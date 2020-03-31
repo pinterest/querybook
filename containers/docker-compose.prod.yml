@@ -1,0 +1,63 @@
+version: '2.1'
+
+services:
+    base:
+        image: datahub:latest
+        cap_add:
+            - SYS_PTRACE
+        tmpfs: /tmp:exec,mode=777
+        # tty: true
+        # stdin_open: true
+        network_mode: 'host'
+        environment:
+            FLASK_SECRET_KEY: ${FLASK_SECRET_KEY}
+
+            PUBLIC_URL: ${PUBLIC_URL}
+            REDIS_URL: ${REDIS_URL}
+            ELASTICSEARCH_HOST: ${ELASTICSEARCH_HOST}
+            DATABASE_CONN: ${DATABASE_CONN}
+            EMAILER_CONN: ${EMAILER_CONN}
+
+            DATABASE_POOL_SIZE: ${DATABASE_POOL_SIZE}
+            DATABASE_POOL_RECYCLE: ${DATABASE_POOL_RECYCLE}
+
+            AUTH_BACKEND: ${AUTH_BACKEND}
+            OAUTH_CALLBACK_HOST: ${OAUTH_CALLBACK_HOST}
+            OAUTH_CLIENT_ID: ${OAUTH_CLIENT_ID}
+            OAUTH_CLIENT_SECRET: ${OAUTH_CLIENT_SECRET}
+            OAUTH_AUTHORIZATION_URL: ${OAUTH_AUTHORIZATION_URL}
+            OAUTH_TOKEN_URL: ${OAUTH_TOKEN_URL}
+            OAUTH_USER_PROFILE: ${OAUTH_USER_PROFILE}
+
+            DATAHUB_SLACK_TOKEN: ${DATAHUB_SLACK_TOKEN}
+            DATAHUB_EMAIL_ADDRESS: ${DATAHUB_EMAIL_ADDRESS}
+
+            RESULT_STORE_TYPE: ${RESULT_STORE_TYPE}
+            S3_BUCKET_NAME: ${S3_BUCKET_NAME}
+            S3_PATH_PREFIX: ${S3_PATH_PREFIX}
+            S3_MIN_UPLOAD_CHUNK_SIZE: ${S3_MIN_UPLOAD_CHUNK_SIZE}
+            S3_MAX_UPLOAD_CHUNK_NUM: ${S3_MAX_UPLOAD_CHUNK_NUM}
+            S3_MAX_READ_SIZE: ${S3_MAX_READ_SIZE}
+            S3_READ_SIZE: ${S3_READ_SIZE}
+            DB_MAX_UPLOAD_SIZE: ${DB_MAX_UPLOAD_SIZE}
+
+            PORT: ${PORT}
+        volumes:
+            # This is for code change via watcher
+            - $PWD:/opt/datahub
+            # See https://stackoverflow.com/questions/29181032/add-a-volume-to-docker-but-exclude-a-sub-folder
+            - /opt/datahub/node_modules/
+            # Make sure the build files don't leak back
+            - /opt/datahub/dist/
+    web:
+        extends:
+            service: base
+        command: './datahub/scripts/runservice prod_web'
+    worker:
+        extends:
+            service: base
+        command: ./datahub/scripts/runservice prod_worker -c 150 -l info -Ofair -n celery@%h
+    scheduler:
+        extends:
+            service: base
+        command: './datahub/scripts/runservice prod_scheduler'

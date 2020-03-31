@@ -1,0 +1,23 @@
+.dropdown {
+    .dropdown-nested-menu .dropdown-menu {
+        top: -12px;
+        // this right now doesn't work
+        margin-left: 100%;
+    }
+    .dropdown-nested-menu.nested-right .dropdown-menu {
+        margin-right: 100%;
+    }
+
+    &.dropdown-open > .dropdown-menu {
+        display: block;
+    }
+
+    .dropdown-menu .dropdown-content-scroll {
+        overflow-x: hidden;
+        overflow-y: scroll;
+    }
+
+    a.dropdown-item {
+        display: flex;
+    }
+}

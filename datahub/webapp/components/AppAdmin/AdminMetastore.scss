@@ -1,0 +1,20 @@
+.AdminMetastore {
+    .AdminMetastore-acl-button {
+        width: 100%;
+        justify-content: center;
+        display: flex;
+    }
+    .AdminMetastore-acl-warning {
+        margin-left: 4px;
+        .Icon {
+            color: var(--color-false);
+            margin-right: 4px;
+            svg {
+                padding: 2px;
+            }
+        }
+    }
+    .AdminMetastore-acl-top {
+        margin-bottom: 8px;
+    }
+}

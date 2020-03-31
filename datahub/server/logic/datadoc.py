@@ -1,0 +1,728 @@
+import datetime
+
+from app.db import with_session
+from const.elasticsearch import ElasticsearchItem
+from const.impression import ImpressionItemType
+from lib.config import get_config_value
+from lib.sqlalchemy import update_model_fields
+from models.datadoc import (
+    DataDoc,
+    DataDocDataCell,
+    DataCell,
+    DataCellQueryExecution,
+    QuerySnippet,
+    FavoriteDataDoc,
+    FunctionDocumentation,
+    DataDocEditor,
+)
+from models.impression import Impression
+from tasks.sync_elasticsearch import sync_elasticsearch
+
+
+cell_types = get_config_value("datadoc.cell_types")
+
+
+"""
+    ----------------------------------------------------------------------------------------------------------
+    DATA DOC
+    ---------------------------------------------------------------------------------------------------------
+"""
+
+
+@with_session
+def create_data_doc(
+    environment_id,
+    owner_uid,
+    public=None,
+    archived=None,
+    title=None,
+    meta=None,
+    commit=True,
+    session=None,
+):
+    data_doc = DataDoc(
+        public=public,
+        archived=archived,
+        owner_uid=owner_uid,
+        environment_id=environment_id,
+        title=title,
+        meta=meta,
+    )
+    session.add(data_doc)
+
+    if commit:
+        session.commit()
+        update_es_data_doc_by_id(data_doc.id)
+    else:
+        session.flush()
+    session.refresh(data_doc)
+    return data_doc
+
+
+@with_session
+def update_data_doc(id, commit=True, session=None, **fields):
+    data_doc = get_data_doc_by_id(id, session=session)
+
+    if not data_doc:
+        return
+
+    updated = update_model_fields(
+        data_doc,
+        skip_if_value_none=True,
+        field_names=["public", "archived", "owner_uid", "title", "meta"],
+        **fields,
+    )
+
+    if updated:
+        data_doc.updated_at = datetime.datetime.now()
+
+        if commit:
+            session.commit()
+            update_es_data_doc_by_id(data_doc.id)
+        else:
+            session.flush()
+        session.refresh(data_doc)
+    return data_doc
+
+
+@with_session
+def get_data_doc_by_id(id, session=None):
+    return session.query(DataDoc).get(id)
+
+
+@with_session
+def get_data_doc_by_user(uid, environment_id, offset, limit, session=None):
+    return (
+        session.query(DataDoc)
+        .filter_by(owner_uid=uid, archived=0, environment_id=environment_id)
+        .order_by(DataDoc.id.desc())
+        .offset(offset)
+        .limit(limit)
+        .all()
+    )
+
+
+@with_session
+def get_all_data_docs(offset=0, limit=100, session=None):
+    return (
+        session.query(DataDoc)
+        .filter(DataDoc.archived == 0)
+        .order_by(DataDoc.id.desc())
+        .offset(offset)
+        .limit(limit)
+        .all()
+    )
+
+
+# You cannot delete data doc
+@with_session
+def delete_data_doc(session=None):
+    pass
+
+
+# You cannot delete data doc
+@with_session
+def clone_data_doc(id, owner_uid, commit=True, session=None):
+    data_doc = get_data_doc_by_id(id, session=session)
+
+    # Check to see if author has permission
+    assert data_doc is not None, "Invalid data doc id"
+
+    new_data_doc = create_data_doc(
+        environment_id=data_doc.environment_id,
+        public=True,
+        archived=False,
+        owner_uid=owner_uid,
+        title=data_doc.title,
+        meta=data_doc.meta,
+        commit=False,
+        session=session,
+    )
+
+    for index, cell in enumerate(data_doc.cells):
+        data_cell = create_data_cell(
+            cell_type=cell.cell_type.name,
+            context=cell.context,
+            meta=cell.meta,
+            commit=False,
+            session=session,
+        )
+        insert_data_doc_cell(
+            data_doc_id=new_data_doc.id,
+            cell_id=data_cell.id,
+            index=index,
+            commit=False,
+            session=session,
+        )
+    if commit:
+        session.commit()
+        update_es_data_doc_by_id(new_data_doc.id)
+    else:
+        session.flush()
+    session.refresh(new_data_doc)
+    return new_data_doc
+
+
+"""
+    ----------------------------------------------------------------------------------------------------------
+    DATA CELL
+    ---------------------------------------------------------------------------------------------------------
+"""
+
+
+def get_valid_meta(input_vals, valid_vals, default_vals=None):
+    if type(input_vals) != type(valid_vals):
+        raise ValueError("Invalid meta type")
+
+    if input_vals is None:
+        return default_vals
+
+    if isinstance(valid_vals, dict):
+        return_obj = {}
+        for valid_key, valid_val in valid_vals.items():
+            if valid_key in input_vals:
+                return_obj[valid_key] = get_valid_meta(
+                    input_vals=input_vals[valid_key],
+                    valid_vals=valid_val,
+                    default_vals=(
+                        default_vals.get(valid_key) if default_vals else None
+                    ),
+                )
+            # only for series obj
+            elif type(valid_key) == int:
+                valid_keys = list(list(valid_vals.values())[0].keys())
+                if all(
+                    all([i in valid_keys for i in item]) for item in input_vals.values()
+                ):
+                    return input_vals
+        return return_obj
+    elif isinstance(valid_vals, list):
+        return [
+            get_valid_meta(
+                input_vals=input_val,
+                valid_vals=valid_vals[0],
+                default_vals=(default_vals or [None])[0],
+            )
+            for input_val in input_vals
+        ]
+    else:
+        return input_vals
+
+
+def sanitize_data_cell_meta(cell_type: str, meta):
+    cell_type_info = cell_types[cell_type]
+
+    valid_dict = cell_type_info["meta"]
+    default_dict = cell_type_info["meta_default"]
+
+    if meta is None:
+        return default_dict
+
+    return get_valid_meta(
+        input_vals=meta, valid_vals=valid_dict, default_vals=default_dict
+    )
+
+
+@with_session
+def create_data_cell(
+    cell_type=None, context=None, meta=None, commit=True, session=None
+):
+    assert cell_type in cell_types, "Invalid cell type"
+    assert isinstance(context, str), "Context must be string"
+
+    processed_meta = sanitize_data_cell_meta(cell_type, meta)
+    data_cell = DataCell(cell_type=cell_type, context=context, meta=processed_meta,)
+
+    session.add(data_cell)
+
+    if commit:
+        session.commit()
+        data_cell.id
+    else:
+        session.flush()
+
+    return data_cell
+
+
+@with_session
+def update_data_cell(
+    id, commit=True, session=None, **fields,
+):
+    data_cell = get_data_cell_by_id(id, session=session)
+    if not data_cell:
+        return
+
+    if "meta" in fields:
+        fields["meta"] = sanitize_data_cell_meta(
+            data_cell.cell_type.name, fields["meta"]
+        )
+
+    updated = update_model_fields(
+        data_cell, skip_if_value_none=True, field_names=["meta", "context"], **fields
+    )
+    if updated:
+        data_cell.updated_at = datetime.datetime.now()
+        data_cell.doc.updated_at = datetime.datetime.now()
+
+        if commit:
+            session.commit()
+            if data_cell.doc:
+                update_es_data_doc_by_id(data_cell.doc.id)
+
+    return data_cell
+
+
+@with_session
+def get_data_cell_by_id(id, session=None):
+    return session.query(DataCell).get(id)
+
+
+@with_session
+def delete_data_cell(session=None):
+    pass
+
+
+"""
+    ----------------------------------------------------------------------------------------------------------
+    DATA DOC DATA CELL
+    ---------------------------------------------------------------------------------------------------------
+"""
+
+
+@with_session
+def insert_data_doc_cell(data_doc_id, cell_id, index, commit=True, session=None):
+    data_doc = get_data_doc_by_id(data_doc_id, session=session)
+    data_cell = get_data_cell_by_id(cell_id, session=session)
+
+    assert index >= 0 and index <= len(data_doc.cells), "Invalid insert cell index"
+    session.query(DataDocDataCell).filter(
+        DataDocDataCell.data_doc_id == data_doc_id
+    ).filter(DataDocDataCell.cell_order >= index).update(
+        {DataDocDataCell.cell_order: DataDocDataCell.cell_order + 1}
+    )
+
+    data_doc.cells.append(data_cell)
+    session.query(DataDocDataCell).filter(
+        DataDocDataCell.data_doc_id == data_doc_id
+    ).filter(DataDocDataCell.data_cell_id == cell_id).update(
+        {DataDocDataCell.cell_order: index}
+    )
+
+    data_doc.updated_at = datetime.datetime.now()
+
+    if commit:
+        session.commit()
+        update_es_data_doc_by_id(data_doc_id)
+    else:
+        session.flush()
+
+
+@with_session
+def delete_data_doc_cell(data_doc_id, index, commit=True, session=None):
+    data_doc = get_data_doc_by_id(data_doc_id, session=session)
+    assert index >= 0 and index < len(data_doc.cells), "Invalid cell index to delete"
+
+    session.query(DataDocDataCell).filter(
+        DataDocDataCell.data_doc_id == data_doc_id
+    ).filter(DataDocDataCell.cell_order == index).delete()
+
+    session.query(DataDocDataCell).filter(
+        DataDocDataCell.data_doc_id == data_doc_id
+    ).filter(DataDocDataCell.cell_order > index).update(
+        {DataDocDataCell.cell_order: DataDocDataCell.cell_order - 1}
+    )
+
+    data_doc.updated_at = datetime.datetime.now()
+
+    if commit:
+        session.commit()
+        update_es_data_doc_by_id(data_doc_id)
+
+
+@with_session
+def move_data_doc_cell(data_doc_id, from_index, to_index, commit=True, session=None):
+    data_doc = get_data_doc_by_id(data_doc_id, session=session)
+
+    assert from_index != to_index, "Can't move same cell"
+    assert from_index >= 0 and from_index < len(
+        data_doc.cells
+    ), "Invalid move from index"
+    assert to_index >= 0 and to_index < len(data_doc.cells), "Invalid move to index"
+
+    is_swap_up = from_index < to_index
+
+    # We will swap from_index to -from_index since this allows parallel
+    # swapping of any other cells in this data doc but makes sure
+    # cell at from_index is locked in place
+    session.query(DataDocDataCell).filter(
+        DataDocDataCell.data_doc_id == data_doc_id
+    ).filter(DataDocDataCell.cell_order == from_index).update(
+        {DataDocDataCell.cell_order: -1}
+    )
+
+    if is_swap_up:
+        session.query(DataDocDataCell).filter(
+            DataDocDataCell.data_doc_id == data_doc_id
+        ).filter(DataDocDataCell.cell_order <= to_index).filter(
+            DataDocDataCell.cell_order > from_index
+        ).update(
+            {DataDocDataCell.cell_order: DataDocDataCell.cell_order - 1}
+        )
+    else:
+        # is swap down
+        session.query(DataDocDataCell).filter(
+            DataDocDataCell.data_doc_id == data_doc_id
+        ).filter(DataDocDataCell.cell_order >= to_index).filter(
+            DataDocDataCell.cell_order < from_index
+        ).update(
+            {DataDocDataCell.cell_order: DataDocDataCell.cell_order + 1}
+        )
+
+    session.query(DataDocDataCell).filter(
+        DataDocDataCell.data_doc_id == data_doc_id
+    ).filter(DataDocDataCell.cell_order == -1).update(
+        {DataDocDataCell.cell_order: to_index}
+    )
+
+    data_doc.updated_at = datetime.datetime.now()
+
+    if commit:
+        session.commit()
+        update_es_data_doc_by_id(data_doc.id)
+    return data_doc
+
+
+@with_session
+def get_data_doc_by_data_cell_id(data_cell_id, session=None):
+    data_cell = get_data_cell_by_id(data_cell_id, session=session)
+    if not data_cell:
+        return
+    return data_cell.doc
+
+
+"""
+    ----------------------------------------------------------------------------------------------------------
+    FUNCTION DOCUMENTATION
+    ---------------------------------------------------------------------------------------------------------
+"""
+
+
+@with_session
+def get_function_documentation_by_language(language, session=None):
+    return (
+        session.query(FunctionDocumentation)
+        .filter(FunctionDocumentation.language == language)
+        .all()
+    )
+
+
+@with_session
+def get_function_documentation_by_id(id, session=None):
+    return (
+        session.query(FunctionDocumentation)
+        .filter(FunctionDocumentation.id == id)
+        .all()
+    )
+
+
+@with_session
+def truncate_function_documentation(session=None):
+    session.query(FunctionDocumentation).delete()
+
+
+@with_session
+def create_function_documentation(
+    language=None,
+    name=None,
+    params=None,
+    return_type=None,
+    description=None,
+    session=None,
+):
+    function_documentation = FunctionDocumentation(
+        language=language,
+        name=name,
+        params=params,
+        return_type=return_type,
+        description=description,
+    )
+    session.add(function_documentation)
+
+    session.commit()
+    function_documentation.id
+
+    return function_documentation
+
+
+"""
+    ----------------------------------------------------------------------------------------------------------
+    SNIPPETS
+    ---------------------------------------------------------------------------------------------------------
+"""
+
+
+@with_session
+def search_snippet(
+    search_by, engine_ids=[], is_public=False, golden=None, session=None
+):
+    query = session.query(QuerySnippet.id, QuerySnippet.title).filter(
+        QuerySnippet.is_public == is_public
+    )
+
+    if not is_public:
+        query = query.filter(QuerySnippet.created_by == search_by)
+
+    if golden is not None:
+        query = query.filter(QuerySnippet.golden == golden)
+
+    if len(engine_ids or []):
+        query = query.filter(QuerySnippet.engine_id.in_(engine_ids))
+    return query.all()
+
+
+@with_session
+def get_snippet_by_id(snippet_id, session=None):
+    return session.query(QuerySnippet).get(snippet_id)
+
+
+@with_session
+def update_snippet_by_id(
+    snippet_id,
+    updated_by,
+    context=None,
+    description=None,
+    title=None,
+    engine_id=None,
+    is_public=None,
+    golden=None,
+    session=None,
+):
+    snippet = get_snippet_by_id(snippet_id, session=session)
+
+    if not snippet:
+        return None
+
+    if context is not None:
+        snippet.context = context
+    if title is not None:
+        snippet.title = title
+    if description is not None:
+        snippet.description = description
+    if engine_id is not None:
+        snippet.engine_id = engine_id
+    if is_public is not None:
+        snippet.is_public = is_public
+    if golden is not None:
+        snippet.golden = golden
+
+    snippet.updated_at = datetime.datetime.now()
+    snippet.last_updated_by = updated_by
+
+    session.commit()
+    snippet.id
+
+    return snippet
+
+
+@with_session
+def create_snippet(
+    created_by,
+    engine_id,
+    context="",
+    title="",
+    description="",
+    is_public=False,
+    golden=False,
+    session=None,
+):
+    snippet = QuerySnippet(
+        context=context,
+        title=title,
+        engine_id=engine_id,
+        is_public=is_public,
+        golden=golden,
+        description=description,
+        created_by=created_by,
+        last_updated_by=created_by,
+    )
+
+    session.add(snippet)
+    session.commit()
+
+    snippet.id
+    return snippet
+
+
+@with_session
+def delete_snippet(snippet_id, deleted_by, session=None):
+    snippet = get_snippet_by_id(snippet_id, session=session)
+
+    if snippet:
+        session.delete(snippet)
+        session.commit()
+
+
+"""
+    ----------------------------------------------------------------------------------------------------------
+    FAVORITE DATA DOC
+    ---------------------------------------------------------------------------------------------------------
+"""
+
+
+@with_session
+def get_user_favorite_data_docs(uid, environment_id, session=None):
+    return (
+        session.query(DataDoc)
+        .join(FavoriteDataDoc)
+        .filter(FavoriteDataDoc.uid == uid)
+        .filter(DataDoc.environment_id == environment_id)
+        .all()
+    )
+
+
+@with_session
+def favorite_data_doc(data_doc_id, uid, session=None):
+    favorite = FavoriteDataDoc(data_doc_id=data_doc_id, uid=uid,)
+    session.add(favorite)
+    session.commit()
+
+    favorite.id
+
+    return favorite
+
+
+@with_session
+def unfavorite_data_doc(data_doc_id, uid, session=None):
+    session.query(FavoriteDataDoc).filter(
+        FavoriteDataDoc.data_doc_id == data_doc_id
+    ).filter(FavoriteDataDoc.uid == uid).delete()
+    session.commit()
+
+
+"""
+    ----------------------------------------------------------------------------------------------------------
+    RECENT DATA DOC
+    ---------------------------------------------------------------------------------------------------------
+"""
+
+
+@with_session
+def get_user_recent_data_docs(uid, environment_id, limit=10, session=None):
+    return (
+        session.query(DataDoc)
+        .join(Impression, DataDoc.id == Impression.item_id)
+        .filter(Impression.item_type == ImpressionItemType.DATA_DOC)
+        .filter(Impression.uid == uid)
+        .filter(DataDoc.environment_id == environment_id)
+        .order_by(Impression.id.desc())
+        .limit(limit)
+        .all()
+    )
+
+
+"""
+    ----------------------------------------------------------------------------------------------------------
+    DATA DOC EDITOR
+    ---------------------------------------------------------------------------------------------------------
+"""
+
+
+@with_session
+def get_data_doc_editor_by_id(id, session=None):
+    return session.query(DataDocEditor).get(id)
+
+
+@with_session
+def get_data_doc_editors_by_doc_id(data_doc_id, session=None):
+    return session.query(DataDocEditor).filter_by(data_doc_id=data_doc_id).all()
+
+
+@with_session
+def create_data_doc_editor(
+    data_doc_id, uid, read=False, write=False, commit=True, session=None
+):
+    editor = DataDocEditor(data_doc_id=data_doc_id, uid=uid, read=read, write=write)
+
+    session.add(editor)
+    if commit:
+        session.commit()
+    else:
+        session.flush()
+    session.refresh(editor)
+    return editor
+
+
+@with_session
+def update_data_doc_editor(
+    id, read=None, write=None, commit=True, session=None, **fields,
+):
+    editor = get_data_doc_editor_by_id(id, session=session)
+    if editor:
+        updated = update_model_fields(
+            editor, skip_if_value_none=True, read=read, write=write
+        )
+
+        if updated:
+            if commit:
+                session.commit()
+            else:
+                session.flush()
+            session.refresh(editor)
+
+        return editor
+
+
+@with_session
+def delete_data_doc_editor(id, session=None):
+    session.query(DataDocEditor).filter_by(id=id).delete()
+    session.commit()
+
+
+"""
+    ----------------------------------------------------------------------------------------------------------
+    DATA CELL QUERY EXECUTION
+    ---------------------------------------------------------------------------------------------------------
+"""
+
+
+@with_session
+def append_query_executions_to_data_cell(
+    data_cell_id, query_execution_ids=[], commit=True, session=None
+):
+    session.query(DataCellQueryExecution).filter(
+        DataCellQueryExecution.data_cell_id == data_cell_id
+    ).update({DataCellQueryExecution.latest: False})
+
+    for index, qid in enumerate(query_execution_ids):
+        dcqe = DataCellQueryExecution(
+            data_cell_id=data_cell_id,
+            query_execution_id=qid,
+            latest=(index == len(query_execution_ids)),
+        )
+        session.add(dcqe)
+
+    if commit:
+        session.commit()
+
+
+@with_session
+def get_data_cell_executions(id, session=None):
+    data_cell = get_data_cell_by_id(id, session=session)
+    return data_cell.query_executions
+
+
+@with_session
+def get_data_cells_executions(ids, session=None):
+    data_cells = session.query(DataCell).filter(DataCell.id.in_(ids)).all()
+    return [(data_cell.id, data_cell.query_executions) for data_cell in data_cells]
+
+
+"""
+    ----------------------------------------------------------------------------------------------------------
+    ELASTICSEARCH
+    ---------------------------------------------------------------------------------------------------------
+"""
+
+
+def update_es_data_doc_by_id(id):
+    sync_elasticsearch.apply_async(args=[ElasticsearchItem.datadocs.value, id])

@@ -1,0 +1,18 @@
+.data-doc-schedule-tabs {
+    position: sticky;
+
+    z-index: 10;
+    top: 0;
+    background-color: var(--bg-color);
+    .tabs {
+        margin-bottom: 0;
+    }
+}
+.DataDocSchedule {
+    height: 100%;
+    padding: 15px 20px;
+
+    .DataDocScheduleForm {
+        margin-bottom: 10px;
+    }
+}

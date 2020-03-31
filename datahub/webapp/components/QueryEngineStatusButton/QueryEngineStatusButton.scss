@@ -1,0 +1,51 @@
+.QueryEngineStatusButton {
+    position: relative;
+
+    &.status-warning .IconButton {
+        color: var(--color-warning);
+    }
+
+    &.status-error .IconButton {
+        color: var(--color-false);
+    }
+}
+
+.QueryEngineStatusPopover {
+    color: var(--text-color);
+    user-select: none;
+    > div {
+        padding-right: 15px;
+        padding-left: 15px;
+    }
+
+    .QueryEngineStatusPopover-timer {
+        padding-top: 15px;
+        padding-bottom: 5px;
+    }
+
+    .QueryEngineStatusPopover-status {
+        padding-top: 10px;
+        padding-bottom: 10px;
+        > div {
+            padding-bottom: 10px;
+        }
+
+        ul {
+            cursor: pointer;
+            li:not(:last-child) {
+                padding-bottom: 10px;
+            }
+        }
+    }
+    .QueryEngineStatusPopover-refresh {
+        padding-top: 5px;
+        padding-bottom: 15px;
+        cursor: pointer;
+        .Icon {
+            margin-right: 5px;
+            svg {
+                padding: 15%;
+            }
+        }
+    }
+}

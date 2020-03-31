@@ -1,0 +1,62 @@
+.AdminUserRole {
+    .AdminUserRole-content {
+        max-width: 720px;
+        margin: 48px auto;
+        .AdminUserRole-new {
+            width: 100%;
+            .AdminUserRole-new-msg {
+                font-size: var(--text-size);
+                .Icon {
+                    margin-right: 8px;
+                }
+            }
+            .AdminUserRole-new-form {
+                background-color: var(--light-bg-color);
+                border-radius: var(--border-radius);
+                border: var(--inner-border);
+                margin: 8px 0px;
+                padding: 8px 16px;
+
+                .FormField {
+                    width: 280px;
+                    .Select {
+                        background-color: var(--bg-color);
+                    }
+                }
+                .AdminUserRole-new-button {
+                    margin-top: 32px;
+                }
+            }
+        }
+        .Card {
+            justify-content: space-between;
+            margin: 8px 0px;
+            padding: 24px;
+            cursor: default;
+
+            .Card-title {
+                margin: 0px;
+            }
+            .Card-content {
+                .AdminUserRole-card-roles {
+                    margin-top: 4px;
+
+                    .AdminUserRole-card-role {
+                        display: flex;
+                        flex-direction: row;
+                        justify-content: space-between;
+                        align-items: center;
+                        width: 280px;
+                        padding-left: 24px;
+                        margin-top: 4px;
+
+                        > div:first-child {
+                            text-align: left;
+                            font-size: var(--text-size);
+                        }
+                    }
+                }
+            }
+        }
+    }
+}

@@ -1,0 +1,66 @@
+.Message {
+    --message-color: var(--dark-bg-color);
+    &.error {
+        --message-color: var(--color-false);
+    }
+    &.warning {
+        --message-color: var(--color-yellow);
+    }
+    &.success {
+        --message-color: var(--color-true);
+    }
+    &.tip {
+        --message-color: var(--color-accent);
+    }
+
+    --message-header-text-size: var(--text-size);
+    --message-text-size: var(--small-text-size);
+    &.tip,
+    &.small {
+        --message-header-text-size: var(--small-text-size);
+        --message-text-size: var(--xsmall-text-size);
+    }
+
+    &.large {
+        --message-header-text-size: var(--med-text-size);
+        --message-text-size: var(--text-size);
+    }
+
+    &.center {
+        text-align: center;
+    }
+
+    color: var(--light-text-color);
+    margin-bottom: 8px;
+    border-radius: var(--border-radius);
+    background-color: var(--light-bg-color);
+    white-space: pre-wrap;
+    overflow: hidden;
+
+    .Message-header {
+        font-size: var(--message-header-text-size);
+        background-color: var(--message-color);
+        color: var(--bg-color);
+        padding: 8px 8px 4px;
+        font-weight: var(--bold-font);
+    }
+
+    .Message-body {
+        padding: 8px;
+        font-size: var(--message-text-size);
+    }
+
+    &.Message-simple {
+        border-left: solid 8px var(--message-color);
+    }
+
+    &.Message-has-icon {
+        .Message-body {
+            display: flex;
+            align-items: center;
+            .Message-icon {
+                margin-right: 8px;
+            }
+        }
+    }
+}

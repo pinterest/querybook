@@ -1,0 +1,17 @@
+.UserEnvironmentEditor {
+    .UserEnvironmentEditor-list {
+        height: 160px;
+        margin: 12px 8px;
+        background-color: var(--light-bg-color);
+        .ReactVirtualized__Grid {
+            padding-bottom: 12px;
+
+            .UserEnvironmentEditor-user {
+                margin-left: 4px;
+                .IconButton {
+                    padding: 8px;
+                }
+            }
+        }
+    }
+}

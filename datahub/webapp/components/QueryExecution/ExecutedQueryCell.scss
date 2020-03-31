@@ -1,0 +1,14 @@
+.ExecutedQueryCell {
+    border-radius: 5px;
+    background: var(--query-editor-default-bg-color);
+
+    .execution-header {
+        margin: 0;
+        padding: 10px;
+        border-bottom: var(--inner-border);
+    }
+
+    .code-highlight {
+        background-color: var(--text-select-bg-color);
+    }
+}

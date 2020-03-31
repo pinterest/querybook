@@ -1,0 +1,101 @@
+// positioning
+.right-align {
+    display: flex;
+    justify-content: flex-end;
+}
+
+.center-align {
+    text-align: center;
+}
+
+.styled-background-div {
+    border-radius: var(--border-radius);
+    background-color: var(--light-bg-color);
+    padding: 15px;
+}
+
+// flex classes
+.flex-row {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+}
+
+.flex-column {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+.flex-right {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    justify-content: flex-end;
+}
+
+.flex-center {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    justify-content: center;
+}
+
+.flex-left {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    justify-content: flex-start;
+}
+
+.horizontal-space-between {
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.vertical-space-between {
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.fullscreen {
+    position: fixed;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    top: 0;
+}
+
+.break-flex {
+    flex-basis: 100%;
+    height: 0;
+}
+
+// reused
+.dh-hr {
+    background-color: var(--light-text-color);
+    height: 1px;
+    width: 100%;
+    margin-left: 10px;
+}
+
+/* force scrollbar to appear on Mac & -webkit (Chrome, Safari) despite user 'hide' preference */
+.force-scrollbar-x {
+    overflow-x: scroll !important;
+}
+.force-scrollbar-y {
+    overflow-y: scroll !important;
+}
+.force-scrollbar {
+    overflow: scroll !important;
+}
+
+.one-line-ellipsis {
+    overflow: hidden;
+    white-space: nowrap;
+    text-overflow: ellipsis;
+}

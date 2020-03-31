@@ -1,0 +1,129 @@
+.Table.ReactTable {
+    border: none;
+    border-radius: var(--border-radius);
+    background: var(--light-bg-color);
+    font-weight: 500;
+    overflow: hidden;
+
+    .rt-table {
+        overflow: visible;
+    }
+
+    .rt-thead {
+        &.-header {
+            box-shadow: none;
+            background-color: var(--hover-bg-color);
+            letter-spacing: 0.25px;
+            font-weight: var(--bold-font);
+        }
+
+        .rt-th {
+            padding: 4px 8px;
+            outline: none;
+            border-right: var(--inner-border);
+        }
+    }
+
+    .rt-tbody {
+        .rt-td {
+            border-right: var(--inner-border);
+            padding: 2px 4px;
+        }
+
+        .rt-tr-group {
+            border-bottom: none;
+        }
+
+        .rt-tr:not(.-padRow):hover {
+            background: var(--select-bg-color);
+        }
+    }
+
+    // trying to beat default style specificity
+    .rt-table {
+        .rt-thead {
+            &.-header {
+                .rt-tr {
+                    .rt-th,
+                    .rt-td {
+                        &.-sort-asc {
+                            box-shadow: inset 0 3px 0 0 var(--color-accent);
+                        }
+                    }
+                    .rt-th,
+                    .rt-td {
+                        &.-sort-desc {
+                            box-shadow: inset 0 -3px 0 0 var(--color-accent);
+                        }
+                    }
+                }
+            }
+        }
+    }
+
+    &.ReactTable.-highlight {
+        .rt-tbody .rt-tr:not(.-padRow):hover {
+            background: rgba(0, 0, 0, 0.25);
+        }
+    }
+
+    .pagination-bottom {
+        position: sticky;
+        bottom: 0px;
+        left: 0px;
+        border-top: var(--inner-border);
+
+        .-pagination {
+            box-shadow: none;
+            border-top: none;
+            padding: 0px;
+
+            button.-btn {
+                background: var(--hover-bg-color);
+                color: var(--light-text-color);
+                border-radius: 0px;
+                font-weight: 700;
+            }
+
+            .-previous {
+                button.-btn {
+                    border-bottom-right-radius: var(--border-radius);
+                }
+            }
+
+            .-next {
+                button.-btn {
+                    border-bottom-left-radius: var(--border-radius);
+                }
+            }
+
+            button.-btn:not([disabled]):hover {
+                background: var(--select-bg-color);
+                color: var(--text-hover-color);
+            }
+        }
+    }
+
+    &.freeze-header {
+        .rt-thead {
+            overflow-y: scroll;
+        }
+    }
+
+    &.hide-header {
+        .rt-thead {
+            display: none;
+        }
+    }
+
+    .rt-noData {
+        display: none;
+    }
+
+    input,
+    select {
+        color: inherit;
+        // override ReactTable default
+        background-color: inherit !important;
+    }
+}

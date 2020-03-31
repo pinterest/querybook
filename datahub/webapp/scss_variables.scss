@@ -1,0 +1,88 @@
+@keyframes dpTapAnimation {
+    0% {
+        opacity: 0;
+        transform: scale(0.96);
+    }
+    100% {
+        opacity: 1;
+        transform: scale(1);
+    }
+}
+
+@mixin dp-tap-state-hover() {
+    animation: dpTapAnimation 0.25s cubic-bezier(0.31, 1, 0.34, 1) forwards;
+}
+
+@mixin fancy-hover() {
+    position: relative;
+
+    &::before {
+        background: var(--hover-bg-color);
+        border-radius: var(--border-radius);
+        content: ' ' !important;
+        height: 100%;
+        left: 0;
+        opacity: 0;
+        pointer-events: none;
+        position: absolute;
+        top: 0;
+        transform: scale(0.96);
+        width: 100%;
+        z-index: 3;
+    }
+
+    &:hover {
+        &::before {
+            @include dp-tap-state-hover;
+        }
+    }
+}
+
+@mixin pushable($scale: 0.95) {
+    transition: transform 0.05s ease-out;
+
+    &:active {
+        transform: scale($scale);
+    }
+}
+
+@mixin ellipsis($number-of-lines) {
+    overflow: hidden;
+    display: -webkit-box;
+    -webkit-line-clamp: $number-of-lines;
+    -webkit-box-orient: vertical;
+}
+
+@mixin one-line-ellipsis() {
+    overflow: hidden;
+    white-space: nowrap;
+    text-overflow: ellipsis;
+}
+
+@mixin full-screen($z-index: 201, $background: var(--bg-color)) {
+    position: fixed;
+    top: 0px;
+    left: 0px;
+    right: 0px;
+    bottom: 0px;
+    z-index: $z-index;
+    background: $background;
+}
+
+@mixin query-execution-text() {
+    font-weight: bold;
+    text-transform: uppercase;
+    font-size: var(--small-text-size);
+    color: var(--text-color);
+    line-height: 1.5;
+}
+
+@mixin query-execution-button() {
+    @include pushable();
+    @include fancy-hover();
+
+    cursor: pointer;
+    margin-left: 5px;
+    display: inline-block;
+    font-size: inherit;
+}

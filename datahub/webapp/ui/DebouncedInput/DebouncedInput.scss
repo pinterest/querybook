@@ -1,0 +1,31 @@
+.DebouncedInput {
+    input {
+        background: none;
+        border: var(--inner-border);
+        box-shadow: none;
+        width: 100%;
+
+        &:active,
+        &:focus {
+            box-shadow: none;
+            border-color: var(--inner-border-color);
+        }
+        &::placeholder {
+            color: var(--light-text-color);
+        }
+    }
+
+    &.flex {
+        display: flex;
+        input {
+            flex-grow: 1;
+        }
+    }
+
+    &.transparent {
+        input {
+            border: none;
+            background-color: transparent;
+        }
+    }
+}

@@ -1,0 +1,24 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <style type="text/css">
+        p {
+            font-size: 16px;
+        }
+    </style>
+</head>
+
+<body>
+    <p>Hi {{ username }},</p>
+    <p>
+        {{ inviting_username }} has invited you to <b>{{ read_or_write }}</b> the DataDoc
+        <strong>
+            <a href="{{ public_url }}/{{ env_name }}/datadoc/{{
+                    data_doc_id
+                }}">{{ data_doc_title }}</a>
+        </strong>
+    </p>
+</body>
+
+</html>

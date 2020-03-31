@@ -1,0 +1,44 @@
+{
+    "extends": ["tslint:latest", "tslint-react", "tslint-config-prettier"],
+    "rules": {
+        "object-literal-sort-keys": false,
+        "ordered-imports": false,
+        "interface-name": [true, "always-prefix"],
+        "no-submodule-imports": false,
+        "max-classes-per-file": false,
+        "no-string-literal": false,
+        "jsx-boolean-value": false,
+        "no-var-requires": false,
+        "callable-types": false,
+        "no-implicit-dependencies": [
+            true,
+            "dev",
+            [
+                "ui",
+                "components",
+                "lib",
+                "config",
+                "worker-loader!.",
+                "history",
+                "const",
+                "hooks"
+            ]
+        ],
+        "no-shadowed-variable": [
+            true,
+            {
+                "class": true,
+                "enum": true,
+                "function": false,
+                "interface": false,
+                "namespace": true,
+                "typeAlias": false,
+                "typeParameter": false
+            }
+        ],
+        "no-console": false,
+        "jsx-no-lambda": false,
+        "only-arrow-functions": [true, "allow-named-functions"],
+        "triple-equals": [true, "allow-null-check"]
+    }
+}

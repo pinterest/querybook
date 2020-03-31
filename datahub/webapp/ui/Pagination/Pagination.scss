@@ -1,0 +1,29 @@
+.Pagination {
+    margin: 15px 0px;
+    .Pagination-next {
+        order: 3;
+        margin-right: 0px;
+    }
+    .Pagination-previous {
+        order: 1;
+        margin-left: 0px;
+    }
+
+    .Pagination-pages {
+        order: 2;
+        > li {
+            display: flex;
+            .Pagination-page-button {
+                &.is-current {
+                    background-color: var(--color-accent);
+                    border-color: var(--color-accent-bg);
+                    color: var(--color-accent-text);
+                }
+            }
+        }
+        .Pagination-ellipsis {
+            margin: 5px;
+            color: var(--light-text-color);
+        }
+    }
+}

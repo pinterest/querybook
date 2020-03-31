@@ -1,0 +1,37 @@
+.IconButton {
+    cursor: pointer;
+    padding: 10px;
+    color: var(--icon-color);
+    transition: color 0.2s ease-out;
+    transition: fill 0.2s ease-out;
+    display: inline-flex;
+
+    &.no-padding {
+        padding: 0px;
+    }
+    &:hover {
+        color: var(--icon-hover-color);
+    }
+    &.active {
+        color: var(--icon-active-color);
+    }
+    &.fill {
+        svg {
+            fill: var(--icon-color);
+        }
+        &:hover {
+            svg {
+                fill: var(--icon-hover-color);
+            }
+        }
+        &.active {
+            svg {
+                fill: var(--icon-active-color);
+            }
+        }
+    }
+
+    &.disabled {
+        cursor: not-allowed;
+    }
+}

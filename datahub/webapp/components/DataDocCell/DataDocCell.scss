@@ -1,0 +1,8 @@
+.DataDocCell {
+    border-radius: var(--border-radius);
+    margin: 48px 16px;
+    &.collapsed {
+        min-height: 0px;
+        cursor: nesw-resize;
+    }
+}

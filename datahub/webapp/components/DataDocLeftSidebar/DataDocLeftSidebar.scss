@@ -1,0 +1,82 @@
+.DataDocLeftSidebar {
+    height: 100vh;
+    position: sticky;
+    top: 0;
+    z-index: 5;
+
+    display: flex;
+    flex-direction: column;
+
+    .sidebar-content {
+        margin-top: 85px;
+    }
+
+    .contents-toggle-button {
+        border: var(--inner-border);
+        border-left: none;
+        margin-right: 0;
+        padding-right: 8px;
+    }
+
+    .sidebar-content-table,
+    .sidebar-content-contents {
+        width: 280px;
+        height: 80vh;
+    }
+
+    .sidebar-content-table {
+        .DataTableViewMini {
+            overflow-x: hidden;
+            overflow-y: auto;
+            max-height: 100%;
+        }
+    }
+
+    .sidebar-content-contents {
+        margin-right: 8px;
+        border: var(--inner-border);
+        border-left: none;
+        border-radius: var(--border-radius);
+        border-bottom-left-radius: 0px;
+        border-top-left-radius: 0px;
+        display: flex;
+        flex-direction: column;
+
+        .contents-panel-header {
+            padding: 0px 12px;
+            border-bottom: var(--inner-border);
+
+            .Title {
+                user-select: none;
+            }
+        }
+
+        .contents-panel-cell-rows {
+            overflow-x: hidden;
+            overflow-y: auto;
+        }
+
+        .contents-panel-cell-row {
+            padding: 8px 8px 0px;
+
+            cursor: pointer;
+            display: flex;
+            align-items: flex-end;
+
+            .contents-panel-cell-row-text {
+                overflow: hidden;
+                white-space: nowrap;
+                text-overflow: ellipsis;
+                margin-left: 5px;
+            }
+
+            &:hover {
+                background-color: var(--color-accent-bg-hover);
+            }
+        }
+    }
+
+    &.hidden {
+        visibility: hidden;
+    }
+}

@@ -1,0 +1,55 @@
+.DataTableNavigator {
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+
+    .navigator-metastore-picker {
+        display: flex;
+        justify-content: center;
+        border-bottom: var(--inner-border);
+
+        .control {
+            margin: 5px;
+        }
+    }
+
+    .navigator-search-input {
+        display: flex;
+        border-bottom: var(--inner-border);
+        .SearchBar {
+            flex-grow: 1;
+            input {
+                width: 100%;
+                padding: 10px;
+            }
+        }
+    }
+
+    .navigator-table-row {
+        overflow: hidden;
+        white-space: nowrap;
+        text-overflow: ellipsis;
+
+        border-left: solid 6px transparent;
+        padding: 4px;
+        color: var(--dark-text-color);
+        cursor: pointer;
+
+        &:not(.selected):hover {
+            background-color: var(--color-accent-bg-hover);
+        }
+
+        &.selected {
+            border-color: var(--color-accent);
+            font-weight: var(--bold-font);
+        }
+    }
+
+    .table-scroll-wrapper {
+        flex: 1;
+    }
+
+    .tabs {
+        padding-top: 5px;
+    }
+}

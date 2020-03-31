@@ -1,0 +1,21 @@
+.ToggleButton {
+    position: relative;
+    display: inline-block;
+    margin: 8px 4px;
+    padding: 4px 8px;
+    border: var(--inner-border);
+    border-radius: var(--border-radius);
+    background-color: transparent;
+    cursor: pointer;
+    transition: all 0.25s ease-out;
+
+    .ToggleButton-title {
+        white-space: nowrap;
+    }
+
+    &.checked {
+        background-color: var(--color-accent-bg);
+        border-color: var(--color-accent-text);
+        color: var(--color-accent-text);
+    }
+}

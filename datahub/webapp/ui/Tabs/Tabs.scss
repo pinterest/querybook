@@ -1,0 +1,108 @@
+.Tabs {
+    ul {
+        display: flex;
+        flex-direction: row;
+        text-align: center;
+        font-weight: var(--bold-font);
+
+        li {
+            padding: 8px 8px 4px;
+            box-sizing: border-box;
+            border-bottom: solid 2px transparent;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+
+            a {
+                color: var(--text-color);
+            }
+
+            &.active {
+                border-bottom-color: var(--select-boder-color);
+                a {
+                    color: var(--text-color);
+                }
+            }
+
+            &:not(.active):hover {
+                cursor: pointer;
+                border-bottom-color: var(--hover-border-color);
+                a {
+                    color: var(--text-color);
+                }
+            }
+        }
+    }
+
+    font-size: var(--small-text-size);
+
+    &.small {
+        font-size: var(--xsmall-text-size);
+    }
+
+    &.large {
+        font-size: var(--text-size);
+    }
+
+    &.wide {
+        ul {
+            li {
+                flex: 1;
+            }
+        }
+    }
+
+    &.pills {
+        ul {
+            overflow: hidden;
+            li {
+                padding: 4px 16px;
+                border-bottom: none;
+                background-color: var(--pill-tab-color);
+
+                &.active {
+                    background-color: var(--invert-select-color);
+                    a {
+                        color: var(--invert-text-color);
+                    }
+                }
+
+                &:not(.active):hover {
+                    background-color: var(--hover-bg-color);
+                }
+
+                &:first-child {
+                    border-top-left-radius: var(--border-radius);
+                    border-bottom-left-radius: var(--border-radius);
+                }
+                &:last-child {
+                    border-top-right-radius: var(--border-radius);
+                    border-bottom-right-radius: var(--border-radius);
+                }
+            }
+        }
+    }
+
+    &.vertical {
+        ul {
+            flex-direction: column;
+        }
+    }
+
+    &.borderless {
+        li a {
+            border: none;
+        }
+    }
+
+    &.center-align {
+        ul {
+            justify-content: center;
+        }
+    }
+    &.left-align {
+        ul {
+            justify-content: left;
+        }
+    }
+}

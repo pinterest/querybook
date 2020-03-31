@@ -1,0 +1,43 @@
+.QuerySnippetInsertionModal {
+    overflow-y: scroll;
+
+    .query-snippet-insertion-content {
+        flex: 1;
+        display: flex;
+        overflow: scroll;
+
+        .query-snippet-navigator-wrapper {
+            height: 100%;
+
+            .QuerySnippetNavigator {
+                height: 100%;
+            }
+        }
+
+        .query-snippet-view-wrapper {
+            flex: 1;
+            padding: 16px;
+            overflow: scroll;
+        }
+    }
+
+    .query-snippet-insertion-header {
+        padding: 12px 16px;
+        border-bottom: var(--inner-border);
+    }
+
+    .snippet-author-info {
+        font-size: var(--text-size);
+
+        figure.image {
+            display: inline-block;
+            vertical-align: middle;
+        }
+    }
+
+    .snippet-description {
+        p {
+            white-space: pre-wrap;
+        }
+    }
+}

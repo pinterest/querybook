@@ -1,0 +1,29 @@
+@import '../../scss_variables.scss';
+
+.UserBadge {
+    .UserBadge-icon {
+        margin-right: 1rem;
+    }
+    &.mini {
+        figure {
+            margin: 0;
+            display: inline-block;
+            vertical-align: sub;
+
+            ~ .user-name {
+                margin-left: 4px;
+            }
+        }
+        display: inline-flex;
+        flex-direction: row;
+        align-items: center;
+    }
+
+    .UserBadge-names {
+        max-width: 180px;
+
+        .Title {
+            @include one-line-ellipsis();
+        }
+    }
+}

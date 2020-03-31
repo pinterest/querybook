@@ -1,0 +1,32 @@
+.AdminDeletedList {
+    display: flex;
+    flex-wrap: wrap;
+    .Card {
+        justify-content: space-between;
+        cursor: default;
+        .Card-title {
+            margin: 8px;
+        }
+        .Card-content {
+            flex-grow: 1;
+            height: 100%;
+            width: 100%;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+            padding: 16px;
+            .AdminDeletedList-content {
+                text-align: left;
+                word-break: break-word;
+            }
+            .AdminDeletedList-button-wrapper {
+                margin-top: 16px;
+                display: flex;
+                justify-content: flex-end;
+                .Button {
+                    margin: 0px;
+                }
+            }
+        }
+    }
+}

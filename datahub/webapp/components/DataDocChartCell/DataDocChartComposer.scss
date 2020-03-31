@@ -1,0 +1,90 @@
+.DataDocChartComposer {
+    display: flex;
+    flex-direction: column;
+    height: 100%;
+    .DataDocChartComposer-chart {
+    }
+    .DataDocChartComposer-content {
+        display: flex;
+        flex-direction: row;
+        height: calc(100vh - 38px);
+        .DataDocChartComposer-left {
+            display: flex;
+            flex-direction: column;
+            overflow: hidden;
+            flex-grow: 1;
+            padding: 8px;
+
+            .ReactTable {
+                width: 100%;
+            }
+            .DataDocChartComposer-chart {
+                display: flex;
+                flex-direction: column;
+
+                flex-grow: 1;
+                margin: 0 auto;
+                width: 100%;
+                overflow-y: hidden;
+                .DataDocChartComposer-chart-sizer {
+                    flex: 1;
+                    position: relative;
+                    display: flex;
+                    flex-direction: column;
+                    overflow: hidden;
+                    width: 100%;
+
+                    canvas {
+                        margin: auto;
+                    }
+                }
+                .DataDocChartComposer-exec-picker {
+                    margin-left: 4px;
+                }
+            }
+            .DataDocChartComposer-bottom {
+                position: relative;
+                display: flex;
+                flex-direction: column;
+
+                .DataDocChartComposer-data {
+                    position: relative;
+                    width: 100%;
+                }
+            }
+        }
+
+        .DataDocChartComposer-right {
+            border-left: var(--inner-border);
+            width: 360px;
+            min-width: 360px;
+            display: flex;
+            flex-direction: column;
+
+            .DataDocChartComposer-form {
+                flex: 1;
+                overflow-y: scroll;
+                padding-right: 0px;
+                flex-grow: 1;
+                padding: 8px;
+                padding-right: 0;
+
+                .Select,
+                select,
+                input:not([type='checkbox']) {
+                    width: 100%;
+                }
+
+                .Checkbox {
+                    display: flex;
+                    margin-left: 4px;
+                    font-size: var(--small-text-size);
+                    flex-direction: row-reverse;
+                    justify-content: space-between;
+                    align-items: center;
+                    margin: 4px 0px;
+                }
+            }
+        }
+    }
+}

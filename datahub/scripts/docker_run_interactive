@@ -1,0 +1,10 @@
+#!/usr/bin/env bash
+
+# Features:
+# 0. Assumes this script is running in-container
+# 1. Execute a command in a docker container
+# 2. Ensures ctrl-c exits to interactive prompt
+# 3. Ensures initial command exists in history, allowing for repeat execution
+
+CMD="bash --init-file <(echo \"history -s '${@}' && ${@}\")"
+bash -c "$CMD"

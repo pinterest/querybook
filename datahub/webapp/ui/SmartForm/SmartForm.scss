@@ -1,0 +1,29 @@
+.SmartForm {
+    .SmartForm-array-section {
+        > .FormField {
+            padding: 0px;
+            flex-grow: 1;
+        }
+        .FormFieldInputSection {
+            margin-right: 12px;
+        }
+    }
+    .FormField {
+        margin: 0px;
+    }
+    .SmartForm-button-box {
+        width: 100%;
+        justify-content: center;
+        margin-top: 12px;
+    }
+
+    i {
+        margin-left: 4px;
+    }
+
+    .FormField-stacked {
+        .SmartForm {
+            flex: 1;
+        }
+    }
+}

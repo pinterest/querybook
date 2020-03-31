@@ -1,0 +1,155 @@
+version: '2.1'
+
+# volumes:
+#   node_modules:
+services:
+    web:
+        image: datahub-dev:latest
+        cap_add:
+            - SYS_PTRACE
+        tmpfs: /tmp:exec,mode=777
+        tty: true
+        stdin_open: true
+        # network_mode: "host"
+        command: './datahub/scripts/bundled_docker_run_web'
+        ports:
+            - '10001:10001'
+        expose:
+            - '10001'
+        environment:
+            PORT: 10001
+        restart: 'always'
+        volumes:
+            # This is for code change via watcher
+            - $PWD:/opt/datahub
+            # See https://stackoverflow.com/questions/29181032/add-a-volume-to-docker-but-exclude-a-sub-folder
+            - /opt/datahub/node_modules/
+            # Make sure the build files don't leak back
+            - /opt/datahub/dist/
+        env_file: bundled_variables.env
+        depends_on:
+            mysql:
+                condition: service_healthy
+            redis:
+                condition: service_healthy
+            elasticsearch:
+                condition: service_healthy
+    worker:
+        image: datahub-dev:latest
+        cap_add:
+            - SYS_PTRACE
+        tmpfs: /tmp:exec,mode=777
+        tty: true
+        stdin_open: true
+        command: './datahub/scripts/runservice worker'
+        # restart: "always"
+        volumes:
+            # This is for code change via watcher
+            - $PWD:/opt/datahub
+        env_file: bundled_variables.env
+        depends_on:
+            mysql:
+                condition: service_healthy
+            redis:
+                condition: service_healthy
+            elasticsearch:
+                condition: service_healthy
+    scheduler:
+        image: datahub-dev:latest
+        cap_add:
+            - SYS_PTRACE
+        tmpfs: /tmp:exec,mode=777
+        tty: true
+        stdin_open: true
+        command: './datahub/scripts/runservice scheduler --pidfile="/opt/celerybeat.pid"'
+        volumes:
+            # This is for code change via watcher
+            - $PWD:/opt/datahub
+            # See https://stackoverflow.com/questions/29181032/add-a-volume-to-docker-but-exclude-a-sub-folder
+            - /opt/datahub/node_modules/
+            # Make sure the build files don't leak back
+            - /opt/datahub/dist/
+        env_file: bundled_variables.env
+        depends_on:
+            mysql:
+                condition: service_healthy
+            redis:
+                condition: service_healthy
+    redis:
+        image: redis
+        restart: always
+        command: ['redis-server', '--appendonly', 'yes']
+        hostname: redis
+        ports:
+            - '6379:6379'
+        healthcheck:
+            test: ['CMD', 'redis-cli', 'ping']
+            interval: 30s
+            timeout: 10s
+            retries: 3
+
+    mysql:
+        image: mysql:5.7
+        restart: always
+        ports:
+            # <Port exposed> : < MySQL Port running inside container>
+            - '3306:3306'
+        expose:
+            # Opens port 3306 on the container
+            - '3306'
+            # Where our data will be persisted
+        volumes:
+            - my-db:/var/lib/mysql
+        environment:
+            MYSQL_HOST: mysql:3306
+            MYSQL_DATABASE: datahub2
+            MYSQL_USER: test
+            MYSQL_PASSWORD: passw0rd
+            # Password for root access
+            MYSQL_ROOT_PASSWORD: hunter2
+        healthcheck:
+            test:
+                [
+                    'CMD-SHELL',
+                    "mysqladmin -h 'localhost' -u test -ppassw0rd ping --silent",
+                ]
+            interval: 30s
+            timeout: 30s
+            retries: 3
+        env_file: bundled_variables.env
+    elasticsearch:
+        image: docker.elastic.co/elasticsearch/elasticsearch:6.6.1
+        container_name: elasticsearch
+        environment:
+            - cluster.name=docker-cluster
+            - bootstrap.memory_lock=true
+            - 'ES_JAVA_OPTS=-Xms512m -Xmx512m'
+        ulimits:
+            memlock:
+                soft: -1
+                hard: -1
+        volumes:
+            - esdata1:/usr/share/elasticsearch/data
+        ports:
+            - 9200:9200
+        healthcheck:
+            test:
+                [
+                    'CMD-SHELL',
+                    'curl --silent --fail localhost:9200/_cluster/health || exit 1',
+                ]
+            interval: 30s
+            timeout: 30s
+            retries: 3
+    # If you need email to work use this
+    # dockerhostforward:
+    #     expose:
+    #         - '25'
+    #     image: qoomon/docker-host
+    #     cap_add: ['NET_ADMIN', 'NET_RAW']
+    #     mem_limit: 8M
+    #     restart: on-failure
+volumes:
+    my-db:
+    esdata1:
+        driver: local

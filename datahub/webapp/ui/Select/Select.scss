@@ -1,0 +1,52 @@
+.Select {
+    display: inline-block;
+    position: relative;
+
+    select {
+        -webkit-appearance: none;
+        background-color: inherit;
+        color: inherit;
+        border-radius: var(--border-radius);
+        border: var(--inner-border);
+        font-size: inherit;
+        padding: 8px 32px 8px 8px;
+
+        &:hover {
+            border-color: var(--border-color);
+        }
+    }
+
+    &::after {
+        z-index: 4;
+        display: block;
+        position: absolute;
+        top: 38%;
+        right: 12px;
+        height: 8px;
+        width: 8px;
+        border: 2px solid transparent;
+        border-radius: 2px;
+        border-right: 0;
+        border-top: 0;
+        border-color: inherit;
+        transform: rotate(-45deg);
+        transform-origin: center;
+        pointer-events: none;
+        content: ' ';
+    }
+    &.Select-transparent {
+        select {
+            font-size: var(--small-text-size);
+            border: none;
+            padding: 4px 32px 4px 4px;
+        }
+        &::after {
+            top: 32%;
+        }
+    }
+    &.Select-full-width {
+        select {
+            width: 100%;
+        }
+    }
+}

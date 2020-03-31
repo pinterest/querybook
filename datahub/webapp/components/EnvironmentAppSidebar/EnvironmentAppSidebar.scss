@@ -1,0 +1,70 @@
+.EnvironmentAppSidebar {
+    .EnvironmentAppSidebar-content {
+        display: flex;
+        flex-direction: column;
+        height: 100%;
+        position: relative;
+
+        .sidebar-content-main {
+            display: flex;
+            flex: 1;
+
+            .sidebar-content-main-navigator {
+                flex: 1;
+                overflow: hidden;
+
+                .QueryViewNavigator,
+                .QuerySnippetNavigator {
+                    height: 100%;
+                }
+            }
+        }
+
+        .collapse-sidebar-button {
+            height: 35px;
+            width: 25px;
+            padding: 5px 0px;
+            cursor: pointer;
+
+            display: flex;
+            position: absolute;
+            top: 0;
+            bottom: 0;
+            margin: auto;
+            left: 100%;
+
+            z-index: 30;
+            opacity: 0;
+        }
+
+        &:hover .collapse-sidebar-button {
+            opacity: 0.4;
+        }
+        .collapse-sidebar-button:hover {
+            opacity: 1;
+        }
+    }
+
+    &:not(.collapsed) {
+        .EntitySidebar {
+            border-right: var(--inner-border);
+        }
+
+        .sidebar-environment-picker {
+            border-bottom: var(--inner-border);
+        }
+
+        .sidebar-content-main {
+            overflow: hidden;
+        }
+    }
+
+    &.collapsed {
+        .sidebar-environment-picker {
+            text-align: center;
+            border-bottom: solid 1px transparent;
+        }
+
+        border-right: var(--inner-border);
+    }
+}

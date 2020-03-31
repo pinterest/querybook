@@ -1,0 +1,21 @@
+.SearchContainer {
+    padding: 10px;
+    display: flex;
+    .SearchButton {
+        flex-grow: 1;
+        background-color: var(--light-bg-color);
+        border-radius: var(--border-radius);
+        .Button {
+            padding: 10px 15px;
+            > span {
+                width: 100%;
+                .SearchButton-tip {
+                    color: var(--light-text-color);
+                    .Icon {
+                        padding-bottom: 1px;
+                    }
+                }
+            }
+        }
+    }
+}

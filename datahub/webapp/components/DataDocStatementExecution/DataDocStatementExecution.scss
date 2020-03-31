@@ -1,0 +1,191 @@
+@import './../../scss_variables.scss';
+
+.DataDocStatementExecution {
+    width: 100%;
+
+    .statement-execution-content {
+        position: relative;
+        box-sizing: border-box;
+        background: transparent;
+        margin-bottom: 0px;
+        padding: 0px;
+        border-radius: 0px;
+
+        .statement-execution-text-title {
+            font-size: var(--small-text-size);
+            margin-bottom: 4px;
+            text-transform: uppercase;
+        }
+
+        .statement-execution-no-output {
+            text-align: center;
+            font-size: var(--med-text-size);
+            user-select: none;
+
+            padding: 8px;
+            font-weight: bold;
+            color: #eaeaea;
+        }
+
+        .statement-execution-progress-wrapper {
+            margin-bottom: 10px;
+
+            progress {
+                width: 40%;
+                display: inline-block;
+            }
+        }
+    }
+
+    .statement-execution-footer {
+        .statement-time-display {
+            text-align: left;
+        }
+    }
+}
+
+.StatementExecutionLog {
+    overflow: hidden;
+    border-radius: var(--border-radius);
+    margin: 0px;
+    height: 240px;
+    position: relative;
+
+    &:focus {
+        outline: none;
+    }
+
+    &.log-viewer {
+        background: var(--terminal-bg-color);
+        margin: 4px 0px;
+        padding: 12px;
+        color: var(--terminal-text-color);
+        font-family: var(--family-monospace);
+
+        &.is-fullscreen {
+            margin: 0px;
+        }
+
+        a {
+            color: var(--color-accent-text);
+            font-weight: bold;
+            cursor: pointer;
+
+            &:hover {
+                opacity: 0.7;
+                text-decoration: none;
+            }
+        }
+    }
+
+    &:not(.is-fullscreen) {
+        @include pushable(0.99);
+        cursor: pointer;
+
+        .statement-execution-log-container {
+            white-space: pre-wrap;
+            word-break: break-all;
+            overflow: hidden;
+            height: 100%;
+        }
+    }
+
+    &.is-fullscreen {
+        @include full-screen(1000, var(--terminal-bg-color));
+        height: 100%;
+
+        .statement-execution-log-container {
+            white-space: pre-wrap;
+            word-break: break-all;
+            overflow-y: scroll;
+            height: 100%;
+        }
+    }
+
+    .go-fullscreen-main-button,
+    .exit-fullscreen-button {
+        border-radius: var(--border-radius);
+        font-size: var(--large-text-size);
+        background: var(--terminal-text-color);
+        padding: 4px 16px;
+        color: var(--terminal-bg-color);
+        font-weight: bold;
+        opacity: 0.8;
+
+        &:hover {
+            opacity: 1;
+        }
+    }
+
+    .go-fullscreen-overlay {
+        cursor: pointer;
+        position: absolute;
+        top: 0px;
+        right: 0px;
+        bottom: 0px;
+        left: 0px;
+        display: flex;
+        align-items: center;
+
+        &:hover {
+            .go-fullscreen-main-button {
+                opacity: 0.8;
+            }
+        }
+
+        .go-fullscreen-main-button {
+            opacity: 0;
+            margin: 0px auto;
+            transition: opacity 0.2s ease-out;
+        }
+    }
+
+    .exit-fullscreen-button {
+        position: absolute;
+        top: 0px;
+        right: 0px;
+        margin: 15px;
+        cursor: pointer;
+    }
+}
+
+.StatementResult {
+    &.fullscreen {
+        display: flex;
+        flex-direction: column;
+        background-color: var(--bg-color);
+        padding: 15px;
+
+        .StatementResultTable {
+            flex: 1;
+            overflow-y: scroll;
+        }
+    }
+
+    .statement-results-summary {
+        .number-of-rows-message {
+            font-weight: 700;
+            text-transform: uppercase;
+            .warning-word {
+                color: var(--color-false);
+            }
+        }
+
+        .view-type-switcher {
+            // Temporal style
+
+            .view-type-button {
+                padding: 0px 4px;
+                margin: 0px 4px;
+                line-height: 1.5;
+                @include query-execution-button();
+
+                cursor: pointer;
+
+                &.selected {
+                    color: var(--light-text-color);
+                }
+            }
+        }
+    }
+}

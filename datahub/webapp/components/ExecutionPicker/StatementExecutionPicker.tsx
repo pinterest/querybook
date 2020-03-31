@@ -1,0 +1,101 @@
+import React from 'react';
+
+import {
+    queryStatusToStatusIcon,
+    STATUS_TO_TEXT_MAPPING,
+    Status,
+} from 'const/queryStatus';
+import { IStatementExecution } from 'redux/queryExecutions/types';
+
+import { DropdownMenu } from 'ui/DropdownMenu/DropdownMenu';
+import { StatusIcon } from 'ui/StatusIcon/StatusIcon';
+
+import './StatementExecutionPicker.scss';
+
+interface IProps {
+    statementExecutionId?: number;
+    onSelection: (id: number) => any;
+    statementExecutions?: IStatementExecution[];
+    autoSelect?: boolean;
+    total?: number;
+}
+export const StatementExecutionPicker: React.FunctionComponent<IProps> = ({
+    statementExecutionId,
+    onSelection,
+    statementExecutions,
+    autoSelect,
+    total,
+}) => {
+    total = total ?? (statementExecutions || []).length;
+    const [hasSelected, setHasSelected] = React.useState(false);
+    React.useEffect(() => {
+        if (
+            autoSelect &&
+            !hasSelected &&
+            statementExecutions &&
+            statementExecutions.length > 0
+        ) {
+            onSelection(statementExecutions[statementExecutions.length - 1].id);
+        }
+    }, [autoSelect, hasSelected, statementExecutions, onSelection]);
+
+    const executionSelectorButton = () => {
+        const selectedIndex = statementExecutions.findIndex(
+            ({ id }) => id === statementExecutionId
+        );
+        const current = selectedIndex >= 0 ? selectedIndex + 1 : 'n/a';
+        return (
+            <div className="custom-statement-picker-button">
+                Statement {current} out of {total}{' '}
+                <i className="fa fa-caret-down dropdown-icon" />
+            </div>
+        );
+    };
+
+    const statementItems = [];
+    for (let i = 0; i < total; i++) {
+        const statementExecution = statementExecutions[i];
+        const statusIcon = (
+            <StatusIcon
+                tooltip={
+                    statementExecution
+                        ? STATUS_TO_TEXT_MAPPING[statementExecution.status]
+                        : 'Statement not started'
+                }
+                status={
+                    statementExecution
+                        ? queryStatusToStatusIcon[statementExecution.status]
+                        : Status.none
+                }
+            />
+        );
+
+        statementItems.push({
+            name: (
+                <span className="statement-execution-tab-name">
+                    {statusIcon} Statement {i + 1}
+                    &nbsp;
+                </span>
+            ),
+            onClick: statementExecution
+                ? () => {
+                      setHasSelected(true);
+                      onSelection(statementExecution.id);
+                  }
+                : null,
+            checked: statementExecution
+                ? statementExecution.id === statementExecutionId
+                : false,
+        });
+    }
+    return (
+        <div className="StatementExecutionPicker">
+            <DropdownMenu
+                customButtonRenderer={executionSelectorButton}
+                items={statementItems}
+                type="select"
+                menuHeight={300}
+            />
+        </div>
+    );
+};

@@ -1,0 +1,41 @@
+.Landing {
+    padding: 48px;
+    height: 100%;
+
+    justify-content: space-between;
+    align-items: flex-start;
+
+    .Landing-top {
+        .Landing-greeting {
+            margin-left: 12px;
+            font-weight: bold;
+            font-size: var(--xxlarge-text-size);
+        }
+
+        .Landing-desc {
+            margin-left: 12px;
+
+            font-weight: bold;
+            font-size: var(--xlarge-text-size);
+            color: var(--light-text-color);
+        }
+    }
+
+    .Landing-bottom {
+        align-items: flex-start;
+
+        width: 100%;
+        max-width: 960px;
+        padding: 0px 12px;
+
+        .Tour-button {
+            margin: 0px;
+        }
+
+        .Landing-list {
+            .Landing-data-doc {
+                cursor: pointer;
+            }
+        }
+    }
+}

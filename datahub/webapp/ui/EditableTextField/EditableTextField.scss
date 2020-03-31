@@ -1,0 +1,36 @@
+.EditableTextField {
+    .edit-mode-button {
+        cursor: pointer;
+        opacity: 0;
+
+        display: flex;
+        align-items: center;
+    }
+
+    &:hover {
+        .edit-mode-button {
+            opacity: 1;
+        }
+    }
+
+    &.edit-mode .editor-wrapper {
+        border: 1px dashed #ddd;
+    }
+
+    .editor-wrapper {
+        display: flex;
+        padding: 5px;
+        word-break: break-all;
+
+        .RichTextEditor {
+            flex: 1;
+        }
+
+        border: 1px solid transparent;
+    }
+
+    .edit-mode-footer {
+        text-align: right;
+        margin-top: 10px;
+    }
+}

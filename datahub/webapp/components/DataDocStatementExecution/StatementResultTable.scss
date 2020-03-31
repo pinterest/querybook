@@ -1,0 +1,23 @@
+@import './../../scss_variables.scss';
+
+.StatementResultTable {
+    &.Table {
+        font-family: var(--family-monospace);
+        margin: 8px 0px;
+        text-transform: none;
+
+        .statement-result-table-title {
+            @include one-line-ellipsis();
+        }
+
+        .rt-resizer {
+            width: 16px;
+            right: -8px;
+        }
+    }
+
+    .expand-column-button {
+        transform: rotate(45deg);
+        padding: 0px 1px;
+    }
+}

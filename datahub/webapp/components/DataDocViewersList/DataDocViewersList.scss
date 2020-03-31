@@ -1,0 +1,63 @@
+.DataDocViewersList {
+    width: 400px;
+    padding: 0.5rem;
+
+    > div {
+        padding: 0.5rem;
+    }
+
+    .public-row-switch {
+        padding-bottom: 1rem;
+    }
+
+    .public-row-description {
+        border-top: 1px solid var(--inner-border-color);
+        padding-top: 1rem;
+        text-align: center;
+    }
+
+    .datadoc-add-user-row {
+        display: flex;
+        flex-direction: row;
+        justify-content: space-between;
+        align-items: center;
+        border-bottom: 1px solid var(--inner-border-color);
+        padding-bottom: 1rem;
+        margin-bottom: 0.5rem;
+
+        .add-user-icon {
+            margin-top: 6px;
+            margin-right: 6px;
+        }
+
+        .user-select-wrapper {
+            flex: 1;
+            margin-right: 0.5rem;
+            color: var(--invert-text-color);
+        }
+    }
+
+    .viewers-list-wrapper {
+        // Each row is 65px, show at most 5
+        max-height: 320px;
+        overflow-y: scroll;
+        padding-bottom: 0rem;
+        padding-top: 0rem;
+
+        > div:not(:last-child) {
+            border-bottom: 1px solid var(--inner-border-color);
+        }
+    }
+
+    .viewers-user-row {
+        display: flex;
+        justify-content: space-between;
+        padding: 8px 0px;
+
+        .access-info {
+            display: flex;
+            align-items: center;
+            text-align: right;
+        }
+    }
+}

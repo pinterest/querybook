@@ -1,0 +1,58 @@
+$borderColor: var(--inner-border-color);
+$backgroundColor: var(--bg-color);
+
+.Popover {
+    &.hidden {
+        visibility: hidden;
+    }
+
+    .popover-wrapper {
+        position: fixed;
+        z-index: 10001;
+
+        .arrow {
+            top: 0px;
+            left: 0px;
+            margin-left: 5px;
+            z-index: 1;
+
+            &::before,
+            & {
+                position: absolute;
+                display: block;
+
+                width: 0;
+                height: 0;
+                border-style: solid;
+                border-color: transparent;
+
+                border-top-width: 0;
+                border-bottom-color: $borderColor;
+                border-width: 10px;
+            }
+
+            &::before {
+                content: '';
+
+                border-color: transparent;
+                border-bottom-color: $backgroundColor;
+                border-width: 10px;
+
+                bottom: -12px;
+                margin-left: -10px;
+            }
+        }
+
+        animation: slide 0.5s forwards;
+        animation-delay: 2s;
+    }
+
+    .popover-content {
+        background: $backgroundColor;
+        border: 1px solid $borderColor;
+        border-radius: 5px;
+        position: relative;
+        min-width: 20px;
+        min-height: 20px;
+    }
+}

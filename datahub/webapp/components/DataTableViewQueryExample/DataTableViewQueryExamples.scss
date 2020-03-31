@@ -1,0 +1,24 @@
+.DataTableViewQueryExamples {
+    .DataTableViewQueryExamples-item {
+        position: relative;
+        margin-bottom: 16px;
+
+        .DataTableViewQueryExamples-text {
+            height: auto;
+            max-height: 360px;
+            overflow-y: scroll;
+            margin: 8px;
+        }
+
+        .DataTableViewQueryExamples-info {
+            text-align: right;
+            margin-right: 12px;
+        }
+
+        .IconButton {
+            position: absolute;
+            top: 0px;
+            right: 20px;
+        }
+    }
+}

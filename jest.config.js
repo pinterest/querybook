@@ -1,0 +1,21 @@
+const config = {
+    moduleFileExtensions: ['js', 'jsx', 'ts', 'tsx'],
+    moduleNameMapper: {
+        '\\.(jpg|jpeg|png|gif|eot|otf|webp|svg|ttf|woff|woff2|mp4|webm|wav|mp3|m4a|aac|oga)$':
+            '<rootDir>/__mocks__/fileMock.js',
+        '.*\\.(css|less|scss)$': '<rootDir>/__mocks__/styleMock.js',
+    },
+    moduleDirectories: [
+        'node_modules', // This is required
+    ],
+    transform: {
+        '^.+\\.(jsx|js|ts|tsx)$': 'babel-jest',
+    },
+    setupFiles: ['<rootDir>/__tests__/setup/setup.js'],
+    testPathIgnorePatterns: ['<rootDir>/__tests__/setup/'],
+    rootDir: './datahub/webapp/',
+    modulePaths: ['<rootDir>'],
+    globalSetup: '<rootDir>/__tests__/setup/jest-global-setup.js',
+};
+
+module.exports = config;

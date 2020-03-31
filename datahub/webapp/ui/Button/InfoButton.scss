@@ -1,0 +1,12 @@
+.InfoButton {
+    cursor: pointer;
+    margin: 4px;
+    display: flex;
+    &:hover {
+        color: var(--icon-hover-color);
+    }
+}
+.info-button-popover {
+    padding: 12px 8px 12px 12px;
+    max-width: 320px;
+}

@@ -1,0 +1,8 @@
+# ignore .git change history.
+.git
+
+# We shouldn't have a top-level node_modules, so we really need to ignore it
+node_modules
+
+# ignore our build file
+build

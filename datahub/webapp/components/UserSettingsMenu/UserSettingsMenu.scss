@@ -1,0 +1,15 @@
+.UserSettingsMenu {
+    > div {
+        margin-bottom: 10px;
+    }
+    .UserSettingsMenu-setting {
+        white-space: nowrap;
+        width: 175px;
+    }
+    .control {
+        width: 175px;
+    }
+    .UserSettingsMenu-desc {
+        color: var(--light-text-color);
+    }
+}

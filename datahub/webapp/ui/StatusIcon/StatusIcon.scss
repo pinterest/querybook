@@ -1,0 +1,17 @@
+.StatusIcon {
+    color: var(--color-null);
+    margin: 1.5px 5px 1.5px 0px;
+
+    &.success {
+        color: var(--color-true);
+    }
+    &.warning {
+        color: var(--color-yellow);
+    }
+    &.error {
+        color: var(--color-false);
+    }
+    &.running {
+        color: var(--color-blue);
+    }
+}

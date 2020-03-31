@@ -1,0 +1,73 @@
+cell_types:
+    text:
+        key: 'text'
+        icon: 'font'
+        meta:
+            collapsed: false
+        meta_default:
+            collapsed: false
+    query:
+        key: 'query'
+        icon: 'code'
+        meta:
+            title: '' # can be any string
+            engine: 0 # Engine Id
+            collapsed: false
+        meta_default:
+            title: ''
+            engine: null
+            collapsed: false
+    chart:
+        key: 'chart'
+        icon: 'chart-line'
+        meta:
+            title: ''
+            data:
+                source_type: ''
+                source_ids: [0]
+                transformations:
+                    format:
+                        agg_col: 0
+                        series_col: 1
+                        value_cols: [2]
+                    aggregate: false
+                    switch: false
+            chart:
+                type: ''
+                x_axis:
+                    col_idx: 0
+                    label: ''
+                    scale: ''
+                    min: 0
+                    max: 0
+                y_axis:
+                    label: ''
+                    scale: ''
+                    min: 0
+                    max: 0
+                    stack: false
+                    series:
+                        0:
+                            source: 0
+                            hidden: false
+                            color: 0
+                            agg_type: 'sum'
+            visual:
+                legend_position: ''
+            collapsed: false
+        meta_default:
+            title: ''
+            data:
+                source_type: 'cell_above'
+                transformations:
+                    format: {}
+            chart:
+                type: 'line'
+                x_axis:
+                    col_idx: 0
+                    label: ''
+                y_axis:
+                    label: ''
+                    series: {}
+            visual: {}
+            collapsed: false

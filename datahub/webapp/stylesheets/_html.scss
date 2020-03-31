@@ -1,0 +1,155 @@
+.transparent {
+    background-color: transparent;
+}
+
+code {
+    background-color: var(--light-bg-color);
+    color: var(--color-false-dark);
+    font-weight: 500;
+}
+
+strong {
+    color: var(--dark-text-color);
+}
+
+a {
+    color: inherit;
+    &:hover {
+        color: var(--color-accent);
+    }
+    &:active,
+    &:focus {
+        outline: none;
+    }
+}
+
+.content {
+    a {
+        color: var(--color-accent-text);
+        &:hover {
+            color: var(--color-accent);
+        }
+    }
+}
+
+textarea,
+input,
+select,
+button {
+    &:active,
+    &:focus,
+    &:focus-within {
+        outline: none;
+    }
+}
+
+input:-webkit-autofill,
+input:-internal-autofill-selected {
+    -webkit-text-fill-color: var(--text-color) !important;
+}
+
+@keyframes autofill {
+    to {
+        color: var(--text-color);
+        background: transparent;
+    }
+}
+
+input:-webkit-autofill {
+    animation-name: autofill;
+    animation-fill-mode: both;
+}
+
+#___reactour {
+    .reactour__helper {
+        background-color: var(--bg-color);
+        color: var(--text-color);
+        > span {
+            color: var(--bg-color);
+            font-weight: var(--bold-font);
+        }
+        .reactour__dot {
+            color: var(--color-accent);
+        }
+        button {
+            &:disabled {
+                svg {
+                    color: var(--color-null);
+                }
+            }
+            svg {
+                color: var(--color-primary-5);
+            }
+        }
+    }
+}
+
+hr {
+    background-color: var(--color-accent-bg);
+    border: none;
+    display: block;
+    height: 2px;
+    margin: 16px 0px;
+}
+
+pre {
+    background-color: var(--light-bg-color);
+    border-radius: var(--border-radius);
+    margin: 4px;
+    color: var(--text-color);
+    font-size: var(--small-text-size);
+    padding: 12px;
+    white-space: pre-wrap;
+}
+
+blockquote {
+    background-color: var(--light-bg-color);
+    border-left: 4px solid var(--inner-border-color);
+    color: var(--light-text-color);
+    border-radius: 0px;
+    border-bottom-right-radius: var(--border-radius);
+    border-top-right-radius: var(--border-radius);
+    padding: 12px;
+    margin: 12px 0px;
+}
+
+::-webkit-scrollbar {
+    -webkit-appearance: none; /* prevent default Mac-OS behavior */
+}
+::-webkit-scrollbar:vertical {
+    width: var(--scroll-bar-size);
+}
+
+::-webkit-scrollbar:horizontal {
+    height: var(--scroll-bar-size);
+}
+::-webkit-scrollbar-thumb {
+    background-color: var(--scroll-bar-color);
+    border-radius: 10px;
+    border: 3px solid transparent;
+    background-clip: content-box;
+}
+::-webkit-scrollbar-thumb:active,
+::-webkit-scrollbar-thumb:hover {
+    background-color: var(--scroll-bar-active-color);
+}
+::-webkit-scrollbar-corner {
+    background: rgba(0, 0, 0, 0);
+}
+
+.CodeMirror {
+    font-family: var(--family-monospace);
+    font-size: var(--small-text-size);
+    line-height: 17px;
+
+    &.cm-s-default {
+        &.CodeHighlight,
+        .CodeMirror-scroll {
+            background-color: var(--query-editor-default-bg-color);
+        }
+        .CodeMirror-gutters {
+            background-color: var(--query-editor-default-gutter-color);
+            border-right: 1px transparent;
+        }
+    }
+}

@@ -1,0 +1,88 @@
+datadocs:
+    index_name: search_datadocs_v1
+    type_name: datadocs
+    mappings: # Keep this same in mappings
+        settings:
+            analysis:
+                analyzer:
+                    user_content_analyzer:
+                        type: custom
+                        tokenizer: standard
+                        char_filter:
+                            - html_strip
+                        filter:
+                            - lowercase
+        mappings:
+            datadocs:
+                properties:
+                    id:
+                        type: long
+                    environment_id:
+                        type: long
+                    owner_uid:
+                        type: long
+                    title:
+                        type: text
+                        analyzer: snowball
+                    cells:
+                        type: text
+                        analyzer: user_content_analyzer
+                    created_at:
+                        type: long
+tables:
+    index_name: search_tables_v1
+    type_name: tables # Keep this same in mappings
+    mappings:
+        settings:
+            analysis:
+                analyzer:
+                    user_content_analyzer:
+                        type: custom
+                        tokenizer: standard
+                        char_filter:
+                            - html_strip
+        mappings:
+            tables:
+                properties:
+                    id:
+                        type: long
+                    metastore_id:
+                        type: long
+                    schema:
+                        type: keyword
+                    name:
+                        type: keyword
+                    full_name:
+                        type: text
+                        analyzer: whitespace
+                    completion_name:
+                        type: completion
+                        analyzer: keyword
+                        contexts:
+                            name: metastore_id
+                            type: category
+                    description:
+                        type: text
+                        analyzer: user_content_analyzer
+                    created_at:
+                        type: long
+                    columns:
+                        type: text
+                    golden:
+                        type: boolean
+users:
+    index_name: search_users_v1
+    type_name: users
+    mappings:
+        mappings:
+            users:
+                properties:
+                    id:
+                        type: long
+                    username:
+                        type: keyword
+                    fullname:
+                        type: text
+                        analyzer: whitespace
+                    suggest:
+                        type: completion

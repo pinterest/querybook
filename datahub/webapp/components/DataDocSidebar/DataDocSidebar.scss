@@ -1,0 +1,35 @@
+.DataDocSidebar {
+    &.DataDocSidebar-collapsed {
+        height: 100vh;
+        position: sticky;
+        top: 0;
+        z-index: 5;
+    }
+
+    &:not(.DataDocSidebar-collapsed) {
+        height: 100%;
+
+        display: flex;
+        flex-direction: column;
+        border-right: 1px solid var(--inner-border-color);
+
+        .DataDocSidebar-datadocs {
+            flex: 1;
+            overflow: hidden;
+            // height: 100%;
+            // display: flex;
+            // flex-direction: column;
+        }
+
+        .DataDocSidebar-footer-lower {
+            border-top: 1px solid var(--inner-border-color);
+
+            .DataDocSidebar-footer-logo {
+                padding: 0px 10px;
+                font-weight: bold;
+                color: lightgray;
+                font-size: 1em;
+            }
+        }
+    }
+}

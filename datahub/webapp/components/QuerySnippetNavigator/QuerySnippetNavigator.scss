@@ -1,0 +1,50 @@
+.QuerySnippetNavigator {
+    display: flex;
+    flex-direction: column;
+
+    .snippets-wrapper {
+        flex: 1;
+        position: relative;
+    }
+
+    .snippet-search {
+        border-bottom: var(--inner-border);
+        .SearchBar {
+            flex-grow: 1;
+            input {
+                width: 100%;
+                padding: 10px;
+            }
+        }
+        .IconButton {
+            padding: 4px;
+            .feather-filter {
+                padding: 1px;
+            }
+        }
+    }
+
+    .query-snippet-row {
+        display: block;
+        overflow: hidden;
+        white-space: nowrap;
+        text-overflow: ellipsis;
+        border-left: solid 6px transparent;
+        padding: 4px;
+        color: var(--dark-text-color);
+        cursor: pointer;
+        user-select: none;
+        &:not(.selected):hover {
+            background-color: var(--color-accent-bg-hover);
+        }
+
+        &.selected {
+            border-color: var(--color-accent);
+            font-weight: var(--bold-font);
+        }
+    }
+}
+
+.QuerySnippetFilterPicker {
+    padding: 10px;
+}

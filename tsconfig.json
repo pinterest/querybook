@@ -1,0 +1,21 @@
+{
+    "compilerOptions": {
+        "outDir": "dist/webapp/",
+        "noImplicitAny": false,
+        "module": "commonjs",
+        "target": "es6",
+        "sourceMap": true,
+        "jsx": "react",
+        "lib": ["dom", "es2017", "esnext.asynciterable", "es2018.promise"],
+        "suppressImplicitAnyIndexErrors": true,
+        "baseUrl": "./datahub/webapp/",
+        "paths": {
+            "config/*": ["../config/*"]
+        },
+        "skipLibCheck": true,
+        "allowSyntheticDefaultImports": true,
+        "experimentalDecorators": true
+    },
+    "include": ["datahub/webapp/**/*"],
+    "exclude": ["node_modules"]
+}

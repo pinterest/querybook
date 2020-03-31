@@ -1,0 +1,19 @@
+.Icon {
+    display: inline-flex;
+
+    &.fill {
+        svg {
+            fill: currentColor;
+        }
+    }
+
+    svg.feather-loader {
+        animation: loading 3s linear forwards infinite;
+    }
+}
+
+@keyframes loading {
+    100% {
+        transform: rotate(360deg);
+    }
+}

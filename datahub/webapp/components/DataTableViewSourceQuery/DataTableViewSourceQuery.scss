@@ -1,0 +1,25 @@
+.DataTableViewSourceQuery {
+    .DataTableViewSourceQuery-table {
+        margin-bottom: 12px;
+        .Table {
+            .rt-tr {
+                > div:last-child {
+                    flex-grow: 500 !important;
+                }
+            }
+            .rt-tbody {
+                .rt-tr {
+                    > div {
+                        padding-left: 12px;
+                    }
+                }
+            }
+        }
+    }
+    .DataTableViewSourceQuery-source-query {
+        .CodeHighlight {
+            margin-top: 12px;
+            border-radius: var(--border-radius);
+        }
+    }
+}

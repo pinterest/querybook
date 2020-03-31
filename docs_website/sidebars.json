@@ -1,0 +1,22 @@
+{
+    "docs": {
+        "Admin Guide": [
+            "admin_guide/quick_start",
+            "admin_guide/setup_guide",
+            "admin_guide/general_config",
+            "admin_guide/infra_config",
+            "admin_guide/plugins",
+            "admin_guide/add_custom_jobs",
+            "admin_guide/troubleshoot"
+        ],
+        "Developer Guide": [
+            "developer_guide/developer_setup",
+            "developer_guide/add_query_engine",
+            "developer_guide/add_metastore",
+            "developer_guide/add_auth",
+            "developer_guide/add_exporter",
+            "developer_guide/run_db_migration"
+        ],
+        "User Guide": ["user_guide/api_token"]
+    }
+}

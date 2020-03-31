@@ -1,0 +1,51 @@
+.QueryComposer {
+    width: 100%;
+    overflow: hidden;
+
+    .QueryComposer-header {
+        border-bottom: 1px solid var(--inner-border-color);
+        padding: 0px 20px;
+        height: 45px;
+        display: table;
+
+        // for safari
+        width: 100%;
+
+        .QueryComposer-header-vertical {
+            display: table-cell;
+            vertical-align: middle;
+        }
+    }
+
+    .QueryComposer-content {
+        flex: 1;
+        overflow: scroll;
+
+        .QueryExecution {
+            padding: 20px;
+        }
+    }
+
+    .QueryComposer-content-editor {
+        display: flex;
+        flex-direction: column;
+        flex: 1;
+        overflow: auto;
+
+        .query-editor-wrapper {
+            flex: 2;
+            overflow: auto;
+        }
+
+        .query-execution-wrapper {
+            height: 100%;
+            flex: 1;
+            overflow: scroll;
+            border-top: var(--inner-border);
+
+            .QueryComposerExecution {
+                padding: 0px 20px;
+            }
+        }
+    }
+}

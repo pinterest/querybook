@@ -1,0 +1,89 @@
+@import './../../scss_variables.scss';
+
+.GenericGridItem {
+    width: 100%;
+    position: relative;
+    background: var(--bg-color);
+    border: 1px solid var(--inner-border-color);
+    border-radius: 10px;
+    padding-top: 100%;
+
+    .grid-item-content {
+        position: absolute;
+        top: 0;
+        left: 0;
+        bottom: 0;
+        right: 0;
+        display: flex;
+        flex-direction: column;
+        // padding: 30px;
+        // padding: 20px;
+
+        .grid-item-top {
+            flex: 1;
+            overflow: hidden;
+            position: relative;
+
+            .grid-item-top-inner {
+                position: absolute;
+                top: 0px;
+                left: 0px;
+                right: 0px;
+                bottom: 0px;
+
+                overflow-y: hidden;
+                display: flex;
+                flex-direction: column;
+
+                .grid-item-title {
+                    @include ellipsis(3);
+
+                    &:not(:empty) {
+                        margin: 20px 20px 15px 20px;
+                    }
+
+                    &:empty {
+                        margin-bottom: 20px;
+                    }
+                }
+            }
+        }
+
+        .grid-item-bottom {
+            padding: 15px 20px 20px 20px;
+        }
+
+        .user-name {
+            @include one-line-ellipsis();
+        }
+
+        .grid-item-date {
+            margin-bottom: 1rem;
+            // text-transform: uppercase;
+            font-size: var(--text-size);
+            // font-weight: bold;
+            color: var(--dark-text-color);
+            // text-transform: uppercase;
+            // font-size: 0.8rem;
+        }
+
+        .media-content {
+            overflow: visible;
+        }
+
+        .media-left {
+            margin-right: 0.6rem;
+        }
+
+        .snippet {
+            // @include ellipsis(6);
+            font-size: var(--text-size);
+
+            // New style //TODO(datahub): Check if only for datahub
+            white-space: pre-wrap;
+            flex: 1;
+            margin: 0px 20px;
+            overflow: hidden;
+        }
+    }
+}

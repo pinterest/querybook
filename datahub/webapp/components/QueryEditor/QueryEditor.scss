@@ -1,0 +1,181 @@
+@import './../../scss_variables.scss';
+
+.QueryEditor {
+    position: relative;
+
+    &.auto-height {
+        .CodeMirror {
+            height: auto;
+        }
+    }
+
+    &.full-height {
+        &,
+        .react-codemirror2,
+        .CodeMirror,
+        .CodeMirror-scroll,
+        .CodeMirror-sizer,
+        .CodeMirror-gutter,
+        .CodeMirror-gutters,
+        .CodeMirror-linenumber {
+            height: 100%;
+        }
+    }
+
+    &.fullScreen {
+        @include full-screen(39);
+        .CodeMirror {
+            .CodeMirror-scroll,
+            .CodeMirror-sizer {
+                min-height: 100vh !important;
+            }
+        }
+    }
+
+    .CodeMirror {
+        // New style
+        line-height: 17px;
+
+        .CodeMirror-cursor {
+            // HACK: chrome bug where border width < 1px will not get drawn
+            border-left-width: 1.4px;
+        }
+    }
+
+    .CodeMirror-hover {
+        background-color: var(--text-select-bg-color);
+    }
+
+    .fullscreen-button-wrapper {
+        position: absolute;
+        top: 0;
+        z-index: 9;
+        right: 0;
+
+        a.button {
+            color: var(--dark-text-color);
+            &:hover {
+                color: var(--text-color);
+            }
+        }
+    }
+
+    &.with-fullscreen-button {
+        .CodeMirror {
+            .CodeMirror-scroll,
+            .CodeMirror-sizer {
+                min-height: 50px;
+            }
+        }
+    }
+}
+
+.CodeMirror-hints {
+    padding: 5px;
+
+    margin-left: -8px;
+    border: none;
+    margin-left: -94px;
+    overflow: auto;
+    z-index: 30;
+
+    // New style
+    background: var(--bg-color);
+    box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.2);
+    border-radius: 8px;
+
+    .CodeMirror-hint {
+        font-size: var(--small-text-size);
+        line-height: 1.5;
+        color: var(--dark-text-color);
+        white-space: nowrap;
+
+        b {
+            color: var(--text-color);
+        }
+
+        &.CodeMirror-hint-active {
+            color: var(--color-accent-text);
+            background: none;
+
+            b {
+                color: var(--color-accent-text);
+            }
+        }
+
+        .code-editor-autocomplete-wrapper {
+            display: flex;
+            align-items: center;
+
+            .code-editor-autocomplete-span {
+                flex: 1;
+                text-align: left;
+                margin-right: 15px;
+
+                &:last-of-type {
+                    margin-right: 0px;
+                }
+            }
+
+            .code-editor-golden-span {
+                width: 13px;
+                flex: 0 0 13px;
+
+                .golden-item-icon {
+                    vertical-align: baseline;
+
+                    &.golden {
+                        color: var(--color-true);
+                    }
+
+                    &.not-golden {
+                        color: var(--dark-text-color);
+                    }
+                }
+            }
+
+            .code-editor-warning-span {
+                width: 13px;
+                flex: 0 0 13px;
+
+                .warning-item-icon {
+                    vertical-align: baseline;
+
+                    &.warning {
+                        color: var(--color-yellow);
+                    }
+
+                    &.not-warning {
+                        color: var(--dark-text-color);
+                    }
+                }
+            }
+
+            .code-editor-trustworthiness-span {
+                // width: 28px; // If supporting 100
+                // flex: 0 0 28px;
+                width: 15px;
+                flex: 0 0 15px;
+                font-weight: bold;
+                display: flex;
+                align-items: center;
+
+                .trustworthiness-icon {
+                    flex: 0 1;
+                    display: none;
+                }
+
+                .trustworthiness-value {
+                    text-align: right;
+                    // width: 14px;
+                    display: inline-block;
+                    flex: 1;
+                }
+            }
+
+            .code-editor-tooltip-span {
+                text-align: right;
+            }
+        }
+    }
+}

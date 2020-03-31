@@ -1,0 +1,13 @@
+.BoardItemAddButton-popover {
+    min-height: 450px;
+    min-width: 280px;
+
+    display: flex;
+    .BoardList {
+        flex: 1;
+
+        .board-navigator-row.selected::before {
+            content: '(Added) ';
+        }
+    }
+}

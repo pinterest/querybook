@@ -1,0 +1,35 @@
+@import './../../scss_variables.scss';
+
+.BoardList {
+    display: flex;
+    flex-direction: column;
+    .list-header {
+        .SearchBar {
+            flex: 1;
+        }
+        border-bottom: var(--inner-border);
+        padding-right: 4px;
+    }
+
+    .board-scroll-wrapper {
+        flex: 1;
+
+        .board-navigator-row {
+            @include one-line-ellipsis();
+
+            border-left: solid 6px transparent;
+            padding: 4px;
+            color: var(--dark-text-color);
+            cursor: pointer;
+
+            &:not(.selected):hover {
+                background-color: var(--color-accent-bg-hover);
+            }
+
+            &.selected {
+                border-color: var(--color-accent);
+                font-weight: var(--bold-font);
+            }
+        }
+    }
+}

@@ -1,0 +1,13 @@
+.SearchBar {
+    display: flex;
+    align-items: center;
+
+    .DebouncedInput {
+        flex: 1;
+    }
+
+    .search-bar-clear-sep {
+        border-left: var(--inner-border);
+        height: 20px;
+    }
+}

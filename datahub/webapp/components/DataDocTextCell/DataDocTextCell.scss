@@ -1,0 +1,62 @@
+.DataDocTextCell {
+    padding: 15px;
+    cursor: text;
+    border-radius: var(--border-radius);
+    font-size: var(--text-size);
+
+    &:focus-within {
+        background-color: var(--light-bg-color);
+    }
+
+    &:hover {
+        background-color: var(--hover-bg-color);
+    }
+
+    h1 {
+        font-size: var(--xlarge-text-size);
+        // So it visually aligns
+        margin-left: -3px;
+        font-weight: bold;
+    }
+
+    h2 {
+        font-size: var(--large-text-size);
+        // So it visually aligns
+        margin-left: -2px;
+        font-weight: bold;
+    }
+
+    blockquote {
+        font-weight: bold;
+        padding-left: 20px;
+    }
+
+    textarea {
+        background: transparent;
+        border: none;
+        font-weight: 400;
+        outline: none;
+        resize: none;
+        overflow: hidden;
+    }
+
+    textarea.h3 {
+        font-size: var(--med-text-size);
+    }
+
+    textarea.text {
+        font-size: var(--text-size);
+    }
+
+    textarea.bold {
+        font-weight: bold;
+    }
+
+    textarea.italic {
+        font-style: italic;
+    }
+
+    a {
+        color: var(--color-accent-text);
+    }
+}

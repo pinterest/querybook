@@ -1,0 +1,151 @@
+from celery import schedules
+import sqlalchemy as sql
+from sqlalchemy.event import listen
+from sqlalchemy.orm import sessionmaker, backref, relationship
+
+from app import db
+
+from lib.utils.serialize import with_formatted_date
+from const.db import (
+    name_length,
+    now,
+)
+from const.schedule import TaskRunStatus
+
+Base = db.Base
+
+
+class TaskSchedules(Base):
+    __tablename__ = "task_schedules"
+
+    id = sql.Column(sql.SmallInteger, primary_key=True, default=1, unique=True)
+    last_update = sql.Column(sql.DateTime, default=now)
+
+    @classmethod
+    @db.with_session
+    def update_changed(cls, session=None, **kwargs):
+        # this is only called by event listener after sql updates. So always open new session and commit
+        obj = session.query(cls).filter_by(id=1).first()
+        if not obj:
+            obj = TaskSchedules(id=1)
+        obj.last_update = now()
+        session.add(obj)
+        session.commit()
+
+    @classmethod
+    @db.with_session
+    def last_change(cls, session=None):
+        # always fetch using new session as the schedules can be updated by a different user
+        obj = session.query(cls).filter_by(id=1).first()
+        if obj:
+            return obj.last_update
+
+
+class TaskSchedule(Base):
+    __tablename__ = "task_schedule"
+
+    id = sql.Column(sql.Integer, primary_key=True, autoincrement=True)
+
+    name = sql.Column(sql.String(length=name_length), unique=True, nullable=False)
+    # for the name of the task, ex: celery.backend_cleanup
+    task = sql.Column(sql.String(length=name_length), nullable=False)
+
+    # schedule time setting
+    cron = sql.Column(sql.String(length=name_length), default="* * * * *")
+    start_time = sql.Column(sql.DateTime, nullable=True)
+
+    args = sql.Column(sql.JSON, default=[])
+    kwargs = sql.Column(sql.JSON, default={})
+    options = sql.Column(sql.JSON, default={})
+
+    # Run records
+    last_run_at = sql.Column(sql.DateTime, default=now)
+    total_run_count = sql.Column(sql.Integer, default=0)
+
+    enabled = sql.Column(sql.Boolean, default=True)
+    no_changes = sql.Column(sql.Boolean, default=False)
+
+    task_type = sql.Column(
+        sql.String(length=name_length), nullable=False, default="prod"
+    )
+
+    def get_cron(self):
+        return self.cron.split(" ")
+
+    @property
+    def schedule(self):
+        minute, hour, day_of_week, day_of_month, month_of_year = self.get_cron()
+
+        return schedules.crontab(
+            minute=minute,
+            hour=hour,
+            day_of_week=day_of_week,
+            day_of_month=day_of_month,
+            month_of_year=month_of_year,
+        )
+
+    @with_formatted_date
+    def to_dict(self):
+        return {
+            "id": self.id,
+            "name": self.name,
+            "task": self.task,
+            "task_type": self.task_type,
+            "cron": self.cron,
+            "start_time": self.start_time,
+            "args": self.args,
+            "kwargs": self.kwargs,
+            "options": self.options,
+            "last_run_at": self.last_run_at,
+            "total_run_count": self.total_run_count,
+            "enabled": self.enabled,
+        }
+
+
+def task_schedules_updated(mapper, connection, target):
+    if not hasattr(target, "no_changes") or not target.no_changes:
+        Session = sessionmaker(bind=connection)
+        TaskSchedules.update_changed(session=Session())
+
+
+listen(TaskSchedule, "after_insert", task_schedules_updated)
+listen(TaskSchedule, "after_update", task_schedules_updated)
+listen(TaskSchedule, "after_delete", task_schedules_updated)
+
+
+class TaskRunRecord(db.Base):
+    __tablename__ = "task_run_record"
+
+    id = sql.Column(sql.Integer, primary_key=True)
+    name = sql.Column(
+        sql.String(length=name_length),
+        sql.ForeignKey(
+            "task_schedule.name",
+            ondelete="CASCADE",
+            name="task_run_record_task_schedule_fk",
+        ),
+    )
+    status = sql.Column(
+        sql.Enum(TaskRunStatus), default=TaskRunStatus.RUNNING, nullable=False
+    )
+    alerted = sql.Column(sql.Boolean, default=False)
+    created_at = sql.Column(sql.DateTime, default=now)
+    updated_at = sql.Column(sql.DateTime, default=now)
+
+    task = relationship(
+        "TaskSchedule",
+        backref=backref("task_run_record", cascade="all, delete"),
+        foreign_keys=[name],
+    )
+
+    def to_dict(self):
+        record = {
+            "id": self.id,
+            "name": self.name,
+            "status": self.status.value,
+            "alerted": self.alerted,
+            "created_at": self.created_at,
+            "updated_at": self.updated_at,
+        }
+
+        return record

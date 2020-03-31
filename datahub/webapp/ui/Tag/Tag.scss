@@ -1,0 +1,27 @@
+.Tag,
+.TagGroup {
+    display: inline-block;
+    margin: 2px;
+    border-radius: var(--border-radius);
+}
+
+.Tag {
+    background-color: var(--dark-bg-color);
+    padding: 0px 4px;
+    color: var(--tag-text-color);
+    font-weight: var(--bold-font);
+    font-size: var(--small-text-size);
+
+    &.highlighted {
+        background-color: var(--color-accent);
+    }
+}
+
+.TagGroup {
+    overflow: hidden;
+
+    .Tag {
+        margin: 0;
+        border-radius: 0;
+    }
+}

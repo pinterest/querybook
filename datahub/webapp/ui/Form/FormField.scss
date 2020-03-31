@@ -1,0 +1,108 @@
+.FormField {
+    position: relative;
+    display: flex;
+    align-items: center;
+    margin: 4px;
+    padding: 4px;
+
+    &.FormField-stacked {
+        flex-wrap: wrap;
+
+        .FormFieldLabelSection {
+            margin-bottom: 4px;
+            padding-left: 2px;
+        }
+        .FormFieldInputSectionRow {
+            flex: 1;
+            display: flex;
+            flex-direction: row;
+            .FormFieldInputSection {
+                margin-right: 4px;
+            }
+        }
+    }
+
+    .FormFieldLabelSection {
+        box-sizing: border-box;
+        padding-right: 12px;
+        // min-width: 120px;
+        cursor: default;
+        white-space: nowrap;
+    }
+
+    .FormFieldInputSectionRow,
+    .FormFieldInputSection {
+        > input,
+        input[type='text'],
+        input[type='number'] {
+            border-radius: var(--border-radius);
+            border: var(--inner-border);
+            padding: 8px;
+            background-color: inherit;
+            font-size: inherit;
+            color: inherit;
+            width: 100%;
+
+            &::placeholder {
+                color: var(--light-text-color);
+            }
+            &:hover {
+                border-color: var(--border-color);
+            }
+        }
+    }
+
+    .FormFieldInputSectionRowGroup {
+        margin-top: 30px;
+    }
+
+    .FormFieldInputSectionRow {
+        &:first-of-type {
+            margin-top: 0px;
+        }
+    }
+
+    .FormFieldInputSection {
+        flex-grow: 1;
+    }
+
+    .FormFieldHelpSection {
+        margin-left: 8px;
+    }
+
+    .FormFieldErrorSection {
+        flex: 1 1 16%;
+        padding: 0px 0px 0px 8px;
+        box-sizing: border-box;
+        color: var(--color-false);
+    }
+
+    .FormFieldRequired {
+        margin-left: 8px;
+    }
+}
+
+.FormSectionHeader {
+    cursor: default;
+    padding-top: 8px;
+    span {
+        font-size: var(--text-size);
+        white-space: nowrap;
+        margin-right: 12px;
+    }
+    hr {
+        width: 100%;
+        margin: 12px 0px;
+    }
+}
+.popover-content {
+    .FormFieldHelpSection {
+        p:not(:last-child) {
+            margin-bottom: 8px;
+        }
+        a {
+            color: var(--color-accent-text);
+            font-weight: var(--bold-font);
+        }
+    }
+}

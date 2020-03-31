@@ -1,0 +1,28 @@
+.QueryRunButton {
+    .engine-selector {
+        display: inline-block;
+
+        .engine-selector-button {
+            padding: 4px 8px;
+            border: var(--outer-border);
+            border-left: none;
+            user-select: none;
+            border-bottom-right-radius: var(--border-radius);
+            border-top-right-radius: var(--border-radius);
+            font-weight: bold;
+            color: var(--dark-text-color);
+            font-size: var(--small-text-size);
+            .fa {
+                margin-left: 5px;
+            }
+        }
+
+        &.readonly {
+            line-height: 36px;
+        }
+    }
+
+    .run-selection {
+        line-height: 24px;
+    }
+}

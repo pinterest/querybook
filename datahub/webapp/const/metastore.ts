@@ -1,0 +1,104 @@
+import { ContentState } from 'draft-js';
+
+export interface IQueryMetastore {
+    id: number;
+    name: string;
+}
+
+export interface IDataSchema {
+    id: number;
+    datasource_id: number;
+    db_comment?: string;
+    description?: string;
+    name: string;
+    table_count: number;
+    title?: string;
+    metastore_id: number;
+}
+
+export interface IDataTable {
+    id: number;
+    created_at: number;
+    updated_at: number;
+
+    name: string;
+    type: string;
+
+    owner: string;
+
+    table_created_at: number;
+    table_updated_by: string;
+    table_updated_at: number;
+
+    data_size_bytes?: number;
+    location: string;
+    column_count: number;
+    column: number[];
+
+    latest_partitions: string;
+    earliest_partitions: string;
+    description: string | ContentState;
+    hive_metastore_description: string;
+
+    schema: number;
+    schema_id: number;
+    golden: boolean;
+}
+
+export interface IDataTableSamples {
+    id: number;
+    created_at: number;
+    created_by: number;
+    value: any[][];
+}
+
+export interface IDataColumn {
+    id: number;
+    comment?: string;
+    description: string | ContentState;
+    name: string;
+    table_id: number;
+    type: string;
+}
+
+export interface ILineage {
+    job_metadata_id: number;
+    parent_table_id: number;
+    parent_name: string;
+    table_id: number;
+    table_name: string;
+}
+
+export interface ILineageCollection {
+    childLineage: Record<number, ILineage[]>;
+    parentLineage: Record<number, ILineage[]>;
+}
+
+export interface IDataJobMetadata {
+    id: number;
+
+    job_name: string;
+    job_info: Record<string, string>;
+    job_owner: string;
+    query_text: string;
+    is_adhoc: boolean;
+}
+
+export interface IFunctionDescription {
+    description: string;
+    id: number;
+    language: string;
+    name: string;
+    params: string;
+    return_type: string;
+}
+
+export type FunctionDocumentationCollection = Record<
+    string,
+    Record<string, IFunctionDescription[]>
+>;
+
+export interface IPaginatedQuerySamples {
+    hasMore: boolean;
+    queryIds: number[];
+}

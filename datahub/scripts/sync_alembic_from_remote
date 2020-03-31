@@ -1,0 +1,20 @@
+#!/usr/bin/env bash
+
+# ONLY USE THIS SCRIPT WHEN
+# you updated alembic from remote server
+# and need to sync it back from devapp to local
+
+USER=$(whoami)
+REMOTE_FOLDER='~/code/datahub/datahub/migrations/'
+LOCAL_FOLDER=datahub/migrations/
+
+if [ $# -eq 2 ]; then
+    USER=$1
+    FOLDER=$2
+elif [ $# -eq 1 ]; then
+    FOLDER=$1
+fi
+
+rsync -rav -e ssh --exclude='*.pyc' --exclude='__pycache__' \
+${USER}@dev-${USER}:${REMOTE_FOLDER} \
+${LOCAL_FOLDER}

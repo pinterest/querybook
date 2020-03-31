@@ -1,0 +1,6 @@
+.EnvironmentDropdownButton {
+    .environment-name.environment-disabled {
+        cursor: not-allowed;
+        color: var(--light-text-color);
+    }
+}

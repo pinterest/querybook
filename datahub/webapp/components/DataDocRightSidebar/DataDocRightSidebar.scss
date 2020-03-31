@@ -1,0 +1,34 @@
+.DataDocRightSidebar {
+    .DataDocRightSidebar-button-section {
+        display: flex;
+        flex-direction: column;
+        justify-content: space-between;
+
+        .DataDocRightSidebar-button-section-top {
+            display: flex;
+            flex-direction: column;
+
+            .connected-button {
+                color: var(--color-false);
+            }
+            .IconButton {
+                transition: opacity 0.2s ease-out;
+                &.hide-button {
+                    opacity: 0;
+                    cursor: unset;
+                }
+            }
+        }
+        .DataDocRightSidebar-button-section-bottom {
+            display: flex;
+            flex-direction: column;
+        }
+    }
+
+    .schema-panel-wrapper {
+        position: fixed;
+        right: 0;
+        height: 100%;
+        display: flex;
+    }
+}

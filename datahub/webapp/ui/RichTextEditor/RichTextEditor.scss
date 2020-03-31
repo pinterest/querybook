@@ -1,0 +1,19 @@
+.RichTextEditor {
+    position: relative;
+
+    .toolbar-wrapper {
+        position: fixed;
+        z-index: 15; // 10 is the + cell icons, and 20 is the sticky header
+    }
+
+    &.content {
+        h1,
+        h2,
+        h3,
+        h4,
+        h5,
+        h6 {
+            color: var(--text-color);
+        }
+    }
+}

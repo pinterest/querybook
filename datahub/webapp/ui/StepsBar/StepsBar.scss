@@ -1,0 +1,59 @@
+.StepsBar {
+    padding: 8px;
+    .steps-ul {
+        counter-reset: step;
+        display: flex;
+        width: 100%;
+
+        > li {
+            list-style-type: none;
+            position: relative;
+            text-align: center;
+            font-size: var(--small-text-size);
+            font-weight: bold;
+
+            &:before {
+                width: 20px;
+                height: 20px;
+                content: counter(step);
+                counter-increment: step;
+                border: 2px solid var(--color-null);
+                display: block;
+                text-align: center;
+                margin: 0 auto 5px auto;
+                border-radius: 50%;
+                line-height: 18px;
+
+                background-color: var(--color-null);
+                color: var(--bg-color);
+            }
+
+            &:after {
+                height: 2px;
+                content: '';
+                position: absolute;
+                background-color: var(--color-null);
+                top: 10px;
+                left: calc(-50% + 9px);
+                right: calc(50% + 9px);
+            }
+
+            &:first-child:after {
+                content: none;
+            }
+
+            &.is-active {
+                color: var(--color-true);
+
+                &:before {
+                    border-color: var(--color-true);
+                    background-color: var(--color-true);
+                }
+
+                &:after {
+                    background-color: var(--color-true);
+                }
+            }
+        }
+    }
+}

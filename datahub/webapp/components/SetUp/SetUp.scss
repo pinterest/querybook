@@ -1,0 +1,8 @@
+.SetUp {
+    flex-direction: column;
+    height: 100%;
+    .SetUp-message {
+        font-size: var(--xxxlarge-text-size);
+        margin: 24px;
+    }
+}

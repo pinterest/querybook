@@ -1,0 +1,13 @@
+.ImpressionWidget {
+    background-color: var(--icon-color);
+    color: var(--invert-text-color);
+    border-radius: var(--border-radius);
+    display: inline-flex;
+    align-items: center;
+    padding: 0px 4px;
+    font-weight: bold;
+    cursor: pointer;
+    font-size: var(--small-text-size);
+    user-select: none;
+    line-height: 19px;
+}

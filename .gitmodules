@@ -1,0 +1,6 @@
+[submodule ".pinterest-linters"]
+	path = .pinterest-linters
+	url = https://github.com/pinterest/arcanist-linters.git
+[submodule ".arc-tslint"]
+	path = .arc-tslint
+	url = https://github.com/material-foundation/arc-tslint.git

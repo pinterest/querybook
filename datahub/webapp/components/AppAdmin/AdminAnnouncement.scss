@@ -1,0 +1,57 @@
+.AdminAnnouncement {
+    .AdminAnnouncement-content {
+        max-width: 720px;
+        margin: 48px auto 84px;
+
+        .AdminAnnouncement-new {
+            width: 100%;
+            > .Card {
+                justify-content: space-between;
+                margin: 8px 0px;
+                padding: 24px;
+            }
+            .AdminAnnouncement-new-msg {
+                font-size: var(--text-size);
+                .Icon {
+                    margin-right: 8px;
+                }
+            }
+            .AdminAnnouncement-new-form {
+                background-color: var(--light-bg-color);
+                border-radius: var(--border-radius);
+                border: var(--inner-border);
+                margin: 8px 0px;
+                padding: 16px;
+                .SingleCRUD {
+                    width: 100%;
+                }
+            }
+        }
+
+        .AdminAnnouncement-list {
+            .Card {
+                margin: 12px;
+                padding: 16px 8px;
+                .Card-title {
+                    margin: 0px;
+                }
+                .Card-content {
+                    width: 100%;
+                }
+            }
+        }
+
+        .AdminForm {
+            .AdminForm-main {
+                .AdminForm-left {
+                    .FormField {
+                        textarea,
+                        input {
+                            background-color: var(--bg-color);
+                        }
+                    }
+                }
+            }
+        }
+    }
+}

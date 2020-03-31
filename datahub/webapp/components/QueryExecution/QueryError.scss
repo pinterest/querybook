@@ -1,0 +1,27 @@
+.QueryError {
+    .ExecutedQueryCell {
+        margin-top: 5px;
+    }
+
+    .QueryError-top {
+        display: flex;
+        justify-content: space-between;
+        margin-bottom: 4px;
+        .QueryError-title {
+            font-size: 1rem;
+            .Icon {
+                padding-right: 8px;
+            }
+        }
+    }
+    .QueryError-content {
+        .SeeMoreText {
+            display: block;
+            overflow: hidden;
+            word-break: break-all;
+        }
+        .code-highlight-red {
+            background-color: var(--red-highlight);
+        }
+    }
+}

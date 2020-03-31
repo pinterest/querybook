@@ -1,0 +1,31 @@
+.AdminEnvironment {
+    .AdminEnvironment-engine-info {
+        margin: 8px;
+        font-size: var(--xsmall-text-size);
+    }
+    .QueryEngineSelect {
+        .Select,
+        select {
+            width: 100%;
+        }
+    }
+    .AdminEnvironment-engine-label {
+        margin-left: 8px;
+    }
+    .AdminEnvironment-engine-list {
+        max-height: 160px;
+        overflow-y: scroll;
+        margin: 8px;
+        padding: 8px;
+        background-color: var(--light-bg-color);
+        .AdminEnvironment-engine {
+            padding: 4px;
+            .IconButton {
+                padding: 4px;
+            }
+            .AdminEnvironment-engine-name {
+                cursor: pointer;
+            }
+        }
+    }
+}

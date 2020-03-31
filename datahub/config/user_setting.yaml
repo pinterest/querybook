@@ -1,0 +1,42 @@
+theme:
+    default: default
+    options:
+        - default
+        - dark
+        - night
+        - dawn
+        - lush
+    helper: Color themes for DataHub.
+
+default_environment:
+    default: null
+    options: []
+    helper: Default environment when going to '/'
+
+default_query_engine:
+    per_env: true
+    default: '{}'
+    options: []
+    helper: Default query engine when creating a query cell.
+
+datadoc_arrow_key:
+    default: enabled
+    options:
+        - enabled
+        - disabled
+    helper: Enable the use of arrow keys to navigate through different cells.
+
+notification_preference:
+    default: slack
+    options:
+        # key is stored in db and the conditional logic is based on it in tasks.py
+        - slack
+        - email
+    helper: Preference for receiving notifications after query execution.
+
+show_full_view:
+    default: disabled
+    options:
+        - enabled
+        - disabled
+    helper: Instead of modal, show full view when opening table/execution/snippet

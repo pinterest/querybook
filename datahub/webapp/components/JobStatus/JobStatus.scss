@@ -1,0 +1,18 @@
+.JobStatus {
+    .JobStatus-controls {
+        margin-bottom: 12px;
+        .SearchBar {
+            width: 360px;
+            margin-right: 8px;
+        }
+    }
+    .JobStatus-more {
+        margin-top: 24px;
+    }
+}
+
+.Modal {
+    .JobStatus {
+        margin: 12px 24px;
+    }
+}

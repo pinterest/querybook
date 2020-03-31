@@ -1,0 +1,28 @@
+.QueryExecution {
+    position: relative;
+
+    .statement-header {
+        display: flex;
+
+        .statement-header-top {
+            font-weight: bold;
+        }
+
+        .statement-header-bottom {
+            margin-left: auto;
+        }
+    }
+
+    .query-execution-content {
+        display: flex;
+        flex-direction: column;
+    }
+
+    .query-execution-button-wrapper {
+        display: flex;
+    }
+
+    .statement-selector-button {
+        display: inline-block;
+    }
+}

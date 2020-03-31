@@ -1,0 +1,21 @@
+.RichTextEditorToolBar {
+    background-color: var(--light-bg-color);
+    display: inline-flex;
+    border-radius: 5px;
+
+    .toolbar-separator {
+        width: 2px;
+        background-color: var(--border-color);
+    }
+}
+
+.toolbar-link-input-wrapper {
+    input {
+        background: transparent;
+        border: none;
+        color: var(--text-color);
+        outline: none;
+        padding: 5px;
+        font-size: var(--text-size);
+    }
+}

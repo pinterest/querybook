@@ -1,0 +1,38 @@
+tinyint: 1-byte signed integer, from -128 to 127
+smallint: 2-byte signed integer, from -32,768 to 32,767
+int: 4-byte signed integer, from -2,147,483,648 to 2,147,483,647
+bigint: 8-byte signed integer, from -9,223,372,036,854,775,808 to 9,223,372,036,854,775,807
+float: 4-byte single precision floating point number
+double: 8-byte double precision floating point number
+decimal: >
+    The DECIMAL type in Hive is based on Java's BigDecimal which is used for representing
+    immutable arbitrary precision decimal numbers in Java. All regular number operations
+    (e.g. +, -, *, /) and relevant UDFs (e.g. Floor, Ceil, Round, and many more) handle decimal types.
+    You can cast to/from decimal types like you would do with other numeric types.
+    The persistence format of the decimal type supports both scientific and non-scientific notation.
+    Therefore, regardless of whether your dataset contains data like 4.004E+3 (scientific notation) or
+    4004 (non-scientific notation) or a combination of both, DECIMAL can be used for it.
+numeric: Same as decimal
+timestamp: >
+    Supports traditional UNIX timestamp with optional nanosecond precision.
+    Supported conversions
+        - Integer. numeric types Interpreted as UNIX timestamp in seconds
+        - Floating. point numeric types Interpreted as UNIX timestamp in seconds with decimal precision
+        - Strings. JDBC compliant java.sql.Timestamp format "YYYY-MM-DD HH:MM:SS.fffffffff" (9 decimal place precision)
+    Timestamps are interpreted to be timezoneless and stored as an offset from the UNIX epoch. Convenience UDFs for conversion to and from timezones are provided (to_utc_timestamp, from_utc_timestamp).
+    All existing datetime UDFs (month, day, year, hour, etc.) work with the TIMESTAMP data type.
+    Timestamps in text files have to use the format yyyy-mm-dd hh:mm:ss[.f...]. If they are in another format, declare them as the appropriate type (INT, FLOAT, STRING, etc.) and use a UDF to convert them to timestamps.
+    On the table level, alternative timestamp formats can be supported by providing the format to the SerDe property "timestamp.formats" (as of release 1.2.0 with HIVE-9298). For example, yyyy-MM-dd'T'HH:mm:ss.SSS,yyyy-MM-dd'T'HH:mm:ss.
+date: DATE values describe a particular year/month/day, in the form YYYY-­MM-­DD. For example, DATE '2013-­01-­01'. Date types do not have a time of day component. The range of values supported for the Date type is 0000-­01-­01 to 9999-­12-­31, dependent on support by the primitive Java Date type.
+# interval:
+string: String literals can be expressed with either single quotes (') or double quotes ("). Hive uses C-style escaping within the strings.
+varchar: >
+    Varchar types are created with a length specifier (between 1 and 65535), which defines the maximum number of characters allowed in the character string. If a string value being converted/assigned to a varchar value exceeds the length specifier, the string is silently truncated. Character length is determined by the number of code points contained by the character string.
+    Like string, trailing whitespace is significant in varchar and will affect comparison results.
+char: Char types are similar to Varchar but they are fixed-length meaning that values shorter than the specified length value are padded with spaces but trailing spaces are not important during comparisons. The maximum length is fixed at 255.
+# boolean:
+# binary:
+# array:
+# map:
+# struct:
+# uniontype:
