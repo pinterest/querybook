@@ -1,8 +1,0 @@
-# Global
-* @jparise
-
-# ESLint + Prettier
-src/ESLintLinter.php @CrabDude
-src/PrettierESLintLinter.php @CrabDude
-src/PrettierLinter.php @CrabDude
-src/node4_proxy @CrabDude
