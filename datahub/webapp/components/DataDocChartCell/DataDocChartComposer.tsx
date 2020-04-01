@@ -447,12 +447,12 @@ const DataDocChartComposerComponent: React.FunctionComponent<
                             options={seriesAggOptions}
                         />
                     </FormField>
-                    {/* <FormField> 
+                    {/* <FormField>
                             <Checkbox
                                 value={showSeriesAggTypes}
                                 title="Select Aggregation Type by Series"
                                 onChange={val => setShowSeriesAggTypes(val)}
-                            /> 
+                            />
                     </FormField>
                     {showSeriesAggTypes
                         ? ['pie', 'doughnut'].includes(values.chartType)

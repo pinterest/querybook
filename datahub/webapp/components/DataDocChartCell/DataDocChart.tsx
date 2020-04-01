@@ -90,8 +90,8 @@ export const DataDocChart: React.FunctionComponent<IDataDocChartProps> = ({
 
     React.useEffect(() => {
         defaults.global.defaultFontColor = `rgb(
-                ${fontColor[theme][0]}, 
-                ${fontColor[theme][1]}, 
+                ${fontColor[theme][0]},
+                ${fontColor[theme][1]},
                 ${fontColor[theme][2]}
                 )`;
         defaults.global.defaultFontFamily = 'Avenir Next';

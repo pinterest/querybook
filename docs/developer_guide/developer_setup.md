@@ -8,6 +8,8 @@ Here is how to setup dev tools before contributing to DataHub
 
 ## Setup Local DevTools
 
+THIS PART IS IMPORTANT! This is required so that pre-commit hook can be used correctly.
+
 ```
 git clone ...
 

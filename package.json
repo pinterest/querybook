@@ -1,6 +1,6 @@
 {
     "name": "datahub",
-    "version": "2.1.0",
+    "version": "2.2.0",
     "description": "A Big Data Webapp",
     "private": true,
     "scripts": {
@@ -12,7 +12,7 @@
     },
     "repository": {
         "type": "git",
-        "url": "git+ssh://git@phabricator.pinadmin.com/diffusion/DATAHUB/datahub.git"
+        "url": "git+ssh://git@github.com:pinterest/datahub.git"
     },
     "keywords": [
         "datahub",
@@ -23,9 +23,9 @@
     ],
     "author": "Analytics Platform",
     "bugs": {
-        "url": "https://phabricator.pinadmin.com/diffusion/DATAHUB/"
+        "url": "https://github.com/pinterest/datahub/issues"
     },
-    "homepage": "https://phabricator.pinadmin.com/diffusion/DATAHUB",
+    "homepage": "https://github.com/pinterest/datahub",
     "engines": {
         "node": "^12.0.0"
     },
