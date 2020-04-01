@@ -56,7 +56,7 @@ remove_running_dev_image:
 	docker kill $(RUNNING_CONTAINERS) || true
 
 unit_test: dev_image
-	docker-compose --file containers/docker-compose.test.yml up --abort-on-container-exit 
+	docker-compose --file containers/docker-compose.test.yml up --abort-on-container-exit
 
 clean: clean_pyc clean_docker
 clean_pyc:

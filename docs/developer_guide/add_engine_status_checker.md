@@ -15,8 +15,8 @@ You can choose which checker to use for every engine in admin tools query engine
 
 ## Adding custom engine checker
 
-You can provide a custom engine status checker to in case you want to customize the check behavior or provide additional information. 
-Create the engine checker under the folder <project_root>/datahub/server/lib/engine_status_checker/. All engine status checker must inherit BaseEngineStatusChecker from <project_root>/datahub/server/lib/engine_status_checker/base_checker.py. 
+You can provide a custom engine status checker to in case you want to customize the check behavior or provide additional information.
+Create the engine checker under the folder <project_root>/datahub/server/lib/engine_status_checker/. All engine status checker must inherit BaseEngineStatusChecker from <project_root>/datahub/server/lib/engine_status_checker/base_checker.py.
 
 By default BaseEngineStatusChecker assumes you will use celery to check the engine status every minute in the backend celery worker. Each checked result will be cached in a sql table and served using the cache first approach. It further assumes that all users see the exact same status even if they are consuming different amount of resources. If these assumptions are true, the only method you need override is the `_perform_check` method which actually does the check. If you want to customize the fine grained behavior of the status checker, you can override any methods in BaseEngineStatusChecker to achieve it.
 

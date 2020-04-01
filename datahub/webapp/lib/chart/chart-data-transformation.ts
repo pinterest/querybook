@@ -140,11 +140,11 @@ function aggregateData(
     const cols = data[0];
     const rows = data.slice(1);
     /*
-        Final output will be 
+        Final output will be
 
         outputColumns
         ---------------------------
-        firstColumnsRows | aggregatedValues 
+        firstColumnsRows | aggregatedValues
     */
     let outputColumns: string[];
     let firstColumnRows: any[];

@@ -53,7 +53,7 @@ presto:
         message: >
             Typically happens when copying over queries that were previously run on Hive or vice versa.
             You'll need to convert any Hive functions to their Presto equivalent.
-            <a href="https://w.pinadmin.com/pages/viewpage.action?spaceKey=DataTeam&title=Presto+User+Guide#PrestoUserGuide-MigratingFromHive:">Here is a starter doc for that</a>
+            <a href="https://prestodb.io/docs/current/migration/from-hive.html">Here is a starter doc for that</a>
     java_lang_unsupported:
         regex: 'java.lang.UnsupportedOperationException: '
         message: >
@@ -149,7 +149,7 @@ hive:
     file_already_exists_exception:
         regex: 'org.apache.hadoop.fs.FileAlreadyExistsException'
         message: >
-            Please refer to <a href="https://w.pinadmin.com/pages/viewpage.action?spaceKey=DataTeam&title=Hive+User+Guide#HiveUserGuide-5.16FileAlreadyExistsExceptioninyourquerytask">here</a> to resolve this issue.
+            Try to add set hive.exec.sink_operator.delete_target_if_exists=true or Keep speculative execution on, turn off directfileoutputcommitter.
 
 sparksql:
     # Spark SQL Errors

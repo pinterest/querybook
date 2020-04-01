@@ -1,4 +1,0 @@
-{
-  "phabricator.uri" : "https://phabricator.pinadmin.com/",
-  "load": [".pinterest-linters", ".arc-tslint"]
-}
