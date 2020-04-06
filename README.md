@@ -29,7 +29,9 @@ DataHub allows you to discover, create, and share data analyses, queries, and ta
 # Installation & Configuration
 
 [For installation, check here.](docs/admin_guide/setup_guide.md)
+
 [For infrastructure configuration, check here](docs/admin_guide/infra_config.md)
+
 [For general configuration, check here](docs/admin_guide/general_config.md)
 
 # Contributing Back
