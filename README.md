@@ -34,4 +34,4 @@ DataHub allows you to discover, create, and share data analyses, queries, and ta
 
 # Contributing Back
 
-[See this guide to start contributing!](docs/developer_guide/developer_setup.md)]
+[See this guide to start contributing!](docs/developer_guide/developer_setup.md)
