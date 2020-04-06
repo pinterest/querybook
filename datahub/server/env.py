@@ -1,5 +1,6 @@
 # DO NOT IMPORT ANY CUSTOM MODULES HERE
 import os
+import sys
 
 
 class MissingConfigException(Exception):
@@ -21,6 +22,9 @@ def get_env(name, optional=False, default=None):
 
 class DataHubSettings(object):
     PRODUCTION = get_env("production", optional=True, default=False) == "true"
+    TESTING = get_env(
+        "TESTING", optional=True, default=hasattr(sys, "_called_from_test")
+    )
 
     # Security key for flask, which is required to for any encryption with flask
     FLASK_SECRET_KEY = get_env("FLASK_SECRET_KEY", optional=True)
@@ -77,3 +81,5 @@ class DataHubSettings(object):
     DB_MAX_UPLOAD_SIZE = int(
         get_env("DB_MAX_UPLOAD_SIZE", optional=True, default=5242880)
     )
+
+    LOG_LOCATION = get_env("LOG_LOCATION", optional=True, default=None)

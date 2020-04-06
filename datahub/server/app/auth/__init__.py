@@ -51,5 +51,4 @@ def load_auth():
 
 
 def logout():
-    print('Logging out..."')
     logout_user()

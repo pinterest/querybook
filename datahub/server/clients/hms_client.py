@@ -117,20 +117,20 @@ class HiveMetastoreClient:
                 InvalidObjectException,
                 SocketError,
             ) as ex:
-                _LOG.warn(
+                _LOG.warning(
                     "Failed to connect to hive metastore at %s"
                     % function_for_node_info()
                 )
                 function_to_move_to_next_hostport()
                 if i == self._num_retries - 1:
-                    _LOG.warn(
+                    _LOG.warning(
                         "Maximum number of retries reached after %d attempts, giving up",
                         self._num_retries,
                     )
-                    _LOG.exception(ex)
+                    _LOG.error(ex, exc_info=True)
                     raise ex
                 else:
-                    _LOG.warn(
+                    _LOG.warning(
                         "Sleeping for %d seconds after attempt %d",
                         self._retry_interval_seconds,
                         i + 1,
@@ -140,10 +140,11 @@ class HiveMetastoreClient:
                 # It did succeed in connecting, but got some other exception
                 if log_error:
                     _LOG.error(
-                        "Got an error when querying metastore at %s:"
-                        % function_for_node_info()
+                        "Got an error when querying metastore at {}:".format(
+                            function_for_node_info()
+                        )
                     )
-                    _LOG.exception(ex)
+                    _LOG.error(ex, exc_info=True)
                 raise ex
         return output
 

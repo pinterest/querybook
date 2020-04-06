@@ -6,6 +6,7 @@ from app.db import with_session
 from app.flask_app import celery
 
 from const.query_execution import QueryExecutionStatus, StatementExecutionStatus
+from lib.logger import get_logger
 from models.query_execution import (
     QueryExecution,
     StatementExecution,
@@ -17,7 +18,7 @@ from models.datadoc import DataCellQueryExecution, DataDocDataCell
 from models.admin import QueryEngine
 
 CLEAN_UP_TIME_THRESHOLD = 20 * 60  # 20 mins
-
+LOG = get_logger(__file__)
 
 """
     ----------------------------------------------------------------------------------------------------------
@@ -480,7 +481,7 @@ def clean_up_query_execution(dry_run=False, session=None):
                 commit=False,
                 session=session,
             )
-            print("Updating query: {}".format(query_execution.id))
+            LOG.info("Updating query: {}".format(query_execution.id))
 
             statement_executions = query_execution.statement_executions
             for statement_execution in statement_executions:
@@ -489,6 +490,6 @@ def clean_up_query_execution(dry_run=False, session=None):
                     < StatementExecutionStatus.DONE.value
                 ):
                     statement_execution.status = StatementExecutionStatus.ERROR
-                    print("Updating statement: {}".format(statement_execution.id))
+                    LOG.info("Updating statement: {}".format(statement_execution.id))
     if should_commit and not dry_run:
         session.commit()

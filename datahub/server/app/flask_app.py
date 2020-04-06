@@ -1,5 +1,3 @@
-import sys
-
 from celery import Celery
 from flask import Flask, Blueprint, json as flask_json
 from flask_socketio import SocketIO
@@ -17,7 +15,7 @@ def validate_db():
     # We need to make sure db connection is valid
     # before proceeding to other things such as
     # celery or flask server
-    if not hasattr(sys, "_called_from_test"):
+    if not DataHubSettings.TESTING:
         from app.db import get_db_engine
 
         try:

@@ -1,8 +1,10 @@
 from celery.signals import celeryd_init
 from celery.utils.log import get_task_logger
+from importlib import import_module
 
 from app.flask_app import celery
 from env import DataHubSettings
+from lib.logger import get_logger
 
 from .run_query import run_query_task
 from .dummy_task import dummy_task
@@ -13,12 +15,12 @@ from .delete_mysql_cache import delete_mysql_cache
 from .poll_engine_status import poll_engine_status
 from .presto_hive_function_scrapper import presto_hive_function_scrapper
 
-from importlib import import_module
+LOG = get_logger(__file__)
 
 try:
     tasks_module = import_module("tasks_plugin")
 except (ImportError, ModuleNotFoundError) as err:
-    print("Cannot import %s for tasks due to: %s", "task_plugin", err)
+    LOG.info("Cannot import %s for tasks due to: %s", "task_plugin", err)
 
 # Linter
 celery

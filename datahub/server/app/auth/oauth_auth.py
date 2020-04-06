@@ -21,6 +21,7 @@ from requests_oauthlib import OAuth2Session
 
 from app.db import with_session, DBSession
 from env import DataHubSettings
+from lib.logger import get_logger
 from logic.user import (
     get_user_by_name,
     create_user,
@@ -31,6 +32,8 @@ from .utils import (
     abort_unauthorized,
     DataHubLoginManager,
 )
+
+LOG = get_logger(__file__)
 
 OAUTH_CALLBACK_PATH = "/oauth2callback"
 
@@ -89,7 +92,7 @@ class OAuthLoginManager(object):
         return user
 
     def oauth_callback(self):
-        # print('Handling Oauth callback...')
+        LOG.debug("Handling Oauth callback...")
         if request.args.get("error"):
             return f"<h1>Error: {request.args.get('error')}</h1>"
 

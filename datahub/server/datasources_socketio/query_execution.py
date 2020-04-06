@@ -5,8 +5,11 @@ from app.auth.permission import verify_query_engine_permission
 from app.datasource import register_socket, api_assert
 from app.db import DBSession
 from const.query_execution import QueryExecutionStatus, QUERY_EXECUTION_NAMESPACE
+from lib.logger import get_logger
 from logic import query_execution as qe_logic
 from tasks import run_query as tasks
+
+LOG = get_logger(__file__)
 
 
 @register_socket("subscribe", namespace=QUERY_EXECUTION_NAMESPACE)
@@ -47,7 +50,7 @@ def on_join_room(query_execution_id):
                     execution_dict["total"] = progress.get("total", 0)
 
                 except Exception as e:
-                    print(e)
+                    LOG.info(e)
 
         emit(
             "query",

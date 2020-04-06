@@ -40,6 +40,7 @@ services:
             S3_MAX_READ_SIZE: ${S3_MAX_READ_SIZE}
             S3_READ_SIZE: ${S3_READ_SIZE}
             DB_MAX_UPLOAD_SIZE: ${DB_MAX_UPLOAD_SIZE}
+            LOG_LOCATION: ${LOG_LOCATION}
 
             PORT: ${PORT}
         volumes:

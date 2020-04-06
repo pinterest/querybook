@@ -14,6 +14,7 @@ from env import DataHubSettings
 
 from lib.celery.cron import validate_cron
 from lib.notification import simple_email, render_html
+from lib.logger import get_logger
 
 from logic import (
     datadoc_collab,
@@ -24,6 +25,8 @@ from logic import (
 from logic.datadoc_permission import assert_can_read, assert_can_write
 from models.environment import Environment
 from tasks.run_datadoc import run_datadoc
+
+LOG = get_logger(__file__)
 
 
 @register("/datadoc/<int:id>/", methods=["GET"])
@@ -131,8 +134,8 @@ def clone_data_doc(id):
             )
             doc_dict = data_doc.to_dict(with_cells=True)
         except AssertionError as e:
-            print("Assert error")
-            print(e)
+            LOG.debug("Assert error")
+            LOG.debug(e)
             api_assert(False, str(e))
 
         return doc_dict
