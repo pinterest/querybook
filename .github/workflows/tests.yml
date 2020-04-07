@@ -14,41 +14,24 @@ jobs:
     - uses: actions/checkout@v2
       with:
         fetch-depth: 1
-    # Runs a single command using the runners shell
-    - name: Prettify the JS code
-      uses: creyD/prettier_action@v2.1
+    - name: Set up Python
+      uses: actions/setup-python@v1
       with:
-        prettier_options: '--tab-width 4 --single-quote --write datahub/webapp/**/*.{ts,tsx}'
-        branch: ${{ github.head_ref }}
-      env:
-        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-    - name: Prettify the Python code
-      uses: lgeiger/black-action@master
+        python-version: 3.7
+    - name: set PY
+      run: echo "::set-env name=PY::$(python -c 'import hashlib, sys;print(hashlib.sha256(sys.version.encode()+sys.executable.encode()).hexdigest())')"
+    - uses: actions/cache@v1
       with:
-        args: 'datahub/{server,tests}/**/*.py --check'
-    - name: Flake8 Check for Python
-      uses: "tayfun/flake8-your-pr@master"
-      env:
-        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        path: ~/.cache/pre-commit
+        key: pre-commit|${{ env.PY }}|${{ hashFiles('.pre-commit-config.yaml') }}
+    - uses: pre-commit/action@v1.0.1
+      with:
+        token: ${{ secrets.GITHUB_TOKEN }}
   tests:
     runs-on: ubuntu-latest
     steps: 
     - uses: actions/checkout@v2
       with:
         fetch-depth: 1
-    - name: Set up Python
-      uses: actions/setup-python@v1
-      with:
-        python-version: 3.7
-    - name: Setup node
-      uses: actions/setup-node@v1
-      with:
-        node-version: '12.x'
-    - name: Install Python dependencies
-      run: |
-        python -m pip install --upgrade pip
-        pip install -r requirements/base.txt
-    - run: npm install
-    - name: Run the tests
-      run: PYTHONPATH=datahub/server ./datahub/scripts/run_unit_test
-    
+    - name: Run docker test
+      run: make unit_test 
