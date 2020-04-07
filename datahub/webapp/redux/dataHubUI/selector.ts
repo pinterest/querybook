@@ -10,5 +10,7 @@ export const visibleAnnouncementSelector = createSelector(
     announcementsSelector,
     dismissedAnnouncementIdsSelector,
     (announcements, dismissedIds) =>
-        announcements.filter((a) => !dismissedIds.includes(a.id))
+        announcements.filter(
+            (a) => !(a.can_dismiss && dismissedIds.includes(a.id))
+        )
 );
