@@ -29,9 +29,9 @@ jobs:
         token: ${{ secrets.GITHUB_TOKEN }}
   tests:
     runs-on: ubuntu-latest
-    steps: 
+    steps:
     - uses: actions/checkout@v2
       with:
         fetch-depth: 1
     - name: Run docker test
-      run: make unit_test 
+      run: make unit_test
