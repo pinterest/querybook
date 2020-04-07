@@ -1,15 +1,10 @@
-# This is a basic workflow to help you get started with Actions
-
-name: Static code check
-
-# Controls when the action will run. Triggers the workflow on push or pull request
-# events but only for the master branch
-on: [pull_request]
+name: Tests
+on: [push, pull_request]
 
 # A workflow run is made up of one or more jobs that can run sequentially or in parallel
 jobs:
   # This workflow contains a single job called "build"
-  build:
+  lint:
     # The type of runner that the job will run on
     runs-on: ubuntu-latest
 
@@ -35,3 +30,25 @@ jobs:
       uses: "tayfun/flake8-your-pr@master"
       env:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+  tests:
+    runs-on: ubuntu-latest
+    steps: 
+    - uses: actions/checkout@v2
+      with:
+        fetch-depth: 1
+    - name: Set up Python
+      uses: actions/setup-python@v1
+      with:
+        python-version: 3.7
+    - name: Setup node
+      uses: actions/setup-node@v1
+      with:
+        node-version: '12.x'
+    - name: Install Python dependencies
+      run: |
+        python -m pip install --upgrade pip
+        pip install -r requirements/base.txt
+    - run: npm install
+    - name: Run the tests
+      run: PYTHONPATH=datahub/server ./datahub/scripts/run_unit_test
+    
