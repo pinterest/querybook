@@ -16,6 +16,9 @@ limitations under the License.
 
 # DataHub
 
+![Build Status](https://github.com/pinterest/datahub/workflows/Tests/badge.svg)
+[![License](http://img.shields.io/:license-Apache%202-blue.svg)](http://www.apache.org/licenses/LICENSE-2.0.txt)
+
 DataHub allows you to discover, create, and share data analyses, queries, and tables.
 
 # Features
