@@ -14,13 +14,12 @@ THIS PART IS IMPORTANT! This is required so that pre-commit hook can be used cor
 git clone ...
 
 cd ../
-virtualenv .dhvenv
+python3 -m venv .dhvenv
 source .dhvenv/bin/activate
 
 cd -
 pip install -r requirements.txt
-
-git submodule update --init
+pre-commit install
 yarn install
 ```
 
