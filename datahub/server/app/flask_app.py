@@ -1,3 +1,5 @@
+import sys
+
 from celery import Celery
 from flask import Flask, Blueprint, json as flask_json
 from flask_socketio import SocketIO
@@ -5,6 +7,7 @@ from flask_login import current_user
 from flask_limiter import Limiter
 from flask_limiter.util import get_remote_address
 from flask_caching import Cache
+
 
 from const.path import BUILD_PATH, STATIC_PATH, WEBAPP_PATH
 from env import DataHubSettings
@@ -15,7 +18,7 @@ def validate_db():
     # We need to make sure db connection is valid
     # before proceeding to other things such as
     # celery or flask server
-    if not DataHubSettings.TESTING:
+    if not hasattr(sys, "_called_from_test"):
         from app.db import get_db_engine
 
         try:
