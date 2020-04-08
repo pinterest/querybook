@@ -3,10 +3,12 @@ from email.mime.multipart import MIMEMultipart
 from email.mime.text import MIMEText
 import smtplib
 import requests
-
 import jinja2
 
+from lib.logger import get_logger
 from env import DataHubSettings
+
+LOG = get_logger(__file__)
 
 
 def send_slack_message(to, message, token=DataHubSettings.DATAHUB_SLACK_TOKEN):
@@ -46,7 +48,7 @@ def simple_email(
         smtp = smtplib.SMTP(DataHubSettings.EMAILER_CONN)
         smtp.sendmail(msg["From"], msg["To"], msg.as_string())
     except Exception as e:
-        print(e)
+        LOG.info(e)
 
 
 def render_html(template_name, context):

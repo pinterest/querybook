@@ -76,7 +76,7 @@ def register(url, methods=None, require_auth=True, custom_response=False):
                     "error": f"User {current_user.id} exceeded limit of {e.description}",
                 }
             except Exception as e:
-                LOG.exception(e)
+                LOG.error(e, exc_info=True)
                 status = 500
                 results = {"host": _host, "error": traceback.format_exc()}
                 # opentsdb_client.increment('pinalytics.datasource.exception',
@@ -115,7 +115,7 @@ def register_socket(url, namespace=None, require_auth=True):
             try:
                 fn(*args, **kwargs)
             except Exception as e:
-                LOG.exception(e)
+                LOG.error(e, exc_info=True)
                 socketio.emit(
                     "error",
                     str(e),
@@ -154,7 +154,7 @@ def with_impression(
                     item_id = kwargs[item_id_name]
                     create_impression(item_id, item_type, current_user.id)
             except Exception as e:
-                LOG.exception(e)
+                LOG.error(e, exc_info=True)
             finally:
                 return result
 

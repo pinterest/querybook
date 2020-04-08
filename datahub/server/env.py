@@ -77,3 +77,5 @@ class DataHubSettings(object):
     DB_MAX_UPLOAD_SIZE = int(
         get_env("DB_MAX_UPLOAD_SIZE", optional=True, default=5242880)
     )
+
+    LOG_LOCATION = get_env("LOG_LOCATION", optional=True, default=None)

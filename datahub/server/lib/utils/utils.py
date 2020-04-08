@@ -3,6 +3,9 @@ from datetime import datetime, date
 import signal
 import subprocess
 from requests.auth import HTTPBasicAuth, HTTPProxyAuth
+from lib.logger import get_logger
+
+LOG = get_logger(__file__)
 
 
 # from: https://stackoverflow.com/questions/9026016/python-requests-library-combine-httpproxyauth-with-httpbasicauth
@@ -74,8 +77,7 @@ def with_exception(func):
         except Exception as e:
             import traceback
 
-            print("error: {}".format(e))
-            print(traceback.format_exc())
+            LOG.info("error: {}\n".format(e) + traceback.format_exc())
 
     return decorator
 

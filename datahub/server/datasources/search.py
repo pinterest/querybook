@@ -8,7 +8,11 @@ from app.auth.permission import (
     verify_metastore_permission,
 )
 from app.datasource import register, api_assert
+from lib.logger import get_logger
 from logic.elasticsearch import ES_CONFIG, get_hosted_es
+
+
+LOG = get_logger(__file__)
 
 
 def _highlight_fields(fields_to_highlight):
@@ -191,11 +195,10 @@ def _get_matching_objects(query, index_name, doc_type, get_count=False):
     try:
         result = get_hosted_es().search(index_name, doc_type, body=query)
     except Exception as e:
-        print("Got ElasticSearch exception:")
-        print(e)
+        LOG.warning("Got ElasticSearch exception: \n " + str(e))
 
     if result is None:
-        print("No Elasticsearch attempt succeeded")
+        LOG.debug("No Elasticsearch attempt succeeded")
         result = {}
     return _parse_results(result, get_count)
 
@@ -295,7 +298,7 @@ def suggest_tables(metastore_id, prefix, limit=10):
         # print '\n--ES latest hosted_index %s\n' % hosted_index
         result = get_hosted_es().search(index_name, type_name, body=query)
     except Exception as e:
-        print(e)
+        LOG.info(e)
     finally:
         if result is None:
             result = {}
@@ -334,7 +337,7 @@ def suggest_user(name, limit=10, offset=None):
         # print '\n--ES latest hosted_index %s\n' % hosted_index
         result = get_hosted_es().search(index_name, type_name, body=query)
     except Exception as e:
-        print(e)
+        LOG.info(e)
     finally:
         if result is None:
             result = {}

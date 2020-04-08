@@ -1,4 +1,7 @@
 from importlib import import_module
+from lib.logger import get_logger
+
+LOG = get_logger(__file__)
 
 
 def import_plugin(
@@ -15,7 +18,7 @@ def import_plugin(
                              if not provided import error may raise  (default: {None})
 
     Raises:
-        err: ImportErro for invalid module
+        err: ImportError for invalid module
 
     Returns:
         Any -- The corresponding plugin value
@@ -33,7 +36,7 @@ def import_plugin(
         return plugin_value
     except (ImportError, ModuleNotFoundError) as err:
         # Silence this err
-        print(f"Cannot import {plugin_path}.{plugin_variable} due to: {str(err)}")
+        LOG.error(f"Cannot import {plugin_path}.{plugin_variable} due to: {str(err)}")
         if default_val is None:
             raise err
         else:

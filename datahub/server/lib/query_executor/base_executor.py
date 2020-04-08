@@ -13,12 +13,17 @@ from const.query_execution import (
     StatementExecutionStatus,
     QUERY_EXECUTION_NAMESPACE,
 )
-from lib.result_store import GenericUploader
 
+from lib.form import AllFormField
+from lib.logger import get_logger
 from lib.query_executor.base_client import ClientBaseClass
 from lib.query_executor.utils import spread_dict, merge_str, row_to_csv, parse_exception
-from lib.form import AllFormField
+from lib.result_store import GenericUploader
+
 from logic import query_execution as qe_logic
+
+
+LOG = get_logger(__file__)
 
 
 class QueryExecutorLogger(object):
@@ -358,8 +363,10 @@ class QueryExecutorLogger(object):
         except Exception as e:
             import traceback
 
-            print(f"{e}\n{traceback.format_exc()}")
-            print("Failed to upload logs. Silently suppressing error")
+            LOG.error(
+                f"{e}\n{traceback.format_exc()}"
+                + "Failed to upload logs. Silently suppressing error"
+            )
 
     def _stream_log(
         self, statement_execution_id: int, log: str, clear_cache: bool = False
@@ -515,7 +522,7 @@ class QueryExecutorBaseClass(metaclass=ABCMeta):
             import traceback
 
             error_message = "%s\n%s" % (e, traceback.format_exc())
-            print(error_message)
+            LOG.error(error_message)
             self.on_exception(e)
 
     def sleep(self):

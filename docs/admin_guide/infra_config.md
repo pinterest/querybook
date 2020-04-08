@@ -50,6 +50,10 @@ The following settings are only relevant if you are using `s3`, note that all un
 `S3_READ_SIZE` (optional, defaults to 131072): The size of chunk when reading from s3.
 `S3_MAX_READ_SIZE` (optional, defaults to 5242880): The max size of s3 file DataHub will read for users to view.
 
+### Logging
+
+`LOG_LOCATION` (optional): By default server logs goes to stderr. Supply a log path if you want the log to appear in a file.
+
 ## Authentication
 
 `AUTH_BACKEND` (optional, defaults to **app.auth.password_auth**): Python path to the authentication file. By default DataHub provides:
