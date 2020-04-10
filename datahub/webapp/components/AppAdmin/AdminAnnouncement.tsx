@@ -12,6 +12,8 @@ import { Loading } from 'ui/Loading/Loading';
 import { SimpleField } from 'ui/FormikField/SimpleField';
 
 import './AdminAnnouncement.scss';
+import { AdminAuditLogButton } from 'components/AdminAuditLog/AdminAuditLogButton';
+import { Level } from 'ui/Level/Level';
 
 const announcementSchema = Yup.object().shape({
     url_regex: Yup.string().min(0),
@@ -58,14 +60,10 @@ export const AdminAnnouncement: React.FunctionComponent = () => {
     );
 
     const saveAnnouncement = React.useCallback(
-        async (announcement: IAdminAnnouncement) => {
+        (id: number) => async (announcement: Partial<IAdminAnnouncement>) => {
             const { data } = await ds.update(
-                `/admin/announcement/${announcement.id}/`,
-                {
-                    message: announcement.message,
-                    url_regex: announcement.url_regex,
-                    can_dismiss: announcement.can_dismiss,
-                }
+                `/admin/announcement/${id}/`,
+                announcement
             );
             return data as IAdminAnnouncement;
         },
@@ -123,7 +121,7 @@ export const AdminAnnouncement: React.FunctionComponent = () => {
                     <SingleCRUD
                         item={ann}
                         deleteItem={deleteAnnouncement}
-                        updateItem={saveAnnouncement}
+                        updateItem={saveAnnouncement(ann.id)}
                         validationSchema={announcementSchema}
                         renderItem={renderAnnouncementItem}
                         onItemCUD={loadAnnouncements}
@@ -173,7 +171,11 @@ export const AdminAnnouncement: React.FunctionComponent = () => {
     return (
         <div className="AdminAnnouncement">
             <div className="AdminLanding-top">
-                <div className="AdminLanding-title">Announcements</div>
+                <Level>
+                    <div className="AdminLanding-title">Announcements</div>
+                    <AdminAuditLogButton itemType={'announcement'} />
+                </Level>
+
                 <div className="AdminLanding-desc">
                     Make an app-wide or an environment-specific announcement.
                 </div>

@@ -11,12 +11,14 @@ import { AdminDeletedList } from './AdminDeletedList';
 
 import { QueryEngineSelect } from 'components/QueryEngineSelect/QueryEngineSelect';
 import { UserEnvironmentEditor } from 'components/UserEnvironmentEditor/UserEnvironmentEditor';
+import { AdminAuditLogButton } from 'components/AdminAuditLog/AdminAuditLogButton';
 
 import { Card } from 'ui/Card/Card';
 import { SingleCRUD } from 'ui/GenericCRUD/SingleCRUD';
+import { Level } from 'ui/Level/Level';
+import { SimpleField } from 'ui/FormikField/SimpleField';
 
 import './AdminEnvironment.scss';
-import { SimpleField } from 'ui/FormikField/SimpleField';
 
 export interface IAdminEnvironment {
     id: number;
@@ -82,22 +84,15 @@ export const AdminEnvironment: React.FunctionComponent<IProps> = ({
     );
 
     const saveEnvironment = React.useCallback(
-        async (environment: IAdminEnvironment) => {
+        async (environment: Partial<IAdminEnvironment>) => {
             const { data } = await ds.update(
-                `/admin/environment/${environment.id}/`,
-                {
-                    name: environment.name,
-                    description: environment.description,
-                    image: environment.image,
-                    public: environment.public,
-                    hidden: environment.hidden,
-                    shareable: environment.shareable,
-                }
+                `/admin/environment/${environmentId}/`,
+                environment
             );
 
             return data as IAdminEnvironment;
         },
-        []
+        [environmentId]
     );
 
     const deleteEnvironment = React.useCallback(
@@ -174,9 +169,15 @@ export const AdminEnvironment: React.FunctionComponent<IProps> = ({
         item: IAdminEnvironment,
         onChange: (fieldName: string, fieldValue: any) => void
     ) => {
+        const logDOM = item.id != null && (
+            <div className="right-align">
+                <AdminAuditLogButton itemType="environment" itemId={item.id} />
+            </div>
+        );
         return (
             <>
                 <div className="AdminForm-top">
+                    {logDOM}
                     <SimpleField stacked name="name" type="input" />
                 </div>
                 <div className="AdminForm-main">
@@ -379,7 +380,12 @@ export const AdminEnvironment: React.FunctionComponent<IProps> = ({
             <div className="AdminEnvironment">
                 <div className="AdminLanding">
                     <div className="AdminLanding-top">
-                        <div className="AdminLanding-title">Environment</div>
+                        <Level>
+                            <div className="AdminLanding-title">
+                                Environment
+                            </div>
+                            <AdminAuditLogButton itemType={'environment'} />
+                        </Level>
                         <div className="AdminLanding-desc">
                             DataHub provides environments for access control and
                             scoped workspaces.

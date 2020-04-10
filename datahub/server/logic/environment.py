@@ -21,13 +21,15 @@ def create_environment(
     session=None,
 ):
     return Environment.create(
-        name=name,
-        description=description,
-        image=image,
-        public=public,
-        hidden=hidden,
-        deleted_at=deleted_at,
-        shareable=shareable,
+        {
+            "name": name,
+            "description": description,
+            "image": image,
+            "public": public,
+            "hidden": hidden,
+            "deleted_at": deleted_at,
+            "shareable": shareable,
+        },
         commit=commit,
         session=session,
     )
@@ -85,10 +87,10 @@ def get_all_environment(include_deleted=False, session=None):
 def update_environment(id, commit=True, session=None, **field_to_update):
     return Environment.update(
         id,
+        fields=field_to_update,
         field_names=["name", "description", "image", "public", "hidden", "shareable"],
         commit=commit,
         session=session,
-        **field_to_update
     )
 
 

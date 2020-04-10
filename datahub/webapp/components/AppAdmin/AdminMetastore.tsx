@@ -12,6 +12,7 @@ import { useDataFetch } from 'hooks/useDataFetch';
 import { AdminDeletedList } from './AdminDeletedList';
 
 import { ScheduledTaskEditor } from 'components/ScheduledTaskEditor/ScheduledTaskEditor';
+import { AdminAuditLogButton } from 'components/AdminAuditLog/AdminAuditLogButton';
 
 import { Button } from 'ui/Button/Button';
 import { Card } from 'ui/Card/Card';
@@ -28,6 +29,7 @@ import {
 } from 'ui/SmartForm/SmartForm';
 import { Tabs } from 'ui/Tabs/Tabs';
 import { SimpleField } from 'ui/FormikField/SimpleField';
+import { Level } from 'ui/Level/Level';
 
 import './AdminMetastore.scss';
 
@@ -92,20 +94,15 @@ export const AdminMetastore: React.FunctionComponent<IProps> = ({
     );
 
     const saveMetastore = React.useCallback(
-        async (metastore: IAdminMetastore) => {
+        async (metastore: Partial<IAdminMetastore>) => {
             const { data } = await ds.update(
-                `/admin/query_metastore/${metastore.id}/`,
-                {
-                    name: metastore.name,
-                    metastore_params: metastore.metastore_params,
-                    loader: metastore.loader,
-                    acl_control: metastore.acl_control,
-                }
+                `/admin/query_metastore/${metastoreId}/`,
+                metastore
             );
 
             return data as IAdminMetastore;
         },
-        []
+        [metastoreId]
     );
 
     const deleteMetastore = React.useCallback(
@@ -271,9 +268,19 @@ export const AdminMetastore: React.FunctionComponent<IProps> = ({
                 onChange('loader', newLoader.name);
             }
         };
+
+        const logDOM = item.id != null && (
+            <div className="right-align">
+                <AdminAuditLogButton
+                    itemType="query_metastore"
+                    itemId={item.id}
+                />
+            </div>
+        );
         return (
             <>
                 <div className="AdminForm-top">
+                    {logDOM}
                     <SimpleField stacked name="name" type="input" />
                 </div>
                 <div className="AdminForm-main">
@@ -474,7 +481,10 @@ export const AdminMetastore: React.FunctionComponent<IProps> = ({
             <div className="AdminMetastore">
                 <div className="AdminLanding">
                     <div className="AdminLanding-top">
-                        <div className="AdminLanding-title">Metastore</div>
+                        <Level>
+                            <div className="AdminLanding-title">Metastore</div>
+                            <AdminAuditLogButton itemType="query_metastore" />
+                        </Level>
                         <div className="AdminLanding-desc">
                             Metastores hold metadata for the tables, such as
                             schemas and black/whitelists.

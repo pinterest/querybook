@@ -146,7 +146,7 @@ export const JobStatus: React.FunctionComponent<IJobStatus> = ({ name }) => {
     );
 
     const buttonDOM = hasMore && (
-        <div className="JobStatus-more flex-column">
+        <div className="mt24 center-align">
             <AsyncButton
                 onClick={fetchMore}
                 title="Show more rows"

@@ -4,12 +4,14 @@ import { Formik, FormikConfig } from 'formik';
 import { AsyncButton } from 'ui/AsyncButton/AsyncButton';
 import './SingleCRUD.scss';
 import { Button } from 'ui/Button/Button';
+import { sendNotification } from 'lib/dataHubUI';
+import { getChangedObject } from 'lib/utils';
 
 export interface ISingleCRUDProps<T> extends Partial<FormikConfig<T>> {
     item: T;
 
     createItem?: (item: T) => Promise<T>;
-    updateItem?: (item: T) => Promise<T>;
+    updateItem?: (updatedItemFields: Partial<T>) => Promise<T>;
     deleteItem?: (item: T) => any;
     onDelete?: () => void;
 
@@ -33,6 +35,7 @@ export function SingleCRUD<T>({
 }: ISingleCRUDProps<T>) {
     const handleDeleteItem = React.useCallback(async () => {
         await deleteItem(item);
+        sendNotification('Deleted!');
         if (onItemCUD) {
             await onItemCUD();
         }
@@ -42,11 +45,13 @@ export function SingleCRUD<T>({
     }, [deleteItem, onItemCUD, item]);
 
     const handleSaveItem = React.useCallback(
-        async (values) => {
+        async (values: T) => {
             if (createItem) {
                 await createItem(values);
+                sendNotification('Created!');
             } else {
-                await updateItem(values);
+                await updateItem(getChangedObject(item, values));
+                sendNotification('Updated!');
             }
 
             if (onItemCUD) {

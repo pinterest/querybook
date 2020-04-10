@@ -76,17 +76,27 @@ class CRUDMixin(SerializeMixin):
 
     @classmethod
     @with_session
-    def get_all(cls, session=None, limit=None, offset=None, **kwargs):
+    def get_all(
+        cls, session=None, limit=None, offset=None, order_by=None, desc=False, **kwargs
+    ):
         query = cls._get_query(session=session, **kwargs)
+        if order_by is not None:
+            col = getattr(cls, order_by)
+            if desc:
+                col = col.desc()
+            query = query.order_by(col)
         if limit is not None:
             query = query.limit(limit)
         if offset is not None:
             query = query.offset(offset)
+
         return query.all()
 
     @classmethod
     @with_session
-    def create(cls, commit=True, session=None, **fields):
+    def create(
+        cls, fields={}, commit=True, session=None,
+    ):
         item = cls()
         for key, value in fields.items():
             setattr(item, key, value)
@@ -103,12 +113,12 @@ class CRUDMixin(SerializeMixin):
     def update(
         cls,
         id,
+        fields={},
         field_names=None,
         skip_if_value_none=False,
         update_callback=None,
         commit=True,
         session=None,
-        **fields
     ):
         item = cls.get(id=id, session=session)
         if not item:
