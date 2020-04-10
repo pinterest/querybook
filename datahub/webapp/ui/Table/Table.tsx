@@ -56,7 +56,7 @@ export class Table extends React.Component<ITableProps> {
             let formattedColumn: Column;
             if (typeof column === 'string') {
                 formattedColumn = {
-                    Header: titleize(column),
+                    Header: titleize(column, '_', ' '),
                     accessor: column,
                 };
             } else {

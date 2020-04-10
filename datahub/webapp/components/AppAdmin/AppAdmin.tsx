@@ -4,25 +4,26 @@ import { Route, Switch, useParams } from 'react-router-dom';
 
 import history from 'lib/router-history';
 import { IStoreState } from 'redux/store/types';
-import { AdminEntity, IAdminEntity } from './types';
-import { IAdminEnvironment } from 'components/AppAdmin/AdminEnvironment';
+import { AdminEntity } from './types';
+import { useDataFetch } from 'hooks/useDataFetch';
 
 import { AdminAppEntitySidebar } from 'components/AdminAppSidebar/AdminAppEntitySidebar';
 import { AdminAppNavigator } from 'components/AdminAppSidebar/AdminAppNavigator';
+import { IAdminEnvironment } from 'components/AppAdmin/AdminEnvironment';
 import { JobStatus } from 'components/JobStatus/JobStatus';
-import { useDataFetch } from 'hooks/useDataFetch';
-import { FourOhThree } from 'ui/ErrorPage/FourOhThree';
-import { Sidebar } from 'ui/Sidebar/Sidebar';
-import { Card } from 'ui/Card/Card';
-import { Icon } from 'ui/Icon/Icon';
 
 import { AdminAnnouncement } from './AdminAnnouncement';
-import { AdminQueryEngine, IAdminQueryEngine } from './AdminQueryEngine';
-import { AdminMetastore, IAdminMetastore } from './AdminMetastore';
-import { AdminUserRole } from './AdminUserRole';
-import { AdminEnvironment } from './AdminEnvironment';
 import { AdminApiAccessToken } from './AdminApiAccessToken';
 import { AdminConfig } from './AdminConfig';
+import { AdminEnvironment } from './AdminEnvironment';
+import { AdminMetastore, IAdminMetastore } from './AdminMetastore';
+import { AdminQueryEngine, IAdminQueryEngine } from './AdminQueryEngine';
+import { AdminTask } from './AdminTask';
+import { AdminUserRole } from './AdminUserRole';
+import { Card } from 'ui/Card/Card';
+import { FourOhThree } from 'ui/ErrorPage/FourOhThree';
+import { Icon } from 'ui/Icon/Icon';
+import { Sidebar } from 'ui/Sidebar/Sidebar';
 
 import './AppAdmin.scss';
 
@@ -248,10 +249,7 @@ export const AppAdmin: React.FunctionComponent = () => {
                             />
                         )}
                     />
-                    <Route
-                        path="/admin/job_status/"
-                        component={AdminJobStatus}
-                    />
+                    <Route path="/admin/task/:id?" component={AdminTask} />
                     <Route path="/admin/user_role/" component={AdminUserRole} />
                     <Route
                         path="/admin/api_access_token/"

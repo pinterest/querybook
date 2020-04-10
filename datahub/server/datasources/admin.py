@@ -16,6 +16,7 @@ from logic import admin as logic
 from logic import user as user_logic
 from logic import schedule as schedule_logic
 from logic import environment as environment_logic
+from logic import task as task_logic
 
 from models.admin import (
     Announcement,
@@ -483,6 +484,13 @@ def add_user_to_environment(id, uid):
 @with_admin_audit_log(AdminItemType.Environment, AdminOperation.UPDATE)
 def remove_user_from_environment(id, uid):
     environment_logic.remove_user_to_environment(uid, id)
+
+
+@register("/admin/task/", methods=["GET"])
+@admin_only
+def get_all_tasks():
+    tasks = task_logic.get_all_task()
+    return [task.to_dict() for task in tasks]
 
 
 """

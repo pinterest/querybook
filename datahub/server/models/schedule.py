@@ -92,7 +92,7 @@ class TaskSchedule(Base):
             "task": self.task,
             "task_type": self.task_type,
             "cron": self.cron,
-            "start_time": self.start_time,
+            # "start_time": self.start_time,
             "args": self.args,
             "kwargs": self.kwargs,
             "options": self.options,
