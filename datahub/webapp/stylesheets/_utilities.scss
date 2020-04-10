@@ -5,7 +5,9 @@
 }
 
 .center-align {
-    text-align: center;
+    display: flex;
+    justify-content: center;
+    align-items: center;
 }
 
 .styled-background-div {

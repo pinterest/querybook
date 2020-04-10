@@ -65,7 +65,7 @@ export const AdminAuditLog: React.FC<IAdminAuditLogProps> = ({
     });
 
     const topDOM = filters && (
-        <div className="pv4">
+        <div className="pv4 mvauto">
             {Object.entries(filters).map(([key, value]) => (
                 <TagGroup key={key}>
                     <Tag>{titleize(key, '_', ' ')}</Tag>
@@ -86,7 +86,7 @@ export const AdminAuditLog: React.FC<IAdminAuditLogProps> = ({
     );
 
     const buttonDOM = hasMore && (
-        <div className="flex-column mt8">
+        <div className="center-align mt8">
             <AsyncButton onClick={fetchMore} title="Show more" type="soft" />
         </div>
     );
