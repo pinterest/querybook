@@ -47,7 +47,7 @@ export const DataDocTemplateVarForm: React.FunctionComponent<IDataDocTemplateVar
                                 ? values.variables.map((ignore, index) => (
                                       <div
                                           key={index}
-                                          className="horizontal-space-between"
+                                          className="horizontal-space-between template-key-value-row"
                                       >
                                           <FormField>
                                               <FormFieldInputSection>
@@ -93,7 +93,10 @@ export const DataDocTemplateVarForm: React.FunctionComponent<IDataDocTemplateVar
 
                             return (
                                 <div className="DataDocTemplateVarForm-content">
-                                    <fieldset disabled={!isEditable}>
+                                    <fieldset
+                                        disabled={!isEditable}
+                                        className="mb8"
+                                    >
                                         {fields}
                                     </fieldset>
                                     {controlDOM}

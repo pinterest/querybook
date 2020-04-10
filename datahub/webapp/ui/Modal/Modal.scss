@@ -59,7 +59,6 @@
 
         .Modal-box {
             z-index: 40;
-            top: 8vh;
             width: 90vw;
             min-width: 400px;
             max-width: var(--max-width);
@@ -71,6 +70,7 @@
             overflow-y: hidden;
             display: flex;
             flex-direction: column;
+            position: relative;
 
             opacity: 0;
             transform: translate(0, 5vh);

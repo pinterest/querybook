@@ -2,9 +2,16 @@
     padding: 15px 20px;
 
     .DataDocTemplateVarForm-content {
-        > div {
-            input {
-                margin-right: 12px;
+        .template-key-value-row {
+            .FormField {
+                flex: 1;
+                .FormFieldInputSection:nth-child(1) {
+                    flex-grow: 1;
+                }
+                .FormFieldInputSection:nth-child(2) {
+                    flex-grow: 5;
+                    margin-left: 12px;
+                }
             }
         }
     }
