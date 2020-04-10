@@ -318,3 +318,15 @@ export function sanitizeUrlTitle(title: string) {
         .replace(/[\-\s_.]+/g, '-')
         .replace(/[^\-A-Za-z0-9]/g, '');
 }
+
+export function getChangedObject(orig: {}, changed: {}) {
+    const ret = {};
+
+    for (const [key, value] of Object.entries(changed)) {
+        if (orig[key] !== value) {
+            ret[key] = value;
+        }
+    }
+
+    return ret;
+}

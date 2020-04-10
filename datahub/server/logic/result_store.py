@@ -14,7 +14,9 @@ csv.field_size_limit(sys.maxsize)
 
 @with_session
 def create_key_value_store(key, value, commit=True, session=None):
-    return KeyValueStore.create(key=key, value=value, commit=commit, session=session)
+    return KeyValueStore.create(
+        {"key": key, "value": value}, commit=commit, session=session
+    )
 
 
 @with_session

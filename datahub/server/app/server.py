@@ -16,7 +16,7 @@ datasources_socketio
 
 @register("/<path:ignore>/")
 @limiter.exempt
-def datasource_four_oh_four(ignore=None):
+def datasource_four_oh_four(*args, **kwargs):
     abort_request(404)
 
 

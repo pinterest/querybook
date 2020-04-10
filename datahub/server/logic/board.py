@@ -25,14 +25,16 @@ def create_board(
     session=None,
 ):
     return Board.create(
+        {
+            "name": name,
+            "environment_id": environment_id,
+            "owner_uid": owner_uid,
+            "description": description,
+            "public": public,
+            "board_type": board_type,
+        },
         commit=commit,
         session=session,
-        name=name,
-        environment_id=environment_id,
-        owner_uid=owner_uid,
-        description=description,
-        public=public,
-        board_type=board_type,
     )
 
 
@@ -40,10 +42,10 @@ def create_board(
 def update_board(id, commit=True, session=None, **fields):
     return Board.update(
         id,
+        fields=fields,
         field_names=["name", "description", "public"],
         commit=commit,
         session=session,
-        **fields,
     )
 
 

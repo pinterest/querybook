@@ -1,4 +1,5 @@
 from functools import wraps
+from enum import Enum
 
 from datetime import datetime, date
 from lib.utils.utils import DATE_TO_UTC, DATETIME_TO_UTC
@@ -14,6 +15,8 @@ def serialize_value(value):
             return DATETIME_TO_UTC(value)
         elif isinstance(value, date):
             return DATE_TO_UTC(value)
+        elif isinstance(value, Enum):
+            return value.value
         elif isinstance(value, dict):
             return {k: serialize_value(v) for k, v in value.items()}
         elif isinstance(value, (list, tuple)):

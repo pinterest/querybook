@@ -599,11 +599,13 @@ def create_table_query_execution_log(
     table_id, cell_id, query_execution_id, commit=True, session=None
 ):
     return DataTableQueryExecution.create(
+        fields={
+            "table_id": table_id,
+            "cell_id": cell_id,
+            "query_execution_id": query_execution_id,
+        },
         commit=commit,
         session=session,
-        table_id=table_id,
-        cell_id=cell_id,
-        query_execution_id=query_execution_id,
     )
 
 

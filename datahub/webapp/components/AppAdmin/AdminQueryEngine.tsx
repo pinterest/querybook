@@ -8,9 +8,7 @@ import history from 'lib/router-history';
 import { generateFormattedDate } from 'lib/utils/datetime';
 import { useDataFetch } from 'hooks/useDataFetch';
 
-import { IAdminEnvironment } from './AdminEnvironment';
-import { IAdminMetastore } from './AdminMetastore';
-import { AdminDeletedList } from './AdminDeletedList';
+import { AdminAuditLogButton } from 'components/AdminAuditLog/AdminAuditLogButton';
 
 import { Card } from 'ui/Card/Card';
 import { Loading } from 'ui/Loading/Loading';
@@ -24,6 +22,11 @@ import {
 } from 'ui/SmartForm/SmartForm';
 import { Loader } from 'ui/Loader/Loader';
 import { SimpleField } from 'ui/FormikField/SimpleField';
+import { Level } from 'ui/Level/Level';
+
+import { IAdminEnvironment } from './AdminEnvironment';
+import { IAdminMetastore } from './AdminMetastore';
+import { AdminDeletedList } from './AdminDeletedList';
 
 export interface IAdminQueryEngine {
     id: number;
@@ -135,24 +138,15 @@ export const AdminQueryEngine: React.FunctionComponent<IProps> = ({
     );
 
     const saveQueryEngine = React.useCallback(
-        async (queryEngine: IAdminQueryEngine) => {
+        async (queryEngine: Partial<IAdminQueryEngine>) => {
             const { data } = await ds.update(
-                `/admin/query_engine/${queryEngine.id}/`,
-                {
-                    name: queryEngine.name,
-                    description: queryEngine.description,
-                    language: queryEngine.language,
-                    executor: queryEngine.executor,
-                    executor_params: queryEngine.executor_params,
-                    metastore_id: queryEngine.metastore_id,
-                    environment_id: queryEngine.environment_id,
-                    status_checker: queryEngine.status_checker,
-                }
+                `/admin/query_engine/${queryEngineId}/`,
+                queryEngine
             );
 
             return data as IAdminQueryEngine;
         },
-        []
+        [queryEngineId]
     );
 
     const deleteQueryEngine = React.useCallback(
@@ -245,9 +239,16 @@ export const AdminQueryEngine: React.FunctionComponent<IProps> = ({
             );
         };
 
+        const logDOM = item.id != null && (
+            <div className="right-align">
+                <AdminAuditLogButton itemType="query_engine" itemId={item.id} />
+            </div>
+        );
+
         return (
             <>
                 <div className="AdminForm-top">
+                    {logDOM}
                     <SimpleField stacked name="name" type="input" />
                 </div>
                 <div className="AdminForm-main">
@@ -473,7 +474,13 @@ export const AdminQueryEngine: React.FunctionComponent<IProps> = ({
             <div className="AdminQueryEngine">
                 <div className="AdminLanding">
                     <div className="AdminLanding-top">
-                        <div className="AdminLanding-title">Query Engine</div>
+                        <Level>
+                            <div className="AdminLanding-title">
+                                Query Engine
+                            </div>
+
+                            <AdminAuditLogButton itemType={'query_engine'} />
+                        </Level>
                         <div className="AdminLanding-desc">
                             Explore data in any language, from any data source.
                         </div>

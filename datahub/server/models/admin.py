@@ -4,6 +4,7 @@ from sqlalchemy.orm import relationship, backref
 
 
 from app import db
+from const.admin import AdminOperation
 from const.db import (
     name_length,
     now,
@@ -11,11 +12,12 @@ from const.db import (
     # mediumtext_length,
     # text_length
 )
+from lib.sqlalchemy import CRUDMixin
 
 Base = db.Base
 
 
-class Announcement(Base):
+class Announcement(CRUDMixin, Base):
     __tablename__ = "announcements"
 
     id = sql.Column(sql.Integer, primary_key=True)
@@ -46,7 +48,7 @@ class Announcement(Base):
         }
 
 
-class QueryEngine(Base):
+class QueryEngine(CRUDMixin, Base):
     __tablename__ = "query_engine"
 
     id = sql.Column(sql.Integer, primary_key=True)
@@ -112,7 +114,7 @@ class QueryEngine(Base):
         return self.executor_params
 
 
-class QueryMetastore(Base):
+class QueryMetastore(CRUDMixin, Base):
     __tablename__ = "query_metastore"
 
     id = sql.Column(sql.Integer, primary_key=True)
@@ -144,7 +146,7 @@ class QueryMetastore(Base):
         }
 
 
-class APIAccessToken(db.Base):
+class APIAccessToken(CRUDMixin, Base):
     __tablename__ = "api_access_token"
 
     id = sql.Column(sql.Integer, primary_key=True)
@@ -166,3 +168,18 @@ class APIAccessToken(db.Base):
             "updated_at": self.updated_at,
             "updater_uid": self.updater_uid,
         }
+
+
+class AdminAuditLog(CRUDMixin, Base):
+    __tablename__ = "admin_audit_log"
+    id = sql.Column(sql.Integer, primary_key=True)
+
+    created_at = sql.Column(sql.DateTime, default=now, nullable=False)
+    uid = sql.Column(sql.Integer, sql.ForeignKey("user.id", ondelete="CASCADE"))
+
+    item_type = sql.Column(sql.String(length=name_length), nullable=False)
+    item_id = sql.Column(sql.Integer, nullable=False)
+    op = sql.Column(sql.Enum(AdminOperation), nullable=False)
+    log = sql.Column(sql.String(length=description_length))
+
+    relationship("User", uselist=False)

@@ -47,13 +47,15 @@ def create_user(
 ):
 
     user = User.create(
-        username=username,
-        password=password,
-        fullname=fullname,
-        email=email,
-        profile_img=profile_img,
+        fields={
+            "username": username,
+            "password": password,
+            "fullname": fullname,
+            "email": email,
+            "profile_img": profile_img,
+            "properties": properties,
+        },
         commit=commit,
-        properties=properties,
         session=session,
     )
 
@@ -66,6 +68,7 @@ def create_user(
 def update_user(uid, commit=True, session=None, **kwargs):
     return User.update(
         uid,
+        fields=kwargs,
         field_names=[
             "fullname",
             "password",
@@ -78,7 +81,6 @@ def update_user(uid, commit=True, session=None, **kwargs):
         session=session,
         commit=commit,
         update_callback=lambda u: update_es_users_by_id(u.id),
-        **kwargs,
     )
 
 

@@ -99,3 +99,69 @@
     white-space: nowrap;
     text-overflow: ellipsis;
 }
+
+@mixin padding-classes {
+    $padding-size-options: 0, 2, 4, 8, 12, 16, 20, 24;
+    @each $size in $padding-size-options {
+        $padding: $size * 1px;
+
+        .p#{$size} {
+            padding: $padding;
+        }
+        .pl#{$size} {
+            padding-left: $padding;
+        }
+        .pr#{$size} {
+            padding-right: $padding;
+        }
+        .pt#{$size} {
+            padding-top: $padding;
+        }
+        .pb#{$size} {
+            padding-bottom: $padding;
+        }
+        .ph#{$size} {
+            padding-left: $padding;
+            padding-right: $padding;
+        }
+        .pv#{$size} {
+            padding-top: $padding;
+            padding-bottom: $padding;
+        }
+    }
+}
+
+@include padding-classes;
+
+@mixin margin-classes {
+    $margin-size-options: 0, 2, 4, 8, 12, 16, 20, 24, 36, 48;
+    @each $size in $margin-size-options {
+        $margin: $size * 1px;
+
+        .m#{$size} {
+            margin: $margin;
+        }
+        .ml#{$size} {
+            margin-left: $margin;
+        }
+        .mr#{$size} {
+            margin-right: $margin;
+        }
+        .mt#{$size} {
+            margin-top: $margin;
+        }
+        .mb#{$size} {
+            margin-bottom: $margin;
+        }
+        .mh#{$size} {
+            margin-left: $margin;
+            margin-right: $margin;
+        }
+        .mv#{$size} {
+            margin-top: $margin;
+            margin-bottom: $margin;
+        }
+    }
+}
+
+@include margin-classes;

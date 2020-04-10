@@ -12,12 +12,15 @@ import * as userActions from 'redux/user/action';
 
 import { UserBadge } from 'components/UserBadge/UserBadge';
 import { UserSelect } from 'components/UserSelect/UserSelect';
+import { AdminAuditLogButton } from 'components/AdminAuditLog/AdminAuditLogButton';
 
 import { AsyncButton } from 'ui/AsyncButton/AsyncButton';
 import { Button } from 'ui/Button/Button';
 import { Card } from 'ui/Card/Card';
 import { FormField } from 'ui/Form/FormField';
 import { Icon } from 'ui/Icon/Icon';
+import { Level } from 'ui/Level/Level';
+
 import { Select, makeSelectOptions } from 'ui/Select/Select';
 
 import './AdminUserRole.scss';
@@ -97,7 +100,11 @@ export const AdminUserRole: React.FunctionComponent = () => {
     return (
         <div className="AdminUserRole">
             <div className="AdminLanding-top">
-                <div className="AdminLanding-title">User Roles</div>
+                <Level>
+                    <div className="AdminLanding-title">User Roles</div>
+                    <AdminAuditLogButton itemType="admin" />
+                </Level>
+
                 <div className="AdminLanding-desc">
                     Assign roles to users for access control.
                 </div>

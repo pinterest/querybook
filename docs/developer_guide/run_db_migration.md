@@ -15,5 +15,5 @@ PYTHONPATH=server alembic upgrade head
 
 # OPTIONAL: if you ran the script from remote server
 # and need to sync it back from devapp to local
-./datahub/scripts/sync_alembic_from_remote
+./datahub/scripts/sync_alembic_from_remote [Your remote repo location]
 ```
