@@ -211,25 +211,30 @@ export function mapMetaToChartOptions(
                 }
             },
         };
+        let xAxesOptions = computeScaleOptions(
+            xAxesScaleType,
+            meta.chart.x_axis,
+            theme,
+            meta.chart.y_axis.stack,
+            meta.chart.type
+        );
+        let yAxesOptions = computeScaleOptions(
+            yAxesScaleType,
+            meta.chart.y_axis,
+            theme,
+            meta.chart.y_axis.stack,
+            meta.chart.type
+        );
+
+        // Because histogram is horizontal bar
+        // We need to reverse the x, y axes settings
+        if (meta.chart.type === 'histogram') {
+            [xAxesOptions, yAxesOptions] = [yAxesOptions, xAxesOptions];
+        }
+
         optionsObj['scales'] = {
-            xAxes: [
-                computeScaleOptions(
-                    xAxesScaleType,
-                    meta.chart.x_axis,
-                    theme,
-                    meta.chart.y_axis.stack,
-                    meta.chart.type
-                ),
-            ],
-            yAxes: [
-                computeScaleOptions(
-                    yAxesScaleType,
-                    meta.chart.y_axis,
-                    theme,
-                    meta.chart.y_axis.stack,
-                    meta.chart.type
-                ),
-            ],
+            xAxes: [xAxesOptions],
+            yAxes: [yAxesOptions],
         };
     }
 

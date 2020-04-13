@@ -384,10 +384,9 @@ const DataDocChartComposerComponent: React.FunctionComponent<
     const dataTransformationDOM = (
         <>
             <FormSectionHeader>Transformation</FormSectionHeader>
-            <FormField label="Transformation">
+            <FormField label="Aggregate Data">
                 <Checkbox
                     value={values.aggregate}
-                    title="Aggregate Data"
                     onChange={(val) => {
                         setFieldValue('aggregate', val);
                         setFieldValue('hiddenSeries', []);

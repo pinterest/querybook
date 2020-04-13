@@ -23,6 +23,7 @@ export const Checkbox: React.FunctionComponent<ICheckboxProps> = ({
     const checkboxClass = classNames({
         Checkbox: true,
         [className]: Boolean(className),
+        checked: value,
     });
 
     return (
