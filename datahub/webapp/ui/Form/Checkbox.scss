@@ -3,10 +3,11 @@
     display: flex;
     flex-direction: row;
     white-space: nowrap;
+    position: relative;
 
     input[type='checkbox'] {
         cursor: pointer;
-        appearance: button;
+        appearance: unset;
         border: solid 1px var(--border-color);
         background-color: var(--bg-color);
 
@@ -16,12 +17,16 @@
         outline: none;
     }
 
-    input[type='checkbox']:checked::before {
+    &.checked::before {
         content: ' ';
         background-color: var(--border-color);
         width: 12px;
         height: 12px;
         display: block;
         margin: 1px 0px 0px 1px;
+
+        position: absolute;
+        left: 1px;
+        top: 1px;
     }
 }

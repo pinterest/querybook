@@ -10,7 +10,6 @@ import {
 } from 'react-chartjs-2';
 import React from 'react';
 import { useSelector } from 'react-redux';
-import { range } from 'lodash';
 import { ChartOptions } from 'chart.js';
 
 import { IDataChartCellMeta } from 'const/datadoc';
