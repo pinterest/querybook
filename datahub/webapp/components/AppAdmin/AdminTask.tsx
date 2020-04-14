@@ -27,6 +27,7 @@ export interface IAdminTask {
     cron: string;
     args: any[];
     kwargs: any[];
+    options: any;
     last_run_at: number;
     total_run_count: number;
     enabled: boolean;
@@ -39,6 +40,7 @@ const tableColumns = [
     'cron',
     'args',
     'kwargs',
+    'options',
     'last_run_at',
     'total_run_count',
     'enabled',
@@ -51,12 +53,13 @@ const tableColumnWidths = {
     last_run_at: 280,
     total_run_count: 160,
     kwargs: 160,
+    options: 160,
     enabled: 100,
 };
 const tableColumnAligns: Record<string, TableAlign> = {
     id: 'center',
+    last_run_at: 'center',
     total_run_count: 'center',
-    args: 'center',
     enabled: 'center',
 };
 
@@ -99,7 +102,8 @@ export const AdminTask: React.FunctionComponent<IProps> = () => {
                     );
                     break;
                 }
-                case 'kwargs': {
+                case 'kwargs':
+                case 'options': {
                     dom = <span>{JSON.stringify(value)}</span>;
                     break;
                 }

@@ -83,26 +83,22 @@ export const TaskHistory: React.FunctionComponent<IProps> = ({ taskName }) => {
 
     const topDOM = (
         <>
-            <div className="TaskHistory-controls horizontal-space-between">
-                <div className="horizontal-space-between">
-                    <div className="TaskHistory-switch">
-                        <ToggleButton
-                            checked={autoRefresh}
-                            onChange={setAutoRefresh}
-                            title="Auto-Refresh"
-                        />
-                        <ToggleButton
-                            checked={fetchInfo.hideSuccessfulJobs}
-                            onChange={(hideSuccessfulJobs) => {
-                                setFetchInfo({
-                                    ...fetchInfo,
-                                    hideSuccessfulJobs,
-                                });
-                            }}
-                            title="Hide Succes"
-                        />
-                    </div>
-                </div>
+            <div className="TaskHistory-controls right-align mb16">
+                <ToggleButton
+                    checked={autoRefresh}
+                    onChange={setAutoRefresh}
+                    title="Auto-Refresh"
+                />
+                <ToggleButton
+                    checked={fetchInfo.hideSuccessfulJobs}
+                    onChange={(hideSuccessfulJobs) => {
+                        setFetchInfo({
+                            ...fetchInfo,
+                            hideSuccessfulJobs,
+                        });
+                    }}
+                    title="Hide Succes"
+                />
             </div>
         </>
     );
@@ -118,8 +114,8 @@ export const TaskHistory: React.FunctionComponent<IProps> = ({ taskName }) => {
         />
     );
 
-    const buttonDOM = hasMore && (
-        <div className="mt24 center-align">
+    const moreButtonDOM = hasMore && (
+        <div className="center-align mv24">
             <AsyncButton
                 onClick={fetchMore}
                 title="Show more rows"
@@ -133,7 +129,7 @@ export const TaskHistory: React.FunctionComponent<IProps> = ({ taskName }) => {
             {topDOM}
             {tableDOM}
             {isLoading ? <Loading /> : null}
-            {buttonDOM}
+            {moreButtonDOM}
         </div>
     );
 };
