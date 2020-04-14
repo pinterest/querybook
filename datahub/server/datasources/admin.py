@@ -404,6 +404,33 @@ def get_task_run_records(
         return data
 
 
+# @register(
+#     "/admin/schedule/record/history/", methods=["GET"],
+# )
+# @admin_only
+# def get_task_run_record_by_name(
+#     name, offset=0, limit=10, hide_successful_jobs=False
+# ):
+#     with DBSession() as session:
+#         records = schedule_logic.get_task_run_record_run_by_name(
+#             name=name,
+#             offset=offset,
+#             limit=limit,
+#             hide_successful_jobs=hide_successful_jobs,
+#             session=session
+#         )
+#         print('???????????????', records)
+
+#         data = []
+#         for record in records:
+#             print('record', record)
+#             record_dict = record.to_dict()
+#             record_dict["task_type"] = record.task.task_type
+#             data.append(record_dict)
+
+#         return data
+
+
 @register("/admin/environment/", methods=["GET"])
 def get_all_environments_admin():
     environments = environment_logic.get_all_environment(include_deleted=True)

@@ -2,9 +2,17 @@
     .AdminTask-content {
         margin: 48px 0px 82px;
 
+        .AdminTask-controls {
+            margin-bottom: 24px;
+        }
+
         .Table {
             overflow-x: scroll;
-            cursor: pointer;
+            .AdminTask-clickable {
+                cursor: pointer;
+                height: 100%;
+                width: 100%;
+            }
             .rt-tr:hover {
                 .rt-td {
                     background-color: var(--hover-bg-color);

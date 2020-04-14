@@ -13,6 +13,9 @@ import { useParams } from 'react-router-dom';
 import { Modal } from 'ui/Modal/Modal';
 import { TaskDetail } from 'components/Task/TaskDetail';
 import { number } from 'yup';
+import { Tabs } from 'ui/Tabs/Tabs';
+import { SearchBar } from 'ui/SearchBar/SearchBar';
+import { ToggleButton } from 'ui/ToggleButton/ToggleButton';
 
 interface IProps {}
 
@@ -59,6 +62,9 @@ const tableColumnAligns: Record<string, TableAlign> = {
 
 export const AdminTask: React.FunctionComponent<IProps> = () => {
     const { id: taskId } = useParams();
+
+    const [type, setType] = React.useState<'prod' | 'user'>('prod');
+    const [searchString, setSearchString] = React.useState<string>('');
 
     const { data: taskList, forceFetch: loadTaskList } = useDataFetch<
         IAdminTask[]
@@ -116,7 +122,7 @@ export const AdminTask: React.FunctionComponent<IProps> = () => {
             }
             return (
                 <div
-                    className={`div-${key}`}
+                    className={`div-${key} AdminTask-clickable`}
                     key={`${taskId}-${key}`}
                     onClick={() => history.push(`/admin/task/${taskId}`)}
                 >
@@ -134,9 +140,32 @@ export const AdminTask: React.FunctionComponent<IProps> = () => {
                 <div className="AdminLanding-desc">Manage all tasks here.</div>
             </div>
             <div className="AdminTask-content">
+                <div className="AdminTask-controls horizontal-space-between">
+                    <Tabs
+                        selectedTabKey={type}
+                        items={[
+                            { name: 'Production', key: 'prod' },
+                            { name: 'User', key: 'user' },
+                        ]}
+                        onSelect={(key: 'prod' | 'user') => {
+                            setType(key);
+                        }}
+                    />
+                    <SearchBar
+                        value={searchString}
+                        placeholder="Filter by name"
+                        onSearch={(s) => setSearchString(s.replace(' ', ''))}
+                    />
+                </div>
                 {taskList ? (
                     <Table
-                        rows={taskList}
+                        rows={taskList.filter(
+                            (task) =>
+                                task.task_type === type &&
+                                task.name.includes(
+                                    searchString.toLocaleLowerCase()
+                                )
+                        )}
                         cols={tableColumns}
                         formatCell={formatCell}
                         colNameToWidths={tableColumnWidths}
@@ -147,7 +176,7 @@ export const AdminTask: React.FunctionComponent<IProps> = () => {
             </div>
         </div>
     ) : (
-        <Modal onHide={() => history.push('/admin/task/')}>
+        <Modal onHide={() => history.push('/admin/task/')} title="Task Details">
             <TaskDetail
                 task={taskList.find((task) => task.id === Number(taskId))}
             />
