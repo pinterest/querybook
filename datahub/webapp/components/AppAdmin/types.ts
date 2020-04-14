@@ -6,6 +6,7 @@ export const adminEntityToTitle = {
     user_role: 'User Role',
     api_access_token: 'API Access Token',
     announcement: 'Announcement',
+    config: 'Configuration',
 };
 
 export type AdminEntity =
@@ -15,7 +16,8 @@ export type AdminEntity =
     | 'job_status'
     | 'user_role'
     | 'api_access_token'
-    | 'announcement';
+    | 'announcement'
+    | 'config';
 
 export interface IAdminEntity {
     id: number;

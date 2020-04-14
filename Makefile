@@ -1,10 +1,10 @@
 SHELL := /bin/bash
 
 bundled: dev_image
-	docker-compose --file containers/docker-compose.bundled.yml up
+	docker-compose up
 
 bundled_off:
-	docker-compose --file containers/docker-compose.bundled.yml down
+	docker-compose down
 
 web: dev_image remove_running_dev_image
 	docker-compose -f containers/docker-compose.dev.yml run web
@@ -29,10 +29,10 @@ prod_scheduler:
 	docker-compose -f containers/docker-compose.prod.yml run scheduler
 
 prod_image:
-	docker build --pull -t datahub -f containers/prod.Dockerfile .
+	docker build --pull -t datahub .
 
 dev_image:
-	docker build --pull -t datahub-dev -f containers/dev.Dockerfile .
+	docker build --pull -t datahub-dev . --build-arg PRODUCTION=false
 
 docs: docs_image
 	docker-compose -f docs_website/docker-compose.yml --project-directory=. up
