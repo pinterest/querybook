@@ -29,11 +29,15 @@ const tableColumns: Array<keyof IJobStatusRecord> = [
 const tableColumnWidths = {
     id: 80,
     created_at: 280,
+    updated_at: 280,
+    name: 240,
     status: 120,
 };
 const tableColumnAligns: Record<string, TableAlign> = {
     id: 'center',
     created_at: 'center',
+    updated_at: 'center',
+    name: 'center',
     status: 'center',
 };
 

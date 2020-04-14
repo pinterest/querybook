@@ -11,23 +11,23 @@ import { generateFormattedDate } from 'lib/utils/datetime';
 import moment from 'moment';
 import { JobStatusIcon } from 'components/JobStatus/JobStatusIcon';
 
+import './TaskHistory.scss';
+
 const PAGE_SIZE = 30;
 
 const tableColumns: Array<keyof IJobStatusRecord> = [
     'id',
     'created_at',
     'updated_at',
-    'name',
     'status',
 ];
 const tableColumnWidths = {
     id: 80,
-    created_at: 280,
-    status: 120,
 };
 const tableColumnAligns: Record<string, TableAlign> = {
     id: 'center',
     created_at: 'center',
+    updated_at: 'center',
     status: 'center',
 };
 
@@ -83,9 +83,9 @@ export const TaskHistory: React.FunctionComponent<IProps> = ({ taskName }) => {
 
     const topDOM = (
         <>
-            <div className="JobStatus-controls horizontal-space-between">
+            <div className="TaskHistory-controls horizontal-space-between">
                 <div className="horizontal-space-between">
-                    <div className="JobStatus-switch">
+                    <div className="TaskHistory-switch">
                         <ToggleButton
                             checked={autoRefresh}
                             onChange={setAutoRefresh}
@@ -129,7 +129,7 @@ export const TaskHistory: React.FunctionComponent<IProps> = ({ taskName }) => {
     );
     console.log('data', data);
     return (
-        <div className="JobStatus">
+        <div className="TaskHistory">
             {topDOM}
             {tableDOM}
             {isLoading ? <Loading /> : null}

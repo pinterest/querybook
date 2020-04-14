@@ -6,6 +6,9 @@ import { Tabs } from 'ui/Tabs/Tabs';
 import { TaskEdit } from './TaskEdit';
 import { TaskHistory } from './TaskHistory';
 
+import './TaskDetail.scss';
+import { Button } from 'ui/Button/Button';
+
 interface IProps {
     task: IAdminTask;
 }
@@ -13,12 +16,19 @@ interface IProps {
 export const TaskDetail: React.FunctionComponent<IProps> = ({ task }) => {
     const [tab, setTab] = React.useState<'setting' | 'history'>('setting');
     // see details, run task, see history, edit task
-    console.log('task', task);
+
     return (
-        <div className="TaskDetail">
-            <div className="TaskDetail-top">
-                <div className="TaskDetail-name">{task.name}</div>
-                <div className="TaskDetail-task">{task.task}</div>
+        <div className="TaskDetail mv16 mh36">
+            <div className="TaskDetail-details mb24">
+                <div className="TaskDetail-top horizontal-space-between">
+                    <div className="TaskDetail-left">
+                        <div className="TaskDetail-name">{task.name}</div>
+                        <div className="TaskDetail-task mb16">{task.task}</div>
+                    </div>
+                    <div className="TaskDetail-right mt8">
+                        <Button title="Run Task" />
+                    </div>
+                </div>
                 <div className="TaskDetail-info horizontal-space-between">
                     <div className="TaskDetail-left">
                         <div className="TaskDetail-args">Args: {task.args}</div>
@@ -40,6 +50,7 @@ export const TaskDetail: React.FunctionComponent<IProps> = ({ task }) => {
             </div>
             <Tabs
                 selectedTabKey={tab}
+                className="mb16"
                 items={[
                     { name: 'Settings', key: 'setting' },
                     { name: 'History', key: 'history' },
