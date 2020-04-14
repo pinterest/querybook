@@ -26,7 +26,7 @@ services:
             - /opt/datahub/node_modules/
             # Make sure the build files don't leak back
             - /opt/datahub/dist/
-        env_file: bundled_variables.env
+            - $PWD/containers/bundled_datahub_config.yaml:/opt/datahub/datahub/config/datahub_config.yaml
         depends_on:
             mysql:
                 condition: service_healthy
@@ -46,7 +46,7 @@ services:
         volumes:
             # This is for code change via watcher
             - $PWD:/opt/datahub
-        env_file: bundled_variables.env
+            - $PWD/containers/bundled_datahub_config.yaml:/opt/datahub/datahub/config/datahub_config.yaml
         depends_on:
             mysql:
                 condition: service_healthy
@@ -69,7 +69,7 @@ services:
             - /opt/datahub/node_modules/
             # Make sure the build files don't leak back
             - /opt/datahub/dist/
-        env_file: bundled_variables.env
+            - $PWD/containers/bundled_datahub_config.yaml:/opt/datahub/datahub/config/datahub_config.yaml
         depends_on:
             mysql:
                 condition: service_healthy
@@ -116,10 +116,8 @@ services:
             interval: 30s
             timeout: 30s
             retries: 3
-        env_file: bundled_variables.env
     elasticsearch:
         image: docker.elastic.co/elasticsearch/elasticsearch:6.6.1
-        container_name: elasticsearch
         environment:
             - cluster.name=docker-cluster
             - bootstrap.memory_lock=true

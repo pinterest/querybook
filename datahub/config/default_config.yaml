@@ -1,0 +1,54 @@
+# --------------- Core Config ---------------
+# Security key for flask, which is required to for any encryption with flask
+FLASK_SECRET_KEY: ~
+# Url of the datahub site, used for auth callback and notifications
+PUBLIC_URL: ''
+
+# --------------- Celery ---------------
+REDIS_URL: ~
+
+# --------------- Search ---------------
+ELASTICSEARCH_HOST: ~
+ELASTICSEARCH_CONNECTION_TYPE: naive
+
+# --------------- Database ---------------
+DATABASE_CONN: ~
+DATABASE_POOL_SIZE: 10
+DATABASE_POOL_RECYCLE: 3600
+
+# --------------- Communications ---------------
+# Url to the email server
+EMAILER_CONN: localhost
+DATAHUB_SLACK_TOKEN: ~
+DATAHUB_EMAIL_ADDRESS: ~
+
+# --------------- Authentication ---------------
+# Settings for auth type. Currently support 'app.auth.password_auth' which
+# is authenticaton via username/password and 'app.auth.oauth_auth' which supports
+# authentication via oauth api
+AUTH_BACKEND: app.auth.password_auth
+
+# If OAuth, then the following values should be provided
+# Optional, if null then defaults to public url
+OAUTH_CLIENT_ID: ~
+OAUTH_CLIENT_SECRET: ~
+OAUTH_AUTHORIZATION_URL: ~
+OAUTH_TOKEN_URL: ~
+OAUTH_USER_PROFILE: ~
+
+# --------------- Result Store ---------------
+RESULT_STORE_TYPE: db
+
+# Following settings are relevant to s3
+S3_BUCKET_NAME: ~
+S3_PATH_PREFIX: ''
+S3_MIN_UPLOAD_CHUNK_SIZE: 10485760
+S3_MAX_UPLOAD_CHUNK_NUM: 10000
+S3_MAX_READ_SIZE: 131072
+S3_READ_SIZE: 5242880
+
+# Folowing settings are relevant to db store
+DB_MAX_UPLOAD_SIZE: 5242880
+
+# --------------- Logging ---------------
+LOG_LOCATION: ~

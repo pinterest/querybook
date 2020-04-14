@@ -8,9 +8,19 @@ sidebar_label: Infra Config
 
 <b>THIS GUIDE IS ONLY FOR INFRASTRUCTURE SETUP, PLEASE READ [GENERAL CONFIG](../admin_guide/general_config.md) FOR GENERIC CONFIGS</b>
 
-Eventhrough DataHub can be launched without any configuration, it is absolutely required for more powerful infrastructure/flexible customization. In this guide we will walkthrough different kind of environment settings you can set for DataHub. You can see an example of the environment file in this repo by checking out `.env.example`.
+Eventhrough DataHub can be launched without any configuration, it is absolutely required for more powerful infrastructure/flexible customization. In this guide we will walkthrough different kind of environment settings you can set for DataHub. You can see all possible options and default values in this repo by checking out `datahub/config/default_config.yaml`.
 
-When launching the DataHub docker, docker-compose will auto pick up all the relevant environment variables and add them DataHub's docker environment.
+### Making custom configs
+
+There are two ways to pass custom configs to DataHub. The first way is using a custom config yaml file. You can write out the file and then pass it through datahub using docker volumes. For example you can add this in the docker-compose file:
+```yaml
+    - path_to_my_custom_config.yaml:/opt/datahub/datahub/config/datahub_config.yaml
+```
+Otherwise you can also pass the environment variable directly when launching the docker image. The order of precedence for a config settings is as the follows:
+
+1. Environment variables (highest priority)
+2. datahub_config.yaml
+3. default_config.yaml (lowest priority)
 
 ## Infrastructure
 
@@ -64,8 +74,6 @@ The following settings are only relevant if you are using `s3`, note that all un
 You can also supply any custom authentication added in the auth plugin. See "Add Auth" and "Plugins" guide for more details.
 
 the next few configurations are only relevant if you are using OAuth based authentication:
-
-`OAUTH_CALLBACK_HOST` (optional): The web url to DataHub host after successful oauth authentication. If not provided, `PUBLIC_URL` will be used (See communication section for PUBLIC_URL).
 `OAUTH_CLIENT_ID`(**required**)
 `OAUTH_CLIENT_SECRET` (**required**)
 `OAUTH_AUTHORIZATION_URL` (**required**): Url for oauth redirection

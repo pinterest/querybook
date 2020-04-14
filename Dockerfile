@@ -1,4 +1,5 @@
 FROM python:3.7.4
+ARG PRODUCTION=true
 
 ## Install DataHub package requirements + NodeJS
 # Installing build-essential and python-dev for uwsgi
@@ -25,7 +26,12 @@ RUN npm i -g npm@6.1.0 \
 WORKDIR /opt/datahub
 
 COPY requirements requirements/
-RUN pip install -r requirements/base.txt && pip install -r requirements/prod.txt
+RUN pip install -r requirements/base.txt \
+    && if [ "${PRODUCTION}" = "true" ] ; then \
+    pip install -r requirements/prod.txt; \
+    else \
+    pip install -r requirements/dev.txt; \
+    fi
 
 COPY package.json yarn.lock ./
 RUN yarn install --frozen-lockfile --pure-lockfile && npm rebuild node-sass
@@ -34,10 +40,10 @@ RUN yarn install --frozen-lockfile --pure-lockfile && npm rebuild node-sass
 # Copy everything else
 COPY . .
 
-# Webpack
-RUN ./node_modules/.bin/webpack --env.NODE_ENV=production
+# Webpack if prod
+RUN if [ "${PRODUCTION}" = "true" ] ; then ./node_modules/.bin/webpack --env.NODE_ENV=production ; fi
 
 # Environment variables, override plugins path for customization
 ENV DATAHUB_PLUGIN=/opt/datahub/plugins
 ENV PYTHONPATH=/opt/datahub/datahub/server:/opt/datahub/plugins
-ENV production=true
+ENV production=${PRODUCTION}

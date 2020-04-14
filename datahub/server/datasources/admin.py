@@ -583,3 +583,13 @@ def get_admin_audit_logs(
         **filters, limit=limit, offset=offset, order_by="id", desc=True
     )
     return [log.to_dict() for log in logs]
+
+
+@register("/admin/datahub_config/", methods=["GET"])
+@admin_only
+def get_admin_config():
+    return {
+        key: getattr(DataHubSettings, key)
+        for key in dir(DataHubSettings)
+        if not key.startswith("__")
+    }

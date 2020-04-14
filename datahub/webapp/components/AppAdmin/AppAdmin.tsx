@@ -7,24 +7,24 @@ import { IStoreState } from 'redux/store/types';
 import { AdminEntity, IAdminEntity } from './types';
 import { IAdminEnvironment } from 'components/AppAdmin/AdminEnvironment';
 
+import { AdminAppEntitySidebar } from 'components/AdminAppSidebar/AdminAppEntitySidebar';
+import { AdminAppNavigator } from 'components/AdminAppSidebar/AdminAppNavigator';
+import { JobStatus } from 'components/JobStatus/JobStatus';
+import { useDataFetch } from 'hooks/useDataFetch';
+import { FourOhThree } from 'ui/ErrorPage/FourOhThree';
+import { Sidebar } from 'ui/Sidebar/Sidebar';
+import { Card } from 'ui/Card/Card';
+import { Icon } from 'ui/Icon/Icon';
+
 import { AdminAnnouncement } from './AdminAnnouncement';
 import { AdminQueryEngine, IAdminQueryEngine } from './AdminQueryEngine';
 import { AdminMetastore, IAdminMetastore } from './AdminMetastore';
 import { AdminUserRole } from './AdminUserRole';
 import { AdminEnvironment } from './AdminEnvironment';
 import { AdminApiAccessToken } from './AdminApiAccessToken';
-
-import { AdminAppEntitySidebar } from 'components/AdminAppSidebar/AdminAppEntitySidebar';
-import { AdminAppNavigator } from 'components/AdminAppSidebar/AdminAppNavigator';
-import { JobStatus } from 'components/JobStatus/JobStatus';
-
-import { FourOhThree } from 'ui/ErrorPage/FourOhThree';
-import { Sidebar } from 'ui/Sidebar/Sidebar';
+import { AdminConfig } from './AdminConfig';
 
 import './AppAdmin.scss';
-import { Card } from 'ui/Card/Card';
-import { Icon } from 'ui/Icon/Icon';
-import { useDataFetch } from 'hooks/useDataFetch';
 
 const ENTITY_SIDEBAR_WIDTH = 200;
 const NAV_SIDEBAR_WIDTH = 200;
@@ -250,20 +250,7 @@ export const AppAdmin: React.FunctionComponent = () => {
                     />
                     <Route
                         path="/admin/job_status/"
-                        render={() => (
-                            <div className="AdminJobStatus">
-                                <div className="AdminLanding-top">
-                                    <div className="AdminLanding-title">
-                                        Job Status
-                                    </div>
-                                    <div className="AdminLanding-desc">
-                                        Update job schedule at a metastore
-                                        setting or in a data doc.
-                                    </div>
-                                </div>
-                                <JobStatus />
-                            </div>
-                        )}
+                        component={AdminJobStatus}
                     />
                     <Route path="/admin/user_role/" component={AdminUserRole} />
                     <Route
@@ -274,6 +261,7 @@ export const AppAdmin: React.FunctionComponent = () => {
                         path="/admin/announcement/"
                         component={AdminAnnouncement}
                     />
+                    <Route path="/admin/config/" component={AdminConfig} />
                     <Route component={FourOhThree} />
                 </Switch>
             </div>
@@ -282,3 +270,15 @@ export const AppAdmin: React.FunctionComponent = () => {
         <FourOhThree />
     );
 };
+
+const AdminJobStatus: React.FC = () => (
+    <div className="AdminJobStatus">
+        <div className="AdminLanding-top">
+            <div className="AdminLanding-title">Job Status</div>
+            <div className="AdminLanding-desc">
+                Update job schedule at a metastore setting or in a data doc.
+            </div>
+        </div>
+        <JobStatus />
+    </div>
+);

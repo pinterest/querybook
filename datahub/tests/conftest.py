@@ -5,9 +5,6 @@ from unittest import mock
 import pytest
 from sqlalchemy import create_engine
 
-from app import db
-import models
-
 
 def pytest_configure(config):
     """We can use _called_from_test to disable some checks
@@ -24,23 +21,6 @@ def pytest_unconfigure(config):
     del sys._called_from_test
 
 
-@pytest.fixture(scope="session")
-def monkeysession(request):
-    from _pytest.monkeypatch import MonkeyPatch
-
-    mpatch = MonkeyPatch()
-    yield mpatch
-    mpatch.undo()
-
-
-@pytest.fixture(autouse=True, scope="session")
-def setup_env(monkeysession):
-    monkeysession.setenv("FLASK_SECRET_KEY", "test_string")
-    monkeysession.setenv("REDIS_URL", "redis://redis:6379/0")
-    monkeysession.setenv("ELASTICSEARCH_HOST", "elasticsearch:9200")
-    monkeysession.setenv("DATABASE_CONN", "sqlite://")
-
-
 @pytest.fixture
 def db_engine(monkeypatch):
     from env import DataHubSettings
@@ -50,10 +30,15 @@ def db_engine(monkeypatch):
     engine = create_engine(
         database_conn, pool_pre_ping=True, encoding="utf-8", echo=True
     )
+
+    import models
+
     models.Base.metadata.create_all(engine)
 
     def mock_get_db_engine(**kwargs):
         return engine
+
+    from app import db
 
     monkeypatch.setattr(db, "get_db_engine", mock_get_db_engine)
     monkeypatch.setattr(DataHubSettings, "DATABASE_CONN", database_conn, raising=True)

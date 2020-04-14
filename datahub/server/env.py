@@ -1,81 +1,78 @@
-# DO NOT IMPORT ANY CUSTOM MODULES HERE
+import sys
 import os
+from lib.config import get_config_value
+
+in_test = hasattr(sys, "_called_from_test")
+datahub_config = get_config_value("datahub_config", {})
+default_config = get_config_value("default_config", {})
 
 
 class MissingConfigException(Exception):
     pass
 
 
-def get_env(name, optional=False, default=None):
-    val = os.environ.get(name)
-
+def get_dh_config(name, optional=True):
+    found = True
+    if name in os.environ:
+        val = os.environ.get(name)
+    elif name in datahub_config:
+        val = datahub_config.get(name)
+    elif name in default_config:
+        val = default_config.get(name)
+        found = val is not None
+    else:
+        found = False
     # We treat empty string as None as well
-    if val is None or len(val) == 0:
-        if not optional:
-            raise MissingConfigException(
-                "{} is required to start the process.".format(name)
-            )
-        return default
+    if not found and not optional and not in_test:
+        raise MissingConfigException(
+            "{} is required to start the process.".format(name)
+        )
     return val
 
 
 class DataHubSettings(object):
-    PRODUCTION = get_env("production", optional=True, default=False) == "true"
+    # Core
+    PRODUCTION = os.environ.get("production", "false") == "true"
+    PUBLIC_URL = get_dh_config("PUBLIC_URL")
+    FLASK_SECRET_KEY = get_dh_config("FLASK_SECRET_KEY", optional=False)
 
-    # Security key for flask, which is required to for any encryption with flask
-    FLASK_SECRET_KEY = get_env("FLASK_SECRET_KEY", optional=True)
+    # Celery
+    REDIS_URL = get_dh_config("REDIS_URL", optional=False)
 
-    # Infrastructure
-    PUBLIC_URL = get_env("PUBLIC_URL", optional=True, default="")
-    REDIS_URL = get_env("REDIS_URL", optional=True)
-    ELASTICSEARCH_HOST = get_env("ELASTICSEARCH_HOST", optional=True)
-    DATABASE_CONN = get_env("DATABASE_CONN", optional=True)
-    EMAILER_CONN = get_env("EMAILER_CONN", optional=True, default="localhost")
+    # Search
+    ELASTICSEARCH_HOST = get_dh_config("ELASTICSEARCH_HOST", optional=False)
+    ELASTICSEARCH_CONNECTION_TYPE = get_dh_config("ELASTICSEARCH_CONNECTION_TYPE")
 
-    ELASTICSEARCH_CONNECTION_TYPE = get_env(
-        "ELASTICSEARCH_CONNECTION_TYPE", optional=True, default="naive"
-    )
+    # Database
+    DATABASE_CONN = get_dh_config("DATABASE_CONN", optional=False)
+    DATABASE_POOL_SIZE = int(get_dh_config("DATABASE_POOL_SIZE"))
+    DATABASE_POOL_RECYCLE = int(get_dh_config("DATABASE_POOL_RECYCLE"))
 
-    # DB Config
-    DATABASE_POOL_SIZE = int(get_env("DATABASE_POOL_SIZE", optional=True, default=10))
-    DATABASE_POOL_RECYCLE = int(
-        get_env("DATABASE_POOL_RECYCLE", optional=True, default=3600)
-    )
+    # Communications
+    EMAILER_CONN = get_dh_config("EMAILER_CONN")
+    DATAHUB_SLACK_TOKEN = get_dh_config("DATAHUB_SLACK_TOKEN")
+    DATAHUB_EMAIL_ADDRESS = get_dh_config("DATAHUB_EMAIL_ADDRESS")
 
-    AUTH_BACKEND = get_env(
-        "AUTH_BACKEND", optional=True, default="app.auth.password_auth"
-    )
-    is_not_oauth = AUTH_BACKEND != "app.auth.oauth_auth"
+    # Authentication
+    AUTH_BACKEND = get_dh_config("AUTH_BACKEND")
 
-    OAUTH_CALLBACK_HOST = get_env(
-        "OAUTH_CALLBACK_HOST",
-        optional=is_not_oauth or PUBLIC_URL is not None,
-        default=PUBLIC_URL,
-    )
-    OAUTH_CLIENT_ID = get_env("OAUTH_CLIENT_ID", optional=is_not_oauth)
-    OAUTH_CLIENT_SECRET = get_env("OAUTH_CLIENT_SECRET", optional=is_not_oauth)
-    OAUTH_AUTHORIZATION_URL = get_env("OAUTH_AUTHORIZATION_URL", optional=is_not_oauth)
-    OAUTH_TOKEN_URL = get_env("OAUTH_TOKEN_URL", optional=is_not_oauth)
-    OAUTH_USER_PROFILE = get_env("OAUTH_USER_PROFILE", optional=is_not_oauth)
+    OAUTH_CLIENT_ID = get_dh_config("OAUTH_CLIENT_ID")
+    OAUTH_CLIENT_SECRET = get_dh_config("OAUTH_CLIENT_SECRET")
+    OAUTH_AUTHORIZATION_URL = get_dh_config("OAUTH_AUTHORIZATION_URL")
+    OAUTH_TOKEN_URL = get_dh_config("OAUTH_TOKEN_URL")
+    OAUTH_USER_PROFILE = get_dh_config("OAUTH_USER_PROFILE")
 
-    DATAHUB_SLACK_TOKEN = get_env("DATAHUB_SLACK_TOKEN", optional=True)
-    DATAHUB_EMAIL_ADDRESS = get_env("DATAHUB_EMAIL_ADDRESS", optional=True)
+    # Result Store
+    RESULT_STORE_TYPE = get_dh_config("RESULT_STORE_TYPE")
 
-    RESULT_STORE_TYPE = get_env("RESULT_STORE_TYPE", optional=True, default="db")
+    S3_BUCKET_NAME = get_dh_config("S3_BUCKET_NAME")
+    S3_PATH_PREFIX = get_dh_config("S3_PATH_PREFIX")
+    S3_MIN_UPLOAD_CHUNK_SIZE = int(get_dh_config("S3_MIN_UPLOAD_CHUNK_SIZE"))
+    S3_MAX_UPLOAD_CHUNK_NUM = int(get_dh_config("S3_MAX_UPLOAD_CHUNK_NUM"))
+    S3_MAX_READ_SIZE = int(get_dh_config("S3_MAX_READ_SIZE"))
+    S3_READ_SIZE = int(get_dh_config("S3_READ_SIZE"))
 
-    S3_BUCKET_NAME = get_env("S3_BUCKET_NAME", optional=RESULT_STORE_TYPE != "s3")
-    S3_PATH_PREFIX = get_env("S3_PATH_PREFIX", optional=True, default="")
-    S3_MIN_UPLOAD_CHUNK_SIZE = int(
-        get_env("S3_MIN_UPLOAD_CHUNK_SIZE", optional=True, default=10485760)
-    )
-    S3_MAX_UPLOAD_CHUNK_NUM = int(
-        get_env("S3_MAX_UPLOAD_CHUNK_NUM", optional=True, default=10000)
-    )
-    S3_MAX_READ_SIZE = int(get_env("S3_MAX_READ_SIZE", optional=True, default=131072))
-    S3_READ_SIZE = int(get_env("S3_READ_SIZE", optional=True, default=5242880))
+    DB_MAX_UPLOAD_SIZE = int(get_dh_config("DB_MAX_UPLOAD_SIZE"))
 
-    DB_MAX_UPLOAD_SIZE = int(
-        get_env("DB_MAX_UPLOAD_SIZE", optional=True, default=5242880)
-    )
-
-    LOG_LOCATION = get_env("LOG_LOCATION", optional=True, default=None)
+    # Logging
+    LOG_LOCATION = get_dh_config("LOG_LOCATION")

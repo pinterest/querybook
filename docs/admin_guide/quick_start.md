@@ -7,7 +7,7 @@ sidebar_label: Quick Start
 After cloning the repo, run the following
 
 ```
-make bundled
+make
 ```
 
 That's it! 🎉

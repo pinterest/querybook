@@ -48,9 +48,7 @@ class OAuthLoginManager(object):
         return OAuth2Session(
             DataHubSettings.OAUTH_CLIENT_ID,
             scope="user",
-            redirect_uri="{}{}".format(
-                DataHubSettings.OAUTH_CALLBACK_HOST, OAUTH_CALLBACK_PATH
-            ),
+            redirect_uri="{}{}".format(DataHubSettings.PUBLIC_URL, OAUTH_CALLBACK_PATH),
         )
 
     def init_app(self, flask_app):

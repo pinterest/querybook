@@ -18,7 +18,7 @@ export const AdminAppEntitySidebar: React.FunctionComponent<IAdminAppEntitySideb
     selectedEntity,
     onSelectEntity,
 }) => {
-    const makeSidebarItem = (key, icon) => {
+    const makeSidebarItem = (key: AdminEntity, icon: string) => {
         return (
             <div
                 className="AdminAppEntitySidebar-item flex-row"
@@ -31,6 +31,15 @@ export const AdminAppEntitySidebar: React.FunctionComponent<IAdminAppEntitySideb
             </div>
         );
     };
+    const divider = (
+        <Divider
+            marginTop="8px"
+            marginBottom="8px"
+            height="1px"
+            color="transparent"
+        />
+    );
+
     return (
         <div className="AdminAppEntitySidebar">
             <div className="AdminAppEntitySidebar-main">
@@ -43,34 +52,15 @@ export const AdminAppEntitySidebar: React.FunctionComponent<IAdminAppEntitySideb
                 {makeSidebarItem('environment', 'box')}
                 {makeSidebarItem('metastore', 'database')}
                 {makeSidebarItem('query_engine', 'server')}
-                <Divider
-                    marginTop="8px"
-                    marginBottom="8px"
-                    height="1px"
-                    color="transparent"
-                />
+                {divider}
                 {makeSidebarItem('job_status', 'activity')}
-                <Divider
-                    marginTop="8px"
-                    marginBottom="8px"
-                    height="1px"
-                    color="transparent"
-                />
+                {divider}
                 {makeSidebarItem('user_role', 'users')}
                 {makeSidebarItem('api_access_token', 'key')}
-                <Divider
-                    marginTop="8px"
-                    marginBottom="8px"
-                    height="1px"
-                    color="transparent"
-                />
+
                 {makeSidebarItem('announcement', 'clipboard')}
-                <Divider
-                    marginTop="8px"
-                    marginBottom="8px"
-                    height="1px"
-                    color="transparent"
-                />
+                {divider}
+                {makeSidebarItem('config', 'settings')}
             </div>
             <div className="AdminAppEntitySidebar-bottom">
                 <div
