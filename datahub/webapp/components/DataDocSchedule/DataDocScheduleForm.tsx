@@ -1,28 +1,16 @@
 import React from 'react';
-import moment from 'moment';
-import { Formik, Field, Form } from 'formik';
-import Select from 'react-select';
+import { Formik, Form } from 'formik';
 import * as Yup from 'yup';
 
-import {
-    cronToRecurrence,
-    recurrenceToCron,
-    getMonthdayOptions,
-    getWeekdayOptions,
-    getRecurrenceLocalTimeString,
-} from 'lib/utils/cron';
-import { makeReactSelectStyle } from 'lib/utils/react-select';
+import { cronToRecurrence, recurrenceToCron } from 'lib/utils/cron';
 
 import { Button } from 'ui/Button/Button';
-import { Tabs } from 'ui/Tabs/Tabs';
-import { TimePicker } from 'ui/TimePicker/TimePicker';
+import { CronField } from 'ui/FormikField/CronField';
+import { FormField } from 'ui/Form/FormField';
+import { FormWrapper } from 'ui/Form/FormWrapper';
 import { InfoButton } from 'ui/Button/InfoButton';
 import { Title } from 'ui/Title/Title';
-import { FormField } from 'ui/Form/FormField';
 import { ToggleSwitchField } from 'ui/FormikField/ToggleSwitchField';
-import { FormWrapper } from 'ui/Form/FormWrapper';
-
-const recurrenceReactSelectStyle = makeReactSelectStyle(true);
 
 interface IDataDocScheduleFormProps {
     cron?: string;
@@ -88,103 +76,12 @@ export const DataDocScheduleForm: React.FunctionComponent<IDataDocScheduleFormPr
                 const formTitle = isCreateForm
                     ? 'Add new schedule'
                     : 'Edit schedule';
-                const hourSecondField = (
-                    <FormField
-                        label="Hour/Minute (UTC)"
-                        error={errors?.recurrence?.hour}
-                    >
-                        <div className="flex-row">
-                            <TimePicker
-                                allowEmpty={false}
-                                value={moment()
-                                    .hour(values.recurrence.hour)
-                                    .minute(values.recurrence.minute)}
-                                minuteStep={15}
-                                showSecond={false}
-                                format="H:mm"
-                                onChange={(value) => {
-                                    setFieldValue(
-                                        'recurrence.hour',
-                                        value.hour()
-                                    );
-                                    setFieldValue(
-                                        'recurrence.minute',
-                                        value.minute()
-                                    );
-                                }}
-                            />
-                            <div>
-                                &nbsp; Local:
-                                {getRecurrenceLocalTimeString(
-                                    values.recurrence
-                                )}
-                            </div>
-                        </div>
-                    </FormField>
-                );
-                const recurrenceTypeField = (
-                    <FormField label="Recurrence Type">
-                        <Field name="recurrence.recurrence">
-                            {({ field }) => (
-                                <Tabs
-                                    items={['daily', 'weekly', 'monthly']}
-                                    selectedTabKey={field.value}
-                                    onSelect={(key) => {
-                                        if (field.value !== key) {
-                                            setFieldValue('recurrence.on', []);
-                                        }
-                                        setFieldValue(
-                                            'recurrence.recurrence',
-                                            key
-                                        );
-                                    }}
-                                    pills
-                                />
-                            )}
-                        </Field>
-                    </FormField>
-                );
-
-                let datePickerField;
-                if (values.recurrence.recurrence !== 'daily') {
-                    const options =
-                        values.recurrence.recurrence === 'weekly'
-                            ? getWeekdayOptions()
-                            : getMonthdayOptions();
-                    datePickerField = (
-                        <FormField label="Run on the follow days">
-                            <Field
-                                name="recurrence.on"
-                                render={({ field }) => (
-                                    <Select
-                                        menuPortalTarget={document.body}
-                                        styles={recurrenceReactSelectStyle}
-                                        value={options.filter((option) =>
-                                            field.value.includes(option.value)
-                                        )}
-                                        options={options}
-                                        onChange={(value) =>
-                                            setFieldValue(
-                                                'recurrence.on',
-                                                (value as Array<{
-                                                    value: any;
-                                                }>).map((v) => v.value)
-                                            )
-                                        }
-                                        isMulti
-                                    />
-                                )}
-                            />
-                        </FormField>
-                    );
-                }
 
                 const enabledField = isCreateForm ? null : (
                     <FormField label="Enabled">
                         <ToggleSwitchField name="enabled" />
                     </FormField>
                 );
-
                 return (
                     <div className="DataDocScheduleForm">
                         <div className="horizontal-space-between">
@@ -201,9 +98,11 @@ export const DataDocScheduleForm: React.FunctionComponent<IDataDocScheduleFormPr
                         </div>
                         <FormWrapper minLabelWidth="180px" size={7}>
                             <Form>
-                                {hourSecondField}
-                                {recurrenceTypeField}
-                                {datePickerField}
+                                <CronField
+                                    recurrence={values.recurrence}
+                                    recurrenceError={errors?.recurrence}
+                                    setRecurrence={setFieldValue}
+                                />
                                 {enabledField}
                                 <br />
                                 <div className="flex-right">

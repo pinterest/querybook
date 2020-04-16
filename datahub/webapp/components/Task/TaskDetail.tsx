@@ -49,10 +49,10 @@ export const TaskDetail: React.FunctionComponent<IProps> = ({ task }) => {
             {tab === 'setting' ? (
                 <div className="TaskDetail-settings">
                     <TaskEdit
-                        taskName={task.name}
+                        taskId={task.id}
                         cron={task.cron}
                         enabled={task.enabled}
-                        options={task.options}
+                        taskOptions={task.options}
                     />
                 </div>
             ) : (

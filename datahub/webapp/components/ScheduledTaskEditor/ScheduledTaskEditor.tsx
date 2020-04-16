@@ -97,11 +97,12 @@ export const ScheduledTaskEditor: React.FunctionComponent<IProps> = ({
         <div className="ScheduledTaskEditor-schedule">
             <div className="ScheduledTaskEditor-schedule-top horizontal-space-between">
                 <div className="ScheduledTaskEditor-title">{schedule.name}</div>
-                <div className="ScheduledTaskEditor-schedule-button">
-                    <AsyncButton
+                <div className="ScheduledTaskEditor-run">
+                    <Button
+                        title="Run Task"
+                        icon="play"
+                        onClick={runSchedule}
                         type="inlineText"
-                        title={schedule.id ? 'Save Changes' : 'Create Schedule'}
-                        onClick={handleSaveSchedule}
                         borderless
                     />
                 </div>
