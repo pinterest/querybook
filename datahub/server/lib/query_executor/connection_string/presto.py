@@ -1,7 +1,7 @@
 from typing import NamedTuple, Optional
 import re
 
-from .common import split_hostport, get_parsed_variables, random_choice
+from .helpers.common import split_hostport, get_parsed_variables, random_choice
 
 # Parser for Presto JDBC string
 # Loosely based on https://prestodb.github.io/docs/current/installation/jdbc.html
