@@ -1,21 +1,22 @@
 import * as React from 'react';
 import moment from 'moment';
+import { useParams } from 'react-router-dom';
 
 import ds from 'lib/datasource';
-import history from 'lib/router-history';
 import { generateFormattedDate } from 'lib/utils/datetime';
+import history from 'lib/router-history';
+import { sendNotification } from 'lib/dataHubUI';
 import { useDataFetch } from 'hooks/useDataFetch';
+
+import { TaskEditor } from 'components/Task/TaskEditor';
+
+import { Modal } from 'ui/Modal/Modal';
+import { SearchBar } from 'ui/SearchBar/SearchBar';
 import { Table, TableAlign } from 'ui/Table/Table';
+import { Tabs } from 'ui/Tabs/Tabs';
 import { ToggleSwitch } from 'ui/ToggleSwitch/ToggleSwitch';
 
 import './AdminTask.scss';
-import { useParams } from 'react-router-dom';
-import { Modal } from 'ui/Modal/Modal';
-import { TaskDetail } from 'components/Task/TaskDetail';
-import { number } from 'yup';
-import { Tabs } from 'ui/Tabs/Tabs';
-import { SearchBar } from 'ui/SearchBar/SearchBar';
-import { ToggleButton } from 'ui/ToggleButton/ToggleButton';
 
 interface IProps {}
 
@@ -50,6 +51,7 @@ const tableColumnWidths = {
     id: 80,
     name: 200,
     task: 320,
+    cron: 160,
     last_run_at: 280,
     total_run_count: 160,
     kwargs: 160,
@@ -58,13 +60,14 @@ const tableColumnWidths = {
 };
 const tableColumnAligns: Record<string, TableAlign> = {
     id: 'center',
+    cron: 'center',
     last_run_at: 'center',
     total_run_count: 'center',
     enabled: 'center',
 };
 
 export const AdminTask: React.FunctionComponent<IProps> = () => {
-    const { id: taskId } = useParams();
+    const { id: detailTaskId } = useParams();
 
     const [type, setType] = React.useState<'prod' | 'user'>('prod');
     const [searchString, setSearchString] = React.useState<string>('');
@@ -74,14 +77,18 @@ export const AdminTask: React.FunctionComponent<IProps> = () => {
     >({
         url: '/admin/task/',
     });
+
     const handleChangeEnabled = React.useCallback(
         async (taskId: number, val: boolean) => {
-            const resp = await ds.update(`/admin/task/${taskId}/`, {
+            ds.update(`/schedule/${taskId}/`, {
                 enabled: val,
-            });
-            if (resp) {
+            }).then(({ data }) => {
+                sendNotification(
+                    val ? 'Schedule enabled!' : 'Schedule disabled!'
+                );
                 loadTaskList();
-            }
+                return data;
+            });
         },
         []
     );
@@ -137,7 +144,7 @@ export const AdminTask: React.FunctionComponent<IProps> = () => {
         []
     );
 
-    return taskId === undefined || taskList === null ? (
+    return detailTaskId === undefined || taskList === null ? (
         <div className="AdminTask">
             <div className="AdminLanding-top">
                 <div className="AdminLanding-title">Task</div>
@@ -180,9 +187,10 @@ export const AdminTask: React.FunctionComponent<IProps> = () => {
             </div>
         </div>
     ) : (
-        <Modal onHide={() => history.push('/admin/task/')} title="Task Details">
-            <TaskDetail
-                task={taskList.find((task) => task.id === Number(taskId))}
+        <Modal onHide={() => history.push('/admin/task/')} title="Task Editor">
+            <TaskEditor
+                task={taskList.find((task) => task.id === Number(detailTaskId))}
+                loadTaskList={loadTaskList}
             />
         </Modal>
     );

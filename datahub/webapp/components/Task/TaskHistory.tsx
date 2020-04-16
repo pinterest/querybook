@@ -123,9 +123,8 @@ export const TaskHistory: React.FunctionComponent<IProps> = ({ taskName }) => {
             />
         </div>
     );
-    console.log('data', data);
     return (
-        <div className="TaskHistory">
+        <div className="TaskHistory mv12">
             {topDOM}
             {tableDOM}
             {isLoading ? <Loading /> : null}

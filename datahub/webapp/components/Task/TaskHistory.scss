@@ -1,2 +1,10 @@
 .TaskHistory {
+    .ReactTable {
+        .rt-table {
+            .rt-th,
+            .rt-td {
+                padding: 8px 16px;
+            }
+        }
+    }
 }

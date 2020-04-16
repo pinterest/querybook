@@ -59,12 +59,10 @@ export const CronField: React.FunctionComponent<IProps> = ({
                         items={['daily', 'weekly', 'monthly']}
                         selectedTabKey={field.value}
                         onSelect={(key) => {
-                            console.log('change?', recurrence);
                             if (field.value !== key) {
                                 setRecurrence('recurrence.on', []);
                             }
                             setRecurrence('recurrence.recurrence', key);
-                            console.log('change?', recurrence);
                         }}
                         pills
                     />
