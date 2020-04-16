@@ -1,3 +1,4 @@
+import time
 import datetime
 from functools import wraps
 
@@ -56,3 +57,39 @@ def in_mem_memoized(ttl_secs=None):
         return wraps(func)(InMemoryMemoized(func, ttl_secs))
 
     return inner_dec
+
+
+def with_exception_retry(
+    max_retry=5, get_retry_delay=lambda x: x, exception_cls=Exception
+):
+    """Automatically retry the function with given exception class
+
+    Keyword Arguments:
+        max_retry {int} -- [Max number of retries] (default: {5})
+        get_retry_delay {(int): int} -- [Get the time delay between retry] (default: {lambdax:x})
+        exception_cls {[Exception]} -- [The exception class to catch] (default: {Exception})
+
+    Raises:
+        ex: [If max retry is reached then the exception will be raised]
+
+    Returns:
+        Any -- [Returns whatever the function is intended to return]
+    """
+
+    def wrapper(func):
+        @wraps(func)
+        def decorator(*args, **kwargs):
+            num_retry = 0
+            while True:
+                try:
+                    return func(*args, **kwargs)
+                except exception_cls as ex:
+                    if num_retry < max_retry:
+                        num_retry += 1
+                        time.sleep(get_retry_delay(num_retry))
+                    else:
+                        raise ex
+
+        return decorator
+
+    return wrapper
