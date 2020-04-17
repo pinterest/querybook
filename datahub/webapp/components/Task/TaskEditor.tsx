@@ -13,8 +13,10 @@ import { TaskHistory } from './TaskHistory';
 
 import { Button } from 'ui/Button/Button';
 import { CronField } from 'ui/FormikField/CronField';
+import { DebouncedInput } from 'ui/DebouncedInput/DebouncedInput';
 import { FormField } from 'ui/Form/FormField';
 import { FormWrapper } from 'ui/Form/FormWrapper';
+import { ToggleButton } from 'ui/ToggleButton/ToggleButton';
 import { ToggleSwitch } from 'ui/ToggleSwitch/ToggleSwitch';
 import { Tabs } from 'ui/Tabs/Tabs';
 
@@ -58,7 +60,9 @@ export const TaskEditor: React.FunctionComponent<IProps> = ({
 
     const handleTaskEditSubmit = React.useCallback(
         async (editedValues) => {
-            const editedCron = recurrenceToCron(editedValues.recurrence);
+            const editedCron = editedValues.isCron
+                ? editedValues.cron
+                : recurrenceToCron(editedValues.recurrence);
             ds.update(`/schedule/${task.id}/`, {
                 cron: editedCron,
                 enabled: editedValues.enabled,
@@ -76,7 +80,9 @@ export const TaskEditor: React.FunctionComponent<IProps> = ({
         if (tab === 'edit') {
             const recurrence = cronToRecurrence(task.cron || '0 0 * * *');
             const formValues = {
+                isCron: false,
                 recurrence,
+                cron: task.cron,
                 enabled: task.enabled,
                 taskOptions: task.options, // to be implemented
             };
@@ -113,22 +119,63 @@ export const TaskEditor: React.FunctionComponent<IProps> = ({
                                                 />
                                             </FormField>
                                             {values.enabled ? (
-                                                <FormField
-                                                    stacked
-                                                    label="Schedule"
-                                                >
-                                                    <CronField
-                                                        recurrence={
-                                                            values.recurrence
-                                                        }
-                                                        recurrenceError={
-                                                            errors?.recurrence
-                                                        }
-                                                        setRecurrence={
-                                                            setFieldValue
-                                                        }
-                                                    />
-                                                </FormField>
+                                                <div className="TaskEditor-schedule horizontal-space-between">
+                                                    {values.isCron ? (
+                                                        <FormField label="Cron Schedule">
+                                                            <DebouncedInput
+                                                                value={
+                                                                    values.cron
+                                                                }
+                                                                onChange={(
+                                                                    val
+                                                                ) => {
+                                                                    setFieldValue(
+                                                                        'recurrence',
+                                                                        val
+                                                                    );
+                                                                }}
+                                                                inputProps={{
+                                                                    className:
+                                                                        'input',
+                                                                }}
+                                                                flex
+                                                            />
+                                                        </FormField>
+                                                    ) : (
+                                                        <FormField
+                                                            stacked
+                                                            label="Schedule"
+                                                        >
+                                                            <CronField
+                                                                recurrence={
+                                                                    values.recurrence
+                                                                }
+                                                                recurrenceError={
+                                                                    errors?.recurrence
+                                                                }
+                                                                setRecurrence={
+                                                                    setFieldValue
+                                                                }
+                                                            />
+                                                        </FormField>
+                                                    )}
+                                                    <div className="TaskEditor-schedule-toggle mr16">
+                                                        <ToggleButton
+                                                            checked={
+                                                                values.isCron
+                                                            }
+                                                            onChange={(
+                                                                val: boolean
+                                                            ) => {
+                                                                setFieldValue(
+                                                                    'isCron',
+                                                                    val
+                                                                );
+                                                            }}
+                                                            title="Use Cron"
+                                                        />
+                                                    </div>
+                                                </div>
                                             ) : null}
                                         </div>
                                         <div className="TaskEditor-form-controls right-align mt16">
