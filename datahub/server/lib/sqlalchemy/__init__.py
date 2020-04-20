@@ -146,6 +146,7 @@ class CRUDMixin(SerializeMixin):
         return item
 
     @classmethod
+    @with_session
     def delete(cls, id, commit=True, session=None):
         item = cls.get(id=id, session=session)
         if not item:

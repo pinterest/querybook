@@ -1,6 +1,9 @@
 import sys
 import os
+import json
+
 from lib.config import get_config_value
+
 
 in_test = hasattr(sys, "_called_from_test")
 datahub_config = get_config_value("datahub_config", {})
@@ -65,14 +68,16 @@ class DataHubSettings(object):
     # Result Store
     RESULT_STORE_TYPE = get_dh_config("RESULT_STORE_TYPE")
 
-    S3_BUCKET_NAME = get_dh_config("S3_BUCKET_NAME")
-    S3_PATH_PREFIX = get_dh_config("S3_PATH_PREFIX")
-    S3_MIN_UPLOAD_CHUNK_SIZE = int(get_dh_config("S3_MIN_UPLOAD_CHUNK_SIZE"))
-    S3_MAX_UPLOAD_CHUNK_NUM = int(get_dh_config("S3_MAX_UPLOAD_CHUNK_NUM"))
-    S3_MAX_READ_SIZE = int(get_dh_config("S3_MAX_READ_SIZE"))
-    S3_READ_SIZE = int(get_dh_config("S3_READ_SIZE"))
+    STORE_BUCKET_NAME = get_dh_config("STORE_BUCKET_NAME")
+    STORE_PATH_PREFIX = get_dh_config("STORE_PATH_PREFIX")
+    STORE_MIN_UPLOAD_CHUNK_SIZE = int(get_dh_config("STORE_MIN_UPLOAD_CHUNK_SIZE"))
+    STORE_MAX_UPLOAD_CHUNK_NUM = int(get_dh_config("STORE_MAX_UPLOAD_CHUNK_NUM"))
+    STORE_MAX_READ_SIZE = int(get_dh_config("STORE_MAX_READ_SIZE"))
+    STORE_READ_SIZE = int(get_dh_config("STORE_READ_SIZE"))
 
     DB_MAX_UPLOAD_SIZE = int(get_dh_config("DB_MAX_UPLOAD_SIZE"))
+
+    GOOGLE_CREDS = json.loads(get_dh_config("GOOGLE_CREDS") or "null")
 
     # Logging
     LOG_LOCATION = get_dh_config("LOG_LOCATION")

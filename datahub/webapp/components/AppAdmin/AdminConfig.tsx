@@ -9,23 +9,24 @@ export const AdminConfig = ({}) => {
     });
     const [filterStr, setFilterStr] = useState('');
 
-    const configArr = useMemo(
+    const processedConfigs = useMemo(
         () =>
             datahubConfig
-                ? Object.entries(datahubConfig)
-                      .filter(
-                          ([key, _]) =>
-                              !filterStr ||
-                              key
-                                  .toLowerCase()
-                                  .includes(filterStr.toLowerCase())
-                      )
-                      .map(([key, value]) => ({
-                          key,
-                          value,
-                      }))
+                ? Object.entries(datahubConfig).map(([key, value]) => ({
+                      key,
+                      value: JSON.stringify(value ?? 'null'),
+                  }))
                 : [],
-        [datahubConfig, filterStr]
+        [datahubConfig]
+    );
+    const filteredConfigs = useMemo(
+        () =>
+            processedConfigs.filter(
+                (config) =>
+                    !filterStr ||
+                    config.key.toLowerCase().includes(filterStr.toLowerCase())
+            ),
+        [processedConfigs, filterStr]
     );
 
     let contentDOM = null;
@@ -40,7 +41,7 @@ export const AdminConfig = ({}) => {
                 />
                 <Table
                     colNameToWidths={{ key: 300 }}
-                    rows={configArr}
+                    rows={filteredConfigs}
                     cols={['key', 'value']}
                     showAllRows={true}
                 />

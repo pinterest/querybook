@@ -53,12 +53,12 @@ The following settings are only relevant if you are using `db`, note that all un
 
 The following settings are only relevant if you are using `s3`, note that all units are in bytes:
 
-`S3_BUCKET_NAME` (optional): S3 Bucket name
-`S3_PATH_PREFIX` (optional, defaults to **''**): S3 key prefix for DataHub's stored results/logs
-`S3_MIN_UPLOAD_CHUNK_SIZE` (optional, defaults to **10485760**): The chunk size when uploading to S3
-`S3_MAX_UPLOAD_CHUNK_NUM` (optional, defaults to **10000**): The number of chunks that can be uploaded to S3, you can determine the maximum upload size by multiplying this with chunk size.
-`S3_READ_SIZE` (optional, defaults to 131072): The size of chunk when reading from s3.
-`S3_MAX_READ_SIZE` (optional, defaults to 5242880): The max size of s3 file DataHub will read for users to view.
+`STORE_BUCKET_NAME` (optional): S3 Bucket name
+`STORE_PATH_PREFIX` (optional, defaults to **''**): S3 key prefix for DataHub's stored results/logs
+`STORE_MIN_UPLOAD_CHUNK_SIZE` (optional, defaults to **10485760**): The chunk size when uploading to S3
+`STORE_MAX_UPLOAD_CHUNK_NUM` (optional, defaults to **10000**): The number of chunks that can be uploaded to S3, you can determine the maximum upload size by multiplying this with chunk size.
+`STORE_READ_SIZE` (optional, defaults to 131072): The size of chunk when reading from s3.
+`STORE_MAX_READ_SIZE` (optional, defaults to 5242880): The max size of s3 file DataHub will read for users to view.
 
 ### Logging
 

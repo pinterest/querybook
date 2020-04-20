@@ -35,7 +35,7 @@ class SqlAlchemyQueryExecutor(QueryExecutorBaseClass):
         return error_type, error_str, error_extracted
 
 
-class MysqlQueryExecution(SqlAlchemyQueryExecutor):
+class MysqlQueryExecutor(SqlAlchemyQueryExecutor):
     @classmethod
     def EXECUTOR_NAME(cls):
         return "sqlalchemy"
@@ -45,7 +45,7 @@ class MysqlQueryExecution(SqlAlchemyQueryExecutor):
         return "mysql"
 
 
-class DruidQueryExecution(SqlAlchemyQueryExecutor):
+class DruidQueryExecutor(SqlAlchemyQueryExecutor):
     @classmethod
     def EXECUTOR_NAME(cls):
         return "druid-sqlalchemy"

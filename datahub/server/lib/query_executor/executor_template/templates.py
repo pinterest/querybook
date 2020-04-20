@@ -49,3 +49,9 @@ sqlalchemy_template = StructFormField(
 </p>""",
     )
 )
+
+bigquery_template = StructFormField(
+    google_credentials_json=FormField(
+        helper="The JSON string used to log in as service account. If not provided then GOOGLE_CREDS from settings will be used.",
+    )
+)
