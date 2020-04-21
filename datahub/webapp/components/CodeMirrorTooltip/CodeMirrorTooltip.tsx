@@ -1,5 +1,5 @@
 import { useSelector, useDispatch } from 'react-redux';
-import React from 'react';
+import React, { useEffect } from 'react';
 import { IStoreState } from 'redux/store/types';
 import { IFunctionDescription } from 'const/metastore';
 import * as dataSourcesActions from 'redux/dataSources/action';
@@ -8,6 +8,7 @@ import { FunctionDocumentationTooltip } from './FunctionDocumentationTooltip';
 import { TableTooltip } from './TableTooltip';
 
 import './CodeMirrorTooltip.scss';
+import { useWindowEvent } from 'hooks/useWindowEvent';
 
 export interface ICodeMirrorTooltipProps {
     tableId?: number;
@@ -45,26 +46,17 @@ export const CodeMirrorTooltip: React.FunctionComponent<ICodeMirrorTooltipProps>
 
     const dispatch = useDispatch();
 
-    const getTable = () => {
-        return dispatch(dataSourcesActions.fetchDataTableIfNeeded(tableId));
-    };
+    useEffect(() => {
+        dispatch(dataSourcesActions.fetchDataTableIfNeeded(tableId));
+    }, []);
 
-    const onKeyDown = (evt) => {
+    useWindowEvent('keydown', (evt: KeyboardEvent) => {
         const specialKeyPress =
             evt.shiftKey || evt.metaKey || evt.ctrlKey || evt.altKey;
         if (!specialKeyPress) {
             hide();
         }
-    };
-
-    React.useEffect(() => {
-        getTable();
-        window.addEventListener('keydown', onKeyDown, true);
-
-        return () => {
-            window.removeEventListener('keydown', onKeyDown, true);
-        };
-    }, []);
+    });
 
     let contentDOM = null;
     if (tableId) {

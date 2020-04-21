@@ -2,7 +2,7 @@ import { useEffect } from 'react';
 
 export const useWindowEvent = (
     eventName: string,
-    func: (...args: any[]) => any,
+    func: EventListenerOrEventListenerObject,
     useCapture = false
 ) => {
     useEffect(() => {

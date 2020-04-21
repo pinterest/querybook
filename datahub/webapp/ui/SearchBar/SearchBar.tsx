@@ -1,5 +1,7 @@
 import * as classNames from 'classnames';
 import React from 'react';
+
+import { matchKeyPress } from 'lib/utils/keyboard';
 import { DebouncedInput } from 'ui/DebouncedInput/DebouncedInput';
 import { Button } from 'ui/Button/Button';
 
@@ -58,8 +60,7 @@ export const SearchBar: React.FunctionComponent<ISearchBarProps> = ({
     };
 
     const onKeyDown = (event: React.KeyboardEvent) => {
-        const keyEnterCode = 13;
-        if (event.keyCode === keyEnterCode) {
+        if (matchKeyPress(event, 'Enter')) {
             onSearchRequest();
         }
     };

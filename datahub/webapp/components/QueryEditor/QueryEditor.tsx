@@ -20,6 +20,7 @@ import {
 } from 'lib/sql-helper/sql-lexer';
 import { format } from 'lib/sql-helper/sql-formatter';
 import { analyzeCode, getSqlLintAnnotations } from 'lib/web-worker';
+import { navigateWithinEnv } from 'lib/utils/query-string';
 
 import { FunctionDocumentationCollection } from 'const/metastore';
 
@@ -28,7 +29,6 @@ import { Button } from 'ui/Button/Button';
 
 import './QueryEditor.scss';
 import { ICodeMirrorTooltipProps } from 'components/CodeMirrorTooltip/CodeMirrorTooltip';
-import { navigateWithinEnv } from 'lib/utils/query-string';
 
 // Checks if token is in table, returns the table if found, false otherwise
 async function isTokenInTable(

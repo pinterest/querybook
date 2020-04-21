@@ -15,6 +15,7 @@ import { sendConfirm, sendNotification } from 'lib/dataHubUI';
 import { scrollToCell } from 'lib/data-doc/data-doc-utils';
 import { sanitizeUrlTitle } from 'lib/utils';
 import { getQueryString } from 'lib/utils/query-string';
+import { matchKeyPress } from 'lib/utils/keyboard';
 
 import {
     closeDataDoc,
@@ -42,7 +43,6 @@ import { DataDocError } from './DataDocError';
 
 import './DataDoc.scss';
 import { DataDocContentContainer } from './DataDocContentContainer';
-import { createQueryExecution } from 'redux/queryExecutions/action';
 
 const loadingHints: string[] = require('config/loading_hints.yaml').hints;
 
@@ -276,12 +276,9 @@ class DataDocComponent extends React.Component<IProps, IState> {
     public onKeyDown = (event: KeyboardEvent) => {
         let stopEvent = false;
 
-        const keySCode = 83;
-
-        const cmdKey = event.metaKey || event.ctrlKey;
         const repeat = event.repeat;
 
-        if (event.keyCode === keySCode && cmdKey && !repeat) {
+        if (matchKeyPress(event, 'Cmd-S') && !repeat) {
             stopEvent = true;
             this.props.forceSaveDataDoc(this.props.docId);
         }

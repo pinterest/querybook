@@ -69,3 +69,7 @@ export function convertRawToContentState(raw: string): DraftJs.ContentState {
         return contentState;
     }
 }
+
+export type RichTextEditorCommand =
+    | DraftJs.DraftEditorCommand
+    | 'show-link-input';
