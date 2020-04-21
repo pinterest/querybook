@@ -1,10 +1,13 @@
 import React from 'react';
 import * as ReactDOM from 'react-dom';
+
+import { matchKeyPress } from 'lib/utils/keyboard';
+import { useWindowEvent } from 'hooks/useWindowEvent';
+
 import { IModalProps } from './types';
 import { FullScreenModal } from './FullScreenModal';
 import { StandardModal } from './StandardModal';
 import './Modal.scss';
-import { useWindowEvent } from 'hooks/useWindowEvent';
 
 // const modalRoot = document.getElementById('modal-root');
 
@@ -32,8 +35,7 @@ export const Modal: React.FunctionComponent<IModalProps> = ({
 
     const onEscapeKeyDown = React.useCallback(
         (evt) => {
-            const key = evt.which || evt.keyCode;
-            if (key === 27 && onHide) {
+            if (matchKeyPress(evt, 'ESC') && onHide) {
                 onHide();
             }
         },

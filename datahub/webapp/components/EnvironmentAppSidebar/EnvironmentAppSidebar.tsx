@@ -17,6 +17,7 @@ import './EnvironmentAppSidebar.scss';
 import { EnvironmentDropdownButton } from './EnvironmentDropdownButton';
 import { BoardNavigator } from 'components/BoardNavigator/BoardNavigator';
 import { useWindowEvent } from 'hooks/useWindowEvent';
+import { matchKeyPress } from 'lib/utils/keyboard';
 
 const SIDEBAR_WIDTH = 320;
 
@@ -46,8 +47,7 @@ export const EnvironmentAppSidebar: React.FunctionComponent = () => {
 
     const onCollapseKeyDown = React.useCallback(
         (evt) => {
-            const key = evt.which || evt.keyCode;
-            if (evt.metaKey && key === 66) {
+            if (matchKeyPress(evt, 'Cmd-B')) {
                 // command + B
                 setCollapsed(!collapsed);
                 evt.stopPropagation();

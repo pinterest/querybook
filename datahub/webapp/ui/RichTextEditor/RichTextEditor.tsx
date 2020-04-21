@@ -8,8 +8,10 @@ import {
     LinkDecorator,
     isSoftNewLineEvent,
     isListBlock,
+    RichTextEditorCommand,
 } from 'lib/draft-js-utils';
 import * as Utils from 'lib/utils';
+import { matchKeyPress } from 'lib/utils/keyboard';
 
 import { RichTextEditorToolBar } from 'ui/RichTextEditorToolBar/RichTextEditorToolBar';
 import './RichTextEditor.scss';
@@ -323,29 +325,54 @@ export class RichTextEditor extends React.Component<
     }
 
     @bind
-    public keyBindingFn(e: React.KeyboardEvent) {
-        if (
-            (e.keyCode === 8 || e.keyCode === 38 || e.keyCode === 40) &&
-            this.props.onKeyDown
-        ) {
+    public keyBindingFn(e: React.KeyboardEvent): RichTextEditorCommand {
+        let handled = true;
+        let command: RichTextEditorCommand = null;
+        if (matchKeyPress(e, 'Delete', 'Up', 'Down') && this.props.onKeyDown) {
             // Delete, Up arrow, down arrow
             this.props.onKeyDown(e, this.state.editorState);
-        } else if (e.keyCode === 9) {
+        } else if (matchKeyPress(e, 'Tab')) {
             this.onTab(e);
+        } else if (matchKeyPress(e, 'Cmd-Shift-X')) {
+            // Cmd+Shift+X
+            command = 'strikethrough';
+        } else if (matchKeyPress(e, 'Cmd-K')) {
+            command = 'show-link-input';
+        } else {
+            command = DraftJs.getDefaultKeyBinding(e);
+            handled = !!command;
         }
-        return DraftJs.getDefaultKeyBinding(e);
+
+        if (handled || command) {
+            e.stopPropagation();
+        }
+        return command;
     }
 
     @bind
-    public handleKeyCommand(command: string, editorState: DraftJs.EditorState) {
-        const newState = DraftJs.RichUtils.handleKeyCommand(
-            editorState,
-            command
-        );
-        if (newState) {
-            this.onChange(newState);
-            return 'handled';
+    public handleKeyCommand(
+        command: RichTextEditorCommand,
+        editorState: DraftJs.EditorState
+    ) {
+        switch (command) {
+            case 'show-link-input': {
+                if (!editorState.getSelection().isCollapsed()) {
+                    this.toolBarRef.current.showLinkInput();
+                    return 'handled';
+                }
+            }
+            default: {
+                const newState = DraftJs.RichUtils.handleKeyCommand(
+                    editorState,
+                    command
+                );
+                if (newState) {
+                    this.onChange(newState);
+                    return 'handled';
+                }
+            }
         }
+
         return 'not-handled';
     }
 

@@ -67,14 +67,16 @@ export class RichTextEditorToolBar extends React.PureComponent<
         mouseEvent.preventDefault();
         mouseEvent.stopPropagation();
 
-        // console.log('Show link input');
+        this.showLinkInput();
+    }
 
+    @bind
+    public showLinkInput() {
         this.setState({ showLinkInput: true });
     }
 
     @bind
     public hideLinkInput() {
-        // console.log('Hide link input');
         this.setState({ showLinkInput: false });
     }
 

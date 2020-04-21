@@ -1,4 +1,5 @@
 import React from 'react';
+import { matchKeyPress } from 'lib/utils/keyboard';
 
 export const LinkInput: React.FunctionComponent<{
     onDismiss: () => any;
@@ -27,15 +28,13 @@ export const LinkInput: React.FunctionComponent<{
                 ref={inputRef}
                 placeholder="Enter url here..."
                 onKeyDown={(event) => {
-                    const enterKeyCode = 13;
-                    const exitKeyCode = 27;
-                    if (event.keyCode === enterKeyCode) {
+                    if (matchKeyPress(event, 'Enter')) {
                         const inputEl = inputRef.current;
                         const url = inputEl.value;
 
                         onSubmit(url);
                         onDismiss();
-                    } else if (event.keyCode === exitKeyCode) {
+                    } else if (matchKeyPress(event, 'Esc')) {
                         onDismiss();
                     }
                 }}

@@ -4,10 +4,10 @@ import React from 'react';
 
 import { useSelector, useDispatch } from 'react-redux';
 
+import { matchKeyPress } from 'lib/utils/keyboard';
 import { IStatementLog } from 'redux/queryExecutions/types';
 import { fetchLog } from 'redux/queryExecutions/action';
 import { IStoreState, Dispatch } from 'redux/store/types';
-
 import { Message } from 'ui/Message/Message';
 import { Loader } from 'ui/Loader/Loader';
 
@@ -115,7 +115,7 @@ export const StatementLog: React.FunctionComponent<IStatementLogProps> = ({
                 'is-fullscreen': fullScreen,
             })}
             onKeyDown={(event) => {
-                if (event.keyCode === 27 && fullScreen) {
+                if (matchKeyPress(event, 'ESC') && fullScreen) {
                     setFullScreen(false);
                 }
             }}
