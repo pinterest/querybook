@@ -4,10 +4,10 @@ from models.schedule import TaskSchedule
 
 
 @with_session
-def get_all_task(include_disabled=True, session=None):
+def get_all_task(enabled=None, session=None):
     query = session.query(TaskSchedule)
 
-    if not include_disabled:
-        query = query.filter_by(enabled=True)
+    if enabled is not None:
+        query = query.filter_by(enabled=enabled)
 
     return query.all()

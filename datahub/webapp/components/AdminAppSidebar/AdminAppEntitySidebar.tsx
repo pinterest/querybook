@@ -53,12 +53,13 @@ export const AdminAppEntitySidebar: React.FunctionComponent<IAdminAppEntitySideb
                 {makeSidebarItem('metastore', 'database')}
                 {makeSidebarItem('query_engine', 'server')}
                 {divider}
-                {makeSidebarItem('task', 'activity')}
+                {makeSidebarItem('task', 'clipboard')}
+                {makeSidebarItem('task_status', 'activity')}
                 {divider}
                 {makeSidebarItem('user_role', 'users')}
                 {makeSidebarItem('api_access_token', 'key')}
 
-                {makeSidebarItem('announcement', 'clipboard')}
+                {makeSidebarItem('announcement', 'volume-2')}
                 {divider}
                 {makeSidebarItem('config', 'settings')}
             </div>

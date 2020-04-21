@@ -144,7 +144,7 @@ export const AdminTask: React.FunctionComponent<IProps> = () => {
         []
     );
 
-    return detailTaskId === undefined || taskList === null ? (
+    return (
         <div className="AdminTask">
             <div className="AdminLanding-top">
                 <div className="AdminLanding-title">Task</div>
@@ -185,13 +185,19 @@ export const AdminTask: React.FunctionComponent<IProps> = () => {
                     />
                 ) : null}
             </div>
+            {detailTaskId == null || taskList === null ? null : (
+                <Modal
+                    onHide={() => history.push('/admin/task/')}
+                    title="Task Editor"
+                >
+                    <TaskEditor
+                        task={taskList.find(
+                            (task) => task.id === Number(detailTaskId)
+                        )}
+                        onTaskUpdate={loadTaskList}
+                    />
+                </Modal>
+            )}
         </div>
-    ) : (
-        <Modal onHide={() => history.push('/admin/task/')} title="Task Editor">
-            <TaskEditor
-                task={taskList.find((task) => task.id === Number(detailTaskId))}
-                loadTaskList={loadTaskList}
-            />
-        </Modal>
     );
 };

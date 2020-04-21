@@ -12,4 +12,16 @@
             min-width: 120px;
         }
     }
+    .TaskEditor-content {
+        .TaskStatus {
+            .ReactTable {
+                .rt-table {
+                    .rt-th,
+                    .rt-td {
+                        padding: 4px 16px;
+                    }
+                }
+            }
+        }
+    }
 }

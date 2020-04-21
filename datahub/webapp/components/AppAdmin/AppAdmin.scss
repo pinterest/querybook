@@ -143,13 +143,20 @@
             }
         }
 
-        .AdminJobStatus {
-            .JobStatus {
+        .AdminTaskStatus {
+            .TaskStatus {
                 margin: 48px 0px 82px;
             }
         }
     }
+
     .SingleCRUD-invalid-msg {
         margin-left: 8px;
+    }
+
+    .Tabs {
+        li {
+            min-width: 120px;
+        }
     }
 }

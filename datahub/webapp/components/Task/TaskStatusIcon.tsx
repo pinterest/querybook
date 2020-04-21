@@ -46,7 +46,7 @@ interface IStatusProps {
     type: TaskRunStatus;
 }
 
-export const JobStatusIcon: React.FunctionComponent<IStatusProps> = ({
+export const TaskStatusIcon: React.FunctionComponent<IStatusProps> = ({
     type = 0,
 }) => {
     const status = statusTypes[type];

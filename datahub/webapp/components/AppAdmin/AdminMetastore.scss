@@ -18,7 +18,11 @@
         margin-bottom: 8px;
     }
     .AdminMetastore-TaskEditor {
-        background-color: var(--light-bg-color);
-        border-radius: var(--border-radius);
+        .TaskEditor {
+            background-color: var(--light-bg-color);
+            border-radius: var(--border-radius);
+            padding-top: 4px;
+            padding-bottom: 4px;
+        }
     }
 }

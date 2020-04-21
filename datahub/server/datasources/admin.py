@@ -405,16 +405,16 @@ def get_task_run_records(
 
 
 @register(
-    "/admin/schedule/record/history/", methods=["GET"],
+    "/admin/schedule/<int:id>/record/", methods=["GET"],
 )
 @admin_only
 def get_task_run_records_by_name(
-    name, offset=0, limit=10, hide_successful_jobs=False, task_type=None
+    id, name, offset=0, limit=10, hide_successful_jobs=False, task_type=None
 ):
     api_assert(limit < 1000, "You are requesting too much data")
 
     with DBSession() as session:
-        tasks, _ = schedule_logic.get_task_run_record_run_by_name(
+        records, _ = schedule_logic.get_task_run_record_run_by_name(
             name=name,
             offset=offset,
             limit=limit,
@@ -423,10 +423,10 @@ def get_task_run_records_by_name(
         )
 
         data = []
-        for task in tasks:
-            task_dict = task.to_dict()
-            task_dict["task_type"] = task.task.task_type
-            data.append(task_dict)
+        for record in records:
+            record_dict = record.to_dict()
+            record_dict["task_type"] = record.task.task_type
+            data.append(record_dict)
 
         return data
 

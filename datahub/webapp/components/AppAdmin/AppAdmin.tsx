@@ -10,7 +10,7 @@ import { useDataFetch } from 'hooks/useDataFetch';
 import { AdminAppEntitySidebar } from 'components/AdminAppSidebar/AdminAppEntitySidebar';
 import { AdminAppNavigator } from 'components/AdminAppSidebar/AdminAppNavigator';
 import { IAdminEnvironment } from 'components/AppAdmin/AdminEnvironment';
-import { JobStatus } from 'components/JobStatus/JobStatus';
+import { TaskStatus } from 'components/Task/TaskStatus';
 
 import { AdminAnnouncement } from './AdminAnnouncement';
 import { AdminApiAccessToken } from './AdminApiAccessToken';
@@ -250,6 +250,10 @@ export const AppAdmin: React.FunctionComponent = () => {
                         )}
                     />
                     <Route path="/admin/task/:id?" component={AdminTask} />
+                    <Route
+                        path="/admin/task_status/"
+                        component={AdminTaskStatus}
+                    />
                     <Route path="/admin/user_role/" component={AdminUserRole} />
                     <Route
                         path="/admin/api_access_token/"
@@ -269,14 +273,14 @@ export const AppAdmin: React.FunctionComponent = () => {
     );
 };
 
-const AdminJobStatus: React.FC = () => (
-    <div className="AdminJobStatus">
+const AdminTaskStatus: React.FC = () => (
+    <div className="AdminTaskStatus">
         <div className="AdminLanding-top">
             <div className="AdminLanding-title">Job Status</div>
             <div className="AdminLanding-desc">
                 Update job schedule at a metastore setting or in a data doc.
             </div>
         </div>
-        <JobStatus />
+        <TaskStatus />
     </div>
 );

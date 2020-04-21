@@ -72,14 +72,14 @@ export const AdminMetastore: React.FunctionComponent<IProps> = ({
 
     const {
         data: metastoreLoaders,
-    }: { data: IMetastoreLoader[] } = useDataFetch({
+    }: { data: IMetastoreLoader[] } = useDataFetch<IMetastoreLoader[]>({
         url: '/admin/query_metastore_loader/',
     });
 
     const {
         data: metastoreUpdateSchedule,
         forceFetch: loadMetastoreUpdateSchedule,
-    }: { data: IAdminTask; forceFetch: () => void } = useDataFetch({
+    }: { data: IAdminTask; forceFetch: () => void } = useDataFetch<IAdminTask>({
         url: `/schedule/name/update_metastore_${metastoreId}/`,
     });
 
@@ -129,19 +129,6 @@ export const AdminMetastore: React.FunctionComponent<IProps> = ({
 
         return data as IAdminMetastore;
     }, []);
-
-    const createSchedule = React.useCallback(async () => {
-        const { data } = await ds.save(`/schedule/`, {
-            cron: '0 0 * * *',
-            schedule_name: `update_metastore_${metastoreId}`,
-            task_name: 'tasks.update_metastore.update_metastore',
-            task_type: 'prod',
-            enabled: true,
-            args: [Number(metastoreId)],
-        });
-        loadMetastoreUpdateSchedule();
-        return data as ITaskSchedule;
-    }, [metastoreId]);
 
     const itemValidator = React.useCallback(
         (metastore: IAdminMetastore) => {
@@ -368,22 +355,24 @@ export const AdminMetastore: React.FunctionComponent<IProps> = ({
                                     <div className="dh-hr" />
                                 </div>
                                 <div className="AdminForm-section-content">
-                                    {metastoreUpdateSchedule ? (
-                                        <div className="AdminMetastore-TaskEditor pv8">
-                                            <TaskEditor
-                                                task={metastoreUpdateSchedule}
-                                            />
-                                        </div>
-                                    ) : (
-                                        <div className="AdminMetastore-schedule-create flex-center">
-                                            <Button
-                                                title="Create Schedule"
-                                                onClick={createSchedule}
-                                                type="inlineText"
-                                                borderless
-                                            />
-                                        </div>
-                                    )}
+                                    <div className="AdminMetastore-TaskEditor">
+                                        <TaskEditor
+                                            task={
+                                                metastoreUpdateSchedule || {
+                                                    cron: '0 0 * * *',
+                                                    name: `update_metastore_${metastoreId}`,
+                                                    task:
+                                                        'tasks.update_metastore.update_metastore',
+                                                    task_type: 'prod',
+                                                    enabled: true,
+                                                    args: [Number(metastoreId)],
+                                                }
+                                            }
+                                            onTaskCreate={
+                                                loadMetastoreUpdateSchedule
+                                            }
+                                        />
+                                    </div>
                                 </div>
                             </div>
                         )}

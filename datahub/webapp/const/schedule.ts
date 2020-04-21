@@ -17,7 +17,7 @@ export interface ITaskSchedule {
     enabled: boolean;
 }
 
-export interface IJobStatusRecord {
+export interface ITaskStatusRecord {
     id: number;
     alerted: boolean;
     created_at: number;

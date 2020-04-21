@@ -21,10 +21,14 @@ import { ToggleSwitch } from 'ui/ToggleSwitch/ToggleSwitch';
 import { Tabs } from 'ui/Tabs/Tabs';
 
 import './TaskEditor.scss';
+import { TaskStatus } from 'components/Task/TaskStatus';
+
+type TaskEditorTabs = 'edit' | 'history';
 
 interface IProps {
-    task: IAdminTask;
-    loadTaskList?: () => void;
+    task: Partial<IAdminTask>;
+    onTaskUpdate?: () => void;
+    onTaskCreate?: () => void;
 }
 
 const taskFormSchema = Yup.object().shape({
@@ -47,15 +51,17 @@ const taskFormSchema = Yup.object().shape({
 
 export const TaskEditor: React.FunctionComponent<IProps> = ({
     task,
-    loadTaskList,
+    onTaskUpdate,
+    onTaskCreate,
 }) => {
-    const [tab, setTab] = React.useState<'edit' | 'history'>('edit');
+    const [tab, setTab] = React.useState<TaskEditorTabs>('edit');
+    const [showCreateForm, setShowCreateForm] = React.useState<boolean>(false);
 
     const runTask = React.useCallback(() => {
         ds.save(`/schedule/${task.id}/run/`).then(() => {
             sendNotification('Task has started!');
         });
-        loadTaskList();
+        onTaskUpdate?.();
     }, [task]);
 
     const handleTaskEditSubmit = React.useCallback(
@@ -63,20 +69,36 @@ export const TaskEditor: React.FunctionComponent<IProps> = ({
             const editedCron = editedValues.isCron
                 ? editedValues.cron
                 : recurrenceToCron(editedValues.recurrence);
-            ds.update(`/schedule/${task.id}/`, {
-                cron: editedCron,
-                enabled: editedValues.enabled,
-                options: editedValues.taskOptions,
-            }).then(({ data }) => {
-                sendNotification('Schedule saved!');
-                return data;
-            });
+            if (task.id) {
+                ds.update(`/schedule/${task.id}/`, {
+                    cron: editedCron,
+                    enabled: editedValues.enabled,
+                    options: editedValues.taskOptions,
+                }).then(({ data }) => {
+                    sendNotification('Task saved!');
+                    return data;
+                });
+            } else {
+                ds.save(`/schedule/`, {
+                    cron: editedCron,
+                    name: task.name,
+                    task: task.task,
+                    task_type: task.task_type,
+                    enabled: editedValues.enabled,
+                    args: task.args,
+                    options: editedValues.taskOptions,
+                }).then(({ data }) => {
+                    sendNotification('Task created!');
+                    onTaskCreate?.();
+                    return data;
+                });
+            }
         },
 
         [task]
     );
 
-    const tabDOM = React.useMemo(() => {
+    const getTabDOM = () => {
         if (tab === 'edit') {
             const recurrence = cronToRecurrence(task.cron || '0 0 * * *');
             const formValues = {
@@ -84,7 +106,7 @@ export const TaskEditor: React.FunctionComponent<IProps> = ({
                 recurrence,
                 cron: task.cron,
                 enabled: task.enabled,
-                taskOptions: task.options, // to be implemented
+                taskOptions: task.options || {}, // to be implemented
             };
             return (
                 <div className="TaskEditor-form">
@@ -182,7 +204,11 @@ export const TaskEditor: React.FunctionComponent<IProps> = ({
                                             <Button
                                                 disabled={!isValid}
                                                 onClick={() => handleSubmit()}
-                                                title="Update Task"
+                                                title={
+                                                    task.id
+                                                        ? 'Update Task'
+                                                        : 'Create Task'
+                                                }
                                                 type="inlineText"
                                                 borderless
                                             />
@@ -197,13 +223,13 @@ export const TaskEditor: React.FunctionComponent<IProps> = ({
         } else {
             return (
                 <div className="TaskEditor-history">
-                    <TaskHistory taskName={task.name} />
+                    <TaskStatus taskId={task.id} taskName={task.name} />
                 </div>
             );
         }
-    }, [task, tab]);
+    };
 
-    return (
+    return task.id || showCreateForm ? (
         <div className="TaskEditor">
             <div className="TaskEditor-top horizontal-space-between mv24 mh36">
                 <div className="TaskEditor-info">
@@ -213,38 +239,58 @@ export const TaskEditor: React.FunctionComponent<IProps> = ({
                     <div className="TaskEditor-kwargs">
                         Kwargs: {JSON.stringify(task.kwargs)}
                     </div>
-                    <div className="TaskEditor-last-run">
-                        Last Run: {generateFormattedDate(task.last_run_at, 'X')}
-                        , {moment.utc(task.last_run_at, 'X').fromNow()}
-                    </div>
-                    <div className="TaskEditor-run-count">
-                        Total Run Count: {task.total_run_count}
-                    </div>
+                    {task.id ? (
+                        <>
+                            <div className="TaskEditor-last-run">
+                                Last Run:{' '}
+                                {generateFormattedDate(task.last_run_at, 'X')},{' '}
+                                {moment.utc(task.last_run_at, 'X').fromNow()}
+                            </div>
+                            <div className="TaskEditor-run-count">
+                                Total Run Count: {task.total_run_count}
+                            </div>
+                        </>
+                    ) : null}
                 </div>
-                <div className="TaskEditor-controls">
-                    <div className="TaskEditor-run">
-                        <Button
-                            title="Run Task"
-                            icon="play"
-                            onClick={runTask}
-                            type="inlineText"
-                            borderless
-                        />
+                {task.id ? (
+                    <div className="TaskEditor-controls">
+                        <div className="TaskEditor-run">
+                            <Button
+                                title="Run Task"
+                                icon="play"
+                                onClick={runTask}
+                                type="inlineText"
+                                borderless
+                            />
+                        </div>
                     </div>
-                </div>
+                ) : null}
             </div>
-            <Tabs
-                selectedTabKey={tab}
-                className="mh16 mb16"
-                items={[
-                    { name: 'Edit', key: 'edit' },
-                    { name: 'History', key: 'history' },
-                ]}
-                onSelect={(key: 'edit' | 'history') => {
-                    setTab(key);
-                }}
+
+            {task.id ? (
+                <Tabs
+                    selectedTabKey={tab}
+                    className="mh16 mb16"
+                    items={[
+                        { name: 'Edit', key: 'edit' },
+                        { name: 'History', key: 'history' },
+                    ]}
+                    onSelect={(key: TaskEditorTabs) => {
+                        setTab(key);
+                    }}
+                />
+            ) : null}
+
+            <div className="TaskEditor-content m24">{getTabDOM()}</div>
+        </div>
+    ) : (
+        <div className="TaskEditor-new center-align">
+            <Button
+                title="Create Schedule"
+                onClick={() => setShowCreateForm(true)}
+                type="inlineText"
+                borderless
             />
-            <div className="TaskEditor-content m24">{tabDOM}</div>
         </div>
     );
 };

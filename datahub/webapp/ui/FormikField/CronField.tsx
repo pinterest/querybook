@@ -44,8 +44,8 @@ export const CronField: React.FunctionComponent<IProps> = ({
                         setRecurrence('recurrence.minute', value.minute());
                     }}
                 />
-                <div>
-                    &nbsp; Local:
+                <div className="pl8">
+                    Local Time:
                     {getRecurrenceLocalTimeString(recurrence)}
                 </div>
             </div>

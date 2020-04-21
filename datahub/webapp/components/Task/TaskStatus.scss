@@ -1,15 +1,18 @@
-.JobStatus {
-    .JobStatus-controls {
+.TaskStatus {
+    .TaskStatus-controls {
         margin-bottom: 12px;
         .SearchBar {
             width: 360px;
             margin-right: 8px;
         }
     }
+    .Table {
+        overflow-x: scroll;
+    }
 }
 
 .Modal {
-    .JobStatus {
+    .TaskStatus {
         margin: 12px 24px;
     }
 }

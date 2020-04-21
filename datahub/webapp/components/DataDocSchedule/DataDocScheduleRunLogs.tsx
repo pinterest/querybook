@@ -1,15 +1,15 @@
 import React from 'react';
 import moment from 'moment';
 
-import { IJobStatusRecord } from 'const/schedule';
+import { ITaskStatusRecord } from 'const/schedule';
 import { generateFormattedDate } from 'lib/utils/datetime';
 import { useDataFetch } from 'hooks/useDataFetch';
 import { Loading } from 'ui/Loading/Loading';
 import { ErrorMessage } from 'ui/Message/ErrorMessage';
 import { Table } from 'ui/Table/Table';
-import { JobStatusIcon } from 'components/JobStatus/JobStatusIcon';
+import { TaskStatusIcon } from 'components/Task/TaskStatusIcon';
 
-function formatCell(index: number, column: string, row: IJobStatusRecord) {
+function formatCell(index: number, column: string, row: ITaskStatusRecord) {
     const value = row[column];
     let dom = value;
     switch (column) {
@@ -24,7 +24,7 @@ function formatCell(index: number, column: string, row: IJobStatusRecord) {
             break;
         }
         case 'status': {
-            dom = <JobStatusIcon type={value} />;
+            dom = <TaskStatusIcon type={value} />;
             break;
         }
     }
