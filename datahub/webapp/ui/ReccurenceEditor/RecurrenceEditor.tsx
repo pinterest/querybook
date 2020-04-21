@@ -23,7 +23,7 @@ interface IProps {
     setRecurrence: (name: string, val: any) => void;
 }
 
-export const CronField: React.FunctionComponent<IProps> = ({
+export const RecurrenceEditor: React.FunctionComponent<IProps> = ({
     recurrence,
     recurrenceError,
     setRecurrence,
@@ -105,7 +105,7 @@ export const CronField: React.FunctionComponent<IProps> = ({
         );
     }
     return (
-        <div className="CronField">
+        <div className="RecurrenceEditor">
             {hourSecondField}
             {recurrenceTypeField}
             {datePickerField}

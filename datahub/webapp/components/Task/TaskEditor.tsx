@@ -9,13 +9,12 @@ import { recurrenceToCron, cronToRecurrence } from 'lib/utils/cron';
 import { sendNotification } from 'lib/dataHubUI';
 
 import { IAdminTask } from 'components/AppAdmin/AdminTask';
-import { TaskHistory } from './TaskHistory';
 
 import { Button } from 'ui/Button/Button';
-import { CronField } from 'ui/FormikField/CronField';
 import { DebouncedInput } from 'ui/DebouncedInput/DebouncedInput';
 import { FormField } from 'ui/Form/FormField';
 import { FormWrapper } from 'ui/Form/FormWrapper';
+import { RecurrenceEditor } from 'ui/ReccurenceEditor/RecurrenceEditor';
 import { ToggleButton } from 'ui/ToggleButton/ToggleButton';
 import { ToggleSwitch } from 'ui/ToggleSwitch/ToggleSwitch';
 import { Tabs } from 'ui/Tabs/Tabs';
@@ -56,6 +55,10 @@ export const TaskEditor: React.FunctionComponent<IProps> = ({
 }) => {
     const [tab, setTab] = React.useState<TaskEditorTabs>('edit');
     const [showCreateForm, setShowCreateForm] = React.useState<boolean>(false);
+
+    React.useEffect(() => {
+        setTab('edit');
+    }, [task]);
 
     const runTask = React.useCallback(() => {
         ds.save(`/schedule/${task.id}/run/`).then(() => {
@@ -98,16 +101,19 @@ export const TaskEditor: React.FunctionComponent<IProps> = ({
         [task]
     );
 
+    const formValues = React.useMemo(() => {
+        const recurrence = cronToRecurrence(task.cron || '0 0 * * *');
+        return {
+            isCron: false,
+            recurrence,
+            cron: task.cron,
+            enabled: task.enabled,
+            taskOptions: task.options || {}, // to be implemented
+        };
+    }, [task]);
+
     const getTabDOM = () => {
         if (tab === 'edit') {
-            const recurrence = cronToRecurrence(task.cron || '0 0 * * *');
-            const formValues = {
-                isCron: false,
-                recurrence,
-                cron: task.cron,
-                enabled: task.enabled,
-                taskOptions: task.options || {}, // to be implemented
-            };
             return (
                 <div className="TaskEditor-form">
                     <Formik
@@ -117,6 +123,7 @@ export const TaskEditor: React.FunctionComponent<IProps> = ({
                         onSubmit={(values) => {
                             handleTaskEditSubmit(values);
                         }}
+                        enableReinitialize
                     >
                         {({
                             handleSubmit,
@@ -168,7 +175,7 @@ export const TaskEditor: React.FunctionComponent<IProps> = ({
                                                             stacked
                                                             label="Schedule"
                                                         >
-                                                            <CronField
+                                                            <RecurrenceEditor
                                                                 recurrence={
                                                                     values.recurrence
                                                                 }
@@ -239,48 +246,37 @@ export const TaskEditor: React.FunctionComponent<IProps> = ({
                     <div className="TaskEditor-kwargs">
                         Kwargs: {JSON.stringify(task.kwargs)}
                     </div>
-                    {task.id ? (
-                        <>
-                            <div className="TaskEditor-last-run">
-                                Last Run:{' '}
-                                {generateFormattedDate(task.last_run_at, 'X')},{' '}
-                                {moment.utc(task.last_run_at, 'X').fromNow()}
-                            </div>
-                            <div className="TaskEditor-run-count">
-                                Total Run Count: {task.total_run_count}
-                            </div>
-                        </>
-                    ) : null}
-                </div>
-                {task.id ? (
-                    <div className="TaskEditor-controls">
-                        <div className="TaskEditor-run">
-                            <Button
-                                title="Run Task"
-                                icon="play"
-                                onClick={runTask}
-                                type="inlineText"
-                                borderless
-                            />
-                        </div>
+                    <div className="TaskEditor-last-run">
+                        Last Run: {generateFormattedDate(task.last_run_at, 'X')}
+                        , {moment.utc(task.last_run_at, 'X').fromNow()}
                     </div>
-                ) : null}
+                    <div className="TaskEditor-run-count">
+                        Total Run Count: {task.total_run_count}
+                    </div>
+                </div>
+                <div className="TaskEditor-controls">
+                    <div className="TaskEditor-run">
+                        <Button
+                            title="Run Task"
+                            icon="play"
+                            onClick={runTask}
+                            type="inlineText"
+                            borderless
+                        />
+                    </div>
+                </div>
             </div>
-
-            {task.id ? (
-                <Tabs
-                    selectedTabKey={tab}
-                    className="mh16 mb16"
-                    items={[
-                        { name: 'Edit', key: 'edit' },
-                        { name: 'History', key: 'history' },
-                    ]}
-                    onSelect={(key: TaskEditorTabs) => {
-                        setTab(key);
-                    }}
-                />
-            ) : null}
-
+            <Tabs
+                selectedTabKey={tab}
+                className="mh16 mb16"
+                items={[
+                    { name: 'Edit', key: 'edit' },
+                    { name: 'History', key: 'history' },
+                ]}
+                onSelect={(key: TaskEditorTabs) => {
+                    setTab(key);
+                }}
+            />
             <div className="TaskEditor-content m24">{getTabDOM()}</div>
         </div>
     ) : (

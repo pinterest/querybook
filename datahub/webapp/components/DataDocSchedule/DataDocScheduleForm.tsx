@@ -5,7 +5,7 @@ import * as Yup from 'yup';
 import { cronToRecurrence, recurrenceToCron } from 'lib/utils/cron';
 
 import { Button } from 'ui/Button/Button';
-import { CronField } from 'ui/FormikField/CronField';
+import { RecurrenceEditor } from 'ui/ReccurenceEditor/RecurrenceEditor';
 import { FormField } from 'ui/Form/FormField';
 import { FormWrapper } from 'ui/Form/FormWrapper';
 import { InfoButton } from 'ui/Button/InfoButton';
@@ -98,7 +98,7 @@ export const DataDocScheduleForm: React.FunctionComponent<IDataDocScheduleFormPr
                         </div>
                         <FormWrapper minLabelWidth="180px" size={7}>
                             <Form>
-                                <CronField
+                                <RecurrenceEditor
                                     recurrence={values.recurrence}
                                     recurrenceError={errors?.recurrence}
                                     setRecurrence={setFieldValue}

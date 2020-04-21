@@ -63,6 +63,7 @@
                 .AdminForm-left {
                     flex-grow: 1;
                     text-align: left;
+                    overflow-y: hidden;
                     .AdminForm-button-box {
                         display: flex;
                         justify-content: center;

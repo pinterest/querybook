@@ -28,6 +28,7 @@ const tableColumns: Array<keyof ITaskStatusRecord> = [
 ];
 const tableColumnWidths = {
     id: 80,
+    name: 240,
     created_at: 240,
     updated_at: 240,
     status: 120,

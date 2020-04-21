@@ -79,7 +79,7 @@ export class Table extends React.Component<ITableProps> {
                 );
             }
             if (widthObj && widthObj[column]) {
-                formattedColumn.width = widthObj[column];
+                formattedColumn.minWidth = widthObj[column];
             }
 
             if (alignObj && alignObj[column]) {
