@@ -1,15 +1,16 @@
 import * as React from 'react';
+import { useRouteMatch } from 'react-router-dom';
 
 import history from 'lib/router-history';
 import { titleize } from 'lib/utils';
 
 import { AdminEntity, IAdminEntity } from 'components/AppAdmin/types';
 
-import { SearchBar } from 'ui/SearchBar/SearchBar';
 import { IconButton } from 'ui/Button/IconButton';
+import { Link } from 'ui/Link/Link';
+import { SearchBar } from 'ui/SearchBar/SearchBar';
 
 import './AdminAppNavigator.scss';
-import { useRouteMatch } from 'react-router-dom';
 
 interface IProps {
     selectedEntity: AdminEntity;
@@ -82,7 +83,7 @@ export const AdminAppNavigator: React.FunctionComponent<IProps> = ({
                 {filteredEntityList.map((item) => {
                     const url = `/admin/${selectedEntity}/${item.id}/`;
                     return (
-                        <div
+                        <Link
                             className={
                                 Number(entityId) === item.id
                                     ? 'AdminAppNavigator-item selected'
@@ -90,9 +91,10 @@ export const AdminAppNavigator: React.FunctionComponent<IProps> = ({
                             }
                             onClick={() => history.push(url)}
                             key={item.id}
+                            to={url}
                         >
                             {item.name}
-                        </div>
+                        </Link>
                     );
                 })}
                 <IconButton
