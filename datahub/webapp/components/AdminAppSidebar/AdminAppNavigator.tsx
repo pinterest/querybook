@@ -1,16 +1,16 @@
 import * as React from 'react';
+import { useRouteMatch } from 'react-router-dom';
 
 import history from 'lib/router-history';
 import { titleize } from 'lib/utils';
 
 import { AdminEntity, IAdminEntity } from 'components/AppAdmin/types';
 
-import { SearchBar } from 'ui/SearchBar/SearchBar';
 import { IconButton } from 'ui/Button/IconButton';
 import { Link } from 'ui/Link/Link';
+import { SearchBar } from 'ui/SearchBar/SearchBar';
 
 import './AdminAppNavigator.scss';
-import { useRouteMatch } from 'react-router-dom';
 
 interface IProps {
     selectedEntity: AdminEntity;
