@@ -324,6 +324,7 @@ export class RichTextEditor extends React.Component<
 
     @bind
     public keyBindingFn(e: React.KeyboardEvent) {
+        let customHandled = true;
         if (
             (e.keyCode === 8 || e.keyCode === 38 || e.keyCode === 40) &&
             this.props.onKeyDown
@@ -332,8 +333,17 @@ export class RichTextEditor extends React.Component<
             this.props.onKeyDown(e, this.state.editorState);
         } else if (e.keyCode === 9) {
             this.onTab(e);
+        } else {
+            customHandled = false;
         }
-        return DraftJs.getDefaultKeyBinding(e);
+
+        const command = DraftJs.getDefaultKeyBinding(e);
+
+        if (customHandled || command) {
+            e.stopPropagation();
+        }
+
+        return command;
     }
 
     @bind
@@ -344,6 +354,7 @@ export class RichTextEditor extends React.Component<
         );
         if (newState) {
             this.onChange(newState);
+
             return 'handled';
         }
         return 'not-handled';

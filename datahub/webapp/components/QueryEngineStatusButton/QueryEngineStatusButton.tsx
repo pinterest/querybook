@@ -122,7 +122,7 @@ export const QueryEngineStatusButton: React.FC<IProps> = ({
                 } else {
                     const warningLevel = engineStatus?.data?.status;
                     const message = capitalize(
-                        queryEngineStatusToMessage[warningLevel]
+                        queryEngineStatusToMessage[warningLevel] ?? ''
                     );
                     const iconClass =
                         queryEngineStatusToIconStatus[warningLevel];
