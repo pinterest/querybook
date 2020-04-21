@@ -77,6 +77,7 @@ export class DataCellSaveManager {
                         }),
                         ...(data.meta != null && { meta: data.meta }),
                     };
+
                     if (dataDocSocket.getActiveDataDocId() === docId) {
                         return dataDocSocket.updateDataCell(
                             docId,

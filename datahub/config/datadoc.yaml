@@ -13,10 +13,12 @@ cell_types:
             title: '' # can be any string
             engine: 0 # Engine Id
             collapsed: false
+            query_collapsed: false
         meta_default:
             title: ''
             engine: null
             collapsed: false
+            query_collapsed: false
     chart:
         key: 'chart'
         icon: 'chart-line'
