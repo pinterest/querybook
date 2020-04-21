@@ -35,3 +35,10 @@ def pdumps(*args, **kwargs):
 
 def loads(*args, **kwargs):
     return json.loads(*args, **kwargs)
+
+
+def safe_loads(*args, default_value=None, **kwargs):
+    try:
+        return loads(*args, **kwargs)
+    except ValueError:
+        return default_value

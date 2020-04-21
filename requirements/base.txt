@@ -1,5 +1,13 @@
+# Query Store
+# AWS S3
 boto3==1.9.16
 boto==2.49.0
+
+# Google GCD
+google-cloud-storage==1.27.0
+google-auth==1.13.1
+google-resumable-media==0.5.0
+
 
 # Server
 Werkzeug==0.15.5
@@ -18,14 +26,17 @@ flask-socketio==4.2.0
 python-socketio==4.4.0  # Needed for flask-socketio, strange bug in 4.5.0 that prevented SocketIO from connecting
 
 # Querying
+# Hive/Presto
 sasl==0.2.1
 thrift==0.11.0
 thrift-sasl==0.3.0
-# Hive/Presto
 PyHive[hive, presto]==0.6.1
 hmsclient==0.1.1
 # Druid
 pydruid==0.5.7
+# BigQuery
+google-cloud-bigquery==1.24.0
+
 
 # Celery
 kazoo==2.5.0

@@ -46,10 +46,24 @@ class OAuthLoginManager(object):
     @property
     def oauth_session(self):
         return OAuth2Session(
-            DataHubSettings.OAUTH_CLIENT_ID,
-            scope="user",
-            redirect_uri="{}{}".format(DataHubSettings.PUBLIC_URL, OAUTH_CALLBACK_PATH),
+            self.oauth_config["client_id"],
+            scope=self.oauth_config["scope"],
+            redirect_uri=self.oauth_config["callback_url"],
         )
+
+    @property
+    def oauth_config(self):
+        return {
+            "callback_url": "{}{}".format(
+                DataHubSettings.PUBLIC_URL, OAUTH_CALLBACK_PATH
+            ),
+            "client_id": DataHubSettings.OAUTH_CLIENT_ID,
+            "client_secret": DataHubSettings.OAUTH_CLIENT_SECRET,
+            "authorization_url": DataHubSettings.OAUTH_AUTHORIZATION_URL,
+            "token_url": DataHubSettings.OAUTH_TOKEN_URL,
+            "profile_url": DataHubSettings.OAUTH_USER_PROFILE,
+            "scope": "user",
+        }
 
     def init_app(self, flask_app):
         self.flask_app = flask_app
@@ -61,14 +75,18 @@ class OAuthLoginManager(object):
 
     def login(self, request):
         oauth_url, _ = self.oauth_session.authorization_url(
-            DataHubSettings.OAUTH_AUTHORIZATION_URL
+            self.oauth_config["authorization_url"]
         )
         flask_session["next"] = request.path
         return redirect(oauth_url)
 
-    def get_user_profile(self, access_token):
+    def _parse_user_profile(self, profile_response):
+        user = profile_response.json()["user"]
+        return user["username"], user["email"]
+
+    def _get_user_profile(self, access_token):
         resp = requests.get(
-            DataHubSettings.OAUTH_USER_PROFILE, params={"access_token": access_token}
+            self.oauth_config["profile_url"], params={"access_token": access_token}
         )
         if not resp or resp.status_code != 200:
             raise AuthenticationError(
@@ -76,9 +94,7 @@ class OAuthLoginManager(object):
                     resp.status if resp else "None"
                 )
             )
-        user = resp.json()["user"]
-
-        return user["username"], user["email"]
+        return self._parse_user_profile(resp)
 
     @with_session
     def login_user(self, username, email, session=None):
@@ -95,10 +111,10 @@ class OAuthLoginManager(object):
             return f"<h1>Error: {request.args.get('error')}</h1>"
 
         resp = self.oauth_session.fetch_token(
-            token_url=DataHubSettings.OAUTH_TOKEN_URL,
-            client_id=DataHubSettings.OAUTH_CLIENT_ID,
+            token_url=self.oauth_config["token_url"],
+            client_id=self.oauth_config["client_id"],
             code=request.args.get("code"),
-            client_secret=DataHubSettings.OAUTH_CLIENT_SECRET,
+            client_secret=self.oauth_config["client_secret"],
             cert=certifi.where(),
         )
 
@@ -108,7 +124,7 @@ class OAuthLoginManager(object):
 
             access_token = resp["access_token"]
 
-            username, email = self.get_user_profile(access_token)
+            username, email = self._get_user_profile(access_token)
         except AuthenticationError:
             abort_unauthorized()
 

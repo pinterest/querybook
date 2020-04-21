@@ -9,6 +9,7 @@ CACHE_REFRESH_INTERVAL_SEC = 300
 
 @cache.memoize(CACHE_REFRESH_INTERVAL_SEC)
 def get_hostname_and_port_from_zk(zk_quorum: str, zk_namespace: str) -> List[str]:
+    zk = None
     try:
         zk = KazooClient(hosts=zk_quorum)
         zk.start()

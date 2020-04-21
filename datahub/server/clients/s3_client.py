@@ -1,18 +1,8 @@
-from collections import deque
-from itertools import islice
-from typing import List
-
 import boto3
 import botocore
 
 from env import DataHubSettings
-from logic.result_store import string_to_csv
-
-LINE_TERMINATOR = "\n"
-
-
-class FileDoesNotExist(Exception):
-    pass
+from .common import ChunkReader, FileDoesNotExist
 
 
 class MultiPartUploader(object):
@@ -29,7 +19,7 @@ class MultiPartUploader(object):
         self.is_first_upload = True
 
     def _upload_part(self, body):
-        if self._part_number > DataHubSettings.S3_MAX_UPLOAD_CHUNK_NUM:
+        if self._part_number > DataHubSettings.STORE_MAX_UPLOAD_CHUNK_NUM:
             return
 
         part = self._s3.upload_part(
@@ -54,12 +44,12 @@ class MultiPartUploader(object):
         Returns:
             bool -- Whether or not the upload is successful
         """
-        if self._part_number > DataHubSettings.S3_MAX_UPLOAD_CHUNK_NUM:
+        if self._part_number > DataHubSettings.STORE_MAX_UPLOAD_CHUNK_NUM:
             return False
 
         self.chunk.append(string)
         self.chunk_datasize += len(string)
-        if self.chunk_datasize > DataHubSettings.S3_MIN_UPLOAD_CHUNK_SIZE:
+        if self.chunk_datasize > DataHubSettings.STORE_MIN_UPLOAD_CHUNK_SIZE:
             self._upload_part("".join(self.chunk))
             self.chunk = []
             self.chunk_datasize = 0
@@ -100,26 +90,18 @@ class S3KeySigner(object):
         return None
 
 
-class S3FileReader(object):
+class S3FileReader(ChunkReader):
     def __init__(
         self,
         bucket_name,
         key,
-        read_size=DataHubSettings.S3_READ_SIZE,
-        max_read_size=DataHubSettings.S3_MAX_READ_SIZE,
+        read_size=DataHubSettings.STORE_READ_SIZE,
+        max_read_size=DataHubSettings.STORE_MAX_READ_SIZE,
     ):
         self._bucket_name = bucket_name
         self._key = key
 
-        # The chunk read size
-        self._read_size = read_size
-        # Max number of chars we will read
-        self._max_read_size = max_read_size
-
-        self._num_char_read = 0
-        self._eof = False
-        self._buffer_deque = deque([])
-        self._raw_buffer = ""
+        super(S3FileReader, self).__init__(read_size, max_read_size)
 
         # Now connect to s3 using boto3
         try:
@@ -134,48 +116,5 @@ class S3FileReader(object):
             else:
                 raise e
 
-    def read_csv(self, number_of_lines=None):
-        raw_csv_str = "\n".join(
-            [line for line in islice(self.read_line(), number_of_lines)]
-        )
-        return string_to_csv(raw_csv_str)
-
-    def read_lines(self, number_of_lines=None) -> List[str]:
-        return [line for line in islice(self.read_line(), number_of_lines)]
-
-    def read_line(self):  # generator
-        while (not self._eof) or len(self._buffer_deque):
-            if len(self._buffer_deque) > 0:
-                yield self._buffer_deque.popleft()
-            elif not self._eof:
-                self._fill_buffer()
-
-    def _fill_buffer(self):
-        raw = self._body.read(self._read_size).decode("utf-8")
-        if len(raw):
-            rawLines = raw.split(LINE_TERMINATOR)
-            rawLines[0] = self._raw_buffer + rawLines[0]
-            for line in rawLines[:-1]:
-                # Update how many chars are read
-                line_len = len(line)
-                self._num_char_read += line_len
-
-                # If we read enough, break
-                if (
-                    self._max_read_size is not None
-                    and self._num_char_read > self._max_read_size
-                ):
-                    self._trigger_eof(real_eof=False)
-                    return
-
-                self._buffer_deque.append(line)
-            self._raw_buffer = rawLines[-1]
-        else:
-            self._trigger_eof()
-
-    def _trigger_eof(self, real_eof=True):
-        # We can have real_eof which means we actually reached the end of file
-        # or fake eof when we read enough data
-        self._eof = True
-        if real_eof and len(self._raw_buffer):
-            self._buffer_deque.append(self._raw_buffer)
+    def read(self):
+        return self._body.read(self._read_size).decode("utf-8")
