@@ -85,7 +85,7 @@ interface IState {
             ch: number;
         };
     };
-    isQueryCollapsedViewOverride: boolean;
+    queryCollapsedOverride: boolean;
     showQuerySnippetModal: boolean;
 }
 
@@ -105,7 +105,7 @@ class DataDocQueryCellComponent extends React.Component<IProps, IState> {
             meta: props.meta,
             focused: false,
             selectedRange: null,
-            isQueryCollapsedViewOverride: null,
+            queryCollapsedOverride: null,
             showQuerySnippetModal: false,
         };
     }
@@ -331,7 +331,10 @@ class DataDocQueryCellComponent extends React.Component<IProps, IState> {
     }
 
     @bind
-    public handleMetaChange(field, value) {
+    public handleMetaChange<K extends keyof IDataQueryCellMeta>(
+        field: K,
+        value: IDataQueryCellMeta[K]
+    ) {
         const { meta } = this.state;
         const newMeta = {
             ...meta,
@@ -344,7 +347,7 @@ class DataDocQueryCellComponent extends React.Component<IProps, IState> {
             () => this.onChangeDebounced({ meta: newMeta })
         );
     }
-    public handleMetaTitleChange = (value) =>
+    public handleMetaTitleChange = (value: string) =>
         this.handleMetaChange('title', value);
 
     @bind
@@ -396,31 +399,30 @@ class DataDocQueryCellComponent extends React.Component<IProps, IState> {
     }
 
     @bind
-    public toggleQueryCollapsing(forceCollapse) {
+    public toggleQueryCollapsing(forceCollapse: boolean) {
         const { isEditable } = this.props;
         if (isEditable) {
-            this.handleMetaChange('is_query_collapsed', !!forceCollapse);
+            this.handleMetaChange('query_collapsed', !!forceCollapse);
         } else {
-            this.setState({ isQueryCollapsedViewOverride: !!forceCollapse });
+            this.setState({ queryCollapsedOverride: !!forceCollapse });
         }
     }
 
     @bind
-    public getIsQueryCollapsed() {
+    public get queryCollapsed() {
         const { meta } = this.props;
-        const { isQueryCollapsedViewOverride } = this.state;
+        const { queryCollapsedOverride } = this.state;
 
-        const isQueryCollapsedSavedValue = !!(meta || ({} as any))
-            .is_query_collapsed;
-        return isQueryCollapsedViewOverride != null
-            ? isQueryCollapsedViewOverride
+        const isQueryCollapsedSavedValue = !!meta?.query_collapsed;
+        return queryCollapsedOverride != null
+            ? queryCollapsedOverride
             : isQueryCollapsedSavedValue;
     }
 
     public getAdditionalDropDownButtonDOM() {
         const { isEditable } = this.props;
 
-        const isQueryCollapsed = this.getIsQueryCollapsed();
+        const queryCollapsed = this.queryCollapsed;
 
         const additionalButtons: IMenuItem[] = [];
         if (isEditable) {
@@ -442,9 +444,9 @@ class DataDocQueryCellComponent extends React.Component<IProps, IState> {
         }
 
         additionalButtons.push({
-            name: isQueryCollapsed ? 'Show Query' : 'Hide Query',
-            onClick: this.toggleQueryCollapsing.bind(this, !isQueryCollapsed),
-            icon: isQueryCollapsed ? 'far fa-eye' : 'far fa-eye-slash',
+            name: queryCollapsed ? 'Show Query' : 'Hide Query',
+            onClick: this.toggleQueryCollapsing.bind(this, !queryCollapsed),
+            icon: queryCollapsed ? 'far fa-eye' : 'far fa-eye-slash',
         });
 
         return additionalButtons.length > 0 ? (
@@ -537,7 +539,7 @@ class DataDocQueryCellComponent extends React.Component<IProps, IState> {
             );
         }
         const queryEngine = queryEngineById[this.engineId];
-        const isQueryCollapsed = this.getIsQueryCollapsed();
+        const queryCollapsed = this.queryCollapsed;
 
         const classes = classNames({
             DataDocQueryCell: true,
@@ -564,7 +566,7 @@ class DataDocQueryCellComponent extends React.Component<IProps, IState> {
         );
 
         const editorLanguage = queryEngine.language;
-        const editorDOM = !isQueryCollapsed && (
+        const editorDOM = !queryCollapsed && (
             <div className="editor">
                 <QueryEditor
                     value={query}
@@ -647,7 +649,7 @@ class DataDocQueryCellComponent extends React.Component<IProps, IState> {
                             <DataDocQueryExecutions
                                 docId={docId}
                                 cellId={cellId}
-                                isQueryCollapsed={isQueryCollapsed}
+                                isQueryCollapsed={queryCollapsed}
                                 changeCellContext={this.handleChange}
                             />
                         </div>
