@@ -35,6 +35,7 @@ interface IProps {
 }
 
 const taskFormSchema = Yup.object().shape({
+    isCron: Yup.boolean(),
     recurrence: Yup.object().shape({
         hour: Yup.number().min(0).max(23),
         minute: Yup.number().min(0).max(59),
@@ -49,7 +50,11 @@ const taskFormSchema = Yup.object().shape({
             return schema;
         }),
     }),
+    cron: Yup.string(),
     enabled: Yup.boolean().required(),
+    arg: Yup.array().of(Yup.mixed()),
+    kwargs: Yup.object(),
+    tempKwargs: Yup.array().of(Yup.array().of(Yup.string())),
 });
 
 function stringToTypedVal(stringVal) {
