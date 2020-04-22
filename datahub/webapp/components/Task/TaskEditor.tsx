@@ -205,23 +205,23 @@ export const TaskEditor: React.FunctionComponent<IProps> = ({
                                               )
                                             : null;
                                         const controlDOM = (
-                                            <div className="TaskEditor-kwarg-button center-align">
+                                            <div className="TaskEditor-kwarg-button center-align mt4 ml4 mb16">
                                                 <Button
-                                                    title="Add New Variable"
+                                                    title="Add New Kwarg"
                                                     onClick={() =>
                                                         arrayHelpers.push([
                                                             '',
                                                             '',
                                                         ])
                                                     }
+                                                    type="inlineText"
+                                                    borderless
                                                 />
                                             </div>
                                         );
                                         return (
                                             <div className="TaskEditor-new-kwargs-input">
-                                                <fieldset className="mb8">
-                                                    {fields}
-                                                </fieldset>
+                                                <fieldset>{fields}</fieldset>
                                                 {controlDOM}
                                             </div>
                                         );
