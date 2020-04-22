@@ -3,19 +3,18 @@ import moment from 'moment';
 
 import { ITaskStatusRecord } from 'const/schedule';
 import { generateFormattedDate } from 'lib/utils/datetime';
-import ds, { ICancelablePromise } from 'lib/datasource';
-
-import { SearchBar } from 'ui/SearchBar/SearchBar';
-import { Table, TableAlign } from 'ui/Table/Table';
-import { Button } from 'ui/Button/Button';
-import './TaskStatus.scss';
-import { TaskStatusIcon } from './TaskStatusIcon';
-import { useInterval } from 'hooks/useInterval';
-import { Loading } from 'ui/Loading/Loading';
-import { Tabs } from 'ui/Tabs/Tabs';
-import { ToggleButton } from 'ui/ToggleButton/ToggleButton';
 import { usePaginatedFetch } from 'hooks/usePaginatedFetch';
+
+import { useInterval } from 'hooks/useInterval';
 import { AsyncButton } from 'ui/AsyncButton/AsyncButton';
+import { Loading } from 'ui/Loading/Loading';
+import { Table, TableAlign } from 'ui/Table/Table';
+import { Tabs } from 'ui/Tabs/Tabs';
+import { SearchBar } from 'ui/SearchBar/SearchBar';
+import { TaskStatusIcon } from './TaskStatusIcon';
+import { ToggleButton } from 'ui/ToggleButton/ToggleButton';
+
+import './TaskStatus.scss';
 
 const PAGE_SIZE = 30;
 
