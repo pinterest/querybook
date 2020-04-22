@@ -407,10 +407,6 @@ export const TaskEditor: React.FunctionComponent<IProps> = ({
                 <div className="TaskEditor-info">
                     <div className="TaskEditor-name">{task.name}</div>
                     <div className="TaskEditor-task mb16">{task.task}</div>
-                    <div className="TaskEditor-args">Args: {task.args}</div>
-                    <div className="TaskEditor-kwargs">
-                        Kwargs: {JSON.stringify(task.kwargs)}
-                    </div>
                     <div className="TaskEditor-last-run">
                         Last Run: {generateFormattedDate(task.last_run_at, 'X')}
                         , {moment.utc(task.last_run_at, 'X').fromNow()}
