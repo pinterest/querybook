@@ -13,6 +13,38 @@
         }
     }
     .TaskEditor-content {
+        .TaskEditor-form {
+            .TaskEditor-form-fields {
+                .DebouncedInput {
+                    max-width: 360px;
+                }
+                .TaskEditor-kwargs-input {
+                    .FormFieldInputSection {
+                        display: flex;
+                        flex-direction: row;
+                        justify-content: space-between;
+                        .DebouncedInput {
+                            width: 360px;
+                        }
+                    }
+                }
+                .TaskEditor-new-kwargs-input {
+                    .FormField {
+                        .FormFieldInputSection:first-child {
+                            margin-right: 15px; // match existing kwarg margin
+                        }
+                        .FormFieldInputSection:last-child {
+                            width: 360px;
+                        }
+                    }
+                }
+                .TaskEditor-toggle {
+                    .FormFieldInputSection {
+                        display: flex;
+                    }
+                }
+            }
+        }
         .TaskStatus {
             .ReactTable {
                 .rt-table {

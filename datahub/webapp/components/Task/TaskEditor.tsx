@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { Formik, Form } from 'formik';
+import { Formik, Form, Field, FieldArray } from 'formik';
 import moment from 'moment';
 import * as Yup from 'yup';
 
@@ -12,7 +12,7 @@ import { IAdminTask } from 'components/AppAdmin/AdminTask';
 
 import { Button } from 'ui/Button/Button';
 import { DebouncedInput } from 'ui/DebouncedInput/DebouncedInput';
-import { FormField } from 'ui/Form/FormField';
+import { FormField, FormFieldInputSection } from 'ui/Form/FormField';
 import { FormWrapper } from 'ui/Form/FormWrapper';
 import { RecurrenceEditor } from 'ui/ReccurenceEditor/RecurrenceEditor';
 import { ToggleButton } from 'ui/ToggleButton/ToggleButton';
@@ -21,6 +21,10 @@ import { Tabs } from 'ui/Tabs/Tabs';
 
 import './TaskEditor.scss';
 import { TaskStatus } from 'components/Task/TaskStatus';
+import { InputField } from 'ui/FormikField/InputField';
+import { SimpleField } from 'ui/FormikField/SimpleField';
+import { SmartForm } from 'ui/SmartForm/SmartForm';
+import { IconButton } from 'ui/Button/IconButton';
 
 type TaskEditorTabs = 'edit' | 'history';
 
@@ -48,6 +52,18 @@ const taskFormSchema = Yup.object().shape({
     enabled: Yup.boolean().required(),
 });
 
+function stringToTypedVal(stringVal) {
+    if (Number.isInteger(Number(stringVal))) {
+        return Number(stringVal);
+    } else if (stringVal === 'true') {
+        return true;
+    } else if (stringVal === 'false') {
+        return false;
+    } else {
+        return stringVal;
+    }
+}
+
 export const TaskEditor: React.FunctionComponent<IProps> = ({
     task,
     onTaskUpdate,
@@ -72,11 +88,26 @@ export const TaskEditor: React.FunctionComponent<IProps> = ({
             const editedCron = editedValues.isCron
                 ? editedValues.cron
                 : recurrenceToCron(editedValues.recurrence);
+
+            const editedKwargs = { ...editedValues.kwargs };
+            if (editedValues.tempKwargs.length) {
+                for (const tempKwarg of editedValues.tempKwargs) {
+                    if (
+                        tempKwarg[0].length &&
+                        !Object.keys(editedKwargs).includes(tempKwarg[0])
+                    ) {
+                        editedKwargs[tempKwarg[0]] = stringToTypedVal(
+                            tempKwarg[1]
+                        );
+                    }
+                }
+            }
+
             if (task.id) {
                 ds.update(`/schedule/${task.id}/`, {
                     cron: editedCron,
                     enabled: editedValues.enabled,
-                    options: editedValues.taskOptions,
+                    kwargs: editedKwargs,
                 }).then(({ data }) => {
                     sendNotification('Task saved!');
                     return data;
@@ -89,7 +120,7 @@ export const TaskEditor: React.FunctionComponent<IProps> = ({
                     task_type: task.task_type,
                     enabled: editedValues.enabled,
                     args: task.args,
-                    options: editedValues.taskOptions,
+                    kwrgs: task.kwargs || {},
                 }).then(({ data }) => {
                     sendNotification('Task created!');
                     onTaskCreate?.();
@@ -108,7 +139,9 @@ export const TaskEditor: React.FunctionComponent<IProps> = ({
             recurrence,
             cron: task.cron,
             enabled: task.enabled,
-            taskOptions: task.options || {}, // to be implemented
+            args: task.args,
+            kwargs: task.kwargs,
+            tempKwargs: [],
         };
     }, [task]);
 
@@ -132,21 +165,143 @@ export const TaskEditor: React.FunctionComponent<IProps> = ({
                             setFieldValue,
                             isValid,
                         }) => {
+                            const newKwargsDOM = (
+                                <FieldArray
+                                    name="tempKwargs"
+                                    render={(arrayHelpers) => {
+                                        const fields = values.tempKwargs.length
+                                            ? values.tempKwargs.map(
+                                                  (ignore, index) => (
+                                                      <div
+                                                          key={index}
+                                                          className="horizontal-space-between template-key-value-row mb8 mr8"
+                                                      >
+                                                          <FormField>
+                                                              <FormFieldInputSection>
+                                                                  <Field
+                                                                      name={`tempKwargs[${index}][0]`}
+                                                                      placeholder="Insert key"
+                                                                  />
+                                                              </FormFieldInputSection>
+                                                              <FormFieldInputSection>
+                                                                  <Field
+                                                                      name={`tempKwargs[${index}][1]`}
+                                                                      placeholder="Insert value"
+                                                                  />
+                                                              </FormFieldInputSection>
+                                                          </FormField>
+                                                          <div>
+                                                              <IconButton
+                                                                  icon="x"
+                                                                  onClick={() =>
+                                                                      arrayHelpers.remove(
+                                                                          index
+                                                                      )
+                                                                  }
+                                                              />
+                                                          </div>
+                                                      </div>
+                                                  )
+                                              )
+                                            : null;
+                                        const controlDOM = (
+                                            <div className="TaskEditor-kwarg-button center-align">
+                                                <Button
+                                                    title="Add New Variable"
+                                                    onClick={() =>
+                                                        arrayHelpers.push([
+                                                            '',
+                                                            '',
+                                                        ])
+                                                    }
+                                                />
+                                            </div>
+                                        );
+                                        return (
+                                            <div className="TaskEditor-new-kwargs-input">
+                                                <fieldset className="mb8">
+                                                    {fields}
+                                                </fieldset>
+                                                {controlDOM}
+                                            </div>
+                                        );
+                                    }}
+                                />
+                            );
+                            const kwargsDOM = (
+                                <FormField stacked label="Kwargs">
+                                    {Object.entries(values.kwargs).map(
+                                        (kwarg) => {
+                                            return (
+                                                <div
+                                                    className="TaskEditor-kwargs-input"
+                                                    key={kwarg[0]}
+                                                >
+                                                    <FormField label={kwarg[0]}>
+                                                        <DebouncedInput
+                                                            value={kwarg[1]}
+                                                            onChange={(val) => {
+                                                                const newKwargs = {
+                                                                    ...values.kwargs,
+                                                                    [kwarg[0]]: stringToTypedVal(
+                                                                        val
+                                                                    ),
+                                                                };
+                                                                setFieldValue(
+                                                                    'kwargs',
+                                                                    newKwargs
+                                                                );
+                                                            }}
+                                                        />
+                                                        <IconButton
+                                                            icon="x"
+                                                            onClick={() => {
+                                                                const newKwargs = {
+                                                                    ...values.kwargs,
+                                                                };
+                                                                delete newKwargs[
+                                                                    kwarg[0]
+                                                                ];
+                                                                setFieldValue(
+                                                                    'kwargs',
+                                                                    newKwargs
+                                                                );
+                                                            }}
+                                                        />
+                                                    </FormField>
+                                                </div>
+                                            );
+                                        }
+                                    )}
+                                    {newKwargsDOM}
+                                </FormField>
+                            );
+
                             return (
                                 <FormWrapper minLabelWidth="180px" size={7}>
                                     <Form>
-                                        <div className="TaskEditor-form-fields ">
-                                            <FormField label="Enable Schedule">
-                                                <ToggleSwitch
-                                                    checked={values.enabled}
-                                                    onChange={(checked) => {
-                                                        setFieldValue(
-                                                            'enabled',
-                                                            checked
-                                                        );
-                                                    }}
-                                                />
-                                            </FormField>
+                                        <div className="TaskEditor-form-fields">
+                                            <SimpleField
+                                                name="args"
+                                                type="input"
+                                                inputProps={{
+                                                    value: values.args,
+                                                }}
+                                            />
+                                            {kwargsDOM}
+                                            <div className="TaskEditor-toggle">
+                                                <FormField label="Enable Schedule">
+                                                    <ToggleSwitch
+                                                        checked={values.enabled}
+                                                        onChange={(checked) => {
+                                                            setFieldValue(
+                                                                'enabled',
+                                                                checked
+                                                            );
+                                                        }}
+                                                    />
+                                                </FormField>
+                                            </div>
                                             {values.enabled ? (
                                                 <div className="TaskEditor-schedule horizontal-space-between">
                                                     {values.isCron ? (
