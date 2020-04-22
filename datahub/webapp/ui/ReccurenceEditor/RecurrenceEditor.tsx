@@ -20,8 +20,10 @@ const recurrenceReactSelectStyle = makeReactSelectStyle(true);
 interface IProps {
     recurrence: IRecurrence;
     recurrenceError?: any;
-    setRecurrence: (name: string, val: any) => void;
+    setRecurrence: (val: IRecurrence) => void;
 }
+
+type ReccurenceOnType = 'daily' | 'weekly' | 'monthly';
 
 export const RecurrenceEditor: React.FunctionComponent<IProps> = ({
     recurrence,
@@ -40,8 +42,12 @@ export const RecurrenceEditor: React.FunctionComponent<IProps> = ({
                     showSecond={false}
                     format="H:mm"
                     onChange={(value) => {
-                        setRecurrence('recurrence.hour', value.hour());
-                        setRecurrence('recurrence.minute', value.minute());
+                        const newRecurrence = {
+                            ...recurrence,
+                            hour: value.hour(),
+                            minute: value.minute(),
+                        };
+                        setRecurrence(newRecurrence);
                     }}
                 />
                 <div className="pl8">
@@ -58,11 +64,15 @@ export const RecurrenceEditor: React.FunctionComponent<IProps> = ({
                     <Tabs
                         items={['daily', 'weekly', 'monthly']}
                         selectedTabKey={field.value}
-                        onSelect={(key) => {
+                        onSelect={(key: ReccurenceOnType) => {
+                            const newRecurrence = {
+                                ...recurrence,
+                                recurrence: key,
+                            };
                             if (field.value !== key) {
-                                setRecurrence('recurrence.on', []);
+                                newRecurrence.on = [];
                             }
-                            setRecurrence('recurrence.recurrence', key);
+                            setRecurrence(newRecurrence);
                         }}
                         pills
                     />
@@ -89,14 +99,15 @@ export const RecurrenceEditor: React.FunctionComponent<IProps> = ({
                                 field.value.includes(option.value)
                             )}
                             options={options}
-                            onChange={(value) =>
-                                setRecurrence(
-                                    'recurrence.on',
-                                    (value as Array<{
+                            onChange={(value) => {
+                                const newRecurrence = {
+                                    ...recurrence,
+                                    on: (value as Array<{
                                         value: any;
-                                    }>).map((v) => v.value)
-                                )
-                            }
+                                    }>).map((v) => v.value),
+                                };
+                                setRecurrence(newRecurrence);
+                            }}
                             isMulti
                         />
                     )}

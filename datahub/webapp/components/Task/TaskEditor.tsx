@@ -342,8 +342,13 @@ export const TaskEditor: React.FunctionComponent<IProps> = ({
                                                                 recurrenceError={
                                                                     errors?.recurrence
                                                                 }
-                                                                setRecurrence={
-                                                                    setFieldValue
+                                                                setRecurrence={(
+                                                                    val
+                                                                ) =>
+                                                                    setFieldValue(
+                                                                        'recurrence',
+                                                                        val
+                                                                    )
                                                                 }
                                                             />
                                                         </FormField>
