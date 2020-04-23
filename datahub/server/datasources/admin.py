@@ -414,6 +414,9 @@ def get_task_run_records_by_name(
     api_assert(limit < 1000, "You are requesting too much data")
 
     with DBSession() as session:
+        task = schedule_logic.get_task_schedule_by_id(id=id, session=session)
+        api_assert(task, "Invalid task id")
+
         records, _ = schedule_logic.get_task_run_record_run_by_name(
             name=name,
             offset=offset,
