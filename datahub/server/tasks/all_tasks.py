@@ -14,6 +14,7 @@ from .run_datadoc import run_datadoc
 from .delete_mysql_cache import delete_mysql_cache
 from .poll_engine_status import poll_engine_status
 from .presto_hive_function_scrapper import presto_hive_function_scrapper
+from .db_clean_up_jobs import run_all_db_clean_up_jobs
 
 LOG = get_logger(__file__)
 
@@ -32,6 +33,7 @@ run_datadoc
 delete_mysql_cache
 poll_engine_status
 presto_hive_function_scrapper
+run_all_db_clean_up_jobs
 
 LOG = get_task_logger(__name__)
 
