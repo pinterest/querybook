@@ -94,9 +94,9 @@ export const TaskEditor: React.FunctionComponent<IProps> = ({
             const editedCron = editedValues.isCron
                 ? editedValues.cron
                 : recurrenceToCron(editedValues.recurrence);
-            const editedArgs = editedValues.args.map((arg) =>
-                stringToTypedVal(arg)
-            );
+            const editedArgs = editedValues.args
+                .filter((arg) => !(arg === ''))
+                .map((arg) => stringToTypedVal(arg));
             const editedKwargs = { ...editedValues.kwargs };
             if (editedValues.tempKwargs.length) {
                 for (const tempKwarg of editedValues.tempKwargs) {
@@ -193,7 +193,7 @@ export const TaskEditor: React.FunctionComponent<IProps> = ({
                                                                   />
                                                               </FormFieldInputSection>
                                                           </FormField>
-                                                          <div className="mr8">
+                                                          <div>
                                                               <IconButton
                                                                   icon="x"
                                                                   onClick={() =>
@@ -242,7 +242,7 @@ export const TaskEditor: React.FunctionComponent<IProps> = ({
                                                   (ignore, index) => (
                                                       <div
                                                           key={index}
-                                                          className="horizontal-space-between mb8 mr8"
+                                                          className="horizontal-space-between mb8"
                                                       >
                                                           <FormField>
                                                               <FormFieldInputSection>
@@ -288,7 +288,7 @@ export const TaskEditor: React.FunctionComponent<IProps> = ({
                                             </div>
                                         );
                                         return (
-                                            <div className="TaskEditor-new-kwargs-input">
+                                            <div>
                                                 <fieldset>{fields}</fieldset>
                                                 {controlDOM}
                                             </div>
@@ -297,30 +297,64 @@ export const TaskEditor: React.FunctionComponent<IProps> = ({
                                 />
                             );
                             const kwargsDOM = (
-                                <FormField stacked label="Kwargs">
-                                    {Object.entries(values.kwargs).map(
-                                        (kwarg) => {
-                                            return (
-                                                <div
-                                                    className="TaskEditor-kwargs-input"
-                                                    key={kwarg[0]}
-                                                >
-                                                    <FormField label={kwarg[0]}>
-                                                        <DebouncedInput
-                                                            value={kwarg[1]}
-                                                            onChange={(val) => {
-                                                                const newKwargs = {
-                                                                    ...values.kwargs,
-                                                                    [kwarg[0]]: stringToTypedVal(
+                                <div className="TaskEditor-kwargs">
+                                    <FormField stacked label="Kwargs">
+                                        {Object.entries(values.kwargs).map(
+                                            (kwarg: [string, string]) => {
+                                                return (
+                                                    <div
+                                                        className="horizontal-space-between"
+                                                        key={kwarg[0]}
+                                                    >
+                                                        <FormField>
+                                                            <FormFieldInputSection>
+                                                                <DebouncedInput
+                                                                    value={
+                                                                        kwarg[0]
+                                                                    }
+                                                                    onChange={(
                                                                         val
-                                                                    ),
-                                                                };
-                                                                setFieldValue(
-                                                                    'kwargs',
-                                                                    newKwargs
-                                                                );
-                                                            }}
-                                                        />
+                                                                    ) => {
+                                                                        const newKwargs = {
+                                                                            ...values.kwargs,
+                                                                            [val]:
+                                                                                values
+                                                                                    .kwargs[
+                                                                                    kwarg[0]
+                                                                                ],
+                                                                        };
+                                                                        delete newKwargs[
+                                                                            kwarg[0]
+                                                                        ];
+                                                                        setFieldValue(
+                                                                            'kwargs',
+                                                                            newKwargs
+                                                                        );
+                                                                    }}
+                                                                />
+                                                            </FormFieldInputSection>
+                                                            <FormFieldInputSection>
+                                                                <DebouncedInput
+                                                                    value={
+                                                                        kwarg[1]
+                                                                    }
+                                                                    onChange={(
+                                                                        val
+                                                                    ) => {
+                                                                        const newKwargs = {
+                                                                            ...values.kwargs,
+                                                                            [kwarg[0]]: stringToTypedVal(
+                                                                                val
+                                                                            ),
+                                                                        };
+                                                                        setFieldValue(
+                                                                            'kwargs',
+                                                                            newKwargs
+                                                                        );
+                                                                    }}
+                                                                />
+                                                            </FormFieldInputSection>
+                                                        </FormField>
                                                         <IconButton
                                                             icon="x"
                                                             onClick={() => {
@@ -336,13 +370,13 @@ export const TaskEditor: React.FunctionComponent<IProps> = ({
                                                                 );
                                                             }}
                                                         />
-                                                    </FormField>
-                                                </div>
-                                            );
-                                        }
-                                    )}
-                                    {newKwargsDOM}
-                                </FormField>
+                                                    </div>
+                                                );
+                                            }
+                                        )}
+                                        {newKwargsDOM}
+                                    </FormField>
+                                </div>
                             );
 
                             return (
