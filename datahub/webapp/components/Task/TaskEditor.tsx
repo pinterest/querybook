@@ -149,7 +149,7 @@ export const TaskEditor: React.FunctionComponent<IProps> = ({
             cron: task.cron,
             enabled: task.enabled,
             args: task.args || [],
-            kwargs: task.kwargs,
+            kwargs: task.kwargs || {},
             tempKwargs: [],
         };
     }, [task]);
@@ -349,13 +349,6 @@ export const TaskEditor: React.FunctionComponent<IProps> = ({
                                 <FormWrapper minLabelWidth="180px" size={7}>
                                     <Form>
                                         <div className="TaskEditor-form-fields">
-                                            {/* <SimpleField
-                                                name="args"
-                                                type="input"
-                                                inputProps={{
-                                                    value: values.args,
-                                                }}
-                                            /> */}
                                             {argsDOM}
                                             {kwargsDOM}
                                             <div className="TaskEditor-toggle">
