@@ -34,14 +34,10 @@ def run_all_db_clean_up_jobs(
 @with_session
 def clean_up_task_run_record(days_to_keep=30, session=None):
     last_day = datetime.now() - timedelta(days_to_keep)
-    old_records = (
-        session.query(TaskRunRecord).filter(TaskRunRecord.created_at < last_day).all()
-    )
-    if not old_records:
-        return
 
-    for old_record in old_records:
-        session.delete(old_record)
+    session.query(TaskRunRecord).filter(TaskRunRecord.created_at < last_day).delete(
+        synchronize_session=False
+    )
     session.commit()
 
 
@@ -50,53 +46,34 @@ def clean_up_query_execution(days_to_keep_done=90, days_to_keep_else=30, session
     last_day_for_done = datetime.now() - timedelta(days_to_keep_done)
     last_day_for_else = datetime.now() - timedelta(days_to_keep_else)
 
-    old_executions_done = (
-        session.query(QueryExecution)
-        .filter(QueryExecution.status == QueryExecutionStatus.DONE)
-        .filter(QueryExecution.completed_at < last_day_for_done)
-        .all()
+    session.query(QueryExecution).filter(
+        QueryExecution.status == QueryExecutionStatus.DONE
+    ).filter(QueryExecution.completed_at < last_day_for_done).delete(
+        synchronize_session=False
     )
-    old_executions_else = (
-        session.query(QueryExecution)
-        .filter(QueryExecution.status != QueryExecutionStatus.DONE)
-        .filter(QueryExecution.completed_at < last_day_for_else)
-        .all()
+    session.query(QueryExecution).filter(
+        QueryExecution.status != QueryExecutionStatus.DONE
+    ).filter(QueryExecution.completed_at < last_day_for_else).delete(
+        synchronize_session=False
     )
-    if not old_executions_done and not old_executions_else:
-        return
-
-    for old_execution_done in old_executions_done:
-        session.delete(old_execution_done)
-    for old_execution_else in old_executions_else:
-        session.delete(old_execution_else)
     session.commit()
 
 
 @with_session
 def clean_up_impression(days_to_keep=30, session=None):
     last_day = datetime.now() - timedelta(days_to_keep)
-    old_impressions = (
-        session.query(Impression).filter(Impression.created_at < last_day).all()
-    )
-    if not old_impressions:
-        return
 
-    for old_impression in old_impressions:
-        session.delete(old_impression)
+    session.query(Impression).filter(Impression.created_at < last_day).delete(
+        synchronize_session=False
+    )
     session.commit()
 
 
 @with_session
 def clean_up_archived_data_doc(days_to_keep=60, session=None):
     last_day = datetime.now() - timedelta(days_to_keep)
-    old_archived_data_docs = (
-        session.query(DataDoc)
-        .filter(DataDoc.archived == 1)
-        .filter(DataDoc.updated_at < last_day)
-        .all()
-    )
-    if not old_archived_data_docs:
-        return
-    for old_archived_data_doc in old_archived_data_docs:
-        session.delete(old_archived_data_doc)
+
+    session.query(DataDoc).filter(DataDoc.archived == 1).filter(
+        DataDoc.updated_at < last_day
+    ).delete(synchronize_session=False)
     session.commit()
