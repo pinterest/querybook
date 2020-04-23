@@ -9,22 +9,20 @@ import { recurrenceToCron, cronToRecurrence } from 'lib/utils/cron';
 import { sendNotification } from 'lib/dataHubUI';
 
 import { IAdminTask } from 'components/AppAdmin/AdminTask';
+import { TaskStatus } from 'components/Task/TaskStatus';
 
 import { Button } from 'ui/Button/Button';
 import { DebouncedInput } from 'ui/DebouncedInput/DebouncedInput';
 import { FormField, FormFieldInputSection } from 'ui/Form/FormField';
 import { FormWrapper } from 'ui/Form/FormWrapper';
+import { IconButton } from 'ui/Button/IconButton';
 import { RecurrenceEditor } from 'ui/ReccurenceEditor/RecurrenceEditor';
+import { SimpleField } from 'ui/FormikField/SimpleField';
 import { ToggleButton } from 'ui/ToggleButton/ToggleButton';
 import { ToggleSwitch } from 'ui/ToggleSwitch/ToggleSwitch';
 import { Tabs } from 'ui/Tabs/Tabs';
 
 import './TaskEditor.scss';
-import { TaskStatus } from 'components/Task/TaskStatus';
-import { InputField } from 'ui/FormikField/InputField';
-import { SimpleField } from 'ui/FormikField/SimpleField';
-import { SmartForm } from 'ui/SmartForm/SmartForm';
-import { IconButton } from 'ui/Button/IconButton';
 
 type TaskEditorTabs = 'edit' | 'history';
 
