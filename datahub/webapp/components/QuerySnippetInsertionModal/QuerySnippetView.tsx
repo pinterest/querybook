@@ -190,7 +190,7 @@ export class QuerySnippetView extends React.Component<
 
         const controlDOM = (
             <div className="right-align">
-                <CopyButton copyText={context} text="Copy To Clipboard" />
+                <CopyButton copyText={context} title="Copy To Clipboard" />
                 <Button
                     type="confirm"
                     title="Insert"

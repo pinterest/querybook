@@ -36,6 +36,11 @@ export interface IDataTextCell extends IDataCellBase {
 
 export type IDataChartCellMeta = IDataCellMetaBase & IChartConfig;
 
+export type IDataCellMeta =
+    | IDataQueryCellMeta
+    | IDataCellMetaBase
+    | IDataChartCellMeta;
+
 export interface IDataChartCell extends IDataCellBase {
     cell_type: 'chart';
     context: string;

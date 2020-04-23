@@ -21,7 +21,8 @@
                 "worker-loader!.",
                 "history",
                 "const",
-                "hooks"
+                "hooks",
+                "context"
             ]
         ],
         "no-shadowed-variable": [

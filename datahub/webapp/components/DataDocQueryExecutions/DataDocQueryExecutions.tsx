@@ -1,9 +1,16 @@
-import React, { useState, useMemo, useCallback, useEffect } from 'react';
+import React, {
+    useState,
+    useMemo,
+    useCallback,
+    useEffect,
+    useContext,
+} from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 
 import { getQueryString } from 'lib/utils/query-string';
 
 import { IStoreState } from 'redux/store/types';
+import { currentEnvironmentSelector } from 'redux/environment/selector';
 import * as queryExecutionsActions from 'redux/queryExecutions/action';
 import * as queryExecutionsSelectors from 'redux/queryExecutions/selector';
 
@@ -12,6 +19,7 @@ import { QueryExecution } from 'components/QueryExecution/QueryExecution';
 
 import './DataDocQueryExecutions.scss';
 import { QueryExecutionPicker } from 'components/ExecutionPicker/QueryExecutionPicker';
+import { DataDocContext } from 'context/DataDoc';
 
 interface IProps {
     docId: number;
@@ -27,7 +35,12 @@ export const DataDocQueryExecutions: React.FunctionComponent<IProps> = ({
     changeCellContext,
     isQueryCollapsed,
 }) => {
-    const [selectedExecutionIndex, selectExecutionIndex] = useState(0);
+    const { cellIdToExecutionId, onQueryCellSelectExecution } = useContext(
+        DataDocContext
+    );
+
+    const environment = useSelector(currentEnvironmentSelector);
+
     const queryExecutionsSelector = useMemo(
         () => queryExecutionsSelectors.makeQueryExecutionsSelector(),
         []
@@ -36,15 +49,32 @@ export const DataDocQueryExecutions: React.FunctionComponent<IProps> = ({
     const queryExecutions =
         useSelector((state: IStoreState) =>
             queryExecutionsSelector(state, cellId)
-        ) || [];
+        ) ?? [];
+
+    const selectedExecutionIndex = useMemo(() => {
+        if (!(cellId in cellIdToExecutionId)) {
+            return 0;
+        }
+
+        const foundIndex = queryExecutions.findIndex(
+            (qe) => qe.id === cellIdToExecutionId[cellId]
+        );
+        // If not found, then return 0
+        return Math.max(0, foundIndex);
+    }, [cellIdToExecutionId[cellId], queryExecutions]);
+
+    const selectExecutionIndex = useCallback(
+        (index: number) => {
+            if (queryExecutions.length > index) {
+                onQueryCellSelectExecution(cellId, queryExecutions[index].id);
+            }
+        },
+        [queryExecutions]
+    );
 
     const dispatch = useDispatch();
-    const loadQueryExecutions = useCallback((dataCellId: number) => {
-        dispatch(queryExecutionsActions.fetchQueryExecutionsByCell(dataCellId));
-    }, []);
-
     useEffect(() => {
-        loadQueryExecutions(cellId);
+        dispatch(queryExecutionsActions.fetchQueryExecutionsByCell(cellId));
     }, [cellId]);
 
     React.useEffect(() => {
@@ -83,9 +113,7 @@ export const DataDocQueryExecutions: React.FunctionComponent<IProps> = ({
     const generatePermaLink = useCallback(() => {
         const queryExecution = (queryExecutions || [])[selectedExecutionIndex];
         if (queryExecution) {
-            const shareUrl =
-                `${location.protocol}//${location.host}${location.pathname}?` +
-                `cellId=${cellId}&executionId=${queryExecution.id}`;
+            const shareUrl = `${location.protocol}//${location.host}/${environment.name}/query_execution/${queryExecution.id}/`;
             return shareUrl;
         }
         return '';
@@ -113,7 +141,6 @@ export const DataDocQueryExecutions: React.FunctionComponent<IProps> = ({
             </div>
         );
     };
-
     const selectedExecution = queryExecutions[selectedExecutionIndex];
     const queryExecutionDOM = selectedExecution && (
         <QueryExecution

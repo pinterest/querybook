@@ -1,5 +1,7 @@
 import classNames from 'classnames';
 import React from 'react';
+
+import { TooltipDirection } from 'const/tooltip';
 import * as Utils from 'lib/utils';
 import { Button, IButtonProps } from 'ui/Button/Button';
 
@@ -11,6 +13,10 @@ interface ICopyButtonProps extends IButtonProps {
     icon?: string;
     title?: string;
     className?: string;
+
+    tooltip?: string;
+    copiedTooltip?: string;
+    tooltipDirection?: TooltipDirection;
 }
 
 interface IState {
@@ -20,9 +26,12 @@ interface IState {
 export const CopyButton: React.FunctionComponent<ICopyButtonProps> = ({
     copyText,
     className = '',
+    tooltip = DEFAULT_TOOL_TIP,
+    copiedTooltip = DEFAULT_COPIED_TOOL_TIP,
+    tooltipDirection = 'up',
     ...propsForButton
 }) => {
-    const [tooltip, setTooltip] = React.useState(DEFAULT_TOOL_TIP);
+    const [tooltipToShow, setTooltipToShow] = React.useState(tooltip);
 
     return (
         <Button
@@ -30,13 +39,13 @@ export const CopyButton: React.FunctionComponent<ICopyButtonProps> = ({
                 CopyButton: true,
                 [className]: className,
             })}
-            aria-label={tooltip}
-            data-balloon-pos={'up'}
+            aria-label={tooltipToShow}
+            data-balloon-pos={tooltipDirection}
             onClick={() => {
                 Utils.copy(copyText);
-                setTooltip(DEFAULT_COPIED_TOOL_TIP);
+                setTooltipToShow(copiedTooltip);
             }}
-            onMouseLeave={() => setTooltip(DEFAULT_TOOL_TIP)}
+            onMouseLeave={() => setTooltipToShow(tooltip)}
             icon="copy"
             {...propsForButton}
         />
