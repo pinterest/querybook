@@ -5,7 +5,11 @@ import * as Yup from 'yup';
 
 import ds from 'lib/datasource';
 import { generateFormattedDate } from 'lib/utils/datetime';
-import { recurrenceToCron, cronToRecurrence } from 'lib/utils/cron';
+import {
+    recurrenceToCron,
+    cronToRecurrence,
+    validateCronForReuccrence,
+} from 'lib/utils/cron';
 import { sendNotification } from 'lib/dataHubUI';
 
 import { IAdminTask } from 'components/AppAdmin/AdminTask';
@@ -17,7 +21,6 @@ import { FormField, FormFieldInputSection } from 'ui/Form/FormField';
 import { FormWrapper } from 'ui/Form/FormWrapper';
 import { IconButton } from 'ui/Button/IconButton';
 import { RecurrenceEditor } from 'ui/ReccurenceEditor/RecurrenceEditor';
-import { SimpleField } from 'ui/FormikField/SimpleField';
 import { ToggleButton } from 'ui/ToggleButton/ToggleButton';
 import { ToggleSwitch } from 'ui/ToggleSwitch/ToggleSwitch';
 import { Tabs } from 'ui/Tabs/Tabs';
@@ -141,7 +144,7 @@ export const TaskEditor: React.FunctionComponent<IProps> = ({
     const formValues = React.useMemo(() => {
         const recurrence = cronToRecurrence(task.cron || '0 0 * * *');
         return {
-            isCron: false,
+            isCron: !validateCronForReuccrence(task.cron),
             recurrence,
             cron: task.cron,
             enabled: task.enabled,
@@ -370,7 +373,10 @@ export const TaskEditor: React.FunctionComponent<IProps> = ({
                                             </div>
                                             {values.enabled ? (
                                                 <div className="TaskEditor-schedule horizontal-space-between">
-                                                    {values.isCron ? (
+                                                    {values.isCron ||
+                                                    !validateCronForReuccrence(
+                                                        values.cron
+                                                    ) ? (
                                                         <FormField label="Cron Schedule">
                                                             <DebouncedInput
                                                                 value={
@@ -380,7 +386,7 @@ export const TaskEditor: React.FunctionComponent<IProps> = ({
                                                                     val
                                                                 ) => {
                                                                     setFieldValue(
-                                                                        'recurrence',
+                                                                        'cron',
                                                                         val
                                                                     );
                                                                 }}
@@ -414,22 +420,30 @@ export const TaskEditor: React.FunctionComponent<IProps> = ({
                                                             />
                                                         </FormField>
                                                     )}
-                                                    <div className="TaskEditor-schedule-toggle mr16">
-                                                        <ToggleButton
-                                                            checked={
-                                                                values.isCron
-                                                            }
-                                                            onChange={(
-                                                                val: boolean
-                                                            ) => {
-                                                                setFieldValue(
-                                                                    'isCron',
-                                                                    val
-                                                                );
-                                                            }}
-                                                            title="Use Cron"
-                                                        />
-                                                    </div>
+                                                    {validateCronForReuccrence(
+                                                        values.cron
+                                                    ) ? (
+                                                        <div className="TaskEditor-schedule-toggle mr16">
+                                                            <ToggleButton
+                                                                checked={
+                                                                    values.isCron
+                                                                }
+                                                                onChange={(
+                                                                    val: boolean
+                                                                ) => {
+                                                                    setFieldValue(
+                                                                        'isCron',
+                                                                        val
+                                                                    );
+                                                                }}
+                                                                title={
+                                                                    values.isCron
+                                                                        ? 'Use Recurrence Editor'
+                                                                        : 'Use Cron'
+                                                                }
+                                                            />
+                                                        </div>
+                                                    ) : null}
                                                 </div>
                                             ) : null}
                                         </div>

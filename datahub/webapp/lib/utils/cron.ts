@@ -91,3 +91,20 @@ export function getHumanReadableRecurrence(recurrence: IRecurrence): string {
             : ''
     }`;
 }
+
+export function validateCronForReuccrence(cron: string) {
+    if (cron.includes('/')) {
+        return false;
+    }
+
+    const minute = Number.isInteger(Number(cron.split(' ')[0]));
+    const hour = Number.isInteger(Number(cron.split(' ')[1]));
+    const month = Number.isInteger(Number(cron.split(' ')[3]));
+    const monthDay = Number.isInteger(Number(cron.split(' ')[2]));
+    const weekDay = Number.isInteger(Number(cron.split(' ')[4]));
+    if (month || (monthDay && weekDay) || !(minute && hour)) {
+        return false;
+    }
+
+    return true;
+}
