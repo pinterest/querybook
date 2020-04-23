@@ -43,11 +43,15 @@ export const QueryExecutionPicker: React.FunctionComponent<IProps> = React.memo(
             if (
                 autoSelect &&
                 queryExecutionId == null &&
-                queryExecutions.length > 0
+                filteredQueryExecutions.length > 0
             ) {
-                onSelection(queryExecutions[0].id);
+                onSelection(filteredQueryExecutions[0].id);
             }
-        }, [autoSelect, queryExecutionId, (queryExecutions || []).length]);
+        }, [
+            autoSelect,
+            queryExecutionId,
+            (filteredQueryExecutions || []).length,
+        ]);
 
         const executionSelectorButton = React.useCallback(() => {
             const execution = queryExecutions.find(

@@ -1,5 +1,17 @@
 @import './../../scss_variables.scss';
 
+@keyframes highlight-fade {
+    0% {
+        background-color: transparent;
+    }
+    25% {
+        background-color: var(--color-accent-bg);
+    }
+    100% {
+        background-color: transparent;
+    }
+}
+
 // Temporal
 .temporal-edit-title-modal-wrapper {
     .close {
@@ -95,6 +107,11 @@
 
         .data-doc-container {
             .data-doc-cell-container-pair {
+                &.highlight-cell {
+                    animation-name: highlight-fade;
+                    animation-duration: 5s;
+                }
+
                 position: relative;
                 &:hover {
                     .data-doc-cell-divider-container {
@@ -143,22 +160,19 @@
                             opacity: 1;
                         }
 
-                        .block-collapse-buttons-wrapper {
+                        .block-left-buttons-wrapper {
                             position: absolute;
                             left: 4px;
                         }
 
-                        .block-edit-buttons-wrapper {
+                        .block-right-buttons-wrapper {
                             position: absolute;
                             right: 4px;
                         }
                         .block-crud-button {
-                            &.disabled {
-                                background-color: var(--select-bg-color);
-                                cursor: not-allowed;
-                                &:hover {
-                                    background-color: var(--select-bg-color);
-                                }
+                            margin: 0;
+                            & + .block-crud-button {
+                                margin-left: 4px;
                             }
                         }
 

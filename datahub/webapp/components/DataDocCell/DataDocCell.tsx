@@ -1,8 +1,14 @@
-import React, { useEffect } from 'react';
+import React, { useEffect, useMemo, useContext } from 'react';
+import classNames from 'classnames';
+import { ContentState } from 'draft-js';
 
 import { useSelector, useDispatch } from 'react-redux';
 import { IStoreState, Dispatch } from 'redux/store/types';
 import { IDataCell, IDataDoc } from 'const/datadoc';
+import { DataDocContext } from 'context/DataDoc';
+
+import { sendNotification, sendConfirm } from 'lib/dataHubUI';
+import { getShareUrl } from 'lib/data-doc/data-doc-utils';
 
 import * as dataDocSelectors from 'redux/dataDoc/selector';
 import * as dataDocActions from 'redux/dataDoc/action';
@@ -13,33 +19,15 @@ import { DataDocQueryCell } from 'components/DataDocQueryCell/DataDocQueryCell';
 import { DataDocChartCell } from 'components/DataDocChartCell/DataDocChartCell';
 import { DataDocTextCell } from 'components/DataDocTextCell/DataDocTextCell';
 import { UserAvatar } from 'components/UserBadge/UserAvatar';
-import { sendNotification, sendConfirm } from 'lib/dataHubUI';
-import { ContentState } from 'draft-js';
 
 import './DataDocCell.scss';
 
 interface IDataDocCellProps {
     dataDoc: IDataDoc;
-
     cell: IDataCell;
     index: number;
     lastQueryCellId: number;
     queryIndexInDoc: number;
-    isEditable: boolean;
-    focusedCellIndex: number;
-    insertCellAt: (
-        index: number,
-        cellKey: string,
-        context: string,
-        meta: {}
-    ) => any;
-    cellFocusProps: {
-        onUpKeyPressed: () => any;
-        onDownKeyPressed: () => any;
-        onFocus: () => any;
-        onBlur: () => any;
-    };
-    defaultCollapse: boolean;
 }
 
 function getEstimatedCellHeight(cell: IDataCell) {
@@ -61,12 +49,16 @@ export const DataDocCell: React.FunctionComponent<IDataDocCellProps> = ({
     index,
     lastQueryCellId,
     queryIndexInDoc,
-    isEditable,
-    focusedCellIndex,
-    insertCellAt,
-    cellFocusProps,
-    defaultCollapse,
 }) => {
+    const {
+        cellIdToExecutionId,
+        insertCellAt,
+        cellFocus,
+        defaultCollapse,
+        focusedCellIndex,
+        isEditable,
+        highlightCellIndex,
+    } = useContext(DataDocContext);
     const { cellIdtoUid, arrowKeysEnabled } = useSelector(
         (state: IStoreState) => {
             return {
@@ -165,15 +157,22 @@ export const DataDocCell: React.FunctionComponent<IDataDocCellProps> = ({
         });
     }, [dataDoc]);
 
+    const shareUrl = useMemo(() => {
+        return getShareUrl(cell.id, cellIdToExecutionId[cell.id]);
+    }, [cell.id, cellIdToExecutionId[cell.id]]);
+
     const renderCell = () => {
         const onCellFocusOrBlur = {
-            onFocus: cellFocusProps.onFocus,
-            onBlur: cellFocusProps.onBlur,
+            onFocus: cellFocus.onFocus.bind(null, index),
+            onBlur: cellFocus.onBlur.bind(null, index),
         };
         const onCellKeyArrowKeyPressed = arrowKeysEnabled
             ? {
-                  onUpKeyPressed: cellFocusProps.onUpKeyPressed,
-                  onDownKeyPressed: cellFocusProps.onDownKeyPressed,
+                  onUpKeyPressed: cellFocus.onUpKeyPressed.bind(null, index),
+                  onDownKeyPressed: cellFocus.onDownKeyPressed.bind(
+                      null,
+                      index
+                  ),
               }
             : {};
 
@@ -241,6 +240,7 @@ export const DataDocCell: React.FunctionComponent<IDataDocCellProps> = ({
                         Boolean(cell.meta.collapsed) === showCollapsed
                     }
                     toggleDefaultCollapsed={handleDefaultCollapseChange}
+                    shareUrl={shareUrl}
                 />
             </div>
         );
@@ -251,9 +251,13 @@ export const DataDocCell: React.FunctionComponent<IDataDocCellProps> = ({
     const dataDocCellClassName = showCollapsed
         ? 'DataDocCell collapsed'
         : 'DataDocCell';
+    const innerCellClassName = classNames({
+        'highlight-cell': highlightCellIndex === index,
+        'data-doc-cell-container-pair': true,
+    });
 
     const innerCellContentDOM = (
-        <div className="data-doc-cell-container-pair">
+        <div className={innerCellClassName}>
             <div className="data-doc-cell-users flex-column">{uidDOM}</div>
             {renderCellControlDOM(index, true)}
             <div

@@ -55,7 +55,8 @@ export const QueryExecutionBar: React.FunctionComponent<IProps> = ({
                 borderless
                 small
                 copyText={permalink}
-                title="Share"
+                icon="link"
+                title="Share Execution"
                 type="inlineText"
             />
         </>

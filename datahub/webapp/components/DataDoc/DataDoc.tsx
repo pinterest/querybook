@@ -12,7 +12,7 @@ import { CELL_TYPE, IDataDoc, IDataCell } from 'const/datadoc';
 import ds from 'lib/datasource';
 import history from 'lib/router-history';
 import { sendConfirm, sendNotification } from 'lib/dataHubUI';
-import { scrollToCell } from 'lib/data-doc/data-doc-utils';
+import { scrollToCell, getShareUrl } from 'lib/data-doc/data-doc-utils';
 import { sanitizeUrlTitle } from 'lib/utils';
 import { getQueryString } from 'lib/utils/query-string';
 import { matchKeyPress } from 'lib/utils/keyboard';
@@ -28,6 +28,7 @@ import { myUserInfoSelector } from 'redux/user/selector';
 import { IStoreState, Dispatch } from 'redux/store/types';
 import { IDataDocSavePromise } from 'redux/dataDoc/types';
 
+import { IDataDocContextType, DataDocContext } from 'context/DataDoc';
 import { DataDocLeftSidebar } from 'components/DataDocLeftSidebar/DataDocLeftSidebar';
 import { DataDocRightSidebar } from 'components/DataDocRightSidebar/DataDocRightSidebar';
 import { DataDocUIGuide } from 'components/UIGuide/DataDocUIGuide';
@@ -40,9 +41,9 @@ import { Loading } from 'ui/Loading/Loading';
 import { DataDocHeader } from './DataDocHeader';
 import { DataDocCellControl } from './DataDocCellControl';
 import { DataDocError } from './DataDocError';
+import { DataDocContentContainer } from './DataDocContentContainer';
 
 import './DataDoc.scss';
-import { DataDocContentContainer } from './DataDocContentContainer';
 
 const loadingHints: string[] = require('config/loading_hints.yaml').hints;
 
@@ -55,21 +56,24 @@ type DataDocDispatchProps = ReturnType<typeof mapDispatchToProps>;
 type IProps = IOwnProps & DataDocStateProps & DataDocDispatchProps;
 
 interface IState {
-    fullScreenCellIndex?: number;
     focusedCellIndex?: number;
     errorObj?: React.ReactChild;
     // indicates whether or not datadoc is connected to websocket
     connected: boolean;
     defaultCollapseAllCells: boolean;
+    cellIdToExecutionId: Record<number, number>;
+    highlightCellIndex?: number;
 }
 
 class DataDocComponent extends React.Component<IProps, IState> {
     public readonly state = {
-        fullScreenCellIndex: null,
         errorObj: null,
         focusedCellIndex: null,
+        highlightCellIndex: null,
+
         connected: false,
         defaultCollapseAllCells: null,
+        cellIdToExecutionId: {},
     };
 
     public componentDidMount() {
@@ -86,7 +90,14 @@ class DataDocComponent extends React.Component<IProps, IState> {
             // No need to close because openDataDoc would auto-close
             if (prevProps.docId != null) {
                 this.props.forceSaveDataDoc(prevProps.docId);
-                this.setState({ defaultCollapseAllCells: null });
+
+                // Reset all the state variables
+                this.setState({
+                    defaultCollapseAllCells: null,
+                    focusedCellIndex: null,
+                    cellIdToExecutionId: {},
+                    highlightCellIndex: null,
+                });
             }
             this.openDataDoc(this.props.docId);
         }
@@ -139,10 +150,15 @@ class DataDocComponent extends React.Component<IProps, IState> {
 
     @bind
     public focusCellAt(index: number) {
-        this.setState({
-            focusedCellIndex: index,
-        });
-        this.updateDocCursor(index);
+        this.setState(
+            {
+                focusedCellIndex: index,
+            },
+            () => {
+                this.updateDocCursor(index);
+                this.updateDocUrl();
+            }
+        );
     }
 
     @bind
@@ -153,6 +169,23 @@ class DataDocComponent extends React.Component<IProps, IState> {
             dataDoc: { dataDocCells },
         } = this.props;
         dataDocActions.moveDataDocCursor(docId, dataDocCells?.[index]?.id);
+    }
+
+    @bind
+    @debounce(1000)
+    public updateDocUrl(cellId?: number, executionId?: number) {
+        const index = this.state.focusedCellIndex;
+        const {
+            dataDoc: { dataDocCells },
+        } = this.props;
+
+        cellId = cellId ?? (index != null ? dataDocCells?.[index]?.id : null);
+
+        if (cellId != null) {
+            executionId = executionId ?? this.state.cellIdToExecutionId[cellId];
+
+            history.replace(getShareUrl(cellId, executionId, true));
+        }
     }
 
     public autoFocusCell(props: Partial<IProps>, nextProps: Partial<IProps>) {
@@ -173,7 +206,23 @@ class DataDocComponent extends React.Component<IProps, IState> {
                     );
 
                     if (cellIndex >= 0) {
-                        scrollToCell(dataDoc.dataDocCells[cellIndex]);
+                        // This is to quickly snap to the element, and then in case
+                        // if the cell above/below pushes the element out of view we
+                        // try to scroll it back
+                        scrollToCell(dataDoc.dataDocCells[cellIndex], 0).then(
+                            () =>
+                                this.setState(
+                                    {
+                                        highlightCellIndex: cellIndex,
+                                    },
+                                    () =>
+                                        scrollToCell(
+                                            dataDoc.dataDocCells[cellIndex],
+                                            200,
+                                            5
+                                        )
+                                )
+                        );
                     }
                 }
             }
@@ -246,10 +295,55 @@ class DataDocComponent extends React.Component<IProps, IState> {
     }
 
     @bind
-    public fullscreenCellAt(index: number) {
-        this.setState({
-            fullScreenCellIndex: index,
-        });
+    @decorate(memoizeOne)
+    public _getDataDocContextState(
+        isEditable: boolean,
+        defaultCollapse: boolean,
+        focusedCellIndex: number,
+        highlightCellIndex: number,
+        cellIdToExecutionId: Record<number, number>
+    ): IDataDocContextType {
+        return {
+            cellIdToExecutionId,
+            onQueryCellSelectExecution: (cellId, executionId) => {
+                this.setState(
+                    ({ cellIdToExecutionId: oldCellIdToExecutionId }) => ({
+                        cellIdToExecutionId: {
+                            ...oldCellIdToExecutionId,
+                            [cellId]: executionId,
+                        },
+                    }),
+                    () => {
+                        this.updateDocUrl(cellId, executionId);
+                    }
+                );
+            },
+
+            insertCellAt: this.insertCellAt,
+
+            defaultCollapse,
+            focusedCellIndex,
+            highlightCellIndex,
+            cellFocus: {
+                onUpKeyPressed: (index: number) => this.focusCellAt(index - 1),
+                onDownKeyPressed: (index: number) =>
+                    this.focusCellAt(index + 1),
+                onFocus: this.onCellFocus,
+                onBlur: this.onCellBlur,
+            },
+            isEditable,
+        };
+    }
+
+    @bind
+    public getDataDocContextState() {
+        return this._getDataDocContextState(
+            this.props.isEditable,
+            this.state.defaultCollapseAllCells,
+            this.state.focusedCellIndex,
+            this.state.highlightCellIndex,
+            this.state.cellIdToExecutionId
+        );
     }
 
     @decorate(memoizeOne)
@@ -351,12 +445,6 @@ class DataDocComponent extends React.Component<IProps, IState> {
                 </div>
             );
         } else {
-            const cellFocusProps = {
-                onUpKeyPressed: this.focusCellAt.bind(this, index - 1),
-                onDownKeyPressed: this.focusCellAt.bind(this, index + 1),
-                onFocus: this.onCellFocus.bind(this, index),
-                onBlur: this.onCellBlur.bind(this, index),
-            };
             return (
                 <DataDocCell
                     key={cell.id}
@@ -365,11 +453,6 @@ class DataDocComponent extends React.Component<IProps, IState> {
                     index={index}
                     queryIndexInDoc={queryIndexInDoc}
                     lastQueryCellId={lastQueryCellId}
-                    isEditable={isEditable}
-                    focusedCellIndex={this.state.focusedCellIndex}
-                    insertCellAt={insertCellAtBinded}
-                    cellFocusProps={cellFocusProps}
-                    defaultCollapse={this.state.defaultCollapseAllCells}
                 />
             );
         }
@@ -487,9 +570,11 @@ class DataDocComponent extends React.Component<IProps, IState> {
                 })}
                 key="data-hub-data-doc"
             >
-                {leftSideBar}
-                {docDOM}
-                {rightSideBar}
+                <DataDocContext.Provider value={this.getDataDocContextState()}>
+                    {leftSideBar}
+                    {docDOM}
+                    {rightSideBar}
+                </DataDocContext.Provider>
             </div>
         );
     }
