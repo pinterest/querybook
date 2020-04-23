@@ -52,16 +52,16 @@ const taskFormSchema = Yup.object().shape({
     enabled: Yup.boolean().required(),
     arg: Yup.array().of(Yup.mixed()),
     kwargs: Yup.object(),
-    tempKwargs: Yup.array().of(Yup.array().of(Yup.string())),
+    tempKwargs: Yup.array().of(Yup.mixed()),
 });
 
 function stringToTypedVal(stringVal) {
-    if (Number.isInteger(Number(stringVal))) {
-        return Number(stringVal);
-    } else if (stringVal === 'true') {
+    if (stringVal === true || stringVal === 'true') {
         return true;
-    } else if (stringVal === 'false') {
+    } else if (stringVal === false || stringVal === 'false') {
         return false;
+    } else if (Number.isInteger(Number(stringVal))) {
+        return Number(stringVal);
     } else {
         return stringVal;
     }
@@ -91,7 +91,9 @@ export const TaskEditor: React.FunctionComponent<IProps> = ({
             const editedCron = editedValues.isCron
                 ? editedValues.cron
                 : recurrenceToCron(editedValues.recurrence);
-
+            const editedArgs = editedValues.args.map((arg) =>
+                stringToTypedVal(arg)
+            );
             const editedKwargs = { ...editedValues.kwargs };
             if (editedValues.tempKwargs.length) {
                 for (const tempKwarg of editedValues.tempKwargs) {
@@ -110,6 +112,7 @@ export const TaskEditor: React.FunctionComponent<IProps> = ({
                 ds.update(`/schedule/${task.id}/`, {
                     cron: editedCron,
                     enabled: editedValues.enabled,
+                    args: editedArgs,
                     kwargs: editedKwargs,
                 }).then(({ data }) => {
                     sendNotification('Task saved!');
@@ -142,7 +145,7 @@ export const TaskEditor: React.FunctionComponent<IProps> = ({
             recurrence,
             cron: task.cron,
             enabled: task.enabled,
-            args: task.args,
+            args: task.args || [],
             kwargs: task.kwargs,
             tempKwargs: [],
         };
@@ -168,6 +171,65 @@ export const TaskEditor: React.FunctionComponent<IProps> = ({
                             setFieldValue,
                             isValid,
                         }) => {
+                            const argsDOM = (
+                                <FieldArray
+                                    name="args"
+                                    render={(arrayHelpers) => {
+                                        const fields = values.args.length
+                                            ? values.args.map(
+                                                  (ignore, index) => (
+                                                      <div
+                                                          key={index}
+                                                          className="horizontal-space-between"
+                                                      >
+                                                          <FormField>
+                                                              <FormFieldInputSection>
+                                                                  <Field
+                                                                      name={`args[${index}]`}
+                                                                      placeholder="Insert arg"
+                                                                  />
+                                                              </FormFieldInputSection>
+                                                          </FormField>
+                                                          <div className="mr8">
+                                                              <IconButton
+                                                                  icon="x"
+                                                                  onClick={() =>
+                                                                      arrayHelpers.remove(
+                                                                          index
+                                                                      )
+                                                                  }
+                                                              />
+                                                          </div>
+                                                      </div>
+                                                  )
+                                              )
+                                            : null;
+                                        const controlDOM = (
+                                            <div className="center-align mt8 mb4">
+                                                <Button
+                                                    title="Add New Arg"
+                                                    onClick={() =>
+                                                        arrayHelpers.push('')
+                                                    }
+                                                    type="soft"
+                                                    borderless
+                                                />
+                                            </div>
+                                        );
+
+                                        return (
+                                            <div className="TaskEditor-args">
+                                                <FormField stacked label="Args">
+                                                    <fieldset>
+                                                        {fields}
+                                                    </fieldset>
+                                                </FormField>
+                                                {controlDOM}
+                                            </div>
+                                        );
+                                    }}
+                                />
+                            );
                             const newKwargsDOM = (
                                 <FieldArray
                                     name="tempKwargs"
@@ -177,7 +239,7 @@ export const TaskEditor: React.FunctionComponent<IProps> = ({
                                                   (ignore, index) => (
                                                       <div
                                                           key={index}
-                                                          className="horizontal-space-between template-key-value-row mb8 mr8"
+                                                          className="horizontal-space-between mb8 mr8"
                                                       >
                                                           <FormField>
                                                               <FormFieldInputSection>
@@ -217,7 +279,7 @@ export const TaskEditor: React.FunctionComponent<IProps> = ({
                                                             '',
                                                         ])
                                                     }
-                                                    type="inlineText"
+                                                    type="soft"
                                                     borderless
                                                 />
                                             </div>
@@ -284,13 +346,14 @@ export const TaskEditor: React.FunctionComponent<IProps> = ({
                                 <FormWrapper minLabelWidth="180px" size={7}>
                                     <Form>
                                         <div className="TaskEditor-form-fields">
-                                            <SimpleField
+                                            {/* <SimpleField
                                                 name="args"
                                                 type="input"
                                                 inputProps={{
                                                     value: values.args,
                                                 }}
-                                            />
+                                            /> */}
+                                            {argsDOM}
                                             {kwargsDOM}
                                             <div className="TaskEditor-toggle">
                                                 <FormField label="Enable Schedule">

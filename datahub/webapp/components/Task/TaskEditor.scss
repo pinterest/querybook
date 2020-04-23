@@ -18,6 +18,13 @@
                 .DebouncedInput {
                     max-width: 360px;
                 }
+                .TaskEditor-args {
+                    .FormField {
+                        .FormFieldInputSection {
+                            width: 360px;
+                        }
+                    }
+                }
                 .TaskEditor-kwargs-input {
                     .FormFieldInputSection {
                         display: flex;
