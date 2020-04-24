@@ -56,7 +56,7 @@ const taskFormSchema = Yup.object().shape({
     enabled: Yup.boolean().required(),
     arg: Yup.array().of(Yup.mixed()),
     kwargs: Yup.object(),
-    tempKwargs: Yup.array().of(Yup.mixed()),
+    kwargs: Yup.array().of(Yup.mixed()),
 });
 
 function stringToTypedVal(stringVal) {
@@ -98,15 +98,13 @@ export const TaskEditor: React.FunctionComponent<IProps> = ({
                 .filter((arg) => !(arg === ''))
                 .map((arg) => stringToTypedVal(arg));
             const editedKwargs = {};
-            if (editedValues.tempKwargs.length) {
-                for (const tempKwarg of editedValues.tempKwargs) {
+            if (editedValues.kwargs.length) {
+                for (const kwarg of editedValues.kwargs) {
                     if (
-                        tempKwarg[0].length &&
-                        !Object.keys(editedKwargs).includes(tempKwarg[0])
+                        kwarg[0].length &&
+                        !Object.keys(editedKwargs).includes(kwarg[0])
                     ) {
-                        editedKwargs[tempKwarg[0]] = stringToTypedVal(
-                            tempKwarg[1]
-                        );
+                        editedKwargs[kwarg[0]] = stringToTypedVal(kwarg[1]);
                     }
                 }
             }
@@ -150,7 +148,7 @@ export const TaskEditor: React.FunctionComponent<IProps> = ({
             cron: task.cron,
             enabled: task.enabled,
             args: task.args || [],
-            tempKwargs: Object.entries(task.kwargs || {}),
+            kwargs: Object.entries(task.kwargs || {}),
         };
     }, [task]);
 
@@ -184,7 +182,7 @@ export const TaskEditor: React.FunctionComponent<IProps> = ({
                                                           className="horizontal-space-between"
                                                       >
                                                           <FormField>
-                                                              <FormFieldInputSection>
+                                                              <FormFieldInputSection className="mr16">
                                                                   <Field
                                                                       name={`args[${index}]`}
                                                                       placeholder="Insert arg"
@@ -236,26 +234,26 @@ export const TaskEditor: React.FunctionComponent<IProps> = ({
                                 <div className="TaskEditor-kwargs">
                                     <FormField stacked label="Kwargs">
                                         <FieldArray
-                                            name="tempKwargs"
+                                            name="kwargs"
                                             render={(arrayHelpers) => {
-                                                const fields = values.tempKwargs
+                                                const fields = values.kwargs
                                                     .length
-                                                    ? values.tempKwargs.map(
+                                                    ? values.kwargs.map(
                                                           (ignore, index) => (
                                                               <div
                                                                   key={index}
                                                                   className="horizontal-space-between mb8"
                                                               >
                                                                   <FormField>
-                                                                      <FormFieldInputSection>
+                                                                      <FormFieldInputSection className="mr16">
                                                                           <Field
-                                                                              name={`tempKwargs[${index}][0]`}
+                                                                              name={`kwargs[${index}][0]`}
                                                                               placeholder="Insert key"
                                                                           />
                                                                       </FormFieldInputSection>
                                                                       <FormFieldInputSection>
                                                                           <Field
-                                                                              name={`tempKwargs[${index}][1]`}
+                                                                              name={`kwargs[${index}][1]`}
                                                                               placeholder="Insert value"
                                                                           />
                                                                       </FormFieldInputSection>

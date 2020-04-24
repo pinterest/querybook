@@ -80,6 +80,14 @@ export const AdminTask: React.FunctionComponent<IProps> = () => {
         url: '/admin/task/',
     });
 
+    const filteredTaskList = React.useMemo(() => {
+        return (taskList || []).filter(
+            (task) =>
+                task.task_type === type &&
+                task.name.includes(searchString.toLocaleLowerCase())
+        );
+    }, [taskList, searchString]);
+
     const handleChangeEnabled = React.useCallback(
         async (taskId: number, val: boolean) => {
             ds.update(`/schedule/${taskId}/`, {
@@ -172,13 +180,7 @@ export const AdminTask: React.FunctionComponent<IProps> = () => {
                 </div>
                 {taskList ? (
                     <Table
-                        rows={taskList.filter(
-                            (task) =>
-                                task.task_type === type &&
-                                task.name.includes(
-                                    searchString.toLocaleLowerCase()
-                                )
-                        )}
+                        rows={filteredTaskList}
                         cols={tableColumns}
                         formatCell={formatCell}
                         colNameToWidths={tableColumnWidths}
