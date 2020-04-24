@@ -86,7 +86,7 @@ export const AdminTask: React.FunctionComponent<IProps> = () => {
                 task.task_type === type &&
                 task.name.includes(searchString.toLocaleLowerCase())
         );
-    }, [taskList, searchString]);
+    }, [taskList, searchString, type]);
 
     const handleChangeEnabled = React.useCallback(
         async (taskId: number, val: boolean) => {
