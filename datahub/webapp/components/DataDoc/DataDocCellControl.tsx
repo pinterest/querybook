@@ -51,6 +51,13 @@ export const DataDocCellControl: React.FunctionComponent<IProps> = ({
         false
     );
 
+    const handleToggleDefaultCollapsed = React.useCallback(() => {
+        setAnimateDefaultChange(true);
+        Promise.all([sleep(500), toggleDefaultCollapsed()]).then(() =>
+            setAnimateDefaultChange(false)
+        );
+    }, [toggleDefaultCollapsed]);
+
     const shareButton = isHeader && shareUrl && (
         <CopyButton
             className="block-crud-button"
@@ -99,13 +106,6 @@ export const DataDocCellControl: React.FunctionComponent<IProps> = ({
                 />
             );
         rightButtons.push(deleteCellButtonDOM);
-
-        const handleToggleDefaultCollapsed = React.useCallback(() => {
-            setAnimateDefaultChange(true);
-            Promise.all([sleep(500), toggleDefaultCollapsed()]).then(() =>
-                setAnimateDefaultChange(false)
-            );
-        }, [toggleDefaultCollapsed]);
 
         if (isHeader && showCollapsed !== undefined) {
             // undefined means the cell cannot be collapsed
