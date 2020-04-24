@@ -65,12 +65,12 @@ function formatCell(
     }
 }
 
-export interface ITaskStatus {
+export interface ITaskStatusProps {
     taskId?: number;
     taskName?: string;
 }
 
-export const TaskStatus: React.FunctionComponent<ITaskStatus> = ({
+export const TaskStatus: React.FunctionComponent<ITaskStatusProps> = ({
     taskId,
     taskName,
 }) => {
@@ -99,7 +99,6 @@ export const TaskStatus: React.FunctionComponent<ITaskStatus> = ({
         params: taskId
             ? {
                   hide_successful_jobs: fetchInfo.hideSuccessfulJobs,
-                  name: taskName,
               }
             : {
                   hide_successful_jobs: fetchInfo.hideSuccessfulJobs,

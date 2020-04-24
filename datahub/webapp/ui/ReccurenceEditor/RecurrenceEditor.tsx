@@ -19,7 +19,7 @@ const recurrenceReactSelectStyle = makeReactSelectStyle(true);
 
 interface IProps {
     recurrence: IRecurrence;
-    recurrenceError?: any;
+    recurrenceError?: Partial<Record<keyof IRecurrence, string>>;
     setRecurrence: (val: IRecurrence) => void;
 }
 

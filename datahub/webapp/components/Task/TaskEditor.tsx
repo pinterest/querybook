@@ -20,12 +20,14 @@ import { DebouncedInput } from 'ui/DebouncedInput/DebouncedInput';
 import { FormField, FormFieldInputSection } from 'ui/Form/FormField';
 import { FormWrapper } from 'ui/Form/FormWrapper';
 import { IconButton } from 'ui/Button/IconButton';
+import { InputField } from 'ui/FormikField/InputField';
 import { RecurrenceEditor } from 'ui/ReccurenceEditor/RecurrenceEditor';
 import { ToggleButton } from 'ui/ToggleButton/ToggleButton';
 import { ToggleSwitch } from 'ui/ToggleSwitch/ToggleSwitch';
 import { Tabs } from 'ui/Tabs/Tabs';
 
 import './TaskEditor.scss';
+import { SimpleField } from 'ui/FormikField/SimpleField';
 
 type TaskEditorTabs = 'edit' | 'history';
 
@@ -63,7 +65,7 @@ function stringToTypedVal(stringVal) {
         return true;
     } else if (stringVal === false || stringVal === 'false') {
         return false;
-    } else if (Number.isInteger(Number(stringVal))) {
+    } else if (!isNaN(Number(stringVal))) {
         return Number(stringVal);
     } else {
         return stringVal;
@@ -82,10 +84,9 @@ export const TaskEditor: React.FunctionComponent<IProps> = ({
         setTab('edit');
     }, [task]);
 
-    const runTask = React.useCallback(() => {
-        ds.save(`/schedule/${task.id}/run/`).then(() => {
-            sendNotification('Task has started!');
-        });
+    const runTask = React.useCallback(async () => {
+        await ds.save(`/schedule/${task.id}/run/`);
+        sendNotification('Task has started!');
         onTaskUpdate?.();
     }, [task]);
 
@@ -97,7 +98,7 @@ export const TaskEditor: React.FunctionComponent<IProps> = ({
             const editedArgs = editedValues.args
                 .filter((arg) => !(arg === ''))
                 .map((arg) => stringToTypedVal(arg));
-            const editedKwargs = { ...editedValues.kwargs };
+            const editedKwargs = {};
             if (editedValues.tempKwargs.length) {
                 for (const tempKwarg of editedValues.tempKwargs) {
                     if (
@@ -119,6 +120,7 @@ export const TaskEditor: React.FunctionComponent<IProps> = ({
                     kwargs: editedKwargs,
                 }).then(({ data }) => {
                     sendNotification('Task saved!');
+                    onTaskUpdate?.();
                     return data;
                 });
             } else {
@@ -129,7 +131,7 @@ export const TaskEditor: React.FunctionComponent<IProps> = ({
                     task_type: task.task_type,
                     enabled: editedValues.enabled,
                     args: task.args,
-                    kwrgs: task.kwargs || {},
+                    kwargs: task.kwargs || {},
                 }).then(({ data }) => {
                     sendNotification('Task created!');
                     onTaskCreate?.();
@@ -149,8 +151,7 @@ export const TaskEditor: React.FunctionComponent<IProps> = ({
             cron: task.cron,
             enabled: task.enabled,
             args: task.args || [],
-            kwargs: task.kwargs || {},
-            tempKwargs: [],
+            tempKwargs: Object.entries(task.kwargs || {}),
         };
     }, [task]);
 
@@ -162,9 +163,7 @@ export const TaskEditor: React.FunctionComponent<IProps> = ({
                         isInitialValid={true}
                         initialValues={formValues}
                         validationSchema={taskFormSchema}
-                        onSubmit={(values) => {
-                            handleTaskEditSubmit(values);
-                        }}
+                        onSubmit={handleTaskEditSubmit}
                         enableReinitialize
                     >
                         {({
@@ -233,148 +232,73 @@ export const TaskEditor: React.FunctionComponent<IProps> = ({
                                     }}
                                 />
                             );
-                            const newKwargsDOM = (
-                                <FieldArray
-                                    name="tempKwargs"
-                                    render={(arrayHelpers) => {
-                                        const fields = values.tempKwargs.length
-                                            ? values.tempKwargs.map(
-                                                  (ignore, index) => (
-                                                      <div
-                                                          key={index}
-                                                          className="horizontal-space-between mb8"
-                                                      >
-                                                          <FormField>
-                                                              <FormFieldInputSection>
-                                                                  <Field
-                                                                      name={`tempKwargs[${index}][0]`}
-                                                                      placeholder="Insert key"
-                                                                  />
-                                                              </FormFieldInputSection>
-                                                              <FormFieldInputSection>
-                                                                  <Field
-                                                                      name={`tempKwargs[${index}][1]`}
-                                                                      placeholder="Insert value"
-                                                                  />
-                                                              </FormFieldInputSection>
-                                                          </FormField>
-                                                          <div>
-                                                              <IconButton
-                                                                  icon="x"
-                                                                  onClick={() =>
-                                                                      arrayHelpers.remove(
-                                                                          index
-                                                                      )
-                                                                  }
-                                                              />
-                                                          </div>
-                                                      </div>
-                                                  )
-                                              )
-                                            : null;
-                                        const controlDOM = (
-                                            <div className="TaskEditor-kwarg-button center-align mt4 ml4 mb16">
-                                                <Button
-                                                    title="Add New Kwarg"
-                                                    onClick={() =>
-                                                        arrayHelpers.push([
-                                                            '',
-                                                            '',
-                                                        ])
-                                                    }
-                                                    type="soft"
-                                                    borderless
-                                                />
-                                            </div>
-                                        );
-                                        return (
-                                            <div>
-                                                <fieldset>{fields}</fieldset>
-                                                {controlDOM}
-                                            </div>
-                                        );
-                                    }}
-                                />
-                            );
+
                             const kwargsDOM = (
                                 <div className="TaskEditor-kwargs">
                                     <FormField stacked label="Kwargs">
-                                        {Object.entries(values.kwargs).map(
-                                            (kwarg: [string, string]) => {
-                                                return (
-                                                    <div
-                                                        className="horizontal-space-between"
-                                                        key={kwarg[0]}
-                                                    >
-                                                        <FormField>
-                                                            <FormFieldInputSection>
-                                                                <DebouncedInput
-                                                                    value={
-                                                                        kwarg[0]
-                                                                    }
-                                                                    onChange={(
-                                                                        val
-                                                                    ) => {
-                                                                        const newKwargs = {
-                                                                            ...values.kwargs,
-                                                                            [val]:
-                                                                                values
-                                                                                    .kwargs[
-                                                                                    kwarg[0]
-                                                                                ],
-                                                                        };
-                                                                        delete newKwargs[
-                                                                            kwarg[0]
-                                                                        ];
-                                                                        setFieldValue(
-                                                                            'kwargs',
-                                                                            newKwargs
-                                                                        );
-                                                                    }}
-                                                                />
-                                                            </FormFieldInputSection>
-                                                            <FormFieldInputSection>
-                                                                <DebouncedInput
-                                                                    value={
-                                                                        kwarg[1]
-                                                                    }
-                                                                    onChange={(
-                                                                        val
-                                                                    ) => {
-                                                                        const newKwargs = {
-                                                                            ...values.kwargs,
-                                                                            [kwarg[0]]: stringToTypedVal(
-                                                                                val
-                                                                            ),
-                                                                        };
-                                                                        setFieldValue(
-                                                                            'kwargs',
-                                                                            newKwargs
-                                                                        );
-                                                                    }}
-                                                                />
-                                                            </FormFieldInputSection>
-                                                        </FormField>
-                                                        <IconButton
-                                                            icon="x"
-                                                            onClick={() => {
-                                                                const newKwargs = {
-                                                                    ...values.kwargs,
-                                                                };
-                                                                delete newKwargs[
-                                                                    kwarg[0]
-                                                                ];
-                                                                setFieldValue(
-                                                                    'kwargs',
-                                                                    newKwargs
-                                                                );
-                                                            }}
+                                        <FieldArray
+                                            name="tempKwargs"
+                                            render={(arrayHelpers) => {
+                                                const fields = values.tempKwargs
+                                                    .length
+                                                    ? values.tempKwargs.map(
+                                                          (ignore, index) => (
+                                                              <div
+                                                                  key={index}
+                                                                  className="horizontal-space-between mb8"
+                                                              >
+                                                                  <FormField>
+                                                                      <FormFieldInputSection>
+                                                                          <Field
+                                                                              name={`tempKwargs[${index}][0]`}
+                                                                              placeholder="Insert key"
+                                                                          />
+                                                                      </FormFieldInputSection>
+                                                                      <FormFieldInputSection>
+                                                                          <Field
+                                                                              name={`tempKwargs[${index}][1]`}
+                                                                              placeholder="Insert value"
+                                                                          />
+                                                                      </FormFieldInputSection>
+                                                                  </FormField>
+                                                                  <div>
+                                                                      <IconButton
+                                                                          icon="x"
+                                                                          onClick={() =>
+                                                                              arrayHelpers.remove(
+                                                                                  index
+                                                                              )
+                                                                          }
+                                                                      />
+                                                                  </div>
+                                                              </div>
+                                                          )
+                                                      )
+                                                    : null;
+                                                const controlDOM = (
+                                                    <div className="TaskEditor-kwarg-button center-align mt4 ml4 mb16">
+                                                        <Button
+                                                            title="Add New Kwarg"
+                                                            onClick={() =>
+                                                                arrayHelpers.push(
+                                                                    ['', '']
+                                                                )
+                                                            }
+                                                            type="soft"
+                                                            borderless
                                                         />
                                                     </div>
                                                 );
-                                            }
-                                        )}
-                                        {newKwargsDOM}
+                                                return (
+                                                    <div>
+                                                        <fieldset>
+                                                            {fields}
+                                                        </fieldset>
+                                                        {controlDOM}
+                                                    </div>
+                                                );
+                                            }}
+                                        />
                                     </FormField>
                                 </div>
                             );
@@ -386,17 +310,11 @@ export const TaskEditor: React.FunctionComponent<IProps> = ({
                                             {argsDOM}
                                             {kwargsDOM}
                                             <div className="TaskEditor-toggle">
-                                                <FormField label="Enable Schedule">
-                                                    <ToggleSwitch
-                                                        checked={values.enabled}
-                                                        onChange={(checked) => {
-                                                            setFieldValue(
-                                                                'enabled',
-                                                                checked
-                                                            );
-                                                        }}
-                                                    />
-                                                </FormField>
+                                                <SimpleField
+                                                    label="Enable Schedule"
+                                                    type="toggle"
+                                                    name="enabled"
+                                                />
                                             </div>
                                             {values.enabled ? (
                                                 <div className="TaskEditor-schedule horizontal-space-between">
@@ -404,26 +322,11 @@ export const TaskEditor: React.FunctionComponent<IProps> = ({
                                                     !validateCronForReuccrence(
                                                         values.cron
                                                     ) ? (
-                                                        <FormField label="Cron Schedule">
-                                                            <DebouncedInput
-                                                                value={
-                                                                    values.cron
-                                                                }
-                                                                onChange={(
-                                                                    val
-                                                                ) => {
-                                                                    setFieldValue(
-                                                                        'cron',
-                                                                        val
-                                                                    );
-                                                                }}
-                                                                inputProps={{
-                                                                    className:
-                                                                        'input',
-                                                                }}
-                                                                flex
-                                                            />
-                                                        </FormField>
+                                                        <SimpleField
+                                                            label="Cron Schedule"
+                                                            type="input"
+                                                            name="cron"
+                                                        />
                                                     ) : (
                                                         <FormField
                                                             stacked

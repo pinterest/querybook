@@ -79,7 +79,7 @@ export const AdminMetastore: React.FunctionComponent<IProps> = ({
     const {
         data: metastoreUpdateSchedule,
         forceFetch: loadMetastoreUpdateSchedule,
-    }: { data: IAdminTask; forceFetch: () => void } = useDataFetch<IAdminTask>({
+    } = useDataFetch<IAdminTask>({
         url: `/schedule/name/update_metastore_${metastoreId}/`,
     });
 
@@ -358,7 +358,7 @@ export const AdminMetastore: React.FunctionComponent<IProps> = ({
                                     <div className="AdminMetastore-TaskEditor">
                                         <TaskEditor
                                             task={
-                                                metastoreUpdateSchedule || {
+                                                metastoreUpdateSchedule ?? {
                                                     cron: '0 0 * * *',
                                                     name: `update_metastore_${metastoreId}`,
                                                     task:

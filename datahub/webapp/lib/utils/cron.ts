@@ -97,11 +97,14 @@ export function validateCronForReuccrence(cron: string) {
         return false;
     }
 
-    const minute = Number.isInteger(Number(cron.split(' ')[0]));
-    const hour = Number.isInteger(Number(cron.split(' ')[1]));
-    const month = Number.isInteger(Number(cron.split(' ')[3]));
-    const monthDay = Number.isInteger(Number(cron.split(' ')[2]));
-    const weekDay = Number.isInteger(Number(cron.split(' ')[4]));
+    const cronValArr = cron.split(' ');
+    if (cronValArr.length < 5) {
+        return false;
+    }
+
+    const [minute, hour, month, monthDay, weekDay] = cronValArr.map((s) =>
+        Number.isInteger(Number(s))
+    );
     if (month || (monthDay && weekDay) || !(minute && hour)) {
         return false;
     }

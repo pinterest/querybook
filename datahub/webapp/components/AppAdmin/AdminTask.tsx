@@ -24,7 +24,7 @@ export interface IAdminTask {
     id: number;
     name: string;
     task: string;
-    task_type: 'prod' | 'user';
+    task_type: TaskType;
     cron: string;
     args: any[];
     kwargs: any[];
@@ -33,6 +33,8 @@ export interface IAdminTask {
     total_run_count: number;
     enabled: boolean;
 }
+
+type TaskType = 'prod' | 'user';
 
 const tableColumns = [
     'id',
@@ -69,7 +71,7 @@ const tableColumnAligns: Record<string, TableAlign> = {
 export const AdminTask: React.FunctionComponent<IProps> = () => {
     const { id: detailTaskId } = useParams();
 
-    const [type, setType] = React.useState<'prod' | 'user'>('prod');
+    const [type, setType] = React.useState<TaskType>('prod');
     const [searchString, setSearchString] = React.useState<string>('');
 
     const { data: taskList, forceFetch: loadTaskList } = useDataFetch<
@@ -151,14 +153,14 @@ export const AdminTask: React.FunctionComponent<IProps> = () => {
                 <div className="AdminLanding-desc">Manage all tasks here.</div>
             </div>
             <div className="AdminTask-content">
-                <div className="AdminTask-controls horizontal-space-between">
+                <div className="AdminTask-controls horizontal-space-between mb24">
                     <Tabs
                         selectedTabKey={type}
                         items={[
                             { name: 'Production', key: 'prod' },
                             { name: 'User', key: 'user' },
                         ]}
-                        onSelect={(key: 'prod' | 'user') => {
+                        onSelect={(key: TaskType) => {
                             setType(key);
                         }}
                     />

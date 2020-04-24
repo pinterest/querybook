@@ -210,3 +210,13 @@ def with_task_logging(
         return wrapper
 
     return base_job_decorator
+
+
+@with_session
+def get_all_task_schedule(enabled=None, session=None):
+    query = session.query(TaskSchedule)
+
+    if enabled is not None:
+        query = query.filter_by(enabled=enabled)
+
+    return query.all()

@@ -16,7 +16,6 @@ from logic import admin as logic
 from logic import user as user_logic
 from logic import schedule as schedule_logic
 from logic import environment as environment_logic
-from logic import task as task_logic
 
 from models.admin import (
     Announcement,
@@ -409,7 +408,7 @@ def get_task_run_records(
 )
 @admin_only
 def get_task_run_records_by_name(
-    id, name, offset=0, limit=10, hide_successful_jobs=False, task_type=None
+    id, offset=0, limit=10, hide_successful_jobs=False, task_type=None
 ):
     api_assert(limit < 1000, "You are requesting too much data")
 
@@ -418,7 +417,7 @@ def get_task_run_records_by_name(
         api_assert(task, "Invalid task id")
 
         records, _ = schedule_logic.get_task_run_record_run_by_name(
-            name=name,
+            name=task.name,
             offset=offset,
             limit=limit,
             hide_successful_jobs=hide_successful_jobs,
@@ -519,7 +518,7 @@ def remove_user_from_environment(id, uid):
 @register("/admin/task/", methods=["GET"])
 @admin_only
 def get_all_tasks():
-    tasks = task_logic.get_all_task()
+    tasks = schedule_logic.get_all_task_schedule()
     return [task.to_dict() for task in tasks]
 
 
