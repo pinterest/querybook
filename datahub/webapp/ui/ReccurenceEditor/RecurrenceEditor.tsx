@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { Field } from 'formik';
+import { Field, FormikErrors } from 'formik';
 import moment from 'moment';
 import Select from 'react-select';
 
@@ -19,7 +19,7 @@ const recurrenceReactSelectStyle = makeReactSelectStyle(true);
 
 interface IProps {
     recurrence: IRecurrence;
-    recurrenceError?: Partial<Record<keyof IRecurrence, string>>;
+    recurrenceError?: FormikErrors<IRecurrence>;
     setRecurrence: (val: IRecurrence) => void;
 }
 

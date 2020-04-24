@@ -365,6 +365,21 @@ export const TaskEditor: React.FunctionComponent<IProps> = ({
                                                                         'isCron',
                                                                         val
                                                                     );
+                                                                    if (val) {
+                                                                        setFieldValue(
+                                                                            'cron',
+                                                                            recurrenceToCron(
+                                                                                values.recurrence
+                                                                            )
+                                                                        );
+                                                                    } else {
+                                                                        setFieldValue(
+                                                                            'recurrence',
+                                                                            cronToRecurrence(
+                                                                                values.cron
+                                                                            )
+                                                                        );
+                                                                    }
                                                                 }}
                                                                 title={
                                                                     values.isCron
