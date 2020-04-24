@@ -28,7 +28,6 @@ def run_all_db_clean_up_jobs(
         clean_up_archived_data_doc(
             days_to_keep=days_to_keep_archived_data_doc, session=session
         )
-        return
 
 
 @with_session
