@@ -29,6 +29,8 @@ const tableColumns = [
 ];
 const tableColumnWidths = {
     id: 80,
+    created_at: 280,
+    updated_at: 280,
     creator_uid: 160,
     updater_uid: 160,
     enabled: 100,

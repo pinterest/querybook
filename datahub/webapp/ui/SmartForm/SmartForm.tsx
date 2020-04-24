@@ -91,7 +91,6 @@ function SimpleFormField<T>({
         <div>
             <FormField required={required}>
                 <FormFieldInputSection>{controlDOM}</FormFieldInputSection>
-
                 {helper ? (
                     <FormFieldHelpSection>
                         <div dangerouslySetInnerHTML={{ __html: helper }} />

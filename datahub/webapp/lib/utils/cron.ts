@@ -91,3 +91,23 @@ export function getHumanReadableRecurrence(recurrence: IRecurrence): string {
             : ''
     }`;
 }
+
+export function validateCronForReuccrence(cron: string) {
+    if (cron.includes('/')) {
+        return false;
+    }
+
+    const cronValArr = cron.split(' ');
+    if (cronValArr.length < 5) {
+        return false;
+    }
+
+    const [minute, hour, month, monthDay, weekDay] = cronValArr.map((s) =>
+        Number.isInteger(Number(s))
+    );
+    if (month || (monthDay && weekDay) || !(minute && hour)) {
+        return false;
+    }
+
+    return true;
+}

@@ -129,10 +129,15 @@ def get_task_run_records(
 
 
 @with_session
-def get_task_run_record_run_by_name(name, limit=20, offset=0, session=None):
+def get_task_run_record_run_by_name(
+    name, limit=20, offset=0, hide_successful_jobs=False, session=None
+):
     query = session.query(TaskRunRecord).filter(TaskRunRecord.name == name)
-
     query = query.order_by(TaskRunRecord.created_at.desc())
+
+    if hide_successful_jobs:
+        query = query.filter(TaskRunRecord.status != TaskRunStatus.SUCCESS)
+
     tasks = query.offset(offset).limit(limit).all()
     count = query.count()
     return tasks, count
@@ -205,3 +210,13 @@ def with_task_logging(
         return wrapper
 
     return base_job_decorator
+
+
+@with_session
+def get_all_task_schedule(enabled=None, session=None):
+    query = session.query(TaskSchedule)
+
+    if enabled is not None:
+        query = query.filter_by(enabled=enabled)
+
+    return query.all()

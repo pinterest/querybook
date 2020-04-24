@@ -8,17 +8,19 @@ import ds from 'lib/datasource';
 import history from 'lib/router-history';
 import { generateFormattedDate } from 'lib/utils/datetime';
 import { useDataFetch } from 'hooks/useDataFetch';
+import { ITaskSchedule } from 'const/schedule';
 
 import { AdminDeletedList } from './AdminDeletedList';
-
-import { ScheduledTaskEditor } from 'components/ScheduledTaskEditor/ScheduledTaskEditor';
 import { AdminAuditLogButton } from 'components/AdminAuditLog/AdminAuditLogButton';
+import { IAdminTask } from './AdminTask';
+import { TaskEditor } from 'components/Task/TaskEditor';
 
 import { Button } from 'ui/Button/Button';
 import { Card } from 'ui/Card/Card';
-
 import { Icon } from 'ui/Icon/Icon';
+import { Level } from 'ui/Level/Level';
 import { Loading } from 'ui/Loading/Loading';
+import { SimpleField } from 'ui/FormikField/SimpleField';
 import { SingleCRUD } from 'ui/GenericCRUD/SingleCRUD';
 import {
     TemplatedForm,
@@ -28,8 +30,6 @@ import {
     updateValue,
 } from 'ui/SmartForm/SmartForm';
 import { Tabs } from 'ui/Tabs/Tabs';
-import { SimpleField } from 'ui/FormikField/SimpleField';
-import { Level } from 'ui/Level/Level';
 
 import './AdminMetastore.scss';
 
@@ -72,8 +72,15 @@ export const AdminMetastore: React.FunctionComponent<IProps> = ({
 
     const {
         data: metastoreLoaders,
-    }: { data: IMetastoreLoader[] } = useDataFetch({
+    }: { data: IMetastoreLoader[] } = useDataFetch<IMetastoreLoader[]>({
         url: '/admin/query_metastore_loader/',
+    });
+
+    const {
+        data: metastoreUpdateSchedule,
+        forceFetch: loadMetastoreUpdateSchedule,
+    } = useDataFetch<IAdminTask>({
+        url: `/schedule/name/update_metastore_${metastoreId}/`,
     });
 
     const createMetastore = React.useCallback(
@@ -277,6 +284,7 @@ export const AdminMetastore: React.FunctionComponent<IProps> = ({
                 />
             </div>
         );
+
         return (
             <>
                 <div className="AdminForm-top">
@@ -347,12 +355,24 @@ export const AdminMetastore: React.FunctionComponent<IProps> = ({
                                     <div className="dh-hr" />
                                 </div>
                                 <div className="AdminForm-section-content">
-                                    <ScheduledTaskEditor
-                                        scheduleName={`update_metastore_${metastoreId}`}
-                                        taskName="tasks.update_metastore.update_metastore"
-                                        taskType="prod"
-                                        args={[metastoreId]}
-                                    />
+                                    <div className="AdminMetastore-TaskEditor">
+                                        <TaskEditor
+                                            task={
+                                                metastoreUpdateSchedule ?? {
+                                                    cron: '0 0 * * *',
+                                                    name: `update_metastore_${metastoreId}`,
+                                                    task:
+                                                        'tasks.update_metastore.update_metastore',
+                                                    task_type: 'prod',
+                                                    enabled: true,
+                                                    args: [Number(metastoreId)],
+                                                }
+                                            }
+                                            onTaskCreate={
+                                                loadMetastoreUpdateSchedule
+                                            }
+                                        />
+                                    </div>
                                 </div>
                             </div>
                         )}

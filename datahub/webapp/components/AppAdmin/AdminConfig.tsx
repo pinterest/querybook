@@ -50,7 +50,7 @@ export const AdminConfig = ({}) => {
     }
 
     return (
-        <div className="AdminJobStatus">
+        <div className="AdminTaskStatus">
             <div className="AdminLanding-top">
                 <div className="AdminLanding-title">DataHub Configuration</div>
                 <div className="AdminLanding-desc">

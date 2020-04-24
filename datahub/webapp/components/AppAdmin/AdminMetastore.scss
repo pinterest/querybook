@@ -17,4 +17,13 @@
     .AdminMetastore-acl-top {
         margin-bottom: 8px;
     }
+    .AdminMetastore-TaskEditor {
+        .TaskEditor {
+            background-color: var(--light-bg-color);
+            border-radius: var(--border-radius);
+            padding-top: 4px;
+            padding-bottom: 4px;
+            overflow-x: scroll;
+        }
+    }
 }

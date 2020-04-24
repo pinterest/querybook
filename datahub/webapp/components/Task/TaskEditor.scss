@@ -1,0 +1,49 @@
+.TaskEditor {
+    width: 100%;
+    .TaskEditor-top {
+        align-items: flex-end;
+    }
+    .Tabs {
+        li {
+            min-width: 120px;
+        }
+    }
+    .TaskEditor-content {
+        .TaskEditor-form {
+            .TaskEditor-form-fields {
+                .DebouncedInput {
+                    max-width: 360px;
+                }
+                .TaskEditor-args {
+                    .FormField {
+                        .FormFieldInputSection {
+                            width: 360px;
+                        }
+                    }
+                }
+                .TaskEditor-kwargs {
+                    .FormField {
+                        .FormFieldInputSection:last-child {
+                            width: 360px;
+                        }
+                    }
+                }
+                .TaskEditor-toggle {
+                    .FormFieldInputSection {
+                        display: flex;
+                    }
+                }
+            }
+        }
+        .TaskStatus {
+            .ReactTable {
+                .rt-table {
+                    .rt-th,
+                    .rt-td {
+                        padding: 4px 16px;
+                    }
+                }
+            }
+        }
+    }
+}

@@ -10,17 +10,19 @@ from lib.celery.cron import validate_cron
 )
 @admin_only
 def create_task_schedule(
-    cron, schedule_name, task_name, task_type, enabled, args=None,
+    cron, name, task, task_type, enabled, args=None, kwargs=None, options=None,
 ):
     with DBSession() as session:
         api_assert(validate_cron(cron), "Invalid cron expression")
 
         schedule = logic.create_task_schedule(
-            name=schedule_name,
-            task=task_name,
+            name=name,
+            task=task,
             cron=cron,
             args=args,
+            kwargs=kwargs,
             task_type=task_type,
+            options=options,
             enabled=enabled,
             session=session,
         )

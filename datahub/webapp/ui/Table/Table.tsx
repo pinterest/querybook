@@ -56,7 +56,7 @@ export class Table extends React.Component<ITableProps> {
             let formattedColumn: Column;
             if (typeof column === 'string') {
                 formattedColumn = {
-                    Header: titleize(column),
+                    Header: titleize(column, '_', ' '),
                     accessor: column,
                 };
             } else {
@@ -79,7 +79,7 @@ export class Table extends React.Component<ITableProps> {
                 );
             }
             if (widthObj && widthObj[column]) {
-                formattedColumn.width = widthObj[column];
+                formattedColumn.minWidth = widthObj[column];
             }
 
             if (alignObj && alignObj[column]) {

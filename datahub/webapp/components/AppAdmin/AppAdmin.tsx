@@ -4,25 +4,26 @@ import { Route, Switch, useParams } from 'react-router-dom';
 
 import history from 'lib/router-history';
 import { IStoreState } from 'redux/store/types';
-import { AdminEntity, IAdminEntity } from './types';
-import { IAdminEnvironment } from 'components/AppAdmin/AdminEnvironment';
+import { AdminEntity } from './types';
+import { useDataFetch } from 'hooks/useDataFetch';
 
 import { AdminAppEntitySidebar } from 'components/AdminAppSidebar/AdminAppEntitySidebar';
 import { AdminAppNavigator } from 'components/AdminAppSidebar/AdminAppNavigator';
-import { JobStatus } from 'components/JobStatus/JobStatus';
-import { useDataFetch } from 'hooks/useDataFetch';
-import { FourOhThree } from 'ui/ErrorPage/FourOhThree';
-import { Sidebar } from 'ui/Sidebar/Sidebar';
-import { Card } from 'ui/Card/Card';
-import { Icon } from 'ui/Icon/Icon';
+import { IAdminEnvironment } from 'components/AppAdmin/AdminEnvironment';
+import { TaskStatus } from 'components/Task/TaskStatus';
 
 import { AdminAnnouncement } from './AdminAnnouncement';
-import { AdminQueryEngine, IAdminQueryEngine } from './AdminQueryEngine';
-import { AdminMetastore, IAdminMetastore } from './AdminMetastore';
-import { AdminUserRole } from './AdminUserRole';
-import { AdminEnvironment } from './AdminEnvironment';
 import { AdminApiAccessToken } from './AdminApiAccessToken';
 import { AdminConfig } from './AdminConfig';
+import { AdminEnvironment } from './AdminEnvironment';
+import { AdminMetastore, IAdminMetastore } from './AdminMetastore';
+import { AdminQueryEngine, IAdminQueryEngine } from './AdminQueryEngine';
+import { AdminTask } from './AdminTask';
+import { AdminUserRole } from './AdminUserRole';
+import { Card } from 'ui/Card/Card';
+import { FourOhThree } from 'ui/ErrorPage/FourOhThree';
+import { Icon } from 'ui/Icon/Icon';
+import { Sidebar } from 'ui/Sidebar/Sidebar';
 
 import './AppAdmin.scss';
 
@@ -248,9 +249,10 @@ export const AppAdmin: React.FunctionComponent = () => {
                             />
                         )}
                     />
+                    <Route path="/admin/task/:id?" component={AdminTask} />
                     <Route
-                        path="/admin/job_status/"
-                        component={AdminJobStatus}
+                        path="/admin/task_status/"
+                        component={AdminTaskStatus}
                     />
                     <Route path="/admin/user_role/" component={AdminUserRole} />
                     <Route
@@ -271,14 +273,14 @@ export const AppAdmin: React.FunctionComponent = () => {
     );
 };
 
-const AdminJobStatus: React.FC = () => (
-    <div className="AdminJobStatus">
+const AdminTaskStatus: React.FC = () => (
+    <div className="AdminTaskStatus">
         <div className="AdminLanding-top">
             <div className="AdminLanding-title">Job Status</div>
             <div className="AdminLanding-desc">
                 Update job schedule at a metastore setting or in a data doc.
             </div>
         </div>
-        <JobStatus />
+        <TaskStatus />
     </div>
 );

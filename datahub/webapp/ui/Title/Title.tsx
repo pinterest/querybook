@@ -69,7 +69,7 @@ export const Title: React.FunctionComponent<ITitleProps> = ({
         elementProps['data-balloon-pos'] = 'up';
     }
 
-    const fontWeight = weight ?? subtitle ? '400' : '600';
+    const fontWeight = weight ?? (subtitle ? '400' : '600');
     const fontSize = numFontSizeToString[size];
     const fontColor =
         color != null

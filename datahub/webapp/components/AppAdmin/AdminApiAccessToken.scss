@@ -1,5 +1,9 @@
 .AdminApiAccessToken {
     .AdminApiAccessToken-content {
         margin: 48px 0px 82px;
+        .Table {
+            overflow-x: scroll;
+            cursor: default;
+        }
     }
 }

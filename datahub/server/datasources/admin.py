@@ -403,6 +403,36 @@ def get_task_run_records(
         return data
 
 
+@register(
+    "/admin/schedule/<int:id>/record/", methods=["GET"],
+)
+@admin_only
+def get_task_run_records_by_name(
+    id, offset=0, limit=10, hide_successful_jobs=False, task_type=None
+):
+    api_assert(limit < 1000, "You are requesting too much data")
+
+    with DBSession() as session:
+        task = schedule_logic.get_task_schedule_by_id(id=id, session=session)
+        api_assert(task, "Invalid task id")
+
+        records, _ = schedule_logic.get_task_run_record_run_by_name(
+            name=task.name,
+            offset=offset,
+            limit=limit,
+            hide_successful_jobs=hide_successful_jobs,
+            session=session,
+        )
+
+        data = []
+        for record in records:
+            record_dict = record.to_dict()
+            record_dict["task_type"] = record.task.task_type
+            data.append(record_dict)
+
+        return data
+
+
 @register("/admin/environment/", methods=["GET"])
 def get_all_environments_admin():
     environments = environment_logic.get_all_environment(include_deleted=True)
@@ -483,6 +513,13 @@ def add_user_to_environment(id, uid):
 @with_admin_audit_log(AdminItemType.Environment, AdminOperation.UPDATE)
 def remove_user_from_environment(id, uid):
     environment_logic.remove_user_to_environment(uid, id)
+
+
+@register("/admin/task/", methods=["GET"])
+@admin_only
+def get_all_tasks():
+    tasks = schedule_logic.get_all_task_schedule()
+    return [task.to_dict() for task in tasks]
 
 
 """
