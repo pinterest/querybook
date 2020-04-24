@@ -62,6 +62,12 @@ export class RichTextEditor extends React.Component<
     private toolBarRef = React.createRef<RichTextEditorToolBar>();
     private selfRef = React.createRef<HTMLDivElement>();
 
+    public componentDidCatch() {
+        // Suppressing error due to LinkDecorator failing on delete
+        // related github issue https://github.com/facebook/draft-js/issues/1320#issuecomment-476509968
+        this.forceUpdate();
+    }
+
     public getContent() {
         return this.state.editorState.getCurrentContent();
     }
