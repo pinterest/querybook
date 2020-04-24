@@ -15,19 +15,18 @@ import { sendNotification } from 'lib/dataHubUI';
 import { IAdminTask } from 'components/AppAdmin/AdminTask';
 import { TaskStatus } from 'components/Task/TaskStatus';
 
+import { AsyncButton } from 'ui/AsyncButton/AsyncButton';
 import { Button } from 'ui/Button/Button';
-import { DebouncedInput } from 'ui/DebouncedInput/DebouncedInput';
 import { FormField, FormFieldInputSection } from 'ui/Form/FormField';
 import { FormWrapper } from 'ui/Form/FormWrapper';
 import { IconButton } from 'ui/Button/IconButton';
-import { InputField } from 'ui/FormikField/InputField';
 import { RecurrenceEditor } from 'ui/ReccurenceEditor/RecurrenceEditor';
-import { ToggleButton } from 'ui/ToggleButton/ToggleButton';
-import { ToggleSwitch } from 'ui/ToggleSwitch/ToggleSwitch';
+import { SimpleField } from 'ui/FormikField/SimpleField';
 import { Tabs } from 'ui/Tabs/Tabs';
+import { Title } from 'ui/Title/Title';
+import { ToggleButton } from 'ui/ToggleButton/ToggleButton';
 
 import './TaskEditor.scss';
-import { SimpleField } from 'ui/FormikField/SimpleField';
 
 type TaskEditorTabs = 'edit' | 'history';
 
@@ -167,11 +166,11 @@ export const TaskEditor: React.FunctionComponent<IProps> = ({
                         enableReinitialize
                     >
                         {({
-                            handleSubmit,
                             values,
                             errors,
                             setFieldValue,
                             isValid,
+                            submitForm,
                         }) => {
                             const argsDOM = (
                                 <FieldArray
@@ -393,9 +392,9 @@ export const TaskEditor: React.FunctionComponent<IProps> = ({
                                             ) : null}
                                         </div>
                                         <div className="TaskEditor-form-controls right-align mt16">
-                                            <Button
+                                            <AsyncButton
                                                 disabled={!isValid}
-                                                onClick={() => handleSubmit()}
+                                                onClick={submitForm}
                                                 title={
                                                     task.id
                                                         ? 'Update Task'
@@ -413,6 +412,7 @@ export const TaskEditor: React.FunctionComponent<IProps> = ({
                 </div>
             );
         } else {
+            // history
             return (
                 <div className="TaskEditor-history">
                     <TaskStatus taskId={task.id} taskName={task.name} />
@@ -425,19 +425,24 @@ export const TaskEditor: React.FunctionComponent<IProps> = ({
         <div className="TaskEditor">
             <div className="TaskEditor-top horizontal-space-between mv24 mh36">
                 <div className="TaskEditor-info">
-                    <div className="TaskEditor-name">{task.name}</div>
-                    <div className="TaskEditor-task mb16">{task.task}</div>
-                    <div className="TaskEditor-last-run">
-                        Last Run: {generateFormattedDate(task.last_run_at, 'X')}
-                        , {moment.utc(task.last_run_at, 'X').fromNow()}
-                    </div>
-                    <div className="TaskEditor-run-count">
-                        Total Run Count: {task.total_run_count}
-                    </div>
+                    <Title size={3} weight="bold">
+                        {task.name}
+                    </Title>
+                    <div className="mb16">{task.task}</div>
+                    {task.id ? (
+                        <>
+                            <div>
+                                Last Run:{' '}
+                                {generateFormattedDate(task.last_run_at, 'X')},{' '}
+                                {moment.utc(task.last_run_at, 'X').fromNow()}
+                            </div>
+                            <div>Total Run Count: {task.total_run_count}</div>
+                        </>
+                    ) : null}
                 </div>
                 <div className="TaskEditor-controls">
                     <div className="TaskEditor-run">
-                        <Button
+                        <AsyncButton
                             title="Run Task"
                             icon="play"
                             onClick={runTask}
