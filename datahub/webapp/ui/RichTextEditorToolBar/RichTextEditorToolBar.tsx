@@ -179,10 +179,10 @@ export class RichTextEditorToolBar extends React.PureComponent<
         const { showLinkInput } = this.state;
 
         let contentDOM = null;
-        if (showLinkInput) {
-            const selectionRect = getSelectionRect() || this.lastSelectionRect;
+        const selectionRect = getSelectionRect() || this.lastSelectionRect;
 
-            if (selectionRect != null) {
+        if (selectionRect != null) {
+            if (showLinkInput) {
                 this.lastSelectionRect = selectionRect;
 
                 const linkInput = showLinkInput ? (
@@ -197,11 +197,10 @@ export class RichTextEditorToolBar extends React.PureComponent<
                         />
                     </Popover>
                 ) : null;
-
                 contentDOM = linkInput;
+            } else {
+                contentDOM = this.renderButtons();
             }
-        } else {
-            contentDOM = this.renderButtons();
         }
 
         return (
