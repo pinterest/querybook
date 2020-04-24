@@ -87,7 +87,7 @@ export const FormField: React.FunctionComponent<IFormFieldProps> = ({
 
 const FormFieldLabelSection: React.FunctionComponent<IFormFieldSectionProps> = ({
     children,
-    className,
+    className = '',
 }) => {
     return (
         <div className={`FormFieldLabelSection ${className}`}>{children}</div>
@@ -96,7 +96,7 @@ const FormFieldLabelSection: React.FunctionComponent<IFormFieldSectionProps> = (
 
 export const FormFieldInputSectionRowGroup: React.FunctionComponent<IFormFieldSectionProps> = ({
     children,
-    className,
+    className = '',
 }) => {
     return (
         <div className={`FormFieldInputSectionRowGroup ${className}`}>
@@ -107,7 +107,7 @@ export const FormFieldInputSectionRowGroup: React.FunctionComponent<IFormFieldSe
 
 export const FormFieldInputSectionRow: React.FunctionComponent<IFormFieldSectionProps> = ({
     children,
-    className,
+    className = '',
 }) => {
     return (
         <div className={`FormFieldInputSectionRow ${className}`}>
@@ -118,7 +118,7 @@ export const FormFieldInputSectionRow: React.FunctionComponent<IFormFieldSection
 
 export const FormFieldInputSection: React.FunctionComponent<IFormFieldSectionProps> = ({
     children,
-    className,
+    className = '',
 }) => {
     return (
         <div className={`FormFieldInputSection ${className}`}>{children}</div>
@@ -127,7 +127,7 @@ export const FormFieldInputSection: React.FunctionComponent<IFormFieldSectionPro
 
 export const FormFieldHelpSection: React.FunctionComponent<IFormFieldSectionProps> = ({
     children,
-    className,
+    className = '',
 }) => {
     return (
         <div className={`FormFieldHelpSection flex-center ${className}`}>
@@ -143,7 +143,7 @@ export const FormFieldHelpSection: React.FunctionComponent<IFormFieldSectionProp
 
 export const FormFieldErrorSection: React.FunctionComponent<IFormFieldSectionProps> = ({
     children,
-    className,
+    className = '',
 }) => {
     return (
         <div className={`FormFieldErrorSection ${className}`}>{children}</div>
