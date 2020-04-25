@@ -34,6 +34,7 @@ interface IProps {
     task: Partial<IAdminTask>;
     onTaskUpdate?: () => void;
     onTaskCreate?: () => void;
+    showCreateForm?: boolean;
 }
 
 const taskFormSchema = Yup.object().shape({
@@ -56,7 +57,6 @@ const taskFormSchema = Yup.object().shape({
     enabled: Yup.boolean().required(),
     arg: Yup.array().of(Yup.mixed()),
     kwargs: Yup.object(),
-    kwargs: Yup.array().of(Yup.mixed()),
 });
 
 function stringToTypedVal(stringVal) {
@@ -75,9 +75,12 @@ export const TaskEditor: React.FunctionComponent<IProps> = ({
     task,
     onTaskUpdate,
     onTaskCreate,
+    showCreateForm = false,
 }) => {
     const [tab, setTab] = React.useState<TaskEditorTabs>('edit');
-    const [showCreateForm, setShowCreateForm] = React.useState<boolean>(false);
+    const [showForm, setShowForm] = React.useState<boolean>(
+        !!task.id || showCreateForm
+    );
 
     React.useEffect(() => {
         setTab('edit');
@@ -141,333 +144,315 @@ export const TaskEditor: React.FunctionComponent<IProps> = ({
     );
 
     const formValues = React.useMemo(() => {
-        const recurrence = cronToRecurrence(task.cron || '0 0 * * *');
+        const cron = task.cron || '0 0 * * *';
+        const recurrence = cronToRecurrence(cron);
         return {
-            isCron: !validateCronForReuccrence(task.cron),
+            name: task.name || 'task_name',
+            task: task.task || '',
+            isCron: !validateCronForReuccrence(cron),
             recurrence,
-            cron: task.cron,
-            enabled: task.enabled,
+            cron,
+            enabled: task.enabled || true,
             args: task.args || [],
             kwargs: Object.entries(task.kwargs || {}),
         };
     }, [task]);
 
-    const getTabDOM = () => {
-        if (tab === 'edit') {
-            return (
-                <div className="TaskEditor-form">
-                    <Formik
-                        isInitialValid={true}
-                        initialValues={formValues}
-                        validationSchema={taskFormSchema}
-                        onSubmit={handleTaskEditSubmit}
-                        enableReinitialize
-                    >
-                        {({
-                            values,
-                            errors,
-                            setFieldValue,
-                            isValid,
-                            submitForm,
-                        }) => {
-                            const argsDOM = (
-                                <FieldArray
-                                    name="args"
-                                    render={(arrayHelpers) => {
-                                        const fields = values.args.length
-                                            ? values.args.map(
-                                                  (ignore, index) => (
-                                                      <div
-                                                          key={index}
-                                                          className="horizontal-space-between"
-                                                      >
-                                                          <FormField>
-                                                              <FormFieldInputSection className="mr16">
-                                                                  <Field
-                                                                      name={`args[${index}]`}
-                                                                      placeholder="Insert arg"
-                                                                  />
-                                                              </FormFieldInputSection>
-                                                          </FormField>
-                                                          <div>
-                                                              <IconButton
-                                                                  icon="x"
-                                                                  onClick={() =>
-                                                                      arrayHelpers.remove(
-                                                                          index
-                                                                      )
-                                                                  }
-                                                              />
-                                                          </div>
-                                                      </div>
-                                                  )
-                                              )
-                                            : null;
-                                        const controlDOM = (
-                                            <div className="center-align mt8 mb4">
-                                                <Button
-                                                    title="Add New Arg"
-                                                    onClick={() =>
-                                                        arrayHelpers.push('')
-                                                    }
-                                                    type="soft"
-                                                    borderless
-                                                />
-                                            </div>
-                                        );
+    const getEditDOM = (values, errors, setFieldValue, isValid, submitForm) => {
+        const argsDOM = (
+            <FieldArray
+                name="args"
+                render={(arrayHelpers) => {
+                    const fields = values.args.length
+                        ? values.args.map((ignore, index) => (
+                              <div key={index} className="flex-row">
+                                  <FormField>
+                                      <FormFieldInputSection>
+                                          <Field
+                                              name={`args[${index}]`}
+                                              placeholder="Insert arg"
+                                          />
+                                      </FormFieldInputSection>
+                                  </FormField>
+                                  <div>
+                                      <IconButton
+                                          icon="x"
+                                          onClick={() =>
+                                              arrayHelpers.remove(index)
+                                          }
+                                      />
+                                  </div>
+                              </div>
+                          ))
+                        : null;
+                    const controlDOM = (
+                        <div className="mv8 ml12">
+                            <Button
+                                title="Add New Arg"
+                                onClick={() => arrayHelpers.push('')}
+                                type="soft"
+                                borderless
+                            />
+                        </div>
+                    );
 
-                                        return (
-                                            <div className="TaskEditor-args">
-                                                <FormField stacked label="Args">
-                                                    <fieldset>
-                                                        {fields}
-                                                    </fieldset>
-                                                </FormField>
-                                                {controlDOM}
-                                            </div>
-                                        );
-                                    }}
-                                />
-                            );
-
-                            const kwargsDOM = (
-                                <div className="TaskEditor-kwargs">
-                                    <FormField stacked label="Kwargs">
-                                        <FieldArray
-                                            name="kwargs"
-                                            render={(arrayHelpers) => {
-                                                const fields = values.kwargs
-                                                    .length
-                                                    ? values.kwargs.map(
-                                                          (ignore, index) => (
-                                                              <div
-                                                                  key={index}
-                                                                  className="horizontal-space-between mb8"
-                                                              >
-                                                                  <FormField>
-                                                                      <FormFieldInputSection className="mr16">
-                                                                          <Field
-                                                                              name={`kwargs[${index}][0]`}
-                                                                              placeholder="Insert key"
-                                                                          />
-                                                                      </FormFieldInputSection>
-                                                                      <FormFieldInputSection>
-                                                                          <Field
-                                                                              name={`kwargs[${index}][1]`}
-                                                                              placeholder="Insert value"
-                                                                          />
-                                                                      </FormFieldInputSection>
-                                                                  </FormField>
-                                                                  <div>
-                                                                      <IconButton
-                                                                          icon="x"
-                                                                          onClick={() =>
-                                                                              arrayHelpers.remove(
-                                                                                  index
-                                                                              )
-                                                                          }
-                                                                      />
-                                                                  </div>
-                                                              </div>
-                                                          )
-                                                      )
-                                                    : null;
-                                                const controlDOM = (
-                                                    <div className="TaskEditor-kwarg-button center-align mt4 ml4 mb16">
-                                                        <Button
-                                                            title="Add New Kwarg"
-                                                            onClick={() =>
-                                                                arrayHelpers.push(
-                                                                    ['', '']
-                                                                )
-                                                            }
-                                                            type="soft"
-                                                            borderless
-                                                        />
-                                                    </div>
-                                                );
-                                                return (
-                                                    <div>
-                                                        <fieldset>
-                                                            {fields}
-                                                        </fieldset>
-                                                        {controlDOM}
-                                                    </div>
-                                                );
-                                            }}
-                                        />
-                                    </FormField>
-                                </div>
-                            );
-
-                            return (
-                                <FormWrapper minLabelWidth="180px" size={7}>
-                                    <Form>
-                                        <div className="TaskEditor-form-fields">
-                                            {argsDOM}
-                                            {kwargsDOM}
-                                            <div className="TaskEditor-toggle">
-                                                <SimpleField
-                                                    label="Enable Schedule"
-                                                    type="toggle"
-                                                    name="enabled"
-                                                />
-                                            </div>
-                                            {values.enabled ? (
-                                                <div className="TaskEditor-schedule horizontal-space-between">
-                                                    {values.isCron ||
-                                                    !validateCronForReuccrence(
-                                                        values.cron
-                                                    ) ? (
-                                                        <SimpleField
-                                                            label="Cron Schedule"
-                                                            type="input"
-                                                            name="cron"
-                                                        />
-                                                    ) : (
-                                                        <FormField
-                                                            stacked
-                                                            label="Schedule"
-                                                        >
-                                                            <RecurrenceEditor
-                                                                recurrence={
-                                                                    values.recurrence
-                                                                }
-                                                                recurrenceError={
-                                                                    errors?.recurrence
-                                                                }
-                                                                setRecurrence={(
-                                                                    val
-                                                                ) =>
-                                                                    setFieldValue(
-                                                                        'recurrence',
-                                                                        val
-                                                                    )
-                                                                }
-                                                            />
-                                                        </FormField>
-                                                    )}
-                                                    {validateCronForReuccrence(
-                                                        values.cron
-                                                    ) ? (
-                                                        <div className="TaskEditor-schedule-toggle mr16">
-                                                            <ToggleButton
-                                                                checked={
-                                                                    values.isCron
-                                                                }
-                                                                onChange={(
-                                                                    val: boolean
-                                                                ) => {
-                                                                    setFieldValue(
-                                                                        'isCron',
-                                                                        val
-                                                                    );
-                                                                    if (val) {
-                                                                        setFieldValue(
-                                                                            'cron',
-                                                                            recurrenceToCron(
-                                                                                values.recurrence
-                                                                            )
-                                                                        );
-                                                                    } else {
-                                                                        setFieldValue(
-                                                                            'recurrence',
-                                                                            cronToRecurrence(
-                                                                                values.cron
-                                                                            )
-                                                                        );
-                                                                    }
-                                                                }}
-                                                                title={
-                                                                    values.isCron
-                                                                        ? 'Use Recurrence Editor'
-                                                                        : 'Use Cron'
-                                                                }
-                                                            />
-                                                        </div>
-                                                    ) : null}
-                                                </div>
-                                            ) : null}
-                                        </div>
-                                        <div className="TaskEditor-form-controls right-align mt16">
-                                            <AsyncButton
-                                                disabled={!isValid}
-                                                onClick={submitForm}
-                                                title={
-                                                    task.id
-                                                        ? 'Update Task'
-                                                        : 'Create Task'
-                                                }
-                                                type="inlineText"
-                                                borderless
-                                            />
-                                        </div>
-                                    </Form>
-                                </FormWrapper>
-                            );
-                        }}
-                    </Formik>
-                </div>
-            );
-        } else {
-            // history
-            return (
-                <div className="TaskEditor-history">
-                    <TaskStatus taskId={task.id} taskName={task.name} />
-                </div>
-            );
-        }
-    };
-
-    return task.id || showCreateForm ? (
-        <div className="TaskEditor">
-            <div className="TaskEditor-top horizontal-space-between mv24 mh36">
-                <div className="TaskEditor-info">
-                    <Title size={3} weight="bold">
-                        {task.name}
-                    </Title>
-                    <div className="mb16">{task.task}</div>
-                    {task.id ? (
-                        <>
-                            <div>
-                                Last Run:{' '}
-                                {generateFormattedDate(task.last_run_at, 'X')},{' '}
-                                {moment.utc(task.last_run_at, 'X').fromNow()}
-                            </div>
-                            <div>Total Run Count: {task.total_run_count}</div>
-                        </>
-                    ) : null}
-                </div>
-                <div className="TaskEditor-controls">
-                    <div className="TaskEditor-run">
-                        <AsyncButton
-                            title="Run Task"
-                            icon="play"
-                            onClick={runTask}
-                            type="inlineText"
-                            borderless
-                        />
-                    </div>
-                </div>
-            </div>
-            <Tabs
-                selectedTabKey={tab}
-                className="mh16 mb16"
-                items={[
-                    { name: 'Edit', key: 'edit' },
-                    { name: 'History', key: 'history' },
-                ]}
-                onSelect={(key: TaskEditorTabs) => {
-                    setTab(key);
+                    return (
+                        <div className="TaskEditor-args">
+                            <FormField stacked label="Args">
+                                <fieldset>{fields}</fieldset>
+                            </FormField>
+                            {controlDOM}
+                        </div>
+                    );
                 }}
             />
-            <div className="TaskEditor-content m24">{getTabDOM()}</div>
+        );
+
+        const kwargsDOM = (
+            <div className="TaskEditor-kwargs">
+                <FormField stacked label="Kwargs">
+                    <FieldArray
+                        name="kwargs"
+                        render={(arrayHelpers) => {
+                            const fields = values.kwargs.length
+                                ? values.kwargs.map((ignore, index) => (
+                                      <div key={index} className="flex-row mb8">
+                                          <FormField>
+                                              <FormFieldInputSection className="mr16">
+                                                  <Field
+                                                      name={`kwargs[${index}][0]`}
+                                                      placeholder="Insert key"
+                                                  />
+                                              </FormFieldInputSection>
+                                              <FormFieldInputSection>
+                                                  <Field
+                                                      name={`kwargs[${index}][1]`}
+                                                      placeholder="Insert value"
+                                                  />
+                                              </FormFieldInputSection>
+                                          </FormField>
+                                          <div>
+                                              <IconButton
+                                                  icon="x"
+                                                  onClick={() =>
+                                                      arrayHelpers.remove(index)
+                                                  }
+                                              />
+                                          </div>
+                                      </div>
+                                  ))
+                                : null;
+                            const controlDOM = (
+                                <div className="TaskEditor-kwarg-button mt4 ml4 mb16">
+                                    <Button
+                                        title="Add New Kwarg"
+                                        onClick={() =>
+                                            arrayHelpers.push(['', ''])
+                                        }
+                                        type="soft"
+                                        borderless
+                                    />
+                                </div>
+                            );
+                            return (
+                                <div>
+                                    <fieldset>{fields}</fieldset>
+                                    {controlDOM}
+                                </div>
+                            );
+                        }}
+                    />
+                </FormField>
+            </div>
+        );
+        return (
+            <div className="TaskEditor-form">
+                <FormWrapper minLabelWidth="180px" size={7}>
+                    <Form>
+                        <div className="TaskEditor-form-fields">
+                            <SimpleField
+                                label="Name"
+                                type="input"
+                                name="name"
+                            />
+                            <SimpleField
+                                label="Task"
+                                type="input"
+                                name="task"
+                            />
+                            {argsDOM}
+                            {kwargsDOM}
+                            <div className="TaskEditor-toggle">
+                                <SimpleField
+                                    label="Enable Schedule"
+                                    type="toggle"
+                                    name="enabled"
+                                />
+                            </div>
+                            {values.enabled ? (
+                                <div className="TaskEditor-schedule horizontal-space-between">
+                                    {values.isCron ||
+                                    !validateCronForReuccrence(values.cron) ? (
+                                        <SimpleField
+                                            label="Cron Schedule"
+                                            type="input"
+                                            name="cron"
+                                        />
+                                    ) : (
+                                        <FormField stacked label="Schedule">
+                                            <RecurrenceEditor
+                                                recurrence={values.recurrence}
+                                                recurrenceError={
+                                                    errors?.recurrence
+                                                }
+                                                setRecurrence={(val) =>
+                                                    setFieldValue(
+                                                        'recurrence',
+                                                        val
+                                                    )
+                                                }
+                                            />
+                                        </FormField>
+                                    )}
+                                    {validateCronForReuccrence(values.cron) ? (
+                                        <div className="TaskEditor-schedule-toggle mr16">
+                                            <ToggleButton
+                                                checked={values.isCron}
+                                                onChange={(val: boolean) => {
+                                                    setFieldValue(
+                                                        'isCron',
+                                                        val
+                                                    );
+                                                    if (val) {
+                                                        setFieldValue(
+                                                            'cron',
+                                                            recurrenceToCron(
+                                                                values.recurrence
+                                                            )
+                                                        );
+                                                    } else {
+                                                        setFieldValue(
+                                                            'recurrence',
+                                                            cronToRecurrence(
+                                                                values.cron
+                                                            )
+                                                        );
+                                                    }
+                                                }}
+                                                title={
+                                                    values.isCron
+                                                        ? 'Use Recurrence Editor'
+                                                        : 'Use Cron'
+                                                }
+                                            />
+                                        </div>
+                                    ) : null}
+                                </div>
+                            ) : null}
+                        </div>
+                        <div className="TaskEditor-form-controls right-align mt16">
+                            <AsyncButton
+                                disabled={!isValid}
+                                onClick={submitForm}
+                                title={task.id ? 'Update Task' : 'Create Task'}
+                                type="inlineText"
+                                borderless
+                            />
+                        </div>
+                    </Form>
+                </FormWrapper>
+            </div>
+        );
+    };
+
+    const historyDOM = () => (
+        <div className="TaskEditor-history">
+            <TaskStatus taskId={task.id} taskName={task.name} />
+        </div>
+    );
+
+    return showForm ? (
+        <div className="TaskEditor">
+            <Formik
+                isInitialValid={true}
+                initialValues={formValues}
+                validationSchema={taskFormSchema}
+                onSubmit={handleTaskEditSubmit}
+                enableReinitialize
+            >
+                {({ values, errors, setFieldValue, isValid, submitForm }) => {
+                    return (
+                        <>
+                            <div className="TaskEditor-top horizontal-space-between mv24 mh36">
+                                <div className="TaskEditor-info">
+                                    <Title size={3} weight="bold">
+                                        {values.name}
+                                    </Title>
+                                    <div className="mb16">{values.task}</div>
+                                    {task.id ? (
+                                        <>
+                                            <div>
+                                                Last Run:{' '}
+                                                {generateFormattedDate(
+                                                    task.last_run_at,
+                                                    'X'
+                                                )}
+                                                ,{' '}
+                                                {moment
+                                                    .utc(task.last_run_at, 'X')
+                                                    .fromNow()}
+                                            </div>
+                                            <div>
+                                                Total Run Count:{' '}
+                                                {task.total_run_count}
+                                            </div>
+                                        </>
+                                    ) : null}
+                                </div>
+                                <div className="TaskEditor-controls">
+                                    <div className="TaskEditor-run">
+                                        <AsyncButton
+                                            title="Run Task"
+                                            icon="play"
+                                            onClick={runTask}
+                                            type="inlineText"
+                                            borderless
+                                        />
+                                    </div>
+                                </div>
+                            </div>
+                            <Tabs
+                                selectedTabKey={tab}
+                                className="mh16 mb16"
+                                items={[
+                                    { name: 'Edit', key: 'edit' },
+                                    { name: 'History', key: 'history' },
+                                ]}
+                                onSelect={(key: TaskEditorTabs) => {
+                                    setTab(key);
+                                }}
+                            />
+                            <div className="TaskEditor-content m24">
+                                {tab === 'edit'
+                                    ? getEditDOM(
+                                          values,
+                                          errors,
+                                          setFieldValue,
+                                          isValid,
+                                          submitForm
+                                      )
+                                    : historyDOM}
+                            </div>
+                        </>
+                    );
+                }}
+            </Formik>
         </div>
     ) : (
         <div className="TaskEditor-new center-align">
             <Button
                 title="Create Schedule"
-                onClick={() => setShowCreateForm(true)}
+                onClick={() => setShowForm(true)}
                 type="inlineText"
                 borderless
             />

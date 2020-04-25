@@ -17,6 +17,7 @@ import { Tabs } from 'ui/Tabs/Tabs';
 import { ToggleSwitch } from 'ui/ToggleSwitch/ToggleSwitch';
 
 import './AdminTask.scss';
+import { Button } from 'ui/Button/Button';
 
 interface IProps {}
 
@@ -145,7 +146,7 @@ export const AdminTask: React.FunctionComponent<IProps> = () => {
                 <div
                     className={`div-${key} AdminTask-clickable`}
                     key={`${taskId}-${key}`}
-                    onClick={() => history.push(`/admin/task/${taskId}`)}
+                    onClick={() => history.push(`/admin/task/${taskId}/`)}
                 >
                     {dom}
                 </div>
@@ -172,11 +173,20 @@ export const AdminTask: React.FunctionComponent<IProps> = () => {
                             setType(key);
                         }}
                     />
-                    <SearchBar
-                        value={searchString}
-                        placeholder="Filter by name"
-                        onSearch={(s) => setSearchString(s.replace(' ', ''))}
-                    />
+                    <div className="AdminTask-controls-left flex-row">
+                        <SearchBar
+                            className="mr12"
+                            value={searchString}
+                            placeholder="Filter by name"
+                            onSearch={(s) =>
+                                setSearchString(s.replace(' ', ''))
+                            }
+                        />
+                        <Button
+                            title="Create Task"
+                            onClick={() => history.push('/admin/task/new/')}
+                        />
+                    </div>
                 </div>
                 {taskList ? (
                     <Table
@@ -195,10 +205,15 @@ export const AdminTask: React.FunctionComponent<IProps> = () => {
                     title="Task Editor"
                 >
                     <TaskEditor
-                        task={taskList.find(
-                            (task) => task.id === Number(detailTaskId)
-                        )}
+                        task={
+                            detailTaskId === 'new'
+                                ? {}
+                                : taskList.find(
+                                      (task) => task.id === Number(detailTaskId)
+                                  )
+                        }
                         onTaskUpdate={loadTaskList}
+                        showCreateForm={detailTaskId === 'new'}
                     />
                 </Modal>
             )}
