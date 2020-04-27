@@ -104,6 +104,10 @@ export const AdminTask: React.FunctionComponent<IProps> = () => {
         []
     );
 
+    const handleTaskCreation = React.useCallback((taskId) => {
+        history.push(`/admin/task/${taskId}/`);
+    }, []);
+
     const formatCell = React.useCallback(
         (index: number, column: string, row: IAdminTask) => {
             const key = column;
@@ -210,9 +214,10 @@ export const AdminTask: React.FunctionComponent<IProps> = () => {
                                 ? {}
                                 : taskList.find(
                                       (task) => task.id === Number(detailTaskId)
-                                  )
+                                  ) || {}
                         }
                         onTaskUpdate={loadTaskList}
+                        onTaskCreate={handleTaskCreation}
                         showCreateForm={detailTaskId === 'new'}
                     />
                 </Modal>

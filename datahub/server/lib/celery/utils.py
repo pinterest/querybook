@@ -1,9 +1,8 @@
 from celery import current_app
 
 # must import explicitly for celery to recognize registered tasks
-from tasks.run_query import run_query_task
-
 # from tasks.dummy_task import dummy_task
+from tasks.run_query import run_query_task
 from tasks.update_metastore import update_metastore
 from tasks.sync_elasticsearch import sync_elasticsearch
 from tasks.run_datadoc import run_datadoc
@@ -12,8 +11,8 @@ from tasks.poll_engine_status import poll_engine_status
 from tasks.presto_hive_function_scrapper import presto_hive_function_scrapper
 from tasks.db_clean_up_jobs import run_all_db_clean_up_jobs
 
-run_query_task
 # dummy_task
+run_query_task
 update_metastore
 sync_elasticsearch
 run_datadoc

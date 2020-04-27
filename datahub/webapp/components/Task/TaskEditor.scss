@@ -23,6 +23,9 @@
                 }
                 .TaskEditor-kwargs {
                     .FormField {
+                        .FormFieldInputSection:first-child {
+                            width: 280px;
+                        }
                         .FormFieldInputSection:last-child {
                             width: 360px;
                         }

@@ -23,22 +23,32 @@ import { FormWrapper } from 'ui/Form/FormWrapper';
 import { IconButton } from 'ui/Button/IconButton';
 import { RecurrenceEditor } from 'ui/ReccurenceEditor/RecurrenceEditor';
 import { SimpleField } from 'ui/FormikField/SimpleField';
+import { SimpleReactSelect } from 'ui/SimpleReactSelect/SimpleReactSelect';
 import { Tabs } from 'ui/Tabs/Tabs';
 import { Title } from 'ui/Title/Title';
 import { ToggleButton } from 'ui/ToggleButton/ToggleButton';
 
 import './TaskEditor.scss';
-import { SimpleReactSelect } from 'ui/SimpleReactSelect/SimpleReactSelect';
-import { ReactSelectField } from 'ui/FormikField/ReactSelectField';
 
 type TaskEditorTabs = 'edit' | 'history';
 
 interface IProps {
     task: Partial<IAdminTask>;
     onTaskUpdate?: () => void;
-    onTaskCreate?: () => void;
+    onTaskCreate?: (id?: number) => void;
     showCreateForm?: boolean;
 }
+
+const kwargsTemplate = {
+    'tasks.db_clean_up_jobs.run_all_db_clean_up_jobs': [
+        ['days_to_keep_task_record', 30],
+        ['days_to_keep_query_exec_done', 90],
+        ['days_to_keep_query_exec_else', 30],
+        ['days_to_keep_impression', 30],
+        ['days_to_keep_archived_data_doc', 60],
+    ],
+    'tasks.run_datadoc.run_datadoc': [['doc_id', '']],
+};
 
 const taskFormSchema = Yup.object().shape({
     isCron: Yup.boolean(),
@@ -91,6 +101,7 @@ export const TaskEditor: React.FunctionComponent<IProps> = ({
 
     React.useEffect(() => {
         setTab('edit');
+        setShowForm(!!task.id || showCreateForm);
     }, [task]);
 
     const runTask = React.useCallback(async () => {
@@ -133,15 +144,19 @@ export const TaskEditor: React.FunctionComponent<IProps> = ({
             } else {
                 ds.save(`/schedule/`, {
                     cron: editedCron,
-                    name: task.name,
-                    task: task.task,
-                    task_type: task.task_type,
+                    name: editedValues.name,
+                    task: editedValues.task,
+                    task_type:
+                        editedValues.task === 'tasks.run_datadoc.run_datadoc'
+                            ? 'user'
+                            : 'prod',
                     enabled: editedValues.enabled,
-                    args: task.args,
-                    kwargs: task.kwargs || {},
+                    args: editedArgs,
+                    kwargs: editedKwargs,
                 }).then(({ data }) => {
                     sendNotification('Task created!');
-                    onTaskCreate?.();
+                    onTaskUpdate?.();
+                    onTaskCreate?.(data.id);
                     return data;
                 });
             }
@@ -283,8 +298,19 @@ export const TaskEditor: React.FunctionComponent<IProps> = ({
                                 name="name"
                             />
                             <FormField label="Task">
-                                <ReactSelectField
-                                    name="task"
+                                <SimpleReactSelect
+                                    value={values.task}
+                                    onChange={(val) => {
+                                        setFieldValue('task', [val]);
+                                        if (kwargsTemplate[val]) {
+                                            setFieldValue(
+                                                'kwargs',
+                                                kwargsTemplate[val]
+                                            );
+                                        } else {
+                                            setFieldValue('kwargs', []);
+                                        }
+                                    }}
                                     options={(registeredTaskList || []).map(
                                         (registeredTask) => ({
                                             value: registeredTask,
@@ -422,29 +448,33 @@ export const TaskEditor: React.FunctionComponent<IProps> = ({
                                         </>
                                     ) : null}
                                 </div>
-                                <div className="TaskEditor-controls">
-                                    <div className="TaskEditor-run">
-                                        <AsyncButton
-                                            title="Run Task"
-                                            icon="play"
-                                            onClick={runTask}
-                                            type="inlineText"
-                                            borderless
-                                        />
+                                {task.id ? (
+                                    <div className="TaskEditor-controls">
+                                        <div className="TaskEditor-run">
+                                            <AsyncButton
+                                                title="Run Task"
+                                                icon="play"
+                                                onClick={runTask}
+                                                type="inlineText"
+                                                borderless
+                                            />
+                                        </div>
                                     </div>
-                                </div>
+                                ) : null}
                             </div>
-                            <Tabs
-                                selectedTabKey={tab}
-                                className="mh16 mb16"
-                                items={[
-                                    { name: 'Edit', key: 'edit' },
-                                    { name: 'History', key: 'history' },
-                                ]}
-                                onSelect={(key: TaskEditorTabs) => {
-                                    setTab(key);
-                                }}
-                            />
+                            {task.id ? (
+                                <Tabs
+                                    selectedTabKey={tab}
+                                    className="mh16 mb16"
+                                    items={[
+                                        { name: 'Edit', key: 'edit' },
+                                        { name: 'History', key: 'history' },
+                                    ]}
+                                    onSelect={(key: TaskEditorTabs) => {
+                                        setTab(key);
+                                    }}
+                                />
+                            ) : null}
                             <div className="TaskEditor-content m24">
                                 {tab === 'edit'
                                     ? getEditDOM(
