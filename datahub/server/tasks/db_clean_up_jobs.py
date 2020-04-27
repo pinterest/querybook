@@ -7,10 +7,13 @@ from models.schedule import TaskRunRecord
 from models.query_execution import QueryExecution
 from models.impression import Impression
 from models.datadoc import DataDoc
+from logic.schedule import with_task_logging
 
 
-@celery.task
+@celery.task(bind=True)
+@with_task_logging()
 def run_all_db_clean_up_jobs(
+    self,
     days_to_keep_task_record=None,
     days_to_keep_query_exec_done=None,
     days_to_keep_query_exec_else=None,

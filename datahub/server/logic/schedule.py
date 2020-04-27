@@ -1,6 +1,7 @@
 from datetime import datetime
 from functools import wraps
 
+from app.flask_app import celery
 from app.db import with_session
 from const.schedule import TaskRunStatus
 from lib.sqlalchemy import update_model_fields
@@ -210,6 +211,23 @@ def with_task_logging(
         return wrapper
 
     return base_job_decorator
+
+
+@with_session
+def run_and_log_scheduled_task(scheduled_task, session=None):
+    scheduled_task_dict = scheduled_task.to_dict()
+    celery.send_task(
+        scheduled_task_dict["task"],
+        args=scheduled_task_dict["args"],
+        kwargs=scheduled_task_dict["kwargs"],
+        shadow=scheduled_task_dict["name"],
+    )
+    update_task_schedule(
+        id=scheduled_task.id,
+        last_run_at=datetime.now(),
+        total_run_count=(scheduled_task.total_run_count + 1),
+        session=session,
+    )
 
 
 @with_session

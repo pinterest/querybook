@@ -102,7 +102,7 @@ export const TaskEditor: React.FunctionComponent<IProps> = ({
     React.useEffect(() => {
         setTab('edit');
         setShowForm(!!task.id || showCreateForm);
-    }, [task]);
+    }, [task.id]);
 
     const runTask = React.useCallback(async () => {
         await ds.save(`/schedule/${task.id}/run/`);
@@ -404,12 +404,6 @@ export const TaskEditor: React.FunctionComponent<IProps> = ({
         );
     };
 
-    const historyDOM = () => (
-        <div className="TaskEditor-history">
-            <TaskStatus taskId={task.id} taskName={task.name} />
-        </div>
-    );
-
     return showForm ? (
         <div className="TaskEditor">
             <Formik
@@ -476,15 +470,23 @@ export const TaskEditor: React.FunctionComponent<IProps> = ({
                                 />
                             ) : null}
                             <div className="TaskEditor-content m24">
-                                {tab === 'edit'
-                                    ? getEditDOM(
-                                          values,
-                                          errors,
-                                          setFieldValue,
-                                          isValid,
-                                          submitForm
-                                      )
-                                    : historyDOM}
+                                {tab === 'edit' ? (
+                                    getEditDOM(
+                                        values,
+                                        errors,
+                                        setFieldValue,
+                                        isValid,
+                                        submitForm
+                                    )
+                                ) : (
+                                    <div className="TaskEditor-history">
+                                        <TaskStatus
+                                            taskId={task.id}
+                                            taskName={task.name}
+                                            taskRunCount={task.total_run_count}
+                                        />
+                                    </div>
+                                )}
                             </div>
                         </>
                     );

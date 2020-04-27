@@ -1,5 +1,4 @@
 from logic import schedule as logic
-from app.flask_app import celery
 from app.datasource import register, api_assert, admin_only
 from app.db import DBSession
 from lib.celery.cron import validate_cron
@@ -79,14 +78,8 @@ def update_schedule(id, **kwargs):
 def run_scheduled_task(id):
     schedule = logic.get_task_schedule_by_id(id)
     if schedule:
-        schedule_dict = schedule.to_dict()
-
-        celery.send_task(
-            schedule_dict["task"],
-            args=schedule_dict["args"],
-            kwargs=schedule_dict["kwargs"],
-            shadow=schedule_dict["name"],
-        )
+        with DBSession() as session:
+            logic.run_and_log_scheduled_task(schedule, session=session)
 
 
 @register(

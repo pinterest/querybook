@@ -68,11 +68,13 @@ function formatCell(
 export interface ITaskStatusProps {
     taskId?: number;
     taskName?: string;
+    taskRunCount?: number;
 }
 
 export const TaskStatus: React.FunctionComponent<ITaskStatusProps> = ({
     taskId,
     taskName,
+    taskRunCount,
 }) => {
     const [type, setType] = React.useState<'prod' | 'user'>('prod');
     const [nameSearchString, setNameSearchString] = React.useState(
@@ -107,6 +109,10 @@ export const TaskStatus: React.FunctionComponent<ITaskStatusProps> = ({
               },
     });
 
+    React.useEffect(() => {
+        reset();
+    }, [taskRunCount]);
+
     useInterval(reset, 60 * 1000, !autoRefresh);
 
     const topDOM = (
@@ -138,7 +144,7 @@ export const TaskStatus: React.FunctionComponent<ITaskStatusProps> = ({
                             }
                         />
                     )}
-                    <div className="TaskStatus-switch">
+                    <div className="TaskStatus-switch flex-row">
                         <ToggleButton
                             checked={autoRefresh}
                             onChange={setAutoRefresh}
