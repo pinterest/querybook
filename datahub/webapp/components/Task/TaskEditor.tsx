@@ -11,6 +11,7 @@ import {
     validateCronForReuccrence,
 } from 'lib/utils/cron';
 import { sendNotification } from 'lib/dataHubUI';
+import { useDataFetch } from 'hooks/useDataFetch';
 
 import { IAdminTask } from 'components/AppAdmin/AdminTask';
 import { TaskStatus } from 'components/Task/TaskStatus';
@@ -27,6 +28,8 @@ import { Title } from 'ui/Title/Title';
 import { ToggleButton } from 'ui/ToggleButton/ToggleButton';
 
 import './TaskEditor.scss';
+import { SimpleReactSelect } from 'ui/SimpleReactSelect/SimpleReactSelect';
+import { ReactSelectField } from 'ui/FormikField/ReactSelectField';
 
 type TaskEditorTabs = 'edit' | 'history';
 
@@ -56,7 +59,7 @@ const taskFormSchema = Yup.object().shape({
     cron: Yup.string(),
     enabled: Yup.boolean().required(),
     arg: Yup.array().of(Yup.mixed()),
-    kwargs: Yup.object(),
+    kwargs: Yup.array().of(Yup.mixed()),
 });
 
 function stringToTypedVal(stringVal) {
@@ -81,6 +84,10 @@ export const TaskEditor: React.FunctionComponent<IProps> = ({
     const [showForm, setShowForm] = React.useState<boolean>(
         !!task.id || showCreateForm
     );
+
+    const { data: registeredTaskList } = useDataFetch<string[]>({
+        url: '/schedule/tasks/list/',
+    });
 
     React.useEffect(() => {
         setTab('edit');
@@ -186,7 +193,7 @@ export const TaskEditor: React.FunctionComponent<IProps> = ({
                           ))
                         : null;
                     const controlDOM = (
-                        <div className="mv8 ml12">
+                        <div className="mv4 ml12">
                             <Button
                                 title="Add New Arg"
                                 onClick={() => arrayHelpers.push('')}
@@ -209,14 +216,14 @@ export const TaskEditor: React.FunctionComponent<IProps> = ({
         );
 
         const kwargsDOM = (
-            <div className="TaskEditor-kwargs">
+            <div className="TaskEditor-kwargs mt12">
                 <FormField stacked label="Kwargs">
                     <FieldArray
                         name="kwargs"
                         render={(arrayHelpers) => {
                             const fields = values.kwargs.length
                                 ? values.kwargs.map((ignore, index) => (
-                                      <div key={index} className="flex-row mb8">
+                                      <div key={index} className="flex-row">
                                           <FormField>
                                               <FormFieldInputSection className="mr16">
                                                   <Field
@@ -243,7 +250,7 @@ export const TaskEditor: React.FunctionComponent<IProps> = ({
                                   ))
                                 : null;
                             const controlDOM = (
-                                <div className="TaskEditor-kwarg-button mt4 ml4 mb16">
+                                <div className="TaskEditor-kwarg-button mt8 ml4 mb16">
                                     <Button
                                         title="Add New Kwarg"
                                         onClick={() =>
@@ -275,11 +282,17 @@ export const TaskEditor: React.FunctionComponent<IProps> = ({
                                 type="input"
                                 name="name"
                             />
-                            <SimpleField
-                                label="Task"
-                                type="input"
-                                name="task"
-                            />
+                            <FormField label="Task">
+                                <ReactSelectField
+                                    name="task"
+                                    options={(registeredTaskList || []).map(
+                                        (registeredTask) => ({
+                                            value: registeredTask,
+                                            label: registeredTask,
+                                        })
+                                    )}
+                                />
+                            </FormField>
                             {argsDOM}
                             {kwargsDOM}
                             <div className="TaskEditor-toggle">

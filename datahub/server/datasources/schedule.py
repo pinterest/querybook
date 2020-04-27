@@ -3,6 +3,7 @@ from app.flask_app import celery
 from app.datasource import register, api_assert, admin_only
 from app.db import DBSession
 from lib.celery.cron import validate_cron
+from lib.celery.utils import get_all_registered_celery_tasks
 
 
 @register(
@@ -86,3 +87,11 @@ def run_scheduled_task(id):
             kwargs=schedule_dict["kwargs"],
             shadow=schedule_dict["name"],
         )
+
+
+@register(
+    "/schedule/tasks/list/", methods=["GET"],
+)
+@admin_only
+def get_registered_tasks_list():
+    return get_all_registered_celery_tasks()
