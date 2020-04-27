@@ -10,6 +10,7 @@ import { useDataFetch } from 'hooks/useDataFetch';
 
 import { TaskEditor } from 'components/Task/TaskEditor';
 
+import { Button } from 'ui/Button/Button';
 import { Modal } from 'ui/Modal/Modal';
 import { SearchBar } from 'ui/SearchBar/SearchBar';
 import { Table, TableAlign } from 'ui/Table/Table';
@@ -17,7 +18,6 @@ import { Tabs } from 'ui/Tabs/Tabs';
 import { ToggleSwitch } from 'ui/ToggleSwitch/ToggleSwitch';
 
 import './AdminTask.scss';
-import { Button } from 'ui/Button/Button';
 
 interface IProps {}
 
@@ -210,11 +210,9 @@ export const AdminTask: React.FunctionComponent<IProps> = () => {
                 >
                     <TaskEditor
                         task={
-                            detailTaskId === 'new'
-                                ? {}
-                                : taskList.find(
-                                      (task) => task.id === Number(detailTaskId)
-                                  ) || {}
+                            taskList.find(
+                                (task) => task.id === Number(detailTaskId)
+                            ) || {}
                         }
                         onTaskUpdate={loadTaskList}
                         onTaskCreate={handleTaskCreation}
