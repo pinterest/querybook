@@ -215,7 +215,10 @@ export const AdminTask: React.FunctionComponent<IProps> = () => {
                             ) || {}
                         }
                         onTaskUpdate={loadTaskList}
-                        onTaskCreate={goToTask}
+                        onTaskCreate={(taskId) => {
+                            loadTaskList();
+                            goToTask(taskId);
+                        }}
                     />
                 </Modal>
             )}

@@ -84,7 +84,7 @@ def run_scheduled_task(id):
 
 
 @register(
-    "/schedule/tasks/list/", methods=["GET"],
+    "/schedule/tasks_list/", methods=["GET"],
 )
 @admin_only
 def get_registered_tasks_list():
@@ -92,7 +92,7 @@ def get_registered_tasks_list():
 
 
 @register(
-    "/schedule/tasks/list/params/", methods=["GET"],
+    "/schedule/tasks_list/params/", methods=["GET"],
 )
 @admin_only
 def get_all_registered_task_params():

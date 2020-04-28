@@ -80,10 +80,14 @@ export const TaskEditor: React.FunctionComponent<IProps> = ({
     const [tab, setTab] = React.useState<TaskEditorTabs>('edit');
 
     const { data: registeredTaskList } = useDataFetch<string[]>({
-        url: '/schedule/tasks/list/',
+        url: '/schedule/tasks_list/',
     });
-    const { data: registeredTaskParamList } = useDataFetch<string[]>({
-        url: '/schedule/tasks/list/params/',
+    const { data: registeredTaskParamList } = useDataFetch<{
+        [task: string]: {
+            [taskParam: string]: string;
+        };
+    }>({
+        url: '/schedule/tasks_list/params/',
     });
 
     React.useEffect(() => {
@@ -141,7 +145,6 @@ export const TaskEditor: React.FunctionComponent<IProps> = ({
                     kwargs: editedKwargs,
                 }).then(({ data }) => {
                     sendNotification('Task created!');
-                    onTaskUpdate?.();
                     onTaskCreate?.(data.id);
                     return data;
                 });
@@ -293,7 +296,8 @@ export const TaskEditor: React.FunctionComponent<IProps> = ({
                                         setFieldValue(
                                             'kwargs',
                                             Object.entries(
-                                                registeredTaskParamList[val]
+                                                registeredTaskParamList[val] ??
+                                                    {}
                                             )
                                         );
                                     }}

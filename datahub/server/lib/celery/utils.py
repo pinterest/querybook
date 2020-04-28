@@ -10,7 +10,6 @@ all_tasks
 
 # from https://stackoverflow.com/questions/26058156/celery-get-list-of-registered-tasks/26211200
 def get_all_registered_celery_tasks():
-    current_app.loader.import_default_modules()
     tasks = list(
         sorted(name for name in current_app.tasks if not name.startswith("celery."))
     )
