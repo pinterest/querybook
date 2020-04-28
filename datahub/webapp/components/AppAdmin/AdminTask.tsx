@@ -104,7 +104,7 @@ export const AdminTask: React.FunctionComponent<IProps> = () => {
         []
     );
 
-    const handleTaskCreation = React.useCallback((taskId) => {
+    const goToTask = React.useCallback((taskId) => {
         history.push(`/admin/task/${taskId}/`);
     }, []);
 
@@ -150,7 +150,7 @@ export const AdminTask: React.FunctionComponent<IProps> = () => {
                 <div
                     className={`div-${key} AdminTask-clickable`}
                     key={`${taskId}-${key}`}
-                    onClick={() => history.push(`/admin/task/${taskId}/`)}
+                    onClick={() => goToTask(taskId)}
                 >
                     {dom}
                 </div>
@@ -215,8 +215,7 @@ export const AdminTask: React.FunctionComponent<IProps> = () => {
                             ) || {}
                         }
                         onTaskUpdate={loadTaskList}
-                        onTaskCreate={handleTaskCreation}
-                        showCreateForm={detailTaskId === 'new'}
+                        onTaskCreate={goToTask}
                     />
                 </Modal>
             )}

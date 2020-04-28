@@ -2,7 +2,10 @@ from logic import schedule as logic
 from app.datasource import register, api_assert, admin_only
 from app.db import DBSession
 from lib.celery.cron import validate_cron
-from lib.celery.utils import get_all_registered_celery_tasks
+from lib.celery.utils import (
+    get_all_registered_celery_tasks,
+    get_all_registered_celery_task_params,
+)
 
 
 @register(
@@ -76,10 +79,8 @@ def update_schedule(id, **kwargs):
 )
 @admin_only
 def run_scheduled_task(id):
-    schedule = logic.get_task_schedule_by_id(id)
-    if schedule:
-        with DBSession() as session:
-            logic.run_and_log_scheduled_task(schedule, session=session)
+    with DBSession() as session:
+        logic.run_and_log_scheduled_task(scheduled_task_id=id, session=session)
 
 
 @register(
@@ -88,3 +89,11 @@ def run_scheduled_task(id):
 @admin_only
 def get_registered_tasks_list():
     return get_all_registered_celery_tasks()
+
+
+@register(
+    "/schedule/tasks/list/params/", methods=["GET"],
+)
+@admin_only
+def get_all_registered_task_params():
+    return get_all_registered_celery_task_params()

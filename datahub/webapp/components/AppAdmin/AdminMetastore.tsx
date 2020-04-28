@@ -70,6 +70,8 @@ export const AdminMetastore: React.FunctionComponent<IProps> = ({
 }) => {
     const { id: metastoreId } = useParams();
 
+    const [showTaskEditor, setShowTaskEditor] = React.useState<boolean>(false);
+
     const {
         data: metastoreLoaders,
     }: { data: IMetastoreLoader[] } = useDataFetch<IMetastoreLoader[]>({
@@ -82,6 +84,12 @@ export const AdminMetastore: React.FunctionComponent<IProps> = ({
     } = useDataFetch<IAdminTask>({
         url: `/schedule/name/update_metastore_${metastoreId}/`,
     });
+
+    React.useEffect(() => {
+        if (metastoreUpdateSchedule?.id) {
+            setShowTaskEditor(true);
+        }
+    }, [metastoreUpdateSchedule]);
 
     const createMetastore = React.useCallback(
         async (metastore: IAdminMetastore) => {
@@ -355,24 +363,39 @@ export const AdminMetastore: React.FunctionComponent<IProps> = ({
                                     <div className="dh-hr" />
                                 </div>
                                 <div className="AdminForm-section-content">
-                                    <div className="AdminMetastore-TaskEditor">
-                                        <TaskEditor
-                                            task={
-                                                metastoreUpdateSchedule ?? {
-                                                    cron: '0 0 * * *',
-                                                    name: `update_metastore_${metastoreId}`,
-                                                    task:
-                                                        'tasks.update_metastore.update_metastore',
-                                                    task_type: 'prod',
-                                                    enabled: true,
-                                                    args: [Number(metastoreId)],
+                                    {showTaskEditor ? (
+                                        <div className="AdminMetastore-TaskEditor">
+                                            <TaskEditor
+                                                task={
+                                                    metastoreUpdateSchedule ?? {
+                                                        cron: '0 0 * * *',
+                                                        name: `update_metastore_${metastoreId}`,
+                                                        task:
+                                                            'tasks.update_metastore.update_metastore',
+                                                        task_type: 'prod',
+                                                        enabled: true,
+                                                        args: [
+                                                            Number(metastoreId),
+                                                        ],
+                                                    }
                                                 }
-                                            }
-                                            onTaskCreate={
-                                                loadMetastoreUpdateSchedule
-                                            }
-                                        />
-                                    </div>
+                                                onTaskCreate={
+                                                    loadMetastoreUpdateSchedule
+                                                }
+                                            />
+                                        </div>
+                                    ) : (
+                                        <div className="AdminMetastore-TaskEditor-button center-align">
+                                            <Button
+                                                title="Create Schedule"
+                                                onClick={() =>
+                                                    setShowTaskEditor(true)
+                                                }
+                                                type="inlineText"
+                                                borderless
+                                            />
+                                        </div>
+                                    )}
                                 </div>
                             </div>
                         )}

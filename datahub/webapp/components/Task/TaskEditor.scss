@@ -1,5 +1,8 @@
 .TaskEditor {
     width: 100%;
+    input {
+        background-color: var(--bg-color);
+    }
     .TaskEditor-top {
         align-items: flex-end;
     }

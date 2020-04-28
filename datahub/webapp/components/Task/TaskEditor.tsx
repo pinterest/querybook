@@ -36,19 +36,7 @@ interface IProps {
     task: Partial<IAdminTask>;
     onTaskUpdate?: () => void;
     onTaskCreate?: (id?: number) => void;
-    showCreateForm?: boolean;
 }
-
-const kwargsTemplate = {
-    'tasks.db_clean_up_jobs.run_all_db_clean_up_jobs': [
-        ['days_to_keep_task_record', 30],
-        ['days_to_keep_query_exec_done', 90],
-        ['days_to_keep_query_exec_else', 30],
-        ['days_to_keep_impression', 30],
-        ['days_to_keep_archived_data_doc', 60],
-    ],
-    'tasks.run_datadoc.run_datadoc': [['doc_id', '']],
-};
 
 const taskFormSchema = Yup.object().shape({
     isCron: Yup.boolean(),
@@ -88,20 +76,18 @@ export const TaskEditor: React.FunctionComponent<IProps> = ({
     task,
     onTaskUpdate,
     onTaskCreate,
-    showCreateForm = false,
 }) => {
     const [tab, setTab] = React.useState<TaskEditorTabs>('edit');
-    const [showForm, setShowForm] = React.useState<boolean>(
-        !!task.id || showCreateForm
-    );
 
     const { data: registeredTaskList } = useDataFetch<string[]>({
         url: '/schedule/tasks/list/',
     });
+    const { data: registeredTaskParamList } = useDataFetch<string[]>({
+        url: '/schedule/tasks/list/params/',
+    });
 
     React.useEffect(() => {
         setTab('edit');
-        setShowForm(!!task.id || showCreateForm);
     }, [task.id]);
 
     const runTask = React.useCallback(async () => {
@@ -174,7 +160,7 @@ export const TaskEditor: React.FunctionComponent<IProps> = ({
             isCron: !validateCronForReuccrence(cron),
             recurrence,
             cron,
-            enabled: task.enabled || true,
+            enabled: task.enabled ?? true,
             args: task.args || [],
             kwargs: Object.entries(task.kwargs || {}),
         };
@@ -296,20 +282,20 @@ export const TaskEditor: React.FunctionComponent<IProps> = ({
                                 label="Name"
                                 type="input"
                                 name="name"
+                                help="Task name must be unique"
                             />
                             <FormField label="Task">
                                 <SimpleReactSelect
                                     value={values.task}
                                     onChange={(val) => {
                                         setFieldValue('task', [val]);
-                                        if (kwargsTemplate[val]) {
-                                            setFieldValue(
-                                                'kwargs',
-                                                kwargsTemplate[val]
-                                            );
-                                        } else {
-                                            setFieldValue('kwargs', []);
-                                        }
+                                        setFieldValue('args', []);
+                                        setFieldValue(
+                                            'kwargs',
+                                            Object.entries(
+                                                registeredTaskParamList[val]
+                                            )
+                                        );
                                     }}
                                     options={(registeredTaskList || []).map(
                                         (registeredTask) => ({
@@ -404,7 +390,7 @@ export const TaskEditor: React.FunctionComponent<IProps> = ({
         );
     };
 
-    return showForm ? (
+    return (
         <div className="TaskEditor">
             <Formik
                 isInitialValid={true}
@@ -492,15 +478,6 @@ export const TaskEditor: React.FunctionComponent<IProps> = ({
                     );
                 }}
             </Formik>
-        </div>
-    ) : (
-        <div className="TaskEditor-new center-align">
-            <Button
-                title="Create Schedule"
-                onClick={() => setShowForm(true)}
-                type="inlineText"
-                borderless
-            />
         </div>
     );
 };

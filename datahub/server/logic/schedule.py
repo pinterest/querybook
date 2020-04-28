@@ -214,20 +214,21 @@ def with_task_logging(
 
 
 @with_session
-def run_and_log_scheduled_task(scheduled_task, session=None):
-    scheduled_task_dict = scheduled_task.to_dict()
-    celery.send_task(
-        scheduled_task_dict["task"],
-        args=scheduled_task_dict["args"],
-        kwargs=scheduled_task_dict["kwargs"],
-        shadow=scheduled_task_dict["name"],
-    )
-    update_task_schedule(
-        id=scheduled_task.id,
-        last_run_at=datetime.now(),
-        total_run_count=(scheduled_task.total_run_count + 1),
-        session=session,
-    )
+def run_and_log_scheduled_task(scheduled_task_id, session=None):
+    schedule = get_task_schedule_by_id(scheduled_task_id)
+    if schedule:
+        celery.send_task(
+            schedule.task,
+            args=schedule.args,
+            kwargs=schedule.kwargs,
+            shadow=schedule.name,
+        )
+        update_task_schedule(
+            id=schedule.id,
+            last_run_at=datetime.now(),
+            total_run_count=(schedule.total_run_count + 1),
+            session=session,
+        )
 
 
 @with_session
