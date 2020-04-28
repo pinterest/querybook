@@ -27,21 +27,22 @@ export const Checkbox: React.FunctionComponent<ICheckboxProps> = ({
     });
 
     return (
-        // @ts-ignore
-        <label className={checkboxClass} disabled={disabled}>
-            <input
-                type="checkbox"
-                disabled={disabled}
-                checked={value}
-                onChange={(event) => {
-                    if (onChange) {
-                        onChange(event.target.checked);
-                        event.stopPropagation();
-                    }
-                }}
-            />{' '}
-            {title}
-            {children}
-        </label>
+        <div className="Checkbox-wrapper">
+            <label className={checkboxClass} disabled={disabled}>
+                <input
+                    type="checkbox"
+                    disabled={disabled}
+                    checked={value}
+                    onChange={(event) => {
+                        if (onChange) {
+                            onChange(event.target.checked);
+                            event.stopPropagation();
+                        }
+                    }}
+                />{' '}
+                {title}
+                {children}
+            </label>
+        </div>
     );
 };
