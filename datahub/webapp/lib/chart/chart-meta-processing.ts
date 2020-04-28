@@ -299,6 +299,12 @@ function computeScaleOptions(
                 ...axis.ticks,
                 min: axisMeta.min,
             };
+        } else {
+            // default min to 0 unless specified
+            axis.ticks = {
+                ...axis.ticks,
+                min: 0,
+            };
         }
     }
 

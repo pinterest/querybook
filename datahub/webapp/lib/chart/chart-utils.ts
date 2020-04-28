@@ -62,5 +62,8 @@ export function sortTable(
             (a, b) => a[columnIndex] - b[columnIndex]
         ) as any[];
     }
-    return tableRows.sort((a, b) => (a[columnIndex] > b[columnIndex] ? 1 : -1));
+
+    // TODO: do not sort categorical data until sort feature
+    // return tableRows.sort((a, b) => (a[columnIndex] > b[columnIndex] ? 1 : -1));
+    return tableRows;
 }
