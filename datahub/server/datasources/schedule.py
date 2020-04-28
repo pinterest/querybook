@@ -79,8 +79,7 @@ def update_schedule(id, **kwargs):
 )
 @admin_only
 def run_scheduled_task(id):
-    with DBSession() as session:
-        logic.run_and_log_scheduled_task(scheduled_task_id=id, session=session)
+    logic.run_and_log_scheduled_task(scheduled_task_id=id)
 
 
 @register(
