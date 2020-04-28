@@ -1,32 +1,34 @@
 .Checkbox {
-    line-height: 1;
-    display: flex;
-    flex-direction: row;
-    white-space: nowrap;
-    position: relative;
+    label {
+        line-height: 1;
+        display: flex;
+        flex-direction: row;
+        white-space: nowrap;
+        position: relative;
 
-    input[type='checkbox'] {
-        cursor: pointer;
-        appearance: unset;
-        border: solid 1px var(--border-color);
-        background-color: var(--bg-color);
+        input[type='checkbox'] {
+            cursor: pointer;
+            appearance: unset;
+            border: solid 1px var(--border-color);
+            background-color: var(--bg-color);
 
-        margin-right: 8px;
-        width: 16px;
-        height: 16px;
-        outline: none;
-    }
+            margin-right: 8px;
+            width: 16px;
+            height: 16px;
+            outline: none;
+        }
 
-    &.checked::before {
-        content: ' ';
-        background-color: var(--border-color);
-        width: 12px;
-        height: 12px;
-        display: block;
-        margin: 1px 0px 0px 1px;
+        &.checked::before {
+            content: ' ';
+            background-color: var(--border-color);
+            width: 12px;
+            height: 12px;
+            display: block;
+            margin: 1px 0px 0px 1px;
 
-        position: absolute;
-        left: 1px;
-        top: 1px;
+            position: absolute;
+            left: 1px;
+            top: 1px;
+        }
     }
 }

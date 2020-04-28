@@ -21,13 +21,12 @@ export const Checkbox: React.FunctionComponent<ICheckboxProps> = ({
     children,
 }) => {
     const checkboxClass = classNames({
-        Checkbox: true,
         [className]: Boolean(className),
         checked: value,
     });
 
     return (
-        <div className="Checkbox-wrapper">
+        <div className="Checkbox">
             <label className={checkboxClass} disabled={disabled}>
                 <input
                     type="checkbox"
