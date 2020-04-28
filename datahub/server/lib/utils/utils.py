@@ -2,6 +2,7 @@ from functools import wraps
 from datetime import datetime, date
 import signal
 import subprocess
+import inspect
 from requests.auth import HTTPBasicAuth, HTTPProxyAuth
 from lib.logger import get_logger
 
@@ -124,3 +125,13 @@ class Timeout:
 
     def raise_timeout(self, *args):
         raise TimeoutError(self.error_message)
+
+
+# from: https://stackoverflow.com/questions/12627118/get-a-function-arguments-default-value
+def get_default_args(func):
+    signature = inspect.signature(func)
+    return {
+        k: v.default
+        for k, v in signature.parameters.items()
+        if v.default is not inspect.Parameter.empty
+    }

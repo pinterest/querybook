@@ -1,5 +1,8 @@
 .TaskEditor {
     width: 100%;
+    input {
+        background-color: var(--bg-color);
+    }
     .TaskEditor-top {
         align-items: flex-end;
     }
@@ -23,6 +26,9 @@
                 }
                 .TaskEditor-kwargs {
                     .FormField {
+                        .FormFieldInputSection:first-child {
+                            width: 280px;
+                        }
                         .FormFieldInputSection:last-child {
                             width: 360px;
                         }

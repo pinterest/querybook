@@ -10,6 +10,7 @@ import { useDataFetch } from 'hooks/useDataFetch';
 
 import { TaskEditor } from 'components/Task/TaskEditor';
 
+import { Button } from 'ui/Button/Button';
 import { Modal } from 'ui/Modal/Modal';
 import { SearchBar } from 'ui/SearchBar/SearchBar';
 import { Table, TableAlign } from 'ui/Table/Table';
@@ -103,6 +104,10 @@ export const AdminTask: React.FunctionComponent<IProps> = () => {
         []
     );
 
+    const goToTask = React.useCallback((taskId) => {
+        history.push(`/admin/task/${taskId}/`);
+    }, []);
+
     const formatCell = React.useCallback(
         (index: number, column: string, row: IAdminTask) => {
             const key = column;
@@ -145,7 +150,7 @@ export const AdminTask: React.FunctionComponent<IProps> = () => {
                 <div
                     className={`div-${key} AdminTask-clickable`}
                     key={`${taskId}-${key}`}
-                    onClick={() => history.push(`/admin/task/${taskId}`)}
+                    onClick={() => goToTask(taskId)}
                 >
                     {dom}
                 </div>
@@ -172,11 +177,20 @@ export const AdminTask: React.FunctionComponent<IProps> = () => {
                             setType(key);
                         }}
                     />
-                    <SearchBar
-                        value={searchString}
-                        placeholder="Filter by name"
-                        onSearch={(s) => setSearchString(s.replace(' ', ''))}
-                    />
+                    <div className="AdminTask-controls-left flex-row">
+                        <SearchBar
+                            className="mr12"
+                            value={searchString}
+                            placeholder="Filter by name"
+                            onSearch={(s) =>
+                                setSearchString(s.replace(' ', ''))
+                            }
+                        />
+                        <Button
+                            title="Create Task"
+                            onClick={() => history.push('/admin/task/new/')}
+                        />
+                    </div>
                 </div>
                 {taskList ? (
                     <Table
@@ -195,10 +209,16 @@ export const AdminTask: React.FunctionComponent<IProps> = () => {
                     title="Task Editor"
                 >
                     <TaskEditor
-                        task={taskList.find(
-                            (task) => task.id === Number(detailTaskId)
-                        )}
+                        task={
+                            taskList.find(
+                                (task) => task.id === Number(detailTaskId)
+                            ) || {}
+                        }
                         onTaskUpdate={loadTaskList}
+                        onTaskCreate={(taskId) => {
+                            loadTaskList();
+                            goToTask(taskId);
+                        }}
                     />
                 </Modal>
             )}
