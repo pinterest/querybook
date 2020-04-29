@@ -1,5 +1,9 @@
 import React from 'react';
-import { IDataCellMeta } from 'const/datadoc';
+import {
+    IDataCellMeta,
+    IDataDocSearchState,
+    DataCellUpdateFields,
+} from 'const/datadoc';
 
 export interface IDataDocContextType {
     cellIdToExecutionId: Record<number, number>;
@@ -10,7 +14,8 @@ export interface IDataDocContextType {
         cellKey: string,
         context: string,
         meta: IDataCellMeta
-    ) => any;
+    ) => Promise<any>;
+    updateCell: (cellId: number, fields: DataCellUpdateFields) => Promise<any>;
 
     defaultCollapse: boolean;
     focusedCellIndex?: number;
@@ -23,6 +28,11 @@ export interface IDataDocContextType {
     };
 
     isEditable: boolean;
+
+    search: {
+        searchState: IDataDocSearchState;
+        focusSearchBar: () => any;
+    };
 }
 
 export const DataDocContext = React.createContext<IDataDocContextType>(null);

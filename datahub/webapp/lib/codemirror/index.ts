@@ -31,6 +31,12 @@ import 'codemirror/addon/edit/closebrackets';
 import 'lib/codemirror/codemirror-hover';
 import 'codemirror/addon/runmode/runmode';
 
+// Search highlighting
+import 'codemirror/addon/search/match-highlighter.js';
+
+// Local styling
+import './editor_styles.scss';
+
 declare module 'codemirror' {
     // This is copied from runmode.d.ts. Not sure how to import it :(
     function runMode(

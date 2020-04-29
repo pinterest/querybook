@@ -2,7 +2,7 @@ import classNames from 'classnames';
 import * as DraftJs from 'draft-js';
 import { find } from 'lodash';
 import { debounce, bind } from 'lodash-decorators';
-import React from 'react';
+import React, { useContext, useEffect, useMemo } from 'react';
 import { connect } from 'react-redux';
 
 import CodeMirror from 'lib/codemirror';
@@ -10,8 +10,9 @@ import { ICodeAnalysis, getSelectedQuery } from 'lib/sql-helper/sql-lexer';
 import { renderTemplatedQuery } from 'lib/templated-query';
 import { sleep, getCodeEditorTheme } from 'lib/utils';
 import { sendNotification } from 'lib/dataHubUI';
-import { formatError } from 'lib/utils/error';
+import { getCodemirrorOverlay } from 'lib/data-doc/search';
 
+import { DataDocContext } from 'context/DataDoc';
 import { IDataQueryCellMeta } from 'const/datadoc';
 
 import * as dataSourcesActions from 'redux/dataSources/action';
@@ -26,17 +27,20 @@ import { IStoreState, Dispatch } from 'redux/store/types';
 import { DataDocQueryExecutions } from 'components/DataDocQueryExecutions/DataDocQueryExecutions';
 import { QueryEditor } from 'components/QueryEditor/QueryEditor';
 import { QuerySnippetInsertionModal } from 'components/QuerySnippetInsertionModal/QuerySnippetInsertionModal';
-import { QueryRunButton } from 'components/QueryRunButton/QueryRunButton';
+import {
+    QueryRunButton,
+    IQueryRunButtonHandles,
+} from 'components/QueryRunButton/QueryRunButton';
 
 import { DebouncedInput } from 'ui/DebouncedInput/DebouncedInput';
 import { DropdownMenu, IMenuItem } from 'ui/DropdownMenu/DropdownMenu';
 import { Title } from 'ui/Title/Title';
 import { Modal } from 'ui/Modal/Modal';
-
-import './DataDocQueryCell.scss';
 import { Message } from 'ui/Message/Message';
 import { Button } from 'ui/Button/Button';
 import { Icon } from 'ui/Icon/Icon';
+
+import './DataDocQueryCell.scss';
 
 const ON_CHANGE_DEBOUNCE_MS = 250;
 
@@ -91,7 +95,7 @@ interface IState {
 
 class DataDocQueryCellComponent extends React.Component<IProps, IState> {
     private queryEditorRef = React.createRef<QueryEditor>();
-    private runButtonRef = React.createRef<QueryRunButton>();
+    private runButtonRef = React.createRef<IQueryRunButtonHandles>();
     private selfRef = React.createRef<HTMLDivElement>();
     private keyMap = {
         'Shift-Enter': this.clickOnRunButton,
@@ -588,6 +592,10 @@ class DataDocQueryCellComponent extends React.Component<IProps, IState> {
                     metastoreId={queryEngine.metastore_id}
                     showFullScreenButton
                 />
+                <SearchHighlighter
+                    cellId={cellId}
+                    editor={this.queryEditorRef.current?.getEditor()}
+                />
             </div>
         );
 
@@ -702,3 +710,66 @@ export const DataDocQueryCell = connect(
     mapStateToProps,
     mapDispatchToProps
 )(DataDocQueryCellComponent);
+
+const SearchHighlighter: React.FC<{
+    editor: CodeMirror.Editor;
+    cellId: number;
+}> = ({ editor, cellId }) => {
+    const {
+        search: {
+            searchState: {
+                searchResults,
+                searchString,
+                currentSearchResultIndex,
+                searchOptions,
+            },
+        },
+    } = useContext(DataDocContext);
+
+    const shouldHighlight = useMemo(
+        () => editor && searchResults.some((r) => r.cellId === cellId),
+        [searchResults, cellId, editor]
+    );
+
+    // highlighter
+    useEffect(() => {
+        const overlay = shouldHighlight
+            ? getCodemirrorOverlay(searchString, searchOptions)
+            : null;
+
+        if (overlay) {
+            editor.addOverlay(overlay);
+        }
+
+        return () => {
+            if (overlay) {
+                editor.removeOverlay(overlay);
+            }
+        };
+    }, [shouldHighlight, editor, searchString, searchOptions]);
+
+    // jump to item
+    const currentSearchItem = useMemo(() => {
+        const item = searchResults[currentSearchResultIndex];
+        if (item?.cellId === cellId) {
+            return item;
+        }
+        return null;
+    }, [currentSearchResultIndex, cellId, searchResults]);
+
+    useEffect(() => {
+        if (currentSearchItem && editor) {
+            // editor.focus();
+            const doc = editor.getDoc();
+            doc.setSelection(
+                doc.posFromIndex(currentSearchItem.from),
+                doc.posFromIndex(currentSearchItem.to),
+                {
+                    scroll: true,
+                }
+            );
+        }
+    }, [currentSearchResultIndex]);
+
+    return null;
+};

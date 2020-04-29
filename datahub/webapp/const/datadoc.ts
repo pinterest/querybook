@@ -48,6 +48,7 @@ export interface IDataChartCell extends IDataCellBase {
 }
 
 export type IDataCell = IDataQueryCell | IDataTextCell | IDataChartCell;
+export type DataCellUpdateFields = Partial<Pick<IDataCell, 'context' | 'meta'>>;
 
 export interface IDataDoc {
     dataDocCells: IDataCell[];
@@ -76,3 +77,23 @@ export interface IDataDocEditor {
 }
 
 export const emptyDataDocTitleMessage = '(Untitled)';
+
+export interface IDataDocSearchResult {
+    cellId: number;
+    blockKey?: string;
+    from: number;
+    to: number;
+}
+
+export interface IDataDocSearchOptions {
+    matchCase: boolean;
+    useRegex: boolean;
+}
+
+export interface IDataDocSearchState {
+    searchString: string;
+    searchOptions: IDataDocSearchOptions;
+    replaceString: string;
+    searchResults: IDataDocSearchResult[];
+    currentSearchResultIndex: number;
+}

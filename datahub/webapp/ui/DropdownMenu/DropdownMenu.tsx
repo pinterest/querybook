@@ -101,7 +101,7 @@ export const DropdownMenu: React.FunctionComponent<IProps> = ({
                     : 'far fa-circle'
                 : 'fa fa-' + action.icon;
 
-            const actionProps: React.AnchorHTMLAttributes<HTMLAnchorElement> = {};
+            const actionProps: React.HTMLProps<HTMLAnchorElement> = {};
             if (action.onClick) {
                 actionProps.onClick = action.onClick;
             }

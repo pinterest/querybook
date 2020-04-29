@@ -200,13 +200,6 @@ export function formatPlural(count: number, unit: string) {
 }
 
 // from https://stackoverflow.com/a/39494245
-export function scrollToElement(element: HTMLElement, duration: number) {
-    const scrollContainer = getScrollParent(element);
-    if (scrollContainer) {
-        return smoothScroll(scrollContainer, element.offsetTop, duration);
-    }
-}
-
 export function smoothScroll(
     scrollContainer: HTMLElement,
     finalScrollTop: number,

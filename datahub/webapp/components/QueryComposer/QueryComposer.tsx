@@ -19,7 +19,10 @@ import * as queryExecutionsAction from 'redux/queryExecutions/action';
 import * as dataSourcesActions from 'redux/dataSources/action';
 import * as adhocQueryActions from 'redux/adhocQuery/action';
 
-import { QueryRunButton } from 'components/QueryRunButton/QueryRunButton';
+import {
+    QueryRunButton,
+    IQueryRunButtonHandles,
+} from 'components/QueryRunButton/QueryRunButton';
 import { QueryEditor } from 'components/QueryEditor/QueryEditor';
 import { FullHeight } from 'ui/FullHeight/FullHeight';
 import { IconButton } from 'ui/Button/IconButton';
@@ -97,7 +100,7 @@ export const QueryComposer: React.FC<{}> = () => {
         getCodeEditorTheme(state.user.computedSettings['theme'])
     );
     const queryEditorRef = useRef<QueryEditor>(null);
-    const runButtonRef = useRef<QueryRunButton>(null);
+    const runButtonRef = useRef<IQueryRunButtonHandles>(null);
 
     const clickOnRunButton = useCallback(() => {
         if (runButtonRef.current) {

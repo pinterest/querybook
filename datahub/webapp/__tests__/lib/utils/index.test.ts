@@ -1,6 +1,6 @@
 import * as utils from 'lib/utils/index';
 
-// missing getSelectionRect, download, copy, scrollToElement, smoothScroll
+// missing getSelectionRect, download, copy, smoothScroll
 
 test('removeEmpty', () => {
     expect(utils.removeEmpty({ notempty: 'test', empty: null })).toStrictEqual({
@@ -18,7 +18,7 @@ test('titleize', () => {
 
 test('sleep', () => {
     const mockFunction = jest.fn(() => {
-        console.log('mock function runs');
+        // console.log('mock function runs');
     });
 
     const testFunction = async () => {

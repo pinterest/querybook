@@ -31,6 +31,8 @@ export interface IRichTextEditorProps {
     ) => any;
     onFocus?: () => any;
     onBlur?: () => any;
+
+    decorator?: DraftJs.CompositeDecorator;
 }
 
 export interface IRichTextEditorState {
@@ -49,7 +51,7 @@ export class RichTextEditor extends React.Component<
     public readonly state = {
         editorState: DraftJs.EditorState.createWithContent(
             this.props.value,
-            compositeDecorator
+            this.props.decorator ?? compositeDecorator
         ),
         toolBarStyle: {
             top: 0,
@@ -66,6 +68,20 @@ export class RichTextEditor extends React.Component<
         // Suppressing error due to LinkDecorator failing on delete
         // related github issue https://github.com/facebook/draft-js/issues/1320#issuecomment-476509968
         this.forceUpdate();
+    }
+
+    public get editorState() {
+        return this.state.editorState;
+    }
+
+    public set editorState(editorState: DraftJs.EditorState) {
+        this.setState({
+            editorState,
+        });
+    }
+
+    public get draftJSEditor() {
+        return this.editorRef.current;
     }
 
     public getContent() {

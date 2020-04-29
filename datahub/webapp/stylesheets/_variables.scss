@@ -120,6 +120,7 @@ body {
     --table-hover-bg-color: var(--color-primary-3);
 
     --red-highlight: rgba(189, 8, 28, 0.5);
+    --text-highlight: rgba(255, 255, 0, 0.5);
 
     --mix-blend-mode: multiply;
 
@@ -208,6 +209,8 @@ body.dark-theme {
 
     --scroll-bar-color: var(--color-primary-3);
     --mix-blend-mode: lighten;
+
+    --text-highlight: rgba(52, 101, 127, 0.5);
 
     font-weight: 500;
 }

@@ -238,6 +238,7 @@ export class QueryEditor extends React.PureComponent<IProps, IState> {
             theme,
             matchBrackets: true,
             autoCloseBrackets: true,
+            highlightSelectionMatches: true,
 
             // Readonly related options
             readOnly,

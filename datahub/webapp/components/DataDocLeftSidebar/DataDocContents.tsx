@@ -64,7 +64,7 @@ export const DataDocContents: React.FunctionComponent<{
             <li
                 key={cell.id}
                 className="contents-panel-cell-row"
-                onClick={() => scrollToCell(cell)}
+                onClick={() => scrollToCell(cell.id)}
             >
                 {cellIcon}
                 <span className="contents-panel-cell-row-text">{cellText}</span>

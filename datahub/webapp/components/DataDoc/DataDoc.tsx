@@ -8,7 +8,13 @@ import { decorate } from 'core-decorators';
 import memoizeOne from 'memoize-one';
 import classNames from 'classnames';
 
-import { CELL_TYPE, IDataDoc, IDataCell } from 'const/datadoc';
+import {
+    CELL_TYPE,
+    IDataDoc,
+    IDataCell,
+    IDataDocSearchState,
+    DataCellUpdateFields,
+} from 'const/datadoc';
 import ds from 'lib/datasource';
 import history from 'lib/router-history';
 import { sendConfirm, sendNotification } from 'lib/dataHubUI';
@@ -34,7 +40,6 @@ import { DataDocRightSidebar } from 'components/DataDocRightSidebar/DataDocRight
 import { DataDocUIGuide } from 'components/UIGuide/DataDocUIGuide';
 import { DataDocCell } from 'components/DataDocCell/DataDocCell';
 
-import { Title } from 'ui/Title/Title';
 import { Message } from 'ui/Message/Message';
 import { Loading } from 'ui/Loading/Loading';
 
@@ -44,8 +49,12 @@ import { DataDocError } from './DataDocError';
 import { DataDocContentContainer } from './DataDocContentContainer';
 
 import './DataDoc.scss';
-
-const loadingHints: string[] = require('config/loading_hints.yaml').hints;
+import { DataDocLoading } from './DataDocLoading';
+import {
+    DataDocSearchAndReplace,
+    IDataDocSearchAndReplaceHandles,
+} from './DataDocSearchAndReplace';
+import { searchDataDoc, replaceAll, replace } from 'lib/data-doc/search';
 
 interface IOwnProps {
     docId: number;
@@ -63,7 +72,21 @@ interface IState {
     defaultCollapseAllCells: boolean;
     cellIdToExecutionId: Record<number, number>;
     highlightCellIndex?: number;
+
+    showSearchAndReplace: boolean;
+    searchState: IDataDocSearchState;
 }
+
+const initialSearchState: IDataDocSearchState = {
+    searchString: '',
+    replaceString: '',
+    searchResults: [],
+    currentSearchResultIndex: 0,
+    searchOptions: {
+        matchCase: false,
+        useRegex: false,
+    },
+};
 
 class DataDocComponent extends React.Component<IProps, IState> {
     public readonly state = {
@@ -74,7 +97,15 @@ class DataDocComponent extends React.Component<IProps, IState> {
         connected: false,
         defaultCollapseAllCells: null,
         cellIdToExecutionId: {},
+
+        showSearchAndReplace: false,
+        searchState: initialSearchState,
     };
+
+    //
+    public searchAndReplaceInputRef = React.createRef<
+        IDataDocSearchAndReplaceHandles
+    >();
 
     public componentDidMount() {
         this.autoFocusCell({}, this.props);
@@ -95,14 +126,39 @@ class DataDocComponent extends React.Component<IProps, IState> {
                 this.setState({
                     defaultCollapseAllCells: null,
                     focusedCellIndex: null,
+
+                    // Sharing State
                     cellIdToExecutionId: {},
                     highlightCellIndex: null,
+
+                    // Reset search
+                    searchState: initialSearchState,
                 });
             }
             this.openDataDoc(this.props.docId);
         }
 
-        if (this.props.dataDoc !== prevProps.dataDoc && this.props.dataDoc) {
+        if (
+            this.props.dataDoc?.dataDocCells !== prevProps.dataDoc?.dataDocCells
+        ) {
+            const cells = this.props.dataDoc?.dataDocCells ?? [];
+            const previousCells = prevProps.dataDoc?.dataDocCells ?? [];
+            const someCellsContextChanged =
+                cells.length !== previousCells.length ||
+                cells.some(
+                    (cell, index) =>
+                        cell.context !== previousCells[index].context
+                );
+
+            if (someCellsContextChanged) {
+                this.performSearch(false);
+            }
+        }
+
+        if (
+            this.props.dataDoc?.title !== prevProps.dataDoc?.title &&
+            this.props.dataDoc?.title
+        ) {
             this.publishDataDocTitle(this.props.dataDoc.title);
         }
     }
@@ -209,19 +265,21 @@ class DataDocComponent extends React.Component<IProps, IState> {
                         // This is to quickly snap to the element, and then in case
                         // if the cell above/below pushes the element out of view we
                         // try to scroll it back
-                        scrollToCell(dataDoc.dataDocCells[cellIndex], 0).then(
-                            () =>
-                                this.setState(
-                                    {
-                                        highlightCellIndex: cellIndex,
-                                    },
-                                    () =>
-                                        scrollToCell(
-                                            dataDoc.dataDocCells[cellIndex],
-                                            200,
-                                            5
-                                        )
-                                )
+                        scrollToCell(
+                            dataDoc.dataDocCells[cellIndex].id,
+                            0
+                        ).then(() =>
+                            this.setState(
+                                {
+                                    highlightCellIndex: cellIndex,
+                                },
+                                () =>
+                                    scrollToCell(
+                                        dataDoc.dataDocCells[cellIndex].id,
+                                        200,
+                                        5
+                                    )
+                            )
                         );
                     }
                 }
@@ -242,6 +300,67 @@ class DataDocComponent extends React.Component<IProps, IState> {
         if (index !== this.state.focusedCellIndex) {
             this.focusCellAt(index);
         }
+    }
+
+    @bind
+    public performSearch(jumpToResult = true) {
+        this.setState(
+            ({ searchState }) => ({
+                searchState: {
+                    ...searchState,
+                    searchResults: searchDataDoc(
+                        this.props.dataDoc,
+                        searchState.searchString,
+                        searchState.searchOptions
+                    ),
+                },
+            }),
+            jumpToResult
+                ? () =>
+                      this.setCurrentSearchResultIndex(0).then(
+                          this.focusSearchBar
+                      )
+                : null
+        );
+    }
+
+    @bind
+    public focusSearchBar() {
+        this.searchAndReplaceInputRef.current?.focus();
+    }
+
+    @bind
+    public setCurrentSearchResultIndex(delta: number) {
+        return new Promise((resolve) => {
+            const { searchState } = this.state;
+            const resultLen = searchState.searchResults.length;
+            const currIndex = searchState.currentSearchResultIndex;
+            if (resultLen) {
+                let newIndex = currIndex + delta;
+                // Clip new index to be between [0, searchState.searchResults.length)
+                newIndex =
+                    (newIndex < 0 ? newIndex + resultLen : newIndex) %
+                    resultLen;
+
+                this.setState(
+                    {
+                        searchState: {
+                            ...searchState,
+                            currentSearchResultIndex: newIndex,
+                        },
+                    },
+                    async () => {
+                        const cellId =
+                            searchState.searchResults[newIndex]?.cellId;
+                        if (cellId != null) {
+                            await scrollToCell(cellId, 0);
+                        }
+
+                        resolve();
+                    }
+                );
+            }
+        });
     }
 
     @bind
@@ -266,6 +385,11 @@ class DataDocComponent extends React.Component<IProps, IState> {
         } catch (e) {
             sendNotification(`Insert cell failed, reason: ${e}`);
         }
+    }
+
+    @bind
+    public updateCell(cellId: number, fields: DataCellUpdateFields) {
+        return this.props.updateDataDocCell(this.props.docId, cellId, fields);
     }
 
     @bind
@@ -301,7 +425,8 @@ class DataDocComponent extends React.Component<IProps, IState> {
         defaultCollapse: boolean,
         focusedCellIndex: number,
         highlightCellIndex: number,
-        cellIdToExecutionId: Record<number, number>
+        cellIdToExecutionId: Record<number, number>,
+        searchState: IDataDocSearchState
     ): IDataDocContextType {
         return {
             cellIdToExecutionId,
@@ -320,6 +445,7 @@ class DataDocComponent extends React.Component<IProps, IState> {
             },
 
             insertCellAt: this.insertCellAt,
+            updateCell: this.updateCell,
 
             defaultCollapse,
             focusedCellIndex,
@@ -332,6 +458,11 @@ class DataDocComponent extends React.Component<IProps, IState> {
                 onBlur: this.onCellBlur,
             },
             isEditable,
+
+            search: {
+                searchState,
+                focusSearchBar: this.focusSearchBar,
+            },
         };
     }
 
@@ -342,7 +473,8 @@ class DataDocComponent extends React.Component<IProps, IState> {
             this.state.defaultCollapseAllCells,
             this.state.focusedCellIndex,
             this.state.highlightCellIndex,
-            this.state.cellIdToExecutionId
+            this.state.cellIdToExecutionId,
+            this.state.searchState
         );
     }
 
@@ -375,6 +507,19 @@ class DataDocComponent extends React.Component<IProps, IState> {
         if (matchKeyPress(event, 'Cmd-S') && !repeat) {
             stopEvent = true;
             this.props.forceSaveDataDoc(this.props.docId);
+        } else if (matchKeyPress(event, 'Cmd-F') && !repeat) {
+            stopEvent = true;
+            if (this.state.showSearchAndReplace) {
+                this.focusSearchBar();
+            } else {
+                this.setState({ showSearchAndReplace: true });
+            }
+        } else if (
+            this.state.showSearchAndReplace &&
+            matchKeyPress(event, 'Esc')
+        ) {
+            stopEvent = true;
+            this.setState({ showSearchAndReplace: false });
         }
 
         if (stopEvent) {
@@ -386,28 +531,6 @@ class DataDocComponent extends React.Component<IProps, IState> {
     @bind
     public runAllQueryCells() {
         ds.save(`/datadoc/${this.props.docId}/run/`);
-    }
-
-    public makeDataDocLoadingDOM() {
-        // Get a random hint from list of hints
-        const hint = sample(loadingHints);
-
-        return (
-            <div className="datadoc-loading">
-                <div className="datadoc-loading-message">
-                    <Title>
-                        <i className="fa fa-spinner fa-pulse" />
-                        &nbsp; Loading DataDoc
-                    </Title>
-
-                    <br />
-                    <p className="subtitle">
-                        <i className="far fa-lightbulb" />
-                        &nbsp; Did you know: {hint}
-                    </p>
-                </div>
-            </div>
-        );
     }
 
     @bind
@@ -499,7 +622,13 @@ class DataDocComponent extends React.Component<IProps, IState> {
             changeDataDocMeta,
         } = this.props;
 
-        const { connected, defaultCollapseAllCells } = this.state;
+        const {
+            connected,
+            defaultCollapseAllCells,
+
+            showSearchAndReplace,
+            searchState,
+        } = this.state;
 
         let docDOM = null;
         let isSavingDataDoc = false;
@@ -540,7 +669,7 @@ class DataDocComponent extends React.Component<IProps, IState> {
                 </DataDocContentContainer>
             );
         } else {
-            docDOM = this.makeDataDocLoadingDOM();
+            docDOM = <DataDocLoading />;
         }
 
         const leftSideBar = (
@@ -563,6 +692,76 @@ class DataDocComponent extends React.Component<IProps, IState> {
             />
         );
 
+        const searchAndReplaceDOM = showSearchAndReplace && (
+            <DataDocSearchAndReplace
+                ref={this.searchAndReplaceInputRef}
+                onHide={() => {
+                    this.setState({ showSearchAndReplace: false });
+                }}
+                searchString={searchState.searchString}
+                onSearchStringChange={(s) => {
+                    this.setState(
+                        {
+                            searchState: {
+                                ...searchState,
+                                searchString: s,
+                                currentSearchResultIndex: 0,
+                            },
+                        },
+                        this.performSearch
+                    );
+                }}
+                onSearchOptionsChange={(options) =>
+                    this.setState(
+                        {
+                            searchState: {
+                                ...searchState,
+                                searchOptions: options,
+                                currentSearchResultIndex: 0,
+                            },
+                        },
+                        this.performSearch
+                    )
+                }
+                replaceString={searchState.replaceString}
+                onReplaceStringChange={(s) =>
+                    this.setState({
+                        searchState: { ...searchState, replaceString: s },
+                    })
+                }
+                moveResultIndex={this.setCurrentSearchResultIndex}
+                onReplace={(all = false) => {
+                    if (all) {
+                        replaceAll(
+                            this.props.dataDoc,
+                            this.state.searchState.searchResults,
+                            this.state.searchState.replaceString,
+                            (cellId, context) =>
+                                this.updateCell(cellId, { context })
+                        );
+                    } else {
+                        replace(
+                            this.props.dataDoc,
+                            this.state.searchState.searchResults[
+                                this.state.searchState.currentSearchResultIndex
+                            ],
+                            this.state.searchState.replaceString,
+                            (cellId, context) =>
+                                this.updateCell(cellId, { context })
+                        );
+                        // Special case last item is replaced
+                        if (
+                            this.state.searchState.currentSearchResultIndex ===
+                            this.state.searchState.searchResults.length - 1
+                        ) {
+                            // we loop over to the first item
+                            this.setCurrentSearchResultIndex(1);
+                        }
+                    }
+                }}
+            />
+        );
+
         return (
             <div
                 className={classNames({
@@ -574,6 +773,7 @@ class DataDocComponent extends React.Component<IProps, IState> {
                     {leftSideBar}
                     {docDOM}
                     {rightSideBar}
+                    {searchAndReplaceDOM}
                 </DataDocContext.Provider>
             </div>
         );
@@ -659,6 +859,25 @@ function mapDispatchToProps(dispatch: Dispatch, ownProps: IOwnProps) {
                     meta
                 )
             ),
+
+        updateDataDocCell: (
+            docId: number,
+            cellId: number,
+            fields: DataCellUpdateFields
+        ) => {
+            try {
+                return dispatch(
+                    dataDocActions.updateDataDocCell(
+                        docId,
+                        cellId,
+                        fields.context,
+                        fields.meta
+                    )
+                );
+            } catch (e) {
+                sendNotification(`Cannot update cell, reason: ${e}`);
+            }
+        },
     };
 }
 

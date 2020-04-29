@@ -208,3 +208,58 @@
         }
     }
 }
+
+.DataDocSearchAndReplace {
+    position: fixed;
+    right: 60px;
+    z-index: 10;
+
+    border: var(--inner-border);
+    border-top: none;
+    border-bottom-left-radius: var(--border-radius);
+    border-bottom-right-radius: var(--border-radius);
+
+    background-color: var(--light-bg-color);
+
+    .position-info {
+        user-select: none;
+        font-size: var(--xsmall-text-size);
+    }
+
+    .datadoc-search-input {
+        border: var(--inner-border);
+        border-radius: var(--border-radius);
+
+        background-color: transparent;
+        width: 250px;
+        display: flex;
+        align-items: center;
+        padding: 4px;
+
+        &:focus-within {
+            border: var(--outer-border);
+            background-color: var(--bg-color);
+        }
+
+        .DebouncedInput {
+            flex: 1;
+            input {
+                padding: none;
+                border: none;
+                color: inherit;
+                font-size: var(--text-size);
+            }
+        }
+
+        .TextToggleButton {
+            font-size: var(--small-text-size);
+            color: var(--light-text-color);
+            font-weight: var(--bold-font);
+            user-select: none;
+
+            &.active {
+                color: var(--dark-text-color);
+            }
+        }
+    }
+}
