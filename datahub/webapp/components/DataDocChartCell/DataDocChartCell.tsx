@@ -129,6 +129,8 @@ export const DataDocChartCell: React.FunctionComponent<IProps> = ({
                     formatSeriesCol,
                     formatValueCols,
                     aggSeries,
+                    sortIndex,
+                    sortAsc,
                 } = getDataTransformationOptions(meta);
 
                 return transformData(
@@ -138,7 +140,9 @@ export const DataDocChartCell: React.FunctionComponent<IProps> = ({
                     formatAggCol,
                     formatSeriesCol,
                     formatValueCols,
-                    aggSeries
+                    aggSeries,
+                    sortIndex,
+                    sortAsc
                 );
             }
         }

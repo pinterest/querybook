@@ -1,5 +1,6 @@
 import { cloneDeep, range } from 'lodash';
 import { ChartDataAggType } from 'const/dataDocChart';
+import { sortTable } from './chart-utils';
 
 const emptyCellValue = 'No Value';
 
@@ -227,6 +228,15 @@ function aggregateData(
     return aggregatedData;
 }
 
+export function sortData(data: any[][], idx: number, ascending: boolean) {
+    const sortIdx = idx ?? (isNaN(data[0][0]) ? undefined : 0);
+    if (sortIdx != null) {
+        return sortTable(data, sortIdx, ascending);
+    } else {
+        return data;
+    }
+}
+
 export function transformData(
     data: any[][],
     isAggregate: boolean = false,
@@ -236,14 +246,12 @@ export function transformData(
     formatValueCols: number[] = [2],
     aggSeries: {
         [seriesIdx: number]: ChartDataAggType;
-    } = {}
+    } = {},
+    sortIdx: number,
+    sortAsc: boolean = true
 ) {
     if (data?.length < 2) {
         return null;
-    }
-
-    if (!isAggregate && !isSwitch) {
-        return data;
     }
 
     let transformedData = cloneDeep(data);
@@ -262,5 +270,8 @@ export function transformData(
         transformedData = switchData(transformedData);
     }
 
-    return transformedData;
+    return [
+        transformedData[0],
+        ...sortData(transformedData.slice(1), sortIdx, sortAsc),
+    ];
 }

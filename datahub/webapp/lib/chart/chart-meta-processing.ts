@@ -63,6 +63,8 @@ export function getDataTransformationOptions(meta: IDataChartCellMeta) {
         switch: Boolean(transformations.switch),
         aggSeries,
         aggType,
+        sortIndex: meta.chart.x_axis.sort?.idx,
+        sortAsc: meta.chart.x_axis.sort.asc || true,
     };
 }
 
@@ -106,6 +108,8 @@ export function mapMetaToFormVals(
         // axes
         xAxis: getAxisOptions(meta.chart.x_axis),
         xIndex: meta.chart.x_axis.col_idx,
+        sortIndex: meta.chart.x_axis.sort?.idx,
+        sortAsc: meta.chart.x_axis.sort?.asc ?? true,
 
         yAxis: getAxisOptions(meta.chart.y_axis),
         stack: Boolean(meta.chart.y_axis.stack),

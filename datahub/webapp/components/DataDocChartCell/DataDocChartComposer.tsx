@@ -23,7 +23,7 @@ import { colorPalette, colorPaletteNames } from 'const/chartColors';
 
 import { defaultReactSelectStyles } from 'lib/utils/react-select';
 import { mapMetaToFormVals } from 'lib/chart/chart-meta-processing';
-import { transformData } from 'lib/chart/chart-data-transformation';
+import { transformData, sortData } from 'lib/chart/chart-data-transformation';
 import { useChartSource } from 'hooks/chart/useChartSource';
 
 import { DataDocChart } from './DataDocChart';
@@ -109,7 +109,9 @@ const DataDocChartComposerComponent: React.FunctionComponent<
                   values.formatAggCol,
                   values.formatSeriesCol,
                   values.formatValueCols,
-                  values.aggSeries
+                  values.aggSeries,
+                  values.sortIndex,
+                  values.sortAsc
               )
             : null;
     }, [
@@ -121,6 +123,33 @@ const DataDocChartComposerComponent: React.FunctionComponent<
         values.formatValueCols,
         values.aggType,
         values.aggSeries,
+        values.sortIndex,
+        values.sortAsc,
+    ]);
+
+    const tableData: any[][] = React.useMemo(() => {
+        if (tableTab === 'original') {
+            if (values.sortIndex != null && statementResultData) {
+                return [
+                    statementResultData[0],
+                    ...sortData(
+                        statementResultData.slice(1),
+                        values.sortIndex,
+                        values.sortAsc
+                    ),
+                ];
+            } else {
+                return statementResultData;
+            }
+        } else {
+            return chartData;
+        }
+    }, [
+        tableTab,
+        statementResultData,
+        values.sortIndex,
+        values.sortAsc,
+        chartData,
     ]);
 
     // getting redux state
@@ -619,10 +648,29 @@ const DataDocChartComposerComponent: React.FunctionComponent<
         );
     }
 
+    const sortDOM = (
+        <>
+            <FormSectionHeader>Sort</FormSectionHeader>
+            <FormField stacked label="Sort Index">
+                <ReactSelectField name={`sortIndex`} options={xAxisOptions} />
+            </FormField>
+            <FormField stacked label="Sort Direction">
+                <ReactSelectField
+                    name={`sortAsc`}
+                    options={[
+                        { value: true, label: 'Ascending' },
+                        { value: false, label: 'Descending' },
+                    ]}
+                />
+            </FormField>
+        </>
+    );
+
     const chartTabDOM = (
         <>
             {chartOptionsDOM}
             {axesDOM}
+            {sortDOM}
         </>
     );
 
@@ -739,11 +787,7 @@ const DataDocChartComposerComponent: React.FunctionComponent<
         dataDOM = (
             <div className="DataDocChartComposer-data">
                 <StatementResultTable
-                    data={
-                        tableTab === 'original'
-                            ? statementResultData
-                            : chartData
-                    }
+                    data={tableData}
                     paginate={true}
                     maxNumberOfRowsToShow={5}
                 />
@@ -757,7 +801,6 @@ const DataDocChartComposerComponent: React.FunctionComponent<
                 <LevelItem>{dataSwitch}</LevelItem>
                 <LevelItem>{hideTableButtonDOM}</LevelItem>
             </Level>
-
             {dataDOM}
         </div>
     );
@@ -877,12 +920,18 @@ function formValsToMeta(vals: IChartFormValues, meta: IDataChartCellMeta) {
         for (const [field, val] of Object.entries(vals.xAxis)) {
             draft.chart.x_axis[field] = val;
         }
-        draft.chart.y_axis.stack = vals.stack;
+        if (vals.sortIndex != null) {
+            draft.chart.x_axis.sort = {
+                idx: vals.sortIndex,
+                asc: vals.sortAsc,
+            };
+        }
 
         // Y Axes
         for (const [field, val] of Object.entries(vals.yAxis)) {
             draft.chart.y_axis[field] = val;
         }
+        draft.chart.y_axis.stack = vals.stack;
 
         const seriesObj = {};
         if (vals.hiddenSeries.length) {
