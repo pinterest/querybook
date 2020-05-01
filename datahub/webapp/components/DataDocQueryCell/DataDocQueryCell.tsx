@@ -2,7 +2,7 @@ import classNames from 'classnames';
 import * as DraftJs from 'draft-js';
 import { find } from 'lodash';
 import { debounce, bind } from 'lodash-decorators';
-import React, { useContext, useEffect, useMemo } from 'react';
+import React from 'react';
 import { connect } from 'react-redux';
 
 import CodeMirror from 'lib/codemirror';
@@ -10,9 +10,6 @@ import { ICodeAnalysis, getSelectedQuery } from 'lib/sql-helper/sql-lexer';
 import { renderTemplatedQuery } from 'lib/templated-query';
 import { sleep, getCodeEditorTheme } from 'lib/utils';
 import { sendNotification } from 'lib/dataHubUI';
-import { getCodemirrorOverlay } from 'lib/data-doc/search';
-
-import { DataDocContext } from 'context/DataDoc';
 import { IDataQueryCellMeta } from 'const/datadoc';
 
 import * as dataSourcesActions from 'redux/dataSources/action';
@@ -31,6 +28,7 @@ import {
     QueryRunButton,
     IQueryRunButtonHandles,
 } from 'components/QueryRunButton/QueryRunButton';
+import { CodeMirrorSearchHighlighter } from 'components/SearchAndReplace/CodeMirrorSearchHighlighter';
 
 import { DebouncedInput } from 'ui/DebouncedInput/DebouncedInput';
 import { DropdownMenu, IMenuItem } from 'ui/DropdownMenu/DropdownMenu';
@@ -592,7 +590,7 @@ class DataDocQueryCellComponent extends React.Component<IProps, IState> {
                     metastoreId={queryEngine.metastore_id}
                     showFullScreenButton
                 />
-                <SearchHighlighter
+                <CodeMirrorSearchHighlighter
                     cellId={cellId}
                     editor={this.queryEditorRef.current?.getEditor()}
                 />
@@ -710,66 +708,3 @@ export const DataDocQueryCell = connect(
     mapStateToProps,
     mapDispatchToProps
 )(DataDocQueryCellComponent);
-
-const SearchHighlighter: React.FC<{
-    editor: CodeMirror.Editor;
-    cellId: number;
-}> = ({ editor, cellId }) => {
-    const {
-        search: {
-            searchState: {
-                searchResults,
-                searchString,
-                currentSearchResultIndex,
-                searchOptions,
-            },
-        },
-    } = useContext(DataDocContext);
-
-    const shouldHighlight = useMemo(
-        () => editor && searchResults.some((r) => r.cellId === cellId),
-        [searchResults, cellId, editor]
-    );
-
-    // highlighter
-    useEffect(() => {
-        const overlay = shouldHighlight
-            ? getCodemirrorOverlay(searchString, searchOptions)
-            : null;
-
-        if (overlay) {
-            editor.addOverlay(overlay);
-        }
-
-        return () => {
-            if (overlay) {
-                editor.removeOverlay(overlay);
-            }
-        };
-    }, [shouldHighlight, editor, searchString, searchOptions]);
-
-    // jump to item
-    const currentSearchItem = useMemo(() => {
-        const item = searchResults[currentSearchResultIndex];
-        if (item?.cellId === cellId) {
-            return item;
-        }
-        return null;
-    }, [currentSearchResultIndex, cellId, searchResults]);
-
-    useEffect(() => {
-        if (currentSearchItem && editor) {
-            // editor.focus();
-            const doc = editor.getDoc();
-            doc.setSelection(
-                doc.posFromIndex(currentSearchItem.from),
-                doc.posFromIndex(currentSearchItem.to),
-                {
-                    scroll: true,
-                }
-            );
-        }
-    }, [currentSearchResultIndex]);
-
-    return null;
-};

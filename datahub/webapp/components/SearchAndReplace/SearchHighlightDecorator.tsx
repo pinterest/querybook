@@ -1,10 +1,10 @@
 import React from 'react';
 import { findSearchEntities } from 'lib/data-doc/search';
-import { IDataDocSearchOptions } from 'const/datadoc';
+import { ISearchOptions } from 'const/searchAndReplace';
 
 export function makeSearchHighlightDecorator(
     searchString: string,
-    searchOptions: IDataDocSearchOptions
+    searchOptions: ISearchOptions
 ) {
     return {
         strategy: findSearchEntities(searchString, searchOptions),

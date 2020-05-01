@@ -1,7 +1,14 @@
-import React, { useRef, useCallback, useMemo } from 'react';
+import React, {
+    useRef,
+    useCallback,
+    useMemo,
+    useEffect,
+    useState,
+} from 'react';
 import Resizable from 're-resizable';
 import { useSelector, useDispatch } from 'react-redux';
 
+import { ISearchOptions, ISearchResult } from 'const/searchAndReplace';
 import {
     getCodeEditorTheme,
     getQueryEngineId,
@@ -32,6 +39,13 @@ import { Button } from 'ui/Button/Button';
 import './QueryComposer.scss';
 import { QueryComposerExecution } from './QueryComposerExecution';
 import { useDebounceState } from 'hooks/redux/useDebounceState';
+import { searchText, replaceStringIndices } from 'lib/data-doc/search';
+import { CodeMirrorSearchHighlighter } from 'components/SearchAndReplace/CodeMirrorSearchHighlighter';
+import {
+    SearchAndReplace,
+    ISearchAndReplaceHandles,
+    ISearchAndReplaceProps,
+} from 'components/SearchAndReplace/SearchAndReplace';
 
 const useExecution = (dispatch: Dispatch) => {
     const executionId = useSelector(
@@ -89,6 +103,44 @@ const useQuery = (dispatch: Dispatch) => {
     return { query, setQuery };
 };
 
+const useQueryComposerSearchAndReplace = (
+    query: string,
+    setQuery: (s: string) => any,
+    searchAndReplaceRef: React.MutableRefObject<ISearchAndReplaceHandles>
+): ISearchAndReplaceProps => {
+    const getSearchResults = useCallback(
+        (searchString: string, searchOptions: ISearchOptions) =>
+            searchText(query, searchString, searchOptions),
+        [query]
+    );
+    const replace = useCallback(
+        (searchResultsToReplace: ISearchResult[], replaceString: string) => {
+            setQuery(
+                replaceStringIndices(
+                    query,
+                    searchResultsToReplace.map((r) => [r.from, r.to]),
+                    replaceString
+                )
+            );
+        },
+        [query]
+    );
+    const jumpToResult = useCallback(
+        (ignore: ISearchResult) => Promise.resolve(),
+        []
+    );
+
+    useEffect(() => {
+        searchAndReplaceRef.current?.performSearch();
+    }, [query]);
+
+    return {
+        getSearchResults,
+        replace,
+        jumpToResult,
+    };
+};
+
 export const QueryComposer: React.FC<{}> = () => {
     const dispatch: Dispatch = useDispatch();
     const { query, setQuery } = useQuery(dispatch);
@@ -101,6 +153,7 @@ export const QueryComposer: React.FC<{}> = () => {
     );
     const queryEditorRef = useRef<QueryEditor>(null);
     const runButtonRef = useRef<IQueryRunButtonHandles>(null);
+    const searchAndReplaceRef = useRef<ISearchAndReplaceHandles>(null);
 
     const clickOnRunButton = useCallback(() => {
         if (runButtonRef.current) {
@@ -123,6 +176,12 @@ export const QueryComposer: React.FC<{}> = () => {
                 )
             ),
         [engine]
+    );
+
+    const searchAndReplaceProps = useQueryComposerSearchAndReplace(
+        query,
+        setQuery,
+        searchAndReplaceRef
     );
 
     const handleRunQuery = React.useCallback(async () => {
@@ -148,18 +207,24 @@ export const QueryComposer: React.FC<{}> = () => {
     );
 
     const editorDOM = (
-        <QueryEditor
-            ref={queryEditorRef}
-            value={query}
-            lineWrapping={true}
-            onChange={setQuery}
-            theme={codeEditorTheme}
-            metastoreId={engine?.metastore_id}
-            language={engine?.language}
-            keyMap={keyMap}
-            height="full"
-            getTableByName={fetchDataTableByNameIfNeeded}
-        />
+        <>
+            <QueryEditor
+                ref={queryEditorRef}
+                value={query}
+                lineWrapping={true}
+                onChange={setQuery}
+                theme={codeEditorTheme}
+                metastoreId={engine?.metastore_id}
+                language={engine?.language}
+                keyMap={keyMap}
+                height="full"
+                getTableByName={fetchDataTableByNameIfNeeded}
+            />
+            <CodeMirrorSearchHighlighter
+                editor={queryEditorRef.current?.getEditor()}
+                cellId={undefined}
+            />
+        </>
     );
 
     const executionDOM = executionId != null && (
@@ -182,7 +247,14 @@ export const QueryComposer: React.FC<{}> = () => {
 
     const contentDOM = (
         <div className="QueryComposer-content-editor">
-            <div className="query-editor-wrapper">{editorDOM}</div>
+            <div className="query-editor-wrapper">
+                <SearchAndReplace
+                    ref={searchAndReplaceRef}
+                    {...searchAndReplaceProps}
+                >
+                    {editorDOM}
+                </SearchAndReplace>
+            </div>
             {executionDOM}
         </div>
     );

@@ -28,11 +28,6 @@ export interface IDataDocContextType {
     };
 
     isEditable: boolean;
-
-    search: {
-        searchState: IDataDocSearchState;
-        focusSearchBar: () => any;
-    };
 }
 
 export const DataDocContext = React.createContext<IDataDocContextType>(null);

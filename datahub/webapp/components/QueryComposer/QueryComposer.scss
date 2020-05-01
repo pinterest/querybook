@@ -35,6 +35,13 @@
         .query-editor-wrapper {
             flex: 2;
             overflow: auto;
+            position: relative;
+
+            .SearchAndReplaceBar {
+                position: absolute;
+                z-index: 9;
+                right: 40px;
+            }
         }
 
         .query-execution-wrapper {

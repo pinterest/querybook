@@ -12,31 +12,30 @@ import classNames from 'classnames';
 import { IconButton } from 'ui/Button/IconButton';
 import { DebouncedInput } from 'ui/DebouncedInput/DebouncedInput';
 import { Button } from 'ui/Button/Button';
-import { DataDocContext } from 'context/DataDoc';
 import { matchKeyPress } from 'lib/utils/keyboard';
-import { IDataDocSearchOptions } from 'const/datadoc';
+import { ISearchOptions } from 'const/searchAndReplace';
+import { SearchAndReplaceContext } from 'context/searchAndReplace';
 
-interface IProps {
+import './SearchAndReplaceBar.scss';
+
+export interface ISearchAndReplaceBarProps {
     onHide: () => any;
 
-    searchString: string;
     onSearchStringChange: (s: string) => any;
-    replaceString: string;
-    onReplaceStringChange: (s: string) => any;
-    onSearchOptionsChange: (options: IDataDocSearchOptions) => any;
-
+    onSearchOptionsChange: (options: ISearchOptions) => any;
     moveResultIndex: (delta: number) => Promise<any>;
 
+    onReplaceStringChange: (s: string) => any;
     onReplace: (all?: boolean) => any;
 }
 
-export interface IDataDocSearchAndReplaceHandles {
+export interface ISearchAndReplaceBarHandles {
     focus(): void;
 }
 
-export const DataDocSearchAndReplace = React.forwardRef<
-    IDataDocSearchAndReplaceHandles,
-    IProps
+export const SearchAndReplaceBar = React.forwardRef<
+    ISearchAndReplaceBarHandles,
+    ISearchAndReplaceBarProps
 >(
     (
         {
@@ -51,16 +50,14 @@ export const DataDocSearchAndReplace = React.forwardRef<
     ) => {
         const [showReplace, setShowReplace] = useState(false);
         const {
-            search: {
-                searchState: {
-                    searchString,
-                    searchResults,
-                    replaceString,
-                    currentSearchResultIndex,
-                    searchOptions,
-                },
+            searchState: {
+                searchString,
+                searchResults,
+                replaceString,
+                currentSearchResultIndex,
+                searchOptions,
             },
-        } = useContext(DataDocContext);
+        } = useContext(SearchAndReplaceContext);
         const searchInputRef = useRef<HTMLInputElement>(null);
         const replaceInputRef = useRef<HTMLInputElement>(null);
         const focusSearchInput = useCallback(() => {
@@ -71,7 +68,7 @@ export const DataDocSearchAndReplace = React.forwardRef<
             }
         }, []);
 
-        // Throttling because if you press enter too focus it
+        // Throttling because if you press enter to focus it
         // might edit the cells underneath.
         const onEnterPressThrottled = useMemo(
             () =>
@@ -194,7 +191,7 @@ export const DataDocSearchAndReplace = React.forwardRef<
         );
 
         return (
-            <div className="DataDocSearchAndReplace flex-row p4">
+            <div className="SearchAndReplaceBar flex-row p4">
                 <IconButton
                     noPadding
                     icon={showReplace ? 'chevron-down' : 'chevron-right'}

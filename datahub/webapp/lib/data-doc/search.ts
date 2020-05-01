@@ -1,18 +1,38 @@
 import * as DraftJs from 'draft-js';
-import {
-    IDataDoc,
-    IDataDocSearchResult,
-    IDataDocSearchOptions,
-    IDataDocSearchState,
-} from 'const/datadoc';
+import { IDataDoc } from 'const/datadoc';
+import { ISearchResult, ISearchOptions } from 'const/searchAndReplace';
+
+export function searchText(
+    text: string,
+    searchString: string,
+    options: ISearchOptions
+) {
+    const searchRegex = getSearchRegex(searchString, options);
+    const results: ISearchResult[] = [];
+
+    if (!searchRegex) {
+        return results;
+    }
+
+    let match: RegExpExecArray;
+    // tslint:disable-next-line
+    while ((match = searchRegex.exec(text)) !== null) {
+        results.push({
+            from: match.index,
+            to: match.index + match[0].length,
+        });
+    }
+
+    return results;
+}
 
 export function searchDataDoc(
     dataDoc: IDataDoc,
     searchString: string,
-    options: IDataDocSearchOptions
+    options: ISearchOptions
 ) {
     const searchRegex = getSearchRegex(searchString, options);
-    const results: IDataDocSearchResult[] = [];
+    const results: ISearchResult[] = [];
 
     if (!searchRegex) {
         return results;
@@ -50,10 +70,7 @@ export function searchDataDoc(
     return results;
 }
 
-function getSearchRegex(
-    searchString: string,
-    searchOptions: IDataDocSearchOptions
-) {
+function getSearchRegex(searchString: string, searchOptions: ISearchOptions) {
     if (!searchString) {
         return null;
     }
@@ -77,7 +94,7 @@ function getSearchRegex(
 
 export function getCodemirrorOverlay(
     searchString: string,
-    searchOptions: IDataDocSearchOptions
+    searchOptions: ISearchOptions
 ) {
     const searchRegex = getSearchRegex(searchString, searchOptions);
     return {
@@ -103,7 +120,7 @@ export function getCodemirrorOverlay(
 
 export const findSearchEntities = (
     searchString: string,
-    searchOptions: IDataDocSearchOptions
+    searchOptions: ISearchOptions
 ) => {
     const searchRegex = getSearchRegex(searchString, searchOptions);
     return (
@@ -145,9 +162,9 @@ export function replaceStringIndices(
     return ret;
 }
 
-function replaceDraftJsContent(
+export function replaceDraftJsContent(
     contentState: DraftJs.ContentState,
-    items: IDataDocSearchResult[],
+    items: ISearchResult[],
     replaceString: string
 ) {
     const selectionsToReplace = items.map(
@@ -174,43 +191,9 @@ function replaceDraftJsContent(
     return newContentState;
 }
 
-export async function replace(
+export async function replaceDataDoc(
     dataDoc: IDataDoc,
-    item: IDataDocSearchResult,
-    replaceString: string,
-    onChange: (
-        cellId: number,
-        context: string | DraftJs.ContentState
-    ) => Promise<any>
-) {
-    if (!item) {
-        return;
-    }
-
-    const cell = dataDoc.dataDocCells.find((c) => c.id === item.cellId);
-
-    if (!cell) {
-        return;
-    }
-
-    if (cell.cell_type === 'query') {
-        const newString = replaceStringIndices(
-            cell.context,
-            [[item.from, item.to]],
-            replaceString
-        );
-        await onChange(cell.id, newString);
-    } else if (cell.cell_type === 'text') {
-        await onChange(
-            cell.id,
-            replaceDraftJsContent(cell.context, [item], replaceString)
-        );
-    }
-}
-
-export async function replaceAll(
-    dataDoc: IDataDoc,
-    items: IDataDocSearchResult[],
+    items: ISearchResult[],
     replaceString: string,
     onChange: (
         cellId: number,
