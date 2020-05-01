@@ -104,11 +104,16 @@ export class BatchManager<T, M> {
         const { onSuccess, onFailure, data: mergedData } = this.mergeFunction(
             this.batchStack
         );
-
-        this.processRequest = this.processFunction(mergedData);
+        // Clear the batch
         this.batchStack = [];
-
-        // Notifi
-        this.processRequest.then(onSuccess, onFailure);
+        try {
+            this.processRequest = this.processFunction(mergedData);
+            await this.processRequest;
+            onSuccess();
+        } catch (e) {
+            onFailure();
+        } finally {
+            this.processRequest = null;
+        }
     };
 }
