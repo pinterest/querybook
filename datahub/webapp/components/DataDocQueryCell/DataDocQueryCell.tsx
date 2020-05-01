@@ -10,8 +10,6 @@ import { ICodeAnalysis, getSelectedQuery } from 'lib/sql-helper/sql-lexer';
 import { renderTemplatedQuery } from 'lib/templated-query';
 import { sleep, getCodeEditorTheme } from 'lib/utils';
 import { sendNotification } from 'lib/dataHubUI';
-import { formatError } from 'lib/utils/error';
-
 import { IDataQueryCellMeta } from 'const/datadoc';
 
 import * as dataSourcesActions from 'redux/dataSources/action';
@@ -26,17 +24,21 @@ import { IStoreState, Dispatch } from 'redux/store/types';
 import { DataDocQueryExecutions } from 'components/DataDocQueryExecutions/DataDocQueryExecutions';
 import { QueryEditor } from 'components/QueryEditor/QueryEditor';
 import { QuerySnippetInsertionModal } from 'components/QuerySnippetInsertionModal/QuerySnippetInsertionModal';
-import { QueryRunButton } from 'components/QueryRunButton/QueryRunButton';
+import {
+    QueryRunButton,
+    IQueryRunButtonHandles,
+} from 'components/QueryRunButton/QueryRunButton';
+import { CodeMirrorSearchHighlighter } from 'components/SearchAndReplace/CodeMirrorSearchHighlighter';
 
 import { DebouncedInput } from 'ui/DebouncedInput/DebouncedInput';
 import { DropdownMenu, IMenuItem } from 'ui/DropdownMenu/DropdownMenu';
 import { Title } from 'ui/Title/Title';
 import { Modal } from 'ui/Modal/Modal';
-
-import './DataDocQueryCell.scss';
 import { Message } from 'ui/Message/Message';
 import { Button } from 'ui/Button/Button';
 import { Icon } from 'ui/Icon/Icon';
+
+import './DataDocQueryCell.scss';
 
 const ON_CHANGE_DEBOUNCE_MS = 250;
 
@@ -91,7 +93,7 @@ interface IState {
 
 class DataDocQueryCellComponent extends React.Component<IProps, IState> {
     private queryEditorRef = React.createRef<QueryEditor>();
-    private runButtonRef = React.createRef<QueryRunButton>();
+    private runButtonRef = React.createRef<IQueryRunButtonHandles>();
     private selfRef = React.createRef<HTMLDivElement>();
     private keyMap = {
         'Shift-Enter': this.clickOnRunButton,
@@ -587,6 +589,10 @@ class DataDocQueryCellComponent extends React.Component<IProps, IState> {
                     getTableByName={this.fetchDataTableByNameIfNeeded}
                     metastoreId={queryEngine.metastore_id}
                     showFullScreenButton
+                />
+                <CodeMirrorSearchHighlighter
+                    cellId={cellId}
+                    editor={this.queryEditorRef.current?.getEditor()}
                 />
             </div>
         );

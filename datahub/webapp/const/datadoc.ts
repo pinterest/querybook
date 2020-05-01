@@ -48,6 +48,7 @@ export interface IDataChartCell extends IDataCellBase {
 }
 
 export type IDataCell = IDataQueryCell | IDataTextCell | IDataChartCell;
+export type DataCellUpdateFields = Partial<Pick<IDataCell, 'context' | 'meta'>>;
 
 export interface IDataDoc {
     dataDocCells: IDataCell[];

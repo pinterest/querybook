@@ -4,7 +4,7 @@ import { FullHeight, IFullHeightProps } from 'ui/FullHeight/FullHeight';
 import './Container.scss';
 
 export const Container: React.FC<
-    React.HTMLAttributes<HTMLDivElement> & IFullHeightProps
+    React.HTMLProps<HTMLDivElement> & IFullHeightProps
 > = ({ children, flex, ...props }) => {
     return (
         <div {...props} className={(props.className || '') + ' Container'}>

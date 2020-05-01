@@ -3,12 +3,14 @@ import { debounce, bind } from 'lodash-decorators';
 import React from 'react';
 import classNames from 'classnames';
 
+import { DraftJsSearchHighlighter } from 'components/SearchAndReplace/DraftJsSearchHighlighter';
 import { RichTextEditor } from 'ui/RichTextEditor/RichTextEditor';
 import './DataDocTextCell.scss';
 
 interface IProps {
-    context: DraftJs.ContentState;
+    cellId: number;
 
+    context: DraftJs.ContentState;
     meta: {};
     isEditable: boolean;
 
@@ -19,7 +21,6 @@ interface IProps {
         meta?: {};
     }) => any;
     onDeleteKeyPressed?: () => any;
-
     onFocus?: () => any;
     onBlur?: () => any;
     onUpKeyPressed?: () => any;
@@ -182,6 +183,10 @@ export class DataDocTextCell extends React.Component<IProps, IState> {
                     onBlur={this.onBlur}
                     onChange={this.handleChange}
                     readOnly={!this.props.isEditable}
+                />
+                <DraftJsSearchHighlighter
+                    editor={this.editorRef.current}
+                    cellId={this.props.cellId}
                 />
             </div>
         );

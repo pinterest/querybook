@@ -1,19 +1,25 @@
-import { IDataCell } from 'const/datadoc';
-import { scrollToElement } from 'lib/utils';
+import scrollIntoView from 'smooth-scroll-into-view-if-needed';
 
 export async function scrollToCell(
-    dataDocCell: IDataCell,
+    cellId: number,
     duration: number = 200,
     repeat: number = 1
 ) {
-    const anchorName = getAnchorNameForCell(dataDocCell.id);
-
-    for (let i = 0; i < repeat; i++) {
-        await scrollToElement(document.getElementById(anchorName), duration);
+    if (cellId == null) {
+        return;
     }
 
-    location.hash = '';
-    location.hash = anchorName;
+    const anchorName = getAnchorNameForCell(cellId);
+    const element = document.getElementById(anchorName);
+    for (let i = 0; i < repeat; i++) {
+        await scrollIntoView(element, {
+            behavior: 'smooth',
+            scrollMode: 'if-needed',
+            block: 'start',
+
+            duration,
+        });
+    }
 }
 
 export function getAnchorNameForCell(cellKey: string | number) {

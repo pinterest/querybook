@@ -24,12 +24,12 @@ interface IQueryRunButtonProps {
     onEngineIdSelect: (id: number) => any;
 }
 
-export interface IRunButtonHandles {
+export interface IQueryRunButtonHandles {
     clickRunButton(): void;
 }
 
 export const QueryRunButton = React.forwardRef<
-    IRunButtonHandles,
+    IQueryRunButtonHandles,
     IQueryRunButtonProps
 >(
     (

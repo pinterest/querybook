@@ -4,7 +4,7 @@ import { ContentState } from 'draft-js';
 
 import { useSelector, useDispatch } from 'react-redux';
 import { IStoreState, Dispatch } from 'redux/store/types';
-import { IDataCell, IDataDoc } from 'const/datadoc';
+import { IDataCell, IDataDoc, DataCellUpdateFields } from 'const/datadoc';
 import { DataDocContext } from 'context/DataDoc';
 
 import { sendNotification, sendConfirm } from 'lib/dataHubUI';
@@ -53,6 +53,8 @@ export const DataDocCell: React.FunctionComponent<IDataDocCellProps> = ({
     const {
         cellIdToExecutionId,
         insertCellAt,
+        updateCell,
+
         cellFocus,
         defaultCollapse,
         focusedCellIndex,
@@ -92,21 +94,8 @@ export const DataDocCell: React.FunctionComponent<IDataDocCellProps> = ({
     const uncollapseCell = () => setShowCollapsed(false);
 
     const updateCellAt = React.useCallback(
-        async (fields: { context?: string | ContentState; meta?: {} }) => {
-            try {
-                await dispatch(
-                    dataDocActions.updateDataDocCell(
-                        dataDoc.id,
-                        cell.id,
-                        fields.context,
-                        fields.meta
-                    )
-                );
-            } catch (e) {
-                sendNotification(`Cannot update cell, reason: ${e}`);
-            }
-        },
-        [cell.id, dataDoc.id]
+        async (fields: DataCellUpdateFields) => updateCell(cell.id, fields),
+        [cell.id]
     );
 
     const handleDefaultCollapseChange = React.useCallback(
@@ -214,7 +203,13 @@ export const DataDocCell: React.FunctionComponent<IDataDocCellProps> = ({
             );
         } else if (cell.cell_type === 'text') {
             // default text
-            cellDOM = <DataDocTextCell {...cellProps} context={cell.context} />;
+            cellDOM = (
+                <DataDocTextCell
+                    {...cellProps}
+                    cellId={cell.id}
+                    context={cell.context}
+                />
+            );
         }
 
         return cellDOM;

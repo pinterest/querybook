@@ -7,7 +7,7 @@ import {
     permissionToReadWrite,
 } from 'lib/data-doc/datadoc-permission';
 import { IStoreState } from 'redux/store/types';
-import { IDataCell, IDataDoc } from 'const/datadoc';
+import { IDataCell } from 'const/datadoc';
 
 import { myUserInfoSelector } from 'redux/user/selector';
 

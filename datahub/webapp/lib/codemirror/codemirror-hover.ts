@@ -44,7 +44,6 @@ class TextHoverState {
         const pos = cm.coordsChar(mouseCoord);
 
         const token = cm.getTokenAt(pos);
-        // console.log(mouseCoord, pos, token);
         if (!token) {
             return;
         }

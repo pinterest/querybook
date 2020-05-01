@@ -207,4 +207,10 @@
             }
         }
     }
+
+    .SearchAndReplaceBar {
+        position: fixed;
+        right: 60px;
+        z-index: 10;
+    }
 }

@@ -25,8 +25,7 @@ const StyledTitle = styled.p<IStyledTitleProps>`
     }
 `;
 
-export interface ITitleProps
-    extends React.ParamHTMLAttributes<HTMLParagraphElement> {
+export interface ITitleProps extends React.HTMLProps<HTMLParagraphElement> {
     tooltip?: string;
 
     // styling

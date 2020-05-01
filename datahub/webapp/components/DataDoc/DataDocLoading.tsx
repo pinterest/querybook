@@ -1,0 +1,26 @@
+import React from 'react';
+import { sample } from 'lodash';
+import { Title } from 'ui/Title/Title';
+
+const loadingHints: string[] = require('config/loading_hints.yaml').hints;
+
+export const DataDocLoading: React.FC = () => {
+    const hint = sample(loadingHints);
+
+    return (
+        <div className="datadoc-loading">
+            <div className="datadoc-loading-message">
+                <Title>
+                    <i className="fa fa-spinner fa-pulse" />
+                    &nbsp; Loading DataDoc
+                </Title>
+
+                <br />
+                <p className="subtitle">
+                    <i className="far fa-lightbulb" />
+                    &nbsp; Did you know: {hint}
+                </p>
+            </div>
+        </div>
+    );
+};

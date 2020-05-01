@@ -1,0 +1,24 @@
+.CodeMirror {
+    font-family: var(--family-monospace);
+    font-size: var(--small-text-size);
+    line-height: 17px;
+
+    &.cm-s-default {
+        &.CodeHighlight,
+        .CodeMirror-scroll {
+            background-color: var(--query-editor-default-bg-color);
+        }
+        .CodeMirror-gutters {
+            background-color: var(--query-editor-default-gutter-color);
+            border-right: 1px transparent;
+        }
+    }
+
+    .cm-matchhighlight {
+        border-bottom: 1px solid var(--color-accent-bg);
+    }
+
+    .cm-searching {
+        background-color: var(--text-highlight);
+    }
+}

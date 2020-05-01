@@ -16,7 +16,7 @@ export interface IDebouncedInputProps extends IDebouncedInputStylingProps {
     debounceTime?: number;
     debounceMethod?: 'debounce' | 'throttle';
     autoAdjustWidth?: boolean;
-    inputProps?: React.InputHTMLAttributes<HTMLInputElement>;
+    inputProps?: React.HTMLProps<HTMLInputElement>;
 
     onChange: (value: string) => any;
 }
