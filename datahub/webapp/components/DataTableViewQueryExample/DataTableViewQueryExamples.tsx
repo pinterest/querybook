@@ -28,7 +28,9 @@ export const DataTableViewQueryExamples: React.FunctionComponent<IProps> = ({
     tableId,
 }) => {
     const dispatch: Dispatch = useDispatch();
-
+    const [loadingQueryExecution, setLoadingQueryExecution] = React.useState(
+        false
+    );
     const {
         queryExampleIds,
         hasMore,
@@ -62,11 +64,15 @@ export const DataTableViewQueryExamples: React.FunctionComponent<IProps> = ({
         [tableId]
     );
 
-    const loadQueryExecution = React.useCallback((queryExecutionId) => {
-        dispatch(
-            queryExecutionsActions.fetchQueryExecutionIfNeeded(queryExecutionId)
-        );
-    }, []);
+    const loadQueryExecution = React.useCallback(
+        (queryExecutionId) =>
+            dispatch(
+                queryExecutionsActions.fetchQueryExecutionIfNeeded(
+                    queryExecutionId
+                )
+            ),
+        []
+    );
 
     const { loading: loadingInitial } = useLoader({
         item: queryExampleIds,
@@ -75,12 +81,14 @@ export const DataTableViewQueryExamples: React.FunctionComponent<IProps> = ({
     });
 
     React.useEffect(() => {
-        for (const queryId of queryExamplesIdsToLoad) {
-            loadQueryExecution(queryId);
-        }
+        setLoadingQueryExecution(true);
+
+        Promise.all(
+            queryExamplesIdsToLoad.map(loadQueryExecution)
+        ).finally(() => setLoadingQueryExecution(false));
     }, [queryExampleIds]);
 
-    const openDisplayModal = (queryId) => {
+    const openDisplayModal = (queryId: number) => {
         navigateWithinEnv(`/query_execution/${queryId}/`, {
             isModal: true,
         });
@@ -89,9 +97,7 @@ export const DataTableViewQueryExamples: React.FunctionComponent<IProps> = ({
     const getExampleDOM = () => {
         if (loadingInitial) {
             return <Loading />;
-        }
-
-        if (!queryExamples?.length) {
+        } else if (!queryExampleIds?.length) {
             return (
                 <div className="center-align m24">
                     <Title subtitle size={4}>
@@ -101,31 +107,36 @@ export const DataTableViewQueryExamples: React.FunctionComponent<IProps> = ({
             );
         }
 
-        return queryExamples.map((query) => {
-            const language =
-                queryEngineById[query.engine_id]?.language ?? 'presto';
-            const formattedQuery = format(query.query, language, {
-                case: 'upper',
-            });
-            return (
-                <div className="DataTableViewQueryExamples-item" key={query.id}>
-                    <CodeHighlight
-                        className="DataTableViewQueryExamples-text"
-                        language={'text/x-hive'}
-                        value={formattedQuery}
-                        theme={editorTheme}
-                    />
-                    <div className="DataTableViewQueryExamples-info">
-                        <span>by </span>
-                        <UserName uid={query.uid} />
+        return queryExamples
+            .map((query) => {
+                const language =
+                    queryEngineById[query.engine_id]?.language ?? 'presto';
+                const formattedQuery = format(query.query, language, {
+                    case: 'upper',
+                });
+                return (
+                    <div
+                        className="DataTableViewQueryExamples-item"
+                        key={query.id}
+                    >
+                        <CodeHighlight
+                            className="DataTableViewQueryExamples-text"
+                            language={'text/x-hive'}
+                            value={formattedQuery}
+                            theme={editorTheme}
+                        />
+                        <div className="DataTableViewQueryExamples-info">
+                            <span>by </span>
+                            <UserName uid={query.uid} />
+                        </div>
+                        <IconButton
+                            icon="external-link"
+                            onClick={() => openDisplayModal(query.id)}
+                        />
                     </div>
-                    <IconButton
-                        icon="external-link"
-                        onClick={() => openDisplayModal(query.id)}
-                    />
-                </div>
-            );
-        });
+                );
+            })
+            .concat(loadingQueryExecution ? [<Loading key="loading" />] : []);
     };
 
     return (
