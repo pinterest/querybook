@@ -16,6 +16,7 @@ import { CodeHighlight } from 'ui/CodeHighlight/CodeHighlight';
 import { IconButton } from 'ui/Button/IconButton';
 import { Loading } from 'ui/Loading/Loading';
 import { AsyncButton } from 'ui/AsyncButton/AsyncButton';
+import { Title } from 'ui/Title/Title';
 
 import './DataTableViewQueryExamples.scss';
 
@@ -90,9 +91,19 @@ export const DataTableViewQueryExamples: React.FunctionComponent<IProps> = ({
             return <Loading />;
         }
 
+        if (!queryExamples?.length) {
+            return (
+                <div className="center-align m24">
+                    <Title subtitle size={4}>
+                        No Examples
+                    </Title>
+                </div>
+            );
+        }
+
         return queryExamples.map((query) => {
             const language =
-                queryEngineById[query.engine_id]?.language || 'presto';
+                queryEngineById[query.engine_id]?.language ?? 'presto';
             const formattedQuery = format(query.query, language, {
                 case: 'upper',
             });
@@ -121,7 +132,7 @@ export const DataTableViewQueryExamples: React.FunctionComponent<IProps> = ({
         <div className="DataTableViewQueryExamples">
             {getExampleDOM()}
             <div className="center-align">
-                {hasMore && (
+                {hasMore && !loadingInitial && (
                     <AsyncButton
                         onClick={loadMoreQueryExampleIds}
                         title="Show More"
