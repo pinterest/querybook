@@ -87,7 +87,6 @@ export const DataTableViewQueryExamples: React.FunctionComponent<IProps> = ({
     };
 
     const getExampleDOM = () => {
-        console.log('WTF');
         if (loadingInitial) {
             return <Loading />;
         }
