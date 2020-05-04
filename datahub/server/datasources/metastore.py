@@ -266,7 +266,9 @@ def get_table_query_examples(table_id, environment_id, limit=10, offset=0):
 
     with DBSession() as session:
         verify_data_table_permission(table_id, session=session)
-        engines = admin_logic.get_query_engines_by_environment(environment_id)
+        engines = admin_logic.get_query_engines_by_environment(
+            environment_id, session=session
+        )
         engine_ids = [engine.id for engine in engines]
         query_logs = logic.get_table_query_examples(
             table_id, engine_ids, limit=limit, offset=offset, session=session
