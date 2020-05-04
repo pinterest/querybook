@@ -228,8 +228,13 @@ function aggregateData(
     return aggregatedData;
 }
 
-export function sortData(data: any[][], idx: number, ascending: boolean) {
-    const sortIdx = idx ?? (isNaN(data[0][0]) ? undefined : 0);
+export function sortData(
+    data: any[][],
+    idx: number,
+    ascending: boolean,
+    xIdx: number
+) {
+    const sortIdx = idx ?? (isNaN(data[0][xIdx]) ? undefined : 0);
     if (sortIdx != null) {
         return sortTable(data, sortIdx, ascending);
     } else {
@@ -247,8 +252,10 @@ export function transformData(
     aggSeries: {
         [seriesIdx: number]: ChartDataAggType;
     } = {},
-    sortIdx: number,
-    sortAsc: boolean = true
+    // tslint:disable-next-line: no-unnecessary-initializer
+    sortIdx: number = undefined,
+    sortAsc: boolean = true,
+    xAxisIdx: number = 0
 ) {
     if (data?.length < 2) {
         return null;
@@ -266,12 +273,16 @@ export function transformData(
         );
     }
 
+    if (transformedData == null) {
+        return null;
+    }
+
     if (isSwitch) {
         transformedData = switchData(transformedData);
     }
 
     return [
         transformedData[0],
-        ...sortData(transformedData.slice(1), sortIdx, sortAsc),
+        ...sortData(transformedData.slice(1), sortIdx, sortAsc, xAxisIdx),
     ];
 }

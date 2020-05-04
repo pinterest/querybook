@@ -72,7 +72,7 @@ export interface IChartAxisMeta {
 
 export interface IChartXAxisMeta extends IChartAxisMeta {
     col_idx: number;
-    sort: {
+    sort?: {
         idx: number;
         asc: boolean;
     };

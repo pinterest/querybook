@@ -64,7 +64,8 @@ export function getDataTransformationOptions(meta: IDataChartCellMeta) {
         aggSeries,
         aggType,
         sortIndex: meta.chart.x_axis.sort?.idx,
-        sortAsc: meta.chart.x_axis.sort.asc || true,
+        sortAsc: meta.chart.x_axis.sort?.asc ?? true,
+        xAxisIdx: meta.chart.x_axis.col_idx,
     };
 }
 

@@ -23,7 +23,7 @@ import { colorPalette, colorPaletteNames } from 'const/chartColors';
 
 import { defaultReactSelectStyles } from 'lib/utils/react-select';
 import { mapMetaToFormVals } from 'lib/chart/chart-meta-processing';
-import { transformData, sortData } from 'lib/chart/chart-data-transformation';
+import { transformData } from 'lib/chart/chart-data-transformation';
 import { useChartSource } from 'hooks/chart/useChartSource';
 
 import { DataDocChart } from './DataDocChart';
@@ -43,7 +43,6 @@ import { Level, LevelItem } from 'ui/Level/Level';
 import { SimpleReactSelect } from 'ui/SimpleReactSelect/SimpleReactSelect';
 import { getDefaultScaleType } from 'lib/chart/chart-utils';
 import { NumberField } from 'ui/FormikField/NumberField';
-import { CheckboxField } from 'ui/FormikField/CheckboxField';
 import { ReactSelectField } from 'ui/FormikField/ReactSelectField';
 import { FormWrapper } from 'ui/Form/FormWrapper';
 import { SimpleField } from 'ui/FormikField/SimpleField';
@@ -111,7 +110,8 @@ const DataDocChartComposerComponent: React.FunctionComponent<
                   values.formatValueCols,
                   values.aggSeries,
                   values.sortIndex,
-                  values.sortAsc
+                  values.sortAsc,
+                  values.xIndex
               )
             : null;
     }, [
@@ -125,32 +125,16 @@ const DataDocChartComposerComponent: React.FunctionComponent<
         values.aggSeries,
         values.sortIndex,
         values.sortAsc,
+        values.xIndex,
     ]);
 
     const tableData: any[][] = React.useMemo(() => {
         if (tableTab === 'original') {
-            if (values.sortIndex != null && statementResultData) {
-                return [
-                    statementResultData[0],
-                    ...sortData(
-                        statementResultData.slice(1),
-                        values.sortIndex,
-                        values.sortAsc
-                    ),
-                ];
-            } else {
-                return statementResultData;
-            }
+            return statementResultData;
         } else {
             return chartData;
         }
-    }, [
-        tableTab,
-        statementResultData,
-        values.sortIndex,
-        values.sortAsc,
-        chartData,
-    ]);
+    }, [tableTab, statementResultData, chartData]);
 
     // getting redux state
     const queryCellOptions = useSelector((state: IStoreState) => {
@@ -651,18 +635,29 @@ const DataDocChartComposerComponent: React.FunctionComponent<
     const sortDOM = (
         <>
             <FormSectionHeader>Sort</FormSectionHeader>
-            <FormField stacked label="Sort Index">
-                <ReactSelectField name={`sortIndex`} options={xAxisOptions} />
-            </FormField>
-            <FormField stacked label="Sort Direction">
-                <ReactSelectField
-                    name={`sortAsc`}
-                    options={[
-                        { value: true, label: 'Ascending' },
-                        { value: false, label: 'Descending' },
-                    ]}
-                />
-            </FormField>
+            <SimpleField
+                stacked
+                type="react-select"
+                options={xAxisOptions}
+                name="sortIndex"
+                label="Sort Index"
+                onChange={(val) => {
+                    setFieldValue('sortIndex', val);
+                    if (val != null) {
+                        setTableTab('transformed');
+                    }
+                }}
+            />
+            <SimpleField
+                stacked
+                type="react-select"
+                options={[
+                    { value: true, label: 'Ascending' },
+                    { value: false, label: 'Descending' },
+                ]}
+                name="sortAsc"
+                label="Sort Direction"
+            />
         </>
     );
 
@@ -770,7 +765,7 @@ const DataDocChartComposerComponent: React.FunctionComponent<
     let dataDOM: JSX.Element;
     let dataSwitch: JSX.Element;
     if (chartData && showTable) {
-        if (values.aggregate || values.switch) {
+        if (values.aggregate || values.switch || values.sortIndex != null) {
             dataSwitch = (
                 <div className="toggleTableDataSwitch">
                     <Tabs

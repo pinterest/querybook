@@ -58,25 +58,15 @@ export function sortTable(
         return tableRows;
     }
 
+    const reverseMultiplier = ascending ? 1 : -1;
+
     if (!isNaN(tableRows[0][columnIndex] as number)) {
-        if (ascending) {
-            return tableRows.sort(
-                (a, b) => a[columnIndex] - b[columnIndex]
-            ) as any[];
-        } else {
-            return tableRows.sort(
-                (a, b) => b[columnIndex] - a[columnIndex]
-            ) as any[];
-        }
+        return tableRows.sort(
+            (a, b) => (a[columnIndex] - b[columnIndex]) * reverseMultiplier
+        ) as any[];
     }
 
-    if (ascending) {
-        return tableRows.sort((a, b) =>
-            a[columnIndex] > b[columnIndex] ? 1 : -1
-        );
-    } else {
-        return tableRows.sort((a, b) =>
-            a[columnIndex] < b[columnIndex] ? 1 : -1
-        );
-    }
+    return tableRows.sort(
+        (a, b) => (a[columnIndex] > b[columnIndex] ? 1 : -1) * reverseMultiplier
+    );
 }
