@@ -240,10 +240,7 @@ export function sortTableWithDefaultIdx(
     } else {
         // if idx is not provided then default idx to the xIndex of the table
         // only sort if the column type for that index is either 'date' 'datetime' or 'number'
-        if (
-            getValueDataType(data[0][xIdx]) === 'string' ||
-            getValueDataType(data[0][xIdx]) === null
-        ) {
+        if (['string', null].includes(getValueDataType(data[0][xIdx]))) {
             return data;
         } else {
             return sortTable(data, xIdx, ascending);
