@@ -261,13 +261,15 @@ def update_column_by_id(
 
 
 @register("/table/<int:table_id>/query_examples/", methods=["GET"])
-def get_table_query_examples(table_id, limit=10, offset=0):
+def get_table_query_examples(table_id, environment_id, limit=10, offset=0):
     api_assert(limit < 100)
 
     with DBSession() as session:
         verify_data_table_permission(table_id, session=session)
+        engines = admin_logic.get_query_engines_by_environment(environment_id)
+        engine_ids = [engine.id for engine in engines]
         query_logs = logic.get_table_query_examples(
-            table_id, limit=limit, offset=offset, session=session
+            table_id, engine_ids, limit=limit, offset=offset, session=session
         )
         query_ids = [log.query_execution_id for log in query_logs]
 
