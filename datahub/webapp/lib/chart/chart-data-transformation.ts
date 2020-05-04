@@ -1,6 +1,6 @@
 import { cloneDeep, range } from 'lodash';
 import { ChartDataAggType } from 'const/dataDocChart';
-import { sortTable } from './chart-utils';
+import { sortTable, getValueDataType } from './chart-utils';
 
 const emptyCellValue = 'No Value';
 
@@ -228,17 +228,26 @@ function aggregateData(
     return aggregatedData;
 }
 
-export function sortData(
+export function sortTableWithDefaultIdx(
     data: any[][],
     idx: number,
     ascending: boolean,
     xIdx: number
 ) {
-    const sortIdx = idx ?? (isNaN(data[0][xIdx]) ? undefined : 0);
-    if (sortIdx != null) {
-        return sortTable(data, sortIdx, ascending);
+    if (idx != null) {
+        // if idx is provided then call sortTable as is
+        return sortTable(data, idx, ascending);
     } else {
-        return data;
+        // if idx is not provided then default idx to the xIndex of the table
+        // only sort if the column type for that index is either 'date' 'datetime' or 'number'
+        if (
+            getValueDataType(data[0][xIdx]) === 'string' ||
+            getValueDataType(data[0][xIdx]) === null
+        ) {
+            return data;
+        } else {
+            return sortTable(data, xIdx, ascending);
+        }
     }
 }
 
@@ -283,6 +292,11 @@ export function transformData(
 
     return [
         transformedData[0],
-        ...sortData(transformedData.slice(1), sortIdx, sortAsc, xAxisIdx),
+        ...sortTableWithDefaultIdx(
+            transformedData.slice(1),
+            sortIdx,
+            sortAsc,
+            xAxisIdx
+        ),
     ];
 }

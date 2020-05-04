@@ -128,14 +128,6 @@ const DataDocChartComposerComponent: React.FunctionComponent<
         values.xIndex,
     ]);
 
-    const tableData: any[][] = React.useMemo(() => {
-        if (tableTab === 'original') {
-            return statementResultData;
-        } else {
-            return chartData;
-        }
-    }, [tableTab, statementResultData, chartData]);
-
     // getting redux state
     const queryCellOptions = useSelector((state: IStoreState) => {
         const cellList = state.dataDoc.dataDocById[dataDocId].cells;
@@ -782,7 +774,11 @@ const DataDocChartComposerComponent: React.FunctionComponent<
         dataDOM = (
             <div className="DataDocChartComposer-data">
                 <StatementResultTable
-                    data={tableData}
+                    data={
+                        tableTab === 'original'
+                            ? statementResultData
+                            : chartData
+                    }
                     paginate={true}
                     maxNumberOfRowsToShow={5}
                 />
