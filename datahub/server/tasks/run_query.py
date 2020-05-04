@@ -249,9 +249,7 @@ def send_query_completion_slack(
     user, env_name, query_execution, query_title, doc_id, cell_id
 ):
     query_status = (
-        "query has finished!"
-        if query_execution.status == QueryExecutionStatus.DONE
-        else "query has failed!"
+        "Finished" if query_execution.status == QueryExecutionStatus.DONE else "Failed"
     )
     data_doc_link = (
         "Here is the url to the datadoc: {}".format(
@@ -264,10 +262,14 @@ def send_query_completion_slack(
         f"{DataHubSettings.PUBLIC_URL}/{env_name}/query_execution/{query_execution.id}/"
     )
 
-    message = """"{}" {} (Query Id {})
-{}
-{}""".format(
-        query_title, query_status, query_execution.id, data_doc_link, execution_link
+    message = """{status}: "{title}" (Query Id {id}) has completed!
+{doc_link}
+{exec_link}""".format(
+        status=query_status,
+        title=query_title,
+        id=query_execution.id,
+        doc_link=data_doc_link,
+        exec_link=execution_link,
     )
     send_slack_message(to=f"@{user.username}", message=message)
 
