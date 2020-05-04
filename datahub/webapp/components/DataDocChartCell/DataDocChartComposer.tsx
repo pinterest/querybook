@@ -43,7 +43,6 @@ import { Level, LevelItem } from 'ui/Level/Level';
 import { SimpleReactSelect } from 'ui/SimpleReactSelect/SimpleReactSelect';
 import { getDefaultScaleType } from 'lib/chart/chart-utils';
 import { NumberField } from 'ui/FormikField/NumberField';
-import { CheckboxField } from 'ui/FormikField/CheckboxField';
 import { ReactSelectField } from 'ui/FormikField/ReactSelectField';
 import { FormWrapper } from 'ui/Form/FormWrapper';
 import { SimpleField } from 'ui/FormikField/SimpleField';
@@ -109,7 +108,10 @@ const DataDocChartComposerComponent: React.FunctionComponent<
                   values.formatAggCol,
                   values.formatSeriesCol,
                   values.formatValueCols,
-                  values.aggSeries
+                  values.aggSeries,
+                  values.sortIndex,
+                  values.sortAsc,
+                  values.xIndex
               )
             : null;
     }, [
@@ -121,6 +123,9 @@ const DataDocChartComposerComponent: React.FunctionComponent<
         values.formatValueCols,
         values.aggType,
         values.aggSeries,
+        values.sortIndex,
+        values.sortAsc,
+        values.xIndex,
     ]);
 
     // getting redux state
@@ -619,10 +624,40 @@ const DataDocChartComposerComponent: React.FunctionComponent<
         );
     }
 
+    const sortDOM = (
+        <>
+            <FormSectionHeader>Sort</FormSectionHeader>
+            <SimpleField
+                stacked
+                type="react-select"
+                options={xAxisOptions}
+                name="sortIndex"
+                label="Sort Index"
+                onChange={(val) => {
+                    setFieldValue('sortIndex', val);
+                    if (val != null) {
+                        setTableTab('transformed');
+                    }
+                }}
+            />
+            <SimpleField
+                stacked
+                type="react-select"
+                options={[
+                    { value: true, label: 'Ascending' },
+                    { value: false, label: 'Descending' },
+                ]}
+                name="sortAsc"
+                label="Sort Direction"
+            />
+        </>
+    );
+
     const chartTabDOM = (
         <>
             {chartOptionsDOM}
             {axesDOM}
+            {sortDOM}
         </>
     );
 
@@ -722,7 +757,7 @@ const DataDocChartComposerComponent: React.FunctionComponent<
     let dataDOM: JSX.Element;
     let dataSwitch: JSX.Element;
     if (chartData && showTable) {
-        if (values.aggregate || values.switch) {
+        if (values.aggregate || values.switch || values.sortIndex != null) {
             dataSwitch = (
                 <div className="toggleTableDataSwitch">
                     <Tabs
@@ -757,7 +792,6 @@ const DataDocChartComposerComponent: React.FunctionComponent<
                 <LevelItem>{dataSwitch}</LevelItem>
                 <LevelItem>{hideTableButtonDOM}</LevelItem>
             </Level>
-
             {dataDOM}
         </div>
     );
@@ -877,12 +911,18 @@ function formValsToMeta(vals: IChartFormValues, meta: IDataChartCellMeta) {
         for (const [field, val] of Object.entries(vals.xAxis)) {
             draft.chart.x_axis[field] = val;
         }
-        draft.chart.y_axis.stack = vals.stack;
+        if (vals.sortIndex != null) {
+            draft.chart.x_axis.sort = {
+                idx: vals.sortIndex,
+                asc: vals.sortAsc,
+            };
+        }
 
         // Y Axes
         for (const [field, val] of Object.entries(vals.yAxis)) {
             draft.chart.y_axis[field] = val;
         }
+        draft.chart.y_axis.stack = vals.stack;
 
         const seriesObj = {};
         if (vals.hiddenSeries.length) {

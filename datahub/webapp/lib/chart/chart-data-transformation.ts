@@ -1,5 +1,6 @@
 import { cloneDeep, range } from 'lodash';
 import { ChartDataAggType } from 'const/dataDocChart';
+import { sortTable, getValueDataType } from './chart-utils';
 
 const emptyCellValue = 'No Value';
 
@@ -227,6 +228,27 @@ function aggregateData(
     return aggregatedData;
 }
 
+export function sortTableWithDefaultIdx(
+    data: any[][],
+    idx: number,
+    ascending: boolean,
+    xIdx: number
+) {
+    if (idx != null) {
+        // if idx is provided then call sortTable as is
+        return sortTable(data, idx, ascending);
+    } else {
+        // if idx is not provided then default idx to the xIndex of the table
+        // only sort if the column type for that index is either 'date' 'datetime' or 'number'
+        const valType = getValueDataType(data[0][xIdx]);
+        if (valType === 'string' || valType === null) {
+            return data;
+        } else {
+            return sortTable(data, xIdx, ascending);
+        }
+    }
+}
+
 export function transformData(
     data: any[][],
     isAggregate: boolean = false,
@@ -236,14 +258,14 @@ export function transformData(
     formatValueCols: number[] = [2],
     aggSeries: {
         [seriesIdx: number]: ChartDataAggType;
-    } = {}
+    } = {},
+    // tslint:disable-next-line: no-unnecessary-initializer
+    sortIdx: number = undefined,
+    sortAsc: boolean = true,
+    xAxisIdx: number = 0
 ) {
     if (data?.length < 2) {
         return null;
-    }
-
-    if (!isAggregate && !isSwitch) {
-        return data;
     }
 
     let transformedData = cloneDeep(data);
@@ -258,9 +280,21 @@ export function transformData(
         );
     }
 
+    if (transformedData == null) {
+        return null;
+    }
+
     if (isSwitch) {
         transformedData = switchData(transformedData);
     }
 
-    return transformedData;
+    return [
+        transformedData[0],
+        ...sortTableWithDefaultIdx(
+            transformedData.slice(1),
+            sortIdx,
+            sortAsc,
+            xAxisIdx
+        ),
+    ];
 }

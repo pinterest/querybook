@@ -48,7 +48,8 @@ export function getDefaultScaleType(value: any): ChartScaleType {
 
 export function sortTable(
     tableRows: any[][],
-    columnIndex: number = 0
+    columnIndex: number = 0,
+    ascending: boolean = true
 ): any[][] {
     // Check if string are numbers, if so use number sort
     // otherwise use default sort
@@ -57,10 +58,15 @@ export function sortTable(
         return tableRows;
     }
 
+    const reverseMultiplier = ascending ? 1 : -1;
+
     if (!isNaN(tableRows[0][columnIndex] as number)) {
         return tableRows.sort(
-            (a, b) => a[columnIndex] - b[columnIndex]
+            (a, b) => (a[columnIndex] - b[columnIndex]) * reverseMultiplier
         ) as any[];
     }
-    return tableRows.sort((a, b) => (a[columnIndex] > b[columnIndex] ? 1 : -1));
+
+    return tableRows.sort(
+        (a, b) => (a[columnIndex] > b[columnIndex] ? 1 : -1) * reverseMultiplier
+    );
 }

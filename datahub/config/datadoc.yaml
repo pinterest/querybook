@@ -42,6 +42,9 @@ cell_types:
                     scale: ''
                     min: 0
                     max: 0
+                    sort:
+                        idx: 0
+                        asc: true
                 y_axis:
                     label: ''
                     scale: ''

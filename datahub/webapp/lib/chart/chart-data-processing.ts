@@ -22,7 +22,7 @@ export function processChartJSData(
 
     const xAxisIdx = chartMeta.x_axis.col_idx;
     const seriesNames: string[] = data[0];
-    const dataRows = sortTable(data.slice(1), xAxisIdx);
+    const dataRows = data.slice(1);
 
     // hide hidden series
     const hiddenSeriesIndices = new Set();

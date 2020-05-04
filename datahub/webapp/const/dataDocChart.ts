@@ -72,6 +72,10 @@ export interface IChartAxisMeta {
 
 export interface IChartXAxisMeta extends IChartAxisMeta {
     col_idx: number;
+    sort?: {
+        idx: number;
+        asc: boolean;
+    };
 }
 
 export interface IChartYAxisMeta extends IChartAxisMeta {
@@ -144,6 +148,8 @@ export interface IChartFormValues {
 
     xAxis: IChartAxisMeta;
     xIndex: number;
+    sortIndex: number | undefined;
+    sortAsc: boolean;
     yAxis: IChartAxisMeta;
     stack: boolean;
     hiddenSeries: number[];
