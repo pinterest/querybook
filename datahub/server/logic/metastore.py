@@ -14,6 +14,7 @@ from models.metastore import (
     DataJobMetadata,
     TableLineage,
 )
+from models.query_execution import QueryExecution
 from tasks.sync_elasticsearch import sync_elasticsearch
 
 
@@ -624,10 +625,14 @@ def delete_old_able_query_execution_log(
 
 
 @with_session
-def get_table_query_examples(table_id, limit=5, offset=0, commit=True, session=None):
+def get_table_query_examples(
+    table_id, engine_ids, limit=5, offset=0, commit=True, session=None
+):
     logs = (
         session.query(DataTableQueryExecution)
+        .join(QueryExecution)
         .filter(DataTableQueryExecution.table_id == table_id)
+        .filter(QueryExecution.engine_id.in_(engine_ids))
         .order_by(DataTableQueryExecution.id.desc())
         .limit(limit)
         .offset(offset)

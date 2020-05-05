@@ -450,12 +450,15 @@ export function fetchQueryExampleIds(
 ): ThunkResult<Promise<number[]>> {
     return async (dispatch, getState) => {
         try {
+            const state = getState();
+            const environmentId = state.environment.currentEnvironmentId;
             const { data } = await ds.fetch<[]>(
                 {
                     url: `/table/${tableId}/query_examples/`,
                 },
                 {
                     table_id: tableId,
+                    environment_id: environmentId,
                     limit,
                     offset,
                 }
