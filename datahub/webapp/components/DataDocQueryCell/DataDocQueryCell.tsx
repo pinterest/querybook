@@ -8,7 +8,7 @@ import { connect } from 'react-redux';
 import CodeMirror from 'lib/codemirror';
 import { ICodeAnalysis, getSelectedQuery } from 'lib/sql-helper/sql-lexer';
 import { renderTemplatedQuery } from 'lib/templated-query';
-import { sleep, getCodeEditorTheme } from 'lib/utils';
+import { sleep } from 'lib/utils';
 import { sendNotification } from 'lib/dataHubUI';
 import { IDataQueryCellMeta } from 'const/datadoc';
 
@@ -29,6 +29,7 @@ import {
     IQueryRunButtonHandles,
 } from 'components/QueryRunButton/QueryRunButton';
 import { CodeMirrorSearchHighlighter } from 'components/SearchAndReplace/CodeMirrorSearchHighlighter';
+import { BindedQueryEditor } from 'components/QueryEditor/BindedQueryEditor';
 
 import { DebouncedInput } from 'ui/DebouncedInput/DebouncedInput';
 import { DropdownMenu, IMenuItem } from 'ui/DropdownMenu/DropdownMenu';
@@ -39,7 +40,6 @@ import { Button } from 'ui/Button/Button';
 import { Icon } from 'ui/Icon/Icon';
 
 import './DataDocQueryCell.scss';
-import { BindedQueryEditor } from 'components/QueryEditor/BindedQueryEditor';
 
 const ON_CHANGE_DEBOUNCE_MS = 250;
 
