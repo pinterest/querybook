@@ -1,7 +1,10 @@
 from cgi import escape
+import math
 import json
 import re
 
+from const.impression import ImpressionItemType
+from env import DataHubSettings
 from elasticsearch import Elasticsearch, RequestsHttpConnection
 
 from lib.utils.utils import (
@@ -19,10 +22,14 @@ from logic.datadoc import get_all_data_docs, get_data_doc_by_id
 from logic.metastore import (
     get_all_table,
     get_table_by_id,
+    get_table_query_samples_count,
+)
+from logic.impression import (
+    get_viewers_count_by_item_after_date,
+    get_last_impressions_date,
 )
 from models.user import User
 from models.datadoc import DataCellType
-from env import DataHubSettings
 
 
 LOG = get_logger(__file__)
@@ -119,6 +126,8 @@ def datadocs_to_es(datadoc, session=None):
 @with_exception
 def simple_parse_draftjs_content_state(value):
     try:
+        if value is None:
+            return ""
         content_state = json.loads(value)
     except Exception:
         # For old text cells the value was plain text
@@ -188,6 +197,33 @@ def get_tables_iter(batch_size=5000, session=None):
 
 
 @with_session
+def get_table_weight(table_id: int, session=None) -> int:
+    """Calculate the weight of table. Used for ranking in auto completion
+       and sidebar table search.
+
+    Arguments:
+        table_id {int} -- Id of DataTable
+
+    Keyword Arguments:
+        session -- Sqlalchemy DB session (default: {None})
+
+    Returns:
+        int -- The integer weight
+    """
+    num_samples = get_table_query_samples_count(table_id, session=session)
+    num_impressions = get_viewers_count_by_item_after_date(
+        ImpressionItemType.DATA_TABLE,
+        table_id,
+        get_last_impressions_date(),
+        session=session,
+    )
+
+    # Samples worth 10x as much as impression
+    # Log the score to flatten the score distrution (since its power law distribution)
+    return int(math.log2(2 + num_impressions + num_samples * 10))
+
+
+@with_session
 def table_to_es(table, session=None):
     schema = table.data_schema
 
@@ -204,10 +240,7 @@ def table_to_es(table, session=None):
     )
 
     full_name = "{}.{}".format(schema_name, table_name)
-
-    # TODO: Allow dynamic weight to tables
-    weight = 0
-
+    weight = get_table_weight(table.id, session=session)
     table_name_words = list(filter(lambda s: len(s), table_name.split("_")))
     schema_words = list(filter(lambda s: len(s), schema_name.split("_")))
     full_name_spaces = " ".join(schema_words + table_name_words)
@@ -234,6 +267,7 @@ def table_to_es(table, session=None):
         "created_at": DATETIME_TO_UTC(table.created_at),
         "columns": column_names_spaces,
         "golden": table.golden,
+        "importance_score": weight,
     }
     return expand_table
 
