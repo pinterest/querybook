@@ -6,11 +6,12 @@ import React from 'react';
 import { Controlled as ReactCodeMirror } from 'react-codemirror2';
 import memoizeOne from 'memoize-one';
 
-import CodeMirror from 'lib/codemirror';
+import CodeMirror, { CodeMirrorKeyMap } from 'lib/codemirror';
 
 import {
     ExcludedTriggerKeys,
     SqlAutoCompleter,
+    AutoCompleteType,
 } from 'lib/sql-helper/sql-autocompleter';
 import {
     ICodeAnalysis,
@@ -23,12 +24,16 @@ import { analyzeCode, getSqlLintAnnotations } from 'lib/web-worker';
 import { navigateWithinEnv } from 'lib/utils/query-string';
 
 import { FunctionDocumentationCollection } from 'const/metastore';
-
+import { ICodeMirrorTooltipProps } from 'components/CodeMirrorTooltip/CodeMirrorTooltip';
 import { showTooltipFor } from 'components/CodeMirrorTooltip';
+
 import { Button } from 'ui/Button/Button';
 
+import {
+    StyledQueryEditor,
+    IStyledQueryEditorProps,
+} from './StyledQueryEditor';
 import './QueryEditor.scss';
-import { ICodeMirrorTooltipProps } from 'components/CodeMirrorTooltip/CodeMirrorTooltip';
 
 // Checks if token is in table, returns the table if found, false otherwise
 async function isTokenInTable(
@@ -83,23 +88,19 @@ async function isTokenInTable(
     return false;
 }
 
-type CodeMirrorKeyMap = Record<
-    string,
-    (editor: CodeMirror.Editor) => any | string
->;
-
-interface IProps {
+export interface IQueryEditorProps extends IStyledQueryEditorProps {
     options?: {};
     value?: string;
 
     lineWrapping?: boolean;
     readOnly?: boolean;
-    height?: 'auto' | 'full' | 'fixed';
     language?: string;
     theme?: string;
     functionDocumentationByNameByLanguage?: FunctionDocumentationCollection;
     metastoreId?: number;
     keyMap?: CodeMirrorKeyMap;
+    className?: string;
+    autoCompleteType?: AutoCompleteType;
 
     onChange?: (value: string) => any;
     onKeyDown?: (editor: CodeMirror.Editor, event: React.SyntheticEvent) => any;
@@ -116,8 +117,11 @@ interface IState {
     lintingOn: boolean;
 }
 
-export class QueryEditor extends React.PureComponent<IProps, IState> {
-    public static defaultProps = {
+export class QueryEditor extends React.PureComponent<
+    IQueryEditorProps,
+    IState
+> {
+    public static defaultProps: Partial<IQueryEditorProps> = {
         options: {},
         keyMap: {},
         value: '',
@@ -127,6 +131,7 @@ export class QueryEditor extends React.PureComponent<IProps, IState> {
         showFullScreenButton: false,
         functionDocumentationByNameByLanguage: {},
         language: 'hive',
+        autoCompleteType: 'all',
     };
 
     private marker = null;
@@ -254,17 +259,26 @@ export class QueryEditor extends React.PureComponent<IProps, IState> {
 
     @bind
     public makeAutocompleter() {
-        this._makeAutocompleter(this.props.language, this.props.metastoreId);
+        this._makeAutocompleter(
+            this.props.language,
+            this.props.metastoreId,
+            this.props.autoCompleteType
+        );
     }
 
     @decorate(memoizeOne)
-    public _makeAutocompleter(language: string, metastoreId: number) {
+    public _makeAutocompleter(
+        language: string,
+        metastoreId: number,
+        type: AutoCompleteType
+    ) {
         if (language != null) {
             // Update the height
             this.autocomplete = new SqlAutoCompleter(
                 CodeMirror,
                 language,
-                metastoreId
+                metastoreId,
+                type
             );
         }
     }
@@ -548,6 +562,12 @@ export class QueryEditor extends React.PureComponent<IProps, IState> {
 
     @bind
     public formatQuery(options = {}) {
+        if (this.editor) {
+            const indentWithTabs = this.editor.getOption('indentWithTabs');
+            const indentUnit = this.editor.getOption('indentUnit');
+            options['indent'] = indentWithTabs ? '\t' : ' '.repeat(indentUnit);
+        }
+
         const formattedQuery = format(
             this.props.value,
             this.props.language,
@@ -559,15 +579,18 @@ export class QueryEditor extends React.PureComponent<IProps, IState> {
     }
 
     public render() {
-        const { height, showFullScreenButton } = this.props;
+        const {
+            height,
+            showFullScreenButton,
+            fontSize,
+            className,
+        } = this.props;
         const { fullScreen } = this.state;
 
-        const className = classNames({
-            QueryEditor: true,
-            'auto-height': height === 'auto',
-            'full-height': height === 'full',
+        const editorClassName = classNames({
             fullScreen,
             'with-fullscreen-button': showFullScreenButton,
+            [className]: !!className,
         });
 
         const fullScreenButton = showFullScreenButton ? (
@@ -583,7 +606,11 @@ export class QueryEditor extends React.PureComponent<IProps, IState> {
         ) : null;
 
         return (
-            <div className={className}>
+            <StyledQueryEditor
+                className={editorClassName}
+                height={height}
+                fontSize={fontSize}
+            >
                 <ReactCodeMirror
                     editorDidMount={this.editorDidMount}
                     options={this.state.options}
@@ -596,7 +623,7 @@ export class QueryEditor extends React.PureComponent<IProps, IState> {
                     onBlur={this.onBlur}
                 />
                 {fullScreenButton}
-            </div>
+            </StyledQueryEditor>
         );
     }
 }

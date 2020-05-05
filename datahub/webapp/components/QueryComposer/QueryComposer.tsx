@@ -9,12 +9,7 @@ import Resizable from 're-resizable';
 import { useSelector, useDispatch } from 'react-redux';
 
 import { ISearchOptions, ISearchResult } from 'const/searchAndReplace';
-import {
-    getCodeEditorTheme,
-    getQueryEngineId,
-    sleep,
-    enableResizable,
-} from 'lib/utils';
+import { getQueryEngineId, sleep, enableResizable } from 'lib/utils';
 import { getSelectedQuery } from 'lib/sql-helper/sql-lexer';
 
 import { IStoreState, Dispatch } from 'redux/store/types';
@@ -23,7 +18,6 @@ import {
     queryEngineByIdEnvSelector,
 } from 'redux/queryEngine/selector';
 import * as queryExecutionsAction from 'redux/queryExecutions/action';
-import * as dataSourcesActions from 'redux/dataSources/action';
 import * as adhocQueryActions from 'redux/adhocQuery/action';
 
 import {
@@ -46,6 +40,7 @@ import {
     ISearchAndReplaceHandles,
     ISearchAndReplaceProps,
 } from 'components/SearchAndReplace/SearchAndReplace';
+import { BindedQueryEditor } from 'components/QueryEditor/BindedQueryEditor';
 
 const useExecution = (dispatch: Dispatch) => {
     const executionId = useSelector(
@@ -148,9 +143,6 @@ export const QueryComposer: React.FC<{}> = () => {
         dispatch
     );
     const { executionId, setExecutionId } = useExecution(dispatch);
-    const codeEditorTheme = useSelector((state: IStoreState) =>
-        getCodeEditorTheme(state.user.computedSettings['theme'])
-    );
     const queryEditorRef = useRef<QueryEditor>(null);
     const runButtonRef = useRef<IQueryRunButtonHandles>(null);
     const searchAndReplaceRef = useRef<ISearchAndReplaceHandles>(null);
@@ -165,18 +157,6 @@ export const QueryComposer: React.FC<{}> = () => {
             queryEditorRef.current.formatQuery();
         }
     }, [queryEditorRef.current]);
-
-    const fetchDataTableByNameIfNeeded = React.useCallback(
-        (schemaName, tableName) =>
-            dispatch(
-                dataSourcesActions.fetchDataTableByNameIfNeeded(
-                    schemaName,
-                    tableName,
-                    engine?.metastore_id
-                )
-            ),
-        [engine]
-    );
 
     const searchAndReplaceProps = useQueryComposerSearchAndReplace(
         query,
@@ -208,17 +188,14 @@ export const QueryComposer: React.FC<{}> = () => {
 
     const editorDOM = (
         <>
-            <QueryEditor
+            <BindedQueryEditor
                 ref={queryEditorRef}
                 value={query}
                 lineWrapping={true}
                 onChange={setQuery}
-                theme={codeEditorTheme}
-                metastoreId={engine?.metastore_id}
-                language={engine?.language}
                 keyMap={keyMap}
                 height="full"
-                getTableByName={fetchDataTableByNameIfNeeded}
+                engine={engine}
             />
             <CodeMirrorSearchHighlighter
                 editor={queryEditorRef.current?.getEditor()}

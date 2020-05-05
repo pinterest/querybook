@@ -71,7 +71,9 @@ export const EnvironmentModalSwitchRouter: React.FC = () => {
                     // In case we refresh the page (so lastNotModalLocation is null)
                     // We show the root which is the 404 Page. Null is not passed because
                     // Switch would use the current browser location instead
-                    needsToShowModal ? lastNotModalLocation ?? '/' : location
+                    needsToShowModal
+                        ? lastNotModalLocation ?? { pathname: '/' }
+                        : location
                 }
             >
                 <Route path="/:env/" exact component={Landing} />

@@ -2,26 +2,6 @@
 
 .QueryEditor {
     position: relative;
-
-    &.auto-height {
-        .CodeMirror {
-            height: auto;
-        }
-    }
-
-    &.full-height {
-        &,
-        .react-codemirror2,
-        .CodeMirror,
-        .CodeMirror-scroll,
-        .CodeMirror-sizer,
-        .CodeMirror-gutter,
-        .CodeMirror-gutters,
-        .CodeMirror-linenumber {
-            height: 100%;
-        }
-    }
-
     &.fullScreen {
         @include full-screen(39);
         .CodeMirror {

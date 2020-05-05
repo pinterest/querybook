@@ -11,30 +11,23 @@ import * as querySnippetsActions from 'redux/querySnippets/action';
 import { IQuerySnippet, IQueryForm } from 'redux/querySnippets/types';
 import { IStoreState } from 'redux/store/types';
 
-import { QueryEditor } from 'components/QueryEditor/QueryEditor';
-
 import { sendConfirm } from 'lib/dataHubUI';
 import history from 'lib/router-history';
-import { getCodeEditorTheme } from 'lib/utils';
 import { generateFormattedDate } from 'lib/utils/datetime';
 
+import { BindedQueryEditor } from 'components/QueryEditor/BindedQueryEditor';
+import { UserName } from 'components/UserBadge/UserName';
 import { AsyncButton } from 'ui/AsyncButton/AsyncButton';
-import { Select, makeSelectOptions } from 'ui/Select/Select';
 import { Message } from 'ui/Message/Message';
 import { Title } from 'ui/Title/Title';
-import {
-    FormField,
-    FormFieldInputSection,
-    FormFieldHelpSection,
-} from 'ui/Form/FormField';
+import { FormField } from 'ui/Form/FormField';
 import { Checkbox } from 'ui/Form/Checkbox';
-
-import './QuerySnippetComposer.scss';
 import { Tabs } from 'ui/Tabs/Tabs';
 import { ResizableTextArea } from 'ui/ResizableTextArea/ResizableTextArea';
-import { UserName } from 'components/UserBadge/UserName';
 import { SimpleReactSelect } from 'ui/SimpleReactSelect/SimpleReactSelect';
 import { FormWrapper } from 'ui/Form/FormWrapper';
+
+import './QuerySnippetComposer.scss';
 
 function showErrorModal(error) {
     sendConfirm({
@@ -279,7 +272,6 @@ class QuerySnippetComposerComponent extends React.PureComponent<
 
     public getQuerySnippetForm() {
         const {
-            codeEditorTheme,
             queryEngineById,
 
             queryEngines,
@@ -301,10 +293,6 @@ class QuerySnippetComposerComponent extends React.PureComponent<
             </FormField>
         );
 
-        const language =
-            form.engine_id in queryEngineById
-                ? queryEngineById[form.engine_id].language
-                : null;
         const templatedQueriesDOM = templatedVariables.length ? (
             <>
                 <br />
@@ -322,15 +310,11 @@ class QuerySnippetComposerComponent extends React.PureComponent<
         const contextField = (
             <FormField label="Query">
                 <div>
-                    <QueryEditor
+                    <BindedQueryEditor
                         value={form.context}
                         lineWrapping={true}
                         onChange={this.onQueryChange}
-                        theme={codeEditorTheme}
-                        language={language}
-                        metastoreId={
-                            queryEngine ? queryEngine.metastore_id : null
-                        }
+                        engine={queryEngine}
                     />
                     {templatedQueriesDOM}
                 </div>
@@ -545,7 +529,6 @@ class QuerySnippetComposerComponent extends React.PureComponent<
 
 const mapStateToProps = (state: IStoreState, ownProps) => {
     return {
-        codeEditorTheme: getCodeEditorTheme(state.user.computedSettings.theme),
         queryEngines: queryEngineSelector(state),
         queryEngineById: queryEngineByIdEnvSelector(state),
         user: state.user.myUserInfo,

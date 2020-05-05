@@ -27,6 +27,8 @@ type Formatter = (
     label?: string
 ) => ICompletionRow;
 
+export type AutoCompleteType = 'none' | 'schema' | 'all';
+
 export const ExcludedTriggerKeys = {
     // "8": "backspace",
     '9': 'tab',
@@ -105,6 +107,12 @@ function calculateCommonPrefixLength(str1: string, str2: string) {
     return count;
 }
 
+interface IAutoCompleteResult {
+    list: ICompletionRow[];
+    from: CodeMirror.Position;
+    to: CodeMirror.Position;
+}
+
 // STATIC
 const RESULT_MAX_LENGTH = 10;
 
@@ -115,15 +123,18 @@ export class SqlAutoCompleter {
     private metastoreId?: number;
     private language: string;
     private keywords?: string[];
+    private type: AutoCompleteType;
 
     constructor(
         codeMirrorInstance: typeof CodeMirror,
         language: string,
-        metastoreId: number = null
+        metastoreId: number = null,
+        type: AutoCompleteType = 'all'
     ) {
         this.codeMirrorInstance = codeMirrorInstance;
         this.metastoreId = metastoreId;
         this.language = language;
+        this.type = type;
 
         this.Pos = this.codeMirrorInstance.Pos;
         this.codeAnalysis = null;
@@ -161,8 +172,9 @@ export class SqlAutoCompleter {
         wordList: string[],
         formatter: Formatter
     ) {
-        if (searchStr.length < 2) {
+        if (searchStr.length < 2 || this.type === 'schema') {
             // we don't autosuggest keywords unless it is longer
+            // if autocomplete type is schema, then keyword is not provided
             return [];
         }
 
@@ -446,7 +458,14 @@ export class SqlAutoCompleter {
         }[type];
     }
 
-    private getSqlHint(editor: CodeMirror.Editor, options: {}) {
+    private getSqlHint(
+        editor: CodeMirror.Editor,
+        options: {}
+    ): Promise<IAutoCompleteResult | null> {
+        if (this.type === 'none') {
+            return Promise.resolve(null);
+        }
+
         const passive = !!options['passive'];
 
         const cursor = editor.getDoc().getCursor();

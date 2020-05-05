@@ -34,8 +34,8 @@ function getDevServerSettings(env, PROD) {
                     // can add custom headers here
                     // "X-name": "value"
                 },
-                pathRewrite: function(req) {},
-                bypass: function(req, res, proxyOptions) {},
+                pathRewrite: function (req) {},
+                bypass: function (req, res, proxyOptions) {},
             },
             '/-/socket.io/*': {
                 target: DATAHUB_UPSTREAM,
@@ -58,7 +58,7 @@ function getDevServerSettings(env, PROD) {
     return settings;
 }
 
-module.exports = env => {
+module.exports = (env) => {
     const PROD = env && env.NODE_ENV && env.NODE_ENV === 'production';
 
     const entry = {
@@ -102,6 +102,9 @@ module.exports = env => {
             filename: '[name].[hash].js',
             path: path.resolve(__dirname, BUILD_DIR),
             publicPath: '/build/',
+
+            // https://github.com/webpack/webpack/issues/6642
+            globalObject: 'this',
         },
 
         resolve: {

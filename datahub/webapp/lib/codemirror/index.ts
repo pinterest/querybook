@@ -48,3 +48,8 @@ declare module 'codemirror' {
 }
 
 export default CodeMirror;
+
+export type CodeMirrorKeyMap = Record<
+    string,
+    (editor: CodeMirror.Editor) => any | string
+>;

@@ -90,7 +90,7 @@ export default function userReducer(
     state = initialState,
     action: UserAction | EnvironmentAction
 ): IUserState {
-    return produce(state, (draft) => {
+    const newState = produce(state, (draft) => {
         switch (action.type) {
             case '@@user/RECEIVE_USER': {
                 const userInfo = action.payload;
@@ -126,7 +126,6 @@ export default function userReducer(
                     state.computedSettings,
                     draft.computedSettings
                 );
-                storeUserSettingsToLocal(draft.rawSettings);
                 return;
             }
             case '@@user/RECEIVE_USER_KEY_SETTING': {
@@ -140,7 +139,7 @@ export default function userReducer(
                     state.computedSettings,
                     draft.computedSettings
                 );
-                storeUserSettingsToLocal(draft.rawSettings);
+
                 return;
             }
 
@@ -154,4 +153,19 @@ export default function userReducer(
             }
         }
     });
+
+    // Sync new user settings to local store
+    switch (action.type) {
+        case '@@user/RECEIVE_USER_SETTING': {
+            if (action.payload.fromLocal) {
+                break;
+            }
+        }
+        case '@@user/RECEIVE_USER_KEY_SETTING': {
+            storeUserSettingsToLocal(newState.rawSettings);
+            break;
+        }
+    }
+
+    return newState;
 }

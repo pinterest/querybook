@@ -39,6 +39,7 @@ import { Button } from 'ui/Button/Button';
 import { Icon } from 'ui/Icon/Icon';
 
 import './DataDocQueryCell.scss';
+import { BindedQueryEditor } from 'components/QueryEditor/BindedQueryEditor';
 
 const ON_CHANGE_DEBOUNCE_MS = 250;
 
@@ -117,15 +118,7 @@ class DataDocQueryCellComponent extends React.Component<IProps, IState> {
     }
 
     public componentDidMount() {
-        const { queryEngineById } = this.props;
-
         this.updateFocus();
-
-        if (this.engineId in queryEngineById) {
-            this.props.loadFunctionDocumentationByLanguage(
-                queryEngineById[this.engineId].language
-            );
-        }
     }
 
     public componentDidUpdate(prevProps, prevState) {
@@ -143,15 +136,6 @@ class DataDocQueryCellComponent extends React.Component<IProps, IState> {
                     meta: this.props.meta,
                 }),
             });
-
-            if (
-                prevProps.meta !== this.props.meta &&
-                this.props.meta.engine in this.props.queryEngineById
-            ) {
-                this.props.loadFunctionDocumentationByLanguage(
-                    this.props.queryEngineById[this.props.meta.engine].language
-                );
-            }
         }
     }
 
@@ -511,9 +495,6 @@ class DataDocQueryCellComponent extends React.Component<IProps, IState> {
 
             isEditable,
 
-            functionDocumentationByNameByLanguage,
-            codeEditorTheme,
-
             queryIndexInDoc,
             showCollapsed,
         } = this.props;
@@ -567,13 +548,11 @@ class DataDocQueryCellComponent extends React.Component<IProps, IState> {
             <Title size={4}>{dataCellTitle}</Title>
         );
 
-        const editorLanguage = queryEngine.language;
         const editorDOM = !queryCollapsed && (
             <div className="editor">
-                <QueryEditor
+                <BindedQueryEditor
                     value={query}
                     lineWrapping={true}
-                    language={editorLanguage}
                     onKeyDown={this.onKeyDown}
                     onChange={this.handleChange}
                     onFocus={this.onFocus}
@@ -582,12 +561,7 @@ class DataDocQueryCellComponent extends React.Component<IProps, IState> {
                     readOnly={!isEditable}
                     keyMap={this.keyMap}
                     ref={this.queryEditorRef}
-                    functionDocumentationByNameByLanguage={
-                        functionDocumentationByNameByLanguage
-                    }
-                    theme={codeEditorTheme}
-                    getTableByName={this.fetchDataTableByNameIfNeeded}
-                    metastoreId={queryEngine.metastore_id}
+                    engine={queryEngine}
                     showFullScreenButton
                 />
                 <CodeMirrorSearchHighlighter
@@ -671,9 +645,6 @@ function mapStateToProps(state: IStoreState, ownProps: IOwnProps) {
     const queryEngines = queryEngineSelector(state);
 
     return {
-        codeEditorTheme: getCodeEditorTheme(state.user.computedSettings.theme),
-        functionDocumentationByNameByLanguage:
-            state.dataSources.functionDocumentationByNameByLanguage,
         queryEngines,
         queryEngineById: queryEngineByIdEnvSelector(state),
     };
@@ -681,11 +652,6 @@ function mapStateToProps(state: IStoreState, ownProps: IOwnProps) {
 
 function mapDispatchToProps(dispatch: Dispatch, ownProps: IOwnProps) {
     return {
-        loadFunctionDocumentationByLanguage: (language) => {
-            return dispatch(
-                dataSourcesActions.fetchFunctionDocumentationIfNeeded(language)
-            );
-        },
         fetchDataTableByNameIfNeeded: (schemaName, tableName, metastoreId) =>
             dispatch(
                 dataSourcesActions.fetchDataTableByNameIfNeeded(

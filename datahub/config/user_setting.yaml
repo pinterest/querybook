@@ -1,5 +1,6 @@
 theme:
     default: default
+    tab: general
     options:
         - default
         - dark
@@ -10,17 +11,20 @@ theme:
 
 default_environment:
     default: null
+    tab: general
     options: []
     helper: Default environment when going to '/'
 
 default_query_engine:
     per_env: true
+    tab: general
     default: '{}'
     options: []
     helper: Default query engine when creating a query cell.
 
 datadoc_arrow_key:
     default: enabled
+    tab: general
     options:
         - enabled
         - disabled
@@ -28,6 +32,7 @@ datadoc_arrow_key:
 
 notification_preference:
     default: slack
+    tab: general
     options:
         # key is stored in db and the conditional logic is based on it in tasks.py
         - slack
@@ -36,7 +41,36 @@ notification_preference:
 
 show_full_view:
     default: disabled
+    tab: general
     options:
         - enabled
         - disabled
     helper: Instead of modal, show full view when opening table/execution/snippet
+
+editor_font_size:
+    default: medium
+    tab: editor
+    options:
+        - xsmall # Maps to var(--xxsmall-text-size)
+        - small # Maps to var(--xsmall-text-size)
+        - medium # Maps to var(--small-text-size)
+        - large # Maps to var(--text-size)
+    helper: Font size of the query editor
+
+auto_complete:
+    default: all
+    tab: editor
+    options:
+        - all
+        - schema
+        - none
+    helper: Auto complete settings when using editor, all shows both table/column names and key words, schema shows only table/column names
+
+tab:
+    default: 'tab space 2'
+    tab: editor
+    options:
+        - 'tab space 2'
+        - 'tab space 4'
+        - tab
+    helper: The spaces setting for codemirror, note this does not change existing code.
