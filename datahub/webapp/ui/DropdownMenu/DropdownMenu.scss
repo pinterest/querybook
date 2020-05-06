@@ -1,4 +1,7 @@
 .dropdown {
+    .dropdown-trigger {
+        display: inherit;
+    }
     .dropdown-nested-menu .dropdown-menu {
         top: -12px;
         // this right now doesn't work

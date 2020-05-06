@@ -156,6 +156,16 @@ export class DataDocSocket {
         return this.makePromise('moveDataCell');
     };
 
+    public pasteDataCell = (
+        cellId: number,
+        cut: boolean,
+        docId: number, // copy to this doc
+        index: number
+    ) => {
+        this.socket.emit('paste_data_cell', cellId, cut, docId, index);
+        return this.makePromise('pasteDataCell');
+    };
+
     public insertDataDocCell = (
         docId: number,
         index: number,
@@ -190,18 +200,27 @@ export class DataDocSocket {
         });
     }
 
+    private checkIsSameOrigin(originator: string) {
+        return `${DataDocSocket.NAME_SPACE}#${originator}` === this.socket.id;
+    }
+
+    private resolvePromise(key: string, isSameOrigin: boolean, ...args: any[]) {
+        // Only resolve promise if it is from the same sender
+        if (isSameOrigin) {
+            if (key in this.promiseMap) {
+                this.promiseMap[key].resolve(...args, isSameOrigin);
+                delete this.promiseMap[key];
+            }
+        }
+    }
+
     private resolveProimseAndEvent(
         key: string,
         originator: string,
         ...args: any[]
     ) {
-        const isSameOrigin =
-            `${DataDocSocket.NAME_SPACE}#${originator}` === this.socket.id;
-        if (key in this.promiseMap) {
-            this.promiseMap[key].resolve(...args, isSameOrigin);
-            delete this.promiseMap[key];
-        }
-
+        const isSameOrigin = this.checkIsSameOrigin(originator);
+        this.resolvePromise(key, isSameOrigin, ...args);
         if (key in this.eventMap) {
             this.eventMap[key].resolve(...args, isSameOrigin);
         }
@@ -282,6 +301,13 @@ export class DataDocSocket {
                     );
                 }
             );
+
+            this.socket.on('data_cell_pasted', (originator) => {
+                this.resolvePromise(
+                    'pasteDataCell',
+                    this.checkIsSameOrigin(originator)
+                );
+            });
 
             this.socket.on(
                 'data_doc_sessions',

@@ -220,6 +220,12 @@ def move_data_cell(doc_id, from_index, to_index):
     datadoc_collab.move_data_cell(doc_id, from_index, to_index, sid=request.sid)
 
 
+@register_socket("paste_data_cell", namespace=DATA_DOC_NAMESPACE)
+@data_doc_socket
+def paste_data_cell(cell_id, cut, doc_id, index):
+    datadoc_collab.paste_data_cell(cell_id, cut, doc_id, index, sid=request.sid)
+
+
 @register_socket("insert_data_cell", namespace=DATA_DOC_NAMESPACE)
 @data_doc_socket
 def insert_data_cell(doc_id, index, cell_type, context, meta):

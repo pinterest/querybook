@@ -88,6 +88,80 @@ def move_data_cell(doc_id, from_index, to_index, sid="", session=None):
 
 
 @with_session
+def paste_data_cell(
+    cell_id: int, cut: bool, doc_id: int, index: int, sid="", session=None
+):
+    data_cell = logic.get_data_cell_by_id(cell_id, session=session)
+    assert data_cell is not None, "Data cell does not exist"
+
+    data_doc = logic.get_data_doc_by_id(doc_id, session=session)
+    old_data_doc = data_cell.doc
+    same_doc = old_data_doc.id == doc_id
+    # Make sure they are in the same environment and have access
+    assert (
+        old_data_doc.environment_id == data_doc.environment_id
+    ), "Must be in the same environment"
+    verify_environment_permission([data_doc.environment_id])
+
+    # Users need to be able to write in the doc copied to
+    assert_can_write(doc_id, session=session)
+    if not same_doc:
+        # And users need to be able to read the original doc
+        assert_can_read(old_data_doc.id, session=session)
+
+    if cut:
+        old_cell_index = logic.get_data_doc_data_cell(
+            cell_id, session=session
+        ).cell_order
+        logic.move_data_doc_cell_to_doc(cell_id, doc_id, index, session=session)
+        if same_doc:
+            socketio.emit(
+                "data_cell_moved",
+                # sid, from_index, to_index
+                (sid, old_cell_index, index,),
+                namespace=DATA_DOC_NAMESPACE,
+                room=doc_id,
+                broadcast=True,
+            )
+        else:
+            socketio.emit(
+                "data_cell_inserted",
+                (sid, index, data_cell.to_dict(),),
+                namespace=DATA_DOC_NAMESPACE,
+                room=doc_id,
+                broadcast=True,
+            )
+            socketio.emit(
+                "data_cell_deleted",
+                (sid, index,),
+                namespace=DATA_DOC_NAMESPACE,
+                room=old_data_doc.id,
+                broadcast=True,
+            )
+    else:  # Copy
+        new_cell_dict = insert_data_cell(
+            doc_id,
+            index,
+            data_cell.cell_type.name,
+            data_cell.context,
+            data_cell.meta,
+            sid,
+            session=session,
+        )
+        # Copy all query history over
+        logic.copy_cell_history(cell_id, new_cell_dict["id"], session=session)
+
+    # To resolve the sender's promise
+    socketio.emit(
+        "data_cell_pasted",
+        (sid),
+        namespace=DATA_DOC_NAMESPACE,
+        room=doc_id,
+        broadcast=False,
+    )
+
+
+@with_session
 def update_data_cell(cell_id, fields, sid="", session=None):
     data_cell = logic.update_data_cell(
         id=cell_id, session=session, commit=False, **fields,

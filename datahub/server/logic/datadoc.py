@@ -273,6 +273,30 @@ def update_data_cell(
 
 
 @with_session
+def copy_cell_history(from_cell_id, to_cell_id, commit=True, session=None):
+    # Remove all old execution for to_cell_id just for precaution
+    session.query(DataCellQueryExecution).filter_by(data_cell_id=to_cell_id).delete()
+
+    all_executions = (
+        session.query(DataCellQueryExecution).filter_by(data_cell_id=from_cell_id).all()
+    )
+
+    session.bulk_save_objects(
+        [
+            DataCellQueryExecution(
+                query_execution_id=execution.query_execution_id,
+                data_cell_id=to_cell_id,
+                latest=execution.latest,
+            )
+            for idx, execution in enumerate(all_executions)
+        ]
+    )
+
+    if commit:
+        session.commit()
+
+
+@with_session
 def get_data_cell_by_id(id, session=None):
     return session.query(DataCell).get(id)
 
@@ -287,6 +311,11 @@ def delete_data_cell(session=None):
     DATA DOC DATA CELL
     ---------------------------------------------------------------------------------------------------------
 """
+
+
+@with_session
+def get_data_doc_data_cell(cell_id, session=None):
+    return session.query(DataDocDataCell).filter_by(data_cell_id=cell_id).first()
 
 
 @with_session
@@ -349,7 +378,7 @@ def move_data_doc_cell(data_doc_id, from_index, to_index, commit=True, session=N
     ), "Invalid move from index"
     assert to_index >= 0 and to_index < len(data_doc.cells), "Invalid move to index"
 
-    is_swap_up = from_index < to_index
+    is_move_down = from_index < to_index
 
     # We will swap from_index to -from_index since this allows parallel
     # swapping of any other cells in this data doc but makes sure
@@ -360,7 +389,7 @@ def move_data_doc_cell(data_doc_id, from_index, to_index, commit=True, session=N
         {DataDocDataCell.cell_order: -1}
     )
 
-    if is_swap_up:
+    if is_move_down:
         session.query(DataDocDataCell).filter(
             DataDocDataCell.data_doc_id == data_doc_id
         ).filter(DataDocDataCell.cell_order <= to_index).filter(
@@ -369,7 +398,7 @@ def move_data_doc_cell(data_doc_id, from_index, to_index, commit=True, session=N
             {DataDocDataCell.cell_order: DataDocDataCell.cell_order - 1}
         )
     else:
-        # is swap down
+        # moving up
         session.query(DataDocDataCell).filter(
             DataDocDataCell.data_doc_id == data_doc_id
         ).filter(DataDocDataCell.cell_order >= to_index).filter(
@@ -389,6 +418,75 @@ def move_data_doc_cell(data_doc_id, from_index, to_index, commit=True, session=N
     if commit:
         session.commit()
         update_es_data_doc_by_id(data_doc.id)
+    return data_doc
+
+
+@with_session
+def move_data_doc_cell_to_doc(cell_id, data_doc_id, index, commit=True, session=None):
+    """Move the cell to be at position index in the provided data doc.
+       Special case when moving the cell in the same doc down, it will be
+       moved to index - 1 since moving it causes all index to shift up 1.
+
+    Arguments:
+        cell_id {int} -- Id of cell that is getting moved
+        data_doc_id {int} -- Data Doc id that will get the new cell
+        index {int} -- The index moved to
+
+    Keyword Arguments:
+        commit {bool} -- (default: {True})
+        session {Any} -- SQLalchemy session (default: {None})
+
+    Returns:
+        DataDoc -- The modified data doc
+    """
+    datadoc_datacell = get_data_doc_data_cell(cell_id, session=session)
+    data_doc = get_data_doc_by_id(data_doc_id, session=session)
+    assert datadoc_datacell, "Cell does not correspond to a doc"
+    assert data_doc, "Invalid doc"
+
+    old_doc_id = datadoc_datacell.data_doc_id
+    old_data_doc = get_data_doc_by_id(old_doc_id, session=session)
+    # If same doc, then reuse the move_data_doc_cell
+    if old_doc_id == data_doc_id:
+        from_index = datadoc_datacell.cell_order
+        to_index = index
+
+        # The behavior of this function is to insert the cell to be
+        # ABOVE the cell at index, for special case of moving DOWN in the same
+        # doc, we have to modify to index to be -1 so that the inserted cell
+        # is above the current cell at index
+        if from_index < to_index:  # Moving down
+            to_index -= 1
+
+        return move_data_doc_cell(
+            data_doc_id, from_index, to_index, commit=commit, session=session,
+        )
+
+    # Move every cell in old doc below up 1
+    session.query(DataDocDataCell).filter(
+        DataDocDataCell.data_doc_id == old_doc_id
+    ).filter(DataDocDataCell.cell_order > datadoc_datacell.cell_order).update(
+        {DataDocDataCell.cell_order: DataDocDataCell.cell_order - 1}
+    )
+
+    # Moving every cell in new doc below down 1
+    session.query(DataDocDataCell).filter(
+        DataDocDataCell.data_doc_id == data_doc_id
+    ).filter(DataDocDataCell.cell_order >= index).update(
+        {DataDocDataCell.cell_order: DataDocDataCell.cell_order + 1}
+    )
+
+    datadoc_datacell.data_doc_id = data_doc_id
+    datadoc_datacell.cell_order = index
+
+    now = datetime.datetime.now()
+    data_doc.updated_at = now
+    old_data_doc.updated_at = now
+
+    if commit:
+        session.commit()
+        update_es_data_doc_by_id(data_doc.id)
+        update_es_data_doc_by_id(old_data_doc.id)
     return data_doc
 
 

@@ -1,9 +1,11 @@
 import React from 'react';
 import classNames from 'classnames';
-import { titleize, sleep } from 'lib/utils';
+import { titleize, sleep, copy } from 'lib/utils';
+
+import { sendNotification } from 'lib/dataHubUI';
 import { AsyncButton } from 'ui/AsyncButton/AsyncButton';
 import { Button } from 'ui/Button/Button';
-import { CopyButton } from 'ui/CopyButton/CopyButton';
+import { DropdownMenu, IMenuItem } from 'ui/DropdownMenu/DropdownMenu';
 
 const cellTypes = require('config/datadoc.yaml').cell_types;
 
@@ -13,6 +15,10 @@ interface IProps {
 
     numberOfCells: number;
     moveCellAt?: (index1: number, index2: number) => any;
+
+    pasteCellAt?: (index: number) => any;
+    copyCellAt?: (index: number, cut?: boolean) => any;
+
     insertCellAt: (
         index: number,
         cellKey: string,
@@ -39,6 +45,9 @@ export const DataDocCellControl: React.FunctionComponent<IProps> = ({
     insertCellAt,
     deleteCellAt,
 
+    copyCellAt,
+    pasteCellAt,
+
     active,
     isEditable,
     showCollapsed,
@@ -58,44 +67,62 @@ export const DataDocCellControl: React.FunctionComponent<IProps> = ({
         );
     }, [toggleDefaultCollapsed]);
 
-    const shareButton = isHeader && shareUrl && (
-        <CopyButton
-            className="block-crud-button"
-            borderless
-            icon="link"
-            type="soft"
-            key="share"
-            tooltip="Share"
-            tooltipDirection="down"
-            copyText={shareUrl}
-        />
-    );
-
     const rightButtons: JSX.Element[] = [];
     const centerButtons: JSX.Element[] = [];
-    const leftButtons: JSX.Element[] = [shareButton];
+
+    const leftButtons: JSX.Element[] = [];
+    const leftMenuItems: IMenuItem[] = [];
+
+    if (isHeader) {
+        if (shareUrl) {
+            leftMenuItems.push({
+                name: 'Share',
+                onClick: () => {
+                    copy(shareUrl);
+                    sendNotification('Url Copied!');
+                },
+                tooltip: 'Click to copy',
+                tooltipPos: 'right',
+                icon: 'share',
+            });
+        }
+
+        // Copy paste buttons
+        if (copyCellAt) {
+            leftMenuItems.push({
+                name: 'Copy',
+                onClick: () => copyCellAt(index, false),
+                tooltip: 'Copy cell',
+                tooltipPos: 'right',
+                icon: 'copy',
+            });
+        }
+
+        if (isEditable && copyCellAt) {
+            leftMenuItems.push({
+                name: 'Cut',
+                onClick: () => copyCellAt(index, true),
+                tooltip: 'Cut cell',
+                tooltipPos: 'right',
+                icon: 'cut',
+            });
+        }
+
+        if (isEditable && pasteCellAt) {
+            leftMenuItems.push({
+                name: 'Paste',
+                onClick: () => pasteCellAt(index),
+                tooltip: 'Paste cell to above',
+                tooltipPos: 'right',
+                icon: 'paste',
+            });
+        }
+    }
 
     if (isEditable) {
-        const swapCellButtonDOM = ((isHeader && index > 0) ||
-            (!isHeader && index <= numberOfCells - 1)) && (
-            <AsyncButton
-                className="block-crud-button"
-                borderless
-                onClick={moveCellAt.bind(
-                    this,
-                    index,
-                    isHeader ? index - 1 : index + 1
-                )}
-                icon={isHeader ? 'chevrons-up' : 'chevrons-down'}
-                type="soft"
-                key="swap"
-            />
-        );
-        rightButtons.push(swapCellButtonDOM);
-
-        const deleteCellButtonDOM = deleteCellAt &&
-            isHeader &&
-            numberOfCells > 0 && (
+        // Delete Button
+        rightButtons.push(
+            deleteCellAt && isHeader && numberOfCells > 0 && (
                 <AsyncButton
                     className="block-crud-button"
                     borderless
@@ -104,51 +131,67 @@ export const DataDocCellControl: React.FunctionComponent<IProps> = ({
                     type="soft"
                     key="delete"
                 />
-            );
-        rightButtons.push(deleteCellButtonDOM);
+            )
+        );
+
+        // Swap Button
+        rightButtons.push(
+            ((isHeader && index > 0) ||
+                (!isHeader && index <= numberOfCells - 1)) &&
+                moveCellAt && (
+                    <AsyncButton
+                        className="block-crud-button"
+                        borderless
+                        onClick={moveCellAt.bind(
+                            this,
+                            index,
+                            isHeader ? index - 1 : index + 1
+                        )}
+                        icon={isHeader ? 'chevrons-up' : 'chevrons-down'}
+                        type="soft"
+                        key="swap"
+                    />
+                )
+        );
 
         if (isHeader && showCollapsed !== undefined) {
             // undefined means the cell cannot be collapsed
-            const setDefaultCollapsedButton = !isCollapsedDefault && (
-                <Button
-                    className={
-                        animateDefaultChange
-                            ? 'block-crud-button disabled'
-                            : 'block-crud-button'
-                    }
-                    borderless
-                    onClick={
-                        animateDefaultChange
-                            ? null
-                            : handleToggleDefaultCollapsed
-                    }
-                    icon={animateDefaultChange ? 'lock' : 'unlock'}
-                    type="soft"
-                    attachedLeft
-                    aria-label={
-                        showCollapsed
-                            ? 'default to collapsed'
-                            : 'default to uncollapsed'
-                    }
-                    data-balloon-pos="down"
-                    key="default-collapse"
-                />
+            leftButtons.push(
+                !isCollapsedDefault && toggleDefaultCollapsed && (
+                    <Button
+                        className={
+                            animateDefaultChange
+                                ? 'block-crud-button disabled'
+                                : 'block-crud-button'
+                        }
+                        borderless
+                        onClick={
+                            animateDefaultChange
+                                ? null
+                                : handleToggleDefaultCollapsed
+                        }
+                        icon={animateDefaultChange ? 'lock' : 'unlock'}
+                        type="soft"
+                        aria-label={
+                            showCollapsed
+                                ? 'default to collapsed'
+                                : 'default to uncollapsed'
+                        }
+                        data-balloon-pos="down"
+                        key="default-collapse"
+                    />
+                )
             );
-            leftButtons.push(setDefaultCollapsedButton);
-            const collapseButtonDOM = (
-                <AsyncButton
-                    className="block-crud-button"
-                    borderless
-                    onClick={() => setShowCollapsed(!showCollapsed)}
-                    icon={showCollapsed ? 'maximize-2' : 'minimize-2'}
-                    type="soft"
-                    attachedRight={isCollapsedDefault}
-                    aria-label={showCollapsed ? 'Uncollapse' : 'Collapse'}
-                    data-balloon-pos="down"
-                    key="collapse"
-                />
+
+            leftMenuItems.push(
+                setShowCollapsed
+                    ? {
+                          onClick: () => setShowCollapsed(!showCollapsed),
+                          name: showCollapsed ? 'Uncollapse' : 'Collapse',
+                          icon: showCollapsed ? 'expand' : 'compress',
+                      }
+                    : null
             );
-            leftButtons.push(collapseButtonDOM);
         }
 
         Object.keys(cellTypes).forEach((cellKey) =>
@@ -169,6 +212,24 @@ export const DataDocCellControl: React.FunctionComponent<IProps> = ({
                     type="soft"
                 />
             )
+        );
+    }
+
+    if (leftMenuItems.length) {
+        leftButtons.unshift(
+            <DropdownMenu
+                className={'inline mr4'}
+                key="dropdown-menu"
+                customButtonRenderer={() => (
+                    <Button
+                        className="block-crud-button "
+                        borderless
+                        icon={'more-vertical'}
+                        type="soft"
+                    />
+                )}
+                items={leftMenuItems}
+            />
         );
     }
 

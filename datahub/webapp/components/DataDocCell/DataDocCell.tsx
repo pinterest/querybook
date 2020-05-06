@@ -2,8 +2,8 @@ import React, { useEffect, useMemo, useContext } from 'react';
 import classNames from 'classnames';
 import { ContentState } from 'draft-js';
 
-import { useSelector, useDispatch } from 'react-redux';
-import { IStoreState, Dispatch } from 'redux/store/types';
+import { useSelector } from 'react-redux';
+import { IStoreState } from 'redux/store/types';
 import { IDataCell, IDataDoc, DataCellUpdateFields } from 'const/datadoc';
 import { DataDocContext } from 'context/DataDoc';
 
@@ -52,8 +52,11 @@ export const DataDocCell: React.FunctionComponent<IDataDocCellProps> = ({
 }) => {
     const {
         cellIdToExecutionId,
+
         insertCellAt,
         updateCell,
+        copyCellAt,
+        pasteCellAt,
 
         cellFocus,
         defaultCollapse,
@@ -76,7 +79,6 @@ export const DataDocCell: React.FunctionComponent<IDataDocCellProps> = ({
         }
     );
 
-    const dispatch: Dispatch = useDispatch();
     const [showCollapsed, setShowCollapsed] = React.useState(undefined);
 
     useEffect(() => {
@@ -225,6 +227,8 @@ export const DataDocCell: React.FunctionComponent<IDataDocCellProps> = ({
                         null,
                         dataDoc.id
                     )}
+                    pasteCellAt={pasteCellAt}
+                    copyCellAt={copyCellAt}
                     insertCellAt={insertCellAt}
                     deleteCellAt={deleteCellAt}
                     isHeader={isHeaderParam}

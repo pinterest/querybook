@@ -18,9 +18,13 @@ import ds from 'lib/datasource';
 import history from 'lib/router-history';
 import { sendConfirm, sendNotification } from 'lib/dataHubUI';
 import { scrollToCell, getShareUrl } from 'lib/data-doc/data-doc-utils';
-import { sanitizeUrlTitle } from 'lib/utils';
+import { sanitizeUrlTitle, copy } from 'lib/utils';
 import { getQueryString } from 'lib/utils/query-string';
 import { matchKeyPress } from 'lib/utils/keyboard';
+import {
+    deserializeCopyCommand,
+    serializeCopyCommand,
+} from 'lib/data-doc/copy';
 
 import {
     closeDataDoc,
@@ -341,6 +345,43 @@ class DataDocComponent extends React.Component<IProps, IState> {
     }
 
     @bind
+    public async pasteCellAt(pasteIndex: number) {
+        const copyCommand = deserializeCopyCommand(
+            await navigator.clipboard.readText()
+        );
+        if (copyCommand) {
+            try {
+                await dataDocActions.pasteDataCell(
+                    copyCommand.cellId,
+                    copyCommand.cut,
+                    this.props.docId,
+                    pasteIndex
+                );
+                // Empty clipboard if copy is success
+                copy('');
+                sendNotification('Pasted');
+            } catch (e) {
+                sendNotification('Failed to paste, reason: ' + String(e));
+            }
+        } else {
+            sendNotification('Nothing to paste, skipping.');
+        }
+    }
+
+    @bind
+    public copyCellAt(index: number, cut: boolean) {
+        copy(
+            serializeCopyCommand({
+                cellId: this.props.dataDoc.cells[index],
+                cut,
+            })
+        );
+        sendNotification(
+            'Copied.' + (cut ? ' Cell will be moved after paste. ' : '')
+        );
+    }
+
+    @bind
     public updateCell(cellId: number, fields: DataCellUpdateFields) {
         return this.props.updateDataDocCell(this.props.docId, cellId, fields);
     }
@@ -398,6 +439,8 @@ class DataDocComponent extends React.Component<IProps, IState> {
 
             insertCellAt: this.insertCellAt,
             updateCell: this.updateCell,
+            copyCellAt: this.copyCellAt,
+            pasteCellAt: this.pasteCellAt,
 
             defaultCollapse,
             focusedCellIndex,
@@ -492,9 +535,10 @@ class DataDocComponent extends React.Component<IProps, IState> {
                             index={index}
                             numberOfCells={numberOfCells}
                             insertCellAt={insertCellAtBinded}
-                            isHeader={false}
+                            isHeader={true}
                             active={forceShow}
                             isEditable={isEditable}
+                            pasteCellAt={this.pasteCellAt}
                         />
                         <DataDocUIGuide hideButton={numberOfCells !== 0} />
                     </div>

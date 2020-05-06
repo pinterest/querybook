@@ -118,6 +118,11 @@ def move_data_cell(doc_id, from_index, to_index):
     return datadoc_collab.move_data_cell(doc_id, from_index, to_index)
 
 
+@register("/data_cell/<int:cell_id>/copy/", methods=["POST"])
+def paste_data_cell(cell_id, cut, doc_id, index):
+    return datadoc_collab.paste_data_cell(cell_id, cut, doc_id, index)
+
+
 @register("/datadoc/<int:doc_id>/cell/<int:index>/", methods=["DELETE"])
 def delete_data_cell_from_doc(doc_id, index):
     return datadoc_collab.delete_data_cell(doc_id, index)
