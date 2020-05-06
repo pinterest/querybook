@@ -159,6 +159,9 @@ export const AdminTask: React.FunctionComponent<IProps> = () => {
         []
     );
 
+    const detailTask = React.useMemo(() => {
+        return taskList?.find((task) => task.id === Number(detailTaskId));
+    }, [taskList, detailTaskId]);
     return (
         <div className="AdminTask">
             <div className="AdminLanding-top">
@@ -203,25 +206,25 @@ export const AdminTask: React.FunctionComponent<IProps> = () => {
                     />
                 ) : null}
             </div>
-            {detailTaskId == null || taskList === null ? null : (
+            {detailTask || detailTaskId === 'new' ? (
                 <Modal
                     onHide={() => history.push('/admin/task/')}
                     title="Task Editor"
                 >
                     <TaskEditor
-                        task={
-                            taskList.find(
-                                (task) => task.id === Number(detailTaskId)
-                            ) || {}
-                        }
+                        task={detailTask || {}}
                         onTaskUpdate={loadTaskList}
+                        onTaskDelete={() => {
+                            loadTaskList();
+                            history.push('/admin/task/');
+                        }}
                         onTaskCreate={(taskId) => {
                             loadTaskList();
                             goToTask(taskId);
                         }}
                     />
                 </Modal>
-            )}
+            ) : null}
         </div>
     );
 };

@@ -23,6 +23,8 @@ from models.admin import (
     QueryEngine,
     AdminAuditLog,
 )
+from models.schedule import TaskSchedule
+
 
 # OPEN APIs
 LOG = get_logger(__file__)
@@ -518,8 +520,15 @@ def remove_user_from_environment(id, uid):
 @register("/admin/task/", methods=["GET"])
 @admin_only
 def get_all_tasks():
-    tasks = schedule_logic.get_all_task_schedule()
+    tasks = TaskSchedule.get_all()
     return [task.to_dict() for task in tasks]
+
+
+@register("/admin/task/<int:id>/", methods=["DELETE"])
+@admin_only
+@with_admin_audit_log(AdminItemType.Task, AdminOperation.DELETE)
+def delete_task(id,):
+    TaskSchedule.delete(id)
 
 
 """

@@ -10,7 +10,7 @@ import {
     cronToRecurrence,
     validateCronForReuccrence,
 } from 'lib/utils/cron';
-import { sendNotification } from 'lib/dataHubUI';
+import { sendNotification, sendConfirm } from 'lib/dataHubUI';
 import { useDataFetch } from 'hooks/useDataFetch';
 
 import { IAdminTask } from 'components/AppAdmin/AdminTask';
@@ -35,10 +35,13 @@ type TaskEditorTabs = 'edit' | 'history';
 interface IProps {
     task: Partial<IAdminTask>;
     onTaskUpdate?: () => void;
+    onTaskDelete?: () => void;
     onTaskCreate?: (id?: number) => void;
 }
 
 const taskFormSchema = Yup.object().shape({
+    name: Yup.string().required(),
+    task: Yup.string().required(),
     isCron: Yup.boolean(),
     recurrence: Yup.object().shape({
         hour: Yup.number().min(0).max(23),
@@ -75,6 +78,7 @@ function stringToTypedVal(stringVal) {
 export const TaskEditor: React.FunctionComponent<IProps> = ({
     task,
     onTaskUpdate,
+    onTaskDelete,
     onTaskCreate,
 }) => {
     const [tab, setTab] = React.useState<TaskEditorTabs>('edit');
@@ -113,7 +117,9 @@ export const TaskEditor: React.FunctionComponent<IProps> = ({
                 for (const kwarg of editedValues.kwargs) {
                     if (
                         kwarg[0].length &&
-                        !Object.keys(editedKwargs).includes(kwarg[0])
+                        !Object.keys(editedKwargs).includes(kwarg[0]) &&
+                        kwarg[1] != null &&
+                        kwarg[1] !== ''
                     ) {
                         editedKwargs[kwarg[0]] = stringToTypedVal(kwarg[1]);
                     }
@@ -123,6 +129,7 @@ export const TaskEditor: React.FunctionComponent<IProps> = ({
             if (task.id) {
                 ds.update(`/schedule/${task.id}/`, {
                     cron: editedCron,
+                    name: editedValues.name,
                     enabled: editedValues.enabled,
                     args: editedArgs,
                     kwargs: editedKwargs,
@@ -144,9 +151,15 @@ export const TaskEditor: React.FunctionComponent<IProps> = ({
                     args: editedArgs,
                     kwargs: editedKwargs,
                 }).then(({ data }) => {
-                    sendNotification('Task created!');
-                    onTaskCreate?.(data.id);
-                    return data;
+                    if (data) {
+                        sendNotification('Task created!');
+                        onTaskCreate?.(data.id);
+                        return data;
+                    } else {
+                        sendNotification(
+                            'Task creation failed - task name must be unique'
+                        );
+                    }
                 });
             }
         },
@@ -154,11 +167,24 @@ export const TaskEditor: React.FunctionComponent<IProps> = ({
         [task]
     );
 
+    const handleDeleteTask = React.useCallback(() => {
+        sendConfirm({
+            header: `Delete ${task.name}?`,
+            message: 'Deleted tasks cannot be recovered.',
+            onConfirm: () => {
+                ds.delete(`/admin/task/${task.id}/`).then(({ data }) => {
+                    sendNotification('Task deleted!');
+                    onTaskDelete?.();
+                });
+            },
+        });
+    }, [task]);
+
     const formValues = React.useMemo(() => {
         const cron = task.cron || '0 0 * * *';
         const recurrence = cronToRecurrence(cron);
         return {
-            name: task.name || 'task_name',
+            name: task.name || '',
             task: task.task || '',
             isCron: !validateCronForReuccrence(cron),
             recurrence,
@@ -219,6 +245,9 @@ export const TaskEditor: React.FunctionComponent<IProps> = ({
             />
         );
 
+        const getKwargPlaceholder = (param: string) =>
+            registeredTaskParamList?.[values.task][param] ?? 'Insert value';
+
         const kwargsDOM = (
             <div className="TaskEditor-kwargs mt12">
                 <FormField stacked label="Kwargs">
@@ -238,7 +267,11 @@ export const TaskEditor: React.FunctionComponent<IProps> = ({
                                               <FormFieldInputSection>
                                                   <Field
                                                       name={`kwargs[${index}][1]`}
-                                                      placeholder="Insert value"
+                                                      placeholder={getKwargPlaceholder(
+                                                          values.kwargs[
+                                                              index
+                                                          ][0]
+                                                      )}
                                                   />
                                               </FormFieldInputSection>
                                           </FormField>
@@ -281,34 +314,43 @@ export const TaskEditor: React.FunctionComponent<IProps> = ({
                 <FormWrapper minLabelWidth="180px" size={7}>
                     <Form>
                         <div className="TaskEditor-form-fields">
-                            <SimpleField
-                                label="Name"
-                                type="input"
-                                name="name"
-                                help="Task name must be unique"
-                            />
-                            <FormField label="Task">
-                                <SimpleReactSelect
-                                    value={values.task}
-                                    onChange={(val) => {
-                                        setFieldValue('task', [val]);
-                                        setFieldValue('args', []);
-                                        setFieldValue(
-                                            'kwargs',
-                                            Object.entries(
-                                                registeredTaskParamList[val] ??
-                                                    {}
-                                            )
-                                        );
-                                    }}
-                                    options={(registeredTaskList || []).map(
-                                        (registeredTask) => ({
-                                            value: registeredTask,
-                                            label: registeredTask,
-                                        })
-                                    )}
-                                />
-                            </FormField>
+                            {task.id ? null : (
+                                <>
+                                    <SimpleField
+                                        label="Name"
+                                        type="input"
+                                        name="name"
+                                        inputProps={{
+                                            placeholder:
+                                                'A unique task name must be supplied',
+                                        }}
+                                        help="Task name must be unique"
+                                    />
+                                    <FormField label="Task">
+                                        <SimpleReactSelect
+                                            value={values.task}
+                                            onChange={(val) => {
+                                                setFieldValue('task', [val]);
+                                                setFieldValue('args', []);
+                                                setFieldValue(
+                                                    'kwargs',
+                                                    Object.keys(
+                                                        registeredTaskParamList[
+                                                            val
+                                                        ] ?? {}
+                                                    ).map((key) => [key, ''])
+                                                );
+                                            }}
+                                            options={(
+                                                registeredTaskList || []
+                                            ).map((registeredTask) => ({
+                                                value: registeredTask,
+                                                label: registeredTask,
+                                            }))}
+                                        />
+                                    </FormField>
+                                </>
+                            )}
                             {argsDOM}
                             {kwargsDOM}
                             <div className="TaskEditor-toggle">
@@ -380,6 +422,16 @@ export const TaskEditor: React.FunctionComponent<IProps> = ({
                             ) : null}
                         </div>
                         <div className="TaskEditor-form-controls right-align mt16">
+                            {task.id ? (
+                                <Button
+                                    className="TaskEditor-delete-button"
+                                    disabled={!isValid}
+                                    onClick={handleDeleteTask}
+                                    title={'Delete Task'}
+                                    type="inlineText"
+                                    borderless
+                                />
+                            ) : null}
                             <AsyncButton
                                 disabled={!isValid}
                                 onClick={submitForm}
@@ -406,58 +458,62 @@ export const TaskEditor: React.FunctionComponent<IProps> = ({
                 {({ values, errors, setFieldValue, isValid, submitForm }) => {
                     return (
                         <>
-                            <div className="TaskEditor-top horizontal-space-between mv24 mh36">
-                                <div className="TaskEditor-info">
-                                    <Title size={3} weight="bold">
-                                        {values.name}
-                                    </Title>
-                                    <div className="mb16">{values.task}</div>
-                                    {task.id ? (
-                                        <>
-                                            <div>
-                                                Last Run:{' '}
-                                                {generateFormattedDate(
-                                                    task.last_run_at,
-                                                    'X'
-                                                )}
-                                                ,{' '}
-                                                {moment
-                                                    .utc(task.last_run_at, 'X')
-                                                    .fromNow()}
+                            {task.id ? (
+                                <>
+                                    <div className="TaskEditor-top horizontal-space-between mv24 mh36">
+                                        <div className="TaskEditor-info">
+                                            <Title size={3} weight="bold">
+                                                {values.name}
+                                            </Title>
+                                            <div className="mb16">
+                                                {values.task}
                                             </div>
-                                            <div>
-                                                Total Run Count:{' '}
-                                                {task.total_run_count}
+
+                                            <>
+                                                <div>
+                                                    Last Run:{' '}
+                                                    {generateFormattedDate(
+                                                        task.last_run_at,
+                                                        'X'
+                                                    )}
+                                                    ,{' '}
+                                                    {moment
+                                                        .utc(
+                                                            task.last_run_at,
+                                                            'X'
+                                                        )
+                                                        .fromNow()}
+                                                </div>
+                                                <div>
+                                                    Total Run Count:{' '}
+                                                    {task.total_run_count}
+                                                </div>
+                                            </>
+                                        </div>
+                                        <div className="TaskEditor-controls">
+                                            <div className="TaskEditor-run">
+                                                <AsyncButton
+                                                    title="Run Task"
+                                                    icon="play"
+                                                    onClick={runTask}
+                                                    type="inlineText"
+                                                    borderless
+                                                />
                                             </div>
-                                        </>
-                                    ) : null}
-                                </div>
-                                {task.id ? (
-                                    <div className="TaskEditor-controls">
-                                        <div className="TaskEditor-run">
-                                            <AsyncButton
-                                                title="Run Task"
-                                                icon="play"
-                                                onClick={runTask}
-                                                type="inlineText"
-                                                borderless
-                                            />
                                         </div>
                                     </div>
-                                ) : null}
-                            </div>
-                            {task.id ? (
-                                <Tabs
-                                    selectedTabKey={tab}
-                                    className="mh16 mb16"
-                                    items={[
-                                        { name: 'Edit', key: 'edit' },
-                                        { name: 'History', key: 'history' },
-                                    ]}
-                                    onSelect={(key: TaskEditorTabs) => {
-                                        setTab(key);
-                                    }}
-                                />
+                                    <Tabs
+                                        selectedTabKey={tab}
+                                        className="mh16 mb16"
+                                        items={[
+                                            { name: 'Edit', key: 'edit' },
+                                            { name: 'History', key: 'history' },
+                                        ]}
+                                        onSelect={(key: TaskEditorTabs) => {
+                                            setTab(key);
+                                        }}
+                                    />
+                                </>
                             ) : null}
                             <div className="TaskEditor-content m24">
                                 {tab === 'edit' ? (
