@@ -1,6 +1,6 @@
 import * as React from 'react';
 import moment from 'moment';
-import { useParams, Redirect } from 'react-router-dom';
+import { useParams } from 'react-router-dom';
 
 import ds from 'lib/datasource';
 import { generateFormattedDate } from 'lib/utils/datetime';
