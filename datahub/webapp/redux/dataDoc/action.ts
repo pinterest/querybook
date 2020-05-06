@@ -277,6 +277,15 @@ export function moveDataDocCell(
     return dataDocSocket.moveDataDocCell(docId, fromIndex, toIndex);
 }
 
+export function pasteDataCell(
+    cellId: number,
+    cut: boolean,
+    docId: number,
+    index: number
+): Promise<any> {
+    return dataDocSocket.pasteDataCell(cellId, cut, docId, index);
+}
+
 export function updateDataDocCell(
     docId: number,
     id: number,

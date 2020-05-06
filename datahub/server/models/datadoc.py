@@ -81,8 +81,8 @@ class DataCell(Base):
     query_executions = relationship(
         "QueryExecution",
         secondary="data_cell_query_execution",
-        backref=backref("cells"),
-        order_by="QueryExecution.id",
+        backref=backref("cells", order_by="DataCell.id"),
+        order_by="QueryExecution.id.desc()",
     )
 
     def to_dict(self, with_query_executions=False):

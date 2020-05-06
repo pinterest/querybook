@@ -1,9 +1,5 @@
 import React from 'react';
-import {
-    IDataCellMeta,
-    IDataDocSearchState,
-    DataCellUpdateFields,
-} from 'const/datadoc';
+import { IDataCellMeta, DataCellUpdateFields } from 'const/datadoc';
 
 export interface IDataDocContextType {
     cellIdToExecutionId: Record<number, number>;
@@ -16,6 +12,8 @@ export interface IDataDocContextType {
         meta: IDataCellMeta
     ) => Promise<any>;
     updateCell: (cellId: number, fields: DataCellUpdateFields) => Promise<any>;
+    copyCellAt: (index: number, cut: boolean) => void;
+    pasteCellAt: (pasteIndex: number) => Promise<void>;
 
     defaultCollapse: boolean;
     focusedCellIndex?: number;
