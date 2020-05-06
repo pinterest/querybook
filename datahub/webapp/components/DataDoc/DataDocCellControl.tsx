@@ -112,7 +112,7 @@ export const DataDocCellControl: React.FunctionComponent<IProps> = ({
             leftMenuItems.push({
                 name: 'Paste',
                 onClick: () => pasteCellAt(index),
-                tooltip: 'Paste cell above',
+                tooltip: 'Paste cell to above',
                 tooltipPos: 'right',
                 icon: 'paste',
             });
