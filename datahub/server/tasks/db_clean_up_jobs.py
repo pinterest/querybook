@@ -14,11 +14,11 @@ from logic.schedule import with_task_logging
 @with_task_logging()
 def run_all_db_clean_up_jobs(
     self,
-    days_to_keep_task_record=None,
-    days_to_keep_query_exec_done=None,
-    days_to_keep_query_exec_else=None,
-    days_to_keep_impression=None,
-    days_to_keep_archived_data_doc=None,
+    days_to_keep_task_record=30,
+    days_to_keep_query_exec_done=90,
+    days_to_keep_query_exec_else=30,
+    days_to_keep_impression=30,
+    days_to_keep_archived_data_doc=60,
 ):
     with DBSession() as session:
         clean_up_task_run_record(days_to_keep=days_to_keep_task_record, session=session)

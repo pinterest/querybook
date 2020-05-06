@@ -5,12 +5,12 @@ from sqlalchemy.orm import sessionmaker, backref, relationship
 
 from app import db
 
-from lib.utils.serialize import with_formatted_date
 from const.db import (
     name_length,
     now,
 )
 from const.schedule import TaskRunStatus
+from lib.sqlalchemy import CRUDMixin
 
 Base = db.Base
 
@@ -41,7 +41,7 @@ class TaskSchedules(Base):
             return obj.last_update
 
 
-class TaskSchedule(Base):
+class TaskSchedule(CRUDMixin, Base):
     __tablename__ = "task_schedule"
 
     id = sql.Column(sql.Integer, primary_key=True, autoincrement=True)
@@ -83,23 +83,6 @@ class TaskSchedule(Base):
             day_of_month=day_of_month,
             month_of_year=month_of_year,
         )
-
-    @with_formatted_date
-    def to_dict(self):
-        return {
-            "id": self.id,
-            "name": self.name,
-            "task": self.task,
-            "task_type": self.task_type,
-            "cron": self.cron,
-            "start_time": self.start_time,
-            "args": self.args,
-            "kwargs": self.kwargs,
-            "options": self.options,
-            "last_run_at": self.last_run_at,
-            "total_run_count": self.total_run_count,
-            "enabled": self.enabled,
-        }
 
 
 def task_schedules_updated(mapper, connection, target):

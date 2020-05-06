@@ -13,3 +13,4 @@ class AdminItemType(Enum):
     QueryMetastore = "query_metastore"
     Admin = "admin"
     Environment = "environment"
+    Task = "task"
