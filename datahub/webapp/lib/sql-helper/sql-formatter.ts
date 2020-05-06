@@ -52,12 +52,14 @@ export function format(
     language: string,
     options?: {
         case?: 'lower' | 'upper';
+        indent?: string;
     }
 ) {
     options = {
         ...{
             // default options
             case: 'upper',
+            indent: '  ',
         },
         ...options,
     };
@@ -129,7 +131,9 @@ export function format(
                 firstKeyWord &&
                 allowedStatement.has(firstKeyWord.string.toLocaleLowerCase())
             ) {
-                let formattedStatement = SqlFormattor.format(statementText);
+                let formattedStatement = SqlFormattor.format(statementText, {
+                    indent: options.indent,
+                });
                 for (const [id, templateTag] of Object.entries(
                     idToTemplateTag
                 )) {

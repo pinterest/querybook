@@ -12,6 +12,33 @@ FROM
     );
 });
 
+test('Simple formatting lower case', () => {
+    expect(format('select * from test;', 'presto', { case: 'lower' })).toBe(
+        `select
+  *
+from
+  test;`
+    );
+});
+
+test('Simple formatting tab indent', () => {
+    expect(format('select * from test;', 'presto', { indent: '\t' })).toBe(
+        `SELECT
+\t*
+FROM
+\ttest;`
+    );
+});
+
+test('Simple formatting four space indent', () => {
+    expect(format('select * from test;', 'presto', { indent: '    ' })).toBe(
+        `SELECT
+    *
+FROM
+    test;`
+    );
+});
+
 test('Multiple statement case', () => {
     expect(format('select * from test;select * from test2;', 'presto')).toBe(
         `SELECT

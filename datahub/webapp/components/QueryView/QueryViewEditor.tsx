@@ -3,49 +3,26 @@ import { useSelector, useDispatch } from 'react-redux';
 
 import { queryStatusToStatusIcon } from 'const/queryStatus';
 
-import { getCodeEditorTheme } from 'lib/utils';
 import { navigateWithinEnv } from 'lib/utils/query-string';
 
 import * as dataSourcesActions from 'redux/dataSources/action';
 import * as adhocQueryActions from 'redux/adhocQuery/action';
 import { IQueryExecution } from 'redux/queryExecutions/types';
 import { queryEngineByIdEnvSelector } from 'redux/queryEngine/selector';
-import { IStoreState } from 'redux/store/types';
-import { QueryEditor } from 'components/QueryEditor/QueryEditor';
 import { Title } from 'ui/Title/Title';
 import { StatusIcon } from 'ui/StatusIcon/StatusIcon';
 import { Button } from 'ui/Button/Button';
 import { useDataFetch } from 'hooks/useDataFetch';
 import { Tag } from 'ui/Tag/Tag';
+import { BindedQueryEditor } from 'components/QueryEditor/BindedQueryEditor';
 
 export const QueryViewEditor: React.FunctionComponent<{
     queryExecution: IQueryExecution;
 }> = ({ queryExecution }) => {
     const queryEngineById = useSelector(queryEngineByIdEnvSelector);
-    const editorLanguage = queryEngineById[queryExecution.engine_id].language;
-
-    const {
-        functionDocumentationByNameByLanguage,
-        codeEditorTheme,
-    } = useSelector((state: IStoreState) => ({
-        functionDocumentationByNameByLanguage:
-            state.dataSources.functionDocumentationByNameByLanguage,
-        codeEditorTheme: getCodeEditorTheme(state.user.computedSettings.theme),
-    }));
+    const queryEngine = queryEngineById[queryExecution.engine_id];
 
     const dispatch = useDispatch();
-
-    const fetchDataTableByNameIfNeeded = React.useCallback(
-        (schemaName, tableName) =>
-            dispatch(
-                dataSourcesActions.fetchDataTableByNameIfNeeded(
-                    schemaName,
-                    tableName,
-                    queryEngineById[queryExecution.engine_id].metastore_id
-                )
-            ),
-        [queryEngineById, queryExecution]
-    );
 
     const { data: cellInfo } = useDataFetch<{
         doc_id: number;
@@ -83,17 +60,12 @@ export const QueryViewEditor: React.FunctionComponent<{
 
     const editorDOM = (
         <div className="editor">
-            <QueryEditor
+            <BindedQueryEditor
                 value={queryExecution.query}
                 lineWrapping={true}
                 readOnly={true}
                 height={'fixed'}
-                language={editorLanguage}
-                functionDocumentationByNameByLanguage={
-                    functionDocumentationByNameByLanguage
-                }
-                theme={codeEditorTheme}
-                getTableByName={fetchDataTableByNameIfNeeded}
+                engine={queryEngine}
             />
         </div>
     );

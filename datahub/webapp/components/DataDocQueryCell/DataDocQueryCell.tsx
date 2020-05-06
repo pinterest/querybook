@@ -8,7 +8,7 @@ import { connect } from 'react-redux';
 import CodeMirror from 'lib/codemirror';
 import { ICodeAnalysis, getSelectedQuery } from 'lib/sql-helper/sql-lexer';
 import { renderTemplatedQuery } from 'lib/templated-query';
-import { sleep, getCodeEditorTheme } from 'lib/utils';
+import { sleep } from 'lib/utils';
 import { sendNotification } from 'lib/dataHubUI';
 import { IDataQueryCellMeta } from 'const/datadoc';
 
@@ -29,6 +29,7 @@ import {
     IQueryRunButtonHandles,
 } from 'components/QueryRunButton/QueryRunButton';
 import { CodeMirrorSearchHighlighter } from 'components/SearchAndReplace/CodeMirrorSearchHighlighter';
+import { BindedQueryEditor } from 'components/QueryEditor/BindedQueryEditor';
 
 import { DebouncedInput } from 'ui/DebouncedInput/DebouncedInput';
 import { DropdownMenu, IMenuItem } from 'ui/DropdownMenu/DropdownMenu';
@@ -117,15 +118,7 @@ class DataDocQueryCellComponent extends React.Component<IProps, IState> {
     }
 
     public componentDidMount() {
-        const { queryEngineById } = this.props;
-
         this.updateFocus();
-
-        if (this.engineId in queryEngineById) {
-            this.props.loadFunctionDocumentationByLanguage(
-                queryEngineById[this.engineId].language
-            );
-        }
     }
 
     public componentDidUpdate(prevProps, prevState) {
@@ -143,15 +136,6 @@ class DataDocQueryCellComponent extends React.Component<IProps, IState> {
                     meta: this.props.meta,
                 }),
             });
-
-            if (
-                prevProps.meta !== this.props.meta &&
-                this.props.meta.engine in this.props.queryEngineById
-            ) {
-                this.props.loadFunctionDocumentationByLanguage(
-                    this.props.queryEngineById[this.props.meta.engine].language
-                );
-            }
         }
     }
 
@@ -511,9 +495,6 @@ class DataDocQueryCellComponent extends React.Component<IProps, IState> {
 
             isEditable,
 
-            functionDocumentationByNameByLanguage,
-            codeEditorTheme,
-
             queryIndexInDoc,
             showCollapsed,
         } = this.props;
@@ -567,13 +548,11 @@ class DataDocQueryCellComponent extends React.Component<IProps, IState> {
             <Title size={4}>{dataCellTitle}</Title>
         );
 
-        const editorLanguage = queryEngine.language;
         const editorDOM = !queryCollapsed && (
             <div className="editor">
-                <QueryEditor
+                <BindedQueryEditor
                     value={query}
                     lineWrapping={true}
-                    language={editorLanguage}
                     onKeyDown={this.onKeyDown}
                     onChange={this.handleChange}
                     onFocus={this.onFocus}
@@ -582,12 +561,7 @@ class DataDocQueryCellComponent extends React.Component<IProps, IState> {
                     readOnly={!isEditable}
                     keyMap={this.keyMap}
                     ref={this.queryEditorRef}
-                    functionDocumentationByNameByLanguage={
-                        functionDocumentationByNameByLanguage
-                    }
-                    theme={codeEditorTheme}
-                    getTableByName={this.fetchDataTableByNameIfNeeded}
-                    metastoreId={queryEngine.metastore_id}
+                    engine={queryEngine}
                     showFullScreenButton
                 />
                 <CodeMirrorSearchHighlighter
@@ -671,9 +645,6 @@ function mapStateToProps(state: IStoreState, ownProps: IOwnProps) {
     const queryEngines = queryEngineSelector(state);
 
     return {
-        codeEditorTheme: getCodeEditorTheme(state.user.computedSettings.theme),
-        functionDocumentationByNameByLanguage:
-            state.dataSources.functionDocumentationByNameByLanguage,
         queryEngines,
         queryEngineById: queryEngineByIdEnvSelector(state),
     };
@@ -681,11 +652,6 @@ function mapStateToProps(state: IStoreState, ownProps: IOwnProps) {
 
 function mapDispatchToProps(dispatch: Dispatch, ownProps: IOwnProps) {
     return {
-        loadFunctionDocumentationByLanguage: (language) => {
-            return dispatch(
-                dataSourcesActions.fetchFunctionDocumentationIfNeeded(language)
-            );
-        },
         fetchDataTableByNameIfNeeded: (schemaName, tableName, metastoreId) =>
             dispatch(
                 dataSourcesActions.fetchDataTableByNameIfNeeded(

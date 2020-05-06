@@ -10,18 +10,14 @@ import {
     renderTemplatedQuery,
 } from 'lib/templated-query';
 
-import { QueryEditor } from 'components/QueryEditor/QueryEditor';
+import { BindedQueryEditor } from 'components/QueryEditor/BindedQueryEditor';
 import { IQuerySnippet } from 'redux/querySnippets/types';
 import { IQueryEngine } from 'const/queryEngine';
 
 import { Button } from 'ui/Button/Button';
 import { CopyButton } from 'ui/CopyButton/CopyButton';
 import { DebouncedInput } from 'ui/DebouncedInput/DebouncedInput';
-import {
-    FormField,
-    FormFieldInputSection,
-    FormFieldInputSectionRowGroup,
-} from 'ui/Form/FormField';
+import { FormField, FormFieldInputSectionRowGroup } from 'ui/Form/FormField';
 import { Tag, TagGroup } from 'ui/Tag/Tag';
 import { Title } from 'ui/Title/Title';
 import { UserName } from 'components/UserBadge/UserName';
@@ -29,7 +25,6 @@ import './QuerySnippetView.scss';
 
 export interface IQuerySnippetViewProps {
     querySnippet: IQuerySnippet;
-    codeEditorTheme: string;
     onInsert: (context: string) => any;
     queryEngineById: Record<number, IQueryEngine>;
 }
@@ -113,7 +108,7 @@ export class QuerySnippetView extends React.Component<
     }
 
     public render() {
-        const { querySnippet, codeEditorTheme, queryEngineById } = this.props;
+        const { querySnippet, queryEngineById } = this.props;
 
         const {
             title,
@@ -177,12 +172,11 @@ export class QuerySnippetView extends React.Component<
                     </TagGroup>
                     <br />
                 </div>
-                <QueryEditor
+                <BindedQueryEditor
                     value={context}
                     readOnly={true}
                     lineWrapping={true}
-                    theme={codeEditorTheme}
-                    language={engine.language}
+                    engine={engine}
                 />
                 {templateDOM}
             </div>

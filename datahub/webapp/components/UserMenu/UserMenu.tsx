@@ -9,9 +9,6 @@ import { Modal } from 'ui/Modal/Modal';
 import { Popover, PopoverLayout } from 'ui/Popover/Popover';
 
 import { UserBadge } from 'components/UserBadge/UserBadge';
-import { UserSettingsMenu } from 'components/UserSettingsMenu/UserSettingsMenu';
-
-import { IconButton } from 'ui/Button/IconButton';
 import { TokenCreation } from 'components/Token/TokenCreation';
 import './UserMenu.scss';
 import { UserAvatar } from 'components/UserBadge/UserAvatar';

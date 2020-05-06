@@ -2,8 +2,6 @@ import { bind } from 'lodash-decorators';
 import React from 'react';
 import { connect } from 'react-redux';
 
-import { getCodeEditorTheme } from 'lib/utils';
-
 import * as querySnippetsActions from 'redux/querySnippets/action';
 import { IStoreState, Dispatch } from 'redux/store/types';
 import { IQuerySnippet } from 'redux/querySnippets/types';
@@ -87,11 +85,7 @@ class QuerySnippetInsertionModalComponent extends React.Component<
     }
 
     public render() {
-        const {
-            querySnippetById,
-            codeEditorTheme,
-            queryEngineById,
-        } = this.props;
+        const { querySnippetById, queryEngineById } = this.props;
 
         const { snippetId, loadingSnippet, editSnippetMode } = this.state;
 
@@ -109,7 +103,6 @@ class QuerySnippetInsertionModalComponent extends React.Component<
                         <QuerySnippetView
                             key={snippetId}
                             querySnippet={querySnippet}
-                            codeEditorTheme={codeEditorTheme}
                             onInsert={this.onInsertSnippet}
                             queryEngineById={queryEngineById}
                         />
@@ -165,7 +158,6 @@ class QuerySnippetInsertionModalComponent extends React.Component<
 const mapStateToProps = (state: IStoreState, ownProps: IOwnProps) => {
     return {
         querySnippetById: state.querySnippets.querySnippetById,
-        codeEditorTheme: getCodeEditorTheme(state.user.computedSettings.theme),
         queryEngineById: queryEngineByIdEnvSelector(state),
     };
 };
