@@ -134,13 +134,9 @@ export const TaskEditor: React.FunctionComponent<IProps> = ({
                     args: editedArgs,
                     kwargs: editedKwargs,
                 }).then(({ data }) => {
-                    if (data) {
-                        sendNotification('Task saved!');
-                        onTaskUpdate?.();
-                        return data;
-                    } else {
-                        sendNotification('Task update failed');
-                    }
+                    sendNotification('Task saved!');
+                    onTaskUpdate?.();
+                    return data;
                 });
             } else {
                 ds.save(`/schedule/`, {
@@ -250,16 +246,13 @@ export const TaskEditor: React.FunctionComponent<IProps> = ({
         );
 
         const getKwargPlaceholder = React.useCallback(
-            (index) => {
+            (param) => {
                 return (
-                    (registeredTaskParamList &&
-                        registeredTaskParamList[values.task][
-                            values.kwargs[index][0]
-                        ]) ??
+                    registeredTaskParamList?.[values.task][param] ??
                     'Insert value'
                 );
             },
-            [values.task, values.kwargs]
+            [registeredTaskParamList, values.task]
         );
 
         const kwargsDOM = (
@@ -282,7 +275,9 @@ export const TaskEditor: React.FunctionComponent<IProps> = ({
                                                   <Field
                                                       name={`kwargs[${index}][1]`}
                                                       placeholder={getKwargPlaceholder(
-                                                          index
+                                                          values.kwargs[
+                                                              index
+                                                          ][0]
                                                       )}
                                                   />
                                               </FormFieldInputSection>

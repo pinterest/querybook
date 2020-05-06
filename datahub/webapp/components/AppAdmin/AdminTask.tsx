@@ -160,10 +160,7 @@ export const AdminTask: React.FunctionComponent<IProps> = () => {
     );
 
     const detailTask = React.useMemo(() => {
-        return (
-            taskList &&
-            taskList.find((task) => task.id === Number(detailTaskId))
-        );
+        return taskList?.find((task) => task.id === Number(detailTaskId));
     }, [taskList, detailTaskId]);
     return (
         <div className="AdminTask">
