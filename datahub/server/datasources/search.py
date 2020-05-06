@@ -127,7 +127,11 @@ def _construct_tables_query(
         "function_score": {
             "query": search_query,
             "boost_mode": "multiply",
-            "functions": [{"filter": {"term": {"golden": True}}, "weight": 2},],
+            "script_score": {
+                "script": {
+                    "source": "doc['importance_score'].value + (doc['golden'].value ? 2 : 0)"
+                }
+            },
         }
     }
 
@@ -290,6 +294,7 @@ def suggest_tables(metastore_id, prefix, limit=10):
             }
         },
     }
+
     index_name = ES_CONFIG["tables"]["index_name"]
     type_name = ES_CONFIG["tables"]["type_name"]
 

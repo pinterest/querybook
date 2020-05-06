@@ -625,9 +625,7 @@ def delete_old_able_query_execution_log(
 
 
 @with_session
-def get_table_query_examples(
-    table_id, engine_ids, limit=5, offset=0, commit=True, session=None
-):
+def get_table_query_examples(table_id, engine_ids, limit=5, offset=0, session=None):
     logs = (
         session.query(DataTableQueryExecution)
         .join(QueryExecution)
@@ -640,6 +638,11 @@ def get_table_query_examples(
     )
 
     return logs
+
+
+@with_session
+def get_table_query_samples_count(table_id, session):
+    return session.query(DataTableQueryExecution).filter_by(table_id=table_id).count()
 
 
 """
