@@ -74,9 +74,7 @@ def get_data_docs(
             docs = logic.get_user_recent_data_docs(
                 current_user.id, environment_id=environment_id, session=session
             )
-        docs_dict = [d.to_dict() for d in docs]
-
-        return docs_dict
+        return docs
 
 
 @register("/datadoc/", methods=["POST"])
@@ -87,7 +85,7 @@ def create_data_doc(
         verify_environment_permission([environment_id])
         environment = Environment.get(id=environment_id, session=session)
 
-        doc = logic.create_data_doc(
+        return logic.create_data_doc(
             public=environment.shareable,
             archived=False,
             environment_id=environment_id,
@@ -96,9 +94,6 @@ def create_data_doc(
             meta={},
             session=session,
         )
-        doc_dict = doc.to_dict()
-
-        return doc_dict
 
 
 @register("/datadoc/<int:id>/", methods=["PUT"])
@@ -188,8 +183,7 @@ def get_data_doc_id_by_data_cell_id(id):
 
 @register("/function_documentation_language/<language>/", methods=["GET"])
 def get_function_documentation_by_language(language):
-    functions = logic.get_function_documentation_by_language(language=language)
-    return [function.to_dict() for function in functions]
+    return logic.get_function_documentation_by_language(language=language)
 
 
 @register(
@@ -202,7 +196,7 @@ def create_favorite_data_doc(
 ):
     api_assert(current_user.id == uid, "You cannot favorite data doc for someone else")
 
-    return logic.favorite_data_doc(data_doc_id=data_doc_id, uid=uid).to_dict()
+    return logic.favorite_data_doc(data_doc_id=data_doc_id, uid=uid)
 
 
 @register(
@@ -229,7 +223,7 @@ def get_datadoc_schedule_run(id):
         runs, _ = schedule_logic.get_task_run_record_run_by_name(
             name=get_data_doc_schedule_name(id), session=session
         )
-        return [run.to_dict() for run in runs]
+        return runs
 
 
 @register("/datadoc/<int:id>/run/", methods=["POST"])
@@ -252,11 +246,7 @@ def get_datadoc_schedule(id):
         verify_data_doc_permission(id, session=session)
 
         schedule_name = get_data_doc_schedule_name(id)
-        schedule = schedule_logic.get_task_schedule_by_name(
-            schedule_name, session=session
-        )
-        if schedule:
-            return schedule.to_dict()
+        return schedule_logic.get_task_schedule_by_name(schedule_name, session=session)
 
 
 @register("/datadoc/<int:id>/schedule/", methods=["POST"])
@@ -272,7 +262,7 @@ def create_datadoc_schedule(
 
         api_assert(validate_cron(cron), "Invalid cron expression")
 
-        schedule = schedule_logic.create_task_schedule(
+        return schedule_logic.create_task_schedule(
             schedule_name,
             "tasks.run_datadoc.run_datadoc",
             cron=cron,
@@ -280,8 +270,6 @@ def create_datadoc_schedule(
             task_type="user",
             session=session,
         )
-
-        return schedule.to_dict()
 
 
 @register("/datadoc/<int:id>/schedule/", methods=["PUT"])
@@ -306,11 +294,9 @@ def update_datadoc_schedule(
         if enabled is not None:
             updated_fields["enabled"] = enabled
 
-        schedule = schedule_logic.update_task_schedule(
+        return schedule_logic.update_task_schedule(
             schedule.id, session=session, **updated_fields,
         )
-
-        return schedule.to_dict()
 
 
 @register("/datadoc/<int:id>/schedule/", methods=["DELETE"])
@@ -329,8 +315,7 @@ def delete_datadoc_schedule(id):
 
 @register("/datadoc/<int:doc_id>/editor/", methods=["GET"])
 def get_datadoc_editors(doc_id):
-    editors = logic.get_data_doc_editors_by_doc_id(doc_id)
-    return [editor.to_dict() for editor in editors]
+    return logic.get_data_doc_editors_by_doc_id(doc_id)
 
 
 @register("/datadoc/<int:doc_id>/editor/<int:uid>/", methods=["POST"])

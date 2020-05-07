@@ -1,7 +1,8 @@
 import React from 'react';
 import { useField } from 'formik';
 
-export interface INumberFieldProps extends React.HTMLProps<HTMLInputElement> {
+export interface INumberFieldProps
+    extends Omit<React.HTMLProps<HTMLInputElement>, 'label'> {
     name: string;
 }
 

@@ -85,7 +85,6 @@ export const DebouncedInput: React.FunctionComponent<IDebouncedInputProps> = ({
         flex,
         transparent,
     });
-
     return (
         <div className={classNameProp}>
             <input

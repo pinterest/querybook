@@ -29,6 +29,7 @@ import { Title } from 'ui/Title/Title';
 import { ToggleButton } from 'ui/ToggleButton/ToggleButton';
 
 import './TaskEditor.scss';
+import { AdminAuditLogButton } from 'components/AdminAuditLog/AdminAuditLogButton';
 
 type TaskEditorTabs = 'edit' | 'history';
 
@@ -172,7 +173,7 @@ export const TaskEditor: React.FunctionComponent<IProps> = ({
             header: `Delete ${task.name}?`,
             message: 'Deleted tasks cannot be recovered.',
             onConfirm: () => {
-                ds.delete(`/admin/task/${task.id}/`).then(({ data }) => {
+                ds.delete(`/schedule/${task.id}/`).then(() => {
                     sendNotification('Task deleted!');
                     onTaskDelete?.();
                 });
@@ -309,6 +310,7 @@ export const TaskEditor: React.FunctionComponent<IProps> = ({
                 </FormField>
             </div>
         );
+
         return (
             <div className="TaskEditor-form">
                 <FormWrapper minLabelWidth="180px" size={7}>
@@ -326,29 +328,30 @@ export const TaskEditor: React.FunctionComponent<IProps> = ({
                                         }}
                                         help="Task name must be unique"
                                     />
-                                    <FormField label="Task">
-                                        <SimpleReactSelect
-                                            value={values.task}
-                                            onChange={(val) => {
-                                                setFieldValue('task', [val]);
-                                                setFieldValue('args', []);
-                                                setFieldValue(
-                                                    'kwargs',
-                                                    Object.keys(
-                                                        registeredTaskParamList[
-                                                            val
-                                                        ] ?? {}
-                                                    ).map((key) => [key, ''])
-                                                );
-                                            }}
-                                            options={(
-                                                registeredTaskList || []
-                                            ).map((registeredTask) => ({
+                                    <SimpleField
+                                        label="Task"
+                                        type="react-select"
+                                        name="task"
+                                        options={(registeredTaskList || []).map(
+                                            (registeredTask) => ({
                                                 value: registeredTask,
                                                 label: registeredTask,
-                                            }))}
-                                        />
-                                    </FormField>
+                                            })
+                                        )}
+                                        onChange={(val) => {
+                                            setFieldValue('args', [], false);
+                                            setFieldValue(
+                                                'kwargs',
+                                                Object.keys(
+                                                    registeredTaskParamList[
+                                                        val
+                                                    ] ?? {}
+                                                ).map((key) => [key, '']),
+                                                false
+                                            );
+                                            setFieldValue('task', val, true);
+                                        }}
+                                    />
                                 </>
                             )}
                             {argsDOM}
@@ -449,7 +452,7 @@ export const TaskEditor: React.FunctionComponent<IProps> = ({
     return (
         <div className="TaskEditor">
             <Formik
-                isInitialValid={true}
+                validateOnMount
                 initialValues={formValues}
                 validationSchema={taskFormSchema}
                 onSubmit={handleTaskEditSubmit}
@@ -465,6 +468,7 @@ export const TaskEditor: React.FunctionComponent<IProps> = ({
                                             <Title size={3} weight="bold">
                                                 {values.name}
                                             </Title>
+
                                             <div className="mb16">
                                                 {values.task}
                                             </div>
@@ -490,7 +494,11 @@ export const TaskEditor: React.FunctionComponent<IProps> = ({
                                                 </div>
                                             </>
                                         </div>
-                                        <div className="TaskEditor-controls">
+                                        <div className="TaskEditor-controls vertical-space-between">
+                                            <AdminAuditLogButton
+                                                itemType="task"
+                                                itemId={task.id}
+                                            />
                                             <div className="TaskEditor-run">
                                                 <AsyncButton
                                                     title="Run Task"

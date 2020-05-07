@@ -26,20 +26,18 @@ def get_user_info(uid):
     if user is None:
         abort(RESOURCE_NOT_FOUND_STATUS_CODE)
 
-    return user.to_dict()
+    return user
 
 
 @register("/batch/user/", methods=["POST"])
 def batch_get_user_info(uids):
-    return [user.to_dict() for user in logic.get_users_by_ids(uids)]
+    return logic.get_users_by_ids(uids)
 
 
 @register("/user/<int:uid>/setting/", methods=["GET"])
 def get_user_settings(uid):
-    settings = logic.get_user_settings(uid=uid)
-    settings_dict = [setting.to_dict() for setting in settings]
-
-    return settings_dict
+    api_assert(current_user.id == uid, "Can only check your own settings")
+    return logic.get_user_settings(uid=uid)
 
 
 @register("/user/<int:uid>/environment/", methods=["GET"])
@@ -49,24 +47,19 @@ def get_user_environment_ids(uid):
     visible_environments = environment_logic.get_all_visible_environments_by_uid(
         uid=uid
     )
-    visible_environments_dict = [
-        environment.to_dict() for environment in visible_environments
-    ]
-
     user_environments = environment_logic.get_all_accessible_environment_ids_by_uid(
         uid=uid
     )
     user_environment_ids = [
         environment_id_tuple[0] for environment_id_tuple in user_environments
     ]
-    return [visible_environments_dict, user_environment_ids]
+    return [visible_environments, user_environment_ids]
 
 
 @register("/user/<int:uid>/setting/<key>/", methods=["POST"], require_auth=True)
 def set_user_setting(uid, key, value=None):
     api_assert(uid == current_user.id, "Cannot apply setting for another user")
-    setting = logic.create_or_update_user_setting(uid=uid, key=key, value=value)
-    return setting.to_dict()
+    return logic.create_or_update_user_setting(uid=uid, key=key, value=value)
 
 
 @register("/logout/", methods=["GET"])

@@ -15,10 +15,7 @@ def get_query_snippet_by_id(query_snippet_id):
     with DBSession() as session:
         query_snippet = logic.get_snippet_by_id(query_snippet_id, session=session)
         verify_query_engine_permission(query_snippet.engine_id, session=session)
-
-        query_snippet_dict = query_snippet.to_dict() if query_snippet else None
-
-        return query_snippet_dict
+        return query_snippet
 
 
 @register("/query_snippet/<int:query_snippet_id>/", methods=["PUT"], require_auth=True)
@@ -61,7 +58,7 @@ def update_query_snippet_by_id(
         if golden is not None and golden != snippet.golden:  # Becomes golden
             api_assert(current_user.is_admin, "Only data gurus can make snippet golden")
 
-        query_snippet = logic.update_snippet_by_id(
+        return logic.update_snippet_by_id(
             query_snippet_id,
             updated_by,
             context=context,
@@ -72,10 +69,6 @@ def update_query_snippet_by_id(
             golden=golden,
             session=session,
         )
-
-        query_snippet_dict = query_snippet.to_dict() if query_snippet else None
-
-        return query_snippet_dict
 
 
 @register("/query_snippet/", methods=["POST"])
@@ -99,7 +92,7 @@ def create_query_snippet(
     with DBSession() as session:
         verify_query_engine_permission(engine_id, session=session)
 
-        query_snippet = logic.create_snippet(
+        return logic.create_snippet(
             created_by,
             context=context,
             title=title,
@@ -109,10 +102,6 @@ def create_query_snippet(
             golden=golden,
             session=session,
         )
-
-        query_snippet_dict = query_snippet.to_dict() if query_snippet else None
-
-        return query_snippet_dict
 
 
 @register("/query_snippet/<int:query_snippet_id>/", methods=["DELETE"])

@@ -13,10 +13,7 @@ from logic import admin as admin_logic
 )
 def get_query_engines(environment_id):
     verify_environment_permission([environment_id])
-    engines = admin_logic.get_query_engines_by_environment(environment_id)
-    engines_dict = [engine.to_dict() for engine in engines]
-
-    return engines_dict
+    return admin_logic.get_query_engines_by_environment(environment_id)
 
 
 @register("/query_engine/<int:id>/status/", methods=["GET"])

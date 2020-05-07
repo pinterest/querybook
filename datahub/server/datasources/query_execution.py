@@ -175,14 +175,7 @@ def get_datadoc_ids_by_query_execution(query_execution_id):
 def get_query_execution_error(query_execution_id):
     with DBSession() as session:
         verify_query_execution_permission(query_execution_id, session=session)
-        execution_error = logic.get_query_execution_error(
-            query_execution_id, session=session
-        )
-
-        if not execution_error:
-            return None
-
-        return execution_error.to_dict()
+        return logic.get_query_execution_error(query_execution_id, session=session)
 
 
 @register(
@@ -305,14 +298,9 @@ def get_statement_execution_log(statement_execution_id):
 def get_query_execution_notification(user, query_id):
     with DBSession() as session:
         verify_query_execution_permission(query_id, session=session)
-        query_execution = logic.get_query_execution_notification(
+        return logic.get_query_execution_notification(
             query_execution_id=query_id, user=user, session=session
         )
-
-        if not query_execution:
-            return None
-
-        return query_execution.to_dict()
 
 
 @register(
@@ -331,7 +319,7 @@ def create_query_execution_notification(
 
         return logic.create_query_execution_notification(
             query_execution_id=query_id, user=user, session=session
-        ).to_dict()
+        )
 
 
 @register(
@@ -355,7 +343,7 @@ def delete_query_execution_notification(
 
 @register("/statement_execution_exporter/", methods=["GET"], require_auth=True)
 def get_all_statement_execution_exporters():
-    return [exporter.to_dict() for exporter in ALL_EXPORTERS]
+    return ALL_EXPORTERS
 
 
 @register(

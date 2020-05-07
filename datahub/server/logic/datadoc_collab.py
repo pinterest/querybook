@@ -106,8 +106,12 @@ def paste_data_cell(
     # Users need to be able to write in the doc copied to
     assert_can_write(doc_id, session=session)
     if not same_doc:
-        # And users need to be able to read the original doc
-        assert_can_read(old_data_doc.id, session=session)
+        if cut:
+            # To cut the user need to be able to write the original doc
+            assert_can_write(old_data_doc.id, session=session)
+        else:
+            # To copy the user need to be able to read the original doc
+            assert_can_read(old_data_doc.id, session=session)
 
     if cut:
         old_cell_index = logic.get_data_doc_data_cell(

@@ -60,7 +60,7 @@ export const DataDocScheduleForm: React.FunctionComponent<IDataDocScheduleFormPr
 
     return (
         <Formik
-            isInitialValid={true}
+            validateOnMount
             initialValues={formValues}
             validationSchema={scheduleFormSchema}
             onSubmit={(values) => {

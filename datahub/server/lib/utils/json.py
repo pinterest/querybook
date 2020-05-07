@@ -15,8 +15,8 @@ class JSONEncoder(flask_json.JSONEncoder):
         super(JSONEncoder, self).__init__(*args, **kwargs)
 
     def default(self, obj):  # pylint: disable=E0202
-        if hasattr(obj, "to_json"):
-            return obj.to_json()
+        if hasattr(obj, "to_dict"):
+            return obj.to_dict()
         elif isinstance(obj, datetime):
             return self.datetime_formatter(obj)
         elif isinstance(obj, date):

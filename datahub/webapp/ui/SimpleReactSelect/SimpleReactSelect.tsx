@@ -1,5 +1,7 @@
 import React, { useMemo, useCallback } from 'react';
+import { Props as ReactSelectProps } from 'react-select/lib/Select';
 import Select from 'react-select';
+
 import { defaultReactSelectStyles } from 'lib/utils/react-select';
 
 interface ISelectOption<T> {
@@ -13,6 +15,7 @@ export interface ISimpleReactSelectProps<T> {
     onChange: (o: T) => any;
     withDeselect?: boolean;
     isDisabled?: boolean;
+    selectProps?: Partial<ReactSelectProps<T>>;
 }
 
 export function SimpleReactSelect<T>({
@@ -21,6 +24,7 @@ export function SimpleReactSelect<T>({
     onChange,
     withDeselect = false,
     isDisabled,
+    selectProps = {},
 }: ISimpleReactSelectProps<T>) {
     const selectedOption = useMemo(
         () => options.find((option) => option.value === value),
@@ -45,6 +49,7 @@ export function SimpleReactSelect<T>({
             onChange={onSelectChange}
             options={computedOptions}
             isDisabled={isDisabled}
+            {...selectProps}
         />
     );
 }
