@@ -12,8 +12,8 @@ Base = db.Base
 class Impression(Base):
     __tablename__ = "impression"
     id = sql.Column(sql.Integer, primary_key=True)
-    item_id = sql.Column(sql.Integer)
-    item_type = sql.Column(sql.Enum(ImpressionItemType))
+    item_id = sql.Column(sql.Integer, index=True)
+    item_type = sql.Column(sql.Enum(ImpressionItemType), index=True)
     uid = sql.Column(sql.Integer, sql.ForeignKey("user.id", ondelete="CASCADE"))
     created_at = sql.Column(sql.DateTime, default=now)
 
