@@ -14,7 +14,13 @@ export const ToggleSwitchField: React.FC<IToggleSwitchFieldProps> = ({
     return (
         <ToggleSwitch
             checked={toggleProps.checked ?? meta.value}
-            onChange={toggleProps.onChange ?? helpers.setValue}
+            onChange={
+                toggleProps.onChange ??
+                ((value) => {
+                    helpers.setValue(value);
+                    helpers.setTouched(true);
+                })
+            }
         />
     );
 };

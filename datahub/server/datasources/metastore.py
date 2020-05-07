@@ -32,10 +32,7 @@ seconds_in_a_day = 60 * 60 * 24
 # @cache.memoize(14400)
 def get_all_query_metastores(environment_id,):
     verify_environment_permission([environment_id])
-    metastores = admin_logic.get_all_query_metastore_by_environment(environment_id)
-    metastores_dict = [metastore.to_dict() for metastore in metastores]
-
-    return metastores_dict
+    return admin_logic.get_all_query_metastore_by_environment(environment_id)
 
 
 # # TODO: Remove or modify
@@ -74,9 +71,7 @@ def get_schema(schema_id, include_metastore=False, include_table=False):
 def get_tables_from_schema(schema_id):
     with DBSession() as session:
         verify_data_schema_permission(schema_id, session=session)
-        result = logic.get_table_by_schema_id(schema_id, session=session)
-
-    return [table.to_dict() for table in result]
+        return logic.get_table_by_schema_id(schema_id, session=session)
 
 
 @register("/table/<int:table_id>/", methods=["GET"])
@@ -113,12 +108,7 @@ def get_table_by_name(
 def get_data_job_metadata(data_job_metadata_id):
     with DBSession() as session:
         # TODO: add some kind of permission check here
-        result = logic.get_data_job_metadata_by_id(
-            data_job_metadata_id, session=session
-        )
-        result = result.to_dict()
-
-    return result
+        return logic.get_data_job_metadata_by_id(data_job_metadata_id, session=session)
 
 
 @register("/data_job_metadata/", methods=["POST"], require_auth=True)
@@ -169,17 +159,14 @@ def update_table(table_id, description=None, golden=None, owner=None):
             )
             logic.update_table(table_id, golden=golden, session=session)
 
-        table = logic.get_table_by_id(table_id, session=session)
-        table_dict = table.to_dict()
-    return table_dict
+        return logic.get_table_by_id(table_id, session=session)
 
 
 @register("/table/<int:table_id>/column/", methods=["GET"])
 def get_columns_from_table(table_id):
     with DBSession() as session:
         verify_data_table_permission(table_id, session=session)
-        result = logic.get_column_by_table_id(table_id, session=session)
-        return [column.to_dict() for column in result]
+        return logic.get_column_by_table_id(table_id, session=session)
 
 
 @register("/table/<int:table_id>/samples/", methods=["POST"], require_auth=True)
@@ -252,12 +239,9 @@ def update_column_by_id(
 ):
     with DBSession() as session:
         verify_data_column_permission(column_id, session=session)
-        result = logic.update_column_by_id(
+        return logic.update_column_by_id(
             column_id, description=description, session=session,
         )
-        result = result.to_dict() if result else None
-
-    return result
 
 
 @register("/table/<int:table_id>/query_examples/", methods=["GET"])
@@ -282,8 +266,7 @@ def get_table_query_examples(table_id, environment_id, limit=10, offset=0):
 def get_lineage():
     with DBSession() as session:
         # TODO: improve this end point and add permission
-        lineages = logic.get_all_table_lineages(session=session)
-        return [lineage.to_dict() for lineage in lineages]
+        return logic.get_all_table_lineages(session=session)
 
 
 @register("/lineage/", methods=["POST"], require_auth=True)
@@ -309,12 +292,10 @@ def add_lineage(table_id, parent_table_id, job_metadata_id):
 @register("/lineage/<int:table_id>/parent/", methods=["GET"], require_auth=True)
 def get_table_parent_lineages(table_id):
     with DBSession() as session:
-        lineages = logic.get_table_parent_lineages(table_id, session=session)
-        return [lineage.to_dict() for lineage in lineages]
+        return logic.get_table_parent_lineages(table_id, session=session)
 
 
 @register("/lineage/<int:table_id>/child/", methods=["GET"], require_auth=True)
 def get_table_child_lineages(table_id):
     with DBSession() as session:
-        lineages = logic.get_table_child_lineages(table_id, session=session)
-        return [lineage.to_dict() for lineage in lineages]
+        return logic.get_table_child_lineages(table_id, session=session)

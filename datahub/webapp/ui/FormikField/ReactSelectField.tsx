@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useCallback } from 'react';
 import { useField } from 'formik';
 import { WithOptional } from 'lib/typescript';
 import {
@@ -16,11 +16,16 @@ export function ReactSelectField<T>({
     ...otherProps
 }: IReactSelectFieldProps<T>) {
     const [_, meta, helpers] = useField(name);
+
     return (
         <SimpleReactSelect
             {...otherProps}
             value={otherProps.value ?? meta.value}
             onChange={otherProps.onChange ?? helpers.setValue}
+            selectProps={{
+                onBlur: () => helpers.setTouched(true),
+                ...otherProps.selectProps,
+            }}
         />
     );
 }

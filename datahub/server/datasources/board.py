@@ -16,13 +16,13 @@ from models.board import Board
 )
 def get_my_boards(environment_id, filter_str=None):
     with DBSession() as session:
-        boards = logic.get_user_boards(
+        return logic.get_user_boards(
             current_user.id,
             environment_id=environment_id,
             filter_str=filter_str,
             session=session,
         )
-        return [board.to_dict() for board in boards]
+        return
 
 
 @register(
@@ -111,10 +111,7 @@ def add_board_item(board_id, item_type, item_id):
             "Board item must be in the same environment as the board",
         )
 
-        board_item = logic.add_item_to_board(
-            board_id, item_id, item_type, session=session
-        )
-        return board_item.to_dict()
+        return logic.add_item_to_board(board_id, item_id, item_type, session=session)
 
 
 @register(

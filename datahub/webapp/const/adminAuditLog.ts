@@ -3,7 +3,8 @@ export type LogItemType =
     | 'query_engine'
     | 'query_metastore'
     | 'admin'
-    | 'environment';
+    | 'environment'
+    | 'task';
 
 export enum ActionType {
     CREATE = 0,

@@ -15,7 +15,13 @@ export const CheckboxField: React.FC<ICheckboxFieldProps> = ({
         <Checkbox
             {...checkboxProps}
             value={checkboxProps.value ?? meta.value}
-            onChange={checkboxProps.onChange ?? helpers.setValue}
+            onChange={
+                checkboxProps.onChange ??
+                ((value) => {
+                    helpers.setValue(value);
+                    helpers.setTouched(true);
+                })
+            }
         />
     );
 };

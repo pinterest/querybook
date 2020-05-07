@@ -24,8 +24,9 @@ export function SelectField({
     const handleChange = useCallback(
         (event: React.ChangeEvent<HTMLSelectElement>) => {
             (otherProps.onChange ?? helpers.setValue)(event.target.value);
+            helpers.setTouched(true);
         },
-        []
+        [otherProps.onChange, helpers.setValue]
     );
 
     return (

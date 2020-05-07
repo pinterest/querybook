@@ -94,9 +94,7 @@ export const TaskStatus: React.FunctionComponent<ITaskStatusProps> = ({
         hasMore,
         reset,
     } = usePaginatedFetch<ITaskStatusRecord>({
-        url: taskId
-            ? `/admin/schedule/${taskId}/record/`
-            : `/admin/schedule/record/`,
+        url: taskId ? `/schedule/${taskId}/record/` : `/schedule/record/`,
         batchSize: PAGE_SIZE,
         params: taskId
             ? {

@@ -120,13 +120,12 @@ export const SimpleField: React.FC<Props> = ({
             />
         );
     }
-
     return (
         <FormField
             label={title}
             help={help}
             stacked={stacked}
-            error={meta.error}
+            error={meta.touched ? meta.error : null}
         >
             {fieldDOM}
         </FormField>

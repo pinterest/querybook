@@ -25,6 +25,7 @@ export const TextareaField: React.FC<ITextareaFieldProps> = ({
             onChange={(newValue) => setValue(newValue)}
             autoResize={false}
             rows={5}
+            onBlur={() => helpers.setTouched(true)}
             {...textareaProps}
         />
     );

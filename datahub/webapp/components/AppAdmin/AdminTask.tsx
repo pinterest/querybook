@@ -16,6 +16,8 @@ import { SearchBar } from 'ui/SearchBar/SearchBar';
 import { Table, TableAlign } from 'ui/Table/Table';
 import { Tabs } from 'ui/Tabs/Tabs';
 import { ToggleSwitch } from 'ui/ToggleSwitch/ToggleSwitch';
+import { Level } from 'ui/Level/Level';
+import { AdminAuditLogButton } from 'components/AdminAuditLog/AdminAuditLogButton';
 
 import './AdminTask.scss';
 
@@ -78,7 +80,7 @@ export const AdminTask: React.FunctionComponent<IProps> = () => {
     const { data: taskList, forceFetch: loadTaskList } = useDataFetch<
         IAdminTask[]
     >({
-        url: '/admin/task/',
+        url: '/schedule/',
     });
 
     const filteredTaskList = React.useMemo(() => {
@@ -165,7 +167,10 @@ export const AdminTask: React.FunctionComponent<IProps> = () => {
     return (
         <div className="AdminTask">
             <div className="AdminLanding-top">
-                <div className="AdminLanding-title">Task</div>
+                <Level>
+                    <div className="AdminLanding-title">Task</div>
+                    <AdminAuditLogButton itemType={'task'} />
+                </Level>
                 <div className="AdminLanding-desc">Manage all tasks here.</div>
             </div>
             <div className="AdminTask-content">
