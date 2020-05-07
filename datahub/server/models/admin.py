@@ -178,8 +178,8 @@ class AdminAuditLog(CRUDMixin, Base):
     created_at = sql.Column(sql.DateTime, default=now, nullable=False)
     uid = sql.Column(sql.Integer, sql.ForeignKey("user.id", ondelete="CASCADE"))
 
-    item_type = sql.Column(sql.String(length=name_length), nullable=False)
-    item_id = sql.Column(sql.Integer, nullable=False)
+    item_type = sql.Column(sql.String(length=name_length), nullable=False, index=True)
+    item_id = sql.Column(sql.Integer, nullable=False, index=True)
     op = sql.Column(sql.Enum(AdminOperation), nullable=False)
     log = sql.Column(sql.String(length=description_length))
 
