@@ -22,7 +22,6 @@ def get_my_boards(environment_id, filter_str=None):
             filter_str=filter_str,
             session=session,
         )
-        return
 
 
 @register(
