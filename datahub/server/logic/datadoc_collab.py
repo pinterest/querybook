@@ -115,6 +115,10 @@ def paste_data_cell(
         ).cell_order
         logic.move_data_doc_cell_to_doc(cell_id, doc_id, index, session=session)
         if same_doc:
+            # Account for shift in original index
+            # See more details in move_data_doc_cell_to_doc
+            if old_cell_index < index:
+                index -= 1
             socketio.emit(
                 "data_cell_moved",
                 # sid, from_index, to_index
