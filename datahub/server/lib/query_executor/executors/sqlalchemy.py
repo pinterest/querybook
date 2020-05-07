@@ -53,3 +53,13 @@ class DruidQueryExecutor(SqlAlchemyQueryExecutor):
     @classmethod
     def EXECUTOR_LANGUAGE(cls):
         return "druid"
+
+
+class SqliteQueryExecutor(SqlAlchemyQueryExecutor):
+    @classmethod
+    def EXECUTOR_NAME(cls):
+        return "sqlalchemy"
+
+    @classmethod
+    def EXECUTOR_LANGUAGE(cls):
+        return "sqlite"
