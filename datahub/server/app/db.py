@@ -1,6 +1,7 @@
 from contextlib import contextmanager
 import functools
 
+from flask import has_app_context, g, _app_ctx_stack
 from sqlalchemy.ext.declarative import declarative_base
 from sqlalchemy.exc import SQLAlchemyError
 from sqlalchemy import create_engine
@@ -39,11 +40,25 @@ def get_db_engine(
     return __engine
 
 
-def get_session():
+def get_session(scopefunc=None):
+    """Create a global bound scoped_session
+
+
+    Returns:
+        [type] -- [description]
+    """
     global __session
     if not __session:
-        __session = scoped_session(sessionmaker(bind=get_db_engine()))
+        __session = scoped_session(
+            sessionmaker(bind=get_db_engine()), scopefunc=scopefunc
+        )
     return __session
+
+
+def get_flask_db_session():
+    if "database_session" not in g:
+        g.database_session = get_session(scopefunc=_app_ctx_stack.__ident_func__)()
+    return g.database_session
 
 
 def with_session(fn):
@@ -55,8 +70,12 @@ def with_session(fn):
         # If there's no session, create a new one. We will
         # automatically close this after the function is called.
         if not kwargs.get("session"):
-            session = get_session()()
-            kwargs["session"] = session
+            # By default we try to use global flask db session first
+            if has_app_context():
+                kwargs["session"] = get_flask_db_session()
+            else:  # If not in a flask context then create our own session
+                session = get_session()()
+                kwargs["session"] = session
 
         try:
             return fn(*args, **kwargs)
@@ -80,7 +99,14 @@ def with_session(fn):
 
 @contextmanager
 def DBSession():
-    """SQLAlchemy database connection"""
+    # If inside a flask request
+    # return the flask db session
+    if has_app_context():
+        yield get_flask_db_session()
+        return
+
+    # Otherwise create the session as normal
+    # and teardown at the end
     session = get_session()()
     try:
         yield session

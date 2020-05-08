@@ -1,10 +1,10 @@
-from flask import send_from_directory
+from flask import send_from_directory, g
 
 from app.flask_app import flask_app, limiter
 from const.path import WEBAPP_PATH
 from app.datasource import register, abort_request
-
 from app import auth
+from db import get_session
 
 import datasources
 import datasources_socketio
@@ -12,6 +12,21 @@ import datasources_socketio
 auth.init_app(flask_app)
 datasources
 datasources_socketio
+
+
+@flask_app.teardown_appcontext
+def teardown_database_session(error):
+    database_session = g.pop("database_session", None)
+
+    if database_session is not None:
+        get_session().remove()
+
+
+@flask_app.errorhandler(Exception)
+def handle_exception(e):
+    database_session = g.get("database_session", None)
+    if database_session:
+        database_session.rollback()
 
 
 @register("/<path:ignore>/")
