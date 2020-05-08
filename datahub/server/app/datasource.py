@@ -54,9 +54,9 @@ def register(url, methods=None, require_auth=True, custom_response=False):
             else:
                 params = flask.request.json or {}
 
+            status = 200
             try:
                 kwargs.update(params)
-                status = 200
                 results = fn(**kwargs)
 
                 if not custom_response:
