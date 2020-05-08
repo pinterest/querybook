@@ -3,7 +3,11 @@ from .base_executor import parse_exception
 
 from .executors.hive import HiveQueryExecutor
 from .executors.presto import PrestoQueryExecutor
-from .executors.sqlalchemy import MysqlQueryExecutor, DruidQueryExecutor
+from .executors.sqlalchemy import (
+    MysqlQueryExecutor,
+    DruidQueryExecutor,
+    SqliteQueryExecutor,
+)
 from .executors.bigquery import BigQueryQueryExecutor
 
 
@@ -15,6 +19,7 @@ ALL_EXECUTORS = [
     PrestoQueryExecutor,
     MysqlQueryExecutor,
     DruidQueryExecutor,
+    SqliteQueryExecutor,
     BigQueryQueryExecutor,
 ] + ALL_PLUGIN_EXECUTORS
 
