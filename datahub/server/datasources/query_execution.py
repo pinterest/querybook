@@ -78,6 +78,7 @@ def create_query_execution(query, engine_id, data_cell_id=None, originator=None)
 def get_query_execution(query_execution_id):
     execution = logic.get_query_execution_by_id(query_execution_id)
     verify_query_engine_permission(execution.engine_id)
+    raise Exception("test")
     execution_dict = execution.to_dict(True) if execution is not None else None
     return execution_dict
 
