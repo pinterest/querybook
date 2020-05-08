@@ -1,10 +1,10 @@
 from flask import send_from_directory, g
 
+from app import auth
+from app.datasource import register, abort_request
+from app.db import get_session
 from app.flask_app import flask_app, limiter
 from const.path import WEBAPP_PATH
-from app.datasource import register, abort_request
-from app import auth
-from db import get_session
 
 import datasources
 import datasources_socketio

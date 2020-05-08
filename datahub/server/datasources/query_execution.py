@@ -76,13 +76,10 @@ def create_query_execution(query, engine_id, data_cell_id=None, originator=None)
 
 @register("/query_execution/<int:query_execution_id>/", methods=["GET"])
 def get_query_execution(query_execution_id):
-    with DBSession() as session:
-        execution = logic.get_query_execution_by_id(query_execution_id, session=session)
-        verify_query_engine_permission(execution.engine_id, session=session)
-
-        execution_dict = execution.to_dict(True) if execution is not None else None
-
-        return execution_dict
+    execution = logic.get_query_execution_by_id(query_execution_id)
+    verify_query_engine_permission(execution.engine_id)
+    execution_dict = execution.to_dict(True) if execution is not None else None
+    return execution_dict
 
 
 @register("/batch/query_execution/", methods=["POST"])
