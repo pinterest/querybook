@@ -10,9 +10,10 @@ from flask_limiter import RateLimitExceeded
 from werkzeug.exceptions import Forbidden, NotFound
 
 from app.flask_app import flask_app, socketio, limiter
-from logic.impression import create_impression
+from app.db import get_session
 from const.datasources import DS_PATH
 from lib.logger import get_logger
+from logic.impression import create_impression
 
 LOG = get_logger(__file__)
 _host = socket.gethostname()
@@ -53,9 +54,9 @@ def register(url, methods=None, require_auth=True, custom_response=False):
             else:
                 params = flask.request.json or {}
 
+            status = 200
             try:
                 kwargs.update(params)
-                status = 200
                 results = fn(**kwargs)
 
                 if not custom_response:
@@ -83,6 +84,8 @@ def register(url, methods=None, require_auth=True, custom_response=False):
                 #                           sample_rate=1,
                 #                           tags={'url': url.replace('/', '.').strip('.')})
             finally:
+                if status != 200 and "database_session" in flask.g:
+                    flask.g.database_session.rollback()
                 # TODO: implement latency check
                 pass
                 # latency_ms = time_utils.now_millis() - start_time
@@ -189,3 +192,13 @@ def abort_request(
     status_code=500, message=None,
 ):
     raise RequestException(message, status_code)
+
+
+@flask_app.teardown_appcontext
+def teardown_database_session(error):
+    """Clean up the db connection at the end of request
+
+    """
+    database_session = flask.g.pop("database_session", None)
+    if database_session is not None:
+        get_session().remove()
