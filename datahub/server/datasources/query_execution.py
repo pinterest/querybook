@@ -1,3 +1,5 @@
+from typing import Dict
+
 from flask import (
     abort,
     Response,
@@ -16,6 +18,7 @@ from app.auth.permission import (
 from clients.s3_client import FileDoesNotExist
 from lib.export.all_exporters import ALL_EXPORTERS, get_exporter_class
 from lib.result_store import GenericReader
+from lib.query_analysis.templating import render_templated_query
 from const.query_execution import QueryExecutionStatus
 from const.datasources import RESOURCE_NOT_FOUND_STATUS_CODE
 from logic import query_execution as logic
@@ -363,3 +366,8 @@ def export_statement_execution_result(statement_execution_id, export_name):
     exporter_class = get_exporter_class(export_name)
     api_assert(exporter_class is not None, f"Invalid export name {export_name}")
     return exporter_class.export(statement_execution_id, current_user.id)
+
+
+@register("/query_execution/templated_query/", methods=["POST"], require_auth=True)
+def get_templated_query(query: str, variables: Dict[str, str]):
+    return render_templated_query(query, variables)

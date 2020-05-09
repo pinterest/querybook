@@ -354,9 +354,7 @@ class DataDocQueryCellComponent extends React.Component<IProps, IState> {
                 templatedVariables
             );
         } catch (e) {
-            sendNotification(
-                'Failed to render query. Check for template syntax errors.'
-            );
+            sendNotification(`Failed to render query. Reason: ${String(e)}.`);
         }
 
         if (renderedQuery != null) {

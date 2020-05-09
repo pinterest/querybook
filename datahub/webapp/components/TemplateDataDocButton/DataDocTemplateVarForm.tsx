@@ -119,19 +119,24 @@ export const DataDocTemplateVarForm: React.FunctionComponent<IDataDocTemplateVar
                                             <p>
                                                 {'Put {{variable_name}} in your query and it will get substituted with ' +
                                                     'variable_value. Some variables are provided automatically. Such as:'}
+                                                <ul>
+                                                    <li>
+                                                        {
+                                                            '{{today}} which maps to todays date in yyyy-mm-dd'
+                                                        }
+                                                    </li>
+                                                    <li>
+                                                        {
+                                                            "{{yesterday}} which maps to yesterday's date"
+                                                        }
+                                                    </li>
+                                                </ul>
                                             </p>
-                                            <ul>
-                                                <li>
-                                                    {
-                                                        '{{today}} which maps to todays date in yyyy-mm-dd'
-                                                    }
-                                                </li>
-                                                <li>
-                                                    {
-                                                        "{{yesterday}} which maps to yesterday's date"
-                                                    }
-                                                </li>
-                                            </ul>
+                                            <p>
+                                                {
+                                                    'To render recursively, please write the recursive variable in the query as {{>variable_name}}.'
+                                                }
+                                            </p>
                                         </div>
                                     </InfoButton>
                                 </div>
