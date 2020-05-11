@@ -12,6 +12,7 @@ from logic import admin as logic
 from logic import user as user_logic
 from logic import environment as environment_logic
 from logic import schedule as schedule_logic
+from logic import metastore as metastore_logic
 from models.admin import Announcement, QueryMetastore, QueryEngine, AdminAuditLog
 from models.schedule import TaskSchedule
 
@@ -481,6 +482,14 @@ def exec_demo_set_up():
         schedule_logic.run_and_log_scheduled_task(
             scheduled_task_id=task_schedule_id, session=session
         )
+
+        golden_table_id = metastore_logic.get_table_by_name(
+            schema_name="main",
+            name="world_happiness_2019",
+            metastore_id=metastore_id,
+            session=session,
+        ).id
+        metastore_logic.update_table(id=golden_table_id, golden=True, session=session)
 
         engine_id = None
         try:
