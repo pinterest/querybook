@@ -74,8 +74,7 @@ class TaskSchedule(CRUDMixin, Base):
 
     @property
     def schedule(self):
-        minute, hour, day_of_week, day_of_month, month_of_year = self.get_cron()
-
+        minute, hour, day_of_month, month_of_year, day_of_week = self.get_cron()
         return schedules.crontab(
             minute=minute,
             hour=hour,
