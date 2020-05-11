@@ -1,7 +1,7 @@
 from contextlib import contextmanager
 import functools
 
-from flask import has_app_context, g, _app_ctx_stack
+from flask import has_request_context, g, _app_ctx_stack
 from sqlalchemy.ext.declarative import declarative_base
 from sqlalchemy.exc import SQLAlchemyError
 from sqlalchemy import create_engine
@@ -71,7 +71,7 @@ def with_session(fn):
         # automatically close this after the function is called.
         if not kwargs.get("session"):
             # By default we try to use global flask db session first
-            if has_app_context():
+            if has_request_context():
                 kwargs["session"] = get_flask_db_session()
             else:  # If not in a flask context then create our own session
                 session = get_session()()
@@ -101,7 +101,7 @@ def with_session(fn):
 def DBSession():
     # If inside a flask request
     # return the flask db session
-    if has_app_context():
+    if has_request_context():
         yield get_flask_db_session()
         return
 
