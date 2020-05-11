@@ -11,7 +11,9 @@ from lib.query_executor.all_executors import ALL_EXECUTORS
 from logic import admin as logic
 from logic import user as user_logic
 from logic import environment as environment_logic
+from logic import schedule as schedule_logic
 from models.admin import Announcement, QueryMetastore, QueryEngine, AdminAuditLog
+from models.schedule import TaskSchedule
 
 
 @register(
@@ -419,49 +421,102 @@ def get_api_access_tokens_admin():
     return logic.get_api_access_tokens()
 
 
-@register("/admin/one_click_set_up/", methods=["POST"])
+@register("/admin/demo_set_up/", methods=["POST"])
 @admin_only
-def exec_one_click_set_up():
-
+def exec_demo_set_up():
+    local_db_conn = "sqlite:///demo/demo_data.db"
     with DBSession() as session:
-        environment = environment_logic.create_environment(
-            name="default_environment",
-            description="",
-            image="",
-            public=True,
-            session=session,
-        )
+        environment_id = None
+        try:
+            environment_id = environment_logic.create_environment(
+                name="demo_environment",
+                description="",
+                image="",
+                public=True,
+                commit=False,
+                session=session,
+            ).id
+            session.commit()
+        except:
+            session.rollback()
+            environment_id = environment_logic.get_environment_by_name(
+                name="demo_environment"
+            ).id
 
-        query_metastore = QueryMetastore.create(
-            {
-                "name": "default_metastore",
-                "metastore_params": {
-                    "connection_string": DataHubSettings.DATABASE_CONN,
+        metastore_id = None
+        task_schedule_id = None
+        try:
+            metastore_id = QueryMetastore.create(
+                {
+                    "name": "demo_metastore",
+                    "metastore_params": {"connection_string": local_db_conn,},
+                    "loader": "SqlAlchemyMetastoreLoader",
+                    "acl_control": {},
                 },
-                "loader": "SqlAlchemyMetastoreLoader",
-                "acl_control": {},
-            },
-            session=session,
-        )
-        metastore = query_metastore.to_dict_admin()
+                commit=False,
+                session=session,
+            ).id
+            session.commit()
+        except:
+            session.rollback()
+            metastore_id = QueryMetastore.get(name="demo_metastore", session=session).id
 
-        query_engine = QueryEngine.create(
-            {
-                "name": "default_engine",
-                "description": "",
-                "language": "mysql",
-                "executor": "sqlalchemy",
-                "executor_params": {
-                    "connection_string": DataHubSettings.DATABASE_CONN,
+        task_name = "update_metastore_{}".format(metastore_id)
+        try:
+            task_schedule_id = TaskSchedule.create(
+                {
+                    "name": task_name,
+                    "task": "tasks.update_metastore.update_metastore",
+                    "cron": "0 0 * * *",
+                    "args": [metastore_id],
+                    "task_type": "prod",
+                    "enabled": True,
                 },
-                "environment_id": environment.id,
-                "metastore_id": query_metastore.id,
-            },
+                commit=False,
+                session=session,
+            ).id
+        except:
+            session.rollback()
+            task_schedule_id = TaskSchedule.get(name=task_name).id
+        schedule_logic.run_and_log_scheduled_task(
+            scheduled_task_id=task_schedule_id, session=session
+        )
+
+        engine_id = None
+        try:
+            engine_id = QueryEngine.create(
+                {
+                    "name": "sqlite",
+                    "description": "SQLite Engine",
+                    "language": "sqlite",
+                    "executor": "sqlalchemy",
+                    "executor_params": {"connection_string": local_db_conn,},
+                    "environment_id": environment_id,
+                    "metastore_id": metastore_id,
+                },
+                commit=False,
+                session=session,
+            ).id
+            session.commit()
+        except:
+            session.rollback()
+            engine_id = QueryEngine.get(name="sqlite").id
+            QueryEngine.update(
+                id=engine_id,
+                fields={"environment_id": environment_id},
+                field_names=["environment_id"],
+                session=session,
+            )
+            pass
+
+        data_doc_id = logic.create_demo_data_doc(
+            environment_id=environment_id,
+            engine_id=engine_id,
+            uid=current_user.id,
             session=session,
         )
-        engine = query_engine.to_dict_admin()
 
-        return [environment, metastore, engine]
+        return data_doc_id
 
 
 admin_item_type_values = set(item.value for item in AdminItemType)

@@ -22,8 +22,8 @@ export const SetUp: React.FunctionComponent = () => {
     const fetchEnvironments = () =>
         dispatch(EnvironmentActions.fetchEnvironments());
 
-    const handleOneClickSetUp = async () => {
-        const resp = await ds.save('/admin/one_click_set_up/', {});
+    const handleDemoSetUp = async () => {
+        const resp = await ds.save('/admin/demo_set_up/', {});
         if (resp.data) {
             await fetchEnvironments();
             history.push(`/${resp.data[0].name}`);
@@ -38,8 +38,8 @@ export const SetUp: React.FunctionComponent = () => {
             <div className="SetUp-choices horizontal-space-between">
                 {hasEnvironments ? null : (
                     <Card
-                        title="One-Click Set Up"
-                        onClick={handleOneClickSetUp}
+                        title="Demo Set Up"
+                        onClick={handleDemoSetUp}
                         height="180px"
                         width="240px"
                     >

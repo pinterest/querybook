@@ -14,6 +14,7 @@ from logic.schedule import (
     delete_task_schedule,
     get_task_schedule_by_name,
 )
+from logic import datadoc as data_doc_logic
 
 
 """
@@ -255,3 +256,311 @@ def sync_metastore_schedule_job(metastore_id, commit=False, session=None):
 
 def get_metastore_schedule_job_name(metastore_id: int) -> str:
     return f"update_metastore_{metastore_id}"
+
+
+"""
+    ---------------------------------------------------------------------------------------------------------
+    DEMO
+    ---------------------------------------------------------------------------------------------------------
+"""
+
+
+@with_session
+def create_demo_data_doc(environment_id, engine_id, uid, session=None):
+    # create datadoc
+    data_doc_id = data_doc_logic.create_data_doc(
+        public=True,
+        archived=False,
+        environment_id=environment_id,
+        owner_uid=uid,
+        title="World Happiness Report (2015-2019)",
+        meta={},
+        session=session,
+    ).id
+    # create cells
+    cell_ids = []
+
+    c_query = """SELECT
+    w9.Country,
+    w9.Rank AS [2019],
+    w8.Rank AS [2018],
+    w7.HappinessRank AS [2017],
+    w6.HappinessRank AS [2016],
+    w5.HappinessRank AS [2015]
+FROM
+    world_happiness_2019 w9
+    INNER JOIN world_happiness_2018 w8 ON w9.Country = w8.Country
+    INNER JOIN world_happiness_2017 w7 ON w9.Country = w7.Country
+    INNER JOIN world_happiness_2016 w6 ON w9.Country = w6.Country
+    INNER JOIN world_happiness_2015 w5 ON w9.Country = w5.Country
+    AND (w5.Region = 'Western Europe');
+    """
+    c_meta = {"title": "Western Europe Countries Ranking", "engine": engine_id}
+    c_id = data_doc_logic.create_data_cell(
+        cell_type="query", context=c_query, meta=c_meta, commit=False, session=session
+    ).id
+    cell_ids.append(c_id)
+
+    c_meta = {
+        "title": "Western Europe Countries Ranking",
+        "data": {
+            "source_type": "cell_above",
+            "transformations": {"format": {}, "aggregate": False, "switch": True},
+        },
+        "chart": {
+            "type": "line",
+            "x_axis": {"col_idx": 0, "label": "Year", "sort": {"idx": 0, "asc": True}},
+            "y_axis": {
+                "label": "Rank",
+                "stack": False,
+                "series": {
+                    "0": {"agg_type": "sum"},
+                    "1": {"agg_type": "sum"},
+                    "2": {"agg_type": "sum"},
+                    "3": {"agg_type": "sum"},
+                    "4": {"agg_type": "sum"},
+                    "5": {"agg_type": "sum"},
+                    "6": {"agg_type": "sum"},
+                    "7": {"agg_type": "sum"},
+                    "8": {"agg_type": "sum"},
+                    "9": {"agg_type": "sum"},
+                    "10": {"agg_type": "sum"},
+                    "11": {"agg_type": "sum"},
+                    "12": {"agg_type": "sum"},
+                    "13": {"agg_type": "sum"},
+                    "14": {"agg_type": "sum"},
+                    "15": {"agg_type": "sum"},
+                    "16": {"agg_type": "sum"},
+                    "17": {"agg_type": "sum"},
+                    "18": {"agg_type": "sum"},
+                    "19": {"agg_type": "sum"},
+                    "20": {"agg_type": "sum"},
+                },
+            },
+        },
+        "visual": {"legend_position": "top"},
+        "collapsed": False,
+    }
+    c_id = data_doc_logic.create_data_cell(
+        cell_type="chart", context="", meta=c_meta, commit=False, session=session
+    ).id
+    cell_ids.append(c_id)
+
+    c_query = """SELECT
+    Country,
+    GDP,
+    SocialSupport,
+    HealthyLifeExpectancy,
+    FreedomToMakeLifeChoices,
+    Generosity,
+    PerceptionsOfCorruption
+FROM
+    world_happiness_2019
+LIMIT
+    10;
+    """
+    c_meta = {"title": "2019 Top 10 Countries", "engine": engine_id}
+    c_id = data_doc_logic.create_data_cell(
+        cell_type="query", context=c_query, meta=c_meta, commit=False, session=session
+    ).id
+    cell_ids.append(c_id)
+
+    c_meta = {
+        "title": "2019 Top 10 Countries",
+        "data": {
+            "source_type": "cell_above",
+            "transformations": {"format": {}, "aggregate": False, "switch": True},
+        },
+        "chart": {
+            "type": "bar",
+            "x_axis": {"col_idx": 0, "label": "Categories"},
+            "y_axis": {
+                "label": "Score",
+                "stack": False,
+                "series": {
+                    "0": {"agg_type": "sum"},
+                    "1": {"agg_type": "sum"},
+                    "2": {"agg_type": "sum"},
+                    "3": {"agg_type": "sum"},
+                    "4": {"agg_type": "sum"},
+                    "5": {"agg_type": "sum"},
+                    "6": {"agg_type": "sum"},
+                    "7": {"agg_type": "sum"},
+                    "8": {"agg_type": "sum"},
+                    "9": {"agg_type": "sum"},
+                    "10": {"agg_type": "sum"},
+                },
+            },
+        },
+        "visual": {"legend_position": "top"},
+        "collapsed": False,
+    }
+    c_id = data_doc_logic.create_data_cell(
+        cell_type="chart", context="", meta=c_meta, commit=False, session=session
+    ).id
+    cell_ids.append(c_id)
+
+    c_query = """SELECT
+  *
+FROM(
+    SELECT
+      '2019' AS Year,
+      Country,
+      Score
+    FROM
+      world_happiness_2019
+    ORDER BY
+      Rank
+    LIMIT
+      10
+  )
+UNION
+SELECT
+  *
+FROM(
+    SELECT
+      '2018' AS Year,
+      Country,
+      Score
+    FROM
+      world_happiness_2018
+    ORDER BY
+      Rank
+    LIMIT
+      10
+  )
+UNION
+SELECT
+  *
+FROM(
+    SELECT
+      '2017' AS Year,
+      Country,
+      HappinessScore AS Score
+    FROM
+      world_happiness_2017
+    ORDER BY
+      HappinessRank
+    LIMIT
+      10
+  )
+UNION
+SELECT
+  *
+FROM(
+    SELECT
+      '2016' AS Year,
+      Country,
+      HappinessScore AS Score
+    FROM
+      world_happiness_2016
+    ORDER BY
+      HappinessRank
+    LIMIT
+      10
+  )
+UNION
+SELECT
+  *
+FROM(
+    SELECT
+      '2015' AS Year,
+      Country,
+      HappinessScore AS Score
+    FROM
+      world_happiness_2015
+    ORDER BY
+      HappinessRank
+    LIMIT
+      10
+  )
+ORDER BY
+  Score DESC;
+    """
+    c_meta = {"title": "Top 10 Countries Score", "engine": engine_id}
+    c_id = data_doc_logic.create_data_cell(
+        cell_type="query", context=c_query, meta=c_meta, commit=False, session=session
+    ).id
+    cell_ids.append(c_id)
+
+    c_meta = {
+        "title": "Top 10 Countries Score",
+        "data": {
+            "source_type": "cell_above",
+            "transformations": {
+                "format": {"agg_col": 1, "series_col": 0, "value_cols": [2]},
+                "aggregate": True,
+                "switch": False,
+            },
+        },
+        "chart": {
+            "type": "bar",
+            "x_axis": {"col_idx": 0, "label": "Country"},
+            "y_axis": {
+                "label": "Happiness Score",
+                "stack": False,
+                "series": {
+                    "0": {"agg_type": "sum"},
+                    "1": {"color": 1, "agg_type": "sum"},
+                    "2": {"color": 5, "agg_type": "sum"},
+                    "3": {"agg_type": "sum"},
+                    "4": {"color": 6, "agg_type": "sum"},
+                    "5": {"color": 9, "agg_type": "sum"},
+                },
+            },
+        },
+        "visual": {"legend_position": "top"},
+        "collapsed": False,
+    }
+    c_id = data_doc_logic.create_data_cell(
+        cell_type="chart", context="", meta=c_meta, commit=False, session=session
+    ).id
+    cell_ids.append(c_id)
+
+    c_meta = {
+        "title": "Top 10 Countries Score",
+        "data": {
+            "source_type": "cell_above",
+            "transformations": {
+                "format": {"agg_col": 0, "series_col": 1, "value_cols": [2]},
+                "aggregate": True,
+                "switch": False,
+            },
+        },
+        "chart": {
+            "type": "histogram",
+            "x_axis": {"col_idx": 0, "label": "Year"},
+            "y_axis": {
+                "label": "Happiness Score",
+                "stack": False,
+                "series": {
+                    "0": {"agg_type": "sum"},
+                    "1": {"color": 12, "agg_type": "sum"},
+                    "2": {"color": 5, "agg_type": "sum"},
+                    "3": {"color": 14, "agg_type": "sum"},
+                    "4": {"color": 3, "agg_type": "sum"},
+                    "5": {"color": 13, "agg_type": "sum"},
+                    "6": {"color": 6, "agg_type": "sum"},
+                    "7": {"color": 9, "agg_type": "sum"},
+                    "8": {"color": 0, "agg_type": "sum"},
+                    "9": {"color": 4, "agg_type": "sum"},
+                    "10": {"color": 11, "agg_type": "sum"},
+                    "11": {"color": 2, "agg_type": "sum"},
+                },
+            },
+        },
+        "visual": {"legend_position": "top"},
+        "collapsed": False,
+    }
+    c_id = data_doc_logic.create_data_cell(
+        cell_type="chart", context="", meta=c_meta, commit=False, session=session
+    ).id
+    cell_ids.append(c_id)
+
+    # populate datadoc
+    for idx, cell_id in enumerate(cell_ids):
+        data_doc_logic.insert_data_doc_cell(
+            data_doc_id=data_doc_id, cell_id=cell_id, index=idx, session=session
+        )
+
+    return data_doc_id
