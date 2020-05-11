@@ -1,6 +1,6 @@
 import React from 'react';
 import { connect } from 'react-redux';
-import { Transition, animated, config } from 'react-spring/renderprops';
+import { Transition, animated, config } from 'react-spring/renderprops.cjs';
 import styled from 'styled-components';
 
 import * as datahubUIActions from 'redux/dataHubUI/action';

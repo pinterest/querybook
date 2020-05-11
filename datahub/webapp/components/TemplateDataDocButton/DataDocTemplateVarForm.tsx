@@ -8,6 +8,7 @@ import { Button } from 'ui/Button/Button';
 import { InfoButton } from 'ui/Button/InfoButton';
 import { IconButton } from 'ui/Button/IconButton';
 import './DataDocTemplateVarForm.scss';
+import { Link } from 'ui/Link/Link';
 
 export interface IDataDocTemplateVarFormProps {
     onSave: (vars: Record<string, string>) => any;
@@ -119,19 +120,33 @@ export const DataDocTemplateVarForm: React.FunctionComponent<IDataDocTemplateVar
                                             <p>
                                                 {'Put {{variable_name}} in your query and it will get substituted with ' +
                                                     'variable_value. Some variables are provided automatically. Such as:'}
+                                                <ul>
+                                                    <li>
+                                                        {
+                                                            '{{today}} which maps to todays date in yyyy-mm-dd'
+                                                        }
+                                                    </li>
+                                                    <li>
+                                                        {
+                                                            "{{yesterday}} which maps to yesterday's date"
+                                                        }
+                                                    </li>
+                                                </ul>
                                             </p>
-                                            <ul>
-                                                <li>
-                                                    {
-                                                        '{{today}} which maps to todays date in yyyy-mm-dd'
+                                            <p>
+                                                {
+                                                    'You can also put variable definitions in variables for recursive rendering.'
+                                                }
+                                            </p>
+                                            <p>
+                                                <Link
+                                                    to={
+                                                        'https://jinja.palletsprojects.com/en/2.11.x/templates/'
                                                     }
-                                                </li>
-                                                <li>
-                                                    {
-                                                        "{{yesterday}} which maps to yesterday's date"
-                                                    }
-                                                </li>
-                                            </ul>
+                                                >
+                                                    See complete guide here.
+                                                </Link>
+                                            </p>
                                         </div>
                                     </InfoButton>
                                 </div>
