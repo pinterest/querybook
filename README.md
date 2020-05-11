@@ -39,4 +39,4 @@ For general configuration, [click here](docs/admin_guide/general_config.md)
 
 # Contributing Back
 
-See [this guide](docs/developer_guide/developer_setup.md) to start contributing!
+See [CONTRIBUTING](CONTRIBUTING.md).
