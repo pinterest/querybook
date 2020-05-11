@@ -4,8 +4,10 @@ from datetime import datetime, date
 from lib.query_analysis.templating import (
     _detect_cycle,
     get_templated_variables_in_string,
-    separate_variable_and_partials,
     render_templated_query,
+    flatten_recursive_variables,
+    UndefinedVariableException,
+    QueryHasCycleException,
 )
 
 
@@ -49,72 +51,91 @@ class GetTemplatedVariablesInStringTestCase(TestCase):
     def test_basic(self):
         self.assertEqual(
             get_templated_variables_in_string(
+                "some random text {{ test }} some random text"
+            ),
+            set(["test"]),
+        )
+
+        self.assertEqual(
+            get_templated_variables_in_string(
                 "{{ test }} Some random text {{ another_test }}"
             ),
             set(["test", "another_test"]),
         )
 
         self.assertEqual(
+            get_templated_variables_in_string("{# some comments #}<b>{{name}}</b>"),
+            set(["name",]),
+        )
+
+    def test_nested(self):
+        self.assertEqual(
             get_templated_variables_in_string(
-                "{{> test }} Some random text {{ another_test }}"
+                "{% set nums = [1,2,3] %}{% for i in nums %}{{ test }} Some random text {{ another_test }} {% endfor %}"
             ),
             set(["test", "another_test"]),
         )
 
         self.assertEqual(
             get_templated_variables_in_string(
-                "{{> test }} Some random {{test2}} text {{! another_test }}"
+                "{% for i in range(5) %}{{ test }} Some {{ another_test }}{% endfor %}"
             ),
-            set(["test", "test2"]),
-        )
-
-    def test_nested(self):
-        self.assertEqual(
-            get_templated_variables_in_string(
-                "{{# section }}{{ test }} Some random text {{ another_test }}{{/section}}"
-            ),
-            set(["section", "test", "another_test"]),
-        )
-
-        self.assertEqual(
-            get_templated_variables_in_string(
-                "{{# section }}{{ test }} Some {{# section2 }}random{{/ section2 }} text {{ another_test }}{{/section}}"
-            ),
-            set(["section", "section2", "test", "another_test"]),
-        )
-        self.assertEqual(
-            get_templated_variables_in_string(
-                "{{#repos}}<b>{{name}}</b>{{/repos}} {{^repos}}No repos : {{value}}({{/repos}}"
-            ),
-            set(["repos", "name", "value"]),
+            set(["test", "another_test"]),
         )
 
 
-class SeparateVariablesAndPartialsTestCase(TestCase):
+class FlattenRecursiveVariablesTestCase(TestCase):
     def test_simple(self):
         self.assertEqual(
-            separate_variable_and_partials(
+            flatten_recursive_variables(
                 {"foo": "{{ bar }}", "bar": "hello world", "baz": "foo"}
             ),
-            ({"bar": "hello world", "baz": "foo"}, {"foo": "{{ bar }}"}),
+            ({"foo": "hello world", "bar": "hello world", "baz": "foo"}),
         )
 
         self.assertEqual(
-            separate_variable_and_partials(
+            flatten_recursive_variables(
                 {"foo": "{{ bar }}", "bar": "hello world", "baz": None}
             ),
-            ({"bar": "hello world", "baz": ""}, {"foo": "{{ bar }}"}),
+            ({"foo": "hello world", "bar": "hello world", "baz": ""}),
+        )
+
+    def test_complex(self):
+        self.assertEqual(
+            flatten_recursive_variables(
+                {
+                    "foo": "{{ bar }}",
+                    "bar": "hello {{ baz }}",
+                    "baz": "world{{end}}",
+                    "end": "!",
+                }
+            ),
+            (
+                {
+                    "foo": "hello world!",
+                    "bar": "hello world!",
+                    "baz": "world!",
+                    "end": "!",
+                }
+            ),
         )
 
     def test_has_cycle(self):
         self.assertRaises(
-            Exception,
-            separate_variable_and_partials,
+            QueryHasCycleException,
+            flatten_recursive_variables,
             {"foo": "{{ bar }}", "bar": "{{ foo }}", "baz": "hello world"},
         )
 
+    def test_undefined_var(self):
+        self.assertRaises(
+            UndefinedVariableException,
+            flatten_recursive_variables,
+            {"foo": "{{ bar }}", "bar": "{{ baz }}", "baz": "{{ boo }}"},
+        )
 
-class RenderTemplatedQuery(TestCase):
+
+class RenderTemplatedQueryTestCase(TestCase):
     def test_basic(self):
         query = 'select * from table where dt="{{ date }}"'
         variable = {"date": "1970-01-01"}
@@ -124,10 +145,11 @@ class RenderTemplatedQuery(TestCase):
         )
 
     def test_recursion(self):
-        query = 'select * from table where dt="{{> date }}"'
+        query = 'select * from table where dt="{{ date }}"'
         variable = {
             "date": "{{ date2 }}",
-            "date2": "1970-01-01",
+            "date2": "1970-{{ date3 }}-01",
+            "date3": "01",
         }
         self.assertEqual(
             render_templated_query(query, variable),
@@ -138,7 +160,7 @@ class RenderTemplatedQuery(TestCase):
         datetime_mock = mock.Mock(wraps=datetime)
         datetime_mock.today.return_value = date(1970, 1, 1)
         with mock.patch("lib.query_analysis.templating.datetime", new=datetime_mock):
-            query = 'select * from table where dt="{{> date }}"'
+            query = 'select * from table where dt="{{ date }}"'
             self.assertEqual(
                 render_templated_query(query, {"date": "{{ today }}"}),
                 'select * from table where dt="1970-01-01"',
@@ -147,16 +169,24 @@ class RenderTemplatedQuery(TestCase):
     def test_exception(self):
         # Missing variable
         self.assertRaises(
-            Exception,
+            UndefinedVariableException,
             render_templated_query,
             'select * from {{ table }} where dt="{{ date }}"',
             {"table": "foo"},
         )
 
+        # Missing variable but recursive
+        self.assertRaises(
+            UndefinedVariableException,
+            render_templated_query,
+            'select * from {{ table }} where dt="{{ date }}"',
+            {"table": "foo", "date": "{{ bar }}"},
+        )
+
         # Circular dependency
         self.assertRaises(
-            Exception,
+            QueryHasCycleException,
             render_templated_query,
-            'select * from {{ table }} where dt="{{> date }}"',
-            {"date": "{{> date2 }}", "date2": "{{> date }}"},
+            'select * from {{ table }} where dt="{{ date }}"',
+            {"date": "{{ date2 }}", "date2": "{{ date }}"},
         )

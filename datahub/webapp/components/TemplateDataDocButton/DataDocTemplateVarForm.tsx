@@ -8,6 +8,7 @@ import { Button } from 'ui/Button/Button';
 import { InfoButton } from 'ui/Button/InfoButton';
 import { IconButton } from 'ui/Button/IconButton';
 import './DataDocTemplateVarForm.scss';
+import { Link } from 'ui/Link/Link';
 
 export interface IDataDocTemplateVarFormProps {
     onSave: (vars: Record<string, string>) => any;
@@ -134,8 +135,17 @@ export const DataDocTemplateVarForm: React.FunctionComponent<IDataDocTemplateVar
                                             </p>
                                             <p>
                                                 {
-                                                    'To render recursively, please write the recursive variable in the query as {{>variable_name}}.'
+                                                    'You can also put variable definitions in variables for recursive rendering.'
                                                 }
+                                            </p>
+                                            <p>
+                                                <Link
+                                                    to={
+                                                        'https://jinja.palletsprojects.com/en/2.11.x/templates/'
+                                                    }
+                                                >
+                                                    See complete guide here.
+                                                </Link>
                                             </p>
                                         </div>
                                     </InfoButton>

@@ -210,11 +210,11 @@ class QuerySnippetComposerComponent extends React.PureComponent<
 
     @bind
     @debounce(1000)
-    public parseTemplatedQueries(context) {
+    public async parseTemplatedQueries(context) {
         context = context || '';
         try {
             this.setState({
-                templatedVariables: getTemplatedQueryVariables(context),
+                templatedVariables: await getTemplatedQueryVariables(context),
             });
         } catch (e) {
             this.setState({

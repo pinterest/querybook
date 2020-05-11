@@ -31,6 +31,7 @@ export interface IQuerySnippetViewProps {
 
 export interface IQuerySnippetViewState {
     templatedQueryForm: Record<string, string>;
+    templatedVariables: string[];
 }
 
 export class QuerySnippetView extends React.Component<
@@ -39,19 +40,26 @@ export class QuerySnippetView extends React.Component<
 > {
     public readonly state = {
         templatedQueryForm: {},
+        templatedVariables: [],
     };
 
+    public componentDidMount() {
+        this.getTemplatedVariables(this.props.querySnippet.context);
+    }
     public componentDidUpdate(prevProps) {
         if (this.props.querySnippet !== prevProps.querySnippet) {
             this.setState({
                 templatedQueryForm: {},
             });
+            this.getTemplatedVariables(this.props.querySnippet.context);
         }
     }
 
     @decorate(memoizeOne)
-    public getTemplatedVariables(context: string) {
-        return getTemplatedQueryVariables(context);
+    public async getTemplatedVariables(context: string) {
+        this.setState({
+            templatedVariables: await getTemplatedQueryVariables(context),
+        });
     }
 
     @bind
@@ -65,14 +73,13 @@ export class QuerySnippetView extends React.Component<
     }
 
     public getTemplatedVariableEditorDOM(context: string) {
-        const { templatedQueryForm } = this.state;
+        const { templatedQueryForm, templatedVariables } = this.state;
 
-        const variables = this.getTemplatedVariables(context);
-        if (variables.length === 0) {
+        if (templatedVariables.length === 0) {
             return null;
         }
 
-        const variablesInputDOM = variables.map((varName) => (
+        const variablesInputDOM = templatedVariables.map((varName) => (
             <FormField key={varName} label={varName}>
                 <DebouncedInput
                     value={templatedQueryForm[varName] || ''}
@@ -92,10 +99,10 @@ export class QuerySnippetView extends React.Component<
     @bind
     public async handleQuerySnippetInsert() {
         const context = this.props.querySnippet.context;
-        const variables = this.getTemplatedVariables(context);
+        const { templatedVariables } = this.state;
 
         let renderedQuery = context;
-        if (variables.length) {
+        if (templatedVariables.length) {
             renderedQuery = await renderTemplatedQuery(
                 context,
                 this.state.templatedQueryForm
