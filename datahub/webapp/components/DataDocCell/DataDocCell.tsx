@@ -244,7 +244,6 @@ export const DataDocCell: React.FunctionComponent<IDataDocCellProps> = ({
             </div>
         );
     };
-
     const uids = cellIdtoUid[cell.id] || [];
     const uidDOM = uids.map((uid) => <UserAvatar key={uid} uid={uid} tiny />);
     const dataDocCellClassName = showCollapsed

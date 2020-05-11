@@ -94,8 +94,8 @@ class DataDocComponent extends React.Component<IProps, IState> {
         showSearchAndReplace: false,
     };
 
-    //
-    public searchAndReplaceRef = React.createRef<ISearchAndReplaceHandles>();
+    private searchAndReplaceRef = React.createRef<ISearchAndReplaceHandles>();
+    private focusCellIndexAfterInsert: number = null;
 
     public componentDidMount() {
         this.autoFocusCell({}, this.props);
@@ -141,6 +141,14 @@ class DataDocComponent extends React.Component<IProps, IState> {
 
             if (someCellsContextChanged) {
                 this.searchAndReplaceRef.current?.performSearch();
+            }
+
+            // When a cell is inserted, the length will be changed
+            // during this time we will focus the new inserted cell
+            const cellLengthChanged = cells.length !== previousCells.length;
+            if (cellLengthChanged && this.focusCellIndexAfterInsert != null) {
+                this.focusCellAt(this.focusCellIndexAfterInsert);
+                this.focusCellIndexAfterInsert = null;
             }
         }
 
@@ -258,16 +266,29 @@ class DataDocComponent extends React.Component<IProps, IState> {
                             dataDoc.dataDocCells[cellIndex].id,
                             0
                         ).then(() =>
+                            // Setting the highlight cell index to turn on the
+                            // blue aura animation
                             this.setState(
                                 {
                                     highlightCellIndex: cellIndex,
                                 },
-                                () =>
+                                () => {
                                     scrollToCell(
                                         dataDoc.dataDocCells[cellIndex].id,
                                         200,
                                         5
-                                    )
+                                    );
+                                    // The highlight animation should last 5 seconds
+                                    // Remove the index so subsequent render does not
+                                    // show this
+                                    setTimeout(
+                                        () =>
+                                            this.setState({
+                                                highlightCellIndex: null,
+                                            }),
+                                        5000
+                                    );
+                                }
                             )
                         );
                     }
@@ -330,6 +351,9 @@ class DataDocComponent extends React.Component<IProps, IState> {
         try {
             const dataDoc = this.props.dataDoc;
             if (dataDoc) {
+                // After componentDidUpdate, this will focus the cell
+                this.focusCellIndexAfterInsert = index;
+
                 await this.props.insertDataDocCell(
                     dataDoc.id,
                     index,
@@ -337,7 +361,6 @@ class DataDocComponent extends React.Component<IProps, IState> {
                     context,
                     meta
                 );
-                this.focusCellAt(index);
             }
         } catch (e) {
             sendNotification(`Insert cell failed, reason: ${e}`);
