@@ -43,4 +43,4 @@ If you add `prod_` in front of the service name (for example `make prod_web`), i
 
 4. Create a query engine and now DataHub should be ready to use.
 
-Check out [general config guide](admin_guide/general_config.md) for more detailed info about datahub configuration.
+Check out the [general configuration guide](general_config.md) for more detailed info about datahub configuration.
