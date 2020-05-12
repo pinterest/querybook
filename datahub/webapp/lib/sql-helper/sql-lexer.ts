@@ -57,10 +57,12 @@ const contextSensitiveKeyWord = {
     // insert,
     table: 'table',
     update: 'table',
+    join: 'table',
     set: 'column',
 
     desc: 'table',
     describe: 'table',
+
     // delete: 'table',
 
     limit: 'none',
@@ -89,6 +91,7 @@ function getTokenTypeMatcher(language: string) {
         VARIABLE: [/^(\w+|`.*`)(?:\.(\w+|`.*`)?)+/],
         WORD: [/^\w+/],
         TEMPLATED_TAG: [/^{{.*?}}/],
+        TEMPLATED_BLOCK: [/^{%.*?%}/, /^{#.*?#}/, /^#.*?/],
     };
 }
 
