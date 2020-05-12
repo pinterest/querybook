@@ -42,7 +42,6 @@ export const SetUp: React.FunctionComponent = () => {
         <div className="SetUp flex-center">
             <div className="SetUp-message">Welcome to DataHub!</div>
             <div className="SetUp-choices horizontal-space-between">
-                {/* {hasEnvironments ? null : ( */}
                 <Card
                     title="Demo Set Up"
                     onClick={handleDemoSetUp}
@@ -51,7 +50,6 @@ export const SetUp: React.FunctionComponent = () => {
                 >
                     we'll set up everything for you to get started
                 </Card>
-                {/* )} */}
                 <Card
                     title="Detailed Set Up"
                     onClick={() => history.push('/admin/')}
