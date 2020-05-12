@@ -2,12 +2,8 @@ import React from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 import { sample } from 'lodash';
 
-import ds from 'lib/datasource';
-import history from 'lib/router-history';
-
 import { titleize } from 'lib/utils';
 import { navigateWithinEnv } from 'lib/utils/query-string';
-import { DataHubLogo } from 'ui/DataHubLogo/DataHubLogo';
 import { IStoreState } from 'redux/store/types';
 import { fetchDataDocs } from 'redux/dataDoc/action';
 import { currentEnvironmentSelector } from 'redux/environment/selector';
@@ -18,12 +14,11 @@ import {
 
 import { DataHubSidebarUIGuide } from 'components/UIGuide/DataHubSidebarUIGuide';
 
-import { Title } from 'ui/Title/Title';
 import { Columns, Column } from 'ui/Column/Column';
+import { DataHubLogo } from 'ui/DataHubLogo/DataHubLogo';
+import { Title } from 'ui/Title/Title';
+
 import './Landing.scss';
-import { Button } from 'ui/Button/Button';
-import { AsyncButton } from 'ui/AsyncButton/AsyncButton';
-import { fetchEnvironments } from 'redux/environment/action';
 
 const datahubHints: string[] = require('config/loading_hints.yaml').hints;
 /*
@@ -92,16 +87,6 @@ export const Landing: React.FunctionComponent = () => {
 
     const [hint] = React.useState(sample(datahubHints));
 
-    const handleDemoSetUp = async () => {
-        const resp = await ds.save('/admin/demo_set_up/', {});
-        if (resp.data) {
-            await fetchEnvironments();
-            history.push(`/demo_environment/datadoc/${resp.data}/`);
-        } else {
-            history.push('/admin/');
-        }
-    };
-
     return (
         <div className="Landing flex-column">
             <div className="Landing-top">
@@ -118,7 +103,6 @@ export const Landing: React.FunctionComponent = () => {
             <div className="Landing-bottom">
                 <Columns>
                     <Column>
-                        <AsyncButton title="Demo" onClick={handleDemoSetUp} />
                         <DataHubSidebarUIGuide />
                     </Column>
                 </Columns>

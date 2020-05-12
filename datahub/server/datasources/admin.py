@@ -425,48 +425,46 @@ def get_api_access_tokens_admin():
 @register("/admin/demo_set_up/", methods=["POST"])
 @admin_only
 def exec_demo_set_up():
-    local_db_conn = "sqlite:///demo/demo_data.db"
     with DBSession() as session:
-        environment_id = None
-        try:
-            environment_id = environment_logic.create_environment(
-                name="demo_environment",
-                description="",
-                image="",
-                public=True,
-                commit=False,
-                session=session,
-            ).id
-            session.commit()
-        except:
-            session.rollback()
-            environment_id = environment_logic.get_environment_by_name(
-                name="demo_environment"
-            ).id
+        environment = environment_logic.create_environment(
+            name="demo_environment",
+            description="Demo environment",
+            image="",
+            public=True,
+            commit=False,
+            session=session,
+        )
 
-        metastore_id = None
-        task_schedule_id = None
-        try:
-            metastore_id = QueryMetastore.create(
-                {
-                    "name": "demo_metastore",
-                    "metastore_params": {"connection_string": local_db_conn,},
-                    "loader": "SqlAlchemyMetastoreLoader",
-                    "acl_control": {},
-                },
-                commit=False,
-                session=session,
-            ).id
-            session.commit()
-        except:
-            session.rollback()
-            metastore_id = QueryMetastore.get(name="demo_metastore", session=session).id
+        local_db_conn = "sqlite:///demo/demo_data.db"
+        metastore_id = QueryMetastore.create(
+            {
+                "name": "demo_metastore",
+                "metastore_params": {"connection_string": local_db_conn,},
+                "loader": "SqlAlchemyMetastoreLoader",
+                "acl_control": {},
+            },
+            commit=False,
+            session=session,
+        ).id
 
-        task_name = "update_metastore_{}".format(metastore_id)
-        try:
+        engine_id = QueryEngine.create(
+            {
+                "name": "sqlite",
+                "description": "SQLite Engine",
+                "language": "sqlite",
+                "executor": "sqlalchemy",
+                "executor_params": {"connection_string": local_db_conn,},
+                "environment_id": environment.id,
+                "metastore_id": metastore_id,
+            },
+            commit=False,
+            session=session,
+        ).id
+
+        if environment and metastore_id and engine_id:
             task_schedule_id = TaskSchedule.create(
                 {
-                    "name": task_name,
+                    "name": "update_metastore_{}".format(metastore_id),
                     "task": "tasks.update_metastore.update_metastore",
                     "cron": "0 0 * * *",
                     "args": [metastore_id],
@@ -476,56 +474,48 @@ def exec_demo_set_up():
                 commit=False,
                 session=session,
             ).id
-        except:
-            session.rollback()
-            task_schedule_id = TaskSchedule.get(name=task_name).id
-        schedule_logic.run_and_log_scheduled_task(
-            scheduled_task_id=task_schedule_id, session=session
-        )
+            schedule_logic.run_and_log_scheduled_task(
+                scheduled_task_id=task_schedule_id, session=session
+            )
 
-        golden_table_id = metastore_logic.get_table_by_name(
+            session.commit()
+
+            data_doc_id = logic.create_demo_data_doc(
+                environment_id=environment.id,
+                engine_id=engine_id,
+                uid=current_user.id,
+                session=session,
+            )
+
+            return {
+                "environment": environment.name,
+                "metastore_id": metastore_id,
+                "task_schedule_id": task_schedule_id,
+                "data_doc_id": data_doc_id,
+            }
+
+
+@register("/admin/demo_set_up_2/", methods=["POST"])
+@admin_only
+def exec_demo_set_up_2(metastore_id, task_schedule_id):
+    with DBSession() as session:
+        golden_table = metastore_logic.get_table_by_name(
             schema_name="main",
             name="world_happiness_2019",
             metastore_id=metastore_id,
             session=session,
-        ).id
-        metastore_logic.update_table(id=golden_table_id, golden=True, session=session)
-
-        engine_id = None
-        try:
-            engine_id = QueryEngine.create(
-                {
-                    "name": "sqlite",
-                    "description": "SQLite Engine",
-                    "language": "sqlite",
-                    "executor": "sqlalchemy",
-                    "executor_params": {"connection_string": local_db_conn,},
-                    "environment_id": environment_id,
-                    "metastore_id": metastore_id,
-                },
-                commit=False,
-                session=session,
-            ).id
-            session.commit()
-        except:
-            session.rollback()
-            engine_id = QueryEngine.get(name="sqlite").id
-            QueryEngine.update(
-                id=engine_id,
-                fields={"environment_id": environment_id},
-                field_names=["environment_id"],
-                session=session,
-            )
-            pass
-
-        data_doc_id = logic.create_demo_data_doc(
-            environment_id=environment_id,
-            engine_id=engine_id,
-            uid=current_user.id,
-            session=session,
         )
 
-        return data_doc_id
+        if golden_table:
+            metastore_logic.update_table(
+                id=golden_table.id, golden=True, session=session
+            )
+
+        schedule_logic.run_and_log_scheduled_task(
+            scheduled_task_id=task_schedule_id, session=session
+        )
+
+        return golden_table.id
 
 
 admin_item_type_values = set(item.value for item in AdminItemType)
