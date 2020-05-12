@@ -20,19 +20,7 @@ First off, thanks for taking the time to contribute! This guide will answer
 some common questions about how this project works.
 
 While this is a Pinterest open source project, we welcome contributions from
-everyone. Regular outside contributors can become project maintainers.
-
-## Help
-
-Start by reading the developer starter guide [this guide](docs/developer_guide/developer_setup.md) to setup DataHub/
-If you're having trouble using this project, please check the [developer guides](docs/developer_guide/)
-and searching for solutions in the existing open and closed issues.
-
-## Security
-
-If you've found a security issue in one of our open source projects,
-please report it at [Bugcrowd](https://bugcrowd.com/pinterest); you may even
-make some money!
+everyone.
 
 ## Code of Conduct
 
@@ -52,6 +40,12 @@ we can help you out:
 -   Stack traces for crashes.
 -   Any logs produced.
 
+## Adding New Features
+
+We welcome everyone to add new features for DataHub! Please start by
+creating a Github issue that outlines your design and get the project maintainers' approval
+before submitting the pull request.
+
 ## Making Changes
 
 1. Fork this repository to your own account
@@ -69,6 +63,18 @@ To increase the chances that your pull request will be accepted:
 -   Follow the coding style
 -   Write tests for your changes
 -   Write a good commit message
+
+## Help
+
+Start by reading the developer starter guide [this guide](docs/developer_guide/developer_setup.md) to setup DataHub/
+If you're having trouble using this project, please check the [developer guides](docs/developer_guide/)
+and searching for solutions in the existing open and closed issues.
+
+## Security
+
+If you've found a security issue in one of our open source projects,
+please report it at [Bugcrowd](https://bugcrowd.com/pinterest); you may even
+make some money!
 
 ## License
 
