@@ -194,7 +194,7 @@ def abort_request(
     raise RequestException(message, status_code)
 
 
-@flask_app.teardown_appcontext
+@flask_app.teardown_request
 def teardown_database_session(error):
     """Clean up the db connection at the end of request
 
