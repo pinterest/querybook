@@ -214,15 +214,20 @@ def with_task_logging(
 
 
 @with_session
-def run_and_log_scheduled_task(scheduled_task_id, session=None):
+def run_and_log_scheduled_task(scheduled_task_id, run_async=True, session=None):
     schedule = get_task_schedule_by_id(scheduled_task_id)
     if schedule:
-        celery.send_task(
-            schedule.task,
-            args=schedule.args,
-            kwargs=schedule.kwargs,
-            shadow=schedule.name,
-        )
+        if run_async:
+            celery.send_task(
+                schedule.task,
+                args=schedule.args,
+                kwargs=schedule.kwargs,
+                shadow=schedule.name,
+            )
+        else:
+            celery.signature(schedule.task).apply(
+                args=schedule.args, kwargs=schedule.kwargs
+            )
         update_task_schedule(
             id=schedule.id,
             last_run_at=datetime.now(),

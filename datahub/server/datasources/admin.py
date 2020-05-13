@@ -427,7 +427,7 @@ def get_api_access_tokens_admin():
 def exec_demo_set_up():
     with DBSession() as session:
         environment = environment_logic.create_environment(
-            name="demo_environment",
+            name="6demo_environment",
             description="Demo environment",
             image="",
             public=True,
@@ -438,7 +438,7 @@ def exec_demo_set_up():
         local_db_conn = "sqlite:///demo/demo_data.db"
         metastore_id = QueryMetastore.create(
             {
-                "name": "demo_metastore",
+                "name": "6demo_metastore",
                 "metastore_params": {"connection_string": local_db_conn,},
                 "loader": "SqlAlchemyMetastoreLoader",
                 "acl_control": {},
@@ -449,7 +449,7 @@ def exec_demo_set_up():
 
         engine_id = QueryEngine.create(
             {
-                "name": "sqlite",
+                "name": "6sqlite",
                 "description": "SQLite Engine",
                 "language": "sqlite",
                 "executor": "sqlalchemy",
@@ -462,6 +462,8 @@ def exec_demo_set_up():
         ).id
 
         if environment and metastore_id and engine_id:
+
+            session.commit()
             task_schedule_id = TaskSchedule.create(
                 {
                     "name": "update_metastore_{}".format(metastore_id),
@@ -471,14 +473,12 @@ def exec_demo_set_up():
                     "task_type": "prod",
                     "enabled": True,
                 },
-                commit=False,
+                # commit=False,
                 session=session,
             ).id
             schedule_logic.run_and_log_scheduled_task(
-                scheduled_task_id=task_schedule_id, session=session
+                scheduled_task_id=task_schedule_id, run_async=False, session=session
             )
-
-            session.commit()
 
             data_doc_id = logic.create_demo_data_doc(
                 environment_id=environment.id,
