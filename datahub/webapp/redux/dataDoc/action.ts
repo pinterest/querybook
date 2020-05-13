@@ -161,7 +161,6 @@ export function createDataDoc(
     cells?: Array<Partial<IDataCell>>
 ): ThunkResult<Promise<IDataDoc>> {
     return async (dispatch, getState) => {
-        console.log('in here?', cells);
         const state = getState();
 
         const { data: rawDataDoc } = await ds.save('/datadoc/', {
