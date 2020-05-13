@@ -40,18 +40,29 @@ we can help you out:
 -   Stack traces for crashes.
 -   Any logs produced.
 
+## Fixing Bugs
+
+We welcome and appreciate anyone for fixing bugs!
+- You can fix bugs as per "Making Changes" and send for code review!
+
 ## Adding New Features
 
-We welcome everyone to add new features for DataHub! Please start by
-creating a Github issue that outlines your design and get the project maintainers' approval
-before submitting the pull request.
+We welcome and appreciate anyone for adding new features for DataHub! 
+Following is the current process:
+- Please create a GitHub issue proposing your new feature, including what and why. It can be brief, one or two paragraphs is ok. 
+- The project maintainers will then approve the new feature proposal.
+- You can then briefly describe your intended technical design for the new feature.
+- The project maintainers will then approve the technical design and/or request changes.
+- Then you can implement the new feature as per "Making Changes" and send for code review!
 
 ## Making Changes
 
-1. Fork this repository to your own account
+Please first check "Fixing Bugs" or "Adding New Features" as appropriate.
+
+1. Create a new branch off of master. (We can't currently enable forking while the repo is in private beta)
 2. Make your changes and verify that tests pass
-3. Commit your work and push to a new branch on your fork
-4. Submit a pull request
+3. Commit your work and push to origin your new branch
+4. Submit a pull request to merge to master
 5. Ensure your code passes both linter and unit tests
 6. Participate in the code review process by responding to feedback
 
@@ -69,6 +80,8 @@ To increase the chances that your pull request will be accepted:
 Start by reading the developer starter guide [this guide](docs/developer_guide/developer_setup.md) to setup DataHub/
 If you're having trouble using this project, please check the [developer guides](docs/developer_guide/)
 and searching for solutions in the existing open and closed issues.
+
+You can also reach out to us at datahub@pinterest.com or on our [Slack](https://join.slack.com/t/datahubchat/shared_invite/zt-dpr988af-9VwGkjcmPhqTmRoA2Tm3gg).
 
 ## Security
 
