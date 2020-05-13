@@ -22,11 +22,13 @@ export const SetUp: React.FunctionComponent = () => {
     const fetchEnvironments = () =>
         dispatch(EnvironmentActions.fetchEnvironments());
 
-    const handleOneClickSetUp = async () => {
-        const resp = await ds.save('/admin/one_click_set_up/', {});
+    const handleDemoSetUp = async () => {
+        const resp = await ds.save('/admin/demo_set_up/', {});
         if (resp.data) {
             await fetchEnvironments();
-            history.push(`/${resp.data[0].name}`);
+            history.push(
+                `/${resp.data.environment}/datadoc/${resp.data.data_doc_id}/`
+            );
         } else {
             history.push('/admin/');
         }
@@ -36,16 +38,15 @@ export const SetUp: React.FunctionComponent = () => {
         <div className="SetUp flex-center">
             <div className="SetUp-message">Welcome to DataHub!</div>
             <div className="SetUp-choices horizontal-space-between">
-                {hasEnvironments ? null : (
-                    <Card
-                        title="One-Click Set Up"
-                        onClick={handleOneClickSetUp}
-                        height="180px"
-                        width="240px"
-                    >
-                        we'll set up everything for you to get started
-                    </Card>
-                )}
+                <Card
+                    title="Demo Set Up"
+                    onClick={handleDemoSetUp}
+                    height="180px"
+                    width="240px"
+                >
+                    we'll set up a demo environment for you to get familiar with
+                    the app
+                </Card>
                 <Card
                     title="Detailed Set Up"
                     onClick={() => history.push('/admin/')}

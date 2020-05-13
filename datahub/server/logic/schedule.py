@@ -214,15 +214,17 @@ def with_task_logging(
 
 
 @with_session
-def run_and_log_scheduled_task(scheduled_task_id, session=None):
+def run_and_log_scheduled_task(scheduled_task_id, wait_to_finish=False, session=None):
     schedule = get_task_schedule_by_id(scheduled_task_id)
     if schedule:
-        celery.send_task(
+        result = celery.send_task(
             schedule.task,
             args=schedule.args,
             kwargs=schedule.kwargs,
             shadow=schedule.name,
         )
+        if wait_to_finish:
+            result.get(timeout=60)
         update_task_schedule(
             id=schedule.id,
             last_run_at=datetime.now(),

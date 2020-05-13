@@ -2,11 +2,8 @@ import React from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 import { sample } from 'lodash';
 
-import history from 'lib/router-history';
-
 import { titleize } from 'lib/utils';
 import { navigateWithinEnv } from 'lib/utils/query-string';
-import { DataHubLogo } from 'ui/DataHubLogo/DataHubLogo';
 import { IStoreState } from 'redux/store/types';
 import { fetchDataDocs } from 'redux/dataDoc/action';
 import { currentEnvironmentSelector } from 'redux/environment/selector';
@@ -17,8 +14,10 @@ import {
 
 import { DataHubSidebarUIGuide } from 'components/UIGuide/DataHubSidebarUIGuide';
 
-import { Title } from 'ui/Title/Title';
 import { Columns, Column } from 'ui/Column/Column';
+import { DataHubLogo } from 'ui/DataHubLogo/DataHubLogo';
+import { Title } from 'ui/Title/Title';
+
 import './Landing.scss';
 
 const datahubHints: string[] = require('config/loading_hints.yaml').hints;
@@ -101,7 +100,7 @@ export const Landing: React.FunctionComponent = () => {
                 <div className="Landing-desc">{descriptionDOM}</div>
             </div>
 
-            <div className="Landing-bottom  ">
+            <div className="Landing-bottom">
                 <Columns>
                     <Column>
                         <DataHubSidebarUIGuide />
