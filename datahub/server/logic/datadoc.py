@@ -17,7 +17,7 @@ from models.datadoc import (
 )
 from models.impression import Impression
 from tasks.sync_elasticsearch import sync_elasticsearch
-
+from logic.datadoc_collab import insert_data_cell
 
 cell_types = get_config_value("datadoc.cell_types")
 
@@ -33,6 +33,51 @@ cell_types = get_config_value("datadoc.cell_types")
 def create_data_doc(
     environment_id,
     owner_uid,
+    cells=None,
+    public=None,
+    archived=None,
+    title=None,
+    meta=None,
+    commit=True,
+    session=None,
+):
+    data_doc = DataDoc(
+        public=public,
+        archived=archived,
+        owner_uid=owner_uid,
+        environment_id=environment_id,
+        title=title,
+        meta=meta,
+    )
+
+    session.add(data_doc)
+
+    if commit:
+        session.commit()
+        if cells:
+            for index, cell in enumerate(cells):
+                insert_data_cell(
+                    doc_id=data_doc.id,
+                    index=index,
+                    cell_type=cell["type"],
+                    context=cell["context"],
+                    meta=cell["meta"],
+                    session=session,
+                )
+        update_es_data_doc_by_id(data_doc.id)
+    else:
+        session.flush()
+    session.refresh(data_doc)
+    return data_doc
+
+
+@with_session
+def create_data_doc_from_execution(
+    environment_id,
+    owner_uid,
+    query_string,
+    execution_id,
+    engine_id,
     public=None,
     archived=None,
     title=None,
@@ -52,6 +97,19 @@ def create_data_doc(
 
     if commit:
         session.commit()
+        data_cell = insert_data_cell(
+            doc_id=data_doc.id,
+            index=0,
+            cell_type="query",
+            context=query_string,
+            meta={"engine": engine_id},
+            session=session,
+        )
+        append_query_executions_to_data_cell(
+            data_cell_id=data_cell["id"],
+            query_execution_ids=[execution_id],
+            session=session,
+        )
         update_es_data_doc_by_id(data_doc.id)
     else:
         session.flush()

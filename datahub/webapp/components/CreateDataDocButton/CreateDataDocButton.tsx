@@ -5,8 +5,10 @@ import history from 'lib/router-history';
 import { TooltipDirection } from 'const/tooltip';
 import * as dataDocActions from 'redux/dataDoc/action';
 import { currentEnvironmentSelector } from 'redux/environment/selector';
-import { Dispatch } from 'redux/store/types';
+import { Dispatch, IStoreState } from 'redux/store/types';
 import { IconButton } from 'ui/Button/IconButton';
+import { getQueryEngineId } from 'lib/utils';
+import { queryEngineSelector } from 'redux/queryEngine/selector';
 
 export interface ICreateDataDocButtonProps {
     // from own Props
@@ -19,10 +21,22 @@ export const CreateDataDocButton: React.FunctionComponent<ICreateDataDocButtonPr
     tooltip = 'New DataDoc',
 }) => {
     const environment = useSelector(currentEnvironmentSelector);
+    const queryEngines = useSelector(queryEngineSelector);
+    const defaultEngineId = useSelector((state: IStoreState) =>
+        getQueryEngineId(
+            state.user.computedSettings['default_query_engine'],
+            queryEngines.map(({ id }) => id)
+        )
+    );
     const dispatch: Dispatch = useDispatch();
 
     const handleCreateDataDoc = React.useCallback(() => {
-        dispatch(dataDocActions.createDataDoc()).then((dataDoc) =>
+        const cell = {
+            type: 'query',
+            context: '',
+            meta: { engine: defaultEngineId },
+        };
+        dispatch(dataDocActions.createDataDoc([cell])).then((dataDoc) =>
             history.push(`/${environment.name}/datadoc/${dataDoc.id}/`)
         );
     }, [dispatch, environment]);

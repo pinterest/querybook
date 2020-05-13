@@ -11,6 +11,7 @@ import { useSelector, useDispatch } from 'react-redux';
 import { ISearchOptions, ISearchResult } from 'const/searchAndReplace';
 import { getQueryEngineId, sleep, enableResizable } from 'lib/utils';
 import { getSelectedQuery } from 'lib/sql-helper/sql-lexer';
+import history from 'lib/router-history';
 
 import { IStoreState, Dispatch } from 'redux/store/types';
 import {
@@ -19,6 +20,7 @@ import {
 } from 'redux/queryEngine/selector';
 import * as queryExecutionsAction from 'redux/queryExecutions/action';
 import * as adhocQueryActions from 'redux/adhocQuery/action';
+import * as dataDocActions from 'redux/dataDoc/action';
 
 import {
     QueryRunButton,
@@ -41,6 +43,7 @@ import {
     ISearchAndReplaceProps,
 } from 'components/SearchAndReplace/SearchAndReplace';
 import { BindedQueryEditor } from 'components/QueryEditor/BindedQueryEditor';
+import { navigateWithinEnv } from 'lib/utils/query-string';
 
 const useExecution = (dispatch: Dispatch) => {
     const executionId = useSelector(
@@ -157,6 +160,23 @@ export const QueryComposer: React.FC<{}> = () => {
             queryEditorRef.current.formatQuery();
         }
     }, [queryEditorRef.current]);
+    const handleCreateDataDoc = useCallback(async () => {
+        let dataDoc = null;
+        const queryString = queryEditorRef.current.props.value;
+        if (executionId) {
+            dataDoc = await dispatch(
+                dataDocActions.createDataDocFromAdhoc(executionId, queryString)
+            );
+        } else {
+            const cell = {
+                type: 'query',
+                context: queryString,
+                meta: { engine: engine.id },
+            };
+            dataDoc = await dispatch(dataDocActions.createDataDoc([cell]));
+        }
+        navigateWithinEnv(`/datadoc/${dataDoc.id}/`);
+    }, [dispatch, executionId]);
 
     const searchAndReplaceProps = useQueryComposerSearchAndReplace(
         query,
@@ -263,6 +283,11 @@ export const QueryComposer: React.FC<{}> = () => {
                             icon="delete"
                             title="Clear"
                             onClick={() => setQuery('')}
+                        />
+                        <Button
+                            icon="plus"
+                            title="Create DataDoc"
+                            onClick={handleCreateDataDoc}
                         />
                     </LevelItem>
                     <LevelItem>{queryRunDOM}</LevelItem>

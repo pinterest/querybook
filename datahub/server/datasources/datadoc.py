@@ -23,6 +23,7 @@ from logic import (
     user as user_logic,
 )
 from logic.datadoc_permission import assert_can_read, assert_can_write
+from logic.query_execution import get_query_execution_by_id
 from models.environment import Environment
 from tasks.run_datadoc import run_datadoc
 
@@ -79,17 +80,43 @@ def get_data_docs(
 
 @register("/datadoc/", methods=["POST"])
 def create_data_doc(
-    environment_id, title=None,
+    environment_id, cells, title=None,
 ):
     with DBSession() as session:
         verify_environment_permission([environment_id])
         environment = Environment.get(id=environment_id, session=session)
 
         return logic.create_data_doc(
-            public=environment.shareable,
-            archived=False,
             environment_id=environment_id,
             owner_uid=current_user.id,
+            cells=cells,
+            public=environment.shareable,
+            archived=False,
+            title=title,
+            meta={},
+            session=session,
+        )
+
+
+@register("/datadoc/from_execution/", methods=["POST"])
+def create_data_doc_from_execution(
+    environment_id, execution_id, query_string, title=None,
+):
+    with DBSession() as session:
+        verify_environment_permission([environment_id])
+        environment = Environment.get(id=environment_id, session=session)
+        execution = get_query_execution_by_id(execution_id, session=session)
+        uid = current_user.id
+        api_assert(execution.uid is uid, "Unauthorized")
+
+        return logic.create_data_doc_from_execution(
+            environment_id=environment_id,
+            owner_uid=uid,
+            query_string=query_string,
+            execution_id=execution_id,
+            engine_id=execution.engine_id,
+            public=environment.shareable,
+            archived=False,
             title=title,
             meta={},
             session=session,
