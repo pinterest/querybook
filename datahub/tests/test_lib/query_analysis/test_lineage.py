@@ -47,6 +47,51 @@ class ProcessQueryTestCase(TestCase):
             self.assertCountEqual(stmt, expected_stmt)
         self.assertListEqual(lineage_per_statement, expected_lineage_per_statement)
 
+    def test_select_statement(self):
+        query = """
+SELECT
+    w9.Country,
+    w9.Rank AS [2019],
+    w8.Rank AS [2018],
+    w7.HappinessRank AS [2017],
+    w6.HappinessRank AS [2016],
+    w5.HappinessRank AS [2015]
+FROM
+    main.world_happiness_2019 w9
+    INNER JOIN main.world_happiness_2018 w8 ON w9.Country = w8.Country
+    INNER JOIN main.world_happiness_2017 w7 ON w9.Country = w7.Country
+    INNER JOIN main.world_happiness_2016 w6 ON w9.Country = w6.Country
+    INNER JOIN main.world_happiness_2015 w5 ON w9.Country = w5.Country
+    AND (w5.Region = "{{Region}}");
+-- Region is a template variable with the value of 'Western Europe'
+-- click on the <> button on the bottom right of the DataDoc to configure more!
+        """
+        processed_query = process_query(query)
+        self.assertIsInstance(processed_query, tuple)
+        self.assertEqual(len(processed_query), 2)
+        self.assertEqual(len(processed_query[0]), 1)
+        self.assertSetEqual(
+            set(processed_query[0][0]),
+            set(
+                [
+                    "main.world_happiness_2019",
+                    "main.world_happiness_2018",
+                    "main.world_happiness_2017",
+                    "main.world_happiness_2016",
+                    "main.world_happiness_2015",
+                ]
+            ),
+        )
+
+        self.assertEqual(
+            processed_query[1], ([[]]),
+        )
+
+    def test_empty_statement(self):
+        self.assertEqual(process_query(""), ([], []))
+        self.assertEqual(process_query("\t\n\t\n"), ([], []))
+        self.assertEqual(process_query("\n\n;\n\n;\n\n"), ([[], []], [[], []]))
+
 
 class TokenizeByStatementTestCase(TestCase):
     def test_tokenize_by_statement(self):

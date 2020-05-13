@@ -18,7 +18,7 @@ test('titleize', () => {
 
 test('sleep', () => {
     const mockFunction = jest.fn(() => {
-        // console.log('mock function runs');
+        /* empty function */
     });
 
     const testFunction = async () => {

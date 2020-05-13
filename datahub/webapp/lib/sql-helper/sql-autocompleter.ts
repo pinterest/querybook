@@ -543,6 +543,7 @@ export class SqlAutoCompleter {
             const processedList = result
                 .sort((a, b) => b.score - a.score)
                 .slice(0, RESULT_MAX_LENGTH);
+
             resolve({
                 list: processedList,
                 from: this.Pos(cursor.line, start),
