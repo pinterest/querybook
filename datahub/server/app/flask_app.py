@@ -1,7 +1,7 @@
 import sys
 
 from celery import Celery
-from flask import Flask, Blueprint, json as flask_json
+from flask import Flask, Blueprint, json as flask_json, has_app_context
 from flask_socketio import SocketIO
 from flask_login import current_user
 from flask_limiter import Limiter
@@ -77,6 +77,11 @@ def make_celery(app):
         abstract = True
 
         def __call__(self, *args, **kwargs):
+            # If app context is already present then call the function
+            # app context is provided if the task run sychronously
+            if has_app_context():
+                return TaskBase.__call__(self, *args, **kwargs)
+            # Otherwise in worker, we create the context and run
             with app.app_context():
                 return TaskBase.__call__(self, *args, **kwargs)
 
