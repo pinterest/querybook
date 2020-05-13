@@ -47,9 +47,9 @@ We welcome and appreciate anyone for fixing bugs!
 
 ## Adding New Features
 
-We welcome and appreciate anyone for adding new features for DataHub! 
+We welcome and appreciate anyone for adding new features for DataHub!
 Following is the current process:
-- Please create a GitHub issue proposing your new feature, including what and why. It can be brief, one or two paragraphs is ok. 
+- Please create a GitHub issue proposing your new feature, including what and why. It can be brief, one or two paragraphs is ok.
 - The project maintainers will then approve the new feature proposal.
 - You can then briefly describe your intended technical design for the new feature.
 - The project maintainers will then approve the technical design and/or request changes.
