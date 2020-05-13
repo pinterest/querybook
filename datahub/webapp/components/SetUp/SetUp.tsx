@@ -26,10 +26,6 @@ export const SetUp: React.FunctionComponent = () => {
         const resp = await ds.save('/admin/demo_set_up/', {});
         if (resp.data) {
             await fetchEnvironments();
-            // await ds.save('/admin/demo_set_up_2/', {
-            //     metastore_id: resp.data.metastore_id,
-            //     task_schedule_id: resp.data.task_schedule_id,
-            // });
             history.push(
                 `/${resp.data.environment}/datadoc/${resp.data.data_doc_id}/`
             );
