@@ -49,11 +49,7 @@ def create_data_doc(
         meta=meta,
     )
     session.add(data_doc)
-    if commit:
-        session.commit()
-        update_es_data_doc_by_id(data_doc.id)
-    else:
-        session.flush()
+    session.flush()
 
     for index, cell in enumerate(cells):
         data_cell = create_data_cell(
@@ -102,11 +98,6 @@ def create_data_doc_from_execution(
         commit=False,
         session=session,
     )
-    if commit:
-        session.commit()
-        update_es_data_doc_by_id(data_doc.id)
-    else:
-        session.flush()
 
     append_query_executions_to_data_cell(
         data_cell_id=data_doc.cells[0].id,
