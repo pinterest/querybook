@@ -156,7 +156,9 @@ export const QueryComposer: React.FC<{}> = () => {
     }, [queryEditorRef.current]);
     const handleCreateDataDoc = useCallback(async () => {
         let dataDoc = null;
-        const queryString = queryEditorRef.current.props.value;
+        const queryString = query;
+        // console.log('queryEditorRef.current', );
+        // const queryString = queryEditorRef.current.props.value;
         if (executionId) {
             dataDoc = await dispatch(
                 dataDocActions.createDataDocFromAdhoc(executionId, queryString)
@@ -170,7 +172,7 @@ export const QueryComposer: React.FC<{}> = () => {
             dataDoc = await dispatch(dataDocActions.createDataDoc([cell]));
         }
         navigateWithinEnv(`/datadoc/${dataDoc.id}/`);
-    }, [dispatch, executionId]);
+    }, [executionId, query]);
 
     const searchAndReplaceProps = useQueryComposerSearchAndReplace(
         query,

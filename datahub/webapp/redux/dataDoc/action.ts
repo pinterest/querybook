@@ -158,7 +158,7 @@ export function cloneDataDoc(docId: number): ThunkResult<Promise<IDataDoc>> {
 }
 
 export function createDataDoc(
-    cells?: Array<Partial<IDataCell>>
+    cells: Array<Partial<IDataCell>> = []
 ): ThunkResult<Promise<IDataDoc>> {
     return async (dispatch, getState) => {
         const state = getState();

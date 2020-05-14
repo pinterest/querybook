@@ -39,7 +39,7 @@ export const CreateDataDocButton: React.FunctionComponent<ICreateDataDocButtonPr
         dispatch(dataDocActions.createDataDoc([cell])).then((dataDoc) =>
             history.push(`/${environment.name}/datadoc/${dataDoc.id}/`)
         );
-    }, [dispatch, environment]);
+    }, [environment]);
 
     return (
         <IconButton

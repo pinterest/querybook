@@ -107,7 +107,9 @@ def create_data_doc_from_execution(
         environment = Environment.get(id=environment_id, session=session)
         execution = get_query_execution_by_id(execution_id, session=session)
         uid = current_user.id
-        api_assert(execution.uid is uid, "Unauthorized")
+        api_assert(
+            execution.uid == uid, "You can only create from your own executions."
+        )
 
         return logic.create_data_doc_from_execution(
             environment_id=environment_id,
