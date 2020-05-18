@@ -68,6 +68,7 @@ def create_data_doc(
         )
     if commit:
         session.commit()
+        update_es_data_doc_by_id(data_doc.id)
     else:
         session.flush()
 
@@ -107,6 +108,7 @@ def create_data_doc_from_execution(
     )
     if commit:
         session.commit()
+        update_es_data_doc_by_id(data_doc.id)
     else:
         session.flush()
 
