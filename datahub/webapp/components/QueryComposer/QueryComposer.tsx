@@ -156,19 +156,18 @@ export const QueryComposer: React.FC<{}> = () => {
     }, [queryEditorRef.current]);
     const handleCreateDataDoc = useCallback(async () => {
         let dataDoc = null;
-        const queryString = query;
         if (executionId) {
             dataDoc = await dispatch(
                 dataDocActions.createDataDocFromAdhoc(
                     executionId,
                     engine.id,
-                    queryString
+                    query
                 )
             );
         } else {
             const cell = {
                 type: 'query',
-                context: queryString,
+                context: query,
                 meta: { engine: engine.id },
             };
             dataDoc = await dispatch(dataDocActions.createDataDoc([cell]));

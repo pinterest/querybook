@@ -80,7 +80,7 @@ def get_data_docs(
 
 @register("/datadoc/", methods=["POST"])
 def create_data_doc(
-    environment_id, cells, title=None,
+    environment_id, cells=[], title=None,
 ):
     with DBSession() as session:
         verify_environment_permission([environment_id])
