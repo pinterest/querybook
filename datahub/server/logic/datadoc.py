@@ -80,9 +80,9 @@ def create_data_doc(
 def create_data_doc_from_execution(
     environment_id,
     owner_uid,
+    engine_id,
     query_string,
     execution_id,
-    engine_id,
     public=None,
     archived=None,
     title=None,

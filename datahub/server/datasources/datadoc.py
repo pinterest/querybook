@@ -100,7 +100,7 @@ def create_data_doc(
 
 @register("/datadoc/from_execution/", methods=["POST"])
 def create_data_doc_from_execution(
-    environment_id, execution_id, query_string, title=None,
+    environment_id, execution_id, engine_id, query_string, title=None,
 ):
     with DBSession() as session:
         verify_environment_permission([environment_id])
@@ -114,9 +114,9 @@ def create_data_doc_from_execution(
         return logic.create_data_doc_from_execution(
             environment_id=environment_id,
             owner_uid=uid,
+            engine_id=engine_id,
             query_string=query_string,
             execution_id=execution_id,
-            engine_id=execution.engine_id,
             public=environment.shareable,
             archived=False,
             title=title,

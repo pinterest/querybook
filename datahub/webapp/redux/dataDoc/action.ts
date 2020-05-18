@@ -177,6 +177,7 @@ export function createDataDoc(
 
 export function createDataDocFromAdhoc(
     queryExecutionId: number,
+    engineId: number,
     queryString: string = ''
 ): ThunkResult<Promise<IDataDoc>> {
     return async (dispatch, getState) => {
@@ -186,6 +187,7 @@ export function createDataDocFromAdhoc(
             title: '',
             environment_id: state.environment.currentEnvironmentId,
             execution_id: queryExecutionId,
+            engine_id: engineId,
             query_string: queryString,
         });
         const { dataDoc, dataDocCellById } = normalizeRawDataDoc(rawDataDoc);
