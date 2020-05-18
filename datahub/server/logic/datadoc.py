@@ -18,7 +18,6 @@ from models.datadoc import (
 from models.impression import Impression
 from tasks.sync_elasticsearch import sync_elasticsearch
 
-
 cell_types = get_config_value("datadoc.cell_types")
 
 
@@ -33,6 +32,7 @@ cell_types = get_config_value("datadoc.cell_types")
 def create_data_doc(
     environment_id,
     owner_uid,
+    cells=[],
     public=None,
     archived=None,
     title=None,
@@ -49,12 +49,69 @@ def create_data_doc(
         meta=meta,
     )
     session.add(data_doc)
+    session.flush()
 
+    for index, cell in enumerate(cells):
+        data_cell = create_data_cell(
+            cell_type=cell["type"],
+            context=cell["context"],
+            meta=cell["meta"],
+            commit=False,
+            session=session,
+        )
+        insert_data_doc_cell(
+            data_doc_id=data_doc.id,
+            cell_id=data_cell.id,
+            index=index,
+            commit=False,
+            session=session,
+        )
     if commit:
         session.commit()
         update_es_data_doc_by_id(data_doc.id)
     else:
         session.flush()
+
+    session.refresh(data_doc)
+    return data_doc
+
+
+@with_session
+def create_data_doc_from_execution(
+    environment_id,
+    owner_uid,
+    engine_id,
+    query_string,
+    execution_id,
+    public=None,
+    archived=None,
+    title=None,
+    meta=None,
+    commit=True,
+    session=None,
+):
+    data_doc = create_data_doc(
+        environment_id=environment_id,
+        owner_uid=owner_uid,
+        cells=[
+            {"type": "query", "context": query_string, "meta": {"engine": engine_id}}
+        ],
+        commit=False,
+        session=session,
+    )
+
+    append_query_executions_to_data_cell(
+        data_cell_id=data_doc.cells[0].id,
+        query_execution_ids=[execution_id],
+        commit=False,
+        session=session,
+    )
+    if commit:
+        session.commit()
+        update_es_data_doc_by_id(data_doc.id)
+    else:
+        session.flush()
+
     session.refresh(data_doc)
     return data_doc
 

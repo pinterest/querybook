@@ -1,16 +1,13 @@
-import React, {
-    useRef,
-    useCallback,
-    useMemo,
-    useEffect,
-    useState,
-} from 'react';
+import React, { useRef, useCallback, useMemo, useEffect } from 'react';
 import Resizable from 're-resizable';
 import { useSelector, useDispatch } from 'react-redux';
 
 import { ISearchOptions, ISearchResult } from 'const/searchAndReplace';
+import { useDebounceState } from 'hooks/redux/useDebounceState';
 import { getQueryEngineId, sleep, enableResizable } from 'lib/utils';
 import { getSelectedQuery } from 'lib/sql-helper/sql-lexer';
+import { navigateWithinEnv } from 'lib/utils/query-string';
+import { searchText, replaceStringIndices } from 'lib/data-doc/search';
 
 import { IStoreState, Dispatch } from 'redux/store/types';
 import {
@@ -19,28 +16,28 @@ import {
 } from 'redux/queryEngine/selector';
 import * as queryExecutionsAction from 'redux/queryExecutions/action';
 import * as adhocQueryActions from 'redux/adhocQuery/action';
+import * as dataDocActions from 'redux/dataDoc/action';
 
-import {
-    QueryRunButton,
-    IQueryRunButtonHandles,
-} from 'components/QueryRunButton/QueryRunButton';
-import { QueryEditor } from 'components/QueryEditor/QueryEditor';
-import { FullHeight } from 'ui/FullHeight/FullHeight';
-import { IconButton } from 'ui/Button/IconButton';
-import { Level, LevelItem } from 'ui/Level/Level';
-import { Button } from 'ui/Button/Button';
-
-import './QueryComposer.scss';
-import { QueryComposerExecution } from './QueryComposerExecution';
-import { useDebounceState } from 'hooks/redux/useDebounceState';
-import { searchText, replaceStringIndices } from 'lib/data-doc/search';
+import { BindedQueryEditor } from 'components/QueryEditor/BindedQueryEditor';
 import { CodeMirrorSearchHighlighter } from 'components/SearchAndReplace/CodeMirrorSearchHighlighter';
 import {
     SearchAndReplace,
     ISearchAndReplaceHandles,
     ISearchAndReplaceProps,
 } from 'components/SearchAndReplace/SearchAndReplace';
-import { BindedQueryEditor } from 'components/QueryEditor/BindedQueryEditor';
+import {
+    QueryRunButton,
+    IQueryRunButtonHandles,
+} from 'components/QueryRunButton/QueryRunButton';
+import { QueryComposerExecution } from './QueryComposerExecution';
+import { QueryEditor } from 'components/QueryEditor/QueryEditor';
+
+import { FullHeight } from 'ui/FullHeight/FullHeight';
+import { IconButton } from 'ui/Button/IconButton';
+import { Level, LevelItem } from 'ui/Level/Level';
+import { Button } from 'ui/Button/Button';
+
+import './QueryComposer.scss';
 
 const useExecution = (dispatch: Dispatch) => {
     const executionId = useSelector(
@@ -157,6 +154,26 @@ export const QueryComposer: React.FC<{}> = () => {
             queryEditorRef.current.formatQuery();
         }
     }, [queryEditorRef.current]);
+    const handleCreateDataDoc = useCallback(async () => {
+        let dataDoc = null;
+        if (executionId) {
+            dataDoc = await dispatch(
+                dataDocActions.createDataDocFromAdhoc(
+                    executionId,
+                    engine.id,
+                    query
+                )
+            );
+        } else {
+            const cell = {
+                type: 'query',
+                context: query,
+                meta: { engine: engine.id },
+            };
+            dataDoc = await dispatch(dataDocActions.createDataDoc([cell]));
+        }
+        navigateWithinEnv(`/datadoc/${dataDoc.id}/`);
+    }, [executionId, query]);
 
     const searchAndReplaceProps = useQueryComposerSearchAndReplace(
         query,
@@ -263,6 +280,11 @@ export const QueryComposer: React.FC<{}> = () => {
                             icon="delete"
                             title="Clear"
                             onClick={() => setQuery('')}
+                        />
+                        <Button
+                            icon="plus"
+                            title="Create DataDoc"
+                            onClick={handleCreateDataDoc}
                         />
                     </LevelItem>
                     <LevelItem>{queryRunDOM}</LevelItem>
