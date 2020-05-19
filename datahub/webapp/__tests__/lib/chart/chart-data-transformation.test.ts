@@ -40,6 +40,20 @@ const testData3 = [
     ['2001-01-03', 91, 'yellow'],
 ];
 
+// mixed vals
+const testData4 = [
+    ['time', 'val', 'color'],
+    ['2001-01-01', '1.2', 'blue'],
+    ['2001-01-01', null, 'blue'],
+    ['2001-01-01', '50.0', 'yellow'],
+    ['2001-01-01', 'null', 'pink'],
+
+    ['2001-01-02', '-9.0', 'blue'],
+    ['2001-01-02', '42.9', 'pink'],
+    ['2001-01-02', '-33.4', 'blue'],
+    ['2001-01-02', '0.9', 'pink'],
+];
+
 // AGG BY ALL ROWS
 test('data aggregates by all rows (sum)', () => {
     const transformedData = transformData(
@@ -264,4 +278,31 @@ test('returns null if invalid index given', () => {
         {}
     );
     expect(invalidIndex3).toEqual(null);
+});
+
+// sorts
+test('returns sorted data', () => {
+    const sortedData = transformData(
+        testData4,
+        false,
+        false,
+        null,
+        null,
+        null,
+        null,
+        1,
+        true,
+        1
+    );
+    expect(sortedData).toEqual([
+        ['time', 'val', 'color'],
+        ['2001-01-02', '-33.4', 'blue'],
+        ['2001-01-02', '-9.0', 'blue'],
+        ['2001-01-02', '0.9', 'pink'],
+        ['2001-01-01', '1.2', 'blue'],
+        ['2001-01-02', '42.9', 'pink'],
+        ['2001-01-01', '50.0', 'yellow'],
+        ['2001-01-01', null, 'blue'],
+        ['2001-01-01', 'null', 'pink'],
+    ]);
 });
