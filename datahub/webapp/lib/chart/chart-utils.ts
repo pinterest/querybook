@@ -68,6 +68,7 @@ export function sortTable(
     const reverseMultiplier = ascending ? 1 : -1;
     if (!isNaN(tableRows[rowIndex][columnIndex] as number)) {
         return tableRows.sort((a, b) => {
+            // null values are always at the end
             if (a[columnIndex] == null || isNaN(a[columnIndex])) {
                 return 1;
             } else if (b[columnIndex] == null || isNaN(b[columnIndex])) {
