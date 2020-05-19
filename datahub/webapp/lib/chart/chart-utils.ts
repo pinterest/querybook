@@ -58,9 +58,15 @@ export function sortTable(
         return tableRows;
     }
 
-    const reverseMultiplier = ascending ? 1 : -1;
+    const rowIndex = tableRows.findIndex(
+        (row) => row[columnIndex] != null && row[columnIndex] !== 'null'
+    );
+    if (rowIndex === -1) {
+        return tableRows;
+    }
 
-    if (!isNaN(tableRows[0][columnIndex] as number)) {
+    const reverseMultiplier = ascending ? 1 : -1;
+    if (!isNaN(tableRows[rowIndex][columnIndex] as number)) {
         return tableRows.sort((a, b) => {
             if (a[columnIndex] == null || isNaN(a[columnIndex])) {
                 return 1;
