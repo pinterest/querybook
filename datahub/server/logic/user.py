@@ -85,6 +85,42 @@ def update_user(uid, commit=True, session=None, **kwargs):
 
 
 @with_session
+def update_user_properties(uid: int, commit=True, session=None, **properties):
+    """Update the properties field of user. Key value pairs of properties
+       will be updated to user, if properties value is None, then that property
+       will be deleted.
+
+    Arguments:
+        uid {int} -- The user Id
+
+    Keyword Arguments:
+        commit {bool} -- Whether or not to commit the change (default: {True})
+        session -- Sqlalchemy session, auto provided (default: {None})
+
+    Returns:
+        User -- The updated user object
+    """
+
+    user = get_user_by_id(uid, session=session)
+    assert user is not None
+    new_properties = {**user.properties}
+    for key, value in properties.items():
+        if value is None:
+            new_properties.pop(key, None)
+        else:
+            new_properties[key] = value
+    user.properties = new_properties
+
+    if commit:
+        session.commit()
+    else:
+        session.flush()
+    session.refresh(user)
+
+    return user
+
+
+@with_session
 def delete_user(uid, session=None):
     # user cannot be deleted
     pass

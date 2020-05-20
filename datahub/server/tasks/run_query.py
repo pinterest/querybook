@@ -154,7 +154,7 @@ def assert_safe_query(query, engine_id, session=None):
     try:
         from lib.metastore.utils import MetastoreTableACLChecker
 
-        LOG.info("assert_safe_query")
+        LOG.debug("assert_safe_query")
         table_per_statement, _ = process_query(query)
         all_tables = [table for tables in table_per_statement for table in tables]
 

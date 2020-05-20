@@ -3,7 +3,8 @@ import produce from 'immer';
 export function updateValue<T>(
     item: T,
     path: string, // example: 'name', or 'url.5' or 'params.username' or 'params.1.username'
-    newVal: any // undefined
+    newVal: any,
+    deleteIfValueEquals = [undefined]
 ): T {
     if (!path) {
         return newVal;
@@ -16,7 +17,7 @@ export function updateValue<T>(
         }
         const lastFieldName = fieldNames[fieldNames.length - 1];
 
-        if (newVal === undefined) {
+        if (deleteIfValueEquals.includes(newVal)) {
             // Deletion
             if (Array.isArray(innerItem)) {
                 innerItem.splice(Number(lastFieldName), 1);

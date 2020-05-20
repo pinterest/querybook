@@ -12,7 +12,7 @@ import { ITaskSchedule } from 'const/schedule';
 
 import { AdminDeletedList } from './AdminDeletedList';
 import { AdminAuditLogButton } from 'components/AdminAuditLog/AdminAuditLogButton';
-import { IAdminTask } from './AdminTask';
+
 import { TaskEditor } from 'components/Task/TaskEditor';
 
 import { Button } from 'ui/Button/Button';
@@ -81,7 +81,7 @@ export const AdminMetastore: React.FunctionComponent<IProps> = ({
     const {
         data: metastoreUpdateSchedule,
         forceFetch: loadMetastoreUpdateSchedule,
-    } = useDataFetch<IAdminTask>({
+    } = useDataFetch<ITaskSchedule>({
         url: `/schedule/name/update_metastore_${metastoreId}/`,
     });
 

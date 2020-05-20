@@ -251,11 +251,11 @@ export function createQueryExecution(
 export function fetchExporters(): ThunkResult<Promise<any>> {
     return async (dispatch) => {
         const { data: exporters } = await ds.fetch(
-            '/statement_execution_exporter/'
+            '/query_execution_exporter/'
         );
 
         dispatch({
-            type: '@@queryExecutions/RECEIVE_STATEMENT_EXECUTION_EXPORTERS',
+            type: '@@queryExecutions/RECEIVE_QUERY_RESULT_EXPORTERS',
             payload: {
                 exporters,
             },

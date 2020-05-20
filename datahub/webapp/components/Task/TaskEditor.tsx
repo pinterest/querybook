@@ -13,7 +13,7 @@ import {
 import { sendNotification, sendConfirm } from 'lib/dataHubUI';
 import { useDataFetch } from 'hooks/useDataFetch';
 
-import { IAdminTask } from 'components/AppAdmin/AdminTask';
+import { ITaskSchedule } from 'const/schedule';
 import { TaskStatus } from 'components/Task/TaskStatus';
 
 import { AsyncButton } from 'ui/AsyncButton/AsyncButton';
@@ -34,7 +34,7 @@ import { AdminAuditLogButton } from 'components/AdminAuditLog/AdminAuditLogButto
 type TaskEditorTabs = 'edit' | 'history';
 
 interface IProps {
-    task: Partial<IAdminTask>;
+    task: Partial<ITaskSchedule>;
     onTaskUpdate?: () => void;
     onTaskDelete?: () => void;
     onTaskCreate?: (id?: number) => void;

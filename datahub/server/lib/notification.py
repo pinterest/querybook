@@ -14,10 +14,15 @@ LOG = get_logger(__file__)
 def send_slack_message(to, message, token=DataHubSettings.DATAHUB_SLACK_TOKEN):
     """Send Message to slack user/channel
 
-        Keyword arguments:
-        token: the api token
-        to: the user or channel message is going to
-        message: the actual message in raw text
+    Arguments:
+        to {str} -- the user or channel message is going to
+        message {str} -- the actual message in raw text
+
+    Keyword Arguments:
+        token {str} -- the api token (default: {DataHubSettings.DATAHUB_SLACK_TOKEN})
+
+    Returns:
+        [requests.Response] -- The slack post request response
     """
 
     url = "https://slack.com/api/chat.postMessage"

@@ -2,17 +2,18 @@ from lib.export.base_exporter import BaseExporter
 
 
 class RExporter(BaseExporter):
-    @classmethod
-    def EXPORTER_NAME(cls):
+    @property
+    def exporter_name(self):
         return "Export to R"
 
-    @classmethod
-    def EXPORTER_TYPE(cls):
+    @property
+    def exporter_type(self):
         return "text"
 
-    @classmethod
-    def export(cls, statement_execution_id, uid):
-        download_url = cls.get_statement_execution_download_url(statement_execution_id)
+    def export(self, statement_execution_id, uid):
+        download_url = self._get_statement_execution_download_url(
+            statement_execution_id
+        )
 
         return """
 library(tidyverse)

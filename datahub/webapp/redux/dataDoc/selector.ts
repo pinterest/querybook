@@ -7,7 +7,7 @@ import {
     permissionToReadWrite,
 } from 'lib/data-doc/datadoc-permission';
 import { IStoreState } from 'redux/store/types';
-import { IDataCell } from 'const/datadoc';
+import { IDataCell, IDataQueryCellMeta } from 'const/datadoc';
 
 import { myUserInfoSelector } from 'redux/user/selector';
 
@@ -188,4 +188,18 @@ export const canCurrentUserEditSelector = createSelector(
         );
         return permissionToReadWrite(permission).write;
     }
+);
+
+export const queryCellSelector = createSelector(dataDocCellsSelector, (cells) =>
+    cells
+        .filter((cell) => cell.cell_type === 'query')
+
+        .map((cell, index) => {
+            const cellMeta: IDataQueryCellMeta = cell.meta;
+            const title = cellMeta.title ?? `Query #${index + 1}`;
+            return {
+                id: cell.id,
+                title,
+            };
+        })
 );

@@ -76,7 +76,7 @@ services:
             redis:
                 condition: service_healthy
     redis:
-        image: redis
+        image: redis:5.0.9
         restart: always
         command: ['redis-server', '--appendonly', 'yes']
         hostname: redis

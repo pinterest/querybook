@@ -1,41 +1,74 @@
-from abc import ABCMeta, abstractclassmethod
+from abc import ABCMeta, abstractmethod
 from logic import query_execution as logic
 from lib.result_store import GenericReader
 
 
 class BaseExporter(metaclass=ABCMeta):
-    @abstractclassmethod
-    def EXPORTER_NAME(cls) -> str:
+    @property
+    @abstractmethod
+    def exporter_name(self) -> str:
         """Name of the exporter that will be shown on the frontend
         """
         raise NotImplementedError()
 
-    @abstractclassmethod
-    def EXPORTER_TYPE(cls):
-        # Can be one of 'url' or 'text'
-        # Both returns a string for upload but
+    @property
+    @abstractmethod
+    def exporter_type(self) -> str:
+        # Can be one of 'url' | 'text' | 'none'
         # Url exports returns a url for user to open
         # Text exports opens up a copy paste modal for user to copy
+        # None returns nothing since the result is exported without anything to track
         raise NotImplementedError()
 
-    @abstractclassmethod
-    def export(cls, statement_execution_id: int, uid: int) -> str:
+    @property
+    def requires_auth(self) -> bool:
+        # Make this method return true if additional auth flow is needed for it to work
+        return False
+
+    def acquire_auth(self, uid: int) -> str:
+        """Implement this method if requires_auth is True
+           Use this method to redirect user to the oauth url
+
+        Arguments:
+            uid {int} -- [description]
+        Returns:
+            str -- Redirection url to the google oauth
+            None -- if no redirection is needed
+        """
+        raise NotImplementedError()
+
+    @property
+    def export_form(self):
+        """Return the form field for additional options for export
+           Note that all options to be optional.
+           Returns None if nothing is to be filled
+
+        Returns:
+            StructFormField -- The form value that indicates
+                               the key value to enter
+        """
+        return None
+
+    @abstractmethod
+    def export(self, statement_execution_id: int, uid: int, **options) -> str:
         """This function exports the query results of statement_execution_id
            to given output
         Arguments:
             statement_execution_id {[number]}
             uid {[number]} -- user who requested access
+            options {[Dict]} -- optional additional options, note they must be optional
+                                since
         Returns:
             str -- String for frontend to display
                    Behavior noted by EXPORTER_TYPE
         """
         raise NotImplementedError()
 
-    @classmethod
-    def get_statement_execution_result(
-        cls,
+    def _get_statement_execution_result(
+        self,
         statement_execution_id: int,
         raw: bool = False,  # If raw, return unparsed csv text
+        number_of_lines: int = 2001,
     ):
         statement_execution = logic.get_statement_execution_by_id(
             statement_execution_id
@@ -43,14 +76,15 @@ class BaseExporter(metaclass=ABCMeta):
         if statement_execution.result_path:
             with GenericReader(statement_execution.result_path) as reader:
                 if raw:
-                    result = "\n".join(reader.read_lines(number_of_lines=2001))
+                    result = "\n".join(
+                        reader.read_lines(number_of_lines=number_of_lines)
+                    )
                 else:
-                    result = reader.read_csv(number_of_lines=2001)
+                    result = reader.read_csv(number_of_lines=number_of_lines)
                 return result
         return None
 
-    @classmethod
-    def get_statement_execution_download_url(cls, statement_execution_id: int):
+    def _get_statement_execution_download_url(self, statement_execution_id: int):
         statement_execution = logic.get_statement_execution_by_id(
             statement_execution_id
         )
@@ -60,6 +94,10 @@ class BaseExporter(metaclass=ABCMeta):
                     return reader.get_download_url()
         return None
 
-    @classmethod
-    def to_dict(cls):
-        return {"name": cls.EXPORTER_NAME(), "type": cls.EXPORTER_TYPE()}
+    def to_dict(self):
+        return {
+            "name": self.exporter_name,
+            "type": self.exporter_type,
+            "requires_auth": self.requires_auth,
+            "form": self.export_form,
+        }

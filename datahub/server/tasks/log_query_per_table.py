@@ -13,8 +13,8 @@ from logic import (
 )
 
 
-@celery.task
-def log_query_per_table_task(query_execution_id):
+@celery.task(bind=True)
+def log_query_per_table_task(self, query_execution_id):
     with DBSession() as session:
         query_execution = qe_logic.get_query_execution_by_id(
             query_execution_id, session=session

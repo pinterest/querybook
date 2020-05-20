@@ -307,7 +307,7 @@ function statementExporters(
     action: QueryExecutionAction
 ) {
     switch (action.type) {
-        case '@@queryExecutions/RECEIVE_STATEMENT_EXECUTION_EXPORTERS': {
+        case '@@queryExecutions/RECEIVE_QUERY_RESULT_EXPORTERS': {
             return action.payload.exporters;
         }
     }

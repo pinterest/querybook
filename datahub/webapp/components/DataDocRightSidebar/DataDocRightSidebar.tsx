@@ -20,13 +20,11 @@ interface IProps {
 
     changeDataDocMeta: (docId: number, meta: Record<string, any>) => any;
     onClone: () => any;
-    onRunAllQueries: () => void;
 }
 
 export const DataDocRightSidebar: React.FunctionComponent<IProps> = ({
     onClone,
     changeDataDocMeta,
-    onRunAllQueries,
 
     isSaving,
     isEditable,
@@ -108,12 +106,6 @@ export const DataDocRightSidebar: React.FunctionComponent<IProps> = ({
                 />
             </div>
             <div className="DataDocRightSidebar-button-section-bottom">
-                {/* <IconButton
-                    icon="play"
-                    tooltip="Run all query cells"
-                    tooltipPos="left"
-                    onClick={onRunAllQueries}
-                /> */}
                 {templateButtonDOM}
                 {scheduleButtonDOM}
                 <IconButton
