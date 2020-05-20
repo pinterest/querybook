@@ -414,14 +414,14 @@ export const SearchOverview: React.FunctionComponent = () => {
             <div className="search-instructions">
                 <span className="search-instructions-span">
                     <span className="instructions-key">esc</span>
-                    to dismiss
+                    <span className="ml4">to dismiss</span>
                 </span>
             </div>
             <div className="search-tip">
                 <span className="instructions-key">⌘</span>
                 <span className="search-tip-plus">+</span>
-                <span className="instructions-key">K</span>
-                to open this faster
+                <span className="instructions-key mr4">K</span>
+                <span className="ml4">to open this faster</span>
             </div>
         </Level>
     );
