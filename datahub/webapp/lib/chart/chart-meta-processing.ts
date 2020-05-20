@@ -154,15 +154,6 @@ export function mapMetaToChartOptions(
                 align: meta.visual.values?.alignment,
             },
         },
-        scales: {
-            yAxes: [
-                {
-                    ticks: {
-                        padding: 100,
-                    },
-                },
-            ],
-        },
         responsive: true,
         legend: {
             position: meta.visual.legend_position || 'top',
