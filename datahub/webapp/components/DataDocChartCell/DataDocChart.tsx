@@ -99,7 +99,6 @@ export const DataDocChart: React.FunctionComponent<IDataDocChartProps> = ({
         defaults.global.defaultFontFamily = 'Avenir Next';
         defaults.global.defaultFontSize = 14;
         defaults.global.plugins.filler.propagate = true;
-        defaults.global.plugins.unregister = { ChartDataLabels: false };
     }, [theme]);
 
     const [xAxesScaleType, yAxesScaleType] = useChartScale(meta, data);
