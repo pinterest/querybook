@@ -123,6 +123,14 @@ export function mapMetaToFormVals(
         // labels
         title: meta.title || '',
         legendPosition: meta.visual.legend_position || 'top',
+        valueDisplay:
+            meta.visual.values?.display === 1
+                ? true
+                : meta.visual.values?.display === 2
+                ? 'auto'
+                : false,
+        valuePosition: meta.visual.values?.position,
+        valueAlignment: meta.visual.values?.alignment,
     };
 }
 
@@ -132,7 +140,29 @@ export function mapMetaToChartOptions(
     xAxesScaleType: ChartScaleType,
     yAxesScaleType: ChartScaleType
 ): ChartOptions {
+    const valueDisplay =
+        meta.visual.values?.display === 1
+            ? true
+            : meta.visual.values?.display === 2
+            ? 'auto'
+            : false;
     const optionsObj: ChartOptions = {
+        plugins: {
+            datalabels: {
+                display: valueDisplay,
+                anchor: meta.visual.values?.position,
+                align: meta.visual.values?.alignment,
+            },
+        },
+        scales: {
+            yAxes: [
+                {
+                    ticks: {
+                        padding: 100,
+                    },
+                },
+            ],
+        },
         responsive: true,
         legend: {
             position: meta.visual.legend_position || 'top',

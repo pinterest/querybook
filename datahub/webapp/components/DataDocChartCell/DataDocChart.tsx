@@ -11,6 +11,7 @@ import {
 import React from 'react';
 import { useSelector } from 'react-redux';
 import { ChartOptions } from 'chart.js';
+import 'chartjs-plugin-datalabels';
 
 import { IDataChartCellMeta } from 'const/datadoc';
 import { ChartScaleType } from 'const/dataDocChart';

@@ -4916,6 +4916,11 @@ chartjs-color@^2.1.0:
     chartjs-color-string "^0.6.0"
     color-convert "^0.5.3"
 
+chartjs-plugin-datalabels@^0.7.0:
+  version "0.7.0"
+  resolved "https://artifacts-prod-use1.pinadmin.com/artifactory/api/npm/node-npm-yarn-prod-virtual/chartjs-plugin-datalabels/-/chartjs-plugin-datalabels-0.7.0.tgz#f72e44edb2db45ef68913e9320bcc50398a205e6"
+  integrity sha1-9y5E7bLbRe9okT6TILzFA5iiBeY=
+
 cheerio@^1.0.0-rc.2:
   version "1.0.0-rc.3"
   resolved "https://registry.yarnpkg.com/cheerio/-/cheerio-1.0.0-rc.3.tgz#094636d425b2e9c0f4eb91a46c05630c9a1a8bf6"

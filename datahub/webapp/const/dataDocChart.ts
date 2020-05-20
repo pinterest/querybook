@@ -104,6 +104,18 @@ export type ChartLegendPositionType = 'top' | 'bottom' | 'right' | 'left';
 
 export interface IChartVisualMeta {
     legend_position: ChartLegendPositionType;
+    values: {
+        display: number;
+        position: 'center' | 'start' | 'end';
+        alignment:
+            | 'center'
+            | 'start'
+            | 'end'
+            | 'right'
+            | 'left'
+            | 'top'
+            | 'bottom';
+    };
 }
 
 export type ChartDataSourceType =
@@ -159,4 +171,14 @@ export interface IChartFormValues {
 
     title: string;
     legendPosition: 'top' | 'bottom' | 'right' | 'left';
+    valueDisplay: true | false | 'auto';
+    valuePosition: 'center' | 'start' | 'end';
+    valueAlignment:
+        | 'center'
+        | 'start'
+        | 'end'
+        | 'right'
+        | 'left'
+        | 'top'
+        | 'bottom';
 }
