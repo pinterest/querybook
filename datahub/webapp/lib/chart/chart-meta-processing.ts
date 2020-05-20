@@ -137,20 +137,7 @@ export function mapMetaToChartOptions(
     xAxesScaleType: ChartScaleType,
     yAxesScaleType: ChartScaleType
 ): ChartOptions {
-    const valueDisplay =
-        meta.visual.values?.display === chartValueDisplayType.TRUE
-            ? true
-            : meta.visual.values?.display === chartValueDisplayType.AUTO
-            ? 'auto'
-            : false;
     const optionsObj: ChartOptions = {
-        plugins: {
-            datalabels: {
-                display: valueDisplay,
-                anchor: meta.visual.values?.position,
-                align: meta.visual.values?.alignment,
-            },
-        },
         responsive: true,
         legend: {
             position: meta.visual.legend_position || 'top',
@@ -187,6 +174,19 @@ export function mapMetaToChartOptions(
             },
         },
     };
+
+    if (meta.visual.values?.display) {
+        optionsObj['plugins'] = {
+            datalabels: {
+                display:
+                    meta.visual.values?.display === chartValueDisplayType.TRUE
+                        ? true
+                        : 'auto',
+                anchor: meta.visual.values?.position,
+                align: meta.visual.values?.alignment,
+            },
+        };
+    }
 
     if (meta.chart.type === 'pie' || meta.chart.type === 'doughnut') {
         optionsObj.tooltips['callbacks'] = {

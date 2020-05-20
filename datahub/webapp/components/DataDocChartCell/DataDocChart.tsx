@@ -11,7 +11,7 @@ import {
 import React from 'react';
 import { useSelector } from 'react-redux';
 import { ChartOptions } from 'chart.js';
-import 'chartjs-plugin-datalabels';
+import ChartDataLabels from 'chartjs-plugin-datalabels';
 
 import { IDataChartCellMeta } from 'const/datadoc';
 import { ChartScaleType } from 'const/dataDocChart';
@@ -97,6 +97,7 @@ export const DataDocChart: React.FunctionComponent<IDataDocChartProps> = ({
         defaults.global.defaultFontFamily = 'Avenir Next';
         defaults.global.defaultFontSize = 14;
         defaults.global.plugins.filler.propagate = true;
+        defaults.global.plugins.unregister = { ChartDataLabels: false };
     }, [theme]);
 
     const [xAxesScaleType, yAxesScaleType] = useChartScale(meta, data);
@@ -106,22 +107,65 @@ export const DataDocChart: React.FunctionComponent<IDataDocChartProps> = ({
         ...mapMetaToChartOptions(meta, theme, xAxesScaleType, yAxesScaleType),
         ...chartJsOptionObj,
     };
+    const chartJSPlugIns = meta.visual.values?.display ? [ChartDataLabels] : [];
 
     let chartDOM = null;
     if (meta.chart.type === 'line' || meta.chart.type === 'area') {
-        chartDOM = <Line data={chartData} options={chartJSOptions} />;
+        chartDOM = (
+            <Line
+                data={chartData}
+                plugins={chartJSPlugIns}
+                options={chartJSOptions}
+            />
+        );
     } else if (meta.chart.type === 'bar') {
-        chartDOM = <Bar data={chartData} options={chartJSOptions} />;
+        chartDOM = (
+            <Bar
+                data={chartData}
+                plugins={chartJSPlugIns}
+                options={chartJSOptions}
+            />
+        );
     } else if (meta.chart.type === 'histogram') {
-        chartDOM = <HorizontalBar data={chartData} options={chartJSOptions} />;
+        chartDOM = (
+            <HorizontalBar
+                data={chartData}
+                plugins={chartJSPlugIns}
+                options={chartJSOptions}
+            />
+        );
     } else if (meta.chart.type === 'pie') {
-        chartDOM = <Pie data={chartData} options={chartJSOptions} />;
+        chartDOM = (
+            <Pie
+                data={chartData}
+                plugins={chartJSPlugIns}
+                options={chartJSOptions}
+            />
+        );
     } else if (meta.chart.type === 'doughnut') {
-        chartDOM = <Doughnut data={chartData} options={chartJSOptions} />;
+        chartDOM = (
+            <Doughnut
+                data={chartData}
+                plugins={chartJSPlugIns}
+                options={chartJSOptions}
+            />
+        );
     } else if (meta.chart.type === 'scatter') {
-        chartDOM = <Scatter data={chartData} options={chartJSOptions} />;
+        chartDOM = (
+            <Scatter
+                data={chartData}
+                plugins={chartJSPlugIns}
+                options={chartJSOptions}
+            />
+        );
     } else if (meta.chart.type === 'bubble') {
-        chartDOM = <Bubble data={chartData} options={chartJSOptions} />;
+        chartDOM = (
+            <Bubble
+                data={chartData}
+                plugins={chartJSPlugIns}
+                options={chartJSOptions}
+            />
+        );
     }
 
     return chartDOM;
