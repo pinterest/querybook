@@ -175,18 +175,18 @@ export function mapMetaToChartOptions(
         },
     };
 
-    if (meta.visual.values?.display) {
-        optionsObj['plugins'] = {
-            datalabels: {
-                display:
-                    meta.visual.values?.display === chartValueDisplayType.TRUE
-                        ? true
-                        : 'auto',
-                anchor: meta.visual.values?.position,
-                align: meta.visual.values?.alignment,
-            },
-        };
-    }
+    optionsObj['plugins'] = {
+        datalabels: {
+            display:
+                meta.visual.values?.display === chartValueDisplayType.TRUE
+                    ? true
+                    : meta.visual.values?.display === chartValueDisplayType.AUTO
+                    ? 'auto'
+                    : false,
+            anchor: meta.visual.values?.position,
+            align: meta.visual.values?.alignment,
+        },
+    };
 
     if (meta.chart.type === 'pie' || meta.chart.type === 'doughnut') {
         optionsObj.tooltips['callbacks'] = {

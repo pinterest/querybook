@@ -10,7 +10,7 @@ import {
 } from 'react-chartjs-2';
 import React from 'react';
 import { useSelector } from 'react-redux';
-import { ChartOptions } from 'chart.js';
+import Chart, { ChartOptions } from 'chart.js';
 import ChartDataLabels from 'chartjs-plugin-datalabels';
 
 import { IDataChartCellMeta } from 'const/datadoc';
@@ -26,6 +26,8 @@ interface IDataDocChartProps {
     data?: any[][];
     chartJsOptionObj?: ChartOptions;
 }
+
+Chart.plugins.unregister(ChartDataLabels);
 
 function isChartValNull(val: any): boolean {
     // checks if chart value is null or "null"
@@ -107,65 +109,28 @@ export const DataDocChart: React.FunctionComponent<IDataDocChartProps> = ({
         ...mapMetaToChartOptions(meta, theme, xAxesScaleType, yAxesScaleType),
         ...chartJsOptionObj,
     };
-    const chartJSPlugIns = meta.visual.values?.display ? [ChartDataLabels] : [];
+
+    const chartProps = {
+        data: chartData,
+        plugins: [ChartDataLabels],
+        options: chartJSOptions,
+    };
 
     let chartDOM = null;
     if (meta.chart.type === 'line' || meta.chart.type === 'area') {
-        chartDOM = (
-            <Line
-                data={chartData}
-                plugins={chartJSPlugIns}
-                options={chartJSOptions}
-            />
-        );
+        chartDOM = <Line {...chartProps} />;
     } else if (meta.chart.type === 'bar') {
-        chartDOM = (
-            <Bar
-                data={chartData}
-                plugins={chartJSPlugIns}
-                options={chartJSOptions}
-            />
-        );
+        chartDOM = <Bar {...chartProps} />;
     } else if (meta.chart.type === 'histogram') {
-        chartDOM = (
-            <HorizontalBar
-                data={chartData}
-                plugins={chartJSPlugIns}
-                options={chartJSOptions}
-            />
-        );
+        chartDOM = <HorizontalBar {...chartProps} />;
     } else if (meta.chart.type === 'pie') {
-        chartDOM = (
-            <Pie
-                data={chartData}
-                plugins={chartJSPlugIns}
-                options={chartJSOptions}
-            />
-        );
+        chartDOM = <Pie {...chartProps} />;
     } else if (meta.chart.type === 'doughnut') {
-        chartDOM = (
-            <Doughnut
-                data={chartData}
-                plugins={chartJSPlugIns}
-                options={chartJSOptions}
-            />
-        );
+        chartDOM = <Doughnut {...chartProps} />;
     } else if (meta.chart.type === 'scatter') {
-        chartDOM = (
-            <Scatter
-                data={chartData}
-                plugins={chartJSPlugIns}
-                options={chartJSOptions}
-            />
-        );
+        chartDOM = <Scatter {...chartProps} />;
     } else if (meta.chart.type === 'bubble') {
-        chartDOM = (
-            <Bubble
-                data={chartData}
-                plugins={chartJSPlugIns}
-                options={chartJSOptions}
-            />
-        );
+        chartDOM = <Bubble {...chartProps} />;
     }
 
     return chartDOM;
