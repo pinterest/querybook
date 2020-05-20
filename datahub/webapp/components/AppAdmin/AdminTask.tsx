@@ -8,6 +8,7 @@ import history from 'lib/router-history';
 import { sendNotification } from 'lib/dataHubUI';
 import { useDataFetch } from 'hooks/useDataFetch';
 
+import { ITaskSchedule, TaskType } from 'const/schedule';
 import { TaskEditor } from 'components/Task/TaskEditor';
 
 import { Button } from 'ui/Button/Button';
@@ -20,24 +21,6 @@ import { Level } from 'ui/Level/Level';
 import { AdminAuditLogButton } from 'components/AdminAuditLog/AdminAuditLogButton';
 
 import './AdminTask.scss';
-
-interface IProps {}
-
-export interface IAdminTask {
-    id: number;
-    name: string;
-    task: string;
-    task_type: TaskType;
-    cron: string;
-    args: any[];
-    kwargs: any[];
-    options: any;
-    last_run_at: number;
-    total_run_count: number;
-    enabled: boolean;
-}
-
-type TaskType = 'prod' | 'user';
 
 const tableColumns = [
     'id',
@@ -71,14 +54,14 @@ const tableColumnAligns: Record<string, TableAlign> = {
     enabled: 'center',
 };
 
-export const AdminTask: React.FunctionComponent<IProps> = () => {
+export const AdminTask: React.FunctionComponent<{}> = () => {
     const { id: detailTaskId } = useParams();
 
     const [type, setType] = React.useState<TaskType>('prod');
     const [searchString, setSearchString] = React.useState<string>('');
 
     const { data: taskList, forceFetch: loadTaskList } = useDataFetch<
-        IAdminTask[]
+        ITaskSchedule[]
     >({
         url: '/schedule/',
     });
@@ -111,7 +94,7 @@ export const AdminTask: React.FunctionComponent<IProps> = () => {
     }, []);
 
     const formatCell = React.useCallback(
-        (index: number, column: string, row: IAdminTask) => {
+        (index: number, column: string, row: ITaskSchedule) => {
             const key = column;
             const value = row[key];
             const taskId = row.id;

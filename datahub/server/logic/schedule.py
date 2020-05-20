@@ -177,6 +177,12 @@ def update_task_run_record(id, status=None, alerted=None, session=None):
         return run
 
 
+@with_session
+def create_task_run_record_for_celery_task(task, session=None):
+    job_name = task.request.get("shadow", task.name)
+    return create_task_run_record(name=job_name, session=session).id
+
+
 def with_task_logging(
     # TODO: add some alerting feature here
 ):
@@ -187,25 +193,17 @@ def with_task_logging(
 
         @wraps(job_func)
         def wrapper(self, *args, **kwargs):
-            record_dict = None
+            record_id = None
             try:
-                job_name = self.request.get("shadow", self.name)
-
-                record_dict = create_task_run_record(name=job_name).to_dict()
-
+                record_id = create_task_run_record_for_celery_task(self)
                 result = job_func(self, *args, **kwargs)
-
-                update_task_run_record(
-                    id=record_dict["id"], status=TaskRunStatus.SUCCESS
-                )
+                update_task_run_record(id=record_id, status=TaskRunStatus.SUCCESS)
 
                 return result
             except Exception as e:
                 logger.info(e)
-                if isinstance(record_dict, dict):
-                    update_task_run_record(
-                        id=record_dict.get("id"), status=TaskRunStatus.FAILURE
-                    )
+                if record_id is not None:
+                    update_task_run_record(id=record_id, status=TaskRunStatus.FAILURE)
                 raise e
 
         return wrapper

@@ -16,7 +16,7 @@ from app.auth.permission import (
     verify_query_engine_permission,
 )
 from clients.s3_client import FileDoesNotExist
-from lib.export.all_exporters import ALL_EXPORTERS, get_exporter_class
+from lib.export.all_exporters import ALL_EXPORTERS, get_exporter
 from lib.result_store import GenericReader
 from lib.query_analysis.templating import (
     render_templated_query,
@@ -344,13 +344,24 @@ def delete_query_execution_notification(
         )
 
 
-@register("/statement_execution_exporter/", methods=["GET"], require_auth=True)
-def get_all_statement_execution_exporters():
+@register("/query_execution_exporter/", methods=["GET"], require_auth=True)
+def get_all_query_result_exporters():
     return ALL_EXPORTERS
 
 
 @register(
-    "/statement_execution/<int:statement_execution_id>/export/",
+    "/query_execution_exporter/auth/", methods=["GET"],
+)
+def export_statement_execution_acquire_auth(export_name):
+    exporter = get_exporter(export_name)
+    api_assert(exporter is not None, f"Invalid export name {export_name}")
+    if not exporter.requires_auth:
+        return None
+    return exporter.acquire_auth(current_user.id)
+
+
+@register(
+    "/query_execution_exporter/statement_execution/<int:statement_execution_id>/",
     methods=["GET"],
     require_auth=True,
 )
@@ -366,9 +377,9 @@ def export_statement_execution_result(statement_execution_id, export_name):
             statement_execution.query_execution_id, session=session
         )
 
-    exporter_class = get_exporter_class(export_name)
-    api_assert(exporter_class is not None, f"Invalid export name {export_name}")
-    return exporter_class.export(statement_execution_id, current_user.id)
+    exporter = get_exporter(export_name)
+    api_assert(exporter is not None, f"Invalid export name {export_name}")
+    return exporter.export(statement_execution_id, current_user.id)
 
 
 @register("/query_execution/templated_query/", methods=["POST"], require_auth=True)

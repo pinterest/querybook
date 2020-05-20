@@ -12,7 +12,7 @@ const StyledJsonViewer = styled.div`
 `;
 
 export interface IJsonViewerProps {
-    value?: string | {};
+    value: string | {};
     indent?: number;
     replacerFunction?: () => any;
 }

@@ -13,7 +13,11 @@ export interface ITaskSchedule {
     task: string;
     task_type: TaskType;
     cron: string;
+    args: any[];
+    kwargs: Record<string, any>;
+    options: Record<string, string | number>;
     last_run_at: number;
+    total_run_count: number;
     enabled: boolean;
 }
 
@@ -25,4 +29,22 @@ export interface ITaskStatusRecord {
     status: TaskRunStatus;
     updated_at: number;
     task_type: TaskType;
+}
+
+export enum NotifyOn {
+    ALL = 0,
+    ON_FAILURE = 1,
+    ON_SUCCESS = 2,
+}
+
+export interface IDataDocScheduleKwargs {
+    notify_with?: null | 'email' | 'slack';
+    notify_on?: NotifyOn;
+    exporter_cell_id?: number;
+    exporter_name?: string;
+    exporter_params?: Record<string, any>;
+}
+
+export interface IDataDocTaskSchedule extends ITaskSchedule {
+    kwargs: IDataDocScheduleKwargs;
 }

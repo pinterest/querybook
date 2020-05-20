@@ -64,9 +64,11 @@ export interface IQueryError {
     error_message: string;
 }
 
-export interface IStatementExporter {
+export interface IQueryResultExporter {
     name: string;
     type: 'url' | 'text';
+    requires_auth: boolean;
+    form: IStructFormField;
 }
 
 export interface IReceiveQueryExecutionsAction extends Action {
@@ -142,9 +144,9 @@ export interface IReceiveStatementExecutionUpdateAction extends Action {
 }
 
 export interface IReceiveStatementExporters extends Action {
-    type: '@@queryExecutions/RECEIVE_STATEMENT_EXECUTION_EXPORTERS';
+    type: '@@queryExecutions/RECEIVE_QUERY_RESULT_EXPORTERS';
     payload: {
-        exporters: IStatementExporter[];
+        exporters: IQueryResultExporter[];
     };
 }
 
@@ -177,7 +179,7 @@ export interface IQueryExecutionState {
     statementResultById: Record<number, IStatementResult>;
     statementLogById: Record<number, IStatementLog>;
 
-    statementExporters: IStatementExporter[];
+    statementExporters: IQueryResultExporter[];
 }
 
 export type ThunkResult<R> = ThunkAction<

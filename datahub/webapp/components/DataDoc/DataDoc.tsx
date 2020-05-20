@@ -528,11 +528,6 @@ class DataDocComponent extends React.Component<IProps, IState> {
     };
 
     @bind
-    public runAllQueryCells() {
-        ds.save(`/datadoc/${this.props.docId}/run/`);
-    }
-
-    @bind
     public renderLazyDataDocCell(
         cell: IDataCell,
         index: number,
@@ -687,7 +682,6 @@ class DataDocComponent extends React.Component<IProps, IState> {
                 isSaving={isSavingDataDoc}
                 isEditable={isEditable}
                 isConnected={connected}
-                onRunAllQueries={this.runAllQueryCells}
             />
         );
 

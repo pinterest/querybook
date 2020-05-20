@@ -3,6 +3,8 @@ from os import SEEK_END
 from datetime import datetime
 from urllib.parse import quote
 
+import requests
+
 from env import DataHubSettings
 from .common import ChunkReader, FileDoesNotExist
 from lib.utils.utils import DATETIME_TO_UTC
@@ -24,6 +26,17 @@ def get_google_credentials(creds_info=None):
     credentials = service_account.Credentials.from_service_account_info(cred_to_use)
 
     return credentials
+
+
+GOOGLE_AUTH_CONFIG = "https://accounts.google.com/.well-known/openid-configuration"
+_cached_google_oauth_config = None
+
+
+def get_google_oauth_config():
+    global _cached_google_oauth_config
+    if _cached_google_oauth_config is None:
+        _cached_google_oauth_config = requests.get(GOOGLE_AUTH_CONFIG).json()
+    return _cached_google_oauth_config
 
 
 # Reference used: https://dev.to/sethmlarson/python-data-streaming-to-google-cloud-storage-with-resumable-uploads-458h

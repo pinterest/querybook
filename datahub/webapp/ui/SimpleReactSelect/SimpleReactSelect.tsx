@@ -2,7 +2,7 @@ import React, { useMemo, useCallback } from 'react';
 import { Props as ReactSelectProps } from 'react-select/lib/Select';
 import Select from 'react-select';
 
-import { defaultReactSelectStyles } from 'lib/utils/react-select';
+import { makeReactSelectStyle } from 'lib/utils/react-select';
 
 interface ISelectOption<T> {
     value: T;
@@ -17,6 +17,8 @@ export interface ISimpleReactSelectProps<T> {
     isDisabled?: boolean;
     selectProps?: Partial<ReactSelectProps<T>>;
 }
+
+const reactSelectStyle = makeReactSelectStyle(true);
 
 export function SimpleReactSelect<T>({
     options,
@@ -44,7 +46,8 @@ export function SimpleReactSelect<T>({
 
     return (
         <Select
-            styles={defaultReactSelectStyles}
+            styles={reactSelectStyle}
+            menuPortalTarget={document.body}
             value={selectedOption}
             onChange={onSelectChange}
             options={computedOptions}

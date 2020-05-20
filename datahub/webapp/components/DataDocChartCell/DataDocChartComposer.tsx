@@ -26,10 +26,10 @@ import { mapMetaToFormVals } from 'lib/chart/chart-meta-processing';
 import { transformData } from 'lib/chart/chart-data-transformation';
 import { useChartSource } from 'hooks/chart/useChartSource';
 
-import { DataDocChart } from './DataDocChart';
 import { QueryExecutionPicker } from 'components/ExecutionPicker/QueryExecutionPicker';
 import { StatementExecutionPicker } from 'components/ExecutionPicker/StatementExecutionPicker';
 import { StatementResultTable } from 'components/DataDocStatementExecution/StatementResultTable';
+import { queryCellSelector } from 'redux/dataDoc/selector';
 
 import { Button } from 'ui/Button/Button';
 import { IconButton } from 'ui/Button/IconButton';
@@ -38,7 +38,6 @@ import { Checkbox } from 'ui/Form/Checkbox';
 import { FormField, FormSectionHeader } from 'ui/Form/FormField';
 import { Tabs } from 'ui/Tabs/Tabs';
 
-import './DataDocChartComposer.scss';
 import { Level, LevelItem } from 'ui/Level/Level';
 import { SimpleReactSelect } from 'ui/SimpleReactSelect/SimpleReactSelect';
 import { getDefaultScaleType } from 'lib/chart/chart-utils';
@@ -46,6 +45,10 @@ import { NumberField } from 'ui/FormikField/NumberField';
 import { ReactSelectField } from 'ui/FormikField/ReactSelectField';
 import { FormWrapper } from 'ui/Form/FormWrapper';
 import { SimpleField } from 'ui/FormikField/SimpleField';
+import { DisabledSection } from 'ui/DisabledSection/DisabledSection';
+
+import { DataDocChart } from './DataDocChart';
+import './DataDocChartComposer.scss';
 
 interface IProps {
     meta?: IDataChartCellMeta;
@@ -129,23 +132,9 @@ const DataDocChartComposerComponent: React.FunctionComponent<
     ]);
 
     // getting redux state
-    const queryCellOptions = useSelector((state: IStoreState) => {
-        const cellList = state.dataDoc.dataDocById[dataDocId].cells;
-        return cellList
-            .filter(
-                (id) => state.dataDoc.dataDocCellById[id].cell_type === 'query'
-            )
-
-            .map((id, idx) => {
-                const cellMeta: IDataQueryCellMeta =
-                    state.dataDoc.dataDocCellById[id].meta;
-                const title = cellMeta.title || `Query #${idx + 1}`;
-                return {
-                    id,
-                    title,
-                };
-            });
-    });
+    const queryCellOptions = useSelector((state: IStoreState) =>
+        queryCellSelector(state, { docId: dataDocId })
+    );
 
     React.useEffect(() => {
         if (
@@ -738,11 +727,11 @@ const DataDocChartComposerComponent: React.FunctionComponent<
 
     const formDOM = (
         <FormWrapper size={7} className="DataDocChartComposer-form">
-            <fieldset disabled={!isEditable}>
+            <DisabledSection disabled={!isEditable}>
                 {formTab === 'data' && dataTabDOM}
                 {formTab === 'chart' && chartTabDOM}
                 {formTab === 'visuals' && visualsTabDOM}
-            </fieldset>
+            </DisabledSection>
         </FormWrapper>
     );
 

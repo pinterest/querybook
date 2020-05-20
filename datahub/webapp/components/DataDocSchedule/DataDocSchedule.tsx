@@ -5,14 +5,13 @@ import { sendNotification } from 'lib/dataHubUI';
 import { useDataFetch } from 'hooks/useDataFetch';
 import { Loading } from 'ui/Loading/Loading';
 import { ErrorMessage } from 'ui/Message/ErrorMessage';
-import { Button } from 'ui/Button/Button';
 
 import { DataDocScheduleForm } from './DataDocScheduleForm';
 import { DataDocScheduleRunLogs } from './DataDocScheduleRunLogs';
 import './DataDocSchedule.scss';
 import { Tabs } from 'ui/Tabs/Tabs';
 import { Title } from 'ui/Title/Title';
-import { cronToRecurrence, getHumanReadableRecurrence } from 'lib/utils/cron';
+import { IDataDocTaskSchedule } from 'const/schedule';
 
 interface IDataDocScheduleProps {
     docId: number;
@@ -38,7 +37,9 @@ export const DataDocSchedule: React.FunctionComponent<IDataDocScheduleProps> = (
     onDelete,
     isEditable,
 }) => {
-    const { isLoading, isError, data, forceFetch } = useDataFetch({
+    const { isLoading, isError, data, forceFetch } = useDataFetch<
+        IDataDocTaskSchedule
+    >({
         url: `/datadoc/${docId}/schedule/`,
     });
     const [currentTab, setCurrentTab] = React.useState('schedule');
@@ -69,15 +70,21 @@ export const DataDocSchedule: React.FunctionComponent<IDataDocScheduleProps> = (
 
     const getScheduleDOM = () => {
         let formDOM = null;
-        if (isEditable) {
+        if (data || isEditable) {
             // When editable, make create/update form
             formDOM = (
                 <DataDocScheduleForm
-                    cron={data ? data.cron : null}
-                    enabled={data ? data.enabled : false}
-                    onCreate={(cron) =>
+                    isEditable={isEditable}
+                    docId={docId}
+                    cron={data?.cron ?? null}
+                    enabled={data?.enabled ?? false}
+                    kwargs={data?.kwargs ?? {}}
+                    onCreate={(cron, kwargs) =>
                         ds
-                            .save(`/datadoc/${docId}/schedule/`, { cron })
+                            .save(`/datadoc/${docId}/schedule/`, {
+                                cron,
+                                kwargs,
+                            })
                             .then(() => {
                                 sendNotification('Schedule Created!');
                                 forceFetch();
@@ -86,11 +93,12 @@ export const DataDocSchedule: React.FunctionComponent<IDataDocScheduleProps> = (
                                 }
                             })
                     }
-                    onUpdate={(cron, enabled) =>
+                    onUpdate={(cron, enabled, kwargs) =>
                         ds
                             .update(`/datadoc/${docId}/schedule/`, {
                                 cron,
                                 enabled,
+                                kwargs,
                             })
                             .then(() => {
                                 sendNotification('Schedule Updated!');
@@ -113,17 +121,19 @@ export const DataDocSchedule: React.FunctionComponent<IDataDocScheduleProps> = (
                                       })
                             : null
                     }
+                    onRun={
+                        data
+                            ? () =>
+                                  ds
+                                      .save(`/datadoc/${docId}/schedule/run/`)
+                                      .then(() => {
+                                          sendNotification(
+                                              'DataDoc execution started!'
+                                          );
+                                      })
+                            : null
+                    }
                 />
-            );
-        } else if (data) {
-            // Readonly view
-            const recurrence = cronToRecurrence(data.cron);
-            const enabled = data.enabled;
-            formDOM = (
-                <div>
-                    <p>Workflow {enabled ? 'Enabled' : 'Disabled'}</p>
-                    <p>{getHumanReadableRecurrence(recurrence)}</p>
-                </div>
             );
         } else {
             // Readonly and no schedule

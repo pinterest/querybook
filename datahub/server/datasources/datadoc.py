@@ -13,6 +13,8 @@ from const.impression import ImpressionItemType
 from env import DataHubSettings
 
 from lib.celery.cron import validate_cron
+from lib.form import validate_form
+from lib.export.all_exporters import get_exporter
 from lib.notification import simple_email, render_html
 from lib.logger import get_logger
 
@@ -24,8 +26,8 @@ from logic import (
 )
 from logic.datadoc_permission import assert_can_read, assert_can_write
 from logic.query_execution import get_query_execution_by_id
+from logic.schedule import run_and_log_scheduled_task
 from models.environment import Environment
-from tasks.run_datadoc import run_datadoc
 
 LOG = get_logger(__file__)
 
@@ -243,27 +245,6 @@ def delete_favorite_data_doc(
     logic.unfavorite_data_doc(data_doc_id=data_doc_id, uid=uid)
 
 
-@register("/datadoc/<int:id>/run/", methods=["GET"])
-def get_datadoc_schedule_run(id):
-    with DBSession() as session:
-        assert_can_read(id, session=session)
-        verify_data_doc_permission(id, session=session)
-
-        runs, _ = schedule_logic.get_task_run_record_run_by_name(
-            name=get_data_doc_schedule_name(id), session=session
-        )
-        return runs
-
-
-@register("/datadoc/<int:id>/run/", methods=["POST"])
-def run_data_doc(id):
-    with DBSession() as session:
-        assert_can_write(id, session=session)
-        verify_data_doc_permission(id, session=session)
-
-        run_datadoc.apply_async(args=[id])
-
-
 def get_data_doc_schedule_name(id: int):
     return f"run_data_doc_{id}"
 
@@ -278,38 +259,61 @@ def get_datadoc_schedule(id):
         return schedule_logic.get_task_schedule_by_name(schedule_name, session=session)
 
 
+def validate_datadoc_schedule_kwargs(kwargs):
+    allowed_keys = [
+        "notify_with",
+        "notify_on",
+        "exporter_cell_id",
+        "exporter_name",
+        "exporter_params",
+    ]
+    for key in kwargs.keys():
+        api_assert(key in allowed_keys, "Invalid field {}".format(key))
+    if "exporter_name" in kwargs:
+        exporter_name = kwargs["exporter_name"]
+        exporter = get_exporter(exporter_name)
+        api_assert(exporter is not None, "Invalid exporter {}".format(exporter_name))
+
+        exporter_params = kwargs.get("exporter_params", {})
+        exporter_form = exporter.export_form
+        if not (exporter_form is None and not exporter_params):
+            valid, reason = validate_form(exporter_form, exporter_params)
+            api_assert(valid, "Invalid exporter params, reason: " + reason)
+
+
 @register("/datadoc/<int:id>/schedule/", methods=["POST"])
 def create_datadoc_schedule(
-    id, cron,
+    id, cron, kwargs,
 ):
-    schedule_name = get_data_doc_schedule_name(id)
+    validate_datadoc_schedule_kwargs(kwargs)
+    api_assert(validate_cron(cron), "Invalid cron expression")
 
+    schedule_name = get_data_doc_schedule_name(id)
     with DBSession() as session:
         assert_can_write(id, session=session)
         data_doc = logic.get_data_doc_by_id(id, session=session)
         verify_environment_permission([data_doc.environment_id])
 
-        api_assert(validate_cron(cron), "Invalid cron expression")
-
         return schedule_logic.create_task_schedule(
             schedule_name,
             "tasks.run_datadoc.run_datadoc",
             cron=cron,
-            kwargs={"doc_id": id},
+            kwargs={**kwargs, "user_id": current_user.id, "doc_id": id},
             task_type="user",
             session=session,
         )
 
 
 @register("/datadoc/<int:id>/schedule/", methods=["PUT"])
-def update_datadoc_schedule(
-    id, cron=None, enabled=None,
-):
+def update_datadoc_schedule(id, cron=None, enabled=None, kwargs=None):
+    if kwargs is not None:
+        validate_datadoc_schedule_kwargs(kwargs)
+    if cron is not None:
+        api_assert(validate_cron(cron), "Invalid cron expression")
+
     schedule_name = get_data_doc_schedule_name(id)
     with DBSession() as session:
         assert_can_write(id, session=session)
-        if cron is not None:
-            api_assert(validate_cron(cron), "Invalid cron expression")
 
         schedule = schedule_logic.get_task_schedule_by_name(
             schedule_name, session=session
@@ -322,6 +326,12 @@ def update_datadoc_schedule(
             updated_fields["cron"] = cron
         if enabled is not None:
             updated_fields["enabled"] = enabled
+        if kwargs is not None:
+            updated_fields["kwargs"] = {
+                **kwargs,
+                "user_id": current_user.id,
+                "doc_id": id,
+            }
 
         return schedule_logic.update_task_schedule(
             schedule.id, session=session, **updated_fields,
@@ -340,6 +350,31 @@ def delete_datadoc_schedule(id):
         )
         if schedule:
             schedule_logic.delete_task_schedule(schedule.id, session=session)
+
+
+@register("/datadoc/<int:id>/schedule/logs/", methods=["GET"])
+def get_datadoc_schedule_run(id):
+    with DBSession() as session:
+        assert_can_read(id, session=session)
+        verify_data_doc_permission(id, session=session)
+
+        runs, _ = schedule_logic.get_task_run_record_run_by_name(
+            name=get_data_doc_schedule_name(id), session=session
+        )
+        return runs
+
+
+@register("/datadoc/<int:id>/schedule/run/", methods=["POST"])
+def run_data_doc(id):
+    schedule_name = get_data_doc_schedule_name(id)
+    with DBSession() as session:
+        assert_can_write(id, session=session)
+        verify_data_doc_permission(id, session=session)
+        schedule = schedule_logic.get_task_schedule_by_name(
+            schedule_name, session=session
+        )
+        api_assert(schedule, "Schedule does not exist")
+        run_and_log_scheduled_task(schedule.id, session=session)
 
 
 @register("/datadoc/<int:doc_id>/editor/", methods=["GET"])

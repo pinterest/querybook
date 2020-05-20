@@ -1,15 +1,12 @@
-import requests
 from app.auth.oauth_auth import OAuthLoginManager, OAUTH_CALLBACK_PATH
 from env import DataHubSettings
-
-GOOGLE_AUTH_CONFIG = "https://accounts.google.com/.well-known/openid-configuration"
+from clients.google_client import get_google_oauth_config
 
 
 class GoogleLoginManager(OAuthLoginManager):
     @property
     def oauth_config(self):
-        if not hasattr(self, "_cached_google_config"):
-            self._cached_google_config = requests.get(GOOGLE_AUTH_CONFIG).json()
+        google_config = get_google_oauth_config()
 
         return {
             "callback_url": "{}{}".format(
@@ -17,9 +14,9 @@ class GoogleLoginManager(OAuthLoginManager):
             ),
             "client_id": DataHubSettings.OAUTH_CLIENT_ID,
             "client_secret": DataHubSettings.OAUTH_CLIENT_SECRET,
-            "authorization_url": self._cached_google_config["authorization_endpoint"],
-            "token_url": self._cached_google_config["token_endpoint"],
-            "profile_url": self._cached_google_config["userinfo_endpoint"],
+            "authorization_url": google_config["authorization_endpoint"],
+            "token_url": google_config["token_endpoint"],
+            "profile_url": google_config["userinfo_endpoint"],
             "scope": [
                 "https://www.googleapis.com/auth/userinfo.email",
                 "openid",

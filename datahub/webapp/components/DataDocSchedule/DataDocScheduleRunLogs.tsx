@@ -39,7 +39,7 @@ export const DataDocScheduleRunLogs: React.FunctionComponent<{
     docId: number;
 }> = ({ docId }) => {
     const { isLoading, isError, data } = useDataFetch({
-        url: `/datadoc/${docId}/run/`,
+        url: `/datadoc/${docId}/schedule/logs/`,
     });
 
     if (isLoading) {

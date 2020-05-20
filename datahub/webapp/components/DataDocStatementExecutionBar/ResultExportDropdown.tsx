@@ -4,7 +4,7 @@ import { useSelector, useDispatch } from 'react-redux';
 import {
     IStatementExecution,
     IStatementResult,
-    IStatementExporter,
+    IQueryResultExporter,
 } from 'redux/queryExecutions/types';
 import * as queryExecutionsActions from 'redux/queryExecutions/action';
 import { IStoreState, Dispatch } from 'redux/store/types';
@@ -12,6 +12,7 @@ import { IStoreState, Dispatch } from 'redux/store/types';
 import ds from 'lib/datasource';
 import * as Utils from 'lib/utils';
 import { getStatementExecutionResultDownloadUrl } from 'lib/query-execution';
+import { getExporterAuthentication } from 'lib/result-export';
 
 import { DropdownMenu } from 'ui/DropdownMenu/DropdownMenu';
 import { Button } from 'ui/Button/Button';
@@ -103,11 +104,13 @@ export const ResultExportDropdown: React.FunctionComponent<IProps> = ({
     }, [statementId, statementResult, loadStatementResult]);
 
     const onGenericExportClick = React.useCallback(
-        async (exporter: IStatementExporter) => {
+        async (exporter: IQueryResultExporter) => {
             try {
+                await getExporterAuthentication(exporter);
+
                 sendNotification(`Exporting, please wait`);
                 const { data } = await ds.fetch(
-                    `/statement_execution/${statementId}/export/`,
+                    `/query_execution_exporter/statement_execution/${statementId}/`,
                     {
                         export_name: exporter.name,
                     }
