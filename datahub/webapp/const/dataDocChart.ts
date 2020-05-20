@@ -171,7 +171,7 @@ export interface IChartFormValues {
 
     title: string;
     legendPosition: 'top' | 'bottom' | 'right' | 'left';
-    valueDisplay: true | false | 'auto';
+    valueDisplay: number;
     valuePosition: 'center' | 'start' | 'end';
     valueAlignment:
         | 'center'

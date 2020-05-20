@@ -123,12 +123,7 @@ export function mapMetaToFormVals(
         // labels
         title: meta.title || '',
         legendPosition: meta.visual.legend_position || 'top',
-        valueDisplay:
-            meta.visual.values?.display === 1
-                ? true
-                : meta.visual.values?.display === 2
-                ? 'auto'
-                : false,
+        valueDisplay: meta.visual.values?.display ?? 0,
         valuePosition: meta.visual.values?.position,
         valueAlignment: meta.visual.values?.alignment,
     };

@@ -731,15 +731,15 @@ const DataDocChartComposerComponent: React.FunctionComponent<
                     type="react-select"
                     options={[
                         {
-                            value: true,
-                            label: 'Show Values',
-                        },
-                        {
-                            value: false,
+                            value: 0,
                             label: 'Hide Values',
                         },
                         {
-                            value: 'auto',
+                            value: 1,
+                            label: 'Show Values',
+                        },
+                        {
+                            value: 2,
                             label: 'Show Values without Overlap',
                         },
                     ]}
@@ -1020,13 +1020,11 @@ function formValsToMeta(vals: IChartFormValues, meta: IDataChartCellMeta) {
         // labels
         draft.title = vals.title;
         draft.visual.legend_position = vals.legendPosition;
-        if (vals.valueDisplay) {
-            draft.visual.values = {
-                display: vals.valueDisplay === 'auto' ? 2 : 1,
-                position: vals.valuePosition,
-                alignment: vals.valueAlignment,
-            };
-        }
+        draft.visual.values = {
+            display: vals.valueDisplay ?? 0,
+            position: vals.valuePosition,
+            alignment: vals.valueAlignment,
+        };
     });
     return updatedMeta;
 }
