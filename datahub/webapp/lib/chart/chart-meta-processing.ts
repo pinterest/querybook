@@ -8,6 +8,7 @@ import {
     IChartFormValues,
     ChartScaleType,
     ChartType,
+    chartValueDisplayType,
 } from 'const/dataDocChart';
 import { fontColor, fillColor, backgroundColor } from 'const/chartColors';
 import { formatNumber } from './chart-utils';
@@ -123,6 +124,10 @@ export function mapMetaToFormVals(
         // labels
         title: meta.title || '',
         legendPosition: meta.visual.legend_position || 'top',
+        valueDisplay:
+            meta.visual.values?.display ?? chartValueDisplayType.FALSE,
+        valuePosition: meta.visual.values?.position,
+        valueAlignment: meta.visual.values?.alignment,
     };
 }
 
@@ -167,6 +172,19 @@ export function mapMetaToChartOptions(
                 hoverRadius: 3,
                 hoverBorderWidth: 5,
             },
+        },
+    };
+
+    optionsObj['plugins'] = {
+        datalabels: {
+            display:
+                meta.visual.values?.display === chartValueDisplayType.TRUE
+                    ? true
+                    : meta.visual.values?.display === chartValueDisplayType.AUTO
+                    ? 'auto'
+                    : false,
+            anchor: meta.visual.values?.position,
+            align: meta.visual.values?.alignment,
         },
     };
 

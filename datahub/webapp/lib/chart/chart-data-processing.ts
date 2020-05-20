@@ -5,7 +5,6 @@ import { IDataChartCellMeta } from 'const/datadoc';
 import { ChartScaleType } from 'const/dataDocChart';
 
 import { colorPalette, colorPaletteFill, fillColor } from 'const/chartColors';
-import { sortTable } from './chart-utils';
 
 export function processChartJSData(
     data: any[][],
@@ -87,6 +86,8 @@ export function processChartJSData(
             // only area gets fill
             if (chartMeta.type === 'area') {
                 dataset.fill = firstDataset ? 'origin' : '-1';
+            } else {
+                dataset.fill = false;
             }
             firstDataset = false;
 

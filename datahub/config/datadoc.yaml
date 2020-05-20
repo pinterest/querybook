@@ -59,6 +59,10 @@ cell_types:
                             agg_type: 'sum'
             visual:
                 legend_position: ''
+                values:
+                    display: 0
+                    position: 'center'
+                    alignment: 'center'
             collapsed: false
         meta_default:
             title: ''

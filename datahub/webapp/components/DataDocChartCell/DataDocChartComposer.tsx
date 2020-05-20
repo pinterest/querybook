@@ -18,6 +18,7 @@ import {
     aggTypes,
     IChartAxisMeta,
     ChartScaleType,
+    chartValueDisplayType,
 } from 'const/dataDocChart';
 import { colorPalette, colorPaletteNames } from 'const/chartColors';
 
@@ -498,7 +499,6 @@ const DataDocChartComposerComponent: React.FunctionComponent<
                     }))}
                 />
             </FormField>
-
             {['area', 'bar', 'histogram'].includes(values.chartType) ? (
                 <SimpleField
                     type="checkbox"
@@ -658,7 +658,7 @@ const DataDocChartComposerComponent: React.FunctionComponent<
               const colorIdx =
                   seriesIdx in values.coloredSeries
                       ? values.coloredSeries[seriesIdx]
-                      : seriesIdx;
+                      : seriesIdx % colorPalette.length;
               return (
                   <FormField
                       stacked
@@ -713,7 +713,72 @@ const DataDocChartComposerComponent: React.FunctionComponent<
                         })
                     )}
                 />
-
+                <FormSectionHeader>Values</FormSectionHeader>
+                <SimpleField
+                    stacked
+                    label="Display"
+                    name="valueDisplay"
+                    type="react-select"
+                    options={[
+                        {
+                            value: chartValueDisplayType.FALSE,
+                            label: 'Hide Values',
+                        },
+                        {
+                            value: chartValueDisplayType.TRUE,
+                            label: 'Show Values',
+                        },
+                        {
+                            value: chartValueDisplayType.AUTO,
+                            label: 'Show Values without Overlap',
+                        },
+                    ]}
+                    onChange={(val) => {
+                        setFieldValue('valueDisplay', val);
+                        if (val) {
+                            if (values.valuePosition == null) {
+                                setFieldValue('valuePosition', 'center');
+                            }
+                            if (values.valueAlignment == null) {
+                                setFieldValue('valueAlignment', 'center');
+                            }
+                        }
+                    }}
+                />
+                {values.valueDisplay ? (
+                    <>
+                        <SimpleField
+                            stacked
+                            label="Position"
+                            name="valuePosition"
+                            type="react-select"
+                            options={['center', 'start', 'end'].map(
+                                (option) => ({
+                                    value: option,
+                                    label: option,
+                                })
+                            )}
+                        />
+                        <SimpleField
+                            stacked
+                            label="Alignment"
+                            name="valueAlignment"
+                            type="react-select"
+                            options={[
+                                'center',
+                                'start',
+                                'end',
+                                'right',
+                                'left',
+                                'top',
+                                'bottom',
+                            ].map((option) => ({
+                                value: option,
+                                label: option,
+                            }))}
+                        />
+                    </>
+                ) : null}
                 {['pie', 'doughnut', 'table'].includes(
                     values.chartType
                 ) ? null : (
@@ -945,6 +1010,11 @@ function formValsToMeta(vals: IChartFormValues, meta: IDataChartCellMeta) {
         // labels
         draft.title = vals.title;
         draft.visual.legend_position = vals.legendPosition;
+        draft.visual.values = {
+            display: vals.valueDisplay ?? chartValueDisplayType.FALSE,
+            position: vals.valuePosition,
+            alignment: vals.valueAlignment,
+        };
     });
     return updatedMeta;
 }
