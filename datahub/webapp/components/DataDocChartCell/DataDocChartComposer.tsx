@@ -18,6 +18,7 @@ import {
     aggTypes,
     IChartAxisMeta,
     ChartScaleType,
+    chartValueDisplayType,
 } from 'const/dataDocChart';
 import { colorPalette, colorPaletteNames } from 'const/chartColors';
 
@@ -731,15 +732,15 @@ const DataDocChartComposerComponent: React.FunctionComponent<
                     type="react-select"
                     options={[
                         {
-                            value: 0,
+                            value: chartValueDisplayType.FALSE,
                             label: 'Hide Values',
                         },
                         {
-                            value: 1,
+                            value: chartValueDisplayType.TRUE,
                             label: 'Show Values',
                         },
                         {
-                            value: 2,
+                            value: chartValueDisplayType.AUTO,
                             label: 'Show Values without Overlap',
                         },
                     ]}
@@ -1021,7 +1022,7 @@ function formValsToMeta(vals: IChartFormValues, meta: IDataChartCellMeta) {
         draft.title = vals.title;
         draft.visual.legend_position = vals.legendPosition;
         draft.visual.values = {
-            display: vals.valueDisplay ?? 0,
+            display: vals.valueDisplay ?? chartValueDisplayType.FALSE,
             position: vals.valuePosition,
             alignment: vals.valueAlignment,
         };

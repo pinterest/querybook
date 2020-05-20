@@ -8,6 +8,7 @@ import {
     IChartFormValues,
     ChartScaleType,
     ChartType,
+    chartValueDisplayType,
 } from 'const/dataDocChart';
 import { fontColor, fillColor, backgroundColor } from 'const/chartColors';
 import { formatNumber } from './chart-utils';
@@ -123,7 +124,8 @@ export function mapMetaToFormVals(
         // labels
         title: meta.title || '',
         legendPosition: meta.visual.legend_position || 'top',
-        valueDisplay: meta.visual.values?.display ?? 0,
+        valueDisplay:
+            meta.visual.values?.display ?? chartValueDisplayType.FALSE,
         valuePosition: meta.visual.values?.position,
         valueAlignment: meta.visual.values?.alignment,
     };
@@ -136,9 +138,9 @@ export function mapMetaToChartOptions(
     yAxesScaleType: ChartScaleType
 ): ChartOptions {
     const valueDisplay =
-        meta.visual.values?.display === 1
+        meta.visual.values?.display === chartValueDisplayType.TRUE
             ? true
-            : meta.visual.values?.display === 2
+            : meta.visual.values?.display === chartValueDisplayType.AUTO
             ? 'auto'
             : false;
     const optionsObj: ChartOptions = {

@@ -102,10 +102,16 @@ export interface IChartChartMeta {
 
 export type ChartLegendPositionType = 'top' | 'bottom' | 'right' | 'left';
 
+export enum chartValueDisplayType {
+    FALSE = 0,
+    TRUE,
+    AUTO,
+}
+
 export interface IChartVisualMeta {
     legend_position: ChartLegendPositionType;
     values: {
-        display: number;
+        display: chartValueDisplayType;
         position: 'center' | 'start' | 'end';
         alignment:
             | 'center'
@@ -171,7 +177,7 @@ export interface IChartFormValues {
 
     title: string;
     legendPosition: 'top' | 'bottom' | 'right' | 'left';
-    valueDisplay: number;
+    valueDisplay: chartValueDisplayType;
     valuePosition: 'center' | 'start' | 'end';
     valueAlignment:
         | 'center'
