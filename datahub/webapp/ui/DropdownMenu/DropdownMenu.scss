@@ -4,16 +4,6 @@
     flex-direction: column;
     justify-content: center;
 
-    .Dropdown-menu .Dropdown-content-scroll {
-        overflow-x: hidden;
-        overflow-y: auto;
-    }
-
-    .Dropdown.is-active .Dropdown-menu,
-    .Dropdown.is-hoverable:hover .Dropdown-menu {
-        display: block;
-    }
-
     .Dropdown-menu {
         display: none;
         left: 0;
@@ -22,6 +12,20 @@
         position: absolute;
         top: 100%;
         z-index: 20;
+        .Dropdown-content-scroll {
+            overflow-x: hidden;
+            overflow-y: auto;
+        }
+    }
+
+    .Dropdown.is-active {
+        .Dropdown-menu {
+            .Dropdown.is-hoverable:hover {
+                .Dropdown-menu {
+                    display: block;
+                }
+            }
+        }
     }
 
     .Dropdown-content {
@@ -29,7 +33,6 @@
         border-radius: var(--border-radius);
         border: var(--inner-border);
         color: var(--text-color);
-        // overflow: hidden;
     }
 
     .Dropdown-trigger,
@@ -57,9 +60,7 @@
             color: inherit;
         }
     }
-
-    a.Dropdown-trigger.is-active,
-    button.Dropdown-trigger.is-active,
+    .Dropdown-trigger.is-active,
     a.Dropdown-item.is-active,
     button.Dropdown-item.is-active {
         background-color: var(--hover-bg-color);

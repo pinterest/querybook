@@ -197,12 +197,6 @@ export const DropdownMenu: React.FunctionComponent<IProps> = ({
             {customMenuRenderer && customMenuRenderer()}
         </>
     );
-    // const dropdownMenuContent =  (
-    //     <>
-    //         {generateMenuDOM()}
-    //         {customMenuRenderer && customMenuRenderer()}
-    //     </>
-    // );
 
     return (
         <div
