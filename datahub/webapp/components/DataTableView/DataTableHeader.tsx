@@ -1,5 +1,4 @@
 import { last } from 'lodash';
-import moment from 'moment';
 import React from 'react';
 
 import { generateFormattedDate } from 'lib/utils/datetime';
@@ -35,14 +34,13 @@ export const DataTableHeader: React.FunctionComponent<IDataTableHeader> = ({
     const tableOwner = (table.owner || '').split('@')[0];
     const isTableOwner = false;
 
-    const createdAtDate = moment.utc(table.created_at, 'YYYY-MM-DD').unix();
     const shortTableName = Utils.generateNameFromKey(
         last(((table || ({} as any)).name || '').split('.'))
     );
 
-    const dateDOM = (createdAtDate &&
-        generateFormattedDate(createdAtDate, 'X')) || <span className="mh4" />;
-
+    const dateDOM = table.created_at ? (
+        <span>Created at: {generateFormattedDate(table.created_at, 'X')}</span>
+    ) : null;
     // TODO: allow claim ownership
     const claimOwnerButton = tableId && isTableOwner && (
         <Button
@@ -60,9 +58,9 @@ export const DataTableHeader: React.FunctionComponent<IDataTableHeader> = ({
     const userBadge = tableOwner;
 
     const titleDOM = (
-        <Level>
+        <Level className="mb24">
             <div>
-                <Title>
+                <Title className="mb8">
                     {shortTableName}
                     <BoardItemAddButton
                         noPadding
@@ -98,11 +96,10 @@ export const DataTableHeader: React.FunctionComponent<IDataTableHeader> = ({
     return (
         <div className="DataTableHeader">
             {titleDOM}
-            <br />
-            <div>{dateDOM}</div>
+            {dateDOM}
             <div className="horizontal-space-between ">
                 <div className="flex-row">
-                    <div>Table Owner: {userBadge}</div>
+                    {userBadge ? <div>Table Owner: {userBadge}</div> : null}
                     <div>{claimOwnerButton}</div>
                 </div>
                 <div>

@@ -142,7 +142,7 @@ export const QueryEngineStatusButton: React.FC<IProps> = ({
             .map((usage, index) => <li key={index}>{usage}</li>);
 
         const systemStatusSectionDOM = (
-            <div className="QueryEngineStatusPopover-status  Menu-item-info">
+            <div className="QueryEngineStatusPopover-status  Menu-item-info ">
                 <span className="mv4">
                     <div className="mb8">Click for details</div>
                     <ul>{systemStatusDOM}</ul>

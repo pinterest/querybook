@@ -70,7 +70,7 @@ export const QueryExecutionNotificationButton: React.FunctionComponent<IProps> =
             <span
                 aria-label={`${notificationPreference} me when finish`}
                 data-balloon-pos={'up'}
-                className="ml4"
+                className="ml8"
             >
                 Notify Me
             </span>

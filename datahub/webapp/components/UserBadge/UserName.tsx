@@ -18,9 +18,10 @@ export const UserNameComponent: React.FunctionComponent<IUserNameComponentProps>
 }) => {
     const fullName = loading
         ? 'loading...'
-        : titleize(
-              userInfo ? userInfo.fullname || userInfo.username : '[No Name]'
-          );
+        : userInfo
+        ? titleize(userInfo.fullname) || userInfo.username
+        : '[No Name]';
+
     return <span>{fullName}</span>;
 };
 

@@ -28,7 +28,7 @@ export const DataDocContents: React.FunctionComponent<{
 
                 cellText = (
                     <>
-                        <b className="mr4">{cellTitle}</b>
+                        <b className="mr8">{cellTitle}</b>
                         {cellQueryText}
                     </>
                 );

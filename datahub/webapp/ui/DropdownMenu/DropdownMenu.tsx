@@ -2,10 +2,11 @@ import classNames from 'classnames';
 import React from 'react';
 
 import { TooltipDirection } from 'const/tooltip';
+
 import { IconButton } from 'ui/Button/IconButton';
+import { Menu } from 'ui/Menu/Menu';
 
 import './DropdownMenu.scss';
-import { Menu } from 'ui/Menu/Menu';
 
 export interface IMenuItem {
     checked?: boolean;

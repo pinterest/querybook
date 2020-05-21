@@ -133,15 +133,13 @@ export class QuerySnippetView extends React.Component<
 
         const engine = queryEngineById[engine_id];
 
-        const publicTag = (
-            <Tag className="mh4">{isPublic ? 'public' : 'private'}</Tag>
-        );
+        const publicTag = <Tag>{isPublic ? 'public' : 'private'}</Tag>;
 
         const goldenTag = golden ? <Tag>Golden</Tag> : null;
 
         const titleDOM = (
             <div className="flex-row">
-                <Title>{title}</Title>
+                <Title className="mr8">{title}</Title>
                 {publicTag}
                 {goldenTag}
             </div>
