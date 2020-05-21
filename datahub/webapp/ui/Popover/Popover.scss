@@ -1,4 +1,5 @@
 .Popover {
+    font-size: var(--small-text-size);
     &.hidden {
         visibility: hidden;
     }
@@ -23,7 +24,7 @@
                 border-color: transparent;
 
                 border-top-width: 0;
-                border-bottom-color: var(--border-color);
+                border-bottom-color: var(--inner-border-color);
                 border-width: 10px;
             }
 
@@ -45,7 +46,7 @@
 
     .popover-content {
         background: var(--bg-color);
-        border: var(--border);
+        border: var(--inner-border);
         border-radius: var(--border-radius);
         position: relative;
         min-width: 20px;
