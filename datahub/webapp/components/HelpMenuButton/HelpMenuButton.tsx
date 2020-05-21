@@ -49,26 +49,26 @@ export const HelpMenuButton: React.FunctionComponent<IProps> = () => {
 
     const getPanelDOM = () => {
         const panelContent = (
-            <div className="Dropdown">
-                <div className="Dropdown-content">
-                    <div
-                        className="Dropdown-item"
-                        onClick={() => setHelpModal('tip')}
-                    >
-                        Tips
-                    </div>
-                    <div
-                        className="Dropdown-item"
-                        onClick={() => setHelpModal('shortcut')}
-                    >
-                        Shortcuts
-                    </div>
-                    <div
-                        className="Dropdown-item"
-                        onClick={() => setHelpModal('faq')}
-                    >
-                        FAQs
-                    </div>
+            <div className="popover-menu">
+                <div
+                    className="popover-item-clickable"
+                    onClick={() => setHelpModal('tip')}
+                >
+                    Tips
+                </div>
+                <hr className="popover-divider" />
+                <div
+                    className="popover-item-clickable"
+                    onClick={() => setHelpModal('shortcut')}
+                >
+                    Shortcuts
+                </div>
+                <hr className="popover-divider" />
+                <div
+                    className="popover-item-clickable"
+                    onClick={() => setHelpModal('faq')}
+                >
+                    FAQs
                 </div>
             </div>
         );

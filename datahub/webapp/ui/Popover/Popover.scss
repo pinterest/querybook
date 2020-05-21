@@ -54,5 +54,29 @@ $backgroundColor: var(--bg-color);
         position: relative;
         min-width: 20px;
         min-height: 20px;
+
+        .popover-menu {
+            display: flex;
+            flex-direction: column;
+            user-select: none;
+            min-width: 120px;
+            .popover-item,
+            .popover-item-clickable {
+                padding: 12px;
+            }
+            .popover-item-clickable {
+                cursor: pointer;
+                &:hover {
+                    background-color: var(--hover-bg-color);
+                    color: inherit;
+                }
+            }
+            .popover-divider {
+                background-color: var(--inner-border-color);
+                display: block;
+                height: 1px;
+                margin: 0px;
+            }
+        }
     }
 }

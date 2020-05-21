@@ -142,15 +142,15 @@ export const QueryEngineStatusButton: React.FC<IProps> = ({
             .map((usage, index) => <li key={index}>{usage}</li>);
 
         const systemStatusSectionDOM = (
-            <div className="QueryEngineStatusPopover-status">
+            <div className="QueryEngineStatusPopover-status  popover-item">
                 <div>Click for details</div>
                 <ul>{systemStatusDOM}</ul>
             </div>
         );
 
         const panelContent = (
-            <div className="QueryEngineStatusPopover">
-                <div className="QueryEngineStatusPopover-timer">
+            <div className="QueryEngineStatusPopover popover-menu">
+                <div className="popover-item">
                     <Timer
                         formatter={timerFormatter}
                         updater={timerUpdater}
@@ -158,11 +158,11 @@ export const QueryEngineStatusButton: React.FC<IProps> = ({
                         initialValue={REFRESH_INTERVAL}
                     />
                 </div>
-                <hr className="Dropdown-divider" />
+                <hr className="popover-divider" />
                 {systemStatusSectionDOM}
-                <hr className="Dropdown-divider" />
+                <hr className="popover-divider" />
                 <div
-                    className="QueryEngineStatusPopover-refresh flex-row"
+                    className="QueryEngineStatusPopover-refresh flex-row popover-item-clickable"
                     onClick={onRefreshClick}
                 >
                     <Icon name="refresh-cw" />

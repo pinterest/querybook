@@ -63,29 +63,29 @@ class UserMenuComponent extends React.PureComponent<IProps, IState> {
 
     public getUserDropdownDOM() {
         return (
-            <div className="dropdown">
-                <span className="Dropdown-item">
+            <div className="popover-menu">
+                <span className="popover-item">
                     <UserBadge uid={this.props.uid} />
                 </span>
-                <span className="Dropdown-item">
+                {/* <span className="popover-item">
                     <div className="user-group-wrapper">{[]}</div>
-                </span>
-                <hr className="Dropdown-divider" />
+                </span> */}
+                <hr className="popover-divider" />
                 <a
-                    className="Dropdown-item"
+                    className="popover-item-clickable"
                     onClick={this.goToUserSettingsMenu}
                 >
                     Settings
                 </a>
-                <hr className="Dropdown-divider" />
+                <hr className="popover-divider" />
                 <a
-                    className="Dropdown-item"
+                    className="popover-item-clickable"
                     onClick={this.toggleTokenCreationModal}
                 >
                     API Access Token
                 </a>
-                <hr className="Dropdown-divider" />
-                <a className="Dropdown-item" onClick={this.logout}>
+                <hr className="popover-divider" />
+                <a className="popover-item-clickable" onClick={this.logout}>
                     Log out
                 </a>
             </div>
