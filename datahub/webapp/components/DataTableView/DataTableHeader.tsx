@@ -41,7 +41,7 @@ export const DataTableHeader: React.FunctionComponent<IDataTableHeader> = ({
     );
 
     const dateDOM = (createdAtDate &&
-        generateFormattedDate(createdAtDate, 'X')) || <span>&nbsp;</span>;
+        generateFormattedDate(createdAtDate, 'X')) || <span className="mh4" />;
 
     // TODO: allow claim ownership
     const claimOwnerButton = tableId && isTableOwner && (
@@ -64,12 +64,12 @@ export const DataTableHeader: React.FunctionComponent<IDataTableHeader> = ({
             <div>
                 <Title>
                     {shortTableName}
-                    &nbsp;
                     <BoardItemAddButton
                         noPadding
                         size={16}
                         itemType="table"
                         itemId={table.id}
+                        className="ml4"
                     />
                 </Title>
                 <Title subtitle size={5}>

@@ -72,9 +72,8 @@ export const StatementExecutionPicker: React.FunctionComponent<IProps> = ({
 
         statementItems.push({
             name: (
-                <span className="statement-execution-tab-name">
+                <span className="statement-execution-tab-name mr4">
                     {statusIcon} Statement {i + 1}
-                    &nbsp;
                 </span>
             ),
             onClick: statementExecution

@@ -36,7 +36,9 @@ export const ImpressionWidget: React.FunctionComponent<IProps> = ({
         </Popover>
     );
 
-    const icon = <Icon name={isLoading ? 'loader' : 'eye'} size={14} />;
+    const icon = (
+        <Icon name={isLoading ? 'loader' : 'eye'} size={14} className="mr4" />
+    );
     return (
         <>
             <span
@@ -44,7 +46,7 @@ export const ImpressionWidget: React.FunctionComponent<IProps> = ({
                 onClick={() => setShowMenu(true)}
                 ref={selfRef}
             >
-                {icon} &nbsp;
+                {icon}
                 {isLoading ? ' ' : totalViews}
             </span>
             {widgetMenu}

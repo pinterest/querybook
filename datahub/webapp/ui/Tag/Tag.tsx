@@ -8,6 +8,7 @@ export interface ITagGroupProps {
 
 export interface ITagProps {
     children: React.ReactNode;
+    className?: string;
     highlighted?: boolean;
 }
 
@@ -20,10 +21,17 @@ export const TagGroup: React.FunctionComponent<ITagGroupProps> = ({
 
 export const Tag: React.FunctionComponent<ITagProps> = ({
     children,
+    className,
     highlighted = false,
 }) => {
     return (
-        <span className={highlighted ? 'Tag highlighted' : 'Tag'}>
+        <span
+            className={
+                highlighted
+                    ? `${className} Tag highlighted`
+                    : `${className} Tag`
+            }
+        >
             {children}
         </span>
     );

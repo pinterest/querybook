@@ -1,0 +1,55 @@
+.Menu {
+    background-color: var(--bg-color);
+    border-radius: var(--border-radius);
+    border: var(--inner-border);
+    color: var(--text-color);
+    user-select: none;
+
+    .Menu-item,
+    .Menu-item-info {
+        display: flex;
+        flex-direction: row;
+        align-items: center;
+        position: relative;
+        color: inherit;
+
+        text-align: left;
+        white-space: nowrap;
+        width: 100%;
+        padding: 8px 24px 8px 12px;
+    }
+
+    .Menu-item {
+        cursor: pointer;
+
+        .Menu-icon {
+            width: 18px;
+        }
+
+        &:hover {
+            background-color: var(--hover-bg-color);
+            color: var(--hover-text-color);
+            a {
+                color: inherit;
+            }
+        }
+    }
+
+    .Menu-divider {
+        background-color: var(--inner-border-color);
+        display: block;
+        height: 1px;
+        margin: 0px;
+    }
+
+    &.soft {
+        background: var(--light-bg-color);
+        color: var(--light-text-color);
+        border: none;
+
+        .Menu-item:hover,
+        .Menu-item.is-active {
+            color: var(--text-color);
+        }
+    }
+}

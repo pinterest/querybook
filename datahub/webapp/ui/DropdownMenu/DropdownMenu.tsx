@@ -2,10 +2,10 @@ import classNames from 'classnames';
 import React from 'react';
 
 import { TooltipDirection } from 'const/tooltip';
-import { calculateTooltipSize } from 'lib/utils';
 import { IconButton } from 'ui/Button/IconButton';
 
 import './DropdownMenu.scss';
+import { Menu } from 'ui/Menu/Menu';
 
 export interface IMenuItem {
     checked?: boolean;
@@ -36,12 +36,13 @@ interface IProps {
 export const DropdownMenu: React.FunctionComponent<IProps> = ({
     hoverable = true,
     menuIcon = 'menu',
-    items = [],
 
-    type,
     className,
     customButtonRenderer,
     customMenuRenderer,
+
+    items = [],
+    type,
     menuHeight,
     soft,
 }) => {
@@ -87,94 +88,6 @@ export const DropdownMenu: React.FunctionComponent<IProps> = ({
         };
     }, [hoverable, active, onDocumentClick]);
 
-    className = className || '';
-
-    const generateMenuDOM = () => {
-        if (!items || !items.length) {
-            return null;
-        }
-
-        const isSelect = type === 'select';
-
-        const menuActionsDOM = items.map((action, index) => {
-            const iconClass = isSelect
-                ? action.checked
-                    ? 'fas fa-circle'
-                    : 'far fa-circle'
-                : 'fa fa-' + action.icon;
-
-            const actionProps: React.HTMLProps<HTMLAnchorElement> = {};
-            if (action.onClick) {
-                actionProps.onClick = action.onClick;
-            }
-            if (action.link) {
-                actionProps.href = action.link;
-            }
-            if (action.tooltip) {
-                actionProps['aria-label'] = action.tooltip;
-                actionProps['data-balloon-pos'] = action.tooltipPos || 'left';
-                actionProps['data-balloon-length'] = calculateTooltipSize(
-                    action.tooltip
-                );
-            }
-
-            const buttonContent = (
-                <>
-                    <span className="action-icon">
-                        <i className={iconClass} />
-                    </span>
-                    &nbsp;
-                    <span className="action-name">{action.name}</span>
-                </>
-            );
-            let itemDOM: React.ReactChild;
-            if (action.items) {
-                itemDOM = (
-                    <DropdownMenu
-                        className={classNames({
-                            'Dropdown-item': true,
-                            'Dropdown-nested-menu': true,
-                            'nested-right': className.includes('is-right'),
-                        })}
-                        key={index}
-                        items={action.items}
-                        customButtonRenderer={() => (
-                            <a {...actionProps} className="flex-row">
-                                {buttonContent}
-                            </a>
-                        )}
-                    />
-                );
-            } else {
-                itemDOM = (
-                    <a {...actionProps} key={index} className="Dropdown-item">
-                        {buttonContent}
-                    </a>
-                );
-            }
-
-            return itemDOM;
-        });
-
-        return (
-            <div
-                className={classNames({
-                    'Dropdown-content': true,
-                    'Dropdown-content-scroll': menuHeight != null,
-                })}
-                style={
-                    menuHeight != null
-                        ? {
-                              maxHeight: menuHeight,
-                          }
-                        : {}
-                }
-            >
-                {menuActionsDOM}
-            </div>
-        );
-    };
-
     const buttonDOM = customButtonRenderer ? (
         customButtonRenderer()
     ) : (
@@ -188,12 +101,17 @@ export const DropdownMenu: React.FunctionComponent<IProps> = ({
         'Dropdown-open': active,
         [className]: className,
         [customFormatClass]: true,
-        soft,
     });
 
     const dropdownMenuContent = active && (
         <>
-            {generateMenuDOM()}
+            <Menu
+                className={className}
+                items={items}
+                type={type}
+                menuHeight={menuHeight}
+                soft={soft}
+            />
             {customMenuRenderer && customMenuRenderer()}
         </>
     );

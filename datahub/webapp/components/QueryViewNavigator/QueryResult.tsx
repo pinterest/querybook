@@ -34,8 +34,10 @@ export const QueryResult: React.FunctionComponent<IProps> = ({
                 <StatusIcon
                     status={queryStatusToStatusIcon[queryExecution.status]}
                 />
-                Execution {queryId} &nbsp;
-                <Tag>{queryEngineById[queryExecution.engine_id].name}</Tag>
+                Execution {queryId}
+                <Tag className="ml4">
+                    {queryEngineById[queryExecution.engine_id].name}
+                </Tag>
             </Title>
             <Title subtitle size={6} className="query-context">
                 {queryCode.slice(0, 60)}

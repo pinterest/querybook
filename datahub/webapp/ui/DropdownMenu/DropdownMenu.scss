@@ -4,6 +4,10 @@
     flex-direction: column;
     justify-content: center;
 
+    .Dropdown-trigger {
+        cursor: pointer;
+    }
+
     .Dropdown-menu {
         display: none;
         left: 0;
@@ -12,63 +16,9 @@
         position: absolute;
         top: 100%;
         z-index: 20;
-        .Dropdown-content-scroll {
+        .Menu-scroll {
             overflow-x: hidden;
             overflow-y: auto;
-        }
-    }
-
-    .Dropdown-content {
-        background-color: var(--bg-color);
-        border-radius: var(--border-radius);
-        border: var(--inner-border);
-        color: var(--text-color);
-    }
-
-    .Dropdown-trigger,
-    .Dropdown-item {
-        cursor: pointer;
-        display: flex;
-        display: block;
-        position: relative;
-        color: inherit;
-
-        text-align: left;
-        white-space: nowrap;
-        width: 100%;
-    }
-    .Dropdown-item {
-        padding: 8px 24px 8px 12px;
-    }
-    .Dropdown-item:hover,
-    .Dropdown-trigger.is-active {
-        background-color: var(--hover-bg-color);
-        color: var(--hover-text-color);
-        a:hover {
-            color: inherit;
-        }
-    }
-    .Dropdown-divider {
-        background-color: var(--inner-border-color);
-    }
-
-    &.soft {
-        .Dropdown-content {
-            background: var(--light-bg-color);
-            color: var(--light-text-color);
-            border: none;
-        }
-
-        a.Dropdown-item:hover,
-        button.Dropdown-item:hover {
-            background-color: var(--hover-bg-color);
-            color: var(--text-color);
-        }
-
-        a.Dropdown-item.is-active,
-        button.Dropdown-item.is-active {
-            background-color: var(--hover-bg-color);
-            color: var(--text-color);
         }
     }
 
@@ -76,23 +26,31 @@
         display: block;
     }
 
-    &.is-right .Dropdown-menu {
-        left: auto;
-        right: 0;
+    &.is-right {
+        .Dropdown-menu {
+            left: auto;
+            right: 0;
+        }
     }
-    &.is-up .Dropdown-menu {
-        bottom: 100%;
-        padding-bottom: 4px;
-        padding-top: initial;
-        top: auto;
+    &.is-up {
+        .Dropdown-menu {
+            bottom: 100%;
+            padding-bottom: 4px;
+            padding-top: initial;
+            top: auto;
+        }
     }
 
-    &.Dropdown-nested-menu .Dropdown-menu {
-        top: -5px;
-        // this right now doesn't work
-        margin-left: 100%;
+    &.Dropdown-nested-menu {
+        .Dropdown-menu {
+            top: -5px;
+            // this right now doesn't work
+            margin-left: 100%;
+        }
     }
-    &.Dropdown-nested-menu.nested-right .Dropdown-menu {
-        margin-right: 100%;
+    &.Dropdown-nested-menu.nested-right {
+        .Dropdown-menu {
+            margin-right: 100%;
+        }
     }
 }

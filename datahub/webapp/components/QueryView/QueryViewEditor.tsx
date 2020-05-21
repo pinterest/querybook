@@ -77,8 +77,10 @@ export const QueryViewEditor: React.FunctionComponent<{
                 <StatusIcon
                     status={queryStatusToStatusIcon[queryExecution.status]}
                 />
-                Execution {queryExecution.id}&nbsp;
-                {dataCellTitle ? `(${dataCellTitle})` : ''} &nbsp;
+                Execution {queryExecution.id}
+                <span className="mh4">
+                    {dataCellTitle ? `(${dataCellTitle})` : ''}
+                </span>
                 <Tag>{queryEngineById[queryExecution.engine_id].name}</Tag>
             </Title>
         </div>

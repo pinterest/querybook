@@ -18,8 +18,7 @@ export const DataDocTableItem: React.FunctionComponent<IProps> = (
     const dataDocDOM = {
         title: (
             <span>
-                <i className="fas fa-file-alt" />
-                &nbsp;
+                <i className="fas fa-file-alt mr4" />
                 <Title size={6}>{dataDoc.title}</Title>
             </span>
         ),

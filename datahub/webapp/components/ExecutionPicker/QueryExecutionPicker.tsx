@@ -76,9 +76,7 @@ export const QueryExecutionPicker: React.FunctionComponent<IProps> = React.memo(
             return (
                 <div className="execution-selector-button">
                     {textDOM}
-                    &nbsp;
-                    {statusIcon}
-                    &nbsp;
+                    <span className="mh4">{statusIcon}</span>
                     <i className="fa fa-caret-down caret-icon" />
                 </div>
             );
@@ -106,23 +104,24 @@ export const QueryExecutionPicker: React.FunctionComponent<IProps> = React.memo(
                         <a
                             key={execution.id}
                             className={classNames({
-                                'Dropdown-item': true,
+                                'Menu-item': true,
                                 'query-execution-item': true,
                                 'query-execution-selected':
                                     execution.id === queryExecutionId,
                             })}
                             onClick={() => onSelection(execution.id)}
                         >
-                            Execution {execution.id}: {dateString} by&nbsp;
-                            <UserName uid={execution.uid} />
-                            &nbsp;
+                            Execution {execution.id}: {dateString} by
+                            <span className="mh4">
+                                <UserName uid={execution.uid} />
+                            </span>
                             {statusIcon}
                         </a>
                     );
                 }
             );
             return (
-                <div className="Dropdown-content">
+                <div className="Menu">
                     <div className="query-execution-item-header flex-row">
                         <span className="mr8">Hide Failed</span>
                         <ToggleSwitch

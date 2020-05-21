@@ -219,8 +219,7 @@ export const SearchOverview: React.FunctionComponent = () => {
                 {searchOrder === SearchOrder.Recency
                     ? 'Most recent'
                     : 'Most relevant'}
-                &nbsp;
-                <i className="fa fa-caret-down caret-icon" />
+                <i className="fa fa-caret-down caret-icon ml8" />
             </span>
         );
     }, [searchOrder]);

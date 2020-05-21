@@ -45,9 +45,10 @@ export const PanelSection: React.FunctionComponent<IPanelSectionProps> = ({
             <PanelTitle>
                 <span>
                     <i
-                        className={'fa fa-angle-' + (isOpen ? 'down' : 'right')}
+                        className={
+                            'mr8 fa fa-angle-' + (isOpen ? 'down' : 'right')
+                        }
                     />
-                    &nbsp;&nbsp;
                 </span>
                 {title}
             </PanelTitle>

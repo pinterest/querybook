@@ -83,8 +83,8 @@ export const BoardMiniView: React.FunctionComponent<IProps> = ({
                                 })
                             }
                             noPadding
+                            className="mr4"
                         />
-                        &nbsp;
                         <IconButton
                             icon="edit-3"
                             onClick={() => setShowUpdateModal(true)}

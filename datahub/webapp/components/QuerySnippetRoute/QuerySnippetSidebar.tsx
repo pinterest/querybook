@@ -58,8 +58,8 @@ export const QuerySnippetSidebar: React.FunctionComponent = () => {
             <QuerySnippetSidebarSection>
                 <QuerySnippetSidebarHeaderTop>
                     <DataHubLogo>
-                        <i className="fas fa-table" />
-                        &nbsp;Snippets
+                        <i className="fas fa-table mr4" />
+                        Snippets
                     </DataHubLogo>
                 </QuerySnippetSidebarHeaderTop>
             </QuerySnippetSidebarSection>

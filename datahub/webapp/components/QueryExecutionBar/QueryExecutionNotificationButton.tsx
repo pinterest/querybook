@@ -67,10 +67,10 @@ export const QueryExecutionNotificationButton: React.FunctionComponent<IProps> =
             onClick={loading ? null : handleNotificationToggle}
         >
             <i className={iconClass} />
-            &nbsp;
             <span
                 aria-label={`${notificationPreference} me when finish`}
                 data-balloon-pos={'up'}
+                className="ml4"
             >
                 Notify Me
             </span>

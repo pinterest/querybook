@@ -42,9 +42,8 @@ export const ErrorPage: React.FunctionComponent<IErrorPageProps> = ({
     ) : (
         <>
             {httpCodeToDescription[errorCode] || 'Unknown error occured at'}
-            &nbsp;
-            <code className="ErrorPage-path">{location.pathname}</code>.
-            &nbsp;Click <a onClick={history.goBack}>here</a> to go back.
+            <code className="ErrorPage-path mh4">{location.pathname}.</code>
+            Click <a onClick={history.goBack}>here</a> to go back.
         </>
     );
 
