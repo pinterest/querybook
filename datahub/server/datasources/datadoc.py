@@ -269,8 +269,10 @@ def validate_datadoc_schedule_kwargs(kwargs):
     ]
     for key in kwargs.keys():
         api_assert(key in allowed_keys, "Invalid field {}".format(key))
-    if "exporter_name" in kwargs:
-        exporter_name = kwargs["exporter_name"]
+
+    # Check if export_cell_id is provided then export name must be valid
+    if kwargs.get("exporter_cell_id", None) is not None:
+        exporter_name = kwargs.get("exporter_name", None)
         exporter = get_exporter(exporter_name)
         api_assert(exporter is not None, "Invalid exporter {}".format(exporter_name))
 
