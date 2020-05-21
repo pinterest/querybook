@@ -15,7 +15,6 @@
 
     .FullScreenModal,
     .StandardModal {
-        z-index: 40;
         display: flex;
         flex-direction: column;
     }
@@ -58,7 +57,6 @@
         }
 
         .Modal-box {
-            z-index: 40;
             width: 90vw;
             min-width: 400px;
             max-width: var(--max-width);
@@ -81,10 +79,6 @@
                 height: auto;
                 overflow-y: auto;
             }
-        }
-
-        .Modal-bottom-box {
-            z-index: 40;
         }
     }
 

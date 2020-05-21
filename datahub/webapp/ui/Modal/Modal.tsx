@@ -1,5 +1,4 @@
 import React from 'react';
-import * as ReactDOM from 'react-dom';
 
 import { matchKeyPress } from 'lib/utils/keyboard';
 import { useWindowEvent } from 'hooks/useWindowEvent';
@@ -8,6 +7,7 @@ import { IModalProps } from './types';
 import { FullScreenModal } from './FullScreenModal';
 import { StandardModal } from './StandardModal';
 import './Modal.scss';
+import { Overlay } from 'ui/Overlay/Overlay';
 
 // const modalRoot = document.getElementById('modal-root');
 
@@ -20,19 +20,6 @@ export const Modal: React.FunctionComponent<IModalProps> = ({
     modalRoot,
     title,
 }) => {
-    const [el] = React.useState(document.createElement('div'));
-
-    React.useEffect(() => {
-        const actualModalRoot =
-            modalRoot ?? document.getElementById('modal-root');
-
-        el.className = 'Modal';
-        actualModalRoot.appendChild(el);
-        return () => {
-            actualModalRoot.removeChild(el);
-        };
-    }, []);
-
     const onEscapeKeyDown = React.useCallback(
         (evt) => {
             if (matchKeyPress(evt, 'ESC') && onHide) {
@@ -71,5 +58,5 @@ export const Modal: React.FunctionComponent<IModalProps> = ({
         );
     }
 
-    return ReactDOM.createPortal(modalDOM, el);
+    return <Overlay className="Modal">{modalDOM}</Overlay>;
 };
