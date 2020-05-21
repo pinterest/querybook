@@ -61,7 +61,7 @@
 
     // New style
     background: var(--bg-color);
-    box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.2);
+    box-shadow: var(--box-shadow);
     border-radius: 8px;
 
     .CodeMirror-hint {
