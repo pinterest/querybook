@@ -1,10 +1,8 @@
 import React from 'react';
-import * as ReactDOM from 'react-dom';
+import { Overlay, overlayRoot } from 'ui/Overlay/Overlay';
 import { useSpring, animated } from 'react-spring';
 
 import './Popover.scss';
-
-const popoverRoot = document.getElementById('popover-root');
 
 export type PopoverDirection = 'left' | 'right' | 'top' | 'bottom';
 export type PopoverLayout =
@@ -34,17 +32,9 @@ function middle(position: number, length: number) {
 
 const ARROW_SIZE = 10;
 
-export const Popover: React.FunctionComponent<IPopoverProps> = (props) => {
-    const [el] = React.useState(document.createElement('div'));
-
-    React.useEffect(() => {
-        popoverRoot.appendChild(el);
-        return () => popoverRoot.removeChild(el);
-    }, []);
-
-    const dom = <PopoverContainer {...props} container={el} />;
-    return ReactDOM.createPortal(dom, el);
-};
+export const Popover: React.FunctionComponent<IPopoverProps> = (props) => (
+    <Overlay render={(el) => <PopoverContainer {...props} container={el} />} />
+);
 
 const initialArrowStyle: React.CSSProperties = {
     top: 0,
@@ -75,7 +65,7 @@ export const PopoverContainer: React.FunctionComponent<IPopoverContainerProps> =
             if (!event.composedPath().includes(container)) {
                 // Here we pass the event so the parent can manage focus.
                 // We only dismiss the last child
-                if (container === popoverRoot.lastElementChild) {
+                if (container === overlayRoot.lastElementChild) {
                     onHide();
                 }
             }
