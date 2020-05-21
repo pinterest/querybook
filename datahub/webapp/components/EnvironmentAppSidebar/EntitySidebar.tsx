@@ -131,7 +131,7 @@ export const EntitySidebar: React.FunctionComponent<IEntitySidebarProps> = ({
                 <UserMenu />
                 <QueryEngineStatusButton />
                 <ChangeLogButton />
-                <HelpMenuButton />
+                {/* <HelpMenuButton /> */}
                 {adminAppButton}
             </div>
         </div>
