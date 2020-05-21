@@ -5,7 +5,8 @@ import { titleize, sleep, copy } from 'lib/utils';
 import { sendNotification } from 'lib/dataHubUI';
 import { AsyncButton } from 'ui/AsyncButton/AsyncButton';
 import { Button } from 'ui/Button/Button';
-import { DropdownMenu, IMenuItem } from 'ui/DropdownMenu/DropdownMenu';
+import { DropdownMenu } from 'ui/DropdownMenu/DropdownMenu';
+import { ListMenu, IListMenuItem } from 'ui/Menu/ListMenu';
 
 const cellTypes = require('config/datadoc.yaml').cell_types;
 
@@ -71,7 +72,7 @@ export const DataDocCellControl: React.FunctionComponent<IProps> = ({
     const centerButtons: JSX.Element[] = [];
 
     const leftButtons: JSX.Element[] = [];
-    const leftMenuItems: IMenuItem[] = [];
+    const leftMenuItems: IListMenuItem[] = [];
 
     if (isHeader) {
         if (shareUrl) {
@@ -228,9 +229,9 @@ export const DataDocCellControl: React.FunctionComponent<IProps> = ({
                         type="soft"
                     />
                 )}
-                items={leftMenuItems}
-                soft
-            />
+            >
+                <ListMenu items={leftMenuItems} soft />
+            </DropdownMenu>
         );
     }
 

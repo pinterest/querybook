@@ -12,13 +12,12 @@
         display: none;
         left: 0;
         min-width: 80px;
-        padding-top: 4px;
         position: absolute;
         top: 100%;
         z-index: 20;
-        .Menu-scroll {
-            overflow-x: hidden;
-            overflow-y: auto;
+        .Menu {
+            border: var(--inner-border);
+            border-radius: var(--border-radius);
         }
     }
 

@@ -1,14 +1,11 @@
 import React from 'react';
 
-import {
-    queryStatusToStatusIcon,
-    STATUS_TO_TEXT_MAPPING,
-    Status,
-} from 'const/queryStatus';
+import { queryStatusToStatusIcon, Status } from 'const/queryStatus';
 import { IStatementExecution } from 'redux/queryExecutions/types';
 
 import { DropdownMenu } from 'ui/DropdownMenu/DropdownMenu';
 import { StatusIcon } from 'ui/StatusIcon/StatusIcon';
+import { ListMenu } from 'ui/Menu/ListMenu';
 
 import './StatementExecutionPicker.scss';
 
@@ -57,11 +54,6 @@ export const StatementExecutionPicker: React.FunctionComponent<IProps> = ({
         const statementExecution = statementExecutions[i];
         const statusIcon = (
             <StatusIcon
-                tooltip={
-                    statementExecution
-                        ? STATUS_TO_TEXT_MAPPING[statementExecution.status]
-                        : 'Statement not started'
-                }
                 status={
                     statementExecution
                         ? queryStatusToStatusIcon[statementExecution.status]
@@ -89,12 +81,9 @@ export const StatementExecutionPicker: React.FunctionComponent<IProps> = ({
     }
     return (
         <div className="StatementExecutionPicker">
-            <DropdownMenu
-                customButtonRenderer={executionSelectorButton}
-                items={statementItems}
-                type="select"
-                menuHeight={300}
-            />
+            <DropdownMenu customButtonRenderer={executionSelectorButton}>
+                <ListMenu items={statementItems} type="select" height={300} />
+            </DropdownMenu>
         </div>
     );
 };

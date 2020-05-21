@@ -6,6 +6,7 @@ import {
     IViewerInfo,
 } from 'lib/data-doc/datadoc-permission';
 import { Popover } from 'ui/Popover/Popover';
+import { MenuItem, MenuDivider, Menu } from 'ui/Menu/Menu';
 interface IProp {
     viewerInfo: IViewerInfo;
     readonly?: boolean;
@@ -32,37 +33,34 @@ export const ViewerPermissionPicker: React.FunctionComponent<IProp> = ({
             layout={['bottom', 'right']}
             hideArrow
         >
-            <div className="Menu">
+            <Menu>
                 {!publicDataDoc && (
-                    <a
-                        className="Menu-item"
+                    <MenuItem
                         onClick={() =>
                             onPermissionChange(DataDocPermission.CAN_READ)
                         }
                     >
                         read only
-                    </a>
+                    </MenuItem>
                 )}
-                <a
-                    className="Menu-item"
+                <MenuItem
                     onClick={() =>
                         onPermissionChange(DataDocPermission.CAN_WRITE)
                     }
                 >
                     edit
-                </a>
+                </MenuItem>
                 {onRemoveEditor && (
                     <>
-                        <hr className="Menu-divider" />
-                        <a
-                            className="Menu-item"
+                        <MenuDivider />
+                        <MenuItem
                             onClick={() => onRemoveEditor(viewerInfo.uid)}
                         >
                             remove
-                        </a>
+                        </MenuItem>
                     </>
                 )}
-            </div>
+            </Menu>
         </Popover>
     );
 

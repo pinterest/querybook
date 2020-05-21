@@ -2,17 +2,20 @@ import { bind } from 'lodash-decorators';
 import React from 'react';
 import { connect } from 'react-redux';
 
-import { TooltipDirection } from 'const/tooltip';
 import { IStoreState, Dispatch } from 'redux/store/types';
 import * as UserActions from 'redux/user/action';
-import { Modal } from 'ui/Modal/Modal';
-import { Popover, PopoverLayout } from 'ui/Popover/Popover';
+import { navigateWithinEnv } from 'lib/utils/query-string';
+import { TooltipDirection } from 'const/tooltip';
 
 import { UserBadge } from 'components/UserBadge/UserBadge';
 import { TokenCreation } from 'components/Token/TokenCreation';
-import './UserMenu.scss';
 import { UserAvatar } from 'components/UserBadge/UserAvatar';
-import { navigateWithinEnv } from 'lib/utils/query-string';
+
+import { MenuInfoItem, Menu, MenuDivider, MenuItem } from 'ui/Menu/Menu';
+import { Modal } from 'ui/Modal/Modal';
+import { Popover, PopoverLayout } from 'ui/Popover/Popover';
+
+import './UserMenu.scss';
 
 interface IOwnProps {
     tooltipPos?: TooltipDirection;
@@ -63,29 +66,24 @@ class UserMenuComponent extends React.PureComponent<IProps, IState> {
 
     public getUserDropdownDOM() {
         return (
-            <div className="Menu">
-                <span className="Menu-item-info">
+            <Menu>
+                <MenuInfoItem>
                     <UserBadge uid={this.props.uid} />
-                </span>
-                {/* <span className="Menu-item-info">
+                </MenuInfoItem>
+                {/* <MenuInfoItem>
                     <div className="user-group-wrapper">{[]}</div>
-                </span> */}
-                <hr className="Menu-divider" />
-                <a className="Menu-item" onClick={this.goToUserSettingsMenu}>
+                </MenuInfoItem> */}
+                <MenuDivider />
+                <MenuItem onClick={this.goToUserSettingsMenu}>
                     Settings
-                </a>
-                <hr className="Menu-divider" />
-                <a
-                    className="Menu-item"
-                    onClick={this.toggleTokenCreationModal}
-                >
+                </MenuItem>
+                <MenuDivider />
+                <MenuItem onClick={this.toggleTokenCreationModal}>
                     API Access Token
-                </a>
-                <hr className="Menu-divider" />
-                <a className="Menu-item" onClick={this.logout}>
-                    Log out
-                </a>
-            </div>
+                </MenuItem>
+                <MenuDivider />
+                <MenuItem onClick={this.logout}>Log out</MenuItem>
+            </Menu>
         );
     }
 

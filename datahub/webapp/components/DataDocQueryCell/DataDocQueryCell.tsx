@@ -31,13 +31,14 @@ import {
 import { CodeMirrorSearchHighlighter } from 'components/SearchAndReplace/CodeMirrorSearchHighlighter';
 import { BindedQueryEditor } from 'components/QueryEditor/BindedQueryEditor';
 
-import { DebouncedInput } from 'ui/DebouncedInput/DebouncedInput';
-import { DropdownMenu, IMenuItem } from 'ui/DropdownMenu/DropdownMenu';
-import { Title } from 'ui/Title/Title';
-import { Modal } from 'ui/Modal/Modal';
-import { Message } from 'ui/Message/Message';
 import { Button } from 'ui/Button/Button';
+import { DebouncedInput } from 'ui/DebouncedInput/DebouncedInput';
+import { DropdownMenu } from 'ui/DropdownMenu/DropdownMenu';
 import { Icon } from 'ui/Icon/Icon';
+import { ListMenu, IListMenuItem } from 'ui/Menu/ListMenu';
+import { Message } from 'ui/Message/Message';
+import { Modal } from 'ui/Modal/Modal';
+import { Title } from 'ui/Title/Title';
 
 import './DataDocQueryCell.scss';
 
@@ -408,7 +409,7 @@ class DataDocQueryCellComponent extends React.Component<IProps, IState> {
 
         const queryCollapsed = this.queryCollapsed;
 
-        const additionalButtons: IMenuItem[] = [];
+        const additionalButtons: IListMenuItem[] = [];
         if (isEditable) {
             additionalButtons.push({
                 name: 'Format Query (⇧⎇F)',
@@ -436,9 +437,10 @@ class DataDocQueryCellComponent extends React.Component<IProps, IState> {
         return additionalButtons.length > 0 ? (
             <DropdownMenu
                 customButtonRenderer={this.additionalDropDownButtonFormatter}
-                items={additionalButtons}
                 className="is-right"
-            />
+            >
+                <ListMenu items={additionalButtons} isRight />
+            </DropdownMenu>
         ) : null;
     }
 

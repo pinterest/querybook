@@ -30,6 +30,7 @@ import { IconButton } from 'ui/Button/IconButton';
 import { Icon } from 'ui/Icon/Icon';
 
 import './QueryEngineStatusButton.scss';
+import { Menu, MenuDivider, MenuInfoItem, MenuItem } from 'ui/Menu/Menu';
 
 const REFRESH_INTERVAL = 60;
 
@@ -142,34 +143,36 @@ export const QueryEngineStatusButton: React.FC<IProps> = ({
             .map((usage, index) => <li key={index}>{usage}</li>);
 
         const systemStatusSectionDOM = (
-            <div className="QueryEngineStatusPopover-status  Menu-item-info ">
+            <MenuInfoItem className="QueryEngineStatusPopover-status">
                 <span className="mv4">
                     <div className="mb8">Click for details</div>
                     <ul>{systemStatusDOM}</ul>
                 </span>
-            </div>
+            </MenuInfoItem>
         );
 
         const panelContent = (
-            <div className="QueryEngineStatusPopover Menu">
-                <div className="Menu-item-info">
-                    <Timer
-                        formatter={timerFormatter}
-                        updater={timerUpdater}
-                        ref={timerRef}
-                        initialValue={REFRESH_INTERVAL}
-                    />
-                </div>
-                <hr className="Menu-divider" />
-                {systemStatusSectionDOM}
-                <hr className="Menu-divider" />
-                <div
-                    className="QueryEngineStatusPopover-refresh flex-row Menu-item"
-                    onClick={onRefreshClick}
-                >
-                    <Icon name="refresh-cw" />
-                    <span>Refresh</span>
-                </div>
+            <div className="QueryEngineStatusPopover">
+                <Menu>
+                    <MenuInfoItem>
+                        <Timer
+                            formatter={timerFormatter}
+                            updater={timerUpdater}
+                            ref={timerRef}
+                            initialValue={REFRESH_INTERVAL}
+                        />
+                    </MenuInfoItem>
+                    <MenuDivider />
+                    {systemStatusSectionDOM}
+                    <MenuDivider />
+                    <MenuItem
+                        className="QueryEngineStatusPopover-refresh flex-row"
+                        onClick={onRefreshClick}
+                    >
+                        <Icon name="refresh-cw" />
+                        <span>Refresh</span>
+                    </MenuItem>
+                </Menu>
             </div>
         );
 

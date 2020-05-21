@@ -20,6 +20,7 @@ import { CopyPasteModal } from 'ui/CopyPasteModal/CopyPasteModal';
 import { sendNotification } from 'lib/dataHubUI';
 import { Modal } from 'ui/Modal/Modal';
 import { Link } from 'ui/Link/Link';
+import { ListMenu } from 'ui/Menu/ListMenu';
 import { Title } from 'ui/Title/Title';
 
 interface IProps {
@@ -195,8 +196,9 @@ export const ResultExportDropdown: React.FunctionComponent<IProps> = ({
                         type="inlineText"
                     />
                 )}
-                items={additionalButtons}
-            />
+            >
+                <ListMenu items={additionalButtons} isRight />
+            </DropdownMenu>
         );
     return (
         <>

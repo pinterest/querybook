@@ -1,12 +1,10 @@
 .Menu {
     background-color: var(--bg-color);
-    border-radius: var(--border-radius);
-    border: var(--inner-border);
     color: var(--text-color);
     user-select: none;
 
-    .Menu-item,
-    .Menu-item-info {
+    .MenuItem,
+    .MenuInfoItem {
         display: flex;
         flex-direction: row;
         align-items: center;
@@ -19,7 +17,7 @@
         padding: 8px 24px 8px 12px;
     }
 
-    .Menu-item {
+    .MenuItem {
         cursor: pointer;
 
         .Menu-icon {
@@ -35,20 +33,13 @@
         }
     }
 
-    .Menu-divider {
-        background-color: var(--inner-border-color);
-        display: block;
-        height: 1px;
-        margin: 0px;
-    }
-
     &.soft {
         background: var(--light-bg-color);
         color: var(--light-text-color);
         border: none;
 
-        .Menu-item:hover,
-        .Menu-item.is-active {
+        .MenuItem:hover,
+        .MenuItem.is-active {
             color: var(--text-color);
         }
     }

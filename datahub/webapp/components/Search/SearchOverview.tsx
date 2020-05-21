@@ -22,16 +22,17 @@ import { DataDocItem, DataTableItem } from './SearchResultItem';
 
 import { Button } from 'ui/Button/Button';
 import { Checkbox } from 'ui/Form/Checkbox';
+import { Container } from 'ui/Container/Container';
 import { DropdownMenu } from 'ui/DropdownMenu/DropdownMenu';
 import { Icon } from 'ui/Icon/Icon';
 import { Level } from 'ui/Level/Level';
+import { ListMenu } from 'ui/Menu/ListMenu';
 import { Pagination } from 'ui/Pagination/Pagination';
 import { SearchBar } from 'ui/SearchBar/SearchBar';
 import { Select } from 'ui/Select/Select';
 import { Tabs } from 'ui/Tabs/Tabs';
 
 import './SearchOverview.scss';
-import { Container } from 'ui/Container/Container';
 
 const secondsPerDay = 60 * 60 * 24;
 
@@ -227,20 +228,26 @@ export const SearchOverview: React.FunctionComponent = () => {
     const orderByDOM = (
         <DropdownMenu
             customButtonRenderer={orderByButtonFormatter}
-            items={[SearchOrder.Recency, SearchOrder.Relevance].map(
-                (choice, index) => ({
-                    name:
-                        choice === 'Recency' ? 'Most recent' : 'Most relevant',
-                    onClick:
-                        searchOrder === choice
-                            ? null
-                            : updateSearchOrder.bind(null, choice),
-                    checked: searchOrder === choice,
-                })
-            )}
-            type="select"
             className="is-right"
-        />
+        >
+            <ListMenu
+                items={[SearchOrder.Recency, SearchOrder.Relevance].map(
+                    (choice, index) => ({
+                        name:
+                            choice === 'Recency'
+                                ? 'Most recent'
+                                : 'Most relevant',
+                        onClick:
+                            searchOrder === choice
+                                ? null
+                                : updateSearchOrder.bind(null, choice),
+                        checked: searchOrder === choice,
+                    })
+                )}
+                type="select"
+                isRight
+            />
+        </DropdownMenu>
     );
 
     const environment = getCurrentEnv();
