@@ -3,7 +3,7 @@
     overflow: hidden;
 
     .QueryComposer-header {
-        border-bottom: 1px solid var(--inner-border-color);
+        border-bottom: 1px solid var(--border-color);
         padding: 0px 20px;
         height: 45px;
         display: table;
@@ -48,7 +48,7 @@
             height: 100%;
             flex: 1;
             overflow: scroll;
-            border-top: var(--inner-border);
+            border-top: var(--border);
 
             .QueryComposerExecution {
                 padding: 0px 20px;

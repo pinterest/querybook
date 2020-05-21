@@ -22,7 +22,7 @@ const StyledTextarea = styled.textarea`
     color: inherit;
     background-color: inherit;
     border-radius: var(--border-radius);
-    border: var(--inner-border);
+    border: var(--border);
     display: block;
     max-width: 100%;
     min-width: 100%;

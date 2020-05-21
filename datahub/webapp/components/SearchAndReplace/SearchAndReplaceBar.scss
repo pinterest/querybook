@@ -1,5 +1,5 @@
 .SearchAndReplaceBar {
-    border: var(--outer-border);
+    border: var(--border);
     border-top: none;
     border-bottom-left-radius: var(--border-radius);
     border-bottom-right-radius: var(--border-radius);
@@ -12,7 +12,7 @@
     }
 
     .datadoc-search-input {
-        border: var(--outer-border);
+        border: var(--border);
         border-radius: var(--border-radius);
 
         background-color: transparent;

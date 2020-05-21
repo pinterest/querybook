@@ -19,7 +19,7 @@
     }
 
     .DebouncedInput {
-        border: var(--inner-border);
+        border: var(--border);
         padding: 4px;
         border-radius: 4px;
     }
@@ -44,7 +44,7 @@
     }
 
     .header-hero {
-        border-bottom: var(--inner-border);
+        border-bottom: var(--border);
     }
 
     .data-doc-content-container {
@@ -78,7 +78,7 @@
         }
         .data-doc-header {
             padding: 36px 12px;
-            border-bottom: var(--inner-border);
+            border-bottom: var(--border);
             color: var(--light-text-color);
 
             .data-doc-header-top {

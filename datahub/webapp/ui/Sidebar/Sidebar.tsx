@@ -37,7 +37,7 @@ const StyledSidebar = styled.div.attrs({
 
         const border = !borderless
             ? `
-            border-${otherSide}: 1px solid var(--inner-border-color);
+            border-${otherSide}: 1px solid var(--border-color);
         `
             : '';
 

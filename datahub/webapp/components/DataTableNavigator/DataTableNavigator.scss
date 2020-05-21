@@ -6,7 +6,7 @@
     .navigator-metastore-picker {
         display: flex;
         justify-content: center;
-        border-bottom: var(--inner-border);
+        border-bottom: var(--border);
 
         .control {
             margin: 5px;
@@ -15,7 +15,7 @@
 
     .navigator-search-input {
         display: flex;
-        border-bottom: var(--inner-border);
+        border-bottom: var(--border);
         .SearchBar {
             flex-grow: 1;
             input {

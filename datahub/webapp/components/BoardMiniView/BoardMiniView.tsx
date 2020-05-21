@@ -104,7 +104,7 @@ export const BoardMiniView: React.FunctionComponent<IProps> = ({
                 marginTop={'2px'}
                 marginBottom={'2px'}
                 height={'1px'}
-                color={'var(--inner-border-color)'}
+                color={'var(--border-color)'}
             />
             <div className="board-item-lists">
                 <BoardExpandableList
