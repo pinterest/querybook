@@ -6,8 +6,9 @@
 #root,
 #modal-root,
 #popover-root,
+#overlay-root,
 #Codemirror-tooltip-root {
-    background: var(--bg-color);
+    background-color: var(--bg-color);
     color: var(--text-color);
     font-family: var(--family-sans-serif);
     font-size: var(--small-text-size);
