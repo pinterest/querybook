@@ -130,7 +130,7 @@ export class DataTableViewOverview extends React.PureComponent<
                     {generateFormattedDate(table.created_at)}
                 </p>
                 <p>
-                    Last pulled from metastore at:{' '}
+                    Last pulled from metastore at{' '}
                     {generateFormattedDate(table.updated_at)}
                 </p>
             </div>

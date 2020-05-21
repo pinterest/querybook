@@ -8,14 +8,16 @@ import {
 } from 'const/queryStatus';
 import { QueryExecutionStatus } from 'const/queryExecution';
 import { generateFormattedDate } from 'lib/utils/datetime';
-
 import { IQueryExecution } from 'redux/queryExecutions/types';
+
 import { UserName } from 'components/UserBadge/UserName';
+
 import { DropdownMenu } from 'ui/DropdownMenu/DropdownMenu';
 import { StatusIcon } from 'ui/StatusIcon/StatusIcon';
 import { ToggleSwitch } from 'ui/ToggleSwitch/ToggleSwitch';
 
 import './QueryExecutionPicker.scss';
+import { Menu, MenuItem } from 'ui/Menu/Menu';
 
 interface IProps {
     queryExecutionId: number;
@@ -76,9 +78,7 @@ export const QueryExecutionPicker: React.FunctionComponent<IProps> = React.memo(
             return (
                 <div className="execution-selector-button">
                     {textDOM}
-                    &nbsp;
-                    {statusIcon}
-                    &nbsp;
+                    <span className="mh4">{statusIcon}</span>
                     <i className="fa fa-caret-down caret-icon" />
                 </div>
             );
@@ -103,28 +103,28 @@ export const QueryExecutionPicker: React.FunctionComponent<IProps> = React.memo(
                         moment.utc(createdAt, 'X').fromNow();
 
                     return (
-                        <a
+                        <MenuItem
                             key={execution.id}
                             className={classNames({
-                                'dropdown-item': true,
                                 'query-execution-item': true,
                                 'query-execution-selected':
                                     execution.id === queryExecutionId,
                             })}
                             onClick={() => onSelection(execution.id)}
                         >
-                            Execution {execution.id}: {dateString} by&nbsp;
-                            <UserName uid={execution.uid} />
-                            &nbsp;
+                            Execution {execution.id}: {dateString} by
+                            <span className="mh4">
+                                <UserName uid={execution.uid} />
+                            </span>
                             {statusIcon}
-                        </a>
+                        </MenuItem>
                     );
                 }
             );
             return (
-                <div className="dropdown-content">
+                <Menu>
                     <div className="query-execution-item-header flex-row">
-                        <span>Hide Failed</span>&nbsp;
+                        <span className="mr8">Hide Failed</span>
                         <ToggleSwitch
                             checked={hideFailed}
                             onChange={setHideFailed}
@@ -133,7 +133,7 @@ export const QueryExecutionPicker: React.FunctionComponent<IProps> = React.memo(
                     <div className="query-execution-item-wrapper">
                         {executionItemsDOM}
                     </div>
-                </div>
+                </Menu>
             );
         }, [filteredQueryExecutions, queryExecutionId, hideFailed]);
 
@@ -141,8 +141,9 @@ export const QueryExecutionPicker: React.FunctionComponent<IProps> = React.memo(
             <DropdownMenu
                 className="QueryExecutionPicker"
                 customButtonRenderer={executionSelectorButton}
-                customMenuRenderer={executionMenuRenderer}
-            />
+            >
+                {executionMenuRenderer()}
+            </DropdownMenu>
         );
     }
 );

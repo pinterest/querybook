@@ -1,16 +1,17 @@
 import classNames from 'classnames';
 import * as React from 'react';
 
+import { useSelector } from 'react-redux';
+import { queryEngineStatusByIdEnvSelector } from 'redux/queryEngine/selector';
 import { IQueryEngine, QueryEngineStatus } from 'const/queryEngine';
+import { queryEngineStatusToIconStatus } from 'const/queryStatusIcon';
 
 import { AsyncButton } from 'ui/AsyncButton/AsyncButton';
 import { DropdownMenu } from 'ui/DropdownMenu/DropdownMenu';
+import { ListMenu } from 'ui/Menu/ListMenu';
 import { StatusIcon } from 'ui/StatusIcon/StatusIcon';
 
 import './QueryRunButton.scss';
-import { useSelector } from 'react-redux';
-import { queryEngineStatusByIdEnvSelector } from 'redux/queryEngine/selector';
-import { queryEngineStatusToIconStatus } from 'const/queryStatusIcon';
 
 interface IQueryRunButtonProps {
     disabled?: boolean;
@@ -119,10 +120,10 @@ export const QueryRunButton = React.forwardRef<
                 engineButton = (
                     <DropdownMenu
                         customButtonRenderer={getEngineSelectorButtonDOM}
-                        items={engineItems}
-                        type="select"
                         className="is-right"
-                    />
+                    >
+                        <ListMenu items={engineItems} type="select" isRight />
+                    </DropdownMenu>
                 );
             } else {
                 engineButton = queryEngineById[engineId].name;

@@ -1,26 +1,55 @@
-.dropdown {
-    .dropdown-trigger {
-        display: inherit;
-    }
-    .dropdown-nested-menu .dropdown-menu {
-        top: -12px;
-        // this right now doesn't work
-        margin-left: 100%;
-    }
-    .dropdown-nested-menu.nested-right .dropdown-menu {
-        margin-right: 100%;
+.DropdownMenu {
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+
+    .Dropdown-trigger {
+        cursor: pointer;
     }
 
-    &.dropdown-open > .dropdown-menu {
+    .Dropdown-menu {
+        display: none;
+        left: 0;
+        min-width: 80px;
+        position: absolute;
+        top: 100%;
+        z-index: 20;
+        .Menu {
+            border: var(--inner-border);
+            border-radius: var(--border-radius);
+        }
+    }
+
+    &.Dropdown-open > .Dropdown-menu {
         display: block;
     }
 
-    .dropdown-menu .dropdown-content-scroll {
-        overflow-x: hidden;
-        overflow-y: scroll;
+    &.is-right {
+        .Dropdown-menu {
+            left: auto;
+            right: 0;
+        }
+    }
+    &.is-up {
+        .Dropdown-menu {
+            bottom: 100%;
+            padding-bottom: 4px;
+            padding-top: initial;
+            top: auto;
+        }
     }
 
-    a.dropdown-item {
-        display: flex;
+    &.Dropdown-nested-menu {
+        .Dropdown-menu {
+            top: -5px;
+            // this right now doesn't work
+            margin-left: 100%;
+        }
+    }
+    &.Dropdown-nested-menu.nested-right {
+        .Dropdown-menu {
+            margin-right: 100%;
+        }
     }
 }

@@ -1,6 +1,3 @@
-$borderColor: var(--inner-border-color);
-$backgroundColor: var(--bg-color);
-
 .Popover {
     &.hidden {
         visibility: hidden;
@@ -26,7 +23,7 @@ $backgroundColor: var(--bg-color);
                 border-color: transparent;
 
                 border-top-width: 0;
-                border-bottom-color: $borderColor;
+                border-bottom-color: var(--inner-border-color);
                 border-width: 10px;
             }
 
@@ -34,7 +31,7 @@ $backgroundColor: var(--bg-color);
                 content: '';
 
                 border-color: transparent;
-                border-bottom-color: $backgroundColor;
+                border-bottom-color: var(--bg-color);
                 border-width: 10px;
 
                 bottom: -12px;
@@ -47,11 +44,12 @@ $backgroundColor: var(--bg-color);
     }
 
     .popover-content {
-        background: $backgroundColor;
-        border: 1px solid $borderColor;
-        border-radius: 5px;
+        background: var(--bg-color);
+        border: var(--inner-border);
+        border-radius: var(--border-radius);
         position: relative;
         min-width: 20px;
         min-height: 20px;
+        overflow: hidden;
     }
 }

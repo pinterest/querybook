@@ -1,13 +1,13 @@
 .Tag,
 .TagGroup {
     display: inline-block;
-    margin: 2px;
+    margin: 2px 4px;
     border-radius: var(--border-radius);
 }
 
 .Tag {
     background-color: var(--dark-bg-color);
-    padding: 0px 4px;
+    padding: 2px 8px;
     color: var(--tag-text-color);
     font-weight: var(--bold-font);
     font-size: var(--small-text-size);

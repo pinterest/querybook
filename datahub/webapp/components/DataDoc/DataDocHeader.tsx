@@ -48,8 +48,8 @@ export const DataDocHeader = React.forwardRef<HTMLDivElement, IProps>(
 
         const timeMessage = isSaving ? (
             <span>
-                Saving&nbsp;
-                <i className="fa fa-spinner fa-pulse" />
+                Saving
+                <i className="fa fa-spinner fa-pulse ml8" />
             </span>
         ) : (
             `Updated at ${generateFormattedDate(lastUpdated, 'X')}`

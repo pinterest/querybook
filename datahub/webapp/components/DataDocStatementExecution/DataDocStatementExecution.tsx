@@ -130,8 +130,8 @@ export class DataDocStatementExecution extends React.PureComponent<
                     </div>
                     {this.makeMetaInfoDOM()}
                     <span>
-                        <i className="fa fa-spinner fa-pulse" />
-                        &nbsp; Loading query results...
+                        <i className="fa fa-spinner fa-pulse mr8" />
+                        Loading query results...
                     </span>
                     {this.makeLogDOM()}
                 </div>

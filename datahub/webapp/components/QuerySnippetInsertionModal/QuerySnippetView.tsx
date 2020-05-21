@@ -139,10 +139,8 @@ export class QuerySnippetView extends React.Component<
 
         const titleDOM = (
             <div className="flex-row">
-                <Title>{title}</Title>
-                &nbsp;
+                <Title className="mr8">{title}</Title>
                 {publicTag}
-                &nbsp;
                 {goldenTag}
             </div>
         );

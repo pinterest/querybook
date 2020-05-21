@@ -11,40 +11,19 @@
 }
 
 .QueryEngineStatusPopover {
-    color: var(--text-color);
-    user-select: none;
-    > div {
-        padding-right: 15px;
-        padding-left: 15px;
-    }
-
-    .QueryEngineStatusPopover-timer {
-        padding-top: 15px;
-        padding-bottom: 5px;
-    }
-
-    .QueryEngineStatusPopover-status {
-        padding-top: 10px;
-        padding-bottom: 10px;
-        > div {
-            padding-bottom: 10px;
-        }
-
-        ul {
-            cursor: pointer;
-            li:not(:last-child) {
-                padding-bottom: 10px;
+    .QueryEngineStatusPopover-refresh {
+        .Icon {
+            margin-right: 4px;
+            svg {
+                padding: 16%;
             }
         }
     }
-    .QueryEngineStatusPopover-refresh {
-        padding-top: 5px;
-        padding-bottom: 15px;
-        cursor: pointer;
-        .Icon {
-            margin-right: 5px;
-            svg {
-                padding: 15%;
+    .QueryEngineStatusPopover-status {
+        ul {
+            cursor: pointer;
+            li:not(:last-child) {
+                padding-bottom: 8px;
             }
         }
     }

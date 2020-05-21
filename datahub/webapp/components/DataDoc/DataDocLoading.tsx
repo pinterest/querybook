@@ -11,14 +11,14 @@ export const DataDocLoading: React.FC = () => {
         <div className="datadoc-loading">
             <div className="datadoc-loading-message">
                 <Title>
-                    <i className="fa fa-spinner fa-pulse" />
-                    &nbsp; Loading DataDoc
+                    <i className="fa fa-spinner fa-pulse mr8" />
+                    Loading DataDoc
                 </Title>
 
                 <br />
                 <p className="subtitle">
-                    <i className="far fa-lightbulb" />
-                    &nbsp; Did you know: {hint}
+                    <i className="far fa-lightbulb mr8" />
+                    Did you know: {hint}
                 </p>
             </div>
         </div>

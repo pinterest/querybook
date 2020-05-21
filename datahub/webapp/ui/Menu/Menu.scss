@@ -1,0 +1,46 @@
+.Menu {
+    background-color: var(--bg-color);
+    color: var(--text-color);
+    user-select: none;
+
+    .MenuItem,
+    .MenuInfoItem {
+        display: flex;
+        flex-direction: row;
+        align-items: center;
+        position: relative;
+        color: inherit;
+
+        text-align: left;
+        white-space: nowrap;
+        width: 100%;
+        padding: 8px 24px 8px 12px;
+    }
+
+    .MenuItem {
+        cursor: pointer;
+
+        .Menu-icon {
+            width: 18px;
+        }
+
+        &:hover {
+            background-color: var(--hover-bg-color);
+            color: var(--hover-text-color);
+            a {
+                color: inherit;
+            }
+        }
+    }
+
+    &.soft {
+        background: var(--light-bg-color);
+        color: var(--light-text-color);
+        border: none;
+
+        .MenuItem:hover,
+        .MenuItem.is-active {
+            color: var(--text-color);
+        }
+    }
+}
