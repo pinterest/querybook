@@ -158,9 +158,9 @@ export const QueryEngineStatusButton: React.FC<IProps> = ({
                         initialValue={REFRESH_INTERVAL}
                     />
                 </div>
-                <hr className="dropdown-divider" />
+                <hr className="Dropdown-divider" />
                 {systemStatusSectionDOM}
-                <hr className="dropdown-divider" />
+                <hr className="Dropdown-divider" />
                 <div
                     className="QueryEngineStatusPopover-refresh flex-row"
                     onClick={onRefreshClick}

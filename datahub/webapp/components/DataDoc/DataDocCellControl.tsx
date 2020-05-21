@@ -229,6 +229,7 @@ export const DataDocCellControl: React.FunctionComponent<IProps> = ({
                     />
                 )}
                 items={leftMenuItems}
+                soft
             />
         );
     }

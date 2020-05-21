@@ -1,26 +1,116 @@
-.dropdown {
-    .dropdown-trigger {
-        display: inherit;
-    }
-    .dropdown-nested-menu .dropdown-menu {
-        top: -12px;
-        // this right now doesn't work
-        margin-left: 100%;
-    }
-    .dropdown-nested-menu.nested-right .dropdown-menu {
-        margin-right: 100%;
+.DropdownMenu {
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+
+    .Dropdown-menu .Dropdown-content-scroll {
+        overflow-x: hidden;
+        overflow-y: auto;
     }
 
-    &.dropdown-open > .dropdown-menu {
+    .Dropdown.is-active .Dropdown-menu,
+    .Dropdown.is-hoverable:hover .Dropdown-menu {
         display: block;
     }
 
-    .dropdown-menu .dropdown-content-scroll {
-        overflow-x: hidden;
-        overflow-y: scroll;
+    .Dropdown-menu {
+        display: none;
+        left: 0;
+        min-width: 80px;
+        padding-top: 4px;
+        position: absolute;
+        top: 100%;
+        z-index: 20;
     }
 
-    a.dropdown-item {
+    .Dropdown-content {
+        background-color: var(--bg-color);
+        border-radius: var(--border-radius);
+        border: var(--inner-border);
+        color: var(--text-color);
+        // overflow: hidden;
+    }
+
+    .Dropdown-trigger,
+    .Dropdown-item {
+        cursor: pointer;
         display: flex;
+        display: block;
+        position: relative;
+        color: inherit;
+
+        text-align: left;
+        white-space: nowrap;
+        width: 100%;
+    }
+    .Dropdown-item {
+        padding: 8px 24px 8px 12px;
+    }
+
+    .Dropdown-item:hover,
+    a.Dropdown-item:hover,
+    button.Dropdown-item:hover {
+        background-color: var(--hover-bg-color);
+        color: var(--hover-text-color);
+        a:hover {
+            color: inherit;
+        }
+    }
+
+    a.Dropdown-trigger.is-active,
+    button.Dropdown-trigger.is-active,
+    a.Dropdown-item.is-active,
+    button.Dropdown-item.is-active {
+        background-color: var(--hover-bg-color);
+        color: var(--hover-text-color);
+    }
+
+    .Dropdown-divider {
+        background-color: var(--inner-border-color);
+    }
+
+    &.soft {
+        .Dropdown-content {
+            background: var(--light-bg-color);
+            color: var(--light-text-color);
+            border: none;
+        }
+
+        a.Dropdown-item:hover,
+        button.Dropdown-item:hover {
+            background-color: var(--hover-bg-color);
+            color: var(--text-color);
+        }
+
+        a.Dropdown-item.is-active,
+        button.Dropdown-item.is-active {
+            background-color: var(--hover-bg-color);
+            color: var(--text-color);
+        }
+    }
+
+    &.Dropdown-open > .Dropdown-menu {
+        display: block;
+    }
+
+    &.is-right .Dropdown-menu {
+        left: auto;
+        right: 0;
+    }
+    &.is-up .Dropdown-menu {
+        bottom: 100%;
+        padding-bottom: 4px;
+        padding-top: initial;
+        top: auto;
+    }
+
+    &.Dropdown-nested-menu .Dropdown-menu {
+        top: -5px;
+        // this right now doesn't work
+        margin-left: 100%;
+    }
+    &.Dropdown-nested-menu.nested-right .Dropdown-menu {
+        margin-right: 100%;
     }
 }

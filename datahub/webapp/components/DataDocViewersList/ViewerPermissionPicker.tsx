@@ -32,10 +32,10 @@ export const ViewerPermissionPicker: React.FunctionComponent<IProp> = ({
             layout={['bottom', 'right']}
             hideArrow
         >
-            <div className="dropdown-content">
+            <div className="Dropdown-content">
                 {!publicDataDoc && (
                     <a
-                        className="dropdown-item"
+                        className="Dropdown-item"
                         onClick={() =>
                             onPermissionChange(DataDocPermission.CAN_READ)
                         }
@@ -44,7 +44,7 @@ export const ViewerPermissionPicker: React.FunctionComponent<IProp> = ({
                     </a>
                 )}
                 <a
-                    className="dropdown-item"
+                    className="Dropdown-item"
                     onClick={() =>
                         onPermissionChange(DataDocPermission.CAN_WRITE)
                     }
@@ -53,9 +53,9 @@ export const ViewerPermissionPicker: React.FunctionComponent<IProp> = ({
                 </a>
                 {onRemoveEditor && (
                     <>
-                        <hr className="dropdown-divider" />
+                        <hr className="Dropdown-divider" />
                         <a
-                            className="dropdown-item"
+                            className="Dropdown-item"
                             onClick={() => onRemoveEditor(viewerInfo.uid)}
                         >
                             remove

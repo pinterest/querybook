@@ -416,11 +416,11 @@ class DataDocQueryCellComponent extends React.Component<IProps, IState> {
                 icon: 'fas fa-file-code',
                 items: [
                     {
-                        name: 'Format(Uppercase)',
+                        name: 'Format (Uppercase)',
                         onClick: this.formatQuery.bind(this, { case: 'upper' }),
                     },
                     {
-                        name: 'Format(Lowercase)',
+                        name: 'Format (Lowercase)',
                         onClick: this.formatQuery.bind(this, { case: 'lower' }),
                     },
                 ],

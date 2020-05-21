@@ -20,12 +20,13 @@
 
     .query-execution-item-wrapper {
         max-height: 300px;
-        overflow-y: scroll;
+        overflow-y: auto;
         overflow-x: hidden;
     }
 
     .query-execution-item-header {
-        padding: 2px 16px;
+        padding: 8px 12px;
         border-bottom: var(--inner-border);
+        align-items: flex-end;
     }
 }

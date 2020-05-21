@@ -106,7 +106,7 @@ export const QueryExecutionPicker: React.FunctionComponent<IProps> = React.memo(
                         <a
                             key={execution.id}
                             className={classNames({
-                                'dropdown-item': true,
+                                'Dropdown-item': true,
                                 'query-execution-item': true,
                                 'query-execution-selected':
                                     execution.id === queryExecutionId,
@@ -122,9 +122,9 @@ export const QueryExecutionPicker: React.FunctionComponent<IProps> = React.memo(
                 }
             );
             return (
-                <div className="dropdown-content">
+                <div className="Dropdown-content">
                     <div className="query-execution-item-header flex-row">
-                        <span>Hide Failed</span>&nbsp;
+                        <span className="mr8">Hide Failed</span>
                         <ToggleSwitch
                             checked={hideFailed}
                             onChange={setHideFailed}

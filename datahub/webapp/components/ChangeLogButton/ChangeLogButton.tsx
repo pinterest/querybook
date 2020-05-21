@@ -1,13 +1,15 @@
 import React, { useEffect, useState, useCallback } from 'react';
 import moment from 'moment';
 
-import localStore from 'lib/local-store';
-import ds from 'lib/datasource';
 import { CHANGE_LOG_KEY, ChangeLogValue } from 'lib/local-store/const';
-import { Modal } from 'ui/Modal/Modal';
+import ds from 'lib/datasource';
+import localStore from 'lib/local-store';
+
 import { Button } from 'ui/Button/Button';
-import './ChangeLogButton.scss';
 import { IconButton } from 'ui/Button/IconButton';
+import { Modal } from 'ui/Modal/Modal';
+
+import './ChangeLogButton.scss';
 
 export const ChangeLogButton: React.FC = () => {
     const [showChangeLogModal, setShowChangeLogModal] = useState(false);

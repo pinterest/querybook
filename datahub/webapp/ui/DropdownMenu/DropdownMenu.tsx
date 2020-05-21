@@ -30,6 +30,7 @@ interface IProps {
 
     // If provided, then menu will overflow
     menuHeight?: number;
+    soft?: boolean;
 }
 
 export const DropdownMenu: React.FunctionComponent<IProps> = ({
@@ -42,6 +43,7 @@ export const DropdownMenu: React.FunctionComponent<IProps> = ({
     customButtonRenderer,
     customMenuRenderer,
     menuHeight,
+    soft,
 }) => {
     const selfRef = React.useRef<HTMLDivElement>(null);
     const [active, setActive] = React.useState(false);
@@ -130,8 +132,8 @@ export const DropdownMenu: React.FunctionComponent<IProps> = ({
                 itemDOM = (
                     <DropdownMenu
                         className={classNames({
-                            'dropdown-item': true,
-                            'dropdown-nested-menu': true,
+                            'Dropdown-item': true,
+                            'Dropdown-nested-menu': true,
                             'nested-right': className.includes('is-right'),
                         })}
                         key={index}
@@ -145,7 +147,7 @@ export const DropdownMenu: React.FunctionComponent<IProps> = ({
                 );
             } else {
                 itemDOM = (
-                    <a {...actionProps} key={index} className="dropdown-item">
+                    <a {...actionProps} key={index} className="Dropdown-item">
                         {buttonContent}
                     </a>
                 );
@@ -157,8 +159,8 @@ export const DropdownMenu: React.FunctionComponent<IProps> = ({
         return (
             <div
                 className={classNames({
-                    'dropdown-content': true,
-                    'dropdown-content-scroll': menuHeight != null,
+                    'Dropdown-content': true,
+                    'Dropdown-content-scroll': menuHeight != null,
                 })}
                 style={
                     menuHeight != null
@@ -182,10 +184,11 @@ export const DropdownMenu: React.FunctionComponent<IProps> = ({
     const customFormatClass = customButtonRenderer ? ' custom-format ' : '';
 
     const combinedClassName = classNames({
-        dropdown: true,
-        'dropdown-open': active,
+        DropdownMenu: true,
+        'Dropdown-open': active,
         [className]: className,
         [customFormatClass]: true,
+        soft,
     });
 
     const dropdownMenuContent = active && (
@@ -194,6 +197,12 @@ export const DropdownMenu: React.FunctionComponent<IProps> = ({
             {customMenuRenderer && customMenuRenderer()}
         </>
     );
+    // const dropdownMenuContent =  (
+    //     <>
+    //         {generateMenuDOM()}
+    //         {customMenuRenderer && customMenuRenderer()}
+    //     </>
+    // );
 
     return (
         <div
@@ -203,8 +212,8 @@ export const DropdownMenu: React.FunctionComponent<IProps> = ({
             onClick={handleClick}
             ref={selfRef}
         >
-            <div className="dropdown-trigger">{buttonDOM}</div>
-            <div className={'dropdown-menu'} role="menu">
+            <div className="Dropdown-trigger">{buttonDOM}</div>
+            <div className="Dropdown-menu" role="menu">
                 {dropdownMenuContent}
             </div>
         </div>
