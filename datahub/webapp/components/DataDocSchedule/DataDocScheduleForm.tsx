@@ -272,7 +272,7 @@ export const DataDocScheduleForm: React.FunctionComponent<IDataDocScheduleFormPr
                                 />
                             )}
                             <AsyncButton
-                                disabled={!isValid || !dirty}
+                                disabled={!isValid || (!dirty && !isCreateForm)}
                                 onClick={submitForm}
                                 title={isCreateForm ? 'Create' : 'Update'}
                             />

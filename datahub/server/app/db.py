@@ -1,10 +1,11 @@
+import os
 from contextlib import contextmanager
 import functools
 
 from flask import has_request_context, g, _app_ctx_stack
 from sqlalchemy.ext.declarative import declarative_base
-from sqlalchemy.exc import SQLAlchemyError
-from sqlalchemy import create_engine
+from sqlalchemy.exc import SQLAlchemyError, DisconnectionError
+from sqlalchemy import create_engine, event
 from sqlalchemy.orm import sessionmaker, scoped_session
 
 from env import DataHubSettings
@@ -33,6 +34,28 @@ def get_db_engine(
             pool_pre_ping=True,
             encoding="utf-8",
         )
+
+        """This is to ensure pooled connections are not used in multi-processing.
+           Primarily to ensure forked celery worker does not reuse the same connection.
+
+           See https://docs.sqlalchemy.org/en/13/core/pooling.html#using-connection-pools-with-multiprocessing
+           for more details.
+        """
+
+        @event.listens_for(__engine, "connect")
+        def connect(dbapi_connection, connection_record):
+            connection_record.info["pid"] = os.getpid()
+
+        @event.listens_for(__engine, "checkout")
+        def checkout(dbapi_connection, connection_record, connection_proxy):
+            pid = os.getpid()
+            if connection_record.info["pid"] != pid:
+                connection_record.connection = connection_proxy.connection = None
+                raise DisconnectionError(
+                    "Connection record belongs to pid %s, "
+                    "attempting to check out in pid %s"
+                    % (connection_record.info["pid"], pid)
+                )
 
         # Set mode to traditional so that, among other things,
         # inserting data in a column that doesn't fit throws an error.
