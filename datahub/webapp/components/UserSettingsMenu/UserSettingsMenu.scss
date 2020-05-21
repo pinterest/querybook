@@ -4,10 +4,13 @@
     }
     .UserSettingsMenu-setting {
         white-space: nowrap;
-        width: 175px;
+        width: 180px;
     }
     .control {
-        width: 175px;
+        width: 180px;
+        select {
+            max-width: 160px;
+        }
     }
     .UserSettingsMenu-desc {
         color: var(--light-text-color);
