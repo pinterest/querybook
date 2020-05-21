@@ -18,16 +18,6 @@
         }
     }
 
-    .Dropdown.is-active {
-        .Dropdown-menu {
-            .Dropdown.is-hoverable:hover {
-                .Dropdown-menu {
-                    display: block;
-                }
-            }
-        }
-    }
-
     .Dropdown-content {
         background-color: var(--bg-color);
         border-radius: var(--border-radius);
@@ -50,23 +40,14 @@
     .Dropdown-item {
         padding: 8px 24px 8px 12px;
     }
-
     .Dropdown-item:hover,
-    a.Dropdown-item:hover,
-    button.Dropdown-item:hover {
+    .Dropdown-trigger.is-active {
         background-color: var(--hover-bg-color);
         color: var(--hover-text-color);
         a:hover {
             color: inherit;
         }
     }
-    .Dropdown-trigger.is-active,
-    a.Dropdown-item.is-active,
-    button.Dropdown-item.is-active {
-        background-color: var(--hover-bg-color);
-        color: var(--hover-text-color);
-    }
-
     .Dropdown-divider {
         background-color: var(--inner-border-color);
     }
