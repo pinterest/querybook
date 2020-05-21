@@ -104,8 +104,7 @@ body {
     --scroll-bar-color: var(--color-primary-4);
     --scroll-bar-active-color: var(--color-primary-5);
 
-    --border-color: var(--color-primary-5);
-    --inner-border-color: var(--color-primary-3);
+    --border-color: var(--color-primary-3);
     --hover-border-color: var(--color-primary-4);
     --select-border-color: var(--color-invert-5);
 
@@ -143,8 +142,8 @@ body {
     // Structure
     --max-width: 1200px;
     --border-radius: 4px;
-    --outer-border: solid 1px var(--border-color);
-    --inner-border: solid 1px var(--inner-border-color);
+    --border: solid 1px var(--border-color);
+    --box-shadow: 0px 0px 8px var(--border-color);
 }
 
 body.dawn-theme {

@@ -23,7 +23,7 @@
                 border-color: transparent;
 
                 border-top-width: 0;
-                border-bottom-color: var(--inner-border-color);
+                border-bottom-color: var(--border-color);
                 border-width: 10px;
             }
 
@@ -45,7 +45,7 @@
 
     .popover-content {
         background: var(--bg-color);
-        border: var(--inner-border);
+        border: var(--border);
         border-radius: var(--border-radius);
         position: relative;
         min-width: 20px;

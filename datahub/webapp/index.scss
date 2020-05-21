@@ -4,13 +4,18 @@
 }
 
 #root,
-#modal-root,
-#popover-root,
+#overlay-root,
 #Codemirror-tooltip-root {
-    background: var(--bg-color);
+    background-color: var(--bg-color);
     color: var(--text-color);
     font-family: var(--family-sans-serif);
     font-size: var(--small-text-size);
+}
+
+#overlay-root {
+    div {
+        z-index: 10;
+    }
 }
 
 html,
@@ -50,7 +55,7 @@ body {
     text-align: center;
     font-size: var(--xxxlarge-text-size);
     font-weight: bold;
-    color: var(--inner-border-color);
+    color: var(--border-color);
     margin-top: 20%;
     user-select: none;
     padding: 0px 20%;

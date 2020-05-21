@@ -11,7 +11,7 @@
     }
 
     .public-row-description {
-        border-top: 1px solid var(--inner-border-color);
+        border-top: 1px solid var(--border-color);
         padding-top: 1rem;
         text-align: center;
     }
@@ -21,7 +21,7 @@
         flex-direction: row;
         justify-content: space-between;
         align-items: center;
-        border-bottom: 1px solid var(--inner-border-color);
+        border-bottom: 1px solid var(--border-color);
         padding-bottom: 1rem;
         margin-bottom: 0.5rem;
 
@@ -45,7 +45,7 @@
         padding-top: 0rem;
 
         > div:not(:last-child) {
-            border-bottom: 1px solid var(--inner-border-color);
+            border-bottom: 1px solid var(--border-color);
         }
     }
 

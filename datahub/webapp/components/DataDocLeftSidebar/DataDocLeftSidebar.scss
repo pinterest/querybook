@@ -12,7 +12,7 @@
     }
 
     .contents-toggle-button {
-        border: var(--inner-border);
+        border: var(--border);
         border-left: none;
         margin-right: 0;
         padding-right: 8px;
@@ -34,7 +34,7 @@
 
     .sidebar-content-contents {
         margin-right: 8px;
-        border: var(--inner-border);
+        border: var(--border);
         border-left: none;
         border-radius: var(--border-radius);
         border-bottom-left-radius: 0px;
@@ -44,7 +44,7 @@
 
         .contents-panel-header {
             padding: 0px 12px;
-            border-bottom: var(--inner-border);
+            border-bottom: var(--border);
 
             .Title {
                 user-select: none;

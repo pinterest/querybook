@@ -30,7 +30,7 @@ export const defaultReactSelectStyles = {
         backgroundColor: 'var(--bg-color)',
         boxShadow: 'none',
         borderRadius: 'var(--border-radius)',
-        borderColor: 'var(--inner-border-color)',
+        borderColor: 'var(--border-color)',
         '&:hover': {
             borderColor: 'var(--border-color)',
         },

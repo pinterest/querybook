@@ -3,7 +3,7 @@
         padding: 8px 8px 8px 16px;
         min-height: 38px;
         background-color: var(--light-bg-color);
-        border-bottom: var(--inner-border);
+        border-bottom: var(--border);
     }
 
     .Modal-close {
@@ -62,7 +62,7 @@
             max-width: var(--max-width);
             max-height: 84vh;
             margin: 0 auto;
-            border: var(--inner-border);
+            border: var(--border);
             border-radius: var(--border-radius);
             background-color: var(--bg-color);
             overflow-y: hidden;
