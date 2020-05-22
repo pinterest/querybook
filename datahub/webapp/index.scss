@@ -13,8 +13,11 @@
 }
 
 #overlay-root {
-    div {
+    * {
         z-index: 10;
+    }
+    .arrow {
+        z-index: 11 !important;
     }
 }
 
