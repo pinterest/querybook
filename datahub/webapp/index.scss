@@ -4,18 +4,11 @@
 }
 
 #root,
-#overlay-root,
-#Codemirror-tooltip-root {
+#overlay-root {
     background-color: var(--bg-color);
     color: var(--text-color);
     font-family: var(--family-sans-serif);
     font-size: var(--small-text-size);
-}
-
-#overlay-root {
-    div {
-        z-index: 10;
-    }
 }
 
 html,

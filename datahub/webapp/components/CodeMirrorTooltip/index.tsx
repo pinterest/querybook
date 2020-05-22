@@ -3,11 +3,13 @@ import * as ReactDOM from 'react-dom';
 import { Provider } from 'react-redux';
 
 import { reduxStore } from 'redux/store';
+
+import { sleep } from 'lib/utils';
+import { overlayRoot } from 'ui/Overlay/Overlay';
 import {
     CodeMirrorTooltip,
     ICodeMirrorTooltipProps,
 } from './CodeMirrorTooltip';
-import { sleep } from 'lib/utils';
 
 function mountTooltip(
     node: Element,
@@ -15,8 +17,8 @@ function mountTooltip(
     hide: () => void
 ) {
     const tooltipContainer = document.createElement('div');
-    tooltipContainer.id = 'Codemirror-tooltip-root';
-    document.body.appendChild(tooltipContainer);
+    tooltipContainer.id = 'Codemirror-tooltip-container';
+    overlayRoot.appendChild(tooltipContainer);
 
     const rect = node.getBoundingClientRect();
     const windowHeight = window.innerHeight;
