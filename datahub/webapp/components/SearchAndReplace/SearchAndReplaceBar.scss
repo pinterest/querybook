@@ -14,6 +14,8 @@
 
     .datadoc-search-input {
         border: var(--border);
+        padding: 4px;
+
         border-radius: var(--border-radius);
 
         background-color: transparent;
@@ -29,8 +31,8 @@
         .DebouncedInput {
             flex: 1;
             input {
-                padding: 4px;
                 border: none;
+                padding: 0;
                 color: inherit;
                 font-size: var(--text-size);
             }
