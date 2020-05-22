@@ -15,6 +15,7 @@ import { matchKeyPress } from 'lib/utils/keyboard';
 
 import { RichTextEditorToolBar } from 'ui/RichTextEditorToolBar/RichTextEditorToolBar';
 import './RichTextEditor.scss';
+import { EditorState, RichUtils, SelectionState } from 'draft-js';
 
 const compositeDecorator = new DraftJs.CompositeDecorator([LinkDecorator]);
 const MAX_LIST_DEPTH = 5;
@@ -173,8 +174,10 @@ export class RichTextEditor extends React.Component<
     }
 
     @bind
-    public handleReturnSoftNewLine(event: React.KeyboardEvent) {
-        const { editorState } = this.state;
+    public handleReturnSoftNewLine(
+        editorState: DraftJs.EditorState,
+        event: React.KeyboardEvent
+    ) {
         const selection = editorState.getSelection();
 
         if (isSoftNewLineEvent(event) && selection.isCollapsed()) {
@@ -185,8 +188,7 @@ export class RichTextEditor extends React.Component<
     }
 
     @bind
-    public handleReturnList() {
-        const { editorState } = this.state;
+    public handleReturnList(editorState: DraftJs.EditorState) {
         const selection = editorState.getSelection();
 
         if (selection.isCollapsed()) {
@@ -242,8 +244,7 @@ export class RichTextEditor extends React.Component<
     }
 
     @bind
-    public handleReturnSpecialBlock() {
-        const { editorState } = this.state;
+    public handleReturnSpecialBlock(editorState: DraftJs.EditorState) {
         const selection = editorState.getSelection();
 
         if (selection.isCollapsed()) {
@@ -308,13 +309,122 @@ export class RichTextEditor extends React.Component<
 
     @bind
     public handleReturn(event: React.KeyboardEvent) {
-        if (this.handleReturnSoftNewLine(event)) {
+        const { editorState } = this.state;
+        const newEditorStateWithLink = this.handleInputLink(editorState);
+        if (this.handleReturnSoftNewLine(newEditorStateWithLink, event)) {
             return 'handled';
         }
-        if (this.handleReturnList()) {
+        if (this.handleReturnList(newEditorStateWithLink)) {
             return 'handled';
         }
-        if (this.handleReturnSpecialBlock()) {
+        if (this.handleReturnSpecialBlock(newEditorStateWithLink)) {
+            return 'handled';
+        }
+        if (newEditorStateWithLink !== editorState) {
+            return 'handled';
+        }
+        return 'not-handled';
+    }
+
+    @bind
+    public handleInputLink(editorState: DraftJs.EditorState) {
+        const selectionState = editorState.getSelection();
+        const anchorKey = selectionState.getAnchorKey();
+        const currentContent = editorState.getCurrentContent();
+        const currentBlock = currentContent.getBlockForKey(anchorKey);
+        const end = selectionState.getEndOffset();
+        const textBeforeSelection = currentBlock.getText().slice(0, end);
+        const whiteSpaceMatch = textBeforeSelection.match(/\s/gi);
+        const start = whiteSpaceMatch?.length
+            ? textBeforeSelection.lastIndexOf(
+                  whiteSpaceMatch[whiteSpaceMatch.length - 1]
+              ) + 1
+            : 0;
+        const url = textBeforeSelection.slice(start);
+
+        // If the text is already a link do not toggle.
+        let isAlreadyLink = false;
+        currentBlock.findEntityRanges(
+            (character) => {
+                const entityKey = character.getEntity();
+                return (
+                    entityKey !== null &&
+                    currentContent.getEntity(entityKey).getType() === 'LINK'
+                );
+            },
+            (linkStart, linkEnd) => {
+                if (start === linkStart && end === linkEnd) {
+                    isAlreadyLink = true;
+                }
+            }
+        );
+
+        if (
+            !isAlreadyLink &&
+            (url.startsWith('https://') || url.startsWith('http://'))
+        ) {
+            const emptySelectionState = SelectionState.createEmpty(anchorKey);
+            const contentStateWithEntity = currentContent.createEntity(
+                'LINK',
+                'MUTABLE',
+                { url }
+            );
+            const entityKey = contentStateWithEntity.getLastCreatedEntityKey();
+            const newEditorState = EditorState.push(
+                editorState,
+                contentStateWithEntity,
+                'apply-entity'
+            );
+            const newSelectionState = emptySelectionState.merge({
+                anchorOffset: start,
+                focusKey: anchorKey,
+                focusOffset: end,
+            });
+            const endSelectionState = emptySelectionState.merge({
+                anchorOffset: end,
+                focusKey: anchorKey,
+                focusOffset: end,
+                hasFocus: true,
+            });
+            const newEditorStateWithLink = EditorState.forceSelection(
+                RichUtils.toggleLink(
+                    newEditorState,
+                    newSelectionState as DraftJs.SelectionState,
+                    entityKey
+                ),
+                endSelectionState as DraftJs.SelectionState
+            );
+            this.onChange(
+                EditorState.forceSelection(
+                    RichUtils.toggleLink(
+                        newEditorState,
+                        newSelectionState as DraftJs.SelectionState,
+                        entityKey
+                    ),
+                    endSelectionState as DraftJs.SelectionState
+                )
+            );
+            return newEditorStateWithLink;
+        }
+        return editorState;
+    }
+
+    @bind
+    public handleBeforeInput(chars: string, editorState: DraftJs.EditorState) {
+        if (/\s/.test(chars)) {
+            const newEditorStateWithLink = this.handleInputLink(editorState);
+            if (newEditorStateWithLink === editorState) return 'not-handled';
+            const newContentState = DraftJs.Modifier.replaceText(
+                newEditorStateWithLink.getCurrentContent(),
+                newEditorStateWithLink.getSelection(),
+                chars
+            );
+            const newEditorStateWithChars = DraftJs.EditorState.push(
+                newEditorStateWithLink,
+                newContentState,
+                'insert-characters'
+            );
+            this.onChange(newEditorStateWithChars);
             return 'handled';
         }
         return 'not-handled';
@@ -332,13 +442,14 @@ export class RichTextEditor extends React.Component<
             this.onChange(newEditorState);
         } else {
             event.preventDefault();
+            const newEditorStateWithLink = this.handleInputLink(editorState);
             const newContentState = DraftJs.Modifier.replaceText(
-                editorState.getCurrentContent(),
-                editorState.getSelection(),
+                newEditorStateWithLink.getCurrentContent(),
+                newEditorStateWithLink.getSelection(),
                 '    '
             );
             const newEditorStateWithTab = DraftJs.EditorState.push(
-                editorState,
+                newEditorStateWithLink,
                 newContentState,
                 'insert-characters'
             );
@@ -426,6 +537,7 @@ export class RichTextEditor extends React.Component<
                 handleReturn={this.handleReturn}
                 readOnly={readOnly}
                 spellCheck={true}
+                handleBeforeInput={this.handleBeforeInput}
             />
         );
 
