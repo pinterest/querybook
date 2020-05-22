@@ -14,7 +14,7 @@ import * as Utils from 'lib/utils';
 import { getStatementExecutionResultDownloadUrl } from 'lib/query-execution';
 import { getExporterAuthentication } from 'lib/result-export';
 
-import { DropdownMenu } from 'ui/DropdownMenu/DropdownMenu';
+import { Dropdown } from 'ui/Dropdown/Dropdown';
 import { Button } from 'ui/Button/Button';
 import { CopyPasteModal } from 'ui/CopyPasteModal/CopyPasteModal';
 import { sendNotification } from 'lib/dataHubUI';
@@ -184,8 +184,8 @@ export const ResultExportDropdown: React.FunctionComponent<IProps> = ({
     const ellipsesDropDownButton = additionalButtons.length > 0 &&
         statementExecution &&
         statementExecution.result_row_count > 0 && (
-            <DropdownMenu
-                className={'inline is-right'}
+            <Dropdown
+                className={'inline'}
                 customButtonRenderer={() => (
                     <Button
                         borderless
@@ -196,9 +196,11 @@ export const ResultExportDropdown: React.FunctionComponent<IProps> = ({
                         type="inlineText"
                     />
                 )}
+                isRight
+                usePortal
             >
                 <ListMenu items={additionalButtons} isRight />
-            </DropdownMenu>
+            </Dropdown>
         );
     return (
         <>

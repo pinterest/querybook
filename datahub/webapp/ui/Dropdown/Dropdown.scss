@@ -1,4 +1,4 @@
-.DropdownMenu {
+.Dropdown {
     position: relative;
     display: flex;
     flex-direction: column;
@@ -9,7 +9,6 @@
     }
 
     .Dropdown-menu {
-        display: none;
         left: 0;
         min-width: 80px;
         position: absolute;
@@ -19,10 +18,6 @@
             border: var(--border);
             border-radius: var(--border-radius);
         }
-    }
-
-    &.Dropdown-open > .Dropdown-menu {
-        display: block;
     }
 
     &.is-right {

@@ -3,7 +3,7 @@ import React from 'react';
 import { queryStatusToStatusIcon, Status } from 'const/queryStatus';
 import { IStatementExecution } from 'redux/queryExecutions/types';
 
-import { DropdownMenu } from 'ui/DropdownMenu/DropdownMenu';
+import { Dropdown } from 'ui/Dropdown/Dropdown';
 import { StatusIcon } from 'ui/StatusIcon/StatusIcon';
 import { ListMenu } from 'ui/Menu/ListMenu';
 
@@ -81,9 +81,9 @@ export const StatementExecutionPicker: React.FunctionComponent<IProps> = ({
     }
     return (
         <div className="StatementExecutionPicker">
-            <DropdownMenu customButtonRenderer={executionSelectorButton}>
+            <Dropdown customButtonRenderer={executionSelectorButton}>
                 <ListMenu items={statementItems} type="select" height={300} />
-            </DropdownMenu>
+            </Dropdown>
         </div>
     );
 };

@@ -706,12 +706,7 @@ const DataDocChartComposerComponent: React.FunctionComponent<
                     label="Legend Position"
                     name="legendPosition"
                     type="react-select"
-                    options={['top', 'bottom', 'left', 'right'].map(
-                        (option) => ({
-                            value: option,
-                            label: option,
-                        })
-                    )}
+                    options={['top', 'bottom', 'left', 'right']}
                 />
                 <FormSectionHeader>Values</FormSectionHeader>
                 <SimpleField
@@ -752,12 +747,7 @@ const DataDocChartComposerComponent: React.FunctionComponent<
                             label="Position"
                             name="valuePosition"
                             type="react-select"
-                            options={['center', 'start', 'end'].map(
-                                (option) => ({
-                                    value: option,
-                                    label: option,
-                                })
-                            )}
+                            options={['center', 'start', 'end']}
                         />
                         <SimpleField
                             stacked
@@ -772,10 +762,7 @@ const DataDocChartComposerComponent: React.FunctionComponent<
                                 'left',
                                 'top',
                                 'bottom',
-                            ].map((option) => ({
-                                value: option,
-                                label: option,
-                            }))}
+                            ]}
                         />
                     </>
                 ) : null}

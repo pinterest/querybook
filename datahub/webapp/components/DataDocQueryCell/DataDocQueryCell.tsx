@@ -33,7 +33,7 @@ import { BindedQueryEditor } from 'components/QueryEditor/BindedQueryEditor';
 
 import { Button } from 'ui/Button/Button';
 import { DebouncedInput } from 'ui/DebouncedInput/DebouncedInput';
-import { DropdownMenu } from 'ui/DropdownMenu/DropdownMenu';
+import { Dropdown } from 'ui/Dropdown/Dropdown';
 import { Icon } from 'ui/Icon/Icon';
 import { ListMenu, IListMenuItem } from 'ui/Menu/ListMenu';
 import { Message } from 'ui/Message/Message';
@@ -435,12 +435,12 @@ class DataDocQueryCellComponent extends React.Component<IProps, IState> {
         });
 
         return additionalButtons.length > 0 ? (
-            <DropdownMenu
+            <Dropdown
                 customButtonRenderer={this.additionalDropDownButtonFormatter}
-                className="is-right"
+                isRight
             >
                 <ListMenu items={additionalButtons} isRight />
-            </DropdownMenu>
+            </Dropdown>
         ) : null;
     }
 

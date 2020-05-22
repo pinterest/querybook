@@ -332,12 +332,7 @@ export const TaskEditor: React.FunctionComponent<IProps> = ({
                                         label="Task"
                                         type="react-select"
                                         name="task"
-                                        options={(registeredTaskList || []).map(
-                                            (registeredTask) => ({
-                                                value: registeredTask,
-                                                label: registeredTask,
-                                            })
-                                        )}
+                                        options={registeredTaskList}
                                         onChange={(val) => {
                                             setFieldValue('args', [], false);
                                             setFieldValue(

@@ -23,7 +23,7 @@ import { DataDocItem, DataTableItem } from './SearchResultItem';
 import { Button } from 'ui/Button/Button';
 import { Checkbox } from 'ui/Form/Checkbox';
 import { Container } from 'ui/Container/Container';
-import { DropdownMenu } from 'ui/DropdownMenu/DropdownMenu';
+import { Dropdown } from 'ui/Dropdown/Dropdown';
 import { Icon } from 'ui/Icon/Icon';
 import { Level } from 'ui/Level/Level';
 import { ListMenu } from 'ui/Menu/ListMenu';
@@ -226,10 +226,7 @@ export const SearchOverview: React.FunctionComponent = () => {
     }, [searchOrder]);
 
     const orderByDOM = (
-        <DropdownMenu
-            customButtonRenderer={orderByButtonFormatter}
-            className="is-right"
-        >
+        <Dropdown customButtonRenderer={orderByButtonFormatter} isRight>
             <ListMenu
                 items={[SearchOrder.Recency, SearchOrder.Relevance].map(
                     (choice, index) => ({
@@ -247,7 +244,7 @@ export const SearchOverview: React.FunctionComponent = () => {
                 type="select"
                 isRight
             />
-        </DropdownMenu>
+        </Dropdown>
     );
 
     const environment = getCurrentEnv();

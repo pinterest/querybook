@@ -10,7 +10,7 @@ import {
     userEnvironmentNamesSelector,
 } from 'redux/environment/selector';
 
-import { DropdownMenu } from 'ui/DropdownMenu/DropdownMenu';
+import { Dropdown } from 'ui/Dropdown/Dropdown';
 import { ListMenu } from 'ui/Menu/ListMenu';
 
 import './EnvironmentDropdownButton.scss';
@@ -51,8 +51,8 @@ export const EnvironmentDropdownButton: React.FunctionComponent<{
     });
 
     return (
-        <DropdownMenu className="EnvironmentDropdownButton">
+        <Dropdown className="EnvironmentDropdownButton">
             <ListMenu items={environmentItems} type="select" />
-        </DropdownMenu>
+        </Dropdown>
     );
 };
