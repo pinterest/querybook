@@ -30,7 +30,7 @@ export function SimpleReactSelect<T>({
 }: ISimpleReactSelectProps<T>) {
     const computedOptions = useMemo(
         () =>
-            options.map((option) =>
+            (options || []).map((option) =>
                 typeof option === 'string'
                     ? {
                           label: option,
