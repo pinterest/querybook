@@ -1,6 +1,45 @@
 from app.db import with_session
 
 from logic import datadoc as data_doc_logic
+from logic import query_execution as qe_logic
+from tasks import run_query as tasks
+
+
+@with_session
+def create_child_table(engine_id, uid, session=None):
+    query = """CREATE TABLE world_happiness_ranking_2015_to_2019 AS
+SELECT
+  w9.Country,
+  w7.HappinessRank AS [2015],
+  w6.HappinessRank AS [2016],
+  w5.HappinessRank AS [2017],
+  w9.Rank AS [2018],
+  w8.Rank AS [2019]
+FROM
+  world_happiness_2019 w9
+  INNER JOIN world_happiness_2018 w8 ON w9.Country = w8.Country
+  INNER JOIN world_happiness_2017 w7 ON w9.Country = w7.Country
+  INNER JOIN world_happiness_2016 w6 ON w9.Country = w6.Country
+  INNER JOIN world_happiness_2015 w5 ON w9.Country = w5.Country;
+SELECT
+  *
+FROM
+  world_happiness_ranking_2015_to_2019;
+    """
+    print("!!!!!!!!!!!!!!!!!", create_child_table)
+    query_execution = qe_logic.create_query_execution(
+        query=query, engine_id=engine_id, uid=uid, session=session
+    )
+    print("!!!!!!!!!!!!!!!!!", query_execution)
+
+    try:
+        tasks.run_query_task.apply_async(
+            args=[query_execution.id,]
+        )
+        query_execution_dict = query_execution.to_dict()
+        print("!!!!!!!!!!!!!!!!", query_execution_dict)
+    except:
+        pass
 
 
 @with_session

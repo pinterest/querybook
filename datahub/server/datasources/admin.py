@@ -428,7 +428,7 @@ def get_api_access_tokens_admin():
 def exec_demo_set_up():
     with DBSession() as session:
         environment = environment_logic.create_environment(
-            name="demo_environment",
+            name="xdemo_environment",
             description="Demo environment",
             image="",
             public=True,
@@ -439,7 +439,7 @@ def exec_demo_set_up():
         local_db_conn = "sqlite:///demo/demo_data.db"
         metastore_id = QueryMetastore.create(
             {
-                "name": "demo_metastore",
+                "name": "zdemo_metastore",
                 "metastore_params": {"connection_string": local_db_conn,},
                 "loader": "SqlAlchemyMetastoreLoader",
                 "acl_control": {},
@@ -450,7 +450,7 @@ def exec_demo_set_up():
 
         engine_id = QueryEngine.create(
             {
-                "name": "sqlite",
+                "name": "zsqlite",
                 "description": "SQLite Engine",
                 "language": "sqlite",
                 "executor": "sqlalchemy",
@@ -496,6 +496,8 @@ def exec_demo_set_up():
         schedule_logic.run_and_log_scheduled_task(
             scheduled_task_id=task_schedule_id, session=session
         )
+
+        demo_logic.create_child_table(engine_id, current_user.id, session=session)
 
         data_doc_id = demo_logic.create_demo_data_doc(
             environment_id=environment.id,
