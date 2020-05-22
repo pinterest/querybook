@@ -4,6 +4,9 @@
 
     .DebouncedInput {
         flex: 1;
+        input {
+            padding: 12px;
+        }
     }
 
     .search-bar-clear-sep {

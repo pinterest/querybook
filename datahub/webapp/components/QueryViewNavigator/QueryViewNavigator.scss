@@ -44,7 +44,7 @@
 
     .loading-queries-message {
         padding: 35px 20px;
-        font-size: var(--large-text-size);
+        // font-size: var(--large-text-size);
     }
 
     .no-result-message {
@@ -70,6 +70,10 @@
     &:hover,
     &.selected {
         background-color: var(--hover-bg-color);
+    }
+
+    .exec-title {
+        white-space: nowrap;
     }
 
     .query-context {

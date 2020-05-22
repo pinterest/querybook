@@ -12,12 +12,12 @@ import { ITableSearchResult } from 'redux/dataTableSearch/types';
 import { queryMetastoresSelector } from 'redux/dataSources/selector';
 import { IQueryMetastore } from 'const/metastore';
 
-import { Tabs } from 'ui/Tabs/Tabs';
 import { InfinityScroll } from 'ui/InfinityScroll/InfinityScroll';
+import { SearchBar } from 'ui/SearchBar/SearchBar';
+import { Select, makeSelectOptions } from 'ui/Select/Select';
+import { Tabs } from 'ui/Tabs/Tabs';
 
 import './DataTableNavigator.scss';
-import { Select, makeSelectOptions } from 'ui/Select/Select';
-import { SearchBar } from 'ui/SearchBar/SearchBar';
 
 const DATA_TABLE_TABS = [
     {

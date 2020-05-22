@@ -43,6 +43,33 @@ button {
     }
 }
 
+// important temporary until bulma is fully removed
+input,
+textarea {
+    background: var(--bg-color);
+    border: var(--border);
+    border-radius: var(--border-radius);
+    box-shadow: none !important;
+    width: 100%;
+    padding: 8px;
+    font-size: inherit;
+    color: inherit;
+
+    &:hover {
+        border-color: var(--hover-border-color) !important;
+    }
+
+    &:active,
+    &:focus {
+        border-color: var(--focus-border-color) !important;
+        box-shadow: none !important;
+        outline: none !important;
+    }
+    &::placeholder {
+        color: var(--light-text-color);
+    }
+}
+
 input:-webkit-autofill,
 input:-internal-autofill-selected {
     -webkit-text-fill-color: var(--text-color) !important;

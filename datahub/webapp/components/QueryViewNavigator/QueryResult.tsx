@@ -30,7 +30,7 @@ export const QueryResult: React.FunctionComponent<IProps> = ({
 
     return (
         <div className={className} onClick={() => onClick(queryExecution)}>
-            <Title size={6} className="flex-row mb12">
+            <Title size={6} className="exec-title flex-row mb12">
                 <StatusIcon
                     status={queryStatusToStatusIcon[queryExecution.status]}
                 />
