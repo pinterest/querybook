@@ -115,7 +115,7 @@ class QueryViewNavigatorComponent extends React.PureComponent<IProps> {
         const loadingDOM = isLoadingQueries ? (
             <div className="loading-queries-message flex-center">
                 <i className="fa fa-spinner fa-pulse mr8" />
-                <div>Loading Queries</div>
+                Loading Queries
             </div>
         ) : null;
 

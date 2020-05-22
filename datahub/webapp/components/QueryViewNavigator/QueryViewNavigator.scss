@@ -43,8 +43,7 @@
     }
 
     .loading-queries-message {
-        padding: 35px 20px;
-        // font-size: var(--large-text-size);
+        padding: 36px 20px;
     }
 
     .no-result-message {
@@ -60,12 +59,8 @@
 
 .QueryResult {
     cursor: pointer;
-    border-bottom: 1px solid var(--border-color);
-    padding: 5px 10px;
-
-    .title {
-        padding-bottom: 3px;
-    }
+    border-bottom: var(--border);
+    padding: 4px 12px;
 
     &:hover,
     &.selected {
