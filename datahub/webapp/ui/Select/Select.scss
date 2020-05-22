@@ -12,7 +12,11 @@
         padding: 8px 32px 8px 8px;
 
         &:hover {
-            border-color: var(--border-color);
+            border-color: var(--hover-border-color);
+        }
+        &:active,
+        &:focus {
+            border-color: var(--focus-border-color);
         }
     }
 
