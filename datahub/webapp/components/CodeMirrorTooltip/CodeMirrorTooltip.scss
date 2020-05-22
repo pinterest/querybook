@@ -1,9 +1,8 @@
-#Codemirror-tooltip-root {
+#Codemirror-tooltip-container {
     position: fixed;
-    z-index: 10000;
+    z-index: 300;
 
     opacity: 0;
-
     transition: opacity 0.4s;
 }
 
