@@ -30,21 +30,15 @@ export function SimpleReactSelect<T>({
 }: ISimpleReactSelectProps<T>) {
     const computedOptions = useMemo(
         () =>
-            options
-                .map((option) =>
-                    typeof option === 'string'
-                        ? {
-                              label: option,
-                              value: option,
-                          }
-                        : option
-                )
-                .concat(
-                    withDeselect
-                        ? [{ value: undefined, label: 'Deselect' }]
-                        : []
-                ),
-        [withDeselect, options]
+            options.map((option) =>
+                typeof option === 'string'
+                    ? {
+                          label: option,
+                          value: option,
+                      }
+                    : option
+            ),
+        [options]
     );
 
     const selectedOption = useMemo(
@@ -65,6 +59,7 @@ export function SimpleReactSelect<T>({
             onChange={onSelectChange}
             options={computedOptions}
             isDisabled={isDisabled}
+            isClearable={withDeselect}
             {...selectProps}
         />
     );
