@@ -1,17 +1,40 @@
 import * as React from 'react';
+
 import { IconButton } from 'ui/Button/IconButton';
-import { Popover } from 'ui/Popover/Popover';
 import { Modal } from 'ui/Modal/Modal';
+import { Popover } from 'ui/Popover/Popover';
 
-interface IProps {}
-
-export const HelpMenuButton: React.FunctionComponent<IProps> = () => {
+export const InfoMenuButton: React.FunctionComponent = () => {
     const [showPanel, setShowPanel] = React.useState(false);
-    const [helpModal, setHelpModal] = React.useState(null);
+    const [helpModal, setHelpModal] = React.useState<
+        'log' | 'tip' | 'shortcut' | 'faq'
+    >(null);
     const buttonRef = React.useRef<HTMLAnchorElement>();
 
     const getModalDOM = () => {
         switch (helpModal) {
+            case 'log':
+                return (
+                    <Modal
+                        onHide={() => setHelpModal(null)}
+                        title="Logs"
+                        className="with-padding"
+                    >
+                        <div className="ChangeLog">
+                            <div
+                                className="content ChangeLog-content"
+                                dangerouslySetInnerHTML={{
+                                    __html: contentLogContent,
+                                }}
+                            />
+                            <div className="ChangeLog-control">
+                                <Button onClick={onDismissChangeLog}>
+                                    Dismiss
+                                </Button>
+                            </div>
+                        </div>
+                    </Modal>
+                );
             case 'tip':
                 return (
                     <Modal
@@ -84,13 +107,13 @@ export const HelpMenuButton: React.FunctionComponent<IProps> = () => {
         );
     };
     return (
-        <div className="HelpMenuButton">
+        <div className="InfoMenuButton">
             <IconButton
-                className="HelpMenuButton-button"
+                className="InfoMenuButton-button"
                 onClick={() => setShowPanel(true)}
                 ref={buttonRef}
-                icon={'help-circle'}
-                tooltip={'Tips, Shortcuts, & FAQs'}
+                icon={'info'}
+                tooltip={'Logs, Tips, Shortcuts, & FAQs'}
                 tooltipPos="right"
             />
             {showPanel ? getPanelDOM() : null}

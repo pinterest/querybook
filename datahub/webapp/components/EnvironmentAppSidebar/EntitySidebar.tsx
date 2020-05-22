@@ -18,7 +18,7 @@ import './EntitySidebar.scss';
 
 import { Divider } from 'ui/Divider/Divider';
 import { Link } from 'ui/Link/Link';
-import { HelpMenuButton } from 'components/HelpMenuButton/HelpMenuButton';
+import { InfoMenuButton } from 'components/InfoMenuButton/InfoMenuButton';
 
 interface IEntitySidebarProps {
     selectedEntity: Entity;
@@ -130,7 +130,7 @@ export const EntitySidebar: React.FunctionComponent<IEntitySidebarProps> = ({
                 <SearchContainer />
                 <UserMenu />
                 <QueryEngineStatusButton />
-                <HelpMenuButton />
+                <InfoMenuButton />
                 <ChangeLogButton />
                 {adminAppButton}
             </div>
