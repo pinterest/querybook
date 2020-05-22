@@ -210,10 +210,7 @@ export const DataDocScheduleForm: React.FunctionComponent<IDataDocScheduleFormPr
                                 label="Export with"
                                 name="kwargs.exporter_name"
                                 type="react-select"
-                                options={exporters.map((exp) => ({
-                                    value: exp.name,
-                                    label: exp.name,
-                                }))}
+                                options={exporters.map((exp) => exp.name)}
                                 onChange={(v) => {
                                     setFieldValue('kwargs.exporter_name', v);
                                     setFieldValue(

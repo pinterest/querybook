@@ -12,7 +12,7 @@ import { IQueryExecution } from 'redux/queryExecutions/types';
 
 import { UserName } from 'components/UserBadge/UserName';
 
-import { DropdownMenu } from 'ui/DropdownMenu/DropdownMenu';
+import { Dropdown } from 'ui/Dropdown/Dropdown';
 import { StatusIcon } from 'ui/StatusIcon/StatusIcon';
 import { ToggleSwitch } from 'ui/ToggleSwitch/ToggleSwitch';
 
@@ -138,12 +138,12 @@ export const QueryExecutionPicker: React.FunctionComponent<IProps> = React.memo(
         }, [filteredQueryExecutions, queryExecutionId, hideFailed]);
 
         return (
-            <DropdownMenu
+            <Dropdown
                 className="QueryExecutionPicker"
                 customButtonRenderer={executionSelectorButton}
             >
                 {executionMenuRenderer()}
-            </DropdownMenu>
+            </Dropdown>
         );
     }
 );

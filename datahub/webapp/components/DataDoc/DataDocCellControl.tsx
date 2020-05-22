@@ -5,7 +5,7 @@ import { titleize, sleep, copy } from 'lib/utils';
 import { sendNotification } from 'lib/dataHubUI';
 import { AsyncButton } from 'ui/AsyncButton/AsyncButton';
 import { Button } from 'ui/Button/Button';
-import { DropdownMenu } from 'ui/DropdownMenu/DropdownMenu';
+import { Dropdown } from 'ui/Dropdown/Dropdown';
 import { ListMenu, IListMenuItem } from 'ui/Menu/ListMenu';
 
 const cellTypes = require('config/datadoc.yaml').cell_types;
@@ -218,7 +218,7 @@ export const DataDocCellControl: React.FunctionComponent<IProps> = ({
 
     if (leftMenuItems.length) {
         leftButtons.unshift(
-            <DropdownMenu
+            <Dropdown
                 className={'inline mr4'}
                 key="dropdown-menu"
                 customButtonRenderer={() => (
@@ -231,7 +231,7 @@ export const DataDocCellControl: React.FunctionComponent<IProps> = ({
                 )}
             >
                 <ListMenu items={leftMenuItems} soft />
-            </DropdownMenu>
+            </Dropdown>
         );
     }
 

@@ -10,7 +10,7 @@ interface ISelectOption<T> {
 }
 
 export interface ISimpleReactSelectProps<T> {
-    options: Array<ISelectOption<T>>;
+    options: Array<ISelectOption<T> | string>;
     value: T;
     onChange: (o: T) => any;
     withDeselect?: boolean;
@@ -28,17 +28,24 @@ export function SimpleReactSelect<T>({
     isDisabled,
     selectProps = {},
 }: ISimpleReactSelectProps<T>) {
-    const selectedOption = useMemo(
-        () => options.find((option) => option.value === value),
-        [options, value]
-    );
     const computedOptions = useMemo(
         () =>
-            withDeselect
-                ? [{ value: undefined, label: 'Deselect' }].concat(options)
-                : options,
-        [withDeselect, options]
+            options.map((option) =>
+                typeof option === 'string'
+                    ? {
+                          label: option,
+                          value: option,
+                      }
+                    : option
+            ),
+        [options]
     );
+
+    const selectedOption = useMemo(
+        () => computedOptions.find((option) => option.value === value),
+        [computedOptions, value]
+    );
+
     const onSelectChange = useCallback(
         (val: ISelectOption<T>) => onChange(val?.value),
         [onChange]
@@ -52,6 +59,7 @@ export function SimpleReactSelect<T>({
             onChange={onSelectChange}
             options={computedOptions}
             isDisabled={isDisabled}
+            isClearable={withDeselect}
             {...selectProps}
         />
     );

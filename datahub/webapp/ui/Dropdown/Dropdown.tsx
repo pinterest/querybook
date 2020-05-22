@@ -3,21 +3,30 @@ import React from 'react';
 
 import { IconButton } from 'ui/Button/IconButton';
 
-import './DropdownMenu.scss';
+import './Dropdown.scss';
+import { Popover } from 'ui/Popover/Popover';
 
 interface IProps {
     menuIcon?: string;
     className?: string;
     customButtonRenderer?: () => React.ReactNode;
-    customMenuRenderer?: () => React.ReactNode;
+
     hoverable?: boolean;
+    isRight?: boolean;
+    isUp?: boolean;
+
+    usePortal?: boolean;
 }
 
-export const DropdownMenu: React.FunctionComponent<IProps> = ({
-    hoverable = true,
+export const Dropdown: React.FunctionComponent<IProps> = ({
     menuIcon = 'menu',
     className,
     customButtonRenderer,
+
+    hoverable = true,
+    isRight,
+    isUp,
+    usePortal,
 
     children,
 }) => {
@@ -72,11 +81,32 @@ export const DropdownMenu: React.FunctionComponent<IProps> = ({
     const customFormatClass = customButtonRenderer ? ' custom-format ' : '';
 
     const combinedClassName = classNames({
-        DropdownMenu: true,
-        'Dropdown-open': active,
+        Dropdown: true,
         [className]: className,
         [customFormatClass]: true,
+        'is-right': isRight,
+        'is-up': isUp,
     });
+
+    let dropdownContent =
+        active && children ? (
+            <div className="Dropdown-menu pt4" role="menu">
+                {children}
+            </div>
+        ) : null;
+    if (usePortal && dropdownContent) {
+        dropdownContent = (
+            <Popover
+                onHide={() => setActive(false)}
+                anchor={selfRef.current}
+                layout={[isUp ? 'top' : 'bottom', isRight ? 'right' : 'left']}
+                hideArrow
+                skipAnimation
+            >
+                {dropdownContent}
+            </Popover>
+        );
+    }
 
     return (
         <div
@@ -87,9 +117,7 @@ export const DropdownMenu: React.FunctionComponent<IProps> = ({
             ref={selfRef}
         >
             <div className="Dropdown-trigger">{buttonDOM}</div>
-            <div className="Dropdown-menu pt4" role="menu">
-                {active && children}
-            </div>
+            {dropdownContent}
         </div>
     );
 };

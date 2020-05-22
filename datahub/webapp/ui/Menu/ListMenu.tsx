@@ -4,7 +4,7 @@ import classNames from 'classnames';
 import { calculateTooltipSize } from 'lib/utils';
 import { TooltipDirection } from 'const/tooltip';
 
-import { DropdownMenu } from 'ui/DropdownMenu/DropdownMenu';
+import { Dropdown } from 'ui/Dropdown/Dropdown';
 import { Menu, MenuItem } from './Menu';
 
 export interface IListMenuItem {
@@ -78,7 +78,7 @@ export const ListMenu: React.FunctionComponent<IProps> = ({
         let itemDOM: React.ReactChild;
         if (action.items) {
             itemDOM = (
-                <DropdownMenu
+                <Dropdown
                     className={classNames({
                         'Dropdown-nested-menu': true,
                         'nested-right': isRight,
@@ -92,7 +92,7 @@ export const ListMenu: React.FunctionComponent<IProps> = ({
                     )}
                 >
                     <ListMenu items={action.items} />
-                </DropdownMenu>
+                </Dropdown>
             );
         } else {
             itemDOM = (

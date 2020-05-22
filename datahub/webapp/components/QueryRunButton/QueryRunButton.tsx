@@ -7,7 +7,7 @@ import { IQueryEngine, QueryEngineStatus } from 'const/queryEngine';
 import { queryEngineStatusToIconStatus } from 'const/queryStatusIcon';
 
 import { AsyncButton } from 'ui/AsyncButton/AsyncButton';
-import { DropdownMenu } from 'ui/DropdownMenu/DropdownMenu';
+import { Dropdown } from 'ui/Dropdown/Dropdown';
 import { ListMenu } from 'ui/Menu/ListMenu';
 import { StatusIcon } from 'ui/StatusIcon/StatusIcon';
 
@@ -118,12 +118,12 @@ export const QueryRunButton = React.forwardRef<
                     };
                 });
                 engineButton = (
-                    <DropdownMenu
+                    <Dropdown
                         customButtonRenderer={getEngineSelectorButtonDOM}
-                        className="is-right"
+                        isRight
                     >
                         <ListMenu items={engineItems} type="select" isRight />
-                    </DropdownMenu>
+                    </Dropdown>
                 );
             } else {
                 engineButton = queryEngineById[engineId].name;

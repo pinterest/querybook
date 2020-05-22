@@ -20,6 +20,9 @@ export interface IPopoverProps {
 
     hideArrow?: boolean;
     resizeOnChange?: boolean;
+
+    // skipping the animation part for more snappy experience
+    skipAnimation?: boolean;
 }
 
 interface IPopoverContainerProps extends IPopoverProps {
@@ -47,12 +50,15 @@ const initialWrapperStyle: React.CSSProperties = {
 
 export const PopoverContainer: React.FunctionComponent<IPopoverContainerProps> = ({
     layout = ['right', 'right'],
-    resizeOnChange,
+
     onHide,
     container,
     anchorBox,
     anchor,
+
     hideArrow,
+    resizeOnChange,
+    skipAnimation,
 
     children,
 }) => {
@@ -205,25 +211,27 @@ export const PopoverContainer: React.FunctionComponent<IPopoverContainerProps> =
     ]);
 
     // Animation Spring
-    const wrapperAnimationProps = useSpring({
-        from: {
-            opacity: 0.75,
-            transform: `translate(${
-                mainLayout === 'left'
-                    ? '-10px'
-                    : mainLayout === 'right'
-                    ? '10px'
-                    : '0'
-            },${
-                mainLayout === 'top'
-                    ? '-10px'
-                    : mainLayout === 'bottom'
-                    ? '10px'
-                    : '0'
-            })`,
-        },
-        to: { opacity: 1, transform: `translate(0,0)` },
-    });
+    const wrapperAnimationProps = skipAnimation
+        ? {}
+        : useSpring({
+              from: {
+                  opacity: 0.75,
+                  transform: `translate(${
+                      mainLayout === 'left'
+                          ? '-10px'
+                          : mainLayout === 'right'
+                          ? '10px'
+                          : '0'
+                  },${
+                      mainLayout === 'top'
+                          ? '-10px'
+                          : mainLayout === 'bottom'
+                          ? '10px'
+                          : '0'
+                  })`,
+              },
+              to: { opacity: 1, transform: `translate(0,0)` },
+          });
 
     const arrowDOM = hideArrow ? null : (
         <div className="arrow" style={arrowStyle} />
