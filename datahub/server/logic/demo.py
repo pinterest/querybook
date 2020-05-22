@@ -26,18 +26,14 @@ SELECT
 FROM
   world_happiness_ranking_2015_to_2019;
     """
-    print("!!!!!!!!!!!!!!!!!", create_child_table)
     query_execution = qe_logic.create_query_execution(
         query=query, engine_id=engine_id, uid=uid, session=session
     )
-    print("!!!!!!!!!!!!!!!!!", query_execution)
 
     try:
         tasks.run_query_task.apply_async(
             args=[query_execution.id,]
         )
-        query_execution_dict = query_execution.to_dict()
-        print("!!!!!!!!!!!!!!!!", query_execution_dict)
     except:
         pass
 

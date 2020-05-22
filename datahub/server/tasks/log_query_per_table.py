@@ -35,6 +35,10 @@ def log_query_per_table_task(self, query_execution_id):
         )
 
         datadoc_cell = next(iter(query_execution.cells), None)
+        if any(statement in statement_types for statement in ["CREATE", "INSERT"]):
+            create_lineage_from_query(
+                query_execution, metastore_id, datadoc_cell, session=session
+            )
         if datadoc_cell is None or not datadoc_cell.doc.public:
             return
 
@@ -47,17 +51,14 @@ def log_query_per_table_task(self, query_execution_id):
             session=session,
         )
 
-        if any(statement in statement_types for statement in ["CREATE", "INSERT"]):
-            create_lineage_from_query(
-                query_execution, datadoc_cell, metastore_id, session=session
-            )
-
 
 def create_lineage_from_query(
-    query_execution, datadoc_cell, metastore_id, session=None
+    query_execution, metastore_id, datadoc_cell=None, session=None
 ):
     cell_title = (
-        datadoc_cell.meta["title"] if "title" in datadoc_cell.meta else "Untitled"
+        datadoc_cell.meta["title"]
+        if (datadoc_cell and "title" in datadoc_cell.meta)
+        else "Untitled"
     )
     job_name = "{}-{}".format(cell_title, query_execution.id)
     data_job_metadata = m_logic.create_job_metadata_row(
