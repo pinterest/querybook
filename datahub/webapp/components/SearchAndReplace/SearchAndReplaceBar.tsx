@@ -216,7 +216,7 @@ const TextToggleButton: React.FC<{
     const className = classNames({
         TextToggleButton: true,
         active: value,
-        mh4: true,
+        ml4: true,
     });
     return (
         <span
