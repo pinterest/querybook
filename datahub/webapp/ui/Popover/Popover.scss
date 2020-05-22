@@ -5,6 +5,7 @@
 
     .popover-wrapper {
         position: fixed;
+        z-index: 200;
 
         .arrow {
             top: 0px;
