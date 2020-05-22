@@ -13,7 +13,7 @@ continue_table_search_key_word = set(
 )
 
 
-def process_query(query, default_catalog="hive", default_schema="default"):
+def process_query(query, language=None):
     """
     This function does all the necessary processing to find the lineage.
     Returns:
@@ -21,6 +21,11 @@ def process_query(query, default_catalog="hive", default_schema="default"):
         Lineage: [{table: [lineage]}],
         Statements: [{table: 'statement' }]
     """
+    if language == "sqlite":
+        default_schema = "main"
+    else:
+        default_schema = "default"
+
     lineage_per_statement = []
     table_per_statement = []
     # This tracks which schema (generic parent table specified in a USE statement) is in use

@@ -26,7 +26,9 @@ def log_query_per_table_task(self, query_execution_id):
             return
 
         statement_types = get_table_statement_type(query_execution.query)
-        table_per_statement, _ = process_query(query_execution.query)
+        table_per_statement, _ = process_query(
+            query_execution.query, query_execution.engine.language
+        )
 
         sync_table_to_metastore(
             table_per_statement, statement_types, metastore_id, session=session
@@ -44,6 +46,32 @@ def log_query_per_table_task(self, query_execution_id):
             datadoc_cell.id,
             session=session,
         )
+
+        if any(statement in statement_types for statement in ["CREATE", "INSERT"]):
+            create_lineage_from_query(
+                query_execution, datadoc_cell, metastore_id, session=session
+            )
+
+
+def create_lineage_from_query(
+    query_execution, datadoc_cell, metastore_id, session=None
+):
+    cell_title = (
+        datadoc_cell.meta["title"] if "title" in datadoc_cell.meta else "Untitled"
+    )
+    job_name = "{}-{}".format(cell_title, query_execution.id)
+    data_job_metadata = m_logic.create_job_metadata_row(
+        job_name,
+        metastore_id,
+        job_info={"query_execution_id": query_execution.id},
+        job_owner=query_execution.owner.username,
+        query_text=query_execution.query,
+        is_adhoc=True,
+        session=session,
+    )
+    m_logic.create_table_lineage_from_metadata(
+        data_job_metadata.id, query_execution.engine.language, session=session
+    )
 
 
 @with_session

@@ -518,12 +518,14 @@ def get_all_table_lineages(session=None):
 
 
 @with_session
-def create_table_lineage_from_metadata(job_metadata_id, session=None):
+def create_table_lineage_from_metadata(
+    job_metadata_id, query_language=None, session=None
+):
     job_metadata = session.query(DataJobMetadata).get(job_metadata_id)
     if job_metadata is None:
         return
 
-    _, lineage_per_statement = process_query(job_metadata.query_text)
+    _, lineage_per_statement = process_query(job_metadata.query_text, query_language)
 
     lineage_ids = []
     for statement_lineage in lineage_per_statement:
