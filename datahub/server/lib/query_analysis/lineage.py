@@ -22,10 +22,8 @@ def process_query(query, language=None):
         Statements: [{table: 'statement' }]
     """
     if language == "sqlite":
-        # default_catalog = None
         default_schema = "main"
     else:
-        # default_catalog = 'hive'
         default_schema = "default"
 
     lineage_per_statement = []
