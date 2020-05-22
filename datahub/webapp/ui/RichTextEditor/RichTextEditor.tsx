@@ -334,86 +334,69 @@ export class RichTextEditor extends React.Component<
         const currentBlock = currentContent.getBlockForKey(anchorKey);
         const end = selectionState.getEndOffset();
         const textBeforeSelection = currentBlock.getText().slice(0, end);
-        const whiteSpaceMatch = textBeforeSelection.match(/\s/gi);
-        const start = whiteSpaceMatch?.length
-            ? textBeforeSelection.lastIndexOf(
-                  whiteSpaceMatch[whiteSpaceMatch.length - 1]
-              ) + 1
-            : 0;
-        const url = textBeforeSelection.slice(start);
+        const urlMatch = textBeforeSelection.match(/[^\s]+$/gi) || [];
+        const url = urlMatch.length ? urlMatch[0] : '';
+        if (!url.startsWith('https://') && !url.startsWith('http://')) {
+            return editorState;
+        }
+        const start = textBeforeSelection.length - url.length;
 
         // If the text is already a link do not toggle.
-        let isAlreadyLink = false;
-        currentBlock.findEntityRanges(
-            (character) => {
-                const entityKey = character.getEntity();
-                return (
-                    entityKey !== null &&
-                    currentContent.getEntity(entityKey).getType() === 'LINK'
-                );
-            },
-            (linkStart, linkEnd) => {
-                if (start === linkStart && end === linkEnd) {
-                    isAlreadyLink = true;
-                }
-            }
+        const entityAtStart = currentBlock.getEntityAt(start);
+        const isAlreadyLink =
+            entityAtStart !== null &&
+            currentContent.getEntity(entityAtStart).getType() === 'LINK';
+
+        if (isAlreadyLink) {
+            return editorState;
+        }
+
+        // Create link entity connected to text starting with https:// or http://
+        const contentStateWithEntity = currentContent.createEntity(
+            'LINK',
+            'MUTABLE',
+            { url }
+        );
+        const entityKey = contentStateWithEntity.getLastCreatedEntityKey();
+        const newEditorState = EditorState.push(
+            editorState,
+            contentStateWithEntity,
+            'apply-entity'
         );
 
-        if (
-            !isAlreadyLink &&
-            (url.startsWith('https://') || url.startsWith('http://'))
-        ) {
-            const emptySelectionState = SelectionState.createEmpty(anchorKey);
-            const contentStateWithEntity = currentContent.createEntity(
-                'LINK',
-                'MUTABLE',
-                { url }
-            );
-            const entityKey = contentStateWithEntity.getLastCreatedEntityKey();
-            const newEditorState = EditorState.push(
-                editorState,
-                contentStateWithEntity,
-                'apply-entity'
-            );
-            const newSelectionState = emptySelectionState.merge({
-                anchorOffset: start,
-                focusKey: anchorKey,
-                focusOffset: end,
-            });
-            const endSelectionState = emptySelectionState.merge({
-                anchorOffset: end,
-                focusKey: anchorKey,
-                focusOffset: end,
-                hasFocus: true,
-            });
-            const newEditorStateWithLink = EditorState.forceSelection(
-                RichUtils.toggleLink(
-                    newEditorState,
-                    newSelectionState as DraftJs.SelectionState,
-                    entityKey
-                ),
-                endSelectionState as DraftJs.SelectionState
-            );
-            this.onChange(
-                EditorState.forceSelection(
-                    RichUtils.toggleLink(
-                        newEditorState,
-                        newSelectionState as DraftJs.SelectionState,
-                        entityKey
-                    ),
-                    endSelectionState as DraftJs.SelectionState
-                )
-            );
-            return newEditorStateWithLink;
-        }
-        return editorState;
+        const emptySelectionState = SelectionState.createEmpty(anchorKey);
+        const linkSelectionState = emptySelectionState.merge({
+            anchorOffset: start,
+            focusKey: anchorKey,
+            focusOffset: end,
+        });
+        // Selection state at end of url to move cursor to end of link
+        const endSelectionState = emptySelectionState.merge({
+            anchorOffset: end,
+            focusKey: anchorKey,
+            focusOffset: end,
+            hasFocus: true,
+        });
+        const newEditorStateWithLink = EditorState.forceSelection(
+            RichUtils.toggleLink(
+                newEditorState,
+                linkSelectionState as DraftJs.SelectionState,
+                entityKey
+            ),
+            endSelectionState as DraftJs.SelectionState
+        );
+        this.onChange(newEditorStateWithLink);
+        return newEditorStateWithLink;
     }
 
     @bind
     public handleBeforeInput(chars: string, editorState: DraftJs.EditorState) {
         if (/\s/.test(chars)) {
+            // Convert links to url if applicable
             const newEditorStateWithLink = this.handleInputLink(editorState);
             if (newEditorStateWithLink === editorState) return 'not-handled';
+
+            // Insert original character that was input
             const newContentState = DraftJs.Modifier.replaceText(
                 newEditorStateWithLink.getCurrentContent(),
                 newEditorStateWithLink.getSelection(),
