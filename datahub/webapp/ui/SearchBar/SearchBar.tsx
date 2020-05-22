@@ -100,7 +100,6 @@ export const SearchBar: React.FunctionComponent<ISearchBarProps> = ({
                 inputProps={{
                     placeholder,
                     className: classNames({
-                        input: true,
                         'is-rounded': isRounded,
                         [inputClassName]: !!inputClassName,
                     }),

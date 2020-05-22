@@ -15,13 +15,6 @@
         .SearchBar {
             flex-grow: 1;
             padding-right: 12px;
-            input {
-                padding: 12px;
-                &::placeholder {
-                    font-size: var(--small-text-size);
-                    opacity: 0.75;
-                }
-            }
         }
         .IconButton {
             padding: 4px;

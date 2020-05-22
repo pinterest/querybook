@@ -132,7 +132,7 @@ export const SearchAndReplaceBar = React.forwardRef<
                     />
                 </div>
 
-                <span className="position-info ml4 mr8">
+                <span className="position-info mh8">
                     {searchResults.length
                         ? `${currentSearchResultIndex + 1} of ${
                               searchResults.length
@@ -191,11 +191,12 @@ export const SearchAndReplaceBar = React.forwardRef<
         );
 
         return (
-            <div className="SearchAndReplaceBar flex-row p4">
+            <div className="SearchAndReplaceBar flex-row p8">
                 <IconButton
                     noPadding
                     icon={showReplace ? 'chevron-down' : 'chevron-right'}
                     onClick={() => setShowReplace(!showReplace)}
+                    className="mr4"
                 />
                 <div>
                     {searchRow}

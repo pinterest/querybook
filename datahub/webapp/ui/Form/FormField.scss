@@ -29,28 +29,6 @@
         white-space: nowrap;
     }
 
-    .FormFieldInputSectionRow,
-    .FormFieldInputSection {
-        > input,
-        input[type='text'],
-        input[type='number'] {
-            border-radius: var(--border-radius);
-            border: var(--border);
-            padding: 8px;
-            background-color: inherit;
-            font-size: inherit;
-            color: inherit;
-            width: 100%;
-
-            &::placeholder {
-                color: var(--light-text-color);
-            }
-            &:hover {
-                border-color: var(--border-color);
-            }
-        }
-    }
-
     .FormFieldInputSectionRowGroup {
         margin-top: 30px;
     }

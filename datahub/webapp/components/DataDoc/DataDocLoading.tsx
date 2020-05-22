@@ -10,7 +10,7 @@ export const DataDocLoading: React.FC = () => {
     return (
         <div className="datadoc-loading">
             <div className="datadoc-loading-message">
-                <Title>
+                <Title className="flex-center">
                     <i className="fa fa-spinner fa-pulse mr8" />
                     Loading DataDoc
                 </Title>

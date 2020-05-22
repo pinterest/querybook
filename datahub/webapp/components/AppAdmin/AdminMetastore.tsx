@@ -304,11 +304,11 @@ export const AdminMetastore: React.FunctionComponent<IProps> = ({
                         <SimpleField
                             stacked
                             name="loader"
-                            type="select"
+                            type="react-select"
                             options={Object.values(metastoreLoaders).map(
                                 (l) => ({
-                                    key: l.name,
                                     value: l.name,
+                                    label: l.name,
                                 })
                             )}
                             onChange={updateLoader}

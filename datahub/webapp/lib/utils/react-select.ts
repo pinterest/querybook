@@ -30,9 +30,13 @@ export const defaultReactSelectStyles = {
         backgroundColor: 'var(--bg-color)',
         boxShadow: 'none',
         borderRadius: 'var(--border-radius)',
-        borderColor: 'var(--border-color)',
+        borderColor: isFocused
+            ? 'var(--focus-border-color)'
+            : isSelected
+            ? 'var(--focus-border-color)'
+            : 'var(--border-color)',
         '&:hover': {
-            borderColor: 'var(--border-color)',
+            borderColor: 'var(--hover-border-color)',
         },
     }),
     input: (styles) => ({

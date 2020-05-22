@@ -247,7 +247,7 @@ export const TaskEditor: React.FunctionComponent<IProps> = ({
         );
 
         const getKwargPlaceholder = (param: string) =>
-            registeredTaskParamList?.[values.task][param] ?? 'Insert value';
+            registeredTaskParamList?.[values.task]?.[param] ?? 'Insert value';
 
         const kwargsDOM = (
             <div className="TaskEditor-kwargs mt12">

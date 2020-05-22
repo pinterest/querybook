@@ -29,9 +29,7 @@
             flex-grow: 1;
             .DebouncedInput {
                 input {
-                    box-shadow: none;
-                    vertical-align: baseline;
-                    padding-left: 5px;
+                    padding-left: 4px;
                 }
             }
         }
@@ -98,13 +96,9 @@
                 .search-date-picker {
                     margin-bottom: 12px;
 
-                    input,
-                    input:focus {
-                        outline: none;
-                        background-color: inherit;
-                        color: inherit;
-                        border: var(--border);
+                    input {
                         padding: 2px 4px;
+                        width: auto;
                     }
                 }
 

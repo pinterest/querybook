@@ -23,7 +23,7 @@
         user-select: none;
 
         &.selected {
-            border: 3px solid var(--border-color);
+            border: 3px solid var(--focus-border-color);
         }
 
         &.disabled {

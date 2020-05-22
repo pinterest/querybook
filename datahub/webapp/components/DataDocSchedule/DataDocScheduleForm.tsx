@@ -166,8 +166,11 @@ export const DataDocScheduleForm: React.FunctionComponent<IDataDocScheduleFormPr
                         <SimpleField
                             label="Notify With"
                             name="kwargs.notify_with"
-                            type="select"
-                            options={['email', 'slack']}
+                            type="react-select"
+                            options={['email', 'slack'].map((val) => ({
+                                value: val,
+                                label: val,
+                            }))}
                             withDeselect
                         />
                         {values.kwargs.notify_with && (
