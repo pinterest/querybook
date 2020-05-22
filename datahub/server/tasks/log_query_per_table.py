@@ -47,16 +47,12 @@ def log_query_per_table_task(self, query_execution_id):
             session=session,
         )
 
-        if (
-            "create" in query_execution.query.lower()
-            or "insert" in query_execution.query.lower()
-        ):
+        if any(statement in statement_types for statement in ["CREATE", "INSERT"]):
             create_lineage_from_query(
                 query_execution, datadoc_cell, metastore_id, session=session
             )
 
 
-@with_session
 def create_lineage_from_query(
     query_execution, datadoc_cell, metastore_id, session=None
 ):

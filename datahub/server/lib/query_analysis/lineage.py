@@ -13,9 +13,7 @@ continue_table_search_key_word = set(
 )
 
 
-def process_query(
-    query, language="hive", default_catalog="hive", default_schema="default"
-):
+def process_query(query, language=None):
     """
     This function does all the necessary processing to find the lineage.
     Returns:
@@ -23,6 +21,13 @@ def process_query(
         Lineage: [{table: [lineage]}],
         Statements: [{table: 'statement' }]
     """
+    if language == "sqlite":
+        # default_catalog = None
+        default_schema = "main"
+    else:
+        # default_catalog = 'hive'
+        default_schema = "default"
+
     lineage_per_statement = []
     table_per_statement = []
     # This tracks which schema (generic parent table specified in a USE statement) is in use
@@ -30,7 +35,7 @@ def process_query(
     # A list of placeholders but are not real tables
 
     for statement in statements:
-        default_schema = get_statement_schema(statement, language, default_schema)
+        default_schema = get_statement_schema(statement, default_schema)
         placeholder_tables = get_statement_placeholders(statement)
         table_list, from_list = get_table_list(
             statement, placeholder_tables, default_schema
@@ -121,7 +126,7 @@ def should_ignore_token(token) -> bool:
     ]
 
 
-def get_statement_schema(statement, language, current_schema) -> str:
+def get_statement_schema(statement, current_schema) -> str:
     """
     If it is a "USE" statement, return the new schema
     otherwise current schema is returned
@@ -133,8 +138,6 @@ def get_statement_schema(statement, language, current_schema) -> str:
         _, second_token = statement.token_next(0)
         if second_token and isinstance(second_token, sqlparse.sql.Identifier):
             return second_token.value
-    if language == "sqlite":
-        return "main"
     return current_schema
 
 
