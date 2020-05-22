@@ -30,7 +30,7 @@ export function SimpleReactSelect<T>({
 }: ISimpleReactSelectProps<T>) {
     const computedOptions = useMemo(
         () =>
-            options.map((option) =>
+            options?.map((option) =>
                 typeof option === 'string'
                     ? {
                           label: option,
@@ -42,7 +42,7 @@ export function SimpleReactSelect<T>({
     );
 
     const selectedOption = useMemo(
-        () => computedOptions.find((option) => option.value === value),
+        () => computedOptions?.find((option) => option.value === value),
         [computedOptions, value]
     );
 
