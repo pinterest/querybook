@@ -15,6 +15,7 @@ import { matchKeyPress } from 'lib/utils/keyboard';
 
 import { RichTextEditorToolBar } from 'ui/RichTextEditorToolBar/RichTextEditorToolBar';
 import './RichTextEditor.scss';
+import { EditorState, RichUtils, SelectionState } from 'draft-js';
 
 const compositeDecorator = new DraftJs.CompositeDecorator([LinkDecorator]);
 const MAX_LIST_DEPTH = 5;
@@ -173,8 +174,10 @@ export class RichTextEditor extends React.Component<
     }
 
     @bind
-    public handleReturnSoftNewLine(event: React.KeyboardEvent) {
-        const { editorState } = this.state;
+    public handleReturnSoftNewLine(
+        editorState: DraftJs.EditorState,
+        event: React.KeyboardEvent
+    ) {
         const selection = editorState.getSelection();
 
         if (isSoftNewLineEvent(event) && selection.isCollapsed()) {
@@ -185,8 +188,7 @@ export class RichTextEditor extends React.Component<
     }
 
     @bind
-    public handleReturnList() {
-        const { editorState } = this.state;
+    public handleReturnList(editorState: DraftJs.EditorState) {
         const selection = editorState.getSelection();
 
         if (selection.isCollapsed()) {
@@ -242,8 +244,7 @@ export class RichTextEditor extends React.Component<
     }
 
     @bind
-    public handleReturnSpecialBlock() {
-        const { editorState } = this.state;
+    public handleReturnSpecialBlock(editorState: DraftJs.EditorState) {
         const selection = editorState.getSelection();
 
         if (selection.isCollapsed()) {
@@ -308,13 +309,105 @@ export class RichTextEditor extends React.Component<
 
     @bind
     public handleReturn(event: React.KeyboardEvent) {
-        if (this.handleReturnSoftNewLine(event)) {
+        const { editorState } = this.state;
+        const newEditorStateWithLink = this.handleInputLink(editorState);
+        if (this.handleReturnSoftNewLine(newEditorStateWithLink, event)) {
             return 'handled';
         }
-        if (this.handleReturnList()) {
+        if (this.handleReturnList(newEditorStateWithLink)) {
             return 'handled';
         }
-        if (this.handleReturnSpecialBlock()) {
+        if (this.handleReturnSpecialBlock(newEditorStateWithLink)) {
+            return 'handled';
+        }
+        if (newEditorStateWithLink !== editorState) {
+            return 'handled';
+        }
+        return 'not-handled';
+    }
+
+    @bind
+    public handleInputLink(editorState: DraftJs.EditorState) {
+        const selectionState = editorState.getSelection();
+        const anchorKey = selectionState.getAnchorKey();
+        const currentContent = editorState.getCurrentContent();
+        const currentBlock = currentContent.getBlockForKey(anchorKey);
+        const end = selectionState.getEndOffset();
+        const textBeforeSelection = currentBlock.getText().slice(0, end);
+        const urlMatch = textBeforeSelection.match(/[^\s]+$/);
+        const url = urlMatch ? urlMatch[0] : '';
+        if (!url.startsWith('https://') && !url.startsWith('http://')) {
+            return editorState;
+        }
+        const start = urlMatch.index;
+
+        // If the text is already a link do not toggle.
+        const entityAtStart = currentBlock.getEntityAt(start);
+        const isAlreadyLink =
+            entityAtStart !== null &&
+            currentContent.getEntity(entityAtStart).getType() === 'LINK';
+
+        if (isAlreadyLink) {
+            return editorState;
+        }
+
+        // Create link entity connected to text starting with https:// or http://
+        const contentStateWithEntity = currentContent.createEntity(
+            'LINK',
+            'MUTABLE',
+            { url }
+        );
+        const entityKey = contentStateWithEntity.getLastCreatedEntityKey();
+        const newEditorState = EditorState.push(
+            editorState,
+            contentStateWithEntity,
+            'apply-entity'
+        );
+
+        const emptySelectionState = SelectionState.createEmpty(anchorKey);
+        const linkSelectionState = emptySelectionState.merge({
+            anchorOffset: start,
+            focusKey: anchorKey,
+            focusOffset: end,
+        });
+        // Selection state at end of url to move cursor to end of link
+        const endSelectionState = emptySelectionState.merge({
+            anchorOffset: end,
+            focusKey: anchorKey,
+            focusOffset: end,
+            hasFocus: true,
+        });
+        const newEditorStateWithLink = EditorState.forceSelection(
+            RichUtils.toggleLink(
+                newEditorState,
+                linkSelectionState as DraftJs.SelectionState,
+                entityKey
+            ),
+            endSelectionState as DraftJs.SelectionState
+        );
+        this.onChange(newEditorStateWithLink);
+        return newEditorStateWithLink;
+    }
+
+    @bind
+    public handleBeforeInput(chars: string, editorState: DraftJs.EditorState) {
+        if (/\s/.test(chars)) {
+            // Convert links to url if applicable
+            const newEditorStateWithLink = this.handleInputLink(editorState);
+            if (newEditorStateWithLink === editorState) return 'not-handled';
+
+            // Insert original character that was input
+            const newContentState = DraftJs.Modifier.replaceText(
+                newEditorStateWithLink.getCurrentContent(),
+                newEditorStateWithLink.getSelection(),
+                chars
+            );
+            const newEditorStateWithChars = DraftJs.EditorState.push(
+                newEditorStateWithLink,
+                newContentState,
+                'insert-characters'
+            );
+            this.onChange(newEditorStateWithChars);
             return 'handled';
         }
         return 'not-handled';
@@ -332,13 +425,14 @@ export class RichTextEditor extends React.Component<
             this.onChange(newEditorState);
         } else {
             event.preventDefault();
+            const newEditorStateWithLink = this.handleInputLink(editorState);
             const newContentState = DraftJs.Modifier.replaceText(
-                editorState.getCurrentContent(),
-                editorState.getSelection(),
+                newEditorStateWithLink.getCurrentContent(),
+                newEditorStateWithLink.getSelection(),
                 '    '
             );
             const newEditorStateWithTab = DraftJs.EditorState.push(
-                editorState,
+                newEditorStateWithLink,
                 newContentState,
                 'insert-characters'
             );
@@ -426,6 +520,7 @@ export class RichTextEditor extends React.Component<
                 handleReturn={this.handleReturn}
                 readOnly={readOnly}
                 spellCheck={true}
+                handleBeforeInput={this.handleBeforeInput}
             />
         );
 
