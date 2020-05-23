@@ -334,12 +334,12 @@ export class RichTextEditor extends React.Component<
         const currentBlock = currentContent.getBlockForKey(anchorKey);
         const end = selectionState.getEndOffset();
         const textBeforeSelection = currentBlock.getText().slice(0, end);
-        const urlMatch = textBeforeSelection.match(/[^\s]+$/gi) || [];
-        const url = urlMatch.length ? urlMatch[0] : '';
+        const urlMatch = textBeforeSelection.match(/[^\s]+$/);
+        const url = urlMatch ? urlMatch[0] : '';
         if (!url.startsWith('https://') && !url.startsWith('http://')) {
             return editorState;
         }
-        const start = textBeforeSelection.length - url.length;
+        const start = urlMatch.index;
 
         // If the text is already a link do not toggle.
         const entityAtStart = currentBlock.getEntityAt(start);
