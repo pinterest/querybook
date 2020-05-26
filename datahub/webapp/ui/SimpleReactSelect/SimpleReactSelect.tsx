@@ -60,6 +60,7 @@ export function SimpleReactSelect<T>({
             options={computedOptions}
             isDisabled={isDisabled}
             isClearable={withDeselect}
+            menuPlacement={'auto'}
             {...selectProps}
         />
     );

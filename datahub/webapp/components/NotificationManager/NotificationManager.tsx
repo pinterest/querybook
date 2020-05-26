@@ -7,6 +7,7 @@ import * as datahubUIActions from 'redux/dataHubUI/action';
 import { INotificationInfo } from 'redux/dataHubUI/types';
 import { IStoreState, Dispatch } from 'redux/store/types';
 import { Notification } from './Notification';
+import { Overlay } from 'ui/Overlay/Overlay';
 
 export const DEFAULT_NOTIFICATION_TIMEOUT = 3000;
 const spring = { ...config.default, precision: 0.1 };
@@ -16,13 +17,16 @@ type DispatchProps = ReturnType<typeof mapDispatchToProps>;
 type IProps = StateProps & DispatchProps;
 
 const NotificationContainer = styled.div`
-    position: fixed;
-    z-index: 50;
     bottom: 10px;
     right: 10px;
+
     display: flex;
     flex-direction: column;
+    z-index: 300;
+    position: fixed;
 `;
+
+const notificationRoot = document.getElementById('notification-root');
 
 class NotificationManagerComponent extends React.Component<IProps> {
     public cancelMap = new WeakMap();
@@ -49,6 +53,7 @@ class NotificationManagerComponent extends React.Component<IProps> {
         await next({ opacity: 0 });
         await next({ height: 0 }, true);
     };
+
     public remove = (item: INotificationInfo) => {
         this.props.popNotification(item.id);
     };
@@ -70,32 +75,33 @@ class NotificationManagerComponent extends React.Component<IProps> {
     public render() {
         const { notifications } = this.props;
 
-        // FIXME: the life on Notification is broken
         return (
-            <NotificationContainer>
-                <Transition
-                    items={notifications}
-                    keys={(item: INotificationInfo) => item.id}
-                    from={{ opacity: 0, height: 0, life: 1 }}
-                    enter={this.enter}
-                    leave={this.leave}
-                    onRest={this.remove}
-                    config={spring}
-                >
-                    {(item: INotificationInfo) => ({ life, ...props }) => (
-                        <animated.div
-                            style={props}
-                            className="NotificationWrapper"
-                        >
-                            <Notification
-                                content={item.content}
-                                onHide={() => this.cancel(item)}
-                                life={life}
-                            />
-                        </animated.div>
-                    )}
-                </Transition>
-            </NotificationContainer>
+            <Overlay root={notificationRoot}>
+                <NotificationContainer>
+                    <Transition
+                        items={notifications}
+                        keys={(item: INotificationInfo) => item.id}
+                        from={{ opacity: 0, height: 0, life: 1 }}
+                        enter={this.enter}
+                        leave={this.leave}
+                        onRest={this.remove}
+                        config={spring}
+                    >
+                        {(item: INotificationInfo) => ({ life, ...props }) => (
+                            <animated.div
+                                style={props}
+                                className="NotificationWrapper"
+                            >
+                                <Notification
+                                    content={item.content}
+                                    onHide={() => this.cancel(item)}
+                                    life={life}
+                                />
+                            </animated.div>
+                        )}
+                    </Transition>
+                </NotificationContainer>
+            </Overlay>
         );
     }
 }
