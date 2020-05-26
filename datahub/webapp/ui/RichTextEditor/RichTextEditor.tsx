@@ -29,7 +29,7 @@ export interface IRichTextEditorProps {
     onKeyDown?: (
         event: React.KeyboardEvent,
         editorState: DraftJs.EditorState
-    ) => any;
+    ) => boolean;
     onFocus?: () => any;
     onBlur?: () => any;
 
@@ -112,7 +112,7 @@ export class RichTextEditor extends React.Component<
 
     @bind
     public calculateToolBarPosition() {
-        if (!this.toolBarRef || !this.toolBarRef.current.selfRef) {
+        if (!this.toolBarRef.current?.selfRef) {
             return null;
         }
         const toolBarDivRef = this.toolBarRef.current.selfRef;
@@ -394,7 +394,9 @@ export class RichTextEditor extends React.Component<
         if (/\s/.test(chars)) {
             // Convert links to url if applicable
             const newEditorStateWithLink = this.handleInputLink(editorState);
-            if (newEditorStateWithLink === editorState) return 'not-handled';
+            if (newEditorStateWithLink === editorState) {
+                return 'not-handled';
+            }
 
             // Insert original character that was input
             const newContentState = DraftJs.Modifier.replaceText(
@@ -424,7 +426,6 @@ export class RichTextEditor extends React.Component<
         if (newEditorState !== editorState) {
             this.onChange(newEditorState);
         } else {
-            event.preventDefault();
             const newEditorStateWithLink = this.handleInputLink(editorState);
             const newContentState = DraftJs.Modifier.replaceText(
                 newEditorStateWithLink.getCurrentContent(),
@@ -442,26 +443,31 @@ export class RichTextEditor extends React.Component<
 
     @bind
     public keyBindingFn(e: React.KeyboardEvent): RichTextEditorCommand {
-        let handled = true;
+        let handled = false;
         let command: RichTextEditorCommand = null;
         if (matchKeyPress(e, 'Delete', 'Up', 'Down') && this.props.onKeyDown) {
             // Delete, Up arrow, down arrow
-            this.props.onKeyDown(e, this.state.editorState);
+            handled = this.props.onKeyDown(e, this.state.editorState);
         } else if (matchKeyPress(e, 'Tab')) {
             this.onTab(e);
+            handled = true;
         } else if (matchKeyPress(e, 'Cmd-Shift-X')) {
             // Cmd+Shift+X
             command = 'strikethrough';
+            handled = true;
         } else if (matchKeyPress(e, 'Cmd-K')) {
             command = 'show-link-input';
-        } else {
-            command = DraftJs.getDefaultKeyBinding(e);
-            handled = !!command;
+            handled = true;
         }
 
-        if (handled || command) {
+        // Fall through to default behavior
+        if (!handled) {
+            command = DraftJs.getDefaultKeyBinding(e);
+        } else {
             e.stopPropagation();
+            e.preventDefault();
         }
+
         return command;
     }
 

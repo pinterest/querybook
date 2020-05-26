@@ -34,7 +34,6 @@ export class RichTextEditorToolBar extends React.PureComponent<
 
     public selfRef = React.createRef<HTMLDivElement>();
     private lastSelectionRect: ClientRect = null;
-    private linkInputRef = React.createRef<HTMLInputElement>();
 
     @bind
     public addUrlToEditor(url: string) {
@@ -179,7 +178,7 @@ export class RichTextEditorToolBar extends React.PureComponent<
         const { showLinkInput } = this.state;
 
         let contentDOM = null;
-        const selectionRect = getSelectionRect() || this.lastSelectionRect;
+        const selectionRect = getSelectionRect() ?? this.lastSelectionRect;
 
         if (selectionRect != null) {
             if (showLinkInput) {
