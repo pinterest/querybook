@@ -6,8 +6,9 @@ import styled from 'styled-components';
 import * as datahubUIActions from 'redux/dataHubUI/action';
 import { INotificationInfo } from 'redux/dataHubUI/types';
 import { IStoreState, Dispatch } from 'redux/store/types';
-import { Notification } from './Notification';
 import { Overlay } from 'ui/Overlay/Overlay';
+
+import { Notification } from './Notification';
 
 export const DEFAULT_NOTIFICATION_TIMEOUT = 3000;
 const spring = { ...config.default, precision: 0.1 };
