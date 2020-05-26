@@ -116,7 +116,7 @@ export class DataDocTextCell extends React.Component<IProps, IState> {
         const keyDownCode = 40;
         const keyDeleteCode = 8;
 
-        let stopEvent = false;
+        let handled = false;
         if (event.keyCode === keyUpCode) {
             const firstBlockKey = editorState
                 .getCurrentContent()
@@ -133,7 +133,7 @@ export class DataDocTextCell extends React.Component<IProps, IState> {
                 if (this.props.onUpKeyPressed) {
                     this.props.onUpKeyPressed();
                 }
-                stopEvent = true;
+                handled = true;
             }
         } else if (event.keyCode === keyDownCode) {
             const lastBlock = editorState
@@ -151,20 +151,17 @@ export class DataDocTextCell extends React.Component<IProps, IState> {
             if (atLastLine && endOfLine) {
                 if (this.props.onDownKeyPressed) {
                     this.props.onDownKeyPressed();
-                    stopEvent = true;
+                    handled = true;
                 }
             }
         } else if (event.keyCode === keyDeleteCode) {
             if (!editorState.getCurrentContent().hasText()) {
                 this.props.onDeleteKeyPressed();
-                stopEvent = true;
+                handled = true;
             }
         }
 
-        if (stopEvent) {
-            event.stopPropagation();
-            event.preventDefault();
-        }
+        return handled;
     }
 
     public render() {

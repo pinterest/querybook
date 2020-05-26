@@ -45,7 +45,7 @@
         "core-js": "^3.4.7",
         "d3": "5.7.0",
         "dagre-d3": "0.6.1",
-        "draft-js": "0.11.0",
+        "draft-js": "0.11.5",
         "fast-json-stable-stringify": "2.0.0",
         "feather-icons": "4.19.0",
         "formik": "2.1.4",

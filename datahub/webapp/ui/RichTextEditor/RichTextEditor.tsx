@@ -9,13 +9,13 @@ import {
     isSoftNewLineEvent,
     isListBlock,
     RichTextEditorCommand,
+    RichTextEditorStyleMap,
 } from 'lib/draft-js-utils';
 import * as Utils from 'lib/utils';
 import { matchKeyPress } from 'lib/utils/keyboard';
 
 import { RichTextEditorToolBar } from 'ui/RichTextEditorToolBar/RichTextEditorToolBar';
 import './RichTextEditor.scss';
-import { EditorState, RichUtils, SelectionState } from 'draft-js';
 
 const compositeDecorator = new DraftJs.CompositeDecorator([LinkDecorator]);
 const MAX_LIST_DEPTH = 5;
@@ -29,7 +29,7 @@ export interface IRichTextEditorProps {
     onKeyDown?: (
         event: React.KeyboardEvent,
         editorState: DraftJs.EditorState
-    ) => any;
+    ) => boolean;
     onFocus?: () => any;
     onBlur?: () => any;
 
@@ -112,7 +112,7 @@ export class RichTextEditor extends React.Component<
 
     @bind
     public calculateToolBarPosition() {
-        if (!this.toolBarRef || !this.toolBarRef.current.selfRef) {
+        if (!this.toolBarRef.current?.selfRef) {
             return null;
         }
         const toolBarDivRef = this.toolBarRef.current.selfRef;
@@ -358,13 +358,15 @@ export class RichTextEditor extends React.Component<
             { url }
         );
         const entityKey = contentStateWithEntity.getLastCreatedEntityKey();
-        const newEditorState = EditorState.push(
+        const newEditorState = DraftJs.EditorState.push(
             editorState,
             contentStateWithEntity,
             'apply-entity'
         );
 
-        const emptySelectionState = SelectionState.createEmpty(anchorKey);
+        const emptySelectionState = DraftJs.SelectionState.createEmpty(
+            anchorKey
+        );
         const linkSelectionState = emptySelectionState.merge({
             anchorOffset: start,
             focusKey: anchorKey,
@@ -377,8 +379,8 @@ export class RichTextEditor extends React.Component<
             focusOffset: end,
             hasFocus: true,
         });
-        const newEditorStateWithLink = EditorState.forceSelection(
-            RichUtils.toggleLink(
+        const newEditorStateWithLink = DraftJs.EditorState.forceSelection(
+            DraftJs.RichUtils.toggleLink(
                 newEditorState,
                 linkSelectionState as DraftJs.SelectionState,
                 entityKey
@@ -394,7 +396,9 @@ export class RichTextEditor extends React.Component<
         if (/\s/.test(chars)) {
             // Convert links to url if applicable
             const newEditorStateWithLink = this.handleInputLink(editorState);
-            if (newEditorStateWithLink === editorState) return 'not-handled';
+            if (newEditorStateWithLink === editorState) {
+                return 'not-handled';
+            }
 
             // Insert original character that was input
             const newContentState = DraftJs.Modifier.replaceText(
@@ -424,7 +428,6 @@ export class RichTextEditor extends React.Component<
         if (newEditorState !== editorState) {
             this.onChange(newEditorState);
         } else {
-            event.preventDefault();
             const newEditorStateWithLink = this.handleInputLink(editorState);
             const newContentState = DraftJs.Modifier.replaceText(
                 newEditorStateWithLink.getCurrentContent(),
@@ -442,26 +445,36 @@ export class RichTextEditor extends React.Component<
 
     @bind
     public keyBindingFn(e: React.KeyboardEvent): RichTextEditorCommand {
-        let handled = true;
+        let handled = false;
         let command: RichTextEditorCommand = null;
         if (matchKeyPress(e, 'Delete', 'Up', 'Down') && this.props.onKeyDown) {
             // Delete, Up arrow, down arrow
-            this.props.onKeyDown(e, this.state.editorState);
+            handled = this.props.onKeyDown(e, this.state.editorState);
         } else if (matchKeyPress(e, 'Tab')) {
             this.onTab(e);
+            handled = true;
         } else if (matchKeyPress(e, 'Cmd-Shift-X')) {
             // Cmd+Shift+X
             command = 'strikethrough';
+            handled = true;
         } else if (matchKeyPress(e, 'Cmd-K')) {
             command = 'show-link-input';
-        } else {
+            handled = true;
+        }
+
+        // Fall through to default behavior
+        if (!handled) {
             command = DraftJs.getDefaultKeyBinding(e);
             handled = !!command;
         }
 
-        if (handled || command) {
+        // stop event progation if the event is
+        // either handled by default behavior or custom behaivor
+        if (handled) {
             e.stopPropagation();
+            e.preventDefault();
         }
+
         return command;
     }
 
@@ -477,11 +490,21 @@ export class RichTextEditor extends React.Component<
                     return 'handled';
                 }
             }
+            case 'strikethrough': {
+                this.onChange(
+                    DraftJs.RichUtils.toggleInlineStyle(
+                        editorState,
+                        'STRIKETHROUGH'
+                    )
+                );
+                return 'handled';
+            }
             default: {
                 const newState = DraftJs.RichUtils.handleKeyCommand(
                     editorState,
                     command
                 );
+
                 if (newState) {
                     this.onChange(newState);
                     return 'handled';
@@ -521,6 +544,7 @@ export class RichTextEditor extends React.Component<
                 readOnly={readOnly}
                 spellCheck={true}
                 handleBeforeInput={this.handleBeforeInput}
+                customStyleMap={RichTextEditorStyleMap}
             />
         );
 
