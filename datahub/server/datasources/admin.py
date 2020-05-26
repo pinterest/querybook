@@ -497,6 +497,8 @@ def exec_demo_set_up():
             scheduled_task_id=task_schedule_id, session=session
         )
 
+        demo_logic.create_child_table(engine_id, current_user.id, session=session)
+
         data_doc_id = demo_logic.create_demo_data_doc(
             environment_id=environment.id,
             engine_id=engine_id,

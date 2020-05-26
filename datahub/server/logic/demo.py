@@ -1,6 +1,38 @@
 from app.db import with_session
 
 from logic import datadoc as data_doc_logic
+from logic import query_execution as qe_logic
+from tasks import run_query as tasks
+
+
+@with_session
+def create_child_table(engine_id, uid, session=None):
+    query = """CREATE TABLE world_happiness_ranking_2015_to_2019 AS
+SELECT
+  w5.Country,
+  w5.Region,
+  w5.HappinessRank AS [Rank2015],
+  w6.HappinessRank AS [Rank2016],
+  w7.HappinessRank AS [Rank2017],
+  w8.Rank AS [Rank2018],
+  w9.Rank AS [Rank2019]
+FROM
+  world_happiness_2019 w9
+  INNER JOIN world_happiness_2018 w8 ON w9.Country = w8.Country
+  INNER JOIN world_happiness_2017 w7 ON w9.Country = w7.Country
+  INNER JOIN world_happiness_2016 w6 ON w9.Country = w6.Country
+  INNER JOIN world_happiness_2015 w5 ON w9.Country = w5.Country;
+"""
+    query_execution = qe_logic.create_query_execution(
+        query=query, engine_id=engine_id, uid=uid, session=session
+    )
+
+    try:
+        tasks.run_query_task.apply_async(
+            args=[query_execution.id,]
+        )
+    except Exception:
+        pass
 
 
 @with_session
@@ -18,7 +50,7 @@ def create_demo_data_doc(environment_id, engine_id, uid, session=None):
     # create cells
     cell_ids = []
 
-    c_text = '{"blocks":[{"key":"2cd2q","text":"Welcome to DataHub! ","type":"header-one","depth":0,"inlineStyleRanges":[],"entityRanges":[],"data":{}},{"key":"fvpk","text":"This is a demo DataDoc.","type":"unstyled","depth":0,"inlineStyleRanges":[],"entityRanges":[],"data":{}},{"key":"8h6cn","text":"Below are some pre-filled cells for you to interact with.","type":"unstyled","depth":0,"inlineStyleRanges":[],"entityRanges":[],"data":{}},{"key":"e573u","text":"","type":"unstyled","depth":0,"inlineStyleRanges":[],"entityRanges":[],"data":{}},{"key":"3j5jq","text":"This is a text cell that can be used for creating narratives and note-taking.","type":"unstyled","depth":0,"inlineStyleRanges":[],"entityRanges":[],"data":{}},{"key":"bto79","text":"","type":"unstyled","depth":0,"inlineStyleRanges":[],"entityRanges":[],"data":{}},{"key":"27fih","text":"To start, run the query cell below by clicking on the button on the top right.","type":"unstyled","depth":0,"inlineStyleRanges":[],"entityRanges":[],"data":{}}],"entityMap":{}}'
+    c_text = '{"blocks":[{"key":"2cd2q","text":"Welcome to DataHub! ","type":"header-one","depth":0,"inlineStyleRanges":[],"entityRanges":[],"data":{}},{"key":"fvpk","text":"This is a demo DataDoc.","type":"unstyled","depth":0,"inlineStyleRanges":[],"entityRanges":[],"data":{}},{"key":"8h6cn","text":"Below are some pre-filled cells for you to interact with.","type":"unstyled","depth":0,"inlineStyleRanges":[],"entityRanges":[],"data":{}},{"key":"e573u","text":"","type":"unstyled","depth":0,"inlineStyleRanges":[],"entityRanges":[],"data":{}},{"key":"3j5jq","text":"This is a text cell that can be used for creating narratives and note-taking.","type":"unstyled","depth":0,"inlineStyleRanges":[],"entityRanges":[],"data":{}},{"key":"64j14","text":"","type":"unstyled","depth":0,"inlineStyleRanges":[],"entityRanges":[],"data":{}},{"key":"cgigd","text":"First, click on the Tables section in the left sidebar to look at the tables we have.","type":"unstyled","depth":0,"inlineStyleRanges":[],"entityRanges":[],"data":{}},{"key":"c0ccn","text":"Click on any table and on VIEW TABLE to inspect.","type":"unstyled","depth":0,"inlineStyleRanges":[{"offset":26,"length":10,"style":"BOLD"}],"entityRanges":[],"data":{}},{"key":"a5jq6","text":"To see its relationship to the other tables,  click on the Lineage tab.","type":"unstyled","depth":0,"inlineStyleRanges":[{"offset":59,"length":7,"style":"BOLD"}],"entityRanges":[],"data":{}},{"key":"nfd6","text":"","type":"unstyled","depth":0,"inlineStyleRanges":[],"entityRanges":[],"data":{}},{"key":"alj0h","text":"Now, let us get started by clicking on the run button in the query cell below.","type":"unstyled","depth":0,"inlineStyleRanges":[],"entityRanges":[],"data":{}}],"entityMap":{}}'
     c_meta = {"collapsed": False}
     c_id = data_doc_logic.create_data_cell(
         cell_type="text", context=c_text, meta=c_meta, commit=False, session=session
@@ -26,19 +58,15 @@ def create_demo_data_doc(environment_id, engine_id, uid, session=None):
     cell_ids.append(c_id)
 
     c_query = """SELECT
-  w9.Country,
-  w9.Rank AS [2019],
-  w8.Rank AS [2018],
-  w7.HappinessRank AS [2017],
-  w6.HappinessRank AS [2016],
-  w5.HappinessRank AS [2015]
+  Country,
+  Rank2015 AS [2015],
+  Rank2016 AS [2016],
+  Rank2017 AS [2017],
+  Rank2018 AS [2018],
+  Rank2019 AS [2019]
 FROM
-  world_happiness_2019 w9
-  INNER JOIN world_happiness_2018 w8 ON w9.Country = w8.Country
-  INNER JOIN world_happiness_2017 w7 ON w9.Country = w7.Country
-  INNER JOIN world_happiness_2016 w6 ON w9.Country = w6.Country
-  INNER JOIN world_happiness_2015 w5 ON w9.Country = w5.Country
-  AND (w5.Region = "{{Region}}");
+  world_happiness_ranking_2015_to_2019
+WHERE Region = "{{Region}}";
 -- Region is a template variable with the value of 'Western Europe'
 -- click on the <> button on the bottom right of the DataDoc to configure more!
     """
