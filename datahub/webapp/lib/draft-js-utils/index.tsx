@@ -73,3 +73,9 @@ export function convertRawToContentState(raw: string): DraftJs.ContentState {
 export type RichTextEditorCommand =
     | DraftJs.DraftEditorCommand
     | 'show-link-input';
+
+export const RichTextEditorStyleMap = {
+    STRIKETHROUGH: {
+        textDecoration: 'line-through',
+    },
+};

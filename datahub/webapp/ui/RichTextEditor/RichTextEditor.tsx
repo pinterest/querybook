@@ -9,13 +9,13 @@ import {
     isSoftNewLineEvent,
     isListBlock,
     RichTextEditorCommand,
+    RichTextEditorStyleMap,
 } from 'lib/draft-js-utils';
 import * as Utils from 'lib/utils';
 import { matchKeyPress } from 'lib/utils/keyboard';
 
 import { RichTextEditorToolBar } from 'ui/RichTextEditorToolBar/RichTextEditorToolBar';
 import './RichTextEditor.scss';
-import { EditorState, RichUtils, SelectionState } from 'draft-js';
 
 const compositeDecorator = new DraftJs.CompositeDecorator([LinkDecorator]);
 const MAX_LIST_DEPTH = 5;
@@ -358,13 +358,15 @@ export class RichTextEditor extends React.Component<
             { url }
         );
         const entityKey = contentStateWithEntity.getLastCreatedEntityKey();
-        const newEditorState = EditorState.push(
+        const newEditorState = DraftJs.EditorState.push(
             editorState,
             contentStateWithEntity,
             'apply-entity'
         );
 
-        const emptySelectionState = SelectionState.createEmpty(anchorKey);
+        const emptySelectionState = DraftJs.SelectionState.createEmpty(
+            anchorKey
+        );
         const linkSelectionState = emptySelectionState.merge({
             anchorOffset: start,
             focusKey: anchorKey,
@@ -377,8 +379,8 @@ export class RichTextEditor extends React.Component<
             focusOffset: end,
             hasFocus: true,
         });
-        const newEditorStateWithLink = EditorState.forceSelection(
-            RichUtils.toggleLink(
+        const newEditorStateWithLink = DraftJs.EditorState.forceSelection(
+            DraftJs.RichUtils.toggleLink(
                 newEditorState,
                 linkSelectionState as DraftJs.SelectionState,
                 entityKey
@@ -463,7 +465,12 @@ export class RichTextEditor extends React.Component<
         // Fall through to default behavior
         if (!handled) {
             command = DraftJs.getDefaultKeyBinding(e);
-        } else {
+            handled = !!command;
+        }
+
+        // stop event progation if the event is
+        // either handled by default behavior or custom behaivor
+        if (handled) {
             e.stopPropagation();
             e.preventDefault();
         }
@@ -483,11 +490,21 @@ export class RichTextEditor extends React.Component<
                     return 'handled';
                 }
             }
+            case 'strikethrough': {
+                this.onChange(
+                    DraftJs.RichUtils.toggleInlineStyle(
+                        editorState,
+                        'STRIKETHROUGH'
+                    )
+                );
+                return 'handled';
+            }
             default: {
                 const newState = DraftJs.RichUtils.handleKeyCommand(
                     editorState,
                     command
                 );
+
                 if (newState) {
                     this.onChange(newState);
                     return 'handled';
@@ -527,6 +544,7 @@ export class RichTextEditor extends React.Component<
                 readOnly={readOnly}
                 spellCheck={true}
                 handleBeforeInput={this.handleBeforeInput}
+                customStyleMap={RichTextEditorStyleMap}
             />
         );
 
