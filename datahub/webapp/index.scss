@@ -4,7 +4,8 @@
 }
 
 #root,
-#overlay-root {
+#overlay-root,
+#notification-root {
     background-color: var(--bg-color);
     color: var(--text-color);
     font-family: var(--family-sans-serif);
