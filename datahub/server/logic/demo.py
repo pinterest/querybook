@@ -31,7 +31,7 @@ FROM
         tasks.run_query_task.apply_async(
             args=[query_execution.id,]
         )
-    except:
+    except Exception:
         pass
 
 
