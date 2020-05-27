@@ -67,6 +67,7 @@ export const PopoverContainer: React.FunctionComponent<IPopoverContainerProps> =
 
     // Behavior related to clicking outside
     // Note: this fails if the popover contains a react portal
+    // that is not using overlayRoot
     const onDocumentClick = React.useCallback(
         (event) => {
             if (!event.composedPath().includes(container)) {
