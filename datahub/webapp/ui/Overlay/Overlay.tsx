@@ -6,29 +6,31 @@ type OverlayRender = (overlayElm: HTMLDivElement) => any;
 interface IOverlayProps {
     className?: string;
     render?: OverlayRender;
-    root?: HTMLElement;
+    customOverlayRoot?: HTMLElement;
 }
 
-export const defaultOverlayRoot = document.getElementById('overlay-root');
+export const overlayRoot = document.getElementById('overlay-root');
 
 export const Overlay: React.FC<IOverlayProps> = ({
     children,
     className = '',
     render,
-    root,
+    customOverlayRoot,
 }) => {
-    const overlayRoot = useMemo(() => root ?? defaultOverlayRoot, [root]);
+    const actualOverlayRoot = useMemo(() => customOverlayRoot ?? overlayRoot, [
+        customOverlayRoot,
+    ]);
     const overlayRef = useRef(document.createElement('div'));
     useEffect(() => {
         if (className) {
             overlayRef.current.className = className;
         }
 
-        overlayRoot.appendChild(overlayRef.current);
+        actualOverlayRoot.appendChild(overlayRef.current);
         return () => {
-            overlayRoot.removeChild(overlayRef.current);
+            actualOverlayRoot.removeChild(overlayRef.current);
         };
-    }, [overlayRoot]);
+    }, [actualOverlayRoot]);
 
     const content = render ? render(overlayRef.current) : children;
     return ReactDOM.createPortal(content, overlayRef.current);

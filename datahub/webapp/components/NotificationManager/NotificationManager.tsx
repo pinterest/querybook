@@ -77,7 +77,7 @@ class NotificationManagerComponent extends React.Component<IProps> {
         const { notifications } = this.props;
 
         return (
-            <Overlay root={notificationRoot}>
+            <Overlay customOverlayRoot={notificationRoot}>
                 <NotificationContainer>
                     <Transition
                         items={notifications}
