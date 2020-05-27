@@ -62,7 +62,6 @@ export const DataDocViewersList: React.FunctionComponent<IDataDocViewersListProp
                             addDataDocEditor(uid, read, write);
                         }
                     }}
-                    usePortalMenu={false}
                     selectProps={{
                         isClearable: true,
                     }}
