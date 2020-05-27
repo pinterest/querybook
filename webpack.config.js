@@ -42,6 +42,10 @@ function getDevServerSettings(env, PROD) {
                 changeOrigin: true,
                 ws: true,
             },
+            '/static/*': {
+                target: DATAHUB_UPSTREAM,
+                changeOrigin: true,
+            },
         },
         port: DEVSERVER_PORT,
         publicPath: '/build/',
