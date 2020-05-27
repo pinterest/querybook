@@ -2,8 +2,9 @@ import React from 'react';
 import AsyncSelect, { Props as AsyncProps } from 'react-select/lib/Async';
 import { debounce } from 'lodash';
 
-import { makeReactSelectStyle } from 'lib/utils/react-select';
 import ds from 'lib/datasource';
+import { makeReactSelectStyle } from 'lib/utils/react-select';
+import { overlayRoot } from 'ui/Overlay/Overlay';
 
 interface IUserSearchResultRow {
     id: number;
@@ -53,7 +54,10 @@ export const UserSelect: React.FunctionComponent<IUserSelectProps> = ({
     const asyncSelectProps: Partial<AsyncProps<any>> = {};
     const userReactSelectStyle: {} = makeReactSelectStyle(usePortalMenu);
     if (usePortalMenu) {
-        asyncSelectProps.menuPortalTarget = document.body;
+        asyncSelectProps.menuPortalTarget = overlayRoot;
+    }
+    if (clearAfterSelect) {
+        asyncSelectProps.value = null;
     }
 
     return (
@@ -74,7 +78,6 @@ export const UserSelect: React.FunctionComponent<IUserSelectProps> = ({
             noOptionsMessage={() => (searchText ? 'No user found.' : null)}
             {...asyncSelectProps}
             {...selectProps}
-            {...(clearAfterSelect ? { value: null } : {})}
         />
     );
 };

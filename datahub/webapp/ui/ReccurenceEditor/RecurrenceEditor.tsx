@@ -14,6 +14,7 @@ import { makeReactSelectStyle } from 'lib/utils/react-select';
 import { FormField } from 'ui/Form/FormField';
 import { Tabs } from 'ui/Tabs/Tabs';
 import { TimePicker } from 'ui/TimePicker/TimePicker';
+import { overlayRoot } from 'ui/Overlay/Overlay';
 
 const recurrenceReactSelectStyle = makeReactSelectStyle(true);
 
@@ -93,7 +94,7 @@ export const RecurrenceEditor: React.FunctionComponent<IProps> = ({
                     name="recurrence.on"
                     render={({ field }) => (
                         <Select
-                            menuPortalTarget={document.body}
+                            menuPortalTarget={overlayRoot}
                             styles={recurrenceReactSelectStyle}
                             value={options.filter((option) =>
                                 field.value.includes(option.value)

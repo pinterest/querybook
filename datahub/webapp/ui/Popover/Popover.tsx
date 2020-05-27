@@ -66,11 +66,13 @@ export const PopoverContainer: React.FunctionComponent<IPopoverContainerProps> =
     const wrapperElement = React.useRef<HTMLDivElement>(null);
 
     // Behavior related to clicking outside
+    // Note: this fails if the popover contains a react portal
     const onDocumentClick = React.useCallback(
         (event) => {
             if (!event.composedPath().includes(container)) {
                 // Here we pass the event so the parent can manage focus.
                 // We only dismiss the last child
+
                 if (container === overlayRoot.lastElementChild) {
                     onHide();
                 }
