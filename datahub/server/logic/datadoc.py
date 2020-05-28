@@ -96,6 +96,10 @@ def create_data_doc_from_execution(
         cells=[
             {"type": "query", "context": query_string, "meta": {"engine": engine_id}}
         ],
+        public=public,
+        archived=archived,
+        title=title,
+        meta=meta,
         commit=False,
         session=session,
     )
