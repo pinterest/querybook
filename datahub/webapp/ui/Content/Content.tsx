@@ -1,7 +1,6 @@
-import * as React from 'react';
+import styled from 'styled-components';
+import './Content.scss';
 
-interface IProps {}
-
-export const Content: React.FunctionComponent<IProps> = () => {
-    return null;
-};
+export const Content = styled.div.attrs<{}>({
+    className: 'Content',
+})``;

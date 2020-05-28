@@ -1,8 +1,10 @@
 import * as React from 'react';
 import { useParams } from 'react-router-dom';
+
 import { navigateWithinEnv } from 'lib/utils/query-string';
 import ds from 'lib/datasource';
 
+import { Content } from 'ui/Content/Content';
 import { Icon } from 'ui/Icon/Icon';
 
 import './ChangeLog.scss';
@@ -35,7 +37,7 @@ export const ChangeLog: React.FunctionComponent = () => {
     }, []);
 
     const changeLogDOM = (
-        <div
+        <Content
             className="ChangeLog-content m12"
             dangerouslySetInnerHTML={{ __html: changeLogContent }}
         />
@@ -64,6 +66,7 @@ export const ChangeLog: React.FunctionComponent = () => {
             })}
         </div>
     );
+
     return (
         <div className="ChangeLog">
             {changeLogDOM}

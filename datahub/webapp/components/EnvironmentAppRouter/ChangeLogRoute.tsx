@@ -23,6 +23,8 @@ export const ChangeLogRoute: React.FunctionComponent<RouteComponentProps> = ({
             <ChangeLog />
         </Modal>
     ) : (
-        <ChangeLog />
+        <div className="ChangeLogRoute m24">
+            <ChangeLog />
+        </div>
     );
 };
