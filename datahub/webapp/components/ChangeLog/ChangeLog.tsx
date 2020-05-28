@@ -34,7 +34,7 @@ export const ChangeLog: React.FunctionComponent = () => {
                 setChangeLogList(data);
             });
         }
-    }, []);
+    }, [changeLogDate]);
 
     const changeLogDOM = (
         <Content
@@ -44,11 +44,8 @@ export const ChangeLog: React.FunctionComponent = () => {
     );
     const changeLogListDOM = changeLogDate ? null : (
         <div className="ChangeLog-list">
-            <div className="ChangeLog-list-title">Previous Logs</div>
-            {changeLogList.map((log, idx) => {
-                if (idx === 0) {
-                    return null;
-                }
+            <div className="ChangeLog-list-title">Change Logs</div>
+            {changeLogList.map((log) => {
                 return (
                     <div
                         className="ChangeLog-log-item horizontal-space-between"
