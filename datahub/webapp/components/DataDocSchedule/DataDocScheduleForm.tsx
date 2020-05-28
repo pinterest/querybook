@@ -140,7 +140,7 @@ export const DataDocScheduleForm: React.FunctionComponent<IDataDocScheduleFormPr
                 if (isCreateForm) {
                     await onCreate(cronRepr, values.kwargs);
                 } else {
-                    await onUpdate(cronRepr, enabled, values.kwargs);
+                    await onUpdate(cronRepr, values.enabled, values.kwargs);
                 }
             }}
         >
