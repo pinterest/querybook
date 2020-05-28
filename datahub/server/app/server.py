@@ -1,4 +1,5 @@
-from flask import send_from_directory
+import os
+from flask import send_from_directory, abort
 
 from app import auth
 from app.datasource import register, abort_request
@@ -24,6 +25,8 @@ def datasource_four_oh_four(*args, **kwargs):
 @limiter.exempt
 def get_health_check():
     """This is a health check endpoint"""
+    if os.path.exists("/tmp/datahub/deploying"):
+        abort(503)
     return "pong"
 
 
