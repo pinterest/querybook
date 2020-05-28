@@ -25,12 +25,20 @@ def load_all_change_logs():
     return __change_logs
 
 
-def get_change_logs(limit=5, date_after=None):
+def get_change_log_list(limit=None, date_after=None):
     change_logs = load_all_change_logs()
 
-    change_log_content = ""
+    change_logs_list = []
     for change_log in islice(change_logs, 0, limit):
         if date_after is not None and change_log["date"] < date_after:
             break
-        change_log_content += change_log["content"] + "<br />"
-    return change_log_content
+        change_logs_list.append(change_log)
+    return change_logs_list
+
+
+def get_change_log_content_by_date(date):
+    change_logs = load_all_change_logs()
+
+    for change_log in change_logs:
+        if change_log["date"] == date:
+            return change_log["content"]

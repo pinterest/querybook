@@ -1,20 +1,20 @@
 .ChangeLog {
-    padding: 16px 0px 8px 16px;
+    // padding: 16px 0px 8px 16px;
 
-    overflow: hidden;
-    display: flex;
-    flex-direction: column;
-    max-height: 75vh;
+    // overflow: hidden;
+    // display: flex;
+    // flex-direction: column;
+    // max-height: 75vh;
 
-    .ChangeLog-content {
-        flex: 1;
-        overflow: scroll;
-        margin-bottom: 0;
-    }
+    // .ChangeLog-content {
+    //     flex: 1;
+    //     overflow: scroll;
+    //     margin-bottom: 0;
+    // }
 
-    .ChangeLog-control {
-        text-align: center;
-    }
+    // .ChangeLog-control {
+    //     text-align: center;
+    // }
 }
 
 .ChangeLogButton {

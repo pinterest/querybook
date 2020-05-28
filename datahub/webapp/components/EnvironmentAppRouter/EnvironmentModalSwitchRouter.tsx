@@ -15,6 +15,9 @@ import { SearchRoute } from './SearchRoute';
 import { DataTableRoute } from './DataTableRoute';
 import { QueryExecutionRoute } from './QueryExecutionRoute';
 import { UserSettingsMenuRoute } from './UserSettingsMenuRoute';
+import { ChangeLog } from 'components/ChangeLog/ChangeLog';
+import { InfoMenuRoute } from './InfoMenuRoute';
+import { ChangeLogRoute } from './ChangeLogRoute';
 
 export const EnvironmentModalSwitchRouter: React.FC = () => {
     const location = useLocation();
@@ -36,7 +39,7 @@ export const EnvironmentModalSwitchRouter: React.FC = () => {
 
     const modalRoutes = [
         <Route
-            path="/:env/table/:id"
+            path="/:env/table/:id/"
             key="table-route"
             component={DataTableRoute}
         />,
@@ -59,6 +62,16 @@ export const EnvironmentModalSwitchRouter: React.FC = () => {
             key="settings-route"
             path="/:env/user_settings/"
             component={UserSettingsMenuRoute}
+        />,
+        <Route
+            key="log-route"
+            path="/:env/changelog/:date?/"
+            component={ChangeLogRoute}
+        />,
+        <Route
+            key="info-route"
+            path="/:env/info/:type/"
+            component={InfoMenuRoute}
         />,
     ];
 

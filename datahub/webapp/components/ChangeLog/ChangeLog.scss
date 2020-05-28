@@ -1,0 +1,120 @@
+.ChangeLog {
+    .ChangeLog-list {
+        color: var(--dark-text-color);
+        .ChangeLog-list-title {
+            margin-top: 24px;
+            font-size: var(--large-text-size);
+            font-weight: bold;
+            text-transform: uppercase;
+        }
+        .ChangeLog-log-item {
+            cursor: pointer;
+            margin: 8px 12px;
+            padding: 12px 0px;
+            font-size: var(--xlarge-text-size);
+            font-weight: 600;
+            .Icon {
+                color: transparent;
+                svg {
+                    width: 28px;
+                    height: 28px;
+                }
+            }
+
+            &:hover {
+                .Icon {
+                    color: var(--dark-text-color);
+                }
+            }
+        }
+    }
+
+    li + li {
+        margin-top: 4px;
+    }
+
+    p:not(:last-child),
+    dl:not(:last-child),
+    ol:not(:last-child),
+    ul:not(:last-child),
+    blockquote:not(:last-child),
+    pre:not(:last-child),
+    table:not(:last-child) {
+        margin-bottom: 12px;
+    }
+
+    h1,
+    h2,
+    h3,
+    h4,
+    h5,
+    h6 {
+        color: var(--dark-text-color);
+        font-weight: 600;
+        line-height: 1.125;
+    }
+
+    h1 {
+        font-size: var(--xlarge-text-size);
+        margin-bottom: 8px;
+    }
+    h1:not(:first-child) {
+        margin-top: 16px;
+    }
+
+    h2 {
+        font-size: 1.75em;
+        margin-bottom: 9px;
+    }
+    h2:not(:first-child) {
+        margin-top: 18px;
+    }
+
+    h3 {
+        font-size: var(--large-text-size);
+        margin-bottom: 10px;
+    }
+    h3:not(:first-child) {
+        margin-top: 20px;
+    }
+
+    h4 {
+        font-size: var(--med-text-size);
+        margin-bottom: 12px;
+    }
+
+    h5 {
+        font-size: 1.125em;
+        margin-bottom: 14px;
+    }
+
+    h6 {
+        font-size: var(--text-size);
+        margin-bottom: 16px;
+    }
+
+    blockquote {
+        background-color: var(--light-bg-color);
+        border-left: var(--border-color);
+        padding: 24px;
+    }
+
+    ol {
+        list-style-position: outside;
+        margin-left: 32px;
+        margin-top: 16px;
+    }
+
+    ul {
+        list-style: disc outside;
+        margin-left: 32px;
+        margin-top: 16px;
+    }
+    ul ul {
+        list-style-type: circle;
+        margin-top: 8px;
+    }
+    ul ul ul {
+        list-style-type: square;
+    }
+}
