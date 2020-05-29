@@ -1,7 +1,19 @@
 import * as React from 'react';
 
-interface IProps {}
+import './Tip.scss';
+import { Icon } from 'ui/Icon/Icon';
 
-export const Tip: React.FunctionComponent<IProps> = () => {
-    return null;
+const tips: string[] = require('config/loading_hints.yaml').hints;
+
+export const Tip: React.FunctionComponent = () => {
+    return (
+        <div className="Tip">
+            {tips.map((tip, idx) => (
+                <div className="Tip-item flex-row mb12" key={idx}>
+                    <Icon name="zap" />
+                    {tip}
+                </div>
+            ))}
+        </div>
+    );
 };

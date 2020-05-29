@@ -1,14 +1,14 @@
 hints:
-    - 'You can format your queries by hovering over ⋮, and click on "Format Query".'
-    - "Change your editor theme in user settings under user icon on the bottom left."
-    - 'Running a long query? Click on "notify me" to get notified through email/slack when on completion.'
-    - "Query not running? Check query engine status on the bottom left."
-    - "Use ⌘K to search Docs/Tables."
+    - 'Format your queries by hovering over ⋮ and clicking on "Format Query".'
+    - 'Change your editor theme in user settings under user icon on the bottom of the left sidebar.'
+    - 'Running a long query? Click on "notify me" to be notified through email/slack on completion.'
+    - 'Query not running? Check the status of the query engine on the bottom of the left sidebar.'
+    - 'Use ⌘K to search Docs/Tables.'
     - 'Need to collaborate on a DataDoc? Click the "Share" icon on top right to give access.'
-    - "Press shift+enter to launch queries quickly."
-    - "You can use ⌘S to force save DataDoc"
+    - 'Press shift+enter to launch queries quickly.'
+    - 'Use ⌘S to force save DataDocs'
 
     # Pinterst specific, TODO: generalize
-    - "Having trouble writing hive query? Read go/hiveguide for help."
-    - "Please do not try to count(distinct) on giant tables in presto, it will block other queries."
-    - "Remember to add a limit to your presto queries to make sure they finish quickly."
+    - 'Having trouble writing hive query? Read go/hiveguide for help.'
+    - 'Please do not try to count(distinct) on giant tables in presto, it will block other queries.'
+    - 'Remember to add a limit to your presto queries to make sure they finish quickly.'
