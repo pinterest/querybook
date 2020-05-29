@@ -7,7 +7,7 @@ import './Shortcut.scss';
 export const Shortcut: React.FunctionComponent = () => {
     return (
         <div className="Shortcut">
-            <div className="Shortcut-box-small">
+            <div className="Shortcut-box">
                 <Title subtitle size={3}>
                     overall UI
                 </Title>
@@ -36,6 +36,35 @@ export const Shortcut: React.FunctionComponent = () => {
             </div>
             <div className="Shortcut-box">
                 <Title subtitle size={3}>
+                    data doc and adhoc{' '}
+                </Title>
+                <div className="Shortcut-item">
+                    <div className="Shortcut-keys">
+                        <KeyboardKey>⌘</KeyboardKey>
+                        <span className="pr4">+</span>
+                        <KeyboardKey>s</KeyboardKey>
+                    </div>
+                    <div className="Shortcut-text">save datadoc</div>
+                </div>
+                <div className="Shortcut-item">
+                    <div className="Shortcut-keys">
+                        <KeyboardKey>⌘</KeyboardKey>
+                        <span className="pr4">+</span>
+                        <KeyboardKey>f</KeyboardKey>
+                    </div>
+                    <div className="Shortcut-text">open search and replace</div>
+                </div>
+                <div className="Shortcut-item">
+                    <div className="Shortcut-keys">
+                        <KeyboardKey>esc</KeyboardKey>
+                    </div>
+                    <div className="Shortcut-text">
+                        close search and replace
+                    </div>
+                </div>
+            </div>
+            <div className="Shortcut-box">
+                <Title subtitle size={3}>
                     rich text
                 </Title>
                 <div className="Shortcut-item">
@@ -44,7 +73,7 @@ export const Shortcut: React.FunctionComponent = () => {
                         <span className="pr4">+</span>
                         <KeyboardKey>k</KeyboardKey>
                     </div>
-                    <div className="Shortcut-text">to add link</div>
+                    <div className="Shortcut-text">add link</div>
                 </div>
                 <div className="Shortcut-item">
                     <div className="Shortcut-keys">
@@ -73,37 +102,6 @@ export const Shortcut: React.FunctionComponent = () => {
                     <div className="Shortcut-text">strikethrough</div>
                 </div>
             </div>
-            <div className="Shortcut-box-small">
-                <Title subtitle size={3}>
-                    data doc and adhoc{' '}
-                </Title>
-                <div className="Shortcut-item">
-                    <div className="Shortcut-keys">
-                        <KeyboardKey>⌘</KeyboardKey>
-                        <span className="pr4">+</span>
-                        <KeyboardKey>s</KeyboardKey>
-                    </div>
-                    <div className="Shortcut-text">to save (for datadoc)</div>
-                </div>
-                <div className="Shortcut-item">
-                    <div className="Shortcut-keys">
-                        <KeyboardKey>⌘</KeyboardKey>
-                        <span className="pr4">+</span>
-                        <KeyboardKey>f</KeyboardKey>
-                    </div>
-                    <div className="Shortcut-text">
-                        to open search and replace{' '}
-                    </div>
-                </div>
-                <div className="Shortcut-item">
-                    <div className="Shortcut-keys">
-                        <KeyboardKey>esc</KeyboardKey>
-                    </div>
-                    <div className="Shortcut-text">
-                        to close search and replace
-                    </div>
-                </div>
-            </div>
             <div className="Shortcut-box">
                 <Title subtitle size={3}>
                     query editor
@@ -114,7 +112,7 @@ export const Shortcut: React.FunctionComponent = () => {
                         <span className="pr4">+</span>
                         <KeyboardKey>enter</KeyboardKey>
                     </div>
-                    <div className="Shortcut-text">to run query </div>
+                    <div className="Shortcut-text">run query </div>
                 </div>
                 <div className="Shortcut-item">
                     <div className="Shortcut-keys">
