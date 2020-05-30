@@ -70,7 +70,7 @@ export const ChangeLog: React.FunctionComponent = () => {
             {changeLogList.map((log) => {
                 return (
                     <div
-                        className="ChangeLog-log-item horizontal-space-between"
+                        className="ChangeLog-log-item horizontal-space-between mv8 mh12 pv12"
                         key={log.date}
                         onClick={() =>
                             navigateWithinEnv(`/changelog/${log.date}/`)
