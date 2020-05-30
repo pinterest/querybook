@@ -1,6 +1,7 @@
 import * as React from 'react';
-import { Title } from 'ui/Title/Title';
+
 import { KeyboardKey } from 'ui/KeyboardKey/KeyboardKey';
+import { Title } from 'ui/Title/Title';
 
 import './Shortcut.scss';
 

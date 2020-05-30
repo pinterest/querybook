@@ -5,19 +5,18 @@ import { usePrevious } from 'hooks/usePrevious';
 import { useModalRoute } from 'hooks/useModalRoute';
 
 import { AppDataDoc } from 'components/AppDataDoc/AppDataDoc';
+import { EmbeddedQueryPage } from 'components/EmbeddedQueryPage/EmbeddedQueryPage';
 import { Landing } from 'components/Landing/Landing';
+import { QueryComposer } from 'components/QueryComposer/QueryComposer';
 import { QuerySnippetRoute } from 'components/QuerySnippetRoute/QuerySnippetRoute';
 import { FourOhFour } from 'ui/ErrorPage/FourOhFour';
-import { QueryComposer } from 'components/QueryComposer/QueryComposer';
-import { EmbeddedQueryPage } from 'components/EmbeddedQueryPage/EmbeddedQueryPage';
 
-import { SearchRoute } from './SearchRoute';
-import { DataTableRoute } from './DataTableRoute';
-import { QueryExecutionRoute } from './QueryExecutionRoute';
-import { UserSettingsMenuRoute } from './UserSettingsMenuRoute';
-import { ChangeLog } from 'components/ChangeLog/ChangeLog';
-import { InfoMenuRoute } from './InfoMenuRoute';
 import { ChangeLogRoute } from './ChangeLogRoute';
+import { DataTableRoute } from './DataTableRoute';
+import { InfoMenuRoute } from './InfoMenuRoute';
+import { QueryExecutionRoute } from './QueryExecutionRoute';
+import { SearchRoute } from './SearchRoute';
+import { UserSettingsMenuRoute } from './UserSettingsMenuRoute';
 
 export const EnvironmentModalSwitchRouter: React.FC = () => {
     const location = useLocation();

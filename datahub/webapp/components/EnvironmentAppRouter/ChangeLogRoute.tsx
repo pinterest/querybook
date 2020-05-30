@@ -1,16 +1,15 @@
 import * as React from 'react';
+import moment from 'moment';
 import { RouteComponentProps } from 'react-router-dom';
 
 import history from 'lib/router-history';
-import { navigateWithinEnv } from 'lib/utils/query-string';
+import localStore from 'lib/local-store';
+import { ChangeLogValue, CHANGE_LOG_KEY } from 'lib/local-store/const';
 import { useModalRoute } from 'hooks/useModalRoute';
 
 import { ChangeLog } from 'components/ChangeLog/ChangeLog';
 
 import { Modal } from 'ui/Modal/Modal';
-import localStore from 'lib/local-store';
-import { ChangeLogValue, CHANGE_LOG_KEY } from 'lib/local-store/const';
-import moment from 'moment';
 
 export const ChangeLogRoute: React.FunctionComponent<RouteComponentProps> = ({
     location,

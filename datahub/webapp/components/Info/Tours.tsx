@@ -1,24 +1,19 @@
 import * as React from 'react';
-import Tour from 'reactour';
+import { useSelector, useDispatch } from 'react-redux';
 
+import * as dataDocActions from 'redux/dataDoc/action';
+import { currentEnvironmentSelector } from 'redux/environment/selector';
+import { Dispatch, IStoreState } from 'redux/store/types';
+import { queryEngineSelector } from 'redux/queryEngine/selector';
+
+import history from 'lib/router-history';
+import { getQueryEngineId } from 'lib/utils';
 import { navigateWithinEnv } from 'lib/utils/query-string';
-
-import { DataHubSidebarTourSteps } from 'components/UIGuide/DataHubSidebarUIGuide';
-import { DataDocTourSteps } from 'components/UIGuide/DataDocUIGuide';
 
 import { Title } from 'ui/Title/Title';
 import { Card } from 'ui/Card/Card';
 
 import './Tours.scss';
-import * as dataDocActions from 'redux/dataDoc/action';
-
-import history from 'lib/router-history';
-
-import { useSelector, useDispatch } from 'react-redux';
-import { currentEnvironmentSelector } from 'redux/environment/selector';
-import { queryEngineSelector } from 'redux/queryEngine/selector';
-import { Dispatch, IStoreState } from 'redux/store/types';
-import { getQueryEngineId } from 'lib/utils';
 
 export const Tours: React.FunctionComponent = () => {
     const environment = useSelector(currentEnvironmentSelector);
