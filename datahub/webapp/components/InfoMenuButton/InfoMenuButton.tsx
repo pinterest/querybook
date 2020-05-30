@@ -33,11 +33,12 @@ export const InfoMenuButton: React.FunctionComponent = () => {
         const panelContent = (
             <Menu>
                 <MenuItem
-                    onClick={() =>
+                    onClick={() => {
                         navigateWithinEnv('/changelog/', {
                             isModal: true,
-                        })
-                    }
+                        });
+                        setNotification(false);
+                    }}
                 >
                     Change Logs
                 </MenuItem>
