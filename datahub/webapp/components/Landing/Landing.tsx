@@ -24,7 +24,9 @@ const datahubHints: string[] = require('config/loading_hints.yaml').hints;
 /*
  * TODO: clean up the urls so they are open source friendly
  */
-export const Landing: React.FunctionComponent = () => {
+export const Landing: React.FunctionComponent<{ openTour?: boolean }> = ({
+    openTour = false,
+}) => {
     const {
         userInfo,
         recentDataDocs,
@@ -103,7 +105,7 @@ export const Landing: React.FunctionComponent = () => {
             <div className="Landing-bottom">
                 <Columns>
                     <Column>
-                        <DataHubSidebarUIGuide />
+                        <DataHubSidebarUIGuide openTour={openTour} />
                     </Column>
                 </Columns>
                 <Columns>

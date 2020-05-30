@@ -8,18 +8,25 @@ import { useModalRoute } from 'hooks/useModalRoute';
 import { ChangeLog } from 'components/ChangeLog/ChangeLog';
 
 import { Modal } from 'ui/Modal/Modal';
+import localStore from 'lib/local-store';
+import { ChangeLogValue, CHANGE_LOG_KEY } from 'lib/local-store/const';
+import moment from 'moment';
 
 export const ChangeLogRoute: React.FunctionComponent<RouteComponentProps> = ({
     location,
 }) => {
     const isModal = useModalRoute(location);
 
+    const handleHide = () => {
+        localStore.set<ChangeLogValue>(
+            CHANGE_LOG_KEY,
+            moment().format('YYYY-MM-DD')
+        );
+        history.goBack();
+    };
+
     return isModal ? (
-        <Modal
-            onHide={isModal ? history.goBack : () => navigateWithinEnv('/')}
-            title="Change Log"
-            className="with-padding"
-        >
+        <Modal onHide={handleHide} title="Change Log" className="with-padding">
             <ChangeLog />
         </Modal>
     ) : (

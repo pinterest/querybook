@@ -90,6 +90,11 @@ export const EnvironmentModalSwitchRouter: React.FC = () => {
                 }
             >
                 <Route path="/:env/" exact component={Landing} />
+                <Route
+                    path="/:env/tour/"
+                    exact={true}
+                    render={() => <Landing openTour />}
+                />
                 <Route path="/:env/datadoc/" component={AppDataDoc} />
                 <Route path="/:env/adhoc/" render={() => <QueryComposer />} />
                 <Route

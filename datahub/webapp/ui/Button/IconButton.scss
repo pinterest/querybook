@@ -34,4 +34,16 @@
     &.disabled {
         cursor: not-allowed;
     }
+    &.ping {
+        background-color: none;
+        .IconButton-ping {
+            position: absolute;
+            width: 8px;
+            height: 8px;
+            background-color: var(--color-accent);
+            border-radius: 50%;
+            right: 10px;
+            top: 10px;
+        }
+    }
 }

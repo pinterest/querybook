@@ -4,7 +4,7 @@ import { Button } from 'ui/Button/Button';
 import { Title } from 'ui/Title/Title';
 import { Icon } from 'ui/Icon/Icon';
 
-const DataHubSidebarTourSteps: ReactourStep[] = [
+export const DataHubSidebarTourSteps: ReactourStep[] = [
     {
         selector: '.EnvironmentAppSidebar',
         content: ({ goTo }) => (
@@ -179,8 +179,14 @@ const DataHubSidebarTourSteps: ReactourStep[] = [
     },
 ];
 
-export const DataHubSidebarUIGuide: React.FunctionComponent<{}> = ({}) => {
-    const [isOpen, setIsOpen] = React.useState(false);
+export const DataHubSidebarUIGuide: React.FunctionComponent<{
+    openTour?: boolean;
+}> = ({ openTour }) => {
+    const [isOpen, setIsOpen] = React.useState(openTour);
+
+    React.useEffect(() => {
+        setIsOpen(openTour);
+    }, [openTour]);
 
     return (
         <>

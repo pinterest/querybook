@@ -3,7 +3,7 @@ import Tour, { ReactourStep } from 'reactour';
 import { Button } from 'ui/Button/Button';
 import { Title } from 'ui/Title/Title';
 
-const DataDocTourSteps: ReactourStep[] = [
+export const DataDocTourSteps: ReactourStep[] = [
     {
         content: (
             <div>
@@ -127,8 +127,18 @@ it to run daily, weekly, or monthly.`,
 
 export const DataDocUIGuide: React.FunctionComponent<{
     hideButton: boolean;
-}> = ({ hideButton }) => {
-    const [isOpen, setIsOpen] = React.useState(false);
+    openTour?: boolean;
+}> = ({ hideButton, openTour = false }) => {
+    const [isOpen, setIsOpen] = React.useState(openTour);
+    const tour = location.pathname.split('/')[4];
+
+    React.useEffect(() => {
+        if (tour) {
+            setIsOpen(true);
+        }
+    }, [tour]);
+
+    console.log('?????', openTour, isOpen);
 
     return (
         <div className="DataDocUIGuide flex-center">

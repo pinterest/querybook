@@ -7,7 +7,7 @@ import { useModalRoute } from 'hooks/useModalRoute';
 
 import { FAQ } from 'components/Info/FAQ';
 import { Shortcut } from 'components/Info/Shortcut';
-import { Tip } from 'components/Info/Tip';
+import { Tours } from 'components/Info/Tours';
 
 import { Modal } from 'ui/Modal/Modal';
 
@@ -21,8 +21,8 @@ export const InfoMenuRoute: React.FunctionComponent<RouteComponentProps> = ({
         switch (infoType) {
             case 'shortcut':
                 return <Shortcut />;
-            case 'tip':
-                return <Tip />;
+            case 'tour':
+                return <Tours />;
             case 'faq':
                 return <FAQ />;
             default:
@@ -33,8 +33,8 @@ export const InfoMenuRoute: React.FunctionComponent<RouteComponentProps> = ({
     const title =
         infoType === 'shortcut'
             ? 'Keyboard Shortcuts'
-            : infoType === 'tip'
-            ? 'DataHub Tips'
+            : infoType === 'tour'
+            ? 'DataHub Tours'
             : 'Frequently Asked Questions';
 
     return isModal ? (
