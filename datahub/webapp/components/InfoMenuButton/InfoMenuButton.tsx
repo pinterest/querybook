@@ -72,7 +72,7 @@ export const InfoMenuButton: React.FunctionComponent = () => {
                 className="InfoMenuButton-button"
                 onClick={() => setShowPanel(true)}
                 ref={buttonRef}
-                icon={'info'}
+                icon={'help-circle'}
                 tooltip={'Logs, Tips, Shortcuts, & FAQs'}
                 tooltipPos="right"
             />

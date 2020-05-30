@@ -1,7 +1,8 @@
 import * as React from 'react';
 
-import './Tip.scss';
 import { Icon } from 'ui/Icon/Icon';
+
+import './Tip.scss';
 
 const tips: string[] = require('config/loading_hints.yaml').hints;
 
