@@ -16,7 +16,6 @@ def execute_query(
     }
     if uid:
         user = get_user_by_id(uid, session=session)
-        client_settings["access_token"] = user.access_token
         client_settings["proxy_user"] = user.username
 
     statements = get_statements(query)
