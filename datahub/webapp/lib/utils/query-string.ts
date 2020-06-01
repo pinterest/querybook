@@ -4,7 +4,7 @@ import { reduxStore } from 'redux/store';
 import { IStoreState } from 'redux/store/types';
 import { currentEnvironmentSelector } from 'redux/environment/selector';
 
-export function getQueryString(): {} {
+export function getQueryString(): Record<string, any> {
     return qs.parse(location.search.slice(1));
 }
 

@@ -1,5 +1,6 @@
 import React from 'react';
 import Tour, { ReactourStep } from 'reactour';
+import { useLocation } from 'react-router-dom';
 
 import { getQueryString } from 'lib/utils/query-string';
 
@@ -183,14 +184,15 @@ export const DataHubSidebarTourSteps: ReactourStep[] = [
 ];
 
 export const DataHubSidebarUIGuide: React.FunctionComponent<{}> = ({}) => {
-    const query = getQueryString();
+    const location = useLocation();
+    const { tour } = React.useMemo(() => getQueryString(), [location.search]);
     const [isOpen, setIsOpen] = React.useState(false);
 
     React.useEffect(() => {
-        if (query['tour']) {
+        if (tour) {
             setIsOpen(true);
         }
-    }, [query['tour']]);
+    }, [tour]);
 
     return (
         <>

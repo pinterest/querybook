@@ -3,9 +3,9 @@ import * as React from 'react';
 import { Content } from 'ui/Content/Content';
 import { Title } from 'ui/Title/Title';
 
-import { faqs } from './faqs';
-
 import './FAQ.scss';
+
+const faqs = require('config/faqs.yaml').faqs;
 
 export const FAQ: React.FunctionComponent = () => {
     return (
