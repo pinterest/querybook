@@ -179,15 +179,15 @@ export const DataHubSidebarTourSteps: ReactourStep[] = [
     },
 ];
 
-export const DataHubSidebarUIGuide: React.FunctionComponent<{
-    openTour?: boolean;
-}> = ({ openTour }) => {
-    const [isOpen, setIsOpen] = React.useState(openTour);
+export const DataHubSidebarUIGuide: React.FunctionComponent<{}> = ({}) => {
+    const [isOpen, setIsOpen] = React.useState(false);
+    const tour = location.pathname.split('/')[2] === 'tour';
 
     React.useEffect(() => {
-        setIsOpen(openTour);
-    }, [openTour]);
-
+        if (tour) {
+            setIsOpen(true);
+        }
+    }, [tour]);
     return (
         <>
             <Button

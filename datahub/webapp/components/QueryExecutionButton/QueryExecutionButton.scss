@@ -1,19 +1,5 @@
 .QueryExecutionButton {
     position: relative;
-
-    .num-query-badge {
-        position: absolute;
-        right: 4px;
-        top: 4px;
-
-        color: var(--color-accent-text);
-        background-color: var(--color-accent-bg);
-        padding: 0px 5px;
-        border-radius: 100px;
-        font-size: var(--xsmall-text-size);
-        font-weight: var(--bold-font);
-        cursor: default;
-    }
 }
 
 .QueryViewNavigator-wrapper {

@@ -20,6 +20,7 @@ export interface IconButtonProps {
     fill?: boolean;
     size?: string | number;
     ping?: boolean;
+    pingMessage?: string;
     // Bug: somehow typescript can't auto detect this field
     // after forwardRef
     children?: React.ReactNode;
@@ -41,6 +42,7 @@ export const IconButton = React.forwardRef<HTMLAnchorElement, IconButtonProps>(
             noPadding,
             fill,
             ping,
+            pingMessage,
         },
         ref
     ) => {
@@ -61,12 +63,15 @@ export const IconButton = React.forwardRef<HTMLAnchorElement, IconButtonProps>(
             fill,
             disabled,
             [className]: className,
-            ping,
+            'has-ping': ping || pingMessage,
         });
 
         return (
             <span {...iconButtonProps} className={iconButtonClassname}>
-                {ping && <div className="IconButton-ping" />}
+                {ping && <div className="ping" />}
+                {pingMessage && (
+                    <div className="ping-message">{pingMessage}</div>
+                )}
                 <Icon name={icon} size={size} fill={fill} /> {children}
             </span>
         );

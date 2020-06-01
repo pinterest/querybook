@@ -127,18 +127,15 @@ it to run daily, weekly, or monthly.`,
 
 export const DataDocUIGuide: React.FunctionComponent<{
     hideButton: boolean;
-    openTour?: boolean;
-}> = ({ hideButton, openTour = false }) => {
-    const [isOpen, setIsOpen] = React.useState(openTour);
-    const tour = location.pathname.split('/')[4];
+}> = ({ hideButton }) => {
+    const [isOpen, setIsOpen] = React.useState(false);
+    const tour = location.pathname.split('/')[4] === 'tour';
 
     React.useEffect(() => {
         if (tour) {
             setIsOpen(true);
         }
     }, [tour]);
-
-    console.log('?????', openTour, isOpen);
 
     return (
         <div className="DataDocUIGuide flex-center">
