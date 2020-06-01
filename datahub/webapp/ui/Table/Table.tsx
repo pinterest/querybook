@@ -15,7 +15,6 @@ export type TableAlign = 'center' | 'left' | 'right';
 export interface ITableProps extends Partial<TableProps> {
     rows: any[];
     cols: Array<Column | string>;
-    freezeHeader?: boolean;
     showHeader?: boolean;
     showAllRows?: boolean;
 
@@ -38,7 +37,6 @@ export interface ITableProps extends Partial<TableProps> {
 
 export class Table extends React.Component<ITableProps> {
     public static defaultProps = {
-        freezeHeader: false,
         showHeader: true,
         showAllRows: false,
     };
@@ -101,7 +99,6 @@ export class Table extends React.Component<ITableProps> {
         const {
             rows,
             cols,
-            freezeHeader,
             showHeader,
             formatCell,
             sortCell,
@@ -115,7 +112,6 @@ export class Table extends React.Component<ITableProps> {
         const combinedClassName = classNames({
             Table: true,
             [className]: className,
-            'freeze-header': freezeHeader,
             'hide-header': !showHeader,
         });
 

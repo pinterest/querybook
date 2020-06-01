@@ -51,7 +51,6 @@ const SamplesTableView: React.FunctionComponent<{
     const tableDOM = (
         <Table
             className="StatementResultTable force-scrollbar-x"
-            freezeHeader={true}
             rows={rows}
             cols={columns}
         />
