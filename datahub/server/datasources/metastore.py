@@ -170,7 +170,16 @@ def get_columns_from_table(table_id):
 
 
 @register("/table/<int:table_id>/samples/", methods=["POST"], require_auth=True)
-def create_table_samples(table_id, environment_id, engine_id, limit=50):
+def create_table_samples(
+    table_id,
+    environment_id,
+    engine_id,
+    partition=None,
+    where=None,
+    order_by=None,
+    order_by_asc=True,
+    limit=100,
+):
     with DBSession() as session:
         api_assert(limit <= 100, "Too many rows requested")
         verify_environment_permission([environment_id])
@@ -181,16 +190,26 @@ def create_table_samples(table_id, environment_id, engine_id, limit=50):
             "Query engine does not belong to environment",
         )
 
-        query = make_samples_query(table_id, limit, session=session)
+        query = make_samples_query(
+            table_id,
+            limit=limit,
+            partition=partition,
+            where=where,
+            order_by=order_by,
+            order_by_asc=order_by_asc,
+            session=session,
+        )
         results = {
             "created_at": DATETIME_TO_UTC(datetime.now()),
-            "value": execute_query(query, engine_id, session=session),
+            "value": execute_query(
+                query, engine_id, uid=current_user.id, session=session
+            ),
             "engine_id": engine_id,
             "created_by": current_user.id,
         }
 
         mysql_cache.set_key(
-            f"table_samples_{table_id}_{environment_id}",
+            f"table_samples_{table_id}_{current_user.id}",
             results,
             expires_after=seconds_in_a_day,
             session=session,
@@ -199,13 +218,13 @@ def create_table_samples(table_id, environment_id, engine_id, limit=50):
 
 
 @register("/table/<int:table_id>/samples/", methods=["GET"], require_auth=True)
-def get_table_samples(table_id, environment_id, limit=100):
+def get_table_samples(table_id, environment_id):
     try:
         with DBSession() as session:
             verify_environment_permission([environment_id])
             verify_data_table_permission(table_id, session=session)
             return mysql_cache.get_key(
-                f"table_samples_{table_id}_{environment_id}",
+                f"table_samples_{table_id}_{current_user.id}",
                 expires_after=seconds_in_a_day,
                 session=session,
             )

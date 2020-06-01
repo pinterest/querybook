@@ -163,7 +163,7 @@ class DataTableViewComponent extends React.PureComponent<
 
     @bind
     public makeSamplesDOM(numberOfRows: number) {
-        const { table, schema } = this.props;
+        const { table, schema, tableColumns } = this.props;
 
         return (
             <Loader
@@ -172,7 +172,11 @@ class DataTableViewComponent extends React.PureComponent<
                     /* */
                 }}
             >
-                <DataTableViewSamples table={table} schema={schema} />
+                <DataTableViewSamples
+                    table={table}
+                    schema={schema}
+                    tableColumns={tableColumns}
+                />
             </Loader>
         );
     }

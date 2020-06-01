@@ -20,6 +20,7 @@ import {
     IReceiveParentDataLineageAction,
     IReceiveChildDataLineageAction,
     IReceiveQueryExampleIdsAction,
+    ITableSampleParams,
 } from './types';
 
 interface IUpdateTableParams {
@@ -403,7 +404,8 @@ export function fetchDataTableSamplesIfNeeded(
 
 export function createDataTableSamples(
     tableId: number,
-    engineId: number
+    engineId: number,
+    sampleParams: ITableSampleParams = {}
 ): ThunkResult<Promise<IDataTableSamples>> {
     return async (dispatch, getState) => {
         try {
@@ -416,6 +418,7 @@ export function createDataTableSamples(
                 {
                     environment_id: environmentId,
                     engine_id: engineId,
+                    ...sampleParams,
                 }
             );
             dispatch(receiveDataTableSamples(tableId, data));

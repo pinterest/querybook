@@ -1,9 +1,14 @@
-import React from 'react';
+import React, { useState, useMemo } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 
 import * as dataSourcesActions from 'redux/dataSources/action';
 
-import { IDataTable, IDataTableSamples, IDataSchema } from 'const/metastore';
+import {
+    IDataTable,
+    IDataTableSamples,
+    IDataSchema,
+    IDataColumn,
+} from 'const/metastore';
 import { AsyncButton } from 'ui/AsyncButton/AsyncButton';
 import { Table } from 'ui/Table/Table';
 import { IStoreState, Dispatch } from 'redux/store/types';
@@ -12,9 +17,13 @@ import { Select, makeSelectOptions } from 'ui/Select/Select';
 import { Title } from 'ui/Title/Title';
 
 import './DataTableViewSamples.scss';
+import { ITableSampleParams } from 'redux/dataSources/types';
+import { Formik } from 'formik';
+import { SimpleField } from 'ui/FormikField/SimpleField';
 
 export interface IDataTableViewSamplesProps {
     table: IDataTable;
+    tableColumns: IDataColumn[];
     schema: IDataSchema;
 }
 
@@ -53,8 +62,14 @@ const SamplesTableView: React.FunctionComponent<{
 
 export const DataTableViewSamples: React.FunctionComponent<IDataTableViewSamplesProps> = ({
     table,
+    tableColumns,
     schema,
 }) => {
+    const tablePartitions: string[] = useMemo(
+        () => JSON.parse(table.latest_partitions ?? '[]'),
+        [table.latest_partitions]
+    );
+
     const dispatch: Dispatch = useDispatch();
     const { queryEngines, samples } = useSelector((state: IStoreState) => {
         const metastoreId = schema.metastore_id;
@@ -66,9 +81,7 @@ export const DataTableViewSamples: React.FunctionComponent<IDataTableViewSamples
         };
     });
     const [isLoading, setIsLoading] = React.useState(false);
-    const [selectedQueryEngineId, setQueryEngine] = React.useState<number>(
-        queryEngines.length ? queryEngines[0].id : null
-    );
+
     const loadDataTableSamples = React.useCallback(
         async (tableId) => {
             setIsLoading(true);
@@ -84,11 +97,15 @@ export const DataTableViewSamples: React.FunctionComponent<IDataTableViewSamples
     );
 
     const createDataTableSamples = React.useCallback(
-        async (tableId, engineId) => {
+        async (tableId, engineId, params) => {
             try {
                 setIsLoading(true);
                 return await dispatch(
-                    dataSourcesActions.createDataTableSamples(tableId, engineId)
+                    dataSourcesActions.createDataTableSamples(
+                        tableId,
+                        engineId,
+                        params
+                    )
                 );
             } finally {
                 setIsLoading(false);
@@ -107,32 +124,129 @@ export const DataTableViewSamples: React.FunctionComponent<IDataTableViewSamples
 
     const controlDOM = (
         <div className="samples-control">
-            <div>
-                <Title size={6}>Generate Table Samples</Title>
-            </div>
-            <div className="samples-control-controller">
-                <Select
-                    value={selectedQueryEngineId}
-                    onChange={(event) =>
-                        setQueryEngine(Number(event.target.value))
+            <Formik
+                initialValues={{
+                    engineId: queryEngines?.[0]?.id,
+                    partition: null,
+                    where: [null, '=', ''] as [string, string, string],
+                    order_by: null,
+                    order_by_asc: true,
+                }}
+                onSubmit={(values) => {
+                    const sampleParams: ITableSampleParams = {};
+                    if (values.partition) {
+                        sampleParams.partition = values.partition;
                     }
-                    withDeselect
-                >
-                    {makeSelectOptions(
-                        queryEngines.map((engine) => ({
-                            key: engine.id,
-                            value: engine.name,
-                        }))
-                    )}
-                </Select>
-                <AsyncButton
-                    title="Generate"
-                    onClick={() =>
-                        createDataTableSamples(table.id, selectedQueryEngineId)
+                    if (values.order_by) {
+                        sampleParams.order_by = values.order_by;
                     }
-                    disabled={selectedQueryEngineId == null || isLoading}
-                />
-            </div>
+                    sampleParams.order_by_asc = values.order_by_asc;
+
+                    if (values.where[0]) {
+                        sampleParams.where = values.where;
+                    }
+
+                    return createDataTableSamples(
+                        table.id,
+                        values.engineId,
+                        sampleParams
+                    );
+                }}
+            >
+                {({ submitForm, isSubmitting, isValid, values }) => (
+                    <div>
+                        <div className="horizontal-space-between">
+                            <div className="flex-row">
+                                <SimpleField
+                                    stacked
+                                    label="Engine"
+                                    type="react-select"
+                                    name="engineId"
+                                    options={queryEngines.map((engine) => ({
+                                        value: engine.id,
+                                        label: engine.name,
+                                    }))}
+                                />
+                                <SimpleField
+                                    stacked
+                                    type="react-select"
+                                    name="partition"
+                                    options={tablePartitions}
+                                    withDeselect
+                                />
+                                <SimpleField
+                                    stacked
+                                    type="react-select"
+                                    name="order_by"
+                                    options={tableColumns.map(
+                                        (col) => col.name
+                                    )}
+                                    withDeselect
+                                />
+                                <SimpleField
+                                    stacked
+                                    label="Order"
+                                    type="react-select"
+                                    name="order_by_asc"
+                                    options={[
+                                        {
+                                            label: 'Ascending',
+                                            value: true,
+                                        },
+                                        {
+                                            label: 'Descending',
+                                            value: false,
+                                        },
+                                    ]}
+                                />
+                            </div>
+                            <AsyncButton
+                                title="Generate Table Samples"
+                                onClick={submitForm}
+                                disabled={isSubmitting}
+                                type="soft"
+                            />
+                        </div>
+                        <div className="flex-row ml8">
+                            <span>Where</span>
+                            <div style={{ flex: 3 }}>
+                                <SimpleField
+                                    label=" "
+                                    type="react-select"
+                                    name="where[0]"
+                                    options={tableColumns.map(
+                                        (col) => col.name
+                                    )}
+                                    withDeselect
+                                />
+                            </div>
+                            <div style={{ flex: 1 }}>
+                                <SimpleField
+                                    label=" "
+                                    type="select"
+                                    name="where[1]"
+                                    options={[
+                                        '=',
+                                        '!=',
+                                        'LIKE',
+                                        'IS NULL',
+                                        'IS NOT NULL',
+                                    ]}
+                                />
+                            </div>
+                            <div style={{ flex: 5 }}>
+                                {['=', '!='].includes(values.where[1]) && (
+                                    <SimpleField
+                                        label=" "
+                                        type="input"
+                                        name="where[2]"
+                                    />
+                                )}
+                            </div>
+                        </div>
+                    </div>
+                )}
+            </Formik>
         </div>
     );
 
