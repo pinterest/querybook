@@ -104,12 +104,6 @@
         }
     }
 
-    &.freeze-header {
-        .rt-thead {
-            overflow-y: scroll;
-        }
-    }
-
     &.hide-header {
         .rt-thead {
             display: none;
