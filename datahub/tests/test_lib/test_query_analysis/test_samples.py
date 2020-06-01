@@ -37,8 +37,8 @@ FROM data.session_data
 WHERE
 dt='2019-11-09'
 
-LIMIT 1001""" == make_samples_query(
-        table_id=1234, limit=1001
+LIMIT 1""" == make_samples_query(
+        table_id=1234, limit=1
     )
 
     assert """
@@ -48,8 +48,8 @@ FROM data.session_data
 WHERE
 dt='2019-11-08'
 
-LIMIT 1001""" == make_samples_query(
-        table_id=1234, limit=1001, partition="dt=2019-11-08"
+LIMIT 2""" == make_samples_query(
+        table_id=1234, limit=2, partition="dt=2019-11-08"
     )
 
     assert """
@@ -59,8 +59,8 @@ FROM data.session_data
 WHERE
 dt='2019-11-09'
 ORDER BY id ASC
-LIMIT 1001""" == make_samples_query(
-        table_id=1234, limit=1001, order_by="id"
+LIMIT 3""" == make_samples_query(
+        table_id=1234, limit=3, order_by="id"
     )
 
     assert """
@@ -68,10 +68,10 @@ SELECT
     *
 FROM data.session_data
 WHERE
-dt='2019-11-09' AND id=5
+dt='2019-11-09' AND id = 5
 
-LIMIT 1001""" == make_samples_query(
-        table_id=1234, limit=1001, where=["id", "=", "5"]
+LIMIT 4""" == make_samples_query(
+        table_id=1234, limit=4, where=["id", "=", "5"]
     )
 
 
