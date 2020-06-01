@@ -1,5 +1,8 @@
 import React from 'react';
 import Tour, { ReactourStep } from 'reactour';
+
+import { getQueryString } from 'lib/utils/query-string';
+
 import { Button } from 'ui/Button/Button';
 import { Title } from 'ui/Title/Title';
 
@@ -128,15 +131,14 @@ it to run daily, weekly, or monthly.`,
 export const DataDocUIGuide: React.FunctionComponent<{
     hideButton: boolean;
 }> = ({ hideButton }) => {
+    const query = getQueryString();
     const [isOpen, setIsOpen] = React.useState(false);
-    const tour = location.pathname.split('/')[4] === 'tour';
 
     React.useEffect(() => {
-        if (tour) {
+        if (query['tour']) {
             setIsOpen(true);
         }
-    }, [tour]);
-
+    }, [query['tour']]);
     return (
         <div className="DataDocUIGuide flex-center">
             {hideButton ? null : (

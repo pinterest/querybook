@@ -1,8 +1,11 @@
 import React from 'react';
 import Tour, { ReactourStep } from 'reactour';
+
+import { getQueryString } from 'lib/utils/query-string';
+
 import { Button } from 'ui/Button/Button';
-import { Title } from 'ui/Title/Title';
 import { Icon } from 'ui/Icon/Icon';
+import { Title } from 'ui/Title/Title';
 
 export const DataHubSidebarTourSteps: ReactourStep[] = [
     {
@@ -180,14 +183,15 @@ export const DataHubSidebarTourSteps: ReactourStep[] = [
 ];
 
 export const DataHubSidebarUIGuide: React.FunctionComponent<{}> = ({}) => {
+    const query = getQueryString();
     const [isOpen, setIsOpen] = React.useState(false);
-    const tour = location.pathname.split('/')[2] === 'tour';
 
     React.useEffect(() => {
-        if (tour) {
+        if (query['tour']) {
             setIsOpen(true);
         }
-    }, [tour]);
+    }, [query['tour']]);
+
     return (
         <>
             <Button

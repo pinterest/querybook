@@ -32,7 +32,9 @@ export const Tours: React.FunctionComponent = () => {
             meta: { engine: defaultEngineId },
         };
         dispatch(dataDocActions.createDataDoc([cell])).then((dataDoc) =>
-            history.push(`/${environment.name}/datadoc/${dataDoc.id}/tour/`)
+            history.push(
+                `/${environment.name}/datadoc/${dataDoc.id}/?tour=true`
+            )
         );
     }, [environment]);
 
@@ -47,7 +49,7 @@ export const Tours: React.FunctionComponent = () => {
             <div className="Tours-cards flex-center mv24">
                 <Card
                     title="DataHub Tour"
-                    onClick={() => navigateWithinEnv('/tour/')}
+                    onClick={() => navigateWithinEnv('/?tour=true')}
                 >
                     General overview of DataHub functionalities
                 </Card>
