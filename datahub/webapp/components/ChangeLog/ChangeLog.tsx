@@ -27,33 +27,33 @@ export const ChangeLog: React.FunctionComponent = () => {
 
     React.useEffect(() => {
         if (changeLogDate) {
-            ds.fetch('/utils/change_log/date/', {
-                date: changeLogDate,
-            }).then(({ data }) => setChangeLogContent([data]));
+            const currentLog = changeLogList.find(
+                (log) => log.date === changeLogDate
+            );
+            if (currentLog) {
+                setChangeLogContent([currentLog.content]);
+            } else {
+                ds.fetch(
+                    `/utils/change_log/${changeLogDate}/`
+                ).then(({ data }) => setChangeLogContent([data]));
+            }
         } else {
-            localStore
-                .get<ChangeLogValue>(CHANGE_LOG_KEY)
-                .then((localStorageDate) => {
-                    ds.fetch(`/utils/change_logs/`).then(
-                        ({ data }: { data: IChangeLogItem[] }) => {
-                            const lastViewedDate =
-                                localStorageDate ?? '2000-01-01';
-                            const content = [];
+            Promise.all([
+                localStore.get<ChangeLogValue>(CHANGE_LOG_KEY),
+                ds.fetch(`/utils/change_logs/`),
+            ]).then((value) => {
+                const [localStorageDate, { data }]: [
+                    string,
+                    { data: IChangeLogItem[] }
+                ] = value;
+                setChangeLogList(data);
 
-                            for (const log of data) {
-                                const isNew =
-                                    Date.parse(log.date) >
-                                    Date.parse(lastViewedDate);
-                                if (isNew) {
-                                    content.push(log.content);
-                                }
-                            }
-
-                            setChangeLogContent(content);
-                            setChangeLogList(data);
-                        }
-                    );
-                });
+                const lastViewedDate = localStorageDate ?? '2000-01-01';
+                const content = data
+                    .filter((log) => log.date > lastViewedDate)
+                    .map((log) => log.content);
+                setChangeLogContent(content);
+            });
         }
     }, [changeLogDate]);
 

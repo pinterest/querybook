@@ -9,7 +9,7 @@ def get_change_logs_list(limit=None, last_viewed_date=None):
     return change_log_list or None
 
 
-@register("/utils/change_log/date/")
+@register("/utils/change_log/<date>/")
 def get_change_log_by_date(date):
     change_log_text = get_change_log_content_by_date(date=date)
     return change_log_text or None

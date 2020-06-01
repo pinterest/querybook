@@ -11,8 +11,7 @@ export const FAQ: React.FunctionComponent = () => {
     return (
         <div className="FAQ m12">
             {faqs.map((faq, idx) => {
-                const question = faq[0];
-                const answer = faq[1];
+                const [question, answer] = faq;
                 return (
                     <div className="FAQ-item mb24" key={idx}>
                         <Title subtitle size={4} className="FAQ-question">
