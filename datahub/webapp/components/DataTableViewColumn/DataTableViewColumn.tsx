@@ -85,7 +85,6 @@ export const DataTableViewColumn: React.FunctionComponent<IDataTableViewColumnPr
     const tableDOM = (
         <Table
             className="data-table-column-table"
-            freezeHeader={true}
             showAllRows={true}
             rows={rows}
             cols={columnsTableColumns}
