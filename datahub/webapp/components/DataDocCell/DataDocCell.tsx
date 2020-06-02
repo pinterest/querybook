@@ -112,7 +112,6 @@ export const DataDocCell: React.FunctionComponent<IDataDocCellProps> = ({
         return new Promise((resolve) => {
             const dataDocCells = dataDoc.dataDocCells;
             const numberOfCells = (dataDocCells || []).length;
-            const { context } = dataDocCells[index];
 
             if (numberOfCells > 0) {
                 const deleteCell = async () => {
@@ -127,21 +126,12 @@ export const DataDocCell: React.FunctionComponent<IDataDocCellProps> = ({
                         resolve();
                     }
                 };
-
-                const plaintext =
-                    typeof context === 'string'
-                        ? context
-                        : (context as ContentState).getPlainText();
-                if (plaintext.length === 0) {
-                    deleteCell();
-                } else {
-                    sendConfirm({
-                        header: 'Are you sure?',
-                        message: 'This cell will be removed.',
-                        onConfirm: deleteCell,
-                        onHide: resolve,
-                    });
-                }
+                sendConfirm({
+                    header: 'Delete Cell?',
+                    message: 'Deleted cells cannot be recovered',
+                    onConfirm: deleteCell,
+                    onHide: resolve,
+                });
             } else {
                 resolve();
             }

@@ -447,7 +447,10 @@ export class RichTextEditor extends React.Component<
     public keyBindingFn(e: React.KeyboardEvent): RichTextEditorCommand {
         let handled = false;
         let command: RichTextEditorCommand = null;
-        if (matchKeyPress(e, 'Delete', 'Up', 'Down') && this.props.onKeyDown) {
+        if (
+            matchKeyPress(e, 'Delete', 'Up', 'Down', 'Ctrl-D') &&
+            this.props.onKeyDown
+        ) {
             // Delete, Up arrow, down arrow
             handled = this.props.onKeyDown(e, this.state.editorState);
         } else if (matchKeyPress(e, 'Tab')) {
