@@ -99,6 +99,7 @@ class DataDocQueryCellComponent extends React.Component<IProps, IState> {
     private selfRef = React.createRef<HTMLDivElement>();
     private keyMap = {
         'Shift-Enter': this.clickOnRunButton,
+        'Ctrl-D': this.props.onDeleteKeyPressed,
     };
 
     constructor(props) {
@@ -258,7 +259,6 @@ class DataDocQueryCellComponent extends React.Component<IProps, IState> {
     public onKeyDown(editor: CodeMirror.Editor, event) {
         const keyUpCode = 38;
         const keyDownCode = 40;
-        const keyDeleteCode = 8;
 
         const doc = editor.getDoc();
 
@@ -284,11 +284,6 @@ class DataDocQueryCellComponent extends React.Component<IProps, IState> {
             cursor.ch === doc.getLine(doc.lineCount() - 1).length
         ) {
             this.props.onDownKeyPressed();
-        } else if (
-            event.keyCode === keyDeleteCode &&
-            this.state.query.length === 0
-        ) {
-            this.props.onDeleteKeyPressed();
         } else {
             stopEvent = false;
         }

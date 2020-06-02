@@ -6,6 +6,7 @@ import classNames from 'classnames';
 import { DraftJsSearchHighlighter } from 'components/SearchAndReplace/DraftJsSearchHighlighter';
 import { RichTextEditor } from 'ui/RichTextEditor/RichTextEditor';
 import './DataDocTextCell.scss';
+import { matchKeyPress } from 'lib/utils/keyboard';
 
 interface IProps {
     cellId: number;
@@ -114,7 +115,7 @@ export class DataDocTextCell extends React.Component<IProps, IState> {
     public handleKeyDown(event, editorState) {
         const keyUpCode = 38;
         const keyDownCode = 40;
-        const keyDeleteCode = 8;
+        const keyDeleteCode = 68;
 
         let handled = false;
         if (event.keyCode === keyUpCode) {
