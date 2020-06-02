@@ -114,7 +114,7 @@ export class DataDocTextCell extends React.Component<IProps, IState> {
     public handleKeyDown(event, editorState) {
         const keyUpCode = 38;
         const keyDownCode = 40;
-        const keyDeleteCode = 68;
+        const keyDCode = 68;
 
         let handled = false;
         if (event.keyCode === keyUpCode) {
@@ -154,7 +154,7 @@ export class DataDocTextCell extends React.Component<IProps, IState> {
                     handled = true;
                 }
             }
-        } else if (event.keyCode === keyDeleteCode) {
+        } else if (event.ctrlKey && event.keyCode === keyDCode) {
             if (!editorState.getCurrentContent().hasText()) {
                 this.props.onDeleteKeyPressed();
                 handled = true;
