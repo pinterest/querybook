@@ -42,7 +42,7 @@ const getFormattedDateFromSeconds = (
 ) =>
     seconds != null
         ? moment(parseInt(seconds as string) * 1000).format(format)
-        : undefined;
+        : '';
 export const SearchOverview: React.FunctionComponent = () => {
     const {
         resultByPage,
@@ -51,12 +51,14 @@ export const SearchOverview: React.FunctionComponent = () => {
 
         searchString,
         searchFilters,
+        searchFields,
         searchOrder,
         searchType,
         searchAuthorChoices,
 
         searchRequest,
         queryMetastores,
+        dataTableSearchFields,
         metastoreId,
     } = useSelector((state: IStoreState) => {
         return {
@@ -64,6 +66,7 @@ export const SearchOverview: React.FunctionComponent = () => {
             environment: currentEnvironmentSelector(state),
             queryMetastores: queryMetastoresSelector(state),
             metastoreId: state.dataTableSearch.metastoreId,
+            dataTableSearchFields: state.dataTableSearch.searchFields,
         };
     });
     const results = resultByPage[currentPage] || [];
@@ -95,6 +98,9 @@ export const SearchOverview: React.FunctionComponent = () => {
     );
     const updateSearchFilter = React.useCallback((filterKey, filterValue) => {
         dispatch(searchActions.updateSearchFilter(filterKey, filterValue));
+    }, []);
+    const updateSearchField = React.useCallback((field) => {
+        dispatch(searchActions.updateSearchField(field));
     }, []);
     const updateSearchOrder = React.useCallback((orderKey) => {
         dispatch(searchActions.updateSearchOrder(orderKey));
@@ -215,12 +221,8 @@ export const SearchOverview: React.FunctionComponent = () => {
                             <span>{label}</span>
                         </span>
                         <Checkbox
-                            value={!!searchFilters[setting]}
-                            onChange={updateSearchFilter.bind(
-                                null,
-                                setting,
-                                searchFilters[setting] ? null : true
-                            )}
+                            value={!!searchFields[setting]}
+                            onChange={updateSearchField.bind(null, setting)}
                         />
                     </div>
                 );

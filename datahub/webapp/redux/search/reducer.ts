@@ -19,6 +19,7 @@ const initialPaginationState: ISearchPaginationState = {
 
 const initialSearchParamState = {
     searchFilters: {},
+    searchFields: {},
     searchOrder: SearchOrder.Relevance,
     searchString: '',
     searchType: SearchType.DataDoc,
@@ -90,20 +91,30 @@ export default function search(
                 }
                 return;
             }
+            case '@@search/SEARCH_FIELD_UPDATE': {
+                const { field } = action.payload;
+                if (draft.searchFields[field] == null) {
+                    draft.searchFields[field] = true;
+                } else {
+                    delete draft.searchFields[field];
+                }
+                return;
+            }
             case '@@search/SEARCH_ORDER_UPDATE': {
                 draft.searchOrder = action.payload.orderKey;
                 return;
             }
             case '@@search/SEARCH_TYPE_UPDATE': {
                 draft.searchType = action.payload.searchType;
-                if (action.payload.searchType === SearchType.Table) {
-                    draft.searchFilters = {
+                draft.searchFilters = {};
+                if (draft.searchType === SearchType.Table) {
+                    draft.searchFields = {
                         table_name: true,
                         description: true,
                         column: true,
                     };
                 } else {
-                    draft.searchFilters = {};
+                    draft.searchFields = {};
                 }
                 return;
             }

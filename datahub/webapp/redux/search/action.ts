@@ -35,6 +35,7 @@ export function mapStateToQueryParam({
     searchType,
     searchString,
     currentPage,
+    searchFields,
 }) {
     replaceQueryString({
         searchFilters,
@@ -42,6 +43,7 @@ export function mapStateToQueryParam({
         searchType,
         searchString,
         currentPage,
+        searchFields,
     });
 }
 
@@ -106,6 +108,14 @@ export function performSearch(): ThunkResult<Promise<ISearchPreview[]>> {
                 const selectedMetastoreId = state.dataTableSearch.metastoreId;
                 searchParams['metastore_id'] =
                     selectedMetastoreId || queryMetastoresSelector(state)[0].id;
+                searchParams['fields'] = Object.entries(
+                    searchState.searchFields
+                ).reduce((fields, [fieldKey, fieldValue]) => {
+                    if (fieldValue) {
+                        fields.push(fieldKey);
+                    }
+                    return fields;
+                }, []);
             }
 
             const searchRequest = ds.fetch(searchEndPoint, searchParams);
@@ -187,6 +197,20 @@ export function updateSearchFilter(
             payload: {
                 filterKey,
                 filterValue,
+            },
+        });
+        mapStateToQueryParam(getState().search);
+        dispatch(performSearch());
+    };
+}
+
+export function updateSearchField(field: string): ThunkResult<void> {
+    return (dispatch, getState) => {
+        dispatch(resetSearchResult());
+        dispatch({
+            type: '@@search/SEARCH_FIELD_UPDATE',
+            payload: {
+                field,
             },
         });
         mapStateToQueryParam(getState().search);
