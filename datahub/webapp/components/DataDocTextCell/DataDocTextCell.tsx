@@ -6,7 +6,6 @@ import classNames from 'classnames';
 import { DraftJsSearchHighlighter } from 'components/SearchAndReplace/DraftJsSearchHighlighter';
 import { RichTextEditor } from 'ui/RichTextEditor/RichTextEditor';
 import './DataDocTextCell.scss';
-import { matchKeyPress } from 'lib/utils/keyboard';
 
 interface IProps {
     cellId: number;
