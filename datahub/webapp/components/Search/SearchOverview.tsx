@@ -36,9 +36,12 @@ import './SearchOverview.scss';
 
 const secondsPerDay = 60 * 60 * 24;
 const inputDateFormat = 'YYYY-MM-DD';
-const getFormattedDateFromSeconds = (seconds, format) =>
+const getFormattedDateFromSeconds = (
+    seconds: string | number,
+    format: string
+) =>
     seconds != null
-        ? moment(parseInt(seconds) * 1000).format(format)
+        ? moment(parseInt(seconds as string) * 1000).format(format)
         : undefined;
 export const SearchOverview: React.FunctionComponent = () => {
     const {
@@ -201,45 +204,27 @@ export const SearchOverview: React.FunctionComponent = () => {
 
     const searchSettingsDOM = (
         <div className="search-settings">
-            <div className="search-settings-toggle horizontal-space-between">
-                <span>
-                    <span>title</span>
-                </span>
-                <Checkbox
-                    value={!!searchFilters.title}
-                    onChange={updateSearchFilter.bind(
-                        null,
-                        'title',
-                        searchFilters.title ? null : true
-                    )}
-                />
-            </div>
-            <div className="search-settings-toggle horizontal-space-between">
-                <span>
-                    <span>description</span>
-                </span>
-                <Checkbox
-                    value={!!searchFilters.description}
-                    onChange={updateSearchFilter.bind(
-                        null,
-                        'description',
-                        searchFilters.description ? null : true
-                    )}
-                />
-            </div>
-            <div className="search-settings-toggle horizontal-space-between">
-                <span>
-                    <span>column</span>
-                </span>
-                <Checkbox
-                    value={!!searchFilters.column}
-                    onChange={updateSearchFilter.bind(
-                        null,
-                        'column',
-                        searchFilters.column ? null : true
-                    )}
-                />
-            </div>
+            {['table_name', 'description', 'column'].map((setting) => {
+                const label = setting.replace(/_/g, ' ');
+                return (
+                    <div
+                        className="search-settings-toggle horizontal-space-between"
+                        key={setting}
+                    >
+                        <span>
+                            <span>{label}</span>
+                        </span>
+                        <Checkbox
+                            value={!!searchFilters[setting]}
+                            onChange={updateSearchFilter.bind(
+                                null,
+                                setting,
+                                searchFilters[setting] ? null : true
+                            )}
+                        />
+                    </div>
+                );
+            })}
         </div>
     );
 

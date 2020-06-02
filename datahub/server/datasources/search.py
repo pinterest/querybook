@@ -62,7 +62,7 @@ def _match_filters(filters):
             range_filters.setdefault("created_at", {"gte": field_val})
         elif field_name == "enddate":
             range_filters.setdefault("created_at", {"lte": field_val})
-        elif field_name == "title":
+        elif field_name == "table_name":
             search_settings.append("full_name^20")
         elif field_name == "description":
             search_settings.append("description")

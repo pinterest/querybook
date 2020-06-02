@@ -18,7 +18,7 @@ const initialPaginationState: ISearchPaginationState = {
 };
 
 const initialSearchParamState = {
-    searchFilters: { title: true, description: true, column: true },
+    searchFilters: {},
     searchOrder: SearchOrder.Relevance,
     searchString: '',
     searchType: SearchType.DataDoc,
@@ -98,7 +98,7 @@ export default function search(
                 draft.searchType = action.payload.searchType;
                 if (action.payload.searchType === SearchType.Table) {
                     draft.searchFilters = {
-                        title: true,
+                        table_name: true,
                         description: true,
                         column: true,
                     };
