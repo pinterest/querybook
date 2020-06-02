@@ -108,7 +108,7 @@ export const DataDocCell: React.FunctionComponent<IDataDocCellProps> = ({
         [cell]
     );
 
-    const handleDeleteCellAt = React.useCallback(() => {
+    const deleteCellAt = React.useCallback(() => {
         return new Promise((resolve) => {
             const dataDocCells = dataDoc.dataDocCells;
             const numberOfCells = (dataDocCells || []).length;
@@ -126,18 +126,15 @@ export const DataDocCell: React.FunctionComponent<IDataDocCellProps> = ({
                         resolve();
                     }
                 };
-                deleteCell();
+                sendConfirm({
+                    header: 'Delete Cell?',
+                    message: 'Deleted cells cannot be recovered',
+                    onConfirm: deleteCell,
+                    onHide: resolve,
+                });
             } else {
                 resolve();
             }
-        });
-    }, [dataDoc]);
-
-    const deleteCellAt = React.useCallback(() => {
-        sendConfirm({
-            header: 'Delete Cell?',
-            message: 'Deleted cells cannot be recovered.',
-            onConfirm: () => handleDeleteCellAt(),
         });
     }, [dataDoc]);
 
