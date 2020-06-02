@@ -46,6 +46,7 @@ def _match_filters(filters):
 
     filter_terms = []
     range_filters = {}
+    search_settings = []
 
     for f in filters:
         field_name = str(f[0]).lower()
@@ -61,13 +62,23 @@ def _match_filters(filters):
             range_filters.setdefault("created_at", {"gte": field_val})
         elif field_name == "enddate":
             range_filters.setdefault("created_at", {"lte": field_val})
+        elif field_name == "title":
+            search_settings.append("full_name^20")
+        elif field_name == "description":
+            search_settings.append("description")
+        elif field_name == "column":
+            search_settings.append("columns")
         else:
             filter_terms.append({"match": field})
 
     if any(range_filters):
-        return {"filter": {"bool": {"must": filter_terms}}, "range": range_filters}
+        return {
+            "filter": {"bool": {"must": filter_terms}},
+            "range": range_filters,
+            "fields": search_settings,
+        }
     else:
-        return {"filter": {"bool": {"must": filter_terms}}}
+        return {"filter": {"bool": {"must": filter_terms}}, "fields": search_settings}
 
 
 def _construct_datadoc_query(
@@ -113,11 +124,13 @@ def _construct_tables_query(
     keywords, filters, limit, offset, concise, sort_key=None, sort_order=None,
 ):
 
+    search_filter = _match_filters(filters)
+
     search_query = {}
     if keywords:
         search_query["multi_match"] = {
             "query": keywords,
-            "fields": ["full_name^20", "columns", "description"],
+            "fields": search_filter["fields"],
             "minimum_should_match": -1,
         }
     else:
@@ -134,8 +147,6 @@ def _construct_tables_query(
             },
         }
     }
-
-    search_filter = _match_filters(filters)
 
     bool_query = {}
     if search_query != {}:

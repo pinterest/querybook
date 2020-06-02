@@ -18,7 +18,7 @@ const initialPaginationState: ISearchPaginationState = {
 };
 
 const initialSearchParamState = {
-    searchFilters: {},
+    searchFilters: { title: true, description: true, column: true },
     searchOrder: SearchOrder.Relevance,
     searchString: '',
     searchType: SearchType.DataDoc,
@@ -96,7 +96,15 @@ export default function search(
             }
             case '@@search/SEARCH_TYPE_UPDATE': {
                 draft.searchType = action.payload.searchType;
-                draft.searchFilters = {};
+                if (action.payload.searchType === SearchType.Table) {
+                    draft.searchFilters = {
+                        title: true,
+                        description: true,
+                        column: true,
+                    };
+                } else {
+                    draft.searchFilters = {};
+                }
                 return;
             }
             case '@@search/SEARCH_GO_TO_PAGE': {
