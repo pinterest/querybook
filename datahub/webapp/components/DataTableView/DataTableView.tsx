@@ -21,6 +21,7 @@ import { DataTableViewOverview } from 'components/DataTableViewOverview/DataTabl
 import { DataTableViewLineage } from 'components/DataTableViewLineage/DataTableViewLineage';
 import { DataTableViewSourceQuery } from 'components/DataTableViewSourceQuery/DataTableViewSourceQuery';
 import { DataTableViewQueryExamples } from 'components/DataTableViewQueryExample/DataTableViewQueryExamples';
+import { DataTableViewWarnings } from 'components/DataTableViewWarnings/DataTableViewWarnings';
 
 import { Loader } from 'ui/Loader/Loader';
 import { Tabs } from 'ui/Tabs/Tabs';
@@ -55,6 +56,10 @@ const tabDefinitions = [
     {
         name: 'Query Examples',
         key: 'query_examples',
+    },
+    {
+        name: 'Warnings',
+        key: 'warnings',
     },
 ];
 
@@ -134,13 +139,14 @@ class DataTableViewComponent extends React.PureComponent<
 
     @bind
     public makeOverviewDOM() {
-        const { table, tableName, tableColumns } = this.props;
+        const { table, tableName, tableColumns, tableWarnings } = this.props;
 
         return (
             <DataTableViewOverview
                 table={table}
                 tableName={tableName}
                 tableColumns={tableColumns}
+                tableWarnings={tableWarnings}
                 onTabSelected={this.onTabSelected}
                 updateDataTableDescription={this.updateDataTableDescription}
             />
@@ -176,6 +182,24 @@ class DataTableViewComponent extends React.PureComponent<
                     table={table}
                     schema={schema}
                     tableColumns={tableColumns}
+                />
+            </Loader>
+        );
+    }
+
+    @bind
+    public makeWarningsDOM() {
+        const { tableWarnings, table } = this.props;
+        return (
+            <Loader
+                item={table}
+                itemLoader={() => {
+                    /* */
+                }}
+            >
+                <DataTableViewWarnings
+                    tableWarnings={tableWarnings}
+                    tableId={table.id}
                 />
             </Loader>
         );
@@ -274,6 +298,7 @@ class DataTableViewComponent extends React.PureComponent<
             lineage: this.makeLineageDOM,
             source_query: this.makeQueryDOM,
             query_examples: this.makeExampleDOM,
+            warnings: this.makeWarningsDOM,
         };
 
         const contentDOM =
@@ -315,10 +340,13 @@ function mapStateToProps(state: IStoreState, ownProps) {
 
     const { tableId } = ownProps;
 
-    const { table, schema, tableName, tableColumns } = fullTableSelector(
-        state,
-        tableId
-    );
+    const {
+        table,
+        schema,
+        tableName,
+        tableColumns,
+        tableWarnings,
+    } = fullTableSelector(state, tableId);
 
     return {
         table,
@@ -330,6 +358,7 @@ function mapStateToProps(state: IStoreState, ownProps) {
         dataTablesById,
         dataJobMetadataById,
         dataSchemasById,
+        tableWarnings,
 
         userInfo: state.user.myUserInfo,
     };

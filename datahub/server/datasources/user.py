@@ -56,7 +56,7 @@ def get_user_environment_ids(uid):
     return [visible_environments, user_environment_ids]
 
 
-@register("/user/<int:uid>/setting/<key>/", methods=["POST"], require_auth=True)
+@register("/user/<int:uid>/setting/<key>/", methods=["POST"])
 def set_user_setting(uid, key, value=None):
     api_assert(uid == current_user.id, "Cannot apply setting for another user")
     return logic.create_or_update_user_setting(uid=uid, key=key, value=value)

@@ -42,7 +42,25 @@ export interface IDataTable {
 
     schema: number;
     schema_id: number;
+    warnings: number[];
     golden: boolean;
+}
+
+// Keep it the same as server/const.py
+export enum DataTableWarningSeverity {
+    WARNING = 0,
+    ERROR = 1,
+}
+
+export interface IDataTableWarning {
+    id: number;
+    table_id: number;
+    message: string;
+    severity: DataTableWarningSeverity;
+    created_at: number;
+    created_by: number;
+    updated_at: number;
+    updated_by: number;
 }
 
 export interface IDataTableSamples {

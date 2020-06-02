@@ -9,6 +9,9 @@ import {
     IQueryMetastore,
     IDataTableSamples,
     ILineageCollection,
+    IDataSchema,
+    IDataTableWarning,
+    DataTableWarningSeverity,
 } from 'const/metastore';
 import { convertRawToContentState } from 'lib/draft-js-utils';
 import ds from 'lib/datasource';
@@ -44,10 +47,12 @@ const dataTableColumnSchema = new schema.Entity(
     }
 );
 const dataSchemaSchema = new schema.Entity('dataSchema');
+const dataTableWarningSchema = new schema.Entity('dataTableWarning');
 
 const dataTableSchema = new schema.Entity('dataTable', {
     column: [dataTableColumnSchema],
     schema: dataSchemaSchema,
+    warnings: [dataTableWarningSchema],
 });
 
 export function fetchQueryMetastore(): ThunkResult<Promise<IQueryMetastore[]>> {
@@ -79,9 +84,17 @@ export function fetchDataTable(tableId): ThunkResult<Promise<any>> {
             dataSchema = {},
             dataTable = {},
             dataColumn = {},
+            dataTableWarning = {},
         } = normalizedData.entities;
 
-        dispatch(receiveDataTable(dataSchema, dataTable, dataColumn));
+        dispatch(
+            receiveDataTable(
+                dataSchema,
+                dataTable,
+                dataColumn,
+                dataTableWarning
+            )
+        );
     };
 }
 
@@ -120,8 +133,16 @@ export function fetchDataTableByName(
                 dataSchema = {},
                 dataTable = {},
                 dataColumn = {},
+                dataTableWarning = {},
             } = normalizedData.entities;
-            dispatch(receiveDataTable(dataSchema, dataTable, dataColumn));
+            dispatch(
+                receiveDataTable(
+                    dataSchema,
+                    dataTable,
+                    dataColumn,
+                    dataTableWarning
+                )
+            );
             return data;
         } catch (e) {
             return null;
@@ -174,7 +195,7 @@ export function updateDataTable(
             const normalizedData = normalize(data, dataTableSchema);
             const { dataTable = {}, dataColumn = {} } = normalizedData.entities;
 
-            dispatch(receiveDataTable({}, dataTable, dataColumn));
+            dispatch(receiveDataTable({}, dataTable, dataColumn, {}));
         } catch (error) {
             // dispatch({
             //     type: 'ERROR',
@@ -198,7 +219,7 @@ export function updateDataColumnDescription(
 
             const normalizedData = normalize(data, dataTableColumnSchema);
             const { dataColumn = {} } = normalizedData.entities;
-            dispatch(receiveDataTable({}, {}, dataColumn));
+            dispatch(receiveDataTable({}, {}, dataColumn, {}));
         } catch (error) {
             // dispatch({
             //     type: 'ERROR',
@@ -209,16 +230,17 @@ export function updateDataColumnDescription(
 }
 
 export function receiveDataTable(
-    dataSchema,
-    dataTable,
-    dataColumn
+    dataSchema: Record<number, IDataSchema>,
+    dataTable: Record<number, IDataTable>,
+    dataColumn: Record<number, IDataColumn>,
+    dataTableWarning: Record<number, IDataTableWarning>
 ): IReceiveDataTableAction {
     return {
         type: '@@dataSources/RECEIVE_DATA_TABLE',
         payload: {
             dataTablesById: Object.entries(dataTable).reduce(
                 (hash, [id, table]) => {
-                    const { description: rawDescription } = table as IDataTable;
+                    const { description: rawDescription } = table;
 
                     const description = convertRawToContentState(
                         rawDescription as string
@@ -253,6 +275,7 @@ export function receiveDataTable(
                 {}
             ),
             dataSchemasById: dataSchema,
+            dataTableWarningById: dataTableWarning,
         },
     };
 }
@@ -323,36 +346,6 @@ function receiveChildDataLineage(
         },
     };
 }
-
-// function fetchTrustworthinessStats() {
-//     return (dispatch, getState) => {
-//         const state = getState().dataSources.trustworthinessStats;
-//         if (state.loaded) {
-//             return;
-//         }
-
-//         ds.fetch('/trustworthiness_stats/').then(resp => {
-//             const {
-//                 children_percentile: childrenPercentile,
-//                 frequency_percentile: frequencyPercentile,
-//             } = resp.data;
-//             dispatch(
-//                 receiveTrustworthinessStats(
-//                     childrenPercentile,
-//                     frequencyPercentile
-//                 )
-//             );
-//         });
-//     };
-// }
-
-// function receiveTrustworthinessStats(childrenPercentile, frequencyPercentile) {
-//     return {
-//         type: RECEIVE_TRUSTWORTHINESS_STATS,
-//         childrenPercentile,
-//         frequencyPercentile,
-//     };
-// }
 
 function receiveDataTableSamples(
     tableId: number,
@@ -599,6 +592,60 @@ export function fetchFunctionDocumentationIfNeeded(
             return functionDocumentation;
         } else {
             return functionDocumentation;
+        }
+    };
+}
+
+export function updateTableWarnings(
+    warningId: number,
+    fields: Partial<{
+        message: string;
+        severity: DataTableWarningSeverity;
+    }>
+): ThunkResult<Promise<any>> {
+    return async (dispatch) => {
+        const { data } = await ds.update(
+            `/table_warning/${warningId}/`,
+            fields
+        );
+        dispatch({
+            type: '@@dataSources/RECEIVE_DATA_TABLE_WARNING',
+            payload: data,
+        });
+        return data;
+    };
+}
+
+export function createTableWarnings(
+    tableId: number,
+    message: string,
+    severity: DataTableWarningSeverity
+): ThunkResult<Promise<any>> {
+    return async (dispatch) => {
+        const { data } = await ds.save('/table_warning/', {
+            table_id: tableId,
+            message,
+            severity,
+        });
+        dispatch({
+            type: '@@dataSources/RECEIVE_DATA_TABLE_WARNING',
+            payload: data,
+        });
+        return data;
+    };
+}
+
+export function deleteTableWarnings(
+    warningId: number
+): ThunkResult<Promise<void>> {
+    return async (dispatch, getState) => {
+        const warning = getState().dataSources.dataTableWarningById[warningId];
+        if (warning) {
+            await ds.delete(`/table_warning/${warning.id}/`);
+            dispatch({
+                type: '@@dataSources/REMOVE_DATA_TABLE_WARNING',
+                payload: warning,
+            });
         }
     };
 }

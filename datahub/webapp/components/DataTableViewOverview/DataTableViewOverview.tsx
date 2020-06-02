@@ -1,6 +1,11 @@
 import { bind } from 'lodash-decorators';
 import React from 'react';
-import { IDataTable, IDataColumn } from 'const/metastore';
+import {
+    IDataTable,
+    IDataColumn,
+    IDataTableWarning,
+    DataTableWarningSeverity,
+} from 'const/metastore';
 import * as DraftJs from 'draft-js';
 import { navigateWithinEnv } from 'lib/utils/query-string';
 import { generateFormattedDate } from 'lib/utils/datetime';
@@ -12,6 +17,7 @@ import { Title } from 'ui/Title/Title';
 import { Divider } from 'ui/Divider/Divider';
 
 import './DataTableViewOverview.scss';
+import { Message } from 'ui/Message/Message';
 
 const dataTableDetailsColumns = [
     {
@@ -38,6 +44,7 @@ export interface IDataHubTableViewOverviewProps {
     table: IDataTable;
     tableName: string;
     tableColumns: IDataColumn[];
+    tableWarnings: IDataTableWarning[];
 
     onTabSelected: (key: string) => any;
     updateDataTableDescription: (
@@ -75,7 +82,7 @@ export class DataTableViewOverview extends React.PureComponent<
     }
 
     public render() {
-        const { table, tableName } = this.props;
+        const { table, tableName, tableWarnings } = this.props;
         const description = table.description ? (
             <EditableTextField
                 value={table.description as DraftJs.ContentState}
@@ -162,8 +169,30 @@ export class DataTableViewOverview extends React.PureComponent<
             </a>
         );
 
+        const warningSection = tableWarnings.length
+            ? this.makeOverviewSectionDOM(
+                  `User Warnings`,
+                  <>
+                      {tableWarnings.map((warning) => {
+                          const isError =
+                              warning.severity ===
+                              DataTableWarningSeverity.ERROR;
+                          return (
+                              <Message
+                                  key={warning.id}
+                                  title={isError ? 'Error' : 'Warning'}
+                                  message={warning.message}
+                                  type={isError ? 'error' : 'warning'}
+                              />
+                          );
+                      })}
+                  </>
+              )
+            : null;
+
         return (
             <div className="DataHubTableViewOverview">
+                {warningSection}
                 {descriptionSection}
                 {metaSection}
                 {detailsSection}

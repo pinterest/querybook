@@ -18,7 +18,7 @@ def get_query_snippet_by_id(query_snippet_id):
         return query_snippet
 
 
-@register("/query_snippet/<int:query_snippet_id>/", methods=["PUT"], require_auth=True)
+@register("/query_snippet/<int:query_snippet_id>/", methods=["PUT"])
 def update_query_snippet_by_id(
     query_snippet_id,
     context=None,

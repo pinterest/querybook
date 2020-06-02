@@ -14,7 +14,8 @@ import {
 function mountTooltip(
     node: Element,
     props: Omit<ICodeMirrorTooltipProps, 'hide'>,
-    hide: () => void
+    hide: () => void,
+    direction: 'up' | 'down' = null
 ) {
     const tooltipContainer = document.createElement('div');
     tooltipContainer.id = 'Codemirror-tooltip-container';
@@ -22,14 +23,16 @@ function mountTooltip(
 
     const rect = node.getBoundingClientRect();
     const windowHeight = window.innerHeight;
-
-    if (windowHeight / 2 > rect.top) {
+    if (direction == null) {
         // node is at top half of the screen
         // Show tooltip on bottom
+        direction = windowHeight / 2 > rect.top ? 'down' : 'up';
+    }
+
+    if (direction === 'down') {
         tooltipContainer.style.top = `${rect.bottom}px`;
     } else {
-        // node is at bottom half of the screen
-        // Show tooltip on top
+        // up direction
         tooltipContainer.style.bottom = `${windowHeight - rect.top}px`;
     }
 
@@ -66,21 +69,22 @@ function isHovered(e: Element) {
 }
 
 export async function showTooltipFor(
-    node: Element,
+    nodes: Element[],
     props: Omit<ICodeMirrorTooltipProps, 'hide'>,
-    onNodeHide?: () => void
+    onNodeHide?: () => void,
+    direction: 'up' | 'down' = null
 ) {
     // This sleep is needed to put this code in eventpool which allosw
     // the node itself to actually appear in the browser
     await sleep(1);
 
-    if (!isHovered(node)) {
+    if (!nodes.some((node) => isHovered(node))) {
         if (onNodeHide) {
             onNodeHide();
         }
         return;
     }
-
+    const hoveredNode = nodes.find((node) => isHovered(node));
     let tooltip = null;
 
     function hideTooltip() {
@@ -95,8 +99,10 @@ export async function showTooltipFor(
     let hideTooltipTimeout: number;
 
     function hideTooltipAndNode() {
-        node.removeEventListener('mouseenter', onMouseEnter);
-        node.removeEventListener('mouseleave', onMouseOut);
+        nodes.forEach((node) => {
+            node.removeEventListener('mouseenter', onMouseEnter);
+            node.removeEventListener('mouseleave', onMouseOut);
+        });
 
         hideTooltip();
         if (onNodeHide) {
@@ -118,7 +124,7 @@ export async function showTooltipFor(
         }
     }
 
-    tooltip = mountTooltip(node, props, hideTooltipAndNode);
+    tooltip = mountTooltip(hoveredNode, props, hideTooltipAndNode, direction);
 
     tooltip.addEventListener('mouseenter', onMouseEnter);
     tooltip.addEventListener('mouseleave', onMouseOut);
@@ -126,7 +132,7 @@ export async function showTooltipFor(
     const poll = setInterval(() => {
         if (tooltip) {
             // if node no longer exists in body, remove both
-            let n: Node & ParentNode = node;
+            let n: Node & ParentNode = hoveredNode;
             while (true) {
                 if (n === document.body) {
                     break;
@@ -147,8 +153,10 @@ export async function showTooltipFor(
         }
     }, 400);
 
-    node.addEventListener('mouseenter', onMouseEnter);
-    node.addEventListener('mouseleave', onMouseOut);
+    nodes.forEach((node) => {
+        node.addEventListener('mouseenter', onMouseEnter);
+        node.addEventListener('mouseleave', onMouseOut);
+    });
 
     return tooltip;
 }
