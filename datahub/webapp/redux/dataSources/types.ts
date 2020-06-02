@@ -13,6 +13,7 @@ import {
     ILineageCollection,
     IDataJobMetadata,
     IPaginatedQuerySamples,
+    IDataTableWarning,
 } from 'const/metastore';
 import { IStoreState } from '../store/types';
 
@@ -37,6 +38,7 @@ export interface IReceiveDataTableAction extends Action {
         dataTablesById: Record<number, IDataTable>;
         dataColumnsById: Record<number, IDataColumn>;
         dataSchemasById: Record<number, IDataSchema>;
+        dataTableWarningById: Record<number, IDataTableWarning>;
     };
 }
 
@@ -103,6 +105,16 @@ export interface IReceiveFunctionDocumentationAction extends Action {
     };
 }
 
+export interface IReceiveDataTableWarning extends Action {
+    type: '@@dataSources/RECEIVE_DATA_TABLE_WARNING';
+    payload: IDataTableWarning;
+}
+
+export interface IRemoveDataTableWarning extends Action {
+    type: '@@dataSources/REMOVE_DATA_TABLE_WARNING';
+    payload: IDataTableWarning;
+}
+
 export type DataSourcesAction =
     | IReceiveQueryMetastoresAction
     | IReceiveDataTableAction
@@ -114,7 +126,9 @@ export type DataSourcesAction =
     | IReceiveDataTableSamplesAction
     | IReceiveQueryExampleIdsAction
     | ILoadingFunctionDocumentationAction
-    | IReceiveFunctionDocumentationAction;
+    | IReceiveFunctionDocumentationAction
+    | IReceiveDataTableWarning
+    | IRemoveDataTableWarning;
 
 export type ThunkResult<R> = ThunkAction<
     R,
@@ -129,6 +143,7 @@ export interface IDataSourcesState {
     dataTablesById: Record<number, IDataTable>;
     dataSchemasById: Record<number, IDataSchema>;
     dataColumnsById: Record<number, IDataColumn>;
+    dataTableWarningById: Record<number, IDataTableWarning>;
 
     // By MetastoreId -> name -> tableId
     dataTableNameToId: Record<number, Record<string, number>>;

@@ -315,19 +315,35 @@ export class QueryEditor extends React.PureComponent<
         });
         this.marker = marker;
 
-        const markerNode = editor
-            .getScrollerElement()
-            .getElementsByClassName('CodeMirror-hover')[0];
-        if (markerNode) {
+        const markerNodes = Array.from(
+            editor
+                .getScrollerElement()
+                .getElementsByClassName('CodeMirror-hover')
+        );
+
+        if (markerNodes.length > 0) {
+            let direction: 'up' | 'down' = null;
+            if (markerNodes.length > 1) {
+                // Since there is another marker in the way
+                // and it is very likely to be a lint marker
+                // so we show the tooltip direction to be down
+                direction = 'down';
+            }
+
             // Sanity check
-            showTooltipFor(markerNode, tooltipProps, () => {
-                if (marker) {
-                    marker.clear();
-                    this.marker = null;
-                }
-            });
+            showTooltipFor(
+                markerNodes,
+                tooltipProps,
+                () => {
+                    if (marker) {
+                        marker.clear();
+                        this.marker = null;
+                    }
+                },
+                direction
+            );
         } else {
-            // since marker did not work at all
+            // marker did not work
             marker.clear();
             this.marker = null;
         }

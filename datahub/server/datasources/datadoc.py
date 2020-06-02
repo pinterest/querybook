@@ -203,7 +203,7 @@ def batch_get_data_cell_executions(cell_ids):
         ]
 
 
-@register("/data_cell/<int:id>/datadoc_id/", methods=["GET"], require_auth=True)
+@register("/data_cell/<int:id>/datadoc_id/", methods=["GET"])
 def get_data_doc_id_by_data_cell_id(id):
     with DBSession() as session:
         verify_data_cell_permission(id, session=session)

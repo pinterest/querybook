@@ -27,7 +27,7 @@ export const Card: React.FunctionComponent<IProps> = ({
             onClick={onClick}
             style={height || width ? { height, width } : null}
         >
-            <div className="Card-title">{title}</div>
+            {title && <div className="Card-title">{title}</div>}
             <div className="Card-content">{children}</div>
         </div>
     );

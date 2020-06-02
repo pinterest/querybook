@@ -10,6 +10,7 @@ from const.db import (
     url_length,
     mediumtext_length,
 )
+from const.metastore import DataTableWarningSeverity
 from lib.sqlalchemy import CRUDMixin
 
 Base = db.Base
@@ -179,7 +180,7 @@ class DataTable(Base, CRUDMixin):
     ownership = relationship("DataTableOwnership", uselist=False)
 
     def to_dict(
-        self, include_schema=False, include_column=False,
+        self, include_schema=False, include_column=False, include_warnings=False,
     ):
         table = {
             "id": self.id,
@@ -208,6 +209,9 @@ class DataTable(Base, CRUDMixin):
 
         if include_column:
             table["column"] = [s.to_dict() for s in self.columns]
+
+        if include_warnings:
+            table["warnings"] = self.warnings
 
         return table
 
@@ -316,4 +320,26 @@ class DataTableQueryExecution(Base, CRUDMixin):
         "QueryExecution",
         backref=backref("table_query_execution", cascade="all, delete"),
         foreign_keys=[query_execution_id],
+    )
+
+
+class DataTableWarning(Base, CRUDMixin):
+    __tablename__ = "data_table_warnings"
+
+    id = sql.Column(sql.Integer, primary_key=True, autoincrement=True)
+    table_id = sql.Column(
+        sql.Integer, sql.ForeignKey("data_table.id", ondelete="CASCADE"), nullable=False
+    )
+    message = sql.Column(sql.String(description_length))
+    severity = sql.Column(sql.Enum(DataTableWarningSeverity), nullable=False)
+
+    created_at = sql.Column(sql.DateTime, default=now)
+    updated_at = sql.Column(sql.DateTime, default=now)
+    created_by = sql.Column(sql.Integer, sql.ForeignKey("user.id", ondelete="CASCADE"))
+    updated_by = sql.Column(sql.Integer, sql.ForeignKey("user.id", ondelete="CASCADE"))
+
+    table = relationship(
+        "DataTable",
+        backref=backref("warnings", cascade="all, delete"),
+        foreign_keys=[table_id],
     )

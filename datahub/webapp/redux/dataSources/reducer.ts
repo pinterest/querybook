@@ -9,6 +9,7 @@ const initialState: IDataSourcesState = {
     dataTablesById: {},
     dataSchemasById: {},
     dataColumnsById: {},
+    dataTableWarningById: {},
     dataTableNameToId: {},
     functionDocumentationByNameByLanguage: {},
     dataJobMetadataById: {},
@@ -110,6 +111,20 @@ function dataTablesById(
                 }
                 return;
             }
+            case '@@dataSources/RECEIVE_DATA_TABLE_WARNING': {
+                const warning = action.payload;
+                if (!draft[warning.table_id].warnings.includes(warning.id)) {
+                    draft[warning.table_id].warnings.push(warning.id);
+                }
+                return;
+            }
+            case '@@dataSources/REMOVE_DATA_TABLE_WARNING': {
+                const warning = action.payload;
+                draft[warning.table_id].warnings.filter(
+                    (w) => w !== warning.id
+                );
+                return;
+            }
         }
     });
 }
@@ -126,6 +141,37 @@ function dataSchemasById(
                 ...state,
                 ...dataSchemasById,
             };
+        }
+        default: {
+            return state;
+        }
+    }
+}
+
+function dataTableWarningById(
+    state = initialState.dataTableWarningById,
+    action: DataSourcesAction
+) {
+    switch (action.type) {
+        case '@@dataSources/RECEIVE_DATA_TABLE': {
+            const { dataTableWarningById } = action.payload;
+
+            return {
+                ...state,
+                ...dataTableWarningById,
+            };
+        }
+        case '@@dataSources/RECEIVE_DATA_TABLE_WARNING': {
+            const warning = action.payload;
+            return {
+                ...state,
+                [warning.id]: warning,
+            };
+        }
+        case '@@dataSources/REMOVE_DATA_TABLE_WARNING': {
+            const warning = action.payload;
+            const { [warning.id]: _, ...newState } = state;
+            return newState;
         }
         default: {
             return state;
@@ -271,4 +317,5 @@ export default combineReducers({
     dataTablesSamplesById,
     queryExampleIdsById,
     dataLineages,
+    dataTableWarningById,
 });

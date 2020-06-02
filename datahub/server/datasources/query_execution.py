@@ -100,9 +100,7 @@ def batch_get_query_execution(ids):
         ]
 
 
-@register(
-    "/query_execution/<int:query_execution_id>/", methods=["DELETE"], require_auth=True
-)
+@register("/query_execution/<int:query_execution_id>/", methods=["DELETE"])
 def cancel_query_execution(query_execution_id):
     with DBSession() as session:
         execution = logic.get_query_execution_by_id(query_execution_id, session=session)
@@ -344,7 +342,7 @@ def delete_query_execution_notification(
         )
 
 
-@register("/query_execution_exporter/", methods=["GET"], require_auth=True)
+@register("/query_execution_exporter/", methods=["GET"])
 def get_all_query_result_exporters():
     return ALL_EXPORTERS
 
@@ -382,13 +380,11 @@ def export_statement_execution_result(statement_execution_id, export_name):
     return exporter.export(statement_execution_id, current_user.id)
 
 
-@register("/query_execution/templated_query/", methods=["POST"], require_auth=True)
+@register("/query_execution/templated_query/", methods=["POST"])
 def get_templated_query(query: str, variables: Dict[str, str]):
     return render_templated_query(query, variables)
 
 
-@register(
-    "/query_execution/templated_query_params/", methods=["POST"], require_auth=True
-)
+@register("/query_execution/templated_query_params/", methods=["POST"])
 def get_templated_query_params(query: str):
     return list(get_templated_variables_in_string(query))

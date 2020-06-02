@@ -24,6 +24,7 @@ import {
     getDefaultFormValue,
 } from 'ui/SmartForm/SmartForm';
 import { AsyncButton } from 'ui/AsyncButton/AsyncButton';
+import { getEnumEntries } from 'lib/typescript';
 
 interface IDataDocScheduleFormProps {
     isEditable: boolean;
@@ -178,15 +179,12 @@ export const DataDocScheduleForm: React.FunctionComponent<IDataDocScheduleFormPr
                                 label="Notify On"
                                 name="kwargs.notify_on"
                                 type="react-select"
-                                options={Object.entries(NotifyOn)
-                                    .filter(
-                                        ([key, _]) =>
-                                            !isNaN(Number(NotifyOn[key]))
-                                    )
-                                    .map(([key, value]) => ({
+                                options={getEnumEntries(NotifyOn).map(
+                                    ([key, value]) => ({
                                         value,
                                         label: key,
-                                    }))}
+                                    })
+                                )}
                             />
                         )}
                     </>
