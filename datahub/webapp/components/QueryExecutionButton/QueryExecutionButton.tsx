@@ -166,7 +166,7 @@ class QueryExecutionButtonComponent extends React.Component<IProps, IState> {
                         tooltipPos={tooltipPos}
                         icon={'list'}
                         active={active || showQueryViewModalForId != null}
-                        pingMessage={
+                        ping={
                             activeQueryExecutions.length > 0
                                 ? activeQueryExecutions.length.toString()
                                 : null

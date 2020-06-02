@@ -41,19 +41,20 @@ export const ChangeLog: React.FunctionComponent = () => {
             Promise.all([
                 localStore.get<ChangeLogValue>(CHANGE_LOG_KEY),
                 ds.fetch(`/utils/change_logs/`),
-            ]).then((value) => {
-                const [localStorageDate, { data }]: [
+            ]).then(
+                ([localStorageDate, { data }]: [
                     string,
                     { data: IChangeLogItem[] }
-                ] = value;
-                setChangeLogList(data);
+                ]) => {
+                    setChangeLogList(data);
 
-                const lastViewedDate = localStorageDate ?? '2000-01-01';
-                const content = data
-                    .filter((log) => log.date > lastViewedDate)
-                    .map((log) => log.content);
-                setChangeLogContent(content);
-            });
+                    const lastViewedDate = localStorageDate ?? '2000-01-01';
+                    const content = data
+                        .filter((log) => log.date > lastViewedDate)
+                        .map((log) => log.content);
+                    setChangeLogContent(content);
+                }
+            );
         }
     }, [changeLogDate]);
 

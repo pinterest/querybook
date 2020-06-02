@@ -36,7 +36,7 @@ export const Tours: React.FunctionComponent = () => {
                 `/${environment.name}/datadoc/${dataDoc.id}/?tour=true`
             )
         );
-    }, [environment]);
+    }, [environment, defaultEngineId]);
 
     return (
         <div className="Tours m12">

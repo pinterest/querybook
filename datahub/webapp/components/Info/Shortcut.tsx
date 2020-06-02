@@ -23,13 +23,17 @@ export const Shortcut: React.FunctionComponent = () => {
                                     {keys.map((key, i) => {
                                         if (i === 0) {
                                             return (
-                                                <KeyboardKey>{key}</KeyboardKey>
+                                                <KeyboardKey key={i}>
+                                                    {key}
+                                                </KeyboardKey>
                                             );
                                         }
                                         return (
                                             <>
                                                 <span className="pr4">+</span>
-                                                <KeyboardKey>{key}</KeyboardKey>
+                                                <KeyboardKey key={i}>
+                                                    {key}
+                                                </KeyboardKey>
                                             </>
                                         );
                                     })}
