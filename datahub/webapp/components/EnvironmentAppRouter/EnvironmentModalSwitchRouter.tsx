@@ -5,15 +5,17 @@ import { usePrevious } from 'hooks/usePrevious';
 import { useModalRoute } from 'hooks/useModalRoute';
 
 import { AppDataDoc } from 'components/AppDataDoc/AppDataDoc';
+import { EmbeddedQueryPage } from 'components/EmbeddedQueryPage/EmbeddedQueryPage';
 import { Landing } from 'components/Landing/Landing';
+import { QueryComposer } from 'components/QueryComposer/QueryComposer';
 import { QuerySnippetRoute } from 'components/QuerySnippetRoute/QuerySnippetRoute';
 import { FourOhFour } from 'ui/ErrorPage/FourOhFour';
-import { QueryComposer } from 'components/QueryComposer/QueryComposer';
-import { EmbeddedQueryPage } from 'components/EmbeddedQueryPage/EmbeddedQueryPage';
 
-import { SearchRoute } from './SearchRoute';
+import { ChangeLogRoute } from './ChangeLogRoute';
 import { DataTableRoute } from './DataTableRoute';
+import { InfoMenuRoute } from './InfoMenuRoute';
 import { QueryExecutionRoute } from './QueryExecutionRoute';
+import { SearchRoute } from './SearchRoute';
 import { UserSettingsMenuRoute } from './UserSettingsMenuRoute';
 
 export const EnvironmentModalSwitchRouter: React.FC = () => {
@@ -36,7 +38,7 @@ export const EnvironmentModalSwitchRouter: React.FC = () => {
 
     const modalRoutes = [
         <Route
-            path="/:env/table/:id"
+            path="/:env/table/:id/"
             key="table-route"
             component={DataTableRoute}
         />,
@@ -59,6 +61,16 @@ export const EnvironmentModalSwitchRouter: React.FC = () => {
             key="settings-route"
             path="/:env/user_settings/"
             component={UserSettingsMenuRoute}
+        />,
+        <Route
+            key="log-route"
+            path="/:env/changelog/:date?/"
+            component={ChangeLogRoute}
+        />,
+        <Route
+            key="info-route"
+            path="/:env/info/:type/"
+            component={InfoMenuRoute}
         />,
     ];
 

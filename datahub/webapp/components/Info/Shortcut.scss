@@ -1,0 +1,19 @@
+.Shortcut {
+    display: flex;
+    flex-wrap: wrap;
+
+    .Shortcut-box,
+    .Shortcut-box-small {
+        min-width: 400px;
+        margin-right: 24px;
+        .Shortcut-item {
+            display: flex;
+            align-items: center;
+            margin: 24px 4px 24px 12px;
+            .Shortcut-keys {
+                margin-right: 12px;
+                min-width: 200px;
+            }
+        }
+    }
+}

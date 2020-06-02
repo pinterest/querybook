@@ -1,0 +1,89 @@
+faqs:
+    - - 'My queries failed. What do I do?'
+      - '<p>
+      Check first if the syntax of the query is correct.
+      Otherwise please check the line message of the error
+      message. There are two common messages:
+  </p>
+  <ul>
+      <li>
+          <u className="mr4">
+              <i className="mr8">Error from Query Engine</i>
+          </u>
+          indicates the error is a run time error from the
+          query engine. Please check with the maintainer of
+          the said engine.
+      </li>
+      <li>
+          <u className="mr4">
+              <i className="mr8">Error from DataHub worker</i>
+          </u>
+          is the default error message. It is likely to be
+          caused by misconfiguration of DataHub or an internal
+          bug. Please check with the maintainer of DataHub to
+          find out the root cause of the error.
+      </li>
+  </ul>'
+    - - 'My DataDoc is not saving. What should I do?'
+      - '<p>
+      When DataDoc is autosaving, there should be a
+      spinning loading icon on the top right. First verify
+      if it is an issue with websockets, there are two
+      possible indicators:
+      <ul>
+          <li>A red 🔗 icon below the saving icon</li>
+          <li>
+              Notifications with the message <u><i>Insert cell
+              failed, reason: TypeError: Cannot read
+              property <code>e</code></i></u> shows up
+          </li>
+      </ul>
+      <p>
+          If any one of these shows up please contact the
+          maintainer of DataHub to investigate the cause
+          of the failing websocket connection. Otherwise
+          if the websocket is working properly, you can
+          try to force save a DataDoc by pressing
+          cmd/ctrl+s.
+      </p>
+  </p>'
+    - - 'Is there a way to clone a Query Cell and its executions?'
+      - '<p>
+      You can copy/cut the cell by hovering over the ⋮ menu on the right and paste the copied cell. Pasting the cell in a doc will carry over all of its query execution history.
+  </p>'
+    - - 'How do I use templating? What capabilities does it have?'
+      - '<p>
+      You can add templating for DataDoc query cells.
+      DataHub’s templating uses Jinja2 syntax and
+      supports all of its functionalities. You can
+      also define any custom templated variable that
+      can be shared across different cells by clicking
+      the <code><></code> button on the bottom right, they can infer
+      other variables and be recursively rendered.
+      Some variables are provided automatically. Such
+      as:
+      <ul>
+          <li>
+              <code>{{today}}</code> which maps to todays date in yyyy-mm-dd
+          </li>
+          <li>
+              <code>{{yesterday}}</code> which maps to yesterday’s date
+          </li>
+      </ul>
+  </p>'
+    - - 'How do I schedule a DataDoc?'
+      - '<p>
+      You can add a schedule to a DataDoc by clicking on the 🕑 button on the bottom right. A scheduled DataDoc will run the query cells sequentially from the first query cell to the last query cell and would stop if any of the query cell failed to execute. You can configure the schedule to automatically export the query result with a given exporter.
+  </p>'
+    - - 'I found a bug! How do I report it?'
+      - '<p>
+      Please report bugs <i><a href="https://github.com/pinterest/datahub/issues">here</></i>
+  </p>'
+    - - 'How do I make a feature request?'
+      - '<p>
+      Please make feature requests <i><a href="https://github.com/pinterest/datahub/issues">here</a></i>
+  </p>'
+    - - 'Where can I see all the planned features for DataHub?'
+      - '<p>
+      You can view our roadmap and feature development process <i><a href="https://github.com/pinterest/datahub/projects">here</a></i>
+  </p>'

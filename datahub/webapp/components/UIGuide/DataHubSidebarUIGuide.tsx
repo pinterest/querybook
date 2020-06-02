@@ -1,10 +1,14 @@
 import React from 'react';
 import Tour, { ReactourStep } from 'reactour';
-import { Button } from 'ui/Button/Button';
-import { Title } from 'ui/Title/Title';
-import { Icon } from 'ui/Icon/Icon';
+import { useLocation } from 'react-router-dom';
 
-const DataHubSidebarTourSteps: ReactourStep[] = [
+import { getQueryString } from 'lib/utils/query-string';
+
+import { Button } from 'ui/Button/Button';
+import { Icon } from 'ui/Icon/Icon';
+import { Title } from 'ui/Title/Title';
+
+export const DataHubSidebarTourSteps: ReactourStep[] = [
     {
         selector: '.EnvironmentAppSidebar',
         content: ({ goTo }) => (
@@ -180,7 +184,15 @@ const DataHubSidebarTourSteps: ReactourStep[] = [
 ];
 
 export const DataHubSidebarUIGuide: React.FunctionComponent<{}> = ({}) => {
+    const location = useLocation();
+    const { tour } = React.useMemo(() => getQueryString(), [location.search]);
     const [isOpen, setIsOpen] = React.useState(false);
+
+    React.useEffect(() => {
+        if (tour) {
+            setIsOpen(true);
+        }
+    }, [tour]);
 
     return (
         <>

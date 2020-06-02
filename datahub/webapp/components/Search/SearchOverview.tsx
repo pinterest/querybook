@@ -25,6 +25,7 @@ import { Checkbox } from 'ui/Form/Checkbox';
 import { Container } from 'ui/Container/Container';
 import { Dropdown } from 'ui/Dropdown/Dropdown';
 import { Icon } from 'ui/Icon/Icon';
+import { KeyboardKey } from 'ui/KeyboardKey/KeyboardKey';
 import { Level } from 'ui/Level/Level';
 import { ListMenu } from 'ui/Menu/ListMenu';
 import { Pagination } from 'ui/Pagination/Pagination';
@@ -416,14 +417,14 @@ export const SearchOverview: React.FunctionComponent = () => {
         <Level className="search-instructions-tip">
             <div className="search-instructions">
                 <span className="search-instructions-span">
-                    <span className="instructions-key">esc</span>
+                    <KeyboardKey>esc</KeyboardKey>
                     <span className="ml4">to dismiss</span>
                 </span>
             </div>
             <div className="search-tip">
-                <span className="instructions-key">⌘</span>
-                <span className="search-tip-plus">+</span>
-                <span className="instructions-key mr4">K</span>
+                <KeyboardKey>⌘</KeyboardKey>
+                <span className="pr4">+</span>
+                <KeyboardKey className="mr4">K</KeyboardKey>
                 <span className="ml4">to open this faster</span>
             </div>
         </Level>

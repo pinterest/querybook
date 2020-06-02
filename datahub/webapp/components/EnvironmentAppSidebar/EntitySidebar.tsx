@@ -6,18 +6,19 @@ import history from 'lib/router-history';
 import { currentEnvironmentSelector } from 'redux/environment/selector';
 import { queryMetastoresSelector } from 'redux/dataSources/selector';
 import { IStoreState } from 'redux/store/types';
-
-import { QueryExecutionButton } from 'components/QueryExecutionButton/QueryExecutionButton';
-import { UserMenu } from 'components/UserMenu/UserMenu';
-import { SearchContainer } from 'components/Search/SearchContainer';
-import { QueryEngineStatusButton } from 'components/QueryEngineStatusButton/QueryEngineStatusButton';
-import { ChangeLogButton } from 'components/ChangeLogButton/ChangeLogButton';
-import { IconButton } from 'ui/Button/IconButton';
 import { Entity } from './types';
-import './EntitySidebar.scss';
+
+import { InfoMenuButton } from 'components/InfoMenuButton/InfoMenuButton';
+import { QueryEngineStatusButton } from 'components/QueryEngineStatusButton/QueryEngineStatusButton';
+import { QueryExecutionButton } from 'components/QueryExecutionButton/QueryExecutionButton';
+import { SearchContainer } from 'components/Search/SearchContainer';
+import { UserMenu } from 'components/UserMenu/UserMenu';
 
 import { Divider } from 'ui/Divider/Divider';
+import { IconButton } from 'ui/Button/IconButton';
 import { Link } from 'ui/Link/Link';
+
+import './EntitySidebar.scss';
 
 interface IEntitySidebarProps {
     selectedEntity: Entity;
@@ -129,7 +130,7 @@ export const EntitySidebar: React.FunctionComponent<IEntitySidebarProps> = ({
                 <SearchContainer />
                 <UserMenu />
                 <QueryEngineStatusButton />
-                <ChangeLogButton />
+                <InfoMenuButton />
                 {adminAppButton}
             </div>
         </div>

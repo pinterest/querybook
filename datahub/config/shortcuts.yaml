@@ -1,0 +1,41 @@
+shortcuts:
+    - title: overall UI
+      keys:
+          - - ['⌘', 'k']
+            - open search
+          - - ['⌘', 'b']
+            - toggle sidebar
+          - - ['esc']
+            - close modal
+    - title: data doc and adhoc
+      keys:
+          - - ['⌘', 's']
+            - save datadoc
+          - - ['⌘', 'f']
+            - open search and replace
+          - - ['esc']
+            - close search and replace
+    - title: rich text
+      keys:
+          - - ['⌘', 'l']
+            - add link
+          - - ['⌘', 'b']
+            - bold
+          - - ['⌘', 'i']
+            - italics
+          - - ['⌘', 'shift', 'x']
+            - strikethrough
+    - title: query editor
+      keys:
+          - - ['shift', 'enter']
+            - run query
+          - - ['ctrl', 'space']
+            - force autocomplete
+          - - ['shift', 'tab']
+            - indent less
+          - - ['⌘', '/']
+            - toggle comment
+          - - ['⌘', 'p']
+            - open table modal if cursor is on a table
+          - - ['shift', 'alt', 'f']
+            - format query

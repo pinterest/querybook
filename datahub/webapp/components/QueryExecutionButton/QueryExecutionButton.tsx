@@ -156,12 +156,6 @@ class QueryExecutionButtonComponent extends React.Component<IProps, IState> {
                 : 'No running queries.'
             : 'Checking running queries';
 
-        const runningQueryBadge = activeQueryExecutions.length > 0 && (
-            <span className="num-query-badge">
-                {activeQueryExecutions.length}
-            </span>
-        );
-
         return (
             <>
                 <span className="QueryExecutionButton">
@@ -172,8 +166,12 @@ class QueryExecutionButtonComponent extends React.Component<IProps, IState> {
                         tooltipPos={tooltipPos}
                         icon={'list'}
                         active={active || showQueryViewModalForId != null}
+                        ping={
+                            activeQueryExecutions.length > 0
+                                ? activeQueryExecutions.length.toString()
+                                : null
+                        }
                     />
-                    {runningQueryBadge}
                 </span>
                 {panel}
                 {queryViewDOM}

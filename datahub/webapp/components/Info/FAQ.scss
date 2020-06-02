@@ -1,0 +1,15 @@
+.FAQ {
+    .FAQ-item {
+        .FAQ-answer {
+            font-size: var(--text-size);
+            li {
+                list-style: none;
+                margin-bottom: 8px;
+            }
+            a {
+                font-weight: 600;
+                text-decoration: underline;
+            }
+        }
+    }
+}

@@ -1,9 +1,13 @@
 import React from 'react';
 import Tour, { ReactourStep } from 'reactour';
+import { useLocation } from 'react-router-dom';
+
+import { getQueryString } from 'lib/utils/query-string';
+
 import { Button } from 'ui/Button/Button';
 import { Title } from 'ui/Title/Title';
 
-const DataDocTourSteps: ReactourStep[] = [
+export const DataDocTourSteps: ReactourStep[] = [
     {
         content: (
             <div>
@@ -128,8 +132,15 @@ it to run daily, weekly, or monthly.`,
 export const DataDocUIGuide: React.FunctionComponent<{
     hideButton: boolean;
 }> = ({ hideButton }) => {
+    const location = useLocation();
+    const { tour } = React.useMemo(() => getQueryString(), [location.search]);
     const [isOpen, setIsOpen] = React.useState(false);
 
+    React.useEffect(() => {
+        if (tour) {
+            setIsOpen(true);
+        }
+    }, [tour]);
     return (
         <div className="DataDocUIGuide flex-center">
             {hideButton ? null : (

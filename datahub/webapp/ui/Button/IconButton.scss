@@ -34,4 +34,30 @@
     &.disabled {
         cursor: not-allowed;
     }
+
+    .ping,
+    .ping-message {
+        position: absolute;
+        cursor: default;
+        border-radius: 100px;
+        background-color: var(--color-accent-bg);
+    }
+
+    .ping {
+        right: 8px;
+        top: 8px;
+
+        width: 12px;
+        height: 12px;
+    }
+
+    .ping-message {
+        right: 4px;
+        top: 4px;
+        padding: 1px 6px 0px 6px;
+
+        color: var(--color-accent-text);
+        font-size: var(--xsmall-text-size);
+        font-weight: var(--bold-font);
+    }
 }
