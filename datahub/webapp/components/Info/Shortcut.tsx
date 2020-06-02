@@ -29,12 +29,10 @@ export const Shortcut: React.FunctionComponent = () => {
                                             );
                                         }
                                         return (
-                                            <>
+                                            <React.Fragment key={i}>
                                                 <span className="pr4">+</span>
-                                                <KeyboardKey key={i}>
-                                                    {key}
-                                                </KeyboardKey>
-                                            </>
+                                                <KeyboardKey>{key}</KeyboardKey>
+                                            </React.Fragment>
                                         );
                                     })}
                                 </div>
