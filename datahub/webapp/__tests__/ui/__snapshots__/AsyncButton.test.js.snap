@@ -29,14 +29,3 @@ exports[`matches test renderer snapshot serializes the styles 1`] = `
   </span>
 </span>
 `;
-
-exports[`matches test renderer snapshot serializes the styles 2`] = `
-<span
-  className="Button "
-  onClick={[Function]}
->
-  <span>
-    test
-  </span>
-</span>
-`;

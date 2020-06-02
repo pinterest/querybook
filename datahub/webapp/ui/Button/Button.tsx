@@ -1,6 +1,8 @@
 import React from 'react';
 import classNames from 'classnames';
+
 import { Icon } from 'ui/Icon/Icon';
+
 import './Button.scss';
 
 export interface IButtonProps

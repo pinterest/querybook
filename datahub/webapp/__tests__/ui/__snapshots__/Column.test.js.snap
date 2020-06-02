@@ -1,0 +1,68 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`matches enzyme snapshots matches snapshot 1`] = `
+<StyledComponent
+  forwardedComponent={
+    Object {
+      "$$typeof": Symbol(react.forward_ref),
+      "attrs": Array [
+        Object {
+          "className": "Columns",
+        },
+      ],
+      "componentStyle": ComponentStyle {
+        "componentId": "sc-bdVaJa",
+        "isStatic": true,
+        "rules": Array [
+          "
+    display: flex;
+    margin-left: -12px;
+    margin-right: -12px;
+    margin-top: -12px;
+
+    .columns:last-child {
+        margin-bottom: -12px;
+    }
+    .columns:not(:last-child) {
+        margin-bottom: 12px;
+    }
+",
+        ],
+      },
+      "displayName": "styled.div",
+      "foldedComponentIds": Array [],
+      "render": [Function],
+      "styledComponentId": "sc-bdVaJa",
+      "target": "div",
+      "toString": [Function],
+      "warnTooManyClasses": [Function],
+      "withComponent": [Function],
+    }
+  }
+  forwardedRef={null}
+>
+  <styled.div>
+    Test
+  </styled.div>
+  <styled.div>
+    Test
+  </styled.div>
+</StyledComponent>
+`;
+
+exports[`matches test renderer snapshot serializes the styles 1`] = `
+<div
+  className="sc-bdVaJa Columns bLpCji"
+>
+  <div
+    className="sc-bwzfXH Column iypiRz"
+  >
+    Test
+  </div>
+  <div
+    className="sc-bwzfXH Column iypiRz"
+  >
+    Test
+  </div>
+</div>
+`;

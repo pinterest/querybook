@@ -3,23 +3,16 @@ import { shallow } from 'enzyme';
 import toJson from 'enzyme-to-json';
 import renderer from 'react-test-renderer';
 
-import { AsyncButton } from '../../ui/AsyncButton/AsyncButton';
+import { Content } from '../../ui/Content/Content';
 
 it('renders without crashing', () => {
-    shallow(<AsyncButton title="test" onClick={() => null} />);
+    shallow(<Content dangerouslySetInnerHTML={{ __html: '<p>test</p>' }} />);
 });
 
 describe('matches enzyme snapshots', () => {
     it('matches snapshot', () => {
         let wrapper = shallow(
-            <AsyncButton title="test" onClick={() => null} />
-        );
-        let serialized = toJson(wrapper);
-        expect(serialized).toMatchSnapshot();
-    });
-    it('matches snapshot - disbled', () => {
-        let wrapper = shallow(
-            <AsyncButton title="test" onClick={() => null} disabled />
+            <Content dangerouslySetInnerHTML={{ __html: '<p>test</p>' }} />
         );
         let serialized = toJson(wrapper);
         expect(serialized).toMatchSnapshot();
@@ -29,7 +22,7 @@ describe('matches enzyme snapshots', () => {
 describe('matches test renderer snapshot', () => {
     it('serializes the styles', () => {
         const output = renderer.create(
-            <AsyncButton title="test" onClick={() => null} />
+            <Content dangerouslySetInnerHTML={{ __html: '<p>test</p>' }} />
         );
         expect(output).toMatchSnapshot();
     });

@@ -1,0 +1,92 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`matches enzyme snapshots matches snapshot - attachedRight 1`] = `
+<span
+  className="Button  attached-right"
+  onClick={[Function]}
+>
+  <span>
+    test
+  </span>
+</span>
+`;
+
+exports[`matches enzyme snapshots matches snapshot - borderless 1`] = `
+<span
+  className="Button  borderless"
+  onClick={[Function]}
+>
+  <span>
+    test
+  </span>
+</span>
+`;
+
+exports[`matches enzyme snapshots matches snapshot - disbled 1`] = `
+<span
+  className="Button  disabled"
+  onClick={null}
+>
+  <span>
+    test
+  </span>
+</span>
+`;
+
+exports[`matches enzyme snapshots matches snapshot - isLoading 1`] = `
+<span
+  className="Button  flex-row"
+  onClick={[Function]}
+>
+  <Memo()
+    name="loader"
+  />
+  <span>
+    test
+  </span>
+</span>
+`;
+
+exports[`matches enzyme snapshots matches snapshot - mixed 1`] = `
+<span
+  className="Button  attached-left transparent pushable small inverted"
+  onClick={[Function]}
+>
+  <span>
+    test
+  </span>
+</span>
+`;
+
+exports[`matches enzyme snapshots matches snapshot - typed 1`] = `
+<span
+  className="Button soft"
+  onClick={[Function]}
+>
+  <span>
+    test
+  </span>
+</span>
+`;
+
+exports[`matches enzyme snapshots matches snapshot 1`] = `
+<span
+  className="Button "
+  onClick={[Function]}
+>
+  <span>
+    test
+  </span>
+</span>
+`;
+
+exports[`matches test renderer snapshot serializes the styles 1`] = `
+<span
+  className="Button "
+  onClick={[Function]}
+>
+  <span>
+    test
+  </span>
+</span>
+`;
