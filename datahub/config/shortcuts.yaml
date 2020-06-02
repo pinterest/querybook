@@ -25,6 +25,8 @@ shortcuts:
             - italics
           - - ['⌘', 'shift', 'x']
             - strikethrough
+          - - ['ctrl', 'd']
+            - delete current cell
     - title: query editor
       keys:
           - - ['shift', 'enter']
@@ -39,3 +41,5 @@ shortcuts:
             - open table modal if cursor is on a table
           - - ['shift', 'alt', 'f']
             - format query
+          - - ['ctrl', 'd']
+            - delete current cell
