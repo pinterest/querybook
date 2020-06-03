@@ -4,7 +4,6 @@
         opacity: 0;
 
         display: flex;
-        align-items: center;
     }
 
     &:hover {
@@ -14,13 +13,14 @@
     }
 
     &.edit-mode .editor-wrapper {
-        border: 1px dashed #ddd;
+        border: 1px dashed var(--focus-border-color);
+        border-radius: var(--border-radius);
     }
 
     .editor-wrapper {
         display: flex;
-        padding: 5px;
-        word-break: break-all;
+        padding: 8px;
+        word-break: break-word;
 
         .RichTextEditor {
             flex: 1;

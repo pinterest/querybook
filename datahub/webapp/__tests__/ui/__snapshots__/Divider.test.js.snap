@@ -23,6 +23,8 @@ exports[`matches enzyme snapshots matches snapshot 1`] = `
     background-color: ",
           [Function],
           ";
+    margin-left: -4px;
+    margin-right: -4px;
 ",
         ],
       },
@@ -42,6 +44,6 @@ exports[`matches enzyme snapshots matches snapshot 1`] = `
 
 exports[`matches test renderer snapshot serializes the styles 1`] = `
 <hr
-  className="sc-bdVaJa HpfCG"
+  className="sc-bdVaJa fKCxyC"
 />
 `;

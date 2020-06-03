@@ -72,7 +72,7 @@ export class DataTableViewOverview extends React.PureComponent<
             <div>
                 <div className="overview-section-top">
                     <Title size={5}>{title}</Title>
-                    <Divider marginTop={'4px'} marginBottom={'12px'} />
+                    <Divider marginTop="4px" marginBottom="12px" />
                 </div>
                 <div className="overview-section-content">{content}</div>
                 <div className="overview-section-footer">{footer}</div>

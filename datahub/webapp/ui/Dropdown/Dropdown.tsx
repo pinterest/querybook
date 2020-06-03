@@ -2,9 +2,9 @@ import classNames from 'classnames';
 import React from 'react';
 
 import { IconButton } from 'ui/Button/IconButton';
+import { Popover } from 'ui/Popover/Popover';
 
 import './Dropdown.scss';
-import { Popover } from 'ui/Popover/Popover';
 
 interface IProps {
     menuIcon?: string;
