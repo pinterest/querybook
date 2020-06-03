@@ -369,9 +369,24 @@ class DataDocComponent extends React.Component<IProps, IState> {
 
     @bind
     public async pasteCellAt(pasteIndex: number) {
-        const copyCommand = deserializeCopyCommand(
-            await navigator.clipboard.readText()
-        );
+        let clipboardContent = null;
+        try {
+            if (navigator.clipboard.readText) {
+                clipboardContent = await navigator.clipboard.readText();
+            }
+        } catch (e) {
+            // ignore if user rejected, handle in finally
+        } finally {
+            if (clipboardContent == null) {
+                // If we failed to get content due to:
+                //    - firefox doesn't have navigator.clipboard.readText
+                //    - user refused to give clipboard permission
+                // then we show the prompt as a last resort
+                clipboardContent = prompt('Paste copied cell here');
+            }
+        }
+
+        const copyCommand = deserializeCopyCommand(clipboardContent);
         if (copyCommand) {
             try {
                 await dataDocActions.pasteDataCell(
