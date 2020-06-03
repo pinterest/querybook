@@ -79,6 +79,7 @@ export const DataTableViewColumn: React.FunctionComponent<IDataTableViewColumnPr
             placeholder={`Find Columns`}
             hasIcon
             autoFocus
+            className="mb8"
         />
     );
 

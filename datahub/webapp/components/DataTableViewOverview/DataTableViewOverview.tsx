@@ -18,6 +18,7 @@ import { Divider } from 'ui/Divider/Divider';
 
 import './DataTableViewOverview.scss';
 import { Message } from 'ui/Message/Message';
+import { Button } from 'ui/Button/Button';
 
 const dataTableDetailsColumns = [
     {
@@ -155,7 +156,7 @@ export class DataTableViewOverview extends React.PureComponent<
 
         const sampleQueriesSection = this.makeOverviewSectionDOM(
             `Sample DataDocs`,
-            <a
+            <Button
                 onClick={() =>
                     navigateWithinEnv(
                         `/search/?searchType=DataDoc&searchString=${tableName}`,
@@ -164,9 +165,11 @@ export class DataTableViewOverview extends React.PureComponent<
                         }
                     )
                 }
+                type="inlineText"
+                borderless
             >
-                See Sample DataDocs.
-            </a>
+                Sample DataDocs
+            </Button>
         );
 
         const warningSection = tableWarnings.length

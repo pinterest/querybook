@@ -90,7 +90,7 @@ export const Dropdown: React.FunctionComponent<IProps> = ({
 
     let dropdownContent =
         active && children ? (
-            <div className="Dropdown-menu pt4" role="menu">
+            <div className="Dropdown-menu" role="menu">
                 {children}
             </div>
         ) : null;

@@ -52,7 +52,7 @@ export const TaskStatusIcon: React.FunctionComponent<IStatusProps> = ({
     const status = statusTypes[type];
     return (
         <StyledStatusIcon className={status.class}>
-            <span className="icon">
+            <span className="m4">
                 <i className={status.iconClass} />
             </span>
             <span>{status.text}</span>

@@ -1,12 +1,22 @@
 .SearchBar {
+    position: relative;
     display: flex;
     align-items: center;
 
     .DebouncedInput {
         flex: 1;
-        input {
-            padding: 12px;
+    }
+    &.transparent {
+        .DebouncedInput {
+            input {
+                padding: 12px;
+            }
         }
+    }
+    .SearchIcon {
+        position: absolute;
+        right: 12px;
+        color: var(--icon-color);
     }
 
     .search-bar-clear-sep {

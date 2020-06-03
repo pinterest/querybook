@@ -14,6 +14,7 @@ import { Title } from 'ui/Title/Title';
 import { ToggleSwitch } from 'ui/ToggleSwitch/ToggleSwitch';
 import { Tag } from 'ui/Tag/Tag';
 import { Level } from 'ui/Level/Level';
+import { navigateWithinEnv } from 'lib/utils/query-string';
 
 export interface IDataTableHeader {
     table: IDataTable;
@@ -57,7 +58,7 @@ export const DataTableHeader: React.FunctionComponent<IDataTableHeader> = ({
 
     const dateDOM = table.created_at ? (
         <div className="DataTableHeader-item">
-            <span className="DataTableHeader-key">Created</span>
+            <span className="DataTableHeader-key">Created at</span>
             <span>{generateFormattedDate(table.created_at, 'X')}</span>
         </div>
     ) : null;
@@ -102,14 +103,16 @@ export const DataTableHeader: React.FunctionComponent<IDataTableHeader> = ({
 
     return (
         <div className="DataTableHeader p24">
-            <div className="DataTableHeader-left">
-                {titleDOM}
-                {dateDOM}
-                {ownerDOM}
-            </div>
-            <div className="DataTableHeader-right">
-                {viewsBadgeDOM}
-                {goldenBadge}
+            <div className="DataTableHeader-top">
+                <div className="DataTableHeader-left">
+                    {titleDOM}
+                    {dateDOM}
+                    {ownerDOM}
+                </div>
+                <div className="DataTableHeader-right pt4">
+                    {viewsBadgeDOM}
+                    {goldenBadge}
+                </div>
             </div>
         </div>
     );
