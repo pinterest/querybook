@@ -7,7 +7,7 @@ import { ChangeLogValue, CHANGE_LOG_KEY } from 'lib/local-store/const';
 
 import { IconButton } from 'ui/Button/IconButton';
 import { Popover } from 'ui/Popover/Popover';
-import { MenuDivider, Menu, MenuItem } from 'ui/Menu/Menu';
+import { MenuDivider, Menu, MenuItem, MenuItemPing } from 'ui/Menu/Menu';
 
 export const InfoMenuButton: React.FunctionComponent = () => {
     const [showPanel, setShowPanel] = React.useState(false);
@@ -39,8 +39,10 @@ export const InfoMenuButton: React.FunctionComponent = () => {
                         });
                         setNotification(false);
                     }}
+                    ping={notification}
                 >
                     Change Logs
+                    {notification ? <MenuItemPing /> : null}
                 </MenuItem>
                 <MenuDivider />
                 <MenuItem

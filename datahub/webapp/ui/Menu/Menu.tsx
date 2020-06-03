@@ -26,3 +26,14 @@ export const MenuDivider = styled.div.attrs<{}>({
     height: 1px;
     margin: 0px;
 `;
+export const MenuItemPing = styled.div.attrs<{}>({
+    className: 'MenuItemPing',
+})`
+    cursor: default;
+    border-radius: 100px;
+    background-color: var(--color-accent-bg);
+    width: 8px;
+    height: 8px;
+    margin-left: 8px;
+    margin-right: -8px;
+`;
