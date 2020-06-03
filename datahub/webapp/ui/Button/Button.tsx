@@ -79,6 +79,7 @@ export const Button = React.forwardRef<HTMLDivElement, IButtonProps>(
             small,
             inverted,
             'flex-row': Boolean(iconDOM && textDOM),
+            'icon-only': Boolean(iconDOM && !textDOM),
         });
 
         return (
