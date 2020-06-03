@@ -89,6 +89,13 @@ export interface ISearchFilterUpdateAction extends Action {
     };
 }
 
+export interface ISearchFieldUpdateAction extends Action {
+    type: '@@search/SEARCH_FIELD_UPDATE';
+    payload: {
+        field: string;
+    };
+}
+
 export interface ISearchOrderUpdateAction extends Action {
     type: '@@search/SEARCH_ORDER_UPDATE';
     payload: {
@@ -133,6 +140,7 @@ export type SearchAction =
     | ISearchReceiveQueryParamAction
     | ISearchStringUpdateAction
     | ISearchFilterUpdateAction
+    | ISearchFieldUpdateAction
     | ISearchOrderUpdateAction
     | ISearchTypeUpdateAction
     | ISearchResultResetAction
@@ -155,6 +163,7 @@ export interface ISearchPaginationState {
 
 export interface ISearchState extends ISearchPaginationState {
     searchFilters: Record<string, any>;
+    searchFields: Record<string, boolean>;
     searchOrder: SearchOrder;
     searchType: SearchType;
     searchString: string;

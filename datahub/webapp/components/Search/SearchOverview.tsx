@@ -36,7 +36,14 @@ import { Tabs } from 'ui/Tabs/Tabs';
 import './SearchOverview.scss';
 
 const secondsPerDay = 60 * 60 * 24;
-
+const inputDateFormat = 'YYYY-MM-DD';
+const getFormattedDateFromSeconds = (
+    seconds: string | number,
+    format: string
+) =>
+    seconds != null
+        ? moment(parseInt(seconds as string) * 1000).format(format)
+        : '';
 export const SearchOverview: React.FunctionComponent = () => {
     const {
         resultByPage,
@@ -45,6 +52,7 @@ export const SearchOverview: React.FunctionComponent = () => {
 
         searchString,
         searchFilters,
+        searchFields,
         searchOrder,
         searchType,
         searchAuthorChoices,
@@ -89,6 +97,9 @@ export const SearchOverview: React.FunctionComponent = () => {
     );
     const updateSearchFilter = React.useCallback((filterKey, filterValue) => {
         dispatch(searchActions.updateSearchFilter(filterKey, filterValue));
+    }, []);
+    const updateSearchField = React.useCallback((field) => {
+        dispatch(searchActions.updateSearchField(field));
     }, []);
     const updateSearchOrder = React.useCallback((orderKey) => {
         dispatch(searchActions.updateSearchOrder(orderKey));
@@ -196,6 +207,28 @@ export const SearchOverview: React.FunctionComponent = () => {
         </div>
     );
 
+    const searchSettingsDOM = (
+        <div className="search-settings">
+            {['table_name', 'description', 'column'].map((setting) => {
+                const label = setting.replace(/_/g, ' ');
+                return (
+                    <div
+                        className="search-settings-toggle horizontal-space-between"
+                        key={setting}
+                    >
+                        <span>
+                            <span>{label}</span>
+                        </span>
+                        <Checkbox
+                            value={!!searchFields[setting]}
+                            onChange={updateSearchField.bind(null, setting)}
+                        />
+                    </div>
+                );
+            })}
+        </div>
+    );
+
     const metastoreSelectDOM =
         searchType === SearchType.Table ? (
             <div className="tables-search-select">
@@ -286,7 +319,10 @@ export const SearchOverview: React.FunctionComponent = () => {
                 <input
                     id="start-date"
                     type="date"
-                    value={undefined}
+                    value={getFormattedDateFromSeconds(
+                        searchFilters?.startDate,
+                        inputDateFormat
+                    )}
                     onChange={(event) => onStartDateChange(event)}
                 />
             </div>
@@ -295,7 +331,10 @@ export const SearchOverview: React.FunctionComponent = () => {
                 <input
                     id="end-date"
                     type="date"
-                    value={undefined}
+                    value={getFormattedDateFromSeconds(
+                        searchFilters?.endDate,
+                        inputDateFormat
+                    )}
                     onChange={(event) => onEndDateChange(event)}
                 />
             </div>
@@ -409,6 +448,13 @@ export const SearchOverview: React.FunctionComponent = () => {
                         <div className="dh-hr" />
                     </span>
                     {dateFilterDOM}
+                </div>
+                <div className="search-filter">
+                    <span className="filter-title">
+                        Search Settings
+                        <div className="dh-hr" />
+                    </span>
+                    {searchSettingsDOM}
                 </div>
             </>
         );

@@ -48,31 +48,35 @@ def _match_filters(filters):
     range_filters = {}
 
     for f in filters:
-        field_name = str(f[0]).lower()
-        field_val = str(f[1]).lower()
+        filter_name = str(f[0]).lower()
+        filter_val = str(f[1]).lower()
 
-        if not field_val or field_val == "":
+        if not filter_val or filter_val == "":
             continue
 
-        field = {}
-        field[field_name] = field_val
+        search_filter = {}
+        search_filter[filter_name] = filter_val
 
-        if field_name == "startdate":
-            range_filters.setdefault("created_at", {"gte": field_val})
-        elif field_name == "enddate":
-            range_filters.setdefault("created_at", {"lte": field_val})
+        if filter_name == "startdate":
+            range_filters.setdefault("created_at", {"gte": filter_val})
+        elif filter_name == "enddate":
+            range_filters.setdefault("created_at", {"lte": filter_val})
         else:
-            filter_terms.append({"match": field})
+            filter_terms.append({"match": search_filter})
 
     if any(range_filters):
-        return {"filter": {"bool": {"must": filter_terms}}, "range": range_filters}
+        return {
+            "filter": {"bool": {"must": filter_terms}},
+            "range": range_filters,
+        }
     else:
         return {"filter": {"bool": {"must": filter_terms}}}
 
 
 def _construct_datadoc_query(
-    keywords, filters, limit, offset, sort_key=None, sort_order=None,
+    keywords, filters, fields, limit, offset, sort_key=None, sort_order=None,
 ):
+    # TODO: fields is not used because explicit search for Data Docs is not implemented
     search_query = _match_any_field(
         keywords, search_fields=["title^5", "cells", "owner",]
     )
@@ -109,15 +113,45 @@ def _construct_datadoc_query(
     return json.dumps(query)
 
 
+def _match_table_fields(fields):
+    search_fields = []
+    for field in fields:
+        # 'table_name', 'description', and 'columns' are fields used by Table search
+        if field == "table_name":
+            search_fields.append("full_name^20")
+        elif field == "description":
+            search_fields.append("description")
+        elif field == "column":
+            search_fields.append("columns")
+
+    return search_fields
+
+
+def _match_data_doc_fields(fields):
+    search_fields = []
+    for field in fields:
+        # 'title', 'cells', and 'owner' are fields used by Data Doc search
+        if field == "title":
+            search_fields.append("title^5")
+        elif field == "cells":
+            search_fields.append("cells")
+        elif field == "owner":
+            search_fields.append("owner")
+
+    return search_fields
+
+
 def _construct_tables_query(
-    keywords, filters, limit, offset, concise, sort_key=None, sort_order=None,
+    keywords, filters, fields, limit, offset, concise, sort_key=None, sort_order=None,
 ):
+
+    search_fields = _match_table_fields(fields)
 
     search_query = {}
     if keywords:
         search_query["multi_match"] = {
             "query": keywords,
-            "fields": ["full_name^20", "columns", "description"],
+            "fields": search_fields,
             "minimum_should_match": -1,
         }
     else:
@@ -212,6 +246,7 @@ def search_datadoc(
     environment_id,
     keywords,
     filters=[],
+    fields=[],
     sort_key=None,
     sort_order=None,
     limit=1000,
@@ -225,6 +260,7 @@ def search_datadoc(
     query = _construct_datadoc_query(
         keywords=keywords,
         filters=filters,
+        fields=fields,
         limit=limit,
         offset=offset,
         sort_key=sort_key,
@@ -246,6 +282,7 @@ def search_tables(
     metastore_id,
     keywords,
     filters=[],
+    fields=[],
     sort_key=None,
     sort_order=None,
     limit=1000,
@@ -260,6 +297,7 @@ def search_tables(
     query = _construct_tables_query(
         keywords=parsed_keywords,
         filters=filters,
+        fields=fields,
         limit=limit,
         offset=offset,
         concise=concise,
