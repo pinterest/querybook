@@ -4,6 +4,8 @@
         opacity: 0;
 
         display: flex;
+        margin-top: 4px;
+        margin-right: 4px;
     }
 
     &:hover {
@@ -21,6 +23,7 @@
         display: flex;
         padding: 8px;
         word-break: break-word;
+        align-items: flex-start;
 
         .RichTextEditor {
             flex: 1;

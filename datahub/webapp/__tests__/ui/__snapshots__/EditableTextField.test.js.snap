@@ -1,0 +1,24 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`matches enzyme snapshots matches snapshot 1`] = `
+<div
+  className="EditableTextField"
+>
+  <div
+    className="editor-wrapper"
+  >
+    <RichTextEditor
+      readOnly={true}
+      value="test"
+    />
+    <span
+      className="edit-mode-button"
+      onClick={[Function]}
+    >
+      <i
+        className="fa fa-edit"
+      />
+    </span>
+  </div>
+</div>
+`;

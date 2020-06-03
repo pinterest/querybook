@@ -557,7 +557,6 @@ export class RichTextEditor extends React.Component<
         const editorClassName = classNames({
             RichTextEditor: true,
             [className]: className,
-            content: true,
         });
 
         return (

@@ -29,41 +29,19 @@ export const DataTableHeader: React.FunctionComponent<IDataTableHeader> = ({
 
     updateDataTableGolden,
 }) => {
-    const tableId = table.id;
-
     const tableOwner = (table.owner || '').split('@')[0];
-    const isTableOwner = false;
+    // const isTableOwner = false;
 
     const shortTableName = Utils.generateNameFromKey(
         last(((table || ({} as any)).name || '').split('.'))
     );
 
-    const dateDOM = table.created_at ? (
-        <span>Created at: {generateFormattedDate(table.created_at, 'X')}</span>
-    ) : null;
-    // TODO: allow claim ownership
-    const claimOwnerButton = tableId && isTableOwner && (
-        <Button
-            title={isTableOwner ? 'You are the table owner' : 'Edit Owner'}
-            icon={'edit-2'}
-            onClick={null}
-            borderless
-        />
-    );
-
-    // TODO: add views badge && user badge back
-    const viewsBadgeDOM = (
-        <ImpressionWidget itemId={table.id} type={'DATA_TABLE'} />
-    );
-    const userBadge = tableOwner;
-
     const titleDOM = (
         <Level className="mb24">
             <div>
-                <Title className="mb8">
+                <Title className="pb12">
                     {shortTableName}
                     <BoardItemAddButton
-                        noPadding
                         size={16}
                         itemType="table"
                         itemId={table.id}
@@ -74,15 +52,44 @@ export const DataTableHeader: React.FunctionComponent<IDataTableHeader> = ({
                     {tableName}
                 </Title>
             </div>
-            {viewsBadgeDOM}
         </Level>
+    );
+
+    const dateDOM = table.created_at ? (
+        <div className="DataTableHeader-item">
+            <span className="DataTableHeader-key">Created</span>
+            <span>{generateFormattedDate(table.created_at, 'X')}</span>
+        </div>
+    ) : null;
+
+    const userBadge = tableOwner || 'meow';
+    const ownerDOM = userBadge ? (
+        <div className="DataTableHeader-item">
+            <span className="DataTableHeader-key">by</span>
+            {userBadge}
+        </div>
+    ) : null;
+
+    // TODO: allow claim ownership - will add back when functionality is there
+    // const claimOwnerButton = tableId && isTableOwner && (
+    //     <Button
+    //         title={isTableOwner ? 'You are the table owner' : 'Edit Owner'}
+    //         icon={'edit-2'}
+    //         onClick={null}
+    //         borderless
+    //     />
+    // );
+
+    // TODO: add views badge && user badge back
+    const viewsBadgeDOM = (
+        <ImpressionWidget itemId={table.id} type={'DATA_TABLE'} />
     );
 
     let goldenBadge;
     if (userInfo.isAdmin) {
         goldenBadge = (
             <div className="flex-row">
-                <span className="golden-switch-text">Featured:</span>
+                <span className="golden-switch-text">Featured</span>
                 <ToggleSwitch
                     checked={table.golden}
                     onChange={updateDataTableGolden}
@@ -94,17 +101,15 @@ export const DataTableHeader: React.FunctionComponent<IDataTableHeader> = ({
     }
 
     return (
-        <div className="DataTableHeader">
-            {titleDOM}
-            {dateDOM}
-            <div className="horizontal-space-between ">
-                <div className="flex-row">
-                    {userBadge ? <div>Table Owner: {userBadge}</div> : null}
-                    <div>{claimOwnerButton}</div>
-                </div>
-                <div>
-                    <div>{goldenBadge}</div>
-                </div>
+        <div className="DataTableHeader p24">
+            <div className="DataTableHeader-left">
+                {titleDOM}
+                {dateDOM}
+                {ownerDOM}
+            </div>
+            <div className="DataTableHeader-right">
+                {viewsBadgeDOM}
+                {goldenBadge}
             </div>
         </div>
     );
