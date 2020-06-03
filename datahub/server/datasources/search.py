@@ -113,7 +113,7 @@ def _construct_datadoc_query(
     return json.dumps(query)
 
 
-def _match_fields(fields):
+def _match_table_fields(fields):
     search_fields = []
     for field in fields:
         # 'table_name', 'description', and 'columns' are fields used by Table search
@@ -123,8 +123,15 @@ def _match_fields(fields):
             search_fields.append("description")
         elif field == "column":
             search_fields.append("columns")
+
+    return search_fields
+
+
+def _match_data_doc_fields(fields):
+    search_fields = []
+    for field in fields:
         # 'title', 'cells', and 'owner' are fields used by Data Doc search
-        elif field == "title":
+        if field == "title":
             search_fields.append("title^5")
         elif field == "cells":
             search_fields.append("cells")
@@ -138,7 +145,7 @@ def _construct_tables_query(
     keywords, filters, fields, limit, offset, concise, sort_key=None, sort_order=None,
 ):
 
-    search_fields = _match_fields(fields)
+    search_fields = _match_table_fields(fields)
 
     search_query = {}
     if keywords:

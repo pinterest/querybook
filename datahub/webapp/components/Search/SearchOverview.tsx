@@ -58,7 +58,6 @@ export const SearchOverview: React.FunctionComponent = () => {
 
         searchRequest,
         queryMetastores,
-        dataTableSearchFields,
         metastoreId,
     } = useSelector((state: IStoreState) => {
         return {
@@ -66,7 +65,6 @@ export const SearchOverview: React.FunctionComponent = () => {
             environment: currentEnvironmentSelector(state),
             queryMetastores: queryMetastoresSelector(state),
             metastoreId: state.dataTableSearch.metastoreId,
-            dataTableSearchFields: state.dataTableSearch.searchFields,
         };
     });
     const results = resultByPage[currentPage] || [];

@@ -108,14 +108,7 @@ export function performSearch(): ThunkResult<Promise<ISearchPreview[]>> {
                 const selectedMetastoreId = state.dataTableSearch.metastoreId;
                 searchParams['metastore_id'] =
                     selectedMetastoreId || queryMetastoresSelector(state)[0].id;
-                searchParams['fields'] = Object.entries(
-                    searchState.searchFields
-                ).reduce((fields, [fieldKey, fieldValue]) => {
-                    if (fieldValue) {
-                        fields.push(fieldKey);
-                    }
-                    return fields;
-                }, []);
+                searchParams['fields'] = Object.keys(searchState.searchFields);
             }
 
             const searchRequest = ds.fetch(searchEndPoint, searchParams);

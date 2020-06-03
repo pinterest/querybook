@@ -93,10 +93,10 @@ export default function search(
             }
             case '@@search/SEARCH_FIELD_UPDATE': {
                 const { field } = action.payload;
-                if (draft.searchFields[field] == null) {
-                    draft.searchFields[field] = true;
-                } else {
+                if (field in draft.searchFields) {
                     delete draft.searchFields[field];
+                } else {
+                    draft.searchFields[field] = true;
                 }
                 return;
             }
