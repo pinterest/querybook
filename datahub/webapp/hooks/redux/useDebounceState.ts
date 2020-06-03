@@ -4,6 +4,7 @@ import { useState, useEffect, useMemo, useRef } from 'react';
 import { debounce, throttle } from 'lodash';
 
 interface IUseDebounceStateOptions {
+    // defaults to debounce
     method: 'debounce' | 'throttle';
 }
 

@@ -154,6 +154,7 @@ export const QueryComposer: React.FC<{}> = () => {
             queryEditorRef.current.formatQuery();
         }
     }, [queryEditorRef.current]);
+
     const handleCreateDataDoc = useCallback(async () => {
         let dataDoc = null;
         if (executionId) {
@@ -213,10 +214,6 @@ export const QueryComposer: React.FC<{}> = () => {
                 keyMap={keyMap}
                 height="full"
                 engine={engine}
-            />
-            <CodeMirrorSearchHighlighter
-                editor={queryEditorRef.current?.getEditor()}
-                cellId={undefined}
             />
         </>
     );

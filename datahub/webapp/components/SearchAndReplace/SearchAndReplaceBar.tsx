@@ -17,6 +17,7 @@ import { ISearchOptions } from 'const/searchAndReplace';
 import { SearchAndReplaceContext } from 'context/searchAndReplace';
 
 import './SearchAndReplaceBar.scss';
+import { useEvent } from 'hooks/useEvent';
 
 export interface ISearchAndReplaceBarProps {
     onHide: () => any;
@@ -48,6 +49,10 @@ export const SearchAndReplaceBar = React.forwardRef<
         },
         ref
     ) => {
+        const lastActiveElementRef = useRef<HTMLElement | Element>(
+            document.activeElement
+        );
+        const selfRef = useRef<HTMLDivElement>(null);
         const [showReplace, setShowReplace] = useState(false);
         const {
             searchState: {
@@ -61,12 +66,40 @@ export const SearchAndReplaceBar = React.forwardRef<
         const searchInputRef = useRef<HTMLInputElement>(null);
         const replaceInputRef = useRef<HTMLInputElement>(null);
         const focusSearchInput = useCallback(() => {
-            // To prevent the case when typing in search and then tab to go to replace
-            // but then searching would then refocus to search input
-            if (document.activeElement !== replaceInputRef.current) {
+            const activeElement = document.activeElement;
+            if (
+                activeElement !== replaceInputRef.current &&
+                activeElement !== searchInputRef.current
+            ) {
+                // To prevent the case when typing in search and then tab to go to replace
+                // but then searching would then refocus to search input
                 searchInputRef.current?.focus();
+                lastActiveElementRef.current = activeElement;
             }
         }, []);
+        const handleHide = useCallback(() => {
+            onHide();
+            if (
+                lastActiveElementRef.current &&
+                lastActiveElementRef.current !== document.body
+            ) {
+                (lastActiveElementRef.current as HTMLElement).focus();
+            }
+        }, [onHide]);
+        useEvent(
+            'focusin',
+            (e: FocusEvent) => {
+                const activeElement = e.target as HTMLElement;
+                if (
+                    activeElement !== replaceInputRef.current &&
+                    activeElement !== searchInputRef.current
+                ) {
+                    lastActiveElementRef.current = activeElement;
+                }
+            },
+            false,
+            document
+        );
 
         // Throttling because if you press enter to focus it
         // might edit the cells underneath.
@@ -82,12 +115,23 @@ export const SearchAndReplaceBar = React.forwardRef<
 
         const onKeyDown = useCallback(
             (evt: React.KeyboardEvent) => {
+                let handled = true;
                 if (matchKeyPress(evt, 'Enter') && !evt.repeat) {
-                    evt.stopPropagation();
                     onEnterPressThrottled();
+                } else if (matchKeyPress(evt, 'Cmd-F')) {
+                    focusSearchInput();
+                } else if (matchKeyPress(evt, 'Esc')) {
+                    handleHide();
+                } else {
+                    handled = false;
+                }
+
+                if (handled) {
+                    evt.stopPropagation();
+                    evt.preventDefault();
                 }
             },
-            [moveResultIndex]
+            [moveResultIndex, handleHide]
         );
 
         useImperativeHandle(ref, () => ({
@@ -134,9 +178,11 @@ export const SearchAndReplaceBar = React.forwardRef<
 
                 <span className="position-info mh8">
                     {searchResults.length
-                        ? `${currentSearchResultIndex + 1} of ${
-                              searchResults.length
-                          }`
+                        ? `${
+                              searchResults.length > currentSearchResultIndex
+                                  ? currentSearchResultIndex + 1
+                                  : '?'
+                          } of ${searchResults.length}`
                         : 'No results'}
                 </span>
 
@@ -154,7 +200,7 @@ export const SearchAndReplaceBar = React.forwardRef<
                     className={'ml8'}
                     noPadding
                     icon="x"
-                    onClick={onHide}
+                    onClick={handleHide}
                 />
             </div>
         );
@@ -164,7 +210,7 @@ export const SearchAndReplaceBar = React.forwardRef<
                     <DebouncedInput
                         value={replaceString}
                         onChange={onReplaceStringChange}
-                        inputProps={{ ref: replaceInputRef }}
+                        inputProps={{ ref: replaceInputRef, onKeyDown }}
                     />
                 </div>
 
@@ -191,7 +237,7 @@ export const SearchAndReplaceBar = React.forwardRef<
         );
 
         return (
-            <div className="SearchAndReplaceBar flex-row p8">
+            <div className="SearchAndReplaceBar flex-row p8" ref={selfRef}>
                 <IconButton
                     noPadding
                     icon={showReplace ? 'chevron-down' : 'chevron-right'}

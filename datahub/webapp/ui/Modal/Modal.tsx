@@ -1,7 +1,7 @@
 import React from 'react';
 
 import { matchKeyPress } from 'lib/utils/keyboard';
-import { useWindowEvent } from 'hooks/useWindowEvent';
+import { useEvent } from 'hooks/useEvent';
 
 import { IModalProps } from './types';
 import { FullScreenModal } from './FullScreenModal';
@@ -28,7 +28,7 @@ export const Modal: React.FunctionComponent<IModalProps> = ({
         },
         [onHide]
     );
-    useWindowEvent('keydown', onEscapeKeyDown);
+    useEvent('keydown', onEscapeKeyDown);
 
     let modalDOM: React.ReactNode;
     if (type === 'custom') {

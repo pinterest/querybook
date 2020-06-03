@@ -8,7 +8,7 @@ import { FunctionDocumentationTooltip } from './FunctionDocumentationTooltip';
 import { TableTooltip } from './TableTooltip';
 
 import './CodeMirrorTooltip.scss';
-import { useWindowEvent } from 'hooks/useWindowEvent';
+import { useEvent } from 'hooks/useEvent';
 
 export interface ICodeMirrorTooltipProps {
     tableId?: number;
@@ -50,7 +50,7 @@ export const CodeMirrorTooltip: React.FunctionComponent<ICodeMirrorTooltipProps>
         dispatch(dataSourcesActions.fetchDataTableIfNeeded(tableId));
     }, []);
 
-    useWindowEvent('keydown', (evt: KeyboardEvent) => {
+    useEvent('keydown', (evt: KeyboardEvent) => {
         const specialKeyPress =
             evt.shiftKey || evt.metaKey || evt.ctrlKey || evt.altKey;
         if (!specialKeyPress) {

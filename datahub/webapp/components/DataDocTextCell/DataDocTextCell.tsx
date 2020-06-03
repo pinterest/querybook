@@ -1,11 +1,20 @@
 import * as DraftJs from 'draft-js';
-import { debounce, bind } from 'lodash-decorators';
-import React from 'react';
+import React, {
+    useState,
+    useRef,
+    useEffect,
+    useCallback,
+    useMemo,
+    useContext,
+} from 'react';
 import classNames from 'classnames';
 
+import { SearchAndReplaceContext } from 'context/searchAndReplace';
 import { DraftJsSearchHighlighter } from 'components/SearchAndReplace/DraftJsSearchHighlighter';
 import { RichTextEditor } from 'ui/RichTextEditor/RichTextEditor';
+import { useDebounceState } from 'hooks/redux/useDebounceState';
 import './DataDocTextCell.scss';
+import { matchKeyPress } from 'lib/utils/keyboard';
 
 interface IProps {
     cellId: number;
@@ -27,165 +36,146 @@ interface IProps {
     onDownKeyPressed?: () => any;
 }
 
-interface IState {
-    focused: boolean;
-}
+export const DataDocTextCell: React.FC<IProps> = ({
+    cellId,
+    context,
+    // meta,
+    isEditable,
+    shouldFocus,
+    onChange,
+    onDeleteKeyPressed,
+    onFocus,
+    onBlur,
+    onUpKeyPressed,
+    onDownKeyPressed,
+}) => {
+    const searchContext = useContext(SearchAndReplaceContext);
+    const [focused, setFocused] = useState(false);
+    const editorRef = useRef<RichTextEditor>(null);
 
-export class DataDocTextCell extends React.Component<IProps, IState> {
-    public readonly state = {
-        focused: false,
-    };
+    const onChangeContext = useCallback(
+        (newContext) => {
+            onChange({ context: newContext });
+        },
+        [onChange]
+    );
+    const [debouncedContext, setDebouncedContext] = useDebounceState(
+        context,
+        onChangeContext,
+        500
+    );
 
-    private editorRef = React.createRef<RichTextEditor>();
-    private updating = false;
+    const focus = useCallback(() => {
+        editorRef.current?.focus();
+    }, []);
 
-    public componentDidMount() {
-        this.updateFocus();
-    }
-
-    public componentDidUpdate(prevProps) {
-        this.updateFocus();
-
-        if (prevProps.context !== this.props.context) {
-            if (this.updating) {
-                this.updating = false;
-            } else if (this.editorRef.current) {
-                this.editorRef.current.setContent(this.props.context);
-            }
-        }
-    }
-
-    @bind
-    @debounce(500)
-    public handleChange(editorState: DraftJs.EditorState) {
-        const context = editorState.getCurrentContent();
-        if (this.props.context !== context) {
-            this.updating = true;
-            this.props.onChange({ context });
-        }
-    }
-
-    public updateFocus() {
-        if (this.props.shouldFocus !== this.state.focused) {
-            if (!this.state.focused) {
-                this.focus();
+    useEffect(() => {
+        if (shouldFocus !== focused) {
+            if (!focused) {
+                focus();
             }
 
-            this.setState({
-                focused: this.props.shouldFocus,
-            });
+            setFocused(shouldFocus);
         }
-    }
+    }, [shouldFocus]);
 
-    @bind
-    public handleTextCellClick() {
-        if (!this.state.focused) {
-            this.focus();
+    const handleChange = useCallback((editorState: DraftJs.EditorState) => {
+        setDebouncedContext(editorState.getCurrentContent());
+    }, []);
+
+    const handleTextCellClick = useCallback(() => {
+        if (!focused) {
+            focus();
         }
-    }
+    }, [focused]);
 
-    @bind
-    public onBlur() {
-        if (this.state.focused) {
-            if (this.props.onBlur) {
-                this.props.onBlur();
-            }
+    const handleBlur = useCallback(() => {
+        if (focused && onBlur) {
+            onBlur();
         }
-    }
-
-    @bind
-    public onFocus() {
-        if (!this.state.focused) {
-            if (this.props.onFocus) {
-                this.props.onFocus();
-            }
+    }, [focused, onBlur]);
+    const handleFocus = useCallback(() => {
+        if (!focused && onFocus) {
+            onFocus();
         }
-    }
+    }, [focused, onFocus]);
 
-    @bind
-    public focus() {
-        const editorRef = this.editorRef;
-        if (editorRef.current) {
-            editorRef.current.focus();
-        }
-    }
+    const handleKeyDown = useCallback(
+        (event: React.KeyboardEvent, editorState: DraftJs.EditorState) => {
+            let handled = false;
+            if (matchKeyPress(event, 'up')) {
+                const firstBlockKey = editorState
+                    .getCurrentContent()
+                    .getBlockMap()
+                    .first()
+                    .getKey();
+                const selectionState = editorState.getSelection();
+                const cursorKey = selectionState.getAnchorKey();
 
-    @bind
-    public handleKeyDown(event, editorState) {
-        const keyUpCode = 38;
-        const keyDownCode = 40;
-        const keyDCode = 68;
+                const atFirstLine = cursorKey === firstBlockKey;
+                const startOfLine = selectionState.getAnchorOffset() === 0;
 
-        let handled = false;
-        if (event.keyCode === keyUpCode) {
-            const firstBlockKey = editorState
-                .getCurrentContent()
-                .getBlockMap()
-                .first()
-                .getKey();
-            const selectionState = editorState.getSelection();
-            const cursorKey = selectionState.getAnchorKey();
-
-            const atFirstLine = cursorKey === firstBlockKey;
-            const startOfLine = selectionState.getAnchorOffset() === 0;
-
-            if (atFirstLine && startOfLine) {
-                if (this.props.onUpKeyPressed) {
-                    this.props.onUpKeyPressed();
-                }
-                handled = true;
-            }
-        } else if (event.keyCode === keyDownCode) {
-            const lastBlock = editorState
-                .getCurrentContent()
-                .getBlockMap()
-                .last();
-            const lastBlockKey = lastBlock.getKey();
-            const selectionState = editorState.getSelection();
-            const cursorKey = selectionState.getAnchorKey();
-
-            const atLastLine = cursorKey === lastBlockKey;
-            const endOfLine =
-                selectionState.getAnchorOffset() === lastBlock.getText().length;
-
-            if (atLastLine && endOfLine) {
-                if (this.props.onDownKeyPressed) {
-                    this.props.onDownKeyPressed();
+                if (atFirstLine && startOfLine && onUpKeyPressed) {
+                    onUpKeyPressed();
                     handled = true;
                 }
-            }
-        } else if (event.ctrlKey && event.keyCode === keyDCode) {
-            if (!editorState.getCurrentContent().hasText()) {
-                this.props.onDeleteKeyPressed();
+            } else if (matchKeyPress(event, 'down')) {
+                const lastBlock = editorState
+                    .getCurrentContent()
+                    .getBlockMap()
+                    .last();
+                const lastBlockKey = lastBlock.getKey();
+                const selectionState = editorState.getSelection();
+                const cursorKey = selectionState.getAnchorKey();
+
+                const atLastLine = cursorKey === lastBlockKey;
+                const endOfLine =
+                    selectionState.getAnchorOffset() ===
+                    lastBlock.getText().length;
+
+                if (atLastLine && endOfLine && onDownKeyPressed) {
+                    onDownKeyPressed();
+                    handled = true;
+                }
+            } else if (matchKeyPress(event, 'Cmd-D')) {
+                if (!editorState.getCurrentContent().hasText()) {
+                    onDeleteKeyPressed?.();
+                    handled = true;
+                }
+            } else if (matchKeyPress(event, 'Cmd-F')) {
+                searchContext.showSearchAndReplace();
+                handled = true;
+            } else if (matchKeyPress(event, 'Esc')) {
+                searchContext.hideSearchAndReplace();
                 handled = true;
             }
-        }
 
-        return handled;
-    }
+            return handled;
+        },
+        [onUpKeyPressed, onDownKeyPressed, onDeleteKeyPressed]
+    );
 
-    public render() {
-        const className = classNames({
-            DataDocTextCell: true,
-            editable: this.props.isEditable,
-        });
+    const className = classNames({
+        DataDocTextCell: true,
+        editable: isEditable,
+    });
 
-        return (
-            <div className={className} onClick={this.handleTextCellClick}>
-                <RichTextEditor
-                    value={this.props.context}
-                    ref={this.editorRef}
-                    onKeyDown={this.handleKeyDown}
-                    onFocus={this.onFocus}
-                    onBlur={this.onBlur}
-                    onChange={this.handleChange}
-                    readOnly={!this.props.isEditable}
-                />
-                <DraftJsSearchHighlighter
-                    editor={this.editorRef.current}
-                    cellId={this.props.cellId}
-                />
-            </div>
-        );
-    }
-}
+    return (
+        <div className={className} onClick={handleTextCellClick}>
+            <RichTextEditor
+                value={debouncedContext}
+                ref={editorRef}
+                onKeyDown={handleKeyDown}
+                onFocus={handleFocus}
+                onBlur={handleBlur}
+                onChange={handleChange}
+                readOnly={!isEditable}
+            />
+            <DraftJsSearchHighlighter
+                searchContext={searchContext}
+                editor={editorRef.current}
+                cellId={cellId}
+            />
+        </div>
+    );
+};
