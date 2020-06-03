@@ -2,7 +2,7 @@ import React from 'react';
 import { Route, RouteComponentProps } from 'react-router-dom';
 import { navigateWithinEnv } from 'lib/utils/query-string';
 import { matchKeyPress } from 'lib/utils/keyboard';
-import { useWindowEvent } from 'hooks/useWindowEvent';
+import { useEvent } from 'hooks/useEvent';
 
 export const CommandKModal: React.FunctionComponent = () => (
     <Route component={CommandKModalInner} />
@@ -21,7 +21,7 @@ const CommandKModalInner: React.FunctionComponent<RouteComponentProps> = ({
             }
         }
     }, []);
-    useWindowEvent('keydown', onKeyDown);
+    useEvent('keydown', onKeyDown);
 
     return null;
 };

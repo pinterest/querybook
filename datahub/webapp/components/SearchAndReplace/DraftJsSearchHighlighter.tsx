@@ -3,14 +3,15 @@ import * as DraftJs from 'draft-js';
 import scrollIntoView from 'smooth-scroll-into-view-if-needed';
 
 import { RichTextEditor } from 'ui/RichTextEditor/RichTextEditor';
-import { SearchAndReplaceContext } from 'context/searchAndReplace';
+import { ISearchAndReplaceContextType } from 'context/searchAndReplace';
 import { LinkDecorator } from 'lib/draft-js-utils';
 import { makeSearchHighlightDecorator } from 'components/SearchAndReplace/SearchHighlightDecorator';
 
 export const DraftJsSearchHighlighter: React.FC<{
     editor: RichTextEditor;
     cellId: number;
-}> = ({ editor, cellId }) => {
+    searchContext: ISearchAndReplaceContextType;
+}> = ({ editor, cellId, searchContext }) => {
     const {
         searchState: {
             searchResults,
@@ -19,7 +20,7 @@ export const DraftJsSearchHighlighter: React.FC<{
             currentSearchResultIndex,
         },
         focusSearchBar,
-    } = useContext(SearchAndReplaceContext);
+    } = searchContext;
 
     const shouldHighlight = useMemo(
         () => editor && searchResults.some((r) => r.cellId === cellId),

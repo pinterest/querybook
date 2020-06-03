@@ -16,7 +16,7 @@ import { EntitySidebar } from './EntitySidebar';
 import './EnvironmentAppSidebar.scss';
 import { EnvironmentDropdownButton } from './EnvironmentDropdownButton';
 import { BoardNavigator } from 'components/BoardNavigator/BoardNavigator';
-import { useWindowEvent } from 'hooks/useWindowEvent';
+import { useEvent } from 'hooks/useEvent';
 import { matchKeyPress } from 'lib/utils/keyboard';
 
 const SIDEBAR_WIDTH = 320;
@@ -57,7 +57,7 @@ export const EnvironmentAppSidebar: React.FunctionComponent = () => {
         [collapsed]
     );
 
-    useWindowEvent('keydown', onCollapseKeyDown);
+    useEvent('keydown', onCollapseKeyDown);
 
     let navigator: React.ReactNode;
     if (!collapsed) {

@@ -1,14 +1,19 @@
-import React, { useMemo, useEffect } from 'react';
+import React, { useMemo, useEffect, useContext } from 'react';
 
 import { useUserQueryEditorConfig } from 'hooks/redux/useUserQueryEditorConfig';
 import { IQueryEditorProps, QueryEditor } from './QueryEditor';
 import { useDispatch, useSelector } from 'react-redux';
+
+import { SearchAndReplaceContext } from 'context/searchAndReplace';
+import { IQueryEngine } from 'const/queryEngine';
 import {
     fetchDataTableByNameIfNeeded,
     fetchFunctionDocumentationIfNeeded,
 } from 'redux/dataSources/action';
-import { IQueryEngine } from 'const/queryEngine';
+
 import { IStoreState } from 'redux/store/types';
+import { CodeMirrorSearchHighlighter } from 'components/SearchAndReplace/CodeMirrorSearchHighlighter';
+import { useForwardedRef } from 'hooks/useForwardedRef';
 
 export const BindedQueryEditor = React.forwardRef<
     QueryEditor,
@@ -23,13 +28,22 @@ export const BindedQueryEditor = React.forwardRef<
         | 'language'
     > & {
         engine?: IQueryEngine;
+        cellId?: number;
     }
 >(
     (
-        { options: propOptions, keyMap: propKeyMap, engine, ...otherProps },
+        {
+            options: propOptions,
+            keyMap: propKeyMap,
+            engine,
+            cellId,
+            ...otherProps
+        },
         ref
     ) => {
         const dispatch = useDispatch();
+        const searchContext = useContext(SearchAndReplaceContext);
+        const editorRef = useForwardedRef(ref);
 
         // Code Editor related Props
         const {
@@ -38,7 +52,7 @@ export const BindedQueryEditor = React.forwardRef<
             options,
             fontSize,
             autoCompleteType,
-        } = useUserQueryEditorConfig();
+        } = useUserQueryEditorConfig(searchContext);
         const combinedOptions = useMemo(
             () => ({
                 ...options,
@@ -82,10 +96,10 @@ export const BindedQueryEditor = React.forwardRef<
             [engine]
         );
 
-        return (
+        const queryEditor = (
             <QueryEditor
                 {...otherProps}
-                ref={ref}
+                ref={editorRef}
                 options={combinedOptions}
                 keyMap={combinedKeyMap}
                 theme={codeEditorTheme}
@@ -98,6 +112,19 @@ export const BindedQueryEditor = React.forwardRef<
                 metastoreId={engine?.metastore_id}
                 language={engine?.language}
             />
+        );
+
+        return searchContext ? (
+            <>
+                {queryEditor}
+                <CodeMirrorSearchHighlighter
+                    searchContext={searchContext}
+                    cellId={cellId}
+                    editor={editorRef.current?.getEditor()}
+                />
+            </>
+        ) : (
+            queryEditor
         );
     }
 );

@@ -1,7 +1,8 @@
-import { useMemo } from 'react';
+import { useMemo, useContext } from 'react';
 import { useSelector } from 'react-redux';
 import { IStoreState } from 'redux/store/types';
 import CodeMirror, { CodeMirrorKeyMap } from 'lib/codemirror';
+import { ISearchAndReplaceContextType } from 'context/searchAndReplace';
 
 import { getCodeEditorTheme } from 'lib/utils';
 import { AutoCompleteType } from 'lib/sql-helper/sql-autocompleter';
@@ -13,7 +14,9 @@ const UserSettingsFontSizeToCSSFontSize = {
     large: 'var(--text-size)',
 };
 
-export function useUserQueryEditorConfig(): {
+export function useUserQueryEditorConfig(
+    searchContext: ISearchAndReplaceContextType
+): {
     codeEditorTheme: string;
     fontSize: string;
     keyMap: CodeMirrorKeyMap;
@@ -80,6 +83,13 @@ export function useUserQueryEditorConfig(): {
             },
             'Shift-Tab': (cm: CodeMirror.Editor & CodeMirror.Doc) =>
                 cm.execCommand('indentLess'),
+
+            ...(searchContext
+                ? {
+                      'Cmd-F': searchContext.showSearchAndReplace,
+                      Esc: searchContext.hideSearchAndReplace,
+                  }
+                : {}),
         }),
         [indentWithTabs, tabSize]
     );

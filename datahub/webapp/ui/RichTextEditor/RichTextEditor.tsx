@@ -447,22 +447,25 @@ export class RichTextEditor extends React.Component<
     public keyBindingFn(e: React.KeyboardEvent): RichTextEditorCommand {
         let handled = false;
         let command: RichTextEditorCommand = null;
-        if (
-            matchKeyPress(e, 'Delete', 'Up', 'Down', 'Ctrl-D') &&
-            this.props.onKeyDown
-        ) {
-            // Delete, Up arrow, down arrow
+
+        // parent component key presses
+        if (this.props.onKeyDown) {
             handled = this.props.onKeyDown(e, this.state.editorState);
-        } else if (matchKeyPress(e, 'Tab')) {
-            this.onTab(e);
-            handled = true;
-        } else if (matchKeyPress(e, 'Cmd-Shift-X')) {
-            // Cmd+Shift+X
-            command = 'strikethrough';
-            handled = true;
-        } else if (matchKeyPress(e, 'Cmd-K')) {
-            command = 'show-link-input';
-            handled = true;
+        }
+
+        // Default key presses
+        if (!handled) {
+            if (matchKeyPress(e, 'Tab')) {
+                this.onTab(e);
+                handled = true;
+            } else if (matchKeyPress(e, 'Cmd-Shift-X')) {
+                // Cmd+Shift+X
+                command = 'strikethrough';
+                handled = true;
+            } else if (matchKeyPress(e, 'Cmd-K')) {
+                command = 'show-link-input';
+                handled = true;
+            }
         }
 
         // Fall through to default behavior

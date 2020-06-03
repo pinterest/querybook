@@ -1,11 +1,16 @@
 import React, { useContext, useMemo, useEffect } from 'react';
-import { SearchAndReplaceContext } from 'context/searchAndReplace';
+import {
+    SearchAndReplaceContext,
+    ISearchAndReplaceContextType,
+} from 'context/searchAndReplace';
 import { getCodemirrorOverlay } from 'lib/data-doc/search';
 
 export const CodeMirrorSearchHighlighter: React.FC<{
     editor: CodeMirror.Editor;
     cellId: number;
-}> = ({ editor, cellId }) => {
+
+    searchContext: ISearchAndReplaceContextType;
+}> = ({ editor, cellId, searchContext }) => {
     const {
         searchState: {
             searchResults,
@@ -13,7 +18,7 @@ export const CodeMirrorSearchHighlighter: React.FC<{
             currentSearchResultIndex,
             searchOptions,
         },
-    } = useContext(SearchAndReplaceContext);
+    } = searchContext;
 
     const shouldHighlight = useMemo(
         () => editor && searchResults.some((r) => r.cellId === cellId),

@@ -557,11 +557,8 @@ class DataDocQueryCellComponent extends React.Component<IProps, IState> {
                     keyMap={this.keyMap}
                     ref={this.queryEditorRef}
                     engine={queryEngine}
-                    showFullScreenButton
-                />
-                <CodeMirrorSearchHighlighter
                     cellId={cellId}
-                    editor={this.queryEditorRef.current?.getEditor()}
+                    showFullScreenButton
                 />
             </div>
         );

@@ -21,8 +21,6 @@ import {
 } from 'components/SearchAndReplace/SearchAndReplaceBar';
 import { WithOptional } from 'lib/typescript';
 import { ISearchAndReplaceBarHandles } from './SearchAndReplaceBar';
-import { matchKeyPress } from 'lib/utils/keyboard';
-import { useWindowEvent } from 'hooks/useWindowEvent';
 
 const initialSearchState: ISearchAndReplaceState = {
     searchString: '',
@@ -52,8 +50,13 @@ export function useSearchAndReplace({
     replace,
     jumpToResult,
     focusSearchBar,
+
+    showing,
+    setShowing,
 }: ISearchAndReplaceProps & {
     focusSearchBar: () => any;
+    showing: boolean;
+    setShowing: (show: boolean) => any;
 }): {
     searchAndReplaceContext: ISearchAndReplaceContextType;
     searchAndReplaceProps: WithOptional<ISearchAndReplaceBarProps, 'onHide'>;
@@ -68,10 +71,13 @@ export function useSearchAndReplace({
         // Passive search is when the search content is changed
         (isActiveSearch: boolean = false) => {
             setSearchState((oldSearchState) => {
-                const searchResults = getSearchResults(
-                    oldSearchState.searchString,
-                    oldSearchState.searchOptions
-                );
+                const searchResults = showing
+                    ? getSearchResults(
+                          oldSearchState.searchString,
+                          oldSearchState.searchOptions
+                      )
+                    : [];
+
                 if (isActiveSearch) {
                     jumpToResult(
                         searchResults[oldSearchState.currentSearchResultIndex]
@@ -83,7 +89,7 @@ export function useSearchAndReplace({
                 };
             });
         },
-        [getSearchResults, jumpToResult, focusSearchBar]
+        [getSearchResults, jumpToResult, focusSearchBar, showing]
     );
     const onSearchStringChange = useCallback((searchString: string) => {
         setSearchState((oldSearchState) => ({
@@ -174,13 +180,25 @@ export function useSearchAndReplace({
     );
 
     useEffect(() => {
-        performSearch(true);
-    }, [searchState.searchString, searchState.searchOptions]);
+        performSearch(showing);
+    }, [searchState.searchString, searchState.searchOptions, showing]);
+
+    const showSearchAndReplace = useCallback(() => {
+        setShowing(true);
+        focusSearchBar();
+    }, []);
+
+    const hideSearchAndReplace = useCallback(() => {
+        setShowing(false);
+    }, []);
 
     return {
         searchAndReplaceContext: {
             searchState,
             focusSearchBar,
+
+            showSearchAndReplace,
+            hideSearchAndReplace,
         },
         searchAndReplaceProps: {
             onSearchStringChange,
@@ -205,7 +223,7 @@ export const SearchAndReplace: React.FC<
     }
 > = React.forwardRef<ISearchAndReplaceHandles, ISearchAndReplaceProps>(
     ({ getSearchResults, jumpToResult, replace, children }, ref) => {
-        const [showSearchAndReplace, setShowSearchAndReplace] = useState(false);
+        const [showing, setShowing] = useState(false);
         const searchBarRef = useRef<ISearchAndReplaceBarHandles>(null);
         const focusSearchBar = useCallback(() => {
             searchBarRef.current?.focus();
@@ -220,6 +238,9 @@ export const SearchAndReplace: React.FC<
             replace,
             jumpToResult,
             focusSearchBar,
+
+            showing,
+            setShowing,
         });
 
         useImperativeHandle(
@@ -231,37 +252,13 @@ export const SearchAndReplace: React.FC<
             [performSearch, reset]
         );
 
-        const onKeyDown = useCallback(
-            (evt: KeyboardEvent) => {
-                let handled = true;
-                if (matchKeyPress(evt, 'Cmd-F')) {
-                    if (!showSearchAndReplace) {
-                        setShowSearchAndReplace(true);
-                    } else {
-                        focusSearchBar();
-                    }
-                } else if (showSearchAndReplace && matchKeyPress(evt, 'esc')) {
-                    setShowSearchAndReplace(false);
-                } else {
-                    handled = false;
-                }
-
-                if (handled) {
-                    evt.stopPropagation();
-                    evt.preventDefault();
-                }
-            },
-            [showSearchAndReplace, focusSearchBar]
-        );
-        useWindowEvent('keydown', onKeyDown);
-
         return (
             <SearchAndReplaceContext.Provider value={searchAndReplaceContext}>
-                {showSearchAndReplace ? (
+                {showing ? (
                     <SearchAndReplaceBar
                         ref={searchBarRef}
                         {...searchAndReplaceProps}
-                        onHide={() => setShowSearchAndReplace(false)}
+                        onHide={searchAndReplaceContext.hideSearchAndReplace}
                     />
                 ) : null}
                 {children}
