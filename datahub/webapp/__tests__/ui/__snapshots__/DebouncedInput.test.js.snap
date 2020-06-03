@@ -1,0 +1,26 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`matches enzyme snapshots matches snapshot - placeholder 1`] = `
+<div
+  className="DebouncedInput"
+>
+  <input
+    onChange={[Function]}
+    placeholder="test placeholder"
+    type="text"
+    value="test"
+  />
+</div>
+`;
+
+exports[`matches enzyme snapshots matches snapshot 1`] = `
+<div
+  className="DebouncedInput"
+>
+  <input
+    onChange={[Function]}
+    type="text"
+    value="test"
+  />
+</div>
+`;
