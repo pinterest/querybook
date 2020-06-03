@@ -1,4 +1,20 @@
 .DataTableViewSamples {
+    .DataTableViewSamples-top {
+        > div:last-child {
+            min-width: 480px;
+        }
+    }
+    .DataTableViewSamples-mid {
+        display: flex;
+        align-items: flex-end;
+    }
+    .DataTableViewSamples-bottom {
+        display: flex;
+        flex-direction: row;
+        justify-content: space-between;
+        align-items: flex-end;
+    }
+
     .samples-control {
         margin-bottom: 5px;
     }

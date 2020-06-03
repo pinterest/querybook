@@ -153,64 +153,31 @@ export const DataTableViewSamples: React.FunctionComponent<IDataTableViewSamples
                 }}
             >
                 {({ submitForm, isSubmitting, isValid, values }) => (
-                    <div>
-                        <div className="horizontal-space-between">
-                            <div className="flex-row">
-                                <SimpleField
-                                    stacked
-                                    label="Engine"
-                                    type="react-select"
-                                    name="engineId"
-                                    options={queryEngines.map((engine) => ({
-                                        value: engine.id,
-                                        label: engine.name,
-                                    }))}
-                                />
-                                <SimpleField
-                                    stacked
-                                    type="react-select"
-                                    name="partition"
-                                    options={tablePartitions}
-                                    withDeselect
-                                />
-                                <SimpleField
-                                    stacked
-                                    type="react-select"
-                                    name="order_by"
-                                    options={tableColumns.map(
-                                        (col) => col.name
-                                    )}
-                                    withDeselect
-                                />
-                                <SimpleField
-                                    stacked
-                                    label="Order"
-                                    type="react-select"
-                                    name="order_by_asc"
-                                    options={[
-                                        {
-                                            label: 'Ascending',
-                                            value: true,
-                                        },
-                                        {
-                                            label: 'Descending',
-                                            value: false,
-                                        },
-                                    ]}
-                                />
-                            </div>
-                            <AsyncButton
-                                title="Generate Table Samples"
-                                onClick={submitForm}
-                                disabled={isSubmitting}
-                                type="soft"
+                    <div className="mb12">
+                        <div className="DataTableViewSamples-top flex-row">
+                            <SimpleField
+                                stacked
+                                label="Engine"
+                                type="react-select"
+                                name="engineId"
+                                options={queryEngines.map((engine) => ({
+                                    value: engine.id,
+                                    label: engine.name,
+                                }))}
+                            />
+                            <SimpleField
+                                stacked
+                                type="react-select"
+                                name="partition"
+                                options={tablePartitions}
+                                withDeselect
                             />
                         </div>
-                        <div className="flex-row ml8">
-                            <span>Where</span>
+                        <div className="DataTableViewSamples-mid">
                             <div style={{ flex: 3 }}>
                                 <SimpleField
-                                    label=" "
+                                    stacked
+                                    label="Where"
                                     type="react-select"
                                     name="where[0]"
                                     options={tableColumns.map(
@@ -241,6 +208,42 @@ export const DataTableViewSamples: React.FunctionComponent<IDataTableViewSamples
                                         name="where[2]"
                                     />
                                 )}
+                            </div>
+                        </div>
+                        <div className="DataTableViewSamples-bottom">
+                            <div className="flex-row">
+                                <SimpleField
+                                    stacked
+                                    type="react-select"
+                                    name="order_by"
+                                    options={tableColumns.map(
+                                        (col) => col.name
+                                    )}
+                                    withDeselect
+                                />
+                                <SimpleField
+                                    stacked
+                                    label="Order"
+                                    type="react-select"
+                                    name="order_by_asc"
+                                    options={[
+                                        {
+                                            label: 'Ascending',
+                                            value: true,
+                                        },
+                                        {
+                                            label: 'Descending',
+                                            value: false,
+                                        },
+                                    ]}
+                                />
+                            </div>
+                            <div className="DataTableViewSamples-button mb12">
+                                <AsyncButton
+                                    title="Generate Table Samples"
+                                    onClick={submitForm}
+                                    disabled={isSubmitting}
+                                />
                             </div>
                         </div>
                     </div>
