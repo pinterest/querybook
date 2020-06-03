@@ -13,7 +13,7 @@ export const Menu = styled.div.attrs<{
         overflow-y: auto;`};
 `;
 export const MenuItem = styled.div.attrs<{}>({
-    className: 'MenuItem',
+    className: 'MenuItem horizontal-space-between',
 })``;
 export const MenuInfoItem = styled.div.attrs<{}>({
     className: 'MenuInfoItem',
@@ -25,4 +25,15 @@ export const MenuDivider = styled.div.attrs<{}>({
     display: block;
     height: 1px;
     margin: 0px;
+`;
+export const MenuItemPing = styled.div.attrs<{}>({
+    className: 'MenuItemPing',
+})`
+    cursor: default;
+    border-radius: 100px;
+    background-color: var(--color-accent-bg);
+    width: 12px;
+    height: 12px;
+    margin-left: 8px;
+    margin-right: -8px;
 `;
