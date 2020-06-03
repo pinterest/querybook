@@ -97,7 +97,11 @@ export const ResultExportDropdown: React.FunctionComponent<IProps> = ({
     const onExportPreviewClick = React.useCallback(async () => {
         const rawResult =
             statementResult?.data || (await loadStatementResult(statementId));
-        const parsedResult = rawResult.map((row) => row.join('\t')).join('\n');
+        const parsedResult = rawResult
+            .map((row) =>
+                row.map((cell) => cell.replace(/\s/g, ' ')).join('\t')
+            )
+            .join('\n');
         setExportedInfo({
             info: parsedResult,
             type: 'text',
