@@ -1,6 +1,8 @@
 import styled from 'styled-components';
+import { isOSX } from 'lib/utils/keyboard';
+import React, { useMemo } from 'react';
 
-export const KeyboardKey = styled.span.attrs<{}>({
+const StyledKeyboardKey = styled.span.attrs<{}>({
     className: 'KeyboardKey mr4',
 })`
     border: var(--border);
@@ -11,3 +13,16 @@ export const KeyboardKey = styled.span.attrs<{}>({
     font-size: var(--small-text-size);
     text-transform: lowercase;
 `;
+
+export const KeyboardKey: React.FC<{
+    className?: string;
+    value: string;
+}> = ({ value, className }) => {
+    const mappedKey = useMemo(
+        () => (!isOSX && value === '⌘' ? 'ctrl' : value),
+        [value]
+    );
+    return (
+        <StyledKeyboardKey className={className}>{mappedKey}</StyledKeyboardKey>
+    );
+};

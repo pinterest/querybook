@@ -5,7 +5,10 @@ import { Title } from 'ui/Title/Title';
 
 import './Shortcut.scss';
 
-const shortcuts = require('config/shortcuts.yaml').shortcuts;
+const shortcuts: Array<{
+    title: string;
+    keys: Array<[string[], string]>;
+}> = require('config/shortcuts.yaml').shortcuts;
 
 export const Shortcut: React.FunctionComponent = () => {
     return (
@@ -23,15 +26,16 @@ export const Shortcut: React.FunctionComponent = () => {
                                     {keys.map((key, i) => {
                                         if (i === 0) {
                                             return (
-                                                <KeyboardKey key={i}>
-                                                    {key}
-                                                </KeyboardKey>
+                                                <KeyboardKey
+                                                    value={key}
+                                                    key={i}
+                                                />
                                             );
                                         }
                                         return (
                                             <React.Fragment key={i}>
                                                 <span className="pr4">+</span>
-                                                <KeyboardKey>{key}</KeyboardKey>
+                                                <KeyboardKey value={key} />
                                             </React.Fragment>
                                         );
                                     })}

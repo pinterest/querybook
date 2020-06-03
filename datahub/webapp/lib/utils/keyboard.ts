@@ -2,7 +2,7 @@ import { KeyboardEvent as ReactKeyboardEvent } from 'react';
 
 type AllKeyboardEvent = KeyboardEvent | ReactKeyboardEvent;
 
-const isOSX = navigator.platform.toUpperCase().indexOf('MAC') >= 0;
+export const isOSX = navigator.platform.toUpperCase().indexOf('MAC') >= 0;
 
 const specialKeyChecker: Record<string, (e: AllKeyboardEvent) => boolean> = {
     CMD: (event: AllKeyboardEvent) => (isOSX ? event.metaKey : event.ctrlKey),
