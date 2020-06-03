@@ -13,7 +13,7 @@ export const Menu = styled.div.attrs<{
         overflow-y: auto;`};
 `;
 export const MenuItem = styled.div.attrs<{}>({
-    className: 'MenuItem horizontal-space-between',
+    className: 'MenuItem',
 })``;
 export const MenuInfoItem = styled.div.attrs<{}>({
     className: 'MenuInfoItem',
