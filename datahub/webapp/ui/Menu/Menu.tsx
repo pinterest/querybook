@@ -32,8 +32,8 @@ export const MenuItemPing = styled.div.attrs<{}>({
     cursor: default;
     border-radius: 100px;
     background-color: var(--color-accent-bg);
-    width: 12px;
-    height: 12px;
+    width: 8px;
+    height: 8px;
     margin-left: 8px;
     margin-right: -8px;
 `;
