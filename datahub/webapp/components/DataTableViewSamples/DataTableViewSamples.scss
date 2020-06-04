@@ -1,6 +1,9 @@
 .DataTableViewSamples {
     .DataTableViewSamples-top {
-        > div:last-child {
+        .FormField:first-child {
+            min-width: 200px;
+        }
+        .FormField:last-child {
             min-width: 480px;
         }
     }
@@ -13,6 +16,12 @@
         flex-direction: row;
         justify-content: space-between;
         align-items: flex-end;
+        .FormField:first-child {
+            min-width: 320px;
+        }
+        .FormField:last-child {
+            min-width: 200px;
+        }
     }
 
     .samples-control {

@@ -156,7 +156,6 @@ export const DataTableViewSamples: React.FunctionComponent<IDataTableViewSamples
                     <div className="mb12">
                         <div className="DataTableViewSamples-top flex-row">
                             <SimpleField
-                                stacked
                                 label="Engine"
                                 type="react-select"
                                 name="engineId"
@@ -166,7 +165,6 @@ export const DataTableViewSamples: React.FunctionComponent<IDataTableViewSamples
                                 }))}
                             />
                             <SimpleField
-                                stacked
                                 type="react-select"
                                 name="partition"
                                 options={tablePartitions}
@@ -176,7 +174,6 @@ export const DataTableViewSamples: React.FunctionComponent<IDataTableViewSamples
                         <div className="DataTableViewSamples-mid">
                             <div style={{ flex: 3 }}>
                                 <SimpleField
-                                    stacked
                                     label="Where"
                                     type="react-select"
                                     name="where[0]"
@@ -213,7 +210,6 @@ export const DataTableViewSamples: React.FunctionComponent<IDataTableViewSamples
                         <div className="DataTableViewSamples-bottom">
                             <div className="flex-row">
                                 <SimpleField
-                                    stacked
                                     type="react-select"
                                     name="order_by"
                                     options={tableColumns.map(
@@ -222,7 +218,6 @@ export const DataTableViewSamples: React.FunctionComponent<IDataTableViewSamples
                                     withDeselect
                                 />
                                 <SimpleField
-                                    stacked
                                     label="Order"
                                     type="react-select"
                                     name="order_by_asc"
