@@ -114,7 +114,7 @@ def should_ignore_token(token) -> bool:
     """
     Check types of tokens (HIVE commands) to filter out irrelevant commands.
     Returns:
-        Boolean depennding on whether the token type is blacklisted
+        Boolean depennding on whether the token type is denylisted
     """
     return token.ttype in [
         sqlparse.tokens.Whitespace,

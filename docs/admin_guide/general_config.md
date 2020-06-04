@@ -30,7 +30,7 @@ Once an environment is created, you can use `Add/Remove User` to add/remove user
 
 Metastore is used to collect schema/table information from the metastore. Different loaders are needed depending on the use case (i.e, Hive orMysql). Each loader comes with different parameters that needs to be set. Note that metastore can be shared between environments since they are only referenced indirectly by query engines.
 
-You can use the `add blacklist/whitelist` function to limit what table can be accessed via the metastore. Note that this also impacts the query engine that is referencing the metastore.
+You can use the `add denylist/allowlist` function to limit what table can be accessed via the metastore. Note that this also impacts the query engine that is referencing the metastore.
 
 Once a metastore is created, you can configure the auto sync schedule, manually kick off a metastore sync, and check sync history.
 

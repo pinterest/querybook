@@ -15,7 +15,7 @@ from lib.utils.decorators import in_mem_memoized
 from lib.logger import get_logger
 from lib.config import get_config_value
 from app.db import (
-    # TODO: We should use slave instead
+    # TODO: We should use follower db instead
     with_session,
 )
 from logic.datadoc import get_all_data_docs, get_data_doc_by_id

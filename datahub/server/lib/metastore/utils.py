@@ -30,14 +30,14 @@ class MetastoreTableACLChecker(object):
     def is_table_valid(
         self, schema, table,
     ):
-        if self._type != "whitelist" and self._type != "blacklist":
+        if self._type != "allowlist" and self._type != "denylist":
             return True
 
         table_in_list = self._is_table_in_list(schema, table)
-        return table_in_list if self._type == "whitelist" else not table_in_list
+        return table_in_list if self._type == "allowlist" else not table_in_list
 
     def is_schema_valid(self, schema):
-        if self._type != "whitelist" and self._type != "blacklist":
+        if self._type != "allowlist" and self._type != "denylist":
             return True
         schema_in_list = schema in self._tables_by_schema
-        return schema_in_list if self._type == "whitelist" else not schema_in_list
+        return schema_in_list if self._type == "allowlist" else not schema_in_list
