@@ -39,7 +39,7 @@ const metastoreSchema = Yup.object().shape({
 });
 
 interface IAdminACLControl {
-    type?: 'blacklist' | 'whitelist';
+    type?: 'denylist' | 'allowlist';
     tables?: string[];
 }
 
@@ -186,11 +186,11 @@ export const AdminMetastore: React.FunctionComponent<IProps> = ({
                     <Button
                         onClick={() =>
                             onChange('acl_control', {
-                                type: 'blacklist',
+                                type: 'denylist',
                                 tables: [],
                             })
                         }
-                        title="Create Whitelist/Blacklist"
+                        title="Create Allowlist/Denylist"
                         type="inlineText"
                         borderless
                     />
@@ -204,9 +204,9 @@ export const AdminMetastore: React.FunctionComponent<IProps> = ({
                     field_type: 'list',
                     of: {
                         description:
-                            aclControl.type === 'blacklist'
-                                ? 'Table to Blacklist'
-                                : 'Table to Whitelist',
+                            aclControl.type === 'denylist'
+                                ? 'Table to Denylist'
+                                : 'Table to Allowlist',
                         field_type: 'string',
                         helper: '',
                         hidden: false,
@@ -228,16 +228,16 @@ export const AdminMetastore: React.FunctionComponent<IProps> = ({
             <>
                 <div className="AdminMetastore-acl-warning flex-row">
                     <Icon name="alert-octagon" />
-                    {aclControl.type === 'blacklist'
-                        ? 'All tables will be whitelisted unless specified.'
-                        : 'All tables will be blacklisted unless specified.'}
+                    {aclControl.type === 'denylist'
+                        ? 'All tables will be allowlisted unless specified.'
+                        : 'All tables will be denylisted unless specified.'}
                 </div>
                 <div className="AdminMetastore-acl-top horizontal-space-between">
                     <Tabs
                         selectedTabKey={aclControl.type}
                         items={[
-                            { name: 'Blacklist', key: 'blacklist' },
-                            { name: 'Whitelist', key: 'whitelist' },
+                            { name: 'Denylist', key: 'denylist' },
+                            { name: 'Allowlist', key: 'allowlist' },
                         ]}
                         onSelect={(key) => {
                             onChange('acl_control', { type: key, tables: [] });
@@ -245,9 +245,9 @@ export const AdminMetastore: React.FunctionComponent<IProps> = ({
                     />
                     <Button
                         title={
-                            aclControl.type === 'blacklist'
-                                ? 'Remove Blacklist'
-                                : 'Remove Whitelist'
+                            aclControl.type === 'denylist'
+                                ? 'Remove Denylist'
+                                : 'Remove Allowlist'
                         }
                         onClick={() => onChange('acl_control', {})}
                         type="inlineText"
@@ -530,7 +530,7 @@ export const AdminMetastore: React.FunctionComponent<IProps> = ({
                         </Level>
                         <div className="AdminLanding-desc">
                             Metastores hold metadata for the tables, such as
-                            schemas and black/whitelists.
+                            schemas and black/allowlists.
                         </div>
                     </div>
                     <div className="AdminLanding-content">
