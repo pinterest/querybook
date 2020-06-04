@@ -10,12 +10,35 @@ exports[`matches enzyme snapshots matches snapshot 1`] = `
 </div>
 `;
 
-exports[`matches test renderer snapshot serializes the styles 1`] = `
+exports[`matches enzyme snapshots matches snapshot 2`] = `
 <div
   className="StepsBar"
 >
   <ul
     className="StepsBar-ul"
-  />
+  >
+    <li
+      className=""
+      key="0"
+      style={
+        Object {
+          "width": "50%",
+        }
+      }
+    >
+      one
+    </li>
+    <li
+      className=""
+      key="1"
+      style={
+        Object {
+          "width": "50%",
+        }
+      }
+    >
+      two
+    </li>
+  </ul>
 </div>
 `;
