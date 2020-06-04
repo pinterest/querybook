@@ -15,18 +15,4 @@ describe('matches enzyme snapshots', () => {
         let serialized = toJson(wrapper);
         expect(serialized).toMatchSnapshot();
     });
-    it('matches snapshot - layout', () => {
-        let wrapper = shallow(
-            <InfoButton layout={['bottom', 'right']}>Test</InfoButton>
-        );
-        let serialized = toJson(wrapper);
-        expect(serialized).toMatchSnapshot();
-    });
-    it('matches snapshot - popoverClassName', () => {
-        let wrapper = shallow(
-            <InfoButton popoverClassName="TestInfoButton">Test</InfoButton>
-        );
-        let serialized = toJson(wrapper);
-        expect(serialized).toMatchSnapshot();
-    });
 });
