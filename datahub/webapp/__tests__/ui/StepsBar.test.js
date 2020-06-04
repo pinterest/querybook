@@ -3,20 +3,15 @@ import { shallow } from 'enzyme';
 import toJson from 'enzyme-to-json';
 import renderer from 'react-test-renderer';
 
-import { StatusIcon } from '../../ui/StatusIcon/StatusIcon';
+import { StepsBar } from '../../ui/StepsBar/StepsBar';
 
 it('renders without crashing', () => {
-    shallow(<StatusIcon status="success" />);
+    shallow(<StepsBar steps={[]} currentStep={0} />);
 });
 
 describe('matches enzyme snapshots', () => {
     it('matches snapshot', () => {
-        let wrapper = shallow(<StatusIcon status="success" />);
-        let serialized = toJson(wrapper);
-        expect(serialized).toMatchSnapshot();
-    });
-    it('matches snapshot - warning', () => {
-        let wrapper = shallow(<StatusIcon status="warning" />);
+        let wrapper = shallow(<StepsBar steps={[]} currentStep={0} />);
         let serialized = toJson(wrapper);
         expect(serialized).toMatchSnapshot();
     });
@@ -24,7 +19,7 @@ describe('matches enzyme snapshots', () => {
 
 describe('matches test renderer snapshot', () => {
     it('serializes the styles', () => {
-        const output = renderer.create(<StatusIcon status="success" />);
+        const output = renderer.create(<StepsBar steps={[]} currentStep={0} />);
         expect(output).toMatchSnapshot();
     });
 });

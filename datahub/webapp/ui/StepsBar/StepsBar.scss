@@ -1,6 +1,6 @@
 .StepsBar {
     padding: 8px;
-    .steps-ul {
+    .StepsBar-ul {
         counter-reset: step;
         display: flex;
         width: 100%;
@@ -42,7 +42,7 @@
                 content: none;
             }
 
-            &.is-active {
+            &.StepsBar-active {
                 color: var(--color-true);
 
                 &:before {
