@@ -229,8 +229,8 @@ export const AdminMetastore: React.FunctionComponent<IProps> = ({
                 <div className="AdminMetastore-acl-warning flex-row">
                     <Icon name="alert-octagon" />
                     {aclControl.type === 'denylist'
-                        ? 'All tables will be allowlisted unless specified.'
-                        : 'All tables will be denylisted unless specified.'}
+                        ? 'All tables will be allowed unless specified.'
+                        : 'All tables will be denied unless specified.'}
                 </div>
                 <div className="AdminMetastore-acl-top horizontal-space-between">
                     <Tabs
@@ -530,7 +530,7 @@ export const AdminMetastore: React.FunctionComponent<IProps> = ({
                         </Level>
                         <div className="AdminLanding-desc">
                             Metastores hold metadata for the tables, such as
-                            schemas and black/allowlists.
+                            schemas and deny/allowlists.
                         </div>
                     </div>
                     <div className="AdminLanding-content">
