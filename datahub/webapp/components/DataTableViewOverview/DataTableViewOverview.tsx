@@ -1,24 +1,25 @@
-import { bind } from 'lodash-decorators';
 import React from 'react';
+import { bind } from 'lodash-decorators';
+import * as DraftJs from 'draft-js';
+
 import {
     IDataTable,
     IDataColumn,
     IDataTableWarning,
     DataTableWarningSeverity,
 } from 'const/metastore';
-import * as DraftJs from 'draft-js';
 import { navigateWithinEnv } from 'lib/utils/query-string';
 import { generateFormattedDate } from 'lib/utils/datetime';
 import { titleize, getHumanReadableByteSize } from 'lib/utils';
 
+import { Button } from 'ui/Button/Button';
+import { Divider } from 'ui/Divider/Divider';
 import { EditableTextField } from 'ui/EditableTextField/EditableTextField';
+import { Message } from 'ui/Message/Message';
 import { Table } from 'ui/Table/Table';
 import { Title } from 'ui/Title/Title';
-import { Divider } from 'ui/Divider/Divider';
 
 import './DataTableViewOverview.scss';
-import { Message } from 'ui/Message/Message';
-import { Button } from 'ui/Button/Button';
 
 const dataTableDetailsColumns = [
     {
