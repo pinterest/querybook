@@ -1,0 +1,12 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`matches enzyme snapshots matches snapshot 1`] = `
+<span
+  className="InfoButton"
+>
+  <i
+    className="fas fa-info-circle"
+    onClick={[Function]}
+  />
+</span>
+`;

@@ -5,7 +5,7 @@ import { TooltipDirection } from 'const/tooltip';
 import * as Utils from 'lib/utils';
 import { Button, IButtonProps } from 'ui/Button/Button';
 
-const DEFAULT_TOOL_TIP = 'Click To Copy.';
+const DEFAULT_TOOL_TIP = 'Click To Copy';
 const DEFAULT_COPIED_TOOL_TIP = 'Copied!';
 
 interface ICopyButtonProps extends IButtonProps {

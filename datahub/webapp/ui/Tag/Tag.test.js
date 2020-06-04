@@ -1,0 +1,22 @@
+import React from 'react';
+import { shallow } from 'enzyme';
+import toJson from 'enzyme-to-json';
+
+import { Tag } from '../../ui/Tag/Tag';
+
+it('renders without crashing', () => {
+    shallow(<Tag>test</Tag>);
+});
+
+describe('matches enzyme snapshots', () => {
+    it('matches snapshot', () => {
+        let wrapper = shallow(<Tag>test</Tag>);
+        let serialized = toJson(wrapper);
+        expect(serialized).toMatchSnapshot();
+    });
+    it('matches snapshot', () => {
+        let wrapper = shallow(<Tag highlighted>test</Tag>);
+        let serialized = toJson(wrapper);
+        expect(serialized).toMatchSnapshot();
+    });
+});

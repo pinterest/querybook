@@ -1,9 +1,10 @@
-import { VisibilityProperty } from 'csstype';
-import classNames from 'classnames';
+import React from 'react';
 import { bind } from 'lodash-decorators';
+import classNames from 'classnames';
 import * as DraftJs from 'draft-js';
 import { List } from 'immutable';
-import React from 'react';
+import { VisibilityProperty } from 'csstype';
+
 import {
     LinkDecorator,
     isSoftNewLineEvent,
@@ -15,6 +16,7 @@ import * as Utils from 'lib/utils';
 import { matchKeyPress } from 'lib/utils/keyboard';
 
 import { RichTextEditorToolBar } from 'ui/RichTextEditorToolBar/RichTextEditorToolBar';
+
 import './RichTextEditor.scss';
 
 const compositeDecorator = new DraftJs.CompositeDecorator([LinkDecorator]);
@@ -557,7 +559,6 @@ export class RichTextEditor extends React.Component<
         const editorClassName = classNames({
             RichTextEditor: true,
             [className]: className,
-            content: true,
         });
 
         return (

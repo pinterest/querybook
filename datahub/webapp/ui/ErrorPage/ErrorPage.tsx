@@ -49,10 +49,13 @@ export const ErrorPage: React.FunctionComponent<IErrorPageProps> = ({
         </>
     );
 
+    const classNameProp = classNames({
+        ErrorPage: true,
+        [className]: className,
+    });
+
     return (
-        <FullHeight
-            className={classNames({ ErrorPage: true, [className]: className })}
-        >
+        <FullHeight className={classNameProp}>
             <Center>
                 <Title size={2}>{errorTitle}</Title>
                 <Title subtitle size={6} className="ErrorPage-message">

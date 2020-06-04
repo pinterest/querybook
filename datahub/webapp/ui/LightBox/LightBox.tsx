@@ -1,10 +1,9 @@
 import * as classNames from 'classnames';
 import React from 'react';
 
-import { useMounted } from 'hooks/useMounted';
-import { IconButton } from 'ui/Button/IconButton';
-import { useDebounce } from 'hooks/useDebounce';
 import { useAppBlur } from 'hooks/ui/useAppBlur';
+
+import { IconButton } from 'ui/Button/IconButton';
 import { Modal } from 'ui/Modal/Modal';
 
 import './LightBox.scss';

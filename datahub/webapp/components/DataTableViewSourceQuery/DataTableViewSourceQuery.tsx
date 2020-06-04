@@ -85,7 +85,7 @@ export const DataTableViewSourceQuery: React.FunctionComponent<IProps> = ({
             <div className="DataTableViewSourceQuery-table">
                 <div className="data-job-metadata-top">
                     <Title size={5}>Meta Data Job</Title>
-                    <Divider marginTop={'4px'} marginBottom={'12px'} />
+                    <Divider marginTop="4px" marginBottom="12px" />
                 </div>
                 <Table
                     className="data-table-details-table"
@@ -108,7 +108,7 @@ export const DataTableViewSourceQuery: React.FunctionComponent<IProps> = ({
             <div className="DataTableViewSourceQuery-source-query">
                 <div className="data-job-source-query-top">
                     <Title size={5}>Source Query</Title>
-                    <Divider marginTop={'4px'} marginBottom={'12px'} />
+                    <Divider marginTop="4px" marginBottom="12px" />
                 </div>
                 <CodeHighlight
                     language={'text/x-hive'}

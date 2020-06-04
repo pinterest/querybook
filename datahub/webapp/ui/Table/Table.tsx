@@ -1,8 +1,7 @@
+import React from 'react';
 import classNames from 'classnames';
-import { clone } from 'lodash';
 import { decorate } from 'core-decorators';
 import memoizeOne from 'memoize-one';
-import React from 'react';
 import ReactTable, { Column, TableProps } from 'react-table';
 
 import { titleize } from 'lib/utils';

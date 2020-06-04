@@ -1,0 +1,153 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`matches enzyme snapshots matches snapshot 1`] = `
+<nav
+  className="Pagination horizontal-space-between flex-row"
+>
+  <ForwardRef
+    className="Pagination-previous"
+    disabled={false}
+    key="previous"
+    onClick={[Function]}
+    title="Previous"
+  />
+  <ForwardRef
+    className="Pagination-next"
+    disabled={false}
+    key="next"
+    onClick={[Function]}
+    title="Next"
+  />
+  <ul
+    className="Pagination-pages flex-row"
+  >
+    <PageButton
+      className=""
+      key="0"
+      onClick={[Function]}
+      page={0}
+      shift={1}
+    />
+    <PageButton
+      className="current"
+      key="1"
+      onClick={[Function]}
+      page={1}
+      shift={1}
+    />
+    <PageButton
+      className=""
+      key="2"
+      onClick={[Function]}
+      page={2}
+      shift={1}
+    />
+    <PageButton
+      className=""
+      key="3"
+      onClick={[Function]}
+      page={3}
+      shift={1}
+    />
+    <li
+      key="last"
+    >
+      <span
+        className="Pagination-ellipsis"
+      >
+        …
+      </span>
+    </li>
+    <PageButton
+      key="9"
+      onClick={[Function]}
+      page={9}
+      shift={1}
+    />
+  </ul>
+</nav>
+`;
+
+exports[`matches test renderer snapshot serializes the styles 1`] = `
+<nav
+  className="Pagination horizontal-space-between flex-row"
+>
+  <span
+    className="Button Pagination-previous "
+    onClick={[Function]}
+  >
+    <span>
+      Previous
+    </span>
+  </span>
+  <span
+    className="Button Pagination-next "
+    onClick={[Function]}
+  >
+    <span>
+      Next
+    </span>
+  </span>
+  <ul
+    className="Pagination-pages flex-row"
+  >
+    <li>
+      <span
+        className="Button Pagination-page-button  "
+        onClick={[Function]}
+      >
+        <span>
+          1
+        </span>
+      </span>
+    </li>
+    <li>
+      <span
+        className="Button Pagination-page-button current "
+        onClick={[Function]}
+      >
+        <span>
+          2
+        </span>
+      </span>
+    </li>
+    <li>
+      <span
+        className="Button Pagination-page-button  "
+        onClick={[Function]}
+      >
+        <span>
+          3
+        </span>
+      </span>
+    </li>
+    <li>
+      <span
+        className="Button Pagination-page-button  "
+        onClick={[Function]}
+      >
+        <span>
+          4
+        </span>
+      </span>
+    </li>
+    <li>
+      <span
+        className="Pagination-ellipsis"
+      >
+        …
+      </span>
+    </li>
+    <li>
+      <span
+        className="Button Pagination-page-button  "
+        onClick={[Function]}
+      >
+        <span>
+          10
+        </span>
+      </span>
+    </li>
+  </ul>
+</nav>
+`;

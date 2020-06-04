@@ -2,6 +2,7 @@ import classNames from 'classnames';
 import React from 'react';
 
 import { Button } from 'ui/Button/Button';
+
 import './Pagination.scss';
 
 interface IPageButtonProps {
@@ -77,7 +78,7 @@ export const Pagination: React.FunctionComponent<IPaginationProps> = ({
                 page={page}
                 onClick={onPageClick}
                 shift={shift}
-                className={page === currentPage ? 'is-current' : ''}
+                className={page === currentPage ? 'current' : ''}
             />
         );
     });

@@ -1,0 +1,17 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`matches enzyme snapshots matches snapshot 1`] = `
+<div
+  className="Checkbox"
+>
+  <label
+    className=""
+  >
+    <input
+      onChange={[Function]}
+      type="checkbox"
+    />
+     
+  </label>
+</div>
+`;

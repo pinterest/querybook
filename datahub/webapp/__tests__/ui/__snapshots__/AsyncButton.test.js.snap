@@ -1,0 +1,31 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`matches enzyme snapshots matches snapshot - disbled 1`] = `
+<ForwardRef
+  className=""
+  disabled={true}
+  isLoading={false}
+  onClick={[Function]}
+  title="test"
+/>
+`;
+
+exports[`matches enzyme snapshots matches snapshot 1`] = `
+<ForwardRef
+  className=""
+  isLoading={false}
+  onClick={[Function]}
+  title="test"
+/>
+`;
+
+exports[`matches test renderer snapshot serializes the styles 1`] = `
+<span
+  className="Button "
+  onClick={[Function]}
+>
+  <span>
+    test
+  </span>
+</span>
+`;

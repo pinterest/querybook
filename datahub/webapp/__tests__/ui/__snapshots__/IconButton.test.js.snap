@@ -1,0 +1,118 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`matches enzyme snapshots matches snapshot - active 1`] = `
+<span
+  className="IconButton active"
+  onClick={[Function]}
+>
+  <Memo()
+    name="check"
+  />
+   
+</span>
+`;
+
+exports[`matches enzyme snapshots matches snapshot - disbled 1`] = `
+<span
+  className="IconButton disabled"
+  onClick={null}
+>
+  <Memo()
+    name="check"
+  />
+   
+</span>
+`;
+
+exports[`matches enzyme snapshots matches snapshot - mixed 1`] = `
+<span
+  className="IconButton no-padding fill"
+  onClick={[Function]}
+>
+  <div
+    className="ping-message"
+  >
+    1
+  </div>
+  <Memo()
+    fill={true}
+    name="check"
+  />
+   
+</span>
+`;
+
+exports[`matches enzyme snapshots matches snapshot - with ping 1`] = `
+<span
+  className="IconButton"
+  onClick={[Function]}
+>
+  <div
+    className="ping"
+  />
+  <Memo()
+    name="check"
+  />
+   
+</span>
+`;
+
+exports[`matches enzyme snapshots matches snapshot - with ping message 1`] = `
+<span
+  className="IconButton"
+  onClick={[Function]}
+>
+  <div
+    className="ping-message"
+  >
+    1
+  </div>
+  <Memo()
+    name="check"
+  />
+   
+</span>
+`;
+
+exports[`matches enzyme snapshots matches snapshot - with tooltip 1`] = `
+<span
+  aria-label="test"
+  className="IconButton"
+  data-balloon-pos="right"
+  onClick={[Function]}
+>
+  <Memo()
+    name="check"
+  />
+   
+</span>
+`;
+
+exports[`matches enzyme snapshots matches snapshot 1`] = `
+<span
+  className="IconButton"
+  onClick={[Function]}
+>
+  <Memo()
+    name="check"
+  />
+   
+</span>
+`;
+
+exports[`matches test renderer snapshot serializes the styles 1`] = `
+<span
+  className="IconButton"
+  onClick={[Function]}
+>
+  <span
+    className=" Icon "
+    dangerouslySetInnerHTML={
+      Object {
+        "__html": "<svg xmlns=\\"http://www.w3.org/2000/svg\\" width=\\"24\\" height=\\"24\\" viewBox=\\"0 0 24 24\\" fill=\\"none\\" stroke=\\"currentColor\\" stroke-width=\\"2\\" stroke-linecap=\\"round\\" stroke-linejoin=\\"round\\" class=\\"feather feather-check\\"><polyline points=\\"20 6 9 17 4 12\\"></polyline></svg>",
+      }
+    }
+  />
+   
+</span>
+`;

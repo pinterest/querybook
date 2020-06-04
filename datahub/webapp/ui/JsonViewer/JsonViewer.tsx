@@ -6,7 +6,7 @@ const StyledJsonViewer = styled.div`
     color: var(--dark-text-color);
     font-size: var(--small-text-size);
     overflow-x: auto;
-    padding: 1.25rem 1.5rem;
+    padding: 20px 24px;
     white-space: pre;
     word-wrap: normal;
 `;

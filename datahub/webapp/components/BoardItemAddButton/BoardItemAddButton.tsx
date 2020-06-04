@@ -128,6 +128,7 @@ export const BoardItemAddButton: React.FunctionComponent<ICreateDataDocButtonPro
                 ref={selfRef}
                 icon="briefcase"
                 tooltip={tooltip}
+                tooltipPos="right"
                 onClick={() => {
                     setShowSelectBoardPopover(true);
                 }}

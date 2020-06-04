@@ -1,9 +1,9 @@
 import React from 'react';
 import classNames from 'classnames';
-import { Status } from 'const/queryStatus';
-import './StatusIcon.scss';
 
-export { Status } from 'const/queryStatus';
+import { Status } from 'const/queryStatus';
+
+import './StatusIcon.scss';
 
 export interface IStatusIconProps {
     status: Status;

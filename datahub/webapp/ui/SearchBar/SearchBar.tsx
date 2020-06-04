@@ -15,7 +15,6 @@ export interface ISearchBarProps {
     placeholder?: string;
     inputClassName?: string;
 
-    isRounded?: boolean;
     hasIcon?: boolean;
     transparent?: boolean;
     autoFocus?: boolean;
@@ -31,7 +30,6 @@ export const SearchBar: React.FunctionComponent<ISearchBarProps> = ({
     onSearch = null,
     placeholder = 'Search',
 
-    isRounded = false,
     hasIcon = false,
     autoFocus = false,
     delayMethod = 'debounce',
@@ -66,7 +64,7 @@ export const SearchBar: React.FunctionComponent<ISearchBarProps> = ({
     };
 
     const searchIcon = hasIcon ? (
-        <span className="icon is-small is-left">
+        <span className="SearchIcon">
             <i
                 className={`fas ${
                     isSearching ? 'fa-spinner fa-pulse' : 'fa-search'
@@ -78,6 +76,7 @@ export const SearchBar: React.FunctionComponent<ISearchBarProps> = ({
     const searchBarClassName = classNames({
         SearchBar: true,
         [className]: Boolean(className),
+        transparent,
     });
 
     const clearSearchButton =
@@ -100,7 +99,6 @@ export const SearchBar: React.FunctionComponent<ISearchBarProps> = ({
                 inputProps={{
                     placeholder,
                     className: classNames({
-                        'is-rounded': isRounded,
                         [inputClassName]: !!inputClassName,
                     }),
                     type: 'text',

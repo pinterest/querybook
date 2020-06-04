@@ -8,7 +8,7 @@
         li {
             padding: 8px 8px 4px;
             box-sizing: border-box;
-            border-bottom: solid 2px transparent;
+            border-bottom: solid 1px transparent;
             display: flex;
             flex-direction: column;
             justify-content: center;
@@ -18,7 +18,7 @@
             }
 
             &.active {
-                border-bottom-color: var(--select-boder-color);
+                border-bottom-color: var(--select-border-color);
                 a {
                     color: var(--text-color);
                 }

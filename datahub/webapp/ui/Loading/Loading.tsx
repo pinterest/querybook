@@ -27,7 +27,7 @@ const StyledSpinner = styled.div`
     width: 20px;
     height: 20px;
     font-size: var(--large-text-size);
-    color: var(--dark-text-color);
+    color: var(--icon-color);
 `;
 
 const StyledLoadingText = styled.div`

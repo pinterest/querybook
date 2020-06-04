@@ -99,7 +99,6 @@ export const Landing: React.FunctionComponent<{}> = ({}) => {
                 </div>
                 <div className="Landing-desc">{descriptionDOM}</div>
             </div>
-
             <div className="Landing-bottom">
                 <Columns>
                     <Column>

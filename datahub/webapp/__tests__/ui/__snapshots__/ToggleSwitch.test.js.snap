@@ -1,0 +1,23 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`matches enzyme snapshots matches snapshot - unchecked 1`] = `
+<div
+  className="ToggleSwitch "
+  onClick={[Function]}
+>
+  <span
+    className="ToggleSwitch-circle"
+  />
+</div>
+`;
+
+exports[`matches enzyme snapshots matches snapshot 1`] = `
+<div
+  className="ToggleSwitch checked"
+  onClick={[Function]}
+>
+  <span
+    className="ToggleSwitch-circle"
+  />
+</div>
+`;

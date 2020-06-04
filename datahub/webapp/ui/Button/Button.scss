@@ -13,13 +13,20 @@
     white-space: nowrap;
 
     .Icon {
+        margin-left: -4px;
         svg {
-            padding: 15%;
+            padding: 16%;
         }
     }
 
     .Icon + span {
-        margin-left: 3px;
+        margin-left: 4px;
+    }
+
+    &.icon-only {
+        .Icon {
+            margin-left: 0px;
+        }
     }
 
     // special buttons
@@ -79,7 +86,7 @@
     // props
     &.small {
         margin: 0px;
-        padding: 1px 5px;
+        padding: 1px 4px;
     }
 
     &.disabled {

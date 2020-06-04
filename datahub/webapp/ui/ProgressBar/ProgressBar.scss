@@ -1,0 +1,96 @@
+.ProgressBar {
+    width: 100%;
+    display: flex;
+    flex-direction: row;
+
+    progress {
+        -moz-appearance: none;
+        -webkit-appearance: none;
+        border: none;
+        border-radius: var(--border-radius);
+        display: block;
+        height: 16px;
+        overflow: hidden;
+        padding: 0;
+        width: 100%;
+        background-color: var(--progress-bg-color);
+        &::-webkit-progress-bar {
+            background-color: var(--progress-bg-color);
+        }
+        &::-webkit-progress-value {
+            background-color: var(--progress-color);
+        }
+        &::-moz-progress-bar {
+            background-color: var(--progress-color);
+        }
+
+        &.success {
+            &::-webkit-progress-value {
+                background-color: var(--color-true);
+            }
+            &::-moz-progress-bar {
+                background-color: var(--color-true);
+            }
+        }
+        &.info {
+            &::-webkit-progress-value {
+                background-color: var(--color-accent);
+            }
+            &::-moz-progress-bar {
+                background-color: var(--color-accent);
+            }
+        }
+        &.warning {
+            &::-webkit-progress-value {
+                background-color: var(--color-warning);
+            }
+            &::-moz-progress-bar {
+                background-color: var(--color-warning);
+            }
+        }
+        &.danger {
+            &::-webkit-progress-value {
+                background-color: var(--color-false);
+            }
+            &::-moz-progress-bar {
+                background-color: var(--color-false);
+            }
+        }
+        &.light {
+            background-color: var(--light-bg-color);
+            &::-webkit-progress-bar {
+                background-color: var(--light-bg-color);
+            }
+            &::-webkit-progress-value {
+                background-color: var(--dark-bg-color);
+            }
+            &::-moz-progress-bar {
+                background-color: var(--dark-bg-color);
+            }
+        }
+        &.dark {
+            background-color: var(--dark-bg-color);
+            &::-webkit-progress-bar {
+                background-color: var(--dark-bg-color);
+            }
+            &::-webkit-progress-value {
+                background-color: var(--invert-bg-color);
+            }
+            &::-moz-progress-bar {
+                background-color: var(--invert-bg-color);
+            }
+        }
+    }
+    .ProgressBar-value {
+        font-size: var(--xsmall-text-size);
+        font-weight: 700;
+    }
+    &.small {
+        progress {
+            height: 12px;
+        }
+        .ProgressBar-value {
+            font-size: var(--xxsmall-text-size);
+        }
+    }
+}

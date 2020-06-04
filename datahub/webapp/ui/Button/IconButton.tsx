@@ -2,7 +2,9 @@ import React from 'react';
 import classNames from 'classnames';
 
 import { TooltipDirection } from 'const/tooltip';
+
 import { Icon } from 'ui/Icon/Icon';
+
 import './IconButton.scss';
 
 // A simple Bulma-based button

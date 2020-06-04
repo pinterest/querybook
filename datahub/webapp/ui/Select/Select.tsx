@@ -11,7 +11,6 @@ export interface ISelectProps {
     fullWidth?: boolean;
     transparent?: boolean;
 
-    icon?: string;
     withDeselect?: boolean;
     deselectValue?: string;
 }
@@ -26,8 +25,6 @@ export const Select: React.FunctionComponent<ISelectProps> = ({
 
     fullWidth,
     transparent,
-
-    icon,
 
     withDeselect,
     deselectValue,
@@ -59,19 +56,11 @@ export const Select: React.FunctionComponent<ISelectProps> = ({
 
     const controlClassName = classNames({
         control: true,
-        'has-icons-left': Boolean(icon),
     });
-
-    const iconDOM = icon ? (
-        <div className="icon is-left">
-            <i className={icon} />
-        </div>
-    ) : null;
 
     return (
         <div className={controlClassName}>
             <div className={wrapperClassName}>{selectDOM}</div>
-            {iconDOM}
         </div>
     );
 };

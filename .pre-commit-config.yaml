@@ -3,6 +3,7 @@ repos:
       rev: v2.4.0
       hooks:
           - id: trailing-whitespace
+            exclude: ^datahub/webapp/__tests__/ui/__snapshots__/
           - id: end-of-file-fixer
           - id: check-yaml
           - id: check-added-large-files

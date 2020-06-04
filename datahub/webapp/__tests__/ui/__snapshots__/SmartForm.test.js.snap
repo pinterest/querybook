@@ -1,0 +1,43 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`matches enzyme snapshots matches snapshot 1`] = `
+<div
+  className="SmartForm"
+>
+  <SimpleFormField
+    formField={
+      Object {
+        "max": null,
+        "min": 1,
+        "of": Object {
+          "description": "test",
+        },
+      }
+    }
+    onChange={[Function]}
+    value={Array []}
+  />
+</div>
+`;
+
+exports[`matches test renderer snapshot serializes the styles 1`] = `
+<div
+  className="SmartForm"
+>
+  <div>
+    <div
+      className="FormField"
+    >
+      <div
+        className="FormFieldInputSection "
+      />
+    </div>
+  </div>
+</div>
+`;
+
+exports[`matches test renderer snapshot serializes the styles 2`] = `
+<div
+  className="SmartForm"
+/>
+`;

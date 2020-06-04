@@ -1,23 +1,25 @@
-import { bind } from 'lodash-decorators';
 import React from 'react';
+import { bind } from 'lodash-decorators';
+import * as DraftJs from 'draft-js';
+
 import {
     IDataTable,
     IDataColumn,
     IDataTableWarning,
     DataTableWarningSeverity,
 } from 'const/metastore';
-import * as DraftJs from 'draft-js';
 import { navigateWithinEnv } from 'lib/utils/query-string';
 import { generateFormattedDate } from 'lib/utils/datetime';
 import { titleize, getHumanReadableByteSize } from 'lib/utils';
 
+import { Button } from 'ui/Button/Button';
+import { Divider } from 'ui/Divider/Divider';
 import { EditableTextField } from 'ui/EditableTextField/EditableTextField';
+import { Message } from 'ui/Message/Message';
 import { Table } from 'ui/Table/Table';
 import { Title } from 'ui/Title/Title';
-import { Divider } from 'ui/Divider/Divider';
 
 import './DataTableViewOverview.scss';
-import { Message } from 'ui/Message/Message';
 
 const dataTableDetailsColumns = [
     {
@@ -72,7 +74,7 @@ export class DataTableViewOverview extends React.PureComponent<
             <div>
                 <div className="overview-section-top">
                     <Title size={5}>{title}</Title>
-                    <Divider marginTop={'4px'} marginBottom={'12px'} />
+                    <Divider marginTop="4px" marginBottom="12px" />
                 </div>
                 <div className="overview-section-content">{content}</div>
                 <div className="overview-section-footer">{footer}</div>
@@ -155,7 +157,7 @@ export class DataTableViewOverview extends React.PureComponent<
 
         const sampleQueriesSection = this.makeOverviewSectionDOM(
             `Sample DataDocs`,
-            <a
+            <Button
                 onClick={() =>
                     navigateWithinEnv(
                         `/search/?searchType=DataDoc&searchString=${tableName}`,
@@ -164,9 +166,11 @@ export class DataTableViewOverview extends React.PureComponent<
                         }
                     )
                 }
+                type="inlineText"
+                borderless
             >
-                See Sample DataDocs.
-            </a>
+                Sample DataDocs
+            </Button>
         );
 
         const warningSection = tableWarnings.length

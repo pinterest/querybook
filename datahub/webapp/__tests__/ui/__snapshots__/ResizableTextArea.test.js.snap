@@ -1,0 +1,24 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`matches enzyme snapshots matches snapshot 1`] = `
+<styled.textarea
+  className="ResizableTextArea"
+  disabled={false}
+  onChange={[Function]}
+  onInput={[Function]}
+  rows={1}
+  transparent={false}
+  value="test"
+/>
+`;
+
+exports[`matches test renderer snapshot serializes the styles 1`] = `
+<textarea
+  className="ResizableTextArea sc-bdVaJa fHIhmG"
+  disabled={false}
+  onChange={[Function]}
+  onInput={[Function]}
+  rows={1}
+  value="test"
+/>
+`;

@@ -1,4 +1,5 @@
 import styled from 'styled-components';
+
 import './Menu.scss';
 
 export const Menu = styled.div.attrs<{

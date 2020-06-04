@@ -1,0 +1,65 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`matches enzyme snapshots matches snapshot - error 1`] = `
+<Message
+  title="Error"
+  type="error"
+>
+  Test
+</Message>
+`;
+
+exports[`matches enzyme snapshots matches snapshot - with options 1`] = `
+<article
+  className="Message Message-has-icon tip TestMessage"
+>
+  <div
+    className="Message-header"
+  >
+    <p>
+      Test Message
+    </p>
+  </div>
+  <div
+    className="Message-body"
+  >
+    <Memo()
+      className="Message-icon"
+      name="check"
+      size={20}
+    />
+    this is a test message
+  </div>
+</article>
+`;
+
+exports[`matches enzyme snapshots matches snapshot 1`] = `
+<article
+  className="Message Message-simple"
+>
+  <div
+    className="Message-body"
+  >
+    Test
+  </div>
+</article>
+`;
+
+exports[`matches test renderer snapshot serializes the styles - error 1`] = `
+<article
+  className="Message error"
+>
+  <div
+    className="Message-header"
+  >
+    <p>
+      Error
+    </p>
+  </div>
+  <div
+    className="Message-body"
+  >
+    Test
+  </div>
+</article>
+`;

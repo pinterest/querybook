@@ -1,0 +1,44 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`matches enzyme snapshots matches snapshot 1`] = `
+<div
+  className="StepsBar"
+>
+  <ul
+    className="StepsBar-ul"
+  />
+</div>
+`;
+
+exports[`matches enzyme snapshots matches snapshot 2`] = `
+<div
+  className="StepsBar"
+>
+  <ul
+    className="StepsBar-ul"
+  >
+    <li
+      className=""
+      key="0"
+      style={
+        Object {
+          "width": "50%",
+        }
+      }
+    >
+      one
+    </li>
+    <li
+      className=""
+      key="1"
+      style={
+        Object {
+          "width": "50%",
+        }
+      }
+    >
+      two
+    </li>
+  </ul>
+</div>
+`;

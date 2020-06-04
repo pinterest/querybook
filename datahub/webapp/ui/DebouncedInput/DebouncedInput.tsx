@@ -1,8 +1,9 @@
 import React from 'react';
-import { debounce, throttle } from 'lodash';
 import classNames from 'classnames';
-import './DebouncedInput.scss';
+
 import { useDebounceState } from 'hooks/redux/useDebounceState';
+
+import './DebouncedInput.scss';
 
 interface IDebouncedInputStylingProps {
     className?: string;

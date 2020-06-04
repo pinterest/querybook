@@ -4,19 +4,18 @@ import React from 'react';
 import { StatementExecutionStatus } from 'const/queryExecution';
 
 import {
-    IStatementLog,
     IStatementExecution,
     IStatementResult,
 } from 'redux/queryExecutions/types';
 
+import { StatementLogWrapper } from './StatementLog';
+import { StatementMeta } from './StatementMeta';
+import { StatementResult } from './StatementResult';
+
 import { Modal } from 'ui/Modal/Modal';
 import { ProgressBar } from 'ui/ProgressBar/ProgressBar';
 
-import { StatementLog, StatementLogWrapper } from './StatementLog';
-import { StatementResult } from './StatementResult';
-
 import './DataDocStatementExecution.scss';
-import { StatementMeta } from './StatementMeta';
 
 interface IProps {
     statementExecution: IStatementExecution;
@@ -101,13 +100,10 @@ export class DataDocStatementExecution extends React.PureComponent<
                 <div className="statement-execution-progress-wrapper">
                     <ProgressBar
                         value={percentComplete}
-                        className={'is-success is-small'}
+                        showValue
+                        isSmall
+                        type="success"
                     />
-                    {`  ${
-                        percentComplete != null
-                            ? `${Math.round(percentComplete)}%`
-                            : 'Unknown'
-                    }`}
                 </div>
             );
             contentDOM = (

@@ -1,6 +1,8 @@
 import React from 'react';
 import classNames from 'classnames';
+
 import { Icon } from 'ui/Icon/Icon';
+
 import './Button.scss';
 
 export interface IButtonProps
@@ -77,6 +79,7 @@ export const Button = React.forwardRef<HTMLDivElement, IButtonProps>(
             small,
             inverted,
             'flex-row': Boolean(iconDOM && textDOM),
+            'icon-only': Boolean(iconDOM && !textDOM),
         });
 
         return (

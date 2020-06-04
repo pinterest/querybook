@@ -5,6 +5,7 @@ import { calculateTooltipSize } from 'lib/utils';
 import { TooltipDirection } from 'const/tooltip';
 
 import { Dropdown } from 'ui/Dropdown/Dropdown';
+
 import { Menu, MenuItem } from './Menu';
 
 export interface IListMenuItem {

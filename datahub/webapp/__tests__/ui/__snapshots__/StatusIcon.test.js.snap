@@ -1,0 +1,23 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`matches enzyme snapshots matches snapshot - warning 1`] = `
+<span
+  className="StatusIcon warning"
+>
+  <i
+    className="fas fa-circle"
+    status="warning"
+  />
+</span>
+`;
+
+exports[`matches enzyme snapshots matches snapshot 1`] = `
+<span
+  className="StatusIcon success"
+>
+  <i
+    className="fas fa-circle"
+    status="success"
+  />
+</span>
+`;

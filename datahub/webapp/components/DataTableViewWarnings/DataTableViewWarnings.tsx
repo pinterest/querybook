@@ -119,8 +119,8 @@ export const DataTableViewWarnings: React.FC<IProps> = ({
                     title=""
                     children={
                         <div className=" flex-row">
-                            <Icon name="plus" />
-                            <span>Create a new warning</span>
+                            <Icon name="plus" className="mr8" />
+                            <span>create a new warning</span>
                         </div>
                     }
                     width="100%"

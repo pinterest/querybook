@@ -14,7 +14,7 @@ export const StepsBar: React.FunctionComponent<IProps> = ({
     const stepsDOM = steps.map((step, index) => (
         <li
             key={index}
-            className={index <= activeStep ? 'is-active' : ''}
+            className={index <= activeStep ? 'StepsBar-active' : ''}
             style={{ width: widthPerStep }}
         >
             {step}
@@ -23,7 +23,7 @@ export const StepsBar: React.FunctionComponent<IProps> = ({
 
     return (
         <div className="StepsBar">
-            <ul className="steps-ul">{stepsDOM}</ul>
+            <ul className="StepsBar-ul">{stepsDOM}</ul>
         </div>
     );
 };
