@@ -1,5 +1,6 @@
-import feather, { FeatherAttributes } from 'feather-icons';
 import React from 'react';
+import feather, { FeatherAttributes } from 'feather-icons';
+
 import './Icon.scss';
 
 // Wrapper for feather icon
@@ -10,6 +11,7 @@ export interface IIconProps {
     options?: FeatherAttributes;
     fill?: boolean;
 }
+
 export const Icon: React.FunctionComponent<IIconProps> = React.memo(
     ({ name, className = '', size, options = {}, fill = false }) => {
         if (!(name in feather.icons)) {

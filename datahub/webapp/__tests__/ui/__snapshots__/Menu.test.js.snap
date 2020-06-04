@@ -1,0 +1,62 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`matches enzyme snapshots matches snapshot 1`] = `
+<StyledComponent
+  forwardedComponent={
+    Object {
+      "$$typeof": Symbol(react.forward_ref),
+      "attrs": Array [
+        Object {
+          "className": "Menu",
+        },
+      ],
+      "componentStyle": ComponentStyle {
+        "componentId": "sc-bdVaJa",
+        "isStatic": false,
+        "rules": Array [
+          "
+    ",
+          [Function],
+          ";
+",
+        ],
+      },
+      "displayName": "styled.div",
+      "foldedComponentIds": Array [],
+      "render": [Function],
+      "styledComponentId": "sc-bdVaJa",
+      "target": "div",
+      "toString": [Function],
+      "warnTooManyClasses": [Function],
+      "withComponent": [Function],
+    }
+  }
+  forwardedRef={null}
+>
+  <styled.div>
+    <styled.div />
+  </styled.div>
+  <styled.div />
+  <styled.div />
+</StyledComponent>
+`;
+
+exports[`matches test renderer snapshot serializes the styles 1`] = `
+<div
+  className="sc-bdVaJa Menu kvKKjL"
+>
+  <div
+    className="sc-bwzfXH MenuItem uTxCW"
+  >
+    <div
+      className="sc-ifAKCX MenuItemPing kIfKgp"
+    />
+  </div>
+  <div
+    className="sc-bxivhb MenuDivider hOHROt"
+  />
+  <div
+    className="sc-htpNat MenuInfoItem KtFsv"
+  />
+</div>
+`;

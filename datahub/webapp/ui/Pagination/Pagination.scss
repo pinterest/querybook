@@ -14,7 +14,7 @@
         > li {
             display: flex;
             .Pagination-page-button {
-                &.is-current {
+                &.current {
                     background-color: var(--color-accent);
                     border-color: var(--color-accent-bg);
                     color: var(--color-accent-text);

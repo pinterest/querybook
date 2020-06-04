@@ -1,0 +1,26 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`matches enzyme snapshots matches snapshot 1`] = `
+<styled.button
+  aria-label=""
+  className=""
+  data-balloon-pos="up"
+>
+  <i
+    className="fa fa-check"
+  />
+</styled.button>
+`;
+
+exports[`matches test renderer snapshot serializes the styles 1`] = `
+<button
+  aria-label=""
+  className="sc-bdVaJa bYqJlZ"
+  data-balloon-pos="up"
+>
+  <i
+    className="fa fa-check"
+  />
+
+</button>
+`;

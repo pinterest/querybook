@@ -1,5 +1,5 @@
 import { QueryEngineStatus } from 'const/queryEngine';
-import { Status } from 'ui/StatusIcon/StatusIcon';
+import { Status } from 'const/queryStatus';
 
 export const queryEngineStatusToIconStatus = {
     [QueryEngineStatus.UNAVAILABLE]: Status.none,

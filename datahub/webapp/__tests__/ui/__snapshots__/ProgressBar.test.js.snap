@@ -1,0 +1,13 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`matches test renderer snapshot serializes the styles 1`] = `
+<div
+  className="ProgressBar flex-row"
+>
+  <progress
+    className=" mr8"
+    max="100"
+    value={0}
+  />
+</div>
+`;

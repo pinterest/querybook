@@ -1,0 +1,15 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`matches enzyme snapshots matches snapshot 1`] = `
+<styled.span>
+  test
+</styled.span>
+`;
+
+exports[`matches test renderer snapshot serializes the styles 1`] = `
+<span
+  className="sc-bdVaJa KeyboardKey mr4 jhrFHl"
+>
+  test
+</span>
+`;

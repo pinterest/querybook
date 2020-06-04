@@ -1,0 +1,27 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`matches enzyme snapshots matches snapshot 1`] = `
+<div
+  className="toolbar-link-input-wrapper"
+>
+  <input
+    autoFocus={true}
+    onClick={[Function]}
+    onKeyDown={[Function]}
+    placeholder="Enter url here..."
+  />
+</div>
+`;
+
+exports[`matches test renderer snapshot serializes the styles 1`] = `
+<div
+  className="toolbar-link-input-wrapper"
+>
+  <input
+    autoFocus={true}
+    onClick={[Function]}
+    onKeyDown={[Function]}
+    placeholder="Enter url here..."
+  />
+</div>
+`;

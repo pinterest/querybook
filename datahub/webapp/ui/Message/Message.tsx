@@ -2,6 +2,7 @@ import React from 'react';
 import classNames from 'classnames';
 
 import { Icon } from 'ui/Icon/Icon';
+
 import './Message.scss';
 
 export type MessageType = 'info' | 'error' | 'warning' | 'success' | 'tip';

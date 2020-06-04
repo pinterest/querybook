@@ -19,6 +19,8 @@ import { DataHubLogo } from 'ui/DataHubLogo/DataHubLogo';
 import { Title } from 'ui/Title/Title';
 
 import './Landing.scss';
+import { Loading } from 'ui/Loading/Loading';
+import { ProgressBar } from 'ui/ProgressBar/ProgressBar';
 
 const datahubHints: string[] = require('config/loading_hints.yaml').hints;
 /*
@@ -99,7 +101,10 @@ export const Landing: React.FunctionComponent<{}> = ({}) => {
                 </div>
                 <div className="Landing-desc">{descriptionDOM}</div>
             </div>
-
+            <ProgressBar value={10} type="warning" showValue />
+            <ProgressBar value={10} type="info" showValue isSmall />
+            <ProgressBar value={10} type="success" />
+            <ProgressBar value={10} type="light" isSmall />
             <div className="Landing-bottom">
                 <Columns>
                     <Column>

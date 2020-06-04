@@ -1,0 +1,21 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`matches enzyme snapshots matches snapshot 1`] = `
+<styled.div
+  className="JsonViewer"
+>
+  {
+    "test": "test"
+}
+</styled.div>
+`;
+
+exports[`matches test renderer snapshot serializes the styles 1`] = `
+<div
+  className="JsonViewer sc-bdVaJa cyihmS"
+>
+  {
+    "test": "test"
+}
+</div>
+`;

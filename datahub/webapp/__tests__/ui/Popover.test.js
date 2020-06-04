@@ -1,0 +1,17 @@
+import React from 'react';
+import { shallow } from 'enzyme';
+import toJson from 'enzyme-to-json';
+
+import { Popover } from '../../ui/Popover/Popover';
+
+it('renders without crashing', () => {
+    shallow(<Popover onHide={() => null}>Test</Popover>);
+});
+
+describe('matches enzyme snapshots', () => {
+    it('matches snapshot', () => {
+        let wrapper = shallow(<Popover onHide={() => null}>Test</Popover>);
+        let serialized = toJson(wrapper);
+        expect(serialized).toMatchSnapshot();
+    });
+});

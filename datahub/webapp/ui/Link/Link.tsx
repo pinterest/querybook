@@ -1,7 +1,7 @@
-import { LocationDescriptor } from 'history';
 import React from 'react';
-import { Link as LinkImport, LinkProps } from 'react-router-dom';
 import styled from 'styled-components';
+import { LocationDescriptor } from 'history';
+import { Link as LinkImport, LinkProps } from 'react-router-dom';
 
 const StyledLink = styled('a')`
     ${({ naturalLink }) =>
