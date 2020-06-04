@@ -1,6 +1,6 @@
 import React from 'react';
-import styled from 'styled-components';
 import { LocationDescriptor } from 'history';
+import styled from 'styled-components';
 import { Link as LinkImport, LinkProps } from 'react-router-dom';
 
 const StyledLink = styled('a')`

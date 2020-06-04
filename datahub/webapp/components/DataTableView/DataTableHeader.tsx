@@ -1,8 +1,9 @@
 import { last } from 'lodash';
 import React from 'react';
 
-import { generateFormattedDate } from 'lib/utils/datetime';
 import * as Utils from 'lib/utils';
+import { generateFormattedDate } from 'lib/utils/datetime';
+import { navigateWithinEnv } from 'lib/utils/query-string';
 
 import { IMyUserInfo } from 'redux/user/types';
 import { IDataTable } from 'const/metastore';
@@ -14,7 +15,6 @@ import { Title } from 'ui/Title/Title';
 import { ToggleSwitch } from 'ui/ToggleSwitch/ToggleSwitch';
 import { Tag } from 'ui/Tag/Tag';
 import { Level } from 'ui/Level/Level';
-import { navigateWithinEnv } from 'lib/utils/query-string';
 
 export interface IDataTableHeader {
     table: IDataTable;
@@ -63,7 +63,7 @@ export const DataTableHeader: React.FunctionComponent<IDataTableHeader> = ({
         </div>
     ) : null;
 
-    const userBadge = tableOwner || 'meow';
+    const userBadge = tableOwner;
     const ownerDOM = userBadge ? (
         <div className="DataTableHeader-item">
             <span className="DataTableHeader-key">by</span>
