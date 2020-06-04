@@ -14,7 +14,7 @@ interface IProgressBarProps {
 export const ProgressBar: React.FunctionComponent<IProgressBarProps> = ({
     value,
     max = 100,
-    type = '',
+    type,
     isSmall = false,
     showValue = false,
 }) => {
@@ -34,7 +34,7 @@ export const ProgressBar: React.FunctionComponent<IProgressBarProps> = ({
             <animated.progress
                 value={percent}
                 max={String(max)}
-                className={`${type} mr8`}
+                className={type ? `${type} mr8` : 'mr8'}
             />
             {showValue && (
                 <div className="ProgressBar-value">
