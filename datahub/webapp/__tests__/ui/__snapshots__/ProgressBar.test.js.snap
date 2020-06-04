@@ -5,7 +5,7 @@ exports[`matches test renderer snapshot serializes the styles 1`] = `
   className="ProgressBar flex-row"
 >
   <progress
-    className=" mr8"
+    className="mr8"
     max="100"
     value={0}
   />
