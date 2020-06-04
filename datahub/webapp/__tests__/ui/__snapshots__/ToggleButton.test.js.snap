@@ -25,16 +25,3 @@ exports[`matches enzyme snapshots matches snapshot 1`] = `
   </span>
 </div>
 `;
-
-exports[`matches test renderer snapshot serializes the styles 1`] = `
-<div
-  className="ToggleButton checked"
-  onClick={[Function]}
->
-  <span
-    className="ToggleButton-title"
-  >
-    Testing
-  </span>
-</div>
-`;

@@ -38,7 +38,7 @@ exports[`matches test renderer snapshot serializes the styles 1`] = `
           }
         }
       />
-
+       
     </span>
   </div>
 </div>

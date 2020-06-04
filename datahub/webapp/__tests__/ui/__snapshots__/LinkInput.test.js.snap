@@ -12,16 +12,3 @@ exports[`matches enzyme snapshots matches snapshot 1`] = `
   />
 </div>
 `;
-
-exports[`matches test renderer snapshot serializes the styles 1`] = `
-<div
-  className="toolbar-link-input-wrapper"
->
-  <input
-    autoFocus={true}
-    onClick={[Function]}
-    onKeyDown={[Function]}
-    placeholder="Enter url here..."
-  />
-</div>
-`;

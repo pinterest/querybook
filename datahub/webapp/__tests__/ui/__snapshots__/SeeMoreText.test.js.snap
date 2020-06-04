@@ -5,7 +5,7 @@ exports[`matches enzyme snapshots matches snapshot 1`] = `
   className="SeeMoreText"
 >
   te
-
+   
   <a
     onClick={[Function]}
   >

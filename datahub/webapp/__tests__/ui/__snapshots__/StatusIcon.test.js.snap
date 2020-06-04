@@ -21,14 +21,3 @@ exports[`matches enzyme snapshots matches snapshot 1`] = `
   />
 </span>
 `;
-
-exports[`matches test renderer snapshot serializes the styles 1`] = `
-<span
-  className="StatusIcon success"
->
-  <i
-    className="fas fa-circle"
-    status="success"
-  />
-</span>
-`;

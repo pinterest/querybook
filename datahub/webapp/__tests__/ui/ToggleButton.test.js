@@ -1,7 +1,6 @@
 import React from 'react';
 import { shallow } from 'enzyme';
 import toJson from 'enzyme-to-json';
-import renderer from 'react-test-renderer';
 
 import { ToggleButton } from '../../ui/ToggleButton/ToggleButton';
 
@@ -33,18 +32,5 @@ describe('matches enzyme snapshots', () => {
         );
         let serialized = toJson(wrapper);
         expect(serialized).toMatchSnapshot();
-    });
-});
-
-describe('matches test renderer snapshot', () => {
-    it('serializes the styles', () => {
-        const output = renderer.create(
-            <ToggleButton
-                checked={true}
-                onChange={() => null}
-                title="Testing"
-            />
-        );
-        expect(output).toMatchSnapshot();
     });
 });

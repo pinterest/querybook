@@ -29,7 +29,7 @@ exports[`matches enzyme snapshots matches snapshot 1`] = `
       <span
         className="ml4"
       >
-        Click
+        Click 
         <a
           onClick={[Function]}
         >

@@ -8,7 +8,7 @@ exports[`matches enzyme snapshots matches snapshot - active 1`] = `
   <Memo()
     name="check"
   />
-
+   
 </span>
 `;
 
@@ -20,7 +20,7 @@ exports[`matches enzyme snapshots matches snapshot - disbled 1`] = `
   <Memo()
     name="check"
   />
-
+   
 </span>
 `;
 
@@ -38,7 +38,7 @@ exports[`matches enzyme snapshots matches snapshot - mixed 1`] = `
     fill={true}
     name="check"
   />
-
+   
 </span>
 `;
 
@@ -53,7 +53,7 @@ exports[`matches enzyme snapshots matches snapshot - with ping 1`] = `
   <Memo()
     name="check"
   />
-
+   
 </span>
 `;
 
@@ -70,7 +70,7 @@ exports[`matches enzyme snapshots matches snapshot - with ping message 1`] = `
   <Memo()
     name="check"
   />
-
+   
 </span>
 `;
 
@@ -84,7 +84,7 @@ exports[`matches enzyme snapshots matches snapshot - with tooltip 1`] = `
   <Memo()
     name="check"
   />
-
+   
 </span>
 `;
 
@@ -96,7 +96,7 @@ exports[`matches enzyme snapshots matches snapshot 1`] = `
   <Memo()
     name="check"
   />
-
+   
 </span>
 `;
 
@@ -113,6 +113,6 @@ exports[`matches test renderer snapshot serializes the styles 1`] = `
       }
     }
   />
-
+   
 </span>
 `;

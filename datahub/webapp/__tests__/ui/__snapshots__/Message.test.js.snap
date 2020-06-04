@@ -63,15 +63,3 @@ exports[`matches test renderer snapshot serializes the styles - error 1`] = `
   </div>
 </article>
 `;
-
-exports[`matches test renderer snapshot serializes the styles 1`] = `
-<article
-  className="Message Message-simple"
->
-  <div
-    className="Message-body"
-  >
-    Test
-  </div>
-</article>
-`;

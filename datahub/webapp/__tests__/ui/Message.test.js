@@ -49,10 +49,6 @@ describe('matches enzyme snapshots', () => {
 });
 
 describe('matches test renderer snapshot', () => {
-    it('serializes the styles', () => {
-        const output = renderer.create(<Message>Test</Message>);
-        expect(output).toMatchSnapshot();
-    });
     it('serializes the styles - error', () => {
         const output = renderer.create(<ErrorMessage>Test</ErrorMessage>);
         expect(output).toMatchSnapshot();

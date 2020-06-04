@@ -1,7 +1,6 @@
 import React from 'react';
 import { shallow } from 'enzyme';
 import toJson from 'enzyme-to-json';
-import renderer from 'react-test-renderer';
 
 import { ToggleSwitch } from '../../ui/ToggleSwitch/ToggleSwitch';
 
@@ -23,14 +22,5 @@ describe('matches enzyme snapshots', () => {
         );
         let serialized = toJson(wrapper);
         expect(serialized).toMatchSnapshot();
-    });
-});
-
-describe('matches test renderer snapshot', () => {
-    it('serializes the styles', () => {
-        const output = renderer.create(
-            <ToggleSwitch checked={true} onChange={() => null} />
-        );
-        expect(output).toMatchSnapshot();
     });
 });

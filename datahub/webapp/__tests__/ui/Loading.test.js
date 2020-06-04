@@ -15,11 +15,6 @@ describe('matches enzyme snapshots', () => {
         let serialized = toJson(wrapper);
         expect(serialized).toMatchSnapshot();
     });
-    it('matches snapshot', () => {
-        let wrapper = shallow(<Loading item="test">children</Loading>);
-        let serialized = toJson(wrapper);
-        expect(serialized).toMatchSnapshot();
-    });
 });
 
 describe('matches test renderer snapshot', () => {

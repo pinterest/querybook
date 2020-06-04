@@ -11,24 +11,7 @@ exports[`matches enzyme snapshots matches snapshot 1`] = `
       onChange={[Function]}
       type="checkbox"
     />
-
-  </label>
-</div>
-`;
-
-exports[`matches test renderer snapshot serializes the styles 1`] = `
-<div
-  className="Checkbox"
->
-  <label
-    className=""
-  >
-    <input
-      onChange={[Function]}
-      type="checkbox"
-    />
-
-
+     
   </label>
 </div>
 `;
