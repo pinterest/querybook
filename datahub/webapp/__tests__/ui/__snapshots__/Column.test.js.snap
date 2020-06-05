@@ -18,13 +18,13 @@ exports[`matches enzyme snapshots matches snapshot 1`] = `
     display: flex;
     margin-left: -12px;
     margin-right: -12px;
-    margin-top: -12px;
+    margin-top: -8px;
 
     .columns:last-child {
-        margin-bottom: -12px;
+        margin-bottom: -8px;
     }
     .columns:not(:last-child) {
-        margin-bottom: 12px;
+        margin-bottom: 8px;
     }
 ",
         ],
@@ -52,7 +52,7 @@ exports[`matches enzyme snapshots matches snapshot 1`] = `
 
 exports[`matches test renderer snapshot serializes the styles 1`] = `
 <div
-  className="sc-bdVaJa Columns bLpCji"
+  className="sc-bdVaJa Columns cbtqjA"
 >
   <div
     className="sc-bwzfXH Column iypiRz"
