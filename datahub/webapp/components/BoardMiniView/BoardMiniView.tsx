@@ -7,23 +7,24 @@ import {
     deleteBoard,
     deleteBoardItem,
 } from 'redux/board/action';
-import { sendConfirm, sendNotification } from 'lib/dataHubUI';
-import { Loading } from 'ui/Loading/Loading';
-import { Title } from 'ui/Title/Title';
-import { Divider } from 'ui/Divider/Divider';
-
-import { IconButton } from 'ui/Button/IconButton';
-import { Level, LevelItem } from 'ui/Level/Level';
-import { BoardCreateUpdateModal } from 'components/BoardCreateUpdateModal/BoardCreateUpdateModal';
-import { SeeMoreText } from 'ui/SeeMoreText/SeeMoreText';
-
-import './BoardMiniView.scss';
-import { BoardItemType } from 'const/board';
 import { boardDataDocSelector, boardTableSelector } from 'redux/board/selector';
+import { sendConfirm, sendNotification } from 'lib/dataHubUI';
 import { IDataDoc, emptyDataDocTitleMessage } from 'const/datadoc';
 import { IDataTable } from 'const/metastore';
-import { Icon } from 'ui/Icon/Icon';
+import { BoardItemType } from 'const/board';
 import { navigateWithinEnv } from 'lib/utils/query-string';
+
+import { BoardCreateUpdateModal } from 'components/BoardCreateUpdateModal/BoardCreateUpdateModal';
+
+import { Divider } from 'ui/Divider/Divider';
+import { Icon } from 'ui/Icon/Icon';
+import { IconButton } from 'ui/Button/IconButton';
+import { Level, LevelItem } from 'ui/Level/Level';
+import { Loading } from 'ui/Loading/Loading';
+import { SeeMoreText } from 'ui/SeeMoreText/SeeMoreText';
+import { Title } from 'ui/Title/Title';
+
+import './BoardMiniView.scss';
 
 interface IProps {
     id: number;
@@ -92,6 +93,8 @@ export const BoardMiniView: React.FunctionComponent<IProps> = ({
                         />
                     </LevelItem>
                 </Level>
+            </div>
+            <div className="BoardMiniView-top mt8 mh12 mb4">
                 <Title className="one-line-ellipsis" size={5}>
                     {board.name}
                 </Title>
@@ -99,7 +102,6 @@ export const BoardMiniView: React.FunctionComponent<IProps> = ({
                     <SeeMoreText text={board.description} />
                 </p>
             </div>
-
             <Divider
                 marginTop={'2px'}
                 marginBottom={'2px'}

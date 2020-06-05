@@ -105,7 +105,7 @@
     }
     &.inverted {
         background-color: var(--color-accent-bg);
-        color: inherit;
+        color: var(--color-accent-text);
         font-weight: 500;
     }
 
