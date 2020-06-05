@@ -1,7 +1,6 @@
 import React from 'react';
 
 import { storiesOf } from '@storybook/react';
-import { action } from '@storybook/addon-actions';
 import { linkTo } from '@storybook/addon-links';
 
 import { Welcome } from '@storybook/react/demo';
@@ -9,19 +8,25 @@ import { Welcome } from '@storybook/react/demo';
 import { Button } from 'ui/Button/Button';
 import { CopyButton } from 'ui/CopyButton/CopyButton';
 import { AsyncButton } from 'ui/AsyncButton/AsyncButton';
-import { Modal } from 'ui/Modal/Modal';
 import { DebouncedInput } from 'ui/DebouncedInput/DebouncedInput';
 import { Select, makeSelectOptions } from 'ui/Select/Select';
 import { Tabs } from 'ui/Tabs/Tabs';
 import { ToggleSwitch } from 'ui/ToggleSwitch/ToggleSwitch';
 
+import 'stylesheets/_html.scss';
+import 'stylesheets/_utilities.scss';
+import 'stylesheets/_variables.scss';
+import 'index.scss';
+
 const styles = {
     display: 'flex',
     justifyContent: 'center',
-    padding: '10px',
-    backgroundColor: '#efefef',
+    alignItems: 'center',
+    height: '100%',
+    width: '100%',
+    backgroundColor: 'var(--bg-color)',
 };
-const CenterDecorator = storyFn => <div style={styles}>{storyFn()}</div>;
+const CenterDecorator = (storyFn) => <div style={styles}>{storyFn()}</div>;
 
 storiesOf('Welcome', module).add('to Storybook', () => (
     <Welcome showApp={linkTo('Button')} />
@@ -31,7 +36,7 @@ storiesOf('Button', module)
     .addDecorator(CenterDecorator)
     .add('Button', () => (
         <Button
-            onClick={e => {
+            onClick={(e) => {
                 e.preventDefault();
             }}
         >
@@ -41,7 +46,7 @@ storiesOf('Button', module)
     .add('Disabled Button', () => (
         <Button
             disabled
-            onClick={e => {
+            onClick={(e) => {
                 e.preventDefault();
             }}
         >
@@ -51,7 +56,7 @@ storiesOf('Button', module)
     .add('Borderless Button', () => (
         <Button
             borderless
-            onClick={e => {
+            onClick={(e) => {
                 e.preventDefault();
             }}
         >
@@ -61,7 +66,7 @@ storiesOf('Button', module)
     .add('Pushable Button', () => (
         <Button
             pushable
-            onClick={e => {
+            onClick={(e) => {
                 e.preventDefault();
             }}
         >
@@ -71,7 +76,7 @@ storiesOf('Button', module)
     .add('Transparent Button', () => (
         <Button
             transparent
-            onClick={e => {
+            onClick={(e) => {
                 e.preventDefault();
             }}
         >
@@ -90,7 +95,7 @@ storiesOf('Async Button', module)
     .add('Async Button', () => (
         <AsyncButton
             children={['Async ', 'Button']}
-            onClick={e => {
+            onClick={(e) => {
                 e.preventDefault();
             }}
         />
@@ -99,7 +104,7 @@ storiesOf('Async Button', module)
         <AsyncButton
             children={['Borderless ', 'Async ', 'Button']}
             borderless
-            onClick={e => {
+            onClick={(e) => {
                 e.preventDefault();
             }}
         />
@@ -108,46 +113,11 @@ storiesOf('Async Button', module)
         <AsyncButton
             children={['Transparent ', 'Async ', 'Button']}
             transparent
-            onClick={e => {
+            onClick={(e) => {
                 e.preventDefault();
             }}
         />
     ));
-
-storiesOf('Modal', module)
-    .addDecorator(CenterDecorator)
-    .add('Modal', () =>
-        React.createElement(() => {
-            const modalRootRef = React.useRef();
-
-            const [modal, setModal] = React.useState(<div />);
-
-            React.useEffect(() => {
-                const modalStyle = {
-                    color: 'white',
-                };
-
-                setModal(
-                    <Modal
-                        className="wide"
-                        onHide={action('hide')}
-                        modalRoot={modalRootRef.current}
-                    >
-                        <div style={modalStyle} className="CommandKModal">
-                            <div className="section">Example Modal</div>
-                        </div>
-                    </Modal>
-                );
-            }, []);
-
-            return (
-                <div>
-                    <div ref={modalRootRef} id="modal-root" />
-                    {modal}
-                </div>
-            );
-        })
-    );
 
 storiesOf('Debounced Input', module)
     .addDecorator(CenterDecorator)
@@ -159,7 +129,7 @@ storiesOf('Debounced Input', module)
                 className: 'input',
                 type: 'text',
             }}
-            onChange={e => 0}
+            onChange={(e) => 0}
             value=""
         />
     ))
@@ -171,7 +141,7 @@ storiesOf('Debounced Input', module)
                 className: 'input',
                 type: 'text',
             }}
-            onChange={e => 0}
+            onChange={(e) => 0}
             value="test value"
         />
     ))
@@ -183,7 +153,7 @@ storiesOf('Debounced Input', module)
                 className: 'input',
                 type: 'text',
             }}
-            onChange={e => 0}
+            onChange={(e) => 0}
             value=""
         />
     ))
@@ -196,7 +166,7 @@ storiesOf('Debounced Input', module)
                 className: 'input',
                 type: 'text',
             }}
-            onChange={e => 0}
+            onChange={(e) => 0}
             value=""
         />
     ));
@@ -207,7 +177,7 @@ storiesOf('Select', module)
         React.createElement(() => {
             const [value, setValue] = React.useState(1);
 
-            const onChange = newVal => {
+            const onChange = (newVal) => {
                 setValue(newVal.target.value);
             };
 
@@ -229,7 +199,7 @@ storiesOf('Tabs', module)
         React.createElement(() => {
             const [selectedTabKey, setSelectedTabKey] = React.useState('one');
 
-            const onSelect = newKey => {
+            const onSelect = (newKey) => {
                 setSelectedTabKey(newKey);
             };
 
