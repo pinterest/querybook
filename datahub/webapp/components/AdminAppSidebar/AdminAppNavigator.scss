@@ -22,28 +22,6 @@
     .AdminAppNavigator-items {
         overflow-x: hidden;
         overflow-y: auto;
-
-        .AdminAppNavigator-item {
-            cursor: pointer;
-            overflow: hidden;
-            display: flex;
-            align-items: center;
-            border-left: solid 6px transparent;
-            padding: 4px;
-            color: var(--dark-text-color);
-            font-size: var(--small-text-size);
-            line-height: 27px;
-            white-space: nowrap;
-            text-overflow: ellipsis;
-            user-select: none;
-            &:hover {
-                background-color: var(--color-accent-bg-hover);
-            }
-            &.selected {
-                border-color: var(--color-accent-bg);
-                font-weight: var(--bold-font);
-            }
-        }
         .IconButton {
             position: absolute;
             bottom: 0px;

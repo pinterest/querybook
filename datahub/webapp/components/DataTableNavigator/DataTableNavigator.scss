@@ -21,26 +21,6 @@
         }
     }
 
-    .navigator-table-row {
-        overflow: hidden;
-        white-space: nowrap;
-        text-overflow: ellipsis;
-
-        border-left: solid 6px transparent;
-        padding: 4px;
-        color: var(--dark-text-color);
-        cursor: pointer;
-
-        &:not(.selected):hover {
-            background-color: var(--color-accent-bg-hover);
-        }
-
-        &.selected {
-            border-color: var(--color-accent-bg);
-            font-weight: var(--bold-font);
-        }
-    }
-
     .table-scroll-wrapper {
         flex: 1;
     }

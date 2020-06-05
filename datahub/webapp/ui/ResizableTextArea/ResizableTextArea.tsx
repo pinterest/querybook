@@ -31,10 +31,6 @@ const StyledTextarea = styled.textarea`
     color: inherit;
     padding: 8px;
 
-    &::placeholder {
-        color: var(--light-text-color);
-    }
-
     ${({ transparent }) =>
         transparent &&
         `
@@ -47,10 +43,6 @@ const StyledTextarea = styled.textarea`
     &:disabled {
         cursor: default;
         color: unset;
-    }
-
-    &:hover {
-        border-color: var(--border-color);
     }
 `;
 

@@ -1,5 +1,3 @@
-@import './../../scss_variables.scss';
-
 .DataDocNavigator {
     display: flex;
     flex-direction: column;
@@ -49,42 +47,10 @@
         padding: 2px 10px;
         font-size: var(--xsmall-text-size);
     }
-
-    .DataDocGridItem {
-        border-left: solid 6px transparent;
-        padding: 4px 10px 4px 4px;
-        color: var(--dark-text-color);
-        cursor: pointer;
-        user-select: none;
-        display: flex;
-        align-items: center;
-
-        &:hover {
-            background-color: var(--color-accent-bg-hover);
-        }
-
-        &.selected {
-            border-color: var(--color-accent-bg);
-            font-weight: var(--bold-font);
-        }
-
-        .analysis-title {
-            padding: 0px 4px;
-            font-size: var(--small-text-size);
-            line-height: 27px;
-            flex: 1;
-            @include one-line-ellipsis();
-
-            &.empty-title {
-                opacity: 0.7;
-                font-style: italic;
-            }
-        }
-    }
 }
 
 @-moz-document url-prefix() {
-    .DataDocNavigator .data-docs .analysis.list-item {
+    .DataDocNavigator .data-docs .list-item {
         white-space: nowrap;
     }
 }

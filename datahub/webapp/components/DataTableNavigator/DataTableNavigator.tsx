@@ -18,6 +18,7 @@ import { Select, makeSelectOptions } from 'ui/Select/Select';
 import { Tabs } from 'ui/Tabs/Tabs';
 
 import './DataTableNavigator.scss';
+import { ListLink } from 'ui/Link/ListLink';
 
 const DATA_TABLE_TABS = [
     {
@@ -119,17 +120,17 @@ class DataTableNavigatorComponent extends React.PureComponent<
     public tableRowRenderer(table: ITableResultWithSelection) {
         const tableName = `${table.schema}.${table.name}`;
         const className = classNames({
-            'navigator-table-row': true,
             selected: table.selected,
         });
 
         return (
-            <div
+            <ListLink
                 className={className}
                 onClick={this.handleTableRowClick.bind(this, table.id)}
+                isRow
             >
                 {tableName}
-            </div>
+            </ListLink>
         );
     }
 

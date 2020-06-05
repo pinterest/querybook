@@ -1,9 +1,9 @@
+import React from 'react';
 import * as classNames from 'classnames';
 import { findIndex } from 'lodash';
 import { decorate } from 'core-decorators';
 import { bind } from 'lodash-decorators';
 import memoizeOne from 'memoize-one';
-import React from 'react';
 import { connect } from 'react-redux';
 import {
     withRouter,
@@ -16,19 +16,17 @@ import { sendConfirm } from 'lib/dataHubUI';
 import { dataDocsOrderedSelector } from 'redux/dataDoc/selector';
 import { currentEnvironmentSelector } from 'redux/environment/selector';
 import * as dataDocActions from 'redux/dataDoc/action';
+import { IStoreState, Dispatch } from 'redux/store/types';
 import { IDataDoc } from 'const/datadoc';
 
-import { IStoreState, Dispatch } from 'redux/store/types';
-
 import { CreateDataDocButton } from 'components/CreateDataDocButton/CreateDataDocButton';
-import { DebouncedInput } from 'ui/DebouncedInput/DebouncedInput';
-import { Tabs, ITabItem } from 'ui/Tabs/Tabs';
-import { Loading } from 'ui/Loading/Loading';
-
 import { DataDocGridItem } from './DataDocGridItem';
 
-import './DataDocNavigator.scss';
+import { Tabs, ITabItem } from 'ui/Tabs/Tabs';
+import { Loading } from 'ui/Loading/Loading';
 import { SearchBar } from 'ui/SearchBar/SearchBar';
+
+import './DataDocNavigator.scss';
 
 const navigatorTabs: ITabItem[] = [
     {
@@ -249,7 +247,6 @@ class DataDocNavigatorComponent extends React.Component<
             const docId = dataDoc.id;
 
             const className = classNames({
-                analysis: true,
                 selected: selectedDataDocId === docId,
             });
 

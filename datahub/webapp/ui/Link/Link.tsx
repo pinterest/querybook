@@ -23,7 +23,7 @@ function isInternalUrl(url: LocationDescriptor): boolean {
 
 export interface ILinkProps {
     to?: LocationDescriptor;
-    onClick?: (to: LocationDescriptor) => any;
+    onClick?: (to: any) => any;
     newTab?: boolean;
 
     className?: string;
@@ -42,7 +42,11 @@ export class Link extends React.PureComponent<ILinkProps> {
         const { to, onClick, newTab } = this.props;
         const isCmdDown = e.metaKey;
         if (onClick) {
-            onClick(to);
+            if (to) {
+                onClick(to);
+            } else {
+                onClick(e);
+            }
         } else if (isCmdDown || newTab) {
             openNewTab(to);
         } else {

@@ -36,13 +36,13 @@
 }
 
 .empty-message {
+    margin-top: 20%;
+    padding: 0px 20%;
     text-align: center;
     font-size: var(--xxxlarge-text-size);
     font-weight: bold;
     color: var(--border-color);
-    margin-top: 20%;
     user-select: none;
-    padding: 0px 20%;
 }
 
 .ReactVirtualized__Grid {

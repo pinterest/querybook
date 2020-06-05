@@ -19,26 +19,6 @@
             }
         }
     }
-
-    .query-snippet-row {
-        display: block;
-        overflow: hidden;
-        white-space: nowrap;
-        text-overflow: ellipsis;
-        border-left: solid 6px transparent;
-        padding: 4px;
-        color: var(--dark-text-color);
-        cursor: pointer;
-        user-select: none;
-        &:not(.selected):hover {
-            background-color: var(--color-accent-bg-hover);
-        }
-
-        &.selected {
-            border-color: var(--color-accent-bg);
-            font-weight: var(--bold-font);
-        }
-    }
 }
 
 .QuerySnippetFilterPicker {

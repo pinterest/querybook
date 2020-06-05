@@ -25,6 +25,7 @@ import { Tabs } from 'ui/Tabs/Tabs';
 import { Popover } from 'ui/Popover/Popover';
 
 import './QuerySnippetNavigator.scss';
+import { ListLink } from 'ui/Link/ListLink';
 
 const NAVIGATOR_TABS = [
     {
@@ -139,15 +140,20 @@ class QuerySnippetNavigatorComponent extends React.PureComponent<
     }
 
     @bind
-    public onQuerySnippetClick(item: IQuerySnippet) {
-        if (this.props.onQuerySnippetSelect) {
-            this.props.onQuerySnippetSelect(item);
-        }
+    public onTabSelect(selectedTabKey) {
+        this.setState({ selectedTabKey }, this.searchQuerySnippets);
     }
 
     @bind
-    public onTabSelect(selectedTabKey) {
-        this.setState({ selectedTabKey }, this.searchQuerySnippets);
+    public snippetRowRenderer(snippet: IQuerySnippet) {
+        return (
+            <ListLink
+                onClick={() => this.props.onQuerySnippetSelect(snippet)}
+                isRow
+            >
+                {snippet.title}
+            </ListLink>
+        );
     }
 
     @bind
@@ -170,9 +176,8 @@ class QuerySnippetNavigatorComponent extends React.PureComponent<
             <InfinityScroll<IQuerySnippet>
                 elements={snippets}
                 labelField={'title'}
-                onClick={this.onQuerySnippetClick}
-                itemClass="query-snippet-row"
                 itemHeight={28}
+                itemRenderer={this.snippetRowRenderer}
             />
         );
 
