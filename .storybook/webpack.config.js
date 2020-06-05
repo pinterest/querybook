@@ -4,22 +4,29 @@ const path = require('path');
 module.exports = async ({ config }) => {
     config.module.rules.push({
         test: /\.(css|sass|scss)$/,
+        // use: [
+        //     MiniCssExtractPlugin.loader,
+        //     'css-loader',
+        //     {
+        //         loader: 'postcss-loader',
+        //         options: {
+        //             ident: 'postcss',
+        //             plugins: () => [postcssPresetEnv(/* pluginOptions */)],
+        //         },
+        //     },
+        //     {
+        //         loader: 'sass-loader',
+        //         options: {
+        //             includePaths: ['node_modules'],
+        //         },
+        //     },
+        // ],
         use: [
-            MiniCssExtractPlugin.loader,
+            'style-loader',
+            'postcss-loader',
+            'sass-loader',
             'css-loader',
-            {
-                loader: 'postcss-loader',
-                options: {
-                    ident: 'postcss',
-                    plugins: () => [postcssPresetEnv(/* pluginOptions */)],
-                },
-            },
-            {
-                loader: 'sass-loader',
-                options: {
-                    includePaths: ['node_modules'],
-                },
-            },
+            'less-loader',
         ],
         include: path.resolve(__dirname, 'datahub/webapp/'),
     });
