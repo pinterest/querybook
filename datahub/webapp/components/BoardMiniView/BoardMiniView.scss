@@ -7,6 +7,11 @@
         padding: 10px 10px 0px 10px;
         .board-header-controls {
             visibility: hidden;
+            .Icon {
+                svg {
+                    padding: 8%;
+                }
+            }
         }
     }
     &:hover {
