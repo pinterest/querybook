@@ -76,11 +76,13 @@
     &.cancel {
         border-color: var(--color-false-dark);
         color: var(--color-false-dark);
+        font-weight: 500;
     }
 
     &.confirm {
-        border-color: var(--light-text-color);
-        color: var(--light-text-color);
+        border-color: var(--color-true-dark);
+        color: var(--color-true-dark);
+        font-weight: 500;
     }
 
     // props

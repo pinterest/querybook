@@ -8,7 +8,7 @@ const StyledStatusIcon = styled.div`
     }
 
     &.status-in-progress {
-        color: orange;
+        color: var(--color-warning-dark);
     }
 
     &.status-failure {
