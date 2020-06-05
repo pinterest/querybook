@@ -2,6 +2,7 @@
     background-color: var(--bg-color);
     color: var(--text-color);
     user-select: none;
+    border-radius: 3px;
 
     .MenuItem,
     .MenuInfoItem {
@@ -30,6 +31,14 @@
             a {
                 color: inherit;
             }
+        }
+        &:first-child {
+            border-top-left-radius: 3px;
+            border-top-right-radius: 3px;
+        }
+        &:last-child {
+            border-bottom-left-radius: 3px;
+            border-bottom-right-radius: 3px;
         }
     }
 
