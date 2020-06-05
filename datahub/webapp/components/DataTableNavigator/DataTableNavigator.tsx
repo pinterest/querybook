@@ -19,6 +19,7 @@ import { Select, makeSelectOptions } from 'ui/Select/Select';
 import { Tabs } from 'ui/Tabs/Tabs';
 
 import './DataTableNavigator.scss';
+import { ListLink } from 'ui/Link/ListLink';
 
 const DATA_TABLE_TABS = [
     {

@@ -27,6 +27,7 @@ import { SearchBar } from 'ui/SearchBar/SearchBar';
 import { Tabs } from 'ui/Tabs/Tabs';
 
 import './QuerySnippetNavigator.scss';
+import { ListLink } from 'ui/Link/ListLink';
 
 const NAVIGATOR_TABS = [
     {
