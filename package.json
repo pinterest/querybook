@@ -35,7 +35,6 @@
         "@babel/preset-react": "^7.7.4",
         "@babel/preset-typescript": "^7.7.4",
         "axios": "0.18.0",
-        "bulma": "0.8.0",
         "chart.js": "^2.8.0",
         "chartjs-plugin-datalabels": "^0.7.0",
         "classnames": "2.2.6",
