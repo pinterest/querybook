@@ -16,16 +16,17 @@ import { IStoreState, Dispatch } from 'redux/store/types';
 
 import { QuerySnippetComposer } from 'components/QuerySnippetComposer/QuerySnippetComposer';
 import { QuerySnippetFilterPicker } from './QuerySnippetFilterPicker';
-import { Loading } from 'ui/Loading/Loading';
-import { InfinityScroll } from 'ui/InfinityScroll/InfinityScroll';
+
 import { IconButton } from 'ui/Button/IconButton';
+import { InfinityScroll } from 'ui/InfinityScroll/InfinityScroll';
+import { ListLink } from 'ui/Link/ListLink';
+import { Loading } from 'ui/Loading/Loading';
 import { Modal } from 'ui/Modal/Modal';
+import { Popover } from 'ui/Popover/Popover';
 import { SearchBar } from 'ui/SearchBar/SearchBar';
 import { Tabs } from 'ui/Tabs/Tabs';
-import { Popover } from 'ui/Popover/Popover';
 
 import './QuerySnippetNavigator.scss';
-import { ListLink } from 'ui/Link/ListLink';
 
 const NAVIGATOR_TABS = [
     {

@@ -1,8 +1,8 @@
+import React from 'react';
 import classNames from 'classnames';
 import { decorate } from 'core-decorators';
 import { bind } from 'lodash-decorators';
 import memoizeOne from 'memoize-one';
-import React from 'react';
 import { connect } from 'react-redux';
 import { withRouter, RouteComponentProps } from 'react-router-dom';
 
@@ -13,12 +13,12 @@ import { queryMetastoresSelector } from 'redux/dataSources/selector';
 import { IQueryMetastore } from 'const/metastore';
 
 import { InfinityScroll } from 'ui/InfinityScroll/InfinityScroll';
+import { ListLink } from 'ui/Link/ListLink';
 import { SearchBar } from 'ui/SearchBar/SearchBar';
 import { Select, makeSelectOptions } from 'ui/Select/Select';
 import { Tabs } from 'ui/Tabs/Tabs';
 
 import './DataTableNavigator.scss';
-import { ListLink } from 'ui/Link/ListLink';
 
 const DATA_TABLE_TABS = [
     {

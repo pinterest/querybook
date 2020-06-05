@@ -51,15 +51,15 @@ export const BoardList: React.FunctionComponent<IProps> = ({
             const className = classNames({
                 selected,
             });
-            const publicIcon = publicBoard && <Icon name="users" size={12} />;
+            const publicIcon = publicBoard && 'users';
 
             return (
                 <ListLink
                     className={className}
                     onClick={() => onBoardClick(board)}
                     isRow
+                    icon={publicIcon}
                 >
-                    {publicIcon}
                     {name}
                 </ListLink>
             );
