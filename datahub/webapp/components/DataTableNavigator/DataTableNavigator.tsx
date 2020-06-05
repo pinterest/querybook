@@ -163,7 +163,7 @@ class DataTableNavigatorComponent extends React.PureComponent<
             queryMetastores.length > 1 ? (
                 <div className="navigator-metastore-picker">
                     <Select
-                        className="is-small"
+                        className="small"
                         value={metastoreId}
                         onChange={this.handleMetastoreChange}
                         transparent

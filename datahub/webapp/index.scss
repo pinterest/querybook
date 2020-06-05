@@ -12,16 +12,6 @@
     font-size: var(--small-text-size);
 }
 
-html,
-body {
-    margin: 0px;
-    padding: 0px;
-    height: 100%;
-    overflow: auto !important;
-    // need to override both bulma and bootrap
-    background-color: var(--bg-color) !important;
-}
-
 .app-splash {
     width: 100%;
     height: 100%;
@@ -59,6 +49,4 @@ body {
     outline: none;
 }
 
-@import './stylesheets/_bulma_override.scss';
-@import '~bulma/bulma';
 @import './stylesheets/_html.scss';

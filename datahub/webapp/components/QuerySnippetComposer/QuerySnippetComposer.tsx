@@ -254,7 +254,7 @@ class QuerySnippetComposerComponent extends React.PureComponent<
         }
 
         const contentDOM = (
-            <div className="content">
+            <div>
                 <div>
                     Created by: <UserName uid={querySnippet.created_by} /> on{' '}
                     {generateFormattedDate(querySnippet.created_at)}

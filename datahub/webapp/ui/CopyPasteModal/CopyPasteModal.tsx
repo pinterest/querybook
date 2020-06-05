@@ -30,7 +30,7 @@ export const CopyPasteModal: React.FunctionComponent<IProps> = (props) => {
         <Modal onHide={onHide} title="Copy Paste Modal">
             <div className="CopyPasteModal">
                 <div>
-                    <div className="content">{textDOM}</div>
+                    <div>{textDOM}</div>
                 </div>
                 <div className="right-align">{actionsDOM}</div>
             </div>

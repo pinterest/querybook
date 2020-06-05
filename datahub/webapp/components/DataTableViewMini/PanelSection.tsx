@@ -82,7 +82,7 @@ export const SubPanelSection: React.FunctionComponent<{
     return (
         <StyledSubPanelSection>
             <div>
-                <SubPanelTitle className="subtitle is-6">{title}</SubPanelTitle>
+                <SubPanelTitle>{title}</SubPanelTitle>
             </div>
             <div>{children}</div>
         </StyledSubPanelSection>

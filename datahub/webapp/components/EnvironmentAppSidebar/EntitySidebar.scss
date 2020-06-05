@@ -8,26 +8,4 @@
     flex-direction: column;
     justify-content: space-between;
     text-align: center;
-
-    .AppIconButtonLink-link-wrapper {
-        width: 100%;
-        height: 50px;
-        display: flex;
-        justify-content: center;
-        align-items: center;
-
-        &.is-active {
-            a {
-                color: #f31f64;
-            }
-        }
-
-        a {
-            color: var(--text-color);
-
-            &:hover {
-                color: var(--text-hover-color);
-            }
-        }
-    }
 }

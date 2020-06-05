@@ -116,7 +116,7 @@ export const DataDocTemplateVarForm: React.FunctionComponent<IDataDocTemplateVar
                                 </div>
                                 <div>
                                     <InfoButton layout={['bottom', 'right']}>
-                                        <div className="content">
+                                        <div>
                                             <p>
                                                 {'Put {{variable_name}} in your query and it will get substituted with ' +
                                                     'variable_value. Some variables are provided automatically. Such as:'}

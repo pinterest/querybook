@@ -7,7 +7,6 @@
 
     .data-docs {
         overflow-y: auto;
-        padding-top: 4px;
     }
 
     .IconButton {
@@ -52,21 +51,20 @@
     }
 
     .DataDocGridItem {
-        margin: 4px 0px;
         border-left: solid 6px transparent;
-        padding: 0px 10px 0px 4px;
+        padding: 4px 10px 4px 4px;
         color: var(--dark-text-color);
         cursor: pointer;
         user-select: none;
         display: flex;
         align-items: center;
 
-        &:not(.selected):hover {
+        &:hover {
             background-color: var(--color-accent-bg-hover);
         }
 
         &.selected {
-            border-color: var(--color-accent);
+            border-color: var(--color-accent-bg);
             font-weight: var(--bold-font);
         }
 

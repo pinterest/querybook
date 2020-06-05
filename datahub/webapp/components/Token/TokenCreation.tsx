@@ -29,7 +29,7 @@ export const TokenCreation: React.FunctionComponent<IProps> = () => {
                     <div className="token-copy-button flex-row">
                         <CopyButton copyText={token} title="Copy" />
                         <InfoButton layout={['bottom']}>
-                            <div className="content">
+                            <div>
                                 <b>{'usage instructions'}</b>
                                 <br />
                                 <span>{'in request header, include:'}</span>

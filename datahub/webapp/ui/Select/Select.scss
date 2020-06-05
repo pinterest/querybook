@@ -53,4 +53,10 @@
             width: 100%;
         }
     }
+
+    &.small {
+        select {
+            font-size: var(--xxsmall-text-size);
+        }
+    }
 }

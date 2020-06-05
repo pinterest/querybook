@@ -321,7 +321,7 @@ export const AdminQueryEngine: React.FunctionComponent<IProps> = ({
                                 <div className="AdminForm-section-title">
                                     Executor Params
                                 </div>
-                                <div className="dh-hr" />
+                                <hr className="dh-hr" />
                             </div>
                             <div className="AdminForm-section-content">
                                 <Loader
