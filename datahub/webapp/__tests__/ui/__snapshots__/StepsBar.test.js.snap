@@ -18,7 +18,7 @@ exports[`matches enzyme snapshots matches snapshot 2`] = `
     className="StepsBar-ul"
   >
     <li
-      className=""
+      className="StepsBar-active"
       key="0"
       style={
         Object {

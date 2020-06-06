@@ -21,9 +21,15 @@ import { Icon } from 'ui/Icon/Icon';
 import { KeyboardKey } from 'ui/KeyboardKey/KeyboardKey';
 import { ListLink } from 'ui/Link/ListLink';
 import { ListMenu } from 'ui/Menu/ListMenu';
+import { ProgressBar } from 'ui/ProgressBar/ProgressBar';
+import { StepsBar } from 'ui/StepsBar/StepsBar';
 import { SimpleReactSelect } from 'ui/SimpleReactSelect/SimpleReactSelect';
+import { StatusIcon } from 'ui/StatusIcon/StatusIcon';
 import { Select, makeSelectOptions } from 'ui/Select/Select';
 import { Tabs } from 'ui/Tabs/Tabs';
+import { Tag, TagGroup } from 'ui/Tag/Tag';
+import { Timer } from 'ui/Timer/Timer';
+import { ToggleButton } from 'ui/ToggleButton/ToggleButton';
 import { ToggleSwitch } from 'ui/ToggleSwitch/ToggleSwitch';
 
 import 'stylesheets/_html.scss';
@@ -85,8 +91,28 @@ storiesOf('Button', module)
             <Button small>Small Button</Button>
         </>
     ))
-    .add('Icon Button', () => <IconButton name="heart" tooltip="Icon Button" />)
-    .add('Info Button', () => <InfoButton>Info Button</InfoButton>);
+    .add('Icon Button', () => (
+        <IconButton icon="heart" tooltip="Icon Button" onClick={() => null} />
+    ))
+    .add('Info Button', () => (
+        <InfoButton onClick={() => null}>Info Button</InfoButton>
+    ))
+    .add('Toggle Button', () => (
+        <>
+            <div className="mb12">
+                <ToggleButton
+                    checked
+                    title="Toggle Button - On"
+                    onChange={() => null}
+                />
+            </div>
+            <ToggleButton
+                checked={false}
+                title="Toggle Button - Off"
+                onChange={() => null}
+            />
+        </>
+    ));
 
 storiesOf('Card', module)
     .addDecorator(CenterDecorator)
@@ -150,99 +176,6 @@ storiesOf('Copy Button', module)
 storiesOf('DataHub Logo', module)
     .addDecorator(CenterDecorator)
     .add('DataHub Logo', () => <DataHubLogo />);
-
-storiesOf('Form Elements', module)
-    .addDecorator(CenterDecorator)
-    .add('Debounced Input', () => (
-        <>
-            <DebouncedInput
-                flex
-                inputProps={{
-                    placeholder: 'placeholder',
-                    className: 'input',
-                    type: 'text',
-                }}
-                onChange={() => null}
-                value=""
-                className="mb8"
-            />
-            <DebouncedInput
-                flex
-                inputProps={{
-                    placeholder: 'placeholder',
-                    className: 'input',
-                    type: 'text',
-                }}
-                onChange={() => null}
-                value="with value"
-                className="mb8"
-            />
-            <DebouncedInput
-                transparent
-                inputProps={{
-                    placeholder: 'placeholder',
-                    className: 'input',
-                    type: 'text',
-                }}
-                onChange={() => null}
-                value="transparent"
-                className="mb8"
-            />
-        </>
-    ))
-    .add('Checkbox', () => (
-        <>
-            <Checkbox title="checkbox" onChange={() => null} />
-            <Checkbox
-                title="checked checkbox"
-                onChange={() => null}
-                value={true}
-                className="mt8"
-            />
-        </>
-    ))
-    .add('Select', () =>
-        React.createElement(() => {
-            const [value, setValue] = React.useState(1);
-
-            const onChange = (newVal) => {
-                setValue(newVal.target.value);
-            };
-
-            return (
-                <Select value={value} onChange={onChange}>
-                    {makeSelectOptions([
-                        { label: 'option one', value: 1, key: 1 },
-                        { label: 'option two', value: 2, key: 2 },
-                    ])}
-                </Select>
-            );
-        })
-    )
-    .add('Simple React Select', () =>
-        React.createElement(() => {
-            const [value, setValue] = React.useState(1);
-
-            const onChange = (newVal) => {
-                setValue(newVal.target.value);
-            };
-
-            return (
-                <SimpleReactSelect value={value} onChange={onChange}>
-                    {makeSelectOptions([
-                        { label: 'option one', value: 1, key: 1 },
-                        { label: 'option two', value: 2, key: 2 },
-                        {
-                            label: 'option color dot',
-                            value: 3,
-                            key: 3,
-                            color: '#35B5BB',
-                        },
-                    ])}
-                </SimpleReactSelect>
-            );
-        })
-    );
 
 storiesOf('Disabled Section', module)
     .addDecorator(CenterDecorator)
@@ -321,9 +254,109 @@ storiesOf('Dropdown', module)
         </>
     ));
 
-storiesOf('Icon', module)
+storiesOf('Form Elements', module)
     .addDecorator(CenterDecorator)
-    .add('Icon', () => <Icon name="heart" />);
+    .add('Debounced Input', () => (
+        <>
+            <DebouncedInput
+                flex
+                inputProps={{
+                    placeholder: 'placeholder',
+                    className: 'input',
+                    type: 'text',
+                }}
+                onChange={() => null}
+                value=""
+                className="mb8"
+            />
+            <DebouncedInput
+                flex
+                inputProps={{
+                    placeholder: 'placeholder',
+                    className: 'input',
+                    type: 'text',
+                }}
+                onChange={() => null}
+                value="with value"
+                className="mb8"
+            />
+            <DebouncedInput
+                transparent
+                inputProps={{
+                    placeholder: 'placeholder',
+                    className: 'input',
+                    type: 'text',
+                }}
+                onChange={() => null}
+                value="transparent"
+                className="mb8"
+            />
+        </>
+    ))
+    .add('Checkbox', () => (
+        <>
+            <Checkbox title="checkbox" onChange={() => null} />
+            <Checkbox
+                title="checked checkbox"
+                onChange={() => null}
+                value={true}
+                className="mt8"
+            />
+        </>
+    ))
+    .add('Select', () =>
+        React.createElement(() => {
+            const [value, setValue] = React.useState(1);
+
+            const onChange = (newVal) => {
+                setValue(newVal.target.value);
+            };
+
+            return (
+                <Select value={value} onChange={onChange}>
+                    {makeSelectOptions([
+                        { label: 'option one', value: 1, key: 1 },
+                        { label: 'option two', value: 2, key: 2 },
+                    ])}
+                </Select>
+            );
+        })
+    )
+    .add('Simple React Select', () =>
+        React.createElement(() => {
+            const [value, setValue] = React.useState(1);
+
+            const onChange = (newVal) => {
+                setValue(newVal.target.value);
+            };
+
+            return (
+                <div style={{ width: '160px', alignItems: 'stretch' }}>
+                    <SimpleReactSelect
+                        value={value}
+                        onChange={onChange}
+                        options={[
+                            { label: 'option one', value: 1, key: 1 },
+                            { label: 'option two', value: 2, key: 2 },
+                        ]}
+                    />
+                </div>
+            );
+        })
+    );
+
+storiesOf('Icons', module)
+    .addDecorator(CenterDecorator)
+    .add('Icon', () => <Icon name="heart" />)
+    .add('StatusIcon', () => (
+        <>
+            <StatusIcon status="success" /> Success
+            <StatusIcon status="warning" /> Warning
+            <StatusIcon status="error" /> Error
+            <StatusIcon status="running" /> Running
+            <StatusIcon status="none" /> None
+        </>
+    ));
 
 storiesOf('Keyboard Key', module)
     .addDecorator(CenterDecorator)
@@ -332,7 +365,7 @@ storiesOf('Keyboard Key', module)
 storiesOf('List Link', module)
     .addDecorator(CenterDecorator)
     .add('List Link', () => (
-        <div styles={{ width: '160px' }}>
+        <div style={{ width: '160px' }}>
             <ListLink onClick={() => null}>List Link 1</ListLink>
             <ListLink className="selected" onClick={() => null}>
                 List Link 2 Selected
@@ -341,7 +374,58 @@ storiesOf('List Link', module)
         </div>
     ));
 
-// needs work
+storiesOf('Progress Bar', module)
+    .addDecorator(CenterDecorator)
+    .add('Progress Bar', () => (
+        <div style={{ width: '480px', alignItems: 'stretch' }}>
+            <div className="mb12">
+                Success Type - Default
+                <ProgressBar value={10} type="success" />
+            </div>
+            <div className="mb12">
+                Warning Type - with value
+                <ProgressBar value={20} type="warning" showValue />
+            </div>
+            <div className="mb12">
+                Danger Type - with value & small
+                <ProgressBar value={30} type="danger" showValue isSmall />
+            </div>
+            <div className="mb12">
+                Info Type - small
+                <ProgressBar value={40} type="info" isSmall />
+            </div>
+            <div className="mb12">
+                Light Type - Default
+                <ProgressBar value={50} type="light" />
+            </div>
+            <div className="mb12">
+                Dark Type - Default
+                <ProgressBar value={60} type="dark" />
+            </div>
+        </div>
+    ));
+
+storiesOf('Steps Bar', module)
+    .addDecorator(CenterDecorator)
+    .add('Steps Bar', () => (
+        <div style={{ width: '240px', alignItems: 'stretch' }}>
+            <StepsBar steps={['one', 'two', 'three']} activeStep={1} />
+        </div>
+    ));
+
+storiesOf('Tag', module)
+    .addDecorator(CenterDecorator)
+    .add('Tag', () => (
+        <>
+            <TagGroup>
+                <Tag>Tag Group</Tag>
+                <Tag highlighted>Highted Part</Tag>
+            </TagGroup>
+            <Tag>Tag</Tag>
+            <Tag highlighted>Highlighted Tag</Tag>
+        </>
+    ));
+
 storiesOf('Tabs', module)
     .addDecorator(CenterDecorator)
     .add('Tabs', () =>
@@ -362,6 +446,10 @@ storiesOf('Tabs', module)
             );
         })
     );
+
+storiesOf('Timer', module)
+    .addDecorator(CenterDecorator)
+    .add('Timer', () => <Timer />);
 
 storiesOf('Toggle Switch', module)
     .addDecorator(CenterDecorator)
