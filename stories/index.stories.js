@@ -4,7 +4,6 @@ import { storiesOf } from '@storybook/react';
 import { Box } from 'ui/Box/Box';
 import { Button } from 'ui/Button/Button';
 import { IconButton } from 'ui/Button/IconButton';
-import { InfoButton } from 'ui/Button/InfoButton';
 import { Card } from 'ui/Card/Card';
 import { Center } from 'ui/Center/Center';
 import { Checkbox } from 'ui/Form/Checkbox';
@@ -52,7 +51,7 @@ storiesOf('Box', module)
     .addDecorator(CenterDecorator)
     .add('Box', () => <Box>Box</Box>);
 
-storiesOf('Button', module)
+storiesOf('Buttons', module)
     .addDecorator(CenterDecorator)
     .add('Button', () => <Button>Button</Button>)
     .add('Disabled Button', () => <Button disabled>Disabled Button</Button>)
@@ -94,9 +93,6 @@ storiesOf('Button', module)
     .add('Icon Button', () => (
         <IconButton icon="heart" tooltip="Icon Button" onClick={() => null} />
     ))
-    .add('Info Button', () => (
-        <InfoButton onClick={() => null}>Info Button</InfoButton>
-    ))
     .add('Toggle Button', () => (
         <>
             <div className="mb12">
@@ -112,6 +108,9 @@ storiesOf('Button', module)
                 onChange={() => null}
             />
         </>
+    ))
+    .add('Copy Button', () => (
+        <CopyButton copyText="text to copy" text="Copy To Clipboard" />
     ));
 
 storiesOf('Card', module)
@@ -165,12 +164,6 @@ storiesOf('Content', module)
             </ul>
             <code>code</code>
         </Content>
-    ));
-
-storiesOf('Copy Button', module)
-    .addDecorator(CenterDecorator)
-    .add('Copy Button', () => (
-        <CopyButton copyText="text to copy" text="Copy To Clipboard" />
     ));
 
 storiesOf('DataHub Logo', module)
