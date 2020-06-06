@@ -20,4 +20,9 @@
         margin: 0px 8px;
         text-align: center;
     }
+    &.flex-row {
+        .Card-title {
+            margin: 16px;
+        }
+    }
 }

@@ -115,6 +115,9 @@
         border-top-right-radius: 0px;
         border-bottom-right-radius: 0px;
         margin-right: 0px;
+        + .Button {
+            border-left: 0px;
+        }
     }
     &.attached-left {
         border-top-left-radius: 0px;
