@@ -232,6 +232,12 @@ storiesOf('Form Elements', module)
                     {makeSelectOptions([
                         { label: 'option one', value: 1, key: 1 },
                         { label: 'option two', value: 2, key: 2 },
+                        {
+                            label: 'option color dot',
+                            value: 3,
+                            key: 3,
+                            color: '#35B5BB',
+                        },
                     ])}
                 </SimpleReactSelect>
             );
