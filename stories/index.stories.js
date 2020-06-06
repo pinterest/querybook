@@ -21,6 +21,7 @@ import { Icon } from 'ui/Icon/Icon';
 import { KeyboardKey } from 'ui/KeyboardKey/KeyboardKey';
 import { ListLink } from 'ui/Link/ListLink';
 import { ListMenu } from 'ui/Menu/ListMenu';
+import { SimpleReactSelect } from 'ui/SimpleReactSelect/SimpleReactSelect';
 import { Select, makeSelectOptions } from 'ui/Select/Select';
 import { Tabs } from 'ui/Tabs/Tabs';
 import { ToggleSwitch } from 'ui/ToggleSwitch/ToggleSwitch';
@@ -199,7 +200,43 @@ storiesOf('Form Elements', module)
                 className="mt8"
             />
         </>
-    ));
+    ))
+    .add('Select', () =>
+        React.createElement(() => {
+            const [value, setValue] = React.useState(1);
+
+            const onChange = (newVal) => {
+                setValue(newVal.target.value);
+            };
+
+            return (
+                <Select value={value} onChange={onChange}>
+                    {makeSelectOptions([
+                        { label: 'option one', value: 1, key: 1 },
+                        { label: 'option two', value: 2, key: 2 },
+                    ])}
+                </Select>
+            );
+        })
+    )
+    .add('Simple React Select', () =>
+        React.createElement(() => {
+            const [value, setValue] = React.useState(1);
+
+            const onChange = (newVal) => {
+                setValue(newVal.target.value);
+            };
+
+            return (
+                <SimpleReactSelect value={value} onChange={onChange}>
+                    {makeSelectOptions([
+                        { label: 'option one', value: 1, key: 1 },
+                        { label: 'option two', value: 2, key: 2 },
+                    ])}
+                </SimpleReactSelect>
+            );
+        })
+    );
 
 storiesOf('Disabled Section', module)
     .addDecorator(CenterDecorator)
@@ -297,27 +334,6 @@ storiesOf('List Link', module)
             <ListLink onClick={() => null}>List Link 3</ListLink>
         </div>
     ));
-
-storiesOf('Select', module)
-    .addDecorator(CenterDecorator)
-    .add('Select', () =>
-        React.createElement(() => {
-            const [value, setValue] = React.useState(1);
-
-            const onChange = (newVal) => {
-                setValue(newVal.target.value);
-            };
-
-            return (
-                <Select value={value} onChange={onChange}>
-                    {makeSelectOptions([
-                        { label: 'one', value: 1, key: 1 },
-                        { label: 'two', value: 2, key: 2 },
-                    ])}
-                </Select>
-            );
-        })
-    );
 
 // needs work
 storiesOf('Tabs', module)
