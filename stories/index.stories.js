@@ -371,13 +371,6 @@ storiesOf('Form Elements', module)
                 hasIcon
                 className="mb12"
             />
-            <SearchBar
-                value=""
-                onSearch={() => null}
-                placeholder="Search Bar with Clear Search"
-                hasClearSearch
-                className="mb12"
-            />
         </div>
     ));
 
