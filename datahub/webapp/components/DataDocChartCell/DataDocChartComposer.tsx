@@ -7,7 +7,7 @@ import { isEmpty, range } from 'lodash';
 import Select from 'react-select';
 
 import { IStoreState } from 'redux/store/types';
-import { IDataQueryCellMeta, IDataChartCellMeta } from 'const/datadoc';
+import { IDataChartCellMeta } from 'const/datadoc';
 import {
     IChartFormValues,
     ChartDataAggType,
@@ -196,6 +196,18 @@ const DataDocChartComposerComponent: React.FunctionComponent<
         }));
     }, [chartData]);
 
+    const zAxisOptions = React.useMemo(() => {
+        if (!chartData) {
+            return [];
+        }
+        return chartData[0]
+            .filter((idx) => idx !== values.xAxis)
+            .map((col, idx) => ({
+                value: idx,
+                label: col,
+            }));
+    }, [chartData, values.xAxis]);
+
     const formatAggByOptions = React.useMemo(() => {
         if (!statementResultData) {
             return [];
@@ -263,10 +275,11 @@ const DataDocChartComposerComponent: React.FunctionComponent<
                 label: valsArray[i],
                 color:
                     colorPalette[
-                        values.coloredSeries[i] || i % colorPalette.length
+                        values.coloredSeries[i] == null
+                            ? i % colorPalette.length
+                            : values.coloredSeries[i]
                     ],
             }));
-
             return options;
         },
         [
@@ -491,6 +504,9 @@ const DataDocChartComposerComponent: React.FunctionComponent<
                         ) {
                             // these charts cannot be stacked
                             setFieldValue('stack', false);
+                            if (val === 'bubble') {
+                                setFieldValue('zIndex', 2);
+                            }
                         }
                     }}
                     options={Object.entries(chartTypes).map(([key, val]) => ({
@@ -570,7 +586,7 @@ const DataDocChartComposerComponent: React.FunctionComponent<
         const xAxisDOM = (
             <>
                 <FormSectionHeader>X Axis</FormSectionHeader>
-                <FormField stacked label="Series">
+                <FormField stacked label="X Axis">
                     <ReactSelectField
                         name={`xIndex`}
                         options={xAxisOptions}
@@ -605,10 +621,25 @@ const DataDocChartComposerComponent: React.FunctionComponent<
             );
         }
 
+        const zAxisDOM =
+            values.chartType === 'bubble' ? (
+                <>
+                    <FormSectionHeader>Z Axis</FormSectionHeader>
+                    <FormField stacked label="Z Axis">
+                        <ReactSelectField
+                            name={`zIndex`}
+                            options={zAxisOptions}
+                            isDisabled={!statementResultData}
+                        />
+                    </FormField>
+                </>
+            ) : null;
+
         axesDOM = (
             <>
                 {xAxisDOM}
                 {yAxisDOM}
+                {zAxisDOM}
             </>
         );
     }
@@ -964,6 +995,11 @@ function formValsToMeta(vals: IChartFormValues, meta: IDataChartCellMeta) {
             draft.chart.y_axis[field] = val;
         }
         draft.chart.y_axis.stack = vals.stack;
+
+        // Z Axes
+        if (vals.chartType === 'bubble') {
+            draft.chart.z_axis = draft.chart.z_axis || 2;
+        }
 
         const seriesObj = {};
         if (vals.hiddenSeries.length) {

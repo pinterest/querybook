@@ -52,14 +52,24 @@ export function processChartJSData(
             };
 
             // scatter and bubble has a different data structure
-            if (chartMeta.type === 'scatter' || chartMeta.type === 'bubble') {
+            if (chartMeta.type === 'scatter') {
                 dataset['pointRadius'] = 4;
                 dataset['data'] = dataRows.map((row) => ({
                     x:
                         xAxesScaleType === 'time'
-                            ? Number(new Date(row[xAxisIdx])) // FIXME: this should be row[xAxisIdx]?
+                            ? Number(new Date(row[xAxisIdx]))
                             : Number(row[xAxisIdx]),
                     y: Number(row[idx]),
+                }));
+            } else if (chartMeta.type === 'bubble') {
+                const rAxisIdx = chartMeta.z_axis;
+                dataset['data'] = dataRows.map((row) => ({
+                    x:
+                        xAxesScaleType === 'time'
+                            ? Number(new Date(row[xAxisIdx]))
+                            : Number(row[xAxisIdx]),
+                    y: Number(row[idx]),
+                    r: Number(row[rAxisIdx]),
                 }));
             } else {
                 dataset['data'] = dataRows.map((row) => Number(row[idx]));
@@ -76,19 +86,31 @@ export function processChartJSData(
             } else {
                 dataset.borderColor =
                     colorPalette[colorIdx % colorPalette.length];
-                dataset.backgroundColor = ['area', 'bar', 'histogram'].includes(
-                    chartMeta.type
-                )
+                dataset.backgroundColor = [
+                    'area',
+                    'bar',
+                    'histogram',
+                    'bubble',
+                    'scatter',
+                ].includes(chartMeta.type)
                     ? colorPaletteFill[colorIdx % colorPaletteFill.length]
                     : (dataset.backgroundColor = fillColor[theme]);
+                if (
+                    chartMeta.type === 'bubble' ||
+                    chartMeta.type === 'scatter'
+                ) {
+                    dataset.borderWidth = 1;
+                    dataset.hoverBorderWidth = 1;
+                }
             }
 
             // only area gets fill
-            if (chartMeta.type === 'area') {
-                dataset.fill = firstDataset ? 'origin' : '-1';
-            } else {
-                dataset.fill = false;
-            }
+            dataset.fill =
+                chartMeta.type === 'area'
+                    ? firstDataset
+                        ? 'origin'
+                        : '-1'
+                    : false;
             firstDataset = false;
 
             return dataset;

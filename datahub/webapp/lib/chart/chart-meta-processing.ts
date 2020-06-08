@@ -116,6 +116,8 @@ export function mapMetaToFormVals(
         yAxis: getAxisOptions(meta.chart.y_axis),
         stack: Boolean(meta.chart.y_axis.stack),
 
+        zAxis: meta.chart.z_axis,
+
         hiddenSeries,
         coloredSeries: filterSeries(meta.chart.y_axis.series, 'color'),
         // chart
@@ -305,7 +307,7 @@ function computeScaleOptions(
             axis.ticks = {
                 ...axis.ticks,
                 callback: (label) => {
-                    return moment(label).format('MM/DD');
+                    return moment(label).format('MM/DD/YY');
                 },
             };
         }

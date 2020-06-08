@@ -40,7 +40,7 @@ export const chartTypes = {
     pie: 'Pie',
     doughnut: 'Doughnut',
     scatter: 'Scatter',
-    // bubble: 'Bubble',
+    bubble: 'Bubble',
     table: 'Table',
 };
 
@@ -98,6 +98,7 @@ export interface IChartChartMeta {
     type?: ChartType;
     x_axis: IChartXAxisMeta;
     y_axis: IChartYAxisMeta;
+    z_axis?: number;
 }
 
 export type ChartLegendPositionType = 'top' | 'bottom' | 'right' | 'left';
@@ -172,6 +173,7 @@ export interface IChartFormValues {
     stack: boolean;
     hiddenSeries: number[];
     coloredSeries: { [seriesIdx: number]: number };
+    zAxis: number | undefined;
 
     chartType: ChartType;
 
