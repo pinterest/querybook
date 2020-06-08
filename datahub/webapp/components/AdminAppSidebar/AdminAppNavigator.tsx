@@ -7,7 +7,7 @@ import { titleize } from 'lib/utils';
 import { AdminEntity, IAdminEntity } from 'components/AppAdmin/types';
 
 import { IconButton } from 'ui/Button/IconButton';
-import { Link } from 'ui/Link/Link';
+import { ListLink } from 'ui/Link/ListLink';
 import { SearchBar } from 'ui/SearchBar/SearchBar';
 
 import './AdminAppNavigator.scss';
@@ -83,7 +83,7 @@ export const AdminAppNavigator: React.FunctionComponent<IProps> = ({
                 {filteredEntityList.map((item) => {
                     const url = `/admin/${selectedEntity}/${item.id}/`;
                     return (
-                        <Link
+                        <ListLink
                             className={
                                 Number(entityId) === item.id
                                     ? 'AdminAppNavigator-item selected'
@@ -92,9 +92,8 @@ export const AdminAppNavigator: React.FunctionComponent<IProps> = ({
                             onClick={() => history.push(url)}
                             key={item.id}
                             to={url}
-                        >
-                            {item.name}
-                        </Link>
+                            title={item.name}
+                        />
                     );
                 })}
                 <IconButton

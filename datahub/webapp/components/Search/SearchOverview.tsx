@@ -401,14 +401,14 @@ export const SearchOverview: React.FunctionComponent = () => {
                 <div className="search-filter">
                     <span className="filter-title">
                         Authors
-                        <div className="dh-hr" />
+                        <hr className="dh-hr" />
                     </span>
                     {getAuthorFiltersDOM()}
                 </div>
                 <div className="search-filter">
                     <span className="filter-title">
                         Date
-                        <div className="dh-hr" />
+                        <hr className="dh-hr" />
                     </span>
                     {minDate && maxDate && dateFilterDOM}
                 </div>
@@ -418,14 +418,14 @@ export const SearchOverview: React.FunctionComponent = () => {
                 <div className="search-filter">
                     <span className="filter-title">
                         Metastore
-                        <div className="dh-hr" />
+                        <hr className="dh-hr" />
                     </span>
                     {metastoreSelectDOM}
                 </div>
                 <div className="search-filter">
                     <span className="filter-title">
                         Featured
-                        <div className="dh-hr" />
+                        <hr className="dh-hr" />
                     </span>
                     <div className="result-item-golden horizontal-space-between">
                         <span>
@@ -445,14 +445,14 @@ export const SearchOverview: React.FunctionComponent = () => {
                 <div className="search-filter">
                     <span className="filter-title">
                         Date
-                        <div className="dh-hr" />
+                        <hr className="dh-hr" />
                     </span>
                     {dateFilterDOM}
                 </div>
                 <div className="search-filter">
                     <span className="filter-title">
                         Search Settings
-                        <div className="dh-hr" />
+                        <hr className="dh-hr" />
                     </span>
                     {searchSettingsDOM}
                 </div>

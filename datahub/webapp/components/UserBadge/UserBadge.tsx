@@ -37,7 +37,7 @@ export const UserBadge: React.FunctionComponent<IProps> = ({
     if (mini) {
         return (
             <span className="UserBadge mini">
-                <figure className="image is-24x24">{avatarDOM}</figure>
+                <figure>{avatarDOM}</figure>
                 <span className="user-name">{userName}</span>
             </span>
         );
@@ -46,7 +46,7 @@ export const UserBadge: React.FunctionComponent<IProps> = ({
     return (
         <div className="UserBadge flex-row">
             <div className="UserBadge-icon">
-                <figure className="image is-48x48">{avatarDOM}</figure>
+                <figure>{avatarDOM}</figure>
             </div>
             <div className="UserBadge-names">
                 <Title size={4} className="user-name">

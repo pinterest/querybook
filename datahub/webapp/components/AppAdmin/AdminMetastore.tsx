@@ -320,7 +320,7 @@ export const AdminMetastore: React.FunctionComponent<IProps> = ({
                                     <div className="AdminForm-section-title">
                                         Loader Params
                                     </div>
-                                    <div className="dh-hr" />
+                                    <hr className="dh-hr" />
                                 </div>
                                 <div className="AdminForm-section-content">
                                     <SmartForm
@@ -345,7 +345,7 @@ export const AdminMetastore: React.FunctionComponent<IProps> = ({
                                 <div className="AdminForm-section-title">
                                     ACL Control
                                 </div>
-                                <div className="dh-hr" />
+                                <hr className="dh-hr" />
                             </div>
                             <div className="AdminForm-section-content">
                                 {getMetastoreACLControlDOM(
@@ -360,7 +360,7 @@ export const AdminMetastore: React.FunctionComponent<IProps> = ({
                                     <div className="AdminForm-section-title">
                                         Update Schedule
                                     </div>
-                                    <div className="dh-hr" />
+                                    <hr className="dh-hr" />
                                 </div>
                                 <div className="AdminForm-section-content">
                                     {showTaskEditor ? (

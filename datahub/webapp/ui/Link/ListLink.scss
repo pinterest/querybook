@@ -1,0 +1,52 @@
+@import './../../scss_variables.scss';
+
+.ListLink {
+    display: flex;
+    align-items: center;
+    border-left: solid 6px transparent;
+    padding: 4px 10px 4px 4px;
+    color: var(--dark-text-color);
+    cursor: pointer;
+    user-select: none;
+
+    .ListLinkText,
+    .ListLinkPlaceholder {
+        flex-grow: 1;
+        margin-left: 4px;
+        margin-right: 12px;
+        font-size: var(--small-text-size);
+        line-height: 27px;
+        @include one-line-ellipsis();
+
+        &:last-child {
+            margin-right: 28px;
+        }
+    }
+    .ListLinkPlaceholder {
+        opacity: 0.7;
+        font-style: italic;
+    }
+
+    .Icon {
+        flex-shrink: 1;
+        svg {
+            padding: 20%;
+        }
+    }
+
+    &.row {
+        padding: 4.5px 10px 4.5px 4.5px;
+        .ListLinkText {
+            line-height: normal;
+            margin-left: 0px;
+        }
+    }
+    &.selected {
+        border-color: var(--color-accent-bg);
+        font-weight: var(--bold-font);
+    }
+    &:hover {
+        background-color: var(--color-accent-bg-hover);
+        color: var(--dark-text-color);
+    }
+}

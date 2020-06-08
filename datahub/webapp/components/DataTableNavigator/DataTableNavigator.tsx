@@ -1,8 +1,8 @@
+import React from 'react';
 import classNames from 'classnames';
 import { decorate } from 'core-decorators';
 import { bind } from 'lodash-decorators';
 import memoizeOne from 'memoize-one';
-import React from 'react';
 import { connect } from 'react-redux';
 import { withRouter, RouteComponentProps } from 'react-router-dom';
 
@@ -13,6 +13,7 @@ import { queryMetastoresSelector } from 'redux/dataSources/selector';
 import { IQueryMetastore } from 'const/metastore';
 
 import { InfinityScroll } from 'ui/InfinityScroll/InfinityScroll';
+import { ListLink } from 'ui/Link/ListLink';
 import { SearchBar } from 'ui/SearchBar/SearchBar';
 import { Select, makeSelectOptions } from 'ui/Select/Select';
 import { Tabs } from 'ui/Tabs/Tabs';
@@ -119,17 +120,16 @@ class DataTableNavigatorComponent extends React.PureComponent<
     public tableRowRenderer(table: ITableResultWithSelection) {
         const tableName = `${table.schema}.${table.name}`;
         const className = classNames({
-            'navigator-table-row': true,
             selected: table.selected,
         });
 
         return (
-            <div
+            <ListLink
                 className={className}
                 onClick={this.handleTableRowClick.bind(this, table.id)}
-            >
-                {tableName}
-            </div>
+                isRow
+                title={tableName}
+            />
         );
     }
 
@@ -163,7 +163,7 @@ class DataTableNavigatorComponent extends React.PureComponent<
             queryMetastores.length > 1 ? (
                 <div className="navigator-metastore-picker">
                     <Select
-                        className="is-small"
+                        className="small"
                         value={metastoreId}
                         onChange={this.handleMetastoreChange}
                         transparent

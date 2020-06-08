@@ -203,7 +203,7 @@ export const AdminEnvironment: React.FunctionComponent<IProps> = ({
                                         <div className="AdminForm-section-title">
                                             Query Engines
                                         </div>
-                                        <div className="dh-hr" />
+                                        <hr className="dh-hr" />
                                     </div>
                                     <div className="AdminForm-section-content">
                                         <div className="AdminForm-section-top">
@@ -243,7 +243,7 @@ export const AdminEnvironment: React.FunctionComponent<IProps> = ({
                                         <div className="AdminForm-section-title">
                                             Access Control
                                         </div>
-                                        <div className="dh-hr" />
+                                        <hr className="dh-hr" />
                                     </div>
                                     <div className="AdminForm-section-content">
                                         <UserEnvironmentEditor

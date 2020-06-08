@@ -4,8 +4,8 @@ import * as classNames from 'classnames';
 import history from 'lib/router-history';
 import { IDataDoc } from 'const/datadoc';
 
-import { Link } from 'ui/Link/Link';
 import { Icon } from 'ui/Icon/Icon';
+import { ListLink } from 'ui/Link/ListLink';
 
 export interface IDataDocGridItemProps {
     dataDoc: IDataDoc;
@@ -23,12 +23,6 @@ export const DataDocGridItem: React.FunctionComponent<IDataDocGridItemProps> = (
     url,
     onDataDocClick,
 }) => {
-    const mergedClassName = classNames({
-        [className]: !!className,
-        DataDocGridItem: true,
-    });
-
-    const { title = '', public: publicDataDoc } = dataDoc;
     const handleClick = React.useCallback(() => {
         if (onDataDocClick) {
             return onDataDocClick();
@@ -36,24 +30,17 @@ export const DataDocGridItem: React.FunctionComponent<IDataDocGridItemProps> = (
         history.push(url);
     }, [url, onDataDocClick]);
 
-    const privateIcon = !publicDataDoc && <Icon name="lock" size={14} />;
-
-    const titleText = title || 'Untitled';
-    const titleDOM = (
-        <span
-            className={classNames({
-                'analysis-title': true,
-                'empty-title': !title,
-            })}
-        >
-            {titleText}
-        </span>
-    );
+    const { title = '', public: publicDataDoc } = dataDoc;
+    const privateIcon = !publicDataDoc && 'lock';
 
     return (
-        <Link className={mergedClassName} onClick={handleClick} to={url}>
-            {titleDOM}
-            {privateIcon}
-        </Link>
+        <ListLink
+            className={className}
+            onClick={handleClick}
+            to={url}
+            icon={privateIcon}
+            title={title}
+            placeholder="Untitled"
+        />
     );
 };

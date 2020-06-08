@@ -14,7 +14,7 @@ exports[`matches enzyme snapshots matches snapshot 1`] = `
 
 exports[`matches test renderer snapshot serializes the styles 1`] = `
 <textarea
-  className="ResizableTextArea sc-bdVaJa fHIhmG"
+  className="ResizableTextArea sc-bdVaJa cSddeQ"
   disabled={false}
   onChange={[Function]}
   onInput={[Function]}

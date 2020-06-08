@@ -6,14 +6,14 @@
 }
 
 .Tag {
-    background-color: var(--dark-bg-color);
+    background-color: var(--tag-bg-color);
     padding: 2px 8px;
     color: var(--tag-text-color);
     font-weight: var(--bold-font);
     font-size: var(--small-text-size);
 
     &.highlighted {
-        background-color: var(--color-accent);
+        background-color: var(--color-accent-bg);
     }
 }
 

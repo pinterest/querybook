@@ -11,6 +11,7 @@ import { BoardCreateUpdateModal } from 'components/BoardCreateUpdateModal/BoardC
 import { InfinityScroll } from 'ui/InfinityScroll/InfinityScroll';
 import { Icon } from 'ui/Icon/Icon';
 import './BoardList.scss';
+import { ListLink } from 'ui/Link/ListLink';
 
 interface IProps {
     onBoardClick: (id: IBoard) => any;
@@ -48,16 +49,18 @@ export const BoardList: React.FunctionComponent<IProps> = ({
         (board: IBoard & { selected: boolean }) => {
             const { name, public: publicBoard, selected } = board;
             const className = classNames({
-                'board-navigator-row': true,
                 selected,
             });
-            const publicIcon = publicBoard && <Icon name="users" size={12} />;
+            const publicIcon = publicBoard && 'users';
 
             return (
-                <div className={className} onClick={() => onBoardClick(board)}>
-                    {publicIcon}
-                    {name}
-                </div>
+                <ListLink
+                    className={className}
+                    onClick={() => onBoardClick(board)}
+                    isRow
+                    icon={publicIcon}
+                    title={name}
+                />
             );
         },
         [onBoardClick]

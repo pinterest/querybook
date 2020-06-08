@@ -12,16 +12,6 @@
     font-size: var(--small-text-size);
 }
 
-html,
-body {
-    margin: 0px;
-    padding: 0px;
-    height: 100%;
-    overflow: auto !important;
-    // need to override both bulma and bootrap
-    background-color: var(--bg-color) !important;
-}
-
 .app-splash {
     width: 100%;
     height: 100%;
@@ -46,19 +36,17 @@ body {
 }
 
 .empty-message {
+    margin-top: 20%;
+    padding: 0px 20%;
     text-align: center;
     font-size: var(--xxxlarge-text-size);
     font-weight: bold;
     color: var(--border-color);
-    margin-top: 20%;
     user-select: none;
-    padding: 0px 20%;
 }
 
 .ReactVirtualized__Grid {
     outline: none;
 }
 
-@import './stylesheets/_bulma_override.scss';
-@import '~bulma/bulma';
 @import './stylesheets/_html.scss';

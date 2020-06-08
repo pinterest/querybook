@@ -51,7 +51,11 @@ export class InfinityScroll<T> extends React.PureComponent<
 
         if (index >= this.props.elements.length) {
             return (
-                <div key={key} style={style} className="InfiniteScroll-loader">
+                <div
+                    key={key}
+                    style={style}
+                    className="InfiniteScroll-loader flex-center"
+                >
                     <div style={{ textAlign: 'center' }}>
                         <i className="fa fa-spinner fa-pulse" /> Loading
                     </div>

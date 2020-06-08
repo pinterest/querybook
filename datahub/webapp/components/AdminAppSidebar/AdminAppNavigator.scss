@@ -11,7 +11,6 @@
         border-bottom: 1px solid var(--border-color);
         justify-content: space-between;
         flex-shrink: 0;
-        margin-bottom: 4px;
         .SearchBar {
             flex-grow: 1;
             padding-right: 12px;
@@ -23,33 +22,10 @@
     .AdminAppNavigator-items {
         overflow-x: hidden;
         overflow-y: auto;
-
-        .AdminAppNavigator-item {
-            cursor: pointer;
-            overflow: hidden;
-            display: flex;
-            align-items: center;
-            margin: 4px 0px;
-            border-left: solid 6px transparent;
-            padding: 0px 4px;
-            color: var(--dark-text-color);
-            font-size: var(--small-text-size);
-            line-height: 27px;
-            white-space: nowrap;
-            text-overflow: ellipsis;
-            user-select: none;
-            &:not(.selected):hover {
-                background-color: var(--color-accent-bg-hover);
-            }
-            &.selected {
-                border-color: var(--color-accent);
-                font-weight: var(--bold-font);
-            }
-        }
         .IconButton {
             position: absolute;
             bottom: 0px;
-            right: 8px;
+            right: 0px;
             padding: 8px;
         }
     }

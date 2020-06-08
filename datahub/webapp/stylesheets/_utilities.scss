@@ -77,12 +77,14 @@
     height: 0;
 }
 
-// reused
 .dh-hr {
-    background-color: var(--light-text-color);
-    height: 1px;
+    background-color: var(--hr-color);
     width: 100%;
-    margin-left: 10px;
+    margin: 0px 0px 0px 12px;
+}
+
+.transparent {
+    background-color: transparent;
 }
 
 /* force scrollbar to appear on Mac & -webkit (Chrome, Safari) despite user 'hide' preference */

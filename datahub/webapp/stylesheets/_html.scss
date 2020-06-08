@@ -1,11 +1,197 @@
-.transparent {
+/*! minireset.css v0.0.6 | MIT License | github.com/jgthms/minireset.css */
+html,
+body,
+p,
+ol,
+ul,
+li,
+dl,
+dt,
+dd,
+blockquote,
+figure,
+fieldset,
+legend,
+textarea,
+pre,
+iframe,
+hr,
+h1,
+h2,
+h3,
+h4,
+h5,
+h6 {
+    margin: 0;
+    padding: 0;
+}
+
+h1,
+h2,
+h3,
+h4,
+h5,
+h6 {
+    font-size: 100%;
+    font-weight: normal;
+}
+
+ul {
+    list-style: none;
+}
+
+button,
+input,
+select,
+textarea {
+    margin: 0;
+}
+
+html {
+    box-sizing: border-box;
+}
+
+*,
+*::before,
+*::after {
+    box-sizing: inherit;
+}
+
+img,
+video {
+    height: auto;
+    max-width: 100%;
+}
+
+iframe {
+    border: 0;
+}
+
+table {
+    border-collapse: collapse;
+    border-spacing: 0;
+}
+
+td,
+th {
+    padding: 0;
+}
+
+td:not([align]),
+th:not([align]) {
+    text-align: left;
+}
+
+html {
+    background-color: white;
+    font-size: 16px;
+    -moz-osx-font-smoothing: grayscale;
+    -webkit-font-smoothing: antialiased;
+    min-width: 300px;
+    overflow-x: hidden;
+    overflow-y: scroll;
+    text-rendering: optimizeLegibility;
+    -webkit-text-size-adjust: 100%;
+    -moz-text-size-adjust: 100%;
+    -ms-text-size-adjust: 100%;
+    text-size-adjust: 100%;
+    overflow: hidden;
+}
+
+article,
+aside,
+figure,
+footer,
+header,
+hgroup,
+section {
+    display: block;
+}
+
+code,
+pre {
+    -moz-osx-font-smoothing: auto;
+    -webkit-font-smoothing: auto;
+    font-family: monospace;
+}
+
+a strong {
+    color: currentColor;
+}
+
+img {
+    height: auto;
+    max-width: 100%;
+}
+
+input[type='checkbox'],
+input[type='radio'] {
+    vertical-align: baseline;
+}
+
+span {
+    font-style: inherit;
+    font-weight: inherit;
+}
+
+strong {
+    color: var(--dark-text-color);
+    font-weight: 700;
+}
+
+fieldset {
+    border: none;
+}
+
+pre code {
     background-color: transparent;
+    color: currentColor;
+    font-size: 1em;
+    padding: 0;
+}
+
+table td,
+table th {
+    vertical-align: top;
+}
+
+table td:not([align]),
+table th:not([align]) {
+    text-align: left;
+}
+
+table th {
+    color: var(--border-color);
+}
+
+// in-house
+html,
+body {
+    margin: 0px;
+    padding: 0px;
+    height: 100%;
+    overflow: auto;
+    background-color: var(--bg-color);
+    color: var(--text-color);
+    font-weight: 400;
+    line-height: 1.5;
+}
+
+body,
+button,
+input,
+select,
+textarea {
+    font-family: 'Avenir Next', 'Avenir', 'Helvetica Neue', 'Arial', sans-serif;
 }
 
 code {
+    border-radius: var(--border-radius);
     background-color: var(--light-bg-color);
-    color: var(--color-false-dark);
+    color: var(--code-text-color);
+    font-size: var(--small-text-size);
     font-weight: 500;
+    padding: 4px;
 }
 
 strong {
@@ -14,21 +200,13 @@ strong {
 
 a {
     color: inherit;
+    text-decoration: none;
     &:hover {
         color: var(--color-accent);
     }
     &:active,
     &:focus {
         outline: none;
-    }
-}
-
-.content {
-    a {
-        color: var(--color-accent-text);
-        &:hover {
-            color: var(--color-accent);
-        }
     }
 }
 
@@ -43,35 +221,34 @@ button {
     }
 }
 
-// important temporary until bulma is fully removed
 input,
 textarea {
-    background: var(--bg-color);
+    background-color: var(--bg-color);
     border: var(--border);
     border-radius: var(--border-radius);
-    box-shadow: none !important;
+    box-shadow: none;
     width: 100%;
     padding: 8px;
     font-size: inherit;
     color: inherit;
 
     &:hover {
-        border-color: var(--hover-border-color) !important;
+        border-color: var(--hover-border-color);
     }
 
     &:active,
     &:focus {
-        border-color: var(--focus-border-color) !important;
-        outline: none !important;
+        border-color: var(--focus-border-color);
+        outline: none;
     }
     &::placeholder {
-        color: var(--light-text-color) !important;
+        color: var(--light-text-color);
     }
 }
 
 input:-webkit-autofill,
 input:-internal-autofill-selected {
-    -webkit-text-fill-color: var(--text-color) !important;
+    -webkit-text-fill-color: var(--text-color);
 }
 
 @keyframes autofill {
@@ -111,20 +288,20 @@ input:-webkit-autofill {
 }
 
 hr {
-    background-color: var(--color-accent-bg);
+    background-color: var(--hr-color);
     border: none;
     display: block;
-    height: 2px;
+    height: 1px;
     margin: 16px 0px;
 }
 
 pre {
-    background-color: var(--light-bg-color);
     border-radius: var(--border-radius);
+    background-color: var(--light-bg-color);
     margin: 4px;
+    padding: 12px;
     color: var(--text-color);
     font-size: var(--small-text-size);
-    padding: 12px;
     white-space: pre-wrap;
 }
 

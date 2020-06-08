@@ -6,13 +6,13 @@ export const Columns = styled.div.attrs({
     display: flex;
     margin-left: -12px;
     margin-right: -12px;
-    margin-top: -12px;
+    margin-top: -8px;
 
     .columns:last-child {
-        margin-bottom: -12px;
+        margin-bottom: -8px;
     }
     .columns:not(:last-child) {
-        margin-bottom: 12px;
+        margin-bottom: 8px;
     }
 `;
 

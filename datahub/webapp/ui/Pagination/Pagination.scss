@@ -15,9 +15,10 @@
             display: flex;
             .Pagination-page-button {
                 &.current {
-                    background-color: var(--color-accent);
-                    border-color: var(--color-accent-bg);
-                    color: var(--color-accent-text);
+                    border-color: var(--select-border-color);
+                }
+                &:hover {
+                    border-color: var(--hover-border-color);
                 }
             }
         }
