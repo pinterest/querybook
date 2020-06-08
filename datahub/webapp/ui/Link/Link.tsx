@@ -42,11 +42,7 @@ export class Link extends React.PureComponent<ILinkProps> {
         const { to, onClick, newTab } = this.props;
         const isCmdDown = e.metaKey;
         if (onClick) {
-            if (to) {
-                onClick(to);
-            } else {
-                onClick(e);
-            }
+            onClick(e);
         } else if (isCmdDown || newTab) {
             openNewTab(to);
         } else {
