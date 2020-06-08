@@ -20,11 +20,23 @@ import { Icon } from 'ui/Icon/Icon';
 import { KeyboardKey } from 'ui/KeyboardKey/KeyboardKey';
 import { ListLink } from 'ui/Link/ListLink';
 import { ListMenu } from 'ui/Menu/ListMenu';
+import { Loading } from 'ui/Loading/Loading';
+import {
+    Menu,
+    MenuItem,
+    MenuInfoItem,
+    MenuItemPing,
+    MenuDivider,
+} from 'ui/Menu/Menu';
+import { Message } from 'ui/Message/Message';
+import { ErrorMessage } from 'ui/Message/ErrorMessage';
+import { Pagination } from 'ui/Pagination/Pagination';
 import { ProgressBar } from 'ui/ProgressBar/ProgressBar';
-import { StepsBar } from 'ui/StepsBar/StepsBar';
+import { SearchBar } from 'ui/SearchBar/SearchBar';
+import { Select, makeSelectOptions } from 'ui/Select/Select';
 import { SimpleReactSelect } from 'ui/SimpleReactSelect/SimpleReactSelect';
 import { StatusIcon } from 'ui/StatusIcon/StatusIcon';
-import { Select, makeSelectOptions } from 'ui/Select/Select';
+import { StepsBar } from 'ui/StepsBar/StepsBar';
 import { Tabs } from 'ui/Tabs/Tabs';
 import { Tag, TagGroup } from 'ui/Tag/Tag';
 import { Timer } from 'ui/Timer/Timer';
@@ -336,7 +348,38 @@ storiesOf('Form Elements', module)
                 </div>
             );
         })
-    );
+    )
+    .add('Search Bar', () => (
+        <div style={{ width: '240px', alignItems: 'stretch' }}>
+            <SearchBar
+                value=""
+                onSearch={() => null}
+                placeholder="Search Bar"
+                className="mb12"
+            />
+            <SearchBar
+                value=""
+                onSearch={() => null}
+                placeholder="Transparent Search Bar"
+                transparent
+                className="mb12"
+            />
+            <SearchBar
+                value=""
+                onSearch={() => null}
+                placeholder="Search Bar with Icon"
+                hasIcon
+                className="mb12"
+            />
+            <SearchBar
+                value=""
+                onSearch={() => null}
+                placeholder="Search Bar with Clear Search"
+                hasClearSearch
+                className="mb12"
+            />
+        </div>
+    ));
 
 storiesOf('Icons', module)
     .addDecorator(CenterDecorator)
@@ -357,15 +400,111 @@ storiesOf('Keyboard Key', module)
 
 storiesOf('List Link', module)
     .addDecorator(CenterDecorator)
-    .add('List Link', () => (
-        <div style={{ width: '160px' }}>
-            <ListLink onClick={() => null}>List Link 1</ListLink>
-            <ListLink className="selected" onClick={() => null}>
-                List Link 2 Selected
-            </ListLink>
-            <ListLink onClick={() => null}>List Link 3</ListLink>
-        </div>
+    .add('List Link', () =>
+        React.createElement(() => {
+            const [selectedLink, setSelectedLink] = React.useState(0);
+
+            return (
+                <div style={{ width: '160px' }}>
+                    <ListLink
+                        className={selectedLink === 0 ? 'selected' : ''}
+                        onClick={() => setSelectedLink(0)}
+                    >
+                        List Link 1
+                    </ListLink>
+                    <ListLink
+                        className={selectedLink === 1 ? 'selected' : ''}
+                        onClick={() => setSelectedLink(1)}
+                    >
+                        List Link 2
+                    </ListLink>
+                    <ListLink
+                        className={selectedLink === 2 ? 'selected' : ''}
+                        onClick={() => setSelectedLink(2)}
+                    >
+                        List Link 3
+                    </ListLink>
+                </div>
+            );
+        })
+    );
+
+storiesOf('Loading', module)
+    .addDecorator(CenterDecorator)
+    .add('Loading', () => <Loading />);
+
+storiesOf('Menu', module)
+    .addDecorator(CenterDecorator)
+    .add('Menu', () => (
+        <Menu>
+            <MenuItem>First Item</MenuItem>
+            <MenuItem>
+                Second Item with Ping
+                <MenuItemPing />
+            </MenuItem>
+            <MenuDivider />
+            <MenuInfoItem>Info Item</MenuInfoItem>
+        </Menu>
     ));
+
+storiesOf('Message', module)
+    .addDecorator(CenterDecorator)
+    .add('Message', () => (
+        <>
+            <Message
+                title="Info Message"
+                message="Info Message with Icon"
+                icon="heart"
+                iconSize={16}
+                type="info"
+            />
+            <Message
+                title="Error Message"
+                message="Error Message with Icon"
+                icon="frown"
+                iconSize={16}
+                type="error"
+            />
+            <Message
+                title="Warning Message"
+                message="Warning Message with Icon"
+                icon="check"
+                iconSize={16}
+                type="warning"
+            />
+            <Message
+                title="Success Message"
+                message="Success Message with Icon"
+                icon="award"
+                iconSize={16}
+                type="success"
+            />
+            <Message
+                title="Tip Message"
+                message="Tip Message with Icon"
+                icon="check"
+                iconSize={16}
+                type="tip"
+            />
+        </>
+    ))
+    .add('Error Message', () => <ErrorMessage>Error Message</ErrorMessage>);
+
+storiesOf('Pagination', module)
+    .addDecorator(CenterDecorator)
+    .add('Pagination', () =>
+        React.createElement(() => {
+            const [currentPage, setCurrentPage] = React.useState(0);
+
+            return (
+                <Pagination
+                    currentPage={currentPage}
+                    totalPage={10}
+                    onPageClick={(page) => setCurrentPage(page)}
+                />
+            );
+        })
+    );
 
 storiesOf('Progress Bar', module)
     .addDecorator(CenterDecorator)
