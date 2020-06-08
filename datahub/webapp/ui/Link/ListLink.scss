@@ -9,7 +9,8 @@
     cursor: pointer;
     user-select: none;
 
-    .ListLinkText {
+    .ListLinkText,
+    .ListLinkPlaceholder {
         flex-grow: 1;
         margin-left: 4px;
         margin-right: 8px;
@@ -17,6 +18,11 @@
         line-height: 27px;
         @include one-line-ellipsis();
     }
+    .ListLinkPlaceholder {
+        opacity: 0.7;
+        font-style: italic;
+    }
+
     .Icon {
         flex-shrink: 1;
         svg {
@@ -31,13 +37,6 @@
             margin-left: 0px;
         }
     }
-    &.empty-title {
-        .ListLinkText {
-            opacity: 0.7;
-            font-style: italic;
-        }
-    }
-
     &.selected {
         border-color: var(--color-accent-bg);
         font-weight: var(--bold-font);

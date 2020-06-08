@@ -32,7 +32,6 @@ export const DataDocGridItem: React.FunctionComponent<IDataDocGridItemProps> = (
 
     const { title = '', public: publicDataDoc } = dataDoc;
     const privateIcon = !publicDataDoc && 'lock';
-    const titleText = title || 'Untitled';
 
     return (
         <ListLink
@@ -40,8 +39,8 @@ export const DataDocGridItem: React.FunctionComponent<IDataDocGridItemProps> = (
             onClick={handleClick}
             to={url}
             icon={privateIcon}
-            emptyTitle={!title}
-            title={titleText}
+            title={title}
+            placeholder="Untitled"
         />
     );
 };
