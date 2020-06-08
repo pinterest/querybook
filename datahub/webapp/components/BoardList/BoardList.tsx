@@ -59,9 +59,8 @@ export const BoardList: React.FunctionComponent<IProps> = ({
                     onClick={() => onBoardClick(board)}
                     isRow
                     icon={publicIcon}
-                >
-                    {name}
-                </ListLink>
+                    title={name}
+                />
             );
         },
         [onBoardClick]

@@ -10,6 +10,7 @@ yarn-error.log
 
 # Build files
 dist/
+storybook-static/
 
 # Byte-compiled / optimized / DLL files
 __pycache__/

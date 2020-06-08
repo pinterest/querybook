@@ -151,9 +151,8 @@ class QuerySnippetNavigatorComponent extends React.PureComponent<
             <ListLink
                 onClick={() => this.props.onQuerySnippetSelect(snippet)}
                 isRow
-            >
-                {snippet.title}
-            </ListLink>
+                title={snippet.title}
+            />
         );
     }
 

@@ -23,7 +23,7 @@ function isInternalUrl(url: LocationDescriptor): boolean {
 
 export interface ILinkProps {
     to?: LocationDescriptor;
-    onClick?: (to: any) => any;
+    onClick?: (to: LocationDescriptor) => any;
     newTab?: boolean;
 
     className?: string;

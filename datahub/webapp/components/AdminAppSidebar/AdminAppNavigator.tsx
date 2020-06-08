@@ -92,9 +92,8 @@ export const AdminAppNavigator: React.FunctionComponent<IProps> = ({
                             onClick={() => history.push(url)}
                             key={item.id}
                             to={url}
-                        >
-                            {item.name}
-                        </ListLink>
+                            title={item.name}
+                        />
                     );
                 })}
                 <IconButton

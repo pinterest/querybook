@@ -41,8 +41,7 @@ export const DataDocGridItem: React.FunctionComponent<IDataDocGridItemProps> = (
             to={url}
             icon={privateIcon}
             emptyTitle={!title}
-        >
-            {titleText}
-        </ListLink>
+            title={titleText}
+        />
     );
 };

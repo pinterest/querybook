@@ -128,9 +128,8 @@ class DataTableNavigatorComponent extends React.PureComponent<
                 className={className}
                 onClick={this.handleTableRowClick.bind(this, table.id)}
                 isRow
-            >
-                {tableName}
-            </ListLink>
+                title={tableName}
+            />
         );
     }
 
