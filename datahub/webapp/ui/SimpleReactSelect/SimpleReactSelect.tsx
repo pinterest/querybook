@@ -2,8 +2,9 @@ import React, { useMemo, useCallback } from 'react';
 import { Props as ReactSelectProps } from 'react-select/lib/Select';
 import Select from 'react-select';
 
-import { overlayRoot } from 'ui/Overlay/Overlay';
 import { makeReactSelectStyle } from 'lib/utils/react-select';
+
+import { overlayRoot } from 'ui/Overlay/Overlay';
 
 interface ISelectOption<T> {
     value: T;
