@@ -13,10 +13,14 @@
     .ListLinkPlaceholder {
         flex-grow: 1;
         margin-left: 4px;
-        margin-right: 8px;
+        margin-right: 12px;
         font-size: var(--small-text-size);
         line-height: 27px;
         @include one-line-ellipsis();
+
+        &:last-child {
+            margin-right: 28px;
+        }
     }
     .ListLinkPlaceholder {
         opacity: 0.7;
