@@ -32,7 +32,7 @@ def get_board_by_id(board_id):
         board = Board.get(id=board_id, session=session)
         api_assert(board is not None, "Invalid board id", 404)
         verify_environment_permission([board.environment_id])
-        return board.to_dict(extra_fields=["docs", "tables"])
+        return board.to_dict(extra_fields=["docs", "tables", "items"])
 
 
 @register(
@@ -51,7 +51,7 @@ def create_board(
             public,
             favorite,
             session=session,
-        ).to_dict(extra_fields=["docs", "tables"])
+        ).to_dict()
 
 
 @register(
@@ -62,7 +62,7 @@ def update_board(board_id, **fields):
         board = Board.get(id=board_id, session=session)
         api_assert(board and board.owner_uid == current_user.id, "Must be owner")
         board = logic.update_board(id=board_id, **fields, session=session)
-        return board.to_dict(extra_fields=["docs", "tables"])
+        return board.to_dict(extra_fields=["docs", "tables", "items"])
 
 
 @register(
@@ -111,6 +111,15 @@ def add_board_item(board_id, item_type, item_id):
         )
 
         return logic.add_item_to_board(board_id, item_id, item_type, session=session)
+
+
+@register(
+    "/board/<int:board_id>/move/<int:from_index>/<int:to_index>/", methods=["POST"],
+)
+def move_board_item(board_id, from_index, to_index):
+    board = logic.move_item_order(board_id, from_index, to_index)
+    # Check if user can edit the board
+    api_assert(board and board.owner_uid == current_user.id, "Must be owner")
 
 
 @register(
