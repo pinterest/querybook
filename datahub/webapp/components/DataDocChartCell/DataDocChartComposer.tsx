@@ -196,18 +196,6 @@ const DataDocChartComposerComponent: React.FunctionComponent<
         }));
     }, [chartData]);
 
-    const zIndexOptions = React.useMemo(() => {
-        if (!chartData) {
-            return [];
-        }
-        return chartData[0]
-            .filter((idx) => idx !== values.xAxis)
-            .map((col, idx) => ({
-                value: idx,
-                label: col,
-            }));
-    }, [chartData, values.xAxis]);
-
     const formatAggByOptions = React.useMemo(() => {
         if (!statementResultData) {
             return [];
@@ -502,7 +490,7 @@ const DataDocChartComposerComponent: React.FunctionComponent<
                         ) {
                             // these charts cannot be stacked
                             setFieldValue('stack', false);
-                            if (val === 'bubble') {
+                            if (val === 'bubble' && !values.zIndex) {
                                 setFieldValue('zIndex', 2);
                             }
                         }
@@ -619,14 +607,14 @@ const DataDocChartComposerComponent: React.FunctionComponent<
             );
         }
 
-        const zIndexDOM =
+        const zAxisDOM =
             values.chartType === 'bubble' ? (
                 <>
                     <FormSectionHeader>Z Axis</FormSectionHeader>
                     <FormField stacked label="Z Axis">
                         <ReactSelectField
                             name={`zIndex`}
-                            options={zIndexOptions}
+                            options={xAxisOptions}
                             isDisabled={!statementResultData}
                         />
                     </FormField>
@@ -637,7 +625,7 @@ const DataDocChartComposerComponent: React.FunctionComponent<
             <>
                 {xAxisDOM}
                 {yAxisDOM}
-                {zIndexDOM}
+                {zAxisDOM}
             </>
         );
     }
