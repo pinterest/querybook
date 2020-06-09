@@ -97,25 +97,6 @@ export const SignupForm: React.FunctionComponent<ISignupFormProps> = ({
                     </FormField>
                 );
 
-                // TODO: Add more validation logic to SignupForm
-                const signupFormNotice = (
-                    <Message
-                        type="info"
-                        message={
-                            <div>
-                                <p>
-                                    This is only a temporary implementation for
-                                    signup.
-                                </p>
-                                <p>
-                                    Proper email validation will be added in
-                                    future.
-                                </p>
-                            </div>
-                        }
-                    />
-                );
-
                 const errorMessageDOM = errorMessage && (
                     <Message message={errorMessage} type="error" />
                 );
@@ -130,7 +111,6 @@ export const SignupForm: React.FunctionComponent<ISignupFormProps> = ({
                 return (
                     <FormWrapper className="SignupForm" minLabelWidth="150px">
                         <Form>
-                            {signupFormNotice}
                             {usernameField}
                             {emailField}
                             {passwordField}

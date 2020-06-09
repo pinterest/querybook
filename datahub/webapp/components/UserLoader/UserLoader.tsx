@@ -7,9 +7,13 @@ import * as UserActions from 'redux/user/action';
 
 import { IStoreState, Dispatch } from 'redux/store/types';
 import { Loader } from 'ui/Loader/Loader';
+import { ErrorPage } from 'ui/ErrorPage/ErrorPage';
+import { formatError } from 'lib/utils/error';
 
 export const UserLoader: React.FunctionComponent = ({ children }) => {
     const [showUnauthPage, setShowUnauth] = React.useState(false);
+    const [fetchError, setFetchError] = React.useState(null);
+
     const myUserInfo = useSelector(
         (state: IStoreState) => state.user.myUserInfo
     );
@@ -21,7 +25,11 @@ export const UserLoader: React.FunctionComponent = ({ children }) => {
 
     const fetchUserInfo = React.useCallback(() => {
         dispatch(UserActions.loginUser()).then(null, (e) => {
-            setShowUnauth(true);
+            if (e?.response?.status === 401) {
+                setShowUnauth(true);
+            } else {
+                setFetchError(e);
+            }
         });
     }, []);
 
@@ -29,6 +37,14 @@ export const UserLoader: React.FunctionComponent = ({ children }) => {
         setShowUnauth(false);
         fetchUserInfo();
     }, []);
+
+    if (fetchError) {
+        return (
+            <ErrorPage errorTitle={'Unexpected Authentication Error'}>
+                {formatError(fetchError)}
+            </ErrorPage>
+        );
+    }
 
     return showUnauthPage ? (
         <UnauthPage onSuccessLogin={handleSuccessLogin} />
