@@ -8,7 +8,7 @@ import {
     Bubble,
     defaults,
 } from 'react-chartjs-2';
-import React from 'react';
+import React, { useMemo } from 'react';
 import { useSelector } from 'react-redux';
 import Chart, { ChartOptions } from 'chart.js';
 import ChartDataLabels from 'chartjs-plugin-datalabels';
@@ -103,11 +103,25 @@ export const DataDocChart: React.FunctionComponent<IDataDocChartProps> = ({
 
     const [xAxesScaleType, yAxesScaleType] = useChartScale(meta, data);
 
-    const chartData = processChartJSData(data, meta, theme, xAxesScaleType);
-    const chartJSOptions = {
-        ...mapMetaToChartOptions(meta, theme, xAxesScaleType, yAxesScaleType),
-        ...chartJsOptionObj,
-    };
+    const chartData = processChartJSData(
+        data,
+        meta,
+        theme,
+        xAxesScaleType,
+        yAxesScaleType
+    );
+    const chartJSOptions = useMemo(
+        () => ({
+            ...mapMetaToChartOptions(
+                meta,
+                theme,
+                xAxesScaleType,
+                yAxesScaleType
+            ),
+            ...chartJsOptionObj,
+        }),
+        [meta, theme, xAxesScaleType, yAxesScaleType, chartJsOptionObj]
+    );
 
     const chartProps = {
         data: chartData,

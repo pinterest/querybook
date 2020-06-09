@@ -240,15 +240,13 @@ export function mapMetaToChartOptions(
             xAxesScaleType,
             meta.chart.x_axis,
             theme,
-            meta.chart.y_axis.stack,
-            meta.chart.type
+            meta.chart.y_axis.stack
         );
         let yAxesOptions = computeScaleOptions(
             yAxesScaleType,
             meta.chart.y_axis,
             theme,
-            meta.chart.y_axis.stack,
-            meta.chart.type
+            meta.chart.y_axis.stack
         );
 
         // Because histogram is horizontal bar
@@ -270,8 +268,7 @@ function computeScaleOptions(
     scaleType: ChartScaleType,
     axisMeta: IChartAxisMeta,
     theme: string,
-    stack: boolean,
-    chartType: ChartType
+    stack: boolean
 ): CommonAxe {
     // Known bug: if scale type change from log to time, the graph crash
     // I think it is a chart js issue
@@ -302,15 +299,6 @@ function computeScaleOptions(
             },
             // unit: 'day',
         };
-
-        if (['scatter', 'bubble'].includes(chartType)) {
-            axis.ticks = {
-                ...axis.ticks,
-                callback: (label) => {
-                    return moment(label).format('MM/DD/YY');
-                },
-            };
-        }
     } else if (scaleType === 'linear' || scaleType === 'logarithmic') {
         // for empty case, it might be null or ""
         if (axisMeta.max != null && typeof axisMeta.max === 'number') {
