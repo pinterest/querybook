@@ -16,12 +16,12 @@ function handleRequestException(error: any, notifyOnError?: boolean) {
     return Promise.reject(error);
 }
 
-function syncDatasource(
+function syncDatasource<T = any>(
     method: string,
     urlOrOptions: UrlOrOptions,
     data?: {},
     notifyOnError?: boolean
-) {
+): ICancelablePromise<{ data: T }> {
     const url =
         typeof urlOrOptions === 'string' ? urlOrOptions : urlOrOptions['url'];
 
@@ -76,27 +76,32 @@ function fetchDatasource<T = any>(
     urlOrOptions: UrlOrOptions,
     data?: {},
     notifyOnError = false
-): ICancelablePromise<{ data: T }> {
-    return syncDatasource('GET', urlOrOptions, data, notifyOnError);
+) {
+    return syncDatasource<T>('GET', urlOrOptions, data, notifyOnError);
 }
 
-const saveDatasource = (
+function saveDatasource<T = any>(
     urlOrOptions: UrlOrOptions,
     data?: {},
     notifyOnError = true
-) => syncDatasource('POST', urlOrOptions, data, notifyOnError);
+) {
+    return syncDatasource<T>('POST', urlOrOptions, data, notifyOnError);
+}
 
-const updateDatasource = (
+function updateDatasource<T = any>(
     urlOrOptions: UrlOrOptions,
     data?: {},
     notifyOnError = true
-) => syncDatasource('PUT', urlOrOptions, data, notifyOnError);
-
-const deleteDatasource = (
+) {
+    return syncDatasource<T>('PUT', urlOrOptions, data, notifyOnError);
+}
+function deleteDatasource<T = any>(
     urlOrOptions: UrlOrOptions,
     data?: {},
     notifyOnError = true
-) => syncDatasource('DELETE', urlOrOptions, data, notifyOnError);
+) {
+    return syncDatasource<T>('DELETE', urlOrOptions, data, notifyOnError);
+}
 
 export default {
     fetch: fetchDatasource,

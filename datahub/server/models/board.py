@@ -88,7 +88,11 @@ class BoardItem(CRUDMixin, Base):
     item_order = sql.Column(sql.Integer)
     created_at = sql.Column(sql.DateTime, default=now)
 
-    board = relationship("Board", uselist=False)
+    board = relationship(
+        "Board",
+        backref=backref("items", order_by="BoardItem.item_order"),
+        uselist=False,
+    )
 
     table = relationship("DataTable", uselist=False)
 

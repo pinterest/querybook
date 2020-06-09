@@ -7,6 +7,7 @@ import {
     IBoard,
     IBoardRaw,
     BoardItemType,
+    IBoardItem,
 } from 'const/board';
 import { Dispatch } from 'redux/store/types';
 import { receiveDataDocs } from 'redux/dataDoc/action';
@@ -14,9 +15,11 @@ import { receiveDataTable } from 'redux/dataSources/action';
 
 export const dataDocSchema = new schema.Entity('dataDoc');
 export const tableSchema = new schema.Entity('dataTable');
+export const boardItemSchema = new schema.Entity('boardItem');
 export const boardSchema = new schema.Entity('board', {
     docs: [dataDocSchema],
     tables: [tableSchema],
+    items: [boardItemSchema],
 });
 
 function normalizeBoard(rawBoard: IBoardRaw) {
@@ -26,23 +29,28 @@ function normalizeBoard(rawBoard: IBoardRaw) {
     const {
         dataTable: dataTableById = {},
         dataDoc: dataDocById = {},
+        boardItem: boardItemById = {},
     } = normalizedData.entities;
     return {
         board,
         dataTableById,
         dataDocById,
+        boardItemById,
     };
 }
 
 function receiveBoardWithItems(dispatch: Dispatch, rawBoard: IBoardRaw) {
-    const { board, dataTableById, dataDocById } = normalizeBoard(rawBoard);
+    const { board, dataTableById, dataDocById, boardItemById } = normalizeBoard(
+        rawBoard
+    );
 
     dispatch(receiveDataDocs(dataDocById, null, null));
-    dispatch(receiveDataTable({}, dataTableById, {}));
+    dispatch(receiveDataTable({}, dataTableById, {}, {}));
     dispatch({
         type: '@@board/RECEIVE_BOARD_WITH_ITEMS',
         payload: {
             board,
+            boardItemById,
         },
     });
 }
@@ -84,10 +92,7 @@ export function fetchBoard(id: number): ThunkResult<Promise<IBoardRaw>> {
 export function fetchBoardIfNeeded(id: number): ThunkResult<Promise<any>> {
     return async (dispatch, getState) => {
         const state = getState();
-        if (
-            state.board.boardIdToItemsId[id] == null ||
-            state.board.boardById[id] == null
-        ) {
+        if (!state.board.boardById[id].items) {
             return dispatch(fetchBoard(id));
         }
     };
@@ -148,13 +153,30 @@ export function addBoardItem(
     itemId: number
 ): ThunkResult<Promise<void>> {
     return async (dispatch) => {
-        await ds.save(`/board/${boardId}/${itemType}/${itemId}/`);
+        const { data: boardItem } = await ds.save<IBoardItem>(
+            `/board/${boardId}/${itemType}/${itemId}/`
+        );
         dispatch({
             type: '@@board/RECEIVE_BOARD_ITEM',
+            payload: { boardItem, boardId },
+        });
+    };
+}
+
+export function moveBoardItem(
+    boardId: number,
+    fromIndex: number,
+    toIndex: number
+): ThunkResult<Promise<void>> {
+    return async (dispatch, getState) => {
+        await ds.save(`/board/${boardId}/move/${fromIndex}/${toIndex}/`);
+
+        dispatch({
+            type: '@@board/MOVE_BOARD_ITEM',
             payload: {
+                fromIndex,
+                toIndex,
                 boardId,
-                itemId,
-                itemType,
             },
         });
     };

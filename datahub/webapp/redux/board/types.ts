@@ -4,7 +4,12 @@ import {
     ThunkDispatch as UntypedThunkDispatch,
 } from 'redux-thunk';
 
-import { IBoard, IBoardWithItemIds, BoardItemType } from 'const/board';
+import {
+    IBoard,
+    IBoardWithItemIds,
+    BoardItemType,
+    IBoardItem,
+} from 'const/board';
 import { IStoreState } from '../store/types';
 
 export interface IReceiveBoardsAction extends Action {
@@ -18,15 +23,15 @@ export interface IReceiveBoardWithItemsAction extends Action {
     type: '@@board/RECEIVE_BOARD_WITH_ITEMS';
     payload: {
         board: IBoardWithItemIds;
+        boardItemById: Record<number, IBoardItem>;
     };
 }
 
 export interface IReceiveBoardItemAction extends Action {
     type: '@@board/RECEIVE_BOARD_ITEM';
     payload: {
+        boardItem: IBoardItem;
         boardId: number;
-        itemId: number;
-        itemType: BoardItemType;
     };
 }
 
@@ -46,22 +51,26 @@ export interface IRemoveBoardItemAction extends Action {
     };
 }
 
+export interface IMoveBoardItemAction extends Action {
+    type: '@@board/MOVE_BOARD_ITEM';
+    payload: {
+        boardId: number;
+        fromIndex: number;
+        toIndex: number;
+    };
+}
+
 export type BoardAction =
     | IReceiveBoardsAction
     | IReceiveBoardWithItemsAction
     | IRemoveBoardAction
     | IReceiveBoardItemAction
-    | IRemoveBoardItemAction;
+    | IRemoveBoardItemAction
+    | IMoveBoardItemAction;
 
 export interface IBoardState {
-    boardById: Record<number, IBoard>;
-    boardIdToItemsId: Record<
-        number,
-        {
-            docs: number[];
-            tables: number[];
-        }
-    >;
+    boardById: Record<number, IBoardWithItemIds>;
+    boardItemById: Record<number, IBoardItem>;
 }
 
 export type ThunkResult<R> = ThunkAction<

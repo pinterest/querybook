@@ -1,74 +1,106 @@
-import React from 'react';
+import React, { useMemo, useRef } from 'react';
 
 import { scrollToCell } from 'lib/data-doc/data-doc-utils';
 import { IDataCell } from 'const/datadoc';
 import { Icon } from 'ui/Icon/Icon';
+import { DraggableList } from 'ui/DraggableList/DraggableList';
+import { moveDataDocCell } from 'redux/dataDoc/action';
+import { getScrollParent } from 'lib/utils';
 
 const CELL_TEXT_LEN = 50;
 
 export const DataDocContents: React.FunctionComponent<{
+    docId: number;
     cells: IDataCell[];
-}> = ({ cells }) => {
-    const cellTypeCount = {};
-    const cellsDOM = cells.map((cell) => {
-        let cellText: React.ReactChild = ' ';
-        let cellIcon: React.ReactChild = null;
-
-        cellTypeCount[cell.cell_type] =
-            (cellTypeCount[cell.cell_type] || 0) + 1;
-        switch (cell.cell_type) {
-            case 'query': {
-                const cellTitle =
-                    cell.meta['title'] ||
-                    `Query #${cellTypeCount[cell.cell_type]}`;
-                const cellQueryText = cell.context.slice(
-                    0,
-                    50 - cellTitle.length
-                );
-
-                cellText = (
-                    <>
-                        <b className="mr8">{cellTitle}</b>
-                        {cellQueryText}
-                    </>
-                );
-                cellIcon = <Icon name="code" size={19} />;
-                break;
-            }
-            case 'text': {
-                cellText = cell.context
-                    .getPlainText()
-                    .trim()
-                    .slice(0, CELL_TEXT_LEN) || (
-                    <i>{`(Empty Text #${cellTypeCount[cell.cell_type]})`}</i>
-                );
-
-                cellIcon = <Icon name="type" size={19} />;
-
-                break;
-            }
-            case 'chart': {
-                cellIcon = <Icon name="pie-chart" size={19} />;
-                cellText = (
-                    <b>
-                        {cell.meta['title'] ||
-                            `Chart #${cellTypeCount[cell.cell_type]}`}
-                    </b>
-                );
-                break;
-            }
+}> = ({ cells, docId }) => {
+    const selfRef = useRef<HTMLDivElement>(null);
+    const cellIdToIndex = useMemo(() => {
+        const ret = {};
+        const cellTypeCount = {};
+        for (const cell of cells) {
+            cellTypeCount[cell.cell_type] =
+                (cellTypeCount[cell.cell_type] ?? 0) + 1;
+            ret[cell.id] = cellTypeCount[cell.cell_type];
         }
+        return ret;
+    }, [cells]);
+    return (
+        <div ref={selfRef}>
+            <DraggableList
+                items={cells}
+                className="contents-panel-cell-rows"
+                onMove={async (from, to) => {
+                    await moveDataDocCell(docId, from, to);
+                    // This is to "nudge" the scroll bar of the data doc
+                    // to make sure lazy loaded cells gets loaded
+                    const scrollParent = getScrollParent(selfRef.current);
+                    scrollParent.scrollTo(
+                        scrollParent.scrollLeft,
+                        scrollParent.scrollTop + 1
+                    );
+                }}
+                renderItem={(index, cell) => {
+                    let cellText: React.ReactChild = ' ';
+                    let cellIcon: React.ReactChild = null;
 
-        return (
-            <li
-                key={cell.id}
-                className="contents-panel-cell-row"
-                onClick={() => scrollToCell(cell.id)}
-            >
-                {cellIcon}
-                <span className="contents-panel-cell-row-text">{cellText}</span>
-            </li>
-        );
-    });
-    return <ul className="contents-panel-cell-rows">{cellsDOM}</ul>;
+                    switch (cell.cell_type) {
+                        case 'query': {
+                            const cellTitle =
+                                cell.meta['title'] ||
+                                `Query #${cellIdToIndex[cell.id]}`;
+                            const cellQueryText = cell.context.slice(
+                                0,
+                                50 - cellTitle.length
+                            );
+
+                            cellText = (
+                                <>
+                                    <b className="mr8">{cellTitle}</b>
+                                    {cellQueryText}
+                                </>
+                            );
+                            cellIcon = <Icon name="code" size={19} />;
+                            break;
+                        }
+                        case 'text': {
+                            cellText = cell.context
+                                .getPlainText()
+                                .trim()
+                                .slice(0, CELL_TEXT_LEN) || (
+                                <i>{`(Empty Text #${
+                                    cellIdToIndex[cell.id]
+                                })`}</i>
+                            );
+
+                            cellIcon = <Icon name="type" size={19} />;
+
+                            break;
+                        }
+                        case 'chart': {
+                            cellIcon = <Icon name="pie-chart" size={19} />;
+                            cellText = (
+                                <b>
+                                    {cell.meta['title'] ||
+                                        `Chart #${cellIdToIndex[cell.id]}`}
+                                </b>
+                            );
+                            break;
+                        }
+                    }
+
+                    return (
+                        <div
+                            className="contents-panel-cell-row"
+                            onClick={() => scrollToCell(cell.id)}
+                        >
+                            {cellIcon}
+                            <span className="contents-panel-cell-row-text">
+                                {cellText}
+                            </span>
+                        </div>
+                    );
+                }}
+            />
+        </div>
+    );
 };

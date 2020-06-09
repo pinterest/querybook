@@ -1,6 +1,8 @@
 import { hot } from 'react-hot-loader/root';
 import { setConfig } from 'react-hot-loader';
 import React from 'react';
+import { DndProvider } from 'react-dnd';
+import { HTML5Backend } from 'react-dnd-html5-backend';
 import { Provider } from 'react-redux';
 
 import { AppRouter } from 'components/AppRouter/AppRouter';
@@ -13,13 +15,15 @@ import { reduxStore } from 'redux/store';
 (window as any).reduxStore = reduxStore;
 
 const AppInner = () => (
-    <Provider store={reduxStore}>
-        <>
-            <AppRouter />
-            <ConfirmationManager />
-            <NotificationManager />
-        </>
-    </Provider>
+    <DndProvider backend={HTML5Backend}>
+        <Provider store={reduxStore}>
+            <>
+                <AppRouter />
+                <ConfirmationManager />
+                <NotificationManager />
+            </>
+        </Provider>
+    </DndProvider>
 );
 
 export const App = hot(AppInner);
