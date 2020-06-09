@@ -683,6 +683,7 @@ class DataDocComponent extends React.Component<IProps, IState> {
 
         const leftSideBar = (
             <DataDocLeftSidebar
+                docId={dataDoc.id}
                 cells={dataDoc.dataDocCells}
                 defaultCollapse={defaultCollapseAllCells}
                 onCollapse={this.handleToggleCollapse}

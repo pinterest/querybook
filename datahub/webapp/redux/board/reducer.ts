@@ -1,10 +1,11 @@
 import { IBoardState, BoardAction } from './types';
 import { combineReducers } from 'redux';
 import produce from 'immer';
+import { arrayMove } from 'lib/utils';
 
 const initialState: Readonly<IBoardState> = {
     boardById: {},
-    boardIdToItemsId: {},
+    boardItemById: {},
 };
 
 function board(state = initialState, action: BoardAction) {
@@ -21,49 +22,68 @@ function board(state = initialState, action: BoardAction) {
                 return;
             }
             case '@@board/RECEIVE_BOARD_WITH_ITEMS': {
-                const { tables, docs, ...board } = action.payload.board;
+                const { board, boardItemById } = action.payload;
 
                 draft.boardById[board.id] = {
                     ...draft.boardById[board.id],
                     ...board,
                 };
-                draft.boardIdToItemsId[board.id] = {
-                    docs,
-                    tables,
+                draft.boardItemById = {
+                    ...draft.boardItemById,
+                    ...boardItemById,
                 };
                 return;
             }
             case '@board/REMOVE_BOARD': {
                 const { id } = action.payload;
                 delete draft.boardById[id];
-                delete draft.boardIdToItemsId[id];
+                draft.boardItemById = Object.values(draft.boardItemById).reduce(
+                    (hash, boardItem) => {
+                        if (boardItem.board_id !== id) {
+                            hash[boardItem.id] = boardItem;
+                        }
+                        return hash;
+                    },
+                    {}
+                );
                 return;
             }
             case '@@board/RECEIVE_BOARD_ITEM': {
-                const { boardId, itemType, itemId } = action.payload;
-                if (boardId in draft.boardIdToItemsId) {
-                    const boardItemIds =
-                        itemType === 'data_doc'
-                            ? draft.boardIdToItemsId[boardId].docs
-                            : draft.boardIdToItemsId[boardId].tables;
-                    if (!boardItemIds.includes(itemId)) {
-                        boardItemIds.push(itemId);
-                    }
+                const { boardItem, boardId } = action.payload;
+                draft.boardItemById[boardItem.id] = boardItem;
+                if (!(boardItem.id in draft.boardById[boardId].items)) {
+                    draft.boardById[boardId].items =
+                        draft.boardById[boardId].items ?? [];
+                    draft.boardById[boardId].items.push(boardItem.id);
                 }
+
                 return;
             }
             case '@@board/REMOVE_BOARD_ITEM': {
                 const { boardId, itemType, itemId } = action.payload;
-                if (boardId in draft.boardIdToItemsId) {
-                    const boardItemIds =
-                        itemType === 'data_doc'
-                            ? draft.boardIdToItemsId[boardId].docs
-                            : draft.boardIdToItemsId[boardId].tables;
-                    const index = boardItemIds.indexOf(itemId);
-                    if (index >= 0) {
-                        boardItemIds.splice(index, 1);
-                    }
-                }
+                const itemField =
+                    itemType === 'data_doc' ? 'data_doc_id' : 'table_id';
+                draft.boardItemById = Object.values(draft.boardItemById).reduce(
+                    (hash, boardItem) => {
+                        if (
+                            !(
+                                boardItem.board_id === boardId &&
+                                itemField in boardItem &&
+                                boardItem[itemField] === itemId
+                            )
+                        ) {
+                            hash[boardItem.id] = boardItem;
+                        }
+                        return hash;
+                    },
+                    {}
+                );
+                return;
+            }
+            case '@@board/MOVE_BOARD_ITEM': {
+                const { boardId, fromIndex, toIndex } = action.payload;
+                const board = draft.boardById[boardId];
+                board.items = arrayMove(board.items, fromIndex, toIndex);
                 return;
             }
         }

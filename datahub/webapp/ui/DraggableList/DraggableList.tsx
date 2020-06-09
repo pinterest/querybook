@@ -1,30 +1,60 @@
-import React from 'react';
+import React, { useState, useEffect, useCallback, useMemo } from 'react';
 import { DndProvider } from 'react-dnd';
-import { HTML5Backend } from 'react-dnd-html5-backend';
+
 import { DraggableItem } from './DraggableItem';
+import produce from 'immer';
+import { arrayMove } from 'lib/utils';
 
 interface IDraggableListProps<T> {
-    children: (index: number, itemProps: T) => React.ReactNode;
+    renderItem: (index: number, itemProps: T) => any;
     items: T[];
 
     onMove: (fromIndex: number, toIndex: number) => void;
     className?: string;
 }
 
-export function DraggableList<T>({
-    children,
+export function DraggableList<T extends { id: any }>({
+    renderItem,
     items,
     onMove,
     className,
-}: IDraggableListProps<T>): React.ReactNode {
-    const renderedChildren = items.map((itemProps, idx) => (
-        <DraggableItem key={idx}>{children(idx, itemProps)}</DraggableItem>
+}: IDraggableListProps<T>) {
+    const [hoverItems, setHoverItems] = useState(items);
+
+    const handleHoverMove = useCallback(
+        (fromIndex: number, toIndex: number) => {
+            setHoverItems(arrayMove(hoverItems, fromIndex, toIndex));
+        },
+        [hoverItems]
+    );
+
+    useEffect(() => {
+        setHoverItems(items);
+    }, [items]);
+
+    const idToOriginalIndex = useMemo(
+        () =>
+            items.reduce((hash, item, idx) => {
+                hash[item.id] = idx;
+                return hash;
+            }, {}),
+        [items]
+    );
+
+    const renderedChildren = hoverItems.map((itemProps, idx) => (
+        <DraggableItem
+            key={itemProps.id}
+            onHoverMove={handleHoverMove}
+            onMove={onMove}
+            index={idx}
+            originalIndex={idToOriginalIndex[itemProps.id]}
+        >
+            {renderItem(idx, itemProps)}
+        </DraggableItem>
     ));
     return (
-        <DndProvider backend={HTML5Backend}>
-            <ul className={'DraggableList ' + (className ?? '')}>
-                {renderedChildren}
-            </ul>
-        </DndProvider>
+        <ul className={'DraggableList ' + (className ?? '')}>
+            {renderedChildren}
+        </ul>
     );
 }

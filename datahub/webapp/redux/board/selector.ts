@@ -1,10 +1,14 @@
 import { createSelector } from 'reselect';
 import { IStoreState } from 'redux/store/types';
 import { currentEnvironmentSelector } from 'redux/environment/selector';
+import { IBoardItem } from 'const/board';
+import { IDataDoc } from 'const/datadoc';
+import { IDataTable } from 'const/metastore';
 
 const boardByIdSelector = (state: IStoreState) => state.board.boardById;
-const boardToItemsIdSelector = (state: IStoreState, boardId: number) =>
-    state.board.boardIdToItemsId[boardId];
+const boardItemByIdSelector = (state: IStoreState) => state.board.boardItemById;
+const boardSelector = (state: IStoreState, boardId: number) =>
+    state.board.boardById[boardId];
 
 export const boardsSelector = createSelector(
     boardByIdSelector,
@@ -15,22 +19,29 @@ export const boardsSelector = createSelector(
             .sort((a, b) => b.updated_at - a.updated_at)
 );
 
-export const boardDataDocSelector = createSelector(
-    boardToItemsIdSelector,
-    (state: IStoreState) => state.dataDoc.dataDocById,
-    (boardToItemsId, dataDocById) => {
-        return (boardToItemsId?.docs || [])
-            .map((docId) => dataDocById[docId])
-            .filter((doc) => doc);
-    }
+const rawBoardItemsSelector = createSelector(
+    boardSelector,
+    boardItemByIdSelector,
+    (board, boardItemById) =>
+        (board?.items ?? []).map((itemId) => boardItemById[itemId])
 );
 
-export const boardTableSelector = createSelector(
-    boardToItemsIdSelector,
+export const boardItemsSelector = createSelector(
+    rawBoardItemsSelector,
+    (state: IStoreState) => state.dataDoc.dataDocById,
     (state: IStoreState) => state.dataSources.dataTablesById,
-    (boardToItemsId, dataTablesById) => {
-        return (boardToItemsId?.tables || [])
-            .map((tableId) => dataTablesById[tableId])
-            .filter((table) => table);
-    }
+    (boardItems, dataDocById, dataTablesById) =>
+        boardItems.map((item) => {
+            if (item['data_doc_id'] != null) {
+                return [item, dataDocById[item.data_doc_id]] as [
+                    IBoardItem,
+                    IDataDoc
+                ];
+            } else {
+                return [item, dataTablesById[item.table_id]] as [
+                    IBoardItem,
+                    IDataTable
+                ];
+            }
+        })
 );

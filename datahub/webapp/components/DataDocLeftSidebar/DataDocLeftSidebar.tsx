@@ -14,6 +14,7 @@ import { DataDocContents } from './DataDocContents';
 import { DataTableViewMini } from 'components/DataTableViewMini/DataTableViewMini';
 
 interface IProps {
+    docId: number;
     cells: IDataCell[];
     onCollapse: () => any;
     defaultCollapse: boolean;
@@ -22,6 +23,7 @@ interface IProps {
 type LeftSidebarContentState = 'contents' | 'table' | 'default';
 
 export const DataDocLeftSidebar: React.FunctionComponent<IProps> = ({
+    docId,
     cells,
     defaultCollapse,
     onCollapse,
@@ -62,7 +64,7 @@ export const DataDocLeftSidebar: React.FunctionComponent<IProps> = ({
                     />
                     <Title size={6}>contents</Title>
                 </Level>
-                <DataDocContents cells={cells} />
+                <DataDocContents cells={cells} docId={docId} />
             </div>
         );
     } else if (contentState === 'table') {

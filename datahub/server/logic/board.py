@@ -1,3 +1,4 @@
+import datetime
 from app.db import with_session
 from models.board import Board, BoardItem
 from models.user import User
@@ -75,6 +76,45 @@ def add_item_to_board(board_id, item_id, item_type, session=None):  # data_doc o
         session.commit()
         board_item.id
     return board_item
+
+
+@with_session
+def move_item_order(board_id, from_index, to_index, commit=True, session=None):
+    if from_index == to_index:
+        return  # NOOP
+
+    board = Board.get(id=board_id, session=session)
+    board_items = board.items
+    assert 0 <= from_index < len(board_items) and 0 <= to_index < len(
+        board_items
+    ), "Invalid index"
+    board_item = board_items[from_index]
+    from_item_order = board_item.item_order
+    to_item_order = board_items[to_index].item_order
+
+    is_move_down = from_item_order < to_item_order
+    if is_move_down:
+        session.query(BoardItem).filter(BoardItem.board_id == board_id).filter(
+            BoardItem.item_order <= to_item_order
+        ).filter(BoardItem.item_order > from_item_order).update(
+            {BoardItem.item_order: BoardItem.item_order - 1}
+        )
+    else:
+        # moving up
+        session.query(BoardItem).filter(BoardItem.board_id == board_id).filter(
+            BoardItem.item_order >= to_item_order
+        ).filter(BoardItem.item_order < from_item_order).update(
+            {BoardItem.item_order: BoardItem.item_order + 1}
+        )
+    # Move item to the right place
+    board_item.item_order = to_item_order
+    board.updated_at = datetime.datetime.now()
+
+    if commit:
+        session.commit()
+    else:
+        session.flush()
+    return board
 
 
 @with_session
