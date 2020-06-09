@@ -233,7 +233,7 @@ export const DataTableViewSamples: React.FunctionComponent<IDataTableViewSamples
                                     ]}
                                 />
                             </div>
-                            <div className="DataTableViewSamples-button mb12">
+                            <div className="DataTableViewSamples-button mb8">
                                 <AsyncButton
                                     title="Generate Table Samples"
                                     onClick={submitForm}

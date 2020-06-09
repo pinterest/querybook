@@ -40,7 +40,7 @@ export function getDefaultScaleType(value: any): ChartScaleType {
         case 'number':
             return 'linear';
         case 'date':
-        // return 'time';
+            return 'time'; 
         case 'string':
         default:
             return 'category';
