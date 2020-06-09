@@ -98,7 +98,7 @@ export interface IChartChartMeta {
     type?: ChartType;
     x_axis: IChartXAxisMeta;
     y_axis: IChartYAxisMeta;
-    z_axis?: number;
+    z_axis?: { col_idx: number };
 }
 
 export type ChartLegendPositionType = 'top' | 'bottom' | 'right' | 'left';
@@ -173,7 +173,7 @@ export interface IChartFormValues {
     stack: boolean;
     hiddenSeries: number[];
     coloredSeries: { [seriesIdx: number]: number };
-    zAxis: number | undefined;
+    zIndex: number | undefined;
 
     chartType: ChartType;
 

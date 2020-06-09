@@ -57,7 +57,8 @@ cell_types:
                             hidden: false
                             color: 0
                             agg_type: 'sum'
-                z_axis: 0
+                z_axis:
+                    col_idx: 2
             visual:
                 legend_position: ''
                 values:

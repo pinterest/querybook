@@ -62,7 +62,7 @@ export function processChartJSData(
                     y: Number(row[idx]),
                 }));
             } else if (chartMeta.type === 'bubble') {
-                const rAxisIdx = chartMeta.z_axis;
+                const rAxisIdx = chartMeta.z_axis?.col_idx ?? 2;
                 dataset['data'] = dataRows.map((row) => ({
                     x:
                         xAxesScaleType === 'time'

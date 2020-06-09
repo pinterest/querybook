@@ -196,7 +196,7 @@ const DataDocChartComposerComponent: React.FunctionComponent<
         }));
     }, [chartData]);
 
-    const zAxisOptions = React.useMemo(() => {
+    const zIndexOptions = React.useMemo(() => {
         if (!chartData) {
             return [];
         }
@@ -275,9 +275,7 @@ const DataDocChartComposerComponent: React.FunctionComponent<
                 label: valsArray[i],
                 color:
                     colorPalette[
-                        values.coloredSeries[i] == null
-                            ? i % colorPalette.length
-                            : values.coloredSeries[i]
+                        values.coloredSeries[i] ?? i % colorPalette.length
                     ],
             }));
             return options;
@@ -621,14 +619,14 @@ const DataDocChartComposerComponent: React.FunctionComponent<
             );
         }
 
-        const zAxisDOM =
+        const zIndexDOM =
             values.chartType === 'bubble' ? (
                 <>
                     <FormSectionHeader>Z Axis</FormSectionHeader>
                     <FormField stacked label="Z Axis">
                         <ReactSelectField
                             name={`zIndex`}
-                            options={zAxisOptions}
+                            options={zIndexOptions}
                             isDisabled={!statementResultData}
                         />
                     </FormField>
@@ -639,7 +637,7 @@ const DataDocChartComposerComponent: React.FunctionComponent<
             <>
                 {xAxisDOM}
                 {yAxisDOM}
-                {zAxisDOM}
+                {zIndexDOM}
             </>
         );
     }
@@ -998,7 +996,7 @@ function formValsToMeta(vals: IChartFormValues, meta: IDataChartCellMeta) {
 
         // Z Axes
         if (vals.chartType === 'bubble') {
-            draft.chart.z_axis = draft.chart.z_axis || 2;
+            draft.chart.z_axis = { col_idx: vals.zIndex ?? 2 };
         }
 
         const seriesObj = {};

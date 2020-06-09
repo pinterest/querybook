@@ -116,7 +116,7 @@ export function mapMetaToFormVals(
         yAxis: getAxisOptions(meta.chart.y_axis),
         stack: Boolean(meta.chart.y_axis.stack),
 
-        zAxis: meta.chart.z_axis,
+        zIndex: meta.chart.z_axis?.col_idx,
 
         hiddenSeries,
         coloredSeries: filterSeries(meta.chart.y_axis.series, 'color'),
