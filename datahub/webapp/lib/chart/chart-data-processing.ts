@@ -6,11 +6,21 @@ import { ChartScaleType } from 'const/dataDocChart';
 
 import { colorPalette, colorPaletteFill, fillColor } from 'const/chartColors';
 
+function processDataPoint(val: any, scale: ChartScaleType) {
+    if (scale === 'category') {
+        return val;
+    } else if (scale === 'time' && isNaN(val)) {
+        return Number(new Date(val));
+    }
+    return Number(val);
+}
+
 export function processChartJSData(
     data: any[][],
     meta: IDataChartCellMeta,
     theme: string,
-    xAxesScaleType: ChartScaleType
+    xAxesScaleType: ChartScaleType,
+    yAxesScaleType: ChartScaleType
 ): ChartData<ChartJsData> {
     // The default input for all chart type is wide
     if (!data.length) {
@@ -55,24 +65,29 @@ export function processChartJSData(
             if (chartMeta.type === 'scatter') {
                 dataset['pointRadius'] = 4;
                 dataset['data'] = dataRows.map((row) => ({
-                    x:
-                        xAxesScaleType === 'time'
-                            ? Number(new Date(row[xAxisIdx]))
-                            : Number(row[xAxisIdx]),
-                    y: Number(row[idx]),
+                    x: processDataPoint(row[xAxisIdx], xAxesScaleType),
+                    y: processDataPoint(row[idx], yAxesScaleType),
                 }));
             } else if (chartMeta.type === 'bubble') {
                 const rAxisIdx = chartMeta.z_axis?.col_idx ?? 2;
                 dataset['data'] = dataRows.map((row) => ({
-                    x:
-                        xAxesScaleType === 'time'
-                            ? Number(new Date(row[xAxisIdx]))
-                            : Number(row[xAxisIdx]),
-                    y: Number(row[idx]),
+                    x: processDataPoint(row[xAxisIdx], xAxesScaleType),
+                    y: processDataPoint(row[idx], yAxesScaleType),
                     r: Number(row[rAxisIdx]),
                 }));
             } else {
-                dataset['data'] = dataRows.map((row) => Number(row[idx]));
+                dataset['data'] =
+                    yAxesScaleType === 'time'
+                        ? (dataset['data'] = dataRows.map((row) => ({
+                              x: processDataPoint(
+                                  row[xAxisIdx],
+                                  xAxesScaleType
+                              ),
+                              y: processDataPoint(row[idx], yAxesScaleType),
+                          })))
+                        : dataRows.map((row) =>
+                              processDataPoint(row[idx], yAxesScaleType)
+                          );
             }
 
             // Assign colors -----------------------------------------------
@@ -117,8 +132,13 @@ export function processChartJSData(
         })
         .filter((dataset) => dataset);
 
-    return {
-        labels: dataRows.map((row) => row[xAxisIdx]),
+    const chartData = {
         datasets: chartDatasets,
     };
+
+    if (!(chartMeta.type === 'bubble' || chartMeta.type === 'scatter')) {
+        chartData['labels'] = dataRows.map((row) => row[xAxisIdx]);
+    }
+
+    return chartData;
 }
