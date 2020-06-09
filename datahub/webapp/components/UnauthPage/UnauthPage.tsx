@@ -54,7 +54,7 @@ export class UnauthPage extends React.Component<
         return (
             <Center>
                 <StyledUnauthPage>
-                    <div className="mb16">
+                    <div className="mb24">
                         <Message type="error">
                             <p>
                                 NOTE: This signup/login flow for DataHub is only
