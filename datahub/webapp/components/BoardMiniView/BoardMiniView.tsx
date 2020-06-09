@@ -17,25 +17,6 @@ import {
     deleteBoardItem,
     moveBoardItem,
 } from 'redux/board/action';
-<<<<<<< HEAD
-import { boardDataDocSelector, boardTableSelector } from 'redux/board/selector';
-import { sendConfirm, sendNotification } from 'lib/dataHubUI';
-import { IDataDoc, emptyDataDocTitleMessage } from 'const/datadoc';
-import { IDataTable } from 'const/metastore';
-import { BoardItemType } from 'const/board';
-import { navigateWithinEnv } from 'lib/utils/query-string';
-
-import { BoardCreateUpdateModal } from 'components/BoardCreateUpdateModal/BoardCreateUpdateModal';
-
-import { Divider } from 'ui/Divider/Divider';
-import { Icon } from 'ui/Icon/Icon';
-import { IconButton } from 'ui/Button/IconButton';
-import { Level, LevelItem } from 'ui/Level/Level';
-import { Loading } from 'ui/Loading/Loading';
-import { SeeMoreText } from 'ui/SeeMoreText/SeeMoreText';
-import { Title } from 'ui/Title/Title';
-
-=======
 
 import { SeeMoreText } from 'ui/SeeMoreText/SeeMoreText';
 import { Icon } from 'ui/Icon/Icon';
@@ -45,7 +26,6 @@ import { Level, LevelItem } from 'ui/Level/Level';
 import { Loading } from 'ui/Loading/Loading';
 import { Title } from 'ui/Title/Title';
 import { Divider } from 'ui/Divider/Divider';
->>>>>>> Add drag and drop for table of contents and board
 import './BoardMiniView.scss';
 
 interface IProps {
