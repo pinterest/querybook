@@ -51,16 +51,10 @@ def get_hosted_es():
     elif DataHubSettings.ELASTICSEARCH_CONNECTION_TYPE == "aws":
         # TODO: GENERALIZE THIS BEFORE OPEN SOURCE
         from boto3 import session as boto_session
-        from requests_aws4auth import AWS4Auth
+        from lib.utils.assume_role_aws4auth import AssumeRoleAWS4Auth
 
         credentials = boto_session.Session().get_credentials()
-        auth = AWS4Auth(
-            credentials.access_key,
-            credentials.secret_key,
-            "us-east-1",
-            "es",
-            session_token=credentials.token,
-        )
+        auth = AssumeRoleAWS4Auth(credentials, "us-east-1", "es",)
         hosted_es = Elasticsearch(
             hosts=DataHubSettings.ELASTICSEARCH_HOST,
             port=443,
