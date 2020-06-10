@@ -27,7 +27,7 @@
     },
     "homepage": "https://github.com/pinterest/datahub",
     "engines": {
-        "node": "^12.0.0"
+        "node": ">=12.0.0"
     },
     "dependencies": {
         "@babel/core": "^7.7.4",
@@ -58,7 +58,7 @@
         "memoize-one": "5.0.2",
         "mini-css-extract-plugin": "0.4.4",
         "moment": "2.24.0",
-        "node-sass": "4.13.0",
+        "node-sass": "4.14.1",
         "normalizr": "3.3.0",
         "qs": "6.5.2",
         "rc-time-picker": "3.6.4",

@@ -15,7 +15,7 @@ import { sendConfirm } from 'lib/dataHubUI';
 import history from 'lib/router-history';
 import { generateFormattedDate } from 'lib/utils/datetime';
 
-import { BindedQueryEditor } from 'components/QueryEditor/BindedQueryEditor';
+import { BoundQueryEditor } from 'components/QueryEditor/BoundQueryEditor';
 import { UserName } from 'components/UserBadge/UserName';
 import { AsyncButton } from 'ui/AsyncButton/AsyncButton';
 import { Message } from 'ui/Message/Message';
@@ -310,7 +310,7 @@ class QuerySnippetComposerComponent extends React.PureComponent<
         const contextField = (
             <FormField label="Query">
                 <div>
-                    <BindedQueryEditor
+                    <BoundQueryEditor
                         value={form.context}
                         lineWrapping={true}
                         onChange={this.onQueryChange}

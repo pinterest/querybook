@@ -18,7 +18,7 @@ import * as queryExecutionsAction from 'redux/queryExecutions/action';
 import * as adhocQueryActions from 'redux/adhocQuery/action';
 import * as dataDocActions from 'redux/dataDoc/action';
 
-import { BindedQueryEditor } from 'components/QueryEditor/BindedQueryEditor';
+import { BoundQueryEditor } from 'components/QueryEditor/BoundQueryEditor';
 import { CodeMirrorSearchHighlighter } from 'components/SearchAndReplace/CodeMirrorSearchHighlighter';
 import {
     SearchAndReplace,
@@ -206,7 +206,7 @@ export const QueryComposer: React.FC<{}> = () => {
 
     const editorDOM = (
         <>
-            <BindedQueryEditor
+            <BoundQueryEditor
                 ref={queryEditorRef}
                 value={query}
                 lineWrapping={true}

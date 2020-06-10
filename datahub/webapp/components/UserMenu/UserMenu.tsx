@@ -1,6 +1,5 @@
-import { bind } from 'lodash-decorators';
-import React from 'react';
-import { connect } from 'react-redux';
+import React, { useState, useRef, useCallback } from 'react';
+import { useDispatch, useSelector } from 'react-redux';
 
 import { IStoreState, Dispatch } from 'redux/store/types';
 import * as UserActions from 'redux/user/action';
@@ -16,136 +15,123 @@ import { Modal } from 'ui/Modal/Modal';
 import { Popover, PopoverLayout } from 'ui/Popover/Popover';
 
 import './UserMenu.scss';
+import { ToggleSwitch } from 'ui/ToggleSwitch/ToggleSwitch';
 
-interface IOwnProps {
+interface IProps {
     tooltipPos?: TooltipDirection;
     popoverLayout?: PopoverLayout;
 }
-type IProps = IOwnProps &
-    ReturnType<typeof mapStateToProps> &
-    ReturnType<typeof mapDispatchToProps>;
 
 interface IState {
     showUserMenuPopover: boolean;
     showTokenCreationModal: boolean;
 }
 
-class UserMenuComponent extends React.PureComponent<IProps, IState> {
-    public readonly state = {
-        showUserMenuPopover: false,
-        showTokenCreationModal: false,
-    };
+export const UserMenu: React.FC<IProps> = ({
+    tooltipPos = 'right',
+    popoverLayout = ['right', 'bottom'] as PopoverLayout,
+}) => {
+    const [showUserMenuPopover, setShowUserMenuPopover] = useState(false);
+    const toggleUserMenuPopover = useCallback(
+        () => setShowUserMenuPopover((val) => !val),
+        []
+    );
 
-    private selfRef = React.createRef<HTMLSpanElement>();
+    const [showTokenModal, setShowTokenModal] = useState(false);
+    const toggleShowTokenModal = useCallback(
+        () => setShowTokenModal((val) => !val),
+        []
+    );
 
-    @bind
-    public toggleUserMenuPopover() {
-        this.setState(({ showUserMenuPopover }) => ({
-            showUserMenuPopover: !showUserMenuPopover,
-        }));
-    }
-
-    @bind
-    public goToUserSettingsMenu() {
+    const selfRef = useRef<HTMLSpanElement>(null);
+    const goToUserSettingsMenu = useCallback(() => {
         navigateWithinEnv('/user_settings/', {
             isModal: true,
         });
-    }
+    }, []);
 
-    @bind
-    public toggleTokenCreationModal() {
-        this.setState(({ showTokenCreationModal }) => ({
-            showTokenCreationModal: !showTokenCreationModal,
-        }));
-    }
+    const uid = useSelector((state: IStoreState) => state.user.myUserInfo.uid);
+    const theme = useSelector(
+        (state: IStoreState) => state.user.computedSettings['theme']
+    );
+    const dispatch: Dispatch = useDispatch();
+    const logout = useCallback(
+        () =>
+            dispatch(UserActions.logoutUser()).then(() =>
+                window.location.reload()
+            ),
+        []
+    );
+    const setTheme = useCallback(
+        (newTheme: 'dark' | 'default') =>
+            dispatch(UserActions.setUserSettings('theme', newTheme)),
+        []
+    );
 
-    @bind
-    public logout() {
-        this.props.logout().then(() => window.location.reload());
-    }
-
-    public getUserDropdownDOM() {
+    const getUserDropdownDOM = () => {
+        const showThemeToggle = theme === 'dark' || theme === 'default';
+        const themeToggle = showThemeToggle ? (
+            <MenuInfoItem className="horizontal-space-between">
+                <span className="mr8">Dark Theme</span>
+                <ToggleSwitch
+                    checked={theme === 'dark'}
+                    onChange={(val) => setTheme(val ? 'dark' : 'default')}
+                />
+            </MenuInfoItem>
+        ) : null;
         return (
             <Menu>
                 <MenuInfoItem>
-                    <UserBadge uid={this.props.uid} />
+                    <UserBadge uid={uid} />
                 </MenuInfoItem>
-                {/* <MenuInfoItem>
-                    <div className="user-group-wrapper">{[]}</div>
-                </MenuInfoItem> */}
                 <MenuDivider />
-                <MenuItem onClick={this.goToUserSettingsMenu}>
-                    Settings
-                </MenuItem>
+                <MenuItem onClick={goToUserSettingsMenu}>Settings</MenuItem>
                 <MenuDivider />
-                <MenuItem onClick={this.toggleTokenCreationModal}>
+                {themeToggle}
+                <MenuDivider />
+                <MenuItem onClick={toggleShowTokenModal}>
                     API Access Token
                 </MenuItem>
                 <MenuDivider />
-                <MenuItem onClick={this.logout}>Log out</MenuItem>
+                <MenuItem onClick={logout}>Log out</MenuItem>
             </Menu>
         );
-    }
-
-    public render() {
-        const {
-            tooltipPos = 'right',
-            popoverLayout = ['right', 'bottom'] as PopoverLayout,
-            uid,
-        } = this.props;
-        const { showUserMenuPopover, showTokenCreationModal } = this.state;
-        const tokenCreationModalDOM = showTokenCreationModal ? (
-            <Modal
-                onHide={this.toggleTokenCreationModal}
-                className="message-size"
-                title="Token Creation"
-            >
-                <TokenCreation uid={this.props.uid} />
-            </Modal>
-        ) : null;
-
-        const userSettingsPopover = showUserMenuPopover && (
-            <Popover
-                anchor={this.selfRef.current}
-                layout={popoverLayout}
-                onHide={this.toggleUserMenuPopover}
-                resizeOnChange
-            >
-                {this.getUserDropdownDOM()}
-            </Popover>
-        );
-
-        return (
-            <>
-                <span
-                    className="UserMenu"
-                    ref={this.selfRef}
-                    onClick={this.toggleUserMenuPopover}
-                    aria-label={'User Settings'}
-                    data-balloon-pos={tooltipPos}
-                >
-                    <UserAvatar uid={uid} />
-                </span>
-                {tokenCreationModalDOM}
-                {userSettingsPopover}
-            </>
-        );
-    }
-}
-
-function mapStateToProps(state: IStoreState, ownProps: {}) {
-    return {
-        uid: state.user.myUserInfo.uid,
     };
-}
 
-function mapDispatchToProps(dispatch: Dispatch, ownProps: {}) {
-    return {
-        logout: () => dispatch(UserActions.logoutUser()),
-    };
-}
+    const tokenCreationModalDOM = showTokenModal ? (
+        <Modal
+            onHide={toggleShowTokenModal}
+            className="message-size"
+            title="Token Creation"
+        >
+            <TokenCreation uid={uid} />
+        </Modal>
+    ) : null;
 
-export const UserMenu = connect(
-    mapStateToProps,
-    mapDispatchToProps
-)(UserMenuComponent);
+    const userSettingsPopover = showUserMenuPopover && (
+        <Popover
+            anchor={selfRef.current}
+            layout={popoverLayout}
+            onHide={toggleUserMenuPopover}
+            resizeOnChange
+        >
+            {getUserDropdownDOM()}
+        </Popover>
+    );
+
+    return (
+        <>
+            <span
+                className="UserMenu"
+                ref={selfRef}
+                onClick={toggleUserMenuPopover}
+                aria-label={'User Settings'}
+                data-balloon-pos={tooltipPos}
+            >
+                <UserAvatar uid={uid} />
+            </span>
+            {tokenCreationModalDOM}
+            {userSettingsPopover}
+        </>
+    );
+};

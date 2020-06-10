@@ -10,7 +10,7 @@ import {
     renderTemplatedQuery,
 } from 'lib/templated-query';
 
-import { BindedQueryEditor } from 'components/QueryEditor/BindedQueryEditor';
+import { BoundQueryEditor } from 'components/QueryEditor/BoundQueryEditor';
 import { IQuerySnippet } from 'redux/querySnippets/types';
 import { IQueryEngine } from 'const/queryEngine';
 
@@ -177,7 +177,7 @@ export class QuerySnippetView extends React.Component<
                     </TagGroup>
                     <br />
                 </div>
-                <BindedQueryEditor
+                <BoundQueryEditor
                     value={context}
                     readOnly={true}
                     lineWrapping={true}
