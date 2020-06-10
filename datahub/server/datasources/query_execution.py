@@ -8,7 +8,7 @@ from flask_login import current_user
 import requests
 
 from app.flask_app import socketio
-from app.datasource import register, api_assert
+from app.datasource import register, api_assert, RequestException
 from app.db import DBSession
 from app.auth.permission import (
     verify_environment_permission,
@@ -21,6 +21,7 @@ from lib.result_store import GenericReader
 from lib.query_analysis.templating import (
     render_templated_query,
     get_templated_variables_in_string,
+    QueryTemplatingError,
 )
 from const.query_execution import QueryExecutionStatus
 from const.datasources import RESOURCE_NOT_FOUND_STATUS_CODE
@@ -382,7 +383,10 @@ def export_statement_execution_result(statement_execution_id, export_name):
 
 @register("/query_execution/templated_query/", methods=["POST"])
 def get_templated_query(query: str, variables: Dict[str, str]):
-    return render_templated_query(query, variables)
+    try:
+        return render_templated_query(query, variables)
+    except QueryTemplatingError as e:
+        raise RequestException(e)
 
 
 @register("/query_execution/templated_query_params/", methods=["POST"])
