@@ -12,7 +12,6 @@ from lib.utils.utils import (
     with_exception,
 )
 from lib.utils.decorators import in_mem_memoized
-from lib.utils.assume_role_aws4auth import AssumeRoleAWS4Auth
 from lib.logger import get_logger
 from lib.config import get_config_value
 from app.db import (
@@ -52,7 +51,7 @@ def get_hosted_es():
     elif DataHubSettings.ELASTICSEARCH_CONNECTION_TYPE == "aws":
         # TODO: GENERALIZE THIS BEFORE OPEN SOURCE
         from boto3 import session as boto_session
-        from requests_aws4auth import AWS4Auth
+        from lib.utils.assume_role_aws4auth import AssumeRoleAWS4Auth
 
         credentials = boto_session.Session().get_credentials()
         auth = AssumeRoleAWS4Auth(credentials, "us-east-1", "es",)
