@@ -12,6 +12,7 @@ from lib.utils.utils import (
     with_exception,
 )
 from lib.utils.decorators import in_mem_memoized
+from lib.utils.assume_role_aws4auth import AssumeRoleAWS4Auth
 from lib.logger import get_logger
 from lib.config import get_config_value
 from app.db import (
@@ -54,13 +55,7 @@ def get_hosted_es():
         from requests_aws4auth import AWS4Auth
 
         credentials = boto_session.Session().get_credentials()
-        auth = AWS4Auth(
-            credentials.access_key,
-            credentials.secret_key,
-            "us-east-1",
-            "es",
-            session_token=credentials.token,
-        )
+        auth = AssumeRoleAWS4Auth(credentials, "us-east-1", "es",)
         hosted_es = Elasticsearch(
             hosts=DataHubSettings.ELASTICSEARCH_HOST,
             port=443,
