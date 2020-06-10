@@ -99,7 +99,7 @@ class DataDocQueryCellComponent extends React.Component<IProps, IState> {
     private selfRef = React.createRef<HTMLDivElement>();
     private keyMap = {
         'Shift-Enter': this.clickOnRunButton,
-        'Ctrl-D': this.props.onDeleteKeyPressed,
+        'Shift-Alt-D': this.props.onDeleteKeyPressed,
     };
 
     constructor(props) {

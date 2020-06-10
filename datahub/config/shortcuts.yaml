@@ -7,6 +7,8 @@ shortcuts:
             - toggle sidebar
           - - ['esc']
             - close modal
+          - - ['⏎']
+            - confirm modal
     - title: data doc and adhoc
       keys:
           - - ['⌘', 's']
@@ -39,7 +41,7 @@ shortcuts:
             - toggle comment
           - - ['⌘', 'p']
             - open table modal if cursor is on a table
-          - - ['shift', 'alt', 'f']
+          - - ['shift', '⌥', 'f']
             - format query
-          - - ['ctrl', 'd']
+          - - ['shift', '⌥', 'd']
             - delete current cell
