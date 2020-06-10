@@ -14,7 +14,7 @@ import { StatusIcon } from 'ui/StatusIcon/StatusIcon';
 import { Button } from 'ui/Button/Button';
 import { useDataFetch } from 'hooks/useDataFetch';
 import { Tag } from 'ui/Tag/Tag';
-import { BindedQueryEditor } from 'components/QueryEditor/BindedQueryEditor';
+import { BoundQueryEditor } from 'components/QueryEditor/BoundQueryEditor';
 
 export const QueryViewEditor: React.FunctionComponent<{
     queryExecution: IQueryExecution;
@@ -60,7 +60,7 @@ export const QueryViewEditor: React.FunctionComponent<{
 
     const editorDOM = (
         <div className="editor">
-            <BindedQueryEditor
+            <BoundQueryEditor
                 value={queryExecution.query}
                 lineWrapping={true}
                 readOnly={true}

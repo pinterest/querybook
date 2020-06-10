@@ -29,7 +29,7 @@ import {
     IQueryRunButtonHandles,
 } from 'components/QueryRunButton/QueryRunButton';
 import { CodeMirrorSearchHighlighter } from 'components/SearchAndReplace/CodeMirrorSearchHighlighter';
-import { BindedQueryEditor } from 'components/QueryEditor/BindedQueryEditor';
+import { BoundQueryEditor } from 'components/QueryEditor/BoundQueryEditor';
 
 import { Button } from 'ui/Button/Button';
 import { DebouncedInput } from 'ui/DebouncedInput/DebouncedInput';
@@ -545,7 +545,7 @@ class DataDocQueryCellComponent extends React.Component<IProps, IState> {
 
         const editorDOM = !queryCollapsed && (
             <div className="editor">
-                <BindedQueryEditor
+                <BoundQueryEditor
                     value={query}
                     lineWrapping={true}
                     onKeyDown={this.onKeyDown}

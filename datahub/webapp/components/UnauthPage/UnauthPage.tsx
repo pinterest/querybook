@@ -68,7 +68,7 @@ export class UnauthPage extends React.Component<
                             </p>
                             <p>
                                 Please use OAuth or other login methods for
-                                production usage.
+                                production.
                             </p>
                         </Message>
                     </div>

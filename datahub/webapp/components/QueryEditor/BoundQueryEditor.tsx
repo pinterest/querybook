@@ -15,7 +15,7 @@ import { IStoreState } from 'redux/store/types';
 import { CodeMirrorSearchHighlighter } from 'components/SearchAndReplace/CodeMirrorSearchHighlighter';
 import { useForwardedRef } from 'hooks/useForwardedRef';
 
-export const BindedQueryEditor = React.forwardRef<
+export const BoundQueryEditor = React.forwardRef<
     QueryEditor,
     Omit<
         IQueryEditorProps,
