@@ -1,4 +1,6 @@
 from datetime import datetime, timedelta
+import json
+import re
 from typing import Dict, Set
 
 from jinja2.sandbox import SandboxedEnvironment
@@ -7,12 +9,27 @@ from jinja2 import meta
 _DAG = Dict[str, Set[str]]
 
 
-class UndefinedVariableException(Exception):
+class QueryTemplatingError(Exception):
     pass
 
 
-class QueryHasCycleException(Exception):
+class UndefinedVariableException(QueryTemplatingError):
     pass
+
+
+class QueryHasCycleException(QueryTemplatingError):
+    pass
+
+
+# The first part is regex for single line comment, ie -- some comment
+# the second part is for multi line comment, ie /* test */
+comment_re = re.compile(r"((?:--.*)|(?:\/\*(?:.*\n.*?)*?.*?\*\/))", re.MULTILINE)
+
+
+def _escape_sql_comments(query: str):
+    return re.sub(
+        comment_re, lambda match: "{{ " + json.dumps(match.group()) + " }}", query
+    )
 
 
 def _detect_cycle_helper(node: str, dag: _DAG, seen: Set[str]) -> bool:
@@ -148,12 +165,13 @@ def render_templated_query(query: str, variables: Dict[str, str]) -> str:
     Returns:
         str -- The rendered string
     """
+    escaped_query = _escape_sql_comments(query)
     all_variables = flatten_recursive_variables(
         {**get_default_variables(), **variables,}
     )
 
     # Check if query contains any invalid variables
-    variables_in_query = get_templated_variables_in_string(query)
+    variables_in_query = get_templated_variables_in_string(escaped_query)
     for variable_name in variables_in_query:
         if variable_name not in all_variables:
             raise UndefinedVariableException(
@@ -161,6 +179,6 @@ def render_templated_query(query: str, variables: Dict[str, str]) -> str:
             )
 
     env = SandboxedEnvironment(autoescape=False)
-    template = env.from_string(query)
+    template = env.from_string(escaped_query)
 
     return template.render(**all_variables)

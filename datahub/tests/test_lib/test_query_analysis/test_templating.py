@@ -190,3 +190,40 @@ class RenderTemplatedQueryTestCase(TestCase):
             'select * from {{ table }} where dt="{{ date }}"',
             {"date": "{{ date2 }}", "date2": "{{ date }}"},
         )
+
+    def test_escape_comments(self):
+        query = """select * from
+-- {{ end_date }}
+/* {{ end_date }} */
+sample_table limit 5;
+-- '{{ end_date }}'
+/*
+    {{ end_date}}
+    {{ end_date}}
+*/
+/*
+{{ end_date}}*/
+-- {{ end_date }}"""
+        self.assertEqual(render_templated_query(query, {}), query)
+
+    def test_escape_comments_non_greedy(self):
+        query_non_greedy = """select * from
+/*
+   {{ end_date }}
+*/
+{{ test }}
+/*
+   {{ end_date2 }}
+*/
+"""
+        self.assertEqual(
+            render_templated_query(query_non_greedy, {"test": "render"}),
+            """select * from
+/*
+   {{ end_date }}
+*/
+render
+/*
+   {{ end_date2 }}
+*/""",
+        )
