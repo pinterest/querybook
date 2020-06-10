@@ -4,7 +4,9 @@ exports[`matches enzyme snapshots matches snapshot 1`] = `
 <styled.div
   className="ErrorPage"
 >
-  <Center>
+  <Center
+    className="flex-column"
+  >
     <Title
       className=""
       gap={false}

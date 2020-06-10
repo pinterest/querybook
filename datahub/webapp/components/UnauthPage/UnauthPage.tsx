@@ -9,6 +9,7 @@ import { LoginForm } from './LoginForm';
 import { SignupForm } from './SignupForm';
 import { Box } from 'ui/Box/Box';
 import './UnauthPage.scss';
+import { Message } from 'ui/Message/Message';
 
 export interface IUnauthPageProps {
     onSuccessLogin: () => any;
@@ -53,6 +54,25 @@ export class UnauthPage extends React.Component<
         return (
             <Center>
                 <StyledUnauthPage>
+                    <div className="mb24">
+                        <Message type="error">
+                            <p>
+                                NOTE: This signup/login flow for DataHub is only
+                                for people who wants to temporarily try out
+                                DataHub.
+                            </p>
+                            <p>
+                                The user name and password (as salted hash)
+                                information is only stored in the DataHub
+                                Database and is not passed anywhere.
+                            </p>
+                            <p>
+                                Please use OAuth or other login methods for
+                                production usage.
+                            </p>
+                        </Message>
+                    </div>
+
                     <Box>
                         <Tabs
                             align="center"

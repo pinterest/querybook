@@ -1,6 +1,9 @@
+@import './../../scss_variables.scss';
+
 .ErrorPage {
     position: relative;
     .ErrorPage-message {
+        @include ellipsis(30);
         white-space: pre-wrap;
     }
 }
