@@ -1,4 +1,7 @@
-import React from 'react';
+import React, { useCallback, useRef, useEffect } from 'react';
+
+import { useEvent } from 'hooks/useEvent';
+import { matchKeyPress } from 'lib/utils/keyboard';
 import { Button } from 'ui/Button/Button';
 import { Modal } from 'ui/Modal/Modal';
 import './ConfirmationMessage.scss';
@@ -26,17 +29,36 @@ export const ConfirmationMessage: React.FunctionComponent<IConfirmationMessagePr
     onHide,
     hideDismiss,
 }) => {
-    const onCloseButtonClick = (confirm) => (evt) => {
-        if (confirm && onConfirm) {
-            onConfirm();
-        }
-        if (!confirm && onDismiss) {
-            onDismiss();
-        }
-        if (onHide) {
-            onHide();
-        }
-    };
+    const selfRef = useRef<HTMLDivElement>(null);
+    useEffect(() => {
+        selfRef.current.focus();
+    }, []);
+
+    const onCloseButtonClick = useCallback(
+        (confirm) => () => {
+            if (confirm && onConfirm) {
+                onConfirm();
+            }
+            if (!confirm && onDismiss) {
+                onDismiss();
+            }
+            if (onHide) {
+                onHide();
+            }
+        },
+        [onConfirm, onDismiss, onHide]
+    );
+
+    const onEnterPress = useCallback(
+        (evt: KeyboardEvent) => {
+            if (matchKeyPress(evt, 'Enter')) {
+                onCloseButtonClick(true)();
+            }
+        },
+        [onCloseButtonClick]
+    );
+
+    useEvent('keydown', onEnterPress);
 
     const actionButtons = [
         <Button
@@ -69,7 +91,7 @@ export const ConfirmationMessage: React.FunctionComponent<IConfirmationMessagePr
             hideClose={true}
             className="message-size with-padding"
         >
-            <div className="ConfirmationMessage">
+            <div className="ConfirmationMessage" ref={selfRef} tabIndex={0}>
                 <div className="confirmation-top">
                     <div className="confirmation-header">{header}</div>
                     <div className="confirmation-message">{message}</div>

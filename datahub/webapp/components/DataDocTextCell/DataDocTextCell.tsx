@@ -137,11 +137,9 @@ export const DataDocTextCell: React.FC<IProps> = ({
                     onDownKeyPressed();
                     handled = true;
                 }
-            } else if (matchKeyPress(event, 'Cmd-D')) {
-                if (!editorState.getCurrentContent().hasText()) {
-                    onDeleteKeyPressed?.();
-                    handled = true;
-                }
+            } else if (matchKeyPress(event, 'Shift-Alt-D')) {
+                onDeleteKeyPressed?.();
+                handled = true;
             } else if (matchKeyPress(event, 'Cmd-F')) {
                 searchContext.showSearchAndReplace();
                 handled = true;

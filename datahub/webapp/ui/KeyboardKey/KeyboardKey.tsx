@@ -14,12 +14,17 @@ const StyledKeyboardKey = styled.span.attrs<{}>({
     text-transform: lowercase;
 `;
 
+const OSXToWindows = {
+    '⌘': 'ctrl',
+    '⌥': 'alt',
+};
+
 export const KeyboardKey: React.FC<{
     className?: string;
     value: string;
 }> = ({ value, className }) => {
     const mappedKey = useMemo(
-        () => (!isOSX && value === '⌘' ? 'ctrl' : value),
+        () => (!isOSX && value in OSXToWindows ? OSXToWindows[value] : value),
         [value]
     );
     return (
