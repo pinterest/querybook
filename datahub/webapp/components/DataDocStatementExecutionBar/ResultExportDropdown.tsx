@@ -50,10 +50,10 @@ const UrlModal: React.FunctionComponent<{
 }> = ({ url, onHide }) => {
     return (
         <Modal onHide={onHide}>
-            <div className="flex-center">
+            <div className="flex-center mv24">
                 <Title size={5}>
                     <Link to={url} newTab>
-                        Click to view the exported result
+                        View Export
                     </Link>
                 </Title>
             </div>
