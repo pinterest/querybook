@@ -30,7 +30,6 @@ export const DataDocContents: React.FunctionComponent<{
         <div className="DataDocContents" ref={selfRef}>
             <DraggableList
                 items={cells}
-                className="contents-panel-cell-rows"
                 onMove={async (from, to) => {
                     await moveDataDocCell(docId, from, to);
                     // This is to "nudge" the scroll bar of the data doc

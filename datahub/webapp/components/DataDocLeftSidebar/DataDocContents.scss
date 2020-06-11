@@ -1,3 +1,23 @@
 .DataDocContents {
-    overflow-y: hidden;
+    overflow-y: scroll;
+    overflow-x: hidden;
+
+    .contents-panel-cell-row {
+        padding: 8px 8px 0px;
+
+        cursor: pointer;
+        display: flex;
+        align-items: flex-end;
+
+        .contents-panel-cell-row-text {
+            overflow: hidden;
+            white-space: nowrap;
+            text-overflow: ellipsis;
+            margin-left: 5px;
+        }
+
+        &:hover {
+            background-color: var(--color-accent-bg-hover);
+        }
+    }
 }
