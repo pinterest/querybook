@@ -8,7 +8,7 @@
     flex-direction: column;
 
     .sidebar-content {
-        margin-top: 85px;
+        margin-top: 88px;
     }
 
     .contents-toggle-button {
@@ -48,30 +48,6 @@
 
             .Title {
                 user-select: none;
-            }
-        }
-
-        .contents-panel-cell-rows {
-            overflow-x: hidden;
-            overflow-y: auto;
-        }
-
-        .contents-panel-cell-row {
-            padding: 8px 8px 0px;
-
-            cursor: pointer;
-            display: flex;
-            align-items: flex-end;
-
-            .contents-panel-cell-row-text {
-                overflow: hidden;
-                white-space: nowrap;
-                text-overflow: ellipsis;
-                margin-left: 5px;
-            }
-
-            &:hover {
-                background-color: var(--color-accent-bg-hover);
             }
         }
     }

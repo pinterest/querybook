@@ -7,6 +7,8 @@ import { DraggableList } from 'ui/DraggableList/DraggableList';
 import { moveDataDocCell } from 'redux/dataDoc/action';
 import { getScrollParent } from 'lib/utils';
 
+import './DataDocContents.scss';
+
 const CELL_TEXT_LEN = 50;
 
 export const DataDocContents: React.FunctionComponent<{
@@ -25,10 +27,9 @@ export const DataDocContents: React.FunctionComponent<{
         return ret;
     }, [cells]);
     return (
-        <div ref={selfRef}>
+        <div className="DataDocContents" ref={selfRef}>
             <DraggableList
                 items={cells}
-                className="contents-panel-cell-rows"
                 onMove={async (from, to) => {
                     await moveDataDocCell(docId, from, to);
                     // This is to "nudge" the scroll bar of the data doc
