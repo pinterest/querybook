@@ -127,26 +127,25 @@ export function format(
     const formattedStatements: string[] = processedStatements.map(
         ({ firstKeyWord, statementText, idToTemplateTag }) => {
             // Use standard formatter to format
+            let formattedStatement = statementText;
             if (
                 firstKeyWord &&
                 allowedStatement.has(firstKeyWord.string.toLocaleLowerCase())
             ) {
-                let formattedStatement = SqlFormattor.format(statementText, {
+                formattedStatement = SqlFormattor.format(statementText, {
                     indent: options.indent,
                 });
-                for (const [id, templateTag] of Object.entries(
-                    idToTemplateTag
-                )) {
-                    formattedStatement = formattedStatement.replace(
-                        new RegExp(id, 'g'),
-                        templateTag
-                    );
-                }
-                return formattedStatement;
             }
 
-            // TODO(datahub) implement formatting
-            return statementText;
+            for (const [id, templateTag] of Object.entries(idToTemplateTag)) {
+                formattedStatement = formattedStatement.replace(
+                    new RegExp(id, 'g'),
+                    templateTag
+                );
+            }
+
+            // TODO(datahub) implement formatting for general purposes
+            return formattedStatement;
         }
     );
 
