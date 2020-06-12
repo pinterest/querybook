@@ -90,11 +90,9 @@ function getTokenTypeMatcher(language: string) {
         COMMA: [/^,/],
         VARIABLE: [/^(\w+|`.*`)(?:\.(\w+|`.*`)?)+/],
         WORD: [/^\w+/],
-        TEMPLATED_TAG: [/^{{.*?}}/].concat(
-            languageSetting.placeholderVariable
-                ? [languageSetting.placeholderVariable]
-                : []
-        ),
+        TEMPLATED_TAG: languageSetting.placeholderVariable
+            ? [/^{{.*?}}/, languageSetting.placeholderVariable]
+            : [/^{{.*?}}/],
         TEMPLATED_BLOCK: [/^{%.*?%}/, /^{#.*?#}/, /^#.*?/],
     };
 }
