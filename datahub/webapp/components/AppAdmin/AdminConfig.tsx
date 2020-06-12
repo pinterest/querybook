@@ -40,7 +40,7 @@ export const AdminConfig = ({}) => {
                     className="mb4"
                 />
                 <Table
-                    colNameToWidths={{ key: 300 }}
+                    colNameToWidths={{ value: 200 }}
                     rows={filteredConfigs}
                     cols={['key', 'value']}
                     showAllRows={true}
