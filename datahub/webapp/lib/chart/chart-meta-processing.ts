@@ -1,4 +1,3 @@
-import moment from 'moment';
 import { ChartOptions, CommonAxe } from 'chart.js';
 
 import { IDataChartCellMeta } from 'const/datadoc';
@@ -7,7 +6,6 @@ import {
     IChartAxisMeta,
     IChartFormValues,
     ChartScaleType,
-    ChartType,
     chartValueDisplayType,
 } from 'const/dataDocChart';
 import { fontColor, fillColor, backgroundColor } from 'const/chartColors';
@@ -42,8 +40,8 @@ export function getDataTransformationOptions(meta: IDataChartCellMeta) {
     let formatSeriesCol: number;
     let formatValueCols: number[] = [];
 
-    if (aggregate) {
-        formatAggCol = transformations.format?.agg_col ?? 0;
+    if (aggregate && formatAggCol !== -1) {
+        formatAggCol = transformations.format?.agg_col;
         formatSeriesCol = transformations.format.series_col;
         formatValueCols = transformations.format.value_cols;
 
@@ -53,6 +51,10 @@ export function getDataTransformationOptions(meta: IDataChartCellMeta) {
                 ? aggTypeArr[0]
                 : undefined;
         }
+    } else {
+        formatAggCol = undefined;
+        formatSeriesCol = undefined;
+        formatValueCols = [];
     }
 
     return {

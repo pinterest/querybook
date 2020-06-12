@@ -125,9 +125,9 @@ function getDistinctValuesAndIndexMap(
 
 function aggregateData(
     data: readonly any[][],
-    aggRowIndex: number = 0,
-    aggColIndex: number = 1,
-    aggValueIndex: number[] = [2],
+    aggRowIndex: number,
+    aggColIndex: number,
+    aggValueIndex: number[] = [],
     aggSeries: {
         [seriesIdx: number]: ChartDataAggType;
     } = {}
@@ -152,28 +152,46 @@ function aggregateData(
     // each row, col contains all the pre-aggregated values
     let collectedValues: any[][];
 
-    if (aggRowIndex === -1) {
-        // aggregate all rows except first column
-        outputColumns = ['', ...cols.slice(1)];
-        firstColumnRows = ['Aggregated Values'];
+    if (aggRowIndex == null && aggColIndex == null) {
+        if (aggValueIndex.length === 0) {
+            // Default Aggregate - aggregate all rows except first column
+            outputColumns = ['', ...cols.slice(1)];
+            firstColumnRows = ['Aggregated Values'];
+            const allRowsExceptFirstColumn = rows.map((row) => row.slice(1));
+            // array of 1 row of array of column.length - 1 with all []
+            collectedValues = [
+                range(Math.max(outputColumns.length - 1, 0)).map((_, index) =>
+                    getChartReducer(aggSeries[index + 1]).getInitialValue()
+                ),
+            ];
+            for (const row of allRowsExceptFirstColumn) {
+                for (const [index, val] of row.entries()) {
+                    collectedValues[0][index] = getChartReducer(
+                        aggSeries[index + 1]
+                    ).reducerFunction(collectedValues[0][index], val);
+                }
+            }
+        } else {
+            // Aggregation when only given value
+            outputColumns = ['', data?.[0]?.[aggValueIndex?.[0]]];
+            firstColumnRows = [
+                `${aggSeries?.[0]} of ${data?.[0]?.[aggValueIndex?.[0]]}`,
+            ];
+            collectedValues = [
+                [getChartReducer(aggSeries[0]).getInitialValue()],
+            ];
 
-        const allRowsExceptFirstColumn = rows.map((row) => row.slice(1));
-
-        // array of 1 row of array of column.length - 1 with all []
-        collectedValues = [
-            range(Math.max(outputColumns.length - 1, 0)).map((_, index) =>
-                getChartReducer(aggSeries[index + 1]).getInitialValue()
-            ),
-        ];
-        for (const row of allRowsExceptFirstColumn) {
-            for (const [index, val] of row.entries()) {
-                collectedValues[0][index] = getChartReducer(
-                    aggSeries[index + 1]
-                ).reducerFunction(collectedValues[0][index], val);
+            const allRowsExceptFirstColumn = rows.map((row) => row.slice(1));
+            for (const row of allRowsExceptFirstColumn) {
+                const newVal = getChartReducer(aggSeries[0]).reducerFunction(
+                    collectedValues[0][0],
+                    row[aggValueIndex[0] - 1]
+                );
+                collectedValues[0][0] = newVal;
             }
         }
     } else {
-        // Aggregation when given pivot column, row and value
+        // Aggregation when given value AND pivot column and/or row
         const [
             distinctColValues,
             distinctColValToIndex,
@@ -182,8 +200,24 @@ function aggregateData(
             distinctRowValues,
             distinctRowValToIndex,
         ] = getDistinctValuesAndIndexMap(rows.map((row) => row[aggRowIndex]));
-        outputColumns = [cols[aggRowIndex], ...distinctColValues];
-        firstColumnRows = distinctRowValues;
+
+        if (aggColIndex == null) {
+            outputColumns = [
+                cols[aggRowIndex],
+                `${aggSeries?.[0]} of ${data?.[0]?.[aggValueIndex?.[0]]}`,
+            ];
+        } else {
+            outputColumns = [cols[aggRowIndex], ...distinctColValues];
+        }
+
+        if (aggRowIndex == null) {
+            firstColumnRows = [
+                `${aggSeries?.[0]} of ${data?.[0]?.[aggValueIndex?.[0]]}`,
+            ];
+        } else {
+            firstColumnRows = distinctRowValues;
+        }
+
         collectedValues = range(distinctRowValues.length).map((_) =>
             range(distinctColValues.length).map((__) => emptyCellValue)
         );
@@ -202,17 +236,33 @@ function aggregateData(
     }
 
     // Aggregate collected values
-    for (const colIndex of range(outputColumns.length - 1)) {
-        const { endReducerFunction } = getChartReducer(aggSeries[colIndex + 1]);
-        if (endReducerFunction) {
-            for (const row of collectedValues) {
-                const value = row[colIndex];
-                const finalValue =
-                    value !== emptyCellValue
-                        ? endReducerFunction(value)
-                        : value;
-                row[colIndex] = finalValue;
+    if (
+        aggRowIndex != null ||
+        aggColIndex != null ||
+        aggValueIndex.length === 0
+    ) {
+        for (const colIndex of range(outputColumns.length - 1)) {
+            const { endReducerFunction } = getChartReducer(
+                aggSeries[colIndex + 1]
+            );
+            if (endReducerFunction) {
+                for (const row of collectedValues) {
+                    const value = row[colIndex];
+                    const finalValue =
+                        value !== emptyCellValue
+                            ? endReducerFunction(value)
+                            : value;
+                    row[colIndex] = finalValue;
+                }
             }
+        }
+    } else {
+        const { endReducerFunction } = getChartReducer(aggSeries[0]);
+        if (endReducerFunction) {
+            const value = collectedValues[0][0];
+            const finalValue =
+                value !== emptyCellValue ? endReducerFunction(value) : value;
+            collectedValues[0][0] = finalValue;
         }
     }
 
@@ -253,9 +303,9 @@ export function transformData(
     data: any[][],
     isAggregate: boolean = false,
     isSwitch: boolean = false,
-    formatAgg: number = 0,
-    formatSeries: number = 1,
-    formatValueCols: number[] = [2],
+    formatAgg: number,
+    formatSeries: number,
+    formatValueCols: number[] = [],
     aggSeries: {
         [seriesIdx: number]: ChartDataAggType;
     } = {},

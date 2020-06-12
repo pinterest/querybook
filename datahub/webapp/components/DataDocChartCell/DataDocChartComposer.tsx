@@ -200,16 +200,14 @@ const DataDocChartComposerComponent: React.FunctionComponent<
         if (!statementResultData) {
             return [];
         }
-        const options = statementResultData[0].map((label, idx) => ({
-            value: idx,
-            label,
-        }));
-        options.unshift({
-            value: -1,
-            label: 'All Rows',
-        });
+        const options = statementResultData[0]
+            .filter((label, idx) => idx !== values.formatSeriesCol)
+            .map((label, idx) => ({
+                value: idx,
+                label,
+            }));
         return options;
-    }, [statementResultData, values.formatAggCol]);
+    }, [statementResultData, values.formatAggCol, values.formatSeriesCol]);
 
     const makeFormatSeriesOptions = React.useMemo(() => {
         if (!statementResultData) {
@@ -378,86 +376,78 @@ const DataDocChartComposerComponent: React.FunctionComponent<
     const dataTransformationDOM = (
         <>
             <FormSectionHeader>Transformation</FormSectionHeader>
-            <FormField label="Aggregate Data">
-                <Checkbox
-                    value={values.aggregate}
-                    onChange={(val) => {
-                        setFieldValue('aggregate', val);
-                        setFieldValue('hiddenSeries', []);
-                        if (val) {
-                            handleAggTypeChange('sum');
-                            setTableTab('transformed');
-                            setFieldValue('formatAggCol', 0);
-                            setFieldValue('formatSeriesCol', 1);
-                            setFieldValue('formatValueCols', [2]);
-                        } else {
-                            setFieldValue('aggType', undefined);
-                            setFieldValue('aggSeries', {});
-                        }
-                    }}
-                />
-            </FormField>
+            <SimpleField
+                type="checkbox"
+                name="aggregate"
+                label="Aggregate"
+                onChange={(val) => {
+                    setFieldValue('aggregate', val);
+                    setFieldValue('hiddenSeries', []);
+                    if (val) {
+                        handleAggTypeChange('sum');
+                        setTableTab('transformed');
+                    } else {
+                        setFieldValue('aggType', undefined);
+                        setFieldValue('aggSeries', {});
+                    }
+                }}
+                help="By default, all rows will be aggregated"
+            />
             {values.aggregate ? (
                 <>
-                    <SimpleField
-                        stacked
-                        type="react-select"
-                        label="Group Rows By"
-                        name="formatAggCol"
-                        options={formatAggByOptions}
-                        isDisabled={!statementResultData}
-                    />
-
-                    {values.formatAggCol === -1 ? null : (
-                        <>
-                            <SimpleField
-                                stacked
-                                label="Group Columns By"
-                                type="react-select"
-                                name="formatSeriesCol"
-                                options={makeFormatSeriesOptions}
-                                isDisabled={!statementResultData}
-                            />
-
-                            <FormField stacked label="Value">
-                                <SimpleReactSelect
-                                    value={
-                                        statementResultData &&
-                                        values.formatValueCols?.[0]
-                                    }
-                                    onChange={(val) => {
-                                        setFieldValue('formatValueCols', [val]);
-                                    }}
-                                    options={makeFormatValueOptions}
-                                />
-                            </FormField>
-                        </>
-                    )}
-                    <FormField stacked label="Value Aggregation Type">
+                    <FormField stacked label="Aggregate By">
                         <SimpleReactSelect
                             value={values.aggType}
                             onChange={(val) => handleAggTypeChange(val)}
                             options={seriesAggOptions}
                         />
                     </FormField>
-                    {/* <FormField>
-                            <Checkbox
-                                value={showSeriesAggTypes}
-                                title="Select Aggregation Type by Series"
-                                onChange={val => setShowSeriesAggTypes(val)}
-                            />
+                    <div className="DataDocChartComposer-info m8">
+                        Selecting rows, columns, or values will create a pivot
+                        table.
+                    </div>
+                    <SimpleField
+                        stacked
+                        type="react-select"
+                        label="Row"
+                        name="formatAggCol"
+                        options={formatAggByOptions}
+                        isDisabled={!statementResultData}
+                        withDeselect
+                    />
+                    <SimpleField
+                        stacked
+                        label="Columns"
+                        type="react-select"
+                        name="formatSeriesCol"
+                        options={makeFormatSeriesOptions}
+                        isDisabled={!statementResultData}
+                        withDeselect
+                    />
+                    <FormField stacked label="Value">
+                        <SimpleReactSelect
+                            value={
+                                statementResultData &&
+                                values.formatValueCols?.[0]
+                            }
+                            onChange={(val) => {
+                                if (val == null) {
+                                    setFieldValue('formatValueCols', []);
+                                } else {
+                                    setFieldValue('formatValueCols', [val]);
+                                }
+                            }}
+                            options={makeFormatValueOptions}
+                            withDeselect
+                        />
                     </FormField>
-                    {showSeriesAggTypes
-                        ? ['pie', 'doughnut'].includes(values.chartType)
-                            ? null
-                            : seriesAggTypeDOM
-                        : null} */}
                 </>
             ) : null}
             <SimpleField
                 type="checkbox"
                 label="Switch Rows/Columns"
                 name="switch"
+                help="Switch is applied after aggregation"
             />
         </>
     );
