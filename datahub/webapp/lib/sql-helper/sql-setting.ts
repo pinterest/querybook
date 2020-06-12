@@ -6,6 +6,7 @@ interface ILanguageSetting {
     bool: Set<string>;
     operatorChars: RegExp;
     punctuationChars: RegExp;
+    placeholderVariable?: RegExp;
 }
 
 const SQL_KEYWORDS =
@@ -28,6 +29,7 @@ const SettingsByLanguage: Record<string, ILanguageSetting> = {
         bool: new Set('false true null'.split(' ')),
         operatorChars: /^[*+\-%<>!=]/,
         punctuationChars: /^[/:.]/,
+        placeholderVariable: /^\${.*?}/,
         // These are code mirror specific
         // dateSQL: new Set("date timestamp".split(" ")),
         // support: new Set("ODBCdotTable doubleQuote binaryNumber hexNumber".split(" "))
@@ -65,6 +67,7 @@ const SettingsByLanguage: Record<string, ILanguageSetting> = {
         punctuationChars: /^[/:.]/,
     },
 };
+SettingsByLanguage['sparksql'] = SettingsByLanguage['hive'];
 
 export function getLanguageSetting(
     language: string,

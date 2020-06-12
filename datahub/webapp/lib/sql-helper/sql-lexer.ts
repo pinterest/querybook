@@ -90,7 +90,9 @@ function getTokenTypeMatcher(language: string) {
         COMMA: [/^,/],
         VARIABLE: [/^(\w+|`.*`)(?:\.(\w+|`.*`)?)+/],
         WORD: [/^\w+/],
-        TEMPLATED_TAG: [/^{{.*?}}/],
+        TEMPLATED_TAG: languageSetting.placeholderVariable
+            ? [/^{{.*?}}/, languageSetting.placeholderVariable]
+            : [/^{{.*?}}/],
         TEMPLATED_BLOCK: [/^{%.*?%}/, /^{#.*?#}/, /^#.*?/],
     };
 }
@@ -250,7 +252,6 @@ function categorizeWord(token: IToken, language: string) {
 
 function makeTokenizer(language: string) {
     const tokenTypes = getTokenTypeMatcher(language);
-
     function tokenizeString(
         token: IToken,
         stream: StringStream,

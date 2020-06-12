@@ -11,6 +11,27 @@ FROM
   test;`
     );
 });
+test('Simple formatting with templating case', () => {
+    expect(format('{{ test }};', 'presto')).toBe(`{{ test }};`);
+});
+
+test('Simple formatting with templating query case', () => {
+    expect(format('select * from {{ test }};', 'presto')).toBe(
+        `SELECT
+  *
+FROM
+  {{ test }};`
+    );
+});
+test('formatting with templated hive query case', () => {
+    // tslint:disable-next-line
+    expect(format('select * from ${ test };', 'hive')).toBe(
+        `SELECT
+  *
+FROM
+  \${ test };`
+    );
+});
 
 test('Simple formatting lower case', () => {
     expect(format('select * from test;', 'presto', { case: 'lower' })).toBe(
