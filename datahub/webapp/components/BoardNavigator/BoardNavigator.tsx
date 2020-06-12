@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import Resizable from 're-resizable';
 
 import { enableResizable } from 'lib/utils';
@@ -24,6 +24,8 @@ export const BoardNavigator: React.FunctionComponent = ({}) => {
             className="board-info-panel"
             defaultSize={{
                 width: '100%',
+                // Bug https://github.com/bokuweb/re-resizable/issues/442
+                // TODO: switch to percentage once its resolved
                 height: '600px',
             }}
             enable={enableResizable({ top: true, bottom: true })}
