@@ -46,7 +46,7 @@ test('data aggregates by all rows (sum)', () => {
         testData,
         true,
         false,
-        -1,
+        undefined,
         undefined,
         undefined,
         {}
@@ -56,12 +56,63 @@ test('data aggregates by all rows (sum)', () => {
         ['sum', 24, 60, 501],
     ]);
 });
+
+test('data aggregates with value', () => {
+    const transformedData = transformData(
+        testData,
+        true,
+        false,
+        undefined,
+        undefined,
+        [1],
+        {}
+    );
+    expect(transformedData).toEqual([
+        ['', 'type1'],
+        ['sum of type1', 24],
+    ]);
+});
+
+test('data aggregates with value and row', () => {
+    const transformedData = transformData(
+        testData,
+        true,
+        false,
+        0,
+        undefined,
+        [1],
+        {}
+    );
+    expect(transformedData).toEqual([
+        ['time', 'sum of type1'],
+        ['2001-01-01', 11],
+        ['2001-01-02', 7],
+        ['2001-01-03', 6],
+    ]);
+});
+
+test('data aggregates with value and col', () => {
+    const transformedData = transformData(
+        testData,
+        true,
+        false,
+        undefined,
+        0,
+        [1],
+        {}
+    );
+    expect(transformedData).toEqual([
+        ['', '2001-01-01', '2001-01-02', '2001-01-03'],
+        ['sum of type1', 11, 7, 6],
+    ]);
+});
+
 test('data aggregates by all rows with invalid values (sum)', () => {
     const transformedData = transformData(
         testData2,
         true,
         false,
-        -1,
+        undefined,
         undefined,
         undefined,
         {}

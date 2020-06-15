@@ -40,8 +40,12 @@ export function getDataTransformationOptions(meta: IDataChartCellMeta) {
     let formatSeriesCol: number;
     let formatValueCols: number[] = [];
 
-    if (aggregate && formatAggCol !== -1) {
-        formatAggCol = transformations.format?.agg_col;
+    if (aggregate) {
+        formatAggCol = transformations.format.agg_col;
+        if (formatAggCol < 0) {
+            // legacy code can make it -1
+            formatAggCol = undefined;
+        }
         formatSeriesCol = transformations.format.series_col;
         formatValueCols = transformations.format.value_cols;
 
@@ -51,10 +55,6 @@ export function getDataTransformationOptions(meta: IDataChartCellMeta) {
                 ? aggTypeArr[0]
                 : undefined;
         }
-    } else {
-        formatAggCol = undefined;
-        formatSeriesCol = undefined;
-        formatValueCols = [];
     }
 
     return {
