@@ -53,7 +53,7 @@ test('data aggregates by all rows (sum)', () => {
     );
     expect(transformedData).toEqual([
         ['', 'type1', 'type2', 'type3'],
-        ['Aggregated Values', 24, 60, 501],
+        ['sum', 24, 60, 501],
     ]);
 });
 test('data aggregates by all rows with invalid values (sum)', () => {
@@ -68,85 +68,7 @@ test('data aggregates by all rows with invalid values (sum)', () => {
     );
     expect(transformedData).toEqual([
         ['', 'type1', 'type2', 'type3'],
-        ['Aggregated Values', 22, 50, 401],
-    ]);
-});
-
-test('data aggregates by all rows (sum, avg, count)', () => {
-    const transformedData = transformData(
-        testData,
-        true,
-        false,
-        -1,
-        undefined,
-        undefined,
-        {
-            1: 'sum',
-            2: 'avg',
-            3: 'count',
-        }
-    );
-    expect(transformedData).toEqual([
-        ['', 'type1', 'type2', 'type3'],
-        ['Aggregated Values', 24, 10, 6],
-    ]);
-});
-test('data aggregates by all rows with invalid vals (sum, avg, count)', () => {
-    const transformedData = transformData(
-        testData2,
-        true,
-        false,
-        -1,
-        undefined,
-        undefined,
-        {
-            1: 'sum',
-            2: 'avg',
-            3: 'count',
-        }
-    );
-    expect(transformedData).toEqual([
-        ['', 'type1', 'type2', 'type3'],
-        ['Aggregated Values', 22, 10, 6],
-    ]);
-});
-
-test('data aggregates by all rows (min, max, med)', () => {
-    const transformedData = transformData(
-        testData,
-        true,
-        false,
-        -1,
-        undefined,
-        undefined,
-        {
-            1: 'min',
-            2: 'max',
-            3: 'med',
-        }
-    );
-    expect(transformedData).toEqual([
-        ['', 'type1', 'type2', 'type3'],
-        ['Aggregated Values', 2, 11, 100],
-    ]);
-});
-test('data aggregates by all rows with invalid vals (min, max, med)', () => {
-    const transformedData = transformData(
-        testData2,
-        true,
-        false,
-        -1,
-        undefined,
-        undefined,
-        {
-            1: 'min',
-            2: 'max',
-            3: 'med',
-        }
-    );
-    expect(transformedData).toEqual([
-        ['', 'type1', 'type2', 'type3'],
-        ['Aggregated Values', 3, 11, 100],
+        ['sum', 22, 50, 401],
     ]);
 });
 
