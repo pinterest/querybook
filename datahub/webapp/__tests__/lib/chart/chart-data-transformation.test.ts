@@ -219,9 +219,9 @@ test('switch row/col works', () => {
 });
 
 test('all rows aggregate and switch work together', () => {
-    const transformedData = transformData(testData, true, true, -1, 1, [2], {});
+    const transformedData = transformData(testData, true, true);
     expect(transformedData).toEqual([
-        ['', 'Aggregated Values'],
+        ['', 'sum'],
         ['type1', 24],
         ['type2', 60],
         ['type3', 501],

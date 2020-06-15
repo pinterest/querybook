@@ -403,8 +403,7 @@ const DataDocChartComposerComponent: React.FunctionComponent<
                         />
                     </FormField>
                     <div className="DataDocChartComposer-info m8">
-                        Selecting rows, columns, or values will create a pivot
-                        table.
+                        Value must be selected for aggregation by row/column.
                     </div>
                     <SimpleField
                         stacked
@@ -417,30 +416,30 @@ const DataDocChartComposerComponent: React.FunctionComponent<
                     />
                     <SimpleField
                         stacked
-                        label="Columns"
+                        label="Column"
                         type="react-select"
                         name="formatSeriesCol"
                         options={makeFormatSeriesOptions}
                         isDisabled={!statementResultData}
                         withDeselect
                     />
-                    <FormField stacked label="Value">
-                        <SimpleReactSelect
-                            value={
-                                statementResultData &&
-                                values.formatValueCols?.[0]
+                    <SimpleField
+                        stacked
+                        label="Value"
+                        type="react-select"
+                        name="formatValueCols"
+                        value={values.formatValueCols[0]}
+                        options={makeFormatValueOptions}
+                        isDisabled={!statementResultData}
+                        onChange={(val) => {
+                            if (val == null) {
+                                setFieldValue('formatValueCols', []);
+                            } else {
+                                setFieldValue('formatValueCols', [val]);
                             }
-                            onChange={(val) => {
-                                if (val == null) {
-                                    setFieldValue('formatValueCols', []);
-                                } else {
-                                    setFieldValue('formatValueCols', [val]);
-                                }
-                            }}
-                            options={makeFormatValueOptions}
-                            withDeselect
-                        />
-                    </FormField>
+                        }}
+                        withDeselect
+                    />
                 </>
             ) : null}
             <SimpleField

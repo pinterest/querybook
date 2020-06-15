@@ -152,43 +152,36 @@ function aggregateData(
     // each row, col contains all the pre-aggregated values
     let collectedValues: any[][];
 
-    if (aggRowIndex == null && aggColIndex == null) {
-        if (aggValueIndex.length === 0) {
-            // Default Aggregate - aggregate all rows except first column
-            outputColumns = ['', ...cols.slice(1)];
-            firstColumnRows = ['Aggregated Values'];
-            const allRowsExceptFirstColumn = rows.map((row) => row.slice(1));
-            // array of 1 row of array of column.length - 1 with all []
-            collectedValues = [
-                range(Math.max(outputColumns.length - 1, 0)).map((_, index) =>
-                    getChartReducer(aggSeries[index + 1]).getInitialValue()
-                ),
-            ];
-            for (const row of allRowsExceptFirstColumn) {
-                for (const [index, val] of row.entries()) {
-                    collectedValues[0][index] = getChartReducer(
-                        aggSeries[index + 1]
-                    ).reducerFunction(collectedValues[0][index], val);
-                }
+    if (aggValueIndex.length === 0) {
+        // Default Aggregate - aggregate all rows except first column
+        outputColumns = ['', ...cols.slice(1)];
+        firstColumnRows = [aggSeries?.[0] || 'sum'];
+        const allRowsExceptFirstColumn = rows.map((row) => row.slice(1));
+        // array of 1 row of array of column.length - 1 with all []
+        collectedValues = [
+            range(Math.max(outputColumns.length - 1, 0)).map((_, index) =>
+                getChartReducer(aggSeries[index + 1]).getInitialValue()
+            ),
+        ];
+        for (const row of allRowsExceptFirstColumn) {
+            for (const [index, val] of row.entries()) {
+                collectedValues[0][index] = getChartReducer(
+                    aggSeries[index + 1]
+                ).reducerFunction(collectedValues[0][index], val);
             }
-        } else {
-            // Aggregation when only given value
-            outputColumns = ['', data?.[0]?.[aggValueIndex?.[0]]];
-            firstColumnRows = [
-                `${aggSeries?.[0]} of ${data?.[0]?.[aggValueIndex?.[0]]}`,
-            ];
-            collectedValues = [
-                [getChartReducer(aggSeries[0]).getInitialValue()],
-            ];
+        }
+    } else if (aggRowIndex == null && aggColIndex == null) {
+        // Aggregation when only given value
+        outputColumns = ['', data[0]?.[aggValueIndex?.[0]]];
+        firstColumnRows = [
+            `${aggSeries?.[0]} of ${data[0]?.[aggValueIndex?.[0]]}`,
+        ];
+        collectedValues = [[getChartReducer(aggSeries[0]).getInitialValue()]];
 
-            const allRowsExceptFirstColumn = rows.map((row) => row.slice(1));
-            for (const row of allRowsExceptFirstColumn) {
-                const newVal = getChartReducer(aggSeries[0]).reducerFunction(
-                    collectedValues[0][0],
-                    row[aggValueIndex[0] - 1]
-                );
-                collectedValues[0][0] = newVal;
-            }
+        for (const row of rows) {
+            collectedValues[0][0] = getChartReducer(
+                aggSeries[0]
+            ).reducerFunction(collectedValues[0][0], row[aggValueIndex[0]]);
         }
     } else {
         // Aggregation when given value AND pivot column and/or row
@@ -303,8 +296,8 @@ export function transformData(
     data: any[][],
     isAggregate: boolean = false,
     isSwitch: boolean = false,
-    formatAgg: number,
-    formatSeries: number,
+    formatAgg: number = null,
+    formatSeries: number = null,
     formatValueCols: number[] = [],
     aggSeries: {
         [seriesIdx: number]: ChartDataAggType;
