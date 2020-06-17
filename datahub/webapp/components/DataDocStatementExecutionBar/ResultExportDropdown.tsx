@@ -71,7 +71,7 @@ const FormModal: React.FunctionComponent<{
     const [formData, setFormData] = React.useState({});
     return (
         <Modal onHide={onHide}>
-            <div className="flex-center mv24">
+            <div className="m24">
                 <SmartForm
                     formField={form}
                     value={formData}
@@ -81,7 +81,8 @@ const FormModal: React.FunctionComponent<{
                         )
                     }
                 />
-                <div className="right-align">
+                <br />
+                <div className="right-align mb12">
                     <Button onClick={() => onSubmit(formData)}>Submit</Button>
                 </div>
             </div>
