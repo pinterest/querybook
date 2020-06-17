@@ -199,7 +199,10 @@ export const ResultExportDropdown: React.FunctionComponent<IProps> = ({
         <FormModal
             form={exportInfo.form}
             onHide={() => setExportInfo(null)}
-            onSubmit={(data) => handleExport(exportInfo, data)}
+            onSubmit={(data) => {
+                setExportInfo(null);
+                handleExport(exportInfo, data);
+            }}
         />
     ) : null;
 
