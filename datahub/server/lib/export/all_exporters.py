@@ -1,10 +1,9 @@
 from lib.utils.plugin import import_plugin
-from lib.export.exporters.python_exporter import PythonExporter
 
 ALL_PLUGIN_EXPORTERS = import_plugin("exporter_plugin", "ALL_PLUGIN_EXPORTERS", [])
 
 # No default exporter is provided
-ALL_EXPORTERS = [PythonExporter()]
+ALL_EXPORTERS = ALL_PLUGIN_EXPORTERS
 
 
 def get_exporter(name: str):
