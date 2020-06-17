@@ -46,107 +46,80 @@ test('data aggregates by all rows (sum)', () => {
         testData,
         true,
         false,
-        -1,
+        undefined,
         undefined,
         undefined,
         {}
     );
     expect(transformedData).toEqual([
         ['', 'type1', 'type2', 'type3'],
-        ['Aggregated Values', 24, 60, 501],
+        ['sum', 24, 60, 501],
     ]);
 });
+
+test('data aggregates with value', () => {
+    const transformedData = transformData(
+        testData,
+        true,
+        false,
+        undefined,
+        undefined,
+        [1],
+        {}
+    );
+    expect(transformedData).toEqual([
+        ['', 'type1'],
+        ['sum of type1', 24],
+    ]);
+});
+
+test('data aggregates with value and row', () => {
+    const transformedData = transformData(
+        testData,
+        true,
+        false,
+        0,
+        undefined,
+        [1],
+        {}
+    );
+    expect(transformedData).toEqual([
+        ['time', 'sum of type1'],
+        ['2001-01-01', 11],
+        ['2001-01-02', 7],
+        ['2001-01-03', 6],
+    ]);
+});
+
+test('data aggregates with value and col', () => {
+    const transformedData = transformData(
+        testData,
+        true,
+        false,
+        undefined,
+        0,
+        [1],
+        {}
+    );
+    expect(transformedData).toEqual([
+        ['', '2001-01-01', '2001-01-02', '2001-01-03'],
+        ['sum of type1', 11, 7, 6],
+    ]);
+});
+
 test('data aggregates by all rows with invalid values (sum)', () => {
     const transformedData = transformData(
         testData2,
         true,
         false,
-        -1,
+        undefined,
         undefined,
         undefined,
         {}
     );
     expect(transformedData).toEqual([
         ['', 'type1', 'type2', 'type3'],
-        ['Aggregated Values', 22, 50, 401],
-    ]);
-});
-
-test('data aggregates by all rows (sum, avg, count)', () => {
-    const transformedData = transformData(
-        testData,
-        true,
-        false,
-        -1,
-        undefined,
-        undefined,
-        {
-            1: 'sum',
-            2: 'avg',
-            3: 'count',
-        }
-    );
-    expect(transformedData).toEqual([
-        ['', 'type1', 'type2', 'type3'],
-        ['Aggregated Values', 24, 10, 6],
-    ]);
-});
-test('data aggregates by all rows with invalid vals (sum, avg, count)', () => {
-    const transformedData = transformData(
-        testData2,
-        true,
-        false,
-        -1,
-        undefined,
-        undefined,
-        {
-            1: 'sum',
-            2: 'avg',
-            3: 'count',
-        }
-    );
-    expect(transformedData).toEqual([
-        ['', 'type1', 'type2', 'type3'],
-        ['Aggregated Values', 22, 10, 6],
-    ]);
-});
-
-test('data aggregates by all rows (min, max, med)', () => {
-    const transformedData = transformData(
-        testData,
-        true,
-        false,
-        -1,
-        undefined,
-        undefined,
-        {
-            1: 'min',
-            2: 'max',
-            3: 'med',
-        }
-    );
-    expect(transformedData).toEqual([
-        ['', 'type1', 'type2', 'type3'],
-        ['Aggregated Values', 2, 11, 100],
-    ]);
-});
-test('data aggregates by all rows with invalid vals (min, max, med)', () => {
-    const transformedData = transformData(
-        testData2,
-        true,
-        false,
-        -1,
-        undefined,
-        undefined,
-        {
-            1: 'min',
-            2: 'max',
-            3: 'med',
-        }
-    );
-    expect(transformedData).toEqual([
-        ['', 'type1', 'type2', 'type3'],
-        ['Aggregated Values', 3, 11, 100],
+        ['sum', 22, 50, 401],
     ]);
 });
 
@@ -219,9 +192,9 @@ test('switch row/col works', () => {
 });
 
 test('all rows aggregate and switch work together', () => {
-    const transformedData = transformData(testData, true, true, -1, 1, [2], {});
+    const transformedData = transformData(testData, true, true);
     expect(transformedData).toEqual([
-        ['', 'Aggregated Values'],
+        ['', 'sum'],
         ['type1', 24],
         ['type2', 60],
         ['type3', 501],

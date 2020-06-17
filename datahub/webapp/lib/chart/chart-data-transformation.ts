@@ -125,9 +125,9 @@ function getDistinctValuesAndIndexMap(
 
 function aggregateData(
     data: readonly any[][],
-    aggRowIndex: number = 0,
-    aggColIndex: number = 1,
-    aggValueIndex: number[] = [2],
+    aggRowIndex: number,
+    aggColIndex: number,
+    aggValueIndex: number[] = [],
     aggSeries: {
         [seriesIdx: number]: ChartDataAggType;
     } = {}
@@ -140,6 +140,7 @@ function aggregateData(
 
     const cols = data[0];
     const rows = data.slice(1);
+    const defaultAggType: ChartDataAggType = aggSeries?.[0] ?? 'sum';
     /*
         Final output will be
 
@@ -152,13 +153,13 @@ function aggregateData(
     // each row, col contains all the pre-aggregated values
     let collectedValues: any[][];
 
-    if (aggRowIndex === -1) {
-        // aggregate all rows except first column
+    if (aggValueIndex.length === 0) {
+        // Default Aggregate - aggregate all rows except first column
+
         outputColumns = ['', ...cols.slice(1)];
-        firstColumnRows = ['Aggregated Values'];
 
+        firstColumnRows = [defaultAggType];
         const allRowsExceptFirstColumn = rows.map((row) => row.slice(1));
-
         // array of 1 row of array of column.length - 1 with all []
         collectedValues = [
             range(Math.max(outputColumns.length - 1, 0)).map((_, index) =>
@@ -173,17 +174,36 @@ function aggregateData(
             }
         }
     } else {
-        // Aggregation when given pivot column, row and value
-        const [
-            distinctColValues,
-            distinctColValToIndex,
-        ] = getDistinctValuesAndIndexMap(rows.map((row) => row[aggColIndex]));
-        const [
-            distinctRowValues,
-            distinctRowValToIndex,
-        ] = getDistinctValuesAndIndexMap(rows.map((row) => row[aggRowIndex]));
-        outputColumns = [cols[aggRowIndex], ...distinctColValues];
-        firstColumnRows = distinctRowValues;
+        // Aggregation when given value AND pivot column and/or row
+        const [distinctColValues, distinctColValToIndex] =
+            aggColIndex != null
+                ? getDistinctValuesAndIndexMap(
+                      rows.map((row) => row[aggColIndex])
+                  )
+                : [[undefined], { undefined: 0 }];
+        const [distinctRowValues, distinctRowValToIndex] =
+            aggRowIndex != null
+                ? getDistinctValuesAndIndexMap(
+                      rows.map((row) => row[aggRowIndex])
+                  )
+                : [[undefined], { undefined: 0 }];
+
+        const aggValColName = data[0][aggValueIndex[0]];
+
+        outputColumns = [cols[aggRowIndex] ?? ''].concat(
+            aggColIndex == null
+                ? [
+                      cols[aggRowIndex] != null
+                          ? `${defaultAggType} of ${aggValColName}`
+                          : aggValColName,
+                  ]
+                : distinctColValues
+        );
+        firstColumnRows =
+            aggRowIndex == null
+                ? [`${defaultAggType} of ${aggValColName}`]
+                : distinctRowValues;
+
         collectedValues = range(distinctRowValues.length).map((_) =>
             range(distinctColValues.length).map((__) => emptyCellValue)
         );
@@ -253,9 +273,9 @@ export function transformData(
     data: any[][],
     isAggregate: boolean = false,
     isSwitch: boolean = false,
-    formatAgg: number = 0,
-    formatSeries: number = 1,
-    formatValueCols: number[] = [2],
+    formatAgg: number = null,
+    formatSeries: number = null,
+    formatValueCols: number[] = [],
     aggSeries: {
         [seriesIdx: number]: ChartDataAggType;
     } = {},
