@@ -22,6 +22,8 @@ import { Modal } from 'ui/Modal/Modal';
 import { Link } from 'ui/Link/Link';
 import { ListMenu } from 'ui/Menu/ListMenu';
 import { Title } from 'ui/Title/Title';
+import { validateForm, updateValue } from 'ui/SmartForm/formFunctions';
+import { SmartForm } from 'ui/SmartForm/SmartForm';
 
 interface IProps {
     statementExecution: IStatementExecution;
@@ -61,6 +63,32 @@ const UrlModal: React.FunctionComponent<{
     );
 };
 
+const FormModal: React.FunctionComponent<{
+    form: any;
+    onSubmit: (data) => any;
+    onHide: () => any;
+}> = ({ form, onSubmit, onHide }) => {
+    const [formData, setFormData] = React.useState({});
+    return (
+        <Modal onHide={onHide}>
+            <div className="flex-center mv24">
+                <SmartForm
+                    formField={form}
+                    value={formData}
+                    onChange={(path, value) =>
+                        setFormData(
+                            updateValue(formData, path, value, [undefined, ''])
+                        )
+                    }
+                />
+                <div className="right-align">
+                    <Button onClick={() => onSubmit(formData)}>Submit</Button>
+                </div>
+            </div>
+        </Modal>
+    );
+};
+
 export const ResultExportDropdown: React.FunctionComponent<IProps> = ({
     statementExecution,
 }) => {
@@ -70,6 +98,9 @@ export const ResultExportDropdown: React.FunctionComponent<IProps> = ({
         info: string;
         type: 'url' | 'text';
     }>(null);
+    const [exportInfo, setExportInfo] = React.useState<IQueryResultExporter>(
+        null
+    );
 
     const dispatch: Dispatch = useDispatch();
     const statementExporters = useSelector(
@@ -108,20 +139,24 @@ export const ResultExportDropdown: React.FunctionComponent<IProps> = ({
         });
     }, [statementId, statementResult, loadStatementResult]);
 
-    const onGenericExportClick = React.useCallback(
-        async (exporter: IQueryResultExporter) => {
+    const handleExport = React.useCallback(
+        async (exporter: IQueryResultExporter, formData?) => {
             try {
                 await getExporterAuthentication(exporter);
 
                 sendNotification(`Exporting, please wait`);
-                const { data } = await ds.fetch(
-                    `/query_execution_exporter/statement_execution/${statementId}/`,
-                    {
-                        export_name: exporter.name,
-                    }
-                );
+                let exportInfoData = formData;
+                if (!formData) {
+                    const { data } = await ds.fetch(
+                        `/query_execution_exporter/statement_execution/${statementId}/`,
+                        {
+                            export_name: exporter.name,
+                        }
+                    );
+                    exportInfoData = data;
+                }
                 setExportedInfo({
-                    info: data,
+                    info: exportInfoData,
                     type: exporter.type,
                 });
             } catch (e) {
@@ -132,6 +167,17 @@ export const ResultExportDropdown: React.FunctionComponent<IProps> = ({
         },
         [statementId]
     );
+
+    const onGenericExportClick = (exporter: IQueryResultExporter) => {
+        const hasRequired = exporter.form
+            ? !validateForm({}, exporter.form)[0]
+            : false;
+        if (hasRequired) {
+            setExportInfo(exporter);
+        } else {
+            handleExport(exporter);
+        }
+    };
 
     const exportedInfoModal =
         exportedInfo != null ? (
@@ -147,6 +193,14 @@ export const ResultExportDropdown: React.FunctionComponent<IProps> = ({
                 />
             )
         ) : null;
+
+    const formModal = exportInfo ? (
+        <FormModal
+            form={exportInfo.form}
+            onHide={() => setExportInfo(null)}
+            onSubmit={(data) => handleExport(exportInfo, data)}
+        />
+    ) : null;
 
     const additionalButtons = [];
     if (statementExecution.result_row_count > 0) {
@@ -210,6 +264,7 @@ export const ResultExportDropdown: React.FunctionComponent<IProps> = ({
         <>
             {ellipsesDropDownButton}
             {exportedInfoModal}
+            {formModal}
         </>
     );
 };
