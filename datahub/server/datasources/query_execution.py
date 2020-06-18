@@ -23,6 +23,7 @@ from lib.query_analysis.templating import (
     get_templated_variables_in_string,
     QueryTemplatingError,
 )
+from lib.form import validate_form
 from const.query_execution import QueryExecutionStatus
 from const.datasources import RESOURCE_NOT_FOUND_STATUS_CODE
 from logic import query_execution as logic
@@ -364,7 +365,7 @@ def export_statement_execution_acquire_auth(export_name):
     methods=["GET"],
     require_auth=True,
 )
-def export_statement_execution_result(statement_execution_id, export_name):
+def export_statement_execution_result(statement_execution_id, export_name, **kwargs):
     with DBSession() as session:
         statement_execution = logic.get_statement_execution_by_id(
             statement_execution_id, session=session
@@ -378,7 +379,16 @@ def export_statement_execution_result(statement_execution_id, export_name):
 
     exporter = get_exporter(export_name)
     api_assert(exporter is not None, f"Invalid export name {export_name}")
-    return exporter.export(statement_execution_id, current_user.id)
+
+    exporter_params = kwargs.get("exporter_params", {})
+    if exporter_params:
+        exporter_form = exporter.export_form
+        if not (exporter_form is None and not exporter_params):
+            valid, reason = validate_form(exporter_form, exporter_params)
+            api_assert(valid, "Invalid exporter params, reason: " + reason)
+        return exporter.export(statement_execution_id, current_user.id, **kwargs)
+    else:
+        return exporter.export(statement_execution_id, current_user.id)
 
 
 @register("/query_execution/templated_query/", methods=["POST"])

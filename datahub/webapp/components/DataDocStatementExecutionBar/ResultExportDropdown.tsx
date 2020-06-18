@@ -64,8 +64,8 @@ const UrlModal: React.FunctionComponent<{
 };
 
 const FormModal: React.FunctionComponent<{
-    form: any;
-    onSubmit: (data) => any;
+    form: IStructFormField;
+    onSubmit: (data: {}) => any;
     onHide: () => any;
 }> = ({ form, onSubmit, onHide }) => {
     const [formData, setFormData] = React.useState({});
@@ -99,9 +99,9 @@ export const ResultExportDropdown: React.FunctionComponent<IProps> = ({
         info: string;
         type: 'url' | 'text';
     }>(null);
-    const [exportInfo, setExportInfo] = React.useState<IQueryResultExporter>(
-        null
-    );
+    const [exporterForForm, setExporterForForm] = React.useState<
+        IQueryResultExporter
+    >(null);
 
     const dispatch: Dispatch = useDispatch();
     const statementExporters = useSelector(
@@ -141,23 +141,21 @@ export const ResultExportDropdown: React.FunctionComponent<IProps> = ({
     }, [statementId, statementResult, loadStatementResult]);
 
     const handleExport = React.useCallback(
-        async (exporter: IQueryResultExporter, formData?) => {
+        async (exporter: IQueryResultExporter, formData?: {}) => {
             try {
                 await getExporterAuthentication(exporter);
 
                 sendNotification(`Exporting, please wait`);
-                let exportInfoData = formData;
-                if (!formData) {
-                    const { data } = await ds.fetch(
-                        `/query_execution_exporter/statement_execution/${statementId}/`,
-                        {
-                            export_name: exporter.name,
-                        }
-                    );
-                    exportInfoData = data;
+                const params = { export_name: exporter.name };
+                if (formData) {
+                    params['exporter_params'] = formData;
                 }
+                const { data } = await ds.fetch(
+                    `/query_execution_exporter/statement_execution/${statementId}/`,
+                    params
+                );
                 setExportedInfo({
-                    info: exportInfoData,
+                    info: data,
                     type: exporter.type,
                 });
             } catch (e) {
@@ -169,16 +167,18 @@ export const ResultExportDropdown: React.FunctionComponent<IProps> = ({
         [statementId]
     );
 
-    const onGenericExportClick = (exporter: IQueryResultExporter) => {
-        const hasRequired = exporter.form
-            ? !validateForm({}, exporter.form)[0]
-            : false;
-        if (hasRequired) {
-            setExportInfo(exporter);
-        } else {
-            handleExport(exporter);
-        }
-    };
+    const onGenericExportClick = React.useCallback(
+        (exporter: IQueryResultExporter) => {
+            const hasRequired =
+                exporter.form && !validateForm({}, exporter.form)[0];
+            if (hasRequired) {
+                setExporterForForm(exporter);
+            } else {
+                handleExport(exporter);
+            }
+        },
+        []
+    );
 
     const exportedInfoModal =
         exportedInfo != null ? (
@@ -195,13 +195,13 @@ export const ResultExportDropdown: React.FunctionComponent<IProps> = ({
             )
         ) : null;
 
-    const formModal = exportInfo ? (
+    const formModal = exporterForForm ? (
         <FormModal
-            form={exportInfo.form}
-            onHide={() => setExportInfo(null)}
+            form={exporterForForm.form}
+            onHide={() => setExporterForForm(null)}
             onSubmit={(data) => {
-                setExportInfo(null);
-                handleExport(exportInfo, data);
+                setExporterForForm(null);
+                handleExport(exporterForForm, data);
             }}
         />
     ) : null;
