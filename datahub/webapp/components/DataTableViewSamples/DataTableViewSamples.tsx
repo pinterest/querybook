@@ -13,13 +13,13 @@ import { AsyncButton } from 'ui/AsyncButton/AsyncButton';
 import { Table } from 'ui/Table/Table';
 import { IStoreState, Dispatch } from 'redux/store/types';
 import { Loading } from 'ui/Loading/Loading';
-import { Select, makeSelectOptions } from 'ui/Select/Select';
-import { Title } from 'ui/Title/Title';
 
 import './DataTableViewSamples.scss';
 import { ITableSampleParams } from 'redux/dataSources/types';
 import { Formik } from 'formik';
 import { SimpleField } from 'ui/FormikField/SimpleField';
+import { useInterval } from 'hooks/useInterval';
+import { ProgressBar } from 'ui/ProgressBar/ProgressBar';
 
 export interface IDataTableViewSamplesProps {
     table: IDataTable;
@@ -70,56 +70,35 @@ export const DataTableViewSamples: React.FunctionComponent<IDataTableViewSamples
     );
 
     const dispatch: Dispatch = useDispatch();
-    const { queryEngines, samples } = useSelector((state: IStoreState) => {
-        const metastoreId = schema.metastore_id;
-        return {
-            queryEngines: Object.values(
-                state.queryEngine.queryEngineById
-            ).filter((engine) => engine.metastore_id === metastoreId),
-            samples: state.dataSources.dataTablesSamplesById[table.id],
-        };
-    });
-    const [isLoading, setIsLoading] = React.useState(false);
+    const queryEngines = useSelector((state: IStoreState) =>
+        Object.values(state.queryEngine.queryEngineById).filter(
+            (engine) => engine.metastore_id === schema.metastore_id
+        )
+    );
 
     const loadDataTableSamples = React.useCallback(
-        async (tableId) => {
-            setIsLoading(true);
-            try {
-                return await dispatch(
-                    dataSourcesActions.fetchDataTableSamplesIfNeeded(tableId)
-                );
-            } finally {
-                setIsLoading(false);
-            }
-        },
-        [dispatch]
+        async () =>
+            dispatch(
+                dataSourcesActions.fetchDataTableSamplesIfNeeded(table.id)
+            ),
+        [table.id]
     );
 
     const createDataTableSamples = React.useCallback(
-        async (tableId, engineId, params) => {
-            try {
-                setIsLoading(true);
-                return await dispatch(
-                    dataSourcesActions.createDataTableSamples(
-                        tableId,
-                        engineId,
-                        params
-                    )
-                );
-            } finally {
-                setIsLoading(false);
-            }
-        },
-
-        [dispatch]
+        async (tableId, engineId, params) =>
+            dispatch(
+                dataSourcesActions.createDataTableSamples(
+                    tableId,
+                    engineId,
+                    params
+                )
+            ),
+        []
     );
 
-    React.useEffect(() => {
-        // Try to load the data initially
-        if (samples == null) {
-            loadDataTableSamples(table.id);
-        }
-    }, [table]);
+    const pollDataTableSamples = React.useCallback(() => {
+        return dispatch(dataSourcesActions.pollDataTableSample(table.id));
+    }, [table.id]);
 
     const controlDOM = (
         <div className="samples-control">
@@ -198,7 +177,9 @@ export const DataTableViewSamples: React.FunctionComponent<IDataTableViewSamples
                                 />
                             </div>
                             <div style={{ flex: 5 }}>
-                                {['=', '!='].includes(values.where[1]) && (
+                                {['=', '!=', 'LIKE'].includes(
+                                    values.where[1]
+                                ) && (
                                     <SimpleField
                                         label=" "
                                         type="input"
@@ -247,8 +228,56 @@ export const DataTableViewSamples: React.FunctionComponent<IDataTableViewSamples
         </div>
     );
 
-    const samplesTableDOM = isLoading ? (
+    return (
+        <div className="DataTableViewSamples">
+            {controlDOM}
+            <DataTableViewSamplesTable
+                tableId={table.id}
+                loadDataTableSamples={loadDataTableSamples}
+                pollDataTableSamples={pollDataTableSamples}
+            />
+        </div>
+    );
+};
+
+const DataTableViewSamplesTable: React.FC<{
+    tableId: number;
+    loadDataTableSamples: () => Promise<any>;
+    pollDataTableSamples: () => Promise<any>;
+}> = ({ tableId, loadDataTableSamples, pollDataTableSamples }) => {
+    const [loading, setLoading] = useState(false);
+
+    const samples = useSelector(
+        (state: IStoreState) => state.dataSources.dataTablesSamplesById[tableId]
+    );
+    const poll = useSelector(
+        (state: IStoreState) =>
+            state.dataSources.dataTablesSamplesPollingById[tableId]
+    );
+
+    React.useEffect(() => {
+        // Try to load the data initially
+        if (samples == null) {
+            setLoading(true);
+            loadDataTableSamples().finally(() => setLoading(false));
+        }
+    }, [tableId]);
+
+    useInterval(
+        () => {
+            pollDataTableSamples();
+        },
+        1000,
+        !poll
+    );
+
+    const samplesTableDOM = loading ? (
         <Loading />
+    ) : poll ? (
+        <div className="center-align p12">
+            {' '}
+            Progress: <ProgressBar value={poll.progress} />
+        </div>
     ) : samples ? (
         <SamplesTableView samples={samples} />
     ) : (
@@ -257,10 +286,5 @@ export const DataTableViewSamples: React.FunctionComponent<IDataTableViewSamples
         </div>
     );
 
-    return (
-        <div className="DataTableViewSamples">
-            {controlDOM}
-            {samplesTableDOM}
-        </div>
-    );
+    return samplesTableDOM;
 };

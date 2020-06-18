@@ -1,5 +1,4 @@
 from flask_login import current_user
-from datetime import datetime
 
 from app.auth.permission import (
     verify_environment_permission,
@@ -11,24 +10,14 @@ from app.auth.permission import (
 from app.db import DBSession
 from app.datasource import register, api_assert, with_impression, admin_only
 from app.flask_app import cache
-
 from const.impression import ImpressionItemType
 from const.metastore import DataTableWarningSeverity
-
+from const.time import seconds_in_a_day
 from lib.utils import mysql_cache
-from lib.utils.utils import DATETIME_TO_UTC
-from lib.utils.execute_query import execute_query
-from lib.query_analysis.samples import make_samples_query
-
 from logic import metastore as logic
 from logic import admin as admin_logic
-
 from models.metastore import DataTableWarning
-
-
-# TODO: remove this
-max_return_size = 5000000
-seconds_in_a_day = 60 * 60 * 24
+from tasks.run_sample_query import run_sample_query
 
 
 @register("/query_metastore/", methods=["GET"])
@@ -183,31 +172,32 @@ def create_table_samples(
             "Query engine does not belong to environment",
         )
 
-        query = make_samples_query(
-            table_id,
-            limit=limit,
-            partition=partition,
-            where=where,
-            order_by=order_by,
-            order_by_asc=order_by_asc,
-            session=session,
+        task = run_sample_query.apply_async(
+            args=[
+                table_id,
+                engine_id,
+                current_user.id,
+                limit,
+                partition,
+                where,
+                order_by,
+                order_by_asc,
+            ]
         )
-        results = {
-            "created_at": DATETIME_TO_UTC(datetime.now()),
-            "value": execute_query(
-                query, engine_id, uid=current_user.id, session=session
-            ),
-            "engine_id": engine_id,
-            "created_by": current_user.id,
-        }
+        return task.task_id
 
-        mysql_cache.set_key(
-            f"table_samples_{table_id}_{current_user.id}",
-            results,
-            expires_after=seconds_in_a_day,
-            session=session,
-        )
-        return results
+
+@register("/table/<int:table_id>/samples/poll/", methods=["GET"])
+def poll_table_samples(table_id, task_id):
+    task = run_sample_query.AsyncResult(task_id)
+    if task is not None:
+        if task.ready():
+            return [True, 100]
+        elif task.info is not None:
+            return [False, task.info]
+        else:
+            return [False, 0]
+    return None
 
 
 @register("/table/<int:table_id>/samples/", methods=["GET"])

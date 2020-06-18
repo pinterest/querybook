@@ -14,7 +14,10 @@ const initialState: IDataSourcesState = {
     functionDocumentationByNameByLanguage: {},
     dataJobMetadataById: {},
     queryMetastoreById: {},
+
     dataTablesSamplesById: {},
+    dataTablesSamplesPollingById: {},
+
     queryExampleIdsById: {},
 
     // trustworthinessStats: {
@@ -214,6 +217,29 @@ function dataTablesSamplesById(
     return state;
 }
 
+function dataTablesSamplesPollingById(
+    state = initialState.dataTablesSamplesPollingById,
+    action: DataSourcesAction
+) {
+    return produce(state, (draft) => {
+        switch (action.type) {
+            case '@@dataSources/RECEIVE_DATA_TABLE_SAMPLES_POLLING': {
+                const { tableId, taskId, progress, finished } = action.payload;
+                if (finished) {
+                    delete draft[tableId];
+                } else {
+                    draft[tableId] = {
+                        ...draft[tableId],
+                        taskId,
+                        progress,
+                    };
+                }
+                return;
+            }
+        }
+    });
+}
+
 function queryExampleIdsById(
     state = initialState.queryExampleIdsById,
     action: DataSourcesAction
@@ -315,6 +341,7 @@ export default combineReducers({
     dataSchemasById,
     dataJobMetadataById,
     dataTablesSamplesById,
+    dataTablesSamplesPollingById,
     queryExampleIdsById,
     dataLineages,
     dataTableWarningById,

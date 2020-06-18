@@ -8,7 +8,6 @@ export const useInterval = (
     useEffect(() => {
         let interval: number = null;
         if (!disabled) {
-            // Every 5 mins
             interval = setInterval(func, freq);
         }
 
