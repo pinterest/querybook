@@ -275,8 +275,7 @@ const DataTableViewSamplesTable: React.FC<{
         <Loading />
     ) : poll ? (
         <div className="center-align p12">
-            {' '}
-            Progress: <ProgressBar value={poll.progress} />
+            <ProgressBar value={poll.progress} />
         </div>
     ) : samples ? (
         <SamplesTableView samples={samples} />
