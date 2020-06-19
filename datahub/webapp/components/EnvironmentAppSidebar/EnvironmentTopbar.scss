@@ -12,8 +12,7 @@
         }
     }
     .env-icon {
-        padding: 0px 10px;
-        font-size: var(--large-text-size);
+        font-size: var(--xxxsmall-text-size);
         font-family: var(--family-monospace);
         background-color: var(--light-bg-color);
         color: var(--text-color);
@@ -22,6 +21,13 @@
         transition: border 0.3s ease-out;
         user-select: none;
 
+        display: inline-flex;
+        justify-content: center;
+        align-items: center;
+
+        width: 36px;
+        height: 36px;
+
         &.selected {
             border: 3px solid var(--focus-border-color);
         }
@@ -29,6 +35,11 @@
         &.disabled {
             opacity: 0.45;
             cursor: not-allowed;
+        }
+
+        .env-icon-text {
+            word-break: break-all;
+            text-align: center;
         }
     }
 }
