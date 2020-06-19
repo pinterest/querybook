@@ -61,10 +61,13 @@ def make_samples_query(
         if filter_op not in COMPARSION_OP:
             raise SamplesError("Invalid filter op " + filter_op)
 
-        if filter_op in ["=", "!="]:
+        if filter_op in ["=", "!=", "LIKE"]:
             if column_type == DataHubColumnType.Number:
                 if not filter_val or not filter_val.isnumeric():
-                    raise SamplesError("Invalid filter value " + filter_val)
+                    raise SamplesError("Invalid numeric filter value " + filter_val)
+            elif column_type == DataHubColumnType.Boolean:
+                if filter_val != "true" and filter_val != "false":
+                    raise SamplesError("Invalid boolean filter value " + filter_val)
             else:  # column_type == DataHubColumnType.String
                 filter_val = "'{}'".format(json.dumps(filter_val)[1:-1])
         else:
@@ -104,6 +107,7 @@ COMPARSION_OP = ["=", "!=", "LIKE", "IS NULL", "IS NOT NULL"]
 class DataHubColumnType(Enum):
     String = "string"
     Number = "number"
+    Boolean = "boolean"
 
     # For composite types
     Composite = "composite"
@@ -111,7 +115,7 @@ class DataHubColumnType(Enum):
 
 
 common_sql_types = {
-    "boolean": DataHubColumnType.Number,
+    "boolean": DataHubColumnType.Boolean,
     # Integers
     "int": DataHubColumnType.Number,
     "integer": DataHubColumnType.Number,

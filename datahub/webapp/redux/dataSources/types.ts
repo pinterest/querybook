@@ -14,6 +14,7 @@ import {
     IDataJobMetadata,
     IPaginatedQuerySamples,
     IDataTableWarning,
+    IDataTableSamplesPolling,
 } from 'const/metastore';
 import { IStoreState } from '../store/types';
 
@@ -80,6 +81,16 @@ export interface IReceiveDataTableSamplesAction extends Action {
     };
 }
 
+export interface IReceiveDataTableSamplesPollingAction extends Action {
+    type: '@@dataSources/RECEIVE_DATA_TABLE_SAMPLES_POLLING';
+    payload: {
+        tableId: number;
+        taskId: number;
+        progress: number;
+        finished: boolean;
+    };
+}
+
 export interface IReceiveQueryExampleIdsAction extends Action {
     type: '@@dataSources/RECEIVE_QUERY_EXAMPLES';
     payload: {
@@ -124,6 +135,7 @@ export type DataSourcesAction =
     | IReceiveDataJobMetadataAction
     | IReceiveGoldenTablesAction
     | IReceiveDataTableSamplesAction
+    | IReceiveDataTableSamplesPollingAction
     | IReceiveQueryExampleIdsAction
     | ILoadingFunctionDocumentationAction
     | IReceiveFunctionDocumentationAction
@@ -151,6 +163,8 @@ export interface IDataSourcesState {
     dataJobMetadataById: Record<number, IDataJobMetadata>;
 
     dataTablesSamplesById: Record<number, IDataTableSamples>;
+    dataTablesSamplesPollingById: Record<number, IDataTableSamplesPolling>;
+
     queryExampleIdsById: Record<number, IPaginatedQuerySamples>;
 
     dataLineages: ILineageCollection;

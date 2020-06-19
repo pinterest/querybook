@@ -77,7 +77,7 @@ class CursorBaseClass(metaclass=ABCMeta):
             For Presto, it is #completed_split/#total_split
 
         Returns:
-            float -- the percentage completion
+            float -- the percentage completion between [0, 100]
         """
 
         return 0

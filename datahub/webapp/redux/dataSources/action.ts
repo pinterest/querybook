@@ -19,12 +19,14 @@ import {
     IReceiveDataTableAction,
     ThunkResult,
     IReceiveDataTableSamplesAction,
+    IReceiveDataTableSamplesPollingAction,
     IReceiveDataJobMetadataAction,
     IReceiveParentDataLineageAction,
     IReceiveChildDataLineageAction,
     IReceiveQueryExampleIdsAction,
     ITableSampleParams,
 } from './types';
+import { Dispatch } from 'redux/store/types';
 
 interface IUpdateTableParams {
     description: ContentState;
@@ -360,6 +362,23 @@ function receiveDataTableSamples(
     };
 }
 
+function receiveDataTableSamplesPolling(
+    tableId: number,
+    taskId: number,
+    progress: number = 0,
+    finished: boolean = false
+): IReceiveDataTableSamplesPollingAction {
+    return {
+        type: '@@dataSources/RECEIVE_DATA_TABLE_SAMPLES_POLLING',
+        payload: {
+            tableId,
+            taskId,
+            progress,
+            finished,
+        },
+    };
+}
+
 export function fetchDataTableSamples(
     tableId: number
 ): ThunkResult<Promise<IDataTableSamples>> {
@@ -399,11 +418,11 @@ export function createDataTableSamples(
     tableId: number,
     engineId: number,
     sampleParams: ITableSampleParams = {}
-): ThunkResult<Promise<IDataTableSamples>> {
+): ThunkResult<Promise<number>> {
     return async (dispatch, getState) => {
         try {
             const environmentId = getState().environment.currentEnvironmentId;
-            const { data } = await ds.save(
+            const { data: taskId } = await ds.save<number>(
                 {
                     url: `/table/${tableId}/samples/`,
                     transformResponse: [JSONBig.parse],
@@ -414,11 +433,51 @@ export function createDataTableSamples(
                     ...sampleParams,
                 }
             );
-            dispatch(receiveDataTableSamples(tableId, data));
-            return data;
+            dispatch(receiveDataTableSamplesPolling(tableId, taskId));
+            return taskId;
         } catch (e) {
             console.error(e);
         }
+    };
+}
+
+export function pollDataTableSample(
+    tableId: number
+): ThunkResult<Promise<boolean>> {
+    return async (dispatch, getState) => {
+        let finished = false;
+        try {
+            const poll = getState().dataSources.dataTablesSamplesPollingById[
+                tableId
+            ];
+            if (poll) {
+                const { data } = await ds.fetch<[boolean, number]>(
+                    `/table/${tableId}/samples/poll/`,
+                    {
+                        task_id: poll.taskId,
+                    }
+                );
+
+                finished = !data || data[0];
+                dispatch(
+                    receiveDataTableSamplesPolling(
+                        tableId,
+                        poll.taskId,
+                        data?.[1],
+                        finished
+                    )
+                );
+
+                if (finished) {
+                    await dispatch(fetchDataTableSamples(tableId));
+                }
+
+                return finished;
+            }
+        } catch (e) {
+            console.error(e);
+        }
+        return finished;
     };
 }
 

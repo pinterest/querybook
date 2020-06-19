@@ -70,6 +70,11 @@ export interface IDataTableSamples {
     value: any[][];
 }
 
+export interface IDataTableSamplesPolling {
+    taskId: number;
+    progress: number;
+}
+
 export interface IDataColumn {
     id: number;
     comment?: string;

@@ -7,6 +7,7 @@ from env import DataHubSettings
 from lib.logger import get_logger
 
 from .run_query import run_query_task
+from .run_sample_query import run_sample_query
 from .dummy_task import dummy_task
 from .update_metastore import update_metastore
 from .sync_elasticsearch import sync_elasticsearch
@@ -34,6 +35,7 @@ delete_mysql_cache
 poll_engine_status
 presto_hive_function_scrapper
 run_all_db_clean_up_jobs
+run_sample_query
 
 LOG = get_task_logger(__name__)
 
