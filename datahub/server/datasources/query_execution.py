@@ -383,10 +383,8 @@ def export_statement_execution_result(
     api_assert(exporter is not None, f"Invalid export name {export_name}")
 
     if exporter_params:
-        exporter_form = exporter.export_form
-        if not (exporter_form is None and not exporter_params):
-            valid, reason = validate_form(exporter_form, exporter_params)
-            api_assert(valid, "Invalid exporter params, reason: " + reason)
+        valid, reason = validate_form(exporter.export_form, exporter_params)
+        api_assert(valid, "Invalid exporter params, reason: " + reason)
 
     return exporter.export(
         statement_execution_id, current_user.id, **(exporter_params or {})
