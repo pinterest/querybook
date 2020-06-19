@@ -33,6 +33,12 @@ export const EnvironmentTopbar: React.FunctionComponent = () => {
                 ? currentEnvironment.id === environment.id
                 : false;
             const accessible = userEnvironmentNames.has(environment.name);
+
+            const firstWordMatch = environment.name.match(/([a-zA-Z0-9]+)/);
+            const envName = firstWordMatch
+                ? firstWordMatch[1].slice(0, 10).toLocaleUpperCase()
+                : '';
+
             return (
                 <Link
                     key={environment.id}
@@ -54,7 +60,7 @@ export const EnvironmentTopbar: React.FunctionComponent = () => {
                             selected,
                         })}
                     >
-                        {environment.name[0].toLocaleUpperCase()}
+                        <span className="env-icon-text">{envName}</span>
                     </span>
                 </Link>
             );
@@ -62,7 +68,7 @@ export const EnvironmentTopbar: React.FunctionComponent = () => {
 
     return (
         <Level className="EnvironmentTopbar ">
-            <div>{environmentIcons}</div>
+            <div className="flex-row">{environmentIcons}</div>
             <div>
                 <EnvironmentDropdownButton skip={NUMBER_OF_ICONS_TO_SHOW} />
             </div>

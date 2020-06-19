@@ -8,7 +8,6 @@ import {
     ILineage,
     IQueryMetastore,
     IDataTableSamples,
-    ILineageCollection,
     IDataSchema,
     IDataTableWarning,
     DataTableWarningSeverity,
@@ -26,7 +25,6 @@ import {
     IReceiveQueryExampleIdsAction,
     ITableSampleParams,
 } from './types';
-import { Dispatch } from 'redux/store/types';
 
 interface IUpdateTableParams {
     description: ContentState;
