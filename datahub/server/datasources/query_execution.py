@@ -366,7 +366,7 @@ def export_statement_execution_acquire_auth(export_name):
     require_auth=True,
 )
 def export_statement_execution_result(
-    statement_execution_id, export_name, exporter_params
+    statement_execution_id, export_name, exporter_params=None
 ):
     with DBSession() as session:
         statement_execution = logic.get_statement_execution_by_id(
