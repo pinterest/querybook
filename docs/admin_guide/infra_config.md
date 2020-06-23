@@ -53,12 +53,12 @@ The following settings are only relevant if you are using `db`, note that all un
 
 The following settings are only relevant if you are using `s3` or `gcs` (Google Cloud Storage), note that all units are in bytes:
 
-`STORE_BUCKET_NAME` (optional): The Bucket name
-`STORE_PATH_PREFIX` (optional, defaults to **''**): Key/Blob prefix for DataHub's stored results/logs
-`STORE_MIN_UPLOAD_CHUNK_SIZE` (optional, defaults to **10485760**): The chunk size when uploading
-`STORE_MAX_UPLOAD_CHUNK_NUM` (optional, defaults to **10000**): The number of chunks that can be uploaded, you can determine the maximum upload size by multiplying this with chunk size.
-`STORE_READ_SIZE` (optional, defaults to 131072): The size of chunk when reading from store.
-`STORE_MAX_READ_SIZE` (optional, defaults to 5242880): The max size of file DataHub will read for users to view.
+- `STORE_BUCKET_NAME` (optional): The Bucket name
+- `STORE_PATH_PREFIX` (optional, defaults to **''**): Key/Blob prefix for DataHub's stored results/logs
+- `STORE_MIN_UPLOAD_CHUNK_SIZE` (optional, defaults to **10485760**): The chunk size when uploading
+- `STORE_MAX_UPLOAD_CHUNK_NUM` (optional, defaults to **10000**): The number of chunks that can be uploaded, you can determine the maximum upload size by multiplying this with chunk size.
+- `STORE_READ_SIZE` (optional, defaults to 131072): The size of chunk when reading from store.
+- `STORE_MAX_READ_SIZE` (optional, defaults to 5242880): The max size of file DataHub will read for users to view.
 
 ### Logging
 
@@ -74,11 +74,16 @@ The following settings are only relevant if you are using `s3` or `gcs` (Google 
 You can also supply any custom authentication added in the auth plugin. See "Add Auth" and "Plugins" guide for more details.
 
 the next few configurations are only relevant if you are using OAuth based authentication:
-`OAUTH_CLIENT_ID`(**required**)
-`OAUTH_CLIENT_SECRET` (**required**)
-`OAUTH_AUTHORIZATION_URL` (**required**): Url for oauth redirection
-`OAUTH_TOKEN_URL` (**required**): Url to get the oauth token
-`OAUTH_USER_PROFILE` (**required**): Url to get the user profile
+
+- `OAUTH_CLIENT_ID`(**required**)
+- `OAUTH_CLIENT_SECRET` (**required**)
+- `OAUTH_AUTHORIZATION_URL` (**required**): Url for oauth redirection
+- `OAUTH_TOKEN_URL` (**required**): Url to get the oauth token
+- `OAUTH_USER_PROFILE` (**required**): Url to get the user profile
+
+If you want to force the user to login again after a certain time, you can the following variable:
+
+`LOGS_OUT_AFTER` (optional, defaults to 0): Force user to log out after they have logged in for X number of seconds. If 0 then never expire the log in. In both cases the re-login is required if the browser is closed.
 
 ## Communication
 
@@ -92,5 +97,5 @@ By default DataHub supports email and slack notifications for sharing DataDocs a
 
 ### Email
 
-EMAILER_CONN (optional, defaults to localhost:22): Location of the emailer server
-DATAHUB_EMAIL_ADDRESS (optional, required for email): Origin address when sending emails
+`EMAILER_CONN` (optional, defaults to localhost:22): Location of the emailer server
+`DATAHUB_EMAIL_ADDRESS` (optional, required for email): Origin address when sending emails
