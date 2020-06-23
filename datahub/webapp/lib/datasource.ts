@@ -1,5 +1,5 @@
 import axios, { AxiosRequestConfig, Canceler } from 'axios';
-import { sendNotification } from 'lib/dataHubUI';
+import { sendNotification, setSessionExpired } from 'lib/dataHubUI';
 import { formatError } from 'lib/utils/error';
 
 export interface ICancelablePromise<T> extends Promise<T> {
@@ -11,6 +11,10 @@ type UrlOrOptions = string | AxiosRequestConfig;
 function handleRequestException(error: any, notifyOnError?: boolean) {
     if (notifyOnError) {
         sendNotification(`FAILED: ${formatError(error)}`);
+    }
+
+    if (error?.response?.status === 401) {
+        setSessionExpired();
     }
 
     return Promise.reject(error);

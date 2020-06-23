@@ -8,7 +8,7 @@ sidebar_label: Infra Config
 
 <b>THIS GUIDE IS ONLY FOR INFRASTRUCTURE SETUP, PLEASE READ [GENERAL CONFIG](../admin_guide/general_config.md) FOR GENERIC CONFIGS</b>
 
-Eventhrough DataHub can be launched without any configuration, it is absolutely required for more powerful infrastructure/flexible customization. In this guide we will walkthrough different kind of environment settings you can set for DataHub. You can see all possible options and default values in this repo by checking out `datahub/config/default_config.yaml`.
+Eventhrough DataHub can be launched without any configuration, it is absolutely required for more powerful infrastructure/flexible customization. In this guide we will walkthrough different kind of environment settings you can set for DataHub. You can see all possible options and default values in this repo by checking out `datahub/config/datahub_default_config.yaml`.
 
 ### Making custom configs
 
@@ -20,7 +20,7 @@ Otherwise you can also pass the environment variable directly when launching the
 
 1. Environment variables (highest priority)
 2. datahub_config.yaml
-3. default_config.yaml (lowest priority)
+3. datahub_default_config.yaml (lowest priority)
 
 ## Infrastructure
 

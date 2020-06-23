@@ -79,3 +79,7 @@ export function setSidebarTableId(tableId: number) {
         datahubUIActions.setSidebarTableId(tableId)
     );
 }
+
+export function setSessionExpired() {
+    (reduxStore.dispatch as Dispatch)(datahubUIActions.setSessionExpired());
+}

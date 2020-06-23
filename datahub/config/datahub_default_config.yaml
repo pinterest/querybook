@@ -27,6 +27,9 @@ DATAHUB_EMAIL_ADDRESS: ~
 # is authenticaton via username/password and 'app.auth.oauth_auth' which supports
 # authentication via oauth api
 AUTH_BACKEND: app.auth.password_auth
+# Force user to log out after they log in for X number of seconds
+# If set to 0 then only expire their login session after log out
+LOGS_OUT_AFTER: 0
 
 # If OAuth, then the following values should be provided
 # Optional, if null then defaults to public url

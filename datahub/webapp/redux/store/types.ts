@@ -22,6 +22,7 @@ import { IQueryEngineState, QueryEngineAction } from 'redux/queryEngine/types';
 import { IEnvironmentState, EnvironmentAction } from 'redux/environment/types';
 import { IAdhocQueryState, AdhocQueryAction } from 'redux/adhocQuery/types';
 import { IBoardState, BoardAction } from 'redux/board/types';
+import { IGlobalStateState, GlobalStateAction } from 'redux/globalState/types';
 
 export interface IStoreState {
     readonly user: IUserState;
@@ -37,6 +38,7 @@ export interface IStoreState {
     readonly environment: IEnvironmentState;
     readonly adhocQuery: IAdhocQueryState;
     readonly board: IBoardState;
+    readonly globalState: IGlobalStateState;
 }
 
 export type AllAction =
@@ -52,6 +54,7 @@ export type AllAction =
     | DataHubUIAction
     | EnvironmentAction
     | AdhocQueryAction
-    | BoardAction;
+    | BoardAction
+    | GlobalStateAction;
 
 export type Dispatch = ThunkDispatch<IStoreState, null, AllAction>;

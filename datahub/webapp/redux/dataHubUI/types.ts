@@ -1,9 +1,11 @@
+import * as React from 'react';
+
 import { Action } from 'redux';
 import { ThunkAction } from 'redux-thunk';
 
 import { IStoreState } from '../store/types';
-import * as React from 'react';
 import { IConfirmationMessageProps } from 'components/ConfirmationManager/ConfirmationMessage';
+import { GlobalStateAction } from 'redux/globalState/types';
 
 export interface IAnnouncement {
     id: number;
@@ -60,11 +62,6 @@ export interface ISetSidebarTableId extends Action {
     payload: number;
 }
 
-export interface ISetAppBlurred extends Action {
-    type: '@@datahubUI/SET_APP_BLURRED';
-    payload: boolean;
-}
-
 export type DataHubUIAction =
     | IPushNotificationAction
     | IPopNotificationAction
@@ -74,7 +71,7 @@ export type DataHubUIAction =
     | IReceiveAnnouncementIds
     | IDismissAnnouncementId
     | ISetSidebarTableId
-    | ISetAppBlurred;
+    | GlobalStateAction;
 
 export interface IDataHubUIState {
     announcements: IAnnouncement[];
@@ -84,7 +81,6 @@ export interface IDataHubUIState {
     confirmation?: IConfirmationMessageProps;
 
     sidebarTableId: number;
-    appBlurred: boolean;
 }
 
 export type ThunkResult<R> = ThunkAction<
