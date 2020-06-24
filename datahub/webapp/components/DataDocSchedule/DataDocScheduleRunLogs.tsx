@@ -9,14 +9,17 @@ import { ErrorMessage } from 'ui/Message/ErrorMessage';
 import { Table } from 'ui/Table/Table';
 import { TaskStatusIcon } from 'components/Task/TaskStatusIcon';
 
-function formatCell(index: number, column: string, row: ITaskStatusRecord) {
+function formatCell(
+    index: number,
+    column: keyof ITaskStatusRecord,
+    row: ITaskStatusRecord
+) {
     const value = row[column];
-    let dom = value;
+    let dom: React.ReactNode = value;
     switch (column) {
+        case 'updated_at':
         case 'created_at': {
-            dom = `${generateFormattedDate(value, 'X')}, ${moment
-                .utc(value, 'X')
-                .fromNow()}`;
+            dom = generateFormattedDate(row[column], 'X');
             break;
         }
         case 'name': {
@@ -24,7 +27,7 @@ function formatCell(index: number, column: string, row: ITaskStatusRecord) {
             break;
         }
         case 'status': {
-            dom = <TaskStatusIcon type={value} />;
+            dom = <TaskStatusIcon type={row[column]} />;
             break;
         }
     }
@@ -35,10 +38,25 @@ function formatCell(index: number, column: string, row: ITaskStatusRecord) {
     );
 }
 
+const runLogsColumns: Array<keyof ITaskStatusRecord> = [
+    'id',
+    'created_at',
+    'updated_at',
+    'status',
+    'error_message',
+];
+const runLogsColumnsWidth: Partial<Record<keyof ITaskStatusRecord, number>> = {
+    id: 1,
+    created_at: 2,
+    updated_at: 2,
+    status: 1,
+    error_message: 5,
+};
+
 export const DataDocScheduleRunLogs: React.FunctionComponent<{
     docId: number;
 }> = ({ docId }) => {
-    const { isLoading, isError, data } = useDataFetch({
+    const { isLoading, isError, data } = useDataFetch<ITaskStatusRecord[]>({
         url: `/datadoc/${docId}/schedule/logs/`,
     });
 
@@ -53,9 +71,10 @@ export const DataDocScheduleRunLogs: React.FunctionComponent<{
     return (
         <Table
             rows={data}
-            cols={['id', 'created_at', 'name', 'status']}
+            cols={runLogsColumns}
             formatCell={formatCell}
             showAllRows={true}
+            colNameToWidths={runLogsColumnsWidth}
         />
     );
 };

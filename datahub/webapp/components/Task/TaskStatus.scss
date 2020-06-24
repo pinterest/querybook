@@ -9,6 +9,11 @@
     }
     .Table {
         overflow-x: scroll;
+
+        .TaskStatus-error-message {
+            white-space: pre-wrap;
+            word-break: break-all;
+        }
     }
 }
 

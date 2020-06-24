@@ -6,6 +6,7 @@ from const.db import (
     name_length,
     description_length,
     url_length,
+    now,
     # mediumtext_length,
     # text_length
 )
@@ -69,3 +70,4 @@ class UserEnvironment(CRUDMixin, Base):
     user_id = sql.Column(
         sql.Integer, sql.ForeignKey("user.id", ondelete="CASCADE"), nullable=False
     )
+    created_at = sql.Column(sql.DateTime, default=now)

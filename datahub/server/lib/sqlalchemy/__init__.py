@@ -1,5 +1,7 @@
 from datetime import datetime
 from typing import List
+from sqlalchemy.orm import validates
+
 from app.db import with_session
 from lib.utils.serialize import serialize_value
 
@@ -155,3 +157,16 @@ class CRUDMixin(SerializeMixin):
         session.delete(item)
         if commit:
             session.commit()
+
+
+# from https://stackoverflow.com/questions/32364499/truncating-too-long-varchar-when-inserting-to-mysql-via-sqlalchemy
+def TruncateString(fields):
+    class TruncateStringMixin:
+        @validates(fields)
+        def validate_string_field_length(self, key, value):
+            max_len = getattr(self.__class__, key).prop.columns[0].type.length
+            if value and len(value) > max_len:
+                return value[:max_len]
+            return value
+
+    return TruncateStringMixin

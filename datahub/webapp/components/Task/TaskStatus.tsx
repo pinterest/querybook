@@ -13,6 +13,7 @@ import { Tabs } from 'ui/Tabs/Tabs';
 import { SearchBar } from 'ui/SearchBar/SearchBar';
 import { TaskStatusIcon } from './TaskStatusIcon';
 import { ToggleButton } from 'ui/ToggleButton/ToggleButton';
+import { SeeMoreText } from 'ui/SeeMoreText/SeeMoreText';
 
 import './TaskStatus.scss';
 
@@ -24,19 +25,21 @@ const tableColumns: Array<keyof ITaskStatusRecord> = [
     'created_at',
     'updated_at',
     'status',
+    'error_message',
 ];
 const tableColumnWidths = {
     id: 80,
-    name: 240,
-    created_at: 240,
-    updated_at: 240,
-    status: 120,
+    name: 120,
+    created_at: 100,
+    updated_at: 100,
+    status: 80,
 };
 const tableColumnAligns: Record<string, TableAlign> = {
     id: 'center',
     created_at: 'center',
     updated_at: 'center',
     status: 'center',
+    error_message: 'center',
 };
 
 function formatCell(
@@ -47,10 +50,7 @@ function formatCell(
     switch (column) {
         case 'updated_at':
         case 'created_at': {
-            const value = row[column];
-            return `${generateFormattedDate(value, 'X')}, ${moment
-                .utc(value, 'X')
-                .fromNow()}`;
+            return generateFormattedDate(row[column], 'X');
         }
         case 'name': {
             const value = row[column];
@@ -59,6 +59,16 @@ function formatCell(
         case 'status': {
             const value = row[column];
             return <TaskStatusIcon type={value} />;
+        }
+        case 'error_message': {
+            return (
+                <SeeMoreText
+                    className="TaskStatus-error-message"
+                    text={row[column]}
+                    length={120}
+                    seeLess
+                />
+            );
         }
         default:
             return row[column];
