@@ -51,7 +51,7 @@ export const EnvironmentTopbar: React.FunctionComponent = () => {
                         .join('. ')}
                     data-balloon-pos={'down-left'}
                     data-balloon-length="medium"
-                    to={`/${environment.name}/`}
+                    to={accessible ? `/${environment.name}/` : null}
                 >
                     <span
                         className={classNames({
