@@ -278,7 +278,16 @@ const DataDocChartComposerComponent: React.FunctionComponent<
     );
 
     const getAxesScaleType = React.useCallback(
-        (colIndex: number) => getDefaultScaleType(chartData?.[1]?.[colIndex]),
+        (colIndex: number) => {
+            for (let row = 1; row < chartData?.length; row++) {
+                const cell = chartData?.[row]?.[colIndex];
+                if (cell != null) {
+                    return getDefaultScaleType(chartData?.[row]?.[colIndex]);
+                }
+            }
+            // Unknown type, use linear as a default
+            return 'linear';
+        },
         [chartData]
     );
 

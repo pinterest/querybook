@@ -2,7 +2,7 @@ import { cloneDeep, range } from 'lodash';
 import { ChartDataAggType } from 'const/dataDocChart';
 import { sortTable, getValueDataType } from './chart-utils';
 
-const emptyCellValue = 'No Value';
+const emptyCellValue = null;
 
 // from: https://stackoverflow.com/questions/4492678/swap-rows-with-columns-transposition-of-a-matrix-in-javascript
 function switchData(data: readonly any[][]) {
