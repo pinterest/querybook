@@ -1,4 +1,5 @@
 import sys
+from datetime import timedelta
 
 from celery import Celery
 from flask import Flask, Blueprint, json as flask_json, has_request_context
@@ -35,6 +36,11 @@ def make_flask_app():
     app = Flask(__name__, static_folder=STATIC_PATH)
     app.json_encoder = JSONEncoder
     app.secret_key = DataHubSettings.FLASK_SECRET_KEY
+
+    if DataHubSettings.LOGS_OUT_AFTER > 0:
+        app.permanent_session_lifetime = timedelta(
+            seconds=DataHubSettings.LOGS_OUT_AFTER
+        )
 
     return app
 

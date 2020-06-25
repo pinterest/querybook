@@ -5,15 +5,12 @@ import { Announcements } from 'components/Announcements/Announcements';
 import { ErrorBoundary } from 'ui/ErrorBoundary/ErrorBoundary';
 import { FullHeight } from 'ui/FullHeight/FullHeight';
 import { CommandKModal } from 'components/Search/CommandKModal';
-import { useSelector } from 'react-redux';
-import { IStoreState } from 'redux/store/types';
+import { useGlobalState } from 'hooks/redux/useGlobalState';
 
 import './AppLayout.scss';
 
 export const AppLayout: React.FunctionComponent = (props) => {
-    const appBlurred = useSelector(
-        (state: IStoreState) => state.dataHubUI.appBlurred
-    );
+    const [appBlurred] = useGlobalState('appBlurred', false);
     const appLayoutClassName = classNames({
         AppLayout: true,
         'AppLayout-blurred': appBlurred,

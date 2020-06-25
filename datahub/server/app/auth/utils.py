@@ -14,7 +14,7 @@
 
 import flask
 from flask_login import UserMixin, LoginManager
-from flask import abort
+from flask import abort, session as flask_session
 
 from app.db import with_session
 from const.datasources import ACCESS_RESTRICTED_STATUS_CODE, UNAUTHORIZED_STATUS_CODE
@@ -68,6 +68,10 @@ class DataHubLoginManager(LoginManager):
         # When upgrade, please use _request_callback and _user_callback
         self.request_callback = load_user_with_api_access_token
         self.user_callback = load_user
+        self.needs_refresh_message = (
+            u"To protect your account, please reauthenticate to access this page."
+        )
+        self.needs_refresh_message_category = "info"
 
 
 @with_session
@@ -75,6 +79,11 @@ def load_user(uid, session=None):
     if not uid or uid == "None":
         return None
     user = get_user_by_id(uid, session=session)
+    if user is None:
+        # Invalid user, clear session
+        flask_session.clear()
+        flask.abort(401, description="Invalid cookie")
+
     return AuthUser(user)
 
 

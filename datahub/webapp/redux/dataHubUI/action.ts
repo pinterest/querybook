@@ -7,7 +7,6 @@ import {
     IRemoveConfirmationAction,
     IAnnouncement,
     ISetSidebarTableId,
-    ISetAppBlurred,
 } from './types';
 
 import localStore from 'lib/local-store';
@@ -16,6 +15,7 @@ import {
     DismissedAnnouncementValue,
 } from 'lib/local-store/const';
 import ds from 'lib/datasource';
+import { ISetGlobalStateAction } from 'redux/globalState/types';
 
 export function pushNotification({
     content,
@@ -120,9 +120,27 @@ export function setSidebarTableId(id: number): ISetSidebarTableId {
     };
 }
 
-export function setAppBlurred(blur: boolean): ISetAppBlurred {
+export function setAppBlurred(blur: boolean): ISetGlobalStateAction {
     return {
-        type: '@@datahubUI/SET_APP_BLURRED',
-        payload: blur,
+        type: '@@globalState/SET_GLOBAL_STATE',
+        payload: {
+            key: 'appBlurred',
+            value: blur,
+        },
+    };
+}
+
+export function setSessionExpired(): ThunkResult<void> {
+    return (dispatch, getState) => {
+        // Can't expire the session if user is not logged in
+        if (!!getState().user.myUserInfo) {
+            dispatch({
+                type: '@@globalState/SET_GLOBAL_STATE',
+                payload: {
+                    key: 'sessionExpired',
+                    value: true,
+                },
+            });
+        }
     };
 }

@@ -7,7 +7,6 @@ const initialState: IDataHubUIState = {
     dismissedAnnouncementIds: [],
     confirmation: null,
     sidebarTableId: null,
-    appBlurred: false,
 };
 
 export default function dataHubUI(
@@ -55,11 +54,6 @@ export default function dataHubUI(
             }
             case '@@datahubUI/SET_SIDEBAR_TABLE_ID': {
                 draft.sidebarTableId = action.payload;
-                return;
-            }
-
-            case '@@datahubUI/SET_APP_BLURRED': {
-                draft.appBlurred = action.payload;
                 return;
             }
         }

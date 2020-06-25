@@ -151,6 +151,10 @@ export default function userReducer(
                 );
                 return;
             }
+            case '@@user/LOGOUT_USER': {
+                delete draft.myUserInfo;
+                return;
+            }
         }
     });
 

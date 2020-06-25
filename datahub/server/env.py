@@ -7,7 +7,7 @@ from lib.config import get_config_value
 
 in_test = hasattr(sys, "_called_from_test")
 datahub_config = get_config_value("datahub_config", {})
-default_config = get_config_value("default_config", {})
+datahub_default_config = get_config_value("datahub_default_config", {})
 
 
 class MissingConfigException(Exception):
@@ -20,8 +20,8 @@ def get_dh_config(name, optional=True):
         val = os.environ.get(name)
     elif name in datahub_config:
         val = datahub_config.get(name)
-    elif name in default_config:
-        val = default_config.get(name)
+    elif name in datahub_default_config:
+        val = datahub_default_config.get(name)
         found = val is not None
     else:
         found = False
@@ -58,6 +58,7 @@ class DataHubSettings(object):
 
     # Authentication
     AUTH_BACKEND = get_dh_config("AUTH_BACKEND")
+    LOGS_OUT_AFTER = int(get_dh_config("LOGS_OUT_AFTER"))
 
     OAUTH_CLIENT_ID = get_dh_config("OAUTH_CLIENT_ID")
     OAUTH_CLIENT_SECRET = get_dh_config("OAUTH_CLIENT_SECRET")
