@@ -66,7 +66,8 @@ export const UserLoader: React.FunctionComponent = ({ children }) => {
                     style={{ cursor: 'pointer' }}
                 >
                     <Title size={5}>
-                        Your session has expired. Click to refresh the page.
+                        Your session has expired. Click HERE to refresh the
+                        page.
                     </Title>
                 </div>
             </Modal>
