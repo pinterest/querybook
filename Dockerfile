@@ -1,4 +1,4 @@
-FROM python:3.7.4
+FROM python:3.7.7
 ARG PRODUCTION=true
 
 ## Install DataHub package requirements + NodeJS
@@ -11,15 +11,15 @@ RUN rm -rf /var/lib/apt/lists/* \
     build-essential \
     python-dev \
     libssl-dev \
-    && curl -sL https://deb.nodesource.com/setup_12.x |  bash - \
+    && curl -sL https://deb.nodesource.com/setup_14.x |  bash - \
     && DEBIAN_FRONTEND=noninteractive apt-get install --no-install-recommends -y --force-yes \
     nodejs \
     && apt-get clean
 
 # Install YARN
-RUN npm i -g npm@6.1.0 \
-    && npm i -g yarn@^1.7 \
-    && npm explore npm --global -- npm install node-gyp@3.6.2 \
+RUN npm i -g npm@6.14.5 \
+    && npm i -g yarn@^1.22 \
+    && npm explore npm --global -- npm install node-gyp@7.0.0 \
     && yarn config set cache-folder /mnt/yarn-cache/cache \
     && yarn config set yarn-offline-mirror /mnt/yarn-offline-mirror
 
@@ -34,7 +34,7 @@ RUN pip install -r requirements/base.txt \
     fi
 
 COPY package.json yarn.lock ./
-RUN yarn install --frozen-lockfile --pure-lockfile && npm rebuild node-sass
+RUN yarn install --frozen-lockfile --pure-lockfile &&  npm rebuild node-sass
 
 
 # Copy everything else
