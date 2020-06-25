@@ -6,7 +6,7 @@ import { generateFormattedDate } from 'lib/utils/datetime';
 import { useDataFetch } from 'hooks/useDataFetch';
 import { Loading } from 'ui/Loading/Loading';
 import { ErrorMessage } from 'ui/Message/ErrorMessage';
-import { Table } from 'ui/Table/Table';
+import { Table, TableAlign } from 'ui/Table/Table';
 import { TaskStatusIcon } from 'components/Task/TaskStatusIcon';
 
 function formatCell(
@@ -38,19 +38,28 @@ function formatCell(
     );
 }
 
-const runLogsColumns: Array<keyof ITaskStatusRecord> = [
+type TableColumn = keyof ITaskStatusRecord;
+
+const runLogsColumns: TableColumn[] = [
     'id',
     'created_at',
     'updated_at',
     'status',
     'error_message',
 ];
-const runLogsColumnsWidth: Partial<Record<keyof ITaskStatusRecord, number>> = {
+const runLogsColumnsWidth: Partial<Record<TableColumn, number>> = {
     id: 1,
     created_at: 2,
     updated_at: 2,
     status: 1,
     error_message: 5,
+};
+
+const tableColumnAligns: Partial<Record<TableColumn, TableAlign>> = {
+    id: 'center',
+    created_at: 'center',
+    updated_at: 'center',
+    status: 'center',
 };
 
 export const DataDocScheduleRunLogs: React.FunctionComponent<{
@@ -75,6 +84,7 @@ export const DataDocScheduleRunLogs: React.FunctionComponent<{
             formatCell={formatCell}
             showAllRows={true}
             colNameToWidths={runLogsColumnsWidth}
+            colNameToTextAlign={tableColumnAligns}
         />
     );
 };
