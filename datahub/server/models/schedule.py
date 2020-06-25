@@ -7,10 +7,11 @@ from app import db
 
 from const.db import (
     name_length,
+    description_length,
     now,
 )
 from const.schedule import TaskRunStatus
-from lib.sqlalchemy import CRUDMixin
+from lib.sqlalchemy import CRUDMixin, TruncateString
 
 Base = db.Base
 
@@ -95,7 +96,7 @@ listen(TaskSchedule, "after_update", task_schedules_updated)
 listen(TaskSchedule, "after_delete", task_schedules_updated)
 
 
-class TaskRunRecord(db.Base):
+class TaskRunRecord(CRUDMixin, TruncateString("error_message"), db.Base):
     __tablename__ = "task_run_record"
 
     id = sql.Column(sql.Integer, primary_key=True)
@@ -110,24 +111,12 @@ class TaskRunRecord(db.Base):
     status = sql.Column(
         sql.Enum(TaskRunStatus), default=TaskRunStatus.RUNNING, nullable=False
     )
-    alerted = sql.Column(sql.Boolean, default=False)
     created_at = sql.Column(sql.DateTime, default=now)
     updated_at = sql.Column(sql.DateTime, default=now)
+    error_message = sql.Column(sql.String(length=description_length))
 
     task = relationship(
         "TaskSchedule",
         backref=backref("task_run_record", cascade="all, delete"),
         foreign_keys=[name],
     )
-
-    def to_dict(self):
-        record = {
-            "id": self.id,
-            "name": self.name,
-            "status": self.status.value,
-            "alerted": self.alerted,
-            "created_at": self.created_at,
-            "updated_at": self.updated_at,
-        }
-
-        return record

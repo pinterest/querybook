@@ -23,12 +23,12 @@ export interface ITaskSchedule {
 
 export interface ITaskStatusRecord {
     id: number;
-    alerted: boolean;
     created_at: number;
     name: string;
     status: TaskRunStatus;
     updated_at: number;
     task_type: TaskType;
+    error_message: string | null;
 }
 
 export enum NotifyOn {

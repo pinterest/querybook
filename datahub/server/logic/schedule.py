@@ -161,14 +161,14 @@ def create_task_run_record(name, session=None):
 
 
 @with_session
-def update_task_run_record(id, status=None, alerted=None, session=None):
+def update_task_run_record(id, status=None, error_message=None, session=None):
     run = get_task_run_record(id, session=session)
     if run:
         if status is not None:
             run.status = status
 
-        if alerted is not None:
-            run.alerted = alerted
+        if error_message is not None:
+            run.error_message = error_message
 
         run.updated_at = datetime.now()
         session.commit()
@@ -203,7 +203,9 @@ def with_task_logging(
             except Exception as e:
                 logger.info(e)
                 if record_id is not None:
-                    update_task_run_record(id=record_id, status=TaskRunStatus.FAILURE)
+                    update_task_run_record(
+                        id=record_id, error_message=str(e), status=TaskRunStatus.FAILURE
+                    )
                 raise e
 
         return wrapper

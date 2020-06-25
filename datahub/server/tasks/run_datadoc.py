@@ -153,6 +153,7 @@ def on_datadoc_completion(
         update_task_run_record(
             id=record_id,
             status=TaskRunStatus.SUCCESS if is_success else TaskRunStatus.FAILURE,
+            error_message=error_msg,
         )
 
         # Export query results

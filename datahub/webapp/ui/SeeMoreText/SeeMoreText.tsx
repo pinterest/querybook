@@ -1,17 +1,22 @@
-import React from 'react';
+import React, { useMemo } from 'react';
 
 interface ISeeMoreTextProps {
     text: string;
     length?: number;
     seeLess?: boolean;
+    className?: string;
 }
 
 export const SeeMoreText: React.FunctionComponent<ISeeMoreTextProps> = ({
     text,
     length = 100,
     seeLess = false,
+    className = '',
 }) => {
     text = text || '';
+    const combinedClassName = useMemo(() => `SeeMoreText ${className}`, [
+        className,
+    ]);
 
     const [expanded, setExpanded] = React.useState(false);
     const toggleSeeMoreClick = (e: React.SyntheticEvent) => {
@@ -28,7 +33,7 @@ export const SeeMoreText: React.FunctionComponent<ISeeMoreTextProps> = ({
         // exceeding length requirement
         if (!expanded) {
             return (
-                <span className="SeeMoreText">
+                <span className={combinedClassName}>
                     {text.slice(0, length)}{' '}
                     <a onClick={toggleSeeMoreClick}>...See More</a>
                 </span>
@@ -42,7 +47,7 @@ export const SeeMoreText: React.FunctionComponent<ISeeMoreTextProps> = ({
             ) : null;
 
             return (
-                <span className="SeeMoreText">
+                <span className={combinedClassName}>
                     {text}
                     {seeLessSection}
                 </span>
@@ -51,5 +56,5 @@ export const SeeMoreText: React.FunctionComponent<ISeeMoreTextProps> = ({
     }
 
     // normal case, text within the number of chars
-    return <span className="SeeMoreText">{text}</span>;
+    return <span className={combinedClassName}>{text}</span>;
 };
