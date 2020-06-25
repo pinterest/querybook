@@ -137,7 +137,7 @@ test('data aggregates with specified series/vals 1', () => {
     expect(transformedData).toEqual([
         ['time', 'blue', 'pink', 'yellow'],
         ['2001-01-01', 14, 74, 21],
-        ['2001-01-02', 30, 102, 'No Value'],
+        ['2001-01-02', 30, 102, null],
         ['2001-01-03', 37, 72, 94],
     ]);
 });
@@ -152,7 +152,7 @@ test('data aggregates with specified series/vals 2', () => {
     expect(transformedData).toEqual([
         ['time', 'blue', 'pink', 'yellow'],
         ['2001-01-01', 7, 74, 1],
-        ['2001-01-02', 15, 102, 'No Value'],
+        ['2001-01-02', 15, 102, null],
         ['2001-01-03', 37, 72, 2],
     ]);
 });
@@ -166,7 +166,7 @@ test('data aggregates with specified series/vals 3', () => {
     expect(transformedData).toEqual([
         ['time', 'blue', 'pink', 'yellow'],
         ['2001-01-01', 1, 74, 21],
-        ['2001-01-02', -1, 99, 'No Value'],
+        ['2001-01-02', -1, 99, null],
         ['2001-01-03', 37, 72, 47],
     ]);
 });
