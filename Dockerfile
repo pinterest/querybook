@@ -5,14 +5,14 @@ ARG PRODUCTION=true
 # Installing build-essential and python-dev for uwsgi
 RUN rm -rf /var/lib/apt/lists/* \
     && apt-get update \
-    && DEBIAN_FRONTEND=noninteractive apt-get install --no-install-recommends -y --force-yes \
+    && DEBIAN_FRONTEND=noninteractive apt-get install --no-install-recommends -y --allow-downgrades --allow-remove-essential --allow-change-held-packages \
     libsasl2-dev \
     libsasl2-modules \
     build-essential \
     python-dev \
     libssl-dev \
     && curl -sL https://deb.nodesource.com/setup_14.x |  bash - \
-    && DEBIAN_FRONTEND=noninteractive apt-get install --no-install-recommends -y --force-yes \
+    && DEBIAN_FRONTEND=noninteractive apt-get install --no-install-recommends -y --allow-downgrades --allow-remove-essential --allow-change-held-packages \
     nodejs \
     && apt-get clean
 
@@ -34,7 +34,7 @@ RUN pip install -r requirements/base.txt \
     fi
 
 COPY package.json yarn.lock ./
-RUN yarn install --frozen-lockfile --pure-lockfile &&  npm rebuild node-sass
+RUN yarn install --frozen-lockfile --pure-lockfile && npm rebuild node-sass
 
 
 # Copy everything else
