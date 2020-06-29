@@ -23,7 +23,7 @@ export const EnvironmentDropdownButton: React.FunctionComponent<{
     const userEnvironmentNames = useSelector(userEnvironmentNamesSelector);
 
     const environmentsToShow = environments.slice(skip);
-    if (!environmentsToShow.length) {
+    if (environmentsToShow.length < 2) {
         return null;
     }
 
