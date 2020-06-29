@@ -51,7 +51,12 @@ function board(state = initialState, action: BoardAction) {
             case '@@board/RECEIVE_BOARD_ITEM': {
                 const { boardItem, boardId } = action.payload;
                 draft.boardItemById[boardItem.id] = boardItem;
-                if (!(boardItem.id in draft.boardById[boardId].items)) {
+                if (
+                    !(
+                        draft.boardById[boardId].items &&
+                        draft.boardById[boardId].items.includes(boardItem.id)
+                    )
+                ) {
                     draft.boardById[boardId].items =
                         draft.boardById[boardId].items ?? [];
                     draft.boardById[boardId].items.push(boardItem.id);

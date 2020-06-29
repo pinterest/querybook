@@ -90,7 +90,7 @@ class BoardItem(CRUDMixin, Base):
 
     board = relationship(
         "Board",
-        backref=backref("items", order_by="BoardItem.item_order"),
+        backref=backref("items", order_by="BoardItem.item_order", cascade="all,delete"),
         uselist=False,
     )
 
