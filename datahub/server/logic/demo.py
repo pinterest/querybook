@@ -1,13 +1,15 @@
 from app.db import with_session
 
-from logic import datadoc as data_doc_logic
-from logic import query_execution as qe_logic
-from tasks import run_query as tasks
+from logic import (
+    metastore as m_logic,
+    datadoc as data_doc_logic,
+    user as user_logic,
+)
 
 
 @with_session
-def create_child_table(engine_id, uid, session=None):
-    query = """CREATE TABLE world_happiness_ranking_2015_to_2019 AS
+def create_demo_lineage(metastore_id, uid, session=None):
+    query_text = """CREATE TABLE world_happiness_ranking_2015_to_2019 AS
 SELECT
   w5.Country,
   w5.Region,
@@ -23,16 +25,19 @@ FROM
   INNER JOIN world_happiness_2016 w6 ON w9.Country = w6.Country
   INNER JOIN world_happiness_2015 w5 ON w9.Country = w5.Country;
 """
-    query_execution = qe_logic.create_query_execution(
-        query=query, engine_id=engine_id, uid=uid, session=session
+    user = user_logic.get_user_by_id(uid, session=session)
+    data_job_metadata = m_logic.create_job_metadata_row(
+        job_name="Untitled",
+        metastore_id=metastore_id,
+        job_info="demo lineage",
+        job_owner=user.username,
+        query_text=query_text,
+        is_adhoc=True,
+        session=session,
     )
-
-    try:
-        tasks.run_query_task.apply_async(
-            args=[query_execution.id,]
-        )
-    except Exception:
-        pass
+    m_logic.create_table_lineage_from_metadata(
+        data_job_metadata.id, "sqlite", session=session
+    )
 
 
 @with_session
