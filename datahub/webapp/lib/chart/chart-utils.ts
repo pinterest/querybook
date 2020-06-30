@@ -82,9 +82,9 @@ export function sortTable(
 
     return tableRows.sort((a, b) => {
         // null values are always at the end
-        if (a[columnIndex] == null) {
+        if (a[columnIndex] == null || a[columnIndex] === 'null') {
             return 1;
-        } else if (b[columnIndex] == null) {
+        } else if (b[columnIndex] == null || b[columnIndex] === 'null') {
             return -1;
         } else {
             return (
