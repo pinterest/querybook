@@ -80,7 +80,16 @@ export function sortTable(
         }) as any[];
     }
 
-    return tableRows.sort(
-        (a, b) => (a[columnIndex] > b[columnIndex] ? 1 : -1) * reverseMultiplier
-    );
+    return tableRows.sort((a, b) => {
+        // null values are always at the end
+        if (a[columnIndex] == null) {
+            return 1;
+        } else if (b[columnIndex] == null) {
+            return -1;
+        } else {
+            return (
+                (a[columnIndex] > b[columnIndex] ? 1 : -1) * reverseMultiplier
+            );
+        }
+    });
 }

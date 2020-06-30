@@ -78,7 +78,13 @@ export const StatementResultTable: React.FunctionComponent<{
             sortCell={(indx, column, a, b) => {
                 const aValue = isNaN(a) ? String(a) : Number(a);
                 const bValue = isNaN(a) ? String(b) : Number(b);
-                return aValue < bValue ? -1 : aValue > bValue ? 1 : 0;
+                if (aValue == null) {
+                    return 1;
+                } else if (bValue == null) {
+                    return -1;
+                } else {
+                    return aValue < bValue ? -1 : aValue > bValue ? 1 : 0;
+                }
             }}
         />
     );
