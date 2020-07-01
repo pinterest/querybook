@@ -1,41 +1,66 @@
 import React, { useEffect, useState } from 'react';
-import { Dispatch, IStoreState } from 'redux/store/types';
-import { useDispatch, useSelector } from 'react-redux';
 
-import { BoardCreateUpdateModal } from 'components/BoardCreateUpdateModal/BoardCreateUpdateModal';
-import { BoardItemType } from 'const/board';
-import { IDataDoc, emptyDataDocTitleMessage } from 'const/datadoc';
-import { IDataTable } from 'const/metastore';
-
-import { navigateWithinEnv } from 'lib/utils/query-string';
-import { sendConfirm, sendNotification } from 'lib/dataHubUI';
-
-import { boardItemsSelector } from 'redux/board/selector';
+import { Title } from 'ui/Title/Title';
+import { useSelector, useDispatch } from 'react-redux';
+import { boardsSelector, boardItemsSelector } from 'redux/board/selector';
 import {
-    fetchBoardIfNeeded,
-    deleteBoard,
+    fetchBoards,
     deleteBoardItem,
     moveBoardItem,
+    fetchBoardIfNeeded,
+    deleteBoard,
 } from 'redux/board/action';
-
-import { SeeMoreText } from 'ui/SeeMoreText/SeeMoreText';
-import { Icon } from 'ui/Icon/Icon';
-import { DraggableList } from 'ui/DraggableList/DraggableList';
+import { Dispatch, IStoreState } from 'redux/store/types';
 import { IconButton } from 'ui/Button/IconButton';
+import { BoardItemType } from 'const/board';
+import { sendNotification, sendConfirm } from 'lib/dataHubUI';
+import { Loading, LoadingIcon } from 'ui/Loading/Loading';
 import { Level, LevelItem } from 'ui/Level/Level';
-import { Loading } from 'ui/Loading/Loading';
-import { Title } from 'ui/Title/Title';
+import { SeeMoreText } from 'ui/SeeMoreText/SeeMoreText';
 import { Divider } from 'ui/Divider/Divider';
-import './BoardMiniView.scss';
+import { BoardCreateUpdateModal } from 'components/BoardCreateUpdateModal/BoardCreateUpdateModal';
+import { DraggableList } from 'ui/DraggableList/DraggableList';
+import { IDataDoc, emptyDataDocTitleMessage } from 'const/datadoc';
+import { Icon } from 'ui/Icon/Icon';
+import { navigateWithinEnv } from 'lib/utils/query-string';
+import { IDataTable } from 'const/metastore';
 
-interface IProps {
-    id: number;
-    onHide?: () => any;
+import './DataDocNavigatorBoardSection.scss';
+
+interface INavigatorBoardSectionProps {
+    selectedDocId: number;
 }
-export const BoardMiniView: React.FunctionComponent<IProps> = ({
-    id,
-    onHide,
-}) => {
+export const DataDocNavigatorBoardSection: React.FC<INavigatorBoardSectionProps> = ({}) => {
+    const dispatch: Dispatch = useDispatch();
+    useEffect(() => {
+        dispatch(fetchBoards());
+    }, []);
+
+    const boards = useSelector(boardsSelector);
+
+    const sectionHeader = (
+        <Level className="pl8">
+            <Title size={6}>Boards</Title>
+            <IconButton icon="plus" />
+        </Level>
+    );
+
+    const boardsDOM = boards.map((board) => (
+        <NavigatorBoardView key={board.id} id={board.id} />
+    ));
+
+    return (
+        <div className="DataDocNavigatorBoardSection">
+            {sectionHeader}
+            {boardsDOM}
+        </div>
+    );
+};
+
+const NavigatorBoardView: React.FunctionComponent<{
+    id: number;
+}> = ({ id }) => {
+    const [collapsed, setCollapsed] = useState(true);
     const [showUpdateModal, setShowUpdateModal] = useState(false);
     const dispatch: Dispatch = useDispatch();
     const board = useSelector(
@@ -60,71 +85,66 @@ export const BoardMiniView: React.FunctionComponent<IProps> = ({
     );
 
     useEffect(() => {
-        dispatch(fetchBoardIfNeeded(id));
-    }, [id]);
+        if (!collapsed) {
+            dispatch(fetchBoardIfNeeded(id));
+        }
+    }, [id, collapsed]);
 
-    if (!board && !boardItems) {
-        return <Loading />;
-    }
+    const headerSectionDOM = (
+        <div className="horizontal-space-between board-header-section pl8">
+            <div onClick={() => setCollapsed(!collapsed)}>
+                <Title size={7}>{board.name}</Title>
+            </div>
 
-    return (
-        <div className="BoardMiniView">
-            <div className="board-header">
-                <Level>
-                    {onHide ? (
-                        <IconButton icon="x" onClick={onHide} noPadding />
-                    ) : (
-                        <span />
-                    )}
-                    <LevelItem className="board-header-controls">
-                        <IconButton
-                            icon="trash"
-                            onClick={() =>
-                                sendConfirm({
-                                    onConfirm: () => {
-                                        dispatch(deleteBoard(id));
-                                        if (onHide) {
-                                            onHide();
-                                        }
-                                    },
-                                    message:
-                                        'Your list will be permanently removed.',
-                                })
-                            }
-                            noPadding
-                            className="mr4"
-                        />
-                        <IconButton
-                            icon="edit-3"
-                            onClick={() => setShowUpdateModal(true)}
-                            noPadding
-                        />
-                    </LevelItem>
-                </Level>
-            </div>
-            <div className="BoardMiniView-top mt8 mh12 mb4">
-                <Title className="one-line-ellipsis" size={5}>
-                    {board.name}
-                </Title>
-                <p>
-                    <SeeMoreText text={board.description} />
-                </p>
-            </div>
-            <Divider
-                marginTop={'2px'}
-                marginBottom={'2px'}
-                height={'1px'}
-                color={'var(--border-color)'}
-            />
-            <div className="board-item-lists">
-                <BoardExpandableList
-                    boardId={id}
-                    itemType={'table'}
-                    onDeleteBoardItem={handleDeleteBoardItem}
-                    onMoveBoardItem={handleMoveBoardItem}
+            <div>
+                <span className="hover-control">
+                    <IconButton
+                        size={18}
+                        icon="trash"
+                        onClick={() =>
+                            sendConfirm({
+                                onConfirm: () => {
+                                    dispatch(deleteBoard(id));
+                                },
+                                message:
+                                    'Your list will be permanently removed.',
+                            })
+                        }
+                        noPadding
+                        className="mr4"
+                    />
+                    <IconButton
+                        size={18}
+                        icon="edit-3"
+                        onClick={() => setShowUpdateModal(true)}
+                        noPadding
+                    />
+                </span>
+
+                <IconButton
+                    icon={collapsed ? 'chevron-right' : 'chevron-down'}
+                    onClick={() => setCollapsed(!collapsed)}
                 />
             </div>
+        </div>
+    );
 
+    const contentSection = collapsed ? null : boardItems ? (
+        <BoardExpandableList
+            boardId={id}
+            onDeleteBoardItem={handleDeleteBoardItem}
+            onMoveBoardItem={handleMoveBoardItem}
+        />
+    ) : (
+        <div>
+            <LoadingIcon />
+        </div>
+    );
+
+    return (
+        <div className="NavigatorBoardView">
+            {headerSectionDOM}
+            {contentSection}
             {showUpdateModal ? (
                 <BoardCreateUpdateModal
                     onComplete={() => setShowUpdateModal(false)}
@@ -138,7 +158,6 @@ export const BoardMiniView: React.FunctionComponent<IProps> = ({
 
 const BoardExpandableList: React.FunctionComponent<{
     boardId: number;
-    itemType: BoardItemType;
     onDeleteBoardItem: (itemId: number, itemType: BoardItemType) => any;
     onMoveBoardItem: (fromIndex: number, toIndex: number) => any;
 }> = ({ boardId, onDeleteBoardItem, onMoveBoardItem }) => {

@@ -4,11 +4,7 @@ exports[`matches enzyme snapshots matches snapshot 1`] = `
 <styled.div
   className=""
 >
-  <styled.div>
-    <i
-      className="fa fa-spinner fa-pulse"
-    />
-  </styled.div>
+  <LoadingIcon />
 </styled.div>
 `;
 

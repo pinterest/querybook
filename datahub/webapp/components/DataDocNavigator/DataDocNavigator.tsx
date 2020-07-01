@@ -4,7 +4,12 @@ import * as classNames from 'classnames';
 import { useSelector, useDispatch } from 'react-redux';
 import { useRouteMatch } from 'react-router-dom';
 
-import { dataDocsOrderedSelector } from 'redux/dataDoc/selector';
+import {
+    dataDocsOrderedSelector,
+    recentDataDocsSelector,
+    favoriteDataDocsSelector,
+    dataDocsMineUncategorizedSelector,
+} from 'redux/dataDoc/selector';
 import * as dataDocActions from 'redux/dataDoc/action';
 import { IStoreState, Dispatch } from 'redux/store/types';
 
@@ -16,6 +21,9 @@ import { SearchBar } from 'ui/SearchBar/SearchBar';
 
 import { DataDocGridItem } from './DataDocGridItem';
 import './DataDocNavigator.scss';
+import { DataDocNavigatorSection } from './DataDocNavigatorSection';
+import { IDataDoc } from 'const/datadoc';
+import { DataDocNavigatorBoardSection } from './DataDocNavigatorBoardSection';
 
 const navigatorTabs: ITabItem[] = [
     {
@@ -33,16 +41,6 @@ const navigatorTabs: ITabItem[] = [
 ];
 
 export const DataDocNavigator: React.FC<{}> = ({}) => {
-    const dataDocs = useSelector(dataDocsOrderedSelector);
-    const favoriteDataDocIds = useSelector(
-        (state: IStoreState) => state.dataDoc.favoriteDataDocIds
-    );
-    const recentDataDocIds = useSelector(
-        (state: IStoreState) => state.dataDoc.recentDataDocIds
-    );
-    const userUid = useSelector(
-        (state: IStoreState) => state.user.myUserInfo.uid
-    );
     const loadedFilterModes = useSelector(
         (state: IStoreState) =>
             state.dataDoc.loadedEnvironmentFilterMode[
@@ -58,75 +56,25 @@ export const DataDocNavigator: React.FC<{}> = ({}) => {
     );
 
     const [titleFilterString, setTitleFilterString] = useState('');
-    const [tabKey, setTabKey] = useState<string>(navigatorTabs[0].key);
 
     const match = useRouteMatch('/:env/:ignore(datadoc)?/:matchDocId?');
-    const { env, matchDocId } = match?.params ?? {};
+    const { matchDocId } = match?.params ?? {};
     const selectedDocId = useMemo(
         () => (matchDocId ? Number(matchDocId) : null),
         [matchDocId]
     );
 
-    useEffect(() => {
-        loadDataDocs(tabKey);
-    }, [env, tabKey]);
+    const lowerCaseTitleFilterString = useMemo(
+        () => titleFilterString.toLowerCase(),
+        [titleFilterString]
+    );
 
-    const dataDocsToShow = useMemo(() => {
-        const lowerCaseTitleFilterString = titleFilterString.toLowerCase();
-        const filteredDataDocs = dataDocs.filter(
-            (dataDoc) =>
-                dataDoc &&
-                dataDoc.title.toLowerCase().includes(lowerCaseTitleFilterString)
-        );
-
-        if (tabKey === 'mine') {
-            return filteredDataDocs.filter(
-                (dataDoc) => dataDoc.owner_uid === userUid && !dataDoc.archived
-            );
-        } else if (tabKey === 'favorite') {
-            const favoriteDataDocIdsSet = new Set(favoriteDataDocIds);
-            return filteredDataDocs.filter((dataDoc) =>
-                favoriteDataDocIdsSet.has(dataDoc.id)
-            );
-        } else if (tabKey === 'recent') {
-            const recentDataDocIdsSet = new Set(recentDataDocIds);
-            return filteredDataDocs.filter((dataDoc) =>
-                recentDataDocIdsSet.has(dataDoc.id)
-            );
-        }
-
-        return [];
-    }, [
-        titleFilterString,
-        dataDocs,
-        tabKey,
-        favoriteDataDocIds,
-        recentDataDocIds,
-    ]);
-
-    const makeDataDocListDOM = () => {
-        const listDOM = dataDocsToShow.map((dataDoc) => {
-            const docId = dataDoc.id;
-
-            const className = classNames({
-                selected: selectedDocId === docId,
-            });
-
-            return (
-                <DataDocGridItem
-                    key={docId}
-                    dataDoc={dataDoc}
-                    className={className}
-                    url={`/${env}/datadoc/${docId}/`}
-                />
-            );
-        });
-
-        return listDOM;
+    const commonSectionProps = {
+        selectedDocId,
+        loadDataDocs,
+        filterString: lowerCaseTitleFilterString,
+        loadedFilterModes,
     };
-
-    const loaded = loadedFilterModes[tabKey];
-    const dataDocsDOM = loaded ? makeDataDocListDOM() : <Loading />;
 
     return (
         <div className="DataDocNavigator">
@@ -139,16 +87,101 @@ export const DataDocNavigator: React.FC<{}> = ({}) => {
                 />
                 <CreateDataDocButton />
             </div>
-            <div>
-                <Tabs
-                    selectedTabKey={tabKey}
-                    onSelect={setTabKey}
-                    items={navigatorTabs}
-                    wide
-                />
+            <div className="data-docs">
+                <RecentDataDocsSection {...commonSectionProps} />
+                <FavoriteDataDocsSection {...commonSectionProps} />
+                <DataDocNavigatorBoardSection selectedDocId={selectedDocId} />
+                <MineDataDocsSection {...commonSectionProps} />
             </div>
-
-            <div className="data-docs">{dataDocsDOM}</div>
         </div>
+    );
+};
+
+interface ICommonSectionProps {
+    selectedDocId: number;
+    loadedFilterModes: Record<string, boolean>;
+    loadDataDocs: (filterMode: string) => any;
+    filterString: string;
+}
+
+function useFilteredDataDocs(dataDocs: IDataDoc[], filterString: string) {
+    const filteredDataDocs = useMemo(
+        () =>
+            dataDocs.filter(
+                (dataDoc) =>
+                    dataDoc &&
+                    dataDoc.title.toLowerCase().includes(filterString)
+            ),
+        [dataDocs, filterString]
+    );
+    return filteredDataDocs;
+}
+
+const RecentDataDocsSection: React.FC<ICommonSectionProps> = ({
+    selectedDocId,
+    loadedFilterModes,
+    loadDataDocs,
+    filterString,
+}) => {
+    const section = 'recent';
+    const dataDocs = useFilteredDataDocs(
+        useSelector(recentDataDocsSelector),
+        filterString
+    );
+    const load = useCallback(() => loadDataDocs(section), [loadDataDocs]);
+    return (
+        <DataDocNavigatorSection
+            sectionHeader={section}
+            dataDocs={dataDocs}
+            selectedDocId={selectedDocId}
+            loaded={!!loadedFilterModes[section]}
+            loadDataDocs={load}
+        />
+    );
+};
+
+const FavoriteDataDocsSection: React.FC<ICommonSectionProps> = ({
+    selectedDocId,
+    loadedFilterModes,
+    loadDataDocs,
+    filterString,
+}) => {
+    const section = 'favorite';
+    const dataDocs = useFilteredDataDocs(
+        useSelector(favoriteDataDocsSelector),
+        filterString
+    );
+    const load = useCallback(() => loadDataDocs(section), [loadDataDocs]);
+    return (
+        <DataDocNavigatorSection
+            sectionHeader={section}
+            dataDocs={dataDocs}
+            selectedDocId={selectedDocId}
+            loaded={!!loadedFilterModes[section]}
+            loadDataDocs={load}
+            defaultCollapsed
+        />
+    );
+};
+
+const MineDataDocsSection: React.FC<ICommonSectionProps> = ({
+    selectedDocId,
+    loadedFilterModes,
+    loadDataDocs,
+    filterString,
+}) => {
+    const section = 'mine';
+    const dataDocs = useFilteredDataDocs(
+        useSelector(dataDocsMineUncategorizedSelector),
+        filterString
+    );
+    const load = useCallback(() => loadDataDocs(section), [loadDataDocs]);
+    return (
+        <DataDocNavigatorSection
+            dataDocs={dataDocs}
+            selectedDocId={selectedDocId}
+            loaded={!!loadedFilterModes[section]}
+            loadDataDocs={load}
+        />
     );
 };

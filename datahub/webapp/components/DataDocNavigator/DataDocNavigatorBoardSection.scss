@@ -1,0 +1,20 @@
+.NavigatorBoardView {
+    .board-header-section {
+        .Title {
+            cursor: pointer;
+            color: var(--light-text-color);
+            text-transform: capitalize;
+        }
+
+        .hover-control {
+            visibility: visible;
+            display: inline-flex;
+        }
+
+        &:hover {
+            .hover-control {
+                visibility: visible;
+            }
+        }
+    }
+}

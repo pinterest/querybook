@@ -35,17 +35,19 @@ const StyledLoadingText = styled.div`
     text-align: center;
 `;
 
+export const LoadingIcon: React.FC = () => (
+    <StyledSpinner>
+        <i className="fa fa-spinner fa-pulse" />
+    </StyledSpinner>
+);
+
 export const Loading: React.FunctionComponent<ILoadingProps> = ({
     useSpinner = true,
     text = '',
     className = '',
     height,
 }) => {
-    const loadingIcon = useSpinner ? (
-        <StyledSpinner>
-            <i className="fa fa-spinner fa-pulse" />
-        </StyledSpinner>
-    ) : null;
+    const loadingIcon = useSpinner ? <LoadingIcon /> : null;
 
     const loadingText =
         (text || '').length > 0 ? (
