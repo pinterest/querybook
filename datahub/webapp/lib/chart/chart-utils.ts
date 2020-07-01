@@ -67,19 +67,9 @@ export function sortTable(
     }
 
     const reverseMultiplier = ascending ? 1 : -1;
-    if (!isNaN(tableRows[rowIndex][columnIndex] as number)) {
-        return tableRows.sort((a, b) => {
-            // null values are always at the end
-            if (a[columnIndex] == null || isNaN(a[columnIndex])) {
-                return 1;
-            } else if (b[columnIndex] == null || isNaN(b[columnIndex])) {
-                return -1;
-            } else {
-                return (a[columnIndex] - b[columnIndex]) * reverseMultiplier;
-            }
-        }) as any[];
-    }
-
+    const comparator = isNaN(tableRows[rowIndex][columnIndex] as number)
+        ? (a, b) => (a < b ? 1 : -1)
+        : (a, b) => a - b;
     return tableRows.sort((a, b) => {
         // null values are always at the end
         if (a[columnIndex] == null || a[columnIndex] === 'null') {
@@ -88,8 +78,8 @@ export function sortTable(
             return -1;
         } else {
             return (
-                (a[columnIndex] > b[columnIndex] ? 1 : -1) * reverseMultiplier
+                comparator(a[columnIndex], b[columnIndex]) * reverseMultiplier
             );
         }
-    });
+    }) as any[];
 }
