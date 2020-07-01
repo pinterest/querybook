@@ -76,6 +76,11 @@ export const StatementResultTable: React.FunctionComponent<{
             showPagination={showPagination}
             formatCell={(index, column, row) => row[index]}
             sortCell={(indx, column, a, b) => {
+                if (a == null || a === 'null') {
+                    return -1;
+                } else if (b == null || b === 'null') {
+                    return 1;
+                }
                 const aValue = isNaN(a) ? String(a) : Number(a);
                 const bValue = isNaN(a) ? String(b) : Number(b);
                 return aValue < bValue ? -1 : aValue > bValue ? 1 : 0;
