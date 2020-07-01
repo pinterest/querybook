@@ -177,7 +177,7 @@ export const ResultExportDropdown: React.FunctionComponent<IProps> = ({
                 handleExport(exporter);
             }
         },
-        []
+        [handleExport]
     );
 
     const exportedInfoModal =
