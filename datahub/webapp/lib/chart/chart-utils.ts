@@ -68,7 +68,7 @@ export function sortTable(
 
     const reverseMultiplier = ascending ? 1 : -1;
     const comparator = isNaN(tableRows[rowIndex][columnIndex] as number)
-        ? (a, b) => (a < b ? 1 : -1)
+        ? (a, b) => (a < b ? -1 : 1)
         : (a, b) => a - b;
     return tableRows.sort((a, b) => {
         // null values are always at the end
