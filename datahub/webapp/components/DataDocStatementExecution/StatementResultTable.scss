@@ -8,6 +8,12 @@
 
         .statement-result-table-title {
             @include one-line-ellipsis();
+            text-align: left;
+
+            &.expanded {
+                white-space: pre-wrap;
+                word-break: break-all;
+            }
         }
 
         .rt-resizer {
