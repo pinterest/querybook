@@ -21,7 +21,8 @@ export const StatementResultTable: React.FunctionComponent<{
             const isExpanded = column in expandedColumn;
             return (
                 <Level>
-                    <span className={`statement-result-table-title ${isExpanded ? "expanded" : ""}`}>
+                    <span 
+                        className={`statement-result-table-title ${isExpanded ? "expanded" : ""}`}>
                         {column}
                     </span>
                     <IconButton
