@@ -36,7 +36,8 @@
 
     &.row {
         padding: 4.5px 10px 4.5px 4.5px;
-        .ListLinkText {
+        .ListLinkText,
+        .ListLinkPlaceholder {
             line-height: normal;
             margin-left: 0px;
         }

@@ -37,16 +37,5 @@
                 font-size: var(--text-size);
             }
         }
-
-        .TextToggleButton {
-            font-size: var(--small-text-size);
-            color: var(--light-text-color);
-            font-weight: var(--bold-font);
-            user-select: none;
-
-            &.active {
-                color: var(--dark-text-color);
-            }
-        }
     }
 }

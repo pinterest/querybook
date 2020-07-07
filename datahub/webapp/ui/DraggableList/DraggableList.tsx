@@ -7,11 +7,9 @@ interface IDraggableListProps<T> {
     renderItem: (index: number, itemProps: T) => any;
     items: T[];
 
-    onMove: (fromIndex: number, toIndex: number, itemType: string) => void;
+    onMove: (fromIndex: number, toIndex: number) => void;
     className?: string;
 
-    // what kind of items are allowed to be dropped
-    dropAccepts?: string[];
     // The type of item getting dragged
     itemType?: string;
 }
@@ -23,24 +21,21 @@ export function DraggableList<T extends { id: any }>({
     className,
 
     itemType,
-    dropAccepts,
 }: IDraggableListProps<T>) {
     const draggableItemType = useMemo(
         () => itemType ?? uniqueId('DraggableItem'),
         [itemType]
-    );
-    const droppableItemTypes = useMemo(
-        () => dropAccepts ?? [draggableItemType],
-        [draggableItemType, dropAccepts]
     );
 
     const [hoverItems, setHoverItems] = useState(items);
 
     const handleHoverMove = useCallback(
         (fromIndex: number, toIndex: number) => {
-            setHoverItems(arrayMove(hoverItems, fromIndex, toIndex));
+            setHoverItems((oldHoverItems) =>
+                arrayMove(oldHoverItems, fromIndex, toIndex)
+            );
         },
-        [hoverItems]
+        []
     );
 
     useEffect(() => {
@@ -64,7 +59,6 @@ export function DraggableList<T extends { id: any }>({
             index={idx}
             originalIndex={idToOriginalIndex[itemProps.id]}
             draggableItemType={draggableItemType}
-            droppableItemTypes={droppableItemTypes}
         >
             {renderItem(idx, itemProps)}
         </DraggableItem>

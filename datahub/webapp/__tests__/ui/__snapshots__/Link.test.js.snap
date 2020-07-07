@@ -3,7 +3,7 @@
 exports[`matches enzyme snapshots matches snapshot 1`] = `
 <styled.a
   href="https://test.com"
-  onClick={[Function]}
+  onMouseDown={[Function]}
 />
 `;
 
@@ -11,6 +11,6 @@ exports[`matches test renderer snapshot serializes the styles 1`] = `
 <a
   className="sc-bdVaJa kvKKjL"
   href="https://test.com"
-  onClick={[Function]}
+  onMouseDown={[Function]}
 />
 `;

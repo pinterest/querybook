@@ -14,3 +14,8 @@ export const visibleAnnouncementSelector = createSelector(
             (a) => !(a.can_dismiss && dismissedIds.includes(a.id))
         )
 );
+
+export const dataDocNavBoardOpenSelector = (
+    state: IStoreState,
+    boardId: number
+) => state.dataHubUI.dataDocNavigatorSectionOpen[`board-${boardId}`];

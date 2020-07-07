@@ -1,44 +1,29 @@
-import React, { useState, useCallback, useEffect, useMemo } from 'react';
-import * as classNames from 'classnames';
+import React, { useState, useCallback, useMemo, useEffect } from 'react';
 
 import { useSelector, useDispatch } from 'react-redux';
 import { useRouteMatch } from 'react-router-dom';
-
 import {
-    dataDocsOrderedSelector,
+    setDataDocNavSection,
+    getDataDocNavSectionConfigFromStore,
+} from 'redux/dataHubUI/action';
+import {
     recentDataDocsSelector,
     favoriteDataDocsSelector,
-    dataDocsMineUncategorizedSelector,
+    dataDocsMineSelector,
 } from 'redux/dataDoc/selector';
 import * as dataDocActions from 'redux/dataDoc/action';
 import { IStoreState, Dispatch } from 'redux/store/types';
 
 import { CreateDataDocButton } from 'components/CreateDataDocButton/CreateDataDocButton';
 
-import { Tabs, ITabItem } from 'ui/Tabs/Tabs';
-import { Loading } from 'ui/Loading/Loading';
 import { SearchBar } from 'ui/SearchBar/SearchBar';
-
-import { DataDocGridItem } from './DataDocGridItem';
 import './DataDocNavigator.scss';
 import { DataDocNavigatorSection } from './DataDocNavigatorSection';
 import { IDataDoc } from 'const/datadoc';
 import { DataDocNavigatorBoardSection } from './DataDocNavigatorBoardSection';
-
-const navigatorTabs: ITabItem[] = [
-    {
-        name: 'Mine',
-        key: 'mine',
-    },
-    {
-        name: 'Favorite',
-        key: 'favorite',
-    },
-    {
-        name: 'Recent',
-        key: 'recent',
-    },
-];
+import { useDrop } from 'react-dnd';
+import { DataDocDraggablePrefix, BoardDraggablePrefix } from './navigatorConst';
+import { IDragItem } from 'ui/DraggableList/types';
 
 export const DataDocNavigator: React.FC<{}> = ({}) => {
     const loadedFilterModes = useSelector(
@@ -69,11 +54,31 @@ export const DataDocNavigator: React.FC<{}> = ({}) => {
         [titleFilterString]
     );
 
+    const sectionOpen = useSelector(
+        (state: IStoreState) => state.dataHubUI.dataDocNavigatorSectionOpen
+    );
+    const setSectionOpen = useCallback(
+        (section: string, value: boolean) =>
+            dispatch(setDataDocNavSection(section, value)),
+        []
+    );
+    useEffect(() => {
+        dispatch(getDataDocNavSectionConfigFromStore());
+    }, []);
+
+    const {
+        collapsed: boardsCollapsed,
+        setCollapsed: setBoardsCollapsed,
+    } = useBoundSectionState('boards', sectionOpen, setSectionOpen);
+
     const commonSectionProps = {
         selectedDocId,
         loadDataDocs,
         filterString: lowerCaseTitleFilterString,
         loadedFilterModes,
+
+        sectionOpen,
+        setSectionOpen,
     };
 
     return (
@@ -90,7 +95,12 @@ export const DataDocNavigator: React.FC<{}> = ({}) => {
             <div className="data-docs">
                 <RecentDataDocsSection {...commonSectionProps} />
                 <FavoriteDataDocsSection {...commonSectionProps} />
-                <DataDocNavigatorBoardSection selectedDocId={selectedDocId} />
+                <DataDocNavigatorBoardSection
+                    filterString={titleFilterString}
+                    selectedDocId={selectedDocId}
+                    collapsed={boardsCollapsed}
+                    setCollapsed={setBoardsCollapsed}
+                />
                 <MineDataDocsSection {...commonSectionProps} />
             </div>
         </div>
@@ -102,86 +112,166 @@ interface ICommonSectionProps {
     loadedFilterModes: Record<string, boolean>;
     loadDataDocs: (filterMode: string) => any;
     filterString: string;
+
+    sectionOpen: Record<string, boolean>;
+    setSectionOpen: (sectionHeader: string, value: boolean) => any;
 }
 
-function useFilteredDataDocs(dataDocs: IDataDoc[], filterString: string) {
-    const filteredDataDocs = useMemo(
-        () =>
-            dataDocs.filter(
-                (dataDoc) =>
-                    dataDoc &&
-                    dataDoc.title.toLowerCase().includes(filterString)
-            ),
-        [dataDocs, filterString]
+function useBoundSectionState(
+    section: string,
+    sectionOpen: Record<string, boolean>,
+    setSectionOpen: (sectionHeader: string, value: boolean) => any
+) {
+    const collapsed = !sectionOpen[section];
+    const setCollapsed = useCallback(
+        (newCollapsed: boolean) => {
+            setSectionOpen(section, !newCollapsed);
+        },
+        [section, setSectionOpen]
     );
-    return filteredDataDocs;
+
+    return { collapsed, setCollapsed };
 }
 
-const RecentDataDocsSection: React.FC<ICommonSectionProps> = ({
-    selectedDocId,
-    loadedFilterModes,
-    loadDataDocs,
-    filterString,
-}) => {
+function useCommonNavigatorState(section: string, props: ICommonSectionProps) {
+    const { collapsed, setCollapsed } = useBoundSectionState(
+        section,
+        props.sectionOpen,
+        props.setSectionOpen
+    );
+
+    const load = useCallback(() => props.loadDataDocs(section), [
+        props.loadDataDocs,
+    ]);
+
+    return {
+        collapsed,
+        setCollapsed,
+        load,
+    };
+}
+
+const RecentDataDocsSection: React.FC<ICommonSectionProps> = (props) => {
+    const { selectedDocId, loadedFilterModes, filterString } = props;
     const section = 'recent';
-    const dataDocs = useFilteredDataDocs(
-        useSelector(recentDataDocsSelector),
-        filterString
+    const { collapsed, setCollapsed, load } = useCommonNavigatorState(
+        section,
+        props
     );
-    const load = useCallback(() => loadDataDocs(section), [loadDataDocs]);
+    const dataDocs = useSelector(recentDataDocsSelector);
     return (
         <DataDocNavigatorSection
+            sectionHeaderIcon="watch"
             sectionHeader={section}
             dataDocs={dataDocs}
             selectedDocId={selectedDocId}
+            filterString={filterString}
             loaded={!!loadedFilterModes[section]}
             loadDataDocs={load}
+            collapsed={collapsed}
+            setCollapsed={setCollapsed}
         />
     );
 };
 
-const FavoriteDataDocsSection: React.FC<ICommonSectionProps> = ({
-    selectedDocId,
-    loadedFilterModes,
-    loadDataDocs,
-    filterString,
-}) => {
+const FavoriteDataDocsSection: React.FC<ICommonSectionProps> = (props) => {
+    const { selectedDocId, loadedFilterModes, filterString } = props;
     const section = 'favorite';
-    const dataDocs = useFilteredDataDocs(
-        useSelector(favoriteDataDocsSelector),
-        filterString
+    const { collapsed, setCollapsed, load } = useCommonNavigatorState(
+        section,
+
+        props
     );
-    const load = useCallback(() => loadDataDocs(section), [loadDataDocs]);
+    const dataDocs = useSelector(favoriteDataDocsSelector);
+    const dispatch = useDispatch();
+    const boardState = useSelector((state: IStoreState) => state.board);
+    const acceptableDroptypes = useMemo(() => {
+        return Object.keys(boardState.boardById)
+            .map((id) => `${BoardDraggablePrefix}${id}`)
+            .concat([DataDocDraggablePrefix]);
+    }, [boardState.boardById]);
+
+    const [{ isOver }, dropRef] = useDrop({
+        accept: acceptableDroptypes,
+        drop(item: IDragItem, monitor) {
+            if (monitor.didDrop()) {
+                return;
+            }
+            let docId: number = null;
+            if (item.type.startsWith(BoardDraggablePrefix)) {
+                const boardId = Number(
+                    item.type.slice(BoardDraggablePrefix.length)
+                );
+                const boardItemId =
+                    boardState.boardById[boardId]?.items?.[item.originalIndex];
+                if (
+                    boardItemId != null &&
+                    boardState.boardItemById[boardItemId]?.data_doc_id != null
+                ) {
+                    docId = boardState.boardItemById[boardItemId].data_doc_id;
+                }
+            } else {
+                docId = item.originalIndex;
+            }
+
+            dispatch(dataDocActions.favoriteDataDoc(docId));
+        },
+
+        collect(monitor) {
+            return {
+                isOver: monitor.isOver({ shallow: true }),
+            };
+        },
+    });
+    const handleUnfavoriteDataDoc = useCallback(
+        (dataDoc: IDataDoc) =>
+            dispatch(dataDocActions.unfavoriteDataDoc(dataDoc.id)),
+        []
+    );
+
     return (
-        <DataDocNavigatorSection
-            sectionHeader={section}
-            dataDocs={dataDocs}
-            selectedDocId={selectedDocId}
-            loaded={!!loadedFilterModes[section]}
-            loadDataDocs={load}
-            defaultCollapsed
-        />
+        <div
+            className={isOver ? 'nav-favorite-dragged-over' : ''}
+            ref={dropRef}
+        >
+            <DataDocNavigatorSection
+                sectionHeader={section}
+                sectionHeaderIcon="heart"
+                dataDocs={dataDocs}
+                selectedDocId={selectedDocId}
+                filterString={filterString}
+                loaded={!!loadedFilterModes[section]}
+                loadDataDocs={load}
+                collapsed={collapsed}
+                setCollapsed={setCollapsed}
+                onRemove={handleUnfavoriteDataDoc}
+                allowReorder
+            />
+        </div>
     );
 };
 
-const MineDataDocsSection: React.FC<ICommonSectionProps> = ({
-    selectedDocId,
-    loadedFilterModes,
-    loadDataDocs,
-    filterString,
-}) => {
+const MineDataDocsSection: React.FC<ICommonSectionProps> = (props) => {
+    const { selectedDocId, loadedFilterModes, filterString } = props;
     const section = 'mine';
-    const dataDocs = useFilteredDataDocs(
-        useSelector(dataDocsMineUncategorizedSelector),
-        filterString
+    const { collapsed, setCollapsed, load } = useCommonNavigatorState(
+        section,
+        props
     );
-    const load = useCallback(() => loadDataDocs(section), [loadDataDocs]);
+    const dataDocs = useSelector(dataDocsMineSelector);
+
     return (
         <DataDocNavigatorSection
+            sectionHeader="all my docs"
+            sectionHeaderIcon="file-text"
             dataDocs={dataDocs}
             selectedDocId={selectedDocId}
+            filterString={filterString}
             loaded={!!loadedFilterModes[section]}
             loadDataDocs={load}
+            collapsed={collapsed}
+            setCollapsed={setCollapsed}
+            allowReorder
         />
     );
 };

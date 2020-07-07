@@ -20,6 +20,7 @@ export const ListLink: React.FunctionComponent<IProps> = ({
     icon,
     isRow,
     placeholder = 'Untitled',
+    children,
     ...listProps
 }) => {
     const mergedClassName = classNames({
@@ -31,10 +32,11 @@ export const ListLink: React.FunctionComponent<IProps> = ({
         <Link className={mergedClassName} {...listProps}>
             {title ? (
                 <span className="ListLinkText">{title}</span>
-            ) : (
+            ) : placeholder ? (
                 <span className="ListLinkPlaceholder">{placeholder}</span>
-            )}
+            ) : null}
             {icon && <Icon name={icon} />}
+            {children}
         </Link>
     );
 };

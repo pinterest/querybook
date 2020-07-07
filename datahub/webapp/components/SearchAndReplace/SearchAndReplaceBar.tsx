@@ -7,17 +7,17 @@ import React, {
     useMemo,
 } from 'react';
 import { throttle } from 'lodash';
-import classNames from 'classnames';
 
+import { useEvent } from 'hooks/useEvent';
 import { IconButton } from 'ui/Button/IconButton';
 import { DebouncedInput } from 'ui/DebouncedInput/DebouncedInput';
 import { Button } from 'ui/Button/Button';
 import { matchKeyPress } from 'lib/utils/keyboard';
 import { ISearchOptions } from 'const/searchAndReplace';
 import { SearchAndReplaceContext } from 'context/searchAndReplace';
+import { TextToggleButton } from 'ui/Button/TextToggleButton';
 
 import './SearchAndReplaceBar.scss';
-import { useEvent } from 'hooks/useEvent';
 
 export interface ISearchAndReplaceBarProps {
     onHide: () => any;
@@ -252,26 +252,3 @@ export const SearchAndReplaceBar = React.forwardRef<
         );
     }
 );
-
-const TextToggleButton: React.FC<{
-    value: boolean;
-    onChange: (v: boolean) => any;
-    text: string;
-    tooltip: string;
-}> = ({ value, onChange, text, tooltip }) => {
-    const className = classNames({
-        TextToggleButton: true,
-        active: value,
-        ml4: true,
-    });
-    return (
-        <span
-            className={className}
-            onClick={() => onChange(!value)}
-            aria-label={tooltip}
-            data-balloon-pos="down"
-        >
-            {text}
-        </span>
-    );
-};

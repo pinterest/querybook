@@ -23,25 +23,34 @@ const rawBoardItemsSelector = createSelector(
     boardSelector,
     boardItemByIdSelector,
     (board, boardItemById) =>
-        (board?.items ?? []).map((itemId) => boardItemById[itemId])
+        (board?.items ?? [])
+            .map((itemId) => boardItemById[itemId])
+            .filter((item) => item)
 );
 
-export const boardItemsSelector = createSelector(
-    rawBoardItemsSelector,
-    (state: IStoreState) => state.dataDoc.dataDocById,
-    (state: IStoreState) => state.dataSources.dataTablesById,
-    (boardItems, dataDocById, dataTablesById) =>
-        boardItems.map((item) => {
-            if (item['data_doc_id'] != null) {
-                return [item, dataDocById[item.data_doc_id]] as [
-                    IBoardItem,
-                    IDataDoc
-                ];
-            } else {
-                return [item, dataTablesById[item.table_id]] as [
-                    IBoardItem,
-                    IDataTable
-                ];
-            }
-        })
-);
+export const makeBoardItemsSelector = () =>
+    createSelector(
+        rawBoardItemsSelector,
+        (state: IStoreState) => state.dataDoc.dataDocById,
+        (state: IStoreState) => state.dataSources.dataTablesById,
+        (boardItems, dataDocById, dataTablesById) =>
+            boardItems
+                .map((item) => {
+                    if (item['data_doc_id'] != null) {
+                        return [item, dataDocById[item.data_doc_id]] as [
+                            IBoardItem,
+                            IDataDoc
+                        ];
+                    } else {
+                        return [item, dataTablesById[item.table_id]] as [
+                            IBoardItem,
+                            IDataTable
+                        ];
+                    }
+                })
+                .map((item) => ({
+                    boardItem: item[0],
+                    itemData: item[1],
+                    id: item[0].id,
+                }))
+    );

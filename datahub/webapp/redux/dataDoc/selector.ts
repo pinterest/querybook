@@ -92,7 +92,7 @@ export const recentDataDocsSelector = createSelector(
     currentEnvironmentIdSelector,
     recentDataDocIdsSelector,
     (dataDocById, envId, ids) =>
-        ids.reduce((arr, id) => {
+        ids.slice(0, 5).reduce((arr, id) => {
             if (id in dataDocById && dataDocById[id].environment_id === envId) {
                 arr.push(dataDocById[id]);
             }

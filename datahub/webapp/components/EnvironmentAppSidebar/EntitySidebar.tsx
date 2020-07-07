@@ -84,13 +84,6 @@ export const EntitySidebar: React.FunctionComponent<IEntitySidebarProps> = ({
                     color="transparent"
                 />
                 <IconButton
-                    icon="briefcase"
-                    tooltip="Lists"
-                    tooltipPos="right"
-                    active={selectedEntity === 'board'}
-                    onClick={() => onSelectEntity('board')}
-                />
-                <IconButton
                     icon="file"
                     tooltip="DataDocs"
                     tooltipPos="right"

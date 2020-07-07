@@ -6,19 +6,15 @@ import {
     DragObjectWithType,
     XYCoord,
 } from 'react-dnd';
+import { IDragItem } from './types';
 
 interface IDraggableItemProps {
     className?: string;
     onHoverMove: (from: number, to: number) => void;
-    onMove: (from: number, to: number, itemType: string) => void;
+    onMove: (from: number, to: number) => void;
     index: number;
     originalIndex: number; // index before drag and drop
     draggableItemType: string;
-    droppableItemTypes: string[];
-}
-interface IDragItem {
-    index: number;
-    type: string;
 }
 
 export const DraggableItem: React.FC<IDraggableItemProps> = ({
@@ -29,26 +25,26 @@ export const DraggableItem: React.FC<IDraggableItemProps> = ({
     onHoverMove,
     onMove,
     draggableItemType,
-    droppableItemTypes,
 }) => {
     const ref = useRef<HTMLLIElement>(null);
     const [{ isDragging }, drag] = useDrag({
-        item: { type: draggableItemType, index },
+        item: { type: draggableItemType, index, originalIndex },
         collect: (monitor) => ({
             isDragging: !!monitor.isDragging(),
         }),
         end: (_, monitor) => {
             const { index: toIndex, type }: IDragItem = monitor.getItem();
             const didDrop = monitor.didDrop();
-            if (didDrop) {
-                onMove(originalIndex, toIndex, type);
-            } else {
+            if (!didDrop) {
                 onHoverMove(toIndex, originalIndex);
             }
         },
     });
     const [, drop] = useDrop({
-        accept: droppableItemTypes,
+        accept: draggableItemType,
+        drop(item: IDragItem) {
+            onMove(item.originalIndex, item.index);
+        },
         hover(item: IDragItem, monitor: DropTargetMonitor) {
             if (!ref.current) {
                 return;

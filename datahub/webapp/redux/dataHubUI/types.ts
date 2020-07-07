@@ -62,6 +62,19 @@ export interface ISetSidebarTableId extends Action {
     payload: number;
 }
 
+export interface ISetDataDocNavSection extends Action {
+    type: '@@datahubUI/SET_DATA_DOC_NAV_SECTION';
+    payload: {
+        section: string;
+        value: boolean;
+    };
+}
+
+export interface IReceiveDataDocNavSection extends Action {
+    type: '@@datahubUI/RECEIVE_DATA_DOC_NAV_SECTION';
+    payload: Record<string, boolean>;
+}
+
 export type DataHubUIAction =
     | IPushNotificationAction
     | IPopNotificationAction
@@ -71,7 +84,9 @@ export type DataHubUIAction =
     | IReceiveAnnouncementIds
     | IDismissAnnouncementId
     | ISetSidebarTableId
-    | GlobalStateAction;
+    | GlobalStateAction
+    | ISetDataDocNavSection
+    | IReceiveDataDocNavSection;
 
 export interface IDataHubUIState {
     announcements: IAnnouncement[];
@@ -81,6 +96,8 @@ export interface IDataHubUIState {
     confirmation?: IConfirmationMessageProps;
 
     sidebarTableId: number;
+
+    dataDocNavigatorSectionOpen: Record<string, boolean>;
 }
 
 export type ThunkResult<R> = ThunkAction<

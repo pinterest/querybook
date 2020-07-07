@@ -15,7 +15,6 @@ import { EnvironmentTopbar } from './EnvironmentTopbar';
 import { EntitySidebar } from './EntitySidebar';
 import './EnvironmentAppSidebar.scss';
 import { EnvironmentDropdownButton } from './EnvironmentDropdownButton';
-import { BoardNavigator } from 'components/BoardNavigator/BoardNavigator';
 import { useEvent } from 'hooks/useEvent';
 import { matchKeyPress } from 'lib/utils/keyboard';
 
@@ -66,8 +65,6 @@ export const EnvironmentAppSidebar: React.FunctionComponent = () => {
                 <DataDocNavigator />
             ) : entity === 'table' ? (
                 <DataDocSchemaNavigator />
-            ) : entity === 'board' ? (
-                <BoardNavigator />
             ) : entity === 'snippet' ? (
                 <QuerySnippetNavigator
                     onQuerySnippetSelect={(querySnippet) =>

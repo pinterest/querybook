@@ -7,6 +7,10 @@ const initialState: IDataHubUIState = {
     dismissedAnnouncementIds: [],
     confirmation: null,
     sidebarTableId: null,
+    dataDocNavigatorSectionOpen: {
+        recent: true,
+        favorite: true,
+    },
 };
 
 export default function dataHubUI(
@@ -54,6 +58,19 @@ export default function dataHubUI(
             }
             case '@@datahubUI/SET_SIDEBAR_TABLE_ID': {
                 draft.sidebarTableId = action.payload;
+                return;
+            }
+            case '@@datahubUI/SET_DATA_DOC_NAV_SECTION': {
+                const { section, value } = action.payload;
+
+                draft.dataDocNavigatorSectionOpen[section] = value;
+                return;
+            }
+            case '@@datahubUI/RECEIVE_DATA_DOC_NAV_SECTION': {
+                draft.dataDocNavigatorSectionOpen = {
+                    ...draft.dataDocNavigatorSectionOpen,
+                    ...action.payload,
+                };
                 return;
             }
         }

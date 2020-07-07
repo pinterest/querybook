@@ -39,7 +39,8 @@ function openClick(
     url: string,
     e: React.MouseEvent<HTMLDivElement, MouseEvent>
 ) {
-    if (e.metaKey || e.ctrlKey) {
+    // cmd or ctrl or middle button
+    if (e.metaKey || e.ctrlKey || e.button === 1) {
         window.open(url);
     } else {
         history.push(url);
@@ -77,7 +78,7 @@ export const DataDocItem: React.FunctionComponent<IDataDocItemProps> = ({
     );
 
     return (
-        <div className="SearchResultItem DataDocItem" onClick={handleClick}>
+        <div className="SearchResultItem DataDocItem" onMouseDown={handleClick}>
             <div className="result-item-icon">
                 <UserAvatar uid={ownerUid} />
             </div>
