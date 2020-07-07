@@ -209,8 +209,10 @@ function favoriteDataDocIds(
         }
         case '@@dataDoc/RECEIVE_PINNED_DATA_DOC_ID': {
             const { docId } = action.payload;
-
-            return [...state, docId];
+            if (!state.includes(docId)) {
+                return [...state, docId];
+            }
+            return state;
         }
         case '@@dataDoc/REMOVE_PINNED_DATA_DOC_ID': {
             const { docId } = action.payload;

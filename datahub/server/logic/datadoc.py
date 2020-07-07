@@ -742,12 +742,17 @@ def get_user_favorite_data_docs(uid, environment_id, session=None):
 
 @with_session
 def favorite_data_doc(data_doc_id, uid, session=None):
-    favorite = FavoriteDataDoc(data_doc_id=data_doc_id, uid=uid,)
+    favorite = (
+        session.query(FavoriteDataDoc)
+        .filter_by(data_doc_id=data_doc_id, uid=uid)
+        .first()
+    )
+    if not favorite:
+        favorite = FavoriteDataDoc(data_doc_id=data_doc_id, uid=uid,)
     session.add(favorite)
     session.commit()
 
     favorite.id
-
     return favorite
 
 

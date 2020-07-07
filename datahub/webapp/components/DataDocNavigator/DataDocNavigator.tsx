@@ -179,7 +179,6 @@ const FavoriteDataDocsSection: React.FC<ICommonSectionProps> = (props) => {
     const section = 'favorite';
     const { collapsed, setCollapsed, load } = useCommonNavigatorState(
         section,
-
         props
     );
     const dataDocs = useSelector(favoriteDataDocsSelector);
