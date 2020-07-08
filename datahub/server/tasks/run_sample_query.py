@@ -14,6 +14,9 @@ from lib.utils import mysql_cache
 def run_sample_query(
     self, table_id, engine_id, uid, limit, partition, where, order_by, order_by_asc,
 ):
+    # Initialize progress to 0 for polling purposes
+    self.update_state(state="PROGRESS", meta=0)
+
     with DBSession() as session:
         query = make_samples_query(
             table_id,
