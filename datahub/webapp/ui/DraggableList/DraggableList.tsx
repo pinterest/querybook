@@ -1,10 +1,13 @@
 import { uniqueId } from 'lodash';
+import { DropTargetMonitor } from 'react-dnd';
 import React, { useState, useEffect, useCallback, useMemo } from 'react';
+
 import { DraggableItem } from './DraggableItem';
 import { arrayMove } from 'lib/utils';
+import { IDragItem } from './types';
 
 interface IDraggableListProps<T> {
-    renderItem: (index: number, itemProps: T) => any;
+    renderItem: (index: number, itemProps: T) => React.ReactNode;
     items: T[];
 
     onMove: (fromIndex: number, toIndex: number) => void;
@@ -12,6 +15,8 @@ interface IDraggableListProps<T> {
 
     // The type of item getting dragged
     itemType?: string;
+
+    canDrop?: (item: IDragItem<T>, monitor: DropTargetMonitor) => boolean;
 }
 
 export function DraggableList<T extends { id: any }>({
@@ -19,9 +24,11 @@ export function DraggableList<T extends { id: any }>({
     items,
     onMove,
     className,
+    canDrop,
 
     itemType,
 }: IDraggableListProps<T>) {
+    const [hoverItemsVersion, resetHoverItemsVersion] = useState(0);
     const draggableItemType = useMemo(
         () => itemType ?? uniqueId('DraggableItem'),
         [itemType]
@@ -40,7 +47,11 @@ export function DraggableList<T extends { id: any }>({
 
     useEffect(() => {
         setHoverItems(items);
-    }, [items]);
+    }, [items, hoverItemsVersion]);
+
+    const resetHoverItems = useCallback(() => {
+        resetHoverItemsVersion((v) => v + 1);
+    }, []);
 
     const idToOriginalIndex = useMemo(
         () =>
@@ -59,6 +70,9 @@ export function DraggableList<T extends { id: any }>({
             index={idx}
             originalIndex={idToOriginalIndex[itemProps.id]}
             draggableItemType={draggableItemType}
+            itemInfo={itemProps}
+            canDrop={canDrop}
+            resetHoverItems={resetHoverItems}
         >
             {renderItem(idx, itemProps)}
         </DraggableItem>

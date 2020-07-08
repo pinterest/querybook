@@ -1,2 +1,2 @@
-export const BoardDraggablePrefix = 'Board-';
-export const DataDocDraggablePrefix = 'DataDoc-';
+export const BoardDraggableType = 'Board-';
+export const DataDocDraggableType = 'DataDoc-';

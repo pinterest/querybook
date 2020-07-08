@@ -1,8 +1,15 @@
 import React, { useEffect, useState, useCallback, useMemo } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 import classNames from 'classnames';
+import { useDrop } from 'react-dnd';
 
-import { Title } from 'ui/Title/Title';
+import { IDataDoc, emptyDataDocTitleMessage } from 'const/datadoc';
+import { BoardItemType } from 'const/board';
+
+import { BoardCreateUpdateModal } from 'components/BoardCreateUpdateModal/BoardCreateUpdateModal';
+import { getWithinEnvUrl } from 'lib/utils/query-string';
+import { sendNotification, sendConfirm } from 'lib/dataHubUI';
+
 import { boardsSelector, makeBoardItemsSelector } from 'redux/board/selector';
 import {
     fetchBoards,
@@ -12,26 +19,22 @@ import {
     deleteBoard,
     addBoardItem,
 } from 'redux/board/action';
-import { Dispatch, IStoreState } from 'redux/store/types';
-import { IconButton } from 'ui/Button/IconButton';
-import { BoardItemType } from 'const/board';
-import { sendNotification, sendConfirm } from 'lib/dataHubUI';
-import { LoadingIcon } from 'ui/Loading/Loading';
-import { Level, LevelItem } from 'ui/Level/Level';
-import { BoardCreateUpdateModal } from 'components/BoardCreateUpdateModal/BoardCreateUpdateModal';
-import { DraggableList } from 'ui/DraggableList/DraggableList';
-import { IDataDoc, emptyDataDocTitleMessage } from 'const/datadoc';
-import { Icon } from 'ui/Icon/Icon';
-import { getWithinEnvUrl } from 'lib/utils/query-string';
-import { IDataTable } from 'const/metastore';
-
-import './DataDocNavigatorBoardSection.scss';
-import { ListLink } from 'ui/Link/ListLink';
-import { useDrop } from 'react-dnd';
-import { IDragItem } from 'ui/DraggableList/types';
-import { BoardDraggablePrefix, DataDocDraggablePrefix } from './navigatorConst';
 import { setDataDocNavBoard } from 'redux/dataHubUI/action';
 import { dataDocNavBoardOpenSelector } from 'redux/dataHubUI/selector';
+import { Dispatch, IStoreState } from 'redux/store/types';
+
+import { IconButton } from 'ui/Button/IconButton';
+import { LoadingIcon } from 'ui/Loading/Loading';
+import { Level, LevelItem } from 'ui/Level/Level';
+import { DraggableList } from 'ui/DraggableList/DraggableList';
+import { Icon } from 'ui/Icon/Icon';
+import { IDataTable } from 'const/metastore';
+import { Title } from 'ui/Title/Title';
+import { ListLink } from 'ui/Link/ListLink';
+import { IDragItem } from 'ui/DraggableList/types';
+
+import { BoardDraggableType, DataDocDraggableType } from './navigatorConst';
+import './DataDocNavigatorBoardSection.scss';
 
 interface INavigatorBoardSectionProps {
     selectedDocId: number;
@@ -55,13 +58,6 @@ export const DataDocNavigatorBoardSection: React.FC<INavigatorBoardSectionProps>
     const boardItemById = useSelector(
         (state: IStoreState) => state.board.boardItemById
     );
-    const draggableBoardItemTypes = useMemo(
-        () =>
-            boards
-                .map((board) => `${BoardDraggablePrefix}${board.id}`)
-                .concat([DataDocDraggablePrefix]),
-        [boards]
-    );
 
     const dispatch: Dispatch = useDispatch();
     useEffect(() => {
@@ -71,47 +67,48 @@ export const DataDocNavigatorBoardSection: React.FC<INavigatorBoardSectionProps>
     }, [collapsed]);
 
     const handleMoveBoardItem = useCallback(
-        async (source: string, dest: string, index: number) => {
+        async (
+            itemType: string,
+            itemInfo: IProcessedBoardItem | IDataDoc,
+            toBoardId: number
+        ) => {
             let sourceType: 'datadoc' | 'board' = null;
             let sourceBoardId: number = null;
             let sourceItemId: number = null;
-            const destBoardId = Number(dest.slice(BoardDraggablePrefix.length));
 
-            if (source.startsWith(BoardDraggablePrefix)) {
+            if (itemType === BoardDraggableType) {
+                const boardItem = itemInfo as IProcessedBoardItem;
+
                 sourceType = 'board';
-                sourceBoardId = Number(
-                    source.slice(BoardDraggablePrefix.length)
-                );
-                sourceItemId = boards.find(
-                    (board) => board.id === sourceBoardId
-                )?.items?.[index];
-            } else if (source.startsWith(DataDocDraggablePrefix)) {
+                sourceBoardId = boardItem.boardId;
+                sourceItemId = boardItem.id;
+            } else if (itemType === DataDocDraggableType) {
                 sourceType = 'datadoc';
-                sourceItemId = index;
+                sourceItemId = (itemInfo as IDataDoc).id;
             }
 
             if (sourceItemId != null) {
                 if (sourceType === 'board' && sourceBoardId != null) {
                     const boardItem = boardItemById[sourceItemId];
-                    const itemType =
+                    const boardItemType =
                         boardItem['data_doc_id'] != null ? 'data_doc' : 'table';
                     const boardItemItemId =
-                        itemType === 'data_doc'
+                        boardItemType === 'data_doc'
                             ? boardItem.data_doc_id
                             : boardItem.table_id;
                     await dispatch(
-                        addBoardItem(destBoardId, itemType, boardItemItemId)
+                        addBoardItem(toBoardId, boardItemType, boardItemItemId)
                     );
                     await dispatch(
                         deleteBoardItem(
                             sourceBoardId,
-                            itemType,
+                            boardItemType,
                             boardItemItemId
                         )
                     );
                 } else if (sourceType === 'datadoc') {
                     await dispatch(
-                        addBoardItem(destBoardId, 'data_doc', sourceItemId)
+                        addBoardItem(toBoardId, 'data_doc', sourceItemId)
                     );
                 }
             }
@@ -143,14 +140,12 @@ export const DataDocNavigatorBoardSection: React.FC<INavigatorBoardSectionProps>
 
     const boardsDOM = collapsed ? null : (
         <div>
-            {boards.map((board, idx) => (
+            {boards.map((board) => (
                 <NavigatorBoardView
                     key={board.id}
                     id={board.id}
                     selectedDocId={selectedDocId}
                     filterString={filterString}
-                    draggableBoardItemTypes={draggableBoardItemTypes}
-                    draggableBoardType={draggableBoardItemTypes[idx]}
                     onMoveBoardItem={handleMoveBoardItem}
                 />
             ))}
@@ -175,17 +170,12 @@ const NavigatorBoardView: React.FunctionComponent<{
     id: number;
     filterString: string;
     selectedDocId: number;
-    draggableBoardType: string;
-    draggableBoardItemTypes: string[];
-    onMoveBoardItem: (source: string, dest: string, index: number) => void;
-}> = ({
-    id,
-    selectedDocId,
-    filterString,
-    draggableBoardItemTypes,
-    draggableBoardType,
-    onMoveBoardItem,
-}) => {
+    onMoveBoardItem: (
+        itemType: string,
+        itemInfo: IProcessedBoardItem | IDataDoc,
+        toBoardId: number
+    ) => void;
+}> = ({ id, selectedDocId, filterString, onMoveBoardItem }) => {
     const [showUpdateModal, setShowUpdateModal] = useState(false);
     const dispatch: Dispatch = useDispatch();
 
@@ -214,7 +204,7 @@ const NavigatorBoardView: React.FunctionComponent<{
         (fromIndex: number, toIndex: number) => {
             return dispatch(moveBoardItem(board.id, fromIndex, toIndex));
         },
-        [board, draggableBoardType]
+        [board]
     );
 
     useEffect(() => {
@@ -223,24 +213,25 @@ const NavigatorBoardView: React.FunctionComponent<{
         }
     }, [id, collapsed]);
 
-    // You shouldn't be able to drag and drop to your original board
-    const draggableTypesExceptSelf = useMemo(
-        () => draggableBoardItemTypes.filter((t) => t !== draggableBoardType),
-        [draggableBoardItemTypes, draggableBoardType]
-    );
-
     const [{ isOver }, dropRef] = useDrop({
-        accept: draggableTypesExceptSelf,
-        drop(item: IDragItem, monitor) {
+        accept: [BoardDraggableType, DataDocDraggableType],
+        drop(item: IDragItem<IProcessedBoardItem | IDataDoc>, monitor) {
+            // You shouldn't be able to drag and drop to your original board
             if (monitor.didDrop()) {
                 return;
             }
-            onMoveBoardItem(item.type, draggableBoardType, item.originalIndex);
+            onMoveBoardItem(item.type, item.itemInfo, id);
         },
 
         collect(monitor) {
+            const item: IDragItem = monitor.getItem();
+
             return {
-                isOver: monitor.isOver({ shallow: true }),
+                isOver:
+                    item?.type === BoardDraggableType &&
+                    item.itemInfo['boardId'] === id
+                        ? false
+                        : monitor.isOver(),
             };
         },
     });
@@ -294,7 +285,6 @@ const NavigatorBoardView: React.FunctionComponent<{
             boardId={id}
             onDeleteBoardItem={handleDeleteBoardItem}
             onMoveBoardItem={handleLocalMoveBoardItem}
-            draggableType={draggableBoardType}
         />
     ) : (
         <div>
@@ -323,17 +313,27 @@ const NavigatorBoardView: React.FunctionComponent<{
     );
 };
 
+export interface IProcessedBoardItem {
+    id: number;
+    key: string;
+    icon: string;
+    itemUrl: string;
+    itemId: number;
+    itemType: BoardItemType;
+    title: string;
+    selected: boolean;
+    boardId: number;
+}
+
 const BoardExpandableList: React.FunctionComponent<{
     selectedDocId: number;
     filterString: string;
-    draggableType: string;
     boardId: number;
     onDeleteBoardItem: (itemId: number, itemType: BoardItemType) => any;
     onMoveBoardItem: (fromIndex: number, toIndex: number) => any;
 }> = ({
     filterString,
     selectedDocId,
-    draggableType,
     boardId,
     onDeleteBoardItem,
     onMoveBoardItem,
@@ -342,7 +342,7 @@ const BoardExpandableList: React.FunctionComponent<{
     const items = useSelector((state: IStoreState) =>
         boardItemsSelector(state, boardId)
     );
-    const processedItem = useMemo(
+    const processedItems: IProcessedBoardItem[] = useMemo(
         () =>
             items.map((item) => {
                 const { boardItem, itemData, id } = item;
@@ -380,6 +380,7 @@ const BoardExpandableList: React.FunctionComponent<{
                     itemType,
                     title,
                     selected,
+                    boardId: item.boardItem.board_id,
                 };
             }),
         [items, selectedDocId]
@@ -389,7 +390,7 @@ const BoardExpandableList: React.FunctionComponent<{
         () =>
             filterString
                 ? new Set(
-                      processedItem
+                      processedItems
                           .filter((item) => {
                               return !item.title
                                   ?.toLowerCase()
@@ -398,13 +399,21 @@ const BoardExpandableList: React.FunctionComponent<{
                           .map((item) => item.id)
                   )
                 : new Set(),
-        [processedItem, filterString]
+        [processedItems, filterString]
+    );
+
+    const canDrop = useCallback(
+        (item: IDragItem<IProcessedBoardItem>) => {
+            return item.itemInfo.boardId === boardId;
+        },
+        [boardId]
     );
 
     const makeItemsDOM = () => (
         <DraggableList
-            itemType={draggableType}
-            items={processedItem}
+            canDrop={canDrop}
+            itemType={BoardDraggableType}
+            items={processedItems}
             onMove={(fromIndex, toIndex) => {
                 onMoveBoardItem(fromIndex, toIndex);
             }}

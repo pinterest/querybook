@@ -5,7 +5,7 @@ import { IDataDoc } from 'const/datadoc';
 
 import { ListLink } from 'ui/Link/ListLink';
 import { useDrag } from 'react-dnd';
-import { DataDocDraggablePrefix } from './navigatorConst';
+import { DataDocDraggableType } from './navigatorConst';
 import { IconButton } from 'ui/Button/IconButton';
 
 import './DataDocGridItem.scss';
@@ -26,8 +26,8 @@ export const DataDocGridItem: React.FunctionComponent<IDataDocGridItemProps> = (
 }) => {
     const [, drag] = useDrag({
         item: {
-            type: DataDocDraggablePrefix,
-            originalIndex: dataDoc.id,
+            type: DataDocDraggableType,
+            itemInfo: dataDoc,
         },
     });
 

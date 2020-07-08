@@ -1,23 +1,21 @@
 import React from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 import * as Yup from 'yup';
-import { Formik, Field, Form } from 'formik';
+import { Formik, Form } from 'formik';
 
 import { createBoard, updateBoard } from 'redux/board/action';
 import { IStoreState, Dispatch } from 'redux/store/types';
-import { FormField } from 'ui/Form/FormField';
 import { Title } from 'ui/Title/Title';
 import { Button } from 'ui/Button/Button';
 import { IStandardModalProps } from 'ui/Modal/types';
 import { Modal } from 'ui/Modal/Modal';
 import './BoardCreateUpdateModal.scss';
 import { IBoardRaw } from 'const/board';
-import { TextareaField } from 'ui/FormikField/TextareaField';
 import { FormWrapper } from 'ui/Form/FormWrapper';
 import { SimpleField } from 'ui/FormikField/SimpleField';
 
 const boardFormSchema = Yup.object().shape({
-    name: Yup.string().max(255).min(1),
+    name: Yup.string().max(255).min(1).required(),
     description: Yup.string().max(5000),
     public: Yup.boolean(),
 });
@@ -52,7 +50,7 @@ export const BoardCreateUpdateForm: React.FunctionComponent<IBoardCreateUpdateFo
     return (
         <Formik
             initialValues={formValues}
-            validateOnMount={false}
+            validateOnMount={true}
             validationSchema={boardFormSchema}
             onSubmit={async (values) => {
                 const action = isCreateForm
@@ -67,13 +65,7 @@ export const BoardCreateUpdateForm: React.FunctionComponent<IBoardCreateUpdateFo
                 onComplete(await dispatch(action));
             }}
         >
-            {({
-                handleSubmit,
-                isSubmitting,
-                errors,
-                setFieldValue,
-                isValid,
-            }) => {
+            {({ submitForm, isSubmitting, errors, setFieldValue, isValid }) => {
                 const formTitle = isCreateForm ? 'New List' : 'Update List';
                 const nameField = <SimpleField name="name" type="input" />;
 
@@ -98,7 +90,7 @@ export const BoardCreateUpdateForm: React.FunctionComponent<IBoardCreateUpdateFo
                                 <div className="flex-right">
                                     <Button
                                         disabled={!isValid || isSubmitting}
-                                        onClick={() => handleSubmit()}
+                                        onClick={submitForm}
                                         title={
                                             isCreateForm ? 'Create' : 'Update'
                                         }

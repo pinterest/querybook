@@ -1,4 +1,4 @@
-import React, { useMemo, useRef } from 'react';
+import React, { useMemo, useRef, useCallback } from 'react';
 
 import { scrollToCell } from 'lib/data-doc/data-doc-utils';
 import { IDataCell } from 'const/datadoc';
@@ -8,6 +8,7 @@ import { moveDataDocCell } from 'redux/dataDoc/action';
 import { getScrollParent } from 'lib/utils';
 
 import './DataDocContents.scss';
+import { IDragItem } from 'ui/DraggableList/types';
 
 const CELL_TEXT_LEN = 50;
 
@@ -26,6 +27,7 @@ export const DataDocContents: React.FunctionComponent<{
         }
         return ret;
     }, [cells]);
+
     return (
         <div className="DataDocContents" ref={selfRef}>
             <DraggableList

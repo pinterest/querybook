@@ -20,10 +20,14 @@ import { SearchBar } from 'ui/SearchBar/SearchBar';
 import './DataDocNavigator.scss';
 import { DataDocNavigatorSection } from './DataDocNavigatorSection';
 import { IDataDoc } from 'const/datadoc';
-import { DataDocNavigatorBoardSection } from './DataDocNavigatorBoardSection';
+import {
+    DataDocNavigatorBoardSection,
+    IProcessedBoardItem,
+} from './DataDocNavigatorBoardSection';
 import { useDrop } from 'react-dnd';
-import { DataDocDraggablePrefix, BoardDraggablePrefix } from './navigatorConst';
+import { DataDocDraggableType, BoardDraggableType } from './navigatorConst';
 import { IDragItem } from 'ui/DraggableList/types';
+import { IBoardItem } from 'const/board';
 
 export const DataDocNavigator: React.FC<{}> = ({}) => {
     const loadedFilterModes = useSelector(
@@ -183,42 +187,36 @@ const FavoriteDataDocsSection: React.FC<ICommonSectionProps> = (props) => {
     );
     const dataDocs = useSelector(favoriteDataDocsSelector);
     const dispatch = useDispatch();
-    const boardState = useSelector((state: IStoreState) => state.board);
-    const acceptableDroptypes = useMemo(() => {
-        return Object.keys(boardState.boardById)
-            .map((id) => `${BoardDraggablePrefix}${id}`)
-            .concat([DataDocDraggablePrefix]);
-    }, [boardState.boardById]);
 
     const [{ isOver }, dropRef] = useDrop({
-        accept: acceptableDroptypes,
-        drop(item: IDragItem, monitor) {
+        accept: [BoardDraggableType, DataDocDraggableType],
+        drop(item: IDragItem<IDataDoc | IProcessedBoardItem>, monitor) {
             if (monitor.didDrop()) {
                 return;
             }
             let docId: number = null;
-            if (item.type.startsWith(BoardDraggablePrefix)) {
-                const boardId = Number(
-                    item.type.slice(BoardDraggablePrefix.length)
-                );
-                const boardItemId =
-                    boardState.boardById[boardId]?.items?.[item.originalIndex];
-                if (
-                    boardItemId != null &&
-                    boardState.boardItemById[boardItemId]?.data_doc_id != null
-                ) {
-                    docId = boardState.boardItemById[boardItemId].data_doc_id;
+            if (item.type === BoardDraggableType) {
+                const itemInfo = item.itemInfo as IProcessedBoardItem;
+                if (itemInfo.itemType === 'data_doc') {
+                    docId = itemInfo.itemId;
                 }
             } else {
-                docId = item.originalIndex;
+                docId = (item.itemInfo as IDataDoc).id;
             }
 
-            dispatch(dataDocActions.favoriteDataDoc(docId));
+            if (docId != null) {
+                dispatch(dataDocActions.favoriteDataDoc(docId));
+            }
         },
 
         collect(monitor) {
+            const item: IDragItem = monitor.getItem();
             return {
-                isOver: monitor.isOver({ shallow: true }),
+                isOver:
+                    item?.type === BoardDraggableType &&
+                    (item?.itemInfo as IProcessedBoardItem).itemType === 'table'
+                        ? false
+                        : monitor.isOver(),
             };
         },
     });
