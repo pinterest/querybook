@@ -194,7 +194,8 @@ def poll_table_samples(table_id, task_id):
         if task.ready():
             return [True, 100]
         elif task.info is not None:
-            return [False, task.info]
+            progress = task.info if isinstance(task.info, (float, int)) else 0
+            return [False, progress]
         else:
             return [False, 0]
     return None
