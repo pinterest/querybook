@@ -1,46 +1,68 @@
 import React from 'react';
-import * as classNames from 'classnames';
 
 import history from 'lib/router-history';
 import { IDataDoc } from 'const/datadoc';
 
-import { Icon } from 'ui/Icon/Icon';
 import { ListLink } from 'ui/Link/ListLink';
+import { useDrag } from 'react-dnd';
+import { DataDocDraggableType } from './navigatorConst';
+import { IconButton } from 'ui/Button/IconButton';
+
+import './DataDocGridItem.scss';
 
 export interface IDataDocGridItemProps {
     dataDoc: IDataDoc;
     className: string;
     pinned?: boolean;
     url?: string;
-    onDataDocClick?: () => any;
-    onDeleteDataDocClick?: () => any;
-    onFavoriteDataDocClick?: () => any;
+    onRemove?: (dataDoc: IDataDoc) => any;
 }
 
 export const DataDocGridItem: React.FunctionComponent<IDataDocGridItemProps> = ({
     dataDoc,
     className,
     url,
-    onDataDocClick,
+    onRemove,
 }) => {
+    const [, drag] = useDrag({
+        item: {
+            type: DataDocDraggableType,
+            itemInfo: dataDoc,
+        },
+    });
+
     const handleClick = React.useCallback(() => {
-        if (onDataDocClick) {
-            return onDataDocClick();
-        }
         history.push(url);
-    }, [url, onDataDocClick]);
+    }, [url]);
 
     const { title = '', public: publicDataDoc } = dataDoc;
     const privateIcon = !publicDataDoc && 'lock';
 
     return (
-        <ListLink
-            className={className}
-            onClick={handleClick}
-            to={url}
-            icon={privateIcon}
-            title={title}
-            placeholder="Untitled"
-        />
+        <div ref={drag} className="DataDocGridItem">
+            <ListLink
+                className={className}
+                onClick={handleClick}
+                to={url}
+                icon={privateIcon}
+                title={title}
+                placeholder="Untitled"
+                isRow
+            >
+                {onRemove && (
+                    <IconButton
+                        className="delete-grid-item-button"
+                        noPadding
+                        size={16}
+                        icon="x"
+                        onClick={(event) => {
+                            event.stopPropagation();
+                            event.preventDefault();
+                            onRemove(dataDoc);
+                        }}
+                    />
+                )}
+            </ListLink>
+        </div>
     );
 };

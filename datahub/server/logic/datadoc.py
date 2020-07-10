@@ -1,4 +1,5 @@
 import datetime
+from sqlalchemy import func
 
 from app.db import with_session
 from const.elasticsearch import ElasticsearchItem
@@ -741,12 +742,17 @@ def get_user_favorite_data_docs(uid, environment_id, session=None):
 
 @with_session
 def favorite_data_doc(data_doc_id, uid, session=None):
-    favorite = FavoriteDataDoc(data_doc_id=data_doc_id, uid=uid,)
+    favorite = (
+        session.query(FavoriteDataDoc)
+        .filter_by(data_doc_id=data_doc_id, uid=uid)
+        .first()
+    )
+    if not favorite:
+        favorite = FavoriteDataDoc(data_doc_id=data_doc_id, uid=uid,)
     session.add(favorite)
     session.commit()
 
     favorite.id
-
     return favorite
 
 
@@ -766,14 +772,19 @@ def unfavorite_data_doc(data_doc_id, uid, session=None):
 
 
 @with_session
-def get_user_recent_data_docs(uid, environment_id, limit=10, session=None):
-    return (
-        session.query(DataDoc)
-        .join(Impression, DataDoc.id == Impression.item_id)
+def get_user_recent_data_docs(uid, environment_id, limit=5, session=None):
+    subquery = (
+        session.query(Impression.item_id)
         .filter(Impression.item_type == ImpressionItemType.DATA_DOC)
         .filter(Impression.uid == uid)
+        .group_by(Impression.item_id)
+        .order_by(func.max(Impression.created_at).desc())
+    ).subquery()
+
+    return (
+        session.query(DataDoc)
+        .join(subquery, DataDoc.id == subquery.c.item_id)
         .filter(DataDoc.environment_id == environment_id)
-        .order_by(Impression.id.desc())
         .limit(limit)
         .all()
     )

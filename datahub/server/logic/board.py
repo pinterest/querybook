@@ -118,16 +118,21 @@ def move_item_order(board_id, from_index, to_index, commit=True, session=None):
 
 
 @with_session
-def remove_item_from_board(board_id, item_id, item_type, session=None):
-    item = (
+def get_item_from_board(board_id, item_id, item_type, session=None):
+    return (
         session.query(BoardItem)
         .filter_by(**{"board_id": board_id, item_type_to_id_type(item_type): item_id})
         .first()
     )
 
+
+@with_session
+def remove_item_from_board(board_id, item_id, item_type, commit=True, session=None):
+    item = get_item_from_board(board_id, item_id, item_type, session=session)
     if item:
         session.delete(item)
-        session.commit()
+        if commit:
+            session.commit()
 
 
 @with_session

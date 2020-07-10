@@ -109,6 +109,11 @@ def add_board_item(board_id, item_type, item_id):
             board.environment_id in item_env_ids,
             "Board item must be in the same environment as the board",
         )
+        api_assert(
+            logic.get_item_from_board(board_id, item_id, item_type, session=session)
+            is None,
+            "Item already exists",
+        )
 
         return logic.add_item_to_board(board_id, item_id, item_type, session=session)
 
@@ -117,9 +122,10 @@ def add_board_item(board_id, item_type, item_id):
     "/board/<int:board_id>/move/<int:from_index>/<int:to_index>/", methods=["POST"],
 )
 def move_board_item(board_id, from_index, to_index):
-    board = logic.move_item_order(board_id, from_index, to_index)
-    # Check if user can edit the board
-    api_assert(board and board.owner_uid == current_user.id, "Must be owner")
+    if from_index != to_index:
+        board = logic.move_item_order(board_id, from_index, to_index)
+        # Check if user can edit the board
+        api_assert(board and board.owner_uid == current_user.id, "Must be owner")
 
 
 @register(

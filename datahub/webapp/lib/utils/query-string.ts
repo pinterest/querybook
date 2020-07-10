@@ -29,16 +29,20 @@ export function replaceQueryString(params: {}, navigate: boolean = false) {
 }
 
 export function navigateWithinEnv(
-    path: string,
+    subpath: string,
     state?: any,
     replace: boolean = false
 ) {
-    const currentEnv = getCurrentEnv();
-    path = path.startsWith('/') ? path.slice(1) : path;
-
+    const path = getWithinEnvUrl(subpath);
     const navigateFunc = replace ? history.replace : history.push;
 
-    navigateFunc(`/${currentEnv.name}/${path}`, state);
+    navigateFunc(path, state);
+}
+
+export function getWithinEnvUrl(subpath: string) {
+    const currentEnv = getCurrentEnv();
+    subpath = subpath.startsWith('/') ? subpath.slice(1) : subpath;
+    return `/${currentEnv.name}/${subpath}`;
 }
 
 export function getCurrentEnv() {

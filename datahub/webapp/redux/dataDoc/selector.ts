@@ -58,6 +58,22 @@ export const dataDocsMineSelector = createSelector(
         )
 );
 
+// Mine selector that excludes docs in favorite & recent
+export const dataDocsMineUncategorizedSelector = createSelector(
+    dataDocsMineSelector,
+    favoriteDataDocIdsSelector,
+    recentDataDocIdsSelector,
+    (dataDocs, favoriteIds, recentIds) => {
+        const favoriteSet = new Set(favoriteIds);
+        const recentSet = new Set(recentIds);
+
+        return dataDocs.filter(
+            (dataDoc) =>
+                !favoriteSet.has(dataDoc.id) && !recentSet.has(dataDoc.id)
+        );
+    }
+);
+
 export const favoriteDataDocsSelector = createSelector(
     dataDocByIdSelector,
     currentEnvironmentIdSelector,
@@ -76,7 +92,7 @@ export const recentDataDocsSelector = createSelector(
     currentEnvironmentIdSelector,
     recentDataDocIdsSelector,
     (dataDocById, envId, ids) =>
-        ids.reduce((arr, id) => {
+        ids.slice(0, 5).reduce((arr, id) => {
             if (id in dataDocById && dataDocById[id].environment_id === envId) {
                 arr.push(dataDocById[id]);
             }

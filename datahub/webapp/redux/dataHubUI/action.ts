@@ -7,12 +7,15 @@ import {
     IRemoveConfirmationAction,
     IAnnouncement,
     ISetSidebarTableId,
+    ISetDataDocNavSection,
 } from './types';
 
 import localStore from 'lib/local-store';
 import {
     DISMISSED_ANNOUNCEMENT_KEY,
     DismissedAnnouncementValue,
+    DATA_DOC_NAV_SECTION_KEY,
+    DataDocNavSectionValue,
 } from 'lib/local-store/const';
 import ds from 'lib/datasource';
 import { ISetGlobalStateAction } from 'redux/globalState/types';
@@ -142,5 +145,42 @@ export function setSessionExpired(): ThunkResult<void> {
                 },
             });
         }
+    };
+}
+
+export function setDataDocNavSection(
+    section: string,
+    value: boolean
+): ThunkResult<void> {
+    return (dispatch, getState) => {
+        dispatch({
+            type: '@@datahubUI/SET_DATA_DOC_NAV_SECTION',
+            payload: {
+                section,
+                value,
+            },
+        });
+
+        localStore.set<DataDocNavSectionValue>(
+            DATA_DOC_NAV_SECTION_KEY,
+            getState().dataHubUI.dataDocNavigatorSectionOpen
+        );
+    };
+}
+
+export function setDataDocNavBoard(boardId: number, value: boolean) {
+    return setDataDocNavSection(`board-${boardId}`, value);
+}
+
+export function getDataDocNavSectionConfigFromStore(): ThunkResult<void> {
+    return async (dispatch) => {
+        const payload =
+            (await localStore.get<DataDocNavSectionValue>(
+                DATA_DOC_NAV_SECTION_KEY
+            )) ?? {};
+        dispatch({
+            type: '@@datahubUI/RECEIVE_DATA_DOC_NAV_SECTION',
+            payload,
+        });
     };
 }

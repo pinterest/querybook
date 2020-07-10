@@ -37,7 +37,7 @@ const openNewTab = (url) => window.open(url);
 const openInTab = (url) => (window.location.href = url);
 
 export class Link extends React.PureComponent<ILinkProps> {
-    public handleClick = (e) => {
+    public handleClick = (e: React.MouseEvent<HTMLAnchorElement>) => {
         e.preventDefault();
         const { to, onClick, newTab } = this.props;
         const isCmdDown = e.metaKey;
@@ -73,7 +73,7 @@ export class Link extends React.PureComponent<ILinkProps> {
                 {...elementProps}
                 href={to}
                 naturalLink={naturalLink}
-                onClick={this.handleClick}
+                onMouseDown={this.handleClick}
             >
                 {children}
             </StyledLink>

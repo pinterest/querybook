@@ -1,5 +1,4 @@
 import { IBoardState, BoardAction } from './types';
-import { combineReducers } from 'redux';
 import produce from 'immer';
 import { arrayMove } from 'lib/utils';
 
@@ -52,13 +51,9 @@ function board(state = initialState, action: BoardAction) {
                 const { boardItem, boardId } = action.payload;
                 draft.boardItemById[boardItem.id] = boardItem;
                 if (
-                    !(
-                        draft.boardById[boardId].items &&
-                        draft.boardById[boardId].items.includes(boardItem.id)
-                    )
+                    draft.boardById[boardId].items &&
+                    !(boardItem.id in draft.boardById[boardId].items)
                 ) {
-                    draft.boardById[boardId].items =
-                        draft.boardById[boardId].items ?? [];
                     draft.boardById[boardId].items.push(boardItem.id);
                 }
 
@@ -68,6 +63,8 @@ function board(state = initialState, action: BoardAction) {
                 const { boardId, itemType, itemId } = action.payload;
                 const itemField =
                     itemType === 'data_doc' ? 'data_doc_id' : 'table_id';
+
+                const board = draft.boardById[boardId];
                 draft.boardItemById = Object.values(draft.boardItemById).reduce(
                     (hash, boardItem) => {
                         if (
@@ -78,6 +75,10 @@ function board(state = initialState, action: BoardAction) {
                             )
                         ) {
                             hash[boardItem.id] = boardItem;
+                        } else {
+                            board.items = board.items.filter(
+                                (id) => id !== boardItem.id
+                            );
                         }
                         return hash;
                     },

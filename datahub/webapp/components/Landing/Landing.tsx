@@ -31,10 +31,7 @@ export const Landing: React.FunctionComponent<{}> = ({}) => {
         favoriteDataDocs,
         environment,
     } = useSelector((state: IStoreState) => {
-        const recentDataDocsFromState = recentDataDocsSelector(state).slice(
-            0,
-            5
-        );
+        const recentDataDocsFromState = recentDataDocsSelector(state);
         const favoriteDataDocsFromState = favoriteDataDocsSelector(state).slice(
             0,
             5

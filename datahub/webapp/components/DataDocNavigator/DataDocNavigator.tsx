@@ -1,48 +1,35 @@
-import React, { useState, useCallback, useEffect, useMemo } from 'react';
-import * as classNames from 'classnames';
+import React, { useState, useCallback, useMemo, useEffect } from 'react';
 
 import { useSelector, useDispatch } from 'react-redux';
 import { useRouteMatch } from 'react-router-dom';
-
-import { dataDocsOrderedSelector } from 'redux/dataDoc/selector';
+import {
+    setDataDocNavSection,
+    getDataDocNavSectionConfigFromStore,
+} from 'redux/dataHubUI/action';
+import {
+    recentDataDocsSelector,
+    favoriteDataDocsSelector,
+    dataDocsMineSelector,
+} from 'redux/dataDoc/selector';
 import * as dataDocActions from 'redux/dataDoc/action';
 import { IStoreState, Dispatch } from 'redux/store/types';
 
 import { CreateDataDocButton } from 'components/CreateDataDocButton/CreateDataDocButton';
 
-import { Tabs, ITabItem } from 'ui/Tabs/Tabs';
-import { Loading } from 'ui/Loading/Loading';
 import { SearchBar } from 'ui/SearchBar/SearchBar';
-
-import { DataDocGridItem } from './DataDocGridItem';
 import './DataDocNavigator.scss';
-
-const navigatorTabs: ITabItem[] = [
-    {
-        name: 'Mine',
-        key: 'mine',
-    },
-    {
-        name: 'Favorite',
-        key: 'favorite',
-    },
-    {
-        name: 'Recent',
-        key: 'recent',
-    },
-];
+import { DataDocNavigatorSection } from './DataDocNavigatorSection';
+import { IDataDoc } from 'const/datadoc';
+import {
+    DataDocNavigatorBoardSection,
+    IProcessedBoardItem,
+} from './DataDocNavigatorBoardSection';
+import { useDrop } from 'react-dnd';
+import { DataDocDraggableType, BoardDraggableType } from './navigatorConst';
+import { IDragItem } from 'ui/DraggableList/types';
+import { IBoardItem } from 'const/board';
 
 export const DataDocNavigator: React.FC<{}> = ({}) => {
-    const dataDocs = useSelector(dataDocsOrderedSelector);
-    const favoriteDataDocIds = useSelector(
-        (state: IStoreState) => state.dataDoc.favoriteDataDocIds
-    );
-    const recentDataDocIds = useSelector(
-        (state: IStoreState) => state.dataDoc.recentDataDocIds
-    );
-    const userUid = useSelector(
-        (state: IStoreState) => state.user.myUserInfo.uid
-    );
     const loadedFilterModes = useSelector(
         (state: IStoreState) =>
             state.dataDoc.loadedEnvironmentFilterMode[
@@ -58,75 +45,45 @@ export const DataDocNavigator: React.FC<{}> = ({}) => {
     );
 
     const [titleFilterString, setTitleFilterString] = useState('');
-    const [tabKey, setTabKey] = useState<string>(navigatorTabs[0].key);
 
     const match = useRouteMatch('/:env/:ignore(datadoc)?/:matchDocId?');
-    const { env, matchDocId } = match?.params ?? {};
+    const { matchDocId } = match?.params ?? {};
     const selectedDocId = useMemo(
         () => (matchDocId ? Number(matchDocId) : null),
         [matchDocId]
     );
 
+    const lowerCaseTitleFilterString = useMemo(
+        () => titleFilterString.toLowerCase(),
+        [titleFilterString]
+    );
+
+    const sectionOpen = useSelector(
+        (state: IStoreState) => state.dataHubUI.dataDocNavigatorSectionOpen
+    );
+    const setSectionOpen = useCallback(
+        (section: string, value: boolean) =>
+            dispatch(setDataDocNavSection(section, value)),
+        []
+    );
     useEffect(() => {
-        loadDataDocs(tabKey);
-    }, [env, tabKey]);
+        dispatch(getDataDocNavSectionConfigFromStore());
+    }, []);
 
-    const dataDocsToShow = useMemo(() => {
-        const lowerCaseTitleFilterString = titleFilterString.toLowerCase();
-        const filteredDataDocs = dataDocs.filter(
-            (dataDoc) =>
-                dataDoc &&
-                dataDoc.title.toLowerCase().includes(lowerCaseTitleFilterString)
-        );
+    const {
+        collapsed: boardsCollapsed,
+        setCollapsed: setBoardsCollapsed,
+    } = useBoundSectionState('boards', sectionOpen, setSectionOpen);
 
-        if (tabKey === 'mine') {
-            return filteredDataDocs.filter(
-                (dataDoc) => dataDoc.owner_uid === userUid && !dataDoc.archived
-            );
-        } else if (tabKey === 'favorite') {
-            const favoriteDataDocIdsSet = new Set(favoriteDataDocIds);
-            return filteredDataDocs.filter((dataDoc) =>
-                favoriteDataDocIdsSet.has(dataDoc.id)
-            );
-        } else if (tabKey === 'recent') {
-            const recentDataDocIdsSet = new Set(recentDataDocIds);
-            return filteredDataDocs.filter((dataDoc) =>
-                recentDataDocIdsSet.has(dataDoc.id)
-            );
-        }
+    const commonSectionProps = {
+        selectedDocId,
+        loadDataDocs,
+        filterString: lowerCaseTitleFilterString,
+        loadedFilterModes,
 
-        return [];
-    }, [
-        titleFilterString,
-        dataDocs,
-        tabKey,
-        favoriteDataDocIds,
-        recentDataDocIds,
-    ]);
-
-    const makeDataDocListDOM = () => {
-        const listDOM = dataDocsToShow.map((dataDoc) => {
-            const docId = dataDoc.id;
-
-            const className = classNames({
-                selected: selectedDocId === docId,
-            });
-
-            return (
-                <DataDocGridItem
-                    key={docId}
-                    dataDoc={dataDoc}
-                    className={className}
-                    url={`/${env}/datadoc/${docId}/`}
-                />
-            );
-        });
-
-        return listDOM;
+        sectionOpen,
+        setSectionOpen,
     };
-
-    const loaded = loadedFilterModes[tabKey];
-    const dataDocsDOM = loaded ? makeDataDocListDOM() : <Loading />;
 
     return (
         <div className="DataDocNavigator">
@@ -139,16 +96,179 @@ export const DataDocNavigator: React.FC<{}> = ({}) => {
                 />
                 <CreateDataDocButton />
             </div>
-            <div>
-                <Tabs
-                    selectedTabKey={tabKey}
-                    onSelect={setTabKey}
-                    items={navigatorTabs}
-                    wide
+            <div className="data-docs">
+                <RecentDataDocsSection {...commonSectionProps} />
+                <FavoriteDataDocsSection {...commonSectionProps} />
+                <DataDocNavigatorBoardSection
+                    filterString={titleFilterString}
+                    selectedDocId={selectedDocId}
+                    collapsed={boardsCollapsed}
+                    setCollapsed={setBoardsCollapsed}
                 />
+                <MyDataDocsSection {...commonSectionProps} />
             </div>
-
-            <div className="data-docs">{dataDocsDOM}</div>
         </div>
+    );
+};
+
+interface ICommonSectionProps {
+    selectedDocId: number;
+    loadedFilterModes: Record<string, boolean>;
+    loadDataDocs: (filterMode: string) => any;
+    filterString: string;
+
+    sectionOpen: Record<string, boolean>;
+    setSectionOpen: (sectionHeader: string, value: boolean) => any;
+}
+
+function useBoundSectionState(
+    section: string,
+    sectionOpen: Record<string, boolean>,
+    setSectionOpen: (sectionHeader: string, value: boolean) => any
+) {
+    const collapsed = !sectionOpen[section];
+    const setCollapsed = useCallback(
+        (newCollapsed: boolean) => {
+            setSectionOpen(section, !newCollapsed);
+        },
+        [section, setSectionOpen]
+    );
+
+    return { collapsed, setCollapsed };
+}
+
+function useCommonNavigatorState(section: string, props: ICommonSectionProps) {
+    const { collapsed, setCollapsed } = useBoundSectionState(
+        section,
+        props.sectionOpen,
+        props.setSectionOpen
+    );
+
+    const load = useCallback(() => props.loadDataDocs(section), [
+        props.loadDataDocs,
+    ]);
+
+    return {
+        collapsed,
+        setCollapsed,
+        load,
+    };
+}
+
+const RecentDataDocsSection: React.FC<ICommonSectionProps> = (props) => {
+    const { selectedDocId, loadedFilterModes, filterString } = props;
+    const section = 'recent';
+    const { collapsed, setCollapsed, load } = useCommonNavigatorState(
+        section,
+        props
+    );
+    const dataDocs = useSelector(recentDataDocsSelector);
+    return (
+        <DataDocNavigatorSection
+            sectionHeaderIcon="watch"
+            sectionHeader={section}
+            dataDocs={dataDocs}
+            selectedDocId={selectedDocId}
+            filterString={filterString}
+            loaded={!!loadedFilterModes[section]}
+            loadDataDocs={load}
+            collapsed={collapsed}
+            setCollapsed={setCollapsed}
+        />
+    );
+};
+
+const FavoriteDataDocsSection: React.FC<ICommonSectionProps> = (props) => {
+    const { selectedDocId, loadedFilterModes, filterString } = props;
+    const section = 'favorites';
+    const { collapsed, setCollapsed, load } = useCommonNavigatorState(
+        section,
+        props
+    );
+    const dataDocs = useSelector(favoriteDataDocsSelector);
+    const dispatch = useDispatch();
+
+    const [{ isOver }, dropRef] = useDrop({
+        accept: [BoardDraggableType, DataDocDraggableType],
+        drop(item: IDragItem<IDataDoc | IProcessedBoardItem>, monitor) {
+            if (monitor.didDrop()) {
+                return;
+            }
+            let docId: number = null;
+            if (item.type === BoardDraggableType) {
+                const itemInfo = item.itemInfo as IProcessedBoardItem;
+                if (itemInfo.itemType === 'data_doc') {
+                    docId = itemInfo.itemId;
+                }
+            } else {
+                docId = (item.itemInfo as IDataDoc).id;
+            }
+
+            if (docId != null) {
+                dispatch(dataDocActions.favoriteDataDoc(docId));
+            }
+        },
+
+        collect(monitor) {
+            const item: IDragItem = monitor.getItem();
+            return {
+                isOver:
+                    item?.type === BoardDraggableType &&
+                    (item?.itemInfo as IProcessedBoardItem).itemType === 'table'
+                        ? false
+                        : monitor.isOver(),
+            };
+        },
+    });
+    const handleUnfavoriteDataDoc = useCallback(
+        (dataDoc: IDataDoc) =>
+            dispatch(dataDocActions.unfavoriteDataDoc(dataDoc.id)),
+        []
+    );
+
+    return (
+        <div
+            className={isOver ? 'nav-favorite-dragged-over' : ''}
+            ref={dropRef}
+        >
+            <DataDocNavigatorSection
+                sectionHeader={section}
+                sectionHeaderIcon="heart"
+                dataDocs={dataDocs}
+                selectedDocId={selectedDocId}
+                filterString={filterString}
+                loaded={!!loadedFilterModes[section]}
+                loadDataDocs={load}
+                collapsed={collapsed}
+                setCollapsed={setCollapsed}
+                onRemove={handleUnfavoriteDataDoc}
+                allowReorder
+            />
+        </div>
+    );
+};
+
+const MyDataDocsSection: React.FC<ICommonSectionProps> = (props) => {
+    const { selectedDocId, loadedFilterModes, filterString } = props;
+    const section = 'mine';
+    const { collapsed, setCollapsed, load } = useCommonNavigatorState(
+        section,
+        props
+    );
+    const dataDocs = useSelector(dataDocsMineSelector);
+
+    return (
+        <DataDocNavigatorSection
+            sectionHeader="all my docs"
+            sectionHeaderIcon="file-text"
+            dataDocs={dataDocs}
+            selectedDocId={selectedDocId}
+            filterString={filterString}
+            loaded={!!loadedFilterModes[section]}
+            loadDataDocs={load}
+            collapsed={collapsed}
+            setCollapsed={setCollapsed}
+            allowReorder
+        />
     );
 };
