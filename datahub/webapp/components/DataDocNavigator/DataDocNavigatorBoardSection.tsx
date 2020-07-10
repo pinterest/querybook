@@ -119,7 +119,7 @@ export const DataDocNavigatorBoardSection: React.FC<INavigatorBoardSectionProps>
     const sectionHeader = (
         <Level className="pl8 navigator-board-header">
             <div className="flex1 flex-row" onClick={toggleCollapsed}>
-                <Icon name="list" className="mr4" size={18} />
+                <Icon name="list" className="mr8" size={18} />
                 <Title size={7}>Lists</Title>
             </div>
 
@@ -237,7 +237,7 @@ const NavigatorBoardView: React.FunctionComponent<{
     });
 
     const headerSectionDOM = (
-        <div className="horizontal-space-between board-header-section pl8 ml4">
+        <div className="horizontal-space-between board-header-section pl12">
             <div
                 onClick={() => setCollapsed(!collapsed)}
                 className="board-header-title flex1"
@@ -449,7 +449,13 @@ const BoardExpandableList: React.FunctionComponent<{
                             isRow
                         >
                             <Icon size={16} className="mr4" name={icon} />
-                            <span className="ListLinkText">{title}</span>
+                            {title.length ? (
+                                <span className="ListLinkText">{title}</span>
+                            ) : (
+                                <span className="ListLinkPlaceholder">
+                                    Untitled
+                                </span>
+                            )}
                             <IconButton
                                 className="delete-board-item-button"
                                 noPadding

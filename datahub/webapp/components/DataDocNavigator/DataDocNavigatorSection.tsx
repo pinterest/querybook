@@ -107,7 +107,7 @@ export const DataDocNavigatorSection: React.FC<INavigatorSectionProps> = ({
                 onClick={() => setCollapsed(!collapsed)}
             >
                 {sectionHeaderIcon && (
-                    <Icon size={18} className="mr4" name={sectionHeaderIcon} />
+                    <Icon size={18} className="mr8" name={sectionHeaderIcon} />
                 )}
                 <Title size={7}>{sectionHeader}</Title>
             </div>
@@ -130,6 +130,7 @@ export const DataDocNavigatorSection: React.FC<INavigatorSectionProps> = ({
                 <IconButton
                     onClick={() => setCollapsed(!collapsed)}
                     icon={collapsed ? 'chevron-right' : 'chevron-down'}
+                    className="ml4"
                 />
             </div>
         </div>
