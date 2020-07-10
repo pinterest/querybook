@@ -105,7 +105,7 @@ export const DataDocNavigator: React.FC<{}> = ({}) => {
                     collapsed={boardsCollapsed}
                     setCollapsed={setBoardsCollapsed}
                 />
-                <MineDataDocsSection {...commonSectionProps} />
+                <MyDataDocsSection {...commonSectionProps} />
             </div>
         </div>
     );
@@ -180,7 +180,7 @@ const RecentDataDocsSection: React.FC<ICommonSectionProps> = (props) => {
 
 const FavoriteDataDocsSection: React.FC<ICommonSectionProps> = (props) => {
     const { selectedDocId, loadedFilterModes, filterString } = props;
-    const section = 'favorite';
+    const section = 'favorites';
     const { collapsed, setCollapsed, load } = useCommonNavigatorState(
         section,
         props
@@ -248,7 +248,7 @@ const FavoriteDataDocsSection: React.FC<ICommonSectionProps> = (props) => {
     );
 };
 
-const MineDataDocsSection: React.FC<ICommonSectionProps> = (props) => {
+const MyDataDocsSection: React.FC<ICommonSectionProps> = (props) => {
     const { selectedDocId, loadedFilterModes, filterString } = props;
     const section = 'mine';
     const { collapsed, setCollapsed, load } = useCommonNavigatorState(
