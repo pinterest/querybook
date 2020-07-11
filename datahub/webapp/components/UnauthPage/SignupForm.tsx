@@ -50,7 +50,7 @@ export const SignupForm: React.FunctionComponent<ISignupFormProps> = ({
             }}
             onSubmit={({ username, password, email }) =>
                 ds
-                    .save('/user/', {
+                    .save('/signup/', {
                         username,
                         password,
                         email,

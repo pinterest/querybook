@@ -1,22 +1,18 @@
-import React, { useCallback } from 'react';
+import React from 'react';
 import { useSelector, useDispatch } from 'react-redux';
-
+import ds from 'lib/datasource';
 import { UnauthPage } from 'components/UnauthPage/UnauthPage';
-
 import * as UserActions from 'redux/user/action';
-
 import { IStoreState, Dispatch } from 'redux/store/types';
 import { Loader } from 'ui/Loader/Loader';
 import { ErrorPage } from 'ui/ErrorPage/ErrorPage';
 import { formatError } from 'lib/utils/error';
-import { useGlobalState } from 'hooks/redux/useGlobalState';
-import { Modal } from 'ui/Modal/Modal';
-import { Title } from 'ui/Title/Title';
 
 export const UserLoader: React.FunctionComponent = ({ children }) => {
     const [showUnauthPage, setShowUnauth] = React.useState(false);
+    const [showSignup, setShowSignup] = React.useState(false);
+
     const [fetchError, setFetchError] = React.useState(null);
-    const [sessionExpired] = useGlobalState('sessionExpired', false);
 
     const myUserInfo = useSelector(
         (state: IStoreState) => state.user.myUserInfo
@@ -27,15 +23,27 @@ export const UserLoader: React.FunctionComponent = ({ children }) => {
         dispatch(UserActions.getUserSettingLocal());
     }, []);
 
-    const refreshPage = useCallback(() => window.location.reload(), []);
-    const fetchUserInfo = React.useCallback(() => {
-        dispatch(UserActions.loginUser()).then(null, (e) => {
+    const fetchUserInfo = React.useCallback(async () => {
+        try {
+            await dispatch(UserActions.loginUser());
+        } catch (e) {
             if (e?.response?.status === 401) {
-                setShowUnauth(true);
+                try {
+                    const {
+                        data: { has_login, has_signup },
+                    } = await ds.fetch<{
+                        has_login: boolean;
+                        has_signup: boolean;
+                    }>(`/user/login_method/`);
+                    setShowSignup(has_signup);
+                    setShowUnauth(has_login);
+                } catch (e2) {
+                    setFetchError(e2);
+                }
             } else {
                 setFetchError(e);
             }
-        });
+        }
     }, []);
 
     const handleSuccessLogin = React.useCallback(() => {
@@ -51,34 +59,13 @@ export const UserLoader: React.FunctionComponent = ({ children }) => {
         );
     }
 
-    let sessionExpiredDOM = null;
-    if (sessionExpired) {
-        sessionExpiredDOM = (
-            <Modal
-                onHide={() => {
-                    /* Can't be hidden */
-                }}
-                hideClose={true}
-            >
-                <div
-                    className="flex-center mv24"
-                    onClick={refreshPage}
-                    style={{ cursor: 'pointer' }}
-                >
-                    <Title size={5}>
-                        Your session has expired. Click HERE to refresh the
-                        page.
-                    </Title>
-                </div>
-            </Modal>
-        );
-    }
-
     return showUnauthPage ? (
-        <UnauthPage onSuccessLogin={handleSuccessLogin} />
+        <UnauthPage
+            showSignUp={showSignup}
+            onSuccessLogin={handleSuccessLogin}
+        />
     ) : (
         <Loader item={myUserInfo} itemLoader={fetchUserInfo}>
-            {sessionExpiredDOM}
             {children}
         </Loader>
     );

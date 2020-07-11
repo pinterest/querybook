@@ -17,7 +17,7 @@ import flask_login
 from flask_login import current_user
 
 from app.db import with_session, DBSession
-from app.datasource import register
+
 from logic.user import get_user_by_name, create_user
 from .utils import AuthenticationError, AuthUser, DataHubLoginManager
 
@@ -52,7 +52,6 @@ def authenticate(username, password, session=None):
     return AuthUser(user)
 
 
-@register("/login/", methods=["POST"], require_auth=False)
 def login_user_endpoint(username, password):
     if current_user.is_authenticated:
         return
@@ -64,20 +63,18 @@ def login_user_endpoint(username, password):
         return user
 
 
+def signup_user_endpoint(username, password, email):
+    with DBSession() as session:
+        user = create_user(
+            username=username, password=password, email=email, session=session
+        )
+        flask_login.login_user(AuthUser(user))
+
+        return user
+
+
 def init_app(app):
     login_manager.init_app(app)
-
-    @register("/user/", methods=["POST"], require_auth=False)
-    def register_user(username, password, email):
-        with DBSession() as session:
-            user = create_user(
-                username=username, password=password, email=email, session=session
-            )
-            flask_login.login_user(AuthUser(user))
-
-            return user
-
-    register_user  # linter
 
 
 def login(request):
