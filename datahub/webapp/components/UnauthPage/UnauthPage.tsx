@@ -13,6 +13,7 @@ import { Message } from 'ui/Message/Message';
 
 export interface IUnauthPageProps {
     onSuccessLogin: () => any;
+    showSignUp: boolean;
 }
 
 export interface IUnauthPageState {
@@ -41,45 +42,50 @@ export class UnauthPage extends React.Component<
     }
 
     public render() {
-        const { onSuccessLogin } = this.props;
+        const { onSuccessLogin, showSignUp } = this.props;
         const { tabKey } = this.state;
 
         const form =
-            tabKey === 'Login' ? (
+            tabKey === 'Login' || !showSignUp ? (
                 <LoginForm onSuccessLogin={onSuccessLogin} />
             ) : (
                 <SignupForm onSuccessLogin={onSuccessLogin} />
             );
 
+        // This warning message is for whomever is using password_auth
+        // as it is an insecure way to register and use DataHub
+        const dataHubWarningMessage = showSignUp && (
+            <div className="mb24">
+                <Message type="error">
+                    <p>
+                        NOTE: This signup/login flow for DataHub is only for
+                        people who wants to temporarily try out DataHub.
+                    </p>
+                    <p>
+                        The user name and password (as salted hash) information
+                        is only stored in the DataHub Database and is not passed
+                        anywhere.
+                    </p>
+                    <p>
+                        Please use OAuth or other login methods for production.
+                    </p>
+                </Message>
+            </div>
+        );
+
         return (
             <Center>
                 <StyledUnauthPage>
-                    <div className="mb24">
-                        <Message type="error">
-                            <p>
-                                NOTE: This signup/login flow for DataHub is only
-                                for people who wants to temporarily try out
-                                DataHub.
-                            </p>
-                            <p>
-                                The user name and password (as salted hash)
-                                information is only stored in the DataHub
-                                Database and is not passed anywhere.
-                            </p>
-                            <p>
-                                Please use OAuth or other login methods for
-                                production.
-                            </p>
-                        </Message>
-                    </div>
-
+                    {dataHubWarningMessage}
                     <Box>
-                        <Tabs
-                            align="center"
-                            items={UNAUTH_TABS}
-                            selectedTabKey={tabKey}
-                            onSelect={this.handleTabChange}
-                        />
+                        {showSignUp && (
+                            <Tabs
+                                align="center"
+                                items={UNAUTH_TABS}
+                                selectedTabKey={tabKey}
+                                onSelect={this.handleTabChange}
+                            />
+                        )}
                         {form}
                     </Box>
                 </StyledUnauthPage>

@@ -1,4 +1,5 @@
 from flask import abort
+from app.auth import get_login_config
 from flask_login import current_user
 from app.db import DBSession
 from const.datasources import RESOURCE_NOT_FOUND_STATUS_CODE
@@ -9,7 +10,12 @@ from logic import environment as environment_logic
 from logic import admin as admin_logic
 
 
-@register("/user-me/", methods=["GET"])
+@register("/user/login_method/", methods=["GET"], require_auth=False)
+def get_login_method():
+    return get_login_config()
+
+
+@register("/user/me/", methods=["GET"])
 def get_my_user_info():
     with DBSession() as session:
         uid = current_user.id

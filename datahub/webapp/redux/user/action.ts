@@ -17,7 +17,7 @@ export function logoutUser(): ThunkResult<Promise<any>> {
 
 export function loginUser(): ThunkResult<Promise<void>> {
     return (dispatch) =>
-        ds.fetch('/user-me/').then(({ data }) => {
+        ds.fetch('/user/me/').then(({ data }) => {
             if (data) {
                 const {
                     uid,
