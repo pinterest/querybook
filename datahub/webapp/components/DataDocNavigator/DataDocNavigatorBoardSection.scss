@@ -1,3 +1,5 @@
+@import './../../scss_variables.scss';
+
 .NavigatorBoardView {
     &.dragged-over {
         background-color: var(--color-accent-bg-hover);
@@ -6,10 +8,13 @@
     .board-header-section {
         .board-header-title {
             cursor: pointer;
+            overflow: hidden;
+
             .Title {
                 color: var(--light-text-color);
                 text-transform: capitalize;
                 user-select: none;
+                @include one-line-ellipsis();
             }
         }
 
@@ -18,14 +23,13 @@
             align-items: center;
 
             .hover-control-section {
-                visibility: hidden;
-                display: inline-flex;
+                display: none;
             }
         }
 
         &:hover {
             .hover-control-section {
-                visibility: visible;
+                display: inline-flex;
             }
         }
     }

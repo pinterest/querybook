@@ -8,7 +8,7 @@ import { BoardItemType } from 'const/board';
 
 import { BoardCreateUpdateModal } from 'components/BoardCreateUpdateModal/BoardCreateUpdateModal';
 import { getWithinEnvUrl } from 'lib/utils/query-string';
-import { sendNotification, sendConfirm } from 'lib/dataHubUI';
+import { sendNotification } from 'lib/dataHubUI';
 
 import { boardsSelector, makeBoardItemsSelector } from 'redux/board/selector';
 import {
@@ -16,7 +16,6 @@ import {
     deleteBoardItem,
     moveBoardItem,
     fetchBoardIfNeeded,
-    deleteBoard,
     addBoardItem,
 } from 'redux/board/action';
 import { setDataDocNavBoard } from 'redux/dataHubUI/action';
@@ -247,21 +246,6 @@ const NavigatorBoardView: React.FunctionComponent<{
 
             <div className="header-control-section">
                 <span className="hover-control-section">
-                    <IconButton
-                        size={18}
-                        icon="trash"
-                        onClick={() =>
-                            sendConfirm({
-                                onConfirm: () => {
-                                    dispatch(deleteBoard(id));
-                                },
-                                message:
-                                    'Your list will be permanently removed.',
-                            })
-                        }
-                        noPadding
-                        className="mr4"
-                    />
                     <IconButton
                         size={18}
                         icon="edit-3"

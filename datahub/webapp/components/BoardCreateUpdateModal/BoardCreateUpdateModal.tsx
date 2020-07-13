@@ -1,18 +1,19 @@
-import React from 'react';
+import React, { useCallback } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 import * as Yup from 'yup';
 import { Formik, Form } from 'formik';
 
-import { createBoard, updateBoard } from 'redux/board/action';
+import { sendConfirm } from 'lib/dataHubUI';
+import { createBoard, updateBoard, deleteBoard } from 'redux/board/action';
 import { IStoreState, Dispatch } from 'redux/store/types';
 import { Title } from 'ui/Title/Title';
 import { Button } from 'ui/Button/Button';
 import { IStandardModalProps } from 'ui/Modal/types';
 import { Modal } from 'ui/Modal/Modal';
-import './BoardCreateUpdateModal.scss';
 import { IBoardRaw } from 'const/board';
 import { FormWrapper } from 'ui/Form/FormWrapper';
 import { SimpleField } from 'ui/FormikField/SimpleField';
+import './BoardCreateUpdateModal.scss';
 
 const boardFormSchema = Yup.object().shape({
     name: Yup.string().max(255).min(1).required(),
@@ -34,6 +35,14 @@ export const BoardCreateUpdateForm: React.FunctionComponent<IBoardCreateUpdateFo
     const board = isCreateForm
         ? null
         : useSelector((state: IStoreState) => state.board.boardById[boardId]);
+    const handleDeleteBoard = useCallback(() => {
+        sendConfirm({
+            onConfirm: () => {
+                dispatch(deleteBoard(boardId));
+            },
+            message: 'Your list will be permanently removed.',
+        });
+    }, [boardId]);
 
     const formValues = isCreateForm
         ? {
@@ -87,7 +96,14 @@ export const BoardCreateUpdateForm: React.FunctionComponent<IBoardCreateUpdateFo
                                 {nameField}
                                 {descriptionField}
                                 <br />
-                                <div className="flex-right">
+                                <div className="right-align">
+                                    {!isCreateForm && (
+                                        <Button
+                                            onClick={handleDeleteBoard}
+                                            title="Delete"
+                                            type="cancel"
+                                        />
+                                    )}
                                     <Button
                                         disabled={!isValid || isSubmitting}
                                         onClick={submitForm}
