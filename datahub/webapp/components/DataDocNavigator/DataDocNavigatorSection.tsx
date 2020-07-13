@@ -1,8 +1,6 @@
 import React, { useState, useEffect, useMemo } from 'react';
 import * as classNames from 'classnames';
 import { orderBy } from 'lodash';
-import { useSelector, useDispatch } from 'react-redux';
-import { IStoreState } from 'redux/store/types';
 
 import { IDataDoc } from 'const/datadoc';
 import { DataDocGridItem } from './DataDocGridItem';
@@ -137,7 +135,7 @@ export const DataDocNavigatorSection: React.FC<INavigatorSectionProps> = ({
     ) : null;
 
     const dataDocListDOM = collapsed ? null : !loaded ? (
-        <div className="center-align">
+        <div className="center-align mt12 mb4">
             <LoadingIcon />
         </div>
     ) : (
