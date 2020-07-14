@@ -19,7 +19,7 @@ services:
             # Make sure the build files don't leak back
             - /opt/datahub/dist/
             # Local DB for result store
-            - file:/opt/store/
+            - ~/code/datahub/:/opt/store/
     web:
         extends:
             service: base
@@ -32,5 +32,3 @@ services:
         extends:
             service: base
         command: './datahub/scripts/runservice prod_scheduler'
-volumes:
-    file:

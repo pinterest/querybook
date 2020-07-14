@@ -28,7 +28,7 @@ services:
             - /opt/datahub/dist/
             - $PWD/containers/bundled_datahub_config.yaml:/opt/datahub/datahub/config/datahub_config.yaml
             # Local DB for result store
-            - file:/opt/store/
+            - ~/code/datahub/:/opt/store/
         depends_on:
             mysql:
                 condition: service_healthy
@@ -152,4 +152,3 @@ volumes:
     my-db:
     esdata1:
         driver: local
-    file:
