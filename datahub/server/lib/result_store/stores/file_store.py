@@ -8,21 +8,20 @@ from env import DataHubSettings
 # and the 'file' volume code @ bottom
 # host path (currently '/mnt/datahub-store/') can be changed as desired
 # RESULT_STORE_TYPE must be set to 'file'
-# FILE_STORE_PATH must match the second path (currently '/opt/store/')
+
+FILE_STORE_PATH = "/opt/store/"
 
 
 class FileUploader(BaseUploader):
     def __init__(self, uri: str):
         self._uri = uri
-        if not os.path.exists("{}datahub_temp".format(DataHubSettings.FILE_STORE_PATH)):
-            os.makedirs("{}datahub_temp".format(DataHubSettings.FILE_STORE_PATH))
+        if not os.path.exists("{}datahub_temp".format(FILE_STORE_PATH)):
+            os.makedirs("{}datahub_temp".format(FILE_STORE_PATH))
 
     def start(self):
         self._chunks_length = 0
         os.makedirs(
-            "{}datahub_temp/{}".format(
-                DataHubSettings.FILE_STORE_PATH, self._uri.split("/")[1]
-            )
+            "{}datahub_temp/{}".format(FILE_STORE_PATH, self._uri.split("/")[1])
         )
 
     def write(self, data: str):
@@ -45,7 +44,7 @@ class FileUploader(BaseUploader):
 
     @property
     def uri(self):
-        return f"{DataHubSettings.FILE_STORE_PATH}{self._uri}"
+        return f"{FILE_STORE_PATH}{self._uri}"
 
 
 class FileReader(BaseReader):
@@ -74,11 +73,7 @@ class FileReader(BaseReader):
 
     def read_raw(self):
         with open(self.uri) as result_file:
-            reader = csv.reader(result_file)
-            raw_text = ""
-            for row in reader:
-                raw_text += ",".join(row)
-            return raw_text
+            return result_file.read()
 
     def end(self):
         pass
@@ -92,4 +87,4 @@ class FileReader(BaseReader):
 
     @property
     def uri(self):
-        return f"{DataHubSettings.FILE_STORE_PATH}{self._uri}"
+        return f"{FILE_STORE_PATH}{self._uri}"

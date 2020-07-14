@@ -78,8 +78,6 @@ class DataHubSettings(object):
 
     DB_MAX_UPLOAD_SIZE = int(get_dh_config("DB_MAX_UPLOAD_SIZE"))
 
-    FILE_STORE_PATH = get_dh_config("FILE_STORE_PATH")
-
     GOOGLE_CREDS = json.loads(get_dh_config("GOOGLE_CREDS") or "null")
 
     # Logging
