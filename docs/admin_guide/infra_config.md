@@ -48,7 +48,7 @@ Otherwise you can also pass the environment variable directly when launching the
 
     - db: This will keep the query results in the default db set by DATABASE_CONN
     - s3: This will upload the query results on AWS S3
-    - file: This will save the query results as csv files in the host. Host path can be changed in the docker-compose file.
+    - file: This will save the query results as csv files in the host
 
 The following settings are only relevant if you are using `db`, note that all units are in bytes::
 

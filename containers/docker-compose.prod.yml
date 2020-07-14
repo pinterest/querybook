@@ -18,8 +18,7 @@ services:
             - /opt/datahub/node_modules/
             # Make sure the build files don't leak back
             - /opt/datahub/dist/
-            # Local DB for result store
-            - ~/code/datahub/:/opt/store/
+            # - ~/code/datahub/:/opt/store/
     web:
         extends:
             service: base

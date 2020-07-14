@@ -3,6 +3,12 @@ import os
 from lib.result_store.stores.base_store import BaseReader, BaseUploader
 from env import DataHubSettings
 
+# to use, enable docker volume inside docker-compose.yml
+# under services -> base or web -> volumes
+# uncomment line `- ~/code/datahub/:/opt/store/`
+# host path can be changes as desired
+# RESULT_STORE_TYPE must be set to 'file'
+
 
 class FileUploader(BaseUploader):
     def __init__(self, uri: str):
