@@ -4,25 +4,24 @@ from lib.result_store.stores.base_store import BaseReader, BaseUploader
 from env import DataHubSettings
 
 # to use, enable docker volume inside docker-compose.yml
-# under services -> base or web -> volumes
-# uncomment line `- /mnt/datahub-store/:/opt/store/`
-# host path can be changes as desired
+# uncomment lines `- file:/opt/store/`
+# and the 'file' volume code @ bottom
+# host path (currently '/mnt/datahub-store/') can be changed as desired
 # RESULT_STORE_TYPE must be set to 'file'
+# FILE_STORE_PATH must match the second path (currently '/opt/store/')
 
 
 class FileUploader(BaseUploader):
     def __init__(self, uri: str):
         self._uri = uri
-        if not os.path.exists(
-            "{}datahub_temp".format(DataHubSettings.STORE_PATH_PREFIX)
-        ):
-            os.makedirs("{}datahub_temp".format(DataHubSettings.STORE_PATH_PREFIX))
+        if not os.path.exists("{}datahub_temp".format(DataHubSettings.FILE_STORE_PATH)):
+            os.makedirs("{}datahub_temp".format(DataHubSettings.FILE_STORE_PATH))
 
     def start(self):
         self._chunks_length = 0
         os.makedirs(
             "{}datahub_temp/{}".format(
-                DataHubSettings.STORE_PATH_PREFIX, self._uri.split("/")[1]
+                DataHubSettings.FILE_STORE_PATH, self._uri.split("/")[1]
             )
         )
 
@@ -46,7 +45,7 @@ class FileUploader(BaseUploader):
 
     @property
     def uri(self):
-        return f"{DataHubSettings.STORE_PATH_PREFIX}{self._uri}"
+        return f"{DataHubSettings.FILE_STORE_PATH}{self._uri}"
 
 
 class FileReader(BaseReader):
@@ -94,4 +93,4 @@ class FileReader(BaseReader):
 
     @property
     def uri(self):
-        return f"{DataHubSettings.STORE_PATH_PREFIX}{self._uri}"
+        return f"{DataHubSettings.FILE_STORE_PATH}{self._uri}"
