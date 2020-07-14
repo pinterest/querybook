@@ -27,7 +27,7 @@ services:
             # Make sure the build files don't leak back
             - /opt/datahub/dist/
             - $PWD/containers/bundled_datahub_config.yaml:/opt/datahub/datahub/config/datahub_config.yaml
-            # - ~/code/datahub/:/opt/store/
+            # - /mnt/datahub-store/:/opt/store/
         depends_on:
             mysql:
                 condition: service_healthy

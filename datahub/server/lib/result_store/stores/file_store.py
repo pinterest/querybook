@@ -5,7 +5,7 @@ from env import DataHubSettings
 
 # to use, enable docker volume inside docker-compose.yml
 # under services -> base or web -> volumes
-# uncomment line `- ~/code/datahub/:/opt/store/`
+# uncomment line `- /mnt/datahub-store/:/opt/store/`
 # host path can be changes as desired
 # RESULT_STORE_TYPE must be set to 'file'
 
