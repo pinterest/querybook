@@ -20,6 +20,7 @@ services:
             # Make sure the build files don't leak back
             - /opt/datahub/dist/
             # - ~/code/datahub/:/opt/store/
+    web:
         extends:
             service: base
         command: './datahub/scripts/docker_run_interactive ./datahub/scripts/runservice web ${PORT-10001}'
