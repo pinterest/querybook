@@ -27,6 +27,8 @@ services:
             # Make sure the build files don't leak back
             - /opt/datahub/dist/
             - $PWD/containers/bundled_datahub_config.yaml:/opt/datahub/datahub/config/datahub_config.yaml
+            # Local DB for result store
+            - file:/opt/store/
         depends_on:
             mysql:
                 condition: service_healthy
@@ -87,7 +89,6 @@ services:
             interval: 30s
             timeout: 10s
             retries: 3
-
     mysql:
         image: mysql:5.7
         restart: always
@@ -151,3 +152,4 @@ volumes:
     my-db:
     esdata1:
         driver: local
+    file:

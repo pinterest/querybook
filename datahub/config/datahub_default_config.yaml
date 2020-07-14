@@ -40,7 +40,8 @@ OAUTH_TOKEN_URL: ~
 OAUTH_USER_PROFILE: ~
 
 # --------------- Result Store ---------------
-RESULT_STORE_TYPE: db
+# RESULT_STORE_TYPE: db
+RESULT_STORE_TYPE: file
 
 # Following settings are relevant to s3
 STORE_BUCKET_NAME: ~
