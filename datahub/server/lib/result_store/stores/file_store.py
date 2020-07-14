@@ -37,7 +37,7 @@ class FileUploader(BaseUploader):
         self._chunks_length += data_len
         with open(self.uri, "a") as result_file:
             writer = csv.writer(result_file, delimiter=",")
-            writer.writerow(data[:-1].split(","))
+            writer.writerow(data.split(","))
         return True
 
     def end(self):
@@ -57,8 +57,7 @@ class FileReader(BaseReader):
 
     def read_csv(self, number_of_lines: int):
         with open(self.uri) as result_file:
-            reader = csv.reader(result_file)
-            return list(reader)
+            return result_file.read()
 
     def read_lines(self, number_of_lines: int):
         with open(self.uri) as result_file:
