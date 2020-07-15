@@ -211,17 +211,19 @@ def send_out_notification(query_execution_id):
                     doc_id = data_cell.doc.id
                     query_title = data_cell.meta.get("title", query_title)
 
-                markdown_message = generate_query_completion_notification(user, env_name, query_execution, query_title,
-                                                                          doc_id,
-                                                                          cell_id)
+                markdown_message = generate_query_completion_notification(
+                    user, env_name, query_execution, query_title, doc_id, cell_id
+                )
                 notifier = get_notifier_class(notification_setting)
                 message = notifier.convert(markdown_message)
-                subject = '"{}" query has finished! (Query #{})'.format(query_title, query_execution.id)
+                subject = '"{}" query has finished! (Query #{})'.format(
+                    query_title, query_execution.id
+                )
                 notifier.notify(user=user, message=message, subject=subject)
 
 
 def generate_query_completion_notification(
-        user, env_name, query_execution, query_title, doc_id, cell_id
+    user, env_name, query_execution, query_title, doc_id, cell_id
 ):
     md = render_message(
         "query_completion_notification.md",

@@ -14,7 +14,7 @@ Notifiers provide the option for users to be notified upon completion of their q
 
 ## Implementation
 
-To keep the notification process standardized, please create an notifier under <project_root>/datahub/server/lib/notify/notifiers. 
+To keep the notification process standardized, please create an notifier under <project_root>/datahub/server/lib/notify/notifiers.
 All notifiers must inherit from BaseNotifier that lives in <project_root>/datahub/server/lib/notify/base_notifier.py.
 
 Here are some fields of notifier that you must configure in the setup process:
@@ -24,7 +24,7 @@ Here are some fields of notifier that you must configure in the setup process:
     - `markdown`
     - `plaintext`
     -  `html`
--   notify(user, message, subject): This is the actual notification sending function.  User is provided for access to the information of the user that 
+-   notify(user, message, subject): This is the actual notification sending function.  User is provided for access to the information of the user that
 the notification is being sent to. Message is the message that will be sent and should be converted to the notifier format. Subject is
 used as a heading for the notification, which is useful for services like email which use a subject line.
 

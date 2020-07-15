@@ -10,7 +10,7 @@ import { Select, makeSelectOptions } from 'ui/Select/Select';
 import './UserSettingsMenu.scss';
 import { availableEnvironmentsSelector } from 'redux/environment/selector';
 import { Tabs } from 'ui/Tabs/Tabs';
-import {notificationServiceSelector} from 'redux/notificationService/selector';
+import { notificationServiceSelector } from 'redux/notificationService/selector';
 
 type UseerSettingsTab = 'general' | 'editor';
 const userSettingConfig: Record<
@@ -84,7 +84,8 @@ export const UserSettingsMenu: React.FunctionComponent<{}> = () => {
                     }))
                 );
             } else if (key === 'notification_preference') {
-                return makeSelectOptions(notifiers.map((notifier) => ({
+                return makeSelectOptions(
+                    notifiers.map((notifier) => ({
                         value: notifier.name,
                         key: notifier.name,
                     }))

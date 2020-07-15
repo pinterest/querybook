@@ -1,4 +1,4 @@
-import { ThunkResult } from "redux/user/types";
+import { ThunkResult } from 'redux/user/types';
 import ds from 'lib/datasource';
 
 export function fetchNotifiers(): ThunkResult<Promise<any>> {

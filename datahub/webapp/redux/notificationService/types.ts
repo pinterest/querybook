@@ -1,12 +1,10 @@
 import { Action } from 'redux';
 
-export type  NotificationServiceAction =
-    | IReceiveNotifiers
+export type NotificationServiceAction = IReceiveNotifiers;
 
 export interface INotificationState {
-    notificationServices: []
+    notificationServices: INotifier[];
 }
-
 
 export interface INotifier {
     name: string;

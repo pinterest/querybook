@@ -115,7 +115,7 @@ def _make_query_execution_task(
 
 @celery.task
 def on_datadoc_run_success(
-        last_query_status, **kwargs,
+    last_query_status, **kwargs,
 ):
     is_success = last_query_status == QueryExecutionStatus.DONE.value
     error_msg = None if is_success else GENERIC_QUERY_FAILURE_MSG
@@ -124,7 +124,7 @@ def on_datadoc_run_success(
 
 @celery.task
 def on_datadoc_run_failure(
-        request, exc, traceback, **kwargs,
+    request, exc, traceback, **kwargs,
 ):
     error_msg = "DataDoc failed to run. Task {0!r} raised error: {1!r}".format(
         request.id, exc
@@ -178,10 +178,7 @@ def on_datadoc_completion(
         )
         if should_notify and notify_with is not None:
             subject, markdown_message = create_completion_message(
-                doc_id,
-                is_success,
-                export_url,
-                error_msg=error_msg,
+                doc_id, is_success, export_url, error_msg=error_msg,
             )
             user = User.get(id=user_id)
             notifier = get_notifier_class(notify_with)
@@ -195,9 +192,7 @@ def on_datadoc_completion(
     return is_success
 
 
-def create_completion_message(
-        doc_id, is_success, export_url, error_msg=''
-):
+def create_completion_message(doc_id, is_success, export_url, error_msg=""):
     doc_title = None
     doc_url = None
     with DBSession() as session:
@@ -205,14 +200,17 @@ def create_completion_message(
         doc_title = datadoc.title or "Untitled"
         env_name = datadoc.environment.name
         doc_url = f"{DataHubSettings.PUBLIC_URL}/{env_name}/datadoc/{doc_id}/"
-    content = render_message("datadoc_completion_notification.md", dict(
-        is_success=is_success,
-        doc_title=doc_title,
-        doc_url=doc_url,
-        doc_id=doc_id,
-        export_url=export_url,
-        error_msg=error_msg
-    ))
+    content = render_message(
+        "datadoc_completion_notification.md",
+        dict(
+            is_success=is_success,
+            doc_title=doc_title,
+            doc_url=doc_url,
+            doc_id=doc_id,
+            export_url=export_url,
+            error_msg=error_msg,
+        ),
+    )
     subject = "{status}: {doc_title} has finished!".format(
         status="Success" if is_success else "Failure", doc_title=doc_title
     )

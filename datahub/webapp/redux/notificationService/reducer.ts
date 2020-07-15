@@ -1,9 +1,8 @@
 import { INotificationState, NotificationServiceAction } from './types';
 import { produce } from 'immer';
 
-
 const initialState: INotificationState = {
-    notificationServices: []
+    notificationServices: [],
 };
 
 export default function notifications(
@@ -13,10 +12,10 @@ export default function notifications(
     return produce(state, (draft) => {
         switch (action.type) {
             case '@@notificationService/RECEIVE_NOTIFIERS': {
-                draft.notificationServices = action.payload.notificationServices;
+                draft.notificationServices =
+                    action.payload.notificationServices;
             }
         }
         return;
-    })
-
+    });
 }

@@ -5,11 +5,11 @@ from email.mime.text import MIMEText
 from env import DataHubSettings
 from lib.notify.base_notifier import BaseNotifier
 from lib.logger import get_logger
+
 LOG = get_logger(__file__)
 
 
 class EmailNotifier(BaseNotifier):
-
     @property
     def notifier_name(self):
         return "email"

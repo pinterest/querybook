@@ -10,8 +10,8 @@ import {
 } from 'react-router-dom';
 
 import * as EnvironmentActions from 'redux/environment/action';
-import {fetchExporters} from 'redux/queryExecutions/action';
-import {fetchNotifiers} from 'redux/notificationService/action'
+import { fetchExporters } from 'redux/queryExecutions/action';
+import { fetchNotifiers } from 'redux/notificationService/action';
 
 import {
     currentEnvironmentSelector,

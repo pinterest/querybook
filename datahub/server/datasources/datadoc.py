@@ -428,15 +428,17 @@ def send_add_datadoc_editor_email(doc_id, uid, read, write, session=None):
     read_or_write = "edit" if write else "view"
     data_doc_title = data_doc.title or "Untitled"
 
-    doc_url = f'{DataHubSettings.PUBLIC_URL}/{environment.name}/datadoc/{doc_id}/'
-    markdown_message = render_message("datadoc_invitation.md",
-                                      dict(
-                                          username=invited_user.get_name().capitalize(),
-                                          inviting_username=inviting_username,
-                                          read_or_write=read_or_write,
-                                          doc_url=doc_url,
-                                          data_doc_title=data_doc_title,
-                                      ), )
+    doc_url = f"{DataHubSettings.PUBLIC_URL}/{environment.name}/datadoc/{doc_id}/"
+    markdown_message = render_message(
+        "datadoc_invitation.md",
+        dict(
+            username=invited_user.get_name().capitalize(),
+            inviting_username=inviting_username,
+            read_or_write=read_or_write,
+            doc_url=doc_url,
+            data_doc_title=data_doc_title,
+        ),
+    )
     notifier = get_notifier_class("email")
     message = notifier.convert(markdown_message)
     subject = f'{inviting_username} has invited you to {read_or_write} DataDoc "{data_doc_title}"'

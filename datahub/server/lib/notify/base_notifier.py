@@ -43,7 +43,7 @@ class BaseNotifier(metaclass=ABCMeta):
             return markdown2.markdown(message)
         elif self.notifier_format == "plaintext":
             html = markdown2.markdown(message)
-            soup = BeautifulSoup(html, 'html.parser')
+            soup = BeautifulSoup(html, "html.parser")
             text = soup.text
             return text
         else:
