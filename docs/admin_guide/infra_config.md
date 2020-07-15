@@ -13,9 +13,11 @@ Eventhrough DataHub can be launched without any configuration, it is absolutely 
 ### Making custom configs
 
 There are two ways to pass custom configs to DataHub. The first way is using a custom config yaml file. You can write out the file and then pass it through datahub using docker volumes. For example you can add this in the docker-compose file:
+
 ```yaml
-    - path_to_my_custom_config.yaml:/opt/datahub/datahub/config/datahub_config.yaml
+- path_to_my_custom_config.yaml:/opt/datahub/datahub/config/datahub_config.yaml
 ```
+
 Otherwise you can also pass the environment variable directly when launching the docker image. The order of precedence for a config settings is as the follows:
 
 1. Environment variables (highest priority)
@@ -46,6 +48,7 @@ Otherwise you can also pass the environment variable directly when launching the
 
     - db: This will keep the query results in the default db set by DATABASE_CONN
     - s3: This will upload the query results on AWS S3
+    - file: This will save the query results as csv files in the host
 
 The following settings are only relevant if you are using `db`, note that all units are in bytes::
 
@@ -53,12 +56,12 @@ The following settings are only relevant if you are using `db`, note that all un
 
 The following settings are only relevant if you are using `s3` or `gcs` (Google Cloud Storage), note that all units are in bytes:
 
-- `STORE_BUCKET_NAME` (optional): The Bucket name
-- `STORE_PATH_PREFIX` (optional, defaults to **''**): Key/Blob prefix for DataHub's stored results/logs
-- `STORE_MIN_UPLOAD_CHUNK_SIZE` (optional, defaults to **10485760**): The chunk size when uploading
-- `STORE_MAX_UPLOAD_CHUNK_NUM` (optional, defaults to **10000**): The number of chunks that can be uploaded, you can determine the maximum upload size by multiplying this with chunk size.
-- `STORE_READ_SIZE` (optional, defaults to 131072): The size of chunk when reading from store.
-- `STORE_MAX_READ_SIZE` (optional, defaults to 5242880): The max size of file DataHub will read for users to view.
+-   `STORE_BUCKET_NAME` (optional): The Bucket name
+-   `STORE_PATH_PREFIX` (optional, defaults to **''**): Key/Blob prefix for DataHub's stored results/logs
+-   `STORE_MIN_UPLOAD_CHUNK_SIZE` (optional, defaults to **10485760**): The chunk size when uploading
+-   `STORE_MAX_UPLOAD_CHUNK_NUM` (optional, defaults to **10000**): The number of chunks that can be uploaded, you can determine the maximum upload size by multiplying this with chunk size.
+-   `STORE_READ_SIZE` (optional, defaults to 131072): The size of chunk when reading from store.
+-   `STORE_MAX_READ_SIZE` (optional, defaults to 5242880): The max size of file DataHub will read for users to view.
 
 ### Logging
 
@@ -75,11 +78,11 @@ You can also supply any custom authentication added in the auth plugin. See "Add
 
 the next few configurations are only relevant if you are using OAuth based authentication:
 
-- `OAUTH_CLIENT_ID`(**required**)
-- `OAUTH_CLIENT_SECRET` (**required**)
-- `OAUTH_AUTHORIZATION_URL` (**required**): Url for oauth redirection
-- `OAUTH_TOKEN_URL` (**required**): Url to get the oauth token
-- `OAUTH_USER_PROFILE` (**required**): Url to get the user profile
+-   `OAUTH_CLIENT_ID`(**required**)
+-   `OAUTH_CLIENT_SECRET` (**required**)
+-   `OAUTH_AUTHORIZATION_URL` (**required**): Url for oauth redirection
+-   `OAUTH_TOKEN_URL` (**required**): Url to get the oauth token
+-   `OAUTH_USER_PROFILE` (**required**): Url to get the user profile
 
 If you want to force the user to login again after a certain time, you can the following variable:
 

@@ -82,14 +82,14 @@ class BaseReader(ABC):
         pass
 
     @abstractmethod
-    def read_lines(self, number_of_lines: int) -> str:
+    def read_lines(self, number_of_lines: int) -> List[str]:
         """Read the string file per line
 
         Arguments:
             number_of_lines {int} -- the number of lines to return
 
         Returns:
-            str -- the parsed file
+            List[str] -- the parsed file
         """
         pass
 
