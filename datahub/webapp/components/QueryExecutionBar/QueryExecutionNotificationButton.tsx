@@ -68,7 +68,7 @@ export const QueryExecutionNotificationButton: React.FunctionComponent<IProps> =
         >
             <i className={iconClass} />
             <span
-                aria-label={`${notificationPreference} me when finish`}
+                aria-label={`${notificationPreference} me when finished`}
                 data-balloon-pos={'up'}
                 className="ml8"
             >

@@ -1,18 +1,18 @@
 import traceback
 
+from app.db import with_session, DBSession
+from app.flask_app import celery
 from celery.contrib.abortable import AbortableTask
 from celery.exceptions import SoftTimeLimitExceeded
 from celery.utils.log import get_task_logger
-
-from app.db import with_session, DBSession
-from app.flask_app import celery
 from const.query_execution import QueryExecutionStatus
 from env import DataHubSettings
 from lib.config import get_config_value
-from lib.notification import simple_email, send_slack_message, render_html
+from lib.notify.all_notifiers import get_notifier_class
 from lib.query_analysis import get_statement_ranges
 from lib.query_analysis.lineage import process_query
 from lib.query_executor.all_executors import get_executor_class, parse_exception
+from lib.utils.utils import render_message
 from logic import (
     admin as admin_logic,
     query_execution as qe_logic,
@@ -211,67 +211,31 @@ def send_out_notification(query_execution_id):
                     doc_id = data_cell.doc.id
                     query_title = data_cell.meta.get("title", query_title)
 
-                if notification_setting == "email":
-                    # Email
-                    send_query_completion_email(
-                        user, env_name, query_execution, query_title, doc_id, cell_id
-                    )
-                else:
-                    # Slack
-                    send_query_completion_slack(
-                        user, env_name, query_execution, query_title, doc_id, cell_id
-                    )
+                markdown_message = generate_query_completion_notification(user, env_name, query_execution, query_title,
+                                                                          doc_id,
+                                                                          cell_id)
+                notifier = get_notifier_class(notification_setting)
+                message = notifier.convert(markdown_message)
+                subject = '"{}" query has finished! (Query #{})'.format(query_title, query_execution.id)
+                notifier.notify(user=user, message=message, subject=subject)
 
 
-def send_query_completion_email(
-    user, env_name, query_execution, query_title, doc_id, cell_id
+def generate_query_completion_notification(
+        user, env_name, query_execution, query_title, doc_id, cell_id
 ):
-    html = render_html(
-        "query_completion_notification.html",
+    md = render_message(
+        "query_completion_notification.md",
         dict(
             username=user.username,
             query_execution=query_execution,
             doc_id=doc_id,
             cell_id=cell_id,
+            query_title=query_title,
             public_url=DataHubSettings.PUBLIC_URL,
             env_name=env_name,
         ),
     )
-
-    simple_email(
-        '"{}" query has finished! (Query #{})'.format(query_title, query_execution.id),
-        html,
-        to_email=user.email,
-    )
-
-
-def send_query_completion_slack(
-    user, env_name, query_execution, query_title, doc_id, cell_id
-):
-    query_status = (
-        "Finished" if query_execution.status == QueryExecutionStatus.DONE else "Failed"
-    )
-    data_doc_link = (
-        "Here is the url to the datadoc: {}".format(
-            f"{DataHubSettings.PUBLIC_URL}/{env_name}/datadoc/{doc_id}/?cellId={cell_id}&executionId={query_execution.id}"
-        )
-        if doc_id and cell_id
-        else ""
-    )
-    execution_link = "Here is the url to the execution: {}".format(
-        f"{DataHubSettings.PUBLIC_URL}/{env_name}/query_execution/{query_execution.id}/"
-    )
-
-    message = """{status}: "{title}" (Query Id {id}) has completed!
-{doc_link}
-{exec_link}""".format(
-        status=query_status,
-        title=query_title,
-        id=query_execution.id,
-        doc_link=data_doc_link,
-        exec_link=execution_link,
-    )
-    send_slack_message(to=f"@{user.username}", message=message)
+    return md
 
 
 class AlreadyExecutedException(Exception):

@@ -8,6 +8,7 @@ import dataSources from '../dataSources/reducer';
 import dataTableSearch from '../dataTableSearch/reducer';
 import environment from '../environment/reducer';
 import globalState from '../globalState/reducer';
+import notificationService from '../notificationService/reducer'
 import queryEngine from '../queryEngine/reducer';
 import queryExecutions from '../queryExecutions/reducer';
 import querySnippets from '../querySnippets/reducer';
@@ -24,6 +25,7 @@ export default combineReducers({
     dataTableSearch,
     environment,
     globalState,
+    notificationService,
     queryEngine,
     queryExecutions,
     querySnippets,

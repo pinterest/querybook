@@ -10,6 +10,7 @@ import { Select, makeSelectOptions } from 'ui/Select/Select';
 import './UserSettingsMenu.scss';
 import { availableEnvironmentsSelector } from 'redux/environment/selector';
 import { Tabs } from 'ui/Tabs/Tabs';
+import {notificationServiceSelector} from 'redux/notificationService/selector';
 
 type UseerSettingsTab = 'general' | 'editor';
 const userSettingConfig: Record<
@@ -38,6 +39,7 @@ export const UserSettingsMenu: React.FunctionComponent<{}> = () => {
     );
     const availableEnvironments = useSelector(availableEnvironmentsSelector);
     const queryEngines = useSelector(queryEngineSelector);
+    const notifiers = useSelector(notificationServiceSelector);
 
     const dispatch = useDispatch();
     const setUserSettings = React.useCallback(
@@ -79,6 +81,12 @@ export const UserSettingsMenu: React.FunctionComponent<{}> = () => {
                     availableEnvironments.map((env) => ({
                         value: env.name,
                         key: env.id,
+                    }))
+                );
+            } else if (key === 'notification_preference') {
+                return makeSelectOptions(notifiers.map((notifier) => ({
+                        value: notifier.name,
+                        key: notifier.name,
                     }))
                 );
             }

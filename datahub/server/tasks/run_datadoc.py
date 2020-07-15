@@ -1,23 +1,21 @@
-from celery import chain
-
-from app.flask_app import celery
 from app.db import DBSession
-
+from app.flask_app import celery
+from celery import chain
 from const.data_doc import DataCellType
-from const.schedule import NotifyOn, TaskRunStatus
 from const.query_execution import QueryExecutionStatus
+from const.schedule import NotifyOn, TaskRunStatus
 from env import DataHubSettings
 from lib.export.all_exporters import get_exporter
-from lib.notification import simple_email, send_slack_message, render_html
-from lib.query_analysis.templating import render_templated_query
 from lib.logger import get_logger
-
+from lib.notify.all_notifiers import get_notifier_class
+from lib.query_analysis.templating import render_templated_query
+from lib.utils.utils import render_message
+from logic import datadoc as datadoc_logic
+from logic import query_execution as qe_logic
 from logic.schedule import (
     create_task_run_record_for_celery_task,
     update_task_run_record,
 )
-from logic import datadoc as datadoc_logic
-from logic import query_execution as qe_logic
 from models.user import User
 from tasks.run_query import run_query_task
 
@@ -117,7 +115,7 @@ def _make_query_execution_task(
 
 @celery.task
 def on_datadoc_run_success(
-    last_query_status, **kwargs,
+        last_query_status, **kwargs,
 ):
     is_success = last_query_status == QueryExecutionStatus.DONE.value
     error_msg = None if is_success else GENERIC_QUERY_FAILURE_MSG
@@ -126,7 +124,7 @@ def on_datadoc_run_success(
 
 @celery.task
 def on_datadoc_run_failure(
-    request, exc, traceback, **kwargs,
+        request, exc, traceback, **kwargs,
 ):
     error_msg = "DataDoc failed to run. Task {0!r} raised error: {1!r}".format(
         request.id, exc
@@ -179,26 +177,16 @@ def on_datadoc_completion(
             or (notify_on == NotifyOn.ON_FAILURE.value and not is_success)
         )
         if should_notify and notify_with is not None:
-            msg_header, msg_content = create_completion_message(
+            subject, markdown_message = create_completion_message(
                 doc_id,
                 is_success,
                 export_url,
-                use_html=(notify_with == "email"),
                 error_msg=error_msg,
             )
             user = User.get(id=user_id)
-            if notify_with == "slack":
-                send_slack_message(
-                    to=f"@{user.username}",
-                    message="{}\n{}".format(msg_header, msg_content),
-                )
-            elif notify_with == "email":
-                html = render_html(
-                    "datadoc_completion_notification.html", dict(message=msg_content),
-                )
-                simple_email(
-                    msg_header, html, to_email=user.email,
-                )
+            notifier = get_notifier_class(notify_with)
+            message = notifier.convert(markdown_message)
+            notifier.notify(user=user, message=message, subject=subject)
     except Exception as e:
         is_success = False
         # error_msg = str(e)
@@ -208,32 +196,25 @@ def on_datadoc_completion(
 
 
 def create_completion_message(
-    doc_id, is_success, export_url, use_html=False, error_msg=None
+        doc_id, is_success, export_url, error_msg=''
 ):
-    def htmlize(url: str):
-        if use_html and url:
-            return '<a href="{url}">{url}</a>'.format(url=url)
-        return url
-
-    export_url = htmlize(export_url)
-
     doc_title = None
     doc_url = None
     with DBSession() as session:
         datadoc = datadoc_logic.get_data_doc_by_id(doc_id, session=session)
         doc_title = datadoc.title or "Untitled"
         env_name = datadoc.environment.name
-        doc_url = htmlize(
-            "{}".format(f"{DataHubSettings.PUBLIC_URL}/{env_name}/datadoc/{doc_id}/")
-        )
-
-    header = "{status}: {doc_title} has finished!".format(
+        doc_url = f"{DataHubSettings.PUBLIC_URL}/{env_name}/datadoc/{doc_id}/"
+    content = render_message("datadoc_completion_notification.md", dict(
+        is_success=is_success,
+        doc_title=doc_title,
+        doc_url=doc_url,
+        doc_id=doc_id,
+        export_url=export_url,
+        error_msg=error_msg
+    ))
+    subject = "{status}: {doc_title} has finished!".format(
         status="Success" if is_success else "Failure", doc_title=doc_title
     )
-    content = "Here is the url to the doc: {}.".format(doc_url)
-    if export_url is not None:
-        content += " Here is the exported query result url: {}.".format(export_url)
-    elif not is_success:
-        content += " The failure reason: {}.".format(error_msg or "")
 
-    return header, content
+    return subject, content

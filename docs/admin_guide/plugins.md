@@ -34,6 +34,10 @@ Engine status checker plugin lets you customize how you want to expose the backe
 
 Exporters are ways to provide a quick way for user to move their query results to external websites. DataHub by default provides "python exporter" and "r exporter" code but they need to included in the plugin exporter to be used. Please check [Add Exporter guide](../developer_guide/add_exporter.md) to learn how to add a new exporter and different types of exporters.
 
+### Notifier Plugin
+
+Notifiers are used to give users various messages for completion of their query actions. DataHub by default provides "email_notifier" and "slack_notifier" code. Please Check [Add Notifier guide](../developer_guide/add_notifier.md) to learn how to add a new notifier.
+
 ### Job Plugin
 
 Admins can use job plugin to add new job schedules to DataHub. DataHub provides various types of jobs such as retention jobs but they are unscheduled unless it is included in job plugin. You can also use job plugin to schedule tasks from task plugin. Please check [Add Custom Jobs guide](../admin_guide/add_custom_jobs.md) to see the formatting required.

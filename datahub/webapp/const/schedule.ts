@@ -38,7 +38,7 @@ export enum NotifyOn {
 }
 
 export interface IDataDocScheduleKwargs {
-    notify_with?: null | 'email' | 'slack';
+    notify_with?: string;
     notify_on?: NotifyOn;
     exporter_cell_id?: number;
     exporter_name?: string;

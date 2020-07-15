@@ -15,8 +15,9 @@ from env import DataHubSettings
 from lib.celery.cron import validate_cron
 from lib.form import validate_form
 from lib.export.all_exporters import get_exporter
-from lib.notification import simple_email, render_html
 from lib.logger import get_logger
+from lib.notify.all_notifiers import get_notifier_class
+from lib.utils.utils import render_message
 
 from logic import (
     datadoc_collab,
@@ -427,22 +428,19 @@ def send_add_datadoc_editor_email(doc_id, uid, read, write, session=None):
     read_or_write = "edit" if write else "view"
     data_doc_title = data_doc.title or "Untitled"
 
-    simple_email(
-        f'{inviting_username} has invited you to {read_or_write} DataDoc "{data_doc_title}""',
-        render_html(
-            "datadoc_invitation.html",
-            dict(
-                username=invited_user.get_name().capitalize(),
-                inviting_username=inviting_username,
-                read_or_write=read_or_write,
-                public_url=DataHubSettings.PUBLIC_URL,
-                env_name=environment.name,
-                data_doc_id=doc_id,
-                data_doc_title=data_doc_title,
-            ),
-        ),
-        invited_user.email,
-    )
+    doc_url = f'{DataHubSettings.PUBLIC_URL}/{environment.name}/datadoc/{doc_id}/'
+    markdown_message = render_message("datadoc_invitation.md",
+                                      dict(
+                                          username=invited_user.get_name().capitalize(),
+                                          inviting_username=inviting_username,
+                                          read_or_write=read_or_write,
+                                          doc_url=doc_url,
+                                          data_doc_title=data_doc_title,
+                                      ), )
+    notifier = get_notifier_class("email")
+    message = notifier.convert(markdown_message)
+    subject = f'{inviting_username} has invited you to {read_or_write} DataDoc "{data_doc_title}"'
+    notifier.notify(user=invited_user, message=message, subject=subject)
 
 
 @register("/datadoc_editor/<int:id>/", methods=["PUT"])

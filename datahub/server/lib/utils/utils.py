@@ -1,10 +1,12 @@
-from functools import wraps
-from datetime import datetime, date
+import inspect
 import signal
 import subprocess
-import inspect
-from requests.auth import HTTPBasicAuth, HTTPProxyAuth
+from datetime import datetime, date
+from functools import wraps
+
+import jinja2
 from lib.logger import get_logger
+from requests.auth import HTTPBasicAuth, HTTPProxyAuth
 
 LOG = get_logger(__file__)
 
@@ -135,3 +137,11 @@ def get_default_args(func):
         for k, v in signature.parameters.items()
         if v.default is not inspect.Parameter.empty
     }
+
+
+def render_message(template_name, context):
+    jinja_env = jinja2.Environment(
+        loader=jinja2.FileSystemLoader("./datahub/notification_templates/")
+    )
+    template = jinja_env.get_template(template_name)
+    return template.render(context)
