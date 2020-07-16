@@ -1,0 +1,38 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+    name: scheduler
+spec:
+    replicas: 1
+    selector:
+        matchLabels:
+            app: scheduler
+    template:
+        metadata:
+            labels:
+                app: scheduler
+        spec:
+            containers:
+                - args:
+                      - ./datahub/scripts/runservice
+                      - prod_scheduler
+                      - --pidfile=/opt/celerybeat.pid
+                  image: docker.pkg.github.com//pinterest/datahub/datahub:latest
+                  env:
+                      - name: FLASK_SECRET_KEY
+                        value: SOME_RANDOM_SECRET_KEY
+                      - name: DATABASE_CONN
+                        value: mysql+pymysql://test:passw0rd@mysql:3306/datahub2?charset=utf8mb4
+                      - name: REDIS_URL
+                        value: redis://redis:6379/0
+                      - name: ELASTICSEARCH_HOST
+                        value: elasticsearch:9200
+                  name: scheduler
+                  resources:
+                      requests:
+                          memory: '200Mi'
+                          cpu: '100m'
+                      limits:
+                          memory: '200Mi'
+                          cpu: '100m'
+            restartPolicy: Always

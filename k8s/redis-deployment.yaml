@@ -1,0 +1,40 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+    name: redis
+spec:
+    replicas: 1
+    selector:
+        matchLabels:
+            app: redis
+    template:
+        metadata:
+            labels:
+                app: redis
+        spec:
+            containers:
+                - args:
+                      - redis-server
+                      - --appendonly
+                      - 'yes'
+                  image: redis:5.0.9
+                  livenessProbe:
+                      exec:
+                          command:
+                              - redis-cli
+                              - ping
+                      failureThreshold: 3
+                      periodSeconds: 30
+                      timeoutSeconds: 10
+                  name: redis
+                  ports:
+                      - containerPort: 6379
+                  resources:
+                      requests:
+                          memory: '1Gi'
+                          cpu: '300m'
+                      limits:
+                          memory: '1Gi'
+                          cpu: '300m'
+            hostname: redis
+            restartPolicy: Always

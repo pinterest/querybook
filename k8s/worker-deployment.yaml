@@ -1,0 +1,36 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+    name: worker
+spec:
+    replicas: 1
+    selector:
+        matchLabels:
+            app: worker
+    template:
+        metadata:
+            labels:
+                app: worker
+        spec:
+            containers:
+                - args:
+                      - ./datahub/scripts/runservice
+                      - prod_worker
+                  image: docker.pkg.github.com//pinterest/datahub/datahub:latest
+                  name: worker
+                  resources:
+                      requests:
+                          memory: '400Mi'
+                          cpu: '500m'
+                      limits:
+                          memory: '400Mi'
+                          cpu: '500m'
+                  env:
+                      - name: FLASK_SECRET_KEY
+                        value: SOME_RANDOM_SECRET_KEY
+                      - name: DATABASE_CONN
+                        value: mysql+pymysql://test:passw0rd@mysql:3306/datahub2?charset=utf8mb4
+                      - name: REDIS_URL
+                        value: redis://redis:6379/0
+                      - name: ELASTICSEARCH_HOST
+                        value: elasticsearch:9200
