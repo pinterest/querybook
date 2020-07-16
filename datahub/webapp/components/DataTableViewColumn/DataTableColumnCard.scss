@@ -3,9 +3,11 @@
         margin: 16px 0px;
 
         .DataTableColumnCard-top {
-            display: flex;
-            flex-direction: row;
-            align-items: baseline;
+            .DataTableColumnCard-left {
+                display: flex;
+                flex-direction: row;
+                align-items: baseline;
+            }
         }
 
         .DataTableColumnCard-item {

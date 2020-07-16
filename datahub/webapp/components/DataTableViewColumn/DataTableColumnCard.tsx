@@ -9,6 +9,7 @@ import { EditableTextField } from 'ui/EditableTextField/EditableTextField';
 import { Title } from 'ui/Title/Title';
 
 import './DataTableColumnCard.scss';
+import { Icon } from 'ui/Icon/Icon';
 
 interface IProps {
     column: IDataColumn;
@@ -27,12 +28,15 @@ export const DataTableColumnCard: React.FunctionComponent<IProps> = ({
         <div className="DataTableColumnCard">
             <Card key={column.id} alignLeft>
                 <div
-                    className="DataTableColumnCard-top"
+                    className="DataTableColumnCard-top horizontal-space-between"
                     onClick={() => setExpanded(!expanded)}
                     title={expanded ? 'click to minimize' : 'click to expand'}
                 >
-                    <Title size={5}>{column.name}</Title>
-                    <div className="ml8">{column.type}</div>
+                    <div className="DataTableColumnCard-left">
+                        <Title size={5}>{column.name}</Title>
+                        <div className="ml8">{column.type}</div>
+                    </div>
+                    <Icon name={expanded ? 'chevron-up' : 'chevron-down'} />
                 </div>
                 {expanded ? (
                     <>
