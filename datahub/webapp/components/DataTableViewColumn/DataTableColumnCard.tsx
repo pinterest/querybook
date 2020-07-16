@@ -1,30 +1,36 @@
 import * as React from 'react';
+import { ContentState } from 'draft-js';
+
+import { IDataColumn } from 'const/metastore';
+
 import { Card } from 'ui/Card/Card';
-import { Title } from 'ui/Title/Title';
 import { Divider } from 'ui/Divider/Divider';
 import { EditableTextField } from 'ui/EditableTextField/EditableTextField';
-import { ContentState } from 'draft-js';
-import { updateDataColumnDescription } from 'redux/dataSources/action';
-import { IDataColumn } from 'const/metastore';
+import { Title } from 'ui/Title/Title';
 
 import './DataTableColumnCard.scss';
 
 interface IProps {
     column: IDataColumn;
+    updateDataColumnDescription: (
+        columnId: number,
+        description: ContentState
+    ) => any;
 }
 
 export const DataTableColumnCard: React.FunctionComponent<IProps> = ({
     column,
+    updateDataColumnDescription,
 }) => {
     const [expanded, setExpanded] = React.useState<boolean>(false);
     return (
         <div className="DataTableColumnCard">
-            <Card
-                key={column.id}
-                alignLeft
-                onClick={() => setExpanded(!expanded)}
-            >
-                <div className="DataTableColumnCard-top">
+            <Card key={column.id} alignLeft>
+                <div
+                    className="DataTableColumnCard-top"
+                    onClick={() => setExpanded(!expanded)}
+                    title={expanded ? 'click to minimize' : 'click to expand'}
+                >
                     <Title size={5}>{column.name}</Title>
                     <div className="ml8">{column.type}</div>
                 </div>
