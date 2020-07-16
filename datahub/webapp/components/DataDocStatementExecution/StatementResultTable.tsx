@@ -70,6 +70,7 @@ export const StatementResultTable: React.FunctionComponent<{
 
     return (
         <Table
+            stickyHeader
             className="StatementResultTable -highlight force-scrollbar-x"
             defaultPageSize={
                 paginate ? Math.min(maxNumberOfRowsToShow, rows.length) : null

@@ -110,6 +110,13 @@
         }
     }
 
+    &.sticky-header {
+        .rt-thead {
+            position: sticky;
+            top: 0;
+        }
+    }
+
     .rt-noData {
         display: none;
     }

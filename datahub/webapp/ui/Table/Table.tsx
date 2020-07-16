@@ -15,6 +15,8 @@ export interface ITableProps extends Partial<TableProps> {
     rows: any[];
     cols: Array<Column | string>;
     showHeader?: boolean;
+    stickyHeader?: boolean;
+
     showAllRows?: boolean;
 
     colNameToWidths?: Record<string, number>;
@@ -99,6 +101,8 @@ export class Table extends React.Component<ITableProps> {
             rows,
             cols,
             showHeader,
+            stickyHeader,
+
             formatCell,
             sortCell,
             colNameToWidths,
@@ -112,6 +116,7 @@ export class Table extends React.Component<ITableProps> {
             Table: true,
             [className]: className,
             'hide-header': !showHeader,
+            'sticky-header': stickyHeader,
         });
 
         if (showAllRows) {
