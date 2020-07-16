@@ -7,6 +7,10 @@ import { EditableTextField } from 'ui/EditableTextField/EditableTextField';
 import { Loading } from 'ui/Loading/Loading';
 import { SearchBar } from 'ui/SearchBar/SearchBar';
 import { Table } from 'ui/Table/Table';
+import { Card } from 'ui/Card/Card';
+import { Title } from 'ui/Title/Title';
+import { Divider } from 'ui/Divider/Divider';
+import { DataTableColumnCard } from './DataTableColumnCard';
 
 const wordWrapStyle = { whiteSpace: 'pre-wrap', wordBreak: 'break-all' };
 
@@ -42,12 +46,19 @@ export const DataTableViewColumn: React.FunctionComponent<IDataTableViewColumnPr
     numberOfRows = null,
 }) => {
     const [filterString, setFilterString] = React.useState('');
+    const [filteredColumns, setFilteredColumns] = React.useState(tableColumns);
     const [rows, setRows] = React.useState([]);
 
     React.useEffect(() => {
         const filteredRows = tableColumns.filter((column) =>
             !!filterString ? column.name.includes(filterString) : true
         );
+        const filteredCols = tableColumns.filter((column) =>
+            !!filterString
+                ? column.name.toLowerCase().includes(filterString.toLowerCase())
+                : true
+        );
+        setFilteredColumns(filteredCols);
         if (numberOfRows != null) {
             filteredRows.splice(numberOfRows);
         }
@@ -93,10 +104,14 @@ export const DataTableViewColumn: React.FunctionComponent<IDataTableViewColumnPr
         />
     );
 
+    const columnDOM = filteredColumns.map((col) => (
+        <DataTableColumnCard column={col} />
+    ));
+
     return (
-        <div className="TableViewColumn">
+        <div className="DataTableViewColumn">
             {filterDOM}
-            {tableDOM}
+            {columnDOM}
         </div>
     );
 };

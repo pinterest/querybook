@@ -1,15 +1,17 @@
 import * as React from 'react';
+import classNames from 'classnames';
 
 import './Card.scss';
 
 interface IProps {
-    title: React.ReactNode;
+    title?: React.ReactNode;
     children: React.ReactNode;
     onClick?: () => any;
 
     height?: string;
     width?: string;
     flexRow?: boolean;
+    alignLeft?: boolean;
 }
 
 export const Card: React.FunctionComponent<IProps> = ({
@@ -20,10 +22,18 @@ export const Card: React.FunctionComponent<IProps> = ({
     height,
     width,
     flexRow,
+    alignLeft,
 }) => {
+    const cardClassName = classNames({
+        Card: true,
+        'flex-row': flexRow,
+        'flex-column': !flexRow && !alignLeft,
+        'align-left': alignLeft,
+        clickable: onClick,
+    });
     return (
         <div
-            className={flexRow ? 'Card flex-row' : 'Card flex-column'}
+            className={cardClassName}
             onClick={onClick}
             style={height || width ? { height, width } : null}
         >

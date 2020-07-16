@@ -5,7 +5,7 @@
     border: var(--border);
     padding: 8px;
     margin: 16px;
-    cursor: pointer;
+    cursor: default;
 
     &:hover {
         border: var(--border);
@@ -24,5 +24,13 @@
         .Card-title {
             margin: 16px;
         }
+    }
+    &.align-left {
+        .Card-content {
+            text-align: left;
+        }
+    }
+    &.clickable {
+        cursor: pointer;
     }
 }
