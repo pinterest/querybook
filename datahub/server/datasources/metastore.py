@@ -338,3 +338,42 @@ def delete_table_warning(warning_id):
     warning = DataTableWarning.get(id=warning_id)
     verify_data_table_permission(warning.table_id)
     DataTableWarning.delete(warning_id)
+
+
+@register("/table/boost_score/", methods=["PUT"])
+def update_table_boost_score(metastore_name, schema_name, table_name, boost_score):
+    # verify user is a service account
+    # verify_service_account_permission(current_user.id)
+    with DBSession() as session:
+        metastore = admin_logic.get_query_metastore_by_name(
+            metastore_name, session=session
+        )
+        api_assert(metastore, "Invalid metastore")
+
+        schema = logic.get_schema_by_name_and_metastore_id(
+            schema_name=schema_name, metastore_id=metastore.id, session=session
+        )
+        api_assert(schema, "Invalid schema")
+
+        table = logic.get_table_by_schema_id_and_name(
+            schema_id=schema.id, name=table_name, session=session
+        )
+        api_assert(table, "Invalid table")
+
+        updated_table = logic.update_table(
+            id=table.id, score=boost_score, session=session
+        )
+
+        return {"table_id": updated_table.id, "boost_score": updated_table.boost_score}
+
+
+@register("/table/boost_score/<int:table_id>/", methods=["PUT"])
+def update_table_boost_score_by_id(table_id, boost_score):
+    # verify user is a service account
+    # verify_service_account_permission(current_user.id)
+    with DBSession() as session:
+        updated_table = logic.update_table(
+            id=table_id, score=boost_score, session=session
+        )
+
+        return updated_table.boost_score
