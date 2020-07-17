@@ -1,10 +1,12 @@
-from functools import wraps
-from datetime import datetime, date
+import inspect
 import signal
 import subprocess
-import inspect
-from requests.auth import HTTPBasicAuth, HTTPProxyAuth
+from datetime import datetime, date
+from functools import wraps
+
 from lib.logger import get_logger
+from requests.auth import HTTPBasicAuth, HTTPProxyAuth
+
 
 LOG = get_logger(__file__)
 

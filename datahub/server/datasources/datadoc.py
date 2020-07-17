@@ -15,8 +15,8 @@ from env import DataHubSettings
 from lib.celery.cron import validate_cron
 from lib.form import validate_form
 from lib.export.all_exporters import get_exporter
-from lib.notification import simple_email, render_html
 from lib.logger import get_logger
+from lib.config import get_config_value
 
 from logic import (
     datadoc_collab,
@@ -28,6 +28,7 @@ from logic.datadoc_permission import assert_can_read, assert_can_write
 from logic.query_execution import get_query_execution_by_id
 from logic.schedule import run_and_log_scheduled_task
 from models.environment import Environment
+from lib.notify.utils import notify_user
 
 LOG = get_logger(__file__)
 
@@ -427,21 +428,27 @@ def send_add_datadoc_editor_email(doc_id, uid, read, write, session=None):
     read_or_write = "edit" if write else "view"
     data_doc_title = data_doc.title or "Untitled"
 
-    simple_email(
-        f'{inviting_username} has invited you to {read_or_write} DataDoc "{data_doc_title}""',
-        render_html(
-            "datadoc_invitation.html",
-            dict(
-                username=invited_user.get_name().capitalize(),
-                inviting_username=inviting_username,
-                read_or_write=read_or_write,
-                public_url=DataHubSettings.PUBLIC_URL,
-                env_name=environment.name,
-                data_doc_id=doc_id,
-                data_doc_title=data_doc_title,
-            ),
+    doc_url = f"{DataHubSettings.PUBLIC_URL}/{environment.name}/datadoc/{doc_id}/"
+    invite_user_setting = user_logic.get_user_settings(
+        uid, "notification_preference", session=session
+    )
+
+    notification_setting = (
+        invite_user_setting.value
+        if invite_user_setting is not None
+        else get_config_value("user_setting.notification_preference.default")
+    )
+    notify_user(
+        user=invited_user,
+        notifier_name=notification_setting,
+        template_name="datadoc_invitation",
+        template_params=dict(
+            username=invited_user.get_name().capitalize(),
+            inviting_username=inviting_username,
+            read_or_write=read_or_write,
+            doc_url=doc_url,
+            data_doc_title=data_doc_title,
         ),
-        invited_user.email,
     )
 
 

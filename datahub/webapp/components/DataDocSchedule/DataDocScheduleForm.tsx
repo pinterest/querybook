@@ -1,5 +1,5 @@
 import React from 'react';
-import { Formik, Form } from 'formik';
+import { Form, Formik } from 'formik';
 import * as Yup from 'yup';
 import { useSelector } from 'react-redux';
 
@@ -19,12 +19,13 @@ import { Title } from 'ui/Title/Title';
 import { SimpleField } from 'ui/FormikField/SimpleField';
 import { DisabledSection } from 'ui/DisabledSection/DisabledSection';
 import {
+    getDefaultFormValue,
     SmartForm,
     updateValue,
-    getDefaultFormValue,
 } from 'ui/SmartForm/SmartForm';
 import { AsyncButton } from 'ui/AsyncButton/AsyncButton';
 import { getEnumEntries } from 'lib/typescript';
+import { notificationServiceSelector } from '../../redux/notificationService/selector';
 
 interface IDataDocScheduleFormProps {
     isEditable: boolean;
@@ -95,7 +96,7 @@ export const DataDocScheduleForm: React.FunctionComponent<IDataDocScheduleFormPr
     const exporters = useSelector(
         (state: IStoreState) => state.queryExecutions.statementExporters
     );
-
+    const notifiers = useSelector(notificationServiceSelector);
     const isCreateForm = !Boolean(cron);
     const recurrence = cronToRecurrence(cron || '0 0 * * *');
     const formValues = isCreateForm
@@ -168,10 +169,7 @@ export const DataDocScheduleForm: React.FunctionComponent<IDataDocScheduleFormPr
                             label="Notify With"
                             name="kwargs.notify_with"
                             type="react-select"
-                            options={['email', 'slack'].map((val) => ({
-                                value: val,
-                                label: val,
-                            }))}
+                            options={notifiers.map((notifier) => notifier.name)}
                             withDeselect
                         />
                         {values.kwargs.notify_with && (

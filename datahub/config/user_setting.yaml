@@ -31,12 +31,9 @@ datadoc_arrow_key:
     helper: Enable the use of arrow keys to navigate through different cells.
 
 notification_preference:
-    default: slack
+    default: email
     tab: general
-    options:
-        # key is stored in db and the conditional logic is based on it in tasks.py
-        - slack
-        - email
+    options: []
     helper: Preference for receiving notifications after query execution.
 
 show_full_view:
