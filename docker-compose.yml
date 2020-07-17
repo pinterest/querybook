@@ -1,4 +1,4 @@
-version: '3'
+version: '2.1'
 
 # volumes:
 #   node_modules:
@@ -28,9 +28,12 @@ services:
             - /opt/datahub/dist/
             - $PWD/containers/bundled_datahub_config.yaml:/opt/datahub/datahub/config/datahub_config.yaml
         depends_on:
-            - mysql
-            - redis
-            - elasticsearch
+            mysql:
+                condition: service_healthy
+            redis:
+                condition: service_healthy
+            elasticsearch:
+                condition: service_healthy
     worker:
         image: datahub-dev:latest
         cap_add:
@@ -45,9 +48,12 @@ services:
             - $PWD:/opt/datahub
             - $PWD/containers/bundled_datahub_config.yaml:/opt/datahub/datahub/config/datahub_config.yaml
         depends_on:
-            - mysql
-            - redis
-            - elasticsearch
+            mysql:
+                condition: service_healthy
+            redis:
+                condition: service_healthy
+            elasticsearch:
+                condition: service_healthy
     scheduler:
         image: datahub-dev:latest
         cap_add:
@@ -65,8 +71,10 @@ services:
             - /opt/datahub/dist/
             - $PWD/containers/bundled_datahub_config.yaml:/opt/datahub/datahub/config/datahub_config.yaml
         depends_on:
-            - mysql
-            - redis
+            mysql:
+                condition: service_healthy
+            redis:
+                condition: service_healthy
     redis:
         image: redis:5.0.9
         restart: always
