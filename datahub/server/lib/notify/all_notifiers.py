@@ -1,6 +1,9 @@
 from lib.utils.plugin import import_plugin
+from lib.notify.notifier.email_notifier import EmailNotifier
 
-ALL_PLUGIN_NOTIFIERS = import_plugin("notification_plugin", "ALL_PLUGIN_NOTIFIERS", [])
+ALL_PLUGIN_NOTIFIERS = import_plugin(
+    "notifier_plugin", "ALL_PLUGIN_NOTIFIERS", [EmailNotifier()]
+)
 
 ALL_NOTIFIERS = ALL_PLUGIN_NOTIFIERS
 

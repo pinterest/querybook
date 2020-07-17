@@ -12,13 +12,14 @@ class SlackNotifier(BaseNotifier):
     def notifier_format(self):
         return "plaintext"
 
-    def notify(self, user, message, subject):
+    def notify(self, user, message):
         to = f"@{user.username}"
         token = DataHubSettings.DATAHUB_SLACK_TOKEN
         url = "https://slack.com/api/chat.postMessage"
         headers = {"Authorization": "Bearer {}".format(token)}
+        text = self._convert_markdown(message)
         data = {
-            "text": message,
+            "text": text,
             "channel": to,
         }
         requests.post(url, json=data, headers=headers, timeout=30)

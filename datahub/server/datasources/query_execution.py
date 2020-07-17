@@ -17,7 +17,6 @@ from app.auth.permission import (
 )
 from clients.s3_client import FileDoesNotExist
 from lib.export.all_exporters import ALL_EXPORTERS, get_exporter
-from lib.notify.all_notifiers import ALL_NOTIFIERS
 from lib.result_store import GenericReader
 from lib.query_analysis.templating import (
     render_templated_query,
@@ -343,11 +342,6 @@ def delete_query_execution_notification(
         logic.delete_query_execution_notification(
             query_execution_id=query_id, user=user, session=session
         )
-
-
-@register("/query_execution_notifier/", methods=["GET"])
-def get_all_query_result_notifier():
-    return ALL_NOTIFIERS
 
 
 @register("/query_execution_exporter/", methods=["GET"])

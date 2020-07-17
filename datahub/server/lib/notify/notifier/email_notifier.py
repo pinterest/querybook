@@ -18,8 +18,10 @@ class EmailNotifier(BaseNotifier):
     def notifier_format(self):
         return "html"
 
-    def notify(self, user, message, subject):
+    def notify(self, user, message):
         from_email = DataHubSettings.DATAHUB_EMAIL_ADDRESS
+        subject = message.split("\n")[0]
+        message = self._convert_markdown(message)
         try:
             date = datetime.now().strftime("%a, %d %b %Y")
 

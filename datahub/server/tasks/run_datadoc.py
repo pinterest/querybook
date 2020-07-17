@@ -7,9 +7,7 @@ from const.schedule import NotifyOn, TaskRunStatus
 from env import DataHubSettings
 from lib.export.all_exporters import get_exporter
 from lib.logger import get_logger
-from lib.notify.all_notifiers import get_notifier_class
 from lib.query_analysis.templating import render_templated_query
-from lib.utils.utils import render_message
 from logic import datadoc as datadoc_logic
 from logic import query_execution as qe_logic
 from logic.schedule import (
@@ -18,6 +16,7 @@ from logic.schedule import (
 )
 from models.user import User
 from tasks.run_query import run_query_task
+from lib.utils.utils import notify_user
 
 LOG = get_logger(__file__)
 GENERIC_QUERY_FAILURE_MSG = "Execution did not finish successfully, workflow failed"
@@ -177,42 +176,29 @@ def on_datadoc_completion(
             or (notify_on == NotifyOn.ON_FAILURE.value and not is_success)
         )
         if should_notify and notify_with is not None:
-            subject, markdown_message = create_completion_message(
-                doc_id, is_success, export_url, error_msg=error_msg,
-            )
+            with DBSession() as session:
+                datadoc = datadoc_logic.get_data_doc_by_id(doc_id, session=session)
+                doc_title = datadoc.title or "Untitled"
+                env_name = datadoc.environment.name
+                doc_url = f"{DataHubSettings.PUBLIC_URL}/{env_name}/datadoc/{doc_id}/"
             user = User.get(id=user_id)
-            notifier = get_notifier_class(notify_with)
-            message = notifier.convert(markdown_message)
-            notifier.notify(user=user, message=message, subject=subject)
+
+            notify_user(
+                user=user,
+                notifier_name=notify_with,
+                template_name="datadoc_completion_notification",
+                template_params=dict(
+                    is_success=is_success,
+                    doc_title=doc_title,
+                    doc_url=doc_url,
+                    doc_id=doc_id,
+                    export_url=export_url,
+                    error_msg=error_msg,
+                ),
+            )
     except Exception as e:
         is_success = False
         # error_msg = str(e)
         LOG.error(e, exc_info=True)
 
     return is_success
-
-
-def create_completion_message(doc_id, is_success, export_url, error_msg=""):
-    doc_title = None
-    doc_url = None
-    with DBSession() as session:
-        datadoc = datadoc_logic.get_data_doc_by_id(doc_id, session=session)
-        doc_title = datadoc.title or "Untitled"
-        env_name = datadoc.environment.name
-        doc_url = f"{DataHubSettings.PUBLIC_URL}/{env_name}/datadoc/{doc_id}/"
-    content = render_message(
-        "datadoc_completion_notification.md",
-        dict(
-            is_success=is_success,
-            doc_title=doc_title,
-            doc_url=doc_url,
-            doc_id=doc_id,
-            export_url=export_url,
-            error_msg=error_msg,
-        ),
-    )
-    subject = "{status}: {doc_title} has finished!".format(
-        status="Success" if is_success else "Failure", doc_title=doc_title
-    )
-
-    return subject, content

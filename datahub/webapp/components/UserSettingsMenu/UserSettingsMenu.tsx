@@ -85,10 +85,7 @@ export const UserSettingsMenu: React.FunctionComponent<{}> = () => {
                 );
             } else if (key === 'notification_preference') {
                 return makeSelectOptions(
-                    notifiers.map((notifier) => ({
-                        value: notifier.name,
-                        key: notifier.name,
-                    }))
+                    notifiers.map((notifier) => notifier.name)
                 );
             }
             return makeSelectOptions(userSettingConfig[key].options);

@@ -14,23 +14,21 @@ class BaseNotifier(metaclass=ABCMeta):
     @property
     @abstractmethod
     def notifier_format(self):
-        # Can be one of 'markdown' | 'html' | 'plaintext'
+        # Can be one of 'markdown' | 'html' | 'plaintext' or any custom format
         raise NotImplementedError()
 
     @abstractmethod
-    def notify(self, user, message: str, subject: str, **options):
+    def notify(self, user, message: str):
         """
         This function sends the notification message to the given user.
 
         Arguments:
             user (models.user): user to send notification to
-            message (str): message content in notifier_format
-            subject (str): subject heading for message
-            **options: optional additional options
+            message (str): message content in markdown format
         """
         raise NotImplementedError()
 
-    def convert(self, message: str):
+    def _convert_markdown(self, message: str) -> str:
         """
         Converts message from markdown to notifier_format
 

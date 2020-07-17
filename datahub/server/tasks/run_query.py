@@ -8,17 +8,16 @@ from celery.utils.log import get_task_logger
 from const.query_execution import QueryExecutionStatus
 from env import DataHubSettings
 from lib.config import get_config_value
-from lib.notify.all_notifiers import get_notifier_class
 from lib.query_analysis import get_statement_ranges
 from lib.query_analysis.lineage import process_query
 from lib.query_executor.all_executors import get_executor_class, parse_exception
-from lib.utils.utils import render_message
 from logic import (
     admin as admin_logic,
     query_execution as qe_logic,
     user as user_logic,
 )
 from tasks.log_query_per_table import log_query_per_table_task
+from lib.utils.utils import notify_user
 
 LOG = get_task_logger(__name__)
 
@@ -211,33 +210,20 @@ def send_out_notification(query_execution_id):
                     doc_id = data_cell.doc.id
                     query_title = data_cell.meta.get("title", query_title)
 
-                markdown_message = generate_query_completion_notification(
-                    user, env_name, query_execution, query_title, doc_id, cell_id
+                notify_user(
+                    user=user,
+                    notifier_name=notification_setting,
+                    template_name="query_completion_notification",
+                    template_params=dict(
+                        username=user.username,
+                        query_execution=query_execution,
+                        doc_id=doc_id,
+                        cell_id=cell_id,
+                        query_title=query_title,
+                        public_url=DataHubSettings.PUBLIC_URL,
+                        env_name=env_name,
+                    ),
                 )
-                notifier = get_notifier_class(notification_setting)
-                message = notifier.convert(markdown_message)
-                subject = '"{}" query has finished! (Query #{})'.format(
-                    query_title, query_execution.id
-                )
-                notifier.notify(user=user, message=message, subject=subject)
-
-
-def generate_query_completion_notification(
-    user, env_name, query_execution, query_title, doc_id, cell_id
-):
-    md = render_message(
-        "query_completion_notification.md",
-        dict(
-            username=user.username,
-            query_execution=query_execution,
-            doc_id=doc_id,
-            cell_id=cell_id,
-            query_title=query_title,
-            public_url=DataHubSettings.PUBLIC_URL,
-            env_name=env_name,
-        ),
-    )
-    return md
 
 
 class AlreadyExecutedException(Exception):

@@ -1,3 +1,3 @@
-Hi {{ username }},
+{{ inviting_username }} has invited you to {{ read_or_write }} the DataDoc: "{{ data_doc_title }}"
 
-{{ inviting_username }} has invited you to **{{ read_or_write }}** the DataDoc "{{ data_doc_title }}": **<{{ doc_url }}>**
+Here's the DataDoc url: **<{{ doc_url }}>**

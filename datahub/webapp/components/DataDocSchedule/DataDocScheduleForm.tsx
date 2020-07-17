@@ -169,10 +169,7 @@ export const DataDocScheduleForm: React.FunctionComponent<IDataDocScheduleFormPr
                             label="Notify With"
                             name="kwargs.notify_with"
                             type="react-select"
-                            options={notifiers.map((notifier) => ({
-                                value: notifier.name,
-                                label: notifier.name,
-                            }))}
+                            options={notifiers.map((notifier) => notifier.name)}
                             withDeselect
                         />
                         {values.kwargs.notify_with && (

@@ -1,6 +1,6 @@
-{% if is_success == True %}
+{% if is_success -%}
 Success: "{{ doc_title }}" (Doc ID: {{ doc_id }}) has completed!
-{% else %}q
+{% else -%}
 Failure: "{{ doc_title }}" (Doc ID: {{ doc_id }}) has failed!
 {% endif %}
 
