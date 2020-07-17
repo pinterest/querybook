@@ -25,9 +25,7 @@ Here are some fields of notifier that you must configure in the setup process:
     - `markdown`
     - `plaintext`
     -  `html`
--   notify(user, message, subject): This is the actual notification sending function.  User is provided for access to the information of the user that
-the notification is being sent to. Message is the message that will be sent and should be converted to the notifier format. Subject is
-used as a heading for the notification, which is useful for services like email which use a subject line.
+-   notify(user, message,): This is the actual notification sending function.  User is provided for access to the information of the user that the notification is being sent to. Message is the markdown-formatted content of the notification that will be sent.
 
 If you want to add a notifier that's specific to your own use case, please do so through plugins (See this [Plugin Guide](../admin_guide/plugins.md) to learn how to setup plugins for DataHub).
 
