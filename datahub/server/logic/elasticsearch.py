@@ -215,7 +215,7 @@ def get_table_weight(table_id: int, session=None) -> int:
 
     # Samples worth 10x as much as impression
     # Log the score to flatten the score distrution (since its power law distribution)
-    return int(math.log2(boost_score * (num_impressions + num_samples * 10)) + 1)
+    return int(math.log2(((num_impressions + num_samples * 10) + 1) * boost_score))
 
 
 @with_session
