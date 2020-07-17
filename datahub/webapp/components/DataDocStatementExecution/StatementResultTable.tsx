@@ -109,6 +109,7 @@ export const StatementResultTable: React.FunctionComponent<{
     return (
         <StyledTableWrapper fontSize={tableFontSize}>
             <Table
+                stickyHeader
                 className="-highlight force-scrollbar-x"
                 defaultPageSize={
                     paginate
