@@ -507,6 +507,14 @@ export function getSelectedQuery(query: string, selectedRange: IRange = null) {
     return selectedQuery;
 }
 
+export function getQueryAsExplain(query: string, language?: string) {
+    const statementRanges = getStatementRanges(query, language);
+    const statements = statementRanges.map((range) =>
+        query.slice(range[0], range[1])
+    );
+    return statements.map((statement) => 'EXPLAIN ' + statement).join('\n');
+}
+
 function findWithStatementPlaceholder(statement: IToken[]) {
     const placeholders: IToken[] = [];
     let tokenIndex = 1;
