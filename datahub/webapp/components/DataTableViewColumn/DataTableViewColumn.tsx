@@ -28,9 +28,8 @@ export const DataTableViewColumn: React.FunctionComponent<IDataTableViewColumnPr
     numberOfRows = null,
 }) => {
     const [filterString, setFilterString] = React.useState('');
-    const [filteredColumns, setFilteredColumns] = React.useState(tableColumns);
 
-    React.useEffect(() => {
+    const filteredColumns = React.useMemo(() => {
         const filteredCols = tableColumns.filter((column) =>
             !!filterString
                 ? column.name.toLowerCase().includes(filterString.toLowerCase())
@@ -39,7 +38,7 @@ export const DataTableViewColumn: React.FunctionComponent<IDataTableViewColumnPr
         if (numberOfRows != null) {
             filteredCols.splice(numberOfRows);
         }
-        setFilteredColumns(filteredCols);
+        return filteredCols;
     }, [tableColumns, filterString, numberOfRows]);
 
     if (!table || !tableColumns) {
@@ -62,6 +61,7 @@ export const DataTableViewColumn: React.FunctionComponent<IDataTableViewColumnPr
         <DataTableColumnCard
             column={col}
             updateDataColumnDescription={updateDataColumnDescription}
+            key={col.id}
         />
     ));
 

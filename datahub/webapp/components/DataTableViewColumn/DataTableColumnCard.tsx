@@ -23,7 +23,7 @@ export const DataTableColumnCard: React.FunctionComponent<IProps> = ({
     column,
     updateDataColumnDescription,
 }) => {
-    const [expanded, setExpanded] = React.useState<boolean>(false);
+    const [expanded, setExpanded] = React.useState(false);
     return (
         <div className="DataTableColumnCard">
             <Card key={column.id} alignLeft>
@@ -45,14 +45,16 @@ export const DataTableColumnCard: React.FunctionComponent<IProps> = ({
                             marginBottom="16px"
                             color="var(--color-primary-5)"
                         />
-                        <div className="DataTableColumnCard-item">
-                            <div className="DataTableColumnCard-key">
-                                Definition
+                        {column.comment && (
+                            <div className="DataTableColumnCard-item">
+                                <div className="DataTableColumnCard-key">
+                                    Definition
+                                </div>
+                                <div className="DataTableColumnCard-content">
+                                    {column.comment}
+                                </div>
                             </div>
-                            <div className="DataTableColumnCard-content">
-                                {column.comment}
-                            </div>
-                        </div>
+                        )}
                         <div className="DataTableColumnCard-item">
                             <div className="DataTableColumnCard-key">
                                 User Comments
@@ -69,15 +71,9 @@ export const DataTableColumnCard: React.FunctionComponent<IProps> = ({
                         </div>
                     </>
                 ) : (
-                    <span className="DataTableColumnCard-preview">
-                        {(column.description as ContentState).getPlainText()
-                            .length < 100
-                            ? (column.description as ContentState).getPlainText()
-                            : (column.description as ContentState)
-                                  .getPlainText()
-                                  .substring(0, 100)
-                                  .concat('...')}
-                    </span>
+                    <div className="DataTableColumnCard-preview">
+                        {(column.description as ContentState).getPlainText()}
+                    </div>
                 )}
             </Card>
         </div>

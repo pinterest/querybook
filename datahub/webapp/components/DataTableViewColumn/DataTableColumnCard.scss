@@ -1,3 +1,5 @@
+@import '../../scss_variables.scss';
+
 .DataTableColumnCard {
     .Card {
         margin: 16px 0px;
@@ -30,6 +32,10 @@
                     }
                 }
             }
+        }
+        .DataTableColumnCard-preview {
+            @include one-line-ellipsis();
+            width: 95%;
         }
     }
 }
