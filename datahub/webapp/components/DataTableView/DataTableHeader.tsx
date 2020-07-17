@@ -2,19 +2,18 @@ import { last } from 'lodash';
 import React from 'react';
 
 import * as Utils from 'lib/utils';
-import { generateFormattedDate } from 'lib/utils/datetime';
-import { navigateWithinEnv } from 'lib/utils/query-string';
 
 import { IMyUserInfo } from 'redux/user/types';
 import { IDataTable } from 'const/metastore';
 
 import { ImpressionWidget } from 'components/ImpressionWidget/ImpressionWidget';
 import { BoardItemAddButton } from 'components/BoardItemAddButton/BoardItemAddButton';
-import { Button } from 'ui/Button/Button';
+
 import { Title } from 'ui/Title/Title';
 import { ToggleSwitch } from 'ui/ToggleSwitch/ToggleSwitch';
 import { Tag } from 'ui/Tag/Tag';
 import { Level } from 'ui/Level/Level';
+import { UserBadge } from 'components/UserBadge/UserBadge';
 
 export interface IDataTableHeader {
     table: IDataTable;
@@ -56,18 +55,10 @@ export const DataTableHeader: React.FunctionComponent<IDataTableHeader> = ({
         </Level>
     );
 
-    const dateDOM = table.created_at ? (
-        <div className="DataTableHeader-item">
-            <span className="DataTableHeader-key">Created at</span>
-            <span>{generateFormattedDate(table.created_at, 'X')}</span>
-        </div>
-    ) : null;
-
-    const userBadge = tableOwner;
-    const ownerDOM = userBadge ? (
-        <div className="DataTableHeader-item">
-            <span className="DataTableHeader-key">by</span>
-            {userBadge}
+    const ownerDOM = tableOwner ? (
+        <div className="DataTableHeader-item flex-row">
+            <span className="DataTableHeader-key mr8">Owner</span>
+            <UserBadge name={tableOwner} mini />
         </div>
     ) : null;
 
@@ -106,7 +97,6 @@ export const DataTableHeader: React.FunctionComponent<IDataTableHeader> = ({
             <div className="DataTableHeader-top">
                 <div className="DataTableHeader-left">
                     {titleDOM}
-                    {dateDOM}
                     {ownerDOM}
                 </div>
                 <div className="DataTableHeader-right pt4">

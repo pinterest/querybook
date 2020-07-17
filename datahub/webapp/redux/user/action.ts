@@ -54,6 +54,16 @@ export function getUser(uid: number): ThunkResult<Promise<void>> {
     };
 }
 
+export function getUserByName(name: string): ThunkResult<Promise<void>> {
+    return async (dispatch) => {
+        const { data } = await ds.fetch(`/user/name/${name}/`);
+        dispatch({
+            type: '@@user/RECEIVE_USER',
+            payload: data,
+        });
+    };
+}
+
 export function getUserSetting(): ThunkResult<Promise<any>> {
     return (dispatch, getState) =>
         ds

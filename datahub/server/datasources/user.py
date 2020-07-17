@@ -35,6 +35,16 @@ def get_user_info(uid):
     return user
 
 
+@register("/user/name/<username>/", methods=["GET"])
+def get_user_info_by_username(username):
+    user = logic.get_user_by_name(username)
+
+    if user is None:
+        abort(RESOURCE_NOT_FOUND_STATUS_CODE)
+
+    return user
+
+
 @register("/batch/user/", methods=["POST"])
 def batch_get_user_info(uids):
     return logic.get_users_by_ids(uids)
