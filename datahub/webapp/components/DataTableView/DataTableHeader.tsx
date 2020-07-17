@@ -57,7 +57,7 @@ export const DataTableHeader: React.FunctionComponent<IDataTableHeader> = ({
 
     const ownerDOM = tableOwner ? (
         <div className="DataTableHeader-item flex-row">
-            <span className="DataTableHeader-key mr8">Owner</span>
+            <span className="DataTableHeader-key mr8">by</span>
             <UserBadge name={tableOwner} mini />
         </div>
     ) : null;
