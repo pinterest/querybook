@@ -444,6 +444,8 @@ class DataDocQueryCellComponent extends React.Component<IProps, IState> {
                 name: 'Explain Query',
                 onClick: this.explainQuery,
                 icon: 'fas fa-info',
+                tooltip: 'Run Query as Explain',
+                tooltipPos: 'left',
             });
         }
 
