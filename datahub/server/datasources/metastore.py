@@ -342,23 +342,26 @@ def delete_table_warning(warning_id):
 
 @register("/table/boost_score/", methods=["PUT"])
 def update_table_boost_score(metastore_name, schema_name, table_name, boost_score):
-    # verify user is a service account
-    # verify_service_account_permission(current_user.id)
+    # TODO: verify user is a service account
     with DBSession() as session:
+
         metastore = admin_logic.get_query_metastore_by_name(
             metastore_name, session=session
         )
         api_assert(metastore, "Invalid metastore")
+        verify_metastore_permission(metastore.id, session=session)
 
         schema = logic.get_schema_by_name_and_metastore_id(
             schema_name=schema_name, metastore_id=metastore.id, session=session
         )
         api_assert(schema, "Invalid schema")
+        verify_data_schema_permission(schema.id, session=session)
 
         table = logic.get_table_by_schema_id_and_name(
             schema_id=schema.id, name=table_name, session=session
         )
         api_assert(table, "Invalid table")
+        verify_data_table_permission(table.id, session=session)
 
         updated_table = logic.update_table(
             id=table.id, score=boost_score, session=session
@@ -369,9 +372,9 @@ def update_table_boost_score(metastore_name, schema_name, table_name, boost_scor
 
 @register("/table/boost_score/<int:table_id>/", methods=["PUT"])
 def update_table_boost_score_by_id(table_id, boost_score):
-    # verify user is a service account
-    # verify_service_account_permission(current_user.id)
+    # TODO: verify user is a service account
     with DBSession() as session:
+        verify_data_table_permission(table_id, session=session)
         updated_table = logic.update_table(
             id=table_id, score=boost_score, session=session
         )
