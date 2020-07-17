@@ -1,4 +1,4 @@
-{% if query_execution.status.value == 2 -%}
+{% if query_execution.status.value == 3 -%}
 Success: "{{ query_title }}" (Query ID: {{ query_execution.id }}) has completed.
 {% else -%}
 Failed: "{{query_title}}" (Query ID: {{ query_execution.id }}) has failed.
