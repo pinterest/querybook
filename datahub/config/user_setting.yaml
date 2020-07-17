@@ -54,6 +54,16 @@ editor_font_size:
         - large # Maps to var(--text-size)
     helper: Font size of the query editor
 
+result_font_size:
+    default: small
+    tab: editor
+    options:
+        - xsmall # Maps to var(--xxsmall-text-size)
+        - small # Maps to var(--xsmall-text-size)
+        - medium # Maps to var(--small-text-size)
+        - large # Maps to var(--text-size)
+    helper: Font size of the query result
+
 auto_complete:
     default: all
     tab: editor
