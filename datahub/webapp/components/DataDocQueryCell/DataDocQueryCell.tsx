@@ -6,7 +6,11 @@ import React from 'react';
 import { connect } from 'react-redux';
 
 import CodeMirror from 'lib/codemirror';
-import { ICodeAnalysis, getSelectedQuery } from 'lib/sql-helper/sql-lexer';
+import {
+    ICodeAnalysis,
+    getSelectedQuery,
+    getQueryAsExplain,
+} from 'lib/sql-helper/sql-lexer';
 import { renderTemplatedQuery } from 'lib/templated-query';
 import { sleep } from 'lib/utils';
 import { sendNotification } from 'lib/dataHubUI';
@@ -333,31 +337,31 @@ class DataDocQueryCellComponent extends React.Component<IProps, IState> {
         this.handleMetaChange('title', value);
 
     @bind
-    public async onRunButtonClick() {
-        const { cellId, templatedVariables = {} } = this.props;
+    public getCurrentSelectedQuery() {
+        const { templatedVariables = {} } = this.props;
         const { query } = this.state;
-
-        await sleep(ON_CHANGE_DEBOUNCE_MS);
         const selectedRange =
             this.queryEditorRef.current &&
             this.queryEditorRef.current.getEditorSelection();
 
-        let renderedQuery: string;
         try {
             const rawQuery = getSelectedQuery(query, selectedRange);
-            renderedQuery = await renderTemplatedQuery(
-                rawQuery,
-                templatedVariables
-            );
+            return renderTemplatedQuery(rawQuery, templatedVariables);
         } catch (e) {
             sendNotification(`Failed to render query. Reason: ${String(e)}.`);
         }
+    }
 
-        if (renderedQuery != null) {
+    @bind
+    public async onRunButtonClick() {
+        await sleep(ON_CHANGE_DEBOUNCE_MS);
+        const renderedQuery = await this.getCurrentSelectedQuery();
+
+        if (renderedQuery) {
             return this.props.createQueryExecution(
                 renderedQuery,
                 this.engineId,
-                cellId
+                this.props.cellId
             );
         }
     }
@@ -366,6 +370,21 @@ class DataDocQueryCellComponent extends React.Component<IProps, IState> {
     public formatQuery(options = {}) {
         if (this.queryEditorRef.current) {
             this.queryEditorRef.current.formatQuery(options);
+        }
+    }
+
+    @bind
+    public async explainQuery() {
+        const renderedQuery = getQueryAsExplain(
+            await this.getCurrentSelectedQuery()
+        );
+
+        if (renderedQuery) {
+            return this.props.createQueryExecution(
+                renderedQuery,
+                this.engineId,
+                this.props.cellId
+            );
         }
     }
 
@@ -420,6 +439,11 @@ class DataDocQueryCellComponent extends React.Component<IProps, IState> {
                         onClick: this.formatQuery.bind(this, { case: 'lower' }),
                     },
                 ],
+            });
+            additionalButtons.push({
+                name: 'Explain Query',
+                onClick: this.explainQuery,
+                icon: 'fas fa-info',
             });
         }
 
