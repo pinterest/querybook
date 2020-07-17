@@ -87,7 +87,7 @@ def get_table_by_name(
 
 
 @register("/table_name/<schema_name>/<table_name>/", methods=["PUT"])
-def update_table_boost_score(schema_name, table_name, metastore_name, boost_score):
+def update_table_by_name(schema_name, table_name, metastore_name, boost_score):
     # TODO: verify user is a service account
     with DBSession() as session:
         metastore = admin_logic.get_query_metastore_by_name(
@@ -110,7 +110,7 @@ def update_table_boost_score(schema_name, table_name, metastore_name, boost_scor
             id=table.id, score=boost_score, session=session
         )
 
-        return {"table_id": updated_table.id, "boost_score": updated_table.boost_score}
+        return updated_table
 
 
 @register("/data_job_metadata/<int:data_job_metadata_id>/", methods=["GET"])
