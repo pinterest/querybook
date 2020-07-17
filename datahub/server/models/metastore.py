@@ -172,7 +172,7 @@ class DataTable(Base, CRUDMixin):
         sql.Integer, sql.ForeignKey("data_schema.id", ondelete="CASCADE")
     )
     golden = sql.Column(sql.Boolean, default=False)
-    boost_score = sql.Column(sql.Float, default=1)
+    boost_score = sql.Column(sql.Numeric, default=1)
 
     information = relationship(
         "DataTableInformation", uselist=False, backref="data_table"
