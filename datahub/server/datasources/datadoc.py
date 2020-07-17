@@ -28,7 +28,7 @@ from logic.datadoc_permission import assert_can_read, assert_can_write
 from logic.query_execution import get_query_execution_by_id
 from logic.schedule import run_and_log_scheduled_task
 from models.environment import Environment
-from lib.utils.utils import notify_user
+from lib.notify.utils import notify_user
 
 LOG = get_logger(__file__)
 

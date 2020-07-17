@@ -4,11 +4,9 @@ import subprocess
 from datetime import datetime, date
 from functools import wraps
 
-import jinja2
 from lib.logger import get_logger
 from requests.auth import HTTPBasicAuth, HTTPProxyAuth
 
-from lib.notify.all_notifiers import get_notifier_class
 
 LOG = get_logger(__file__)
 
@@ -139,17 +137,3 @@ def get_default_args(func):
         for k, v in signature.parameters.items()
         if v.default is not inspect.Parameter.empty
     }
-
-
-def render_message(template_name, context):
-    jinja_env = jinja2.Environment(
-        loader=jinja2.FileSystemLoader("./datahub/notification_templates/")
-    )
-    template = jinja_env.get_template(f"{template_name}.md")
-    return template.render(context)
-
-
-def notify_user(user, notifier_name, template_name, template_params):
-    notifier = get_notifier_class(notifier_name)
-    markdown_message = render_message(template_name, template_params)
-    notifier.notify(user=user, message=markdown_message)

@@ -17,7 +17,7 @@ from logic import (
     user as user_logic,
 )
 from tasks.log_query_per_table import log_query_per_table_task
-from lib.utils.utils import notify_user
+from lib.notify.utils import notify_user
 
 LOG = get_task_logger(__name__)
 

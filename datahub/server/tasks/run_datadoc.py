@@ -16,7 +16,7 @@ from logic.schedule import (
 )
 from models.user import User
 from tasks.run_query import run_query_task
-from lib.utils.utils import notify_user
+from lib.notify.utils import notify_user
 
 LOG = get_logger(__file__)
 GENERIC_QUERY_FAILURE_MSG = "Execution did not finish successfully, workflow failed"
@@ -181,7 +181,7 @@ def on_datadoc_completion(
                 doc_title = datadoc.title or "Untitled"
                 env_name = datadoc.environment.name
                 doc_url = f"{DataHubSettings.PUBLIC_URL}/{env_name}/datadoc/{doc_id}/"
-            user = User.get(id=user_id)
+                user = User.get(id=user_id, session=session)
 
             notify_user(
                 user=user,
