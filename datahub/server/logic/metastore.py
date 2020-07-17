@@ -202,13 +202,16 @@ def create_table(
 
 
 @with_session
-def update_table(id, golden=None, commit=True, session=None):
+def update_table(id, golden=None, score=None, commit=True, session=None):
     table = get_table_by_id(id, session=session)
     if not table:
         return
 
     if golden is not None:
         table.golden = golden
+
+    if score is not None:
+        table.boost_score = score
 
     if commit:
         session.commit()

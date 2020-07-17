@@ -211,10 +211,11 @@ def get_table_weight(table_id: int, session=None) -> int:
         get_last_impressions_date(),
         session=session,
     )
+    boost_score = get_table_by_id(table_id, session=session).boost_score
 
     # Samples worth 10x as much as impression
     # Log the score to flatten the score distrution (since its power law distribution)
-    return int(math.log2(2 + num_impressions + num_samples * 10))
+    return int(math.log2(((num_impressions + num_samples * 10) + 1) * boost_score))
 
 
 @with_session

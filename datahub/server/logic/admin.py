@@ -92,6 +92,11 @@ def get_query_metastore_by_id(id, session=None):
 
 
 @with_session
+def get_query_metastore_by_name(name, session=None):
+    return session.query(QueryMetastore).filter(QueryMetastore.name == name).first()
+
+
+@with_session
 def get_all_query_metastore(session=None):
     return session.query(QueryMetastore).all()
 
