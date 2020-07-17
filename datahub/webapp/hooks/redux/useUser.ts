@@ -5,9 +5,11 @@ import { ICancelablePromise } from 'lib/datasource';
 import { IStoreState, Dispatch } from 'redux/store/types';
 import * as UserActions from 'redux/user/action';
 
-export function useUser(uid: number) {
-    const userInfo = useSelector(
-        (state: IStoreState) => state.user.userInfoById[uid]
+export function useUser({ uid, name }: { uid?: number; name?: string }) {
+    const userInfo = useSelector((state: IStoreState) =>
+        uid
+            ? state.user.userInfoById[uid]
+            : state.user.userInfoById[state.user.userNameToId[name]]
     );
     const [loading, setLoading] = useState(userInfo == null);
 
@@ -16,12 +18,18 @@ export function useUser(uid: number) {
         (id: number) => dispatch(UserActions.getUser(id)),
         []
     );
+    const getUserByName = useCallback(
+        (username: string) => dispatch(UserActions.getUserByName(username)),
+        []
+    );
 
     useEffect(() => {
         let loadUserPromise: ICancelablePromise<any>;
-        if (userInfo == null || userInfo.id !== uid) {
+        if (!userInfo) {
             setLoading(true);
-            loadUserPromise = getUser(uid).then(() => setLoading(false));
+            loadUserPromise = uid ? getUser(uid) : getUserByName(name);
+
+            loadUserPromise.finally(() => setLoading(false));
         }
 
         return () => {
@@ -29,7 +37,7 @@ export function useUser(uid: number) {
                 loadUserPromise.cancel();
             }
         };
-    }, [uid, userInfo]);
+    }, [uid, name, userInfo]);
 
     return {
         loading,

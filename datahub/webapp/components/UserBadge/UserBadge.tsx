@@ -1,17 +1,17 @@
-import React from 'react';
+import React, { useMemo } from 'react';
 
 import { useUser } from 'hooks/redux/useUser';
+import { Title } from 'ui/Title/Title';
 
 import { UserNameComponent } from './UserName';
 import { UserAvatarComponent } from './UserAvatar';
+import { ICommonUserLoaderProps } from './types';
 import './UserBadge.scss';
-import { Title } from 'ui/Title/Title';
 
-export interface IProps {
-    uid: number;
+type IProps = {
     isOnline?: boolean;
     mini?: boolean;
-}
+} & ICommonUserLoaderProps;
 
 export interface IState {
     loading: boolean;
@@ -19,10 +19,11 @@ export interface IState {
 
 export const UserBadge: React.FunctionComponent<IProps> = ({
     uid,
+    name,
     isOnline,
     mini,
 }) => {
-    const { loading, userInfo } = useUser(uid);
+    const { loading, userInfo } = useUser({ uid, name });
 
     const avatarDOM = (
         <UserAvatarComponent
@@ -32,7 +33,13 @@ export const UserBadge: React.FunctionComponent<IProps> = ({
         />
     );
 
-    const userName = (userInfo ? userInfo.username : '').toLocaleLowerCase();
+    const userName = useMemo(() => {
+        return userInfo
+            ? userInfo.fullname ?? userInfo.username
+            : name
+            ? `Unknown (${name})`
+            : 'Unknown';
+    }, [userInfo?.username, name]);
 
     if (mini) {
         return (

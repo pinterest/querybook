@@ -59,7 +59,7 @@ export const DataDocItem: React.FunctionComponent<IDataDocItemProps> = ({
     searchString,
 }) => {
     const { owner_uid: ownerUid, created_at: createdAt } = preview;
-    const { userInfo: ownerInfo, loading } = useUser(ownerUid);
+    const { userInfo: ownerInfo, loading } = useUser({ uid: ownerUid });
     const handleClick = React.useMemo(() => openClick.bind(null, url), [url]);
 
     if (loading) {

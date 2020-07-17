@@ -1,20 +1,22 @@
 import React, { useEffect } from 'react';
 
-import './UserAvatar.scss';
 import { useUser } from 'hooks/redux/useUser';
 import { IUserInfo } from 'redux/user/types';
+import { ICommonUserLoaderProps } from './types';
+import './UserAvatar.scss';
 
-interface IUserAvatarProps {
+type IUserAvatarProps = {
     isOnline?: boolean;
     tiny?: boolean;
-    uid: number;
-}
+} & ICommonUserLoaderProps;
+
 export interface IUserAvatarComponentProps
-    extends Omit<IUserAvatarProps, 'uid'> {
+    extends Omit<IUserAvatarProps, 'uid' | 'name'> {
     loading: boolean;
     userInfo: IUserInfo;
 }
 
+const defaultNoUserBackground = '#F65B50';
 const defaultUserIconBackgrounds = [
     '#FF6400',
     '#FAB904',
@@ -24,16 +26,17 @@ const defaultUserIconBackgrounds = [
 ];
 
 const DefaultUserIcon: React.FunctionComponent<{
-    name: string;
+    name: string | null;
 }> = ({ name }) => {
     const canvasRef = React.useRef<HTMLCanvasElement>(null);
     useEffect(() => {
-        const text = name[0].toUpperCase();
-        const backgroundColor =
-            defaultUserIconBackgrounds[
-                Math.abs(text.charCodeAt(0) - 'A'.charCodeAt(0)) %
-                    defaultUserIconBackgrounds.length
-            ];
+        const text = name ? name[0].toUpperCase() : '?';
+        const backgroundColor = name
+            ? defaultUserIconBackgrounds[
+                  Math.abs(text.charCodeAt(0) - 'A'.charCodeAt(0)) %
+                      defaultUserIconBackgrounds.length
+              ]
+            : defaultNoUserBackground;
 
         const ctx = canvasRef.current.getContext('2d');
         const width = canvasRef.current.width;
@@ -66,7 +69,7 @@ export const UserAvatarComponent: React.FunctionComponent<IUserAvatarComponentPr
     tiny,
 }) => {
     const profileImage = userInfo ? userInfo.profile_img : null;
-    const userName = userInfo ? userInfo.fullname || userInfo.username : '*';
+    const userName = userInfo ? userInfo.fullname ?? userInfo.username : null;
 
     const imageDOM = loading ? (
         <div className="spinner-wrapper">
@@ -99,10 +102,11 @@ export const UserAvatarComponent: React.FunctionComponent<IUserAvatarComponentPr
 
 export const UserAvatar: React.FunctionComponent<IUserAvatarProps> = ({
     uid,
+    name,
     tiny,
     isOnline,
 }) => {
-    const { loading, userInfo } = useUser(uid);
+    const { loading, userInfo } = useUser({ uid, name });
 
     return (
         <UserAvatarComponent

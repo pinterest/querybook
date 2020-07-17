@@ -10,12 +10,8 @@
             justify-content: space-between;
 
             .DataTableHeader-left {
-                .DataTableHeader-item {
-                    .DataTableHeader-key {
-                        text-transform: lowercase;
-                        font-weight: 600;
-                        margin-right: 8px;
-                    }
+                .DataTableHeader-item .DataTableHeader-key {
+                    font-weight: 600;
                 }
             }
             .DataTableHeader-right {
