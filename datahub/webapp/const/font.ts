@@ -11,4 +11,11 @@ export const numFontSizeToString = {
     10: 'var(--xxxsmall-text-size)',
 };
 
+export const UserSettingsFontSizeToCSSFontSize = {
+    xsmall: 'var(--xxsmall-text-size)',
+    small: 'var(--xsmall-text-size)',
+    medium: 'var(--small-text-size)',
+    large: 'var(--text-size)',
+};
+
 export type NumFontSize = 1 | 2 | 3 | 4 | 5 | 6 | 7 | 8 | 9 | 10;

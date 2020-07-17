@@ -49,7 +49,7 @@ export const UserBadge: React.FunctionComponent<IProps> = ({
                 <figure>{avatarDOM}</figure>
             </div>
             <div className="UserBadge-names">
-                <Title size={4} className="user-name">
+                <Title size={4} className="user-name one-line-ellipsis">
                     <UserNameComponent userInfo={userInfo} loading={loading} />
                 </Title>
                 <Title subtitle size={6}>
