@@ -8,6 +8,7 @@ from app.datasource import register, api_assert
 from logic import user as logic
 from logic import environment as environment_logic
 from logic import admin as admin_logic
+from lib.notify.all_notifiers import ALL_NOTIFIERS
 
 
 @register("/user/login_method/", methods=["GET"], require_auth=False)
@@ -28,6 +29,16 @@ def get_my_user_info():
 @register("/user/<int:uid>/", methods=["GET"])
 def get_user_info(uid):
     user = logic.get_user_by_id(uid)
+
+    if user is None:
+        abort(RESOURCE_NOT_FOUND_STATUS_CODE)
+
+    return user
+
+
+@register("/user/name/<username>/", methods=["GET"])
+def get_user_info_by_username(username):
+    user = logic.get_user_by_name(username)
 
     if user is None:
         abort(RESOURCE_NOT_FOUND_STATUS_CODE)
@@ -95,3 +106,8 @@ def handle_create_api_access_tokens():
     uid = current_user.id
     admin_logic.disable_api_access_tokens(uid, uid)
     return admin_logic.create_api_access_token(uid)
+
+
+@register("/user/notifiers/", methods=["GET"])
+def get_all_query_result_notifier():
+    return ALL_NOTIFIERS

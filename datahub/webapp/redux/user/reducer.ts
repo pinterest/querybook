@@ -84,6 +84,7 @@ const initialState: Readonly<IUserState> = {
     fromWeb: false,
 
     userInfoById: {},
+    userNameToId: {},
 };
 
 export default function userReducer(
@@ -95,11 +96,14 @@ export default function userReducer(
             case '@@user/RECEIVE_USER': {
                 const userInfo = action.payload;
                 draft.userInfoById[userInfo.id] = userInfo;
+                draft.userNameToId[userInfo.username] = userInfo.id;
                 return;
             }
             case '@@user/LOGIN_USER': {
                 const { userInfo, myUserInfo } = action.payload;
+
                 draft.userInfoById[userInfo.id] = userInfo;
+                draft.userNameToId[userInfo.username] = userInfo.id;
                 draft.myUserInfo = myUserInfo;
                 return;
             }

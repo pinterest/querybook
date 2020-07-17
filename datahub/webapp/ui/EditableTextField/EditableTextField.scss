@@ -33,7 +33,8 @@
     }
 
     .edit-mode-footer {
-        text-align: right;
-        margin-top: 10px;
+        display: flex;
+        justify-content: flex-end;
+        margin-top: 8px;
     }
 }

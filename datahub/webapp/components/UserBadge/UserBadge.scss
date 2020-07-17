@@ -27,9 +27,5 @@
 
     .UserBadge-names {
         max-width: 180px;
-
-        .Title {
-            @include one-line-ellipsis();
-        }
     }
 }

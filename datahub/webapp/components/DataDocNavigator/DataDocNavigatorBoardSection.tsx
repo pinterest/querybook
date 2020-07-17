@@ -241,7 +241,9 @@ const NavigatorBoardView: React.FunctionComponent<{
                 onClick={() => setCollapsed(!collapsed)}
                 className="board-header-title flex1"
             >
-                <Title size={7}>{board.name}</Title>
+                <Title size={7} className="one-line-ellipsis">
+                    {board.name}
+                </Title>
             </div>
 
             <div className="header-control-section">

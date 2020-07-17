@@ -1,0 +1,41 @@
+@import '../../scss_variables.scss';
+
+.DataTableColumnCard {
+    .Card {
+        margin: 16px 0px;
+
+        .DataTableColumnCard-top {
+            .DataTableColumnCard-left {
+                display: flex;
+                flex-direction: row;
+                align-items: baseline;
+            }
+        }
+
+        .DataTableColumnCard-item {
+            display: flex;
+            flex-direction: row;
+            margin-bottom: 8px;
+            .DataTableColumnCard-key {
+                font-size: var(--text-size);
+                width: 180px;
+                margin-right: 12px;
+            }
+            .DataTableColumnCard-content {
+                width: 100%;
+                .EditableTextField {
+                    margin-left: -4px;
+                    .editor-wrapper {
+                        border: var(--border);
+                        border-radius: var(--border-radius);
+                        background-color: var(--bg-color);
+                    }
+                }
+            }
+        }
+        .DataTableColumnCard-preview {
+            @include one-line-ellipsis();
+            width: 95%;
+        }
+    }
+}

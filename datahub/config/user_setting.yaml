@@ -31,12 +31,9 @@ datadoc_arrow_key:
     helper: Enable the use of arrow keys to navigate through different cells.
 
 notification_preference:
-    default: slack
+    default: email
     tab: general
-    options:
-        # key is stored in db and the conditional logic is based on it in tasks.py
-        - slack
-        - email
+    options: []
     helper: Preference for receiving notifications after query execution.
 
 show_full_view:
@@ -56,6 +53,16 @@ editor_font_size:
         - medium # Maps to var(--small-text-size)
         - large # Maps to var(--text-size)
     helper: Font size of the query editor
+
+result_font_size:
+    default: small
+    tab: editor
+    options:
+        - xsmall # Maps to var(--xxsmall-text-size)
+        - small # Maps to var(--xsmall-text-size)
+        - medium # Maps to var(--small-text-size)
+        - large # Maps to var(--text-size)
+    helper: Font size of the query result
 
 auto_complete:
     default: all

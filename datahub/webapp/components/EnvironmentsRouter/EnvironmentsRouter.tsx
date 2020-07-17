@@ -11,6 +11,7 @@ import {
 
 import * as EnvironmentActions from 'redux/environment/action';
 import { fetchExporters } from 'redux/queryExecutions/action';
+import { fetchNotifiers } from 'redux/notificationService/action';
 
 import {
     currentEnvironmentSelector,
@@ -67,6 +68,7 @@ class EnvironmentsRouterComponent extends React.PureComponent<
     public loadInitialLoadItems() {
         // Load things that will only loaded once on start up here
         this.props.fetchExporters();
+        this.props.fetchNotifiers();
     }
 
     @bind
@@ -207,6 +209,7 @@ function mapDispatchToProps(dispatch: Dispatch, ownProps: {}) {
         setEnvironment: (name: string) =>
             dispatch(EnvironmentActions.setEnvironment(name)),
         fetchExporters: () => dispatch(fetchExporters()),
+        fetchNotifiers: () => dispatch(fetchNotifiers()),
     };
 }
 

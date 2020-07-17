@@ -30,7 +30,7 @@ def import_plugin(
         if plugin_variable is not None:
             plugin_value = getattr(plugin_value, plugin_variable, None)
 
-        if plugin_value is None and default_val is not None:
+        if not plugin_value and default_val is not None:
             plugin_value = default_val
 
         return plugin_value

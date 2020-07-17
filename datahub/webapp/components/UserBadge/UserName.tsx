@@ -3,11 +3,9 @@ import React from 'react';
 import { IUserInfo } from 'redux/user/types';
 import { titleize } from 'lib/utils';
 import { useUser } from 'hooks/redux/useUser';
+import { ICommonUserLoaderProps } from './types';
 
-interface IUserNameProps {
-    uid: number;
-}
-export interface IUserNameComponentProps extends Omit<IUserNameProps, 'uid'> {
+export interface IUserNameComponentProps {
     loading: boolean;
     userInfo: IUserInfo;
 }
@@ -25,8 +23,11 @@ export const UserNameComponent: React.FunctionComponent<IUserNameComponentProps>
     return <span>{fullName}</span>;
 };
 
-export const UserName: React.FunctionComponent<IUserNameProps> = ({ uid }) => {
-    const { loading, userInfo } = useUser(uid);
+export const UserName: React.FunctionComponent<ICommonUserLoaderProps> = ({
+    uid,
+    name,
+}) => {
+    const { loading, userInfo } = useUser({ uid, name });
 
     return <UserNameComponent loading={loading} userInfo={userInfo} />;
 };

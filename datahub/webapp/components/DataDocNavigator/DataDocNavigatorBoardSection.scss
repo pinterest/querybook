@@ -1,5 +1,3 @@
-@import './../../scss_variables.scss';
-
 .NavigatorBoardView {
     &.dragged-over {
         background-color: var(--color-accent-bg-hover);
@@ -14,7 +12,6 @@
                 color: var(--light-text-color);
                 text-transform: capitalize;
                 user-select: none;
-                @include one-line-ellipsis();
             }
         }
 

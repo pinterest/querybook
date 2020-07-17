@@ -1,15 +1,13 @@
 import traceback
 
+from app.db import with_session, DBSession
+from app.flask_app import celery
 from celery.contrib.abortable import AbortableTask
 from celery.exceptions import SoftTimeLimitExceeded
 from celery.utils.log import get_task_logger
-
-from app.db import with_session, DBSession
-from app.flask_app import celery
 from const.query_execution import QueryExecutionStatus
 from env import DataHubSettings
 from lib.config import get_config_value
-from lib.notification import simple_email, send_slack_message, render_html
 from lib.query_analysis import get_statement_ranges
 from lib.query_analysis.lineage import process_query
 from lib.query_executor.all_executors import get_executor_class, parse_exception
@@ -19,6 +17,7 @@ from logic import (
     user as user_logic,
 )
 from tasks.log_query_per_table import log_query_per_table_task
+from lib.notify.utils import notify_user
 
 LOG = get_task_logger(__name__)
 
@@ -211,67 +210,20 @@ def send_out_notification(query_execution_id):
                     doc_id = data_cell.doc.id
                     query_title = data_cell.meta.get("title", query_title)
 
-                if notification_setting == "email":
-                    # Email
-                    send_query_completion_email(
-                        user, env_name, query_execution, query_title, doc_id, cell_id
-                    )
-                else:
-                    # Slack
-                    send_query_completion_slack(
-                        user, env_name, query_execution, query_title, doc_id, cell_id
-                    )
-
-
-def send_query_completion_email(
-    user, env_name, query_execution, query_title, doc_id, cell_id
-):
-    html = render_html(
-        "query_completion_notification.html",
-        dict(
-            username=user.username,
-            query_execution=query_execution,
-            doc_id=doc_id,
-            cell_id=cell_id,
-            public_url=DataHubSettings.PUBLIC_URL,
-            env_name=env_name,
-        ),
-    )
-
-    simple_email(
-        '"{}" query has finished! (Query #{})'.format(query_title, query_execution.id),
-        html,
-        to_email=user.email,
-    )
-
-
-def send_query_completion_slack(
-    user, env_name, query_execution, query_title, doc_id, cell_id
-):
-    query_status = (
-        "Finished" if query_execution.status == QueryExecutionStatus.DONE else "Failed"
-    )
-    data_doc_link = (
-        "Here is the url to the datadoc: {}".format(
-            f"{DataHubSettings.PUBLIC_URL}/{env_name}/datadoc/{doc_id}/?cellId={cell_id}&executionId={query_execution.id}"
-        )
-        if doc_id and cell_id
-        else ""
-    )
-    execution_link = "Here is the url to the execution: {}".format(
-        f"{DataHubSettings.PUBLIC_URL}/{env_name}/query_execution/{query_execution.id}/"
-    )
-
-    message = """{status}: "{title}" (Query Id {id}) has completed!
-{doc_link}
-{exec_link}""".format(
-        status=query_status,
-        title=query_title,
-        id=query_execution.id,
-        doc_link=data_doc_link,
-        exec_link=execution_link,
-    )
-    send_slack_message(to=f"@{user.username}", message=message)
+                notify_user(
+                    user=user,
+                    notifier_name=notification_setting,
+                    template_name="query_completion_notification",
+                    template_params=dict(
+                        username=user.username,
+                        query_execution=query_execution,
+                        doc_id=doc_id,
+                        cell_id=cell_id,
+                        query_title=query_title,
+                        public_url=DataHubSettings.PUBLIC_URL,
+                        env_name=env_name,
+                    ),
+                )
 
 
 class AlreadyExecutedException(Exception):

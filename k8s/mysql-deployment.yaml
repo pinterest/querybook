@@ -1,0 +1,53 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+    name: mysql
+spec:
+    replicas: 1
+    selector:
+        matchLabels:
+            app: mysql
+    strategy:
+        type: Recreate
+    template:
+        metadata:
+            labels:
+                app: mysql
+        spec:
+            containers:
+                - name: mysql
+                  image: mariadb:10.5.4
+                  ports:
+                      - containerPort: 3306
+                        name: mysql
+                  env:
+                      - name: MYSQL_DATABASE
+                        value: datahub2
+                      - name: MYSQL_HOST
+                        value: mysql:3306
+                      - name: MYSQL_PASSWORD
+                        value: passw0rd
+                      - name: MYSQL_ROOT_PASSWORD
+                        value: hunter2
+                      - name: MYSQL_USER
+                        value: test
+                  livenessProbe:
+                      tcpSocket:
+                          port: 3306
+                      failureThreshold: 3
+                      periodSeconds: 30
+                      timeoutSeconds: 30
+                  resources:
+                      requests:
+                          memory: '500Mi'
+                          cpu: '300m'
+                      limits:
+                          memory: '500Mi'
+                          cpu: '300m'
+                  volumeMounts:
+                      - name: mysql-persistent-storage
+                        mountPath: /var/lib/mysql
+            restartPolicy: Always
+            volumes:
+                - name: mysql-persistent-storage
+                  emptyDir: {}

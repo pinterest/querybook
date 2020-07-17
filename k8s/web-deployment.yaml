@@ -1,0 +1,40 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+    name: web
+spec:
+    replicas: 1
+    selector:
+        matchLabels:
+            app: web
+    template:
+        metadata:
+            labels:
+                app: web
+        spec:
+            containers:
+                - args:
+                      - ./datahub/scripts/bundled_docker_run_web
+                  env:
+                      - name: PORT
+                        value: '10001'
+                      - name: FLASK_SECRET_KEY
+                        value: SOME_RANDOM_SECRET_KEY
+                      - name: DATABASE_CONN
+                        value: mysql+pymysql://test:passw0rd@mysql:3306/datahub2?charset=utf8mb4
+                      - name: REDIS_URL
+                        value: redis://redis:6379/0
+                      - name: ELASTICSEARCH_HOST
+                        value: elasticsearch:9200
+                  image: docker.pkg.github.com//pinterest/datahub/datahub:latest
+                  name: web
+                  ports:
+                      - containerPort: 10001
+                  resources:
+                      requests:
+                          memory: '800Mi'
+                          cpu: '500m'
+                      limits:
+                          memory: '800Mi'
+                          cpu: '500m'
+            restartPolicy: Always

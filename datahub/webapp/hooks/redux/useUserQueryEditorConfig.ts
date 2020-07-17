@@ -1,18 +1,12 @@
 import { useMemo, useContext } from 'react';
 import { useSelector } from 'react-redux';
 import { IStoreState } from 'redux/store/types';
-import CodeMirror, { CodeMirrorKeyMap } from 'lib/codemirror';
+
+import { UserSettingsFontSizeToCSSFontSize } from 'const/font';
 import { ISearchAndReplaceContextType } from 'context/searchAndReplace';
-
-import { getCodeEditorTheme } from 'lib/utils';
+import CodeMirror, { CodeMirrorKeyMap } from 'lib/codemirror';
 import { AutoCompleteType } from 'lib/sql-helper/sql-autocompleter';
-
-const UserSettingsFontSizeToCSSFontSize = {
-    xsmall: 'var(--xxsmall-text-size)',
-    small: 'var(--xsmall-text-size)',
-    medium: 'var(--small-text-size)',
-    large: 'var(--text-size)',
-};
+import { getCodeEditorTheme } from 'lib/utils';
 
 export function useUserQueryEditorConfig(
     searchContext: ISearchAndReplaceContextType
@@ -28,7 +22,7 @@ export function useUserQueryEditorConfig(
         fontSize:
             UserSettingsFontSizeToCSSFontSize[
                 state.user.computedSettings['editor_font_size']
-            ] ?? UserSettingsFontSizeToCSSFontSize.medium,
+            ],
         autoComplete: state.user.computedSettings['auto_complete'],
         tab: state.user.computedSettings['tab'],
     }));

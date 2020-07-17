@@ -27,6 +27,7 @@ export interface IUserSettingState {
 export interface IUserState extends IUserSettingState {
     userInfoById: Record<number, IUserInfo>;
     myUserInfo?: IMyUserInfo;
+    userNameToId: Record<string, number>;
 }
 
 export interface ILoginUserAction extends Action {
