@@ -84,6 +84,11 @@ the next few configurations are only relevant if you are using OAuth based authe
 -   `OAUTH_TOKEN_URL` (**required**): Url to get the oauth token
 -   `OAUTH_USER_PROFILE` (**required**): Url to get the user profile
 
+for LDAP authentication:
+
+-   `LDAP_CONN`(**required**)
+-   `LDAP_USER_DN` (**required**) DN with {} for username/etc (ex. `uid={},dc=example,dc=com`)
+
 If you want to force the user to login again after a certain time, you can the following variable:
 
 `LOGS_OUT_AFTER` (optional, defaults to 0): Force user to log out after they have logged in for X number of seconds. If 0 then never expire the log in. In both cases the re-login is required if the browser is closed.
