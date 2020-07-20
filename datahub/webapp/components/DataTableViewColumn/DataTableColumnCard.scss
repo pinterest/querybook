@@ -5,11 +5,17 @@
         margin: 16px 0px;
 
         .DataTableColumnCard-top {
+            cursor: pointer;
             .DataTableColumnCard-left {
                 display: flex;
                 flex-direction: row;
                 align-items: baseline;
             }
+        }
+
+        .DataTableColumnCard-preview,
+        .DataTableColumnCard-item {
+            cursor: default;
         }
 
         .DataTableColumnCard-item {
