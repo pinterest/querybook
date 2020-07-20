@@ -8,6 +8,8 @@ google-cloud-storage==1.27.0
 google-auth==1.13.1
 google-resumable-media==0.5.0
 
+# LDAP
+python-ldap==3.3.1
 
 # Server
 Werkzeug==0.15.5

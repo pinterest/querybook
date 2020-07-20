@@ -66,6 +66,9 @@ class DataHubSettings(object):
     OAUTH_TOKEN_URL = get_dh_config("OAUTH_TOKEN_URL")
     OAUTH_USER_PROFILE = get_dh_config("OAUTH_USER_PROFILE")
 
+    LDAP_CONN = get_dh_config("LDAP_CONN")
+    LDAP_USER_DN = get_dh_config("LDAP_USER_DN")
+
     # Result Store
     RESULT_STORE_TYPE = get_dh_config("RESULT_STORE_TYPE")
 

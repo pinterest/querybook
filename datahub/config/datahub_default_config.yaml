@@ -39,6 +39,10 @@ OAUTH_AUTHORIZATION_URL: ~
 OAUTH_TOKEN_URL: ~
 OAUTH_USER_PROFILE: ~
 
+# LDAP
+LDAP_CONN: ~
+LDAP_USER_DN: uid={},dc=example,dc=com
+
 # --------------- Result Store ---------------
 RESULT_STORE_TYPE: db
 

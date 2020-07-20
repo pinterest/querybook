@@ -11,6 +11,7 @@ RUN rm -rf /var/lib/apt/lists/* \
     build-essential \
     python-dev \
     libssl-dev \
+    libldap2-dev \
     && curl -sL https://deb.nodesource.com/setup_14.x |  bash - \
     && DEBIAN_FRONTEND=noninteractive apt-get install --no-install-recommends -y --allow-downgrades --allow-remove-essential --allow-change-held-packages \
     nodejs \
