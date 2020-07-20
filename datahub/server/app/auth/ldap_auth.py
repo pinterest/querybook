@@ -11,6 +11,8 @@
 # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 # See the License for the specific language governing permissions and
 # limitations under the License.
+import re
+
 import ldap
 import flask_login
 
@@ -26,6 +28,18 @@ from logic.user import (
 login_manager = DataHubLoginManager()
 
 
+def get_transformed_username(username):
+    dn = None
+    if username.startswith("uid="):
+        dn = username
+
+        match = re.match(r"^uid=([^,]+)", username)
+        username = match.group(1)
+    else:
+        dn = DataHubSettings.LDAP_USER_DN.format(username)
+    return username, dn
+
+
 @with_session
 def authenticate(username, password, session=None):
     if not username or not password:
@@ -35,7 +49,10 @@ def authenticate(username, password, session=None):
     conn.set_option(ldap.OPT_REFERRALS, 0)
 
     try:
-        dn = DataHubSettings.LDAP_USER_DN.format(username)
+        if username.startswith("uid="):
+            dn = username
+        else:
+            dn = DataHubSettings.LDAP_USER_DN.format(username)
         conn.simple_bind_s(dn, password)
     except ldap.INVALID_CREDENTIALS:
         raise AuthenticationError("User does not exist or wrong password")
@@ -54,7 +71,9 @@ def login_user_endpoint(username, password):
     if current_user.is_authenticated:
         return
 
-    if authenticate(username, password):
+    username, dn = get_transformed_username(username)
+
+    if authenticate(dn, password):
         with DBSession() as session:
             user = login_user(username, session=session)
             flask_login.login_user(AuthUser(user))
