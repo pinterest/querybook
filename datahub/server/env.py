@@ -67,9 +67,6 @@ class DataHubSettings(object):
     OAUTH_USER_PROFILE = get_dh_config("OAUTH_USER_PROFILE")
 
     LDAP_CONN = get_dh_config("LDAP_CONN")
-    LDAP_LOGIN = get_dh_config("LDAP_LOGIN")
-    LDAP_PASSWORD = get_dh_config("LDAP_PASSWORD")
-    LDAP_DOMAIN = get_dh_config("LDAP_DOMAIN")
 
     # Result Store
     RESULT_STORE_TYPE = get_dh_config("RESULT_STORE_TYPE")

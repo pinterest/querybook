@@ -41,9 +41,6 @@ OAUTH_USER_PROFILE: ~
 
 # LDAP
 LDAP_CONN: ~
-LDAP_LOGIN: ~
-LDAP_PASSWORD: ~
-LDAP_DOMAIN: ~
 
 # --------------- Result Store ---------------
 RESULT_STORE_TYPE: db
