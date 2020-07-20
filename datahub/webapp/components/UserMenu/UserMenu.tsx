@@ -10,10 +10,10 @@ import { UserBadge } from 'components/UserBadge/UserBadge';
 import { TokenCreation } from 'components/Token/TokenCreation';
 import { UserAvatar } from 'components/UserBadge/UserAvatar';
 
+import { Link } from 'ui/Link/Link';
 import { MenuInfoItem, Menu, MenuDivider, MenuItem } from 'ui/Menu/Menu';
 import { Modal } from 'ui/Modal/Modal';
 import { Popover, PopoverLayout } from 'ui/Popover/Popover';
-
 import './UserMenu.scss';
 import { ToggleSwitch } from 'ui/ToggleSwitch/ToggleSwitch';
 
@@ -50,7 +50,7 @@ export const UserMenu: React.FC<IProps> = ({
         });
     }, []);
 
-    const uid = useSelector((state: IStoreState) => state.user.myUserInfo.uid);
+    const userInfo = useSelector((state: IStoreState) => state.user.myUserInfo);
     const theme = useSelector(
         (state: IStoreState) => state.user.computedSettings['theme']
     );
@@ -82,16 +82,20 @@ export const UserMenu: React.FC<IProps> = ({
         return (
             <Menu>
                 <MenuInfoItem>
-                    <UserBadge uid={uid} />
+                    <UserBadge uid={userInfo.uid} />
                 </MenuInfoItem>
                 <MenuDivider />
                 <MenuItem onClick={goToUserSettingsMenu}>Settings</MenuItem>
-                <MenuDivider />
                 {themeToggle}
                 <MenuDivider />
                 <MenuItem onClick={toggleShowTokenModal}>
                     API Access Token
                 </MenuItem>
+                {userInfo.isAdmin && (
+                    <MenuItem>
+                        <Link to="/admin">Admin Tools</Link>
+                    </MenuItem>
+                )}
                 <MenuDivider />
                 <MenuItem onClick={logout}>Log out</MenuItem>
             </Menu>
@@ -104,7 +108,7 @@ export const UserMenu: React.FC<IProps> = ({
             className="message-size"
             title="Token Creation"
         >
-            <TokenCreation uid={uid} />
+            <TokenCreation uid={userInfo.uid} />
         </Modal>
     ) : null;
 
@@ -128,7 +132,7 @@ export const UserMenu: React.FC<IProps> = ({
                 aria-label={'User Settings'}
                 data-balloon-pos={tooltipPos}
             >
-                <UserAvatar uid={uid} />
+                <UserAvatar uid={userInfo.uid} />
             </span>
             {tokenCreationModalDOM}
             {userSettingsPopover}

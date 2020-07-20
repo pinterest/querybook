@@ -29,20 +29,8 @@ export const EntitySidebar: React.FunctionComponent<IEntitySidebarProps> = ({
     selectedEntity,
     onSelectEntity,
 }) => {
-    const isAdmin = useSelector(
-        (state: IStoreState) => state.user.myUserInfo.isAdmin
-    );
     const environment = useSelector(currentEnvironmentSelector);
     const queryMetastores = useSelector(queryMetastoresSelector);
-
-    const adminAppButton = isAdmin && (
-        <IconButton
-            icon="settings"
-            tooltip={'Admin'}
-            tooltipPos="right"
-            onClick={() => history.push('/admin/')}
-        />
-    );
 
     return (
         <div className="EntitySidebar">
@@ -124,7 +112,6 @@ export const EntitySidebar: React.FunctionComponent<IEntitySidebarProps> = ({
                 <UserMenu />
                 <QueryEngineStatusButton />
                 <InfoMenuButton />
-                {adminAppButton}
             </div>
         </div>
     );
