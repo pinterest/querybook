@@ -35,7 +35,7 @@ def authenticate(username, password, session=None):
     conn.set_option(ldap.OPT_REFERRALS, 0)
 
     try:
-        dn = "uid={},dc=example,dc=com".format(username)
+        dn = DataHubSettings.LDAP_USER_DN.format(username)
         conn.simple_bind_s(dn, password)
     except ldap.INVALID_CREDENTIALS:
         raise AuthenticationError("User does not exist or wrong password")
