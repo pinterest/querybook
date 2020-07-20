@@ -33,7 +33,7 @@ export const DataTableColumnCard: React.FunctionComponent<IProps> = ({
                     title={expanded ? 'click to minimize' : 'click to expand'}
                 >
                     <div className="DataTableColumnCard-left">
-                        <Title size={5}>{column.name}</Title>
+                        <Title size={6}>{column.name}</Title>
                         <div className="ml8">{column.type}</div>
                     </div>
                     <Icon name={expanded ? 'chevron-up' : 'chevron-down'} />
