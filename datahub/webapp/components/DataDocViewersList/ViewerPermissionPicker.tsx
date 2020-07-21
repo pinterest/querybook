@@ -11,9 +11,11 @@ interface IProp {
     viewerInfo: IViewerInfo;
     readonly?: boolean;
     publicDataDoc: boolean;
+    isOwner: boolean;
 
     onPermissionChange: (permision: DataDocPermission) => any;
     onRemoveEditor?: (uid: number) => any;
+    updateDataDocOwner: (uid: number) => any;
 }
 
 export const ViewerPermissionPicker: React.FunctionComponent<IProp> = ({
@@ -22,10 +24,11 @@ export const ViewerPermissionPicker: React.FunctionComponent<IProp> = ({
     viewerInfo,
     onPermissionChange,
     onRemoveEditor,
+    updateDataDocOwner,
+    isOwner,
 }) => {
     const [showEditMenu, setShowEditMenu] = React.useState(false);
     const selfRef = React.useRef<HTMLDivElement>(null);
-
     const editMenuDOM = showEditMenu && (
         <Popover
             onHide={() => setShowEditMenu(false)}
@@ -50,6 +53,13 @@ export const ViewerPermissionPicker: React.FunctionComponent<IProp> = ({
                 >
                     edit
                 </MenuItem>
+                {isOwner && (
+                    <MenuItem
+                        onClick={() => updateDataDocOwner(viewerInfo.uid)}
+                    >
+                        owner
+                    </MenuItem>
+                )}
                 {onRemoveEditor && (
                     <>
                         <MenuDivider />

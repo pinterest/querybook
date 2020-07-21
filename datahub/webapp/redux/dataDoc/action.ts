@@ -98,6 +98,18 @@ export function fetchDataDocs(filterMode: string): ThunkResult<Promise<void>> {
     };
 }
 
+export function updateDataDocOwner(
+    docId: number,
+    current_owner_uid: number,
+    next_owner_uid: number
+): ThunkResult<Promise<void>> {
+    return async (dispatch) => {
+        dispatch(addDataDocEditors(docId, current_owner_uid, true, true));
+        dispatch(updateDataDocField(docId, 'owner_uid', next_owner_uid));
+        dispatch(deleteDataDocEditor(docId, next_owner_uid));
+    };
+}
+
 export function receiveDataDoc(
     dataDoc: IDataDoc,
     dataDocCellById: Record<number, IDataCell>

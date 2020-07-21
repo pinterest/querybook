@@ -18,6 +18,8 @@ import { UserSelect } from 'components/UserSelect/UserSelect';
 import { AsyncButton } from 'ui/AsyncButton/AsyncButton';
 import { Tabs } from 'ui/Tabs/Tabs';
 import { sendNotification } from 'lib/dataHubUI';
+import { myUserInfoSelector } from 'redux/user/selector';
+import { useSelector } from 'react-redux';
 
 interface IDataDocViewersListProps {
     className?: string;
@@ -30,6 +32,10 @@ interface IDataDocViewersListProps {
     changeDataDocPublic: (docId: number, docPublic: boolean) => any;
     updateDataDocEditors: (uid: number, read: boolean, write: boolean) => any;
     deleteDataDocEditor: (uid: number) => any;
+    updateDataDocOwner: (
+        current_owner_uid: number,
+        next_owner_uid: number
+    ) => any;
 }
 
 // TODO: make this component use React-Redux directly
@@ -44,7 +50,9 @@ export const DataDocViewersList: React.FunctionComponent<IDataDocViewersListProp
     changeDataDocPublic,
     updateDataDocEditors,
     deleteDataDocEditor,
+    updateDataDocOwner,
 }) => {
+    const userInfo = useSelector(myUserInfoSelector);
     const addUserRowDOM = readonly ? null : (
         <div className="datadoc-add-user-row">
             <div className="user-select-wrapper">
@@ -87,6 +95,7 @@ export const DataDocViewersList: React.FunctionComponent<IDataDocViewersListProp
                     <ViewerPermissionPicker
                         readonly={readonly}
                         publicDataDoc={dataDoc.public}
+                        isOwner={dataDoc.owner_uid == userInfo.id}
                         viewerInfo={info}
                         onPermissionChange={(permission) => {
                             const { read, write } = permissionToReadWrite(
@@ -103,6 +112,9 @@ export const DataDocViewersList: React.FunctionComponent<IDataDocViewersListProp
                                 ? () => deleteDataDocEditor(info.uid)
                                 : null
                         }
+                        updateDataDocOwner={(uid) => {
+                            updateDataDocOwner(dataDoc.owner_uid, uid);
+                        }}
                     />
                 </div>
             </div>

@@ -121,6 +121,7 @@ class DataDocViewersBadgeComponent extends React.Component<IProps, IState> {
             changeDataDocPublic,
             updateDataDocEditors,
             deleteDataDocEditor,
+            updateDataDocOwner,
         } = this.props;
 
         const { showViewsList } = this.state;
@@ -145,6 +146,7 @@ class DataDocViewersBadgeComponent extends React.Component<IProps, IState> {
                     changeDataDocPublic={changeDataDocPublic}
                     updateDataDocEditors={updateDataDocEditors}
                     deleteDataDocEditor={deleteDataDocEditor}
+                    updateDataDocOwner={updateDataDocOwner}
                 />
             </Popover>
         );
@@ -204,6 +206,19 @@ function mapDispatchToProps(dispatch: Dispatch, ownProps: IOwnProps) {
                     write
                 )
             ),
+
+        updateDataDocOwner: (
+            current_owner_uid: number,
+            next_owner_uid: number
+        ) => {
+            dispatch(
+                dataDocActions.updateDataDocOwner(
+                    ownProps.docId,
+                    current_owner_uid,
+                    next_owner_uid
+                )
+            );
+        },
     };
 }
 
