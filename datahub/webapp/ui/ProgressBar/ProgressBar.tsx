@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useMemo } from 'react';
 import { useSpring, animated } from 'react-spring';
 
 import './ProgressBar.scss';
@@ -38,7 +38,7 @@ export const ProgressBar: React.FunctionComponent<IProgressBarProps> = ({
             />
             {showValue && (
                 <div className="ProgressBar-value">
-                    {value == null ? 'Unknown' : `${Math.round(value)}%`}
+                    {value == null ? 'Unknown' : `${Math.floor(value)}%`}
                 </div>
             )}
         </div>

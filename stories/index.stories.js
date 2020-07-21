@@ -508,8 +508,8 @@ storiesOf('Progress Bar', module)
                 <ProgressBar value={10} type="success" />
             </div>
             <div className="mb12">
-                Warning Type - with value
-                <ProgressBar value={20} type="warning" showValue />
+                Warning Type - with value (Rounded down)
+                <ProgressBar value={20.5} type="warning" showValue />
             </div>
             <div className="mb12">
                 Danger Type - with value & small
