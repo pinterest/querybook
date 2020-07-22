@@ -4,6 +4,7 @@ import localStore from 'lib/local-store';
 import { USER_SETTINGS_KEY } from 'lib/local-store/const';
 import { IUserState, UserAction } from './types';
 import { EnvironmentAction } from 'redux/environment/types';
+import { NotificationServiceAction } from 'redux/notificationService/types';
 
 const userSettingsConfig: Record<
     string,
@@ -89,7 +90,7 @@ const initialState: Readonly<IUserState> = {
 
 export default function userReducer(
     state = initialState,
-    action: UserAction | EnvironmentAction
+    action: UserAction | EnvironmentAction | NotificationServiceAction
 ): IUserState {
     const newState = produce(state, (draft) => {
         switch (action.type) {
@@ -157,6 +158,16 @@ export default function userReducer(
             }
             case '@@user/LOGOUT_USER': {
                 delete draft.myUserInfo;
+                return;
+            }
+            case '@@notificationService/RECEIVE_NOTIFIERS': {
+                if (!state.rawSettings['notification_preference']) {
+                    draft.rawSettings['notification_preference'] =
+                        action.payload.notificationServices[0].name;
+                    draft.computedSettings = computeUserSettings(
+                        draft.rawSettings
+                    );
+                }
                 return;
             }
         }
