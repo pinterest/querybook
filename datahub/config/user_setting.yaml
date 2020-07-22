@@ -31,7 +31,7 @@ datadoc_arrow_key:
     helper: Enable the use of arrow keys to navigate through different cells.
 
 notification_preference:
-    default: email
+    default: ""
     tab: general
     options: []
     helper: Preference for receiving notifications after query execution.
