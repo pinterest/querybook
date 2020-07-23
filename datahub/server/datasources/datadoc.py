@@ -16,7 +16,6 @@ from lib.celery.cron import validate_cron
 from lib.form import validate_form
 from lib.export.all_exporters import get_exporter
 from lib.logger import get_logger
-from lib.config import get_config_value
 
 from logic import (
     datadoc_collab,
@@ -24,7 +23,7 @@ from logic import (
     schedule as schedule_logic,
     user as user_logic,
 )
-from logic.datadoc_permission import assert_can_read, assert_can_write
+from logic.datadoc_permission import assert_can_read, assert_can_write, assert_is_owner
 from logic.query_execution import get_query_execution_by_id
 from logic.schedule import run_and_log_scheduled_task
 from models.environment import Environment
@@ -429,15 +428,18 @@ def send_add_datadoc_editor_email(doc_id, uid, read, write, session=None):
     data_doc_title = data_doc.title or "Untitled"
 
     doc_url = f"{DataHubSettings.PUBLIC_URL}/{environment.name}/datadoc/{doc_id}/"
-    invite_user_setting = user_logic.get_user_settings(
+    invited_user_setting = user_logic.get_user_settings(
         uid, "notification_preference", session=session
     )
 
     notification_setting = (
-        invite_user_setting.value
-        if invite_user_setting is not None
-        else get_config_value("user_setting.notification_preference.default")
+        invited_user_setting.value
+        if invited_user_setting is not None
+        else user_logic.get_user_settings(
+            current_user.id, "notification_preference", session=session
+        ).value
     )
+
     notify_user(
         user=invited_user,
         notifier_name=notification_setting,
@@ -500,3 +502,90 @@ def delete_datadoc_editor(
                 room=editor_dict["data_doc_id"],
                 broadcast=True,
             )
+
+
+@register("/datadoc/<int:doc_id>/owner/", methods=["POST"])
+def update_datadoc_owner(doc_id, current_owner_id, next_owner_id, originator=None):
+    with DBSession() as session:
+        # Add previous owner as an editor to the doc
+        assert_is_owner(doc_id, session=session)
+        current_owner_editor = logic.create_data_doc_editor(
+            data_doc_id=doc_id,
+            uid=current_owner_id,
+            read=True,
+            write=True,
+            commit=False,
+            session=session,
+        )
+        current_owner_editor_dict = current_owner_editor.to_dict()
+
+        # Notify all in the doc
+        socketio.emit(
+            "data_doc_editor",
+            (originator, doc_id, current_owner_id, current_owner_editor_dict),
+            namespace="/datadoc",
+            room=doc_id,
+            broadcast=True,
+        )
+
+        # If next_owner is an editor remove them as an editor
+        next_owner_editor = logic.get_data_doc_editor_by_id(
+            next_owner_id, session=session
+        )
+        if next_owner_editor:
+            next_owner_editor_dict = next_owner_editor.to_dict()
+            logic.delete_data_doc_editor(
+                id=next_owner_id, session=session, commit=False
+            )
+            socketio.emit(
+                "data_doc_editor",
+                (
+                    originator,
+                    next_owner_editor_dict["data_doc_id"],
+                    next_owner_editor_dict["uid"],
+                    None,
+                ),
+                namespace="/datadoc",
+                room=next_owner_editor_dict["data_doc_id"],
+                broadcast=True,
+            )
+        # Update doc owner to next owner
+        logic.update_data_doc(
+            id=doc_id, commit=False, session=session, owner_uid=next_owner_id
+        )
+        session.commit()
+        send_datadoc_transfer_notification(doc_id, next_owner_id, session)
+        return current_owner_editor_dict
+
+
+def send_datadoc_transfer_notification(doc_id, next_owner_id, session=None):
+    inviting_user = user_logic.get_user_by_id(current_user.id, session=session)
+    invited_user = user_logic.get_user_by_id(next_owner_id, session=session)
+    data_doc = logic.get_data_doc_by_id(doc_id, session=session)
+    environment = data_doc.environment
+
+    inviting_username = inviting_user.get_name().capitalize()
+    data_doc_title = data_doc.title or "Untitled"
+
+    doc_url = f"{DataHubSettings.PUBLIC_URL}/{environment.name}/datadoc/{doc_id}/"
+    invited_user_setting = user_logic.get_user_settings(
+        next_owner_id, "notification_preference", session=session
+    )
+    notification_setting = (
+        invited_user_setting.value
+        if invited_user_setting is not None
+        else user_logic.get_user_settings(
+            current_user.id, "notification_preference", session=session
+        ).value
+    )
+
+    notify_user(
+        user=invited_user,
+        notifier_name=notification_setting,
+        template_name="datadoc_ownership_transfer",
+        template_params=dict(
+            inviting_username=inviting_username,
+            doc_url=doc_url,
+            data_doc_title=data_doc_title,
+        ),
+    )

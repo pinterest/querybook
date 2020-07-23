@@ -15,7 +15,6 @@ interface IProp {
 
     onPermissionChange: (permision: DataDocPermission) => any;
     onRemoveEditor?: (uid: number) => any;
-    updateDataDocOwner: (uid: number) => any;
 }
 
 export const ViewerPermissionPicker: React.FunctionComponent<IProp> = ({
@@ -24,7 +23,6 @@ export const ViewerPermissionPicker: React.FunctionComponent<IProp> = ({
     viewerInfo,
     onPermissionChange,
     onRemoveEditor,
-    updateDataDocOwner,
     isOwner,
 }) => {
     const [showEditMenu, setShowEditMenu] = React.useState(false);
@@ -55,7 +53,9 @@ export const ViewerPermissionPicker: React.FunctionComponent<IProp> = ({
                 </MenuItem>
                 {isOwner && (
                     <MenuItem
-                        onClick={() => updateDataDocOwner(viewerInfo.uid)}
+                        onClick={() =>
+                            onPermissionChange(DataDocPermission.OWNER)
+                        }
                     >
                         owner
                     </MenuItem>

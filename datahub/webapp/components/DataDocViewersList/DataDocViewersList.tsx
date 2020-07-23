@@ -32,10 +32,7 @@ interface IDataDocViewersListProps {
     changeDataDocPublic: (docId: number, docPublic: boolean) => any;
     updateDataDocEditors: (uid: number, read: boolean, write: boolean) => any;
     deleteDataDocEditor: (uid: number) => any;
-    updateDataDocOwner: (
-        current_owner_uid: number,
-        next_owner_uid: number
-    ) => any;
+    updateDataDocOwner: (currentOwnerId: number, nextOwnerId: number) => any;
 }
 
 // TODO: make this component use React-Redux directly
@@ -98,13 +95,17 @@ export const DataDocViewersList: React.FunctionComponent<IDataDocViewersListProp
                         isOwner={dataDoc.owner_uid == userInfo.id}
                         viewerInfo={info}
                         onPermissionChange={(permission) => {
-                            const { read, write } = permissionToReadWrite(
-                                permission
-                            );
-                            if (info.uid in editorsByUid) {
-                                updateDataDocEditors(info.uid, read, write);
+                            if (permission == DataDocPermission.OWNER) {
+                                updateDataDocOwner(dataDoc.owner_uid, info.uid);
                             } else {
-                                addDataDocEditor(info.uid, read, write);
+                                const { read, write } = permissionToReadWrite(
+                                    permission
+                                );
+                                if (info.uid in editorsByUid) {
+                                    updateDataDocEditors(info.uid, read, write);
+                                } else {
+                                    addDataDocEditor(info.uid, read, write);
+                                }
                             }
                         }}
                         onRemoveEditor={
@@ -112,9 +113,6 @@ export const DataDocViewersList: React.FunctionComponent<IDataDocViewersListProp
                                 ? () => deleteDataDocEditor(info.uid)
                                 : null
                         }
-                        updateDataDocOwner={(uid) => {
-                            updateDataDocOwner(dataDoc.owner_uid, uid);
-                        }}
                     />
                 </div>
             </div>

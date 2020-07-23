@@ -100,13 +100,41 @@ export function fetchDataDocs(filterMode: string): ThunkResult<Promise<void>> {
 
 export function updateDataDocOwner(
     docId: number,
-    current_owner_uid: number,
-    next_owner_uid: number
+    currentOwnerId: number,
+    nextOwnerId: number
 ): ThunkResult<Promise<void>> {
     return async (dispatch) => {
-        dispatch(addDataDocEditors(docId, current_owner_uid, true, true));
-        dispatch(updateDataDocField(docId, 'owner_uid', next_owner_uid));
-        dispatch(deleteDataDocEditor(docId, next_owner_uid));
+        const {
+            data,
+        }: {
+            data: IDataDocEditor;
+        } = await ds.save(`/datadoc/${docId}/owner/`, {
+            current_owner_id: currentOwnerId,
+            next_owner_id: nextOwnerId,
+            originator: dataDocSocket.getSocketId(),
+        });
+        dispatch({
+            type: '@@dataDoc/RECEIVE_DATA_DOC_EDITOR',
+            payload: {
+                docId: data['data_doc_id'],
+                editor: data,
+            },
+        });
+        dispatch({
+            type: '@@dataDoc/REMOVE_DATA_DOC_EDITOR',
+            payload: {
+                docId: docId,
+                uid: nextOwnerId,
+            },
+        });
+        dispatch({
+            type: '@@dataDoc/UPDATE_DATA_DOC_FIELD',
+            payload: {
+                docId: docId,
+                fieldName: 'owner_uid',
+                fieldVal: nextOwnerId,
+            },
+        });
     };
 }
 
