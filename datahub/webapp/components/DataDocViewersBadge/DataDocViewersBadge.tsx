@@ -116,6 +116,7 @@ class DataDocViewersBadgeComponent extends React.Component<IProps, IState> {
             dataDoc,
             editorsByUid,
             readonly,
+            ownerId,
 
             addDataDocEditor,
             changeDataDocPublic,
@@ -140,6 +141,7 @@ class DataDocViewersBadgeComponent extends React.Component<IProps, IState> {
                 <DataDocViewersList
                     readonly={readonly}
                     viewerInfos={viewerInfos}
+                    isOwner={dataDoc.owner_uid == ownerId}
                     editorsByUid={editorsByUid}
                     dataDoc={dataDoc}
                     addDataDocEditor={addDataDocEditor}
@@ -174,6 +176,7 @@ function mapStateToProps(state: IStoreState, ownProps: IOwnProps) {
         dataDoc: dataDocSelectors.dataDocSelector(state, ownProps),
         userInfoById: state.user.userInfoById,
         readonly: !dataDocSelectors.canCurrentUserEditSelector(state, ownProps),
+        ownerId: state.user.myUserInfo.uid,
     };
 }
 

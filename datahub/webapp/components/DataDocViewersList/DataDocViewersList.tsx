@@ -27,6 +27,7 @@ interface IDataDocViewersListProps {
     editorsByUid: Record<number, IDataDocEditor>;
     dataDoc: IDataDoc;
     readonly: boolean;
+    isOwner: boolean;
 
     addDataDocEditor: (uid: number, read: boolean, write: boolean) => any;
     changeDataDocPublic: (docId: number, docPublic: boolean) => any;
@@ -41,6 +42,7 @@ export const DataDocViewersList: React.FunctionComponent<IDataDocViewersListProp
     dataDoc,
     editorsByUid,
     readonly,
+    isOwner,
     className = '',
 
     addDataDocEditor,
@@ -49,7 +51,6 @@ export const DataDocViewersList: React.FunctionComponent<IDataDocViewersListProp
     deleteDataDocEditor,
     updateDataDocOwner,
 }) => {
-    const userInfo = useSelector(myUserInfoSelector);
     const addUserRowDOM = readonly ? null : (
         <div className="datadoc-add-user-row">
             <div className="user-select-wrapper">
@@ -92,7 +93,7 @@ export const DataDocViewersList: React.FunctionComponent<IDataDocViewersListProp
                     <ViewerPermissionPicker
                         readonly={readonly}
                         publicDataDoc={dataDoc.public}
-                        isOwner={dataDoc.owner_uid == userInfo.id}
+                        isOwner={isOwner}
                         viewerInfo={info}
                         onPermissionChange={(permission) => {
                             if (permission == DataDocPermission.OWNER) {
