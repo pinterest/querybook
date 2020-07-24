@@ -518,8 +518,18 @@ def update_datadoc_owner(doc_id, current_owner_id, next_owner_id, originator=Non
             session=session,
         )
         current_owner_editor_dict = current_owner_editor.to_dict()
-
-        # Notify all in the doc
+        # If next_owner is an editor remove them as an editor
+        next_owner_editor = logic.get_data_doc_editor_by_id(
+            next_owner_id, session=session
+        )
+        next_owner_editor_dict = next_owner_editor.to_dict()
+        logic.delete_data_doc_editor(id=next_owner_id, session=session, commit=False)
+        next_owner_uid = next_owner_editor_dict["uid"]
+        # Update doc owner to next owner
+        doc = logic.update_data_doc(
+            id=doc_id, commit=False, session=session, owner_uid=next_owner_uid
+        )
+        doc_dict = doc.to_dict()
         socketio.emit(
             "data_doc_editor",
             (originator, doc_id, current_owner_id, current_owner_editor_dict),
@@ -527,13 +537,6 @@ def update_datadoc_owner(doc_id, current_owner_id, next_owner_id, originator=Non
             room=doc_id,
             broadcast=True,
         )
-
-        # If next_owner is an editor remove them as an editor
-        next_owner_editor = logic.get_data_doc_editor_by_id(
-            next_owner_id, session=session
-        )
-        next_owner_editor_dict = next_owner_editor.to_dict()
-        logic.delete_data_doc_editor(id=next_owner_id, session=session, commit=False)
         socketio.emit(
             "data_doc_editor",
             (
@@ -546,10 +549,12 @@ def update_datadoc_owner(doc_id, current_owner_id, next_owner_id, originator=Non
             room=next_owner_editor_dict["data_doc_id"],
             broadcast=True,
         )
-        next_owner_uid = next_owner_editor_dict["uid"]
-        # Update doc owner to next owner
-        logic.update_data_doc(
-            id=doc_id, commit=False, session=session, owner_uid=next_owner_uid
+        socketio.emit(
+            "data_doc_updated",
+            (originator, doc_dict,),
+            namespace="/datadoc",
+            room=next_owner_editor_dict["data_doc_id"],
+            broadcast=True,
         )
         session.commit()
         send_datadoc_transfer_notification(doc_id, next_owner_uid, session)
