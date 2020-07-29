@@ -505,20 +505,20 @@ def delete_datadoc_editor(
 
 
 @register("/datadoc/<int:doc_id>/owner/", methods=["POST"])
-def update_datadoc_owner(doc_id, current_owner_id, next_owner_id, originator=None):
+def update_datadoc_owner(doc_id, next_owner_id, originator=None):
     with DBSession() as session:
         # Add previous owner as an editor to the doc
         assert_is_owner(doc_id, session=session)
         current_owner_editor = logic.create_data_doc_editor(
             data_doc_id=doc_id,
-            uid=current_owner_id,
+            uid=current_user.id,
             read=True,
             write=True,
             commit=False,
             session=session,
         )
         current_owner_editor_dict = current_owner_editor.to_dict()
-        # If next_owner is an editor remove them as an editor
+        # Remove next owner as a doc editor
         next_owner_editor = logic.get_data_doc_editor_by_id(
             next_owner_id, session=session
         )
@@ -530,9 +530,10 @@ def update_datadoc_owner(doc_id, current_owner_id, next_owner_id, originator=Non
             id=doc_id, commit=False, session=session, owner_uid=next_owner_uid
         )
         doc_dict = doc.to_dict()
+        session.commit()
         socketio.emit(
             "data_doc_editor",
-            (originator, doc_id, current_owner_id, current_owner_editor_dict),
+            (originator, doc_id, current_user.id, current_owner_editor_dict),
             namespace="/datadoc",
             room=doc_id,
             broadcast=True,
@@ -556,7 +557,6 @@ def update_datadoc_owner(doc_id, current_owner_id, next_owner_id, originator=Non
             room=next_owner_editor_dict["data_doc_id"],
             broadcast=True,
         )
-        session.commit()
         send_datadoc_transfer_notification(doc_id, next_owner_uid, session)
         return current_owner_editor_dict
 

@@ -210,13 +210,9 @@ function mapDispatchToProps(dispatch: Dispatch, ownProps: IOwnProps) {
                 )
             ),
 
-        updateDataDocOwner: (currentOwnerId: number, nextOwnerId: number) => {
+        updateDataDocOwner: (nextOwnerId: number) => {
             dispatch(
-                dataDocActions.updateDataDocOwner(
-                    ownProps.docId,
-                    currentOwnerId,
-                    nextOwnerId
-                )
+                dataDocActions.updateDataDocOwner(ownProps.docId, nextOwnerId)
             );
         },
     };

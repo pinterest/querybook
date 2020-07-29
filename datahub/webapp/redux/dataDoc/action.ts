@@ -100,7 +100,6 @@ export function fetchDataDocs(filterMode: string): ThunkResult<Promise<void>> {
 
 export function updateDataDocOwner(
     docId: number,
-    currentOwnerId: number,
     nextOwnerId: number
 ): ThunkResult<Promise<void>> {
     return async (dispatch, getState) => {
@@ -112,7 +111,6 @@ export function updateDataDocOwner(
         }: {
             data: IDataDocEditor;
         } = await ds.save(`/datadoc/${docId}/owner/`, {
-            current_owner_id: currentOwnerId,
             next_owner_id: nextOwnerEditor.id,
             originator: dataDocSocket.getSocketId(),
         });

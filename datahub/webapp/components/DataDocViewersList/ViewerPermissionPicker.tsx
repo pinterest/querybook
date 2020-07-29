@@ -7,6 +7,8 @@ import {
 } from 'lib/data-doc/datadoc-permission';
 import { Popover } from 'ui/Popover/Popover';
 import { MenuItem, MenuDivider, Menu } from 'ui/Menu/Menu';
+import { sendConfirm } from 'lib/dataHubUI';
+
 interface IProp {
     viewerInfo: IViewerInfo;
     readonly?: boolean;
@@ -54,7 +56,13 @@ export const ViewerPermissionPicker: React.FunctionComponent<IProp> = ({
                 {isOwner && (
                     <MenuItem
                         onClick={() =>
-                            onPermissionChange(DataDocPermission.OWNER)
+                            sendConfirm({
+                                header: 'Transfer Ownership',
+                                message:
+                                    'Are you sure you want to transfer ownership?',
+                                onConfirm: () =>
+                                    onPermissionChange(DataDocPermission.OWNER),
+                            })
                         }
                     >
                         owner

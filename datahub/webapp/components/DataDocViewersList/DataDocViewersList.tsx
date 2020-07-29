@@ -33,7 +33,7 @@ interface IDataDocViewersListProps {
     changeDataDocPublic: (docId: number, docPublic: boolean) => any;
     updateDataDocEditors: (uid: number, read: boolean, write: boolean) => any;
     deleteDataDocEditor: (uid: number) => any;
-    updateDataDocOwner: (currentOwnerId: number, nextOwnerId: number) => any;
+    updateDataDocOwner: (nextOwnerId: number) => any;
 }
 
 // TODO: make this component use React-Redux directly
@@ -97,7 +97,7 @@ export const DataDocViewersList: React.FunctionComponent<IDataDocViewersListProp
                         viewerInfo={info}
                         onPermissionChange={(permission) => {
                             if (permission == DataDocPermission.OWNER) {
-                                updateDataDocOwner(dataDoc.owner_uid, info.uid);
+                                updateDataDocOwner(info.uid);
                             } else {
                                 const { read, write } = permissionToReadWrite(
                                     permission

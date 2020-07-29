@@ -70,7 +70,7 @@ def assert_can_write(doc_id, session=None):
 @with_session
 def assert_is_owner(doc_id, session=None):
     try:
-        doc = session.query(DataDoc).filter(DataDoc.id == doc_id).first() or None
+        doc = session.query(DataDoc).filter(DataDoc.id == doc_id).first()
         if doc is None:
             raise DocDoesNotExist
         api_assert(
