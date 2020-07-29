@@ -843,9 +843,10 @@ def update_data_doc_editor(
 
 
 @with_session
-def delete_data_doc_editor(id, session=None):
+def delete_data_doc_editor(id, session=None, commit=True):
     session.query(DataDocEditor).filter_by(id=id).delete()
-    session.commit()
+    if commit:
+        session.commit()
 
 
 """

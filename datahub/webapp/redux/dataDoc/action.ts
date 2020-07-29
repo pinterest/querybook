@@ -98,6 +98,47 @@ export function fetchDataDocs(filterMode: string): ThunkResult<Promise<void>> {
     };
 }
 
+export function updateDataDocOwner(
+    docId: number,
+    nextOwnerId: number
+): ThunkResult<Promise<void>> {
+    return async (dispatch, getState) => {
+        const nextOwnerEditor = (getState().dataDoc.editorsByDocIdUserId[
+            docId
+        ] || {})[nextOwnerId];
+        const {
+            data,
+        }: {
+            data: IDataDocEditor;
+        } = await ds.save(`/datadoc/${docId}/owner/`, {
+            next_owner_id: nextOwnerEditor.id,
+            originator: dataDocSocket.getSocketId(),
+        });
+        dispatch({
+            type: '@@dataDoc/REMOVE_DATA_DOC_EDITOR',
+            payload: {
+                docId: docId,
+                uid: nextOwnerId,
+            },
+        });
+        dispatch({
+            type: '@@dataDoc/UPDATE_DATA_DOC_FIELD',
+            payload: {
+                docId: docId,
+                fieldName: 'owner_uid',
+                fieldVal: nextOwnerId,
+            },
+        });
+        dispatch({
+            type: '@@dataDoc/RECEIVE_DATA_DOC_EDITOR',
+            payload: {
+                docId: data['data_doc_id'],
+                editor: data,
+            },
+        });
+    };
+}
+
 export function receiveDataDoc(
     dataDoc: IDataDoc,
     dataDocCellById: Record<number, IDataCell>

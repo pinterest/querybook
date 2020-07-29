@@ -116,11 +116,13 @@ class DataDocViewersBadgeComponent extends React.Component<IProps, IState> {
             dataDoc,
             editorsByUid,
             readonly,
+            ownerId,
 
             addDataDocEditor,
             changeDataDocPublic,
             updateDataDocEditors,
             deleteDataDocEditor,
+            updateDataDocOwner,
         } = this.props;
 
         const { showViewsList } = this.state;
@@ -139,12 +141,14 @@ class DataDocViewersBadgeComponent extends React.Component<IProps, IState> {
                 <DataDocViewersList
                     readonly={readonly}
                     viewerInfos={viewerInfos}
+                    isOwner={dataDoc.owner_uid == ownerId}
                     editorsByUid={editorsByUid}
                     dataDoc={dataDoc}
                     addDataDocEditor={addDataDocEditor}
                     changeDataDocPublic={changeDataDocPublic}
                     updateDataDocEditors={updateDataDocEditors}
                     deleteDataDocEditor={deleteDataDocEditor}
+                    updateDataDocOwner={updateDataDocOwner}
                 />
             </Popover>
         );
@@ -172,6 +176,7 @@ function mapStateToProps(state: IStoreState, ownProps: IOwnProps) {
         dataDoc: dataDocSelectors.dataDocSelector(state, ownProps),
         userInfoById: state.user.userInfoById,
         readonly: !dataDocSelectors.canCurrentUserEditSelector(state, ownProps),
+        ownerId: state.user.myUserInfo.uid,
     };
 }
 
@@ -204,6 +209,12 @@ function mapDispatchToProps(dispatch: Dispatch, ownProps: IOwnProps) {
                     write
                 )
             ),
+
+        updateDataDocOwner: (nextOwnerId: number) => {
+            dispatch(
+                dataDocActions.updateDataDocOwner(ownProps.docId, nextOwnerId)
+            );
+        },
     };
 }
 

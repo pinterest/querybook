@@ -18,6 +18,8 @@ import { UserSelect } from 'components/UserSelect/UserSelect';
 import { AsyncButton } from 'ui/AsyncButton/AsyncButton';
 import { Tabs } from 'ui/Tabs/Tabs';
 import { sendNotification } from 'lib/dataHubUI';
+import { myUserInfoSelector } from 'redux/user/selector';
+import { useSelector } from 'react-redux';
 
 interface IDataDocViewersListProps {
     className?: string;
@@ -25,11 +27,13 @@ interface IDataDocViewersListProps {
     editorsByUid: Record<number, IDataDocEditor>;
     dataDoc: IDataDoc;
     readonly: boolean;
+    isOwner: boolean;
 
     addDataDocEditor: (uid: number, read: boolean, write: boolean) => any;
     changeDataDocPublic: (docId: number, docPublic: boolean) => any;
     updateDataDocEditors: (uid: number, read: boolean, write: boolean) => any;
     deleteDataDocEditor: (uid: number) => any;
+    updateDataDocOwner: (nextOwnerId: number) => any;
 }
 
 // TODO: make this component use React-Redux directly
@@ -38,12 +42,14 @@ export const DataDocViewersList: React.FunctionComponent<IDataDocViewersListProp
     dataDoc,
     editorsByUid,
     readonly,
+    isOwner,
     className = '',
 
     addDataDocEditor,
     changeDataDocPublic,
     updateDataDocEditors,
     deleteDataDocEditor,
+    updateDataDocOwner,
 }) => {
     const addUserRowDOM = readonly ? null : (
         <div className="datadoc-add-user-row">
@@ -87,15 +93,20 @@ export const DataDocViewersList: React.FunctionComponent<IDataDocViewersListProp
                     <ViewerPermissionPicker
                         readonly={readonly}
                         publicDataDoc={dataDoc.public}
+                        isOwner={isOwner}
                         viewerInfo={info}
                         onPermissionChange={(permission) => {
-                            const { read, write } = permissionToReadWrite(
-                                permission
-                            );
-                            if (info.uid in editorsByUid) {
-                                updateDataDocEditors(info.uid, read, write);
+                            if (permission == DataDocPermission.OWNER) {
+                                updateDataDocOwner(info.uid);
                             } else {
-                                addDataDocEditor(info.uid, read, write);
+                                const { read, write } = permissionToReadWrite(
+                                    permission
+                                );
+                                if (info.uid in editorsByUid) {
+                                    updateDataDocEditors(info.uid, read, write);
+                                } else {
+                                    addDataDocEditor(info.uid, read, write);
+                                }
                             }
                         }}
                         onRemoveEditor={
