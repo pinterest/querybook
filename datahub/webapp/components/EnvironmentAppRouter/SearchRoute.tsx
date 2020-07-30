@@ -4,6 +4,8 @@ import { useDispatch } from 'react-redux';
 
 import { mapQueryParamToState as mapQueryParamToStateAction } from 'redux/search/action';
 import history from 'lib/router-history';
+
+import { useBrowserTitle } from 'hooks/useBrowserTitle';
 import { useModalRoute } from 'hooks/useModalRoute';
 import { SearchOverview } from 'components/Search/SearchOverview';
 import { Modal } from 'ui/Modal/Modal';
@@ -11,6 +13,7 @@ import { Modal } from 'ui/Modal/Modal';
 export const SearchRoute: React.FunctionComponent<RouteComponentProps> = ({
     location,
 }) => {
+    useBrowserTitle('Search');
     const dispatch = useDispatch();
     const mapQueryParamToState = React.useCallback(
         () => dispatch(mapQueryParamToStateAction()),

@@ -1,7 +1,7 @@
 import { useEffect, useRef } from 'react';
 import { setBrowserTitle } from 'lib/dataHubUI';
 
-export function useBrowserTitle(title: string) {
+export function useBrowserTitle(title = '') {
     const oldTitle = useRef(document.title);
     useEffect(() => {
         setBrowserTitle(title);
@@ -10,7 +10,7 @@ export function useBrowserTitle(title: string) {
     // Unset the title when unmounting
     useEffect(() => {
         return () => {
-            setBrowserTitle(oldTitle.current);
+            setBrowserTitle(oldTitle.current, false);
         };
     }, []);
 }

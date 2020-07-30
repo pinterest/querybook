@@ -100,7 +100,9 @@ class DataDocComponent extends React.Component<IProps, IState> {
     public componentDidMount() {
         this.autoFocusCell({}, this.props);
         this.openDataDoc(this.props.docId);
-
+        if (this.props.dataDoc?.title != null) {
+            this.publishDataDocTitle(this.props.dataDoc.title);
+        }
         window.addEventListener('keydown', this.onKeyDown, true);
     }
 
