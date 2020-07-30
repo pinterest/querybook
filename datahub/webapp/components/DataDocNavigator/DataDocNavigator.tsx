@@ -180,7 +180,7 @@ const RecentDataDocsSection: React.FC<ICommonSectionProps> = (props) => {
 
 const FavoriteDataDocsSection: React.FC<ICommonSectionProps> = (props) => {
     const { selectedDocId, loadedFilterModes, filterString } = props;
-    const section = 'favorites';
+    const section = 'favorite';
     const { collapsed, setCollapsed, load } = useCommonNavigatorState(
         section,
         props
@@ -232,7 +232,7 @@ const FavoriteDataDocsSection: React.FC<ICommonSectionProps> = (props) => {
             ref={dropRef}
         >
             <DataDocNavigatorSection
-                sectionHeader={section}
+                sectionHeader={'Favorites'}
                 sectionHeaderIcon="heart"
                 dataDocs={dataDocs}
                 selectedDocId={selectedDocId}
