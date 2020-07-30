@@ -34,6 +34,7 @@ import { Select } from 'ui/Select/Select';
 import { Tabs } from 'ui/Tabs/Tabs';
 
 import './SearchOverview.scss';
+import { useBrowserTitle } from 'hooks/useBrowserTitle';
 
 const secondsPerDay = 60 * 60 * 24;
 const inputDateFormat = 'YYYY-MM-DD';
@@ -68,6 +69,8 @@ export const SearchOverview: React.FunctionComponent = () => {
             metastoreId: state.dataTableSearch.metastoreId,
         };
     });
+    useBrowserTitle(searchString ?? 'Search');
+
     const results = resultByPage[currentPage] || [];
     const isLoading = !!searchRequest;
 

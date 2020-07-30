@@ -2,6 +2,7 @@ import React from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 import { sample } from 'lodash';
 
+import { useBrowserTitle } from 'hooks/useBrowserTitle';
 import { titleize } from 'lib/utils';
 import { navigateWithinEnv } from 'lib/utils/query-string';
 import { IStoreState } from 'redux/store/types';
@@ -25,6 +26,8 @@ const datahubHints: string[] = require('config/loading_hints.yaml').hints;
  * TODO: clean up the urls so they are open source friendly
  */
 export const Landing: React.FunctionComponent<{}> = ({}) => {
+    useBrowserTitle('');
+
     const {
         userInfo,
         recentDataDocs,
