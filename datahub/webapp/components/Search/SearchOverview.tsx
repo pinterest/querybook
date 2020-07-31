@@ -68,6 +68,7 @@ export const SearchOverview: React.FunctionComponent = () => {
             metastoreId: state.dataTableSearch.metastoreId,
         };
     });
+
     const results = resultByPage[currentPage] || [];
     const isLoading = !!searchRequest;
 

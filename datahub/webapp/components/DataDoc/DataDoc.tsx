@@ -16,7 +16,7 @@ import {
 } from 'const/datadoc';
 import ds from 'lib/datasource';
 import history from 'lib/router-history';
-import { sendConfirm, sendNotification } from 'lib/dataHubUI';
+import { sendConfirm, sendNotification, setBrowserTitle } from 'lib/dataHubUI';
 import { scrollToCell, getShareUrl } from 'lib/data-doc/data-doc-utils';
 import { sanitizeUrlTitle, copy } from 'lib/utils';
 import { getQueryString } from 'lib/utils/query-string';
@@ -100,7 +100,9 @@ class DataDocComponent extends React.Component<IProps, IState> {
     public componentDidMount() {
         this.autoFocusCell({}, this.props);
         this.openDataDoc(this.props.docId);
-
+        if (this.props.dataDoc?.title != null) {
+            this.publishDataDocTitle(this.props.dataDoc.title);
+        }
         window.addEventListener('keydown', this.onKeyDown, true);
     }
 
@@ -164,7 +166,7 @@ class DataDocComponent extends React.Component<IProps, IState> {
     @decorate(memoizeOne)
     public publishDataDocTitle(title: string) {
         title = title || 'Untitled';
-        document.title = title;
+        setBrowserTitle(title);
         history.replace(
             location.pathname.split('/').slice(0, 4).join('/') +
                 `/${sanitizeUrlTitle(title)}/` +

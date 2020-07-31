@@ -4,6 +4,7 @@ import { RouteComponentProps, useParams } from 'react-router-dom';
 import history from 'lib/router-history';
 import { navigateWithinEnv } from 'lib/utils/query-string';
 import { useModalRoute } from 'hooks/useModalRoute';
+import { useBrowserTitle } from 'hooks/useBrowserTitle';
 
 import { FAQ } from 'components/Info/FAQ';
 import { Shortcut } from 'components/Info/Shortcut';
@@ -14,6 +15,7 @@ import { Modal } from 'ui/Modal/Modal';
 export const InfoMenuRoute: React.FunctionComponent<RouteComponentProps> = ({
     location,
 }) => {
+    useBrowserTitle('Info');
     const { type: infoType } = useParams();
     const isModal = useModalRoute(location);
 

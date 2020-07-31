@@ -19,7 +19,6 @@ import * as adhocQueryActions from 'redux/adhocQuery/action';
 import * as dataDocActions from 'redux/dataDoc/action';
 
 import { BoundQueryEditor } from 'components/QueryEditor/BoundQueryEditor';
-import { CodeMirrorSearchHighlighter } from 'components/SearchAndReplace/CodeMirrorSearchHighlighter';
 import {
     SearchAndReplace,
     ISearchAndReplaceHandles,
@@ -31,6 +30,8 @@ import {
 } from 'components/QueryRunButton/QueryRunButton';
 import { QueryComposerExecution } from './QueryComposerExecution';
 import { QueryEditor } from 'components/QueryEditor/QueryEditor';
+
+import { useBrowserTitle } from 'hooks/useBrowserTitle';
 
 import { FullHeight } from 'ui/FullHeight/FullHeight';
 import { IconButton } from 'ui/Button/IconButton';
@@ -134,6 +135,8 @@ const useQueryComposerSearchAndReplace = (
 };
 
 export const QueryComposer: React.FC<{}> = () => {
+    useBrowserTitle('Adhoc Query');
+
     const dispatch: Dispatch = useDispatch();
     const { query, setQuery } = useQuery(dispatch);
     const { engine, setEngineId, queryEngines, queryEngineById } = useEngine(

@@ -83,3 +83,14 @@ export function setSidebarTableId(tableId: number) {
 export function setSessionExpired() {
     (reduxStore.dispatch as Dispatch)(datahubUIActions.setSessionExpired());
 }
+
+export function setBrowserTitle(title = '', withSuffix = true) {
+    const formattedTitle = withSuffix
+        ? title
+            ? title + ' - DataHub'
+            : 'DataHub'
+        : title;
+    if (document.title !== formattedTitle) {
+        document.title = formattedTitle;
+    }
+}
