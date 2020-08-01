@@ -52,7 +52,11 @@ class User(CRUDMixin, Base):
         return check_password_hash(self._password or "", plaintext)
 
     def get_name(self):
-        return self.fullname or self.username
+        return (
+            " ".join([name.capitalize() for name in self.fullname.split(" ")])
+            if self.fullname
+            else self.username
+        )
 
     def to_dict(self, with_roles=False):
         user_dict = {

@@ -215,7 +215,6 @@ def send_out_notification(query_execution_id):
                     notifier_name=notification_setting,
                     template_name="query_completion_notification",
                     template_params=dict(
-                        username=user.username,
                         query_execution=query_execution,
                         doc_id=doc_id,
                         cell_id=cell_id,
