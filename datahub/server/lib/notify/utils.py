@@ -8,10 +8,6 @@ def notify_user(user, notifier_name, template_name, template_params):
     notifier.notify(user=user, message=markdown_message)
 
 
-def capitalize_username(username: str):
-    return " ".join([name.capitalize() for name in username.split(" ")])
-
-
 def render_message(template_name, context):
     jinja_env = jinja2.Environment(
         loader=jinja2.FileSystemLoader("./datahub/notification_templates/")

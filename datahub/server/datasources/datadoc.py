@@ -27,7 +27,7 @@ from logic.datadoc_permission import assert_can_read, assert_can_write, assert_i
 from logic.query_execution import get_query_execution_by_id
 from logic.schedule import run_and_log_scheduled_task
 from models.environment import Environment
-from lib.notify.utils import notify_user, capitalize_username
+from lib.notify.utils import notify_user
 
 LOG = get_logger(__file__)
 
@@ -444,7 +444,7 @@ def send_add_datadoc_editor_email(doc_id, uid, read, write, session=None):
         notifier_name=notification_setting,
         template_name="datadoc_invitation",
         template_params=dict(
-            inviting_username=capitalize_username(inviting_user.get_name()),
+            inviting_username=inviting_user.get_name(),
             read_or_write=read_or_write,
             doc_url=doc_url,
             data_doc_title=data_doc_title,
@@ -584,7 +584,7 @@ def send_datadoc_transfer_notification(doc_id, next_owner_id, session=None):
         notifier_name=notification_setting,
         template_name="datadoc_ownership_transfer",
         template_params=dict(
-            inviting_username=capitalize_username(inviting_user.get_name()),
+            inviting_username=inviting_user.get_name(),
             doc_url=doc_url,
             data_doc_title=data_doc_title,
         ),
