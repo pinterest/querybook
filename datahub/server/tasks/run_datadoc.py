@@ -183,19 +183,20 @@ def on_datadoc_completion(
                 doc_url = f"{DataHubSettings.PUBLIC_URL}/{env_name}/datadoc/{doc_id}/"
                 user = User.get(id=user_id, session=session)
 
-            notify_user(
-                user=user,
-                notifier_name=notify_with,
-                template_name="datadoc_completion_notification",
-                template_params=dict(
-                    is_success=is_success,
-                    doc_title=doc_title,
-                    doc_url=doc_url,
-                    doc_id=doc_id,
-                    export_url=export_url,
-                    error_msg=error_msg,
-                ),
-            )
+                notify_user(
+                    user=user,
+                    template_name="datadoc_completion_notification",
+                    template_params=dict(
+                        is_success=is_success,
+                        doc_title=doc_title,
+                        doc_url=doc_url,
+                        doc_id=doc_id,
+                        export_url=export_url,
+                        error_msg=error_msg,
+                    ),
+                    notifier_name=notify_with,
+                    session=session,
+                )
     except Exception as e:
         is_success = False
         # error_msg = str(e)

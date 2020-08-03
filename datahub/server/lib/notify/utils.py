@@ -1,8 +1,18 @@
 import jinja2
-from lib.notify.all_notifiers import get_notifier_class
+from lib.notify.all_notifiers import get_notifier_class, DEFAULT_NOTIFIER
+from logic import user as user_logic
 
 
-def notify_user(user, notifier_name, template_name, template_params):
+def notify_user(user, template_name, template_params, notifier_name=None, session=None):
+    if notifier_name is None:
+        notification_preference = user_logic.get_user_settings(
+            user.id, "notification_preference", session=session
+        )
+        notifier_name = (
+            notification_preference.value
+            if notification_preference is not None
+            else DEFAULT_NOTIFIER
+        )
     notifier = get_notifier_class(notifier_name)
     markdown_message = render_message(template_name, template_params)
     notifier.notify(user=user, message=markdown_message)

@@ -17,7 +17,6 @@ from logic import (
 )
 from tasks.log_query_per_table import log_query_per_table_task
 from lib.notify.utils import notify_user
-from lib.notify.all_notifiers import DEFAULT_NOTIFIER
 
 LOG = get_task_logger(__name__)
 
@@ -189,13 +188,6 @@ def send_out_notification(query_execution_id):
             for notification in notifications:
                 uid = notification.user
                 user = user_logic.get_user_by_id(uid, session=session)
-                user_setting = user_logic.get_user_settings(
-                    uid, "notification_preference", session=session
-                )
-
-                notification_setting = (
-                    user_setting.value if user_setting is not None else DEFAULT_NOTIFIER
-                )
                 doc_id = None
                 cell_id = None
                 query_title = "Untitled"
@@ -207,7 +199,6 @@ def send_out_notification(query_execution_id):
 
                 notify_user(
                     user=user,
-                    notifier_name=notification_setting,
                     template_name="query_completion_notification",
                     template_params=dict(
                         query_execution=query_execution,
@@ -217,6 +208,7 @@ def send_out_notification(query_execution_id):
                         public_url=DataHubSettings.PUBLIC_URL,
                         env_name=env_name,
                     ),
+                    session=session,
                 )
 
 

@@ -28,7 +28,6 @@ from logic.query_execution import get_query_execution_by_id
 from logic.schedule import run_and_log_scheduled_task
 from models.environment import Environment
 from lib.notify.utils import notify_user
-from lib.notify.all_notifiers import DEFAULT_NOTIFIER
 
 LOG = get_logger(__file__)
 
@@ -428,19 +427,9 @@ def send_add_datadoc_editor_email(doc_id, uid, read, write, session=None):
     data_doc_title = data_doc.title or "Untitled"
 
     doc_url = f"{DataHubSettings.PUBLIC_URL}/{environment.name}/datadoc/{doc_id}/"
-    invited_user_setting = user_logic.get_user_settings(
-        uid, "notification_preference", session=session
-    )
-
-    notification_setting = (
-        invited_user_setting.value
-        if invited_user_setting is not None
-        else DEFAULT_NOTIFIER
-    )
 
     notify_user(
         user=invited_user,
-        notifier_name=notification_setting,
         template_name="datadoc_invitation",
         template_params=dict(
             inviting_username=inviting_user.get_name(),
@@ -448,6 +437,7 @@ def send_add_datadoc_editor_email(doc_id, uid, read, write, session=None):
             doc_url=doc_url,
             data_doc_title=data_doc_title,
         ),
+        session=session,
     )
 
 
@@ -567,22 +557,14 @@ def send_datadoc_transfer_notification(doc_id, next_owner_id, session=None):
     data_doc_title = data_doc.title or "Untitled"
 
     doc_url = f"{DataHubSettings.PUBLIC_URL}/{environment.name}/datadoc/{doc_id}/"
-    invited_user_setting = user_logic.get_user_settings(
-        next_owner_id, "notification_preference", session=session
-    )
-    notification_setting = (
-        invited_user_setting.value
-        if invited_user_setting is not None
-        else DEFAULT_NOTIFIER
-    )
 
     notify_user(
         user=invited_user,
-        notifier_name=notification_setting,
         template_name="datadoc_ownership_transfer",
         template_params=dict(
             inviting_username=inviting_user.get_name(),
             doc_url=doc_url,
             data_doc_title=data_doc_title,
         ),
+        session=session,
     )
