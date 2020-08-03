@@ -63,6 +63,54 @@ export interface IChartSeriesMeta {
 }
 
 export type ChartScaleType = 'time' | 'category' | 'linear' | 'logarithmic';
+export const ChartScaleOptions: ChartScaleType[] = [
+    'time',
+    'category',
+    'linear',
+    'logarithmic',
+];
+export const chartTypeToAllowedAxisType: Partial<Record<
+    ChartType,
+    { x: ChartScaleType[]; y: ChartScaleType[] }
+>> = {
+    line: {
+        x: ChartScaleOptions,
+        y: ['linear', 'logarithmic'],
+    },
+    area: {
+        x: ChartScaleOptions,
+        y: ['linear', 'logarithmic'],
+    },
+    bar: {
+        x: ['category'],
+        y: ['linear', 'logarithmic'],
+    },
+    histogram: {
+        x: ['category'],
+        y: ['linear', 'logarithmic'],
+    },
+    pie: {
+        x: ['category'],
+        y: ['linear', 'logarithmic'],
+    },
+    doughnut: {
+        x: ['category'],
+        y: ['linear', 'logarithmic'],
+    },
+    scatter: {
+        x: ChartScaleOptions,
+        y: ['linear', 'logarithmic'],
+    },
+    bubble: {
+        x: ChartScaleOptions,
+        y: ['linear', 'logarithmic'],
+    },
+    table: {
+        x: ChartScaleOptions,
+        y: ChartScaleOptions,
+    },
+};
+
 export interface IChartAxisMeta {
     label: string;
     scale?: ChartScaleType;

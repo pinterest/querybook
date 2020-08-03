@@ -14,7 +14,7 @@ import Chart, { ChartOptions } from 'chart.js';
 import ChartDataLabels from 'chartjs-plugin-datalabels';
 
 import { IDataChartCellMeta } from 'const/datadoc';
-import { ChartScaleType } from 'const/dataDocChart';
+import { ChartScaleType, chartTypeToAllowedAxisType } from 'const/dataDocChart';
 import { fontColor } from 'const/chartColors';
 import { mapMetaToChartOptions } from 'lib/chart/chart-meta-processing';
 import { getDefaultScaleType } from 'lib/chart/chart-utils';
@@ -24,7 +24,7 @@ import { IStoreState } from 'redux/store/types';
 interface IDataDocChartProps {
     meta: IDataChartCellMeta;
     data?: any[][];
-    chartJsOptionObj?: ChartOptions;
+    chartJSOptions?: ChartOptions;
 }
 
 Chart.plugins.unregister(ChartDataLabels);
@@ -39,10 +39,19 @@ const useChartScale = (meta: IDataChartCellMeta, data?: any[][]) => {
     const xScale = meta?.chart?.x_axis?.scale;
     const xIndex = meta?.chart?.x_axis?.col_idx;
     const xAxesScaleType: ChartScaleType = React.useMemo(() => {
-        let defaultScale: ChartScaleType = null;
-        if (data?.length < 1) {
+        if (xScale != null) {
+            return xScale;
+        } else if (data?.length < 2) {
             return null;
         }
+
+        const allowedXAxisType = chartTypeToAllowedAxisType[meta.chart.type].x;
+        if (allowedXAxisType.length === 1) {
+            // If there is only 1 allowed scale type then return immediately
+            return allowedXAxisType[0];
+        }
+
+        let defaultScale: ChartScaleType = null;
         for (let i = 1; i < data.length; i++) {
             const row = data[i];
             if (!isChartValNull(row?.[xIndex])) {
@@ -50,8 +59,16 @@ const useChartScale = (meta: IDataChartCellMeta, data?: any[][]) => {
                 break;
             }
         }
-        // For x scale, it is either time or auto detect
-        return defaultScale === 'time' ? 'time' : null;
+
+        // since chart js's linear chart has very awkward scale display
+        // use category whenever possible
+        defaultScale = defaultScale === 'linear' ? 'category' : defaultScale;
+
+        // If the configured scale is not allowed, then just pick the first
+        // one from the allowed axis type
+        return allowedXAxisType.includes(defaultScale)
+            ? defaultScale
+            : allowedXAxisType[0];
     }, [data, xIndex, xScale]);
 
     const yScale = meta?.chart?.y_axis?.scale;
@@ -59,10 +76,14 @@ const useChartScale = (meta: IDataChartCellMeta, data?: any[][]) => {
     const yAxesScaleType = React.useMemo(() => {
         if (yScale != null) {
             return yScale;
+        } else if (data?.length < 2) {
+            return null;
         }
 
-        if (data?.length < 2) {
-            return null;
+        const allowedYAxisType = chartTypeToAllowedAxisType[meta.chart.type].y;
+        if (allowedYAxisType.length === 1) {
+            // If there is only 1 allowed scale type then return immediately
+            return allowedYAxisType[0];
         }
 
         for (let i = 1; i < data.length; i++) {
@@ -72,7 +93,10 @@ const useChartScale = (meta: IDataChartCellMeta, data?: any[][]) => {
                     j !== xIndex &&
                     !isChartValNull(val)
                 ) {
-                    return getDefaultScaleType(val);
+                    const defaultScale = getDefaultScaleType(val);
+                    return allowedYAxisType.includes(defaultScale)
+                        ? defaultScale
+                        : allowedYAxisType[0];
                 }
             }
         }
@@ -84,7 +108,7 @@ const useChartScale = (meta: IDataChartCellMeta, data?: any[][]) => {
 export const DataDocChart: React.FunctionComponent<IDataDocChartProps> = ({
     meta,
     data = [],
-    chartJsOptionObj = {},
+    chartJSOptions = {},
 }) => {
     const theme = useSelector(
         (state: IStoreState) => state.user.computedSettings.theme
@@ -102,7 +126,6 @@ export const DataDocChart: React.FunctionComponent<IDataDocChartProps> = ({
     }, [theme]);
 
     const [xAxesScaleType, yAxesScaleType] = useChartScale(meta, data);
-
     const chartData = processChartJSData(
         data,
         meta,
@@ -110,7 +133,7 @@ export const DataDocChart: React.FunctionComponent<IDataDocChartProps> = ({
         xAxesScaleType,
         yAxesScaleType
     );
-    const chartJSOptions = useMemo(
+    const combinedChartJSOptions = useMemo(
         () => ({
             ...mapMetaToChartOptions(
                 meta,
@@ -118,16 +141,18 @@ export const DataDocChart: React.FunctionComponent<IDataDocChartProps> = ({
                 xAxesScaleType,
                 yAxesScaleType
             ),
-            ...chartJsOptionObj,
+            ...chartJSOptions,
         }),
-        [meta, theme, xAxesScaleType, yAxesScaleType, chartJsOptionObj]
+        [meta, theme, xAxesScaleType, yAxesScaleType, chartJSOptions]
     );
 
     const chartProps = {
         data: chartData,
         plugins: [ChartDataLabels],
-        options: chartJSOptions,
+        options: combinedChartJSOptions,
     };
+
+    console.log({ combinedChartJSOptions, chartData });
 
     let chartDOM = null;
     if (meta.chart.type === 'line' || meta.chart.type === 'area') {
