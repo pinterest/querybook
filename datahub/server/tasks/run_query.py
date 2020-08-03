@@ -7,7 +7,6 @@ from celery.exceptions import SoftTimeLimitExceeded
 from celery.utils.log import get_task_logger
 from const.query_execution import QueryExecutionStatus
 from env import DataHubSettings
-from lib.config import get_config_value
 from lib.query_analysis import get_statement_ranges
 from lib.query_analysis.lineage import process_query
 from lib.query_executor.all_executors import get_executor_class, parse_exception
@@ -18,6 +17,7 @@ from logic import (
 )
 from tasks.log_query_per_table import log_query_per_table_task
 from lib.notify.utils import notify_user
+from lib.notify.all_notifiers import DEFAULT_NOTIFIER
 
 LOG = get_task_logger(__name__)
 
@@ -194,13 +194,8 @@ def send_out_notification(query_execution_id):
                 )
 
                 notification_setting = (
-                    user_setting.value
-                    if user_setting is not None
-                    else get_config_value(
-                        "user_setting.notification_preference.default"
-                    )
+                    user_setting.value if user_setting is not None else DEFAULT_NOTIFIER
                 )
-
                 doc_id = None
                 cell_id = None
                 query_title = "Untitled"

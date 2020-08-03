@@ -28,6 +28,7 @@ from logic.query_execution import get_query_execution_by_id
 from logic.schedule import run_and_log_scheduled_task
 from models.environment import Environment
 from lib.notify.utils import notify_user
+from lib.notify.all_notifiers import DEFAULT_NOTIFIER
 
 LOG = get_logger(__file__)
 
@@ -434,9 +435,7 @@ def send_add_datadoc_editor_email(doc_id, uid, read, write, session=None):
     notification_setting = (
         invited_user_setting.value
         if invited_user_setting is not None
-        else user_logic.get_user_settings(
-            current_user.id, "notification_preference", session=session
-        ).value
+        else DEFAULT_NOTIFIER
     )
 
     notify_user(
@@ -574,9 +573,7 @@ def send_datadoc_transfer_notification(doc_id, next_owner_id, session=None):
     notification_setting = (
         invited_user_setting.value
         if invited_user_setting is not None
-        else user_logic.get_user_settings(
-            current_user.id, "notification_preference", session=session
-        ).value
+        else DEFAULT_NOTIFIER
     )
 
     notify_user(
