@@ -427,21 +427,9 @@ def send_add_datadoc_editor_email(doc_id, uid, read, write, session=None):
     data_doc_title = data_doc.title or "Untitled"
 
     doc_url = f"{DataHubSettings.PUBLIC_URL}/{environment.name}/datadoc/{doc_id}/"
-    invited_user_setting = user_logic.get_user_settings(
-        uid, "notification_preference", session=session
-    )
-
-    notification_setting = (
-        invited_user_setting.value
-        if invited_user_setting is not None
-        else user_logic.get_user_settings(
-            current_user.id, "notification_preference", session=session
-        ).value
-    )
 
     notify_user(
         user=invited_user,
-        notifier_name=notification_setting,
         template_name="datadoc_invitation",
         template_params=dict(
             inviting_username=inviting_user.get_name(),
@@ -449,6 +437,7 @@ def send_add_datadoc_editor_email(doc_id, uid, read, write, session=None):
             doc_url=doc_url,
             data_doc_title=data_doc_title,
         ),
+        session=session,
     )
 
 
@@ -568,24 +557,14 @@ def send_datadoc_transfer_notification(doc_id, next_owner_id, session=None):
     data_doc_title = data_doc.title or "Untitled"
 
     doc_url = f"{DataHubSettings.PUBLIC_URL}/{environment.name}/datadoc/{doc_id}/"
-    invited_user_setting = user_logic.get_user_settings(
-        next_owner_id, "notification_preference", session=session
-    )
-    notification_setting = (
-        invited_user_setting.value
-        if invited_user_setting is not None
-        else user_logic.get_user_settings(
-            current_user.id, "notification_preference", session=session
-        ).value
-    )
 
     notify_user(
         user=invited_user,
-        notifier_name=notification_setting,
         template_name="datadoc_ownership_transfer",
         template_params=dict(
             inviting_username=inviting_user.get_name(),
             doc_url=doc_url,
             data_doc_title=data_doc_title,
         ),
+        session=session,
     )
