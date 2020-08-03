@@ -1,8 +1,10 @@
 import jinja2
 from lib.notify.all_notifiers import get_notifier_class, DEFAULT_NOTIFIER
 from logic import user as user_logic
+from app.db import with_session
 
 
+@with_session
 def notify_user(user, template_name, template_params, notifier_name=None, session=None):
     if notifier_name is None:
         notification_preference = user_logic.get_user_settings(
