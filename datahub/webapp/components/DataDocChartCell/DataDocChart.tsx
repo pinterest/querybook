@@ -152,8 +152,6 @@ export const DataDocChart: React.FunctionComponent<IDataDocChartProps> = ({
         options: combinedChartJSOptions,
     };
 
-    console.log({ combinedChartJSOptions, chartData });
-
     let chartDOM = null;
     if (meta.chart.type === 'line' || meta.chart.type === 'area') {
         chartDOM = <Line {...chartProps} />;
