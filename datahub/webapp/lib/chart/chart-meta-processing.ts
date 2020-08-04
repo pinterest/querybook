@@ -242,7 +242,8 @@ export function mapMetaToChartOptions(
             xAxesScaleType,
             meta.chart.x_axis,
             theme,
-            meta.chart.y_axis.stack
+            meta.chart.y_axis.stack,
+            true
         );
         let yAxesOptions = computeScaleOptions(
             yAxesScaleType,
@@ -270,7 +271,8 @@ function computeScaleOptions(
     scaleType: ChartScaleType,
     axisMeta: IChartAxisMeta,
     theme: string,
-    stack: boolean
+    stack: boolean,
+    isXAxis = false
 ): CommonAxe {
     // Known bug: if scale type change from log to time, the graph crash
     // I think it is a chart js issue
@@ -314,8 +316,8 @@ function computeScaleOptions(
                 ...axis.ticks,
                 min: axisMeta.min,
             };
-        } else {
-            // default min to 0 unless specified
+        } else if (!isXAxis) {
+            // for yAxis, default min to 0 unless specified
             axis.ticks = {
                 ...axis.ticks,
                 min: 0,

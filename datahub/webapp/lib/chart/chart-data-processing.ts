@@ -49,6 +49,11 @@ export function processChartJSData(
         }
     }
 
+    const useXYDataPoint =
+        xAxesScaleType === 'linear' ||
+        xAxesScaleType === 'logarithmic' ||
+        chartMeta.type === 'scatter';
+
     const chartDatasets = seriesNames
         .map((seriesName, idx) => {
             if (idx === xAxisIdx || hiddenSeriesIndices.has(idx)) {
@@ -62,8 +67,11 @@ export function processChartJSData(
             };
 
             // scatter and bubble has a different data structure
-            if (chartMeta.type === 'scatter') {
-                dataset['pointRadius'] = 4;
+            if (useXYDataPoint) {
+                if (chartMeta.type === 'scatter') {
+                    dataset['pointRadius'] = 4;
+                }
+
                 dataset['data'] = dataRows.map((row) => ({
                     x: processDataPoint(row[xAxisIdx], xAxesScaleType),
                     y: processDataPoint(row[idx], yAxesScaleType),
@@ -137,7 +145,9 @@ export function processChartJSData(
     };
 
     if (!(chartMeta.type === 'bubble' || chartMeta.type === 'scatter')) {
-        chartData['labels'] = dataRows.map((row) => row[xAxisIdx]);
+        chartData['labels'] = dataRows.map((row) =>
+            processDataPoint(row[xAxisIdx], xAxesScaleType)
+        );
     }
 
     return chartData;

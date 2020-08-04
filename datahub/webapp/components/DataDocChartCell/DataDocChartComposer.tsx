@@ -19,6 +19,8 @@ import {
     IChartAxisMeta,
     ChartScaleType,
     chartValueDisplayType,
+    ChartScaleOptions,
+    chartTypeToAllowedAxisType,
 } from 'const/dataDocChart';
 import { colorPalette, colorPaletteNames } from 'const/chartColors';
 
@@ -35,7 +37,6 @@ import { queryCellSelector } from 'redux/dataDoc/selector';
 import { Button } from 'ui/Button/Button';
 import { IconButton } from 'ui/Button/IconButton';
 import { ErrorBoundary } from 'ui/ErrorBoundary/ErrorBoundary';
-import { Checkbox } from 'ui/Form/Checkbox';
 import { FormField, FormSectionHeader } from 'ui/Form/FormField';
 import { Tabs } from 'ui/Tabs/Tabs';
 
@@ -517,19 +518,20 @@ const DataDocChartComposerComponent: React.FunctionComponent<
         const getAxisDOM = (
             prefix: string,
             axisMeta: IChartAxisMeta,
-            scaleType: ChartScaleType
+            scaleType: ChartScaleType,
+            scaleOptions: ChartScaleType[] = ChartScaleOptions
         ) => {
             if (noAxesConfig) {
                 return null;
             }
 
-            const scaleOptions = [
+            const allScaleOptions = [
                 {
                     label: `auto detect (${scaleType})`,
                     value: null,
                 },
             ].concat(
-                ['time', 'category', 'linear', 'logarithmic'].map((value) => ({
+                scaleOptions.map((value) => ({
                     label: value,
                     value,
                 }))
@@ -560,13 +562,14 @@ const DataDocChartComposerComponent: React.FunctionComponent<
                         stacked
                         type="react-select"
                         name={`${prefix}.scale`}
-                        options={scaleOptions}
+                        options={allScaleOptions}
                     />
                     {axisRangeDOM}
                 </>
             );
         };
 
+        const detectedXAxisScale = getAxesScaleType(values.xIndex);
         const xAxisDOM = (
             <>
                 <FormSectionHeader>X Axis</FormSectionHeader>
@@ -577,6 +580,14 @@ const DataDocChartComposerComponent: React.FunctionComponent<
                         isDisabled={!statementResultData}
                     />
                 </FormField>
+                {getAxisDOM(
+                    'xAxis',
+                    values.xAxis,
+                    detectedXAxisScale === 'linear'
+                        ? 'category'
+                        : detectedXAxisScale,
+                    chartTypeToAllowedAxisType[values.chartType].x
+                )}
             </>
         );
 
@@ -600,7 +611,12 @@ const DataDocChartComposerComponent: React.FunctionComponent<
                             isMulti
                         />
                     </FormField>
-                    {getAxisDOM('yAxis', values.yAxis, defaultYAxisScaleType)}
+                    {getAxisDOM(
+                        'yAxis',
+                        values.yAxis,
+                        defaultYAxisScaleType,
+                        chartTypeToAllowedAxisType[values.chartType].y
+                    )}
                 </>
             );
         }
@@ -897,7 +913,7 @@ const DataDocChartComposerComponent: React.FunctionComponent<
             <DataDocChart
                 data={chartData}
                 meta={formValsToMeta(values, meta)}
-                chartJsOptionObj={{ maintainAspectRatio: false }}
+                chartJSOptions={{ maintainAspectRatio: false }}
             />
         );
 
@@ -965,7 +981,11 @@ function formValsToMeta(vals: IChartFormValues, meta: IDataChartCellMeta) {
         // X Axes
         draft.chart.x_axis.col_idx = vals.xIndex;
         for (const [field, val] of Object.entries(vals.xAxis)) {
-            draft.chart.x_axis[field] = val;
+            if (val != null) {
+                draft.chart.x_axis[field] = val;
+            } else {
+                delete draft.chart.x_axis[field];
+            }
         }
         if (vals.sortIndex != null) {
             draft.chart.x_axis.sort = {
@@ -976,7 +996,11 @@ function formValsToMeta(vals: IChartFormValues, meta: IDataChartCellMeta) {
 
         // Y Axes
         for (const [field, val] of Object.entries(vals.yAxis)) {
-            draft.chart.y_axis[field] = val;
+            if (val != null) {
+                draft.chart.y_axis[field] = val;
+            } else {
+                delete draft.chart.y_axis[field];
+            }
         }
         draft.chart.y_axis.stack = vals.stack;
 
