@@ -53,7 +53,7 @@ export const SeeMoreText: React.FunctionComponent<ISeeMoreTextProps> = ({
                         className="SeeMoreText-click"
                         onClick={toggleSeeMoreClick}
                     >
-                        see less
+                        show less
                     </a>
                 </>
             ) : null;
