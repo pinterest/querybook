@@ -2,14 +2,15 @@
 
 exports[`matches enzyme snapshots matches snapshot 1`] = `
 <span
-  className="SeeMoreText "
+  className="ShowMoreText "
 >
   te
    
   <a
+    className="ShowMoreText-click"
     onClick={[Function]}
   >
-    ...See More
+    show more
   </a>
 </span>
 `;

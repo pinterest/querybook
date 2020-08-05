@@ -21,7 +21,7 @@ import { ErrorSuggestion } from '../DataDocStatementExecution/ErrorSuggestion';
 import { ExecutedQueryCell, IHighlightRange } from './ExecutedQueryCell';
 import { Icon } from 'ui/Icon/Icon';
 import { Message } from 'ui/Message/Message';
-import { SeeMoreText } from 'ui/SeeMoreText/SeeMoreText';
+import { ShowMoreText } from 'ui/ShowMoreText/ShowMoreText';
 import { Tabs } from 'ui/Tabs/Tabs';
 import { Loader } from 'ui/Loader/Loader';
 
@@ -106,7 +106,7 @@ export const SyntaxQueryError: React.FunctionComponent<{
 
     return (
         <div>
-            <SeeMoreText
+            <ShowMoreText
                 text={parsedErrorMsg && parsedErrorMsg.message}
                 length={500}
             />
@@ -169,7 +169,7 @@ export const QueryError: React.FunctionComponent<IProps> = ({
             />
         );
     } else {
-        errorContentDOM = <SeeMoreText text={errorMsg} length={500} />;
+        errorContentDOM = <ShowMoreText text={errorMsg} length={500} />;
     }
 
     return (

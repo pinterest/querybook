@@ -1,7 +1,7 @@
 import React from 'react';
 import { ContentState } from 'draft-js';
 import { IDataColumn, IDataTable, IDataSchema } from 'const/metastore';
-import { SeeMoreText } from 'ui/SeeMoreText/SeeMoreText';
+import { ShowMoreText } from 'ui/ShowMoreText/ShowMoreText';
 import { IconButton } from 'ui/Button/IconButton';
 import { setSidebarTableId } from 'lib/dataHubUI';
 
@@ -62,17 +62,17 @@ export const TableTooltip: React.FunctionComponent<IProps> = ({
 
             <h6>Description</h6>
             <p>
-                <SeeMoreText text={description} />
+                <ShowMoreText text={description} />
             </p>
 
             <h6>Latest Partitions</h6>
             <p>
-                <SeeMoreText text={lastPartitions} />
+                <ShowMoreText text={lastPartitions} />
             </p>
 
             <h6>Column Names</h6>
             <p>
-                <SeeMoreText text={columnNames} seeLess={true} />
+                <ShowMoreText text={columnNames} seeLess={true} />
             </p>
 
             <h6>Location</h6>
