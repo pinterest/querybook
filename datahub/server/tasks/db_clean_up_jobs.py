@@ -55,7 +55,7 @@ def clean_up_query_execution(days_to_keep_done=90, days_to_keep_else=30, session
     )
     session.query(QueryExecution).filter(
         QueryExecution.status != QueryExecutionStatus.DONE
-    ).filter(QueryExecution.completed_at < last_day_for_else).delete(
+    ).filter(QueryExecution.created_at < last_day_for_else).delete(
         synchronize_session=False
     )
     session.commit()
