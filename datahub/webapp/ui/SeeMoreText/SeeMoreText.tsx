@@ -1,5 +1,7 @@
 import React, { useMemo } from 'react';
 
+import './SeeMoreText.scss';
+
 interface ISeeMoreTextProps {
     text: string;
     length?: number;
@@ -35,14 +37,24 @@ export const SeeMoreText: React.FunctionComponent<ISeeMoreTextProps> = ({
             return (
                 <span className={combinedClassName}>
                     {text.slice(0, length)}{' '}
-                    <a onClick={toggleSeeMoreClick}>...See More</a>
+                    <a
+                        className="SeeMoreText-click"
+                        onClick={toggleSeeMoreClick}
+                    >
+                        show more
+                    </a>
                 </span>
             );
         } else {
             const seeLessSection = seeLess ? (
                 <>
                     {' '}
-                    <a onClick={toggleSeeMoreClick}>...See Less</a>
+                    <a
+                        className="SeeMoreText-click"
+                        onClick={toggleSeeMoreClick}
+                    >
+                        see less
+                    </a>
                 </>
             ) : null;
 
