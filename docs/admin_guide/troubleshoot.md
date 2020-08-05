@@ -17,12 +17,3 @@ elasticsearch    | [2019-03-27T20:35:00,273][INFO ][o.e.x.m.p.NativeController] 
 
 Simply run `sudo sysctl -w vm.max_map_count=262144` in your machine, outside Docker, and run `make` again.
 (We'll add an automatic check for this).
-
-### Error: Source file "/...path to datahub.../datahub/.arcanist/**phutil_library_init**.php" failed to load.
-
-**Solution:** Run the following commands:
-
-```
-git submodule update --init
-yarn install
-```
