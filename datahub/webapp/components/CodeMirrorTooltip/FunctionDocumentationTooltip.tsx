@@ -1,7 +1,7 @@
 import React from 'react';
 
 import { IFunctionDescription } from 'const/metastore';
-import { SeeMoreText } from 'ui/SeeMoreText/SeeMoreText';
+import { ShowMoreText } from 'ui/ShowMoreText/ShowMoreText';
 
 interface IProps {
     functionDocumentations: IFunctionDescription[];
@@ -33,7 +33,7 @@ export const FunctionDocumentationTooltip: React.FunctionComponent<IProps> = ({
 
                         <h6>Description</h6>
                         <p>
-                            <SeeMoreText text={description} length={200} />
+                            <ShowMoreText text={description} length={200} />
                         </p>
                     </div>
                 </div>

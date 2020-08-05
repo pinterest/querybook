@@ -1,22 +1,22 @@
 import React, { useMemo } from 'react';
 
-import './SeeMoreText.scss';
+import './ShowMoreText.scss';
 
-interface ISeeMoreTextProps {
+interface IShowMoreTextProps {
     text: string;
     length?: number;
     seeLess?: boolean;
     className?: string;
 }
 
-export const SeeMoreText: React.FunctionComponent<ISeeMoreTextProps> = ({
+export const ShowMoreText: React.FunctionComponent<IShowMoreTextProps> = ({
     text,
     length = 100,
     seeLess = false,
     className = '',
 }) => {
     text = text || '';
-    const combinedClassName = useMemo(() => `SeeMoreText ${className}`, [
+    const combinedClassName = useMemo(() => `ShowMoreText ${className}`, [
         className,
     ]);
 
@@ -38,7 +38,7 @@ export const SeeMoreText: React.FunctionComponent<ISeeMoreTextProps> = ({
                 <span className={combinedClassName}>
                     {text.slice(0, length)}{' '}
                     <a
-                        className="SeeMoreText-click"
+                        className="ShowMoreText-click"
                         onClick={toggleSeeMoreClick}
                     >
                         show more
@@ -50,7 +50,7 @@ export const SeeMoreText: React.FunctionComponent<ISeeMoreTextProps> = ({
                 <>
                     {' '}
                     <a
-                        className="SeeMoreText-click"
+                        className="ShowMoreText-click"
                         onClick={toggleSeeMoreClick}
                     >
                         show less
