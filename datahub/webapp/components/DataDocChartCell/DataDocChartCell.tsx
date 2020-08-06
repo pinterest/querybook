@@ -201,11 +201,18 @@ export const DataDocChartCell: React.FunctionComponent<IProps> = ({
         let visualizationDOM: React.ReactChild;
         if (meta.chart.type === 'table') {
             visualizationDOM = (
-                <StatementResultTable
-                    data={transformedChartData}
-                    paginate={true}
-                    maxNumberOfRowsToShow={20}
-                />
+                <div>
+                    {meta.title?.length ? (
+                        <div className="DataDocChartCell-table-title mv4 center-align">
+                            {meta.title}
+                        </div>
+                    ) : null}
+                    <StatementResultTable
+                        data={transformedChartData}
+                        paginate={true}
+                        maxNumberOfRowsToShow={20}
+                    />
+                </div>
             );
         } else {
             visualizationDOM = (

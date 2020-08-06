@@ -711,7 +711,11 @@ const DataDocChartComposerComponent: React.FunctionComponent<
         : null;
 
     const visualsTabDOM =
-        values.chartType === 'table' ? null : (
+        values.chartType === 'table' ? (
+            <FormField stacked label="Title">
+                <Field name="title" />
+            </FormField>
+        ) : (
             <>
                 <FormField stacked label="Title">
                     <Field name="title" />
@@ -904,11 +908,18 @@ const DataDocChartComposerComponent: React.FunctionComponent<
 
     const chartDOM =
         values.chartType === 'table' ? (
-            <StatementResultTable
-                data={chartData}
-                paginate={true}
-                maxNumberOfRowsToShow={20}
-            />
+            <div className="DataDocChartComposer-table">
+                {values.title.length ? (
+                    <div className="DataDocChartComposer-table-title center-align mv4">
+                        {values.title}
+                    </div>
+                ) : null}
+                <StatementResultTable
+                    data={chartData}
+                    paginate={true}
+                    maxNumberOfRowsToShow={20}
+                />
+            </div>
         ) : (
             <DataDocChart
                 data={chartData}
