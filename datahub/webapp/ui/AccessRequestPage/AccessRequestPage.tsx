@@ -1,7 +1,6 @@
 import React from 'react';
 import { Button } from 'ui/Button/Button';
 import { useState } from 'react';
-import './AccessRequestPage.scss';
 
 export const AccessRequestPage: React.FunctionComponent<{
     onAccessRequest: () => any;
