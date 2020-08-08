@@ -14,7 +14,6 @@ import {
     IDataCell,
     DataCellUpdateFields,
 } from 'const/datadoc';
-import ds from 'lib/datasource';
 import history from 'lib/router-history';
 import { sendConfirm, sendNotification, setBrowserTitle } from 'lib/dataHubUI';
 import { scrollToCell, getShareUrl } from 'lib/data-doc/data-doc-utils';
@@ -729,9 +728,16 @@ class DataDocComponent extends React.Component<IProps, IState> {
     public render() {
         const { dataDoc } = this.props;
         const { errorObj } = this.state;
+        const uid = this.props.userInfo.id;
 
         if (errorObj) {
-            return <DataDocError errorObj={errorObj} />;
+            return (
+                <DataDocError
+                    docId={this.props.docId}
+                    uid={uid}
+                    errorObj={errorObj}
+                />
+            );
         }
         if (!(dataDoc && dataDoc.cells)) {
             return <Loading />;

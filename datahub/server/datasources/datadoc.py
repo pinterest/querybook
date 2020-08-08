@@ -392,13 +392,11 @@ def add_datadoc_editor(
     write=None,
     originator=None,  # Used for websocket to identify sender, optional
 ):
-
     with DBSession() as session:
         assert_can_write(doc_id, session=session)
         editor = logic.create_data_doc_editor(
             data_doc_id=doc_id, uid=uid, read=read, write=write, session=session
         )
-
         editor_dict = editor.to_dict()
 
         # Notify all in the doc
@@ -414,6 +412,94 @@ def add_datadoc_editor(
         send_add_datadoc_editor_email(doc_id, uid, read, write, session=session)
 
         return editor_dict
+
+
+@register("/datadoc/<int:doc_id>/access_request/", methods=["GET"])
+def get_datadoc_access_requests(doc_id):
+    return logic.get_data_doc_access_requests_by_doc_id(doc_id)
+
+
+@register("/datadoc/<int:doc_id>/access_request/<int:uid>/", methods=["POST"])
+def add_datadoc_access_request(doc_id, uid, originator=None):
+    with DBSession() as session:
+        access_request = logic.create_data_doc_access_request(doc_id=doc_id, uid=uid)
+        access_request_dict = access_request.to_dict()
+        socketio.emit(
+            "data_doc_access_request",
+            (originator, doc_id, uid, access_request_dict),
+            namespace="/datadoc",
+            room=doc_id,
+            broadcast=True,
+        )
+        send_datadoc_access_request_notification(
+            doc_id=doc_id, uid=uid, session=session
+        )
+    return access_request_dict
+
+
+@register("/datadoc/<int:doc_id>/grant_access/<int:uid>/", methods=["POST"])
+def approve_datadoc_access_request(doc_id, uid, read, write, originator):
+    with DBSession() as session:
+        assert_can_write(doc_id, session=session)
+        # give the user read access
+        editor = logic.create_data_doc_editor(
+            data_doc_id=doc_id,
+            uid=uid,
+            read=read,
+            write=write,
+            session=session,
+            commit=False,
+        )
+        # remove the user from the access request table.
+        logic.remove_datadoc_access_request(
+            doc_id=doc_id, uid=uid, session=session, commit=False
+        )
+        session.commit()
+        editor_dict = editor.to_dict()
+        # Notify all in the doc
+        socketio.emit(
+            "data_doc_editor",
+            (None, doc_id, uid, editor_dict),
+            namespace="/datadoc",
+            room=doc_id,
+            broadcast=True,
+        )
+
+        socketio.emit(
+            "data_doc_access_request",
+            (originator, doc_id, uid, None),
+            namespace="/datadoc",
+            room=doc_id,
+            broadcast=True,
+        )
+        # Email the user that got invited
+        send_add_datadoc_editor_email(doc_id, uid, read, write, session=session)
+
+
+@with_session
+def send_datadoc_access_request_notification(doc_id, uid, session=None):
+    requestor = user_logic.get_user_by_id(uid, session=session)
+    data_doc = logic.get_data_doc_by_id(doc_id, session=session)
+    environment = data_doc.environment
+    data_doc_title = data_doc.title or "Untitled"
+    doc_url = f"{DataHubSettings.PUBLIC_URL}/{environment.name}/datadoc/{doc_id}/"
+
+    owner = user_logic.get_user_by_id(data_doc.owner_uid, session=session)
+    doc_editors = [owner]
+    writers = logic.get_data_doc_writers_by_doc_id(doc_id=doc_id, session=session)
+    if writers is not None:
+        doc_editors.extend(writers)
+    requestor_username = requestor.get_name()
+    for user in doc_editors:
+        notify_user(
+            user=user,
+            template_name="datahub_access_request",
+            template_params=dict(
+                username=requestor_username,
+                data_doc_title=data_doc_title,
+                doc_url=doc_url,
+            ),
+        )
 
 
 @with_session

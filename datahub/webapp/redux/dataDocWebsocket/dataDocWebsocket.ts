@@ -2,7 +2,7 @@ import dataDocSocket, {
     IDataDocSocketEvent,
 } from 'lib/data-doc/datadoc-socketio';
 
-import { IDataDocEditor } from 'const/datadoc';
+import { IDataDocEditor, IAccessRequest } from 'const/datadoc';
 
 import { ThunkDispatch as QueryExecutionDispatch } from 'redux/queryExecutions/types';
 import { receiveQueryExecution } from 'redux/queryExecutions/action';
@@ -33,6 +33,18 @@ export function openDataDoc(docId: number): ThunkResult<Promise<any>> {
                         payload: {
                             docId,
                             editors,
+                        },
+                    });
+                },
+            },
+
+            receiveDataDocAccessRequests: {
+                resolve: (requests) => {
+                    dispatch({
+                        type: '@@dataDoc/RECEIVE_DATA_DOC_ACCESS_REQUESTS',
+                        payload: {
+                            docId,
+                            requests,
                         },
                     });
                 },
@@ -140,6 +152,37 @@ export function openDataDoc(docId: number): ThunkResult<Promise<any>> {
                                 type: '@@dataDoc/REMOVE_DATA_DOC_EDITOR',
                                 payload: {
                                     docId: editorDocId,
+                                    uid,
+                                },
+                            });
+                        }
+                    }
+                },
+            },
+
+            updateDataDocAccessRequest: {
+                resolve: (
+                    requestDocId: number,
+                    uid: number,
+                    request: IAccessRequest,
+                    isSameOrigin: boolean
+                ) => {
+                    if (!isSameOrigin) {
+                        if (request) {
+                            dispatch({
+                                type:
+                                    '@@dataDoc/RECEIVE_DATA_DOC_ACCESS_REQUEST',
+                                payload: {
+                                    docId: requestDocId,
+                                    request,
+                                },
+                            });
+                        } else {
+                            dispatch({
+                                type:
+                                    '@@dataDoc/REMOVE_DATA_DOC_ACCESS_REQUEST',
+                                payload: {
+                                    docId: requestDocId,
                                     uid,
                                 },
                             });

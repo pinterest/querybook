@@ -9,7 +9,7 @@ import {
 import { UserBadge } from 'components/UserBadge/UserBadge';
 
 import './DataDocViewersList.scss';
-import { IDataDoc, IDataDocEditor } from 'const/datadoc';
+import { IDataDoc, IDataDocEditor, IAccessRequest } from 'const/datadoc';
 
 import { Title } from 'ui/Title/Title';
 
@@ -18,8 +18,7 @@ import { UserSelect } from 'components/UserSelect/UserSelect';
 import { AsyncButton } from 'ui/AsyncButton/AsyncButton';
 import { Tabs } from 'ui/Tabs/Tabs';
 import { sendNotification } from 'lib/dataHubUI';
-import { myUserInfoSelector } from 'redux/user/selector';
-import { useSelector } from 'react-redux';
+import { AccessRequestPermissionPicker } from 'components/AccessRequestPermissionPicker.tsx/AccessRequestPermissionPicker';
 
 interface IDataDocViewersListProps {
     className?: string;
@@ -28,12 +27,17 @@ interface IDataDocViewersListProps {
     dataDoc: IDataDoc;
     readonly: boolean;
     isOwner: boolean;
+    accessRequestsByUid: Record<number, IAccessRequest>;
 
     addDataDocEditor: (uid: number, read: boolean, write: boolean) => any;
     changeDataDocPublic: (docId: number, docPublic: boolean) => any;
     updateDataDocEditors: (uid: number, read: boolean, write: boolean) => any;
     deleteDataDocEditor: (uid: number) => any;
     updateDataDocOwner: (nextOwnerId: number) => any;
+    approveDataDocAccessRequest: (
+        uid: number,
+        permission: DataDocPermission
+    ) => any;
 }
 
 // TODO: make this component use React-Redux directly
@@ -44,12 +48,14 @@ export const DataDocViewersList: React.FunctionComponent<IDataDocViewersListProp
     readonly,
     isOwner,
     className = '',
+    accessRequestsByUid,
 
     addDataDocEditor,
     changeDataDocPublic,
     updateDataDocEditors,
     deleteDataDocEditor,
     updateDataDocOwner,
+    approveDataDocAccessRequest,
 }) => {
     const addUserRowDOM = readonly ? null : (
         <div className="datadoc-add-user-row">
@@ -65,7 +71,14 @@ export const DataDocViewersList: React.FunctionComponent<IDataDocViewersListProp
                             const { read, write } = permissionToReadWrite(
                                 newUserPermission
                             );
-                            addDataDocEditor(uid, read, write);
+                            if (uid in accessRequestsByUid) {
+                                approveDataDocAccessRequest(
+                                    uid,
+                                    newUserPermission
+                                );
+                            } else {
+                                addDataDocEditor(uid, read, write);
+                            }
                         }
                     }}
                     selectProps={{
@@ -120,8 +133,31 @@ export const DataDocViewersList: React.FunctionComponent<IDataDocViewersListProp
         </div>
     ));
 
+    const accessRequestListDOM = readonly
+        ? null
+        : Object.values(accessRequestsByUid).map((request) => (
+              <div key={request.uid} className="viewers-user-row">
+                  <div className="user-badge-wrapper">
+                      <UserBadge isOnline={undefined} uid={request.uid} />
+                  </div>
+                  <div className="access-info">
+                      <AccessRequestPermissionPicker
+                          uid={request.uid}
+                          approveDataDocAccessRequest={
+                              approveDataDocAccessRequest
+                          }
+                      />
+                  </div>
+              </div>
+          ));
+
     const contentDOM = (
-        <div className="viewers-list-wrapper">{viewersListDOM}</div>
+        <div>
+            <div className="viewers-list-wrapper">
+                {accessRequestListDOM}
+                {viewersListDOM}
+            </div>
+        </div>
     );
     const dataDocPublicRow = (
         <>

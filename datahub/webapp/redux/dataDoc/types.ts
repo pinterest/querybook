@@ -5,7 +5,12 @@ import {
 } from 'redux-thunk';
 import { ContentState } from 'draft-js';
 
-import { IDataDoc, IDataCell, IDataDocEditor } from 'const/datadoc';
+import {
+    IDataDoc,
+    IDataCell,
+    IDataDocEditor,
+    IAccessRequest,
+} from 'const/datadoc';
 import { IStoreState } from '../store/types';
 
 export interface IDataDocSavePromise {
@@ -204,6 +209,29 @@ export interface IRemoveDataDocEditorAction extends Action {
         uid: number;
     };
 }
+export interface IReceiveDataDocAccessRequestsAction extends Action {
+    type: '@@dataDoc/RECEIVE_DATA_DOC_ACCESS_REQUESTS';
+    payload: {
+        docId: number;
+        requests: IAccessRequest[];
+    };
+}
+
+export interface IReceiveDataDocAccessRequestAction extends Action {
+    type: '@@dataDoc/RECEIVE_DATA_DOC_ACCESS_REQUEST';
+    payload: {
+        docId: number;
+        request: IAccessRequest;
+    };
+}
+
+export interface IApproveDataDocAccessRequestAction extends Action {
+    type: '@@dataDoc/REMOVE_DATA_DOC_ACCESS_REQUEST';
+    payload: {
+        docId: number;
+        uid: number;
+    };
+}
 
 export interface IMoveDataDocCursor extends Action {
     type: '@@dataDoc/MOVE_DATA_DOC_CURSOR';
@@ -238,6 +266,9 @@ export type DataDocAction =
     | IReceiveDataDocEditorsAction
     | IReceiveDataDocEditorAction
     | IRemoveDataDocEditorAction
+    | IReceiveDataDocAccessRequestsAction
+    | IReceiveDataDocAccessRequestAction
+    | IApproveDataDocAccessRequestAction
     | IMoveDataDocCursor;
 
 export type ThunkResult<R> = ThunkAction<
@@ -270,7 +301,7 @@ export interface IDataDocState {
         >
     >;
     editorsByDocIdUserId: Record<number, Record<number, IDataDocEditor>>;
-
+    accessRequestsByDocIdUserId: Record<number, Record<number, IAccessRequest>>;
     favoriteDataDocIds: number[];
     recentDataDocIds: number[];
 }

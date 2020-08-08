@@ -1,4 +1,5 @@
 # flake8: noqa
+from .access_request import *
 from .admin import *
 from .board import *
 from .datadoc import *

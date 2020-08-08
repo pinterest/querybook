@@ -12,6 +12,7 @@ interface IErrorPageProps {
     className?: string;
     errorCode?: number;
     errorTitle?: string;
+    errorMessage?: any;
 }
 
 const httpCodeToString = {
@@ -27,6 +28,7 @@ const httpCodeToDescription = {
 export const ErrorPage: React.FunctionComponent<IErrorPageProps> = ({
     className,
     children,
+    errorMessage,
     errorCode,
     errorTitle,
 }) => {
@@ -37,8 +39,8 @@ export const ErrorPage: React.FunctionComponent<IErrorPageProps> = ({
                 : 'Unknown Error';
     }
 
-    const message = children ? (
-        children
+    const message = errorMessage ? (
+        errorMessage
     ) : (
         <>
             {httpCodeToDescription[errorCode] || 'Unknown error occured at'}
@@ -61,6 +63,7 @@ export const ErrorPage: React.FunctionComponent<IErrorPageProps> = ({
                 <Title subtitle size={6} className="ErrorPage-message">
                     {message}
                 </Title>
+                {children}
             </Center>
         </FullHeight>
     );

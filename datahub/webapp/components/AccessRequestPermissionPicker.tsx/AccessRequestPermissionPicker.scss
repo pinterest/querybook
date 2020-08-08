@@ -1,0 +1,12 @@
+.AccessRequestPermissionPicker {
+    flex-direction: column;
+
+    .permission-text {
+        margin-right: 0.5rem;
+        cursor: pointer;
+
+        .caret-icon {
+            margin-right: 0.25rem;
+        }
+    }
+}

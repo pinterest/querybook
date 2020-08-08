@@ -9,6 +9,7 @@ import {
     IDataDoc,
     CELL_TYPE,
     IDataDocEditor,
+    IAccessRequest,
 } from 'const/datadoc';
 import ds from 'lib/datasource';
 import {
@@ -26,6 +27,10 @@ import {
     ISaveDataDocStartAction,
     IReceiveDataDocsAction,
 } from './types';
+import {
+    DataDocPermission,
+    permissionToReadWrite,
+} from 'lib/data-doc/datadoc-permission';
 
 export const dataDocCellSchema = new schema.Entity(
     'dataDocCell',
@@ -611,5 +616,58 @@ export function deleteDataDocEditor(
                 },
             });
         }
+    };
+}
+
+export function approveDataDocAccessRequest(
+    docId: number,
+    uid: number,
+    permission: DataDocPermission
+): ThunkResult<Promise<void>> {
+    const { read, write } = permissionToReadWrite(permission);
+    return async (dispatch, getState) => {
+        const request = (getState().dataDoc.accessRequestsByDocIdUserId[
+            docId
+        ] || {})[uid];
+        if (request) {
+            await ds.save(`/datadoc/${docId}/grant_access/${request.uid}/`, {
+                read: read,
+                write: write,
+                originator: dataDocSocket.getSocketId(),
+            });
+
+            dispatch({
+                type: '@@dataDoc/REMOVE_DATA_DOC_ACCESS_REQUEST',
+                payload: {
+                    docId,
+                    uid,
+                },
+            });
+        }
+    };
+}
+
+export function addDataDocAccessRequest(
+    docId: number,
+    uid: number
+): ThunkResult<Promise<IAccessRequest>> {
+    return async (dispatch) => {
+        const {
+            data,
+        }: {
+            data: IAccessRequest;
+        } = await ds.save(`/datadoc/${docId}/access_request/${uid}/`, {
+            originator: dataDocSocket.getSocketId(),
+        });
+
+        dispatch({
+            type: '@@dataDoc/RECEIVE_DATA_DOC_ACCESS_REQUEST',
+            payload: {
+                docId,
+                request: data,
+            },
+        });
+
+        return data;
     };
 }

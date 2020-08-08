@@ -12,6 +12,7 @@ import { DataDocViewersList } from 'components/DataDocViewersList/DataDocViewers
 import './DataDocViewersBadge.scss';
 import { Popover } from 'ui/Popover/Popover';
 import { Button } from 'ui/Button/Button';
+import { DataDocPermission } from 'lib/data-doc/datadoc-permission';
 
 interface IOwnProps {
     numberBadges?: number;
@@ -117,12 +118,14 @@ class DataDocViewersBadgeComponent extends React.Component<IProps, IState> {
             editorsByUid,
             readonly,
             ownerId,
+            accessRequestsByUid,
 
             addDataDocEditor,
             changeDataDocPublic,
             updateDataDocEditors,
             deleteDataDocEditor,
             updateDataDocOwner,
+            approveDataDocAccessRequest,
         } = this.props;
 
         const { showViewsList } = this.state;
@@ -141,6 +144,7 @@ class DataDocViewersBadgeComponent extends React.Component<IProps, IState> {
                 <DataDocViewersList
                     readonly={readonly}
                     viewerInfos={viewerInfos}
+                    accessRequestsByUid={accessRequestsByUid}
                     isOwner={dataDoc.owner_uid == ownerId}
                     editorsByUid={editorsByUid}
                     dataDoc={dataDoc}
@@ -149,6 +153,7 @@ class DataDocViewersBadgeComponent extends React.Component<IProps, IState> {
                     updateDataDocEditors={updateDataDocEditors}
                     deleteDataDocEditor={deleteDataDocEditor}
                     updateDataDocOwner={updateDataDocOwner}
+                    approveDataDocAccessRequest={approveDataDocAccessRequest}
                 />
             </Popover>
         );
@@ -170,6 +175,10 @@ function mapStateToProps(state: IStoreState, ownProps: IOwnProps) {
     return {
         viewerInfos,
         editorsByUid: dataDocSelectors.dataDocEditorByUidSelector(
+            state,
+            ownProps
+        ),
+        accessRequestsByUid: dataDocSelectors.dataDocAccessRequestsByUidSelector(
             state,
             ownProps
         ),
@@ -213,6 +222,19 @@ function mapDispatchToProps(dispatch: Dispatch, ownProps: IOwnProps) {
         updateDataDocOwner: (nextOwnerId: number) => {
             dispatch(
                 dataDocActions.updateDataDocOwner(ownProps.docId, nextOwnerId)
+            );
+        },
+
+        approveDataDocAccessRequest: (
+            uid: number,
+            permission: DataDocPermission
+        ) => {
+            dispatch(
+                dataDocActions.approveDataDocAccessRequest(
+                    ownProps.docId,
+                    uid,
+                    permission
+                )
             );
         },
     };
