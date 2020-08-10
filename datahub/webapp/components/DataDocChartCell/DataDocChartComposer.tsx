@@ -51,6 +51,7 @@ import { DisabledSection } from 'ui/DisabledSection/DisabledSection';
 
 import { DataDocChart } from './DataDocChart';
 import './DataDocChartComposer.scss';
+import { DataDocChartCellTable } from './DataDocChartCellTable';
 
 interface IProps {
     meta?: IDataChartCellMeta;
@@ -908,18 +909,7 @@ const DataDocChartComposerComponent: React.FunctionComponent<
 
     const chartDOM =
         values.chartType === 'table' ? (
-            <div className="DataDocChartComposer-table">
-                {values.title.length ? (
-                    <div className="DataDocChartComposer-table-title center-align mv4">
-                        {values.title}
-                    </div>
-                ) : null}
-                <StatementResultTable
-                    data={chartData}
-                    paginate={true}
-                    maxNumberOfRowsToShow={20}
-                />
-            </div>
+            <DataDocChartCellTable data={chartData} title={values.title} />
         ) : (
             <DataDocChart
                 data={chartData}

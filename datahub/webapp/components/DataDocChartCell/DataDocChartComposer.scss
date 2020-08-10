@@ -25,13 +25,6 @@
                 width: 100%;
                 overflow-y: hidden;
                 .DataDocChartComposer-chart-sizer {
-                    .DataDocChartComposer-table {
-                        overflow-y: scroll;
-                        .DataDocChartComposer-table-title {
-                            font-size: var(--text-size);
-                            font-weight: var(--bold-font);
-                        }
-                    }
                     flex: 1;
                     position: relative;
                     display: flex;

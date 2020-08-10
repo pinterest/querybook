@@ -19,6 +19,7 @@ import { DataDocChartComposer } from './DataDocChartComposer';
 import { InfoButton } from 'ui/Button/InfoButton';
 import { Modal } from 'ui/Modal/Modal';
 import { Title } from 'ui/Title/Title';
+import { DataDocChartCellTable } from './DataDocChartCellTable';
 
 interface IProps {
     context: string;
@@ -201,18 +202,10 @@ export const DataDocChartCell: React.FunctionComponent<IProps> = ({
         let visualizationDOM: React.ReactChild;
         if (meta.chart.type === 'table') {
             visualizationDOM = (
-                <div>
-                    {meta.title?.length ? (
-                        <div className="DataDocChartCell-table-title mv4 center-align">
-                            {meta.title}
-                        </div>
-                    ) : null}
-                    <StatementResultTable
-                        data={transformedChartData}
-                        paginate={true}
-                        maxNumberOfRowsToShow={20}
-                    />
-                </div>
+                <DataDocChartCellTable
+                    data={transformedChartData}
+                    title={meta.title}
+                />
             );
         } else {
             visualizationDOM = (
