@@ -55,7 +55,7 @@ export const AccessRequestPermissionPicker: React.FunctionComponent<IPermissionP
 
     const approveRequestButton = (
         <Button
-            title="Add"
+            title="Approve"
             small
             onClick={() => {
                 approveDataDocAccessRequest(uid, permission);

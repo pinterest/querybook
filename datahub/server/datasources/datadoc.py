@@ -448,7 +448,7 @@ def add_datadoc_access_request(doc_id, uid, originator=None):
 def approve_datadoc_access_request(doc_id, uid, read, write, originator):
     with DBSession() as session:
         assert_can_write(doc_id, session=session)
-        # give the user read access
+        # Add the user as an editor
         editor = logic.create_data_doc_editor(
             data_doc_id=doc_id,
             uid=uid,
@@ -457,7 +457,7 @@ def approve_datadoc_access_request(doc_id, uid, read, write, originator):
             session=session,
             commit=False,
         )
-        # remove the user from the access request table.
+        # remove the request
         logic.remove_datadoc_access_request(
             doc_id=doc_id, uid=uid, session=session, commit=False
         )

@@ -2,26 +2,25 @@ import React from 'react';
 import { Button } from 'ui/Button/Button';
 import { useState } from 'react';
 
-export const AccessRequestPage: React.FunctionComponent<{
+export const AccessRequestButton: React.FunctionComponent<{
     onAccessRequest: () => any;
 }> = ({ onAccessRequest }) => {
     const [accessRequsted, setAccessRequested] = useState(false);
     return (
-        <>
+        <div className="access-request-button">
             {accessRequsted ? (
-                'Access Request sent!'
+                'Access Request Sent!'
             ) : (
                 <Button
                     onClick={() => {
                         onAccessRequest();
                         setAccessRequested(true);
                     }}
-                    className="request-access-buton"
                     pushable
                 >
                     Request Access
                 </Button>
             )}
-        </>
+        </div>
     );
 };

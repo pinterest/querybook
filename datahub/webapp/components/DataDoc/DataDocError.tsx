@@ -1,9 +1,9 @@
 import * as React from 'react';
 import { ErrorPage } from 'ui/ErrorPage/ErrorPage';
-import { AccessRequestPage } from 'ui/AccessRequestPage/AccessRequestPage';
 import * as dataDocActions from 'redux/dataDoc/action';
 import { Dispatch } from 'redux/store/types';
 import { useDispatch } from 'react-redux';
+import { AccessRequestButton } from 'components/AccessRequestButton/AccessRequestButton';
 
 export const DataDocError: React.FunctionComponent<{
     errorObj: any;
@@ -12,7 +12,7 @@ export const DataDocError: React.FunctionComponent<{
 }> = React.memo(({ docId, errorObj, uid }) => {
     let errorTitle: string;
     let errorContent: any;
-    let errorMessage: any;
+    let errorMessage: string;
     const dispatch: Dispatch = useDispatch();
 
     const handleDataDocAccessRequest = () =>
@@ -30,7 +30,7 @@ export const DataDocError: React.FunctionComponent<{
                     errorTitle = 'Access Denied';
                     errorMessage = 'You cannot read this DataDoc.';
                     errorContent = (
-                        <AccessRequestPage
+                        <AccessRequestButton
                             onAccessRequest={() => handleDataDocAccessRequest()}
                         />
                     );
