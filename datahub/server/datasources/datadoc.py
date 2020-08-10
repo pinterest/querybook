@@ -422,15 +422,22 @@ def get_datadoc_access_requests(doc_id):
 @register("/datadoc/<int:doc_id>/access_request/<int:uid>/", methods=["POST"])
 def add_datadoc_access_request(doc_id, uid, originator=None):
     with DBSession() as session:
-        access_request = logic.create_data_doc_access_request(doc_id=doc_id, uid=uid)
-        access_request_dict = access_request.to_dict()
-        socketio.emit(
-            "data_doc_access_request",
-            (originator, doc_id, uid, access_request_dict),
-            namespace="/datadoc",
-            room=doc_id,
-            broadcast=True,
+        access_request_dict = None
+        existing_access_requst = logic.get_data_doc_access_request(
+            doc_id=doc_id, uid=uid
         )
+        if not existing_access_requst:
+            access_request = logic.create_data_doc_access_request(
+                doc_id=doc_id, uid=uid
+            )
+            access_request_dict = access_request.to_dict()
+            socketio.emit(
+                "data_doc_access_request",
+                (originator, doc_id, uid, access_request_dict),
+                namespace="/datadoc",
+                room=doc_id,
+                broadcast=True,
+            )
         send_datadoc_access_request_notification(
             doc_id=doc_id, uid=uid, session=session
         )

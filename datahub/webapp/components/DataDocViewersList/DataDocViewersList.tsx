@@ -15,7 +15,6 @@ import { Title } from 'ui/Title/Title';
 
 import { ViewerPermissionPicker } from './ViewerPermissionPicker';
 import { UserSelect } from 'components/UserSelect/UserSelect';
-import { AsyncButton } from 'ui/AsyncButton/AsyncButton';
 import { Tabs } from 'ui/Tabs/Tabs';
 import { sendNotification } from 'lib/dataHubUI';
 import { AccessRequestPermissionPicker } from 'components/AccessRequestPermissionPicker.tsx/AccessRequestPermissionPicker';

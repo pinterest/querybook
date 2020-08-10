@@ -17,6 +17,7 @@ export const AccessRequestPage: React.FunctionComponent<{
                         setAccessRequested(true);
                     }}
                     className="request-access-buton"
+                    pushable
                 >
                     Request Access
                 </Button>

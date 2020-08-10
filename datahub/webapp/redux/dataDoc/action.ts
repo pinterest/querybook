@@ -659,15 +659,15 @@ export function addDataDocAccessRequest(
         } = await ds.save(`/datadoc/${docId}/access_request/${uid}/`, {
             originator: dataDocSocket.getSocketId(),
         });
-
-        dispatch({
-            type: '@@dataDoc/RECEIVE_DATA_DOC_ACCESS_REQUEST',
-            payload: {
-                docId,
-                request: data,
-            },
-        });
-
+        if (data != null) {
+            dispatch({
+                type: '@@dataDoc/RECEIVE_DATA_DOC_ACCESS_REQUEST',
+                payload: {
+                    docId,
+                    request: data,
+                },
+            });
+        }
         return data;
     };
 }
