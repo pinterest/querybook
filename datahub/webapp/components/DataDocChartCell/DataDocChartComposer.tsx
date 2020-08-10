@@ -50,8 +50,8 @@ import { SimpleField } from 'ui/FormikField/SimpleField';
 import { DisabledSection } from 'ui/DisabledSection/DisabledSection';
 
 import { DataDocChart } from './DataDocChart';
-import './DataDocChartComposer.scss';
 import { DataDocChartCellTable } from './DataDocChartCellTable';
+import './DataDocChartComposer.scss';
 
 interface IProps {
     meta?: IDataChartCellMeta;
