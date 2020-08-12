@@ -84,6 +84,20 @@ test('linkifyLog', () => {
     expect(utils.linkifyLog('https://www.datahub.com/')).toBe(
         '<a target="_blank" rel="noopener noreferrer" href="https://www.datahub.com/">https://www.datahub.com/</a>'
     );
+    // testing basic string with query params
+    expect(
+        utils.linkifyLog(
+            'Test https://www.google.com/search?source=hp&q=test&oq=test end test'
+        )
+    ).toBe(
+        'Test <a target="_blank" rel="noopener noreferrer" href="https://www.google.com/search?source=hp&q=test&oq=test">https://www.google.com/search?source=hp&q=test&oq=test</a> end test'
+    );
+    expect(
+        utils.linkifyLog('<a href="https://pinterest.com">Cool Website</a>')
+    ).toBe(
+        '&lt;a href=&quot;<a target="_blank" rel="noopener noreferrer" href="https://pinterest.com">https://pinterest.com</a>&quot;&gt;Cool Website&lt;/a&gt;'
+    );
+
     // when not url
     expect(utils.linkifyLog('datahub&')).toBe('datahub&amp;');
 });
