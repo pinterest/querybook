@@ -19,6 +19,7 @@ import { AsyncButton } from 'ui/AsyncButton/AsyncButton';
 import { Title } from 'ui/Title/Title';
 
 import './DataTableViewQueryExamples.scss';
+import { DataTableViewQueryUsers } from './DataTableViewQueryUsers';
 
 interface IProps {
     tableId: number;
@@ -98,16 +99,12 @@ export const DataTableViewQueryExamples: React.FunctionComponent<IProps> = ({
         if (loadingInitial) {
             return <Loading />;
         } else if (!queryExampleIds?.length) {
-            return (
-                <div className="center-align m24">
-                    <Title subtitle size={4}>
-                        No Examples
-                    </Title>
-                </div>
-            );
+            // Return nothing since the top users section
+            // will have an empty message
+            return null;
         }
 
-        return queryExamples
+        const queryExamplesDOM = queryExamples
             .map((query) => {
                 const language =
                     queryEngineById[query.engine_id]?.language ?? 'presto';
@@ -137,10 +134,30 @@ export const DataTableViewQueryExamples: React.FunctionComponent<IProps> = ({
                 );
             })
             .concat(loadingQueryExecution ? [<Loading key="loading" />] : []);
+
+        return (
+            <div>
+                <Title subtitle size={4}>
+                    Example Queries
+                </Title>
+                {queryExamplesDOM}
+            </div>
+        );
     };
+
+    const topUsersSection = (
+        <div className="mb12">
+            <Title subtitle size={4}>
+                Frequent users of this table
+            </Title>
+
+            <DataTableViewQueryUsers tableId={tableId} />
+        </div>
+    );
 
     return (
         <div className="DataTableViewQueryExamples">
+            {topUsersSection}
             {getExampleDOM()}
             <div className="center-align">
                 {hasMore && !loadingInitial && (

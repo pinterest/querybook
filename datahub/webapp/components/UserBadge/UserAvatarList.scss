@@ -1,0 +1,26 @@
+.UserAvatarList {
+    display: flex;
+    flex-direction: row;
+    .UserAvatarList-user-wrapper {
+        width: 29px;
+
+        .UserAvatarList-user {
+            width: 36px;
+            height: 36px;
+            border-radius: 100px;
+        }
+
+        &.extra-user-count {
+            z-index: 1;
+            .UserAvatarList-user {
+                background: var(--text-color);
+                color: var(--bg-color);
+                font-size: var(--med-text-size);
+                text-align: center;
+                display: flex;
+                align-items: center;
+                justify-content: center;
+            }
+        }
+    }
+}

@@ -5,7 +5,7 @@ import { IUserInfo } from 'redux/user/types';
 import { ICommonUserLoaderProps } from './types';
 import './UserAvatar.scss';
 
-type IUserAvatarProps = {
+export type IUserAvatarProps = {
     isOnline?: boolean;
     tiny?: boolean;
 } & ICommonUserLoaderProps;
