@@ -50,6 +50,7 @@ import { SimpleField } from 'ui/FormikField/SimpleField';
 import { DisabledSection } from 'ui/DisabledSection/DisabledSection';
 
 import { DataDocChart } from './DataDocChart';
+import { DataDocChartCellTable } from './DataDocChartCellTable';
 import './DataDocChartComposer.scss';
 
 interface IProps {
@@ -711,7 +712,11 @@ const DataDocChartComposerComponent: React.FunctionComponent<
         : null;
 
     const visualsTabDOM =
-        values.chartType === 'table' ? null : (
+        values.chartType === 'table' ? (
+            <FormField stacked label="Title">
+                <Field name="title" />
+            </FormField>
+        ) : (
             <>
                 <FormField stacked label="Title">
                     <Field name="title" />
@@ -904,11 +909,7 @@ const DataDocChartComposerComponent: React.FunctionComponent<
 
     const chartDOM =
         values.chartType === 'table' ? (
-            <StatementResultTable
-                data={chartData}
-                paginate={true}
-                maxNumberOfRowsToShow={20}
-            />
+            <DataDocChartCellTable data={chartData} title={values.title} />
         ) : (
             <DataDocChart
                 data={chartData}

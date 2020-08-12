@@ -56,7 +56,7 @@ export const DataDocViewersList: React.FunctionComponent<IDataDocViewersListProp
             <div className="user-select-wrapper">
                 <UserSelect
                     onSelect={(uid) => {
-                        if (uid in editorsByUid) {
+                        if (uid in editorsByUid || uid === dataDoc.owner_uid) {
                             sendNotification('User already added.');
                         } else {
                             const newUserPermission = dataDoc.public

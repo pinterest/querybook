@@ -9,12 +9,12 @@ import { useChartSource } from 'hooks/chart/useChartSource';
 import { IDataChartCellMeta } from 'const/datadoc';
 
 import { StatementExecutionPicker } from 'components/ExecutionPicker/StatementExecutionPicker';
-import { StatementResultTable } from 'components/DataDocStatementExecution/StatementResultTable';
 import { QueryExecutionPicker } from 'components/ExecutionPicker/QueryExecutionPicker';
 
 import { Button } from 'ui/Button/Button';
 import { ErrorBoundary } from 'ui/ErrorBoundary/ErrorBoundary';
 import { DataDocChart } from './DataDocChart';
+import { DataDocChartCellTable } from './DataDocChartCellTable';
 import { DataDocChartComposer } from './DataDocChartComposer';
 import { InfoButton } from 'ui/Button/InfoButton';
 import { Modal } from 'ui/Modal/Modal';
@@ -201,10 +201,9 @@ export const DataDocChartCell: React.FunctionComponent<IProps> = ({
         let visualizationDOM: React.ReactChild;
         if (meta.chart.type === 'table') {
             visualizationDOM = (
-                <StatementResultTable
+                <DataDocChartCellTable
                     data={transformedChartData}
-                    paginate={true}
-                    maxNumberOfRowsToShow={20}
+                    title={meta.title}
                 />
             );
         } else {

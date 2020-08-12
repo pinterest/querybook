@@ -1,6 +1,6 @@
 import React from 'react';
 import { CopyButton } from 'ui/CopyButton/CopyButton';
-import { SeeMoreText } from 'ui/SeeMoreText/SeeMoreText';
+import { ShowMoreText } from 'ui/ShowMoreText/ShowMoreText';
 import { Modal } from 'ui/Modal/Modal';
 
 import './CopyPasteModal.scss';
@@ -21,7 +21,7 @@ export const CopyPasteModal: React.FunctionComponent<IProps> = (props) => {
     const textDOM = displayText ? (
         <blockquote className="CopyPasteModal-text">
             <pre>
-                <SeeMoreText text={text} length={400} />
+                <ShowMoreText text={text} length={400} />
             </pre>
         </blockquote>
     ) : null;
