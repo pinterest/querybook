@@ -480,9 +480,7 @@ def send_datadoc_access_request_notification(doc_id, uid, session=None):
     writer_uids = [
         writer.uid for writer in logic.get_data_doc_writers_by_doc_id(doc_id)
     ]
-    if writer_uids is not None:
-        writers = user_logic.get_users_by_ids(writer_uids)
-        doc_editors.extend(writers)
+    doc_editors.extend(user_logic.get_users_by_ids(writer_uids))
     requestor_username = requestor.get_name()
     for user in doc_editors:
         notify_user(
