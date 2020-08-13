@@ -13,7 +13,7 @@ import { Tabs } from 'ui/Tabs/Tabs';
 import { SearchBar } from 'ui/SearchBar/SearchBar';
 import { TaskStatusIcon } from './TaskStatusIcon';
 import { ToggleButton } from 'ui/ToggleButton/ToggleButton';
-import { SeeMoreText } from 'ui/SeeMoreText/SeeMoreText';
+import { ShowMoreText } from 'ui/ShowMoreText/ShowMoreText';
 
 import './TaskStatus.scss';
 
@@ -62,7 +62,7 @@ function formatCell(
         }
         case 'error_message': {
             return (
-                <SeeMoreText
+                <ShowMoreText
                     className="TaskStatus-error-message"
                     text={row[column]}
                     length={120}

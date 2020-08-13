@@ -20,6 +20,7 @@ import { Table } from 'ui/Table/Table';
 import { Title } from 'ui/Title/Title';
 
 import './DataTableViewOverview.scss';
+import { DataTableViewQueryUsers } from 'components/DataTableViewQueryExample/DataTableViewQueryUsers';
 
 const dataTableDetailsColumns = [
     {
@@ -96,35 +97,37 @@ export class DataTableViewOverview extends React.PureComponent<
             <Table
                 className="data-table-details-table"
                 showHeader={false}
-                rows={dataTableDetailsRows.map((row) => {
-                    let value: string = '';
-                    switch (row) {
-                        case 'table_created_at':
-                        case 'table_updated_at': {
-                            value = table[row]
-                                ? generateFormattedDate(table[row])
-                                : '';
-                            break;
+                rows={dataTableDetailsRows
+                    .filter((row) => table[row] != null)
+                    .map((row) => {
+                        let value: string = '';
+                        switch (row) {
+                            case 'table_created_at':
+                            case 'table_updated_at': {
+                                value = table[row]
+                                    ? generateFormattedDate(table[row])
+                                    : '';
+                                break;
+                            }
+                            case 'data_size_bytes': {
+                                value = getHumanReadableByteSize(table[row]);
+                                break;
+                            }
+                            default:
+                                value = table[row];
                         }
-                        case 'data_size_bytes': {
-                            value = getHumanReadableByteSize(table[row]);
-                            break;
-                        }
-                        default:
-                            value = table[row];
-                    }
-                    return {
-                        name: titleize(row, '_', ' '),
-                        value,
-                    };
-                })}
+                        return {
+                            name: titleize(row, '_', ' '),
+                            value,
+                        };
+                    })}
                 showAllRows={true}
                 cols={dataTableDetailsColumns}
             />
         );
-        const hiveMetastoreDOM = (
-            <pre>{table.hive_metastore_description || ''}</pre>
-        );
+        const hiveMetastoreDOM = table.hive_metastore_description ? (
+            <pre>{table.hive_metastore_description}</pre>
+        ) : null;
 
         const descriptionSection = this.makeOverviewSectionDOM(
             `Description`,
@@ -136,11 +139,11 @@ export class DataTableViewOverview extends React.PureComponent<
             <div>
                 <p>
                     First created in DataHub at{' '}
-                    {generateFormattedDate(table.created_at)}
+                    {generateFormattedDate(table.created_at)}.
                 </p>
                 <p>
                     Last pulled from metastore at{' '}
-                    {generateFormattedDate(table.updated_at)}
+                    {generateFormattedDate(table.updated_at)}.
                 </p>
             </div>
         );
@@ -150,10 +153,12 @@ export class DataTableViewOverview extends React.PureComponent<
             detailsDOM
         );
 
-        const hiveMetastoreSection = this.makeOverviewSectionDOM(
-            `Hive Metastore Raw`,
-            hiveMetastoreDOM
-        );
+        const hiveMetastoreSection = hiveMetastoreDOM
+            ? this.makeOverviewSectionDOM(
+                  `Hive Metastore Raw`,
+                  hiveMetastoreDOM
+              )
+            : null;
 
         const sampleQueriesSection = this.makeOverviewSectionDOM(
             `Sample DataDocs`,
@@ -169,7 +174,7 @@ export class DataTableViewOverview extends React.PureComponent<
                 type="inlineText"
                 borderless
             >
-                Sample DataDocs
+                Click to View Sample DataDocs
             </Button>
         );
 
@@ -194,13 +199,19 @@ export class DataTableViewOverview extends React.PureComponent<
               )
             : null;
 
+        const frequentUsersSection = this.makeOverviewSectionDOM(
+            `Frequent Users`,
+            <DataTableViewQueryUsers tableId={table.id} />
+        );
+
         return (
             <div className="DataHubTableViewOverview">
                 {warningSection}
                 {descriptionSection}
-                {metaSection}
+                {frequentUsersSection}
                 {detailsSection}
                 {hiveMetastoreSection}
+                {metaSection}
                 {sampleQueriesSection}
             </div>
         );

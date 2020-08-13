@@ -19,6 +19,7 @@ const initialState: IDataSourcesState = {
     dataTablesSamplesPollingById: {},
 
     queryExampleIdsById: {},
+    queryTopUsersByTableId: {},
 
     // trustworthinessStats: {
     //     loaded: false,
@@ -264,6 +265,21 @@ function queryExampleIdsById(
     });
 }
 
+function queryTopUsersByTableId(
+    state = initialState.queryTopUsersByTableId,
+    action: DataSourcesAction
+) {
+    return produce(state, (draft) => {
+        switch (action.type) {
+            case '@@dataSources/RECEIVE_TOP_QUERY_USERS': {
+                const { tableId, users } = action.payload;
+                draft[tableId] = users;
+                return;
+            }
+        }
+    });
+}
+
 function goldenTableNameToId(
     state = initialState.goldenTableNameToId,
     action: DataSourcesAction
@@ -343,6 +359,7 @@ export default combineReducers({
     dataTablesSamplesById,
     dataTablesSamplesPollingById,
     queryExampleIdsById,
+    queryTopUsersByTableId,
     dataLineages,
     dataTableWarningById,
 });

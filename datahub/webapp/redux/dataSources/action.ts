@@ -11,6 +11,7 @@ import {
     IDataSchema,
     IDataTableWarning,
     DataTableWarningSeverity,
+    ITopQueryUser,
 } from 'const/metastore';
 import { convertRawToContentState } from 'lib/draft-js-utils';
 import ds from 'lib/datasource';
@@ -550,6 +551,43 @@ export function fetchMoreQueryExampleIds(
         return dispatch(
             fetchQueryExampleIds(tableId, samples?.queryIds?.length ?? 0)
         );
+    };
+}
+
+export function fetchTopQueryUsersIfNeeded(
+    tableId: number,
+    limit = 5
+): ThunkResult<Promise<ITopQueryUser[]>> {
+    return async (dispatch, getState) => {
+        try {
+            const state = getState();
+            const users = state.dataSources.queryTopUsersByTableId[tableId];
+            if (users != null) {
+                return Promise.resolve(users);
+            }
+
+            const environmentId = state.environment.currentEnvironmentId;
+            const { data } = await ds.fetch<ITopQueryUser[]>(
+                {
+                    url: `/table/${tableId}/query_example_users/`,
+                },
+                {
+                    table_id: tableId,
+                    environment_id: environmentId,
+                    limit,
+                }
+            );
+            dispatch({
+                type: '@@dataSources/RECEIVE_TOP_QUERY_USERS',
+                payload: {
+                    tableId,
+                    users: data,
+                },
+            });
+            return data;
+        } catch (e) {
+            console.error(e);
+        }
     };
 }
 

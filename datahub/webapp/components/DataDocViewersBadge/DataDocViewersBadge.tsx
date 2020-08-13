@@ -55,47 +55,20 @@ class DataDocViewersBadgeComponent extends React.Component<IProps, IState> {
             readonly,
         } = this.props;
         const { showViewsList } = this.state;
-
-        const viewersDOM = viewerInfos
-            .slice(0, numberBadges)
-            .map((viewerInfo) => (
-                <div
-                    className="viewers-badge-viewer-wrapper"
-                    key={viewerInfo.uid}
-                >
-                    <div
-                        className={classNames({
-                            'viewers-badge-viewer': true,
-                            // offline: !viewerInfo.online,
-                        })}
-                        aria-label={
-                            viewerInfo.uid in userInfoById
-                                ? userInfoById[viewerInfo.uid].username
-                                : null
-                        }
-                        data-balloon-pos={'down'}
-                    >
-                        <UserAvatar
-                            isOnline={viewerInfo.online}
-                            uid={viewerInfo.uid}
-                        />
-                    </div>
-                </div>
-            ));
-
         const extraViewersCount = viewerInfos.length - numberBadges;
 
-        const extraViewersDOM = extraViewersCount > 0 && (
-            <div
-                className="viewers-badge-viewer-wrapper viewers-badge-viewer-count"
-                key={'count'}
-                aria-label={`${extraViewersCount} Others`}
-                data-balloon-pos={'down'}
-            >
-                <div className="viewers-badge-viewer">
-                    {extraViewersCount < 100 ? extraViewersCount : '*'}
-                </div>
-            </div>
+        const viewersDOM = (
+            <UserAvatarList
+                users={viewerInfos.slice(0, numberBadges).map((viewerInfo) => ({
+                    uid: viewerInfo.uid,
+                    tooltip:
+                        viewerInfo.uid in userInfoById
+                            ? userInfoById[viewerInfo.uid].username
+                            : null,
+                    isOnline: viewerInfo.online,
+                }))}
+                extraCount={extraViewersCount}
+            />
         );
 
         const accessRequestsByUidLength = Object.keys(accessRequestsByUid)
@@ -120,7 +93,6 @@ class DataDocViewersBadgeComponent extends React.Component<IProps, IState> {
                 onClick={() => this.setShowViewsList(!showViewsList)}
             >
                 {viewersDOM}
-                {extraViewersDOM}
                 {shareButtonDOM}
             </div>
         );

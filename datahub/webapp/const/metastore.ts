@@ -125,3 +125,8 @@ export interface IPaginatedQuerySamples {
     hasMore: boolean;
     queryIds: number[];
 }
+
+export interface ITopQueryUser {
+    uid: number;
+    count: number;
+}

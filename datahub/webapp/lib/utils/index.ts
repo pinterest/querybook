@@ -1,4 +1,4 @@
-import { escape } from 'lodash';
+import { escape, unescape } from 'lodash';
 import { PickType } from 'lib/typescript';
 
 // from: https://stackoverflow.com/questions/286141/remove-blank-attributes-from-an-object-in-javascript
@@ -278,12 +278,28 @@ export function getHumanReadableByteSize(
 
 export function linkifyLog(log: string) {
     // https://stackoverflow.com/questions/3809401/what-is-a-good-regular-expression-to-match-a-url
-    const urlRegex = /https?:\/\/(www\.)?[-a-zA-Z0-9@:%._\+~#=]{2,256}(\.[a-z]{2,6})?\b([-a-zA-Z0-9@:%_\+.~#?&\/=]*)/g;
+    const urlRegex = /https?:\/\/(www\.)?[-a-zA-Z0-9@:%._\+~#=]{2,256}(\.[a-z]{2,6})?\b([-a-zA-Z0-9@:%_\+.~#?&\/=]*)/;
+    const processedParts: string[] = [];
 
-    return escape(log).replace(
-        urlRegex,
-        '<a target="_blank" rel="noopener noreferrer" href="$&">$&</a>'
-    );
+    while (true) {
+        const match = log.match(urlRegex);
+        if (match) {
+            const url = match[0];
+            const matchStart = match.index;
+            const matchEnd = match.index + url.length;
+
+            const partBeforeMatch = log.slice(0, matchStart);
+            log = log.slice(matchEnd);
+            processedParts.push(escape(partBeforeMatch));
+            processedParts.push(
+                `<a target="_blank" rel="noopener noreferrer" href="${url}">${url}</a>`
+            );
+        } else {
+            processedParts.push(escape(log));
+            break;
+        }
+    }
+    return processedParts.join('');
 }
 
 export function calculateTooltipSize(tooltip: string) {
