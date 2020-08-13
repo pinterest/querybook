@@ -1,10 +1,12 @@
 import sqlalchemy as sql
 from app import db
+from lib.sqlalchemy import CRUDMixin
+from const.db import now
 
 Base = db.Base
 
 
-class AccessRequest(Base):
+class AccessRequest(CRUDMixin, Base):
     __tablename__ = "access_request"
     __table_args__ = (
         sql.UniqueConstraint(
@@ -24,11 +26,4 @@ class AccessRequest(Base):
         sql.ForeignKey("query_execution.id", ondelete="CASCADE"),
         nullable=True,
     )
-
-    def to_dict(self):
-        return {
-            "id": self.id,
-            "uid": self.uid,
-            "data_doc_id": self.data_doc_id,
-            "query_execution_id": self.query_execution_id,
-        }
+    created_at = sql.Column(sql.DateTime, default=now)

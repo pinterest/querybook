@@ -8,15 +8,15 @@ import { AccessRequestButton } from 'components/AccessRequestButton/AccessReques
 export const DataDocError: React.FunctionComponent<{
     errorObj: any;
     docId: number;
-    uid: number;
-}> = React.memo(({ docId, errorObj, uid }) => {
+}> = React.memo(({ docId, errorObj }) => {
     let errorTitle: string;
-    let errorContent: any;
+    let errorContent: React.ReactNode;
     let errorMessage: string;
     const dispatch: Dispatch = useDispatch();
 
-    const handleDataDocAccessRequest = () =>
-        dispatch(dataDocActions.addDataDocAccessRequest(docId, uid));
+    const handleDataDocAccessRequest = React.useCallback(() => {
+        dispatch(dataDocActions.addDataDocAccessRequest(docId));
+    }, [docId]);
 
     if (errorObj) {
         if (errorObj.response) {
@@ -31,7 +31,7 @@ export const DataDocError: React.FunctionComponent<{
                     errorMessage = 'You cannot read this DataDoc.';
                     errorContent = (
                         <AccessRequestButton
-                            onAccessRequest={() => handleDataDocAccessRequest()}
+                            onAccessRequest={handleDataDocAccessRequest}
                         />
                     );
                 } else if (exceptionMessage === 'DOC_DNE') {

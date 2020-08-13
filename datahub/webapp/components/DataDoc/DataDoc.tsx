@@ -728,15 +728,10 @@ class DataDocComponent extends React.Component<IProps, IState> {
     public render() {
         const { dataDoc } = this.props;
         const { errorObj } = this.state;
-        const uid = this.props.userInfo.id;
 
         if (errorObj) {
             return (
-                <DataDocError
-                    docId={this.props.docId}
-                    uid={uid}
-                    errorObj={errorObj}
-                />
+                <DataDocError docId={this.props.docId} errorObj={errorObj} />
             );
         }
         if (!(dataDoc && dataDoc.cells)) {

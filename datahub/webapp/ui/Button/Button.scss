@@ -128,4 +128,20 @@
     &.pushable {
         @include pushable();
     }
+
+    .ping-message {
+        position: absolute;
+        cursor: default;
+        border-radius: 100px;
+        background-color: var(--color-accent-bg);
+
+        right: 0px;
+        top: -10px;
+
+        padding: 1px 6px 0px 6px;
+
+        color: var(--color-accent-text);
+        font-size: var(--xsmall-text-size);
+        font-weight: var(--bold-font);
+    }
 }

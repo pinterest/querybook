@@ -225,7 +225,7 @@ export interface IReceiveDataDocAccessRequestAction extends Action {
     };
 }
 
-export interface IApproveDataDocAccessRequestAction extends Action {
+export interface IRemoveDataDocAccessRequestAction extends Action {
     type: '@@dataDoc/REMOVE_DATA_DOC_ACCESS_REQUEST';
     payload: {
         docId: number;
@@ -268,7 +268,7 @@ export type DataDocAction =
     | IRemoveDataDocEditorAction
     | IReceiveDataDocAccessRequestsAction
     | IReceiveDataDocAccessRequestAction
-    | IApproveDataDocAccessRequestAction
+    | IRemoveDataDocAccessRequestAction
     | IMoveDataDocCursor;
 
 export type ThunkResult<R> = ThunkAction<

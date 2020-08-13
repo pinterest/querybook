@@ -45,7 +45,14 @@ class DataDocViewersBadgeComponent extends React.Component<IProps, IState> {
 
     @bind
     public getBadgeContentDOM() {
-        const { viewerInfos, numberBadges, userInfoById, dataDoc } = this.props;
+        const {
+            viewerInfos,
+            numberBadges,
+            userInfoById,
+            dataDoc,
+            accessRequestsByUid,
+            readonly,
+        } = this.props;
         const { showViewsList } = this.state;
 
         const viewersDOM = viewerInfos
@@ -90,12 +97,19 @@ class DataDocViewersBadgeComponent extends React.Component<IProps, IState> {
             </div>
         );
 
+        const accessRequestsByUidLength = Object.keys(accessRequestsByUid)
+            .length;
         const shareButtonDOM = (
             <Button
                 className="viewers-badge-share-button"
                 icon={dataDoc.public ? 'users' : 'lock'}
                 title="Share"
                 pushable
+                ping={
+                    !readonly && accessRequestsByUidLength > 0
+                        ? accessRequestsByUidLength.toString()
+                        : null
+                }
             />
         );
 
@@ -125,7 +139,7 @@ class DataDocViewersBadgeComponent extends React.Component<IProps, IState> {
             updateDataDocEditors,
             deleteDataDocEditor,
             updateDataDocOwner,
-            approveDataDocAccessRequest,
+            rejectDataDocAccessRequest,
         } = this.props;
 
         const { showViewsList } = this.state;
@@ -153,7 +167,7 @@ class DataDocViewersBadgeComponent extends React.Component<IProps, IState> {
                     updateDataDocEditors={updateDataDocEditors}
                     deleteDataDocEditor={deleteDataDocEditor}
                     updateDataDocOwner={updateDataDocOwner}
-                    approveDataDocAccessRequest={approveDataDocAccessRequest}
+                    rejectDataDocAccessRequest={rejectDataDocAccessRequest}
                 />
             </Popover>
         );
@@ -178,7 +192,7 @@ function mapStateToProps(state: IStoreState, ownProps: IOwnProps) {
             state,
             ownProps
         ),
-        accessRequestsByUid: dataDocSelectors.dataDocAccessRequestsByUidSelector(
+        accessRequestsByUid: dataDocSelectors.currentDataDocAccessRequestsByUidSelector(
             state,
             ownProps
         ),
@@ -209,15 +223,15 @@ function mapDispatchToProps(dispatch: Dispatch, ownProps: IOwnProps) {
         deleteDataDocEditor: (uid: number) =>
             dispatch(dataDocActions.deleteDataDocEditor(ownProps.docId, uid)),
 
-        addDataDocEditor: (uid: number, read: boolean, write: boolean) =>
+        addDataDocEditor: (uid: number, permission: DataDocPermission) => {
             dispatch(
                 dataDocActions.addDataDocEditors(
                     ownProps.docId,
                     uid,
-                    read,
-                    write
+                    permission
                 )
-            ),
+            );
+        },
 
         updateDataDocOwner: (nextOwnerId: number) => {
             dispatch(
@@ -225,16 +239,9 @@ function mapDispatchToProps(dispatch: Dispatch, ownProps: IOwnProps) {
             );
         },
 
-        approveDataDocAccessRequest: (
-            uid: number,
-            permission: DataDocPermission
-        ) => {
+        rejectDataDocAccessRequest: (uid: number) => {
             dispatch(
-                dataDocActions.approveDataDocAccessRequest(
-                    ownProps.docId,
-                    uid,
-                    permission
-                )
+                dataDocActions.rejectDataDocAccessRequest(ownProps.docId, uid)
             );
         },
     };

@@ -28,15 +28,12 @@ interface IDataDocViewersListProps {
     isOwner: boolean;
     accessRequestsByUid: Record<number, IAccessRequest>;
 
-    addDataDocEditor: (uid: number, read: boolean, write: boolean) => any;
+    addDataDocEditor: (uid: number, permission: DataDocPermission) => any;
     changeDataDocPublic: (docId: number, docPublic: boolean) => any;
     updateDataDocEditors: (uid: number, read: boolean, write: boolean) => any;
     deleteDataDocEditor: (uid: number) => any;
     updateDataDocOwner: (nextOwnerId: number) => any;
-    approveDataDocAccessRequest: (
-        uid: number,
-        permission: DataDocPermission
-    ) => any;
+    rejectDataDocAccessRequest: (uid: number) => any;
 }
 
 // TODO: make this component use React-Redux directly
@@ -54,7 +51,7 @@ export const DataDocViewersList: React.FunctionComponent<IDataDocViewersListProp
     updateDataDocEditors,
     deleteDataDocEditor,
     updateDataDocOwner,
-    approveDataDocAccessRequest,
+    rejectDataDocAccessRequest,
 }) => {
     const addUserRowDOM = readonly ? null : (
         <div className="datadoc-add-user-row">
@@ -67,17 +64,7 @@ export const DataDocViewersList: React.FunctionComponent<IDataDocViewersListProp
                             const newUserPermission = dataDoc.public
                                 ? DataDocPermission.CAN_WRITE
                                 : DataDocPermission.CAN_READ;
-                            const { read, write } = permissionToReadWrite(
-                                newUserPermission
-                            );
-                            if (uid in accessRequestsByUid) {
-                                approveDataDocAccessRequest(
-                                    uid,
-                                    newUserPermission
-                                );
-                            } else {
-                                addDataDocEditor(uid, read, write);
-                            }
+                            addDataDocEditor(uid, newUserPermission);
                         }
                     }}
                     selectProps={{
@@ -117,7 +104,7 @@ export const DataDocViewersList: React.FunctionComponent<IDataDocViewersListProp
                                 if (info.uid in editorsByUid) {
                                     updateDataDocEditors(info.uid, read, write);
                                 } else {
-                                    addDataDocEditor(info.uid, read, write);
+                                    addDataDocEditor(info.uid, permission);
                                 }
                             }
                         }}
@@ -142,8 +129,9 @@ export const DataDocViewersList: React.FunctionComponent<IDataDocViewersListProp
                   <div className="access-info">
                       <AccessRequestPermissionPicker
                           uid={request.uid}
-                          approveDataDocAccessRequest={
-                              approveDataDocAccessRequest
+                          addDataDocEditor={addDataDocEditor}
+                          rejectDataDocAccessRequest={
+                              rejectDataDocAccessRequest
                           }
                       />
                   </div>

@@ -868,7 +868,7 @@ def get_data_doc_access_requests_by_doc_id(doc_id, session=None):
 
 
 @with_session
-def get_data_doc_access_request(doc_id, uid, session=None):
+def get_data_doc_access_request_by_doc_id(doc_id, uid, session=None):
     return session.query(AccessRequest).filter_by(data_doc_id=doc_id, uid=uid).first()
 
 

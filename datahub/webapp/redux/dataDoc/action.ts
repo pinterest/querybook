@@ -536,10 +536,14 @@ export function getDataDocEditors(
 export function addDataDocEditors(
     docId: number,
     uid: number,
-    read: boolean,
-    write: boolean
+    permission: DataDocPermission
 ): ThunkResult<Promise<IDataDocEditor>> {
-    return async (dispatch) => {
+    return async (dispatch, getState) => {
+        const { read, write } = permissionToReadWrite(permission);
+        const request = (getState().dataDoc.accessRequestsByDocIdUserId[
+            docId
+        ] || {})[uid];
+
         const {
             data,
         }: {
@@ -549,7 +553,15 @@ export function addDataDocEditors(
             write,
             originator: dataDocSocket.getSocketId(),
         });
-
+        if (request) {
+            dispatch({
+                type: '@@dataDoc/REMOVE_DATA_DOC_ACCESS_REQUEST',
+                payload: {
+                    docId,
+                    uid,
+                },
+            });
+        }
         dispatch({
             type: '@@dataDoc/RECEIVE_DATA_DOC_EDITOR',
             payload: {
@@ -619,44 +631,15 @@ export function deleteDataDocEditor(
     };
 }
 
-export function approveDataDocAccessRequest(
-    docId: number,
-    uid: number,
-    permission: DataDocPermission
-): ThunkResult<Promise<void>> {
-    const { read, write } = permissionToReadWrite(permission);
-    return async (dispatch, getState) => {
-        const request = (getState().dataDoc.accessRequestsByDocIdUserId[
-            docId
-        ] || {})[uid];
-        if (request) {
-            await ds.save(`/datadoc/${docId}/grant_access/${request.uid}/`, {
-                read: read,
-                write: write,
-                originator: dataDocSocket.getSocketId(),
-            });
-
-            dispatch({
-                type: '@@dataDoc/REMOVE_DATA_DOC_ACCESS_REQUEST',
-                payload: {
-                    docId,
-                    uid,
-                },
-            });
-        }
-    };
-}
-
 export function addDataDocAccessRequest(
-    docId: number,
-    uid: number
+    docId: number
 ): ThunkResult<Promise<IAccessRequest>> {
     return async (dispatch) => {
         const {
             data,
         }: {
             data: IAccessRequest;
-        } = await ds.save(`/datadoc/${docId}/access_request/${uid}/`, {
+        } = await ds.save(`/datadoc/${docId}/access_request/`, {
             originator: dataDocSocket.getSocketId(),
         });
         if (data != null) {
@@ -669,5 +652,30 @@ export function addDataDocAccessRequest(
             });
         }
         return data;
+    };
+}
+
+export function rejectDataDocAccessRequest(
+    docId: number,
+    uid: number
+): ThunkResult<Promise<void>> {
+    return async (dispatch, getState) => {
+        const accessRequest = (getState().dataDoc.accessRequestsByDocIdUserId[
+            docId
+        ] || {})[uid];
+        if (accessRequest) {
+            await ds.delete(`/datadoc/${docId}/access_request/`, {
+                uid: uid,
+                originator: dataDocSocket.getSocketId(),
+            });
+
+            dispatch({
+                type: '@@dataDoc/REMOVE_DATA_DOC_ACCESS_REQUEST',
+                payload: {
+                    docId,
+                    uid,
+                },
+            });
+        }
     };
 }

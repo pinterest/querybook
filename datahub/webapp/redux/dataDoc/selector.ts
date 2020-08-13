@@ -133,7 +133,7 @@ export const dataDocEditorByUidSelector = createSelector(
             : {}
 );
 
-export const dataDocAccessRequestsByUidSelector = createSelector(
+export const currentDataDocAccessRequestsByUidSelector = createSelector(
     currentDataDocSelector,
     accessRequestsByDocIdUserIdSelector,
     (dataDoc, accessRequestsByDocIdUserId) =>

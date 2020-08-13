@@ -23,6 +23,7 @@ export interface IButtonProps
     attachedRight?: boolean;
     attachedLeft?: boolean;
     isLoading?: boolean;
+    ping?: string;
 }
 
 const defaultProps: IButtonProps = {
@@ -47,6 +48,7 @@ export const Button = React.forwardRef<HTMLDivElement, IButtonProps>(
             attachedRight = false,
             attachedLeft = false,
             isLoading = false,
+            ping = null,
             ...elementProps
         } = props;
 
@@ -82,6 +84,9 @@ export const Button = React.forwardRef<HTMLDivElement, IButtonProps>(
             'icon-only': Boolean(iconDOM && !textDOM),
         });
 
+        const pingDOM = !ping ? null : (
+            <div className="ping-message">{ping}</div>
+        );
         return (
             <span
                 className={buttonClassName}
@@ -89,6 +94,7 @@ export const Button = React.forwardRef<HTMLDivElement, IButtonProps>(
                 ref={ref}
                 onClick={buttonOnClick}
             >
+                {pingDOM}
                 {iconDOM}
                 {textDOM}
                 {children}

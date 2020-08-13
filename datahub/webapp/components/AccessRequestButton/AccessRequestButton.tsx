@@ -7,7 +7,7 @@ export const AccessRequestButton: React.FunctionComponent<{
 }> = ({ onAccessRequest }) => {
     const [accessRequsted, setAccessRequested] = useState(false);
     return (
-        <div className="access-request-button">
+        <div className="AccessRequestButton">
             {accessRequsted ? (
                 'Access Request Sent!'
             ) : (

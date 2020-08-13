@@ -3,19 +3,18 @@ import './AccessRequestPermissionPicker.scss';
 import { DataDocPermission } from 'lib/data-doc/datadoc-permission';
 import { Popover } from 'ui/Popover/Popover';
 import { MenuItem, Menu } from 'ui/Menu/Menu';
-import { Button } from 'ui/Button/Button';
+import { IconButton } from 'ui/Button/IconButton';
 
 interface IPermissionPickerProp {
     uid: number;
-    approveDataDocAccessRequest: (
-        uid: number,
-        permission: DataDocPermission
-    ) => any;
+    addDataDocEditor: (uid: number, permission: DataDocPermission) => any;
+    rejectDataDocAccessRequest: (uid: number) => any;
 }
 
 export const AccessRequestPermissionPicker: React.FunctionComponent<IPermissionPickerProp> = ({
     uid,
-    approveDataDocAccessRequest,
+    addDataDocEditor,
+    rejectDataDocAccessRequest,
 }) => {
     const [showEditMenu, setShowEditMenu] = React.useState(false);
     const selfRef = React.useRef<HTMLDivElement>(null);
@@ -52,20 +51,24 @@ export const AccessRequestPermissionPicker: React.FunctionComponent<IPermissionP
             <span> {permission}</span>
         </div>
     );
-
-    const approveRequestButton = (
-        <Button
-            title="Approve"
-            small
-            onClick={() => {
-                approveDataDocAccessRequest(uid, permission);
-            }}
-        />
+    const accessRequestControlButtonsDOM = (
+        <div className="access-request-control-buttons flex-row">
+            <IconButton
+                className="access-request-control-button"
+                icon="check-circle"
+                onClick={() => addDataDocEditor(uid, permission)}
+            />
+            <IconButton
+                className="access-request-control-button"
+                icon="x-circle"
+                onClick={() => rejectDataDocAccessRequest(uid)}
+            />
+        </div>
     );
 
     return (
         <div className="AccessRequestPermissionPicker" ref={selfRef}>
-            {approveRequestButton}
+            {accessRequestControlButtonsDOM}
             {pickerButton}
             {editMenuDOM}
         </div>

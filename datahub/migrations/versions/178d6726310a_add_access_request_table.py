@@ -1,8 +1,8 @@
-"""Add access request table
+"""Add Access Request Table
 
-Revision ID: fb7550640189
+Revision ID: 178d6726310a
 Revises: 1f1bf1af5704
-Create Date: 2020-08-07 08:17:34.318853
+Create Date: 2020-08-11 19:06:35.748303
 
 """
 from alembic import op
@@ -10,7 +10,7 @@ import sqlalchemy as sa
 
 
 # revision identifiers, used by Alembic.
-revision = 'fb7550640189'
+revision = '178d6726310a'
 down_revision = '1f1bf1af5704'
 branch_labels = None
 depends_on = None
@@ -23,6 +23,7 @@ def upgrade():
     sa.Column('uid', sa.Integer(), nullable=True),
     sa.Column('data_doc_id', sa.Integer(), nullable=True),
     sa.Column('query_execution_id', sa.Integer(), nullable=True),
+    sa.Column('created_at', sa.DateTime(), nullable=True),
     sa.ForeignKeyConstraint(['data_doc_id'], ['data_doc.id'], ondelete='CASCADE'),
     sa.ForeignKeyConstraint(['query_execution_id'], ['query_execution.id'], ondelete='CASCADE'),
     sa.ForeignKeyConstraint(['uid'], ['user.id'], ondelete='CASCADE'),
