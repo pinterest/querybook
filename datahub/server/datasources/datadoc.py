@@ -477,11 +477,11 @@ def send_datadoc_access_request_notification(doc_id, uid, session=None):
 
     owner = user_logic.get_user_by_id(data_doc.owner_uid, session=session)
     doc_editors = [owner]
-    writers = [
-        user_logic.get_user_by_id(writer.uid)
-        for writer in logic.get_data_doc_writers_by_doc_id(doc_id)
+    writer_uids = [
+        writer.uid for writer in logic.get_data_doc_writers_by_doc_id(doc_id)
     ]
-    if writers is not None:
+    if writer_uids is not None:
+        writers = user_logic.get_users_by_ids(writer_uids)
         doc_editors.extend(writers)
     requestor_username = requestor.get_name()
     for user in doc_editors:

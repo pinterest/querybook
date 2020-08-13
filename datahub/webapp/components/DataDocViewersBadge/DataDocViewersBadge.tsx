@@ -13,6 +13,7 @@ import './DataDocViewersBadge.scss';
 import { Popover } from 'ui/Popover/Popover';
 import { Button } from 'ui/Button/Button';
 import { DataDocPermission } from 'lib/data-doc/datadoc-permission';
+import { UserAvatarList } from 'components/UserBadge/UserAvatarList';
 
 interface IOwnProps {
     numberBadges?: number;
