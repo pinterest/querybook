@@ -86,9 +86,12 @@ def get_table_by_name(
     return table_dict
 
 
-@register("/table_name/<schema_name>/<table_name>/boost_score/", methods=["PUT"])
+@register(
+    "/table_name/<metastore_name>/<schema_name>/<table_name>/boost_score/",
+    methods=["POST", "PUT"],
+)
 def update_table_boost_score_by_name(
-    schema_name, table_name, metastore_name, boost_score
+    metastore_name, schema_name, table_name, boost_score
 ):
     # TODO: verify user is a service account
     with DBSession() as session:
@@ -173,14 +176,16 @@ def update_table(table_id, description=None, golden=None, owner=None):
         return logic.get_table_by_id(table_id, session=session)
 
 
-@register("/table/<int:table_id>/boost_score/", methods=["PUT"])
+@register("/table/<int:table_id>/boost_score/", methods=["POST", "PUT"])
 def update_table_boost_score(table_id, boost_score):
     """Update a table boost score"""
     # TODO: verify user is a service account
     with DBSession() as session:
         verify_data_table_permission(table_id, session=session)
-        logic.update_table(id=table_id, score=boost_score, session=session)
-        return
+        updated_table = logic.update_table(
+            id=table_id, score=boost_score, session=session
+        )
+        return {"id": table_id, "boost_score": updated_table.boost_score}
 
 
 @register("/table/<int:table_id>/column/", methods=["GET"])
