@@ -11,33 +11,6 @@
         display: flex;
         flex-direction: row;
 
-        .viewers-badge-viewer-wrapper {
-            width: 29px;
-
-            .viewers-badge-viewer {
-                width: 36px;
-                height: 36px;
-                border-radius: 100px;
-
-                &.offline {
-                    filter: grayscale(1);
-                }
-            }
-
-            &.viewers-badge-viewer-count {
-                z-index: 1;
-                .viewers-badge-viewer {
-                    background: var(--text-color);
-                    color: var(--bg-color);
-                    font-size: var(--med-text-size);
-                    text-align: center;
-                    display: flex;
-                    align-items: center;
-                    justify-content: center;
-                }
-            }
-        }
-
         .viewers-badge-share-button {
             margin-left: 15px;
         }

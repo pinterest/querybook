@@ -15,6 +15,7 @@ import {
     IPaginatedQuerySamples,
     IDataTableWarning,
     IDataTableSamplesPolling,
+    ITopQueryUser,
 } from 'const/metastore';
 import { IStoreState } from '../store/types';
 
@@ -116,6 +117,14 @@ export interface IReceiveFunctionDocumentationAction extends Action {
     };
 }
 
+export interface IReceiveTopQueryUsersAction extends Action {
+    type: '@@dataSources/RECEIVE_TOP_QUERY_USERS';
+    payload: {
+        tableId: number;
+        users: ITopQueryUser[];
+    };
+}
+
 export interface IReceiveDataTableWarning extends Action {
     type: '@@dataSources/RECEIVE_DATA_TABLE_WARNING';
     payload: IDataTableWarning;
@@ -140,7 +149,8 @@ export type DataSourcesAction =
     | ILoadingFunctionDocumentationAction
     | IReceiveFunctionDocumentationAction
     | IReceiveDataTableWarning
-    | IRemoveDataTableWarning;
+    | IRemoveDataTableWarning
+    | IReceiveTopQueryUsersAction;
 
 export type ThunkResult<R> = ThunkAction<
     R,
@@ -166,6 +176,7 @@ export interface IDataSourcesState {
     dataTablesSamplesPollingById: Record<number, IDataTableSamplesPolling>;
 
     queryExampleIdsById: Record<number, IPaginatedQuerySamples>;
+    queryTopUsersByTableId: Record<number, ITopQueryUser[]>;
 
     dataLineages: ILineageCollection;
 }

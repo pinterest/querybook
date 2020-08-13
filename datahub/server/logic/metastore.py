@@ -1,4 +1,5 @@
 import datetime
+from sqlalchemy import func
 
 from app.db import with_session
 from const.elasticsearch import ElasticsearchItem
@@ -643,6 +644,23 @@ def get_table_query_examples(table_id, engine_ids, limit=5, offset=0, session=No
     )
 
     return logs
+
+
+@with_session
+def get_query_example_users(table_id, engine_ids, limit=5, session=None):
+    users = (
+        session.query(QueryExecution.uid, func.count(QueryExecution.id))
+        .select_from(DataTableQueryExecution)
+        .join(QueryExecution)
+        .filter(DataTableQueryExecution.table_id == table_id)
+        .filter(QueryExecution.engine_id.in_(engine_ids))
+        .group_by(QueryExecution.uid)
+        .order_by(func.count(QueryExecution.id).desc())
+        .limit(limit)
+        .all()
+    )
+
+    return users
 
 
 @with_session

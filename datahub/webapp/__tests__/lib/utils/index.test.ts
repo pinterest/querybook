@@ -84,6 +84,7 @@ test('linkifyLog', () => {
     expect(utils.linkifyLog('https://www.datahub.com/')).toBe(
         '<a target="_blank" rel="noopener noreferrer" href="https://www.datahub.com/">https://www.datahub.com/</a>'
     );
+
     // testing basic string with query params
     expect(
         utils.linkifyLog(
