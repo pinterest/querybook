@@ -53,9 +53,10 @@ export const UserLoader: React.FunctionComponent = ({ children }) => {
 
     if (fetchError) {
         return (
-            <ErrorPage errorTitle={'Unexpected Authentication Error'}>
-                {formatError(fetchError)}
-            </ErrorPage>
+            <ErrorPage
+                errorTitle={'Unexpected Authentication Error'}
+                errorMessage={formatError(fetchError)}
+            />
         );
     }
 

@@ -34,9 +34,10 @@ export class ErrorBoundary extends React.Component<{}, IErrorBoundaryState> {
 
         if (hasError) {
             return (
-                <ErrorPage errorTitle={'Unexpected Frontend Error'}>
-                    {errorString}
-                </ErrorPage>
+                <ErrorPage
+                    errorTitle={'Unexpected Frontend Error'}
+                    errorMessage={errorString}
+                />
             );
         }
 

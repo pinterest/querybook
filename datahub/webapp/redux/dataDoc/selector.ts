@@ -19,6 +19,8 @@ const currentEnvironmentIdSelector = (state: IStoreState) =>
 
 const editorsByDocIdUserIdSelector = (state: IStoreState) =>
     state.dataDoc.editorsByDocIdUserId;
+const accessRequestsByDocIdUserIdSelector = (state: IStoreState) =>
+    state.dataDoc.accessRequestsByDocIdUserId;
 const sessionByDocIdSelector = (state: IStoreState) =>
     state.dataDoc.sessionByDocId;
 const favoriteDataDocIdsSelector = (state: IStoreState) =>
@@ -128,6 +130,15 @@ export const dataDocEditorByUidSelector = createSelector(
     (dataDoc, editorsByDocIdUserId) =>
         dataDoc && dataDoc.id in editorsByDocIdUserId
             ? editorsByDocIdUserId[dataDoc.id]
+            : {}
+);
+
+export const currentDataDocAccessRequestsByUidSelector = createSelector(
+    currentDataDocSelector,
+    accessRequestsByDocIdUserIdSelector,
+    (dataDoc, accessRequestsByDocIdUserId) =>
+        dataDoc && dataDoc.id in accessRequestsByDocIdUserId
+            ? accessRequestsByDocIdUserId[dataDoc.id]
             : {}
 );
 

@@ -196,6 +196,28 @@ def fetch_data_doc_editors(doc_id):
             send_data_doc_session_info(doc_id, room=request.sid)
 
 
+@register_socket("fetch_data_doc_access_requests", namespace=DATA_DOC_NAMESPACE)
+@data_doc_socket
+def fetch_data_doc_access_requests(doc_id):
+    with DBSession() as session:
+        doc = datadoc_collab.get_datadoc(doc_id, session=session)
+        if doc:
+            access_requests = logic.get_data_doc_access_requests_by_doc_id(
+                doc_id, session=session
+            )
+            access_request_dicts = [
+                access_request.to_dict() for access_request in access_requests
+            ]
+            socketio.emit(
+                "data_doc_access_requests",
+                (request.sid, access_request_dicts),
+                namespace=DATA_DOC_NAMESPACE,
+                broadcast=False,
+                room=request.sid,
+            )
+            send_data_doc_session_info(doc_id, room=request.sid)
+
+
 @register_socket("update_data_doc", namespace=DATA_DOC_NAMESPACE)
 @data_doc_socket
 def update_data_doc(id, fields):

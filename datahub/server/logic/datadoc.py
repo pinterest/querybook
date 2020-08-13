@@ -16,6 +16,7 @@ from models.datadoc import (
     FunctionDocumentation,
     DataDocEditor,
 )
+from models.access_request import AccessRequest
 from models.impression import Impression
 from tasks.sync_elasticsearch import sync_elasticsearch
 
@@ -808,6 +809,11 @@ def get_data_doc_editors_by_doc_id(data_doc_id, session=None):
 
 
 @with_session
+def get_data_doc_writers_by_doc_id(doc_id, session=None):
+    return session.query(DataDocEditor).filter_by(data_doc_id=doc_id, write=True).all()
+
+
+@with_session
 def create_data_doc_editor(
     data_doc_id, uid, read=False, write=False, commit=True, session=None
 ):
@@ -845,6 +851,42 @@ def update_data_doc_editor(
 @with_session
 def delete_data_doc_editor(id, session=None, commit=True):
     session.query(DataDocEditor).filter_by(id=id).delete()
+    if commit:
+        session.commit()
+
+
+"""
+    ----------------------------------------------------------------------------------------------------------
+    DATA DOC ACCESS REQUESTS
+    ---------------------------------------------------------------------------------------------------------
+"""
+
+
+@with_session
+def get_data_doc_access_requests_by_doc_id(doc_id, session=None):
+    return session.query(AccessRequest).filter_by(data_doc_id=doc_id).all()
+
+
+@with_session
+def get_data_doc_access_request_by_doc_id(doc_id, uid, session=None):
+    return session.query(AccessRequest).filter_by(data_doc_id=doc_id, uid=uid).first()
+
+
+@with_session
+def create_data_doc_access_request(doc_id, uid, commit=True, session=None):
+    request = AccessRequest(uid=uid, data_doc_id=doc_id)
+    session.add(request)
+    if commit:
+        session.commit()
+    else:
+        session.flush()
+    session.refresh(request)
+    return request
+
+
+@with_session
+def remove_datadoc_access_request(doc_id, uid, session=None, commit=True):
+    session.query(AccessRequest).filter_by(data_doc_id=doc_id, uid=uid).delete()
     if commit:
         session.commit()
 

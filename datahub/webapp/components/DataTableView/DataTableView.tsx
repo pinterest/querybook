@@ -276,7 +276,7 @@ class DataTableViewComponent extends React.PureComponent<
                 itemKey={tableId}
                 itemLoader={getTable.bind(null, tableId)}
                 errorRenderer={(error) => (
-                    <ErrorPage>{formatError(error)}</ErrorPage>
+                    <ErrorPage errorMessage={formatError(error)} />
                 )}
             >
                 {this.renderTableView()}

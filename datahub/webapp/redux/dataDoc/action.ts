@@ -9,6 +9,7 @@ import {
     IDataDoc,
     CELL_TYPE,
     IDataDocEditor,
+    IAccessRequest,
 } from 'const/datadoc';
 import ds from 'lib/datasource';
 import {
@@ -26,6 +27,10 @@ import {
     ISaveDataDocStartAction,
     IReceiveDataDocsAction,
 } from './types';
+import {
+    DataDocPermission,
+    permissionToReadWrite,
+} from 'lib/data-doc/datadoc-permission';
 
 export const dataDocCellSchema = new schema.Entity(
     'dataDocCell',
@@ -531,10 +536,14 @@ export function getDataDocEditors(
 export function addDataDocEditors(
     docId: number,
     uid: number,
-    read: boolean,
-    write: boolean
+    permission: DataDocPermission
 ): ThunkResult<Promise<IDataDocEditor>> {
-    return async (dispatch) => {
+    return async (dispatch, getState) => {
+        const { read, write } = permissionToReadWrite(permission);
+        const request = (getState().dataDoc.accessRequestsByDocIdUserId[
+            docId
+        ] || {})[uid];
+
         const {
             data,
         }: {
@@ -544,7 +553,15 @@ export function addDataDocEditors(
             write,
             originator: dataDocSocket.getSocketId(),
         });
-
+        if (request) {
+            dispatch({
+                type: '@@dataDoc/REMOVE_DATA_DOC_ACCESS_REQUEST',
+                payload: {
+                    docId,
+                    uid,
+                },
+            });
+        }
         dispatch({
             type: '@@dataDoc/RECEIVE_DATA_DOC_EDITOR',
             payload: {
@@ -605,6 +622,55 @@ export function deleteDataDocEditor(
 
             dispatch({
                 type: '@@dataDoc/REMOVE_DATA_DOC_EDITOR',
+                payload: {
+                    docId,
+                    uid,
+                },
+            });
+        }
+    };
+}
+
+export function addDataDocAccessRequest(
+    docId: number
+): ThunkResult<Promise<IAccessRequest>> {
+    return async (dispatch) => {
+        const {
+            data,
+        }: {
+            data: IAccessRequest;
+        } = await ds.save(`/datadoc/${docId}/access_request/`, {
+            originator: dataDocSocket.getSocketId(),
+        });
+        if (data != null) {
+            dispatch({
+                type: '@@dataDoc/RECEIVE_DATA_DOC_ACCESS_REQUEST',
+                payload: {
+                    docId,
+                    request: data,
+                },
+            });
+        }
+        return data;
+    };
+}
+
+export function rejectDataDocAccessRequest(
+    docId: number,
+    uid: number
+): ThunkResult<Promise<void>> {
+    return async (dispatch, getState) => {
+        const accessRequest = (getState().dataDoc.accessRequestsByDocIdUserId[
+            docId
+        ] || {})[uid];
+        if (accessRequest) {
+            await ds.delete(`/datadoc/${docId}/access_request/`, {
+                uid: uid,
+                originator: dataDocSocket.getSocketId(),
+            });
+
+            dispatch({
+                type: '@@dataDoc/REMOVE_DATA_DOC_ACCESS_REQUEST',
                 payload: {
                     docId,
                     uid,

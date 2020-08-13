@@ -1,5 +1,5 @@
 import SocketIOManager from 'lib/socketio-manager';
-import { IDataDocEditor } from 'const/datadoc';
+import { IDataDocEditor, IAccessRequest } from 'const/datadoc';
 
 import { IQueryExecution } from 'redux/queryExecutions/types';
 
@@ -11,6 +11,9 @@ interface IDataDocSocketEventPromise<A = () => any, R = (e) => any> {
 export interface IDataDocSocketEvent {
     receiveDataDoc?: IDataDocSocketEventPromise<(rawDataDoc) => any>;
     receiveDataDocEditors?: IDataDocSocketEventPromise<(editors: any[]) => any>;
+    receiveDataDocAccessRequests?: IDataDocSocketEventPromise<
+        (requests: IAccessRequest[]) => any
+    >;
 
     updateDataDoc?: IDataDocSocketEventPromise<
         (rawDataDoc, isSameOrigin) => any
@@ -38,6 +41,14 @@ export interface IDataDocSocketEvent {
             docId: number,
             uid: number,
             editor: IDataDocEditor | null,
+            isSameOrigin: boolean
+        ) => any
+    >;
+    updateDataDocAccessRequest?: IDataDocSocketEventPromise<
+        (
+            docId: number,
+            uid: number,
+            request: IAccessRequest | null,
             isSameOrigin: boolean
         ) => any
     >;
@@ -101,6 +112,7 @@ export class DataDocSocket {
         this.socket.emit('subscribe', docId);
 
         this.getDataDocEditors(docId);
+        this.getDataDocAccessRequests(docId);
     };
 
     public removeDataDoc = (docId: number, removeSocket = true) => {
@@ -126,6 +138,11 @@ export class DataDocSocket {
     public getDataDocEditors = (docId: number) => {
         this.socket.emit('fetch_data_doc_editors', docId);
         return this.makePromise('receiveDataDocEditors');
+    };
+
+    public getDataDocAccessRequests = (docId: number) => {
+        this.socket.emit('fetch_data_doc_access_requests', docId);
+        return this.makePromise('receiveDataDocAccessRequests');
     };
 
     public updateDataDoc = (docId: number, fields: Record<string, any>) => {
@@ -254,6 +271,17 @@ export class DataDocSocket {
                 );
             });
 
+            this.socket.on(
+                'data_doc_access_requests',
+                (originator, requests) => {
+                    this.resolveProimseAndEvent(
+                        'receiveDataDocAccessRequests',
+                        originator,
+                        requests
+                    );
+                }
+            );
+
             this.socket.on('data_doc_updated', (originator, rawDataDoc) => {
                 this.resolveProimseAndEvent(
                     'updateDataDoc',
@@ -335,6 +363,19 @@ export class DataDocSocket {
                         docId,
                         uid,
                         editor
+                    );
+                }
+            );
+
+            this.socket.on(
+                'data_doc_access_request',
+                (originator, docId, uid, request) => {
+                    this.resolveProimseAndEvent(
+                        'updateDataDocAccessRequest',
+                        originator,
+                        docId,
+                        uid,
+                        request
                     );
                 }
             );

@@ -12,6 +12,7 @@ import { DataDocViewersList } from 'components/DataDocViewersList/DataDocViewers
 import './DataDocViewersBadge.scss';
 import { Popover } from 'ui/Popover/Popover';
 import { Button } from 'ui/Button/Button';
+import { DataDocPermission } from 'lib/data-doc/datadoc-permission';
 import { UserAvatarList } from 'components/UserBadge/UserAvatarList';
 
 interface IOwnProps {
@@ -45,7 +46,14 @@ class DataDocViewersBadgeComponent extends React.Component<IProps, IState> {
 
     @bind
     public getBadgeContentDOM() {
-        const { viewerInfos, numberBadges, userInfoById, dataDoc } = this.props;
+        const {
+            viewerInfos,
+            numberBadges,
+            userInfoById,
+            dataDoc,
+            accessRequestsByUid,
+            readonly,
+        } = this.props;
         const { showViewsList } = this.state;
         const extraViewersCount = viewerInfos.length - numberBadges;
 
@@ -63,12 +71,19 @@ class DataDocViewersBadgeComponent extends React.Component<IProps, IState> {
             />
         );
 
+        const accessRequestsByUidLength = Object.keys(accessRequestsByUid)
+            .length;
         const shareButtonDOM = (
             <Button
                 className="viewers-badge-share-button"
                 icon={dataDoc.public ? 'users' : 'lock'}
                 title="Share"
                 pushable
+                ping={
+                    !readonly && accessRequestsByUidLength > 0
+                        ? accessRequestsByUidLength.toString()
+                        : null
+                }
             />
         );
 
@@ -90,12 +105,14 @@ class DataDocViewersBadgeComponent extends React.Component<IProps, IState> {
             editorsByUid,
             readonly,
             ownerId,
+            accessRequestsByUid,
 
             addDataDocEditor,
             changeDataDocPublic,
             updateDataDocEditors,
             deleteDataDocEditor,
             updateDataDocOwner,
+            rejectDataDocAccessRequest,
         } = this.props;
 
         const { showViewsList } = this.state;
@@ -114,6 +131,7 @@ class DataDocViewersBadgeComponent extends React.Component<IProps, IState> {
                 <DataDocViewersList
                     readonly={readonly}
                     viewerInfos={viewerInfos}
+                    accessRequestsByUid={accessRequestsByUid}
                     isOwner={dataDoc.owner_uid == ownerId}
                     editorsByUid={editorsByUid}
                     dataDoc={dataDoc}
@@ -122,6 +140,7 @@ class DataDocViewersBadgeComponent extends React.Component<IProps, IState> {
                     updateDataDocEditors={updateDataDocEditors}
                     deleteDataDocEditor={deleteDataDocEditor}
                     updateDataDocOwner={updateDataDocOwner}
+                    rejectDataDocAccessRequest={rejectDataDocAccessRequest}
                 />
             </Popover>
         );
@@ -143,6 +162,10 @@ function mapStateToProps(state: IStoreState, ownProps: IOwnProps) {
     return {
         viewerInfos,
         editorsByUid: dataDocSelectors.dataDocEditorByUidSelector(
+            state,
+            ownProps
+        ),
+        accessRequestsByUid: dataDocSelectors.currentDataDocAccessRequestsByUidSelector(
             state,
             ownProps
         ),
@@ -173,19 +196,25 @@ function mapDispatchToProps(dispatch: Dispatch, ownProps: IOwnProps) {
         deleteDataDocEditor: (uid: number) =>
             dispatch(dataDocActions.deleteDataDocEditor(ownProps.docId, uid)),
 
-        addDataDocEditor: (uid: number, read: boolean, write: boolean) =>
+        addDataDocEditor: (uid: number, permission: DataDocPermission) => {
             dispatch(
                 dataDocActions.addDataDocEditors(
                     ownProps.docId,
                     uid,
-                    read,
-                    write
+                    permission
                 )
-            ),
+            );
+        },
 
         updateDataDocOwner: (nextOwnerId: number) => {
             dispatch(
                 dataDocActions.updateDataDocOwner(ownProps.docId, nextOwnerId)
+            );
+        },
+
+        rejectDataDocAccessRequest: (uid: number) => {
+            dispatch(
+                dataDocActions.rejectDataDocAccessRequest(ownProps.docId, uid)
             );
         },
     };

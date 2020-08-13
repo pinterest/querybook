@@ -19,6 +19,7 @@ const initialState: Readonly<IDataDocState> = {
 
     sessionByDocId: {},
     editorsByDocIdUserId: {},
+    accessRequestsByDocIdUserId: {},
 };
 
 function loadedEnvironmentFilterMode(
@@ -373,6 +374,36 @@ function sessionByDocId(
     });
 }
 
+function accessRequestsByDocIdUserId(
+    state = initialState.accessRequestsByDocIdUserId,
+    action: DataDocAction
+) {
+    return produce(state, (draft) => {
+        switch (action.type) {
+            case '@@dataDoc/RECEIVE_DATA_DOC_ACCESS_REQUESTS': {
+                const { docId, requests } = action.payload;
+                draft[docId] = arrayGroupByField(requests, 'uid');
+                return;
+            }
+            case '@@dataDoc/RECEIVE_DATA_DOC_ACCESS_REQUEST': {
+                const { docId, request } = action.payload;
+                if (!(docId in draft)) {
+                    draft[docId] = {};
+                }
+                draft[docId][request.uid] = request;
+                return;
+            }
+            case '@@dataDoc/REMOVE_DATA_DOC_ACCESS_REQUEST': {
+                const { docId, uid } = action.payload;
+                if (docId in draft && uid in draft[docId]) {
+                    delete draft[docId][uid];
+                }
+                return;
+            }
+        }
+    });
+}
+
 function editorsByDocIdUserId(
     state = initialState.editorsByDocIdUserId,
     action: DataDocAction
@@ -415,4 +446,5 @@ export default combineReducers({
     dataDocSavePromiseById,
     sessionByDocId,
     editorsByDocIdUserId,
+    accessRequestsByDocIdUserId,
 });
