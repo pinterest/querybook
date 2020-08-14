@@ -319,7 +319,7 @@ def update_table_boost_score_by_name(metastore_name, data):
 
 @register("/table/boost_score/", methods=["POST", "PUT"])
 def update_table_boost_score(data):
-    """Batch update a table boost score"""
+    """Batch update table boost scores"""
     # TODO: verify user is a service account
     with DBSession() as session:
         count = 0
@@ -336,32 +336,167 @@ def update_table_boost_score(data):
 
 @register("/table/stats/<int:table_id>/", methods=["GET"])
 def get_table_stats(table_id):
-    return
+    """Get all table stats by id"""
+    with DBSession() as session:
+        return logic.get_table_stat_by_id(table_id=table_id, session=session)
 
 
 @register("/table/stats/name/", methods=["POST"])
 def create_table_stats_by_name(metastore_name, data):
-    return
+    """Batch add/update table stats"""
+    # TODO: verify user is a service account
+    with DBSession() as session:
+        metastore = admin_logic.get_query_metastore_by_name(
+            metastore_name, session=session
+        )
+        api_assert(metastore, "Invalid metastore")
+        verify_metastore_permission(metastore.id, session=session)
+
+        count = 0
+        schemas = {}
+        for d in data:
+            schema_id = None
+            if d.schema_name in schemas:
+                schema_id = schemas[d.schema_name]
+            else:
+                schema = logic.get_schema_by_name_and_metastore_id(
+                    schema_name=d.schema_name,
+                    metastore_id=metastore.id,
+                    session=session,
+                )
+                if schema:
+                    schemas[schema.name] = schema.id
+                    schema_id = schema.id
+
+            table_id = None
+            if schema_id:
+                table = logic.get_table_by_schema_id_and_name(
+                    schema_id=schema_id, name=d.table_name, session=session
+                )
+                if table:
+                    table_id = table.id
+
+            if table_id:
+                for s in d.stats:
+                    data_table_stat = logic.create_table_stat(
+                        table_id=table_id,
+                        key=s.key,
+                        value=s.value,
+                        content_type=s.content_type,
+                        uid=current_user.id,
+                        session=session,
+                    )
+                    if data_table_stat:
+                        count += 1
+    return {"count": count}
 
 
 @register("/table/stats/", methods=["POST"])
 def create_table_stats(data):
-    return
+    """Batch add/update table stats"""
+    # TODO: verify user is a service account
+    with DBSession() as session:
+        count = 0
+        for d in data:
+            verify_data_table_permission(d.table_id, session=session)
+            for s in d.stats:
+                data_table_stat = logic.create_table_stat(
+                    table_id=d.table_id,
+                    key=s.key,
+                    value=s.value,
+                    content_type=s.content_type,
+                    uid=current_user.id,
+                    session=session,
+                )
+                if data_table_stat:
+                    count += 1
+    return {"count": count}
 
 
 @register("/column/stats/<int:column_id>/", methods=["GET"])
 def get_table_column_stats(column_id):
-    return
+    """Get all table stats column by id"""
+    with DBSession() as session:
+        return logic.get_table_colum_stat_by_id(column_id=column_id, session=session)
 
 
 @register("/column/stats/name/", methods=["POST"])
 def create_table_column_stats_by_name(metastore_name, data):
-    return
+    """Batch add/update table column stats"""
+    # TODO: verify user is a service account
+    with DBSession() as session:
+        metastore = admin_logic.get_query_metastore_by_name(
+            metastore_name, session=session
+        )
+        api_assert(metastore, "Invalid metastore")
+        verify_metastore_permission(metastore.id, session=session)
+
+        count = 0
+        schemas = {}
+        for d in data:
+            schema_id = None
+            if d.schema_name in schemas:
+                schema_id = schemas[d.schema_name]
+            else:
+                schema = logic.get_schema_by_name_and_metastore_id(
+                    schema_name=d.schema_name,
+                    metastore_id=metastore.id,
+                    session=session,
+                )
+                if schema:
+                    schemas[schema.name] = schema.id
+                    schema_id = schema.id
+
+            table_id = None
+            if schema_id:
+                table = logic.get_table_by_schema_id_and_name(
+                    schema_id=schema_id, name=d.table_name, session=session
+                )
+                if table:
+                    table_id = table.id
+
+            if table_id:
+                column = logic.get_column_by_name(
+                    name=d.column_name, table_id=table_id, session=session
+                )
+
+            if column:
+                for s in d.stats:
+                    data_table_stat = logic.create_table_column_stat(
+                        column_id=column.id,
+                        key=s.key,
+                        value=s.value,
+                        content_type=s.content_type,
+                        uid=current_user.id,
+                        session=session,
+                    )
+                    if data_table_stat:
+                        count += 1
+    return {"count": count}
 
 
 @register("/column/stats/", methods=["POST"])
 def create_table_column_stats(data):
-    return
+    """Batch add/update table column stats"""
+    # TODO: verify user is a service account
+    with DBSession() as session:
+        count = 0
+        for d in data:
+            column = logic.get_column_by_id(d.column_id, session=session)
+            if column:
+                verify_data_table_permission(column.table_id, session=session)
+                for s in d.stats:
+                    data_table_stat = logic.create_table_column_stat(
+                        column_id=d.column_id,
+                        key=s.key,
+                        value=s.value,
+                        content_type=s.content_type,
+                        uid=current_user.id,
+                        session=session,
+                    )
+                    if data_table_stat:
+                        count += 1
+    return {"count": count}
 
 
 @register("/lineage/", methods=["GET"])
