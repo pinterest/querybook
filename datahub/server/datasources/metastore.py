@@ -86,33 +86,6 @@ def get_table_by_name(
     return table_dict
 
 
-@register("/table_name/<schema_name>/<table_name>/", methods=["PUT"])
-def update_table_by_name(schema_name, table_name, metastore_name, boost_score):
-    # TODO: verify user is a service account
-    with DBSession() as session:
-        metastore = admin_logic.get_query_metastore_by_name(
-            metastore_name, session=session
-        )
-        api_assert(metastore, "Invalid metastore")
-        verify_metastore_permission(metastore.id, session=session)
-
-        schema = logic.get_schema_by_name_and_metastore_id(
-            schema_name=schema_name, metastore_id=metastore.id, session=session
-        )
-        api_assert(schema, "Invalid schema")
-
-        table = logic.get_table_by_schema_id_and_name(
-            schema_id=schema.id, name=table_name, session=session
-        )
-        api_assert(table, "Invalid table")
-
-        updated_table = logic.update_table(
-            id=table.id, score=boost_score, session=session
-        )
-
-        return updated_table
-
-
 @register("/data_job_metadata/<int:data_job_metadata_id>/", methods=["GET"])
 def get_data_job_metadata(data_job_metadata_id):
     with DBSession() as session:
@@ -148,7 +121,7 @@ def add_data_job_metadata(
 
 
 @register("/table/<int:table_id>/", methods=["PUT"])
-def update_table(table_id, description=None, golden=None, boost_score=None, owner=None):
+def update_table(table_id, description=None, golden=None, owner=None):
     """Update a table"""
     with DBSession() as session:
         verify_data_table_permission(table_id, session=session)
@@ -167,12 +140,6 @@ def update_table(table_id, description=None, golden=None, boost_score=None, owne
                 current_user.is_admin, "Golden table can only be updated by Admin"
             )
             logic.update_table(table_id, golden=golden, session=session)
-        if boost_score is not None:
-            # TODO: add service role
-            # api_assert(
-            #     current_user.is_service, "Boost scores can only be updated by a service account"
-            # )
-            logic.update_table(table_id, score=boost_score, session=session)
 
         return logic.get_table_by_id(table_id, session=session)
 
@@ -308,6 +275,63 @@ def get_table_query_examples_users(table_id, environment_id, limit=5):
     engine_ids = [engine.id for engine in engines]
     users = logic.get_query_example_users(table_id, engine_ids, limit=limit)
     return list(map(lambda u: {"uid": u[0], "count": u[1]}, users))
+
+
+@register("/table/boost_score/name/", methods=["POST", "PUT"])
+def update_table_boost_score_by_name(metastore_name, data):
+    # TODO: verify user is a service account
+    with DBSession() as session:
+        metastore = admin_logic.get_query_metastore_by_name(
+            metastore_name, session=session
+        )
+        api_assert(metastore, "Invalid metastore")
+        verify_metastore_permission(metastore.id, session=session)
+
+        count = 0
+        schemas = {}
+        for d in data:
+            schema_id = None
+            if d.schema_name in schemas:
+                schema_id = schemas[d.schema_name]
+            else:
+                schema = logic.get_schema_by_name_and_metastore_id(
+                    schema_name=d.schema_name,
+                    metastore_id=metastore.id,
+                    session=session,
+                )
+                if schema:
+                    schemas[schema.name] = schema.id
+                    schema_id = schema.id
+
+            if schema_id:
+                table = logic.get_table_by_schema_id_and_name(
+                    schema_id=schema_id, name=d.table_name, session=session
+                )
+                if table:
+                    updated_table = logic.update_table(
+                        id=d.table_id, score=d.boost_score, session=session
+                    )
+                    if updated_table:
+                        count += 1
+
+        return {"count": count}
+
+
+@register("/table/boost_score/", methods=["POST", "PUT"])
+def update_table_boost_score(data):
+    """Batch update a table boost score"""
+    # TODO: verify user is a service account
+    with DBSession() as session:
+        count = 0
+        for d in data:
+            verify_data_table_permission(d.table_id, session=session)
+            updated_table = logic.update_table(
+                id=d.table_id, score=d.boost_score, session=session
+            )
+            if updated_table:
+                count += 1
+
+        return {"count": count}
 
 
 @register("/table/stats/<int:table_id>/", methods=["GET"])
