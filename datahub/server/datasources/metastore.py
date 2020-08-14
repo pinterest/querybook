@@ -310,6 +310,36 @@ def get_table_query_examples_users(table_id, environment_id, limit=5):
     return list(map(lambda u: {"uid": u[0], "count": u[1]}, users))
 
 
+@register("/table/stats/<int:table_id>/", methods=["GET"])
+def get_table_stats(table_id):
+    return
+
+
+@register("/table/stats/name/", methods=["POST"])
+def create_table_stats_by_name(metastore_name, data):
+    return
+
+
+@register("/table/stats/", methods=["POST"])
+def create_table_stats(data):
+    return
+
+
+@register("/column/stats/<int:column_id>/", methods=["GET"])
+def get_table_column_stats(column_id):
+    return
+
+
+@register("/column/stats/name/", methods=["POST"])
+def create_table_column_stats_by_name(metastore_name, data):
+    return
+
+
+@register("/column/stats/", methods=["POST"])
+def create_table_column_stats(data):
+    return
+
+
 @register("/lineage/", methods=["GET"])
 def get_lineage():
     with DBSession() as session:
