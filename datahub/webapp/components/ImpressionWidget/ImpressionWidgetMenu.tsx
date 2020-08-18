@@ -1,5 +1,4 @@
-import React, { useState } from 'react';
-import { useSelector } from 'react-redux';
+import React, { useState, useMemo } from 'react';
 import { Line } from 'react-chartjs-2';
 
 import { IStoreState } from 'redux/store/types';
@@ -58,19 +57,22 @@ const ImpressionWidgetUsers: React.FC<IProps> = ({ type, itemId }) => {
 
     const tableDOM = (
         <Table
-            cols={['Name', 'Number of Views', 'Last Viewed On']}
+            cols={[
+                {
+                    accessor: 'uid',
+                    Header: 'Name',
+                },
+                { accessor: 'views_count', Header: 'Number of Views' },
+                { accessor: 'latest_view_at', Header: 'Last Viewed On' },
+            ]}
             showAllRows
             rows={users}
-            formatCell={(columnNum, column, row) => {
-                let dom = null;
-                if (columnNum === 0) {
-                    dom = <UserBadge uid={row.uid} mini />;
-                } else if (columnNum === 1) {
-                    dom = row.views_count;
-                } else if (columnNum === 2) {
-                    dom = (
-                        <span>{generateFormattedDate(row.latest_view_at)}</span>
-                    );
+            formatCell={(index, column, row) => {
+                let dom = row[column];
+                if (column === 'uid') {
+                    dom = <UserBadge uid={dom} mini />;
+                } else if (column === 'latest_view_at') {
+                    dom = <span>{generateFormattedDate(dom)}</span>;
                 }
                 return (
                     <div

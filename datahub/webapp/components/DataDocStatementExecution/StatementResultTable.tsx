@@ -121,7 +121,7 @@ export const StatementResultTable: React.FunctionComponent<{
                 cols={columns}
                 showPagination={showPagination}
                 formatCell={(index, column, row) => row[index]}
-                sortCell={(indx, column, a, b) => {
+                sortCell={(a, b) => {
                     if (a == null || a === 'null') {
                         return -1;
                     } else if (b == null || b === 'null') {
