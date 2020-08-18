@@ -28,12 +28,7 @@ export interface ITableProps extends Partial<TableProps> {
         row: any
     ) => React.ReactNode;
 
-    sortCell?: (
-        columnIndex: number,
-        column: string,
-        cellA: any,
-        cellB: any
-    ) => -1 | 0 | 1;
+    sortCell?: (cellA: any, cellB: any) => -1 | 0 | 1;
 }
 
 export class Table extends React.Component<ITableProps> {
@@ -69,14 +64,10 @@ export class Table extends React.Component<ITableProps> {
                     columnIndex
                 );
             }
-
             if (sortCell) {
-                formattedColumn.sortMethod = sortCell.bind(
-                    null,
-                    formattedColumn.accessor,
-                    columnIndex
-                );
+                formattedColumn.sortMethod = sortCell;
             }
+
             if (widthObj && widthObj[column]) {
                 formattedColumn.minWidth = widthObj[column];
             }
