@@ -689,14 +689,10 @@ def update_es_tables_by_id(id):
 
 
 def get_table_stat_by_id(table_id, session=None):
-    return (
-        session.query(DataTableStatistics)
-        .filter(DataTableStatistics.table_id == table_id)
-        .all()
-    )
+    return DataTableStatistics.get_all(table_id=table_id)
 
 
-def create_table_stat(
+def upsert_table_stat(
     table_id, key, value, content_type, uid, commit=True, session=None
 ):
     table_stat = DataTableStatistics.get(table_id=table_id, key=key, session=session)
@@ -721,15 +717,11 @@ def create_table_stat(
     return table_stat
 
 
-def get_table_column_stat_by_id(column_id, session=None):
-    return (
-        session.query(DataTableColumnStatistics)
-        .filter(DataTableColumnStatistics.column_id == column_id)
-        .all()
-    )
+def get_table_column_stat_by_column_id(column_id, session=None):
+    return DataTableColumnStatistics.get_all(column_id=column_id)
 
 
-def create_table_column_stat(
+def upsert_table_column_stat(
     column_id, key, value, content_type, uid, commit=True, session=None
 ):
     column_stat = DataTableColumnStatistics.get(

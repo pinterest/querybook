@@ -23,7 +23,8 @@ def upgrade():
                     sa.Column('table_id', sa.Integer(), nullable=False),
                     sa.Column('key', sa.String(length=191), nullable=False),
                     sa.Column('value', sa.Text(length=16777215), nullable=False),
-                    sa.Column('content_type', sa.Text(length=255), nullable=False),
+                    sa.Column('content_type', sa.Enum('TEXT', 'NUMBER', 'LIST',
+                                                      name='tablestatscontenttype'), nullable=False),
                     sa.Column('uid', sa.Integer(), nullable=False),
                     sa.ForeignKeyConstraint(
                         ['table_id'], ['data_table.id'], ondelete='CASCADE'),
@@ -38,7 +39,8 @@ def upgrade():
                     sa.Column('column_id', sa.Integer(), nullable=False),
                     sa.Column('key', sa.String(length=191), nullable=False),
                     sa.Column('value', sa.Text(length=16777215), nullable=False),
-                    sa.Column('content_type', sa.Text(length=255), nullable=False),
+                    sa.Column('content_type', sa.Enum('TEXT', 'NUMBER', 'LIST',
+                                                      name='tablestatscontenttype'), nullable=False),
                     sa.Column('uid', sa.Integer(), nullable=False),
                     sa.ForeignKeyConstraint(
                         ['column_id'], ['data_table_column.id'], ondelete='CASCADE'),
