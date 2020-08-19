@@ -14,6 +14,7 @@ from const.impression import ImpressionItemType
 from const.metastore import DataTableWarningSeverity
 from const.time import seconds_in_a_day
 from lib.utils import mysql_cache
+from lib.metastore.utils import DataTableFinder
 from logic import metastore as logic
 from logic import admin as admin_logic
 from models.metastore import DataTableWarning
@@ -287,30 +288,17 @@ def update_table_boost_score_by_name(metastore_name, data):
         api_assert(metastore, "Invalid metastore")
         verify_metastore_permission(metastore.id, session=session)
 
-        schemas = {}
-        for d in data:
-            if d["schema_name"] not in schemas:
-                schemas[d["schema_name"]] = logic.get_schema_by_name_and_metastore_id(
-                    schema_name=d["schema_name"],
-                    metastore_id=metastore.id,
-                    session=session,
+        table_finder = DataTableFinder(metastore.id)
+        with table_finder as t_finder:
+            for d in data:
+                table = t_finder.get_table_by_name(
+                    d["schema_name"], d["table_name"], session
                 )
-                schema_id = schemas[d["schema_name"]]
-            schema_id = (
-                schemas[d["schema_name"]].id
-                if schemas[d["schema_name"]] is not None
-                else None
-            )
 
-            if schema_id:
-                table = logic.get_table_by_schema_id_and_name(
-                    schema_id=schema_id, name=d.table_name, session=session
-                )
-                if table:
+                if table is not None:
                     logic.update_table(
                         id=d.table_id, score=d.boost_score, session=session
                     )
-
         return
 
 
@@ -345,39 +333,23 @@ def create_table_stats_by_name(metastore_name, data):
         api_assert(metastore, "Invalid metastore")
         verify_metastore_permission(metastore.id, session=session)
 
-        schemas = {}
-        for d in data:
-            schema_id = None
-            if d["schema_name"] in schemas:
-                schema_id = schemas[d["schema_name"]]
-            else:
-                schema = logic.get_schema_by_name_and_metastore_id(
-                    schema_name=d["schema_name"],
-                    metastore_id=metastore.id,
-                    session=session,
+        table_finder = DataTableFinder(metastore.id)
+        with table_finder as t_finder:
+            for d in data:
+                table = t_finder.get_table_by_name(
+                    d["schema_name"], d["table_name"], session
                 )
-                if schema:
-                    schemas[schema.name] = schema.id
-                    schema_id = schema.id
 
-            table_id = None
-            if schema_id:
-                table = logic.get_table_by_schema_id_and_name(
-                    schema_id=schema_id, name=d.table_name, session=session
-                )
-                if table:
-                    table_id = table.id
-
-            if table_id:
-                for s in d.stats:
-                    logic.upsert_table_stat(
-                        table_id=table_id,
-                        key=s.key,
-                        value=s.value,
-                        content_type=s.content_type,
-                        uid=current_user.id,
-                        session=session,
-                    )
+                if table is not None:
+                    for s in d.stats:
+                        logic.upsert_table_stat(
+                            table_id=table.id,
+                            key=s.key,
+                            value=s.value,
+                            content_type=s.content_type,
+                            uid=current_user.id,
+                            session=session,
+                        )
     return
 
 
@@ -422,44 +394,26 @@ def create_table_column_stats_by_name(metastore_name, data):
         api_assert(metastore, "Invalid metastore")
         verify_metastore_permission(metastore.id, session=session)
 
-        schemas = {}
-        for d in data:
-            if d["schema_name"] not in schemas:
-                schemas[d["schema_name"]] = logic.get_schema_by_name_and_metastore_id(
-                    schema_name=d["schema_name"],
-                    metastore_id=metastore.id,
-                    session=session,
-                )
-                schema_id = schemas[d["schema_name"]]
-            schema_id = (
-                schemas[d["schema_name"]].id
-                if schemas[d["schema_name"]] is not None
-                else None
-            )
-
-            table_id = None
-            if schema_id:
-                table = logic.get_table_by_schema_id_and_name(
-                    schema_id=schema_id, name=d.table_name, session=session
-                )
-                if table:
-                    table_id = table.id
-
-            if table_id:
-                column = logic.get_column_by_name(
-                    name=d.column_name, table_id=table_id, session=session
+        table_finder = DataTableFinder(metastore.id)
+        with table_finder as t_finder:
+            for d in data:
+                table = t_finder.get_table_by_name(
+                    d["schema_name"], d["table_name"], session
                 )
 
-            if column:
-                for s in d.stats:
-                    logic.upsert_table_column_stat(
-                        column_id=column.id,
-                        key=s.key,
-                        value=s.value,
-                        content_type=s.content_type,
-                        uid=current_user.id,
-                        session=session,
+                if table is not None:
+                    column = logic.get_column_by_name(
+                        name=d.column_name, table_id=table.id, session=session
                     )
+                    for s in d.stats:
+                        logic.upsert_table_column_stat(
+                            column_id=column.id,
+                            key=s.key,
+                            value=s.value,
+                            content_type=s.content_type,
+                            uid=current_user.id,
+                            session=session,
+                        )
     return
 
 
