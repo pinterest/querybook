@@ -297,7 +297,7 @@ def update_table_boost_score_by_name(metastore_name, data):
 
                 if table is not None:
                     logic.update_table(
-                        id=d.table_id, score=d.boost_score, session=session
+                        id=table.id, score=d["boost_score"], session=session
                     )
         return
 
@@ -308,8 +308,10 @@ def update_table_boost_score(data):
     # TODO: verify user is a service account
     with DBSession() as session:
         for d in data:
-            verify_data_table_permission(d.table_id, session=session)
-            logic.update_table(id=d.table_id, score=d.boost_score, session=session)
+            verify_data_table_permission(d["table_id"], session=session)
+            logic.update_table(
+                id=d["table_id"], score=d["boost_score"], session=session
+            )
 
         return
 
@@ -341,12 +343,12 @@ def create_table_stats_by_name(metastore_name, data):
                 )
 
                 if table is not None:
-                    for s in d.stats:
+                    for s in d["stats"]:
                         logic.upsert_table_stat(
                             table_id=table.id,
-                            key=s.key,
-                            value=s.value,
-                            content_type=s.content_type,
+                            key=s["key"],
+                            value=s["value"],
+                            content_type=s["content_type"],
                             uid=current_user.id,
                             session=session,
                         )
@@ -359,13 +361,13 @@ def create_table_stats(data):
     # TODO: verify user is a service account
     with DBSession() as session:
         for d in data:
-            verify_data_table_permission(d.table_id, session=session)
-            for s in d.stats:
+            verify_data_table_permission(d["table_id"], session=session)
+            for s in d["stats"]:
                 logic.upsert_table_stat(
-                    table_id=d.table_id,
-                    key=s.key,
-                    value=s.value,
-                    content_type=s.content_type,
+                    table_id=d["table_id"],
+                    key=s["key"],
+                    value=s["value"],
+                    content_type=s["content_type"],
                     uid=current_user.id,
                     session=session,
                 )
@@ -383,7 +385,7 @@ def get_table_column_stats(column_id):
         )
 
 
-@register("/column/stats/name/", methods=["POST"])
+@register("/column/stats/<metastore_name>/", methods=["POST"])
 def create_table_column_stats_by_name(metastore_name, data):
     """Batch add/update table column stats"""
     # TODO: verify user is a service account
@@ -403,14 +405,14 @@ def create_table_column_stats_by_name(metastore_name, data):
 
                 if table is not None:
                     column = logic.get_column_by_name(
-                        name=d.column_name, table_id=table.id, session=session
+                        name=d["column_name"], table_id=table.id, session=session
                     )
-                    for s in d.stats:
+                    for s in d["stats"]:
                         logic.upsert_table_column_stat(
                             column_id=column.id,
-                            key=s.key,
-                            value=s.value,
-                            content_type=s.content_type,
+                            key=s["key"],
+                            value=s["value"],
+                            content_type=s["content_type"],
                             uid=current_user.id,
                             session=session,
                         )
@@ -424,15 +426,15 @@ def create_table_column_stats(data):
     with DBSession() as session:
 
         for d in data:
-            column = logic.get_column_by_id(d.column_id, session=session)
+            column = logic.get_column_by_id(d["column_id"], session=session)
             if column:
                 verify_data_table_permission(column.table_id, session=session)
-                for s in d.stats:
+                for s in d["stats"]:
                     logic.upsert_table_column_stat(
-                        column_id=d.column_id,
-                        key=s.key,
-                        value=s.value,
-                        content_type=s.content_type,
+                        column_id=d["column_id"],
+                        key=s["key"],
+                        value=s["value"],
+                        content_type=s["content_type"],
                         uid=current_user.id,
                         session=session,
                     )
