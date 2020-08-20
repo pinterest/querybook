@@ -11,7 +11,6 @@ from const.db import (
     mediumtext_length,
 )
 from const.metastore import DataTableWarningSeverity
-from const.table_stats import TableStatsContentType
 from lib.sqlalchemy import CRUDMixin
 
 Base = db.Base
@@ -356,7 +355,6 @@ class DataTableStatistics(Base, CRUDMixin):
     )
     key = sql.Column(sql.Text(length=utf8mb4_name_length), nullable=False, index=True)
     value = sql.Column(sql.JSON, nullable=False)
-    content_type = sql.Column(sql.Enum(TableStatsContentType), nullable=False)
     uid = sql.Column(sql.Integer, sql.ForeignKey("user.id",), nullable=False)
 
     table = relationship(
@@ -377,7 +375,6 @@ class DataTableColumnStatistics(Base, CRUDMixin):
     )
     key = sql.Column(sql.Text(length=utf8mb4_name_length), nullable=False, index=True)
     value = sql.Column(sql.JSON, nullable=False)
-    content_type = sql.Column(sql.Enum(TableStatsContentType), nullable=False)
     uid = sql.Column(sql.Integer, sql.ForeignKey("user.id",), nullable=False)
 
     column = relationship(

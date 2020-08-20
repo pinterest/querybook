@@ -692,13 +692,11 @@ def get_table_stat_by_id(table_id, session=None):
     return DataTableStatistics.get_all(table_id=table_id)
 
 
-def upsert_table_stat(
-    table_id, key, value, content_type, uid, commit=True, session=None
-):
+def upsert_table_stat(table_id, key, value, uid, commit=True, session=None):
     table_stat = DataTableStatistics.get(table_id=table_id, key=key, session=session)
 
     new_table_stat = DataTableStatistics(
-        table_id=table_id, key=key, value=value, content_type=content_type, uid=uid
+        table_id=table_id, key=key, value=value, uid=uid
     )
 
     if table_stat:
@@ -721,15 +719,13 @@ def get_table_column_stat_by_column_id(column_id, session=None):
     return DataTableColumnStatistics.get_all(column_id=column_id)
 
 
-def upsert_table_column_stat(
-    column_id, key, value, content_type, uid, commit=True, session=None
-):
+def upsert_table_column_stat(column_id, key, value, uid, commit=True, session=None):
     column_stat = DataTableColumnStatistics.get(
         column_id=column_id, key=key, session=session
     )
 
     new_column_stat = DataTableColumnStatistics(
-        column_id=column_id, key=key, value=value, content_type=content_type, uid=uid
+        column_id=column_id, key=key, value=value, uid=uid
     )
 
     if column_stat:
