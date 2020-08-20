@@ -344,3 +344,41 @@ class DataTableWarning(Base, CRUDMixin):
         backref=backref("warnings", cascade="all, delete"),
         foreign_keys=[table_id],
     )
+
+
+class DataTableStatistics(Base, CRUDMixin):
+    __tablename__ = "data_table_statistics"
+
+    id = sql.Column(sql.Integer, primary_key=True)
+    table_id = sql.Column(
+        sql.Integer, sql.ForeignKey("data_table.id", ondelete="CASCADE"), nullable=False
+    )
+    key = sql.Column(sql.Text(length=utf8mb4_name_length), nullable=False, index=True)
+    value = sql.Column(sql.JSON, nullable=False)
+    uid = sql.Column(sql.Integer, sql.ForeignKey("user.id",), nullable=False)
+
+    table = relationship(
+        "DataTable",
+        backref=backref("table_statistics", cascade="all, delete"),
+        foreign_keys=[table_id],
+    )
+
+
+class DataTableColumnStatistics(Base, CRUDMixin):
+    __tablename__ = "data_table_column_statistics"
+
+    id = sql.Column(sql.Integer, primary_key=True)
+    column_id = sql.Column(
+        sql.Integer,
+        sql.ForeignKey("data_table_column.id", ondelete="CASCADE"),
+        nullable=False,
+    )
+    key = sql.Column(sql.Text(length=utf8mb4_name_length), nullable=False, index=True)
+    value = sql.Column(sql.JSON, nullable=False)
+    uid = sql.Column(sql.Integer, sql.ForeignKey("user.id",), nullable=False)
+
+    column = relationship(
+        "DataTableColumn",
+        backref=backref("table_statistics", cascade="all, delete"),
+        foreign_keys=[column_id],
+    )

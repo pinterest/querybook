@@ -14,9 +14,14 @@ from const.impression import ImpressionItemType
 from const.metastore import DataTableWarningSeverity
 from const.time import seconds_in_a_day
 from lib.utils import mysql_cache
+from lib.metastore.utils import DataTableFinder
 from logic import metastore as logic
 from logic import admin as admin_logic
-from models.metastore import DataTableWarning
+from models.metastore import (
+    DataTableWarning,
+    DataTableStatistics,
+    DataTableColumnStatistics,
+)
 from tasks.run_sample_query import run_sample_query
 
 
@@ -86,33 +91,6 @@ def get_table_by_name(
     return table_dict
 
 
-@register("/table_name/<schema_name>/<table_name>/", methods=["PUT"])
-def update_table_by_name(schema_name, table_name, metastore_name, boost_score):
-    # TODO: verify user is a service account
-    with DBSession() as session:
-        metastore = admin_logic.get_query_metastore_by_name(
-            metastore_name, session=session
-        )
-        api_assert(metastore, "Invalid metastore")
-        verify_metastore_permission(metastore.id, session=session)
-
-        schema = logic.get_schema_by_name_and_metastore_id(
-            schema_name=schema_name, metastore_id=metastore.id, session=session
-        )
-        api_assert(schema, "Invalid schema")
-
-        table = logic.get_table_by_schema_id_and_name(
-            schema_id=schema.id, name=table_name, session=session
-        )
-        api_assert(table, "Invalid table")
-
-        updated_table = logic.update_table(
-            id=table.id, score=boost_score, session=session
-        )
-
-        return updated_table
-
-
 @register("/data_job_metadata/<int:data_job_metadata_id>/", methods=["GET"])
 def get_data_job_metadata(data_job_metadata_id):
     with DBSession() as session:
@@ -148,7 +126,7 @@ def add_data_job_metadata(
 
 
 @register("/table/<int:table_id>/", methods=["PUT"])
-def update_table(table_id, description=None, golden=None, boost_score=None, owner=None):
+def update_table(table_id, description=None, golden=None, owner=None):
     """Update a table"""
     with DBSession() as session:
         verify_data_table_permission(table_id, session=session)
@@ -167,12 +145,6 @@ def update_table(table_id, description=None, golden=None, boost_score=None, owne
                 current_user.is_admin, "Golden table can only be updated by Admin"
             )
             logic.update_table(table_id, golden=golden, session=session)
-        if boost_score is not None:
-            # TODO: add service role
-            # api_assert(
-            #     current_user.is_service, "Boost scores can only be updated by a service account"
-            # )
-            logic.update_table(table_id, score=boost_score, session=session)
 
         return logic.get_table_by_id(table_id, session=session)
 
@@ -308,6 +280,164 @@ def get_table_query_examples_users(table_id, environment_id, limit=5):
     engine_ids = [engine.id for engine in engines]
     users = logic.get_query_example_users(table_id, engine_ids, limit=limit)
     return list(map(lambda u: {"uid": u[0], "count": u[1]}, users))
+
+
+@register("/table/boost_score/<metastore_name>/", methods=["POST", "PUT"])
+def upsert_table_boost_score_by_name(metastore_name, data):
+    # TODO: verify user is a service account
+    with DBSession() as session:
+        metastore = admin_logic.get_query_metastore_by_name(
+            metastore_name, session=session
+        )
+        api_assert(metastore, "Invalid metastore")
+        verify_metastore_permission(metastore.id, session=session)
+
+        with DataTableFinder(metastore.id) as t_finder:
+            for d in data:
+                table = t_finder.get_table_by_name(
+                    schema_name=d["schema_name"],
+                    table_name=d["table_name"],
+                    session=session,
+                )
+
+                if table is not None:
+                    logic.update_table(
+                        id=table.id, score=d["boost_score"], session=session
+                    )
+        return
+
+
+@register("/table/boost_score/", methods=["POST", "PUT"])
+def update_table_boost_score(data):
+    """Batch update table boost scores"""
+    # TODO: verify user is a service account
+    with DBSession() as session:
+        for d in data:
+            verify_data_table_permission(d["table_id"], session=session)
+            logic.update_table(
+                id=d["table_id"], score=d["boost_score"], session=session
+            )
+
+        return
+
+
+@register("/table/stats/<int:table_id>/", methods=["GET"])
+def get_table_stats(table_id):
+    """Get all table stats by id"""
+    with DBSession() as session:
+        verify_data_table_permission(table_id, session=session)
+        return DataTableStatistics.get_all(table_id=table_id, session=session)
+
+
+@register("/table/stats/<metastore_name>/", methods=["POST"])
+def create_table_stats_by_name(metastore_name, data):
+    """Batch add/update table stats"""
+    # TODO: verify user is a service account
+    with DBSession() as session:
+        metastore = admin_logic.get_query_metastore_by_name(
+            metastore_name, session=session
+        )
+        api_assert(metastore, "Invalid metastore")
+        verify_metastore_permission(metastore.id, session=session)
+
+        with DataTableFinder(metastore.id) as t_finder:
+            for d in data:
+                table = t_finder.get_table_by_name(
+                    schema_name=d["schema_name"],
+                    table_name=d["table_name"],
+                    session=session,
+                )
+
+                if table is not None:
+                    for s in d["stats"]:
+                        logic.upsert_table_stat(
+                            table_id=table.id,
+                            key=s["key"],
+                            value=s["value"],
+                            uid=current_user.id,
+                            session=session,
+                        )
+    return
+
+
+@register("/table/stats/", methods=["POST"])
+def create_table_stats(data):
+    """Batch add/update table stats"""
+    # TODO: verify user is a service account
+    with DBSession() as session:
+        for d in data:
+            verify_data_table_permission(d["table_id"], session=session)
+            for s in d["stats"]:
+                logic.upsert_table_stat(
+                    table_id=d["table_id"],
+                    key=s["key"],
+                    value=s["value"],
+                    uid=current_user.id,
+                    session=session,
+                )
+    return
+
+
+@register("/column/stats/<int:column_id>/", methods=["GET"])
+def get_table_column_stats(column_id):
+    """Get all table stats column by id"""
+    with DBSession() as session:
+        column = logic.get_column_by_id(column_id, session=session)
+        verify_data_table_permission(column.table_id, session=session)
+        return DataTableColumnStatistics.get_all(column_id=column_id, session=session)
+
+
+@register("/column/stats/<metastore_name>/", methods=["POST"])
+def create_table_column_stats_by_name(metastore_name, data):
+    """Batch add/update table column stats"""
+    # TODO: verify user is a service account
+    with DBSession() as session:
+        metastore = admin_logic.get_query_metastore_by_name(
+            metastore_name, session=session
+        )
+        api_assert(metastore, "Invalid metastore")
+        verify_metastore_permission(metastore.id, session=session)
+
+        with DataTableFinder(metastore.id) as t_finder:
+            for d in data:
+                column = t_finder.get_table_column_by_name(
+                    schema_name=d["schema_name"],
+                    table_name=d["table_name"],
+                    column_name=d["column_name"],
+                    session=session,
+                )
+
+                if column is not None:
+                    for s in d["stats"]:
+                        logic.upsert_table_column_stat(
+                            column_id=column.id,
+                            key=s["key"],
+                            value=s["value"],
+                            uid=current_user.id,
+                            session=session,
+                        )
+    return
+
+
+@register("/column/stats/", methods=["POST"])
+def create_table_column_stats(data):
+    """Batch add/update table column stats"""
+    # TODO: verify user is a service account
+    with DBSession() as session:
+
+        for d in data:
+            column = logic.get_column_by_id(d["column_id"], session=session)
+            if column:
+                verify_data_table_permission(column.table_id, session=session)
+                for s in d["stats"]:
+                    logic.upsert_table_column_stat(
+                        column_id=d["column_id"],
+                        key=s["key"],
+                        value=s["value"],
+                        uid=current_user.id,
+                        session=session,
+                    )
+    return
 
 
 @register("/lineage/", methods=["GET"])

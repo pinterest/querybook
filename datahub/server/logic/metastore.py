@@ -14,6 +14,8 @@ from models.metastore import (
     DataTableQueryExecution,
     DataJobMetadata,
     TableLineage,
+    DataTableStatistics,
+    DataTableColumnStatistics,
 )
 from models.query_execution import QueryExecution
 from tasks.sync_elasticsearch import sync_elasticsearch
@@ -677,3 +679,60 @@ def get_table_query_samples_count(table_id, session):
 
 def update_es_tables_by_id(id):
     sync_elasticsearch.apply_async(args=[ElasticsearchItem.tables.value, id])
+
+
+"""
+    ---------------------------------------------------------------------------------------------------------
+    STATISTICS
+    ---------------------------------------------------------------------------------------------------------
+"""
+
+
+@with_session
+def upsert_table_stat(table_id, key, value, uid, commit=True, session=None):
+    table_stat = DataTableStatistics.get(table_id=table_id, key=key, session=session)
+
+    new_table_stat = DataTableStatistics(
+        table_id=table_id, key=key, value=value, uid=uid
+    )
+
+    if table_stat:
+        new_table_stat.id = table_stat.id
+        session.merge(new_table_stat)
+    else:
+        session.add(new_table_stat)
+        table_stat = new_table_stat
+
+    if commit:
+        session.commit()
+    else:
+        session.flush()
+    session.refresh(table_stat)
+
+    return table_stat
+
+
+@with_session
+def upsert_table_column_stat(column_id, key, value, uid, commit=True, session=None):
+    column_stat = DataTableColumnStatistics.get(
+        column_id=column_id, key=key, session=session
+    )
+
+    new_column_stat = DataTableColumnStatistics(
+        column_id=column_id, key=key, value=value, uid=uid
+    )
+
+    if column_stat:
+        new_column_stat.id = column_stat.id
+        session.merge(new_column_stat)
+    else:
+        session.add(new_column_stat)
+        column_stat = new_column_stat
+
+    if commit:
+        session.commit()
+    else:
+        session.flush()
+    session.refresh(column_stat)
+
+    return column_stat
