@@ -17,10 +17,8 @@ interface ITableStats {
 }
 
 export const renderStatValue = (val) => {
-    const parsedVal = JSON.parse(val);
-
-    if (Array.isArray(parsedVal)) {
-        return parsedVal.map((item) => <div>{item}</div>);
+    if (Array.isArray(val)) {
+        return val.map((item, idx) => <div key={idx}>{item}</div>);
     }
 
     return val;
@@ -35,6 +33,7 @@ export const DataTableStats: React.FunctionComponent<IProps> = ({
 
     const statsDOM = (tableStats || []).map((tableStat) => (
         <KeyContentDisplay
+            key={tableStat.id}
             keyString={tableStat.key}
             content={renderStatValue(tableStat.value)}
         />

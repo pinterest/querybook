@@ -9,7 +9,7 @@ interface IProps {
     columnId: number;
 }
 
-interface ITableStats {
+interface ITableColumnStats {
     id: number;
     column_id: number;
     key: string;
@@ -19,14 +19,17 @@ interface ITableStats {
 export const DataTableColumnStats: React.FunctionComponent<IProps> = ({
     columnId,
 }) => {
-    const { data: tableStats }: { data: ITableStats[] } = useDataFetch({
+    const {
+        data: tableColumnStats,
+    }: { data: ITableColumnStats[] } = useDataFetch({
         url: `/column/stats/${columnId}/`,
     });
 
-    const statsDOM = (tableStats || []).map((tableStat) => (
+    const statsDOM = (tableColumnStats || []).map((tableColumnStat) => (
         <KeyContentDisplay
-            keyString={tableStat.key}
-            content={renderStatValue(tableStat.value)}
+            key={tableColumnStat.id}
+            keyString={tableColumnStat.key}
+            content={renderStatValue(tableColumnStat.value)}
         />
     ));
 
