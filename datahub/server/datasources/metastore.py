@@ -17,7 +17,11 @@ from lib.utils import mysql_cache
 from lib.metastore.utils import DataTableFinder
 from logic import metastore as logic
 from logic import admin as admin_logic
-from models.metastore import DataTableWarning
+from models.metastore import (
+    DataTableWarning,
+    DataTableStatistics,
+    DataTableColumnStatistics,
+)
 from tasks.run_sample_query import run_sample_query
 
 
@@ -279,7 +283,7 @@ def get_table_query_examples_users(table_id, environment_id, limit=5):
 
 
 @register("/table/boost_score/<metastore_name>/", methods=["POST", "PUT"])
-def update_table_boost_score_by_name(metastore_name, data):
+def upsert_table_boost_score_by_name(metastore_name, data):
     # TODO: verify user is a service account
     with DBSession() as session:
         metastore = admin_logic.get_query_metastore_by_name(
@@ -288,11 +292,12 @@ def update_table_boost_score_by_name(metastore_name, data):
         api_assert(metastore, "Invalid metastore")
         verify_metastore_permission(metastore.id, session=session)
 
-        table_finder = DataTableFinder(metastore.id)
-        with table_finder as t_finder:
+        with DataTableFinder(metastore.id) as t_finder:
             for d in data:
                 table = t_finder.get_table_by_name(
-                    d["schema_name"], d["table_name"], session
+                    schema_name=d["schema_name"],
+                    table_name=d["table_name"],
+                    session=session,
                 )
 
                 if table is not None:
@@ -321,7 +326,7 @@ def get_table_stats(table_id):
     """Get all table stats by id"""
     with DBSession() as session:
         verify_data_table_permission(table_id, session=session)
-        return logic.get_table_stat_by_id(table_id=table_id, session=session)
+        return DataTableStatistics.get_all(table_id=table_id)
 
 
 @register("/table/stats/<metastore_name>/", methods=["POST"])
@@ -335,11 +340,12 @@ def create_table_stats_by_name(metastore_name, data):
         api_assert(metastore, "Invalid metastore")
         verify_metastore_permission(metastore.id, session=session)
 
-        table_finder = DataTableFinder(metastore.id)
-        with table_finder as t_finder:
+        with DataTableFinder(metastore.id) as t_finder:
             for d in data:
                 table = t_finder.get_table_by_name(
-                    d["schema_name"], d["table_name"], session
+                    schema_name=d["schema_name"],
+                    table_name=d["table_name"],
+                    session=session,
                 )
 
                 if table is not None:
@@ -348,7 +354,6 @@ def create_table_stats_by_name(metastore_name, data):
                             table_id=table.id,
                             key=s["key"],
                             value=s["value"],
-                            content_type=s["content_type"],
                             uid=current_user.id,
                             session=session,
                         )
@@ -367,7 +372,6 @@ def create_table_stats(data):
                     table_id=d["table_id"],
                     key=s["key"],
                     value=s["value"],
-                    content_type=s["content_type"],
                     uid=current_user.id,
                     session=session,
                 )
@@ -380,9 +384,7 @@ def get_table_column_stats(column_id):
     with DBSession() as session:
         column = logic.get_column_by_id(column_id, session=session)
         verify_data_table_permission(column.table_id, session=session)
-        return logic.get_table_column_stat_by_column_id(
-            column_id=column_id, session=session
-        )
+        return DataTableColumnStatistics.get_all(column_id=column_id)
 
 
 @register("/column/stats/<metastore_name>/", methods=["POST"])
@@ -396,23 +398,21 @@ def create_table_column_stats_by_name(metastore_name, data):
         api_assert(metastore, "Invalid metastore")
         verify_metastore_permission(metastore.id, session=session)
 
-        table_finder = DataTableFinder(metastore.id)
-        with table_finder as t_finder:
+        with DataTableFinder(metastore.id) as t_finder:
             for d in data:
-                table = t_finder.get_table_by_name(
-                    d["schema_name"], d["table_name"], session
+                column = t_finder.get_table_column_by_name(
+                    schema_name=d["schema_name"],
+                    table_name=d["table_name"],
+                    column_name=d["column_name"],
+                    session=session,
                 )
 
-                if table is not None:
-                    column = logic.get_column_by_name(
-                        name=d["column_name"], table_id=table.id, session=session
-                    )
+                if column is not None:
                     for s in d["stats"]:
                         logic.upsert_table_column_stat(
                             column_id=column.id,
                             key=s["key"],
                             value=s["value"],
-                            content_type=s["content_type"],
                             uid=current_user.id,
                             session=session,
                         )
@@ -434,7 +434,6 @@ def create_table_column_stats(data):
                         column_id=d["column_id"],
                         key=s["key"],
                         value=s["value"],
-                        content_type=s["content_type"],
                         uid=current_user.id,
                         session=session,
                     )

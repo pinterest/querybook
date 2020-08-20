@@ -1,5 +1,6 @@
 from typing import Dict, List
 from logic import metastore as logic
+from app.db import with_session
 
 
 class MetastoreTableACLChecker(object):
@@ -62,23 +63,32 @@ class DataTableFinder:
     def end(self):
         pass
 
-    def get_schema_id_by_name(self, schema_name, session):
+    @with_session
+    def get_schema_by_name(self, schema_name, session):
         if schema_name not in self.schemas:
             self.schemas[schema_name] = logic.get_schema_by_name_and_metastore_id(
                 schema_name=schema_name,
                 metastore_id=self.metastore_id,
                 session=session,
             )
-        return (
-            self.schemas[schema_name].id
-            if self.schemas[schema_name] is not None
-            else None
+        return self.schemas.get(schema_name)
+
+    @with_session
+    def get_table_by_name(self, schema_name, table_name, session):
+        schema = self.get_schema_by_name(schema_name=schema_name, session=session)
+
+        if schema:
+            return logic.get_table_by_schema_id_and_name(
+                schema_id=schema.id, name=table_name, session=session
+            )
+
+    @with_session
+    def get_table_column_by_name(self, schema_name, table_name, column_name, session):
+        table = self.get_table_by_name(
+            schema_name=schema_name, table_name=table_name, session=session
         )
 
-    def get_table_by_name(self, schema_name, table_name, session):
-        schema_id = self.get_schema_id_by_name(schema_name, session)
-
-        if schema_id:
-            return logic.get_table_by_schema_id_and_name(
-                schema_id=schema_id, name=table_name, session=session
+        if table:
+            return logic.get_column_by_name(
+                name=column_name, table_id=table.id, session=session
             )
