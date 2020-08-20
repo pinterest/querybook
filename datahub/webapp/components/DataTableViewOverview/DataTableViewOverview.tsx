@@ -12,6 +12,8 @@ import { navigateWithinEnv } from 'lib/utils/query-string';
 import { generateFormattedDate } from 'lib/utils/datetime';
 import { titleize, getHumanReadableByteSize } from 'lib/utils';
 
+import { DataTableStats } from './DataTableStats';
+import { DataTableViewQueryUsers } from 'components/DataTableViewQueryExample/DataTableViewQueryUsers';
 import { Button } from 'ui/Button/Button';
 import { Divider } from 'ui/Divider/Divider';
 import { EditableTextField } from 'ui/EditableTextField/EditableTextField';
@@ -20,8 +22,6 @@ import { Table } from 'ui/Table/Table';
 import { Title } from 'ui/Title/Title';
 
 import './DataTableViewOverview.scss';
-import { DataTableViewQueryUsers } from 'components/DataTableViewQueryExample/DataTableViewQueryUsers';
-import { DataTableStats } from './DataTableStats';
 
 const dataTableDetailsColumns = [
     {

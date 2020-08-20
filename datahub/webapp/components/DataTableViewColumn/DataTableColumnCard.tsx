@@ -3,6 +3,7 @@ import { ContentState } from 'draft-js';
 
 import { IDataColumn } from 'const/metastore';
 
+import { DataTableColumnStats } from './DataTableColumnStats';
 import { Card } from 'ui/Card/Card';
 import { Divider } from 'ui/Divider/Divider';
 import { EditableTextField } from 'ui/EditableTextField/EditableTextField';
@@ -11,7 +12,6 @@ import { KeyContentDisplay } from 'ui/KeyContentDisplay/KeyContentDisplay';
 import { Title } from 'ui/Title/Title';
 
 import './DataTableColumnCard.scss';
-import { DataTableColumnStats } from './DataTableColumnStats';
 
 interface IProps {
     column: IDataColumn;
