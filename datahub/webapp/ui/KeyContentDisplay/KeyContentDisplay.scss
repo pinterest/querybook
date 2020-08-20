@@ -1,0 +1,23 @@
+.KeyContentDisplay {
+    display: flex;
+    flex-direction: row;
+    margin-bottom: 8px;
+    cursor: default;
+
+    .KeyContentDisplay-key {
+        font-size: var(--text-size);
+        width: 180px;
+        margin-right: 12px;
+    }
+    .KeyContentDisplay-content {
+        width: 100%;
+        .EditableTextField {
+            margin-left: -4px;
+            .editor-wrapper {
+                border: var(--border);
+                border-radius: var(--border-radius);
+                background-color: var(--bg-color);
+            }
+        }
+    }
+}

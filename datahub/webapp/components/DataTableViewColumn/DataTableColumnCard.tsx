@@ -6,10 +6,12 @@ import { IDataColumn } from 'const/metastore';
 import { Card } from 'ui/Card/Card';
 import { Divider } from 'ui/Divider/Divider';
 import { EditableTextField } from 'ui/EditableTextField/EditableTextField';
+import { Icon } from 'ui/Icon/Icon';
+import { KeyContentDisplay } from 'ui/KeyContentDisplay/KeyContentDisplay';
 import { Title } from 'ui/Title/Title';
 
 import './DataTableColumnCard.scss';
-import { Icon } from 'ui/Icon/Icon';
+import { DataTableColumnStats } from './DataTableColumnStats';
 
 interface IProps {
     column: IDataColumn;
@@ -24,13 +26,23 @@ export const DataTableColumnCard: React.FunctionComponent<IProps> = ({
     updateDataColumnDescription,
 }) => {
     const [expanded, setExpanded] = React.useState(false);
+
+    const userCommentsContent = (
+        <EditableTextField
+            value={column.description as ContentState}
+            onSave={updateDataColumnDescription.bind(null, column.id)}
+        />
+    );
     return (
         <div className="DataTableColumnCard">
             <Card key={column.id} alignLeft>
                 <div
                     className="DataTableColumnCard-top horizontal-space-between"
                     onClick={() => setExpanded(!expanded)}
-                    title={expanded ? 'click to minimize' : 'click to expand'}
+                    aria-label={
+                        expanded ? 'click to collapse' : 'click to expand'
+                    }
+                    data-balloon-pos="down-right"
                 >
                     <div className="DataTableColumnCard-left">
                         <Title size={6}>{column.name}</Title>
@@ -46,29 +58,16 @@ export const DataTableColumnCard: React.FunctionComponent<IProps> = ({
                             color="var(--color-primary-5)"
                         />
                         {column.comment && (
-                            <div className="DataTableColumnCard-item">
-                                <div className="DataTableColumnCard-key">
-                                    Definition
-                                </div>
-                                <div className="DataTableColumnCard-content">
-                                    {column.comment}
-                                </div>
-                            </div>
+                            <KeyContentDisplay
+                                keyString="Definition"
+                                content={column.comment}
+                            />
                         )}
-                        <div className="DataTableColumnCard-item">
-                            <div className="DataTableColumnCard-key">
-                                User Comments
-                            </div>
-                            <div className="DataTableColumnCard-content">
-                                <EditableTextField
-                                    value={column.description as ContentState}
-                                    onSave={updateDataColumnDescription.bind(
-                                        null,
-                                        column.id
-                                    )}
-                                />
-                            </div>
-                        </div>
+                        <DataTableColumnStats columnId={column.id} />
+                        <KeyContentDisplay
+                            keyString="User Comments"
+                            content={userCommentsContent}
+                        />
                     </>
                 ) : (
                     <div className="DataTableColumnCard-preview">

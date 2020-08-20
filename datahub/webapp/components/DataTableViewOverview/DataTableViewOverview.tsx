@@ -21,6 +21,7 @@ import { Title } from 'ui/Title/Title';
 
 import './DataTableViewOverview.scss';
 import { DataTableViewQueryUsers } from 'components/DataTableViewQueryExample/DataTableViewQueryUsers';
+import { DataTableStats } from './DataTableStats';
 
 const dataTableDetailsColumns = [
     {
@@ -125,6 +126,9 @@ export class DataTableViewOverview extends React.PureComponent<
                 cols={dataTableDetailsColumns}
             />
         );
+
+        const statsDOM = <DataTableStats tableId={this.props.table.id} />;
+
         const hiveMetastoreDOM = table.hive_metastore_description ? (
             <pre>{table.hive_metastore_description}</pre>
         ) : null;
@@ -134,6 +138,7 @@ export class DataTableViewOverview extends React.PureComponent<
             description,
             null
         );
+
         const metaSection = this.makeOverviewSectionDOM(
             'Meta info',
             <div>
@@ -151,6 +156,11 @@ export class DataTableViewOverview extends React.PureComponent<
         const detailsSection = this.makeOverviewSectionDOM(
             `Details`,
             detailsDOM
+        );
+
+        const statsSection = this.makeOverviewSectionDOM(
+            'Statistics',
+            statsDOM
         );
 
         const hiveMetastoreSection = hiveMetastoreDOM
@@ -210,6 +220,7 @@ export class DataTableViewOverview extends React.PureComponent<
                 {descriptionSection}
                 {frequentUsersSection}
                 {detailsSection}
+                {statsSection}
                 {hiveMetastoreSection}
                 {metaSection}
                 {sampleQueriesSection}
