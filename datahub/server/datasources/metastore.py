@@ -326,7 +326,7 @@ def get_table_stats(table_id):
     """Get all table stats by id"""
     with DBSession() as session:
         verify_data_table_permission(table_id, session=session)
-        return DataTableStatistics.get_all(table_id=table_id)
+        return DataTableStatistics.get_all(table_id=table_id, session=session)
 
 
 @register("/table/stats/<metastore_name>/", methods=["POST"])
@@ -384,7 +384,7 @@ def get_table_column_stats(column_id):
     with DBSession() as session:
         column = logic.get_column_by_id(column_id, session=session)
         verify_data_table_permission(column.table_id, session=session)
-        return DataTableColumnStatistics.get_all(column_id=column_id)
+        return DataTableColumnStatistics.get_all(column_id=column_id, session=session)
 
 
 @register("/column/stats/<metastore_name>/", methods=["POST"])
