@@ -10,6 +10,7 @@ import { IStoreState, Dispatch } from 'redux/store/types';
 import * as dataSourcesActions from 'redux/dataSources/action';
 import * as queryExecutionsActions from 'redux/queryExecutions/action';
 
+import { DataTableViewQueryUsers } from './DataTableViewQueryUsers';
 import { UserName } from 'components/UserBadge/UserName';
 
 import { CodeHighlight } from 'ui/CodeHighlight/CodeHighlight';
@@ -19,7 +20,6 @@ import { AsyncButton } from 'ui/AsyncButton/AsyncButton';
 import { Title } from 'ui/Title/Title';
 
 import './DataTableViewQueryExamples.scss';
-import { DataTableViewQueryUsers } from './DataTableViewQueryUsers';
 
 interface IProps {
     tableId: number;

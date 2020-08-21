@@ -12,6 +12,8 @@ import { navigateWithinEnv } from 'lib/utils/query-string';
 import { generateFormattedDate } from 'lib/utils/datetime';
 import { titleize, getHumanReadableByteSize } from 'lib/utils';
 
+import { DataTableStats } from '../DataTableStats/DataTableStats';
+import { DataTableViewQueryUsers } from 'components/DataTableViewQueryExample/DataTableViewQueryUsers';
 import { Button } from 'ui/Button/Button';
 import { Divider } from 'ui/Divider/Divider';
 import { EditableTextField } from 'ui/EditableTextField/EditableTextField';
@@ -20,7 +22,6 @@ import { Table } from 'ui/Table/Table';
 import { Title } from 'ui/Title/Title';
 
 import './DataTableViewOverview.scss';
-import { DataTableViewQueryUsers } from 'components/DataTableViewQueryExample/DataTableViewQueryUsers';
 
 const dataTableDetailsColumns = [
     {
@@ -125,6 +126,9 @@ export class DataTableViewOverview extends React.PureComponent<
                 cols={dataTableDetailsColumns}
             />
         );
+
+        const statsDOM = <DataTableStats tableId={this.props.table.id} />;
+
         const hiveMetastoreDOM = table.hive_metastore_description ? (
             <pre>{table.hive_metastore_description}</pre>
         ) : null;
@@ -134,6 +138,7 @@ export class DataTableViewOverview extends React.PureComponent<
             description,
             null
         );
+
         const metaSection = this.makeOverviewSectionDOM(
             'Meta info',
             <div>
@@ -151,6 +156,11 @@ export class DataTableViewOverview extends React.PureComponent<
         const detailsSection = this.makeOverviewSectionDOM(
             `Details`,
             detailsDOM
+        );
+
+        const statsSection = this.makeOverviewSectionDOM(
+            'Statistics',
+            statsDOM
         );
 
         const hiveMetastoreSection = hiveMetastoreDOM
@@ -210,6 +220,7 @@ export class DataTableViewOverview extends React.PureComponent<
                 {descriptionSection}
                 {frequentUsersSection}
                 {detailsSection}
+                {statsSection}
                 {hiveMetastoreSection}
                 {metaSection}
                 {sampleQueriesSection}
