@@ -58,16 +58,14 @@ export const DataTableColumnCard: React.FunctionComponent<IProps> = ({
                             color="var(--color-primary-5)"
                         />
                         {column.comment && (
-                            <KeyContentDisplay
-                                keyString="Definition"
-                                content={column.comment}
-                            />
+                            <KeyContentDisplay keyString="Definition">
+                                {column.comment}
+                            </KeyContentDisplay>
                         )}
+                        <KeyContentDisplay keyString="User Comments">
+                            {userCommentsContent}
+                        </KeyContentDisplay>
                         <DataTableColumnStats columnId={column.id} />
-                        <KeyContentDisplay
-                            keyString="User Comments"
-                            content={userCommentsContent}
-                        />
                     </>
                 ) : (
                     <div className="DataTableColumnCard-preview">

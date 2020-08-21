@@ -2,7 +2,10 @@ import * as React from 'react';
 
 import { useDataFetch } from 'hooks/useDataFetch';
 
-import { renderStatValue } from 'components/DataTableViewOverview/DataTableStats';
+import {
+    renderStatValue,
+    TableStatValueType,
+} from 'components/DataTableViewOverview/DataTableStats';
 import { KeyContentDisplay } from 'ui/KeyContentDisplay/KeyContentDisplay';
 
 interface IProps {
@@ -13,15 +16,13 @@ interface ITableColumnStats {
     id: number;
     column_id: number;
     key: string;
-    value: JSON;
+    value: TableStatValueType;
     uid: number;
 }
 export const DataTableColumnStats: React.FunctionComponent<IProps> = ({
     columnId,
 }) => {
-    const {
-        data: tableColumnStats,
-    }: { data: ITableColumnStats[] } = useDataFetch({
+    const { data: tableColumnStats } = useDataFetch<ITableColumnStats[]>({
         url: `/column/stats/${columnId}/`,
     });
 
@@ -29,8 +30,9 @@ export const DataTableColumnStats: React.FunctionComponent<IProps> = ({
         <KeyContentDisplay
             key={tableColumnStat.id}
             keyString={tableColumnStat.key}
-            content={renderStatValue(tableColumnStat.value)}
-        />
+        >
+            {renderStatValue(tableColumnStat.value)}
+        </KeyContentDisplay>
     ));
 
     return <div className="DataTableColumnStats">{statsDOM}</div>;
