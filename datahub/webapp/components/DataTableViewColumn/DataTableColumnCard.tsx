@@ -3,7 +3,7 @@ import { ContentState } from 'draft-js';
 
 import { IDataColumn } from 'const/metastore';
 
-import { DataTableColumnStats } from './DataTableColumnStats';
+import { DataTableColumnStats } from '../DataTableStats/DataTableColumnStats';
 import { Card } from 'ui/Card/Card';
 import { Divider } from 'ui/Divider/Divider';
 import { EditableTextField } from 'ui/EditableTextField/EditableTextField';

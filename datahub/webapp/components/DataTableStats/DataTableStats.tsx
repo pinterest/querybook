@@ -3,12 +3,11 @@ import * as React from 'react';
 import { useDataFetch } from 'hooks/useDataFetch';
 
 import { KeyContentDisplay } from 'ui/KeyContentDisplay/KeyContentDisplay';
+import { TableStatValueType, renderStatValue } from './DataTableStatsCommon';
 
 interface IProps {
     tableId: number;
 }
-
-export type TableStatValueType = number | string | Array<number | string>;
 
 interface ITableStats {
     id: number;
@@ -17,14 +16,6 @@ interface ITableStats {
     value: TableStatValueType;
     uid: number;
 }
-
-export const renderStatValue = (val: TableStatValueType) => {
-    if (Array.isArray(val)) {
-        return val.map((item, idx) => <div key={idx}>{item}</div>);
-    }
-
-    return val;
-};
 
 export const DataTableStats: React.FunctionComponent<IProps> = ({
     tableId,

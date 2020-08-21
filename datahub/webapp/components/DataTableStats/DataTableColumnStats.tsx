@@ -2,10 +2,8 @@ import * as React from 'react';
 
 import { useDataFetch } from 'hooks/useDataFetch';
 
-import {
-    renderStatValue,
-    TableStatValueType,
-} from 'components/DataTableViewOverview/DataTableStats';
+import { TableStatValueType, renderStatValue } from './DataTableStatsCommon';
+
 import { KeyContentDisplay } from 'ui/KeyContentDisplay/KeyContentDisplay';
 
 interface IProps {

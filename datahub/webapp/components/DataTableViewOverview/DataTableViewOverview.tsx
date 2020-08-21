@@ -12,7 +12,7 @@ import { navigateWithinEnv } from 'lib/utils/query-string';
 import { generateFormattedDate } from 'lib/utils/datetime';
 import { titleize, getHumanReadableByteSize } from 'lib/utils';
 
-import { DataTableStats } from './DataTableStats';
+import { DataTableStats } from '../DataTableStats/DataTableStats';
 import { DataTableViewQueryUsers } from 'components/DataTableViewQueryExample/DataTableViewQueryUsers';
 import { Button } from 'ui/Button/Button';
 import { Divider } from 'ui/Divider/Divider';
