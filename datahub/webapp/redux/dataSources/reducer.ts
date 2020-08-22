@@ -256,6 +256,9 @@ function queryExampleIdsById(
                 draft[tableId].queryIds = draft[tableId].queryIds.concat(
                     exampleIds
                 );
+                draft[tableId].queryIds = Array.from(
+                    new Set(draft[tableId].queryIds)
+                );
                 draft[tableId].hasMore = hasMore;
 
                 return;

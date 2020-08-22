@@ -24,13 +24,13 @@ import { DataTableViewSourceQuery } from 'components/DataTableViewSourceQuery/Da
 import { DataTableViewQueryExamples } from 'components/DataTableViewQueryExample/DataTableViewQueryExamples';
 import { DataTableViewWarnings } from 'components/DataTableViewWarnings/DataTableViewWarnings';
 
+import { DataTableHeader } from './DataTableHeader';
+import { Container } from 'ui/Container/Container';
+import { ErrorPage } from 'ui/ErrorPage/ErrorPage';
+import { FourOhFour } from 'ui/ErrorPage/FourOhFour';
 import { Loader } from 'ui/Loader/Loader';
 import { Tabs } from 'ui/Tabs/Tabs';
 
-import { DataTableHeader } from './DataTableHeader';
-import { FourOhFour } from 'ui/ErrorPage/FourOhFour';
-import { ErrorPage } from 'ui/ErrorPage/ErrorPage';
-import { Container } from 'ui/Container/Container';
 import './DataTableView.scss';
 
 const tabDefinitions = [
@@ -77,6 +77,7 @@ export type IDataTableViewProps = IOwnProps &
 
 export interface IDataTableViewState {
     selectedTabKey: string;
+    exampleUid: number;
 }
 
 class DataTableViewComponent extends React.PureComponent<
@@ -85,6 +86,7 @@ class DataTableViewComponent extends React.PureComponent<
 > {
     public readonly state = {
         selectedTabKey: this.getInitialTabKey(),
+        exampleUid: null,
     };
 
     public componentDidMount() {
@@ -135,7 +137,12 @@ class DataTableViewComponent extends React.PureComponent<
     public onTabSelected(key) {
         // Temporal
         replaceQueryString({ tab: key });
-        this.setState({ selectedTabKey: key });
+        this.setState({ selectedTabKey: key, exampleUid: null });
+    }
+
+    @bind
+    public handleExampleUidFilter(uid: number) {
+        this.setState({ selectedTabKey: 'query_examples', exampleUid: uid });
     }
 
     @bind
@@ -150,6 +157,7 @@ class DataTableViewComponent extends React.PureComponent<
                 tableWarnings={tableWarnings}
                 onTabSelected={this.onTabSelected}
                 updateDataTableDescription={this.updateDataTableDescription}
+                onExampleUidFilter={this.handleExampleUidFilter}
             />
         );
     }
@@ -263,8 +271,11 @@ class DataTableViewComponent extends React.PureComponent<
     @bind
     public makeExampleDOM() {
         const { tableId } = this.props;
+        const { exampleUid } = this.state;
 
-        return <DataTableViewQueryExamples tableId={tableId} />;
+        return (
+            <DataTableViewQueryExamples tableId={tableId} uid={exampleUid} />
+        );
     }
 
     public render() {

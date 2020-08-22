@@ -499,6 +499,7 @@ const QUERY_EXAMPLE_BATCH_SIZE = 5;
 
 export function fetchQueryExampleIds(
     tableId: number,
+    uid: number = null,
     offset: number = 0,
     limit: number = QUERY_EXAMPLE_BATCH_SIZE
 ): ThunkResult<Promise<number[]>> {
@@ -513,6 +514,7 @@ export function fetchQueryExampleIds(
                 {
                     table_id: tableId,
                     environment_id: environmentId,
+                    uid,
                     limit,
                     offset,
                 }
@@ -528,13 +530,14 @@ export function fetchQueryExampleIds(
 }
 
 export function fetchQueryExampleIdsIfNeeded(
-    tableId: number
+    tableId: number,
+    uid: number = null
 ): ThunkResult<Promise<number[]>> {
     return (dispatch, getState) => {
         const state = getState();
         const samples = state.dataSources.queryExampleIdsById[tableId];
         if (!samples) {
-            return dispatch(fetchQueryExampleIds(tableId));
+            return dispatch(fetchQueryExampleIds(tableId, uid));
         } else {
             return Promise.resolve(samples.queryIds);
         }
@@ -542,14 +545,15 @@ export function fetchQueryExampleIdsIfNeeded(
 }
 
 export function fetchMoreQueryExampleIds(
-    tableId: number
+    tableId: number,
+    uid: number = null
 ): ThunkResult<Promise<number[]>> {
     return (dispatch, getState) => {
         const state = getState();
         const samples = state.dataSources.queryExampleIdsById[tableId];
 
         return dispatch(
-            fetchQueryExampleIds(tableId, samples?.queryIds?.length ?? 0)
+            fetchQueryExampleIds(tableId, uid, samples?.queryIds?.length ?? 0)
         );
     };
 }

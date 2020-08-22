@@ -3,7 +3,7 @@ import { useDispatch, useSelector } from 'react-redux';
 
 import { format } from 'lib/sql-helper/sql-formatter';
 import { getCodeEditorTheme } from 'lib/utils';
-import { navigateWithinEnv } from 'lib/utils/query-string';
+import { navigateWithinEnv, getQueryString } from 'lib/utils/query-string';
 import { useLoader } from 'hooks/useLoader';
 
 import { IStoreState, Dispatch } from 'redux/store/types';
@@ -13,25 +13,31 @@ import * as queryExecutionsActions from 'redux/queryExecutions/action';
 import { DataTableViewQueryUsers } from './DataTableViewQueryUsers';
 import { UserName } from 'components/UserBadge/UserName';
 
+import { AsyncButton } from 'ui/AsyncButton/AsyncButton';
+import { Button } from 'ui/Button/Button';
 import { CodeHighlight } from 'ui/CodeHighlight/CodeHighlight';
 import { IconButton } from 'ui/Button/IconButton';
 import { Loading } from 'ui/Loading/Loading';
-import { AsyncButton } from 'ui/AsyncButton/AsyncButton';
 import { Title } from 'ui/Title/Title';
+import { UserBadge } from 'components/UserBadge/UserBadge';
 
 import './DataTableViewQueryExamples.scss';
 
 interface IProps {
     tableId: number;
+    uid?: number;
 }
 
 export const DataTableViewQueryExamples: React.FunctionComponent<IProps> = ({
     tableId,
+    uid = null,
 }) => {
     const dispatch: Dispatch = useDispatch();
     const [loadingQueryExecution, setLoadingQueryExecution] = React.useState(
         false
     );
+    const [filterByUid, setFilterByUid] = React.useState<number>(uid);
+
     const {
         queryExampleIds,
         hasMore,
@@ -61,8 +67,14 @@ export const DataTableViewQueryExamples: React.FunctionComponent<IProps> = ({
     });
 
     const loadMoreQueryExampleIds = React.useCallback(
-        () => dispatch(dataSourcesActions.fetchMoreQueryExampleIds(tableId)),
-        [tableId]
+        () =>
+            dispatch(
+                dataSourcesActions.fetchMoreQueryExampleIds(
+                    tableId,
+                    filterByUid
+                )
+            ),
+        [tableId, filterByUid]
     );
 
     const loadQueryExecution = React.useCallback(
@@ -75,15 +87,25 @@ export const DataTableViewQueryExamples: React.FunctionComponent<IProps> = ({
         []
     );
 
+    React.useEffect(() => {
+        if (filterByUid) {
+            loadMoreQueryExampleIds();
+        }
+    }, [filterByUid]);
+
     const { loading: loadingInitial } = useLoader({
         item: queryExampleIds,
         itemLoader: () =>
-            dispatch(dataSourcesActions.fetchQueryExampleIdsIfNeeded(tableId)),
+            dispatch(
+                dataSourcesActions.fetchQueryExampleIdsIfNeeded(
+                    tableId,
+                    filterByUid
+                )
+            ),
     });
 
     React.useEffect(() => {
         setLoadingQueryExecution(true);
-
         Promise.all(
             queryExamplesIdsToLoad.map(loadQueryExecution)
         ).finally(() => setLoadingQueryExecution(false));
@@ -99,12 +121,13 @@ export const DataTableViewQueryExamples: React.FunctionComponent<IProps> = ({
         if (loadingInitial) {
             return <Loading />;
         } else if (!queryExampleIds?.length) {
-            // Return nothing since the top users section
-            // will have an empty message
-            return null;
+            return <div>No user has queried this table on DataHub.</div>;
         }
 
         const queryExamplesDOM = queryExamples
+            .filter((query) =>
+                filterByUid == null ? true : query.uid === filterByUid
+            )
             .map((query) => {
                 const language =
                     queryEngineById[query.engine_id]?.language ?? 'presto';
@@ -135,11 +158,29 @@ export const DataTableViewQueryExamples: React.FunctionComponent<IProps> = ({
             })
             .concat(loadingQueryExecution ? [<Loading key="loading" />] : []);
 
+        const titleDOM = filterByUid ? (
+            <div className="horizontal-space-between">
+                <div className="flex-row">
+                    <Title subtitle size={4}>
+                        Example Queries by
+                    </Title>
+                    <div className="mt4 ml8">
+                        <UserBadge uid={filterByUid} mini />
+                    </div>
+                </div>
+                <Button onClick={() => setFilterByUid(null)}>
+                    Clear User Filter
+                </Button>
+            </div>
+        ) : (
+            <Title subtitle size={4}>
+                Example Queries
+            </Title>
+        );
+
         return (
             <div>
-                <Title subtitle size={4}>
-                    Example Queries
-                </Title>
+                {titleDOM}
                 {queryExamplesDOM}
             </div>
         );
@@ -150,8 +191,10 @@ export const DataTableViewQueryExamples: React.FunctionComponent<IProps> = ({
             <Title subtitle size={4}>
                 Frequent users of this table
             </Title>
-
-            <DataTableViewQueryUsers tableId={tableId} />
+            <DataTableViewQueryUsers
+                tableId={tableId}
+                onClick={setFilterByUid}
+            />
         </div>
     );
 
