@@ -70,6 +70,8 @@ tables:
                         type: text
                     golden:
                         type: boolean
+                    score:
+                        type: long
                     importance_score:
                         type: long
 users:
