@@ -35,7 +35,7 @@ export const UserBadge: React.FunctionComponent<IProps> = ({
 
     const userName = useMemo(() => {
         return userInfo
-            ? userInfo.fullname ?? userInfo.username
+            ? userInfo.username
             : name
             ? `Unknown (${name})`
             : 'Unknown';
@@ -45,7 +45,9 @@ export const UserBadge: React.FunctionComponent<IProps> = ({
         return (
             <span className="UserBadge mini">
                 <figure>{avatarDOM}</figure>
-                <span className="user-name">{userName}</span>
+                <span className="user-name">
+                    {userInfo.fullname ?? userName}
+                </span>
             </span>
         );
     }
