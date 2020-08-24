@@ -3,7 +3,7 @@ import { useDispatch, useSelector } from 'react-redux';
 
 import { format } from 'lib/sql-helper/sql-formatter';
 import { getCodeEditorTheme } from 'lib/utils';
-import { navigateWithinEnv, getQueryString } from 'lib/utils/query-string';
+import { navigateWithinEnv } from 'lib/utils/query-string';
 import { useLoader } from 'hooks/useLoader';
 
 import { IStoreState, Dispatch } from 'redux/store/types';
@@ -35,9 +35,7 @@ export const DataTableViewQueryExamples: React.FunctionComponent<IProps> = ({
     const [loadingQueryExecution, setLoadingQueryExecution] = React.useState(
         false
     );
-    const [filterUid, setFilterUid] = React.useState<number>(
-        Number(getQueryString()['uid']) || uid
-    );
+    const [filterUid, setFilterUid] = React.useState<number>(uid);
 
     const {
         queryExampleIds,

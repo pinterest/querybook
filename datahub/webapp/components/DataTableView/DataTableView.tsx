@@ -81,7 +81,6 @@ export type IDataTableViewProps = IOwnProps &
 
 export interface IDataTableViewState {
     selectedTabKey: string;
-    exampleUid: number;
 }
 
 class DataTableViewComponent extends React.PureComponent<
@@ -90,7 +89,6 @@ class DataTableViewComponent extends React.PureComponent<
 > {
     public readonly state = {
         selectedTabKey: this.getInitialTabKey(),
-        exampleUid: null,
     };
 
     public componentDidMount() {
@@ -277,11 +275,9 @@ class DataTableViewComponent extends React.PureComponent<
     @bind
     public makeExampleDOM() {
         const { tableId } = this.props;
-        const { exampleUid } = this.state;
+        const uid = Number(getQueryString()['uid']);
 
-        return (
-            <DataTableViewQueryExamples tableId={tableId} uid={exampleUid} />
-        );
+        return <DataTableViewQueryExamples tableId={tableId} uid={uid} />;
     }
 
     public render() {
