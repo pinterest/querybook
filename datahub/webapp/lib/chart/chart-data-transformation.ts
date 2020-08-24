@@ -254,6 +254,9 @@ export function sortTableWithDefaultIdx(
     ascending: boolean,
     xIdx: number
 ) {
+    if (data.length === 0) {
+        return [];
+    }
     if (idx != null) {
         // if idx is provided then call sortTable as is
         return sortTable(data, idx, ascending);
