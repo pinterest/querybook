@@ -5,11 +5,11 @@ exports[`matches enzyme snapshots matches snapshot - unchecked 1`] = `
   className="ToggleButton "
   onClick={[Function]}
 >
-  <span
-    className="ToggleButton-title"
+  <ForwardRef
+    className=""
   >
     Testing
-  </span>
+  </ForwardRef>
 </div>
 `;
 
@@ -18,10 +18,10 @@ exports[`matches enzyme snapshots matches snapshot 1`] = `
   className="ToggleButton checked"
   onClick={[Function]}
 >
-  <span
-    className="ToggleButton-title"
+  <ForwardRef
+    className=""
   >
     Testing
-  </span>
+  </ForwardRef>
 </div>
 `;

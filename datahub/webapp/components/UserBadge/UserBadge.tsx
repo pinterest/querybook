@@ -61,7 +61,7 @@ export const UserBadge: React.FunctionComponent<IProps> = ({
                 <Title size={4} className="user-name one-line-ellipsis">
                     <UserNameComponent userInfo={userInfo} loading={loading} />
                 </Title>
-                <Title subtitle size={6}>
+                <Title subtitle size={7}>
                     @{userName}
                 </Title>
             </div>

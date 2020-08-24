@@ -111,13 +111,13 @@ storiesOf('Buttons', module)
                 <ToggleButton
                     checked
                     title="Toggle Button - On"
-                    onChange={() => null}
+                    onClick={() => null}
                 />
             </div>
             <ToggleButton
                 checked={false}
                 title="Toggle Button - Off"
-                onChange={() => null}
+                onClick={() => null}
             />
         </>
     ))

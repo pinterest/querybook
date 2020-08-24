@@ -6,18 +6,14 @@ import { ToggleButton } from '../../ui/ToggleButton/ToggleButton';
 
 it('renders without crashing', () => {
     shallow(
-        <ToggleButton checked={true} onChange={() => null} title="Testing" />
+        <ToggleButton checked={true} onClick={() => null} title="Testing" />
     );
 });
 
 describe('matches enzyme snapshots', () => {
     it('matches snapshot', () => {
         let wrapper = shallow(
-            <ToggleButton
-                checked={true}
-                onChange={() => null}
-                title="Testing"
-            />
+            <ToggleButton checked={true} onClick={() => null} title="Testing" />
         );
         let serialized = toJson(wrapper);
         expect(serialized).toMatchSnapshot();
@@ -26,7 +22,7 @@ describe('matches enzyme snapshots', () => {
         let wrapper = shallow(
             <ToggleButton
                 checked={false}
-                onChange={() => null}
+                onClick={() => null}
                 title="Testing"
             />
         );
