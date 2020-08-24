@@ -12,7 +12,7 @@ import { navigateWithinEnv } from 'lib/utils/query-string';
 import { generateFormattedDate } from 'lib/utils/datetime';
 import { titleize, getHumanReadableByteSize } from 'lib/utils';
 
-import { DataTableStats } from '../DataTableStats/DataTableStats';
+import { DataTableStats } from 'components/DataTableStats/DataTableStats';
 import { DataTableViewQueryUsers } from 'components/DataTableViewQueryExample/DataTableViewQueryUsers';
 import { Button } from 'ui/Button/Button';
 import { Divider } from 'ui/Divider/Divider';
@@ -55,6 +55,7 @@ export interface IDataHubTableViewOverviewProps {
         tableId: number,
         description: DraftJs.ContentState
     ) => any;
+    onExampleUidFilter: (uid: number) => any;
 }
 
 export class DataTableViewOverview extends React.PureComponent<
@@ -211,7 +212,10 @@ export class DataTableViewOverview extends React.PureComponent<
 
         const frequentUsersSection = this.makeOverviewSectionDOM(
             `Frequent Users`,
-            <DataTableViewQueryUsers tableId={table.id} />
+            <DataTableViewQueryUsers
+                tableId={table.id}
+                onClick={this.props.onExampleUidFilter}
+            />
         );
 
         return (

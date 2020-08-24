@@ -9,7 +9,8 @@ import { Loading } from 'ui/Loading/Loading';
 
 export const DataTableViewQueryUsers: React.FC<{
     tableId: number;
-}> = ({ tableId }) => {
+    onClick?: (uid: number) => any;
+}> = ({ tableId, onClick = null }) => {
     const [loading, setLoading] = useState(false);
     const topQueryUsers = useSelector(
         (state: IStoreState) =>
@@ -35,6 +36,7 @@ export const DataTableViewQueryUsers: React.FC<{
         <UserAvatarList
             users={topQueryUsers.map((topQueryUser) => ({
                 uid: topQueryUser.uid,
+                onClick: onClick ? () => onClick(topQueryUser.uid) : null,
                 tooltip: `${
                     userInfoById[topQueryUser.uid]?.username ?? 'Loading'
                 }, query count ${topQueryUser.count}`,
@@ -43,6 +45,11 @@ export const DataTableViewQueryUsers: React.FC<{
     );
 
     return (
-        <div className="DataTableViewQueryUsers center-align">{viewersDOM}</div>
+        <div className="DataTableViewQueryUsers">
+            <div>Click on a user to see their queries</div>
+            <div className="DataTableViewQueryUsers-users center-align">
+                {viewersDOM}
+            </div>
+        </div>
     );
 };

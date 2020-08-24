@@ -121,9 +121,14 @@ export type FunctionDocumentationCollection = Record<
     Record<string, IFunctionDescription[]>
 >;
 
+export interface IPaginatedQuerySampleFilters {
+    uid?: number;
+}
+
 export interface IPaginatedQuerySamples {
     hasMore: boolean;
     queryIds: number[];
+    filters: IPaginatedQuerySampleFilters;
 }
 
 export interface ITopQueryUser {

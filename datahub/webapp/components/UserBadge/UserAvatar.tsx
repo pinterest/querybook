@@ -8,12 +8,14 @@ import './UserAvatar.scss';
 export type IUserAvatarProps = {
     isOnline?: boolean;
     tiny?: boolean;
+    onClick?: () => any;
 } & ICommonUserLoaderProps;
 
 export interface IUserAvatarComponentProps
     extends Omit<IUserAvatarProps, 'uid' | 'name'> {
     loading: boolean;
     userInfo: IUserInfo;
+    onClick?: () => any;
 }
 
 const defaultNoUserBackground = '#F65B50';
@@ -57,7 +59,7 @@ const DefaultUserIcon: React.FunctionComponent<{
             width / 2 - textWidth / 2,
             height / 2 + textWidth / 2
         );
-    }, [canvasRef]);
+    }, [canvasRef, name]);
 
     return <canvas ref={canvasRef} width="100px" height="100px" />;
 };
@@ -67,6 +69,7 @@ export const UserAvatarComponent: React.FunctionComponent<IUserAvatarComponentPr
     userInfo,
     isOnline,
     tiny,
+    onClick = null,
 }) => {
     const profileImage = userInfo ? userInfo.profile_img : null;
     const userName = userInfo ? userInfo.fullname ?? userInfo.username : null;
@@ -91,9 +94,11 @@ export const UserAvatarComponent: React.FunctionComponent<IUserAvatarComponentPr
         isOnline === undefined ? null : <span className={isOnlineClasses} />;
 
     return tiny ? (
-        <span className="UserAvatar tiny">{imageDOM}</span>
+        <span className="UserAvatar tiny" onClick={onClick}>
+            {imageDOM}
+        </span>
     ) : (
-        <span className="UserAvatar">
+        <span className="UserAvatar" onClick={onClick}>
             {imageDOM}
             {isOnlineDot}
         </span>
@@ -105,6 +110,7 @@ export const UserAvatar: React.FunctionComponent<IUserAvatarProps> = ({
     name,
     tiny,
     isOnline,
+    onClick = null,
 }) => {
     const { loading, userInfo } = useUser({ uid, name });
 
@@ -114,6 +120,7 @@ export const UserAvatar: React.FunctionComponent<IUserAvatarProps> = ({
             loading={loading}
             isOnline={isOnline}
             tiny={tiny}
+            onClick={onClick}
         />
     );
 };

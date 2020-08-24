@@ -12,6 +12,7 @@ import {
     IDataTableWarning,
     DataTableWarningSeverity,
     ITopQueryUser,
+    IPaginatedQuerySampleFilters,
 } from 'const/metastore';
 import { convertRawToContentState } from 'lib/draft-js-utils';
 import ds from 'lib/datasource';
@@ -483,7 +484,8 @@ export function pollDataTableSample(
 function receiveQueryExampleIds(
     tableId: number,
     exampleIds: number[],
-    hasMore: boolean
+    hasMore: boolean,
+    filters: IPaginatedQuerySampleFilters
 ): IReceiveQueryExampleIdsAction {
     return {
         type: '@@dataSources/RECEIVE_QUERY_EXAMPLES',
@@ -491,6 +493,7 @@ function receiveQueryExampleIds(
             tableId,
             exampleIds,
             hasMore,
+            filters,
         },
     };
 }
@@ -499,6 +502,7 @@ const QUERY_EXAMPLE_BATCH_SIZE = 5;
 
 export function fetchQueryExampleIds(
     tableId: number,
+    uid: number = null,
     offset: number = 0,
     limit: number = QUERY_EXAMPLE_BATCH_SIZE
 ): ThunkResult<Promise<number[]>> {
@@ -513,12 +517,19 @@ export function fetchQueryExampleIds(
                 {
                     table_id: tableId,
                     environment_id: environmentId,
+                    uid,
                     limit,
                     offset,
                 }
             );
+            const filters = uid ? { uid } : {};
             dispatch(
-                receiveQueryExampleIds(tableId, data, data?.length === limit)
+                receiveQueryExampleIds(
+                    tableId,
+                    data,
+                    data?.length === limit,
+                    filters
+                )
             );
             return data;
         } catch (e) {
@@ -528,13 +539,17 @@ export function fetchQueryExampleIds(
 }
 
 export function fetchQueryExampleIdsIfNeeded(
-    tableId: number
+    tableId: number,
+    uid: number = null
 ): ThunkResult<Promise<number[]>> {
     return (dispatch, getState) => {
         const state = getState();
         const samples = state.dataSources.queryExampleIdsById[tableId];
-        if (!samples) {
-            return dispatch(fetchQueryExampleIds(tableId));
+        const prevUidFilter =
+            state.dataSources.queryExampleIdsById[tableId]?.filters.uid || null;
+
+        if (!samples || uid !== prevUidFilter) {
+            return dispatch(fetchQueryExampleIds(tableId, uid));
         } else {
             return Promise.resolve(samples.queryIds);
         }
@@ -547,9 +562,15 @@ export function fetchMoreQueryExampleIds(
     return (dispatch, getState) => {
         const state = getState();
         const samples = state.dataSources.queryExampleIdsById[tableId];
+        const uidFilter =
+            state.dataSources.queryExampleIdsById[tableId]?.filters.uid || null;
 
         return dispatch(
-            fetchQueryExampleIds(tableId, samples?.queryIds?.length ?? 0)
+            fetchQueryExampleIds(
+                tableId,
+                uidFilter,
+                samples?.queryIds?.length ?? 0
+            )
         );
     };
 }

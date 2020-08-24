@@ -13,25 +13,30 @@ import * as queryExecutionsActions from 'redux/queryExecutions/action';
 import { DataTableViewQueryUsers } from './DataTableViewQueryUsers';
 import { UserName } from 'components/UserBadge/UserName';
 
+import { AsyncButton } from 'ui/AsyncButton/AsyncButton';
+import { Button } from 'ui/Button/Button';
 import { CodeHighlight } from 'ui/CodeHighlight/CodeHighlight';
 import { IconButton } from 'ui/Button/IconButton';
 import { Loading } from 'ui/Loading/Loading';
-import { AsyncButton } from 'ui/AsyncButton/AsyncButton';
 import { Title } from 'ui/Title/Title';
 
 import './DataTableViewQueryExamples.scss';
 
 interface IProps {
     tableId: number;
+    uid?: number;
 }
 
 export const DataTableViewQueryExamples: React.FunctionComponent<IProps> = ({
     tableId,
+    uid = null,
 }) => {
     const dispatch: Dispatch = useDispatch();
     const [loadingQueryExecution, setLoadingQueryExecution] = React.useState(
         false
     );
+    const [filterUid, setFilterUid] = React.useState<number>(uid);
+
     const {
         queryExampleIds,
         hasMore,
@@ -78,12 +83,27 @@ export const DataTableViewQueryExamples: React.FunctionComponent<IProps> = ({
     const { loading: loadingInitial } = useLoader({
         item: queryExampleIds,
         itemLoader: () =>
-            dispatch(dataSourcesActions.fetchQueryExampleIdsIfNeeded(tableId)),
+            dispatch(
+                dataSourcesActions.fetchQueryExampleIdsIfNeeded(
+                    tableId,
+                    filterUid
+                )
+            ),
     });
 
     React.useEffect(() => {
-        setLoadingQueryExecution(true);
+        if (!loadingInitial) {
+            dispatch(
+                dataSourcesActions.fetchQueryExampleIdsIfNeeded(
+                    tableId,
+                    filterUid
+                )
+            );
+        }
+    }, [filterUid]);
 
+    React.useEffect(() => {
+        setLoadingQueryExecution(true);
         Promise.all(
             queryExamplesIdsToLoad.map(loadQueryExecution)
         ).finally(() => setLoadingQueryExecution(false));
@@ -98,10 +118,6 @@ export const DataTableViewQueryExamples: React.FunctionComponent<IProps> = ({
     const getExampleDOM = () => {
         if (loadingInitial) {
             return <Loading />;
-        } else if (!queryExampleIds?.length) {
-            // Return nothing since the top users section
-            // will have an empty message
-            return null;
         }
 
         const queryExamplesDOM = queryExamples
@@ -135,11 +151,36 @@ export const DataTableViewQueryExamples: React.FunctionComponent<IProps> = ({
             })
             .concat(loadingQueryExecution ? [<Loading key="loading" />] : []);
 
+        const titleDOM = filterUid ? (
+            <div className="horizontal-space-between">
+                <div className="flex-row">
+                    <Title subtitle size={4}>
+                        Example Queries by
+                        <span className="ml8">
+                            <UserName uid={filterUid} />
+                        </span>
+                    </Title>
+                </div>
+                <Button
+                    onClick={() => {
+                        setFilterUid(null);
+                        navigateWithinEnv(
+                            `/table/${tableId}/?tab=query_examples`
+                        );
+                    }}
+                >
+                    Clear User Filter
+                </Button>
+            </div>
+        ) : (
+            <Title subtitle size={4}>
+                Example Queries
+            </Title>
+        );
+
         return (
             <div>
-                <Title subtitle size={4}>
-                    Example Queries
-                </Title>
+                {titleDOM}
                 {queryExamplesDOM}
             </div>
         );
@@ -150,8 +191,7 @@ export const DataTableViewQueryExamples: React.FunctionComponent<IProps> = ({
             <Title subtitle size={4}>
                 Frequent users of this table
             </Title>
-
-            <DataTableViewQueryUsers tableId={tableId} />
+            <DataTableViewQueryUsers tableId={tableId} onClick={setFilterUid} />
         </div>
     );
 

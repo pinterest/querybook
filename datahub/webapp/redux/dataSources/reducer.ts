@@ -1,5 +1,6 @@
 import { produce } from 'immer';
 import { combineReducers } from 'redux';
+import { isEqual } from 'lodash';
 
 import { arrayGroupByField } from 'lib/utils';
 import { IDataSourcesState, DataSourcesAction } from './types';
@@ -248,15 +249,23 @@ function queryExampleIdsById(
     return produce(state, (draft) => {
         switch (action.type) {
             case '@@dataSources/RECEIVE_QUERY_EXAMPLES': {
-                const { tableId, exampleIds, hasMore } = action.payload;
+                const {
+                    tableId,
+                    exampleIds,
+                    hasMore,
+                    filters,
+                } = action.payload;
                 draft[tableId] = draft[tableId] || {
                     hasMore: true,
                     queryIds: [],
+                    filters: {},
                 };
-                draft[tableId].queryIds = draft[tableId].queryIds.concat(
-                    exampleIds
-                );
+                const sameFilter = isEqual(filters, draft[tableId].filters);
+                draft[tableId].queryIds = sameFilter
+                    ? draft[tableId].queryIds.concat(exampleIds)
+                    : exampleIds;
                 draft[tableId].hasMore = hasMore;
+                draft[tableId].filters = filters;
 
                 return;
             }
