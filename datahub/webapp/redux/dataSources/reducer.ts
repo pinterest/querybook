@@ -248,18 +248,25 @@ function queryExampleIdsById(
     return produce(state, (draft) => {
         switch (action.type) {
             case '@@dataSources/RECEIVE_QUERY_EXAMPLES': {
-                const { tableId, exampleIds, hasMore } = action.payload;
+                const {
+                    tableId,
+                    exampleIds,
+                    hasMore,
+                    filters,
+                } = action.payload;
                 draft[tableId] = draft[tableId] || {
                     hasMore: true,
                     queryIds: [],
+                    filters: {},
                 };
-                draft[tableId].queryIds = draft[tableId].queryIds.concat(
-                    exampleIds
-                );
-                draft[tableId].queryIds = Array.from(
-                    new Set(draft[tableId].queryIds)
-                );
+                const sameFilter = filters.uid === draft[tableId].filters.uid;
+                draft[tableId].queryIds = sameFilter
+                    ? draft[tableId].queryIds.concat(exampleIds)
+                    : exampleIds;
                 draft[tableId].hasMore = hasMore;
+                draft[tableId].filters = filters.uid
+                    ? { uid: filters.uid }
+                    : {};
 
                 return;
             }

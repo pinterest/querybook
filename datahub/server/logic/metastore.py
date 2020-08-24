@@ -644,18 +644,14 @@ def get_table_query_examples(
     )
 
     if uid:
-        return (
-            query.filter(QueryExecution.uid == uid)
-            .order_by(DataTableQueryExecution.id.desc())
-            .all()
-        )
-    else:
-        return (
-            query.order_by(DataTableQueryExecution.id.desc())
-            .limit(limit)
-            .offset(offset)
-            .all()
-        )
+        query = query.filter(QueryExecution.uid == uid)
+
+    return (
+        query.order_by(DataTableQueryExecution.id.desc())
+        .limit(limit)
+        .offset(offset)
+        .all()
+    )
 
 
 @with_session

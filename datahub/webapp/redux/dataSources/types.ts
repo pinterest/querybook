@@ -16,6 +16,7 @@ import {
     IDataTableWarning,
     IDataTableSamplesPolling,
     ITopQueryUser,
+    IPaginatedQuerySampleFilters,
 } from 'const/metastore';
 import { IStoreState } from '../store/types';
 
@@ -98,6 +99,7 @@ export interface IReceiveQueryExampleIdsAction extends Action {
         tableId: number;
         exampleIds: number[];
         hasMore: boolean;
+        filters: IPaginatedQuerySampleFilters;
     };
 }
 

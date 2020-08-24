@@ -9,7 +9,6 @@ interface IUserAvatarListProps {
     users: Array<
         IUserAvatarProps & {
             tooltip?: string;
-            onClick?: () => any;
         }
     >;
     extraCount?: number;

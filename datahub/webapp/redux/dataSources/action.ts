@@ -12,6 +12,7 @@ import {
     IDataTableWarning,
     DataTableWarningSeverity,
     ITopQueryUser,
+    IPaginatedQuerySampleFilters,
 } from 'const/metastore';
 import { convertRawToContentState } from 'lib/draft-js-utils';
 import ds from 'lib/datasource';
@@ -483,7 +484,8 @@ export function pollDataTableSample(
 function receiveQueryExampleIds(
     tableId: number,
     exampleIds: number[],
-    hasMore: boolean
+    hasMore: boolean,
+    filters: IPaginatedQuerySampleFilters
 ): IReceiveQueryExampleIdsAction {
     return {
         type: '@@dataSources/RECEIVE_QUERY_EXAMPLES',
@@ -491,6 +493,7 @@ function receiveQueryExampleIds(
             tableId,
             exampleIds,
             hasMore,
+            filters,
         },
     };
 }
@@ -519,8 +522,14 @@ export function fetchQueryExampleIds(
                     offset,
                 }
             );
+            const filterObj = uid ? { uid } : {};
             dispatch(
-                receiveQueryExampleIds(tableId, data, data?.length === limit)
+                receiveQueryExampleIds(
+                    tableId,
+                    data,
+                    data?.length === limit,
+                    filterObj
+                )
             );
             return data;
         } catch (e) {
@@ -536,7 +545,10 @@ export function fetchQueryExampleIdsIfNeeded(
     return (dispatch, getState) => {
         const state = getState();
         const samples = state.dataSources.queryExampleIdsById[tableId];
-        if (!samples) {
+        const prevUidFilter =
+            state.dataSources.queryExampleIdsById[tableId]?.filters.uid || null;
+
+        if (!samples || uid !== prevUidFilter) {
             return dispatch(fetchQueryExampleIds(tableId, uid));
         } else {
             return Promise.resolve(samples.queryIds);
@@ -551,10 +563,12 @@ export function fetchMoreQueryExampleIds(
     return (dispatch, getState) => {
         const state = getState();
         const samples = state.dataSources.queryExampleIdsById[tableId];
+        const prevUidFilter =
+            state.dataSources.queryExampleIdsById[tableId]?.filters.uid || null;
+        const offset =
+            uid === prevUidFilter ? samples?.queryIds?.length ?? 0 : 0;
 
-        return dispatch(
-            fetchQueryExampleIds(tableId, uid, samples?.queryIds?.length ?? 0)
-        );
+        return dispatch(fetchQueryExampleIds(tableId, uid, offset));
     };
 }
 

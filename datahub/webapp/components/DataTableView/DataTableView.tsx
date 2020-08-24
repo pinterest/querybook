@@ -9,7 +9,11 @@ import { withRouter, RouteComponentProps } from 'react-router-dom';
 import { sanitizeUrlTitle } from 'lib/utils';
 import history from 'lib/router-history';
 import { formatError } from 'lib/utils/error';
-import { getQueryString, replaceQueryString } from 'lib/utils/query-string';
+import {
+    getQueryString,
+    replaceQueryString,
+    navigateWithinEnv,
+} from 'lib/utils/query-string';
 import { setBrowserTitle } from 'lib/dataHubUI';
 
 import { fullTableSelector } from 'redux/dataSources/selector';
@@ -137,12 +141,14 @@ class DataTableViewComponent extends React.PureComponent<
     public onTabSelected(key) {
         // Temporal
         replaceQueryString({ tab: key });
-        this.setState({ selectedTabKey: key, exampleUid: null });
+        this.setState({ selectedTabKey: key });
     }
 
     @bind
     public handleExampleUidFilter(uid: number) {
-        this.setState({ selectedTabKey: 'query_examples', exampleUid: uid });
+        const { table } = this.props;
+        this.setState({ selectedTabKey: 'query_examples' });
+        navigateWithinEnv(`/table/${table.id}/?tab=query_examples&uid=${uid}`);
     }
 
     @bind
