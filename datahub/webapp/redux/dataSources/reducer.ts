@@ -1,5 +1,6 @@
 import { produce } from 'immer';
 import { combineReducers } from 'redux';
+import { isEqual } from 'lodash';
 
 import { arrayGroupByField } from 'lib/utils';
 import { IDataSourcesState, DataSourcesAction } from './types';
@@ -259,14 +260,12 @@ function queryExampleIdsById(
                     queryIds: [],
                     filters: {},
                 };
-                const sameFilter = filters.uid === draft[tableId].filters.uid;
+                const sameFilter = isEqual(filters, draft[tableId].filters);
                 draft[tableId].queryIds = sameFilter
                     ? draft[tableId].queryIds.concat(exampleIds)
                     : exampleIds;
                 draft[tableId].hasMore = hasMore;
-                draft[tableId].filters = filters.uid
-                    ? { uid: filters.uid }
-                    : {};
+                draft[tableId].filters = filters;
 
                 return;
             }

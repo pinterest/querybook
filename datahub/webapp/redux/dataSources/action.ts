@@ -522,13 +522,13 @@ export function fetchQueryExampleIds(
                     offset,
                 }
             );
-            const filterObj = uid ? { uid } : {};
+            const filters = uid ? { uid } : {};
             dispatch(
                 receiveQueryExampleIds(
                     tableId,
                     data,
                     data?.length === limit,
-                    filterObj
+                    filters
                 )
             );
             return data;
@@ -557,18 +557,21 @@ export function fetchQueryExampleIdsIfNeeded(
 }
 
 export function fetchMoreQueryExampleIds(
-    tableId: number,
-    uid: number = null
+    tableId: number
 ): ThunkResult<Promise<number[]>> {
     return (dispatch, getState) => {
         const state = getState();
         const samples = state.dataSources.queryExampleIdsById[tableId];
-        const prevUidFilter =
+        const uidFilter =
             state.dataSources.queryExampleIdsById[tableId]?.filters.uid || null;
-        const offset =
-            uid === prevUidFilter ? samples?.queryIds?.length ?? 0 : 0;
 
-        return dispatch(fetchQueryExampleIds(tableId, uid, offset));
+        return dispatch(
+            fetchQueryExampleIds(
+                tableId,
+                uidFilter,
+                samples?.queryIds?.length ?? 0
+            )
+        );
     };
 }
 

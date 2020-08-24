@@ -36,7 +36,7 @@ export const DataTableViewQueryExamples: React.FunctionComponent<IProps> = ({
         false
     );
     const [filterUid, setFilterUid] = React.useState<number>(
-        Number(getQueryString()['uid']) || null
+        Number(getQueryString()['uid']) || uid
     );
 
     const {
@@ -68,11 +68,8 @@ export const DataTableViewQueryExamples: React.FunctionComponent<IProps> = ({
     });
 
     const loadMoreQueryExampleIds = React.useCallback(
-        () =>
-            dispatch(
-                dataSourcesActions.fetchMoreQueryExampleIds(tableId, filterUid)
-            ),
-        [tableId, filterUid]
+        () => dispatch(dataSourcesActions.fetchMoreQueryExampleIds(tableId)),
+        [tableId]
     );
 
     const loadQueryExecution = React.useCallback(
@@ -85,12 +82,6 @@ export const DataTableViewQueryExamples: React.FunctionComponent<IProps> = ({
         []
     );
 
-    React.useEffect(() => {
-        if (filterUid) {
-            loadMoreQueryExampleIds();
-        }
-    }, [filterUid]);
-
     const { loading: loadingInitial } = useLoader({
         item: queryExampleIds,
         itemLoader: () =>
@@ -101,6 +92,17 @@ export const DataTableViewQueryExamples: React.FunctionComponent<IProps> = ({
                 )
             ),
     });
+
+    React.useEffect(() => {
+        if (!loadingInitial) {
+            dispatch(
+                dataSourcesActions.fetchQueryExampleIdsIfNeeded(
+                    tableId,
+                    filterUid
+                )
+            );
+        }
+    }, [filterUid]);
 
     React.useEffect(() => {
         setLoadingQueryExecution(true);
@@ -118,12 +120,9 @@ export const DataTableViewQueryExamples: React.FunctionComponent<IProps> = ({
     const getExampleDOM = () => {
         if (loadingInitial) {
             return <Loading />;
-        } else if (!queryExampleIds?.length) {
-            return <div>No user has queried this table on DataHub.</div>;
         }
 
         const queryExamplesDOM = queryExamples
-            .filter((query) => filterUid == null || query.uid === filterUid)
             .map((query) => {
                 const language =
                     queryEngineById[query.engine_id]?.language ?? 'presto';
