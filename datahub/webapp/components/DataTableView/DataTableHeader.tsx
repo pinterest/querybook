@@ -97,12 +97,12 @@ export const DataTableHeader: React.FunctionComponent<IDataTableHeader> = ({
         <div className="DataTableHeader p24">
             <div className="DataTableHeader-top ">
                 <div className="DataTableHeader-title">{titleDOM}</div>
-                <div className="DataTableHeader-score"></div>
+                {/* <div className="DataTableHeader-score"></div> */}
             </div>
             <div className="DataTableHeader-bottom ">
                 <div className="DataTableHeader-left">
                     {ownerDOM}
-                    <div className="DataTableHeader-tags"></div>
+                    {/* <div className="DataTableHeader-tags"></div> */}
                 </div>
                 <div className="DataTableHeader-right">
                     <div className="DataTableHeader-featured flex-row mb8">
