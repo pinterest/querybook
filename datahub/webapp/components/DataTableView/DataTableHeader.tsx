@@ -12,11 +12,10 @@ import { BoardItemAddButton } from 'components/BoardItemAddButton/BoardItemAddBu
 import { Level } from 'ui/Level/Level';
 import { Tag } from 'ui/Tag/Tag';
 import { Title } from 'ui/Title/Title';
-import { ToggleSwitch } from 'ui/ToggleSwitch/ToggleSwitch';
+import { ToggleButton } from 'ui/ToggleButton/ToggleButton';
 import { UserBadge } from 'components/UserBadge/UserBadge';
 
 import './DataTableHeader.scss';
-import { ToggleButton } from 'ui/ToggleButton/ToggleButton';
 
 export interface IDataTableHeader {
     table: IDataTable;

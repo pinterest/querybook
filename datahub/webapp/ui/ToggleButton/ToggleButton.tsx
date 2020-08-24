@@ -1,7 +1,8 @@
 import React from 'react';
 
-import './ToggleButton.scss';
 import { Button, IButtonProps } from 'ui/Button/Button';
+
+import './ToggleButton.scss';
 
 interface IToggleButton extends IButtonProps {
     title: string;
