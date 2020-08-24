@@ -277,7 +277,9 @@ class DataTableViewComponent extends React.PureComponent<
         const { tableId } = this.props;
         const uid = Number(getQueryString()['uid']);
 
-        return <DataTableViewQueryExamples tableId={tableId} uid={uid} />;
+        return (
+            <DataTableViewQueryExamples tableId={tableId} uid={uid ?? null} />
+        );
     }
 
     public render() {
