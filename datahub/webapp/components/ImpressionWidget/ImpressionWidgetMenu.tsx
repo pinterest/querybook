@@ -1,20 +1,23 @@
-import React, { useState, useMemo } from 'react';
+import React, { useState } from 'react';
 import { Line } from 'react-chartjs-2';
 
-import { IStoreState } from 'redux/store/types';
+import { generateFormattedDate } from 'lib/utils/datetime';
 import { ImpressionType } from 'const/impression';
 import { useDataFetch } from 'hooks/useDataFetch';
-import { Tabs } from 'ui/Tabs/Tabs';
+
+import { UserName } from 'components/UserBadge/UserName';
+
 import { Loading } from 'ui/Loading/Loading';
-import { generateFormattedDate } from 'lib/utils/datetime';
-import { UserBadge } from 'components/UserBadge/UserBadge';
 import { Table } from 'ui/Table/Table';
+import { Tabs } from 'ui/Tabs/Tabs';
+
 import './ImpressionWidgetMenu.scss';
 
 interface IProps {
     type: ImpressionType;
     itemId: number;
 }
+
 export const ImpressionWidgetMenu: React.FunctionComponent<IProps> = (
     props
 ) => {
@@ -70,14 +73,14 @@ const ImpressionWidgetUsers: React.FC<IProps> = ({ type, itemId }) => {
             formatCell={(index, column, row) => {
                 let dom = row[column];
                 if (column === 'uid') {
-                    dom = <UserBadge uid={dom} mini />;
+                    dom = <UserName uid={dom} />;
                 } else if (column === 'latest_view_at') {
                     dom = <span>{generateFormattedDate(dom)}</span>;
                 }
                 return (
                     <div
                         key={`${row.uid}-${column}`}
-                        className={`col-${column} flex-row`}
+                        className={`col-${column} flex-row center-align`}
                     >
                         {dom}
                     </div>
@@ -131,7 +134,7 @@ const ImpressionWidgetTimeseries: React.FC<IProps> = ({ type, itemId }) => {
                             time: {
                                 unit: 'week',
                                 displayFormats: {
-                                    week: 'll',
+                                    week: 'l',
                                 },
                             },
                         },

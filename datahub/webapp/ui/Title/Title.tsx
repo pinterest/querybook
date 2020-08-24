@@ -21,7 +21,7 @@ const StyledTitle = styled.p<IStyledTitleProps>`
 
     & + .Subtitle:not(:empty) {
         margin-top: ${(props) =>
-            `calc(${props.size || 'var(--large-text-size)'} * -0.5)`};
+            `calc(${props.size || 'var(--large-text-size)'} * -0.4)`};
     }
 `;
 

@@ -155,12 +155,12 @@ export const TaskStatus: React.FunctionComponent<ITaskStatusProps> = ({
                     <div className="TaskStatus-switch flex-row">
                         <ToggleButton
                             checked={autoRefresh}
-                            onChange={setAutoRefresh}
+                            onClick={setAutoRefresh}
                             title="Auto-Refresh"
                         />
                         <ToggleButton
                             checked={fetchInfo.hideSuccessfulJobs}
-                            onChange={(hideSuccessfulJobs) => {
+                            onClick={(hideSuccessfulJobs) => {
                                 setFetchInfo({
                                     ...fetchInfo,
                                     hideSuccessfulJobs,

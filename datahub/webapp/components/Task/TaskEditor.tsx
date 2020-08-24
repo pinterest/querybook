@@ -387,7 +387,7 @@ export const TaskEditor: React.FunctionComponent<IProps> = ({
                                         <div className="TaskEditor-schedule-toggle mr16">
                                             <ToggleButton
                                                 checked={values.isCron}
-                                                onChange={(val: boolean) => {
+                                                onClick={(val: boolean) => {
                                                     setFieldValue(
                                                         'isCron',
                                                         val

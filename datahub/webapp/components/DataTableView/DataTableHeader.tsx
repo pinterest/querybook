@@ -1,5 +1,5 @@
-import { last } from 'lodash';
 import React from 'react';
+import { last } from 'lodash';
 
 import * as Utils from 'lib/utils';
 
@@ -9,11 +9,13 @@ import { IDataTable } from 'const/metastore';
 import { ImpressionWidget } from 'components/ImpressionWidget/ImpressionWidget';
 import { BoardItemAddButton } from 'components/BoardItemAddButton/BoardItemAddButton';
 
-import { Title } from 'ui/Title/Title';
-import { ToggleSwitch } from 'ui/ToggleSwitch/ToggleSwitch';
-import { Tag } from 'ui/Tag/Tag';
 import { Level } from 'ui/Level/Level';
+import { Tag } from 'ui/Tag/Tag';
+import { Title } from 'ui/Title/Title';
+import { ToggleButton } from 'ui/ToggleButton/ToggleButton';
 import { UserBadge } from 'components/UserBadge/UserBadge';
+
+import './DataTableHeader.scss';
 
 export interface IDataTableHeader {
     table: IDataTable;
@@ -37,7 +39,7 @@ export const DataTableHeader: React.FunctionComponent<IDataTableHeader> = ({
     );
 
     const titleDOM = (
-        <Level className="mb24">
+        <Level className="mb4">
             <div>
                 <Title className="pb12">
                     {shortTableName}
@@ -77,31 +79,36 @@ export const DataTableHeader: React.FunctionComponent<IDataTableHeader> = ({
         <ImpressionWidget itemId={table.id} type={'DATA_TABLE'} />
     );
 
-    let goldenBadge;
+    let featuredBadge;
     if (userInfo.isAdmin) {
-        goldenBadge = (
-            <div className="flex-row">
-                <span className="golden-switch-text">Featured</span>
-                <ToggleSwitch
-                    checked={table.golden}
-                    onChange={updateDataTableGolden}
-                />
-            </div>
+        featuredBadge = (
+            <ToggleButton
+                checked={table.golden}
+                onClick={updateDataTableGolden}
+                title={table.golden ? 'Featured' : 'Make Featured'}
+                small
+            />
         );
     } else if (table.golden) {
-        goldenBadge = <Tag>Golden</Tag>;
+        featuredBadge = <Tag>Featured</Tag>;
     }
 
     return (
         <div className="DataTableHeader p24">
-            <div className="DataTableHeader-top">
+            <div className="DataTableHeader-top ">
+                <div className="DataTableHeader-title">{titleDOM}</div>
+                {/* <div className="DataTableHeader-score"></div> */}
+            </div>
+            <div className="DataTableHeader-bottom ">
                 <div className="DataTableHeader-left">
-                    {titleDOM}
                     {ownerDOM}
+                    {/* <div className="DataTableHeader-tags"></div> */}
                 </div>
-                <div className="DataTableHeader-right pt4">
+                <div className="DataTableHeader-right">
+                    <div className="DataTableHeader-featured flex-row mb8">
+                        {featuredBadge}
+                    </div>
                     {viewsBadgeDOM}
-                    {goldenBadge}
                 </div>
             </div>
         </div>
