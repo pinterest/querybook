@@ -262,6 +262,7 @@ def table_to_es(table, session=None):
         "created_at": DATETIME_TO_UTC(table.created_at),
         "columns": column_names_spaces,
         "golden": table.golden,
+        "score": table.boost_score,
         "importance_score": weight,
     }
     return expand_table
