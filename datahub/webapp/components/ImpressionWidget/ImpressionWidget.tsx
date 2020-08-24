@@ -3,9 +3,10 @@ import { ImpressionType } from 'const/impression';
 import { useDataFetch } from 'hooks/useDataFetch';
 import { Icon } from 'ui/Icon/Icon';
 
-import './ImpressionWidget.scss';
-import { Popover, PopoverLayout } from 'ui/Popover/Popover';
 import { ImpressionWidgetMenu } from './ImpressionWidgetMenu';
+import { Popover, PopoverLayout } from 'ui/Popover/Popover';
+
+import './ImpressionWidget.scss';
 
 interface IProps {
     type: ImpressionType;
