@@ -21,6 +21,7 @@ import { IStoreState } from 'redux/store/types';
 import * as queryExecutionSelectors from 'redux/queryExecutions/selector';
 import * as queryExecutionActions from 'redux/queryExecutions/action';
 import { myUserInfoSelector } from 'redux/user/selector';
+import { currentEnvironmentSelector } from 'redux/environment/selector';
 
 export const QueryViewEditor: React.FunctionComponent<{
     queryExecution: IQueryExecution;
@@ -40,7 +41,9 @@ export const QueryViewEditor: React.FunctionComponent<{
         )
     );
     const userInfo = useSelector(myUserInfoSelector);
-    const isExecutionOwner = queryExecution.uid == userInfo.id;
+    const environment = useSelector(currentEnvironmentSelector);
+    const showAccessControls =
+        queryExecution.uid == userInfo.id && !environment.shareable;
     const [showAccessList, setShowAccessList] = useState(false);
 
     const dispatch = useDispatch();
@@ -78,7 +81,7 @@ export const QueryViewEditor: React.FunctionComponent<{
                 queryEngineById[queryExecution.engine_id].language
             )
         );
-        if (isExecutionOwner) {
+        if (showAccessControls) {
             dispatch(
                 queryExecutionActions.fetchQueryExecutionAccessRequests(
                     queryExecution.id
@@ -162,7 +165,7 @@ export const QueryViewEditor: React.FunctionComponent<{
         ) : null;
 
     const accessRequestsByUidLength = Object.values(accessRequestsByUid).length;
-    const shareButton = isExecutionOwner && (
+    const shareButton = showAccessControls && (
         <Button
             className="share-button"
             title="Share"
@@ -176,7 +179,7 @@ export const QueryViewEditor: React.FunctionComponent<{
         />
     );
 
-    const viewersListDOM = isExecutionOwner && showAccessList && (
+    const viewersListDOM = showAccessControls && showAccessList && (
         <Popover
             anchor={buttonRef.current}
             onHide={() => setShowAccessList(false)}

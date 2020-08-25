@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { IQueryExecutionViewer } from 'const/queryExecution';
 import { IAccessRequest } from 'const/accessRequest';
 import { UserSelect } from 'components/UserSelect/UserSelect';
