@@ -5,12 +5,8 @@ import {
 } from 'redux-thunk';
 import { ContentState } from 'draft-js';
 
-import {
-    IDataDoc,
-    IDataCell,
-    IDataDocEditor,
-    IAccessRequest,
-} from 'const/datadoc';
+import { IDataDoc, IDataCell, IDataDocEditor } from 'const/datadoc';
+import { IAccessRequest } from 'const/accessRequest';
 import { IStoreState } from '../store/types';
 
 export interface IDataDocSavePromise {

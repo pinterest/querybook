@@ -1,5 +1,6 @@
 import SocketIOManager from 'lib/socketio-manager';
-import { IDataDocEditor, IAccessRequest } from 'const/datadoc';
+import { IDataDocEditor } from 'const/datadoc';
+import { IAccessRequest } from 'const/accessRequest';
 
 import { IQueryExecution } from 'redux/queryExecutions/types';
 

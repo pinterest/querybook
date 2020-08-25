@@ -8,11 +8,11 @@ from const.datasources import (
     RESOURCE_NOT_FOUND_STATUS_CODE,
 )
 from logic import admin as admin_logic
-
 from models.admin import QueryEngine, QueryMetastore
 from models.query_execution import QueryExecution, StatementExecution
 from models.metastore import DataSchema, DataTable, DataTableColumn
 from models.datadoc import DataDoc, DataCell, DataDocDataCell
+from logic.query_execution_permission import verify_query_execution_access
 
 
 def abort_404():
@@ -44,6 +44,7 @@ def verify_query_execution_permission(query_execution_id, session=None):
         .filter(QueryExecution.id == query_execution_id)
     ]
     verify_environment_permission(environment_ids)
+    verify_query_execution_access(query_execution_id)
 
 
 @with_session

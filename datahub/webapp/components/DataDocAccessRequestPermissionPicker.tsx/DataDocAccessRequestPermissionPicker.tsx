@@ -1,5 +1,5 @@
 import React from 'react';
-import './AccessRequestPermissionPicker.scss';
+import './DataDocAccessRequestPermissionPicker.scss';
 import { DataDocPermission } from 'lib/data-doc/datadoc-permission';
 import { Popover } from 'ui/Popover/Popover';
 import { MenuItem, Menu } from 'ui/Menu/Menu';
@@ -7,11 +7,13 @@ import { IconButton } from 'ui/Button/IconButton';
 
 interface IPermissionPickerProp {
     uid: number;
-    addDataDocEditor: (uid: number, permission: DataDocPermission) => any;
-    rejectDataDocAccessRequest: (uid: number) => any;
+    addDataDocEditor?: (uid: number, permission: DataDocPermission) => any;
+    rejectDataDocAccessRequest?: (uid: number) => any;
+    addQueryExecutionViewer?: (uid: number) => any;
+    rejectQueryExecutionAccessRequest?: (uid: number) => any;
 }
 
-export const AccessRequestPermissionPicker: React.FunctionComponent<IPermissionPickerProp> = ({
+export const DataDocAccessRequestPermissionPicker: React.FunctionComponent<IPermissionPickerProp> = ({
     uid,
     addDataDocEditor,
     rejectDataDocAccessRequest,
@@ -67,7 +69,7 @@ export const AccessRequestPermissionPicker: React.FunctionComponent<IPermissionP
     );
 
     return (
-        <div className="AccessRequestPermissionPicker" ref={selfRef}>
+        <div className="DataDocAccessRequestPermissionPicker" ref={selfRef}>
             {accessRequestControlButtonsDOM}
             {pickerButton}
             {editMenuDOM}

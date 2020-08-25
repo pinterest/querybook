@@ -54,3 +54,31 @@ export const statementExecutionsSelector = createSelector(
             (id) => statementExecutionById[id]
         )
 );
+
+const viewersByExecutionIdUidSelector = (state: IStoreState) =>
+    state.queryExecutions.viewersByExecutionIdUserId;
+
+const accessRequestsByExecutionIdUidSelector = (state: IStoreState) =>
+    state.queryExecutions.accessRequestsByExecutionIdUserId;
+
+export const queryExecutionAccessRequestsByUidSelector = createSelector(
+    queryExecutionSelector,
+    accessRequestsByExecutionIdUidSelector,
+    (queryExecution, accessRequestsByExecutionIdUid) =>
+        queryExecution &&
+        accessRequestsByExecutionIdUid &&
+        queryExecution.id in accessRequestsByExecutionIdUid
+            ? accessRequestsByExecutionIdUid[queryExecution.id]
+            : {}
+);
+
+export const queryExecutionViewersByUidSelector = createSelector(
+    queryExecutionSelector,
+    viewersByExecutionIdUidSelector,
+    (queryExecution, viewersByExecutionIdUid) =>
+        viewersByExecutionIdUid &&
+        queryExecution &&
+        queryExecution.id in viewersByExecutionIdUid
+            ? viewersByExecutionIdUid[queryExecution.id]
+            : {}
+);

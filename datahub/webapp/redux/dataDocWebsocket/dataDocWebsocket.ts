@@ -2,7 +2,8 @@ import dataDocSocket, {
     IDataDocSocketEvent,
 } from 'lib/data-doc/datadoc-socketio';
 
-import { IDataDocEditor, IAccessRequest } from 'const/datadoc';
+import { IDataDocEditor } from 'const/datadoc';
+import { IAccessRequest } from 'const/accessRequest';
 
 import { ThunkDispatch as QueryExecutionDispatch } from 'redux/queryExecutions/types';
 import { receiveQueryExecution } from 'redux/queryExecutions/action';

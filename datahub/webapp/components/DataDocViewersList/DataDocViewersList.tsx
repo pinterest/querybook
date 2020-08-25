@@ -9,7 +9,8 @@ import {
 import { UserBadge } from 'components/UserBadge/UserBadge';
 
 import './DataDocViewersList.scss';
-import { IDataDoc, IDataDocEditor, IAccessRequest } from 'const/datadoc';
+import { IDataDoc, IDataDocEditor } from 'const/datadoc';
+import { IAccessRequest } from 'const/accessRequest';
 
 import { Title } from 'ui/Title/Title';
 
@@ -17,7 +18,7 @@ import { ViewerPermissionPicker } from './ViewerPermissionPicker';
 import { UserSelect } from 'components/UserSelect/UserSelect';
 import { Tabs } from 'ui/Tabs/Tabs';
 import { sendNotification } from 'lib/dataHubUI';
-import { AccessRequestPermissionPicker } from 'components/AccessRequestPermissionPicker.tsx/AccessRequestPermissionPicker';
+import { DataDocAccessRequestPermissionPicker } from 'components/DataDocAccessRequestPermissionPicker.tsx/DataDocAccessRequestPermissionPicker';
 
 interface IDataDocViewersListProps {
     className?: string;
@@ -127,7 +128,7 @@ export const DataDocViewersList: React.FunctionComponent<IDataDocViewersListProp
                       <UserBadge isOnline={undefined} uid={request.uid} />
                   </div>
                   <div className="access-info">
-                      <AccessRequestPermissionPicker
+                      <DataDocAccessRequestPermissionPicker
                           uid={request.uid}
                           addDataDocEditor={addDataDocEditor}
                           rejectDataDocAccessRequest={

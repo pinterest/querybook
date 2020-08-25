@@ -19,6 +19,7 @@ from models.datadoc import (
 from models.access_request import AccessRequest
 from models.impression import Impression
 from tasks.sync_elasticsearch import sync_elasticsearch
+from logic import query_execution as query_execution_logic
 
 cell_types = get_config_value("datadoc.cell_types")
 
@@ -927,7 +928,18 @@ def get_data_cell_executions(id, session=None):
 @with_session
 def get_data_cells_executions(ids, session=None):
     data_cells = session.query(DataCell).filter(DataCell.id.in_(ids)).all()
-    return [(data_cell.id, data_cell.query_executions) for data_cell in data_cells]
+    data_cell_executions = []
+    for data_cell in data_cells:
+        latest_execution = None
+        if data_cell.query_executions:
+            latest_execution_id = data_cell.query_executions[0]
+            latest_execution = query_execution_logic.get_query_execution_by_id(
+                latest_execution_id.id
+            )
+        data_cell_executions.append(
+            (data_cell.id, data_cell.query_executions, latest_execution)
+        )
+    return data_cell_executions
 
 
 """

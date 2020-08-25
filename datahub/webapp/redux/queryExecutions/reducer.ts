@@ -3,7 +3,7 @@ import moment from 'moment';
 import { combineReducers } from 'redux';
 
 import { StatementExecutionStatus } from 'const/queryExecution';
-import { linkifyLog } from 'lib/utils';
+import { linkifyLog, arrayGroupByField } from 'lib/utils';
 import { IQueryExecutionState, QueryExecutionAction } from './types';
 
 const initialState: IQueryExecutionState = {
@@ -15,6 +15,9 @@ const initialState: IQueryExecutionState = {
     statementLogById: {},
     queryErrorById: {},
     statementExporters: [],
+
+    viewersByExecutionIdUserId: {},
+    accessRequestsByExecutionIdUserId: {},
 };
 
 function dataCellIdQueryExecution(
@@ -302,6 +305,66 @@ function queryErrorById(
     });
 }
 
+function accessRequestsByExecutionIdUserId(
+    state = initialState.accessRequestsByExecutionIdUserId,
+    action: QueryExecutionAction
+) {
+    return produce(state, (draft) => {
+        switch (action.type) {
+            case '@@queryExecutions/RECEIVE_QUERY_EXECUTION_ACCESS_REQUESTS': {
+                const { executionId, requests } = action.payload;
+                draft[executionId] = arrayGroupByField(requests, 'uid');
+                return;
+            }
+            case '@@queryExecutions/RECEIVE_QUERY_EXECUTION_ACCESS_REQUEST': {
+                const { executionId, request } = action.payload;
+                if (!(executionId in draft)) {
+                    draft[executionId] = {};
+                }
+                draft[executionId][request.uid] = request;
+                return;
+            }
+            case '@@queryExecutions/REMOVE_QUERY_EXECUTION_ACCESS_REQUEST': {
+                const { executionId, uid } = action.payload;
+                if (executionId in draft && uid in draft[executionId]) {
+                    delete draft[executionId][uid];
+                }
+                return;
+            }
+        }
+    });
+}
+
+function viewersByExecutionIdUserId(
+    state = initialState.viewersByExecutionIdUserId,
+    action: QueryExecutionAction
+) {
+    return produce(state, (draft) => {
+        switch (action.type) {
+            case '@@queryExecutions/RECEIVE_QUERY_EXECUTION_VIEWERS': {
+                const { executionId, viewers } = action.payload;
+                draft[executionId] = arrayGroupByField(viewers, 'uid');
+                return;
+            }
+            case '@@queryExecutions/RECEIVE_QUERY_EXECUTION_VIEWER': {
+                const { executionId, viewer } = action.payload;
+                if (!(executionId in draft)) {
+                    draft[executionId] = {};
+                }
+                draft[executionId][viewer.uid] = viewer;
+                return;
+            }
+            case '@@queryExecutions/REMOVE_QUERY_EXECUTION_VIEWER': {
+                const { executionId, uid } = action.payload;
+                if (executionId in draft && uid in draft[executionId]) {
+                    delete draft[executionId][uid];
+                }
+                return;
+            }
+        }
+    });
+}
+
 function statementExporters(
     state = initialState.statementExporters,
     action: QueryExecutionAction
@@ -323,4 +386,6 @@ export default combineReducers({
     statementLogById,
     queryErrorById,
     statementExporters,
+    accessRequestsByExecutionIdUserId,
+    viewersByExecutionIdUserId,
 });

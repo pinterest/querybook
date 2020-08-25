@@ -1,5 +1,5 @@
 import sqlalchemy as sql
-from sqlalchemy.orm import relationship
+from sqlalchemy.orm import relationship, backref
 
 from app import db
 from lib.utils.serialize import with_formatted_date
@@ -12,6 +12,8 @@ from const.db import (
     text_length,
 )
 from const.query_execution import QueryExecutionStatus, StatementExecutionStatus
+from lib.sqlalchemy import CRUDMixin
+
 
 Base = db.Base
 
@@ -163,3 +165,22 @@ class QueryExecutionNotification(Base):
             "query_execution_id": self.query_execution_id,
             "user": self.user,
         }
+
+
+class QueryExecutionViewer(CRUDMixin, Base):
+    __tablename__ = "query_execution_viewer"
+    __table_args__ = (
+        sql.UniqueConstraint(
+            "query_execution_id", "uid", name="unique_query_execution_viewer"
+        ),
+    )
+
+    id = sql.Column(sql.Integer, primary_key=True, autoincrement=True)
+    query_execution_id = sql.Column(
+        sql.Integer, sql.ForeignKey("query_execution.id", ondelete="CASCADE")
+    )
+    uid = sql.Column(sql.Integer, sql.ForeignKey("user.id", ondelete="CASCADE"))
+    user = relationship("User", uselist=False)
+    query_execution = relationship(
+        "QueryExecution", uselist=False, backref=backref("viewers")
+    )

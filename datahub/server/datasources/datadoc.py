@@ -198,8 +198,9 @@ def batch_get_data_cell_executions(cell_ids):
             (
                 cell_id,
                 [execution.to_dict(with_statement=False) for execution in executions],
+                latest_execution,
             )
-            for cell_id, executions in cells_executions
+            for cell_id, executions, latest_execution in cells_executions
         ]
 
 

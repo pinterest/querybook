@@ -1,5 +1,6 @@
 import { sortBy } from 'lodash';
-import { IDataDocEditor, IDataDoc, IAccessRequest } from 'const/datadoc';
+import { IDataDocEditor, IDataDoc } from 'const/datadoc';
+
 export enum DataDocPermission {
     CAN_READ = 'read only',
     CAN_WRITE = 'edit',

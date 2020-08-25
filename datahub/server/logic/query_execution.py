@@ -1,9 +1,10 @@
 from datetime import datetime
 
 from sqlalchemy.orm import joinedload
-
+from flask_login import current_user
 from app.db import with_session
 from app.flask_app import celery
+from env import DataHubSettings
 
 from const.query_execution import QueryExecutionStatus, StatementExecutionStatus
 from lib.logger import get_logger
@@ -14,8 +15,13 @@ from models.query_execution import (
     QueryExecutionError,
     StatementExecutionStreamLog,
 )
+from logic import user as user_logic
 from models.datadoc import DataCellQueryExecution, DataDocDataCell
 from models.admin import QueryEngine
+from models.access_request import AccessRequest
+from models.query_execution import QueryExecutionViewer
+from models.environment import Environment
+from lib.notify.utils import notify_user
 
 CLEAN_UP_TIME_THRESHOLD = 20 * 60  # 20 mins
 LOG = get_logger(__file__)
@@ -142,6 +148,17 @@ def get_query_execution_by_id(id, session=None):
 @with_session
 def get_query_execution_by_ids(ids, session=None):
     return session.query(QueryExecution).filter(QueryExecution.id.in_(ids)).all()
+
+
+@with_session
+def get_environment_by_execution_id(execution_id, session=None):
+    return (
+        session.query(Environment)
+        .join(QueryEngine)
+        .join(QueryExecution)
+        .filter(QueryExecution.id == execution_id)
+        .first()
+    )
 
 
 """
@@ -493,3 +510,137 @@ def clean_up_query_execution(dry_run=False, session=None):
                     LOG.info("Updating statement: {}".format(statement_execution.id))
     if should_commit and not dry_run:
         session.commit()
+
+
+"""
+    ---------------------------------------------------------------------------------------------------------
+    QUERY EXECUTION VIEWER
+    ---------------------------------------------------------------------------------------------------------
+"""
+
+
+@with_session
+def get_query_execution_viewers(execution_id, session=None):
+    return (
+        session.query(QueryExecutionViewer)
+        .filter_by(query_execution_id=execution_id)
+        .all()
+    )
+
+
+@with_session
+def get_query_execution_viewer(execution_id, uid, session=None):
+    return (
+        session.query(QueryExecutionViewer)
+        .filter_by(query_execution_id=execution_id, uid=uid)
+        .first()
+    )
+
+
+@with_session
+def create_query_execution_viewer(execution_id, uid, session=None, commit=True):
+    viewer = QueryExecutionViewer(query_execution_id=execution_id, uid=uid)
+    session.add(viewer)
+    if commit:
+        session.commit()
+    else:
+        session.flush()
+    session.refresh(viewer)
+    return viewer
+
+
+@with_session
+def delete_query_execution_viewer(id, session=None, commit=True):
+    session.query(QueryExecutionViewer).filter_by(id=id).delete()
+    if commit:
+        session.commit()
+
+
+"""
+    ----------------------------------------------------------------------------------------------------------
+    QUERY EXECUTION ACCESS REQUESTS
+    ---------------------------------------------------------------------------------------------------------
+"""
+
+
+@with_session
+def get_query_execution_access_requests_by_execution_id(execution_id, session=None):
+    return session.query(AccessRequest).filter_by(query_execution_id=execution_id).all()
+
+
+@with_session
+def get_query_execution_access_request_by_execution_id_uid(
+    execution_id, uid, session=None
+):
+    return (
+        session.query(AccessRequest)
+        .filter_by(query_execution_id=execution_id, uid=uid)
+        .first()
+    )
+
+
+@with_session
+def create_query_execution_access_request(execution_id, uid, commit=True, session=None):
+    access_request = AccessRequest(uid=uid, query_execution_id=execution_id)
+    session.add(access_request)
+    if commit:
+        session.commit()
+    else:
+        session.flush()
+    session.refresh(access_request)
+    return access_request
+
+
+@with_session
+def delete_query_execution_access_request(execution_id, uid, commit=True, session=None):
+    session.query(AccessRequest).filter_by(
+        query_execution_id=execution_id, uid=uid
+    ).delete()
+    if commit:
+        session.commit()
+
+
+"""
+    ----------------------------------------------------------------------------------------------------------
+    QUERY EXECUTION USER NOTIFICATIONS
+    ---------------------------------------------------------------------------------------------------------
+"""
+
+
+@with_session
+def send_query_execution_access_request_notification(execution_id, uid, session=None):
+    requestor = user_logic.get_user_by_id(uid, session=session)
+    query_execution = get_query_execution_by_id(execution_id, session=session)
+    environment = get_environment_by_execution_id(execution_id=execution_id)
+    execution_url = f"{DataHubSettings.PUBLIC_URL}/{environment.name}/query_execution/{execution_id}/"
+
+    owner = user_logic.get_user_by_id(query_execution.uid, session=session)
+    requestor_username = requestor.get_name()
+    notify_user(
+        user=owner,
+        template_name="query_execution_access_request",
+        template_params=dict(
+            username=requestor_username,
+            execution_id=execution_id,
+            execution_url=execution_url,
+        ),
+    )
+
+
+@with_session
+def send_query_execution_invitation_notification(execution_id, uid, session=None):
+    inviting_user = user_logic.get_user_by_id(current_user.id, session=session)
+    invited_user = user_logic.get_user_by_id(uid, session=session)
+    environment = get_environment_by_execution_id(execution_id=execution_id)
+    execution_url = f"{DataHubSettings.PUBLIC_URL}/{environment.name}/query_execution/{execution_id}/"
+
+    notify_user(
+        user=invited_user,
+        template_name="query_execution_invitation",
+        template_params=dict(
+            inviting_username=inviting_user.get_name(),
+            execution_id=execution_id,
+            execution_url=execution_url,
+        ),
+        session=session,
+    )
