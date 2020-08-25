@@ -274,7 +274,7 @@ export function fetchDataDocInfoByQueryExecutionId(
 export function fetchQueryExecutionIfNeeded(
     queryExecutionId: number
 ): ThunkResult<Promise<any>> {
-    return (dispatch, getState) => {
+    return async (dispatch, getState) => {
         const state = getState();
         const queryExecution =
             state.queryExecutions.queryExecutionById[queryExecutionId];
@@ -282,13 +282,12 @@ export function fetchQueryExecutionIfNeeded(
         if (!queryExecution || !queryExecution.statement_executions) {
             return dispatch(fetchQueryExecution(queryExecutionId));
         }
-        return new Promise(null);
     };
 }
 
 export function fetchQueryExecution(
     queryExecutionId: number
-): ThunkResult<Promise<void>> {
+): ThunkResult<Promise<IQueryExecution>> {
     return async (dispatch) => {
         const {
             data: execution,
@@ -296,6 +295,7 @@ export function fetchQueryExecution(
             data: IQueryExecution;
         } = await ds.fetch(`/query_execution/${queryExecutionId}/`);
         dispatch(receiveQueryExecution(execution));
+        return execution;
     };
 }
 
