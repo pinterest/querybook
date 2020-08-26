@@ -29,9 +29,9 @@ import {
 } from './types';
 
 interface IUpdateTableParams {
-    description: ContentState;
-    owner: string;
-    golden: boolean;
+    description?: ContentState;
+    owner?: string;
+    golden?: boolean;
 }
 
 const dataTableColumnSchema = new schema.Entity(

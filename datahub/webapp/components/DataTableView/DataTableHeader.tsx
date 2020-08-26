@@ -1,14 +1,19 @@
 import React from 'react';
 import { last } from 'lodash';
+import { useSelector } from 'react-redux';
 
+import ds from 'lib/datasource';
 import * as Utils from 'lib/utils';
 
 import { IMyUserInfo } from 'redux/user/types';
+import { IStoreState } from 'redux/store/types';
 import { IDataTable } from 'const/metastore';
+import { useDataFetch } from 'hooks/useDataFetch';
 
 import { ImpressionWidget } from 'components/ImpressionWidget/ImpressionWidget';
 import { BoardItemAddButton } from 'components/BoardItemAddButton/BoardItemAddButton';
 
+import { Button } from 'ui/Button/Button';
 import { Level } from 'ui/Level/Level';
 import { Tag } from 'ui/Tag/Tag';
 import { Title } from 'ui/Title/Title';
@@ -24,6 +29,12 @@ export interface IDataTableHeader {
     updateDataTableGolden: (golden: boolean) => any;
 }
 
+interface ITableOwnership {
+    data_table_id: number;
+    owner: string;
+    created_at: number;
+}
+
 export const DataTableHeader: React.FunctionComponent<IDataTableHeader> = ({
     table,
     tableName,
@@ -31,12 +42,42 @@ export const DataTableHeader: React.FunctionComponent<IDataTableHeader> = ({
 
     updateDataTableGolden,
 }) => {
-    const tableOwner = (table.owner || '').split('@')[0];
-    // const isTableOwner = false;
-
-    const shortTableName = Utils.generateNameFromKey(
-        last(((table || ({} as any)).name || '').split('.'))
+    const {
+        data: tableOwnerships,
+        forceFetch: loadTableOwnerships,
+    }: { data: ITableOwnership[]; forceFetch } = useDataFetch({
+        url: `/table/${table.id}/ownership/`,
+    });
+    const username: string = useSelector(
+        (state: IStoreState) => state.user.userInfoById[userInfo.uid].username
     );
+    const dbTableOwner = (table.owner || '').split('@')[0];
+
+    const isDBTableOwner = dbTableOwner === username;
+    const isTableOwner = (tableOwnerships || []).find(
+        (ownership) => ownership.owner === username
+    );
+
+    const shortTableName = React.useMemo(
+        () =>
+            Utils.generateNameFromKey(
+                last(((table || ({} as any)).name || '').split('.'))
+            ),
+        [table]
+    );
+
+    const createTableOwnership = React.useCallback(async () => {
+        await ds.save(`/table/${table.id}/ownership/`, {
+            uid: userInfo.uid,
+        });
+        loadTableOwnerships();
+    }, [table.id, userInfo.uid]);
+    const deleteTableOwnership = React.useCallback(async () => {
+        await ds.delete(`/table/${table.id}/ownership/`, {
+            uid: userInfo.uid,
+        });
+        loadTableOwnerships();
+    }, [table.id, userInfo.uid]);
 
     const titleDOM = (
         <Level className="mb4">
@@ -57,22 +98,39 @@ export const DataTableHeader: React.FunctionComponent<IDataTableHeader> = ({
         </Level>
     );
 
-    const ownerDOM = tableOwner ? (
-        <div className="DataTableHeader-item flex-row">
-            <span className="DataTableHeader-key mr8">by</span>
-            <UserBadge name={tableOwner} mini />
-        </div>
-    ) : null;
+    const ownershipDOM = (tableOwnerships || []).map((ownership) => (
+        <UserBadge name={ownership.owner} mini />
+    ));
 
-    // TODO: allow claim ownership - will add back when functionality is there
-    // const claimOwnerButton = tableId && isTableOwner && (
-    //     <Button
-    //         title={isTableOwner ? 'You are the table owner' : 'Edit Owner'}
-    //         icon={'edit-2'}
-    //         onClick={null}
-    //         borderless
-    //     />
-    // );
+    // Ownership cannot be removed if owner in db
+    const ownerDOM = (
+        <div className="DataTableHeader-owner">
+            {dbTableOwner || tableOwnerships?.length ? (
+                <div className="DataTableHeader-owner-list flex-row mb8">
+                    <span className="mr8">by</span>
+                    {dbTableOwner && <UserBadge name={dbTableOwner} mini />}
+                    {ownershipDOM}
+                </div>
+            ) : null}
+            {isDBTableOwner ? null : isTableOwner ? (
+                <Button
+                    title={'Remove table ownership'}
+                    icon="user-minus"
+                    type="soft"
+                    onClick={deleteTableOwnership}
+                    small
+                />
+            ) : (
+                <Button
+                    title={'Claim table'}
+                    icon="user-plus"
+                    type="soft"
+                    onClick={createTableOwnership}
+                    small
+                />
+            )}
+        </div>
+    );
 
     // TODO: add views badge && user badge back
     const viewsBadgeDOM = (

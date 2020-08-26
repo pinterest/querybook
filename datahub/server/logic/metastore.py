@@ -19,6 +19,7 @@ from models.metastore import (
 )
 from models.query_execution import QueryExecution
 from tasks.sync_elasticsearch import sync_elasticsearch
+from logic import user as user_logic
 
 
 @with_session
@@ -308,26 +309,38 @@ def get_table_information_by_table_id(table_id, session=None):
 
 
 @with_session
-def get_table_ownership_by_table_id(table_id, session=None):
+def get_all_table_ownerships_by_table_id(table_id, session=None):
     return (
         session.query(DataTableOwnership)
         .filter(DataTableOwnership.data_table_id == table_id)
+        .all()
+    )
+
+
+@with_session
+def get_table_ownership(table_id, owner, session=None):
+    return (
+        session.query(DataTableOwnership)
+        .filter(DataTableOwnership.data_table_id == table_id)
+        .filter(DataTableOwnership.owner == owner)
         .first()
     )
 
 
 @with_session
-def create_or_update_table_ownership_by_table_id(
-    table_id, owner, commit=True, session=None
-):
-    table_ownership = get_table_ownership_by_table_id(table_id, session=session)
+def create_table_ownership(table_id, uid, commit=True, session=None):
+    user = user_logic.get_user_by_id(uid)
+    table_ownership = get_table_ownership(
+        table_id=table_id, owner=user.username, session=session
+    )
 
     if table_ownership:
-        # Update
-        table_ownership.owner = owner
+        table_ownership.owner = user.username
         table_ownership.created_at = datetime.datetime.now()
     else:
-        table_ownership = DataTableOwnership(owner=owner, data_table_id=table_id)
+        table_ownership = DataTableOwnership(
+            owner=user.username, data_table_id=table_id
+        )
         session.add(table_ownership)
 
     if commit:
@@ -335,6 +348,25 @@ def create_or_update_table_ownership_by_table_id(
         update_es_tables_by_id(table_id)
     table_ownership.id
     return table_ownership
+
+
+@with_session
+def delete_table_ownership(table_id, uid, commit=True, session=None):
+    user = user_logic.get_user_by_id(uid)
+    table_ownership = get_table_ownership(
+        table_id=table_id, owner=user.username, session=session
+    )
+
+    if not table_ownership:
+        return
+
+    session.delete(table_ownership)
+
+    if commit:
+        session.commit()
+        update_es_tables_by_id(table_id)
+    else:
+        session.flush()
 
 
 @with_session

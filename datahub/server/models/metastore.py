@@ -278,6 +278,7 @@ class DataTableColumn(Base):
 
 class DataTableOwnership(Base):
     __tablename__ = "data_table_ownership"
+    sql.UniqueConstraint("data_table_id", "owner", name="unique_table_ownership",),
 
     id = sql.Column(sql.Integer, primary_key=True)
     data_table_id = sql.Column(
