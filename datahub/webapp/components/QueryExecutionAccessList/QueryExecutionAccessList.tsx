@@ -86,7 +86,7 @@ export const QueryExecutionAccessList: React.FunctionComponent<IQueryExecutionAc
 
     const accessRequestHeader =
         Object.values(accessRequestsByUid).length > 0 ? (
-            <div className="row-description mr16">
+            <div className="row-description mr16 mb4">
                 <Title size={6} subtitle>
                     Access Requests
                 </Title>
@@ -95,7 +95,7 @@ export const QueryExecutionAccessList: React.FunctionComponent<IQueryExecutionAc
 
     const viewersListHeader =
         Object.values(executionViewersByUid).length > 0 ? (
-            <div className="row-description mr16">
+            <div className="row-description mr16 mb4">
                 <Title size={6} subtitle>
                     Users With Access
                 </Title>
