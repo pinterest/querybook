@@ -144,7 +144,7 @@ def update_table(table_id, description=None, golden=None):
 
 
 @register("/table/<int:table_id>/ownership/", methods=["GET"])
-def get_all_table_ownerships(table_id):
+def get_all_table_ownerships_by_table_id(table_id):
     """ Add all table ownerships"""
     with DBSession() as session:
         verify_data_table_permission(table_id, session=session)
