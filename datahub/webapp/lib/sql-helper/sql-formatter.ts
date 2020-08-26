@@ -3,6 +3,10 @@ import SqlFormattor from 'sql-formatter';
 
 import { tokenize, IToken, getQueryLinePosition } from './sql-lexer';
 
+// If the token falls under these types then do not
+// format the insides of the token
+const skipTokenType = new Set(['TEMPLATED_TAG', 'TEMPLATED_BLOCK', 'URL']);
+
 const allowedStatement = new Set([
     'select',
     'insert',
@@ -30,7 +34,7 @@ function tokensToText(tokens: IToken[]) {
             }
         }
 
-        if (token.type === 'TEMPLATED_TAG') {
+        if (skipTokenType.has(token.type)) {
             if (!(token.string in templateTagToId)) {
                 templateTagToId[token.string] = uniqueId('__TEMPLATED_TAG_');
             }
@@ -148,7 +152,6 @@ export function format(
             return formattedStatement;
         }
     );
-
     return formattedStatements.reduce((acc, statement, index) => {
         return acc + '\n'.repeat(newLineBetweenStatement[index]) + statement;
     }, '');
