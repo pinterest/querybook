@@ -313,6 +313,7 @@ function accessRequestsByExecutionIdUserId(
         switch (action.type) {
             case '@@queryExecutions/RECEIVE_QUERY_EXECUTION_ACCESS_REQUESTS': {
                 const { executionId, requests } = action.payload;
+                console.log(action.payload);
                 draft[executionId] = arrayGroupByField(requests, 'uid');
                 return;
             }

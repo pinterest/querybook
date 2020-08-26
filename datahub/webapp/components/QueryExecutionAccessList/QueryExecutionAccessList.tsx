@@ -30,8 +30,8 @@ export const QueryExecutionAccessList: React.FunctionComponent<IQueryExecutionAc
     rejectQueryExecutionAccessRequest,
 }) => {
     const addUserRowDOM = (
-        <div className="query-execution-add-user-row">
-            <div className="user-select-wrapper">
+        <div className="query-execution-add-user-row horizontal-space-between">
+            <div className="user-select-wrapper mr8">
                 <UserSelect
                     onSelect={(uid) => {
                         if (
@@ -52,7 +52,7 @@ export const QueryExecutionAccessList: React.FunctionComponent<IQueryExecutionAc
         </div>
     );
     const shareHeader = (
-        <div className="row-description">
+        <div className="mb4">
             <Title size={6} subtitle>
                 Add User
             </Title>
@@ -86,7 +86,7 @@ export const QueryExecutionAccessList: React.FunctionComponent<IQueryExecutionAc
 
     const accessRequestHeader =
         Object.values(accessRequestsByUid).length > 0 ? (
-            <div className="row-description">
+            <div className="row-description mr16">
                 <Title size={6} subtitle>
                     Access Requests
                 </Title>
@@ -95,7 +95,7 @@ export const QueryExecutionAccessList: React.FunctionComponent<IQueryExecutionAc
 
     const viewersListHeader =
         Object.values(executionViewersByUid).length > 0 ? (
-            <div className="row-description">
+            <div className="row-description mr16">
                 <Title size={6} subtitle>
                     Users With Access
                 </Title>
@@ -109,6 +109,7 @@ export const QueryExecutionAccessList: React.FunctionComponent<IQueryExecutionAc
                     <UserBadge isOnline={undefined} uid={viewer.uid} />
                 </div>
                 <Button
+                    className="remove-button"
                     small
                     title="Remove"
                     onClick={() => deleteQueryExecutionViewer(viewer.uid)}
@@ -119,16 +120,14 @@ export const QueryExecutionAccessList: React.FunctionComponent<IQueryExecutionAc
 
     const contentDOM = (
         <div>
-            <div className="viewers-list-wrapper">
-                {accessRequestHeader}
-                {accessRequestListDOM}
-                {viewersListHeader}
-                {viewersListDOM}
-            </div>
+            {accessRequestHeader}
+            <div className="viewers-list-wrapper">{accessRequestListDOM}</div>
+            {viewersListHeader}
+            <div className="viewers-list-wrapper">{viewersListDOM}</div>
         </div>
     );
     return (
-        <div className="QueryExecutionAccessList">
+        <div className="QueryExecutionAccessList p8">
             {shareHeader}
             {addUserRowDOM}
             {contentDOM}

@@ -1,9 +1,9 @@
 import React from 'react';
-import './DataDocAccessRequestPermissionPicker.scss';
 import { DataDocPermission } from 'lib/data-doc/datadoc-permission';
 import { Popover } from 'ui/Popover/Popover';
 import { MenuItem, Menu } from 'ui/Menu/Menu';
 import { IconButton } from 'ui/Button/IconButton';
+import './DataDocAccessRequestPermissionPicker.scss';
 
 interface IPermissionPickerProp {
     uid: number;

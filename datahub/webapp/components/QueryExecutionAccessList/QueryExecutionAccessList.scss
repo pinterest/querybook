@@ -1,39 +1,29 @@
 .QueryExecutionAccessList {
     width: 400px;
-    padding: 0.5rem;
-
 
     .query-execution-add-user-row {
-        display: flex;
-        flex-direction: row;
-        justify-content: space-between;
-        align-items: center;
-        border-bottom: 1px solid var(--border-color);
-        padding-bottom: 1rem;
-        margin-bottom: 0.5rem;
-
-        .add-user-icon {
-            margin-top: 6px;
-            margin-right: 6px;
-        }
+        padding-bottom: 16px;
+        margin-bottom: 8px;
 
         .user-select-wrapper {
             flex: 1;
-            margin-right: 0.5rem;
             color: var(--invert-text-color);
         }
     }
 
+    .row-description {
+        border-bottom: var(--border);
+    }
 
     .viewers-list-wrapper {
         // Each row is 65px, show at most 5
         max-height: 320px;
         overflow-y: scroll;
-        padding-bottom: 0rem;
-        padding-top: 0rem;
+        padding-bottom: 0px;
+        padding-top: 0px;
 
         > div:not(:last-child) {
-            border-bottom: 1px solid var(--border-color);
+            border-bottom: var(--border);
         }
     }
 
@@ -41,6 +31,11 @@
         display: flex;
         justify-content: space-between;
         padding: 8px 0px;
+
+        .remove-button {
+            height: 32px;
+            align-self: center;
+        }
 
         .access-info {
             display: flex;

@@ -32,7 +32,9 @@ from logic import (
 )
 from logic.datadoc_permission import user_can_read
 from tasks.run_query import run_query_task
-from logic.query_execution_permission import verify_user_is_execution_owner
+from app.auth.permission import verify_query_execution_owner
+from models.query_execution import QueryExecutionViewer
+from models.access_request import AccessRequest
 
 
 @register("/query_execution/", methods=["POST"])
@@ -396,18 +398,18 @@ def get_templated_query_params(query: str):
 
 @register("/query_execution/<int:execution_id>/viewer/", methods=["POST"])
 def add_query_execution_viewer(execution_id, uid):
-    verify_user_is_execution_owner(execution_id)
+    verify_query_execution_owner(execution_id)
     with DBSession() as session:
-        viewer = logic.create_query_execution_viewer(
-            execution_id=execution_id, uid=uid, commit=False, session=session
+        viewer = QueryExecutionViewer.create(
+            {"query_execution_id": execution_id, "uid": uid},
+            commit=False,
+            session=session,
         )
-        access_request = logic.get_query_execution_access_request_by_execution_id_uid(
-            execution_id=execution_id, uid=uid, session=session
+        access_request = AccessRequest.get(
+            session=session, query_execution_id=execution_id, uid=uid
         )
         if access_request:
-            logic.delete_query_execution_access_request(
-                execution_id=execution_id, uid=uid, session=session, commit=False
-            ),
+            AccessRequest.delete(id=access_request.id, session=session, commit=False)
         logic.send_query_execution_invitation_notification(
             execution_id=execution_id, uid=uid, session=session
         )
@@ -417,33 +419,31 @@ def add_query_execution_viewer(execution_id, uid):
 
 @register("/query_execution_viewer/<int:id>/", methods=["DELETE"])
 def delete_query_execution_viewer(id):
-    return logic.delete_query_execution_viewer(id=id)
+    return QueryExecutionViewer.delete(id)
 
 
 @register("/query_execution/<int:execution_id>/viewer/", methods=["GET"])
 def get_query_execution_viewers(execution_id):
-    verify_user_is_execution_owner(execution_id)
-    return logic.get_query_execution_viewers(execution_id=execution_id)
+    verify_query_execution_owner(execution_id)
+    return QueryExecutionViewer.get_all(query_execution_id=execution_id)
 
 
 @register("/query_execution/<int:execution_id>/access_request/", methods=["GET"])
 def get_query_execution_access_requests(execution_id):
-    verify_user_is_execution_owner(execution_id)
-    return logic.get_query_execution_access_requests_by_execution_id(
-        execution_id=execution_id
-    )
+    verify_query_execution_owner(execution_id)
+    return AccessRequest.get_all(query_execution_id=execution_id)
 
 
 @register("/query_execution/<int:execution_id>/access_request/", methods=["POST"])
 def add_query_execution_access_request(execution_id):
     uid = current_user.id
     access_request_dict = None
-    existing_access_request = logic.get_query_execution_access_request_by_execution_id_uid(
-        execution_id=execution_id, uid=uid
+    existing_access_request = AccessRequest.get(
+        query_execution_id=execution_id, uid=uid
     )
     if not existing_access_request:
-        access_request = logic.create_query_execution_access_request(
-            execution_id=execution_id, uid=uid
+        access_request = AccessRequest.create(
+            {"query_execution_id": execution_id, "uid": uid}
         )
         access_request_dict = access_request.to_dict()
 
@@ -455,5 +455,7 @@ def add_query_execution_access_request(execution_id):
 
 @register("/query_execution/<int:execution_id>/access_request/", methods=["DELETE"])
 def delete_query_execution_access_request(execution_id, uid):
-    verify_user_is_execution_owner(execution_id)
-    logic.delete_query_execution_access_request(execution_id=execution_id, uid=uid)
+    verify_query_execution_owner(execution_id)
+    access_request = AccessRequest.get(query_execution_id=execution_id, uid=uid)
+    if access_request:
+        AccessRequest.delete(id=access_request.id)
