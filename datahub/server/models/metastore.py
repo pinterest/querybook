@@ -278,21 +278,21 @@ class DataTableColumn(Base):
 
 class DataTableOwnership(Base):
     __tablename__ = "data_table_ownership"
-    sql.UniqueConstraint("data_table_id", "owner", name="unique_table_ownership",),
+    sql.UniqueConstraint("data_table_id", "uid", name="unique_table_ownership",),
 
     id = sql.Column(sql.Integer, primary_key=True)
     data_table_id = sql.Column(
         sql.Integer, sql.ForeignKey("data_table.id", ondelete="CASCADE"), unique=True
     )
     created_at = sql.Column(sql.DateTime, default=now)
-    owner = sql.Column(sql.String(length=name_length))
+    uid = sql.Column(sql.Integer, sql.ForeignKey("user.id",), nullable=False)
 
     def to_dict(self):
         item = {
             "id": self.id,
             "data_table_id": self.data_table_id,
             "created_at": self.created_at,
-            "owner": self.owner,
+            "uid": self.uid,
         }
         return item
 

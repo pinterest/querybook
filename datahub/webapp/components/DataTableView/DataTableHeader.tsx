@@ -7,7 +7,7 @@ import * as Utils from 'lib/utils';
 
 import { IMyUserInfo } from 'redux/user/types';
 import { IStoreState } from 'redux/store/types';
-import { IDataTable } from 'const/metastore';
+import { IDataTable, ITableOwnership } from 'const/metastore';
 import { useDataFetch } from 'hooks/useDataFetch';
 
 import { ImpressionWidget } from 'components/ImpressionWidget/ImpressionWidget';
@@ -27,12 +27,6 @@ export interface IDataTableHeader {
     userInfo: IMyUserInfo;
     tableName: string;
     updateDataTableGolden: (golden: boolean) => any;
-}
-
-interface ITableOwnership {
-    data_table_id: number;
-    owner: string;
-    created_at: number;
 }
 
 export const DataTableHeader: React.FunctionComponent<IDataTableHeader> = ({
@@ -110,7 +104,7 @@ export const DataTableHeader: React.FunctionComponent<IDataTableHeader> = ({
             ) : null}
             {isDBTableOwner ? null : isTableOwner ? (
                 <Button
-                    title={'Remove table ownership'}
+                    title={'Remove my table ownership'}
                     icon="user-minus"
                     type="soft"
                     onClick={deleteTableOwnership}

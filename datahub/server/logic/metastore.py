@@ -335,13 +335,10 @@ def create_table_ownership(table_id, uid, commit=True, session=None):
     )
 
     if table_ownership:
-        table_ownership.owner = user.username
-        table_ownership.created_at = datetime.datetime.now()
-    else:
-        table_ownership = DataTableOwnership(
-            owner=user.username, data_table_id=table_id
-        )
-        session.add(table_ownership)
+        return
+
+    table_ownership = DataTableOwnership(owner=user.username, data_table_id=table_id)
+    session.add(table_ownership)
 
     if commit:
         session.commit()
