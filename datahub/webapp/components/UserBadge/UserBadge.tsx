@@ -46,7 +46,7 @@ export const UserBadge: React.FunctionComponent<IProps> = ({
             <span className="UserBadge mini">
                 <figure>{avatarDOM}</figure>
                 <span className="user-name">
-                    {userInfo.fullname ?? userName}
+                    {userInfo?.fullname ?? userName}
                 </span>
             </span>
         );
