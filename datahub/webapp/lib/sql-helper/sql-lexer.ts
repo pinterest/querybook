@@ -70,31 +70,72 @@ const contextSensitiveKeyWord = {
 
 function getTokenTypeMatcher(language: string) {
     const languageSetting = getLanguageSetting(language);
-    return {
-        NUMBER: [
-            /^0x[0-9a-f]+/, // HEX
-            /^x'[0-9a-f]+'/, // HEX
-            /^b'[01]+'/, // BINARY
-            /^0b[01]+/, // BINARY
-            /^[0-9]+(\.[0-9]+)?([e][-+]?[0-9])?/, // DECIMAL
-            /^{( )*(d|t|ts)( )*'[^']*'( )*}/, // DATE
-            /^{( )*(d|t|ts)( )*"[^"]*"( )*}/, // DATE
-            /^[0-9]+/,
-        ],
-        STRING: [/^"(\\.|[^"])*"/, /^'(\\.|[^'])*'/, /^['"]/],
-        COMMENT: [/^--.*/, /^\/\*/],
-        OPERATOR: [languageSetting.operatorChars],
-        PUNCTUATION: [languageSetting.punctuationChars],
-        BRACKET: [/^[\(\)\[\]]/],
-        SEMI: [/^;/],
-        COMMA: [/^,/],
-        VARIABLE: [/^(\w+|`.*`)(?:\.(\w+|`.*`)?)+/],
-        WORD: [/^\w+/],
-        TEMPLATED_TAG: languageSetting.placeholderVariable
-            ? [/^{{.*?}}/, languageSetting.placeholderVariable]
-            : [/^{{.*?}}/],
-        TEMPLATED_BLOCK: [/^{%.*?%}/, /^{#.*?#}/, /^#.*?/],
-    };
+    return [
+        {
+            name: 'NUMBER',
+            regex: [
+                /^0x[0-9a-f]+/, // HEX
+                /^x'[0-9a-f]+'/, // HEX
+                /^b'[01]+'/, // BINARY
+                /^0b[01]+/, // BINARY
+                /^[0-9]+(\.[0-9]+)?([e][-+]?[0-9])?/, // DECIMAL
+                /^{( )*(d|t|ts)( )*'[^']*'( )*}/, // DATE
+                /^{( )*(d|t|ts)( )*"[^"]*"( )*}/, // DATE
+                /^[0-9]+/,
+            ],
+        },
+        {
+            name: 'STRING',
+            regex: [/^"(\\.|[^"])*"/, /^'(\\.|[^'])*'/, /^['"]/],
+        },
+        {
+            name: 'COMMENT',
+            regex: [/^--.*/, /^\/\*/],
+        },
+        {
+            name: 'OPERATOR',
+            regex: [languageSetting.operatorChars],
+        },
+        {
+            name: 'PUNCTUATION',
+            regex: [languageSetting.punctuationChars],
+        },
+        {
+            name: 'BRACKET',
+            regex: [/^[\(\)\[\]]/],
+        },
+        {
+            name: 'SEMI',
+            regex: [/^;/],
+        },
+        {
+            name: 'COMMA',
+            regex: [/^,/],
+        },
+
+        {
+            name: 'TEMPLATED_TAG',
+            regex: languageSetting.placeholderVariable
+                ? [/^{{.*?}}/, languageSetting.placeholderVariable]
+                : [/^{{.*?}}/],
+        },
+        {
+            name: 'TEMPLATED_BLOCK',
+            regex: [/^{%.*?%}/, /^{#.*?#}/, /^#.*?/],
+        },
+        {
+            name: 'URL',
+            regex: [/^[a-z0-9]+:\/\/[A-Za-z0-9_.\-~/]+/],
+        },
+        {
+            name: 'VARIABLE',
+            regex: [/^(\w+|`.*`)(?:\.(\w+|`.*`)?)+/],
+        },
+        {
+            name: 'WORD',
+            regex: [/^\w+/],
+        },
+    ];
 }
 
 export interface IRange {
@@ -317,25 +358,26 @@ function makeTokenizer(language: string) {
         stream.eatSpace();
 
         let token: IToken = null;
-        const tokenFound = Object.keys(tokenTypes).some((tokenType) => {
-            const tokenRegexs = tokenTypes[tokenType];
-            return tokenRegexs.some((tokenRegex) => {
-                const match = stream.match(tokenRegex, true);
-                if (match) {
-                    const end = stream.pos;
-                    const start = stream.pos - match[0].length;
+        const tokenFound = tokenTypes.some(
+            ({ name: tokenType, regex: tokenRegexs }) => {
+                return tokenRegexs.some((tokenRegex) => {
+                    const match = stream.match(tokenRegex, true);
+                    if (match) {
+                        const end = stream.pos;
+                        const start = stream.pos - match[0].length;
 
-                    token = {
-                        type: tokenType,
-                        string: match[0],
-                        line: lineNum,
-                        start,
-                        end,
-                    };
-                    return true;
-                }
-            });
-        });
+                        token = {
+                            type: tokenType,
+                            string: match[0],
+                            line: lineNum,
+                            start,
+                            end,
+                        };
+                        return true;
+                    }
+                });
+            }
+        );
 
         if (tokenFound) {
             if (token.type === 'WORD') {

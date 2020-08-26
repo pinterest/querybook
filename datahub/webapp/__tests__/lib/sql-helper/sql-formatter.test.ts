@@ -1,4 +1,5 @@
 import { format } from 'lib/sql-helper/sql-formatter';
+import { tokenize } from 'lib/sql-helper/sql-lexer';
 
 const complexQuery =
     "select test_country.country_code, test_country.country_name, sum(users) as test_users from metrics test_metrics left join test.country test_country on test_country.country_code = test_metrics.country where a.dt = '2020-01-01' and test_country.country_code != 'US' group by 1, 2 order by 3 desc limit 30;";
@@ -30,6 +31,17 @@ test('formatting with templated hive query case', () => {
   *
 FROM
   \${ test };`
+    );
+});
+
+test('formatting with templated comment', () => {
+    expect(
+        format('select {{ test2 }} from {#comment#}{{ test }};', 'hive')
+    ).toBe(
+        `SELECT
+  {{ test2 }}
+FROM
+  {#comment#}{{ test }};`
     );
 });
 
@@ -91,4 +103,17 @@ ORDER BY
   3 DESC
 LIMIT
   30;`);
+});
+
+test('Hive Jar Path Case', () => {
+    expect(
+        format(
+            `DELETE JAR s3://test-bucket/hadoopusrs/prod/test-0.5-SNAPSHOT/test-0.5-SNAPSHOT.jar;
+ADD JAR s3://test-bucket/hadoopusrs/bob/test-0.5-SNAPSHOT/test-0.5-SNAPSHOT.jar;`,
+            'hive'
+        )
+    ).toBe(
+        `DELETE JAR s3://test-bucket/hadoopusrs/prod/test-0.5-SNAPSHOT/test-0.5-SNAPSHOT.jar;
+ADD JAR s3://test-bucket/hadoopusrs/bob/test-0.5-SNAPSHOT/test-0.5-SNAPSHOT.jar;`
+    );
 });
