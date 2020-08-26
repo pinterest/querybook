@@ -29,9 +29,8 @@ import {
 } from './types';
 
 interface IUpdateTableParams {
-    description?: ContentState;
-    owner?: string;
-    golden?: boolean;
+    description: ContentState;
+    golden: boolean;
 }
 
 const dataTableColumnSchema = new schema.Entity(
@@ -176,16 +175,13 @@ export function fetchDataTableByNameIfNeeded(
 
 export function updateDataTable(
     tableId: number,
-    { description, owner, golden }: IUpdateTableParams
+    { description, golden }: IUpdateTableParams
 ): ThunkResult<Promise<void>> {
     return async (dispatch, getState) => {
         const params: Partial<IDataTable> = {};
 
         if (description != null) {
             params.description = JSON.stringify(convertToRaw(description));
-        }
-        if (owner != null) {
-            params.owner = owner;
         }
         if (golden != null) {
             params.golden = golden;

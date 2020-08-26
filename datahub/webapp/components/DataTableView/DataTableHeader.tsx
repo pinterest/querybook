@@ -58,12 +58,8 @@ export const DataTableHeader: React.FunctionComponent<IDataTableHeader> = ({
         (ownership) => ownership.owner === username
     );
 
-    const shortTableName = React.useMemo(
-        () =>
-            Utils.generateNameFromKey(
-                last(((table || ({} as any)).name || '').split('.'))
-            ),
-        [table]
+    const shortTableName = Utils.generateNameFromKey(
+        last(((table || ({} as any)).name || '').split('.'))
     );
 
     const createTableOwnership = React.useCallback(async () => {
