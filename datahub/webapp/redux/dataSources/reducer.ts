@@ -11,6 +11,7 @@ const initialState: IDataSourcesState = {
     dataSchemasById: {},
     dataColumnsById: {},
     dataTableWarningById: {},
+    dataTableOwnershipById: {},
     dataTableNameToId: {},
     functionDocumentationByNameByLanguage: {},
     dataJobMetadataById: {},
@@ -177,6 +178,24 @@ function dataTableWarningById(
             const warning = action.payload;
             const { [warning.id]: _, ...newState } = state;
             return newState;
+        }
+        default: {
+            return state;
+        }
+    }
+}
+
+function dataTableOwnershipById(
+    state = initialState.dataTableOwnershipById,
+    action: DataSourcesAction
+) {
+    switch (action.type) {
+        case '@@dataSources/RECEIVE_DATA_TABLE_OWNERSHIP': {
+            const { tableId, ownerships } = action.payload;
+            return {
+                ...state,
+                [tableId]: ownerships,
+            };
         }
         default: {
             return state;
@@ -371,4 +390,5 @@ export default combineReducers({
     queryTopUsersByTableId,
     dataLineages,
     dataTableWarningById,
+    dataTableOwnershipById,
 });

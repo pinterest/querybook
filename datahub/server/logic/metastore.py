@@ -19,7 +19,6 @@ from models.metastore import (
 )
 from models.query_execution import QueryExecution
 from tasks.sync_elasticsearch import sync_elasticsearch
-from logic import user as user_logic
 
 
 @with_session
@@ -318,26 +317,23 @@ def get_all_table_ownerships_by_table_id(table_id, session=None):
 
 
 @with_session
-def get_table_ownership(table_id, owner, session=None):
+def get_table_ownership(table_id, uid, session=None):
     return (
         session.query(DataTableOwnership)
         .filter(DataTableOwnership.data_table_id == table_id)
-        .filter(DataTableOwnership.owner == owner)
+        .filter(DataTableOwnership.uid == uid)
         .first()
     )
 
 
 @with_session
 def create_table_ownership(table_id, uid, commit=True, session=None):
-    user = user_logic.get_user_by_id(uid)
-    table_ownership = get_table_ownership(
-        table_id=table_id, owner=user.username, session=session
-    )
+    table_ownership = get_table_ownership(table_id=table_id, uid=uid, session=session)
 
     if table_ownership:
         return
 
-    table_ownership = DataTableOwnership(owner=user.username, data_table_id=table_id)
+    table_ownership = DataTableOwnership(data_table_id=table_id, uid=uid)
     session.add(table_ownership)
 
     if commit:
@@ -349,10 +345,7 @@ def create_table_ownership(table_id, uid, commit=True, session=None):
 
 @with_session
 def delete_table_ownership(table_id, uid, commit=True, session=None):
-    user = user_logic.get_user_by_id(uid)
-    table_ownership = get_table_ownership(
-        table_id=table_id, owner=user.username, session=session
-    )
+    table_ownership = get_table_ownership(table_id=table_id, uid=uid, session=session)
 
     if not table_ownership:
         return

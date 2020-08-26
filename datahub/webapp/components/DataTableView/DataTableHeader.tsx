@@ -1,14 +1,17 @@
 import React from 'react';
 import { last } from 'lodash';
-import { useSelector } from 'react-redux';
+import { useSelector, useDispatch } from 'react-redux';
 
-import ds from 'lib/datasource';
 import * as Utils from 'lib/utils';
 
 import { IMyUserInfo } from 'redux/user/types';
-import { IStoreState } from 'redux/store/types';
-import { IDataTable, ITableOwnership } from 'const/metastore';
-import { useDataFetch } from 'hooks/useDataFetch';
+import { IStoreState, Dispatch } from 'redux/store/types';
+import { IDataTable } from 'const/metastore';
+import {
+    fetchDataTableOwnershipIfNeeded,
+    deleteDataTableOwnership,
+    createDataTableOwnership,
+} from 'redux/dataSources/action';
 
 import { ImpressionWidget } from 'components/ImpressionWidget/ImpressionWidget';
 import { BoardItemAddButton } from 'components/BoardItemAddButton/BoardItemAddButton';
@@ -36,38 +39,37 @@ export const DataTableHeader: React.FunctionComponent<IDataTableHeader> = ({
 
     updateDataTableGolden,
 }) => {
-    const {
-        data: tableOwnerships,
-        forceFetch: loadTableOwnerships,
-    }: { data: ITableOwnership[]; forceFetch } = useDataFetch({
-        url: `/table/${table.id}/ownership/`,
-    });
-    const username: string = useSelector(
-        (state: IStoreState) => state.user.userInfoById[userInfo.uid].username
+    const dispatch: Dispatch = useDispatch();
+    const loadTableOwnerships = React.useCallback(
+        () => dispatch(fetchDataTableOwnershipIfNeeded(table.id)),
+        [table.id]
     );
-    const dbTableOwner = (table.owner || '').split('@')[0];
+    const createTableOwnership = React.useCallback(
+        () => dispatch(createDataTableOwnership(table.id, userInfo.uid)),
+        [table.id, userInfo.uid]
+    );
+    const deleteTableOwnership = React.useCallback(
+        () => dispatch(deleteDataTableOwnership(table.id, userInfo.uid)),
+        [table.id, userInfo.uid]
+    );
 
+    const { username, tableOwnerships } = useSelector((state: IStoreState) => ({
+        username: state.user.userInfoById[userInfo.uid].username,
+        tableOwnerships: state.dataSources.dataTableOwnershipById[table.id],
+    }));
+    const dbTableOwner = (table.owner || '').split('@')[0];
     const isDBTableOwner = dbTableOwner === username;
     const isTableOwner = (tableOwnerships || []).find(
-        (ownership) => ownership.owner === username
+        (ownership) => ownership.uid === userInfo.uid
     );
 
     const shortTableName = Utils.generateNameFromKey(
         last(((table || ({} as any)).name || '').split('.'))
     );
 
-    const createTableOwnership = React.useCallback(async () => {
-        await ds.save(`/table/${table.id}/ownership/`, {
-            uid: userInfo.uid,
-        });
+    React.useEffect(() => {
         loadTableOwnerships();
-    }, [table.id, userInfo.uid]);
-    const deleteTableOwnership = React.useCallback(async () => {
-        await ds.delete(`/table/${table.id}/ownership/`, {
-            uid: userInfo.uid,
-        });
-        loadTableOwnerships();
-    }, [table.id, userInfo.uid]);
+    }, []);
 
     const titleDOM = (
         <Level className="mb4">
@@ -89,7 +91,7 @@ export const DataTableHeader: React.FunctionComponent<IDataTableHeader> = ({
     );
 
     const ownershipDOM = (tableOwnerships || []).map((ownership) => (
-        <UserBadge name={ownership.owner} mini />
+        <UserBadge uid={ownership.uid} mini />
     ));
 
     // Ownership cannot be removed if owner in db
