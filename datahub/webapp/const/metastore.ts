@@ -135,3 +135,9 @@ export interface ITopQueryUser {
     uid: number;
     count: number;
 }
+
+export interface IDataTableOwnership {
+    data_table_id: number;
+    uid: number;
+    created_at: number;
+}

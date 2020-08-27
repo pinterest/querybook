@@ -126,7 +126,7 @@ def add_data_job_metadata(
 
 
 @register("/table/<int:table_id>/", methods=["PUT"])
-def update_table(table_id, description=None, golden=None, owner=None):
+def update_table(table_id, description=None, golden=None):
     """Update a table"""
     with DBSession() as session:
         verify_data_table_permission(table_id, session=session)
@@ -134,12 +134,6 @@ def update_table(table_id, description=None, golden=None, owner=None):
             logic.update_table_information(
                 table_id, description=description, session=session
             )
-        if owner:
-            api_assert(
-                current_user.id == owner,
-                "You are only allowed to claim ownership for yourself",
-            )
-            logic.create_or_update_table_ownership_by_table_id(table_id, owner=owner)
         if golden is not None:
             api_assert(
                 current_user.is_admin, "Golden table can only be updated by Admin"
@@ -147,6 +141,43 @@ def update_table(table_id, description=None, golden=None, owner=None):
             logic.update_table(table_id, golden=golden, session=session)
 
         return logic.get_table_by_id(table_id, session=session)
+
+
+@register("/table/<int:table_id>/ownership/", methods=["GET"])
+def get_all_table_ownerships_by_table_id(table_id):
+    """ Add all table ownerships"""
+    with DBSession() as session:
+        verify_data_table_permission(table_id, session=session)
+
+        return logic.get_all_table_ownerships_by_table_id(
+            table_id=table_id, session=session
+        )
+
+
+@register("/table/<int:table_id>/ownership/", methods=["POST"])
+def create_table_ownership(table_id, uid):
+    """ Add a table ownership"""
+    with DBSession() as session:
+        verify_data_table_permission(table_id, session=session)
+        api_assert(
+            current_user.id == uid,
+            "You are only allowed to claim ownership for yourself",
+        )
+
+        return logic.create_table_ownership(table_id=table_id, uid=uid, session=session)
+
+
+@register("/table/<int:table_id>/ownership/", methods=["DELETE"])
+def remove_table_ownership(table_id, uid):
+    """ Remove a table ownership"""
+    with DBSession() as session:
+        verify_data_table_permission(table_id, session=session)
+        api_assert(
+            current_user.id == uid,
+            "You are only allowed to remove ownership for yourself",
+        )
+
+        return logic.delete_table_ownership(table_id=table_id, uid=uid, session=session)
 
 
 @register("/table/<int:table_id>/column/", methods=["GET"])

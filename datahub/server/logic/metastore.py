@@ -308,33 +308,55 @@ def get_table_information_by_table_id(table_id, session=None):
 
 
 @with_session
-def get_table_ownership_by_table_id(table_id, session=None):
+def get_all_table_ownerships_by_table_id(table_id, session=None):
     return (
         session.query(DataTableOwnership)
         .filter(DataTableOwnership.data_table_id == table_id)
+        .all()
+    )
+
+
+@with_session
+def get_table_ownership(table_id, uid, session=None):
+    return (
+        session.query(DataTableOwnership)
+        .filter(DataTableOwnership.data_table_id == table_id)
+        .filter(DataTableOwnership.uid == uid)
         .first()
     )
 
 
 @with_session
-def create_or_update_table_ownership_by_table_id(
-    table_id, owner, commit=True, session=None
-):
-    table_ownership = get_table_ownership_by_table_id(table_id, session=session)
+def create_table_ownership(table_id, uid, commit=True, session=None):
+    table_ownership = get_table_ownership(table_id=table_id, uid=uid, session=session)
 
     if table_ownership:
-        # Update
-        table_ownership.owner = owner
-        table_ownership.created_at = datetime.datetime.now()
-    else:
-        table_ownership = DataTableOwnership(owner=owner, data_table_id=table_id)
-        session.add(table_ownership)
+        return
+
+    table_ownership = DataTableOwnership(data_table_id=table_id, uid=uid)
+    session.add(table_ownership)
 
     if commit:
         session.commit()
         update_es_tables_by_id(table_id)
     table_ownership.id
     return table_ownership
+
+
+@with_session
+def delete_table_ownership(table_id, uid, commit=True, session=None):
+    table_ownership = get_table_ownership(table_id=table_id, uid=uid, session=session)
+
+    if not table_ownership:
+        return
+
+    session.delete(table_ownership)
+
+    if commit:
+        session.commit()
+        update_es_tables_by_id(table_id)
+    else:
+        session.flush()
 
 
 @with_session

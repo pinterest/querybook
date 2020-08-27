@@ -11,15 +11,25 @@
     }
     .DataTableHeader-bottom {
         .DataTableHeader-left {
-            .DataTableHeader-item .DataTableHeader-key {
-                font-weight: 600;
+            .DataTableHeader-owner {
+                .DataTableHeader-owner-list {
+                    flex-wrap: wrap;
+                    span:first-child {
+                        font-weight: 600;
+                    }
+                    .UserBadge {
+                        margin-right: 8px;
+                    }
+                }
+                .Button {
+                    margin-left: 0px;
+                }
             }
         }
         .DataTableHeader-right {
             display: flex;
             flex-direction: column;
             align-items: flex-end;
-            justify-content: space-between;
             .DataTableHeader-featured {
                 .golden-switch-text {
                     text-transform: uppercase;

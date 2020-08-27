@@ -13,6 +13,7 @@ import {
     DataTableWarningSeverity,
     ITopQueryUser,
     IPaginatedQuerySampleFilters,
+    IDataTableOwnership,
 } from 'const/metastore';
 import { convertRawToContentState } from 'lib/draft-js-utils';
 import ds from 'lib/datasource';
@@ -30,7 +31,6 @@ import {
 
 interface IUpdateTableParams {
     description: ContentState;
-    owner: string;
     golden: boolean;
 }
 
@@ -176,16 +176,13 @@ export function fetchDataTableByNameIfNeeded(
 
 export function updateDataTable(
     tableId: number,
-    { description, owner, golden }: IUpdateTableParams
+    { description, golden }: IUpdateTableParams
 ): ThunkResult<Promise<void>> {
     return async (dispatch, getState) => {
         const params: Partial<IDataTable> = {};
 
         if (description != null) {
             params.description = JSON.stringify(convertToRaw(description));
-        }
-        if (owner != null) {
-            params.owner = owner;
         }
         if (golden != null) {
             params.golden = golden;
@@ -762,6 +759,69 @@ export function deleteTableWarnings(
                 type: '@@dataSources/REMOVE_DATA_TABLE_WARNING',
                 payload: warning,
             });
+        }
+    };
+}
+
+function fetchDataTableOwnership(tableId: number): ThunkResult<Promise<any>> {
+    return async (dispatch) => {
+        const { data } = await ds.fetch<IDataTableOwnership[]>(
+            `/table/${tableId}/ownership/`,
+            {}
+        );
+        dispatch({
+            type: '@@dataSources/RECEIVE_DATA_TABLE_OWNERSHIPS',
+            payload: { tableId, ownerships: data },
+        });
+        return data;
+    };
+}
+
+export function fetchDataTableOwnershipIfNeeded(
+    tableId: number
+): ThunkResult<Promise<void>> {
+    return (dispatch, getState) => {
+        const state = getState();
+        const ownership =
+            state.dataSources.dataTableOwnershipByTableId[tableId];
+        if (!ownership) {
+            return dispatch(fetchDataTableOwnership(tableId));
+        }
+    };
+}
+
+export function createDataTableOwnership(
+    tableId: number,
+    uid: number
+): ThunkResult<Promise<any>> {
+    return async (dispatch) => {
+        try {
+            const { data } = await ds.save(`/table/${tableId}/ownership/`, {
+                uid,
+            });
+            dispatch({
+                type: '@@dataSources/RECEIVE_DATA_TABLE_OWNERSHIP',
+                payload: { tableId, ownership: data },
+            });
+            return data;
+        } catch (e) {
+            console.error(e);
+        }
+    };
+}
+export function deleteDataTableOwnership(
+    tableId: number,
+    uid: number
+): ThunkResult<Promise<void>> {
+    return async (dispatch) => {
+        try {
+            await ds.delete(`/table/${tableId}/ownership/`, { uid });
+            dispatch({
+                type: '@@dataSources/REMOVE_DATA_TABLE_OWNERSHIP',
+                payload: { tableId, uid },
+            });
+        } catch (e) {
+            console.error(e);
         }
     };
 }
