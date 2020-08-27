@@ -11,7 +11,7 @@ const initialState: IDataSourcesState = {
     dataSchemasById: {},
     dataColumnsById: {},
     dataTableWarningById: {},
-    dataTableOwnershipById: {},
+    dataTableOwnershipByTableId: {},
     dataTableNameToId: {},
     functionDocumentationByNameByLanguage: {},
     dataJobMetadataById: {},
@@ -185,8 +185,8 @@ function dataTableWarningById(
     }
 }
 
-function dataTableOwnershipById(
-    state = initialState.dataTableOwnershipById,
+function dataTableOwnershipByTableId(
+    state = initialState.dataTableOwnershipByTableId,
     action: DataSourcesAction
 ) {
     switch (action.type) {
@@ -195,6 +195,23 @@ function dataTableOwnershipById(
             return {
                 ...state,
                 [tableId]: ownerships,
+            };
+        }
+        case '@@dataSources/ADD_DATA_TABLE_OWNERSHIP': {
+            const { tableId, ownership } = action.payload;
+            return {
+                ...state,
+                [tableId]: [...state[tableId], ownership],
+            };
+        }
+        case '@@dataSources/REMOVE_DATA_TABLE_OWNERSHIP': {
+            const { tableId, uid } = action.payload;
+            const updatedState = state[tableId].filter(
+                (ownership) => ownership.uid !== uid
+            );
+            return {
+                ...state,
+                [tableId]: updatedState,
             };
         }
         default: {
@@ -390,5 +407,5 @@ export default combineReducers({
     queryTopUsersByTableId,
     dataLineages,
     dataTableWarningById,
-    dataTableOwnershipById,
+    dataTableOwnershipByTableId,
 });

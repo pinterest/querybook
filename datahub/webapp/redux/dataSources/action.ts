@@ -13,6 +13,7 @@ import {
     DataTableWarningSeverity,
     ITopQueryUser,
     IPaginatedQuerySampleFilters,
+    IDataTableOwnership,
 } from 'const/metastore';
 import { convertRawToContentState } from 'lib/draft-js-utils';
 import ds from 'lib/datasource';
@@ -764,7 +765,10 @@ export function deleteTableWarnings(
 
 function fetchDataTableOwnership(tableId: number): ThunkResult<Promise<any>> {
     return async (dispatch) => {
-        const { data } = await ds.fetch(`/table/${tableId}/ownership/`, {});
+        const { data } = await ds.fetch<IDataTableOwnership[]>(
+            `/table/${tableId}/ownership/`,
+            {}
+        );
         dispatch({
             type: '@@dataSources/RECEIVE_DATA_TABLE_OWNERSHIP',
             payload: { tableId, ownerships: data },
@@ -778,7 +782,8 @@ export function fetchDataTableOwnershipIfNeeded(
 ): ThunkResult<Promise<void>> {
     return (dispatch, getState) => {
         const state = getState();
-        const ownership = state.dataSources.dataTableOwnershipById[tableId];
+        const ownership =
+            state.dataSources.dataTableOwnershipByTableId[tableId];
         if (!ownership) {
             return dispatch(fetchDataTableOwnership(tableId));
         }
@@ -788,13 +793,16 @@ export function fetchDataTableOwnershipIfNeeded(
 export function createDataTableOwnership(
     tableId: number,
     uid: number
-): ThunkResult<Promise<void>> {
+): ThunkResult<Promise<any>> {
     return async (dispatch) => {
         try {
             const { data } = await ds.save(`/table/${tableId}/ownership/`, {
                 uid,
             });
-            dispatch(fetchDataTableOwnership(tableId));
+            dispatch({
+                type: '@@dataSources/ADD_DATA_TABLE_OWNERSHIP',
+                payload: { tableId, ownership: data },
+            });
             return data;
         } catch (e) {
             console.error(e);
@@ -807,11 +815,11 @@ export function deleteDataTableOwnership(
 ): ThunkResult<Promise<void>> {
     return async (dispatch) => {
         try {
-            const { data } = await ds.delete(`/table/${tableId}/ownership/`, {
-                uid,
+            await ds.delete(`/table/${tableId}/ownership/`, { uid });
+            dispatch({
+                type: '@@dataSources/REMOVE_DATA_TABLE_OWNERSHIP',
+                payload: { tableId, uid },
             });
-            dispatch(fetchDataTableOwnership(tableId));
-            return data;
         } catch (e) {
             console.error(e);
         }

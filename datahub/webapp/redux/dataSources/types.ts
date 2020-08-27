@@ -142,7 +142,21 @@ export interface IReceiveDataTableOwnership extends Action {
     type: '@@dataSources/RECEIVE_DATA_TABLE_OWNERSHIP';
     payload: {
         tableId: number;
-        ownerships: IDataTableOwnership;
+        ownerships: IDataTableOwnership[];
+    };
+}
+export interface IAddDataTableOwnership extends Action {
+    type: '@@dataSources/ADD_DATA_TABLE_OWNERSHIP';
+    payload: {
+        tableId: number;
+        ownership: IDataTableOwnership;
+    };
+}
+export interface IRemoveDataTableOwnership extends Action {
+    type: '@@dataSources/REMOVE_DATA_TABLE_OWNERSHIP';
+    payload: {
+        tableId: number;
+        uid: number;
     };
 }
 
@@ -162,6 +176,8 @@ export type DataSourcesAction =
     | IReceiveDataTableWarning
     | IRemoveDataTableWarning
     | IReceiveDataTableOwnership
+    | IAddDataTableOwnership
+    | IRemoveDataTableOwnership
     | IReceiveTopQueryUsersAction;
 
 export type ThunkResult<R> = ThunkAction<
@@ -178,7 +194,7 @@ export interface IDataSourcesState {
     dataSchemasById: Record<number, IDataSchema>;
     dataColumnsById: Record<number, IDataColumn>;
     dataTableWarningById: Record<number, IDataTableWarning>;
-    dataTableOwnershipById: Record<number, IDataTableOwnership[]>;
+    dataTableOwnershipByTableId: Record<number, IDataTableOwnership[]>;
 
     // By MetastoreId -> name -> tableId
     dataTableNameToId: Record<number, Record<string, number>>;

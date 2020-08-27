@@ -55,7 +55,8 @@ export const DataTableHeader: React.FunctionComponent<IDataTableHeader> = ({
 
     const { username, tableOwnerships } = useSelector((state: IStoreState) => ({
         username: state.user.userInfoById[userInfo.uid].username,
-        tableOwnerships: state.dataSources.dataTableOwnershipById[table.id],
+        tableOwnerships:
+            state.dataSources.dataTableOwnershipByTableId[table.id],
     }));
     const dbTableOwner = (table.owner || '').split('@')[0];
     const isDBTableOwner = dbTableOwner === username;
