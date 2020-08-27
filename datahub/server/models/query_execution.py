@@ -179,9 +179,13 @@ class QueryExecutionViewer(CRUDMixin, Base):
     query_execution_id = sql.Column(
         sql.Integer, sql.ForeignKey("query_execution.id", ondelete="CASCADE")
     )
-    uid = sql.Column(sql.Integer, sql.ForeignKey("user.id", ondelete="CASCADE"))
-    user = relationship("User", uselist=False)
-    created_by = sql.Column(sql.Integer)
+    uid = sql.Column(
+        sql.Integer, sql.ForeignKey("user.id", ondelete="CASCADE"), nullable=False
+    )
+    user = relationship("User", foreign_keys="QueryExecutionViewer.uid")
+
+    created_by = sql.Column(sql.Integer, sql.ForeignKey("user.id"), nullable=False)
+    creator = relationship("User", foreign_keys="QueryExecutionViewer.created_by")
     created_at = sql.Column(sql.DateTime, default=now, nullable=False)
     query_execution = relationship(
         "QueryExecution", uselist=False, backref=backref("viewers")
