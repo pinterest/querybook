@@ -139,22 +139,14 @@ export interface IRemoveDataTableWarning extends Action {
     payload: IDataTableWarning;
 }
 
-export interface IReceiveDataTableStats extends Action {
-    type: '@@dataSources/RECEIVE_DATA_TABLE_STATS';
-    payload: {
-        tableId: number;
-        stat: ITableStats[];
-    };
-}
-
-export interface IReceiveDataTableOwnership extends Action {
+export interface IReceiveDataTableOwnerships extends Action {
     type: '@@dataSources/RECEIVE_DATA_TABLE_OWNERSHIPS';
     payload: {
         tableId: number;
         ownerships: IDataTableOwnership[];
     };
 }
-export interface IAddDataTableOwnership extends Action {
+export interface IReceiveDataTableOwnership extends Action {
     type: '@@dataSources/RECEIVE_DATA_TABLE_OWNERSHIP';
     payload: {
         tableId: number;
@@ -184,9 +176,8 @@ export type DataSourcesAction =
     | IReceiveFunctionDocumentationAction
     | IReceiveDataTableWarning
     | IRemoveDataTableWarning
+    | IReceiveDataTableOwnerships
     | IReceiveDataTableOwnership
-    | IReceiveDataTableStats
-    | IAddDataTableOwnership
     | IRemoveDataTableOwnership
     | IReceiveTopQueryUsersAction;
 

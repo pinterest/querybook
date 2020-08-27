@@ -15,6 +15,7 @@ import querySnippets from '../querySnippets/reducer';
 import queryView from '../queryView/reducer';
 import search from '../search/reducer';
 import user from '../user/reducer';
+import tag from '../tag/reducer';
 
 export default combineReducers({
     adhocQuery,
@@ -32,4 +33,5 @@ export default combineReducers({
     queryView,
     search,
     user,
+    tag,
 });
