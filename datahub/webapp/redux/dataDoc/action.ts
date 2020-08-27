@@ -9,8 +9,9 @@ import {
     IDataDoc,
     CELL_TYPE,
     IDataDocEditor,
-    IAccessRequest,
 } from 'const/datadoc';
+import { IAccessRequest } from 'const/accessRequest';
+
 import ds from 'lib/datasource';
 import {
     DataDocSaveManager,

@@ -1,7 +1,6 @@
 from datetime import datetime
 
 from sqlalchemy.orm import joinedload
-
 from app.db import with_session
 from app.flask_app import celery
 
@@ -16,6 +15,7 @@ from models.query_execution import (
 )
 from models.datadoc import DataCellQueryExecution, DataDocDataCell
 from models.admin import QueryEngine
+from models.environment import Environment
 
 CLEAN_UP_TIME_THRESHOLD = 20 * 60  # 20 mins
 LOG = get_logger(__file__)
@@ -142,6 +142,17 @@ def get_query_execution_by_id(id, session=None):
 @with_session
 def get_query_execution_by_ids(ids, session=None):
     return session.query(QueryExecution).filter(QueryExecution.id.in_(ids)).all()
+
+
+@with_session
+def get_environment_by_execution_id(execution_id, session=None):
+    return (
+        session.query(Environment)
+        .join(QueryEngine)
+        .join(QueryExecution)
+        .filter(QueryExecution.id == execution_id)
+        .first()
+    )
 
 
 """
@@ -493,3 +504,10 @@ def clean_up_query_execution(dry_run=False, session=None):
                     LOG.info("Updating statement: {}".format(statement_execution.id))
     if should_commit and not dry_run:
         session.commit()
+
+
+"""
+    ----------------------------------------------------------------------------------------------------------
+    QUERY EXECUTION USER NOTIFICATIONS
+    ---------------------------------------------------------------------------------------------------------
+"""

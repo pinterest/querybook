@@ -13,14 +13,18 @@ import {
     IReceiveStatementExecutionUpdateAction,
     IQueryExecution,
     IStatementExecution,
+    IReceiveQueryExecutionAccessRequestsAction,
+    IReceiveQueryExecutionViewersAction,
 } from './types';
 import { queryEngineSelector } from 'redux/queryEngine/selector';
-import { QueryExecutionStatus } from 'const/queryExecution';
-import dataDocSocket from 'lib/data-doc/datadoc-socketio';
 import {
-    queryCellExecutionManager,
-    queryExecutionLoadManager,
-} from 'lib/batch/query-execution-manager';
+    QueryExecutionStatus,
+    IQueryExecutionViewer,
+} from 'const/queryExecution';
+import { IAccessRequest } from 'const/accessRequest';
+
+import dataDocSocket from 'lib/data-doc/datadoc-socketio';
+import { queryCellExecutionManager } from 'lib/batch/query-execution-manager';
 
 const statementExecutionSchema = new schema.Entity('statementExecution');
 const dataCellSchema = new schema.Entity('dataCell');
@@ -29,6 +33,113 @@ const queryExecutionSchema = new schema.Entity('queryExecution', {
     data_cell: dataCellSchema,
 });
 export const queryExecutionSchemaList = [queryExecutionSchema];
+
+export function addQueryExecutionAccessRequest(
+    executionId: number
+): ThunkResult<Promise<IAccessRequest>> {
+    return async (dispatch) => {
+        const {
+            data,
+        }: {
+            data: IAccessRequest;
+        } = await ds.save(
+            `/query_execution/${executionId}/access_request/`,
+            {}
+        );
+        if (data != null) {
+            dispatch({
+                type:
+                    '@@queryExecutions/RECEIVE_QUERY_EXECUTION_ACCESS_REQUEST',
+                payload: {
+                    executionId,
+                    request: data,
+                },
+            });
+        }
+        return data;
+    };
+}
+
+export function rejectQueryExecutionAccessRequest(
+    executionId: number,
+    uid: number
+): ThunkResult<Promise<void>> {
+    return async (dispatch, getState) => {
+        const accessRequest = (getState().queryExecutions
+            .accessRequestsByExecutionIdUserId[executionId] || {})[uid];
+        if (accessRequest) {
+            await ds.delete(`/query_execution/${executionId}/access_request/`, {
+                uid: uid,
+            });
+
+            dispatch({
+                type: '@@queryExecutions/REMOVE_QUERY_EXECUTION_ACCESS_REQUEST',
+                payload: {
+                    executionId,
+                    uid,
+                },
+            });
+        }
+    };
+}
+
+export function addQueryExecutionViewer(
+    executionId: number,
+    uid: number
+): ThunkResult<Promise<IQueryExecutionViewer>> {
+    return async (dispatch, getState) => {
+        const request = (getState().queryExecutions
+            .accessRequestsByExecutionIdUserId[executionId] || {})[uid];
+
+        const {
+            data,
+        }: {
+            data: IQueryExecutionViewer;
+        } = await ds.save(`/query_execution/${executionId}/viewer/`, {
+            uid: uid,
+        });
+        if (request) {
+            dispatch({
+                type: '@@queryExecutions/REMOVE_QUERY_EXECUTION_ACCESS_REQUEST',
+                payload: {
+                    executionId,
+                    uid,
+                },
+            });
+        }
+        dispatch({
+            type: '@@queryExecutions/RECEIVE_QUERY_EXECUTION_VIEWER',
+            payload: {
+                executionId,
+                viewer: data,
+            },
+        });
+
+        return data;
+    };
+}
+
+export function deleteQueryExecutionViewer(
+    executionId: number,
+    uid: number
+): ThunkResult<Promise<void>> {
+    return async (dispatch, getState) => {
+        const viewer = (getState().queryExecutions.viewersByExecutionIdUserId[
+            executionId
+        ] || {})[uid];
+        if (viewer) {
+            await ds.delete(`/query_execution_viewer/${viewer.id}/`, {});
+
+            dispatch({
+                type: '@@queryExecutions/REMOVE_QUERY_EXECUTION_VIEWER',
+                payload: {
+                    executionId,
+                    uid,
+                },
+            });
+        }
+    };
+}
 
 export function receiveQueryExecutionsByCell(
     queryExecutions: IQueryExecution[],
@@ -66,6 +177,32 @@ export function receiveQueryExecution(
             queryExecutionById,
             statementExecutionById,
             dataCellId,
+        },
+    };
+}
+
+export function receiveQueryExecutionViewers(
+    executionId: number,
+    viewers: IQueryExecutionViewer[]
+): IReceiveQueryExecutionViewersAction {
+    return {
+        type: '@@queryExecutions/RECEIVE_QUERY_EXECUTION_VIEWERS',
+        payload: {
+            executionId,
+            viewers,
+        },
+    };
+}
+
+export function receiveQueryExecutionAccessRequests(
+    executionId: number,
+    requests: IAccessRequest[]
+): IReceiveQueryExecutionAccessRequestsAction {
+    return {
+        type: '@@queryExecutions/RECEIVE_QUERY_EXECUTION_ACCESS_REQUESTS',
+        payload: {
+            executionId,
+            requests,
         },
     };
 }
@@ -134,15 +271,10 @@ export function fetchDataDocInfoByQueryExecutionId(
     };
 }
 
-const fetchingQueryExecutionIds = new Set<number>();
 export function fetchQueryExecutionIfNeeded(
     queryExecutionId: number
-): ThunkResult<Promise<void>> {
-    return (dispatch, getState) => {
-        if (fetchingQueryExecutionIds.has(queryExecutionId)) {
-            return; // already fetching
-        }
-
+): ThunkResult<Promise<any>> {
+    return async (dispatch, getState) => {
         const state = getState();
         const queryExecution =
             state.queryExecutions.queryExecutionById[queryExecutionId];
@@ -155,16 +287,45 @@ export function fetchQueryExecutionIfNeeded(
 
 function fetchQueryExecution(
     queryExecutionId: number
-): ThunkResult<Promise<void>> {
-    return async (dispatch, getState) => {
-        fetchingQueryExecutionIds.add(queryExecutionId);
-
-        await queryExecutionLoadManager.loadQueryExecution(
-            queryExecutionId,
-            dispatch
+): ThunkResult<Promise<IQueryExecution>> {
+    return async (dispatch) => {
+        const { data: execution } = await ds.fetch<IQueryExecution>(
+            `/query_execution/${queryExecutionId}/`
         );
+        dispatch(receiveQueryExecution(execution));
+        return execution;
+    };
+}
 
-        fetchingQueryExecutionIds.delete(queryExecutionId);
+export function fetchQueryExecutionAccessRequests(
+    queryExecutionId: number
+): ThunkResult<Promise<void>> {
+    return async (dispatch) => {
+        const { data: queryExecutionAccessRequests } = await ds.fetch<
+            IAccessRequest[]
+        >(`/query_execution/${queryExecutionId}/access_request/`);
+        dispatch(
+            receiveQueryExecutionAccessRequests(
+                queryExecutionId,
+                queryExecutionAccessRequests
+            )
+        );
+    };
+}
+
+export function fetchQueryExecutionViewers(
+    queryExecutionId: number
+): ThunkResult<Promise<void>> {
+    return async (dispatch) => {
+        const { data: queryExecutionViewers } = await ds.fetch<
+            IQueryExecutionViewer[]
+        >(`/query_execution/${queryExecutionId}/viewer/`);
+        dispatch(
+            receiveQueryExecutionViewers(
+                queryExecutionId,
+                queryExecutionViewers
+            )
+        );
     };
 }
 

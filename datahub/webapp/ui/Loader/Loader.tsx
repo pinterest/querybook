@@ -60,8 +60,8 @@ export const Loader: React.FunctionComponent<ILoaderProps> = ({
                     setIsLoading(false);
                 } catch (errorObj) {
                     console.error(errorObj);
-                    setHasError(true);
                     setErrorObj(errorObj);
+                    setHasError(true);
                 }
             })();
         }

@@ -8,11 +8,12 @@ from const.datasources import (
     RESOURCE_NOT_FOUND_STATUS_CODE,
 )
 from logic import admin as admin_logic
-
 from models.admin import QueryEngine, QueryMetastore
 from models.query_execution import QueryExecution, StatementExecution
 from models.metastore import DataSchema, DataTable, DataTableColumn
 from models.datadoc import DataDoc, DataCell, DataDocDataCell
+from logic.query_execution_permission import user_can_access_query_execution
+from logic import query_execution as query_execution_logic
 
 
 def abort_404():
@@ -44,6 +45,7 @@ def verify_query_execution_permission(query_execution_id, session=None):
         .filter(QueryExecution.id == query_execution_id)
     ]
     verify_environment_permission(environment_ids)
+    verify_query_execution_access(query_execution_id)
 
 
 @with_session
@@ -152,3 +154,26 @@ def verify_data_cells_permission(cell_ids: List, session=None):
         .filter(DataCell.id.in_(cell_ids))
     ]
     verify_environment_permission(environment_ids)
+
+
+@with_session
+def verify_query_execution_owner(execution_id, session=None):
+    execution = query_execution_logic.get_query_execution_by_id(
+        execution_id, session=session
+    )
+    api_assert(
+        current_user.id == getattr(execution, "uid", None),
+        "Action can only be preformed by execution owner",
+    )
+
+
+@with_session
+def verify_query_execution_access(execution_id, session=None):
+    execution = query_execution_logic.get_query_execution_by_id(
+        execution_id, session=session
+    )
+    api_assert(
+        user_can_access_query_execution(execution=execution, uid=current_user.id),
+        "CANNOT_ACCESS_QUERY_EXECUTION",
+        403,
+    )
