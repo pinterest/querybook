@@ -770,7 +770,7 @@ function fetchDataTableOwnership(tableId: number): ThunkResult<Promise<any>> {
             {}
         );
         dispatch({
-            type: '@@dataSources/RECEIVE_DATA_TABLE_OWNERSHIP',
+            type: '@@dataSources/RECEIVE_DATA_TABLE_OWNERSHIPS',
             payload: { tableId, ownerships: data },
         });
         return data;
@@ -800,7 +800,7 @@ export function createDataTableOwnership(
                 uid,
             });
             dispatch({
-                type: '@@dataSources/ADD_DATA_TABLE_OWNERSHIP',
+                type: '@@dataSources/RECEIVE_DATA_TABLE_OWNERSHIP',
                 payload: { tableId, ownership: data },
             });
             return data;

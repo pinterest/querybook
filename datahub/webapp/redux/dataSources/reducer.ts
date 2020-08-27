@@ -190,14 +190,14 @@ function dataTableOwnershipByTableId(
     action: DataSourcesAction
 ) {
     switch (action.type) {
-        case '@@dataSources/RECEIVE_DATA_TABLE_OWNERSHIP': {
+        case '@@dataSources/RECEIVE_DATA_TABLE_OWNERSHIPS': {
             const { tableId, ownerships } = action.payload;
             return {
                 ...state,
                 [tableId]: ownerships,
             };
         }
-        case '@@dataSources/ADD_DATA_TABLE_OWNERSHIP': {
+        case '@@dataSources/RECEIVE_DATA_TABLE_OWNERSHIP': {
             const { tableId, ownership } = action.payload;
             return {
                 ...state,

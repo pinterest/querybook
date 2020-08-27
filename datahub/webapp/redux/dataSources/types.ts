@@ -139,14 +139,14 @@ export interface IRemoveDataTableWarning extends Action {
 }
 
 export interface IReceiveDataTableOwnership extends Action {
-    type: '@@dataSources/RECEIVE_DATA_TABLE_OWNERSHIP';
+    type: '@@dataSources/RECEIVE_DATA_TABLE_OWNERSHIPS';
     payload: {
         tableId: number;
         ownerships: IDataTableOwnership[];
     };
 }
 export interface IAddDataTableOwnership extends Action {
-    type: '@@dataSources/ADD_DATA_TABLE_OWNERSHIP';
+    type: '@@dataSources/RECEIVE_DATA_TABLE_OWNERSHIP';
     payload: {
         tableId: number;
         ownership: IDataTableOwnership;
