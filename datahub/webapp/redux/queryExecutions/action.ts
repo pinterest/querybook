@@ -285,15 +285,13 @@ export function fetchQueryExecutionIfNeeded(
     };
 }
 
-export function fetchQueryExecution(
+function fetchQueryExecution(
     queryExecutionId: number
 ): ThunkResult<Promise<IQueryExecution>> {
     return async (dispatch) => {
-        const {
-            data: execution,
-        }: {
-            data: IQueryExecution;
-        } = await ds.fetch(`/query_execution/${queryExecutionId}/`);
+        const { data: execution } = await ds.fetch(
+            `/query_execution/${queryExecutionId}/`
+        );
         dispatch(receiveQueryExecution(execution));
         return execution;
     };
@@ -303,11 +301,7 @@ export function fetchQueryExecutionAccessRequests(
     queryExecutionId: number
 ): ThunkResult<Promise<void>> {
     return async (dispatch) => {
-        const {
-            data: queryExecutionAccessRequests,
-        }: {
-            data: IAccessRequest[];
-        } = await ds.fetch(
+        const { data: queryExecutionAccessRequests } = await ds.fetch(
             `/query_execution/${queryExecutionId}/access_request/`
         );
         dispatch(
@@ -323,11 +317,9 @@ export function fetchQueryExecutionViewers(
     queryExecutionId: number
 ): ThunkResult<Promise<void>> {
     return async (dispatch) => {
-        const {
-            data: queryExecutionViewers,
-        }: {
-            data: IQueryExecutionViewer[];
-        } = await ds.fetch(`/query_execution/${queryExecutionId}/viewer/`);
+        const { data: queryExecutionViewers } = await ds.fetch(
+            `/query_execution/${queryExecutionId}/viewer/`
+        );
         dispatch(
             receiveQueryExecutionViewers(
                 queryExecutionId,

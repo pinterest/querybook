@@ -1,9 +1,8 @@
-"""Add Query Execution Viewer table
+"""Add Query Execution Viewer Table
 
-
-Revision ID: c15cc6c6bee7
+Revision ID: a010058f3340
 Revises: 178d6726310a
-Create Date: 2020-08-25 15:40:46.215244
+Create Date: 2020-08-27 01:16:41.540124
 
 """
 from alembic import op
@@ -11,7 +10,7 @@ import sqlalchemy as sa
 
 
 # revision identifiers, used by Alembic.
-revision = 'c15cc6c6bee7'
+revision = 'a010058f3340'
 down_revision = '178d6726310a'
 branch_labels = None
 depends_on = None
@@ -23,6 +22,8 @@ def upgrade():
     sa.Column('id', sa.Integer(), autoincrement=True, nullable=False),
     sa.Column('query_execution_id', sa.Integer(), nullable=True),
     sa.Column('uid', sa.Integer(), nullable=True),
+    sa.Column('created_by', sa.Integer(), nullable=True),
+    sa.Column('created_at', sa.DateTime(), nullable=False),
     sa.ForeignKeyConstraint(['query_execution_id'], ['query_execution.id'], ondelete='CASCADE'),
     sa.ForeignKeyConstraint(['uid'], ['user.id'], ondelete='CASCADE'),
     sa.PrimaryKeyConstraint('id'),

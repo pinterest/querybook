@@ -161,9 +161,8 @@ def verify_query_execution_owner(execution_id, session=None):
     execution = query_execution_logic.get_query_execution_by_id(
         execution_id, session=session
     )
-    execution_dict = execution.to_dict(True) if execution is not None else None
     api_assert(
-        current_user.id == execution_dict["uid"],
+        current_user.id == getattr(execution, "uid", None),
         "Action can only be preformed by execution owner",
     )
 
@@ -174,5 +173,7 @@ def verify_query_execution_access(execution_id, session=None):
         execution_id, session=session
     )
     api_assert(
-        user_can_access_query_execution(execution), "CANNOT_ACCESS_QUERY_EXECUTION", 403
+        user_can_access_query_execution(execution=execution, uid=current_user.id),
+        "CANNOT_ACCESS_QUERY_EXECUTION",
+        403,
     )

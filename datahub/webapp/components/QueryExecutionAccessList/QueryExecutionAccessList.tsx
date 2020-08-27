@@ -62,7 +62,7 @@ export const QueryExecutionAccessList: React.FunctionComponent<IQueryExecutionAc
         (request) => (
             <div key={request.uid} className="viewers-user-row">
                 <div className="user-badge-wrapper">
-                    <UserBadge isOnline={undefined} uid={request.uid} />
+                    <UserBadge uid={request.uid} />
                 </div>
                 <div className="access-info">
                     <div className="access-request-control-buttons flex-row">
@@ -84,29 +84,11 @@ export const QueryExecutionAccessList: React.FunctionComponent<IQueryExecutionAc
         )
     );
 
-    const accessRequestHeader =
-        Object.values(accessRequestsByUid).length > 0 ? (
-            <div className="row-description mr16 mb4">
-                <Title size={6} subtitle>
-                    Access Requests
-                </Title>
-            </div>
-        ) : null;
-
-    const viewersListHeader =
-        Object.values(executionViewersByUid).length > 0 ? (
-            <div className="row-description mr16 mb4">
-                <Title size={6} subtitle>
-                    Users With Access
-                </Title>
-            </div>
-        ) : null;
-
     const viewersListDOM = Object.values(executionViewersByUid).map(
         (viewer) => (
             <div key={viewer.uid} className="viewers-user-row">
                 <div className="user-badge-wrapper">
-                    <UserBadge isOnline={undefined} uid={viewer.uid} />
+                    <UserBadge uid={viewer.uid} />
                 </div>
                 <Button
                     className="remove-button"
@@ -117,6 +99,24 @@ export const QueryExecutionAccessList: React.FunctionComponent<IQueryExecutionAc
             </div>
         )
     );
+
+    const accessRequestHeader =
+        accessRequestListDOM.length > 0 ? (
+            <div className="row-description mr16 mb4">
+                <Title size={6} subtitle>
+                    Access Requests
+                </Title>
+            </div>
+        ) : null;
+
+    const viewersListHeader =
+        viewersListDOM.length > 0 ? (
+            <div className="row-description mr16 mb4">
+                <Title size={6} subtitle>
+                    Users With Access
+                </Title>
+            </div>
+        ) : null;
 
     const contentDOM = (
         <div>

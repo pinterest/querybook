@@ -15,36 +15,21 @@ import { Button } from 'ui/Button/Button';
 import { useDataFetch } from 'hooks/useDataFetch';
 import { Tag } from 'ui/Tag/Tag';
 import { BoundQueryEditor } from 'components/QueryEditor/BoundQueryEditor';
-import { Popover } from 'ui/Popover/Popover';
-import { QueryExecutionAccessList } from 'components/QueryExecutionAccessList/QueryExecutionAccessList';
-import { IStoreState } from 'redux/store/types';
-import * as queryExecutionSelectors from 'redux/queryExecutions/selector';
 import * as queryExecutionActions from 'redux/queryExecutions/action';
 import { myUserInfoSelector } from 'redux/user/selector';
 import { currentEnvironmentSelector } from 'redux/environment/selector';
+import { QueryViewEditorShareButton } from './QueryViewEditorShareButton';
 
 export const QueryViewEditor: React.FunctionComponent<{
     queryExecution: IQueryExecution;
 }> = ({ queryExecution }) => {
     const queryEngineById = useSelector(queryEngineByIdEnvSelector);
     const queryEngine = queryEngineById[queryExecution.engine_id];
-    const accessRequestsByUid = useSelector((state: IStoreState) =>
-        queryExecutionSelectors.queryExecutionAccessRequestsByUidSelector(
-            state,
-            queryExecution.id
-        )
-    );
-    const executionViewersByUid = useSelector((state: IStoreState) =>
-        queryExecutionSelectors.queryExecutionViewersByUidSelector(
-            state,
-            queryExecution.id
-        )
-    );
+
     const userInfo = useSelector(myUserInfoSelector);
     const environment = useSelector(currentEnvironmentSelector);
     const showAccessControls =
         queryExecution.uid == userInfo.id && !environment.shareable;
-    const [showAccessList, setShowAccessList] = useState(false);
 
     const dispatch = useDispatch();
     const { data: cellInfo } = useDataFetch<{
@@ -54,8 +39,6 @@ export const QueryViewEditor: React.FunctionComponent<{
     }>({
         url: `/query_execution/${queryExecution.id}/datadoc_cell_info/`,
     });
-
-    const buttonRef = useRef<HTMLAnchorElement>(null);
 
     const goToDataDoc = React.useCallback(() => {
         if (cellInfo != null) {
@@ -95,42 +78,6 @@ export const QueryViewEditor: React.FunctionComponent<{
         }
     }, [queryEngineById, queryExecution]);
 
-    const addQueryExecutionViewer = React.useCallback(
-        (uid) => {
-            dispatch(
-                queryExecutionActions.addQueryExecutionViewer(
-                    queryExecution.id,
-                    uid
-                )
-            );
-        },
-        [queryExecution]
-    );
-
-    const deleteQueryExecutionViewer = React.useCallback(
-        (uid) => {
-            dispatch(
-                queryExecutionActions.deleteQueryExecutionViewer(
-                    queryExecution.id,
-                    uid
-                )
-            );
-        },
-        [queryExecution]
-    );
-
-    const rejectQueryExecutionAccessRequest = React.useCallback(
-        (uid) => {
-            dispatch(
-                queryExecutionActions.rejectQueryExecutionAccessRequest(
-                    queryExecution.id,
-                    uid
-                )
-            );
-        },
-        [queryExecution]
-    );
-
     const editorDOM = (
         <div className="editor">
             <BoundQueryEditor
@@ -164,48 +111,16 @@ export const QueryViewEditor: React.FunctionComponent<{
             <Button onClick={goToDataDoc} title="Go To DataDoc" />
         ) : null;
 
-    const accessRequestsByUidLength = Object.values(accessRequestsByUid).length;
-    const shareButton = showAccessControls && (
-        <Button
-            className="share-button"
-            title="Share"
-            ping={
-                accessRequestsByUidLength > 0
-                    ? accessRequestsByUidLength.toString()
-                    : null
-            }
-            ref={buttonRef}
-            onClick={() => setShowAccessList(!showAccessList)}
-        />
-    );
-
-    const viewersListDOM = showAccessControls && showAccessList && (
-        <Popover
-            anchor={buttonRef.current}
-            onHide={() => setShowAccessList(false)}
-            layout={['bottom', 'right']}
-            resizeOnChange
-        >
-            <QueryExecutionAccessList
-                accessRequestsByUid={accessRequestsByUid}
-                executionViewersByUid={executionViewersByUid}
-                queryExecution={queryExecution}
-                addQueryExecutionViewer={addQueryExecutionViewer}
-                deleteQueryExecutionViewer={deleteQueryExecutionViewer}
-                rejectQueryExecutionAccessRequest={
-                    rejectQueryExecutionAccessRequest
-                }
-            />
-        </Popover>
-    );
+    const shareExecutionButton = showAccessControls ? (
+        <QueryViewEditorShareButton queryExecution={queryExecution} />
+    ) : null;
 
     const editorSectionHeader = (
         <div className="editor-section-header horizontal-space-between">
             <div>{queryExecutionTitleDOM}</div>
 
-            <div>
-                {shareButton}
-                {viewersListDOM}
+            <div className="horizontal-space-between">
+                {shareExecutionButton}
                 <Button onClick={exportToAdhocQuery} title="Edit" />
                 {goToDataDocButton}
             </div>

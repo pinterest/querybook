@@ -1,10 +1,8 @@
 from datetime import datetime
 
 from sqlalchemy.orm import joinedload
-from flask_login import current_user
 from app.db import with_session
 from app.flask_app import celery
-from env import DataHubSettings
 
 from const.query_execution import QueryExecutionStatus, StatementExecutionStatus
 from lib.logger import get_logger
@@ -15,11 +13,9 @@ from models.query_execution import (
     QueryExecutionError,
     StatementExecutionStreamLog,
 )
-from logic import user as user_logic
 from models.datadoc import DataCellQueryExecution, DataDocDataCell
 from models.admin import QueryEngine
 from models.environment import Environment
-from lib.notify.utils import notify_user
 
 CLEAN_UP_TIME_THRESHOLD = 20 * 60  # 20 mins
 LOG = get_logger(__file__)
@@ -515,42 +511,3 @@ def clean_up_query_execution(dry_run=False, session=None):
     QUERY EXECUTION USER NOTIFICATIONS
     ---------------------------------------------------------------------------------------------------------
 """
-
-
-@with_session
-def send_query_execution_access_request_notification(execution_id, uid, session=None):
-    requestor = user_logic.get_user_by_id(uid, session=session)
-    query_execution = get_query_execution_by_id(execution_id, session=session)
-    environment = get_environment_by_execution_id(execution_id=execution_id)
-    execution_url = f"{DataHubSettings.PUBLIC_URL}/{environment.name}/query_execution/{execution_id}/"
-
-    owner = user_logic.get_user_by_id(query_execution.uid, session=session)
-    requestor_username = requestor.get_name()
-    notify_user(
-        user=owner,
-        template_name="query_execution_access_request",
-        template_params=dict(
-            username=requestor_username,
-            execution_id=execution_id,
-            execution_url=execution_url,
-        ),
-    )
-
-
-@with_session
-def send_query_execution_invitation_notification(execution_id, uid, session=None):
-    inviting_user = user_logic.get_user_by_id(current_user.id, session=session)
-    invited_user = user_logic.get_user_by_id(uid, session=session)
-    environment = get_environment_by_execution_id(execution_id=execution_id)
-    execution_url = f"{DataHubSettings.PUBLIC_URL}/{environment.name}/query_execution/{execution_id}/"
-
-    notify_user(
-        user=invited_user,
-        template_name="query_execution_invitation",
-        template_params=dict(
-            inviting_username=inviting_user.get_name(),
-            execution_id=execution_id,
-            execution_url=execution_url,
-        ),
-        session=session,
-    )

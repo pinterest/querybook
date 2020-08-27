@@ -313,7 +313,6 @@ function accessRequestsByExecutionIdUserId(
         switch (action.type) {
             case '@@queryExecutions/RECEIVE_QUERY_EXECUTION_ACCESS_REQUESTS': {
                 const { executionId, requests } = action.payload;
-                console.log(action.payload);
                 draft[executionId] = arrayGroupByField(requests, 'uid');
                 return;
             }
@@ -327,7 +326,7 @@ function accessRequestsByExecutionIdUserId(
             }
             case '@@queryExecutions/REMOVE_QUERY_EXECUTION_ACCESS_REQUEST': {
                 const { executionId, uid } = action.payload;
-                if (executionId in draft && uid in draft[executionId]) {
+                if (draft?.[executionId]?.[uid]) {
                     delete draft[executionId][uid];
                 }
                 return;
@@ -357,7 +356,7 @@ function viewersByExecutionIdUserId(
             }
             case '@@queryExecutions/REMOVE_QUERY_EXECUTION_VIEWER': {
                 const { executionId, uid } = action.payload;
-                if (executionId in draft && uid in draft[executionId]) {
+                if (draft?.[executionId]?.[uid]) {
                     delete draft[executionId][uid];
                 }
                 return;

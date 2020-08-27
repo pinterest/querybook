@@ -11,6 +11,8 @@ import { Loading } from 'ui/Loading/Loading';
 import { Container } from 'ui/Container/Container';
 import { ErrorPage } from 'ui/ErrorPage/ErrorPage';
 import { AccessRequestButton } from 'components/AccessRequestButton/AccessRequestButton';
+import { Loader } from 'ui/Loader/Loader';
+import { formatError } from 'lib/utils/error';
 
 interface IProps {
     queryId: number;
@@ -21,17 +23,6 @@ export const QueryView: React.FunctionComponent<IProps> = ({ queryId }) => {
     const queryExecution = useSelector((state: IStoreState) =>
         queryExecutionsSelector.queryExecutionSelector(state, queryId)
     );
-    const [errorObj, setErrorObj] = useState(null);
-    React.useEffect(() => {
-        setErrorObj(null);
-        dispatch(queryExecutionsActions.fetchQueryExecution(queryId)).catch(
-            (error) => {
-                if (error.response.status == 403) {
-                    setErrorObj(error);
-                }
-            }
-        );
-    }, [queryId]);
 
     const handleQueryExecutionAccessRequest = React.useCallback(() => {
         dispatch(
@@ -39,29 +30,44 @@ export const QueryView: React.FunctionComponent<IProps> = ({ queryId }) => {
         );
     }, [queryId]);
 
-    const errorPage = (
-        <ErrorPage
-            errorTitle="Access Denied"
-            errorMessage="You do not have access to this query execution"
-        >
-            <AccessRequestButton
-                onAccessRequest={handleQueryExecutionAccessRequest}
-            />
-        </ErrorPage>
+    const fetchQueryExecution = React.useCallback(
+        () =>
+            dispatch(
+                queryExecutionsActions.fetchQueryExecutionIfNeeded(queryId)
+            ),
+        [queryExecution]
     );
 
-    return errorObj || queryExecution ? (
+    const errorPage = (error) => {
+        if (error.response.status == 403) {
+            return (
+                <ErrorPage
+                    errorTitle="Access Denied"
+                    errorMessage="You do not have access to this query execution"
+                >
+                    <AccessRequestButton
+                        onAccessRequest={handleQueryExecutionAccessRequest}
+                    />
+                </ErrorPage>
+            );
+        } else {
+            return <ErrorPage errorMessage={formatError(error)} />;
+        }
+    };
+
+    return (
         <Container className="QueryView">
-            {errorObj ? (
-                errorPage
-            ) : (
+            <Loader
+                item={queryExecution}
+                itemKey={queryId}
+                itemLoader={fetchQueryExecution}
+                errorRenderer={(error) => errorPage(error)}
+            >
                 <>
                     <QueryViewEditor queryExecution={queryExecution} />
                     <QueryViewExecution queryExecution={queryExecution} />
                 </>
-            )}
+            </Loader>
         </Container>
-    ) : (
-        <Loading />
     );
 };

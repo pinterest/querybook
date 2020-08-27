@@ -26,15 +26,15 @@ from lib.query_analysis.templating import (
 from lib.form import validate_form
 from const.query_execution import QueryExecutionStatus
 from const.datasources import RESOURCE_NOT_FOUND_STATUS_CODE
-from logic import (
-    query_execution as logic,
-    datadoc as datadoc_logic,
-)
+from logic import query_execution as logic, datadoc as datadoc_logic, user as user_logic
 from logic.datadoc_permission import user_can_read
 from tasks.run_query import run_query_task
 from app.auth.permission import verify_query_execution_owner
 from models.query_execution import QueryExecutionViewer
 from models.access_request import AccessRequest
+from app.db import with_session
+from env import DataHubSettings
+from lib.notify.utils import notify_user
 
 
 @register("/query_execution/", methods=["POST"])
@@ -89,9 +89,8 @@ def create_query_execution(query, engine_id, data_cell_id=None, originator=None)
 
 @register("/query_execution/<int:query_execution_id>/", methods=["GET"])
 def get_query_execution(query_execution_id):
-    execution = logic.get_query_execution_by_id(query_execution_id)
-    verify_query_engine_permission(execution.engine_id)
     verify_query_execution_permission(query_execution_id)
+    execution = logic.get_query_execution_by_id(query_execution_id)
     execution_dict = execution.to_dict(True) if execution is not None else None
     return execution_dict
 
@@ -401,7 +400,11 @@ def add_query_execution_viewer(execution_id, uid):
     verify_query_execution_owner(execution_id)
     with DBSession() as session:
         viewer = QueryExecutionViewer.create(
-            {"query_execution_id": execution_id, "uid": uid},
+            {
+                "query_execution_id": execution_id,
+                "uid": uid,
+                "created_by": current_user.id,
+            },
             commit=False,
             session=session,
         )
@@ -410,7 +413,7 @@ def add_query_execution_viewer(execution_id, uid):
         )
         if access_request:
             AccessRequest.delete(id=access_request.id, session=session, commit=False)
-        logic.send_query_execution_invitation_notification(
+        send_query_execution_invitation_notification(
             execution_id=execution_id, uid=uid, session=session
         )
         session.commit()
@@ -437,20 +440,13 @@ def get_query_execution_access_requests(execution_id):
 @register("/query_execution/<int:execution_id>/access_request/", methods=["POST"])
 def add_query_execution_access_request(execution_id):
     uid = current_user.id
-    access_request_dict = None
-    existing_access_request = AccessRequest.get(
-        query_execution_id=execution_id, uid=uid
-    )
-    if not existing_access_request:
+    access_request = AccessRequest.get(query_execution_id=execution_id, uid=uid)
+    if not access_request:
         access_request = AccessRequest.create(
             {"query_execution_id": execution_id, "uid": uid}
         )
-        access_request_dict = access_request.to_dict()
-
-    logic.send_query_execution_access_request_notification(
-        execution_id=execution_id, uid=uid
-    )
-    return access_request_dict
+    send_query_execution_access_request_notification(execution_id=execution_id, uid=uid)
+    return access_request
 
 
 @register("/query_execution/<int:execution_id>/access_request/", methods=["DELETE"])
@@ -459,3 +455,46 @@ def delete_query_execution_access_request(execution_id, uid):
     access_request = AccessRequest.get(query_execution_id=execution_id, uid=uid)
     if access_request:
         AccessRequest.delete(id=access_request.id)
+
+
+@with_session
+def send_query_execution_access_request_notification(execution_id, uid, session=None):
+    requestor = user_logic.get_user_by_id(uid, session=session)
+    query_execution = logic.get_query_execution_by_id(execution_id, session=session)
+    environment = logic.get_environment_by_execution_id(
+        execution_id=execution_id, session=session
+    )
+    execution_url = f"{DataHubSettings.PUBLIC_URL}/{environment.name}/query_execution/{execution_id}/"
+
+    owner = user_logic.get_user_by_id(query_execution.uid, session=session)
+    requestor_username = requestor.get_name()
+    notify_user(
+        user=owner,
+        template_name="query_execution_access_request",
+        template_params=dict(
+            username=requestor_username,
+            execution_id=execution_id,
+            execution_url=execution_url,
+        ),
+    )
+
+
+@with_session
+def send_query_execution_invitation_notification(execution_id, uid, session=None):
+    inviting_user = user_logic.get_user_by_id(current_user.id, session=session)
+    invited_user = user_logic.get_user_by_id(uid, session=session)
+    environment = logic.get_environment_by_execution_id(
+        execution_id=execution_id, session=session
+    )
+    execution_url = f"{DataHubSettings.PUBLIC_URL}/{environment.name}/query_execution/{execution_id}/"
+
+    notify_user(
+        user=invited_user,
+        template_name="query_execution_invitation",
+        template_params=dict(
+            inviting_username=inviting_user.get_name(),
+            execution_id=execution_id,
+            execution_url=execution_url,
+        ),
+        session=session,
+    )
