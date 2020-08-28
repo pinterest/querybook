@@ -7,6 +7,8 @@ import {
     createTagItem,
     deleteTagItem,
 } from 'redux/tag/action';
+import { useEvent } from 'hooks/useEvent';
+import { matchKeyPress } from 'lib/utils/keyboard';
 
 import { DebouncedInput } from 'ui/DebouncedInput/DebouncedInput';
 import { IconButton } from 'ui/Button/IconButton';
@@ -45,28 +47,60 @@ export const DataTableTags: React.FunctionComponent<IProps> = ({
 
     const [tagString, setTagString] = React.useState('');
     const [isAdding, setIsAdding] = React.useState(false);
+    const [isValid, setIsValid] = React.useState(true);
 
     React.useEffect(() => {
         loadTags();
     }, []);
 
-    // change isAdding on esc and add on enter
+    useEvent('keydown', (evt: KeyboardEvent) => {
+        if (isAdding) {
+            if (matchKeyPress(evt, 'Enter')) {
+                onCreateTag();
+            } else if (matchKeyPress(evt, 'Esc')) {
+                setTagString('');
+                setIsAdding(false);
+            }
+        }
+    });
+
+    const validateString = React.useCallback((string) => {
+        const regex = /^[a-z0-9]+$/i;
+        const match = string.match(regex);
+        return Boolean(match);
+    }, []);
+
+    const onCreateTag = React.useCallback(() => {
+        if (isValid) {
+            createTag(tagString);
+            setTagString('');
+            setIsAdding(false);
+        }
+    }, [tagString]);
+
+    const onStringChange = React.useCallback(
+        (str) => {
+            const valid = validateString(str);
+            if (isValid !== valid) {
+                setIsValid(valid);
+            }
+            setTagString(str);
+        },
+        [isValid]
+    );
+
     const makeAddDOM = () =>
         isAdding ? (
             <div className="DataTableTags-input flex-row">
                 <DebouncedInput
+                    debounceTime={0}
                     value={tagString}
-                    onChange={(str) => setTagString(str)}
+                    onChange={(str) => onStringChange(str)}
+                    inputProps={{ placeholder: 'alphanumeric only' }}
+                    className={isValid ? '' : 'invalid-string'}
                 />
-                {tagString.length ? (
-                    <IconButton
-                        icon="plus"
-                        onClick={() => {
-                            createTag(tagString);
-                            setTagString('');
-                        }}
-                        size={20}
-                    />
+                {tagString.length && isValid ? (
+                    <IconButton icon="plus" onClick={onCreateTag} size={20} />
                 ) : (
                     <IconButton
                         icon="x"

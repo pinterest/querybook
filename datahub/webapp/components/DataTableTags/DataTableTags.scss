@@ -14,8 +14,13 @@
                 display: flex;
                 input {
                     padding: 0px 2px;
-                    width: 100px;
+                    width: 120px;
                     font-size: var(--xsmall-text-size);
+                }
+                &.invalid-string {
+                    input {
+                        border-color: var(--color-false);
+                    }
                 }
             }
         }
