@@ -1,8 +1,8 @@
 """Add Tag and TagItem
 
-Revision ID: 4bfbcee641dc
+Revision ID: b67a78f26e73
 Revises: 8e3a8aa02aa7
-Create Date: 2020-08-27 23:19:33.545740
+Create Date: 2020-08-28 01:24:14.971175
 
 """
 from alembic import op
@@ -10,7 +10,7 @@ import sqlalchemy as sa
 from sqlalchemy.dialects import mysql
 
 # revision identifiers, used by Alembic.
-revision = '4bfbcee641dc'
+revision = 'b67a78f26e73'
 down_revision = '8e3a8aa02aa7'
 branch_labels = None
 depends_on = None
@@ -34,10 +34,11 @@ def upgrade():
                     sa.Column('table_id', sa.Integer(), nullable=True),
                     sa.Column('uid', sa.Integer(), nullable=True),
                     sa.ForeignKeyConstraint(
-                        ['table_id'], ['data_table.id'], ondelete='CASCADE'),
+                        ['table_id'], ['data_table.id'], name='fk_tag_item_data_table', ondelete='CASCADE'),
                     sa.ForeignKeyConstraint(
-                        ['tag_name'], ['tag.name'], ondelete='CASCADE'),
-                    sa.ForeignKeyConstraint(['uid'], ['user.id'], ondelete='NO ACTION'),
+                        ['tag_name'], ['tag.name'], name='fk_tag_item_tag', ondelete='CASCADE'),
+                    sa.ForeignKeyConstraint(
+                        ['uid'], ['user.id'], name='fk_tag_item_user', ondelete='NO ACTION'),
                     sa.PrimaryKeyConstraint('id')
                     )
     # ### end Alembic commands ###
