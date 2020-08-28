@@ -34,7 +34,7 @@ export function createTagItem(
 ): ThunkResult<Promise<any>> {
     return async (dispatch) => {
         try {
-            const { data } = await ds.save(`/tag/`, { tag });
+            const { data } = await ds.save(`/tag/`, { table_id: tableId, tag });
             dispatch({
                 type: '@@tag/RECEIVE_TAG_ITEM',
                 payload: { tableId, tag: data },
@@ -51,7 +51,7 @@ export function deleteTagItem(
 ): ThunkResult<Promise<void>> {
     return async (dispatch) => {
         try {
-            await ds.delete(`/tag/${tagId}/`, {});
+            await ds.delete(`/tag/${tagId}/`, { table_id: tableId });
             dispatch({
                 type: '@@tag/REMOVE_TAG_ITEM',
                 payload: { tableId, tagId },

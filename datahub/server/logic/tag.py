@@ -19,18 +19,10 @@ def get_tag_by_name(tag_name, session=None):
 
 
 @with_session
-def create_tag_item(table_id, tag_name, uid, session=None):
-    tag_item = (
-        session.query(TagItem).filter_by(table_id=table_id, tag_name=tag_name).first()
-    )
-    if tag_item:
-        return
-
+def create_or_update_tag(tag_name, is_delete=False, session=None):
     tag = get_tag_by_name(tag_name=tag_name, session=session)
-    if tag:
-        tag.updated_at = datetime.datetime.now()
-        tag.count = tag.count + 1
-    else:
+
+    if not tag and not is_delete:
         tag = Tag(
             name=tag_name,
             created_at=datetime.datetime.now(),
@@ -38,6 +30,23 @@ def create_tag_item(table_id, tag_name, uid, session=None):
             count=1,
         )
         session.add(tag)
+    else:
+        tag.updated_at = datetime.datetime.now()
+        tag.count = tag.count - 1 if is_delete else tag.count + 1
+
+    session.commit()
+    return tag
+
+
+@with_session
+def create_tag_item(table_id, tag_name, uid, session=None):
+    existing_tag_item = (
+        session.query(TagItem).filter_by(table_id=table_id, tag_name=tag_name).first()
+    )
+    if existing_tag_item:
+        return
+
+    tag = create_or_update_tag(tag_name=tag_name, session=session)
 
     tag_item = TagItem(
         created_at=datetime.datetime.now(),
@@ -55,9 +64,7 @@ def create_tag_item(table_id, tag_name, uid, session=None):
 def delete_tag_item(tag_item_id, commit=True, session=None):
     tag_item = get_tag_item_by_id(tag_item_id)
 
-    tag = get_tag_by_name(tag_item.tag_name)
-    tag.updated_at = datetime.datetime.now()
-    tag.count = tag.count - 1
+    create_or_update_tag(tag_name=tag_item.tag_name, is_delete=True, session=session)
 
     session.delete(tag_item)
 

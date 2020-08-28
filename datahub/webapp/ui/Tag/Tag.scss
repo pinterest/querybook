@@ -1,8 +1,9 @@
 .Tag,
 .TagGroup {
-    display: inline-block;
+    display: inline-flex;
     margin: 2px 4px;
     border-radius: var(--border-radius);
+    cursor: default;
 }
 
 .Tag {
@@ -14,6 +15,22 @@
 
     &.highlighted {
         background-color: var(--color-accent-bg);
+    }
+    .Tag-hover {
+        display: none;
+        .Icon {
+            padding-left: 4px;
+            svg {
+                height: 16px;
+                width: 16px;
+            }
+        }
+    }
+    &:hover {
+        .Tag-hover {
+            display: flex;
+            cursor: pointer;
+        }
     }
 }
 

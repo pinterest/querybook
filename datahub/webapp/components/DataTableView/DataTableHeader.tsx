@@ -24,6 +24,7 @@ import { ToggleButton } from 'ui/ToggleButton/ToggleButton';
 import { UserBadge } from 'components/UserBadge/UserBadge';
 
 import './DataTableHeader.scss';
+import { DataTableTags } from 'components/DataTableTags/DataTableTags';
 
 export interface IDataTableHeader {
     table: IDataTable;
@@ -92,7 +93,7 @@ export const DataTableHeader: React.FunctionComponent<IDataTableHeader> = ({
     );
 
     const ownershipDOM = (tableOwnerships || []).map((ownership) => (
-        <UserBadge uid={ownership.uid} mini />
+        <UserBadge key={ownership.uid} uid={ownership.uid} mini />
     ));
 
     // Ownership cannot be removed if owner in db
@@ -157,7 +158,7 @@ export const DataTableHeader: React.FunctionComponent<IDataTableHeader> = ({
             <div className="DataTableHeader-bottom ">
                 <div className="DataTableHeader-left">
                     {ownerDOM}
-                    {/* <div className="DataTableHeader-tags"></div> */}
+                    <DataTableTags tableId={table.id} uid={userInfo.uid} />
                 </div>
                 <div className="DataTableHeader-right">
                     <div className="DataTableHeader-featured flex-row mb8">

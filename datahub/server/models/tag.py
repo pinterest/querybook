@@ -18,7 +18,9 @@ class Tag(CRUDMixin, Base):
     created_at = sql.Column(sql.DateTime, default=now)
     updated_at = sql.Column(sql.DateTime, default=now)
 
-    name = sql.Column(sql.String(length=name_length), nullable=False)
+    name = sql.Column(
+        sql.String(length=name_length), unique=True, index=True, nullable=False
+    )
     count = sql.Column(sql.Integer, default=1, nullable=False)
 
 
@@ -38,7 +40,9 @@ class TagItem(Base):
         sql.Integer, sql.ForeignKey("data_table.id", ondelete="CASCADE"), nullable=True
     )
 
-    uid = sql.Column(sql.Integer, sql.ForeignKey("user.id"), nullable=False)
+    uid = sql.Column(
+        sql.Integer, sql.ForeignKey("user.id", ondelete="NO ACTION"), nullable=True
+    )
 
     tag = relationship(
         "Tag",

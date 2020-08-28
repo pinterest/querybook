@@ -34,7 +34,7 @@ def create_tag_item(table_id, tag):
 @register(
     "/tag/<int:tag_id>/", methods=["DELETE"],
 )
-def delete_tag_item(table_id, tag_id):
+def delete_tag_item(tag_id, table_id):
     with DBSession() as session:
         verify_data_table_permission(table_id, session=session)
         tag_item = logic.get_tag_item_by_id(tag_id, session=session)
