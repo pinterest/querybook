@@ -16,7 +16,7 @@ import {
 import { ImpressionWidget } from 'components/ImpressionWidget/ImpressionWidget';
 import { BoardItemAddButton } from 'components/BoardItemAddButton/BoardItemAddButton';
 
-import { Button } from 'ui/Button/Button';
+import { IconButton } from 'ui/Button/IconButton';
 import { Level } from 'ui/Level/Level';
 import { Tag } from 'ui/Tag/Tag';
 import { Title } from 'ui/Title/Title';
@@ -24,7 +24,6 @@ import { ToggleButton } from 'ui/ToggleButton/ToggleButton';
 import { UserBadge } from 'components/UserBadge/UserBadge';
 
 import './DataTableHeader.scss';
-import { IconButton } from 'ui/Button/IconButton';
 
 export interface IDataTableHeader {
     table: IDataTable;
