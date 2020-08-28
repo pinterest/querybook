@@ -119,13 +119,6 @@ def search_query_execution(
 ):
     verify_environment_permission([environment_id])
     with DBSession() as session:
-        if "user" in filters:
-            api_assert(
-                current_user.id == filters["user"],
-                "You can only search your own queries",
-            )
-        else:
-            filters["user"] = current_user.id
         query_executions = logic.search_query_execution(
             environment_id=environment_id,
             filters=filters,
