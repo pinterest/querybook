@@ -24,6 +24,7 @@ import { ToggleButton } from 'ui/ToggleButton/ToggleButton';
 import { UserBadge } from 'components/UserBadge/UserBadge';
 
 import './DataTableHeader.scss';
+import { IconButton } from 'ui/Button/IconButton';
 
 export interface IDataTableHeader {
     table: IDataTable;
@@ -98,30 +99,34 @@ export const DataTableHeader: React.FunctionComponent<IDataTableHeader> = ({
     // Ownership cannot be removed if owner in db
     const ownerDOM = (
         <div className="DataTableHeader-owner">
-            {dbTableOwner || tableOwnerships?.length ? (
-                <div className="DataTableHeader-owner-list flex-row mb8">
-                    <span className="mr8">by</span>
-                    {dbTableOwner && <UserBadge name={dbTableOwner} mini />}
-                    {ownershipDOM}
-                </div>
-            ) : null}
-            {isDBTableOwner ? null : isTableOwner ? (
-                <Button
-                    title={'Remove my table ownership'}
-                    icon="user-minus"
-                    type="soft"
-                    onClick={deleteTableOwnership}
-                    small
-                />
-            ) : (
-                <Button
-                    title={'Claim table'}
-                    icon="user-plus"
-                    type="soft"
-                    onClick={createTableOwnership}
-                    small
-                />
-            )}
+            <div className="DataTableHeader-owner-list flex-row mb8">
+                {dbTableOwner || tableOwnerships?.length ? (
+                    <>
+                        <span className="mr8">by</span>
+                        {dbTableOwner && <UserBadge name={dbTableOwner} mini />}
+                        {ownershipDOM}
+                    </>
+                ) : null}
+                {isDBTableOwner ? null : isTableOwner ? (
+                    <IconButton
+                        tooltip={'Remove my table ownership'}
+                        tooltipPos="right"
+                        icon="user-minus"
+                        size={18}
+                        onClick={deleteTableOwnership}
+                        invertCircle
+                    />
+                ) : (
+                    <IconButton
+                        tooltip={'Claim table'}
+                        tooltipPos="right"
+                        icon="user-plus"
+                        size={18}
+                        onClick={createTableOwnership}
+                        invertCircle
+                    />
+                )}
+            </div>
         </div>
     );
 

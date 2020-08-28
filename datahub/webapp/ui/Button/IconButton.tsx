@@ -16,6 +16,7 @@ export interface IconButtonProps {
     tooltip?: React.ReactNode;
     tooltipPos?: TooltipDirection;
 
+    invertCircle?: boolean;
     disabled?: boolean;
     active?: boolean;
     noPadding?: boolean;
@@ -37,7 +38,7 @@ export const IconButton = React.forwardRef<HTMLAnchorElement, IconButtonProps>(
             tooltip,
             tooltipPos = 'up',
             disabled,
-
+            invertCircle,
             active,
             size,
             noPadding,
@@ -62,6 +63,7 @@ export const IconButton = React.forwardRef<HTMLAnchorElement, IconButtonProps>(
             'no-padding': noPadding,
             fill,
             disabled,
+            'invert-circle': invertCircle,
             [className]: className,
         });
 

@@ -6,6 +6,12 @@
     transition: fill 0.2s ease-out;
     display: inline-flex;
 
+    &.invert-circle {
+        background-color: var(--color-primary-3);
+        padding: 4px;
+        border-radius: 50%;
+    }
+
     &.no-padding {
         padding: 0px;
     }
