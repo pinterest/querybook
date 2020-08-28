@@ -1,18 +1,18 @@
-import { ContentState } from 'draft-js';
 import React from 'react';
+import { ContentState } from 'draft-js';
 import { useSelector, useDispatch } from 'react-redux';
 import styled from 'styled-components';
 
 import { getHumanReadableByteSize } from 'lib/utils';
 import { generateFormattedDate } from 'lib/utils/datetime';
+import { fullTableSelector } from 'redux/dataSources/selector';
 import { IStoreState } from 'redux/store/types';
 import * as dataSourcesActions from 'redux/dataSources/action';
-import { IDataColumn } from 'const/metastore';
+
+import { DataTableTags } from 'components/DataTableTags/DataTableTags';
+import { PanelSection, SubPanelSection } from './PanelSection';
 
 import { Loader } from 'ui/Loader/Loader';
-
-import { PanelSection, SubPanelSection } from './PanelSection';
-import { fullTableSelector } from 'redux/dataSources/selector';
 
 interface ITablePanelViewProps {
     tableId: number;
@@ -48,6 +48,9 @@ export const TablePanelView: React.FunctionComponent<ITablePanelViewProps> = ({
                     {table.description
                         ? (table.description as ContentState).getPlainText()
                         : ''}
+                </SubPanelSection>
+                <SubPanelSection title="tags">
+                    <DataTableTags tableId={table.id} readonly />
                 </SubPanelSection>
             </PanelSection>
         );

@@ -3,5 +3,8 @@
         cursor: pointer;
         white-space: nowrap;
         text-decoration: underline;
+        &a {
+            margin-left: 4px;
+        }
     }
 }

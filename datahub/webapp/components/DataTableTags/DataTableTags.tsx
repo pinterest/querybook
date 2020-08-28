@@ -51,32 +51,39 @@ export const DataTableTags: React.FunctionComponent<IProps> = ({
     }, []);
 
     // change isAdding on esc and add on enter
-    const addDOM = isAdding ? (
-        <div className="DataTableTags-input flex-row">
-            <DebouncedInput
-                value={tagString}
-                onChange={(str) => setTagString(str)}
-            />
-            {tagString.length ? (
-                <IconButton
-                    icon="plus"
-                    onClick={() => {
-                        createTag(tagString);
-                        setTagString('');
-                    }}
+    const makeAddDOM = () =>
+        isAdding ? (
+            <div className="DataTableTags-input flex-row">
+                <DebouncedInput
+                    value={tagString}
+                    onChange={(str) => setTagString(str)}
                 />
-            ) : (
-                <IconButton icon="x" onClick={() => setIsAdding(false)} />
-            )}
-        </div>
-    ) : (
-        <IconButton
-            icon="plus"
-            onClick={() => setIsAdding(true)}
-            tooltip="Add tag"
-            tooltipPos="right"
-        />
-    );
+                {tagString.length ? (
+                    <IconButton
+                        icon="plus"
+                        onClick={() => {
+                            createTag(tagString);
+                            setTagString('');
+                        }}
+                        size={20}
+                    />
+                ) : (
+                    <IconButton
+                        icon="x"
+                        onClick={() => setIsAdding(false)}
+                        size={20}
+                    />
+                )}
+            </div>
+        ) : (
+            <IconButton
+                icon="plus"
+                onClick={() => setIsAdding(true)}
+                tooltip="Add tag"
+                tooltipPos="right"
+                size={20}
+            />
+        );
 
     const listDOM = (tags || [])
         .sort((t1, t2) => t1.count - t2.count)
@@ -87,8 +94,8 @@ export const DataTableTags: React.FunctionComponent<IProps> = ({
                         key={tag.id}
                         iconOnHover="x"
                         onHoverClick={() => deleteTag(tag.id)}
-                        tooltip="click to search by tag"
-                        tooltipPos="right"
+                        tooltip="search by tag"
+                        tooltipPos={readonly ? 'down' : 'right'}
                     >
                         {tag.tag}
                     </Tag>
@@ -97,8 +104,8 @@ export const DataTableTags: React.FunctionComponent<IProps> = ({
                 return (
                     <Tag
                         key={tag.id}
-                        tooltip="click to search by tag"
-                        tooltipPos="right"
+                        tooltip="search by tag"
+                        tooltipPos={readonly ? 'down' : 'right'}
                     >
                         {tag.tag}
                     </Tag>
@@ -110,7 +117,7 @@ export const DataTableTags: React.FunctionComponent<IProps> = ({
         <div className="DataTableTags flex-row">
             {listDOM}
             {readonly ? null : (
-                <div className="DataTableTags-add flex-row">{addDOM}</div>
+                <div className="DataTableTags-add flex-row">{makeAddDOM()}</div>
             )}
         </div>
     );

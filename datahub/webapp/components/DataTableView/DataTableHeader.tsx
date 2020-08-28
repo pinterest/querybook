@@ -13,8 +13,9 @@ import {
     createDataTableOwnership,
 } from 'redux/dataSources/action';
 
-import { ImpressionWidget } from 'components/ImpressionWidget/ImpressionWidget';
 import { BoardItemAddButton } from 'components/BoardItemAddButton/BoardItemAddButton';
+import { DataTableTags } from 'components/DataTableTags/DataTableTags';
+import { ImpressionWidget } from 'components/ImpressionWidget/ImpressionWidget';
 
 import { IconButton } from 'ui/Button/IconButton';
 import { Level } from 'ui/Level/Level';
@@ -24,7 +25,6 @@ import { ToggleButton } from 'ui/ToggleButton/ToggleButton';
 import { UserBadge } from 'components/UserBadge/UserBadge';
 
 import './DataTableHeader.scss';
-import { DataTableTags } from 'components/DataTableTags/DataTableTags';
 
 export interface IDataTableHeader {
     table: IDataTable;

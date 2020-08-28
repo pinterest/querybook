@@ -7,6 +7,7 @@ interface IShowMoreTextProps {
     length?: number;
     seeLess?: boolean;
     className?: string;
+    nextLine?: boolean;
 }
 
 export const ShowMoreText: React.FunctionComponent<IShowMoreTextProps> = ({
@@ -14,6 +15,7 @@ export const ShowMoreText: React.FunctionComponent<IShowMoreTextProps> = ({
     length = 100,
     seeLess = false,
     className = '',
+    nextLine = false,
 }) => {
     text = text || '';
     const combinedClassName = useMemo(() => `ShowMoreText ${className}`, [
@@ -36,26 +38,41 @@ export const ShowMoreText: React.FunctionComponent<IShowMoreTextProps> = ({
         if (!expanded) {
             return (
                 <span className={combinedClassName}>
-                    {text.slice(0, length)}{' '}
-                    <a
-                        className="ShowMoreText-click"
-                        onClick={toggleSeeMoreClick}
-                    >
-                        show more
-                    </a>
+                    {text.slice(0, length)}
+                    {nextLine ? (
+                        <div
+                            className="ShowMoreText-click"
+                            onClick={toggleSeeMoreClick}
+                        >
+                            show more
+                        </div>
+                    ) : (
+                        <a
+                            className="ShowMoreText-click"
+                            onClick={toggleSeeMoreClick}
+                        >
+                            show more
+                        </a>
+                    )}
                 </span>
             );
         } else {
             const seeLessSection = seeLess ? (
-                <>
-                    {' '}
+                nextLine ? (
+                    <div
+                        className="ShowMoreText-click"
+                        onClick={toggleSeeMoreClick}
+                    >
+                        show less
+                    </div>
+                ) : (
                     <a
                         className="ShowMoreText-click"
                         onClick={toggleSeeMoreClick}
                     >
                         show less
                     </a>
-                </>
+                )
             ) : null;
 
             return (

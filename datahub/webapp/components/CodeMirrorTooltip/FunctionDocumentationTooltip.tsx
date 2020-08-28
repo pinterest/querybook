@@ -26,15 +26,15 @@ export const FunctionDocumentationTooltip: React.FunctionComponent<IProps> = ({
                 <div key={index}>
                     {separator}
                     <div className="rich-text-content">
-                        <p>{signature}</p>
+                        <div className="tooltip-content">{signature}</div>
 
-                        <h6>Returns</h6>
-                        <p>{returnType}</p>
+                        <div className="tooltip-title">Returns</div>
+                        <div className="tooltip-content">{returnType}</div>
 
-                        <h6>Description</h6>
-                        <p>
+                        <div className="tooltip-title">Description</div>
+                        <div className="tooltip-content">
                             <ShowMoreText text={description} length={200} />
-                        </p>
+                        </div>
                     </div>
                 </div>
             );
