@@ -822,6 +822,7 @@ def create_data_doc_editor(
     session.add(editor)
     if commit:
         session.commit()
+        update_es_data_doc_by_id(editor.data_doc_id)
     else:
         session.flush()
     session.refresh(editor)
@@ -845,13 +846,12 @@ def update_data_doc_editor(
                 session.flush()
             session.refresh(editor)
 
-        return editor
-
 
 @with_session
-def delete_data_doc_editor(id, session=None, commit=True):
+def delete_data_doc_editor(id, doc_id, session=None, commit=True):
     session.query(DataDocEditor).filter_by(id=id).delete()
     if commit:
+        update_es_data_doc_by_id(doc_id)
         session.commit()
 
 

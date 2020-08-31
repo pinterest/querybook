@@ -1,7 +1,7 @@
 # TODO: refactor
 import re
 import json
-
+from flask_login import current_user
 
 from app.auth.permission import (
     verify_environment_permission,
@@ -77,6 +77,9 @@ def _construct_datadoc_query(
         keywords, search_fields=["title^5", "cells", "owner",]
     )
     search_filter = _match_filters(filters)
+    if search_filter == {}:
+        search_filter["filter"] = {"bool": {}}
+    search_filter["filter"]["bool"]["should"] = _data_doc_access_terms(current_user.id)
 
     bool_query = {}
     if search_query != {}:
@@ -108,6 +111,14 @@ def _construct_datadoc_query(
     )
 
     return json.dumps(query)
+
+
+def _data_doc_access_terms(user_id):
+    return [
+        {"term": {"owner_uid": user_id}},
+        {"term": {"readable_user_ids": user_id}},
+        {"term": {"public": True}},
+    ]
 
 
 def _match_table_fields(fields):
@@ -264,7 +275,6 @@ def search_datadoc(
         sort_order=sort_order,
     )
 
-    # print query
     results, count = _get_matching_objects(
         query,
         ES_CONFIG["datadocs"]["index_name"],
