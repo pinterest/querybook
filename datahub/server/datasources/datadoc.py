@@ -432,6 +432,7 @@ def add_datadoc_editor(
             room=doc_id,
             broadcast=True,
         )
+        logic.update_es_data_doc_by_id(doc_id)
         send_add_datadoc_editor_email(doc_id, uid, read, write)
         return editor_dict
 
@@ -568,7 +569,9 @@ def delete_datadoc_editor(
         if editor:
             editor_dict = editor.to_dict()
             assert_can_write(editor.data_doc_id, session=session)
-            logic.delete_data_doc_editor(id=id, session=session)
+            logic.delete_data_doc_editor(
+                id=id, doc_id=editor.data_doc_id, session=session
+            )
             socketio.emit(
                 "data_doc_editor",
                 (originator, editor_dict["data_doc_id"], editor_dict["uid"], None),
@@ -597,7 +600,9 @@ def update_datadoc_owner(doc_id, next_owner_id, originator=None):
             next_owner_id, session=session
         )
         next_owner_editor_dict = next_owner_editor.to_dict()
-        logic.delete_data_doc_editor(id=next_owner_id, session=session, commit=False)
+        logic.delete_data_doc_editor(
+            id=next_owner_id, doc_id=doc_id, session=session, commit=False
+        )
         next_owner_uid = next_owner_editor_dict["uid"]
         # Update doc owner to next owner
         doc = logic.update_data_doc(
@@ -631,6 +636,7 @@ def update_datadoc_owner(doc_id, next_owner_id, originator=None):
             room=next_owner_editor_dict["data_doc_id"],
             broadcast=True,
         )
+        logic.update_es_data_doc_by_id(doc_id)
         send_datadoc_transfer_notification(doc_id, next_owner_uid, session)
         return current_owner_editor_dict
 
