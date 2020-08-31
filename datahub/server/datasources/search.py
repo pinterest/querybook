@@ -45,8 +45,7 @@ def _match_filters(filters):
         return {}
 
     filter_terms = []
-    range_filters = {}
-
+    created_at_filter = {}
     for f in filters:
         filter_name = str(f[0]).lower()
         filter_val = str(f[1]).lower()
@@ -58,19 +57,16 @@ def _match_filters(filters):
         search_filter[filter_name] = filter_val
 
         if filter_name == "startdate":
-            range_filters.setdefault("created_at", {"gte": filter_val})
+            created_at_filter["gte"] = filter_val
         elif filter_name == "enddate":
-            range_filters.setdefault("created_at", {"lte": filter_val})
+            created_at_filter["lte"] = filter_val
         else:
             filter_terms.append({"match": search_filter})
 
-    if any(range_filters):
-        return {
-            "filter": {"bool": {"must": filter_terms}},
-            "range": range_filters,
-        }
-    else:
-        return {"filter": {"bool": {"must": filter_terms}}}
+    filters = {"filter": {"bool": {"must": filter_terms}}}
+    if created_at_filter:
+        filters["range"] = {"created_at": created_at_filter}
+    return filters
 
 
 def _construct_datadoc_query(
@@ -88,6 +84,7 @@ def _construct_datadoc_query(
     if search_filter != {}:
         bool_query["filter"] = search_filter["filter"]
         if "range" in search_filter:
+            bool_query.setdefault("must", [])
             bool_query["must"].append({"range": search_filter["range"]})
 
     query = {
