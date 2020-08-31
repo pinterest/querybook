@@ -45,7 +45,6 @@ def _match_filters(filters):
         return {}
 
     filter_terms = []
-    range_filters = {}
     created_at_filter = {}
     for f in filters:
         filter_name = str(f[0]).lower()
@@ -64,15 +63,10 @@ def _match_filters(filters):
         else:
             filter_terms.append({"match": search_filter})
 
+    filters = {"filter": {"bool": {"must": filter_terms}}}
     if created_at_filter:
-        range_filters["created_at"] = created_at_filter
-    if any(range_filters):
-        return {
-            "filter": {"bool": {"must": filter_terms}},
-            "range": range_filters,
-        }
-    else:
-        return {"filter": {"bool": {"must": filter_terms}}}
+        filters["range"] = {"created_at": created_at_filter}
+    return filters
 
 
 def _construct_datadoc_query(
