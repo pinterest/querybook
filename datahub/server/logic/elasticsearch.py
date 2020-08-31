@@ -18,7 +18,11 @@ from app.db import (
     # TODO: We should use follower db instead
     with_session,
 )
-from logic.datadoc import get_all_data_docs, get_data_doc_by_id
+from logic.datadoc import (
+    get_all_data_docs,
+    get_data_doc_by_id,
+    get_data_doc_editors_by_doc_id,
+)
 from logic.metastore import (
     get_all_table,
     get_table_by_id,
@@ -106,6 +110,7 @@ def datadocs_to_es(datadoc, session=None):
             cells_as_text.append("[... additional unparsable content ...]")
 
     joined_cells = escape("\n".join(cells_as_text))
+    editors = [editor.uid for editor in get_data_doc_editors_by_doc_id(datadoc.id)]
     expand_datadoc = {
         "id": datadoc.id,
         "environment_id": datadoc.environment_id,
@@ -113,6 +118,8 @@ def datadocs_to_es(datadoc, session=None):
         "created_at": DATETIME_TO_UTC(datadoc.created_at),
         "cells": joined_cells,
         "title": title,
+        "public": datadoc.public,
+        "readable_user_ids": editors,
     }
     return expand_datadoc
 

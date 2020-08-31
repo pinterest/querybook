@@ -29,6 +29,10 @@ datadocs:
                         analyzer: user_content_analyzer
                     created_at:
                         type: long
+                    public:
+                        type: boolean
+                    readable_user_ids:
+                        type: integer
 tables:
     index_name: search_tables_v1
     type_name: tables # Keep this same in mappings
