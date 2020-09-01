@@ -61,12 +61,7 @@ export const TableTooltip: React.FunctionComponent<IProps> = ({
             </div>
         </>
     );
-    const tagsDOM = (
-        <>
-            <div className="tooltip-title">Tags</div>
-            <DataTableTags tableId={table.id} readonly />
-        </>
-    );
+    const tagsDOM = <DataTableTags tableId={table.id} readonly />;
     const partitionDOM = lastPartitions && lastPartitions !== '[]' && (
         <>
             <div className="tooltip-title">Latest Partitions</div>

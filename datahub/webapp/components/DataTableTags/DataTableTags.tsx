@@ -151,20 +151,33 @@ export const DataTableTags: React.FunctionComponent<IProps> = ({
 
     const listDOM = (tags || [])
         .sort((t1, t2) => t2.count - t1.count)
-        .map((tag) => (
-            <Tag
-                key={tag.id}
-                onClick={() =>
-                    navigateWithinEnv(
-                        `/search/?searchType=Table&searchString=${tag.tag}`
-                    )
-                }
-                iconOnHover="x"
-                onHoverClick={() => deleteTag(tag.id)}
-            >
-                {tag.tag}
-            </Tag>
-        ));
+        .map((tag) =>
+            readonly ? (
+                <Tag
+                    key={tag.id}
+                    onClick={() =>
+                        navigateWithinEnv(
+                            `/search/?searchType=Table&searchString=${tag.tag}`
+                        )
+                    }
+                >
+                    {tag.tag}
+                </Tag>
+            ) : (
+                <Tag
+                    key={tag.id}
+                    onClick={() =>
+                        navigateWithinEnv(
+                            `/search/?searchType=Table&searchString=${tag.tag}`
+                        )
+                    }
+                    iconOnHover="x"
+                    onHoverClick={() => deleteTag(tag.id)}
+                >
+                    {tag.tag}
+                </Tag>
+            )
+        );
 
     return (
         <div className="DataTableTags flex-row">
