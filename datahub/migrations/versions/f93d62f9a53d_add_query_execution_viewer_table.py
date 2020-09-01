@@ -1,7 +1,7 @@
 """Add Query Execution Viewer Table
 
 Revision ID: f93d62f9a53d
-Revises: 178d6726310a
+Revises: 8e3a8aa02aa7
 Create Date: 2020-08-27 17:47:02.179572
 
 """
@@ -11,7 +11,7 @@ import sqlalchemy as sa
 
 # revision identifiers, used by Alembic.
 revision = 'f93d62f9a53d'
-down_revision = '178d6726310a'
+down_revision = '8e3a8aa02aa7'
 branch_labels = None
 depends_on = None
 
