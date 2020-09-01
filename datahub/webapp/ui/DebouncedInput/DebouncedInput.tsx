@@ -92,7 +92,6 @@ export const DebouncedInput: React.FunctionComponent<IDebouncedInputProps> = ({
         transparent,
     });
 
-    console.log('optns', options, optionKey);
     return (
         <div className={classNameProp}>
             <input

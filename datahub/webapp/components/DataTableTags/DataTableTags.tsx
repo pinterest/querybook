@@ -62,8 +62,6 @@ export const DataTableTags: React.FunctionComponent<IProps> = ({
 
     const tagSuggestionArr = React.useMemo(() => {
         const existingTags = (tags || []).map((tag) => tag.tag);
-        console.log('existingTags,', existingTags);
-        console.log('tagSuggestions', tagSuggestions);
         return (tagSuggestions || []).filter(
             (str) => str.length && !existingTags.includes(str)
         );
