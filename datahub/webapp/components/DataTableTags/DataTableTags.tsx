@@ -120,7 +120,7 @@ export const DataTableTags: React.FunctionComponent<IProps> = ({
         );
 
     const listDOM = (tags || [])
-        .sort((t1, t2) => t1.count - t2.count)
+        .sort((t1, t2) => t2.count - t1.count)
         .map((tag) => {
             if (tag.uid === uid) {
                 return (
@@ -128,22 +128,12 @@ export const DataTableTags: React.FunctionComponent<IProps> = ({
                         key={tag.id}
                         iconOnHover="x"
                         onHoverClick={() => deleteTag(tag.id)}
-                        tooltip="search by tag"
-                        tooltipPos={readonly ? 'down' : 'right'}
                     >
                         {tag.tag}
                     </Tag>
                 );
             } else {
-                return (
-                    <Tag
-                        key={tag.id}
-                        tooltip="search by tag"
-                        tooltipPos={readonly ? 'down' : 'right'}
-                    >
-                        {tag.tag}
-                    </Tag>
-                );
+                return <Tag key={tag.id}>{tag.tag}</Tag>;
             }
         });
 

@@ -84,6 +84,8 @@ tables:
                         type: boolean
                     importance_score:
                         type: long
+                    tags:
+                        type: text
 users:
     index_name: search_users_v1
     type_name: users

@@ -49,6 +49,11 @@ class TagItem(Base):
         backref=backref("tag_item", cascade="all, delete"),
         foreign_keys=[tag_name],
     )
+    table = relationship(
+        "DataTable",
+        backref=backref("tags", cascade="all, delete"),
+        foreign_keys=[table_id],
+    )
 
     def to_dict(self):
         item = {
