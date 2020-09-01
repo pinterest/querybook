@@ -15,6 +15,7 @@ import { IconButton } from 'ui/Button/IconButton';
 import { Tag } from 'ui/Tag/Tag';
 
 import './DataTableTags.scss';
+import { useDataFetch } from 'hooks/useDataFetch';
 
 interface IProps {
     tableId: number;
@@ -49,9 +50,32 @@ export const DataTableTags: React.FunctionComponent<IProps> = ({
     const [isAdding, setIsAdding] = React.useState(false);
     const [isValid, setIsValid] = React.useState(true);
 
+    const {
+        data: tagSuggestions,
+        forceFetch: loadTagSuggestions,
+    }: { data: string[]; forceFetch } = useDataFetch({
+        url: '/tag/prefix/',
+        params: {
+            prefix: tagString,
+        },
+    });
+
+    const tagSuggestionArr = React.useMemo(() => {
+        const existingTags = (tags || []).map((tag) => tag.tag);
+        console.log('existingTags,', existingTags);
+        console.log('tagSuggestions', tagSuggestions);
+        return (tagSuggestions || []).filter(
+            (str) => str.length && !existingTags.includes(str)
+        );
+    }, [tagString, tagSuggestions, tags]);
+
     React.useEffect(() => {
         loadTags();
     }, []);
+
+    React.useEffect(() => {
+        loadTagSuggestions();
+    }, [tagString]);
 
     useEvent('keydown', (evt: KeyboardEvent) => {
         if (isAdding) {
@@ -98,6 +122,8 @@ export const DataTableTags: React.FunctionComponent<IProps> = ({
                     onChange={(str) => onStringChange(str)}
                     inputProps={{ placeholder: 'alphanumeric only' }}
                     className={isValid ? '' : 'invalid-string'}
+                    options={tagSuggestionArr}
+                    optionKey="data-table-tags"
                 />
                 {tagString.length && isValid ? (
                     <IconButton icon="plus" onClick={onCreateTag} size={20} />
@@ -121,21 +147,15 @@ export const DataTableTags: React.FunctionComponent<IProps> = ({
 
     const listDOM = (tags || [])
         .sort((t1, t2) => t2.count - t1.count)
-        .map((tag) => {
-            if (tag.uid === uid) {
-                return (
-                    <Tag
-                        key={tag.id}
-                        iconOnHover="x"
-                        onHoverClick={() => deleteTag(tag.id)}
-                    >
-                        {tag.tag}
-                    </Tag>
-                );
-            } else {
-                return <Tag key={tag.id}>{tag.tag}</Tag>;
-            }
-        });
+        .map((tag) => (
+            <Tag
+                key={tag.id}
+                iconOnHover="x"
+                onHoverClick={() => deleteTag(tag.id)}
+            >
+                {tag.tag}
+            </Tag>
+        ));
 
     return (
         <div className="DataTableTags flex-row">

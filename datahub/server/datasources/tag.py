@@ -1,6 +1,6 @@
 from flask_login import current_user
 
-from app.datasource import register, api_assert
+from app.datasource import register
 from app.db import DBSession
 from app.auth.permission import verify_data_table_permission
 from logic import tag as logic
@@ -12,9 +12,17 @@ from logic import tag as logic
 def get_tag_items(table_id):
     with DBSession() as session:
         verify_data_table_permission(table_id, session=session)
-
-        tag_items = logic.get_tag_items_by_table_id(table_id=table_id)
+        tag_items = logic.get_tag_items_by_table_id(table_id=table_id, session=session)
         return [tag_item.to_dict() for tag_item in tag_items]
+
+
+@register(
+    "/tag/prefix/", methods=["GET"],
+)
+def get_tags_by_prefix(prefix, limit=None):
+    with DBSession() as session:
+        tags = logic.get_tags_by_prefix(prefix=prefix, limit=limit, session=session)
+        return [tag.name for tag in tags]
 
 
 @register(
@@ -23,11 +31,9 @@ def get_tag_items(table_id):
 def create_tag_item(table_id, tag):
     with DBSession() as session:
         verify_data_table_permission(table_id, session=session)
-
         tag_item = logic.create_tag_item(
             table_id=table_id, tag_name=tag, uid=current_user.id, session=session
         )
-
         return tag_item.to_dict()
 
 
@@ -37,7 +43,4 @@ def create_tag_item(table_id, tag):
 def delete_tag_item(tag_id, table_id):
     with DBSession() as session:
         verify_data_table_permission(table_id, session=session)
-        tag_item = logic.get_tag_item_by_id(tag_id, session=session)
-
-        api_assert(tag_item.uid == current_user.id, "You can only delete your own tags")
         return logic.delete_tag_item(tag_item_id=tag_id, session=session)

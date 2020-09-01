@@ -85,7 +85,8 @@ tables:
                     importance_score:
                         type: long
                     tags:
-                        type: text
+                        type: keyword
+                        normalizer: case_insensitive
 users:
     index_name: search_users_v1
     type_name: users

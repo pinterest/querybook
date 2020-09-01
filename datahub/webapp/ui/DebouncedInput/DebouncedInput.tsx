@@ -20,6 +20,9 @@ export interface IDebouncedInputProps extends IDebouncedInputStylingProps {
     inputProps?: React.HTMLProps<HTMLInputElement>;
 
     onChange: (value: string) => any;
+
+    options?: string[];
+    optionKey?: string;
 }
 
 export interface IDebouncedInputState {
@@ -37,6 +40,8 @@ export const DebouncedInput: React.FunctionComponent<IDebouncedInputProps> = ({
     onChange,
     transparent,
     flex,
+    options,
+    optionKey,
 }) => {
     const [debouncedValue, setDebouncedValue] = useDebounceState(
         value ?? '',
@@ -86,6 +91,8 @@ export const DebouncedInput: React.FunctionComponent<IDebouncedInputProps> = ({
         flex,
         transparent,
     });
+
+    console.log('optns', options, optionKey);
     return (
         <div className={classNameProp}>
             <input
@@ -94,7 +101,15 @@ export const DebouncedInput: React.FunctionComponent<IDebouncedInputProps> = ({
                 value={debouncedValue}
                 onChange={onChangeFn}
                 {...inputProps}
+                list={optionKey}
             />
+            {options?.length ? (
+                <datalist id={optionKey}>
+                    {options.map((opt) => (
+                        <option key={opt} value={opt}></option>
+                    ))}
+                </datalist>
+            ) : null}
             {children}
         </div>
     );
