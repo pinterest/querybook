@@ -7,16 +7,16 @@ import {
     createTagItem,
     deleteTagItem,
 } from 'redux/tag/action';
-import { useEvent } from 'hooks/useEvent';
 import { matchKeyPress } from 'lib/utils/keyboard';
+import { navigateWithinEnv } from 'lib/utils/query-string';
+import { useDataFetch } from 'hooks/useDataFetch';
+import { useEvent } from 'hooks/useEvent';
 
 import { DebouncedInput } from 'ui/DebouncedInput/DebouncedInput';
 import { IconButton } from 'ui/Button/IconButton';
 import { Tag } from 'ui/Tag/Tag';
 
 import './DataTableTags.scss';
-import { useDataFetch } from 'hooks/useDataFetch';
-import { navigateWithinEnv } from 'lib/utils/query-string';
 
 interface IProps {
     tableId: number;
@@ -95,9 +95,14 @@ export const DataTableTags: React.FunctionComponent<IProps> = ({
 
     const onCreateTag = React.useCallback(() => {
         if (isValid) {
-            createTag(tagString);
-            setTagString('');
-            setIsAdding(false);
+            const existingTags = (tags || []).map((tag) => tag.tag);
+            if (!existingTags.includes(tagString)) {
+                createTag(tagString);
+                setTagString('');
+                setIsAdding(false);
+            } else {
+                setIsValid(false);
+            }
         }
     }, [tagString]);
 
