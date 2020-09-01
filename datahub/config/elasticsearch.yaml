@@ -41,6 +41,11 @@ tables:
                         tokenizer: standard
                         char_filter:
                             - html_strip
+                normalizer:
+                    case_insensitive:
+                        type: custom
+                        filter:
+                            - lowercase
         mappings:
             tables:
                 properties:
@@ -50,8 +55,10 @@ tables:
                         type: long
                     schema:
                         type: keyword
+                        normalizer: case_insensitive
                     name:
                         type: keyword
+                        normalizer: case_insensitive
                     full_name:
                         type: text
                         analyzer: whitespace
@@ -67,7 +74,8 @@ tables:
                     created_at:
                         type: long
                     columns:
-                        type: text
+                        type: keyword
+                        normalizer: case_insensitive
                     golden:
                         type: boolean
                     importance_score:

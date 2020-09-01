@@ -222,7 +222,7 @@ def get_table_weight(table_id: int, session=None) -> int:
 def table_to_es(table, session=None):
     schema = table.data_schema
 
-    column_names = map(lambda c: c.name, table.columns)
+    column_names = list(map(lambda c: c.name, table.columns))
     schema_name = schema.name
     table_name = table.name
     description = escape(
@@ -240,13 +240,6 @@ def table_to_es(table, session=None):
     schema_words = list(filter(lambda s: len(s), schema_name.split("_")))
     full_name_spaces = " ".join(schema_words + table_name_words)
 
-    column_names_spaces = " ".join(
-        [
-            " ".join(list(filter(lambda s: len(s), column_name.split("_"))))
-            for column_name in column_names or []
-        ]
-    )
-
     expand_table = {
         "id": table.id,
         "metastore_id": schema.metastore_id,
@@ -260,7 +253,7 @@ def table_to_es(table, session=None):
         },
         "description": description,
         "created_at": DATETIME_TO_UTC(table.created_at),
-        "columns": column_names_spaces,
+        "columns": column_names,
         "golden": table.golden,
         "importance_score": weight,
     }
@@ -408,8 +401,9 @@ def _update(index_name, doc_type, id, content):
     get_hosted_es().update(index=index_name, doc_type=doc_type, id=id, body=content)
 
 
-def create_indices():
-    for es_config in ES_CONFIG.values():
+def create_indices(*config_names):
+    es_configs = get_es_config_by_name(*config_names)
+    for es_config in es_configs:
         get_hosted_es().indices.create(es_config["index_name"], es_config["mappings"])
 
     LOG.info("Inserting datadocs")
@@ -422,8 +416,9 @@ def create_indices():
     _bulk_insert_users()
 
 
-def create_indices_if_not_exist():
-    for es_config in ES_CONFIG.values():
+def create_indices_if_not_exist(*config_names):
+    es_configs = get_es_config_by_name(*config_names)
+    for es_config in es_configs:
         if not get_hosted_es().indices.exists(index=es_config["index_name"]):
             get_hosted_es().indices.create(
                 es_config["index_name"], es_config["mappings"]
@@ -439,6 +434,18 @@ def create_indices_if_not_exist():
                 _bulk_insert_users()
 
 
-def delete_indices():
-    for es_config in ES_CONFIG.values():
+def delete_indices(*config_names):
+    es_configs = get_es_config_by_name(*config_names)
+    for es_config in es_configs:
         get_hosted_es().indices.delete(es_config["index_name"])
+
+
+def get_es_config_by_name(*config_names):
+    if len(config_names) == 0:
+        config_names = ES_CONFIG.keys()
+    return [ES_CONFIG[config_name] for config_name in config_names]
+
+
+def recreate_indices(*config_names):
+    delete_indices(*config_names)
+    create_indices_if_not_exist(*config_names)
