@@ -12,16 +12,22 @@ import { navigateWithinEnv } from 'lib/utils/query-string';
 import { generateFormattedDate } from 'lib/utils/datetime';
 import { titleize, getHumanReadableByteSize } from 'lib/utils';
 
-import { DataTableStats } from 'components/DataTableStats/DataTableStats';
-import { DataTableViewQueryUsers } from 'components/DataTableViewQueryExample/DataTableViewQueryUsers';
+import {
+    DataTableStats,
+    useFetchDataTableStats,
+} from 'components/DataTableStats/DataTableStats';
+import {
+    DataTableViewQueryUsers,
+    useLoadQueryUsers,
+} from 'components/DataTableViewQueryExample/DataTableViewQueryUsers';
 import { Button } from 'ui/Button/Button';
-import { Divider } from 'ui/Divider/Divider';
 import { EditableTextField } from 'ui/EditableTextField/EditableTextField';
 import { Message } from 'ui/Message/Message';
 import { Table } from 'ui/Table/Table';
-import { Title } from 'ui/Title/Title';
 
 import './DataTableViewOverview.scss';
+import { DataTableViewOverviewSection } from './DataTableViewOverviewSection';
+import { LoadingRow } from 'ui/Loading/Loading';
 
 const dataTableDetailsColumns = [
     {
@@ -67,27 +73,13 @@ export class DataTableViewOverview extends React.PureComponent<
         return this.props.updateDataTableDescription(table.id, description);
     }
 
-    @bind
-    public makeOverviewSectionDOM(
-        title: React.ReactNode,
-        content?: React.ReactNode,
-        footer?: React.ReactNode
-    ) {
-        return (
-            <div>
-                <div className="overview-section-top">
-                    <Title size={5}>{title}</Title>
-                    <Divider marginTop="4px" marginBottom="12px" />
-                </div>
-                <div className="overview-section-content">{content}</div>
-                <div className="overview-section-footer">{footer}</div>
-                <br />
-            </div>
-        );
-    }
-
     public render() {
-        const { table, tableName, tableWarnings } = this.props;
+        const {
+            table,
+            tableName,
+            tableWarnings,
+            onExampleUidFilter,
+        } = this.props;
         const description = table.description ? (
             <EditableTextField
                 value={table.description as DraftJs.ContentState}
@@ -128,103 +120,90 @@ export class DataTableViewOverview extends React.PureComponent<
             />
         );
 
-        const statsDOM = <DataTableStats tableId={this.props.table.id} />;
-
         const hiveMetastoreDOM = table.hive_metastore_description ? (
             <pre>{table.hive_metastore_description}</pre>
         ) : null;
 
-        const descriptionSection = this.makeOverviewSectionDOM(
-            `Description`,
-            description,
-            null
+        const descriptionSection = (
+            <DataTableViewOverviewSection title="Description">
+                {description}
+            </DataTableViewOverviewSection>
         );
 
-        const metaSection = this.makeOverviewSectionDOM(
-            'Meta info',
-            <div>
-                <p>
-                    First created in DataHub at{' '}
-                    {generateFormattedDate(table.created_at)}.
-                </p>
-                <p>
-                    Last pulled from metastore at{' '}
-                    {generateFormattedDate(table.updated_at)}.
-                </p>
-            </div>
+        const metaSection = (
+            <DataTableViewOverviewSection title="Meta info">
+                <div>
+                    <p>
+                        First created in DataHub at{' '}
+                        {generateFormattedDate(table.created_at)}.
+                    </p>
+                    <p>
+                        Last pulled from metastore at{' '}
+                        {generateFormattedDate(table.updated_at)}.
+                    </p>
+                </div>
+            </DataTableViewOverviewSection>
+        );
+        const detailsSection = (
+            <DataTableViewOverviewSection title="Details">
+                {detailsDOM}
+            </DataTableViewOverviewSection>
         );
 
-        const detailsSection = this.makeOverviewSectionDOM(
-            `Details`,
-            detailsDOM
+        const hiveMetastoreSection = (
+            <DataTableViewOverviewSection title="Hive Metastore Raw">
+                {hiveMetastoreDOM}
+            </DataTableViewOverviewSection>
         );
 
-        const statsSection = this.makeOverviewSectionDOM(
-            'Statistics',
-            statsDOM
+        const sampleQueriesSection = (
+            <DataTableViewOverviewSection title="Sample DataDocs">
+                <Button
+                    onClick={() =>
+                        navigateWithinEnv(
+                            `/search/?searchType=DataDoc&searchString=${tableName}`,
+                            {
+                                isModal: true,
+                            }
+                        )
+                    }
+                    type="inlineText"
+                    borderless
+                >
+                    Click to View Sample DataDocs
+                </Button>
+            </DataTableViewOverviewSection>
         );
 
-        const hiveMetastoreSection = hiveMetastoreDOM
-            ? this.makeOverviewSectionDOM(
-                  `Hive Metastore Raw`,
-                  hiveMetastoreDOM
-              )
-            : null;
-
-        const sampleQueriesSection = this.makeOverviewSectionDOM(
-            `Sample DataDocs`,
-            <Button
-                onClick={() =>
-                    navigateWithinEnv(
-                        `/search/?searchType=DataDoc&searchString=${tableName}`,
-                        {
-                            isModal: true,
-                        }
-                    )
-                }
-                type="inlineText"
-                borderless
-            >
-                Click to View Sample DataDocs
-            </Button>
-        );
-
-        const warningSection = tableWarnings.length
-            ? this.makeOverviewSectionDOM(
-                  `User Warnings`,
-                  <>
-                      {tableWarnings.map((warning) => {
-                          const isError =
-                              warning.severity ===
-                              DataTableWarningSeverity.ERROR;
-                          return (
-                              <Message
-                                  key={warning.id}
-                                  title={isError ? 'Error' : 'Warning'}
-                                  message={warning.message}
-                                  type={isError ? 'error' : 'warning'}
-                              />
-                          );
-                      })}
-                  </>
-              )
-            : null;
-
-        const frequentUsersSection = this.makeOverviewSectionDOM(
-            `Frequent Users`,
-            <DataTableViewQueryUsers
-                tableId={table.id}
-                onClick={this.props.onExampleUidFilter}
-            />
-        );
+        const warningSection = tableWarnings.length ? (
+            <DataTableViewOverviewSection title="User Warnings">
+                <>
+                    {tableWarnings.map((warning) => {
+                        const isError =
+                            warning.severity === DataTableWarningSeverity.ERROR;
+                        return (
+                            <Message
+                                key={warning.id}
+                                title={isError ? 'Error' : 'Warning'}
+                                message={warning.message}
+                                type={isError ? 'error' : 'warning'}
+                            />
+                        );
+                    })}
+                </>
+            </DataTableViewOverviewSection>
+        ) : null;
 
         return (
             <div className="DataHubTableViewOverview">
                 {warningSection}
                 {descriptionSection}
-                {frequentUsersSection}
+                <FrequentUsersSection
+                    tableId={table.id}
+                    onClick={onExampleUidFilter}
+                />
                 {detailsSection}
-                {statsSection}
+                <TableStatsSection tableId={table.id} />
                 {hiveMetastoreSection}
                 {metaSection}
                 {sampleQueriesSection}
@@ -232,3 +211,30 @@ export class DataTableViewOverview extends React.PureComponent<
         );
     }
 }
+
+const FrequentUsersSection: React.FC<{
+    tableId: number;
+    onClick: (uid: number) => any;
+}> = ({ tableId, onClick }) => {
+    const { loading, topQueryUsers } = useLoadQueryUsers(tableId);
+    return loading ? (
+        <LoadingRow />
+    ) : topQueryUsers?.length ? (
+        <DataTableViewOverviewSection title="Frequent Users">
+            <DataTableViewQueryUsers tableId={tableId} onClick={onClick} />
+        </DataTableViewOverviewSection>
+    ) : null;
+};
+
+const TableStatsSection: React.FC<{
+    tableId: number;
+}> = ({ tableId }) => {
+    const { loading, tableStats } = useFetchDataTableStats(tableId);
+    return loading ? (
+        <LoadingRow />
+    ) : tableStats?.length ? (
+        <DataTableViewOverviewSection title="Statistics">
+            {<DataTableStats tableId={tableId} />}
+        </DataTableViewOverviewSection>
+    ) : null;
+};

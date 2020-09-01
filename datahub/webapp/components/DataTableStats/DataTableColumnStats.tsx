@@ -1,10 +1,9 @@
 import * as React from 'react';
 
+import { TableStatValue } from 'const/metastore';
 import { useDataFetch } from 'hooks/useDataFetch';
-
-import { TableStatValueType, renderStatValue } from './DataTableStatsCommon';
-
 import { KeyContentDisplay } from 'ui/KeyContentDisplay/KeyContentDisplay';
+import { renderStatValue } from './DataTableStatsCommon';
 
 interface IProps {
     columnId: number;
@@ -14,7 +13,7 @@ interface ITableColumnStats {
     id: number;
     column_id: number;
     key: string;
-    value: TableStatValueType;
+    value: TableStatValue;
     uid: number;
 }
 export const DataTableColumnStats: React.FunctionComponent<IProps> = ({

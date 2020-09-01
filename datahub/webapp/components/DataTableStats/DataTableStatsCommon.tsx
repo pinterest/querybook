@@ -1,8 +1,7 @@
 import * as React from 'react';
+import { TableStatValue } from 'const/metastore';
 
-export type TableStatValueType = number | string | Array<number | string>;
-
-export const renderStatValue = (val: TableStatValueType) => {
+export const renderStatValue = (val: TableStatValue) => {
     if (Array.isArray(val)) {
         return val.map((item, idx) => <div key={idx}>{item}</div>);
     }

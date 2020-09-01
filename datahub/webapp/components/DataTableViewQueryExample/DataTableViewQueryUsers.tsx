@@ -7,18 +7,13 @@ import { fetchTopQueryUsersIfNeeded } from 'redux/dataSources/action';
 import { UserAvatarList } from 'components/UserBadge/UserAvatarList';
 import { Loading } from 'ui/Loading/Loading';
 
-export const DataTableViewQueryUsers: React.FC<{
-    tableId: number;
-    onClick?: (uid: number) => any;
-}> = ({ tableId, onClick = null }) => {
+export function useLoadQueryUsers(tableId: number) {
     const [loading, setLoading] = useState(false);
     const topQueryUsers = useSelector(
         (state: IStoreState) =>
             state.dataSources.queryTopUsersByTableId[tableId]
     );
-    const userInfoById = useSelector(
-        (state: IStoreState) => state.user.userInfoById
-    );
+
     const dispatch: Dispatch = useDispatch();
 
     useEffect(() => {
@@ -27,6 +22,21 @@ export const DataTableViewQueryUsers: React.FC<{
             setLoading(false);
         });
     }, [tableId]);
+
+    return {
+        loading,
+        topQueryUsers,
+    };
+}
+
+export const DataTableViewQueryUsers: React.FC<{
+    tableId: number;
+    onClick?: (uid: number) => any;
+}> = ({ tableId, onClick = null }) => {
+    const { loading, topQueryUsers } = useLoadQueryUsers(tableId);
+    const userInfoById = useSelector(
+        (state: IStoreState) => state.user.userInfoById
+    );
 
     const viewersDOM = loading ? (
         <Loading />
@@ -46,7 +56,9 @@ export const DataTableViewQueryUsers: React.FC<{
 
     return (
         <div className="DataTableViewQueryUsers">
-            <div>Click on a user to see their queries</div>
+            {topQueryUsers?.length ? (
+                <div>Click on a user to see their queries</div>
+            ) : null}
             <div className="DataTableViewQueryUsers-users center-align">
                 {viewersDOM}
             </div>

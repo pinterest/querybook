@@ -41,6 +41,12 @@ export const LoadingIcon: React.FC = () => (
     </StyledSpinner>
 );
 
+export const LoadingRow: React.FC = () => (
+    <div className="center-align mv4">
+        <LoadingIcon />
+    </div>
+);
+
 export const Loading: React.FunctionComponent<ILoadingProps> = ({
     useSpinner = true,
     text = '',

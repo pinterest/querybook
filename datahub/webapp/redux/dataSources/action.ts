@@ -14,6 +14,7 @@ import {
     ITopQueryUser,
     IPaginatedQuerySampleFilters,
     IDataTableOwnership,
+    ITableStats,
 } from 'const/metastore';
 import { convertRawToContentState } from 'lib/draft-js-utils';
 import ds from 'lib/datasource';
@@ -822,6 +823,35 @@ export function deleteDataTableOwnership(
             });
         } catch (e) {
             console.error(e);
+        }
+    };
+}
+
+export function fetchDataTableStats(
+    tableId: number
+): ThunkResult<Promise<void>> {
+    return async (dispatch) => {
+        try {
+            const { data: stat } = await ds.fetch<ITableStats[]>(
+                `/table/stats/${tableId}/`
+            );
+            dispatch({
+                type: '@@dataSources/RECEIVE_DATA_TABLE_STATS',
+                payload: { tableId, stat },
+            });
+        } catch (e) {
+            console.error(e);
+        }
+    };
+}
+
+export function fetchDataTableStatsIfNeeded(
+    tableId: number
+): ThunkResult<Promise<void>> {
+    return async (dispatch, getState) => {
+        const stat = getState().dataSources.dataTableStatByTableId[tableId];
+        if (!stat) {
+            dispatch(fetchDataTableStats(tableId));
         }
     };
 }
