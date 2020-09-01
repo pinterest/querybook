@@ -16,6 +16,7 @@ import { Tag } from 'ui/Tag/Tag';
 
 import './DataTableTags.scss';
 import { useDataFetch } from 'hooks/useDataFetch';
+import { navigateWithinEnv } from 'lib/utils/query-string';
 
 interface IProps {
     tableId: number;
@@ -148,6 +149,11 @@ export const DataTableTags: React.FunctionComponent<IProps> = ({
         .map((tag) => (
             <Tag
                 key={tag.id}
+                onClick={() =>
+                    navigateWithinEnv(
+                        `/search/?searchType=Table&searchString=${tag.tag}`
+                    )
+                }
                 iconOnHover="x"
                 onHoverClick={() => deleteTag(tag.id)}
             >
