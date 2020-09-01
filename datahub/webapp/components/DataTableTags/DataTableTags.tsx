@@ -127,7 +127,7 @@ export const DataTableTags: React.FunctionComponent<IProps> = ({
                     inputProps={{ placeholder: 'alphanumeric only' }}
                     className={isValid ? '' : 'invalid-string'}
                     options={tagSuggestionArr}
-                    optionKey="data-table-tags"
+                    optionKey={`data-table-tags-${tableId}`}
                 />
                 {tagString.length && isValid ? (
                     <IconButton icon="plus" onClick={onCreateTag} size={20} />
@@ -151,33 +151,20 @@ export const DataTableTags: React.FunctionComponent<IProps> = ({
 
     const listDOM = (tags || [])
         .sort((t1, t2) => t2.count - t1.count)
-        .map((tag) =>
-            readonly ? (
-                <Tag
-                    key={tag.id}
-                    onClick={() =>
-                        navigateWithinEnv(
-                            `/search/?searchType=Table&searchString=${tag.tag}`
-                        )
-                    }
-                >
-                    {tag.tag}
-                </Tag>
-            ) : (
-                <Tag
-                    key={tag.id}
-                    onClick={() =>
-                        navigateWithinEnv(
-                            `/search/?searchType=Table&searchString=${tag.tag}`
-                        )
-                    }
-                    iconOnHover="x"
-                    onHoverClick={() => deleteTag(tag.id)}
-                >
-                    {tag.tag}
-                </Tag>
-            )
-        );
+        .map((tag) => (
+            <Tag
+                key={tag.id}
+                onClick={() =>
+                    navigateWithinEnv(
+                        `/search/?searchType=Table&searchString=${tag.tag}`
+                    )
+                }
+                iconOnHover={readonly ? null : 'x'}
+                onHoverClick={readonly ? null : () => deleteTag(tag.id)}
+            >
+                {tag.tag}
+            </Tag>
+        ));
 
     return (
         <div className="DataTableTags flex-row">

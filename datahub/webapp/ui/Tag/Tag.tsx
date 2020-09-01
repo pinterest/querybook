@@ -1,9 +1,11 @@
 import React from 'react';
+import classNames from 'classnames';
+
+import { TooltipDirection } from 'const/tooltip';
+
+import { Icon } from 'ui/Icon/Icon';
 
 import './Tag.scss';
-import { Icon } from 'ui/Icon/Icon';
-import { TooltipDirection } from 'const/tooltip';
-import classNames from 'classnames';
 
 export interface ITagGroupProps {
     className?: string;
