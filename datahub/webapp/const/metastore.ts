@@ -141,3 +141,12 @@ export interface IDataTableOwnership {
     uid: number;
     created_at: number;
 }
+
+export type TableStatValue = number | string | Array<number | string>;
+export interface ITableStats {
+    id: number;
+    table_id: number;
+    key: string;
+    value: TableStatValue;
+    uid: number;
+}

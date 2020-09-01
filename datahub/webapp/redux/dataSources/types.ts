@@ -18,6 +18,7 @@ import {
     ITopQueryUser,
     IPaginatedQuerySampleFilters,
     IDataTableOwnership,
+    ITableStats,
 } from 'const/metastore';
 import { IStoreState } from '../store/types';
 
@@ -138,6 +139,14 @@ export interface IRemoveDataTableWarning extends Action {
     payload: IDataTableWarning;
 }
 
+export interface IReceiveDataTableStats extends Action {
+    type: '@@dataSources/RECEIVE_DATA_TABLE_STATS';
+    payload: {
+        tableId: number;
+        stat: ITableStats[];
+    };
+}
+
 export interface IReceiveDataTableOwnership extends Action {
     type: '@@dataSources/RECEIVE_DATA_TABLE_OWNERSHIPS';
     payload: {
@@ -176,6 +185,7 @@ export type DataSourcesAction =
     | IReceiveDataTableWarning
     | IRemoveDataTableWarning
     | IReceiveDataTableOwnership
+    | IReceiveDataTableStats
     | IAddDataTableOwnership
     | IRemoveDataTableOwnership
     | IReceiveTopQueryUsersAction;
@@ -194,6 +204,7 @@ export interface IDataSourcesState {
     dataSchemasById: Record<number, IDataSchema>;
     dataColumnsById: Record<number, IDataColumn>;
     dataTableWarningById: Record<number, IDataTableWarning>;
+    dataTableStatByTableId: Record<number, ITableStats[]>;
     dataTableOwnershipByTableId: Record<number, IDataTableOwnership[]>;
 
     // By MetastoreId -> name -> tableId

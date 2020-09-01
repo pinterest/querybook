@@ -19,14 +19,14 @@ export const ColumnPanelView: React.FunctionComponent<IColumnPanelViewProps> = (
     );
 
     const overviewPanel = (
-        <PanelSection title="overview">
+        <PanelSection title="column">
             <SubPanelSection title="name">{column.name}</SubPanelSection>
             <SubPanelSection title="type">{column.type}</SubPanelSection>
         </PanelSection>
     );
 
     const descriptionPanel = (
-        <PanelSection title="description">
+        <PanelSection title="description" hideIfNoContent>
             {column.description
                 ? (column.description as ContentState).getPlainText()
                 : '-'}

@@ -26,7 +26,7 @@ const initialState: IDataSourcesState = {
     // trustworthinessStats: {
     //     loaded: false,
     // },
-
+    dataTableStatByTableId: {},
     dataLineages: {
         parentLineage: {},
         childLineage: {},
@@ -392,6 +392,21 @@ function queryMetastoreById(
     return state;
 }
 
+function dataTableStatByTableId(
+    state = initialState.dataTableStatByTableId,
+    action: DataSourcesAction
+) {
+    switch (action.type) {
+        case '@@dataSources/RECEIVE_DATA_TABLE_STATS': {
+            return {
+                ...state,
+                [action.payload.tableId]: action.payload.stat,
+            };
+        }
+    }
+    return state;
+}
+
 export default combineReducers({
     queryMetastoreById,
     goldenTableNameToId,
@@ -408,4 +423,5 @@ export default combineReducers({
     dataLineages,
     dataTableWarningById,
     dataTableOwnershipByTableId,
+    dataTableStatByTableId,
 });

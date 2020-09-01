@@ -20,6 +20,10 @@ interface ITablePanelViewProps {
     onColumnRowClick?: (id: number) => any;
 }
 
+function hasPartitions(partitions: string) {
+    return partitions && partitions !== '[]';
+}
+
 export const TablePanelView: React.FunctionComponent<ITablePanelViewProps> = ({
     tableId,
     onColumnRowClick,
@@ -37,13 +41,13 @@ export const TablePanelView: React.FunctionComponent<ITablePanelViewProps> = ({
 
     const renderPanelView = () => {
         const overviewSection = (
-            <PanelSection title="overview">
+            <PanelSection title="table">
                 <SubPanelSection title="schema">{schema.name}</SubPanelSection>
                 <SubPanelSection title="name">{table.name}</SubPanelSection>
-                <SubPanelSection title="description">
+                <SubPanelSection title="description" hideIfNoContent>
                     {table.description
                         ? (table.description as ContentState).getPlainText()
-                        : '-'}
+                        : ''}
                 </SubPanelSection>
             </PanelSection>
         );
@@ -62,27 +66,29 @@ export const TablePanelView: React.FunctionComponent<ITablePanelViewProps> = ({
             </PanelSection>
         );
 
-        const partitionsSection = (
-            <PanelSection title="partitions">
-                <SubPanelSection title={`Latest`}>
-                    {table.latest_partitions}
-                </SubPanelSection>
+        const partitionsSection =
+            hasPartitions(table.latest_partitions) ||
+            hasPartitions(table.earliest_partitions) ? (
+                <PanelSection title="partitions">
+                    <SubPanelSection title={`Latest`}>
+                        {table.latest_partitions}
+                    </SubPanelSection>
 
-                <SubPanelSection title={`Earliest`}>
-                    {table.earliest_partitions}
-                </SubPanelSection>
-            </PanelSection>
-        );
+                    <SubPanelSection title={`Earliest`}>
+                        {table.earliest_partitions}
+                    </SubPanelSection>
+                </PanelSection>
+            ) : null;
 
         const detailsSection = (
             <PanelSection title="details">
-                <SubPanelSection title="data size (bytes)">
+                <SubPanelSection title="data size (bytes)" hideIfNoContent>
                     {getHumanReadableByteSize(table.data_size_bytes)}
                 </SubPanelSection>
-                <SubPanelSection title="Location">
+                <SubPanelSection title="Location" hideIfNoContent>
                     {table.location}
                 </SubPanelSection>
-                <SubPanelSection title="Last Synced">
+                <SubPanelSection title="Last Synced" hideIfNoContent>
                     {generateFormattedDate(table.updated_at)}
                 </SubPanelSection>
             </PanelSection>

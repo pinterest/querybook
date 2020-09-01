@@ -1,8 +1,9 @@
-import React from 'react';
+import React, { useCallback } from 'react';
 import styled from 'styled-components';
 
 export interface IPanelSectionProps {
     title: string;
+    hideIfNoContent?: boolean;
 }
 export interface IPanelSectionState {
     isOpen: boolean;
@@ -33,12 +34,16 @@ const PanelTitle = styled.p`
 export const PanelSection: React.FunctionComponent<IPanelSectionProps> = ({
     title,
     children,
+    hideIfNoContent,
 }) => {
     const [isOpen, setIsOpen] = React.useState(true);
+    const toggleSectionOpen = useCallback(() => {
+        setIsOpen((o) => !o);
+    }, []);
 
-    const toggleSectionOpen = () => {
-        setIsOpen(!isOpen);
-    };
+    if (hideIfNoContent && !children) {
+        return null;
+    }
 
     const headerDOM = (
         <div onClick={toggleSectionOpen}>
@@ -78,8 +83,9 @@ const StyledSubPanelSection = styled.div`
 
 export const SubPanelSection: React.FunctionComponent<{
     title: string;
-}> = ({ title, children }) => {
-    return (
+    hideIfNoContent?: boolean;
+}> = ({ title, children, hideIfNoContent }) => {
+    return hideIfNoContent && !children ? null : (
         <StyledSubPanelSection>
             <div>
                 <SubPanelTitle>{title}</SubPanelTitle>
