@@ -22,3 +22,9 @@ export enum QueryExecutionErrorType {
     ENGINE,
     SYNTAX,
 }
+
+export interface IQueryExecutionViewer {
+    id: number;
+    uid: number;
+    execution_id: number;
+}

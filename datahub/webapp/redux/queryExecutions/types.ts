@@ -3,6 +3,8 @@ import { ThunkAction, ThunkDispatch as ReduxThunkDispatch } from 'redux-thunk';
 
 import { DataDocAction } from '../dataDoc/types';
 import { IStoreState } from '../store/types';
+import { IQueryExecutionViewer } from 'const/queryExecution';
+import { IAccessRequest } from 'const/accessRequest';
 
 export interface IQueryExecution {
     id: number;
@@ -158,6 +160,54 @@ export interface IReceiveQueryCellIdFromExecution extends Action {
     };
 }
 
+export interface IRemoveQueryExecutionAccessRequestAction extends Action {
+    type: '@@queryExecutions/REMOVE_QUERY_EXECUTION_ACCESS_REQUEST';
+    payload: {
+        executionId: number;
+        uid: number;
+    };
+}
+
+export interface IReceiveQueryExecutionViewerAction extends Action {
+    type: '@@queryExecutions/RECEIVE_QUERY_EXECUTION_VIEWER';
+    payload: {
+        executionId: number;
+        viewer: IQueryExecutionViewer;
+    };
+}
+
+export interface IReceiveQueryExecutionViewersAction extends Action {
+    type: '@@queryExecutions/RECEIVE_QUERY_EXECUTION_VIEWERS';
+    payload: {
+        executionId: number;
+        viewers: IQueryExecutionViewer[];
+    };
+}
+
+export interface IRemoveQueryExectionViewerAction extends Action {
+    type: '@@queryExecutions/REMOVE_QUERY_EXECUTION_VIEWER';
+    payload: {
+        executionId: number;
+        uid: number;
+    };
+}
+
+export interface IReceiveQueryExecutionAccessRequestAction extends Action {
+    type: '@@queryExecutions/RECEIVE_QUERY_EXECUTION_ACCESS_REQUEST';
+    payload: {
+        executionId: number;
+        request: IAccessRequest;
+    };
+}
+
+export interface IReceiveQueryExecutionAccessRequestsAction extends Action {
+    type: '@@queryExecutions/RECEIVE_QUERY_EXECUTION_ACCESS_REQUESTS';
+    payload: {
+        executionId: number;
+        requests: IAccessRequest[];
+    };
+}
+
 export type QueryExecutionAction =
     | IReceiveQueryExecutionsAction
     | IReceiveQueryExecutionAction
@@ -168,7 +218,13 @@ export type QueryExecutionAction =
     | IReceiveStatementExecutionAction
     | IReceiveStatementExecutionUpdateAction
     | IReceiveStatementExporters
-    | IReceiveQueryCellIdFromExecution;
+    | IReceiveQueryCellIdFromExecution
+    | IReceiveQueryExecutionAccessRequestAction
+    | IRemoveQueryExecutionAccessRequestAction
+    | IReceiveQueryExecutionViewerAction
+    | IReceiveQueryExecutionViewersAction
+    | IRemoveQueryExectionViewerAction
+    | IReceiveQueryExecutionAccessRequestsAction;
 
 export interface IQueryExecutionState {
     queryExecutionById: Record<number, IQueryExecution>;
@@ -180,6 +236,15 @@ export interface IQueryExecutionState {
     statementLogById: Record<number, IStatementLog>;
 
     statementExporters: IQueryResultExporter[];
+
+    viewersByExecutionIdUserId: Record<
+        number,
+        Record<number, IQueryExecutionViewer>
+    >;
+    accessRequestsByExecutionIdUserId: Record<
+        number,
+        Record<number, IAccessRequest>
+    >;
 }
 
 export type ThunkResult<R> = ThunkAction<

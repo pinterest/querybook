@@ -11,6 +11,7 @@ export interface IEnvironment {
     public: boolean;
     hidden: boolean;
     archived: boolean;
+    shareable: boolean;
 }
 
 export interface IReceiveEnvironmentsAction extends Action {

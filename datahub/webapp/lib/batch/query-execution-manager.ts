@@ -18,11 +18,16 @@ class QueryCellExecutionManager {
                 }
             );
 
-            for (const [cellId, executions] of cellExecutions) {
+            for (const [
+                cellId,
+                executions,
+                latest_execution,
+            ] of cellExecutions) {
                 if (executions) {
                     this.dispatch(
                         receiveQueryExecutionsByCell(executions, cellId)
                     );
+                    this.dispatch(receiveQueryExecution(latest_execution));
                 }
             }
         },
@@ -34,33 +39,4 @@ class QueryCellExecutionManager {
         return this.batchLoadUserManager.batch(cellId);
     }
 }
-
-class QueryExecutionLoadManager {
-    private dispatch: Dispatch;
-    private batchLoadUserManager = new BatchManager<number, number[]>({
-        batchFrequency: 500,
-        processFunction: async (executionIds: number[]) => {
-            const { data: executions } = await ds.save(
-                `/batch/query_execution/`,
-                {
-                    ids: executionIds,
-                }
-            );
-
-            for (const execution of executions) {
-                if (executions) {
-                    this.dispatch(receiveQueryExecution(execution));
-                }
-            }
-        },
-        mergeFunction: mergeSetFunction,
-    });
-
-    public loadQueryExecution(executionId: number, dispatch: Dispatch) {
-        this.dispatch = dispatch;
-        return this.batchLoadUserManager.batch(executionId);
-    }
-}
-
 export const queryCellExecutionManager = new QueryCellExecutionManager();
-export const queryExecutionLoadManager = new QueryExecutionLoadManager();

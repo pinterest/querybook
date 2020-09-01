@@ -1,4 +1,4 @@
-import React, { useMemo } from 'react';
+import React, { useMemo, useState, useRef } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 
 import { queryStatusToStatusIcon } from 'const/queryStatus';
@@ -15,6 +15,10 @@ import { Button } from 'ui/Button/Button';
 import { useDataFetch } from 'hooks/useDataFetch';
 import { Tag } from 'ui/Tag/Tag';
 import { BoundQueryEditor } from 'components/QueryEditor/BoundQueryEditor';
+import * as queryExecutionActions from 'redux/queryExecutions/action';
+import { myUserInfoSelector } from 'redux/user/selector';
+import { currentEnvironmentSelector } from 'redux/environment/selector';
+import { QueryViewEditorShareButton } from './QueryViewEditorShareButton';
 
 export const QueryViewEditor: React.FunctionComponent<{
     queryExecution: IQueryExecution;
@@ -22,8 +26,12 @@ export const QueryViewEditor: React.FunctionComponent<{
     const queryEngineById = useSelector(queryEngineByIdEnvSelector);
     const queryEngine = queryEngineById[queryExecution.engine_id];
 
-    const dispatch = useDispatch();
+    const userInfo = useSelector(myUserInfoSelector);
+    const environment = useSelector(currentEnvironmentSelector);
+    const showAccessControls =
+        queryExecution.uid == userInfo.id && !environment.shareable;
 
+    const dispatch = useDispatch();
     const { data: cellInfo } = useDataFetch<{
         doc_id: number;
         cell_id: number;
@@ -56,6 +64,18 @@ export const QueryViewEditor: React.FunctionComponent<{
                 queryEngineById[queryExecution.engine_id].language
             )
         );
+        if (showAccessControls) {
+            dispatch(
+                queryExecutionActions.fetchQueryExecutionAccessRequests(
+                    queryExecution.id
+                )
+            );
+            dispatch(
+                queryExecutionActions.fetchQueryExecutionViewers(
+                    queryExecution.id
+                )
+            );
+        }
     }, [queryEngineById, queryExecution]);
 
     const editorDOM = (
@@ -91,11 +111,16 @@ export const QueryViewEditor: React.FunctionComponent<{
             <Button onClick={goToDataDoc} title="Go To DataDoc" />
         ) : null;
 
+    const shareExecutionButton = showAccessControls ? (
+        <QueryViewEditorShareButton queryExecution={queryExecution} />
+    ) : null;
+
     const editorSectionHeader = (
         <div className="editor-section-header horizontal-space-between">
             <div>{queryExecutionTitleDOM}</div>
 
-            <div>
+            <div className="horizontal-space-between">
+                {shareExecutionButton}
                 <Button onClick={exportToAdhocQuery} title="Edit" />
                 {goToDataDocButton}
             </div>

@@ -1,0 +1,46 @@
+.QueryExecutionAccessList {
+    width: 400px;
+
+    .query-execution-add-user-row {
+        padding-bottom: 16px;
+        margin-bottom: 8px;
+
+        .user-select-wrapper {
+            flex: 1;
+            color: var(--invert-text-color);
+        }
+    }
+
+    .row-description {
+        border-bottom: var(--border);
+    }
+
+    .viewers-list-wrapper {
+        // Each row is 65px, show at most 5
+        max-height: 320px;
+        overflow-y: scroll;
+        padding-bottom: 0px;
+        padding-top: 0px;
+
+        > div:not(:last-child) {
+            border-bottom: var(--border);
+        }
+    }
+
+    .viewers-user-row {
+        display: flex;
+        justify-content: space-between;
+        padding: 8px 0px;
+
+        .remove-button {
+            height: 32px;
+            align-self: center;
+        }
+
+        .access-info {
+            display: flex;
+            align-items: center;
+            text-align: right;
+        }
+    }
+}
