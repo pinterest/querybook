@@ -27,22 +27,21 @@ def get_tag_by_name(tag_name, session=None):
 
 
 @with_session
-def create_or_update_tag(tag_name, is_delete=False, session=None):
+def create_or_update_tag(tag_name, is_delete=False, commit=True, session=None):
     tag = get_tag_by_name(tag_name=tag_name, session=session)
 
     if not tag and not is_delete:
-        tag = Tag(
-            name=tag_name,
-            created_at=datetime.datetime.now(),
-            updated_at=datetime.datetime.now(),
-            count=1,
-        )
+        tag = Tag(name=tag_name, count=1,)
         session.add(tag)
     else:
         tag.updated_at = datetime.datetime.now()
         tag.count = tag.count - 1 if is_delete else tag.count + 1
 
-    session.commit()
+    if commit:
+        session.commit()
+    else:
+        session.flush()
+
     return tag
 
 
@@ -56,12 +55,7 @@ def create_tag_item(table_id, tag_name, uid, session=None):
 
     tag = create_or_update_tag(tag_name=tag_name, session=session)
 
-    tag_item = TagItem(
-        created_at=datetime.datetime.now(),
-        tag_name=tag.name,
-        table_id=table_id,
-        uid=uid,
-    )
+    tag_item = TagItem(tag_name=tag.name, table_id=table_id, uid=uid,)
     session.add(tag_item)
 
     session.commit()

@@ -43,13 +43,21 @@ export const DataTableTags: React.FunctionComponent<IProps> = ({
         [tableId]
     );
 
-    const { tags } = useSelector((state: IStoreState) => ({
-        tags: state.tag.tagItemByTableId[tableId],
-    }));
+    const tags = useSelector(
+        (state: IStoreState) => state.tag.tagItemByTableId[tableId]
+    );
+    const existingTags = React.useMemo(
+        () => (tags || []).map((tag) => tag.tag),
+        [tags]
+    );
 
     const [tagString, setTagString] = React.useState('');
     const [isAdding, setIsAdding] = React.useState(false);
-    const [isValid, setIsValid] = React.useState(true);
+    const isValid = React.useMemo(() => {
+        const regex = /^[a-z0-9]+$/i;
+        const match = tagString.match(regex);
+        return Boolean(match && !existingTags);
+    }, [tagString]);
 
     const {
         data: tagSuggestions,
@@ -95,27 +103,11 @@ export const DataTableTags: React.FunctionComponent<IProps> = ({
 
     const onCreateTag = React.useCallback(() => {
         if (isValid) {
-            const existingTags = (tags || []).map((tag) => tag.tag);
-            if (!existingTags.includes(tagString)) {
-                createTag(tagString);
-                setTagString('');
-                setIsAdding(false);
-            } else {
-                setIsValid(false);
-            }
+            createTag(tagString);
+            setTagString('');
+            setIsAdding(false);
         }
     }, [tagString]);
-
-    const onStringChange = React.useCallback(
-        (str) => {
-            const valid = validateString(str);
-            if (isValid !== valid) {
-                setIsValid(valid);
-            }
-            setTagString(str);
-        },
-        [isValid]
-    );
 
     const makeAddDOM = () =>
         isAdding ? (
@@ -123,7 +115,7 @@ export const DataTableTags: React.FunctionComponent<IProps> = ({
                 <DebouncedInput
                     debounceTime={0}
                     value={tagString}
-                    onChange={(str) => onStringChange(str)}
+                    onChange={(str) => setTagString(str)}
                     inputProps={{ placeholder: 'alphanumeric only' }}
                     className={isValid ? '' : 'invalid-string'}
                     options={tagSuggestionArr}

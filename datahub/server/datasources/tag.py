@@ -7,7 +7,7 @@ from logic import tag as logic
 
 
 @register(
-    "/tag/", methods=["GET"],
+    "/tag/table/<int:table_id>/", methods=["GET"],
 )
 def get_tag_items(table_id):
     with DBSession() as session:
@@ -26,7 +26,7 @@ def get_tags_by_prefix(prefix, limit=None):
 
 
 @register(
-    "/tag/", methods=["POST"],
+    "/tag/table/<int:table_id>/", methods=["POST"],
 )
 def create_tag_item(table_id, tag):
     with DBSession() as session:
@@ -38,9 +38,9 @@ def create_tag_item(table_id, tag):
 
 
 @register(
-    "/tag/<int:tag_id>/", methods=["DELETE"],
+    "/tag/table/<int:table_id>/<int:tag_id>/", methods=["DELETE"],
 )
-def delete_tag_item(tag_id, table_id):
+def delete_tag_item(table_id, tag_id):
     with DBSession() as session:
         verify_data_table_permission(table_id, session=session)
         return logic.delete_tag_item(tag_item_id=tag_id, session=session)
