@@ -61,8 +61,8 @@ export const Tag: React.FunctionComponent<ITagProps> = ({
     ) : null;
 
     return (
-        <span {...tagProps} className={tagClassname}>
-            <div onClick={onClick ?? null}>{children}</div>
+        <span {...tagProps} onClick={onClick ?? null} className={tagClassname}>
+            {children}
             {hoverDOM}
         </span>
     );

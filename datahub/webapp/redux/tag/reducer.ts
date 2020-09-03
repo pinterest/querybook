@@ -1,3 +1,5 @@
+import { produce } from 'immer';
+
 import { ITagState, TagAction } from './types';
 import { combineReducers } from 'redux';
 
@@ -9,35 +11,32 @@ function tagItemByTableId(
     state = initialState.tagItemByTableId,
     action: TagAction
 ) {
-    switch (action.type) {
-        case '@@tag/RECEIVE_TAG_ITEMS': {
-            const { tableId, tags } = action.payload;
-            return {
-                ...state,
-                [tableId]: tags,
-            };
+    return produce(state, (draft) => {
+        switch (action.type) {
+            case '@@tag/RECEIVE_TAG_ITEMS': {
+                const { tableId, tags } = action.payload;
+
+                draft[tableId] = tags;
+                return;
+            }
+            case '@@tag/RECEIVE_TAG_ITEM': {
+                const { tableId, tag } = action.payload;
+
+                draft[tableId] = [...draft[tableId], tag];
+                return;
+            }
+            case '@@tag/REMOVE_TAG_ITEM': {
+                const { tableId, tagId } = action.payload;
+                draft[tableId] = draft[tableId].filter(
+                    (tag) => tag.id !== tagId
+                );
+                return;
+            }
+            default: {
+                return state;
+            }
         }
-        case '@@tag/RECEIVE_TAG_ITEM': {
-            const { tableId, tag } = action.payload;
-            return {
-                ...state,
-                [tableId]: [...state[tableId], tag],
-            };
-        }
-        case '@@tag/REMOVE_TAG_ITEM': {
-            const { tableId, tagId } = action.payload;
-            const updatedState = state[tableId].filter(
-                (tag) => tag.id !== tagId
-            );
-            return {
-                ...state,
-                [tableId]: updatedState,
-            };
-        }
-        default: {
-            return state;
-        }
-    }
+    });
 }
 
 export default combineReducers({

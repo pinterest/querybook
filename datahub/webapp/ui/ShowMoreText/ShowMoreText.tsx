@@ -39,21 +39,16 @@ export const ShowMoreText: React.FunctionComponent<IShowMoreTextProps> = ({
             return (
                 <span className={combinedClassName}>
                     {text.slice(0, length)}
-                    {nextLine ? (
-                        <div
-                            className="ShowMoreText-click"
-                            onClick={toggleSeeMoreClick}
-                        >
-                            show more
-                        </div>
-                    ) : (
-                        <a
-                            className="ShowMoreText-click"
-                            onClick={toggleSeeMoreClick}
-                        >
-                            show more
-                        </a>
-                    )}
+                    <div
+                        className={
+                            nextLine
+                                ? 'ShowMoreText-click next-line'
+                                : 'ShowMoreText-click'
+                        }
+                        onClick={toggleSeeMoreClick}
+                    >
+                        show more
+                    </div>
                 </span>
             );
         } else {

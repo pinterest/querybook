@@ -3,9 +3,9 @@ import { useDispatch, useSelector } from 'react-redux';
 
 import { Dispatch, IStoreState } from 'redux/store/types';
 import {
-    fetchTagItemsIfNeeded,
-    createTagItem,
-    deleteTagItem,
+    fetchTableTagItemsIfNeeded,
+    createTableTagItem,
+    deleteTableTagItem,
 } from 'redux/tag/action';
 import { matchKeyPress } from 'lib/utils/keyboard';
 import { navigateWithinEnv } from 'lib/utils/query-string';
@@ -17,7 +17,7 @@ import { IconButton } from 'ui/Button/IconButton';
 import { Tag } from 'ui/Tag/Tag';
 
 import './DataTableTags.scss';
-import { string } from 'yup';
+import { Icon } from 'ui/Icon/Icon';
 
 interface IProps {
     tableId: number;
@@ -30,15 +30,15 @@ export const DataTableTags: React.FunctionComponent<IProps> = ({
 }) => {
     const dispatch: Dispatch = useDispatch();
     const loadTags = React.useCallback(
-        () => dispatch(fetchTagItemsIfNeeded(tableId)),
+        () => dispatch(fetchTableTagItemsIfNeeded(tableId)),
         [tableId]
     );
     const createTag = React.useCallback(
-        (tag) => dispatch(createTagItem(tableId, tag)),
+        (tag) => dispatch(createTableTagItem(tableId, tag)),
         [tableId]
     );
     const deleteTag = React.useCallback(
-        (tagId) => dispatch(deleteTagItem(tableId, tagId)),
+        (tagId) => dispatch(deleteTableTagItem(tableId, tagId)),
         [tableId]
     );
 
@@ -139,16 +139,19 @@ export const DataTableTags: React.FunctionComponent<IProps> = ({
     const listDOM = (tags || []).map((tag) => (
         <Tag
             key={tag.id}
-            onClick={() =>
-                navigateWithinEnv(
-                    `/search/?searchType=Table&searchString=${tag.tag_name}`,
-                    { isModal: true }
-                )
-            }
             iconOnHover={readonly ? null : 'x'}
             onHoverClick={readonly ? null : () => deleteTag(tag.id)}
         >
-            {tag.tag_name}
+            <span
+                onClick={() =>
+                    navigateWithinEnv(
+                        `/search/?searchType=Table&searchString=${tag.tag_name}`,
+                        { isModal: true }
+                    )
+                }
+            >
+                {tag.tag_name}
+            </span>
         </Tag>
     ));
 
