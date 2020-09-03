@@ -1,6 +1,7 @@
 import * as React from 'react';
 import { useDispatch } from 'react-redux';
 
+import { ITagItem } from 'const/tag';
 import { useDataFetch } from 'hooks/useDataFetch';
 import { useEvent } from 'hooks/useEvent';
 import { matchKeyPress } from 'lib/utils/keyboard';
@@ -11,20 +12,27 @@ import { DebouncedInput } from 'ui/DebouncedInput/DebouncedInput';
 import { IconButton } from 'ui/Button/IconButton';
 
 import './CreateDataTableTag.scss';
+import { ReactSelectField } from 'ui/FormikField/ReactSelectField';
+import { FormField } from 'ui/Form/FormField';
 
 interface IProps {
     tableId: number;
-    existingTags: string[];
+    tags: ITagItem[];
 }
 
 export const CreateDataTableTag: React.FunctionComponent<IProps> = ({
     tableId,
-    existingTags,
+    tags,
 }) => {
     const dispatch: Dispatch = useDispatch();
 
     const [tagString, setTagString] = React.useState('');
     const [isAdding, setIsAdding] = React.useState(false);
+
+    const existingTags = React.useMemo(
+        () => (tags || []).map((tag) => tag.tag_name),
+        [tags]
+    );
 
     const createTag = React.useCallback(
         (tag: string) => dispatch(createTableTagItem(tableId, tag)),
@@ -32,6 +40,7 @@ export const CreateDataTableTag: React.FunctionComponent<IProps> = ({
     );
 
     const isValid = React.useMemo(() => {
+        if (tagString.length === 0) return true;
         const regex = /^[a-z0-9]+$/i;
         const match = tagString.match(regex);
         return Boolean(match && !existingTags.includes(tagString));
@@ -79,6 +88,7 @@ export const CreateDataTableTag: React.FunctionComponent<IProps> = ({
         await createTag(tagString);
         clearCreateState();
     }, [tagString]);
+
     const makeAddDOM = () =>
         isAdding ? (
             <div className="CreateDataTableTag-input flex-row">
@@ -90,6 +100,7 @@ export const CreateDataTableTag: React.FunctionComponent<IProps> = ({
                     options={tagSuggestions}
                     optionKey={`data-table-tags-${tableId}`}
                 />
+
                 {tagString.length && isValid ? (
                     <IconButton icon="plus" onClick={onCreateTag} size={20} />
                 ) : (

@@ -21,7 +21,7 @@ interface IProps {
 
 export const DataTableTags: React.FunctionComponent<IProps> = ({
     tableId,
-    readonly,
+    readonly = false,
 }) => {
     const dispatch: Dispatch = useDispatch();
     const loadTags = React.useCallback(
@@ -35,11 +35,6 @@ export const DataTableTags: React.FunctionComponent<IProps> = ({
 
     const tags = useSelector(
         (state: IStoreState) => state.tag.tagItemByTableId[tableId]
-    );
-
-    const existingTags = React.useMemo(
-        () => (tags || []).map((tag) => tag.tag_name),
-        [tags]
     );
 
     React.useEffect(() => {
@@ -69,10 +64,7 @@ export const DataTableTags: React.FunctionComponent<IProps> = ({
         <div className="DataTableTags flex-row">
             {listDOM}
             {readonly ? null : (
-                <CreateDataTableTag
-                    tableId={tableId}
-                    existingTags={existingTags}
-                />
+                <CreateDataTableTag tableId={tableId} tags={tags} />
             )}
         </div>
     );
