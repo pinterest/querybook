@@ -126,9 +126,9 @@ export const CreateDataTableTag: React.FunctionComponent<IProps> = ({
     return (
         <div
             className={
-                isValid
-                    ? 'CreateDataTableTag flex-row'
-                    : 'CreateDataTableTag flex-row invalid-string'
+                isAdding && !isValid
+                    ? 'CreateDataTableTag flex-row invalid-string'
+                    : 'CreateDataTableTag flex-row'
             }
         >
             {makeAddDOM()}
