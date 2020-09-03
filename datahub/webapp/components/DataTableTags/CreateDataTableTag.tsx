@@ -5,10 +5,13 @@ import { ITagItem } from 'const/tag';
 import { useDataFetch } from 'hooks/useDataFetch';
 import { useEvent } from 'hooks/useEvent';
 import { matchKeyPress } from 'lib/utils/keyboard';
+import {
+    miniReactSelectStyles,
+    makeReactSelectStyle,
+} from 'lib/utils/react-select';
 import { createTableTagItem } from 'redux/tag/action';
 import { Dispatch } from 'redux/store/types';
 
-import { FormField } from 'ui/Form/FormField';
 import { IconButton } from 'ui/Button/IconButton';
 import { SimpleReactSelect } from 'ui/SimpleReactSelect/SimpleReactSelect';
 
@@ -19,6 +22,11 @@ interface IProps {
     tags: ITagItem[];
 }
 
+const tagReactSelectStyle: {} = makeReactSelectStyle(
+    true,
+    miniReactSelectStyles
+);
+
 export const CreateDataTableTag: React.FunctionComponent<IProps> = ({
     tableId,
     tags,
@@ -27,11 +35,6 @@ export const CreateDataTableTag: React.FunctionComponent<IProps> = ({
 
     const [tagString, setTagString] = React.useState('');
     const [isAdding, setIsAdding] = React.useState(false);
-    // react-select clears selected value on blur
-    const [
-        preventInputClearOnBlur,
-        setPreventInputClearOnBlur,
-    ] = React.useState(false);
 
     const existingTags = React.useMemo(
         () => (tags || []).map((tag) => tag.tag_name),
@@ -75,7 +78,6 @@ export const CreateDataTableTag: React.FunctionComponent<IProps> = ({
 
     useEvent('keydown', (evt: KeyboardEvent) => {
         if (isAdding) {
-            if (preventInputClearOnBlur) setPreventInputClearOnBlur(false);
             if (matchKeyPress(evt, 'Enter')) {
                 onCreateTag();
             } else if (matchKeyPress(evt, 'Esc')) {
@@ -99,27 +101,19 @@ export const CreateDataTableTag: React.FunctionComponent<IProps> = ({
     const makeAddDOM = () =>
         isAdding ? (
             <div className="CreateDataTableTag-input flex-row">
-                <FormField error={isValid ? null : 'invalid input'}>
-                    <SimpleReactSelect
-                        value={tagString}
-                        options={tagSuggestions.map((tag) => ({
-                            label: tag,
-                            value: tag,
-                        }))}
-                        onChange={(value) => setTagString(value)}
-                        selectProps={{
-                            onInputChange: (newValue) => {
-                                if (!preventInputClearOnBlur) {
-                                    setTagString(newValue);
-                                }
-                            },
-                            onBlur: async () => {
-                                await setPreventInputClearOnBlur(true);
-                            },
-                            placeholder: 'alphanumeric only',
-                        }}
-                    />
-                </FormField>
+                <SimpleReactSelect
+                    value={tagString}
+                    options={tagSuggestions.map((tag) => ({
+                        label: tag,
+                        value: tag,
+                    }))}
+                    onChange={(value) => setTagString(value)}
+                    selectProps={{
+                        onInputChange: (newValue) => setTagString(newValue),
+                        placeholder: 'alphanumeric only',
+                        styles: tagReactSelectStyle,
+                    }}
+                />
             </div>
         ) : (
             <IconButton
@@ -130,5 +124,15 @@ export const CreateDataTableTag: React.FunctionComponent<IProps> = ({
                 size={20}
             />
         );
-    return <div className="CreateDataTableTag flex-row">{makeAddDOM()}</div>;
+    return (
+        <div
+            className={
+                isValid
+                    ? 'CreateDataTableTag flex-row'
+                    : 'CreateDataTableTag flex-row invalid-string'
+            }
+        >
+            {makeAddDOM()}
+        </div>
+    );
 };

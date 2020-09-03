@@ -3,32 +3,24 @@
     border-radius: var(--border-radius);
     padding: 3px;
     .CreateDataTableTag-input {
-        .DebouncedInput {
-            display: flex;
-            input {
-                padding: 0px 2px;
-                width: 160px;
-                font-size: var(--xsmall-text-size);
-            }
-            &.invalid-string {
-                input {
-                    border-color: var(--color-false);
-                }
-            }
-        }
-        .FormField {
-            width: 200px;
-            margin: 0px;
-            padding: 0px;
-            > div {
-                width: 100%;
-            }
+        width: 180px;
+        margin: 0px;
+        padding: 0px;
+        > div {
+            width: 100%;
         }
     }
     .IconButton {
         padding: 0px;
         svg {
             padding: 2px;
+        }
+    }
+
+    &.invalid-string {
+        background-color: var(--color-false);
+        div {
+            border-color: var(--color-false);
         }
     }
 }
