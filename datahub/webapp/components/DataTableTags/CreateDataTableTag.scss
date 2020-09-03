@@ -1,0 +1,26 @@
+.CreateDataTableTag {
+    background-color: var(--tag-bg-color);
+    border-radius: var(--border-radius);
+    padding: 3px;
+    .CreateDataTableTag-input {
+        .DebouncedInput {
+            display: flex;
+            input {
+                padding: 0px 2px;
+                width: 160px;
+                font-size: var(--xsmall-text-size);
+            }
+            &.invalid-string {
+                input {
+                    border-color: var(--color-false);
+                }
+            }
+        }
+    }
+    .IconButton {
+        padding: 0px;
+        svg {
+            padding: 2px;
+        }
+    }
+}

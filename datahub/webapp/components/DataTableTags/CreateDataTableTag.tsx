@@ -1,7 +1,6 @@
 import * as React from 'react';
 import { useDispatch } from 'react-redux';
 
-import { ITagItem } from 'const/tag';
 import { useDataFetch } from 'hooks/useDataFetch';
 import { useEvent } from 'hooks/useEvent';
 import { matchKeyPress } from 'lib/utils/keyboard';
@@ -10,6 +9,8 @@ import { Dispatch } from 'redux/store/types';
 
 import { DebouncedInput } from 'ui/DebouncedInput/DebouncedInput';
 import { IconButton } from 'ui/Button/IconButton';
+
+import './CreateDataTableTag.scss';
 
 interface IProps {
     tableId: number;
@@ -80,7 +81,7 @@ export const CreateDataTableTag: React.FunctionComponent<IProps> = ({
     }, [tagString]);
     const makeAddDOM = () =>
         isAdding ? (
-            <div className="DataTableTags-input flex-row">
+            <div className="CreateDataTableTag-input flex-row">
                 <DebouncedInput
                     value={tagString}
                     onChange={(str) => setTagString(str)}
@@ -108,5 +109,5 @@ export const CreateDataTableTag: React.FunctionComponent<IProps> = ({
                 size={20}
             />
         );
-    return <div className="DataTableTags-add flex-row">{makeAddDOM()}</div>;
+    return <div className="CreateDataTableTag flex-row">{makeAddDOM()}</div>;
 };
