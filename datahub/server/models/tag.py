@@ -24,7 +24,7 @@ class Tag(CRUDMixin, Base):
     count = sql.Column(sql.Integer, default=1, nullable=False)
 
 
-class TagItem(Base):
+class TagItem(CRUDMixin, Base):
     __tablename__ = "tag_item"
 
     id = sql.Column(sql.Integer, primary_key=True)
@@ -54,14 +54,3 @@ class TagItem(Base):
         backref=backref("tags", cascade="all, delete"),
         foreign_keys=[table_id],
     )
-
-    def to_dict(self):
-        item = {
-            "id": self.id,
-            "created_at": self.created_at,
-            "tag": self.tag_name,
-            "table_id": self.table_id,
-            "uid": self.uid,
-            "count": self.tag.count,
-        }
-        return item

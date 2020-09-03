@@ -17,16 +17,15 @@ import { IconButton } from 'ui/Button/IconButton';
 import { Tag } from 'ui/Tag/Tag';
 
 import './DataTableTags.scss';
+import { string } from 'yup';
 
 interface IProps {
     tableId: number;
-    uid?: number;
     readonly?: boolean;
 }
 
 export const DataTableTags: React.FunctionComponent<IProps> = ({
     tableId,
-    uid,
     readonly,
 }) => {
     const dispatch: Dispatch = useDispatch();
@@ -47,7 +46,7 @@ export const DataTableTags: React.FunctionComponent<IProps> = ({
         (state: IStoreState) => state.tag.tagItemByTableId[tableId]
     );
     const existingTags = React.useMemo(
-        () => (tags || []).map((tag) => tag.tag),
+        () => (tags || []).map((tag) => tag.tag_name),
         [tags]
     );
 
@@ -56,69 +55,65 @@ export const DataTableTags: React.FunctionComponent<IProps> = ({
     const isValid = React.useMemo(() => {
         const regex = /^[a-z0-9]+$/i;
         const match = tagString.match(regex);
-        return Boolean(match && !existingTags);
+        return Boolean(match && !existingTags.includes(tagString));
     }, [tagString]);
 
     const {
-        data: tagSuggestions,
+        data: rawTagSuggestions,
         forceFetch: loadTagSuggestions,
     }: { data: string[]; forceFetch } = useDataFetch({
         url: '/tag/prefix/',
         params: {
             prefix: tagString,
         },
+        fetchOnMount: false,
     });
 
-    const tagSuggestionArr = React.useMemo(() => {
-        const existingTags = (tags || []).map((tag) => tag.tag);
-        return (tagSuggestions || []).filter(
-            (str) => str.length && !existingTags.includes(str)
+    const tagSuggestions = React.useMemo(() => {
+        return (rawTagSuggestions || []).filter(
+            (str) => !existingTags.includes(str)
         );
-    }, [tagString, tagSuggestions, tags]);
+    }, [tagString, rawTagSuggestions, tags]);
 
     React.useEffect(() => {
         loadTags();
     }, []);
 
     React.useEffect(() => {
-        loadTagSuggestions();
-    }, [tagString]);
+        if (isAdding) {
+            loadTagSuggestions();
+        }
+    }, [tagString, isAdding]);
 
     useEvent('keydown', (evt: KeyboardEvent) => {
         if (isAdding) {
             if (matchKeyPress(evt, 'Enter')) {
                 onCreateTag();
             } else if (matchKeyPress(evt, 'Esc')) {
-                setTagString('');
-                setIsAdding(false);
+                clearCreateState();
             }
         }
     });
 
-    const validateString = React.useCallback((string) => {
-        const regex = /^[a-z0-9]+$/i;
-        const match = string.match(regex);
-        return Boolean(match);
+    const clearCreateState = React.useCallback(() => {
+        setTagString('');
+        setIsAdding(false);
     }, []);
 
-    const onCreateTag = React.useCallback(() => {
-        if (isValid) {
-            createTag(tagString);
-            setTagString('');
-            setIsAdding(false);
-        }
+    const onCreateTag = React.useCallback(async () => {
+        await createTag(tagString);
+        clearCreateState();
     }, [tagString]);
 
     const makeAddDOM = () =>
         isAdding ? (
             <div className="DataTableTags-input flex-row">
                 <DebouncedInput
-                    debounceTime={0}
                     value={tagString}
                     onChange={(str) => setTagString(str)}
                     inputProps={{ placeholder: 'alphanumeric only' }}
                     className={isValid ? '' : 'invalid-string'}
-                    options={tagSuggestionArr}
+                    options={tagSuggestions}
                     optionKey={`data-table-tags-${tableId}`}
                 />
                 {tagString.length && isValid ? (
@@ -141,22 +136,21 @@ export const DataTableTags: React.FunctionComponent<IProps> = ({
             />
         );
 
-    const listDOM = (tags || [])
-        .sort((t1, t2) => t2.count - t1.count)
-        .map((tag) => (
-            <Tag
-                key={tag.id}
-                onClick={() =>
-                    navigateWithinEnv(
-                        `/search/?searchType=Table&searchString=${tag.tag}`
-                    )
-                }
-                iconOnHover={readonly ? null : 'x'}
-                onHoverClick={readonly ? null : () => deleteTag(tag.id)}
-            >
-                {tag.tag}
-            </Tag>
-        ));
+    const listDOM = (tags || []).map((tag) => (
+        <Tag
+            key={tag.id}
+            onClick={() =>
+                navigateWithinEnv(
+                    `/search/?searchType=Table&searchString=${tag.tag_name}`,
+                    { isModal: true }
+                )
+            }
+            iconOnHover={readonly ? null : 'x'}
+            onHoverClick={readonly ? null : () => deleteTag(tag.id)}
+        >
+            {tag.tag_name}
+        </Tag>
+    ));
 
     return (
         <div className="DataTableTags flex-row">

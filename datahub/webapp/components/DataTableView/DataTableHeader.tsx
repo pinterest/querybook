@@ -158,7 +158,7 @@ export const DataTableHeader: React.FunctionComponent<IDataTableHeader> = ({
             <div className="DataTableHeader-bottom ">
                 <div className="DataTableHeader-left">
                     {ownerDOM}
-                    <DataTableTags tableId={table.id} uid={userInfo.uid} />
+                    <DataTableTags tableId={table.id} />
                 </div>
                 <div className="DataTableHeader-right">
                     <div className="DataTableHeader-featured flex-row mb8">
