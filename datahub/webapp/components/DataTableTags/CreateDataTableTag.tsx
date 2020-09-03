@@ -48,7 +48,7 @@ export const CreateDataTableTag: React.FunctionComponent<IProps> = ({
 
     const isValid = React.useMemo(() => {
         if (tagString.length === 0) return true;
-        const regex = /^[a-z0-9]+$/i;
+        const regex = /^(?=.{1,255}$)([a-z0-9]+)$/i;
         const match = tagString.match(regex);
         return Boolean(match && !existingTags.includes(tagString));
     }, [tagString]);
