@@ -16,6 +16,14 @@
                 }
             }
         }
+        .FormField {
+            width: 200px;
+            margin: 0px;
+            padding: 0px;
+            > div {
+                width: 100%;
+            }
+        }
     }
     .IconButton {
         padding: 0px;

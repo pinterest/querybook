@@ -8,12 +8,11 @@ import { matchKeyPress } from 'lib/utils/keyboard';
 import { createTableTagItem } from 'redux/tag/action';
 import { Dispatch } from 'redux/store/types';
 
-import { DebouncedInput } from 'ui/DebouncedInput/DebouncedInput';
+import { FormField } from 'ui/Form/FormField';
 import { IconButton } from 'ui/Button/IconButton';
+import { SimpleReactSelect } from 'ui/SimpleReactSelect/SimpleReactSelect';
 
 import './CreateDataTableTag.scss';
-import { ReactSelectField } from 'ui/FormikField/ReactSelectField';
-import { FormField } from 'ui/Form/FormField';
 
 interface IProps {
     tableId: number;
@@ -28,6 +27,11 @@ export const CreateDataTableTag: React.FunctionComponent<IProps> = ({
 
     const [tagString, setTagString] = React.useState('');
     const [isAdding, setIsAdding] = React.useState(false);
+    // react-select clears selected value on blur
+    const [
+        preventInputClearOnBlur,
+        setPreventInputClearOnBlur,
+    ] = React.useState(false);
 
     const existingTags = React.useMemo(
         () => (tags || []).map((tag) => tag.tag_name),
@@ -71,6 +75,7 @@ export const CreateDataTableTag: React.FunctionComponent<IProps> = ({
 
     useEvent('keydown', (evt: KeyboardEvent) => {
         if (isAdding) {
+            if (preventInputClearOnBlur) setPreventInputClearOnBlur(false);
             if (matchKeyPress(evt, 'Enter')) {
                 onCreateTag();
             } else if (matchKeyPress(evt, 'Esc')) {
@@ -85,31 +90,36 @@ export const CreateDataTableTag: React.FunctionComponent<IProps> = ({
     }, []);
 
     const onCreateTag = React.useCallback(async () => {
-        await createTag(tagString);
-        clearCreateState();
+        if (isValid && tagString.length) {
+            await createTag(tagString);
+            clearCreateState();
+        }
     }, [tagString]);
 
     const makeAddDOM = () =>
         isAdding ? (
             <div className="CreateDataTableTag-input flex-row">
-                <DebouncedInput
-                    value={tagString}
-                    onChange={(str) => setTagString(str)}
-                    inputProps={{ placeholder: 'alphanumeric only' }}
-                    className={isValid ? '' : 'invalid-string'}
-                    options={tagSuggestions}
-                    optionKey={`data-table-tags-${tableId}`}
-                />
-
-                {tagString.length && isValid ? (
-                    <IconButton icon="plus" onClick={onCreateTag} size={20} />
-                ) : (
-                    <IconButton
-                        icon="x"
-                        onClick={() => setIsAdding(false)}
-                        size={20}
+                <FormField error={isValid ? null : 'invalid input'}>
+                    <SimpleReactSelect
+                        value={tagString}
+                        options={tagSuggestions.map((tag) => ({
+                            label: tag,
+                            value: tag,
+                        }))}
+                        onChange={(value) => setTagString(value)}
+                        selectProps={{
+                            onInputChange: (newValue) => {
+                                if (!preventInputClearOnBlur) {
+                                    setTagString(newValue);
+                                }
+                            },
+                            onBlur: async () => {
+                                await setPreventInputClearOnBlur(true);
+                            },
+                            placeholder: 'alphanumeric only',
+                        }}
                     />
-                )}
+                </FormField>
             </div>
         ) : (
             <IconButton
