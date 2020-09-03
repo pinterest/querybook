@@ -4,20 +4,15 @@ import { useDispatch, useSelector } from 'react-redux';
 import { Dispatch, IStoreState } from 'redux/store/types';
 import {
     fetchTableTagItemsIfNeeded,
-    createTableTagItem,
     deleteTableTagItem,
 } from 'redux/tag/action';
-import { matchKeyPress } from 'lib/utils/keyboard';
 import { navigateWithinEnv } from 'lib/utils/query-string';
-import { useDataFetch } from 'hooks/useDataFetch';
-import { useEvent } from 'hooks/useEvent';
 
-import { DebouncedInput } from 'ui/DebouncedInput/DebouncedInput';
-import { IconButton } from 'ui/Button/IconButton';
+import { CreateDataTableTag } from './CreateDataTableTag';
+
 import { Tag } from 'ui/Tag/Tag';
 
 import './DataTableTags.scss';
-import { Icon } from 'ui/Icon/Icon';
 
 interface IProps {
     tableId: number;
@@ -33,10 +28,6 @@ export const DataTableTags: React.FunctionComponent<IProps> = ({
         () => dispatch(fetchTableTagItemsIfNeeded(tableId)),
         [tableId]
     );
-    const createTag = React.useCallback(
-        (tag) => dispatch(createTableTagItem(tableId, tag)),
-        [tableId]
-    );
     const deleteTag = React.useCallback(
         (tagId) => dispatch(deleteTableTagItem(tableId, tagId)),
         [tableId]
@@ -45,96 +36,15 @@ export const DataTableTags: React.FunctionComponent<IProps> = ({
     const tags = useSelector(
         (state: IStoreState) => state.tag.tagItemByTableId[tableId]
     );
+
     const existingTags = React.useMemo(
         () => (tags || []).map((tag) => tag.tag_name),
         [tags]
     );
 
-    const [tagString, setTagString] = React.useState('');
-    const [isAdding, setIsAdding] = React.useState(false);
-    const isValid = React.useMemo(() => {
-        const regex = /^[a-z0-9]+$/i;
-        const match = tagString.match(regex);
-        return Boolean(match && !existingTags.includes(tagString));
-    }, [tagString]);
-
-    const {
-        data: rawTagSuggestions,
-        forceFetch: loadTagSuggestions,
-    }: { data: string[]; forceFetch } = useDataFetch({
-        url: '/tag/prefix/',
-        params: {
-            prefix: tagString,
-        },
-        fetchOnMount: false,
-    });
-
-    const tagSuggestions = React.useMemo(() => {
-        return (rawTagSuggestions || []).filter(
-            (str) => !existingTags.includes(str)
-        );
-    }, [tagString, rawTagSuggestions, tags]);
-
     React.useEffect(() => {
         loadTags();
     }, []);
-
-    React.useEffect(() => {
-        if (isAdding) {
-            loadTagSuggestions();
-        }
-    }, [tagString, isAdding]);
-
-    useEvent('keydown', (evt: KeyboardEvent) => {
-        if (isAdding) {
-            if (matchKeyPress(evt, 'Enter')) {
-                onCreateTag();
-            } else if (matchKeyPress(evt, 'Esc')) {
-                clearCreateState();
-            }
-        }
-    });
-
-    const clearCreateState = React.useCallback(() => {
-        setTagString('');
-        setIsAdding(false);
-    }, []);
-
-    const onCreateTag = React.useCallback(async () => {
-        await createTag(tagString);
-        clearCreateState();
-    }, [tagString]);
-
-    const makeAddDOM = () =>
-        isAdding ? (
-            <div className="DataTableTags-input flex-row">
-                <DebouncedInput
-                    value={tagString}
-                    onChange={(str) => setTagString(str)}
-                    inputProps={{ placeholder: 'alphanumeric only' }}
-                    className={isValid ? '' : 'invalid-string'}
-                    options={tagSuggestions}
-                    optionKey={`data-table-tags-${tableId}`}
-                />
-                {tagString.length && isValid ? (
-                    <IconButton icon="plus" onClick={onCreateTag} size={20} />
-                ) : (
-                    <IconButton
-                        icon="x"
-                        onClick={() => setIsAdding(false)}
-                        size={20}
-                    />
-                )}
-            </div>
-        ) : (
-            <IconButton
-                icon="plus"
-                onClick={() => setIsAdding(true)}
-                tooltip="Add tag"
-                tooltipPos="right"
-                size={20}
-            />
-        );
 
     const listDOM = (tags || []).map((tag) => (
         <Tag
@@ -159,7 +69,10 @@ export const DataTableTags: React.FunctionComponent<IProps> = ({
         <div className="DataTableTags flex-row">
             {listDOM}
             {readonly ? null : (
-                <div className="DataTableTags-add flex-row">{makeAddDOM()}</div>
+                <CreateDataTableTag
+                    tableId={tableId}
+                    existingTags={existingTags}
+                />
             )}
         </div>
     );
