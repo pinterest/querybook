@@ -124,13 +124,15 @@ def _data_doc_access_terms(user_id):
 def _match_table_fields(fields):
     search_fields = []
     for field in fields:
-        # 'table_name', 'description', and 'columns' are fields used by Table search
+        # 'table_name', 'description', 'column', and 'tag' are fields used by Table search
         if field == "table_name":
             search_fields.append("full_name^20")
         elif field == "description":
             search_fields.append("description")
         elif field == "column":
             search_fields.append("columns")
+        elif field == "tag":
+            search_fields.append("tags")
 
     return search_fields
 

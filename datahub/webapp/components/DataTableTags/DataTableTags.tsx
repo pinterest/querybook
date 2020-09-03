@@ -6,6 +6,7 @@ import {
     fetchTableTagItemsIfNeeded,
     deleteTableTagItem,
 } from 'redux/tag/action';
+import * as searchActions from 'redux/search/action';
 import { navigateWithinEnv } from 'lib/utils/query-string';
 
 import { CreateDataTableTag } from './CreateDataTableTag';
@@ -33,9 +34,29 @@ export const DataTableTags: React.FunctionComponent<IProps> = ({
         [tableId]
     );
 
+    const updateSearchString = React.useCallback(
+        (searchStringParam: string) => {
+            dispatch(searchActions.updateSearchString(searchStringParam));
+        },
+        []
+    );
+    const updateSearchType = React.useCallback((type) => {
+        dispatch(searchActions.updateSearchType(type));
+    }, []);
+    const updateSearchField = React.useCallback((field) => {
+        dispatch(searchActions.updateSearchField(field));
+    }, []);
+
     const tags = useSelector(
         (state: IStoreState) => state.tag.tagItemByTableId[tableId]
     );
+
+    const handleClick = React.useCallback((tag_name) => {
+        navigateWithinEnv('/search/', { isModal: true });
+        updateSearchString(tag_name);
+        updateSearchType('Table');
+        updateSearchField('tag');
+    }, []);
 
     React.useEffect(() => {
         loadTags();
@@ -47,14 +68,7 @@ export const DataTableTags: React.FunctionComponent<IProps> = ({
             iconOnHover={readonly ? null : 'x'}
             onHoverClick={readonly ? null : () => deleteTag(tag.id)}
         >
-            <span
-                onClick={() =>
-                    navigateWithinEnv(
-                        `/search/?searchType=Table&searchString=${tag.tag_name}`,
-                        { isModal: true }
-                    )
-                }
-            >
+            <span onClick={() => handleClick(tag.tag_name)}>
                 {tag.tag_name}
             </span>
         </Tag>

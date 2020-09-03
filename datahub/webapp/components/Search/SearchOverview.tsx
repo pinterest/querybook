@@ -210,7 +210,7 @@ export const SearchOverview: React.FunctionComponent = () => {
 
     const searchSettingsDOM = (
         <div className="search-settings">
-            {['table_name', 'description', 'column'].map((setting) => {
+            {['table_name', 'description', 'column', 'tag'].map((setting) => {
                 const label = setting.replace(/_/g, ' ');
                 return (
                     <div
