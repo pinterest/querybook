@@ -1,7 +1,7 @@
 """Add Tag and TagItem
 
 Revision ID: b67a78f26e73
-Revises: 8e3a8aa02aa7
+Revises: f93d62f9a53d
 Create Date: 2020-08-28 01:24:14.971175
 
 """
@@ -11,7 +11,7 @@ from sqlalchemy.dialects import mysql
 
 # revision identifiers, used by Alembic.
 revision = 'b67a78f26e73'
-down_revision = '8e3a8aa02aa7'
+down_revision = 'f93d62f9a53d'
 branch_labels = None
 depends_on = None
 
