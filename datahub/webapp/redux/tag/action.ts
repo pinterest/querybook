@@ -3,7 +3,7 @@ import ds from 'lib/datasource';
 import { ITagItem } from 'const/tag';
 import { ThunkResult } from './types';
 
-function fetchTableTagItems(tableId: number): ThunkResult<Promise<any>> {
+function fetchTableTagItems(tableId: number): ThunkResult<Promise<ITagItem[]>> {
     return async (dispatch) => {
         const { data } = await ds.fetch<ITagItem[]>(`/tag/table/${tableId}/`);
         dispatch({
@@ -16,7 +16,7 @@ function fetchTableTagItems(tableId: number): ThunkResult<Promise<any>> {
 
 export function fetchTableTagItemsIfNeeded(
     tableId: number
-): ThunkResult<Promise<void>> {
+): ThunkResult<Promise<any>> {
     return (dispatch, getState) => {
         const state = getState();
         const tags = state.tag.tagItemByTableId[tableId];
@@ -29,7 +29,7 @@ export function fetchTableTagItemsIfNeeded(
 export function createTableTagItem(
     tableId: number,
     tag: string
-): ThunkResult<Promise<any>> {
+): ThunkResult<Promise<ITagItem>> {
     return async (dispatch) => {
         try {
             const { data } = await ds.save(`/tag/table/${tableId}/`, { tag });
