@@ -131,8 +131,6 @@ def _match_table_fields(fields):
             search_fields.append("description")
         elif field == "column":
             search_fields.append("columns")
-        elif field == "tag":
-            search_fields.append("tags")
 
     return search_fields
 
