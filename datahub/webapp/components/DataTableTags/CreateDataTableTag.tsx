@@ -2,18 +2,11 @@ import * as React from 'react';
 import { useDispatch } from 'react-redux';
 
 import { ITagItem } from 'const/tag';
-import { useDataFetch } from 'hooks/useDataFetch';
-import { useEvent } from 'hooks/useEvent';
-import { matchKeyPress } from 'lib/utils/keyboard';
-import {
-    miniReactSelectStyles,
-    makeReactSelectStyle,
-} from 'lib/utils/react-select';
 import { createTableTagItem } from 'redux/tag/action';
 import { Dispatch } from 'redux/store/types';
 
+import { TableTagSelect } from './TableTagSelect';
 import { IconButton } from 'ui/Button/IconButton';
-import { SimpleReactSelect } from 'ui/SimpleReactSelect/SimpleReactSelect';
 
 import './CreateDataTableTag.scss';
 
@@ -22,19 +15,12 @@ interface IProps {
     tags: ITagItem[];
 }
 
-const tagReactSelectStyle: {} = makeReactSelectStyle(
-    true,
-    miniReactSelectStyles
-);
-
 export const CreateDataTableTag: React.FunctionComponent<IProps> = ({
     tableId,
     tags,
 }) => {
     const dispatch: Dispatch = useDispatch();
-
-    const [tagString, setTagString] = React.useState('');
-    const [isAdding, setIsAdding] = React.useState(false);
+    const [showSelect, setShowSelect] = React.useState(false);
 
     const existingTags = React.useMemo(
         () => (tags || []).map((tag) => tag.tag_name),
@@ -46,82 +32,38 @@ export const CreateDataTableTag: React.FunctionComponent<IProps> = ({
         [tableId]
     );
 
-    const isValid = React.useMemo(() => {
+    const isValidCheck = React.useCallback((val: string) => {
         const regex = /^[a-z0-9]{1,255}$/i;
-        const match = tagString.match(regex);
-        return Boolean(match && !existingTags.includes(tagString));
-    }, [tagString]);
-
-    const { data: rawTagSuggestions }: { data: string[] } = useDataFetch({
-        url: '/tag/keyword/',
-        params: {
-            keyword: tagString,
-        },
-        fetchOnMount: isAdding,
-    });
-
-    const tagSuggestions = React.useMemo(() => {
-        return (rawTagSuggestions || []).filter(
-            (str) => !existingTags.includes(str)
-        );
-    }, [rawTagSuggestions, existingTags]);
-
-    useEvent('keydown', (evt: KeyboardEvent) => {
-        if (isAdding) {
-            if (matchKeyPress(evt, 'Enter')) {
-                onCreateTag();
-            } else if (matchKeyPress(evt, 'Esc')) {
-                clearCreateState();
-            }
-        }
-    });
-
-    const clearCreateState = React.useCallback(() => {
-        setTagString('');
-        setIsAdding(false);
+        const match = val.match(regex);
+        return Boolean(match && !existingTags.includes(val));
     }, []);
 
-    const onCreateTag = React.useCallback(() => {
-        if (isValid) {
-            createTag(tagString).finally(clearCreateState);
-        }
-    }, [tagString]);
+    const handleCreateTag = React.useCallback(
+        (val) => {
+            createTag(val).finally(() => setShowSelect(false));
+        },
+        [createTag]
+    );
 
-    const makeAddDOM = () =>
-        isAdding ? (
-            <div className="CreateDataTableTag-input flex-row">
-                <SimpleReactSelect
-                    value={tagString}
-                    options={tagSuggestions.map((tag) => ({
-                        label: tag,
-                        value: tag,
-                    }))}
-                    onChange={(value) => setTagString(value)}
-                    selectProps={{
-                        onInputChange: (newValue) => setTagString(newValue),
-                        placeholder: 'alphanumeric only',
-                        styles: tagReactSelectStyle,
-                    }}
-                />
-            </div>
-        ) : (
-            <IconButton
-                icon="plus"
-                onClick={() => setIsAdding(true)}
-                tooltip="Add tag"
-                tooltipPos="right"
-                size={20}
-            />
-        );
     return (
-        <div
-            className={
-                isAdding && !isValid
-                    ? 'CreateDataTableTag flex-row invalid-string'
-                    : 'CreateDataTableTag flex-row'
-            }
-        >
-            {makeAddDOM()}
+        <div className="CreateDataTableTag flex-row">
+            {showSelect ? (
+                <div className="CreateDataTableTag-input flex-row">
+                    <TableTagSelect
+                        onSelect={(val) => handleCreateTag(val)}
+                        isValidCheck={isValidCheck}
+                        existingTags={existingTags}
+                    />
+                </div>
+            ) : (
+                <IconButton
+                    icon="plus"
+                    onClick={() => setShowSelect(true)}
+                    tooltip="Add tag"
+                    tooltipPos="right"
+                    size={20}
+                />
+            )}
         </div>
     );
 };

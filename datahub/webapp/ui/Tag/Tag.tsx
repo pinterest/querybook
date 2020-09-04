@@ -24,6 +24,7 @@ export interface ITagProps {
 
     iconOnHover?: string;
     onIconHoverClick?: () => any;
+    className?: string;
 }
 export interface IHoverIconTagProps extends ITagProps {
     iconOnHover?: string;
@@ -43,6 +44,7 @@ export const Tag: React.FunctionComponent<ITagProps> = ({
     tooltip,
     tooltipPos,
     onClick,
+    className,
 }) => {
     const tooltipProps = {};
     if (tooltip) {
@@ -54,6 +56,7 @@ export const Tag: React.FunctionComponent<ITagProps> = ({
         Tag: true,
         'flex-row': true,
         highlighted,
+        [className]: true,
     });
 
     return (
@@ -70,13 +73,13 @@ export const HoverIconTag: React.FunctionComponent<IHoverIconTagProps> = ({
     ...tagProps
 }) => {
     const hoverDOM = iconOnHover ? (
-        <div className="Tag-hover" onClick={onIconHoverClick}>
+        <div className="HoverIconTag-hover" onClick={onIconHoverClick}>
             <Icon name={iconOnHover} />
         </div>
     ) : null;
 
     return (
-        <Tag {...tagProps}>
+        <Tag {...tagProps} className="HoverIconTag">
             {children}
             {hoverDOM}
         </Tag>

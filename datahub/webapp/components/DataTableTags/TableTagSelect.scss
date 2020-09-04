@@ -1,0 +1,13 @@
+.TableTagSelect {
+    min-width: 180px;
+    margin: 0px;
+    padding: 0px;
+    > div {
+        width: 100%;
+    }
+    &.invalid-string {
+        div {
+            border-color: var(--color-false);
+        }
+    }
+}

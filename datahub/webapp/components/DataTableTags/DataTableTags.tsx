@@ -51,7 +51,7 @@ export const DataTableTags: React.FunctionComponent<IProps> = ({
             <span
                 onClick={() =>
                     navigateWithinEnv(
-                        `/search/searchType=Table&searchString=${tag.tag_name}`,
+                        `/search/?searchType=Table&searchString=${tag.tag_name}`,
                         { isModal: true }
                     )
                 }

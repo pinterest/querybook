@@ -16,7 +16,7 @@
     &.highlighted {
         background-color: var(--color-accent-bg);
     }
-    .Tag-hover {
+    .HoverIconTag-hover {
         display: none;
         .Icon {
             padding-left: 4px;
@@ -27,11 +27,15 @@
         }
     }
     &:hover {
-        .Tag-hover {
+        .HoverIconTag-hover {
             display: flex;
             cursor: pointer;
         }
     }
+}
+
+.HoverIconTag:last-of-type {
+    margin-right: 36px;
 }
 
 .TagGroup {

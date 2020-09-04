@@ -2,25 +2,10 @@
     background-color: var(--tag-bg-color);
     border-radius: var(--border-radius);
     padding: 3px;
-    .CreateDataTableTag-input {
-        width: 180px;
-        margin: 0px;
-        padding: 0px;
-        > div {
-            width: 100%;
-        }
-    }
     .IconButton {
         padding: 0px;
         svg {
             padding: 2px;
-        }
-    }
-
-    &.invalid-string {
-        background-color: var(--color-false);
-        div {
-            border-color: var(--color-false);
         }
     }
 }

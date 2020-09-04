@@ -11,6 +11,10 @@ import {
 } from 'redux/search/types';
 
 import { getCurrentEnv } from 'lib/utils/query-string';
+import {
+    makeReactSelectStyle,
+    miniReactSelectStyles,
+} from 'lib/utils/react-select';
 import * as searchActions from 'redux/search/action';
 import * as dataTableSearchActions from 'redux/dataTableSearch/action';
 import { queryMetastoresSelector } from 'redux/dataSources/selector';
@@ -32,8 +36,10 @@ import { Pagination } from 'ui/Pagination/Pagination';
 import { SearchBar } from 'ui/SearchBar/SearchBar';
 import { Select } from 'ui/Select/Select';
 import { Tabs } from 'ui/Tabs/Tabs';
+import { TableTagSelect } from 'components/DataTableTags/TableTagSelect';
 
 import './SearchOverview.scss';
+import { HoverIconTag } from 'ui/Tag/Tag';
 
 const secondsPerDay = 60 * 60 * 24;
 const inputDateFormat = 'YYYY-MM-DD';
@@ -44,6 +50,11 @@ const getFormattedDateFromSeconds = (
     seconds != null
         ? moment(parseInt(seconds as string) * 1000).format(format)
         : '';
+
+const userReactSelectStyle: {} = makeReactSelectStyle(
+    true,
+    miniReactSelectStyles
+);
 export const SearchOverview: React.FunctionComponent = () => {
     const {
         resultByPage,
@@ -230,6 +241,47 @@ export const SearchOverview: React.FunctionComponent = () => {
         </div>
     );
 
+    const handleTagSelect = React.useCallback(
+        (tag: string) => {
+            const tagFilter = searchFilters?.tags
+                ? [...searchFilters.tags]
+                : [];
+            tagFilter.push(tag);
+            updateSearchFilter('tags', tagFilter);
+        },
+        [searchFilters?.tags]
+    );
+
+    const handleTagRemove = React.useCallback(
+        (tag: string) => {
+            const tagFilter = (searchFilters?.tags || []).filter(
+                (existingTag) => existingTag !== tag
+            );
+            updateSearchFilter('tags', tagFilter);
+        },
+        [searchFilters?.tags]
+    );
+
+    const tagDOM = (
+        <div className="tables-tag">
+            <div className="tables-tag-list mb8">
+                {(searchFilters?.tags || []).map((tag) => (
+                    <HoverIconTag
+                        key={tag}
+                        iconOnHover={'x'}
+                        onIconHoverClick={() => handleTagRemove(tag)}
+                    >
+                        <span>{tag}</span>
+                    </HoverIconTag>
+                ))}
+            </div>
+            <TableTagSelect
+                existingTags={searchFilters?.tags ?? []}
+                onSelect={handleTagSelect}
+            />
+        </div>
+    );
+
     const metastoreSelectDOM =
         searchType === SearchType.Table ? (
             <div className="tables-search-select">
@@ -373,7 +425,10 @@ export const SearchOverview: React.FunctionComponent = () => {
                         updateSearchFilter('owner_uid', uid);
                         toggleShowAddSearchAuthor();
                     }}
-                    selectProps={{ autoFocus: true }}
+                    selectProps={{
+                        autoFocus: true,
+                        styles: userReactSelectStyle,
+                    }}
                     clearAfterSelect
                 />
             </div>
@@ -449,6 +504,13 @@ export const SearchOverview: React.FunctionComponent = () => {
                         <hr className="dh-hr" />
                     </span>
                     {dateFilterDOM}
+                </div>
+                <div className="search-filter">
+                    <span className="filter-title">
+                        Tags
+                        <hr className="dh-hr" />
+                    </span>
+                    {tagDOM}
                 </div>
                 <div className="search-filter">
                     <span className="filter-title">
