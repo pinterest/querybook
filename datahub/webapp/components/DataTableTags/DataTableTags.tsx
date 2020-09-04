@@ -11,7 +11,7 @@ import { navigateWithinEnv } from 'lib/utils/query-string';
 
 import { CreateDataTableTag } from './CreateDataTableTag';
 
-import { Tag } from 'ui/Tag/Tag';
+import { HoverIconTag } from 'ui/Tag/Tag';
 
 import './DataTableTags.scss';
 
@@ -63,15 +63,15 @@ export const DataTableTags: React.FunctionComponent<IProps> = ({
     }, []);
 
     const listDOM = (tags || []).map((tag) => (
-        <Tag
+        <HoverIconTag
             key={tag.id}
             iconOnHover={readonly ? null : 'x'}
-            onHoverClick={readonly ? null : () => deleteTag(tag.id)}
+            onIconHoverClick={readonly ? null : () => deleteTag(tag.id)}
         >
             <span onClick={() => handleClick(tag.tag_name)}>
                 {tag.tag_name}
             </span>
-        </Tag>
+        </HoverIconTag>
     ));
 
     return (

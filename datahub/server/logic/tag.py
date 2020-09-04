@@ -16,9 +16,14 @@ def get_tag_items_by_table_id(table_id, session=None):
 
 
 @with_session
-def get_tags_by_prefix(prefix, limit=5, session=None):
+def get_tags_by_keyword(keyword, limit=10, session=None):
     return (
-        session.query(Tag).filter(Tag.name.like("%" + prefix + "%")).limit(limit).all()
+        session.query(Tag)
+        .filter(Tag.name.like("%" + keyword + "%"))
+        .order_by(Tag.count.desc())
+        .offset(0)
+        .limit(limit)
+        .all()
     )
 
 
@@ -31,8 +36,8 @@ def create_or_update_tag(tag_name, commit=True, session=None):
     else:
         tag = Tag.update(
             id=tag.id,
-            fields={"updated_at": datetime.datetime.now(), "count": tag.count + 1},
-            field_names=["updated_at", "count"],
+            fields={"count": tag.count + 1},
+            field_names=["count"],
             commit=commit,
             session=session,
         )
@@ -49,7 +54,7 @@ def create_tag_item(table_id, tag_name, uid, session=None):
     if existing_tag_item:
         return
 
-    tag = create_or_update_tag(tag_name=tag_name, session=session)
+    tag = create_or_update_tag(tag_name=tag_name, commit=False, session=session)
 
     tag_item = TagItem.create(
         {"tag_name": tag.name, "table_id": table_id, "uid": uid}, session=session

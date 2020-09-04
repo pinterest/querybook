@@ -53,21 +53,16 @@ export const ShowMoreText: React.FunctionComponent<IShowMoreTextProps> = ({
             );
         } else {
             const seeLessSection = seeLess ? (
-                nextLine ? (
-                    <div
-                        className="ShowMoreText-click"
-                        onClick={toggleSeeMoreClick}
-                    >
-                        show less
-                    </div>
-                ) : (
-                    <a
-                        className="ShowMoreText-click"
-                        onClick={toggleSeeMoreClick}
-                    >
-                        show less
-                    </a>
-                )
+                <div
+                    className={
+                        nextLine
+                            ? 'ShowMoreText-click next-line'
+                            : 'ShowMoreText-click'
+                    }
+                    onClick={toggleSeeMoreClick}
+                >
+                    show less
+                </div>
             ) : null;
 
             return (

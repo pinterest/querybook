@@ -32,9 +32,6 @@ function tagItemByTableId(
                 );
                 return;
             }
-            default: {
-                return state;
-            }
         }
     });
 }

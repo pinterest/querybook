@@ -17,11 +17,11 @@ def get_tag_items(table_id):
 
 
 @register(
-    "/tag/prefix/", methods=["GET"],
+    "/tag/keyword/", methods=["GET"],
 )
-def get_tags_by_prefix(prefix, limit=None):
+def get_tags_by_keyword(keyword):
     with DBSession() as session:
-        tags = logic.get_tags_by_prefix(prefix=prefix, limit=limit, session=session)
+        tags = logic.get_tags_by_keyword(keyword=keyword, session=session)
         return [tag.name for tag in tags]
 
 
@@ -40,7 +40,7 @@ def create_tag_item(table_id, tag):
 @register(
     "/tag/table/<int:table_id>/<int:tag_id>/", methods=["DELETE"],
 )
-def delete_tag_item(table_id, tag_id):
+def delete_tag_item(table_id, tag_item_id):
     with DBSession() as session:
         verify_data_table_permission(table_id, session=session)
-        return logic.delete_tag_item(tag_item_id=tag_id, session=session)
+        return logic.delete_tag_item(tag_item_id=tag_item_id, session=session)

@@ -47,33 +47,24 @@ export const CreateDataTableTag: React.FunctionComponent<IProps> = ({
     );
 
     const isValid = React.useMemo(() => {
-        const regex = /^(?=.{1,255}$)([a-z0-9]+)$/i;
+        const regex = /^[a-z0-9]{1,255}$/i;
         const match = tagString.match(regex);
         return Boolean(match && !existingTags.includes(tagString));
     }, [tagString]);
 
-    const {
-        data: rawTagSuggestions,
-        forceFetch: loadTagSuggestions,
-    }: { data: string[]; forceFetch } = useDataFetch({
-        url: '/tag/prefix/',
+    const { data: rawTagSuggestions }: { data: string[] } = useDataFetch({
+        url: '/tag/keyword/',
         params: {
-            prefix: tagString,
+            keyword: tagString,
         },
-        fetchOnMount: false,
+        fetchOnMount: isAdding,
     });
 
     const tagSuggestions = React.useMemo(() => {
         return (rawTagSuggestions || []).filter(
             (str) => !existingTags.includes(str)
         );
-    }, [tagString, rawTagSuggestions, existingTags]);
-
-    React.useEffect(() => {
-        if (isAdding) {
-            loadTagSuggestions();
-        }
-    }, [tagString, isAdding]);
+    }, [rawTagSuggestions, existingTags]);
 
     useEvent('keydown', (evt: KeyboardEvent) => {
         if (isAdding) {
@@ -90,10 +81,9 @@ export const CreateDataTableTag: React.FunctionComponent<IProps> = ({
         setIsAdding(false);
     }, []);
 
-    const onCreateTag = React.useCallback(async () => {
+    const onCreateTag = React.useCallback(() => {
         if (isValid) {
-            await createTag(tagString);
-            clearCreateState();
+            createTag(tagString).finally(clearCreateState);
         }
     }, [tagString]);
 
