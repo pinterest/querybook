@@ -493,6 +493,16 @@ def exec_demo_set_up():
                 description="The World Happiness Report is a landmark survey of the state of global happiness. The first report was published in 2012, the second in 2013, the third in 2015, and the fourth in the 2016 Update. The World Happiness 2017, which ranks 155 countries by their happiness levels, was released at the United Nations at an event celebrating International Day of Happiness on March 20th. The report continues to gain global recognition as governments, organizations and civil society increasingly use happiness indicators to inform their policy-making decisions. Leading experts across fields – economics, psychology, survey analysis, national statistics, health, public policy and more – describe how measurements of well-being can be used effectively to assess the progress of nations. The reports review the state of happiness in the world today and show how the new science of happiness explains personal and national variations in happiness.",
                 session=session,
             )
+            demo_logic.create_demo_table_stats(
+                table_id=golden_table.id, uid=current_user.id, session=session
+            )
+            score_column = metastore_logic.get_column_by_name(
+                name="Score", table_id=golden_table.id, session=session
+            )
+            demo_logic.create_demo_table_column_stats(
+                column_id=score_column.id, uid=current_user.id, session=session
+            )
+
         schedule_logic.run_and_log_scheduled_task(
             scheduled_task_id=task_schedule_id, session=session
         )

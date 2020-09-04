@@ -8,6 +8,45 @@ from logic import (
 
 
 @with_session
+def create_demo_table_stats(table_id, uid, session=None):
+    m_logic.upsert_table_stat(
+        table_id=table_id, key="queries_count", value=37, uid=uid, session=session,
+    )
+    m_logic.upsert_table_stat(
+        table_id=table_id,
+        key="successful_queries_count",
+        value=37,
+        uid=uid,
+        session=session,
+    )
+    m_logic.upsert_table_stat(
+        table_id=table_id, key="users_count", value=18, uid=uid, session=session,
+    )
+    m_logic.upsert_table_stat(
+        table_id=table_id, key="join_queries_count", value=11, uid=uid, session=session,
+    )
+
+
+@with_session
+def create_demo_table_column_stats(column_id, uid, session=None):
+    m_logic.upsert_table_column_stat(
+        column_id=column_id, key="sum", value=843.507, uid=uid, session=session,
+    )
+    m_logic.upsert_table_column_stat(
+        column_id=column_id, key="mean", value=5.407, uid=uid, session=session,
+    )
+    m_logic.upsert_table_column_stat(
+        column_id=column_id, key="maximum", value=7.769, uid=uid, session=session,
+    )
+    m_logic.upsert_table_column_stat(
+        column_id=column_id, key="minimum", value=4.913, uid=uid, session=session,
+    )
+    m_logic.upsert_table_column_stat(
+        column_id=column_id, key="null_value_count", value=0, uid=uid, session=session,
+    )
+
+
+@with_session
 def create_demo_lineage(metastore_id, uid, session=None):
     query_text = """CREATE TABLE world_happiness_ranking_2015_to_2019 AS
 SELECT
