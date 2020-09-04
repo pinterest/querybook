@@ -1,11 +1,15 @@
 import * as React from 'react';
-
-import { KeyContentDisplay } from 'ui/KeyContentDisplay/KeyContentDisplay';
-import { Loading, LoadingIcon } from 'ui/Loading/Loading';
-import { renderStatValue } from './DataTableStatsCommon';
 import { useDispatch, useSelector } from 'react-redux';
+
 import { IStoreState, Dispatch } from 'redux/store/types';
 import { fetchDataTableStatsIfNeeded } from 'redux/dataSources/action';
+
+import { renderStatValue } from './DataTableStatsCommon';
+
+import { KeyContentDisplay } from 'ui/KeyContentDisplay/KeyContentDisplay';
+import { LoadingIcon } from 'ui/Loading/Loading';
+
+import './DataTableStats.scss';
 
 interface IProps {
     tableId: number;
