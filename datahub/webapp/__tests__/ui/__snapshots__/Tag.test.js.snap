@@ -2,7 +2,7 @@
 
 exports[`matches enzyme snapshots matches snapshot 1`] = `
 <span
-  className="Tag flex-row undefined"
+  className="Tag flex-row"
 >
   test
 </span>
@@ -10,7 +10,7 @@ exports[`matches enzyme snapshots matches snapshot 1`] = `
 
 exports[`matches enzyme snapshots matches snapshot 2`] = `
 <span
-  className="Tag flex-row highlighted undefined"
+  className="Tag flex-row highlighted"
 >
   test
 </span>

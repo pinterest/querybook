@@ -54,7 +54,7 @@ export const Tag: React.FunctionComponent<ITagProps> = ({
         Tag: true,
         'flex-row': true,
         highlighted,
-        [className]: true,
+        [className]: Boolean(className),
     });
 
     return (
