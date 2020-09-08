@@ -12,8 +12,7 @@ from logic import tag as logic
 def get_tag_items(table_id):
     with DBSession() as session:
         verify_data_table_permission(table_id, session=session)
-        tag_items = logic.get_tag_items_by_table_id(table_id=table_id, session=session)
-        return [tag_item.to_dict() for tag_item in tag_items]
+        return logic.get_tag_items_by_table_id(table_id=table_id, session=session)
 
 
 @register(
@@ -31,10 +30,9 @@ def get_tags_by_keyword(keyword):
 def create_tag_item(table_id, tag):
     with DBSession() as session:
         verify_data_table_permission(table_id, session=session)
-        tag_item = logic.create_tag_item(
+        return logic.create_tag_item(
             table_id=table_id, tag_name=tag, uid=current_user.id, session=session
         )
-        return tag_item.to_dict()
 
 
 @register(

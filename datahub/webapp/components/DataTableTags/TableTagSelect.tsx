@@ -6,7 +6,7 @@ import {
 } from 'lib/utils/react-select';
 import { matchKeyPress } from 'lib/utils/keyboard';
 import { useDataFetch } from 'hooks/useDataFetch';
-import { useEvent } from 'hooks/useEvent';
+import { useDebounce } from 'hooks/useDebounce';
 
 import { SimpleReactSelect } from 'ui/SimpleReactSelect/SimpleReactSelect';
 
@@ -31,10 +31,10 @@ export const TableTagSelect: React.FunctionComponent<IProps> = ({
     const [tagString, setTagString] = React.useState('');
     const [isTyping, setIsTyping] = React.useState(false);
 
-    const { data: rawTagSuggestions }: { data: string[] } = useDataFetch({
+    const { data: rawTagSuggestions } = useDataFetch<string[]>({
         url: '/tag/keyword/',
         params: {
-            keyword: tagString,
+            keyword: useDebounce(tagString, 500),
         },
     });
 
@@ -45,38 +45,23 @@ export const TableTagSelect: React.FunctionComponent<IProps> = ({
     }, [rawTagSuggestions, existingTags]);
 
     const isValid = React.useMemo(() => {
-        return isTyping
-            ? isValidCheck
-                ? isValidCheck(tagString)
-                : true
-            : true;
+        return isTyping && isValidCheck ? isValidCheck(tagString) : true;
     }, [isValidCheck, tagString]);
 
-    useEvent('keydown', (evt: KeyboardEvent) => {
-        if (isTyping) {
-            if (matchKeyPress(evt, 'Enter')) {
-                handleSelect();
-            } else if (matchKeyPress(evt, 'Esc')) {
-                clearCreateState();
-            }
-        }
-    });
-
     const handleSelect = React.useCallback(
-        (val?) => {
+        (val?: string) => {
             const tagVal = val ?? tagString;
             if (isValid) {
-                setIsTyping(false);
-                onSelect(tagVal);
                 clearCreateState();
+                onSelect(tagVal);
             }
         },
-        [tagString]
+        [tagString, onSelect]
     );
 
     const clearCreateState = React.useCallback(() => {
-        setTagString('');
         setIsTyping(false);
+        setTagString('');
     }, []);
 
     return (
@@ -84,7 +69,6 @@ export const TableTagSelect: React.FunctionComponent<IProps> = ({
             className={
                 isValid ? 'TableTagSelect' : 'TableTagSelect invalid-string'
             }
-            onClick={() => setIsTyping(true)}
         >
             <SimpleReactSelect
                 value={tagString}
@@ -98,6 +82,15 @@ export const TableTagSelect: React.FunctionComponent<IProps> = ({
                     placeholder: 'alphanumeric only',
                     styles: tagReactSelectStyle,
                     onFocus: () => setIsTyping(true),
+                    onBlur: () => setIsTyping(false),
+                    noOptionsMessage: () => null,
+                    onKeyDown: (evt) => {
+                        if (matchKeyPress(evt, 'Enter')) {
+                            handleSelect();
+                        } else if (matchKeyPress(evt, 'Esc')) {
+                            clearCreateState();
+                        }
+                    },
                 }}
             />
         </div>

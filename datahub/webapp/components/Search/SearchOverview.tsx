@@ -243,10 +243,7 @@ export const SearchOverview: React.FunctionComponent = () => {
 
     const handleTagSelect = React.useCallback(
         (tag: string) => {
-            const tagFilter = searchFilters?.tags
-                ? [...searchFilters.tags]
-                : [];
-            tagFilter.push(tag);
+            const tagFilter = [...(searchFilters.tags || []), tag];
             updateSearchFilter('tags', tagFilter);
         },
         [searchFilters?.tags]

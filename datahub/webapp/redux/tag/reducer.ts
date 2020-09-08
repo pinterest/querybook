@@ -21,8 +21,7 @@ function tagItemByTableId(
             }
             case '@@tag/RECEIVE_TAG_ITEM': {
                 const { tableId, tag } = action.payload;
-
-                draft[tableId] = [...draft[tableId], tag];
+                draft[tableId].push(tag);
                 return;
             }
             case '@@tag/REMOVE_TAG_ITEM': {

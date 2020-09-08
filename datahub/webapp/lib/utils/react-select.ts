@@ -151,8 +151,8 @@ export const miniReactSelectStyles = {
     }),
 };
 
-export function makeReactSelectStyle(modalMenu?: boolean, styleObj?: {}) {
-    let styles: {} = styleObj ?? defaultReactSelectStyles;
+export function makeReactSelectStyle(modalMenu?: boolean, style?: {}) {
+    let styles: {} = style ?? defaultReactSelectStyles;
     if (modalMenu) {
         styles = {
             ...styles,

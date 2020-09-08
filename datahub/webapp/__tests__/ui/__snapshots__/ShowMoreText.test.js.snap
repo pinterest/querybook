@@ -5,11 +5,11 @@ exports[`matches enzyme snapshots matches snapshot 1`] = `
   className="ShowMoreText "
 >
   te
-  <div
+  <span
     className="ShowMoreText-click"
     onClick={[Function]}
   >
     show more
-  </div>
+  </span>
 </span>
 `;
