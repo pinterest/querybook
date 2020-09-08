@@ -136,8 +136,8 @@ export const AdminEnvironment: React.FunctionComponent<IProps> = ({
     // };
 
     const queryEnginesInDisplayEnv = React.useMemo(() => {
-        return (queryEngines || []).filter(
-            (engine) => engine.environment_id === Number(environmentId)
+        return (queryEngines || []).filter((engine) =>
+            engine.environments.some((env) => env.id === Number(environmentId))
         );
     }, [queryEngines, environmentId]);
 
@@ -216,10 +216,14 @@ export const AdminEnvironment: React.FunctionComponent<IProps> = ({
                                             <QueryEngineSelect
                                                 queryEngines={(
                                                     queryEngines || []
-                                                ).filter(
-                                                    (engine) =>
-                                                        engine.environment_id !==
-                                                        Number(environmentId)
+                                                ).filter((engine) =>
+                                                    engine.environments.some(
+                                                        (env) =>
+                                                            env.id !==
+                                                            Number(
+                                                                environmentId
+                                                            )
+                                                    )
                                                 )}
                                                 handleAddQueryEngine={
                                                     handleAddQueryEngine

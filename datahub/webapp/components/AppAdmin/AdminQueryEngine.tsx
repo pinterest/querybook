@@ -24,9 +24,12 @@ import { Loader } from 'ui/Loader/Loader';
 import { SimpleField } from 'ui/FormikField/SimpleField';
 import { Level } from 'ui/Level/Level';
 
-import { IAdminEnvironment } from './AdminEnvironment';
 import { IAdminMetastore } from './AdminMetastore';
 import { AdminDeletedList } from './AdminDeletedList';
+import { IEnvironment } from 'redux/environment/types';
+import { Link } from 'ui/Link/Link';
+
+import './AdminQueryEngine.scss';
 
 export interface IAdminQueryEngine {
     id: number;
@@ -38,27 +41,24 @@ export interface IAdminQueryEngine {
     description: string;
 
     metastore_id: number;
-    environment_id: number;
     executor: string;
     executor_params: Record<string, any>;
     status_checker: string;
+
+    environments?: IEnvironment[];
 }
 
 interface IProps {
     queryEngines: IAdminQueryEngine[];
-    environments: IAdminEnvironment[];
     metastores: IAdminMetastore[];
     loadQueryEngines: () => Promise<any>;
-    loadEnvironments: () => Promise<any>;
     loadMetastores: () => Promise<any>;
 }
 
 export const AdminQueryEngine: React.FunctionComponent<IProps> = ({
     queryEngines,
-    environments,
     metastores,
     loadQueryEngines,
-    loadEnvironments,
     loadMetastores,
 }) => {
     const { id: queryEngineId } = useParams();
@@ -108,9 +108,6 @@ export const AdminQueryEngine: React.FunctionComponent<IProps> = ({
     );
 
     React.useEffect(() => {
-        if (!environments) {
-            loadEnvironments();
-        }
         if (!metastores) {
             loadMetastores();
         }
@@ -125,7 +122,6 @@ export const AdminQueryEngine: React.FunctionComponent<IProps> = ({
                 executor: queryEngine.executor,
                 executor_params: queryEngine.executor_params,
                 metastore_id: queryEngine.metastore_id,
-                environment_id: queryEngine.environment_id,
                 status_checker: queryEngine.status_checker,
             });
 
@@ -193,10 +189,6 @@ export const AdminQueryEngine: React.FunctionComponent<IProps> = ({
                 if (!formValid[0]) {
                     errors.executor_params = `Error found in ${formValid[2]}: ${formValid[1]}`;
                 }
-
-                if (queryEngine.environment_id == null) {
-                    errors.environment_id = 'Must specify environment';
-                }
             }
 
             return errors;
@@ -239,6 +231,35 @@ export const AdminQueryEngine: React.FunctionComponent<IProps> = ({
             );
         };
 
+        const environmentDOM = item.id != null && (
+            <div className="AdminForm-section">
+                <div className="AdminForm-section-top flex-row">
+                    <div className="AdminForm-section-title">Environments</div>
+                    <hr className="dh-hr" />
+                </div>
+                <div className="AdminForm-section-content">
+                    <p>
+                        This section is read only. Please add the query engine
+                        to the environment in the{' '}
+                        <Link to="/admin/environment/">environment config</Link>
+                        .
+                    </p>
+                    <div className="AdmingQueryEngine-environment-list m8 p8">
+                        {item.environments?.length
+                            ? item.environments.map((environment) => (
+                                  <Link
+                                      key={environment.id}
+                                      to={`/admin/environment/${environment.id}/`}
+                                  >
+                                      {environment.name}
+                                  </Link>
+                              ))
+                            : 'This query engine does not belong to any environment.'}
+                    </div>
+                </div>
+            </div>
+        );
+
         const logDOM = item.id != null && (
             <div className="right-align">
                 <AdminAuditLogButton itemType="query_engine" itemId={item.id} />
@@ -262,19 +283,6 @@ export const AdminQueryEngine: React.FunctionComponent<IProps> = ({
                         <div className="flex-row">
                             <SimpleField
                                 stacked
-                                name="environment_id"
-                                label="Environment"
-                                type="select"
-                                options={(environments || []).map(
-                                    (env: IAdminEnvironment) => ({
-                                        key: env.id,
-                                        value: env.name,
-                                    })
-                                )}
-                                withDeselect
-                            />
-                            <SimpleField
-                                stacked
                                 name="metastore_id"
                                 label="Metastore"
                                 type="select"
@@ -293,9 +301,6 @@ export const AdminQueryEngine: React.FunctionComponent<IProps> = ({
                                 options={engineStatusCheckerNames}
                                 withDeselect
                             />
-                        </div>
-
-                        <div className="flex-row">
                             <SimpleField
                                 stacked
                                 name="language"
@@ -339,6 +344,7 @@ export const AdminQueryEngine: React.FunctionComponent<IProps> = ({
                                 />
                             </div>
                         </div>
+                        {environmentDOM}
                     </div>
                 </div>
             </>
@@ -360,7 +366,6 @@ export const AdminQueryEngine: React.FunctionComponent<IProps> = ({
                 language: defaultLanguage,
                 description: '',
                 metastore_id: null,
-                environment_id: null,
                 executor: defaultExecutor,
                 executor_params:
                     defaultExecutorTemplate &&

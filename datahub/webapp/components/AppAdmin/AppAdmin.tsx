@@ -241,10 +241,8 @@ export const AppAdmin: React.FunctionComponent = () => {
                         render={() => (
                             <AdminQueryEngine
                                 queryEngines={queryEngines}
-                                environments={environments}
                                 metastores={metastores}
                                 loadQueryEngines={loadQueryEngines}
-                                loadEnvironments={loadEnvironments}
                                 loadMetastores={loadMetastores}
                             />
                         )}

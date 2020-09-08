@@ -6,6 +6,7 @@ from app.db import with_session
 
 from models.admin import (
     QueryEngine,
+    QueryEngineEnvironment,
     QueryMetastore,
     APIAccessToken,
 )
@@ -37,7 +38,9 @@ def get_all_query_engines(session=None):
 def get_query_engines_by_environment(environment_id, session=None):
     return (
         session.query(QueryEngine)
-        .filter_by(environment_id=environment_id, deleted_at=None,)
+        .join(QueryEngineEnvironment)
+        .filter(QueryEngineEnvironment.environment_id == environment_id)
+        .filter(QueryEngine.deleted_at.is_(None))
         .all()
     )
 
@@ -106,7 +109,8 @@ def get_all_query_metastore_by_environment(environment_id, session=None):
     return (
         session.query(QueryMetastore)
         .join(QueryEngine)
-        .filter(QueryEngine.environment_id == environment_id)
+        .join(QueryEngineEnvironment)
+        .filter(QueryEngineEnvironment.environment_id == environment_id)
         .filter(QueryMetastore.deleted_at.is_(None))
         .all()
     )

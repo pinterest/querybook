@@ -183,7 +183,7 @@ def send_out_notification(query_execution_id):
         notifications = query_execution.notifications
         if len(notifications):
             data_cell = next(iter(query_execution.cells), None)
-            env_name = query_execution.engine.environment.name
+            env_name = query_execution.engine.environments[0].name
 
             for notification in notifications:
                 uid = notification.user
