@@ -1,6 +1,7 @@
 from datetime import datetime
 import hashlib
 import uuid
+from sqlalchemy import func
 
 from app.db import with_session
 
@@ -35,14 +36,104 @@ def get_all_query_engines(session=None):
 
 
 @with_session
-def get_query_engines_by_environment(environment_id, session=None):
-    return (
+def get_query_engines_by_environment(environment_id, ordered=False, session=None):
+    query = (
         session.query(QueryEngine)
         .join(QueryEngineEnvironment)
         .filter(QueryEngineEnvironment.environment_id == environment_id)
         .filter(QueryEngine.deleted_at.is_(None))
+    )
+
+    if ordered:
+        query = query.order_by(QueryEngineEnvironment.engine_order)
+
+    return query.all()
+
+
+@with_session
+def add_query_engine_to_environment(environment_id, query_engine_id, session=None):
+    max_engine_order = (
+        next(
+            iter(
+                session.query(func.max(QueryEngineEnvironment.engine_order))
+                .filter_by(environment_id=environment_id)
+                .first()
+            ),
+            None,
+        )
+        or 0
+    )
+    return QueryEngineEnvironment.create(
+        fields={
+            "query_engine_id": query_engine_id,
+            "environment_id": environment_id,
+            "engine_order": max_engine_order + 1,
+        },
+        session=session,
+    )
+
+
+@with_session
+def remove_query_engine_from_environment(environment_id, query_engine_id, session=None):
+    session.query(QueryEngineEnvironment).filter_by(
+        query_engine_id=query_engine_id, environment_id=environment_id,
+    ).delete()
+    session.commit()
+
+
+@with_session
+def swap_query_engine_in_environment(
+    environment_id, from_index, to_index, commit=True, session=None
+):
+    if from_index == to_index:
+        return  # NOOP
+
+    qe_envs = (
+        session.query(QueryEngineEnvironment)
+        .filter_by(environment_id=environment_id)
+        .order_by(QueryEngineEnvironment.engine_order)
         .all()
     )
+
+    assert 0 <= from_index < len(qe_envs) and 0 <= to_index < len(
+        qe_envs
+    ), "Invalid index"
+    item = qe_envs[from_index]
+
+    from_item_order = item.engine_order
+    to_item_order = qe_envs[to_index].engine_order
+
+    is_move_down = from_item_order < to_item_order
+    if is_move_down:
+        session.query(QueryEngineEnvironment).filter(
+            QueryEngineEnvironment.environment_id == environment_id
+        ).filter(QueryEngineEnvironment.engine_order <= to_item_order).filter(
+            QueryEngineEnvironment.engine_order > from_item_order
+        ).update(
+            {
+                QueryEngineEnvironment.engine_order: QueryEngineEnvironment.engine_order
+                - 1
+            }
+        )
+    else:
+        # moving up
+        session.query(QueryEngineEnvironment).filter(
+            QueryEngineEnvironment.environment_id == environment_id
+        ).filter(QueryEngineEnvironment.engine_order >= to_item_order).filter(
+            QueryEngineEnvironment.engine_order < from_item_order
+        ).update(
+            {
+                QueryEngineEnvironment.engine_order: QueryEngineEnvironment.engine_order
+                + 1
+            }
+        )
+    # Move item to the right place
+    item.engine_order = to_item_order
+
+    if commit:
+        session.commit()
+    else:
+        session.flush()
 
 
 @with_session

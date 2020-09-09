@@ -21,6 +21,12 @@ def abort_404():
 
 
 def verify_environment_permission(environment_ids: List[int]):
+    # If we are verifying environment ids and none is returned
+    # it is most likely that the object we are verifying does
+    # not associate with any environment
+    if len(environment_ids) == 0:
+        abort_404()
+
     api_assert(
         any(eid in current_user.environment_ids for eid in environment_ids),
         message="Unauthorized Environment",
@@ -96,6 +102,7 @@ def verify_data_schema_permission(schema_id, session=None):
     environment_ids = [
         eid
         for eid, in session.query(QueryEngineEnvironment.environment_id)
+        .join(QueryEngine)
         .join(QueryMetastore)
         .join(DataSchema)
         .filter(DataSchema.id == schema_id)

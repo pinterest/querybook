@@ -15,7 +15,7 @@ import { fetchAllSystemStatus } from 'redux/queryEngine/action';
 import { QueryEngineStatusViewer } from 'components/QueryEngineStatusViewer/QueryEngineStatusViewer';
 import {
     queryEngineByIdEnvSelector,
-    queryEngineStatusByIdEnvSelector,
+    queryEngineStatusAndEngineIdsSelector,
 } from 'redux/queryEngine/selector';
 import {
     queryEngineStatusToIconStatus,
@@ -51,7 +51,9 @@ export const QueryEngineStatusButton: React.FC<IProps> = ({
     const buttonRef = useRef<HTMLAnchorElement>();
 
     const queryEngineById = useSelector(queryEngineByIdEnvSelector);
-    const queryEngineStatusById = useSelector(queryEngineStatusByIdEnvSelector);
+    const queryEngineStatusAndEngineIds = useSelector(
+        queryEngineStatusAndEngineIdsSelector
+    );
 
     const dispatch = useDispatch();
     const loadAllEngineStatus = useCallback(
@@ -89,11 +91,11 @@ export const QueryEngineStatusButton: React.FC<IProps> = ({
 
     const overallWorstQueryEngineStatus: QueryEngineStatus = useMemo(() => {
         return Math.max(
-            ...Object.values(queryEngineStatusById).map((status) =>
+            ...queryEngineStatusAndEngineIds.map(([id, status]) =>
                 Number(status?.data?.status)
             )
         );
-    }, [queryEngineStatusById]);
+    }, [queryEngineStatusAndEngineIds]);
 
     const getQueryEngineStatusModal = (engineId: string) => {
         return (
@@ -108,7 +110,7 @@ export const QueryEngineStatusButton: React.FC<IProps> = ({
     };
 
     const getQueryEngineStatusPanelDOM = () => {
-        const systemStatusDOM = Object.entries(queryEngineStatusById)
+        const systemStatusDOM = queryEngineStatusAndEngineIds
             .map(([engineId, engineStatus]) => {
                 const engine: IQueryEngine = queryEngineById[engineId];
 
@@ -130,7 +132,9 @@ export const QueryEngineStatusButton: React.FC<IProps> = ({
 
                     systemStatusContent = (
                         <span
-                            onClick={() => setShowStatusForEngineId(engineId)}
+                            onClick={() =>
+                                setShowStatusForEngineId(String(engineId))
+                            }
                         >
                             <StatusIcon status={iconClass} />
                             {titleize(engine.name)}: {message}{' '}

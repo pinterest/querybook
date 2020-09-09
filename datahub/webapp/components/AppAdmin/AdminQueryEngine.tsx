@@ -247,12 +247,13 @@ export const AdminQueryEngine: React.FunctionComponent<IProps> = ({
                     <div className="AdmingQueryEngine-environment-list m8 p8">
                         {item.environments?.length
                             ? item.environments.map((environment) => (
-                                  <Link
-                                      key={environment.id}
-                                      to={`/admin/environment/${environment.id}/`}
-                                  >
-                                      {environment.name}
-                                  </Link>
+                                  <div key={environment.id}>
+                                      <Link
+                                          to={`/admin/environment/${environment.id}/`}
+                                      >
+                                          {environment.name}
+                                      </Link>
+                                  </div>
                               ))
                             : 'This query engine does not belong to any environment.'}
                     </div>

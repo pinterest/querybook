@@ -16,7 +16,7 @@ from logic import admin as admin_logic
 )
 def get_query_engines(environment_id):
     verify_environment_permission([environment_id])
-    return admin_logic.get_query_engines_by_environment(environment_id)
+    return admin_logic.get_query_engines_by_environment(environment_id, ordered=True)
 
 
 @register("/query_engine/<int:engine_id>/status/", methods=["GET"])
