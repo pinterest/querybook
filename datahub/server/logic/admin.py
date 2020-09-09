@@ -82,7 +82,7 @@ def remove_query_engine_from_environment(environment_id, query_engine_id, sessio
 
 
 @with_session
-def swap_query_engine_in_environment(
+def swap_query_engine_order_in_environment(
     environment_id, from_index, to_index, commit=True, session=None
 ):
     if from_index == to_index:

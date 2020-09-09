@@ -255,7 +255,7 @@ export const AdminQueryEngine: React.FunctionComponent<IProps> = ({
                                       </Link>
                                   </div>
                               ))
-                            : 'This query engine does not belong to any environment.'}
+                            : 'This query engine does not belong to any environments.'}
                     </div>
                 </div>
             </div>

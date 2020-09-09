@@ -1,7 +1,7 @@
 """Make engine environment to many to many
 
 Revision ID: 3ff3ad7e4669
-Revises: f93d62f9a53d
+Revises: b67a78f26e73
 Create Date: 2020-09-03 21:05:00.373952
 
 """
@@ -11,7 +11,7 @@ from sqlalchemy.dialects import mysql
 
 # revision identifiers, used by Alembic.
 revision = "3ff3ad7e4669"
-down_revision = "f93d62f9a53d"
+down_revision = "b67a78f26e73"
 branch_labels = None
 depends_on = None
 
