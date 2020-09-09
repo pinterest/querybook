@@ -163,6 +163,11 @@
                         .block-left-buttons-wrapper {
                             position: absolute;
                             left: 4px;
+                            .Dropdown {
+                                .Dropdown-trigger {
+                                    display: flex;
+                                }
+                            }
                         }
 
                         .block-right-buttons-wrapper {
