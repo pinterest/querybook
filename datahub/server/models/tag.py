@@ -41,7 +41,7 @@ class TagItem(CRUDMixin, Base):
     )
 
     uid = sql.Column(
-        sql.Integer, sql.ForeignKey("user.id", ondelete="NO ACTION"), nullable=True
+        sql.Integer, sql.ForeignKey("user.id", ondelete="SET NULL"), nullable=True
     )
 
     tag = relationship(

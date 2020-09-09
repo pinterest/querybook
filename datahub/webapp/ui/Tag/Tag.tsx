@@ -40,7 +40,7 @@ export const Tag: React.FunctionComponent<ITagProps> = ({
     children,
     highlighted = false,
     tooltip,
-    tooltipPos,
+    tooltipPos = 'top',
     onClick,
     className,
 }) => {

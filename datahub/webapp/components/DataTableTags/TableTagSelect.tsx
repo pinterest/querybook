@@ -52,17 +52,12 @@ export const TableTagSelect: React.FunctionComponent<IProps> = ({
         (val?: string) => {
             const tagVal = val ?? tagString;
             if (isValid) {
-                clearCreateState();
+                setTagString('');
                 onSelect(tagVal);
             }
         },
         [tagString, onSelect]
     );
-
-    const clearCreateState = React.useCallback(() => {
-        setIsTyping(false);
-        setTagString('');
-    }, []);
 
     return (
         <div
@@ -72,10 +67,7 @@ export const TableTagSelect: React.FunctionComponent<IProps> = ({
         >
             <SimpleReactSelect
                 value={tagString}
-                options={tagSuggestions.map((tag) => ({
-                    label: tag,
-                    value: tag,
-                }))}
+                options={tagSuggestions}
                 onChange={(val) => handleSelect(val)}
                 selectProps={{
                     onInputChange: (newValue) => setTagString(newValue),
@@ -88,7 +80,7 @@ export const TableTagSelect: React.FunctionComponent<IProps> = ({
                         if (matchKeyPress(evt, 'Enter')) {
                             handleSelect();
                         } else if (matchKeyPress(evt, 'Esc')) {
-                            clearCreateState();
+                            setTagString('');
                         }
                     },
                 }}
