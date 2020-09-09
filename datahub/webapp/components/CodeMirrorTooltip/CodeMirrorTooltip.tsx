@@ -1,14 +1,15 @@
-import { useSelector, useDispatch } from 'react-redux';
 import React, { useEffect } from 'react';
-import { IStoreState } from 'redux/store/types';
+import { useSelector, useDispatch } from 'react-redux';
+
 import { IFunctionDescription } from 'const/metastore';
+import { useEvent } from 'hooks/useEvent';
+import { IStoreState } from 'redux/store/types';
 import * as dataSourcesActions from 'redux/dataSources/action';
 
 import { FunctionDocumentationTooltip } from './FunctionDocumentationTooltip';
 import { TableTooltip } from './TableTooltip';
 
 import './CodeMirrorTooltip.scss';
-import { useEvent } from 'hooks/useEvent';
 
 export interface ICodeMirrorTooltipProps {
     tableId?: number;

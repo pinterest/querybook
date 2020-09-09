@@ -1,0 +1,11 @@
+.CreateDataTableTag {
+    background-color: var(--tag-bg-color);
+    border-radius: var(--border-radius);
+    padding: 3px;
+    .IconButton {
+        padding: 0px;
+        svg {
+            padding: 2px;
+        }
+    }
+}

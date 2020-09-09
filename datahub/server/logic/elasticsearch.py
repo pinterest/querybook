@@ -268,6 +268,7 @@ def table_to_es(table, session=None):
         "columns": column_names,
         "golden": table.golden,
         "importance_score": weight,
+        "tags": [tag.tag_name for tag in table.tags],
     }
     return expand_table
 

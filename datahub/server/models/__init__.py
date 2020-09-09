@@ -10,3 +10,4 @@ from .query_execution import *
 from .result_store import *
 from .schedule import *
 from .user import *
+from .tag import *

@@ -61,7 +61,7 @@ export const defaultReactSelectStyles = {
             color: 'var(--text-hover-color)',
         },
     }),
-    dropdownIndicator: (styles, state) => ({
+    dropdownIndicator: (styles) => ({
         ...styles,
         color: 'var(--text-color)',
         '&:hover': {
@@ -87,7 +87,7 @@ export const defaultReactSelectStyles = {
         cursor: isDisabled ? 'not-allowed' : 'default',
         ...(data.color ? dot(data.color) : {}),
     }),
-    menu: (styles, state) => ({
+    menu: (styles) => ({
         ...styles,
         backgroundColor: 'var(--bg-color)',
     }),
@@ -125,8 +125,34 @@ export const defaultReactSelectStyles = {
     }),
 };
 
-export function makeReactSelectStyle(modalMenu?: boolean) {
-    let styles: {} = defaultReactSelectStyles;
+export const miniReactSelectStyles = {
+    ...defaultReactSelectStyles,
+    control: (styles, { isFocused, isSelected }) => ({
+        ...styles,
+        ...defaultReactSelectStyles.control(styles, { isFocused, isSelected }),
+        padding: '0px',
+        margin: '0px,',
+        minHeight: '0px',
+        '&:hover': {
+            borderColor: 'var(--hover-border-color)',
+        },
+    }),
+    input: (styles) => ({
+        ...styles,
+        ...defaultReactSelectStyles.input(styles),
+        padding: '0px',
+        margin: '0px,',
+        minHeight: '0px',
+    }),
+    dropdownIndicator: (styles) => ({
+        ...styles,
+        ...defaultReactSelectStyles.dropdownIndicator(styles),
+        padding: '0px 4px',
+    }),
+};
+
+export function makeReactSelectStyle(modalMenu?: boolean, style?: {}) {
+    let styles: {} = style ?? defaultReactSelectStyles;
     if (modalMenu) {
         styles = {
             ...styles,

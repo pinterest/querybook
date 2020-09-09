@@ -10,6 +10,7 @@ from . import schedule
 from . import user
 from . import board
 from . import utils
+from . import tag
 
 # Flake8 :(
 admin
@@ -24,3 +25,4 @@ user
 schedule
 board
 utils
+tag

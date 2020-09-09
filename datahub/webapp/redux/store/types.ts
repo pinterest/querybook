@@ -27,6 +27,7 @@ import {
     INotificationState,
     NotificationServiceAction,
 } from 'redux/notificationService/types';
+import { ITagState, TagAction } from 'redux/tag/types';
 
 export interface IStoreState {
     readonly user: IUserState;
@@ -44,6 +45,7 @@ export interface IStoreState {
     readonly adhocQuery: IAdhocQueryState;
     readonly board: IBoardState;
     readonly globalState: IGlobalStateState;
+    readonly tag: ITagState;
 }
 
 export type AllAction =
@@ -61,6 +63,7 @@ export type AllAction =
     | NotificationServiceAction
     | AdhocQueryAction
     | BoardAction
-    | GlobalStateAction;
+    | GlobalStateAction
+    | TagAction;
 
 export type Dispatch = ThunkDispatch<IStoreState, null, AllAction>;

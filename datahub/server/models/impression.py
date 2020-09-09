@@ -1,6 +1,5 @@
 import sqlalchemy as sql
 
-
 from app import db
 
 from const.db import now

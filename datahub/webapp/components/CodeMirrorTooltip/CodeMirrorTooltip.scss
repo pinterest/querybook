@@ -8,36 +8,29 @@
 
 .CodeMirrorTooltip {
     background-color: var(--bg-color);
-    border: 1px solid black;
-    border-radius: 1px;
-    padding: 10px;
-
-    max-width: 500px;
-    max-height: 400px;
-    overflow: scroll;
+    border: var(--border);
+    border-radius: var(--border-radius);
 
     .rich-text-content {
-        strong {
+        max-width: 280px;
+        max-height: 400px;
+        overflow-y: scroll;
+        overflow-x: hidden;
+        padding: 8px;
+
+        .table-tooltip-header {
+            font-size: var(--text-size);
             color: var(--dark-text-color);
+            font-weight: var(--bold-font);
         }
-        h6 {
-            font-size: var(--small-text-size);
-            font-weight: normal;
-            color: var(--title-color);
+        .tooltip-title {
+            font-weight: var(--bold-font);
             margin-bottom: 0;
         }
 
-        p {
+        .tooltip-content {
             white-space: pre-wrap;
-        }
-
-        .see-detailed-button {
-            float: right;
-        }
-    }
-    .table-tooltip-header {
-        .table-tooltip-header-title {
-            flex: 1;
+            margin-left: 4px;
         }
     }
 }

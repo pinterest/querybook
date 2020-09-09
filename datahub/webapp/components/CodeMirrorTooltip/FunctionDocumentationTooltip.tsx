@@ -20,21 +20,21 @@ export const FunctionDocumentationTooltip: React.FunctionComponent<IProps> = ({
             } = functionDocumentation;
 
             const signature = `${name}(${params})`;
-            const separator = index > 0 ? <hr /> : null;
+            const separator = index > 0 ? <hr className="dh-hr" /> : null;
 
             return (
                 <div key={index}>
                     {separator}
                     <div className="rich-text-content">
-                        <p>{signature}</p>
+                        <div className="table-tooltip-header">{signature}</div>
 
-                        <h6>Returns</h6>
-                        <p>{returnType}</p>
+                        <div className="tooltip-title">Returns</div>
+                        <div className="tooltip-content">{returnType}</div>
 
-                        <h6>Description</h6>
-                        <p>
+                        <div className="tooltip-title">Description</div>
+                        <div className="tooltip-content">
                             <ShowMoreText text={description} length={200} />
-                        </p>
+                        </div>
                     </div>
                 </div>
             );

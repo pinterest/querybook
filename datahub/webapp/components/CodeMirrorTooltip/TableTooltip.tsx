@@ -4,6 +4,7 @@ import { IDataColumn, IDataTable, IDataSchema } from 'const/metastore';
 import { ShowMoreText } from 'ui/ShowMoreText/ShowMoreText';
 import { IconButton } from 'ui/Button/IconButton';
 import { setSidebarTableId } from 'lib/dataHubUI';
+import { DataTableTags } from 'components/DataTableTags/DataTableTags';
 
 interface IProps {
     table: IDataTable;
@@ -32,72 +33,74 @@ export const TableTooltip: React.FunctionComponent<IProps> = ({
 
     const seeDetailsButton = openTableModal && (
         <IconButton
-            size={20}
+            size={18}
             onClick={openTableModal}
             noPadding
             icon={'external-link'}
             tooltip={'Details'}
-            tooltipPos={'down'}
+            tooltipPos={'left'}
+            className="ml4"
         />
     );
     const pinToSidebarButton = (
         <IconButton
             noPadding
-            size={20}
+            size={18}
             onClick={() => setSidebarTableId(table.id)}
             icon={'sidebar'}
             tooltip={'Pin'}
-            tooltipPos={'down'}
+            tooltipPos={'left'}
         />
     );
 
     const descriptionDOM = description && (
         <>
-            <h6>Description</h6>
-            <p>
+            <div className="tooltip-title">Description</div>
+            <div className="tooltip-content">
                 <ShowMoreText text={description} />
-            </p>
+            </div>
         </>
     );
+    const tagsDOM = <DataTableTags tableId={table.id} readonly />;
     const partitionDOM = lastPartitions && lastPartitions !== '[]' && (
         <>
-            <h6>Latest Partitions</h6>
-            <p>
+            <div className="tooltip-title">Latest Partitions</div>
+            <div className="tooltip-content">
                 <ShowMoreText text={lastPartitions} />
-            </p>
+            </div>
         </>
     );
     const columnsDOM = (
         <>
-            <h6>Column Names</h6>
-            <p>
-                <ShowMoreText text={columnNames} seeLess={true} />
-            </p>
+            <div className="tooltip-title">Column Names</div>
+            <div className="tooltip-content">
+                <ShowMoreText nextLine text={columnNames} seeLess={true} />
+            </div>
         </>
     );
     const locationDOM = location && (
         <>
-            <h6>Location</h6>
-            <p>{location}</p>
+            <div className="tooltip-title">Location</div>
+            <div className="tooltip-content">{location}</div>
         </>
     );
 
     const contentDOM = (
-        <div className="rich-text-content ">
+        <>
             <div className="table-tooltip-header flex-row">
-                <b className="table-tooltip-header-title">{tableName}</b>
-                <span>
+                <div>{tableName}</div>
+                <div className="flex-row ml4">
                     {pinToSidebarButton}
                     {seeDetailsButton}
-                </span>
+                </div>
             </div>
-
             {descriptionDOM}
+            {tagsDOM}
             {partitionDOM}
             {columnsDOM}
             {locationDOM}
-        </div>
+        </>
     );
 
-    return <div>{contentDOM}</div>;
+    return <div className="rich-text-content ">{contentDOM}</div>;
 };

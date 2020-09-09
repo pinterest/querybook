@@ -13,8 +13,9 @@ import {
     createDataTableOwnership,
 } from 'redux/dataSources/action';
 
-import { ImpressionWidget } from 'components/ImpressionWidget/ImpressionWidget';
 import { BoardItemAddButton } from 'components/BoardItemAddButton/BoardItemAddButton';
+import { DataTableTags } from 'components/DataTableTags/DataTableTags';
+import { ImpressionWidget } from 'components/ImpressionWidget/ImpressionWidget';
 
 import { IconButton } from 'ui/Button/IconButton';
 import { Level } from 'ui/Level/Level';
@@ -92,7 +93,7 @@ export const DataTableHeader: React.FunctionComponent<IDataTableHeader> = ({
     );
 
     const ownershipDOM = (tableOwnerships || []).map((ownership) => (
-        <UserBadge uid={ownership.uid} mini />
+        <UserBadge key={ownership.uid} uid={ownership.uid} mini />
     ));
 
     // Ownership cannot be removed if owner in db
@@ -157,7 +158,7 @@ export const DataTableHeader: React.FunctionComponent<IDataTableHeader> = ({
             <div className="DataTableHeader-bottom ">
                 <div className="DataTableHeader-left">
                     {ownerDOM}
-                    {/* <div className="DataTableHeader-tags"></div> */}
+                    <DataTableTags tableId={table.id} />
                 </div>
                 <div className="DataTableHeader-right">
                     <div className="DataTableHeader-featured flex-row mb8">

@@ -1,11 +1,14 @@
 import React from 'react';
 
 import { navigateWithinEnv } from 'lib/utils/query-string';
-import { Level } from 'ui/Level/Level';
-import { IconButton } from 'ui/Button/IconButton';
-import { Button } from 'ui/Button/Button';
-import { TablePanelView } from './TablePanelView';
+
 import { ColumnPanelView } from './ColumnPanelView';
+import { TablePanelView } from './TablePanelView';
+
+import { Button } from 'ui/Button/Button';
+import { IconButton } from 'ui/Button/IconButton';
+import { Level } from 'ui/Level/Level';
+
 import './DataTableViewMini.scss';
 
 interface IProps {
