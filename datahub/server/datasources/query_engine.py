@@ -26,11 +26,11 @@ def get_query_engine_status(engine_id):
     # Security check
     with DBSession() as session:
         verify_query_engine_permission(engine_id, session=session)
-        engine = admin_logic.get_query_engine_by_id(id, session=session)
+        engine = admin_logic.get_query_engine_by_id(engine_id, session=session)
 
         engine_checker = get_engine_checker_class(
             getattr(engine, "status_checker") or "NullChecker"
         )
 
     api_assert(engine_checker is not None, "Invalid engine checker")
-    return engine_checker.check(engine_id=id, uid=current_user.id)
+    return engine_checker.check(engine_id=engine_id, uid=current_user.id)
