@@ -119,7 +119,6 @@ def create_query_engine(
     language,
     executor,
     executor_params,
-    environment_id,
     description=None,
     status_checker=None,
     metastore_id=None,
@@ -132,7 +131,6 @@ def create_query_engine(
                 "language": language,
                 "executor": executor,
                 "executor_params": executor_params,
-                "environment_id": environment_id,
                 "metastore_id": metastore_id,
                 "status_checker": status_checker,
             },
@@ -160,7 +158,6 @@ def update_query_engine(id, **fields_to_update):
                 "executor",
                 "executor_params",
                 "metastore_id",
-                "environment_id",
                 "deleted_at",
                 "status_checker",
             ],
@@ -391,6 +388,41 @@ def add_user_to_environment(id, uid):
 @with_admin_audit_log(AdminItemType.Environment, AdminOperation.UPDATE)
 def remove_user_from_environment(id, uid):
     environment_logic.remove_user_to_environment(uid, id)
+
+
+@register("/admin/environment/<int:id>/query_engine/", methods=["GET"])
+@admin_only
+def get_query_engine_in_environment(id):
+    return logic.get_query_engines_by_environment(id, ordered=True)
+
+
+@register(
+    "/admin/environment/<int:id>/query_engine/<int:engine_id>/",
+    methods=["POST", "PUT"],
+)
+@admin_only
+@with_admin_audit_log(AdminItemType.Environment, AdminOperation.UPDATE)
+def add_query_engine_to_environment(id, engine_id):
+    return logic.add_query_engine_to_environment(id, engine_id)
+
+
+@register(
+    "/admin/environment/<int:id>/query_engine/<int:from_index>/<int:to_index>/",
+    methods=["POST", "PUT"],
+)
+@admin_only
+@with_admin_audit_log(AdminItemType.Environment, AdminOperation.UPDATE)
+def swap_query_engine_order_in_environment(id, from_index, to_index):
+    return logic.swap_query_engine_order_in_environment(id, from_index, to_index)
+
+
+@register(
+    "/admin/environment/<int:id>/query_engine/<int:engine_id>/", methods=["DELETE"]
+)
+@admin_only
+@with_admin_audit_log(AdminItemType.Environment, AdminOperation.UPDATE)
+def remove_query_engine_from_environment(id, engine_id):
+    logic.remove_query_engine_from_environment(id, engine_id)
 
 
 """

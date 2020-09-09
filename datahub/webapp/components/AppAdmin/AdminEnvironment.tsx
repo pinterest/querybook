@@ -19,6 +19,10 @@ import { Level } from 'ui/Level/Level';
 import { SimpleField } from 'ui/FormikField/SimpleField';
 
 import './AdminEnvironment.scss';
+import { IconButton } from 'ui/Button/IconButton';
+import { useDataFetch } from 'hooks/useDataFetch';
+import { IQueryEngine } from 'const/queryEngine';
+import { DraggableList } from 'ui/DraggableList/DraggableList';
 
 export interface IAdminEnvironment {
     id: number;
@@ -57,13 +61,6 @@ export const AdminEnvironment: React.FunctionComponent<IProps> = ({
     loadQueryEngines,
 }) => {
     const { id: environmentId } = useParams();
-
-    React.useEffect(() => {
-        if (queryEngines === null) {
-            loadQueryEngines();
-        }
-    }, []);
-
     const createEnvironment = React.useCallback(
         async (environment: IAdminEnvironment) => {
             const { data } = await ds.save(`/admin/environment/`, {
@@ -113,58 +110,6 @@ export const AdminEnvironment: React.FunctionComponent<IProps> = ({
         return data as IAdminEnvironment;
     }, []);
 
-    const handleAddQueryEngine = React.useCallback(
-        async (engineId: number) => {
-            await ds.update(`/admin/query_engine/${engineId}/`, {
-                environment_id: Number(environmentId),
-            });
-            await loadQueryEngines();
-        },
-        [environmentId]
-    );
-
-    // FIXME: engine.environment_id should be nullable
-    // const handleDeleteQueryEngine = async (engineId: number) => {
-    //     const QueryEngine = queryEngines.find(
-    //         engine => engine.id === engineId
-    //     );
-
-    //     await ds.update(`/admin/query_engine/${QueryEngine.id}/`, {
-    //         environment_id: null,
-    //     });
-    //     loadQueryEngines();
-    // };
-
-    const queryEnginesInDisplayEnv = React.useMemo(() => {
-        return (queryEngines || []).filter(
-            (engine) => engine.environment_id === Number(environmentId)
-        );
-    }, [queryEngines, environmentId]);
-
-    const getQueryEngineListDOM = () => {
-        return queryEnginesInDisplayEnv.map((engine) => {
-            return (
-                <div
-                    key={engine.id}
-                    className="AdminEnvironment-engine flex-row"
-                >
-                    {/* <IconButton
-                            icon="x"
-                            onClick={() => handleDeleteQueryEngine(engine.id)}
-                        /> */}
-                    <div
-                        className="AdminEnvironment-engine-name"
-                        onClick={() =>
-                            history.push(`/admin/query_engine/${engine.id}`)
-                        }
-                    >
-                        {engine.name}
-                    </div>
-                </div>
-            );
-        });
-    };
-
     const renderEnvironmentItem = (
         item: IAdminEnvironment,
         onChange: (fieldName: string, fieldValue: any) => void
@@ -198,46 +143,11 @@ export const AdminEnvironment: React.FunctionComponent<IProps> = ({
 
                         {environmentId !== 'new' && (
                             <>
-                                <div className="AdminForm-section">
-                                    <div className="AdminForm-section-top flex-row">
-                                        <div className="AdminForm-section-title">
-                                            Query Engines
-                                        </div>
-                                        <hr className="dh-hr" />
-                                    </div>
-                                    <div className="AdminForm-section-content">
-                                        <div className="AdminForm-section-top">
-                                            <div className="AdminEnvironment-engine-info">
-                                                Currently query engines can only
-                                                be used in one environment.
-                                                Adding a query engine may remove
-                                                it from its current environment
-                                            </div>
-                                            <QueryEngineSelect
-                                                queryEngines={(
-                                                    queryEngines || []
-                                                ).filter(
-                                                    (engine) =>
-                                                        engine.environment_id !==
-                                                        Number(environmentId)
-                                                )}
-                                                handleAddQueryEngine={
-                                                    handleAddQueryEngine
-                                                }
-                                            />
-                                        </div>
-                                        <div className="AdminForm-section-list">
-                                            <div className="AdminEnvironment-engine-label">
-                                                Current Query Engines
-                                            </div>
-                                            <div className="AdminEnvironment-engine-list">
-                                                {queryEnginesInDisplayEnv.length
-                                                    ? getQueryEngineListDOM()
-                                                    : 'No Query Engines'}
-                                            </div>
-                                        </div>
-                                    </div>
-                                </div>
+                                <AdminEnvironmentQueryEngine
+                                    queryEngines={queryEngines}
+                                    environmentId={environmentId}
+                                    loadQueryEngines={loadQueryEngines}
+                                />
                                 <div className="AdminForm-section">
                                     <div className="AdminForm-section-top flex-row">
                                         <div className="AdminForm-section-title">
@@ -409,4 +319,128 @@ export const AdminEnvironment: React.FunctionComponent<IProps> = ({
             </div>
         );
     }
+};
+
+const AdminEnvironmentQueryEngine: React.FC<{
+    queryEngines: IAdminQueryEngine[];
+    loadQueryEngines: () => Promise<any>;
+    environmentId: number;
+}> = ({ queryEngines, loadQueryEngines, environmentId }) => {
+    React.useEffect(() => {
+        if (queryEngines === null) {
+            loadQueryEngines();
+        }
+    }, []);
+
+    const {
+        data: environmentEngines,
+        forceFetch: fetchEnvironmentEngines,
+    } = useDataFetch<IQueryEngine[]>({
+        url: `/admin/environment/${environmentId}/query_engine/`,
+    });
+
+    const handleAddQueryEngine = React.useCallback(
+        async (engineId: number) => {
+            await ds.save(
+                `/admin/environment/${environmentId}/query_engine/${engineId}/`
+            );
+            await fetchEnvironmentEngines();
+        },
+        [environmentId]
+    );
+
+    const handleDeleteQueryEngine = React.useCallback(
+        async (engineId: number) => {
+            await ds.delete(
+                `/admin/environment/${environmentId}/query_engine/${engineId}/`
+            );
+            await fetchEnvironmentEngines();
+        },
+        [environmentId]
+    );
+
+    const handleSwapQueryEngine = React.useCallback(
+        async (fromIndex: number, toIndex: number) => {
+            await ds.save(
+                `/admin/environment/${environmentId}/query_engine/${fromIndex}/${toIndex}/`
+            );
+            await fetchEnvironmentEngines();
+        },
+        [environmentId]
+    );
+
+    const queryEnginesNotInDisplayEnv = React.useMemo(
+        () =>
+            (queryEngines || []).filter(
+                (engine) =>
+                    !environmentEngines?.some(
+                        (envEngine) => envEngine.id === engine.id
+                    )
+            ),
+
+        [queryEngines, environmentEngines]
+    );
+
+    const getQueryEngineListDOM = () => {
+        return (
+            <DraggableList
+                items={environmentEngines ?? []}
+                renderItem={(index, engine) => {
+                    return (
+                        <div className="AdminEnvironment-engine horizontal-space-between">
+                            <div
+                                className="AdminEnvironment-engine-name"
+                                onClick={() =>
+                                    history.push(
+                                        `/admin/query_engine/${engine.id}`
+                                    )
+                                }
+                            >
+                                {engine.name}
+                            </div>
+                            <IconButton
+                                className="delete-query-engine-button"
+                                noPadding
+                                icon="x"
+                                onClick={() =>
+                                    handleDeleteQueryEngine(engine.id)
+                                }
+                            />
+                        </div>
+                    );
+                }}
+                onMove={handleSwapQueryEngine}
+            />
+        );
+    };
+
+    return (
+        <div className="AdminForm-section">
+            <div className="AdminForm-section-top flex-row">
+                <div className="AdminForm-section-title">Query Engines</div>
+                <hr className="dh-hr" />
+            </div>
+            <div className="AdminForm-section-content">
+                <div className="AdminForm-section-top">
+                    {queryEnginesNotInDisplayEnv.length ? (
+                        <QueryEngineSelect
+                            queryEngines={queryEnginesNotInDisplayEnv}
+                            handleAddQueryEngine={handleAddQueryEngine}
+                        />
+                    ) : null}
+                </div>
+
+                <div className="AdminForm-section-list">
+                    <div className="AdminEnvironment-engine-label">
+                        Current Query Engines
+                    </div>
+                    <div className="AdminEnvironment-engine-list">
+                        {environmentEngines?.length
+                            ? getQueryEngineListDOM()
+                            : 'No Query Engines'}
+                    </div>
+                </div>
+            </div>
+        </div>
+    );
 };

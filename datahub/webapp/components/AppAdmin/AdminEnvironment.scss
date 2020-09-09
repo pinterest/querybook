@@ -14,17 +14,27 @@
     }
     .AdminEnvironment-engine-list {
         max-height: 160px;
-        overflow-y: scroll;
+        overflow-y: auto;
         margin: 8px;
         padding: 8px;
         background-color: var(--light-bg-color);
         .AdminEnvironment-engine {
             padding: 4px;
-            .IconButton {
-                padding: 4px;
-            }
+
             .AdminEnvironment-engine-name {
                 cursor: pointer;
+                &:hover {
+                    color: var(--color-accent-text);
+                }
+            }
+
+            .delete-query-engine-button {
+                visibility: hidden;
+            }
+            &:hover {
+                .delete-query-engine-button {
+                    visibility: visible;
+                }
             }
         }
     }

@@ -1,9 +1,7 @@
-import { sortBy } from 'lodash';
 import { createSelector } from 'reselect';
 
 import { arrayGroupByField } from 'lib/utils';
 import { IStoreState } from 'redux/store/types';
-import { IQueryEngine } from 'const/queryEngine';
 import { IQueryEngineStatus } from './types';
 
 const queryEngineByIdSelector = (state: IStoreState) =>
@@ -17,29 +15,34 @@ const engineIdsInEnvironmentSelector = (state: IStoreState) =>
         state.environment.currentEnvironmentId
     ] || [];
 
-export const queryEngineByIdEnvSelector = createSelector(
+export const queryEngineSelector = createSelector(
     queryEngineByIdSelector,
     engineIdsInEnvironmentSelector,
-    (queryEgnineById, engineIds) =>
-        arrayGroupByField(engineIds.map((id) => queryEgnineById[id])) as Record<
-            number,
-            IQueryEngine
-        >
+    (queryEgnineById, engineIds) => engineIds.map((id) => queryEgnineById[id])
 );
 
-export const queryEngineSelector = createSelector(
-    queryEngineByIdEnvSelector,
-    (queryEngineById) => sortBy(Object.values(queryEngineById), ['id'])
+export const queryEngineByIdEnvSelector = createSelector(
+    queryEngineSelector,
+    (queryEgnines) => arrayGroupByField(queryEgnines)
 );
 
-export const queryEngineStatusByIdEnvSelector = createSelector(
+export const queryEngineStatusAndEngineIdsSelector = createSelector(
     queryEngineStatusByIdSelector,
     engineIdsInEnvironmentSelector,
     (queryEngineStatusById, engineIds) =>
-        engineIds.reduce((hash, id) => {
+        engineIds.reduce((pairs, id) => {
             if (id in queryEngineStatusById) {
-                hash[id] = queryEngineStatusById[id];
+                pairs.push([id, queryEngineStatusById[id]]);
             }
-            return hash;
-        }, {}) as Record<number, IQueryEngineStatus>
+            return pairs;
+        }, []) as Array<[number, IQueryEngineStatus]>
+);
+
+export const queryEngineStatusByIdEnvSelector = createSelector(
+    queryEngineStatusAndEngineIdsSelector,
+    (queryEngineStatusAndEngineIds) =>
+        Object.fromEntries(queryEngineStatusAndEngineIds) as Record<
+            number,
+            IQueryEngineStatus
+        >
 );

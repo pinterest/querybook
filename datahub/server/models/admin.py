@@ -49,6 +49,28 @@ class Announcement(CRUDMixin, Base):
         }
 
 
+class QueryEngineEnvironment(CRUDMixin, Base):
+    __tablename__ = "query_engine_environment"
+    __table_args__ = (
+        sql.UniqueConstraint(
+            "query_engine_id", "environment_id", name="unique_query_engine_environment"
+        ),
+    )
+
+    id = sql.Column(sql.Integer, primary_key=True, autoincrement=True)
+    query_engine_id = sql.Column(
+        sql.Integer,
+        sql.ForeignKey("query_engine.id", ondelete="CASCADE"),
+        nullable=False,
+    )
+    environment_id = sql.Column(
+        sql.Integer,
+        sql.ForeignKey("environment.id", ondelete="CASCADE"),
+        nullable=False,
+    )
+    engine_order = sql.Column(sql.Integer, nullable=False)
+
+
 class QueryEngine(CRUDMixin, Base):
     __tablename__ = "query_engine"
 
@@ -71,13 +93,12 @@ class QueryEngine(CRUDMixin, Base):
     metastore_id = sql.Column(sql.Integer, sql.ForeignKey("query_metastore.id"))
     metastore = relationship("QueryMetastore", backref="query_engine")
 
-    environment_id = sql.Column(
-        sql.Integer,
-        sql.ForeignKey("environment.id", ondelete="CASCADE"),
-        nullable=False,
-    )
-    environment = relationship(
-        "Environment", uselist=False, backref=backref("query_engines"),
+    environments = relationship(
+        "Environment",
+        secondary="query_engine_environment",
+        backref=backref(
+            "query_engines", order_by="QueryEngineEnvironment.engine_order"
+        ),
     )
 
     def to_dict(self):
@@ -88,7 +109,6 @@ class QueryEngine(CRUDMixin, Base):
             "language": self.language,
             "description": self.description,
             "metastore_id": self.metastore_id,
-            "environment_id": self.environment_id,
             "executor": self.executor,
         }
 
@@ -103,12 +123,11 @@ class QueryEngine(CRUDMixin, Base):
             "language": self.language,
             "description": self.description,
             "metastore_id": self.metastore_id,
-            "environment_id": self.environment_id,
             "executor": self.executor,
             "executor_params": self.get_engine_params(),
             "control_params": self.control_params,
             "status_checker": self.status_checker,
-            "environment": self.environment,
+            "environments": self.environments,
         }
 
     def get_engine_params(self):

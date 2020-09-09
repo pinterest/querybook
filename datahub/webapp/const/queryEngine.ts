@@ -7,7 +7,6 @@ export interface IQueryEngine {
     description: string;
 
     metastore_id: number;
-    environment_id: number;
     executor: string;
 }
 

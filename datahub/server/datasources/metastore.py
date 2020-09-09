@@ -1,6 +1,7 @@
 from flask_login import current_user
 
 from app.auth.permission import (
+    verify_query_engine_environment_permission,
     verify_environment_permission,
     verify_metastore_permission,
     verify_data_schema_permission,
@@ -202,10 +203,8 @@ def create_table_samples(
         api_assert(limit <= 100, "Too many rows requested")
         verify_environment_permission([environment_id])
         verify_data_table_permission(table_id, session=session)
-        query_engine = admin_logic.get_query_engine_by_id(engine_id, session=session)
-        api_assert(
-            query_engine.environment_id == environment_id,
-            "Query engine does not belong to environment",
+        verify_query_engine_environment_permission(
+            engine_id, environment_id, session=session
         )
 
         task = run_sample_query.apply_async(

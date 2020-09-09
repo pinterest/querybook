@@ -14,7 +14,7 @@ from models.query_execution import (
     StatementExecutionStreamLog,
 )
 from models.datadoc import DataCellQueryExecution, DataDocDataCell
-from models.admin import QueryEngine
+from models.admin import QueryEngine, QueryEngineEnvironment
 from models.environment import Environment
 
 CLEAN_UP_TIME_THRESHOLD = 20 * 60  # 20 mins
@@ -48,7 +48,8 @@ def search_query_execution(
     query = (
         session.query(QueryExecution)
         .join(QueryEngine)
-        .filter(QueryEngine.environment_id == environment_id)
+        .join(QueryEngineEnvironment)
+        .filter(QueryEngineEnvironment.environment_id == environment_id)
     )
 
     for filter_key, filter_val in filters.items():

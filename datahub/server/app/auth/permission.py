@@ -7,8 +7,8 @@ from const.datasources import (
     ACCESS_RESTRICTED_STATUS_CODE,
     RESOURCE_NOT_FOUND_STATUS_CODE,
 )
-from logic import admin as admin_logic
-from models.admin import QueryEngine, QueryMetastore
+
+from models.admin import QueryEngine, QueryMetastore, QueryEngineEnvironment
 from models.query_execution import QueryExecution, StatementExecution
 from models.metastore import DataSchema, DataTable, DataTableColumn
 from models.datadoc import DataDoc, DataCell, DataDocDataCell
@@ -21,6 +21,12 @@ def abort_404():
 
 
 def verify_environment_permission(environment_ids: List[int]):
+    # If we are verifying environment ids and none is returned
+    # it is most likely that the object we are verifying does
+    # not associate with any environment
+    if len(environment_ids) == 0:
+        abort_404()
+
     api_assert(
         any(eid in current_user.environment_ids for eid in environment_ids),
         message="Unauthorized Environment",
@@ -29,18 +35,36 @@ def verify_environment_permission(environment_ids: List[int]):
 
 
 @with_session
+def verify_query_engine_environment_permission(
+    query_engine_id, environment_id, session=None
+):
+    api_assert(
+        session.query(QueryEngineEnvironment)
+        .filter_by(query_engine_id=query_engine_id, environment_id=environment_id)
+        .first()
+        is not None,
+        message="Engine is not in Environment",
+        status_code=ACCESS_RESTRICTED_STATUS_CODE,
+    )
+
+
+@with_session
 def verify_query_engine_permission(query_engine_id, session=None):
-    query_engine = admin_logic.get_query_engine_by_id(query_engine_id, session=session)
-    if not query_engine:
-        abort_404()
-    verify_environment_permission([query_engine.environment_id])
+    environment_ids = [
+        eid
+        for eid, in session.query(QueryEngineEnvironment.environment_id)
+        .join(QueryEngine)
+        .filter(QueryEngine.id == query_engine_id)
+    ]
+    verify_environment_permission(environment_ids)
 
 
 @with_session
 def verify_query_execution_permission(query_execution_id, session=None):
     environment_ids = [
         eid
-        for eid, in session.query(QueryEngine.environment_id)
+        for eid, in session.query(QueryEngineEnvironment.environment_id)
+        .join(QueryEngine)
         .join(QueryExecution)
         .filter(QueryExecution.id == query_execution_id)
     ]
@@ -52,7 +76,8 @@ def verify_query_execution_permission(query_execution_id, session=None):
 def verify_statement_execution_permission(statement_execution_id, session=None):
     environment_ids = [
         eid
-        for eid, in session.query(QueryEngine.environment_id)
+        for eid, in session.query(QueryEngineEnvironment.environment_id)
+        .join(QueryEngine)
         .join(QueryExecution)
         .join(StatementExecution)
         .filter(StatementExecution.id == statement_execution_id)
@@ -64,7 +89,8 @@ def verify_statement_execution_permission(statement_execution_id, session=None):
 def verify_metastore_permission(metastore_id, session=None):
     environment_ids = [
         eid
-        for eid, in session.query(QueryEngine.environment_id)
+        for eid, in session.query(QueryEngineEnvironment.environment_id)
+        .join(QueryEngine)
         .join(QueryMetastore)
         .filter(QueryMetastore.id == metastore_id)
     ]
@@ -75,7 +101,8 @@ def verify_metastore_permission(metastore_id, session=None):
 def verify_data_schema_permission(schema_id, session=None):
     environment_ids = [
         eid
-        for eid, in session.query(QueryEngine.environment_id)
+        for eid, in session.query(QueryEngineEnvironment.environment_id)
+        .join(QueryEngine)
         .join(QueryMetastore)
         .join(DataSchema)
         .filter(DataSchema.id == schema_id)
@@ -94,7 +121,8 @@ def verify_data_table_permission(table_id, session=None):
 def get_data_table_environment_ids(table_id, session=None):
     return [
         eid
-        for eid, in session.query(QueryEngine.environment_id)
+        for eid, in session.query(QueryEngineEnvironment.environment_id)
+        .join(QueryEngine)
         .join(QueryMetastore)
         .join(DataSchema)
         .join(DataTable)
@@ -106,7 +134,8 @@ def get_data_table_environment_ids(table_id, session=None):
 def verify_data_column_permission(column_id, session=None):
     environment_ids = [
         eid
-        for eid, in session.query(QueryEngine.environment_id)
+        for eid, in session.query(QueryEngineEnvironment.environment_id)
+        .join(QueryEngine)
         .join(QueryMetastore)
         .join(DataSchema)
         .join(DataTable)
