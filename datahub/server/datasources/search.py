@@ -268,14 +268,14 @@ def _get_matching_objects(query, index_name, doc_type, get_count=False):
     return _parse_results(result, get_count)
 
 
-def _data_cell_access_filter_bool(table_id, current_user_id=None, uid=None):
+def _data_table_data_cell_filter_bool(table_id, access_filter=False, uid=None):
     bool_filter = {}
     must_terms = [{"term": {"tables": table_id}}]
     if uid:
         must_terms.append({"term": {"latest_execution_uid": uid}})
-    if current_user_id:
+    if access_filter:
         bool_filter["should"] = [
-            {"term": {"readable_uids": current_user_id}},
+            {"term": {"readable_uids": current_user.id}},
             {"term": {"public": True}},
         ]
 
@@ -444,21 +444,9 @@ def suggest_user(name, limit=10, offset=None):
 def get_data_cell_data_tables(table_id, environment_id, uid=None, limit=10, offset=0):
     verify_environment_permission([environment_id])
     verify_data_table_permission(table_id)
-    index_name = ES_CONFIG["data_cell_data_tables"]["index_name"]
-    type_name = ES_CONFIG["data_cell_data_tables"]["type_name"]
-    search_filter = {
-        "filter": _data_cell_access_filter_bool(
-            table_id, current_user_id=current_user.id, uid=uid
-        )
-    }
-    query = {
-        "query": {"bool": search_filter},
-        "from": offset,
-        "_source": ["latest_execution_id"],
-        "size": limit,
-    }
-    results = _get_matching_objects(query, index_name, type_name)
-    return [result["latest_execution_id"] for result in results]
+    return get_data_table_query_executions(
+        table_id, uid=uid, limit=limit, offset=offset, access_filter=True
+    )
 
 
 @register("/search/data_table_query_users/<int:table_id>/", methods=["GET"])
@@ -471,8 +459,8 @@ def get_data_tables_users(table_id, environment_id, limit=10):
     query = {
         "aggs": {
             "query_counts": {
-                "filter": _data_cell_access_filter_bool(
-                    table_id, current_user_id=current_user.id
+                "filter": _data_table_data_cell_filter_bool(
+                    table_id, access_filter=True
                 ),
                 "aggs": {"user_count": {"terms": {"field": "readable_uids"}}},
             }
@@ -492,3 +480,24 @@ def get_data_tables_users(table_id, environment_id, limit=10):
         {"uid": user_count["key"], "count": user_count["doc_count"]}
         for user_count in aggregations["query_counts"]["user_count"]["buckets"]
     ]
+
+
+def get_data_table_query_executions(
+    table_id, uid=None, limit=None, offset=0, access_filter=True
+):
+    index_name = ES_CONFIG["data_cell_data_tables"]["index_name"]
+    type_name = ES_CONFIG["data_cell_data_tables"]["type_name"]
+    search_filter = {
+        "filter": _data_table_data_cell_filter_bool(
+            table_id, access_filter=access_filter, uid=uid
+        )
+    }
+    query = {
+        "query": {"bool": search_filter},
+        "from": offset,
+        "_source": ["latest_execution_id"],
+    }
+    if limit:
+        query["size"] = limit
+    results = _get_matching_objects(query, index_name, type_name)
+    return [result["latest_execution_id"] for result in results]

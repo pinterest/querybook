@@ -14,7 +14,6 @@ from models.metastore import (
     TableLineage,
     DataTableStatistics,
     DataTableColumnStatistics,
-    DataTableQueryExecution,
 )
 from tasks.sync_elasticsearch import sync_elasticsearch
 
@@ -621,11 +620,6 @@ def get_table_child_lineages(table_id, session=None):
         .all()
     )
     return child_lineages
-
-
-@with_session
-def get_table_query_samples_count(table_id, session):
-    return session.query(DataTableQueryExecution).filter_by(table_id=table_id).count()
 
 
 """

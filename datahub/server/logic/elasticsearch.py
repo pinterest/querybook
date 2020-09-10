@@ -26,7 +26,6 @@ from logic.datadoc import (
 from logic.metastore import (
     get_all_table,
     get_table_by_id,
-    get_table_query_samples_count,
     get_table_by_name,
 )
 from logic.impression import (
@@ -345,9 +344,11 @@ def get_table_weight(table_id: int, session=None) -> int:
     Returns:
         int -- The integer weight
     """
-    num_samples = get_table_query_samples_count(
-        table_id, session=session
-    )  # TODO update to read es data doc cell index
+    from datasources.search import (
+        get_data_table_query_executions,
+    )  # To avoid circular dependency
+
+    num_samples = len(get_data_table_query_executions(table_id, access_filter=False))
     num_impressions = get_viewers_count_by_item_after_date(
         ImpressionItemType.DATA_TABLE,
         table_id,
