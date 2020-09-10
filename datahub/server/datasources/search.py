@@ -6,6 +6,7 @@ from flask_login import current_user
 from app.auth.permission import (
     verify_environment_permission,
     verify_metastore_permission,
+    verify_data_table_permission,
 )
 from app.datasource import register, api_assert
 from lib.logger import get_logger
@@ -267,6 +268,21 @@ def _get_matching_objects(query, index_name, doc_type, get_count=False):
     return _parse_results(result, get_count)
 
 
+def _data_cell_access_filter_bool(table_id, current_user_id=None, uid=None):
+    bool_filter = {}
+    must_terms = [{"term": {"tables": table_id}}]
+    if uid:
+        must_terms.append({"term": {"latest_execution_uid": uid}})
+    if current_user_id:
+        bool_filter["should"] = [
+            {"term": {"readable_uids": current_user_id}},
+            {"term": {"public": True}},
+        ]
+
+    bool_filter["must"] = must_terms
+    return {"bool": bool_filter}
+
+
 @register("/search/datadoc/", methods=["GET"])
 def search_datadoc(
     environment_id,
@@ -280,7 +296,7 @@ def search_datadoc(
 ):
     verify_environment_permission([environment_id])
     filters.append(["environment_id", environment_id])
-    # Unfortuantely currently we can't search including underscore,
+    # Unfortunately currently we can't search including underscore,
     # so split. # TODO: Allow for both.
     # parsed_keywords = map(lambda x: re.split('(-|_)', x), keywords)
     query = _construct_datadoc_query(
@@ -422,3 +438,57 @@ def suggest_user(name, limit=10, offset=None):
         for option in options
     ]
     return users
+
+
+@register("/search/data_cell_data_tables/<int:table_id>/", methods=["GET"])
+def get_data_cell_data_tables(table_id, environment_id, uid=None, limit=10, offset=0):
+    verify_environment_permission([environment_id])
+    verify_data_table_permission(table_id)
+    index_name = ES_CONFIG["data_cell_data_tables"]["index_name"]
+    type_name = ES_CONFIG["data_cell_data_tables"]["type_name"]
+    search_filter = {
+        "filter": _data_cell_access_filter_bool(
+            table_id, current_user_id=current_user.id, uid=uid
+        )
+    }
+    query = {
+        "query": {"bool": search_filter},
+        "from": offset,
+        "_source": ["latest_execution_id"],
+        "size": limit,
+    }
+    results = _get_matching_objects(query, index_name, type_name)
+    return [result["latest_execution_id"] for result in results]
+
+
+@register("/search/data_table_query_users/<int:table_id>/", methods=["GET"])
+def get_data_tables_users(table_id, environment_id, limit=10):
+    verify_environment_permission([environment_id])
+    verify_data_table_permission(table_id)
+    index_name = ES_CONFIG["data_cell_data_tables"]["index_name"]
+    type_name = ES_CONFIG["data_cell_data_tables"]["type_name"]
+
+    query = {
+        "aggs": {
+            "query_counts": {
+                "filter": _data_cell_access_filter_bool(
+                    table_id, current_user_id=current_user.id
+                ),
+                "aggs": {"user_count": {"terms": {"field": "readable_uids"}}},
+            }
+        },
+        "size": limit,
+    }
+    result = []
+    try:
+        result = get_hosted_es().search(index_name, type_name, body=query)
+    except Exception as e:
+        LOG.info(e)
+    finally:
+        if not result:
+            return []
+    aggregations = result["aggregations"]
+    return [
+        {"uid": user_count["key"], "count": user_count["doc_count"]}
+        for user_count in aggregations["query_counts"]["user_count"]["buckets"]
+    ]

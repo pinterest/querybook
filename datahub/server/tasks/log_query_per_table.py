@@ -10,6 +10,7 @@ from lib.metastore import get_metastore_loader
 from logic import (
     query_execution as qe_logic,
     metastore as m_logic,
+    datadoc as d_logic,
 )
 
 
@@ -42,14 +43,7 @@ def log_query_per_table_task(self, query_execution_id):
         if datadoc_cell is None or not datadoc_cell.doc.public:
             return
 
-        log_table_per_statement(
-            table_per_statement,
-            statement_types,
-            query_execution_id,
-            metastore_id,
-            datadoc_cell.id,
-            session=session,
-        )
+        d_logic.update_es_data_cell_by_cell_id(datadoc_cell.id)
 
 
 def create_lineage_from_query(
@@ -119,42 +113,3 @@ def sync_table_to_metastore(
         metastore_loader.sync_create_or_update_table(
             schema_name, table_name, session=session
         )
-
-
-@with_session
-def log_table_per_statement(
-    table_per_statement,
-    statement_types,
-    query_execution_id,
-    metastore_id,
-    cell_id,
-    session=None,
-):
-    metastore_loader = get_metastore_loader(metastore_id, session=session)
-    assert metastore_loader is not None
-
-    all_tables = set()
-    # Only show example queries of SELECT statements
-    for tables, statement_type in zip(table_per_statement, statement_types):
-        if statement_type in ("SELECT", "INSERT"):
-            all_tables.update(tables)
-
-    for table in all_tables:
-        schema_name, table_name = table.split(".")
-        query_table = m_logic.get_table_by_name(
-            schema_name, table_name, metastore_id=metastore_id, session=session
-        )
-
-        if query_table:  # Sanity check
-            m_logic.delete_old_able_query_execution_log(
-                cell_id=cell_id,
-                query_execution_id=query_execution_id,
-                commit=False,
-                session=session,
-            )
-            m_logic.create_table_query_execution_log(
-                table_id=query_table.id,
-                cell_id=cell_id,
-                query_execution_id=query_execution_id,
-                session=session,
-            )

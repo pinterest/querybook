@@ -1,23 +1,21 @@
 import datetime
-from sqlalchemy import func
 
 from app.db import with_session
 from const.elasticsearch import ElasticsearchItem
-from lib.sqlalchemy import update_model_fields
 from lib.query_analysis.lineage import process_query
+from lib.sqlalchemy import update_model_fields
 from models.metastore import (
     DataSchema,
     DataTable,
     DataTableInformation,
     DataTableColumn,
     DataTableOwnership,
-    DataTableQueryExecution,
     DataJobMetadata,
     TableLineage,
     DataTableStatistics,
     DataTableColumnStatistics,
+    DataTableQueryExecution,
 )
-from models.query_execution import QueryExecution
 from tasks.sync_elasticsearch import sync_elasticsearch
 
 
@@ -623,74 +621,6 @@ def get_table_child_lineages(table_id, session=None):
         .all()
     )
     return child_lineages
-
-
-@with_session
-def create_table_query_execution_log(
-    table_id, cell_id, query_execution_id, commit=True, session=None
-):
-    return DataTableQueryExecution.create(
-        fields={
-            "table_id": table_id,
-            "cell_id": cell_id,
-            "query_execution_id": query_execution_id,
-        },
-        commit=commit,
-        session=session,
-    )
-
-
-@with_session
-def delete_old_able_query_execution_log(
-    cell_id, query_execution_id, commit=True, session=None
-):
-    session.query(DataTableQueryExecution).filter(
-        DataTableQueryExecution.cell_id == cell_id
-    ).filter(DataTableQueryExecution.query_execution_id < query_execution_id).delete()
-
-    if commit:
-        session.commit()
-    else:
-        session.flush()
-
-
-@with_session
-def get_table_query_examples(
-    table_id, engine_ids, uid=None, limit=5, offset=0, session=None
-):
-    query = (
-        session.query(DataTableQueryExecution)
-        .join(QueryExecution)
-        .filter(DataTableQueryExecution.table_id == table_id)
-        .filter(QueryExecution.engine_id.in_(engine_ids))
-    )
-
-    if uid:
-        query = query.filter(QueryExecution.uid == uid)
-
-    return (
-        query.order_by(DataTableQueryExecution.id.desc())
-        .limit(limit)
-        .offset(offset)
-        .all()
-    )
-
-
-@with_session
-def get_query_example_users(table_id, engine_ids, limit=5, session=None):
-    users = (
-        session.query(QueryExecution.uid, func.count(QueryExecution.id))
-        .select_from(DataTableQueryExecution)
-        .join(QueryExecution)
-        .filter(DataTableQueryExecution.table_id == table_id)
-        .filter(QueryExecution.engine_id.in_(engine_ids))
-        .group_by(QueryExecution.uid)
-        .order_by(func.count(QueryExecution.id).desc())
-        .limit(limit)
-        .all()
-    )
-
-    return users
 
 
 @with_session

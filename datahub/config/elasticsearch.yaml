@@ -102,3 +102,24 @@ users:
                         analyzer: whitespace
                     suggest:
                         type: completion
+data_cell_data_tables:
+    index_name: search_data_cell_data_tables_v1
+    type_name: data_cell_data_tables
+    mappings: # Keep this same in mappings
+        mappings:
+            data_cell_data_tables:
+                properties:
+                    id:
+                        type: long
+                    latest_execution_id:
+                        type: long
+                    readable_uids:
+                        type: long
+                    doc_id:
+                        type: long
+                    public:
+                        type: boolean
+                    tables:
+                        type: long
+                    latest_execution_uid:
+                        type: long

@@ -115,6 +115,7 @@ def create_data_doc_from_execution(
     if commit:
         session.commit()
         update_es_data_doc_by_id(data_doc.id)
+        update_es_data_cells_by_doc_id(data_doc.id)
     else:
         session.flush()
 
@@ -142,6 +143,7 @@ def update_data_doc(id, commit=True, session=None, **fields):
         if commit:
             session.commit()
             update_es_data_doc_by_id(data_doc.id)
+            update_es_data_cells_by_doc_id(data_doc.id)
         else:
             session.flush()
         session.refresh(data_doc)
@@ -220,6 +222,7 @@ def clone_data_doc(id, owner_uid, commit=True, session=None):
     if commit:
         session.commit()
         update_es_data_doc_by_id(new_data_doc.id)
+        update_es_data_cells_by_doc_id(new_data_doc.id)
     else:
         session.flush()
     session.refresh(new_data_doc)
@@ -394,10 +397,11 @@ def insert_data_doc_cell(data_doc_id, cell_id, index, commit=True, session=None)
     )
 
     data_doc.cells.append(data_cell)
-    session.query(DataDocDataCell).filter(
-        DataDocDataCell.data_doc_id == data_doc_id
-    ).filter(DataDocDataCell.data_cell_id == cell_id).update(
-        {DataDocDataCell.cell_order: index}
+    data_doc_data_cell = (
+        session.query(DataDocDataCell)
+        .filter(DataDocDataCell.data_doc_id == data_doc_id)
+        .filter(DataDocDataCell.data_cell_id == cell_id)
+        .update({DataDocDataCell.cell_order: index})
     )
 
     data_doc.updated_at = datetime.datetime.now()
@@ -405,6 +409,7 @@ def insert_data_doc_cell(data_doc_id, cell_id, index, commit=True, session=None)
     if commit:
         session.commit()
         update_es_data_doc_by_id(data_doc_id)
+        update_es_data_cell_by_cell_id(data_doc_data_cell.id)
     else:
         session.flush()
 
@@ -414,9 +419,16 @@ def delete_data_doc_cell(data_doc_id, index, commit=True, session=None):
     data_doc = get_data_doc_by_id(data_doc_id, session=session)
     assert index >= 0 and index < len(data_doc.cells), "Invalid cell index to delete"
 
+    data_doc_data_cell = (
+        session.query(DataDocDataCell)
+        .filter(DataDocDataCell.data_doc_id == data_doc_id)
+        .filter(DataDocDataCell.cell_order == index)
+        .first()
+    )
+
     session.query(DataDocDataCell).filter(
-        DataDocDataCell.data_doc_id == data_doc_id
-    ).filter(DataDocDataCell.cell_order == index).delete()
+        DataDocDataCell.id == data_doc_data_cell.id
+    ).delete()
 
     session.query(DataDocDataCell).filter(
         DataDocDataCell.data_doc_id == data_doc_id
@@ -429,6 +441,7 @@ def delete_data_doc_cell(data_doc_id, index, commit=True, session=None):
     if commit:
         session.commit()
         update_es_data_doc_by_id(data_doc_id)
+        update_es_data_cell_by_cell_id(data_doc_data_cell.id)
 
 
 @with_session
@@ -550,6 +563,7 @@ def move_data_doc_cell_to_doc(cell_id, data_doc_id, index, commit=True, session=
         session.commit()
         update_es_data_doc_by_id(data_doc.id)
         update_es_data_doc_by_id(old_data_doc.id)
+        update_es_data_cell_by_cell_id(datadoc_datacell.id)
     return data_doc
 
 
@@ -823,6 +837,7 @@ def create_data_doc_editor(
     if commit:
         session.commit()
         update_es_data_doc_by_id(editor.data_doc_id)
+        update_es_data_cells_by_doc_id(editor.data_doc_id)
     else:
         session.flush()
     session.refresh(editor)
@@ -852,6 +867,7 @@ def delete_data_doc_editor(id, doc_id, session=None, commit=True):
     session.query(DataDocEditor).filter_by(id=id).delete()
     if commit:
         update_es_data_doc_by_id(doc_id)
+        update_es_data_cells_by_doc_id(doc_id)
         session.commit()
 
 
@@ -930,6 +946,19 @@ def get_data_cells_executions(ids, session=None):
     return [(data_cell.id, data_cell.query_executions) for data_cell in data_cells]
 
 
+@with_session
+def get_data_doc_cells_by_execution_id(id, session=None):
+    return (
+        session.query(DataDocDataCell)
+        .join(
+            DataCellQueryExecution,
+            (DataCellQueryExecution.data_cell_id == DataDocDataCell.data_cell_id),
+        )
+        .filter(DataCellQueryExecution.query_execution_id == id)
+        .all()
+    )
+
+
 """
     ----------------------------------------------------------------------------------------------------------
     ELASTICSEARCH
@@ -939,3 +968,23 @@ def get_data_cells_executions(ids, session=None):
 
 def update_es_data_doc_by_id(id):
     sync_elasticsearch.apply_async(args=[ElasticsearchItem.datadocs.value, id])
+
+
+def update_es_data_cell_by_cell_id(id):
+    sync_elasticsearch.apply_async(
+        args=[ElasticsearchItem.data_cell_data_tables.value, id]
+    )
+
+
+def update_es_data_cells_by_doc_id(doc_id):
+    data_doc = get_data_doc_by_id(doc_id)
+    data_doc_cells = data_doc.cells
+    for cell in data_doc_cells:
+        id = cell.id
+        update_es_data_cell_by_cell_id(id)
+
+
+def update_es_data_cells_by_execution_id(execution_id):
+    data_doc_data_cells = get_data_doc_cells_by_execution_id(execution_id)
+    for data_doc_data_cell in data_doc_data_cells:
+        update_es_data_cell_by_cell_id(data_doc_data_cell.id)

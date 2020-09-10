@@ -426,13 +426,16 @@ def add_query_execution_viewer(execution_id, uid):
         send_query_execution_invitation_notification(
             execution_id=execution_id, uid=uid, session=session
         )
+        datadoc_logic.update_es_data_cells_by_execution_id(execution_id)
         session.commit()
     return viewer.to_dict()
 
 
 @register("/query_execution_viewer/<int:id>/", methods=["DELETE"])
 def delete_query_execution_viewer(id):
-    return QueryExecutionViewer.delete(id)
+    viewer = QueryExecutionViewer.get(id=id)
+    datadoc_logic.update_es_data_cells_by_execution_id(viewer.query_execution_id)
+    QueryExecutionViewer.delete(id)
 
 
 @register("/query_execution/<int:execution_id>/viewer/", methods=["GET"])

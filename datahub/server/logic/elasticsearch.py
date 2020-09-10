@@ -27,6 +27,7 @@ from logic.metastore import (
     get_all_table,
     get_table_by_id,
     get_table_query_samples_count,
+    get_table_by_name,
 )
 from logic.impression import (
     get_viewers_count_by_item_after_date,
@@ -34,6 +35,12 @@ from logic.impression import (
 )
 from models.user import User
 from models.datadoc import DataCellType
+from logic import datadoc as d_logic
+from lib.query_analysis.lineage import (
+    process_query,
+    get_table_statement_type,
+)
+from const.query_execution import QueryExecutionStatus
 
 
 LOG = get_logger(__file__)
@@ -68,6 +75,121 @@ def get_hosted_es():
             verify_certs=True,
         )
     return hosted_es
+
+
+"""
+    DATA CELL DATA TABLES
+"""
+
+
+@with_session
+def get_data_cell_tables_iter(batch_size=5000, session=None):
+    offset = 0
+    while True:
+        data_docs = get_all_data_docs(limit=batch_size, offset=offset, session=session)
+        for data_doc in data_docs:
+            if data_doc.archived:
+                continue
+            for cell in data_doc.cells:
+                table_execution = data_doc_cell_data_tables_to_es(cell, data_doc)
+                if table_execution is not None:
+                    yield table_execution
+        if len(data_docs) < batch_size:
+            break
+        offset += batch_size
+
+
+@with_session
+def data_doc_cell_data_tables_to_es(data_doc_cell, data_doc=None, session=None):
+    if data_doc is None:
+        data_doc = get_data_doc_by_id(data_doc_cell.data_doc_id, session=session)
+
+    data_cell = d_logic.get_data_cell_by_id(data_doc_cell.id, session=session)
+
+    executions = data_cell.query_executions
+    if not executions:
+        return None
+    latest_execution = next(
+        (
+            execution
+            for _, execution in enumerate(executions)
+            if execution.status == QueryExecutionStatus.DONE
+        ),
+        None,
+    )
+    if not latest_execution:
+        return None
+    metastore_id = latest_execution.engine.metastore_id
+    statement_types = get_table_statement_type(latest_execution.query)
+    table_per_statement, _ = process_query(
+        latest_execution.query, latest_execution.engine.language
+    )
+    all_tables = set()
+    for tables, statement_type in zip(table_per_statement, statement_types):
+        if statement_type in ("SELECT", "INSERT"):
+            all_tables.update(tables)
+    readable_uids = list(
+        set(
+            [data_doc.owner_uid, latest_execution.uid]
+            + [user.uid for user in data_doc.editors + latest_execution.viewers]
+        )
+    )
+    table_ids = [
+        get_table_by_name(
+            schema_name, table_name, metastore_id=metastore_id, session=session
+        ).id
+        for schema_name, table_name in [table.split(".") for table in all_tables]
+    ]
+    data_table_query_execution = {
+        "id": data_doc_cell.id,
+        "latest_execution_id": latest_execution.id,
+        "readable_uids": readable_uids,
+        "public": data_doc.public,
+        "doc_id": data_doc.id,
+        "tables": table_ids,
+        "latest_execution_uid": latest_execution.uid,
+    }
+    return data_table_query_execution
+
+
+@with_exception
+def _bulk_insert_data_cell_data_tables():
+    type_name = ES_CONFIG["data_cell_data_tables"]["type_name"]
+    index_name = ES_CONFIG["data_cell_data_tables"]["index_name"]
+
+    for data_cell_data_tables in get_data_cell_tables_iter():
+        _insert(
+            index_name, type_name, data_cell_data_tables["id"], data_cell_data_tables
+        )
+
+
+@with_exception
+@with_session
+def update_data_cell_data_tables_by_cell_id(data_doc_cell_id, session=None):
+    type_name = ES_CONFIG["data_cell_data_tables"]["type_name"]
+    index_name = ES_CONFIG["data_cell_data_tables"]["index_name"]
+
+    data_doc_cell = d_logic.get_data_doc_data_cell(
+        cell_id=data_doc_cell_id, session=session
+    )
+    if data_doc_cell is None:
+        try:
+            _delete(index_name, type_name, id=data_doc_cell_id)
+        except Exception:
+            LOG.error("failed to delete {}. Will pass.".format(data_doc_cell_id))
+    else:
+        formatted_object = data_doc_cell_data_tables_to_es(
+            data_doc_cell, session=session
+        )
+        try:
+            # Try to update if present
+            updated_body = {
+                "doc": formatted_object,
+                "doc_as_upsert": True,
+            }  # ES requires this format for updates
+            _update(index_name, type_name, data_doc_cell_id, updated_body)
+        except Exception:
+            LOG.error("failed to upsert {}. Will pass.".format(data_doc_cell_id))
 
 
 """
@@ -223,7 +345,9 @@ def get_table_weight(table_id: int, session=None) -> int:
     Returns:
         int -- The integer weight
     """
-    num_samples = get_table_query_samples_count(table_id, session=session)
+    num_samples = get_table_query_samples_count(
+        table_id, session=session
+    )  # TODO update to read es data doc cell index
     num_impressions = get_viewers_count_by_item_after_date(
         ImpressionItemType.DATA_TABLE,
         table_id,
@@ -435,6 +559,9 @@ def create_indices(*config_names):
     LOG.info("Inserting users")
     _bulk_insert_users()
 
+    LOG.info("Inserting data cell data tables")
+    _bulk_insert_data_cell_data_tables()
+
 
 def create_indices_if_not_exist(*config_names):
     es_configs = get_es_config_by_name(*config_names)
@@ -452,6 +579,9 @@ def create_indices_if_not_exist(*config_names):
             elif es_config["type_name"] == "users":
                 LOG.info("Inserting users")
                 _bulk_insert_users()
+            elif es_config["type_name"] == "data_cell_data_tables":
+                LOG.info("Inserting data cell data tables")
+                _bulk_insert_data_cell_data_tables()
 
 
 def delete_indices(*config_names):

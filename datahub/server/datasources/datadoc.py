@@ -433,6 +433,7 @@ def add_datadoc_editor(
             broadcast=True,
         )
         logic.update_es_data_doc_by_id(doc_id)
+        logic.update_es_data_cells_by_doc_id(doc_id)
         send_add_datadoc_editor_email(doc_id, uid, read, write)
         return editor_dict
 
@@ -637,6 +638,7 @@ def update_datadoc_owner(doc_id, next_owner_id, originator=None):
             broadcast=True,
         )
         logic.update_es_data_doc_by_id(doc_id)
+        logic.update_es_data_cells_by_doc_id(doc_id)
         send_datadoc_transfer_notification(doc_id, next_owner_uid, session)
         return current_owner_editor_dict
 

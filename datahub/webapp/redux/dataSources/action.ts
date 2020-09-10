@@ -510,10 +510,9 @@ export function fetchQueryExampleIds(
             const environmentId = state.environment.currentEnvironmentId;
             const { data } = await ds.fetch<[]>(
                 {
-                    url: `/table/${tableId}/query_examples/`,
+                    url: `/search/data_cell_data_tables/${tableId}/`,
                 },
                 {
-                    table_id: tableId,
                     environment_id: environmentId,
                     uid,
                     limit,
@@ -588,10 +587,9 @@ export function fetchTopQueryUsersIfNeeded(
             const environmentId = state.environment.currentEnvironmentId;
             const { data } = await ds.fetch<ITopQueryUser[]>(
                 {
-                    url: `/table/${tableId}/query_example_users/`,
+                    url: `/search/data_table_query_users/${tableId}/`,
                 },
                 {
-                    table_id: tableId,
                     environment_id: environmentId,
                     limit,
                 }
