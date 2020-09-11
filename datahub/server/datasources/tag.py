@@ -36,7 +36,7 @@ def create_tag_item(table_id, tag):
 
 
 @register(
-    "/tag/table/<int:table_id>/<int:tag_id>/", methods=["DELETE"],
+    "/tag/table/<int:table_id>/<int:tag_item_id>/", methods=["DELETE"],
 )
 def delete_tag_item(table_id, tag_item_id):
     with DBSession() as session:
