@@ -717,7 +717,7 @@ def update_es_tables_by_id(id):
 
 
 @with_session
-def upsert_table_stat(table_id, key, value, uid, commit=True, session=None):
+def upsert_table_stat(table_id, key, value, uid=None, commit=True, session=None):
     table_stat = DataTableStatistics.get(table_id=table_id, key=key, session=session)
 
     new_table_stat = DataTableStatistics(
@@ -741,7 +741,9 @@ def upsert_table_stat(table_id, key, value, uid, commit=True, session=None):
 
 
 @with_session
-def upsert_table_column_stat(column_id, key, value, uid, commit=True, session=None):
+def upsert_table_column_stat(
+    column_id, key, value, uid=None, commit=True, session=None
+):
     column_stat = DataTableColumnStatistics.get(
         column_id=column_id, key=key, session=session
     )
