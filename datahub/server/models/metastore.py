@@ -360,7 +360,7 @@ class DataTableStatistics(Base, CRUDMixin):
     )
     key = sql.Column(sql.Text(length=utf8mb4_name_length), nullable=False, index=True)
     value = sql.Column(sql.JSON, nullable=False)
-    uid = sql.Column(sql.Integer, sql.ForeignKey("user.id",), nullable=False)
+    uid = sql.Column(sql.Integer, sql.ForeignKey("user.id",), nullable=True)
 
     table = relationship(
         "DataTable",
@@ -380,7 +380,7 @@ class DataTableColumnStatistics(Base, CRUDMixin):
     )
     key = sql.Column(sql.Text(length=utf8mb4_name_length), nullable=False, index=True)
     value = sql.Column(sql.JSON, nullable=False)
-    uid = sql.Column(sql.Integer, sql.ForeignKey("user.id",), nullable=False)
+    uid = sql.Column(sql.Integer, sql.ForeignKey("user.id",), nullable=True)
 
     column = relationship(
         "DataTableColumn",
