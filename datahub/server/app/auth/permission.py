@@ -12,7 +12,10 @@ from models.admin import QueryEngine, QueryMetastore, QueryEngineEnvironment
 from models.query_execution import QueryExecution, StatementExecution
 from models.metastore import DataSchema, DataTable, DataTableColumn
 from models.datadoc import DataDoc, DataCell, DataDocDataCell
-from logic.query_execution_permission import user_can_access_query_execution
+from logic.query_execution_permission import (
+    user_can_access_query_execution,
+    get_user_environments_by_execution_id,
+)
 from logic import query_execution as query_execution_logic
 
 
@@ -61,15 +64,11 @@ def verify_query_engine_permission(query_engine_id, session=None):
 
 @with_session
 def verify_query_execution_permission(query_execution_id, session=None):
-    environment_ids = [
-        eid
-        for eid, in session.query(QueryEngineEnvironment.environment_id)
-        .join(QueryEngine)
-        .join(QueryExecution)
-        .filter(QueryExecution.id == query_execution_id)
-    ]
-    verify_environment_permission(environment_ids)
-    verify_query_execution_access(query_execution_id)
+    user_envs = get_user_environments_by_execution_id(
+        query_execution_id, current_user.id, session=session
+    )
+    verify_environment_permission([e.id for e in user_envs])
+    verify_query_execution_access(query_execution_id, user_envs, session=session)
 
 
 @with_session
@@ -197,12 +196,14 @@ def verify_query_execution_owner(execution_id, session=None):
 
 
 @with_session
-def verify_query_execution_access(execution_id, session=None):
-    execution = query_execution_logic.get_query_execution_by_id(
-        execution_id, session=session
-    )
+def verify_query_execution_access(execution_id, user_envs, session=None):
     api_assert(
-        user_can_access_query_execution(execution=execution, uid=current_user.id),
+        # if any env is shareable
+        any(e.shareable for e in user_envs)
+        # otherwise we have to check if query execution has user
+        or user_can_access_query_execution(
+            execution_id=execution_id, uid=user_envs, session=session,
+        ),
         "CANNOT_ACCESS_QUERY_EXECUTION",
         403,
     )

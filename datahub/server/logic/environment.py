@@ -64,12 +64,17 @@ def get_all_visible_environments_by_uid(uid, session=None):
 
 @with_session
 def get_all_accessible_environment_ids_by_uid(uid, session=None):
-    return (
-        session.query(Environment.id)
-        .outerjoin(UserEnvironment)
-        .filter(Environment.deleted_at.is_(None))  # noqa: E712
-        .filter(or_(Environment.public == True, UserEnvironment.user_id == uid))
-        .all()
+    return list(
+        map(
+            lambda r: r[0],
+            (
+                session.query(Environment.id)
+                .outerjoin(UserEnvironment)
+                .filter(Environment.deleted_at.is_(None))  # noqa: E712
+                .filter(or_(Environment.public == True, UserEnvironment.user_id == uid))
+                .all()
+            ),
+        )
     )
 
 
