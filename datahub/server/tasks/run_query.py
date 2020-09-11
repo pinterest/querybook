@@ -14,6 +14,7 @@ from logic import (
     admin as admin_logic,
     query_execution as qe_logic,
     user as user_logic,
+    query_execution_permission as qe_perm_logic,
 )
 from tasks.log_query_per_table import log_query_per_table_task
 from lib.notify.utils import notify_user
@@ -183,7 +184,22 @@ def send_out_notification(query_execution_id):
         notifications = query_execution.notifications
         if len(notifications):
             data_cell = next(iter(query_execution.cells), None)
-            env_name = query_execution.engine.environments[0].name
+            # TODO: this should be determined by the notification.user?
+            # Come up with a more efficient way to determine env per user
+            env_name = getattr(
+                qe_perm_logic.get_default_user_environment_by_execution_id(
+                    execution_id=query_execution_id,
+                    uid=query_execution.uid,
+                    session=session,
+                ),
+                "name",
+                None,
+            )
+
+            # If the query execution is not associated with any environment
+            # then no notification can be done
+            if not env_name:
+                return
 
             for notification in notifications:
                 uid = notification.user

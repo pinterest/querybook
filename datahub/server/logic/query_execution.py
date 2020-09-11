@@ -146,13 +146,14 @@ def get_query_execution_by_ids(ids, session=None):
 
 
 @with_session
-def get_environment_by_execution_id(execution_id, session=None):
+def get_environments_by_execution_id(execution_id, session=None):
     return (
         session.query(Environment)
+        .join(QueryEngineEnvironment)
         .join(QueryEngine)
         .join(QueryExecution)
         .filter(QueryExecution.id == execution_id)
-        .first()
+        .all()
     )
 
 

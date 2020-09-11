@@ -50,14 +50,7 @@ class AuthUser(UserMixin):
     @property
     # @in_mem_memoized(300)
     def environment_ids(self):
-        return list(
-            map(
-                lambda e: e[0],
-                get_all_accessible_environment_ids_by_uid(
-                    self.id, session=get_session()
-                ),
-            )
-        )
+        return get_all_accessible_environment_ids_by_uid(self.id, session=get_session())
 
 
 class DataHubLoginManager(LoginManager):

@@ -64,12 +64,9 @@ def get_user_environment_ids(uid):
     visible_environments = environment_logic.get_all_visible_environments_by_uid(
         uid=uid
     )
-    user_environments = environment_logic.get_all_accessible_environment_ids_by_uid(
+    user_environment_ids = environment_logic.get_all_accessible_environment_ids_by_uid(
         uid=uid
     )
-    user_environment_ids = [
-        environment_id_tuple[0] for environment_id_tuple in user_environments
-    ]
     return [visible_environments, user_environment_ids]
 
 

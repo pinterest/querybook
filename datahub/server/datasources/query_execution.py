@@ -28,6 +28,9 @@ from const.query_execution import QueryExecutionStatus
 from const.datasources import RESOURCE_NOT_FOUND_STATUS_CODE
 from logic import query_execution as logic, datadoc as datadoc_logic, user as user_logic
 from logic.datadoc_permission import user_can_read
+from logic.query_execution_permission import (
+    get_default_user_environment_by_execution_id,
+)
 from tasks.run_query import run_query_task
 from app.auth.permission import verify_query_execution_owner
 from models.query_execution import QueryExecutionViewer
@@ -468,8 +471,8 @@ def delete_query_execution_access_request(execution_id, uid):
 def send_query_execution_access_request_notification(execution_id, uid, session=None):
     requestor = user_logic.get_user_by_id(uid, session=session)
     query_execution = logic.get_query_execution_by_id(execution_id, session=session)
-    environment = logic.get_environment_by_execution_id(
-        execution_id=execution_id, session=session
+    environment = get_default_user_environment_by_execution_id(
+        execution_id=execution_id, uid=uid, session=session
     )
     execution_url = f"{DataHubSettings.PUBLIC_URL}/{environment.name}/query_execution/{execution_id}/"
 
@@ -490,8 +493,8 @@ def send_query_execution_access_request_notification(execution_id, uid, session=
 def send_query_execution_invitation_notification(execution_id, uid, session=None):
     inviting_user = user_logic.get_user_by_id(current_user.id, session=session)
     invited_user = user_logic.get_user_by_id(uid, session=session)
-    environment = logic.get_environment_by_execution_id(
-        execution_id=execution_id, session=session
+    environment = get_default_user_environment_by_execution_id(
+        execution_id=execution_id, uid=uid, session=session
     )
     execution_url = f"{DataHubSettings.PUBLIC_URL}/{environment.name}/query_execution/{execution_id}/"
 
