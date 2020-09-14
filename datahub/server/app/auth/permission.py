@@ -202,7 +202,7 @@ def verify_query_execution_access(execution_id, user_envs, session=None):
         any(e.shareable for e in user_envs)
         # otherwise we have to check if query execution has user
         or user_can_access_query_execution(
-            execution_id=execution_id, uid=user_envs, session=session,
+            uid=current_user.id, execution_id=execution_id, session=session,
         ),
         "CANNOT_ACCESS_QUERY_EXECUTION",
         403,
