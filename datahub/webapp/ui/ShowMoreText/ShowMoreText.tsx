@@ -6,7 +6,6 @@ import './ShowMoreText.scss';
 interface IShowMoreTextProps {
     text: string | string[];
     length?: number;
-    count?: number;
     seeLess?: boolean;
     className?: string;
 }
@@ -14,19 +13,12 @@ interface IShowMoreTextProps {
 export const ShowMoreText: React.FunctionComponent<IShowMoreTextProps> = ({
     text = '',
     length = 100,
-    count = 4,
     seeLess = false,
     className = '',
 }) => {
     const [expanded, setExpanded] = React.useState(false);
-    const { isList, max } = useMemo(
-        () =>
-            Array.isArray(text)
-                ? { isList: true, max: count }
-                : { isList: false, max: length },
-        [text, count, length]
-    );
-    console.log('Array.isArray(text)', Array.isArray(text), max);
+    const isList = Array.isArray(text);
+    const max = length ?? (isList ? 4 : 100);
 
     const toggleSeeMoreClick = (e: React.SyntheticEvent) => {
         if (e) {
@@ -46,13 +38,14 @@ export const ShowMoreText: React.FunctionComponent<IShowMoreTextProps> = ({
         return null;
     } else if (text.length >= max && !expanded) {
         // exceeding length requirement
+        const truncatedText = text.slice(0, max);
         return (
             <span className={combinedClassName}>
                 {isList
-                    ? text
-                          .slice(0, max)
-                          .map((line, idx) => <span key={idx}>{line}</span>)
-                    : text.slice(0, max)}
+                    ? truncatedText.map((line, idx) => (
+                          <span key={idx}>{line}</span>
+                      ))
+                    : truncatedText}
                 <span
                     className="ShowMoreText-click"
                     onClick={toggleSeeMoreClick}
@@ -64,7 +57,7 @@ export const ShowMoreText: React.FunctionComponent<IShowMoreTextProps> = ({
     } else {
         // normal case, text within the max
         const seeLessSection =
-            text.length >= max && seeLess ? (
+            seeLess && text.length >= max ? (
                 <span
                     className="ShowMoreText-click"
                     onClick={toggleSeeMoreClick}
