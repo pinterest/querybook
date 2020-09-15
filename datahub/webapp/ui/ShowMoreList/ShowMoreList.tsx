@@ -1,22 +1,21 @@
 import React, { useMemo } from 'react';
 
-import './ShowMoreText.scss';
+import './ShowMoreList.scss';
 
-interface IShowMoreTextProps {
-    text: string;
+interface IShowMoreListProps {
+    list: string[];
     length?: number;
     seeLess?: boolean;
     className?: string;
 }
 
-export const ShowMoreText: React.FunctionComponent<IShowMoreTextProps> = ({
-    text,
-    length = 100,
+export const ShowMoreList: React.FunctionComponent<IShowMoreListProps> = ({
+    list,
+    length = 3,
     seeLess = false,
     className = '',
 }) => {
-    text = text || '';
-    const combinedClassName = useMemo(() => `ShowMoreText ${className}`, [
+    const combinedClassName = useMemo(() => `ShowMoreList ${className}`, [
         className,
     ]);
 
@@ -29,16 +28,18 @@ export const ShowMoreText: React.FunctionComponent<IShowMoreTextProps> = ({
         setExpanded(!expanded);
     };
 
-    if (text.length === 0) {
+    if (list?.length === 0) {
         return null;
-    } else if (text.length >= length) {
+    } else if (list.length >= length) {
         // exceeding length requirement
         if (!expanded) {
             return (
                 <span className={combinedClassName}>
-                    {text.slice(0, length)}
+                    {list.slice(0, length).map((line, idx) => (
+                        <span key={idx}>{line}</span>
+                    ))}
                     <span
-                        className="ShowMoreText-click"
+                        className="ShowMoreList-click"
                         onClick={toggleSeeMoreClick}
                     >
                         show more
@@ -48,7 +49,7 @@ export const ShowMoreText: React.FunctionComponent<IShowMoreTextProps> = ({
         } else {
             const seeLessSection = seeLess ? (
                 <span
-                    className="ShowMoreText-click"
+                    className="ShowMoreList-click"
                     onClick={toggleSeeMoreClick}
                 >
                     show less
@@ -57,13 +58,15 @@ export const ShowMoreText: React.FunctionComponent<IShowMoreTextProps> = ({
 
             return (
                 <span className={combinedClassName}>
-                    {text}
+                    {list.map((line, idx) => (
+                        <span key={idx}>{line}</span>
+                    ))}
                     {seeLessSection}
                 </span>
             );
         }
     }
 
-    // normal case, text within the number of chars
-    return <span className={combinedClassName}>{text}</span>;
+    // normal case, list within the number of chars
+    return <span className={combinedClassName}>{list}</span>;
 };

@@ -88,13 +88,12 @@ export async function showTooltipFor(
     let tooltip = null;
 
     function hideTooltip() {
-        if (tooltip) {
-            tooltip.removeEventListener('mouseenter', onMouseEnter);
-            tooltip.removeEventListener('mouseleave', onMouseOut);
-
-            unmountTooltip(tooltip);
-            tooltip = null;
-        }
+        // if (tooltip) {
+        //     tooltip.removeEventListener('mouseenter', onMouseEnter);
+        //     tooltip.removeEventListener('mouseleave', onMouseOut);
+        //     unmountTooltip(tooltip);
+        //     tooltip = null;
+        // }
     }
     let hideTooltipTimeout: number;
 

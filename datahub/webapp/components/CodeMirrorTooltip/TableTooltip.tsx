@@ -2,6 +2,7 @@ import React from 'react';
 import { ContentState } from 'draft-js';
 import { IDataColumn, IDataTable, IDataSchema } from 'const/metastore';
 import { ShowMoreText } from 'ui/ShowMoreText/ShowMoreText';
+import { ShowMoreList } from 'ui/ShowMoreList/ShowMoreList';
 import { IconButton } from 'ui/Button/IconButton';
 import { setSidebarTableId } from 'lib/dataHubUI';
 import { DataTableTags } from 'components/DataTableTags/DataTableTags';
@@ -24,9 +25,9 @@ export const TableTooltip: React.FunctionComponent<IProps> = ({
     const description = table.description
         ? (table.description as ContentState).getPlainText()
         : '';
-    const columnNames = (columns || [])
-        .map((column) => `- ${column.name}: ${column.type}`)
-        .join('\n');
+    const columnNames = (columns || []).map(
+        (column) => `- ${column.name}: ${column.type}`
+    );
     const location = table.location;
 
     const lastPartitions = table.latest_partitions ?? '[]';
@@ -74,14 +75,16 @@ export const TableTooltip: React.FunctionComponent<IProps> = ({
         <>
             <div className="tooltip-title">Column Names</div>
             <div className="tooltip-content">
-                <ShowMoreText nextLine text={columnNames} seeLess={true} />
+                <ShowMoreList list={columnNames} seeLess={true} />
             </div>
         </>
     );
-    const locationDOM = location && (
+    const locationDOM = true && (
         <>
             <div className="tooltip-title">Location</div>
-            <div className="tooltip-content">{location}</div>
+            <div className="tooltip-content">
+                s3://pinterest-test/test/test/pinterest-test/test/test/pinlogs/users/knowledge/test_table_meow
+            </div>
         </>
     );
 
@@ -89,7 +92,7 @@ export const TableTooltip: React.FunctionComponent<IProps> = ({
         <>
             <div className="table-tooltip-header flex-row">
                 <div>{tableName}</div>
-                <div className="flex-row ml4">
+                <div className="flex-row mt4 ml4">
                     {pinToSidebarButton}
                     {seeDetailsButton}
                 </div>
