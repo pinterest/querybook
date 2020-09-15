@@ -11,7 +11,7 @@ interface IShowMoreListProps {
 
 export const ShowMoreList: React.FunctionComponent<IShowMoreListProps> = ({
     list,
-    length = 3,
+    length = 4,
     seeLess = false,
     className = '',
 }) => {
@@ -30,24 +30,25 @@ export const ShowMoreList: React.FunctionComponent<IShowMoreListProps> = ({
 
     if (list?.length === 0) {
         return null;
-    } else if (list.length >= length) {
+    } else if (list.length >= length && !expanded) {
         // exceeding length requirement
-        if (!expanded) {
-            return (
-                <span className={combinedClassName}>
-                    {list.slice(0, length).map((line, idx) => (
-                        <span key={idx}>{line}</span>
-                    ))}
-                    <span
-                        className="ShowMoreList-click"
-                        onClick={toggleSeeMoreClick}
-                    >
-                        show more
-                    </span>
+        return (
+            <span className={combinedClassName}>
+                {list.slice(0, length).map((line, idx) => (
+                    <span key={idx}>{line}</span>
+                ))}
+                <span
+                    className="ShowMoreList-click"
+                    onClick={toggleSeeMoreClick}
+                >
+                    show more
                 </span>
-            );
-        } else {
-            const seeLessSection = seeLess ? (
+            </span>
+        );
+    } else {
+        // normal case, text within the number of chars
+        const seeLessSection =
+            list.length >= length && seeLess ? (
                 <span
                     className="ShowMoreList-click"
                     onClick={toggleSeeMoreClick}
@@ -56,17 +57,13 @@ export const ShowMoreList: React.FunctionComponent<IShowMoreListProps> = ({
                 </span>
             ) : null;
 
-            return (
-                <span className={combinedClassName}>
-                    {list.map((line, idx) => (
-                        <span key={idx}>{line}</span>
-                    ))}
-                    {seeLessSection}
-                </span>
-            );
-        }
+        return (
+            <span className={combinedClassName}>
+                {list.map((line, idx) => (
+                    <span key={idx}>{line}</span>
+                ))}
+                {seeLessSection}
+            </span>
+        );
     }
-
-    // normal case, list within the number of chars
-    return <span className={combinedClassName}>{list}</span>;
 };

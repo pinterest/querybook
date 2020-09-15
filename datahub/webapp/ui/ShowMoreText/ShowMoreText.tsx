@@ -31,22 +31,23 @@ export const ShowMoreText: React.FunctionComponent<IShowMoreTextProps> = ({
 
     if (text.length === 0) {
         return null;
-    } else if (text.length >= length) {
+    } else if (text.length >= length && !expanded) {
         // exceeding length requirement
-        if (!expanded) {
-            return (
-                <span className={combinedClassName}>
-                    {text.slice(0, length)}
-                    <span
-                        className="ShowMoreText-click"
-                        onClick={toggleSeeMoreClick}
-                    >
-                        show more
-                    </span>
+        return (
+            <span className={combinedClassName}>
+                {text.slice(0, length)}
+                <span
+                    className="ShowMoreText-click"
+                    onClick={toggleSeeMoreClick}
+                >
+                    show more
                 </span>
-            );
-        } else {
-            const seeLessSection = seeLess ? (
+            </span>
+        );
+    } else {
+        // normal case, text within the number of chars
+        const seeLessSection =
+            text.length >= length && seeLess ? (
                 <span
                     className="ShowMoreText-click"
                     onClick={toggleSeeMoreClick}
@@ -55,15 +56,11 @@ export const ShowMoreText: React.FunctionComponent<IShowMoreTextProps> = ({
                 </span>
             ) : null;
 
-            return (
-                <span className={combinedClassName}>
-                    {text}
-                    {seeLessSection}
-                </span>
-            );
-        }
+        return (
+            <span className={combinedClassName}>
+                {text}
+                {seeLessSection}
+            </span>
+        );
     }
-
-    // normal case, text within the number of chars
-    return <span className={combinedClassName}>{text}</span>;
 };

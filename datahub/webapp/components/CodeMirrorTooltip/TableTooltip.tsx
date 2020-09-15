@@ -79,12 +79,10 @@ export const TableTooltip: React.FunctionComponent<IProps> = ({
             </div>
         </>
     );
-    const locationDOM = true && (
+    const locationDOM = location && (
         <>
             <div className="tooltip-title">Location</div>
-            <div className="tooltip-content">
-                s3://pinterest-test/test/test/pinterest-test/test/test/pinlogs/users/knowledge/test_table_meow
-            </div>
+            <div className="tooltip-content">{location}</div>
         </>
     );
 

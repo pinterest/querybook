@@ -17,6 +17,8 @@
         overflow-y: scroll;
         overflow-x: hidden;
         padding: 8px;
+        white-space: pre-wrap;
+        word-break: break-word;
 
         .table-tooltip-header {
             font-size: var(--text-size);
@@ -24,8 +26,6 @@
             font-weight: var(--bold-font);
             justify-content: space-between;
             align-items: start;
-            white-space: pre-wrap;
-            word-break: break-word;
         }
         .tooltip-title {
             font-weight: var(--bold-font);
@@ -33,8 +33,6 @@
         }
 
         .tooltip-content {
-            white-space: pre-wrap;
-            word-break: break-word;
             margin-left: 4px;
         }
     }
