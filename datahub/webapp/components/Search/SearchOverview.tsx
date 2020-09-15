@@ -254,7 +254,7 @@ export const SearchOverview: React.FunctionComponent = () => {
             const tagFilter = (searchFilters?.tags || []).filter(
                 (existingTag) => existingTag !== tag
             );
-            updateSearchFilter('tags', tagFilter);
+            updateSearchFilter('tags', tagFilter.length ? tagFilter : null);
         },
         [searchFilters?.tags]
     );

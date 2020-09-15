@@ -1,3 +1,4 @@
+import qs from 'qs';
 import * as React from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 
@@ -51,8 +52,13 @@ export const DataTableTags: React.FunctionComponent<IProps> = ({
             <span
                 onClick={() =>
                     navigateWithinEnv(
-                        `/search/?searchType=Table&searchString=${tag.tag_name}`,
-                        { isModal: true }
+                        `/search/?${qs.stringify({
+                            searchType: 'Table',
+                            'searchFilters[tags][0]': tag.tag_name,
+                        })}`,
+                        {
+                            isModal: true,
+                        }
                     )
                 }
             >
