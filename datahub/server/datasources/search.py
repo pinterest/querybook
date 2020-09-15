@@ -40,29 +40,48 @@ def _match_any_field(keywords="", search_fields=[]):
     return query
 
 
+def _make_singular_filter(filter_name: str, filter_val):
+    """Create a elasticsearch filter for a single
+       filter_name, filter_val pair. Note filter_val can
+       be a list and an OR will be applied
+
+    Args:
+        filter_name (str): Name of filter
+        filter_val (str | str[]): Value of filter
+
+    Returns:
+        Dict: Valid elasticsearch filter params
+    """
+    if isinstance(filter_val, list):
+        filters = [_make_singular_filter(filter_name, val) for val in filter_val]
+        return {"bool": {"should": filters}}
+    return {"match": {filter_name: filter_val}}
+
+
 def _match_filters(filters):
     if not filters:
         return {}
 
     filter_terms = []
     created_at_filter = {}
+
     for f in filters:
         filter_name = str(f[0]).lower()
-        filter_val = str(f[1]).lower()
+        filter_val = (
+            str(f[1]).lower()
+            if not isinstance(f[1], list)
+            else [str(v).lower() for v in f[1]]
+        )
 
         if not filter_val or filter_val == "":
             continue
 
-        search_filter = {}
-        search_filter[filter_name] = filter_val
-
         if filter_name == "startdate":
-            created_at_filter["gte"] = filter_val
+            created_at_filter["gte"] = {filter_name: filter_val}
         elif filter_name == "enddate":
-            created_at_filter["lte"] = filter_val
+            created_at_filter["lte"] = {filter_name: filter_val}
         else:
-            filter_terms.append({"match": search_filter})
-
+            filter_terms.append(_make_singular_filter(filter_name, filter_val))
     filters = {"filter": {"bool": {"must": filter_terms}}}
     if created_at_filter:
         filters["range"] = {"created_at": created_at_filter}
@@ -213,7 +232,6 @@ def _construct_tables_query(
             }
         )
     )
-
     return json.dumps(query)
 
 
