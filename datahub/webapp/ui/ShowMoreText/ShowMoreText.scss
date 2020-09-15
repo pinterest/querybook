@@ -5,8 +5,9 @@
         text-decoration: underline;
         display: inline;
         margin-left: 4px;
-
-        &.next-line {
+    }
+    &.is-list {
+        span {
             margin-left: 0px;
             display: block;
         }

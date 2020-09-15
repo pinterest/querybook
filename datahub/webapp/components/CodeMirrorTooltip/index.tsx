@@ -91,7 +91,6 @@ export async function showTooltipFor(
         if (tooltip) {
             tooltip.removeEventListener('mouseenter', onMouseEnter);
             tooltip.removeEventListener('mouseleave', onMouseOut);
-
             unmountTooltip(tooltip);
             tooltip = null;
         }

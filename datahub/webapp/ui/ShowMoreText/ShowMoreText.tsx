@@ -1,28 +1,25 @@
 import React, { useMemo } from 'react';
+import classNames from 'classnames';
 
 import './ShowMoreText.scss';
 
 interface IShowMoreTextProps {
-    text: string;
+    text: string | string[];
     length?: number;
     seeLess?: boolean;
     className?: string;
-    nextLine?: boolean;
 }
 
 export const ShowMoreText: React.FunctionComponent<IShowMoreTextProps> = ({
-    text,
+    text = '',
     length = 100,
     seeLess = false,
     className = '',
-    nextLine = false,
 }) => {
-    text = text || '';
-    const combinedClassName = useMemo(() => `ShowMoreText ${className}`, [
-        className,
-    ]);
-
     const [expanded, setExpanded] = React.useState(false);
+    const isList = Array.isArray(text);
+    const max = length ?? (isList ? 4 : 100);
+
     const toggleSeeMoreClick = (e: React.SyntheticEvent) => {
         if (e) {
             e.stopPropagation();
@@ -31,49 +28,51 @@ export const ShowMoreText: React.FunctionComponent<IShowMoreTextProps> = ({
         setExpanded(!expanded);
     };
 
+    const combinedClassName = classNames({
+        ShowMoreText: true,
+        [className]: className,
+        'is-list': isList,
+    });
+
     if (text.length === 0) {
         return null;
-    } else if (text.length >= length) {
+    } else if (text.length >= max && !expanded) {
         // exceeding length requirement
-        if (!expanded) {
-            return (
-                <span className={combinedClassName}>
-                    {text.slice(0, length)}
-                    <span
-                        className={
-                            nextLine
-                                ? 'ShowMoreText-click next-line'
-                                : 'ShowMoreText-click'
-                        }
-                        onClick={toggleSeeMoreClick}
-                    >
-                        show more
-                    </span>
-                </span>
-            );
-        } else {
-            const seeLessSection = seeLess ? (
+        const truncatedText = text.slice(0, max);
+        return (
+            <span className={combinedClassName}>
+                {isList
+                    ? truncatedText.map((line, idx) => (
+                          <span key={idx}>{line}</span>
+                      ))
+                    : truncatedText}
                 <span
-                    className={
-                        nextLine
-                            ? 'ShowMoreText-click next-line'
-                            : 'ShowMoreText-click'
-                    }
+                    className="ShowMoreText-click"
+                    onClick={toggleSeeMoreClick}
+                >
+                    show more
+                </span>
+            </span>
+        );
+    } else {
+        // normal case, text within the max
+        const seeLessSection =
+            seeLess && text.length >= max ? (
+                <span
+                    className="ShowMoreText-click"
                     onClick={toggleSeeMoreClick}
                 >
                     show less
                 </span>
             ) : null;
 
-            return (
-                <span className={combinedClassName}>
-                    {text}
-                    {seeLessSection}
-                </span>
-            );
-        }
+        return (
+            <span className={combinedClassName}>
+                {isList
+                    ? text.map((line, idx) => <span key={idx}>{line}</span>)
+                    : text}
+                {seeLessSection}
+            </span>
+        );
     }
-
-    // normal case, text within the number of chars
-    return <span className={combinedClassName}>{text}</span>;
 };

@@ -24,9 +24,9 @@ export const TableTooltip: React.FunctionComponent<IProps> = ({
     const description = table.description
         ? (table.description as ContentState).getPlainText()
         : '';
-    const columnNames = (columns || [])
-        .map((column) => `- ${column.name}: ${column.type}`)
-        .join('\n');
+    const columnNames = (columns || []).map(
+        (column) => `- ${column.name}: ${column.type}`
+    );
     const location = table.location;
 
     const lastPartitions = table.latest_partitions ?? '[]';
@@ -74,7 +74,7 @@ export const TableTooltip: React.FunctionComponent<IProps> = ({
         <>
             <div className="tooltip-title">Column Names</div>
             <div className="tooltip-content">
-                <ShowMoreText nextLine text={columnNames} seeLess={true} />
+                <ShowMoreText text={columnNames} seeLess={true} />
             </div>
         </>
     );
@@ -89,7 +89,7 @@ export const TableTooltip: React.FunctionComponent<IProps> = ({
         <>
             <div className="table-tooltip-header flex-row">
                 <div>{tableName}</div>
-                <div className="flex-row ml4">
+                <div className="flex-row mt4 ml4">
                     {pinToSidebarButton}
                     {seeDetailsButton}
                 </div>
