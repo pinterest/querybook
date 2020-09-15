@@ -110,12 +110,19 @@ def datadocs_to_es(datadoc, session=None):
             cells_as_text.append("[... additional unparsable content ...]")
 
     joined_cells = escape("\n".join(cells_as_text))
-    editors = [
-        editor.uid
-        for editor in get_data_doc_editors_by_doc_id(
-            data_doc_id=datadoc.id, session=session
-        )
-    ]
+
+    # There is no need to compute the list of editors
+    # for public datadoc since everyone is able to see it
+    editors = (
+        [
+            editor.uid
+            for editor in get_data_doc_editors_by_doc_id(
+                data_doc_id=datadoc.id, session=session
+            )
+        ]
+        if not datadoc.public
+        else []
+    )
     expand_datadoc = {
         "id": datadoc.id,
         "environment_id": datadoc.environment_id,
