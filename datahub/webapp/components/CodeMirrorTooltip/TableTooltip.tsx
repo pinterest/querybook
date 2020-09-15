@@ -2,7 +2,6 @@ import React from 'react';
 import { ContentState } from 'draft-js';
 import { IDataColumn, IDataTable, IDataSchema } from 'const/metastore';
 import { ShowMoreText } from 'ui/ShowMoreText/ShowMoreText';
-import { ShowMoreList } from 'ui/ShowMoreList/ShowMoreList';
 import { IconButton } from 'ui/Button/IconButton';
 import { setSidebarTableId } from 'lib/dataHubUI';
 import { DataTableTags } from 'components/DataTableTags/DataTableTags';
@@ -75,7 +74,7 @@ export const TableTooltip: React.FunctionComponent<IProps> = ({
         <>
             <div className="tooltip-title">Column Names</div>
             <div className="tooltip-content">
-                <ShowMoreList list={columnNames} seeLess={true} />
+                <ShowMoreText text={columnNames} seeLess={true} />
             </div>
         </>
     );

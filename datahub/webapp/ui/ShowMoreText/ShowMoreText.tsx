@@ -1,26 +1,33 @@
 import React, { useMemo } from 'react';
+import classNames from 'classnames';
 
 import './ShowMoreText.scss';
 
 interface IShowMoreTextProps {
-    text: string;
+    text: string | string[];
     length?: number;
+    count?: number;
     seeLess?: boolean;
     className?: string;
 }
 
 export const ShowMoreText: React.FunctionComponent<IShowMoreTextProps> = ({
-    text,
+    text = '',
     length = 100,
+    count = 4,
     seeLess = false,
     className = '',
 }) => {
-    text = text || '';
-    const combinedClassName = useMemo(() => `ShowMoreText ${className}`, [
-        className,
-    ]);
-
     const [expanded, setExpanded] = React.useState(false);
+    const { isList, max } = useMemo(
+        () =>
+            Array.isArray(text)
+                ? { isList: true, max: count }
+                : { isList: false, max: length },
+        [text, count, length]
+    );
+    console.log('Array.isArray(text)', Array.isArray(text), max);
+
     const toggleSeeMoreClick = (e: React.SyntheticEvent) => {
         if (e) {
             e.stopPropagation();
@@ -29,13 +36,23 @@ export const ShowMoreText: React.FunctionComponent<IShowMoreTextProps> = ({
         setExpanded(!expanded);
     };
 
+    const combinedClassName = classNames({
+        ShowMoreText: true,
+        [className]: className,
+        'is-list': isList,
+    });
+
     if (text.length === 0) {
         return null;
-    } else if (text.length >= length && !expanded) {
+    } else if (text.length >= max && !expanded) {
         // exceeding length requirement
         return (
             <span className={combinedClassName}>
-                {text.slice(0, length)}
+                {isList
+                    ? text
+                          .slice(0, max)
+                          .map((line, idx) => <span key={idx}>{line}</span>)
+                    : text.slice(0, max)}
                 <span
                     className="ShowMoreText-click"
                     onClick={toggleSeeMoreClick}
@@ -45,9 +62,9 @@ export const ShowMoreText: React.FunctionComponent<IShowMoreTextProps> = ({
             </span>
         );
     } else {
-        // normal case, text within the number of chars
+        // normal case, text within the max
         const seeLessSection =
-            text.length >= length && seeLess ? (
+            text.length >= max && seeLess ? (
                 <span
                     className="ShowMoreText-click"
                     onClick={toggleSeeMoreClick}
@@ -58,7 +75,9 @@ export const ShowMoreText: React.FunctionComponent<IShowMoreTextProps> = ({
 
         return (
             <span className={combinedClassName}>
-                {text}
+                {isList
+                    ? text.map((line, idx) => <span key={idx}>{line}</span>)
+                    : text}
                 {seeLessSection}
             </span>
         );
