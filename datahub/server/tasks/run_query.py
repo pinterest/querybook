@@ -136,7 +136,7 @@ def get_query_execution_params(query_execution_id):
             raise InvalidQueryExecution(f"Query {query_execution_id} does not exist")
         if query_execution.status != QueryExecutionStatus.INITIALIZED:
             raise AlreadyExecutedException(
-                f"Query {query_execution_id} is already executed, this is likely caused by a worker crash."
+                f"Query {query_execution_id} is already executed. This is likely caused by a worker crash."
             )
 
         query = query_execution.query
