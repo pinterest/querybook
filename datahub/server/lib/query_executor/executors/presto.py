@@ -43,13 +43,14 @@ class PrestoQueryExecutor(QueryExecutorBaseClass):
                 error_dict = get_presto_error_dict(e)
                 if error_dict:
                     error_extracted = error_dict.get("message", None)
-                    if error_dict.get("errorName") == "SYNTAX_ERROR":
+                    # In Presto, only context free syntax error are labelled as
+                    # SYNTAX_ERROR, and context sensitive errors are user errors
+                    # However in both cases errorLocation is provided
+                    if "errorLocation" in error_dict:
                         return get_parsed_syntax_error(
                             error_extracted,
-                            error_dict.get("errorLocation", {}).get("lineNumber", 1)
-                            - 1,
-                            error_dict.get("errorLocation", {}).get("columnNumber", 1)
-                            - 1,
+                            error_dict["errorLocation"].get("lineNumber", 1) - 1,
+                            error_dict["errorLocation"].get("columnNumber", 1) - 1,
                         )
 
         except Exception:
