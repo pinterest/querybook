@@ -24,6 +24,7 @@ import { ListMenu } from 'ui/Menu/ListMenu';
 import { Title } from 'ui/Title/Title';
 import { validateForm, updateValue } from 'ui/SmartForm/formFunctions';
 import { SmartForm } from 'ui/SmartForm/SmartForm';
+import './ResultExportDropdown.scss';
 
 interface IProps {
     statementExecution: IStatementExecution;
@@ -261,7 +262,11 @@ export const ResultExportDropdown: React.FunctionComponent<IProps> = ({
                 isRight
                 usePortal
             >
-                <ListMenu items={additionalButtons} isRight />
+                <ListMenu
+                    className="ResultExportDropdown-menu"
+                    items={additionalButtons}
+                    isRight
+                />
             </Dropdown>
         );
     return (

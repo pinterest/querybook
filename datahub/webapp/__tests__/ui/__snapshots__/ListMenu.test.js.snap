@@ -1,8 +1,10 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
 exports[`matches enzyme snapshots matches snapshot 1`] = `
-<styled.div>
-  <styled.div
+<styled.div
+  className=""
+>
+  <styled.a
     key="0"
   >
     <span
@@ -14,7 +16,7 @@ exports[`matches enzyme snapshots matches snapshot 1`] = `
         test
       </span>
     </span>
-  </styled.div>
+  </styled.a>
 </styled.div>
 `;
 
@@ -22,7 +24,7 @@ exports[`matches test renderer snapshot serializes the styles 1`] = `
 <div
   className="sc-bdVaJa Menu kvKKjL"
 >
-  <div
+  <a
     className="sc-bwzfXH MenuItem uTxCW"
   >
     <span
@@ -34,6 +36,6 @@ exports[`matches test renderer snapshot serializes the styles 1`] = `
         test
       </span>
     </span>
-  </div>
+  </a>
 </div>
 `;

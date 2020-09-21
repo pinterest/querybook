@@ -26,6 +26,7 @@ interface IProps {
     isRight?: boolean;
     height?: number;
     soft?: boolean;
+    className?: string;
 }
 
 export const ListMenu: React.FunctionComponent<IProps> = ({
@@ -35,6 +36,7 @@ export const ListMenu: React.FunctionComponent<IProps> = ({
 
     height,
     soft,
+    className,
 }) => {
     if (!items || !items.length) {
         return null;
@@ -107,7 +109,13 @@ export const ListMenu: React.FunctionComponent<IProps> = ({
     });
 
     return (
-        <Menu height={height} className={soft && 'soft'}>
+        <Menu
+            height={height}
+            className={classNames({
+                soft,
+                [className]: className,
+            })}
+        >
             {menuActionsDOM}
         </Menu>
     );
