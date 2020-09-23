@@ -20,7 +20,9 @@ Flask-Login==0.4.1
 Flask-Limiter==1.1.0
 python-memcached==1.59
 redis==3.5.2
-gevent==1.4.0
+
+gevent==20.9.0
+
 alembic==1.0.3
 
 gevent-websocket==0.10.1
