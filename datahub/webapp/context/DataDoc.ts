@@ -14,10 +14,13 @@ export interface IDataDocContextType {
     updateCell: (cellId: number, fields: DataCellUpdateFields) => Promise<any>;
     copyCellAt: (index: number, cut: boolean) => void;
     pasteCellAt: (pasteIndex: number) => Promise<void>;
+    fullScreenCellAt: (index: number) => void;
 
     defaultCollapse: boolean;
     focusedCellIndex?: number;
     highlightCellIndex: number;
+    fullScreenCellIndex: number;
+
     cellFocus: {
         onUpKeyPressed: (index: number) => any;
         onDownKeyPressed: (index: number) => any;

@@ -29,7 +29,7 @@ export const QueryViewEditor: React.FunctionComponent<{
     const userInfo = useSelector(myUserInfoSelector);
     const environment = useSelector(currentEnvironmentSelector);
     const showAccessControls =
-        queryExecution.uid == userInfo.id && !environment.shareable;
+        queryExecution.uid === userInfo.id && !environment.shareable;
 
     const dispatch = useDispatch();
     const { data: cellInfo } = useDataFetch<{

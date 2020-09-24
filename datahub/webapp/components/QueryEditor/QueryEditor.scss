@@ -2,15 +2,6 @@
 
 .QueryEditor {
     position: relative;
-    &.fullScreen {
-        @include full-screen(39);
-        .CodeMirror {
-            .CodeMirror-scroll,
-            .CodeMirror-sizer {
-                min-height: 100vh !important;
-            }
-        }
-    }
 
     .CodeMirror {
         // New style
@@ -24,29 +15,6 @@
 
     .CodeMirror-hover {
         background-color: var(--text-select-bg-color);
-    }
-
-    .fullscreen-button-wrapper {
-        position: absolute;
-        top: 0;
-        z-index: 9;
-        right: 0;
-
-        a.button {
-            color: var(--dark-text-color);
-            &:hover {
-                color: var(--text-color);
-            }
-        }
-    }
-
-    &.with-fullscreen-button {
-        .CodeMirror {
-            .CodeMirror-scroll,
-            .CodeMirror-sizer {
-                min-height: 50px;
-            }
-        }
     }
 }
 

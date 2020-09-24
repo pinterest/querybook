@@ -1,6 +1,52 @@
 @import './../../scss_variables.scss';
 
 .DataDocQueryCell {
+    &.fullScreen {
+        @include full-screen(39);
+        margin: 0;
+
+        display: flex;
+        flex-direction: column;
+
+        .query-metadata {
+            padding: 0px 10px;
+        }
+
+        .query-content {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            overflow: hidden;
+
+            .editor {
+                flex: 1;
+                margin: 0;
+                overflow: hidden;
+                display: flex;
+                .QueryEditor {
+                    flex: 1;
+                }
+            }
+        }
+
+        .DataDocQueryExecutions {
+            overflow: auto;
+            height: 100%;
+            border-top: var(--border);
+            padding: 12px;
+        }
+    }
+
+    &:not(.fullScreen) {
+        .QueryEditor .CodeMirror {
+            .CodeMirror-scroll,
+            .CodeMirror-sizer {
+                max-height: 50vh;
+                min-height: 50px;
+            }
+        }
+    }
+
     .query-title {
         flex: 1;
 
@@ -20,45 +66,49 @@
         }
     }
 
-    .data-doc-query-cell-inner {
-        .query-metadata {
-            display: flex;
-            margin-bottom: 5px;
+    .query-metadata {
+        display: flex;
 
-            .query-engine-name {
-                font-size: var(--text-size);
-            }
-
-            .additional-dropdown-button {
-                @include pushable();
-                @include fancy-hover();
-
-                cursor: pointer;
-                margin-left: 5px;
-
-                height: 100%;
-                font-size: 20px;
-                line-height: 38px;
-
-                svg {
-                    z-index: 4;
-                }
-            }
+        .query-engine-name {
+            font-size: var(--text-size);
         }
 
-        .editor {
-            position: relative;
-            box-sizing: border-box;
-            margin: 5px 0px;
+        .additional-dropdown-button {
+            @include pushable();
+            @include fancy-hover();
 
-            .QueryEditor {
-                .CodeMirror {
-                    border-radius: var(--border-radius);
+            cursor: pointer;
+            margin-left: 5px;
 
-                    .CodeMirror-scroll,
-                    .CodeMirror-sizer {
-                        max-height: 50vh;
-                    }
+            height: 100%;
+            font-size: 20px;
+            line-height: 38px;
+
+            svg {
+                z-index: 4;
+            }
+        }
+    }
+
+    .editor {
+        position: relative;
+        box-sizing: border-box;
+        margin: 5px 0px;
+
+        .QueryEditor .CodeMirror {
+            border-radius: var(--border-radius);
+        }
+
+        .fullscreen-button-wrapper {
+            position: absolute;
+            top: 0;
+            z-index: 9;
+            right: 0;
+
+            a.button {
+                color: var(--dark-text-color);
+                &:hover {
+                    color: var(--text-color);
                 }
             }
         }

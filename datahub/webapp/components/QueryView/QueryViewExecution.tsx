@@ -2,8 +2,6 @@ import React from 'react';
 import { useSelector } from 'react-redux';
 
 import { IQueryExecution } from 'redux/queryExecutions/types';
-import { myUserInfoSelector } from 'redux/user/selector';
-import { IStoreState } from 'redux/store/types';
 import { currentEnvironmentSelector } from 'redux/environment/selector';
 import { QueryExecutionBar } from 'components/QueryExecutionBar/QueryExecutionBar';
 import { QueryExecution } from 'components/QueryExecution/QueryExecution';
@@ -11,11 +9,6 @@ import { QueryExecution } from 'components/QueryExecution/QueryExecution';
 export const QueryViewExecution: React.FunctionComponent<{
     queryExecution: IQueryExecution;
 }> = ({ queryExecution }) => {
-    const userInfo = useSelector(myUserInfoSelector);
-    const notificationPreference = useSelector(
-        (state: IStoreState) =>
-            state.user.computedSettings.notification_preference
-    );
     const environment = useSelector(currentEnvironmentSelector);
     const generatePermaLink = React.useCallback(() => {
         if (!queryExecution) {

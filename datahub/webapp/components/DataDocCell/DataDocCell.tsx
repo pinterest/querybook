@@ -1,4 +1,4 @@
-import React, { useEffect, useMemo, useContext } from 'react';
+import React, { useEffect, useMemo, useContext, useCallback } from 'react';
 import classNames from 'classnames';
 import { ContentState } from 'draft-js';
 
@@ -57,12 +57,14 @@ export const DataDocCell: React.FunctionComponent<IDataDocCellProps> = ({
         updateCell,
         copyCellAt,
         pasteCellAt,
+        fullScreenCellAt,
 
         cellFocus,
         defaultCollapse,
         focusedCellIndex,
         isEditable,
         highlightCellIndex,
+        fullScreenCellIndex,
     } = useContext(DataDocContext);
     const { cellIdtoUid, arrowKeysEnabled } = useSelector(
         (state: IStoreState) => {
@@ -142,6 +144,11 @@ export const DataDocCell: React.FunctionComponent<IDataDocCellProps> = ({
         return getShareUrl(cell.id, cellIdToExecutionId[cell.id]);
     }, [cell.id, cellIdToExecutionId[cell.id]]);
 
+    const isFullScreen = index === fullScreenCellIndex;
+    const toggleFullScreen = useCallback(() => {
+        fullScreenCellAt(isFullScreen ? null : index);
+    }, [isFullScreen, fullScreenCellAt, index]);
+
     const renderCell = () => {
         const onCellFocusOrBlur = {
             onFocus: cellFocus.onFocus.bind(null, index),
@@ -181,6 +188,8 @@ export const DataDocCell: React.FunctionComponent<IDataDocCellProps> = ({
                 cellId: cell.id,
                 queryIndexInDoc,
                 templatedVariables: dataDoc.meta,
+                isFullScreen,
+                toggleFullScreen,
             };
             cellDOM = <DataDocQueryCell {...allProps} />;
         } else if (cell.cell_type === 'chart') {

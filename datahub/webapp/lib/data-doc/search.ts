@@ -1,5 +1,5 @@
 import * as DraftJs from 'draft-js';
-import { IDataDoc } from 'const/datadoc';
+import { IDataDoc, IDataCell } from 'const/datadoc';
 import { ISearchResult, ISearchOptions } from 'const/searchAndReplace';
 
 export function searchText(
@@ -26,8 +26,8 @@ export function searchText(
     return results;
 }
 
-export function searchDataDoc(
-    dataDoc: IDataDoc,
+export function searchDataDocCells(
+    dataDocCells: IDataCell[],
     searchString: string,
     options: ISearchOptions
 ) {
@@ -37,7 +37,7 @@ export function searchDataDoc(
     if (!searchRegex) {
         return results;
     }
-    for (const cell of dataDoc.dataDocCells) {
+    for (const cell of dataDocCells) {
         if (cell.cell_type === 'query') {
             const content = cell.context;
             let match: RegExpExecArray;

@@ -53,7 +53,7 @@ import { DataDocContentContainer } from './DataDocContentContainer';
 import './DataDoc.scss';
 import { DataDocLoading } from './DataDocLoading';
 
-import { searchDataDoc, replaceDataDoc } from 'lib/data-doc/search';
+import { searchDataDocCells, replaceDataDoc } from 'lib/data-doc/search';
 import {
     ISearchAndReplaceHandles,
     SearchAndReplace,
@@ -76,6 +76,7 @@ interface IState {
     defaultCollapseAllCells: boolean;
     cellIdToExecutionId: Record<number, number>;
     highlightCellIndex?: number;
+    fullScreenCellIndex?: number;
 
     showSearchAndReplace: boolean;
 }
@@ -85,6 +86,7 @@ class DataDocComponent extends React.Component<IProps, IState> {
         errorObj: null,
         focusedCellIndex: null,
         highlightCellIndex: null,
+        fullScreenCellIndex: null,
 
         connected: false,
         defaultCollapseAllCells: null,
@@ -216,6 +218,14 @@ class DataDocComponent extends React.Component<IProps, IState> {
     }
 
     @bind
+    public fullScreenCellAt(index?: number) {
+        this.searchAndReplaceRef.current.performSearch();
+        this.setState({
+            fullScreenCellIndex: index,
+        });
+    }
+
+    @bind
     @debounce(200)
     public updateDocCursor(index: number) {
         const {
@@ -318,7 +328,18 @@ class DataDocComponent extends React.Component<IProps, IState> {
         searchString: string,
         searchOptions: ISearchOptions
     ) {
-        return searchDataDoc(this.props.dataDoc, searchString, searchOptions);
+        // If a cell is full screen'ed, then only show
+        // the full screen content
+        const { fullScreenCellIndex } = this.state;
+        const cells =
+            fullScreenCellIndex == null
+                ? this.props.dataDoc?.dataDocCells
+                : this.props.dataDoc?.dataDocCells.slice(
+                      fullScreenCellIndex,
+                      fullScreenCellIndex + 1
+                  );
+
+        return searchDataDocCells(cells, searchString, searchOptions);
     }
 
     @bind
@@ -457,6 +478,7 @@ class DataDocComponent extends React.Component<IProps, IState> {
         isEditable: boolean,
         defaultCollapse: boolean,
         focusedCellIndex: number,
+        fullScreenCellIndex: number,
         highlightCellIndex: number,
         cellIdToExecutionId: Record<number, number>
     ): IDataDocContextType {
@@ -480,10 +502,13 @@ class DataDocComponent extends React.Component<IProps, IState> {
             updateCell: this.updateCell,
             copyCellAt: this.copyCellAt,
             pasteCellAt: this.pasteCellAt,
+            fullScreenCellAt: this.fullScreenCellAt,
 
             defaultCollapse,
             focusedCellIndex,
             highlightCellIndex,
+            fullScreenCellIndex,
+
             cellFocus: {
                 onUpKeyPressed: (index: number) => this.focusCellAt(index - 1),
                 onDownKeyPressed: (index: number) =>
@@ -501,6 +526,7 @@ class DataDocComponent extends React.Component<IProps, IState> {
             this.props.isEditable,
             this.state.defaultCollapseAllCells,
             this.state.focusedCellIndex,
+            this.state.fullScreenCellIndex,
             this.state.highlightCellIndex,
             this.state.cellIdToExecutionId
         );
@@ -633,12 +659,7 @@ class DataDocComponent extends React.Component<IProps, IState> {
             changeDataDocMeta,
         } = this.props;
 
-        const {
-            connected,
-            defaultCollapseAllCells,
-
-            showSearchAndReplace,
-        } = this.state;
+        const { connected, defaultCollapseAllCells } = this.state;
 
         let docDOM = null;
         let isSavingDataDoc = false;
