@@ -22,7 +22,7 @@ python-memcached==1.59
 redis==3.5.2
 
 gevent==20.6.2
-greenlet==0.4.16  # 0.4.17 update causes UWSGI to break
+greenlet==0.4.16  # 0.4.17 update causes UWSGI to break 
 
 alembic==1.0.3
 
