@@ -62,7 +62,7 @@ interface IOwnProps {
     templatedVariables: Record<string, string>;
 
     shouldFocus: boolean;
-    isFullScreen?: boolean;
+    isFullScreen: boolean;
 
     showCollapsed: boolean;
 
@@ -75,6 +75,7 @@ interface IOwnProps {
     onUpKeyPressed?: () => any;
     onDownKeyPressed?: () => any;
     onDeleteKeyPressed?: () => any;
+    toggleFullScreen: () => any;
 }
 type IProps = IOwnProps & StateProps & DispatchProps;
 
@@ -95,8 +96,6 @@ interface IState {
     };
     queryCollapsedOverride: boolean;
     showQuerySnippetModal: boolean;
-
-    fullScreenCell: boolean;
 }
 
 class DataDocQueryCellComponent extends React.Component<IProps, IState> {
@@ -118,7 +117,6 @@ class DataDocQueryCellComponent extends React.Component<IProps, IState> {
             selectedRange: null,
             queryCollapsedOverride: null,
             showQuerySnippetModal: false,
-            fullScreenCell: false,
         };
     }
 
@@ -411,13 +409,6 @@ class DataDocQueryCellComponent extends React.Component<IProps, IState> {
     }
 
     @bind
-    public toggleFullScreen() {
-        this.setState(({ fullScreenCell }) => ({
-            fullScreenCell: !fullScreenCell,
-        }));
-    }
-
-    @bind
     public get queryCollapsed() {
         const { meta } = this.props;
         const { queryCollapsedOverride } = this.state;
@@ -574,8 +565,14 @@ class DataDocQueryCellComponent extends React.Component<IProps, IState> {
     }
 
     public renderEditorDOM() {
-        const { queryEngineById, cellId, isEditable } = this.props;
-        const { query, showQuerySnippetModal, fullScreenCell } = this.state;
+        const {
+            queryEngineById,
+            cellId,
+            isEditable,
+            isFullScreen,
+            toggleFullScreen,
+        } = this.props;
+        const { query, showQuerySnippetModal } = this.state;
         const queryEngine = queryEngineById[this.engineId];
         const queryCollapsed = this.queryCollapsed;
 
@@ -583,7 +580,7 @@ class DataDocQueryCellComponent extends React.Component<IProps, IState> {
             <div className="fullscreen-button-wrapper">
                 <Button
                     icon="maximize"
-                    onClick={this.toggleFullScreen}
+                    onClick={toggleFullScreen}
                     borderless
                     transparent
                     pushable
@@ -606,7 +603,7 @@ class DataDocQueryCellComponent extends React.Component<IProps, IState> {
                     ref={this.queryEditorRef}
                     engine={queryEngine}
                     cellId={cellId}
-                    height={fullScreenCell ? 'full' : 'auto'}
+                    height={isFullScreen ? 'full' : 'auto'}
                 />
             </div>
         );
@@ -658,8 +655,13 @@ class DataDocQueryCellComponent extends React.Component<IProps, IState> {
     }
 
     public render() {
-        const { queryEngines, queryEngineById, showCollapsed } = this.props;
-        const { query, fullScreenCell } = this.state;
+        const {
+            queryEngines,
+            queryEngineById,
+            showCollapsed,
+            isFullScreen,
+        } = this.props;
+        const { query } = this.state;
 
         if (!queryEngines.length) {
             return this.renderErrorCell(
@@ -680,7 +682,7 @@ class DataDocQueryCellComponent extends React.Component<IProps, IState> {
 
         const classes = classNames({
             DataDocQueryCell: true,
-            fullScreen: fullScreenCell,
+            fullScreen: isFullScreen,
         });
 
         return showCollapsed ? (
@@ -690,7 +692,7 @@ class DataDocQueryCellComponent extends React.Component<IProps, IState> {
                     <span>{'{...}'}</span>
                 </div>
             </div>
-        ) : fullScreenCell ? (
+        ) : isFullScreen ? (
             <div className={classes} ref={this.selfRef}>
                 {this.renderCellHeaderDOM()}
                 <div className="query-content">
