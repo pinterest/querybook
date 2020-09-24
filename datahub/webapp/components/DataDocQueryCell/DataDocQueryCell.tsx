@@ -4,6 +4,7 @@ import { find } from 'lodash';
 import { debounce, bind } from 'lodash-decorators';
 import React from 'react';
 import { connect } from 'react-redux';
+import Resizable from 're-resizable';
 
 import CodeMirror from 'lib/codemirror';
 import {
@@ -12,7 +13,7 @@ import {
     getQueryAsExplain,
 } from 'lib/sql-helper/sql-lexer';
 import { renderTemplatedQuery } from 'lib/templated-query';
-import { sleep } from 'lib/utils';
+import { sleep, enableResizable } from 'lib/utils';
 import { sendNotification } from 'lib/dataHubUI';
 import { IDataQueryCellMeta } from 'const/datadoc';
 
@@ -32,7 +33,6 @@ import {
     QueryRunButton,
     IQueryRunButtonHandles,
 } from 'components/QueryRunButton/QueryRunButton';
-import { CodeMirrorSearchHighlighter } from 'components/SearchAndReplace/CodeMirrorSearchHighlighter';
 import { BoundQueryEditor } from 'components/QueryEditor/BoundQueryEditor';
 
 import { Button } from 'ui/Button/Button';
@@ -95,6 +95,8 @@ interface IState {
     };
     queryCollapsedOverride: boolean;
     showQuerySnippetModal: boolean;
+
+    fullScreenCell: boolean;
 }
 
 class DataDocQueryCellComponent extends React.Component<IProps, IState> {
@@ -116,6 +118,7 @@ class DataDocQueryCellComponent extends React.Component<IProps, IState> {
             selectedRange: null,
             queryCollapsedOverride: null,
             showQuerySnippetModal: false,
+            fullScreenCell: false,
         };
     }
 
@@ -408,6 +411,13 @@ class DataDocQueryCellComponent extends React.Component<IProps, IState> {
     }
 
     @bind
+    public toggleFullScreen() {
+        this.setState(({ fullScreenCell }) => ({
+            fullScreenCell: !fullScreenCell,
+        }));
+    }
+
+    @bind
     public get queryCollapsed() {
         const { meta } = this.props;
         const { queryCollapsedOverride } = this.state;
@@ -492,6 +502,18 @@ class DataDocQueryCellComponent extends React.Component<IProps, IState> {
         );
     }
 
+    public get defaultCellTitle() {
+        const { queryIndexInDoc } = this.props;
+        return queryIndexInDoc == null
+            ? 'Untitled'
+            : `Query #${queryIndexInDoc + 1}`;
+    }
+    public get dataCellTitle() {
+        const { meta } = this.state;
+
+        return meta.title || this.defaultCellTitle;
+    }
+
     public renderErrorCell(errorMessage: React.ReactChild) {
         return (
             <div className={'DataDocQueryCell'} ref={this.selfRef}>
@@ -506,71 +528,71 @@ class DataDocQueryCellComponent extends React.Component<IProps, IState> {
         );
     }
 
-    public render() {
+    public renderCellHeaderDOM() {
         const {
             queryEngines,
             queryEngineById,
 
-            cellId,
-            docId,
-
             isEditable,
-
-            queryIndexInDoc,
-            showCollapsed,
         } = this.props;
-        const {
-            query,
-            meta,
-            selectedRange,
-            showQuerySnippetModal,
-        } = this.state;
+        const { meta, selectedRange } = this.state;
 
-        if (!queryEngines.length) {
-            return this.renderErrorCell(
-                'QueryCell will not work unless there is at least 1 query engine.' +
-                    ' Please contact admin.'
-            );
-        } else if (!(this.engineId in queryEngineById)) {
-            return this.renderErrorCell(
-                <>
-                    <p>
-                        Please remove this cell since it uses an invalid engine.
-                        Query text:
-                    </p>
-                    <p>{query}</p>
-                </>
-            );
-        }
-        const queryEngine = queryEngineById[this.engineId];
-        const queryCollapsed = this.queryCollapsed;
-
-        const classes = classNames({
-            DataDocQueryCell: true,
-        });
-
-        const defaultQueryTitle =
-            queryIndexInDoc == null
-                ? 'Untitled'
-                : `Query #${queryIndexInDoc + 1}`;
-        const dataCellTitle = meta.title || defaultQueryTitle;
         const queryTitleDOM = isEditable ? (
             <DebouncedInput
                 value={meta.title}
                 onChange={this.handleMetaTitleChange}
                 inputProps={{
-                    placeholder: defaultQueryTitle,
+                    placeholder: this.defaultCellTitle,
                     className: 'Title',
                 }}
                 transparent
                 flex
             />
         ) : (
-            <Title size={4}>{dataCellTitle}</Title>
+            <Title size={4}>{this.dataCellTitle}</Title>
         );
 
+        return (
+            <div className="query-metadata">
+                <div className="query-title">{queryTitleDOM}</div>
+                <QueryRunButton
+                    ref={this.runButtonRef}
+                    queryEngineById={queryEngineById}
+                    queryEngines={queryEngines}
+                    disabled={!isEditable}
+                    hasSelection={selectedRange != null}
+                    engineId={this.engineId}
+                    onRunClick={this.onRunButtonClick}
+                    onEngineIdSelect={this.handleMetaChange.bind(
+                        this,
+                        'engine'
+                    )}
+                />
+                {this.getAdditionalDropDownButtonDOM()}
+            </div>
+        );
+    }
+
+    public renderEditorDOM() {
+        const { queryEngineById, cellId, isEditable } = this.props;
+        const { query, showQuerySnippetModal, fullScreenCell } = this.state;
+        const queryEngine = queryEngineById[this.engineId];
+        const queryCollapsed = this.queryCollapsed;
+
+        const fullScreenButton = (
+            <div className="fullscreen-button-wrapper">
+                <Button
+                    icon="maximize"
+                    onClick={this.toggleFullScreen}
+                    borderless
+                    transparent
+                    pushable
+                />
+            </div>
+        );
         const editorDOM = !queryCollapsed && (
             <div className="editor">
+                {fullScreenButton}
                 <BoundQueryEditor
                     value={query}
                     lineWrapping={true}
@@ -584,7 +606,7 @@ class DataDocQueryCellComponent extends React.Component<IProps, IState> {
                     ref={this.queryEditorRef}
                     engine={queryEngine}
                     cellId={cellId}
-                    showFullScreenButton
+                    height={fullScreenCell ? 'full' : 'auto'}
                 />
             </div>
         );
@@ -613,48 +635,86 @@ class DataDocQueryCellComponent extends React.Component<IProps, IState> {
             </Modal>
         ) : null;
 
+        return (
+            <>
+                {editorDOM}
+                {openSnippetDOM}
+                {insertQuerySnippetModalDOM}
+            </>
+        );
+    }
+
+    public renderExecutionsDOM() {
+        const { cellId, docId } = this.props;
+
+        return (
+            <DataDocQueryExecutions
+                docId={docId}
+                cellId={cellId}
+                isQueryCollapsed={this.queryCollapsed}
+                changeCellContext={this.handleChange}
+            />
+        );
+    }
+
+    public render() {
+        const { queryEngines, queryEngineById, showCollapsed } = this.props;
+        const { query, fullScreenCell } = this.state;
+
+        if (!queryEngines.length) {
+            return this.renderErrorCell(
+                'QueryCell will not work unless there is at least 1 query engine.' +
+                    ' Please contact admin.'
+            );
+        } else if (!(this.engineId in queryEngineById)) {
+            return this.renderErrorCell(
+                <>
+                    <p>
+                        Please remove this cell since it uses an invalid engine.
+                        Query text:
+                    </p>
+                    <p>{query}</p>
+                </>
+            );
+        }
+
+        const classes = classNames({
+            DataDocQueryCell: true,
+            fullScreen: fullScreenCell,
+        });
+
         return showCollapsed ? (
             <div className={classes} ref={this.selfRef}>
                 <div className="query-title flex-row">
-                    <span>{meta.title || defaultQueryTitle}</span>
+                    <span>{this.dataCellTitle}</span>
                     <span>{'{...}'}</span>
                 </div>
             </div>
-        ) : (
-            <>
-                <div className={classes} ref={this.selfRef}>
-                    <div className="data-doc-query-cell-inner">
-                        <div className="query-metadata">
-                            <div className="query-title">{queryTitleDOM}</div>
-                            <QueryRunButton
-                                ref={this.runButtonRef}
-                                queryEngineById={queryEngineById}
-                                queryEngines={queryEngines}
-                                disabled={!isEditable}
-                                hasSelection={selectedRange != null}
-                                engineId={this.engineId}
-                                onRunClick={this.onRunButtonClick}
-                                onEngineIdSelect={this.handleMetaChange.bind(
-                                    this,
-                                    'engine'
-                                )}
-                            />
-                            {this.getAdditionalDropDownButtonDOM()}
-                        </div>
-                        <div className="query-content">
-                            {editorDOM}
-                            {openSnippetDOM}
-                            <DataDocQueryExecutions
-                                docId={docId}
-                                cellId={cellId}
-                                isQueryCollapsed={queryCollapsed}
-                                changeCellContext={this.handleChange}
-                            />
-                        </div>
-                    </div>
+        ) : fullScreenCell ? (
+            <div className={classes} ref={this.selfRef}>
+                {this.renderCellHeaderDOM()}
+                <div className="query-content">
+                    {this.renderEditorDOM()}
+                    <Resizable
+                        defaultSize={{
+                            width: '100%',
+                            height: `300px`,
+                        }}
+                        enable={enableResizable({ top: true, bottom: true })}
+                        minHeight={200}
+                    >
+                        {this.renderExecutionsDOM()}
+                    </Resizable>
                 </div>
-                {insertQuerySnippetModalDOM}
-            </>
+            </div>
+        ) : (
+            <div className={classes} ref={this.selfRef}>
+                {this.renderCellHeaderDOM()}
+                <div className="query-content">
+                    {this.renderEditorDOM()}
+                    {this.renderExecutionsDOM()}
+                </div>
+            </div>
         );
     }
 }

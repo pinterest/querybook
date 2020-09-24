@@ -108,7 +108,6 @@ export interface IQueryEditorProps extends IStyledQueryEditorProps {
     onBlur?: (editor: CodeMirror.Editor, event: React.SyntheticEvent) => any;
     onSelection?: (str: string, selection: IRange) => any;
     getTableByName?: (schema: string, name: string) => any;
-    showFullScreenButton?: boolean;
 }
 
 interface IState {
@@ -128,7 +127,6 @@ export class QueryEditor extends React.PureComponent<
         lineWrapping: false,
         height: 'auto',
         theme: 'default',
-        showFullScreenButton: false,
         functionDocumentationByNameByLanguage: {},
         language: 'hive',
         autoCompleteType: 'all',
@@ -595,31 +593,13 @@ export class QueryEditor extends React.PureComponent<
     }
 
     public render() {
-        const {
-            height,
-            showFullScreenButton,
-            fontSize,
-            className,
-        } = this.props;
+        const { height, fontSize, className } = this.props;
         const { fullScreen } = this.state;
 
         const editorClassName = classNames({
             fullScreen,
-            'with-fullscreen-button': showFullScreenButton,
             [className]: !!className,
         });
-
-        const fullScreenButton = showFullScreenButton ? (
-            <div className="fullscreen-button-wrapper">
-                <Button
-                    icon="maximize"
-                    onClick={this.toggleFullScreen}
-                    borderless
-                    transparent
-                    pushable
-                />
-            </div>
-        ) : null;
 
         return (
             <StyledQueryEditor
@@ -638,7 +618,6 @@ export class QueryEditor extends React.PureComponent<
                     onFocus={this.onFocus}
                     onBlur={this.onBlur}
                 />
-                {fullScreenButton}
             </StyledQueryEditor>
         );
     }
