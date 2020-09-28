@@ -21,13 +21,15 @@ class QueryCellExecutionManager {
             for (const [
                 cellId,
                 executions,
-                latest_execution,
+                latestExecution,
             ] of cellExecutions) {
                 if (executions) {
                     this.dispatch(
                         receiveQueryExecutionsByCell(executions, cellId)
                     );
-                    this.dispatch(receiveQueryExecution(latest_execution));
+                    if (latestExecution) {
+                        this.dispatch(receiveQueryExecution(latestExecution));
+                    }
                 }
             }
         },
