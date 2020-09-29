@@ -14,8 +14,9 @@ from app.flask_app import cache
 from const.impression import ImpressionItemType
 from const.metastore import DataTableWarningSeverity
 from const.time import seconds_in_a_day
-from lib.utils import mysql_cache
 from lib.metastore.utils import DataTableFinder
+from lib.query_analysis.samples import make_samples_query
+from lib.utils import mysql_cache
 from logic import metastore as logic
 from logic import admin as admin_logic
 from models.metastore import (
@@ -186,6 +187,23 @@ def get_columns_from_table(table_id):
     with DBSession() as session:
         verify_data_table_permission(table_id, session=session)
         return logic.get_column_by_table_id(table_id, session=session)
+
+
+@register("/table/<int:table_id>/raw_samples_query/", methods=["GET"])
+def get_table_samples_raw_query(
+    table_id, partition=None, where=None, order_by=None, order_by_asc=True, limit=100,
+):
+    with DBSession() as session:
+        verify_data_table_permission(table_id, session=session)
+        return make_samples_query(
+            table_id,
+            limit=limit,
+            partition=partition,
+            where=where,
+            order_by=order_by,
+            order_by_asc=order_by_asc,
+            session=session,
+        )
 
 
 @register("/table/<int:table_id>/samples/", methods=["POST"])

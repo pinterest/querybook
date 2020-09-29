@@ -25,6 +25,7 @@ import { Title } from 'ui/Title/Title';
 import { validateForm, updateValue } from 'ui/SmartForm/formFunctions';
 import { SmartForm } from 'ui/SmartForm/SmartForm';
 import './ResultExportDropdown.scss';
+import { tableToTSV } from 'lib/utils/table-export';
 
 interface IProps {
     statementExecution: IStatementExecution;
@@ -130,11 +131,7 @@ export const ResultExportDropdown: React.FunctionComponent<IProps> = ({
     const onExportPreviewClick = React.useCallback(async () => {
         const rawResult =
             statementResult?.data || (await loadStatementResult(statementId));
-        const parsedResult = rawResult
-            .map((row) =>
-                row.map((cell) => cell.replace(/\s/g, ' ')).join('\t')
-            )
-            .join('\n');
+        const parsedResult = tableToTSV(rawResult);
         setExportedInfo({
             info: parsedResult,
             type: 'text',

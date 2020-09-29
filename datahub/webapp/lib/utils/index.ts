@@ -53,7 +53,7 @@ export function getSelectionRect() {
     return windowSelection.getRangeAt(0).getBoundingClientRect();
 }
 
-export function sleep(ms) {
+export function sleep(ms: number) {
     return new Promise((resolve) => setTimeout(resolve, ms));
 }
 
@@ -67,7 +67,16 @@ export function download(dataUrl: string, fileName: string) {
     document.body.removeChild(a);
 }
 
-export function copy(text) {
+export function downloadString(
+    data: string,
+    fileName: string,
+    fileType = 'text/plain'
+) {
+    const blob = new Blob([data], { type: fileType });
+    download(window.URL.createObjectURL(blob), fileName);
+}
+
+export function copy(text: string) {
     const textArea = document.createElement('textarea');
     textArea.value = text;
     document.body.appendChild(textArea);

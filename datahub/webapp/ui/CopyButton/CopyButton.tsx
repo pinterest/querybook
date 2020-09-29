@@ -9,7 +9,7 @@ const DEFAULT_TOOL_TIP = 'Click To Copy';
 const DEFAULT_COPIED_TOOL_TIP = 'Copied!';
 
 interface ICopyButtonProps extends IButtonProps {
-    copyText: string;
+    copyText: string | (() => string);
     icon?: string;
     title?: string;
     className?: string;
@@ -42,7 +42,9 @@ export const CopyButton: React.FunctionComponent<ICopyButtonProps> = ({
             aria-label={tooltipToShow}
             data-balloon-pos={tooltipDirection}
             onClick={() => {
-                Utils.copy(copyText);
+                Utils.copy(
+                    typeof copyText === 'function' ? copyText() : copyText
+                );
                 setTooltipToShow(copiedTooltip);
             }}
             onMouseLeave={() => setTooltipToShow(tooltip)}

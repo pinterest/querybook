@@ -1,7 +1,13 @@
 import React, { useState, useMemo } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
+import { Formik } from 'formik';
 
 import * as dataSourcesActions from 'redux/dataSources/action';
+import { IStoreState, Dispatch } from 'redux/store/types';
+import ds from 'lib/datasource';
+import { format } from 'lib/sql-helper/sql-formatter';
+import { downloadString } from 'lib/utils';
+import { tableToCSV, tableToTSV } from 'lib/utils/table-export';
 
 import {
     IDataTable,
@@ -10,16 +16,19 @@ import {
     IDataColumn,
 } from 'const/metastore';
 import { AsyncButton } from 'ui/AsyncButton/AsyncButton';
-import { Table } from 'ui/Table/Table';
-import { IStoreState, Dispatch } from 'redux/store/types';
+
 import { Loading } from 'ui/Loading/Loading';
 
-import './DataTableViewSamples.scss';
 import { ITableSampleParams } from 'redux/dataSources/types';
-import { Formik } from 'formik';
 import { SimpleField } from 'ui/FormikField/SimpleField';
 import { useInterval } from 'hooks/useInterval';
 import { ProgressBar } from 'ui/ProgressBar/ProgressBar';
+import { CopyPasteModal } from 'ui/CopyPasteModal/CopyPasteModal';
+import { StatementResultTable } from 'components/DataDocStatementExecution/StatementResultTable';
+import { Button } from 'ui/Button/Button';
+import { CopyButton } from 'ui/CopyButton/CopyButton';
+
+import './DataTableViewSamples.scss';
 
 export interface IDataTableViewSamplesProps {
     table: IDataTable;
@@ -29,41 +38,81 @@ export interface IDataTableViewSamplesProps {
 
 const SamplesTableView: React.FunctionComponent<{
     samples: IDataTableSamples;
+    tableName: string;
     numberOfRows?: number;
-}> = ({ samples, numberOfRows }) => {
-    const tableRows = samples.value || [];
-
-    const rows = tableRows
-        .slice(1)
-        .map((row) =>
-            row.map((value) =>
-                typeof value === 'string' ? value : JSON.stringify(value)
-            )
-        );
-    const columns = (tableRows[0] || []).map((column, index) => ({
-        Header: column,
-        accessor: String(index),
-    }));
-    if (numberOfRows != null) {
-        rows.splice(numberOfRows);
-    }
-
+}> = ({ samples, numberOfRows, tableName }) => {
     const tableDOM = (
-        <Table
-            className="StatementResultTable force-scrollbar-x"
-            rows={rows}
-            cols={columns}
+        <StatementResultTable
+            data={samples.value}
+            paginate={true}
+            maxNumberOfRowsToShow={numberOfRows}
         />
     );
 
-    return <div className="DataHubTableViewSamples">{tableDOM}</div>;
+    return (
+        <div className="DataHubTableViewSamples">
+            <div className="flex-row">
+                <Button
+                    title="Download as csv"
+                    onClick={() => {
+                        downloadString(
+                            tableToCSV(samples.value),
+                            `${tableName}_samples.csv`,
+                            'text/csv'
+                        );
+                    }}
+                    icon="download"
+                    type="inlineText"
+                    borderless
+                    small
+                />
+                <span className="mr8" />
+                <CopyButton
+                    title="Copy as tsv"
+                    copyText={() => tableToTSV(samples.value)}
+                    type="inlineText"
+                    borderless
+                    small
+                />
+            </div>
+
+            {tableDOM}
+        </div>
+    );
 };
+
+interface ITableSamplesFormValues {
+    engineId: number;
+    partition?: string;
+    where: [string | null, string, string];
+    order_by?: string;
+    order_by_asc: boolean;
+}
+
+function valuesToParams(values: ITableSamplesFormValues) {
+    const sampleParams: ITableSampleParams = {};
+    if (values.partition) {
+        sampleParams.partition = values.partition;
+    }
+    if (values.order_by) {
+        sampleParams.order_by = values.order_by;
+    }
+    sampleParams.order_by_asc = values.order_by_asc;
+
+    if (values.where[0]) {
+        sampleParams.where = values.where;
+    }
+    return sampleParams;
+}
 
 export const DataTableViewSamples: React.FunctionComponent<IDataTableViewSamplesProps> = ({
     table,
     tableColumns,
     schema,
 }) => {
+    // Used to display the raw query that will be used for samples
+    // only shown if view query is clicked
+    const [rawSamplesQuery, setRawSamplesQuery] = useState<string>(null);
     const tablePartitions: string[] = useMemo(
         () => JSON.parse(table.latest_partitions ?? '[]'),
         [table.latest_partitions]
@@ -85,7 +134,7 @@ export const DataTableViewSamples: React.FunctionComponent<IDataTableViewSamples
     );
 
     const createDataTableSamples = React.useCallback(
-        async (tableId, engineId, params) =>
+        async (tableId, engineId, params?: ITableSampleParams) =>
             dispatch(
                 dataSourcesActions.createDataTableSamples(
                     tableId,
@@ -96,13 +145,24 @@ export const DataTableViewSamples: React.FunctionComponent<IDataTableViewSamples
         []
     );
 
+    const getDataTableSamplesQuery = React.useCallback(
+        async (tableId, params: ITableSampleParams, language: string) => {
+            const { data: query } = await ds.fetch<string>(
+                `/table/${tableId}/raw_samples_query/`,
+                params
+            );
+            setRawSamplesQuery(format(query, language));
+        },
+        []
+    );
+
     const pollDataTableSamples = React.useCallback(() => {
         return dispatch(dataSourcesActions.pollDataTableSample(table.id));
     }, [table.id]);
 
     const controlDOM = (
         <div className="samples-control">
-            <Formik
+            <Formik<ITableSamplesFormValues>
                 initialValues={{
                     engineId: queryEngines?.[0]?.id,
                     partition: null,
@@ -111,23 +171,10 @@ export const DataTableViewSamples: React.FunctionComponent<IDataTableViewSamples
                     order_by_asc: true,
                 }}
                 onSubmit={(values) => {
-                    const sampleParams: ITableSampleParams = {};
-                    if (values.partition) {
-                        sampleParams.partition = values.partition;
-                    }
-                    if (values.order_by) {
-                        sampleParams.order_by = values.order_by;
-                    }
-                    sampleParams.order_by_asc = values.order_by_asc;
-
-                    if (values.where[0]) {
-                        sampleParams.where = values.where;
-                    }
-
                     return createDataTableSamples(
                         table.id,
                         values.engineId,
-                        sampleParams
+                        valuesToParams(values)
                     );
                 }}
             >
@@ -198,25 +245,41 @@ export const DataTableViewSamples: React.FunctionComponent<IDataTableViewSamples
                                     )}
                                     withDeselect
                                 />
-                                <SimpleField
-                                    label="Order"
-                                    type="react-select"
-                                    name="order_by_asc"
-                                    options={[
-                                        {
-                                            label: 'Ascending',
-                                            value: true,
-                                        },
-                                        {
-                                            label: 'Descending',
-                                            value: false,
-                                        },
-                                    ]}
-                                />
+                                {values.order_by != null && (
+                                    <SimpleField
+                                        label="Order"
+                                        type="react-select"
+                                        name="order_by_asc"
+                                        options={[
+                                            {
+                                                label: 'Ascending',
+                                                value: true,
+                                            },
+                                            {
+                                                label: 'Descending',
+                                                value: false,
+                                            },
+                                        ]}
+                                    />
+                                )}
                             </div>
                             <div className="DataTableViewSamples-button mb8">
                                 <AsyncButton
-                                    title="Generate Table Samples"
+                                    title="View Query"
+                                    onClick={() =>
+                                        getDataTableSamplesQuery(
+                                            table.id,
+                                            valuesToParams(values),
+                                            queryEngines.find(
+                                                (engine) =>
+                                                    values.engineId ===
+                                                    engine.id
+                                            )?.language
+                                        )
+                                    }
+                                />
+                                <AsyncButton
+                                    title="Generate Samples"
                                     onClick={submitForm}
                                     disabled={isSubmitting}
                                 />
@@ -233,18 +296,27 @@ export const DataTableViewSamples: React.FunctionComponent<IDataTableViewSamples
             {controlDOM}
             <DataTableViewSamplesTable
                 tableId={table.id}
+                tableName={table.name}
                 loadDataTableSamples={loadDataTableSamples}
                 pollDataTableSamples={pollDataTableSamples}
             />
+            {rawSamplesQuery != null && (
+                <CopyPasteModal
+                    text={rawSamplesQuery}
+                    displayText
+                    onHide={() => setRawSamplesQuery(null)}
+                />
+            )}
         </div>
     );
 };
 
 const DataTableViewSamplesTable: React.FC<{
     tableId: number;
+    tableName: string;
     loadDataTableSamples: () => Promise<any>;
     pollDataTableSamples: () => Promise<any>;
-}> = ({ tableId, loadDataTableSamples, pollDataTableSamples }) => {
+}> = ({ tableId, loadDataTableSamples, pollDataTableSamples, tableName }) => {
     const [loading, setLoading] = useState(false);
 
     const samples = useSelector(
@@ -278,7 +350,7 @@ const DataTableViewSamplesTable: React.FC<{
             <ProgressBar value={poll.progress} showValue />
         </div>
     ) : samples ? (
-        <SamplesTableView samples={samples} />
+        <SamplesTableView tableName={tableName} samples={samples} />
     ) : (
         <div className="samples-not-found">
             Samples not found, Click 'Generate' to create samples.
