@@ -104,16 +104,7 @@ export const DataDocChartCell: React.FunctionComponent<IProps> = ({
                 setQueryExecutionId(meta.data.source_ids[0]);
             });
         }
-    }, [meta.data, previousQueryCellId, queryExecutions]);
-
-    React.useEffect(() => {
-        const sourceType = meta.data.source_type;
-        if (sourceType === 'cell_above' || sourceType === 'cell') {
-            if (queryExecutionId !== queryExecutions[0]?.id) {
-                setQueryExecutionId(queryExecutions[0]?.id);
-            }
-        }
-    }, [queryExecutions]);
+    }, [meta.data, previousQueryCellId]);
 
     const transformedChartData = React.useMemo(() => {
         const sourceType = meta.data.source_type;

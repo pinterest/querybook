@@ -39,21 +39,21 @@ export const QueryExecutionPicker: React.FunctionComponent<IProps> = React.memo(
                         qe.status !== QueryExecutionStatus.ERROR &&
                         qe.status !== QueryExecutionStatus.CANCEL
                 );
-            }, [hideFailed, queryExecutions]) || [];
+            }, [hideFailed, queryExecutions]) ?? [];
 
+        // Create an unique representation of query executions with its ids
+        // used for memo in autoSelect
+        const queryExecutionsStr = React.useMemo(
+            () => JSON.stringify(filteredQueryExecutions.map((q) => q.id)),
+            [filteredQueryExecutions]
+        );
+
+        // Whenever there are new executions, always go to the first one
         React.useEffect(() => {
-            if (
-                autoSelect &&
-                queryExecutionId == null &&
-                filteredQueryExecutions.length > 0
-            ) {
+            if (autoSelect && filteredQueryExecutions.length > 0) {
                 onSelection(filteredQueryExecutions[0].id);
             }
-        }, [
-            autoSelect,
-            queryExecutionId,
-            (filteredQueryExecutions || []).length,
-        ]);
+        }, [autoSelect, queryExecutionsStr]);
 
         const executionSelectorButton = React.useCallback(() => {
             const execution = queryExecutions.find(
