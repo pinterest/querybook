@@ -494,6 +494,10 @@ def exec_demo_set_up():
             session=session,
         ).id
 
+        logic.add_query_engine_to_environment(
+            environment.id, engine_id, commit=False, session=session
+        )
+
         task_schedule_id = TaskSchedule.create(
             {
                 "name": "update_metastore_{}".format(metastore_id),
