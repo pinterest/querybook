@@ -51,7 +51,9 @@ def get_query_engines_by_environment(environment_id, ordered=False, session=None
 
 
 @with_session
-def add_query_engine_to_environment(environment_id, query_engine_id, session=None):
+def add_query_engine_to_environment(
+    environment_id, query_engine_id, commit=True, session=None
+):
     max_engine_order = (
         next(
             iter(
@@ -69,6 +71,7 @@ def add_query_engine_to_environment(environment_id, query_engine_id, session=Non
             "environment_id": environment_id,
             "engine_order": max_engine_order + 1,
         },
+        commit=commit,
         session=session,
     )
 
