@@ -14,7 +14,9 @@ export const KeyContentDisplay: React.FunctionComponent<IProps> = ({
 }) => {
     return (
         <div className="KeyContentDisplay">
-            <div className="KeyContentDisplay-key">{titleize(keyString)}</div>
+            <div className="KeyContentDisplay-key">
+                {titleize(keyString, '_', ' ')}
+            </div>
             <div className="KeyContentDisplay-content">{children}</div>
         </div>
     );
