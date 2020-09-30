@@ -61,6 +61,8 @@ cell_types:
                     col_idx: 2
             visual:
                 legend_position: ''
+                legend_display: true
+
                 values:
                     display: 0
                     position: 'center'

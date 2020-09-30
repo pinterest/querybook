@@ -158,7 +158,9 @@ export enum chartValueDisplayType {
 }
 
 export interface IChartVisualMeta {
-    legend_position: ChartLegendPositionType;
+    legend_position?: ChartLegendPositionType;
+    legend_display?: boolean;
+
     values: {
         display: chartValueDisplayType;
         position: 'center' | 'start' | 'end';
@@ -227,6 +229,8 @@ export interface IChartFormValues {
 
     title: string;
     legendPosition: 'top' | 'bottom' | 'right' | 'left';
+    legendDisplay: boolean;
+
     valueDisplay: chartValueDisplayType;
     valuePosition: 'center' | 'start' | 'end';
     valueAlignment:

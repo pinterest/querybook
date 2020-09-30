@@ -127,7 +127,8 @@ export function mapMetaToFormVals(
 
         // labels
         title: meta.title || '',
-        legendPosition: meta.visual.legend_position || 'top',
+        legendPosition: meta.visual.legend_position ?? 'top',
+        legendDisplay: meta.visual.legend_display ?? true,
         valueDisplay:
             meta.visual.values?.display ?? chartValueDisplayType.FALSE,
         valuePosition: meta.visual.values?.position,
@@ -144,7 +145,8 @@ export function mapMetaToChartOptions(
     const optionsObj: ChartOptions = {
         responsive: true,
         legend: {
-            position: meta.visual.legend_position || 'top',
+            position: meta.visual.legend_position ?? 'top',
+            display: meta.visual.legend_display ?? true,
         },
         animation: {
             duration: 0,

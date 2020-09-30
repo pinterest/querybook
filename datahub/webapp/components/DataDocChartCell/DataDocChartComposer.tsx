@@ -737,13 +737,20 @@ const DataDocChartComposerComponent: React.FunctionComponent<
                         />
                     </>
                 )}
+                <FormSectionHeader>Legend</FormSectionHeader>
+                <SimpleField
+                    label="Visible"
+                    name="legendDisplay"
+                    type="checkbox"
+                />
                 <SimpleField
                     stacked
-                    label="Legend Position"
+                    label="Position"
                     name="legendPosition"
                     type="react-select"
                     options={['top', 'bottom', 'left', 'right']}
                 />
+
                 <FormSectionHeader>Values</FormSectionHeader>
                 <SimpleField
                     stacked
@@ -1042,6 +1049,7 @@ function formValsToMeta(vals: IChartFormValues, meta: IDataChartCellMeta) {
         // labels
         draft.title = vals.title;
         draft.visual.legend_position = vals.legendPosition;
+        draft.visual.legend_display = vals.legendDisplay;
         draft.visual.values = {
             display: vals.valueDisplay ?? chartValueDisplayType.FALSE,
             position: vals.valuePosition,
