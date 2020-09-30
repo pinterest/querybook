@@ -11,11 +11,13 @@ interface IShowMoreTextProps {
 }
 
 export const ShowMoreText: React.FunctionComponent<IShowMoreTextProps> = ({
-    text = '',
+    text,
     length = 100,
     seeLess = false,
     className = '',
 }) => {
+    text = text ?? '';
+
     const [expanded, setExpanded] = React.useState(false);
     const isList = Array.isArray(text);
     const max = length ?? (isList ? 4 : 100);
@@ -42,7 +44,7 @@ export const ShowMoreText: React.FunctionComponent<IShowMoreTextProps> = ({
         return (
             <span className={combinedClassName}>
                 {isList
-                    ? truncatedText.map((line, idx) => (
+                    ? (truncatedText as string[]).map((line, idx) => (
                           <span key={idx}>{line}</span>
                       ))
                     : truncatedText}
@@ -69,7 +71,9 @@ export const ShowMoreText: React.FunctionComponent<IShowMoreTextProps> = ({
         return (
             <span className={combinedClassName}>
                 {isList
-                    ? text.map((line, idx) => <span key={idx}>{line}</span>)
+                    ? (text as string[]).map((line, idx) => (
+                          <span key={idx}>{line}</span>
+                      ))
                     : text}
                 {seeLessSection}
             </span>
