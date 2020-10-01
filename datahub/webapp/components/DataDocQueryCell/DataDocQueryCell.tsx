@@ -11,6 +11,7 @@ import {
     ICodeAnalysis,
     getSelectedQuery,
     getQueryAsExplain,
+    IRange,
 } from 'lib/sql-helper/sql-lexer';
 import { renderTemplatedQuery } from 'lib/templated-query';
 import { sleep, enableResizable } from 'lib/utils';
@@ -166,66 +167,69 @@ class DataDocQueryCellComponent extends React.Component<IProps, IState> {
     }
 
     @bind
-    public onSelection(query, selectedRange) {
+    public onSelection(query: string, selectedRange: IRange) {
         this.setState({
             selectedRange,
         });
 
-        if (selectedRange) {
-            const codeAnalysis: ICodeAnalysis = this.queryEditorRef.current.getCodeAnalysis();
+        // disable this feature for now since users complainted that
+        // the sidebar popup disrupts the flow when selecting table names
 
-            if (
-                codeAnalysis &&
-                codeAnalysis.lineage &&
-                codeAnalysis.lineage.references &&
-                selectedRange.from.line === selectedRange.to.line
-            ) {
-                const selectionLine = selectedRange.from.line;
-                const selectionPos = {
-                    from: selectedRange.from.ch,
-                    to: selectedRange.to.ch,
-                };
+        // if (selectedRange) {
+        //     const codeAnalysis: ICodeAnalysis = this.queryEditorRef.current.getCodeAnalysis();
 
-                const tableReferences = Array.prototype.concat.apply(
-                    [],
-                    Object.values(codeAnalysis.lineage.references)
-                );
-                const table = find(tableReferences, (tb) => {
-                    if (tb.line === selectionLine) {
-                        const isSchemaExplicit =
-                            tb.end - tb.start > tb.name.length;
-                        const tablePos = {
-                            from:
-                                tb.start +
-                                (isSchemaExplicit ? tb.schema.length + 1 : 0),
-                            to: tb.end,
-                        };
+        //     if (
+        //         codeAnalysis &&
+        //         codeAnalysis.lineage &&
+        //         codeAnalysis.lineage.references &&
+        //         selectedRange.from.line === selectedRange.to.line
+        //     ) {
+        //         const selectionLine = selectedRange.from.line;
+        //         const selectionPos = {
+        //             from: selectedRange.from.ch,
+        //             to: selectedRange.to.ch,
+        //         };
 
-                        return (
-                            tablePos.from === selectionPos.from &&
-                            tablePos.to === selectionPos.to
-                        );
-                    }
-                });
-                if (table) {
-                    (async () => {
-                        const tableInfo = await this.fetchDataTableByNameIfNeeded(
-                            table.schema,
-                            table.name
-                        );
+        //         const tableReferences = Array.prototype.concat.apply(
+        //             [],
+        //             Object.values(codeAnalysis.lineage.references)
+        //         );
+        //         const table = find(tableReferences, (tb) => {
+        //             if (tb.line === selectionLine) {
+        //                 const isSchemaExplicit =
+        //                     tb.end - tb.start > tb.name.length;
+        //                 const tablePos = {
+        //                     from:
+        //                         tb.start +
+        //                         (isSchemaExplicit ? tb.schema.length + 1 : 0),
+        //                     to: tb.end,
+        //                 };
 
-                        if (tableInfo) {
-                            this.props.setTableSidebarId(tableInfo.id);
-                            // TODO: do we keep this logic?
-                            // this.props.showTableInInspector(tableInfo.id);
-                        } else {
-                            this.props.setTableSidebarId(null);
-                            // this.props.showTableInInspector(null);
-                        }
-                    })();
-                }
-            }
-        }
+        //                 return (
+        //                     tablePos.from === selectionPos.from &&
+        //                     tablePos.to === selectionPos.to
+        //                 );
+        //             }
+        //         });
+        //         if (table) {
+        //             (async () => {
+        //                 const tableInfo = await this.fetchDataTableByNameIfNeeded(
+        //                     table.schema,
+        //                     table.name
+        //                 );
+
+        //                 if (tableInfo) {
+        //                     this.props.setTableSidebarId(tableInfo.id);
+        //                     // TODO: do we keep this logic?
+        //                     // this.props.showTableInInspector(tableInfo.id);
+        //                 } else {
+        //                     this.props.setTableSidebarId(null);
+        //                     // this.props.showTableInInspector(null);
+        //                 }
+        //             })();
+        //         }
+        //     }
+        // }
     }
 
     @bind
