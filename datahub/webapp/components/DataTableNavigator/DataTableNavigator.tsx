@@ -8,7 +8,10 @@ import { withRouter, RouteComponentProps } from 'react-router-dom';
 
 import * as dataTableSearchActions from 'redux/dataTableSearch/action';
 import { IStoreState, Dispatch } from 'redux/store/types';
-import { ITableSearchResult } from 'redux/dataTableSearch/types';
+import {
+    ITableSearchResult,
+    ITableSearchFilters,
+} from 'redux/dataTableSearch/types';
 import { queryMetastoresSelector } from 'redux/dataSources/selector';
 import { IQueryMetastore } from 'const/metastore';
 
@@ -249,10 +252,14 @@ const mapDispatchToProps = (dispatch: Dispatch) => {
             dispatch(dataTableSearchActions.mapQueryParamToState()),
         updateSearchString: (searchString: string) =>
             dispatch(dataTableSearchActions.updateSearchString(searchString)),
-        updateSearchFilter: (filterKey: string, filterVal: any) =>
-            dispatch(
+        updateSearchFilter<K extends keyof ITableSearchFilters>(
+            filterKey: K,
+            filterVal: ITableSearchFilters[K]
+        ) {
+            return dispatch(
                 dataTableSearchActions.updateSearchFilter(filterKey, filterVal)
-            ),
+            );
+        },
         selectMetastore: (metastoreId: number) =>
             dispatch(dataTableSearchActions.selectMetastore(metastoreId)),
         getMoreDataTable: () =>

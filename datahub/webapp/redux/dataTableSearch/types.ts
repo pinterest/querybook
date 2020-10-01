@@ -1,4 +1,4 @@
-import { Action, Dispatch } from 'redux';
+import { Action } from 'redux';
 import { ThunkAction } from 'redux-thunk';
 import { IStoreState } from '../store/types';
 import { ICancelablePromise } from 'lib/datasource';
@@ -7,6 +7,13 @@ export interface ITableSearchResult {
     id: number;
     name: string;
     schema: string;
+}
+
+export interface ITableSearchFilters {
+    golden?: true;
+    tags?: string[];
+    startDate?: number;
+    endDate?: number;
 }
 
 export interface IDataTableSearchResultResetAction extends Action {
@@ -93,7 +100,10 @@ export interface IDataTableSearchPaginationState {
 }
 
 export interface IDataTableSearchState extends IDataTableSearchPaginationState {
-    searchFilters: {};
+    searchFilters: ITableSearchFilters;
+    searchFields: Partial<
+        Record<'table_name' | 'description' | 'column', boolean>
+    >;
     searchString: string;
     searchRequest?: ICancelablePromise<any>;
     metastoreId?: number;

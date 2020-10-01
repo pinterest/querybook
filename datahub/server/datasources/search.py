@@ -299,7 +299,7 @@ def search_datadoc(
         ES_CONFIG["datadocs"]["type_name"],
         True,
     )
-    return {"count": count, "data": results}
+    return {"count": count, "results": results}
 
 
 @register("/search/tables/", methods=["GET"])
@@ -329,14 +329,13 @@ def search_tables(
         sort_key=sort_key,
         sort_order=sort_order,
     )
-
     results, count = _get_matching_objects(
         query,
         ES_CONFIG["tables"]["index_name"],
         ES_CONFIG["tables"]["type_name"],
         True,
     )
-    return {"count": count, "data": results}
+    return {"count": count, "results": results}
 
 
 @register("/suggest/<int:metastore_id>/tables/", methods=["GET"])

@@ -111,7 +111,10 @@ export function performSearch(): ThunkResult<Promise<ISearchPreview[]>> {
                 searchParams['fields'] = Object.keys(searchState.searchFields);
             }
 
-            const searchRequest = ds.fetch(searchEndPoint, searchParams);
+            const searchRequest = ds.fetch<{
+                count: number;
+                results: ISearchPreview[];
+            }>(searchEndPoint, searchParams);
 
             dispatch({
                 type: '@@search/SEARCH_STARTED',
@@ -120,18 +123,20 @@ export function performSearch(): ThunkResult<Promise<ISearchPreview[]>> {
                 },
             });
 
-            const { data = [], count } = await searchRequest;
+            const {
+                data: { results, count },
+            } = await searchRequest;
 
             dispatch({
                 type: '@@search/SEARCH_DONE',
                 payload: {
-                    result: data || [],
+                    result: results || [],
                     page: currentPage,
                     count,
                 },
             });
 
-            return data;
+            return results;
         } catch (error) {
             if (error instanceof Object && error.name === 'AbortError') {
                 // guess it got canceled
