@@ -179,7 +179,7 @@ def _construct_tables_query(
         search_query["multi_match"] = {
             "query": keywords,
             "fields": search_fields,
-            "minimum_should_match": -1,
+            "minimum_should_match": "100%",
         }
     else:
         search_query["match_all"] = {}
