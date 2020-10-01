@@ -6,6 +6,7 @@ import {
     IDataTableSearchResultClearAction,
     ITableSearchResult,
     IDataTableSearchState,
+    ITableSearchFilters,
 } from './types';
 
 const BATCH_LOAD_SIZE = 100;
@@ -24,7 +25,7 @@ export function mapQueryParamToState(): ThunkResult<void> {
     };
 }
 
-function mapStateToQueryParam(state) {
+function mapStateToQueryParam(state: IDataTableSearchState) {
     const { searchFilters, searchString } = state;
     replaceQueryString({
         searchFilters,
@@ -36,7 +37,7 @@ function mapStateToSearch(state: IDataTableSearchState) {
     const searchString = state.searchString;
 
     const filters = Object.entries(state.searchFilters).filter(
-        ([filterKey, filterValue]) => filterValue != null
+        ([_, filterValue]) => filterValue != null
     );
 
     const matchSchemaName = searchString.match(/(\w+)\.\w*/);
@@ -50,6 +51,7 @@ function mapStateToSearch(state: IDataTableSearchState) {
         filters,
         limit: BATCH_LOAD_SIZE,
         concise: true,
+        fields: Object.keys(state.searchFields),
     };
     return searchParam;
 }
@@ -73,10 +75,10 @@ function searchDataTable(): ThunkResult<Promise<ITableSearchResult[]>> {
             if (state.searchRequest) {
                 state.searchRequest.cancel();
             }
-            const searchRequest = ds.fetch(
-                '/search/tables/',
-                mapStateToSearch(state)
-            );
+            const searchRequest = ds.fetch<{
+                results: ITableSearchResult[];
+                count: number;
+            }>('/search/tables/', mapStateToSearch(state));
             dispatch(resetSearchResult());
             dispatch({
                 type: '@@dataTableSearch/DATA_TABLE_SEARCH_STARTED',
@@ -85,7 +87,9 @@ function searchDataTable(): ThunkResult<Promise<ITableSearchResult[]>> {
                 },
             });
 
-            const { data: tables, count } = await searchRequest;
+            const {
+                data: { results: tables, count },
+            } = await searchRequest;
 
             dispatch({
                 type: '@@dataTableSearch/DATA_TABLE_SEARCH_DONE',
@@ -131,7 +135,10 @@ export function getMoreDataTable(): ThunkResult<Promise<ITableSearchResult[]>> {
                 offset: resultsCount,
             };
 
-            const searchRequest = ds.fetch('/search/tables/', searchParams);
+            const searchRequest = ds.fetch<{
+                results: ITableSearchResult[];
+                count: number;
+            }>('/search/tables/', searchParams);
 
             dispatch({
                 type: '@@dataTableSearch/DATA_TABLE_SEARCH_STARTED',
@@ -140,7 +147,9 @@ export function getMoreDataTable(): ThunkResult<Promise<ITableSearchResult[]>> {
                 },
             });
 
-            const { data: tables } = await searchRequest;
+            const {
+                data: { results: tables },
+            } = await searchRequest;
 
             dispatch({
                 type: '@@dataTableSearch/DATA_TABLE_SEARCH_MORE',
@@ -167,7 +176,7 @@ export function getMoreDataTable(): ThunkResult<Promise<ITableSearchResult[]>> {
     };
 }
 
-export function updateSearchString(searchString): ThunkResult<void> {
+export function updateSearchString(searchString: string): ThunkResult<void> {
     return (dispatch, getState) => {
         dispatch({
             type: '@@dataTableSearch/DATA_TABLE_SEARCH_STRING_UPDATE',
@@ -180,7 +189,10 @@ export function updateSearchString(searchString): ThunkResult<void> {
     };
 }
 
-export function updateSearchFilter(filterKey, filterValue): ThunkResult<void> {
+export function updateSearchFilter<K extends keyof ITableSearchFilters>(
+    filterKey: K,
+    filterValue: ITableSearchFilters[K] | null
+): ThunkResult<void> {
     return (dispatch, getState) => {
         dispatch({
             type: '@@dataTableSearch/DATA_TABLE_SEARCH_FILTER_UPDATE',

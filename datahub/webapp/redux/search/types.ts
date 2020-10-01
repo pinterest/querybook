@@ -163,7 +163,9 @@ export interface ISearchPaginationState {
 
 export interface ISearchState extends ISearchPaginationState {
     searchFilters: Record<string, any>;
-    searchFields: Record<string, boolean>;
+    searchFields: Partial<
+        Record<'table_name' | 'description' | 'column', boolean>
+    >;
     searchOrder: SearchOrder;
     searchType: SearchType;
     searchString: string;

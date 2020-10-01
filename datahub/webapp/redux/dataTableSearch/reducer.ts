@@ -12,6 +12,7 @@ const initialResultState: IDataTableSearchPaginationState = {
 
 const initialState: IDataTableSearchState = {
     searchFilters: {},
+    searchFields: { table_name: true },
     searchString: '',
     searchRequest: null,
     metastoreId: null,
