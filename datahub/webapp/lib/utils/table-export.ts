@@ -1,20 +1,15 @@
-export function tableToTSV(table: any[][]) {
+export function tableToTSV(table: string[][]) {
     return table
-        .map((row) =>
-            row.map((cell) => String(cell).replace(/\s/g, ' ')).join('\t')
-        )
+        .map((row) => row.map((cell) => cell.replace(/\s/g, ' ')).join('\t'))
         .join('\n');
 }
 
-export function tableToCSV(table: any[][]) {
+export function tableToCSV(table: string[][]) {
     return table
         .map((row) =>
             row
                 .map(
-                    (cell) =>
-                        `"${String(cell)
-                            .replace('"', '""')
-                            .replace('\n', ' ')}"`
+                    (cell) => `"${cell.replace('"', '""').replace('\n', ' ')}"`
                 )
                 .join(',')
         )
