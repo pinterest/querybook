@@ -19,7 +19,7 @@ def update_model_fields(
         field_names {List[str]} -- If not none, only update fields in the list (default: {None})
 
     Returns:
-        bool -- [description]
+        bool -- Whether or not the model got updated
     """
     model_updated = False
 

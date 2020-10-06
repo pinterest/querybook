@@ -845,6 +845,7 @@ def update_data_doc_editor(
             else:
                 session.flush()
             session.refresh(editor)
+        return editor
 
 
 @with_session

@@ -542,7 +542,6 @@ def update_datadoc_editor(
             assert_can_write(editor.data_doc_id, session=session)
 
         editor = logic.update_data_doc_editor(id, read, write, session=session)
-
         if editor:
             editor_dict = editor.to_dict()
             socketio.emit(
