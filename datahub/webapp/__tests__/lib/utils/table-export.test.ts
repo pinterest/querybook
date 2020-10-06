@@ -1,7 +1,7 @@
 import { tableToCSV, tableToTSV } from 'lib/utils/table-export';
 const table = [
     ['column1', 'column2', 'column3'],
-    [1, 2, 3],
+    ['1', '2', '3'],
     ['test"', 'test2    ', 'test3\t\t\n'],
 ];
 

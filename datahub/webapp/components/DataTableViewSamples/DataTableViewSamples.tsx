@@ -41,9 +41,24 @@ const SamplesTableView: React.FunctionComponent<{
     tableName: string;
     numberOfRows?: number;
 }> = ({ samples, numberOfRows, tableName }) => {
+    const processedData: string[][] = useMemo(
+        () =>
+            samples?.value.map((row) =>
+                row.map((value) =>
+                    typeof value === 'string'
+                        ? value
+                        : value?._isBigNumber || typeof value === 'number'
+                        ? value.toString()
+                        : // this is for functions, objects and arrays
+                          JSON.stringify(value)
+                )
+            ),
+        [samples?.value]
+    );
+
     const tableDOM = (
         <StatementResultTable
-            data={samples.value}
+            data={processedData}
             paginate={true}
             maxNumberOfRowsToShow={numberOfRows}
         />
@@ -56,7 +71,7 @@ const SamplesTableView: React.FunctionComponent<{
                     title="Download as csv"
                     onClick={() => {
                         downloadString(
-                            tableToCSV(samples.value),
+                            tableToCSV(processedData),
                             `${tableName}_samples.csv`,
                             'text/csv'
                         );
@@ -69,7 +84,7 @@ const SamplesTableView: React.FunctionComponent<{
                 <span className="mr8" />
                 <CopyButton
                     title="Copy as tsv"
-                    copyText={() => tableToTSV(samples.value)}
+                    copyText={() => tableToTSV(processedData)}
                     type="inlineText"
                     borderless
                     small
