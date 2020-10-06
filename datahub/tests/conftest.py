@@ -6,6 +6,15 @@ import pytest
 from sqlalchemy import create_engine
 
 
+@pytest.fixture(scope="session")
+def monkeysession():
+    from _pytest.monkeypatch import MonkeyPatch
+
+    mp = MonkeyPatch()
+    yield mp
+    mp.undo()
+
+
 def pytest_configure(config):
     """We can use _called_from_test to disable some checks
        during the test
@@ -21,8 +30,8 @@ def pytest_unconfigure(config):
     del sys._called_from_test
 
 
-@pytest.fixture
-def db_engine(monkeypatch):
+@pytest.fixture(scope="session")
+def db_engine(monkeysession):
     from env import DataHubSettings
 
     tempfile_path = os.path.join(tempfile.gettempdir(), "test.db")
@@ -40,15 +49,15 @@ def db_engine(monkeypatch):
 
     from app import db
 
-    monkeypatch.setattr(db, "get_db_engine", mock_get_db_engine)
-    monkeypatch.setattr(DataHubSettings, "DATABASE_CONN", database_conn, raising=True)
+    monkeysession.setattr(db, "get_db_engine", mock_get_db_engine)
+    monkeysession.setattr(DataHubSettings, "DATABASE_CONN", database_conn, raising=True)
 
     yield engine
 
     os.remove(tempfile_path)
 
 
-@pytest.fixture
+@pytest.fixture(scope="session")
 def flask_client(db_engine):
     from app.flask_app import flask_app
 
@@ -63,6 +72,7 @@ def fake_user(monkeypatch):
 
     user = mock.MagicMock()
     user.__repr__ = lambda self: "Mr Mocked"
+    user.id = 1
     monkeypatch.setattr(flask_login.utils, "_get_user", user)
 
     return user
