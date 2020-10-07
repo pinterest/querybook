@@ -17,6 +17,7 @@ import { IconButton } from 'ui/Button/IconButton';
 
 import './QueryExecutionButton.scss';
 import { IQueryEngine } from 'const/queryEngine';
+import { IEnvironment } from 'redux/environment/types';
 
 interface IOwnProps {
     tooltipPos?: TooltipDirection;
@@ -64,30 +65,23 @@ class QueryExecutionButtonComponent extends React.Component<IProps, IState> {
     @decorate(memoizeOne)
     public _getActiveQueryExecutions(
         queryExecutionById: Record<number, IQueryExecution>,
-        queryEngineById: Record<number, IQueryEngine>,
-        currentEnvironmentId: number
+        queryEnginesInEnv: number[]
     ) {
         return Object.values(queryExecutionById).filter((queryExecution) => {
             // filter by query executions only in the current environment
             return (
-                queryEngineById[queryExecution.engine_id]?.environment_id ===
-                    currentEnvironmentId &&
+                queryEnginesInEnv.includes(queryExecution.engine_id) &&
                 queryExecution.status < QueryExecutionStatus.DONE
             );
         });
     }
 
     public getActiveQueryExecutions() {
-        const {
-            queryExecutionById,
-            queryEngineById,
-            currentEnvironmentId,
-        } = this.props;
+        const { queryExecutionById, queryEnginesInEnv } = this.props;
 
         return this._getActiveQueryExecutions(
             queryExecutionById,
-            queryEngineById,
-            currentEnvironmentId
+            queryEnginesInEnv
         );
     }
 
@@ -184,8 +178,10 @@ function mapStateToProps(state: IStoreState) {
     return {
         queryExecutionById: state.queryExecutions.queryExecutionById,
         uid: state.user.myUserInfo.uid,
-        queryEngineById: state.queryEngine.queryEngineById,
-        currentEnvironmentId: state.environment.currentEnvironmentId,
+        queryEnginesInEnv:
+            state.environment.environmentEngineIds[
+                state.environment.currentEnvironmentId
+            ],
     };
 }
 

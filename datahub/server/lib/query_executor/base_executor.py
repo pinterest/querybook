@@ -251,6 +251,12 @@ class QueryExecutorLogger(object):
 
     def on_exception(self, error_type: int, error_str: str, error_extracted: str):
         utcnow = datetime.datetime.utcnow()
+        error_extracted = (
+            error_extracted[:5000]
+            if error_extracted is not None and len(error_extracted) > 5000
+            else error_extracted
+        )
+
         with DBSession() as session:
             if len(self.statement_execution_ids) > 0:
                 statement_execution_id = self.statement_execution_ids[-1]
@@ -560,7 +566,6 @@ class QueryExecutorBaseClass(metaclass=ABCMeta):
             self._on_query_completion()
 
     def on_exception(self, e):
-        self.status = QueryExecutionStatus.ERROR
         try:
             # Try our best to fetch logs again
             if self._cursor:
@@ -572,6 +577,12 @@ class QueryExecutorBaseClass(metaclass=ABCMeta):
             # Update logger
             error_type, error_str, error_extracted = self._parse_exception(e)
             self._logger.on_exception(error_type, error_str, error_extracted)
+
+            # Finally update the executor status
+            # The logger might fail as well, so update the executor status last
+            # Since in case of failure, it is expected that the caller of executor
+            # to update the db status
+            self.status = QueryExecutionStatus.ERROR
 
     def _on_statement_completion(self):
         self._logger.on_statement_end(self._cursor)
