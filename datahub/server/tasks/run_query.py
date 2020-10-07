@@ -107,7 +107,7 @@ def run_query_task(self, query_execution_id):
                 qe_logic.create_query_execution_error(
                     query_execution_id,
                     error_type=None,
-                    error_message_extracted=error_message,
+                    error_message_extracted=None,
                     error_message=error_message,
                     session=session,
                 )
