@@ -181,7 +181,7 @@ function mapStateToProps(state: IStoreState) {
         queryEnginesInEnv:
             state.environment.environmentEngineIds[
                 state.environment.currentEnvironmentId
-            ],
+            ] ?? [],
     };
 }
 
