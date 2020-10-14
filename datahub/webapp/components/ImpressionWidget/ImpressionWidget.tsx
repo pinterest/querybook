@@ -5,6 +5,7 @@ import { Icon } from 'ui/Icon/Icon';
 
 import { ImpressionWidgetMenu } from './ImpressionWidgetMenu';
 import { Popover, PopoverLayout } from 'ui/Popover/Popover';
+import { PrettyNumber } from 'ui/PrettyNumber/PrettyNumber';
 
 import './ImpressionWidget.scss';
 
@@ -22,7 +23,7 @@ export const ImpressionWidget: React.FunctionComponent<IProps> = ({
     const selfRef = useRef<HTMLSpanElement>(null);
     const [showMenu, setShowMenu] = useState(false);
 
-    const { data: totalViews, isLoading } = useDataFetch({
+    const { data: totalViews, isLoading } = useDataFetch<number>({
         url: `/impression/${type}/${itemId}/count/`,
     });
 
@@ -48,7 +49,7 @@ export const ImpressionWidget: React.FunctionComponent<IProps> = ({
                 ref={selfRef}
             >
                 {icon}
-                {isLoading ? ' ' : totalViews}
+                {isLoading ? ' ' : <PrettyNumber val={totalViews} />}
             </span>
             {widgetMenu}
         </>

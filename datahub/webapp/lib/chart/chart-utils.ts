@@ -3,15 +3,12 @@ import { ChartScaleType } from 'const/dataDocChart';
 
 // from: https://blog.abelotech.com/posts/number-currency-formatting-javascript/
 // need to fix (12.34567 becomes 12.34,567)
-export function formatNumber(num: number) {
+export function formatNumber(rawNum: number | string) {
+    const num = Number(rawNum);
     if (isNaN(num)) {
-        return num;
+        return rawNum;
     } else {
-        const [numberString, ...decimals] = num.toString().split('.');
-        return [
-            numberString.replace(/(\d)(?=(\d{3})+(?!\d))/g, '$1,'),
-            ...decimals,
-        ].join('.');
+        return num.toLocaleString();
     }
 }
 
