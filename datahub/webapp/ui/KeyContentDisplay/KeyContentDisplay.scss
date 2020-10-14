@@ -19,5 +19,8 @@
                 background-color: var(--bg-color);
             }
         }
+        &.right-align {
+            max-width: 120px;
+        }
     }
 }
