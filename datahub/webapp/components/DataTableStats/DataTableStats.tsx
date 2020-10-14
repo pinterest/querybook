@@ -50,7 +50,11 @@ export const DataTableStats: React.FunctionComponent<IProps> = ({
     }
 
     const statsDOM = (tableStats || []).map((tableStat) => (
-        <KeyContentDisplay key={tableStat.id} keyString={tableStat.key}>
+        <KeyContentDisplay
+            key={tableStat.id}
+            keyString={tableStat.key}
+            rightAlign={!isNaN(tableStat.value)}
+        >
             {renderStatValue(tableStat.value)}
         </KeyContentDisplay>
     ));

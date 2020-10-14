@@ -102,7 +102,7 @@ export const DataTableHeader: React.FunctionComponent<IDataTableHeader> = ({
             <div className="DataTableHeader-owner-list flex-row mb8">
                 {dbTableOwner || tableOwnerships?.length ? (
                     <>
-                        <span className="mr8">by</span>
+                        <span className="mr8">owned by</span>
                         {dbTableOwner && <UserBadge name={dbTableOwner} mini />}
                         {ownershipDOM}
                     </>
@@ -118,7 +118,7 @@ export const DataTableHeader: React.FunctionComponent<IDataTableHeader> = ({
                     />
                 ) : (
                     <IconButton
-                        tooltip={'Claim table'}
+                        tooltip={'Add myself as an additional owner'}
                         tooltipPos="right"
                         icon="user-plus"
                         size={18}
