@@ -1,4 +1,5 @@
 import * as React from 'react';
+import classNames from 'classnames';
 
 import { titleize } from 'lib/utils';
 
@@ -14,20 +15,17 @@ export const KeyContentDisplay: React.FunctionComponent<IProps> = ({
     children,
     rightAlign,
 }) => {
+    const keyContentDisplayClassName = classNames({
+        'KeyContentDisplay-content': true,
+        'right-align': rightAlign,
+    });
+
     return (
         <div className="KeyContentDisplay">
             <div className="KeyContentDisplay-key">
                 {titleize(keyString, '_', ' ')}
             </div>
-            <div
-                className={
-                    rightAlign
-                        ? 'KeyContentDisplay-content right-align'
-                        : 'KeyContentDisplay-content'
-                }
-            >
-                {children}
-            </div>
+            <div className={keyContentDisplayClassName}>{children}</div>
         </div>
     );
 };

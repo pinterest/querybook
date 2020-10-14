@@ -118,7 +118,11 @@ export const DataTableHeader: React.FunctionComponent<IDataTableHeader> = ({
                     />
                 ) : (
                     <IconButton
-                        tooltip={'Add myself as an additional owner'}
+                        tooltip={
+                            dbTableOwner || tableOwnerships?.length
+                                ? 'Add myself as an additional owner'
+                                : 'Add myself as an owner'
+                        }
                         tooltipPos="right"
                         icon="user-plus"
                         size={18}
