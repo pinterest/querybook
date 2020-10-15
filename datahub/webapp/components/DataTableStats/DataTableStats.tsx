@@ -4,7 +4,7 @@ import { useDispatch, useSelector } from 'react-redux';
 import { IStoreState, Dispatch } from 'redux/store/types';
 import { fetchDataTableStatsIfNeeded } from 'redux/dataSources/action';
 
-import { renderStatValue } from './DataTableStatsCommon';
+import { TableStats } from './DataTableStatsCommon';
 
 import { KeyContentDisplay } from 'ui/KeyContentDisplay/KeyContentDisplay';
 import { LoadingIcon } from 'ui/Loading/Loading';
@@ -55,7 +55,7 @@ export const DataTableStats: React.FunctionComponent<IProps> = ({
             keyString={tableStat.key}
             rightAlign={!isNaN(tableStat.value)}
         >
-            {renderStatValue(tableStat.value)}
+            <TableStats val={tableStat.value} />
         </KeyContentDisplay>
     ));
 

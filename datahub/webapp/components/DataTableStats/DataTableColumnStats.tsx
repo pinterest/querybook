@@ -3,7 +3,7 @@ import * as React from 'react';
 import { TableStatValue } from 'const/metastore';
 import { useDataFetch } from 'hooks/useDataFetch';
 import { KeyContentDisplay } from 'ui/KeyContentDisplay/KeyContentDisplay';
-import { renderStatValue } from './DataTableStatsCommon';
+import { TableStats } from './DataTableStatsCommon';
 
 interface IProps {
     columnId: number;
@@ -28,7 +28,7 @@ export const DataTableColumnStats: React.FunctionComponent<IProps> = ({
             key={tableColumnStat.id}
             keyString={tableColumnStat.key}
         >
-            {renderStatValue(tableColumnStat.value)}
+            <TableStats val={tableColumnStat.value} />
         </KeyContentDisplay>
     ));
 

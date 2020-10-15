@@ -22,6 +22,7 @@ import { currentEnvironmentSelector } from 'redux/environment/selector';
 
 import { UserSelect } from 'components/UserSelect/UserSelect';
 import { UserAvatar } from 'components/UserBadge/UserAvatar';
+import { TableTagSelect } from 'components/DataTableTags/TableTagSelect';
 import { DataDocItem, DataTableItem } from './SearchResultItem';
 
 import { Button } from 'ui/Button/Button';
@@ -36,10 +37,10 @@ import { Pagination } from 'ui/Pagination/Pagination';
 import { SearchBar } from 'ui/SearchBar/SearchBar';
 import { Select } from 'ui/Select/Select';
 import { Tabs } from 'ui/Tabs/Tabs';
-import { TableTagSelect } from 'components/DataTableTags/TableTagSelect';
+import { HoverIconTag } from 'ui/Tag/Tag';
+import { PrettyNumber } from 'ui/PrettyNumber/PrettyNumber';
 
 import './SearchOverview.scss';
-import { HoverIconTag } from 'ui/Tag/Tag';
 
 const secondsPerDay = 60 * 60 * 24;
 const inputDateFormat = 'YYYY-MM-DD';
@@ -48,7 +49,7 @@ const getFormattedDateFromSeconds = (
     format: string
 ) =>
     seconds != null
-        ? moment(parseInt(seconds as string) * 1000).format(format)
+        ? moment(parseInt(seconds as string, 10) * 1000).format(format)
         : '';
 
 const userReactSelectStyle: {} = makeReactSelectStyle(
@@ -541,8 +542,8 @@ export const SearchOverview: React.FunctionComponent = () => {
             <div className="search-results">
                 <div className="search-result-top horizontal-space-between">
                     <span className="search-result-count">
-                        {numberOfResult}{' '}
-                        {numberOfResult === 1 ? 'result' : 'results'}
+                        <PrettyNumber val={numberOfResult} />{' '}
+                        {numberOfResult <= 1 ? 'result' : 'results'}
                     </span>
                     <span>{orderByDOM}</span>
                 </div>

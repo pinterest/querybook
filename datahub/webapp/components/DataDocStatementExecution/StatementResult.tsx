@@ -10,6 +10,7 @@ import {
 import { Loading } from 'ui/Loading/Loading';
 import { Message } from 'ui/Message/Message';
 import { Button } from 'ui/Button/Button';
+import { PrettyNumber } from 'ui/PrettyNumber/PrettyNumber';
 import { StatementResultTable } from './StatementResultTable';
 
 interface IProps {
@@ -37,7 +38,9 @@ export class StatementResult extends React.PureComponent<IProps, {}> {
                 <span className="warning-word">
                     Previewing First {formatPlural(actualRowCount, 'row')}{' '}
                 </span>
-                <span>Full Result ({resultRowCount} Rows) </span>
+                <span>
+                    Full Result (<PrettyNumber val={resultRowCount} /> Rows){' '}
+                </span>
                 <span aria-label={resultPreviewTooltip} data-balloon-pos={'up'}>
                     <i className="fas fa-info-circle" />
                 </span>

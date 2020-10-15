@@ -1,13 +1,16 @@
 import * as React from 'react';
 import { TableStatValue } from 'const/metastore';
 import { formatNumber } from 'lib/chart/chart-utils';
+import { PrettyNumber } from 'ui/PrettyNumber/PrettyNumber';
 
-export const renderStatValue = (val: TableStatValue) => {
+export const TableStats: React.FC<{ val: TableStatValue }> = ({ val }) => {
+    let dom: React.ReactNode = null;
     if (Array.isArray(val)) {
-        return val.map((item, idx) => <div key={idx}>{item}</div>);
+        dom = val.map((item, idx) => <div key={idx}>{item}</div>);
     } else if (typeof val === 'number') {
-        return formatNumber(val);
+        dom = <PrettyNumber val={val} />;
+    } else {
+        dom = val;
     }
-
-    return val;
+    return <>{dom}</>;
 };
