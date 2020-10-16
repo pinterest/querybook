@@ -1,17 +1,6 @@
 import moment from 'moment';
 import { ChartScaleType } from 'const/dataDocChart';
 
-// from: https://blog.abelotech.com/posts/number-currency-formatting-javascript/
-// need to fix (12.34567 becomes 12.34,567)
-export function formatNumber(rawNum: number | string) {
-    const num = Number(rawNum);
-    if (isNaN(num)) {
-        return rawNum;
-    } else {
-        return num.toLocaleString();
-    }
-}
-
 export type AxesValueType = null | 'date' | 'datetime' | 'number' | 'string';
 export function getValueDataType(value: any): AxesValueType {
     if (value != null) {

@@ -1,9 +1,10 @@
 import React, { useMemo } from 'react';
-import { formatNumber } from 'lib/chart/chart-utils';
+import { formatNumber } from 'lib/utils';
 
 export const PrettyNumber: React.FC<{
     val: number | string;
-}> = ({ val }) => {
-    const formattedNumber = useMemo(() => formatNumber(val), [val]);
+    unit?: string;
+}> = ({ val, unit }) => {
+    const formattedNumber = useMemo(() => formatNumber(val, unit), [val, unit]);
     return <>{formattedNumber}</>;
 };
