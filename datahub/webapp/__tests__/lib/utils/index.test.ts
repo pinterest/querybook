@@ -76,6 +76,9 @@ test('formatNumber', () => {
     expect(utils.formatNumber(1, 'kitten')).toStrictEqual('1 kitten');
     expect(utils.formatNumber(3, 'kitten')).toStrictEqual('3 kittens');
     expect(utils.formatNumber(9999, 'kitten')).toStrictEqual('9,999 kittens');
+
+    expect(utils.formatNumber(123)).toStrictEqual('123');
+    expect(utils.formatNumber(1234.123)).toStrictEqual('1,234.123');
 });
 
 test('getHumanReadableByteSize', () => {
