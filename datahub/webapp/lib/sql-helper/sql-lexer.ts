@@ -163,7 +163,7 @@ class StringStream {
     public string: string;
     public pos: number;
 
-    constructor(s) {
+    constructor(s: string) {
         this.string = s;
         this.pos = 0;
     }
