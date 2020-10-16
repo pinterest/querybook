@@ -1,7 +1,7 @@
 import classNames from 'classnames';
 import React from 'react';
 
-import { formatPlural } from 'lib/utils';
+import { formatNumber } from 'lib/utils';
 import {
     IStatementExecution,
     IStatementResult,
@@ -21,25 +21,30 @@ interface IProps {
 }
 
 export class StatementResult extends React.PureComponent<IProps, {}> {
-    public getFetchInfoDOM(resultRowColumnCount, actualRowColumnCount) {
+    public getFetchInfoDOM(
+        resultRowColumnCount: number,
+        actualRowColumnCount: number
+    ) {
         const resultRowCount = Math.max(resultRowColumnCount - 1, 0);
         const actualRowCount = Math.max(actualRowColumnCount - 1, 0);
 
         const fetchedAllRows = resultRowCount === actualRowCount;
-        const resultPreviewTooltip = `Download full result (${formatPlural(
+        const resultPreviewTooltip = `Download full result (${formatNumber(
             resultRowCount,
             'row'
         )}) through Export.`;
 
         const fetchRowInfo = fetchedAllRows ? (
-            `Full Result (${formatPlural(actualRowCount, 'row')})`
+            `Full Result (${formatNumber(actualRowCount, 'row')})`
         ) : (
             <span>
                 <span className="warning-word">
-                    Previewing First {formatPlural(actualRowCount, 'row')}{' '}
+                    Previewing First{' '}
+                    <PrettyNumber val={actualRowCount} unit="Row" />{' '}
                 </span>
                 <span>
-                    Full Result (<PrettyNumber val={resultRowCount} /> Rows){' '}
+                    Full Result (
+                    <PrettyNumber val={resultRowCount} unit="Row" />){' '}
                 </span>
                 <span aria-label={resultPreviewTooltip} data-balloon-pos={'up'}>
                     <i className="fas fa-info-circle" />

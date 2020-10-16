@@ -1,6 +1,5 @@
 import * as React from 'react';
 import { TableStatValue } from 'const/metastore';
-import { formatNumber } from 'lib/chart/chart-utils';
 import { PrettyNumber } from 'ui/PrettyNumber/PrettyNumber';
 
 export const TableStats: React.FC<{ val: TableStatValue }> = ({ val }) => {

@@ -204,8 +204,15 @@ export function arrayGroupByField<
     }, {});
 }
 
-export function formatPlural(count: number, unit: string) {
-    return `${count} ${unit}${count > 1 ? 's' : ''}`;
+export function formatNumber(rawNum: number | string, unit?: string) {
+    const num = Number(rawNum);
+    if (isNaN(num)) {
+        return rawNum;
+    } else {
+        const numString = num.toLocaleString('en-us');
+        const unitString = unit ? ` ${unit}${num > 1 ? 's' : ''}` : '';
+        return numString + unitString;
+    }
 }
 
 // from https://stackoverflow.com/a/39494245

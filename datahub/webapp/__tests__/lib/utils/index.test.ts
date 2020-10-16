@@ -71,9 +71,11 @@ test('arrayGroupByField', () => {
     });
 });
 
-test('formatPlural', () => {
-    expect(utils.formatPlural(1, 'kitten')).toStrictEqual('1 kitten');
-    expect(utils.formatPlural(3, 'kitten')).toStrictEqual('3 kittens');
+test('formatNumber', () => {
+    expect(utils.formatNumber(0, 'kitten')).toStrictEqual('0 kitten');
+    expect(utils.formatNumber(1, 'kitten')).toStrictEqual('1 kitten');
+    expect(utils.formatNumber(3, 'kitten')).toStrictEqual('3 kittens');
+    expect(utils.formatNumber(9999, 'kitten')).toStrictEqual('9,999 kittens');
 });
 
 test('getHumanReadableByteSize', () => {

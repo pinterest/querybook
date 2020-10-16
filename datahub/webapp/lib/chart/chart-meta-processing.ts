@@ -9,7 +9,7 @@ import {
     chartValueDisplayType,
 } from 'const/dataDocChart';
 import { fontColor, fillColor, backgroundColor } from 'const/chartColors';
-import { formatNumber } from './chart-utils';
+import { formatNumber } from 'lib/utils';
 
 function filterSeries<T, K extends keyof T>(
     series: Record<number, T>,
