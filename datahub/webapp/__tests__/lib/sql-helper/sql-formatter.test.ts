@@ -11,6 +11,10 @@ test('Simple formatting case', () => {
 FROM
   test;`
     );
+    expect(format('select ARRAY [1] || ARRAY [2];', 'presto')).toBe(
+        `SELECT
+  ARRAY [1] || ARRAY [2];`
+    );
 });
 test('Simple formatting with templating case', () => {
     expect(format('{{ test }};', 'presto')).toBe(`{{ test }};`);
