@@ -12,7 +12,15 @@ import { NotificationManager } from 'components/NotificationManager/Notification
 import { reduxStore } from 'redux/store';
 
 // Make debugging easier
-(window as any).reduxStore = reduxStore;
+declare global {
+    /* tslint:disable:interface-name */
+    interface Window {
+        reduxStore?: typeof reduxStore;
+        receiveChildMessage?: () => void;
+        NO_ENVIRONMENT_MESSAGE?: string;
+    }
+}
+window.reduxStore = reduxStore;
 
 const AppInner = () => (
     <DndProvider backend={HTML5Backend}>

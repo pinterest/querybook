@@ -89,7 +89,7 @@ module.exports = (env) => {
     const customScriptPath = !!process.env.DATAHUB_PLUGIN
         ? path.resolve(
               process.env.DATAHUB_PLUGIN,
-              './webpage_plugin/custom_script.js'
+              './webpage_plugin/custom_script.ts'
           )
         : null;
     if (customScriptPath != null && fs.existsSync(customScriptPath)) {
@@ -207,9 +207,9 @@ module.exports = (env) => {
             new HtmlWebpackPlugin({
                 title: 'DataHub',
                 template: './datahub/webapp/index.html',
-                chunks: ['react_hot_loader', 'vendor', 'react_app'].concat(
-                    entry.custom ? ['custom'] : []
-                ),
+                chunks: ['react_hot_loader', 'vendor']
+                    .concat(entry.custom ? ['custom'] : [])
+                    .concat(['react_app']),
                 chunksSortMode: 'manual',
             }),
             new webpack.SourceMapDevToolPlugin({
