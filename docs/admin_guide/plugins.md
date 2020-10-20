@@ -24,11 +24,9 @@ If you are extending the default query engine, you can create a new engine execu
 
 Auth plugin can be used to add different authentication methods to DataHub as well as adding custom behavior behaviors after a user authenticates. An example of the latter case is to automatically add users to different environments based on additional user permission queries. Please check [Add Auth guide](../developer_guide/add_auth.md) to learn how to add a new auth plugin.
 
-
 ### Engine Status Checker
 
 Engine status checker plugin lets you customize how you want to expose the backend query engine information to the frontend user. Place your custom logic under engine_status_checker_plugin/. Please check [Add Engine Status Checker guide](../developer_guide/add_engine_status_checker.md) to learn how to add a new engine status checker.
-
 
 ### Exporter Plugin
 
@@ -46,11 +44,9 @@ Admins can use job plugin to add new job schedules to DataHub. DataHub provides 
 
 Similar to Query engine, metastore plugins provides a way for admins to configure how a metastore can be populated. Users can use it add new ways to load table information. Please check [Add Metastore guide](../developer_guide/add_metastore.md) to learn how to add a new metastore loader.
 
-
 ### Result Store Plugin
 
 By default, datahub supports storing query results/logs to and from s3 and sqlalchemy database. If other store is needed (such as local file system or google cloud), you can add a custom result store exporter. Please check [Add Result Store guide](../developer_guide/add_result_store.md) for more details.
-
 
 ### Task Plugin
 
@@ -58,8 +54,7 @@ Task plugin lets you implement custom async tasks on datahub. For example, you c
 
 ### Web Page Plugin
 
-Web page plugin allows you to inject custom js, css to DataHub. Place your custom logic under webpage_plugin/custom_script.js to inject it into the Datahub webapp.
-
+Web page plugin allows you to inject custom js, css to DataHub. Place your custom logic under webpage_plugin/custom_script.ts to inject it into the Datahub webapp.
 
 ## Installing Plugins
 

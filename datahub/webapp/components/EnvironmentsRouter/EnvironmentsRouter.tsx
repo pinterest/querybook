@@ -36,11 +36,12 @@ interface IEnvironmentsRouterState {
     environmentsLoaded: boolean;
 }
 
-const blank: React.FunctionComponent = () => (
-    <div className="empty-message">
-        No Environment Available. Please contact DataHub Admin for more info.
-    </div>
-);
+const blank: React.FunctionComponent = () => {
+    const message =
+        window.NO_ENVIRONMENT_MESSAGE ??
+        'No Environment Available. Please contact DataHub Admin for more info.';
+    return <div className="empty-message">{message}</div>;
+};
 
 class EnvironmentsRouterComponent extends React.PureComponent<
     IEnvironmentsRouterProps,

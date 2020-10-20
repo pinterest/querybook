@@ -24,11 +24,11 @@ export function getExporterAuthentication(
         const authWindow = window.open(url);
         const receiveMessage = () => {
             authWindow.close();
-            delete (window as any).receiveChildMessage;
+            delete window.receiveChildMessage;
             window.removeEventListener('message', receiveMessage, false);
             resolve();
         };
-        (window as any).receiveChildMessage = receiveMessage;
+        window.receiveChildMessage = receiveMessage;
 
         // If window is closed without having received message
         const timer = setInterval(() => {
