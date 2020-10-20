@@ -1,5 +1,5 @@
 import { produce } from 'immer';
-import React from 'react';
+import React, { useRef, useMemo, useState } from 'react';
 import { useSelector } from 'react-redux';
 import styled from 'styled-components';
 
@@ -8,6 +8,8 @@ import { IStoreState } from 'redux/store/types';
 import { Table } from 'ui/Table/Table';
 import { Level } from 'ui/Level/Level';
 import { IconButton } from 'ui/Button/IconButton';
+import { Popover } from 'ui/Popover/Popover';
+import { StatementResultColumnInfo } from './StatementResultColumnInfo';
 
 const StyledTableWrapper = styled.div.attrs({
     className: 'StatementResultTable',
@@ -33,9 +35,18 @@ const StyledTableWrapper = styled.div.attrs({
         }
     }
 
-    .expand-column-button {
-        transform: rotate(45deg);
-        padding: 0px 1px;
+    .result-table-header {
+        .column-button {
+            padding: 0px 1px;
+            display: none;
+            &.expand-column-button {
+                transform: rotate(45deg);
+            }
+        }
+
+        &:hover .column-button {
+            display: inline-flex;
+        }
     }
 `;
 
@@ -45,7 +56,7 @@ export const StatementResultTable: React.FunctionComponent<{
     maxNumberOfRowsToShow?: number;
 }> = ({ data, paginate, maxNumberOfRowsToShow = 20 }) => {
     const [expandedColumn, setExpandedColumn] = React.useState<
-        Record<string, any>
+        Record<string, boolean>
     >({});
     const tableFontSize = useSelector(
         (state: IStoreState) =>
@@ -53,42 +64,17 @@ export const StatementResultTable: React.FunctionComponent<{
                 state.user.computedSettings['result_font_size']
             ]
     );
-
+    const rows = useMemo(() => data.slice(1), [data]);
     const columns = data[0].map((column, index) => ({
-        Header: () => {
-            const isExpanded = column in expandedColumn;
-            return (
-                <Level>
-                    <span
-                        className={`statement-result-table-title one-line-ellipsis ${
-                            isExpanded ? 'expanded' : ''
-                        }`}
-                    >
-                        {column}
-                    </span>
-                    <IconButton
-                        className="expand-column-button"
-                        noPadding
-                        icon={isExpanded ? 'minimize-2' : 'maximize-2'}
-                        size={14}
-                        onClick={(e) => {
-                            e.preventDefault();
-                            e.stopPropagation();
-
-                            setExpandedColumn(
-                                produce(expandedColumn, (draft) => {
-                                    if (isExpanded) {
-                                        delete draft[column];
-                                    } else {
-                                        draft[column] = true;
-                                    }
-                                })
-                            );
-                        }}
-                    />
-                </Level>
-            );
-        },
+        Header: () => (
+            <StatementResultTableColumn
+                column={column}
+                expandedColumn={expandedColumn}
+                setExpandedColumn={setExpandedColumn}
+                rows={rows}
+                colIndex={index}
+            />
+        ),
         accessor: String(index),
         minWidth: 150,
         style: {
@@ -103,7 +89,7 @@ export const StatementResultTable: React.FunctionComponent<{
                   }),
         },
     }));
-    const rows = data.slice(1);
+
     const showPagination = rows.length > maxNumberOfRowsToShow && paginate;
 
     return (
@@ -133,5 +119,83 @@ export const StatementResultTable: React.FunctionComponent<{
                 }}
             />
         </StyledTableWrapper>
+    );
+};
+const layout = ['right', 'right'];
+const StatementResultTableColumn: React.FC<{
+    column: string;
+    colIndex: number;
+    rows: any[][];
+
+    expandedColumn: Record<string, boolean>;
+    setExpandedColumn: (c: Record<string, boolean>) => any;
+}> = ({ column, expandedColumn, setExpandedColumn, colIndex, rows }) => {
+    const [showInfo, setShowInfo] = useState(false);
+    const isExpanded = column in expandedColumn;
+    const selfRef = useRef<HTMLDivElement>(null);
+
+    return (
+        <Level className="result-table-header" ref={selfRef}>
+            <span
+                className={`statement-result-table-title one-line-ellipsis ${
+                    isExpanded ? 'expanded' : ''
+                }`}
+            >
+                {column}
+            </span>
+            <div className="flex-row">
+                <IconButton
+                    className="column-button"
+                    noPadding
+                    icon={'info'}
+                    size={14}
+                    onClick={(e) => {
+                        e.preventDefault();
+                        e.stopPropagation();
+                        setShowInfo(true);
+                    }}
+                />
+                <IconButton
+                    className="expand-column-button column-button"
+                    noPadding
+                    icon={isExpanded ? 'minimize-2' : 'maximize-2'}
+                    size={14}
+                    onClick={(e) => {
+                        e.preventDefault();
+                        e.stopPropagation();
+
+                        setExpandedColumn(
+                            produce(expandedColumn, (draft) => {
+                                if (isExpanded) {
+                                    delete draft[column];
+                                } else {
+                                    draft[column] = true;
+                                }
+                            })
+                        );
+                    }}
+                />
+            </div>
+            {showInfo ? (
+                <Popover
+                    anchor={selfRef.current}
+                    onHide={() => setShowInfo(false)}
+                    layout={['bottom', 'left']}
+                >
+                    <div
+                        onClick={(e) => {
+                            e.preventDefault();
+                            e.stopPropagation();
+                        }}
+                    >
+                        <StatementResultColumnInfo
+                            rows={rows}
+                            colIndex={colIndex}
+                            colName={column}
+                        />
+                    </div>
+                </Popover>
+            ) : null}
+        </Level>
     );
 };

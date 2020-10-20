@@ -48,8 +48,10 @@ const initialWrapperStyle: React.CSSProperties = {
     left: 0,
 };
 
+const defaultLayout = ['right', 'right'];
+
 export const PopoverContainer: React.FunctionComponent<IPopoverContainerProps> = ({
-    layout = ['right', 'right'],
+    layout = defaultLayout,
 
     onHide,
     container,
@@ -205,7 +207,8 @@ export const PopoverContainer: React.FunctionComponent<IPopoverContainerProps> =
         setArrowStyle(newArrowStyle);
         setWrapperStyle(newWrapperStyle);
     }, [
-        layout,
+        mainLayout,
+        subLayout,
         anchorBox,
         anchor,
         hideArrow,
