@@ -4,34 +4,36 @@ const columnDetectors: IColumnDetector[] = [
     {
         type: 'string',
         priority: 0,
-        on: 'value',
-        checker: (v: any) => {
-            const vType = typeof v;
-            return vType === 'string';
+        checker: (colName: string, values: any[]) => {
+            return detectTypeForValues(values, (v) => {
+                const vType = typeof v;
+                return vType === 'string';
+            });
         },
     },
     {
         type: 'number',
         priority: 1,
-        on: 'value',
-        checker: (v: any) => {
-            const vType = typeof v;
-            if (vType === 'number' || vType === 'bigint') {
-                return true;
-            } else if (vType === 'string') {
-                return !isNaN(v);
-            }
-            return false;
+        checker: (colName: string, values: any[]) => {
+            return detectTypeForValues(values, (v) => {
+                const vType = typeof v;
+                if (vType === 'number' || vType === 'bigint') {
+                    return true;
+                } else if (vType === 'string') {
+                    return !isNaN(v);
+                }
+                return false;
+            });
         },
     },
     {
         type: 'id',
         priority: 2,
-        on: 'name',
-        checker: (v: any) => {
+        checker: (colName: string, values: any[]) => {
             if (
-                typeof v === 'string' &&
-                (['uid', 'userid', 'id'].includes(v) || v.includes('_id'))
+                typeof colName === 'string' &&
+                (['uid', 'userid', 'id'].includes(colName) ||
+                    colName.includes('_id'))
             ) {
                 return true;
             }
@@ -41,24 +43,22 @@ const columnDetectors: IColumnDetector[] = [
 ]
     .concat(window.CUSTOM_COLUMN_DETECTORS ?? [])
     .sort((a, b) => b.priority - a.priority) as IColumnDetector[];
-const columnNameDetectors = columnDetectors.filter((d) => d.on === 'name');
-const columnValueDetectors = columnDetectors.filter((d) => d.on === 'value');
 
 export function findColumnType(columnName: string, values: any[]) {
-    for (const detector of columnNameDetectors) {
-        if (detector.checker(columnName)) {
+    for (const detector of columnDetectors) {
+        if (detector.checker(columnName, values)) {
             return detector.type;
-        }
-    }
-
-    for (const v of values) {
-        for (const detector of columnValueDetectors) {
-            if (detector.checker(v)) {
-                return detector.type;
-            }
         }
     }
 
     // No Type found
     return null;
+}
+
+function detectTypeForValues<T>(
+    values: T[],
+    detector: (value: T) => boolean,
+    mode: 'some' | 'every' = 'some'
+): boolean {
+    return mode === 'some' ? values.some(detector) : values.every(detector);
 }

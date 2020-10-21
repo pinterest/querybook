@@ -3,8 +3,7 @@ import React from 'react';
 export interface IColumnDetector {
     type: string;
     priority: number;
-    on: 'name' | 'value';
-    checker: (v: any) => boolean;
+    checker: (colName: string, values: any[]) => boolean;
 }
 
 export interface IColumnStatsAnalyzer {

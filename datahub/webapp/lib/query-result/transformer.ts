@@ -12,6 +12,16 @@ const queryResultTransformers: IColumnTransformer[] = [
             return formatNumber(v);
         },
     },
+    {
+        key: 'capitalize',
+        name: 'Capitalize',
+        appliesToType: ['string'],
+        priority: 0,
+        auto: false,
+        transform: (v: string): React.ReactNode => {
+            return v.toLocaleUpperCase();
+        },
+    },
 ]
     .concat(window.CUSTOM_COLUMN_TRANSFORMERS ?? [])
     .sort((a, b) => b.priority - a.priority) as IColumnTransformer[];
