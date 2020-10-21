@@ -225,7 +225,7 @@ const StatementResultTableColumn: React.FC<{
                 <IconButton
                     className="column-button"
                     noPadding
-                    icon={'info'}
+                    icon={'zap'}
                     size={14}
                     onClick={(e) => {
                         e.preventDefault();
