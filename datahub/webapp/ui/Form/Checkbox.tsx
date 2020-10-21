@@ -32,6 +32,7 @@ export const Checkbox: React.FunctionComponent<ICheckboxProps> = ({
                     type="checkbox"
                     disabled={disabled}
                     checked={value}
+                    readOnly
                     onClick={
                         disabled
                             ? null
@@ -39,6 +40,7 @@ export const Checkbox: React.FunctionComponent<ICheckboxProps> = ({
                                   if (onChange) {
                                       onChange(!value);
                                       event.stopPropagation();
+                                      event.preventDefault();
                                   }
                               }
                     }

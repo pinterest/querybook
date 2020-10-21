@@ -4,10 +4,7 @@ import { useSelector } from 'react-redux';
 import styled from 'styled-components';
 
 import { UserSettingsFontSizeToCSSFontSize } from 'const/font';
-import {
-    IColumnTransformer,
-    IColumnStatsPresenter,
-} from 'lib/query-result/types';
+import { IColumnTransformer } from 'lib/query-result/types';
 import { findColumnType } from 'lib/query-result/detector';
 import { IStoreState } from 'redux/store/types';
 import { Table } from 'ui/Table/Table';

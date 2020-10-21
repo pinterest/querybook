@@ -6,7 +6,7 @@ import { HTML5Backend } from 'react-dnd-html5-backend';
 import { Provider } from 'react-redux';
 
 import {
-    IColumnStatsPresenter,
+    IColumnStatsAnalyzer,
     IColumnDetector,
     IColumnTransformer,
 } from 'lib/query-result/types';
@@ -23,9 +23,9 @@ declare global {
         reduxStore?: typeof reduxStore;
         receiveChildMessage?: () => void;
         NO_ENVIRONMENT_MESSAGE?: string;
-        CUSTOM_COLUMN_STATS_PRESENTER?: IColumnStatsPresenter[];
-        CUSTOM_COLUMN_DETECTOR?: IColumnDetector[];
-        CUSTOM_COLUMN_TRANSFORMER?: IColumnTransformer[];
+        CUSTOM_COLUMN_STATS_ANALYZERS?: IColumnStatsAnalyzer[];
+        CUSTOM_COLUMN_DETECTORS?: IColumnDetector[];
+        CUSTOM_COLUMN_TRANSFORMERS?: IColumnTransformer[];
     }
 }
 // Make debugging easier

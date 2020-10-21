@@ -1,6 +1,6 @@
-import React, { useMemo } from 'react';
+import React, { useMemo, useState } from 'react';
 import styled from 'styled-components';
-import { columnStatsPresenters } from 'lib/query-result/presenter';
+import { columnStatsAnalyzers } from 'lib/query-result/analyzer';
 import { Title } from 'ui/Title/Title';
 import { IColumnTransformer } from 'lib/query-result/types';
 import { getTransformersForType } from 'lib/query-result/transformer';
@@ -28,6 +28,7 @@ export const StatementResultColumnInfo: React.FC<{
     transformer: IColumnTransformer;
     setTransformer: (transformer: IColumnTransformer) => any;
 }> = ({ rows, colIndex, colType, isPreview, setTransformer, transformer }) => {
+    const [test, setTest] = useState(false);
     const columnValues = useMemo(() => rows.map((row) => row[colIndex]), [
         rows,
         colIndex,
@@ -39,13 +40,13 @@ export const StatementResultColumnInfo: React.FC<{
     );
 
     const statistics = useMemo(() => {
-        const statisticsPresenters = columnStatsPresenters.filter((presenter) =>
-            presenter.appliesToType.includes(colType)
+        const statisticsAnalyzers = columnStatsAnalyzers.filter((analyzer) =>
+            analyzer.appliesToType.includes(colType)
         );
-        return statisticsPresenters.map((presenter) => [
-            presenter.key,
-            presenter.name,
-            presenter.generator(columnValues),
+        return statisticsAnalyzers.map((analyzer) => [
+            analyzer.key,
+            analyzer.name,
+            analyzer.generator(columnValues),
         ]);
     }, [colType, columnValues]);
 
@@ -54,14 +55,16 @@ export const StatementResultColumnInfo: React.FC<{
             <div className="column-info-header">
                 <Title size={8}>TRANSFORMER</Title>
             </div>
-            {columnTransformers.map((coltrans) => (
+            {columnTransformers.map((colTrans) => (
                 <Checkbox
                     className="mb2"
-                    key={coltrans.key}
-                    title={coltrans.name}
-                    value={transformer?.key === coltrans.key}
-                    onChange={(value) =>
-                        setTransformer(value ? coltrans : null)
+                    key={colTrans.key}
+                    title={colTrans.name}
+                    value={transformer?.key === colTrans.key}
+                    onChange={() =>
+                        setTransformer(
+                            transformer?.key !== colTrans.key ? colTrans : null
+                        )
                     }
                 />
             ))}
@@ -99,6 +102,11 @@ export const StatementResultColumnInfo: React.FC<{
 
     return (
         <StyledColumnInfo className={' p8'}>
+            <Checkbox
+                className="mb2"
+                value={test}
+                onChange={(value) => setTest(value)}
+            />
             <div className="column-info-section">
                 {incompleteDataWarning}
                 <div className="column-info-header">

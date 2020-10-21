@@ -1,12 +1,12 @@
 import BigNumber from 'bignumber.js';
 import { sortBy } from 'lodash';
-import { IColumnStatsPresenter } from './types';
+import { IColumnStatsAnalyzer } from './types';
 
 function arrToBigNumber(values: any[]) {
     return values.map((v) => new BigNumber(v)).filter((n) => !n.isNaN());
 }
 
-export const columnStatsPresenters: IColumnStatsPresenter[] = [
+export const columnStatsAnalyzers: IColumnStatsAnalyzer[] = [
     {
         key: 'average',
         name: 'Average',
@@ -86,4 +86,4 @@ export const columnStatsPresenters: IColumnStatsPresenter[] = [
                 : 'All Unique.';
         },
     },
-].concat(window.CUSTOM_COLUMN_STATS_PRESENTER ?? []);
+].concat(window.CUSTOM_COLUMN_STATS_ANALYZERS ?? []);

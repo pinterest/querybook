@@ -7,7 +7,7 @@ export interface IColumnDetector {
     checker: (v: any) => boolean;
 }
 
-export interface IColumnStatsPresenter {
+export interface IColumnStatsAnalyzer {
     key: string;
     name: string;
     appliesToType: string[];

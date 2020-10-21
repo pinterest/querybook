@@ -39,7 +39,7 @@ const columnDetectors: IColumnDetector[] = [
         },
     },
 ]
-    .concat(window.CUSTOM_COLUMN_DETECTOR ?? [])
+    .concat(window.CUSTOM_COLUMN_DETECTORS ?? [])
     .sort((a, b) => b.priority - a.priority) as IColumnDetector[];
 const columnNameDetectors = columnDetectors.filter((d) => d.on === 'name');
 const columnValueDetectors = columnDetectors.filter((d) => d.on === 'value');

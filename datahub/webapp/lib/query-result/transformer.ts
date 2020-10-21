@@ -13,7 +13,7 @@ const queryResultTransformers: IColumnTransformer[] = [
         },
     },
 ]
-    .concat(window.CUSTOM_COLUMN_TRANSFORMER ?? [])
+    .concat(window.CUSTOM_COLUMN_TRANSFORMERS ?? [])
     .sort((a, b) => b.priority - a.priority) as IColumnTransformer[];
 
 const transformersForType: Record<

@@ -9,7 +9,7 @@ interface IColumnDetector {
     checker: (v: any) => boolean;
 }
 
-interface IColumnStatsPresenter {
+interface IColumnStatsAnalyzer {
     key: string;
     name: string;
     appliesToType: string[];
@@ -24,7 +24,7 @@ declare global {
         // Users will see this message if they cannot
         // access any
         NO_ENVIRONMENT_MESSAGE?: string;
-        CUSTOM_COLUMN_STATS_PRESENTER?: IColumnStatsPresenter[];
-        CUSTOM_COLUMN_DETECTOR?: IColumnDetector[];
+        CUSTOM_COLUMN_STATS_ANALYZERS?: IColumnStatsAnalyzer[];
+        CUSTOM_COLUMN_DETECTORS?: IColumnDetector[];
     }
 }
