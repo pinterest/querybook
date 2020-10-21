@@ -1,5 +1,11 @@
+import React from 'react';
+
 import { IColumnTransformer } from './types';
-import { formatNumber } from 'lib/utils';
+import {
+    formatNumber,
+    getHumanReadableNumber,
+    roundNumberToDecimal,
+} from 'lib/utils/number';
 
 const queryResultTransformers: IColumnTransformer[] = [
     {
@@ -7,10 +13,39 @@ const queryResultTransformers: IColumnTransformer[] = [
         name: 'Decimal Separator',
         appliesToType: ['number'],
         priority: 0,
-        auto: true,
+        auto: false,
         transform: (v: any): React.ReactNode => {
             return formatNumber(v);
         },
+    },
+    {
+        key: 'dollar-formatter',
+        name: 'Dollar format',
+        appliesToType: ['number'],
+        priority: 0,
+        auto: false,
+        transform: (v: any): React.ReactNode => {
+            const num = Number(v);
+            if (isNaN(num)) {
+                return v;
+            }
+
+            const rounded = roundNumberToDecimal(num, 2);
+            return (
+                <span className="right-align">{`$ ${formatNumber(rounded, '', {
+                    maximumFractionDigits: 2,
+                    minimumFractionDigits: 2,
+                })}`}</span>
+            );
+        },
+    },
+    {
+        key: 'human-formatter',
+        name: 'Human Readable',
+        appliesToType: ['number'],
+        priority: 0,
+        auto: false,
+        transform: (v: any): React.ReactNode => getHumanReadableNumber(v, 2),
     },
     {
         key: 'capitalize',

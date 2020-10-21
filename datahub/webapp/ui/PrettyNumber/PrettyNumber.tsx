@@ -1,5 +1,5 @@
 import React, { useMemo } from 'react';
-import { formatNumber } from 'lib/utils';
+import { formatNumber } from 'lib/utils/number';
 
 export const PrettyNumber: React.FC<{
     val: number | string;

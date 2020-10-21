@@ -3,7 +3,7 @@ import { ContentState } from 'draft-js';
 import { useSelector, useDispatch } from 'react-redux';
 import styled from 'styled-components';
 
-import { getHumanReadableByteSize } from 'lib/utils';
+import { getHumanReadableByteSize } from 'lib/utils/number';
 import { generateFormattedDate } from 'lib/utils/datetime';
 import { fullTableSelector } from 'redux/dataSources/selector';
 import { IStoreState } from 'redux/store/types';

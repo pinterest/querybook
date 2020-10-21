@@ -21,7 +21,7 @@
 
         &.checked::before {
             content: ' ';
-            background-color: var(--border-color);
+            background-color: var(--text-color);
             width: 12px;
             height: 12px;
             display: block;

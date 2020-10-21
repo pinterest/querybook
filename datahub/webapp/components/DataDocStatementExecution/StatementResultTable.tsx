@@ -1,4 +1,5 @@
 import { produce } from 'immer';
+import classNames from 'classnames';
 import React, { useRef, useMemo, useState, useCallback } from 'react';
 import { useSelector } from 'react-redux';
 import styled from 'styled-components';
@@ -10,9 +11,9 @@ import { IStoreState } from 'redux/store/types';
 import { Table } from 'ui/Table/Table';
 import { Level } from 'ui/Level/Level';
 import { IconButton } from 'ui/Button/IconButton';
-import { Popover } from 'ui/Popover/Popover';
 import { StatementResultColumnInfo } from './StatementResultColumnInfo';
 import { getTransformersForType } from 'lib/query-result/transformer';
+import { Dropdown } from 'ui/Dropdown/Dropdown';
 
 const StyledTableWrapper = styled.div.attrs({
     className: 'StatementResultTable',
@@ -41,13 +42,16 @@ const StyledTableWrapper = styled.div.attrs({
     .result-table-header {
         .column-button {
             padding: 0px 1px;
-            display: none;
-            &.expand-column-button {
+
+            &.expand-column-button .Icon {
                 transform: rotate(45deg);
+            }
+            &.hidden-button {
+                display: none;
             }
         }
 
-        &:hover .column-button {
+        &:hover .hidden-button {
             display: inline-flex;
         }
     }
@@ -202,9 +206,7 @@ const StatementResultTableColumn: React.FC<{
     columnTransformer,
     setTransformerForColumn,
 }) => {
-    const [showInfo, setShowInfo] = useState(false);
     const isExpanded = column in expandedColumn;
-    const selfRef = useRef<HTMLDivElement>(null);
 
     const boundSetTransformerForColumn = useCallback(
         (transformer: IColumnTransformer | null) =>
@@ -213,7 +215,7 @@ const StatementResultTableColumn: React.FC<{
     );
 
     return (
-        <Level className="result-table-header" ref={selfRef}>
+        <Level className="result-table-header">
             <span
                 className={`statement-result-table-title one-line-ellipsis ${
                     isExpanded ? 'expanded' : ''
@@ -223,18 +225,11 @@ const StatementResultTableColumn: React.FC<{
             </span>
             <div className="flex-row">
                 <IconButton
-                    className="column-button"
-                    noPadding
-                    icon={'zap'}
-                    size={14}
-                    onClick={(e) => {
-                        e.preventDefault();
-                        e.stopPropagation();
-                        setShowInfo(true);
-                    }}
-                />
-                <IconButton
-                    className="expand-column-button column-button"
+                    className={classNames({
+                        'column-button': true,
+                        'expand-column-button': true,
+                        'hidden-button': !isExpanded,
+                    })}
                     noPadding
                     icon={isExpanded ? 'minimize-2' : 'maximize-2'}
                     size={14}
@@ -253,12 +248,28 @@ const StatementResultTableColumn: React.FC<{
                         );
                     }}
                 />
-            </div>
-            {showInfo ? (
-                <Popover
-                    anchor={selfRef.current}
-                    onHide={() => setShowInfo(false)}
-                    layout={['bottom', 'left']}
+                <Dropdown
+                    usePortal
+                    isRight
+                    isUp
+                    customButtonRenderer={() => (
+                        <IconButton
+                            className={classNames({
+                                'column-button': true,
+                                'hidden-button': !columnTransformer,
+                            })}
+                            noPadding
+                            icon={'zap'}
+                            size={14}
+                            onClick={(e) => {
+                                e.preventDefault();
+                                e.stopPropagation();
+                                if (columnTransformer) {
+                                    boundSetTransformerForColumn(null);
+                                }
+                            }}
+                        />
+                    )}
                 >
                     <div
                         onClick={(e) => {
@@ -275,8 +286,8 @@ const StatementResultTableColumn: React.FC<{
                             transformer={columnTransformer}
                         />
                     </div>
-                </Popover>
-            ) : null}
+                </Dropdown>
+            </div>
         </Level>
     );
 };

@@ -1,7 +1,7 @@
 import classNames from 'classnames';
 import React from 'react';
 
-import { formatNumber } from 'lib/utils';
+import { formatNumber } from 'lib/utils/number';
 import {
     IStatementExecution,
     IStatementResult,
