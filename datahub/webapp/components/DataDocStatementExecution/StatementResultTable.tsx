@@ -1,15 +1,21 @@
 import { produce } from 'immer';
-import React, { useRef, useMemo, useState } from 'react';
+import React, { useRef, useMemo, useState, useCallback } from 'react';
 import { useSelector } from 'react-redux';
 import styled from 'styled-components';
 
 import { UserSettingsFontSizeToCSSFontSize } from 'const/font';
+import {
+    IColumnTransformer,
+    IColumnStatsPresenter,
+} from 'lib/query-result/types';
+import { findColumnType } from 'lib/query-result/detector';
 import { IStoreState } from 'redux/store/types';
 import { Table } from 'ui/Table/Table';
 import { Level } from 'ui/Level/Level';
 import { IconButton } from 'ui/Button/IconButton';
 import { Popover } from 'ui/Popover/Popover';
 import { StatementResultColumnInfo } from './StatementResultColumnInfo';
+import { getTransformersForType } from 'lib/query-result/transformer';
 
 const StyledTableWrapper = styled.div.attrs({
     className: 'StatementResultTable',
@@ -51,20 +57,53 @@ const StyledTableWrapper = styled.div.attrs({
 `;
 
 export const StatementResultTable: React.FunctionComponent<{
+    // If isPreview, then it is only showing partial results instead of
+    // all rows
+    isPreview?: boolean;
+
     data: string[][];
     paginate: boolean;
     maxNumberOfRowsToShow?: number;
-}> = ({ data, paginate, maxNumberOfRowsToShow = 20 }) => {
+}> = ({ data, paginate, maxNumberOfRowsToShow = 20, isPreview = false }) => {
     const [expandedColumn, setExpandedColumn] = React.useState<
         Record<string, boolean>
     >({});
+    const [columnTransformerByIndex, setColumnTransformer] = useState<
+        Record<string, IColumnTransformer>
+    >({});
+
     const tableFontSize = useSelector(
         (state: IStoreState) =>
             UserSettingsFontSizeToCSSFontSize[
                 state.user.computedSettings['result_font_size']
             ]
     );
+
     const rows = useMemo(() => data.slice(1), [data]);
+    const columnTypes = useMemo(
+        () =>
+            data[0].map((col, index) =>
+                findColumnType(
+                    col,
+                    rows.map((row) => row[index])
+                )
+            ),
+        [data, rows]
+    );
+    const defaultColTransformer = useMemo(
+        () => columnTypes.map((t) => getTransformersForType(t)[1]),
+        [columnTypes]
+    );
+    const setTransformerForColumn = useCallback(
+        (colIndex: number, transformer: IColumnTransformer) => {
+            setColumnTransformer((old) => ({
+                ...old,
+                [colIndex]: transformer,
+            }));
+        },
+        []
+    );
+
     const columns = data[0].map((column, index) => ({
         Header: () => (
             <StatementResultTableColumn
@@ -73,6 +112,14 @@ export const StatementResultTable: React.FunctionComponent<{
                 setExpandedColumn={setExpandedColumn}
                 rows={rows}
                 colIndex={index}
+                colType={columnTypes[index]}
+                isPreview={isPreview}
+                setTransformerForColumn={setTransformerForColumn}
+                columnTransformer={
+                    index in columnTransformerByIndex
+                        ? columnTransformerByIndex[index]
+                        : defaultColTransformer[index]
+                }
             />
         ),
         accessor: String(index),
@@ -106,7 +153,15 @@ export const StatementResultTable: React.FunctionComponent<{
                 rows={rows}
                 cols={columns}
                 showPagination={showPagination}
-                formatCell={(index, column, row) => row[index]}
+                formatCell={(index, column, row) => {
+                    const transformer =
+                        index in columnTransformerByIndex
+                            ? columnTransformerByIndex[index]
+                            : defaultColTransformer[index];
+                    return transformer
+                        ? transformer.transform(row[index])
+                        : row[index];
+                }}
                 sortCell={(a, b) => {
                     if (a == null || a === 'null') {
                         return -1;
@@ -121,18 +176,44 @@ export const StatementResultTable: React.FunctionComponent<{
         </StyledTableWrapper>
     );
 };
-const layout = ['right', 'right'];
+
 const StatementResultTableColumn: React.FC<{
     column: string;
-    colIndex: number;
-    rows: any[][];
-
     expandedColumn: Record<string, boolean>;
     setExpandedColumn: (c: Record<string, boolean>) => any;
-}> = ({ column, expandedColumn, setExpandedColumn, colIndex, rows }) => {
+
+    // These props are for the column info
+    colIndex: number;
+    colType: string;
+    rows: any[][];
+    isPreview: boolean;
+    columnTransformer?: IColumnTransformer;
+    setTransformerForColumn: (
+        index: number,
+        transformer: IColumnTransformer
+    ) => any;
+}> = ({
+    column,
+    expandedColumn,
+    setExpandedColumn,
+
+    colIndex,
+    colType,
+    rows,
+    isPreview,
+
+    columnTransformer,
+    setTransformerForColumn,
+}) => {
     const [showInfo, setShowInfo] = useState(false);
     const isExpanded = column in expandedColumn;
     const selfRef = useRef<HTMLDivElement>(null);
+
+    const boundSetTransformerForColumn = useCallback(
+        (transformer: IColumnTransformer | null) =>
+            setTransformerForColumn(colIndex, transformer),
+        [setTransformerForColumn, colIndex]
+    );
 
     return (
         <Level className="result-table-header" ref={selfRef}>
@@ -191,7 +272,10 @@ const StatementResultTableColumn: React.FC<{
                         <StatementResultColumnInfo
                             rows={rows}
                             colIndex={colIndex}
-                            colName={column}
+                            colType={colType}
+                            isPreview={isPreview}
+                            setTransformer={boundSetTransformerForColumn}
+                            transformer={columnTransformer}
                         />
                     </div>
                 </Popover>

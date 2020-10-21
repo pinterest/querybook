@@ -8,7 +8,7 @@ exports[`matches enzyme snapshots matches snapshot 1`] = `
     className=""
   >
     <input
-      onChange={[Function]}
+      onClick={[Function]}
       type="checkbox"
     />
      
