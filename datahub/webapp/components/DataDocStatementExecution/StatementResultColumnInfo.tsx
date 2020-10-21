@@ -9,13 +9,19 @@ import { Checkbox } from 'ui/Form/Checkbox';
 const StyledColumnInfo = styled.div.attrs({
     className: 'StatementResultColumnInfo',
 })`
+    width: 160px;
     font-size: var(--xsmall-text-size);
 
     .preview-warning {
+        word-break: break-word;
         font-weight: var(--bold-font);
         .preview-warning-warning {
             color: var(--color-false-dark);
         }
+    }
+
+    .result-statistic {
+        word-break: break-all;
     }
 `;
 
@@ -73,7 +79,7 @@ export const StatementResultColumnInfo: React.FC<{
     const generateStatisticsDOM = () => {
         const statsDOM = statistics.map(([key, name, stat]) => {
             return (
-                <div key={key}>
+                <div key={key} className="result-statistic">
                     {name}: {stat}
                 </div>
             );
