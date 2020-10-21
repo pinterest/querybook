@@ -1,4 +1,4 @@
-import React, { useMemo, useState } from 'react';
+import React, { useMemo } from 'react';
 import styled from 'styled-components';
 import { columnStatsAnalyzers } from 'lib/query-result/analyzer';
 import { Title } from 'ui/Title/Title';
@@ -56,7 +56,7 @@ export const StatementResultColumnInfo: React.FC<{
     }, [colType, columnValues]);
 
     const transformerPicker = columnTransformers.length ? (
-        <div className="column-info-section mt4">
+        <div className="column-info-section mt8">
             <div className="column-info-header">
                 <Title size={8}>TRANSFORMER</Title>
             </div>
@@ -88,7 +88,7 @@ export const StatementResultColumnInfo: React.FC<{
     };
 
     const quickInsightsDOM = statistics.length ? (
-        <div className="column-info-section mt4">
+        <div className="column-info-section mt8">
             <div className="column-info-header">
                 <Title size={8}>QUICK INSIGHTS</Title>
             </div>

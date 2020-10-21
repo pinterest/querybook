@@ -1,6 +1,12 @@
 import { produce } from 'immer';
 import classNames from 'classnames';
-import React, { useRef, useMemo, useState, useCallback } from 'react';
+import React, {
+    useRef,
+    useMemo,
+    useState,
+    useCallback,
+    useEffect,
+} from 'react';
 import { useSelector } from 'react-redux';
 import styled from 'styled-components';
 
@@ -48,6 +54,9 @@ const StyledTableWrapper = styled.div.attrs({
             }
             &.hidden-button {
                 display: none;
+            }
+            &.active-button {
+                color: var(--color-accent-text);
             }
         }
 
@@ -178,6 +187,17 @@ export const StatementResultTable: React.FunctionComponent<{
     );
 };
 
+function useLastNotNull<T>(value: T): T {
+    const [s, set] = useState(null);
+    useEffect(() => {
+        if (value != null) {
+            set(value);
+        }
+    }, [value]);
+
+    return s;
+}
+
 const StatementResultTableColumn: React.FC<{
     column: string;
     expandedColumn: Record<string, boolean>;
@@ -208,6 +228,7 @@ const StatementResultTableColumn: React.FC<{
 }) => {
     const isExpanded = column in expandedColumn;
 
+    const lastColumnTransformer = useLastNotNull(columnTransformer);
     const boundSetTransformerForColumn = useCallback(
         (transformer: IColumnTransformer | null) =>
             setTransformerForColumn(colIndex, transformer),
@@ -256,6 +277,7 @@ const StatementResultTableColumn: React.FC<{
                         <IconButton
                             className={classNames({
                                 'column-button': true,
+                                'active-button': !!columnTransformer,
                                 'hidden-button': !columnTransformer,
                             })}
                             noPadding
@@ -265,7 +287,26 @@ const StatementResultTableColumn: React.FC<{
                                 e.preventDefault();
                                 e.stopPropagation();
                                 if (columnTransformer) {
+                                    // turn off
                                     boundSetTransformerForColumn(null);
+                                } else {
+                                    // turn on
+                                    if (lastColumnTransformer) {
+                                        // turn on the last active transformer
+                                        boundSetTransformerForColumn(
+                                            lastColumnTransformer
+                                        );
+                                    } else {
+                                        // if not last turn on the one with highest priority
+                                        const transformer = getTransformersForType(
+                                            colType
+                                        )[0][0];
+                                        if (transformer) {
+                                            boundSetTransformerForColumn(
+                                                transformer
+                                            );
+                                        }
+                                    }
                                 }
                             }}
                         />

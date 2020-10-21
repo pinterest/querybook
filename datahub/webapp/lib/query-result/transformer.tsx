@@ -9,18 +9,18 @@ import {
 
 const queryResultTransformers: IColumnTransformer[] = [
     {
-        key: 'decimal-separator',
-        name: 'Decimal Separator',
+        key: 'with-comma',
+        name: 'With Comma',
         appliesToType: ['number'],
-        priority: 0,
+        priority: 1,
         auto: false,
         transform: (v: any): React.ReactNode => {
             return formatNumber(v);
         },
     },
     {
-        key: 'dollar-formatter',
-        name: 'Dollar format',
+        key: 'dollar-format',
+        name: 'Dollar Format',
         appliesToType: ['number'],
         priority: 0,
         auto: false,
@@ -40,7 +40,7 @@ const queryResultTransformers: IColumnTransformer[] = [
         },
     },
     {
-        key: 'human-formatter',
+        key: 'human-readable',
         name: 'Human Readable',
         appliesToType: ['number'],
         priority: 0,
