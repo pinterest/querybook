@@ -28,7 +28,6 @@ export const StatementResultColumnInfo: React.FC<{
     transformer: IColumnTransformer;
     setTransformer: (transformer: IColumnTransformer) => any;
 }> = ({ rows, colIndex, colType, isPreview, setTransformer, transformer }) => {
-    const [test, setTest] = useState(false);
     const columnValues = useMemo(() => rows.map((row) => row[colIndex]), [
         rows,
         colIndex,
@@ -102,11 +101,6 @@ export const StatementResultColumnInfo: React.FC<{
 
     return (
         <StyledColumnInfo className={' p8'}>
-            <Checkbox
-                className="mb2"
-                value={test}
-                onChange={(value) => setTest(value)}
-            />
             <div className="column-info-section">
                 {incompleteDataWarning}
                 <div className="column-info-header">
