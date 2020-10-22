@@ -1,7 +1,7 @@
 import classNames from 'classnames';
 import React from 'react';
 
-import { formatNumber } from 'lib/utils';
+import { formatNumber } from 'lib/utils/number';
 import {
     IStatementExecution,
     IStatementResult,
@@ -20,31 +20,36 @@ interface IProps {
     onFullscreenToggle: () => any;
 }
 
-export class StatementResult extends React.PureComponent<IProps, {}> {
-    public getFetchInfoDOM(
-        resultRowColumnCount: number,
-        actualRowColumnCount: number
-    ) {
-        const resultRowCount = Math.max(resultRowColumnCount - 1, 0);
-        const actualRowCount = Math.max(actualRowColumnCount - 1, 0);
-
-        const fetchedAllRows = resultRowCount === actualRowCount;
+export const StatementResult: React.FC<IProps> = ({
+    statementExecution,
+    statementResult,
+    isFullscreen,
+    onFullscreenToggle,
+}) => {
+    const getFetchInfoDOM = (
+        resultRowMinusColCount: number,
+        actualRowMinusColCount: number,
+        fetchedAllRows: boolean
+    ) => {
         const resultPreviewTooltip = `Download full result (${formatNumber(
-            resultRowCount,
+            resultRowMinusColCount,
             'row'
         )}) through Export.`;
 
         const fetchRowInfo = fetchedAllRows ? (
-            `Full Result (${formatNumber(actualRowCount, 'row')})`
+            `Full Result (${formatNumber(actualRowMinusColCount, 'row')})`
         ) : (
             <span>
                 <span className="warning-word">
                     Previewing First{' '}
-                    <PrettyNumber val={actualRowCount} unit="Row" />{' '}
+                    <PrettyNumber val={actualRowMinusColCount} unit="Row" />{' '}
                 </span>
                 <span>
                     Full Result (
-                    <PrettyNumber val={resultRowCount} unit="Row" />){' '}
+                    <PrettyNumber
+                        val={resultRowMinusColCount}
+                        unit="Row"
+                    />){' '}
                 </span>
                 <span aria-label={resultPreviewTooltip} data-balloon-pos={'up'}>
                     <i className="fas fa-info-circle" />
@@ -62,70 +67,74 @@ export class StatementResult extends React.PureComponent<IProps, {}> {
                 {fetchRowInfo}
             </span>
         );
-    }
+    };
 
-    public render() {
-        const {
-            statementResult,
-            statementExecution,
-            isFullscreen,
-            onFullscreenToggle,
-        } = this.props;
+    const { result_row_count: resultRowCount } = statementExecution;
 
-        const { result_row_count: resultRowCount } = statementExecution;
+    let fetchRowInfoDOM = null;
+    let visualizationDOM = null;
 
-        let fetchRowInfoDOM = null;
-        let visualizationDOM = null;
+    const exploreButtonDOM = (
+        <Button
+            onClick={onFullscreenToggle}
+            icon={isFullscreen ? 'minimize-2' : 'maximize-2'}
+            title={isFullscreen ? 'Exit Fullscreen' : 'Fullscreen'}
+            borderless
+            small
+            type="inlineText"
+        />
+    );
 
-        const exploreButtonDOM = (
-            <Button
-                onClick={onFullscreenToggle}
-                icon={isFullscreen ? 'minimize-2' : 'maximize-2'}
-                title={isFullscreen ? 'Exit Fullscreen' : 'Fullscreen'}
-                borderless
-                small
-                type="inlineText"
-            />
+    if (resultRowCount === 0) {
+        visualizationDOM = (
+            <div className="statement-execution-no-output">No Output</div>
         );
+    } else if (!statementResult) {
+        visualizationDOM = <Loading />;
+    } else {
+        const { data, failed, error } = statementResult;
 
-        if (resultRowCount === 0) {
-            visualizationDOM = (
-                <div className="statement-execution-no-output">No Output</div>
+        if (failed) {
+            return (
+                <Message
+                    title="Cannot Load Statement Result"
+                    message={error}
+                    type="error"
+                />
             );
-        } else if (!statementResult) {
-            visualizationDOM = <Loading />;
-        } else {
-            const { data, failed, error } = statementResult;
-
-            if (failed) {
-                return (
-                    <Message
-                        title="Cannot Load Statement Result"
-                        message={error}
-                        type="error"
-                    />
-                );
-            }
-
-            fetchRowInfoDOM = this.getFetchInfoDOM(resultRowCount, data.length);
-            visualizationDOM = data.length ? (
-                <StatementResultTable data={data} paginate={!isFullscreen} />
-            ) : null;
         }
 
-        return (
-            <div
-                className={classNames({
-                    StatementResult: true,
-                    fullscreen: isFullscreen,
-                })}
-            >
-                <div className="statement-results-summary horizontal-space-between">
-                    {fetchRowInfoDOM}
-                    {exploreButtonDOM}
-                </div>
-                {visualizationDOM}
-            </div>
+        const resultRowMinusColCount = Math.max(resultRowCount - 1, 0);
+        const actualRowsMinusColCount = Math.max(data.length - 1, 0);
+        const fetchedAllRows =
+            resultRowMinusColCount === actualRowsMinusColCount;
+
+        fetchRowInfoDOM = getFetchInfoDOM(
+            resultRowMinusColCount,
+            actualRowsMinusColCount,
+            fetchedAllRows
         );
+        visualizationDOM = data.length ? (
+            <StatementResultTable
+                data={data}
+                paginate={!isFullscreen}
+                isPreview={!fetchedAllRows}
+            />
+        ) : null;
     }
-}
+
+    return (
+        <div
+            className={classNames({
+                StatementResult: true,
+                fullscreen: isFullscreen,
+            })}
+        >
+            <div className="statement-results-summary horizontal-space-between">
+                {fetchRowInfoDOM}
+                {exploreButtonDOM}
+            </div>
+            {visualizationDOM}
+        </div>
+    );
+};

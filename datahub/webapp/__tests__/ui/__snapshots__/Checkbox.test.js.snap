@@ -6,9 +6,10 @@ exports[`matches enzyme snapshots matches snapshot 1`] = `
 >
   <label
     className=""
+    onClick={[Function]}
   >
     <input
-      onChange={[Function]}
+      readOnly={true}
       type="checkbox"
     />
      

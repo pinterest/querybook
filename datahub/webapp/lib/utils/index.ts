@@ -204,17 +204,6 @@ export function arrayGroupByField<
     }, {});
 }
 
-export function formatNumber(rawNum: number | string, unit?: string) {
-    const num = Number(rawNum);
-    if (isNaN(num)) {
-        return rawNum;
-    } else {
-        const numString = num.toLocaleString('en-us');
-        const unitString = unit ? ` ${unit}${num > 1 ? 's' : ''}` : '';
-        return numString + unitString;
-    }
-}
-
 // from https://stackoverflow.com/a/39494245
 export function smoothScroll(
     scrollContainer: HTMLElement,
@@ -263,33 +252,6 @@ export function getScrollParent(node: Element): HTMLElement {
     }
 
     return getScrollParent(node.parentNode as Element) || document.body;
-}
-
-export enum ByteSizes {
-    bit = 0,
-    byte = 1,
-    kb = 2,
-    mb = 3,
-    gb = 4,
-    tb = 5,
-    pb = 6,
-    eb = 7,
-}
-export function getHumanReadableByteSize(
-    size: number,
-    fromUnit: ByteSizes = ByteSizes.byte
-): string {
-    let currentUnit = fromUnit;
-    while (size < 1 && currentUnit !== ByteSizes.bit) {
-        currentUnit = ByteSizes[ByteSizes[currentUnit - 1]];
-        size *= 1024;
-    }
-    while (size > 1024 && currentUnit !== ByteSizes.eb) {
-        currentUnit = ByteSizes[ByteSizes[currentUnit + 1]];
-        size /= 1024;
-    }
-
-    return `${size.toFixed(2)} ${ByteSizes[currentUnit].toUpperCase()}s`;
 }
 
 export function linkifyLog(log: string) {

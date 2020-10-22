@@ -10,7 +10,8 @@ import {
 } from 'const/metastore';
 import { navigateWithinEnv } from 'lib/utils/query-string';
 import { generateFormattedDate } from 'lib/utils/datetime';
-import { titleize, getHumanReadableByteSize } from 'lib/utils';
+import { titleize } from 'lib/utils';
+import { getHumanReadableByteSize } from 'lib/utils/number';
 
 import {
     DataTableStats,
