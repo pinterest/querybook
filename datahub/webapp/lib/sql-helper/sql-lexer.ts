@@ -638,9 +638,9 @@ export function findTableReferenceAndAlias(statements: IToken[][]) {
                     tableSearchMode = false;
                 } else if (token.type === 'VARIABLE') {
                     if (tableSearchMode) {
-                        const isActualTable = !(
-                            placeholders && placeholders.has(token.string)
-                        ) && token.raw_type === 'VARIABLE';;
+                        const isActualTable =
+                            !(placeholders && placeholders.has(token.string)) &&
+                            token.raw_type === 'VARIABLE';
 
                         if (isActualTable) {
                             tables.push(token);
