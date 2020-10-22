@@ -205,6 +205,7 @@ class StringStream {
 
 export interface IToken {
     type: string;
+    raw_type: string;
     string: string;
     line: number;
     start: number;
@@ -368,6 +369,7 @@ function makeTokenizer(language: string) {
 
                         token = {
                             type: tokenType,
+                            raw_type: tokenType,
                             string: match[0],
                             line: lineNum,
                             start,
@@ -638,7 +640,7 @@ export function findTableReferenceAndAlias(statements: IToken[][]) {
                     if (tableSearchMode) {
                         const isActualTable = !(
                             placeholders && placeholders.has(token.string)
-                        );
+                        ) && token.raw_type === 'VARIABLE';;
 
                         if (isActualTable) {
                             tables.push(token);
