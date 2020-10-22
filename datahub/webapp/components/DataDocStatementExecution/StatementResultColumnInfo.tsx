@@ -58,7 +58,9 @@ export const StatementResultColumnInfo: React.FC<{
     const transformerPicker = columnTransformers.length ? (
         <div className="column-info-section mt8">
             <div className="column-info-header">
-                <Title size={8}>TRANSFORMER</Title>
+                <Title weight="var(--extra-bold-font)" size={8}>
+                    TRANSFORMER
+                </Title>
             </div>
             {columnTransformers.map((colTrans) => (
                 <Checkbox
@@ -90,7 +92,9 @@ export const StatementResultColumnInfo: React.FC<{
     const quickInsightsDOM = statistics.length ? (
         <div className="column-info-section mt8">
             <div className="column-info-header">
-                <Title size={8}>QUICK INSIGHTS</Title>
+                <Title weight="var(--extra-bold-font)" size={8}>
+                    QUICK INSIGHTS
+                </Title>
             </div>
             <div className="column-dropdown-content">
                 {generateStatisticsDOM()}
@@ -110,7 +114,9 @@ export const StatementResultColumnInfo: React.FC<{
             <div className="column-info-section">
                 {incompleteDataWarning}
                 <div className="column-info-header">
-                    <Title size={8}>OVERVIEW</Title>
+                    <Title weight="var(--extra-bold-font)" size={8}>
+                        OVERVIEW
+                    </Title>
                 </div>
                 <div className="column-dropdown-content">Type: {colType}</div>
             </div>
