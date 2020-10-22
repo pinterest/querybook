@@ -31,7 +31,7 @@ export function formatNumber(
     options: Intl.NumberFormatOptions = {}
 ) {
     const num = Number(rawNum);
-    if (isNaN(num)) {
+    if (!isNumeric(num)) {
         return rawNum;
     } else {
         const numString = num.toLocaleString('en-us', options);
@@ -46,7 +46,7 @@ export function getHumanReadableNumber(
     decimal: number = 2
 ): string {
     const num = Number(rawNum);
-    if (isNaN(num)) {
+    if (!isNumeric(num)) {
         return rawNum as string;
     } else {
         const sign = num < 0 ? '-' : '';
@@ -72,4 +72,17 @@ export function getHumanReadableNumber(
 export function roundNumberToDecimal(n: number, decimalPlaces: number) {
     const baseDiv = Math.pow(10, decimalPlaces);
     return Math.round((n + Number.EPSILON) * baseDiv) / baseDiv;
+}
+
+export function isNumeric(n: any): boolean {
+    if (typeof n === 'bigint') {
+        return true;
+    }
+    if (typeof n === 'number') {
+        return !isNaN(n);
+    } else if (typeof n === 'string') {
+        // typescript thinks isNaN can only take number
+        return !isNaN(n as any) && !isNaN(parseFloat(n));
+    }
+    return false;
 }

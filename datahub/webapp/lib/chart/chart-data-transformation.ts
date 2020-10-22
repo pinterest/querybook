@@ -1,5 +1,8 @@
 import { cloneDeep, range } from 'lodash';
+
 import { ChartDataAggType } from 'const/dataDocChart';
+import { isNumeric } from 'lib/utils/number';
+
 import { sortTable, getValueDataType } from './chart-utils';
 
 const emptyCellValue = null;
@@ -32,16 +35,12 @@ function sortByType<T>(arr: T[]): T[] {
         return arr;
     }
 
-    const isFirstValueNumber = !isNaN(arr[0] as any);
+    const isFirstValueNumber = isNumeric(arr[0]);
     if (isFirstValueNumber) {
         const numArr: number[] = arr as any[];
         return numArr.sort((a, b) => a - b) as any[];
     }
     return arr.sort();
-}
-
-function isNumber(value: any) {
-    return value != null && !isNaN(value);
 }
 
 function safeDiv(x: number, y: number) {
@@ -52,7 +51,7 @@ function safeDiv(x: number, y: number) {
 }
 
 function getFilterNumberArr(values: any[]): number[] {
-    return values.filter(isNumber).map(Number);
+    return values.filter(isNumeric).map(Number);
 }
 
 class PivotReducer<T> {
@@ -75,7 +74,7 @@ const ChartReducers = {
     avg: new PivotReducer(
         { count: 0, sum: 0 },
         (agg, val) => {
-            if (isNumber(val)) {
+            if (isNumeric(val)) {
                 agg.count += 1;
                 agg.sum += Number(val);
             }
@@ -85,10 +84,10 @@ const ChartReducers = {
     ),
     count: new PivotReducer(0, (agg) => agg + 1),
     min: new PivotReducer(Infinity, (a, b) =>
-        isNumber(b) && Number(b) < a ? Number(b) : a
+        isNumeric(b) && Number(b) < a ? Number(b) : a
     ),
     max: new PivotReducer(-Infinity, (a, b) =>
-        isNumber(b) && Number(b) > a ? Number(b) : a
+        isNumeric(b) && Number(b) > a ? Number(b) : a
     ),
     med: new PivotReducer(
         [],
@@ -101,7 +100,7 @@ const ChartReducers = {
         }
     ),
     sum: new PivotReducer(0, (agg, val) =>
-        isNumber(val) ? agg + Number(val) : agg
+        isNumeric(val) ? agg + Number(val) : agg
     ),
 };
 

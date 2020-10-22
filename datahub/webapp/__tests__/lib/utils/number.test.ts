@@ -4,6 +4,7 @@ import {
     getHumanReadableNumber,
     ByteSizes,
     roundNumberToDecimal,
+    isNumeric,
 } from 'lib/utils/number';
 
 test('getHumanReadableByteSize', () => {
@@ -55,4 +56,24 @@ test('roundNumberToDecimal', () => {
     expect(roundNumberToDecimal(1.7777777, 2)).toBe(1.78);
     expect(roundNumberToDecimal(9.1, 2)).toBe(9.1);
     expect(roundNumberToDecimal(1234.5678, 2)).toBe(1234.57);
+});
+
+test('isNumeric', () => {
+    expect(isNumeric(123)).toBe(true);
+    expect(isNumeric('123')).toBe(true);
+    expect(isNumeric('123.123')).toBe(true);
+
+    expect(isNumeric('not number')).toBe(false);
+    expect(isNumeric('Not a number')).toBe(false);
+
+    expect(isNumeric('123not')).toBe(false);
+    expect(isNumeric('123 not')).toBe(false);
+    expect(isNumeric('123e+1000')).toBe(true);
+
+    expect(isNumeric('')).toBe(false);
+    expect(isNumeric(null)).toBe(false);
+    expect(isNumeric(undefined)).toBe(false);
+    expect(isNumeric(NaN)).toBe(false);
+    expect(isNumeric([])).toBe(false);
+    expect(isNumeric([123])).toBe(false);
 });
