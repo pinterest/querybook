@@ -1,14 +1,13 @@
 import * as React from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 
+import { isNumeric } from 'lib/utils/number';
 import { IStoreState, Dispatch } from 'redux/store/types';
 import { fetchDataTableStatsIfNeeded } from 'redux/dataSources/action';
-
-import { TableStats } from './DataTableStatsCommon';
-
 import { KeyContentDisplay } from 'ui/KeyContentDisplay/KeyContentDisplay';
 import { LoadingIcon } from 'ui/Loading/Loading';
 
+import { TableStats } from './DataTableStatsCommon';
 import './DataTableStats.scss';
 
 interface IProps {
@@ -53,7 +52,7 @@ export const DataTableStats: React.FunctionComponent<IProps> = ({
         <KeyContentDisplay
             key={tableStat.id}
             keyString={tableStat.key}
-            rightAlign={!isNaN(tableStat.value)}
+            rightAlign={isNumeric(tableStat.value)}
         >
             <TableStats val={tableStat.value} />
         </KeyContentDisplay>

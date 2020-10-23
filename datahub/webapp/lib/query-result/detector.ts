@@ -1,4 +1,6 @@
 import { IColumnDetector } from './types';
+import { isNumeric } from 'lib/utils/number';
+import { sampleSize } from 'lodash';
 
 const columnDetectors: IColumnDetector[] = [
     {
@@ -15,15 +17,7 @@ const columnDetectors: IColumnDetector[] = [
         type: 'number',
         priority: 1,
         checker: (colName: string, values: any[]) => {
-            return detectTypeForValues(values, (v) => {
-                const vType = typeof v;
-                if (vType === 'number' || vType === 'bigint') {
-                    return true;
-                } else if (vType === 'string') {
-                    return !isNaN(v);
-                }
-                return false;
-            });
+            return detectTypeForValues(values, isNumeric);
         },
     },
     {
@@ -55,10 +49,16 @@ export function findColumnType(columnName: string, values: any[]) {
     return null;
 }
 
-function detectTypeForValues<T>(
+const DETECTOR_MIN_SAMPLE_SIZE = 5;
+
+export function detectTypeForValues<T>(
     values: T[],
-    detector: (value: T) => boolean,
-    mode: 'some' | 'every' = 'some'
+    detector: (value: T) => boolean
 ): boolean {
-    return mode === 'some' ? values.some(detector) : values.every(detector);
+    const sizeOfSample = Math.max(
+        DETECTOR_MIN_SAMPLE_SIZE,
+        Math.floor(values.length / 100)
+    );
+    const sampleValues = sampleSize(values, sizeOfSample);
+    return sampleValues.every(detector);
 }

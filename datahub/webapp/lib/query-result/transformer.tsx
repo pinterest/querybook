@@ -5,6 +5,7 @@ import {
     formatNumber,
     getHumanReadableNumber,
     roundNumberToDecimal,
+    isNumeric,
 } from 'lib/utils/number';
 
 const queryResultTransformers: IColumnTransformer[] = [
@@ -26,7 +27,7 @@ const queryResultTransformers: IColumnTransformer[] = [
         auto: false,
         transform: (v: any): React.ReactNode => {
             const num = Number(v);
-            if (isNaN(num)) {
+            if (!isNumeric(num)) {
                 return v;
             }
 

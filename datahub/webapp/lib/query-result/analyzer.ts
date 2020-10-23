@@ -29,6 +29,9 @@ export const columnStatsAnalyzers: IColumnStatsAnalyzer[] = [
                 return a.comparedTo(b);
             });
             const length = sortedArray.length;
+            if (length === 0) {
+                return 'None';
+            }
             const median =
                 length % 2 === 0
                     ? sortedArray[length / 2 - 1]

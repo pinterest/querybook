@@ -1,10 +1,12 @@
 import moment from 'moment';
+
+import { isNumeric } from 'lib/utils/number';
 import { ChartScaleType } from 'const/dataDocChart';
 
 export type AxesValueType = null | 'date' | 'datetime' | 'number' | 'string';
 export function getValueDataType(value: any): AxesValueType {
     if (value != null) {
-        if (isNaN(value)) {
+        if (!isNumeric(value)) {
             if (moment(value, [moment.HTML5_FMT.DATE], true).isValid()) {
                 return 'date';
             } else if (moment(value, [moment.ISO_8601], true).isValid()) {
@@ -53,9 +55,9 @@ export function sortTable(
     }
 
     const reverseMultiplier = ascending ? 1 : -1;
-    const comparator = isNaN(tableRows[rowIndex][columnIndex] as number)
-        ? (a, b) => (a < b ? -1 : 1)
-        : (a, b) => a - b;
+    const comparator = isNumeric(tableRows[rowIndex][columnIndex])
+        ? (a, b) => a - b
+        : (a, b) => (a < b ? -1 : 1);
     return tableRows.sort((a, b) => {
         // null values are always at the end
         if (a[columnIndex] == null || a[columnIndex] === 'null') {

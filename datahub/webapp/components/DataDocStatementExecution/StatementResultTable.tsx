@@ -13,6 +13,7 @@ import styled from 'styled-components';
 import { UserSettingsFontSizeToCSSFontSize } from 'const/font';
 import { IColumnTransformer } from 'lib/query-result/types';
 import { findColumnType } from 'lib/query-result/detector';
+import { isNumeric } from 'lib/utils/number';
 import { IStoreState } from 'redux/store/types';
 import { Table } from 'ui/Table/Table';
 import { Level } from 'ui/Level/Level';
@@ -178,8 +179,8 @@ export const StatementResultTable: React.FunctionComponent<{
                     } else if (b == null || b === 'null') {
                         return 1;
                     }
-                    const aValue = isNaN(a) ? String(a) : Number(a);
-                    const bValue = isNaN(a) ? String(b) : Number(b);
+                    const aValue = isNumeric(a) ? Number(a) : String(a);
+                    const bValue = isNumeric(a) ? Number(b) : String(b);
                     return aValue < bValue ? -1 : aValue > bValue ? 1 : 0;
                 }}
             />
