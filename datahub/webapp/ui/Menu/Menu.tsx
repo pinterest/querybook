@@ -13,7 +13,7 @@ export const Menu = styled.div.attrs<{
         overflow-x: hidden;
         overflow-y: auto;`};
 `;
-export const MenuItem = styled.a.attrs<{}>({
+export const MenuItem = styled.span.attrs<{}>({
     className: 'MenuItem',
 })``;
 export const MenuInfoItem = styled.div.attrs<{}>({
