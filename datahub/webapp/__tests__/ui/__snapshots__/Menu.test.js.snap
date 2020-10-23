@@ -33,9 +33,9 @@ exports[`matches enzyme snapshots matches snapshot 1`] = `
   }
   forwardedRef={null}
 >
-  <styled.a>
+  <styled.span>
     <styled.div />
-  </styled.a>
+  </styled.span>
   <styled.div />
   <styled.div />
 </StyledComponent>
@@ -45,13 +45,13 @@ exports[`matches test renderer snapshot serializes the styles 1`] = `
 <div
   className="sc-bdVaJa Menu kvKKjL"
 >
-  <a
+  <span
     className="sc-bwzfXH MenuItem uTxCW"
   >
     <div
       className="sc-ifAKCX MenuItemPing kIfKgp"
     />
-  </a>
+  </span>
   <div
     className="sc-bxivhb MenuDivider hOHROt"
   />
