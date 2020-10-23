@@ -93,7 +93,9 @@ export const UserMenu: React.FC<IProps> = ({
                 </MenuItem>
                 {userInfo.isAdmin && (
                     <MenuItem>
-                        <Link to="/admin">Admin Tools</Link>
+                        <Link className="flex1" to="/admin">
+                            Admin Tools
+                        </Link>
                     </MenuItem>
                 )}
                 <MenuDivider />
