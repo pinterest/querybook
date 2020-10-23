@@ -15,7 +15,11 @@ export const Menu = styled.div.attrs<{
 `;
 export const MenuItem = styled.a.attrs<{}>({
     className: 'MenuItem',
-})``;
+})`
+    a {
+        width: 100%;
+    }
+`;
 export const MenuInfoItem = styled.div.attrs<{}>({
     className: 'MenuInfoItem',
 })``;
