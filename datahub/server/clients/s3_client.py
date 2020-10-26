@@ -2,6 +2,8 @@ import boto3
 import botocore
 
 from env import DataHubSettings
+from lib.utils.utf8 import split_by_last_invalid_utf8_char
+
 from .common import ChunkReader, FileDoesNotExist
 
 
@@ -100,6 +102,7 @@ class S3FileReader(ChunkReader):
     ):
         self._bucket_name = bucket_name
         self._key = key
+        self._left_over_bytes = b""
 
         super(S3FileReader, self).__init__(read_size, max_read_size)
 
@@ -117,4 +120,6 @@ class S3FileReader(ChunkReader):
                 raise e
 
     def read(self):
-        return self._body.read(self._read_size).decode("utf-8")
+        raw = self._left_over_bytes + self._body.read(self._read_size)
+        valid_raw, self._left_over_bytes = split_by_last_invalid_utf8_char(raw)
+        return valid_raw.decode("utf-8")
