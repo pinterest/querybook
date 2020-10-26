@@ -80,4 +80,3 @@ def split_by_last_invalid_utf8_char(binary_s: bytes) -> Tuple[bytes, bytes]:
         return [binary_s, b""]
 
     return [binary_s[:last_start_byte], last_start_char]
-
