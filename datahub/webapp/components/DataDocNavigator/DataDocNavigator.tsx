@@ -91,7 +91,7 @@ export const DataDocNavigator: React.FC<{}> = ({}) => {
                 <SearchBar
                     value={titleFilterString}
                     onSearch={setTitleFilterString}
-                    placeholder="Filter..."
+                    placeholder="Filter by title..."
                     transparent
                 />
                 <CreateDataDocButton />
