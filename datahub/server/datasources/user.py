@@ -1,14 +1,18 @@
 from flask import abort
-from app.auth import get_login_config
 from flask_login import current_user
-from app.db import DBSession
-from const.datasources import RESOURCE_NOT_FOUND_STATUS_CODE
+
+from app.auth import get_login_config
 from app.auth import logout as auth_logout
 from app.datasource import register, api_assert
+from app.db import DBSession
+from const.datasources import RESOURCE_NOT_FOUND_STATUS_CODE
+
+from lib.notify.all_notifiers import ALL_NOTIFIERS
+from lib.utils.version import get_version
+
 from logic import user as logic
 from logic import environment as environment_logic
 from logic import admin as admin_logic
-from lib.notify.all_notifiers import ALL_NOTIFIERS
 
 
 @register("/user/login_method/", methods=["GET"], require_auth=False)
@@ -108,3 +112,9 @@ def handle_create_api_access_tokens():
 @register("/user/notifiers/", methods=["GET"])
 def get_all_query_result_notifier():
     return ALL_NOTIFIERS
+
+
+@register("/version/", methods=["GET"])
+def get_datahub_version():
+    """This gets the current version of datahub from package.json (source of truth)"""
+    return get_version()

@@ -3,9 +3,9 @@ from flask import send_from_directory, abort
 
 from app import auth
 from app.datasource import register, abort_request
-
 from app.flask_app import flask_app, limiter
 from const.path import WEBAPP_PATH
+
 
 import datasources
 import datasources_socketio

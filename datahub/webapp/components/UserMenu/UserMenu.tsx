@@ -14,8 +14,9 @@ import { Link } from 'ui/Link/Link';
 import { MenuInfoItem, Menu, MenuDivider, MenuItem } from 'ui/Menu/Menu';
 import { Modal } from 'ui/Modal/Modal';
 import { Popover, PopoverLayout } from 'ui/Popover/Popover';
-import './UserMenu.scss';
 import { ToggleSwitch } from 'ui/ToggleSwitch/ToggleSwitch';
+
+import './UserMenu.scss';
 
 interface IProps {
     tooltipPos?: TooltipDirection;
