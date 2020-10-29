@@ -12,8 +12,8 @@ repos:
       hooks:
           - id: black
             files: "^datahub/(server|tests)/.*\\.py$"
-    - repo: https://github.com/prettier/prettier
-      rev: '2.0.2'
+    - repo: https://github.com/prettier/pre-commit
+      rev: v2.0.2
       hooks:
           - id: prettier
             files: "^datahub/webapp/.*\\.(tsx?)$"

@@ -26,3 +26,6 @@ node_modules/*
 .vscode/*
 *.pyc
 .vscode.env
+
+# Jest coverage files
+datahub/webapp/coverage/
