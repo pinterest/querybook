@@ -68,7 +68,27 @@ const contextSensitiveKeyWord = {
     limit: 'none',
 };
 
-function getTokenTypeMatcher(language: string) {
+type TokenType =
+    | 'NUMBER'
+    | 'STRING'
+    | 'COMMENT'
+    | 'OPERATOR'
+    | 'PUNCTUATION'
+    | 'BRACKET'
+    | 'SEMI'
+    | 'COMMA'
+    | 'TEMPLATED_TAG'
+    | 'TEMPLATED_BLOCK'
+    | 'URL'
+    | 'VARIABLE'
+    | 'WORD'
+    | 'KEYWORD'
+    | 'BOOL'
+    | 'TYPE';
+
+function getTokenTypeMatcher(
+    language: string
+): Array<{ name: TokenType; regex: RegExp[] }> {
     const languageSetting = getLanguageSetting(language);
     return [
         {
@@ -204,7 +224,7 @@ class StringStream {
 }
 
 export interface IToken {
-    type: string;
+    type: TokenType;
     string: string;
     line: number;
     start: number;
@@ -551,8 +571,8 @@ export function getSelectedQuery(query: string, selectedRange: IRange = null) {
 
 export function getQueryAsExplain(query: string, language?: string) {
     const statementRanges = getStatementRanges(query, language);
-    const statements = statementRanges.map((range) =>
-        query.slice(range[0], range[1])
+    const statements = statementRanges.map(
+        (range) => query.slice(range[0], range[1]) + ';'
     );
     return statements.map((statement) => 'EXPLAIN ' + statement).join('\n');
 }
@@ -586,6 +606,9 @@ export function findTableReferenceAndAlias(statements: IToken[][]) {
 
         let tokenCounter = 0;
         let firstToken = statement[tokenCounter++];
+
+        // If the query starts with EXPLAIN
+        // ignore that word and skip again to the rest
         if (
             firstToken.type === 'KEYWORD' &&
             firstToken.string === 'explain' &&
@@ -615,12 +638,43 @@ export function findTableReferenceAndAlias(statements: IToken[][]) {
                     )
                 );
             }
+
             const tables: IToken[] = [];
             const tableAlias: Record<string, IToken> = {};
+
+            // Whether or not the context inside a () is a query
+            // start with True because the checks above
+            const bracketQueryContext: boolean[] = [true];
+
             let tableSearchMode = false;
             let lastTableIndex = -1;
 
             statement.forEach((token, tokenIndex) => {
+                if (token.type === 'BRACKET') {
+                    if (token.string === '(' || token.string === '[') {
+                        const nextToken = statement[tokenIndex + 1];
+                        if (!nextToken) {
+                            // no need for more analysis if the loop is going to end
+                            return;
+                        }
+                        bracketQueryContext.push(
+                            nextToken.type === 'KEYWORD' &&
+                                initialStatementKeyWord.has(nextToken.string)
+                        );
+                        tableSearchMode = false;
+                    } else {
+                        // ) or ]
+                        bracketQueryContext.pop();
+                    }
+                    return;
+                }
+
+                // If the content inside the bracket is not going to be
+                // a query, then we skip all until we meet the enclosing bracket
+                if (!bracketQueryContext[bracketQueryContext.length - 1]) {
+                    return;
+                }
+
                 if (token.type === 'KEYWORD') {
                     if (tableKeyWord.has(token.string)) {
                         tableSearchMode = true;
@@ -632,14 +686,11 @@ export function findTableReferenceAndAlias(statements: IToken[][]) {
                     } else if (!continueTableSearchKeyWord.has(token.string)) {
                         tableSearchMode = false;
                     }
-                } else if (token.type === 'BRACKET') {
-                    tableSearchMode = false;
                 } else if (token.type === 'VARIABLE') {
                     if (tableSearchMode) {
                         const isActualTable = !(
                             placeholders && placeholders.has(token.string)
                         );
-
                         if (isActualTable) {
                             tables.push(token);
                             lastTableIndex = tokenIndex;
@@ -648,12 +699,15 @@ export function findTableReferenceAndAlias(statements: IToken[][]) {
                     } else if (tokenIndex > 0) {
                         // check alias
                         const prevToken = statement[tokenIndex - 1];
-                        const hasPrestoAlias =
+
+                        // example: select * from table_a as aa;
+                        const hasAsAlias =
                             prevToken.type === 'KEYWORD' &&
                             prevToken.string === 'AS' &&
                             lastTableIndex + 2 === tokenIndex;
-                        const hasHiveAlias = lastTableIndex + 1 === tokenIndex;
-                        if (hasPrestoAlias || hasHiveAlias) {
+                        // example: select * from table_a aa;
+                        const hasSpaceAlias = lastTableIndex + 1 === tokenIndex;
+                        if (hasAsAlias || hasSpaceAlias) {
                             const tableToken = tables[tables.length - 1];
                             const isActualTable = !(
                                 placeholders && placeholders.has(token.string)
