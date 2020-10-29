@@ -474,7 +474,7 @@ export function simpleParse(tokens: IToken[]) {
     return statements;
 }
 
-export function getQueryLinePosition(query: string) {
+export function getQueryLinePosition(query: string): number[] {
     // Return start char position of every line
     // the return array is always 1 + number of lines in query
     return query
