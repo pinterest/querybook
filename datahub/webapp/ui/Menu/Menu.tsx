@@ -30,7 +30,7 @@ export const MenuDivider = styled.div.attrs<{}>({
 export const MenuItemPing = styled.div.attrs<{}>({
     className: 'MenuItemPing',
 })`
-    cursor: default;
+    pointer-events: none;
     border-radius: 100px;
     background-color: var(--color-accent-bg);
     width: 8px;

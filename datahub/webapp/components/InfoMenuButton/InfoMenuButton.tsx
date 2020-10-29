@@ -7,7 +7,14 @@ import { ChangeLogValue, CHANGE_LOG_KEY } from 'lib/local-store/const';
 
 import { IconButton } from 'ui/Button/IconButton';
 import { Popover } from 'ui/Popover/Popover';
-import { MenuDivider, Menu, MenuItem, MenuItemPing } from 'ui/Menu/Menu';
+import {
+    MenuDivider,
+    Menu,
+    MenuItem,
+    MenuItemPing,
+    MenuInfoItem,
+} from 'ui/Menu/Menu';
+import { DataHubVersion } from './DataHubVersion';
 
 export const InfoMenuButton: React.FunctionComponent = () => {
     const [showPanel, setShowPanel] = React.useState(false);
@@ -32,6 +39,10 @@ export const InfoMenuButton: React.FunctionComponent = () => {
     const getPanelDOM = () => {
         const panelContent = (
             <Menu>
+                <MenuInfoItem>
+                    DataHub v<DataHubVersion />
+                </MenuInfoItem>
+                <MenuDivider />
                 <MenuItem
                     onClick={() => {
                         navigateWithinEnv('/changelog/', {
@@ -39,12 +50,10 @@ export const InfoMenuButton: React.FunctionComponent = () => {
                         });
                         setNotification(false);
                     }}
-                    ping={notification}
                 >
                     Change Logs
                     {notification ? <MenuItemPing /> : null}
                 </MenuItem>
-                <MenuDivider />
                 <MenuItem
                     onClick={() =>
                         navigateWithinEnv('/info/shortcut/', {
@@ -54,7 +63,6 @@ export const InfoMenuButton: React.FunctionComponent = () => {
                 >
                     Shortcuts
                 </MenuItem>
-                <MenuDivider />
                 <MenuItem
                     onClick={() =>
                         navigateWithinEnv('/info/faq/', {
@@ -64,7 +72,6 @@ export const InfoMenuButton: React.FunctionComponent = () => {
                 >
                     FAQs
                 </MenuItem>
-                <MenuDivider />
                 <MenuItem
                     onClick={() =>
                         navigateWithinEnv('/info/tour/', {

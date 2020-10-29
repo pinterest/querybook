@@ -5,6 +5,7 @@ import React, { useMemo } from 'react';
 const StyledKeyboardKey = styled.span.attrs<{}>({
     className: 'KeyboardKey mr4',
 })`
+    cursor: default;
     border: var(--border);
     border-radius: var(--border-radius);
     background-color: var(--bg-color);
