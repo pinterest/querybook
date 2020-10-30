@@ -186,7 +186,7 @@ class DataTableNavigatorComponent extends React.PureComponent<
                 <SearchBar
                     value={searchString}
                     onSearch={this.handleSearch}
-                    placeholder="Filter..."
+                    placeholder="Search by Table Name..."
                     transparent
                     delayMethod="throttle"
                 />
