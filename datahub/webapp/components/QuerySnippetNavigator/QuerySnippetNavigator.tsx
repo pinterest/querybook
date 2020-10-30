@@ -235,7 +235,7 @@ class QuerySnippetNavigatorComponent extends React.PureComponent<
                     value={titleFilter}
                     onSearch={this.onTitleFilter}
                     isSearching={false}
-                    placeholder="Filter..."
+                    placeholder="Search by Title..."
                     transparent
                 />
                 <IconButton
