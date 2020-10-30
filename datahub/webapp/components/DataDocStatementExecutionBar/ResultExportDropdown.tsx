@@ -13,6 +13,7 @@ import ds from 'lib/datasource';
 import * as Utils from 'lib/utils';
 import { getStatementExecutionResultDownloadUrl } from 'lib/query-execution';
 import { getExporterAuthentication } from 'lib/result-export';
+import { tableToTSV } from 'lib/utils/table-export';
 
 import { Dropdown } from 'ui/Dropdown/Dropdown';
 import { Button } from 'ui/Button/Button';
@@ -24,8 +25,8 @@ import { ListMenu } from 'ui/Menu/ListMenu';
 import { Title } from 'ui/Title/Title';
 import { validateForm, updateValue } from 'ui/SmartForm/formFunctions';
 import { SmartForm } from 'ui/SmartForm/SmartForm';
+import { IconButton } from 'ui/Button/IconButton';
 import './ResultExportDropdown.scss';
-import { tableToTSV } from 'lib/utils/table-export';
 
 interface IProps {
     statementExecution: IStatementExecution;
@@ -166,10 +167,12 @@ export const ResultExportDropdown: React.FunctionComponent<IProps> = ({
     );
 
     const onGenericExportClick = React.useCallback(
-        (exporter: IQueryResultExporter) => {
-            const hasRequired =
-                exporter.form && !validateForm({}, exporter.form)[0];
-            if (hasRequired) {
+        (exporter: IQueryResultExporter, showExportForm: boolean) => {
+            if (
+                showExportForm ||
+                // In this case, check if the form is required to be filled before export
+                (exporter.form && !validateForm({}, exporter.form)[0])
+            ) {
                 setExporterForForm(exporter);
             } else {
                 handleExport(exporter);
@@ -231,8 +234,26 @@ export const ResultExportDropdown: React.FunctionComponent<IProps> = ({
                 icon: 'fas fa-copy',
             },
             ...statementExporters.map((exporter) => ({
-                name: exporter.name,
-                onClick: onGenericExportClick.bind(null, exporter),
+                name: (
+                    <div className="horizontal-space-between flex1">
+                        <span>{exporter.name}</span>
+                        {exporter.form ? (
+                            <IconButton
+                                noPadding
+                                tooltip="Detailed Export"
+                                tooltipPos="left"
+                                size={16}
+                                icon="share"
+                                onClick={(e) => {
+                                    e.stopPropagation();
+                                    e.preventDefault();
+                                    onGenericExportClick(exporter, true);
+                                }}
+                            />
+                        ) : null}
+                    </div>
+                ),
+                onClick: onGenericExportClick.bind(null, exporter, false),
                 icon:
                     exporter.type === 'url'
                         ? 'fas fa-file-export'
