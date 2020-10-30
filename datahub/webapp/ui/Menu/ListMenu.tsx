@@ -69,13 +69,13 @@ export const ListMenu: React.FunctionComponent<IProps> = ({
         }
 
         const buttonContent = (
-            <span className="flex-row">
+            <span className="flex-row flex1">
                 {iconClass ? (
                     <span className="Menu-icon flex-center mr8">
                         <i className={iconClass} />
                     </span>
                 ) : null}
-                <span className="Menu-text">{action.name}</span>
+                <span className="Menu-text flex1">{action.name}</span>
             </span>
         );
         let itemDOM: React.ReactChild;

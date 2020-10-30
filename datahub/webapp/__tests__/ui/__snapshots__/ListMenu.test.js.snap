@@ -8,10 +8,10 @@ exports[`matches enzyme snapshots matches snapshot 1`] = `
     key="0"
   >
     <span
-      className="flex-row"
+      className="flex-row flex1"
     >
       <span
-        className="Menu-text"
+        className="Menu-text flex1"
       >
         test
       </span>
@@ -28,10 +28,10 @@ exports[`matches test renderer snapshot serializes the styles 1`] = `
     className="sc-bwzfXH MenuItem uTxCW"
   >
     <span
-      className="flex-row"
+      className="flex-row flex1"
     >
       <span
-        className="Menu-text"
+        className="Menu-text flex1"
       >
         test
       </span>
