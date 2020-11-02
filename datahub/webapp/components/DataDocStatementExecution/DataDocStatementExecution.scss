@@ -158,7 +158,12 @@
 
         .StatementResultTable {
             flex: 1;
-            overflow-y: scroll;
+            overflow: hidden;
+            display: flex;
+            .Table {
+                flex: 1;
+                overflow: auto;
+            }
         }
     }
 
