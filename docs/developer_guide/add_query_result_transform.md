@@ -6,7 +6,7 @@ sidebar_label: Result Transform
 
 ## Transform Query Results
 
-The query results in DataHub can be transformed to provide meaningful statistics or visualization. This can be tailored to the needs of the organization through the use of web plugins. Common examples include:
+The query results in DataHub can be transformed to provide meaningful statistics or visualization. This can be tailored to the needs of the organization through the use of web plugins. Common use cases include:
 
 -   Add an external URL to the result cell
 -   Transform the cell into images or videos
@@ -19,7 +19,7 @@ To implement the features above, we would need to add detectors, analyzers, and 
 
 Detectors are used to figure out the "type" of a column. The detector gets provided with the column name and all values under that column to evaluate the type of the column.
 
-There are three things to note here. First of all, since the query results of DataHub are fetched from source via CSV and the query samples are fetched directly from the query engine, we must ensure the detector can detect both string and native types. For example, a number type detector must check if the value is a javascript number or a number string. Another thing to watch out for is that the type detected does not need to be associated with the actual type of the query engine. For example, a URL type's underlying database type is most likely to be varchar. Last but not least, there is no need to check every single value under a column for efficiency purposes. The default DataHub type detectors take a random sample of the values and only check based on that.
+There are three things to note here. First of all, since the query results of DataHub are fetched from the source via CSV and the query samples are fetched directly from the query engine, we must ensure the detector can detect both string and native types. For example, a number type detector must check if the value is a javascript number or a number string. Another thing to watch out for is that the type detected does not need to be associated with the actual type of the query engine. For example, a URL type's underlying database type is most likely to be varchar. Last but not least, there is no need to check every single value under a column for efficiency purposes. The default DataHub type detectors take a random sample of the values and only check based on that.
 
 ### Analyzers
 
