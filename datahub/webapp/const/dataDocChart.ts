@@ -160,6 +160,7 @@ export enum chartValueDisplayType {
 export interface IChartVisualMeta {
     legend_position?: ChartLegendPositionType;
     legend_display?: boolean;
+    connect_missing?: boolean;
 
     values: {
         display: chartValueDisplayType;
@@ -230,6 +231,7 @@ export interface IChartFormValues {
     title: string;
     legendPosition: 'top' | 'bottom' | 'right' | 'left';
     legendDisplay: boolean;
+    connectMissing: boolean;
 
     valueDisplay: chartValueDisplayType;
     valuePosition: 'center' | 'start' | 'end';

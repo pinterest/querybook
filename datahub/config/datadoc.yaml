@@ -62,7 +62,7 @@ cell_types:
             visual:
                 legend_position: ''
                 legend_display: true
-
+                connect_missing: false
                 values:
                     display: 0
                     position: 'center'

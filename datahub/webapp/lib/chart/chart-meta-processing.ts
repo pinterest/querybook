@@ -129,6 +129,8 @@ export function mapMetaToFormVals(
         title: meta.title || '',
         legendPosition: meta.visual.legend_position ?? 'top',
         legendDisplay: meta.visual.legend_display ?? true,
+        connectMissing: meta.visual.connect_missing ?? false,
+
         valueDisplay:
             meta.visual.values?.display ?? chartValueDisplayType.FALSE,
         valuePosition: meta.visual.values?.position,
@@ -181,6 +183,10 @@ export function mapMetaToChartOptions(
         },
     };
 
+    if (meta.visual.connect_missing != null) {
+        optionsObj.spanGaps = meta.visual.connect_missing;
+    }
+
     optionsObj['plugins'] = {
         datalabels: {
             display:
@@ -209,7 +215,7 @@ export function mapMetaToChartOptions(
                 )} (${percentage}%)`;
             },
             title: (tooltipItem, chartData) => {
-                return chartData.labels[tooltipItem[0].index];
+                return String(chartData.labels[tooltipItem[0].index]);
             },
         };
     } else {
@@ -220,14 +226,14 @@ export function mapMetaToChartOptions(
                 const value = tooltipItem.value;
                 return ` ${label}: ${formatNumber(value)}`;
             },
-            title: (tooltipItem, chartData) => {
+            title: (tooltipItem, chartData): string => {
                 if (meta.chart.y_axis.stack) {
                     let totalValue = 0;
                     for (const value of tooltipItem) {
                         totalValue += Number(value.yLabel);
                     }
                     if (isNaN(totalValue)) {
-                        return chartData.labels[tooltipItem[0].index];
+                        return String(chartData.labels[tooltipItem[0].index]);
                     } else {
                         return (
                             chartData.labels[tooltipItem[0].index] +
@@ -236,7 +242,7 @@ export function mapMetaToChartOptions(
                         );
                     }
                 } else {
-                    return chartData.labels[tooltipItem[0].index];
+                    return String(chartData.labels[tooltipItem[0].index]);
                 }
             },
         };

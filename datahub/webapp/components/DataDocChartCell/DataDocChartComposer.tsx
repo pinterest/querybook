@@ -501,13 +501,8 @@ const DataDocChartComposerComponent: React.FunctionComponent<
                     }))}
                 />
             </FormField>
-            {['area', 'bar', 'histogram'].includes(values.chartType) ? (
-                <SimpleField
-                    type="checkbox"
-                    label="Stack Chart"
-                    name="stack"
-                    disabled={values.chartType === 'area'}
-                />
+            {['bar', 'histogram'].includes(values.chartType) ? (
+                <SimpleField type="checkbox" label="Stack Chart" name="stack" />
             ) : null}
         </>
     );
@@ -817,6 +812,16 @@ const DataDocChartComposerComponent: React.FunctionComponent<
                         {seriesColorDOM}
                     </>
                 )}
+                {['line', 'area'].includes(values.chartType) ? (
+                    <>
+                        <FormSectionHeader>Line Formatting</FormSectionHeader>
+                        <SimpleField
+                            label="Connect missing data"
+                            name="connectMissing"
+                            type="checkbox"
+                        />
+                    </>
+                ) : null}
             </>
         );
 
@@ -1050,6 +1055,8 @@ function formValsToMeta(vals: IChartFormValues, meta: IDataChartCellMeta) {
         draft.title = vals.title;
         draft.visual.legend_position = vals.legendPosition;
         draft.visual.legend_display = vals.legendDisplay;
+        draft.visual.connect_missing = vals.connectMissing;
+
         draft.visual.values = {
             display: vals.valueDisplay ?? chartValueDisplayType.FALSE,
             position: vals.valuePosition,

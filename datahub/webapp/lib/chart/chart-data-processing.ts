@@ -7,11 +7,19 @@ import { ChartScaleType } from 'const/dataDocChart';
 import { colorPalette, colorPaletteFill, fillColor } from 'const/chartColors';
 
 function processDataPoint(val: any, scale: ChartScaleType) {
+    // val type validation
+    if (val == null) {
+        return null;
+    }
+
+    // Convert data by Axis type
     if (scale === 'category') {
         return val;
     } else if (scale === 'time' && isNaN(val)) {
-        return Number(new Date(val));
+        return new Date(val);
     }
+
+    // by default, a point is a number
     return Number(val);
 }
 
