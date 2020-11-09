@@ -60,10 +60,16 @@ export const DataDocChartCell: React.FunctionComponent<IProps> = ({
             ? meta.data.source_ids[0]
             : null
     );
+
+    const defaultQueryExecutionId = React.useMemo(
+        () =>
+            meta.data.source_type === 'execution'
+                ? meta.data.source_ids[0]
+                : undefined,
+        [meta.data.source_type, meta.data.source_ids]
+    );
     const [queryExecutionId, setQueryExecutionId] = React.useState(
-        meta.data.source_type === 'execution'
-            ? meta.data.source_ids[0]
-            : undefined
+        defaultQueryExecutionId
     );
     const [statementExecutionId, setStatementExecutionId] = React.useState(
         null
@@ -149,13 +155,12 @@ export const DataDocChartCell: React.FunctionComponent<IProps> = ({
         if (sourceType === 'custom') {
             return null; // Custom data is sourced from internal context
         }
-
         const queryExecutionPicker = queryExecutions.length ? (
             <QueryExecutionPicker
                 queryExecutionId={queryExecutionId}
                 onSelection={setQueryExecutionId}
                 queryExecutions={queryExecutions}
-                autoSelect
+                autoSelect={defaultQueryExecutionId == null}
             />
         ) : null;
 

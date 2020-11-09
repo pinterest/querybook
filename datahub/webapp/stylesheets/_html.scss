@@ -175,6 +175,7 @@ body {
     color: var(--text-color);
     font-weight: 400;
     line-height: 1.5;
+    overscroll-behavior-y: none;
 }
 
 body,
