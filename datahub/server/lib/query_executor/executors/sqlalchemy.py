@@ -63,3 +63,13 @@ class SqliteQueryExecutor(SqlAlchemyQueryExecutor):
     @classmethod
     def EXECUTOR_LANGUAGE(cls):
         return "sqlite"
+
+
+class SnowflakeQueryExecutor(SqlAlchemyQueryExecutor):
+    @classmethod
+    def EXECUTOR_NAME(cls):
+        return "sqlalchemy"
+
+    @classmethod
+    def EXECUTOR_LANGUAGE(cls):
+        return "snowflake"
