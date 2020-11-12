@@ -7,6 +7,7 @@ from .executors.sqlalchemy import (
     MysqlQueryExecutor,
     DruidQueryExecutor,
     SqliteQueryExecutor,
+    SnowflakeQueryExecutor,
 )
 from .executors.bigquery import BigQueryQueryExecutor
 
@@ -21,6 +22,7 @@ ALL_EXECUTORS = [
     DruidQueryExecutor,
     SqliteQueryExecutor,
     BigQueryQueryExecutor,
+    SnowflakeQueryExecutor,
 ] + ALL_PLUGIN_EXECUTORS
 
 

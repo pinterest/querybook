@@ -41,6 +41,8 @@ hmsclient==0.1.1
 pydruid==0.5.7
 # BigQuery
 google-cloud-bigquery==1.24.0
+# Snowflake
+snowflake-sqlalchemy==1.2.4
 
 # Query templating
 Jinja2==2.10.3  # From Flask
