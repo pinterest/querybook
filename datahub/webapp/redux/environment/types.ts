@@ -1,5 +1,8 @@
-import { Action, Dispatch } from 'redux';
-import { ThunkAction, ThunkDispatch } from 'redux-thunk';
+import { Action } from 'redux';
+import {
+    ThunkAction,
+    ThunkDispatch as UntypedThunkDispatch,
+} from 'redux-thunk';
 
 import { IStoreState } from '../store/types';
 
@@ -55,7 +58,7 @@ export type ThunkResult<R> = ThunkAction<
     EnvironmentAction
 >;
 
-export type ThunkDispatch = ThunkDispatch<
+export type ThunkDispatch = UntypedThunkDispatch<
     IStoreState,
     undefined,
     EnvironmentAction

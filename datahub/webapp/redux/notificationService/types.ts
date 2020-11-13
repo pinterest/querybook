@@ -1,4 +1,6 @@
 import { Action } from 'redux';
+import { ThunkAction } from 'redux-thunk';
+import { IStoreState } from '../store/types';
 
 export type NotificationServiceAction = IReceiveNotifiersAction;
 
@@ -16,3 +18,10 @@ export interface IReceiveNotifiersAction extends Action {
         notificationServices: INotifier[];
     };
 }
+
+export type ThunkResult<R> = ThunkAction<
+    R,
+    IStoreState,
+    undefined,
+    NotificationServiceAction
+>;

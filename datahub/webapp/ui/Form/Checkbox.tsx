@@ -29,7 +29,6 @@ export const Checkbox: React.FunctionComponent<ICheckboxProps> = ({
         <div className="Checkbox">
             <label
                 className={checkboxClass}
-                disabled={disabled}
                 onClick={
                     disabled
                         ? null

@@ -27,7 +27,7 @@ export function AdminDeletedList<T extends { id: number; name: string }>({
             valDOM = moment(val * 1000).format('lll');
         }
         return (
-            <div className="AdminDeletedList-key-val" key={key}>
+            <div className="AdminDeletedList-key-val" key={key as string}>
                 {key}: {valDOM}
             </div>
         );

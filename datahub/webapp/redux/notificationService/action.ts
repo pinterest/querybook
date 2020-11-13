@@ -1,4 +1,4 @@
-import { ThunkResult } from 'redux/user/types';
+import { ThunkResult } from 'redux/notificationService/types';
 import ds from 'lib/datasource';
 import { INotifier } from './types';
 

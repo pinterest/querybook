@@ -33,8 +33,8 @@ export interface ILinkProps {
     linkProps?: Partial<LinkProps>;
 }
 
-const openNewTab = (url) => window.open(url);
-const openInTab = (url) => (window.location.href = url);
+const openNewTab = (url: string) => window.open(url);
+const openInTab = (url: string) => (window.location.href = url);
 
 export class Link extends React.PureComponent<ILinkProps> {
     public handleClick = (e: React.MouseEvent<HTMLAnchorElement>) => {
@@ -43,7 +43,7 @@ export class Link extends React.PureComponent<ILinkProps> {
         const isCmdDown = e.metaKey;
         if (onClick) {
             onClick(e);
-        } else if (to) {
+        } else if (to && typeof to === 'string') {
             if (isCmdDown || newTab) {
                 openNewTab(to);
             } else {

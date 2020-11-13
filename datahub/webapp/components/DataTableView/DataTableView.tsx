@@ -64,14 +64,14 @@ const tabDefinitions = [
     },
 ];
 
-interface IOwnProps extends RouteComponentProps {
+interface IDataTableViewOwnProps extends RouteComponentProps {
     tableId: number;
 }
 
 type DataTableViewStateProps = ReturnType<typeof mapStateToProps>;
 type DataTableViewDispatchProps = ReturnType<typeof mapDispatchToProps>;
 
-export type IDataTableViewProps = IOwnProps &
+export type IDataTableViewProps = IDataTableViewOwnProps &
     DataTableViewStateProps &
     DataTableViewDispatchProps;
 
@@ -414,6 +414,6 @@ function mapDispatchToProps(dispatch: Dispatch, ownProps) {
     };
 }
 
-export const DataTableView = withRouter(
+export const DataTableView = withRouter<IDataTableViewOwnProps>(
     connect(mapStateToProps, mapDispatchToProps)(DataTableViewComponent)
 );
