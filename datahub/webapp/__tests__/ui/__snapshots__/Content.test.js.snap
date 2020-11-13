@@ -1,42 +1,19 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
 exports[`matches enzyme snapshots matches snapshot 1`] = `
-<StyledComponent
+<div
+  className="sc-bdfBwQ Content"
   dangerouslySetInnerHTML={
     Object {
       "__html": "<p>test</p>",
     }
   }
-  forwardedComponent={
-    Object {
-      "$$typeof": Symbol(react.forward_ref),
-      "attrs": Array [
-        Object {
-          "className": "Content",
-        },
-      ],
-      "componentStyle": ComponentStyle {
-        "componentId": "sc-bdVaJa",
-        "isStatic": true,
-        "rules": Array [],
-      },
-      "displayName": "styled.div",
-      "foldedComponentIds": Array [],
-      "render": [Function],
-      "styledComponentId": "sc-bdVaJa",
-      "target": "div",
-      "toString": [Function],
-      "warnTooManyClasses": [Function],
-      "withComponent": [Function],
-    }
-  }
-  forwardedRef={null}
 />
 `;
 
 exports[`matches test renderer snapshot serializes the styles 1`] = `
 <div
-  className="sc-bdVaJa Content bDWFJH"
+  className="sc-bdfBwQ Content"
   dangerouslySetInnerHTML={
     Object {
       "__html": "<p>test</p>",
