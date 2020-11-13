@@ -14,13 +14,19 @@ run_webpack_test() {
     fi
 }
 
-run_js_unit_test() (
+run_js_unit_test() {
     echo 'Start running js unit tests >>>>>>>>>>>>>>>>>>>>>>>>>>>>'
     NODE_ENV=test ./node_modules/.bin/jest
-)
+}
+
+run_ts_validation() {
+    echo 'Start running ts validation  >>>>>>>>>>>>>>>>>>>>>>>>>>>>'
+    ./node_modules/.bin/tsc --noEmit
+}
 
 tests=(
     "run_python_unit_test"
+    "run_ts_validation"
     "run_js_unit_test"
     "run_webpack_test"
 )

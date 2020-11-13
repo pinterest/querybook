@@ -1,5 +1,8 @@
 import { Action } from 'redux';
-import { ThunkAction, ThunkDispatch } from 'redux-thunk';
+import {
+    ThunkAction,
+    ThunkDispatch as UntypedThunkDispatch,
+} from 'redux-thunk';
 import { IStoreState } from '../store/types';
 
 export interface IReceiveAdhocQueryAction extends Action {
@@ -35,7 +38,7 @@ export type ThunkResult<R> = ThunkAction<
     AdhocQueryAction
 >;
 
-export type ThunkDispatch = ThunkDispatch<
+export type ThunkDispatch = UntypedThunkDispatch<
     IStoreState,
     undefined,
     AdhocQueryAction

@@ -268,6 +268,6 @@ const mapDispatchToProps = (dispatch: Dispatch) => {
     };
 };
 
-export const DataTableNavigator = withRouter(
+export const DataTableNavigator = withRouter<IDataTableNavigatorOwnProps>(
     connect(mapStateToProps, mapDispatchToProps)(DataTableNavigatorComponent)
 );

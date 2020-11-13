@@ -204,8 +204,13 @@ export function mapMetaToChartOptions(
         optionsObj.tooltips['callbacks'] = {
             label: (tooltipItem, chartData) => {
                 const dataset = chartData.datasets[tooltipItem.datasetIndex];
+                const datasetMeta: Record<
+                    number,
+                    { total: number }
+                > = (dataset as any)._meta;
                 const totalValue =
-                    dataset._meta[Object.keys(dataset._meta)[0]].total;
+                    datasetMeta[Object.keys(datasetMeta)[0]].total;
+
                 const currentValue = dataset.data[tooltipItem.index] as number;
                 const percentage = parseFloat(
                     ((currentValue / totalValue) * 100).toFixed(1)

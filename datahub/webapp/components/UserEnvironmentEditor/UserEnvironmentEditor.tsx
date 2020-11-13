@@ -25,7 +25,9 @@ export const UserEnvironmentEditor: React.FunctionComponent<IProps> = ({
 }) => {
     const [selectedUserId, setSelectedUserId] = React.useState<number>(null);
 
-    const { data, isLoading, hasMore, fetchMore, reset } = usePaginatedFetch({
+    const { data, isLoading, hasMore, fetchMore, reset } = usePaginatedFetch<
+        IUserInfo
+    >({
         url: `/admin/environment/${environmentId}/users/`,
     });
 
