@@ -8,9 +8,10 @@ export function useBrowserTitle(title = '') {
     }, [title]);
 
     // Unset the title when unmounting
-    useEffect(() => {
-        return () => {
+    useEffect(
+        () => () => {
             setBrowserTitle(oldTitle.current, false);
-        };
-    }, []);
+        },
+        []
+    );
 }

@@ -23,11 +23,9 @@ const StyledDataHubLogo = styled.span`
 
 export const DataHubLogo: React.SFC<{
     size?: number;
-}> = ({ size = 2 }) => {
-    return (
-        <StyledDataHubLogo size={size}>
-            <span className="datahub-title-first-part">Data</span>
-            <span className="datahub-title-last-part">Hub</span>
-        </StyledDataHubLogo>
-    );
-};
+}> = ({ size = 2 }) => (
+    <StyledDataHubLogo size={size}>
+        <span className="datahub-title-first-part">Data</span>
+        <span className="datahub-title-last-part">Hub</span>
+    </StyledDataHubLogo>
+);

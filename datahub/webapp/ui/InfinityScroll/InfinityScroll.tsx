@@ -80,12 +80,6 @@ export class InfinityScroll<T> extends React.PureComponent<
         );
     }
 
-    public componentDidUpdate(prevProps) {
-        if (this.props.elements !== prevProps.elements && this.listRef) {
-            this.listRef.forceUpdateGrid();
-        }
-    }
-
     @bind
     public isRowLoaded({ index }) {
         return index < this.props.elements.length;
@@ -105,6 +99,12 @@ export class InfinityScroll<T> extends React.PureComponent<
                 }
             });
         });
+    }
+
+    public componentDidUpdate(prevProps) {
+        if (this.props.elements !== prevProps.elements && this.listRef) {
+            this.listRef.forceUpdateGrid();
+        }
     }
 
     public render() {

@@ -14,9 +14,10 @@ export function pickLastMergeFunction<T, M>(changes: Array<IBatchPromise<T>>) {
     return (changes[changes.length - 1] as unknown) as IBatchPromise<M>;
 }
 
-export function spreadMergeFunction<T = {}, M = {}>(
-    changes: Array<IBatchPromise<T>>
-) {
+export function spreadMergeFunction<
+    T = Record<string | number, unknown>,
+    M = Record<string | number, unknown>
+>(changes: Array<IBatchPromise<T>>) {
     const mergedData = (changes.reduce(
         (hash, change) => ({
             ...hash,
@@ -52,7 +53,7 @@ export class BatchManager<T, M> {
         changes: Array<IBatchPromise<T>>
     ) => IBatchPromise<M>;
 
-    constructor(options: IBatchManagerOptions<T, M>) {
+    public constructor(options: IBatchManagerOptions<T, M>) {
         const {
             processFunction,
             mergeFunction = pickLastMergeFunction,

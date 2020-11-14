@@ -69,7 +69,7 @@ interface IOwnProps {
 
     onChange: (fields: {
         context?: string | DraftJs.ContentState;
-        meta?: {};
+        meta?: IDataQueryCellMeta;
     }) => any;
     onFocus?: () => any;
     onBlur?: () => any;
@@ -108,7 +108,7 @@ class DataDocQueryCellComponent extends React.Component<IProps, IState> {
         'Shift-Alt-D': this.props.onDeleteKeyPressed,
     };
 
-    constructor(props) {
+    public constructor(props) {
         super(props);
 
         this.state = {
@@ -121,30 +121,9 @@ class DataDocQueryCellComponent extends React.Component<IProps, IState> {
         };
     }
 
+    @bind
     public get engineId() {
         return this.state.meta.engine;
-    }
-
-    public componentDidMount() {
-        this.updateFocus();
-    }
-
-    public componentDidUpdate(prevProps, prevState) {
-        this.updateFocus();
-
-        if (
-            prevProps.query !== this.props.query ||
-            prevProps.meta !== this.props.meta
-        ) {
-            this.setState({
-                ...(prevProps.query !== this.props.query && {
-                    query: this.props.query,
-                }),
-                ...(prevProps.meta !== this.props.meta && {
-                    meta: this.props.meta,
-                }),
-            });
-        }
     }
 
     @bind
@@ -250,6 +229,7 @@ class DataDocQueryCellComponent extends React.Component<IProps, IState> {
         }
     }
 
+    @bind
     public focus() {
         if (
             !(
@@ -338,8 +318,11 @@ class DataDocQueryCellComponent extends React.Component<IProps, IState> {
             () => this.onChangeDebounced({ meta: newMeta })
         );
     }
-    public handleMetaTitleChange = (value: string) =>
-        this.handleMetaChange('title', value);
+
+    @bind
+    public handleMetaTitleChange(value: string) {
+        return this.handleMetaChange('title', value);
+    }
 
     @bind
     public getCurrentSelectedQuery() {
@@ -393,15 +376,6 @@ class DataDocQueryCellComponent extends React.Component<IProps, IState> {
         }
     }
 
-    public additionalDropDownButtonFormatter() {
-        return (
-            <Icon
-                className="additional-dropdown-button flex-center"
-                name="more-vertical"
-            />
-        );
-    }
-
     @bind
     public toggleQueryCollapsing(forceCollapse: boolean) {
         const { isEditable } = this.props;
@@ -423,6 +397,7 @@ class DataDocQueryCellComponent extends React.Component<IProps, IState> {
             : isQueryCollapsedSavedValue;
     }
 
+    @bind
     public getAdditionalDropDownButtonDOM() {
         const { isEditable } = this.props;
 
@@ -494,6 +469,37 @@ class DataDocQueryCellComponent extends React.Component<IProps, IState> {
             schema,
             table,
             this.props.queryEngineById[this.engineId].metastore_id
+        );
+    }
+
+    public componentDidMount() {
+        this.updateFocus();
+    }
+
+    public componentDidUpdate(prevProps, prevState) {
+        this.updateFocus();
+
+        if (
+            prevProps.query !== this.props.query ||
+            prevProps.meta !== this.props.meta
+        ) {
+            this.setState({
+                ...(prevProps.query !== this.props.query && {
+                    query: this.props.query,
+                }),
+                ...(prevProps.meta !== this.props.meta && {
+                    meta: this.props.meta,
+                }),
+            });
+        }
+    }
+
+    public additionalDropDownButtonFormatter() {
+        return (
+            <Icon
+                className="additional-dropdown-button flex-center"
+                name="more-vertical"
+            />
         );
     }
 

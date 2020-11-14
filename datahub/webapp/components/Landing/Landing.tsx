@@ -25,7 +25,7 @@ const datahubHints: string[] = require('config/loading_hints.yaml').hints;
 /*
  * TODO: clean up the urls so they are open source friendly
  */
-export const Landing: React.FunctionComponent<{}> = ({}) => {
+export const Landing: React.FunctionComponent = () => {
     useBrowserTitle();
 
     const {
@@ -58,32 +58,26 @@ export const Landing: React.FunctionComponent<{}> = ({}) => {
         navigateWithinEnv(`/datadoc/${docId}/`);
     }, []);
 
-    const getRecentDOM = () => {
-        return recentDataDocs.map((dataDoc) => {
-            return (
-                <div
-                    className="Landing-data-doc"
-                    onClick={() => onDataDocClick(dataDoc.id)}
-                    key={dataDoc.id}
-                >
-                    {dataDoc.title || 'Untitled'}
-                </div>
-            );
-        });
-    };
-    const getFavoriteDOM = () => {
-        return favoriteDataDocs.map((dataDoc) => {
-            return (
-                <div
-                    className="Landing-data-doc"
-                    onClick={() => onDataDocClick(dataDoc.id)}
-                    key={dataDoc.id}
-                >
-                    {dataDoc.title || 'Untitled'}
-                </div>
-            );
-        });
-    };
+    const getRecentDOM = () =>
+        recentDataDocs.map((dataDoc) => (
+            <div
+                className="Landing-data-doc"
+                onClick={() => onDataDocClick(dataDoc.id)}
+                key={dataDoc.id}
+            >
+                {dataDoc.title || 'Untitled'}
+            </div>
+        ));
+    const getFavoriteDOM = () =>
+        favoriteDataDocs.map((dataDoc) => (
+            <div
+                className="Landing-data-doc"
+                onClick={() => onDataDocClick(dataDoc.id)}
+                key={dataDoc.id}
+            >
+                {dataDoc.title || 'Untitled'}
+            </div>
+        ));
 
     const [hint] = React.useState(sample(datahubHints));
 

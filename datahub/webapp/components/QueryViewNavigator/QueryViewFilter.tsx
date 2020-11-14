@@ -33,14 +33,12 @@ export class QueryViewFilter extends React.PureComponent<
     private engineOptions: IOptions;
     private statusOptions: IOptions;
 
-    constructor(props: IQueryViewFilterProps) {
+    public constructor(props: IQueryViewFilterProps) {
         super(props);
-        this.engineOptions = props.queryEngines.map((queryEngine) => {
-            return {
-                label: queryEngine.name,
-                value: queryEngine.id,
-            };
-        });
+        this.engineOptions = props.queryEngines.map((queryEngine) => ({
+            label: queryEngine.name,
+            value: queryEngine.id,
+        }));
 
         this.statusOptions = getEnumEntries(QueryExecutionStatus).map(
             ([status, statusEnum]) => ({
@@ -56,11 +54,9 @@ export class QueryViewFilter extends React.PureComponent<
 
     @bind
     public toggleFilterPicker() {
-        this.setState((state) => {
-            return {
-                showFilterPicker: !state.showFilterPicker,
-            };
-        });
+        this.setState((state) => ({
+            showFilterPicker: !state.showFilterPicker,
+        }));
     }
 
     public render() {

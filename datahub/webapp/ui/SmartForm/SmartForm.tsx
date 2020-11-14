@@ -149,7 +149,7 @@ function ExpandableFormField<T extends []>({
     );
 }
 
-function StructFormField<T extends object>({
+function StructFormField<T extends Record<string, unknown>>({
     formField,
     value,
     onChange,
@@ -191,7 +191,7 @@ export function SmartForm<T>({
                 onChange={(onChange as unknown) as onChangeFunc<[]>}
             />
         ) : fieldType === 'struct' ? (
-            <StructFormField<{}>
+            <StructFormField<Record<string, any>>
                 formField={formField as IStructFormField}
                 value={value}
                 onChange={onChange}

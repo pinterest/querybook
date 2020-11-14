@@ -30,7 +30,7 @@ const userSettingConfig: Record<
     }
 > = require('config/user_setting.yaml');
 
-export const UserSettingsMenu: React.FunctionComponent<{}> = () => {
+export const UserSettingsMenu: React.FC = () => {
     const userSettingByKey = useSelector(
         (state: IStoreState) => state.user.rawSettings
     );

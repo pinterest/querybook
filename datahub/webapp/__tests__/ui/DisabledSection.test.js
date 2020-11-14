@@ -15,21 +15,21 @@ it('renders without crashing', () => {
 
 describe('matches enzyme snapshots', () => {
     it('matches snapshot', () => {
-        let wrapper = shallow(
+        const wrapper = shallow(
             <DisabledSection>
                 <input />
             </DisabledSection>
         );
-        let serialized = toJson(wrapper);
+        const serialized = toJson(wrapper);
         expect(serialized).toMatchSnapshot();
     });
     it('matches snapshot - false', () => {
-        let wrapper = shallow(
+        const wrapper = shallow(
             <DisabledSection disabled={false}>
                 <input />
             </DisabledSection>
         );
-        let serialized = toJson(wrapper);
+        const serialized = toJson(wrapper);
         expect(serialized).toMatchSnapshot();
     });
 });

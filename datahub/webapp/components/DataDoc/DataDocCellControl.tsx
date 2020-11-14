@@ -2,6 +2,7 @@ import React from 'react';
 import classNames from 'classnames';
 import { titleize, sleep, copy } from 'lib/utils';
 
+import { IDataCellMeta } from 'const/datadoc';
 import { sendNotification } from 'lib/dataHubUI';
 import { AsyncButton } from 'ui/AsyncButton/AsyncButton';
 import { Button } from 'ui/Button/Button';
@@ -24,7 +25,7 @@ interface IProps {
         index: number,
         cellKey: string,
         context: string,
-        meta: {}
+        meta: IDataCellMeta
     ) => any;
     deleteCellAt?: (index: number) => any;
 

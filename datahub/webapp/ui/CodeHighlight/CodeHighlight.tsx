@@ -40,12 +40,12 @@ export class CodeHighlight extends React.PureComponent<IProps> {
     public getStyledTokens(value: string, language: string, prefix: string) {
         let lastStyle = null;
         let tokenBuffer = '';
-        const styledTokens = [];
+        const styledTokens: Array<{ className: string; text: string }> = [];
 
-        const pushStyleToken = (str, style) =>
+        const pushStyleToken = (text: string, style: string) =>
             styledTokens.push({
                 className: style ? prefix + style : '',
-                string: str,
+                text,
             });
 
         CodeMirror.runMode(value, language, (token, style) => {
@@ -78,11 +78,11 @@ export class CodeHighlight extends React.PureComponent<IProps> {
         const styledTokens = this.getStyledTokens(value, language, prefix);
 
         const codeElements = styledTokens.map((token, index) => {
-            const { string: str, className: tokenClassName } = token;
+            const { text, className: tokenClassName } = token;
 
             return (
                 <span className={tokenClassName} key={index}>
-                    {str}
+                    {text}
                 </span>
             );
         });

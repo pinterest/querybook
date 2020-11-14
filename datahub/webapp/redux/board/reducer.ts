@@ -7,7 +7,7 @@ const initialState: Readonly<IBoardState> = {
     boardItemById: {},
 };
 
-function board(state = initialState, action: BoardAction) {
+export default function (state = initialState, action: BoardAction) {
     return produce(state, (draft) => {
         switch (action.type) {
             case '@@board/RECEIVE_BOARDS': {
@@ -95,5 +95,3 @@ function board(state = initialState, action: BoardAction) {
         }
     });
 }
-
-export default board;

@@ -26,8 +26,8 @@ interface IProps {
     edges: IDAGEdge[];
     // If provided, zoom will zoom to this focusNode
     focusNode?: IDAGNode;
-    customNodeRender?: (node: IDAGNode) => object;
-    onNodeClicked?: (node: object, d3: any) => void;
+    customNodeRender?: (node: IDAGNode) => Record<string, unknown>;
+    onNodeClicked?: (node: Record<string, unknown>, d3: any) => void;
     // Multi Graph allows multiple edges between same node pair
     // and edge lbaelling
     isMultiGraph?: boolean;
@@ -57,9 +57,7 @@ export const DAG: React.FunctionComponent<IProps> = ({
             .setGraph({
                 rankdir: rankDir || 'LR',
             })
-            .setDefaultEdgeLabel(() => {
-                return {};
-            });
+            .setDefaultEdgeLabel(() => ({}));
 
         for (const [index, node] of nodes.entries()) {
             const nodeColor = node.color || 'var(--icon-color)';
@@ -95,9 +93,7 @@ export const DAG: React.FunctionComponent<IProps> = ({
         const svgGroup = svg.append('g');
         render(d3.select(`#${graphId} svg g`) as any, g);
         // Give each node a unique id ('node' + node.id) for referencing
-        svg.selectAll('g.node').attr('id', (__, idx) => {
-            return `node${nodes[idx].id}`;
-        });
+        svg.selectAll('g.node').attr('id', (__, idx) => `node${nodes[idx].id}`);
         // Rendering is now complete
 
         // setup zoom behavior

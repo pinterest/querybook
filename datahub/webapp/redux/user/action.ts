@@ -49,9 +49,7 @@ export function loginUser(): ThunkResult<Promise<void>> {
 }
 
 export function getUser(uid: number): ThunkResult<Promise<void>> {
-    return (dispatch) => {
-        return userLoadManager.loadUser(uid, dispatch);
-    };
+    return (dispatch) => userLoadManager.loadUser(uid, dispatch);
 }
 
 export function getUserByName(name: string): ThunkResult<Promise<void>> {

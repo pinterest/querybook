@@ -10,14 +10,14 @@ it('renders without crashing', () => {
 
 describe('matches enzyme snapshots', () => {
     it('matches snapshot', () => {
-        let wrapper = shallow(
+        const wrapper = shallow(
             <Tabs items={[{ key: 'test' }]} onSelect={() => null} />
         );
-        let serialized = toJson(wrapper);
+        const serialized = toJson(wrapper);
         expect(serialized).toMatchSnapshot();
     });
     it('matches snapshot', () => {
-        let wrapper = shallow(
+        const wrapper = shallow(
             <Tabs
                 items={[{ name: 'test', icon: 'check', key: 'test' }]}
                 onSelect={() => null}
@@ -28,7 +28,7 @@ describe('matches enzyme snapshots', () => {
                 align="right"
             />
         );
-        let serialized = toJson(wrapper);
+        const serialized = toJson(wrapper);
         expect(serialized).toMatchSnapshot();
     });
 });

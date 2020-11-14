@@ -6,9 +6,9 @@ export type HTMLElementEvent<T extends HTMLElement> = Event & {
     // currentTarget: T;
 };
 
-export function getEnumEntries(enumDefObjectType: {}): Array<
-    [string, string | number]
-> {
+export function getEnumEntries(
+    enumDefObjectType: Record<string, unknown>
+): Array<[string, string | number]> {
     // Somehow Enum is not the same as Record<string, string | number>
     const enumDef = enumDefObjectType as Record<string, string | number>;
     return Object.entries(enumDef).filter(([name]) => isNaN(name as any));

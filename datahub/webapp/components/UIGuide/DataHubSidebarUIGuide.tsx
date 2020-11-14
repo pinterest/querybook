@@ -14,7 +14,7 @@ export const DataHubSidebarTourSteps: ReactourStep[] = [
         content: ({ goTo }) => (
             <div>
                 <Title size={5}>Welcome!</Title>
-                <p>Let's go over the sidebar functionalities.</p>
+                <p>Let&apos;s go over the sidebar functionalities.</p>
                 <hr />
                 <div>
                     <span>For the DataDoc tour, </span>
@@ -75,7 +75,7 @@ export const DataHubSidebarTourSteps: ReactourStep[] = [
                 <p>
                     Queries run on Adhoc Editor will not be saved. However, you
                     can access a list of queries you have run by clicking on the
-                    Query Execution Navigator (we'll get to it in a bit).
+                    Query Execution Navigator (we&apos;ll get to it in a bit).
                 </p>
             </>
         ),
@@ -168,8 +168,8 @@ export const DataHubSidebarTourSteps: ReactourStep[] = [
         content: ({ goTo }) => (
             <>
                 <p>
-                    That's it! Thanks for using DataHub and feel free to contact
-                    us on #datahub!
+                    That&apos;s it! Thanks for using DataHub and feel free to
+                    contact us on #datahub!
                 </p>
                 <hr />
                 <div>
@@ -183,7 +183,7 @@ export const DataHubSidebarTourSteps: ReactourStep[] = [
     },
 ];
 
-export const DataHubSidebarUIGuide: React.FunctionComponent<{}> = ({}) => {
+export const DataHubSidebarUIGuide: React.FC = () => {
     const location = useLocation();
     const { tour } = React.useMemo(() => getQueryString(), [location.search]);
     const [isOpen, setIsOpen] = React.useState(false);

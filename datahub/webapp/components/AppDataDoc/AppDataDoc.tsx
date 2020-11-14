@@ -8,12 +8,10 @@ import { FourOhFour } from 'ui/ErrorPage/FourOhFour';
 
 import './AppDataDoc.scss';
 
-export const AppDataDoc: React.FunctionComponent<RouteComponentProps> = () => {
-    return (
-        <Switch>
-            <Route path="/:env/datadoc/:docId/" component={DataDocWrapper} />
-            <Route path="/:env/datadoc/" exact={true} component={Landing} />
-            <Route component={FourOhFour} />
-        </Switch>
-    );
-};
+export const AppDataDoc: React.FunctionComponent<RouteComponentProps> = () => (
+    <Switch>
+        <Route path="/:env/datadoc/:docId/" component={DataDocWrapper} />
+        <Route path="/:env/datadoc/" exact={true} component={Landing} />
+        <Route component={FourOhFour} />
+    </Switch>
+);

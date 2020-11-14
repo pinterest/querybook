@@ -154,11 +154,11 @@ export const DataDocQueryExecutions: React.FunctionComponent<IProps> = ({
     const placeholderIfNoExecutionsDOM = isQueryCollapsed &&
         !queryExecutionDOM && (
             <div>
-                Note: This query is collapsed, but it doesn't yet have an
+                Note: This query is collapsed, but it doesn&apos;t yet have an
                 execution.
                 <br />
                 You can either run it, or edit it by clicking on the ellipsis
-                button on the top right and then on "Show Query".
+                button on the top right and then on &quot;Show Query&quot;.
             </div>
         );
 

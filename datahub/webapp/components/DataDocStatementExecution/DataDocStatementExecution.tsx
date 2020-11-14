@@ -36,13 +36,20 @@ export class DataDocStatementExecution extends React.PureComponent<
     IProps,
     IState
 > {
-    constructor(props) {
+    public constructor(props) {
         super(props);
         this.state = {
             showInFullScreen: false,
         };
 
         this.loadStatementResult(this.props);
+    }
+
+    @bind
+    public onFullscreenToggle() {
+        this.setState({
+            showInFullScreen: true,
+        });
     }
 
     public componentDidUpdate(prevProps) {
@@ -57,13 +64,6 @@ export class DataDocStatementExecution extends React.PureComponent<
         if (statementExecution.result_row_count && !statementResult) {
             loadS3Result(statementExecution.id);
         }
-    }
-
-    @bind
-    public onFullscreenToggle() {
-        this.setState({
-            showInFullScreen: true,
-        });
     }
 
     public makeLogDOM() {

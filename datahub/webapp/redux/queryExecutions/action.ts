@@ -69,7 +69,7 @@ export function rejectQueryExecutionAccessRequest(
             .accessRequestsByExecutionIdUserId[executionId] || {})[uid];
         if (accessRequest) {
             await ds.delete(`/query_execution/${executionId}/access_request/`, {
-                uid: uid,
+                uid,
             });
 
             dispatch({
@@ -96,7 +96,7 @@ export function addQueryExecutionViewer(
         }: {
             data: IQueryExecutionViewer;
         } = await ds.save(`/query_execution/${executionId}/viewer/`, {
-            uid: uid,
+            uid,
         });
         if (request) {
             dispatch({
@@ -518,10 +518,10 @@ export function fetchLog(
         const statementExecution =
             state.queryExecutions.statementExecutionById[statementExecutionId];
         if (statementExecution) {
-            const { id, has_log } = statementExecution;
+            const { id, has_log: hasLog } = statementExecution;
             const statementLog =
                 state.queryExecutions.statementLogById[statementExecutionId];
-            if (has_log && (!statementLog || statementLog.isPartialLog)) {
+            if (hasLog && (!statementLog || statementLog.isPartialLog)) {
                 try {
                     const { data } = await ds.fetch(
                         `/statement_execution/${id}/log/`

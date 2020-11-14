@@ -87,20 +87,6 @@ class DataTableViewComponent extends React.PureComponent<
         selectedTabKey: this.getInitialTabKey(),
     };
 
-    public componentDidMount() {
-        this.props.getTable(this.props.tableId);
-        this.publishDataTableTitle(this.props.tableName);
-    }
-
-    public componentDidUpdate(prevProps) {
-        if (
-            this.props.tableName &&
-            prevProps.tableName !== this.props.tableName
-        ) {
-            this.publishDataTableTitle(this.props.tableName);
-        }
-    }
-
     @decorate(memoizeOne)
     public publishDataTableTitle(title: string) {
         if (title) {
@@ -115,20 +101,20 @@ class DataTableViewComponent extends React.PureComponent<
         }
     }
 
+    @bind
     public getInitialTabKey() {
         const queryParam = getQueryString();
         return queryParam['tab'] || snakeCase(tabDefinitions[0].key);
     }
 
+    @bind
     public getInitialTabs() {
         const tabs = tabDefinitions;
-        return tabs.map((tab) => {
-            return {
-                name: tab.name,
-                key: tab.key,
-                onClick: this.onTabSelected.bind(this, tab.key),
-            };
-        });
+        return tabs.map((tab) => ({
+            name: tab.name,
+            key: tab.key,
+            onClick: this.onTabSelected.bind(this, tab.key),
+        }));
     }
 
     @bind
@@ -283,6 +269,20 @@ class DataTableViewComponent extends React.PureComponent<
         );
     }
 
+    public componentDidMount() {
+        this.props.getTable(this.props.tableId);
+        this.publishDataTableTitle(this.props.tableName);
+    }
+
+    public componentDidUpdate(prevProps) {
+        if (
+            this.props.tableName &&
+            prevProps.tableName !== this.props.tableName
+        ) {
+            this.publishDataTableTitle(this.props.tableName);
+        }
+    }
+
     public render() {
         const { table, tableId, getTable } = this.props;
 
@@ -383,9 +383,8 @@ function mapStateToProps(state: IStoreState, ownProps) {
 
 function mapDispatchToProps(dispatch: Dispatch, ownProps) {
     return {
-        getTable: (tableId) => {
-            return dispatch(dataSourcesActions.fetchDataTableIfNeeded(tableId));
-        },
+        getTable: (tableId) =>
+            dispatch(dataSourcesActions.fetchDataTableIfNeeded(tableId)),
 
         loadDataJobMetadata: (dataJobMetadataId) => {
             dispatch(
@@ -395,20 +394,16 @@ function mapDispatchToProps(dispatch: Dispatch, ownProps) {
             );
         },
 
-        updateDataTable: (tableId, params) => {
-            return dispatch(
-                dataSourcesActions.updateDataTable(tableId, params)
-            );
-        },
+        updateDataTable: (tableId, params) =>
+            dispatch(dataSourcesActions.updateDataTable(tableId, params)),
 
-        updateDataColumnDescription: (columnId, description) => {
-            return dispatch(
+        updateDataColumnDescription: (columnId, description) =>
+            dispatch(
                 dataSourcesActions.updateDataColumnDescription(
                     columnId,
                     description
                 )
-            );
-        },
+            ),
         loadDataLineages: (tableId) =>
             dispatch(dataSourcesActions.fetchDataLineage(tableId)),
     };

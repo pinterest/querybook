@@ -84,8 +84,8 @@ const StyledSubPanelSection = styled.div`
 export const SubPanelSection: React.FunctionComponent<{
     title: string;
     hideIfNoContent?: boolean;
-}> = ({ title, children, hideIfNoContent }) => {
-    return hideIfNoContent && !children ? null : (
+}> = ({ title, children, hideIfNoContent }) =>
+    hideIfNoContent && !children ? null : (
         <StyledSubPanelSection>
             <div>
                 <SubPanelTitle>{title}</SubPanelTitle>
@@ -93,4 +93,3 @@ export const SubPanelSection: React.FunctionComponent<{
             <div>{children}</div>
         </StyledSubPanelSection>
     );
-};

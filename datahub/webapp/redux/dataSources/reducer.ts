@@ -33,7 +33,7 @@ const initialState: IDataSourcesState = {
     },
 };
 
-function dataTableNameToId(
+function dataTableNameToIdReducer(
     state = initialState.dataTableNameToId,
     action: DataSourcesAction
 ) {
@@ -57,7 +57,7 @@ function dataTableNameToId(
     });
 }
 
-function functionDocumentationByNameByLanguage(
+function functionDocumentationByNameByLanguageReducer(
     state = initialState.functionDocumentationByNameByLanguage,
     action: DataSourcesAction
 ) {
@@ -81,7 +81,7 @@ function functionDocumentationByNameByLanguage(
     });
 }
 
-function dataColumnsById(
+function dataColumnsByIdReducer(
     state = initialState.dataColumnsById,
     action: DataSourcesAction
 ) {
@@ -101,7 +101,7 @@ function dataColumnsById(
     });
 }
 
-function dataTablesById(
+function dataTablesByIdReducer(
     state = initialState.dataTablesById,
     action: DataSourcesAction
 ) {
@@ -135,7 +135,7 @@ function dataTablesById(
     });
 }
 
-function dataSchemasById(
+function dataSchemasByIdReducer(
     state = initialState.dataSchemasById,
     action: DataSourcesAction
 ) {
@@ -154,7 +154,7 @@ function dataSchemasById(
     }
 }
 
-function dataTableWarningById(
+function dataTableWarningByIdReducer(
     state = initialState.dataTableWarningById,
     action: DataSourcesAction
 ) {
@@ -185,7 +185,7 @@ function dataTableWarningById(
     }
 }
 
-function dataTableOwnershipByTableId(
+function dataTableOwnershipByTableIdReducer(
     state = initialState.dataTableOwnershipByTableId,
     action: DataSourcesAction
 ) {
@@ -220,7 +220,7 @@ function dataTableOwnershipByTableId(
     }
 }
 
-function dataJobMetadataById(
+function dataJobMetadataByIdReducer(
     state = initialState.dataJobMetadataById,
     action: DataSourcesAction
 ) {
@@ -239,7 +239,7 @@ function dataJobMetadataById(
     return state;
 }
 
-function dataTablesSamplesById(
+function dataTablesSamplesByIdReducer(
     state = initialState.dataTablesSamplesById,
     action: DataSourcesAction
 ) {
@@ -255,7 +255,7 @@ function dataTablesSamplesById(
     return state;
 }
 
-function dataTablesSamplesPollingById(
+function dataTablesSamplesPollingByIdReducer(
     state = initialState.dataTablesSamplesPollingById,
     action: DataSourcesAction
 ) {
@@ -278,7 +278,7 @@ function dataTablesSamplesPollingById(
     });
 }
 
-function queryExampleIdsById(
+function queryExampleIdsByIdReducer(
     state = initialState.queryExampleIdsById,
     action: DataSourcesAction
 ) {
@@ -310,7 +310,7 @@ function queryExampleIdsById(
     });
 }
 
-function queryTopUsersByTableId(
+function queryTopUsersByTableIdReducer(
     state = initialState.queryTopUsersByTableId,
     action: DataSourcesAction
 ) {
@@ -325,7 +325,7 @@ function queryTopUsersByTableId(
     });
 }
 
-function goldenTableNameToId(
+function goldenTableNameToIdReducer(
     state = initialState.goldenTableNameToId,
     action: DataSourcesAction
 ) {
@@ -342,7 +342,7 @@ function goldenTableNameToId(
     return state;
 }
 
-function dataLineages(
+function dataLineagesReducer(
     state = initialState.dataLineages,
     action: DataSourcesAction
 ) {
@@ -377,7 +377,7 @@ function dataLineages(
     return state;
 }
 
-function queryMetastoreById(
+function queryMetastoreByIdReducer(
     state = initialState.queryMetastoreById,
     action: DataSourcesAction
 ) {
@@ -392,7 +392,7 @@ function queryMetastoreById(
     return state;
 }
 
-function dataTableStatByTableId(
+function dataTableStatByTableIdReducer(
     state = initialState.dataTableStatByTableId,
     action: DataSourcesAction
 ) {
@@ -408,20 +408,20 @@ function dataTableStatByTableId(
 }
 
 export default combineReducers({
-    queryMetastoreById,
-    goldenTableNameToId,
-    dataTableNameToId,
-    functionDocumentationByNameByLanguage,
-    dataColumnsById,
-    dataTablesById,
-    dataSchemasById,
-    dataJobMetadataById,
-    dataTablesSamplesById,
-    dataTablesSamplesPollingById,
-    queryExampleIdsById,
-    queryTopUsersByTableId,
-    dataLineages,
-    dataTableWarningById,
-    dataTableOwnershipByTableId,
-    dataTableStatByTableId,
+    queryMetastoreById: queryMetastoreByIdReducer,
+    goldenTableNameToId: goldenTableNameToIdReducer,
+    dataTableNameToId: dataTableNameToIdReducer,
+    functionDocumentationByNameByLanguage: functionDocumentationByNameByLanguageReducer,
+    dataColumnsById: dataColumnsByIdReducer,
+    dataTablesById: dataTablesByIdReducer,
+    dataSchemasById: dataSchemasByIdReducer,
+    dataJobMetadataById: dataJobMetadataByIdReducer,
+    dataTablesSamplesById: dataTablesSamplesByIdReducer,
+    dataTablesSamplesPollingById: dataTablesSamplesPollingByIdReducer,
+    queryExampleIdsById: queryExampleIdsByIdReducer,
+    queryTopUsersByTableId: queryTopUsersByTableIdReducer,
+    dataLineages: dataLineagesReducer,
+    dataTableWarningById: dataTableWarningByIdReducer,
+    dataTableOwnershipByTableId: dataTableOwnershipByTableIdReducer,
+    dataTableStatByTableId: dataTableStatByTableIdReducer,
 });

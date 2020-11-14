@@ -10,13 +10,11 @@ export interface IToggleSwitchProps {
 export const ToggleSwitch: React.FunctionComponent<IToggleSwitchProps> = ({
     onChange,
     checked,
-}) => {
-    return (
-        <div
-            className={`ToggleSwitch ${checked ? 'checked' : ''}`}
-            onClick={() => onChange(!checked)}
-        >
-            <span className="ToggleSwitch-circle" />
-        </div>
-    );
-};
+}) => (
+    <div
+        className={`ToggleSwitch ${checked ? 'checked' : ''}`}
+        onClick={() => onChange(!checked)}
+    >
+        <span className="ToggleSwitch-circle" />
+    </div>
+);

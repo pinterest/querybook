@@ -147,7 +147,8 @@ export const DataTableViewLineage: React.FunctionComponent<IDataTableViewLineage
                 nodes={nodes}
                 edges={edges}
                 focusNode={focusNode}
-                onNodeClicked={(node: IDAGNode, d3) => {
+                onNodeClicked={(_node, d3) => {
+                    const node = (_node as unknown) as IDAGNode;
                     const newTableId = Number(node.id);
                     const prevSelectedNode =
                         selectedTableId && d3.select(`#node${selectedTableId}`);

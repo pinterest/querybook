@@ -78,9 +78,10 @@ export const QueryEngineStatusButton: React.FC<IProps> = ({
         [loadAllEngineStatus]
     );
 
-    const timerFormatter = useCallback((timestamp: number) => {
-        return `Next auto-refresh: ${timestamp}s`;
-    }, []);
+    const timerFormatter = useCallback(
+        (timestamp: number) => `Next auto-refresh: ${timestamp}s`,
+        []
+    );
 
     const onRefreshClick = useCallback(() => {
         loadAllEngineStatus(true);
@@ -89,25 +90,25 @@ export const QueryEngineStatusButton: React.FC<IProps> = ({
         }
     }, [loadAllEngineStatus, timerRef.current]);
 
-    const overallWorstQueryEngineStatus: QueryEngineStatus = useMemo(() => {
-        return Math.max(
-            ...queryEngineStatusAndEngineIds.map(([id, status]) =>
-                Number(status?.data?.status)
-            )
-        );
-    }, [queryEngineStatusAndEngineIds]);
+    const overallWorstQueryEngineStatus: QueryEngineStatus = useMemo(
+        () =>
+            Math.max(
+                ...queryEngineStatusAndEngineIds.map(([id, status]) =>
+                    Number(status?.data?.status)
+                )
+            ),
+        [queryEngineStatusAndEngineIds]
+    );
 
-    const getQueryEngineStatusModal = (engineId: string) => {
-        return (
-            <Modal
-                onHide={() => setShowStatusForEngineId(null)}
-                title="Query Engine Status"
-                className="with-padding"
-            >
-                <QueryEngineStatusViewer engineId={Number(engineId)} />
-            </Modal>
-        );
-    };
+    const getQueryEngineStatusModal = (engineId: string) => (
+        <Modal
+            onHide={() => setShowStatusForEngineId(null)}
+            title="Query Engine Status"
+            className="with-padding"
+        >
+            <QueryEngineStatusViewer engineId={Number(engineId)} />
+        </Modal>
+    );
 
     const getQueryEngineStatusPanelDOM = () => {
         const systemStatusDOM = queryEngineStatusAndEngineIds

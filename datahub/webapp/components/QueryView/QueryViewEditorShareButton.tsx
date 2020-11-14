@@ -1,6 +1,5 @@
 import { QueryExecutionAccessList } from 'components/QueryExecutionAccessList/QueryExecutionAccessList';
-import { useRef, useState } from 'react';
-import React from 'react';
+import React, { useRef, useState } from 'react';
 import { Button } from 'ui/Button/Button';
 import { Popover } from 'ui/Popover/Popover';
 import { IQueryExecution } from 'redux/queryExecutions/types';

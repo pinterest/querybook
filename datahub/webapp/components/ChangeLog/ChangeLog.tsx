@@ -63,22 +63,18 @@ export const ChangeLog: React.FunctionComponent = () => {
     const changeLogListDOM = changeLogDate ? null : (
         <div className="ChangeLog-list">
             <div className="ChangeLog-list-title mt12">Change Logs</div>
-            {changeLogList.map((log) => {
-                return (
-                    <div
-                        className="ChangeLog-log-item horizontal-space-between mv8 mh12 pv12"
-                        key={log.date}
-                        onClick={() =>
-                            navigateWithinEnv(`/changelog/${log.date}/`)
-                        }
-                    >
-                        <div>{log.date}</div>
-                        <div className="ChangeLog-arrow">
-                            <Icon name="arrow-right" />
-                        </div>
+            {changeLogList.map((log) => (
+                <div
+                    className="ChangeLog-log-item horizontal-space-between mv8 mh12 pv12"
+                    key={log.date}
+                    onClick={() => navigateWithinEnv(`/changelog/${log.date}/`)}
+                >
+                    <div>{log.date}</div>
+                    <div className="ChangeLog-arrow">
+                        <Icon name="arrow-right" />
                     </div>
-                );
-            })}
+                </div>
+            ))}
         </div>
     );
 

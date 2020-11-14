@@ -11,26 +11,26 @@ it('renders without crashing', () => {
 
 describe('matches enzyme snapshots', () => {
     it('matches snapshot', () => {
-        let wrapper = shallow(<IconButton icon="check" onClick={() => null} />);
-        let serialized = toJson(wrapper);
+        const wrapper = shallow(<IconButton icon="check" onClick={() => null} />);
+        const serialized = toJson(wrapper);
         expect(serialized).toMatchSnapshot();
     });
     it('matches snapshot - disbled', () => {
-        let wrapper = shallow(
+        const wrapper = shallow(
             <IconButton icon="check" onClick={() => null} disabled />
         );
-        let serialized = toJson(wrapper);
+        const serialized = toJson(wrapper);
         expect(serialized).toMatchSnapshot();
     });
     it('matches snapshot - active', () => {
-        let wrapper = shallow(
+        const wrapper = shallow(
             <IconButton icon="check" onClick={() => null} active />
         );
-        let serialized = toJson(wrapper);
+        const serialized = toJson(wrapper);
         expect(serialized).toMatchSnapshot();
     });
     it('matches snapshot - with tooltip', () => {
-        let wrapper = shallow(
+        const wrapper = shallow(
             <IconButton
                 icon="check"
                 onClick={() => null}
@@ -38,25 +38,25 @@ describe('matches enzyme snapshots', () => {
                 tooltipPos="right"
             />
         );
-        let serialized = toJson(wrapper);
+        const serialized = toJson(wrapper);
         expect(serialized).toMatchSnapshot();
     });
     it('matches snapshot - with ping', () => {
-        let wrapper = shallow(
+        const wrapper = shallow(
             <IconButton icon="check" onClick={() => null} ping={true} />
         );
-        let serialized = toJson(wrapper);
+        const serialized = toJson(wrapper);
         expect(serialized).toMatchSnapshot();
     });
     it('matches snapshot - with ping message', () => {
-        let wrapper = shallow(
+        const wrapper = shallow(
             <IconButton icon="check" onClick={() => null} ping="1" />
         );
-        let serialized = toJson(wrapper);
+        const serialized = toJson(wrapper);
         expect(serialized).toMatchSnapshot();
     });
     it('matches snapshot - mixed', () => {
-        let wrapper = shallow(
+        const wrapper = shallow(
             <IconButton
                 icon="check"
                 onClick={() => null}
@@ -65,7 +65,7 @@ describe('matches enzyme snapshots', () => {
                 ping="1"
             />
         );
-        let serialized = toJson(wrapper);
+        const serialized = toJson(wrapper);
         expect(serialized).toMatchSnapshot();
     });
 });

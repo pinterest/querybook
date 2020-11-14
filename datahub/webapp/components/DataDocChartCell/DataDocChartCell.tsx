@@ -30,7 +30,7 @@ interface IProps {
 
     onChange: (fields: {
         context?: string | DraftJs.ContentState;
-        meta?: {};
+        meta?: IDataChartCellMeta;
     }) => any;
     onFocus?: () => any;
     onBlur?: () => any;

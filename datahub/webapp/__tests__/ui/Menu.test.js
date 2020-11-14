@@ -25,7 +25,7 @@ it('renders without crashing', () => {
 
 describe('matches enzyme snapshots', () => {
     it('matches snapshot', () => {
-        let wrapper = shallow(
+        const wrapper = shallow(
             <Menu>
                 <MenuItem>
                     <MenuItemPing />
@@ -34,7 +34,7 @@ describe('matches enzyme snapshots', () => {
                 <MenuInfoItem />
             </Menu>
         );
-        let serialized = toJson(wrapper);
+        const serialized = toJson(wrapper);
         expect(serialized).toMatchSnapshot();
     });
 });

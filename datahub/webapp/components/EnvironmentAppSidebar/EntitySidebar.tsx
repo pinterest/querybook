@@ -36,34 +36,32 @@ export const EntitySidebar: React.FunctionComponent<IEntitySidebarProps> = ({
         <div className="EntitySidebar">
             <div className="apps-list">
                 <Route
-                    render={({ location }) => {
-                        return (
-                            <>
-                                <Link to={`/${environment.name}/`}>
-                                    <IconButton
-                                        icon="home"
-                                        tooltip="Home"
-                                        tooltipPos="right"
-                                        active={
-                                            location.pathname ===
-                                            `/${environment.name}/`
-                                        }
-                                    />
-                                </Link>
+                    render={({ location }) => (
+                        <>
+                            <Link to={`/${environment.name}/`}>
+                                <IconButton
+                                    icon="home"
+                                    tooltip="Home"
+                                    tooltipPos="right"
+                                    active={
+                                        location.pathname ===
+                                        `/${environment.name}/`
+                                    }
+                                />
+                            </Link>
 
-                                <Link to={`/${environment.name}/adhoc/`}>
-                                    <IconButton
-                                        icon="edit"
-                                        tooltip={'Adhoc Query'}
-                                        tooltipPos="right"
-                                        active={location.pathname.startsWith(
-                                            `/${environment.name}/adhoc/`
-                                        )}
-                                    />
-                                </Link>
-                            </>
-                        );
-                    }}
+                            <Link to={`/${environment.name}/adhoc/`}>
+                                <IconButton
+                                    icon="edit"
+                                    tooltip={'Adhoc Query'}
+                                    tooltipPos="right"
+                                    active={location.pathname.startsWith(
+                                        `/${environment.name}/adhoc/`
+                                    )}
+                                />
+                            </Link>
+                        </>
+                    )}
                 />
                 <Divider
                     marginTop="8px"

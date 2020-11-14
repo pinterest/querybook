@@ -6,6 +6,7 @@ import { isNumeric } from 'lib/utils/number';
 import { sortTable, getValueDataType } from './chart-utils';
 
 const emptyCellValue = null;
+const UNDEFINED = 'undefined';
 
 // from: https://stackoverflow.com/questions/4492678/swap-rows-with-columns-transposition-of-a-matrix-in-javascript
 function switchData(data: readonly any[][]) {
@@ -59,7 +60,7 @@ class PivotReducer<T> {
     public reducerFunction: (agg: T, val: any) => T;
     public endReducerFunction?: (agg: T) => any;
 
-    constructor(
+    public constructor(
         initialValue: T,
         reducerFunction: (agg: T, val: any) => T,
         endReducerFunction: (agg: T) => any = null
@@ -95,9 +96,7 @@ const ChartReducers = {
             agg.push(val);
             return agg;
         },
-        (values) => {
-            return getMedian(getFilterNumberArr(values));
-        }
+        (values) => getMedian(getFilterNumberArr(values))
     ),
     sum: new PivotReducer(0, (agg, val) =>
         isNumeric(val) ? agg + Number(val) : agg
@@ -179,13 +178,13 @@ function aggregateData(
                 ? getDistinctValuesAndIndexMap(
                       rows.map((row) => row[aggColIndex])
                   )
-                : [[undefined], { undefined: 0 }];
+                : [[undefined], { [UNDEFINED]: 0 }];
         const [distinctRowValues, distinctRowValToIndex] =
             aggRowIndex != null
                 ? getDistinctValuesAndIndexMap(
                       rows.map((row) => row[aggRowIndex])
                   )
-                : [[undefined], { undefined: 0 }];
+                : [[undefined], { [UNDEFINED]: 0 }];
 
         const aggValColName = data[0][aggValueIndex[0]];
 
@@ -281,7 +280,7 @@ export function transformData(
     aggSeries: {
         [seriesIdx: number]: ChartDataAggType;
     } = {},
-    // tslint:disable-next-line: no-unnecessary-initializer
+    // eslint-disable-next-line no-undef-init
     sortIdx: number = undefined,
     sortAsc: boolean = true,
     xAxisIdx: number = 0

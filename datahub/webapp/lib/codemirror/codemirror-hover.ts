@@ -20,7 +20,7 @@ class TextHoverState {
     private cm;
     private node;
 
-    constructor(cm, options) {
+    public constructor(cm, options) {
         this.options = options;
         this.cm = cm;
         this.node = null;

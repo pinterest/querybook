@@ -9,6 +9,7 @@ import {
     IDataDoc,
     CELL_TYPE,
     IDataDocEditor,
+    IDataCellMeta,
 } from 'const/datadoc';
 import { IAccessRequest } from 'const/accessRequest';
 
@@ -37,14 +38,13 @@ export const dataDocCellSchema = new schema.Entity(
     'dataDocCell',
     {},
     {
-        processStrategy(value, parent, key) {
-            return parent
+        processStrategy: (value, parent, key) =>
+            parent
                 ? {
                       ...value,
                       docId: parent.id,
                   }
-                : value;
-        },
+                : value,
     }
 );
 export const dataDocSchema = new schema.Entity('dataDoc', {
@@ -123,14 +123,14 @@ export function updateDataDocOwner(
         dispatch({
             type: '@@dataDoc/REMOVE_DATA_DOC_EDITOR',
             payload: {
-                docId: docId,
+                docId,
                 uid: nextOwnerId,
             },
         });
         dispatch({
             type: '@@dataDoc/UPDATE_DATA_DOC_FIELD',
             payload: {
-                docId: docId,
+                docId,
                 fieldName: 'owner_uid',
                 fieldVal: nextOwnerId,
             },
@@ -173,7 +173,7 @@ export function receiveDataDocs(
     };
 }
 
-export function fetchDataDoc(docId: number): ThunkResult<Promise<{}>> {
+export function fetchDataDoc(docId: number): ThunkResult<Promise<any>> {
     return async (dispatch) => {
         const { data: rawDataDoc } = await ds.fetch(`/datadoc/${docId}/`);
 
@@ -287,7 +287,7 @@ export function insertDataDocCell(
     index: number,
     cellType: CELL_TYPE,
     context: string | ContentState,
-    meta: {}
+    meta: IDataCellMeta
 ): ThunkResult<Promise<any>> {
     return (dispatch, getState) => {
         const state = getState();
@@ -330,7 +330,10 @@ export function insertDataDocCell(
     };
 }
 
-export function deleteDataDocCell(docId: number, index: number): Promise<{}> {
+export function deleteDataDocCell(
+    docId: number,
+    index: number
+): Promise<Record<string, unknown>> {
     return dataDocSocket.deleteDataCell(docId, index);
 }
 
@@ -362,7 +365,7 @@ export function updateDataDocCell(
     docId: number,
     id: number,
     context?: string | ContentState,
-    meta?: {}
+    meta?: IDataCellMeta
 ): ThunkResult<Promise<void>> {
     return (dispatch) => {
         dispatch({
@@ -666,7 +669,7 @@ export function rejectDataDocAccessRequest(
         ] || {})[uid];
         if (accessRequest) {
             await ds.delete(`/datadoc/${docId}/access_request/`, {
-                uid: uid,
+                uid,
                 originator: dataDocSocket.getSocketId(),
             });
 

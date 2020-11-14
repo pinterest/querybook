@@ -57,8 +57,8 @@ export function updateQuerySnippet(
             context,
             title,
             description,
-            engine_id,
-            is_public,
+            engine_id: engineId,
+            is_public: isPublic,
             golden,
         } = querySnippet;
 
@@ -66,8 +66,8 @@ export function updateQuerySnippet(
             context,
             title,
             description,
-            engine_id,
-            is_public,
+            engine_id: engineId,
+            is_public: isPublic,
             golden,
         };
 
@@ -88,7 +88,10 @@ export function saveQuerySnippet(
 ): ThunkResult<Promise<IQuerySnippet>> {
     return async (dispatch) => {
         const params = querySnippet;
-        const { data } = await ds.save('/query_snippet/', params);
+        const { data } = await ds.save(
+            '/query_snippet/',
+            (params as unknown) as Record<string, unknown>
+        );
         dispatch({
             type: '@@querySnippets/RECEIVE_QUERY_SNIPPET',
             payload: {

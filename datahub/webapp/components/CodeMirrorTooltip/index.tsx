@@ -87,17 +87,17 @@ export async function showTooltipFor(
     const hoveredNode = nodes.find((node) => isHovered(node));
     let tooltip = null;
 
-    function hideTooltip() {
+    const hideTooltip = () => {
         if (tooltip) {
             tooltip.removeEventListener('mouseenter', onMouseEnter);
             tooltip.removeEventListener('mouseleave', onMouseOut);
             unmountTooltip(tooltip);
             tooltip = null;
         }
-    }
+    };
     let hideTooltipTimeout: number;
 
-    function hideTooltipAndNode() {
+    const hideTooltipAndNode = () => {
         nodes.forEach((node) => {
             node.removeEventListener('mouseenter', onMouseEnter);
             node.removeEventListener('mouseleave', onMouseOut);
@@ -107,21 +107,21 @@ export async function showTooltipFor(
         if (onNodeHide) {
             onNodeHide();
         }
-    }
+    };
 
-    function onMouseOut(e) {
+    const onMouseOut = () => {
         if (hideTooltipTimeout) {
             clearTimeout(hideTooltipTimeout);
         }
         hideTooltipTimeout = setTimeout(hideTooltipAndNode, 300);
-    }
+    };
 
-    function onMouseEnter(e) {
+    const onMouseEnter = () => {
         if (hideTooltipTimeout) {
             clearTimeout(hideTooltipTimeout);
             hideTooltipTimeout = null;
         }
-    }
+    };
 
     tooltip = mountTooltip(hoveredNode, props, hideTooltipAndNode, direction);
 

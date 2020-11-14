@@ -21,13 +21,19 @@ run_js_unit_test() {
 
 run_ts_validation() {
     echo 'Start running ts validation  >>>>>>>>>>>>>>>>>>>>>>>>>>>>'
-    ./node_modules/.bin/tsc --noEmit
+    npm run tsc-check
+}
+
+run_eslint_validation() {
+    echo 'Start running eslint validation  >>>>>>>>>>>>>>>>>>>>>>>>>>>>'
+    npm run lint
 }
 
 tests=(
     "run_python_unit_test"
     "run_ts_validation"
     "run_js_unit_test"
+    "run_eslint_validation"
     "run_webpack_test"
 )
 

@@ -79,13 +79,11 @@ export const StatementResultColumnInfo: React.FC<{
     ) : null;
 
     const generateStatisticsDOM = () => {
-        const statsDOM = statistics.map(([key, name, stat]) => {
-            return (
-                <div key={key} className="result-statistic">
-                    {name}: {stat}
-                </div>
-            );
-        });
+        const statsDOM = statistics.map(([key, name, stat]) => (
+            <div key={key} className="result-statistic">
+                {name}: {stat}
+            </div>
+        ));
         return <div>{statsDOM}</div>;
     };
 

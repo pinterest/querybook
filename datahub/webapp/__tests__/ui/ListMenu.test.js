@@ -13,8 +13,8 @@ it('renders without crashing', () => {
 
 describe('matches enzyme snapshots', () => {
     it('matches snapshot', () => {
-        let wrapper = shallow(<ListMenu items={items} />);
-        let serialized = toJson(wrapper);
+        const wrapper = shallow(<ListMenu items={items} />);
+        const serialized = toJson(wrapper);
         expect(serialized).toMatchSnapshot();
     });
 });

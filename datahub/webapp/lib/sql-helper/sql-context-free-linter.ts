@@ -30,7 +30,7 @@ const contextFreeLinterWarningsByLanguage: Record<
             }
 
             for (const [tokenIdx, token] of statement.entries()) {
-                if (token.type === 'KEYWORD' && token.string === 'count') {
+                if (token.type === 'KEYWORD' && token.text === 'count') {
                     const countDistinctTokens = statement.slice(
                         tokenIdx,
                         tokenIdx + 3
@@ -39,9 +39,9 @@ const contextFreeLinterWarningsByLanguage: Record<
                         const [_, bracket, distinct] = countDistinctTokens;
                         if (
                             bracket.type === 'BRACKET' &&
-                            bracket.string === '(' &&
+                            bracket.text === '(' &&
                             distinct.type === 'KEYWORD' &&
-                            distinct.string === 'distinct'
+                            distinct.text === 'distinct'
                         ) {
                             warnings.push({
                                 message:
@@ -71,10 +71,7 @@ const contextFreeLinterWarningsByLanguage: Record<
             }
 
             const firstToken = statement[0];
-            if (
-                firstToken.type === 'KEYWORD' &&
-                firstToken.string === 'select'
-            ) {
+            if (firstToken.type === 'KEYWORD' && firstToken.text === 'select') {
                 // SELECT statement
 
                 // Must have limit check
@@ -84,7 +81,7 @@ const contextFreeLinterWarningsByLanguage: Record<
 
                     const isLimitToken =
                         limitToken.type === 'KEYWORD' &&
-                        limitToken.string === 'limit';
+                        limitToken.text === 'limit';
                     const isNumberToken = numberToken.type === 'NUMBER';
 
                     if (!isLimitToken || !isNumberToken) {

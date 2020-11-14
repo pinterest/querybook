@@ -62,14 +62,6 @@ class QueryExecutionComponent extends React.Component<IProps, IState> {
         }
     }
 
-    public componentDidMount() {
-        this.pollQueryExecution(this.props.queryExecution);
-    }
-
-    public componentDidUpdate() {
-        this.pollQueryExecution(this.props.queryExecution);
-    }
-
     @bind
     public selectStatementTabIndex(index: number) {
         this.setState({
@@ -113,6 +105,89 @@ class QueryExecutionComponent extends React.Component<IProps, IState> {
     public toggleLogs() {
         const showStatementLogs = !this.state.showStatementLogs;
         this.setState({ showStatementLogs });
+    }
+
+    @bind
+    public renderQueryExecution() {
+        const {
+            queryExecution,
+            statementResultById,
+
+            loadS3Result,
+
+            changeCellContext,
+        } = this.props;
+        const {
+            selectedStatementTabIndex,
+            showExecutedQuery,
+            showStatementMeta,
+        } = this.state;
+        const { statement_executions: statementExecutionIds } = queryExecution;
+
+        const queryStepsDOM = <QuerySteps queryExecution={queryExecution} />;
+        if (
+            statementExecutionIds == null ||
+            queryExecution.status === QueryExecutionStatus.INITIALIZED
+        ) {
+            return <div className="QueryExecution ">{queryStepsDOM}</div>;
+        }
+
+        const statementExecution = this.getStatementExecution();
+        const statementExecutionId = statementExecution
+            ? statementExecution.id
+            : null;
+        const statementExecutionDOM = statementExecution ? (
+            <DataDocStatementExecution
+                key={statementExecutionId}
+                statementExecution={statementExecution}
+                statementResult={statementResultById[statementExecutionId]}
+                showStatementMeta={showStatementMeta}
+                loadS3Result={loadS3Result}
+                index={selectedStatementTabIndex}
+                showStatementLogs={this.state.showStatementLogs}
+            />
+        ) : queryExecution.status <= QueryExecutionStatus.RUNNING ? (
+            <Loading />
+        ) : null;
+
+        const executedQueryDOM = showExecutedQuery ? (
+            <ExecutedQueryCell
+                queryExecution={queryExecution}
+                highlightRange={
+                    statementExecution && {
+                        from: statementExecution.statement_range_start,
+                        to: statementExecution.statement_range_end,
+                    }
+                }
+                changeCellContext={changeCellContext}
+            />
+        ) : null;
+
+        const footerDOM = this.renderQueryExecutionFooter();
+
+        return (
+            <div className="QueryExecution ">
+                <div className="execution-wrapper">
+                    {queryStepsDOM}
+                    {this.renderQueryExecutionErrorDOM()}
+                    {this.renderStatementExecutionHeader()}
+                    {executedQueryDOM}
+                    <div className="query-execution-content">
+                        {statementExecutionDOM}
+                    </div>
+
+                    {footerDOM}
+                </div>
+            </div>
+        );
+    }
+
+    public componentDidMount() {
+        this.pollQueryExecution(this.props.queryExecution);
+    }
+
+    public componentDidUpdate() {
+        this.pollQueryExecution(this.props.queryExecution);
     }
 
     public renderStatementExecutionHeader() {
@@ -195,81 +270,6 @@ class QueryExecutionComponent extends React.Component<IProps, IState> {
                 queryExecution={queryExecution}
                 statementExecutions={statementExecutions}
             />
-        );
-    }
-
-    @bind
-    public renderQueryExecution() {
-        const {
-            queryExecution,
-            statementResultById,
-
-            loadS3Result,
-
-            changeCellContext,
-        } = this.props;
-        const {
-            selectedStatementTabIndex,
-            showExecutedQuery,
-            showStatementMeta,
-        } = this.state;
-        const { statement_executions: statementExecutionIds } = queryExecution;
-
-        const queryStepsDOM = <QuerySteps queryExecution={queryExecution} />;
-        if (
-            statementExecutionIds == null ||
-            queryExecution.status === QueryExecutionStatus.INITIALIZED
-        ) {
-            return <div className="QueryExecution ">{queryStepsDOM}</div>;
-        }
-
-        const statementExecution = this.getStatementExecution();
-        const statementExecutionId = statementExecution
-            ? statementExecution.id
-            : null;
-        const statementExecutionDOM = statementExecution ? (
-            <DataDocStatementExecution
-                key={statementExecutionId}
-                statementExecution={statementExecution}
-                statementResult={statementResultById[statementExecutionId]}
-                showStatementMeta={showStatementMeta}
-                loadS3Result={loadS3Result}
-                index={selectedStatementTabIndex}
-                showStatementLogs={this.state.showStatementLogs}
-            />
-        ) : queryExecution.status <= QueryExecutionStatus.RUNNING ? (
-            <Loading />
-        ) : null;
-
-        const executedQueryDOM = showExecutedQuery ? (
-            <ExecutedQueryCell
-                queryExecution={queryExecution}
-                highlightRange={
-                    statementExecution && {
-                        from: statementExecution.statement_range_start,
-                        to: statementExecution.statement_range_end,
-                    }
-                }
-                changeCellContext={changeCellContext}
-            />
-        ) : null;
-
-        const footerDOM = this.renderQueryExecutionFooter();
-
-        return (
-            <div className="QueryExecution ">
-                <div className="execution-wrapper">
-                    {queryStepsDOM}
-                    {this.renderQueryExecutionErrorDOM()}
-                    {this.renderStatementExecutionHeader()}
-                    {executedQueryDOM}
-                    <div className="query-execution-content">
-                        {statementExecutionDOM}
-                    </div>
-
-                    {footerDOM}
-                </div>
-            </div>
         );
     }
 

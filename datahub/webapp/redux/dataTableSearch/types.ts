@@ -49,7 +49,7 @@ export interface IDataTableSearchFailedAction extends Action {
 export interface IDataTableSearchReceiveQueryParamAction extends Action {
     type: '@@dataTableSearch/DATA_TABLE_SEARCH_RECEIVE_QUERY_PARAM';
     payload: {
-        queryParam: {};
+        queryParam: Record<string, unknown>;
     };
 }
 

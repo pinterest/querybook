@@ -11,8 +11,8 @@ it('renders without crashing', () => {
 
 describe('matches enzyme snapshots', () => {
     it('matches snapshot', () => {
-        let wrapper = shallow(<KeyboardKey value="test" />);
-        let serialized = toJson(wrapper);
+        const wrapper = shallow(<KeyboardKey value="test" />);
+        const serialized = toJson(wrapper);
         expect(serialized).toMatchSnapshot();
     });
 });

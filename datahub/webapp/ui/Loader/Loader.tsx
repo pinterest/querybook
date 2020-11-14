@@ -58,9 +58,9 @@ export const Loader: React.FunctionComponent<ILoaderProps> = ({
                 try {
                     await itemLoader();
                     setIsLoading(false);
-                } catch (errorObj) {
-                    console.error(errorObj);
-                    setErrorObj(errorObj);
+                } catch (newErrorObj) {
+                    console.error(newErrorObj);
+                    setErrorObj(newErrorObj);
                     setHasError(true);
                 }
             })();

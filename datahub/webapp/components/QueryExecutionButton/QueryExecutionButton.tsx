@@ -45,37 +45,21 @@ class QueryExecutionButtonComponent extends React.Component<IProps, IState> {
     private buttonRef = React.createRef<HTMLAnchorElement>();
     private mounted = false;
 
-    public componentDidMount() {
-        this.mounted = true;
-
-        this.props.fetchActiveQueryExecutionForUser(this.props.uid).then(() => {
-            if (this.mounted) {
-                this.setState({
-                    hasInitialLoadFinished: true,
-                });
-            }
-        });
-    }
-
-    public componentWillUnmount() {
-        this.mounted = false;
-    }
-
     // Extract this into a selector
     @decorate(memoizeOne)
     public _getActiveQueryExecutions(
         queryExecutionById: Record<number, IQueryExecution>,
         queryEnginesInEnv: number[]
     ) {
-        return Object.values(queryExecutionById).filter((queryExecution) => {
-            // filter by query executions only in the current environment
-            return (
+        return Object.values(queryExecutionById).filter(
+            (queryExecution) =>
+                // filter by query executions only in the current environment
                 queryEnginesInEnv.includes(queryExecution.engine_id) &&
                 queryExecution.status < QueryExecutionStatus.DONE
-            );
-        });
+        );
     }
 
+    @bind
     public getActiveQueryExecutions() {
         const { queryExecutionById, queryEnginesInEnv } = this.props;
 
@@ -102,6 +86,22 @@ class QueryExecutionButtonComponent extends React.Component<IProps, IState> {
         this.setState({
             showQueryViewModalForId: null,
         });
+    }
+
+    public componentDidMount() {
+        this.mounted = true;
+
+        this.props.fetchActiveQueryExecutionForUser(this.props.uid).then(() => {
+            if (this.mounted) {
+                this.setState({
+                    hasInitialLoadFinished: true,
+                });
+            }
+        });
+    }
+
+    public componentWillUnmount() {
+        this.mounted = false;
     }
 
     public render() {

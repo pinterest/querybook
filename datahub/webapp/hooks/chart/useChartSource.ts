@@ -129,22 +129,26 @@ export function useChartSource(
         }
     }, [statementId]);
 
-    const queryExecutions = React.useMemo(() => {
-        return (executionIdList || [])
-            .map((id) => queryExecutionById[id])
-            .filter((queryExecution) => queryExecution);
-    }, [queryExecutionById, executionIdList]);
+    const queryExecutions = React.useMemo(
+        () =>
+            (executionIdList || [])
+                .map((id) => queryExecutionById[id])
+                .filter((queryExecution) => queryExecution),
+        [queryExecutionById, executionIdList]
+    );
 
-    const statementExecutions = React.useMemo(() => {
-        return (statementIdList || [])
-            .map((sid) => statementExecutionById[sid])
-            .filter(
-                (statementExecution) =>
-                    statementExecution.status ===
-                        StatementExecutionStatus.DONE &&
-                    statementExecution.result_row_count > 0
-            );
-    }, [statementIdList, statementExecutionById]);
+    const statementExecutions = React.useMemo(
+        () =>
+            (statementIdList || [])
+                .map((sid) => statementExecutionById[sid])
+                .filter(
+                    (statementExecution) =>
+                        statementExecution.status ===
+                            StatementExecutionStatus.DONE &&
+                        statementExecution.result_row_count > 0
+                ),
+        [statementIdList, statementExecutionById]
+    );
 
     return {
         statementResultData,

@@ -43,18 +43,6 @@ export class QuerySnippetView extends React.Component<
         templatedVariables: [],
     };
 
-    public componentDidMount() {
-        this.getTemplatedVariables(this.props.querySnippet.context);
-    }
-    public componentDidUpdate(prevProps) {
-        if (this.props.querySnippet !== prevProps.querySnippet) {
-            this.setState({
-                templatedQueryForm: {},
-            });
-            this.getTemplatedVariables(this.props.querySnippet.context);
-        }
-    }
-
     @decorate(memoizeOne)
     public async getTemplatedVariables(context: string) {
         this.setState({
@@ -70,6 +58,36 @@ export class QuerySnippetView extends React.Component<
                 [fieldName]: fieldVal,
             },
         }));
+    }
+
+    @bind
+    public async handleQuerySnippetInsert() {
+        const context = this.props.querySnippet.context;
+        const { templatedVariables } = this.state;
+
+        let renderedQuery = context;
+        if (templatedVariables.length) {
+            renderedQuery = await renderTemplatedQuery(
+                context,
+                this.state.templatedQueryForm
+            );
+        }
+
+        if (this.props.onInsert) {
+            this.props.onInsert(renderedQuery);
+        }
+    }
+
+    public componentDidMount() {
+        this.getTemplatedVariables(this.props.querySnippet.context);
+    }
+    public componentDidUpdate(prevProps) {
+        if (this.props.querySnippet !== prevProps.querySnippet) {
+            this.setState({
+                templatedQueryForm: {},
+            });
+            this.getTemplatedVariables(this.props.querySnippet.context);
+        }
     }
 
     public getTemplatedVariableEditorDOM(context: string) {
@@ -96,30 +114,12 @@ export class QuerySnippetView extends React.Component<
         );
     }
 
-    @bind
-    public async handleQuerySnippetInsert() {
-        const context = this.props.querySnippet.context;
-        const { templatedVariables } = this.state;
-
-        let renderedQuery = context;
-        if (templatedVariables.length) {
-            renderedQuery = await renderTemplatedQuery(
-                context,
-                this.state.templatedQueryForm
-            );
-        }
-
-        if (this.props.onInsert) {
-            this.props.onInsert(renderedQuery);
-        }
-    }
-
     public render() {
         const { querySnippet, queryEngineById } = this.props;
 
         const {
             title,
-            engine_id,
+            engine_id: engineId,
             description,
             golden,
             context,
@@ -131,7 +131,7 @@ export class QuerySnippetView extends React.Component<
             updated_at: updatedAt,
         } = querySnippet;
 
-        const engine = queryEngineById[engine_id];
+        const engine = queryEngineById[engineId];
 
         const publicTag = <Tag>{isPublic ? 'public' : 'private'}</Tag>;
 

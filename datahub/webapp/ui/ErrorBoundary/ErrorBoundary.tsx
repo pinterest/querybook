@@ -16,7 +16,10 @@ function stringifyError(errorObj: any): string {
     return JSON.stringify(errorObj);
 }
 
-export class ErrorBoundary extends React.Component<{}, IErrorBoundaryState> {
+export class ErrorBoundary extends React.Component<
+    unknown,
+    IErrorBoundaryState
+> {
     public readonly state = {
         hasError: false,
         errorString: '',

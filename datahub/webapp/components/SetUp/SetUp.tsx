@@ -46,8 +46,8 @@ export const SetUp: React.FunctionComponent = () => {
                         height="180px"
                         width="240px"
                     >
-                        we'll set up a demo environment for you to get familiar
-                        with the app
+                        we&apos;ll set up a demo environment for you to get
+                        familiar with the app
                     </Card>
                 )}
                 <Card

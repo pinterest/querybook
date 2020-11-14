@@ -52,10 +52,7 @@ const getFormattedDateFromSeconds = (
         ? moment(parseInt(seconds as string, 10) * 1000).format(format)
         : '';
 
-const userReactSelectStyle: {} = makeReactSelectStyle(
-    true,
-    miniReactSelectStyles
-);
+const userReactSelectStyle = makeReactSelectStyle(true, miniReactSelectStyles);
 export const SearchOverview: React.FunctionComponent = () => {
     const {
         resultByPage,
@@ -72,14 +69,12 @@ export const SearchOverview: React.FunctionComponent = () => {
         searchRequest,
         queryMetastores,
         metastoreId,
-    } = useSelector((state: IStoreState) => {
-        return {
-            ...state.search,
-            environment: currentEnvironmentSelector(state),
-            queryMetastores: queryMetastoresSelector(state),
-            metastoreId: state.dataTableSearch.metastoreId,
-        };
-    });
+    } = useSelector((state: IStoreState) => ({
+        ...state.search,
+        environment: currentEnvironmentSelector(state),
+        queryMetastores: queryMetastoresSelector(state),
+        metastoreId: state.dataTableSearch.metastoreId,
+    }));
 
     const results = resultByPage[currentPage] || [];
     const isLoading = !!searchRequest;
@@ -288,27 +283,26 @@ export const SearchOverview: React.FunctionComponent = () => {
                     onChange={handleMetastoreChange}
                     transparent
                 >
-                    {queryMetastores.map((metastore) => {
-                        return (
-                            <option key={metastore.id} value={metastore.id}>
-                                {metastore.name}
-                            </option>
-                        );
-                    })}
+                    {queryMetastores.map((metastore) => (
+                        <option key={metastore.id} value={metastore.id}>
+                            {metastore.name}
+                        </option>
+                    ))}
                 </Select>
             </div>
         ) : null;
 
-    const orderByButtonFormatter = React.useCallback(() => {
-        return (
+    const orderByButtonFormatter = React.useCallback(
+        () => (
             <span>
                 {searchOrder === SearchOrder.Recency
                     ? 'Most recent'
                     : 'Most relevant'}
                 <i className="fa fa-caret-down caret-icon ml8" />
             </span>
-        );
-    }, [searchOrder]);
+        ),
+        [searchOrder]
+    );
 
     const orderByDOM = (
         <Dropdown customButtonRenderer={orderByButtonFormatter} isRight>

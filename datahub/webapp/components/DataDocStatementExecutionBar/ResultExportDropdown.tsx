@@ -52,23 +52,21 @@ function isPreviewFullResult(
 const UrlModal: React.FunctionComponent<{
     url: string;
     onHide: () => any;
-}> = ({ url, onHide }) => {
-    return (
-        <Modal onHide={onHide}>
-            <div className="flex-center mv24">
-                <Title size={5}>
-                    <Link to={url} newTab>
-                        View Export
-                    </Link>
-                </Title>
-            </div>
-        </Modal>
-    );
-};
+}> = ({ url, onHide }) => (
+    <Modal onHide={onHide}>
+        <div className="flex-center mv24">
+            <Title size={5}>
+                <Link to={url} newTab>
+                    View Export
+                </Link>
+            </Title>
+        </div>
+    </Modal>
+);
 
 const FormModal: React.FunctionComponent<{
     form: IStructFormField;
-    onSubmit: (data: {}) => any;
+    onSubmit: (data: Record<string, unknown>) => any;
     onHide: () => any;
 }> = ({ form, onSubmit, onHide }) => {
     const [formData, setFormData] = React.useState({});
@@ -140,7 +138,10 @@ export const ResultExportDropdown: React.FunctionComponent<IProps> = ({
     }, [statementId, statementResult, loadStatementResult]);
 
     const handleExport = React.useCallback(
-        async (exporter: IQueryResultExporter, formData?: {}) => {
+        async (
+            exporter: IQueryResultExporter,
+            formData?: Record<string, unknown>
+        ) => {
             try {
                 await getExporterAuthentication(exporter);
 

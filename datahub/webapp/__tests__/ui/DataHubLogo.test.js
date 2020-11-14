@@ -11,13 +11,13 @@ it('renders without crashing', () => {
 
 describe('matches enzyme snapshots', () => {
     it('matches snapshot', () => {
-        let wrapper = shallow(<DataHubLogo />);
-        let serialized = toJson(wrapper);
+        const wrapper = shallow(<DataHubLogo />);
+        const serialized = toJson(wrapper);
         expect(serialized).toMatchSnapshot();
     });
     it('matches snapshot - size', () => {
-        let wrapper = shallow(<DataHubLogo size={8} />);
-        let serialized = toJson(wrapper);
+        const wrapper = shallow(<DataHubLogo size={8} />);
+        const serialized = toJson(wrapper);
         expect(serialized).toMatchSnapshot();
     });
 });

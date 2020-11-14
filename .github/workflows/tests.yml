@@ -1,43 +1,43 @@
 name: Tests
 on:
-  push:
-    branches:
-      - master
-  pull_request:
+    push:
+        branches:
+            - master
+    pull_request:
 # A workflow run is made up of one or more jobs that can run sequentially or in parallel
 jobs:
-  # This workflow contains a single job called "build"
-  lint:
-    # The type of runner that the job will run on
-    runs-on: ubuntu-latest
+    # This workflow contains a single job called "build"
+    lint:
+        # The type of runner that the job will run on
+        runs-on: ubuntu-latest
 
-    # Steps represent a sequence of tasks that will be executed as part of the job
-    steps:
-    # Checks-out your repository under $GITHUB_WORKSPACE, so your job can access it
-    - uses: actions/checkout@v2
-      with:
-        fetch-depth: 1
-    - name: Set up Python
-      uses: actions/setup-python@v1
-      with:
-        python-version: 3.7
-    - name: Set PY
-      run: |
-          echo 'PY<<EOF' >> $GITHUB_ENV
-          echo "$(python -c 'import hashlib, sys;print(hashlib.sha256(sys.version.encode()+sys.executable.encode()).hexdigest())')" >> $GITHUB_ENV
-          echo 'EOF' >> $GITHUB_ENV
-    - uses: actions/cache@v1
-      with:
-        path: ~/.cache/pre-commit
-        key: pre-commit|${{ env.PY }}|${{ hashFiles('.pre-commit-config.yaml') }}
-    - uses: pre-commit/action@v1.0.1
-      with:
-        token: ${{ secrets.GITHUB_TOKEN }}
-  tests:
-    runs-on: ubuntu-latest
-    steps:
-    - uses: actions/checkout@v2
-      with:
-        fetch-depth: 1
-    - name: Run docker test
-      run: make unit_test
+        # Steps represent a sequence of tasks that will be executed as part of the job
+        steps:
+            # Checks-out your repository under $GITHUB_WORKSPACE, so your job can access it
+            - uses: actions/checkout@v2
+              with:
+                  fetch-depth: 1
+            - name: Set up Python
+              uses: actions/setup-python@v1
+              with:
+                  python-version: 3.7
+            - name: Set PY
+              run: |
+                  echo 'PY<<EOF' >> $GITHUB_ENV
+                  echo "$(python -c 'import hashlib, sys;print(hashlib.sha256(sys.version.encode()+sys.executable.encode()).hexdigest())')" >> $GITHUB_ENV
+                  echo 'EOF' >> $GITHUB_ENV
+            - uses: actions/cache@v1
+              with:
+                  path: ~/.cache/pre-commit
+                  key: pre-commit|${{ env.PY }}|${{ hashFiles('.pre-commit-config.yaml') }}
+            - uses: pre-commit/action@v1.0.1
+              with:
+                  token: ${{ secrets.GITHUB_TOKEN }}
+    tests:
+        runs-on: ubuntu-latest
+        steps:
+            - uses: actions/checkout@v2
+              with:
+                  fetch-depth: 1
+            - name: Run docker test
+              run: make test

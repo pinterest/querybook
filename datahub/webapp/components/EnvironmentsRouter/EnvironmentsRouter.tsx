@@ -51,11 +51,7 @@ class EnvironmentsRouterComponent extends React.PureComponent<
         environmentsLoaded: false,
     };
 
-    public componentDidMount() {
-        this.loadEnvironments();
-        this.loadInitialLoadItems();
-    }
-
+    @bind
     public async loadEnvironments() {
         try {
             await this.props.fetchEnvironments();
@@ -66,6 +62,7 @@ class EnvironmentsRouterComponent extends React.PureComponent<
         }
     }
 
+    @bind
     public loadInitialLoadItems() {
         // Load things that will only loaded once on start up here
         this.props.fetchExporters();
@@ -95,6 +92,11 @@ class EnvironmentsRouterComponent extends React.PureComponent<
                 }
             }
         }
+    }
+
+    public componentDidMount() {
+        this.loadEnvironments();
+        this.loadInitialLoadItems();
     }
 
     public render() {
@@ -203,7 +205,7 @@ function mapStateToProps(state: IStoreState) {
     };
 }
 
-function mapDispatchToProps(dispatch: Dispatch, ownProps: {}) {
+function mapDispatchToProps(dispatch: Dispatch) {
     return {
         fetchEnvironments: () =>
             dispatch(EnvironmentActions.fetchEnvironments()),

@@ -51,9 +51,7 @@ export const SyntaxQueryError: React.FunctionComponent<{
         line?: number;
         char?: number;
         message: string;
-    } = useMemo(() => {
-        return JSON.parse(errorMessage);
-    }, [errorMessage]);
+    } = useMemo(() => JSON.parse(errorMessage), [errorMessage]);
 
     const query = queryExecution.query;
     const failedStatement = statementExecutions[statementExecutions.length - 1];

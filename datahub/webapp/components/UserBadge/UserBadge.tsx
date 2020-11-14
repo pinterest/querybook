@@ -33,13 +33,15 @@ export const UserBadge: React.FunctionComponent<IProps> = ({
         />
     );
 
-    const userName = useMemo(() => {
-        return userInfo
-            ? userInfo.username
-            : name
-            ? `Unknown (${name})`
-            : 'Unknown';
-    }, [userInfo?.username, name]);
+    const userName = useMemo(
+        () =>
+            userInfo
+                ? userInfo.username
+                : name
+                ? `Unknown (${name})`
+                : 'Unknown',
+        [userInfo?.username, name]
+    );
 
     if (mini) {
         return (

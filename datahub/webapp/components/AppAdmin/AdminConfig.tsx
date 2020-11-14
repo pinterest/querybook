@@ -4,7 +4,9 @@ import { Table } from 'ui/Table/Table';
 import { SearchBar } from 'ui/SearchBar/SearchBar';
 
 export const AdminConfig = ({}) => {
-    const { data: datahubConfig, isLoading } = useDataFetch<{}>({
+    const { data: datahubConfig, isLoading } = useDataFetch<
+        Record<string, unknown>
+    >({
         url: '/admin/datahub_config/',
     });
     const [filterStr, setFilterStr] = useState('');

@@ -20,8 +20,8 @@ export class Timer<T = number> extends React.PureComponent<
     ITimerState<T>
 > {
     public static defaultProps = {
-        formatter: (timestamp) => timestamp,
-        updater: (timestamp) => timestamp + 1,
+        formatter: (timestamp: number) => timestamp,
+        updater: (timestamp: number) => timestamp + 1,
 
         updateFrequency: 1000, // 1 second
         className: '',
@@ -30,12 +30,22 @@ export class Timer<T = number> extends React.PureComponent<
 
     private updateInterval: number = null;
 
-    constructor(props) {
+    public constructor(props: ITimerProps<T>) {
         super(props);
 
         this.state = {
             value: this.props.initialValue,
         };
+    }
+
+    @bind
+    public updateTimer(overrideValue = null) {
+        this.setState(({ value }) => ({
+            value:
+                overrideValue != null
+                    ? this.props.updater(overrideValue)
+                    : this.props.updater(value),
+        }));
     }
 
     public componentDidMount() {
@@ -47,18 +57,6 @@ export class Timer<T = number> extends React.PureComponent<
 
     public componentWillUnmount() {
         clearInterval(this.updateInterval);
-    }
-
-    @bind
-    public updateTimer(overrideValue = null) {
-        this.setState(({ value }) => {
-            return {
-                value:
-                    overrideValue != null
-                        ? this.props.updater(overrideValue)
-                        : this.props.updater(value),
-            };
-        });
     }
 
     public render() {

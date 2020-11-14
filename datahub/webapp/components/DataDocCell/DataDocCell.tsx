@@ -67,18 +67,13 @@ export const DataDocCell: React.FunctionComponent<IDataDocCellProps> = ({
         fullScreenCellIndex,
     } = useContext(DataDocContext);
     const { cellIdtoUid, arrowKeysEnabled } = useSelector(
-        (state: IStoreState) => {
-            return {
-                cellIdtoUid: dataDocSelectors.dataDocCursorByCellIdSelector(
-                    state,
-                    {
-                        docId: dataDoc.id,
-                    }
-                ),
-                arrowKeysEnabled:
-                    state.user.computedSettings.datadoc_arrow_key === 'enabled',
-            };
-        }
+        (state: IStoreState) => ({
+            cellIdtoUid: dataDocSelectors.dataDocCursorByCellIdSelector(state, {
+                docId: dataDoc.id,
+            }),
+            arrowKeysEnabled:
+                state.user.computedSettings.datadoc_arrow_key === 'enabled',
+        })
     );
 
     const [showCollapsed, setShowCollapsed] = React.useState(undefined);
@@ -110,39 +105,44 @@ export const DataDocCell: React.FunctionComponent<IDataDocCellProps> = ({
         [cell]
     );
 
-    const deleteCellAt = React.useCallback(() => {
-        return new Promise((resolve) => {
-            const dataDocCells = dataDoc.dataDocCells;
-            const numberOfCells = (dataDocCells || []).length;
+    const deleteCellAt = React.useCallback(
+        () =>
+            new Promise((resolve) => {
+                const dataDocCells = dataDoc.dataDocCells;
+                const numberOfCells = (dataDocCells || []).length;
 
-            if (numberOfCells > 0) {
-                const deleteCell = async () => {
-                    try {
-                        await dataDocActions.deleteDataDocCell(
-                            dataDoc.id,
-                            index
-                        );
-                    } catch (e) {
-                        sendNotification(`Delete cell failed, reason: ${e}`);
-                    } finally {
-                        resolve();
-                    }
-                };
-                sendConfirm({
-                    header: 'Delete Cell?',
-                    message: 'Deleted cells cannot be recovered',
-                    onConfirm: deleteCell,
-                    onHide: resolve,
-                });
-            } else {
-                resolve();
-            }
-        });
-    }, [dataDoc]);
+                if (numberOfCells > 0) {
+                    const deleteCell = async () => {
+                        try {
+                            await dataDocActions.deleteDataDocCell(
+                                dataDoc.id,
+                                index
+                            );
+                        } catch (e) {
+                            sendNotification(
+                                `Delete cell failed, reason: ${e}`
+                            );
+                        } finally {
+                            resolve();
+                        }
+                    };
+                    sendConfirm({
+                        header: 'Delete Cell?',
+                        message: 'Deleted cells cannot be recovered',
+                        onConfirm: deleteCell,
+                        onHide: resolve,
+                    });
+                } else {
+                    resolve();
+                }
+            }),
+        [dataDoc]
+    );
 
-    const shareUrl = useMemo(() => {
-        return getShareUrl(cell.id, cellIdToExecutionId[cell.id]);
-    }, [cell.id, cellIdToExecutionId[cell.id]]);
+    const shareUrl = useMemo(
+        () => getShareUrl(cell.id, cellIdToExecutionId[cell.id]),
+        [cell.id, cellIdToExecutionId[cell.id]]
+    );
 
     const isFullScreen = index === fullScreenCellIndex;
     const toggleFullScreen = useCallback(() => {
@@ -216,33 +216,31 @@ export const DataDocCell: React.FunctionComponent<IDataDocCellProps> = ({
         return cellDOM;
     };
 
-    const renderCellControlDOM = (idx: number, isHeaderParam: boolean) => {
-        return (
-            <div className={'data-doc-cell-divider-container'}>
-                <DataDocCellControl
-                    index={idx}
-                    numberOfCells={dataDoc.dataDocCells.length}
-                    moveCellAt={dataDocActions.moveDataDocCell.bind(
-                        null,
-                        dataDoc.id
-                    )}
-                    pasteCellAt={pasteCellAt}
-                    copyCellAt={copyCellAt}
-                    insertCellAt={insertCellAt}
-                    deleteCellAt={deleteCellAt}
-                    isHeader={isHeaderParam}
-                    isEditable={isEditable}
-                    showCollapsed={showCollapsed}
-                    setShowCollapsed={setShowCollapsed}
-                    isCollapsedDefault={
-                        Boolean(cell.meta.collapsed) === showCollapsed
-                    }
-                    toggleDefaultCollapsed={handleDefaultCollapseChange}
-                    shareUrl={shareUrl}
-                />
-            </div>
-        );
-    };
+    const renderCellControlDOM = (idx: number, isHeaderParam: boolean) => (
+        <div className={'data-doc-cell-divider-container'}>
+            <DataDocCellControl
+                index={idx}
+                numberOfCells={dataDoc.dataDocCells.length}
+                moveCellAt={dataDocActions.moveDataDocCell.bind(
+                    null,
+                    dataDoc.id
+                )}
+                pasteCellAt={pasteCellAt}
+                copyCellAt={copyCellAt}
+                insertCellAt={insertCellAt}
+                deleteCellAt={deleteCellAt}
+                isHeader={isHeaderParam}
+                isEditable={isEditable}
+                showCollapsed={showCollapsed}
+                setShowCollapsed={setShowCollapsed}
+                isCollapsedDefault={
+                    Boolean(cell.meta.collapsed) === showCollapsed
+                }
+                toggleDefaultCollapsed={handleDefaultCollapseChange}
+                shareUrl={shareUrl}
+            />
+        </div>
+    );
     const uids = cellIdtoUid[cell.id] || [];
     const uidDOM = uids.map((uid) => <UserAvatar key={uid} uid={uid} tiny />);
     const dataDocCellClassName = showCollapsed

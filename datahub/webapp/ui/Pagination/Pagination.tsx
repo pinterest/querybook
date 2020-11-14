@@ -16,17 +16,15 @@ const PageButton: React.FunctionComponent<IPageButtonProps> = ({
     onClick,
     shift = 0,
     className = '',
-}) => {
-    return (
-        <li>
-            <Button
-                className={'Pagination-page-button ' + className}
-                onClick={onClick.bind(null, page)}
-                title={(page + shift).toString()}
-            />
-        </li>
-    );
-};
+}) => (
+    <li>
+        <Button
+            className={'Pagination-page-button ' + className}
+            onClick={onClick.bind(null, page)}
+            title={(page + shift).toString()}
+        />
+    </li>
+);
 
 export interface IPaginationProps {
     currentPage: number;

@@ -134,7 +134,7 @@ const useQueryComposerSearchAndReplace = (
     };
 };
 
-export const QueryComposer: React.FC<{}> = () => {
+export const QueryComposer: React.FC = () => {
     useBrowserTitle('Adhoc Query');
 
     const dispatch: Dispatch = useDispatch();

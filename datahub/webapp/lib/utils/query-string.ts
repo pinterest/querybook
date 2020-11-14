@@ -8,7 +8,10 @@ export function getQueryString(): Record<string, any> {
     return qs.parse(location.search.slice(1));
 }
 
-export function replaceQueryString(params: {}, navigate: boolean = false) {
+export function replaceQueryString(
+    params: Record<string, any>,
+    navigate: boolean = false
+) {
     const mergedParams = {
         ...getQueryString(),
         ...params,

@@ -6,19 +6,17 @@ const columnDetectors: IColumnDetector[] = [
     {
         type: 'string',
         priority: 0,
-        checker: (colName: string, values: any[]) => {
-            return detectTypeForValues(values, (v) => {
+        checker: (colName: string, values: any[]) =>
+            detectTypeForValues(values, (v) => {
                 const vType = typeof v;
                 return vType === 'string';
-            });
-        },
+            }),
     },
     {
         type: 'number',
         priority: 1,
-        checker: (colName: string, values: any[]) => {
-            return detectTypeForValues(values, isNumeric);
-        },
+        checker: (colName: string, values: any[]) =>
+            detectTypeForValues(values, isNumeric),
     },
     {
         type: 'id',

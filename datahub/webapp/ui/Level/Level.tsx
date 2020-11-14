@@ -23,6 +23,6 @@ export const Level = styled.div.attrs<{
     `};
 `;
 
-export const LevelItem = styled.div.attrs<{}>({
+export const LevelItem = styled.div.attrs({
     className: 'LevelItem  flex-row',
 })``;

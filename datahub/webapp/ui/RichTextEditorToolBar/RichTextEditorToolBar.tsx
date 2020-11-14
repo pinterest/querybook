@@ -104,17 +104,15 @@ export class RichTextEditorToolBar extends React.PureComponent<
         const { editorState } = this.props;
         const currentStyle = editorState.getCurrentInlineStyle();
 
-        const styleButtons = styleButtonsConfig.map((config, index) => {
-            return (
-                <ToolBarButton
-                    key={index}
-                    active={currentStyle.has(config.style)}
-                    icon={config.icon}
-                    tooltip={config.tooltip}
-                    onClick={this.toggleStyle.bind(null, config.style)}
-                />
-            );
-        });
+        const styleButtons = styleButtonsConfig.map((config, index) => (
+            <ToolBarButton
+                key={index}
+                active={currentStyle.has(config.style)}
+                icon={config.icon}
+                tooltip={config.tooltip}
+                onClick={this.toggleStyle.bind(null, config.style)}
+            />
+        ));
         numberOfButtons += styleButtons.length;
 
         const selection = editorState.getSelection();
@@ -123,18 +121,16 @@ export class RichTextEditorToolBar extends React.PureComponent<
             .getBlockForKey(selection.getStartKey())
             .getType();
 
-        const blockButtons = blockButtonsConfig.map((config, index) => {
-            return (
-                <ToolBarButton
-                    key={index + numberOfButtons}
-                    active={blockType === config.style}
-                    title={config.label}
-                    icon={config.icon}
-                    tooltip={config.tooltip}
-                    onClick={this.toggleBlock.bind(null, config.style)}
-                />
-            );
-        });
+        const blockButtons = blockButtonsConfig.map((config, index) => (
+            <ToolBarButton
+                key={index + numberOfButtons}
+                active={blockType === config.style}
+                title={config.label}
+                icon={config.icon}
+                tooltip={config.tooltip}
+                onClick={this.toggleBlock.bind(null, config.style)}
+            />
+        ));
         numberOfButtons += blockButtons.length;
 
         const entityButtons = entityButtonsConfig.map((config, index) => {

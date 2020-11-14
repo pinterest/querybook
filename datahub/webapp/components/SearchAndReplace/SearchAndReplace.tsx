@@ -115,37 +115,39 @@ export function useSearchAndReplace({
         }));
     }, []);
 
-    const moveResultIndex = useCallback((delta: number) => {
-        return new Promise((resolve) => {
-            setSearchState((oldSearchState) => {
-                const resultLen = oldSearchState.searchResults.length;
-                if (!resultLen) {
-                    resolve();
-                    return oldSearchState;
-                }
+    const moveResultIndex = useCallback(
+        (delta: number) =>
+            new Promise((resolve) => {
+                setSearchState((oldSearchState) => {
+                    const resultLen = oldSearchState.searchResults.length;
+                    if (!resultLen) {
+                        resolve();
+                        return oldSearchState;
+                    }
 
-                const currIndex = oldSearchState.currentSearchResultIndex;
-                let newIndex = currIndex + delta;
-                // Clip new index to be between [0, searchState.searchResults.length)
-                newIndex =
-                    (newIndex < 0 ? newIndex + resultLen : newIndex) %
-                    resultLen;
+                    const currIndex = oldSearchState.currentSearchResultIndex;
+                    let newIndex = currIndex + delta;
+                    // Clip new index to be between [0, searchState.searchResults.length)
+                    newIndex =
+                        (newIndex < 0 ? newIndex + resultLen : newIndex) %
+                        resultLen;
 
-                if (jumpToResult) {
-                    jumpToResult(
-                        oldSearchState.searchResults[newIndex]
-                    ).then(() => resolve());
-                } else {
-                    resolve();
-                }
+                    if (jumpToResult) {
+                        jumpToResult(
+                            oldSearchState.searchResults[newIndex]
+                        ).then(() => resolve());
+                    } else {
+                        resolve();
+                    }
 
-                return {
-                    ...oldSearchState,
-                    currentSearchResultIndex: newIndex,
-                };
-            });
-        });
-    }, []);
+                    return {
+                        ...oldSearchState,
+                        currentSearchResultIndex: newIndex,
+                    };
+                });
+            }),
+        []
+    );
 
     const onReplace = useCallback(
         (all: boolean = false) => {

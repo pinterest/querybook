@@ -22,7 +22,7 @@ const initialState: Readonly<IDataDocState> = {
     accessRequestsByDocIdUserId: {},
 };
 
-function loadedEnvironmentFilterMode(
+function loadedEnvironmentFilterModeReducer(
     state = initialState.loadedEnvironmentFilterMode,
     action: DataDocAction | EnvironmentAction
 ) {
@@ -65,7 +65,7 @@ function removeDocFromCells(
     }, {});
 }
 
-function dataDocCellById(
+function dataDocCellByIdReducer(
     state = initialState.dataDocCellById,
     action: DataDocAction
 ) {
@@ -133,7 +133,10 @@ function dataDocCellsArrayHelper(cells: number[] = [], action: DataDocAction) {
     }
 }
 
-function dataDocById(state = initialState.dataDocById, action: DataDocAction) {
+function dataDocByIdReducer(
+    state = initialState.dataDocById,
+    action: DataDocAction
+) {
     return produce(state, (draft) => {
         switch (action.type) {
             case '@@dataDoc/RECEIVE_DATA_DOCS': {
@@ -196,7 +199,7 @@ function dataDocById(state = initialState.dataDocById, action: DataDocAction) {
     });
 }
 
-function favoriteDataDocIds(
+function favoriteDataDocIdsReducer(
     state = initialState.favoriteDataDocIds,
     action: DataDocAction
 ) {
@@ -226,7 +229,7 @@ function favoriteDataDocIds(
     }
 }
 
-function recentDataDocIds(
+function recentDataDocIdsReducer(
     state = initialState.recentDataDocIds,
     action: DataDocAction
 ) {
@@ -250,7 +253,7 @@ function recentDataDocIds(
     }
 }
 
-function docIdToQueryExecution(
+function docIdToQueryExecutionReducer(
     state = initialState.docIdToQueryExecution,
     action: DataDocAction
 ) {
@@ -275,7 +278,7 @@ function docIdToQueryExecution(
     });
 }
 
-function dataDocSavePromiseById(
+function dataDocSavePromiseByIdReducer(
     state = initialState.dataDocSavePromiseById,
     action: DataDocAction
 ) {
@@ -318,7 +321,7 @@ function dataDocSavePromiseById(
     });
 }
 
-function sessionByDocId(
+function sessionByDocIdReducer(
     state = initialState.sessionByDocId,
     action: DataDocAction
 ) {
@@ -374,7 +377,7 @@ function sessionByDocId(
     });
 }
 
-function accessRequestsByDocIdUserId(
+function accessRequestsByDocIdUserIdReducer(
     state = initialState.accessRequestsByDocIdUserId,
     action: DataDocAction
 ) {
@@ -404,7 +407,7 @@ function accessRequestsByDocIdUserId(
     });
 }
 
-function editorsByDocIdUserId(
+function editorsByDocIdUserIdReducer(
     state = initialState.editorsByDocIdUserId,
     action: DataDocAction
 ) {
@@ -436,15 +439,15 @@ function editorsByDocIdUserId(
 }
 
 export default combineReducers({
-    dataDocById,
-    dataDocCellById,
-    loadedEnvironmentFilterMode,
-    favoriteDataDocIds,
-    recentDataDocIds,
+    dataDocById: dataDocByIdReducer,
+    dataDocCellById: dataDocCellByIdReducer,
+    loadedEnvironmentFilterMode: loadedEnvironmentFilterModeReducer,
+    favoriteDataDocIds: favoriteDataDocIdsReducer,
+    recentDataDocIds: recentDataDocIdsReducer,
 
-    docIdToQueryExecution,
-    dataDocSavePromiseById,
-    sessionByDocId,
-    editorsByDocIdUserId,
-    accessRequestsByDocIdUserId,
+    docIdToQueryExecution: docIdToQueryExecutionReducer,
+    dataDocSavePromiseById: dataDocSavePromiseByIdReducer,
+    sessionByDocId: sessionByDocIdReducer,
+    editorsByDocIdUserId: editorsByDocIdUserIdReducer,
+    accessRequestsByDocIdUserId: accessRequestsByDocIdUserIdReducer,
 });

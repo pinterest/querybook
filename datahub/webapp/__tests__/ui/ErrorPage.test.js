@@ -18,18 +18,18 @@ it('renders without crashing', () => {
 
 describe('matches enzyme snapshots', () => {
     it('matches snapshot', () => {
-        let wrapper = shallow(<ErrorPage />);
-        let serialized = toJson(wrapper);
+        const wrapper = shallow(<ErrorPage />);
+        const serialized = toJson(wrapper);
         expect(serialized).toMatchSnapshot();
     });
     it('matches snapshot', () => {
-        let wrapper = shallow(<FourOhFour />);
-        let serialized = toJson(wrapper);
+        const wrapper = shallow(<FourOhFour />);
+        const serialized = toJson(wrapper);
         expect(serialized).toMatchSnapshot();
     });
     it('matches snapshot', () => {
-        let wrapper = shallow(<FourOhThree />);
-        let serialized = toJson(wrapper);
+        const wrapper = shallow(<FourOhThree />);
+        const serialized = toJson(wrapper);
         expect(serialized).toMatchSnapshot();
     });
 });

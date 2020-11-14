@@ -18,19 +18,17 @@ export const AdminAppEntitySidebar: React.FunctionComponent<IAdminAppEntitySideb
     selectedEntity,
     onSelectEntity,
 }) => {
-    const makeSidebarItem = (key: AdminEntity, icon: string) => {
-        return (
-            <div
-                className="AdminAppEntitySidebar-item flex-row"
-                onClick={() => onSelectEntity(key)}
-            >
-                <IconButton icon={icon} active={selectedEntity === key} />
-                <span className="AdminAppEntitySidebar-title">
-                    {adminEntityToTitle[key]}
-                </span>
-            </div>
-        );
-    };
+    const makeSidebarItem = (key: AdminEntity, icon: string) => (
+        <div
+            className="AdminAppEntitySidebar-item flex-row"
+            onClick={() => onSelectEntity(key)}
+        >
+            <IconButton icon={icon} active={selectedEntity === key} />
+            <span className="AdminAppEntitySidebar-title">
+                {adminEntityToTitle[key]}
+            </span>
+        </div>
+    );
     const divider = (
         <Divider
             marginTop="8px"

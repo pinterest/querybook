@@ -8,10 +8,7 @@ const initialState: IQuerySnippetsState = {
     querySnippetIds: [],
 };
 
-export default function querySnippets(
-    state = initialState,
-    action: QuerySnippetsAction
-) {
+export default function (state = initialState, action: QuerySnippetsAction) {
     return produce(state, (draft) => {
         switch (action.type) {
             case '@@querySnippets/RECEIVE_QUERY_SNIPPET': {

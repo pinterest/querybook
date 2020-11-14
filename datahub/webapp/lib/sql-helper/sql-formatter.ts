@@ -35,12 +35,12 @@ function tokensToText(tokens: IToken[]) {
         }
 
         if (skipTokenType.has(token.type)) {
-            if (!(token.string in templateTagToId)) {
-                templateTagToId[token.string] = uniqueId('__TEMPLATED_TAG_');
+            if (!(token.text in templateTagToId)) {
+                templateTagToId[token.text] = uniqueId('__TEMPLATED_TAG_');
             }
-            statementText += templateTagToId[token.string];
+            statementText += templateTagToId[token.text];
         } else {
-            statementText += token.string;
+            statementText += token.text;
         }
         lastToken = token;
     }
@@ -73,9 +73,9 @@ export function format(
     tokens.reduce((statement, token, index) => {
         if (token.type === 'KEYWORD' && options.case) {
             if (options.case === 'lower') {
-                token.string = token.string.toLocaleLowerCase();
+                token.text = token.text.toLocaleLowerCase();
             } else if (options.case === 'upper') {
-                token.string = token.string.toLocaleUpperCase();
+                token.text = token.text.toLocaleUpperCase();
             }
         }
 
@@ -134,7 +134,7 @@ export function format(
             let formattedStatement = statementText;
             if (
                 firstKeyWord &&
-                allowedStatement.has(firstKeyWord.string.toLocaleLowerCase())
+                allowedStatement.has(firstKeyWord.text.toLocaleLowerCase())
             ) {
                 formattedStatement = SqlFormattor.format(statementText, {
                     indent: options.indent,
@@ -152,7 +152,9 @@ export function format(
             return formattedStatement;
         }
     );
-    return formattedStatements.reduce((acc, statement, index) => {
-        return acc + '\n'.repeat(newLineBetweenStatement[index]) + statement;
-    }, '');
+    return formattedStatements.reduce(
+        (acc, statement, index) =>
+            acc + '\n'.repeat(newLineBetweenStatement[index]) + statement,
+        ''
+    );
 }
