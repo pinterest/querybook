@@ -226,7 +226,7 @@ module.exports = {
         'react/no-is-mounted': 'error',
         'react/no-render-return-value': 'error',
         'react/no-string-refs': 'error',
-        'react/no-unescaped-entities': 'error',
+        'react/no-unescaped-entities': ['error', { forbid: ['>', '}'] }],
         'react/no-unknown-property': 'error',
         'react/no-unsafe': 'off',
         'react/prop-types': 'off',

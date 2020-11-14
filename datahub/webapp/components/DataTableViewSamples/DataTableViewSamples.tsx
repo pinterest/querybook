@@ -369,7 +369,7 @@ const DataTableViewSamplesTable: React.FC<{
         <SamplesTableView tableName={tableName} samples={samples} />
     ) : (
         <div className="samples-not-found">
-            Samples not found, Click &apos;Generate&apos; to create samples.
+            Samples not found, Click "Generate" to create samples.
         </div>
     );
 

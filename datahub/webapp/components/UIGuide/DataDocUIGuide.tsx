@@ -12,7 +12,7 @@ export const DataDocTourSteps: ReactourStep[] = [
         content: (
             <div>
                 <Title size={5}>Welcome to DataDoc!</Title>
-                <p>Let&apos;s go over the DataDoc interface.</p>
+                <p>Let's go over the DataDoc interface.</p>
             </div>
         ),
     },
@@ -86,8 +86,7 @@ export const DataDocTourSteps: ReactourStep[] = [
                 </p>
                 <hr />
                 <p>
-                    For example, if you have a template named &apos;today&apos;,
-                    you can:
+                    For example, if you have a template named "today", you can:
                 </p>
                 <pre>dt=&#123;&#123;today&#125;&#125;</pre>
             </>
@@ -123,8 +122,7 @@ it to run daily, weekly, or monthly.`,
                 </p>
                 <hr />
                 <p>
-                    Don&apos;t see it? Make sure you created a cell in the last
-                    step!
+                    Don't see it? Make sure you created a cell in the last step!
                 </p>
             </>
         ),
