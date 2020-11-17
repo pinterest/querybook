@@ -21,8 +21,11 @@ jobs:
       uses: actions/setup-python@v1
       with:
         python-version: 3.7
-    - name: set PY
-      run: echo "::set-env name=PY::$(python -c 'import hashlib, sys;print(hashlib.sha256(sys.version.encode()+sys.executable.encode()).hexdigest())')"
+    - name: Set PY
+      run: |
+          echo 'PY<<EOF' >> $GITHUB_ENV
+          echo "$(python -c 'import hashlib, sys;print(hashlib.sha256(sys.version.encode()+sys.executable.encode()).hexdigest())')" >> $GITHUB_ENV
+          echo 'EOF' >> $GITHUB_ENV
     - uses: actions/cache@v1
       with:
         path: ~/.cache/pre-commit
