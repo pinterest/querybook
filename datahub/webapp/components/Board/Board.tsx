@@ -23,35 +23,24 @@ export const Board: React.FunctionComponent<IProps> = ({ boardId }) => {
 
     React.useEffect(() => {
         dispatch(fetchBoardIfNeeded(boardId));
-        board?.tables.map((tableId) => {
-            dispatch(fetchDataTableIfNeeded(tableId));
-        });
-        board?.docs.map((docId) => {
-            dispatch(fetchDataDocIfNeeded(docId));
-        });
-    }, [board, boardItemById]);
+    }, [boardId]);
 
-    const boardItemDOM = board?.items?.map((itemIdx) => {
-        const item = boardItemById?.[itemIdx];
-        if (!item) {
-            return null;
-        }
-        if (item.data_doc_id) {
-            return (
+    const boardItemDOM = board?.items
+        ?.map((itemIdx) => boardItemById?.[itemIdx])
+        .filter((i) => i)
+        .map((boardItem) =>
+            boardItem.data_doc_id ? (
                 <BoardDataDocItem
-                    docId={item.data_doc_id}
-                    key={item.data_doc_id}
+                    docId={boardItem.data_doc_id}
+                    key={boardItem.id}
                 />
-            );
-        } else {
-            return (
+            ) : (
                 <BoardDataTableItem
-                    tableId={item.table_id}
-                    key={item.table_id}
+                    tableId={boardItem.table_id}
+                    key={boardItem.id}
                 />
-            );
-        }
-    });
+            )
+        );
 
     return <div className="Board m48">{boardItemDOM}</div>;
 };

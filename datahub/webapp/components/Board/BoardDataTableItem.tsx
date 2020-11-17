@@ -3,14 +3,14 @@ import { useDispatch, useSelector } from 'react-redux';
 import { ContentState } from 'draft-js';
 import { Link } from 'react-router-dom';
 
-import * as dataSourcesActions from 'redux/dataSources/action';
-import { IStoreState } from 'redux/store/types';
+import { Dispatch, IStoreState } from 'redux/store/types';
 import { getWithinEnvUrl } from 'lib/utils/query-string';
 
 import { BoardItemAddButton } from 'components/BoardItemAddButton/BoardItemAddButton';
 import { Icon } from 'ui/Icon/Icon';
 import { RichTextEditor } from 'ui/RichTextEditor/RichTextEditor';
 import { Title } from 'ui/Title/Title';
+import { fetchDataTableIfNeeded } from 'redux/dataSources/action';
 
 interface IProps {
     tableId: number;
@@ -31,11 +31,11 @@ export const BoardDataTableItem: React.FunctionComponent<IProps> = ({
         };
     });
 
-    const dispatch = useDispatch();
+    const dispatch: Dispatch = useDispatch();
 
     React.useEffect(() => {
-        dispatch(dataSourcesActions.fetchDataTableIfNeeded(tableId));
-    }, []);
+        dispatch(fetchDataTableIfNeeded(tableId));
+    }, [tableId]);
 
     return (
         <div className="BoardDataTableItem BoardItem mv24 p12">

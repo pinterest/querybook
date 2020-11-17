@@ -92,7 +92,7 @@ export function fetchBoard(id: number): ThunkResult<Promise<IBoardRaw>> {
 export function fetchBoardIfNeeded(id: number): ThunkResult<Promise<any>> {
     return async (dispatch, getState) => {
         const state = getState();
-        if (!state.board.boardById[id] || !state.board.boardById[id].items) {
+        if (!state.board.boardById[id]?.items) {
             return dispatch(fetchBoard(id));
         }
     };
