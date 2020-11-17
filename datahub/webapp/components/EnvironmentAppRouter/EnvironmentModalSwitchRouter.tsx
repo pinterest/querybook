@@ -5,6 +5,7 @@ import { usePrevious } from 'hooks/usePrevious';
 import { useModalRoute } from 'hooks/useModalRoute';
 
 import { AppDataDoc } from 'components/AppDataDoc/AppDataDoc';
+import { BoardWrapper } from 'components/Board/BoardWrapper';
 import { EmbeddedQueryPage } from 'components/EmbeddedQueryPage/EmbeddedQueryPage';
 import { Landing } from 'components/Landing/Landing';
 import { QueryComposer } from 'components/QueryComposer/QueryComposer';
@@ -95,6 +96,7 @@ export const EnvironmentModalSwitchRouter: React.FC = () => {
                     path="/:env/_/embedded_editor/"
                     render={() => <EmbeddedQueryPage />}
                 />
+                <Route path="/:env/board/:boardId/" component={BoardWrapper} />
                 {modalRoutes}
                 <Route component={FourOhFour} />
             </Switch>

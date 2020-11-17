@@ -1,0 +1,24 @@
+.Board {
+    .BoardItem {
+        cursor: default;
+        max-width: 960px;
+        margin-right: auto;
+        border: var(--border);
+        border-radius: var(--border-radius);
+        background-color: var(--light-bg-color);
+        .Icon {
+            color: var(--icon-color);
+            z-index: 100;
+        }
+
+        a:hover {
+            p {
+                color: var(--text-hover-color);
+            }
+        }
+        &:hover {
+            border-color: var(--hover-border-color);
+            color: var(--text-color);
+        }
+    }
+}
