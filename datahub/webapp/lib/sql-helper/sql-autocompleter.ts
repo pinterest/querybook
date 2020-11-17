@@ -14,14 +14,12 @@ interface ILineAnalysis {
 /**
  * CompletionRow used by Codemirror.
  *
- * string: the text we are replacing
- * text: the text we autocomplete string to
+ * originalText: the text we are replacing
+ * text: the text we autocomplete to
  * label: the text we show in autocomplete
  */
 interface ICompletionRow {
-    // disable since the string field is required by codemirror
-    // eslint-disable-next-line id-blacklist
-    string: string;
+    originalText: string;
     text: string;
     label: string;
 
@@ -335,15 +333,15 @@ export class SqlAutoCompleter {
                           // this case is for schemaName.tableName case
                           index === 1
                               ? word.replace(
-                                    data.string,
-                                    `<b style='font-weight: bold'>${data.string}</b>`
+                                    data.originalText,
+                                    `<b style='font-weight: bold'>${data.originalText}</b>`
                                 )
                               : word
                       )
                       .join('.')
                 : data.label.replace(
-                      data.string,
-                      `<b style='font-weight: bold'>${data.string}</b>`
+                      data.originalText,
+                      `<b style='font-weight: bold'>${data.originalText}</b>`
                   );
 
         const isGoldenItem = data.isGoldenItem;
@@ -381,9 +379,7 @@ export class SqlAutoCompleter {
             const upperCasedString = text.toUpperCase();
             const score = -upperCasedWord.length;
             return {
-                // disable since the string field is required by codemirror
-                // eslint-disable-next-line id-blacklist
-                string: upperCasedString,
+                originalText: upperCasedString,
                 text: upperCasedWord,
                 label: upperCasedWord,
                 tooltip: 'keyword',
@@ -398,9 +394,7 @@ export class SqlAutoCompleter {
             // we should give it a better rank
             const isGoldenItem = false;
             return {
-                // disable since the string field is required by codemirror
-                // eslint-disable-next-line id-blacklist
-                string: text,
+                originalText: text,
                 text: word,
                 label: word,
                 tooltip: context,
@@ -413,9 +407,7 @@ export class SqlAutoCompleter {
         const hierarchicalFormatter: Formatter = (context, word, label) => {
             const isGoldenItem = false;
             return {
-                // disable since the string field is required by codemirror
-                // eslint-disable-next-line id-blacklist
-                string: text,
+                originalText: text,
                 text: word,
                 label,
                 tooltip: context,
