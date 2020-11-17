@@ -9,15 +9,8 @@
         .BoardItemIcon {
             color: var(--icon-color);
         }
-
-        a:hover {
-            p {
-                color: var(--text-hover-color);
-            }
-        }
         &:hover {
             border-color: var(--hover-border-color);
-            color: var(--text-color);
         }
     }
 }
