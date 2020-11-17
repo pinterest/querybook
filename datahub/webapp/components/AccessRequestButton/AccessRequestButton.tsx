@@ -1,6 +1,5 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { Button } from 'ui/Button/Button';
-import { useState } from 'react';
 
 export const AccessRequestButton: React.FunctionComponent<{
     onAccessRequest: () => any;

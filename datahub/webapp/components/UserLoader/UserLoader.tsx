@@ -30,13 +30,13 @@ export const UserLoader: React.FunctionComponent = ({ children }) => {
             if (e?.response?.status === 401) {
                 try {
                     const {
-                        data: { has_login, has_signup },
+                        data: { has_login: hasLogin, has_signup: hasSignup },
                     } = await ds.fetch<{
                         has_login: boolean;
                         has_signup: boolean;
                     }>(`/user/login_method/`);
-                    setShowSignup(has_signup);
-                    setShowUnauth(has_login);
+                    setShowSignup(hasLogin);
+                    setShowUnauth(hasSignup);
                 } catch (e2) {
                     setFetchError(e2);
                 }

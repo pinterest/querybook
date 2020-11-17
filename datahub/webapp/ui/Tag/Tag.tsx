@@ -32,9 +32,7 @@ export interface IHoverIconTagProps extends ITagProps {
 export const TagGroup: React.FunctionComponent<ITagGroupProps> = ({
     className,
     children,
-}) => {
-    return <div className={`${className} TagGroup`}>{children}</div>;
-};
+}) => <div className={`${className} TagGroup`}>{children}</div>;
 
 export const Tag: React.FunctionComponent<ITagProps> = ({
     children,

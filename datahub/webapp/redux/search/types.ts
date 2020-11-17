@@ -70,7 +70,7 @@ export interface ISearchFailedAction extends Action {
 export interface ISearchReceiveQueryParamAction extends Action {
     type: '@@search/SEARCH_RECEIVE_QUERY_PARAM';
     payload: {
-        queryParam: {};
+        queryParam: Record<string, unknown>;
     };
 }
 

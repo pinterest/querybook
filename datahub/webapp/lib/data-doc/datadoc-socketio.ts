@@ -1,7 +1,6 @@
 import SocketIOManager from 'lib/socketio-manager';
-import { IDataDocEditor } from 'const/datadoc';
+import { IDataDocEditor, IDataCellMeta } from 'const/datadoc';
 import { IAccessRequest } from 'const/accessRequest';
-
 import { IQueryExecution } from 'redux/queryExecutions/types';
 
 interface IDataDocSocketEventPromise<A = () => any, R = (e) => any> {
@@ -154,7 +153,7 @@ export class DataDocSocket {
     public updateDataCell = (
         docId: number,
         cellId: number,
-        fields: { meta?: {}; context?: string }
+        fields: { meta?: IDataCellMeta; context?: string }
     ) => {
         this.socket.emit('update_data_cell', docId, cellId, fields);
         return this.makePromise('updateDataCell');
@@ -189,7 +188,7 @@ export class DataDocSocket {
         index: number,
         cellType: string,
         context: string,
-        meta: {}
+        meta: IDataCellMeta
     ) => {
         this.socket.emit(
             'insert_data_cell',

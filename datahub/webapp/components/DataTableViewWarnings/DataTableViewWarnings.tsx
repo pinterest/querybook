@@ -83,20 +83,17 @@ export const DataTableViewWarnings: React.FC<IProps> = ({
         </FormWrapper>
     );
 
-    const getCardsDOM = () => {
-        return tableWarnings.map((warning) => {
-            return (
-                <Card key={warning.id} title="" width="100%" flexRow>
-                    <SingleCRUD
-                        item={warning}
-                        deleteItem={deleteWarning}
-                        updateItem={updateWarning(warning.id)}
-                        renderItem={renderWarningDOM}
-                    />
-                </Card>
-            );
-        });
-    };
+    const getCardsDOM = () =>
+        tableWarnings.map((warning) => (
+            <Card key={warning.id} title="" width="100%" flexRow>
+                <SingleCRUD
+                    item={warning}
+                    deleteItem={deleteWarning}
+                    updateItem={updateWarning(warning.id)}
+                    renderItem={renderWarningDOM}
+                />
+            </Card>
+        ));
 
     const getNewFormDOM = () => {
         if (displayNewForm) {
@@ -117,18 +114,17 @@ export const DataTableViewWarnings: React.FC<IProps> = ({
             return (
                 <Card
                     title=""
-                    children={
-                        <div className=" flex-row">
-                            <Icon name="plus" className="mr8" />
-                            <span>create a new warning</span>
-                        </div>
-                    }
                     width="100%"
                     flexRow
                     onClick={() => {
                         setDisplayNewForm(true);
                     }}
-                />
+                >
+                    <div className=" flex-row">
+                        <Icon name="plus" className="mr8" />
+                        <span>create a new warning</span>
+                    </div>
+                </Card>
             );
         }
     };

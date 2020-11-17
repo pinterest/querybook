@@ -146,9 +146,8 @@ export const AdminQueryEngine: React.FunctionComponent<IProps> = ({
     );
 
     const deleteQueryEngine = React.useCallback(
-        (queryEngine: IAdminQueryEngine) => {
-            return ds.delete(`/admin/query_engine/${queryEngine.id}/`);
-        },
+        (queryEngine: IAdminQueryEngine) =>
+            ds.delete(`/admin/query_engine/${queryEngine.id}/`),
         []
     );
 
@@ -204,20 +203,18 @@ export const AdminQueryEngine: React.FunctionComponent<IProps> = ({
             fieldValue: any,
             item?: IAdminQueryEngine
         ) => IAdminQueryEngine
-    ) => {
-        return (
-            <SmartForm
-                formField={template}
-                value={executorParams}
-                onChange={(path, value) =>
-                    onChange(
-                        'executor_params',
-                        updateValue(executorParams, path, value)
-                    )
-                }
-            />
-        );
-    };
+    ) => (
+        <SmartForm
+            formField={template}
+            value={executorParams}
+            onChange={(path, value) =>
+                onChange(
+                    'executor_params',
+                    updateValue(executorParams, path, value)
+                )
+            }
+        />
+    );
 
     const renderQueryEngineItem = (
         item: IAdminQueryEngine,
@@ -340,7 +337,7 @@ export const AdminQueryEngine: React.FunctionComponent<IProps> = ({
                                     }
                                     item={executorTemplate[item.executor]}
                                     itemLoader={() => {
-                                        return;
+                                        /* do nothing */
                                     }}
                                 />
                             </div>
@@ -368,9 +365,13 @@ export const AdminQueryEngine: React.FunctionComponent<IProps> = ({
                 description: '',
                 metastore_id: null,
                 executor: defaultExecutor,
-                executor_params:
-                    defaultExecutorTemplate &&
-                    getDefaultFormValue(defaultExecutorTemplate),
+
+                // Since defaultExecutorTemplate has to be StructForm
+                executor_params: (defaultExecutorTemplate &&
+                    getDefaultFormValue(defaultExecutorTemplate)) as Record<
+                    string,
+                    any
+                >,
                 status_checker: null,
             };
             return (
@@ -447,35 +448,31 @@ export const AdminQueryEngine: React.FunctionComponent<IProps> = ({
             return <Loading />;
         }
     } else {
-        const getCardDOM = () => {
-            return clone(queryEngines)
+        const getCardDOM = () =>
+            clone(queryEngines)
                 .filter((eng) => eng.deleted_at == null)
                 .sort((e1, e2) => e2.updated_at - e1.updated_at)
                 .slice(0, 5)
-                .map((e) => {
-                    return (
-                        <Card
-                            key={e.id}
-                            title={e.name}
-                            children={
-                                <div className="AdminLanding-card-content">
-                                    <div className="AdminLanding-card-content-top">
-                                        Last Updated
-                                    </div>
-                                    <div className="AdminLanding-card-content-date">
-                                        {generateFormattedDate(e.updated_at)}
-                                    </div>
-                                </div>
-                            }
-                            onClick={() =>
-                                history.push(`/admin/query_engine/${e.id}/`)
-                            }
-                            height="160px"
-                            width="240px"
-                        />
-                    );
-                });
-        };
+                .map((e) => (
+                    <Card
+                        key={e.id}
+                        title={e.name}
+                        onClick={() =>
+                            history.push(`/admin/query_engine/${e.id}/`)
+                        }
+                        height="160px"
+                        width="240px"
+                    >
+                        <div className="AdminLanding-card-content">
+                            <div className="AdminLanding-card-content-top">
+                                Last Updated
+                            </div>
+                            <div className="AdminLanding-card-content-date">
+                                {generateFormattedDate(e.updated_at)}
+                            </div>
+                        </div>
+                    </Card>
+                ));
         return (
             <div className="AdminQueryEngine">
                 <div className="AdminLanding">
@@ -496,13 +493,14 @@ export const AdminQueryEngine: React.FunctionComponent<IProps> = ({
                             {queryEngines && getCardDOM()}
                             <Card
                                 title="+"
-                                children="create a new query engine"
                                 onClick={() =>
                                     history.push('/admin/query_engine/new/')
                                 }
                                 height="160px"
                                 width="240px"
-                            />
+                            >
+                                create a new query engine
+                            </Card>
                         </div>
                     </div>
                 </div>

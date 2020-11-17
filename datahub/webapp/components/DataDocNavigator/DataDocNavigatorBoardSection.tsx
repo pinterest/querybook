@@ -200,9 +200,8 @@ const NavigatorBoardView: React.FunctionComponent<{
     );
 
     const handleLocalMoveBoardItem = React.useCallback(
-        (fromIndex: number, toIndex: number) => {
-            return dispatch(moveBoardItem(board.id, fromIndex, toIndex));
-        },
+        (fromIndex: number, toIndex: number) =>
+            dispatch(moveBoardItem(board.id, fromIndex, toIndex)),
         [board]
     );
 
@@ -214,7 +213,7 @@ const NavigatorBoardView: React.FunctionComponent<{
 
     const [{ isOver }, dropRef] = useDrop({
         accept: [BoardDraggableType, DataDocDraggableType],
-        drop(item: IDragItem<IProcessedBoardItem | IDataDoc>, monitor) {
+        drop: (item: IDragItem<IProcessedBoardItem | IDataDoc>, monitor) => {
             // You shouldn't be able to drag and drop to your original board
             if (monitor.didDrop()) {
                 return;
@@ -222,7 +221,7 @@ const NavigatorBoardView: React.FunctionComponent<{
             onMoveBoardItem(item.type, item.itemInfo, id);
         },
 
-        collect(monitor) {
+        collect: (monitor) => {
             const item: IDragItem = monitor.getItem();
 
             return {
@@ -377,11 +376,12 @@ const BoardExpandableList: React.FunctionComponent<{
             filterString
                 ? new Set(
                       processedItems
-                          .filter((item) => {
-                              return !item.title
-                                  ?.toLowerCase()
-                                  .includes(filterString);
-                          })
+                          .filter(
+                              (item) =>
+                                  !item.title
+                                      ?.toLowerCase()
+                                      .includes(filterString)
+                          )
                           .map((item) => item.id)
                   )
                 : new Set(),
@@ -389,9 +389,8 @@ const BoardExpandableList: React.FunctionComponent<{
     );
 
     const canDrop = useCallback(
-        (item: IDragItem<IProcessedBoardItem>) => {
-            return item.itemInfo.boardId === boardId;
-        },
+        (item: IDragItem<IProcessedBoardItem>) =>
+            item.itemInfo.boardId === boardId,
         [boardId]
     );
 

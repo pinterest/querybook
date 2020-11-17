@@ -20,7 +20,7 @@ const initialState: IQueryExecutionState = {
     accessRequestsByExecutionIdUserId: {},
 };
 
-function dataCellIdQueryExecution(
+function dataCellIdQueryExecutionReducer(
     state = initialState.dataCellIdQueryExecution,
     action: QueryExecutionAction
 ) {
@@ -59,7 +59,7 @@ function dataCellIdQueryExecution(
     });
 }
 
-function statementExecutionById(
+function statementExecutionByIdReducer(
     state = initialState.statementExecutionById,
     action: QueryExecutionAction
 ) {
@@ -110,7 +110,7 @@ function statementExecutionById(
     });
 }
 
-function queryExecutionById(
+function queryExecutionByIdReducer(
     state = initialState.queryExecutionById,
     action: QueryExecutionAction
 ) {
@@ -172,7 +172,7 @@ function getPartialLogHeader() {
     ];
 }
 
-function statementLogById(
+function statementLogByIdReducer(
     state = initialState.statementLogById,
     action: QueryExecutionAction
 ) {
@@ -251,7 +251,7 @@ function statementLogById(
     });
 }
 
-function statementResultById(
+function statementResultByIdReducer(
     state = initialState.statementResultById,
     action: QueryExecutionAction
 ) {
@@ -278,7 +278,7 @@ function statementResultById(
     return state;
 }
 
-function queryErrorById(
+function queryErrorByIdReducer(
     state = initialState.queryErrorById,
     action: QueryExecutionAction
 ) {
@@ -305,7 +305,7 @@ function queryErrorById(
     });
 }
 
-function accessRequestsByExecutionIdUserId(
+function accessRequestsByExecutionIdUserIdReducer(
     state = initialState.accessRequestsByExecutionIdUserId,
     action: QueryExecutionAction
 ) {
@@ -335,7 +335,7 @@ function accessRequestsByExecutionIdUserId(
     });
 }
 
-function viewersByExecutionIdUserId(
+function viewersByExecutionIdUserIdReducer(
     state = initialState.viewersByExecutionIdUserId,
     action: QueryExecutionAction
 ) {
@@ -365,7 +365,7 @@ function viewersByExecutionIdUserId(
     });
 }
 
-function statementExporters(
+function statementExportersReducer(
     state = initialState.statementExporters,
     action: QueryExecutionAction
 ) {
@@ -378,14 +378,14 @@ function statementExporters(
 }
 
 export default combineReducers({
-    dataCellIdQueryExecution,
-    statementExecutionById,
-    queryExecutionById,
+    dataCellIdQueryExecution: dataCellIdQueryExecutionReducer,
+    statementExecutionById: statementExecutionByIdReducer,
+    queryExecutionById: queryExecutionByIdReducer,
 
-    statementResultById,
-    statementLogById,
-    queryErrorById,
-    statementExporters,
-    accessRequestsByExecutionIdUserId,
-    viewersByExecutionIdUserId,
+    statementResultById: statementResultByIdReducer,
+    statementLogById: statementLogByIdReducer,
+    queryErrorById: queryErrorByIdReducer,
+    statementExporters: statementExportersReducer,
+    accessRequestsByExecutionIdUserId: accessRequestsByExecutionIdUserIdReducer,
+    viewersByExecutionIdUserId: viewersByExecutionIdUserIdReducer,
 });

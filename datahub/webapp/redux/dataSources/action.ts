@@ -39,14 +39,13 @@ const dataTableColumnSchema = new schema.Entity(
     'dataColumn',
     {},
     {
-        processStrategy(value, parent, key) {
-            return parent
+        processStrategy: (value, parent, key) =>
+            parent
                 ? {
                       ...value,
                       table: parent.id,
                   }
-                : value;
-        },
+                : value,
     }
 );
 const dataSchemaSchema = new schema.Entity('dataSchema');
@@ -79,7 +78,7 @@ export function fetchQueryMetastore(): ThunkResult<Promise<IQueryMetastore[]>> {
     };
 }
 
-export function fetchDataTable(tableId): ThunkResult<Promise<any>> {
+export function fetchDataTable(tableId: number): ThunkResult<Promise<any>> {
     return async (dispatch, getState) => {
         const { data } = await ds.fetch(`/table/${tableId}/`);
         const normalizedData = normalize(data, dataTableSchema);
@@ -299,7 +298,9 @@ export function fetchDataLineage(tableId): ThunkResult<Promise<any[]>> {
     };
 }
 
-export function fetchParentDataLineage(tableId): ThunkResult<Promise<void>> {
+export function fetchParentDataLineage(
+    tableId: number
+): ThunkResult<Promise<void>> {
     return async (dispatch, getState) => {
         const state = getState().dataSources.dataLineages.parentLineage[
             tableId

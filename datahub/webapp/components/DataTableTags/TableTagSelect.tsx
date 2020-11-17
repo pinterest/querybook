@@ -18,10 +18,7 @@ interface IProps {
     existingTags?: string[];
 }
 
-const tagReactSelectStyle: {} = makeReactSelectStyle(
-    true,
-    miniReactSelectStyles
-);
+const tagReactSelectStyle = makeReactSelectStyle(true, miniReactSelectStyles);
 
 export const TableTagSelect: React.FunctionComponent<IProps> = ({
     onSelect,
@@ -38,15 +35,18 @@ export const TableTagSelect: React.FunctionComponent<IProps> = ({
         },
     });
 
-    const tagSuggestions = React.useMemo(() => {
-        return (rawTagSuggestions || []).filter(
-            (str) => !existingTags.includes(str)
-        );
-    }, [rawTagSuggestions, existingTags]);
+    const tagSuggestions = React.useMemo(
+        () =>
+            (rawTagSuggestions || []).filter(
+                (str) => !existingTags.includes(str)
+            ),
+        [rawTagSuggestions, existingTags]
+    );
 
-    const isValid = React.useMemo(() => {
-        return isTyping && isValidCheck ? isValidCheck(tagString) : true;
-    }, [isValidCheck, tagString]);
+    const isValid = React.useMemo(
+        () => (isTyping && isValidCheck ? isValidCheck(tagString) : true),
+        [isValidCheck, tagString]
+    );
 
     const handleSelect = React.useCallback(
         (val?: string) => {

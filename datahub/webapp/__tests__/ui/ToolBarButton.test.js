@@ -11,8 +11,8 @@ it('renders without crashing', () => {
 
 describe('matches enzyme snapshots', () => {
     it('matches snapshot', () => {
-        let wrapper = shallow(<ToolBarButton icon="check" />);
-        let serialized = toJson(wrapper);
+        const wrapper = shallow(<ToolBarButton icon="check" />);
+        const serialized = toJson(wrapper);
         expect(serialized).toMatchSnapshot();
     });
 });

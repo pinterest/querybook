@@ -23,7 +23,7 @@ function handleRequestException(error: any, notifyOnError?: boolean) {
 function syncDatasource<T = any>(
     method: string,
     urlOrOptions: UrlOrOptions,
-    data?: {},
+    data?: Record<string, unknown>,
     notifyOnError?: boolean
 ): ICancelablePromise<{ data: T }> {
     const url =
@@ -66,9 +66,7 @@ function syncDatasource<T = any>(
                 return handleRequestException(resp, notifyOnError);
             }
         },
-        (rej) => {
-            return handleRequestException(rej, notifyOnError);
-        }
+        (rej) => handleRequestException(rej, notifyOnError)
     );
 
     request.cancel = cancel;
@@ -78,7 +76,7 @@ function syncDatasource<T = any>(
 
 function fetchDatasource<T = any>(
     urlOrOptions: UrlOrOptions,
-    data?: {},
+    data?: Record<string, unknown>,
     notifyOnError = false
 ) {
     return syncDatasource<T>('GET', urlOrOptions, data, notifyOnError);
@@ -86,7 +84,7 @@ function fetchDatasource<T = any>(
 
 function saveDatasource<T = any>(
     urlOrOptions: UrlOrOptions,
-    data?: {},
+    data?: Record<string, unknown>,
     notifyOnError = true
 ) {
     return syncDatasource<T>('POST', urlOrOptions, data, notifyOnError);
@@ -94,14 +92,14 @@ function saveDatasource<T = any>(
 
 function updateDatasource<T = any>(
     urlOrOptions: UrlOrOptions,
-    data?: {},
+    data?: Record<string, unknown>,
     notifyOnError = true
 ) {
     return syncDatasource<T>('PUT', urlOrOptions, data, notifyOnError);
 }
 function deleteDatasource<T = any>(
     urlOrOptions: UrlOrOptions,
-    data?: {},
+    data?: Record<string, unknown>,
     notifyOnError = true
 ) {
     return syncDatasource<T>('DELETE', urlOrOptions, data, notifyOnError);

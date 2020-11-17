@@ -19,7 +19,7 @@ it('renders without crashing', () => {
 
 describe('matches enzyme snapshots', () => {
     it('matches snapshot', () => {
-        let wrapper = shallow(
+        const wrapper = shallow(
             <CopyButton
                 borderless
                 small
@@ -28,7 +28,7 @@ describe('matches enzyme snapshots', () => {
                 title="Test Copy"
             />
         );
-        let serialized = toJson(wrapper);
+        const serialized = toJson(wrapper);
         expect(serialized).toMatchSnapshot();
     });
 });

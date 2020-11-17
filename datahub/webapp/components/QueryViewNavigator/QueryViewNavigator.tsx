@@ -29,7 +29,7 @@ export type IProps = IOwnProps & StateProps & DispatchProps;
 class QueryViewNavigatorComponent extends React.PureComponent<IProps> {
     private navigatorScrollRef = React.createRef<HTMLDivElement>();
 
-    constructor(props) {
+    public constructor(props) {
         super(props);
 
         this.state = {
@@ -37,17 +37,7 @@ class QueryViewNavigatorComponent extends React.PureComponent<IProps> {
         };
     }
 
-    public componentDidMount() {
-        this.props.initializeFromQueryParam();
-        this.setupPolling(this.props.queryResults);
-    }
-
-    public componentDidUpdate(prevProps) {
-        if (this.props.queryResults !== prevProps.queryResults) {
-            this.setupPolling(this.props.queryResults);
-        }
-    }
-
+    @bind
     public setupPolling(queryExecutions: IQueryExecution[]) {
         for (const queryExecution of queryExecutions) {
             if (queryExecution.status < QueryExecutionStatus.DONE) {
@@ -77,6 +67,17 @@ class QueryViewNavigatorComponent extends React.PureComponent<IProps> {
         }
     }
 
+    public componentDidMount() {
+        this.props.initializeFromQueryParam();
+        this.setupPolling(this.props.queryResults);
+    }
+
+    public componentDidUpdate(prevProps) {
+        if (this.props.queryResults !== prevProps.queryResults) {
+            this.setupPolling(this.props.queryResults);
+        }
+    }
+
     public render() {
         const {
             onQueryExecutionClick,
@@ -101,16 +102,14 @@ class QueryViewNavigatorComponent extends React.PureComponent<IProps> {
             />
         );
 
-        const queryResultsListDOM = queryResults.map((queryResult, index) => {
-            return (
-                <QueryResult
-                    key={queryResult.id}
-                    queryExecution={queryResult}
-                    queryEngineById={queryEngineById}
-                    onClick={onQueryExecutionClick}
-                />
-            );
-        });
+        const queryResultsListDOM = queryResults.map((queryResult, index) => (
+            <QueryResult
+                key={queryResult.id}
+                queryExecution={queryResult}
+                queryEngineById={queryEngineById}
+                onClick={onQueryExecutionClick}
+            />
+        ));
 
         const loadingDOM = isLoadingQueries ? (
             <div className="loading-queries-message flex-center">
@@ -141,34 +140,28 @@ class QueryViewNavigatorComponent extends React.PureComponent<IProps> {
     }
 }
 
-const mapStateToProps = (state: IStoreState, ownProps: IOwnProps) => {
-    return {
-        queryResults: queryExecutionResultSelector(state),
-        isLoadingQueries: state.queryView.isLoading,
-        queryViewFilters: state.queryView.filters,
-        queryEngines: queryEngineSelector(state),
-        queryEngineById: queryEngineByIdEnvSelector(state),
-    };
-};
+const mapStateToProps = (state: IStoreState, ownProps: IOwnProps) => ({
+    queryResults: queryExecutionResultSelector(state),
+    isLoadingQueries: state.queryView.isLoading,
+    queryViewFilters: state.queryView.filters,
+    queryEngines: queryEngineSelector(state),
+    queryEngineById: queryEngineByIdEnvSelector(state),
+});
 
-const mapDispatchToProps = (dispatch: Dispatch, ownProps: IOwnProps) => {
-    return {
-        updateFilter: (filterKey, filterValue) => {
-            dispatch(queryViewActions.updateFilter(filterKey, filterValue));
-        },
+const mapDispatchToProps = (dispatch: Dispatch, ownProps: IOwnProps) => ({
+    updateFilter: (filterKey, filterValue) => {
+        dispatch(queryViewActions.updateFilter(filterKey, filterValue));
+    },
 
-        initializeFromQueryParam: () =>
-            dispatch(queryViewActions.mapQueryParamToState()),
+    initializeFromQueryParam: () =>
+        dispatch(queryViewActions.mapQueryParamToState()),
 
-        loadQueries: () => dispatch(queryViewActions.searchQueries()),
+    loadQueries: () => dispatch(queryViewActions.searchQueries()),
 
-        pollQueryExecution: (queryExecutionId) => {
-            dispatch(
-                queryExecutionsActions.pollQueryExecution(queryExecutionId)
-            );
-        },
-    };
-};
+    pollQueryExecution: (queryExecutionId) => {
+        dispatch(queryExecutionsActions.pollQueryExecution(queryExecutionId));
+    },
+});
 
 export const QueryViewNavigator = connect(
     mapStateToProps,

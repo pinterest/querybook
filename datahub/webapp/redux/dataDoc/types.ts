@@ -5,7 +5,12 @@ import {
 } from 'redux-thunk';
 import { ContentState } from 'draft-js';
 
-import { IDataDoc, IDataCell, IDataDocEditor } from 'const/datadoc';
+import {
+    IDataDoc,
+    IDataCell,
+    IDataDocEditor,
+    IDataCellMeta,
+} from 'const/datadoc';
 import { IAccessRequest } from 'const/accessRequest';
 import { IStoreState } from '../store/types';
 
@@ -92,7 +97,7 @@ export interface IUpdateDataDocCellDataAction extends Action {
         cellId: number;
 
         context?: string | ContentState;
-        meta?: {};
+        meta?: IDataCellMeta;
     };
 }
 

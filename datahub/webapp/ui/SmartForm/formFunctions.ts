@@ -102,7 +102,9 @@ function validateFormField(value: any, field: IFormField): validationResp {
     return [true, null, null];
 }
 
-export function getDefaultFormValue(form: AllFormField): [] | {} {
+export function getDefaultFormValue(
+    form: AllFormField
+): [] | Record<string, unknown> | ReturnType<typeof getDefaultFormFieldValue> {
     const fieldType = form.field_type;
     if (fieldType === 'list') {
         return [];

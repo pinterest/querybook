@@ -177,6 +177,38 @@ export class GenericCRUD<T extends IWithId> extends React.PureComponent<
         });
     }
 
+    @bind
+    public renderUI() {
+        const { createItem } = this.props;
+        const { items = [], newItem } = this.state;
+        const itemsDOM = items.map((item, index) =>
+            this.itemRenderer(item, index, false)
+        );
+
+        let newItemUI = null;
+        if (createItem) {
+            newItemUI = newItem ? (
+                <div>{this.itemRenderer(newItem, null, true)}</div>
+            ) : (
+                <div>
+                    <Button
+                        title="New"
+                        icon="plus"
+                        onClick={this.handleCreateNewItem}
+                    />
+                </div>
+            );
+        }
+
+        return (
+            <div className="GenericCRUD">
+                {newItemUI}
+                {newItemUI ? <Divider /> : null}
+                {itemsDOM}
+            </div>
+        );
+    }
+
     public itemRenderer(item: T, index: number, isNewItem: boolean) {
         const { createItem, updateItem, deleteItem } = this.props;
         const [isItemValid, invalidReason] = this.validateItemMemoized(item);
@@ -235,38 +267,6 @@ export class GenericCRUD<T extends IWithId> extends React.PureComponent<
                     </Level>
                 </div>
             </StyledItemContainer>
-        );
-    }
-
-    @bind
-    public renderUI() {
-        const { createItem } = this.props;
-        const { items = [], newItem } = this.state;
-        const itemsDOM = items.map((item, index) =>
-            this.itemRenderer(item, index, false)
-        );
-
-        let newItemUI = null;
-        if (createItem) {
-            newItemUI = newItem ? (
-                <div>{this.itemRenderer(newItem, null, true)}</div>
-            ) : (
-                <div>
-                    <Button
-                        title="New"
-                        icon="plus"
-                        onClick={this.handleCreateNewItem}
-                    />
-                </div>
-            );
-        }
-
-        return (
-            <div className="GenericCRUD">
-                {newItemUI}
-                {newItemUI ? <Divider /> : null}
-                {itemsDOM}
-            </div>
         );
     }
 

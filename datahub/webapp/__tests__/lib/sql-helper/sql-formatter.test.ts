@@ -28,7 +28,7 @@ FROM
     );
 });
 test('formatting with templated hive query case', () => {
-    // tslint:disable-next-line
+    // eslint-disable-next-line
     expect(format('select * from ${ test };', 'hive')).toBe(
         `SELECT
   *

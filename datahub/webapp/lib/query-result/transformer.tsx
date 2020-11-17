@@ -15,9 +15,7 @@ const queryResultTransformers: IColumnTransformer[] = [
         appliesToType: ['number'],
         priority: 1,
         auto: false,
-        transform: (v: any): React.ReactNode => {
-            return formatNumber(v);
-        },
+        transform: (v: any): React.ReactNode => formatNumber(v),
     },
     {
         key: 'dollar-format',
@@ -25,7 +23,7 @@ const queryResultTransformers: IColumnTransformer[] = [
         appliesToType: ['number'],
         priority: 0,
         auto: false,
-        transform: (v: any): React.ReactNode => {
+        transform: (v: any) => {
             const num = Number(v);
             if (!isNumeric(num)) {
                 return v;
@@ -54,9 +52,7 @@ const queryResultTransformers: IColumnTransformer[] = [
         appliesToType: ['string'],
         priority: 0,
         auto: false,
-        transform: (v: string): React.ReactNode => {
-            return v.toLocaleUpperCase();
-        },
+        transform: (v: string): React.ReactNode => v.toLocaleUpperCase(),
     },
 ]
     .concat(window.CUSTOM_COLUMN_TRANSFORMERS ?? [])

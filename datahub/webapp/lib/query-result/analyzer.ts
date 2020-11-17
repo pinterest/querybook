@@ -13,9 +13,10 @@ export const columnStatsAnalyzers: IColumnStatsAnalyzer[] = [
         appliesToType: ['number'],
         generator: (values: any[]) => {
             const bigNumberArray = arrToBigNumber(values);
-            const sum = bigNumberArray.reduce((s, value) => {
-                return s.plus(value);
-            }, new BigNumber(0));
+            const sum = bigNumberArray.reduce(
+                (s, value) => s.plus(value),
+                new BigNumber(0)
+            );
             const average = sum.dividedBy(bigNumberArray.length);
             return average.toFormat(2);
         },
@@ -25,9 +26,9 @@ export const columnStatsAnalyzers: IColumnStatsAnalyzer[] = [
         name: 'Median',
         appliesToType: ['number'],
         generator: (values: any[]) => {
-            const sortedArray = arrToBigNumber(values).sort((a, b) => {
-                return a.comparedTo(b);
-            });
+            const sortedArray = arrToBigNumber(values).sort((a, b) =>
+                a.comparedTo(b)
+            );
             const length = sortedArray.length;
             if (length === 0) {
                 return 'None';
@@ -45,27 +46,25 @@ export const columnStatsAnalyzers: IColumnStatsAnalyzer[] = [
         key: 'min',
         name: 'Min',
         appliesToType: ['number'],
-        generator: (values: any[]) => {
-            return BigNumber.min(...arrToBigNumber(values)).toFormat(2);
-        },
+        generator: (values: any[]) =>
+            BigNumber.min(...arrToBigNumber(values)).toFormat(2),
     },
     {
         key: 'max',
         name: 'Max',
         appliesToType: ['number'],
-        generator: (values: any[]) => {
-            return BigNumber.max(...arrToBigNumber(values)).toFormat(2);
-        },
+        generator: (values: any[]) =>
+            BigNumber.max(...arrToBigNumber(values)).toFormat(2),
     },
     {
         key: 'num_of_unique_values',
         name: '# of Unique Values',
         appliesToType: ['number', 'string', 'id'],
-        generator: (values: any[]) => {
-            return values.reduce((set: Set<any>, current) => {
-                return set.add(current);
-            }, new Set()).size;
-        },
+        generator: (values: any[]) =>
+            values.reduce(
+                (set: Set<any>, current) => set.add(current),
+                new Set()
+            ).size,
     },
     {
         key: 'common_values',

@@ -10,8 +10,8 @@ it('renders without crashing', () => {
 
 describe('matches enzyme snapshots', () => {
     it('matches snapshot', () => {
-        let wrapper = shallow(<Popover onHide={() => null}>Test</Popover>);
-        let serialized = toJson(wrapper);
+        const wrapper = shallow(<Popover onHide={() => null}>Test</Popover>);
+        const serialized = toJson(wrapper);
         expect(serialized).toMatchSnapshot();
     });
 });

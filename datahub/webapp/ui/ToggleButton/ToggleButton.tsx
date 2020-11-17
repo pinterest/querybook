@@ -15,13 +15,11 @@ export const ToggleButton: React.FunctionComponent<IToggleButton> = ({
     checked,
     title,
     ...otherProps
-}) => {
-    return (
-        <div
-            className={`ToggleButton ${checked ? 'checked' : ''}`}
-            onClick={() => onClick(!checked)}
-        >
-            <Button {...otherProps}>{title}</Button>
-        </div>
-    );
-};
+}) => (
+    <div
+        className={`ToggleButton ${checked ? 'checked' : ''}`}
+        onClick={() => onClick(!checked)}
+    >
+        <Button {...otherProps}>{title}</Button>
+    </div>
+);

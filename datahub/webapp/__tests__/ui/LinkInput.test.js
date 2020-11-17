@@ -10,8 +10,8 @@ it('renders without crashing', () => {
 
 describe('matches enzyme snapshots', () => {
     it('matches snapshot', () => {
-        let wrapper = shallow(<LinkInput />);
-        let serialized = toJson(wrapper);
+        const wrapper = shallow(<LinkInput />);
+        const serialized = toJson(wrapper);
         expect(serialized).toMatchSnapshot();
     });
 });

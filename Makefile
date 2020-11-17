@@ -55,7 +55,7 @@ remove_running_dev_image:
 	$(eval RUNNING_CONTAINERS=$(shell sh -c 'docker ps -q --filter name=datahub_devserver'))
 	docker kill $(RUNNING_CONTAINERS) || true
 
-unit_test: dev_image
+test: dev_image
 	docker-compose --file containers/docker-compose.test.yml up --abort-on-container-exit
 
 clean: clean_pyc clean_docker

@@ -89,7 +89,7 @@ async function isTokenInTable(
 }
 
 export interface IQueryEditorProps extends IStyledQueryEditorProps {
-    options?: {};
+    options?: Record<string, unknown>;
     value?: string;
 
     lineWrapping?: boolean;
@@ -111,7 +111,7 @@ export interface IQueryEditorProps extends IStyledQueryEditorProps {
 }
 
 interface IState {
-    options: {};
+    options: Record<string, unknown>;
     fullScreen: boolean;
     lintingOn: boolean;
 }
@@ -137,7 +137,7 @@ export class QueryEditor extends React.PureComponent<
     private editor: CodeMirror.Editor = null;
     private autocomplete: SqlAutoCompleter = null;
 
-    constructor(props) {
+    public constructor(props) {
         super(props);
 
         this.state = {
@@ -145,26 +145,6 @@ export class QueryEditor extends React.PureComponent<
             lintingOn: false,
             fullScreen: false,
         };
-    }
-
-    public componentDidMount() {
-        this.makeCodeAnalysis(this.props.value);
-        this.makeAutocompleter();
-    }
-
-    public componentDidUpdate(prevProps, prevState) {
-        const newOptions = this.createOptions();
-        if (newOptions !== this.state.options) {
-            this.setState({
-                options: newOptions,
-            });
-        }
-
-        if (this.state.fullScreen !== prevState.fullScreen) {
-            this.getEditor().refresh();
-        }
-
-        this.makeAutocompleter();
     }
 
     @bind
@@ -194,7 +174,7 @@ export class QueryEditor extends React.PureComponent<
 
     @decorate(memoizeOne)
     public _createOptions(
-        propsOptions: {},
+        propsOptions: Record<string, unknown>,
         lineWrapping: boolean,
         readOnly: boolean,
         theme: string,
@@ -281,6 +261,7 @@ export class QueryEditor extends React.PureComponent<
         }
     }
 
+    @bind
     public matchFunctionWithDefinition(functionName: string) {
         const { functionDocumentationByNameByLanguage, language } = this.props;
 
@@ -566,10 +547,12 @@ export class QueryEditor extends React.PureComponent<
         });
     }
 
+    @bind
     public getEditor() {
         return this.editor;
     }
 
+    @bind
     public getCodeAnalysis() {
         return this.codeAnalysis;
     }
@@ -590,6 +573,26 @@ export class QueryEditor extends React.PureComponent<
         if (this.editor) {
             this.editor.setValue(formattedQuery);
         }
+    }
+
+    public componentDidMount() {
+        this.makeCodeAnalysis(this.props.value);
+        this.makeAutocompleter();
+    }
+
+    public componentDidUpdate(prevProps, prevState) {
+        const newOptions = this.createOptions();
+        if (newOptions !== this.state.options) {
+            this.setState({
+                options: newOptions,
+            });
+        }
+
+        if (this.state.fullScreen !== prevState.fullScreen) {
+            this.getEditor().refresh();
+        }
+
+        this.makeAutocompleter();
     }
 
     public render() {

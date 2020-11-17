@@ -44,6 +44,7 @@ class QuerySnippetInsertionModalComponent extends React.Component<
         editSnippetMode: false,
     };
 
+    @bind
     public fetchQuerySnippet(id: number) {
         if (id) {
             this.setState(
@@ -155,19 +156,15 @@ class QuerySnippetInsertionModalComponent extends React.Component<
     }
 }
 
-const mapStateToProps = (state: IStoreState, ownProps: IOwnProps) => {
-    return {
-        querySnippetById: state.querySnippets.querySnippetById,
-        queryEngineById: queryEngineByIdEnvSelector(state),
-    };
-};
+const mapStateToProps = (state: IStoreState, ownProps: IOwnProps) => ({
+    querySnippetById: state.querySnippets.querySnippetById,
+    queryEngineById: queryEngineByIdEnvSelector(state),
+});
 
-const mapDispatchToProps = (dispatch, ownProps) => {
-    return {
-        fetchQuerySnippetIfNeeded: (id: number) =>
-            dispatch(querySnippetsActions.fetchQuerySnippetIfNeeded(id)),
-    };
-};
+const mapDispatchToProps = (dispatch, ownProps) => ({
+    fetchQuerySnippetIfNeeded: (id: number) =>
+        dispatch(querySnippetsActions.fetchQuerySnippetIfNeeded(id)),
+});
 
 export const QuerySnippetInsertionModal = connect(
     mapStateToProps,

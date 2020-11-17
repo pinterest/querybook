@@ -453,93 +453,88 @@ export const TaskEditor: React.FunctionComponent<IProps> = ({
                 onSubmit={handleTaskEditSubmit}
                 enableReinitialize
             >
-                {({ values, errors, setFieldValue, isValid, submitForm }) => {
-                    return (
-                        <>
-                            {task.id ? (
-                                <>
-                                    <div className="TaskEditor-top horizontal-space-between mv24 mh36">
-                                        <div className="TaskEditor-info">
-                                            <Title size={3} weight="bold">
-                                                {values.name}
-                                            </Title>
+                {({ values, errors, setFieldValue, isValid, submitForm }) => (
+                    <>
+                        {task.id ? (
+                            <>
+                                <div className="TaskEditor-top horizontal-space-between mv24 mh36">
+                                    <div className="TaskEditor-info">
+                                        <Title size={3} weight="bold">
+                                            {values.name}
+                                        </Title>
 
-                                            <div className="mb16">
-                                                {values.task}
-                                            </div>
+                                        <div className="mb16">
+                                            {values.task}
+                                        </div>
 
-                                            <>
-                                                <div>
-                                                    Last Run:{' '}
-                                                    {generateFormattedDate(
-                                                        task.last_run_at,
-                                                        'X'
-                                                    )}
-                                                    ,{' '}
-                                                    {moment
-                                                        .utc(
-                                                            task.last_run_at,
-                                                            'X'
-                                                        )
-                                                        .fromNow()}
-                                                </div>
-                                                <div>
-                                                    Total Run Count:{' '}
-                                                    {task.total_run_count}
-                                                </div>
-                                            </>
-                                        </div>
-                                        <div className="TaskEditor-controls vertical-space-between">
-                                            <AdminAuditLogButton
-                                                itemType="task"
-                                                itemId={task.id}
-                                            />
-                                            <div className="TaskEditor-run">
-                                                <AsyncButton
-                                                    title="Run Task"
-                                                    icon="play"
-                                                    onClick={runTask}
-                                                    type="inlineText"
-                                                    borderless
-                                                />
+                                        <>
+                                            <div>
+                                                Last Run:{' '}
+                                                {generateFormattedDate(
+                                                    task.last_run_at,
+                                                    'X'
+                                                )}
+                                                ,{' '}
+                                                {moment
+                                                    .utc(task.last_run_at, 'X')
+                                                    .fromNow()}
                                             </div>
-                                        </div>
+                                            <div>
+                                                Total Run Count:{' '}
+                                                {task.total_run_count}
+                                            </div>
+                                        </>
                                     </div>
-                                    <Tabs
-                                        selectedTabKey={tab}
-                                        className="mh16 mb16"
-                                        items={[
-                                            { name: 'Edit', key: 'edit' },
-                                            { name: 'History', key: 'history' },
-                                        ]}
-                                        onSelect={(key: TaskEditorTabs) => {
-                                            setTab(key);
-                                        }}
-                                    />
-                                </>
-                            ) : null}
-                            <div className="TaskEditor-content m24">
-                                {tab === 'edit' ? (
-                                    getEditDOM(
-                                        values,
-                                        errors,
-                                        setFieldValue,
-                                        isValid,
-                                        submitForm
-                                    )
-                                ) : (
-                                    <div className="TaskEditor-history">
-                                        <TaskStatus
-                                            taskId={task.id}
-                                            taskName={task.name}
-                                            taskRunCount={task.total_run_count}
+                                    <div className="TaskEditor-controls vertical-space-between">
+                                        <AdminAuditLogButton
+                                            itemType="task"
+                                            itemId={task.id}
                                         />
+                                        <div className="TaskEditor-run">
+                                            <AsyncButton
+                                                title="Run Task"
+                                                icon="play"
+                                                onClick={runTask}
+                                                type="inlineText"
+                                                borderless
+                                            />
+                                        </div>
                                     </div>
-                                )}
-                            </div>
-                        </>
-                    );
-                }}
+                                </div>
+                                <Tabs
+                                    selectedTabKey={tab}
+                                    className="mh16 mb16"
+                                    items={[
+                                        { name: 'Edit', key: 'edit' },
+                                        { name: 'History', key: 'history' },
+                                    ]}
+                                    onSelect={(key: TaskEditorTabs) => {
+                                        setTab(key);
+                                    }}
+                                />
+                            </>
+                        ) : null}
+                        <div className="TaskEditor-content m24">
+                            {tab === 'edit' ? (
+                                getEditDOM(
+                                    values,
+                                    errors,
+                                    setFieldValue,
+                                    isValid,
+                                    submitForm
+                                )
+                            ) : (
+                                <div className="TaskEditor-history">
+                                    <TaskStatus
+                                        taskId={task.id}
+                                        taskName={task.name}
+                                        taskRunCount={task.total_run_count}
+                                    />
+                                </div>
+                            )}
+                        </div>
+                    </>
+                )}
             </Formik>
         </div>
     );

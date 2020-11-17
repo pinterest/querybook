@@ -35,9 +35,8 @@ export const TablePanelView: React.FunctionComponent<ITablePanelViewProps> = ({
 
     const dispatch = useDispatch();
 
-    const getTable = () => {
-        return dispatch(dataSourcesActions.fetchDataTableIfNeeded(tableId));
-    };
+    const getTable = () =>
+        dispatch(dataSourcesActions.fetchDataTableIfNeeded(tableId));
 
     const renderPanelView = () => {
         const overviewSection = (

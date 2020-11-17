@@ -96,7 +96,7 @@ export const DataDocViewersList: React.FunctionComponent<IDataDocViewersListProp
                         isOwner={isOwner}
                         viewerInfo={info}
                         onPermissionChange={(permission) => {
-                            if (permission == DataDocPermission.OWNER) {
+                            if (permission === DataDocPermission.OWNER) {
                                 updateDataDocOwner(info.uid);
                             } else {
                                 const { read, write } = permissionToReadWrite(

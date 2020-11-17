@@ -118,69 +118,66 @@ export const AppAdmin: React.FunctionComponent = () => {
         [selectedEntity]
     );
 
-    const makeLandingPageDOM = () => {
-        return (
-            <div className="AdminLanding">
-                <div className="AdminLanding-top">
-                    <div className="AdminLanding-title">
-                        Welcome to the DataHub Admin App
-                    </div>
-                    <div className="AdminLanding-desc">
-                        All your settings are here.
-                    </div>
+    const makeLandingPageDOM = () => (
+        <div className="AdminLanding">
+            <div className="AdminLanding-top">
+                <div className="AdminLanding-title">
+                    Welcome to the DataHub Admin App
                 </div>
-                <div className="AdminLanding-content">
-                    <div className="AdminLanding-cards flex-row">
-                        <Card
-                            title={<Icon name="box" />}
-                            children="create a new environment"
-                            onClick={() =>
-                                history.push('/admin/environment/new/')
-                            }
-                            height="160px"
-                            width="240px"
-                        />
-                        <Card
-                            title={<Icon name="database" />}
-                            children="create a new metastore"
-                            onClick={() =>
-                                history.push('/admin/metastore/new/')
-                            }
-                            height="160px"
-                            width="240px"
-                        />
-                        <Card
-                            title={<Icon name="server" />}
-                            children="create a new query engine"
-                            onClick={() =>
-                                history.push('/admin/query_engine/new/')
-                            }
-                            height="160px"
-                            width="240px"
-                        />
-                        <Card
-                            title={<Icon name="users" />}
-                            children="create a new user role"
-                            onClick={() =>
-                                history.push('/admin/user_role/?new=true/')
-                            }
-                            height="160px"
-                            width="240px"
-                        />
-                        <Card
-                            title={<Icon name="clipboard" />}
-                            children="create a new announcement"
-                            onClick={() =>
-                                history.push('/admin/announcement/?new=true/')
-                            }
-                            height="160px"
-                            width="240px"
-                        />
-                    </div>
+                <div className="AdminLanding-desc">
+                    All your settings are here.
                 </div>
             </div>
-        );
-    };
+            <div className="AdminLanding-content">
+                <div className="AdminLanding-cards flex-row">
+                    <Card
+                        title={<Icon name="box" />}
+                        onClick={() => history.push('/admin/environment/new/')}
+                        height="160px"
+                        width="240px"
+                    >
+                        create a new environment
+                    </Card>
+                    <Card
+                        title={<Icon name="database" />}
+                        onClick={() => history.push('/admin/metastore/new/')}
+                        height="160px"
+                        width="240px"
+                    >
+                        create a new metastore
+                    </Card>
+                    <Card
+                        title={<Icon name="server" />}
+                        onClick={() => history.push('/admin/query_engine/new/')}
+                        height="160px"
+                        width="240px"
+                    >
+                        create a new query engine
+                    </Card>
+                    <Card
+                        title={<Icon name="users" />}
+                        onClick={() =>
+                            history.push('/admin/user_role/?new=true/')
+                        }
+                        height="160px"
+                        width="240px"
+                    >
+                        create a new user role
+                    </Card>
+                    <Card
+                        title={<Icon name="clipboard" />}
+                        onClick={() =>
+                            history.push('/admin/announcement/?new=true/')
+                        }
+                        height="160px"
+                        width="240px"
+                    >
+                        create a new announcement
+                    </Card>
+                </div>
+            </div>
+        </div>
+    );
 
     return isAdmin ? (
         <div className="AppAdmin">

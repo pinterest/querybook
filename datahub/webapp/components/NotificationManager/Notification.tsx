@@ -15,22 +15,20 @@ export const Notification: React.FunctionComponent<INotificationProps> = ({
     content,
     onHide,
     life,
-}) => {
-    return (
-        <div className="Notification">
-            <IconButton
-                onClick={onHide}
-                className="Notification-delete-btn"
-                icon="x"
-                noPadding
-            />
-            {content}
-            <animated.div
-                style={{
-                    right: `calc(${life * 100}%)`,
-                }}
-                className="notification-progress"
-            />
-        </div>
-    );
-};
+}) => (
+    <div className="Notification">
+        <IconButton
+            onClick={onHide}
+            className="Notification-delete-btn"
+            icon="x"
+            noPadding
+        />
+        {content}
+        <animated.div
+            style={{
+                right: `calc(${life * 100}%)`,
+            }}
+            className="notification-progress"
+        />
+    </div>
+);

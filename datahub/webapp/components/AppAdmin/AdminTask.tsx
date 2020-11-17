@@ -54,7 +54,7 @@ const tableColumnAligns: Record<string, TableAlign> = {
     enabled: 'center',
 };
 
-export const AdminTask: React.FunctionComponent<{}> = () => {
+export const AdminTask: React.FC = () => {
     const { id: detailTaskId } = useParams();
 
     const [type, setType] = React.useState<TaskType>('prod');
@@ -66,13 +66,15 @@ export const AdminTask: React.FunctionComponent<{}> = () => {
         url: '/schedule/',
     });
 
-    const filteredTaskList = React.useMemo(() => {
-        return (taskList || []).filter(
-            (task) =>
-                task.task_type === type &&
-                task.name.includes(searchString.toLocaleLowerCase())
-        );
-    }, [taskList, searchString, type]);
+    const filteredTaskList = React.useMemo(
+        () =>
+            (taskList || []).filter(
+                (task) =>
+                    task.task_type === type &&
+                    task.name.includes(searchString.toLocaleLowerCase())
+            ),
+        [taskList, searchString, type]
+    );
 
     const handleChangeEnabled = React.useCallback(
         async (taskId: number, val: boolean) => {
@@ -144,9 +146,10 @@ export const AdminTask: React.FunctionComponent<{}> = () => {
         []
     );
 
-    const detailTask = React.useMemo(() => {
-        return taskList?.find((task) => task.id === Number(detailTaskId));
-    }, [taskList, detailTaskId]);
+    const detailTask = React.useMemo(
+        () => taskList?.find((task) => task.id === Number(detailTaskId)),
+        [taskList, detailTaskId]
+    );
     return (
         <div className="AdminTask">
             <div className="AdminLanding-top">

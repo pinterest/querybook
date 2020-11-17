@@ -96,17 +96,15 @@ export const defaultReactSelectStyles = {
         color: 'var(--title-color)',
         ...(data.color ? dot(data.color) : {}),
     }),
-    multiValue: (styles, { data }) => {
-        return {
-            ...styles,
-            backgroundColor: data.color || 'var(--light-bg-color)',
-            color: data.color ? '#000' : 'var(--text-color)',
-            ':hover': {
-                backgroundColor: 'var(--hover-bg-color)',
-                color: 'var(--text-color)',
-            },
-        };
-    },
+    multiValue: (styles, { data }) => ({
+        ...styles,
+        backgroundColor: data.color || 'var(--light-bg-color)',
+        color: data.color ? '#000' : 'var(--text-color)',
+        ':hover': {
+            backgroundColor: 'var(--hover-bg-color)',
+            color: 'var(--text-color)',
+        },
+    }),
     multiValueLabel: (styles) => ({
         ...styles,
         color: 'inherit',
@@ -151,8 +149,11 @@ export const miniReactSelectStyles = {
     }),
 };
 
-export function makeReactSelectStyle(modalMenu?: boolean, style?: {}) {
-    let styles: {} = style ?? defaultReactSelectStyles;
+export function makeReactSelectStyle(
+    modalMenu?: boolean,
+    style?: Record<string, unknown>
+) {
+    let styles: Record<string, unknown> = style ?? defaultReactSelectStyles;
     if (modalMenu) {
         styles = {
             ...styles,

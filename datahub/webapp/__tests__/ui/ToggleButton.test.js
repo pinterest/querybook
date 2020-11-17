@@ -12,21 +12,21 @@ it('renders without crashing', () => {
 
 describe('matches enzyme snapshots', () => {
     it('matches snapshot', () => {
-        let wrapper = shallow(
+        const wrapper = shallow(
             <ToggleButton checked={true} onClick={() => null} title="Testing" />
         );
-        let serialized = toJson(wrapper);
+        const serialized = toJson(wrapper);
         expect(serialized).toMatchSnapshot();
     });
     it('matches snapshot - unchecked', () => {
-        let wrapper = shallow(
+        const wrapper = shallow(
             <ToggleButton
                 checked={false}
                 onClick={() => null}
                 title="Testing"
             />
         );
-        let serialized = toJson(wrapper);
+        const serialized = toJson(wrapper);
         expect(serialized).toMatchSnapshot();
     });
 });

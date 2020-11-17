@@ -58,7 +58,7 @@ class QuerySnippetComposerComponent extends React.PureComponent<
     IProps,
     IState
 > {
-    constructor(props) {
+    public constructor(props) {
         super(props);
 
         this.state = {
@@ -72,49 +72,27 @@ class QuerySnippetComposerComponent extends React.PureComponent<
         };
     }
 
-    public componentDidMount() {
-        this.validateForm();
-
-        if (this.state.form) {
-            this.parseTemplatedQueries(this.state.form.context);
-        }
-    }
-
-    public componentDidUpdate(prevProps) {
-        if (this.props.querySnippet !== prevProps.querySnippet) {
-            this.setState(
-                {
-                    form: this.getFormFromSnippet(this.props.querySnippet),
-                },
-                () => {
-                    this.validateForm();
-                    if (this.state.form) {
-                        this.parseTemplatedQueries(this.state.form);
-                    }
-                }
-            );
-        }
-    }
-
+    @bind
     public getFormFromSnippet(snippet) {
         const {
             title,
             context,
-            engine_id,
+            engine_id: engineId,
             description,
-            is_public,
+            is_public: isPublic,
             golden,
         } = snippet;
         return {
             title,
             context,
-            engine_id,
+            engine_id: engineId,
             description,
-            is_public,
+            is_public: isPublic,
             golden,
         };
     }
 
+    @bind
     public getForm() {
         return {
             title: '',
@@ -126,6 +104,7 @@ class QuerySnippetComposerComponent extends React.PureComponent<
         };
     }
 
+    @bind
     public setFormState(key, value) {
         const { form } = this.state;
 
@@ -142,6 +121,7 @@ class QuerySnippetComposerComponent extends React.PureComponent<
         );
     }
 
+    @bind
     public isFormInvalid(form): [boolean, string] {
         if (form.title.length === 0) {
             return [true, 'Title must not be empty'];
@@ -244,6 +224,50 @@ class QuerySnippetComposerComponent extends React.PureComponent<
     @bind
     public onGoldenChange(golden) {
         this.setFormState('golden', golden);
+    }
+
+    @bind
+    public handleDelete() {
+        return new Promise((resolve) => {
+            const { querySnippet } = this.props;
+
+            sendConfirm({
+                message: 'This template will be removed PERMANENTLY.',
+                onConfirm: async () => {
+                    try {
+                        await this.props.deleteQuerySnippet(querySnippet);
+                        history.push('/template/');
+                    } catch (error) {
+                        showErrorModal(error);
+                    }
+                    resolve();
+                },
+            });
+        });
+    }
+
+    public componentDidMount() {
+        this.validateForm();
+
+        if (this.state.form) {
+            this.parseTemplatedQueries(this.state.form.context);
+        }
+    }
+
+    public componentDidUpdate(prevProps) {
+        if (this.props.querySnippet !== prevProps.querySnippet) {
+            this.setState(
+                {
+                    form: this.getFormFromSnippet(this.props.querySnippet),
+                },
+                () => {
+                    this.validateForm();
+                    if (this.state.form) {
+                        this.parseTemplatedQueries(this.state.form);
+                    }
+                }
+            );
+        }
     }
 
     public getSnippetUpdateInfoDOM() {
@@ -437,26 +461,6 @@ class QuerySnippetComposerComponent extends React.PureComponent<
         }
     };
 
-    @bind
-    public handleDelete() {
-        return new Promise((resolve) => {
-            const { querySnippet } = this.props;
-
-            sendConfirm({
-                message: 'This template will be removed PERMANENTLY.',
-                onConfirm: async () => {
-                    try {
-                        await this.props.deleteQuerySnippet(querySnippet);
-                        history.push('/template/');
-                    } catch (error) {
-                        showErrorModal(error);
-                    }
-                    resolve();
-                },
-            });
-        });
-    }
-
     public render() {
         const { querySnippet, user } = this.props;
 
@@ -527,24 +531,20 @@ class QuerySnippetComposerComponent extends React.PureComponent<
     }
 }
 
-const mapStateToProps = (state: IStoreState, ownProps) => {
-    return {
-        queryEngines: queryEngineSelector(state),
-        queryEngineById: queryEngineByIdEnvSelector(state),
-        user: state.user.myUserInfo,
-    };
-};
+const mapStateToProps = (state: IStoreState, ownProps) => ({
+    queryEngines: queryEngineSelector(state),
+    queryEngineById: queryEngineByIdEnvSelector(state),
+    user: state.user.myUserInfo,
+});
 
-const mapDispatchToProps = (dispatch, ownProps) => {
-    return {
-        saveQuerySnippet: (snippet: IQueryForm) =>
-            dispatch(querySnippetsActions.saveQuerySnippet(snippet)),
-        updateQuerySnippet: (snippet: IQueryForm) =>
-            dispatch(querySnippetsActions.updateQuerySnippet(snippet)),
-        deleteQuerySnippet: (snippet: IQuerySnippet) =>
-            dispatch(querySnippetsActions.deleteQuerySnippet(snippet)),
-    };
-};
+const mapDispatchToProps = (dispatch, ownProps) => ({
+    saveQuerySnippet: (snippet: IQueryForm) =>
+        dispatch(querySnippetsActions.saveQuerySnippet(snippet)),
+    updateQuerySnippet: (snippet: IQueryForm) =>
+        dispatch(querySnippetsActions.updateQuerySnippet(snippet)),
+    deleteQuerySnippet: (snippet: IQuerySnippet) =>
+        dispatch(querySnippetsActions.deleteQuerySnippet(snippet)),
+});
 
 export const QuerySnippetComposer = connect(
     mapStateToProps,

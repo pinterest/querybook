@@ -1,5 +1,3 @@
-import { string } from 'yup';
-
 interface IPropsWithUid {
     uid: number;
     name?: string;

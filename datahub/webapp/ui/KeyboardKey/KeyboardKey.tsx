@@ -2,7 +2,7 @@ import styled from 'styled-components';
 import { isOSX } from 'lib/utils/keyboard';
 import React, { useMemo } from 'react';
 
-const StyledKeyboardKey = styled.span.attrs<{}>({
+const StyledKeyboardKey = styled.span.attrs({
     className: 'KeyboardKey mr4',
 })`
     cursor: default;

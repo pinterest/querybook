@@ -55,7 +55,7 @@ function dataFetchReducer<T>(state: IDataFetchState<T>, action) {
 
 interface IFetchArgs {
     url: string;
-    params?: {};
+    params?: Record<string | number, unknown>;
     type?: 'fetch' | 'save' | 'delete' | 'update';
     initialOffset?: number;
     batchSize?: number;
@@ -133,7 +133,6 @@ export function usePaginatedFetch<T>({
                 request.cancel();
             }
         };
-        // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [stringify(params), url, type, batchSize, offset, shouldFetch, version]);
 
     const fetchMore = useCallback(async () => {

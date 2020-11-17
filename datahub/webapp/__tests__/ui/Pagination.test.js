@@ -15,12 +15,12 @@ it('renders without crashing', () => {
 
 describe('matches enzyme snapshots', () => {
     it('matches snapshot', () => {
-        let wrapper = shallow(
+        const wrapper = shallow(
             <Pagination currentPage={1} totalPage={10} onPageClick={() => null}>
                 Test
             </Pagination>
         );
-        let serialized = toJson(wrapper);
+        const serialized = toJson(wrapper);
         expect(serialized).toMatchSnapshot();
     });
 });

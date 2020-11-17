@@ -164,16 +164,17 @@ export const DataTableViewSamples: React.FunctionComponent<IDataTableViewSamples
         async (tableId, params: ITableSampleParams, language: string) => {
             const { data: query } = await ds.fetch<string>(
                 `/table/${tableId}/raw_samples_query/`,
-                params
+                params as Record<string, any>
             );
             setRawSamplesQuery(format(query, language));
         },
         []
     );
 
-    const pollDataTableSamples = React.useCallback(() => {
-        return dispatch(dataSourcesActions.pollDataTableSample(table.id));
-    }, [table.id]);
+    const pollDataTableSamples = React.useCallback(
+        () => dispatch(dataSourcesActions.pollDataTableSample(table.id)),
+        [table.id]
+    );
 
     const controlDOM = (
         <div className="samples-control">
@@ -185,13 +186,13 @@ export const DataTableViewSamples: React.FunctionComponent<IDataTableViewSamples
                     order_by: null,
                     order_by_asc: true,
                 }}
-                onSubmit={(values) => {
-                    return createDataTableSamples(
+                onSubmit={(values) =>
+                    createDataTableSamples(
                         table.id,
                         values.engineId,
                         valuesToParams(values)
-                    );
-                }}
+                    )
+                }
             >
                 {({ submitForm, isSubmitting, isValid, values }) => (
                     <div className="mb12">
@@ -368,7 +369,7 @@ const DataTableViewSamplesTable: React.FC<{
         <SamplesTableView tableName={tableName} samples={samples} />
     ) : (
         <div className="samples-not-found">
-            Samples not found, Click 'Generate' to create samples.
+            Samples not found, Click "Generate" to create samples.
         </div>
     );
 

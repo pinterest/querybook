@@ -219,9 +219,8 @@ export function mapMetaToChartOptions(
                     currentValue
                 )} (${percentage}%)`;
             },
-            title: (tooltipItem, chartData) => {
-                return String(chartData.labels[tooltipItem[0].index]);
-            },
+            title: (tooltipItem, chartData) =>
+                String(chartData.labels[tooltipItem[0].index]),
         };
     } else {
         optionsObj.tooltips['callbacks'] = {

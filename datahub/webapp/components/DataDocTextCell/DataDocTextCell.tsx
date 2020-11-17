@@ -11,6 +11,7 @@ import classNames from 'classnames';
 
 import { SearchAndReplaceContext } from 'context/searchAndReplace';
 import { DraftJsSearchHighlighter } from 'components/SearchAndReplace/DraftJsSearchHighlighter';
+import { IDataCellMetaBase } from 'const/datadoc';
 import { RichTextEditor } from 'ui/RichTextEditor/RichTextEditor';
 import { useDebounceState } from 'hooks/redux/useDebounceState';
 import './DataDocTextCell.scss';
@@ -20,14 +21,14 @@ interface IProps {
     cellId: number;
 
     context: DraftJs.ContentState;
-    meta: {};
+    meta: IDataCellMetaBase;
     isEditable: boolean;
 
     shouldFocus: boolean;
 
     onChange: (fields: {
         context?: string | DraftJs.ContentState;
-        meta?: {};
+        meta?: IDataCellMetaBase;
     }) => any;
     onDeleteKeyPressed?: () => any;
     onFocus?: () => any;

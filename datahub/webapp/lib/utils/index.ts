@@ -2,10 +2,10 @@ import { escape, unescape } from 'lodash';
 import { PickType } from 'lib/typescript';
 
 // from: https://stackoverflow.com/questions/286141/remove-blank-attributes-from-an-object-in-javascript
-export function removeEmpty(obj: {}) {
+export function removeEmpty(obj: Record<string, unknown>) {
     Object.entries(obj).forEach(([key, val]) => {
         if (val && typeof val === 'object') {
-            removeEmpty(val);
+            removeEmpty(val as Record<string, unknown>);
         } else if (val == null) {
             delete obj[key];
         }
@@ -215,8 +215,7 @@ export function smoothScroll(
         const yDiff = finalScrollTop - startingY;
         let startTime: number;
 
-        // Bootstrap our animation - it will get called right before next frame shall be rendered.
-        window.requestAnimationFrame(function step(timestamp: number) {
+        const step = (timestamp: number) => {
             if (!startTime) {
                 startTime = timestamp;
             }
@@ -234,7 +233,10 @@ export function smoothScroll(
             } else {
                 resolve();
             }
-        });
+        };
+
+        // Bootstrap our animation - it will get called right before next frame shall be rendered.
+        window.requestAnimationFrame(step);
     });
 }
 
@@ -306,7 +308,10 @@ export function sanitizeUrlTitle(title: string) {
         .replace(/[^\-A-Za-z0-9]/g, '');
 }
 
-export function getChangedObject(orig: {}, changed: {}) {
+export function getChangedObject(
+    orig: Record<any, unknown>,
+    changed: Record<any, unknown>
+) {
     const ret = {};
 
     for (const [key, value] of Object.entries(changed)) {

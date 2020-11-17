@@ -11,19 +11,17 @@ interface IProps {
 export const DataDocChartCellTable: React.FunctionComponent<IProps> = ({
     title,
     data,
-}) => {
-    return (
-        <div>
-            {title?.length ? (
-                <Title size={6} className="mv4 center-align">
-                    {title}
-                </Title>
-            ) : null}
-            <StatementResultTable
-                data={data}
-                paginate={true}
-                maxNumberOfRowsToShow={20}
-            />
-        </div>
-    );
-};
+}) => (
+    <div>
+        {title?.length ? (
+            <Title size={6} className="mv4 center-align">
+                {title}
+            </Title>
+        ) : null}
+        <StatementResultTable
+            data={data}
+            paginate={true}
+            maxNumberOfRowsToShow={20}
+        />
+    </div>
+);

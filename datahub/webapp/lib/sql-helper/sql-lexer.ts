@@ -180,30 +180,30 @@ export interface ICodeAnalysis {
 }
 
 class StringStream {
-    public string: string;
+    public text: string;
     public pos: number;
 
-    constructor(s: string) {
-        this.string = s;
+    public constructor(s: string) {
+        this.text = s;
         this.pos = 0;
     }
 
     public next() {
         if (!this.eol()) {
-            return this.string.charAt(this.pos++);
+            return this.text.charAt(this.pos++);
         }
     }
 
     public peek() {
-        return this.string.charAt(this.pos);
+        return this.text.charAt(this.pos);
     }
 
     public eol() {
-        return this.pos >= this.string.length;
+        return this.pos >= this.text.length;
     }
 
     public match(pattern, consume = false) {
-        const match = this.string.slice(this.pos).match(pattern);
+        const match = this.text.slice(this.pos).match(pattern);
         if (match && consume) {
             this.pos += match.index + match[0].length;
         }
@@ -212,20 +212,20 @@ class StringStream {
 
     public eatSpace() {
         const start = this.pos;
-        while (/\s/.test(this.string.charAt(this.pos))) {
+        while (/\s/.test(this.text.charAt(this.pos))) {
             this.pos++;
         }
         return this.pos - start;
     }
 
     public goToEnd() {
-        this.pos = this.string.length;
+        this.pos = this.text.length;
     }
 }
 
 export interface IToken {
     type: TokenType;
-    string: string;
+    text: string;
     line: number;
     start: number;
     end: number;
@@ -239,7 +239,7 @@ export class TableToken {
     public start: number;
     public end: number;
 
-    constructor(schema, table, token) {
+    public constructor(schema: string, table: string, token: IToken) {
         this.schema = schema;
         this.name = table;
         this.line = token.line;
@@ -252,14 +252,14 @@ class Line {
     public statements: Array<[number, number]>;
     public contexts: Array<[number, string]>;
 
-    constructor(initialStatement: number, initialContext: string) {
+    public constructor(initialStatement: number, initialContext: string) {
         this.statements = [[0, initialStatement]];
         this.contexts = [[0, initialContext]];
     }
 }
 
 function sanitizeTable(tableToken: IToken, defaultSchema: string) {
-    const stream = new StringStream(tableToken.string);
+    const stream = new StringStream(tableToken.text);
     const parts = [];
     while (!stream.eol()) {
         const match = stream.match(/^([_\w\d]+|`.*`)\.?/, true);
@@ -298,10 +298,10 @@ function sanitizeTable(tableToken: IToken, defaultSchema: string) {
 
 function categorizeWord(token: IToken, language: string) {
     const languageSetting = getLanguageSetting(language);
-    const s = token.string.toLowerCase();
+    const s = token.text.toLowerCase();
     if (languageSetting.keywords.has(s)) {
         token.type = 'KEYWORD';
-        token.string = s;
+        token.text = s;
     } else if (languageSetting.bool.has(s)) {
         token.type = 'BOOL';
     } else if (languageSetting.type.has(s)) {
@@ -313,14 +313,14 @@ function categorizeWord(token: IToken, language: string) {
 
 function makeTokenizer(language: string) {
     const tokenTypes = getTokenTypeMatcher(language);
-    function tokenizeString(
+    const tokenizeString = (
         token: IToken,
         stream: StringStream,
         tokens: IToken[],
         lineNum: number
-    ) {
+    ) => {
         let previousEscape = false;
-        const quote = token.string.charAt(0);
+        const quote = token.text.charAt(0);
         const start = stream.pos;
         while (!stream.eol()) {
             const ch = stream.next();
@@ -328,8 +328,7 @@ function makeTokenizer(language: string) {
                 if (ch === quote) {
                     // End
                     const end = stream.pos;
-                    token.string =
-                        token.string + stream.string.slice(start, end);
+                    token.text = token.text + stream.text.slice(start, end);
                     token.end = end;
                     tokens.push(token);
 
@@ -342,22 +341,22 @@ function makeTokenizer(language: string) {
             }
         }
 
-        token.string = token.string + stream.string.slice(start) + '\n';
+        token.text = token.text + stream.text.slice(start) + '\n';
         return tokenizeString.bind(null, token);
-    }
+    };
 
-    function tokenizeComment(
+    const tokenizeComment = (
         token: IToken,
         stream: StringStream,
         tokens: IToken[],
         lineNum: number
-    ) {
+    ) => {
         const start = stream.pos;
         if (!stream.eol()) {
             const match = stream.match(/\*\//, true);
             if (match) {
                 const end = stream.pos;
-                token.string = token.string + stream.string.slice(start, end);
+                token.text = token.text + stream.text.slice(start, end);
                 token.end = end;
                 tokens.push(token);
 
@@ -365,22 +364,22 @@ function makeTokenizer(language: string) {
             }
         }
 
-        token.string = token.string + stream.string.slice(start) + '\n';
+        token.text = token.text + stream.text.slice(start) + '\n';
         stream.goToEnd();
         return tokenizeComment.bind(null, token);
-    }
+    };
 
-    function tokenizeBase(
+    const tokenizeBase = (
         stream: StringStream,
         tokens: IToken[],
         lineNum: number
-    ) {
+    ) => {
         stream.eatSpace();
 
         let token: IToken = null;
         const tokenFound = tokenTypes.some(
-            ({ name: tokenType, regex: tokenRegexs }) => {
-                return tokenRegexs.some((tokenRegex) => {
+            ({ name: tokenType, regex: tokenRegexs }) =>
+                tokenRegexs.some((tokenRegex) => {
                     const match = stream.match(tokenRegex, true);
                     if (match) {
                         const end = stream.pos;
@@ -388,25 +387,24 @@ function makeTokenizer(language: string) {
 
                         token = {
                             type: tokenType,
-                            string: match[0],
+                            text: match[0],
                             line: lineNum,
                             start,
                             end,
                         };
                         return true;
                     }
-                });
-            }
+                })
         );
 
         if (tokenFound) {
             if (token.type === 'WORD') {
                 categorizeWord(token, language);
-            } else if (token.type === 'STRING' && token.string.length === 1) {
+            } else if (token.type === 'STRING' && token.text.length === 1) {
                 // Multi-line string!
                 // Change the mode to tokenizeString instead!
                 return tokenizeString.bind(null, token);
-            } else if (token.type === 'COMMENT' && token.string === '/*') {
+            } else if (token.type === 'COMMENT' && token.text === '/*') {
                 return tokenizeComment.bind(null, token);
             }
 
@@ -416,7 +414,7 @@ function makeTokenizer(language: string) {
         }
 
         return tokenizeBase;
-    }
+    };
 
     return tokenizeBase;
 }
@@ -443,7 +441,7 @@ export function simpleParse(tokens: IToken[]) {
         if (keepTokenType.has(token.type)) {
             if (token.type === 'BRACKET') {
                 statement.push(token);
-                if (token.string === '(' || token.string === '[') {
+                if (token.text === '(' || token.text === '[') {
                     bracketStack.push(token);
                 } else if (bracketStack.length > 0) {
                     // ) or ]
@@ -586,7 +584,7 @@ function findWithStatementPlaceholder(statement: IToken[]) {
             placeholders.push(token);
         } else if (token.type === 'BRACKET' && token.bracketIndex) {
             tokenIndex = token.bracketIndex + 1;
-        } else if (token.type === 'KEYWORD' && dmlKeyWord.has(token.string)) {
+        } else if (token.type === 'KEYWORD' && dmlKeyWord.has(token.text)) {
             break;
         }
     }
@@ -611,7 +609,7 @@ export function findTableReferenceAndAlias(statements: IToken[][]) {
         // ignore that word and skip again to the rest
         if (
             firstToken.type === 'KEYWORD' &&
-            firstToken.string === 'explain' &&
+            firstToken.text === 'explain' &&
             statement.length > 1
         ) {
             firstToken = statement[tokenCounter++];
@@ -619,22 +617,22 @@ export function findTableReferenceAndAlias(statements: IToken[][]) {
 
         if (
             firstToken.type !== 'KEYWORD' ||
-            !initialStatementKeyWord.has(firstToken.string)
+            !initialStatementKeyWord.has(firstToken.text)
         ) {
             return;
         }
 
-        if (firstToken.string === 'use') {
+        if (firstToken.text === 'use') {
             const secondToken = statement[tokenCounter++];
             if (secondToken && secondToken.type === 'VARIABLE') {
-                defaultSchema = secondToken.string;
+                defaultSchema = secondToken.text;
             }
         } else {
             let placeholders: Set<string> = null;
-            if (firstToken.string === 'with') {
+            if (firstToken.text === 'with') {
                 placeholders = new Set(
                     findWithStatementPlaceholder(statement).map(
-                        (token) => token.string
+                        (token) => token.text
                     )
                 );
             }
@@ -651,7 +649,7 @@ export function findTableReferenceAndAlias(statements: IToken[][]) {
 
             statement.forEach((token, tokenIndex) => {
                 if (token.type === 'BRACKET') {
-                    if (token.string === '(' || token.string === '[') {
+                    if (token.text === '(' || token.text === '[') {
                         const nextToken = statement[tokenIndex + 1];
                         if (!nextToken) {
                             // no need for more analysis if the loop is going to end
@@ -659,7 +657,7 @@ export function findTableReferenceAndAlias(statements: IToken[][]) {
                         }
                         bracketQueryContext.push(
                             nextToken.type === 'KEYWORD' &&
-                                initialStatementKeyWord.has(nextToken.string)
+                                initialStatementKeyWord.has(nextToken.text)
                         );
                         tableSearchMode = false;
                     } else {
@@ -676,20 +674,20 @@ export function findTableReferenceAndAlias(statements: IToken[][]) {
                 }
 
                 if (token.type === 'KEYWORD') {
-                    if (tableKeyWord.has(token.string)) {
+                    if (tableKeyWord.has(token.text)) {
                         tableSearchMode = true;
                     } else if (
                         tokenIndex === 0 &&
-                        initialStatementTableKeyWord.has(token.string)
+                        initialStatementTableKeyWord.has(token.text)
                     ) {
                         tableSearchMode = true;
-                    } else if (!continueTableSearchKeyWord.has(token.string)) {
+                    } else if (!continueTableSearchKeyWord.has(token.text)) {
                         tableSearchMode = false;
                     }
                 } else if (token.type === 'VARIABLE') {
                     if (tableSearchMode) {
                         const isActualTable = !(
-                            placeholders && placeholders.has(token.string)
+                            placeholders && placeholders.has(token.text)
                         );
                         if (isActualTable) {
                             tables.push(token);
@@ -703,17 +701,17 @@ export function findTableReferenceAndAlias(statements: IToken[][]) {
                         // example: select * from table_a as aa;
                         const hasAsAlias =
                             prevToken.type === 'KEYWORD' &&
-                            prevToken.string === 'AS' &&
+                            prevToken.text === 'AS' &&
                             lastTableIndex + 2 === tokenIndex;
                         // example: select * from table_a aa;
                         const hasSpaceAlias = lastTableIndex + 1 === tokenIndex;
                         if (hasAsAlias || hasSpaceAlias) {
                             const tableToken = tables[tables.length - 1];
                             const isActualTable = !(
-                                placeholders && placeholders.has(token.string)
+                                placeholders && placeholders.has(token.text)
                             );
                             if (isActualTable) {
-                                tableAlias[token.string] = tableToken;
+                                tableAlias[token.text] = tableToken;
                             }
                         }
                     }
@@ -781,16 +779,16 @@ export function getEditorLines(statements: IToken[][]) {
             let needToUpdateLine = false;
             if (
                 token.type === 'KEYWORD' &&
-                token.string in contextSensitiveKeyWord
+                token.text in contextSensitiveKeyWord
             ) {
-                context = contextSensitiveKeyWord[token.string];
+                context = contextSensitiveKeyWord[token.text];
                 tokenPosition += 1;
                 needToUpdateLine = true;
             } else if (token.type === 'SEMI') {
                 context = 'none';
                 needToUpdateLine = true;
             } else if (token.type === 'BRACKET') {
-                if (token.string === '(' || token.string === '[') {
+                if (token.text === '(' || token.text === '[') {
                     contextStack.push(context);
                     // However context don't change because there may be the case of
                     // select count(* <---)

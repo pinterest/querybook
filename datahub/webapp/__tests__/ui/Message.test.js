@@ -16,12 +16,12 @@ it('renders without crashing', () => {
 
 describe('matches enzyme snapshots', () => {
     it('matches snapshot', () => {
-        let wrapper = shallow(<Message>Test</Message>);
-        let serialized = toJson(wrapper);
+        const wrapper = shallow(<Message>Test</Message>);
+        const serialized = toJson(wrapper);
         expect(serialized).toMatchSnapshot();
     });
     it('matches snapshot - with options', () => {
-        let wrapper = shallow(
+        const wrapper = shallow(
             <Message
                 title="Test Message"
                 message="this is a test message"
@@ -33,12 +33,12 @@ describe('matches enzyme snapshots', () => {
                 Test
             </Message>
         );
-        let serialized = toJson(wrapper);
+        const serialized = toJson(wrapper);
         expect(serialized).toMatchSnapshot();
     });
     it('matches snapshot - error', () => {
-        let wrapper = shallow(<ErrorMessage>Test</ErrorMessage>);
-        let serialized = toJson(wrapper);
+        const wrapper = shallow(<ErrorMessage>Test</ErrorMessage>);
+        const serialized = toJson(wrapper);
         expect(serialized).toMatchSnapshot();
     });
 });

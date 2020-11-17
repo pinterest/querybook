@@ -17,7 +17,7 @@ interface IDraggableItemProps<T> {
     draggableItemType: string;
     resetHoverItems: () => void;
     // the raw item
-    itemInfo: {};
+    itemInfo: Record<string, unknown>;
     canDrop?: (item: IDragItem<T>, monitor: DropTargetMonitor) => boolean;
 }
 
@@ -47,10 +47,10 @@ export function DraggableItem<T extends { id: any }>({
     const [, drop] = useDrop({
         accept: draggableItemType,
         canDrop,
-        drop(item: IDragItem) {
+        drop: (item: IDragItem) => {
             onMove(item.originalIndex, item.index);
         },
-        hover(item: IDragItem, monitor: DropTargetMonitor) {
+        hover: (item: IDragItem, monitor: DropTargetMonitor) => {
             if (!ref.current) {
                 return;
             }

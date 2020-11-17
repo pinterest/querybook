@@ -55,22 +55,13 @@ class DataTableNavigatorComponent extends React.PureComponent<
     IDataTableNavigatorProps,
     IDataTableNavigatorState
 > {
-    constructor(props) {
+    public constructor(props) {
         super(props);
 
         const index = this.props.searchFilters['golden'] === true ? 0 : 1;
         this.state = {
             selectedTabKey: DATA_TABLE_TABS[index].key,
         };
-    }
-
-    public componentDidMount() {
-        this.props.mapQueryParamToState();
-        this.setDefaultMetastoreForEnvironment();
-    }
-
-    public componentDidUpdate() {
-        this.setDefaultMetastoreForEnvironment();
     }
 
     @bind
@@ -149,6 +140,15 @@ class DataTableNavigatorComponent extends React.PureComponent<
     @bind
     public handleSearch(searchString: string) {
         this.props.updateSearchString(searchString);
+    }
+
+    public componentDidMount() {
+        this.props.mapQueryParamToState();
+        this.setDefaultMetastoreForEnvironment();
+    }
+
+    public componentDidUpdate() {
+        this.setDefaultMetastoreForEnvironment();
     }
 
     public render() {
@@ -246,27 +246,23 @@ function mapStateToProps(state: IStoreState) {
     };
 }
 
-const mapDispatchToProps = (dispatch: Dispatch) => {
-    return {
-        mapQueryParamToState: () =>
-            dispatch(dataTableSearchActions.mapQueryParamToState()),
-        updateSearchString: (searchString: string) =>
-            dispatch(dataTableSearchActions.updateSearchString(searchString)),
-        updateSearchFilter<K extends keyof ITableSearchFilters>(
-            filterKey: K,
-            filterVal: ITableSearchFilters[K]
-        ) {
-            return dispatch(
-                dataTableSearchActions.updateSearchFilter(filterKey, filterVal)
-            );
-        },
-        selectMetastore: (metastoreId: number) =>
-            dispatch(dataTableSearchActions.selectMetastore(metastoreId)),
-        getMoreDataTable: () =>
-            dispatch(dataTableSearchActions.getMoreDataTable()),
-        resetSearch: () => dispatch(dataTableSearchActions.resetSearch()),
-    };
-};
+const mapDispatchToProps = (dispatch: Dispatch) => ({
+    mapQueryParamToState: () =>
+        dispatch(dataTableSearchActions.mapQueryParamToState()),
+    updateSearchString: (searchString: string) =>
+        dispatch(dataTableSearchActions.updateSearchString(searchString)),
+    updateSearchFilter: <K extends keyof ITableSearchFilters>(
+        filterKey: K,
+        filterVal: ITableSearchFilters[K]
+    ) =>
+        dispatch(
+            dataTableSearchActions.updateSearchFilter(filterKey, filterVal)
+        ),
+    selectMetastore: (metastoreId: number) =>
+        dispatch(dataTableSearchActions.selectMetastore(metastoreId)),
+    getMoreDataTable: () => dispatch(dataTableSearchActions.getMoreDataTable()),
+    resetSearch: () => dispatch(dataTableSearchActions.resetSearch()),
+});
 
 export const DataTableNavigator = withRouter<IDataTableNavigatorOwnProps>(
     connect(mapStateToProps, mapDispatchToProps)(DataTableNavigatorComponent)

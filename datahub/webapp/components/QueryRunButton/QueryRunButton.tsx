@@ -105,18 +105,16 @@ export const QueryRunButton = React.forwardRef<
         const getEngineSelectorDOM = React.useCallback(() => {
             let engineButton = null;
             if (!disabled) {
-                const engineItems = queryEngines.map((engineInfo) => {
-                    return {
-                        name: (
-                            <span className="query-engine-name">
-                                {engineInfo.name}
-                            </span>
-                        ),
-                        onClick: onEngineIdSelect.bind(null, engineInfo.id),
-                        checked: engineInfo.id === engineId,
-                        tooltip: engineInfo.description,
-                    };
-                });
+                const engineItems = queryEngines.map((engineInfo) => ({
+                    name: (
+                        <span className="query-engine-name">
+                            {engineInfo.name}
+                        </span>
+                    ),
+                    onClick: onEngineIdSelect.bind(null, engineInfo.id),
+                    checked: engineInfo.id === engineId,
+                    tooltip: engineInfo.description,
+                }));
                 engineButton = (
                     <Dropdown
                         customButtonRenderer={getEngineSelectorButtonDOM}

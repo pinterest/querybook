@@ -132,7 +132,7 @@ class DataDocViewersBadgeComponent extends React.Component<IProps, IState> {
                     readonly={readonly}
                     viewerInfos={viewerInfos}
                     accessRequestsByUid={accessRequestsByUid}
-                    isOwner={dataDoc.owner_uid == ownerId}
+                    isOwner={dataDoc.owner_uid === ownerId}
                     editorsByUid={editorsByUid}
                     dataDoc={dataDoc}
                     addDataDocEditor={addDataDocEditor}

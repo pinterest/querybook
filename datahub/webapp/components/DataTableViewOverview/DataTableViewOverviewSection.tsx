@@ -8,8 +8,8 @@ interface IProps {
 export const DataTableViewOverviewSection: React.FC<IProps> = ({
     title,
     children,
-}) => {
-    return children ? (
+}) =>
+    children ? (
         <div>
             <div className="overview-section-top">
                 <Title size={5}>{title}</Title>
@@ -19,4 +19,3 @@ export const DataTableViewOverviewSection: React.FC<IProps> = ({
             <br />
         </div>
     ) : null;
-};

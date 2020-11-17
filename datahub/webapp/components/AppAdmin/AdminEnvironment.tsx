@@ -93,9 +93,8 @@ export const AdminEnvironment: React.FunctionComponent<IProps> = ({
     );
 
     const deleteEnvironment = React.useCallback(
-        (environment: IAdminEnvironment) => {
-            return ds.delete(`/admin/environment/${environment.id}/`);
-        },
+        (environment: IAdminEnvironment) =>
+            ds.delete(`/admin/environment/${environment.id}/`),
         []
     );
 
@@ -262,30 +261,26 @@ export const AdminEnvironment: React.FunctionComponent<IProps> = ({
             </div>
         );
     } else {
-        const getCardDOM = () => {
-            return clone(environments)
+        const getCardDOM = () =>
+            clone(environments)
                 .filter((env) => env.deleted_at == null)
                 .sort((env1, env2) => env1.id - env2.id)
                 .slice(0, 5)
-                .map((env) => {
-                    return (
-                        <Card
-                            key={env.id}
-                            title={env.name}
-                            children={
-                                <div className="AdminLanding-card-content">
-                                    {env.description}
-                                </div>
-                            }
-                            onClick={() =>
-                                history.push(`/admin/environment/${env.id}/`)
-                            }
-                            height="160px"
-                            width="240px"
-                        />
-                    );
-                });
-        };
+                .map((env) => (
+                    <Card
+                        key={env.id}
+                        title={env.name}
+                        onClick={() =>
+                            history.push(`/admin/environment/${env.id}/`)
+                        }
+                        height="160px"
+                        width="240px"
+                    >
+                        <div className="AdminLanding-card-content">
+                            {env.description}
+                        </div>
+                    </Card>
+                ));
         return (
             <div className="AdminEnvironment">
                 <div className="AdminLanding">
@@ -306,13 +301,14 @@ export const AdminEnvironment: React.FunctionComponent<IProps> = ({
                             {environments && getCardDOM()}
                             <Card
                                 title="+"
-                                children="create a new environment"
                                 onClick={() =>
                                     history.push('/admin/environment/new/')
                                 }
                                 height="160px"
                                 width="240px"
-                            />
+                            >
+                                create a new environment
+                            </Card>
                         </div>
                     </div>
                 </div>
@@ -381,38 +377,30 @@ const AdminEnvironmentQueryEngine: React.FC<{
         [queryEngines, environmentEngines]
     );
 
-    const getQueryEngineListDOM = () => {
-        return (
-            <DraggableList
-                items={environmentEngines ?? []}
-                renderItem={(index, engine) => {
-                    return (
-                        <div className="AdminEnvironment-engine horizontal-space-between">
-                            <div
-                                className="AdminEnvironment-engine-name"
-                                onClick={() =>
-                                    history.push(
-                                        `/admin/query_engine/${engine.id}`
-                                    )
-                                }
-                            >
-                                {engine.name}
-                            </div>
-                            <IconButton
-                                className="delete-query-engine-button"
-                                noPadding
-                                icon="x"
-                                onClick={() =>
-                                    handleDeleteQueryEngine(engine.id)
-                                }
-                            />
-                        </div>
-                    );
-                }}
-                onMove={handleSwapQueryEngine}
-            />
-        );
-    };
+    const getQueryEngineListDOM = () => (
+        <DraggableList
+            items={environmentEngines ?? []}
+            renderItem={(index, engine) => (
+                <div className="AdminEnvironment-engine horizontal-space-between">
+                    <div
+                        className="AdminEnvironment-engine-name"
+                        onClick={() =>
+                            history.push(`/admin/query_engine/${engine.id}`)
+                        }
+                    >
+                        {engine.name}
+                    </div>
+                    <IconButton
+                        className="delete-query-engine-button"
+                        noPadding
+                        icon="x"
+                        onClick={() => handleDeleteQueryEngine(engine.id)}
+                    />
+                </div>
+            )}
+            onMove={handleSwapQueryEngine}
+        />
+    );
 
     return (
         <div className="AdminForm-section">

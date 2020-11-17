@@ -49,7 +49,7 @@ export interface IAdminMetastore {
     updated_at: number;
     deleted_at: number;
     name: string;
-    metastore_params: {};
+    metastore_params: Record<string, unknown>;
     loader: string;
     acl_control: IAdminACLControl;
 }
@@ -121,9 +121,8 @@ export const AdminMetastore: React.FunctionComponent<IProps> = ({
     );
 
     const deleteMetastore = React.useCallback(
-        async (metastore: IAdminMetastore) => {
-            return ds.delete(`/admin/query_metastore/${metastore.id}/`);
-        },
+        async (metastore: IAdminMetastore) =>
+            ds.delete(`/admin/query_metastore/${metastore.id}/`),
         []
     );
 
@@ -416,7 +415,10 @@ export const AdminMetastore: React.FunctionComponent<IProps> = ({
                 deleted_at: null,
                 name: '',
                 loader: defaultLoader.name,
-                metastore_params: getDefaultFormValue(defaultLoader.template),
+                // Only StructForm form for template
+                metastore_params: getDefaultFormValue(
+                    defaultLoader.template
+                ) as Record<string, unknown>,
                 acl_control: {},
             };
             return (
@@ -491,35 +493,32 @@ export const AdminMetastore: React.FunctionComponent<IProps> = ({
             return <Loading />;
         }
     } else {
-        const getCardDOM = () => {
-            return clone(metastores)
+        const getCardDOM = () =>
+            clone(metastores)
                 .filter((ms) => ms.deleted_at == null)
                 .sort((m1, m2) => m2.updated_at - m1.updated_at)
                 .slice(0, 5)
-                .map((m) => {
-                    return (
-                        <Card
-                            key={m.id}
-                            title={m.name}
-                            children={
-                                <div className="AdminLanding-card-content">
-                                    <div className="AdminLanding-card-content-top">
-                                        Last Updated
-                                    </div>
-                                    <div className="AdminLanding-card-content-date">
-                                        {generateFormattedDate(m.updated_at)}
-                                    </div>
-                                </div>
-                            }
-                            onClick={() =>
-                                history.push(`/admin/metastore/${m.id}/`)
-                            }
-                            height="160px"
-                            width="240px"
-                        />
-                    );
-                });
-        };
+                .map((m) => (
+                    <Card
+                        key={m.id}
+                        title={m.name}
+                        onClick={() =>
+                            history.push(`/admin/metastore/${m.id}/`)
+                        }
+                        height="160px"
+                        width="240px"
+                    >
+                        {' '}
+                        <div className="AdminLanding-card-content">
+                            <div className="AdminLanding-card-content-top">
+                                Last Updated
+                            </div>
+                            <div className="AdminLanding-card-content-date">
+                                {generateFormattedDate(m.updated_at)}
+                            </div>
+                        </div>
+                    </Card>
+                ));
         return (
             <div className="AdminMetastore">
                 <div className="AdminLanding">
@@ -538,13 +537,14 @@ export const AdminMetastore: React.FunctionComponent<IProps> = ({
                             {metastores && getCardDOM()}
                             <Card
                                 title="+"
-                                children="create a new metastore"
                                 onClick={() =>
                                     history.push('/admin/metastore/new/')
                                 }
                                 height="160px"
                                 width="240px"
-                            />
+                            >
+                                create a new metastore
+                            </Card>
                         </div>
                     </div>
                 </div>

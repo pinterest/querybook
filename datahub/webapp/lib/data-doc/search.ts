@@ -15,7 +15,7 @@ export function searchText(
     }
 
     let match: RegExpExecArray;
-    // tslint:disable-next-line
+    // eslint-disable-next-line
     while ((match = searchRegex.exec(text)) !== null) {
         results.push({
             from: match.index,
@@ -41,7 +41,7 @@ export function searchDataDocCells(
         if (cell.cell_type === 'query') {
             const content = cell.context;
             let match: RegExpExecArray;
-            // tslint:disable-next-line
+            // eslint-disable-next-line
             while ((match = searchRegex.exec(content)) !== null) {
                 results.push({
                     cellId: cell.id,
@@ -54,7 +54,7 @@ export function searchDataDocCells(
             content.getBlockMap().map((contentBlock) => {
                 let match: RegExpExecArray;
                 const blockText = contentBlock.getText();
-                // tslint:disable-next-line
+                // eslint-disable-next-line
                 while ((match = searchRegex.exec(blockText)) !== null) {
                     results.push({
                         cellId: cell.id,
@@ -133,7 +133,7 @@ export const findSearchEntities = (
 
         let match: RegExpExecArray;
         const blockText = contentBlock.getText();
-        // tslint:disable-next-line
+        // eslint-disable-next-line
         while ((match = searchRegex.exec(blockText)) !== null) {
             callback(match.index, match.index + match[0].length);
         }

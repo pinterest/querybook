@@ -22,7 +22,7 @@ export interface ISingleCRUDProps<T> extends Partial<FormikConfig<T>> {
     renderItem: (item, handleItemChange) => React.ReactChild;
 }
 
-export function SingleCRUD<T>({
+export function SingleCRUD<T extends Record<any, any>>({
     item,
     createItem,
     updateItem,

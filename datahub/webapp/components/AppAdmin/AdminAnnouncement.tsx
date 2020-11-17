@@ -71,65 +71,59 @@ export const AdminAnnouncement: React.FunctionComponent = () => {
     );
 
     const deleteAnnouncement = React.useCallback(
-        (announcement: IAdminAnnouncement) => {
-            return ds.delete(`/admin/announcement/${announcement.id}/`);
-        },
+        (announcement: IAdminAnnouncement) =>
+            ds.delete(`/admin/announcement/${announcement.id}/`),
         []
     );
 
     const renderAnnouncementItem = (
         item: IAdminAnnouncement,
         onChange: (fieldName: string, fieldValue: any) => void
-    ) => {
-        return (
-            <div className="AdminForm">
-                <div className="AdminForm-main">
-                    <div className="AdminForm-left">
-                        <SimpleField
-                            stacked
-                            name="message"
-                            type="textarea"
-                            placeholder="Announcements can be written in markdown format."
-                        />
-                        <SimpleField
-                            stacked
-                            name="url_regex"
-                            type="input"
-                            help={
-                                'You can specify the url in which the announcement will be shown. ' +
-                                'Try using an environment name to announce to a specific environment ' +
-                                " (ex. '/default/')"
-                            }
-                        />
-                    </div>
-                    <div className="AdminForm-right">
-                        <SimpleField
-                            name="can_dismiss"
-                            type="toggle"
-                            help="Enabling will allow users to dismiss the announcement"
-                        />
-                    </div>
+    ) => (
+        <div className="AdminForm">
+            <div className="AdminForm-main">
+                <div className="AdminForm-left">
+                    <SimpleField
+                        stacked
+                        name="message"
+                        type="textarea"
+                        placeholder="Announcements can be written in markdown format."
+                    />
+                    <SimpleField
+                        stacked
+                        name="url_regex"
+                        type="input"
+                        help={
+                            'You can specify the url in which the announcement will be shown. ' +
+                            'Try using an environment name to announce to a specific environment ' +
+                            " (ex. '/default/')"
+                        }
+                    />
+                </div>
+                <div className="AdminForm-right">
+                    <SimpleField
+                        name="can_dismiss"
+                        type="toggle"
+                        help="Enabling will allow users to dismiss the announcement"
+                    />
                 </div>
             </div>
-        );
-    };
+        </div>
+    );
 
-    const getCardDOM = () => {
-        return announcements.map((ann) => {
-            return (
-                <Card key={ann.id} title="" width="100%" flexRow>
-                    <SingleCRUD
-                        item={ann}
-                        deleteItem={deleteAnnouncement}
-                        updateItem={saveAnnouncement(ann.id)}
-                        validationSchema={announcementSchema}
-                        renderItem={renderAnnouncementItem}
-                        onItemCUD={loadAnnouncements}
-                    />
-                </Card>
-            );
-        });
-    };
+    const getCardDOM = () =>
+        announcements.map((ann) => (
+            <Card key={ann.id} title="" width="100%" flexRow>
+                <SingleCRUD
+                    item={ann}
+                    deleteItem={deleteAnnouncement}
+                    updateItem={saveAnnouncement(ann.id)}
+                    validationSchema={announcementSchema}
+                    renderItem={renderAnnouncementItem}
+                    onItemCUD={loadAnnouncements}
+                />
+            </Card>
+        ));
 
     const getNewFormDOM = () => {
         if (displayNewForm) {
@@ -152,18 +146,17 @@ export const AdminAnnouncement: React.FunctionComponent = () => {
             return (
                 <Card
                     title=""
-                    children={
-                        <div className="AdminAnnouncement-new-msg flex-row">
-                            <Icon name="plus" />
-                            <span>create a new announcement</span>
-                        </div>
-                    }
                     width="100%"
                     flexRow
                     onClick={() => {
                         setDisplayNewForm(true);
                     }}
-                />
+                >
+                    <div className="AdminAnnouncement-new-msg flex-row">
+                        <Icon name="plus" />
+                        <span>create a new announcement</span>
+                    </div>
+                </Card>
             );
         }
     };

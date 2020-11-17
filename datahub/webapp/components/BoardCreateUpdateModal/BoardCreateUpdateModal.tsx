@@ -123,15 +123,10 @@ export const BoardCreateUpdateForm: React.FunctionComponent<IBoardCreateUpdateFo
 
 export const BoardCreateUpdateModal: React.FunctionComponent<
     IBoardCreateUpdateFormProps & IStandardModalProps
-> = ({ boardId, onComplete, ...modalProps }) => {
-    return (
-        <Modal {...modalProps}>
-            <div className="BoardCreateUpdateModal">
-                <BoardCreateUpdateForm
-                    boardId={boardId}
-                    onComplete={onComplete}
-                />
-            </div>
-        </Modal>
-    );
-};
+> = ({ boardId, onComplete, ...modalProps }) => (
+    <Modal {...modalProps}>
+        <div className="BoardCreateUpdateModal">
+            <BoardCreateUpdateForm boardId={boardId} onComplete={onComplete} />
+        </div>
+    </Modal>
+);

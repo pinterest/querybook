@@ -55,9 +55,7 @@ export function setupOnDataHubClose() {
         const state = reduxStore.getState();
         const { dataDocSavePromiseById } = state.dataDoc;
         const hasUnsavedChanges = Object.values(dataDocSavePromiseById).some(
-            (savePromise) => {
-                return Object.keys(savePromise.itemToSave).length > 0;
-            }
+            (savePromise) => Object.keys(savePromise.itemToSave).length > 0
         );
 
         if (!hasUnsavedChanges) {

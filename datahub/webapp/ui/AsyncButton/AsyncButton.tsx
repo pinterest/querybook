@@ -20,7 +20,7 @@ export class AsyncButton extends React.PureComponent<
     };
     private canSetState: boolean = true;
 
-    constructor(props: IAsyncButtonProps) {
+    public constructor(props: IAsyncButtonProps) {
         super(props);
 
         this.state = {

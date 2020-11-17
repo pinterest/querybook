@@ -13,6 +13,7 @@ import {
     IDataDoc,
     IDataCell,
     DataCellUpdateFields,
+    IDataCellMeta,
 } from 'const/datadoc';
 import history from 'lib/router-history';
 import { sendConfirm, sendNotification, setBrowserTitle } from 'lib/dataHubUI';
@@ -98,71 +99,6 @@ class DataDocComponent extends React.Component<IProps, IState> {
     private searchAndReplaceRef = React.createRef<ISearchAndReplaceHandles>();
     private focusCellIndexAfterInsert: number = null;
 
-    public componentDidMount() {
-        this.autoFocusCell({}, this.props);
-        this.openDataDoc(this.props.docId);
-        if (this.props.dataDoc?.title != null) {
-            this.publishDataDocTitle(this.props.dataDoc.title);
-        }
-        window.addEventListener('keydown', this.onKeyDown, true);
-    }
-
-    public componentDidUpdate(prevProps) {
-        this.autoFocusCell(prevProps, this.props);
-
-        if (this.props.docId !== prevProps.docId) {
-            // No need to close because openDataDoc would auto-close
-            if (prevProps.docId != null) {
-                this.props.forceSaveDataDoc(prevProps.docId);
-
-                // Reset all the state variables
-                this.setState({
-                    defaultCollapseAllCells: null,
-                    focusedCellIndex: null,
-
-                    // Sharing State
-                    cellIdToExecutionId: {},
-                    highlightCellIndex: null,
-                });
-                // Reset search
-                this.searchAndReplaceRef.current?.reset();
-            }
-            this.openDataDoc(this.props.docId);
-        }
-
-        if (
-            this.props.dataDoc?.dataDocCells !== prevProps.dataDoc?.dataDocCells
-        ) {
-            const cells = this.props.dataDoc?.dataDocCells ?? [];
-            const previousCells = prevProps.dataDoc?.dataDocCells ?? [];
-            const someCellsContextChanged =
-                cells.length !== previousCells.length ||
-                cells.some(
-                    (cell, index) =>
-                        cell.context !== previousCells[index].context
-                );
-
-            if (someCellsContextChanged) {
-                this.searchAndReplaceRef.current?.performSearch();
-            }
-
-            // When a cell is inserted, the length will be changed
-            // during this time we will focus the new inserted cell
-            const cellLengthChanged = cells.length !== previousCells.length;
-            if (cellLengthChanged && this.focusCellIndexAfterInsert != null) {
-                this.focusCellAt(this.focusCellIndexAfterInsert);
-                this.focusCellIndexAfterInsert = null;
-            }
-        }
-
-        if (
-            this.props.dataDoc?.title !== prevProps.dataDoc?.title &&
-            this.props.dataDoc?.title
-        ) {
-            this.publishDataDocTitle(this.props.dataDoc.title);
-        }
-    }
-
     // Show data doc title in url and document title
     @decorate(memoizeOne)
     public publishDataDocTitle(title: string) {
@@ -174,11 +110,6 @@ class DataDocComponent extends React.Component<IProps, IState> {
                 location.search +
                 location.hash
         );
-    }
-
-    public componentWillUnmount() {
-        this.closeDataDoc(this.props.docId);
-        window.removeEventListener('keydown', this.onKeyDown, true);
     }
 
     @bind
@@ -252,6 +183,7 @@ class DataDocComponent extends React.Component<IProps, IState> {
         }
     }
 
+    @bind
     public autoFocusCell(props: Partial<IProps>, nextProps: Partial<IProps>) {
         const { dataDoc: oldDataDoc } = props;
         const { dataDoc } = nextProps;
@@ -264,9 +196,7 @@ class DataDocComponent extends React.Component<IProps, IState> {
                 if (dataDoc.dataDocCells) {
                     const cellIndex = findIndex(
                         dataDoc.dataDocCells,
-                        (cell) => {
-                            return cell.id === cellId;
-                        }
+                        (cell) => cell.id === cellId
                     );
 
                     if (cellIndex >= 0) {
@@ -368,7 +298,7 @@ class DataDocComponent extends React.Component<IProps, IState> {
         index: number,
         cellType: CELL_TYPE,
         context: string,
-        meta: {}
+        meta: IDataCellMeta
     ) {
         try {
             const dataDoc = this.props.dataDoc;
@@ -553,7 +483,8 @@ class DataDocComponent extends React.Component<IProps, IState> {
         };
     }
 
-    public onKeyDown = (event: KeyboardEvent) => {
+    @bind
+    public onKeyDown(event: KeyboardEvent) {
         let stopEvent = false;
 
         const repeat = event.repeat;
@@ -567,7 +498,7 @@ class DataDocComponent extends React.Component<IProps, IState> {
             event.stopPropagation();
             event.preventDefault();
         }
-    };
+    }
 
     @bind
     public renderLazyDataDocCell(
@@ -746,6 +677,76 @@ class DataDocComponent extends React.Component<IProps, IState> {
         );
     }
 
+    public componentDidMount() {
+        this.autoFocusCell({}, this.props);
+        this.openDataDoc(this.props.docId);
+        if (this.props.dataDoc?.title != null) {
+            this.publishDataDocTitle(this.props.dataDoc.title);
+        }
+        window.addEventListener('keydown', this.onKeyDown, true);
+    }
+
+    public componentDidUpdate(prevProps) {
+        this.autoFocusCell(prevProps, this.props);
+
+        if (this.props.docId !== prevProps.docId) {
+            // No need to close because openDataDoc would auto-close
+            if (prevProps.docId != null) {
+                this.props.forceSaveDataDoc(prevProps.docId);
+
+                // Reset all the state variables
+                this.setState({
+                    defaultCollapseAllCells: null,
+                    focusedCellIndex: null,
+
+                    // Sharing State
+                    cellIdToExecutionId: {},
+                    highlightCellIndex: null,
+                });
+                // Reset search
+                this.searchAndReplaceRef.current?.reset();
+            }
+            this.openDataDoc(this.props.docId);
+        }
+
+        if (
+            this.props.dataDoc?.dataDocCells !== prevProps.dataDoc?.dataDocCells
+        ) {
+            const cells = this.props.dataDoc?.dataDocCells ?? [];
+            const previousCells = prevProps.dataDoc?.dataDocCells ?? [];
+            const someCellsContextChanged =
+                cells.length !== previousCells.length ||
+                cells.some(
+                    (cell, index) =>
+                        cell.context !== previousCells[index].context
+                );
+
+            if (someCellsContextChanged) {
+                this.searchAndReplaceRef.current?.performSearch();
+            }
+
+            // When a cell is inserted, the length will be changed
+            // during this time we will focus the new inserted cell
+            const cellLengthChanged = cells.length !== previousCells.length;
+            if (cellLengthChanged && this.focusCellIndexAfterInsert != null) {
+                this.focusCellAt(this.focusCellIndexAfterInsert);
+                this.focusCellIndexAfterInsert = null;
+            }
+        }
+
+        if (
+            this.props.dataDoc?.title !== prevProps.dataDoc?.title &&
+            this.props.dataDoc?.title
+        ) {
+            this.publishDataDocTitle(this.props.dataDoc.title);
+        }
+    }
+
+    public componentWillUnmount() {
+        this.closeDataDoc(this.props.docId);
+        window.removeEventListener('keydown', this.onKeyDown, true);
+    }
+
     public render() {
         const { dataDoc } = this.props;
         const { errorObj } = this.state;
@@ -806,7 +807,7 @@ function mapDispatchToProps(dispatch: Dispatch, ownProps: IOwnProps) {
             );
         },
 
-        changeDataDocMeta: (docId: number, meta: {}) =>
+        changeDataDocMeta: (docId: number, meta: IDataCellMeta) =>
             dispatch(dataDocActions.updateDataDocField(docId, 'meta', meta)),
 
         cloneDataDoc: (docId: number) =>
@@ -817,7 +818,7 @@ function mapDispatchToProps(dispatch: Dispatch, ownProps: IOwnProps) {
             index: number,
             cellType: CELL_TYPE,
             context: string | ContentState,
-            meta: {}
+            meta: IDataCellMeta
         ) =>
             dispatch(
                 dataDocActions.insertDataDocCell(

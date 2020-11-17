@@ -183,7 +183,7 @@ export const DataHubSidebarTourSteps: ReactourStep[] = [
     },
 ];
 
-export const DataHubSidebarUIGuide: React.FunctionComponent<{}> = ({}) => {
+export const DataHubSidebarUIGuide: React.FC = () => {
     const location = useLocation();
     const { tour } = React.useMemo(() => getQueryString(), [location.search]);
     const [isOpen, setIsOpen] = React.useState(false);

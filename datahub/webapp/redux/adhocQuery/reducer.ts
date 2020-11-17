@@ -12,8 +12,8 @@ const initialState: Readonly<IAdhocQueryState> = {
 export default (
     state = initialState,
     action: AdhocQueryAction | EnvironmentAction
-) => {
-    return produce(state, (draft) => {
+) =>
+    produce(state, (draft) => {
         switch (action.type) {
             case '@@adhocQuery/RECEIVE_ADHOC_QUERY': {
                 draft.query = action.payload.query;
@@ -32,4 +32,3 @@ export default (
             }
         }
     });
-};

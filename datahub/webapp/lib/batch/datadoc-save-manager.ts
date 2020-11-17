@@ -1,5 +1,6 @@
 import { convertToRaw, ContentState } from 'draft-js';
 
+import { IDataCellMeta } from 'const/datadoc';
 import ds from 'lib/datasource';
 import { BatchManager, spreadMergeFunction } from 'lib/batch/batch-manager';
 import dataDocSocket from 'lib/data-doc/datadoc-socketio';
@@ -44,7 +45,7 @@ export class DataDocSaveManager {
 
 interface IUpdateDataCell {
     context?: string | ContentState;
-    meta?: {};
+    meta?: IDataCellMeta;
 }
 
 export class DataCellSaveManager {
@@ -57,7 +58,7 @@ export class DataCellSaveManager {
         docId: number,
         cellId: number,
         context?: string | ContentState,
-        meta?: {},
+        meta?: IDataCellMeta,
         frequency: number = 2000
     ) {
         if (!(cellId in this.itemSaverByCellId)) {

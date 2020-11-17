@@ -10,15 +10,15 @@ it('renders without crashing', () => {
 
 describe('matches enzyme snapshots', () => {
     it('matches snapshot', () => {
-        let wrapper = shallow(<Select value="test" onChange={() => null} />);
-        let serialized = toJson(wrapper);
+        const wrapper = shallow(<Select value="test" onChange={() => null} />);
+        const serialized = toJson(wrapper);
         expect(serialized).toMatchSnapshot();
     });
     it('matches snapshot - placeholder', () => {
-        let wrapper = shallow(
+        const wrapper = shallow(
             <Select value="test" onChange={() => null} disabled />
         );
-        let serialized = toJson(wrapper);
+        const serialized = toJson(wrapper);
         expect(serialized).toMatchSnapshot();
     });
 });

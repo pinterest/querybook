@@ -10,13 +10,13 @@ it('renders without crashing', () => {
 
 describe('matches enzyme snapshots', () => {
     it('matches snapshot', () => {
-        let wrapper = shallow(<Tag>test</Tag>);
-        let serialized = toJson(wrapper);
+        const wrapper = shallow(<Tag>test</Tag>);
+        const serialized = toJson(wrapper);
         expect(serialized).toMatchSnapshot();
     });
     it('matches snapshot', () => {
-        let wrapper = shallow(<Tag highlighted>test</Tag>);
-        let serialized = toJson(wrapper);
+        const wrapper = shallow(<Tag highlighted>test</Tag>);
+        const serialized = toJson(wrapper);
         expect(serialized).toMatchSnapshot();
     });
 });

@@ -4,4 +4,4 @@ services:
     test:
         container_name: datahub_test
         image: datahub-dev:latest
-        command: './datahub/scripts/run_unit_test'
+        command: './datahub/scripts/run_test'

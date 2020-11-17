@@ -74,28 +74,26 @@ export const AdminUserRole: React.FunctionComponent = () => {
     }, [newUserRoleState, uid]);
 
     // TODO: make it work for multiple roles per user
-    const cardDOM = userRoles?.map((userRole) => {
-        return (
-            <Card
-                key={userRole.id}
-                title={<UserBadge uid={userRole.uid} />}
-                width="100%"
-                flexRow
-            >
-                <div className="AdminUserRole-card-roles flex-column">
-                    <div className="AdminUserRole-card-role">
-                        <div>{UserRoleType[userRole.role]}</div>
-                        <Button
-                            type="inlineText"
-                            borderless
-                            title="Remove Role"
-                            onClick={() => deleteUserRole(userRole.id)}
-                        />
-                    </div>
+    const cardDOM = userRoles?.map((userRole) => (
+        <Card
+            key={userRole.id}
+            title={<UserBadge uid={userRole.uid} />}
+            width="100%"
+            flexRow
+        >
+            <div className="AdminUserRole-card-roles flex-column">
+                <div className="AdminUserRole-card-role">
+                    <div>{UserRoleType[userRole.role]}</div>
+                    <Button
+                        type="inlineText"
+                        borderless
+                        title="Remove Role"
+                        onClick={() => deleteUserRole(userRole.id)}
+                    />
                 </div>
-            </Card>
-        );
-    });
+            </div>
+        </Card>
+    ));
 
     return (
         <div className="AdminUserRole">

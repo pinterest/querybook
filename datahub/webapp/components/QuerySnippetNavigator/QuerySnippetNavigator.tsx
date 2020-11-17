@@ -77,10 +77,12 @@ class QuerySnippetNavigatorComponent extends React.PureComponent<
 
     private filterButton = React.createRef<HTMLAnchorElement>();
 
+    @bind
     public getInitialSearchFilters() {
         return {};
     }
 
+    @bind
     public searchQuerySnippets() {
         const { filters, selectedTabKey } = this.state;
 
@@ -109,15 +111,6 @@ class QuerySnippetNavigatorComponent extends React.PureComponent<
                     searching: false,
                 });
             }
-        );
-    }
-
-    public componentDidMount() {
-        this.setState(
-            {
-                filters: this.getInitialSearchFilters(),
-            },
-            this.searchQuerySnippets
         );
     }
 
@@ -224,6 +217,15 @@ class QuerySnippetNavigatorComponent extends React.PureComponent<
         this.setState({
             showCreateSnippetModal: false,
         });
+    }
+
+    public componentDidMount() {
+        this.setState(
+            {
+                filters: this.getInitialSearchFilters(),
+            },
+            this.searchQuerySnippets
+        );
     }
 
     public makeSearchFilterDOM() {

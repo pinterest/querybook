@@ -12,8 +12,8 @@ interface ILineAnalysis {
 }
 
 interface ICompletionRow {
-    string: string;
-    text: string;
+    searchText: string;
+    displayText: string;
     label: string;
     tooltip: string;
     render: (element: HTMLElement, self: any, data: ICompletionRow) => void;
@@ -125,7 +125,7 @@ export class SqlAutoCompleter {
     private keywords?: string[];
     private type: AutoCompleteType;
 
-    constructor(
+    public constructor(
         codeMirrorInstance: typeof CodeMirror,
         language: string,
         metastoreId: number = null,
@@ -334,19 +334,19 @@ export class SqlAutoCompleter {
             tooltip === 'table'
                 ? data.label
                       .split('.')
-                      .map((word, index) => {
+                      .map((word, index) =>
                           // this case is for schemaName.tableName case
-                          return index === 1
+                          index === 1
                               ? word.replace(
-                                    data.string,
-                                    `<b style='font-weight: bold'>${data.string}</b>`
+                                    data.searchText,
+                                    `<b style='font-weight: bold'>${data.searchText}</b>`
                                 )
-                              : word;
-                      })
+                              : word
+                      )
                       .join('.')
                 : data.label.replace(
-                      data.string,
-                      `<b style='font-weight: bold'>${data.string}</b>`
+                      data.searchText,
+                      `<b style='font-weight: bold'>${data.searchText}</b>`
                   );
 
         const isGoldenItem = data.isGoldenItem;
@@ -414,8 +414,8 @@ export class SqlAutoCompleter {
             const upperCasedString = text.toUpperCase();
             const score = -upperCasedWord.length;
             return {
-                string: upperCasedString,
-                text: upperCasedWord,
+                searchText: upperCasedString,
+                displayText: upperCasedWord,
                 label: upperCasedWord,
                 tooltip: 'keyword',
                 render: this.autoSuggestionRenderer,
@@ -429,8 +429,8 @@ export class SqlAutoCompleter {
             // we should give it a better rank
             const isGoldenItem = false;
             return {
-                string: text,
-                text: word,
+                searchText: text,
+                displayText: word,
                 label: word,
                 tooltip: context,
                 render: this.autoSuggestionRenderer,
@@ -441,8 +441,8 @@ export class SqlAutoCompleter {
         const hierarchicalFormatter: Formatter = (context, word, label) => {
             const isGoldenItem = false;
             return {
-                string: text,
-                text: word,
+                searchText: text,
+                displayText: word,
                 label,
                 tooltip: context,
                 render: this.autoSuggestionRenderer,
@@ -460,7 +460,9 @@ export class SqlAutoCompleter {
 
     private getSqlHint(
         editor: CodeMirror.Editor,
-        options: {}
+        options: {
+            passive?: boolean;
+        }
     ): Promise<IAutoCompleteResult | null> {
         if (this.type === 'none') {
             return Promise.resolve(null);

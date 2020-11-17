@@ -29,7 +29,7 @@ import { DataDocDraggableType, BoardDraggableType } from './navigatorConst';
 import { IDragItem } from 'ui/DraggableList/types';
 import { IBoardItem } from 'const/board';
 
-export const DataDocNavigator: React.FC<{}> = ({}) => {
+export const DataDocNavigator: React.FC = () => {
     const loadedFilterModes = useSelector(
         (state: IStoreState) =>
             state.dataDoc.loadedEnvironmentFilterMode[
@@ -190,7 +190,7 @@ const FavoriteDataDocsSection: React.FC<ICommonSectionProps> = (props) => {
 
     const [{ isOver }, dropRef] = useDrop({
         accept: [BoardDraggableType, DataDocDraggableType],
-        drop(item: IDragItem<IDataDoc | IProcessedBoardItem>, monitor) {
+        drop: (item: IDragItem<IDataDoc | IProcessedBoardItem>, monitor) => {
             if (monitor.didDrop()) {
                 return;
             }
@@ -209,12 +209,13 @@ const FavoriteDataDocsSection: React.FC<ICommonSectionProps> = (props) => {
             }
         },
 
-        collect(monitor) {
+        collect: (monitor) => {
             const item: IDragItem = monitor.getItem();
             return {
                 isOver:
                     item?.type === BoardDraggableType &&
-                    (item?.itemInfo as IProcessedBoardItem).itemType === 'table'
+                    ((item?.itemInfo as unknown) as IProcessedBoardItem)
+                        .itemType === 'table'
                         ? false
                         : monitor.isOver(),
             };

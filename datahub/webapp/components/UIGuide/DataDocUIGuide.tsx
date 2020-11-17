@@ -86,7 +86,7 @@ export const DataDocTourSteps: ReactourStep[] = [
                 </p>
                 <hr />
                 <p>
-                    For example, if you have a template named 'today', you can:
+                    For example, if you have a template named "today", you can:
                 </p>
                 <pre>dt=&#123;&#123;today&#125;&#125;</pre>
             </>

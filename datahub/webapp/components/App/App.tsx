@@ -18,7 +18,7 @@ import { reduxStore } from 'redux/store';
 
 // TODO: decouple this with App.tsx
 declare global {
-    /* tslint:disable:interface-name */
+    /* eslint-disable @typescript-eslint/naming-convention */
     interface Window {
         reduxStore?: typeof reduxStore;
         receiveChildMessage?: () => void;

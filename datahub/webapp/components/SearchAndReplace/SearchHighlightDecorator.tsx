@@ -12,6 +12,6 @@ export function makeSearchHighlightDecorator(
     };
 }
 
-const SearchHighlight: React.FC = ({ children }) => {
-    return <span className="search-highlight">{children}</span>;
-};
+const SearchHighlight: React.FC = ({ children }) => (
+    <span className="search-highlight">{children}</span>
+);

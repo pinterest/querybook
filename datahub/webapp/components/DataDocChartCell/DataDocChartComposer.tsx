@@ -105,34 +105,36 @@ const DataDocChartComposerComponent: React.FunctionComponent<
         setDisplayStatementId
     );
 
-    const chartData = React.useMemo(() => {
-        return statementResultData
-            ? transformData(
-                  statementResultData,
-                  values.aggregate,
-                  values.switch,
-                  values.formatAggCol,
-                  values.formatSeriesCol,
-                  values.formatValueCols,
-                  values.aggSeries,
-                  values.sortIndex,
-                  values.sortAsc,
-                  values.xIndex
-              )
-            : null;
-    }, [
-        statementResultData,
-        values.aggregate,
-        values.switch,
-        values.formatAggCol,
-        values.formatSeriesCol,
-        values.formatValueCols,
-        values.aggType,
-        values.aggSeries,
-        values.sortIndex,
-        values.sortAsc,
-        values.xIndex,
-    ]);
+    const chartData = React.useMemo(
+        () =>
+            statementResultData
+                ? transformData(
+                      statementResultData,
+                      values.aggregate,
+                      values.switch,
+                      values.formatAggCol,
+                      values.formatSeriesCol,
+                      values.formatValueCols,
+                      values.aggSeries,
+                      values.sortIndex,
+                      values.sortAsc,
+                      values.xIndex
+                  )
+                : null,
+        [
+            statementResultData,
+            values.aggregate,
+            values.switch,
+            values.formatAggCol,
+            values.formatSeriesCol,
+            values.formatValueCols,
+            values.aggType,
+            values.aggSeries,
+            values.sortIndex,
+            values.sortAsc,
+            values.xIndex,
+        ]
+    );
 
     // getting redux state
     const queryCellOptions = useSelector((state: IStoreState) =>
@@ -1067,9 +1069,8 @@ function formValsToMeta(vals: IChartFormValues, meta: IDataChartCellMeta) {
 }
 
 export const DataDocChartComposer = withFormik<IProps, IChartFormValues>({
-    mapPropsToValues: ({ meta, cellAboveId }) => {
-        return mapMetaToFormVals(meta, cellAboveId);
-    },
+    mapPropsToValues: ({ meta, cellAboveId }) =>
+        mapMetaToFormVals(meta, cellAboveId),
 
     handleSubmit: (values, { props: { onUpdateChartConfig, meta } }) => {
         onUpdateChartConfig(formValsToMeta(values, meta));
