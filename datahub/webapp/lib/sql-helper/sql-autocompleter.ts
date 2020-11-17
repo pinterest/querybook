@@ -11,10 +11,20 @@ interface ILineAnalysis {
     alias: Record<string, TableToken>;
 }
 
+/**
+ * CompletionRow used by Codemirror.
+ *
+ * string: the text we are replacing
+ * text: the text we autocomplete string to
+ * label: the text we show in autocomplete
+ */
 interface ICompletionRow {
-    searchText: string;
-    displayText: string;
+    // disable since the string field is required by codemirror
+    // eslint-disable-next-line id-blacklist
+    string: string;
+    text: string;
     label: string;
+
     tooltip: string;
     render: (element: HTMLElement, self: any, data: ICompletionRow) => void;
     isGoldenItem?: boolean;
@@ -92,19 +102,6 @@ function findLast(arr: Array<[number, any]>, num: number) {
         }
     }
     return arr[index];
-}
-
-function calculateCommonPrefixLength(str1: string, str2: string) {
-    let count = 0;
-    while (count < str1.length && count < str2.length) {
-        if (str1.charAt(count) !== str2.charAt(count)) {
-            break;
-        }
-
-        count++;
-    }
-
-    return count;
 }
 
 interface IAutoCompleteResult {
@@ -338,42 +335,18 @@ export class SqlAutoCompleter {
                           // this case is for schemaName.tableName case
                           index === 1
                               ? word.replace(
-                                    data.searchText,
-                                    `<b style='font-weight: bold'>${data.searchText}</b>`
+                                    data.string,
+                                    `<b style='font-weight: bold'>${data.string}</b>`
                                 )
                               : word
                       )
                       .join('.')
                 : data.label.replace(
-                      data.searchText,
-                      `<b style='font-weight: bold'>${data.searchText}</b>`
+                      data.string,
+                      `<b style='font-weight: bold'>${data.string}</b>`
                   );
 
         const isGoldenItem = data.isGoldenItem;
-
-        // const hasTrustworthiness = data.tooltip !== 'keyword';
-        // const trustworthiness = data.trustworthiness;
-        // const trustworthinessLevel = hasTrustworthiness ? (
-        //     trustworthiness < 50 ? 'low-trustworthiness' :
-        //     trustworthiness < 80 ? 'medium-trustworthiness' : 'high-trustworthiness'
-        // ) : '';
-
-        // const redHue = 353;
-        // const greenHue = 120;
-        // const hueDelta = (360 - redHue) + greenHue;
-        // const hue = 120 - (((100 - trustworthiness)/100) * hueDelta);
-
-        // const trustworthinessSpanStyle = hasTrustworthiness ? (
-        //     `color: hsl(${hue}, 100%, 25%)`
-        // ) : '';
-
-        // const trustworthinessDOM = hasTrustworthiness ? (
-        //     `<span class="trustworthiness-value">${trustworthiness}</span><i class="fa fa-shield trustworthiness-icon"></i>`
-        // ) : '';
-        // <span class="code-editor-autocomplete-span code-editor-trustworthiness-span" data-tooltip="Trustworthiness Score" style="${trustworthinessSpanStyle}">
-        //     ${trustworthinessDOM}
-        // </span>
-
         const goldenItemIconDOM =
             'isGoldenItem' in data
                 ? `<i class="fa fa-check-circle golden-item-icon ${
@@ -403,19 +376,15 @@ export class SqlAutoCompleter {
     }
 
     private getAutoSuggestionFormatters(type: string, text: string): Formatter {
-        /*
-         *  string: the text we are replacing
-         *  text: the text we autocomplete string to
-         *  label: the text we show in autocomplete
-         */
-
         const keywordFormatter: Formatter = (word) => {
             const upperCasedWord = word.toUpperCase();
             const upperCasedString = text.toUpperCase();
             const score = -upperCasedWord.length;
             return {
-                searchText: upperCasedString,
-                displayText: upperCasedWord,
+                // disable since the string field is required by codemirror
+                // eslint-disable-next-line id-blacklist
+                string: upperCasedString,
+                text: upperCasedWord,
                 label: upperCasedWord,
                 tooltip: 'keyword',
                 render: this.autoSuggestionRenderer,
@@ -429,11 +398,14 @@ export class SqlAutoCompleter {
             // we should give it a better rank
             const isGoldenItem = false;
             return {
-                searchText: text,
-                displayText: word,
+                // disable since the string field is required by codemirror
+                // eslint-disable-next-line id-blacklist
+                string: text,
+                text: word,
                 label: word,
                 tooltip: context,
                 render: this.autoSuggestionRenderer,
+                isGoldenItem,
                 score: 0,
             };
         };
@@ -441,8 +413,10 @@ export class SqlAutoCompleter {
         const hierarchicalFormatter: Formatter = (context, word, label) => {
             const isGoldenItem = false;
             return {
-                searchText: text,
-                displayText: word,
+                // disable since the string field is required by codemirror
+                // eslint-disable-next-line id-blacklist
+                string: text,
+                text: word,
                 label,
                 tooltip: context,
                 render: this.autoSuggestionRenderer,
