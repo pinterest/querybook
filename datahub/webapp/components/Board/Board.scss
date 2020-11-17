@@ -6,9 +6,8 @@
         border: var(--border);
         border-radius: var(--border-radius);
         background-color: var(--light-bg-color);
-        .Icon {
+        .BoardItemIcon {
             color: var(--icon-color);
-            z-index: 100;
         }
 
         a:hover {
