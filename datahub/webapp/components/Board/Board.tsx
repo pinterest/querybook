@@ -29,7 +29,7 @@ export const Board: React.FunctionComponent<IProps> = ({ boardId }) => {
         board?.docs.map((docId) => {
             dispatch(fetchDataDocIfNeeded(docId));
         });
-    }, []);
+    }, [board, boardItemById]);
 
     const boardItemDOM = board?.items?.map((itemIdx) => {
         const item = boardItemById?.[itemIdx];
