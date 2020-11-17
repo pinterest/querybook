@@ -9,8 +9,6 @@ import { BoardItemAddButton } from 'components/BoardItemAddButton/BoardItemAddBu
 import { Icon } from 'ui/Icon/Icon';
 import { Title } from 'ui/Title/Title';
 
-import './BoardDataDocItem.scss';
-
 interface IProps {
     docId: number;
 }

@@ -12,8 +12,6 @@ import { Icon } from 'ui/Icon/Icon';
 import { RichTextEditor } from 'ui/RichTextEditor/RichTextEditor';
 import { Title } from 'ui/Title/Title';
 
-import './BoardDataTableItem.scss';
-
 interface IProps {
     tableId: number;
 }
