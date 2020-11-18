@@ -34,7 +34,7 @@ def get_executor_class(language: str, name: str):
         ):
             return executor
 
-    raise ValueError(f"Unknown executor name {name}")
+    raise ValueError(f"Unknown executor {name} with language {language}")
 
 
 # Re-export parse_exception
