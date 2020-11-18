@@ -20,10 +20,11 @@ class SelectOneChecker(BaseEngineStatusChecker):
     def _perform_check(cls, engine_id: int) -> EngineStatus:
         with DBSession() as session:
             engine = get_query_engine_by_id(engine_id, session=session)
-            executor_name = engine.executor
             executor_params = engine.get_engine_params()
 
-            return check_select_one(get_executor_class(executor_name), executor_params)
+            return check_select_one(
+                get_executor_class(engine.language, engine.executor), executor_params
+            )
 
 
 class WrongSelectOneException(Exception):
