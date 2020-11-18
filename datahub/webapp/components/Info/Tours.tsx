@@ -41,10 +41,10 @@ export const Tours: React.FunctionComponent = () => {
     return (
         <div className="Tours m12">
             <Title subtitle className="mb12">
-                Welcome to DataHub Tours!
+                Welcome to the DataHub Tutorial!
             </Title>
             <Title subtitle size={5}>
-                Click on a card to start a tour
+                Click on a card to start the tutorial.
             </Title>
             <div className="Tours-cards flex-center mv24">
                 <Card
