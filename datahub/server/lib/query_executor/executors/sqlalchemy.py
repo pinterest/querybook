@@ -1,5 +1,6 @@
 import re
 from sqlalchemy.exc import SQLAlchemyError, DBAPIError
+from snowflake.connector import errors as sf_errors
 
 from const.query_execution import QueryExecutionErrorType
 from lib.query_executor.base_executor import QueryExecutorBaseClass
@@ -48,7 +49,7 @@ class MysqlQueryExecutor(SqlAlchemyQueryExecutor):
 class DruidQueryExecutor(SqlAlchemyQueryExecutor):
     @classmethod
     def EXECUTOR_NAME(cls):
-        return "druid-sqlalchemy"
+        return "sqlalchemy"
 
     @classmethod
     def EXECUTOR_LANGUAGE(cls):
@@ -73,3 +74,16 @@ class SnowflakeQueryExecutor(SqlAlchemyQueryExecutor):
     @classmethod
     def EXECUTOR_LANGUAGE(cls):
         return "snowflake"
+
+    def _parse_exception(self, e):
+        if isinstance(e, SQLAlchemyError):
+            orig_error = getattr(e, "orig", None)
+
+            if isinstance(orig_error, sf_errors.ProgrammingError):
+                message = orig_error.msg
+                match = re.search(r"error line (\d+) at position (\d+)", message)
+                if match is not None:
+                    return get_parsed_syntax_error(
+                        message, int(match.group(1)) - 1, int(match.group(2))
+                    )
+        return super(SnowflakeQueryExecutor, self)._parse_exception(e)

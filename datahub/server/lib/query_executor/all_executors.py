@@ -26,9 +26,12 @@ ALL_EXECUTORS = [
 ] + ALL_PLUGIN_EXECUTORS
 
 
-def get_executor_class(name: str):
+def get_executor_class(language: str, name: str):
     for executor in ALL_EXECUTORS:
-        if executor.EXECUTOR_NAME() == name:
+        if (
+            executor.EXECUTOR_LANGUAGE() == language
+            and executor.EXECUTOR_NAME() == name
+        ):
             return executor
 
     raise ValueError(f"Unknown executor name {name}")

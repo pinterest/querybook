@@ -37,7 +37,7 @@ class ExecuteQuery(object):
             user = get_user_by_id(uid, session=session)
             client_settings["proxy_user"] = user.username
 
-        executor = get_executor_class(engine.executor)
+        executor = get_executor_class(engine.language, engine.executor)
 
         if executor.SINGLE_QUERY_QUERY_ENGINE():
             statements = [query]

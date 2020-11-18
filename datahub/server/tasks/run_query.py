@@ -43,7 +43,6 @@ def run_query_task(self, query_execution_id):
 
         user = user_logic.get_user_by_id(uid)
         engine = admin_logic.get_query_engine_by_id(engine_id)
-        executor_type = engine.executor
 
         executor_params = {
             "query_execution_id": query_execution_id,
@@ -56,7 +55,9 @@ def run_query_task(self, query_execution_id):
             },
         }
 
-        executor = get_executor_class(executor_type)(**executor_params)
+        executor = get_executor_class(engine.language, engine.executor)(
+            **executor_params
+        )
 
         while True:
             if self.is_aborted():

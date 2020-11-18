@@ -444,7 +444,8 @@ class QueryExecutorBaseClass(metaclass=ABCMeta):
 
     @abstractclassmethod
     def EXECUTOR_NAME(cls) -> str:
-        """Distinct name for the executor
+        """Distinct name for the executor.
+           Must be distinct under for the same language.
         """
         raise NotImplementedError
 
