@@ -68,7 +68,7 @@ FROM
     data_job_metadata = m_logic.create_job_metadata_row(
         job_name="Untitled",
         metastore_id=metastore_id,
-        job_info="demo lineage",
+        job_info={"source": "demo lineage"},
         job_owner=user.username,
         query_text=query_text,
         is_adhoc=True,
