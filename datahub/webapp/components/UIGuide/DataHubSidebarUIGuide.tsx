@@ -202,7 +202,7 @@ export const DataHubSidebarUIGuide: React.FC = () => {
                 borderless
                 inverted
             >
-                Begin Tour
+                DataHub UI Tutorial
             </Button>
             <Tour
                 isOpen={isOpen}

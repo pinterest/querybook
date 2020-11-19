@@ -22,12 +22,8 @@ import { Title } from 'ui/Title/Title';
 import './Landing.scss';
 
 const datahubHints: string[] = require('config/loading_hints.yaml').hints;
-/*
- * TODO: clean up the urls so they are open source friendly
- */
-export const Landing: React.FunctionComponent = () => {
-    useBrowserTitle();
 
+const DefaultLanding: React.FC = ({ children }) => {
     const {
         userInfo,
         recentDataDocs,
@@ -81,47 +77,67 @@ export const Landing: React.FunctionComponent = () => {
 
     const [hint] = React.useState(sample(datahubHints));
 
-    return (
-        <div className="Landing flex-column">
-            <div className="Landing-top">
-                <div className="Landing-greeting">
-                    Hi {titleize(userInfo.fullname || userInfo.username)},
-                    welcome to
-                </div>
-                <div className="Landing-logo">
-                    <DataHubLogo size={8} />
-                </div>
-                <div className="Landing-desc">{descriptionDOM}</div>
+    const LandingHeader = (
+        <div className="Landing-top">
+            <div className="Landing-greeting">
+                Hi {titleize(userInfo.fullname || userInfo.username)}, welcome
+                to
             </div>
-            <div className="Landing-bottom">
-                <Columns>
-                    <Column>
-                        <DataHubSidebarUIGuide />
-                    </Column>
-                </Columns>
-                <Columns>
-                    <Column>
-                        <Title size={5} weight={'bold'}>
-                            Did you know?
-                        </Title>
-                        <p>{hint}</p>
-                    </Column>
-                </Columns>
-                <Columns>
-                    <Column>
-                        <Title weight={'bold'} size={5}>
-                            Recent DataDocs
-                        </Title>
-                        <div className="Landing-list">{getRecentDOM()}</div>
-                    </Column>
-                    <Column>
-                        <Title weight={'bold'} size={5}>
-                            Favorite DataDocs
-                        </Title>
-                        <div className="Landing-list">{getFavoriteDOM()}</div>
-                    </Column>
-                </Columns>
+            <div className="Landing-logo">
+                <DataHubLogo size={5} />
             </div>
+            <div className="Landing-desc">{descriptionDOM}</div>
         </div>
     );
+
+    const LandingFooter = (
+        <div className="Landing-bottom">
+            <Columns>
+                <Column>
+                    <DataHubSidebarUIGuide />
+                </Column>
+            </Columns>
+            <Columns>
+                <Column>
+                    <Title size={5} weight={'bold'}>
+                        Did you know?
+                    </Title>
+                    <p>{hint}</p>
+                </Column>
+            </Columns>
+            <Columns>
+                <Column>
+                    <Title weight={'bold'} size={5}>
+                        Recent DataDocs
+                    </Title>
+                    <div className="Landing-list">{getRecentDOM()}</div>
+                </Column>
+                <Column>
+                    <Title weight={'bold'} size={5}>
+                        Favorite DataDocs
+                    </Title>
+                    <div className="Landing-list">{getFavoriteDOM()}</div>
+                </Column>
+            </Columns>
+        </div>
+    );
+
+    return (
+        <div className="Landing flex-column">
+            {LandingHeader}
+            <div className="Landing-middle">{children}</div>
+            {LandingFooter}
+        </div>
+    );
+};
+
+export const Landing: React.FC = () => {
+    useBrowserTitle();
+
+    const customLandingConfig = window.CUSTOM_LANDING_PAGE;
+    if (customLandingConfig?.mode === 'replace') {
+        return customLandingConfig.renderer();
+    }
+
+    return <DefaultLanding>{customLandingConfig?.renderer()}</DefaultLanding>;
 };

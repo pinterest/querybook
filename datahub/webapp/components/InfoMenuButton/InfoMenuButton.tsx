@@ -79,7 +79,7 @@ export const InfoMenuButton: React.FunctionComponent = () => {
                         })
                     }
                 >
-                    Tours
+                    Tutorials
                 </MenuItem>
             </Menu>
         );
