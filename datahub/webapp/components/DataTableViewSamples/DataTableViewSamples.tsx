@@ -134,11 +134,15 @@ export const DataTableViewSamples: React.FunctionComponent<IDataTableViewSamples
     );
 
     const dispatch: Dispatch = useDispatch();
-    const queryEngines = useSelector((state: IStoreState) =>
-        Object.values(state.queryEngine.queryEngineById).filter(
-            (engine) => engine.metastore_id === schema.metastore_id
-        )
-    );
+    const queryEngines = useSelector((state: IStoreState) => {
+        const queryEngineIds =
+            state.environment.environmentEngineIds[
+                state.environment.currentEnvironmentId
+            ] ?? [];
+        return queryEngineIds
+            .map((engineId) => state.queryEngine.queryEngineById[engineId])
+            .filter((engine) => engine?.metastore_id === schema.metastore_id);
+    });
 
     const loadDataTableSamples = React.useCallback(
         async () =>
