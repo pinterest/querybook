@@ -5,18 +5,27 @@
             "admin_guide/setup_guide",
             "admin_guide/general_config",
             "admin_guide/infra_config",
+            "admin_guide/deployment_guide",
+            "admin_guide/sharing_and_security",
             "admin_guide/plugins",
             "admin_guide/add_custom_jobs",
+            "admin_guide/customize_html",
+            "admin_guide/embedded_iframe",
             "admin_guide/troubleshoot"
         ],
         "Developer Guide": [
             "developer_guide/developer_setup",
+            "developer_guide/run_db_migration",
+            "developer_guide/add_auth",
             "developer_guide/add_query_engine",
             "developer_guide/add_metastore",
-            "developer_guide/add_auth",
+            "developer_guide/add_result_store",
             "developer_guide/add_exporter",
-            "developer_guide/run_db_migration"
+            "developer_guide/add_engine_status_checker",
+            "developer_guide/add_notifier",
+            "developer_guide/add_query_result_transform"
         ],
-        "User Guide": ["user_guide/api_token"]
+        "User Guide": ["user_guide/api_token"],
+        "Changelog": ["changelog/may_2020_2_3_0", "changelog/jan_2020_2_1_0"]
     }
 }

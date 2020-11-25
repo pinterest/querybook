@@ -2,11 +2,12 @@
 id: quick_start
 title: Quick Start
 sidebar_label: Quick Start
+slug: /
 ---
 
 After cloning the repo, run the following
 
-```
+```sh
 make
 ```
 

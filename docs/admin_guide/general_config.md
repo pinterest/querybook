@@ -12,6 +12,10 @@ The first user that installs DataHub gets the "Admin" role. Admins can add other
 
 In the next section we will go over different things that can be configured in the Admin tools.
 
+:::info
+Checkout [Sharing & Security](./sharing_and_security.md) to learn how to configure access permission for these entities.
+:::
+
 #### Environment
 
 Environment ensures users on DataHub are only allowed to access to information/query they have permission to. All DataDocs, Query Engines are attached to some environments.
@@ -23,6 +27,8 @@ Here are all the fields needed when creating an environment:
 -   Archived: Once archived, environments cannot be accessed on the website.
 -   Environment description: A short description of the environment which will appear as a tooltip on the environment picker.
 -   Logo Url: By default an environment's icon is shown as an square button with the first letter of the environment's name in it. You can also supply a custom image.
+-   Hidden: If a user do not have access to the environment, hide the environment option.
+-   Shareable: If turned off, DataDocs will be private by default, and query executions can only be viewed by the owner.
 
 Once an environment is created, you can use `Add/Remove User` to add/remove user access to an environment.
 

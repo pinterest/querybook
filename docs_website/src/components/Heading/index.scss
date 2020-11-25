@@ -1,0 +1,21 @@
+.Heading {
+    margin-bottom: 2rem;
+
+    .Heading-key {
+        font-size: var(--small-text-size);
+        color: var(--ifm-color-emphasis-500);
+        margin-left: 2px; // align with title
+    }
+    .Heading-title {
+        color: var(--ifm-color-emphasis-900);
+        font-size: var(--xxlarge-text-size);
+        font-weight: 800;
+        line-height: 2.5rem;
+        margin-bottom: 0.5rem;
+    }
+    .Heading-subtitle {
+        font-size: var(--med-text-size);
+        color: var(--ifm-color-emphasis-700);
+        margin-left: 1px; // align with title
+    }
+}

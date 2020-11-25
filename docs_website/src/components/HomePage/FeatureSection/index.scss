@@ -1,0 +1,49 @@
+.FeatureSection {
+    --ifm-link-decoration: underline;
+
+    .Feature-Header {
+        margin-bottom: 3rem;
+
+        .Feature-Header-key {
+            font-size: var(--small-text-size);
+            color: var(--ifm-color-emphasis-500);
+        }
+        .Feature-Header-title {
+            color: var(--ifm-color-emphasis-900);
+            font-size: var(--xxlarge-text-size);
+            font-weight: 800;
+            line-height: 2.5rem;
+            margin-bottom: 0.5rem;
+        }
+        .Feature-Header-subtitle {
+            font-size: var(--med-text-size);
+            color: var(--ifm-color-emphasis-700);
+        }
+    }
+    .Feature-Items {
+        margin-bottom: 2rem;
+
+        .feature-item {
+            cursor: pointer;
+            padding: 10px 10px;
+            &:not(:last-child) {
+                border-bottom: 1px solid var(--ifm-color-emphasis-200);
+            }
+
+            .feature-item-title {
+                font-size: var(--large-text-size);
+                color: var(--ifm-color-emphasis-800);
+                font-weight: 700;
+            }
+            .feature-item-content {
+                font-size: var(--small-text-size);
+                color: var(--ifm-color-emphasis-600);
+                margin-left: 1px; // to align with title
+            }
+        }
+        .feature-item-image {
+            display: flex;
+            align-items: center;
+        }
+    }
+}
