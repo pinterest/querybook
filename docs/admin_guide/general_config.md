@@ -27,8 +27,8 @@ Here are all the fields needed when creating an environment:
 -   Archived: Once archived, environments cannot be accessed on the website.
 -   Environment description: A short description of the environment which will appear as a tooltip on the environment picker.
 -   Logo Url: By default an environment's icon is shown as an square button with the first letter of the environment's name in it. You can also supply a custom image.
--   Hidden: If a user do not have access to the environment, hide the environment option.
--   Shareable: If turned off, DataDocs will be private by default, and query executions can only be viewed by the owner.
+-   Hidden: if a user does not have access to the environment, hide the environment.
+-   Shareable: If turned off, DataDocs will be private by default and query executions can only be viewed by the owner.
 
 Once an environment is created, you can use `Add/Remove User` to add/remove user access to an environment.
 

@@ -13,7 +13,7 @@ To understand how security & access restrictions work, let's first go over the c
 -   Query Engines
 -   Query Executions
 
-All of these entities can be connected to each other into a tree where the environment is the root node. All DataDocs are required to be inside a single environment whereas query engines have many to many relationships with environments. Each query engine can belong to a metastore, and every metastore is associated with 0 or more tables/schemas. Last, each query execution must belong to a query engine.
+All of these entities can be connected to each other as a tree where the environment is the root node. All DataDocs are required to be inside a single environment whereas query engines have many to many relationships with environments. Each query engine can belong to a single metastore, and every metastore is associated with 0 or more tables/schemas. Last, each query execution must belong to a query engine.
 
 When checking if a user has access to a certain entity in DataHub, DataHub would walk up the tree all the way to environments. Since there are many to many relationships, an entity may be related to multiple environments. If the user can access any one of them, then they can access the entity.
 
