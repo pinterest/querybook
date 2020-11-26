@@ -107,7 +107,7 @@ module.exports = {
                     ],
                 },
             ],
-            copyright: `Copyright © ${new Date().getFullYear()} Pinterest`,
+            copyright: `Copyright © ${new Date().getFullYear()} Pinterest. Built with Docusaurus.`,
         },
     },
 };
