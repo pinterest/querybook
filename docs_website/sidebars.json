@@ -25,7 +25,8 @@
             "developer_guide/add_notifier",
             "developer_guide/add_query_result_transform"
         ],
-        "User Guide": ["user_guide/api_token"],
-        "Changelog": ["changelog/may_2020_2_3_0", "changelog/jan_2020_2_1_0"]
+        "Changelog": ["changelog/may_2020_2_3_0", "changelog/jan_2020_2_1_0"],
+        "Contributing": ["contributing/overview"],
+        "User Guide": ["user_guide/api_token"]
     }
 }
