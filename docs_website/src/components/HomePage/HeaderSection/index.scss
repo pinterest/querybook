@@ -1,0 +1,46 @@
+.HeaderSection {
+    .hero {
+        background-color: var(--ifm-background-color);
+        padding: 2rem;
+    }
+    .container {
+        text-align: center;
+
+        .hero__title {
+            font-size: var(--xxlarge-text-size);
+            margin-bottom: 0;
+        }
+        .hero__subtitle {
+            font-size: var(--large-text-size);
+            color: var(--ifm-color-emphasis-500);
+        }
+    }
+
+    .DataHubTutorialVideo iframe {
+        @media only screen and (min-width: 768px) {
+            /* For pc scren: */
+            width: 600px;
+            height: 340px;
+        }
+    }
+
+    .HeaderActions {
+        margin-top: 2rem;
+        flex-wrap: wrap;
+
+        > .button {
+            margin-right: 1rem;
+            margin-bottom: 1rem;
+        }
+    }
+
+    .used-by {
+        margin-bottom: 0.4rem;
+    }
+
+    .used-by-logos {
+        > a:not(:first-child) {
+            margin-left: 1rem;
+        }
+    }
+}

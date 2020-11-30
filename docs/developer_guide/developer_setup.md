@@ -10,7 +10,7 @@ Here is how to setup dev tools before contributing to DataHub
 
 THIS PART IS IMPORTANT! This is required so that pre-commit hook can be used correctly.
 
-```
+```sh
 git clone ...
 
 cd ../
@@ -27,12 +27,12 @@ yarn install
 
 Run the following command
 
-```
+```sh
 yarn dev --env.DATAHUB_UPSTREAM=(Put your backend api server url here)
 ```
 
 If you want to bypass cookie of upsteam do this
 
-```
+```sh
 yarn dev --env.DATAHUB_UPSTREAM=(Put your backend api server url here) --env.DATAHUB_COOKIE=(Put backend api cookie here)
 ```

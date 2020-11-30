@@ -35,10 +35,10 @@ Depending on the use case, transformers/analyzers/detectors can be added to Data
 
 For org specific use cases, you can add transformers/analyzers/detectors by setting the following variables in the window object in the web plugin (See this [Plugin Guide](../admin_guide/plugins.md) to learn how to set up plugins for DataHub). They are:
 
-```
-window.CUSTOM_COLUMN_STATS_ANALYZERS
-window.CUSTOM_COLUMN_DETECTORS
-window.CUSTOM_COLUMN_TRANSFORMERS
+```js
+window.CUSTOM_COLUMN_STATS_ANALYZERS;
+window.CUSTOM_COLUMN_DETECTORS;
+window.CUSTOM_COLUMN_TRANSFORMERS;
 ```
 
 The typing for these variables are defined in App.tsx for reference.

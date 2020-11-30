@@ -11,7 +11,7 @@ Please run migrations when makeing changes to sqlalchemy schema definitions
 If datadocs are not showing up in search results and
 if when you run `make` you get the following message in the bash console:
 
-```
+```sh
 elasticsearch    | [2019-03-27T20:35:00,273][INFO ][o.e.x.m.p.NativeController] [kcqBkjB] Native controller process has stopped - no new native processes can be started
 ```
 

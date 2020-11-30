@@ -1,12 +1,21 @@
 .DS_Store
 .idea/*
 *.iml
+.env.local
+.env.development.local
+.env.test.local
+.env.production.local
+
 
 package-lock.json
 # jenkins job should not delete .env
 .env/
 
-yarn-error.log
+# Frontend logs
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+
 
 # Build files
 dist/
@@ -22,10 +31,16 @@ __pycache__/
 celerybeat.pid
 
 # ignore for testing/custom settings
-node_modules/*
+**/node_modules
 .vscode/*
 *.pyc
 .vscode.env
 
 # Jest coverage files
 datahub/webapp/coverage/
+
+
+# Documentation site
+.docusaurus
+.cache-loader
+/build

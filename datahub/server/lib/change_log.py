@@ -7,6 +7,34 @@ from const.path import CHANGE_LOG_PATH
 __change_logs = None
 
 
+def generate_change_log(raw_text: str) -> str:
+    # Since the markdown is used for the documentation site
+    # We need to preprocess it so that it can be presentable
+    # within DataHub
+
+    # TODO: either move the changelog completely to documentation site
+    #       or come up with a solution that can be compatible with both
+
+    lines = raw_text.split("\n")
+    filtered_lines = []
+
+    # Remove --- blocks from markdown
+    inside_comment = False
+    for line in lines:
+        if line.startswith("---"):
+            inside_comment = not inside_comment
+        if not inside_comment:
+            filtered_lines.append(line)
+
+    # Add "static" prefix to image path
+    filtered_lines = [
+        line.replace("![](/changelog/", "![](/static/changelog/")
+        for line in filtered_lines
+    ]
+
+    return markdown2.markdown("\n".join(filtered_lines))
+
+
 def load_all_change_logs():
     # Eventually there will be too many changelogs
     # TODO: add a maximum number of change logs to load
@@ -16,10 +44,13 @@ def load_all_change_logs():
         change_log_files = sorted(os.listdir(CHANGE_LOG_PATH), reverse=True)
         for filename in change_log_files:
             with open(os.path.join(CHANGE_LOG_PATH, "./{}".format(filename))) as f:
+                changelog_date = filename.split(".")[0]
                 __change_logs.append(
                     {
-                        "date": filename.split(".")[0],
-                        "content": markdown2.markdown(f.read()),
+                        "date": changelog_date,
+                        "content": generate_change_log(
+                            f"{changelog_date}\n" + f.read()
+                        ),
                     }
                 )
     return __change_logs

@@ -1,0 +1,17 @@
+.UsersSection {
+    .UserReview {
+        height: 100%;
+        display: flex;
+        flex-direction: column;
+        justify-content: space-between;
+
+        .UserReview-comment {
+            font-style: italic;
+        }
+        .UserReview-name {
+            font-size: var(--xsmall-text-size);
+            color: var(--ifm-color-emphasis-500);
+            text-align: right;
+        }
+    }
+}

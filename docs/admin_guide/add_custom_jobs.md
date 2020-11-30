@@ -9,7 +9,7 @@ Please use the plugin repo to add custom jobs.
 
 When adding a job, use the following format:
 
-```
+```py
     '[name of the task]': {
         'task': '[import path of the task]',
         'schedule': '0 0 * * *',  # cron schedule

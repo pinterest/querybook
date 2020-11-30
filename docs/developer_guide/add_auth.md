@@ -12,14 +12,14 @@ To add a new authentication, add a new file under <project_root>/datahub/server/
 
 -   login(request) (**required**): A function that logs in the user. One common implementation would be:
 
-```
+```py
 def login(request):
     return login_manager.login(request)
 ```
 
 -   init_app(app) (**required**): A function that initializes the authentication class. Commonly used to register any callback endpoints. One common implementation would be:
 
-```
+```py
 def init_app(app):
     login_manager.init_app(app)
 ```

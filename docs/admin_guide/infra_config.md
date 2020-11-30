@@ -6,7 +6,9 @@ sidebar_label: Infra Config
 
 ## Overview
 
-<b>THIS GUIDE IS ONLY FOR INFRASTRUCTURE SETUP, PLEASE READ [GENERAL CONFIG](../admin_guide/general_config.md) FOR GENERIC CONFIGS</b>
+:::caution
+THIS GUIDE IS ONLY FOR INFRASTRUCTURE SETUP, PLEASE READ THE [GENERAL CONFIG](../admin_guide/general_config.md) TO CONFIGURE ENTITIES SUCH AS QUERY ENGINE & ACCESS PERMISSION.
+:::
 
 Eventhrough DataHub can be launched without any configuration, it is absolutely required for more powerful infrastructure/flexible customization. In this guide we will walkthrough different kind of environment settings you can set for DataHub. You can see all possible options and default values in this repo by checking out `datahub/config/datahub_default_config.yaml`.
 

@@ -1,0 +1,78 @@
+:root {
+    // --ifm-color-primary-lightest: #151515;
+    // --ifm-color-primary-lighter: #121212;
+    // --ifm-color-primary-light: #121212;
+    // --ifm-color-primary: #101010;
+    // --ifm-color-primary-dark: #0e0e0e;
+    // --ifm-color-primary-darker: #0e0e0e;
+    // --ifm-color-primary-darkest: #0b0b0b;
+
+    --xxxsmall-text-size: 0.6rem;
+    --xxsmall-text-size: 0.7rem;
+    --xsmall-text-size: 0.8rem;
+    --small-text-size: 0.9rem;
+    --text-size: 1rem;
+    --med-text-size: 1.25rem;
+    --large-text-size: 1.5rem;
+    --xlarge-text-size: 2rem;
+    --xxlarge-text-size: 2.5rem;
+    --xxxlarge-text-size: 3rem;
+}
+
+// GENERAL CSS CLASS
+
+.text {
+    color: var(--ifm-color-emphasis-800);
+}
+
+.subtext {
+    color: var(--ifm-color-emphasis-500);
+}
+
+// flex classes
+.flex-row {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+}
+
+.flex-column {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+.flex-right {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    justify-content: flex-end;
+}
+
+.flex-center {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    justify-content: center;
+}
+
+.flex-left {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    justify-content: flex-start;
+}
+
+.horizontal-space-between {
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.vertical-space-between {
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    align-items: center;
+}

@@ -6,7 +6,7 @@ sidebar_label: DB Migration
 
 To make changes to the SQLAlchemy database model definitions, you need to run the following migrations:
 
-```
+```sh
 # Edit datahub/alembic.ini sqlalchemy.url to point to the database
 # go into the docker terminal
 cd datahub
