@@ -42,18 +42,13 @@ module.exports = {
             },
             items: [
                 {
-                    href: 'https://github.com/pinterest/datahub',
-                    label: 'GitHub',
-                    position: 'right',
-                },
-                {
                     to: 'docs/',
                     label: 'Documentation',
                     position: 'right',
                 },
                 {
-                    to: '/tryout',
-                    label: 'Request Demo',
+                    to: '/waitlist',
+                    label: 'Waitlist',
                     position: 'right',
                 },
             ],
@@ -99,10 +94,6 @@ module.exports = {
                         {
                             label: 'Changelog',
                             to: 'docs/changelog',
-                        },
-                        {
-                            label: 'GitHub',
-                            href: 'https://github.com/pinterest/datahub',
                         },
                     ],
                 },
