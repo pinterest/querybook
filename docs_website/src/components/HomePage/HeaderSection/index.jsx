@@ -26,9 +26,9 @@ export default () => {
                     <div className="HeaderActions flex-center">
                         <Link
                             className="button button--primary button--lg"
-                            to="/tryout"
+                            to="/waitlist"
                         >
-                            Request Demo
+                            Waitlist
                         </Link>
                         <Link
                             className="button button--secondary button--lg"

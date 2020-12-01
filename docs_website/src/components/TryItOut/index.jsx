@@ -1,48 +1,26 @@
 import React from 'react';
 import Heading from '../Heading';
-import InputField from './InputField';
+import './index.scss';
 
 export default () => {
-    const [formValue, setFormValue] = React.useState({
-        name: '',
-        company: '',
-        email: '',
-    });
-
     return (
         <div className="TryItOut container">
             <Heading
                 headingKey="Interested?"
-                title="Request Demo"
-                subtitle="Please enter the contact information here and we will reach out to you."
+                title="Waitlist"
+                subtitle="Enter the contact information here and we will reach out once DataHub is ready to be open sourced."
             />
-            <div className="flex-column">
-                <InputField
-                    placeholder="Name"
-                    value={formValue.name}
-                    onChange={(name) =>
-                        setFormValue((oldValue) => ({ ...oldValue, name }))
-                    }
-                />
-                <InputField
-                    placeholder="Company"
-                    value={formValue.company}
-                    onChange={(company) =>
-                        setFormValue((oldValue) => ({ ...oldValue, company }))
-                    }
-                />
-                <InputField
-                    placeholder="Email"
-                    value={formValue.email}
-                    onChange={(email) =>
-                        setFormValue((oldValue) => ({ ...oldValue, email }))
-                    }
-                />
-                <div>
-                    <span className="button button--outline button--secondary">
-                        Submit
-                    </span>
-                </div>
+            <div className="form-container">
+                <iframe
+                    src="https://docs.google.com/forms/d/e/1FAIpQLScOkqT7IBIhWIGSnfeBEKZ0uNiHvCACpV4C_Jcyk6Z5gzNK-Q/viewform?embedded=true"
+                    width="100%"
+                    height="100%"
+                    frameborder="0"
+                    marginheight="0"
+                    marginwidth="0"
+                >
+                    Loading…
+                </iframe>
             </div>
         </div>
     );
