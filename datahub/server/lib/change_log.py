@@ -61,7 +61,7 @@ def get_change_log_list(limit=None, date_after=None):
 
     change_logs_list = []
     for change_log in islice(change_logs, 0, limit):
-        if date_after is not None and change_log["date"] < date_after:
+        if date_after is not None and change_log["date"] <= date_after:
             break
         change_logs_list.append(change_log)
     return change_logs_list

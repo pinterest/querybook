@@ -32,6 +32,7 @@ celerybeat.pid
 
 # ignore for testing/custom settings
 **/node_modules
+node_modules
 .vscode/*
 *.pyc
 .vscode.env
