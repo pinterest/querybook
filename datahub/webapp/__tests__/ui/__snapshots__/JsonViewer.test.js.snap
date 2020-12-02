@@ -12,7 +12,7 @@ exports[`matches enzyme snapshots matches snapshot 1`] = `
 
 exports[`matches test renderer snapshot serializes the styles 1`] = `
 <div
-  className="sc-bdfBwQ joUYLa JsonViewer"
+  className="JsonViewer sc-bdVaJa cyihmS"
 >
   {
     "test": "test"

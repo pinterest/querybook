@@ -9,7 +9,7 @@ exports[`matches enzyme snapshots matches snapshot 1`] = `
 
 exports[`matches test renderer snapshot serializes the styles 1`] = `
 <a
-  className="sc-bdfBwQ fQYtYk"
+  className="sc-bdVaJa kvKKjL"
   href="https://test.com"
   onMouseDown={[Function]}
 />

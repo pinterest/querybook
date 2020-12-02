@@ -1,8 +1,45 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
 exports[`matches enzyme snapshots matches snapshot 1`] = `
-<div
-  className="sc-bdfBwQ iEvDpo Columns"
+<StyledComponent
+  forwardedComponent={
+    Object {
+      "$$typeof": Symbol(react.forward_ref),
+      "attrs": Array [
+        Object {
+          "className": "Columns",
+        },
+      ],
+      "componentStyle": ComponentStyle {
+        "componentId": "sc-bdVaJa",
+        "isStatic": true,
+        "rules": Array [
+          "
+    display: flex;
+    margin-left: -12px;
+    margin-right: -12px;
+    margin-top: -8px;
+
+    .columns:last-child {
+        margin-bottom: -8px;
+    }
+    .columns:not(:last-child) {
+        margin-bottom: 8px;
+    }
+",
+        ],
+      },
+      "displayName": "styled.div",
+      "foldedComponentIds": Array [],
+      "render": [Function],
+      "styledComponentId": "sc-bdVaJa",
+      "target": "div",
+      "toString": [Function],
+      "warnTooManyClasses": [Function],
+      "withComponent": [Function],
+    }
+  }
+  forwardedRef={null}
 >
   <styled.div>
     Test
@@ -10,20 +47,20 @@ exports[`matches enzyme snapshots matches snapshot 1`] = `
   <styled.div>
     Test
   </styled.div>
-</div>
+</StyledComponent>
 `;
 
 exports[`matches test renderer snapshot serializes the styles 1`] = `
 <div
-  className="sc-bdfBwQ iEvDpo Columns"
+  className="sc-bdVaJa Columns cbtqjA"
 >
   <div
-    className="sc-gsTCUz vuYDo Column"
+    className="sc-bwzfXH Column iypiRz"
   >
     Test
   </div>
   <div
-    className="sc-gsTCUz vuYDo Column"
+    className="sc-bwzfXH Column iypiRz"
   >
     Test
   </div>

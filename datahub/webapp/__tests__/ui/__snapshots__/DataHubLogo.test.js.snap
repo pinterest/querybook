@@ -36,7 +36,7 @@ exports[`matches enzyme snapshots matches snapshot 1`] = `
 
 exports[`matches test renderer snapshot serializes the styles 1`] = `
 <span
-  className="sc-bdfBwQ kaxqOP"
+  className="sc-bdVaJa jtnFdk"
   size={2}
 >
   <span
