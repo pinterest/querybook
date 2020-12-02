@@ -22,10 +22,10 @@ exports[`matches enzyme snapshots matches snapshot 1`] = `
 
 exports[`matches test renderer snapshot serializes the styles 1`] = `
 <div
-  className="sc-bdfBwQ fQYtYk Menu"
+  className="sc-bdVaJa Menu kvKKjL"
 >
   <span
-    className="sc-gsTCUz MenuItem"
+    className="sc-bwzfXH MenuItem uTxCW"
   >
     <span
       className="flex-row flex1"

@@ -1,6 +1,7 @@
 .StatusIcon {
+    display: inline-flex;
     color: var(--color-null);
-    margin: 1.5px 5px 1.5px 0px;
+    margin-right: 6px;
     i {
         vertical-align: middle;
     }

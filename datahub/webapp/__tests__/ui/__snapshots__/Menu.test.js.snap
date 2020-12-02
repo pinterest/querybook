@@ -1,33 +1,62 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
 exports[`matches enzyme snapshots matches snapshot 1`] = `
-<div
-  className="sc-bdfBwQ fQYtYk Menu"
+<StyledComponent
+  forwardedComponent={
+    Object {
+      "$$typeof": Symbol(react.forward_ref),
+      "attrs": Array [
+        Object {
+          "className": "Menu",
+        },
+      ],
+      "componentStyle": ComponentStyle {
+        "componentId": "sc-bdVaJa",
+        "isStatic": false,
+        "rules": Array [
+          "
+    ",
+          [Function],
+          ";
+",
+        ],
+      },
+      "displayName": "styled.div",
+      "foldedComponentIds": Array [],
+      "render": [Function],
+      "styledComponentId": "sc-bdVaJa",
+      "target": "div",
+      "toString": [Function],
+      "warnTooManyClasses": [Function],
+      "withComponent": [Function],
+    }
+  }
+  forwardedRef={null}
 >
   <styled.span>
     <styled.div />
   </styled.span>
   <styled.div />
   <styled.div />
-</div>
+</StyledComponent>
 `;
 
 exports[`matches test renderer snapshot serializes the styles 1`] = `
 <div
-  className="sc-bdfBwQ fQYtYk Menu"
+  className="sc-bdVaJa Menu kvKKjL"
 >
   <span
-    className="sc-gsTCUz MenuItem"
+    className="sc-bwzfXH MenuItem uTxCW"
   >
     <div
-      className="sc-eCssSg geCxVH MenuItemPing"
+      className="sc-ifAKCX MenuItemPing cLYKhy"
     />
   </span>
   <div
-    className="sc-hKgILt hOpHjq MenuDivider"
+    className="sc-bxivhb MenuDivider hOHROt"
   />
   <div
-    className="sc-dlfnbm MenuInfoItem"
+    className="sc-htpNat MenuInfoItem KtFsv"
   />
 </div>
 `;

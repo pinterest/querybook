@@ -1,19 +1,52 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
 exports[`matches enzyme snapshots matches snapshot 1`] = `
-<div
-  className="sc-bdfBwQ ftYXGo Level horizontal-space-between "
+<StyledComponent
+  forwardedComponent={
+    Object {
+      "$$typeof": Symbol(react.forward_ref),
+      "attrs": Array [
+        Object {
+          "className": "Level horizontal-space-between ",
+        },
+      ],
+      "componentStyle": ComponentStyle {
+        "componentId": "sc-bdVaJa",
+        "isStatic": false,
+        "rules": Array [
+          "
+    ",
+          [Function],
+          ";
+
+    ",
+          [Function],
+          ";
+",
+        ],
+      },
+      "displayName": "styled.div",
+      "foldedComponentIds": Array [],
+      "render": [Function],
+      "styledComponentId": "sc-bdVaJa",
+      "target": "div",
+      "toString": [Function],
+      "warnTooManyClasses": [Function],
+      "withComponent": [Function],
+    }
+  }
+  forwardedRef={null}
 >
   <styled.div />
-</div>
+</StyledComponent>
 `;
 
 exports[`matches test renderer snapshot serializes the styles 1`] = `
 <div
-  className="sc-bdfBwQ ftYXGo Level horizontal-space-between "
+  className="sc-bdVaJa Level horizontal-space-between  hGZceS"
 >
   <div
-    className="sc-gsTCUz LevelItem  flex-row"
+    className="sc-bwzfXH LevelItem  flex-row uTxCW"
   />
 </div>
 `;
