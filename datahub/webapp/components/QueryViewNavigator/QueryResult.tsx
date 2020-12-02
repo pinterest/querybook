@@ -30,7 +30,7 @@ export const QueryResult: React.FunctionComponent<IProps> = ({
 
     return (
         <div className={className} onClick={() => onClick(queryExecution)}>
-            <div className="exec-title horizontal-space-between mb4">
+            <div className="exec-header horizontal-space-between mb4">
                 <div className="flex-row">
                     <StatusIcon
                         status={queryStatusToStatusIcon[queryExecution.status]}
