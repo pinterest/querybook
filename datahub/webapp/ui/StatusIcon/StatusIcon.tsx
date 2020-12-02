@@ -29,6 +29,7 @@ export const StatusIcon: React.FunctionComponent<IStatusIconProps> = ({
         className: classNames({
             StatusIcon: true,
             [status]: true,
+            'flex-center': true,
         }),
     };
     if (tooltip) {

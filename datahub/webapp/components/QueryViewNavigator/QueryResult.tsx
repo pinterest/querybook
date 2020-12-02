@@ -30,13 +30,17 @@ export const QueryResult: React.FunctionComponent<IProps> = ({
 
     return (
         <div className={className} onClick={() => onClick(queryExecution)}>
-            <Title size={6} className="exec-title flex-row mb12">
-                <StatusIcon
-                    status={queryStatusToStatusIcon[queryExecution.status]}
-                />
-                <span className="mr8">Execution {queryId}</span>
+            <div className="exec-title horizontal-space-between mb4">
+                <div className="flex-row">
+                    <StatusIcon
+                        status={queryStatusToStatusIcon[queryExecution.status]}
+                    />
+                    <Title size={6} className="mr8">
+                        Execution {queryId}
+                    </Title>
+                </div>
                 <Tag>{queryEngineById[queryExecution.engine_id].name}</Tag>
-            </Title>
+            </div>
             <Title subtitle size={7} className="query-context mb4">
                 {queryCode.slice(0, 60)}
             </Title>
