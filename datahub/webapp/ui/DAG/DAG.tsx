@@ -53,13 +53,6 @@ export const DAG: React.FunctionComponent<IProps> = ({
     const setScaleDebounced = debounce(setScale, 300);
 
     React.useEffect(() => {
-        console.log('DAG did mount');
-        return () => {
-            console.log('DAG will unmount');
-        };
-    }, []);
-
-    React.useEffect(() => {
         const g = new DagreD3.graphlib.Graph()
             .setGraph({
                 rankdir: rankDir || 'LR',
