@@ -53,6 +53,13 @@ export const DAG: React.FunctionComponent<IProps> = ({
     const setScaleDebounced = debounce(setScale, 300);
 
     React.useEffect(() => {
+        console.log('DAG did mount');
+        return () => {
+            console.log('DAG will unmount');
+        };
+    }, []);
+
+    React.useEffect(() => {
         const g = new DagreD3.graphlib.Graph()
             .setGraph({
                 rankdir: rankDir || 'LR',
@@ -113,34 +120,36 @@ export const DAG: React.FunctionComponent<IProps> = ({
         };
     }, [rankDir, nodes, edges]);
 
+    // Zoom the graph to the focusNode
     React.useEffect(() => {
         if (graph && d3Zoom && focusNode) {
             const svg = d3.select(`#${graphId} svg`);
             const svgWidth = parseFloat(svg.style('width').slice(0, -2));
             const svgHeight = parseFloat(svg.style('height').slice(0, -2));
+            const d3FocusNode = d3.select(`#node${focusNode.id}`);
 
-            const transformString = d3
-                .select(`#node${focusNode.id}`)
-                .attr('transform');
-            const translation = transformString
-                .substring(
-                    transformString.indexOf('(') + 1,
-                    transformString.indexOf(')')
-                )
-                .split(',')
-                .map(Number);
+            if (!d3FocusNode.empty()) {
+                const transformString = d3FocusNode.attr('transform');
+                const translation = transformString
+                    .substring(
+                        transformString.indexOf('(') + 1,
+                        transformString.indexOf(')')
+                    )
+                    .split(',')
+                    .map(Number);
 
-            svg.transition()
-                .duration(750)
-                .call(
-                    d3Zoom.transform as any,
-                    d3.zoomIdentity
-                        .translate(
-                            -1 * translation[0] * scale + 0.5 * svgWidth,
-                            -1 * translation[1] * scale + 0.5 * svgHeight
-                        )
-                        .scale(scale)
-                );
+                svg.transition()
+                    .duration(750)
+                    .call(
+                        d3Zoom.transform as any,
+                        d3.zoomIdentity
+                            .translate(
+                                -1 * translation[0] * scale + 0.5 * svgWidth,
+                                -1 * translation[1] * scale + 0.5 * svgHeight
+                            )
+                            .scale(scale)
+                    );
+            }
         }
     }, [graph, d3Zoom, focusNode]);
 
