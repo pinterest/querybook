@@ -1,49 +1,13 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
 exports[`matches enzyme snapshots matches snapshot 1`] = `
-<StyledComponent
-  forwardedComponent={
-    Object {
-      "$$typeof": Symbol(react.forward_ref),
-      "attrs": Array [],
-      "componentStyle": ComponentStyle {
-        "componentId": "sc-bdVaJa",
-        "isStatic": false,
-        "rules": Array [
-          "
-    margin-top: ",
-          [Function],
-          ";
-    margin-bottom: ",
-          [Function],
-          ";
-    height: ",
-          [Function],
-          ";
-    background-color: ",
-          [Function],
-          ";
-    margin-left: -4px;
-    margin-right: -4px;
-",
-        ],
-      },
-      "displayName": "styled.hr",
-      "foldedComponentIds": Array [],
-      "render": [Function],
-      "styledComponentId": "sc-bdVaJa",
-      "target": "hr",
-      "toString": [Function],
-      "warnTooManyClasses": [Function],
-      "withComponent": [Function],
-    }
-  }
-  forwardedRef={null}
+<hr
+  className="sc-bdfBwQ fVVgFx"
 />
 `;
 
 exports[`matches test renderer snapshot serializes the styles 1`] = `
 <hr
-  className="sc-bdVaJa fKCxyC"
+  className="sc-bdfBwQ fVVgFx"
 />
 `;
