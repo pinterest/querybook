@@ -35,7 +35,7 @@ dev_image:
 	docker build --pull -t datahub-dev . --build-arg PRODUCTION=false
 
 docs:
-	docker-compose -f docs_website/docker-compose.yml --project-directory=. up
+	docker-compose -f docs_website/docker-compose.yml --project-directory=. up --build
 
 install:
 	make install_pip_runtime_dependencies

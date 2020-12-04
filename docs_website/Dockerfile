@@ -6,5 +6,6 @@ COPY docs_website/yarn.lock .
 RUN yarn install
 COPY docs_website/ /opt/docs_website
 COPY docs /opt/docs
+RUN yarn run build
 
-ENTRYPOINT yarn start --port ${PORT}
+ENTRYPOINT yarn run docusaurus serve --build --port ${PORT} --host 0.0.0.0
