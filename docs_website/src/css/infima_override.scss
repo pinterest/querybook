@@ -1,0 +1,27 @@
+@media only screen and (min-width: 1024px) {
+    .navbar {
+        .navbar__inner {
+            max-width: var(--ifm-container-width);
+            margin: auto;
+        }
+    }
+}
+
+.navbar {
+    background-color: transparent;
+    &:not(.navbar-sidebar--show) {
+        backdrop-filter: blur(5px);
+    }
+}
+
+body {
+    &.no-nav-border {
+        .navbar {
+            box-shadow: none;
+        }
+    }
+}
+
+// :root {
+//     --ifm-navbar-background-color: transparent;
+// }

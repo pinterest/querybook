@@ -25,7 +25,7 @@ export default () => {
         <div className="container DeploymentSection HomePageSection">
             <Heading
                 headingKey="Deployment"
-                title="Setup & deployment in minutes."
+                title="Setup & deploy in minutes."
             />
             <Grid
                 itemPerRow={2}

@@ -2,6 +2,7 @@ import React from 'react';
 import useBaseUrl from '@docusaurus/useBaseUrl';
 import Link from '@docusaurus/Link';
 import './index.scss';
+import GradientText from './GradientText';
 
 export default () => {
     return (
@@ -9,11 +10,21 @@ export default () => {
             <div className="hero ">
                 <div className="container">
                     <h1 className="hero__title">
-                        Discover, Analyze, and Collaborate
+                        <GradientText
+                            text="Discover"
+                            className="text-discover"
+                        />
+                        ,
+                        <GradientText text="Analyze" className="text-analyze" />
+                        , and{' '}
+                        <GradientText
+                            text="Collaborate"
+                            className="text-collaborate"
+                        />
                     </h1>
                     <p className="hero__subtitle">
-                        DataHub is Pinterest’s open-sourced big data portal via
-                        a notebook interface.
+                        <b>DataHub</b> is Pinterest’s open-sourced big data
+                        portal via a notebook interface.
                     </p>
                     <div className="DataHubTutorialVideo">
                         <iframe
