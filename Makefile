@@ -1,4 +1,5 @@
 SHELL := /bin/bash
+.PHONY: bundled_off prod_web prod_worker prod_scheduler docs remove_running_dev_image clean
 
 bundled: dev_image
 	docker-compose up
@@ -18,7 +19,6 @@ scheduler: dev_image
 terminal: dev_image
 	docker-compose -f containers/docker-compose.dev.yml run terminal
 
-
 prod_web:
 	docker-compose -f containers/docker-compose.prod.yml run web
 
@@ -34,12 +34,8 @@ prod_image:
 dev_image:
 	docker build --pull -t datahub-dev . --build-arg PRODUCTION=false
 
-docs: docs_image
+docs:
 	docker-compose -f docs_website/docker-compose.yml --project-directory=. up
-
-docs_image:
-	docker build --file docs_website/Dockerfile -t docusaurus-doc .
-
 
 install:
 	make install_pip_runtime_dependencies

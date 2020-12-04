@@ -1,0 +1,13 @@
+version: '2.1'
+
+# volumes:
+#   node_modules:
+services:
+    docs:
+        build:
+            context: .
+            dockerfile: ./docs_website/Dockerfile
+        container_name: datahub_docs
+        network_mode: 'host'
+        environment:
+            PORT: ${PORT:-3000}
