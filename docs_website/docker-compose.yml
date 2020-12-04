@@ -1,7 +1,5 @@
 version: '2.1'
 
-# volumes:
-#   node_modules:
 services:
     docs:
         build:
