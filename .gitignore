@@ -44,4 +44,4 @@ datahub/webapp/coverage/
 # Documentation site
 .docusaurus
 .cache-loader
-/build
+build
