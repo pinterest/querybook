@@ -1,5 +1,17 @@
 .ImageModalButton {
     cursor: pointer;
+    position: relative;
+    .image-magnify-icon {
+        color: white;
+        position: absolute;
+        left: 4%;
+        bottom: 10%;
+
+        opacity: 0.5;
+    }
+    &:hover .image-magnify-icon {
+        opacity: 1;
+    }
 }
 
 .ImageModal {

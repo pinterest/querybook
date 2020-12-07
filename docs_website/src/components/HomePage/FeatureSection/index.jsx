@@ -1,4 +1,5 @@
 import React from 'react';
+import clsx from 'clsx';
 import useBaseUrl from '@docusaurus/useBaseUrl';
 import { pluginFeatures, keyFeatures } from './content';
 import Heading from '../../Heading';
@@ -20,12 +21,16 @@ export default ({ featureType = 'key' }) => {
             />
             <div className="Feature-Items">
                 <div className="row">
-                    <div className="col col--6">
+                    <div className="col col--4">
                         {featureConfig.featureItems.map((entry, idx) => (
                             <div
                                 key={idx}
                                 onClick={() => setImageIndex(idx)}
-                                className="feature-item"
+                                className={clsx(
+                                    'feature-item',
+                                    imageIndex === idx &&
+                                        'feature-item-selected'
+                                )}
                             >
                                 <div className="feature-item-title">
                                     {entry.title}
@@ -36,7 +41,7 @@ export default ({ featureType = 'key' }) => {
                             </div>
                         ))}
                     </div>
-                    <div className="col col--6 feature-item-image">
+                    <div className="col col--8 feature-item-image">
                         <ImageModal>
                             <Image
                                 url={

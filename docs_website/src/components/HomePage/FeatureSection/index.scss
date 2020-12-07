@@ -29,14 +29,21 @@
             &:not(:last-child) {
                 border-bottom: 1px solid var(--ifm-color-emphasis-200);
             }
+            &:hover .feature-item-title {
+                color: var(--ifm-color-primary);
+            }
+            &.feature-item-selected .feature-item-title {
+                color: var(--ifm-color-primary-dark);
+            }
 
             .feature-item-title {
-                font-size: var(--large-text-size);
+                font-size: var(--med-text-size);
                 color: var(--ifm-color-emphasis-800);
                 font-weight: 700;
+                transition: color 0.5s;
             }
             .feature-item-content {
-                font-size: var(--small-text-size);
+                font-size: var(--xsmall-text-size);
                 color: var(--ifm-color-emphasis-600);
                 margin-left: 1px; // to align with title
             }

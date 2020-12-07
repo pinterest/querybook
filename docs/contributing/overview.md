@@ -67,8 +67,8 @@ To increase the chances that your pull request will be accepted:
 
 ## Help
 
-Start by reading the developer starter guide [this guide](docs/developer_guide/developer_setup.md) to setup DataHub/
-If you're having trouble using this project, please check the [developer guides](docs/developer_guide/)
+Start by reading the developer starter guide [this guide](../developer_guide/developer_setup.md) to setup DataHub/
+If you're having trouble using this project, please check the [developer guides](../developer_guide/)
 and searching for solutions in the existing open and closed issues.
 
 You can also reach out to us at datahub@pinterest.com or on our [Slack](https://join.slack.com/t/datahubchat/shared_invite/zt-dpr988af-9VwGkjcmPhqTmRoA2Tm3gg).

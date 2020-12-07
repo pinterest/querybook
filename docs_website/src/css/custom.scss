@@ -1,12 +1,4 @@
 :root {
-    // --ifm-color-primary-lightest: #151515;
-    // --ifm-color-primary-lighter: #121212;
-    // --ifm-color-primary-light: #121212;
-    // --ifm-color-primary: #101010;
-    // --ifm-color-primary-dark: #0e0e0e;
-    // --ifm-color-primary-darker: #0e0e0e;
-    // --ifm-color-primary-darkest: #0b0b0b;
-
     --xxxsmall-text-size: 0.6rem;
     --xxsmall-text-size: 0.7rem;
     --xsmall-text-size: 0.8rem;
@@ -76,3 +68,5 @@
     justify-content: space-between;
     align-items: center;
 }
+
+@import './infima_override.scss';

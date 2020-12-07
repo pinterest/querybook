@@ -1,0 +1,172 @@
+.GradientText {
+    .gradient-content {
+        background-image: linear-gradient(90deg, #e60023, #fdc900);
+        background-clip: text;
+        -webkit-text-fill-color: transparent;
+    }
+
+    display: inline-flex;
+    position: relative;
+    &::before {
+        position: absolute;
+        top: 0;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        font-weight: var(--ifm-heading-font-weight);
+        line-height: var(--ifm-heading-line-height);
+        white-space: nowrap;
+    }
+}
+.GradientText.text-discover {
+    .gradient-content {
+        background-image: linear-gradient(
+            to right top,
+            #f65b50,
+            #f55e52,
+            #f46153,
+            #f36355,
+            #f26657,
+            #f47157,
+            #f67c59,
+            #f7875b,
+            #fa9c61,
+            #fcb16b,
+            #fec578,
+            #ffd889
+        );
+        animation: animation-text-discover 6s infinite;
+    }
+    &::before {
+        content: 'Discover';
+        animation: animation-text-discover-rev 6s infinite;
+    }
+}
+
+.GradientText.text-analyze {
+    .gradient-content {
+        background-image: linear-gradient(
+            to right top,
+            #34657f,
+            #3f7890,
+            #4b8c9f,
+            #5aa1ae,
+            #6bb5bc,
+            #6bc0c0,
+            #6fcbc3,
+            #76d6c3,
+            #74dab5,
+            #7bdca2,
+            #8bdd8d,
+            #9fdd75
+        );
+        animation: animation-text-analyze 6s infinite;
+    }
+    &::before {
+        content: 'Analyze';
+        animation: animation-text-analyze-rev 6s infinite;
+    }
+}
+
+.GradientText.text-collaborate {
+    .gradient-content {
+        background-image: linear-gradient(
+            to right top,
+            #534b94,
+            #734b99,
+            #914a9a,
+            #ae4797,
+            #c8458f,
+            #d54e90,
+            #e15891,
+            #ec6292,
+            #f0759f,
+            #f386ac,
+            #f697b9,
+            #f9a8c5
+        );
+        animation: animation-text-collaborate 6s infinite;
+    }
+    &::before {
+        content: 'Collaborate';
+        animation: animation-text-collaborate-rev 6s infinite;
+    }
+}
+
+@keyframes animation-text-discover {
+    0%,
+    27%,
+    100% {
+        opacity: 1;
+    }
+    33%,
+    94% {
+        opacity: 0;
+    }
+}
+
+@keyframes animation-text-discover-rev {
+    0%,
+    27%,
+    100% {
+        opacity: 0;
+    }
+    33%,
+    94% {
+        opacity: 1;
+    }
+}
+
+@keyframes animation-text-analyze {
+    0%,
+    27% {
+        opacity: 0;
+    }
+    33%,
+    60% {
+        opacity: 1;
+    }
+    66%,
+    100% {
+        opacity: 0;
+    }
+}
+
+@keyframes animation-text-analyze-rev {
+    0%,
+    27% {
+        opacity: 1;
+    }
+    33%,
+    60% {
+        opacity: 0;
+    }
+    66%,
+    100% {
+        opacity: 1;
+    }
+}
+
+@keyframes animation-text-collaborate {
+    0%,
+    60%,
+    100% {
+        opacity: 0;
+    }
+    66%,
+    94% {
+        opacity: 1;
+    }
+}
+
+@keyframes animation-text-collaborate-rev {
+    0%,
+    60%,
+    100% {
+        opacity: 1;
+    }
+    66%,
+    94% {
+        opacity: 0;
+    }
+}

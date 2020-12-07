@@ -8,8 +8,22 @@ import DeploymentSection from '../components/HomePage/DeploymentSection';
 import UsersSection from '../components/HomePage/UsersSection';
 import TryItOut from '../components/TryItOut';
 import './index.scss';
+import useWindowScroll from '../hooks/useWindowScroll';
 
 export default () => {
+    const scrolled = useWindowScroll() > 0;
+    React.useEffect(() => {
+        const scrollClassName = 'no-nav-border';
+        if (scrolled) {
+            document.body.classList.remove(scrollClassName);
+        } else {
+            document.body.classList.add(scrollClassName);
+        }
+        return () => {
+            document.body.classList.remove(scrollClassName);
+        };
+    }, [scrolled]);
+
     return (
         <Layout>
             <HeaderSection />

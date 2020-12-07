@@ -8,6 +8,7 @@
             margin: 5px;
             padding: 10px;
             background: white; // not impacted by dark mode
+            filter: grayscale(1);
             img {
                 object-fit: contain;
             }

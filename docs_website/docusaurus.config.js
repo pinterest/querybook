@@ -1,7 +1,7 @@
 module.exports = {
     title: 'DataHub',
     tagline: 'Data made simple.',
-    url: 'https://your-docusaurus-test-site.com',
+    url: 'https://trydatahub.com',
     baseUrl: '/',
     organizationName: 'pinterest',
     projectName: 'datahub-documentation-site',
