@@ -10,7 +10,7 @@ import { sanitizeUrlTitle } from 'lib/utils';
 import history from 'lib/router-history';
 import { formatError } from 'lib/utils/error';
 import { getQueryString, replaceQueryString } from 'lib/utils/query-string';
-import { setBrowserTitle } from 'lib/dataHubUI';
+import { setBrowserTitle } from 'lib/globalUI';
 
 import { fullTableSelector } from 'redux/dataSources/selector';
 import { IStoreState, Dispatch } from 'redux/store/types';

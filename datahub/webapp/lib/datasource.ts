@@ -1,5 +1,5 @@
 import axios, { AxiosRequestConfig, Canceler } from 'axios';
-import { sendNotification, setSessionExpired } from 'lib/dataHubUI';
+import { sendNotification, setSessionExpired } from 'lib/globalUI';
 import { formatError } from 'lib/utils/error';
 
 export interface ICancelablePromise<T> extends Promise<T> {

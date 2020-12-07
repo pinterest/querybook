@@ -1,6 +1,6 @@
 from typing import List
 
-from env import DataHubSettings
+from env import SiteSettings
 from lib.result_store.stores.base_store import BaseReader, BaseUploader
 from logic.result_store import (
     get_key_value_store,
@@ -68,8 +68,8 @@ class DBUploader(BaseUploader):
     def write(self, data: str) -> bool:
         data_len = len(data)
         if (
-            DataHubSettings.DB_MAX_UPLOAD_SIZE > 0
-            and self._chunks_length + data_len > DataHubSettings.DB_MAX_UPLOAD_SIZE
+            SiteSettings.DB_MAX_UPLOAD_SIZE > 0
+            and self._chunks_length + data_len > SiteSettings.DB_MAX_UPLOAD_SIZE
         ):
             return False
 

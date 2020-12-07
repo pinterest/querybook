@@ -1,5 +1,5 @@
 import requests
-from env import DataHubSettings
+from env import SiteSettings
 from lib.notify.base_notifier import BaseNotifier
 
 
@@ -14,7 +14,7 @@ class SlackNotifier(BaseNotifier):
 
     def notify(self, user, message):
         to = f"@{user.username}"
-        token = DataHubSettings.DATAHUB_SLACK_TOKEN
+        token = SiteSettings.DATAHUB_SLACK_TOKEN
         url = "https://slack.com/api/chat.postMessage"
         headers = {"Authorization": "Bearer {}".format(token)}
         text = self._convert_markdown(message)

@@ -15,12 +15,12 @@ import {
 } from 'lib/sql-helper/sql-lexer';
 import { renderTemplatedQuery } from 'lib/templated-query';
 import { sleep, enableResizable } from 'lib/utils';
-import { sendNotification } from 'lib/dataHubUI';
+import { sendNotification } from 'lib/globalUI';
 import { IDataQueryCellMeta } from 'const/datadoc';
 
 import * as dataSourcesActions from 'redux/dataSources/action';
 import { createQueryExecution } from 'redux/queryExecutions/action';
-import { setSidebarTableId } from 'redux/dataHubUI/action';
+import { setSidebarTableId } from 'redux/globalUI/action';
 import {
     queryEngineSelector,
     queryEngineByIdEnvSelector,

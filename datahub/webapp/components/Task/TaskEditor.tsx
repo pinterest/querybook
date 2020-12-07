@@ -10,7 +10,7 @@ import {
     cronToRecurrence,
     validateCronForReuccrence,
 } from 'lib/utils/cron';
-import { sendNotification, sendConfirm } from 'lib/dataHubUI';
+import { sendNotification, sendConfirm } from 'lib/globalUI';
 import { useDataFetch } from 'hooks/useDataFetch';
 
 import { ITaskSchedule } from 'const/schedule';

@@ -16,7 +16,7 @@ import { BoardList } from 'components/BoardList/BoardList';
 
 import './BoardItemAddButton.scss';
 import { Loading } from 'ui/Loading/Loading';
-import { sendNotification } from 'lib/dataHubUI';
+import { sendNotification } from 'lib/globalUI';
 
 export interface ICreateDataDocButtonProps extends Partial<IconButtonProps> {
     // from own Props

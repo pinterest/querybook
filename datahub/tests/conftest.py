@@ -32,7 +32,7 @@ def pytest_unconfigure(config):
 
 @pytest.fixture(scope="session")
 def db_engine(monkeysession):
-    from env import DataHubSettings
+    from env import SiteSettings
 
     tempfile_path = os.path.join(tempfile.gettempdir(), "test.db")
     database_conn = "sqlite:///" + tempfile_path
@@ -50,7 +50,7 @@ def db_engine(monkeysession):
     from app import db
 
     monkeysession.setattr(db, "get_db_engine", mock_get_db_engine)
-    monkeysession.setattr(DataHubSettings, "DATABASE_CONN", database_conn, raising=True)
+    monkeysession.setattr(SiteSettings, "DATABASE_CONN", database_conn, raising=True)
 
     yield engine
 

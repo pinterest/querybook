@@ -1,7 +1,7 @@
 import redis
 import functools
 
-from env import DataHubSettings
+from env import SiteSettings
 
 
 __redis = None
@@ -10,7 +10,7 @@ __redis = None
 def get_redis():
     global __redis
     if not __redis:
-        __redis = redis.from_url(DataHubSettings.REDIS_URL)
+        __redis = redis.from_url(SiteSettings.REDIS_URL)
     return __redis
 
 

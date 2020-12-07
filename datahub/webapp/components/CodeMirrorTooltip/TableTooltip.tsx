@@ -3,7 +3,7 @@ import { ContentState } from 'draft-js';
 import { IDataColumn, IDataTable, IDataSchema } from 'const/metastore';
 import { ShowMoreText } from 'ui/ShowMoreText/ShowMoreText';
 import { IconButton } from 'ui/Button/IconButton';
-import { setSidebarTableId } from 'lib/dataHubUI';
+import { setSidebarTableId } from 'lib/globalUI';
 import { DataTableTags } from 'components/DataTableTags/DataTableTags';
 
 interface IProps {

@@ -17,14 +17,14 @@ Eventhrough DataHub can be launched without any configuration, it is absolutely 
 There are two ways to pass custom configs to DataHub. The first way is using a custom config yaml file. You can write out the file and then pass it through datahub using docker volumes. For example you can add this in the docker-compose file:
 
 ```yaml
-- path_to_my_custom_config.yaml:/opt/datahub/datahub/config/datahub_config.yaml
+- path_to_my_custom_config.yaml:/opt/datahub/datahub/config/site_config.yaml
 ```
 
 Otherwise you can also pass the environment variable directly when launching the docker image. The order of precedence for a config settings is as the follows:
 
 1. Environment variables (highest priority)
-2. datahub_config.yaml
-3. datahub_default_config.yaml (lowest priority)
+2. site_config.yaml
+3. site_default_config.yaml (lowest priority)
 
 ## Infrastructure
 

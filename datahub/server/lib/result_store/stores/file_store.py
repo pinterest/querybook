@@ -1,7 +1,7 @@
 import csv
 import os
 from lib.result_store.stores.base_store import BaseReader, BaseUploader
-from env import DataHubSettings
+from env import SiteSettings
 
 # to use, enable docker volume inside docker-compose.yml
 # uncomment lines `- file:/opt/store/`
@@ -28,8 +28,8 @@ class FileUploader(BaseUploader):
         # write each line into csv
         data_len = len(data)
         if (
-            DataHubSettings.DB_MAX_UPLOAD_SIZE > 0
-            and self._chunks_length + data_len > DataHubSettings.DB_MAX_UPLOAD_SIZE
+            SiteSettings.DB_MAX_UPLOAD_SIZE > 0
+            and self._chunks_length + data_len > SiteSettings.DB_MAX_UPLOAD_SIZE
         ):
             return False
 

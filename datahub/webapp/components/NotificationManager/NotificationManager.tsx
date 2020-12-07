@@ -3,8 +3,8 @@ import { connect } from 'react-redux';
 import { Transition, animated, config } from 'react-spring/renderprops.cjs';
 import styled from 'styled-components';
 
-import * as datahubUIActions from 'redux/dataHubUI/action';
-import { INotificationInfo } from 'redux/dataHubUI/types';
+import * as globalUIActions from 'redux/globalUI/action';
+import { INotificationInfo } from 'redux/globalUI/types';
 import { IStoreState, Dispatch } from 'redux/store/types';
 import { Overlay } from 'ui/Overlay/Overlay';
 
@@ -109,14 +109,14 @@ class NotificationManagerComponent extends React.Component<IProps> {
 
 function mapStateToProps(state: IStoreState) {
     return {
-        notifications: state.dataHubUI.notifications,
+        notifications: state.globalUI.notifications,
     };
 }
 
 function mapDispatchToProps(dispatch: Dispatch) {
     return {
         popNotification: (id: string) =>
-            dispatch(datahubUIActions.popNotification(id)),
+            dispatch(globalUIActions.popNotification(id)),
     };
 }
 

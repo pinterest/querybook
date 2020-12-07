@@ -8,7 +8,7 @@ from sqlalchemy.exc import SQLAlchemyError, DisconnectionError
 from sqlalchemy import create_engine, event
 from sqlalchemy.orm import sessionmaker, scoped_session
 
-from env import DataHubSettings
+from env import SiteSettings
 from lib.logger import get_logger
 
 LOG = get_logger(__file__)
@@ -18,9 +18,9 @@ __session = None
 
 
 def get_db_engine(
-    conn_string=DataHubSettings.DATABASE_CONN,
-    pool_size=DataHubSettings.DATABASE_POOL_SIZE,
-    pool_recycle=DataHubSettings.DATABASE_POOL_RECYCLE,
+    conn_string=SiteSettings.DATABASE_CONN,
+    pool_size=SiteSettings.DATABASE_POOL_SIZE,
+    pool_recycle=SiteSettings.DATABASE_POOL_RECYCLE,
 ):
     global __engine
     if not __engine:

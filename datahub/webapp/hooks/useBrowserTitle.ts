@@ -1,5 +1,5 @@
 import { useEffect, useRef } from 'react';
-import { setBrowserTitle } from 'lib/dataHubUI';
+import { setBrowserTitle } from 'lib/globalUI';
 
 export function useBrowserTitle(title = '') {
     const oldTitle = useRef(document.title);

@@ -3,7 +3,7 @@ from collections import deque
 from itertools import islice
 from typing import List
 
-from env import DataHubSettings
+from env import SiteSettings
 from logic.result_store import string_to_csv
 
 LINE_TERMINATOR = "\n"
@@ -16,8 +16,8 @@ class FileDoesNotExist(Exception):
 class ChunkReader(metaclass=ABCMeta):
     def __init__(
         self,
-        read_size=DataHubSettings.STORE_READ_SIZE,
-        max_read_size=DataHubSettings.STORE_MAX_READ_SIZE,
+        read_size=SiteSettings.STORE_READ_SIZE,
+        max_read_size=SiteSettings.STORE_MAX_READ_SIZE,
     ):
         # The chunk read size
         self._read_size = read_size

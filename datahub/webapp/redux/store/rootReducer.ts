@@ -3,7 +3,7 @@ import { combineReducers } from 'redux';
 import adhocQuery from '../adhocQuery/reducer';
 import board from '../board/reducer';
 import dataDoc from '../dataDoc/reducer';
-import dataHubUI from '../dataHubUI/reducer';
+import globalUI from '../globalUI/reducer';
 import dataSources from '../dataSources/reducer';
 import dataTableSearch from '../dataTableSearch/reducer';
 import environment from '../environment/reducer';
@@ -21,7 +21,7 @@ export default combineReducers({
     adhocQuery,
     board,
     dataDoc,
-    dataHubUI,
+    globalUI,
     dataSources,
     dataTableSearch,
     environment,

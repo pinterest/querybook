@@ -1,7 +1,7 @@
 from typing import List
 
 from lib.result_store.stores.base_store import BaseReader, BaseUploader
-from env import DataHubSettings
+from env import SiteSettings
 from clients.s3_client import MultiPartUploader, S3FileReader, S3KeySigner
 
 
@@ -11,7 +11,7 @@ class S3Uploader(BaseUploader):
         self._uri = uri
 
     def start(self):
-        self._uploader = MultiPartUploader(DataHubSettings.STORE_BUCKET_NAME, self.uri)
+        self._uploader = MultiPartUploader(SiteSettings.STORE_BUCKET_NAME, self.uri)
 
     def write(self, data: str) -> bool:
         return self._uploader.write(data)
@@ -26,7 +26,7 @@ class S3Uploader(BaseUploader):
 
     @property
     def uri(self):
-        return f"{DataHubSettings.STORE_PATH_PREFIX}{self._uri}"
+        return f"{SiteSettings.STORE_PATH_PREFIX}{self._uri}"
 
 
 class S3Reader(BaseReader):
@@ -35,7 +35,7 @@ class S3Reader(BaseReader):
         self._reader = None
 
     def start(self):
-        self._reader = S3FileReader(DataHubSettings.STORE_BUCKET_NAME, self.uri)
+        self._reader = S3FileReader(SiteSettings.STORE_BUCKET_NAME, self.uri)
 
     def read_csv(self, number_of_lines: int) -> List[List[str]]:
         return self._reader.read_csv(number_of_lines)
@@ -55,10 +55,10 @@ class S3Reader(BaseReader):
         return True
 
     def get_download_url(self):
-        key_signer = S3KeySigner(DataHubSettings.STORE_BUCKET_NAME)
+        key_signer = S3KeySigner(SiteSettings.STORE_BUCKET_NAME)
         download_url = key_signer.generate_presigned_url(self.uri)
         return download_url
 
     @property
     def uri(self):
-        return f"{DataHubSettings.STORE_PATH_PREFIX}{self._uri}"
+        return f"{SiteSettings.STORE_PATH_PREFIX}{self._uri}"

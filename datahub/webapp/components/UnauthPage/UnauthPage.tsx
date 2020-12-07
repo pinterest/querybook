@@ -53,8 +53,8 @@ export class UnauthPage extends React.Component<
             );
 
         // This warning message is for whomever is using password_auth
-        // as it is an insecure way to register and use DataHub
-        const dataHubWarningMessage = showSignUp && (
+        // as it is an insecure way to register and signin
+        const loginFlowWarningMessage = showSignUp && (
             <div className="mb24">
                 <Message type="error">
                     <p>
@@ -76,7 +76,7 @@ export class UnauthPage extends React.Component<
         return (
             <Center>
                 <StyledUnauthPage>
-                    {dataHubWarningMessage}
+                    {loginFlowWarningMessage}
                     <Box>
                         {showSignUp && (
                             <Tabs

@@ -3,7 +3,7 @@ import { bind, memoize } from 'lodash-decorators';
 import React from 'react';
 import styled from 'styled-components';
 
-import { sendConfirm } from 'lib/dataHubUI';
+import { sendConfirm } from 'lib/globalUI';
 import { AsyncButton } from 'ui/AsyncButton/AsyncButton';
 import { Button } from 'ui/Button/Button';
 import { Level, LevelItem } from 'ui/Level/Level';

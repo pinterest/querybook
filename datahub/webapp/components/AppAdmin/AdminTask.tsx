@@ -5,7 +5,7 @@ import { useParams } from 'react-router-dom';
 import ds from 'lib/datasource';
 import { generateFormattedDate } from 'lib/utils/datetime';
 import history from 'lib/router-history';
-import { sendNotification } from 'lib/dataHubUI';
+import { sendNotification } from 'lib/globalUI';
 import { useDataFetch } from 'hooks/useDataFetch';
 
 import { ITaskSchedule, TaskType } from 'const/schedule';

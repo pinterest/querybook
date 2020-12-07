@@ -3,7 +3,7 @@ from celery.utils.log import get_task_logger
 from importlib import import_module
 
 from app.flask_app import celery
-from env import DataHubSettings
+from env import SiteSettings
 from lib.logger import get_logger
 
 from .run_query import run_query_task
@@ -42,7 +42,7 @@ LOG = get_task_logger(__name__)
 
 @celeryd_init.connect
 def configure_workers(sender=None, conf=None, **kwargs):
-    if DataHubSettings.PRODUCTION:
+    if SiteSettings.PRODUCTION:
         LOG.info(f"Starting PROD Celery worker: {sender}")
 
         from logic.query_execution import clean_up_query_execution

@@ -4,7 +4,7 @@ from celery import chain
 from const.data_doc import DataCellType
 from const.query_execution import QueryExecutionStatus
 from const.schedule import NotifyOn, TaskRunStatus
-from env import DataHubSettings
+from env import SiteSettings
 from lib.export.all_exporters import get_exporter
 from lib.logger import get_logger
 from lib.query_analysis.templating import render_templated_query
@@ -180,7 +180,7 @@ def on_datadoc_completion(
                 datadoc = datadoc_logic.get_data_doc_by_id(doc_id, session=session)
                 doc_title = datadoc.title or "Untitled"
                 env_name = datadoc.environment.name
-                doc_url = f"{DataHubSettings.PUBLIC_URL}/{env_name}/datadoc/{doc_id}/"
+                doc_url = f"{SiteSettings.PUBLIC_URL}/{env_name}/datadoc/{doc_id}/"
                 user = User.get(id=user_id, session=session)
 
                 notify_user(

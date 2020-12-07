@@ -5,7 +5,7 @@ import { useRouteMatch } from 'react-router-dom';
 import {
     setDataDocNavSection,
     getDataDocNavSectionConfigFromStore,
-} from 'redux/dataHubUI/action';
+} from 'redux/globalUI/action';
 import {
     recentDataDocsSelector,
     favoriteDataDocsSelector,
@@ -59,7 +59,7 @@ export const DataDocNavigator: React.FC = () => {
     );
 
     const sectionOpen = useSelector(
-        (state: IStoreState) => state.dataHubUI.dataDocNavigatorSectionOpen
+        (state: IStoreState) => state.globalUI.dataDocNavigatorSectionOpen
     );
     const setSectionOpen = useCallback(
         (section: string, value: boolean) =>

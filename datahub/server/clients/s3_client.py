@@ -1,7 +1,7 @@
 import boto3
 import botocore
 
-from env import DataHubSettings
+from env import SiteSettings
 from lib.utils.utf8 import split_by_last_invalid_utf8_char
 
 from .common import ChunkReader, FileDoesNotExist
@@ -21,7 +21,7 @@ class MultiPartUploader(object):
         self.is_first_upload = True
 
     def _upload_part(self, body):
-        if self._part_number > DataHubSettings.STORE_MAX_UPLOAD_CHUNK_NUM:
+        if self._part_number > SiteSettings.STORE_MAX_UPLOAD_CHUNK_NUM:
             return
 
         part = self._s3.upload_part(
@@ -46,12 +46,12 @@ class MultiPartUploader(object):
         Returns:
             bool -- Whether or not the upload is successful
         """
-        if self._part_number > DataHubSettings.STORE_MAX_UPLOAD_CHUNK_NUM:
+        if self._part_number > SiteSettings.STORE_MAX_UPLOAD_CHUNK_NUM:
             return False
 
         self.chunk.append(string)
         self.chunk_datasize += len(string)
-        if self.chunk_datasize > DataHubSettings.STORE_MIN_UPLOAD_CHUNK_SIZE:
+        if self.chunk_datasize > SiteSettings.STORE_MIN_UPLOAD_CHUNK_SIZE:
             self._upload_part("".join(self.chunk))
             self.chunk = []
             self.chunk_datasize = 0
@@ -97,8 +97,8 @@ class S3FileReader(ChunkReader):
         self,
         bucket_name,
         key,
-        read_size=DataHubSettings.STORE_READ_SIZE,
-        max_read_size=DataHubSettings.STORE_MAX_READ_SIZE,
+        read_size=SiteSettings.STORE_READ_SIZE,
+        max_read_size=SiteSettings.STORE_MAX_READ_SIZE,
     ):
         self._bucket_name = bucket_name
         self._key = key

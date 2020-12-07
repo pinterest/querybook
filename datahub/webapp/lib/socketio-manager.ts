@@ -1,7 +1,7 @@
 import { throttle } from 'lodash';
 import * as SocketIOClient from 'socket.io-client';
 
-import { sendNotification } from './dataHubUI';
+import { sendNotification } from './globalUI';
 
 /*
 This module manages all incoming websocket connections using socketIO,

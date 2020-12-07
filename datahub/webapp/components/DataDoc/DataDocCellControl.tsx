@@ -3,7 +3,7 @@ import classNames from 'classnames';
 import { titleize, sleep, copy } from 'lib/utils';
 
 import { IDataCellMeta } from 'const/datadoc';
-import { sendNotification } from 'lib/dataHubUI';
+import { sendNotification } from 'lib/globalUI';
 import { AsyncButton } from 'ui/AsyncButton/AsyncButton';
 import { Button } from 'ui/Button/Button';
 import { Dropdown } from 'ui/Dropdown/Dropdown';

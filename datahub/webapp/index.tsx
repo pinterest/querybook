@@ -13,7 +13,7 @@ import 'react-virtualized/styles.css';
 import 'draft-js/dist/Draft.css';
 
 import { App } from './components/App/App';
-import { setupOnDataHubClose } from 'lib/dataHubUI';
+import { setupOnWebPageClose } from 'lib/globalUI';
 
 ReactDOM.render(<App />, document.getElementById('root'));
-setupOnDataHubClose();
+setupOnWebPageClose();

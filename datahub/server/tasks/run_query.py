@@ -6,7 +6,7 @@ from celery.contrib.abortable import AbortableTask
 from celery.exceptions import SoftTimeLimitExceeded
 from celery.utils.log import get_task_logger
 from const.query_execution import QueryExecutionStatus
-from env import DataHubSettings
+from env import SiteSettings
 from lib.query_analysis import get_statement_ranges
 from lib.query_analysis.lineage import process_query
 from lib.query_executor.all_executors import get_executor_class
@@ -222,7 +222,7 @@ def send_out_notification(query_execution_id, session=None):
                     doc_id=doc_id,
                     cell_id=cell_id,
                     query_title=query_title,
-                    public_url=DataHubSettings.PUBLIC_URL,
+                    public_url=SiteSettings.PUBLIC_URL,
                     env_name=env_name,
                 ),
                 session=session,

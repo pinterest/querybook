@@ -4,7 +4,7 @@ import { Formik, FormikConfig } from 'formik';
 import { AsyncButton } from 'ui/AsyncButton/AsyncButton';
 import './SingleCRUD.scss';
 import { Button } from 'ui/Button/Button';
-import { sendNotification } from 'lib/dataHubUI';
+import { sendNotification } from 'lib/globalUI';
 import { getChangedObject } from 'lib/utils';
 
 export interface ISingleCRUDProps<T> extends Partial<FormikConfig<T>> {

@@ -26,7 +26,7 @@ import gspread
 # import requests
 
 from app.flask_app import flask_app
-from env import DataHubSettings
+from env import SiteSettings
 from logic.user import get_user_by_id, update_user_properties
 from lib.export.base_exporter import BaseExporter
 from lib.form import StructFormField, FormField
@@ -53,9 +53,7 @@ def create_google_flow(google_client_config):
         _google_flow = Flow.from_client_config(
             google_client_config,
             scopes=SCOPES,
-            redirect_uri="{}{}".format(
-                DataHubSettings.PUBLIC_URL, GSPREAD_OAUTH_CALLBACK
-            ),
+            redirect_uri="{}{}".format(SiteSettings.PUBLIC_URL, GSPREAD_OAUTH_CALLBACK),
         )
 
 

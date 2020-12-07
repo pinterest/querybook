@@ -4,7 +4,7 @@ import memoizeOne from 'memoize-one';
 import React from 'react';
 import { connect } from 'react-redux';
 
-import { sendNotification } from 'lib/dataHubUI';
+import { sendNotification } from 'lib/globalUI';
 import { QueryExecutionStatus } from 'const/queryExecution';
 import { IQueryExecution } from 'redux/queryExecutions/types';
 import * as queryExecutionsActions from 'redux/queryExecutions/action';

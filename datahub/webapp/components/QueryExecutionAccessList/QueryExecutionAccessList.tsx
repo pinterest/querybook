@@ -3,7 +3,7 @@ import { IQueryExecutionViewer } from 'const/queryExecution';
 import { IAccessRequest } from 'const/accessRequest';
 import { UserSelect } from 'components/UserSelect/UserSelect';
 import { IQueryExecution } from 'redux/queryExecutions/types';
-import { sendNotification } from 'lib/dataHubUI';
+import { sendNotification } from 'lib/globalUI';
 import { UserBadge } from 'components/UserBadge/UserBadge';
 import { Button } from 'ui/Button/Button';
 import { IconButton } from 'ui/Button/IconButton';

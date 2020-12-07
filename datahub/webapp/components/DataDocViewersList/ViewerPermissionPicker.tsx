@@ -7,7 +7,7 @@ import {
 } from 'lib/data-doc/datadoc-permission';
 import { Popover } from 'ui/Popover/Popover';
 import { MenuItem, MenuDivider, Menu } from 'ui/Menu/Menu';
-import { sendConfirm } from 'lib/dataHubUI';
+import { sendConfirm } from 'lib/globalUI';
 
 interface IProp {
     viewerInfo: IViewerInfo;

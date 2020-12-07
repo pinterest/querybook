@@ -6,7 +6,7 @@ from clients.google_client import (
     GoogleKeySigner,
 )
 from lib.result_store.stores.base_store import BaseReader, BaseUploader
-from env import DataHubSettings
+from env import SiteSettings
 
 
 class GoogleUploader(BaseUploader):
@@ -14,7 +14,7 @@ class GoogleUploader(BaseUploader):
         self._uri = uri
 
     def start(self):
-        self._uploader = GoogleUploadClient(DataHubSettings.STORE_BUCKET_NAME, self.uri)
+        self._uploader = GoogleUploadClient(SiteSettings.STORE_BUCKET_NAME, self.uri)
         self._uploader.start()
 
     def write(self, data: str) -> bool:
@@ -31,7 +31,7 @@ class GoogleUploader(BaseUploader):
 
     @property
     def uri(self):
-        return f"{DataHubSettings.STORE_PATH_PREFIX}{self._uri}"
+        return f"{SiteSettings.STORE_PATH_PREFIX}{self._uri}"
 
 
 class GoogleReader(BaseReader):
@@ -40,7 +40,7 @@ class GoogleReader(BaseReader):
         self._reader = None
 
     def start(self):
-        self._reader = GoogleDownloadClient(DataHubSettings.STORE_BUCKET_NAME, self.uri)
+        self._reader = GoogleDownloadClient(SiteSettings.STORE_BUCKET_NAME, self.uri)
 
     def read_csv(self, number_of_lines: int) -> List[List[str]]:
         return self._reader.read_csv(number_of_lines)
@@ -60,10 +60,10 @@ class GoogleReader(BaseReader):
         return True
 
     def get_download_url(self):
-        key_signer = GoogleKeySigner(DataHubSettings.STORE_BUCKET_NAME)
+        key_signer = GoogleKeySigner(SiteSettings.STORE_BUCKET_NAME)
         download_url = key_signer.generate_presigned_url(self.uri)
         return download_url
 
     @property
     def uri(self):
-        return f"{DataHubSettings.STORE_PATH_PREFIX}{self._uri}"
+        return f"{SiteSettings.STORE_PATH_PREFIX}{self._uri}"

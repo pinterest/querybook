@@ -7,7 +7,7 @@ import { IStoreState } from 'redux/store/types';
 import { IDataCell, IDataDoc, DataCellUpdateFields } from 'const/datadoc';
 import { DataDocContext } from 'context/DataDoc';
 
-import { sendNotification, sendConfirm } from 'lib/dataHubUI';
+import { sendNotification, sendConfirm } from 'lib/globalUI';
 import { getShareUrl } from 'lib/data-doc/data-doc-utils';
 
 import * as dataDocSelectors from 'redux/dataDoc/selector';

@@ -4,7 +4,7 @@ import json
 import re
 
 from const.impression import ImpressionItemType
-from env import DataHubSettings
+from env import SiteSettings
 from elasticsearch import Elasticsearch, RequestsHttpConnection
 
 from lib.utils.utils import (
@@ -44,15 +44,15 @@ ES_CONFIG = get_config_value("elasticsearch")
 def get_hosted_es():
     hosted_es = None
 
-    if ":" in DataHubSettings.ELASTICSEARCH_HOST:
-        host, port = DataHubSettings.ELASTICSEARCH_HOST.split(":")
+    if ":" in SiteSettings.ELASTICSEARCH_HOST:
+        host, port = SiteSettings.ELASTICSEARCH_HOST.split(":")
     else:
-        host = DataHubSettings.ELASTICSEARCH_HOST
+        host = SiteSettings.ELASTICSEARCH_HOST
         port = 9200  # Default port for elasticsearch
 
-    if DataHubSettings.ELASTICSEARCH_CONNECTION_TYPE == "naive":
+    if SiteSettings.ELASTICSEARCH_CONNECTION_TYPE == "naive":
         hosted_es = Elasticsearch(hosts=[host], port=port,)
-    elif DataHubSettings.ELASTICSEARCH_CONNECTION_TYPE == "aws":
+    elif SiteSettings.ELASTICSEARCH_CONNECTION_TYPE == "aws":
         # TODO: GENERALIZE THIS BEFORE OPEN SOURCE
         from boto3 import session as boto_session
         from lib.utils.assume_role_aws4auth import AssumeRoleAWS4Auth
@@ -60,7 +60,7 @@ def get_hosted_es():
         credentials = boto_session.Session().get_credentials()
         auth = AssumeRoleAWS4Auth(credentials, "us-east-1", "es",)
         hosted_es = Elasticsearch(
-            hosts=DataHubSettings.ELASTICSEARCH_HOST,
+            hosts=SiteSettings.ELASTICSEARCH_HOST,
             port=443,
             http_auth=auth,
             connection_class=RequestsHttpConnection,

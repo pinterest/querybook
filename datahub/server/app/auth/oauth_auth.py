@@ -20,7 +20,7 @@ import flask_login
 from requests_oauthlib import OAuth2Session
 
 from app.db import with_session, DBSession
-from env import DataHubSettings
+from env import SiteSettings
 from lib.logger import get_logger
 from logic.user import (
     get_user_by_name,
@@ -54,14 +54,12 @@ class OAuthLoginManager(object):
     @property
     def oauth_config(self):
         return {
-            "callback_url": "{}{}".format(
-                DataHubSettings.PUBLIC_URL, OAUTH_CALLBACK_PATH
-            ),
-            "client_id": DataHubSettings.OAUTH_CLIENT_ID,
-            "client_secret": DataHubSettings.OAUTH_CLIENT_SECRET,
-            "authorization_url": DataHubSettings.OAUTH_AUTHORIZATION_URL,
-            "token_url": DataHubSettings.OAUTH_TOKEN_URL,
-            "profile_url": DataHubSettings.OAUTH_USER_PROFILE,
+            "callback_url": "{}{}".format(SiteSettings.PUBLIC_URL, OAUTH_CALLBACK_PATH),
+            "client_id": SiteSettings.OAUTH_CLIENT_ID,
+            "client_secret": SiteSettings.OAUTH_CLIENT_SECRET,
+            "authorization_url": SiteSettings.OAUTH_AUTHORIZATION_URL,
+            "token_url": SiteSettings.OAUTH_TOKEN_URL,
+            "profile_url": SiteSettings.OAUTH_USER_PROFILE,
             "scope": "user",
         }
 

@@ -1,18 +1,18 @@
 import React from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 
-import * as datahubUIActions from 'redux/dataHubUI/action';
+import * as globalUIActions from 'redux/globalUI/action';
 import { IStoreState, Dispatch } from 'redux/store/types';
 import { ConfirmationMessage } from './ConfirmationMessage';
 
 export const ConfirmationManager: React.FunctionComponent = () => {
     const confirmation = useSelector(
-        (state: IStoreState) => state.dataHubUI.confirmation
+        (state: IStoreState) => state.globalUI.confirmation
     );
     const dispatch: Dispatch = useDispatch();
 
     const wrapOnConfirmationEnd = (callback?: () => any) => () => {
-        dispatch(datahubUIActions.removeConfirmation());
+        dispatch(globalUIActions.removeConfirmation());
         if (callback != null) {
             callback();
         }

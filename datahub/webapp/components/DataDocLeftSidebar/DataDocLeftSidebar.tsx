@@ -2,7 +2,7 @@ import classNames from 'classnames';
 import React, { useEffect } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 
-import { setSidebarTableId } from 'redux/dataHubUI/action';
+import { setSidebarTableId } from 'redux/globalUI/action';
 import { IStoreState } from 'redux/store/types';
 import { IDataCell } from 'const/datadoc';
 import { Button } from 'ui/Button/Button';
@@ -30,7 +30,7 @@ export const DataDocLeftSidebar: React.FunctionComponent<IProps> = ({
 }) => {
     const dispatch = useDispatch();
     const sidebarTableId = useSelector(
-        (state: IStoreState) => state.dataHubUI.sidebarTableId
+        (state: IStoreState) => state.globalUI.sidebarTableId
     );
     const clearSidebarTableId = () => dispatch(setSidebarTableId(null));
 

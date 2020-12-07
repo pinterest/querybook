@@ -25,10 +25,10 @@ export function pushNotification({
     timeout,
     onHide,
 }: Omit<INotificationInfo, 'id'>): ThunkResult<string> {
-    return (dispatch, state) => {
+    return (dispatch) => {
         const id = uniqueId('notification');
         dispatch({
-            type: '@@dataHubUI/PUSH_NOTIFICATION',
+            type: '@@globalUI/PUSH_NOTIFICATION',
             payload: {
                 id,
                 content,
@@ -43,7 +43,7 @@ export function pushNotification({
 
 export function popNotification(id: string): ThunkResult<void> {
     return (dispatch, getState) => {
-        const notification = getState().dataHubUI.notifications.find(
+        const notification = getState().globalUI.notifications.find(
             (n) => n.id === id
         );
         if (notification && notification.onHide) {
@@ -51,7 +51,7 @@ export function popNotification(id: string): ThunkResult<void> {
         }
 
         dispatch({
-            type: '@@dataHubUI/POP_NOTIFICATION',
+            type: '@@globalUI/POP_NOTIFICATION',
             payload: {
                 id,
             },
@@ -61,14 +61,14 @@ export function popNotification(id: string): ThunkResult<void> {
 
 export function setConfirmation(props): ISetConfirmationAction {
     return {
-        type: '@@dataHubUI/SET_CONFIRMATION',
+        type: '@@globalUI/SET_CONFIRMATION',
         payload: props,
     };
 }
 
 export function removeConfirmation(): IRemoveConfirmationAction {
     return {
-        type: '@@dataHubUI/REMOVE_CONFIRMATION',
+        type: '@@globalUI/REMOVE_CONFIRMATION',
     };
 }
 
@@ -76,7 +76,7 @@ export function loadAnnouncements(): ThunkResult<Promise<IAnnouncement[]>> {
     return async (dispatch, state) => {
         const { data } = await ds.fetch('/announcement/');
         dispatch({
-            type: '@@datahubUI/RECEIVE_ANNOUNCEMENTS',
+            type: '@@globalUI/RECEIVE_ANNOUNCEMENTS',
             payload: data,
         });
 
@@ -92,7 +92,7 @@ export function loadDismissedAnnouncements(): ThunkResult<Promise<number[]>> {
             )) || [];
 
         dispatch({
-            type: '@@datahubUI/RECEIVE_DISMISSED_ANNOUNCEMENT_IDS',
+            type: '@@globalUI/RECEIVE_DISMISSED_ANNOUNCEMENT_IDS',
             payload: ids,
         });
 
@@ -105,20 +105,20 @@ export function dismissAnnouncement(
 ): ThunkResult<Promise<void>> {
     return async (dispatch, getState) => {
         dispatch({
-            type: '@@datahubUI/DISMISS_ANNOUNCEMENT_ID',
+            type: '@@globalUI/DISMISS_ANNOUNCEMENT_ID',
             payload: itemId,
         });
 
         await localStore.set(
             DISMISSED_ANNOUNCEMENT_KEY,
-            getState().dataHubUI.dismissedAnnouncementIds
+            getState().globalUI.dismissedAnnouncementIds
         );
     };
 }
 
 export function setSidebarTableId(id: number): ISetSidebarTableId {
     return {
-        type: '@@datahubUI/SET_SIDEBAR_TABLE_ID',
+        type: '@@globalUI/SET_SIDEBAR_TABLE_ID',
         payload: id,
     };
 }
@@ -154,7 +154,7 @@ export function setDataDocNavSection(
 ): ThunkResult<void> {
     return (dispatch, getState) => {
         dispatch({
-            type: '@@datahubUI/SET_DATA_DOC_NAV_SECTION',
+            type: '@@globalUI/SET_DATA_DOC_NAV_SECTION',
             payload: {
                 section,
                 value,
@@ -163,7 +163,7 @@ export function setDataDocNavSection(
 
         localStore.set<DataDocNavSectionValue>(
             DATA_DOC_NAV_SECTION_KEY,
-            getState().dataHubUI.dataDocNavigatorSectionOpen
+            getState().globalUI.dataDocNavigatorSectionOpen
         );
     };
 }
@@ -179,7 +179,7 @@ export function getDataDocNavSectionConfigFromStore(): ThunkResult<void> {
                 DATA_DOC_NAV_SECTION_KEY
             )) ?? {};
         dispatch({
-            type: '@@datahubUI/RECEIVE_DATA_DOC_NAV_SECTION',
+            type: '@@globalUI/RECEIVE_DATA_DOC_NAV_SECTION',
             payload,
         });
     };

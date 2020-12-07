@@ -72,8 +72,8 @@ test('arrayGroupByField', () => {
 });
 
 test('linkifyLog', () => {
-    expect(utils.linkifyLog('https://www.datahub.com/')).toBe(
-        '<a target="_blank" rel="noopener noreferrer" href="https://www.datahub.com/">https://www.datahub.com/</a>'
+    expect(utils.linkifyLog('https://en.wikipedia.org/')).toBe(
+        '<a target="_blank" rel="noopener noreferrer" href="https://en.wikipedia.org/">https://en.wikipedia.org/</a>'
     );
 
     // testing basic string with query params

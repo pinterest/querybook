@@ -22,48 +22,48 @@ export interface INotificationInfo {
 }
 
 export interface IPushNotificationAction extends Action {
-    type: '@@dataHubUI/PUSH_NOTIFICATION';
+    type: '@@globalUI/PUSH_NOTIFICATION';
     payload: INotificationInfo;
 }
 
 export interface IPopNotificationAction extends Action {
-    type: '@@dataHubUI/POP_NOTIFICATION';
+    type: '@@globalUI/POP_NOTIFICATION';
     payload: {
         id: string;
     };
 }
 
 export interface ISetConfirmationAction extends Action {
-    type: '@@dataHubUI/SET_CONFIRMATION';
+    type: '@@globalUI/SET_CONFIRMATION';
     payload: IConfirmationMessageProps;
 }
 
 export interface IRemoveConfirmationAction extends Action {
-    type: '@@dataHubUI/REMOVE_CONFIRMATION';
+    type: '@@globalUI/REMOVE_CONFIRMATION';
 }
 
 export interface IReceiveAnnouncements extends Action {
-    type: '@@datahubUI/RECEIVE_ANNOUNCEMENTS';
+    type: '@@globalUI/RECEIVE_ANNOUNCEMENTS';
     payload: IAnnouncement[];
 }
 
 export interface IReceiveAnnouncementIds extends Action {
-    type: '@@datahubUI/RECEIVE_DISMISSED_ANNOUNCEMENT_IDS';
+    type: '@@globalUI/RECEIVE_DISMISSED_ANNOUNCEMENT_IDS';
     payload: number[];
 }
 
 export interface IDismissAnnouncementId extends Action {
-    type: '@@datahubUI/DISMISS_ANNOUNCEMENT_ID';
+    type: '@@globalUI/DISMISS_ANNOUNCEMENT_ID';
     payload: number;
 }
 
 export interface ISetSidebarTableId extends Action {
-    type: '@@datahubUI/SET_SIDEBAR_TABLE_ID';
+    type: '@@globalUI/SET_SIDEBAR_TABLE_ID';
     payload: number;
 }
 
 export interface ISetDataDocNavSection extends Action {
-    type: '@@datahubUI/SET_DATA_DOC_NAV_SECTION';
+    type: '@@globalUI/SET_DATA_DOC_NAV_SECTION';
     payload: {
         section: string;
         value: boolean;
@@ -71,11 +71,11 @@ export interface ISetDataDocNavSection extends Action {
 }
 
 export interface IReceiveDataDocNavSection extends Action {
-    type: '@@datahubUI/RECEIVE_DATA_DOC_NAV_SECTION';
+    type: '@@globalUI/RECEIVE_DATA_DOC_NAV_SECTION';
     payload: Record<string, boolean>;
 }
 
-export type DataHubUIAction =
+export type GlobalUIAction =
     | IPushNotificationAction
     | IPopNotificationAction
     | ISetConfirmationAction
@@ -88,7 +88,7 @@ export type DataHubUIAction =
     | ISetDataDocNavSection
     | IReceiveDataDocNavSection;
 
-export interface IDataHubUIState {
+export interface IGlobalUIState {
     announcements: IAnnouncement[];
     dismissedAnnouncementIds: number[];
 
@@ -104,5 +104,5 @@ export type ThunkResult<R> = ThunkAction<
     R,
     IStoreState,
     undefined,
-    DataHubUIAction
+    GlobalUIAction
 >;

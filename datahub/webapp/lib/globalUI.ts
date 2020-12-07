@@ -2,12 +2,12 @@ import { DEFAULT_NOTIFICATION_TIMEOUT } from 'components/NotificationManager/Not
 import { IConfirmationMessageProps } from 'components/ConfirmationManager/ConfirmationMessage';
 
 import { reduxStore } from 'redux/store';
-import * as datahubUIActions from 'redux/dataHubUI/action';
+import * as globalUIActions from 'redux/globalUI/action';
 import { Dispatch } from 'redux/store/types';
-import { INotificationInfo } from 'redux/dataHubUI/types';
+import { INotificationInfo } from 'redux/globalUI/types';
 
 export function sendConfirm(props: IConfirmationMessageProps) {
-    (reduxStore.dispatch as Dispatch)(datahubUIActions.setConfirmation(props));
+    (reduxStore.dispatch as Dispatch)(globalUIActions.setConfirmation(props));
 }
 
 export function sendAlert({
@@ -41,7 +41,7 @@ export function sendNotification(
     options?: Partial<INotificationInfo>
 ) {
     (reduxStore.dispatch as Dispatch)(
-        datahubUIActions.pushNotification({
+        globalUIActions.pushNotification({
             timeout: DEFAULT_NOTIFICATION_TIMEOUT,
             ...options,
             content,
@@ -49,8 +49,7 @@ export function sendNotification(
     );
 }
 
-export function setupOnDataHubClose() {
-    // This is
+export function setupOnWebPageClose() {
     window.addEventListener('beforeunload', (e) => {
         const state = reduxStore.getState();
         const { dataDocSavePromiseById } = state.dataDoc;
@@ -74,12 +73,12 @@ export function setupOnDataHubClose() {
 
 export function setSidebarTableId(tableId: number) {
     (reduxStore.dispatch as Dispatch)(
-        datahubUIActions.setSidebarTableId(tableId)
+        globalUIActions.setSidebarTableId(tableId)
     );
 }
 
 export function setSessionExpired() {
-    (reduxStore.dispatch as Dispatch)(datahubUIActions.setSessionExpired());
+    (reduxStore.dispatch as Dispatch)(globalUIActions.setSessionExpired());
 }
 
 export function setBrowserTitle(title = '', withSuffix = true) {

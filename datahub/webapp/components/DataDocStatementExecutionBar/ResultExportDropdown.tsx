@@ -18,7 +18,7 @@ import { tableToTSV } from 'lib/utils/table-export';
 import { Dropdown } from 'ui/Dropdown/Dropdown';
 import { Button } from 'ui/Button/Button';
 import { CopyPasteModal } from 'ui/CopyPasteModal/CopyPasteModal';
-import { sendNotification } from 'lib/dataHubUI';
+import { sendNotification } from 'lib/globalUI';
 import { Modal } from 'ui/Modal/Modal';
 import { Link } from 'ui/Link/Link';
 import { ListMenu } from 'ui/Menu/ListMenu';

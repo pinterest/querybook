@@ -2,18 +2,16 @@ from typing import List
 
 from .all_result_stores import ALL_RESULT_STORES
 from .stores.base_store import BaseReader, BaseUploader
-from env import DataHubSettings
+from env import SiteSettings
 
 
 class GenericUploader(BaseUploader):
     def __init__(self, uri):
         self._uri = uri
         self._uri_with_store_type = "{}://{}".format(
-            DataHubSettings.RESULT_STORE_TYPE, uri
+            SiteSettings.RESULT_STORE_TYPE, uri
         )
-        self._uploader = ALL_RESULT_STORES[DataHubSettings.RESULT_STORE_TYPE].uploader(
-            uri
-        )
+        self._uploader = ALL_RESULT_STORES[SiteSettings.RESULT_STORE_TYPE].uploader(uri)
 
     def start(self) -> None:
         self._uploader.start()

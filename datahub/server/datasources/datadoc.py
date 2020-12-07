@@ -10,7 +10,7 @@ from app.datasource import register, api_assert, with_impression
 from app.flask_app import socketio
 from app.db import DBSession, with_session
 from const.impression import ImpressionItemType
-from env import DataHubSettings
+from env import SiteSettings
 
 from lib.celery.cron import validate_cron
 from lib.form import validate_form
@@ -483,7 +483,7 @@ def send_datadoc_access_request_notification(doc_id, uid, session=None):
     data_doc = logic.get_data_doc_by_id(doc_id, session=session)
     environment = data_doc.environment
     data_doc_title = data_doc.title or "Untitled"
-    doc_url = f"{DataHubSettings.PUBLIC_URL}/{environment.name}/datadoc/{doc_id}/"
+    doc_url = f"{SiteSettings.PUBLIC_URL}/{environment.name}/datadoc/{doc_id}/"
 
     owner = user_logic.get_user_by_id(data_doc.owner_uid, session=session)
     doc_editors = [owner]
@@ -514,7 +514,7 @@ def send_add_datadoc_editor_email(doc_id, uid, read, write, session=None):
     read_or_write = "edit" if write else "view"
     data_doc_title = data_doc.title or "Untitled"
 
-    doc_url = f"{DataHubSettings.PUBLIC_URL}/{environment.name}/datadoc/{doc_id}/"
+    doc_url = f"{SiteSettings.PUBLIC_URL}/{environment.name}/datadoc/{doc_id}/"
 
     notify_user(
         user=invited_user,
@@ -648,7 +648,7 @@ def send_datadoc_transfer_notification(doc_id, next_owner_id, session=None):
 
     data_doc_title = data_doc.title or "Untitled"
 
-    doc_url = f"{DataHubSettings.PUBLIC_URL}/{environment.name}/datadoc/{doc_id}/"
+    doc_url = f"{SiteSettings.PUBLIC_URL}/{environment.name}/datadoc/{doc_id}/"
 
     notify_user(
         user=invited_user,

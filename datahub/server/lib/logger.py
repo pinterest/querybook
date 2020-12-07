@@ -1,6 +1,6 @@
 import logging
 import sys
-from env import DataHubSettings
+from env import SiteSettings
 
 
 def get_logger(module):
@@ -15,13 +15,13 @@ def get_logger(module):
         log_stream_handler.setFormatter(formatter)
         log.addHandler(log_stream_handler)
 
-        if DataHubSettings.LOG_LOCATION is not None:
-            log_file_handler = logging.FileHandler(DataHubSettings.LOG_LOCATION)
+        if SiteSettings.LOG_LOCATION is not None:
+            log_file_handler = logging.FileHandler(SiteSettings.LOG_LOCATION)
             log_file_handler.setFormatter(formatter)
             log.addHandler(log_file_handler)
     except IOError:
-        print("{} not found".format(DataHubSettings.LOG_LOCATION))
+        print("{} not found".format(SiteSettings.LOG_LOCATION))
     finally:
         # Avoid debug logs in production
-        log.setLevel(logging.INFO if DataHubSettings.PRODUCTION else logging.DEBUG)
+        log.setLevel(logging.INFO if SiteSettings.PRODUCTION else logging.DEBUG)
         return log

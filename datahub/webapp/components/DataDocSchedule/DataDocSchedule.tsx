@@ -1,7 +1,7 @@
 import React from 'react';
 import ds from 'lib/datasource';
 
-import { sendNotification } from 'lib/dataHubUI';
+import { sendNotification } from 'lib/globalUI';
 import { useDataFetch } from 'hooks/useDataFetch';
 import { Loading } from 'ui/Loading/Loading';
 import { ErrorMessage } from 'ui/Message/ErrorMessage';

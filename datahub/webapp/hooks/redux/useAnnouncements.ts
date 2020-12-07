@@ -2,7 +2,7 @@ import { useLocation } from 'react-router-dom';
 import { useMemo } from 'react';
 import { useSelector } from 'react-redux';
 
-import { visibleAnnouncementSelector } from 'redux/dataHubUI/selector';
+import { visibleAnnouncementSelector } from 'redux/globalUI/selector';
 
 export const useAnnouncements = () => {
     const location = useLocation();

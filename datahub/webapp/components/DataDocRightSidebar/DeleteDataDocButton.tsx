@@ -3,7 +3,7 @@ import { useDispatch } from 'react-redux';
 
 import { TooltipDirection } from 'const/tooltip';
 
-import { sendConfirm, sendNotification } from 'lib/dataHubUI';
+import { sendConfirm, sendNotification } from 'lib/globalUI';
 import { Dispatch } from 'redux/store/types';
 
 import * as dataDocActions from 'redux/dataDoc/action';

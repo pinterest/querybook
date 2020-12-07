@@ -8,7 +8,7 @@ import { Button } from 'ui/Button/Button';
 import { Icon } from 'ui/Icon/Icon';
 import { Title } from 'ui/Title/Title';
 
-export const DataHubSidebarTourSteps: ReactourStep[] = [
+export const SidebarTourSteps: ReactourStep[] = [
     {
         selector: '.EnvironmentAppSidebar',
         content: ({ goTo }) => (
@@ -207,7 +207,7 @@ export const DataHubSidebarUIGuide: React.FC = () => {
             <Tour
                 isOpen={isOpen}
                 onRequestClose={() => setIsOpen(false)}
-                steps={DataHubSidebarTourSteps}
+                steps={SidebarTourSteps}
                 accentColor={'var(--color-accent)'}
             />
         </>

@@ -24,7 +24,7 @@ services:
             - /opt/datahub/node_modules/
             # Make sure the build files don't leak back
             - /opt/datahub/dist/
-            - $PWD/containers/bundled_datahub_config.yaml:/opt/datahub/datahub/config/datahub_config.yaml
+            - $PWD/containers/bundled_site_config.yaml:/opt/datahub/datahub/config/site_config.yaml
             # - file:/opt/store/
         depends_on:
             mysql:
@@ -45,7 +45,7 @@ services:
         volumes:
             # This is for code change via watcher
             - $PWD:/opt/datahub
-            - $PWD/containers/bundled_datahub_config.yaml:/opt/datahub/datahub/config/datahub_config.yaml
+            - $PWD/containers/bundled_site_config.yaml:/opt/datahub/datahub/config/site_config.yaml
             # - file:/opt/store/
         depends_on:
             mysql:
@@ -69,7 +69,7 @@ services:
             - /opt/datahub/node_modules/
             # Make sure the build files don't leak back
             - /opt/datahub/dist/
-            - $PWD/containers/bundled_datahub_config.yaml:/opt/datahub/datahub/config/datahub_config.yaml
+            - $PWD/containers/bundled_site_config.yaml:/opt/datahub/datahub/config/site_config.yaml
         depends_on:
             mysql:
                 condition: service_healthy

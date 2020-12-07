@@ -1,6 +1,6 @@
 import { useEffect } from 'react';
 import { useDispatch } from 'react-redux';
-import { setAppBlurred } from 'redux/dataHubUI/action';
+import { setAppBlurred } from 'redux/globalUI/action';
 
 export const useAppBlur = () => {
     const dispatch = useDispatch();

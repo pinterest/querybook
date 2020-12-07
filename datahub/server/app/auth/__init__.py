@@ -16,7 +16,7 @@ from flask_login import logout_user, current_user
 
 from const.path import BUILD_PATH
 from const.datasources import DS_PATH
-from env import DataHubSettings
+from env import SiteSettings
 from lib.utils.plugin import import_plugin
 
 
@@ -47,7 +47,7 @@ def init_app(flask_app):
 
 def load_auth():
     global auth
-    auth = import_plugin(DataHubSettings.AUTH_BACKEND)
+    auth = import_plugin(SiteSettings.AUTH_BACKEND)
     get_login_config()
 
 

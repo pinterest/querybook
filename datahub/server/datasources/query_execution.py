@@ -36,7 +36,7 @@ from app.auth.permission import verify_query_execution_owner
 from models.query_execution import QueryExecutionViewer
 from models.access_request import AccessRequest
 from app.db import with_session
-from env import DataHubSettings
+from env import SiteSettings
 from lib.notify.utils import notify_user
 
 
@@ -474,7 +474,9 @@ def send_query_execution_access_request_notification(execution_id, uid, session=
     environment = get_default_user_environment_by_execution_id(
         execution_id=execution_id, uid=uid, session=session
     )
-    execution_url = f"{DataHubSettings.PUBLIC_URL}/{environment.name}/query_execution/{execution_id}/"
+    execution_url = (
+        f"{SiteSettings.PUBLIC_URL}/{environment.name}/query_execution/{execution_id}/"
+    )
 
     owner = user_logic.get_user_by_id(query_execution.uid, session=session)
     requestor_username = requestor.get_name()
@@ -496,7 +498,9 @@ def send_query_execution_invitation_notification(execution_id, uid, session=None
     environment = get_default_user_environment_by_execution_id(
         execution_id=execution_id, uid=uid, session=session
     )
-    execution_url = f"{DataHubSettings.PUBLIC_URL}/{environment.name}/query_execution/{execution_id}/"
+    execution_url = (
+        f"{SiteSettings.PUBLIC_URL}/{environment.name}/query_execution/{execution_id}/"
+    )
 
     notify_user(
         user=invited_user,

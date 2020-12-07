@@ -1,5 +1,5 @@
 from app.auth.oauth_auth import OAuthLoginManager, OAUTH_CALLBACK_PATH
-from env import DataHubSettings
+from env import SiteSettings
 from clients.google_client import get_google_oauth_config
 
 
@@ -9,11 +9,9 @@ class GoogleLoginManager(OAuthLoginManager):
         google_config = get_google_oauth_config()
 
         return {
-            "callback_url": "{}{}".format(
-                DataHubSettings.PUBLIC_URL, OAUTH_CALLBACK_PATH
-            ),
-            "client_id": DataHubSettings.OAUTH_CLIENT_ID,
-            "client_secret": DataHubSettings.OAUTH_CLIENT_SECRET,
+            "callback_url": "{}{}".format(SiteSettings.PUBLIC_URL, OAUTH_CALLBACK_PATH),
+            "client_id": SiteSettings.OAUTH_CLIENT_ID,
+            "client_secret": SiteSettings.OAUTH_CLIENT_SECRET,
             "authorization_url": google_config["authorization_endpoint"],
             "token_url": google_config["token_endpoint"],
             "profile_url": google_config["userinfo_endpoint"],

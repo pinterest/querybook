@@ -8,7 +8,7 @@ import { BoardItemType } from 'const/board';
 
 import { BoardCreateUpdateModal } from 'components/BoardCreateUpdateModal/BoardCreateUpdateModal';
 import { getWithinEnvUrl } from 'lib/utils/query-string';
-import { sendNotification } from 'lib/dataHubUI';
+import { sendNotification } from 'lib/globalUI';
 
 import { boardsSelector, makeBoardItemsSelector } from 'redux/board/selector';
 import {
@@ -18,8 +18,8 @@ import {
     fetchBoardIfNeeded,
     addBoardItem,
 } from 'redux/board/action';
-import { setDataDocNavBoard } from 'redux/dataHubUI/action';
-import { dataDocNavBoardOpenSelector } from 'redux/dataHubUI/selector';
+import { setDataDocNavBoard } from 'redux/globalUI/action';
+import { dataDocNavBoardOpenSelector } from 'redux/globalUI/selector';
 import { Dispatch, IStoreState } from 'redux/store/types';
 
 import { IconButton } from 'ui/Button/IconButton';

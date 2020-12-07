@@ -5,7 +5,7 @@ from urllib.parse import quote
 
 import requests
 
-from env import DataHubSettings
+from env import SiteSettings
 from .common import ChunkReader, FileDoesNotExist
 from lib.utils.utils import DATETIME_TO_UTC
 
@@ -20,7 +20,7 @@ def get_google_credentials(creds_info=None):
             + "to use any of the google services"
         )
 
-    cred_to_use = creds_info or DataHubSettings.GOOGLE_CREDS
+    cred_to_use = creds_info or SiteSettings.GOOGLE_CREDS
     assert cred_to_use is not None, "Invalid Google credentials"
 
     credentials = service_account.Credentials.from_service_account_info(cred_to_use)
@@ -52,7 +52,7 @@ class GoogleUploadClient(object):
         self._bucket = self._client.bucket(bucket_name)
         self._blob = self._bucket.blob(blob_name)
 
-        self._chunk_size = DataHubSettings.STORE_MIN_UPLOAD_CHUNK_SIZE
+        self._chunk_size = SiteSettings.STORE_MIN_UPLOAD_CHUNK_SIZE
 
         self._transport = requests.AuthorizedSession(
             credentials=self._client._credentials
@@ -111,8 +111,8 @@ class GoogleDownloadClient(ChunkReader):
         self,
         bucket_name,
         blob_name,
-        read_size=DataHubSettings.STORE_READ_SIZE,
-        max_read_size=DataHubSettings.STORE_MAX_READ_SIZE,
+        read_size=SiteSettings.STORE_READ_SIZE,
+        max_read_size=SiteSettings.STORE_MAX_READ_SIZE,
     ):
         from google.cloud import storage
         from google.auth.transport.requests import AuthorizedSession

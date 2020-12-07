@@ -16,7 +16,7 @@ import {
     IDataCellMeta,
 } from 'const/datadoc';
 import history from 'lib/router-history';
-import { sendConfirm, sendNotification, setBrowserTitle } from 'lib/dataHubUI';
+import { sendConfirm, sendNotification, setBrowserTitle } from 'lib/globalUI';
 import { scrollToCell, getShareUrl } from 'lib/data-doc/data-doc-utils';
 import { sanitizeUrlTitle, copy } from 'lib/utils';
 import { getQueryString } from 'lib/utils/query-string';

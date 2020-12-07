@@ -11,7 +11,7 @@ from flask_caching import Cache
 
 
 from const.path import BUILD_PATH, STATIC_PATH, WEBAPP_PATH
-from env import DataHubSettings
+from env import SiteSettings
 from lib.utils.json import JSONEncoder
 
 
@@ -28,19 +28,17 @@ def validate_db():
             connection.close()
         except Exception:
             raise Exception(
-                f"Invalid Database connection string {DataHubSettings.DATABASE_CONN}"
+                f"Invalid Database connection string {SiteSettings.DATABASE_CONN}"
             )
 
 
 def make_flask_app():
     app = Flask(__name__, static_folder=STATIC_PATH)
     app.json_encoder = JSONEncoder
-    app.secret_key = DataHubSettings.FLASK_SECRET_KEY
+    app.secret_key = SiteSettings.FLASK_SECRET_KEY
 
-    if DataHubSettings.LOGS_OUT_AFTER > 0:
-        app.permanent_session_lifetime = timedelta(
-            seconds=DataHubSettings.LOGS_OUT_AFTER
-        )
+    if SiteSettings.LOGS_OUT_AFTER > 0:
+        app.permanent_session_lifetime = timedelta(seconds=SiteSettings.LOGS_OUT_AFTER)
 
     return app
 
@@ -59,9 +57,7 @@ def make_cache(app):
 
 def make_celery(app):
     celery = Celery(
-        app.import_name,
-        backend=DataHubSettings.REDIS_URL,
-        broker=DataHubSettings.REDIS_URL,
+        app.import_name, backend=SiteSettings.REDIS_URL, broker=SiteSettings.REDIS_URL,
     )
 
     celery.conf.update(
@@ -103,7 +99,7 @@ def make_limiter(app):
         else get_remote_address(),
         default_limits=["1000 per day", "30 per minute"],
     )
-    limiter.enabled = DataHubSettings.PRODUCTION
+    limiter.enabled = SiteSettings.PRODUCTION
     for handler in app.logger.handlers:
         limiter.logger.addHandler(handler)
     return limiter
@@ -113,7 +109,7 @@ def make_socketio(app):
     socketio = SocketIO(
         app,
         path="-/socket.io",
-        message_queue=DataHubSettings.REDIS_URL,
+        message_queue=SiteSettings.REDIS_URL,
         json=flask_json,
         cors_allowed_origins="*",
     )

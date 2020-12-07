@@ -2,9 +2,9 @@ import { createSelector } from 'reselect';
 import { IStoreState } from '../store/types';
 
 const announcementsSelector = (state: IStoreState) =>
-    state.dataHubUI.announcements;
+    state.globalUI.announcements;
 const dismissedAnnouncementIdsSelector = (state: IStoreState) =>
-    state.dataHubUI.dismissedAnnouncementIds;
+    state.globalUI.dismissedAnnouncementIds;
 
 export const visibleAnnouncementSelector = createSelector(
     announcementsSelector,
@@ -18,4 +18,4 @@ export const visibleAnnouncementSelector = createSelector(
 export const dataDocNavBoardOpenSelector = (
     state: IStoreState,
     boardId: number
-) => state.dataHubUI.dataDocNavigatorSectionOpen[`board-${boardId}`];
+) => state.globalUI.dataDocNavigatorSectionOpen[`board-${boardId}`];

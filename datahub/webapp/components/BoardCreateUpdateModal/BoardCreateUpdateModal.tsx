@@ -3,7 +3,7 @@ import { useSelector, useDispatch } from 'react-redux';
 import * as Yup from 'yup';
 import { Formik, Form } from 'formik';
 
-import { sendConfirm } from 'lib/dataHubUI';
+import { sendConfirm } from 'lib/globalUI';
 import { createBoard, updateBoard, deleteBoard } from 'redux/board/action';
 import { IStoreState, Dispatch } from 'redux/store/types';
 import { Title } from 'ui/Title/Title';

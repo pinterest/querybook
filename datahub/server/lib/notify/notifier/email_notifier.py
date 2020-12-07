@@ -2,7 +2,7 @@ import smtplib
 from datetime import datetime
 from email.mime.multipart import MIMEMultipart
 from email.mime.text import MIMEText
-from env import DataHubSettings
+from env import SiteSettings
 from lib.notify.base_notifier import BaseNotifier
 from lib.logger import get_logger
 
@@ -19,7 +19,7 @@ class EmailNotifier(BaseNotifier):
         return "html"
 
     def notify(self, user, message):
-        from_email = DataHubSettings.DATAHUB_EMAIL_ADDRESS
+        from_email = SiteSettings.DATAHUB_EMAIL_ADDRESS
         subject = message.split("\n")[0]
         message = self._convert_markdown(message)
         try:
@@ -32,7 +32,7 @@ class EmailNotifier(BaseNotifier):
             msg["To"] = user.email
             msg.attach(MIMEText(message, "html"))
 
-            smtp = smtplib.SMTP(DataHubSettings.EMAILER_CONN)
+            smtp = smtplib.SMTP(SiteSettings.EMAILER_CONN)
             smtp.sendmail(msg["From"], msg["To"], msg.as_string())
         except Exception as e:
             LOG.info(e)

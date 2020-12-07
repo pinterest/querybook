@@ -4,7 +4,7 @@ from app.datasource import register, admin_only, api_assert
 from app.db import DBSession
 from const.admin import AdminOperation, AdminItemType
 from datasources.admin_audit_log import with_admin_audit_log
-from env import DataHubSettings
+from env import SiteSettings
 from lib.engine_status_checker import ALL_ENGINE_STATUS_CHECKERS
 from lib.metastore.loaders import ALL_METASTORE_LOADERS
 from lib.query_executor.all_executors import ALL_EXECUTORS
@@ -587,7 +587,7 @@ def get_admin_audit_logs(
 @admin_only
 def get_admin_config():
     return {
-        key: getattr(DataHubSettings, key)
-        for key in dir(DataHubSettings)
+        key: getattr(SiteSettings, key)
+        for key in dir(SiteSettings)
         if not key.startswith("__")
     }

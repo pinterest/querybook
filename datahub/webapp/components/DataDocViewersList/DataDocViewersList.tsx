@@ -17,7 +17,7 @@ import { Title } from 'ui/Title/Title';
 import { ViewerPermissionPicker } from './ViewerPermissionPicker';
 import { UserSelect } from 'components/UserSelect/UserSelect';
 import { Tabs } from 'ui/Tabs/Tabs';
-import { sendNotification } from 'lib/dataHubUI';
+import { sendNotification } from 'lib/globalUI';
 import { DataDocAccessRequestPermissionPicker } from 'components/DataDocAccessRequestPermissionPicker.tsx/DataDocAccessRequestPermissionPicker';
 
 interface IDataDocViewersListProps {

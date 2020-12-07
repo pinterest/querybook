@@ -11,7 +11,7 @@ import * as querySnippetsActions from 'redux/querySnippets/action';
 import { IQuerySnippet, IQueryForm } from 'redux/querySnippets/types';
 import { IStoreState } from 'redux/store/types';
 
-import { sendConfirm } from 'lib/dataHubUI';
+import { sendConfirm } from 'lib/globalUI';
 import history from 'lib/router-history';
 import { generateFormattedDate } from 'lib/utils/datetime';
 

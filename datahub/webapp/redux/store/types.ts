@@ -17,7 +17,7 @@ import {
     QuerySnippetsAction,
 } from 'redux/querySnippets/types';
 import { IQueryViewState, QueryViewAction } from 'redux/queryView/types';
-import { DataHubUIAction, IDataHubUIState } from 'redux/dataHubUI/types';
+import { GlobalUIAction, IGlobalUIState } from 'redux/globalUI/types';
 import { IQueryEngineState, QueryEngineAction } from 'redux/queryEngine/types';
 import { IEnvironmentState, EnvironmentAction } from 'redux/environment/types';
 import { IAdhocQueryState, AdhocQueryAction } from 'redux/adhocQuery/types';
@@ -40,7 +40,7 @@ export interface IStoreState {
     readonly queryView: IQueryViewState;
     readonly queryEngine: IQueryEngineState;
     readonly notificationService: INotificationState;
-    readonly dataHubUI: IDataHubUIState;
+    readonly globalUI: IGlobalUIState;
     readonly environment: IEnvironmentState;
     readonly adhocQuery: IAdhocQueryState;
     readonly board: IBoardState;
@@ -58,7 +58,7 @@ export type AllAction =
     | QuerySnippetsAction
     | QueryEngineAction
     | QueryViewAction
-    | DataHubUIAction
+    | GlobalUIAction
     | EnvironmentAction
     | NotificationServiceAction
     | AdhocQueryAction

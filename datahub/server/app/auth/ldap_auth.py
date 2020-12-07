@@ -17,7 +17,7 @@ import ldap
 import flask_login
 
 from flask_login import current_user
-from env import DataHubSettings
+from env import SiteSettings
 from app.db import with_session, DBSession
 from .utils import AuthenticationError, AuthUser, DataHubLoginManager
 from logic.user import (
@@ -36,7 +36,7 @@ def get_transformed_username(username):
         match = re.match(r"^uid=([^,]+)", username)
         username = match.group(1)
     else:
-        dn = DataHubSettings.LDAP_USER_DN.format(username)
+        dn = SiteSettings.LDAP_USER_DN.format(username)
     return username, dn
 
 
@@ -45,14 +45,14 @@ def authenticate(username, password, session=None):
     if not username or not password:
         raise AuthenticationError()
 
-    conn = ldap.initialize(DataHubSettings.LDAP_CONN)
+    conn = ldap.initialize(SiteSettings.LDAP_CONN)
     conn.set_option(ldap.OPT_REFERRALS, 0)
 
     try:
         if username.startswith("uid="):
             dn = username
         else:
-            dn = DataHubSettings.LDAP_USER_DN.format(username)
+            dn = SiteSettings.LDAP_USER_DN.format(username)
         conn.simple_bind_s(dn, password)
     except ldap.INVALID_CREDENTIALS:
         raise AuthenticationError("User does not exist or wrong password")

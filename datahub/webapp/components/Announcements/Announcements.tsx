@@ -1,6 +1,6 @@
 import React from 'react';
 import { useDispatch } from 'react-redux';
-import * as datahubUIActions from 'redux/dataHubUI/action';
+import * as globalUIActions from 'redux/globalUI/action';
 import { Dispatch } from 'redux/store/types';
 
 import { Level } from 'ui/Level/Level';
@@ -15,13 +15,13 @@ export const Announcements: React.FunctionComponent = () => {
     const announcements = useAnnouncements();
     const dispatch: Dispatch = useDispatch();
     const loadAnnouncements = () =>
-        dispatch(datahubUIActions.loadAnnouncements());
+        dispatch(globalUIActions.loadAnnouncements());
     const dismissAnnouncement = (id: number) =>
-        dispatch(datahubUIActions.dismissAnnouncement(id));
+        dispatch(globalUIActions.dismissAnnouncement(id));
 
     React.useEffect(() => {
         loadAnnouncements();
-        dispatch(datahubUIActions.loadDismissedAnnouncements());
+        dispatch(globalUIActions.loadDismissedAnnouncements());
     }, []);
 
     useInterval(loadAnnouncements, 300000);
