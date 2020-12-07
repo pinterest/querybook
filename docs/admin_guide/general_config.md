@@ -6,9 +6,9 @@ sidebar_label: General Config
 
 ## Overview
 
-Other than the basic infrastructure setup such as rdbms and redis, all configurations can be done in the admin tools on the DataHub website directly. Note that it is only accessible for users under the "Admin" role.
+Other than the basic infrastructure setup such as rdbms and redis, all configurations can be done in the admin tools on the Querybook website directly. Note that it is only accessible for users under the "Admin" role.
 
-The first user that installs DataHub gets the "Admin" role. Admins can add other admins and modify anyone's role.
+The first user that installs Querybook gets the "Admin" role. Admins can add other admins and modify anyone's role.
 
 In the next section we will go over different things that can be configured in the Admin tools.
 
@@ -18,12 +18,12 @@ Checkout [Sharing & Security](./sharing_and_security.md) to learn how to configu
 
 #### Environment
 
-Environment ensures users on DataHub are only allowed to access to information/query they have permission to. All DataDocs, Query Engines are attached to some environments.
+Environment ensures users on Querybook are only allowed to access to information/query they have permission to. All DataDocs, Query Engines are attached to some environments.
 
 Here are all the fields needed when creating an environment:
 
 -   Name (**required**): The name must be all letters since it will appear in the url.
--   Public: A public environment allows any users of DataHub to use.
+-   Public: A public environment allows any users of Querybook to use.
 -   Archived: Once archived, environments cannot be accessed on the website.
 -   Environment description: A short description of the environment which will appear as a tooltip on the environment picker.
 -   Logo Url: By default an environment's icon is shown as an square button with the first letter of the environment's name in it. You can also supply a custom image.
@@ -46,7 +46,7 @@ Query engine configures the endpoints that users can query. Each query engine ne
 
 ### Announcement
 
-DataHub Admins can use the announcement feature to send quick updates to users on DataHub.The announcement will appear as a top banner on DataHub's main site. DataHub actively polls the announcement end point five minutes so any change to the announcements are quickly reflected.
+Querybook Admins can use the announcement feature to send quick updates to users on Querybook.The announcement will appear as a top banner on Querybook's main site. Querybook actively polls the announcement end point five minutes so any change to the announcements are quickly reflected.
 Here are all the fields needed when creating an announcement:
 
 -   url prefix: admins can enter a regex so the announcement will only show up if the url matches the regex
@@ -55,7 +55,7 @@ Here are all the fields needed when creating an announcement:
 
 ### User Role
 
-The user role feature allows admin to add other admins or remove admin permission of other admins. At least 1 admin needs to exist on DataHub.
+The user role feature allows admin to add other admins or remove admin permission of other admins. At least 1 admin needs to exist on Querybook.
 
 ### Job Status
 

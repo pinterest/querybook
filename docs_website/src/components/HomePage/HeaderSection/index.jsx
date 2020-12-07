@@ -23,10 +23,10 @@ export default () => {
                         />
                     </h1>
                     <p className="hero__subtitle">
-                        <b>DataHub</b> is Pinterest’s open-sourced big data
+                        <b>Querybook</b> is Pinterest’s open-sourced big data
                         portal via a notebook interface.
                     </p>
-                    <div className="DataHubTutorialVideo">
+                    <div className="QuerybookTutorialVideo">
                         <iframe
                             src="https://www.youtube.com/embed/dQw4w9WgXcQ"
                             frameBorder="0"

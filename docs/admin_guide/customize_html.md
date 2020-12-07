@@ -4,7 +4,7 @@ title: Customize HTML
 sidebar_label: Customize HTML
 ---
 
-DataHub allows for some basic customization in the frontend. You can use the web plugin to inject custom javascript into DataHub frontend. Please check [Plugins Guide](./plugins.md) to see how to get started.
+Querybook allows for some basic customization in the frontend. You can use the web plugin to inject custom javascript into Querybook frontend. Please check [Plugins Guide](./plugins.md) to see how to get started.
 
 Right now there are four use cases for custom javascript:
 
@@ -18,7 +18,7 @@ script.innerHTML = `
 document.body.appendChild(script);
 ```
 
-2. Customize some of the messages in DataHub. Currently DataHub allows the plugin to set the following messages:
+2. Customize some of the messages in Querybook. Currently Querybook allows the plugin to set the following messages:
 
 ```typescript
 interface Window {
@@ -46,6 +46,6 @@ interface Window {
 }
 ```
 
-The renderer should be treated as the entry point into your customized react view. You can add any default HTML elements you want or import UI elements from DataHub.
+The renderer should be treated as the entry point into your customized react view. You can add any default HTML elements you want or import UI elements from Querybook.
 
-If the mode variable is not provided, then DataHub would show this custom content in the middle section (currently empty) of the default landing page. However, if you specify the mode to be "replace", then the entire landing page will be replaced with your custom content.
+If the mode variable is not provided, then Querybook would show this custom content in the middle section (currently empty) of the default landing page. However, if you specify the mode to be "replace", then the entire landing page will be replaced with your custom content.

@@ -11,11 +11,10 @@ Once the code is completed, include in the lib/result_store/all_result_stores.py
 
 To use the store in production, set the environment variable ALL_PLUGIN_RESULT_STORES to be the same as the result store name (the one chosen in all_result_stores.py).
 
-
 ### Adding the new engine as a plugin
 
 If you cannot include this result store as part of the open source project, you can also add it as a [plugin](../admin_guide/plugins.md).
 
-1. Locate the plugin root directory for your customized DataHub, and find the folder called result_store_plugin.
+1. Locate the plugin root directory for your customized Querybook, and find the folder called result_store_plugin.
 2. Add your result store code similiar to what's above, which means making sure it inherits from base_store.py.
 3. Add the new reuslt store along with its representative name in the variable ALL_PLUGIN_RESULT_STORES under result_store_plugin/\_\_init\_\_.py

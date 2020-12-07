@@ -12,7 +12,7 @@ everyone.
 
 ## Code of Conduct
 
-Please be sure to read and understand our [CODE_OF_CONDUCT.md](https://github.com/pinterest/datahub/blob/master/CODE_OF_CONDUCT.md).
+Please be sure to read and understand our [CODE_OF_CONDUCT.md](https://github.com/pinterest/querybook/blob/master/CODE_OF_CONDUCT.md).
 We work hard to ensure that our projects are welcoming and inclusive to as many
 people as possible.
 
@@ -36,7 +36,7 @@ We welcome and appreciate anyone for fixing bugs!
 
 ## Adding New Features
 
-We welcome and appreciate anyone for adding new features for DataHub!
+We welcome and appreciate anyone for adding new features for Querybook!
 Following is the current process:
 
 -   Please create a GitHub issue proposing your new feature, including what and why. It can be brief, one or two paragraphs is ok.
@@ -67,11 +67,11 @@ To increase the chances that your pull request will be accepted:
 
 ## Help
 
-Start by reading the developer starter guide [this guide](../developer_guide/developer_setup.md) to setup DataHub/
+Start by reading the developer starter guide [this guide](../developer_guide/developer_setup.md) to setup Querybook/
 If you're having trouble using this project, please check the [developer guides](../developer_guide/)
 and searching for solutions in the existing open and closed issues.
 
-You can also reach out to us at datahub@pinterest.com or on our [Slack](https://join.slack.com/t/datahubchat/shared_invite/zt-dpr988af-9VwGkjcmPhqTmRoA2Tm3gg).
+You can also reach out to us at querybook@pinterest.com or on our [Slack](https://join.slack.com/t/querybookchat/shared_invite/zt-dpr988af-9VwGkjcmPhqTmRoA2Tm3gg).
 
 ## Security
 

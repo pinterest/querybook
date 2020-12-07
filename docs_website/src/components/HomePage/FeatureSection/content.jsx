@@ -4,11 +4,11 @@ import Link from '@docusaurus/Link';
 export const keyFeatures = {
     key: 'Key Features',
     title: 'Querying done right',
-    subtitle: `DataHub’s core focus is to make composing queries, creating analyses, and collaborating with others as simple as possible`,
+    subtitle: `Querybook’s core focus is to make composing queries, creating analyses, and collaborating with others as simple as possible`,
     footer: () => (
         <>
             Check out <Link to="/docs/">our documentation</Link> to learn more
-            about what DataHub can offer.
+            about what Querybook can offer.
         </>
     ),
 
@@ -25,7 +25,7 @@ export const keyFeatures = {
         },
         {
             title: 'Visualizations',
-            content: `No need to leave DataHub to create charts to quickly visualize your results. With a familiar interface easily create line, bar, stacked area, pie, horizontal bar, donut, scatter, and table charts. Add them then to your DataDoc to complete your data narrative.`,
+            content: `No need to leave Querybook to create charts to quickly visualize your results. With a familiar interface easily create line, bar, stacked area, pie, horizontal bar, donut, scatter, and table charts. Add them then to your DataDoc to complete your data narrative.`,
             image: 'key_features/visualization.png',
         },
         {
@@ -35,12 +35,12 @@ export const keyFeatures = {
         },
         {
             title: 'Scheduling',
-            content: `Built-in scheduling functionality allows automatic DataDoc updates on set intervals. Combined with exporting, DataHub can send scheduled updates to external apps.`,
+            content: `Built-in scheduling functionality allows automatic DataDoc updates on set intervals. Combined with exporting, Querybook can send scheduled updates to external apps.`,
             image: 'key_features/scheduling.png',
         },
         {
             title: 'Query Analytics',
-            content: `DataHub auto analyzes executed queries to provide data lineage, example queries, frequent user information, search/auto-completion ranking.`,
+            content: `Querybook auto analyzes executed queries to provide data lineage, example queries, frequent user information, search/auto-completion ranking.`,
             image: 'key_features/analytics.png',
         },
     ],
@@ -49,7 +49,7 @@ export const keyFeatures = {
 export const pluginFeatures = {
     key: 'Plugin Features',
     title: 'Suit your needs',
-    subtitle: `Have a different tech stack? No problem. Every aspect of DataHub can be dynamically configured via the plugin system to let you fully leverage all of its features.`,
+    subtitle: `Have a different tech stack? No problem. Every aspect of Querybook can be dynamically configured via the plugin system to let you fully leverage all of its features.`,
     footer: () => (
         <>
             Check out{' '}
@@ -66,7 +66,7 @@ export const pluginFeatures = {
         },
         {
             title: 'Exporter',
-            content: `Upload query results from DataHub to other tools for further analyses.`,
+            content: `Upload query results from Querybook to other tools for further analyses.`,
             image: 'plugin_features/exporter.png',
         },
         {

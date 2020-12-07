@@ -1,10 +1,10 @@
 module.exports = {
-    title: 'DataHub',
+    title: 'Querybook',
     tagline: 'Data made simple.',
-    url: 'https://trydatahub.com',
+    url: 'https://querybook.io',
     baseUrl: '/',
     organizationName: 'pinterest',
-    projectName: 'datahub-documentation-site',
+    projectName: 'querybook-documentation-site',
     scripts: ['https://buttons.github.io/buttons.js'],
     favicon: 'img/favicon.ico',
     customFields: {
@@ -35,7 +35,7 @@ module.exports = {
     plugins: ['docusaurus-plugin-sass'],
     themeConfig: {
         navbar: {
-            title: 'DataHub',
+            title: 'Querybook',
             logo: {
                 src: 'img/favicon.ico',
                 srcDark: 'img/favicon.ico',
@@ -79,12 +79,12 @@ module.exports = {
                     items: [
                         {
                             label: 'Email',
-                            href: 'mailto:datahub@pinterest.com',
+                            href: 'mailto:querybook@pinterest.com',
                         },
                         {
                             label: 'Slack',
                             href:
-                                'https://datahubchat.slack.com/join/shared_invite/zt-dpr988af-9VwGkjcmPhqTmRoA2Tm3gg#/',
+                                'https://querybookchat.slack.com/join/shared_invite/zt-dpr988af-9VwGkjcmPhqTmRoA2Tm3gg#/',
                         },
                     ],
                 },

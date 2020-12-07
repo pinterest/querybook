@@ -13,7 +13,7 @@ const userReviews = [
     {
         name: 'Bob, PM @Pinterest',
         comment:
-            "Datahub is amazing! I can't imagine doing my work without DataHub",
+            "Querybook is amazing! I can't imagine doing my work without Querybook",
     },
     {
         name: 'Cindy, SRE @CompanyC',
@@ -26,7 +26,7 @@ export default () => {
         <div className="container UsersSection HomePageSection">
             <Heading
                 headingKey="Feedback"
-                title="Here’s what users are saying about DataHub"
+                title="Here’s what users are saying about Querybook"
             />
             <Grid
                 itemPerRow={3}

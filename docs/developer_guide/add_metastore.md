@@ -6,11 +6,11 @@ sidebar_label: Metastore
 
 ## Overview
 
-Metastore loader provides a way for datahub to know what kind of tables and schemas are queryable by the query engine. The actual loading process is deeply abstracted away to simplify the implementation. DataHub by default provides hive metastore loader (w/ thrift schema support) and sqlalchemy loader which should cover most of the use cases. However you can always make your own metastore loader for efficiency or customization purposes.
+Metastore loader provides a way for querybook to know what kind of tables and schemas are queryable by the query engine. The actual loading process is deeply abstracted away to simplify the implementation. Querybook by default provides hive metastore loader (w/ thrift schema support) and sqlalchemy loader which should cover most of the use cases. However you can always make your own metastore loader for efficiency or customization purposes.
 
 ## Adding a new Metastore
 
-Please add any new metastore loaders under <project_root>/datahub/server/lib/metastore/loaders/. All of the metastore loaders should inherit `BaseMetastoreLoader` from base_metastore_loader.py. You can also inherit from SqlAlchemyMetastoreLoader or HMSMetastoreLoader to add more fine grained details.
+Please add any new metastore loaders under <project_root>/querybook/server/lib/metastore/loaders/. All of the metastore loaders should inherit `BaseMetastoreLoader` from base_metastore_loader.py. You can also inherit from SqlAlchemyMetastoreLoader or HMSMetastoreLoader to add more fine grained details.
 
 The following functions needs to be overloaded when inheriting from BaseMetastoreLoader:
 
