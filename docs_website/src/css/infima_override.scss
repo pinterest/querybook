@@ -25,6 +25,16 @@ body {
 :root {
     --ifm-navbar-background-color: transparent;
 
+    --ifm-color-primary: #6cc7c4;
+    --ifm-color-primary-dark: #56bfbb;
+    --ifm-color-primary-darker: #4bbab7;
+    --ifm-color-primary-darkest: #3b9c98;
+    --ifm-color-primary-light: #82cfcd;
+    --ifm-color-primary-lighter: #8dd4d1;
+    --ifm-color-primary-lightest: #afe0df;
+}
+
+html[data-theme='dark'] {
     --ifm-color-primary-lightest: #f9a8c5;
     --ifm-color-primary-lighter: #f896b9;
     --ifm-color-primary-light: #f683ad;
