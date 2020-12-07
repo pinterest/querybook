@@ -29,7 +29,7 @@ export default () => {
             </div>
             <div className="integrations-grid">
                 <p className="integrations-title">
-                    DataHub also supports the following Cloud Platforms
+                    Querybook also supports the following Cloud Platforms
                 </p>
                 <Grid
                     items={CloudPlatforms}

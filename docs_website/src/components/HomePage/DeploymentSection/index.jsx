@@ -5,7 +5,7 @@ import Link from '@docusaurus/Link';
 
 const deploymentInfos = [
     <p>
-        DataHub is configured to work entirely inside Docker. With the help of
+        Querybook is configured to work entirely inside Docker. With the help of
         docker-compose, you can start a{' '}
         <Link to="/docs/">full-featured demo</Link> instance within minutes.
     </p>,
@@ -14,9 +14,9 @@ const deploymentInfos = [
         <Link to="/docs/admin_guide/deployment_guide">
             deploying to production
         </Link>
-        , DataHub comes with an example K8s file for you to easily deploy to K8s
-        cluster. You can also use docker-compose run to deploy each individual
-        service to separate machines.
+        , Querybook comes with an example K8s file for you to easily deploy to
+        K8s cluster. You can also use docker-compose run to deploy each
+        individual service to separate machines.
     </p>,
 ];
 

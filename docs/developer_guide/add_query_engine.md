@@ -8,7 +8,7 @@ sidebar_label: Query Engine
 
 ### Development
 
-Adding a query engine in DataHub is simple.
+Adding a query engine in Querybook is simple.
 
 1.  Configure what data is needed to start the query engine, and what languages it supports. Use FormField from `lib/form/` to determine the shape of the template input. You can then put the template under lib/query_executor/executor_template/\<the name of the engine\>.py
 
@@ -21,12 +21,12 @@ Adding a query engine in DataHub is simple.
 
 4.  Finally add your executor under `common/query_executor/executors/`. Follow the format of QueryExecutorBaseClass and make sure it is included in the array ALL_EXECUTORS in `common/query_executor/executors/__init__.py`.
 
-5.  Launch the DataHub server, and you should see the new engine showing up in the query engine page of Admin tools.
+5.  Launch the Querybook server, and you should see the new engine showing up in the query engine page of Admin tools.
 
 ### Adding the new engine as a plugin
 
 If you cannot include this engine as part of the open source project, you can also add it as a [plugin](../admin_guide/plugins.md).
 
-1. Locate the plugin root directory for your customized DataHub, and find the folder called executor_plugin.
+1. Locate the plugin root directory for your customized Querybook, and find the folder called executor_plugin.
 2. Add your engine code similiar to what's above.
 3. Make sure it is included in the variable ALL_PLUGIN_EXECUTORS under executor_plugin/\_\_init\_\_.py

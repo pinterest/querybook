@@ -4,7 +4,7 @@ title: Developer Setup
 sidebar_label: Developer Setup
 ---
 
-Here is how to setup dev tools before contributing to DataHub
+Here is how to setup dev tools before contributing to Querybook
 
 ## Setup Local DevTools
 
@@ -28,11 +28,11 @@ yarn install
 Run the following command
 
 ```sh
-yarn dev --env.DATAHUB_UPSTREAM=(Put your backend api server url here)
+yarn dev --env.QUERYBOOK_UPSTREAM=(Put your backend api server url here)
 ```
 
 If you want to bypass cookie of upsteam do this
 
 ```sh
-yarn dev --env.DATAHUB_UPSTREAM=(Put your backend api server url here) --env.DATAHUB_COOKIE=(Put backend api cookie here)
+yarn dev --env.QUERYBOOK_UPSTREAM=(Put your backend api server url here) --env.QUERYBOOK_COOKIE=(Put backend api cookie here)
 ```

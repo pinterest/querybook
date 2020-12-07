@@ -5,7 +5,7 @@ services:
         build:
             context: .
             dockerfile: ./docs_website/Dockerfile
-        container_name: datahub_docs
+        container_name: querybook_docs
         network_mode: 'host'
         environment:
             PORT: ${PORT:-3000}

@@ -8,7 +8,7 @@ export default () => {
             <Heading
                 headingKey="Interested in trying it out?"
                 title="Waitlist"
-                subtitle="Please enter your contact information and we will reach out to you once DataHub is ready to be open sourced."
+                subtitle="Please enter your contact information and we will reach out to you once Querybook is ready to be open sourced."
             />
             <div className="form-container">
                 <iframe

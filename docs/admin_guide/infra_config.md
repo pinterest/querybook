@@ -10,21 +10,21 @@ sidebar_label: Infra Config
 THIS GUIDE IS ONLY FOR INFRASTRUCTURE SETUP, PLEASE READ THE [GENERAL CONFIG](../admin_guide/general_config.md) TO CONFIGURE ENTITIES SUCH AS QUERY ENGINE & ACCESS PERMISSION.
 :::
 
-Eventhrough DataHub can be launched without any configuration, it is absolutely required for more powerful infrastructure/flexible customization. In this guide we will walkthrough different kind of environment settings you can set for DataHub. You can see all possible options and default values in this repo by checking out `datahub/config/datahub_default_config.yaml`.
+Eventhrough Querybook can be launched without any configuration, it is absolutely required for more powerful infrastructure/flexible customization. In this guide we will walkthrough different kind of environment settings you can set for Querybook. You can see all possible options and default values in this repo by checking out `querybook/config/querybook_default_config.yaml`.
 
 ### Making custom configs
 
-There are two ways to pass custom configs to DataHub. The first way is using a custom config yaml file. You can write out the file and then pass it through datahub using docker volumes. For example you can add this in the docker-compose file:
+There are two ways to pass custom configs to Querybook. The first way is using a custom config yaml file. You can write out the file and then pass it through querybook using docker volumes. For example you can add this in the docker-compose file:
 
 ```yaml
-- path_to_my_custom_config.yaml:/opt/datahub/datahub/config/datahub_config.yaml
+- path_to_my_custom_config.yaml:/opt/querybook/querybook/config/querybook_config.yaml
 ```
 
 Otherwise you can also pass the environment variable directly when launching the docker image. The order of precedence for a config settings is as the follows:
 
 1. Environment variables (highest priority)
-2. datahub_config.yaml
-3. datahub_default_config.yaml (lowest priority)
+2. querybook_config.yaml
+3. querybook_default_config.yaml (lowest priority)
 
 ## Infrastructure
 
@@ -59,11 +59,11 @@ The following settings are only relevant if you are using `db`, note that all un
 The following settings are only relevant if you are using `s3` or `gcs` (Google Cloud Storage), note that all units are in bytes:
 
 -   `STORE_BUCKET_NAME` (optional): The Bucket name
--   `STORE_PATH_PREFIX` (optional, defaults to **''**): Key/Blob prefix for DataHub's stored results/logs
+-   `STORE_PATH_PREFIX` (optional, defaults to **''**): Key/Blob prefix for Querybook's stored results/logs
 -   `STORE_MIN_UPLOAD_CHUNK_SIZE` (optional, defaults to **10485760**): The chunk size when uploading
 -   `STORE_MAX_UPLOAD_CHUNK_NUM` (optional, defaults to **10000**): The number of chunks that can be uploaded, you can determine the maximum upload size by multiplying this with chunk size.
 -   `STORE_READ_SIZE` (optional, defaults to 131072): The size of chunk when reading from store.
--   `STORE_MAX_READ_SIZE` (optional, defaults to 5242880): The max size of file DataHub will read for users to view.
+-   `STORE_MAX_READ_SIZE` (optional, defaults to 5242880): The max size of file Querybook will read for users to view.
 
 ### Logging
 
@@ -71,9 +71,9 @@ The following settings are only relevant if you are using `s3` or `gcs` (Google 
 
 ## Authentication
 
-`AUTH_BACKEND` (optional, defaults to **app.auth.password_auth**): Python path to the authentication file. By default DataHub provides:
+`AUTH_BACKEND` (optional, defaults to **app.auth.password_auth**): Python path to the authentication file. By default Querybook provides:
 
-    - app.auth.password_auth: Username/password based on registering on DataHub.
+    - app.auth.password_auth: Username/password based on registering on Querybook.
     - app.auth.oauth_auth: Oauth based authentication.
 
 You can also supply any custom authentication added in the auth plugin. See "Add Auth" and "Plugins" guide for more details.
@@ -97,15 +97,15 @@ If you want to force the user to login again after a certain time, you can the f
 
 ## Communication
 
-By default DataHub supports email and slack notifications for sharing DataDocs and Query completions.
+By default Querybook supports email and slack notifications for sharing DataDocs and Query completions.
 
-`PUBLIC_URL` (optional, defaults to localhost): The public url to access DataHub's website, used in oauth, email and slack.
+`PUBLIC_URL` (optional, defaults to localhost): The public url to access Querybook's website, used in oauth, email and slack.
 
 ### Slack
 
-`DATAHUB_SLACK_TOKEN` (**optional**): Put the Bot User OAuth Access Token from slack here. See https://api.slack.com/docs/oauth#bots for more details.
+`QUERYBOOK_SLACK_TOKEN` (**optional**): Put the Bot User OAuth Access Token from slack here. See https://api.slack.com/docs/oauth#bots for more details.
 
 ### Email
 
 `EMAILER_CONN` (optional, defaults to localhost:22): Location of the emailer server
-`DATAHUB_EMAIL_ADDRESS` (optional, required for email): Origin address when sending emails
+`QUERYBOOK_EMAIL_ADDRESS` (optional, required for email): Origin address when sending emails

@@ -6,7 +6,7 @@ sidebar_label: Plugins
 
 ## Overview
 
-Plugins provide a simple way for admins to add their org specific code to DataHub without modifying the open sourced code. This guide will cover all the plugins that can be added as well as the required steps needed to install plugins on DataHub.
+Plugins provide a simple way for admins to add their org specific code to Querybook without modifying the open sourced code. This guide will cover all the plugins that can be added as well as the required steps needed to install plugins on Querybook.
 
 ## Types of plugins
 
@@ -14,7 +14,7 @@ In this section we will cover different types of plugins and their use cases.
 
 ### Query Engine Plugin
 
-Query engine plugin is useful if you want to add custom query engines that are not supported in DataHub or add different behaviors in the default query engines.
+Query engine plugin is useful if you want to add custom query engines that are not supported in Querybook or add different behaviors in the default query engines.
 
 If you are adding a new custom query engine, please check the [Add Query Engine guide](../developer_guide/add_query_engine.md) in the developer guide to learn how to add a query engine.
 
@@ -22,7 +22,7 @@ If you are extending the default query engine, you can create a new engine execu
 
 ### Auth Plugin
 
-Auth plugin can be used to add different authentication methods to DataHub as well as adding custom behavior behaviors after a user authenticates. An example of the latter case is to automatically add users to different environments based on additional user permission queries. Please check [Add Auth guide](../developer_guide/add_auth.md) to learn how to add a new auth plugin.
+Auth plugin can be used to add different authentication methods to Querybook as well as adding custom behavior behaviors after a user authenticates. An example of the latter case is to automatically add users to different environments based on additional user permission queries. Please check [Add Auth guide](../developer_guide/add_auth.md) to learn how to add a new auth plugin.
 
 ### Engine Status Checker
 
@@ -30,15 +30,15 @@ Engine status checker plugin lets you customize how you want to expose the backe
 
 ### Exporter Plugin
 
-Exporters are ways to provide a quick way for user to move their query results to external websites. DataHub by default provides "python exporter" and "r exporter" code but they need to included in the plugin exporter to be used. Please check [Add Exporter guide](../developer_guide/add_exporter.md) to learn how to add a new exporter and different types of exporters.
+Exporters are ways to provide a quick way for user to move their query results to external websites. Querybook by default provides "python exporter" and "r exporter" code but they need to included in the plugin exporter to be used. Please check [Add Exporter guide](../developer_guide/add_exporter.md) to learn how to add a new exporter and different types of exporters.
 
 ### Notifier Plugin
 
-Notifiers are used to give users various messages for completion of their query actions. DataHub by default provides "email_notifier" and "slack_notifier" code. Please Check [Add Notifier guide](../developer_guide/add_notifier.md) to learn how to add a new notifier.
+Notifiers are used to give users various messages for completion of their query actions. Querybook by default provides "email_notifier" and "slack_notifier" code. Please Check [Add Notifier guide](../developer_guide/add_notifier.md) to learn how to add a new notifier.
 
 ### Job Plugin
 
-Admins can use job plugin to add new job schedules to DataHub. DataHub provides various types of jobs such as retention jobs but they are unscheduled unless it is included in job plugin. You can also use job plugin to schedule tasks from task plugin. Please check [Add Custom Jobs guide](../admin_guide/add_custom_jobs.md) to see the formatting required.
+Admins can use job plugin to add new job schedules to Querybook. Querybook provides various types of jobs such as retention jobs but they are unscheduled unless it is included in job plugin. You can also use job plugin to schedule tasks from task plugin. Please check [Add Custom Jobs guide](../admin_guide/add_custom_jobs.md) to see the formatting required.
 
 ### Metastore Plugin
 
@@ -46,27 +46,27 @@ Similar to Query engine, metastore plugins provides a way for admins to configur
 
 ### Result Store Plugin
 
-By default, datahub supports storing query results/logs to and from s3 and sqlalchemy database. If other store is needed (such as local file system or google cloud), you can add a custom result store exporter. Please check [Add Result Store guide](../developer_guide/add_result_store.md) for more details.
+By default, querybook supports storing query results/logs to and from s3 and sqlalchemy database. If other store is needed (such as local file system or google cloud), you can add a custom result store exporter. Please check [Add Result Store guide](../developer_guide/add_result_store.md) for more details.
 
 ### Task Plugin
 
-Task plugin lets you implement custom async tasks on datahub. For example, you can add a task which refreshes user's profile pic from an external source or add a task that checks if a user still has their access to an environment.
+Task plugin lets you implement custom async tasks on querybook. For example, you can add a task which refreshes user's profile pic from an external source or add a task that checks if a user still has their access to an environment.
 
 ### Web Page Plugin
 
-Web page plugin allows you to inject custom js, css to DataHub. Place your custom logic under webpage_plugin/custom_script.ts to inject it into the Datahub webapp.
+Web page plugin allows you to inject custom js, css to Querybook. Place your custom logic under webpage_plugin/custom_script.ts to inject it into the Querybook webapp.
 
 ## Installing Plugins
 
-0. Ensure you can run the vanilla DataHub
+0. Ensure you can run the vanilla Querybook
 
-Please ensure you can spin up DataHub's docker images (webserver, scheduler, workers) and able to set environment variables. Check "Setup DataHub" for more details.
+Please ensure you can spin up Querybook's docker images (webserver, scheduler, workers) and able to set environment variables. Check "Setup Querybook" for more details.
 
-1. Setup a new project folder for DataHub plugins
+1. Setup a new project folder for Querybook plugins
 
-DataHub can be pulled from dockerhub directly, so this is mainly used for plugins and custom environment settings.
+Querybook can be pulled from dockerhub directly, so this is mainly used for plugins and custom environment settings.
 
-2. Copy plugins folder from the DataHub repo
+2. Copy plugins folder from the Querybook repo
 
 Copy the `plugins` folder from the root directory of this project to the custom project folder.
 
@@ -76,4 +76,4 @@ Create a new dockerfile which can be used to install additional libraries and de
 
 4. Pack the plugins with the new docker image
 
-Last but not least, remember to set docker environment variable DATAHUB_PLUGIN to the path of the plugins folder and also include it as part of the PYTHONPATH.
+Last but not least, remember to set docker environment variable QUERYBOOK_PLUGIN to the path of the plugins folder and also include it as part of the PYTHONPATH.
