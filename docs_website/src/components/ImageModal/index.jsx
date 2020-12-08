@@ -81,8 +81,8 @@ export default ({ children, className = '' }) => {
                 onClick={() => setShowModal(true)}
                 className={'ImageModalButton ' + className}
             >
-                <MagnifyIcon />
                 {children}
+                <MagnifyIcon />
             </span>
             {modalDOM}
         </>

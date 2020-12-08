@@ -41,6 +41,7 @@ export const keyFeatures = {
             title: 'Scheduling',
             content: `Built-in scheduling functionality allows automatic DataDoc updates on set intervals. Combined with exporting, Querybook can send scheduled updates to external apps.`,
             image: 'key_features/scheduling.png',
+            imageClassName: 'mac-box-shadow',
         },
         {
             title: 'Query Analytics',
@@ -68,21 +69,25 @@ export const pluginFeatures = {
             title: 'Query Engine',
             content: `Supply your own query engine and add actionable error messages, useful metadata, and additional security measures.`,
             image: 'plugin_features/engine.png',
+            imageClassName: 'mac-box-shadow',
         },
         {
             title: 'Exporter',
             content: `Upload query results from Querybook to other tools for further analyses.`,
-            image: 'plugin_features/exporter.png',
+            image: 'plugin_features/exporter.gif',
+            imageClassName: 'box-shadowed-image',
         },
         {
             title: 'Notification',
             content: `Get notified upon completion of queries and DataDoc invitations via IM or email.`,
             image: 'plugin_features/notification.png',
+            imageClassName: 'mac-box-shadow',
         },
         {
             title: 'Result Transform',
             content: `Augment query results to provide meaningful statistics and visualizations.`,
-            image: 'plugin_features/transform.png',
+            image: 'plugin_features/transform.gif',
+            imageClassName: 'box-shadowed-image',
         },
     ],
 };
