@@ -16,22 +16,26 @@ export const keyFeatures = {
         {
             title: 'Collaborative DataDoc',
             content: `Organize rich text, queries, and charts into a notebook to easily document your analyses. Work collaboratively with others in a DataDoc and get real-time updates.`,
-            image: 'key_features/collab.png',
+            image: 'key_features/collab.gif',
+            imageClassName: 'box-shadowed-image',
         },
         {
             title: 'Smart Query Editor',
             content: `The Query Editor is aware of your tables and their columns, as such it provides autocompletion, syntax highlighting, and the ability to hover or click on a table to view its information.`,
-            image: 'key_features/editor.png',
+            image: 'key_features/editor.gif',
+            imageClassName: 'box-shadowed-image',
         },
         {
             title: 'Visualizations',
             content: `No need to leave Querybook to create charts to quickly visualize your results. With a familiar interface easily create line, bar, stacked area, pie, horizontal bar, donut, scatter, and table charts. Add them then to your DataDoc to complete your data narrative.`,
-            image: 'key_features/visualization.png',
+            image: 'key_features/visualization.gif',
+            imageClassName: 'box-shadowed-image',
         },
         {
             title: 'Templating',
             content: `Write dynamically generated queries via Jinja2 templating. Set variables in DataDoc on the fly.`,
-            image: 'key_features/templating.png',
+            image: 'key_features/templating.gif',
+            imageClassName: 'box-shadowed-image',
         },
         {
             title: 'Scheduling',
@@ -41,7 +45,8 @@ export const keyFeatures = {
         {
             title: 'Query Analytics',
             content: `Querybook auto analyzes executed queries to provide data lineage, example queries, frequent user information, search/auto-completion ranking.`,
-            image: 'key_features/analytics.png',
+            image: 'key_features/analytics.gif',
+            imageClassName: 'box-shadowed-image',
         },
     ],
 };

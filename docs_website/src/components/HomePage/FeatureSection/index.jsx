@@ -6,7 +6,9 @@ import Heading from '../../Heading';
 import './index.scss';
 import ImageModal from '../../ImageModal';
 
-const Image = ({ url }) => <img src={useBaseUrl(`img/${url}`)} />;
+const Image = ({ url, className }) => (
+    <img className={className ?? ''} src={useBaseUrl(`img/${url}`)} />
+);
 
 export default ({ featureType = 'key' }) => {
     const featureConfig = featureType == 'key' ? keyFeatures : pluginFeatures;
@@ -46,6 +48,10 @@ export default ({ featureType = 'key' }) => {
                             <Image
                                 url={
                                     featureConfig.featureItems[imageIndex].image
+                                }
+                                className={
+                                    featureConfig.featureItems[imageIndex]
+                                        .imageClassName
                                 }
                             />
                         </ImageModal>
