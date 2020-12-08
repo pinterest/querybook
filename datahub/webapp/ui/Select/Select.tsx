@@ -2,6 +2,7 @@ import React from 'react';
 import classNames from 'classnames';
 import './Select.scss';
 
+export const DESELECT_VALUE = '';
 export interface ISelectProps {
     name?: string;
     disabled?: boolean;
@@ -12,7 +13,6 @@ export interface ISelectProps {
     transparent?: boolean;
 
     withDeselect?: boolean;
-    deselectValue?: string;
 }
 
 export const Select: React.FunctionComponent<ISelectProps> = ({
@@ -20,17 +20,16 @@ export const Select: React.FunctionComponent<ISelectProps> = ({
     disabled,
     value,
     onChange,
-    className,
+    className = '',
     children,
 
     fullWidth,
     transparent,
 
     withDeselect,
-    deselectValue,
 }) => {
     const deselectOption = withDeselect ? (
-        <option value={deselectValue} key="">
+        <option value={DESELECT_VALUE} key="">
             {'Deselect'}
         </option>
     ) : null;
@@ -39,7 +38,7 @@ export const Select: React.FunctionComponent<ISelectProps> = ({
         <select
             name={name}
             disabled={disabled || false}
-            value={value ?? deselectValue}
+            value={value ?? DESELECT_VALUE}
             onChange={onChange}
         >
             {deselectOption}
@@ -63,11 +62,6 @@ export const Select: React.FunctionComponent<ISelectProps> = ({
             <div className={wrapperClassName}>{selectDOM}</div>
         </div>
     );
-};
-
-Select.defaultProps = {
-    className: '',
-    deselectValue: '',
 };
 
 export type IOptions = Array<

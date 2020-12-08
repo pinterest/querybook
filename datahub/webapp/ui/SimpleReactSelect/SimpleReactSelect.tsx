@@ -18,6 +18,9 @@ export interface ISimpleReactSelectProps<T> {
     withDeselect?: boolean;
     isDisabled?: boolean;
     selectProps?: Partial<ReactSelectProps<T>>;
+
+    // Clear selection user picks value
+    clearAfterSelect?: boolean;
 }
 
 const reactSelectStyle = makeReactSelectStyle(true);
@@ -26,10 +29,21 @@ export function SimpleReactSelect<T>({
     options,
     value,
     onChange,
-    withDeselect = false,
     isDisabled,
+
     selectProps = {},
+    withDeselect = false,
+    clearAfterSelect = false,
 }: ISimpleReactSelectProps<T>) {
+    const overrideSelectProps = useMemo(() => {
+        const override: Partial<ReactSelectProps<T>> = {};
+        if (clearAfterSelect) {
+            override.value = null;
+        }
+
+        return override;
+    }, [clearAfterSelect]);
+
     const computedOptions = useMemo(
         () =>
             (options || []).map((option) =>
@@ -64,6 +78,7 @@ export function SimpleReactSelect<T>({
             isClearable={withDeselect}
             menuPlacement={'auto'}
             {...selectProps}
+            {...overrideSelectProps}
         />
     );
 }

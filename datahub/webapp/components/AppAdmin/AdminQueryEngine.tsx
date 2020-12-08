@@ -121,7 +121,7 @@ export const AdminQueryEngine: React.FunctionComponent<IProps> = ({
                 language: queryEngine.language,
                 executor: queryEngine.executor,
                 executor_params: queryEngine.executor_params,
-                metastore_id: queryEngine.metastore_id,
+                metastore_id: queryEngine.metastore_id ?? null,
                 status_checker: queryEngine.status_checker,
             });
 
@@ -290,6 +290,12 @@ export const AdminQueryEngine: React.FunctionComponent<IProps> = ({
                                         value: metastore.name,
                                     })
                                 )}
+                                onChange={(value) => {
+                                    onChange(
+                                        'metastore_id',
+                                        value !== '' ? value : null
+                                    );
+                                }}
                                 withDeselect
                             />
                             <SimpleField

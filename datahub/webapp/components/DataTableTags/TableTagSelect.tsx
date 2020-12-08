@@ -84,6 +84,7 @@ export const TableTagSelect: React.FunctionComponent<IProps> = ({
                         }
                     },
                 }}
+                clearAfterSelect
             />
         </div>
     );
