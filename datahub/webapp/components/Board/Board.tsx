@@ -1,13 +1,14 @@
 import * as React from 'react';
 import { useDispatch, useSelector } from 'react-redux';
-import { fetchDataDocIfNeeded } from 'redux/dataDoc/action';
-import { fetchDataTableIfNeeded } from 'redux/dataSources/action';
-import { BoardDataDocItem } from './BoardDataDocItem';
-import { BoardDataTableItem } from './BoardDataTableItem';
+
+import { fetchBoardIfNeeded } from 'redux/board/action';
 import { Dispatch, IStoreState } from 'redux/store/types';
 
+import { BoardDataDocItem } from './BoardDataDocItem';
+import { BoardDataTableItem } from './BoardDataTableItem';
+import { Title } from 'ui/Title/Title';
+
 import './Board.scss';
-import { fetchBoardIfNeeded } from 'redux/board/action';
 
 interface IProps {
     boardId: number;
@@ -42,5 +43,13 @@ export const Board: React.FunctionComponent<IProps> = ({ boardId }) => {
             )
         );
 
-    return <div className="Board m48">{boardItemDOM}</div>;
+    return (
+        <div className="Board mv24 mh48">
+            <div className="Board-top ml4">
+                <Title>{board?.name}</Title>
+                <div className="Board-desc">{board?.description}</div>
+            </div>
+            {boardItemDOM}
+        </div>
+    );
 };
