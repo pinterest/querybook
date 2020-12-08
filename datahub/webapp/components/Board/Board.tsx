@@ -8,6 +8,7 @@ import { Dispatch, IStoreState } from 'redux/store/types';
 
 import './Board.scss';
 import { fetchBoardIfNeeded } from 'redux/board/action';
+import { Title } from 'ui/Title/Title';
 
 interface IProps {
     boardId: number;
@@ -42,5 +43,13 @@ export const Board: React.FunctionComponent<IProps> = ({ boardId }) => {
             )
         );
 
-    return <div className="Board m48">{boardItemDOM}</div>;
+    return (
+        <div className="Board mv24 mh48">
+            <div className="Board-top ml4">
+                <Title>{board?.name}</Title>
+                <div className="Board-desc">{board?.description}</div>
+            </div>
+            {boardItemDOM}
+        </div>
+    );
 };
