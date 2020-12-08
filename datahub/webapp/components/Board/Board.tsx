@@ -1,14 +1,14 @@
 import * as React from 'react';
 import { useDispatch, useSelector } from 'react-redux';
-import { fetchDataDocIfNeeded } from 'redux/dataDoc/action';
-import { fetchDataTableIfNeeded } from 'redux/dataSources/action';
-import { BoardDataDocItem } from './BoardDataDocItem';
-import { BoardDataTableItem } from './BoardDataTableItem';
+
+import { fetchBoardIfNeeded } from 'redux/board/action';
 import { Dispatch, IStoreState } from 'redux/store/types';
 
-import './Board.scss';
-import { fetchBoardIfNeeded } from 'redux/board/action';
+import { BoardDataDocItem } from './BoardDataDocItem';
+import { BoardDataTableItem } from './BoardDataTableItem';
 import { Title } from 'ui/Title/Title';
+
+import './Board.scss';
 
 interface IProps {
     boardId: number;
