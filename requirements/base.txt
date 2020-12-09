@@ -28,7 +28,11 @@ alembic==1.0.3
 
 gevent-websocket==0.10.1
 flask-socketio==4.2.0
-python-socketio==4.4.0  # Needed for flask-socketio, strange bug in 4.5.0 that prevented SocketIO from connecting
+# Pinning the version down, waiting for flask-socketio to update
+# to version 5
+python-socketio==4.4.0
+python-engineio==3.14.2
+
 
 # Querying
 # Hive/Presto
