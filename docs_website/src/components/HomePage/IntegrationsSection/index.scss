@@ -11,6 +11,7 @@
             filter: grayscale(1);
             img {
                 object-fit: contain;
+                max-height: 48px;
             }
         }
     }

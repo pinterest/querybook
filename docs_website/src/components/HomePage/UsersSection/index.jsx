@@ -6,18 +6,14 @@ import './index.scss';
 
 const userReviews = [
     {
-        name: 'Alice, Engineer @Pinterest',
+        name: 'Arvin Rezvanpour, SWE @Pinterest',
         comment:
-            'Love the UI! Especially like the separation of adhoc queries and saved datadocs!',
+            'Querybook has been instrumental to the Advertiser Growth Team at Pinterest. It allows us to opportunity size new experiment ideas and do offline experiment analysis in a collaborative and scalable way.',
     },
     {
-        name: 'Bob, PM @Pinterest',
+        name: 'Jesse Lumarie, SWE @Pinterest',
         comment:
-            "Querybook is amazing! I can't imagine doing my work without Querybook",
-    },
-    {
-        name: 'Cindy, SRE @CompanyC',
-        comment: 'So simple to set up and make it work!',
+            "I rely on Querybook every day to query, organize and analyze Pinterest data.  It's a fast and intuitive program that gets out of the way and allows me to focus on identifying trends and opportunities.",
     },
 ];
 

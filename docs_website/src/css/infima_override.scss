@@ -7,13 +7,6 @@
     }
 }
 
-.navbar {
-    background-color: transparent;
-    &:not(.navbar-sidebar--show) {
-        backdrop-filter: blur(5px);
-    }
-}
-
 body {
     &.no-nav-border {
         .navbar {
@@ -23,8 +16,6 @@ body {
 }
 
 :root {
-    --ifm-navbar-background-color: transparent;
-
     --ifm-color-primary-lightest: #bfe6e5;
     --ifm-color-primary-lighter: #a2dbd9;
     --ifm-color-primary-light: #86d0ce;

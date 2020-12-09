@@ -4,6 +4,20 @@ import { disableBodyScroll, enableBodyScroll } from 'body-scroll-lock';
 
 import './index.scss';
 
+function getPageContentDOM() {
+    return document.getElementById('__docusaurus');
+}
+
+function blurPage() {
+    const contentDOM = getPageContentDOM();
+    contentDOM.classList.add('blur-page');
+}
+
+function unblurPage() {
+    const contentDOM = getPageContentDOM();
+    contentDOM.classList.remove('blur-page');
+}
+
 const Overlay = ({ children, render }) => {
     const overlayRoot = useMemo(() => {
         let overlayRoot = document.getElementById('overlay-root');
@@ -19,8 +33,13 @@ const Overlay = ({ children, render }) => {
     useEffect(() => {
         if (overlayRoot) {
             overlayRoot.appendChild(overlayRef.current);
+            blurPage();
+
             return () => {
                 overlayRoot.removeChild(overlayRef.current);
+                if (overlayRoot.childElementCount === 0) {
+                    unblurPage();
+                }
             };
         }
     }, [overlayRoot]);

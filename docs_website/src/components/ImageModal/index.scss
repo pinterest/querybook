@@ -12,6 +12,20 @@
     &:hover .image-magnify-icon {
         opacity: 1;
     }
+
+    img {
+        &.box-shadowed-image {
+            border-radius: 5px;
+            box-shadow: 0px 1px 11px 5px rgba(0, 0, 0, 0.2);
+        }
+
+        &.mac-box-shadow {
+            ~ svg.image-magnify-icon {
+                right: 5%;
+                bottom: 10%;
+            }
+        }
+    }
 }
 
 .ImageModal {
@@ -20,8 +34,8 @@
     bottom: 0;
     left: 0;
     right: 0;
-    z-index: 300;
-    backdrop-filter: blur(5px);
+    background-color: rgba(0, 0, 0, 0.4);
+
     display: flex;
 
     .Modal-image {
@@ -29,17 +43,12 @@
         display: flex;
         max-width: 90vw;
         max-height: 90vh;
-    }
-}
 
-.box-shadowed-image {
-    border-radius: 5px;
-    box-shadow: 0px 1px 11px 5px rgba(0, 0, 0, 0.2);
-}
-
-.mac-box-shadow {
-    ~ svg.image-magnify-icon {
-        right: 5%;
-        bottom: 10%;
+        img {
+            width: auto;
+            height: auto;
+            object-fit: contain;
+            border-radius: 5px;
+        }
     }
 }
