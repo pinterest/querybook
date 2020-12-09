@@ -14,7 +14,7 @@ export default () => {
                             text="Discover"
                             className="text-discover"
                         />
-                        ,
+                        ,{' '}
                         <GradientText text="Analyze" className="text-analyze" />
                         , and{' '}
                         <GradientText
@@ -24,7 +24,7 @@ export default () => {
                     </h1>
                     <p className="hero__subtitle">
                         <b>Querybook</b> is Pinterest’s open-sourced big data
-                        portal via a notebook interface.
+                        IDE via a notebook interface.
                     </p>
                     <div className="Querybook-Showcase">
                         <img

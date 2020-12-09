@@ -27,6 +27,18 @@ export const Databases = [
         key: 'sqlite',
         image: 'integrations/sqlite.png',
     },
+    {
+        key: 'postgres',
+        image: 'integrations/postgres.svg',
+    },
+    {
+        key: 'sqlserver',
+        image: 'integrations/sqlserver.svg',
+    },
+    {
+        key: 'oracle',
+        image: 'integrations/oracle.png',
+    },
 ];
 
 export const CloudPlatforms = [

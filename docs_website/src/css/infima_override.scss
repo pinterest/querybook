@@ -23,6 +23,10 @@ body {
     --ifm-color-primary-dark: #5cc0bd;
     --ifm-color-primary-darker: #3fa29f;
     --ifm-color-primary-darkest: #2e7775;
+
+    .footer.footer--dark {
+        --ifm-footer-background-color: #302e2f;
+    }
 }
 
 html[data-theme='dark'] {
@@ -33,4 +37,8 @@ html[data-theme='dark'] {
     --ifm-color-primary-dark: #eb5a8f;
     --ifm-color-primary-darker: #e64680;
     --ifm-color-primary-darkest: #e12368;
+
+    .footer.footer--dark {
+        --ifm-footer-background-color: #222021;
+    }
 }
