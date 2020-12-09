@@ -69,4 +69,8 @@
     align-items: center;
 }
 
+.blur-page {
+    filter: blur(10px);
+}
+
 @import './infima_override.scss';

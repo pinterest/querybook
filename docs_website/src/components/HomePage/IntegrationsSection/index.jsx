@@ -18,7 +18,7 @@ export default () => {
                 </p>
                 <Grid
                     items={Databases}
-                    itemPerRow={3}
+                    itemPerRow={4}
                     renderer={(item) => (
                         <div className="logo-container">
                             <img src={`img/${item.image}`} height={'80px'} />
@@ -33,7 +33,7 @@ export default () => {
                 </p>
                 <Grid
                     items={CloudPlatforms}
-                    itemPerRow={3}
+                    itemPerRow={4}
                     renderer={(item) => (
                         <div className="logo-container">
                             <img src={`img/${item.image}`} height={'80px'} />

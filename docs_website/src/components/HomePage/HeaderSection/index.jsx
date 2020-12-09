@@ -14,7 +14,7 @@ export default () => {
                             text="Discover"
                             className="text-discover"
                         />
-                        ,
+                        ,{' '}
                         <GradientText text="Analyze" className="text-analyze" />
                         , and{' '}
                         <GradientText
@@ -24,15 +24,13 @@ export default () => {
                     </h1>
                     <p className="hero__subtitle">
                         <b>Querybook</b> is Pinterest’s open-sourced big data
-                        portal via a notebook interface.
+                        IDE via a notebook interface.
                     </p>
-                    <div className="QuerybookTutorialVideo">
-                        <iframe
-                            src="https://www.youtube.com/embed/dQw4w9WgXcQ"
-                            frameBorder="0"
-                            allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
-                            allowFullScreen
-                        ></iframe>
+                    <div className="Querybook-Showcase">
+                        <img
+                            src={useBaseUrl('img/homepage.png')}
+                            className="mac-box-shadow"
+                        />
                     </div>
                     <div className="HeaderActions flex-center">
                         <Link
