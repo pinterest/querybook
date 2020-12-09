@@ -58,7 +58,10 @@
         animation: fadeIn 1s ease-in-out backwards;
         animation-delay: 1s;
 
-        margin-bottom: 0.5rem;
+        margin-bottom: var(--ifm-paragraph-margin-bottom);
+        p {
+            margin-bottom: 0;
+        }
     }
 
     .used-by-logos {
