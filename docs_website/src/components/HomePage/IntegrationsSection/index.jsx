@@ -21,7 +21,11 @@ export default () => {
                     itemPerRow={4}
                     renderer={(item) => (
                         <div className="logo-container">
-                            <img src={`img/${item.image}`} height={'80px'} />
+                            <img
+                                src={`img/${item.image}`}
+                                height={'80px'}
+                                alt={item.key}
+                            />
                         </div>
                     )}
                     itemClassName={'logo-item'}
@@ -36,7 +40,11 @@ export default () => {
                     itemPerRow={4}
                     renderer={(item) => (
                         <div className="logo-container">
-                            <img src={`img/${item.image}`} height={'80px'} />
+                            <img
+                                src={`img/${item.image}`}
+                                height={'80px'}
+                                alt={item.key}
+                            />
                         </div>
                     )}
                     itemClassName={'logo-item'}

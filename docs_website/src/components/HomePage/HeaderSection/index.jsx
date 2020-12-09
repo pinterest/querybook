@@ -50,9 +50,10 @@ export default () => {
             </div>
 
             <div className="container">
-                <p className="used-by text">
-                    Used by Engineers and Data Scientists From
-                </p>
+                <div className="used-by text">
+                    <p>Announced in Dec 2020</p>
+                    <p>Used by Engineers and Data Scientists From</p>
+                </div>
                 <div className="flex-center used-by-logos">
                     <Link to="https://www.pinterest.com">
                         <img

@@ -6,8 +6,8 @@ import Heading from '../../Heading';
 import './index.scss';
 import ImageModal from '../../ImageModal';
 
-const Image = ({ url, className }) => (
-    <img className={className ?? ''} src={useBaseUrl(`img/${url}`)} />
+const Image = ({ url, className, alt }) => (
+    <img className={className ?? ''} src={useBaseUrl(`img/${url}`)} alt={alt} />
 );
 
 export default ({ featureType = 'key' }) => {
@@ -52,6 +52,9 @@ export default ({ featureType = 'key' }) => {
                                 className={
                                     featureConfig.featureItems[imageIndex]
                                         .imageClassName
+                                }
+                                alt={
+                                    featureConfig.featureItems[imageIndex].title
                                 }
                             />
                         </ImageModal>
