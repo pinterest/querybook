@@ -200,8 +200,8 @@ Array [
       "end": 38,
       "line": 0,
       "start": 34,
-      "text": "year",
-      "type": "KEYWORD",
+      "text": "YEAR",
+      "type": "VARIABLE",
     },
     Object {
       "end": 43,
@@ -277,7 +277,7 @@ Array [
     "line": 0,
     "start": 26,
     "text": "a",
-    "type": "KEYWORD",
+    "type": "VARIABLE",
   },
   Object {
     "end": 29,
