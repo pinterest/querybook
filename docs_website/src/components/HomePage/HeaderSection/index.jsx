@@ -14,9 +14,9 @@ export default () => {
                             text="Discover"
                             className="text-discover"
                         />
-                        ,{' '}
+                        ,&nbsp;
                         <GradientText text="Analyze" className="text-analyze" />
-                        , and{' '}
+                        , and&nbsp;
                         <GradientText
                             text="Collaborate"
                             className="text-collaborate"
