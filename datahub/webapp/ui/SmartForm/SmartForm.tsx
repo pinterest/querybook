@@ -14,6 +14,7 @@ import { IconButton } from 'ui/Button/IconButton';
 import { ToggleSwitch } from 'ui/ToggleSwitch/ToggleSwitch';
 
 import './SmartForm.scss';
+import Markdown from 'markdown-to-jsx';
 
 export {
     updateValue,
@@ -93,7 +94,7 @@ function SimpleFormField<T>({
                 <FormFieldInputSection>{controlDOM}</FormFieldInputSection>
                 {helper ? (
                     <FormFieldHelpSection>
-                        <div dangerouslySetInnerHTML={{ __html: helper }} />
+                        <Markdown>{helper}</Markdown>
                     </FormFieldHelpSection>
                 ) : null}
             </FormField>

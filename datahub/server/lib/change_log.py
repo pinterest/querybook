@@ -1,6 +1,5 @@
 import os
 from itertools import islice
-import markdown2
 from const.path import CHANGE_LOG_PATH
 
 
@@ -8,31 +7,9 @@ __change_logs = None
 
 
 def generate_change_log(raw_text: str) -> str:
-    # Since the markdown is used for the documentation site
-    # We need to preprocess it so that it can be presentable
-    # within DataHub
-
     # TODO: either move the changelog completely to documentation site
     #       or come up with a solution that can be compatible with both
-
-    lines = raw_text.split("\n")
-    filtered_lines = []
-
-    # Remove --- blocks from markdown
-    inside_comment = False
-    for line in lines:
-        if line.startswith("---"):
-            inside_comment = not inside_comment
-        if not inside_comment:
-            filtered_lines.append(line)
-
-    # Add "static" prefix to image path
-    filtered_lines = [
-        line.replace("![](/changelog/", "![](/static/changelog/")
-        for line in filtered_lines
-    ]
-
-    return markdown2.markdown("\n".join(filtered_lines))
+    return raw_text.replace("![](/changelog/", "![](/static/changelog/")
 
 
 def load_all_change_logs():
@@ -46,12 +23,7 @@ def load_all_change_logs():
             with open(os.path.join(CHANGE_LOG_PATH, "./{}".format(filename))) as f:
                 changelog_date = filename.split(".")[0]
                 __change_logs.append(
-                    {
-                        "date": changelog_date,
-                        "content": generate_change_log(
-                            f"{changelog_date}\n" + f.read()
-                        ),
-                    }
+                    {"date": changelog_date, "content": generate_change_log(f.read()),}
                 )
     return __change_logs
 

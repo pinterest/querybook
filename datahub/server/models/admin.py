@@ -1,4 +1,3 @@
-import markdown2
 import sqlalchemy as sql
 from sqlalchemy.orm import relationship, backref
 
@@ -32,7 +31,7 @@ class Announcement(CRUDMixin, Base):
     def to_dict(self):
         return {
             "id": self.id,
-            "message": markdown2.markdown(self.message),
+            "message": self.message,
             "url_regex": self.url_regex,
             "can_dismiss": self.can_dismiss,
         }
