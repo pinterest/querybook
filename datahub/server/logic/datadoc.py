@@ -193,7 +193,7 @@ def clone_data_doc(id, owner_uid, commit=True, session=None):
 
     new_data_doc = create_data_doc(
         environment_id=data_doc.environment_id,
-        public=data_doc.environment.shareable,
+        public=data_doc.public,
         archived=False,
         owner_uid=owner_uid,
         title=data_doc.title,
