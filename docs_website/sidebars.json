@@ -3,8 +3,8 @@
         "Admin Guide": [
             "admin_guide/quick_start",
             "admin_guide/setup_guide",
-            "admin_guide/general_config",
             "admin_guide/infra_config",
+            "admin_guide/general_config",
             "admin_guide/deployment_guide",
             "admin_guide/sharing_and_security",
             "admin_guide/plugins",
