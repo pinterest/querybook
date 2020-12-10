@@ -579,10 +579,18 @@ export function getQueryAsExplain(query: string, language?: string) {
     return statements.map((statement) => 'EXPLAIN ' + statement).join('\n');
 }
 
+function isKeywordToken(token: IToken) {
+    return token.type === 'KEYWORD';
+}
+
+function isKeywordTokenWithText(token: IToken, text: string) {
+    return isKeywordToken(token) && token.text === text;
+}
+
 export function findWithStatementPlaceholder(statement: IToken[]) {
     const placeholders: string[] = [];
     const firstToken = statement[0];
-    if (firstToken?.type === 'KEYWORD' && firstToken?.text === 'with') {
+    if (firstToken && isKeywordTokenWithText(firstToken, 'with')) {
         let tokenIndex = 1;
         while (tokenIndex < statement.length) {
             const token = statement[tokenIndex++];
@@ -590,20 +598,13 @@ export function findWithStatementPlaceholder(statement: IToken[]) {
                 placeholders.push(token.text);
             } else if (token.type === 'BRACKET' && token.bracketIndex) {
                 tokenIndex = token.bracketIndex + 1;
-            } else if (token.type === 'KEYWORD' && dmlKeyWord.has(token.text)) {
+            } else if (isKeywordToken(token) && dmlKeyWord.has(token.text)) {
                 break;
             }
         }
     }
 
     return placeholders;
-}
-
-function isKeywordToken(token: IToken) {
-    return token.type === 'KEYWORD';
-}
-function isKeywordTokenWithText(token: IToken, text: string) {
-    return isKeywordToken(token) && token.text === text;
 }
 
 export function findTableReferenceAndAlias(statements: IToken[][]) {
@@ -790,7 +791,7 @@ export function getEditorLines(statements: IToken[][]) {
 
             let needToUpdateLine = false;
             if (
-                token.type === 'KEYWORD' &&
+                isKeywordToken(token) &&
                 token.text in contextSensitiveKeyWord
             ) {
                 context = contextSensitiveKeyWord[token.text];
