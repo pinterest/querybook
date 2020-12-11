@@ -11,9 +11,9 @@ There are two ways to setup Querybook:
 1. [Single-Machine Instant Setup (In laptop or server)](quick_start.md)
 2. Multi-Machine Setup
 
-The single machine method is a quick way to setup Querybook for <5 users usage and it uses docker-compose to bring up all the necessary databases. Please check `Single Machine Setup` and `Post Setup Configuration` for details.
+The single machine method is a quick way to setup Querybook for <5 users usage and it uses docker-compose to bring up all the necessary databases. Please check [Single Machine Setup](quick_start.md) and `Post Setup Configuration` for details.
 
-The multi-machine method allows Querybook to be scaled for hundreds/thousands of users. It is more complicated to setup and requires external databases. Please check `Multi-Machine Setup` and `Post Setup Configuration` for details.
+The multi-machine method allows Querybook to be scaled for thousands of users. It is more complicated to setup and requires external databases. Please check [Infra Config](infra_config.md) to see how to setup the infrastructure required to run Querybook.
 
 ## Multi-Machine Setup
 
@@ -21,7 +21,7 @@ Once further scalability is desired you can start each service individually in d
 
 #### Step 1: Update your environment variables configuration
 
-See the configuration section for this.
+See the [Infra Config](infra_config.md) section for this.
 
 #### Step 2: Start each service individually
 
@@ -31,7 +31,7 @@ You can start each service by the following commands:
 -   Celery worker: `make worker`
 -   Scheduler: `make scheduler`
 
-If you add `prod_` in front of the service name (for example `make prod_web`), it will start the production version which uses the prod docker image, which has less logging, and no auto-reloading.
+If you add `prod_` in front of the service name (for example `make prod_web`), it will start the production version which uses the prod docker image, which has less logging, no auto-reloading, and utilizes uwsgi to handle more requests.
 
 ## Post Setup Configuration
 

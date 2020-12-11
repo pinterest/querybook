@@ -8,7 +8,9 @@ Querybook allows for some basic customization in the frontend. You can use the w
 
 Right now there are four use cases for custom javascript:
 
-1. Inject trackers such as google analytics. For example:
+### Inject trackers such as google analytics.
+
+For example:
 
 ```typescript
 const script = document.createElement('script');
@@ -18,7 +20,9 @@ script.innerHTML = `
 document.body.appendChild(script);
 ```
 
-2. Customize some of the messages in Querybook. Currently Querybook allows the plugin to set the following messages:
+### Customize some of the messages in Querybook.
+
+Currently Querybook allows the plugin to set the following messages:
 
 ```typescript
 interface Window {
@@ -34,8 +38,13 @@ You can set the message directly in the custom_script.ts:
 window.NO_ENVIRONMENT_MESSAGE = 'Lorem ipsum dolor sit amet.';
 ```
 
-3. Customize query result transformation such as adding url link or to transform the text into image. To see the complete guide, please check out [Plugins Guide](../developer_guide/add_query_result_transform.md) on how.
-4. Customize the landing page for '/'. You can do so by modifying the window variable with the following type:
+### Customize query result transformation.
+
+With result transform, you can dding url link or to transform the text into image. To see the complete guide, please check out [Plugins Guide](../developer_guide/add_query_result_transform.md) on how.
+
+### Customize the landing page.
+
+The landing page is the page shown with the route '/'. You can do so by modifying the window variable with the following type:
 
 ```typescript
 interface Window {
