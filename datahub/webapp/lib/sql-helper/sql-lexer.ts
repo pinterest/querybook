@@ -10,6 +10,10 @@ const keepTokenType = new Set([
 
 // We look for actual table name table these keyword
 const tableKeyWord = new Set(['table', 'from', 'join', 'into']);
+// if it is 'distinct from' then it is not referencing a table
+const previousTokenKeyWordDenylistMap = {
+    from: new Set(['distinct']),
+};
 
 const dmlKeyWord = new Set([
     'select',
@@ -422,7 +426,7 @@ function makeTokenizer(language: string) {
 export function tokenize(code: string, language?: string) {
     const lines = code.split('\n');
     const tokens: IToken[] = [];
-    let tokenizer = makeTokenizer(language || 'hive');
+    let tokenizer = makeTokenizer(language ?? 'presto');
     lines.forEach((line, lineNum) => {
         const stream = new StringStream(line);
         while (!stream.eol()) {
@@ -575,17 +579,28 @@ export function getQueryAsExplain(query: string, language?: string) {
     return statements.map((statement) => 'EXPLAIN ' + statement).join('\n');
 }
 
-function findWithStatementPlaceholder(statement: IToken[]) {
-    const placeholders: IToken[] = [];
-    let tokenIndex = 1;
-    while (tokenIndex < statement.length) {
-        const token = statement[tokenIndex++];
-        if (token.type === 'VARIABLE') {
-            placeholders.push(token);
-        } else if (token.type === 'BRACKET' && token.bracketIndex) {
-            tokenIndex = token.bracketIndex + 1;
-        } else if (token.type === 'KEYWORD' && dmlKeyWord.has(token.text)) {
-            break;
+function isKeywordToken(token: IToken) {
+    return token.type === 'KEYWORD';
+}
+
+function isKeywordTokenWithText(token: IToken, text: string) {
+    return isKeywordToken(token) && token.text === text;
+}
+
+export function findWithStatementPlaceholder(statement: IToken[]) {
+    const placeholders: string[] = [];
+    const firstToken = statement[0];
+    if (firstToken && isKeywordTokenWithText(firstToken, 'with')) {
+        let tokenIndex = 1;
+        while (tokenIndex < statement.length) {
+            const token = statement[tokenIndex++];
+            if (token.type === 'VARIABLE') {
+                placeholders.push(token.text);
+            } else if (token.type === 'BRACKET' && token.bracketIndex) {
+                tokenIndex = token.bracketIndex + 1;
+            } else if (isKeywordToken(token) && dmlKeyWord.has(token.text)) {
+                break;
+            }
         }
     }
 
@@ -608,15 +623,14 @@ export function findTableReferenceAndAlias(statements: IToken[][]) {
         // If the query starts with EXPLAIN
         // ignore that word and skip again to the rest
         if (
-            firstToken.type === 'KEYWORD' &&
-            firstToken.text === 'explain' &&
+            isKeywordTokenWithText(firstToken, 'explain') &&
             statement.length > 1
         ) {
             firstToken = statement[tokenCounter++];
         }
 
         if (
-            firstToken.type !== 'KEYWORD' ||
+            !isKeywordToken(firstToken) ||
             !initialStatementKeyWord.has(firstToken.text)
         ) {
             return;
@@ -628,57 +642,63 @@ export function findTableReferenceAndAlias(statements: IToken[][]) {
                 defaultSchema = secondToken.text;
             }
         } else {
-            let placeholders: Set<string> = null;
-            if (firstToken.text === 'with') {
-                placeholders = new Set(
-                    findWithStatementPlaceholder(statement).map(
-                        (token) => token.text
-                    )
-                );
-            }
+            const placeholders: Set<string> = new Set(
+                findWithStatementPlaceholder(statement)
+            );
 
             const tables: IToken[] = [];
             const tableAlias: Record<string, IToken> = {};
 
-            // Whether or not the context inside a () is a query
+            // Whether or not the context inside a () is a subquery
             // start with True because the checks above
-            const bracketQueryContext: boolean[] = [true];
+            const backetQueryContextStack: boolean[] = [true];
 
             let tableSearchMode = false;
             let lastTableIndex = -1;
 
             statement.forEach((token, tokenIndex) => {
+                const nextToken = statement[tokenIndex + 1];
+                const prevToken = statement[tokenIndex - 1];
+
                 if (token.type === 'BRACKET') {
                     if (token.text === '(' || token.text === '[') {
-                        const nextToken = statement[tokenIndex + 1];
                         if (!nextToken) {
                             // no need for more analysis if the loop is going to end
                             return;
                         }
-                        bracketQueryContext.push(
-                            nextToken.type === 'KEYWORD' &&
+                        backetQueryContextStack.push(
+                            isKeywordToken(nextToken) &&
                                 initialStatementKeyWord.has(nextToken.text)
                         );
                         tableSearchMode = false;
                     } else {
                         // ) or ]
-                        bracketQueryContext.pop();
+                        backetQueryContextStack.pop();
                     }
                     return;
                 }
 
                 // If the content inside the bracket is not going to be
                 // a query, then we skip all until we meet the enclosing bracket
-                if (!bracketQueryContext[bracketQueryContext.length - 1]) {
+                if (
+                    !backetQueryContextStack[backetQueryContextStack.length - 1]
+                ) {
                     return;
                 }
 
-                if (token.type === 'KEYWORD') {
-                    if (tableKeyWord.has(token.text)) {
-                        tableSearchMode = true;
+                if (isKeywordToken(token)) {
+                    if (tokenIndex === 0) {
+                        tableSearchMode = initialStatementTableKeyWord.has(
+                            token.text
+                        );
                     } else if (
-                        tokenIndex === 0 &&
-                        initialStatementTableKeyWord.has(token.text)
+                        tableKeyWord.has(token.text) &&
+                        !(
+                            isKeywordToken(prevToken) &&
+                            previousTokenKeyWordDenylistMap[token.text]?.has(
+                                prevToken?.text
+                            )
+                        )
                     ) {
                         tableSearchMode = true;
                     } else if (!continueTableSearchKeyWord.has(token.text)) {
@@ -686,9 +706,7 @@ export function findTableReferenceAndAlias(statements: IToken[][]) {
                     }
                 } else if (token.type === 'VARIABLE') {
                     if (tableSearchMode) {
-                        const isActualTable = !(
-                            placeholders && placeholders.has(token.text)
-                        );
+                        const isActualTable = !placeholders.has(token.text);
                         if (isActualTable) {
                             tables.push(token);
                             lastTableIndex = tokenIndex;
@@ -696,20 +714,15 @@ export function findTableReferenceAndAlias(statements: IToken[][]) {
                         tableSearchMode = false;
                     } else if (tokenIndex > 0) {
                         // check alias
-                        const prevToken = statement[tokenIndex - 1];
-
                         // example: select * from table_a as aa;
                         const hasAsAlias =
-                            prevToken.type === 'KEYWORD' &&
-                            prevToken.text === 'AS' &&
+                            isKeywordTokenWithText(prevToken, 'as') &&
                             lastTableIndex + 2 === tokenIndex;
                         // example: select * from table_a aa;
                         const hasSpaceAlias = lastTableIndex + 1 === tokenIndex;
                         if (hasAsAlias || hasSpaceAlias) {
                             const tableToken = tables[tables.length - 1];
-                            const isActualTable = !(
-                                placeholders && placeholders.has(token.text)
-                            );
+                            const isActualTable = !placeholders.has(token.text);
                             if (isActualTable) {
                                 tableAlias[token.text] = tableToken;
                             }
@@ -718,7 +731,7 @@ export function findTableReferenceAndAlias(statements: IToken[][]) {
                 }
             });
 
-            // Post Process Tables
+            // Post Process Tables to find the correct name
             const processedTables = [];
             tables.forEach((tableToken) => {
                 const { schema, table, success } = sanitizeTable(
@@ -733,7 +746,7 @@ export function findTableReferenceAndAlias(statements: IToken[][]) {
             });
             references[statementNum] = processedTables;
 
-            // Post Process Alias
+            // Post Process Alias to link them to table
             const processedAlias: Record<string, TableToken> = {};
             Object.keys(tableAlias).forEach((alias) => {
                 const tableToken = tableAlias[alias];
@@ -778,7 +791,7 @@ export function getEditorLines(statements: IToken[][]) {
 
             let needToUpdateLine = false;
             if (
-                token.type === 'KEYWORD' &&
+                isKeywordToken(token) &&
                 token.text in contextSensitiveKeyWord
             ) {
                 context = contextSensitiveKeyWord[token.text];
