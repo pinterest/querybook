@@ -1,8 +1,10 @@
 import * as React from 'react';
 import { useParams } from 'react-router-dom';
+import Markdown from 'markdown-to-jsx';
 
 import ds from 'lib/datasource';
 import localStore from 'lib/local-store';
+import { sanitizeAndExtraMarkdown } from 'lib/markdown';
 import { navigateWithinEnv } from 'lib/utils/query-string';
 import { ChangeLogValue, CHANGE_LOG_KEY } from 'lib/local-store/const';
 
@@ -15,6 +17,20 @@ interface IChangeLogItem {
     content: string;
     date: string;
 }
+
+const ChangeLogMarkdown: React.FC<{ markdown: string }> = ({ markdown }) => {
+    const processedMarkdown = React.useMemo(() => {
+        const [text, properties] = sanitizeAndExtraMarkdown(markdown);
+        return 'title' in properties
+            ? `# ${properties['title']}\n` + text
+            : text;
+    }, [markdown]);
+    return (
+        <Content className="ChangeLog-content mt12 mh12 mb24">
+            <Markdown>{processedMarkdown}</Markdown>
+        </Content>
+    );
+};
 
 export const ChangeLog: React.FunctionComponent = () => {
     const { date: changeLogDate } = useParams();
@@ -54,11 +70,7 @@ export const ChangeLog: React.FunctionComponent = () => {
     }, [changeLogDate]);
 
     const changeLogDOM = changeLogContent.map((text, idx) => (
-        <Content
-            className="ChangeLog-content mt12 mh12 mb24"
-            dangerouslySetInnerHTML={{ __html: text }}
-            key={idx}
-        />
+        <ChangeLogMarkdown markdown={text} key={idx} />
     ));
     const changeLogListDOM = changeLogDate ? null : (
         <div className="ChangeLog-list">

@@ -1,5 +1,6 @@
 import React, { useCallback, useEffect } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
+import Markdown from 'markdown-to-jsx';
 
 import { titleize } from 'lib/utils';
 import { generateFormattedDate } from 'lib/utils/datetime';
@@ -94,7 +95,7 @@ export const QueryEngineStatusViewer: React.FC<IProps> = ({ engineId }) => {
 
         const messageDOMs = (data.messages ?? []).map((message, index) => (
             <Message key={index} type={messageType}>
-                <p dangerouslySetInnerHTML={{ __html: message }} />
+                <Markdown>{message}</Markdown>
             </Message>
         ));
         const messageSectionDOM = messageDOMs.length ? (

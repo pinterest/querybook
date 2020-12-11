@@ -1,4 +1,5 @@
 import React, { useMemo } from 'react';
+import Markdown from 'markdown-to-jsx';
 import { Message } from 'ui/Message/Message';
 
 const queryErrorsByLanguage: Record<
@@ -62,7 +63,7 @@ export const ErrorSuggestion: React.FunctionComponent<IProps> = ({
             iconSize={20}
             type="tip"
         >
-            <span dangerouslySetInnerHTML={{ __html: matchedError.message }} />
+            <Markdown>{matchedError.message}</Markdown>
         </Message>
     ) : null;
 };

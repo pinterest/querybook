@@ -14,10 +14,7 @@ Format
 jdbc:hive2://&lt;host1&gt;:&lt;port1&gt;,&lt;host2&gt;:&lt;port2&gt;/dbName;sess_var_list?hive_conf_list#hive_var_list
 </p>
 <p>Currently support zookeeper in session var, and will pass any conf variables to HS2</p>
-<p>See
-    <a href="https://cwiki.apache.org/confluence/display/Hive/HiveServer2+Clients#HiveServer2Clients-JDBC">
-        here
-    </a> for more details.
+<p>See [here](https://cwiki.apache.org/confluence/display/Hive/HiveServer2+Clients#HiveServer2Clients-JDBC) for more details.
 </p>""",
     ),
     username=FormField(regex="\\w+"),
@@ -32,7 +29,7 @@ presto_executor_template = StructFormField(
         helper="""
 <p>Format jdbc:presto://&lt;host:port&gt;/&lt;catalog&gt;/&lt;schema&gt;?presto_conf_list</p>
 <p>Catalog and schema are optional. We only support SSL as the conf option.</p>
-<p>See <a href="https://prestodb.github.io/docs/current/installation/jdbc.html">here</a> for more details.</p>""",
+<p>See [here](https://prestodb.github.io/docs/current/installation/jdbc.html) for more details.</p>""",
     ),
     username=FormField(regex="\\w+"),
     password=FormField(hidden=True),
@@ -44,14 +41,13 @@ sqlalchemy_template = StructFormField(
         required=True,
         helper="""
 <p>
-    See <a href="https://docs.sqlalchemy.org/en/latest/core/engines.html#database-urls">here</a>
-    for more details.
+    See [here](https://docs.sqlalchemy.org/en/latest/core/engines.html#database-urls) for more details.
 </p>""",
     )
 )
 
 bigquery_template = StructFormField(
     google_credentials_json=FormField(
-        helper="The JSON string used to log in as service account. If not provided then GOOGLE_CREDS from settings will be used.",
+        helper="The JSON string used to log in as service account. If not provided then **GOOGLE_CREDS** from settings will be used.",
     )
 )

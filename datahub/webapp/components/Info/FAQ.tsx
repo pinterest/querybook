@@ -4,8 +4,9 @@ import { Content } from 'ui/Content/Content';
 import { Title } from 'ui/Title/Title';
 
 import './FAQ.scss';
+import Markdown from 'markdown-to-jsx';
 
-const faqs = require('config/faqs.yaml').faqs;
+const faqs: Array<[string, string]> = require('config/faqs.yaml').faqs;
 
 export const FAQ: React.FunctionComponent = () => (
     <div className="FAQ m12">
@@ -17,7 +18,9 @@ export const FAQ: React.FunctionComponent = () => (
                         {question}
                     </Title>
                     <div className="FAQ-answer m12">
-                        <Content dangerouslySetInnerHTML={{ __html: answer }} />
+                        <Content>
+                            <Markdown>{answer}</Markdown>
+                        </Content>
                     </div>
                 </div>
             );

@@ -1,3 +1,4 @@
+import Markdown from 'markdown-to-jsx';
 import React from 'react';
 import { useDispatch } from 'react-redux';
 import * as datahubUIActions from 'redux/dataHubUI/action';
@@ -46,7 +47,7 @@ export const Announcements: React.FunctionComponent = () => {
                     }`}
                     key={item.id}
                 >
-                    <p dangerouslySetInnerHTML={{ __html: item.message }} />
+                    <Markdown>{item.message}</Markdown>
                     {deleteButton}
                 </Level>
             );
