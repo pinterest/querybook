@@ -1,8 +1,8 @@
-import { bind } from 'lodash-decorators';
-import React from 'react';
+import React, { useEffect, useMemo, useState } from 'react';
 
 import { StatementExecutionStatus } from 'const/queryExecution';
 
+import { useToggle } from 'hooks/useToggle';
 import {
     IStatementExecution,
     IStatementResult,
@@ -16,73 +16,79 @@ import { Modal } from 'ui/Modal/Modal';
 import { ProgressBar } from 'ui/ProgressBar/ProgressBar';
 
 import './DataDocStatementExecution.scss';
+import { sanitizeAndExtraMarkdown } from 'lib/markdown';
 
 interface IProps {
     statementExecution: IStatementExecution;
     statementResult: IStatementResult;
 
-    index: number;
     showStatementLogs: boolean;
     showStatementMeta: boolean;
 
+    toggleStatementMeta: () => any;
     loadS3Result: (id: number) => any;
 }
 
-interface IState {
-    showInFullScreen: boolean;
+function useStatementMeta(
+    metaInfo: string | null,
+    showStatementMeta: boolean,
+    toggleStatementMeta: () => void
+) {
+    const [statementMeta, forceShowMeta] = useMemo(() => {
+        if (!metaInfo) {
+            return [null, false];
+        }
+        const [processedMeta, metaProperties] = sanitizeAndExtraMarkdown(
+            metaInfo
+        );
+        return [processedMeta, Boolean(metaProperties['force_show'])];
+    }, [metaInfo]);
+
+    useEffect(() => {
+        if (forceShowMeta && !showStatementMeta) {
+            toggleStatementMeta();
+        }
+    }, [forceShowMeta]);
+
+    return statementMeta;
 }
 
-export class DataDocStatementExecution extends React.PureComponent<
-    IProps,
-    IState
-> {
-    public constructor(props) {
-        super(props);
-        this.state = {
-            showInFullScreen: false,
-        };
+export const DataDocStatementExecution: React.FC<IProps> = ({
+    statementExecution,
+    statementResult,
 
-        this.loadStatementResult(this.props);
-    }
+    showStatementLogs,
+    showStatementMeta,
+    toggleStatementMeta,
 
-    @bind
-    public onFullscreenToggle() {
-        this.setState({
-            showInFullScreen: true,
-        });
-    }
+    loadS3Result,
+}) => {
+    const [showInFullScreen, setShowInFullScreen] = useState(false);
+    const statementMeta = useStatementMeta(
+        statementExecution.meta_info,
+        showStatementMeta,
+        toggleStatementMeta
+    );
 
-    public componentDidUpdate(prevProps) {
-        if (this.props.statementExecution !== prevProps.statementExecution) {
-            this.loadStatementResult(this.props);
-        }
-    }
+    const toggleFullScreen = useToggle(setShowInFullScreen);
 
-    public loadStatementResult(props) {
-        const { statementExecution, statementResult, loadS3Result } = props;
-
+    useEffect(() => {
         if (statementExecution.result_row_count && !statementResult) {
             loadS3Result(statementExecution.id);
         }
-    }
+    }, [
+        statementExecution.result_row_count,
+        statementExecution.id,
+        statementResult,
+    ]);
 
-    public makeLogDOM() {
-        return (
-            <StatementLogWrapper
-                statementId={this.props.statementExecution.id}
-            />
-        );
-    }
+    const getLogDOM = () => (
+        <StatementLogWrapper statementId={statementExecution.id} />
+    );
 
-    public makeMetaInfoDOM() {
-        return (
-            <StatementMeta metaInfo={this.props.statementExecution.meta_info} />
-        );
-    }
+    const getMetaInfoDOM = () => <StatementMeta metaInfo={statementMeta} />;
 
-    public makeContentDOM() {
-        const { statementExecution, statementResult } = this.props;
-
+    const getContentDOM = () => {
         const { status } = statementExecution;
 
         let contentDOM = null;
@@ -111,9 +117,9 @@ export class DataDocStatementExecution extends React.PureComponent<
                     <div className="statement-execution-text-title">
                         Status: {statusLabel}
                     </div>
-                    {this.makeMetaInfoDOM()}
+                    {getMetaInfoDOM()}
                     {progressBar}
-                    {this.makeLogDOM()}
+                    {getLogDOM()}
                 </div>
             );
         } else if (status === StatementExecutionStatus.UPLOADING) {
@@ -124,24 +130,23 @@ export class DataDocStatementExecution extends React.PureComponent<
                             Status: Uploading
                         </span>
                     </div>
-                    {this.makeMetaInfoDOM()}
+                    {getMetaInfoDOM()}
                     <span>
                         <i className="fa fa-spinner fa-pulse mr8" />
                         Loading query results...
                     </span>
-                    {this.makeLogDOM()}
+                    {getLogDOM()}
                 </div>
             );
         } else if (status === StatementExecutionStatus.DONE) {
-            const { showStatementLogs, showStatementMeta } = this.props;
             contentDOM = (
                 <>
-                    {showStatementMeta && this.makeMetaInfoDOM()}
-                    {showStatementLogs && this.makeLogDOM()}
+                    {showStatementMeta && getMetaInfoDOM()}
+                    {showStatementLogs && getLogDOM()}
                     <StatementResult
                         statementResult={statementResult}
                         statementExecution={statementExecution}
-                        onFullscreenToggle={this.onFullscreenToggle}
+                        onFullscreenToggle={toggleFullScreen}
                         isFullscreen={false}
                     />
                 </>
@@ -150,8 +155,8 @@ export class DataDocStatementExecution extends React.PureComponent<
             // error
             contentDOM = (
                 <div>
-                    {this.makeMetaInfoDOM()}
-                    {this.makeLogDOM()}
+                    {getMetaInfoDOM()}
+                    {getLogDOM()}
                 </div>
             );
         } else if (status === StatementExecutionStatus.CANCEL) {
@@ -161,49 +166,31 @@ export class DataDocStatementExecution extends React.PureComponent<
                     <div className="statement-execution-text-title">
                         Status: User Cancelled
                     </div>
-                    {this.makeMetaInfoDOM()}
-                    {this.makeLogDOM()}
+                    {getMetaInfoDOM()}
+                    {getLogDOM()}
                 </div>
             );
         }
 
         return <div className="statement-execution-content">{contentDOM}</div>;
-    }
+    };
 
-    public makeFullScreenModal() {
-        const { showInFullScreen } = this.state;
-
-        const { statementExecution, statementResult } = this.props;
-        return showInFullScreen ? (
-            <Modal
-                type="fullscreen"
-                onHide={() => this.setState({ showInFullScreen: false })}
-            >
+    const getFullScreenModal = () =>
+        showInFullScreen ? (
+            <Modal type="fullscreen" onHide={toggleFullScreen}>
                 <StatementResult
                     statementResult={statementResult}
                     statementExecution={statementExecution}
-                    onFullscreenToggle={() =>
-                        this.setState({ showInFullScreen: false })
-                    }
+                    onFullscreenToggle={toggleFullScreen}
                     isFullscreen={true}
                 />
             </Modal>
         ) : null;
-    }
 
-    public render() {
-        const contentDOM = this.makeContentDOM();
-        // const headerDOM = this.makeHeaderDOM();
-        // const footerDOM = this.makeFooterDOM();
-
-        return (
-            <>
-                <div className={'DataDocStatementExecution'}>
-                    {/* {headerDOM} */}
-                    {contentDOM}
-                </div>
-                {this.makeFullScreenModal()}
-            </>
-        );
-    }
-}
+    return (
+        <>
+            <div className={'DataDocStatementExecution'}>{getContentDOM()}</div>
+            {getFullScreenModal()}
+        </>
+    );
+};
