@@ -41,14 +41,17 @@
     .Modal-image {
         margin: auto;
         display: flex;
-        max-width: 90vw;
-        max-height: 90vh;
 
         img {
-            width: auto;
-            height: auto;
-            object-fit: contain;
+            max-width: 90vw;
+            max-height: 90vh;
             border-radius: 5px;
         }
+    }
+}
+
+@media only screen and (max-width: 736px) {
+    .ImageModal .Modal-image img {
+        object-fit: contain;
     }
 }
