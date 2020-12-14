@@ -1,129 +1,160 @@
-import { bind } from 'lodash-decorators';
-import { decorate } from 'core-decorators';
-import memoizeOne from 'memoize-one';
-import React from 'react';
-import { connect } from 'react-redux';
+import React, { useState, useCallback, useEffect, useMemo } from 'react';
+import { useSelector, useDispatch } from 'react-redux';
 
-import { sendNotification } from 'lib/dataHubUI';
 import { QueryExecutionStatus } from 'const/queryExecution';
-import { IQueryExecution } from 'redux/queryExecutions/types';
+import { useToggle } from 'hooks/useToggle';
+import { sendNotification } from 'lib/dataHubUI';
 import * as queryExecutionsActions from 'redux/queryExecutions/action';
 import { IStoreState, Dispatch } from 'redux/store/types';
+import {
+    queryExecutionSelector,
+    statementExecutionsSelector,
+} from 'redux/queryExecutions/selector';
 
 import { DataDocStatementExecutionBar } from 'components/DataDocStatementExecutionBar/DataDocStatementExecutionBar';
 import { DataDocStatementExecution } from 'components/DataDocStatementExecution/DataDocStatementExecution';
 import { StatementExecutionPicker } from 'components/ExecutionPicker/StatementExecutionPicker';
-
 import { Loader } from 'ui/Loader/Loader';
 import { Loading } from 'ui/Loading/Loading';
 
 import { ExecutedQueryCell } from './ExecutedQueryCell';
 import { QueryErrorWrapper } from './QueryError';
 import { QuerySteps } from './QuerySteps';
-import './QueryExecution.scss';
 import { QueryExecutionFooter } from './QueryExecutionFooter';
-import {
-    queryExecutionSelector,
-    statementExecutionsSelector,
-} from 'redux/queryExecutions/selector';
-import { queryEngineByIdEnvSelector } from 'redux/queryEngine/selector';
+import './QueryExecution.scss';
 
-interface IOwnProps {
+interface IProps {
     id: number;
     docId?: number;
     changeCellContext?: (context: string) => any;
 }
-type StateProps = ReturnType<typeof mapStateToProps>;
-type DispatchProps = ReturnType<typeof mapDispatchToProps>;
-type IProps = IOwnProps & StateProps & DispatchProps;
 
-interface IState {
-    selectedStatementTabIndex: number;
-    showExecutedQuery: boolean;
-    showStatementLogs: boolean;
-    showStatementMeta: boolean;
+function useQueryExecutionReduxState(queryId: number) {
+    // queryExecution: queryExecutionSelector(state, ownProps.id),
+    //     statementExecutions: statementExecutionsSelector(state, ownProps.id),
+    //     statementResultById: state.queryExecutions.statementResultById,
+
+    const queryExecution = useSelector((state: IStoreState) =>
+        queryExecutionSelector(state, queryId)
+    );
+    const statementExecutions = useSelector((state: IStoreState) =>
+        statementExecutionsSelector(state, queryId)
+    );
+    const statementResultById = useSelector(
+        (state: IStoreState) => state.queryExecutions.statementResultById
+    );
+
+    return {
+        queryExecution,
+        statementExecutions,
+        statementResultById,
+    };
 }
 
-class QueryExecutionComponent extends React.Component<IProps, IState> {
-    public readonly state = {
-        selectedStatementTabIndex: 0,
-        showExecutedQuery: false,
-        showStatementLogs: false,
-        showStatementMeta: false,
-    };
+function useQueryExecutionDispatch() {
+    const dispatch: Dispatch = useDispatch();
+    const loadQueryExecutionIfNeeded = useCallback(
+        (queryExecutionId: number) => {
+            dispatch(
+                queryExecutionsActions.fetchQueryExecutionIfNeeded(
+                    queryExecutionId
+                )
+            );
+        },
+        []
+    );
 
-    @decorate(memoizeOne)
-    public pollQueryExecution(queryExecution: IQueryExecution) {
+    const pollQueryExecution = useCallback(
+        (queryExecutionId: number, docId?: number) =>
+            dispatch(
+                queryExecutionsActions.pollQueryExecution(
+                    queryExecutionId,
+                    docId
+                )
+            ),
+        []
+    );
+
+    const loadS3Result = useCallback(
+        (statementExecutionId: number) =>
+            dispatch(queryExecutionsActions.fetchResult(statementExecutionId)),
+        []
+    );
+
+    const cancelQueryExecution = useCallback(
+        (queryExecutionId: number) =>
+            queryExecutionsActions
+                .cancelQueryExecution(queryExecutionId)
+                .then(() => {
+                    sendNotification(
+                        'Cancelled! Please be patient as the cancellation takes some time.'
+                    );
+                }),
+        []
+    );
+    return {
+        loadQueryExecutionIfNeeded,
+        pollQueryExecution,
+        loadS3Result,
+        cancelQueryExecution,
+    };
+}
+
+export const QueryExecution: React.FC<IProps> = ({
+    id,
+    docId,
+    changeCellContext,
+}) => {
+    const [statementIndex, setStatementIndex] = useState(0);
+    const [showExecutedQuery, setShowExecutedQuery] = useState(false);
+    const [showStatementLogs, setShowStatementLogs] = useState(false);
+    const [showStatementMeta, setShowStatementMeta] = useState(false);
+
+    const {
+        queryExecution,
+        statementExecutions,
+        statementResultById,
+    } = useQueryExecutionReduxState(id);
+
+    const statementExecution = useMemo(
+        () => statementExecutions?.[statementIndex],
+        [statementExecutions, statementIndex]
+    );
+
+    const {
+        loadQueryExecutionIfNeeded,
+        pollQueryExecution,
+        loadS3Result,
+        cancelQueryExecution,
+    } = useQueryExecutionDispatch();
+
+    const selectStatementId = useCallback(
+        (statementId: number) => {
+            const {
+                statement_executions: statementExecutionIds,
+            } = queryExecution;
+            setStatementIndex(
+                Math.max(statementExecutionIds.indexOf(statementId), 0)
+            );
+        },
+        [queryExecution]
+    );
+
+    const toggleShowExecutedQuery = useToggle(setShowExecutedQuery);
+    const toggleLogs = useToggle(setShowStatementLogs);
+    const toggleShowStatementMeta = useToggle(setShowStatementMeta);
+
+    useEffect(() => {
         if (
             queryExecution &&
             queryExecution.status <= QueryExecutionStatus.RUNNING
         ) {
-            this.props.pollQueryExecution(queryExecution.id, this.props.docId);
+            pollQueryExecution(queryExecution.id, docId);
         }
-    }
+    }, [queryExecution]);
 
-    @bind
-    public selectStatementTabIndex(index: number) {
-        this.setState({
-            selectedStatementTabIndex: index,
-        });
-    }
-
-    @bind
-    public selectStatementId(id: number) {
-        const {
-            queryExecution: { statement_executions: statementExecutionIds },
-        } = this.props;
-
-        this.selectStatementTabIndex(
-            Math.max(statementExecutionIds.indexOf(id), 0)
-        );
-    }
-
-    @bind
-    public getStatementExecution() {
-        return this.props.statementExecutions[
-            this.state.selectedStatementTabIndex
-        ];
-    }
-
-    @bind
-    public toggleShowExecutedQuery() {
-        this.setState({
-            showExecutedQuery: !this.state.showExecutedQuery,
-        });
-    }
-
-    @bind
-    public toggleShowStatementMeta() {
-        this.setState(({ showStatementMeta }) => ({
-            showStatementMeta: !showStatementMeta,
-        }));
-    }
-
-    @bind
-    public toggleLogs() {
-        const showStatementLogs = !this.state.showStatementLogs;
-        this.setState({ showStatementLogs });
-    }
-
-    @bind
-    public renderQueryExecution() {
-        const {
-            queryExecution,
-            statementResultById,
-
-            loadS3Result,
-
-            changeCellContext,
-        } = this.props;
-        const {
-            selectedStatementTabIndex,
-            showExecutedQuery,
-            showStatementMeta,
-        } = this.state;
+    const getQueryExecutionDOM = () => {
         const { statement_executions: statementExecutionIds } = queryExecution;
-
         const queryStepsDOM = <QuerySteps queryExecution={queryExecution} />;
         if (
             statementExecutionIds == null ||
@@ -131,8 +162,6 @@ class QueryExecutionComponent extends React.Component<IProps, IState> {
         ) {
             return <div className="QueryExecution ">{queryStepsDOM}</div>;
         }
-
-        const statementExecution = this.getStatementExecution();
         const statementExecutionId = statementExecution
             ? statementExecution.id
             : null;
@@ -143,8 +172,8 @@ class QueryExecutionComponent extends React.Component<IProps, IState> {
                 statementResult={statementResultById[statementExecutionId]}
                 showStatementMeta={showStatementMeta}
                 loadS3Result={loadS3Result}
-                index={selectedStatementTabIndex}
-                showStatementLogs={this.state.showStatementLogs}
+                showStatementLogs={showStatementLogs}
+                toggleStatementMeta={toggleShowStatementMeta}
             />
         ) : queryExecution.status <= QueryExecutionStatus.RUNNING ? (
             <Loading />
@@ -163,14 +192,14 @@ class QueryExecutionComponent extends React.Component<IProps, IState> {
             />
         ) : null;
 
-        const footerDOM = this.renderQueryExecutionFooter();
+        const footerDOM = getQueryExecutionFooterDOM();
 
         return (
             <div className="QueryExecution ">
                 <div className="execution-wrapper">
                     {queryStepsDOM}
-                    {this.renderQueryExecutionErrorDOM()}
-                    {this.renderStatementExecutionHeader()}
+                    {getQueryExecutionErrorDOM()}
+                    {getStatementExecutionHeaderDOM()}
                     {executedQueryDOM}
                     <div className="query-execution-content">
                         {statementExecutionDOM}
@@ -180,32 +209,10 @@ class QueryExecutionComponent extends React.Component<IProps, IState> {
                 </div>
             </div>
         );
-    }
+    };
 
-    public componentDidMount() {
-        this.pollQueryExecution(this.props.queryExecution);
-    }
-
-    public componentDidUpdate() {
-        this.pollQueryExecution(this.props.queryExecution);
-    }
-
-    public renderStatementExecutionHeader() {
-        const {
-            statementExecutions,
-            cancelQueryExecution,
-            queryExecution,
-        } = this.props;
-
-        const {
-            showExecutedQuery,
-            showStatementLogs,
-            showStatementMeta,
-        } = this.state;
-
+    const getStatementExecutionHeaderDOM = () => {
         const { id, status: queryStatus } = queryExecution;
-
-        const statementExecution = this.getStatementExecution();
 
         const statementExecutionBar = statementExecution ? (
             <DataDocStatementExecutionBar
@@ -215,9 +222,9 @@ class QueryExecutionComponent extends React.Component<IProps, IState> {
                 showExecutedQuery={showExecutedQuery}
                 showStatementMeta={showStatementMeta}
                 cancelQueryExecution={cancelQueryExecution.bind(null, id)}
-                toggleShowExecutedQuery={this.toggleShowExecutedQuery}
-                toggleLogs={this.toggleLogs}
-                toggleShowStatementMeta={this.toggleShowStatementMeta}
+                toggleShowExecutedQuery={toggleShowExecutedQuery}
+                toggleLogs={toggleLogs}
+                toggleShowStatementMeta={toggleShowStatementMeta}
             />
         ) : null;
 
@@ -227,7 +234,7 @@ class QueryExecutionComponent extends React.Component<IProps, IState> {
                     statementExecution ? statementExecution.id : null
                 }
                 statementExecutions={statementExecutions}
-                onSelection={this.selectStatementId}
+                onSelection={selectStatementId}
                 total={queryExecution.total}
                 autoSelect
             />
@@ -243,11 +250,9 @@ class QueryExecutionComponent extends React.Component<IProps, IState> {
                 </div>
             </div>
         );
-    }
+    };
 
-    public renderQueryExecutionErrorDOM() {
-        const { queryExecution, statementExecutions } = this.props;
-
+    const getQueryExecutionErrorDOM = () => {
         if (queryExecution.status === QueryExecutionStatus.ERROR) {
             return (
                 <QueryErrorWrapper
@@ -256,11 +261,9 @@ class QueryExecutionComponent extends React.Component<IProps, IState> {
                 />
             );
         }
-    }
+    };
 
-    public renderQueryExecutionFooter() {
-        const { queryExecution, statementExecutions } = this.props;
-
+    const getQueryExecutionFooterDOM = () => {
         if (!queryExecution) {
             return;
         }
@@ -271,64 +274,14 @@ class QueryExecutionComponent extends React.Component<IProps, IState> {
                 statementExecutions={statementExecutions}
             />
         );
-    }
-
-    public render() {
-        const { id, queryExecution, loadQueryExecutionIfNeeded } = this.props;
-
-        return (
-            <Loader
-                item={queryExecution && queryExecution.statement_executions}
-                itemKey={id}
-                itemLoader={loadQueryExecutionIfNeeded.bind(null, id)}
-                renderer={this.renderQueryExecution}
-            />
-        );
-    }
-}
-
-function mapStateToProps(state: IStoreState, ownProps: IOwnProps) {
-    return {
-        queryExecution: queryExecutionSelector(state, ownProps.id),
-        statementExecutions: statementExecutionsSelector(state, ownProps.id),
-        statementResultById: state.queryExecutions.statementResultById,
     };
-}
 
-function mapDispatchToProps(dispatch: Dispatch) {
-    return {
-        loadQueryExecutionIfNeeded: (queryExecutionId: number) => {
-            dispatch(
-                queryExecutionsActions.fetchQueryExecutionIfNeeded(
-                    queryExecutionId
-                )
-            );
-        },
-
-        pollQueryExecution: (queryExecutionId: number, docId?: number) =>
-            dispatch(
-                queryExecutionsActions.pollQueryExecution(
-                    queryExecutionId,
-                    docId
-                )
-            ),
-
-        loadS3Result: (statementExecutionId: number) =>
-            dispatch(queryExecutionsActions.fetchResult(statementExecutionId)),
-
-        cancelQueryExecution: (queryExecutionId: number) => {
-            queryExecutionsActions
-                .cancelQueryExecution(queryExecutionId)
-                .then(() => {
-                    sendNotification(
-                        'Cancelled! Please be patient as the cancellation takes some time.'
-                    );
-                });
-        },
-    };
-}
-
-export const QueryExecution = connect(
-    mapStateToProps,
-    mapDispatchToProps
-)(QueryExecutionComponent);
+    return (
+        <Loader
+            item={queryExecution && queryExecution.statement_executions}
+            itemKey={id}
+            itemLoader={loadQueryExecutionIfNeeded.bind(null, id)}
+            renderer={getQueryExecutionDOM}
+        />
+    );
+};
