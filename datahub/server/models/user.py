@@ -34,8 +34,8 @@ class User(CRUDMixin, Base):
 
     properties = sql.Column(sql.JSON, default={})
 
-    settings = relationship("UserSetting")
-    roles = relationship("UserRole")
+    settings = relationship("UserSetting", cascade="all, delete", passive_deletes=True)
+    roles = relationship("UserRole", cascade="all, delete", passive_deletes=True)
 
     @hybrid_property
     def password(self):

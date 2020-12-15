@@ -36,12 +36,29 @@ class QueryExecution(Base):
     uid = sql.Column(sql.Integer, sql.ForeignKey("user.id", ondelete="CASCADE"))
 
     owner = relationship("User", uselist=False)
-    engine = relationship("QueryEngine", uselist=False)
-    statement_executions = relationship("StatementExecution", backref="query_execution")
-    notifications = relationship(
-        "QueryExecutionNotification", backref="query_execution"
+    engine = relationship(
+        "QueryEngine",
+        uselist=False,
+        backref=backref("executions", cascade="all, delete", passive_deletes=True),
     )
-    error = relationship("QueryExecutionError", uselist=False)
+    statement_executions = relationship(
+        "StatementExecution",
+        backref="query_execution",
+        cascade="all, delete",
+        passive_deletes=True,
+    )
+    notifications = relationship(
+        "QueryExecutionNotification",
+        backref="query_execution",
+        cascade="all, delete",
+        passive_deletes=True,
+    )
+    error = relationship(
+        "QueryExecutionError",
+        uselist=False,
+        cascade="all, delete",
+        passive_deletes=True,
+    )
 
     @with_formatted_date
     def to_dict(self, with_statement=True):
@@ -188,5 +205,7 @@ class QueryExecutionViewer(CRUDMixin, Base):
     creator = relationship("User", foreign_keys="QueryExecutionViewer.created_by")
     created_at = sql.Column(sql.DateTime, default=now, nullable=False)
     query_execution = relationship(
-        "QueryExecution", uselist=False, backref=backref("viewers")
+        "QueryExecution",
+        uselist=False,
+        backref=backref("viewers", cascade="all, delete", passive_deletes=True),
     )

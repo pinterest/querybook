@@ -117,6 +117,6 @@ class TaskRunRecord(CRUDMixin, TruncateString("error_message"), db.Base):
 
     task = relationship(
         "TaskSchedule",
-        backref=backref("task_run_record", cascade="all, delete"),
+        backref=backref("task_run_record", cascade="all, delete", passive_deletes=True),
         foreign_keys=[name],
     )

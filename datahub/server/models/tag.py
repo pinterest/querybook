@@ -46,11 +46,11 @@ class TagItem(CRUDMixin, Base):
 
     tag = relationship(
         "Tag",
-        backref=backref("tag_item", cascade="all, delete"),
+        backref=backref("tag_item", cascade="all, delete", passive_deletes=True),
         foreign_keys=[tag_name],
     )
     table = relationship(
         "DataTable",
-        backref=backref("tags", cascade="all, delete"),
+        backref=backref("tags", cascade="all, delete", passive_deletes=True),
         foreign_keys=[table_id],
     )

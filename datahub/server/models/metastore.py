@@ -51,16 +51,19 @@ class TableLineage(Base):
 
     table = relationship(
         "DataTable",
-        backref=backref("table_lineage", cascade="all, delete"),
+        backref=backref("table_lineage", cascade="all, delete", passive_deletes=True),
         foreign_keys=[table_id],
     )
     parent_table = relationship(
         "DataTable",
-        backref=backref("parent_table_lineage", cascade="all, delete"),
+        backref=backref(
+            "parent_table_lineage", cascade="all, delete", passive_deletes=True
+        ),
         foreign_keys=[parent_table_id],
     )
     job_metadata = relationship(
-        "DataJobMetadata", backref=backref("table_lineage", passive_deletes=True)
+        "DataJobMetadata",
+        backref=backref("table_lineage", cascade="all, delete", passive_deletes=True),
     )
 
     def to_dict(self, include_table=False):
@@ -95,10 +98,13 @@ class DataJobMetadata(Base):
 
     metastore_id = sql.Column(
         sql.Integer,
-        sql.ForeignKey("query_metastore.id", name="job_metadata_metastore_fk"),
+        sql.ForeignKey(
+            "query_metastore.id", name="job_metadata_metastore_fk", ondelete="CASCADE"
+        ),
     )
     metastore = relationship(
-        "QueryMetastore", backref=backref("job_metadata", passive_deletes=True)
+        "QueryMetastore",
+        backref=backref("job_metadata", cascade="all, delete", passive_deletes=True),
     )
 
     def to_dict(self):
@@ -125,10 +131,17 @@ class DataSchema(Base):
     table_count = sql.Column(sql.Integer)
     description = sql.Column(sql.Text(length=mediumtext_length))
 
-    metastore_id = sql.Column(sql.Integer, sql.ForeignKey("query_metastore.id"))
-    metastore = relationship("QueryMetastore", backref="schemas")
+    metastore_id = sql.Column(
+        sql.Integer, sql.ForeignKey("query_metastore.id", ondelete="CASCADE")
+    )
+    metastore = relationship(
+        "QueryMetastore",
+        backref=backref("schemas", cascade="all, delete", passive_deletes=True),
+    )
 
-    tables = relationship("DataTable", backref="data_schema")
+    tables = relationship(
+        "DataTable", backref="data_schema", cascade="all, delete", passive_deletes=True
+    )
 
     def to_dict(self, include_metastore=False, include_table=False):
         schema_dict = {
@@ -172,13 +185,24 @@ class DataTable(Base, CRUDMixin):
         sql.Integer, sql.ForeignKey("data_schema.id", ondelete="CASCADE")
     )
     golden = sql.Column(sql.Boolean, default=False)
-    boost_score = sql.Column(sql.Numeric, default=1)
+    boost_score = sql.Column(sql.Numeric, default=1, nullable=False)
 
     information = relationship(
-        "DataTableInformation", uselist=False, backref="data_table"
+        "DataTableInformation",
+        uselist=False,
+        backref="data_table",
+        cascade="all, delete",
+        passive_deletes=True,
     )
-    columns = relationship("DataTableColumn", backref="data_table")
-    ownership = relationship("DataTableOwnership", uselist=False)
+    columns = relationship(
+        "DataTableColumn",
+        backref="data_table",
+        cascade="all, delete",
+        passive_deletes=True,
+    )
+    ownership = relationship(
+        "DataTableOwnership", uselist=False, cascade="all, delete", passive_deletes=True
+    )
 
     def to_dict(
         self, include_schema=False, include_column=False, include_warnings=False,
@@ -319,12 +343,16 @@ class DataTableQueryExecution(Base, CRUDMixin):
 
     table = relationship(
         "DataTable",
-        backref=backref("table_query_execution", cascade="all, delete"),
+        backref=backref(
+            "table_query_execution", cascade="all, delete", passive_deletes=True
+        ),
         foreign_keys=[table_id],
     )
     query_execution = relationship(
         "QueryExecution",
-        backref=backref("table_query_execution", cascade="all, delete"),
+        backref=backref(
+            "table_query_execution", cascade="all, delete", passive_deletes=True
+        ),
         foreign_keys=[query_execution_id],
     )
 
@@ -346,7 +374,7 @@ class DataTableWarning(Base, CRUDMixin):
 
     table = relationship(
         "DataTable",
-        backref=backref("warnings", cascade="all, delete"),
+        backref=backref("warnings", cascade="all, delete", passive_deletes=True),
         foreign_keys=[table_id],
     )
 
@@ -364,7 +392,9 @@ class DataTableStatistics(Base, CRUDMixin):
 
     table = relationship(
         "DataTable",
-        backref=backref("table_statistics", cascade="all, delete"),
+        backref=backref(
+            "table_statistics", cascade="all, delete", passive_deletes=True
+        ),
         foreign_keys=[table_id],
     )
 
@@ -384,6 +414,8 @@ class DataTableColumnStatistics(Base, CRUDMixin):
 
     column = relationship(
         "DataTableColumn",
-        backref=backref("table_statistics", cascade="all, delete"),
+        backref=backref(
+            "table_statistics", cascade="all, delete", passive_deletes=True
+        ),
         foreign_keys=[column_id],
     )
