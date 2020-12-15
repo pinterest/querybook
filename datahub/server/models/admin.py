@@ -201,4 +201,4 @@ class AdminAuditLog(CRUDMixin, Base):
     op = sql.Column(sql.Enum(AdminOperation), nullable=False)
     log = sql.Column(sql.String(length=description_length))
 
-    relationship("User", uselist=False)
+    user = relationship("User", uselist=False)

@@ -46,6 +46,13 @@ def get_db_engine(
         def connect(dbapi_connection, connection_record):
             connection_record.info["pid"] = os.getpid()
 
+            if conn_string.startswith("sqlite"):
+                # Sqlite DB requires foreign keys to be turned on manually
+                # to ensure on delete cascade works
+                cursor = dbapi_connection.cursor()
+                cursor.execute("PRAGMA foreign_keys=ON")
+                cursor.close()
+
         @event.listens_for(__engine, "checkout")
         def checkout(dbapi_connection, connection_record, connection_proxy):
             pid = os.getpid()
@@ -65,7 +72,6 @@ def get_db_engine(
 
 def get_session(scopefunc=None):
     """Create a global bound scoped_session
-
 
     Returns:
         [type] -- [description]

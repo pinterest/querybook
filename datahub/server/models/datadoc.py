@@ -43,7 +43,9 @@ class DataDoc(Base, CRUDMixin):
     owner = relationship("User", uselist=False)
 
     environment = relationship(
-        "Environment", uselist=False, backref=backref("data_docs"),
+        "Environment",
+        uselist=False,
+        backref=backref("data_docs", cascade="all, delete", passive_deletes=True),
     )
 
     def to_dict(self, with_cells=False):
@@ -131,7 +133,9 @@ class DataDocEditor(Base):
     )
 
     id = sql.Column(sql.Integer, primary_key=True, autoincrement=True)
-    data_doc_id = sql.Column(sql.Integer, sql.ForeignKey("data_doc.id"))
+    data_doc_id = sql.Column(
+        sql.Integer, sql.ForeignKey("data_doc.id", ondelete="CASCADE")
+    )
     uid = sql.Column(sql.Integer, sql.ForeignKey("user.id", ondelete="CASCADE"))
 
     read = sql.Column(sql.Boolean, default=False, nullable=False)
@@ -139,7 +143,11 @@ class DataDocEditor(Base):
 
     user = relationship("User", uselist=False)
 
-    data_doc = relationship("DataDoc", uselist=False, backref=backref("editors"))
+    data_doc = relationship(
+        "DataDoc",
+        uselist=False,
+        backref=backref("editors", cascade="all, delete", passive_deletes=True),
+    )
 
     def to_dict(self):
         return {
