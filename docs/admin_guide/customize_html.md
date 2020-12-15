@@ -4,7 +4,7 @@ title: Customize HTML
 sidebar_label: Customize HTML
 ---
 
-Querybook allows for some basic customization in the frontend. You can use the web plugin to inject custom javascript into Querybook frontend. Please check [Plugins Guide](./plugins.md) to see how to get started.
+Querybook allows for some basic customization in the frontend. You can use the web plugin to inject custom javascript into Querybook frontend. Please check [Plugins Guide](./plugins.md) to see how to setup plugins. Once the plugins setup is completed, you would need to create a folder named `webpage_plugin` under the `plugins` folder and a typescript file with path `webpage_plugin/custom_script.ts` as the entrypoint.
 
 Right now there are four use cases for custom javascript:
 
