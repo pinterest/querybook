@@ -58,22 +58,51 @@ Web page plugin allows you to inject custom js, css to Querybook. Place your cus
 
 ## Installing Plugins
 
-0. Ensure you can run the vanilla Querybook
+1. Ensure you can run the vanilla Querybook
 
-Please ensure you can spin up Querybook's docker images (webserver, scheduler, workers) and able to set environment variables. Check "Setup Querybook" for more details.
+Please ensure you can spin up Querybook's production docker images (webserver, scheduler, workers) and able to set customized settings. Check [Infra Config](infra_config.md) for more details.
 
-1. Setup a new project folder for Querybook plugins
+1. Setup a new project folder for Querybook plugins. This should be outside of Querybook's repo.
 
 Querybook can be pulled from dockerhub directly, so this is mainly used for plugins and custom environment settings.
 
-2. Copy plugins folder from the Querybook repo
+3. To get started. Copy plugins folder from the Querybook repo.
+
+```sh
+cp -R ../querybook/plugins .
+```
 
 Copy the `plugins` folder from the root directory of this project to the custom project folder.
 
-3. Extending the docker image and install dependencies
+4. Extending the docker image and install dependencies
 
 Create a new dockerfile which can be used to install additional libraries and dependencies. Make sure to also COPY the plugins folder into the docker image.
 
-4. Pack the plugins with the new docker image
+```Dockerfile
+FROM .../querybook:latest
+
+# If you need to install additional libs
+RUN rm -rf /var/lib/apt/lists/* \
+    && apt-get update \
+    && DEBIAN_FRONTEND=noninteractive apt-get install --no-install-recommends -y \
+    ... \
+    ... \
+    ... \
+    && apt-get clean
+
+# If you need to install additional python packages
+COPY plugins/requirements /opt/plugins/requirements
+RUN pip install -r /opt/plugins/requirements/base.txt
+
+# Copy the plugins directory
+COPY plugins /opt/plugins
+```
+
+5. Pack the plugins with the new docker image
 
 Last but not least, remember to set docker environment variable QUERYBOOK_PLUGIN to the path of the plugins folder and also include it as part of the PYTHONPATH.
+
+```Dockerfile
+ENV QUERYBOOK_PLUGIN=/opt/plugins
+ENV PYTHONPATH=/opt/datahub/datahub/server:/opt/plugins
+```
