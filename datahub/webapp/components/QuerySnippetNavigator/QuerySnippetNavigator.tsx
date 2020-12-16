@@ -242,7 +242,7 @@ class QuerySnippetNavigatorComponent extends React.PureComponent<
                 />
                 <IconButton
                     onClick={this.toggleSnippetFilterPopover}
-                    icon="filter"
+                    icon="sliders"
                     aria-label="Filter"
                     data-balloon-pos="down"
                     ref={this.filterButton}

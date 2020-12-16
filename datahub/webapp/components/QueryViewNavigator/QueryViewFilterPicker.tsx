@@ -12,7 +12,7 @@ import { IQueryViewFilter } from 'redux/queryView/types';
 import { Title } from 'ui/Title/Title';
 
 const StyledPicker = styled.div`
-    padding: 30px;
+    padding: 10px;
 `;
 
 interface IQueryViewFilterPickerProps {
@@ -29,7 +29,7 @@ export const QueryViewFilterPicker: React.FunctionComponent<IQueryViewFilterPick
     statusOptions,
 }) => {
     const enginePickerField = (
-        <div className="field">
+        <div className="field mb8">
             <div>
                 <Title size={6}>Filter by Engine</Title>
             </div>

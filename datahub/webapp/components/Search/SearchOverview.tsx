@@ -41,6 +41,7 @@ import { HoverIconTag } from 'ui/Tag/Tag';
 import { PrettyNumber } from 'ui/PrettyNumber/PrettyNumber';
 
 import './SearchOverview.scss';
+import { TableTagGroupSelect } from 'components/DataTableTags/TableTagGroupSelect';
 
 const secondsPerDay = 60 * 60 * 24;
 const inputDateFormat = 'YYYY-MM-DD';
@@ -237,42 +238,18 @@ export const SearchOverview: React.FunctionComponent = () => {
         </div>
     );
 
-    const handleTagSelect = React.useCallback(
-        (tag: string) => {
-            const tagFilter = [...(searchFilters.tags || []), tag];
-            updateSearchFilter('tags', tagFilter);
+    const updateTags = React.useCallback(
+        (newTags: string[]) => {
+            updateSearchFilter('tags', newTags.length ? newTags : null);
         },
-        [searchFilters?.tags]
-    );
-
-    const handleTagRemove = React.useCallback(
-        (tag: string) => {
-            const tagFilter = (searchFilters?.tags || []).filter(
-                (existingTag) => existingTag !== tag
-            );
-            updateSearchFilter('tags', tagFilter.length ? tagFilter : null);
-        },
-        [searchFilters?.tags]
+        [updateSearchFilter]
     );
 
     const tagDOM = (
-        <div className="tables-tag">
-            <div className="tables-tag-list mb8">
-                {(searchFilters?.tags || []).map((tag) => (
-                    <HoverIconTag
-                        key={tag}
-                        iconOnHover={'x'}
-                        onIconHoverClick={() => handleTagRemove(tag)}
-                    >
-                        <span>{tag}</span>
-                    </HoverIconTag>
-                ))}
-            </div>
-            <TableTagSelect
-                existingTags={searchFilters?.tags ?? []}
-                onSelect={handleTagSelect}
-            />
-        </div>
+        <TableTagGroupSelect
+            tags={searchFilters?.tags}
+            updateTags={updateTags}
+        />
     );
 
     const metastoreSelectDOM =

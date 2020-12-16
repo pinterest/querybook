@@ -8,6 +8,7 @@ import {
     IDataTableSearchState,
     ITableSearchFilters,
 } from './types';
+import { dispatch } from 'd3';
 
 const BATCH_LOAD_SIZE = 100;
 
@@ -200,6 +201,16 @@ export function updateSearchFilter<K extends keyof ITableSearchFilters>(
                 filterKey,
                 filterValue,
             },
+        });
+        mapStateToQueryParam(getState().dataTableSearch);
+        dispatch(searchDataTable());
+    };
+}
+
+export function resetSearchFilter(): ThunkResult<void> {
+    return (dispatch, getState) => {
+        dispatch({
+            type: '@@dataTableSearch/DATA_TABLE_FILTER_RESET',
         });
         mapStateToQueryParam(getState().dataTableSearch);
         dispatch(searchDataTable());

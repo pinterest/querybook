@@ -75,6 +75,10 @@ export default function dataTableSearch(
                 }
                 return;
             }
+            case '@@dataTableSearch/DATA_TABLE_FILTER_RESET': {
+                draft.searchFilters = {};
+                return;
+            }
             case '@@dataTableSearch/DATA_TABLE_SEARCH_SELECT_METASTORE': {
                 draft.metastoreId = action.payload.metastoreId;
                 return;

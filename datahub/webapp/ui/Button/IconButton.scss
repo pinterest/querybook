@@ -5,6 +5,7 @@
     transition: color 0.2s ease-out;
     transition: fill 0.2s ease-out;
     display: inline-flex;
+    position: relative;
 
     &.invert-circle {
         background-color: var(--color-primary-3);

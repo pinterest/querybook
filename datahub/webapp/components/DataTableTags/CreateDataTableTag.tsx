@@ -39,7 +39,7 @@ export const CreateDataTableTag: React.FunctionComponent<IProps> = ({
     }, []);
 
     const handleCreateTag = React.useCallback(
-        (val) => {
+        (val: string) => {
             createTag(val).finally(() => setShowSelect(false));
         },
         [createTag]
@@ -50,7 +50,7 @@ export const CreateDataTableTag: React.FunctionComponent<IProps> = ({
             {showSelect ? (
                 <div className="CreateDataTableTag-input flex-row">
                     <TableTagSelect
-                        onSelect={(val) => handleCreateTag(val)}
+                        onSelect={handleCreateTag}
                         isValidCheck={isValidCheck}
                         existingTags={existingTags}
                     />
