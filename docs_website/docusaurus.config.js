@@ -1,7 +1,7 @@
 module.exports = {
     title: 'Querybook',
     tagline: 'Data made simple.',
-    url: 'https://querybook.io',
+    url: 'https://querybook.com',
     baseUrl: '/',
     organizationName: 'pinterest',
     projectName: 'querybook-documentation-site',
