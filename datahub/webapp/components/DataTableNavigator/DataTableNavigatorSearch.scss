@@ -1,0 +1,48 @@
+.DataTableNavigatorSearch {
+    border-bottom: var(--border);
+    > .SearchBar {
+        flex-grow: 1;
+    }
+    > .IconButton {
+        padding-right: 12px;
+        .ping-message {
+            top: -5px;
+            right: 6px;
+            padding: 0.5px 4.2px 0px 4.2px;
+            font-size: var(--xxxsmall-text-size);
+        }
+    }
+}
+
+.DataTableNavigatorSearchFilter {
+    padding: 4px 12px;
+    position: relative;
+
+    .filter-reset-button {
+        position: absolute;
+        right: 12px;
+        top: 12px;
+    }
+
+    .search-filter-row {
+        display: flex;
+        align-items: flex-start;
+        padding: 8px 0px;
+
+        &.toggle-padding {
+            padding-bottom: 2px;
+        }
+
+        .Title {
+            margin-left: 10px;
+            min-width: 70px;
+        }
+
+        .search-filter-row-item {
+            flex: 1;
+            .DebouncedInput input {
+                padding: 2px 8px;
+            }
+        }
+    }
+}

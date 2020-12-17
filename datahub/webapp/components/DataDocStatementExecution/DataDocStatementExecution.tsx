@@ -2,7 +2,7 @@ import React, { useEffect, useMemo, useState } from 'react';
 
 import { StatementExecutionStatus } from 'const/queryExecution';
 
-import { useToggle } from 'hooks/useToggle';
+import { useToggleState } from 'hooks/useToggleState';
 import {
     IStatementExecution,
     IStatementResult,
@@ -63,14 +63,12 @@ export const DataDocStatementExecution: React.FC<IProps> = ({
 
     loadS3Result,
 }) => {
-    const [showInFullScreen, setShowInFullScreen] = useState(false);
+    const [showInFullScreen, , toggleFullScreen] = useToggleState(false);
     const statementMeta = useStatementMeta(
         statementExecution.meta_info,
         showStatementMeta,
         toggleStatementMeta
     );
-
-    const toggleFullScreen = useToggle(setShowInFullScreen);
 
     useEffect(() => {
         if (statementExecution.result_row_count && !statementResult) {

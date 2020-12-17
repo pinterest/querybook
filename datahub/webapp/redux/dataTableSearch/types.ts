@@ -14,6 +14,7 @@ export interface ITableSearchFilters {
     tags?: string[];
     startDate?: number;
     endDate?: number;
+    schema?: string;
 }
 
 export interface IDataTableSearchResultResetAction extends Action {
@@ -75,6 +76,10 @@ export interface IDataTableSearchFilterUpdateAction extends Action {
     };
 }
 
+export interface IDataTableSearchResetFilterAction extends Action {
+    type: '@@dataTableSearch/DATA_TABLE_FILTER_RESET';
+}
+
 export interface IDataTableSearchMoreAction extends Action {
     type: '@@dataTableSearch/DATA_TABLE_SEARCH_MORE';
     payload: {
@@ -91,6 +96,7 @@ export type DataTableSearchAction =
     | IDataTableSearchReceiveQueryParamAction
     | IDataTableSearchStringUpdateAction
     | IDataTableSearchFilterUpdateAction
+    | IDataTableSearchResetFilterAction
     | IDataTableSearchMoreAction
     | IDataTableSearchSelectMetastoreAction;
 

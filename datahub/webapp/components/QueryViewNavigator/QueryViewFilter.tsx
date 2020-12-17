@@ -114,7 +114,7 @@ export class QueryViewFilter extends React.PureComponent<
 
         const configButton = (
             <IconButton
-                icon="filter"
+                icon="sliders"
                 ref={this.configButtonRef}
                 onClick={this.toggleFilterPicker}
             />

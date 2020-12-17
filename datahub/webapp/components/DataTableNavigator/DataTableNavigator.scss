@@ -13,14 +13,6 @@
         }
     }
 
-    .navigator-search-input {
-        display: flex;
-        border-bottom: var(--border);
-        .SearchBar {
-            flex-grow: 1;
-        }
-    }
-
     .table-scroll-wrapper {
         flex: 1;
     }
