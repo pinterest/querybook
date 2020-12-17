@@ -24,7 +24,7 @@ redis==3.5.2
 gevent==20.6.2
 greenlet==0.4.16  # 0.4.17 update causes UWSGI to break
 
-alembic==1.0.3
+alembic==1.4.3
 
 gevent-websocket==0.10.1
 flask-socketio==4.2.0
