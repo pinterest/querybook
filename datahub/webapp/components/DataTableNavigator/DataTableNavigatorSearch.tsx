@@ -50,15 +50,14 @@ export const DataTableNavigatorSearch: React.FC<{
             layout={['right', 'top']}
         >
             <div className="DataTableNavigatorSearchFilter">
-                <div className="right-align mt8">
-                    <Button
-                        title="Reset"
-                        type="soft"
-                        small
-                        borderless
-                        onClick={resetSearchFilter}
-                    />
-                </div>
+                <Button
+                    title="Reset"
+                    className="filter-reset-button"
+                    type="soft"
+                    small
+                    borderless
+                    onClick={resetSearchFilter}
+                />
                 <div>
                     <SearchFilterRow
                         title="Featured"
