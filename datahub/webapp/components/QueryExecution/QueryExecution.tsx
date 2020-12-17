@@ -2,7 +2,7 @@ import React, { useState, useCallback, useEffect, useMemo } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 
 import { QueryExecutionStatus } from 'const/queryExecution';
-import { useToggle } from 'hooks/useToggle';
+import { useToggleState } from 'hooks/useToggleState';
 import { sendNotification } from 'lib/dataHubUI';
 import * as queryExecutionsActions from 'redux/queryExecutions/action';
 import { IStoreState, Dispatch } from 'redux/store/types';
@@ -106,9 +106,13 @@ export const QueryExecution: React.FC<IProps> = ({
     changeCellContext,
 }) => {
     const [statementIndex, setStatementIndex] = useState(0);
-    const [showExecutedQuery, setShowExecutedQuery] = useState(false);
-    const [showStatementLogs, setShowStatementLogs] = useState(false);
-    const [showStatementMeta, setShowStatementMeta] = useState(false);
+    const [showExecutedQuery, , toggleShowExecutedQuery] = useToggleState(
+        false
+    );
+    const [showStatementLogs, , toggleLogs] = useToggleState(false);
+    const [showStatementMeta, , toggleShowStatementMeta] = useToggleState(
+        false
+    );
 
     const {
         queryExecution,
@@ -139,10 +143,6 @@ export const QueryExecution: React.FC<IProps> = ({
         },
         [queryExecution]
     );
-
-    const toggleShowExecutedQuery = useToggle(setShowExecutedQuery);
-    const toggleLogs = useToggle(setShowStatementLogs);
-    const toggleShowStatementMeta = useToggle(setShowStatementMeta);
 
     useEffect(() => {
         if (

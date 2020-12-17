@@ -1,7 +1,7 @@
-import React, { useState, useRef, useMemo, useCallback } from 'react';
+import React, { useRef, useMemo, useCallback } from 'react';
 import { ITableSearchFilters } from 'redux/dataTableSearch/types';
 
-import { useToggle } from 'hooks/useToggle';
+import { useToggleState } from 'hooks/useToggleState';
 
 import { Popover } from 'ui/Popover/Popover';
 import { ToggleSwitch } from 'ui/ToggleSwitch/ToggleSwitch';
@@ -29,8 +29,7 @@ export const DataTableNavigatorSearch: React.FC<{
     updateSearchFilter,
     resetSearchFilter,
 }) => {
-    const [showSearchFilter, setShowSearchFilter] = useState(false);
-    const toggleSearchFilter = useToggle(setShowSearchFilter);
+    const [showSearchFilter, , toggleSearchFilter] = useToggleState(false);
     const filterButtonRef = useRef<HTMLAnchorElement>();
     const searchFiltersSize = useMemo(() => Object.keys(searchFilters).length, [
         searchFilters,
