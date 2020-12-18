@@ -4,7 +4,7 @@ import classNames from 'classnames';
 
 import { IBoard } from 'const/board';
 import { fetchBoards } from 'redux/board/action';
-import { boardsSelector } from 'redux/board/selector';
+import { myBoardsSelector } from 'redux/board/selector';
 import { SearchBar } from 'ui/SearchBar/SearchBar';
 import { IconButton } from 'ui/Button/IconButton';
 import { BoardCreateUpdateModal } from 'components/BoardCreateUpdateModal/BoardCreateUpdateModal';
@@ -27,7 +27,7 @@ export const BoardList: React.FunctionComponent<IProps> = ({
     const [showCreateModal, setCreateModal] = useState(false);
     const [filterStr, setFilterStr] = useState('');
     const dispatch = useDispatch();
-    const boards = useSelector(boardsSelector);
+    const boards = useSelector(myBoardsSelector);
     useEffect(() => {
         dispatch(fetchBoards());
     }, []);

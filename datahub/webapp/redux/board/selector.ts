@@ -1,6 +1,7 @@
 import { createSelector } from 'reselect';
 import { IStoreState } from 'redux/store/types';
 import { currentEnvironmentSelector } from 'redux/environment/selector';
+import { myUserInfoSelector } from 'redux/user/selector';
 import { IBoardItem } from 'const/board';
 import { IDataDoc } from 'const/datadoc';
 import { IDataTable } from 'const/metastore';
@@ -10,12 +11,17 @@ const boardItemByIdSelector = (state: IStoreState) => state.board.boardItemById;
 const boardSelector = (state: IStoreState, boardId: number) =>
     state.board.boardById[boardId];
 
-export const boardsSelector = createSelector(
+export const myBoardsSelector = createSelector(
     boardByIdSelector,
     currentEnvironmentSelector,
-    (boardById, environment) =>
+    myUserInfoSelector,
+    (boardById, environment, userInfo) =>
         Object.values(boardById)
-            .filter((board) => board.environment_id === environment?.id)
+            .filter(
+                (board) =>
+                    board.environment_id === environment?.id &&
+                    userInfo.id === board.owner_uid
+            )
             .sort((a, b) => b.updated_at - a.updated_at)
 );
 
