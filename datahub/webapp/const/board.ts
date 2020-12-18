@@ -37,3 +37,19 @@ export interface IBoardItem {
 }
 
 export type BoardItemType = 'table' | 'data_doc';
+
+export enum BoardOrderBy {
+    alphabetical = 0,
+    createdAt,
+    updatedAt,
+}
+export const BoardOrderToDescription = {
+    [BoardOrderBy.alphabetical]: 'Alphabetical',
+    [BoardOrderBy.createdAt]: 'Created At',
+    [BoardOrderBy.updatedAt]: 'Last Updated',
+};
+export const BoardOrderToTitle = {
+    [BoardOrderBy.alphabetical]: '↓Aa',
+    [BoardOrderBy.createdAt]: '↑C',
+    [BoardOrderBy.updatedAt]: '↑U',
+};
