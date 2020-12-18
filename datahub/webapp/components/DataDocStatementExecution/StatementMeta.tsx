@@ -1,5 +1,5 @@
 import React from 'react';
-import Markdown from 'markdown-to-jsx';
+import { Markdown } from 'ui/Markdown/Markdown';
 import { Message } from 'ui/Message/Message';
 
 export const StatementMeta: React.FunctionComponent<{ metaInfo?: string }> = ({

@@ -21,7 +21,13 @@ function isInternalUrl(url: LocationDescriptor): boolean {
     return false;
 }
 
-export interface ILinkProps {
+// ReactRouter's Link's tying thinks that defaultValue can only be string | string[]
+// This causes a ts error since defaultValue can also be a number
+type AnchorProps = React.AnchorHTMLAttributes<HTMLAnchorElement> & {
+    defaultValue?: string | string[];
+};
+
+export interface ILinkProps extends AnchorProps {
     to?: LocationDescriptor;
     onClick?: (to: React.MouseEvent) => any;
     newTab?: boolean;
@@ -70,10 +76,13 @@ export class Link extends React.PureComponent<ILinkProps> {
             </LinkImport>
         ) : (
             <StyledLink
-                {...elementProps}
                 href={to}
                 naturalLink={naturalLink}
                 onMouseDown={this.handleClick}
+                {...elementProps}
+                {...(newTab
+                    ? {}
+                    : { target: '_blank', rel: 'noopener noreferrer' })}
             >
                 {children}
             </StyledLink>

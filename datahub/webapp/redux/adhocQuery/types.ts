@@ -4,32 +4,24 @@ import {
     ThunkDispatch as UntypedThunkDispatch,
 } from 'redux-thunk';
 import { IStoreState } from '../store/types';
+import { IAdhocQuery } from 'const/adhocQuery';
 
-export interface IReceiveAdhocQueryAction extends Action {
-    type: '@@adhocQuery/RECEIVE_ADHOC_QUERY';
+export interface ISetAdhocQueryAction extends Action {
+    type: '@@adhocQuery/SET_ADHOC_QUERY';
     payload: {
-        query: string;
+        adhocQuery: Partial<IAdhocQuery>;
+        environmentId: number;
     };
 }
 
-export interface IReceiveAdhocQueryEngineIdAction extends Action {
-    type: '@@adhocQuery/RECEIVE_ADHOC_QUERY_ENGINE_ID';
+export interface IClearAdhocQueryAction extends Action {
+    type: '@@adhocQuery/CLEAR_ADHOC_QUERY';
     payload: {
-        engineId?: number;
+        environmentId: number;
     };
 }
 
-export interface IReceiveAdhocQueryExecutionIdAction extends Action {
-    type: '@@adhocQuery/RECEIVE_ADHOC_QUERY_EXECUTION_ID';
-    payload: {
-        executionId?: number;
-    };
-}
-
-export type AdhocQueryAction =
-    | IReceiveAdhocQueryAction
-    | IReceiveAdhocQueryEngineIdAction
-    | IReceiveAdhocQueryExecutionIdAction;
+export type AdhocQueryAction = ISetAdhocQueryAction | IClearAdhocQueryAction;
 
 export type ThunkResult<R> = ThunkAction<
     R,
@@ -44,8 +36,4 @@ export type ThunkDispatch = UntypedThunkDispatch<
     AdhocQueryAction
 >;
 
-export interface IAdhocQueryState {
-    query: string;
-    engineId?: number;
-    executionId?: number;
-}
+export type AdhocQueryState = Record<number, IAdhocQuery>;

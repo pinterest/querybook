@@ -50,13 +50,18 @@ export const QueryViewEditor: React.FunctionComponent<{
     }, [queryExecution, cellInfo]);
 
     const exportToAdhocQuery = React.useCallback(() => {
-        dispatch(adhocQueryActions.receiveAdhocQuery(queryExecution.query));
         dispatch(
-            adhocQueryActions.receiveAdhocEngineId(queryExecution.engine_id)
+            adhocQueryActions.receiveAdhocQuery(
+                {
+                    query: queryExecution.query,
+                    executionId: queryExecution.id,
+                    engineId: queryExecution.engine_id,
+                },
+                environment.id
+            )
         );
-        dispatch(adhocQueryActions.receiveAdhocExecutionId(queryExecution.id));
         navigateWithinEnv('/adhoc/');
-    }, [queryExecution]);
+    }, [queryExecution, environment.id]);
 
     React.useEffect(() => {
         dispatch(

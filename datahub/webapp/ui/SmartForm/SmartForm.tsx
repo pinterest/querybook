@@ -4,17 +4,17 @@ import { titleize } from 'lib/utils';
 import { getDefaultFormValue } from './formFunctions';
 
 import { Button } from 'ui/Button/Button';
+import { IconButton } from 'ui/Button/IconButton';
 import { DebouncedInput } from 'ui/DebouncedInput/DebouncedInput';
 import {
     FormField,
     FormFieldInputSection,
     FormFieldHelpSection,
 } from 'ui/Form/FormField';
-import { IconButton } from 'ui/Button/IconButton';
+import { Markdown } from 'ui/Markdown/Markdown';
 import { ToggleSwitch } from 'ui/ToggleSwitch/ToggleSwitch';
 
 import './SmartForm.scss';
-import Markdown from 'markdown-to-jsx';
 
 export {
     updateValue,

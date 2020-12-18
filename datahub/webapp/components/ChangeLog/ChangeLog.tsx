@@ -1,6 +1,5 @@
 import * as React from 'react';
 import { useParams } from 'react-router-dom';
-import Markdown from 'markdown-to-jsx';
 
 import ds from 'lib/datasource';
 import localStore from 'lib/local-store';
@@ -8,6 +7,7 @@ import { sanitizeAndExtraMarkdown } from 'lib/markdown';
 import { navigateWithinEnv } from 'lib/utils/query-string';
 import { ChangeLogValue, CHANGE_LOG_KEY } from 'lib/local-store/const';
 
+import { Markdown } from 'ui/Markdown/Markdown';
 import { Content } from 'ui/Content/Content';
 import { Icon } from 'ui/Icon/Icon';
 

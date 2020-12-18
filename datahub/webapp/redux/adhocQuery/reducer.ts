@@ -1,13 +1,12 @@
 import { produce } from 'immer';
 
-import { IAdhocQueryState, AdhocQueryAction } from './types';
+import { AdhocQueryState, AdhocQueryAction } from './types';
 import { EnvironmentAction } from 'redux/environment/types';
+import localStore from 'lib/local-store';
+import { AdhocQueryValue, ADHOC_QUERY_KEY } from 'lib/local-store/const';
+import { saveAdhocQuery } from './persistence';
 
-const initialState: Readonly<IAdhocQueryState> = {
-    query: '',
-    engineId: null,
-    executionId: null,
-};
+const initialState: Readonly<AdhocQueryState> = {};
 
 export default (
     state = initialState,
@@ -15,20 +14,19 @@ export default (
 ) =>
     produce(state, (draft) => {
         switch (action.type) {
-            case '@@adhocQuery/RECEIVE_ADHOC_QUERY': {
-                draft.query = action.payload.query;
+            case '@@adhocQuery/SET_ADHOC_QUERY': {
+                const { adhocQuery, environmentId } = action.payload;
+                draft[environmentId] = {
+                    ...draft[environmentId],
+                    ...adhocQuery,
+                };
+                saveAdhocQuery(draft[environmentId], environmentId);
                 return;
             }
-            case '@@adhocQuery/RECEIVE_ADHOC_QUERY_ENGINE_ID': {
-                draft.engineId = action.payload.engineId;
+            case '@@adhocQuery/CLEAR_ADHOC_QUERY': {
+                const { environmentId } = action.payload;
+                delete draft[environmentId];
                 return;
-            }
-            case '@@adhocQuery/RECEIVE_ADHOC_QUERY_EXECUTION_ID': {
-                draft.executionId = action.payload.executionId;
-                return;
-            }
-            case '@@environment/SET_ENVIRONMENT_BY_ID': {
-                return initialState;
             }
         }
     });

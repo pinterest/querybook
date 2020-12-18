@@ -9,10 +9,17 @@ import { IStoreState, Dispatch } from 'redux/store/types';
 import { receiveAdhocQuery } from 'redux/adhocQuery/action';
 
 export const EmbeddedQueryPage: React.FunctionComponent = () => {
-    const query = useSelector((state: IStoreState) => state.adhocQuery.query);
+    const environmentId = useSelector(
+        (state: IStoreState) => state.environment.currentEnvironmentId
+    );
+    const query = useSelector(
+        (state: IStoreState) => state.adhocQuery[environmentId]?.query ?? ''
+    );
+
     const dispatch: Dispatch = useDispatch();
     const setQuery = React.useCallback(
-        (newQuery: string) => dispatch(receiveAdhocQuery(newQuery)),
+        (newQuery: string) =>
+            dispatch(receiveAdhocQuery({ query: newQuery }, environmentId)),
         []
     );
 
