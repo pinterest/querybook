@@ -96,7 +96,7 @@ export const EnvironmentModalSwitchRouter: React.FC = () => {
                     path="/:env/_/embedded_editor/"
                     render={() => <EmbeddedQueryPage />}
                 />
-                <Route path="/:env/board/:boardId/" component={BoardWrapper} />
+                <Route path="/:env/list/:boardId/" component={BoardWrapper} />
                 {modalRoutes}
                 <Route component={FourOhFour} />
             </Switch>

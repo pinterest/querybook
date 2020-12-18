@@ -10,7 +10,7 @@ import { BoardCreateUpdateModal } from 'components/BoardCreateUpdateModal/BoardC
 import { getWithinEnvUrl } from 'lib/utils/query-string';
 import { sendNotification } from 'lib/dataHubUI';
 
-import { boardsSelector, makeBoardItemsSelector } from 'redux/board/selector';
+import { myBoardsSelector, makeBoardItemsSelector } from 'redux/board/selector';
 import {
     fetchBoards,
     deleteBoardItem,
@@ -53,7 +53,7 @@ export const DataDocNavigatorBoardSection: React.FC<INavigatorBoardSectionProps>
     ]);
 
     const [showCreateModal, setShowCreateModal] = useState(false);
-    const boards = useSelector(boardsSelector);
+    const boards = useSelector(myBoardsSelector);
     const boardItemById = useSelector(
         (state: IStoreState) => state.board.boardItemById
     );
