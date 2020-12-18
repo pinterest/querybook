@@ -68,19 +68,19 @@ export const DataDocNavigatorBoardSection: React.FC<INavigatorBoardSectionProps>
     );
 
     const [orderBoardBy, setOrderBoardBy] = useState(BoardOrderBy.updatedAt);
-    const unorderedboards = useSelector(myBoardsSelector);
+    const unorderedBoards = useSelector(myBoardsSelector);
     const boards = useMemo(
         () =>
             orderBoardBy === BoardOrderBy.alphabetical
-                ? [...unorderedboards].sort((a, b) =>
+                ? [...unorderedBoards].sort((a, b) =>
                       a.name.localeCompare(b.name)
                   )
                 : orderBoardBy === BoardOrderBy.createdAt
-                ? [...unorderedboards].sort(
+                ? [...unorderedBoards].sort(
                       (a, b) => b.created_at - a.created_at
                   )
-                : unorderedboards, // order by updated at by default,
-        [unorderedboards, orderBoardBy]
+                : unorderedBoards, // order by updated at by default,
+        [unorderedBoards, orderBoardBy]
     );
     const showBoardOrderBy = boards.length > 1;
 
