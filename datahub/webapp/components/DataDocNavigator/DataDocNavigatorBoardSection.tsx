@@ -4,7 +4,12 @@ import classNames from 'classnames';
 import { useDrop } from 'react-dnd';
 
 import { IDataDoc, emptyDataDocTitleMessage } from 'const/datadoc';
-import { BoardItemType } from 'const/board';
+import {
+    BoardItemType,
+    BoardOrderBy,
+    BoardOrderToDescription,
+    BoardOrderToTitle,
+} from 'const/board';
 
 import { BoardCreateUpdateModal } from 'components/BoardCreateUpdateModal/BoardCreateUpdateModal';
 import { getWithinEnvUrl } from 'lib/utils/query-string';
@@ -21,6 +26,7 @@ import {
 import { setDataDocNavBoard } from 'redux/dataHubUI/action';
 import { dataDocNavBoardOpenSelector } from 'redux/dataHubUI/selector';
 import { Dispatch, IStoreState } from 'redux/store/types';
+import { getEnumEntries } from 'lib/typescript';
 
 import { IconButton } from 'ui/Button/IconButton';
 import { LoadingIcon } from 'ui/Loading/Loading';
@@ -34,6 +40,7 @@ import { IDragItem } from 'ui/DraggableList/types';
 
 import { BoardDraggableType, DataDocDraggableType } from './navigatorConst';
 import './DataDocNavigatorBoardSection.scss';
+import { TextToggleButton } from 'ui/Button/TextToggleButton';
 
 interface INavigatorBoardSectionProps {
     selectedDocId: number;
@@ -41,6 +48,9 @@ interface INavigatorBoardSectionProps {
     setCollapsed: (v: boolean) => any;
     filterString: string;
 }
+
+const BoardOrderByOptions = getEnumEntries(BoardOrderBy);
+
 export const DataDocNavigatorBoardSection: React.FC<INavigatorBoardSectionProps> = ({
     selectedDocId,
     collapsed,
@@ -53,10 +63,26 @@ export const DataDocNavigatorBoardSection: React.FC<INavigatorBoardSectionProps>
     ]);
 
     const [showCreateModal, setShowCreateModal] = useState(false);
-    const boards = useSelector(myBoardsSelector);
     const boardItemById = useSelector(
         (state: IStoreState) => state.board.boardItemById
     );
+
+    const [orderBoardBy, setOrderBoardBy] = useState(BoardOrderBy.updatedAt);
+    const unorderedboards = useSelector(myBoardsSelector);
+    const boards = useMemo(
+        () =>
+            orderBoardBy === BoardOrderBy.alphabetical
+                ? [...unorderedboards].sort((a, b) =>
+                      a.name.localeCompare(b.name)
+                  )
+                : orderBoardBy === BoardOrderBy.createdAt
+                ? [...unorderedboards].sort(
+                      (a, b) => b.created_at - a.created_at
+                  )
+                : unorderedboards, // order by updated at by default,
+        [unorderedboards, orderBoardBy]
+    );
+    const showBoardOrderBy = boards.length > 1;
 
     const dispatch: Dispatch = useDispatch();
     useEffect(() => {
@@ -123,6 +149,24 @@ export const DataDocNavigatorBoardSection: React.FC<INavigatorBoardSectionProps>
             </div>
 
             <LevelItem>
+                {showBoardOrderBy ? (
+                    <TextToggleButton
+                        value={false}
+                        onChange={() =>
+                            setOrderBoardBy(
+                                (oldValue) =>
+                                    BoardOrderByOptions[
+                                        (Number(oldValue) + 1) %
+                                            BoardOrderByOptions.length
+                                    ][1] as BoardOrderBy
+                            )
+                        }
+                        tooltip={`Order By ${BoardOrderToDescription[orderBoardBy]}`}
+                        tooltipPos="left"
+                        text={BoardOrderToTitle[orderBoardBy]}
+                    />
+                ) : null}
+
                 <IconButton
                     icon="plus"
                     onClick={() => setShowCreateModal(true)}
