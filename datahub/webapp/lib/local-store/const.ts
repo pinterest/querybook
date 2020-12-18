@@ -1,3 +1,5 @@
+import { IAdhocQuery } from 'const/adhocQuery';
+
 export const DISMISSED_ANNOUNCEMENT_KEY = 'dismissed_announcement_ids';
 export type DismissedAnnouncementValue = number[];
 
@@ -11,11 +13,4 @@ export const DATA_DOC_NAV_SECTION_KEY = 'data_doc_nav_section';
 export type DataDocNavSectionValue = Record<string, boolean>;
 
 export const ADHOC_QUERY_KEY = 'adhoc_query_editor';
-export type AdhocQueryValue = Record<
-    number,
-    {
-        query?: string;
-        engineId?: number;
-        executionId?: number;
-    }
->;
+export type AdhocQueryValue = IAdhocQuery;
