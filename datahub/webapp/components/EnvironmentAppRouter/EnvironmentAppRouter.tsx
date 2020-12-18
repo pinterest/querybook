@@ -12,6 +12,7 @@ import { EnvironmentModalSwitchRouter } from 'components/EnvironmentAppRouter/En
 import { FullHeight } from 'ui/FullHeight/FullHeight';
 
 import './EnvironmentAppRouter.scss';
+import { rehydrateAdhocQueryForEnvironment } from 'redux/adhocQuery/action';
 
 interface IProps {
     environment?: IEnvironment;
@@ -29,16 +30,17 @@ export const EnvironmentAppRouter: React.FunctionComponent<
     const [engineLoaded, setEngineLoaded] = React.useState(false);
     const dispatch = useDispatch();
     React.useEffect(() => {
-        if ((environment || {})['name']) {
+        if (environment?.name) {
             setEngineLoaded(false);
             Promise.all([
                 dispatch(loadQueryEngine()),
                 dispatch(fetchQueryMetastore()),
             ]).finally(() => {
+                dispatch(rehydrateAdhocQueryForEnvironment(environment.id));
                 setEngineLoaded(true);
             });
         }
-    }, [(environment || {})['name']]);
+    }, [environment?.name]);
 
     React.useEffect(() => {
         selectEnvironment(envName);

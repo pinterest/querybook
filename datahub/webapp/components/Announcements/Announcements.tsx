@@ -1,4 +1,3 @@
-import Markdown from 'markdown-to-jsx';
 import React from 'react';
 import { useDispatch } from 'react-redux';
 import * as datahubUIActions from 'redux/dataHubUI/action';
@@ -6,6 +5,7 @@ import { Dispatch } from 'redux/store/types';
 
 import { Level } from 'ui/Level/Level';
 import { IconButton } from 'ui/Button/IconButton';
+import { Markdown } from 'ui/Markdown/Markdown';
 
 import './Announcements.scss';
 

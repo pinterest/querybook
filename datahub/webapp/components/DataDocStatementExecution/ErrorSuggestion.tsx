@@ -1,5 +1,5 @@
 import React, { useMemo } from 'react';
-import Markdown from 'markdown-to-jsx';
+import { Markdown } from 'ui/Markdown/Markdown';
 import { Message } from 'ui/Message/Message';
 
 const queryErrorsByLanguage: Record<

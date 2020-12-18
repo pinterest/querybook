@@ -40,21 +40,27 @@ import { Button } from 'ui/Button/Button';
 
 import './QueryComposer.scss';
 
-const useExecution = (dispatch: Dispatch) => {
+const useExecution = (dispatch: Dispatch, environmentId: number) => {
     const executionId = useSelector(
-        (state: IStoreState) => state.adhocQuery.executionId
+        (state: IStoreState) => state.adhocQuery[environmentId]?.executionId
     );
     const setExecutionId = useCallback(
-        (id: number) => dispatch(adhocQueryActions.receiveAdhocExecutionId(id)),
+        (id: number) =>
+            dispatch(
+                adhocQueryActions.receiveAdhocQuery(
+                    { executionId: id },
+                    environmentId
+                )
+            ),
         []
     );
 
     return { executionId, setExecutionId };
 };
 
-const useEngine = (dispatch: Dispatch) => {
+const useEngine = (dispatch: Dispatch, environmentId: number) => {
     const engineId = useSelector(
-        (state: IStoreState) => state.adhocQuery.engineId
+        (state: IStoreState) => state.adhocQuery[environmentId]?.engineId
     );
     const queryEngineById = useSelector(queryEngineByIdEnvSelector);
     const queryEngines = useSelector(queryEngineSelector);
@@ -65,7 +71,13 @@ const useEngine = (dispatch: Dispatch) => {
         )
     );
     const setEngineId = useCallback(
-        (id: number) => dispatch(adhocQueryActions.receiveAdhocEngineId(id)),
+        (id: number) =>
+            dispatch(
+                adhocQueryActions.receiveAdhocQuery(
+                    { engineId: id },
+                    environmentId
+                )
+            ),
         []
     );
 
@@ -83,13 +95,18 @@ const useEngine = (dispatch: Dispatch) => {
     };
 };
 
-const useQuery = (dispatch: Dispatch) => {
+const useQuery = (dispatch: Dispatch, environmentId: number) => {
     const reduxQuery = useSelector(
-        (state: IStoreState) => state.adhocQuery.query
+        (state: IStoreState) => state.adhocQuery[environmentId]?.query ?? ''
     );
     const setReduxQuery = useCallback(
         (newQuery: string) =>
-            dispatch(adhocQueryActions.receiveAdhocQuery(newQuery)),
+            dispatch(
+                adhocQueryActions.receiveAdhocQuery(
+                    { query: newQuery },
+                    environmentId
+                )
+            ),
         []
     );
     const [query, setQuery] = useDebounceState(reduxQuery, setReduxQuery, 500);
@@ -137,12 +154,19 @@ const useQueryComposerSearchAndReplace = (
 export const QueryComposer: React.FC = () => {
     useBrowserTitle('Adhoc Query');
 
-    const dispatch: Dispatch = useDispatch();
-    const { query, setQuery } = useQuery(dispatch);
-    const { engine, setEngineId, queryEngines, queryEngineById } = useEngine(
-        dispatch
+    const environmentId = useSelector(
+        (state: IStoreState) => state.environment.currentEnvironmentId
     );
-    const { executionId, setExecutionId } = useExecution(dispatch);
+    const dispatch: Dispatch = useDispatch();
+    const { query, setQuery } = useQuery(dispatch, environmentId);
+    const { engine, setEngineId, queryEngines, queryEngineById } = useEngine(
+        dispatch,
+        environmentId
+    );
+    const { executionId, setExecutionId } = useExecution(
+        dispatch,
+        environmentId
+    );
     const queryEditorRef = useRef<QueryEditor>(null);
     const runButtonRef = useRef<IQueryRunButtonHandles>(null);
     const searchAndReplaceRef = useRef<ISearchAndReplaceHandles>(null);
@@ -279,7 +303,10 @@ export const QueryComposer: React.FC = () => {
                         <Button
                             icon="delete"
                             title="Clear"
-                            onClick={() => setQuery('')}
+                            onClick={() => {
+                                setQuery('');
+                                setExecutionId(null);
+                            }}
                         />
                         <Button
                             icon="plus"

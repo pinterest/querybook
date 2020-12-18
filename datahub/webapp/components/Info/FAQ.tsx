@@ -2,9 +2,9 @@ import * as React from 'react';
 
 import { Content } from 'ui/Content/Content';
 import { Title } from 'ui/Title/Title';
+import { Markdown } from 'ui/Markdown/Markdown';
 
 import './FAQ.scss';
-import Markdown from 'markdown-to-jsx';
 
 const faqs: Array<[string, string]> = require('config/faqs.yaml').faqs;
 

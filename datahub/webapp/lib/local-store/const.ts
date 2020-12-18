@@ -9,3 +9,13 @@ export type ChangeLogValue = string;
 
 export const DATA_DOC_NAV_SECTION_KEY = 'data_doc_nav_section';
 export type DataDocNavSectionValue = Record<string, boolean>;
+
+export const ADHOC_QUERY_KEY = 'adhoc_query_editor';
+export type AdhocQueryValue = Record<
+    number,
+    {
+        query?: string;
+        engineId?: number;
+        executionId?: number;
+    }
+>;

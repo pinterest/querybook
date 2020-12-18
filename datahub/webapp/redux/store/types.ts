@@ -20,7 +20,7 @@ import { IQueryViewState, QueryViewAction } from 'redux/queryView/types';
 import { DataHubUIAction, IDataHubUIState } from 'redux/dataHubUI/types';
 import { IQueryEngineState, QueryEngineAction } from 'redux/queryEngine/types';
 import { IEnvironmentState, EnvironmentAction } from 'redux/environment/types';
-import { IAdhocQueryState, AdhocQueryAction } from 'redux/adhocQuery/types';
+import { AdhocQueryState, AdhocQueryAction } from 'redux/adhocQuery/types';
 import { IBoardState, BoardAction } from 'redux/board/types';
 import { IGlobalStateState, GlobalStateAction } from 'redux/globalState/types';
 import {
@@ -42,7 +42,7 @@ export interface IStoreState {
     readonly notificationService: INotificationState;
     readonly dataHubUI: IDataHubUIState;
     readonly environment: IEnvironmentState;
-    readonly adhocQuery: IAdhocQueryState;
+    readonly adhocQuery: AdhocQueryState;
     readonly board: IBoardState;
     readonly globalState: IGlobalStateState;
     readonly tag: ITagState;

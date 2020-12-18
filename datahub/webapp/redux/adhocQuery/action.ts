@@ -1,36 +1,50 @@
+import { IAdhocQuery } from 'const/adhocQuery';
+import { fetchQueryExecutionIfNeeded } from 'redux/queryExecutions/action';
 import {
-    IReceiveAdhocQueryAction,
-    IReceiveAdhocQueryEngineIdAction,
-    IReceiveAdhocQueryExecutionIdAction,
+    ISetAdhocQueryAction,
+    IClearAdhocQueryAction,
+    ThunkResult,
 } from './types';
+import { loadAdhocQuery } from './persistence';
 
-export function receiveAdhocQuery(query: string): IReceiveAdhocQueryAction {
+export function receiveAdhocQuery(
+    adhocQuery: Partial<IAdhocQuery>,
+    environmentId: number
+): ISetAdhocQueryAction {
     return {
-        type: '@@adhocQuery/RECEIVE_ADHOC_QUERY',
+        type: '@@adhocQuery/SET_ADHOC_QUERY',
         payload: {
-            query,
+            adhocQuery,
+            environmentId,
         },
     };
 }
 
-export function receiveAdhocEngineId(
-    engineId: number
-): IReceiveAdhocQueryEngineIdAction {
+export function clearAdhocQuery(environmentId: number): IClearAdhocQueryAction {
     return {
-        type: '@@adhocQuery/RECEIVE_ADHOC_QUERY_ENGINE_ID',
+        type: '@@adhocQuery/CLEAR_ADHOC_QUERY',
         payload: {
-            engineId,
+            environmentId,
         },
     };
 }
 
-export function receiveAdhocExecutionId(
-    executionId: number
-): IReceiveAdhocQueryExecutionIdAction {
-    return {
-        type: '@@adhocQuery/RECEIVE_ADHOC_QUERY_EXECUTION_ID',
-        payload: {
-            executionId,
-        },
+export function rehydrateAdhocQueryForEnvironment(
+    environmentId: number
+): ThunkResult<Promise<void>> {
+    return async (dispatch, getState) => {
+        const adhocQueryExistsInState = environmentId in getState().adhocQuery;
+        if (adhocQueryExistsInState) {
+            return;
+        }
+
+        const adhocQuery = await loadAdhocQuery(environmentId);
+        if (adhocQuery) {
+            if (adhocQuery.executionId) {
+                dispatch(fetchQueryExecutionIfNeeded(adhocQuery.executionId));
+            }
+
+            dispatch(receiveAdhocQuery(adhocQuery, environmentId));
+        }
     };
 }
