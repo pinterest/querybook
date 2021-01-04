@@ -46,6 +46,7 @@ import { Modal } from 'ui/Modal/Modal';
 import { Title } from 'ui/Title/Title';
 
 import './DataDocQueryCell.scss';
+import { ResizableTextArea } from 'ui/ResizableTextArea/ResizableTextArea';
 
 const ON_CHANGE_DEBOUNCE_MS = 250;
 
@@ -539,15 +540,12 @@ class DataDocQueryCellComponent extends React.Component<IProps, IState> {
         const { meta, selectedRange } = this.state;
 
         const queryTitleDOM = isEditable ? (
-            <DebouncedInput
+            <ResizableTextArea
                 value={meta.title}
                 onChange={this.handleMetaTitleChange}
-                inputProps={{
-                    placeholder: this.defaultCellTitle,
-                    className: 'Title',
-                }}
                 transparent
-                flex
+                placeholder={this.defaultCellTitle}
+                className="Title"
             />
         ) : (
             <Title size={4}>{this.dataCellTitle}</Title>
@@ -619,7 +617,7 @@ class DataDocQueryCellComponent extends React.Component<IProps, IState> {
         );
 
         const openSnippetDOM =
-            query.trim().length === 0 ? (
+            query.trim().length === 0 && isEditable ? (
                 <div className="add-snippet-wrapper flex-center">
                     <Button
                         title="Add Template"

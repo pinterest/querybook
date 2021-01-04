@@ -50,19 +50,12 @@
     .query-title {
         flex: 1;
 
-        input.Title,
-        span {
+        .Title,
+        p {
             font-weight: bold;
-        }
-        input.Title {
             font-size: var(--large-text-size);
             color: var(--dark-text-color);
-            text-overflow: ellipsis;
-        }
-        span {
-            font-size: var(--med-text-size);
-            color: var(--light-text-color);
-            margin-right: 8px;
+            padding: 8px;
         }
     }
 
