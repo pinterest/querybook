@@ -63,6 +63,10 @@
         .sidebar-environment-picker {
             text-align: center;
             border-bottom: solid 1px transparent;
+            .EnvironmentDropdownButton .Dropdown-trigger {
+                display: flex;
+                justify-content: center;
+            }
         }
 
         border-right: var(--border);

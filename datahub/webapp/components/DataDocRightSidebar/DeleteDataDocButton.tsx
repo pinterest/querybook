@@ -44,6 +44,7 @@ export const DeleteDataDocButton: React.FunctionComponent<IDeleteDataDocButtonPr
             tooltip={tooltip}
             tooltipPos={tooltipPos}
             onClick={handleDeleteDataDoc}
+            title="Delete"
         />
     );
 };

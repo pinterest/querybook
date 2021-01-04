@@ -23,6 +23,7 @@ export interface IconButtonProps {
     fill?: boolean;
     size?: string | number;
     ping?: boolean | string;
+    title?: string;
     // Bug: somehow typescript can't auto detect this field
     // after forwardRef
     children?: React.ReactNode;
@@ -44,6 +45,7 @@ export const IconButton = React.forwardRef<HTMLAnchorElement, IconButtonProps>(
             noPadding,
             fill,
             ping,
+            title,
         },
         ref
     ) => {
@@ -64,17 +66,29 @@ export const IconButton = React.forwardRef<HTMLAnchorElement, IconButtonProps>(
             fill,
             disabled,
             'invert-circle': invertCircle,
+            'with-title': !!title,
             [className]: className,
         });
 
+        const pingDOM = !ping ? null : typeof ping === 'boolean' ? (
+            <div className="ping" />
+        ) : (
+            <div className="ping-message">{ping}</div>
+        );
+        const iconDOM = <Icon name={icon} size={size} fill={fill} />;
+        const contentDOM = title ? (
+            <div className="flex-column">
+                {iconDOM}
+                <span className="icon-title">{title}</span>
+            </div>
+        ) : (
+            iconDOM
+        );
+
         return (
             <span {...iconButtonProps} className={iconButtonClassname}>
-                {!ping ? null : typeof ping === 'boolean' ? (
-                    <div className="ping" />
-                ) : (
-                    <div className="ping-message">{ping}</div>
-                )}
-                <Icon name={icon} size={size} fill={fill} /> {children}
+                {pingDOM}
+                {contentDOM} {children}
             </span>
         );
     }

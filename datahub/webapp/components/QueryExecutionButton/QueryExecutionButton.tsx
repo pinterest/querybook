@@ -165,6 +165,7 @@ class QueryExecutionButtonComponent extends React.Component<IProps, IState> {
                                 ? activeQueryExecutions.length.toString()
                                 : null
                         }
+                        title="Runs"
                     />
                 </span>
                 {panel}

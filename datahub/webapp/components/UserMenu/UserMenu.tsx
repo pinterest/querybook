@@ -17,6 +17,7 @@ import { Popover, PopoverLayout } from 'ui/Popover/Popover';
 import { ToggleSwitch } from 'ui/ToggleSwitch/ToggleSwitch';
 
 import './UserMenu.scss';
+import { Icon } from 'ui/Icon/Icon';
 
 interface IProps {
     tooltipPos?: TooltipDirection;
@@ -129,13 +130,15 @@ export const UserMenu: React.FC<IProps> = ({
     return (
         <>
             <span
-                className="UserMenu"
+                className="UserMenu flex-column"
                 ref={selfRef}
                 onClick={toggleUserMenuPopover}
                 aria-label={'User Settings'}
                 data-balloon-pos={tooltipPos}
             >
                 <UserAvatar uid={userInfo.uid} />
+
+                <span className="user-menu-title">Settings</span>
             </span>
             {tokenCreationModalDOM}
             {userSettingsPopover}

@@ -2,10 +2,8 @@ import React from 'react';
 import { Route } from 'react-router-dom';
 import { useSelector } from 'react-redux';
 
-import history from 'lib/router-history';
 import { currentEnvironmentSelector } from 'redux/environment/selector';
 import { queryMetastoresSelector } from 'redux/dataSources/selector';
-import { IStoreState } from 'redux/store/types';
 import { Entity } from './types';
 
 import { InfoMenuButton } from 'components/InfoMenuButton/InfoMenuButton';
@@ -34,7 +32,7 @@ export const EntitySidebar: React.FunctionComponent<IEntitySidebarProps> = ({
 
     return (
         <div className="EntitySidebar">
-            <div className="apps-list">
+            <div className="apps-list flex-column">
                 <Route
                     render={({ location }) => (
                         <>
@@ -49,26 +47,29 @@ export const EntitySidebar: React.FunctionComponent<IEntitySidebarProps> = ({
                                     }
                                 />
                             </Link>
-
+                            <Divider
+                                marginTop="2px"
+                                marginBottom="2px"
+                                height="1px"
+                                color="transparent"
+                            />
                             <Link to={`/${environment.name}/adhoc/`}>
-                                <IconButton
-                                    icon="edit"
-                                    tooltip={'Adhoc Query'}
-                                    tooltipPos="right"
-                                    active={location.pathname.startsWith(
-                                        `/${environment.name}/adhoc/`
-                                    )}
-                                />
+                                <div>
+                                    <IconButton
+                                        icon="edit"
+                                        tooltip={'Adhoc Query'}
+                                        tooltipPos="right"
+                                        active={location.pathname.startsWith(
+                                            `/${environment.name}/adhoc/`
+                                        )}
+                                        title="Adhoc"
+                                    />
+                                </div>
                             </Link>
                         </>
                     )}
                 />
-                <Divider
-                    marginTop="8px"
-                    marginBottom="8px"
-                    height="1px"
-                    color="transparent"
-                />
+
                 <IconButton
                     icon="file"
                     tooltip="DataDocs"
@@ -77,6 +78,7 @@ export const EntitySidebar: React.FunctionComponent<IEntitySidebarProps> = ({
                     onClick={() => {
                         onSelectEntity('datadoc');
                     }}
+                    title="Docs"
                 />
                 {queryMetastores.length ? (
                     <IconButton
@@ -85,6 +87,7 @@ export const EntitySidebar: React.FunctionComponent<IEntitySidebarProps> = ({
                         tooltipPos="right"
                         active={selectedEntity === 'table'}
                         onClick={() => onSelectEntity('table')}
+                        title="Tables"
                     />
                 ) : null}
                 <IconButton
@@ -93,6 +96,7 @@ export const EntitySidebar: React.FunctionComponent<IEntitySidebarProps> = ({
                     tooltipPos="right"
                     active={selectedEntity === 'snippet'}
                     onClick={() => onSelectEntity('snippet')}
+                    title="Snippets"
                 />
                 <QueryExecutionButton
                     onClick={() => onSelectEntity('execution')}

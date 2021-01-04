@@ -1,6 +1,15 @@
 .UserMenu {
-    display: inline-block;
-    padding: 10px 10px 4px 10px;
+    padding: 10px 10px 0px 10px;
+
+    color: var(--icon-color);
+
+    &:hover {
+        color: var(--icon-hover-color);
+    }
+
+    .user-menu-title {
+        font-size: var(--xxsmall-text-size);
+    }
 
     .UserAvatar {
         width: 24px;

@@ -27,6 +27,7 @@ export const ScheduleDataDocButton: React.FunctionComponent<IProps> = ({
                 onClick={() => setShowForm(true)}
                 tooltip="Schedule DataDoc"
                 tooltipPos="left"
+                title="Schedule"
             />
             {modal}
         </div>

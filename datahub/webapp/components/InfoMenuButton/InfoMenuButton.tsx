@@ -104,6 +104,7 @@ export const InfoMenuButton: React.FunctionComponent = () => {
                 tooltip={'Logs, Tips, Shortcuts, & FAQs'}
                 tooltipPos="right"
                 ping={notification}
+                title="Info"
             />
             {showPanel ? getPanelDOM() : null}
         </div>

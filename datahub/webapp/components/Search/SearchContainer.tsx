@@ -13,8 +13,9 @@ export const SearchContainer: React.FC = () => {
         <IconButton
             icon="search"
             tooltipPos="right"
-            tooltip="Search in DataHub"
+            tooltip="Search Docs/Tables"
             onClick={navigateToSearch}
+            title="Search"
         />
     );
 };
