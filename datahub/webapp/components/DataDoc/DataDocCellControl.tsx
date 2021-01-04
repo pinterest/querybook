@@ -215,6 +215,10 @@ export const DataDocCellControl: React.FunctionComponent<IProps> = ({
                 />
             )
         );
+    } else {
+        // In case center buttons are empty
+        // push an empty span to ensure the width
+        centerButtons.push(<span key="empty" />);
     }
 
     if (leftMenuItems.length) {
@@ -250,6 +254,7 @@ export const DataDocCellControl: React.FunctionComponent<IProps> = ({
                 </div>
             ) : null}
             {centerButtons}
+            <span>&nbsp;</span>
             {rightButtons.length ? (
                 <div className="block-right-buttons-wrapper flex-row">
                     {rightButtons}

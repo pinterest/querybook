@@ -1,7 +1,8 @@
 import classNames from 'classnames';
-import { bind } from 'lodash-decorators';
+import { throttle } from 'lodash';
 import React, { useRef, useEffect, useCallback } from 'react';
 import styled from 'styled-components';
+import { useResizeObserver } from 'hooks/useResizeObserver';
 
 export interface IResizableTextareaProps
     extends Omit<
@@ -57,17 +58,22 @@ export const ResizableTextArea: React.FC<IResizableTextareaProps> = ({
     ...textareaProps
 }) => {
     const textareaRef = useRef<HTMLTextAreaElement>();
+    const autoHeight = useCallback(
+        throttle(() => {
+            if (textareaRef.current && autoResize) {
+                const textarea = textareaRef.current;
+                textarea.style.height = 'auto';
+                textarea.style.height = `${textarea.scrollHeight}px`;
+            }
+        }, 500),
+        [autoResize]
+    );
+
     useEffect(() => {
         autoHeight();
     }, [value, autoResize]);
 
-    const autoHeight = useCallback(() => {
-        if (textareaRef.current && autoResize) {
-            const textarea = textareaRef.current;
-            textarea.style.height = 'auto';
-            textarea.style.height = `${textarea.scrollHeight}px`;
-        }
-    }, [autoResize]);
+    useResizeObserver(textareaRef.current, autoHeight);
 
     const handleChange = useCallback(
         (evt: React.ChangeEvent<HTMLTextAreaElement>) => {

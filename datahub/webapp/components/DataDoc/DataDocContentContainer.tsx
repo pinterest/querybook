@@ -1,4 +1,5 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, useCallback } from 'react';
+import { useResizeObserver } from 'hooks/useResizeObserver';
 
 const isChrome = /chrome/.test(navigator.userAgent.toLowerCase());
 
@@ -12,27 +13,20 @@ export const DataDocContentContainer: React.FunctionComponent = isChrome
           const [containerWidth, setContainerWidth] = useState(1200);
           const selfRef = React.useRef<HTMLDivElement>(null);
 
-          useEffect(() => {
-              let observer;
-
-              if (selfRef.current) {
-                  setContainerWidth(selfRef.current.offsetWidth);
-                  observer = new ResizeObserver((entries) => {
-                      for (const entry of entries) {
-                          if (entry.contentRect) {
-                              setContainerWidth(entry.contentRect.width);
-                          }
+          useResizeObserver(
+              selfRef.current,
+              useCallback((entries) => {
+                  for (const entry of entries) {
+                      if (entry.contentRect) {
+                          setContainerWidth(entry.contentRect.width);
                       }
-                  });
-                  observer.observe(selfRef.current);
-              }
-
-              return () => {
-                  if (observer) {
-                      observer.disconnect();
                   }
-              };
-          }, [selfRef.current]);
+              }, []),
+              useCallback(
+                  () => setContainerWidth(selfRef.current.offsetWidth),
+                  []
+              )
+          );
 
           return (
               <div ref={selfRef} className="data-doc-content-container">
