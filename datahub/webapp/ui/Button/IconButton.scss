@@ -42,6 +42,10 @@
         cursor: not-allowed;
     }
 
+    &.with-title {
+        padding-bottom: 0px;
+    }
+
     .ping,
     .ping-message {
         position: absolute;
@@ -66,5 +70,9 @@
         color: var(--color-accent-text);
         font-size: var(--xsmall-text-size);
         font-weight: var(--bold-font);
+    }
+
+    .icon-title {
+        font-size: var(--xxxsmall-text-size);
     }
 }

@@ -49,7 +49,7 @@
         "dagre-d3": "0.6.1",
         "draft-js": "0.11.5",
         "fast-json-stable-stringify": "2.0.0",
-        "feather-icons": "4.19.0",
+        "feather-icons": "4.28.0",
         "formik": "2.1.4",
         "history": "^4.10.1",
         "html-webpack-plugin": "3.2.0",

@@ -66,6 +66,7 @@ export const DataDocRightSidebar: React.FunctionComponent<IProps> = ({
             disabled={true}
             tooltipPos="left"
             tooltip="Only editor can delete"
+            title="Delete"
         />
     );
     const templateButtonDOM = (
@@ -81,7 +82,7 @@ export const DataDocRightSidebar: React.FunctionComponent<IProps> = ({
 
     const buttonSection = (
         <div className="DataDocRightSidebar-button-section">
-            <div className="DataDocRightSidebar-button-section-top">
+            <div className="DataDocRightSidebar-button-section-top flex-column">
                 <IconButton
                     icon="arrow-up"
                     className={showScrollToTop ? '' : 'hide-button'}
@@ -95,6 +96,7 @@ export const DataDocRightSidebar: React.FunctionComponent<IProps> = ({
                 <IconButton
                     icon="loader"
                     className={isSaving ? '' : 'hide-button'}
+                    title="Saving"
                 />
                 <IconButton
                     icon="link"
@@ -105,7 +107,7 @@ export const DataDocRightSidebar: React.FunctionComponent<IProps> = ({
                     }
                 />
             </div>
-            <div className="DataDocRightSidebar-button-section-bottom">
+            <div className="DataDocRightSidebar-button-section-bottom flex-column">
                 {templateButtonDOM}
                 {scheduleButtonDOM}
                 <IconButton
@@ -113,6 +115,7 @@ export const DataDocRightSidebar: React.FunctionComponent<IProps> = ({
                     onClick={onClone}
                     tooltip={'Clone'}
                     tooltipPos={'left'}
+                    title="Clone"
                 />
                 {deleteButtonDOM}
             </div>

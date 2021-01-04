@@ -43,8 +43,9 @@ export const TemplateDataDocButton: React.FunctionComponent<IProps> = ({
             <IconButton
                 icon="code"
                 onClick={() => setShowTemplateForm(true)}
-                tooltip="Configure Template"
+                tooltip="Set Templated Variables"
                 tooltipPos="left"
+                title="Template"
             />
 
             {templatedModal}
