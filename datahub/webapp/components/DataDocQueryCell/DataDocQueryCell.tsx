@@ -548,16 +548,6 @@ class DataDocQueryCellComponent extends React.Component<IProps, IState> {
                 className="Title"
             />
         ) : (
-            // <DebouncedInput
-            //     value={meta.title}
-            //     onChange={this.handleMetaTitleChange}
-            //     inputProps={{
-            //         placeholder: this.defaultCellTitle,
-            //         className: 'Title',
-            //     }}
-            //     transparent
-            //     flex
-            // />
             <Title size={4}>{this.dataCellTitle}</Title>
         );
 
