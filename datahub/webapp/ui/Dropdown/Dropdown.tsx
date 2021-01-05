@@ -46,7 +46,6 @@ export const Dropdown: React.FunctionComponent<IProps> = ({
 
     // Click based Dropdown Control
     const handleClick = React.useCallback((event) => {
-        console.log('wtf');
         if (!hoverable) {
             event.stopPropagation();
             event.preventDefault();
