@@ -1,6 +1,7 @@
 import React from 'react';
 import MarkdownJSX, { MarkdownToJSX } from 'markdown-to-jsx';
 import { Link } from 'ui/Link/Link';
+import { Content } from 'ui/Content/Content';
 
 const MarkdownLink: React.FC<{ title: string; href: string }> = ({
     title,
@@ -21,5 +22,7 @@ const markdownOptions: MarkdownToJSX.Options = {
 };
 
 export const Markdown: React.FC<{ children: string }> = ({ children }) => (
-    <MarkdownJSX options={markdownOptions}>{children}</MarkdownJSX>
+    <Content>
+        <MarkdownJSX options={markdownOptions}>{children}</MarkdownJSX>
+    </Content>
 );
