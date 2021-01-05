@@ -1,7 +1,7 @@
 const postcssPresetEnv = require('postcss-preset-env');
 const path = require('path');
 
-module.exports = async ({ config }) => {
+module.exports = async (config) => {
     config.module.rules.push({
         test: /\.(css|sass|scss)$/,
         use: [
@@ -32,14 +32,12 @@ module.exports = async ({ config }) => {
     config.module.rules.push({
         test: /\.(ts|tsx)$/,
         loader: require.resolve('babel-loader'),
-        // options: {
-        //     presets: [['react-app', { typescript: true }]],
-        // },
     });
     config.resolve.extensions.push('.ts', '.tsx');
     config.resolve.modules = [
         ...(config.resolve.modules || []),
         path.resolve('./datahub/webapp'),
     ];
+
     return config;
 };

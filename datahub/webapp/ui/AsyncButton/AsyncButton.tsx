@@ -3,7 +3,7 @@ import React from 'react';
 import classNames from 'classnames';
 
 export interface IAsyncButtonProps extends IButtonProps {
-    onClick: (...args: any[]) => Promise<any>;
+    onClick: (...args: any[]) => Promise<unknown>;
     disableWhileAsync?: boolean;
 }
 
@@ -33,7 +33,7 @@ export class AsyncButton extends React.PureComponent<
     }
 
     public asyncSetState(newState: Partial<IAsyncButtonState>) {
-        return new Promise((resolve) => {
+        return new Promise<void>((resolve) => {
             if (this.canSetState) {
                 this.setState(newState, resolve);
             }

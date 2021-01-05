@@ -21,7 +21,7 @@ import { AsyncButton } from 'ui/AsyncButton/AsyncButton';
 import { Message } from 'ui/Message/Message';
 import { Title } from 'ui/Title/Title';
 import { FormField } from 'ui/Form/FormField';
-import { Checkbox } from 'ui/Form/Checkbox';
+import { Checkbox } from 'ui/Checkbox/Checkbox';
 import { Tabs } from 'ui/Tabs/Tabs';
 import { ResizableTextArea } from 'ui/ResizableTextArea/ResizableTextArea';
 import { SimpleReactSelect } from 'ui/SimpleReactSelect/SimpleReactSelect';
@@ -228,7 +228,7 @@ class QuerySnippetComposerComponent extends React.PureComponent<
 
     @bind
     public handleDelete() {
-        return new Promise((resolve) => {
+        return new Promise<void>((resolve) => {
             const { querySnippet } = this.props;
 
             sendConfirm({

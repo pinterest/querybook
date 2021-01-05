@@ -107,7 +107,7 @@ export const DataDocCell: React.FunctionComponent<IDataDocCellProps> = ({
 
     const deleteCellAt = React.useCallback(
         () =>
-            new Promise((resolve) => {
+            new Promise<void>((resolve) => {
                 const dataDocCells = dataDoc.dataDocCells;
                 const numberOfCells = (dataDocCells || []).length;
 

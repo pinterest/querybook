@@ -117,7 +117,7 @@ export function useSearchAndReplace({
 
     const moveResultIndex = useCallback(
         (delta: number) =>
-            new Promise((resolve) => {
+            new Promise<void>((resolve) => {
                 setSearchState((oldSearchState) => {
                     const resultLen = oldSearchState.searchResults.length;
                     if (!resultLen) {

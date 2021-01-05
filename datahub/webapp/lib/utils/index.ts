@@ -210,7 +210,7 @@ export function smoothScroll(
     finalScrollTop: number,
     duration: number // in ms
 ) {
-    return new Promise((resolve) => {
+    return new Promise<void>((resolve) => {
         const startingY = scrollContainer.scrollTop;
         const yDiff = finalScrollTop - startingY;
         let startTime: number;

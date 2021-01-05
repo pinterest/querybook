@@ -1,12 +1,21 @@
-import React, { useMemo } from 'react';
+import React from 'react';
+import classNames from 'classnames';
 import { useSpring, animated } from 'react-spring';
 
 import './ProgressBar.scss';
 
-interface IProgressBarProps {
+export const ProgressBarTypes = [
+    'success',
+    'info',
+    'warning',
+    'danger',
+    'light',
+    'dark',
+] as const;
+export interface IProgressBarProps {
     value: number;
     max?: number;
-    type?: 'success' | 'info' | 'warning' | 'danger' | 'light' | 'dark';
+    type?: typeof ProgressBarTypes[number];
     isSmall?: boolean;
     showValue?: boolean;
 }
@@ -27,12 +36,15 @@ export const ProgressBar: React.FunctionComponent<IProgressBarProps> = ({
 
     return (
         <div
-            className={
-                isSmall ? 'ProgressBar flex-row small' : 'ProgressBar flex-row'
-            }
+            className={classNames({
+                ProgressBar: true,
+                'flex-row': true,
+                small: isSmall,
+            })}
         >
             <animated.progress
-                value={percent}
+                // quick hack before removing react-spring
+                value={(percent as unknown) as number}
                 max={String(max)}
                 className={type ? `${type} mr8` : 'mr8'}
             />

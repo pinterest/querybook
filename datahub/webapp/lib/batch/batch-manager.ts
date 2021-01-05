@@ -6,8 +6,8 @@ export interface IBatchManagerOptions<T, M> {
 
 interface IBatchPromise<T> {
     data: T;
-    onSuccess: () => any;
-    onFailure: () => any;
+    onSuccess: () => void;
+    onFailure: () => void;
 }
 
 export function pickLastMergeFunction<T, M>(changes: Array<IBatchPromise<T>>) {
@@ -75,7 +75,7 @@ export class BatchManager<T, M> {
         this.processBatch(++this.changeVersion, true);
     }
 
-    public batch(data: T): Promise<any> {
+    public batch(data: T): Promise<void> {
         return new Promise((onSuccess, onFailure) => {
             this.batchStack.push({
                 data,

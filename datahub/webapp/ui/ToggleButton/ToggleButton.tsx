@@ -4,13 +4,13 @@ import { Button, IButtonProps } from 'ui/Button/Button';
 
 import './ToggleButton.scss';
 
-interface IToggleButton extends IButtonProps {
+export interface IToggleButtonProps extends IButtonProps {
     title: string;
     checked: boolean;
     onClick: (...args: any) => any;
 }
 
-export const ToggleButton: React.FunctionComponent<IToggleButton> = ({
+export const ToggleButton: React.FunctionComponent<IToggleButtonProps> = ({
     onClick,
     checked,
     title,

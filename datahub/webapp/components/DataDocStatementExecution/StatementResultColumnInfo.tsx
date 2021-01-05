@@ -4,7 +4,7 @@ import { columnStatsAnalyzers } from 'lib/query-result/analyzer';
 import { Title } from 'ui/Title/Title';
 import { IColumnTransformer } from 'lib/query-result/types';
 import { getTransformersForType } from 'lib/query-result/transformer';
-import { Checkbox } from 'ui/Form/Checkbox';
+import { Checkbox } from 'ui/Checkbox/Checkbox';
 
 const StyledColumnInfo = styled.div.attrs({
     className: 'StatementResultColumnInfo',

@@ -1,0 +1,7 @@
+const webpackFinal = require('./webpack');
+
+module.exports = {
+    stories: ['../datahub/webapp/**/*.stories.@(js|jsx|ts|tsx)'],
+    addons: ['@storybook/addon-essentials'],
+    webpackFinal,
+};

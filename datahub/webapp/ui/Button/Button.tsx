@@ -5,13 +5,22 @@ import { Icon } from 'ui/Icon/Icon';
 
 import './Button.scss';
 
+export const ButtonTypes = [
+    '',
+    'soft',
+    'inlineText',
+    'confirm',
+    'cancel',
+    'fullWidth',
+] as const;
+
 export interface IButtonProps
     extends React.AnchorHTMLAttributes<HTMLDivElement> {
     icon?: string;
     title?: string;
     className?: string;
 
-    type?: 'soft' | 'inlineText' | 'confirm' | 'cancel' | 'fullWidth';
+    type?: typeof ButtonTypes[number];
 
     disabled?: boolean;
 

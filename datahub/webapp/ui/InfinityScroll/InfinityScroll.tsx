@@ -87,7 +87,7 @@ export class InfinityScroll<T> extends React.PureComponent<
 
     @bind
     public handleLoadMoreRows() {
-        return new Promise((resolve) => {
+        return new Promise<void>((resolve) => {
             this.setState({ isLoadingMore: true }, async () => {
                 try {
                     if (this.props.onLoadMore) {
