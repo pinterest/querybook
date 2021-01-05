@@ -8,7 +8,7 @@ import { Button, IButtonProps } from 'ui/Button/Button';
 const DEFAULT_TOOL_TIP = 'Click To Copy';
 const DEFAULT_COPIED_TOOL_TIP = 'Copied!';
 
-interface ICopyButtonProps extends IButtonProps {
+export interface ICopyButtonProps extends IButtonProps {
     copyText: string | (() => string);
     icon?: string;
     title?: string;
@@ -17,10 +17,6 @@ interface ICopyButtonProps extends IButtonProps {
     tooltip?: string;
     copiedTooltip?: string;
     tooltipDirection?: TooltipDirection;
-}
-
-interface IState {
-    tooltip: string;
 }
 
 export const CopyButton: React.FunctionComponent<ICopyButtonProps> = ({

@@ -22,11 +22,10 @@ import { currentEnvironmentSelector } from 'redux/environment/selector';
 
 import { UserSelect } from 'components/UserSelect/UserSelect';
 import { UserAvatar } from 'components/UserBadge/UserAvatar';
-import { TableTagSelect } from 'components/DataTableTags/TableTagSelect';
 import { DataDocItem, DataTableItem } from './SearchResultItem';
 
 import { Button } from 'ui/Button/Button';
-import { Checkbox } from 'ui/Form/Checkbox';
+import { Checkbox } from 'ui/Checkbox/Checkbox';
 import { Container } from 'ui/Container/Container';
 import { Dropdown } from 'ui/Dropdown/Dropdown';
 import { Icon } from 'ui/Icon/Icon';
@@ -37,7 +36,6 @@ import { Pagination } from 'ui/Pagination/Pagination';
 import { SearchBar } from 'ui/SearchBar/SearchBar';
 import { Select } from 'ui/Select/Select';
 import { Tabs } from 'ui/Tabs/Tabs';
-import { HoverIconTag } from 'ui/Tag/Tag';
 import { PrettyNumber } from 'ui/PrettyNumber/PrettyNumber';
 
 import './SearchOverview.scss';
