@@ -43,7 +43,8 @@ export const ProgressBar: React.FunctionComponent<IProgressBarProps> = ({
             })}
         >
             <animated.progress
-                value={percent}
+                // quick hack before removing react-spring
+                value={(percent as unknown) as number}
                 max={String(max)}
                 className={type ? `${type} mr8` : 'mr8'}
             />

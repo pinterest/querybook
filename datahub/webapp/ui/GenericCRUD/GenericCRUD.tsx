@@ -66,7 +66,7 @@ export class GenericCRUD<T extends IWithId> extends React.PureComponent<
 
     @bind
     public async handleLoadItems() {
-        return new Promise(async (resolve, reject) => {
+        return new Promise<void>(async (resolve, reject) => {
             try {
                 const items = await this.props.getItems();
                 this.setState(
@@ -156,7 +156,7 @@ export class GenericCRUD<T extends IWithId> extends React.PureComponent<
 
     @bind
     public handleDeleteItem(itemToDelete: T) {
-        return new Promise((resolve) => {
+        return new Promise<void>((resolve) => {
             sendConfirm({
                 message: 'Once deleted, the item cannot be recovered.',
                 onConfirm: async () => {

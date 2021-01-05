@@ -45,7 +45,7 @@ export default {
         if (!socket.connected) {
             socket.connect();
             // wait for connection
-            await new Promise((resolve) => {
+            await new Promise<void>((resolve) => {
                 socket.on('connect', () => {
                     if (onConnection) {
                         onConnection(socket);
