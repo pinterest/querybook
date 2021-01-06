@@ -1,9 +1,10 @@
-import React, { useState } from 'react';
+import React from 'react';
+import toast from 'react-hot-toast';
+
 import { IQueryExecutionViewer } from 'const/queryExecution';
 import { IAccessRequest } from 'const/accessRequest';
 import { UserSelect } from 'components/UserSelect/UserSelect';
 import { IQueryExecution } from 'redux/queryExecutions/types';
-import { sendNotification } from 'lib/dataHubUI';
 import { UserBadge } from 'components/UserBadge/UserBadge';
 import { Button } from 'ui/Button/Button';
 import { IconButton } from 'ui/Button/IconButton';
@@ -38,7 +39,7 @@ export const QueryExecutionAccessList: React.FunctionComponent<IQueryExecutionAc
                             uid in executionViewersByUid ||
                             uid === queryExecution.uid
                         ) {
-                            sendNotification('User already added.');
+                            toast.error('User already added.');
                         } else {
                             addQueryExecutionViewer(uid);
                         }

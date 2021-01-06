@@ -16,7 +16,7 @@ import {
     IDataCellMeta,
 } from 'const/datadoc';
 import history from 'lib/router-history';
-import { sendConfirm, sendNotification, setBrowserTitle } from 'lib/dataHubUI';
+import { sendConfirm, setBrowserTitle } from 'lib/dataHubUI';
 import { scrollToCell, getShareUrl } from 'lib/data-doc/data-doc-utils';
 import { sanitizeUrlTitle, copy } from 'lib/utils';
 import { getQueryString } from 'lib/utils/query-string';
@@ -60,6 +60,7 @@ import {
     SearchAndReplace,
 } from 'components/SearchAndReplace/SearchAndReplace';
 import { ISearchOptions, ISearchResult } from 'const/searchAndReplace';
+import toast from 'react-hot-toast';
 
 interface IOwnProps {
     docId: number;
@@ -315,7 +316,7 @@ class DataDocComponent extends React.Component<IProps, IState> {
                 );
             }
         } catch (e) {
-            sendNotification(`Insert cell failed, reason: ${e}`);
+            toast.error(`Insert cell failed, reason: ${e}`);
         }
     }
 
@@ -349,12 +350,12 @@ class DataDocComponent extends React.Component<IProps, IState> {
                 );
                 // Empty clipboard if copy is success
                 copy('');
-                sendNotification('Pasted');
+                toast.success('Pasted');
             } catch (e) {
-                sendNotification('Failed to paste, reason: ' + String(e));
+                toast.error('Failed to paste, reason: ' + String(e));
             }
         } else {
-            sendNotification('Nothing to paste, skipping.');
+            toast.error('Nothing to paste, skipping.');
         }
     }
 
@@ -366,9 +367,7 @@ class DataDocComponent extends React.Component<IProps, IState> {
                 cut,
             })
         );
-        sendNotification(
-            'Copied.' + (cut ? ' Cell will be moved after paste. ' : '')
-        );
+        toast('Copied.' + (cut ? ' Cell will be moved after paste. ' : ''));
     }
 
     @bind
@@ -395,10 +394,18 @@ class DataDocComponent extends React.Component<IProps, IState> {
             message:
                 'You will be redirected to the new Data Doc after cloning.',
             onConfirm: () =>
-                cloneDataDoc(id).then((dataDoc: IDataDoc) => {
-                    sendNotification('Clone Success!');
-                    history.push(`/${environment.name}/datadoc/${dataDoc.id}/`);
-                }),
+                toast.promise(
+                    cloneDataDoc(id).then((dataDoc) =>
+                        history.push(
+                            `/${environment.name}/datadoc/${dataDoc.id}/`
+                        )
+                    ),
+                    {
+                        loading: 'Cloning DataDoc...',
+                        success: 'Clone Success!',
+                        error: 'Cloning failed.',
+                    }
+                ),
         });
     }
 
@@ -845,7 +852,7 @@ function mapDispatchToProps(dispatch: Dispatch, ownProps: IOwnProps) {
                     )
                 );
             } catch (e) {
-                sendNotification(`Cannot update cell, reason: ${e}`);
+                toast.error(`Cannot update cell, reason: ${e}`);
             }
         },
     };

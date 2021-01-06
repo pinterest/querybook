@@ -40,8 +40,9 @@
             }
         }
 
-        animation: slide 0.5s forwards;
-        animation-delay: 2s;
+        &.animate-popover {
+            animation: popoverIntro 0.3s ease-in-out;
+        }
     }
 
     .popover-content {
@@ -51,5 +52,14 @@
         position: relative;
         min-width: 20px;
         min-height: 20px;
+    }
+}
+
+@keyframes popoverIntro {
+    0% {
+        opacity: 0;
+    }
+    100% {
+        opacity: 1;
     }
 }

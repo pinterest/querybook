@@ -8,6 +8,7 @@ from lib.query_analysis.templating import (
     flatten_recursive_variables,
     UndefinedVariableException,
     QueryHasCycleException,
+    QueryJinjaSyntaxException,
 )
 
 
@@ -189,6 +190,14 @@ class RenderTemplatedQueryTestCase(TestCase):
             render_templated_query,
             'select * from {{ table }} where dt="{{ date }}"',
             {"date": "{{ date2 }}", "date2": "{{ date }}"},
+        )
+
+        # Invalid template usage
+        self.assertRaises(
+            QueryJinjaSyntaxException,
+            render_templated_query,
+            'select * from {{ table  where dt="{{ date }}"',
+            {"table": "foo", "date": "{{ bar }}"},
         )
 
     def test_escape_comments(self):

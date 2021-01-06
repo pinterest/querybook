@@ -1,6 +1,6 @@
 import React from 'react';
+import classNames from 'classnames';
 import { Overlay, overlayRoot } from 'ui/Overlay/Overlay';
-import { useSpring, animated } from 'react-spring';
 
 import './Popover.scss';
 
@@ -20,8 +20,6 @@ export interface IPopoverProps {
 
     hideArrow?: boolean;
     resizeOnChange?: boolean;
-
-    // skipping the animation part for more snappy experience
     skipAnimation?: boolean;
 }
 
@@ -216,43 +214,23 @@ export const PopoverContainer: React.FunctionComponent<IPopoverContainerProps> =
         resizeVersion,
     ]);
 
-    // Animation Spring
-    const wrapperAnimationProps = skipAnimation
-        ? {}
-        : useSpring({
-              from: {
-                  opacity: 0.75,
-                  transform: `translate(${
-                      mainLayout === 'left'
-                          ? '-10px'
-                          : mainLayout === 'right'
-                          ? '10px'
-                          : '0'
-                  },${
-                      mainLayout === 'top'
-                          ? '-10px'
-                          : mainLayout === 'bottom'
-                          ? '10px'
-                          : '0'
-                  })`,
-              },
-              to: { opacity: 1, transform: `translate(0,0)` },
-          });
-
     const arrowDOM = hideArrow ? null : (
         <div className="arrow" style={arrowStyle} />
     );
 
     return (
         <div className={'Popover '}>
-            <animated.div
-                className={'popover-wrapper'}
-                style={{ ...wrapperStyle, ...wrapperAnimationProps }}
+            <div
+                className={classNames({
+                    'popover-wrapper': true,
+                    'animate-popover': !skipAnimation,
+                })}
+                style={wrapperStyle}
                 ref={wrapperElement}
             >
                 {arrowDOM}
                 <div className={'popover-content'}>{children}</div>
-            </animated.div>
+            </div>
         </div>
     );
 };

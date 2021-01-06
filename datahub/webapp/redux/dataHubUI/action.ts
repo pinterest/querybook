@@ -1,13 +1,9 @@
-import { uniqueId } from 'lodash';
-
 import {
     ThunkResult,
-    INotificationInfo,
     ISetConfirmationAction,
     IRemoveConfirmationAction,
     IAnnouncement,
     ISetSidebarTableId,
-    ISetDataDocNavSection,
 } from './types';
 
 import localStore from 'lib/local-store';
@@ -19,45 +15,6 @@ import {
 } from 'lib/local-store/const';
 import ds from 'lib/datasource';
 import { ISetGlobalStateAction } from 'redux/globalState/types';
-
-export function pushNotification({
-    content,
-    timeout,
-    onHide,
-}: Omit<INotificationInfo, 'id'>): ThunkResult<string> {
-    return (dispatch, state) => {
-        const id = uniqueId('notification');
-        dispatch({
-            type: '@@dataHubUI/PUSH_NOTIFICATION',
-            payload: {
-                id,
-                content,
-                timeout,
-                onHide,
-            },
-        });
-
-        return id;
-    };
-}
-
-export function popNotification(id: string): ThunkResult<void> {
-    return (dispatch, getState) => {
-        const notification = getState().dataHubUI.notifications.find(
-            (n) => n.id === id
-        );
-        if (notification && notification.onHide) {
-            notification.onHide();
-        }
-
-        dispatch({
-            type: '@@dataHubUI/POP_NOTIFICATION',
-            payload: {
-                id,
-            },
-        });
-    };
-}
 
 export function setConfirmation(props): ISetConfirmationAction {
     return {

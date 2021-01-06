@@ -1,13 +1,13 @@
 import React, { useEffect, useMemo, useContext, useCallback } from 'react';
 import classNames from 'classnames';
-import { ContentState } from 'draft-js';
+import toast from 'react-hot-toast';
 
 import { useSelector } from 'react-redux';
 import { IStoreState } from 'redux/store/types';
 import { IDataCell, IDataDoc, DataCellUpdateFields } from 'const/datadoc';
 import { DataDocContext } from 'context/DataDoc';
 
-import { sendNotification, sendConfirm } from 'lib/dataHubUI';
+import { sendConfirm } from 'lib/dataHubUI';
 import { getShareUrl } from 'lib/data-doc/data-doc-utils';
 
 import * as dataDocSelectors from 'redux/dataDoc/selector';
@@ -119,9 +119,7 @@ export const DataDocCell: React.FunctionComponent<IDataDocCellProps> = ({
                                 index
                             );
                         } catch (e) {
-                            sendNotification(
-                                `Delete cell failed, reason: ${e}`
-                            );
+                            toast.error(`Delete cell failed, reason: ${e}`);
                         } finally {
                             resolve();
                         }

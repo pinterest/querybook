@@ -1,7 +1,8 @@
-import React, { useEffect, useState, useCallback, useMemo } from 'react';
-import { useSelector, useDispatch } from 'react-redux';
 import classNames from 'classnames';
+import React, { useEffect, useState, useCallback, useMemo } from 'react';
 import { useDrop } from 'react-dnd';
+import toast from 'react-hot-toast';
+import { useSelector, useDispatch } from 'react-redux';
 
 import { IDataDoc, emptyDataDocTitleMessage } from 'const/datadoc';
 import {
@@ -13,7 +14,6 @@ import {
 
 import { BoardCreateUpdateModal } from 'components/BoardCreateUpdateModal/BoardCreateUpdateModal';
 import { getWithinEnvUrl } from 'lib/utils/query-string';
-import { sendNotification } from 'lib/dataHubUI';
 
 import { myBoardsSelector, makeBoardItemsSelector } from 'redux/board/selector';
 import {
@@ -238,7 +238,7 @@ const NavigatorBoardView: React.FunctionComponent<{
         async (itemId: number, itemType: BoardItemType) => {
             await dispatch(deleteBoardItem(board.id, itemType, itemId));
             // TODO: Consider not duplicatiing this logic in BoardItemAddButton
-            sendNotification(`Item removed from the list "${board.name}"`);
+            toast.success(`Item removed from the list "${board.name}"`);
         },
         [board]
     );

@@ -12,7 +12,7 @@ import {
 } from 'lib/query-result/types';
 import { AppRouter } from 'components/AppRouter/AppRouter';
 import { ConfirmationManager } from 'components/ConfirmationManager/ConfirmationManager';
-import { NotificationManager } from 'components/NotificationManager/NotificationManager';
+import { ToastManager } from 'ui/ToastManager/ToastManager';
 
 import { reduxStore } from 'redux/store';
 
@@ -47,7 +47,7 @@ const AppInner = () => (
             <>
                 <AppRouter />
                 <ConfirmationManager />
-                <NotificationManager />
+                <ToastManager />
             </>
         </Provider>
     </DndProvider>

@@ -7,7 +7,7 @@ exports[`matches test renderer snapshot serializes the styles 1`] = `
   <progress
     className="mr8"
     max="100"
-    value={0}
+    value={10}
   />
 </div>
 `;

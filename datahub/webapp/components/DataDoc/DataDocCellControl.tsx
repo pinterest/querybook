@@ -1,9 +1,9 @@
-import React from 'react';
 import classNames from 'classnames';
+import React from 'react';
+import toast from 'react-hot-toast';
 import { titleize, sleep, copy } from 'lib/utils';
 
 import { IDataCellMeta } from 'const/datadoc';
-import { sendNotification } from 'lib/dataHubUI';
 import { AsyncButton } from 'ui/AsyncButton/AsyncButton';
 import { Button } from 'ui/Button/Button';
 import { Dropdown } from 'ui/Dropdown/Dropdown';
@@ -81,7 +81,7 @@ export const DataDocCellControl: React.FunctionComponent<IProps> = ({
                 name: 'Share',
                 onClick: () => {
                     copy(shareUrl);
-                    sendNotification('Url Copied!');
+                    toast('Url Copied!');
                 },
                 tooltip: 'Click to copy',
                 tooltipPos: 'right',

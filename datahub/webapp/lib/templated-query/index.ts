@@ -15,9 +15,13 @@ export async function renderTemplatedQuery(
     query: string,
     variables: Record<string, string>
 ) {
-    const { data } = await ds.save('/query_execution/templated_query/', {
-        query,
-        variables,
-    });
-    return data as string;
+    const { data } = await ds.save<string>(
+        '/query_execution/templated_query/',
+        {
+            query,
+            variables,
+        },
+        false
+    );
+    return data;
 }

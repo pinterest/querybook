@@ -1,9 +1,9 @@
 import React, { useState, useCallback, useEffect, useMemo } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
+import toast from 'react-hot-toast';
 
 import { QueryExecutionStatus } from 'const/queryExecution';
 import { useToggleState } from 'hooks/useToggleState';
-import { sendNotification } from 'lib/dataHubUI';
 import * as queryExecutionsActions from 'redux/queryExecutions/action';
 import { IStoreState, Dispatch } from 'redux/store/types';
 import {
@@ -86,7 +86,7 @@ function useQueryExecutionDispatch() {
             queryExecutionsActions
                 .cancelQueryExecution(queryExecutionId)
                 .then(() => {
-                    sendNotification(
+                    toast(
                         'Cancelled! Please be patient as the cancellation takes some time.'
                     );
                 }),

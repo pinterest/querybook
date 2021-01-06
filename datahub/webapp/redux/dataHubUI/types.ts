@@ -14,25 +14,6 @@ export interface IAnnouncement {
     can_dismiss: boolean;
 }
 
-export interface INotificationInfo {
-    id: string;
-    content: React.ReactNode;
-    timeout?: number;
-    onHide?: () => any;
-}
-
-export interface IPushNotificationAction extends Action {
-    type: '@@dataHubUI/PUSH_NOTIFICATION';
-    payload: INotificationInfo;
-}
-
-export interface IPopNotificationAction extends Action {
-    type: '@@dataHubUI/POP_NOTIFICATION';
-    payload: {
-        id: string;
-    };
-}
-
 export interface ISetConfirmationAction extends Action {
     type: '@@dataHubUI/SET_CONFIRMATION';
     payload: IConfirmationMessageProps;
@@ -76,8 +57,6 @@ export interface IReceiveDataDocNavSection extends Action {
 }
 
 export type DataHubUIAction =
-    | IPushNotificationAction
-    | IPopNotificationAction
     | ISetConfirmationAction
     | IRemoveConfirmationAction
     | IReceiveAnnouncements
@@ -92,7 +71,6 @@ export interface IDataHubUIState {
     announcements: IAnnouncement[];
     dismissedAnnouncementIds: number[];
 
-    notifications: INotificationInfo[];
     confirmation?: IConfirmationMessageProps;
 
     sidebarTableId: number;

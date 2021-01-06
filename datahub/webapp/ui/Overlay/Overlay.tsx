@@ -9,7 +9,14 @@ interface IOverlayProps {
     customOverlayRoot?: HTMLElement;
 }
 
-export const overlayRoot = document.getElementById('overlay-root');
+export const overlayRoot = (() => {
+    let root = document.getElementById('overlay-root');
+    if (!root) {
+        root = document.createElement('div');
+        document.body.appendChild(root);
+    }
+    return root;
+})();
 
 export const Overlay: React.FC<IOverlayProps> = ({
     children,

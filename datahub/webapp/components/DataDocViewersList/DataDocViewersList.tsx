@@ -1,5 +1,6 @@
 import classNames from 'classnames';
-import React, { useEffect } from 'react';
+import React from 'react';
+import toast from 'react-hot-toast';
 
 import {
     IViewerInfo,
@@ -17,7 +18,6 @@ import { Title } from 'ui/Title/Title';
 import { ViewerPermissionPicker } from './ViewerPermissionPicker';
 import { UserSelect } from 'components/UserSelect/UserSelect';
 import { Tabs } from 'ui/Tabs/Tabs';
-import { sendNotification } from 'lib/dataHubUI';
 import { DataDocAccessRequestPermissionPicker } from 'components/DataDocAccessRequestPermissionPicker.tsx/DataDocAccessRequestPermissionPicker';
 
 interface IDataDocViewersListProps {
@@ -60,7 +60,7 @@ export const DataDocViewersList: React.FunctionComponent<IDataDocViewersListProp
                 <UserSelect
                     onSelect={(uid) => {
                         if (uid in editorsByUid || uid === dataDoc.owner_uid) {
-                            sendNotification('User already added.');
+                            toast.error('User already added.');
                         } else {
                             const newUserPermission = dataDoc.public
                                 ? DataDocPermission.CAN_WRITE

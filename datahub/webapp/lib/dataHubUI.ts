@@ -1,10 +1,8 @@
-import { DEFAULT_NOTIFICATION_TIMEOUT } from 'components/NotificationManager/NotificationManager';
 import { IConfirmationMessageProps } from 'components/ConfirmationManager/ConfirmationMessage';
 
 import { reduxStore } from 'redux/store';
 import * as datahubUIActions from 'redux/dataHubUI/action';
 import { Dispatch } from 'redux/store/types';
-import { INotificationInfo } from 'redux/dataHubUI/types';
 
 export function sendConfirm(props: IConfirmationMessageProps) {
     (reduxStore.dispatch as Dispatch)(datahubUIActions.setConfirmation(props));
@@ -34,19 +32,6 @@ export function sendAlert({
     }
 
     return sendConfirm(confirmProps);
-}
-
-export function sendNotification(
-    content: React.ReactNode,
-    options?: Partial<INotificationInfo>
-) {
-    (reduxStore.dispatch as Dispatch)(
-        datahubUIActions.pushNotification({
-            timeout: DEFAULT_NOTIFICATION_TIMEOUT,
-            ...options,
-            content,
-        })
-    );
 }
 
 export function setupOnDataHubClose() {
