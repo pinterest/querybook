@@ -7,20 +7,28 @@ import { ToastManager } from './ToastManager';
 import { Button } from 'ui/Button/Button';
 import { sleep } from 'lib/utils';
 
-export const _Toast = () => (
+export const _Toast = (args) => (
     <div>
         <div className="flex-column">
             <Button
-                onClick={() => toast('This is a notification')}
+                onClick={() =>
+                    toast('This is a notification', {
+                        duration: args.toastDuration,
+                    })
+                }
                 title={'Click for toast'}
             />
             <Button
-                onClick={() => toast.success('This is a notification')}
+                onClick={() =>
+                    toast.success('This is a notification', {
+                        duration: args.toastDuration,
+                    })
+                }
                 title={'Click for success toast'}
             />
             <Button
                 onClick={() =>
-                    toast.promise(sleep(5000), {
+                    toast.promise(sleep(args.promiseDuration), {
                         loading: 'Loading',
                         success: 'Completed!',
                         error: 'Failed :(',
@@ -33,6 +41,11 @@ export const _Toast = () => (
         <ToastManager />
     </div>
 );
+
+_Toast.args = {
+    promiseDuration: 5000,
+    toastDuration: 4000,
+};
 
 export default {
     title: 'Stateful/Toast',
