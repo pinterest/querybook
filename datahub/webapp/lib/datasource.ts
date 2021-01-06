@@ -1,4 +1,4 @@
-import axios, { AxiosRequestConfig, Canceler } from 'axios';
+import axios, { AxiosRequestConfig, Canceler, Method } from 'axios';
 import { sendNotification, setSessionExpired } from 'lib/dataHubUI';
 import { formatError } from 'lib/utils/error';
 
@@ -21,7 +21,7 @@ function handleRequestException(error: any, notifyOnError?: boolean) {
 }
 
 function syncDatasource<T = any>(
-    method: string,
+    method: Method,
     urlOrOptions: UrlOrOptions,
     data?: Record<string, unknown>,
     notifyOnError?: boolean

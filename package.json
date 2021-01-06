@@ -36,7 +36,7 @@
         "@babel/preset-env": "^7.12.11",
         "@babel/preset-react": "^7.12.10",
         "@babel/preset-typescript": "^7.12.7",
-        "axios": "0.18.0",
+        "axios": "0.21.1",
         "bignumber.js": "^9.0.1",
         "chart.js": "^2.9.3",
         "chartjs-plugin-datalabels": "^0.7.0",
