@@ -2,7 +2,6 @@ import { produce } from 'immer';
 import { IDataHubUIState, DataHubUIAction } from './types';
 
 const initialState: IDataHubUIState = {
-    notifications: [],
     announcements: [],
     dismissedAnnouncementIds: [],
     confirmation: null,
@@ -19,18 +18,6 @@ export default function dataHubUI(
 ) {
     return produce(state, (draft) => {
         switch (action.type) {
-            case '@@dataHubUI/PUSH_NOTIFICATION': {
-                draft.notifications.push(action.payload);
-                return;
-            }
-            case '@@dataHubUI/POP_NOTIFICATION': {
-                const { id } = action.payload;
-
-                draft.notifications = draft.notifications.filter(
-                    (n) => n.id !== id
-                );
-                return;
-            }
             case '@@dataHubUI/SET_CONFIRMATION': {
                 draft.confirmation = action.payload;
                 return;

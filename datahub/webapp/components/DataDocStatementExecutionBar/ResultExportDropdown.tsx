@@ -1,5 +1,6 @@
 import React from 'react';
 import { useSelector, useDispatch } from 'react-redux';
+import toast from 'react-hot-toast';
 
 import {
     IStatementExecution,
@@ -18,7 +19,6 @@ import { tableToTSV } from 'lib/utils/table-export';
 import { Dropdown } from 'ui/Dropdown/Dropdown';
 import { Button } from 'ui/Button/Button';
 import { CopyPasteModal } from 'ui/CopyPasteModal/CopyPasteModal';
-import { sendNotification } from 'lib/dataHubUI';
 import { Modal } from 'ui/Modal/Modal';
 import { Link } from 'ui/Link/Link';
 import { ListMenu } from 'ui/Menu/ListMenu';
@@ -123,7 +123,7 @@ export const ResultExportDropdown: React.FunctionComponent<IProps> = ({
         if (url) {
             Utils.download(url, `${statementId}.csv`);
         } else {
-            sendNotification('No valid url!');
+            toast.error('No valid url!');
         }
     }, [statementId]);
 
@@ -138,14 +138,12 @@ export const ResultExportDropdown: React.FunctionComponent<IProps> = ({
     }, [statementId, statementResult, loadStatementResult]);
 
     const handleExport = React.useCallback(
-        async (
+        (
             exporter: IQueryResultExporter,
             formData?: Record<string, unknown>
         ) => {
-            try {
+            const performExport = async () => {
                 await getExporterAuthentication(exporter);
-
-                sendNotification(`Exporting, please wait`);
                 const params = { export_name: exporter.name };
                 if (formData) {
                     params['exporter_params'] = formData;
@@ -158,11 +156,14 @@ export const ResultExportDropdown: React.FunctionComponent<IProps> = ({
                     info: data,
                     type: exporter.type,
                 });
-            } catch (e) {
-                sendNotification(
-                    `Cannot ${exporter.name.toLowerCase()}, reason: ${e}`
-                );
-            }
+            };
+
+            return toast.promise(performExport(), {
+                loading: 'Exporting, please wait',
+                success: 'Exported!',
+                error: (e) =>
+                    `Cannot ${exporter.name.toLowerCase()}, reason: ${e}`,
+            });
         },
         [statementId]
     );

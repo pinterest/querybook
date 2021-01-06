@@ -4,8 +4,8 @@ import { Formik, FormikConfig } from 'formik';
 import { AsyncButton } from 'ui/AsyncButton/AsyncButton';
 import './SingleCRUD.scss';
 import { Button } from 'ui/Button/Button';
-import { sendNotification } from 'lib/dataHubUI';
 import { getChangedObject } from 'lib/utils';
+import toast from 'react-hot-toast';
 
 export interface ISingleCRUDProps<T> extends Partial<FormikConfig<T>> {
     item: T;
@@ -35,7 +35,7 @@ export function SingleCRUD<T extends Record<any, any>>({
 }: ISingleCRUDProps<T>) {
     const handleDeleteItem = React.useCallback(async () => {
         await deleteItem(item);
-        sendNotification('Deleted!');
+        toast.success('Deleted!');
         if (onItemCUD) {
             await onItemCUD();
         }
@@ -48,10 +48,10 @@ export function SingleCRUD<T extends Record<any, any>>({
         async (values: T) => {
             if (createItem) {
                 await createItem(values);
-                sendNotification('Created!');
+                toast.success('Created!');
             } else {
                 await updateItem(getChangedObject(item, values));
-                sendNotification('Updated!');
+                toast.success('Updated!');
             }
 
             if (onItemCUD) {

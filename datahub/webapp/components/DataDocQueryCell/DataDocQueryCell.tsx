@@ -1,6 +1,6 @@
 import classNames from 'classnames';
 import * as DraftJs from 'draft-js';
-import { find } from 'lodash';
+import toast from 'react-hot-toast';
 import { debounce, bind } from 'lodash-decorators';
 import React from 'react';
 import { connect } from 'react-redux';
@@ -8,14 +8,13 @@ import Resizable from 're-resizable';
 
 import CodeMirror from 'lib/codemirror';
 import {
-    ICodeAnalysis,
     getSelectedQuery,
     getQueryAsExplain,
     IRange,
 } from 'lib/sql-helper/sql-lexer';
 import { renderTemplatedQuery } from 'lib/templated-query';
 import { sleep, enableResizable } from 'lib/utils';
-import { sendNotification } from 'lib/dataHubUI';
+import { formatError } from 'lib/utils/error';
 import { IDataQueryCellMeta } from 'const/datadoc';
 
 import * as dataSourcesActions from 'redux/dataSources/action';
@@ -37,7 +36,6 @@ import {
 import { BoundQueryEditor } from 'components/QueryEditor/BoundQueryEditor';
 
 import { Button } from 'ui/Button/Button';
-import { DebouncedInput } from 'ui/DebouncedInput/DebouncedInput';
 import { Dropdown } from 'ui/Dropdown/Dropdown';
 import { Icon } from 'ui/Icon/Icon';
 import { ListMenu, IListMenuItem } from 'ui/Menu/ListMenu';
@@ -45,8 +43,9 @@ import { Message } from 'ui/Message/Message';
 import { Modal } from 'ui/Modal/Modal';
 import { Title } from 'ui/Title/Title';
 
-import './DataDocQueryCell.scss';
 import { ResizableTextArea } from 'ui/ResizableTextArea/ResizableTextArea';
+
+import './DataDocQueryCell.scss';
 
 const ON_CHANGE_DEBOUNCE_MS = 250;
 
@@ -293,7 +292,7 @@ class DataDocQueryCellComponent extends React.Component<IProps, IState> {
     }
 
     @bind
-    public handleChange(query) {
+    public handleChange(query: string) {
         this.setState(
             {
                 query,
@@ -326,7 +325,7 @@ class DataDocQueryCellComponent extends React.Component<IProps, IState> {
     }
 
     @bind
-    public getCurrentSelectedQuery() {
+    public async getCurrentSelectedQuery() {
         const { templatedVariables = {} } = this.props;
         const { query } = this.state;
         const selectedRange =
@@ -335,9 +334,17 @@ class DataDocQueryCellComponent extends React.Component<IProps, IState> {
 
         try {
             const rawQuery = getSelectedQuery(query, selectedRange);
-            return renderTemplatedQuery(rawQuery, templatedVariables);
+            return await renderTemplatedQuery(rawQuery, templatedVariables);
         } catch (e) {
-            sendNotification(`Failed to render query. Reason: ${String(e)}.`);
+            toast.error(
+                <div>
+                    <p>Failed to templatize query. </p>
+                    <p>{formatError(e)}</p>
+                </div>,
+                {
+                    duration: 5000,
+                }
+            );
         }
     }
 

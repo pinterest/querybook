@@ -3,6 +3,7 @@ import json
 import re
 from typing import Dict, Set
 
+from jinja2.exceptions import TemplateSyntaxError
 from jinja2.sandbox import SandboxedEnvironment
 from jinja2 import meta
 
@@ -18,6 +19,10 @@ class UndefinedVariableException(QueryTemplatingError):
 
 
 class QueryHasCycleException(QueryTemplatingError):
+    pass
+
+
+class QueryJinjaSyntaxException(QueryTemplatingError):
     pass
 
 
@@ -66,6 +71,7 @@ def get_templated_variables_in_string(s: str) -> Set[str]:
     Returns:
         Set[str] - set of variable names
     """
+
     env = SandboxedEnvironment()
     ast = env.parse(s)
     variables = meta.find_undeclared_variables(ast)
@@ -78,6 +84,21 @@ def get_templated_variables_in_string(s: str) -> Set[str]:
             filtered_variables.add(variable)
 
     return filtered_variables
+
+
+def verify_all_variables_are_defined(variables_required, variables_provided):
+    for variable_name in variables_required:
+        if variable_name not in variables_provided:
+            raise UndefinedVariableException(
+                "Invalid variable name {}".format(variable_name)
+            )
+
+
+def render_query_with_variables(s, variables):
+    env = SandboxedEnvironment(autoescape=False)
+    template = env.from_string(s)
+
+    return template.render(**variables)
 
 
 def _flatten_variable(
@@ -148,6 +169,12 @@ def flatten_recursive_variables(raw_variables: Dict[str, str]) -> Dict[str, str]
     return flattened_variables
 
 
+def get_templated_query_variables(variables_provided):
+    return flatten_recursive_variables(
+        {**get_default_variables(), **variables_provided,}
+    )
+
+
 def render_templated_query(query: str, variables: Dict[str, str]) -> str:
     """Renders the templated query, with global variables such as today, yesterday.
        All the default html escape is ignore since it is not applicable.
@@ -165,20 +192,13 @@ def render_templated_query(query: str, variables: Dict[str, str]) -> str:
     Returns:
         str -- The rendered string
     """
-    escaped_query = _escape_sql_comments(query)
-    all_variables = flatten_recursive_variables(
-        {**get_default_variables(), **variables,}
-    )
+    try:
+        escaped_query = _escape_sql_comments(query)
+        variables_in_query = get_templated_variables_in_string(escaped_query)
 
-    # Check if query contains any invalid variables
-    variables_in_query = get_templated_variables_in_string(escaped_query)
-    for variable_name in variables_in_query:
-        if variable_name not in all_variables:
-            raise UndefinedVariableException(
-                "Invalid variable name {}".format(variable_name)
-            )
+        all_variables = get_templated_query_variables(variables)
+        verify_all_variables_are_defined(variables_in_query, all_variables)
 
-    env = SandboxedEnvironment(autoescape=False)
-    template = env.from_string(escaped_query)
-
-    return template.render(**all_variables)
+        return render_query_with_variables(escaped_query, all_variables)
+    except TemplateSyntaxError as e:
+        raise QueryJinjaSyntaxException(f"Line {e.lineno}: {e.message}")

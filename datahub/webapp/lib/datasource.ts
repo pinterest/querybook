@@ -1,6 +1,7 @@
 import axios, { AxiosRequestConfig, Canceler, Method } from 'axios';
-import { sendNotification, setSessionExpired } from 'lib/dataHubUI';
+import { setSessionExpired } from 'lib/dataHubUI';
 import { formatError } from 'lib/utils/error';
+import toast from 'react-hot-toast';
 
 export interface ICancelablePromise<T> extends Promise<T> {
     cancel?: Canceler;
@@ -10,7 +11,7 @@ type UrlOrOptions = string | AxiosRequestConfig;
 
 function handleRequestException(error: any, notifyOnError?: boolean) {
     if (notifyOnError) {
-        sendNotification(`FAILED: ${formatError(error)}`);
+        toast.error(formatError(error));
     }
 
     if (error?.response?.status === 401) {

@@ -3,12 +3,13 @@ import { useDispatch } from 'react-redux';
 
 import { TooltipDirection } from 'const/tooltip';
 
-import { sendConfirm, sendNotification } from 'lib/dataHubUI';
+import { sendConfirm } from 'lib/dataHubUI';
 import { Dispatch } from 'redux/store/types';
 
 import * as dataDocActions from 'redux/dataDoc/action';
 import { IconButton } from 'ui/Button/IconButton';
 import { navigateWithinEnv } from 'lib/utils/query-string';
+import toast from 'react-hot-toast';
 
 export interface IDeleteDataDocButtonProps {
     // from own Props
@@ -29,10 +30,17 @@ export const DeleteDataDocButton: React.FunctionComponent<IDeleteDataDocButtonPr
             sendConfirm({
                 header: 'Remove DataDoc',
                 message: 'Are you sure to delete?',
-                onConfirm: async () => {
-                    await dispatch(dataDocActions.deleteDataDoc(docId));
-                    sendNotification('DataDoc Archived!');
-                    navigateWithinEnv('/datadoc/');
+                onConfirm: () => {
+                    toast.promise(
+                        dispatch(dataDocActions.deleteDataDoc(docId)).then(() =>
+                            navigateWithinEnv('/datadoc/')
+                        ),
+                        {
+                            loading: 'Deleting DataDoc...',
+                            success: 'DataDoc Deleted!',
+                            error: 'Deletion failed',
+                        }
+                    );
                 },
             }),
         [docId]

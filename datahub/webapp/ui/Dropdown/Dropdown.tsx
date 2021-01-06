@@ -101,6 +101,7 @@ export const Dropdown: React.FunctionComponent<IProps> = ({
                 anchor={selfRef.current}
                 layout={[isUp ? 'top' : 'bottom', isRight ? 'right' : 'left']}
                 hideArrow
+                skipAnimation
             >
                 {dropdownContent}
             </Popover>

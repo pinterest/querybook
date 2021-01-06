@@ -7,7 +7,7 @@ import { Popover, IPopoverProps } from './Popover';
 export const _Popover = (args) => {
     const divRef = useRef<HTMLDivElement>(null);
     const [show, setShow] = useState(false);
-    console.log({ show });
+
     return (
         <>
             <div
@@ -27,6 +27,7 @@ export const _Popover = (args) => {
                     anchor={divRef.current}
                     hideArrow={args.hideArrow}
                     layout={[args.mainDirection, args.secondaryDirection]}
+                    skipAnimation={args.skipAnimation}
                 >
                     <div className="p12">I am content inside popover!</div>
                 </Popover>
@@ -39,6 +40,7 @@ _Popover.args = {
     hideArrow: false,
     mainDirection: 'left',
     secondaryDirection: 'top',
+    skipAnimation: false,
 };
 
 const directions = ['left', 'right', 'top', 'bottom'];

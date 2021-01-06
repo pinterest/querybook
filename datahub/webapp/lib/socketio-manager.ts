@@ -1,7 +1,6 @@
 import { throttle } from 'lodash';
+import toast from 'react-hot-toast';
 import * as SocketIOClient from 'socket.io-client';
-
-import { sendNotification } from './dataHubUI';
 
 /*
 This module manages all incoming websocket connections using socketIO,
@@ -13,16 +12,8 @@ const socketIOPath = `${location.protocol}//${location.host}`;
 
 const socketByNameSpace: Record<string, SocketIOClient.Socket> = {};
 
-let showingError = false;
-const sendNotificationForError = throttle((error) => {
-    if (!showingError) {
-        showingError = true;
-        sendNotification(error, {
-            onHide: () => {
-                showingError = false;
-            },
-        });
-    }
+const sendToastForError = throttle((error) => {
+    toast.error(String(error));
 }, 3000);
 
 export default {
@@ -54,11 +45,11 @@ export default {
                 });
 
                 socket.on('connect_error', (error) => {
-                    sendNotificationForError(error.toString());
+                    sendToastForError(error.toString());
                 });
 
                 socket.on('connect_timeout', (timeout) => {
-                    sendNotificationForError(timeout);
+                    sendToastForError(timeout);
                 });
             });
         }

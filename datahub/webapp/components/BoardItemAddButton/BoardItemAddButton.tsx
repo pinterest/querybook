@@ -1,5 +1,6 @@
-import React, { useState, useRef, useCallback, useEffect } from 'react';
+import React, { useState, useRef, useEffect } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
+import toast from 'react-hot-toast';
 
 import { Dispatch } from 'redux/store/types';
 import { addBoardItem, deleteBoardItem } from 'redux/board/action';
@@ -16,7 +17,6 @@ import { BoardList } from 'components/BoardList/BoardList';
 
 import './BoardItemAddButton.scss';
 import { Loading } from 'ui/Loading/Loading';
-import { sendNotification } from 'lib/dataHubUI';
 
 export interface ICreateDataDocButtonProps extends Partial<IconButtonProps> {
     // from own Props
@@ -78,11 +78,11 @@ export const BoardItemAddButton: React.FunctionComponent<ICreateDataDocButtonPro
             if (!(boardIds || []).includes(boardId)) {
                 // Add item
                 await dispatch(addBoardItem(boardId, itemType, itemId));
-                sendNotification(`Item added to the list "${boardName}"!`);
+                toast.success(`Item added to the list "${boardName}"!`);
             } else {
                 // remove item
                 await dispatch(deleteBoardItem(boardId, itemType, itemId));
-                sendNotification(`Item removed from the list "${boardName}"!`);
+                toast.success(`Item removed from the list "${boardName}"!`);
             }
             setShowSelectBoardPopover(false);
         },

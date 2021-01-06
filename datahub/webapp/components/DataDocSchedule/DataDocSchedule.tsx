@@ -1,7 +1,7 @@
 import React from 'react';
 import ds from 'lib/datasource';
+import toast from 'react-hot-toast';
 
-import { sendNotification } from 'lib/dataHubUI';
 import { useDataFetch } from 'hooks/useDataFetch';
 import { Loading } from 'ui/Loading/Loading';
 import { ErrorMessage } from 'ui/Message/ErrorMessage';
@@ -86,7 +86,7 @@ export const DataDocSchedule: React.FunctionComponent<IDataDocScheduleProps> = (
                                 kwargs,
                             })
                             .then(() => {
-                                sendNotification('Schedule Created!');
+                                toast.success('Schedule Created!');
                                 forceFetch();
                                 if (onSave) {
                                     onSave();
@@ -101,7 +101,7 @@ export const DataDocSchedule: React.FunctionComponent<IDataDocScheduleProps> = (
                                 kwargs,
                             })
                             .then(() => {
-                                sendNotification('Schedule Updated!');
+                                toast.success('Schedule Updated!');
                                 forceFetch();
                                 if (onSave) {
                                     onSave();
@@ -127,7 +127,7 @@ export const DataDocSchedule: React.FunctionComponent<IDataDocScheduleProps> = (
                                   ds
                                       .save(`/datadoc/${docId}/schedule/run/`)
                                       .then(() => {
-                                          sendNotification(
+                                          toast.success(
                                               'DataDoc execution started!'
                                           );
                                       })

@@ -1,4 +1,5 @@
 import React from 'react';
+import classNames from 'classnames';
 import { Overlay, overlayRoot } from 'ui/Overlay/Overlay';
 
 import './Popover.scss';
@@ -19,6 +20,7 @@ export interface IPopoverProps {
 
     hideArrow?: boolean;
     resizeOnChange?: boolean;
+    skipAnimation?: boolean;
 }
 
 interface IPopoverContainerProps extends IPopoverProps {
@@ -56,6 +58,7 @@ export const PopoverContainer: React.FunctionComponent<IPopoverContainerProps> =
 
     hideArrow,
     resizeOnChange,
+    skipAnimation,
 
     children,
 }) => {
@@ -218,7 +221,10 @@ export const PopoverContainer: React.FunctionComponent<IPopoverContainerProps> =
     return (
         <div className={'Popover '}>
             <div
-                className={'popover-wrapper'}
+                className={classNames({
+                    'popover-wrapper': true,
+                    'animate-popover': !skipAnimation,
+                })}
                 style={wrapperStyle}
                 ref={wrapperElement}
             >

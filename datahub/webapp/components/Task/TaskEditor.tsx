@@ -10,7 +10,7 @@ import {
     cronToRecurrence,
     validateCronForReuccrence,
 } from 'lib/utils/cron';
-import { sendNotification, sendConfirm } from 'lib/dataHubUI';
+import { sendConfirm } from 'lib/dataHubUI';
 import { useDataFetch } from 'hooks/useDataFetch';
 
 import { ITaskSchedule } from 'const/schedule';
@@ -23,13 +23,13 @@ import { FormWrapper } from 'ui/Form/FormWrapper';
 import { IconButton } from 'ui/Button/IconButton';
 import { RecurrenceEditor } from 'ui/ReccurenceEditor/RecurrenceEditor';
 import { SimpleField } from 'ui/FormikField/SimpleField';
-import { SimpleReactSelect } from 'ui/SimpleReactSelect/SimpleReactSelect';
 import { Tabs } from 'ui/Tabs/Tabs';
 import { Title } from 'ui/Title/Title';
 import { ToggleButton } from 'ui/ToggleButton/ToggleButton';
 
 import './TaskEditor.scss';
 import { AdminAuditLogButton } from 'components/AdminAuditLog/AdminAuditLogButton';
+import toast from 'react-hot-toast';
 
 type TaskEditorTabs = 'edit' | 'history';
 
@@ -101,12 +101,12 @@ export const TaskEditor: React.FunctionComponent<IProps> = ({
 
     const runTask = React.useCallback(async () => {
         await ds.save(`/schedule/${task.id}/run/`);
-        sendNotification('Task has started!');
+        toast.success('Task has started!');
         onTaskUpdate?.();
     }, [task]);
 
     const handleTaskEditSubmit = React.useCallback(
-        async (editedValues) => {
+        (editedValues) => {
             const editedCron = editedValues.isCron
                 ? editedValues.cron
                 : recurrenceToCron(editedValues.recurrence);
@@ -134,34 +134,36 @@ export const TaskEditor: React.FunctionComponent<IProps> = ({
                     enabled: editedValues.enabled,
                     args: editedArgs,
                     kwargs: editedKwargs,
-                }).then(({ data }) => {
-                    sendNotification('Task saved!');
+                }).then(() => {
+                    toast.success('Task saved!');
                     onTaskUpdate?.();
-                    return data;
                 });
             } else {
-                ds.save(`/schedule/`, {
-                    cron: editedCron,
-                    name: editedValues.name,
-                    task: editedValues.task,
-                    task_type:
-                        editedValues.task === 'tasks.run_datadoc.run_datadoc'
-                            ? 'user'
-                            : 'prod',
-                    enabled: editedValues.enabled,
-                    args: editedArgs,
-                    kwargs: editedKwargs,
-                }).then(({ data }) => {
-                    if (data) {
-                        sendNotification('Task created!');
-                        onTaskCreate?.(data.id);
-                        return data;
-                    } else {
-                        sendNotification(
-                            'Task creation failed - task name must be unique'
-                        );
+                toast.promise(
+                    ds
+                        .save(`/schedule/`, {
+                            cron: editedCron,
+                            name: editedValues.name,
+                            task: editedValues.task,
+                            task_type:
+                                editedValues.task ===
+                                'tasks.run_datadoc.run_datadoc'
+                                    ? 'user'
+                                    : 'prod',
+                            enabled: editedValues.enabled,
+                            args: editedArgs,
+                            kwargs: editedKwargs,
+                        })
+                        .then(({ data }) => {
+                            onTaskCreate?.(data.id);
+                        }),
+                    {
+                        loading: 'Creating task...',
+                        success: 'Task created!',
+                        error:
+                            'Task creation failed - task name must be unique',
                     }
-                });
+                );
             }
         },
 
@@ -174,7 +176,7 @@ export const TaskEditor: React.FunctionComponent<IProps> = ({
             message: 'Deleted tasks cannot be recovered.',
             onConfirm: () => {
                 ds.delete(`/schedule/${task.id}/`).then(() => {
-                    sendNotification('Task deleted!');
+                    toast.success('Task deleted!');
                     onTaskDelete?.();
                 });
             },

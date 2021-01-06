@@ -34,7 +34,6 @@ export const ProgressBar: React.FunctionComponent<IProgressBarProps> = ({
         })}
     >
         <progress
-            // quick hack before removing react-spring
             value={value}
             max={String(max)}
             className={type ? `${type} mr8` : 'mr8'}
