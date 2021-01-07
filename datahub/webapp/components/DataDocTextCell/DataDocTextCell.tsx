@@ -4,7 +4,6 @@ import React, {
     useRef,
     useEffect,
     useCallback,
-    useMemo,
     useContext,
 } from 'react';
 import classNames from 'classnames';

@@ -27,8 +27,6 @@ import { FunctionDocumentationCollection } from 'const/metastore';
 import { ICodeMirrorTooltipProps } from 'components/CodeMirrorTooltip/CodeMirrorTooltip';
 import { showTooltipFor } from 'components/CodeMirrorTooltip';
 
-import { Button } from 'ui/Button/Button';
-
 import {
     StyledQueryEditor,
     IStyledQueryEditorProps,

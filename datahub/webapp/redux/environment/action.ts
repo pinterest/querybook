@@ -1,7 +1,7 @@
 import ds from 'lib/datasource';
 
 import { arrayGroupByField } from 'lib/utils';
-import { ThunkResult, ISetEnvironmentByIdAction } from './types';
+import { ThunkResult } from './types';
 
 export function fetchEnvironments(): ThunkResult<Promise<void>> {
     return async (dispatch, getState) => {

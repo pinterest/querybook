@@ -9,7 +9,7 @@ import {
 } from 'redux/queryEngine/selector';
 import * as querySnippetsActions from 'redux/querySnippets/action';
 import { IQuerySnippet, IQueryForm } from 'redux/querySnippets/types';
-import { IStoreState } from 'redux/store/types';
+import { Dispatch, IStoreState } from 'redux/store/types';
 
 import { sendConfirm } from 'lib/dataHubUI';
 import history from 'lib/router-history';
@@ -531,13 +531,13 @@ class QuerySnippetComposerComponent extends React.PureComponent<
     }
 }
 
-const mapStateToProps = (state: IStoreState, ownProps) => ({
+const mapStateToProps = (state: IStoreState) => ({
     queryEngines: queryEngineSelector(state),
     queryEngineById: queryEngineByIdEnvSelector(state),
     user: state.user.myUserInfo,
 });
 
-const mapDispatchToProps = (dispatch, ownProps) => ({
+const mapDispatchToProps = (dispatch: Dispatch) => ({
     saveQuerySnippet: (snippet: IQueryForm) =>
         dispatch(querySnippetsActions.saveQuerySnippet(snippet)),
     updateQuerySnippet: (snippet: IQueryForm) =>

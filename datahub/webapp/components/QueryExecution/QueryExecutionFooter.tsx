@@ -13,12 +13,7 @@ export const QueryExecutionFooter: React.FunctionComponent<{
     queryExecution: IQueryExecution;
     statementExecutions: IStatementExecution[];
 }> = ({
-    queryExecution: {
-        statement_executions: statementExecutionIds,
-        status,
-        created_at: createdAt,
-        uid,
-    },
+    queryExecution: { status, created_at: createdAt, uid },
     statementExecutions,
 }) => {
     let text = '';

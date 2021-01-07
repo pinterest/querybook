@@ -1,4 +1,3 @@
-import { getQueryString, replaceQueryString } from 'lib/utils/query-string';
 import ds from 'lib/datasource';
 import {
     ThunkResult,
@@ -8,31 +7,8 @@ import {
     IDataTableSearchState,
     ITableSearchFilters,
 } from './types';
-import { dispatch } from 'd3';
 
 const BATCH_LOAD_SIZE = 100;
-
-export function mapQueryParamToState(): ThunkResult<void> {
-    return (dispatch) => {
-        dispatch(resetSearchResult());
-        const queryParam = getQueryString();
-        dispatch({
-            type: '@@dataTableSearch/DATA_TABLE_SEARCH_RECEIVE_QUERY_PARAM',
-            payload: {
-                queryParam,
-            },
-        });
-        dispatch(searchDataTable());
-    };
-}
-
-function mapStateToQueryParam(state: IDataTableSearchState) {
-    const { searchFilters, searchString } = state;
-    replaceQueryString({
-        searchFilters,
-        searchString,
-    });
-}
 
 function mapStateToSearch(state: IDataTableSearchState) {
     const searchString = state.searchString;
@@ -178,14 +154,13 @@ export function getMoreDataTable(): ThunkResult<Promise<ITableSearchResult[]>> {
 }
 
 export function updateSearchString(searchString: string): ThunkResult<void> {
-    return (dispatch, getState) => {
+    return (dispatch) => {
         dispatch({
             type: '@@dataTableSearch/DATA_TABLE_SEARCH_STRING_UPDATE',
             payload: {
                 searchString,
             },
         });
-        mapStateToQueryParam(getState().dataTableSearch);
         dispatch(searchDataTable());
     };
 }
@@ -194,7 +169,7 @@ export function updateSearchFilter<K extends keyof ITableSearchFilters>(
     filterKey: K,
     filterValue: ITableSearchFilters[K] | null
 ): ThunkResult<void> {
-    return (dispatch, getState) => {
+    return (dispatch) => {
         dispatch({
             type: '@@dataTableSearch/DATA_TABLE_SEARCH_FILTER_UPDATE',
             payload: {
@@ -202,17 +177,15 @@ export function updateSearchFilter<K extends keyof ITableSearchFilters>(
                 filterValue,
             },
         });
-        mapStateToQueryParam(getState().dataTableSearch);
         dispatch(searchDataTable());
     };
 }
 
 export function resetSearchFilter(): ThunkResult<void> {
-    return (dispatch, getState) => {
+    return (dispatch) => {
         dispatch({
             type: '@@dataTableSearch/DATA_TABLE_FILTER_RESET',
         });
-        mapStateToQueryParam(getState().dataTableSearch);
         dispatch(searchDataTable());
     };
 }
@@ -220,14 +193,13 @@ export function resetSearchFilter(): ThunkResult<void> {
 export function selectMetastore(
     metastoreId: number
 ): ThunkResult<Promise<any>> {
-    return (dispatch, getState) => {
+    return (dispatch) => {
         dispatch({
             type: '@@dataTableSearch/DATA_TABLE_SEARCH_SELECT_METASTORE',
             payload: {
                 metastoreId,
             },
         });
-        mapStateToQueryParam(getState().dataTableSearch);
         return dispatch(searchDataTable());
     };
 }

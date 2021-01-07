@@ -90,7 +90,7 @@ export class QuerySnippetView extends React.Component<
         }
     }
 
-    public getTemplatedVariableEditorDOM(context: string) {
+    public getTemplatedVariableEditorDOM() {
         const { templatedQueryForm, templatedVariables } = this.state;
 
         if (templatedVariables.length === 0) {
@@ -166,7 +166,7 @@ export class QuerySnippetView extends React.Component<
             </div>
         ) : null;
 
-        const templateDOM = this.getTemplatedVariableEditorDOM(context);
+        const templateDOM = this.getTemplatedVariableEditorDOM();
 
         const editorDOM = (
             <div>

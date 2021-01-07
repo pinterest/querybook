@@ -1,4 +1,4 @@
-import { Action, Dispatch } from 'redux';
+import { Action } from 'redux';
 import { ThunkAction } from 'redux-thunk';
 import { IStoreState } from '../store/types';
 import { ICancelablePromise } from 'lib/datasource';

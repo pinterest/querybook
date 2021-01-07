@@ -5,7 +5,6 @@ import {
     ISearchPaginationState,
     ISearchState,
     SearchOrder,
-    DisplayOption,
     SearchType,
 } from './types';
 import { UserAction } from 'redux/user/types';

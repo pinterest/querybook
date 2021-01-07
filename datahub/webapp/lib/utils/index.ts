@@ -1,4 +1,4 @@
-import { escape, unescape } from 'lodash';
+import { escape } from 'lodash';
 import { PickType } from 'lib/typescript';
 
 // from: https://stackoverflow.com/questions/286141/remove-blank-attributes-from-an-object-in-javascript
@@ -84,48 +84,6 @@ export function copy(text: string) {
     textArea.select();
     document.execCommand('copy');
     document.body.removeChild(textArea);
-}
-
-// export function timeout(milliseconds: number = 0) {
-//     return (
-//         target: any,
-//         propertyKey: string,
-//         descriptor: PropertyDescriptor
-//     ) => {
-//         const originalMethod = descriptor.value;
-
-//         descriptor.value = function() {
-//             originalMethod.apply(this, arguments);
-//         };
-
-//         return descriptor;
-//     };
-// }
-
-function defaultAggregateReducer(args: any[], acc: any[]) {
-    return [].concat(acc).concat(Array.from(args));
-}
-
-export function reduceDebounce(
-    func: (...args: any[]) => any,
-    wait: number,
-    reducer: (args: any[], acc: any) => any = defaultAggregateReducer,
-    initialValue: any = []
-) {
-    let timeout: number;
-    let acc = initialValue;
-
-    return function wrapped(...args) {
-        acc = reducer(args, acc);
-        if (timeout) {
-            clearTimeout(timeout);
-        }
-        timeout = setTimeout(() => {
-            timeout = null;
-            func.apply(this, [].concat(acc));
-            acc = initialValue;
-        }, wait);
-    };
 }
 
 export function arrayMove<T = any>(

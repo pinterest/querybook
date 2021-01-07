@@ -5,9 +5,6 @@ export interface IPanelSectionProps {
     title: string;
     hideIfNoContent?: boolean;
 }
-export interface IPanelSectionState {
-    isOpen: boolean;
-}
 
 const PanelContentWrapper = styled.div`
     padding: 5px 32px;

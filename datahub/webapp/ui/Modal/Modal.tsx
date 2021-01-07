@@ -9,15 +9,12 @@ import { StandardModal } from './StandardModal';
 import './Modal.scss';
 import { Overlay } from 'ui/Overlay/Overlay';
 
-// const modalRoot = document.getElementById('modal-root');
-
 export const Modal: React.FunctionComponent<IModalProps> = ({
     type = 'standard',
     hideClose = false,
     className = '',
     children,
     onHide,
-    modalRoot,
     title,
 }) => {
     const onEscapeKeyDown = React.useCallback(

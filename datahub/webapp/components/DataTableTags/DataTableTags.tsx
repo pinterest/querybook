@@ -7,7 +7,6 @@ import {
     fetchTableTagItemsIfNeeded,
     deleteTableTagItem,
 } from 'redux/tag/action';
-import * as searchActions from 'redux/search/action';
 import { navigateWithinEnv } from 'lib/utils/query-string';
 
 import { CreateDataTableTag } from './CreateDataTableTag';

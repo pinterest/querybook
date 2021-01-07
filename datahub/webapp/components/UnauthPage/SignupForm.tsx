@@ -60,7 +60,7 @@ export const SignupForm: React.FunctionComponent<ISignupFormProps> = ({
                     )
             }
         >
-            {({ handleSubmit, isSubmitting, isValid, errors }) => {
+            {({ handleSubmit, isSubmitting, isValid }) => {
                 const usernameField = (
                     <FormField
                         label="Username"

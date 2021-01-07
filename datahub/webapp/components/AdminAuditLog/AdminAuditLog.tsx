@@ -101,7 +101,7 @@ export const AdminAuditLog: React.FC<IAdminAuditLogProps> = ({
 };
 
 function formatCell(
-    index: number,
+    _index: number,
     column: keyof IAdminAuditLog,
     row: IAdminAuditLog
 ) {

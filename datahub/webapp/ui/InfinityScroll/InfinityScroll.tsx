@@ -1,4 +1,4 @@
-import { bind, debounce } from 'lodash-decorators';
+import { bind } from 'lodash-decorators';
 import React from 'react';
 
 import { AutoSizer, List, InfiniteLoader } from 'react-virtualized';

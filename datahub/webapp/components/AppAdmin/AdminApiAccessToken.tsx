@@ -74,7 +74,7 @@ export const AdminApiAccessToken: React.FunctionComponent = () => {
     );
 
     const formatCell = React.useCallback(
-        (index: number, column: string, row: IAdminApiAccessToken) => {
+        (_index: number, column: string, row: IAdminApiAccessToken) => {
             const key = column;
             const value = row[key];
             const tokenId = row.id;

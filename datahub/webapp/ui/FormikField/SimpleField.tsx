@@ -17,8 +17,6 @@ import {
 // Simple Field is the amalgamation of all custom field,
 // it contains all the simple use case of field
 
-type FieldType = 'checkbox' | 'input' | 'number' | 'select' | 'toggle';
-
 interface IBaseProps extends IFormFieldProps {
     name: string; // name is used as title
 }

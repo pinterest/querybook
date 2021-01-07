@@ -1,8 +1,9 @@
-import React, { useEffect } from 'react';
+import React from 'react';
 import { formatError } from 'lib/utils/error';
 
 import { Loading } from 'ui/Loading/Loading';
 import { ErrorMessage } from 'ui/Message/ErrorMessage';
+import { useLoader } from 'hooks/useLoader';
 
 export interface ILoaderProps {
     // We check the value of item to see if it needs to be loaded, must not be null
@@ -27,11 +28,6 @@ export interface ILoaderProps {
     children?: any;
 }
 
-export interface ILoaderState {
-    hasError: boolean;
-    errorObj: any;
-}
-
 export const Loader: React.FunctionComponent<ILoaderProps> = ({
     item,
     itemKey,
@@ -43,35 +39,12 @@ export const Loader: React.FunctionComponent<ILoaderProps> = ({
     emptyRenderer,
     children,
 }) => {
-    // If no item, then its loading (or going to be), otherwise its not loading
-    const [isLoading, setIsLoading] = React.useState(!item);
-    const [hasError, setHasError] = React.useState(false);
-    const [errorObj, setErrorObj] = React.useState(null);
-
-    useEffect(() => {
-        if (item == null) {
-            setHasError(false);
-            setErrorObj(null);
-            setIsLoading(true);
-
-            (async () => {
-                try {
-                    await itemLoader();
-                    setIsLoading(false);
-                } catch (newErrorObj) {
-                    console.error(newErrorObj);
-                    setErrorObj(newErrorObj);
-                    setHasError(true);
-                }
-            })();
-        }
-
-        return () => {
-            if (itemUnloader) {
-                itemUnloader();
-            }
-        };
-    }, [itemKey, itemUnloader]);
+    const { loading, hasError, errorObj } = useLoader({
+        item,
+        itemKey,
+        itemLoader,
+        itemUnloader,
+    });
 
     if (hasError) {
         return errorRenderer ? (
@@ -79,7 +52,7 @@ export const Loader: React.FunctionComponent<ILoaderProps> = ({
         ) : (
             <ErrorMessage>{formatError(errorObj)}</ErrorMessage>
         );
-    } else if (isLoading) {
+    } else if (loading) {
         return placeHolder ? placeHolder : <Loading />;
     } else if (item == null) {
         // We already tried to load and nothing gets returned;

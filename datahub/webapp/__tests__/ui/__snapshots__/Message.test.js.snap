@@ -2,6 +2,7 @@
 
 exports[`matches enzyme snapshots matches snapshot - error 1`] = `
 <Message
+  className=""
   title="Error"
   type="error"
 >

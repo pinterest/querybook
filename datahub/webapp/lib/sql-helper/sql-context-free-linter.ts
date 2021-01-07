@@ -65,7 +65,7 @@ const contextFreeLinterWarningsByLanguage: Record<
     },
     presto: (statements) => {
         const warnings: ILinterWarning[] = [];
-        statements.forEach((statement, statementNum) => {
+        statements.forEach((statement) => {
             if (statement.length === 0) {
                 return;
             }

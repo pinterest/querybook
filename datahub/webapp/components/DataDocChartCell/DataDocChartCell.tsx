@@ -38,11 +38,6 @@ interface IProps {
     onDownKeyPressed?: () => any;
     onDeleteKeyPressed?: () => any;
 }
-interface IState {
-    queryExecutionId?: number;
-    statementExecutionId?: number;
-    showChartComposer: boolean;
-}
 
 export const DataDocChartCell: React.FunctionComponent<IProps> = ({
     context,

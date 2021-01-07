@@ -112,5 +112,3 @@ export default {
     update: updateDatasource,
     delete: deleteDatasource,
 };
-
-export const dataSelector = ({ data }) => data;

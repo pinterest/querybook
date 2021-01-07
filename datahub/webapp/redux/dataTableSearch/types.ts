@@ -47,13 +47,6 @@ export interface IDataTableSearchFailedAction extends Action {
     };
 }
 
-export interface IDataTableSearchReceiveQueryParamAction extends Action {
-    type: '@@dataTableSearch/DATA_TABLE_SEARCH_RECEIVE_QUERY_PARAM';
-    payload: {
-        queryParam: Record<string, unknown>;
-    };
-}
-
 export interface IDataTableSearchStringUpdateAction extends Action {
     type: '@@dataTableSearch/DATA_TABLE_SEARCH_STRING_UPDATE';
     payload: {
@@ -93,7 +86,6 @@ export type DataTableSearchAction =
     | IDataTableSearchStartedAction
     | IDataTableSearchDoneAction
     | IDataTableSearchFailedAction
-    | IDataTableSearchReceiveQueryParamAction
     | IDataTableSearchStringUpdateAction
     | IDataTableSearchFilterUpdateAction
     | IDataTableSearchResetFilterAction

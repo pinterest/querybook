@@ -1,6 +1,6 @@
 import CodeMirror from 'lib/codemirror';
 import ds from 'lib/datasource';
-import { ICodeAnalysis, IToken, TableToken } from 'lib/sql-helper/sql-lexer';
+import { ICodeAnalysis, TableToken } from 'lib/sql-helper/sql-lexer';
 import { reduxStore } from 'redux/store';
 import { getLanguageSetting } from './sql-setting';
 

@@ -12,15 +12,6 @@ export interface ILoginFormProps {
     onSuccessLogin: () => any;
 }
 
-export interface ILoginFormState {
-    form: {
-        username: string;
-        password: string;
-    };
-    validForm: boolean;
-    errorMessage: string;
-}
-
 export const LoginForm: React.FunctionComponent<ILoginFormProps> = ({
     onSuccessLogin,
 }) => {

@@ -7,7 +7,7 @@ import { useDataFetch } from 'hooks/useDataFetch';
 
 import { Card } from 'ui/Card/Card';
 import { Icon } from 'ui/Icon/Icon';
-import { SingleCRUD } from 'ui/GenericCRUD/SingleCRUD';
+import { GenericCRUD } from 'ui/GenericCRUD/GenericCRUD';
 import { Loading } from 'ui/Loading/Loading';
 import { SimpleField } from 'ui/FormikField/SimpleField';
 
@@ -76,10 +76,7 @@ export const AdminAnnouncement: React.FunctionComponent = () => {
         []
     );
 
-    const renderAnnouncementItem = (
-        item: IAdminAnnouncement,
-        onChange: (fieldName: string, fieldValue: any) => void
-    ) => (
+    const renderAnnouncementItem = () => (
         <div className="AdminForm">
             <div className="AdminForm-main">
                 <div className="AdminForm-left">
@@ -114,7 +111,7 @@ export const AdminAnnouncement: React.FunctionComponent = () => {
     const getCardDOM = () =>
         announcements.map((ann) => (
             <Card key={ann.id} title="" width="100%" flexRow>
-                <SingleCRUD
+                <GenericCRUD
                     item={ann}
                     deleteItem={deleteAnnouncement}
                     updateItem={saveAnnouncement(ann.id)}
@@ -129,7 +126,7 @@ export const AdminAnnouncement: React.FunctionComponent = () => {
         if (displayNewForm) {
             return (
                 <div className="AdminAnnouncement-new-form horizontal-space-between">
-                    <SingleCRUD<Partial<IAdminAnnouncement>>
+                    <GenericCRUD<Partial<IAdminAnnouncement>>
                         item={{
                             message: undefined,
                             url_regex: undefined,

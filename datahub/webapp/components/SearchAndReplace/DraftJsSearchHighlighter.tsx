@@ -1,4 +1,4 @@
-import React, { useContext, useMemo, useEffect } from 'react';
+import React, { useMemo, useEffect } from 'react';
 import * as DraftJs from 'draft-js';
 import scrollIntoView from 'smooth-scroll-into-view-if-needed';
 

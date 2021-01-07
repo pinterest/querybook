@@ -94,9 +94,6 @@ export class RichTextEditor extends React.Component<
             return null;
         }
 
-        const relativeElement = this.selfRef.current;
-        const relativeRect = relativeElement.getBoundingClientRect();
-
         const position = {
             top: Math.max(selectionRect.top - toolBarHeight - 5, 0),
             left: Math.max(

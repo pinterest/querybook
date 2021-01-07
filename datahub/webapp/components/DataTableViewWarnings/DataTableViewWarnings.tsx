@@ -1,4 +1,4 @@
-import React, { useCallback, useMemo } from 'react';
+import React, { useCallback } from 'react';
 import { IDataTableWarning, DataTableWarningSeverity } from 'const/metastore';
 import { useDispatch } from 'react-redux';
 
@@ -7,7 +7,7 @@ import { Dispatch } from 'redux/store/types';
 import { getEnumEntries } from 'lib/typescript';
 import { SimpleField } from 'ui/FormikField/SimpleField';
 import { Card } from 'ui/Card/Card';
-import { SingleCRUD } from 'ui/GenericCRUD/SingleCRUD';
+import { GenericCRUD } from 'ui/GenericCRUD/GenericCRUD';
 import {
     deleteTableWarnings,
     createTableWarnings,
@@ -86,7 +86,7 @@ export const DataTableViewWarnings: React.FC<IProps> = ({
     const getCardsDOM = () =>
         tableWarnings.map((warning) => (
             <Card key={warning.id} title="" width="100%" flexRow>
-                <SingleCRUD
+                <GenericCRUD
                     item={warning}
                     deleteItem={deleteWarning}
                     updateItem={updateWarning(warning.id)}
@@ -99,7 +99,7 @@ export const DataTableViewWarnings: React.FC<IProps> = ({
         if (displayNewForm) {
             return (
                 <Card title="" width="100%" flexRow>
-                    <SingleCRUD<Partial<IDataTableWarning>>
+                    <GenericCRUD<Partial<IDataTableWarning>>
                         item={{
                             message: '',
                             severity: DataTableWarningSeverity.WARNING,

@@ -31,5 +31,5 @@ export function generateFormattedDate(utcTime: number, momentFormat = 'X') {
 }
 
 export function fromNow(utcTime: number, momentFormat = 'X') {
-    return moment.utc(utcTime, 'X').fromNow();
+    return moment.utc(utcTime, momentFormat).fromNow();
 }

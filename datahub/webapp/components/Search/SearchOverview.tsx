@@ -283,7 +283,7 @@ export const SearchOverview: React.FunctionComponent = () => {
         <Dropdown customButtonRenderer={orderByButtonFormatter} isRight>
             <ListMenu
                 items={[SearchOrder.Recency, SearchOrder.Relevance].map(
-                    (choice, index) => ({
+                    (choice) => ({
                         name:
                             choice === 'Recency'
                                 ? 'Most recent'

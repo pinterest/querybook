@@ -10,7 +10,7 @@ import { queryExecutionSchemaList } from 'redux/queryExecutions/action';
 export const CHUNK_LOAD_SIZE = 50;
 
 export function mapQueryParamToState(): ThunkResult<void> {
-    return (dispatch, getState) => {
+    return (dispatch) => {
         dispatch(resetQueryView());
         const queryParam = getQueryString();
         dispatch({
@@ -148,7 +148,7 @@ export function updateFilter(
     };
 }
 
-export function updateOrderBy(orderBy): ThunkResult<Promise<any>> {
+export function updateOrderBy(orderBy: string): ThunkResult<Promise<any>> {
     return (dispatch, getState) => {
         dispatch(resetQueryView());
         dispatch({

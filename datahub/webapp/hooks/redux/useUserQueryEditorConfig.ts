@@ -1,4 +1,4 @@
-import { useMemo, useContext } from 'react';
+import { useMemo } from 'react';
 import { useSelector } from 'react-redux';
 import { IStoreState } from 'redux/store/types';
 

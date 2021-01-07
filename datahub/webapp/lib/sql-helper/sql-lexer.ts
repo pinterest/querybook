@@ -320,8 +320,7 @@ function makeTokenizer(language: string) {
     const tokenizeString = (
         token: IToken,
         stream: StringStream,
-        tokens: IToken[],
-        lineNum: number
+        tokens: IToken[]
     ) => {
         let previousEscape = false;
         const quote = token.text.charAt(0);
@@ -352,8 +351,7 @@ function makeTokenizer(language: string) {
     const tokenizeComment = (
         token: IToken,
         stream: StringStream,
-        tokens: IToken[],
-        lineNum: number
+        tokens: IToken[]
     ) => {
         const start = stream.pos;
         if (!stream.eol()) {

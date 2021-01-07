@@ -17,10 +17,6 @@ export interface IDataTableViewColumnProps {
     ) => any;
 }
 
-export interface IDataTableViewColumnState {
-    filterString: string;
-}
-
 export const DataTableViewColumn: React.FunctionComponent<IDataTableViewColumnProps> = ({
     updateDataColumnDescription,
     table = null,

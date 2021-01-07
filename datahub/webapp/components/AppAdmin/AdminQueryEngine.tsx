@@ -12,7 +12,7 @@ import { AdminAuditLogButton } from 'components/AdminAuditLog/AdminAuditLogButto
 
 import { Card } from 'ui/Card/Card';
 import { Loading } from 'ui/Loading/Loading';
-import { SingleCRUD } from 'ui/GenericCRUD/SingleCRUD';
+import { GenericCRUD } from 'ui/GenericCRUD/GenericCRUD';
 import {
     SmartForm,
     TemplatedForm,
@@ -383,7 +383,7 @@ export const AdminQueryEngine: React.FunctionComponent<IProps> = ({
             return (
                 <div className="AdminQueryEngine">
                     <div className="AdminForm">
-                        <SingleCRUD
+                        <GenericCRUD
                             item={newQueryEngine}
                             createItem={createQueryEngine}
                             renderItem={renderQueryEngineItem}
@@ -436,7 +436,7 @@ export const AdminQueryEngine: React.FunctionComponent<IProps> = ({
             return (
                 <div className="AdminQueryEngine">
                     <div className="AdminForm">
-                        <SingleCRUD
+                        <GenericCRUD
                             item={queryEngineItem}
                             deleteItem={deleteQueryEngine}
                             updateItem={saveQueryEngine}

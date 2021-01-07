@@ -1,5 +1,4 @@
 import React from 'react';
-import moment from 'moment';
 
 import { ITaskStatusRecord } from 'const/schedule';
 import { generateFormattedDate } from 'lib/utils/datetime';

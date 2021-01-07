@@ -1,4 +1,4 @@
-import React, { useEffect } from 'react';
+import React from 'react';
 import { RouteComponentProps } from 'react-router-dom';
 
 import history from 'lib/router-history';

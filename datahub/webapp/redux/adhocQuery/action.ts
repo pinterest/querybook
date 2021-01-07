@@ -1,10 +1,6 @@
 import { IAdhocQuery } from 'const/adhocQuery';
 import { fetchQueryExecutionIfNeeded } from 'redux/queryExecutions/action';
-import {
-    ISetAdhocQueryAction,
-    IClearAdhocQueryAction,
-    ThunkResult,
-} from './types';
+import { ISetAdhocQueryAction, ThunkResult } from './types';
 import { loadAdhocQuery } from './persistence';
 
 export function receiveAdhocQuery(
@@ -15,15 +11,6 @@ export function receiveAdhocQuery(
         type: '@@adhocQuery/SET_ADHOC_QUERY',
         payload: {
             adhocQuery,
-            environmentId,
-        },
-    };
-}
-
-export function clearAdhocQuery(environmentId: number): IClearAdhocQueryAction {
-    return {
-        type: '@@adhocQuery/CLEAR_ADHOC_QUERY',
-        payload: {
             environmentId,
         },
     };
