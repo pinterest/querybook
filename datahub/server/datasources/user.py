@@ -3,7 +3,7 @@ from flask_login import current_user
 
 from app.auth import get_login_config
 from app.auth import logout as auth_logout
-from app.datasource import register, api_assert
+from app.datasource import register
 from app.db import DBSession
 from const.datasources import RESOURCE_NOT_FOUND_STATUS_CODE
 
@@ -55,29 +55,27 @@ def batch_get_user_info(uids):
     return logic.get_users_by_ids(uids)
 
 
-@register("/user/<int:uid>/setting/", methods=["GET"])
-def get_user_settings(uid):
-    api_assert(current_user.id == uid, "Can only check your own settings")
-    return logic.get_user_settings(uid=uid)
+@register("/user/setting/", methods=["GET"])
+def get_user_settings():
+    return logic.get_user_settings(uid=current_user.id)
 
 
-@register("/user/<int:uid>/environment/", methods=["GET"])
-def get_user_environment_ids(uid):
-    api_assert(uid == current_user.id, "Cannot see environment for another user")
-
+@register("/user/environment/", methods=["GET"])
+def get_user_environment_ids():
     visible_environments = environment_logic.get_all_visible_environments_by_uid(
-        uid=uid
+        uid=current_user.id
     )
     user_environment_ids = environment_logic.get_all_accessible_environment_ids_by_uid(
-        uid=uid
+        uid=current_user.id
     )
     return [visible_environments, user_environment_ids]
 
 
-@register("/user/<int:uid>/setting/<key>/", methods=["POST"])
-def set_user_setting(uid, key, value=None):
-    api_assert(uid == current_user.id, "Cannot apply setting for another user")
-    return logic.create_or_update_user_setting(uid=uid, key=key, value=value)
+@register("/user/setting/<key>/", methods=["POST"])
+def set_user_setting(key, value=None):
+    return logic.create_or_update_user_setting(
+        uid=current_user.id, key=key, value=value
+    )
 
 
 @register("/logout/", methods=["GET"])

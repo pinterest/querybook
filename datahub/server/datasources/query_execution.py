@@ -296,52 +296,40 @@ def get_statement_execution_log(statement_execution_id):
 
 
 @register(
-    "/query_execution_notification/<int:user>/<int:query_id>/",
-    methods=["GET"],
-    require_auth=True,
+    "/query_execution_notification/<int:query_id>/", methods=["GET"], require_auth=True,
 )
-def get_query_execution_notification(user, query_id):
+def get_query_execution_notification(query_id):
     with DBSession() as session:
         verify_query_execution_permission(query_id, session=session)
         return logic.get_query_execution_notification(
-            query_execution_id=query_id, user=user, session=session
+            query_execution_id=query_id, uid=current_user.id, session=session
         )
 
 
 @register(
-    "/query_execution_notification/<int:user>/<int:query_id>/",
+    "/query_execution_notification/<int:query_id>/",
     methods=["POST"],
     require_auth=True,
 )
-def create_query_execution_notification(
-    user, query_id,
-):
+def create_query_execution_notification(query_id,):
     with DBSession() as session:
-        api_assert(
-            current_user.id == user, "You can only create notification for yourself"
-        )
         verify_query_execution_permission(query_id, session=session)
 
         return logic.create_query_execution_notification(
-            query_execution_id=query_id, user=user, session=session
+            query_execution_id=query_id, uid=current_user.id, session=session
         )
 
 
 @register(
-    "/query_execution_notification/<int:user>/<int:query_id>/",
+    "/query_execution_notification/<int:query_id>/",
     methods=["DELETE"],
     require_auth=True,
 )
-def delete_query_execution_notification(
-    user, query_id,
-):
+def delete_query_execution_notification(query_id,):
     with DBSession() as session:
-        api_assert(
-            current_user.id == user, "You can only delete notification for yourself"
-        )
         verify_query_execution_permission(query_id, session=session)
         logic.delete_query_execution_notification(
-            query_execution_id=query_id, user=user, session=session
+            query_execution_id=query_id, uid=current_user.id, session=session
         )
 
 
