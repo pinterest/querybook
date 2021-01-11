@@ -4,6 +4,9 @@ from lib.notify.base_notifier import BaseNotifier
 
 
 class SlackNotifier(BaseNotifier):
+    def __init__(self, token=None):
+        self.token = token if token is not None else DataHubSettings.DATAHUB_SLACK_TOKEN
+
     @property
     def notifier_name(self):
         return "slack"
@@ -14,9 +17,8 @@ class SlackNotifier(BaseNotifier):
 
     def notify(self, user, message):
         to = f"@{user.username}"
-        token = DataHubSettings.DATAHUB_SLACK_TOKEN
         url = "https://slack.com/api/chat.postMessage"
-        headers = {"Authorization": "Bearer {}".format(token)}
+        headers = {"Authorization": "Bearer {}".format(self.token)}
         text = self._convert_markdown(message)
         data = {
             "text": text,

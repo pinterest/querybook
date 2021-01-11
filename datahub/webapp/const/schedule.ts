@@ -40,9 +40,11 @@ export enum NotifyOn {
 export interface IDataDocScheduleKwargs {
     notify_with?: string;
     notify_on?: NotifyOn;
-    exporter_cell_id?: number;
-    exporter_name?: string;
-    exporter_params?: Record<string, any>;
+    exports?: Array<{
+        exporter_cell_id?: number;
+        exporter_name?: string;
+        exporter_params?: Record<string, any>;
+    }>;
 }
 
 export interface IDataDocTaskSchedule extends ITaskSchedule {

@@ -66,6 +66,9 @@ class DataDoc(Base, CRUDMixin):
 
         return data_doc_dict
 
+    def get_query_cells(self):
+        return [cell for cell in self.cells if cell.cell_type == DataCellType.query]
+
 
 class DataCell(Base):
     __tablename__ = "data_cell"
