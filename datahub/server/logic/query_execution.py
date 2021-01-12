@@ -42,6 +42,16 @@ def get_datadoc_id_from_query_execution_id(query_execution_id, session=None):
 
 
 @with_session
+def get_last_query_execution_from_cell(cell_id, session=None):
+    return (
+        session.query(QueryExecution)
+        .join(DataCellQueryExecution, DataCellQueryExecution.data_cell_id == cell_id,)
+        .order_by(QueryExecution.id.desc())
+        .first()
+    )
+
+
+@with_session
 def search_query_execution(
     environment_id, filters, orderBy, limit, offset, session=None
 ):

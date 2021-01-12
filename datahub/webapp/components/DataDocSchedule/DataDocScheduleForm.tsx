@@ -1,10 +1,14 @@
 import React from 'react';
-import { Form, Formik } from 'formik';
+import { FieldArray, Form, Formik, useFormikContext } from 'formik';
 import * as Yup from 'yup';
 import { useSelector } from 'react-redux';
 
 import { IDataDocScheduleKwargs, NotifyOn } from 'const/schedule';
-import { cronToRecurrence, recurrenceToCron } from 'lib/utils/cron';
+import {
+    cronToRecurrence,
+    IRecurrence,
+    recurrenceToCron,
+} from 'lib/utils/cron';
 import { getExporterAuthentication } from 'lib/result-export';
 
 import { IStoreState } from 'redux/store/types';
@@ -26,6 +30,11 @@ import {
 import { AsyncButton } from 'ui/AsyncButton/AsyncButton';
 import { getEnumEntries } from 'lib/typescript';
 import { notificationServiceSelector } from '../../redux/notificationService/selector';
+import { IQueryResultExporter } from 'redux/queryExecutions/types';
+import { Button } from 'ui/Button/Button';
+import { IconButton } from 'ui/Button/IconButton';
+
+import './DataDocScheduleForm.scss';
 
 interface IDataDocScheduleFormProps {
     isEditable: boolean;
@@ -66,16 +75,25 @@ const scheduleFormSchema = Yup.object().shape({
             is: (val) => val != null,
             then: Yup.mixed().required(),
         }),
-        exporter_cell_id: Yup.number().nullable(),
-        exporter_name: Yup.string()
-            .nullable()
-            .when('exporter_cell_id', {
-                is: (val) => val != null,
-                then: Yup.string().required(),
-            }),
-        exporter_params: Yup.object(),
+        exports: Yup.array().of(
+            Yup.object().shape({
+                exporter_cell_id: Yup.number().required(),
+                exporter_name: Yup.string().required(),
+                exporter_params: Yup.object(),
+            })
+        ),
     }),
 });
+
+interface IScheduleFormValues {
+    recurrence: IRecurrence;
+    enabled?: boolean;
+    kwargs: {
+        notify_with: string | null;
+        notify_on: NotifyOn;
+        exports: IDataDocScheduleKwargs['exports'];
+    };
+}
 
 export const DataDocScheduleForm: React.FunctionComponent<IDataDocScheduleFormProps> = ({
     isEditable,
@@ -90,24 +108,19 @@ export const DataDocScheduleForm: React.FunctionComponent<IDataDocScheduleFormPr
     onDelete,
     onRun,
 }) => {
-    const queryCellOptions = useSelector((state: IStoreState) =>
-        queryCellSelector(state, { docId })
-    );
     const exporters = useSelector(
         (state: IStoreState) => state.queryExecutions.statementExporters
     );
     const notifiers = useSelector(notificationServiceSelector);
     const isCreateForm = !Boolean(cron);
     const recurrence = cronToRecurrence(cron || '0 0 * * *');
-    const formValues = isCreateForm
+    const formValues: IScheduleFormValues = isCreateForm
         ? {
               recurrence,
               kwargs: {
                   notify_with: null,
                   notify_on: NotifyOn.ALL,
-                  exporter_cell_id: null,
-                  exporter_name: null,
-                  exporter_params: {},
+                  exports: [],
               },
           }
         : {
@@ -116,9 +129,7 @@ export const DataDocScheduleForm: React.FunctionComponent<IDataDocScheduleFormPr
               kwargs: {
                   notify_with: kwargs.notify_with,
                   notify_on: kwargs.notify_on,
-                  exporter_cell_id: kwargs.exporter_cell_id,
-                  exporter_name: kwargs.exporter_name,
-                  exporter_params: kwargs.exporter_params,
+                  exports: kwargs.exports,
               },
           };
 
@@ -129,13 +140,11 @@ export const DataDocScheduleForm: React.FunctionComponent<IDataDocScheduleFormPr
             validationSchema={scheduleFormSchema}
             onSubmit={async (values) => {
                 const cronRepr = recurrenceToCron(values.recurrence);
-                const exporter =
-                    values.kwargs.exporter_cell_id != null
-                        ? exporters.find(
-                              (exp) => exp.name === values.kwargs.exporter_name
-                          )
-                        : null;
-                if (exporter) {
+
+                for (const exportConf of values.kwargs.exports) {
+                    const exporter = exporters.find(
+                        (exp) => exp.name === exportConf.exporter_name
+                    );
                     await getExporterAuthentication(exporter);
                 }
 
@@ -188,63 +197,13 @@ export const DataDocScheduleForm: React.FunctionComponent<IDataDocScheduleFormPr
                     </>
                 );
 
-                const exporter = exporters.find(
-                    (exp) => exp.name === values.kwargs.exporter_name
-                );
                 const exportField = (
                     <>
-                        <FormSectionHeader>Export Results</FormSectionHeader>
-                        <SimpleField
-                            label="Export Cell"
-                            name="kwargs.exporter_cell_id"
-                            type="react-select"
-                            options={queryCellOptions.map((val) => ({
-                                value: val.id,
-                                label: val.title,
-                            }))}
-                            withDeselect
+                        <FormSectionHeader>Export</FormSectionHeader>
+                        <ScheduleExportsForm
+                            docId={docId}
+                            exporters={exporters}
                         />
-                        {values.kwargs.exporter_cell_id != null && (
-                            <SimpleField
-                                label="Export with"
-                                name="kwargs.exporter_name"
-                                type="react-select"
-                                options={exporters.map((exp) => exp.name)}
-                                onChange={(v) => {
-                                    setFieldValue('kwargs.exporter_name', v);
-                                    setFieldValue(
-                                        'kwargs.exporter_params',
-                                        exporter?.form
-                                            ? getDefaultFormValue(exporter.form)
-                                            : {}
-                                    );
-                                }}
-                            />
-                        )}
-                        {values.kwargs.exporter_cell_id != null &&
-                            exporter?.form && (
-                                <>
-                                    <FormSectionHeader>
-                                        Export Parameters
-                                    </FormSectionHeader>
-                                    <SmartForm
-                                        formField={exporter.form}
-                                        value={values.kwargs.exporter_params}
-                                        onChange={(path, value) =>
-                                            setFieldValue(
-                                                'kwargs.exporter_params',
-                                                updateValue(
-                                                    values.kwargs
-                                                        .exporter_params,
-                                                    path,
-                                                    value,
-                                                    [undefined, '']
-                                                )
-                                            )
-                                        }
-                                    />
-                                </>
-                            )}
                     </>
                 );
 
@@ -313,5 +272,133 @@ export const DataDocScheduleForm: React.FunctionComponent<IDataDocScheduleFormPr
                 );
             }}
         </Formik>
+    );
+};
+
+const ScheduleExportsForm: React.FC<{
+    docId: number;
+    exporters: IQueryResultExporter[];
+}> = ({ docId, exporters }) => {
+    const name = 'kwargs.exports';
+    const { values, setFieldValue } = useFormikContext<IScheduleFormValues>();
+    const queryCellOptions = useSelector((state: IStoreState) =>
+        queryCellSelector(state, { docId })
+    );
+    const exportsValues = values.kwargs.exports;
+
+    return (
+        <FieldArray
+            name={name}
+            render={(arrayHelpers) => {
+                const exportFields = exportsValues.map((exportConf, index) => {
+                    const exportFormName = `${name}[${index}]`;
+
+                    const cellPickerField = (
+                        <SimpleField
+                            label="Export Cell"
+                            name={`${exportFormName}.exporter_cell_id`}
+                            type="react-select"
+                            options={queryCellOptions.map((val) => ({
+                                value: val.id,
+                                label: val.title,
+                            }))}
+                            withDeselect
+                        />
+                    );
+
+                    const exporter = exporters.find(
+                        (exp) => exp.name === exportConf.exporter_name
+                    );
+                    const exporterPickerField = (
+                        <SimpleField
+                            label="Export with"
+                            name={`${exportFormName}.exporter_name`}
+                            type="react-select"
+                            options={exporters.map((exp) => exp.name)}
+                            onChange={(v) => {
+                                setFieldValue(
+                                    `${exportFormName}.exporter_name`,
+                                    v
+                                );
+                                setFieldValue(
+                                    `${exportFormName}.exporter_params`,
+                                    exporter?.form
+                                        ? getDefaultFormValue(exporter.form)
+                                        : {}
+                                );
+                            }}
+                        />
+                    );
+                    const exporterFormField = exporter?.form && (
+                        <>
+                            <FormSectionHeader>
+                                Export Parameters
+                            </FormSectionHeader>
+                            <SmartForm
+                                formField={exporter.form}
+                                value={
+                                    values.kwargs.exports[index].exporter_params
+                                }
+                                onChange={(path, value) =>
+                                    setFieldValue(
+                                        `${exportFormName}.exporter_params`,
+                                        updateValue(
+                                            values.kwargs.exports[index]
+                                                .exporter_params,
+                                            path,
+                                            value,
+                                            [undefined, '']
+                                        )
+                                    )
+                                }
+                            />
+                        </>
+                    );
+
+                    return (
+                        <div
+                            key={index}
+                            className="cell-export-field p4 mt16 flex-row"
+                        >
+                            <div className="flex1">
+                                {cellPickerField}
+                                {exporterPickerField}
+                                {exporterFormField}
+                            </div>
+                            <div>
+                                <IconButton
+                                    icon="x"
+                                    onClick={() => arrayHelpers.remove(index)}
+                                />
+                            </div>
+                        </div>
+                    );
+                });
+
+                const controlDOM = (
+                    <div className="center-align mt8">
+                        <Button
+                            icon="plus"
+                            title="Export Query Cell Result"
+                            onClick={() =>
+                                arrayHelpers.push({
+                                    exporter_cell_id: null,
+                                    exporter_name: null,
+                                    exporter_params: {},
+                                })
+                            }
+                            type="soft"
+                            pushable
+                        />
+                    </div>
+                );
+                return (
+                    <div className="ScheduleExportsForm">
+                        {exportFields}
+                        {controlDOM}
+                    </div>
+                );
+            }}
+        />
     );
 };

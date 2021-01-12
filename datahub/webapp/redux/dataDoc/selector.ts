@@ -220,10 +220,9 @@ export const canCurrentUserEditSelector = createSelector(
 export const queryCellSelector = createSelector(dataDocCellsSelector, (cells) =>
     cells
         .filter((cell) => cell.cell_type === 'query')
-
         .map((cell, index) => {
             const cellMeta: IDataQueryCellMeta = cell.meta;
-            const title = cellMeta.title ?? `Query #${index + 1}`;
+            const title = cellMeta.title || `Query #${index + 1}`;
             return {
                 id: cell.id,
                 title,
