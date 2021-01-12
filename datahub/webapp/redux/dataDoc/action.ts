@@ -19,7 +19,7 @@ import {
     DataCellSaveManager,
 } from 'lib/batch/datadoc-save-manager';
 import { getQueryEngineId } from 'lib/utils';
-import { convertRawToContentState } from 'lib/draft-js-utils';
+import { convertRawToContentState } from 'lib/richtext/serialize';
 import dataDocSocket from 'lib/data-doc/datadoc-socketio';
 import {
     IUpdateDataDocPollingAction,

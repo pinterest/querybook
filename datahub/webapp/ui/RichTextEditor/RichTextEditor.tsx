@@ -11,7 +11,7 @@ import {
     isListBlock,
     RichTextEditorCommand,
     RichTextEditorStyleMap,
-} from 'lib/draft-js-utils';
+} from 'lib/richtext';
 import * as Utils from 'lib/utils';
 import { matchKeyPress } from 'lib/utils/keyboard';
 

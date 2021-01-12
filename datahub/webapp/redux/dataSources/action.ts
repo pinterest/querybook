@@ -1,5 +1,5 @@
 import { normalize, schema } from 'normalizr';
-import { convertToRaw, ContentState } from 'draft-js';
+import type { ContentState } from 'draft-js';
 import JSONBig from 'json-bigint';
 
 import {
@@ -16,7 +16,10 @@ import {
     IDataTableOwnership,
     ITableStats,
 } from 'const/metastore';
-import { convertRawToContentState } from 'lib/draft-js-utils';
+import {
+    convertContentStateToHTML,
+    convertRawToContentState,
+} from 'lib/richtext/serialize';
 import ds from 'lib/datasource';
 import {
     IReceiveDataTableAction,
@@ -182,7 +185,7 @@ export function updateDataTable(
         const params: Partial<IDataTable> = {};
 
         if (description != null) {
-            params.description = JSON.stringify(convertToRaw(description));
+            params.description = convertContentStateToHTML(description);
         }
         if (golden != null) {
             params.golden = golden;
@@ -209,9 +212,8 @@ export function updateDataColumnDescription(
     description: ContentState
 ): ThunkResult<Promise<void>> {
     return async (dispatch, getState) => {
-        const raw = JSON.stringify(convertToRaw(description));
         const params = {
-            description: raw,
+            description: convertContentStateToHTML(description),
         };
         try {
             const { data } = await ds.update(`/column/${columnId}/`, params);
