@@ -227,31 +227,17 @@ def get_function_documentation_by_language(language):
 
 
 @register(
-    "/favorite_data_doc/<int:uid>/<int:data_doc_id>/",
-    methods=["POST"],
-    require_auth=True,
+    "/favorite_data_doc/<int:data_doc_id>/", methods=["POST"], require_auth=True,
 )
-def create_favorite_data_doc(
-    uid, data_doc_id,
-):
-    api_assert(current_user.id == uid, "You cannot favorite data doc for someone else")
-
-    return logic.favorite_data_doc(data_doc_id=data_doc_id, uid=uid)
+def create_favorite_data_doc(data_doc_id,):
+    return logic.favorite_data_doc(data_doc_id=data_doc_id, uid=current_user.id)
 
 
 @register(
-    "/favorite_data_doc/<int:uid>/<int:data_doc_id>/",
-    methods=["DELETE"],
-    require_auth=True,
+    "/favorite_data_doc/<int:data_doc_id>/", methods=["DELETE"], require_auth=True,
 )
-def delete_favorite_data_doc(
-    uid, data_doc_id,
-):
-    api_assert(
-        current_user.id == uid, "You cannot unfavorite data doc for someone else"
-    )
-
-    logic.unfavorite_data_doc(data_doc_id=data_doc_id, uid=uid)
+def delete_favorite_data_doc(data_doc_id,):
+    logic.unfavorite_data_doc(data_doc_id=data_doc_id, uid=current_user.id)
 
 
 def get_data_doc_schedule_name(id: int):

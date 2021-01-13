@@ -417,9 +417,8 @@ export function updateDataDocPolling(
 }
 
 export function favoriteDataDoc(docId: number): ThunkResult<void> {
-    return async (dispatch, getState) => {
-        const userId = getState().user.myUserInfo.uid;
-        await ds.save(`/favorite_data_doc/${userId}/${docId}/`);
+    return async (dispatch) => {
+        await ds.save(`/favorite_data_doc/${docId}/`);
         dispatch({
             type: '@@dataDoc/RECEIVE_PINNED_DATA_DOC_ID',
             payload: {
@@ -430,9 +429,8 @@ export function favoriteDataDoc(docId: number): ThunkResult<void> {
 }
 
 export function unfavoriteDataDoc(docId: number): ThunkResult<void> {
-    return async (dispatch, getState) => {
-        const userId = getState().user.myUserInfo.uid;
-        await ds.delete(`/favorite_data_doc/${userId}/${docId}/`);
+    return async (dispatch) => {
+        await ds.delete(`/favorite_data_doc/${docId}/`);
         dispatch({
             type: '@@dataDoc/REMOVE_PINNED_DATA_DOC_ID',
             payload: {

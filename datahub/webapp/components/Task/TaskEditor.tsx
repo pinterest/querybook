@@ -64,7 +64,7 @@ const taskFormSchema = Yup.object().shape({
     kwargs: Yup.array().of(Yup.mixed()),
 });
 
-function stringToTypedVal(stringVal) {
+function stringToTypedVal(stringVal: boolean | number | string) {
     if (stringVal === true || stringVal === 'true') {
         return true;
     } else if (stringVal === false || stringVal === 'false') {
@@ -74,6 +74,11 @@ function stringToTypedVal(stringVal) {
     } else {
         return stringVal;
     }
+}
+
+const UserTasks = new Set(['tasks.run_datadoc.run_datadoc']);
+function isTaskUserTask(task: string) {
+    return UserTasks.has(task) ? 'user' : 'prod';
 }
 
 export const TaskEditor: React.FunctionComponent<IProps> = ({
@@ -112,7 +117,7 @@ export const TaskEditor: React.FunctionComponent<IProps> = ({
                 : recurrenceToCron(editedValues.recurrence);
             const editedArgs = editedValues.args
                 .filter((arg) => !(arg === ''))
-                .map((arg) => stringToTypedVal(arg));
+                .map(stringToTypedVal);
             const editedKwargs = {};
             if (editedValues.kwargs.length) {
                 for (const kwarg of editedValues.kwargs) {
@@ -145,11 +150,7 @@ export const TaskEditor: React.FunctionComponent<IProps> = ({
                             cron: editedCron,
                             name: editedValues.name,
                             task: editedValues.task,
-                            task_type:
-                                editedValues.task ===
-                                'tasks.run_datadoc.run_datadoc'
-                                    ? 'user'
-                                    : 'prod',
+                            task_type: isTaskUserTask(editedValues.task),
                             enabled: editedValues.enabled,
                             args: editedArgs,
                             kwargs: editedKwargs,

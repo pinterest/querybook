@@ -263,19 +263,19 @@ def get_statement_execution_by_id(id, with_query_execution=False, session=None):
 
 
 @with_session
-def get_query_execution_notification(query_execution_id, user, session=None):
+def get_query_execution_notification(query_execution_id, uid, session=None):
     return (
         session.query(QueryExecutionNotification)
         .filter(QueryExecutionNotification.query_execution_id == query_execution_id)
-        .filter(QueryExecutionNotification.user == user)
+        .filter(QueryExecutionNotification.user == uid)
         .first()
     )
 
 
 @with_session
-def create_query_execution_notification(query_execution_id, user, session=None):
+def create_query_execution_notification(query_execution_id, uid, session=None):
     notification = QueryExecutionNotification(
-        query_execution_id=query_execution_id, user=user,
+        query_execution_id=query_execution_id, user=uid,
     )
     session.add(notification)
     session.commit()
@@ -287,11 +287,11 @@ def create_query_execution_notification(query_execution_id, user, session=None):
 
 @with_session
 def delete_query_execution_notification(
-    query_execution_id, user, commit=True, session=None
+    query_execution_id, uid, commit=True, session=None
 ):
     session.query(QueryExecutionNotification).filter(
         QueryExecutionNotification.query_execution_id == query_execution_id
-    ).filter(QueryExecutionNotification.user == user).delete()
+    ).filter(QueryExecutionNotification.user == uid).delete()
 
     if commit:
         session.commit()

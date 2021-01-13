@@ -793,14 +793,13 @@ export function fetchDataTableOwnershipIfNeeded(
 }
 
 export function createDataTableOwnership(
-    tableId: number,
-    uid: number
+    tableId: number
 ): ThunkResult<Promise<any>> {
     return async (dispatch) => {
         try {
-            const { data } = await ds.save(`/table/${tableId}/ownership/`, {
-                uid,
-            });
+            const { data } = await ds.save<IDataTableOwnership>(
+                `/table/${tableId}/ownership/`
+            );
             dispatch({
                 type: '@@dataSources/RECEIVE_DATA_TABLE_OWNERSHIP',
                 payload: { tableId, ownership: data },
@@ -812,15 +811,14 @@ export function createDataTableOwnership(
     };
 }
 export function deleteDataTableOwnership(
-    tableId: number,
-    uid: number
+    tableId: number
 ): ThunkResult<Promise<void>> {
-    return async (dispatch) => {
+    return async (dispatch, getState) => {
         try {
-            await ds.delete(`/table/${tableId}/ownership/`, { uid });
+            await ds.delete(`/table/${tableId}/ownership/`);
             dispatch({
                 type: '@@dataSources/REMOVE_DATA_TABLE_OWNERSHIP',
-                payload: { tableId, uid },
+                payload: { tableId, uid: getState().user.myUserInfo.uid },
             });
         } catch (e) {
             console.error(e);

@@ -46,11 +46,11 @@ export const DataTableHeader: React.FunctionComponent<IDataTableHeader> = ({
         [table.id]
     );
     const createTableOwnership = React.useCallback(
-        () => dispatch(createDataTableOwnership(table.id, userInfo.uid)),
+        () => dispatch(createDataTableOwnership(table.id)),
         [table.id, userInfo.uid]
     );
     const deleteTableOwnership = React.useCallback(
-        () => dispatch(deleteDataTableOwnership(table.id, userInfo.uid)),
+        () => dispatch(deleteDataTableOwnership(table.id)),
         [table.id, userInfo.uid]
     );
 

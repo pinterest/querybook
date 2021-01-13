@@ -3,7 +3,6 @@ import { useSelector } from 'react-redux';
 import moment from 'moment';
 
 import { IStoreState } from 'redux/store/types';
-import { myUserInfoSelector } from 'redux/user/selector';
 import { IQueryExecution } from 'redux/queryExecutions/types';
 import { generateFormattedDate } from 'lib/utils/datetime';
 
@@ -22,7 +21,6 @@ export const QueryExecutionBar: React.FunctionComponent<IProps> = ({
     queryExecution,
     permalink,
 }) => {
-    const userInfo = useSelector(myUserInfoSelector);
     const notificationPreference = useSelector(
         (state: IStoreState) =>
             state.user.computedSettings.notification_preference
@@ -36,16 +34,13 @@ export const QueryExecutionBar: React.FunctionComponent<IProps> = ({
         </span>
     );
 
-    let notificationButtonDOM;
-    if (queryExecution.status <= QueryExecutionStatus.RUNNING) {
-        notificationButtonDOM = (
-            <QueryExecutionNotificationButton
-                notificationPreference={notificationPreference}
-                queryExecution={queryExecution}
-                userInfo={userInfo}
-            />
-        );
-    }
+    const notificationButtonDOM = queryExecution.status <=
+        QueryExecutionStatus.RUNNING && (
+        <QueryExecutionNotificationButton
+            notificationPreference={notificationPreference}
+            queryExecution={queryExecution}
+        />
+    );
 
     return (
         <>
