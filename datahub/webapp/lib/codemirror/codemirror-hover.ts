@@ -1,5 +1,4 @@
 // from https://github.com/prismagraphql/chromeless-playground/blob/master/frontend/src/codemirror/codeEditor/addons/textHover.ts
-import { decorate } from 'core-decorators';
 import { bind } from 'lodash-decorators';
 import * as CodeMirror from 'codemirror';
 

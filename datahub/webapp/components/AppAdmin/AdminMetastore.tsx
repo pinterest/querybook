@@ -21,7 +21,7 @@ import { Icon } from 'ui/Icon/Icon';
 import { Level } from 'ui/Level/Level';
 import { Loading } from 'ui/Loading/Loading';
 import { SimpleField } from 'ui/FormikField/SimpleField';
-import { SingleCRUD } from 'ui/GenericCRUD/SingleCRUD';
+import { GenericCRUD } from 'ui/GenericCRUD/GenericCRUD';
 import {
     TemplatedForm,
     getDefaultFormValue,
@@ -32,11 +32,6 @@ import {
 import { Tabs } from 'ui/Tabs/Tabs';
 
 import './AdminMetastore.scss';
-
-const metastoreSchema = Yup.object().shape({
-    name: Yup.string().min(1).max(255),
-    loader: Yup.string().required(),
-});
 
 interface IAdminACLControl {
     type?: 'denylist' | 'allowlist';
@@ -424,7 +419,7 @@ export const AdminMetastore: React.FunctionComponent<IProps> = ({
             return (
                 <div className="AdminMetastore">
                     <div className="AdminForm">
-                        <SingleCRUD
+                        <GenericCRUD
                             item={newMetastore}
                             createItem={createMetastore}
                             renderItem={renderMetastoreItem}
@@ -477,7 +472,7 @@ export const AdminMetastore: React.FunctionComponent<IProps> = ({
             return (
                 <div className="AdminMetastore">
                     <div className="AdminForm">
-                        <SingleCRUD
+                        <GenericCRUD
                             item={metastoreItem}
                             deleteItem={deleteMetastore}
                             onDelete={() => history.push('/admin/metastore/')}

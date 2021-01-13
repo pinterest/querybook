@@ -800,7 +800,7 @@ function mapStateToProps(state: IStoreState, ownProps: IOwnProps) {
     };
 }
 
-function mapDispatchToProps(dispatch: Dispatch, ownProps: IOwnProps) {
+function mapDispatchToProps(dispatch: Dispatch) {
     return {
         openDataDoc: (id: number) => dispatch(openDataDoc(id)),
         closeDataDoc: (id: number) => dispatch(closeDataDoc(id)),

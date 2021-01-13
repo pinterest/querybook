@@ -65,7 +65,7 @@ export function getUserByName(name: string): ThunkResult<Promise<void>> {
 export function getUserSetting(): ThunkResult<Promise<any>> {
     return (dispatch, getState) =>
         ds
-            .fetch(`/user/${getState().user.myUserInfo.uid}/setting/`)
+            .fetch<Array<{ key: string; value: string }>>(`/user/setting/`)
             .then(({ data }) => {
                 if (data) {
                     const userSetting = data.reduce((hash, val) => {
@@ -107,15 +107,17 @@ export function getUserSettingLocal(): ThunkResult<void> {
     };
 }
 
-export function setUserSettings(key, value): ThunkResult<Promise<any>> {
+export function setUserSettings(
+    key: string,
+    value: string
+): ThunkResult<Promise<any>> {
     return async (dispatch, getState) => {
-        const uid = getState().user.myUserInfo.uid;
         const settings = getState().user.rawSettings;
         if (settings[key] === value) {
             return;
         }
 
-        const { data } = await ds.save(`/user/${uid}/setting/${key}/`, {
+        const { data } = await ds.save(`/user/setting/${key}/`, {
             value,
         });
 

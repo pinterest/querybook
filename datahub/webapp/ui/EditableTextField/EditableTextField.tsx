@@ -14,10 +14,6 @@ export interface IEditableTextFieldProps {
     className?: string;
 }
 
-export interface IEditableTextFieldState {
-    editMode: boolean;
-}
-
 export const EditableTextField: React.FunctionComponent<IEditableTextFieldProps> = ({
     value,
     onSave,

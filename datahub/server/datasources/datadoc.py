@@ -13,9 +13,9 @@ from const.impression import ImpressionItemType
 from env import DataHubSettings
 
 from lib.celery.cron import validate_cron
-from lib.form import validate_form
-from lib.export.all_exporters import get_exporter
 from lib.logger import get_logger
+from lib.scheduled_datadoc.validator import validate_datadoc_schedule_config
+from lib.scheduled_datadoc.legacy import convert_if_legacy_datadoc_schedule
 
 from logic import (
     datadoc_collab,
@@ -227,31 +227,17 @@ def get_function_documentation_by_language(language):
 
 
 @register(
-    "/favorite_data_doc/<int:uid>/<int:data_doc_id>/",
-    methods=["POST"],
-    require_auth=True,
+    "/favorite_data_doc/<int:data_doc_id>/", methods=["POST"], require_auth=True,
 )
-def create_favorite_data_doc(
-    uid, data_doc_id,
-):
-    api_assert(current_user.id == uid, "You cannot favorite data doc for someone else")
-
-    return logic.favorite_data_doc(data_doc_id=data_doc_id, uid=uid)
+def create_favorite_data_doc(data_doc_id,):
+    return logic.favorite_data_doc(data_doc_id=data_doc_id, uid=current_user.id)
 
 
 @register(
-    "/favorite_data_doc/<int:uid>/<int:data_doc_id>/",
-    methods=["DELETE"],
-    require_auth=True,
+    "/favorite_data_doc/<int:data_doc_id>/", methods=["DELETE"], require_auth=True,
 )
-def delete_favorite_data_doc(
-    uid, data_doc_id,
-):
-    api_assert(
-        current_user.id == uid, "You cannot unfavorite data doc for someone else"
-    )
-
-    logic.unfavorite_data_doc(data_doc_id=data_doc_id, uid=uid)
+def delete_favorite_data_doc(data_doc_id,):
+    logic.unfavorite_data_doc(data_doc_id=data_doc_id, uid=current_user.id)
 
 
 def get_data_doc_schedule_name(id: int):
@@ -265,38 +251,25 @@ def get_datadoc_schedule(id):
         verify_data_doc_permission(id, session=session)
 
         schedule_name = get_data_doc_schedule_name(id)
-        return schedule_logic.get_task_schedule_by_name(schedule_name, session=session)
+        schedule = schedule_logic.get_task_schedule_by_name(
+            schedule_name, session=session
+        )
+        if not schedule:
+            return None
 
-
-def validate_datadoc_schedule_kwargs(kwargs):
-    allowed_keys = [
-        "notify_with",
-        "notify_on",
-        "exporter_cell_id",
-        "exporter_name",
-        "exporter_params",
-    ]
-    for key in kwargs.keys():
-        api_assert(key in allowed_keys, "Invalid field {}".format(key))
-
-    # Check if export_cell_id is provided then export name must be valid
-    if kwargs.get("exporter_cell_id", None) is not None:
-        exporter_name = kwargs.get("exporter_name", None)
-        exporter = get_exporter(exporter_name)
-        api_assert(exporter is not None, "Invalid exporter {}".format(exporter_name))
-
-        exporter_params = kwargs.get("exporter_params", {})
-        exporter_form = exporter.export_form
-        if not (exporter_form is None and not exporter_params):
-            valid, reason = validate_form(exporter_form, exporter_params)
-            api_assert(valid, "Invalid exporter params, reason: " + reason)
+        schedule_dict = schedule.to_dict()
+        schedule_dict["kwargs"] = convert_if_legacy_datadoc_schedule(
+            schedule_dict["kwargs"]
+        )
+        return schedule_dict
 
 
 @register("/datadoc/<int:id>/schedule/", methods=["POST"])
 def create_datadoc_schedule(
     id, cron, kwargs,
 ):
-    validate_datadoc_schedule_kwargs(kwargs)
+    kwargs_valid, kwargs_valid_reason = validate_datadoc_schedule_config(kwargs)
+    api_assert(kwargs_valid, kwargs_valid_reason)
     api_assert(validate_cron(cron), "Invalid cron expression")
 
     schedule_name = get_data_doc_schedule_name(id)
@@ -318,7 +291,8 @@ def create_datadoc_schedule(
 @register("/datadoc/<int:id>/schedule/", methods=["PUT"])
 def update_datadoc_schedule(id, cron=None, enabled=None, kwargs=None):
     if kwargs is not None:
-        validate_datadoc_schedule_kwargs(kwargs)
+        kwargs_valid, kwargs_valid_reason = validate_datadoc_schedule_config(kwargs)
+        api_assert(kwargs_valid, kwargs_valid_reason)
     if cron is not None:
         api_assert(validate_cron(cron), "Invalid cron expression")
 

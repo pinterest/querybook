@@ -157,29 +157,23 @@ def get_all_table_ownerships_by_table_id(table_id):
 
 
 @register("/table/<int:table_id>/ownership/", methods=["POST"])
-def create_table_ownership(table_id, uid):
+def create_table_ownership(table_id):
     """ Add a table ownership"""
     with DBSession() as session:
         verify_data_table_permission(table_id, session=session)
-        api_assert(
-            current_user.id == uid,
-            "You are only allowed to claim ownership for yourself",
+        return logic.create_table_ownership(
+            table_id=table_id, uid=current_user.id, session=session
         )
-
-        return logic.create_table_ownership(table_id=table_id, uid=uid, session=session)
 
 
 @register("/table/<int:table_id>/ownership/", methods=["DELETE"])
-def remove_table_ownership(table_id, uid):
+def remove_table_ownership(table_id):
     """ Remove a table ownership"""
     with DBSession() as session:
         verify_data_table_permission(table_id, session=session)
-        api_assert(
-            current_user.id == uid,
-            "You are only allowed to remove ownership for yourself",
+        return logic.delete_table_ownership(
+            table_id=table_id, uid=current_user.id, session=session
         )
-
-        return logic.delete_table_ownership(table_id=table_id, uid=uid, session=session)
 
 
 @register("/table/<int:table_id>/column/", methods=["GET"])

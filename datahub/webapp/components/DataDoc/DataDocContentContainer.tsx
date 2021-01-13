@@ -1,4 +1,4 @@
-import React, { useEffect, useState, useCallback } from 'react';
+import React, { useState, useCallback } from 'react';
 import { useResizeObserver } from 'hooks/useResizeObserver';
 
 const isChrome = /chrome/.test(navigator.userAgent.toLowerCase());

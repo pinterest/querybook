@@ -11,7 +11,7 @@ You can embed Querybook as an iframe in other tools so users can edit query dire
 ```html
 <iframe
     id="querybook-iframe"
-    src="https://{QUERYBOOK_URL}/data/_/embedded_editor/"
+    src="https://{QUERYBOOK_URL}/{ENVIRONMENT_NAME}/_/embedded_editor/"
 />
 ```
 

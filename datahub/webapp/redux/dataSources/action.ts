@@ -42,7 +42,7 @@ const dataTableColumnSchema = new schema.Entity(
     'dataColumn',
     {},
     {
-        processStrategy: (value, parent, key) =>
+        processStrategy: (value, parent) =>
             parent
                 ? {
                       ...value,
@@ -82,7 +82,7 @@ export function fetchQueryMetastore(): ThunkResult<Promise<IQueryMetastore[]>> {
 }
 
 export function fetchDataTable(tableId: number): ThunkResult<Promise<any>> {
-    return async (dispatch, getState) => {
+    return async (dispatch) => {
         const { data } = await ds.fetch(`/table/${tableId}/`);
         const normalizedData = normalize(data, dataTableSchema);
         const {
@@ -124,7 +124,7 @@ export function fetchDataTableByName(
     tableName: string,
     metastoreId: number
 ): ThunkResult<Promise<IDataTable>> {
-    return async (dispatch, getState) => {
+    return async (dispatch) => {
         try {
             const { data } = await ds.fetch(
                 `/table_name/${schemaName}/${tableName}/`,
@@ -181,7 +181,7 @@ export function updateDataTable(
     tableId: number,
     { description, golden }: IUpdateTableParams
 ): ThunkResult<Promise<void>> {
-    return async (dispatch, getState) => {
+    return async (dispatch) => {
         const params: Partial<IDataTable> = {};
 
         if (description != null) {
@@ -211,7 +211,7 @@ export function updateDataColumnDescription(
     columnId: number,
     description: ContentState
 ): ThunkResult<Promise<void>> {
-    return async (dispatch, getState) => {
+    return async (dispatch) => {
         const params = {
             description: convertContentStateToHTML(description),
         };
@@ -627,7 +627,7 @@ function receiveDataJobMetadata(
 export function fetchDataJobMetadata(
     dataJobMetadataId: number
 ): ThunkResult<Promise<void>> {
-    return (dispatch, getState) => {
+    return (dispatch) => {
         dispatch(
             receiveDataJobMetadata({
                 id: dataJobMetadataId,
@@ -795,14 +795,13 @@ export function fetchDataTableOwnershipIfNeeded(
 }
 
 export function createDataTableOwnership(
-    tableId: number,
-    uid: number
+    tableId: number
 ): ThunkResult<Promise<any>> {
     return async (dispatch) => {
         try {
-            const { data } = await ds.save(`/table/${tableId}/ownership/`, {
-                uid,
-            });
+            const { data } = await ds.save<IDataTableOwnership>(
+                `/table/${tableId}/ownership/`
+            );
             dispatch({
                 type: '@@dataSources/RECEIVE_DATA_TABLE_OWNERSHIP',
                 payload: { tableId, ownership: data },
@@ -814,15 +813,14 @@ export function createDataTableOwnership(
     };
 }
 export function deleteDataTableOwnership(
-    tableId: number,
-    uid: number
+    tableId: number
 ): ThunkResult<Promise<void>> {
-    return async (dispatch) => {
+    return async (dispatch, getState) => {
         try {
-            await ds.delete(`/table/${tableId}/ownership/`, { uid });
+            await ds.delete(`/table/${tableId}/ownership/`);
             dispatch({
                 type: '@@dataSources/REMOVE_DATA_TABLE_OWNERSHIP',
-                payload: { tableId, uid },
+                payload: { tableId, uid: getState().user.myUserInfo.uid },
             });
         } catch (e) {
             console.error(e);

@@ -12,7 +12,7 @@ export const ErrorMessage: React.FunctionComponent<IProps> = ({
     className = '',
     children,
 }) => (
-    <Message type="error" title={title}>
+    <Message type="error" title={title} className={className}>
         {children}
     </Message>
 );

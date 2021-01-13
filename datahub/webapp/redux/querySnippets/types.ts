@@ -1,10 +1,9 @@
-import { Action, Dispatch } from 'redux';
+import { Action } from 'redux';
 import { ThunkAction } from 'redux-thunk';
 import { IStoreState } from 'redux/store/types';
 
 export interface IQueryForm {
     id?: number;
-
     title: string;
     context: string;
     engine_id: number;
@@ -17,13 +16,14 @@ export interface IQuerySnippet {
     id: number;
     title: string;
 
-    context?: string;
+    context: string;
+    description: string;
+    is_public: boolean;
+    golden: boolean;
+
     created_at?: number;
     created_by?: number;
-    description?: string;
-    engine_id?: number;
-    golden?: boolean;
-    is_public?: boolean;
+    engine_id: number;
     last_updated_by?: number;
     updated_at?: number;
 }

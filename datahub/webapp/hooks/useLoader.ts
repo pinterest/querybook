@@ -18,17 +18,18 @@ export function useLoader({
     itemLoader,
     itemUnloader,
 }: ILoaderProps) {
+    const [loading, setLoading] = useState(!item);
     const [hasError, setHasError] = useState(false);
     const [errorObj, setErrorObj] = useState(null);
-    const [loading, setLoading] = useState(item == null);
 
     useEffect(() => {
         if (item == null) {
             setHasError(false);
             setErrorObj(null);
+            setLoading(true);
+
             (async () => {
                 try {
-                    setLoading(true);
                     await itemLoader();
                     setLoading(false);
                 } catch (errorObj) {

@@ -55,13 +55,6 @@ export default function dataTableSearch(
                 draft.results = draft.results.concat(results);
                 return;
             }
-            case '@@dataTableSearch/DATA_TABLE_SEARCH_RECEIVE_QUERY_PARAM': {
-                const { queryParam } = action.payload;
-                return {
-                    ...state,
-                    ...queryParam,
-                };
-            }
             case '@@dataTableSearch/DATA_TABLE_SEARCH_STRING_UPDATE': {
                 draft.searchString = action.payload.searchString;
                 return;

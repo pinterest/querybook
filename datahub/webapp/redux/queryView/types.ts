@@ -1,4 +1,4 @@
-import { Action, Dispatch } from 'redux';
+import { Action } from 'redux';
 import { ThunkAction } from 'redux-thunk';
 
 import { ICancelablePromise } from 'lib/datasource';

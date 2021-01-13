@@ -17,19 +17,13 @@ import { Popover, PopoverLayout } from 'ui/Popover/Popover';
 import { ToggleSwitch } from 'ui/ToggleSwitch/ToggleSwitch';
 
 import './UserMenu.scss';
-import { Icon } from 'ui/Icon/Icon';
 
-interface IProps {
+interface IUserMenuProps {
     tooltipPos?: TooltipDirection;
     popoverLayout?: PopoverLayout;
 }
 
-interface IState {
-    showUserMenuPopover: boolean;
-    showTokenCreationModal: boolean;
-}
-
-export const UserMenu: React.FC<IProps> = ({
+export const UserMenu: React.FC<IUserMenuProps> = ({
     tooltipPos = 'right',
     popoverLayout = ['right', 'bottom'] as PopoverLayout,
 }) => {

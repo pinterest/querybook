@@ -61,6 +61,7 @@ def update_board(board_id, **fields):
     with DBSession() as session:
         board = Board.get(id=board_id, session=session)
         api_assert(board and board.owner_uid == current_user.id, "Must be owner")
+
         board = logic.update_board(id=board_id, **fields, session=session)
         return board.to_dict(extra_fields=["docs", "tables", "items"])
 
@@ -73,6 +74,7 @@ def delete_board(board_id, **fields):
         board = Board.get(id=board_id, session=session)
         api_assert(board and board.owner_uid == current_user.id, "Must be owner")
         api_assert(not board.board_type == "favorite", "Cannot delete favorite")
+
         Board.delete(board.id, session=session)
 
 
@@ -94,6 +96,7 @@ def get_board_ids_from_board_item(item_type: str, item_id: int, environment_id: 
 )
 def add_board_item(board_id, item_type, item_id):
     api_assert(item_type == "data_doc" or item_type == "table", "Invalid item type")
+
     with DBSession() as session:
         # Check if user can edit the board
         board = Board.get(id=board_id, session=session)
@@ -105,6 +108,7 @@ def add_board_item(board_id, item_type, item_id):
             item_env_ids = get_data_doc_environment_ids(item_id, session=session)
         else:
             item_env_ids = get_data_table_environment_ids(item_id, session=session)
+
         api_assert(
             board.environment_id in item_env_ids,
             "Board item must be in the same environment as the board",

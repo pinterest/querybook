@@ -245,40 +245,14 @@ export function createDataDocFromAdhoc(
 }
 
 export function deleteDataDoc(docId: number): ThunkResult<Promise<void>> {
-    return async (dispatch, getState) => {
-        try {
-            await ds.delete(`/datadoc/${docId}/`);
-            dispatch({
-                type: '@@dataDoc/REMOVE_DATA_DOC',
-                payload: {
-                    docId,
-                },
-            });
-        } catch (error) {
-            // dispatch({
-            //     type: 'ERROR',
-            //     error,
-            // });
-        }
-    };
-}
-
-export function fetchUnModifiedDataCellByQueryExecutionIfNeeded({
-    id,
-}): ThunkResult<Promise<any>> {
     return async (dispatch) => {
-        const { data } = await ds.fetch(`/query_execution/${id}/cell/`);
-        const normalizedData = normalize(data, dataDocCellSchema);
-        const { dataDocCell: dataDocCellById = {} } = normalizedData.entities;
-
+        await ds.delete(`/datadoc/${docId}/`);
         dispatch({
-            type: '@@dataDoc/RECEIVE_DATA_CELL',
+            type: '@@dataDoc/REMOVE_DATA_DOC',
             payload: {
-                dataDocCellById,
+                docId,
             },
         });
-
-        return data;
     };
 }
 
@@ -400,7 +374,7 @@ export function updateDataDocField(
     fieldName: string,
     fieldVal: any
 ): ThunkResult<Promise<void>> {
-    return (dispatch, getState) => {
+    return (dispatch) => {
         dispatch({
             type: '@@dataDoc/UPDATE_DATA_DOC_FIELD',
             payload: {
@@ -443,9 +417,8 @@ export function updateDataDocPolling(
 }
 
 export function favoriteDataDoc(docId: number): ThunkResult<void> {
-    return async (dispatch, getState) => {
-        const userId = getState().user.myUserInfo.uid;
-        await ds.save(`/favorite_data_doc/${userId}/${docId}/`);
+    return async (dispatch) => {
+        await ds.save(`/favorite_data_doc/${docId}/`);
         dispatch({
             type: '@@dataDoc/RECEIVE_PINNED_DATA_DOC_ID',
             payload: {
@@ -456,9 +429,8 @@ export function favoriteDataDoc(docId: number): ThunkResult<void> {
 }
 
 export function unfavoriteDataDoc(docId: number): ThunkResult<void> {
-    return async (dispatch, getState) => {
-        const userId = getState().user.myUserInfo.uid;
-        await ds.delete(`/favorite_data_doc/${userId}/${docId}/`);
+    return async (dispatch) => {
+        await ds.delete(`/favorite_data_doc/${docId}/`);
         dispatch({
             type: '@@dataDoc/REMOVE_PINNED_DATA_DOC_ID',
             payload: {

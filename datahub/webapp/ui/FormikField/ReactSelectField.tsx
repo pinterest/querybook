@@ -1,4 +1,4 @@
-import React, { useCallback } from 'react';
+import React from 'react';
 import { useField } from 'formik';
 import { WithOptional } from 'lib/typescript';
 import {

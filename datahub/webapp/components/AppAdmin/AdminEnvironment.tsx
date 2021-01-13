@@ -14,7 +14,7 @@ import { UserEnvironmentEditor } from 'components/UserEnvironmentEditor/UserEnvi
 import { AdminAuditLogButton } from 'components/AdminAuditLog/AdminAuditLogButton';
 
 import { Card } from 'ui/Card/Card';
-import { SingleCRUD } from 'ui/GenericCRUD/SingleCRUD';
+import { GenericCRUD } from 'ui/GenericCRUD/GenericCRUD';
 import { Level } from 'ui/Level/Level';
 import { SimpleField } from 'ui/FormikField/SimpleField';
 
@@ -109,10 +109,7 @@ export const AdminEnvironment: React.FunctionComponent<IProps> = ({
         return data as IAdminEnvironment;
     }, []);
 
-    const renderEnvironmentItem = (
-        item: IAdminEnvironment,
-        onChange: (fieldName: string, fieldValue: any) => void
-    ) => {
+    const renderEnvironmentItem = (item: IAdminEnvironment) => {
         const logDOM = item.id != null && (
             <div className="right-align">
                 <AdminAuditLogButton itemType="environment" itemId={item.id} />
@@ -199,7 +196,7 @@ export const AdminEnvironment: React.FunctionComponent<IProps> = ({
         return (
             <div className="AdminEnvironment">
                 <div className="AdminForm">
-                    <SingleCRUD
+                    <GenericCRUD
                         item={newEnvironment}
                         createItem={createEnvironment}
                         renderItem={renderEnvironmentItem}
@@ -248,7 +245,7 @@ export const AdminEnvironment: React.FunctionComponent<IProps> = ({
         return (
             <div className="AdminEnvironment">
                 <div className="AdminForm">
-                    <SingleCRUD
+                    <GenericCRUD
                         item={environmentItem}
                         deleteItem={deleteEnvironment}
                         updateItem={saveEnvironment}

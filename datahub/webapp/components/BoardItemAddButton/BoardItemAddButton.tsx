@@ -9,7 +9,7 @@ import { TooltipDirection } from 'const/tooltip';
 import { useDataFetch } from 'hooks/useDataFetch';
 
 import { IconButton, IconButtonProps } from 'ui/Button/IconButton';
-import { BoardItemType, IBoard, IBoardRaw } from 'const/board';
+import { BoardItemType, IBoardRaw } from 'const/board';
 
 import { Popover, PopoverLayout } from 'ui/Popover/Popover';
 import { BoardCreateUpdateModal } from 'components/BoardCreateUpdateModal/BoardCreateUpdateModal';

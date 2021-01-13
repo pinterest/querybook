@@ -46,7 +46,7 @@ export const SyntaxQueryError: React.FunctionComponent<{
     errorMessage: string;
     queryExecution: IQueryExecution;
     statementExecutions: IStatementExecution[];
-}> = ({ errorTitle, errorMessage, queryExecution, statementExecutions }) => {
+}> = ({ errorMessage, queryExecution, statementExecutions }) => {
     const parsedErrorMsg: {
         line?: number;
         char?: number;

@@ -1,18 +1,17 @@
-import React, { useState } from 'react';
+import React from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 
+import { formatError } from 'lib/utils/error';
 import * as queryExecutionsSelector from 'redux/queryExecutions/selector';
 import * as queryExecutionsActions from 'redux/queryExecutions/action';
 import { IStoreState } from 'redux/store/types';
 import { QueryViewEditor } from './QueryViewEditor';
 import { QueryViewExecution } from './QueryViewExecution';
-import './QueryView.scss';
-import { Loading } from 'ui/Loading/Loading';
 import { Container } from 'ui/Container/Container';
 import { ErrorPage } from 'ui/ErrorPage/ErrorPage';
 import { AccessRequestButton } from 'components/AccessRequestButton/AccessRequestButton';
 import { Loader } from 'ui/Loader/Loader';
-import { formatError } from 'lib/utils/error';
+import './QueryView.scss';
 
 interface IProps {
     queryId: number;

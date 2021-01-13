@@ -80,20 +80,9 @@ def register(url, methods=None, require_auth=True, custom_response=False):
                 LOG.error(e, exc_info=True)
                 status = 500
                 results = {"host": _host, "error": traceback.format_exc()}
-                # opentsdb_client.increment('pinalytics.datasource.exception',
-                #                           sample_rate=1,
-                #                           tags={'url': url.replace('/', '.').strip('.')})
             finally:
                 if status != 200 and "database_session" in flask.g:
                     flask.g.database_session.rollback()
-                # TODO: implement latency check
-                pass
-                # latency_ms = time_utils.now_millis() - start_time
-                # opentsdb_client.timing('pinalytics.datasource.latency',
-                #                        latency_ms,
-                #                        sample_rate=1,
-                #                        tags={'url': url.replace('/', '.').strip('.')})
-
             if custom_response:
                 return results
             else:
