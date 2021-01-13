@@ -14,14 +14,7 @@ export interface ISetAdhocQueryAction extends Action {
     };
 }
 
-export interface IClearAdhocQueryAction extends Action {
-    type: '@@adhocQuery/CLEAR_ADHOC_QUERY';
-    payload: {
-        environmentId: number;
-    };
-}
-
-export type AdhocQueryAction = ISetAdhocQueryAction | IClearAdhocQueryAction;
+export type AdhocQueryAction = ISetAdhocQueryAction;
 
 export type ThunkResult<R> = ThunkAction<
     R,

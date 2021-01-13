@@ -79,19 +79,6 @@ export function getRecurrenceLocalTimeString(recurrence: IRecurrence): string {
         .format('HH:mm');
 }
 
-export function getHumanReadableRecurrence(recurrence: IRecurrence): string {
-    const { hour, minute, recurrence: freq, on } = recurrence;
-    return `At ${hour}:${minute} UTC (Local: ${getRecurrenceLocalTimeString(
-        recurrence
-    )}) ${freq} ${
-        freq !== 'daily'
-            ? `on ${(on || [])
-                  .map((d) => (freq === 'weekly' ? WEEKDAYS[d] : d))
-                  .join(', ')}`
-            : ''
-    }`;
-}
-
 export function validateCronForReuccrence(cron: string) {
     if (cron.includes('/')) {
         return false;

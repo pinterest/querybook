@@ -29,10 +29,6 @@ export interface IProps {
     loadDataJobMetadata: (id: number) => any;
 }
 
-export interface IState {
-    parentTableIds: number[];
-}
-
 export const DataTableViewSourceQuery: React.FunctionComponent<IProps> = ({
     dataLineages,
     table,

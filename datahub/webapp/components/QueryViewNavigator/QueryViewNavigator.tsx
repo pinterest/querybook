@@ -102,7 +102,7 @@ class QueryViewNavigatorComponent extends React.PureComponent<IProps> {
             />
         );
 
-        const queryResultsListDOM = queryResults.map((queryResult, index) => (
+        const queryResultsListDOM = queryResults.map((queryResult) => (
             <QueryResult
                 key={queryResult.id}
                 queryExecution={queryResult}
@@ -140,7 +140,7 @@ class QueryViewNavigatorComponent extends React.PureComponent<IProps> {
     }
 }
 
-const mapStateToProps = (state: IStoreState, ownProps: IOwnProps) => ({
+const mapStateToProps = (state: IStoreState) => ({
     queryResults: queryExecutionResultSelector(state),
     isLoadingQueries: state.queryView.isLoading,
     queryViewFilters: state.queryView.filters,
@@ -148,8 +148,8 @@ const mapStateToProps = (state: IStoreState, ownProps: IOwnProps) => ({
     queryEngineById: queryEngineByIdEnvSelector(state),
 });
 
-const mapDispatchToProps = (dispatch: Dispatch, ownProps: IOwnProps) => ({
-    updateFilter: (filterKey, filterValue) => {
+const mapDispatchToProps = (dispatch: Dispatch) => ({
+    updateFilter: (filterKey: string, filterValue: any) => {
         dispatch(queryViewActions.updateFilter(filterKey, filterValue));
     },
 

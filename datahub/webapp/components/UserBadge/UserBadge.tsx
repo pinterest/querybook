@@ -13,10 +13,6 @@ type IProps = {
     mini?: boolean;
 } & ICommonUserLoaderProps;
 
-export interface IState {
-    loading: boolean;
-}
-
 export const UserBadge: React.FunctionComponent<IProps> = ({
     uid,
     name,

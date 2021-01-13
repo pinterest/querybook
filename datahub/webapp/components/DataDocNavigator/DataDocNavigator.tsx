@@ -27,7 +27,6 @@ import {
 import { useDrop } from 'react-dnd';
 import { DataDocDraggableType, BoardDraggableType } from './navigatorConst';
 import { IDragItem } from 'ui/DraggableList/types';
-import { IBoardItem } from 'const/board';
 
 export const DataDocNavigator: React.FC = () => {
     const loadedFilterModes = useSelector(

@@ -1,11 +1,4 @@
 // This file is to supply any functionality typescript still needs
-
-export type HTMLElementEvent<T extends HTMLElement> = Event & {
-    target: T;
-    // probably you might want to add the currentTarget as well
-    // currentTarget: T;
-};
-
 export function getEnumEntries<T>(
     enumDefObjectType: Record<string, T>
 ): Array<[string, T]> {

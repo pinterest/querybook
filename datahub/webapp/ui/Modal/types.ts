@@ -1,7 +1,6 @@
 interface IBaseModalProps {
     hideClose?: boolean;
     className?: string;
-    modalRoot?: HTMLElement;
 
     // defaults to '', set to null to hide title
     title?: string;

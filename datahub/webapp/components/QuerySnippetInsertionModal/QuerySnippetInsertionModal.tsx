@@ -3,7 +3,7 @@ import React from 'react';
 import { connect } from 'react-redux';
 
 import * as querySnippetsActions from 'redux/querySnippets/action';
-import { IStoreState, Dispatch } from 'redux/store/types';
+import { Dispatch, IStoreState } from 'redux/store/types';
 import { IQuerySnippet } from 'redux/querySnippets/types';
 import { queryEngineByIdEnvSelector } from 'redux/queryEngine/selector';
 
@@ -156,12 +156,12 @@ class QuerySnippetInsertionModalComponent extends React.Component<
     }
 }
 
-const mapStateToProps = (state: IStoreState, ownProps: IOwnProps) => ({
+const mapStateToProps = (state: IStoreState) => ({
     querySnippetById: state.querySnippets.querySnippetById,
     queryEngineById: queryEngineByIdEnvSelector(state),
 });
 
-const mapDispatchToProps = (dispatch, ownProps) => ({
+const mapDispatchToProps = (dispatch: Dispatch) => ({
     fetchQuerySnippetIfNeeded: (id: number) =>
         dispatch(querySnippetsActions.fetchQuerySnippetIfNeeded(id)),
 });

@@ -1,4 +1,4 @@
-import React, { useEffect, useState, useMemo, useRef } from 'react';
+import React, { useEffect, useState, useMemo } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import classNames from 'classnames';
 
@@ -9,9 +9,8 @@ import { SearchBar } from 'ui/SearchBar/SearchBar';
 import { IconButton } from 'ui/Button/IconButton';
 import { BoardCreateUpdateModal } from 'components/BoardCreateUpdateModal/BoardCreateUpdateModal';
 import { InfinityScroll } from 'ui/InfinityScroll/InfinityScroll';
-import { Icon } from 'ui/Icon/Icon';
-import './BoardList.scss';
 import { ListLink } from 'ui/Link/ListLink';
+import './BoardList.scss';
 
 interface IProps {
     onBoardClick: (id: IBoard) => any;

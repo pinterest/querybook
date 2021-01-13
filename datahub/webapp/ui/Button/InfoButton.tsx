@@ -4,13 +4,12 @@ import './InfoButton.scss';
 
 export interface IInfoButtonProps {
     layout?: PopoverLayout;
-    maxWidth?: number;
     popoverClassName?: string;
 }
 
 export const InfoButton: React.FunctionComponent<IInfoButtonProps> = ({
     layout = ['top'] as [PopoverDirection],
-    maxWidth,
+
     children,
     popoverClassName,
 }) => {

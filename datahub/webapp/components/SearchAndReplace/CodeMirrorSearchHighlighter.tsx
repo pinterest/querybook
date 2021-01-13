@@ -1,8 +1,5 @@
-import React, { useContext, useMemo, useEffect } from 'react';
-import {
-    SearchAndReplaceContext,
-    ISearchAndReplaceContextType,
-} from 'context/searchAndReplace';
+import React, { useMemo, useEffect } from 'react';
+import { ISearchAndReplaceContextType } from 'context/searchAndReplace';
 import { getCodemirrorOverlay } from 'lib/data-doc/search';
 
 export const CodeMirrorSearchHighlighter: React.FC<{

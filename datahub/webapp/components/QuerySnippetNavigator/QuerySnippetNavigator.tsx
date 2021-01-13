@@ -309,7 +309,7 @@ class QuerySnippetNavigatorComponent extends React.PureComponent<
     }
 }
 
-function mapStateToProps(state: IStoreState, ownProps: IOwnProps) {
+function mapStateToProps(state: IStoreState) {
     return {
         querySnippetById: state.querySnippets.querySnippetById,
         querySnippetIds: state.querySnippets.querySnippetIds,
@@ -317,7 +317,7 @@ function mapStateToProps(state: IStoreState, ownProps: IOwnProps) {
     };
 }
 
-function mapDispatchToProps(dispatch: Dispatch, ownProps: IOwnProps) {
+function mapDispatchToProps(dispatch: Dispatch) {
     return {
         searchQuerySnippets: bindActionCreators(
             querySnippetsActions.searchQuerySnippets,

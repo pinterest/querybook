@@ -2,7 +2,6 @@ import React from 'react';
 import { useSelector } from 'react-redux';
 import classNames from 'classnames';
 
-import history from 'lib/router-history';
 import {
     currentEnvironmentSelector,
     userEnvironmentNamesSelector,

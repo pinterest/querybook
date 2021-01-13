@@ -46,11 +46,11 @@ export const defaultReactSelectStyles = {
             color: 'var(--text-hover-color)',
         },
     }),
-    placeholder: (styles, state) => ({
+    placeholder: (styles) => ({
         ...styles,
         color: 'var(--light-text-color)',
     }),
-    indicatorSeparator: (styles, state) => ({
+    indicatorSeparator: (styles) => ({
         ...styles,
         backgroundColor: 'transparent', // invisible
     }),

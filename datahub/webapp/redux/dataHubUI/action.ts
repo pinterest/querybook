@@ -30,7 +30,7 @@ export function removeConfirmation(): IRemoveConfirmationAction {
 }
 
 export function loadAnnouncements(): ThunkResult<Promise<IAnnouncement[]>> {
-    return async (dispatch, state) => {
+    return async (dispatch) => {
         const { data } = await ds.fetch('/announcement/');
         dispatch({
             type: '@@datahubUI/RECEIVE_ANNOUNCEMENTS',
@@ -42,7 +42,7 @@ export function loadAnnouncements(): ThunkResult<Promise<IAnnouncement[]>> {
 }
 
 export function loadDismissedAnnouncements(): ThunkResult<Promise<number[]>> {
-    return async (dispatch, getState) => {
+    return async (dispatch) => {
         const ids =
             (await localStore.get<DismissedAnnouncementValue>(
                 DISMISSED_ANNOUNCEMENT_KEY

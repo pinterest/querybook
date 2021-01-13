@@ -350,7 +350,6 @@ export function fetchActiveQueryExecutionForUser(
         );
         const {
             queryExecution: queryExecutionById = {},
-            dataCell: dataDocCellById = {},
             statementExecution: statementExecutionById = {},
         } = normalizedData.entities;
 
@@ -370,7 +369,7 @@ export function pollQueryExecution(
     queryExecutionId: number,
     docId?: number
 ): ThunkResult<Promise<void>> {
-    return async (dispatch, getState) => {
+    return async (dispatch) => {
         await queryExecutionSocket.addQueryExecution(
             queryExecutionId,
             docId,
@@ -423,49 +422,6 @@ export function fetchExporters(): ThunkResult<Promise<any>> {
         });
 
         return exporters;
-    };
-}
-
-export function fetchDownloadUrl(
-    statementExecutionId: number
-): ThunkResult<Promise<string>> {
-    return async (dispatch, getState) => {
-        const state = getState();
-        const statementExecution =
-            state.queryExecutions.statementExecutionById[statementExecutionId];
-        if (
-            statementExecution &&
-            !statementExecution.downloadUrl &&
-            !statementExecution.downloadUrlFailed
-        ) {
-            const { id, result_row_count: resultRowCount } = statementExecution;
-            if (resultRowCount > 0) {
-                try {
-                    const { data: url } = await ds.fetch(
-                        `/statement_execution/${id}/s3_url/`
-                    );
-                    dispatch({
-                        type: '@@queryExecutions/RECEIVE_DOWNLOAD_URL',
-                        payload: {
-                            statementExecutionId,
-                            downloadUrl: url,
-                        },
-                    });
-                    return url;
-                } catch (e) {
-                    dispatch({
-                        type: '@@queryExecutions/RECEIVE_DOWNLOAD_URL',
-                        payload: {
-                            statementExecutionId,
-                            failed: true,
-                            e,
-                        },
-                    });
-                }
-            }
-        } else {
-            return statementExecution.downloadUrl;
-        }
     };
 }
 

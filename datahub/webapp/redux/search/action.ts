@@ -79,6 +79,7 @@ function resetSearchResult(): ISearchResultResetAction {
         type: '@@search/SEARCH_RESULT_RESET',
     };
 }
+
 export function resetSearch(): IResetSearchAction {
     return {
         type: '@@search/SEARCH_RESET',

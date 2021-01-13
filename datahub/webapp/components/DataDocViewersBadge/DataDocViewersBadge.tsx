@@ -1,4 +1,3 @@
-import classNames from 'classnames';
 import { bind } from 'lodash-decorators';
 import { connect } from 'react-redux';
 import React from 'react';
@@ -7,7 +6,6 @@ import { IStoreState, Dispatch } from 'redux/store/types';
 import * as dataDocActions from 'redux/dataDoc/action';
 import * as dataDocSelectors from 'redux/dataDoc/selector';
 
-import { UserAvatar } from 'components/UserBadge/UserAvatar';
 import { DataDocViewersList } from 'components/DataDocViewersList/DataDocViewersList';
 import './DataDocViewersBadge.scss';
 import { Popover } from 'ui/Popover/Popover';

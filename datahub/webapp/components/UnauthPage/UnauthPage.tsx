@@ -3,7 +3,7 @@ import React from 'react';
 import styled from 'styled-components';
 
 import { Center } from 'ui/Center/Center';
-import { Tabs, ITabItem } from 'ui/Tabs/Tabs';
+import { Tabs } from 'ui/Tabs/Tabs';
 
 import { LoginForm } from './LoginForm';
 import { SignupForm } from './SignupForm';

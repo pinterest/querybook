@@ -13,13 +13,8 @@ export interface ISidebarProps extends ResizableProps {
     right?: boolean;
     left?: boolean;
 
-    initiallyHidden?: boolean;
     className?: string;
     borderless?: boolean;
-}
-
-export interface ISidebarState {
-    isVisible: boolean;
 }
 
 const StyledSidebar = styled.div.attrs({
@@ -70,33 +65,29 @@ export const Sidebar: React.FunctionComponent<ISidebarProps> = ({
     initialWidth = 250,
     right = false,
     left = true,
-    initiallyHidden = false,
     borderless = false,
     className = '',
 
     ...resizableProps
-}) => {
-    const [visible, setVisible] = React.useState(!initiallyHidden);
-    return (
-        <StyledSidebar
-            isVisible={visible}
-            left={left}
-            right={right}
-            borderless={borderless}
-            className={className}
-        >
-            <FullHeight className="sidebar-content">
-                <Resizable
-                    defaultSize={{
-                        width: `${initialWidth}px`,
-                        height: '100%',
-                    }}
-                    enable={enableResizable({ right: left, left: right })}
-                    {...resizableProps}
-                >
-                    <FullHeight>{children}</FullHeight>
-                </Resizable>
-            </FullHeight>
-        </StyledSidebar>
-    );
-};
+}) => (
+    <StyledSidebar
+        isVisible={true}
+        left={left}
+        right={right}
+        borderless={borderless}
+        className={className}
+    >
+        <FullHeight className="sidebar-content">
+            <Resizable
+                defaultSize={{
+                    width: `${initialWidth}px`,
+                    height: '100%',
+                }}
+                enable={enableResizable({ right: left, left: right })}
+                {...resizableProps}
+            >
+                <FullHeight>{children}</FullHeight>
+            </Resizable>
+        </FullHeight>
+    </StyledSidebar>
+);

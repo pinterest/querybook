@@ -51,7 +51,7 @@ export function searchQuerySnippets(
 export function updateQuerySnippet(
     querySnippet: IQueryForm
 ): ThunkResult<Promise<IQuerySnippet>> {
-    return async (dispatch, getState) => {
+    return async (dispatch) => {
         const {
             id,
             context,

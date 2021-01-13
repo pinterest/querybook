@@ -22,10 +22,6 @@ export interface IDebouncedInputProps extends IDebouncedInputStylingProps {
     onChange: (value: string) => any;
 }
 
-export interface IDebouncedInputState {
-    value: string;
-}
-
 export const DebouncedInput: React.FunctionComponent<IDebouncedInputProps> = ({
     debounceTime = 500,
     debounceMethod = 'debounce',
