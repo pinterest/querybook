@@ -1,6 +1,5 @@
 from html import escape
 import math
-import json
 import re
 
 from const.impression import ImpressionItemType
@@ -14,6 +13,7 @@ from lib.utils.utils import (
 from lib.utils.decorators import in_mem_memoized
 from lib.logger import get_logger
 from lib.config import get_config_value
+from lib.richtext import richtext_to_plaintext
 from app.db import (
     # TODO: We should use follower db instead
     with_session,
@@ -99,7 +99,7 @@ def datadocs_to_es(datadoc, session=None):
     cells_as_text = []
     for cell in datadoc.cells:
         if cell.cell_type == DataCellType.text:
-            cells_as_text.append(simple_parse_draftjs_content_state(cell.context) or "")
+            cells_as_text.append(richtext_to_plaintext(cell.context))
         elif cell.cell_type == DataCellType.query:
             cell_title = cell.meta.get("title", "")
             cell_text = (
@@ -134,23 +134,6 @@ def datadocs_to_es(datadoc, session=None):
         "readable_user_ids": editors,
     }
     return expand_datadoc
-
-
-@with_exception
-def simple_parse_draftjs_content_state(value):
-    try:
-        if value is None:
-            return ""
-        content_state = json.loads(value)
-    except Exception:
-        # For old text cells the value was plain text
-        LOG.debug("Text cell is not json, content: {}".format(value))
-        return value
-
-    blocks = content_state.get("blocks", [])
-    blocks_text = [block.get("text", "") for block in blocks]
-    joined_blocks = "\n".join(blocks_text)
-    return joined_blocks
 
 
 @with_exception
@@ -244,13 +227,10 @@ def table_to_es(table, session=None):
     column_names = list(map(lambda c: c.name, table.columns))
     schema_name = schema.name
     table_name = table.name
-    description = escape(
-        (
-            simple_parse_draftjs_content_state(table.information.description)
-            if table.information
-            else ""
-        )
-        or ""
+    description = (
+        richtext_to_plaintext(table.information.description, escape=True)
+        if table.information
+        else ""
     )
 
     full_name = "{}.{}".format(schema_name, table_name)

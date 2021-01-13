@@ -4,7 +4,7 @@ import scrollIntoView from 'smooth-scroll-into-view-if-needed';
 
 import { RichTextEditor } from 'ui/RichTextEditor/RichTextEditor';
 import { ISearchAndReplaceContextType } from 'context/searchAndReplace';
-import { LinkDecorator } from 'lib/draft-js-utils';
+import { LinkDecorator } from 'lib/richtext';
 import { makeSearchHighlightDecorator } from 'components/SearchAndReplace/SearchHighlightDecorator';
 
 export const DraftJsSearchHighlighter: React.FC<{

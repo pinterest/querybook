@@ -1,9 +1,10 @@
-import { convertToRaw, ContentState } from 'draft-js';
+import type { ContentState } from 'draft-js';
 
-import { IDataCellMeta } from 'const/datadoc';
+import type { IDataCellMeta } from 'const/datadoc';
 import ds from 'lib/datasource';
 import { BatchManager, spreadMergeFunction } from 'lib/batch/batch-manager';
 import dataDocSocket from 'lib/data-doc/datadoc-socketio';
+import { convertIfContentStateToHTML } from 'lib/richtext/serialize';
 
 export class DataDocSaveManager {
     private dataDocSaverByDocId: Record<
@@ -65,12 +66,9 @@ export class DataCellSaveManager {
             this.itemSaverByCellId[cellId] = new BatchManager({
                 mergeFunction: spreadMergeFunction,
                 processFunction: (data) => {
-                    const stringifiedContext =
-                        data.context != null
-                            ? typeof data.context === 'string'
-                                ? data.context
-                                : JSON.stringify(convertToRaw(data.context))
-                            : undefined;
+                    const stringifiedContext = convertIfContentStateToHTML(
+                        data.context
+                    );
 
                     const fields = {
                         ...(stringifiedContext != null && {

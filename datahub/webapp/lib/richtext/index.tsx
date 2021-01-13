@@ -47,29 +47,6 @@ export function isSoftNewLineEvent(event: React.KeyboardEvent) {
     );
 }
 
-// Used mainly for chart descriptions, which could still be strings or raw
-export function convertRawToContentState(raw: string): DraftJs.ContentState {
-    try {
-        if (raw) {
-            const result = JSON.parse(raw);
-            return DraftJs.convertFromRaw(result);
-        } else {
-            return DraftJs.ContentState.createFromText('');
-        }
-    } catch (e) {
-        const htmlBlocks = DraftJs.convertFromHTML((raw as string) || '');
-
-        const contentState = htmlBlocks.contentBlocks
-            ? DraftJs.ContentState.createFromBlockArray(
-                  htmlBlocks.contentBlocks,
-                  htmlBlocks.entityMap
-              )
-            : DraftJs.ContentState.createFromText('');
-
-        return contentState;
-    }
-}
-
 export type RichTextEditorCommand =
     | DraftJs.DraftEditorCommand
     | 'show-link-input';
