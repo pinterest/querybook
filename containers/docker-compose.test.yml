@@ -2,6 +2,6 @@ version: '2.1'
 
 services:
     test:
-        container_name: datahub_test
-        image: datahub-dev:latest
-        command: './datahub/scripts/run_test'
+        container_name: querybook_test
+        image: querybook-dev:latest
+        command: './querybook/scripts/run_test'

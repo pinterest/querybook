@@ -2,14 +2,14 @@ version: '2.1'
 
 services:
     web:
-        image: datahub-dev:latest
+        image: querybook-dev:latest
         cap_add:
             - SYS_PTRACE
         tmpfs: /tmp:exec,mode=777
         tty: true
         stdin_open: true
         # network_mode: "host"
-        command: './datahub/scripts/bundled_docker_run_web'
+        command: './querybook/scripts/bundled_docker_run_web'
         ports:
             - '10001:10001'
         expose:
@@ -19,12 +19,12 @@ services:
         restart: 'always'
         volumes:
             # This is for code change via watcher
-            - $PWD:/opt/datahub
+            - $PWD:/opt/querybook
             # See https://stackoverflow.com/questions/29181032/add-a-volume-to-docker-but-exclude-a-sub-folder
-            - /opt/datahub/node_modules/
+            - /opt/querybook/node_modules/
             # Make sure the build files don't leak back
-            - /opt/datahub/dist/
-            - $PWD/containers/bundled_datahub_config.yaml:/opt/datahub/datahub/config/datahub_config.yaml
+            - /opt/querybook/dist/
+            - $PWD/containers/bundled_querybook_config.yaml:/opt/querybook/querybook/config/querybook_config.yaml
             # - file:/opt/store/
         depends_on:
             mysql:
@@ -34,18 +34,18 @@ services:
             elasticsearch:
                 condition: service_healthy
     worker:
-        image: datahub-dev:latest
+        image: querybook-dev:latest
         cap_add:
             - SYS_PTRACE
         tmpfs: /tmp:exec,mode=777
         tty: true
         stdin_open: true
-        command: './datahub/scripts/runservice worker'
+        command: './querybook/scripts/runservice worker'
         # restart: "always"
         volumes:
             # This is for code change via watcher
-            - $PWD:/opt/datahub
-            - $PWD/containers/bundled_datahub_config.yaml:/opt/datahub/datahub/config/datahub_config.yaml
+            - $PWD:/opt/querybook
+            - $PWD/containers/bundled_querybook_config.yaml:/opt/querybook/querybook/config/querybook_config.yaml
             # - file:/opt/store/
         depends_on:
             mysql:
@@ -55,21 +55,21 @@ services:
             elasticsearch:
                 condition: service_healthy
     scheduler:
-        image: datahub-dev:latest
+        image: querybook-dev:latest
         cap_add:
             - SYS_PTRACE
         tmpfs: /tmp:exec,mode=777
         tty: true
         stdin_open: true
-        command: './datahub/scripts/runservice scheduler --pidfile="/opt/celerybeat.pid"'
+        command: './querybook/scripts/runservice scheduler --pidfile="/opt/celerybeat.pid"'
         volumes:
             # This is for code change via watcher
-            - $PWD:/opt/datahub
+            - $PWD:/opt/querybook
             # See https://stackoverflow.com/questions/29181032/add-a-volume-to-docker-but-exclude-a-sub-folder
-            - /opt/datahub/node_modules/
+            - /opt/querybook/node_modules/
             # Make sure the build files don't leak back
-            - /opt/datahub/dist/
-            - $PWD/containers/bundled_datahub_config.yaml:/opt/datahub/datahub/config/datahub_config.yaml
+            - /opt/querybook/dist/
+            - $PWD/containers/bundled_querybook_config.yaml:/opt/querybook/querybook/config/querybook_config.yaml
         depends_on:
             mysql:
                 condition: service_healthy
@@ -101,7 +101,7 @@ services:
             - my-db:/var/lib/mysql
         environment:
             MYSQL_HOST: mysql:3306
-            MYSQL_DATABASE: datahub2
+            MYSQL_DATABASE: querybook2
             MYSQL_USER: test
             MYSQL_PASSWORD: passw0rd
             # Password for root access
@@ -155,4 +155,4 @@ volumes:
     #     driver_opts:
     #         type: 'none'
     #         o: 'bind'
-    #         device: '/mnt/datahub-store/'
+    #         device: '/mnt/querybook-store/'

@@ -38,7 +38,7 @@ node_modules
 .vscode.env
 
 # Jest coverage files
-datahub/webapp/coverage/
+querybook/webapp/coverage/
 
 
 # Documentation site

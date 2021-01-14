@@ -1,23 +1,23 @@
 {
-    "name": "datahub",
+    "name": "querybook",
     "version": "2.5.0",
     "description": "A Big Data Webapp",
     "private": true,
     "scripts": {
         "test": "jest",
         "build": "npx webpack",
-        "storybook": "STORYBOOK_USER=${USER} start-storybook -p 6006",
+        "storybook": "STORYBOOK_USER=${USER} start-storybook -s ./querybook/static:/static -p 6006",
         "build-storybook": "build-storybook",
         "dev": "webpack-dev-server --mode development --open --hot",
-        "lint": "eslint 'datahub/webapp/*/**/*.{ts,tsx}' --quiet --fix",
+        "lint": "eslint 'querybook/webapp/*/**/*.{ts,tsx}' --quiet --fix",
         "tsc-check": "tsc --noEmit"
     },
     "repository": {
         "type": "git",
-        "url": "git+ssh://git@github.com:pinterest/datahub.git"
+        "url": "git+ssh://git@github.com:pinterest/querybook.git"
     },
     "keywords": [
-        "datahub",
+        "querybook",
         "big",
         "data",
         "hive",
@@ -25,9 +25,9 @@
     ],
     "author": "Analytics Platform",
     "bugs": {
-        "url": "https://github.com/pinterest/datahub/issues"
+        "url": "https://github.com/pinterest/querybook/issues"
     },
-    "homepage": "https://github.com/pinterest/datahub",
+    "homepage": "https://github.com/pinterest/querybook",
     "engines": {
         "node": ">=12.0.0"
     },

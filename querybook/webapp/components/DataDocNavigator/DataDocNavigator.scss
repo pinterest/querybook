@@ -1,0 +1,65 @@
+.DataDocNavigator {
+    display: flex;
+    flex-direction: column;
+    height: 100%;
+
+    .data-docs {
+        overflow-y: auto;
+        overflow-x: hidden;
+    }
+
+    .IconButton {
+        padding: 4px;
+    }
+
+    .list-header {
+        display: flex;
+        border-bottom: 1px solid var(--border-color);
+        justify-content: space-between;
+
+        // for safari
+        flex-shrink: 0;
+        .SearchBar {
+            flex-grow: 1;
+            input {
+                width: 100%;
+                padding: 12px;
+            }
+        }
+    }
+
+    .tabs {
+        padding-top: 5px;
+    }
+
+    .querybook-table-filters {
+        height: 30px;
+        margin: 10px;
+        position: relative;
+        box-sizing: border-box;
+    }
+
+    .data-docs-list-separator {
+        border-bottom: 5px solid var(--border-color);
+    }
+
+    .data-docs-list-header {
+        background: var(--border-color);
+        padding: 2px 10px;
+        font-size: var(--xsmall-text-size);
+    }
+
+    .nav-favorite-dragged-over {
+        background-color: var(--color-accent-bg-hover);
+
+        .DataDocNavigatorSection .navigator-header {
+            background-color: var(--color-accent-bg-hover);
+        }
+    }
+}
+
+@-moz-document url-prefix() {
+    .DataDocNavigator .data-docs .list-item {
+        white-space: nowrap;
+    }
+}

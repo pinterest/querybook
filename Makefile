@@ -29,10 +29,10 @@ prod_scheduler:
 	docker-compose -f containers/docker-compose.prod.yml run scheduler
 
 prod_image:
-	docker build --pull -t datahub .
+	docker build --pull -t querybook .
 
 dev_image:
-	docker build --pull -t datahub-dev . --build-arg PRODUCTION=false
+	docker build --pull -t querybook-dev . --build-arg PRODUCTION=false
 
 docs:
 	docker-compose -f docs_website/docker-compose.yml --project-directory=. up --build
@@ -48,7 +48,7 @@ install_yarn_packages:
 	yarn install --ignore-scripts --frozen-lockfile --pure-lockfile --ignore-engines && npm rebuild node-sass
 
 remove_running_dev_image:
-	$(eval RUNNING_CONTAINERS=$(shell sh -c 'docker ps -q --filter name=datahub_devserver'))
+	$(eval RUNNING_CONTAINERS=$(shell sh -c 'docker ps -q --filter name=querybook_devserver'))
 	docker kill $(RUNNING_CONTAINERS) || true
 
 test: dev_image

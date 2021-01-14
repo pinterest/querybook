@@ -1,0 +1,6 @@
+#!/usr/bin/env bash
+
+cd querybook
+PYTHONPATH=server alembic upgrade head
+PYTHONPATH=server python server/scripts/init_es.py
+cd -

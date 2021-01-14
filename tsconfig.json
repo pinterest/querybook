@@ -8,7 +8,7 @@
         "jsx": "react",
         "lib": ["dom", "es2017", "esnext", "es2018.promise"],
         "suppressImplicitAnyIndexErrors": true,
-        "baseUrl": "./datahub/webapp/",
+        "baseUrl": "./querybook/webapp/",
         "paths": {
             "config/*": ["../config/*"]
         },
@@ -16,6 +16,6 @@
         "allowSyntheticDefaultImports": true,
         "experimentalDecorators": true
     },
-    "include": ["datahub/webapp/**/*"],
+    "include": ["querybook/webapp/**/*"],
     "exclude": ["node_modules"]
 }

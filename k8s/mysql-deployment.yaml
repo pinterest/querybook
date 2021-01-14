@@ -22,7 +22,7 @@ spec:
                         name: mysql
                   env:
                       - name: MYSQL_DATABASE
-                        value: datahub2
+                        value: querybook2
                       - name: MYSQL_HOST
                         value: mysql:3306
                       - name: MYSQL_PASSWORD

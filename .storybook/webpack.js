@@ -26,7 +26,7 @@ module.exports = async (config) => {
     });
     config.module.rules.push({
         test: /\.ya?ml$/,
-        include: path.resolve(__dirname, 'datahub/config'),
+        include: path.resolve(__dirname, 'querybook/config'),
         loader: 'json-loader!yaml-loader',
     });
     config.module.rules.push({
@@ -36,7 +36,7 @@ module.exports = async (config) => {
     config.resolve.extensions.push('.ts', '.tsx');
     config.resolve.modules = [
         ...(config.resolve.modules || []),
-        path.resolve('./datahub/webapp'),
+        path.resolve('./querybook/webapp'),
     ];
 
     return config;
