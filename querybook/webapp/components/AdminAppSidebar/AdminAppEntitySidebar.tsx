@@ -43,7 +43,7 @@ export const AdminAppEntitySidebar: React.FunctionComponent<IAdminAppEntitySideb
         <div className="AdminAppEntitySidebar">
             <div className="AdminAppEntitySidebar-main">
                 <div
-                    className="AdminAppEntitySidebar-top p6"
+                    className="AdminAppEntitySidebar-top p4"
                     onClick={() => history.push('/admin/')}
                 >
                     <QuerybookLogo size={1.3} withBrandMark />
