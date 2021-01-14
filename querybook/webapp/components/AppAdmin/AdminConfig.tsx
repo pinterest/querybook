@@ -1,0 +1,68 @@
+import React, { useMemo, useState } from 'react';
+import { useDataFetch } from 'hooks/useDataFetch';
+import { Table } from 'ui/Table/Table';
+import { SearchBar } from 'ui/SearchBar/SearchBar';
+
+export const AdminConfig = ({}) => {
+    const { data: querybookConfig, isLoading } = useDataFetch<
+        Record<string, unknown>
+    >({
+        url: '/admin/querybook_config/',
+    });
+    const [filterStr, setFilterStr] = useState('');
+
+    const processedConfigs = useMemo(
+        () =>
+            querybookConfig
+                ? Object.entries(querybookConfig).map(([key, value]) => ({
+                      key,
+                      value: JSON.stringify(value ?? 'null'),
+                  }))
+                : [],
+        [querybookConfig]
+    );
+    const filteredConfigs = useMemo(
+        () =>
+            processedConfigs.filter(
+                (config) =>
+                    !filterStr ||
+                    config.key.toLowerCase().includes(filterStr.toLowerCase())
+            ),
+        [processedConfigs, filterStr]
+    );
+
+    let contentDOM = null;
+    if (!isLoading) {
+        contentDOM = (
+            <div className="mt8 p8">
+                <SearchBar
+                    value={filterStr}
+                    onSearch={setFilterStr}
+                    placeholder="Filter Key"
+                    className="mb4"
+                />
+                <Table
+                    colNameToWidths={{ value: 200 }}
+                    rows={filteredConfigs}
+                    cols={['key', 'value']}
+                    showAllRows={true}
+                />
+            </div>
+        );
+    }
+
+    return (
+        <div className="AdminTaskStatus">
+            <div className="AdminLanding-top">
+                <div className="AdminLanding-title">
+                    Querybook Configuration
+                </div>
+                <div className="AdminLanding-desc">
+                    This is a readonly view of the querybook config. Please
+                    check admin_guide/infra_config.md for customization.
+                </div>
+            </div>
+            {contentDOM}
+        </div>
+    );
+};

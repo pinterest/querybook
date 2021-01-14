@@ -1,0 +1,63 @@
+#!/bin/bash
+
+run_python_unit_test() {
+    echo 'Start running python unit tests >>>>>>>>>>>>>>>>>>>>>>>>>>>>'
+    py.test querybook/tests || exit 1
+}
+
+run_webpack_test() {
+    echo 'Start running webpack >>>>>>>>>>>>>>>>>>>>>>>>>>>>'
+    ./node_modules/.bin/webpack --env.NODE_ENV=production
+    if [ $? -ne 0 ]; then
+        echo "Webpack test failed"
+        exit 1
+    fi
+}
+
+run_js_unit_test() {
+    echo 'Start running js unit tests >>>>>>>>>>>>>>>>>>>>>>>>>>>>'
+    NODE_ENV=test ./node_modules/.bin/jest
+}
+
+run_ts_validation() {
+    echo 'Start running ts validation  >>>>>>>>>>>>>>>>>>>>>>>>>>>>'
+    npm run tsc-check
+}
+
+run_eslint_validation() {
+    echo 'Start running eslint validation  >>>>>>>>>>>>>>>>>>>>>>>>>>>>'
+    npm run lint
+}
+
+tests=(
+    "run_python_unit_test"
+    "run_ts_validation"
+    "run_js_unit_test"
+    "run_eslint_validation"
+    "run_webpack_test"
+)
+
+children_pids=()
+
+clen=`expr "${#tests[@]}" - 1`
+
+for i in `seq 0 "$clen"`; do
+    ${tests[$i]} &
+    children_pids+=("$!")
+done
+
+wait_and_get_exit_codes() {
+    children=("$@")
+    EXIT_CODE=0
+    for job in "${children[@]}"; do
+       CODE=0;
+       wait ${job} || CODE=$?
+       if [[ "${CODE}" != "0" ]]; then
+            EXIT_CODE=1
+       fi
+   done
+}
+
+wait_and_get_exit_codes "${children_pids[@]}"
+
+exit "$EXIT_CODE"

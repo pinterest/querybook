@@ -2,7 +2,7 @@ version: '2.1'
 
 services:
     base:
-        image: datahub-dev:latest
+        image: querybook-dev:latest
         cap_add:
             - SYS_PTRACE
         tmpfs: /tmp:exec,mode=777
@@ -14,23 +14,23 @@ services:
         # restart: "always"
         volumes:
             # This is for code change via watcher
-            - $PWD:/opt/datahub
+            - $PWD:/opt/querybook
             # See https://stackoverflow.com/questions/29181032/add-a-volume-to-docker-but-exclude-a-sub-folder
-            - /opt/datahub/node_modules/
+            - /opt/querybook/node_modules/
             # Make sure the build files don't leak back
-            - /opt/datahub/dist/
+            - /opt/querybook/dist/
     web:
         extends:
             service: base
-        command: './datahub/scripts/docker_run_interactive ./datahub/scripts/runservice web ${PORT-10001}'
+        command: './querybook/scripts/docker_run_interactive ./querybook/scripts/runservice web ${PORT-10001}'
     worker:
         extends:
             service: base
-        command: ./datahub/scripts/docker_run_interactive ./datahub/scripts/runservice worker
+        command: ./querybook/scripts/docker_run_interactive ./querybook/scripts/runservice worker
     scheduler:
         extends:
             service: base
-        command: './datahub/scripts/docker_run_interactive ./datahub/scripts/runservice scheduler'
+        command: './querybook/scripts/docker_run_interactive ./querybook/scripts/runservice scheduler'
     terminal:
         extends:
             service: base

@@ -1,0 +1,65 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`matches enzyme snapshots matches snapshot - size 1`] = `
+<styled.span
+  size={8}
+>
+  <span
+    className="querybook-wordmark"
+  >
+    <span
+      className="querybook-title-first-part"
+    >
+      Query
+    </span>
+    <span
+      className="querybook-title-last-part"
+    >
+      book
+    </span>
+  </span>
+</styled.span>
+`;
+
+exports[`matches enzyme snapshots matches snapshot 1`] = `
+<styled.span
+  size={2}
+>
+  <span
+    className="querybook-wordmark"
+  >
+    <span
+      className="querybook-title-first-part"
+    >
+      Query
+    </span>
+    <span
+      className="querybook-title-last-part"
+    >
+      book
+    </span>
+  </span>
+</styled.span>
+`;
+
+exports[`matches test renderer snapshot serializes the styles 1`] = `
+<span
+  className="sc-bdfBwQ krGXPh"
+  size={2}
+>
+  <span
+    className="querybook-wordmark"
+  >
+    <span
+      className="querybook-title-first-part"
+    >
+      Query
+    </span>
+    <span
+      className="querybook-title-last-part"
+    >
+      book
+    </span>
+  </span>
+</span>
+`;

@@ -2,7 +2,7 @@ version: '2.1'
 
 services:
     base:
-        image: datahub:latest
+        image: querybook:latest
         cap_add:
             - SYS_PTRACE
         tmpfs: /tmp:exec,mode=777
@@ -13,20 +13,20 @@ services:
             PORT: ${PORT}
         volumes:
             # This is for code change via watcher
-            - $PWD:/opt/datahub
+            - $PWD:/opt/querybook
             # See https://stackoverflow.com/questions/29181032/add-a-volume-to-docker-but-exclude-a-sub-folder
-            - /opt/datahub/node_modules/
+            - /opt/querybook/node_modules/
             # Make sure the build files don't leak back
-            - /opt/datahub/dist/
+            - /opt/querybook/dist/
     web:
         extends:
             service: base
-        command: './datahub/scripts/runservice prod_web'
+        command: './querybook/scripts/runservice prod_web'
     worker:
         extends:
             service: base
-        command: ./datahub/scripts/runservice prod_worker -c 150 -l info -Ofair -n celery@%h
+        command: ./querybook/scripts/runservice prod_worker -c 150 -l info -Ofair -n celery@%h
     scheduler:
         extends:
             service: base
-        command: './datahub/scripts/runservice prod_scheduler'
+        command: './querybook/scripts/runservice prod_scheduler'

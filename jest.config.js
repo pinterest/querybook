@@ -13,7 +13,7 @@ const config = {
     },
     setupFiles: ['<rootDir>/__tests__/setup/setup.js'],
     testPathIgnorePatterns: ['<rootDir>/__tests__/setup/'],
-    rootDir: './datahub/webapp/',
+    rootDir: './querybook/webapp/',
     modulePaths: ['<rootDir>'],
     globalSetup: '<rootDir>/__tests__/setup/jest-global-setup.js',
 };

@@ -1,0 +1,51 @@
+#!/usr/bin/env bash
+
+SERVICE_NAME=$1
+SERVICE_OPTIONS="${@:2}"
+
+if [ -z "$SERVICE_NAME" ]; then
+    echo "Usage: $0 [SERVICE] [SERVICE_OPTIONS]"
+    echo "For example: $0 web --debug"
+    exit -1
+fi
+
+COMMAND=""
+case "$SERVICE_NAME" in
+"web")
+    COMMAND="python3 querybook/server/runweb.py --debug"
+    ;;
+"worker")
+    COMMAND="watchmedo auto-restart -d querybook -p '*.py' -R -- celery worker -A tasks.all_tasks --loglevel=DEBUG"
+    ;;
+"scheduler")
+    COMMAND="watchmedo auto-restart -d querybook -p '*.py' -R -- celery beat -A tasks.all_tasks -S scheduler.DatabaseScheduler --loglevel=DEBUG"
+    ;;
+"worker_scheduler") # FIXME: this doesn't schedule task as desired
+    COMMAND="celery -A tasks.all_tasks worker --beat --scheduler scheduler.DatabaseScheduler --loglevel=INFO"
+    ;;
+
+"prod_web")
+    # gunicorn doesn't work with websocket
+    # COMMAND="gunicorn -c querybook/server/gunicorn_conf.py app.server:flask_app"
+    COMMAND="uwsgi --ini uwsgi.ini"
+    ;;
+"prod_worker")
+    COMMAND="celery worker -A tasks.all_tasks"
+    ;;
+"prod_scheduler")
+    COMMAND="celery beat -A tasks.all_tasks -S scheduler.DatabaseScheduler"
+    ;;
+"webpack")
+    COMMAND="npx webpack"
+    ;;
+
+esac
+
+if [ -z "$COMMAND" ]; then
+    echo "Service Unavailable"
+    exit -1
+fi
+
+COMMAND="${COMMAND} ${SERVICE_OPTIONS}"
+echo "Running: $COMMAND"
+eval $COMMAND

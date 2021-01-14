@@ -13,7 +13,7 @@ jobs:
             - name: Publish to Registry
               uses: elgohr/Publish-Docker-Github-Action@master
               with:
-                  name: ${{ github.repository }}/datahub
+                  name: ${{ github.repository }}/querybook
                   username: $GITHUB_ACTOR
                   password: ${{ secrets.GITHUB_TOKEN }}
                   registry: docker.pkg.github.com

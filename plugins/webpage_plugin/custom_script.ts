@@ -26,7 +26,7 @@ interface IColumnTransformer {
     transform: (v: any) => React.ReactNode;
 }
 
-// Use the following definitions to override default DataHub
+// Use the following definitions to override default Querybook
 // behavior
 declare global {
     /* tslint:disable:interface-name */

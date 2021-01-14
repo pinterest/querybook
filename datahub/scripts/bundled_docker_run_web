@@ -1,4 +1,0 @@
-#!/usr/bin/env bash
-
-./datahub/scripts/init_db
-./datahub/scripts/runservice web ${PORT-10001}

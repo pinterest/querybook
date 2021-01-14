@@ -104,5 +104,5 @@ Last but not least, remember to set docker environment variable QUERYBOOK_PLUGIN
 
 ```Dockerfile
 ENV QUERYBOOK_PLUGIN=/opt/plugins
-ENV PYTHONPATH=/opt/datahub/datahub/server:/opt/plugins
+ENV PYTHONPATH=/opt/querybook/querybook/server:/opt/plugins
 ```

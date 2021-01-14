@@ -17,8 +17,8 @@ function getDevServerSettings(env, PROD) {
     }
 
     const DEVSERVER_PORT = 3000;
-    const DATAHUB_UPSTREAM =
-        (env && env.DATAHUB_UPSTREAM) || `http://localhost:${DEVSERVER_PORT}`;
+    const QUERYBOOK_UPSTREAM =
+        (env && env.QUERYBOOK_UPSTREAM) || `http://localhost:${DEVSERVER_PORT}`;
     const settings = {
         hot: true,
 
@@ -27,7 +27,7 @@ function getDevServerSettings(env, PROD) {
         },
         proxy: {
             '/ds/*': {
-                target: DATAHUB_UPSTREAM,
+                target: QUERYBOOK_UPSTREAM,
                 changeOrigin: true,
                 secure: false,
                 headers: {
@@ -38,12 +38,12 @@ function getDevServerSettings(env, PROD) {
                 bypass: function (req, res, proxyOptions) {},
             },
             '/-/socket.io/*': {
-                target: DATAHUB_UPSTREAM,
+                target: QUERYBOOK_UPSTREAM,
                 changeOrigin: true,
                 ws: true,
             },
             '/static/*': {
-                target: DATAHUB_UPSTREAM,
+                target: QUERYBOOK_UPSTREAM,
                 changeOrigin: true,
             },
         },
@@ -51,10 +51,10 @@ function getDevServerSettings(env, PROD) {
         publicPath: '/build/',
     };
 
-    if (env && env.DATAHUB_COOKIE) {
+    if (env && env.QUERYBOOK_COOKIE) {
         for (const proxyPath in settings.proxy) {
             settings.proxy[proxyPath]['headers'] = {
-                Cookie: env.DATAHUB_COOKIE,
+                Cookie: env.QUERYBOOK_COOKIE,
             };
         }
     }
@@ -67,8 +67,8 @@ module.exports = (env) => {
 
     const entry = {
         react_hot_loader: 'react-hot-loader/patch',
-        react_app: './datahub/webapp/index.tsx',
-        vendor: './datahub/webapp/vendor.tsx',
+        react_app: './querybook/webapp/index.tsx',
+        vendor: './querybook/webapp/vendor.tsx',
     };
 
     const devTool = PROD
@@ -86,9 +86,9 @@ module.exports = (env) => {
               },
           };
 
-    const customScriptPath = !!process.env.DATAHUB_PLUGIN
+    const customScriptPath = !!process.env.QUERYBOOK_PLUGIN
         ? path.resolve(
-              process.env.DATAHUB_PLUGIN,
+              process.env.QUERYBOOK_PLUGIN,
               './webpage_plugin/custom_script.ts'
           )
         : null;
@@ -165,7 +165,7 @@ module.exports = (env) => {
 
                 {
                     test: /\.ya?ml$/,
-                    include: path.resolve(__dirname, 'datahub/config'),
+                    include: path.resolve(__dirname, 'querybook/config'),
                     loader: 'json-loader!yaml-loader',
                 },
             ],
@@ -205,8 +205,8 @@ module.exports = (env) => {
                 filename: '[name].[contenthash:4].css',
             }),
             new HtmlWebpackPlugin({
-                title: 'DataHub',
-                template: './datahub/webapp/index.html',
+                title: 'Querybook',
+                template: './querybook/webapp/index.html',
                 chunks: ['react_hot_loader', 'vendor']
                     .concat(entry.custom ? ['custom'] : [])
                     .concat(['react_app']),

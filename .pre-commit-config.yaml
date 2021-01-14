@@ -3,7 +3,7 @@ repos:
       rev: v2.4.0
       hooks:
           - id: trailing-whitespace
-            exclude: ^datahub/webapp/__tests__/ui/__snapshots__/
+            exclude: ^querybook/webapp/__tests__/ui/__snapshots__/
           - id: end-of-file-fixer
           - id: check-yaml
           - id: check-added-large-files
@@ -12,20 +12,20 @@ repos:
       rev: 19.10b0
       hooks:
           - id: black
-            files: "^datahub/(server|tests)/.*\\.py$"
+            files: "^querybook/(server|tests)/.*\\.py$"
     - repo: https://github.com/prettier/pre-commit
       rev: v2.0.2
       hooks:
           - id: prettier
-            files: "^datahub/webapp/.*\\.(tsx?)$"
+            files: "^querybook/webapp/.*\\.(tsx?)$"
     - repo: https://gitlab.com/pycqa/flake8
       rev: '3.7.9'
       hooks:
           - id: flake8
-            files: "^datahub/(server|tests)/.*\\.py$"
-            exclude: ^datahub/migrations/.*
+            files: "^querybook/(server|tests)/.*\\.py$"
+            exclude: ^querybook/migrations/.*
     # - repo: https://github.com/pre-commit/mirrors-eslint
     #   rev: '6.8.0' # Use the sha / tag you want to point at
-    #   files: 'datahub/webapp/.*\\.(tsx?)$'
+    #   files: 'querybook/webapp/.*\\.(tsx?)$'
     #   hooks:
     #       - id: eslint

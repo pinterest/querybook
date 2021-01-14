@@ -1,0 +1,64 @@
+# --------------- Core Config ---------------
+# Security key for flask, which is required to for any encryption with flask
+FLASK_SECRET_KEY: ~
+# Url of the querybook site, used for auth callback and notifications
+PUBLIC_URL: ''
+
+# --------------- Celery ---------------
+REDIS_URL: ~
+
+# --------------- Search ---------------
+ELASTICSEARCH_HOST: ~
+ELASTICSEARCH_CONNECTION_TYPE: naive
+
+# --------------- Database ---------------
+DATABASE_CONN: ~
+DATABASE_POOL_SIZE: 10
+DATABASE_POOL_RECYCLE: 3600
+
+# --------------- Communications ---------------
+# Url to the email server
+EMAILER_CONN: localhost
+QUERYBOOK_SLACK_TOKEN: ~
+QUERYBOOK_EMAIL_ADDRESS: ~
+
+# --------------- Authentication ---------------
+# Settings for auth type. Currently support 'app.auth.password_auth' which
+# is authenticaton via username/password and 'app.auth.oauth_auth' which supports
+# authentication via oauth api
+AUTH_BACKEND: app.auth.password_auth
+# Force user to log out after they log in for X number of seconds
+# If set to 0 then only expire their login session after log out
+LOGS_OUT_AFTER: 0
+
+# If OAuth, then the following values should be provided
+# Optional, if null then defaults to public url
+OAUTH_CLIENT_ID: ~
+OAUTH_CLIENT_SECRET: ~
+OAUTH_AUTHORIZATION_URL: ~
+OAUTH_TOKEN_URL: ~
+OAUTH_USER_PROFILE: ~
+
+# LDAP
+LDAP_CONN: ~
+LDAP_USER_DN: uid={},dc=example,dc=com
+
+# --------------- Result Store ---------------
+RESULT_STORE_TYPE: db
+
+# Following settings are relevant to s3
+STORE_BUCKET_NAME: ~
+STORE_PATH_PREFIX: ''
+STORE_MIN_UPLOAD_CHUNK_SIZE: 10485760
+STORE_MAX_UPLOAD_CHUNK_NUM: 10000
+STORE_MAX_READ_SIZE: 131072
+STORE_READ_SIZE: 5242880
+
+# Folowing settings are relevant to db store
+DB_MAX_UPLOAD_SIZE: 5242880
+
+# For Google service account Storage, also for querying
+GOOGLE_CREDS: ~
+
+# --------------- Logging ---------------
+LOG_LOCATION: ~

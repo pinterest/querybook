@@ -1,0 +1,4 @@
+#!/usr/bin/env bash
+
+./querybook/scripts/init_db
+./querybook/scripts/runservice web ${PORT-10001}

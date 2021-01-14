@@ -1,7 +1,7 @@
 FROM python:3.7.9
 ARG PRODUCTION=true
 
-## Install DataHub package requirements + NodeJS
+## Install Querybook package requirements + NodeJS
 # Installing build-essential and python-dev for uwsgi
 RUN rm -rf /var/lib/apt/lists/* \
     && apt-get update \
@@ -24,7 +24,7 @@ RUN npm i -g npm@6.14.5 \
     && yarn config set cache-folder /mnt/yarn-cache/cache \
     && yarn config set yarn-offline-mirror /mnt/yarn-offline-mirror
 
-WORKDIR /opt/datahub
+WORKDIR /opt/querybook
 
 COPY requirements requirements/
 RUN pip install -r requirements/base.txt \
@@ -45,6 +45,6 @@ COPY . .
 RUN if [ "${PRODUCTION}" = "true" ] ; then ./node_modules/.bin/webpack --env.NODE_ENV=production ; fi
 
 # Environment variables, override plugins path for customization
-ENV DATAHUB_PLUGIN=/opt/datahub/plugins
-ENV PYTHONPATH=/opt/datahub/datahub/server:/opt/datahub/plugins
+ENV QUERYBOOK_PLUGIN=/opt/querybook/plugins
+ENV PYTHONPATH=/opt/querybook/querybook/server:/opt/querybook/plugins
 ENV production=${PRODUCTION}
