@@ -22,10 +22,7 @@ import { IQueryEngineState, QueryEngineAction } from 'redux/queryEngine/types';
 import { IEnvironmentState, EnvironmentAction } from 'redux/environment/types';
 import { AdhocQueryState, AdhocQueryAction } from 'redux/adhocQuery/types';
 import { IBoardState, BoardAction } from 'redux/board/types';
-import {
-    IGlobalStateState,
-    GlobalStateAction,
-} from '../querybookUI/node_modules/redux/globalState/types';
+import { IGlobalStateState, GlobalStateAction } from 'redux/globalState/types';
 import {
     INotificationState,
     NotificationServiceAction,
