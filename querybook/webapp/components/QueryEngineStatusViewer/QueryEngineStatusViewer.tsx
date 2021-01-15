@@ -2,6 +2,8 @@ import React, { useCallback, useEffect } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 
 import { titleize } from 'lib/utils';
+import { getAppName } from 'lib/utils/global';
+
 import { generateFormattedDate } from 'lib/utils/datetime';
 import { fetchSystemStatus } from 'redux/queryEngine/action';
 import { IStoreState } from 'redux/store/types';
@@ -78,7 +80,7 @@ export const QueryEngineStatusViewer: React.FC<IProps> = ({ engineId }) => {
             infoMessage = `Your query may take longer than expected.`;
         } else if (data.status === QueryEngineStatus.ERROR) {
             messageType = 'error';
-            infoTitle = 'Querybook cannot connect to engine.';
+            infoTitle = `${getAppName()} cannot connect to engine.`;
             infoMessage =
                 'Running queries on this engine will most likely result in failure.';
         }

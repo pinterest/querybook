@@ -3,6 +3,7 @@ import { useDispatch } from 'react-redux';
 
 import ds from 'lib/datasource';
 import history from 'lib/router-history';
+import { getAppName } from 'lib/utils/global';
 import * as EnvironmentActions from 'redux/environment/action';
 
 import { Card } from 'ui/Card/Card';
@@ -33,7 +34,7 @@ export const SetUp: React.FunctionComponent = () => {
 
     return (
         <div className="SetUp flex-center">
-            <div className="SetUp-message">Welcome to Querybook!</div>
+            <div className="SetUp-message">Welcome to ${getAppName()}!</div>
             <div className="SetUp-choices horizontal-space-between">
                 {demoLoading ? (
                     <Card height="180px" width="240px">

@@ -116,8 +116,6 @@ body {
     --red-highlight: rgba(189, 8, 28, 0.5);
     --text-highlight: rgba(255, 255, 0, 0.5);
 
-    --mix-blend-mode: multiply;
-
     // Type
     --family-sans-serif: 'Avenir Next', 'Avenir', 'Helvetica Neue', 'Arial',
         sans-serif;
@@ -200,7 +198,6 @@ body.dark-theme {
     --text-select-bg-color: var(--color-transparent-dark);
 
     --scroll-bar-color: var(--color-primary-3);
-    --mix-blend-mode: lighten;
 
     --text-highlight: rgba(52, 101, 127, 0.5);
 
@@ -235,7 +232,6 @@ body.night-theme {
     --text-select-bg-color: var(--color-transparent-dark);
 
     --scroll-bar-color: var(--color-primary-3);
-    --mix-blend-mode: lighten;
 
     font-weight: 500;
 
@@ -277,7 +273,6 @@ body.lush-theme {
     --text-select-bg-color: var(--color-transparent-dark);
 
     --scroll-bar-color: var(--color-primary-3);
-    --mix-blend-mode: lighten;
 
     font-weight: 500;
 

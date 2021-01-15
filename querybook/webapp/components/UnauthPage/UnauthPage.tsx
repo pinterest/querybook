@@ -8,8 +8,9 @@ import { Tabs } from 'ui/Tabs/Tabs';
 import { LoginForm } from './LoginForm';
 import { SignupForm } from './SignupForm';
 import { Box } from 'ui/Box/Box';
-import './UnauthPage.scss';
 import { Message } from 'ui/Message/Message';
+import { QuerybookLogo } from 'ui/QuerybookLogo/QuerybookLogo';
+import './UnauthPage.scss';
 
 export interface IUnauthPageProps {
     onSuccessLogin: () => any;
@@ -58,8 +59,8 @@ export class UnauthPage extends React.Component<
             <div className="mb24">
                 <Message type="error">
                     <p>
-                        NOTE: This signup/login flow for Querybook is only for
-                        people who wants to temporarily try out Querybook.
+                        NOTE: This signup/login flow is only for people who
+                        wants to temporarily try out Querybook.
                     </p>
                     <p>
                         The user name and password (as salted hash) information
@@ -76,6 +77,9 @@ export class UnauthPage extends React.Component<
         return (
             <Center>
                 <StyledUnauthPage>
+                    <div className="center-align mb8">
+                        <QuerybookLogo />
+                    </div>
                     {querybookWarningMessage}
                     <Box>
                         {showSignUp && (

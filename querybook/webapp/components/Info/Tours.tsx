@@ -7,6 +7,7 @@ import { Dispatch, IStoreState } from 'redux/store/types';
 import { queryEngineSelector } from 'redux/queryEngine/selector';
 
 import history from 'lib/router-history';
+import { getAppName } from 'lib/utils/global';
 import { getQueryEngineId } from 'lib/utils';
 import { navigateWithinEnv } from 'lib/utils/query-string';
 
@@ -41,17 +42,17 @@ export const Tours: React.FunctionComponent = () => {
     return (
         <div className="Tours m12">
             <Title subtitle className="mb12">
-                Welcome to the Querybook Tutorial!
+                Welcome to the {getAppName()} Tutorial!
             </Title>
             <Title subtitle size={5}>
                 Click on a card to start the tutorial.
             </Title>
             <div className="Tours-cards flex-center mv24">
                 <Card
-                    title="Querybook Tour"
+                    title={`${getAppName()} Tour`}
                     onClick={() => navigateWithinEnv('/?tour=true')}
                 >
-                    General overview of Querybook functionalities
+                    General overview of {getAppName()} functionalities
                 </Card>
                 <Card title="DataDoc Tour" onClick={handleDataDocTour}>
                     Overview of DataDoc functionalities

@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 
+import { getAppName } from 'lib/utils/global';
 import { IStoreState, Dispatch } from 'redux/store/types';
 import { fetchTopQueryUsersIfNeeded } from 'redux/dataSources/action';
 
@@ -41,7 +42,7 @@ export const DataTableViewQueryUsers: React.FC<{
     const viewersDOM = loading ? (
         <Loading />
     ) : !topQueryUsers?.length ? (
-        <div>No user has queried this table on Querybook.</div>
+        <div>No user has queried this table on {getAppName()}.</div>
     ) : (
         <UserAvatarList
             users={topQueryUsers.map((topQueryUser) => ({

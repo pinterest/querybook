@@ -9,6 +9,7 @@ import { IconButton } from 'ui/Button/IconButton';
 
 import './AdminAppEntitySidebar.scss';
 import { QuerybookLogo } from 'ui/QuerybookLogo/QuerybookLogo';
+import { getAppName } from 'lib/utils/global';
 
 interface IAdminAppEntitySidebarProps {
     selectedEntity: AdminEntity;
@@ -70,12 +71,11 @@ export const AdminAppEntitySidebar: React.FunctionComponent<IAdminAppEntitySideb
                 >
                     <IconButton
                         icon="log-out"
-                        tooltip="Back to Querybook"
                         tooltipPos="right"
                         active={false}
                     />
                     <span className="AdminAppEntitySidebar-title">
-                        Back to Querybook
+                        Back to {getAppName()}
                     </span>
                 </div>
             </div>

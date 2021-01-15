@@ -1,17 +1,4 @@
-import React, { useEffect } from 'react';
-import { useGlobalState } from 'hooks/redux/useGlobalState';
-import ds from 'lib/datasource';
+import React from 'react';
+import { getAppVersion } from 'lib/utils/global';
 
-export const QuerybookVersion: React.FC = () => {
-    const [version, setVersion] = useGlobalState('querybookVersion', null);
-
-    useEffect(() => {
-        if (version == null) {
-            ds.fetch<string>(`/version/`).then(({ data }) => {
-                setVersion(data);
-            });
-        }
-    }, []);
-
-    return <span>{version}</span>;
-};
+export const QuerybookVersion: React.FC = () => <span>{getAppVersion()}</span>;

@@ -20,7 +20,7 @@ export const UserSettingsMenuRoute: React.FunctionComponent<RouteComponentProps>
             onHide={
                 isModalRoute ? history.goBack : () => navigateWithinEnv('/')
             }
-            title="Querybook User Settings"
+            title="User Settings"
             className="with-padding"
         >
             {contentDOM}

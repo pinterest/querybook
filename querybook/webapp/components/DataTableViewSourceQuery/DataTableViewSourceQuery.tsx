@@ -6,6 +6,7 @@ import {
     ILineageCollection,
 } from 'const/metastore';
 import { getWithinEnvUrl } from 'lib/utils/query-string';
+import { getAppName } from 'lib/utils/global';
 import { Loading } from 'ui/Loading/Loading';
 import { Table } from 'ui/Table/Table';
 import { CodeHighlight } from 'ui/CodeHighlight/CodeHighlight';
@@ -126,7 +127,7 @@ const DataJobMetadataInfo: React.FC<{
     ) {
         const queryExecutionId = dataJobMetadata.job_info['query_execution_id'];
         queryExecutionUrlRows.push({
-            name: `Created in Querybook`,
+            name: `Created in ${getAppName()}`,
             value: (
                 <Link
                     to={{

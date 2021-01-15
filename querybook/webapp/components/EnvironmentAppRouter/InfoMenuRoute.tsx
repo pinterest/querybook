@@ -36,7 +36,7 @@ export const InfoMenuRoute: React.FunctionComponent<RouteComponentProps> = ({
         infoType === 'shortcut'
             ? 'Keyboard Shortcuts'
             : infoType === 'tour'
-            ? 'Querybook Tutorials'
+            ? 'Tutorials'
             : 'Frequently Asked Questions';
 
     return isModal ? (

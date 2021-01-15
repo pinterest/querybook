@@ -1,5 +1,5 @@
 export const colorPalette = [
-    '#35B5BB', // dh blue
+    '#35B5BB', // blue
     '#ff3975', // pink
     '#bfbfbf', // grey
     '#ffca00', // gold
@@ -20,7 +20,7 @@ export const colorPalette = [
     '#b7652b', // choco
 ];
 export const colorPaletteNames = [
-    'querybook blue',
+    'blue',
     'pink',
     'grey',
     'gold',

@@ -1,5 +1,6 @@
 const postcssPresetEnv = require('postcss-preset-env');
 const path = require('path');
+const webpack = require('webpack');
 
 module.exports = async (config) => {
     config.module.rules.push({
@@ -38,6 +39,15 @@ module.exports = async (config) => {
         ...(config.resolve.modules || []),
         path.resolve('./querybook/webapp'),
     ];
+
+    config.plugins.push(
+        new webpack.DefinePlugin({
+            __VERSION__: JSON.stringify(require('../package.json').version),
+            __APPNAME__: JSON.stringify(
+                process.env.QUERYBOOK_APPNAME ?? 'Querybook'
+            ),
+        })
+    );
 
     return config;
 };
