@@ -1,48 +1,32 @@
-import React from 'react';
+import React, { useCallback } from 'react';
+import { useStateWithRef } from 'hooks/useStateWithRef';
+import { useEvent } from 'hooks/useEvent';
 
 export const _EmbeddedQueryPage = (args) => {
-    const [queryText, _setQueryText] = React.useState('select 1;');
-    const queryRef = React.useRef(queryText);
-    const iframeRef = React.useRef<HTMLIFrameElement>();
+    const [queryText, setQueryText, queryTextRef] = useStateWithRef('select 1');
     const [showEmbed, setShowEmbed] = React.useState(false);
+    const iframeRef = React.useRef<HTMLIFrameElement>();
 
-    const setQuery = React.useCallback((newQuery: string) => {
-        queryRef.current = newQuery;
-        _setQueryText(newQuery);
-    }, []);
-
-    React.useEffect(() => {
-        const listener = (e) => {
-            // Determine the event type here
+    useEvent(
+        'message',
+        useCallback((e) => {
             const type = e?.data?.type;
 
             if (type === 'SEND_QUERY') {
-                // If it is a send query event, please send the
-                // querybook iframe the query being edited
                 iframeRef.current?.contentWindow?.postMessage(
                     {
                         type: 'SET_QUERY',
-                        value: queryRef.current,
+                        value: queryTextRef.current,
                         engine: args.ENGINE_ID,
                     },
                     '*'
                 );
             } else if (type === 'SUBMIT_QUERY') {
-                // If it is a submit query event, it means the user
-                // has finished editing the query in querybook, please
-                // update your query in your tool accordingly
-
-                setQuery(e?.data?.value);
+                setQueryText(e?.data?.value);
                 setShowEmbed(false);
             }
-        };
-
-        window.addEventListener('message', listener, false);
-
-        return () => {
-            window.removeEventListener('message', listener, false);
-        };
-    }, []);
+        }, [])
+    );
 
     return showEmbed ? (
         <div
@@ -65,7 +49,7 @@ export const _EmbeddedQueryPage = (args) => {
         <div>
             <textarea
                 value={queryText}
-                onChange={(event) => setQuery(event.target.value)}
+                onChange={(event) => setQueryText(event.target.value)}
             />
             <button onClick={() => setShowEmbed(true)}>
                 Open In Querybook
