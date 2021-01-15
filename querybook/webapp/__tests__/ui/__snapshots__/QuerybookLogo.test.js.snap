@@ -7,16 +7,7 @@ exports[`matches enzyme snapshots matches snapshot - size 1`] = `
   <span
     className="querybook-wordmark"
   >
-    <span
-      className="querybook-title-first-part"
-    >
-      Query
-    </span>
-    <span
-      className="querybook-title-last-part"
-    >
-      book
-    </span>
+    Querybook
   </span>
 </styled.span>
 `;
@@ -28,38 +19,20 @@ exports[`matches enzyme snapshots matches snapshot 1`] = `
   <span
     className="querybook-wordmark"
   >
-    <span
-      className="querybook-title-first-part"
-    >
-      Query
-    </span>
-    <span
-      className="querybook-title-last-part"
-    >
-      book
-    </span>
+    Querybook
   </span>
 </styled.span>
 `;
 
 exports[`matches test renderer snapshot serializes the styles 1`] = `
 <span
-  className="sc-bdfBwQ krGXPh"
+  className="sc-bdfBwQ fCJyE"
   size={2}
 >
   <span
     className="querybook-wordmark"
   >
-    <span
-      className="querybook-title-first-part"
-    >
-      Query
-    </span>
-    <span
-      className="querybook-title-last-part"
-    >
-      book
-    </span>
+    Querybook
   </span>
 </span>
 `;
