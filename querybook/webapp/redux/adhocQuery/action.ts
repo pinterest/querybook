@@ -20,18 +20,24 @@ export function rehydrateAdhocQueryForEnvironment(
     environmentId: number
 ): ThunkResult<Promise<void>> {
     return async (dispatch, getState) => {
-        const adhocQueryExistsInState = environmentId in getState().adhocQuery;
-        if (adhocQueryExistsInState) {
+        const isAdhocQueryDefined = () =>
+            environmentId in getState().adhocQuery;
+
+        if (isAdhocQueryDefined()) {
             return;
         }
 
         const adhocQuery = await loadAdhocQuery(environmentId);
-        if (adhocQuery) {
-            if (adhocQuery.executionId) {
-                dispatch(fetchQueryExecutionIfNeeded(adhocQuery.executionId));
-            }
-
-            dispatch(receiveAdhocQuery(adhocQuery, environmentId));
+        if (!adhocQuery || isAdhocQueryDefined()) {
+            // Checking reduxState again since it is possible that
+            // adhoc query gets defined while the adhocQuery
+            // is loaded from the store
+            return;
         }
+
+        if (adhocQuery.executionId) {
+            dispatch(fetchQueryExecutionIfNeeded(adhocQuery.executionId));
+        }
+        dispatch(receiveAdhocQuery(adhocQuery, environmentId));
     };
 }

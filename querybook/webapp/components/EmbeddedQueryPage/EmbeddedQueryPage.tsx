@@ -1,12 +1,13 @@
 import React from 'react';
-import { QueryComposer } from 'components/QueryComposer/QueryComposer';
-import { FullHeight } from 'ui/FullHeight/FullHeight';
-import { Button } from 'ui/Button/Button';
-
-import './EmbeddedQueryPage.scss';
 import { useSelector, useDispatch } from 'react-redux';
+
+import { QueryComposer } from 'components/QueryComposer/QueryComposer';
+import { IAdhocQuery } from 'const/adhocQuery';
 import { IStoreState, Dispatch } from 'redux/store/types';
 import { receiveAdhocQuery } from 'redux/adhocQuery/action';
+import { FullHeight } from 'ui/FullHeight/FullHeight';
+import { Button } from 'ui/Button/Button';
+import './EmbeddedQueryPage.scss';
 
 export const EmbeddedQueryPage: React.FunctionComponent = () => {
     const environmentId = useSelector(
@@ -18,14 +19,22 @@ export const EmbeddedQueryPage: React.FunctionComponent = () => {
 
     const dispatch: Dispatch = useDispatch();
     const setQuery = React.useCallback(
-        (newQuery: string) =>
-            dispatch(receiveAdhocQuery({ query: newQuery }, environmentId)),
+        (query: IAdhocQuery) =>
+            dispatch(receiveAdhocQuery(query, environmentId)),
         []
     );
 
     const onMessage = React.useCallback((e) => {
         if (e.data && e.data.type === 'SET_QUERY') {
-            setQuery(e.data.value);
+            const query: IAdhocQuery = {};
+            if (e.data.value) {
+                query.query = e.data.value;
+            }
+            if (e.data.engine) {
+                query.engineId = e.data.engine;
+            }
+
+            setQuery(query);
         }
     }, []);
 
@@ -49,7 +58,8 @@ export const EmbeddedQueryPage: React.FunctionComponent = () => {
             </div>
             <div className="control-bar right-align">
                 <Button
-                    title="Submit"
+                    type="confirm"
+                    title="Save Query"
                     onClick={() => {
                         window.parent.postMessage(
                             { type: 'SUBMIT_QUERY', value: query },
