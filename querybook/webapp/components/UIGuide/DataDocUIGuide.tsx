@@ -53,23 +53,25 @@ export const DataDocTourSteps: ReactourStep[] = [
         selector: '.DataDoc .block-crud-buttons ',
         content: (
             <>
+                <p>Hover over the highlighted area!</p>
+                <hr />
                 <p>
                     This section allows you to add different kind of cells to a
                     DataDoc. You can think of DataDoc as a list of cells.
                 </p>
                 <hr />
                 <p>
-                    Text cell allows you to document your investigation or make
-                    notes. It supports rich text editing.
+                    <b>Text cell</b> allows you to document your investigation
+                    or make notes. It supports rich text editing.
                 </p>
                 <hr />
                 <p>
-                    Query cell is the most important type of cell. You can use
-                    it to write and run queries.
+                    <b>Query cell</b> is the most <b>important</b> type of cell.
+                    You can use it to write and run queries.
                 </p>
                 <hr />
                 <p>
-                    Chart cell allows you to make visuatizations based on
+                    <b>Chart cell</b> allows you to make visuatizations based on
                     execution results.
                 </p>
             </>
@@ -77,7 +79,7 @@ export const DataDocTourSteps: ReactourStep[] = [
     },
     {
         selector:
-            '.DataDoc .DataDocRightSidebar-button-section-bottom [aria-label="Configure Template"]',
+            '.DataDoc .DataDocRightSidebar-button-section-bottom [aria-label="Set Templated Variables"]',
         content: (
             <>
                 <p>
