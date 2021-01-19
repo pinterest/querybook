@@ -1,34 +1,36 @@
 import React from 'react';
 import styled from 'styled-components';
+import { getAppName } from 'lib/utils/global';
 
 const StyledQuerybookLogo = styled.span`
     display: flex;
     align-items: center;
     justify-content: center;
 
+    font-size: ${({ size }) => `${size}rem`};
     .querybook-brandmark {
         width: ${({ size }) => `${size * 1.3}rem`};
         height: ${({ size }) => `${size * 1.3}rem`};
     }
 
     .querybook-wordmark {
-        align-items: center;
-        font-size: ${({ size }) => `${size}rem`};
         font-weight: 700;
+
         letter-spacing: -0.05em;
-        padding: 0px;
+        padding-right: 0.05em;
+
         user-select: none;
+        color: var(--color-accent);
 
-        .querybook-title-first-part {
-            color: var(--color-red);
-        }
-
-        .querybook-title-last-part {
-            color: var(--color-blue);
-            position: relative;
-            left: -0.18em;
-            mix-blend-mode: var(--mix-blend-mode);
-        }
+        background: -webkit-linear-gradient(
+            45deg,
+            var(--color-accent-text),
+            var(--color-accent),
+            var(--color-accent-bg)
+        );
+        background-clip: text;
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
     }
 `;
 
@@ -43,9 +45,6 @@ export const QuerybookLogo: React.FC<{
                 src={'/static/favicon/favicon.ico'}
             />
         )}
-        <span className="querybook-wordmark">
-            <span className="querybook-title-first-part">Query</span>
-            <span className="querybook-title-last-part">book</span>
-        </span>
+        <span className="querybook-wordmark">{getAppName()}</span>
     </StyledQuerybookLogo>
 );

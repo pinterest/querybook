@@ -1,8 +1,8 @@
 import { IConfirmationMessageProps } from 'components/ConfirmationManager/ConfirmationMessage';
-
-import { reduxStore } from 'redux/store';
 import * as querybookUIActions from 'redux/querybookUI/action';
+import { reduxStore } from 'redux/store';
 import { Dispatch } from 'redux/store/types';
+import { getAppName } from './utils/global';
 
 export function sendConfirm(props: IConfirmationMessageProps) {
     (reduxStore.dispatch as Dispatch)(
@@ -70,10 +70,11 @@ export function setSessionExpired() {
 }
 
 export function setBrowserTitle(title = '', withSuffix = true) {
+    const appName = getAppName();
     const formattedTitle = withSuffix
         ? title
-            ? title + ' - Querybook'
-            : 'Querybook'
+            ? title + ' - ' + appName
+            : appName
         : title;
     if (document.title !== formattedTitle) {
         document.title = formattedTitle;

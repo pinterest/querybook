@@ -10,6 +10,7 @@ import {
 } from 'const/metastore';
 import { navigateWithinEnv } from 'lib/utils/query-string';
 import { generateFormattedDate } from 'lib/utils/datetime';
+import { getAppName } from 'lib/utils/global';
 import { titleize } from 'lib/utils';
 import { getHumanReadableByteSize } from 'lib/utils/number';
 
@@ -135,7 +136,7 @@ export class DataTableViewOverview extends React.PureComponent<
             <DataTableViewOverviewSection title="Meta info">
                 <div>
                     <p>
-                        First created in Querybook at{' '}
+                        First created in {getAppName()} at{' '}
                         {generateFormattedDate(table.created_at)}.
                     </p>
                     <p>

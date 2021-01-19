@@ -20,12 +20,13 @@ import {
 } from 'redux/environment/selector';
 import { IStoreState, Dispatch } from 'redux/store/types';
 
-import { EnvironmentAppRouter } from '../EnvironmentAppRouter/EnvironmentAppRouter';
-
+import { getAppName } from 'lib/utils/global';
 import { SetUp } from 'components/SetUp/SetUp';
 import { Loading } from 'ui/Loading/Loading';
 import { FourOhFour } from 'ui/ErrorPage/FourOhFour';
 import { FourOhThree } from 'ui/ErrorPage/FourOhThree';
+
+import { EnvironmentAppRouter } from '../EnvironmentAppRouter/EnvironmentAppRouter';
 
 type DispatchProps = ReturnType<typeof mapDispatchToProps>;
 type StateProps = ReturnType<typeof mapStateToProps>;
@@ -39,7 +40,7 @@ interface IEnvironmentsRouterState {
 const blank: React.FunctionComponent = () => {
     const message =
         window.NO_ENVIRONMENT_MESSAGE ??
-        'No Environment Available. Please contact Querybook Admin for more info.';
+        `No Environment Available. Please contact ${getAppName()} Admin for more info.`;
     return <div className="empty-message">{message}</div>;
 };
 

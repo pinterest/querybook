@@ -96,6 +96,8 @@ module.exports = (env) => {
         entry.custom = customScriptPath;
     }
 
+    const appName = process.env.QUERYBOOK_APPNAME ?? 'Querybook';
+
     return {
         entry,
         mode: PROD ? 'production' : 'development',
@@ -190,6 +192,10 @@ module.exports = (env) => {
         plugins: [
             new CleanObsoleteChunks(),
             new CleanWebpackPlugin([BUILD_DIR]),
+            new webpack.DefinePlugin({
+                __VERSION__: JSON.stringify(require('./package.json').version),
+                __APPNAME__: JSON.stringify(appName),
+            }),
             new webpack.IgnorePlugin(/^\.\/locale$/, /moment$/),
             new webpack.LoaderOptionsPlugin({
                 options: {
@@ -205,7 +211,7 @@ module.exports = (env) => {
                 filename: '[name].[contenthash:4].css',
             }),
             new HtmlWebpackPlugin({
-                title: 'Querybook',
+                title: appName,
                 template: './querybook/webapp/index.html',
                 chunks: ['react_hot_loader', 'vendor']
                     .concat(entry.custom ? ['custom'] : [])

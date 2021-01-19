@@ -16,6 +16,10 @@ const config = {
     rootDir: './querybook/webapp/',
     modulePaths: ['<rootDir>'],
     globalSetup: '<rootDir>/__tests__/setup/jest-global-setup.js',
+    globals: {
+        __VERSION__: '1.0.0',
+        __APPNAME__: 'Querybook',
+    },
 };
 
 module.exports = config;

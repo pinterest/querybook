@@ -1,11 +1,14 @@
 import React from 'react';
 import Tour, { ReactourStep } from 'reactour';
 import { useLocation } from 'react-router-dom';
+
+import { getQueryString } from 'lib/utils/query-string';
+import { getAppName } from 'lib/utils/global';
+
 import { Button } from 'ui/Button/Button';
 import { Icon } from 'ui/Icon/Icon';
 import { Title } from 'ui/Title/Title';
 import { Link } from 'ui/Link/Link';
-import { getQueryString } from 'lib/utils/query-string';
 
 function getQuerybookSidebarTourSteps() {
     const hasEnvironmentTopbar = !!document.querySelector('.EnvironmentTopbar');
@@ -174,11 +177,12 @@ function getQuerybookSidebarTourSteps() {
             content: ({ goTo }) => (
                 <>
                     <p>
-                        That's it! Please send your suggestions to improve the
-                        product on&nbsp;
+                        That's it! Thanks for using {getAppName()}. Please send
+                        your suggestions to improve the product on&nbsp;
                         <Link to="https://github.com/pinterest/querybook">
                             GitHub
                         </Link>
+                        .
                     </p>
                     <hr />
                     <div>
@@ -225,7 +229,7 @@ export const QuerybookSidebarUIGuide: React.FC = () => {
                 borderless
                 inverted
             >
-                Querybook UI Tutorial
+                UI Tutorial
             </Button>
             <Tour
                 isOpen={showTour}

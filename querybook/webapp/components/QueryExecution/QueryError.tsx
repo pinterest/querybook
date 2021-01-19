@@ -14,19 +14,20 @@ import {
 } from 'lib/sql-helper/sql-lexer';
 
 import { IQueryEngine } from 'const/queryEngine';
+import { getAppName } from 'lib/utils/global';
 import { fetchQueryError } from 'redux/queryExecutions/action';
 import { IStoreState } from 'redux/store/types';
+import { queryEngineByIdEnvSelector } from 'redux/queryEngine/selector';
 
-import { ErrorSuggestion } from '../DataDocStatementExecution/ErrorSuggestion';
-import { ExecutedQueryCell, IHighlightRange } from './ExecutedQueryCell';
+import { ErrorSuggestion } from 'components/DataDocStatementExecution/ErrorSuggestion';
 import { Icon } from 'ui/Icon/Icon';
 import { Message } from 'ui/Message/Message';
 import { ShowMoreText } from 'ui/ShowMoreText/ShowMoreText';
 import { Tabs } from 'ui/Tabs/Tabs';
 import { Loader } from 'ui/Loader/Loader';
 
+import { ExecutedQueryCell, IHighlightRange } from './ExecutedQueryCell';
 import './QueryError.scss';
-import { queryEngineByIdEnvSelector } from 'redux/queryEngine/selector';
 
 interface IProps {
     queryError: IQueryError;
@@ -36,7 +37,7 @@ interface IProps {
 }
 
 const queryErrorTypeToString: Record<number, string> = {
-    [QueryExecutionErrorType.INTERNAL]: 'Error from Querybook worker',
+    [QueryExecutionErrorType.INTERNAL]: `Error from ${getAppName()} worker`,
     [QueryExecutionErrorType.ENGINE]: 'Error from Query Engine',
     [QueryExecutionErrorType.SYNTAX]: 'Syntax Error',
 };

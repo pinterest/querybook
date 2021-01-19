@@ -3,8 +3,8 @@ import { useSelector } from 'react-redux';
 import { Route, Switch, useParams } from 'react-router-dom';
 
 import history from 'lib/router-history';
+import { getAppName } from 'lib/utils/global';
 import { IStoreState } from 'redux/store/types';
-import { AdminEntity } from './types';
 import { useDataFetch } from 'hooks/useDataFetch';
 
 import { AdminAppEntitySidebar } from 'components/AdminAppSidebar/AdminAppEntitySidebar';
@@ -25,6 +25,7 @@ import { FourOhThree } from 'ui/ErrorPage/FourOhThree';
 import { Icon } from 'ui/Icon/Icon';
 import { Sidebar } from 'ui/Sidebar/Sidebar';
 
+import { AdminEntity } from './types';
 import './AppAdmin.scss';
 
 const ENTITY_SIDEBAR_WIDTH = 200;
@@ -122,7 +123,7 @@ export const AppAdmin: React.FunctionComponent = () => {
         <div className="AdminLanding">
             <div className="AdminLanding-top">
                 <div className="AdminLanding-title">
-                    Welcome to the Querybook Admin App
+                    Welcome to the {getAppName()} Admin App
                 </div>
                 <div className="AdminLanding-desc">
                     All your settings are here.
