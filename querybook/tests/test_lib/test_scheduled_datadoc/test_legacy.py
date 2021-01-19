@@ -13,6 +13,7 @@ legacy_config = {
     "exporter_params": {},
 }
 
+
 current_config = {
     **unchanged_fields,
     "exports": [
@@ -27,6 +28,12 @@ def test_convert_current():
 
 def test_convert_legacy():
     assert convert_if_legacy_datadoc_schedule(legacy_config) == current_config
+
+
+def test_convert_semi_legacy():
+    assert convert_if_legacy_datadoc_schedule(
+        {**unchanged_fields, "exporter_name": "foobar", "exporter_params": {},}
+    ) == {**unchanged_fields, "exports": []}
 
 
 def test_convert_unchanged():

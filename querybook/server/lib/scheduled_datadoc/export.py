@@ -9,8 +9,8 @@ from logic.query_execution import get_last_query_execution_from_cell
 
 
 @with_session
-def export_datadoc(doc_id, uid, exports, session=None):
-    if not len(exports):
+def export_datadoc(doc_id: int, uid: int, exports: List, session=None):
+    if not exports or len(exports) == 0:
         return []
 
     export_by_cell = group_export_by_cell_id(exports)

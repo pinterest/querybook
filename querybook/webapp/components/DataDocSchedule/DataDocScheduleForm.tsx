@@ -284,7 +284,7 @@ const ScheduleExportsForm: React.FC<{
     const queryCellOptions = useSelector((state: IStoreState) =>
         queryCellSelector(state, { docId })
     );
-    const exportsValues = values.kwargs.exports;
+    const exportsValues = values.kwargs.exports ?? [];
 
     return (
         <FieldArray
@@ -358,7 +358,7 @@ const ScheduleExportsForm: React.FC<{
                     return (
                         <div
                             key={index}
-                            className="cell-export-field p4 mt16 flex-row"
+                            className="cell-export-field ph12 pv4 mt16 flex-row"
                         >
                             <div className="flex1">
                                 {cellPickerField}
