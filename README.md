@@ -5,6 +5,8 @@
 
 Querybook allows you to discover, create, and share data analyses, queries, and tables.
 
+[Check out the full documentation & feature highlights here.](https://querybook.org)
+
 # Features
 
 -   🚀 Query **Presto**, **Hive**, **Mysql**, and **Druid** (more coming soon!)
