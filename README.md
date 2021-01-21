@@ -17,11 +17,11 @@ Querybook allows you to discover, create, and share data analyses, queries, and 
 
 # Installation & Configuration
 
-For installation, [click here](docs/admin_guide/setup_guide.md)
+For installation, [click here](docs_website/docs/admin_guide/setup_guide.md)
 
-For infrastructure configuration, [click here](docs/admin_guide/infra_config.md)
+For infrastructure configuration, [click here](docs_website/docs/admin_guide/infra_config.md)
 
-For general configuration, [click here](docs/admin_guide/general_config.md)
+For general configuration, [click here](docs_website/docs/admin_guide/general_config.md)
 
 # Contributing Back
 
