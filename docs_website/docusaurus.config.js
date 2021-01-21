@@ -22,7 +22,7 @@ module.exports = {
                 docs: {
                     showLastUpdateAuthor: true,
                     showLastUpdateTime: true,
-                    path: '../docs',
+                    path: 'docs',
                     routeBasePath: 'docs',
                     sidebarPath: './sidebars.json',
                 },
@@ -99,6 +99,9 @@ module.exports = {
                 },
             ],
             copyright: `Copyright © ${new Date().getFullYear()} Pinterest. Built with Docusaurus.`,
+        },
+        gtag: {
+            trackingID: 'G-ZV2Q3M58R9',
         },
     },
 };
