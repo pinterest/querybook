@@ -2,7 +2,6 @@ from abc import ABCMeta, abstractclassmethod
 import datetime
 import time
 
-
 from app.db import DBSession
 from app.flask_app import socketio
 

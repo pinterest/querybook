@@ -1,4 +1,5 @@
 import traceback
+import datetime
 
 from app.db import with_session, DBSession
 from app.flask_app import celery
@@ -115,6 +116,7 @@ def run_query_task(self, query_execution_id):
                 qe_logic.update_query_execution(
                     query_execution_id,
                     status=QueryExecutionStatus.ERROR,
+                    completed_at=datetime.datetime.utcnow(),
                     session=session,
                 )
 

@@ -19,9 +19,10 @@ def export_datadoc(doc_id: int, uid: int, exports: List, session=None):
     export_urls = []
     for cell in query_cells:
         if cell.id not in export_by_cell:
-            pass
+            continue
+
         export_urls.extend(
-            _export_query_cell(cell, uid, export_by_cell[cell.id], session)
+            _export_query_cell(cell.id, uid, export_by_cell[cell.id], session=session)
         )
 
     return export_urls
@@ -34,15 +35,11 @@ def group_export_by_cell_id(exports: List):
     return export_by_cell
 
 
-def _export_query_cell(
-    cell,
-    uid,
-    cell_exports,
-    session,  # Don't use with_session because cell is should be in another
-):
+@with_session
+def _export_query_cell(cell_id, uid, cell_exports, session=None):
     statement_execution_id = None
 
-    query_execution = get_last_query_execution_from_cell(cell.id, session=session)
+    query_execution = get_last_query_execution_from_cell(cell_id, session=session)
     if not query_execution or query_execution.status != QueryExecutionStatus.DONE:
         return [query_execution.status]
     statement_execution_id = query_execution.statement_executions[-1].id
