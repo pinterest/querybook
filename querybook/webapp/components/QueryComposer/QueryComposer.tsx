@@ -115,9 +115,10 @@ const useQuery = (dispatch: Dispatch, environmentId: number) => {
 
 const useQueryComposerSearchAndReplace = (
     query: string,
-    setQuery: (s: string) => any,
-    searchAndReplaceRef: React.MutableRefObject<ISearchAndReplaceHandles>
-): ISearchAndReplaceProps => {
+    setQuery: (s: string) => any
+) => {
+    const searchAndReplaceRef = useRef<ISearchAndReplaceHandles>(null);
+
     const getSearchResults = useCallback(
         (searchString: string, searchOptions: ISearchOptions) =>
             searchText(query, searchString, searchOptions),
@@ -144,12 +145,41 @@ const useQueryComposerSearchAndReplace = (
         searchAndReplaceRef.current?.performSearch();
     }, [query]);
 
-    return {
+    const searchAndReplaceProps: ISearchAndReplaceProps = {
         getSearchResults,
         replace,
         jumpToResult,
     };
+
+    return {
+        searchAndReplaceProps,
+        searchAndReplaceRef,
+    };
 };
+
+function useQueryEditorHelpers() {
+    const queryEditorRef = useRef<QueryEditor>(null);
+    const handleFormatQuery = useCallback(() => {
+        if (queryEditorRef.current) {
+            queryEditorRef.current.formatQuery();
+        }
+    }, [queryEditorRef.current]);
+
+    const handleFocusEditor = useCallback(() => {
+        if (queryEditorRef.current) {
+            queryEditorRef.current.getEditor()?.focus();
+        }
+    }, [queryEditorRef.current]);
+
+    useEffect(() => {
+        handleFocusEditor();
+    }, []);
+
+    return {
+        queryEditorRef,
+        handleFormatQuery,
+    };
+}
 
 export const QueryComposer: React.FC = () => {
     useBrowserTitle('Adhoc Query');
@@ -167,20 +197,20 @@ export const QueryComposer: React.FC = () => {
         dispatch,
         environmentId
     );
-    const queryEditorRef = useRef<QueryEditor>(null);
-    const runButtonRef = useRef<IQueryRunButtonHandles>(null);
-    const searchAndReplaceRef = useRef<ISearchAndReplaceHandles>(null);
 
+    const {
+        searchAndReplaceProps,
+        searchAndReplaceRef,
+    } = useQueryComposerSearchAndReplace(query, setQuery);
+
+    const runButtonRef = useRef<IQueryRunButtonHandles>(null);
     const clickOnRunButton = useCallback(() => {
         if (runButtonRef.current) {
             runButtonRef.current.clickRunButton();
         }
     }, [runButtonRef.current]);
-    const handleFormatQuery = useCallback(() => {
-        if (queryEditorRef.current) {
-            queryEditorRef.current.formatQuery();
-        }
-    }, [queryEditorRef.current]);
+
+    const { queryEditorRef, handleFormatQuery } = useQueryEditorHelpers();
 
     const handleCreateDataDoc = useCallback(async () => {
         let dataDoc = null;
@@ -203,12 +233,6 @@ export const QueryComposer: React.FC = () => {
         navigateWithinEnv(`/datadoc/${dataDoc.id}/`);
     }, [executionId, query]);
 
-    const searchAndReplaceProps = useQueryComposerSearchAndReplace(
-        query,
-        setQuery,
-        searchAndReplaceRef
-    );
-
     const handleRunQuery = React.useCallback(async () => {
         // Just to throttle to prevent double running
         await sleep(250);
@@ -224,6 +248,7 @@ export const QueryComposer: React.FC = () => {
 
         setExecutionId(id);
     }, [queryEditorRef.current, query, engine]);
+
     const keyMap = useMemo(
         () => ({
             'Shift-Enter': clickOnRunButton,
