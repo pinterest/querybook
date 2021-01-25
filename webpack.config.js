@@ -62,8 +62,9 @@ function getDevServerSettings(env, PROD) {
     return settings;
 }
 
-module.exports = (env) => {
-    const PROD = env && env.NODE_ENV && env.NODE_ENV === 'production';
+module.exports = (env, options) => {
+    const PROD = (env?.NODE_ENV || options.mode) === 'production';
+    const mode = PROD ? 'production' : 'development';
 
     const entry = {
         react_hot_loader: 'react-hot-loader/patch',
@@ -100,7 +101,7 @@ module.exports = (env) => {
 
     return {
         entry,
-        mode: PROD ? 'production' : 'development',
+        mode,
 
         devServer: getDevServerSettings(env),
 
@@ -128,7 +129,12 @@ module.exports = (env) => {
             rules: [
                 {
                     test: /\.tsx?$/,
-                    use: 'babel-loader',
+                    use: {
+                        loader: 'babel-loader',
+                        options: {
+                            envName: mode,
+                        },
+                    },
                     exclude: [/[\\/]node_modules[\\/]/],
                 },
 

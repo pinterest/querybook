@@ -2,12 +2,12 @@
 
 exports[`matches enzyme snapshots matches snapshot 1`] = `
 <hr
-  className="sc-bdfBwQ fVVgFx"
+  className="Divider-sc-1si0xbl-0 jSzksP"
 />
 `;
 
 exports[`matches test renderer snapshot serializes the styles 1`] = `
 <hr
-  className="sc-bdfBwQ fVVgFx"
+  className="Divider-sc-1si0xbl-0 jSzksP"
 />
 `;

@@ -7,7 +7,7 @@ exports[`matches enzyme snapshots matches snapshot 1`] = `
 `;
 
 exports[`matches enzyme snapshots matches snapshot 2`] = `
-<styled.div
+<FormWrapper__StyledFormWrapper
   errorFontSize="var(--small-text-size)"
   fontSize="var(--text-size)"
   sectionFontSize="var(--med-text-size)"

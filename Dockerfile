@@ -42,7 +42,7 @@ RUN yarn install --frozen-lockfile --pure-lockfile && npm rebuild node-sass
 COPY . .
 
 # Webpack if prod
-RUN if [ "${PRODUCTION}" = "true" ] ; then ./node_modules/.bin/webpack --env.NODE_ENV=production ; fi
+RUN if [ "${PRODUCTION}" = "true" ] ; then ./node_modules/.bin/webpack --mode=production; fi
 
 # Environment variables, override plugins path for customization
 ENV QUERYBOOK_PLUGIN=/opt/querybook/plugins

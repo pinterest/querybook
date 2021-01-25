@@ -6,10 +6,10 @@ exports[`matches enzyme snapshots matches snapshot 2`] = `"children"`;
 
 exports[`matches test renderer snapshot serializes the styles 1`] = `
 <div
-  className="sc-gsTCUz hxvrcr"
+  className="Loading__StyledLoading-sc-1xendm7-0 cdKARu"
 >
   <div
-    className="sc-dlfnbm bLdTPU"
+    className="Loading__StyledSpinner-sc-1xendm7-1 dUUxro"
   >
     <i
       className="fa fa-spinner fa-pulse"

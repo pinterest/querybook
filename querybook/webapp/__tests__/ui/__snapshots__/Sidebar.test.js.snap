@@ -1,14 +1,14 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
 exports[`matches enzyme snapshots matches snapshot 1`] = `
-<styled.div
+<Sidebar__StyledSidebar
   borderless={false}
   className=""
   isVisible={true}
   left={true}
   right={false}
 >
-  <styled.div
+  <FullHeight
     className="sidebar-content"
   >
     <Resizable
@@ -44,8 +44,8 @@ exports[`matches enzyme snapshots matches snapshot 1`] = `
       onResizeStop={[Function]}
       style={Object {}}
     >
-      <styled.div />
+      <FullHeight />
     </Resizable>
-  </styled.div>
-</styled.div>
+  </FullHeight>
+</Sidebar__StyledSidebar>
 `;

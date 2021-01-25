@@ -2,32 +2,32 @@
 
 exports[`matches enzyme snapshots matches snapshot 1`] = `
 <div
-  className="sc-bdfBwQ fQYtYk Menu"
+  className="Menu-sc-13z76nv-0 dbaXzY Menu"
 >
-  <styled.span>
-    <styled.div />
-  </styled.span>
-  <styled.div />
-  <styled.div />
+  <Menu__MenuItem>
+    <Menu__MenuItemPing />
+  </Menu__MenuItem>
+  <Menu__MenuDivider />
+  <Menu__MenuInfoItem />
 </div>
 `;
 
 exports[`matches test renderer snapshot serializes the styles 1`] = `
 <div
-  className="sc-bdfBwQ fQYtYk Menu"
+  className="Menu-sc-13z76nv-0 dbaXzY Menu"
 >
   <span
-    className="sc-gsTCUz MenuItem"
+    className="Menu__MenuItem-sc-13z76nv-1 MenuItem"
   >
     <div
-      className="sc-eCssSg geCxVH MenuItemPing"
+      className="Menu__MenuItemPing-sc-13z76nv-4 COjBt MenuItemPing"
     />
   </span>
   <div
-    className="sc-hKgILt hOpHjq MenuDivider"
+    className="Menu__MenuDivider-sc-13z76nv-3 ixcCKO MenuDivider"
   />
   <div
-    className="sc-dlfnbm MenuInfoItem"
+    className="Menu__MenuInfoItem-sc-13z76nv-2 MenuInfoItem"
   />
 </div>
 `;
