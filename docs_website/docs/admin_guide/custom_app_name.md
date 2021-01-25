@@ -11,7 +11,7 @@ To do so, rebuild the Webpack files with the environment variable `QUERYBOOK_APP
 ```Dockerfile
 FROM querybook:latest
 
-RUN QUERYBOOK_APPNAME=Example ./node_modules/.bin/webpack --env.NODE_ENV=production
+RUN QUERYBOOK_APPNAME=Example ./node_modules/.bin/webpack --mode=production
 ```
 
 The website served by this docker image will show "Welcome to Example" on the homepage with the browser title as "Example".

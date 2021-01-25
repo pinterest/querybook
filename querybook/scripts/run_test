@@ -7,7 +7,7 @@ run_python_unit_test() {
 
 run_webpack_test() {
     echo 'Start running webpack >>>>>>>>>>>>>>>>>>>>>>>>>>>>'
-    ./node_modules/.bin/webpack --env.NODE_ENV=production
+    ./node_modules/.bin/webpack --mode=production
     if [ $? -ne 0 ]; then
         echo "Webpack test failed"
         exit 1
