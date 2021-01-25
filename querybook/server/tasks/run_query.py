@@ -33,11 +33,14 @@ def run_query_task(self, query_execution_id):
     try:
         executor = create_executor_from_execution(query_execution_id, celery_task=self)
         run_executor_until_finish(self, executor)
-    except (QueryExecutorException, SoftTimeLimitExceeded, Exception) as e:
+    except SoftTimeLimitExceeded:
         # SoftTimeLimitExceeded
         # This exception happens when query has been running for more than
         # the limited time (default 2 days)
-
+        error_message = "The execution has exceeded the maximum allowed time."
+    except QueryExecutorException as e:
+        error_message = str(e)
+    except Exception as e:
         error_message = "{}\n{}".format(e, traceback.format_exc())
     finally:
         # When the finally block is reached, it is expected
