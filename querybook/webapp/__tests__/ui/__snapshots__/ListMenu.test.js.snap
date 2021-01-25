@@ -1,10 +1,10 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
 exports[`matches enzyme snapshots matches snapshot 1`] = `
-<styled.div
+<Menu
   className=""
 >
-  <styled.span
+  <Menu__MenuItem
     key="0"
   >
     <span
@@ -16,16 +16,16 @@ exports[`matches enzyme snapshots matches snapshot 1`] = `
         test
       </span>
     </span>
-  </styled.span>
-</styled.div>
+  </Menu__MenuItem>
+</Menu>
 `;
 
 exports[`matches test renderer snapshot serializes the styles 1`] = `
 <div
-  className="sc-bdfBwQ fQYtYk Menu"
+  className="Menu-sc-13z76nv-0 dbaXzY Menu"
 >
   <span
-    className="sc-gsTCUz MenuItem"
+    className="Menu__MenuItem-sc-13z76nv-1 MenuItem"
   >
     <span
       className="flex-row flex1"

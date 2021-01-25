@@ -1,7 +1,7 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
 exports[`matches enzyme snapshots matches snapshot 1`] = `
-<styled.button
+<ToolBarButton__StyledButton
   aria-label=""
   className=""
   data-balloon-pos="up"
@@ -9,13 +9,13 @@ exports[`matches enzyme snapshots matches snapshot 1`] = `
   <i
     className="fa fa-check"
   />
-</styled.button>
+</ToolBarButton__StyledButton>
 `;
 
 exports[`matches test renderer snapshot serializes the styles 1`] = `
 <button
   aria-label=""
-  className="sc-bdfBwQ fmlrbc"
+  className="ToolBarButton__StyledButton-qi1boi-0 hLRtS"
   data-balloon-pos="up"
 >
   <i

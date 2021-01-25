@@ -1,7 +1,7 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
 exports[`matches enzyme snapshots matches snapshot 1`] = `
-<styled.textarea
+<ResizableTextArea__StyledTextarea
   className="ResizableTextArea"
   disabled={false}
   onChange={[Function]}
@@ -14,7 +14,7 @@ exports[`matches enzyme snapshots matches snapshot 1`] = `
 
 exports[`matches test renderer snapshot serializes the styles 1`] = `
 <textarea
-  className="sc-bdfBwQ fdRujR ResizableTextArea"
+  className="ResizableTextArea__StyledTextarea-sc-1fskja0-0 eHAMQj ResizableTextArea"
   disabled={false}
   onChange={[Function]}
   onInput={[Function]}

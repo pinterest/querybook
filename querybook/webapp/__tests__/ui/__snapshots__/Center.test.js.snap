@@ -1,19 +1,19 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
 exports[`matches enzyme snapshots matches snapshot 1`] = `
-<styled.div>
-  <styled.div>
+<Center__CenterDivContainer>
+  <Center__CenterDiv>
     Test
-  </styled.div>
-</styled.div>
+  </Center__CenterDiv>
+</Center__CenterDivContainer>
 `;
 
 exports[`matches test renderer snapshot serializes the styles 1`] = `
 <div
-  className="sc-bdfBwQ itbNMb"
+  className="Center__CenterDivContainer-sc-1kqp0n6-0 hFbxlS"
 >
   <div
-    className="sc-gsTCUz fMCZYS"
+    className="Center__CenterDiv-sc-1kqp0n6-1 kKQJv"
   >
     Test
   </div>

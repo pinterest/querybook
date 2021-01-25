@@ -2,7 +2,7 @@
 
 exports[`matches enzyme snapshots matches snapshot 1`] = `
 <div
-  className="sc-bdfBwQ Content"
+  className="Content-sc-13ypr6e-0 Content"
   dangerouslySetInnerHTML={
     Object {
       "__html": "<p>test</p>",
@@ -13,7 +13,7 @@ exports[`matches enzyme snapshots matches snapshot 1`] = `
 
 exports[`matches test renderer snapshot serializes the styles 1`] = `
 <div
-  className="sc-bdfBwQ Content"
+  className="Content-sc-13ypr6e-0 Content"
   dangerouslySetInnerHTML={
     Object {
       "__html": "<p>test</p>",

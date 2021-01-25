@@ -4,11 +4,11 @@ exports[`matches enzyme snapshots matches snapshot 1`] = `
 <div
   className="TestContainer Container"
 >
-  <styled.div
+  <FullHeight
     className="Container-content"
   >
     Test
-  </styled.div>
+  </FullHeight>
 </div>
 `;
 
@@ -17,7 +17,7 @@ exports[`matches test renderer snapshot serializes the styles 1`] = `
   className="TestContainer Container"
 >
   <div
-    className="sc-bdfBwQ cSFrRC Container-content"
+    className="FullHeight-p6umsy-0 kFdkFT Container-content"
   >
     Test
   </div>

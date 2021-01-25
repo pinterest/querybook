@@ -1,7 +1,7 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
 exports[`matches enzyme snapshots matches snapshot 1`] = `
-<styled.a
+<Link__StyledLink
   href="https://test.com"
   onMouseDown={[Function]}
   rel="noopener noreferrer"
@@ -11,7 +11,7 @@ exports[`matches enzyme snapshots matches snapshot 1`] = `
 
 exports[`matches test renderer snapshot serializes the styles 1`] = `
 <a
-  className="sc-bdfBwQ fQYtYk"
+  className="Link__StyledLink-sc-1k0sviq-0 gVoECW"
   href="https://test.com"
   onMouseDown={[Function]}
   rel="noopener noreferrer"
