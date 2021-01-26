@@ -1,36 +1,47 @@
 {
     "docs": {
-        "Admin Guide": [
-            "admin_guide/quick_start",
-            "admin_guide/setup_guide",
-            "admin_guide/infra_config",
-            "admin_guide/general_config",
-            "admin_guide/deployment_guide",
-            "admin_guide/sharing_and_security",
-            "admin_guide/plugins",
-            "admin_guide/add_custom_jobs",
-            "admin_guide/customize_html",
-            "admin_guide/embedded_iframe",
-            "admin_guide/troubleshoot"
+        "Overview": [
+            "overview/querybook",
+            "overview/architecture",
+            "overview/sharing_and_security"
+        ],
+        "Setup Guide": [
+            "setup_guide/setup_overview",
+            "setup_guide/quick_setup",
+            "setup_guide/troubleshoot",
+            "setup_guide/prod_setup",
+            "setup_guide/deployment_guide",
+            "setup_guide/update_guide"
+        ],
+        "Configurations": [
+            "configurations/infra_config",
+            "configurations/general_config",
+            "configurations/custom_app_name"
+        ],
+        "Integrations": [
+            "integrations/plugins",
+            "integrations/add_auth",
+            "integrations/add_query_engine",
+            "integrations/add_metastore",
+            "integrations/add_result_store",
+            "integrations/add_exporter",
+            "integrations/add_engine_status_checker",
+            "integrations/add_notifier",
+            "integrations/add_query_result_transform",
+            "integrations/customize_html",
+            "integrations/embedded_iframe"
         ],
         "Developer Guide": [
+            "developer_guide/contributing",
             "developer_guide/developer_setup",
-            "developer_guide/run_db_migration",
-            "developer_guide/add_auth",
-            "developer_guide/add_query_engine",
-            "developer_guide/add_metastore",
-            "developer_guide/add_result_store",
-            "developer_guide/add_exporter",
-            "developer_guide/add_engine_status_checker",
-            "developer_guide/add_notifier",
-            "developer_guide/add_query_result_transform"
+            "developer_guide/run_db_migration"
         ],
+
+        "User Guide": ["user_guide/api_token", "user_guide/faq"],
         "Changelog": [
             "changelog/nov_2020_2_4_2",
             "changelog/may_2020_2_3_0",
             "changelog/jan_2020_2_1_0"
-        ],
-        "Contributing": ["contributing/overview"],
-        "User Guide": ["user_guide/api_token"]
+        ]
     }
 }

@@ -27,6 +27,6 @@ Here are some fields of notifier that you must configure in the setup process:
     -   `html`
 -   notify(user, message,): This is the actual notification sending function. User is provided for access to the information of the user that the notification is being sent to. Message is the markdown-formatted content of the notification that will be sent.
 
-If you want to add a notifier that's specific to your own use case, please do so through plugins (See this [Plugin Guide](../admin_guide/plugins.md) to learn how to setup plugins for Querybook).
+If you want to add a notifier that's specific to your own use case, please do so through plugins (See this [Plugin Guide](plugins.md) to learn how to setup plugins for Querybook).
 
 Once plugins folder is setup, import the notifier class under `ALL_PLUGIN_NOTIFIERS` in notifier_plugin/**init**.py .

@@ -29,6 +29,7 @@ def main():
         port = int(sys.argv[-1])
 
     debug = "--debug" in sys.argv
+
     webpack_process = None
 
     if debug:
@@ -40,7 +41,6 @@ def main():
         if os.environ.get("WERKZEUG_RUN_MAIN") != "true":
             webpack_process = multiprocessing.Process(target=webpack)
             webpack_process.start()
-
     else:
         print("You are not running in debug mode, so files are not autoreloaded.")
         print("To run in debug mode: python runweb.py --debug port")
@@ -48,8 +48,7 @@ def main():
     try:
         socketio_server(host=host, port=port, debug=debug)
     finally:
-        if webpack_process is not None:
-            webpack_process.terminate()
+        terminate_process_if_live(webpack_process)
 
 
 def socketio_server(host="0.0.0.0", port=5000, debug=False):
@@ -71,6 +70,11 @@ def webpack():
             break
         if output:
             sys.stdout.write(output.decode("utf-8"))
+
+
+def terminate_process_if_live(process):
+    if process is not None and process.is_alive():
+        process.terminate()
 
 
 if __name__ == "__main__":

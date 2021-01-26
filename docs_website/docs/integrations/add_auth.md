@@ -32,4 +32,4 @@ TODO: add examples of adding ldap auth and okta auth as 2 different authenticati
 
 ## Plugins
 
-If the authentication method is too specific for your org or it has some post-authentication actions (such as adding users to a specific environment based on their permission), it is recommended to add the auth as part of the plugin. Please check the [Plugin Guide](../admin_guide/plugins.md) to see how setup plugins. Once it is setup and running, simply put your auth code under auth_plugins/ (or any other folder, it is not an enforced restriction) and set AUTH_BACKEND='auth_plugin.<auth_module_name>' as the environment variable.
+If the authentication method is too specific for your org or it has some post-authentication actions (such as adding users to a specific environment based on their permission), it is recommended to add the auth as part of the plugin. Please check the [Plugin Guide](plugins.md) to see how setup plugins. Once it is setup and running, simply put your auth code under auth_plugins/ (or any other folder, it is not an enforced restriction) and set AUTH_BACKEND='auth_plugin.<auth_module_name>' as the environment variable.
