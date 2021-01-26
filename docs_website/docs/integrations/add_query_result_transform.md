@@ -33,7 +33,7 @@ Transformers can be used to create alternative views of a column cell. Similar t
 
 Depending on the use case, transformers/analyzers/detectors can be added to Querybook either directly in the source code or as a plugin. The default transformers/analyzers/detectors are located under querybook/webapp/lib/query-result/ and they serve as examples of how to add these features.
 
-For org specific use cases, you can add transformers/analyzers/detectors by setting the following variables in the window object in the web plugin (See this [Plugin Guide](../admin_guide/plugins.md) to learn how to set up plugins for Querybook). They are:
+For org specific use cases, you can add transformers/analyzers/detectors by setting the following variables in the window object in the web plugin (See this [Plugin Guide](plugins.md) to learn how to set up plugins for Querybook). They are:
 
 ```js
 window.CUSTOM_COLUMN_STATS_ANALYZERS;

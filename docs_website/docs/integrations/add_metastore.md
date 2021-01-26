@@ -19,4 +19,4 @@ The following functions needs to be overloaded when inheriting from BaseMetastor
 -   `get_table_and_columns(schema_name: str, table_name: str) -> Tuple[DataTable, List[DataColumn]]`: This is the main function which loads the table information and a list of its columns. See DataTable, DataColumn in base_metastore_loader.py to learn about the structure of data that needs to be returned.
 -   `get_metastore_params_template() -> AllFormField`: return the input form that configures the metastore. Normally it should include connection string and associated authentication data.
 
-And that is all! If the metastore is org specific, you can put it in the plugins directory, see [Plugins Guide](../admin_guide/plugins.md) for more details.
+And that is all! If the metastore is org specific, you can put it in the plugins directory, see [Plugins Guide](plugins.md) for more details.

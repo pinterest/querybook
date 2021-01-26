@@ -34,7 +34,7 @@ export const SetUp: React.FunctionComponent = () => {
 
     return (
         <div className="SetUp flex-center">
-            <div className="SetUp-message">Welcome to ${getAppName()}!</div>
+            <div className="SetUp-message">Welcome to {getAppName()}!</div>
             <div className="SetUp-choices horizontal-space-between">
                 {demoLoading ? (
                     <Card height="180px" width="240px">

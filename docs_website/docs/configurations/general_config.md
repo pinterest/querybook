@@ -13,7 +13,7 @@ The first user that installs Querybook gets the "Admin" role. Admins can add oth
 In the next section we will go over different things that can be configured in the Admin tools.
 
 :::info
-Checkout [Sharing & Security](./sharing_and_security.md) to learn how to configure access permission for these entities.
+Checkout [Sharing & Security](../overview/sharing_and_security.md) to learn how to configure access permission for these entities.
 :::
 
 #### Environment
@@ -34,7 +34,7 @@ Once an environment is created, you can use `Add/Remove User` to add/remove user
 
 ### Metastore
 
-Metastore is used to collect schema/table information from the metastore. Different loaders are needed depending on the use case (i.e, Hive orMysql). Each loader comes with different parameters that needs to be set. Note that metastore can be shared between environments since they are only referenced indirectly by query engines.
+Metastore is used to collect schema/table information from the metastore. Different loaders are needed depending on the use case (i.e, Hive or MySQL). Each loader comes with different parameters that needs to be set. Note that metastore can be shared between environments since they are only referenced indirectly by query engines.
 
 You can use the `add denylist/allowlist` function to limit what table can be accessed via the metastore. Note that this also impacts the query engine that is referencing the metastore.
 

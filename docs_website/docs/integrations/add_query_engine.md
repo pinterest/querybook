@@ -25,7 +25,7 @@ Adding a query engine in Querybook is simple.
 
 ### Adding the new engine as a plugin
 
-If you cannot include this engine as part of the open source project, you can also add it as a [plugin](../admin_guide/plugins.md).
+If you cannot include this engine as part of the open source project, you can also add it as a [plugin](plugins.md).
 
 1. Locate the plugin root directory for your customized Querybook, and find the folder called executor_plugin.
 2. Add your engine code similiar to what's above.
@@ -37,7 +37,7 @@ Given most query engines can be used via Sqlalchemy connectors, the primary use 
 
 ### Authentication
 
-The default query engines require a fixed SQL connection string (e.g. mysql://username:password@host:port/database) to authenticate to the query engine. However, you might want to do the following:
+The default query engines require a fixed SQL connection string (e.g. MySQL://username:password@host:port/database) to authenticate to the query engine. However, you might want to do the following:
 
 -   proxy user so that the query engine can perform another check on whether or not the user has access
 -   use user's auth token to connect to the query engine instead

@@ -100,7 +100,21 @@ export function arrayMove<T = any>(
     return newArr;
 }
 
-export function enableResizable(options) {
+export function enableResizable(
+    options: Partial<
+        Record<
+            | 'top'
+            | 'bottom'
+            | 'right'
+            | 'left'
+            | 'topRight'
+            | 'bottomRight'
+            | 'bottomLeft'
+            | 'topLeft',
+            boolean
+        >
+    >
+) {
     return {
         top: false,
         bottom: false,

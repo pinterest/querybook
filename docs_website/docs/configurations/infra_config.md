@@ -7,7 +7,7 @@ sidebar_label: Infra Config
 ## Overview
 
 :::caution
-THIS GUIDE IS ONLY FOR INFRASTRUCTURE SETUP, PLEASE READ THE [GENERAL CONFIG](../admin_guide/general_config.md) TO CONFIGURE ENTITIES SUCH AS QUERY ENGINE & ACCESS PERMISSION.
+THIS GUIDE IS ONLY FOR INFRASTRUCTURE SETUP, PLEASE READ THE [GENERAL CONFIG](./general_config.md) TO CONFIGURE ENTITIES SUCH AS QUERY ENGINE & ACCESS PERMISSION.
 :::
 
 Eventhrough Querybook can be launched without any configuration, it is absolutely required for more powerful infrastructure/flexible customization. In this guide we will walkthrough different kind of environment settings you can set for Querybook. You can see all possible options and default values in this repo by checking out `querybook/config/querybook_default_config.yaml`.

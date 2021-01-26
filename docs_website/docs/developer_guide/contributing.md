@@ -1,7 +1,7 @@
 ---
-id: overview
+id: contributing
 title: Contributing
-sidebar_label: Overview
+sidebar_label: Contributing
 ---
 
 First off, thanks for taking the time to contribute! This guide will answer
@@ -67,8 +67,8 @@ To increase the chances that your pull request will be accepted:
 
 ## Help
 
-Start by reading the developer starter guide [this guide](../developer_guide/developer_setup.md) to setup Querybook/
-If you're having trouble using this project, please check the [developer guides](../developer_guide/)
+Start by reading the developer starter guide [this guide](./developer_setup.md) to setup Querybook/
+If you're having trouble using this project, please check the [developer guides](./developer_guide/)
 and searching for solutions in the existing open and closed issues.
 
 You can also reach out to us at querybook@pinterest.com or on our [Slack](https://join.slack.com/t/querybookchat/shared_invite/zt-dpr988af-9VwGkjcmPhqTmRoA2Tm3gg).

@@ -27,6 +27,6 @@ Here are some fields of exporter that you must configure in the setup process:
 
 (\* This is because currently db based query store does not provide a download url for security reasons, this should be a non-issue once one time user signed token is implemented on Querybook)
 
-To ensure Querybook more generalizable, all exporters are not included by default. If you want to add an exporter, please do so through plugins (See this [Plugin Guide](../admin_guide/plugins.md) to learn how to setup plugins for Querybook).
+To ensure Querybook more generalizable, all exporters are not included by default. If you want to add an exporter, please do so through plugins (See this [Plugin Guide](plugins.md) to learn how to setup plugins for Querybook).
 
 Once plugins folder is setup, import the exporter class under `ALL_PLUGIN_EXPORTERS` in exporter_plugin/**init**.py .

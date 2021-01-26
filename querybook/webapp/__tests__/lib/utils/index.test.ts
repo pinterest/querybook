@@ -38,13 +38,13 @@ test('arrayMove', () => {
 });
 
 test('enableResizable', () => {
-    const enabledResizable = utils.enableResizable({ testOption: true });
+    const enabledResizable = utils.enableResizable({ bottom: true });
     expect(utils.enableResizable(enabledResizable)).toHaveProperty(
         'top',
         false
     );
     expect(utils.enableResizable(enabledResizable)).toHaveProperty(
-        'testOption',
+        'bottom',
         true
     );
 });
