@@ -16,6 +16,8 @@ services:
             - '10001'
         environment:
             PORT: 10001
+            PUBLIC_URL: ${PUBLIC_URL-http://localhost:10001}
+            TERM: xterm-256color
         restart: 'always'
         volumes:
             # This is for code change via watcher

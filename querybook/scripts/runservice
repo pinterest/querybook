@@ -18,7 +18,7 @@ case "$SERVICE_NAME" in
     COMMAND="watchmedo auto-restart -d querybook -p '*.py' -R -- celery worker -A tasks.all_tasks --loglevel=DEBUG"
     ;;
 "scheduler")
-    COMMAND="watchmedo auto-restart -d querybook -p '*.py' -R -- celery beat -A tasks.all_tasks -S scheduler.DatabaseScheduler --loglevel=DEBUG"
+    COMMAND="watchmedo auto-restart -d querybook -p '*.py' -R -- celery beat -A tasks.all_tasks -S scheduler.DatabaseScheduler --loglevel=INFO"
     ;;
 "worker_scheduler") # FIXME: this doesn't schedule task as desired
     COMMAND="celery -A tasks.all_tasks worker --beat --scheduler scheduler.DatabaseScheduler --loglevel=INFO"

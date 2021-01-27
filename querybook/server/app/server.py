@@ -1,10 +1,10 @@
 import os
-from flask import send_from_directory, abort
+from flask import send_file, abort
 
 from app import auth
 from app.datasource import register, abort_request
 from app.flask_app import flask_app, limiter
-from const.path import WEBAPP_PATH
+from const.path import WEBAPP_INDEX_PATH
 
 
 import datasources
@@ -34,4 +34,4 @@ def get_health_check():
 @flask_app.route("/<path:ignore>/")
 @limiter.exempt
 def main(ignore=None):
-    return send_from_directory(WEBAPP_PATH, "index.html")
+    return send_file(WEBAPP_INDEX_PATH, mimetype="text/html")
