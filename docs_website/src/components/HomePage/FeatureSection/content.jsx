@@ -59,8 +59,8 @@ export const pluginFeatures = {
     footer: () => (
         <>
             Check out{' '}
-            <Link to="/docs/admin_guide/plugins">our documentation</Link> to see
-            all customization options.
+            <Link to="/docs/integrations/plugins">our documentation</Link> to
+            see all customization options.
         </>
     ),
 
