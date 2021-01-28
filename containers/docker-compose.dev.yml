@@ -22,7 +22,7 @@ services:
     web:
         extends:
             service: base
-        command: './querybook/scripts/docker_run_interactive ./querybook/scripts/runservice web ${PORT-10001}'
+        command: './querybook/scripts/docker_run_interactive ./querybook/scripts/runservice web --debug ${PORT-10001}'
     worker:
         extends:
             service: base

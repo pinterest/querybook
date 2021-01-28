@@ -10,16 +10,14 @@ const webpack = require('webpack');
 const fs = require('fs');
 const BUILD_DIR = 'dist/webapp';
 
-function getDevServerSettings(env, PROD) {
-    if (PROD) {
-        // No dev server in prod
-        return {};
+function getDevServerSettings(env) {
+    const QUERYBOOK_UPSTREAM = env?.QUERYBOOK_UPSTREAM;
+    if (!QUERYBOOK_UPSTREAM) {
+        throw Error('Upstream API server is required for this to work');
     }
 
-    const DEVSERVER_PORT = 3000;
-    const QUERYBOOK_UPSTREAM =
-        (env && env.QUERYBOOK_UPSTREAM) || `http://localhost:${DEVSERVER_PORT}`;
     const settings = {
+        disableHostCheck: true,
         hot: true,
 
         historyApiFallback: {
@@ -47,8 +45,26 @@ function getDevServerSettings(env, PROD) {
                 changeOrigin: true,
             },
         },
-        port: DEVSERVER_PORT,
         publicPath: '/build/',
+        onListening: (server) => {
+            const port = server.listeningApp.address().port;
+            server.compiler.hooks.done.tap('done', () => {
+                setImmediate(() => {
+                    console.log('\033c');
+                    console.log(`
+                    ██████╗ ██╗   ██╗███████╗██████╗ ██╗   ██╗██████╗  ██████╗  ██████╗ ██╗  ██╗
+                    ██╔═══██╗██║   ██║██╔════╝██╔══██╗╚██╗ ██╔╝██╔══██╗██╔═══██╗██╔═══██╗██║ ██╔╝
+                    ██║   ██║██║   ██║█████╗  ██████╔╝ ╚████╔╝ ██████╔╝██║   ██║██║   ██║█████╔╝
+                    ██║▄▄ ██║██║   ██║██╔══╝  ██╔══██╗  ╚██╔╝  ██╔══██╗██║   ██║██║   ██║██╔═██╗
+                    ╚██████╔╝╚██████╔╝███████╗██║  ██║   ██║   ██████╔╝╚██████╔╝╚██████╔╝██║  ██╗
+                     ╚══▀▀═╝  ╚═════╝ ╚══════╝╚═╝  ╚═╝   ╚═╝   ╚═════╝  ╚═════╝  ╚═════╝ ╚═╝  ╚═╝
+                     - Website is served on http://localhost:${port}
+                     - Run terminal inside container with: \`docker exec -it querybook_web_1 bash\`
+                     - Stop the containers with \`ctrl+c\` or run \`make bundled_off\`
+                                `);
+                });
+            });
+        },
     };
 
     if (env && env.QUERYBOOK_COOKIE) {
@@ -98,12 +114,15 @@ module.exports = (env, options) => {
     }
 
     const appName = process.env.QUERYBOOK_APPNAME ?? 'Querybook';
+    const devServer = process.env.WEBPACK_DEV_SERVER
+        ? getDevServerSettings(env)
+        : {};
 
     return {
         entry,
         mode,
 
-        devServer: getDevServerSettings(env),
+        devServer,
 
         output: {
             filename: '[name].[hash].js',

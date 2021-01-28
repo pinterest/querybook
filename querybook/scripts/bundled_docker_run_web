@@ -1,4 +1,16 @@
 #!/usr/bin/env bash
 
 ./querybook/scripts/init_db
-./querybook/scripts/runservice web ${PORT-10001}
+
+if [ "$HOT_RELOAD" = "true" ]; then
+    ./querybook/scripts/runservice web ${APIPORT-3000} & PIDSERVER=$!
+    yarn run webpack-dev-server \
+        --host 0.0.0.0 \
+        --port ${PORT-10001} \
+        --mode=development --open --hot \
+        --env.QUERYBOOK_UPSTREAM=http://0.0.0.0:${APIPORT-3000}  & PIDWEB=$!
+    wait $PIDSERVER
+    wait $PIDWEB
+else
+    ./querybook/scripts/runservice web --debug ${PORT-10001}
+fi
