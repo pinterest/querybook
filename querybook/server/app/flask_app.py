@@ -10,7 +10,7 @@ from flask_limiter.util import get_remote_address
 from flask_caching import Cache
 
 
-from const.path import BUILD_PATH, STATIC_PATH, WEBAPP_PATH
+from const.path import BUILD_PATH, STATIC_PATH, WEBAPP_DIR_PATH
 from env import QuerybookSettings
 from lib.utils.json import JSONEncoder
 
@@ -126,7 +126,7 @@ def make_blue_print(app, limiter):
     blueprint = Blueprint(
         "static_build_files",
         __name__,
-        static_folder=WEBAPP_PATH,
+        static_folder=WEBAPP_DIR_PATH,
         static_url_path=BUILD_PATH,
     )
     app.register_blueprint(blueprint)

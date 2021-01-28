@@ -31,5 +31,5 @@ def draftjs_content_state_to_plaintext(content_state) -> str:
 
 
 def html_to_plaintext(html) -> str:
-    soup = BeautifulSoup(html)
+    soup = BeautifulSoup(html, "html.parser")
     return soup.getText()
