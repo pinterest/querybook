@@ -6,7 +6,7 @@ import renderer from 'react-test-renderer';
 import { Table } from '../../ui/Table/Table';
 
 it('renders without crashing', () => {
-    shallow(<Table rows={[1, 2]} cols={[1, 2]} />);
+    shallow(<Table rows={[1, 2]} cols={['1', '2']} />);
 });
 
 describe('matches enzyme snapshots', () => {
