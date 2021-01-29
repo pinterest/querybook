@@ -3,7 +3,7 @@ import styled from 'styled-components';
 import { getAppName } from 'lib/utils/global';
 
 const StyledQuerybookLogo = styled.span`
-    display: flex;
+    display: inline-flex;
     align-items: center;
     justify-content: center;
 
