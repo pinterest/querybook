@@ -8,6 +8,7 @@ const StyledLink = styled('a')`
         naturalLink &&
         `
         color: inherit;
+        text-decoration: underline;
     `};
 `;
 

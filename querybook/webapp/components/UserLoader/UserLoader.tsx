@@ -35,8 +35,8 @@ export const UserLoader: React.FunctionComponent = ({ children }) => {
                         has_login: boolean;
                         has_signup: boolean;
                     }>(`/user/login_method/`);
-                    setShowSignup(hasLogin);
-                    setShowUnauth(hasSignup);
+                    setShowSignup(hasSignup);
+                    setShowUnauth(hasLogin);
                 } catch (e2) {
                     setFetchError(e2);
                 }
