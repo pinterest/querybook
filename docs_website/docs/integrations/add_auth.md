@@ -23,6 +23,8 @@ We will go through how to setup authentication with OAuth and LDAP starting from
 
 Start by creating an OAuth client with the authentication provider (e.g. [Google](https://developers.google.com/identity/protocols/oauth2), [Okta](https://developer.okta.com/docs/guides/implement-oauth-for-okta/create-oauth-app/)). Make sure "http://localhost:10001/oauth2callback" is entered as allowed redirect uri. Once created, the next step is to change the querybook config by editing `containers/bundled_querybook_config.yaml`. Open that file and enter the following:
 
+#### Generic OAuth
+
 ```yaml
 AUTH_BACKEND: 'app.auth.oauth_auth' # Same as import path when running Python
 OAUTH_CLIENT_ID: '---Redacted---'
@@ -30,6 +32,26 @@ OAUTH_CLIENT_SECRET: '---Redacted---'
 OAUTH_AUTHORIZATION_URL: https://accounts.google.com/o/oauth2/v2/auth
 OAUTH_TOKEN_URL: https://oauth2.googleapis.com/token
 OAUTH_USER_PROFILE: https://openidconnect.googleapis.com/v1/userinfo
+PUBLIC_URL: http://localhost:10001
+```
+
+#### Google
+
+```yaml
+AUTH_BACKEND: 'app.auth.google_auth'
+OAUTH_CLIENT_ID: '---Redacted---'
+OAUTH_CLIENT_SECRET: '---Redacted---'
+PUBLIC_URL: http://localhost:10001
+```
+
+#### Okta
+
+```yaml
+AUTH_BACKEND: 'app.auth.okta_auth'
+OAUTH_CLIENT_ID: '---Redacted---'
+OAUTH_CLIENT_SECRET: '---Redacted---'
+OKTA_BASE_URL: https://[Redacted].okta.com/oauth2
+PUBLIC_URL: http://localhost:10001
 ```
 
 :::caution
