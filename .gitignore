@@ -40,6 +40,8 @@ node_modules
 # Jest coverage files
 querybook/webapp/coverage/
 
+# Python coverage files
+.coverage
 
 # Documentation site
 .docusaurus
