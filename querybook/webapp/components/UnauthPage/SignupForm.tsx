@@ -7,6 +7,7 @@ import { FormField } from 'ui/Form/FormField';
 import { Message } from 'ui/Message/Message';
 import { Button } from 'ui/Button/Button';
 import { FormWrapper } from 'ui/Form/FormWrapper';
+import { SimpleField } from 'ui/FormikField/SimpleField';
 
 export interface ISignupFormProps {
     onSuccessLogin: () => any;
@@ -62,12 +63,7 @@ export const SignupForm: React.FunctionComponent<ISignupFormProps> = ({
         >
             {({ handleSubmit, isSubmitting, isValid }) => {
                 const usernameField = (
-                    <FormField
-                        label="Username"
-                        error={() => <ErrorMessage name="username" />}
-                    >
-                        <Field type="username" name="username" />
-                    </FormField>
+                    <SimpleField type="input" name="username" />
                 );
 
                 const emailField = (
@@ -80,21 +76,19 @@ export const SignupForm: React.FunctionComponent<ISignupFormProps> = ({
                 );
 
                 const passwordField = (
-                    <FormField
-                        label="Password"
-                        error={() => <ErrorMessage name="password" />}
-                    >
-                        <Field type="password" name="password" />
-                    </FormField>
+                    <SimpleField
+                        type="input"
+                        name="password"
+                        inputType="password"
+                    />
                 );
 
                 const password2Field = (
-                    <FormField
-                        label="Confirm Password"
-                        error={() => <ErrorMessage name="password2" />}
-                    >
-                        <Field type="password" name="password2" />
-                    </FormField>
+                    <SimpleField
+                        type="input"
+                        name="password2"
+                        inputType="password"
+                    />
                 );
 
                 const errorMessageDOM = errorMessage && (
