@@ -10,6 +10,7 @@ import { SignupForm } from './SignupForm';
 import { Box } from 'ui/Box/Box';
 import { Message } from 'ui/Message/Message';
 import { QuerybookLogo } from 'ui/QuerybookLogo/QuerybookLogo';
+import { Link } from 'ui/Link/Link';
 import './UnauthPage.scss';
 
 export interface IUnauthPageProps {
@@ -60,15 +61,23 @@ export class UnauthPage extends React.Component<
                 <Message type="error">
                     <p>
                         NOTE: This signup/login flow is only for people who
-                        wants to temporarily try out Querybook.
+                        wants to <b>temporarily</b> try out Querybook.
                     </p>
                     <p>
                         The user name and password (as salted hash) information
                         is only stored in the Querybook Database and is not
                         passed anywhere.
                     </p>
+                    <br />
                     <p>
-                        Please use OAuth or other login methods for production.
+                        Check out{' '}
+                        <Link
+                            to="https://www.querybook.org/docs/integrations/add_auth"
+                            naturalLink
+                        >
+                            the authentication guide
+                        </Link>{' '}
+                        to learn how to set it up for your org.
                     </p>
                 </Message>
             </div>
