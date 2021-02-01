@@ -33,14 +33,14 @@ OAUTH_USER_PROFILE: https://openidconnect.googleapis.com/v1/userinfo
 ```
 
 :::caution
-DO NOT checkin `OAUTH_CLIENT_SECRET` into the codebase. The example above is for testing only. For production, please use environment variables to provide this value.
+DO NOT CHECK IN `OAUTH_CLIENT_SECRET` to the codebase. The example above is for testing only. For production, please use environment variables to provide this value.
 :::
 
 Once entered, relaunch the container with `docker restart querybook_web_1` and visit the localhost website. It should redirect you to the OAuth login page.
 
 ### LDAP
 
-LDAP is much easier to setup compare to OAuth, put the following into `containers/bundled_querybook_config.yaml`:
+LDAP is much easier to setup compared to OAuth, put the following into `containers/bundled_querybook_config.yaml`:
 
 ```yaml
 AUTH_BACKEND: 'app.auth.ldap_auth' # Same as import path when running Python
