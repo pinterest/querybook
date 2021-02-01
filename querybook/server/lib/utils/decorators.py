@@ -42,6 +42,7 @@ class InMemoryMemoized:
 
 def in_mem_memoized(ttl_secs=None):
     """Memoizes the results of the function.
+       Note params change are ignored in memo.
 
     Args:
         func: A function that will have its results memoized.
