@@ -8,8 +8,12 @@ from .utils import AuthenticationError
 
 
 class NoopAuth(requests.auth.AuthBase):
+    """
+    This auth doesn't do anything.
+    It only used to override oauthlib's behavior.
+    """
+
     def __call__(self, r):
-        # Implement my authentication
         return r
 
 
