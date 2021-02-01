@@ -61,15 +61,51 @@ class OAuthLoginManager(object):
         )
 
     def login(self, request):
-        oauth_url, _ = self.oauth_session.authorization_url(
-            self.oauth_config["authorization_url"]
-        )
+        oauth_url, _ = self._get_authn_url()
         flask_session["next"] = request.path
         return redirect(oauth_url)
 
-    def _parse_user_profile(self, profile_response):
-        user = profile_response.json()["user"]
-        return user["username"], user["email"]
+    def _get_authn_url(self):
+        return self.oauth_session.authorization_url(
+            self.oauth_config["authorization_url"]
+        )
+
+    def oauth_callback(self):
+        LOG.debug("Handling Oauth callback...")
+
+        if request.args.get("error"):
+            return f"<h1>Error: {request.args.get('error')}</h1>"
+
+        code = request.args.get("code")
+
+        try:
+            access_token = self._fetch_access_token(code)
+            username, email = self._get_user_profile(access_token)
+            with DBSession() as session:
+                flask_login.login_user(
+                    AuthUser(self.login_user(username, email, session=session))
+                )
+        except AuthenticationError:
+            abort_unauthorized()
+
+        next_url = "/"
+        if "next" in flask_session:
+            next_url = flask_session["next"]
+            del flask_session["next"]
+
+        return redirect(next_url)
+
+    def _fetch_access_token(self, code):
+        resp = self.oauth_session.fetch_token(
+            token_url=self.oauth_config["token_url"],
+            client_id=self.oauth_config["client_id"],
+            code=code,
+            client_secret=self.oauth_config["client_secret"],
+            cert=certifi.where(),
+        )
+        if resp is None:
+            raise AuthenticationError("Null response, denying access.")
+        return resp["access_token"]
 
     def _get_user_profile(self, access_token):
         resp = requests.get(
@@ -83,6 +119,10 @@ class OAuthLoginManager(object):
             )
         return self._parse_user_profile(resp)
 
+    def _parse_user_profile(self, profile_response):
+        user = profile_response.json()["user"]
+        return user["username"], user["email"]
+
     @with_session
     def login_user(self, username, email, session=None):
         user = get_user_by_name(username, session=session)
@@ -91,41 +131,6 @@ class OAuthLoginManager(object):
                 username=username, fullname=username, email=email, session=session
             )
         return user
-
-    def oauth_callback(self):
-        LOG.debug("Handling Oauth callback...")
-        if request.args.get("error"):
-            return f"<h1>Error: {request.args.get('error')}</h1>"
-
-        resp = self.oauth_session.fetch_token(
-            token_url=self.oauth_config["token_url"],
-            client_id=self.oauth_config["client_id"],
-            code=request.args.get("code"),
-            client_secret=self.oauth_config["client_secret"],
-            cert=certifi.where(),
-        )
-
-        try:
-            if resp is None:
-                raise AuthenticationError("Null response, denying access.")
-
-            access_token = resp["access_token"]
-
-            username, email = self._get_user_profile(access_token)
-        except AuthenticationError:
-            abort_unauthorized()
-
-        with DBSession() as session:
-            flask_login.login_user(
-                AuthUser(self.login_user(username, email, session=session))
-            )
-
-        next_url = "/"
-        if "next" in flask_session:
-            next_url = flask_session["next"]
-            del flask_session["next"]
-
-        return redirect(next_url)
 
 
 login_manager = OAuthLoginManager()
