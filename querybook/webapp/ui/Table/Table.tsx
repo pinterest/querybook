@@ -59,7 +59,6 @@ export class Table extends React.Component<ITableProps> {
 
                 if (alignObj && alignObj[column]) {
                     formattedColumn.style = {
-                        ...formattedColumn.style,
                         textAlign: alignObj[column],
                     };
                 }
