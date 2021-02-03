@@ -30,7 +30,7 @@ import { ExecutedQueryCell, IHighlightRange } from './ExecutedQueryCell';
 import './QueryError.scss';
 
 interface IProps {
-    queryEngine?: IQueryEngine;
+    queryEngine: IQueryEngine;
     queryError: IQueryError;
     queryExecution: IQueryExecution;
     statementExecutions: IStatementExecution[];
