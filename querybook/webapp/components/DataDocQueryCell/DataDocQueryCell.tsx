@@ -32,6 +32,7 @@ import { QuerySnippetInsertionModal } from 'components/QuerySnippetInsertionModa
 import {
     QueryRunButton,
     IQueryRunButtonHandles,
+    QueryEngineSelector,
 } from 'components/QueryRunButton/QueryRunButton';
 import { BoundQueryEditor } from 'components/QueryEditor/BoundQueryEditor';
 
@@ -44,8 +45,10 @@ import { Modal } from 'ui/Modal/Modal';
 import { Title } from 'ui/Title/Title';
 
 import { ResizableTextArea } from 'ui/ResizableTextArea/ResizableTextArea';
-
+import { ISelectedRange } from './common';
 import './DataDocQueryCell.scss';
+import { ErrorQueryCell } from './ErrorQueryCell';
+import { CodeHighlight } from 'ui/CodeHighlight/CodeHighlight';
 
 const ON_CHANGE_DEBOUNCE_MS = 250;
 
@@ -85,16 +88,7 @@ interface IState {
     meta: IDataQueryCellMeta;
 
     focused: boolean;
-    selectedRange: {
-        from: {
-            line: number;
-            ch: number;
-        };
-        to: {
-            line: number;
-            ch: number;
-        };
-    };
+    selectedRange: ISelectedRange;
     queryCollapsedOverride: boolean;
     showQuerySnippetModal: boolean;
 }
@@ -102,7 +96,6 @@ interface IState {
 class DataDocQueryCellComponent extends React.Component<IProps, IState> {
     private queryEditorRef = React.createRef<QueryEditor>();
     private runButtonRef = React.createRef<IQueryRunButtonHandles>();
-    private selfRef = React.createRef<HTMLDivElement>();
     private keyMap = {
         'Shift-Enter': this.clickOnRunButton,
         'Shift-Alt-D': this.props.onDeleteKeyPressed,
@@ -150,65 +143,6 @@ class DataDocQueryCellComponent extends React.Component<IProps, IState> {
         this.setState({
             selectedRange,
         });
-
-        // disable this feature for now since users complainted that
-        // the sidebar popup disrupts the flow when selecting table names
-
-        // if (selectedRange) {
-        //     const codeAnalysis: ICodeAnalysis = this.queryEditorRef.current.getCodeAnalysis();
-
-        //     if (
-        //         codeAnalysis &&
-        //         codeAnalysis.lineage &&
-        //         codeAnalysis.lineage.references &&
-        //         selectedRange.from.line === selectedRange.to.line
-        //     ) {
-        //         const selectionLine = selectedRange.from.line;
-        //         const selectionPos = {
-        //             from: selectedRange.from.ch,
-        //             to: selectedRange.to.ch,
-        //         };
-
-        //         const tableReferences = Array.prototype.concat.apply(
-        //             [],
-        //             Object.values(codeAnalysis.lineage.references)
-        //         );
-        //         const table = find(tableReferences, (tb) => {
-        //             if (tb.line === selectionLine) {
-        //                 const isSchemaExplicit =
-        //                     tb.end - tb.start > tb.name.length;
-        //                 const tablePos = {
-        //                     from:
-        //                         tb.start +
-        //                         (isSchemaExplicit ? tb.schema.length + 1 : 0),
-        //                     to: tb.end,
-        //                 };
-
-        //                 return (
-        //                     tablePos.from === selectionPos.from &&
-        //                     tablePos.to === selectionPos.to
-        //                 );
-        //             }
-        //         });
-        //         if (table) {
-        //             (async () => {
-        //                 const tableInfo = await this.fetchDataTableByNameIfNeeded(
-        //                     table.schema,
-        //                     table.name
-        //                 );
-
-        //                 if (tableInfo) {
-        //                     this.props.setTableSidebarId(tableInfo.id);
-        //                     // TODO: do we keep this logic?
-        //                     // this.props.showTableInInspector(tableInfo.id);
-        //                 } else {
-        //                     this.props.setTableSidebarId(null);
-        //                     // this.props.showTableInInspector(null);
-        //                 }
-        //             })();
-        //         }
-        //     }
-        // }
     }
 
     @bind
@@ -523,20 +457,6 @@ class DataDocQueryCellComponent extends React.Component<IProps, IState> {
         return meta.title || this.defaultCellTitle;
     }
 
-    public renderErrorCell(errorMessage: React.ReactChild) {
-        return (
-            <div className={'DataDocQueryCell'} ref={this.selfRef}>
-                <div className="data-doc-query-cell-inner">
-                    <Message
-                        title={'Invalid Query Cell - Please remove'}
-                        message={errorMessage}
-                        type="error"
-                    />
-                </div>
-            </div>
-        );
-    }
-
     public renderCellHeaderDOM() {
         const {
             queryEngines,
@@ -669,6 +589,46 @@ class DataDocQueryCellComponent extends React.Component<IProps, IState> {
         );
     }
 
+    public renderNoEngineCell() {
+        const errorMessage =
+            'QueryCell will not work unless there is at least 1 query engine.' +
+            ' Please contact admin.';
+        return <ErrorQueryCell errorMessage={errorMessage} />;
+    }
+
+    public renderInvalidEngineCell() {
+        const {
+            showCollapsed,
+            isEditable,
+            queryEngineById,
+            queryEngines,
+        } = this.props;
+        const { query } = this.state;
+        const errorMessage = isEditable
+            ? 'Please choose another engine for this cell since it uses an invalid engine.'
+            : 'This query cell uses an invalid engine.';
+        const queryEnginePicker = isEditable ? (
+            <QueryEngineSelector
+                queryEngineById={queryEngineById}
+                queryEngines={queryEngines}
+                engineId={this.engineId}
+                onEngineIdSelect={this.handleMetaChange.bind(this, 'engine')}
+            />
+        ) : null;
+
+        return (
+            <ErrorQueryCell
+                errorMessage={errorMessage}
+                collapsed={showCollapsed}
+            >
+                <div className="right-align ph4 mv8">{queryEnginePicker}</div>
+
+                <CodeHighlight value={query} />
+                {this.renderExecutionsDOM()}
+            </ErrorQueryCell>
+        );
+    }
+
     public render() {
         const {
             queryEngines,
@@ -676,23 +636,11 @@ class DataDocQueryCellComponent extends React.Component<IProps, IState> {
             showCollapsed,
             isFullScreen,
         } = this.props;
-        const { query } = this.state;
 
         if (!queryEngines.length) {
-            return this.renderErrorCell(
-                'QueryCell will not work unless there is at least 1 query engine.' +
-                    ' Please contact admin.'
-            );
+            return this.renderNoEngineCell();
         } else if (!(this.engineId in queryEngineById)) {
-            return this.renderErrorCell(
-                <>
-                    <p>
-                        Please remove this cell since it uses an invalid engine.
-                        Query text:
-                    </p>
-                    <p>{query}</p>
-                </>
-            );
+            return this.renderInvalidEngineCell();
         }
 
         const classes = classNames({
@@ -701,14 +649,14 @@ class DataDocQueryCellComponent extends React.Component<IProps, IState> {
         });
 
         return showCollapsed ? (
-            <div className={classes} ref={this.selfRef}>
+            <div className={classes}>
                 <div className="query-title flex-row">
                     <span>{this.dataCellTitle}</span>
                     <span>{'{...}'}</span>
                 </div>
             </div>
         ) : isFullScreen ? (
-            <div className={classes} ref={this.selfRef}>
+            <div className={classes}>
                 {this.renderCellHeaderDOM()}
                 <div className="query-content">
                     {this.renderEditorDOM()}
@@ -725,7 +673,7 @@ class DataDocQueryCellComponent extends React.Component<IProps, IState> {
                 </div>
             </div>
         ) : (
-            <div className={classes} ref={this.selfRef}>
+            <div className={classes}>
                 {this.renderCellHeaderDOM()}
                 <div className="query-content">
                     {this.renderEditorDOM()}

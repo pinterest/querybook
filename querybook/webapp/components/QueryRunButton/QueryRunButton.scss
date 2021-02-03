@@ -1,28 +1,34 @@
 .QueryRunButton {
-    .engine-selector {
-        display: inline-block;
+    .run-selection {
+        line-height: 24px;
+    }
 
-        .engine-selector-button {
-            padding: 5.5px 8px;
-            border: var(--border);
-            border-left: none;
-            user-select: none;
-            border-bottom-right-radius: var(--border-radius);
-            border-top-right-radius: var(--border-radius);
-            font-weight: bold;
-            color: var(--dark-text-color);
-            font-size: var(--small-text-size);
-            .fa {
-                margin-left: 5px;
-            }
-        }
+    & .QueryEngineSelector .engine-selector-button {
+        border-left: none;
+        border-bottom-left-radius: 0;
+        border-top-left-radius: 0;
+    }
+}
 
-        &.readonly {
-            line-height: 36px;
+.QueryEngineSelector {
+    display: inline-block;
+
+    .engine-selector-button {
+        padding: 5.5px 8px;
+        border: var(--border);
+        border-radius: var(--border-radius);
+
+        user-select: none;
+
+        font-weight: bold;
+        color: var(--dark-text-color);
+        font-size: var(--small-text-size);
+        .fa {
+            margin-left: 5px;
         }
     }
 
-    .run-selection {
-        line-height: 24px;
+    &.readonly {
+        line-height: 36px;
     }
 }

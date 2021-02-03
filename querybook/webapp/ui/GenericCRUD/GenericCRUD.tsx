@@ -19,7 +19,14 @@ export interface IGenericCRUDProps<T> extends Partial<FormikConfig<T>> {
     onItemCUD?: (item?: T) => any;
 
     validationSchema?: any;
-    renderItem: (item, handleItemChange) => React.ReactChild;
+    renderItem: (
+        item: T,
+        handleItemChange: (
+            field: string,
+            value: any,
+            shouldValidate?: boolean
+        ) => void
+    ) => React.ReactChild;
 }
 
 export function GenericCRUD<T extends Record<any, any>>({

@@ -30,8 +30,8 @@ import { ExecutedQueryCell, IHighlightRange } from './ExecutedQueryCell';
 import './QueryError.scss';
 
 interface IProps {
+    queryEngine?: IQueryEngine;
     queryError: IQueryError;
-    queryEngine: IQueryEngine;
     queryExecution: IQueryExecution;
     statementExecutions: IStatementExecution[];
 }
@@ -173,10 +173,12 @@ export const QueryError: React.FunctionComponent<IProps> = ({
 
     return (
         <div className="QueryError">
-            <ErrorSuggestion
-                errorMsg={errorMsg}
-                language={queryEngine.language}
-            />
+            {queryEngine ? (
+                <ErrorSuggestion
+                    errorMsg={errorMsg}
+                    language={queryEngine.language}
+                />
+            ) : null}
             <Message type="error" size="small">
                 <div className="QueryError-top">
                     <div className="QueryError-title flex-row">
@@ -200,6 +202,7 @@ export const QueryErrorWrapper: React.FunctionComponent<{
             state.queryExecutions.queryErrorById[queryExecution.id]
     );
     const queryEngineById = useSelector(queryEngineByIdEnvSelector);
+    const queryEngine = queryEngineById[queryExecution.engine_id];
 
     const dispatch = useDispatch();
     const loadQueryError = useCallback(
@@ -219,7 +222,7 @@ export const QueryErrorWrapper: React.FunctionComponent<{
                 queryError={queryError}
                 queryExecution={queryExecution}
                 statementExecutions={statementExecutions}
-                queryEngine={queryEngineById[queryExecution.engine_id]}
+                queryEngine={queryEngine}
             />
         </Loader>
     );

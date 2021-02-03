@@ -6,8 +6,6 @@ import { HTML5Backend } from 'react-dnd-html5-backend';
 import { Provider } from 'react-redux';
 
 import { AppRouter } from 'components/AppRouter/AppRouter';
-import { ConfirmationManager } from 'components/ConfirmationManager/ConfirmationManager';
-import { ToastManager } from 'ui/ToastManager/ToastManager';
 
 import { reduxStore } from 'redux/store';
 
@@ -17,11 +15,7 @@ window.reduxStore = reduxStore;
 const AppInner = () => (
     <DndProvider backend={HTML5Backend}>
         <Provider store={reduxStore}>
-            <>
-                <AppRouter />
-                <ConfirmationManager />
-                <ToastManager />
-            </>
+            <AppRouter />
         </Provider>
     </DndProvider>
 );
