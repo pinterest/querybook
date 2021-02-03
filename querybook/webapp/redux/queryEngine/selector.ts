@@ -1,6 +1,6 @@
 import { createSelector } from 'reselect';
 
-import { IQueryEngine } from 'const/queryEngine';
+import type { IQueryEngine } from 'const/queryEngine';
 import { arrayGroupByField } from 'lib/utils';
 import { IStoreState } from 'redux/store/types';
 import { IQueryEngineStatus } from './types';
