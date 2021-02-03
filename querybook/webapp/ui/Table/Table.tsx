@@ -28,7 +28,7 @@ export interface ITableProps extends Partial<TableProps> {
         row: any
     ) => React.ReactNode;
 
-    sortCell?: (cellA: any, cellB: any) => -1 | 0 | 1;
+    sortCell?: (columnIdx: number, cellA: any, cellB: any) => -1 | 0 | 1;
 }
 
 export class Table extends React.Component<ITableProps> {
@@ -46,13 +46,22 @@ export class Table extends React.Component<ITableProps> {
         widthObj?: Record<string, number>,
         alignObj?: Record<string, 'left' | 'right' | 'center'>
     ): Column[] {
-        return columns.map((column: string, columnIndex) => {
+        return columns.map((column: Column | string, columnIndex: number) => {
             let formattedColumn: Column;
             if (typeof column === 'string') {
                 formattedColumn = {
                     Header: titleize(column, '_', ' '),
                     accessor: column,
                 };
+                if (widthObj && widthObj[column]) {
+                    formattedColumn.minWidth = widthObj[column];
+                }
+
+                if (alignObj && alignObj[column]) {
+                    formattedColumn.style = {
+                        textAlign: alignObj[column],
+                    };
+                }
             } else {
                 formattedColumn = column;
             }
@@ -65,18 +74,7 @@ export class Table extends React.Component<ITableProps> {
                 );
             }
             if (sortCell) {
-                formattedColumn.sortMethod = sortCell;
-            }
-
-            if (widthObj && widthObj[column]) {
-                formattedColumn.minWidth = widthObj[column];
-            }
-
-            if (alignObj && alignObj[column]) {
-                formattedColumn.style = {
-                    ...formattedColumn.style,
-                    textAlign: alignObj[column],
-                };
+                formattedColumn.sortMethod = sortCell.bind(null, columnIndex);
             }
 
             return formattedColumn;

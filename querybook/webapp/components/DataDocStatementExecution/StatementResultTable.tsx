@@ -1,16 +1,10 @@
-import { produce } from 'immer';
 import classNames from 'classnames';
-import React, {
-    useRef,
-    useMemo,
-    useState,
-    useCallback,
-    useEffect,
-} from 'react';
+import React, { useMemo, useState, useCallback, useEffect } from 'react';
 import { useSelector } from 'react-redux';
 import styled from 'styled-components';
 
 import { UserSettingsFontSizeToCSSFontSize } from 'const/font';
+import { useImmer } from 'hooks/useImmer';
 import { IColumnTransformer } from 'lib/query-result/types';
 import { findColumnType } from 'lib/query-result/detector';
 import { isNumeric } from 'lib/utils/number';
@@ -76,10 +70,9 @@ export const StatementResultTable: React.FunctionComponent<{
     paginate: boolean;
     maxNumberOfRowsToShow?: number;
 }> = ({ data, paginate, maxNumberOfRowsToShow = 20, isPreview = false }) => {
-    const [expandedColumn, setExpandedColumn] = React.useState<
-        Record<string, boolean>
-    >({});
-    const [columnTransformerByIndex, setColumnTransformer] = useState<
+    const [expandedColumn, toggleExpandedColumn] = useExpandedColumn();
+
+    const [columnTransformerByIndex, setColumnTransformer] = useImmer<
         Record<string, IColumnTransformer>
     >({});
 
@@ -107,10 +100,9 @@ export const StatementResultTable: React.FunctionComponent<{
     );
     const setTransformerForColumn = useCallback(
         (colIndex: number, transformer: IColumnTransformer) => {
-            setColumnTransformer((old) => ({
-                ...old,
-                [colIndex]: transformer,
-            }));
+            setColumnTransformer((old) => {
+                old[colIndex] = transformer;
+            });
         },
         []
     );
@@ -120,7 +112,7 @@ export const StatementResultTable: React.FunctionComponent<{
             <StatementResultTableColumn
                 column={column}
                 expandedColumn={expandedColumn}
-                setExpandedColumn={setExpandedColumn}
+                toggleExpandedColumn={toggleExpandedColumn}
                 rows={rows}
                 colIndex={index}
                 colType={columnTypes[index]}
@@ -173,36 +165,79 @@ export const StatementResultTable: React.FunctionComponent<{
                         ? transformer.transform(row[index])
                         : row[index];
                 }}
-                sortCell={(a, b) => {
-                    if (a == null || a === 'null') {
-                        return -1;
-                    } else if (b == null || b === 'null') {
-                        return 1;
-                    }
-                    const aValue = isNumeric(a) ? Number(a) : String(a);
-                    const bValue = isNumeric(a) ? Number(b) : String(b);
-                    return aValue < bValue ? -1 : aValue > bValue ? 1 : 0;
-                }}
+                sortCell={useSortCell(rows)}
             />
         </StyledTableWrapper>
     );
 };
 
-function useLastNotNull<T>(value: T): T {
-    const [s, set] = useState(null);
-    useEffect(() => {
-        if (value != null) {
-            set(value);
-        }
-    }, [value]);
+function useExpandedColumn() {
+    const [expandedColumn, setExpandedColumn] = useImmer<
+        Record<string, boolean>
+    >({});
+    const toggleExpandedColumn = useCallback((column: string) => {
+        setExpandedColumn((old) => {
+            if (column in old) {
+                delete old[column];
+            } else {
+                old[column] = true;
+            }
+        });
+    }, []);
+    return [expandedColumn, toggleExpandedColumn] as const;
+}
 
-    return s;
+type ColumnSortType = 'string' | 'number';
+function isCellNull(cell: any) {
+    return cell === 'null' || cell == null;
+}
+
+function useSortCell(rows: string[][]) {
+    const columnTypeCache: Record<number, ColumnSortType> = useMemo(
+        () => ({}),
+        [rows]
+    );
+
+    const sortCell = useCallback(
+        (colIdx: number, a: any, b: any) => {
+            if (isCellNull(a)) {
+                return -1;
+            } else if (isCellNull(b)) {
+                return 1;
+            }
+
+            if (!(colIdx in columnTypeCache)) {
+                columnTypeCache[colIdx] = getColumnType(rows, colIdx);
+            }
+
+            const colType = columnTypeCache[colIdx];
+            if (colType === 'number') {
+                a = Number(a);
+                b = Number(b);
+            }
+            return a < b ? -1 : a > b ? 1 : 0;
+        },
+        [rows, columnTypeCache]
+    );
+    return sortCell;
+}
+
+function getColumnType(rows: any[][], colIdx: number): ColumnSortType {
+    for (const row of rows) {
+        const cell = row[colIdx];
+        if (isCellNull(cell)) {
+            continue;
+        } else if (!isNumeric(cell)) {
+            return 'string';
+        }
+    }
+    return 'number';
 }
 
 const StatementResultTableColumn: React.FC<{
     column: string;
     expandedColumn: Record<string, boolean>;
-    setExpandedColumn: (c: Record<string, boolean>) => any;
+    toggleExpandedColumn: (c: string) => any;
 
     // These props are for the column info
     colIndex: number;
@@ -217,7 +252,7 @@ const StatementResultTableColumn: React.FC<{
 }> = ({
     column,
     expandedColumn,
-    setExpandedColumn,
+    toggleExpandedColumn,
 
     colIndex,
     colType,
@@ -259,15 +294,7 @@ const StatementResultTableColumn: React.FC<{
                         e.preventDefault();
                         e.stopPropagation();
 
-                        setExpandedColumn(
-                            produce(expandedColumn, (draft) => {
-                                if (isExpanded) {
-                                    delete draft[column];
-                                } else {
-                                    draft[column] = true;
-                                }
-                            })
-                        );
+                        toggleExpandedColumn(column);
                     }}
                 />
                 <Dropdown
@@ -333,3 +360,14 @@ const StatementResultTableColumn: React.FC<{
         </Level>
     );
 };
+
+function useLastNotNull<T>(value: T): T {
+    const [s, set] = useState(null);
+    useEffect(() => {
+        if (value != null) {
+            set(value);
+        }
+    }, [value]);
+
+    return s;
+}

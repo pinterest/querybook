@@ -75,14 +75,13 @@ export function roundNumberToDecimal(n: number, decimalPlaces: number) {
 }
 
 export function isNumeric(n: any): boolean {
-    if (typeof n === 'bigint') {
-        return true;
-    }
-    if (typeof n === 'number') {
-        return !isNaN(n);
-    } else if (typeof n === 'string') {
+    if (typeof n === 'string') {
         // typescript thinks isNaN can only take number
         return !isNaN(n as any) && !isNaN(parseFloat(n));
+    } else if (typeof n === 'number') {
+        return !isNaN(n);
+    } else if (typeof n === 'bigint') {
+        return true;
     }
     return false;
 }
