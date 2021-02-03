@@ -1,3 +1,4 @@
+import { IQueryEngine } from 'const/queryEngine';
 import { produce } from 'immer';
 
 import { IQueryEngineState, QueryEngineAction } from './types';

@@ -102,10 +102,7 @@ export const QueryEngineSelector: React.FC<IQueryEngineSelectorProps> = ({
             engineStatus?.data?.status ?? QueryEngineStatus.UNAVAILABLE;
         const iconClass = queryEngineStatusToIconStatus[warningLevel];
 
-        const queryEngineName =
-            engineId in queryEngineById
-                ? queryEngineById[engineId].name
-                : 'Unknown';
+        const queryEngineName = queryEngineById[engineId].name;
 
         return (
             <div className="engine-selector-button flex-row">

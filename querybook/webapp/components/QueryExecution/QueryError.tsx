@@ -173,12 +173,10 @@ export const QueryError: React.FunctionComponent<IProps> = ({
 
     return (
         <div className="QueryError">
-            {queryEngine ? (
-                <ErrorSuggestion
-                    errorMsg={errorMsg}
-                    language={queryEngine.language}
-                />
-            ) : null}
+            <ErrorSuggestion
+                errorMsg={errorMsg}
+                language={queryEngine.language}
+            />
             <Message type="error" size="small">
                 <div className="QueryError-top">
                     <div className="QueryError-title flex-row">

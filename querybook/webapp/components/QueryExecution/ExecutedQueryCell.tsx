@@ -112,9 +112,7 @@ export const ExecutedQueryCell: React.FunctionComponent<IProps> = ({
     const headerDOM = (
         <div className="execution-header horizontal-space-between">
             <div>
-                <div>{`Engine: ${titleize(
-                    queryEngine?.name ?? 'Unknown'
-                )}`}</div>
+                <div>{`Engine: ${titleize(queryEngine.name)}`}</div>
             </div>
             <div>{changeCellContextButton}</div>
         </div>
