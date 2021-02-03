@@ -156,8 +156,9 @@ export const AdminQueryEngine: React.FunctionComponent<IProps> = ({
                     message: (
                         <Content>
                             <p>
-                                Once archived, the engine will become readonly,
-                                but it can be recovered later in{' '}
+                                Once archived, the engine will become{' '}
+                                <b>read-only</b>, and it can be recovered later
+                                in the{' '}
                                 <Link to="/admin/query_engine/deleted/">
                                     trash
                                 </Link>
@@ -173,18 +174,16 @@ export const AdminQueryEngine: React.FunctionComponent<IProps> = ({
                                     Users will not be able to see this engine in
                                     any environment.
                                 </li>
+                                <li>
+                                    Users' past queries and query results are
+                                    preserved and accessible.
+                                </li>
                             </ul>
                             <p>
-                                However,{' '}
-                                <b>
-                                    users will still be able to view their past
-                                    query results.
-                                </b>
-                            </p>
-                            <p>
-                                If you want to revoke user's access to past
-                                query results, please remove the engine from the
-                                environment before archiving.
+                                If you want to revoke all users' access to their
+                                past query results executed by the engine,
+                                please remove the engine from all environments
+                                before archiving.
                             </p>
                         </Content>
                     ),
