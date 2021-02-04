@@ -10,9 +10,9 @@ jobs:
         steps:
             - uses: actions/checkout@v2
             - name: Set up Python
-              uses: actions/setup-python@v1
+              uses: actions/setup-python@v2
               with:
-                  python-version: 3.7
+                  python-version: 3.7.9
             - name: Set PY
               run: |
                   echo 'PY<<EOF' >> $GITHUB_ENV
@@ -25,31 +25,34 @@ jobs:
             - uses: pre-commit/action@v1.0.1
               with:
                   token: ${{ secrets.GITHUB_TOKEN }}
-    tests:
+    nodetests:
         runs-on: ubuntu-latest
         steps:
             - uses: actions/checkout@v2
+            - uses: actions/setup-node@v2
               with:
-                  fetch-depth: 1
+                  node-version: '14'
+            - run: yarn install --frozen-lockfile
+            - run: PYTHONPATH=querybook/server ./querybook/scripts/run_test --node
+    pythontests:
+        runs-on: ubuntu-latest
+        steps:
+            - uses: actions/checkout@v2
             - name: Install libs
-              run:
-                  apt-get update && DEBIAN_FRONTEND=noninteractive sudo apt-get install --no-install-recommends -y --allow-downgrades --allow-remove-essential --allow-change-held-packages \
-                  libsasl2-dev \
-                  libsasl2-modules \
-                  build-essential \
-                  python-dev \
-                  libssl-dev \
+              run: >
+                  sudo apt-get update && DEBIAN_FRONTEND=noninteractive sudo apt-get install --no-install-recommends -y --allow-downgrades --allow-remove-essential --allow-change-held-packages
+                  libsasl2-dev
+                  libsasl2-modules
+                  build-essential
+                  python-dev
+                  libssl-dev
                   libldap2-dev
             - uses: actions/setup-python@v2
               with:
-                  python-version: '3.7.9'
+                  python-version: 3.7.9
             - name: Install Python dependencies
               run: |
                   python -m pip install --upgrade pip
                   pip install pytest
                   pip install -r requirements/base.txt
-            - uses: actions/setup-node@v2
-              with:
-                  node-version: '14'
-            - run: yarn install --frozen-lockfile
-            - run: PYTHONPATH=querybook/server ./querybook/scripts/run_test
+            - run: PYTHONPATH=querybook/server ./querybook/scripts/run_test --python
