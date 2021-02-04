@@ -1,5 +1,20 @@
 #!/bin/bash
 
+usage() {
+    echo "Runs querybook tests"
+    echo ''
+    echo 'If not specified, then both python and node tests'
+    echo 'will be executed.'
+    echo ''
+    echo 'Flags:'
+    echo '  --python    only run python tests'
+    echo '  --node      only run node js tests'
+    echo
+    echo 'Usage:'
+    echo '  $0 [--python]'
+    exit 1
+}
+
 run_python_unit_test() {
     echo 'Start running python unit tests >>>>>>>>>>>>>>>>>>>>>>>>>>>>'
     py.test querybook/tests || exit 1
@@ -29,13 +44,27 @@ run_eslint_validation() {
     npm run lint
 }
 
-tests=(
+PYTHON_TESTS=(
     "run_python_unit_test"
+)
+
+NODE_TESTS=(
     "run_ts_validation"
     "run_js_unit_test"
     "run_eslint_validation"
     "run_webpack_test"
 )
+
+tests=("${PYTHON_TESTS[@]}" "${NODE_TESTS[@]}")
+while [[ "$#" -gt 0 ]]; do
+  case $1 in
+    --python) tests=("${PYTHON_TESTS[@]}");;
+    --node) tests=("${NODE_TESTS[@]}");;
+    --help) usage;;
+      *) echo "Unknown parameter passed: $1"; usage;;
+  esac;
+  shift;
+done
 
 children_pids=()
 
