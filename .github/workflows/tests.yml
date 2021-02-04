@@ -33,7 +33,7 @@ jobs:
                   fetch-depth: 1
             - name: Install libs
               run:
-                  DEBIAN_FRONTEND=noninteractive apt-get install --no-install-recommends -y --allow-downgrades --allow-remove-essential --allow-change-held-packages \
+                  DEBIAN_FRONTEND=noninteractive sudo apt-get install --no-install-recommends -y --allow-downgrades --allow-remove-essential --allow-change-held-packages \
                   libsasl2-dev \
                   libsasl2-modules \
                   build-essential \
