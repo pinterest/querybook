@@ -1,4 +1,8 @@
 {
+    "LABEL": {
+        "name": "title needs formatting",
+        "color": "EEEEEE"
+    },
     "CHECKS": {
         "regexp": "(build|chore|ci|docs|style|refactor|perf|test|feat|minor|MAJOR|BREAKING CHANGE)(\\(.+\\))?!?\\:"
     }
