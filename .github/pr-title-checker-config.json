@@ -1,0 +1,5 @@
+{
+    "CHECKS": {
+        "regexp": "(build|chore|ci|docs|style|refactor|perf|test|feat|minor|MAJOR|BREAKING CHANGE)(\\(.+\\))?!?\\:"
+    }
+}
