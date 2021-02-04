@@ -30,7 +30,10 @@ jobs:
                       ${{ runner.os }}-yarn-
             - run: yarn install --frozen-lockfile
               # if: steps.yarn-cache.outputs.cache-hit != 'true'
-            - run: ./querybook/scripts/run_test --node
+            - run: NODE_ENV=test ./node_modules/.bin/jest
+            - run: npm run tsc-check
+            - run: npm run lint
+            - run: ./node_modules/.bin/webpack --mode=production
     pythontests:
         runs-on: ubuntu-latest
         steps:
