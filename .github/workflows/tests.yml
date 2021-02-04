@@ -28,12 +28,9 @@ jobs:
                   key: ${{ runner.os }}-yarn-${{ hashFiles('**/yarn.lock') }}
                   restore-keys: |
                       ${{ runner.os }}-yarn-
-            - run: yarn install --frozen-lockfile
+            - run: yarn install --frozen-lockfile --prefer-offline
               # if: steps.yarn-cache.outputs.cache-hit != 'true'
-            - run: NODE_ENV=test ./node_modules/.bin/jest
-            - run: npm run tsc-check
-            - run: npm run lint
-            - run: ./node_modules/.bin/webpack --mode=production
+            - run: ./querybook/scripts/run_test --node
     pythontests:
         runs-on: ubuntu-latest
         steps:
