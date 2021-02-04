@@ -1,15 +1,31 @@
-name: Publish to Registry
+name: Update Version & Publish to Registry
 on:
-    release:
-        types: [published]
     push:
         branches:
             - master
 jobs:
-    update:
+    bump:
         runs-on: ubuntu-latest
+        if: contains(github.event.head_commit.message, 'version bump to') == false
         steps:
-            - uses: actions/checkout@v2
+            - uses: 'actions/checkout@v2'
+              with:
+                  ref: ${{ github.ref }}
+            - name: 'Setup Node.js'
+              uses: 'actions/setup-node@v1'
+              with:
+                  node-version: 12
+            - name: Automated Version Bump
+              id: version-bump
+              uses: 'phips28/gh-action-bump-version@master'
+              with:
+                  tag-prefix: ''
+                  minor-wording: 'feat:,feat(,minor'
+                  major-wording: 'MAJOR,BREAKING CHANGE'
+                  # build,patch,ci,docs,ui,refactor,test
+                  patch-wording: 'build:,build(,patch:,patch(,ci:,ci(,docs:,docs(,ui:,ui(,refactor:,refactor(,test:,test('
+              env:
+                  GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
             - name: Publish to Registry
               uses: elgohr/Publish-Docker-Github-Action@master
               with:
