@@ -6,6 +6,7 @@ import { getDefaultFormValue } from './formFunctions';
 import { Button } from 'ui/Button/Button';
 import { IconButton } from 'ui/Button/IconButton';
 import { DebouncedInput } from 'ui/DebouncedInput/DebouncedInput';
+import { DebouncedPasswordInput } from 'ui/DebouncedInput/DebouncedPasswordInput';
 import {
     FormField,
     FormFieldInputSection,
@@ -63,10 +64,11 @@ function SimpleFormField<T>({
             className: 'input',
         };
 
+        let InputComponent = DebouncedInput;
         if (fieldType === 'number') {
             inputProps['type'] = 'number';
         } else if (hidden) {
-            inputProps['type'] = 'password';
+            InputComponent = DebouncedPasswordInput;
         }
 
         if (description) {
@@ -74,7 +76,7 @@ function SimpleFormField<T>({
         }
 
         controlDOM = (
-            <DebouncedInput
+            <InputComponent
                 value={(value as unknown) as string}
                 onChange={onFieldChange}
                 inputProps={inputProps}

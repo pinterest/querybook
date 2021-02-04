@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useMemo } from 'react';
 import classNames from 'classnames';
 
 import { useDebounceState } from 'hooks/redux/useDebounceState';
@@ -22,15 +22,44 @@ export interface IDebouncedInputProps extends IDebouncedInputStylingProps {
     onChange: (value: string) => any;
 }
 
+function useAdjustableWidth(
+    autoAdjustWidth: boolean,
+    inputRef: React.MutableRefObject<HTMLInputElement>,
+    value: string,
+    placeholder: string
+) {
+    placeholder = placeholder ?? '';
+
+    React.useEffect(() => {
+        const adjustInputSize = () => {
+            if (inputRef.current) {
+                inputRef.current.size = Math.max(
+                    1,
+                    value.length,
+                    placeholder.length
+                );
+            }
+        };
+
+        if (autoAdjustWidth) {
+            adjustInputSize();
+        }
+    }, [autoAdjustWidth, value, inputRef.current, placeholder]);
+}
+
 export const DebouncedInput: React.FunctionComponent<IDebouncedInputProps> = ({
     debounceTime = 500,
     debounceMethod = 'debounce',
+
+    // Input
     value = '',
-    className = '',
     autoAdjustWidth = false,
     inputProps = {},
     children,
     onChange,
+
+    // Styling
+    className = '',
     transparent,
     flex,
 }) => {
@@ -42,31 +71,13 @@ export const DebouncedInput: React.FunctionComponent<IDebouncedInputProps> = ({
             method: debounceMethod,
         }
     );
-
     const inputRef = React.useRef<HTMLInputElement>();
-
-    React.useEffect(() => {
-        const adjustInputSize = () => {
-            if (inputRef.current) {
-                const { placeholder = '' } = inputProps;
-
-                inputRef.current.size = Math.max(
-                    1,
-                    debouncedValue.length,
-                    placeholder.length
-                );
-            }
-        };
-
-        if (autoAdjustWidth) {
-            adjustInputSize();
-        }
-    }, [
+    useAdjustableWidth(
         autoAdjustWidth,
+        inputRef,
         debouncedValue,
-        inputRef.current,
-        inputProps.placeholder,
-    ]);
+        inputProps?.placeholder
+    );
 
     const onChangeFn = React.useCallback(
         (event: React.ChangeEvent<HTMLInputElement>) => {

@@ -1,9 +1,8 @@
 import React from 'react';
-import { Formik, Form, Field } from 'formik';
+import { Formik, Form } from 'formik';
 
 import ds from 'lib/datasource';
 import { Button } from 'ui/Button/Button';
-import { FormField } from 'ui/Form/FormField';
 import { Message } from 'ui/Message/Message';
 import { FormWrapper } from 'ui/Form/FormWrapper';
 import { SimpleField } from 'ui/FormikField/SimpleField';
@@ -39,9 +38,11 @@ export const LoginForm: React.FunctionComponent<ILoginFormProps> = ({
                 );
 
                 const passwordField = (
-                    <FormField label="Password">
-                        <Field type="password" name="password" />
-                    </FormField>
+                    <SimpleField
+                        type="input"
+                        name="password"
+                        inputType="password"
+                    />
                 );
 
                 const errorMessageDOM = errorMessage && (
