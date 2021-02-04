@@ -9,22 +9,8 @@ jobs:
         runs-on: ubuntu-latest
         steps:
             - uses: actions/checkout@v2
-            - name: Set up Python
-              uses: actions/setup-python@v2
-              with:
-                  python-version: 3.7.9
-            - name: Set PY
-              run: |
-                  echo 'PY<<EOF' >> $GITHUB_ENV
-                  echo "$(python -c 'import hashlib, sys;print(hashlib.sha256(sys.version.encode()+sys.executable.encode()).hexdigest())')" >> $GITHUB_ENV
-                  echo 'EOF' >> $GITHUB_ENV
-            - uses: actions/cache@v1
-              with:
-                  path: ~/.cache/pre-commit
-                  key: pre-commit|${{ env.PY }}|${{ hashFiles('.pre-commit-config.yaml') }}
-            - uses: pre-commit/action@v1.0.1
-              with:
-                  token: ${{ secrets.GITHUB_TOKEN }}
+            - uses: actions/setup-python@v2
+            - uses: pre-commit/action@v2.0.0
     nodetests:
         runs-on: ubuntu-latest
         steps:
