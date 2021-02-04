@@ -9,6 +9,7 @@ import { useLoader } from 'hooks/useLoader';
 import { IStoreState, Dispatch } from 'redux/store/types';
 import * as dataSourcesActions from 'redux/dataSources/action';
 import * as queryExecutionsActions from 'redux/queryExecutions/action';
+import { queryEngineByIdEnvSelector } from 'redux/queryEngine/selector';
 
 import { DataTableViewQueryUsers } from './DataTableViewQueryUsers';
 import { UserName } from 'components/UserBadge/UserName';
@@ -27,6 +28,29 @@ interface IProps {
     uid?: number;
 }
 
+function useQueryExampleState(tableId: number) {
+    const queryExecutionById = useSelector(
+        (state: IStoreState) => state.queryExecutions.queryExecutionById
+    );
+    const queryExampleIdsState = useSelector(
+        (state: IStoreState) => state.dataSources.queryExampleIdsById[tableId]
+    );
+    return React.useMemo(
+        () => ({
+            queryExampleIds: queryExampleIdsState?.queryIds,
+            hasMore: queryExampleIdsState?.hasMore ?? true,
+            queryExamplesIdsToLoad: (
+                queryExampleIdsState?.queryIds ?? []
+            ).filter((id) => !(id in queryExecutionById)),
+
+            queryExamples: (queryExampleIdsState?.queryIds ?? [])
+                .map((id) => queryExecutionById[id])
+                .filter((query) => query),
+        }),
+        [queryExampleIdsState, queryExecutionById]
+    );
+}
+
 export const DataTableViewQueryExamples: React.FunctionComponent<IProps> = ({
     tableId,
     uid = null,
@@ -37,33 +61,17 @@ export const DataTableViewQueryExamples: React.FunctionComponent<IProps> = ({
     );
     const [filterUid, setFilterUid] = React.useState<number>(uid);
 
+    const queryEngineById = useSelector(queryEngineByIdEnvSelector);
+    const editorTheme = useSelector((state: IStoreState) =>
+        getCodeEditorTheme(state.user.computedSettings.theme)
+    );
     const {
         queryExampleIds,
         hasMore,
 
         queryExamples,
         queryExamplesIdsToLoad,
-
-        queryEngineById,
-        editorTheme,
-    } = useSelector((state: IStoreState) => {
-        const queryExampleIdsState =
-            state.dataSources.queryExampleIdsById[tableId];
-        return {
-            queryExampleIds: queryExampleIdsState?.queryIds,
-            hasMore: queryExampleIdsState?.hasMore ?? true,
-            queryExamplesIdsToLoad: (
-                queryExampleIdsState?.queryIds ?? []
-            ).filter((id) => !(id in state.queryExecutions.queryExecutionById)),
-
-            queryExamples: (queryExampleIdsState?.queryIds ?? [])
-                .map((id) => state.queryExecutions.queryExecutionById[id])
-                .filter((query) => query),
-
-            queryEngineById: state.queryEngine.queryEngineById,
-            editorTheme: getCodeEditorTheme(state.user.computedSettings.theme),
-        };
-    });
+    } = useQueryExampleState(tableId);
 
     const loadMoreQueryExampleIds = React.useCallback(
         () => dispatch(dataSourcesActions.fetchMoreQueryExampleIds(tableId)),

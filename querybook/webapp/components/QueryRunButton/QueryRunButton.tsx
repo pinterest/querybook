@@ -13,16 +13,10 @@ import { StatusIcon } from 'ui/StatusIcon/StatusIcon';
 
 import './QueryRunButton.scss';
 
-interface IQueryRunButtonProps {
+interface IQueryRunButtonProps extends IQueryEngineSelectorProps {
     disabled?: boolean;
     hasSelection?: boolean;
-
     onRunClick: () => any;
-
-    queryEngineById: Record<number, IQueryEngine>;
-    queryEngines: IQueryEngine[];
-    engineId: number;
-    onEngineIdSelect: (id: number) => any;
 }
 
 export interface IQueryRunButtonHandles {
@@ -45,10 +39,6 @@ export const QueryRunButton = React.forwardRef<
         },
         ref
     ) => {
-        const queryEngineStatusById = useSelector(
-            queryEngineStatusByIdEnvSelector
-        );
-
         const runButtonRef = React.useRef<AsyncButton>();
 
         React.useImperativeHandle(ref, () => ({
@@ -59,98 +49,97 @@ export const QueryRunButton = React.forwardRef<
             },
         }));
 
-        const getRunButtonDOM = React.useCallback(() => {
-            if (disabled) {
-                return null;
-            }
-
-            return (
-                <AsyncButton
-                    onClick={onRunClick}
-                    ref={runButtonRef}
-                    className={classNames({
-                        'run-selection': !!hasSelection,
-                    })}
-                    title={hasSelection ? 'Run Selection' : null}
-                    icon={hasSelection ? null : 'play'}
-                    aria-label={'Execute (⇧↵)'}
-                    data-balloon-pos={'up'}
-                    attachedRight
-                />
-            );
-        }, [disabled, onRunClick, runButtonRef, hasSelection]);
-
-        const getEngineSelectorButtonDOM = React.useCallback(() => {
-            const engineStatus = queryEngineStatusById[engineId];
-            const warningLevel =
-                engineStatus?.data?.status ?? QueryEngineStatus.UNAVAILABLE;
-            const iconClass = queryEngineStatusToIconStatus[warningLevel];
-
-            const queryEngineName =
-                engineId in queryEngineById
-                    ? queryEngineById[engineId].name
-                    : null;
-
-            return (
-                <div className="engine-selector-button flex-row">
-                    <StatusIcon status={iconClass} />{' '}
-                    <span>
-                        {queryEngineName}{' '}
-                        <i className="fa fa-caret-down caret-icon" />
-                    </span>
-                </div>
-            );
-        }, [queryEngineStatusById, queryEngineById, engineId]);
-
-        const getEngineSelectorDOM = React.useCallback(() => {
-            let engineButton = null;
-            if (!disabled) {
-                const engineItems = queryEngines.map((engineInfo) => ({
-                    name: (
-                        <span className="query-engine-name">
-                            {engineInfo.name}
-                        </span>
-                    ),
-                    onClick: onEngineIdSelect.bind(null, engineInfo.id),
-                    checked: engineInfo.id === engineId,
-                    tooltip: engineInfo.description,
-                }));
-                engineButton = (
-                    <Dropdown
-                        customButtonRenderer={getEngineSelectorButtonDOM}
-                        isRight
-                    >
-                        <ListMenu items={engineItems} type="select" isRight />
-                    </Dropdown>
-                );
-            } else {
-                engineButton = queryEngineById[engineId].name;
-            }
-
-            return (
-                <div
-                    className={classNames({
-                        'engine-selector': true,
-                        readonly: disabled,
-                    })}
-                >
-                    {engineButton}
-                </div>
-            );
-        }, [
-            disabled,
-            queryEngines,
-            onEngineIdSelect,
-            getEngineSelectorButtonDOM,
-            queryEngineById,
-            engineId,
-        ]);
+        const runButtonDOM = disabled ? null : (
+            <AsyncButton
+                onClick={onRunClick}
+                ref={runButtonRef}
+                className={classNames({
+                    'run-selection': !!hasSelection,
+                })}
+                title={hasSelection ? 'Run Selection' : null}
+                icon={hasSelection ? null : 'play'}
+                aria-label={'Execute (⇧↵)'}
+                data-balloon-pos={'up'}
+                attachedRight
+            />
+        );
 
         return (
             <div className="QueryRunButton flex-row">
-                {getRunButtonDOM()}
-                {getEngineSelectorDOM()}
+                {runButtonDOM}
+                <QueryEngineSelector
+                    disabled={disabled}
+                    queryEngineById={queryEngineById}
+                    queryEngines={queryEngines}
+                    engineId={engineId}
+                    onEngineIdSelect={onEngineIdSelect}
+                />
             </div>
         );
     }
 );
+
+interface IQueryEngineSelectorProps {
+    disabled?: boolean;
+
+    queryEngineById: Record<number, IQueryEngine>;
+    queryEngines: IQueryEngine[];
+    engineId: number;
+    onEngineIdSelect: (id: number) => any;
+}
+export const QueryEngineSelector: React.FC<IQueryEngineSelectorProps> = ({
+    queryEngineById,
+    queryEngines,
+    engineId,
+    onEngineIdSelect,
+    disabled,
+}) => {
+    const queryEngineStatusById = useSelector(queryEngineStatusByIdEnvSelector);
+
+    const getEngineSelectorButtonDOM = () => {
+        const engineStatus = queryEngineStatusById[engineId];
+        const warningLevel =
+            engineStatus?.data?.status ?? QueryEngineStatus.UNAVAILABLE;
+        const iconClass = queryEngineStatusToIconStatus[warningLevel];
+
+        const queryEngineName = queryEngineById[engineId].name;
+
+        return (
+            <div className="engine-selector-button flex-row">
+                <StatusIcon status={iconClass} />{' '}
+                <span>
+                    {queryEngineName}{' '}
+                    <i className="fa fa-caret-down caret-icon" />
+                </span>
+            </div>
+        );
+    };
+
+    let engineButtonDOM = null;
+    if (!disabled) {
+        const engineItems = queryEngines.map((engineInfo) => ({
+            name: <span className="query-engine-name">{engineInfo.name}</span>,
+            onClick: onEngineIdSelect.bind(null, engineInfo.id),
+            checked: engineInfo.id === engineId,
+            tooltip: engineInfo.description,
+        }));
+        engineButtonDOM = (
+            <Dropdown customButtonRenderer={getEngineSelectorButtonDOM} isRight>
+                <ListMenu items={engineItems} type="select" isRight />
+            </Dropdown>
+        );
+    } else {
+        engineButtonDOM = queryEngineById[engineId].name;
+    }
+
+    return (
+        <div
+            className={classNames({
+                QueryEngineSelector: true,
+                readonly: disabled,
+            })}
+        >
+            {engineButtonDOM}
+        </div>
+    );
+};

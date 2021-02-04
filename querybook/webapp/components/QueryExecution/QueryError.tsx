@@ -30,8 +30,8 @@ import { ExecutedQueryCell, IHighlightRange } from './ExecutedQueryCell';
 import './QueryError.scss';
 
 interface IProps {
-    queryError: IQueryError;
     queryEngine: IQueryEngine;
+    queryError: IQueryError;
     queryExecution: IQueryExecution;
     statementExecutions: IStatementExecution[];
 }
@@ -200,6 +200,7 @@ export const QueryErrorWrapper: React.FunctionComponent<{
             state.queryExecutions.queryErrorById[queryExecution.id]
     );
     const queryEngineById = useSelector(queryEngineByIdEnvSelector);
+    const queryEngine = queryEngineById[queryExecution.engine_id];
 
     const dispatch = useDispatch();
     const loadQueryError = useCallback(
@@ -219,7 +220,7 @@ export const QueryErrorWrapper: React.FunctionComponent<{
                 queryError={queryError}
                 queryExecution={queryExecution}
                 statementExecutions={statementExecutions}
-                queryEngine={queryEngineById[queryExecution.engine_id]}
+                queryEngine={queryEngine}
             />
         </Loader>
     );

@@ -1,8 +1,18 @@
 import { createSelector } from 'reselect';
 
+import type { IQueryEngine } from 'const/queryEngine';
 import { arrayGroupByField } from 'lib/utils';
 import { IStoreState } from 'redux/store/types';
 import { IQueryEngineStatus } from './types';
+
+const unknownQueryEngine: IQueryEngine = {
+    id: -1,
+    metastore_id: -1,
+    description: 'Unknown Engine',
+    executor: 'unknown',
+    language: 'presto',
+    name: 'unknown',
+};
 
 const queryEngineByIdSelector = (state: IStoreState) =>
     state.queryEngine.queryEngineById;
@@ -23,7 +33,11 @@ export const queryEngineSelector = createSelector(
 
 export const queryEngineByIdEnvSelector = createSelector(
     queryEngineSelector,
-    (queryEgnines) => arrayGroupByField(queryEgnines)
+    (queryEngines) =>
+        new Proxy(arrayGroupByField(queryEngines), {
+            get: (engineById, name: string) =>
+                name in engineById ? engineById[name] : unknownQueryEngine,
+        })
 );
 
 export const queryEngineStatusAndEngineIdsSelector = createSelector(

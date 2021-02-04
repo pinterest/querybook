@@ -1,8 +1,6 @@
 // Modified from https://github.com/craftzdog/react-codemirror-runmode
-import { decorate } from 'core-decorators';
 import classNames from 'classnames';
-import React from 'react';
-import memoizeOne from 'memoize-one';
+import React, { useMemo } from 'react';
 import styled from 'styled-components';
 
 import CodeMirror from 'lib/codemirror';
@@ -28,16 +26,16 @@ const CodeHighlightContainer = styled.div.attrs({
     box-shadow: none !important;
 `;
 
-export class CodeHighlight extends React.PureComponent<IProps> {
-    public static defaultProps: Partial<IProps> = {
-        prefix: 'cm-',
-        className: '',
-        theme: 'default',
-        inline: false,
-    };
+export const CodeHighlight: React.FC<IProps> = ({
+    className = '',
+    theme = 'default',
+    prefix = 'cm-',
+    inline = false,
 
-    @decorate(memoizeOne)
-    public getStyledTokens(value: string, language: string, prefix: string) {
+    language = 'text/x-hive',
+    value,
+}) => {
+    const styledTokens = useMemo(() => {
         let lastStyle = null;
         let tokenBuffer = '';
         const styledTokens: Array<{ className: string; text: string }> = [];
@@ -63,50 +61,37 @@ export class CodeHighlight extends React.PureComponent<IProps> {
         pushStyleToken(tokenBuffer, lastStyle);
 
         return styledTokens;
-    }
+    }, [value, language, prefix]);
 
-    public render() {
-        const {
-            className,
-            theme,
-            inline,
-            language,
-            prefix,
-            value,
-        } = this.props;
+    const codeElements = styledTokens.map((token, index) => {
+        const { text, className: tokenClassName } = token;
 
-        const styledTokens = this.getStyledTokens(value, language, prefix);
-
-        const codeElements = styledTokens.map((token, index) => {
-            const { text, className: tokenClassName } = token;
-
-            return (
-                <span className={tokenClassName} key={index}>
-                    {text}
-                </span>
-            );
-        });
-
-        const themeClassName = theme
-            .split(' ')
-            .map((subtheme) => `${prefix}s-${subtheme}`)
-            .join(' ');
-        const wrapperClassName = classNames({
-            CodeHighlight: true,
-            [themeClassName]: true,
-            CodeMirror: true,
-            [className]: Boolean(className),
-            inline,
-        });
-
-        const wrapper = inline ? (
-            <code className={wrapperClassName}>{codeElements}</code>
-        ) : (
-            <CodeHighlightContainer className={wrapperClassName}>
-                {codeElements}
-            </CodeHighlightContainer>
+        return (
+            <span className={tokenClassName} key={index}>
+                {text}
+            </span>
         );
+    });
 
-        return wrapper;
-    }
-}
+    const themeClassName = theme
+        .split(' ')
+        .map((subtheme) => `${prefix}s-${subtheme}`)
+        .join(' ');
+    const wrapperClassName = classNames({
+        CodeHighlight: true,
+        [themeClassName]: true,
+        CodeMirror: true,
+        [className]: Boolean(className),
+        inline,
+    });
+
+    const wrapper = inline ? (
+        <code className={wrapperClassName}>{codeElements}</code>
+    ) : (
+        <CodeHighlightContainer className={wrapperClassName}>
+            {codeElements}
+        </CodeHighlightContainer>
+    );
+
+    return wrapper;
+};

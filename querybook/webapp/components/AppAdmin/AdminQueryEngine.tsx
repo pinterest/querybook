@@ -3,12 +3,15 @@ import moment from 'moment';
 import { clone } from 'lodash';
 import { useParams } from 'react-router-dom';
 
+import { sendConfirm } from 'lib/querybookUI';
+
 import ds from 'lib/datasource';
 import history from 'lib/router-history';
 import { generateFormattedDate } from 'lib/utils/datetime';
 import { useDataFetch } from 'hooks/useDataFetch';
 
 import { AdminAuditLogButton } from 'components/AdminAuditLog/AdminAuditLogButton';
+import { IEnvironment } from 'redux/environment/types';
 
 import { Card } from 'ui/Card/Card';
 import { Loading } from 'ui/Loading/Loading';
@@ -26,7 +29,7 @@ import { Level } from 'ui/Level/Level';
 
 import { IAdminMetastore } from './AdminMetastore';
 import { AdminDeletedList } from './AdminDeletedList';
-import { IEnvironment } from 'redux/environment/types';
+import { Content } from 'ui/Content/Content';
 import { Link } from 'ui/Link/Link';
 
 import './AdminQueryEngine.scss';
@@ -147,7 +150,50 @@ export const AdminQueryEngine: React.FunctionComponent<IProps> = ({
 
     const deleteQueryEngine = React.useCallback(
         (queryEngine: IAdminQueryEngine) =>
-            ds.delete(`/admin/query_engine/${queryEngine.id}/`),
+            new Promise((resolve, reject) => {
+                sendConfirm({
+                    header: 'Archive Query Engine?',
+                    message: (
+                        <Content>
+                            <p>
+                                Once archived, the engine will become{' '}
+                                <b>read-only</b>, and it can be recovered later
+                                in the{' '}
+                                <Link to="/admin/query_engine/deleted/">
+                                    trash
+                                </Link>
+                                .
+                            </p>
+                            <br />
+                            <p>Archiving this query engine means:</p>
+                            <ul>
+                                <li>
+                                    New queries using this engine will fail.
+                                </li>
+                                <li>
+                                    Users will not be able to see this engine in
+                                    any environment.
+                                </li>
+                                <li>
+                                    Users' past queries and query results are
+                                    preserved and accessible.
+                                </li>
+                            </ul>
+                            <p>
+                                If you want to revoke all users' access to their
+                                past query results executed by the engine,
+                                please remove the engine from all environments
+                                before archiving.
+                            </p>
+                        </Content>
+                    ),
+                    onConfirm: () =>
+                        ds
+                            .delete(`/admin/query_engine/${queryEngine.id}/`)
+                            .then(resolve),
+                    onDismiss: reject,
+                });
+            }),
         []
     );
 
@@ -202,7 +248,7 @@ export const AdminQueryEngine: React.FunctionComponent<IProps> = ({
             fieldName: string,
             fieldValue: any,
             item?: IAdminQueryEngine
-        ) => IAdminQueryEngine
+        ) => void
     ) => (
         <SmartForm
             formField={template}
@@ -218,7 +264,7 @@ export const AdminQueryEngine: React.FunctionComponent<IProps> = ({
 
     const renderQueryEngineItem = (
         item: IAdminQueryEngine,
-        onChange: (fieldName: string, fieldValue: any) => IAdminQueryEngine
+        onChange: (fieldName: string, fieldValue: any) => void
     ) => {
         const updateExecutor = (executor: string) => {
             onChange('executor', executor);
@@ -412,7 +458,7 @@ export const AdminQueryEngine: React.FunctionComponent<IProps> = ({
             <div className="AdminQueryEngine">
                 <div className="AdminLanding-top">
                     <div className="AdminLanding-desc">
-                        Deleted metastores can be recovered.
+                        Deleted query engines can be recovered.
                     </div>
                 </div>
                 <div className="AdminLanding-content">

@@ -1,6 +1,5 @@
 export interface IQueryEngine {
     id: number;
-    permission: number;
 
     name: string;
     language: string;

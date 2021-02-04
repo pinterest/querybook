@@ -50,10 +50,10 @@ def get_all_visible_environments_by_uid(uid, session=None):
     return (
         session.query(Environment)
         .outerjoin(UserEnvironment)
-        .filter(Environment.deleted_at.is_(None))  # noqa: E712
+        .filter(Environment.deleted_at.is_(None))
         .filter(
             or_(
-                Environment.hidden != True,
+                Environment.hidden != True,  # noqa: E712
                 UserEnvironment.user_id == uid,
                 Environment.public == True,
             )
@@ -70,8 +70,13 @@ def get_all_accessible_environment_ids_by_uid(uid, session=None):
             (
                 session.query(Environment.id)
                 .outerjoin(UserEnvironment)
-                .filter(Environment.deleted_at.is_(None))  # noqa: E712
-                .filter(or_(Environment.public == True, UserEnvironment.user_id == uid))
+                .filter(Environment.deleted_at.is_(None))
+                .filter(
+                    or_(
+                        Environment.public == True,  # noqa: E712
+                        UserEnvironment.user_id == uid,
+                    )
+                )
                 .all()
             ),
         )

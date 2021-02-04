@@ -255,11 +255,7 @@ export const AdminMetastore: React.FunctionComponent<IProps> = ({
 
     const renderMetastoreItem = (
         item: IAdminMetastore,
-        onChange: (
-            fieldName: string,
-            fieldValue: any,
-            item?: IAdminMetastore
-        ) => IAdminMetastore
+        onChange: (fieldName: string, fieldValue: any) => void
     ) => {
         const loader = (metastoreLoaders || []).find(
             (l) => l.name === item.loader

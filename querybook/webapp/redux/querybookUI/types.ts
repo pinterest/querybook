@@ -1,9 +1,9 @@
 import { Action } from 'redux';
 import { ThunkAction } from 'redux-thunk';
 
-import { IStoreState } from '../store/types';
-import { IConfirmationMessageProps } from 'components/ConfirmationManager/ConfirmationMessage';
-import { GlobalStateAction } from 'redux/globalState/types';
+import type { IStoreState } from '../store/types';
+import type { IConfirmationMessageProps } from 'components/ConfirmationManager/ConfirmationMessage';
+import type { GlobalStateAction } from 'redux/globalState/types';
 
 export interface IAnnouncement {
     id: number;

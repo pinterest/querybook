@@ -8,7 +8,7 @@ from logic import (
     query_execution as qe_logic,
     user as user_logic,
 )
-from .exc import AlreadyExecutedException, InvalidQueryExecution
+from .exc import AlreadyExecutedException, InvalidQueryExecution, ArchivedQueryEngine
 from .all_executors import get_executor_class
 
 LOG = get_logger(__file__)
@@ -30,6 +30,8 @@ def _get_executor_params_and_engine(query_execution_id, celery_task, session=Non
     )
     user = user_logic.get_user_by_id(uid, session=session)
     engine = admin_logic.get_query_engine_by_id(engine_id, session=session)
+    if engine.deleted_at is not None:
+        raise ArchivedQueryEngine("This query engine is disabled.")
 
     return (
         {

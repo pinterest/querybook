@@ -83,7 +83,6 @@ export const ExecutedQueryCell: React.FunctionComponent<IProps> = ({
     }
 
     const { query } = queryExecution;
-    const queryEngine = queryEngineById[queryExecution.engine_id];
 
     const codeMirrorOptions = {
         mode: 'text/x-hive', // Temporarily hardcoded
@@ -109,6 +108,7 @@ export const ExecutedQueryCell: React.FunctionComponent<IProps> = ({
         </span>
     );
 
+    const queryEngine = queryEngineById[queryExecution.engine_id];
     const headerDOM = (
         <div className="execution-header horizontal-space-between">
             <div>

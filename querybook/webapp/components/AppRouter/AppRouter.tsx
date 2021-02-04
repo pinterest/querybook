@@ -1,15 +1,16 @@
 import React from 'react';
 import { Router, Route, Switch } from 'react-router-dom';
 
-// import { Querybook } from 'components/Querybook';
 import { AppAdmin } from 'components/AppAdmin/AppAdmin';
 import { UserLoader } from 'components/UserLoader/UserLoader';
 import { EnvironmentsRouter } from 'components/EnvironmentsRouter/EnvironmentsRouter';
 
 import history from 'lib/router-history';
 
-import { FourOhFour } from 'ui/ErrorPage/FourOhFour';
 import { AppLayout } from 'components/AppLayout/AppLayout';
+import { ConfirmationManager } from 'components/ConfirmationManager/ConfirmationManager';
+import { ToastManager } from 'ui/ToastManager/ToastManager';
+import { FourOhFour } from 'ui/ErrorPage/FourOhFour';
 
 export const AppRouter: React.FunctionComponent = () => (
     <Router history={history}>
@@ -27,5 +28,7 @@ export const AppRouter: React.FunctionComponent = () => (
                 </Switch>
             </AppLayout>
         </UserLoader>
+        <ConfirmationManager />
+        <ToastManager />
     </Router>
 );
