@@ -65,6 +65,28 @@ To increase the chances that your pull request will be accepted:
 -   Write tests for your changes
 -   Write a good commit message
 
+### Pull Request Format
+
+When you create a new pull request, please make sure it's title follows the specifications in https://www.conventionalcommits.org/en/v1.0.0/. This is to ensure automatic versioning.
+
+Here are all the prefix allowed by Querybook:
+
+-   **patch change**
+    -   build
+    -   chore
+    -   ci
+    -   docs
+    -   style
+    -   refactor
+    -   perf
+    -   test
+-   **minor change**
+    -   feat
+    -   minor
+-   **major change**
+    -   MAJOR
+    -   BREAKING CHANGE
+
 ## Help
 
 Start by reading the developer starter guide [this guide](./developer_setup.md) to setup Querybook/

@@ -1,0 +1,27 @@
+name: Bump Package Version
+on:
+    push:
+        branches:
+            - master
+jobs:
+    bump:
+        runs-on: ubuntu-latest
+        steps:
+            - uses: 'actions/checkout@v2'
+              with:
+                  ref: ${{ github.ref }}
+            - name: 'Setup Node.js'
+              uses: 'actions/setup-node@v1'
+              with:
+                  node-version: 12
+            - name: 'Automated Version Bump'
+              id: version-bump
+              uses: 'phips28/gh-action-bump-version@master'
+              with:
+                  tag-prefix: 'v'
+                  minor-wording: 'feat:,feat(,minor'
+                  major-wording: 'MAJOR,BREAKING CHANGE'
+                  # build,chore,ci,docs,style,refactor,perf,test
+                  patch-wording: 'build:,build(,chore:,chore(,ci:,ci(,docs:,docs(,style:,style(,refactor:,refactor(,perf:,perf(,test:,test('
+              env:
+                  GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
