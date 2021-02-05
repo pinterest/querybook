@@ -12,7 +12,7 @@ sidebar_label: Quick Setup
 
 ### System requirements:
 
--   6GB of free RAM
+-   5GB of free RAM (10GB for Windows WSL)
 -   5GB of disk space
 
 ### Kernel Config
@@ -24,6 +24,11 @@ Run `sudo sysctl -w vm.max_map_count=262144` to ensure [ElasticSearch](https://w
 #### Mac
 
 Go to the `Docker Desktop` app -> top right gear icon -> Preferences -> Resources -> Advanced. Make sure your memory limit per app is >= 3GB.
+
+#### Windows
+Please install WSL 2 as instructed [here](https://docs.microsoft.com/en-us/windows/wsl/install-win10). Now go to Docker Desktop, Settings > General, and check the box "Use the WSL 2 based Engine".
+
+Launch WSL shell and run `sudo sysctl -w vm.max_map_count=262144` to ensure [ElasticSearch](https://www.elastic.co/guide/en/elasticsearch/reference/current/vm-max-map-count.html) works.
 
 ## Getting Started
 
