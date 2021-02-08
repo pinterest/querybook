@@ -1,7 +1,6 @@
 import { throttle } from 'lodash';
 import toast from 'react-hot-toast';
-import * as SocketIOClient from 'socket.io-client';
-
+import { Manager } from 'socket.io-client';
 /*
 This module manages all incoming websocket connections using socketIO,
 please do not use socketio individually and only use this to avoid repeated
@@ -9,29 +8,27 @@ socket creation
 */
 
 const socketIOPath = `${location.protocol}//${location.host}`;
-
-const socketByNameSpace: Record<string, SocketIOClient.Socket> = {};
+const socketIOManager = new Manager(socketIOPath, {
+    secure: true,
+    path: '/-/socket.io',
+    transports: ['websocket'],
+    autoConnect: false,
+});
 
 const sendToastForError = throttle((error) => {
     toast.error(String(error));
 }, 3000);
+
+function getSocket(nameSpace: string) {
+    return socketIOManager.socket(nameSpace);
+}
 
 export default {
     getSocket: async (
         nameSpace = '/',
         onConnection: (socket: SocketIOClient.Socket) => any = null
     ) => {
-        let socket = socketByNameSpace[nameSpace];
-
-        if (!socket) {
-            const newSocket = SocketIOClient(`${socketIOPath}${nameSpace}`, {
-                secure: true,
-                path: '/-/socket.io',
-                transports: ['websocket'],
-            });
-            socketByNameSpace[nameSpace] = newSocket;
-            socket = newSocket;
-        }
+        const socket = getSocket(nameSpace);
 
         if (!socket.connected) {
             socket.connect();
@@ -44,7 +41,7 @@ export default {
                     resolve();
                 });
 
-                socket.on('connect_error', (error) => {
+                socket.on('connect_error', (error: Error) => {
                     sendToastForError(error.toString());
                 });
 
@@ -55,12 +52,9 @@ export default {
         }
         return socket;
     },
-
-    removeSocket: (nameSpace = '/') => {
-        const socket = socketByNameSpace[nameSpace];
+    removeSocket: (socket: SocketIOClient.Socket) => {
         if (socket && socket.connected) {
             socket.close();
         }
-        delete socketByNameSpace[nameSpace];
     },
 };

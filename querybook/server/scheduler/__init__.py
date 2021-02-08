@@ -7,9 +7,8 @@ from multiprocessing.util import Finalize
 from celery import current_app
 from celery import schedules
 from celery.beat import ScheduleEntry, Scheduler
-from celery.utils.encoding import safe_str
 from celery.utils.log import get_logger
-
+from kombu.utils.encoding import safe_str
 
 from lib.schedule import ALL_JOBS
 from models.schedule import TaskSchedule, TaskSchedules

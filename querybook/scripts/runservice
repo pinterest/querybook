@@ -15,10 +15,10 @@ case "$SERVICE_NAME" in
     COMMAND="python3 querybook/server/runweb.py"
     ;;
 "worker")
-    COMMAND="watchmedo auto-restart -d querybook -p '*.py' -R -- celery worker -A tasks.all_tasks --loglevel=DEBUG"
+    COMMAND="watchmedo auto-restart -d querybook -p '*.py' -R -- celery -A tasks.all_tasks worker --loglevel=DEBUG "
     ;;
 "scheduler")
-    COMMAND="watchmedo auto-restart -d querybook -p '*.py' -R -- celery beat -A tasks.all_tasks -S scheduler.DatabaseScheduler --loglevel=INFO"
+    COMMAND="watchmedo auto-restart -d querybook -p '*.py' -R -- celery -A tasks.all_tasks beat -S scheduler.DatabaseScheduler --loglevel=INFO"
     ;;
 "worker_scheduler") # FIXME: this doesn't schedule task as desired
     COMMAND="celery -A tasks.all_tasks worker --beat --scheduler scheduler.DatabaseScheduler --loglevel=INFO"
@@ -30,10 +30,10 @@ case "$SERVICE_NAME" in
     COMMAND="uwsgi --ini uwsgi.ini"
     ;;
 "prod_worker")
-    COMMAND="celery worker -A tasks.all_tasks"
+    COMMAND="celery -A tasks.all_tasks worker"
     ;;
 "prod_scheduler")
-    COMMAND="celery beat -A tasks.all_tasks -S scheduler.DatabaseScheduler"
+    COMMAND="celery -A tasks.all_tasks beat -S scheduler.DatabaseScheduler"
     ;;
 "webpack")
     COMMAND="npx webpack"

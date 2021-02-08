@@ -601,7 +601,7 @@ class QueryExecutionSocket {
 
             // If we are not running any query any more, break off the socketio connection
             if (Object.keys(this.activeQueryExecutions).length === 0) {
-                SocketIOManager.removeSocket(QueryExecutionSocket.NAME_SPACE);
+                SocketIOManager.removeSocket(this.socket);
                 this.socket = null;
                 this.socketPromise = null;
             }
