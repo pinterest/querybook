@@ -127,14 +127,12 @@ export const ResultExportDropdown: React.FunctionComponent<IProps> = ({
         }
     }, [statementId]);
 
-    const onExportPreviewClick = React.useCallback(async () => {
+    const onExportTSVClick = React.useCallback(async () => {
         const rawResult =
             statementResult?.data || (await loadStatementResult(statementId));
         const parsedResult = tableToTSV(rawResult);
-        setExportedInfo({
-            info: parsedResult,
-            type: 'text',
-        });
+        Utils.copy(parsedResult);
+        toast.success('Copied!');
     }, [statementId, statementResult, loadStatementResult]);
 
     const handleExport = React.useCallback(
@@ -218,21 +216,23 @@ export const ResultExportDropdown: React.FunctionComponent<IProps> = ({
                 icon: 'fas fa-download',
             },
             {
-                name: isPreviewFullResult(
-                    statementExecution,
-                    statementResult
-                ) ? (
-                    'Copy Full Result to Clipboard (as TSV)'
-                ) : (
+                name: (
                     <span>
                         Copy{' '}
-                        <span style={{ color: 'var(--color-accent-text)' }}>
-                            Preview
-                        </span>{' '}
+                        {isPreviewFullResult(
+                            statementExecution,
+                            statementResult
+                        ) ? (
+                            'Full Result'
+                        ) : (
+                            <span style={{ color: 'var(--color-accent-text)' }}>
+                                Preview
+                            </span>
+                        )}{' '}
                         to Clipboard (as TSV)
                     </span>
                 ),
-                onClick: onExportPreviewClick,
+                onClick: onExportTSVClick,
                 icon: 'fas fa-copy',
             },
             ...statementExporters.map((exporter) => ({
