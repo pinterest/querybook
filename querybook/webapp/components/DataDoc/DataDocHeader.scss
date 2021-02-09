@@ -1,7 +1,8 @@
 .DataDocHeader {
-    padding: 12px 12px 24px 12px;
+    padding: 12px 12px 0 12px;
     border-radius: var(--border-radius);
     color: var(--light-text-color);
+    margin-bottom: 24px;
     transition: background-color 0.2s ease-in-out;
     &:hover {
         background: var(--light-bg-color);
