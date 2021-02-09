@@ -43,10 +43,6 @@
         flex: 1;
     }
 
-    .header-hero {
-        border-bottom: var(--border);
-    }
-
     .data-doc-content-container {
         flex: 0 1 var(--max-width);
         padding: 36px 12px;
@@ -73,34 +69,6 @@
                             fill: var(--color-yellow-light);
                         }
                     }
-                }
-            }
-        }
-        .data-doc-header {
-            padding: 36px 12px;
-            border-bottom: var(--border);
-            color: var(--light-text-color);
-
-            .data-doc-header-top {
-                .data-doc-header-time {
-                    text-transform: uppercase;
-                    font-size: var(--text-size);
-                    font-weight: bold;
-                    padding-left: 4px;
-                }
-                .data-doc-header-users {
-                    .ImpressionWidget {
-                        margin-right: 4px;
-                    }
-                }
-            }
-            .data-doc-title {
-                color: var(--light-text-color);
-                font-size: var(--xxxlarge-text-size);
-                font-weight: bold;
-
-                &::placeholder {
-                    color: var(--light-text-color);
                 }
             }
         }
@@ -149,11 +117,12 @@
                     }
 
                     .block-crud-buttons {
-                        opacity: 0;
-                        top: -17px;
-                        position: relative;
-                        text-align: center;
                         margin: 0px 8px;
+                        position: relative;
+                        opacity: 0;
+                        text-align: center;
+                        top: -17px;
+                        transition: opacity 0.2s ease-in-out;
 
                         &.active,
                         &:hover {

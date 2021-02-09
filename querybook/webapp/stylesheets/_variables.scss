@@ -54,10 +54,13 @@ body {
     --color-accent-bg-hover: #dfeff5;
 
     // Colors: Text + Content
-    --title-color: var(--color-invert-3);
-    --text-color: var(--color-invert-2);
     --dark-text-color: var(--color-invert);
+    --text-color: var(--color-invert-2);
+    --dark-title-color: var(--color-invert-3);
+    --title-color: var(--color-invert-4);
     --light-text-color: var(--color-invert-5);
+    --empty-text-color: var(--color-primary-4);
+
     --invert-text-color: var(--color-primary);
     --code-text-color: var(--color-accent-text);
 
@@ -81,10 +84,11 @@ body {
 
     // Colors: Background + Borders
     --bg-color: var(--color-primary);
-    --hover-bg-color: var(--color-primary-2);
     --light-bg-color: var(--color-primary-1);
+    --hover-bg-color: var(--color-primary-2);
     --select-bg-color: var(--color-primary-3);
     --dark-bg-color: var(--color-primary-4);
+
     --invert-select-color: var(--color-invert-2);
     --invert-bg-color: var(--color-invert-1);
     --modal-bg-color: var(--color-invert-1);
@@ -117,8 +121,9 @@ body {
     --text-highlight: rgba(255, 255, 0, 0.5);
 
     // Type
-    --family-sans-serif: 'Avenir Next', 'Avenir', 'Helvetica Neue', 'Arial',
-        sans-serif;
+    --family-sans-serif: 'Avenir Next', 'Avenir', 'Segoe UI', Helvetica,
+        'Apple Color Emoji', Arial, sans-serif;
+
     --family-monospace: monaco, monospace;
     --bold-font: 600;
     --extra-bold-font: 700;

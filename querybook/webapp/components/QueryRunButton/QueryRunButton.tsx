@@ -60,13 +60,11 @@ export const QueryRunButton = React.forwardRef<
                 icon={hasSelection ? null : 'play'}
                 aria-label={'Execute (⇧↵)'}
                 data-balloon-pos={'up'}
-                attachedRight
             />
         );
 
         return (
             <div className="QueryRunButton flex-row">
-                {runButtonDOM}
                 <QueryEngineSelector
                     disabled={disabled}
                     queryEngineById={queryEngineById}
@@ -74,6 +72,7 @@ export const QueryRunButton = React.forwardRef<
                     engineId={engineId}
                     onEngineIdSelect={onEngineIdSelect}
                 />
+                {runButtonDOM}
             </div>
         );
     }

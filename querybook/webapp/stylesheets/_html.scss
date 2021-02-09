@@ -183,7 +183,7 @@ button,
 input,
 select,
 textarea {
-    font-family: 'Avenir Next', 'Avenir', 'Helvetica Neue', 'Arial', sans-serif;
+    font-family: var(--family-sans-serif);
 }
 
 code {

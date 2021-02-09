@@ -120,7 +120,7 @@ export const DataDocChart: React.FunctionComponent<IDataDocChartProps> = ({
                 ${fontColor[theme][1]},
                 ${fontColor[theme][2]}
                 )`;
-        defaults.global.defaultFontFamily = 'Avenir Next';
+        defaults.global.defaultFontFamily = 'var(--family-sans-serif)';
         defaults.global.defaultFontSize = 14;
         defaults.global.plugins.filler.propagate = true;
     }, [theme]);

@@ -3,6 +3,7 @@
     cursor: text;
     border-radius: var(--border-radius);
     font-size: var(--text-size);
+    transition: background-color 0.2s ease-in-out;
 
     &:focus-within {
         background-color: var(--light-bg-color);
@@ -12,18 +13,22 @@
         background-color: var(--hover-bg-color);
     }
 
+    h1,
+    h2 {
+        font-weight: bold;
+        color: var(--title-color);
+    }
+
     h1 {
         font-size: var(--xlarge-text-size);
         // So it visually aligns
         margin-left: -3px;
-        font-weight: bold;
     }
 
     h2 {
         font-size: var(--large-text-size);
         // So it visually aligns
         margin-left: -2px;
-        font-weight: bold;
     }
 
     blockquote {

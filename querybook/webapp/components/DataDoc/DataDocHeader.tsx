@@ -13,6 +13,7 @@ import { IconButton } from 'ui/Button/IconButton';
 import { ImpressionWidget } from 'components/ImpressionWidget/ImpressionWidget';
 import { BoardItemAddButton } from 'components/BoardItemAddButton/BoardItemAddButton';
 
+import './DataDocHeader.scss';
 interface IProps {
     dataDoc: IDataDoc;
     isEditable: boolean;
@@ -56,7 +57,7 @@ export const DataDocHeader = React.forwardRef<HTMLDivElement, IProps>(
         );
 
         return (
-            <div className="data-doc-header" ref={ref} key="data-doc-header">
+            <div className="DataDocHeader" ref={ref}>
                 <div className="data-doc-header-top horizontal-space-between">
                     <div className="data-doc-header-time flex-row mr8">
                         <p>{timeMessage}</p>

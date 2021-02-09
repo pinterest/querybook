@@ -1,0 +1,32 @@
+.DataDocHeader {
+    padding: 12px 12px 24px 12px;
+    border-radius: var(--border-radius);
+    color: var(--light-text-color);
+    transition: background-color 0.2s ease-in-out;
+    &:hover {
+        background: var(--light-bg-color);
+    }
+
+    .data-doc-header-top {
+        .data-doc-header-time {
+            text-transform: uppercase;
+            font-size: var(--text-size);
+            font-weight: bold;
+            padding-left: 4px;
+        }
+        .data-doc-header-users {
+            .ImpressionWidget {
+                margin-right: 4px;
+            }
+        }
+    }
+    .data-doc-title {
+        color: var(--title-color);
+        font-size: var(--xxxlarge-text-size);
+        font-weight: bold;
+
+        &::placeholder {
+            color: var(--empty-text-color);
+        }
+    }
+}

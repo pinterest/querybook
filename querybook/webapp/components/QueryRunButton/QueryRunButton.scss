@@ -3,10 +3,17 @@
         line-height: 24px;
     }
 
-    & .QueryEngineSelector .engine-selector-button {
-        border-left: none;
-        border-bottom-left-radius: 0;
-        border-top-left-radius: 0;
+    .Button {
+        background: var(--light-bg-color);
+        color: var(--empty-text-color);
+        border: none;
+        padding: 8px 40px;
+        margin-right: 0px;
+
+        &:hover {
+            background: var(--hover-bg-color);
+            color: var(--text-color);
+        }
     }
 }
 
@@ -14,15 +21,20 @@
     display: inline-block;
 
     .engine-selector-button {
-        padding: 5.5px 8px;
-        border: var(--border);
+        padding: 9.5px 15px;
         border-radius: var(--border-radius);
 
         user-select: none;
 
         font-weight: bold;
-        color: var(--dark-text-color);
+        color: var(--light-text-color);
         font-size: var(--small-text-size);
+
+        &:hover {
+            background: var(--hover-bg-color);
+            color: var(--text-color);
+        }
+
         .fa {
             margin-left: 5px;
         }

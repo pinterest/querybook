@@ -93,7 +93,7 @@ export const defaultReactSelectStyles = {
     }),
     singleValue: (styles, { data }) => ({
         ...styles,
-        color: 'var(--title-color)',
+        color: 'var(--dark-title-color)',
         ...(data.color ? dot(data.color) : {}),
     }),
     multiValue: (styles, { data }) => ({

@@ -54,8 +54,12 @@
         p {
             font-weight: bold;
             font-size: var(--large-text-size);
-            color: var(--dark-text-color);
+            color: var(--title-color);
             padding: 8px;
+
+            &::placeholder {
+                color: var(--empty-text-color);
+            }
         }
     }
 
@@ -67,15 +71,12 @@
         }
 
         .additional-dropdown-button {
-            @include pushable();
             @include fancy-hover();
 
+            color: var(--light-text-color);
             cursor: pointer;
-            margin-left: 5px;
-
-            height: 100%;
-            font-size: 20px;
-            line-height: 38px;
+            margin-right: 4px;
+            padding: 8px 0px; // for an exact height match
 
             svg {
                 z-index: 4;
