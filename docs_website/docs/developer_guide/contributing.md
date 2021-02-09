@@ -72,20 +72,22 @@ When you create a new pull request, please make sure it's title follows the spec
 Here are all the prefix allowed by Querybook:
 
 -   **patch change**
-    -   build
-    -   chore
-    -   ci
-    -   docs
-    -   style
-    -   refactor
-    -   perf
-    -   test
+    -   build: Any changes to webpack/pip/Docker
+    -   ci: Changes related to github actions
+    -   docs: Any change to documentation or documentation site
+    -   ui: Minor UI changes that does not impact logic
+    -   refactor: Code refactor/reorg that does not change logic
+    -   test: Add/Update tests, changes to pytest/jest
+    -   fix: Bug fix/Small tweaks
 -   **minor change**
-    -   feat
+    -   feat: Major logic/interaction change, any db migrations
     -   minor
+        -   Use this for large patch change
 -   **major change**
-    -   MAJOR
     -   BREAKING CHANGE
+        -   Imcompatible DB data/metadata change
+        -   Plugins API change
+    -   MAJOR
 
 ## Help
 
