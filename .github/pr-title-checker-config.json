@@ -1,5 +1,5 @@
 {
     "CHECKS": {
-        "regexp": "(build|patch|ci|docs|ui|refactor|test|feat|minor|MAJOR|BREAKING CHANGE)(\\(.+\\))?!?\\:"
+        "regexp": "(build|fix|ci|docs|ui|refactor|test|feat|minor|MAJOR|BREAKING CHANGE)(\\(.+\\))?!?\\:"
     }
 }

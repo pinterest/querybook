@@ -22,8 +22,8 @@ jobs:
                   tag-prefix: ''
                   minor-wording: 'feat:,feat(,minor'
                   major-wording: 'MAJOR,BREAKING CHANGE'
-                  # build,patch,ci,docs,ui,refactor,test
-                  patch-wording: 'build:,build(,patch:,patch(,ci:,ci(,docs:,docs(,ui:,ui(,refactor:,refactor(,test:,test('
+                  # build,fix,ci,docs,ui,refactor,test
+                  patch-wording: 'build:,build(,fix:,fix(,ci:,ci(,docs:,docs(,ui:,ui(,refactor:,refactor(,test:,test('
               env:
                   GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
             - name: Publish to Registry

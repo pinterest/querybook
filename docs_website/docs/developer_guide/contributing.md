@@ -78,7 +78,7 @@ Here are all the prefix allowed by Querybook:
     -   ui: Minor UI changes that does not impact logic
     -   refactor: Code refactor/reorg that does not change logic
     -   test: Add/Update tests, changes to pytest/jest
-    -   patch: Any other patch change
+    -   fix: Bug fix/Small tweaks
 -   **minor change**
     -   feat: Major logic/interaction change, any db migrations
     -   minor
