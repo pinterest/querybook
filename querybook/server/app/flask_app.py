@@ -65,11 +65,11 @@ def make_celery(app):
     )
 
     celery.conf.update(
-        CELERYD_PREFETCH_MULTIPLIER=1,
-        CELERYD_MAX_TASKS_PER_CHILD=1,
-        CELERY_TRACK_STARTED=True,
-        CELERYD_TASK_SOFT_TIME_LIMIT=172800,
-        BROKER_TRANSPORT_OPTIONS={
+        worker_prefetch_multiplier=1,
+        worker_max_tasks_per_child=1,
+        task_track_started=True,
+        task_soft_time_limit=172800,
+        broker_transport_options={
             # This must be higher than soft time limit,
             # otherwise the task will get retried (in the case of acks_late=True)
             # after visibility timeout

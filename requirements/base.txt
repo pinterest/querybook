@@ -19,27 +19,23 @@ Flask-Compress==1.4.0
 Flask-Login==0.4.1
 Flask-Limiter==1.1.0
 python-memcached==1.59
-redis==3.5.2
+redis==3.5.3
 
-gevent==20.6.2
-greenlet==0.4.16  # 0.4.17 update causes UWSGI to break
+gevent==21.1.2
+greenlet==1.0.0
 
 alembic==1.4.3
 
 gevent-websocket==0.10.1
-flask-socketio==4.2.0
-# Pinning the version down, waiting for flask-socketio to update
-# to version 5
-python-socketio==4.4.0
-python-engineio==3.14.2
-
+flask-socketio==5.0.1
 
 # Querying
 # Hive/Presto
 sasl==0.2.1
 thrift==0.11.0
 thrift-sasl==0.3.0
-PyHive[hive, presto]==0.6.1
+PyHive[hive, presto]==0.6.3
+kazoo==2.5.0
 hmsclient==0.1.1
 # Druid
 pydruid==0.5.7
@@ -53,8 +49,7 @@ Jinja2==2.10.3  # From Flask
 
 
 # Celery
-kazoo==2.5.0
-celery[redis]==4.4.2
+celery[redis]==5.0.5
 
 # Ops
 requests-oauthlib==1.0.0

@@ -133,7 +133,7 @@ class DataDocComponent extends React.Component<IProps, IState> {
 
     @bind
     public closeDataDoc(docId: number) {
-        return closeDataDoc(docId);
+        return this.props.closeDataDoc(docId);
     }
 
     @bind
