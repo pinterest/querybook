@@ -50,7 +50,7 @@
             border-right: var(--border);
         }
 
-        .sidebar-environment-picker {
+        .sidebar-environment-picker:not(:empty) {
             border-bottom: var(--border);
         }
 

@@ -4,7 +4,11 @@
     color: var(--icon-color);
     transition: color 0.2s ease-out;
     transition: fill 0.2s ease-out;
+
     display: inline-flex;
+    align-items: center;
+    justify-content: center;
+
     position: relative;
 
     &.invert-circle {
@@ -74,5 +78,16 @@
 
     .icon-title {
         font-size: var(--xxxsmall-text-size);
+    }
+}
+
+.VerticalIconButtonControl {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+
+    .IconButton {
+        width: var(--square-icon-size);
+        height: var(--square-icon-size);
     }
 }

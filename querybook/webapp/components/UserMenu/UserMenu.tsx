@@ -124,7 +124,7 @@ export const UserMenu: React.FC<IUserMenuProps> = ({
     return (
         <>
             <span
-                className="UserMenu flex-column"
+                className="UserMenuButton flex-column"
                 ref={selfRef}
                 onClick={toggleUserMenuPopover}
                 aria-label={'User Settings'}

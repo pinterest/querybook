@@ -102,7 +102,7 @@ export const EnvironmentAppSidebar: React.FunctionComponent = () => {
     );
 
     const environmentPickerSection = collapsed ? (
-        <EnvironmentDropdownButton />
+        <EnvironmentDropdownButton showIfMoreThan={1} />
     ) : (
         <EnvironmentTopbar />
     );

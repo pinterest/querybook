@@ -107,7 +107,7 @@ export const DataDocRightSidebar: React.FunctionComponent<IProps> = ({
                     }
                 />
             </div>
-            <div className="DataDocRightSidebar-button-section-bottom flex-column">
+            <div className="DataDocRightSidebar-button-section-bottom  VerticalIconButtonControl">
                 {templateButtonDOM}
                 {scheduleButtonDOM}
                 <IconButton

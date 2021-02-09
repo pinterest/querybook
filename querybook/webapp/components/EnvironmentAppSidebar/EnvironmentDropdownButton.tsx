@@ -17,13 +17,14 @@ import './EnvironmentDropdownButton.scss';
 
 export const EnvironmentDropdownButton: React.FunctionComponent<{
     skip?: number;
-}> = ({ skip = 0 }) => {
+    showIfMoreThan?: number;
+}> = ({ skip = 0, showIfMoreThan = 0 }) => {
     const environments = useSelector(environmentsSelector);
     const currentEnvironment = useSelector(currentEnvironmentSelector);
     const userEnvironmentNames = useSelector(userEnvironmentNamesSelector);
 
     const environmentsToShow = environments.slice(skip);
-    if (!environmentsToShow.length) {
+    if (environmentsToShow.length <= showIfMoreThan) {
         return null;
     }
 

@@ -8,4 +8,11 @@
     flex-direction: column;
     justify-content: space-between;
     text-align: center;
+
+    .EntitySidebar-footer {
+        .UserMenuButton {
+            width: var(--square-icon-size);
+            height: var(--square-icon-size);
+        }
+    }
 }

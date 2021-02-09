@@ -12,6 +12,7 @@ import { ListMenu } from 'ui/Menu/ListMenu';
 import { StatusIcon } from 'ui/StatusIcon/StatusIcon';
 
 import './QueryRunButton.scss';
+import { Icon } from 'ui/Icon/Icon';
 
 interface IQueryRunButtonProps extends IQueryEngineSelectorProps {
     disabled?: boolean;
@@ -57,7 +58,7 @@ export const QueryRunButton = React.forwardRef<
                     'run-selection': !!hasSelection,
                 })}
                 title={hasSelection ? 'Run Selection' : null}
-                icon={hasSelection ? null : 'play'}
+                icon={hasSelection ? null : <Icon name="play" fill />}
                 aria-label={'Execute (⇧↵)'}
                 data-balloon-pos={'up'}
                 attachedRight

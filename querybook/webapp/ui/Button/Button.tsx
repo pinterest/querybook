@@ -1,7 +1,7 @@
 import React from 'react';
 import classNames from 'classnames';
 
-import { Icon } from 'ui/Icon/Icon';
+import { Icon, IIconProps } from 'ui/Icon/Icon';
 
 import './Button.scss';
 
@@ -16,7 +16,7 @@ export const ButtonTypes = [
 
 export interface IButtonProps
     extends React.AnchorHTMLAttributes<HTMLDivElement> {
-    icon?: string;
+    icon?: string | React.ReactElement<IIconProps>;
     title?: string;
     className?: string;
 
@@ -64,7 +64,7 @@ export const Button = React.forwardRef<HTMLDivElement, IButtonProps>(
         const iconDOM = isLoading ? (
             <Icon name="loader" />
         ) : (
-            icon && <Icon name={icon} />
+            icon && (typeof icon === 'string' ? <Icon name={icon} /> : icon)
         );
         const textDOM = title && <span>{title}</span>;
 
