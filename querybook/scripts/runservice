@@ -15,7 +15,7 @@ case "$SERVICE_NAME" in
     COMMAND="python3 querybook/server/runweb.py"
     ;;
 "worker")
-    COMMAND="watchmedo auto-restart -d querybook -p '*.py' -R -- celery -A tasks.all_tasks worker --loglevel=DEBUG "
+    COMMAND="watchmedo auto-restart -d querybook -p '*.py' -R -- celery -A tasks.all_tasks worker --loglevel=DEBUG"
     ;;
 "scheduler")
     COMMAND="watchmedo auto-restart -d querybook -p '*.py' -R -- celery -A tasks.all_tasks beat -S scheduler.DatabaseScheduler --loglevel=INFO"

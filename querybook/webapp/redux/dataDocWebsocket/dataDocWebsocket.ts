@@ -247,8 +247,6 @@ export function openDataDoc(docId: number): ThunkResult<Promise<any>> {
 
 export function closeDataDoc(docId: number): ThunkResult<void> {
     return () => {
-        console.log('Closing DataDoc ');
-        console.log(docId);
         dataDocSocket.removeDataDoc(docId);
     };
 }

@@ -15,20 +15,20 @@ const socketIOManager = new Manager(socketIOPath, {
     autoConnect: false,
 });
 
+function getSocketFromManager(nameSpace: string) {
+    return socketIOManager.socket(nameSpace);
+}
+
 const sendToastForError = throttle((error) => {
     toast.error(String(error));
 }, 3000);
-
-function getSocket(nameSpace: string) {
-    return socketIOManager.socket(nameSpace);
-}
 
 export default {
     getSocket: async (
         nameSpace = '/',
         onConnection: (socket: SocketIOClient.Socket) => any = null
     ) => {
-        const socket = getSocket(nameSpace);
+        const socket = getSocketFromManager(nameSpace);
 
         if (!socket.connected) {
             socket.connect();
