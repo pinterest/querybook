@@ -76,11 +76,14 @@ def _assert_safe_query(query, engine_id, session=None):
     try:
         from lib.metastore.utils import MetastoreTableACLChecker
 
-        LOG.debug("assert_safe_query")
         table_per_statement, _ = process_query(query)
         all_tables = [table for tables in table_per_statement for table in tables]
 
         query_engine = admin_logic.get_query_engine_by_id(engine_id, session=session)
+        if query_engine.metastore_id is None:
+            LOG.debug("No metastore for query engine, skipping")
+            return
+
         metastore = admin_logic.get_query_metastore_by_id(
             query_engine.metastore_id, session=session
         )
