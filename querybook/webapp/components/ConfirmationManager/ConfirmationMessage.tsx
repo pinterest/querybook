@@ -66,10 +66,10 @@ export const ConfirmationMessage: React.FunctionComponent<IConfirmationMessagePr
             icon="x"
             title="Cancel"
             key="cancel"
-            type="cancel"
+            color="cancel"
         />,
         <Button
-            type="confirm"
+            color="confirm"
             onClick={onCloseButtonClick(true)}
             icon="check"
             title="Confirm"

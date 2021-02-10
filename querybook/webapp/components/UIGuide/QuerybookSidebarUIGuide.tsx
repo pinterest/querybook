@@ -26,7 +26,11 @@ function getQuerybookSidebarTourSteps() {
                     <hr />
                     <div>
                         <span>For the DataDoc tour, </span>
-                        <Button onClick={() => goTo(4)} borderless small>
+                        <Button
+                            onClick={() => goTo(4)}
+                            theme="text"
+                            size="small"
+                        >
                             click here
                         </Button>
                     </div>
@@ -186,7 +190,11 @@ function getQuerybookSidebarTourSteps() {
                     </p>
                     <hr />
                     <div>
-                        <Button onClick={() => goTo(4)} borderless small>
+                        <Button
+                            onClick={() => goTo(4)}
+                            theme="text"
+                            size="small"
+                        >
                             Click here
                         </Button>
                         <span> for the DataDoc tour.</span>
@@ -226,8 +234,8 @@ export const QuerybookSidebarUIGuide: React.FC = () => {
             <Button
                 className="Tour-button"
                 onClick={startTour}
-                borderless
-                inverted
+                color="accent"
+                theme="fill"
             >
                 UI Tutorial
             </Button>

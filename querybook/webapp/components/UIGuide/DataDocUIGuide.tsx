@@ -149,8 +149,8 @@ export const DataDocUIGuide: React.FunctionComponent<{
                 <Button
                     className="Tour-button"
                     onClick={() => setIsOpen(true)}
-                    borderless
-                    inverted
+                    theme="text"
+                    color="accent"
                 >
                     Begin DataDoc Tour
                 </Button>

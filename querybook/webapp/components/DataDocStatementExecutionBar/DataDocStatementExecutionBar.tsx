@@ -7,7 +7,7 @@ import {
     QueryExecutionStatus,
     StatementExecutionStatus,
 } from 'const/queryExecution';
-import { Button } from 'ui/Button/Button';
+import { Button, TextButton } from 'ui/Button/Button';
 import { ResultExportDropdown } from './ResultExportDropdown';
 
 interface IProps {
@@ -40,13 +40,11 @@ export class DataDocStatementExecutionBar extends React.PureComponent<IProps> {
 
         const toggleLogsButton = hasLog &&
             status === StatementExecutionStatus.DONE && (
-                <Button
-                    borderless
-                    small
+                <TextButton
+                    size="small"
                     onClick={toggleLogs}
                     icon="list"
                     title={showStatementLogs ? 'Show Result' : 'Show Logs'}
-                    type="inlineText"
                 />
             );
 
@@ -68,10 +66,8 @@ export class DataDocStatementExecutionBar extends React.PureComponent<IProps> {
         return (
             metaInfo &&
             status === StatementExecutionStatus.DONE && (
-                <Button
-                    borderless
-                    small
-                    type="inlineText"
+                <TextButton
+                    size="small"
                     onClick={toggleShowStatementMeta}
                     icon="activity"
                     title={showStatementMeta ? 'Hide Meta' : 'Show Meta'}
@@ -91,10 +87,8 @@ export class DataDocStatementExecutionBar extends React.PureComponent<IProps> {
 
         const cancelQueryButton =
             queryStatus === QueryExecutionStatus.RUNNING ? (
-                <Button
-                    borderless
-                    small
-                    type="inlineText"
+                <TextButton
+                    size="small"
                     onClick={cancelQueryExecution}
                     icon="x"
                     title="Cancel Query"
@@ -102,11 +96,9 @@ export class DataDocStatementExecutionBar extends React.PureComponent<IProps> {
             ) : null;
 
         const showExecutedQueryButton = (
-            <Button
-                borderless
-                small
-                type="inlineText"
+            <TextButton
                 onClick={toggleShowExecutedQuery}
+                size="small"
                 icon="eye"
                 title={showExecutedQuery ? 'Hide Query' : 'Show Query'}
             />

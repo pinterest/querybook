@@ -25,7 +25,7 @@ import { useInterval } from 'hooks/useInterval';
 import { ProgressBar } from 'ui/ProgressBar/ProgressBar';
 import { CopyPasteModal } from 'ui/CopyPasteModal/CopyPasteModal';
 import { StatementResultTable } from 'components/DataDocStatementExecution/StatementResultTable';
-import { Button } from 'ui/Button/Button';
+import { Button, TextButton } from 'ui/Button/Button';
 import { CopyButton } from 'ui/CopyButton/CopyButton';
 
 import './DataTableViewSamples.scss';
@@ -67,7 +67,7 @@ const SamplesTableView: React.FunctionComponent<{
     return (
         <div className="QuerybookTableViewSamples">
             <div className="flex-row">
-                <Button
+                <TextButton
                     title="Download as csv"
                     onClick={() => {
                         downloadString(
@@ -77,17 +77,14 @@ const SamplesTableView: React.FunctionComponent<{
                         );
                     }}
                     icon="download"
-                    type="inlineText"
-                    borderless
-                    small
+                    size="small"
                 />
                 <span className="mr8" />
                 <CopyButton
                     title="Copy as tsv"
                     copyText={() => tableToTSV(processedData)}
-                    type="inlineText"
-                    borderless
-                    small
+                    size="small"
+                    type="text"
                 />
             </div>
 

@@ -36,11 +36,10 @@ import {
 } from 'components/QueryRunButton/QueryRunButton';
 import { BoundQueryEditor } from 'components/QueryEditor/BoundQueryEditor';
 
-import { Button } from 'ui/Button/Button';
+import { Button, TextButton } from 'ui/Button/Button';
 import { Dropdown } from 'ui/Dropdown/Dropdown';
 import { Icon } from 'ui/Icon/Icon';
 import { ListMenu, IListMenuItem } from 'ui/Menu/ListMenu';
-import { Message } from 'ui/Message/Message';
 import { Modal } from 'ui/Modal/Modal';
 import { Title } from 'ui/Title/Title';
 
@@ -516,8 +515,7 @@ class DataDocQueryCellComponent extends React.Component<IProps, IState> {
                 <Button
                     icon="maximize"
                     onClick={toggleFullScreen}
-                    borderless
-                    transparent
+                    theme="text"
                     pushable
                 />
             </div>
@@ -546,11 +544,9 @@ class DataDocQueryCellComponent extends React.Component<IProps, IState> {
         const openSnippetDOM =
             query.trim().length === 0 && isEditable ? (
                 <div className="add-snippet-wrapper flex-center">
-                    <Button
+                    <TextButton
                         title="Add Template"
                         onClick={this.toggleInsertQuerySnippetModal}
-                        borderless
-                        type="inlineText"
                     />
                 </div>
             ) : null;

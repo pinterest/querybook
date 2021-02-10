@@ -3,7 +3,7 @@ import React from 'react';
 import { titleize } from 'lib/utils';
 import { getDefaultFormValue } from './formFunctions';
 
-import { Button } from 'ui/Button/Button';
+import { Button, SoftButton } from 'ui/Button/Button';
 import { IconButton } from 'ui/Button/IconButton';
 import { DebouncedInput } from 'ui/DebouncedInput/DebouncedInput';
 import { DebouncedPasswordInput } from 'ui/DebouncedInput/DebouncedPasswordInput';
@@ -137,7 +137,7 @@ function ExpandableFormField<T extends []>({
         <>
             {arrayFieldDOM}
             <div className="SmartForm-button-box flex-row">
-                <Button
+                <SoftButton
                     title="Add More"
                     icon="plus"
                     onClick={onChange.bind(
@@ -145,7 +145,6 @@ function ExpandableFormField<T extends []>({
                         `${value.length}`,
                         getDefaultFormValue(formField.of)
                     )}
-                    type="soft"
                 />
             </div>
         </>

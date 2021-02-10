@@ -482,7 +482,7 @@ class QuerySnippetComposerComponent extends React.PureComponent<
 
         const controls = [
             <AsyncButton
-                type="confirm"
+                color="confirm"
                 onClick={
                     formInvalid ? () => Promise.resolve() : this.handleSave
                 }

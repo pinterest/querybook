@@ -2,9 +2,9 @@ import React from 'react';
 // eslint-disable-next-line import/no-extraneous-dependencies
 import centered from '@storybook/addon-centered/react';
 
-import { IconButton, IconButtonProps } from './IconButton';
+import { IconButton, IIconButtonProps } from './IconButton';
 
-export const _IconButton = (args: IconButtonProps) => (
+export const _IconButton = (args: IIconButtonProps) => (
     <IconButton
         onClick={() => {
             window.alert('Hello World');

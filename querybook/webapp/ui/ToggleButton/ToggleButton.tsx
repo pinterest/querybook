@@ -1,10 +1,10 @@
 import React from 'react';
 
-import { Button, IButtonProps } from 'ui/Button/Button';
+import { Button, ButtonProps } from 'ui/Button/Button';
 
 import './ToggleButton.scss';
 
-export interface IToggleButtonProps extends IButtonProps {
+export interface IToggleButtonProps extends ButtonProps {
     title: string;
     checked: boolean;
     onClick: (...args: any) => any;

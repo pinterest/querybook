@@ -5,7 +5,7 @@ import { titleize, sleep, copy } from 'lib/utils';
 
 import { IDataCellMeta } from 'const/datadoc';
 import { AsyncButton } from 'ui/AsyncButton/AsyncButton';
-import { Button } from 'ui/Button/Button';
+import { Button, SoftButton } from 'ui/Button/Button';
 import { Dropdown } from 'ui/Dropdown/Dropdown';
 import { ListMenu, IListMenuItem } from 'ui/Menu/ListMenu';
 
@@ -127,7 +127,6 @@ export const DataDocCellControl: React.FunctionComponent<IProps> = ({
             deleteCellAt && isHeader && numberOfCells > 0 && (
                 <AsyncButton
                     className="block-crud-button"
-                    borderless
                     onClick={deleteCellAt.bind(this, index)}
                     icon="x"
                     type="soft"
@@ -143,7 +142,6 @@ export const DataDocCellControl: React.FunctionComponent<IProps> = ({
                 moveCellAt && (
                     <AsyncButton
                         className="block-crud-button"
-                        borderless
                         onClick={moveCellAt.bind(
                             this,
                             index,
@@ -160,20 +158,18 @@ export const DataDocCellControl: React.FunctionComponent<IProps> = ({
             // undefined means the cell cannot be collapsed
             leftButtons.push(
                 !isCollapsedDefault && toggleDefaultCollapsed && (
-                    <Button
+                    <SoftButton
                         className={
                             animateDefaultChange
                                 ? 'block-crud-button disabled'
                                 : 'block-crud-button'
                         }
-                        borderless
                         onClick={
                             animateDefaultChange
                                 ? null
                                 : handleToggleDefaultCollapsed
                         }
                         icon={animateDefaultChange ? 'lock' : 'unlock'}
-                        type="soft"
                         aria-label={
                             showCollapsed
                                 ? 'default to collapsed'
@@ -200,7 +196,6 @@ export const DataDocCellControl: React.FunctionComponent<IProps> = ({
             centerButtons.push(
                 <AsyncButton
                     className="block-crud-button"
-                    borderless
                     key={cellKey}
                     onClick={insertCellAt.bind(
                         null,
@@ -227,11 +222,9 @@ export const DataDocCellControl: React.FunctionComponent<IProps> = ({
                 className={'inline mr4'}
                 key="dropdown-menu"
                 customButtonRenderer={() => (
-                    <Button
+                    <SoftButton
                         className="block-crud-button "
-                        borderless
                         icon={'more-vertical'}
-                        type="soft"
                     />
                 )}
             >

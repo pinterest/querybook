@@ -3,12 +3,16 @@ import React from 'react';
 
 import { TooltipDirection } from 'const/tooltip';
 import * as Utils from 'lib/utils';
-import { Button, IButtonProps } from 'ui/Button/Button';
+import {
+    ButtonProps,
+    ButtonType,
+    getButtonComponentByType,
+} from 'ui/Button/Button';
 
 const DEFAULT_TOOL_TIP = 'Click To Copy';
 const DEFAULT_COPIED_TOOL_TIP = 'Copied!';
 
-export interface ICopyButtonProps extends IButtonProps {
+export interface ICopyButtonProps extends ButtonProps {
     copyText: string | (() => string);
     icon?: string;
     title?: string;
@@ -17,6 +21,7 @@ export interface ICopyButtonProps extends IButtonProps {
     tooltip?: string;
     copiedTooltip?: string;
     tooltipDirection?: TooltipDirection;
+    type?: ButtonType;
 }
 
 export const CopyButton: React.FunctionComponent<ICopyButtonProps> = ({
@@ -25,10 +30,12 @@ export const CopyButton: React.FunctionComponent<ICopyButtonProps> = ({
     tooltip = DEFAULT_TOOL_TIP,
     copiedTooltip = DEFAULT_COPIED_TOOL_TIP,
     tooltipDirection = 'up',
+    type,
     ...propsForButton
 }) => {
     const [tooltipToShow, setTooltipToShow] = React.useState(tooltip);
 
+    const Button = getButtonComponentByType(type);
     return (
         <Button
             className={classNames({

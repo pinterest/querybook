@@ -17,7 +17,7 @@ import { ITaskSchedule } from 'const/schedule';
 import { TaskStatus } from 'components/Task/TaskStatus';
 
 import { AsyncButton } from 'ui/AsyncButton/AsyncButton';
-import { Button } from 'ui/Button/Button';
+import { SoftButton, TextButton } from 'ui/Button/Button';
 import { FormField, FormFieldInputSection } from 'ui/Form/FormField';
 import { FormWrapper } from 'ui/Form/FormWrapper';
 import { IconButton } from 'ui/Button/IconButton';
@@ -228,11 +228,9 @@ export const TaskEditor: React.FunctionComponent<IProps> = ({
                         : null;
                     const controlDOM = (
                         <div className="mv4 ml12">
-                            <Button
+                            <SoftButton
                                 title="Add New Arg"
                                 onClick={() => arrayHelpers.push('')}
-                                type="soft"
-                                borderless
                             />
                         </div>
                     );
@@ -292,13 +290,11 @@ export const TaskEditor: React.FunctionComponent<IProps> = ({
                                 : null;
                             const controlDOM = (
                                 <div className="TaskEditor-kwarg-button mt8 ml4 mb16">
-                                    <Button
+                                    <SoftButton
                                         title="Add New Kwarg"
                                         onClick={() =>
                                             arrayHelpers.push(['', ''])
                                         }
-                                        type="soft"
-                                        borderless
                                     />
                                 </div>
                             );
@@ -424,21 +420,17 @@ export const TaskEditor: React.FunctionComponent<IProps> = ({
                         </div>
                         <div className="TaskEditor-form-controls right-align mt16">
                             {task.id ? (
-                                <Button
+                                <TextButton
                                     className="TaskEditor-delete-button"
                                     disabled={!isValid}
                                     onClick={handleDeleteTask}
                                     title={'Delete Task'}
-                                    type="inlineText"
-                                    borderless
                                 />
                             ) : null}
                             <AsyncButton
                                 disabled={!isValid}
                                 onClick={submitForm}
                                 title={task.id ? 'Update Task' : 'Create Task'}
-                                type="inlineText"
-                                borderless
                             />
                         </div>
                     </Form>
@@ -498,8 +490,6 @@ export const TaskEditor: React.FunctionComponent<IProps> = ({
                                                 title="Run Task"
                                                 icon="play"
                                                 onClick={runTask}
-                                                type="inlineText"
-                                                borderless
                                             />
                                         </div>
                                     </div>

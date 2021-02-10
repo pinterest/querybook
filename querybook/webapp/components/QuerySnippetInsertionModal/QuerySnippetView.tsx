@@ -191,7 +191,7 @@ export class QuerySnippetView extends React.Component<
             <div className="right-align">
                 <CopyButton copyText={context} title="Copy To Clipboard" />
                 <Button
-                    type="confirm"
+                    color="confirm"
                     title="Insert"
                     onClick={this.handleQuerySnippetInsert}
                 />

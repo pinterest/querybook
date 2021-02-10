@@ -47,12 +47,11 @@ export const QueryExecutionBar: React.FunctionComponent<IProps> = ({
             {executionDateDOM}
             {notificationButtonDOM}
             <CopyButton
-                borderless
-                small
+                type="text"
+                size="small"
                 copyText={permalink}
                 icon="link"
                 title="Share Execution"
-                type="inlineText"
             />
         </>
     );

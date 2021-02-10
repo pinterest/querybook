@@ -31,7 +31,7 @@ import { AsyncButton } from 'ui/AsyncButton/AsyncButton';
 import { getEnumEntries } from 'lib/typescript';
 import { notificationServiceSelector } from '../../redux/notificationService/selector';
 import { IQueryResultExporter } from 'redux/queryExecutions/types';
-import { Button } from 'ui/Button/Button';
+import { Button, SoftButton } from 'ui/Button/Button';
 import { IconButton } from 'ui/Button/IconButton';
 
 import './DataDocScheduleForm.scss';
@@ -222,7 +222,7 @@ export const DataDocScheduleForm: React.FunctionComponent<IDataDocScheduleFormPr
                             {onDelete && (
                                 <AsyncButton
                                     title="Delete"
-                                    type="cancel"
+                                    color="cancel"
                                     onClick={onDelete}
                                 />
                             )}
@@ -377,7 +377,7 @@ const ScheduleExportsForm: React.FC<{
 
                 const controlDOM = (
                     <div className="center-align mt8">
-                        <Button
+                        <SoftButton
                             icon="plus"
                             title="Export Query Cell Result"
                             onClick={() =>
@@ -387,8 +387,6 @@ const ScheduleExportsForm: React.FC<{
                                     exporter_params: {},
                                 })
                             }
-                            type="soft"
-                            pushable
                         />
                     </div>
                 );

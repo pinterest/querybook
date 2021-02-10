@@ -11,7 +11,7 @@ import { IDataChartCellMeta } from 'const/datadoc';
 import { StatementExecutionPicker } from 'components/ExecutionPicker/StatementExecutionPicker';
 import { QueryExecutionPicker } from 'components/ExecutionPicker/QueryExecutionPicker';
 
-import { Button } from 'ui/Button/Button';
+import { Button, TextButton } from 'ui/Button/Button';
 import { ErrorBoundary } from 'ui/ErrorBoundary/ErrorBoundary';
 import { DataDocChart } from './DataDocChart';
 import { DataDocChartCellTable } from './DataDocChartCellTable';
@@ -230,12 +230,10 @@ export const DataDocChartCell: React.FunctionComponent<IProps> = ({
             <div className="horizontal-space-between">
                 <div>{renderPickerDOM()}</div>
                 <div className="flex-row">
-                    <Button
+                    <TextButton
                         title="Config Chart"
                         onClick={() => setShowChartComposer(true)}
-                        borderless
-                        small
-                        type="inlineText"
+                        size="small"
                     />
                     <InfoButton>
                         Chart data comes from the last query cell above.

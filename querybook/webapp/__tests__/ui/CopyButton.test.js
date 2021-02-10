@@ -8,8 +8,8 @@ import { CopyButton } from '../../ui/CopyButton/CopyButton';
 it('renders without crashing', () => {
     shallow(
         <CopyButton
-            borderless
-            small
+            type="text"
+            size="small"
             copyText="Text to be copied"
             icon="link"
             title="Test Copy"
@@ -21,8 +21,8 @@ describe('matches enzyme snapshots', () => {
     it('matches snapshot', () => {
         const wrapper = shallow(
             <CopyButton
-                borderless
-                small
+                type="text"
+                size="small"
                 copyText="Text to be copied"
                 icon="link"
                 title="Test Copy"
@@ -37,8 +37,8 @@ describe('matches test renderer snapshot', () => {
     it('serializes the styles', () => {
         const output = renderer.create(
             <CopyButton
-                borderless
-                small
+                type="text"
+                size="small"
                 copyText="Text to be copied"
                 icon="link"
                 title="Test Copy"

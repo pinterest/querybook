@@ -2,7 +2,6 @@ import React from 'react';
 import moment from 'moment';
 import { clone } from 'lodash';
 import { useParams } from 'react-router-dom';
-import * as Yup from 'yup';
 
 import ds from 'lib/datasource';
 import history from 'lib/router-history';
@@ -15,7 +14,7 @@ import { AdminAuditLogButton } from 'components/AdminAuditLog/AdminAuditLogButto
 
 import { TaskEditor } from 'components/Task/TaskEditor';
 
-import { Button } from 'ui/Button/Button';
+import { Button, TextButton } from 'ui/Button/Button';
 import { Card } from 'ui/Card/Card';
 import { Icon } from 'ui/Icon/Icon';
 import { Level } from 'ui/Level/Level';
@@ -177,7 +176,7 @@ export const AdminMetastore: React.FunctionComponent<IProps> = ({
         if (aclControl.type == null) {
             return (
                 <div className="AdminMetastore-acl-button">
-                    <Button
+                    <TextButton
                         onClick={() =>
                             onChange('acl_control', {
                                 type: 'denylist',
@@ -185,8 +184,6 @@ export const AdminMetastore: React.FunctionComponent<IProps> = ({
                             })
                         }
                         title="Create Allowlist/Denylist"
-                        type="inlineText"
-                        borderless
                     />
                 </div>
             );
@@ -237,15 +234,13 @@ export const AdminMetastore: React.FunctionComponent<IProps> = ({
                             onChange('acl_control', { type: key, tables: [] });
                         }}
                     />
-                    <Button
+                    <TextButton
                         title={
                             aclControl.type === 'denylist'
                                 ? 'Remove Denylist'
                                 : 'Remove Allowlist'
                         }
                         onClick={() => onChange('acl_control', {})}
-                        type="inlineText"
-                        borderless
                     />
                 </div>
                 {tablesDOM}
@@ -376,13 +371,11 @@ export const AdminMetastore: React.FunctionComponent<IProps> = ({
                                         </div>
                                     ) : (
                                         <div className="AdminMetastore-TaskEditor-button center-align">
-                                            <Button
+                                            <TextButton
                                                 title="Create Schedule"
                                                 onClick={() =>
                                                     setShowTaskEditor(true)
                                                 }
-                                                type="inlineText"
-                                                borderless
                                             />
                                         </div>
                                     )}

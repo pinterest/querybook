@@ -60,7 +60,7 @@ export const QueryRunButton = React.forwardRef<
                 icon={hasSelection ? null : 'play'}
                 aria-label={'Execute (⇧↵)'}
                 data-balloon-pos={'up'}
-                attachedRight
+                attached="right"
             />
         );
 

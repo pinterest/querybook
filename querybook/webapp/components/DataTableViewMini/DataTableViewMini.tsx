@@ -5,7 +5,7 @@ import { navigateWithinEnv } from 'lib/utils/query-string';
 import { ColumnPanelView } from './ColumnPanelView';
 import { TablePanelView } from './TablePanelView';
 
-import { Button } from 'ui/Button/Button';
+import { TextButton } from 'ui/Button/Button';
 import { IconButton } from 'ui/Button/IconButton';
 import { Level } from 'ui/Level/Level';
 
@@ -56,7 +56,7 @@ export const DataTableViewMini: React.FunctionComponent<IProps> = ({
         <div className="DataTableViewMini">
             <Level className="DataTableViewMini-header">
                 {closeButton || <div />}
-                <Button
+                <TextButton
                     onClick={() =>
                         onViewDetails
                             ? onViewDetails(tableId)
@@ -64,8 +64,6 @@ export const DataTableViewMini: React.FunctionComponent<IProps> = ({
                                   isModal: true,
                               })
                     }
-                    borderless
-                    type="inlineText"
                     title="View Table"
                     className="table-details-button"
                 />
