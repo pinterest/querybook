@@ -13,32 +13,22 @@ export type ButtonColorType = typeof ButtonColors[number];
 export type ButtonThemeType = typeof ButtonThemes[number];
 
 interface IButtonColorConfig {
-    primary: string; // Border and text
+    primary: string; // text and icon
     primaryHover?: string;
-    secondary: string; // Background
+    secondary: string; // Background and border
     secondaryHover?: string;
-
-    // if theme is fill, then use primary as bg
-    // and bg as text
-    invertOnFill?: boolean;
 }
 
 const buttonThemeToProps: Record<ButtonColorType, IButtonColorConfig> = {
     confirm: {
-        primary: 'var(--color-true)',
-        primaryHover: 'var(--color-true-dark)',
-        secondary: 'var(--color-true-light)',
+        primary: 'var(--color-true-dark)',
+        secondary: 'var(--color-true-dark)',
         secondaryHover: 'var(--color-true)',
-
-        invertOnFill: true,
     },
     cancel: {
-        primary: 'var(--color-false)',
-        primaryHover: 'var(--color-false-dark)',
-        secondary: 'var(--color-false-light)',
+        primary: 'var(--color-false-dark)',
+        secondary: 'var(--color-false-dark)',
         secondaryHover: 'var(--color-false)',
-
-        invertOnFill: true,
     },
     accent: {
         primary: 'var(--color-accent-text)',
@@ -63,9 +53,11 @@ export function computeStyleButtonProps(
     theme: ButtonThemeType
 ) {
     const colorConfig = buttonThemeToProps[colorType];
+    const secondaryIsPrimary = colorConfig.secondary === colorConfig.primary;
     const themeProps: IStyledButtonThemeProps = {};
+
     if (theme === 'fill') {
-        if (!colorConfig.invertOnFill) {
+        if (!secondaryIsPrimary) {
             themeProps.color = colorConfig.primary;
             themeProps.hoverColor =
                 colorConfig.primaryHover || colorConfig.primary;
