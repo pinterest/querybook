@@ -76,6 +76,7 @@ class DataDocViewersBadgeComponent extends React.Component<IProps, IState> {
                 className="viewers-badge-share-button"
                 icon={dataDoc.public ? 'users' : 'lock'}
                 title="Share"
+                color="light"
                 pushable
                 ping={
                     !readonly && accessRequestsByUidLength > 0

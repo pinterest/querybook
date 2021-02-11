@@ -15,7 +15,7 @@ import { UserSelect } from 'components/UserSelect/UserSelect';
 import { AdminAuditLogButton } from 'components/AdminAuditLog/AdminAuditLogButton';
 
 import { AsyncButton } from 'ui/AsyncButton/AsyncButton';
-import { Button } from 'ui/Button/Button';
+import { Button, TextButton } from 'ui/Button/Button';
 import { Card } from 'ui/Card/Card';
 import { FormField } from 'ui/Form/FormField';
 import { Icon } from 'ui/Icon/Icon';
@@ -84,9 +84,7 @@ export const AdminUserRole: React.FunctionComponent = () => {
             <div className="AdminUserRole-card-roles flex-column">
                 <div className="AdminUserRole-card-role">
                     <div>{UserRoleType[userRole.role]}</div>
-                    <Button
-                        type="inlineText"
-                        borderless
+                    <TextButton
                         title="Remove Role"
                         onClick={() => deleteUserRole(userRole.id)}
                     />

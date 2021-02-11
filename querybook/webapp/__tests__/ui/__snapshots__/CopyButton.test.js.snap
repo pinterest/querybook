@@ -1,15 +1,14 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
 exports[`matches enzyme snapshots matches snapshot 1`] = `
-<ForwardRef
+<Button
   aria-label="Click To Copy"
-  borderless={true}
   className="CopyButton"
   data-balloon-pos="up"
   icon="link"
   onClick={[Function]}
   onMouseLeave={[Function]}
-  small={true}
+  size="small"
   title="Test Copy"
 />
 `;
@@ -17,10 +16,13 @@ exports[`matches enzyme snapshots matches snapshot 1`] = `
 exports[`matches test renderer snapshot serializes the styles 1`] = `
 <span
   aria-label="Click To Copy"
-  className="Button CopyButton  borderless small flex-row"
+  className="StyledButton-aqwbwz-0 jcYWyt Button CopyButton flex-row"
+  color="var(--text-color)"
   data-balloon-pos="up"
+  fontWeight="700"
   onClick={[Function]}
   onMouseLeave={[Function]}
+  size="small"
 >
   <span
     className=" Icon "

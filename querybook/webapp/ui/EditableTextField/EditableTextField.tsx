@@ -62,8 +62,8 @@ export const EditableTextField: React.FunctionComponent<IEditableTextFieldProps>
 
     const editModeButtons = editMode ? (
         <div className="edit-mode-footer">
-            <Button type="cancel" title="Cancel" onClick={handleCancel} />
-            <AsyncButton type="confirm" title="Save" onClick={handleSave} />
+            <Button color="cancel" title="Cancel" onClick={handleCancel} />
+            <AsyncButton color="confirm" title="Save" onClick={handleSave} />
         </div>
     ) : null;
 

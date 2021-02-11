@@ -34,7 +34,7 @@ import { StatementExecutionPicker } from 'components/ExecutionPicker/StatementEx
 import { StatementResultTable } from 'components/DataDocStatementExecution/StatementResultTable';
 import { queryCellSelector } from 'redux/dataDoc/selector';
 
-import { Button } from 'ui/Button/Button';
+import { SoftButton } from 'ui/Button/Button';
 import { IconButton } from 'ui/Button/IconButton';
 import { ErrorBoundary } from 'ui/ErrorBoundary/ErrorBoundary';
 import { FormField, FormSectionHeader } from 'ui/Form/FormField';
@@ -953,10 +953,11 @@ const DataDocChartComposerComponent: React.FunctionComponent<
                     {formDOM}
                     {isEditable ? (
                         <div className="DataDocChartComposer-button">
-                            <Button
+                            <SoftButton
                                 onClick={() => handleSubmit()}
                                 title="Submit"
-                                type="fullWidth"
+                                fullWidth
+                                pushable={false}
                             />
                         </div>
                     ) : null}

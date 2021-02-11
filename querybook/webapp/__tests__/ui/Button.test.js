@@ -24,21 +24,26 @@ describe('matches enzyme snapshots', () => {
     });
     it('matches snapshot - typed', () => {
         const wrapper = shallow(
-            <Button title="test" onClick={() => null} type="soft" />
+            <Button
+                title="test"
+                onClick={() => null}
+                color="light"
+                theme="fill"
+            />
         );
         const serialized = toJson(wrapper);
         expect(serialized).toMatchSnapshot();
     });
-    it('matches snapshot - borderless', () => {
+    it('matches snapshot - text button', () => {
         const wrapper = shallow(
-            <Button title="test" onClick={() => null} borderless />
+            <Button title="test" onClick={() => null} theme="text" />
         );
         const serialized = toJson(wrapper);
         expect(serialized).toMatchSnapshot();
     });
-    it('matches snapshot - attachedRight', () => {
+    it('matches snapshot - attached right', () => {
         const wrapper = shallow(
-            <Button title="test" onClick={() => null} attachedRight />
+            <Button title="test" onClick={() => null} attached="right" />
         );
         const serialized = toJson(wrapper);
         expect(serialized).toMatchSnapshot();
@@ -56,10 +61,8 @@ describe('matches enzyme snapshots', () => {
                 title="test"
                 onClick={() => null}
                 pushable
-                transparent
-                small
-                inverted
-                attachedLeft
+                size="small"
+                attached="left"
             />
         );
         const serialized = toJson(wrapper);

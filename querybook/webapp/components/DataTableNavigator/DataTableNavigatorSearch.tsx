@@ -11,7 +11,7 @@ import { SearchBar } from 'ui/SearchBar/SearchBar';
 import { TableTagGroupSelect } from 'components/DataTableTags/TableTagGroupSelect';
 
 import './DataTableNavigatorSearch.scss';
-import { Button } from 'ui/Button/Button';
+import { Button, SoftButton } from 'ui/Button/Button';
 
 export const DataTableNavigatorSearch: React.FC<{
     searchString: string;
@@ -49,12 +49,10 @@ export const DataTableNavigatorSearch: React.FC<{
             layout={['right', 'top']}
         >
             <div className="DataTableNavigatorSearchFilter">
-                <Button
+                <SoftButton
                     title="Reset"
                     className="filter-reset-button"
-                    type="soft"
-                    small
-                    borderless
+                    size="small"
                     onClick={resetSearchFilter}
                 />
                 <div>

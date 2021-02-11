@@ -405,8 +405,9 @@ export const SearchOverview: React.FunctionComponent = () => {
                 className="add-authors"
                 icon="plus"
                 title="more authors"
-                borderless
-                small
+                theme="text"
+                color="light"
+                size="small"
             />
         );
 

@@ -1,10 +1,15 @@
-import { Button, IButtonProps } from '../Button/Button';
+import {
+    ButtonProps,
+    ButtonType,
+    getButtonComponentByType,
+} from '../Button/Button';
 import React from 'react';
 import classNames from 'classnames';
 
-export interface IAsyncButtonProps extends IButtonProps {
+export interface IAsyncButtonProps extends ButtonProps {
     onClick: (...args: any[]) => Promise<unknown>;
     disableWhileAsync?: boolean;
+    type?: ButtonType;
 }
 
 export interface IAsyncButtonState {
@@ -54,10 +59,10 @@ export class AsyncButton extends React.PureComponent<
     };
 
     public render() {
-        const { disableWhileAsync, ...propsForButton } = this.props;
+        const { disableWhileAsync, type, ...propsForButton } = this.props;
         const { loading } = this.state;
 
-        const buttonProps: IButtonProps = {
+        const buttonProps: ButtonProps = {
             ...propsForButton,
 
             onClick: this.onClick,
@@ -66,6 +71,7 @@ export class AsyncButton extends React.PureComponent<
                 [propsForButton.className || '']: true,
             }),
         };
+        const Button = getButtonComponentByType(type);
         return <Button {...buttonProps}>{this.props.children}</Button>;
     }
 }

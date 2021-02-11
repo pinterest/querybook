@@ -1,42 +1,51 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
-exports[`matches enzyme snapshots matches snapshot - attachedRight 1`] = `
-<span
-  className="Button  attached-right"
+exports[`matches enzyme snapshots matches snapshot - attached right 1`] = `
+<StyledButton
+  attached="right"
+  bgColor="var(--bg-color)"
+  borderColor="var(--border-color)"
+  className="Button"
+  color="var(--text-color)"
+  hoverBorderColor="var(--hover-border-color)"
+  hoverColor="var(--dark-text-color)"
   onClick={[Function]}
+  size="medium"
 >
   <span>
     test
   </span>
-</span>
-`;
-
-exports[`matches enzyme snapshots matches snapshot - borderless 1`] = `
-<span
-  className="Button  borderless"
-  onClick={[Function]}
->
-  <span>
-    test
-  </span>
-</span>
+</StyledButton>
 `;
 
 exports[`matches enzyme snapshots matches snapshot - disbled 1`] = `
-<span
-  className="Button  disabled"
+<StyledButton
+  bgColor="var(--bg-color)"
+  borderColor="var(--border-color)"
+  className="Button"
+  color="var(--text-color)"
+  disabled={true}
+  hoverBorderColor="var(--hover-border-color)"
+  hoverColor="var(--dark-text-color)"
   onClick={null}
+  size="medium"
 >
   <span>
     test
   </span>
-</span>
+</StyledButton>
 `;
 
 exports[`matches enzyme snapshots matches snapshot - isLoading 1`] = `
-<span
-  className="Button  flex-row"
+<StyledButton
+  bgColor="var(--bg-color)"
+  borderColor="var(--border-color)"
+  className="Button flex-row"
+  color="var(--text-color)"
+  hoverBorderColor="var(--hover-border-color)"
+  hoverColor="var(--dark-text-color)"
   onClick={[Function]}
+  size="medium"
 >
   <Memo()
     name="loader"
@@ -44,46 +53,83 @@ exports[`matches enzyme snapshots matches snapshot - isLoading 1`] = `
   <span>
     test
   </span>
-</span>
+</StyledButton>
 `;
 
 exports[`matches enzyme snapshots matches snapshot - mixed 1`] = `
-<span
-  className="Button  attached-left transparent pushable small inverted"
+<StyledButton
+  attached="left"
+  bgColor="var(--bg-color)"
+  borderColor="var(--border-color)"
+  className="Button"
+  color="var(--text-color)"
+  hoverBorderColor="var(--hover-border-color)"
+  hoverColor="var(--dark-text-color)"
   onClick={[Function]}
+  pushable={true}
+  size="small"
 >
   <span>
     test
   </span>
-</span>
+</StyledButton>
+`;
+
+exports[`matches enzyme snapshots matches snapshot - text button 1`] = `
+<StyledButton
+  bgColor="transparent"
+  className="Button"
+  color="var(--text-color)"
+  hoverBgColor="var(--light-bg-color)"
+  hoverColor="var(--dark-text-color)"
+  onClick={[Function]}
+  size="medium"
+>
+  <span>
+    test
+  </span>
+</StyledButton>
 `;
 
 exports[`matches enzyme snapshots matches snapshot - typed 1`] = `
-<span
-  className="Button soft"
+<StyledButton
+  bgColor="var(--light-bg-color)"
+  className="Button"
+  color="var(--light-text-color)"
+  hoverBgColor="var(--hover-bg-color)"
+  hoverColor="var(--text-color)"
   onClick={[Function]}
+  size="medium"
 >
   <span>
     test
   </span>
-</span>
+</StyledButton>
 `;
 
 exports[`matches enzyme snapshots matches snapshot 1`] = `
-<span
-  className="Button "
+<StyledButton
+  bgColor="var(--bg-color)"
+  borderColor="var(--border-color)"
+  className="Button"
+  color="var(--text-color)"
+  hoverBorderColor="var(--hover-border-color)"
+  hoverColor="var(--dark-text-color)"
   onClick={[Function]}
+  size="medium"
 >
   <span>
     test
   </span>
-</span>
+</StyledButton>
 `;
 
 exports[`matches test renderer snapshot serializes the styles 1`] = `
 <span
-  className="Button "
+  className="StyledButton-aqwbwz-0 dgIqNJ Button"
+  color="var(--text-color)"
   onClick={[Function]}
+  size="medium"
 >
   <span>
     test

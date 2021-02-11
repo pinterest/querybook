@@ -83,7 +83,7 @@ export const DataDocLeftSidebar: React.FunctionComponent<IProps> = ({
                 <Button
                     className="contents-toggle-button"
                     icon="list"
-                    attachedLeft
+                    attached="left"
                     onClick={() => setContentState('contents')}
                     aria-label="Show doc contents"
                     data-balloon-pos="right"

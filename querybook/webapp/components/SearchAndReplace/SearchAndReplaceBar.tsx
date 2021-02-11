@@ -11,7 +11,7 @@ import { throttle } from 'lodash';
 import { useEvent } from 'hooks/useEvent';
 import { IconButton } from 'ui/Button/IconButton';
 import { DebouncedInput } from 'ui/DebouncedInput/DebouncedInput';
-import { Button } from 'ui/Button/Button';
+import { Button, TextButton } from 'ui/Button/Button';
 import { matchKeyPress } from 'lib/utils/keyboard';
 import { ISearchOptions } from 'const/searchAndReplace';
 import { SearchAndReplaceContext } from 'context/searchAndReplace';
@@ -214,23 +214,19 @@ export const SearchAndReplaceBar = React.forwardRef<
                     />
                 </div>
 
-                <Button
+                <TextButton
                     icon="repeat"
-                    type="inlineText"
-                    borderless
                     aria-label="Replace"
                     data-balloon-pos="down"
-                    small
+                    size="small"
                     onClick={() => onReplace()}
                 />
-                <Button
+                <TextButton
                     icon="repeat"
                     title="All"
-                    type="inlineText"
-                    borderless
                     aria-label="Replace all"
                     data-balloon-pos="down"
-                    small
+                    size="small"
                     onClick={() => onReplace(true)}
                 />
             </div>

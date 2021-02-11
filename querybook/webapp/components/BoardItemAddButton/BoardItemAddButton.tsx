@@ -8,7 +8,7 @@ import { currentEnvironmentSelector } from 'redux/environment/selector';
 import { TooltipDirection } from 'const/tooltip';
 import { useDataFetch } from 'hooks/useDataFetch';
 
-import { IconButton, IconButtonProps } from 'ui/Button/IconButton';
+import { IconButton, IIconButtonProps } from 'ui/Button/IconButton';
 import { BoardItemType, IBoardRaw } from 'const/board';
 
 import { Popover, PopoverLayout } from 'ui/Popover/Popover';
@@ -18,7 +18,7 @@ import { BoardList } from 'components/BoardList/BoardList';
 import './BoardItemAddButton.scss';
 import { Loading } from 'ui/Loading/Loading';
 
-export interface ICreateDataDocButtonProps extends Partial<IconButtonProps> {
+export interface ICreateDataDocButtonProps extends Partial<IIconButtonProps> {
     // from own Props
     tooltipPos?: TooltipDirection;
     tooltip?: string;
@@ -33,7 +33,7 @@ export const BoardItemAddButton: React.FunctionComponent<ICreateDataDocButtonPro
     itemId,
     itemType,
 
-    ...iconButtonProps
+    ...IIconButtonProps
 }) => {
     const selfRef = useRef<HTMLAnchorElement>(null);
 
@@ -132,7 +132,7 @@ export const BoardItemAddButton: React.FunctionComponent<ICreateDataDocButtonPro
                 onClick={() => {
                     setShowSelectBoardPopover(true);
                 }}
-                {...iconButtonProps}
+                {...IIconButtonProps}
             />
             {boardPickerPopover}
             {showCreateModal ? (

@@ -121,6 +121,10 @@
 
                 .add-authors {
                     margin-top: 4px;
+
+                    &.Button:hover {
+                        background-color: var(--hover-bg-color);
+                    }
                 }
                 .TableTagGroupSelect .tables-tag-list {
                     margin-left: -4px;

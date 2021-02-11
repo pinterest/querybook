@@ -146,7 +146,7 @@ export const DataTableHeader: React.FunctionComponent<IDataTableHeader> = ({
                 checked={table.golden}
                 onClick={updateDataTableGolden}
                 title={table.golden ? 'Featured' : 'Make Featured'}
-                small
+                size="small"
             />
         );
     } else if (table.golden) {

@@ -2,73 +2,98 @@ import React from 'react';
 // eslint-disable-next-line import/no-extraneous-dependencies
 import centered from '@storybook/addon-centered/react';
 
-import { Button, ButtonTypes, IButtonProps } from './Button';
+import { Button, ButtonProps, SoftButton, TextButton } from './Button';
+import { ButtonColors, ButtonThemes } from './ButtonTheme';
 
 export default {
     title: 'Button/Button',
     decorators: [centered],
 };
 
-export const _Button = ({ ...args }: IButtonProps) => <Button {...args} />;
+export const _Button = ({ ...args }: ButtonProps) => <Button {...args} />;
 _Button.args = {
     icon: 'zap',
     title: 'Button',
-    type: '',
-
+    color: 'default',
+    theme: 'outline',
     disabled: false,
-
-    borderless: false,
-    pushable: false,
-    transparent: false,
-    small: false,
-    inverted: false,
-    attachedRight: false,
-    attachedLeft: false,
     isLoading: false,
+
+    pushable: false,
+    size: 'medium',
+    fullWidth: false,
+    uppercase: false,
+    attached: '',
+    fontWeight: '',
     ping: '',
 };
 
 _Button.argTypes = {
-    type: {
+    color: {
         control: {
             type: 'select',
-            options: ButtonTypes,
+            options: ButtonColors,
+        },
+    },
+    theme: {
+        control: {
+            type: 'select',
+            options: ButtonThemes,
+        },
+    },
+    size: {
+        control: {
+            type: 'select',
+            options: ['small', 'medium'],
+        },
+    },
+    attached: {
+        control: {
+            type: 'select',
+            options: ['', 'left', 'right'],
         },
     },
 };
 
-export const ButtonTypesExamples = () => (
+export const ButtonThemeColorExamples = () => (
     <>
-        <Button className="mb12" type="soft">
-            Soft Button
-        </Button>
-        <Button className="mb12" type="inlineText">
-            Inline-Text Button
-        </Button>
-        <Button className="mb12" type="confirm">
-            Confirm Button
-        </Button>
-        <Button className="mb12" type="cancel">
-            Cancel Button
-        </Button>
+        {ButtonThemes.map((theme) => (
+            <div key={theme} className="mv12">
+                {ButtonColors.map((color) => (
+                    <Button key={theme + color} theme={theme} color={color}>
+                        {theme} {color}
+                    </Button>
+                ))}
+            </div>
+        ))}
     </>
 );
 
 export const ButtonStylesExamples = () => (
     <>
-        <Button className="mb12" pushable>
-            Pushable Button
-        </Button>
-        <Button className="mb12" borderless>
-            Borderless Button
-        </Button>
-        <Button className="mb12" inverted>
-            Inverted Button
-        </Button>
         <div className="mb12">
-            <Button attachedRight>Button Attached Right</Button>
-            <Button attachedLeft>Button Attached Left</Button>
+            <Button pushable>Pushable Button</Button>
         </div>
-        <Button small>Small Button</Button>
+
+        <div className="mb12">
+            <Button disabled>Disabled Button</Button>
+        </div>
+
+        <div className="mb12">
+            <Button fullWidth>Full Width Button</Button>
+        </div>
+
+        <div className="mb12">
+            <Button uppercase>Uppercase Button</Button>
+        </div>
+
+        <div className="mb12">
+            <Button attached="right">Button Attached Right</Button>
+            <Button attached="left">Button Attached Left</Button>
+        </div>
+
+        <div className="mb12">
+            <Button size="small">Small Button</Button>
+        </div>
     </>
 );

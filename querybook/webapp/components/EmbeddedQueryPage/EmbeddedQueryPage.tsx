@@ -58,7 +58,7 @@ export const EmbeddedQueryPage: React.FunctionComponent = () => {
             </div>
             <div className="control-bar right-align">
                 <Button
-                    type="confirm"
+                    color="confirm"
                     title="Save Query"
                     onClick={() => {
                         window.parent.postMessage(

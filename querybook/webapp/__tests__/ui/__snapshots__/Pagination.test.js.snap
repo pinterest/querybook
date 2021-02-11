@@ -4,18 +4,24 @@ exports[`matches enzyme snapshots matches snapshot 1`] = `
 <nav
   className="Pagination horizontal-space-between flex-row"
 >
-  <ForwardRef
+  <Button
     className="Pagination-previous"
+    color="default"
     disabled={false}
     key="previous"
     onClick={[Function]}
+    size="medium"
+    theme="outline"
     title="Previous"
   />
-  <ForwardRef
+  <Button
     className="Pagination-next"
+    color="default"
     disabled={false}
     key="next"
     onClick={[Function]}
+    size="medium"
+    theme="outline"
     title="Next"
   />
   <ul
@@ -73,16 +79,22 @@ exports[`matches test renderer snapshot serializes the styles 1`] = `
   className="Pagination horizontal-space-between flex-row"
 >
   <span
-    className="Button Pagination-previous "
+    className="StyledButton-aqwbwz-0 dgIqNJ Button Pagination-previous"
+    color="var(--text-color)"
+    disabled={false}
     onClick={[Function]}
+    size="medium"
   >
     <span>
       Previous
     </span>
   </span>
   <span
-    className="Button Pagination-next "
+    className="StyledButton-aqwbwz-0 dgIqNJ Button Pagination-next"
+    color="var(--text-color)"
+    disabled={false}
     onClick={[Function]}
+    size="medium"
   >
     <span>
       Next
@@ -93,8 +105,10 @@ exports[`matches test renderer snapshot serializes the styles 1`] = `
   >
     <li>
       <span
-        className="Button Pagination-page-button  "
+        className="StyledButton-aqwbwz-0 dgIqNJ Button Pagination-page-button "
+        color="var(--text-color)"
         onClick={[Function]}
+        size="medium"
       >
         <span>
           1
@@ -103,8 +117,10 @@ exports[`matches test renderer snapshot serializes the styles 1`] = `
     </li>
     <li>
       <span
-        className="Button Pagination-page-button current "
+        className="StyledButton-aqwbwz-0 dgIqNJ Button Pagination-page-button current"
+        color="var(--text-color)"
         onClick={[Function]}
+        size="medium"
       >
         <span>
           2
@@ -113,8 +129,10 @@ exports[`matches test renderer snapshot serializes the styles 1`] = `
     </li>
     <li>
       <span
-        className="Button Pagination-page-button  "
+        className="StyledButton-aqwbwz-0 dgIqNJ Button Pagination-page-button "
+        color="var(--text-color)"
         onClick={[Function]}
+        size="medium"
       >
         <span>
           3
@@ -123,8 +141,10 @@ exports[`matches test renderer snapshot serializes the styles 1`] = `
     </li>
     <li>
       <span
-        className="Button Pagination-page-button  "
+        className="StyledButton-aqwbwz-0 dgIqNJ Button Pagination-page-button "
+        color="var(--text-color)"
         onClick={[Function]}
+        size="medium"
       >
         <span>
           4
@@ -140,8 +160,10 @@ exports[`matches test renderer snapshot serializes the styles 1`] = `
     </li>
     <li>
       <span
-        className="Button Pagination-page-button  "
+        className="StyledButton-aqwbwz-0 dgIqNJ Button Pagination-page-button "
+        color="var(--text-color)"
         onClick={[Function]}
+        size="medium"
       >
         <span>
           10

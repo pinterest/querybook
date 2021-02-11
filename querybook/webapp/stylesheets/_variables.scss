@@ -72,8 +72,10 @@ body {
     --tag-text-color: var(--text-color);
 
     // For boolean + warning cases
+    --color-true-light: var(--color-green-light);
     --color-true: var(--color-green);
     --color-true-dark: var(--color-green-dark);
+    --color-false-light: var(--color-red-light);
     --color-false: var(--color-red);
     --color-false-dark: var(--color-red-dark);
     --color-warning: var(--color-yellow);

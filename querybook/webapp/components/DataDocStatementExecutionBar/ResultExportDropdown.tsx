@@ -17,7 +17,7 @@ import { getExporterAuthentication } from 'lib/result-export';
 import { tableToTSV } from 'lib/utils/table-export';
 
 import { Dropdown } from 'ui/Dropdown/Dropdown';
-import { Button } from 'ui/Button/Button';
+import { Button, TextButton } from 'ui/Button/Button';
 import { CopyPasteModal } from 'ui/CopyPasteModal/CopyPasteModal';
 import { Modal } from 'ui/Modal/Modal';
 import { Link } from 'ui/Link/Link';
@@ -270,13 +270,11 @@ export const ResultExportDropdown: React.FunctionComponent<IProps> = ({
             <Dropdown
                 className={'inline'}
                 customButtonRenderer={() => (
-                    <Button
-                        borderless
-                        small
+                    <TextButton
+                        size="small"
                         onClick={onDownloadClick}
                         icon="download"
                         title="Export"
-                        type="inlineText"
                     />
                 )}
                 isRight

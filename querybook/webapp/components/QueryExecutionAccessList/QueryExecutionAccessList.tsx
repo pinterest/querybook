@@ -93,7 +93,7 @@ export const QueryExecutionAccessList: React.FunctionComponent<IQueryExecutionAc
                 </div>
                 <Button
                     className="remove-button"
-                    small
+                    size="small"
                     title="Remove"
                     onClick={() => deleteQueryExecutionViewer(viewer.uid)}
                 />

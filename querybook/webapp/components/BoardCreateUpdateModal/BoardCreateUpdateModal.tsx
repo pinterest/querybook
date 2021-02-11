@@ -101,7 +101,7 @@ export const BoardCreateUpdateForm: React.FunctionComponent<IBoardCreateUpdateFo
                                         <Button
                                             onClick={handleDeleteBoard}
                                             title="Delete"
-                                            type="cancel"
+                                            color="cancel"
                                         />
                                     )}
                                     <Button

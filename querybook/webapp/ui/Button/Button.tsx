@@ -1,61 +1,47 @@
 import React from 'react';
 import classNames from 'classnames';
 
-import { Icon } from 'ui/Icon/Icon';
+import { Icon, IIconProps } from 'ui/Icon/Icon';
+import { StyledButton, ISharedButtonProps } from './StyledButton';
+import { withBoundProps } from 'lib/utils/react-bind';
+import {
+    ButtonColorType,
+    ButtonThemeType,
+    computeStyleButtonProps,
+} from './ButtonTheme';
 
-import './Button.scss';
+export type ButtonProps = React.HTMLAttributes<HTMLSpanElement> &
+    ISharedButtonProps & {
+        icon?: string | React.ComponentType<IIconProps>;
+        title?: string;
+        className?: string;
 
-export const ButtonTypes = [
-    '',
-    'soft',
-    'inlineText',
-    'confirm',
-    'cancel',
-    'fullWidth',
-] as const;
+        color?: ButtonColorType;
+        theme?: ButtonThemeType;
 
-export interface IButtonProps
-    extends React.AnchorHTMLAttributes<HTMLDivElement> {
-    icon?: string;
-    title?: string;
-    className?: string;
+        disabled?: boolean;
+        isLoading?: boolean;
+        ping?: string;
+    };
 
-    type?: typeof ButtonTypes[number];
-
-    disabled?: boolean;
-
-    borderless?: boolean;
-    pushable?: boolean;
-    transparent?: boolean;
-    small?: boolean;
-    inverted?: boolean;
-    attachedRight?: boolean;
-    attachedLeft?: boolean;
-    isLoading?: boolean;
-    ping?: string;
-}
-
-const defaultProps: IButtonProps = {
+const defaultProps: ButtonProps = {
     className: '',
+    color: 'default',
+    theme: 'outline',
+    size: 'medium',
 };
 
-export const Button = React.forwardRef<HTMLDivElement, IButtonProps>(
+export const Button = React.forwardRef<HTMLSpanElement, ButtonProps>(
     (props, ref) => {
         const {
+            children,
             icon,
             title,
-            children,
+            className,
+            color,
+            theme,
             disabled,
             onClick,
-            className,
-            type = null,
-            borderless = false,
-            pushable = false,
-            transparent = false,
-            small = false,
-            inverted = false,
-            attachedRight = false,
-            attachedLeft = false,
             isLoading = false,
             ping = null,
             ...elementProps
@@ -64,31 +50,16 @@ export const Button = React.forwardRef<HTMLDivElement, IButtonProps>(
         const iconDOM = isLoading ? (
             <Icon name="loader" />
         ) : (
-            icon && <Icon name={icon} />
+            icon && (typeof icon === 'string' ? <Icon name={icon} /> : icon)
         );
         const textDOM = title && <span>{title}</span>;
 
         const buttonOnClick = disabled ? null : onClick;
-        const typeClass = type
-            ? type === 'inlineText'
-                ? 'inline-text'
-                : type === 'fullWidth'
-                ? 'full-width'
-                : type
-            : '';
+        const themeProps = computeStyleButtonProps(color, theme);
 
         const buttonClassName = classNames({
             Button: true,
             [className]: !!className,
-            [typeClass]: true,
-            'attached-right': attachedRight,
-            'attached-left': attachedLeft,
-            disabled,
-            borderless,
-            transparent,
-            pushable,
-            small,
-            inverted,
             'flex-row': Boolean(iconDOM && textDOM),
             'icon-only': Boolean(iconDOM && !textDOM),
         });
@@ -97,8 +68,10 @@ export const Button = React.forwardRef<HTMLDivElement, IButtonProps>(
             <div className="ping-message">{ping}</div>
         );
         return (
-            <span
+            <StyledButton
                 className={buttonClassName}
+                disabled={disabled}
+                {...themeProps}
                 {...elementProps}
                 ref={ref}
                 onClick={buttonOnClick}
@@ -107,9 +80,39 @@ export const Button = React.forwardRef<HTMLDivElement, IButtonProps>(
                 {iconDOM}
                 {textDOM}
                 {children}
-            </span>
+            </StyledButton>
         );
     }
 );
 
 Button.defaultProps = defaultProps;
+Button.displayName = 'Button';
+
+export const TextButton = withBoundProps(Button, {
+    theme: 'text',
+    fontWeight: '700',
+    uppercase: true,
+    pushable: true,
+});
+
+export const SoftButton = withBoundProps(Button, {
+    theme: 'fill',
+    color: 'light',
+    fontWeight: '700',
+    pushable: true,
+});
+
+export type ButtonType = 'soft' | 'text' | 'default';
+
+const buttonComponentByType: Record<
+    ButtonType,
+    React.ComponentType<ButtonProps>
+> = {
+    soft: SoftButton,
+    text: TextButton,
+    default: Button,
+};
+export function getButtonComponentByType(buttonType?: ButtonType) {
+    buttonType = buttonType ?? 'default';
+    return buttonComponentByType[buttonType];
+}

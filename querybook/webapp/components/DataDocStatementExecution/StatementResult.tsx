@@ -9,7 +9,7 @@ import {
 
 import { Loading } from 'ui/Loading/Loading';
 import { Message } from 'ui/Message/Message';
-import { Button } from 'ui/Button/Button';
+import { Button, TextButton } from 'ui/Button/Button';
 import { PrettyNumber } from 'ui/PrettyNumber/PrettyNumber';
 import { StatementResultTable } from './StatementResultTable';
 
@@ -75,13 +75,11 @@ export const StatementResult: React.FC<IProps> = ({
     let visualizationDOM = null;
 
     const exploreButtonDOM = (
-        <Button
+        <TextButton
             onClick={onFullscreenToggle}
             icon={isFullscreen ? 'minimize-2' : 'maximize-2'}
             title={isFullscreen ? 'Exit Fullscreen' : 'Fullscreen'}
-            borderless
-            small
-            type="inlineText"
+            size="small"
         />
     );
 

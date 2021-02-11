@@ -22,7 +22,7 @@ import {
     DataTableViewQueryUsers,
     useLoadQueryUsers,
 } from 'components/DataTableViewQueryExample/DataTableViewQueryUsers';
-import { Button } from 'ui/Button/Button';
+import { Button, TextButton } from 'ui/Button/Button';
 import { EditableTextField } from 'ui/EditableTextField/EditableTextField';
 import { Message } from 'ui/Message/Message';
 import { Table } from 'ui/Table/Table';
@@ -160,7 +160,7 @@ export class DataTableViewOverview extends React.PureComponent<
 
         const sampleQueriesSection = (
             <DataTableViewOverviewSection title="Sample DataDocs">
-                <Button
+                <TextButton
                     onClick={() =>
                         navigateWithinEnv(
                             `/search/?searchType=DataDoc&searchString=${tableName}`,
@@ -169,11 +169,9 @@ export class DataTableViewOverview extends React.PureComponent<
                             }
                         )
                     }
-                    type="inlineText"
-                    borderless
                 >
                     Click to View Sample DataDocs
-                </Button>
+                </TextButton>
             </DataTableViewOverviewSection>
         );
 

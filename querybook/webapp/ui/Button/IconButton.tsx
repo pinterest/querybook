@@ -8,7 +8,7 @@ import { Icon } from 'ui/Icon/Icon';
 import './IconButton.scss';
 
 // A simple Bulma-based button
-export interface IconButtonProps {
+export interface IIconButtonProps {
     icon: string;
     className?: string;
     onClick?: (event?: React.MouseEvent<HTMLSpanElement, MouseEvent>) => any;
@@ -29,7 +29,7 @@ export interface IconButtonProps {
     children?: React.ReactNode;
 }
 
-export const IconButton = React.forwardRef<HTMLAnchorElement, IconButtonProps>(
+export const IconButton = React.forwardRef<HTMLAnchorElement, IIconButtonProps>(
     (
         {
             icon,
@@ -49,14 +49,14 @@ export const IconButton = React.forwardRef<HTMLAnchorElement, IconButtonProps>(
         },
         ref
     ) => {
-        const iconButtonProps = {
+        const IIconButtonProps = {
             ref,
             onClick: disabled ? null : onClick,
         };
 
         if (tooltip) {
-            iconButtonProps['aria-label'] = tooltip;
-            iconButtonProps['data-balloon-pos'] = tooltipPos;
+            IIconButtonProps['aria-label'] = tooltip;
+            IIconButtonProps['data-balloon-pos'] = tooltipPos;
         }
 
         const iconButtonClassname = classNames({
@@ -86,7 +86,7 @@ export const IconButton = React.forwardRef<HTMLAnchorElement, IconButtonProps>(
         );
 
         return (
-            <span {...iconButtonProps} className={iconButtonClassname}>
+            <span {...IIconButtonProps} className={iconButtonClassname}>
                 {pingDOM}
                 {contentDOM} {children}
             </span>
