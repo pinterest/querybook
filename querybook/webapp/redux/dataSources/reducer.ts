@@ -22,10 +22,8 @@ const initialState: IDataSourcesState = {
 
     queryExampleIdsById: {},
     queryTopUsersByTableId: {},
+    queryTopConcurrencesByTableId: {},
 
-    // trustworthinessStats: {
-    //     loaded: false,
-    // },
     dataTableStatByTableId: {},
     dataLineages: {
         parentLineage: {},
@@ -325,6 +323,21 @@ function queryTopUsersByTableIdReducer(
     });
 }
 
+function queryTopConcurrencesByTableIdReducer(
+    state = initialState.queryTopConcurrencesByTableId,
+    action: DataSourcesAction
+) {
+    return produce(state, (draft) => {
+        switch (action.type) {
+            case '@@dataSources/RECEIVE_TOP_QUERY_CONCURRENCES': {
+                const { tableId, joins } = action.payload;
+                draft[tableId] = joins;
+                return;
+            }
+        }
+    });
+}
+
 function goldenTableNameToIdReducer(
     state = initialState.goldenTableNameToId,
     action: DataSourcesAction
@@ -420,6 +433,7 @@ export default combineReducers({
     dataTablesSamplesPollingById: dataTablesSamplesPollingByIdReducer,
     queryExampleIdsById: queryExampleIdsByIdReducer,
     queryTopUsersByTableId: queryTopUsersByTableIdReducer,
+    queryTopConcurrencesByTableId: queryTopConcurrencesByTableIdReducer,
     dataLineages: dataLineagesReducer,
     dataTableWarningById: dataTableWarningByIdReducer,
     dataTableOwnershipByTableId: dataTableOwnershipByTableIdReducer,

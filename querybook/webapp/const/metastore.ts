@@ -123,6 +123,7 @@ export type FunctionDocumentationCollection = Record<
 
 export interface IPaginatedQuerySampleFilters {
     uid?: number;
+    with_table_id?: number;
 }
 
 export interface IPaginatedQuerySamples {
@@ -133,6 +134,11 @@ export interface IPaginatedQuerySamples {
 
 export interface ITopQueryUser {
     uid: number;
+    count: number;
+}
+
+export interface ITopQueryConcurrences {
+    table_id: number;
     count: number;
 }
 

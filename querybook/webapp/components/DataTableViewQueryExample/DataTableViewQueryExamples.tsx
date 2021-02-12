@@ -1,10 +1,18 @@
 import * as React from 'react';
 import { useDispatch, useSelector } from 'react-redux';
+import { isEmpty } from 'lodash';
+
+import { IPaginatedQuerySampleFilters } from 'const/metastore';
 
 import { format } from 'lib/sql-helper/sql-formatter';
 import { getCodeEditorTheme } from 'lib/utils';
-import { navigateWithinEnv } from 'lib/utils/query-string';
+import {
+    getQueryString,
+    replaceQueryString,
+    navigateWithinEnv,
+} from 'lib/utils/query-string';
 import { useLoader } from 'hooks/useLoader';
+import { useImmer } from 'hooks/useImmer';
 
 import { IStoreState, Dispatch } from 'redux/store/types';
 import * as dataSourcesActions from 'redux/dataSources/action';
@@ -21,11 +29,12 @@ import { IconButton } from 'ui/Button/IconButton';
 import { Loading } from 'ui/Loading/Loading';
 import { Title } from 'ui/Title/Title';
 
+import { DataTableViewQueryConcurrences } from './DataTableViewQueryConcurrences';
+import { TableName } from './DataTableName';
 import './DataTableViewQueryExamples.scss';
 
 interface IProps {
     tableId: number;
-    uid?: number;
 }
 
 function useQueryExampleState(tableId: number) {
@@ -38,11 +47,11 @@ function useQueryExampleState(tableId: number) {
     return React.useMemo(
         () => ({
             queryExampleIds: queryExampleIdsState?.queryIds,
+
             hasMore: queryExampleIdsState?.hasMore ?? true,
             queryExamplesIdsToLoad: (
                 queryExampleIdsState?.queryIds ?? []
             ).filter((id) => !(id in queryExecutionById)),
-
             queryExamples: (queryExampleIdsState?.queryIds ?? [])
                 .map((id) => queryExecutionById[id])
                 .filter((query) => query),
@@ -51,15 +60,127 @@ function useQueryExampleState(tableId: number) {
     );
 }
 
+function getInitialFilterState(): IPaginatedQuerySampleFilters {
+    const queryString = getQueryString();
+    const uid: string = queryString['uid'];
+    const withTableId: string = queryString['with_table_id'];
+    const filters: IPaginatedQuerySampleFilters = {};
+
+    if (uid) {
+        filters.uid = Number(uid);
+    }
+    if (withTableId) {
+        filters.with_table_id = Number(withTableId);
+    }
+    return filters;
+}
+
+function syncFilterStateToQueryString(filters: IPaginatedQuerySampleFilters) {
+    replaceQueryString(filters, false);
+}
+
+function useFilterState() {
+    const [filters, setFilters] = useImmer<IPaginatedQuerySampleFilters>(
+        getInitialFilterState()
+    );
+
+    const setFilter = React.useCallback(
+        <K extends keyof IPaginatedQuerySampleFilters>(
+            filterKey: K,
+            filterVal?: IPaginatedQuerySampleFilters[K]
+        ) => {
+            setFilters((draft) => {
+                if (filterVal == null) {
+                    delete draft[filterKey];
+                } else {
+                    draft[filterKey] = filterVal;
+                }
+                syncFilterStateToQueryString(draft);
+            });
+        },
+        []
+    );
+
+    const clearFilter = React.useCallback(() => {
+        setFilters(() => ({}));
+        syncFilterStateToQueryString({});
+    }, []);
+
+    return [filters, setFilter, clearFilter] as const;
+}
+
 export const DataTableViewQueryExamples: React.FunctionComponent<IProps> = ({
     tableId,
-    uid = null,
 }) => {
+    const [filters, setFilter, clearFilter] = useFilterState();
+
+    const setUidFilter = React.useCallback(
+        (uid: number) => {
+            setFilter('uid', uid === filters.uid ? null : uid);
+        },
+        [filters]
+    );
+
+    const setTableIdFilter = React.useCallback(
+        (tableId: number) => {
+            setFilter(
+                'with_table_id',
+                tableId === filters.with_table_id ? null : tableId
+            );
+        },
+        [filters]
+    );
+
+    const queryExampleFiltersSection = (
+        <div className="mb12">
+            <div className="horizontal-space-between">
+                <Title size={4}>Queries with this table</Title>
+                {!isEmpty(filters) && (
+                    <Button onClick={clearFilter}>Clear Filter</Button>
+                )}
+            </div>
+            <div className="filter-selection-section mb16 mt4">
+                <div>
+                    <Title subtitle size={6}>
+                        Top users
+                    </Title>
+                    <DataTableViewQueryUsers
+                        tableId={tableId}
+                        onClick={setUidFilter}
+                        selectedUid={filters.uid}
+                    />
+                </div>
+
+                <div className="mt12">
+                    <Title subtitle size={6}>
+                        Top co-occuring tables
+                    </Title>
+                    <DataTableViewQueryConcurrences
+                        tableId={tableId}
+                        onClick={setTableIdFilter}
+                        selectedTableId={filters.with_table_id}
+                    />
+                </div>
+            </div>
+        </div>
+    );
+
+    return (
+        <div className="DataTableViewQueryExamples">
+            {queryExampleFiltersSection}
+            <QueryExamplesList tableId={tableId} filters={filters} />
+        </div>
+    );
+};
+
+const QueryExamplesList: React.FC<{
+    tableId: number;
+    filters: IPaginatedQuerySampleFilters;
+}> = ({ tableId, filters }) => {
     const dispatch: Dispatch = useDispatch();
     const [loadingQueryExecution, setLoadingQueryExecution] = React.useState(
         false
     );
-    const [filterUid, setFilterUid] = React.useState<number>(uid);
 
     const queryEngineById = useSelector(queryEngineByIdEnvSelector);
     const editorTheme = useSelector((state: IStoreState) =>
@@ -94,7 +215,7 @@ export const DataTableViewQueryExamples: React.FunctionComponent<IProps> = ({
             dispatch(
                 dataSourcesActions.fetchQueryExampleIdsIfNeeded(
                     tableId,
-                    filterUid
+                    filters
                 )
             ),
     });
@@ -104,11 +225,11 @@ export const DataTableViewQueryExamples: React.FunctionComponent<IProps> = ({
             dispatch(
                 dataSourcesActions.fetchQueryExampleIdsIfNeeded(
                     tableId,
-                    filterUid
+                    filters
                 )
             );
         }
-    }, [filterUid]);
+    }, [filters]);
 
     React.useEffect(() => {
         setLoadingQueryExecution(true);
@@ -141,7 +262,7 @@ export const DataTableViewQueryExamples: React.FunctionComponent<IProps> = ({
                         key={query.id}
                     >
                         <CodeHighlight
-                            className="DataTableViewQueryExamples-text"
+                            className="DataTableViewQueryExamples-query"
                             language={'text/x-hive'}
                             value={formattedQuery}
                             theme={editorTheme}
@@ -158,54 +279,11 @@ export const DataTableViewQueryExamples: React.FunctionComponent<IProps> = ({
                 );
             })
             .concat(loadingQueryExecution ? [<Loading key="loading" />] : []);
-
-        const titleDOM = filterUid ? (
-            <div className="horizontal-space-between">
-                <div className="flex-row">
-                    <Title subtitle size={4}>
-                        Example Queries by
-                        <span className="ml8">
-                            <UserName uid={filterUid} />
-                        </span>
-                    </Title>
-                </div>
-                <Button
-                    onClick={() => {
-                        setFilterUid(null);
-                        navigateWithinEnv(
-                            `/table/${tableId}/?tab=query_examples`
-                        );
-                    }}
-                >
-                    Clear User Filter
-                </Button>
-            </div>
-        ) : (
-            <Title subtitle size={4}>
-                Example Queries
-            </Title>
-        );
-
-        return (
-            <div>
-                {titleDOM}
-                {queryExamplesDOM}
-            </div>
-        );
+        return <div>{queryExamplesDOM}</div>;
     };
 
-    const topUsersSection = (
-        <div className="mb12">
-            <Title subtitle size={4}>
-                Frequent users of this table
-            </Title>
-            <DataTableViewQueryUsers tableId={tableId} onClick={setFilterUid} />
-        </div>
-    );
-
     return (
-        <div className="DataTableViewQueryExamples">
-            {topUsersSection}
+        <div>
             {getExampleDOM()}
             <div className="center-align">
                 {hasMore && !loadingInitial && (

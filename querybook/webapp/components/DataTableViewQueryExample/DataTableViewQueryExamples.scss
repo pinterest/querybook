@@ -1,13 +1,20 @@
 .DataTableViewQueryExamples {
+    .filter-selection-section {
+        .Button.active {
+            border-color: var(--color-accent-text);
+            background-color: var(--color-accent-bg);
+        }
+    }
+
     .DataTableViewQueryExamples-item {
         position: relative;
         margin-bottom: 16px;
 
-        .DataTableViewQueryExamples-text {
+        .DataTableViewQueryExamples-query {
             height: auto;
             max-height: 360px;
             overflow-y: scroll;
-            margin: 8px;
+            border-radius: var(--border-radius);
         }
 
         .DataTableViewQueryExamples-info {
@@ -19,6 +26,20 @@
             position: absolute;
             top: 0px;
             right: 20px;
+        }
+    }
+}
+
+.DataTableViewQueryUsers,
+.DataTableViewQueryConcurrences {
+    .query-filter-wrapper {
+        display: flex;
+        flex-direction: row;
+        flex-wrap: wrap;
+
+        .Button {
+            margin-right: 4px;
+            margin-top: 4px;
         }
     }
 }

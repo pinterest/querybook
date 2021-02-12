@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useCallback } from 'react';
 import { bind } from 'lodash-decorators';
 import * as DraftJs from 'draft-js';
 
@@ -30,6 +30,8 @@ import { Table } from 'ui/Table/Table';
 import './DataTableViewOverview.scss';
 import { DataTableViewOverviewSection } from './DataTableViewOverviewSection';
 import { LoadingRow } from 'ui/Loading/Loading';
+import { DataTableViewQueryConcurrences } from 'components/DataTableViewQueryExample/DataTableViewQueryConcurrences';
+import { Title } from 'ui/Title/Title';
 
 const dataTableDetailsColumns = [
     {
@@ -63,7 +65,7 @@ export interface IQuerybookTableViewOverviewProps {
         tableId: number,
         description: DraftJs.ContentState
     ) => any;
-    onExampleUidFilter: (uid: number) => any;
+    onExampleFilter: (uid: number, withTableId: number) => any;
 }
 
 export class DataTableViewOverview extends React.PureComponent<
@@ -80,7 +82,7 @@ export class DataTableViewOverview extends React.PureComponent<
             table,
             tableName,
             tableWarnings,
-            onExampleUidFilter,
+            onExampleFilter: onExampleUidFilter,
         } = this.props;
         const description = table.description ? (
             <EditableTextField
@@ -198,7 +200,7 @@ export class DataTableViewOverview extends React.PureComponent<
             <div className="QuerybookTableViewOverview">
                 {warningSection}
                 {descriptionSection}
-                <FrequentUsersSection
+                <TableInsightsSection
                     tableId={table.id}
                     onClick={onExampleUidFilter}
                 />
@@ -212,16 +214,42 @@ export class DataTableViewOverview extends React.PureComponent<
     }
 }
 
-const FrequentUsersSection: React.FC<{
+const TableInsightsSection: React.FC<{
     tableId: number;
-    onClick: (uid: number) => any;
+    onClick: (uid: number, withTableId: number) => any;
 }> = ({ tableId, onClick }) => {
     const { loading, topQueryUsers } = useLoadQueryUsers(tableId);
+    const handleUserClick = useCallback(
+        (uid: number) => {
+            onClick(uid, null);
+        },
+        [onClick]
+    );
+    const handleTableClick = useCallback(
+        (tableId: number) => {
+            onClick(null, tableId);
+        },
+        [onClick]
+    );
+
     return loading ? (
         <LoadingRow />
     ) : topQueryUsers?.length ? (
-        <DataTableViewOverviewSection title="Frequent Users">
-            <DataTableViewQueryUsers tableId={tableId} onClick={onClick} />
+        <DataTableViewOverviewSection title="Table Insights">
+            <div>
+                <Title size={6}>Frequent Users</Title>
+                <DataTableViewQueryUsers
+                    tableId={tableId}
+                    onClick={handleUserClick}
+                />
+            </div>
+            <div className="mt8">
+                <Title size={6}>Top co-occuring tables</Title>
+                <DataTableViewQueryConcurrences
+                    tableId={tableId}
+                    onClick={handleTableClick}
+                />
+            </div>
         </DataTableViewOverviewSection>
     ) : null;
 };

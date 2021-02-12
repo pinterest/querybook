@@ -295,7 +295,9 @@ def update_column_by_id(
 
 
 @register("/table/<int:table_id>/query_examples/", methods=["GET"])
-def get_table_query_examples(table_id, environment_id, uid=None, limit=10, offset=0):
+def get_table_query_examples(
+    table_id, environment_id, uid=None, with_table_id=None, limit=10, offset=0
+):
     api_assert(limit < 100)
 
     with DBSession() as session:
@@ -306,14 +308,20 @@ def get_table_query_examples(table_id, environment_id, uid=None, limit=10, offse
         )
         engine_ids = [engine.id for engine in engines]
         query_logs = logic.get_table_query_examples(
-            table_id, engine_ids, uid=uid, limit=limit, offset=offset, session=session
+            table_id,
+            engine_ids,
+            uid=uid,
+            with_table_id=with_table_id,
+            limit=limit,
+            offset=offset,
+            session=session,
         )
         query_ids = [log.query_execution_id for log in query_logs]
 
         return query_ids
 
 
-@register("/table/<int:table_id>/query_example_users/", methods=["GET"])
+@register("/table/<int:table_id>/query_examples/users/", methods=["GET"])
 def get_table_query_examples_users(table_id, environment_id, limit=5):
     api_assert(limit <= 10)
     verify_environment_permission([environment_id])
@@ -321,7 +329,16 @@ def get_table_query_examples_users(table_id, environment_id, limit=5):
     engines = admin_logic.get_query_engines_by_environment(environment_id)
     engine_ids = [engine.id for engine in engines]
     users = logic.get_query_example_users(table_id, engine_ids, limit=limit)
-    return list(map(lambda u: {"uid": u[0], "count": u[1]}, users))
+
+    return [{"uid": r[0], "count": r[1]} for r in users]
+
+
+@register("/table/<int:table_id>/query_examples/concurrences/", methods=["GET"])
+def get_table_query_examples_concurrences(table_id, limit=5):
+    api_assert(limit <= 10)
+    verify_data_table_permission(table_id)
+    concurrences = logic.get_query_example_concurrences(table_id, limit=limit)
+    return [{"table_id": r[0], "count": r[1]} for r in concurrences]
 
 
 @register("/table/boost_score/<metastore_name>/", methods=["POST", "PUT"])

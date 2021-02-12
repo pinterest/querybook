@@ -79,7 +79,7 @@ exports[`matches test renderer snapshot serializes the styles 1`] = `
   className="Pagination horizontal-space-between flex-row"
 >
   <span
-    className="StyledButton-aqwbwz-0 dgIqNJ Button Pagination-previous"
+    className="StyledButton-aqwbwz-0 eZYUp Button Pagination-previous"
     color="var(--text-color)"
     disabled={false}
     onClick={[Function]}
@@ -90,7 +90,7 @@ exports[`matches test renderer snapshot serializes the styles 1`] = `
     </span>
   </span>
   <span
-    className="StyledButton-aqwbwz-0 dgIqNJ Button Pagination-next"
+    className="StyledButton-aqwbwz-0 eZYUp Button Pagination-next"
     color="var(--text-color)"
     disabled={false}
     onClick={[Function]}
@@ -105,7 +105,7 @@ exports[`matches test renderer snapshot serializes the styles 1`] = `
   >
     <li>
       <span
-        className="StyledButton-aqwbwz-0 dgIqNJ Button Pagination-page-button "
+        className="StyledButton-aqwbwz-0 eZYUp Button Pagination-page-button "
         color="var(--text-color)"
         onClick={[Function]}
         size="medium"
@@ -117,7 +117,7 @@ exports[`matches test renderer snapshot serializes the styles 1`] = `
     </li>
     <li>
       <span
-        className="StyledButton-aqwbwz-0 dgIqNJ Button Pagination-page-button current"
+        className="StyledButton-aqwbwz-0 eZYUp Button Pagination-page-button current"
         color="var(--text-color)"
         onClick={[Function]}
         size="medium"
@@ -129,7 +129,7 @@ exports[`matches test renderer snapshot serializes the styles 1`] = `
     </li>
     <li>
       <span
-        className="StyledButton-aqwbwz-0 dgIqNJ Button Pagination-page-button "
+        className="StyledButton-aqwbwz-0 eZYUp Button Pagination-page-button "
         color="var(--text-color)"
         onClick={[Function]}
         size="medium"
@@ -141,7 +141,7 @@ exports[`matches test renderer snapshot serializes the styles 1`] = `
     </li>
     <li>
       <span
-        className="StyledButton-aqwbwz-0 dgIqNJ Button Pagination-page-button "
+        className="StyledButton-aqwbwz-0 eZYUp Button Pagination-page-button "
         color="var(--text-color)"
         onClick={[Function]}
         size="medium"
@@ -160,7 +160,7 @@ exports[`matches test renderer snapshot serializes the styles 1`] = `
     </li>
     <li>
       <span
-        className="StyledButton-aqwbwz-0 dgIqNJ Button Pagination-page-button "
+        className="StyledButton-aqwbwz-0 eZYUp Button Pagination-page-button "
         color="var(--text-color)"
         onClick={[Function]}
         size="medium"

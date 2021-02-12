@@ -125,10 +125,11 @@ class DataTableViewComponent extends React.PureComponent<
     }
 
     @bind
-    public handleExampleUidFilter(uid: number) {
+    public handleExampleFilter(uid: number, withTableId: number) {
         replaceQueryString({
             tab: 'query_examples',
             uid,
+            with_table_id: withTableId,
         });
         this.setState({ selectedTabKey: 'query_examples' });
     }
@@ -145,7 +146,7 @@ class DataTableViewComponent extends React.PureComponent<
                 tableWarnings={tableWarnings}
                 onTabSelected={this.onTabSelected}
                 updateDataTableDescription={this.updateDataTableDescription}
-                onExampleUidFilter={this.handleExampleUidFilter}
+                onExampleFilter={this.handleExampleFilter}
             />
         );
     }
@@ -257,16 +258,8 @@ class DataTableViewComponent extends React.PureComponent<
     }
 
     @bind
-    public makeExampleDOM() {
-        const { tableId } = this.props;
-        const uid: string = getQueryString()['uid'];
-
-        return (
-            <DataTableViewQueryExamples
-                tableId={tableId}
-                uid={uid ? Number(uid) : null}
-            />
-        );
+    public makeQueryExamplesDOM() {
+        return <DataTableViewQueryExamples tableId={this.props.tableId} />;
     }
 
     public componentDidMount() {
@@ -314,7 +307,7 @@ class DataTableViewComponent extends React.PureComponent<
             row_samples: this.makeSamplesDOM,
             lineage: this.makeLineageDOM,
             source_query: this.makeQueryDOM,
-            query_examples: this.makeExampleDOM,
+            query_examples: this.makeQueryExamplesDOM,
             warnings: this.makeWarningsDOM,
         };
 

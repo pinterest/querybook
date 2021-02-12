@@ -27,7 +27,7 @@ exports[`matches enzyme snapshots matches snapshot 1`] = `
 
 exports[`matches test renderer snapshot serializes the styles 1`] = `
 <span
-  className="StyledButton-aqwbwz-0 dgIqNJ Button"
+  className="StyledButton-aqwbwz-0 eZYUp Button"
   color="var(--text-color)"
   onClick={[Function]}
   size="medium"
