@@ -57,9 +57,7 @@ export const DataTableViewQueryUsers: React.FC<{
         </div>
     );
 
-    return (
-        <div className="DataTableViewQueryUsers center-align">{viewersDOM}</div>
-    );
+    return <div className="DataTableViewQueryUsers">{viewersDOM}</div>;
 };
 
 const QueryUserButton: React.FC<{

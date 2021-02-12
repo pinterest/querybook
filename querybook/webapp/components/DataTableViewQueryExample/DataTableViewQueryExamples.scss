@@ -10,11 +10,11 @@
         position: relative;
         margin-bottom: 16px;
 
-        .DataTableViewQueryExamples-text {
+        .DataTableViewQueryExamples-query {
             height: auto;
             max-height: 360px;
             overflow-y: scroll;
-            margin: 8px;
+            border-radius: var(--border-radius);
         }
 
         .DataTableViewQueryExamples-info {

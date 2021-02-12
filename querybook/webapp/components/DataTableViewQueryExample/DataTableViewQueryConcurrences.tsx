@@ -55,11 +55,7 @@ export const DataTableViewQueryConcurrences: React.FC<{
         </div>
     );
 
-    return (
-        <div className="DataTableViewQueryConcurrences center-align">
-            {tablesDOM}
-        </div>
-    );
+    return <div className="DataTableViewQueryConcurrences">{tablesDOM}</div>;
 };
 
 const QueryTableButton: React.FC<{

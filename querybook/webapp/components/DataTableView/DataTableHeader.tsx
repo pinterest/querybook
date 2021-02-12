@@ -154,7 +154,7 @@ export const DataTableHeader: React.FunctionComponent<IDataTableHeader> = ({
     }
 
     return (
-        <div className="DataTableHeader p24">
+        <div className="DataTableHeader ph24 pt16 pb8">
             <div className="DataTableHeader-top ">
                 <div className="DataTableHeader-title">{titleDOM}</div>
                 {/* <div className="DataTableHeader-score"></div> */}

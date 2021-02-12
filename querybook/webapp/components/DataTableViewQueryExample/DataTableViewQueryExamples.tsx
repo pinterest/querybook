@@ -139,10 +139,10 @@ export const DataTableViewQueryExamples: React.FunctionComponent<IProps> = ({
                     <Button onClick={clearFilter}>Clear Filter</Button>
                 )}
             </div>
-            <div className="filter-selection-section">
+            <div className="filter-selection-section mb16 mt4">
                 <div>
                     <Title subtitle size={6}>
-                        By users
+                        Top users
                     </Title>
                     <DataTableViewQueryUsers
                         tableId={tableId}
@@ -151,9 +151,9 @@ export const DataTableViewQueryExamples: React.FunctionComponent<IProps> = ({
                     />
                 </div>
 
-                <div>
+                <div className="mt12">
                     <Title subtitle size={6}>
-                        By top co-occuring tables
+                        Top co-occuring tables
                     </Title>
                     <DataTableViewQueryConcurrences
                         tableId={tableId}
@@ -262,7 +262,7 @@ const QueryExamplesList: React.FC<{
                         key={query.id}
                     >
                         <CodeHighlight
-                            className="DataTableViewQueryExamples-text"
+                            className="DataTableViewQueryExamples-query"
                             language={'text/x-hive'}
                             value={formattedQuery}
                             theme={editorTheme}

@@ -243,7 +243,7 @@ const TableInsightsSection: React.FC<{
                     onClick={handleUserClick}
                 />
             </div>
-            <div>
+            <div className="mt8">
                 <Title size={6}>Top co-occuring tables</Title>
                 <DataTableViewQueryConcurrences
                     tableId={tableId}

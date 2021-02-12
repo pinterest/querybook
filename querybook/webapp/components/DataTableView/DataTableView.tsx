@@ -55,8 +55,8 @@ const tabDefinitions = [
         key: 'source_query',
     },
     {
-        name: 'Table Insights',
-        key: 'table_insights',
+        name: 'Query Examples',
+        key: 'query_examples',
     },
     {
         name: 'Warnings',
@@ -127,11 +127,11 @@ class DataTableViewComponent extends React.PureComponent<
     @bind
     public handleExampleFilter(uid: number, withTableId: number) {
         replaceQueryString({
-            tab: 'table_insights',
+            tab: 'query_examples',
             uid,
             with_table_id: withTableId,
         });
-        this.setState({ selectedTabKey: 'table_insights' });
+        this.setState({ selectedTabKey: 'query_examples' });
     }
 
     @bind
@@ -258,17 +258,8 @@ class DataTableViewComponent extends React.PureComponent<
     }
 
     @bind
-    public makeInsightsDOM() {
-        const { tableId } = this.props;
-
-        const uid: string = getQueryString()['uid'];
-
-        return (
-            <DataTableViewQueryExamples
-                tableId={tableId}
-                uid={uid ? Number(uid) : null}
-            />
-        );
+    public makeQueryExamplesDOM() {
+        return <DataTableViewQueryExamples tableId={this.props.tableId} />;
     }
 
     public componentDidMount() {
@@ -316,7 +307,7 @@ class DataTableViewComponent extends React.PureComponent<
             row_samples: this.makeSamplesDOM,
             lineage: this.makeLineageDOM,
             source_query: this.makeQueryDOM,
-            table_insights: this.makeInsightsDOM,
+            query_examples: this.makeQueryExamplesDOM,
             warnings: this.makeWarningsDOM,
         };
 
