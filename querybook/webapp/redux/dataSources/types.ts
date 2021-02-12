@@ -19,6 +19,7 @@ import {
     IPaginatedQuerySampleFilters,
     IDataTableOwnership,
     ITableStats,
+    ITopQueryConcurrences,
 } from 'const/metastore';
 import { IStoreState } from '../store/types';
 
@@ -129,6 +130,14 @@ export interface IReceiveTopQueryUsersAction extends Action {
     };
 }
 
+export interface IReceiveTopQueryJoinsAction extends Action {
+    type: '@@dataSources/RECEIVE_TOP_QUERY_CONCURRENCES';
+    payload: {
+        tableId: number;
+        joins: ITopQueryConcurrences[];
+    };
+}
+
 export interface IReceiveDataTableWarning extends Action {
     type: '@@dataSources/RECEIVE_DATA_TABLE_WARNING';
     payload: IDataTableWarning;
@@ -188,7 +197,8 @@ export type DataSourcesAction =
     | IReceiveDataTableStats
     | IAddDataTableOwnership
     | IRemoveDataTableOwnership
-    | IReceiveTopQueryUsersAction;
+    | IReceiveTopQueryUsersAction
+    | IReceiveTopQueryJoinsAction;
 
 export type ThunkResult<R> = ThunkAction<
     R,
@@ -217,6 +227,7 @@ export interface IDataSourcesState {
 
     queryExampleIdsById: Record<number, IPaginatedQuerySamples>;
     queryTopUsersByTableId: Record<number, ITopQueryUser[]>;
+    queryTopConcurrencesByTableId: Record<number, ITopQueryConcurrences[]>;
 
     dataLineages: ILineageCollection;
 }

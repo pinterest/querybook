@@ -34,7 +34,7 @@ export const StyledButton = styled.span<StyledButtonProps>`
     color: ${(props) => props.color || 'inherit'};
     background-color: ${(props) => props.bgColor || 'inherit'};
 
-    &:hover {
+    &:hover, &.active {
         ${(props) => {
             if (props.disabled) {
                 return '';

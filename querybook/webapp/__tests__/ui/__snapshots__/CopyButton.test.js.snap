@@ -16,7 +16,7 @@ exports[`matches enzyme snapshots matches snapshot 1`] = `
 exports[`matches test renderer snapshot serializes the styles 1`] = `
 <span
   aria-label="Click To Copy"
-  className="StyledButton-aqwbwz-0 jcYWyt Button CopyButton flex-row"
+  className="StyledButton-aqwbwz-0 jBXKFp Button CopyButton flex-row"
   color="var(--text-color)"
   data-balloon-pos="up"
   fontWeight="700"

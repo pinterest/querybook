@@ -21,6 +21,7 @@ export type ButtonProps = React.HTMLAttributes<HTMLSpanElement> &
 
         disabled?: boolean;
         isLoading?: boolean;
+        active?: boolean;
         ping?: string;
     };
 
@@ -42,6 +43,7 @@ export const Button = React.forwardRef<HTMLSpanElement, ButtonProps>(
             theme,
             disabled,
             onClick,
+            active = false,
             isLoading = false,
             ping = null,
             ...elementProps
@@ -60,6 +62,7 @@ export const Button = React.forwardRef<HTMLSpanElement, ButtonProps>(
         const buttonClassName = classNames({
             Button: true,
             [className]: !!className,
+            active,
             'flex-row': Boolean(iconDOM && textDOM),
             'icon-only': Boolean(iconDOM && !textDOM),
         });

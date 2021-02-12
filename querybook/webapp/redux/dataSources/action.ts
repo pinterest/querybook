@@ -15,6 +15,7 @@ import {
     IPaginatedQuerySampleFilters,
     IDataTableOwnership,
     ITableStats,
+    ITopQueryConcurrences,
 } from 'const/metastore';
 import {
     convertContentStateToHTML,
@@ -32,6 +33,7 @@ import {
     IReceiveQueryExampleIdsAction,
     ITableSampleParams,
 } from './types';
+import { isEqual } from 'lodash';
 
 interface IUpdateTableParams {
     description: ContentState;
@@ -503,7 +505,7 @@ const QUERY_EXAMPLE_BATCH_SIZE = 5;
 
 export function fetchQueryExampleIds(
     tableId: number,
-    uid: number = null,
+    filters: IPaginatedQuerySampleFilters,
     offset: number = 0,
     limit: number = QUERY_EXAMPLE_BATCH_SIZE
 ): ThunkResult<Promise<number[]>> {
@@ -511,6 +513,7 @@ export function fetchQueryExampleIds(
         try {
             const state = getState();
             const environmentId = state.environment.currentEnvironmentId;
+
             const { data } = await ds.fetch<[]>(
                 {
                     url: `/table/${tableId}/query_examples/`,
@@ -518,12 +521,11 @@ export function fetchQueryExampleIds(
                 {
                     table_id: tableId,
                     environment_id: environmentId,
-                    uid,
+                    ...filters,
                     limit,
                     offset,
                 }
             );
-            const filters = uid ? { uid } : {};
             dispatch(
                 receiveQueryExampleIds(
                     tableId,
@@ -541,16 +543,16 @@ export function fetchQueryExampleIds(
 
 export function fetchQueryExampleIdsIfNeeded(
     tableId: number,
-    uid: number = null
+    filters: IPaginatedQuerySampleFilters
 ): ThunkResult<Promise<number[]>> {
     return (dispatch, getState) => {
         const state = getState();
         const samples = state.dataSources.queryExampleIdsById[tableId];
-        const prevUidFilter =
-            state.dataSources.queryExampleIdsById[tableId]?.filters.uid || null;
+        const prevFilters =
+            state.dataSources.queryExampleIdsById[tableId]?.filters;
 
-        if (!samples || uid !== prevUidFilter) {
-            return dispatch(fetchQueryExampleIds(tableId, uid));
+        if (!samples || !isEqual(filters, prevFilters)) {
+            return dispatch(fetchQueryExampleIds(tableId, filters));
         } else {
             return Promise.resolve(samples.queryIds);
         }
@@ -563,13 +565,13 @@ export function fetchMoreQueryExampleIds(
     return (dispatch, getState) => {
         const state = getState();
         const samples = state.dataSources.queryExampleIdsById[tableId];
-        const uidFilter =
-            state.dataSources.queryExampleIdsById[tableId]?.filters.uid || null;
+        const filters =
+            state.dataSources.queryExampleIdsById[tableId]?.filters ?? {};
 
         return dispatch(
             fetchQueryExampleIds(
                 tableId,
-                uidFilter,
+                filters,
                 samples?.queryIds?.length ?? 0
             )
         );
@@ -591,7 +593,7 @@ export function fetchTopQueryUsersIfNeeded(
             const environmentId = state.environment.currentEnvironmentId;
             const { data } = await ds.fetch<ITopQueryUser[]>(
                 {
-                    url: `/table/${tableId}/query_example_users/`,
+                    url: `/table/${tableId}/query_examples/users/`,
                 },
                 {
                     table_id: tableId,
@@ -604,6 +606,42 @@ export function fetchTopQueryUsersIfNeeded(
                 payload: {
                     tableId,
                     users: data,
+                },
+            });
+            return data;
+        } catch (e) {
+            console.error(e);
+        }
+    };
+}
+
+export function fetchTopQueryConcurrencesIfNeeded(
+    tableId: number,
+    limit = 5
+): ThunkResult<Promise<ITopQueryConcurrences[]>> {
+    return async (dispatch, getState) => {
+        try {
+            const state = getState();
+            const joins =
+                state.dataSources.queryTopConcurrencesByTableId[tableId];
+            if (joins != null) {
+                return Promise.resolve(joins);
+            }
+
+            const { data } = await ds.fetch<ITopQueryConcurrences[]>(
+                {
+                    url: `/table/${tableId}/query_examples/concurrences/`,
+                },
+                {
+                    table_id: tableId,
+                    limit,
+                }
+            );
+            dispatch({
+                type: '@@dataSources/RECEIVE_TOP_QUERY_CONCURRENCES',
+                payload: {
+                    tableId,
+                    joins: data,
                 },
             });
             return data;

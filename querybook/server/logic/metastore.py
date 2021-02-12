@@ -1,5 +1,6 @@
 import datetime
-from sqlalchemy import func
+from sqlalchemy import func, and_
+from sqlalchemy.orm import aliased
 
 from app.db import with_session
 from const.elasticsearch import ElasticsearchItem
@@ -656,24 +657,30 @@ def delete_old_able_query_execution_log(
 
 @with_session
 def get_table_query_examples(
-    table_id, engine_ids, uid=None, limit=5, offset=0, session=None
+    table_id, engine_ids, uid=None, with_table_id=None, limit=5, offset=0, session=None
 ):
+    main_table_qe = aliased(DataTableQueryExecution)
     query = (
-        session.query(DataTableQueryExecution)
+        session.query(main_table_qe)
         .join(QueryExecution)
-        .filter(DataTableQueryExecution.table_id == table_id)
+        .filter(main_table_qe.table_id == table_id)
         .filter(QueryExecution.engine_id.in_(engine_ids))
     )
 
-    if uid:
+    if uid is not None:
         query = query.filter(QueryExecution.uid == uid)
 
-    return (
-        query.order_by(DataTableQueryExecution.id.desc())
-        .limit(limit)
-        .offset(offset)
-        .all()
-    )
+    if with_table_id is not None:
+        join_table_qe = aliased(DataTableQueryExecution)
+        query = query.join(
+            join_table_qe,
+            and_(
+                main_table_qe.id != join_table_qe.id,
+                main_table_qe.query_execution_id == join_table_qe.query_execution_id,
+            ),
+        ).filter(join_table_qe.table_id == with_table_id)
+
+    return query.order_by(main_table_qe.id.desc()).limit(limit).offset(offset).all()
 
 
 @with_session
@@ -691,6 +698,31 @@ def get_query_example_users(table_id, engine_ids, limit=5, session=None):
     )
 
     return users
+
+
+@with_session
+def get_query_example_concurrences(table_id, limit=5, session=None):
+    main_table_qe = aliased(DataTableQueryExecution)
+    join_table_qe = aliased(DataTableQueryExecution)
+
+    concurrences = (
+        session.query(join_table_qe.table_id, func.count(join_table_qe.id))
+        .select_from(main_table_qe)
+        .join(
+            join_table_qe,
+            and_(
+                main_table_qe.id != join_table_qe.id,
+                main_table_qe.query_execution_id == join_table_qe.query_execution_id,
+            ),
+        )
+        .filter(main_table_qe.table_id == table_id)
+        .group_by(join_table_qe.table_id)
+        .order_by(func.count(join_table_qe.id).desc())
+        .limit(limit)
+        .all()
+    )
+
+    return concurrences
 
 
 @with_session
