@@ -78,3 +78,7 @@ def get_parsed_syntax_error(
     error_type = QueryExecutionErrorType.SYNTAX.value
     error_str = json.dumps({"line": line_num, "char": char_num, "message": message,})
     return error_type, error_str, None
+
+
+def format_error_message(code: int, message: str):
+    return f"Error #{code}: {message}"
