@@ -1,5 +1,7 @@
 import React from 'react';
 import classNames from 'classnames';
+import { Icon } from 'ui/Icon/Icon';
+import { TooltipDirection } from 'const/tooltip';
 
 import './Tabs.scss';
 
@@ -7,6 +9,8 @@ export interface ITabItem {
     name?: string;
     icon?: string;
     key: string;
+    tooltip?: string;
+    tooltipPos?: TooltipDirection;
 }
 
 export interface ITabsProps {
@@ -51,6 +55,8 @@ export const Tabs: React.FunctionComponent<ITabsProps> = ({
     const tabItemsDOM = items.map((item, index) => {
         let name: string;
         let key: string;
+        let icon: string;
+        const tooltipProps = {};
 
         if (typeof item === 'string') {
             name = item;
@@ -58,6 +64,12 @@ export const Tabs: React.FunctionComponent<ITabsProps> = ({
         } else {
             name = item.name;
             key = item.key;
+            icon = item.icon;
+
+            if (item.tooltip) {
+                tooltipProps['aria-label'] = item.tooltip;
+                tooltipProps['data-balloon-pos'] = item.tooltipPos ?? 'up';
+            }
         }
 
         const selected = key === selectedTabKey;
@@ -73,8 +85,9 @@ export const Tabs: React.FunctionComponent<ITabsProps> = ({
                     !selected && onSelect ? onSelect.bind(null, key) : null
                 }
             >
-                <a>
-                    <span>{name || key}</span>
+                <a className="flex-center" {...tooltipProps}>
+                    {icon && <Icon className="mr4" name={icon} />}
+                    {name && <span>{name}</span>}
                 </a>
             </li>
         );

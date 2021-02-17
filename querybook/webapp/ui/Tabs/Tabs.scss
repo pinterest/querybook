@@ -16,6 +16,11 @@
 
             a {
                 color: var(--text-color);
+
+                .Icon svg {
+                    height: 20px;
+                    width: 20px;
+                }
             }
 
             &.active {

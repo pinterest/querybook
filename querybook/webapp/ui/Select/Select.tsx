@@ -30,7 +30,7 @@ export const Select: React.FunctionComponent<ISelectProps> = ({
 }) => {
     const deselectOption = withDeselect ? (
         <option value={DESELECT_VALUE} key="">
-            {'Deselect'}
+            {'Choose one'}
         </option>
     ) : null;
 

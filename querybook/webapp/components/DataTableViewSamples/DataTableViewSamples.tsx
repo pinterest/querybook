@@ -24,7 +24,7 @@ import { SimpleField } from 'ui/FormikField/SimpleField';
 import { useInterval } from 'hooks/useInterval';
 import { ProgressBar } from 'ui/ProgressBar/ProgressBar';
 import { CopyPasteModal } from 'ui/CopyPasteModal/CopyPasteModal';
-import { StatementResultTable } from 'components/DataDocStatementExecution/StatementResultTable';
+import { StatementResultTable } from 'components/StatementResultTable/StatementResultTable';
 import { Button, TextButton } from 'ui/Button/Button';
 import { CopyButton } from 'ui/CopyButton/CopyButton';
 
