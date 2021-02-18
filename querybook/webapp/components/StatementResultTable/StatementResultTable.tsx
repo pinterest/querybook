@@ -50,12 +50,12 @@ const StyledTableWrapper = styled.div.attrs({
                 display: none;
             }
             &.active-button {
-                color: var(--color-accent-text);
+                color: var(--color-accent);
             }
         }
 
         .column-menu-buttons .column-button {
-            margin-left: 4px;
+            margin-left: 2px;
         }
 
         &:hover .hidden-button {

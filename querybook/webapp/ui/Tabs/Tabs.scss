@@ -79,26 +79,14 @@
         &.light-pills {
             ul {
                 li {
-                    border-top: var(--border);
-                    border-bottom: var(--border);
+                    background-color: var(--hover-bg-color);
 
                     &.active {
-                        background-color: var(--select-bg-color);
+                        background-color: var(--bg-color);
                     }
 
                     &:not(.active):hover {
-                        background-color: var(--hover-bg-color);
-                    }
-
-                    &:first-child {
-                        border-left: var(--border);
-                        border-top-left-radius: var(--border-radius);
-                        border-bottom-left-radius: var(--border-radius);
-                    }
-                    &:last-child {
-                        border-right: var(--border);
-                        border-top-right-radius: var(--border-radius);
-                        border-bottom-right-radius: var(--border-radius);
+                        background-color: var(--light-bg-color);
                     }
                 }
             }

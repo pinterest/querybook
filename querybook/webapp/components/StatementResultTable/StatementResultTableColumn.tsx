@@ -160,6 +160,7 @@ const ColumnInfoDropdownButton: React.FC<IColumnInfoDropdownButtonProps> = ({
                 })}
                 noPadding
                 icon={'menu'}
+                active={showPopover}
                 size={14}
             />
         </span>

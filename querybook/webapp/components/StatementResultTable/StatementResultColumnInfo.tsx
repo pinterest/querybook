@@ -21,10 +21,6 @@ const StyledColumnInfo = styled.div.attrs({
 
     .PopoverTabs.Tabs.pills {
         ul li {
-            border-left: 0;
-            border-right: 0;
-            border-top: 0;
-
             &:first-child,
             &:last-child {
                 border-bottom-left-radius: 0;
