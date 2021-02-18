@@ -20,8 +20,9 @@ export interface ITabsProps {
 
     className?: string;
     vertical?: boolean;
-    borderless?: boolean;
+
     pills?: boolean;
+
     wide?: boolean;
     size?: 'small' | 'large';
     align?: 'right' | 'left' | 'center';
@@ -33,7 +34,6 @@ export const Tabs: React.FunctionComponent<ITabsProps> = ({
     onSelect,
     className,
     vertical,
-    borderless,
     pills,
     wide,
     size = null,
@@ -43,7 +43,6 @@ export const Tabs: React.FunctionComponent<ITabsProps> = ({
         Tabs: true,
         [className]: Boolean(className),
         vertical,
-        borderless,
         pills,
         wide,
         [size]: !!size,
@@ -86,7 +85,7 @@ export const Tabs: React.FunctionComponent<ITabsProps> = ({
                 }
             >
                 <a className="flex-center" {...tooltipProps}>
-                    {icon && <Icon className="mr4" name={icon} />}
+                    {icon && <Icon name={icon} />}
                     {name && <span>{name}</span>}
                 </a>
             </li>

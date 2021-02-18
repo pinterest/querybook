@@ -54,6 +54,10 @@ const StyledTableWrapper = styled.div.attrs({
             }
         }
 
+        .column-menu-buttons .column-button {
+            margin-left: 4px;
+        }
+
         &:hover .hidden-button {
             display: inline-flex;
         }

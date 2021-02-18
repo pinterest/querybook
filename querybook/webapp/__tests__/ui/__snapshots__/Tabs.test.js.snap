@@ -20,7 +20,7 @@ exports[`matches enzyme snapshots matches snapshot 1`] = `
 
 exports[`matches enzyme snapshots matches snapshot 2`] = `
 <div
-  className="Tabs vertical borderless wide small right-align"
+  className="Tabs vertical wide small right-align"
 >
   <ul>
     <li
@@ -32,7 +32,6 @@ exports[`matches enzyme snapshots matches snapshot 2`] = `
         className="flex-center"
       >
         <Memo()
-          className="mr4"
           name="check"
         />
         <span>

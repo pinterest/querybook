@@ -19,6 +19,20 @@ const StyledColumnInfo = styled.div.attrs({
     width: 160px;
     font-size: var(--xsmall-text-size);
 
+    .PopoverTabs.Tabs.pills {
+        ul li {
+            border-left: 0;
+            border-right: 0;
+            border-top: 0;
+
+            &:first-child,
+            &:last-child {
+                border-bottom-left-radius: 0;
+                border-bottom-right-radius: 0;
+            }
+        }
+    }
+
     .preview-warning {
         word-break: break-word;
         font-weight: var(--bold-font);
@@ -99,6 +113,7 @@ export const StatementResultColumnInfo: React.FC<IColumnInfoProps> = ({
     return (
         <StyledColumnInfo>
             <Tabs
+                className="PopoverTabs light-pills"
                 wide
                 items={ColumnInfoTabs.map((tab) => ({
                     icon: ColumnInfoTabToIcons[tab],
@@ -107,6 +122,7 @@ export const StatementResultColumnInfo: React.FC<IColumnInfoProps> = ({
                 }))}
                 onSelect={(k: ColumnInfoTabType) => setTab(k)}
                 selectedTabKey={tab}
+                pills
             />
             <div className="column-content p8">{contentDOM}</div>
         </StyledColumnInfo>
@@ -231,7 +247,7 @@ const ColumnQuickInsights: React.FC<IColumnQuickInsightsProps> = ({
     };
 
     return statistics.length ? (
-        <div className="column-info-section mt8">
+        <div className="column-info-section">
             <div className="column-info-header">
                 <Title weight="var(--extra-bold-font)" size={8}>
                     QUICK INSIGHTS
@@ -308,12 +324,12 @@ const ColumnFilter: React.FC<IColumnFilterProps> = ({
     return (
         <div className="column-info-section">
             {filterCondition && (
-                <div className="right-align">
+                <div className="right-align mb8">
                     <SoftButton title="Clear" onClick={clearFilterCondition} />
                 </div>
             )}
 
-            <div className="mt8">
+            <div>
                 <Select
                     value={filterCondition?.name}
                     onChange={(evt) => setFilterConditionName(evt.target.value)}

@@ -17,9 +17,16 @@
             a {
                 color: var(--text-color);
 
-                .Icon svg {
-                    height: 20px;
-                    width: 20px;
+                .Icon {
+                    & ~ span {
+                        // To create gap between icon and title
+                        margin-left: 4px;
+                    }
+
+                    svg {
+                        height: 20px;
+                        width: 20px;
+                    }
                 }
             }
 
@@ -50,32 +57,58 @@
         font-size: var(--text-size);
     }
 
-    &.wide {
-        ul {
-            li {
-                flex: 1;
+    &.pills {
+        &:not(.light-pills) {
+            ul {
+                li {
+                    background-color: var(--pill-tab-color);
+
+                    &.active {
+                        background-color: var(--invert-select-color);
+                        a {
+                            color: var(--invert-text-color);
+                        }
+                    }
+
+                    &:not(.active):hover {
+                        background-color: var(--hover-bg-color);
+                    }
+                }
             }
         }
-    }
+        &.light-pills {
+            ul {
+                li {
+                    border-top: var(--border);
+                    border-bottom: var(--border);
 
-    &.pills {
+                    &.active {
+                        background-color: var(--select-bg-color);
+                    }
+
+                    &:not(.active):hover {
+                        background-color: var(--hover-bg-color);
+                    }
+
+                    &:first-child {
+                        border-left: var(--border);
+                        border-top-left-radius: var(--border-radius);
+                        border-bottom-left-radius: var(--border-radius);
+                    }
+                    &:last-child {
+                        border-right: var(--border);
+                        border-top-right-radius: var(--border-radius);
+                        border-bottom-right-radius: var(--border-radius);
+                    }
+                }
+            }
+        }
+
         ul {
-            overflow: hidden;
+            border-radius: var(--border-radius);
             li {
                 padding: 4px 16px;
                 border-bottom: none;
-                background-color: var(--pill-tab-color);
-
-                &.active {
-                    background-color: var(--invert-select-color);
-                    a {
-                        color: var(--invert-text-color);
-                    }
-                }
-
-                &:not(.active):hover {
-                    background-color: var(--hover-bg-color);
-                }
 
                 &:first-child {
                     border-top-left-radius: var(--border-radius);
@@ -89,15 +122,20 @@
         }
     }
 
-    &.vertical {
+    &.wide {
         ul {
-            flex-direction: column;
+            width: 100%;
+            li {
+                padding-left: 0;
+                padding-right: 0;
+                flex: 1;
+            }
         }
     }
 
-    &.borderless {
-        li a {
-            border: none;
+    &.vertical {
+        ul {
+            flex-direction: column;
         }
     }
 

@@ -145,7 +145,7 @@ const ColumnInfoDropdownButton: React.FC<IColumnInfoDropdownButtonProps> = ({
 
     const menuButtonDOM = (
         <span
-            className="flex-row"
+            className="flex-row column-menu-buttons"
             onClick={(e) => {
                 e.stopPropagation();
                 setShowPopover(true);
