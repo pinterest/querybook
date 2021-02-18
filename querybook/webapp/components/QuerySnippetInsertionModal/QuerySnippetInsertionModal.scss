@@ -1,10 +1,13 @@
 .QuerySnippetInsertionModal {
-    overflow-y: scroll;
+    overflow: hidden;
+    display: flex;
+    flex-direction: column;
+    max-height: 100%;
 
     .query-snippet-insertion-content {
         flex: 1;
         display: flex;
-        overflow: scroll;
+        overflow: hidden;
 
         .query-snippet-navigator-wrapper {
             height: 100%;
@@ -17,7 +20,7 @@
         .query-snippet-view-wrapper {
             flex: 1;
             padding: 16px;
-            overflow: scroll;
+            overflow: auto;
         }
     }
 

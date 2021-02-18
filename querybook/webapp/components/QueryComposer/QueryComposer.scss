@@ -17,15 +17,6 @@
         }
     }
 
-    .QueryComposer-content {
-        flex: 1;
-        overflow: scroll;
-
-        .QueryExecution {
-            padding: 20px;
-        }
-    }
-
     .QueryComposer-content-editor {
         display: flex;
         flex-direction: column;
@@ -47,7 +38,7 @@
         .query-execution-wrapper {
             height: 100%;
             flex: 1;
-            overflow: scroll;
+            overflow-y: auto;
             border-top: var(--border);
 
             .QueryComposerExecution {

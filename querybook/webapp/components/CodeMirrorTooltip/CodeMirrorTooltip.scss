@@ -14,7 +14,7 @@
     .rich-text-content {
         max-width: 280px;
         max-height: 400px;
-        overflow-y: scroll;
+        overflow-y: auto;
         overflow-x: hidden;
         padding: 8px;
         white-space: pre-wrap;

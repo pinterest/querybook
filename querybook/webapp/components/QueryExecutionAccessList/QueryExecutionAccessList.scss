@@ -18,7 +18,7 @@
     .viewers-list-wrapper {
         // Each row is 65px, show at most 5
         max-height: 320px;
-        overflow-y: scroll;
+        overflow-y: auto;
         padding-bottom: 0px;
         padding-top: 0px;
 

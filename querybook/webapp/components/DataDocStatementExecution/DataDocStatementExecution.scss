@@ -97,7 +97,7 @@
         .statement-execution-log-container {
             white-space: pre-wrap;
             word-break: break-all;
-            overflow-y: scroll;
+            overflow-y: auto;
             height: 100%;
         }
     }

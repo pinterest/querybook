@@ -22,7 +22,7 @@ const CodeHighlightContainer = styled.div.attrs({
     white-space: pre-wrap;
     height: auto;
     padding: 8px 16px;
-    overflow-y: scroll;
+    overflow-y: auto;
     box-shadow: none !important;
 `;
 
