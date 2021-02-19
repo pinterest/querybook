@@ -21,7 +21,7 @@ export class DataDocSaveManager {
         if (!(docId in this.dataDocSaverByDocId)) {
             this.dataDocSaverByDocId[docId] = new BatchManager({
                 processFunction: (fields) => {
-                    if (dataDocSocket.getActiveDataDocId() === docId) {
+                    if (dataDocSocket.activeDataDocId === docId) {
                         return dataDocSocket.updateDataDoc(docId, fields);
                     } else {
                         return ds.update(`/datadoc/${docId}/`, fields);
@@ -77,7 +77,7 @@ export class DataCellSaveManager {
                         ...(data.meta != null && { meta: data.meta }),
                     };
 
-                    if (dataDocSocket.getActiveDataDocId() === docId) {
+                    if (dataDocSocket.activeDataDocId === docId) {
                         return dataDocSocket.updateDataCell(
                             docId,
                             cellId,

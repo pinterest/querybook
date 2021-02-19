@@ -395,7 +395,7 @@ export function createQueryExecution(
 
         if (cellId != null) {
             params['data_cell_id'] = cellId;
-            params['originator'] = dataDocSocket.getSocketId();
+            params['originator'] = dataDocSocket.socketId;
         }
 
         const { data: queryExecution } = await ds.save(
@@ -571,10 +571,18 @@ class QueryExecutionSocket {
             this.activeQueryExecutions[queryExecutionId] = docId;
 
             await this.setupSocket();
-
-            this.socket.emit('subscribe', queryExecutionId);
         }
     };
+
+    public onSocketConnect(socket: SocketIOClient.Socket) {
+        // Setup rooms
+        const activeQueryExecutionIds = Object.keys(this.activeQueryExecutions);
+        if (activeQueryExecutionIds.length > 0) {
+            activeQueryExecutionIds.map((queryExecutionId) => {
+                socket.emit('subscribe', Number(queryExecutionId));
+            });
+        }
+    }
 
     public removeAllQueryExecution = () => {
         for (const queryExecutionId of Object.values(
@@ -621,7 +629,8 @@ class QueryExecutionSocket {
         } else {
             // We need to setup our socket
             this.socketPromise = SocketIOManager.getSocket(
-                QueryExecutionSocket.NAME_SPACE
+                QueryExecutionSocket.NAME_SPACE,
+                this.onSocketConnect.bind(this)
             );
 
             // Setup socket's connection functions
@@ -671,18 +680,6 @@ class QueryExecutionSocket {
                     this.processQueryExecution(queryExecution);
                 }
             );
-
-            this.socket.on('reconnect', () => {
-                // Setup rooms again
-                const activeQueryExecutionIds = Object.keys(
-                    this.activeQueryExecutions
-                );
-                if (activeQueryExecutionIds.length > 0) {
-                    activeQueryExecutionIds.map((queryExecutionId) => {
-                        this.socket.emit('subscribe', Number(queryExecutionId));
-                    });
-                }
-            });
         }
     };
 }

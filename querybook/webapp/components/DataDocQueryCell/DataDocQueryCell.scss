@@ -98,11 +98,8 @@
             z-index: 9;
             right: 0;
 
-            a.button {
-                color: var(--dark-text-color);
-                &:hover {
-                    color: var(--text-color);
-                }
+            .Button {
+                background-color: transparent;
             }
         }
     }

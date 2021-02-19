@@ -68,6 +68,25 @@ export class RichTextEditor extends React.Component<
     private selfRef = React.createRef<HTMLDivElement>();
 
     @bind
+    public componentDidUpdate(prevProps: IRichTextEditorProps) {
+        if (
+            prevProps.value !== this.props.value &&
+            this.props.value !== this.state.editorState.getCurrentContent() &&
+            this.state.editorState.getUndoStack().indexOf(this.props.value) ===
+                -1
+        ) {
+            const newEditorState = DraftJs.EditorState.push(
+                this.state.editorState,
+                this.props.value,
+                'apply-entity'
+            );
+            this.setState({
+                editorState: newEditorState,
+            });
+        }
+    }
+
+    @bind
     public focus() {
         if (this.editorRef) {
             this.editorRef.current.focus();
