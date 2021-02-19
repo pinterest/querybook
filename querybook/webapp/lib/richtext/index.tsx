@@ -1,5 +1,6 @@
 import * as DraftJs from 'draft-js';
 import React from 'react';
+import type { Stack } from 'immutable';
 import { Link } from 'ui/Link/Link';
 
 interface IUrlLinkProps {
@@ -56,3 +57,25 @@ export const RichTextEditorStyleMap = {
         textDecoration: 'line-through',
     },
 };
+
+export function isContentStateInUndoStack(
+    contentState: DraftJs.ContentState,
+    undoStack: Stack<DraftJs.ContentState>,
+    numToCheck: number = -1 // Max number of elements to check, -1 for unlimited
+): boolean {
+    let found = false;
+    let numChecked = 0;
+    undoStack.forEach((undoContentState) => {
+        if (undoContentState === contentState) {
+            found = true;
+            // breaks the loop
+            return false;
+        }
+
+        numChecked++;
+        if (numChecked === numToCheck) {
+            return false;
+        }
+    });
+    return found;
+}

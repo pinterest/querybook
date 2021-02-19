@@ -11,6 +11,7 @@ import {
     isListBlock,
     RichTextEditorCommand,
     RichTextEditorStyleMap,
+    isContentStateInUndoStack,
 } from 'lib/richtext';
 import * as Utils from 'lib/utils';
 import { matchKeyPress } from 'lib/utils/keyboard';
@@ -72,8 +73,12 @@ export class RichTextEditor extends React.Component<
         if (
             prevProps.value !== this.props.value &&
             this.props.value !== this.state.editorState.getCurrentContent() &&
-            this.state.editorState.getUndoStack().indexOf(this.props.value) ===
-                -1
+            // This shouldn't happen, but just in case
+            !isContentStateInUndoStack(
+                this.props.value,
+                this.state.editorState.getUndoStack(),
+                5
+            )
         ) {
             const newEditorState = DraftJs.EditorState.push(
                 this.state.editorState,
