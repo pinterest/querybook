@@ -54,7 +54,7 @@ export const DataDocTextCell: React.FC<IProps> = ({
     const editorRef = useRef<RichTextEditor>(null);
 
     const onChangeContext = useCallback(
-        (newContext) => {
+        (newContext: DraftJs.ContentState) => {
             onChange({ context: newContext });
         },
         [onChange]

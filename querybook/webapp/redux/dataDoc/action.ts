@@ -118,7 +118,7 @@ export function updateDataDocOwner(
             data: IDataDocEditor;
         } = await ds.save(`/datadoc/${docId}/owner/`, {
             next_owner_id: nextOwnerEditor.id,
-            originator: dataDocSocket.getSocketId(),
+            originator: dataDocSocket.socketId,
         });
         dispatch({
             type: '@@dataDoc/REMOVE_DATA_DOC_EDITOR',
@@ -387,16 +387,16 @@ export function updateDataDocField(
         const saveTitleTimeout = 2500;
         const completeAt = moment().add(saveTitleTimeout, 'ms').unix();
         const saveKey = `doc-${docId}`;
-        const onSave = (start) => {
+        const onSave = (start: boolean) => {
             dispatch(makeSaveDataDocPromise(start, docId, saveKey, completeAt));
         };
 
         onSave(true);
         return dataDocSaveManager
             .saveDataDocField(docId, fieldName, fieldVal, saveTitleTimeout)
-            .then(
-                onSave.bind(null, false),
-                onSave.bind(null, false) // on failure, we pretend it saved!
+            .finally(
+                // on failure, we pretend it saved!
+                onSave.bind(null, false)
             );
     };
 }
@@ -527,7 +527,7 @@ export function addDataDocEditors(
         } = await ds.save(`/datadoc/${docId}/editor/${uid}/`, {
             read,
             write,
-            originator: dataDocSocket.getSocketId(),
+            originator: dataDocSocket.socketId,
         });
         if (request) {
             dispatch({
@@ -568,7 +568,7 @@ export function updateDataDocEditors(
             } = await ds.update(`/datadoc_editor/${editor.id}/`, {
                 read,
                 write,
-                originator: dataDocSocket.getSocketId(),
+                originator: dataDocSocket.socketId,
             });
 
             dispatch({
@@ -593,7 +593,7 @@ export function deleteDataDocEditor(
         ];
         if (editor) {
             await ds.delete(`/datadoc_editor/${editor.id}/`, {
-                originator: dataDocSocket.getSocketId(),
+                originator: dataDocSocket.socketId,
             });
 
             dispatch({
@@ -616,7 +616,7 @@ export function addDataDocAccessRequest(
         }: {
             data: IAccessRequest;
         } = await ds.save(`/datadoc/${docId}/access_request/`, {
-            originator: dataDocSocket.getSocketId(),
+            originator: dataDocSocket.socketId,
         });
         if (data != null) {
             dispatch({
@@ -642,7 +642,7 @@ export function rejectDataDocAccessRequest(
         if (accessRequest) {
             await ds.delete(`/datadoc/${docId}/access_request/`, {
                 uid,
-                originator: dataDocSocket.getSocketId(),
+                originator: dataDocSocket.socketId,
             });
 
             dispatch({

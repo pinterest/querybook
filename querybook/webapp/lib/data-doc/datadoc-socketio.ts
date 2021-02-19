@@ -77,48 +77,44 @@ export interface IDataDocSocketEvent {
 export class DataDocSocket {
     private static NAME_SPACE = '/datadoc';
 
-    private activeDataDocId = null;
+    private _activeDataDocId: number = null;
     private socket: SocketIOClient.Socket = null;
     private socketPromise: Promise<any> = null;
 
     private promiseMap: IDataDocSocketEvent = {};
     private eventMap: IDataDocSocketEvent = {};
 
-    public getActiveDataDocId() {
-        return this.socket && this.activeDataDocId != null
-            ? this.activeDataDocId
+    public get activeDataDocId() {
+        return this.socket && this._activeDataDocId != null
+            ? this._activeDataDocId
             : null;
     }
 
-    public getSocketId(): string {
-        if (!this.socket) {
-            return null;
-        }
-        return this.socket.id.slice(DataDocSocket.NAME_SPACE.length + 1);
+    public get socketId(): string {
+        return this.socket?.id;
     }
 
     public addDataDoc = async (
         docId: number,
         eventMap: IDataDocSocketEvent
     ) => {
-        if (docId !== this.activeDataDocId && this.activeDataDocId != null) {
-            this.removeDataDoc(this.activeDataDocId, false);
+        if (docId !== this._activeDataDocId && this._activeDataDocId != null) {
+            this.removeDataDoc(this._activeDataDocId, false);
         }
 
-        this.activeDataDocId = docId;
+        this._activeDataDocId = docId;
         this.eventMap = eventMap;
 
         await this.setupSocket();
-        this.socket.emit('subscribe', docId);
 
         this.getDataDocEditors(docId);
         this.getDataDocAccessRequests(docId);
     };
 
     public removeDataDoc = (docId: number, removeSocket = true) => {
-        if (docId === this.activeDataDocId) {
+        if (docId === this._activeDataDocId) {
             // Otherwise its NOOP
-            this.activeDataDocId = null;
+            this._activeDataDocId = null;
 
             if (this.socket) {
                 // Leave the socket room
@@ -202,11 +198,17 @@ export class DataDocSocket {
     };
 
     public moveDataDocCursor = (docId: number, cellId?: number) => {
-        if (this.getActiveDataDocId() != null) {
+        if (this.activeDataDocId != null) {
             this.socket.emit('move_data_doc_cursor', docId, cellId);
             return this.makePromise('moveDataDocCursor');
         }
     };
+
+    public onSocketConnect(socket: SocketIOClient.Socket) {
+        if (this._activeDataDocId != null) {
+            socket.emit('subscribe', this._activeDataDocId);
+        }
+    }
 
     private makePromise<T = any>(key: string): Promise<T> {
         return new Promise((resolve, reject) => {
@@ -218,7 +220,7 @@ export class DataDocSocket {
     }
 
     private checkIsSameOrigin(originator: string) {
-        return `${DataDocSocket.NAME_SPACE}#${originator}` === this.socket.id;
+        return originator === this.socket.id;
     }
 
     private resolvePromise(key: string, isSameOrigin: boolean, ...args: any[]) {
@@ -249,7 +251,8 @@ export class DataDocSocket {
         } else {
             // We need to setup our socket
             this.socketPromise = SocketIOManager.getSocket(
-                DataDocSocket.NAME_SPACE
+                DataDocSocket.NAME_SPACE,
+                this.onSocketConnect.bind(this)
             );
 
             // Setup socket's connection functions
@@ -415,13 +418,6 @@ export class DataDocSocket {
             this.socket.on('error', (e) => {
                 console.error(e);
                 Object.values(this.promiseMap).map(({ reject }) => reject(e));
-            });
-
-            this.socket.on('reconnect', () => {
-                // Setup rooms again
-                if (this.activeDataDocId != null) {
-                    this.socket.emit('subscribe', this.activeDataDocId);
-                }
             });
         }
     };
