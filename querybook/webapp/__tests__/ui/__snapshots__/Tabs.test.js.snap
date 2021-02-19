@@ -10,11 +10,9 @@ exports[`matches enzyme snapshots matches snapshot 1`] = `
       key="0"
       onClick={[Function]}
     >
-      <a>
-        <span>
-          test
-        </span>
-      </a>
+      <a
+        className="flex-center"
+      />
     </li>
   </ul>
 </div>
@@ -22,7 +20,7 @@ exports[`matches enzyme snapshots matches snapshot 1`] = `
 
 exports[`matches enzyme snapshots matches snapshot 2`] = `
 <div
-  className="Tabs vertical borderless wide small right-align"
+  className="Tabs vertical wide small right-align"
 >
   <ul>
     <li
@@ -30,7 +28,12 @@ exports[`matches enzyme snapshots matches snapshot 2`] = `
       key="0"
       onClick={[Function]}
     >
-      <a>
+      <a
+        className="flex-center"
+      >
+        <Memo()
+          name="check"
+        />
         <span>
           test
         </span>

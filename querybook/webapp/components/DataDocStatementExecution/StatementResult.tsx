@@ -9,9 +9,9 @@ import {
 
 import { Loading } from 'ui/Loading/Loading';
 import { Message } from 'ui/Message/Message';
-import { Button, TextButton } from 'ui/Button/Button';
+import { TextButton } from 'ui/Button/Button';
 import { PrettyNumber } from 'ui/PrettyNumber/PrettyNumber';
-import { StatementResultTable } from './StatementResultTable';
+import { StatementResultTable } from '../StatementResultTable/StatementResultTable';
 
 interface IProps {
     statementResult: IStatementResult;

@@ -1,6 +1,6 @@
 import * as React from 'react';
 
-import { StatementResultTable } from 'components/DataDocStatementExecution/StatementResultTable';
+import { StatementResultTable } from 'components/StatementResultTable/StatementResultTable';
 import { Title } from 'ui/Title/Title';
 
 interface IProps {

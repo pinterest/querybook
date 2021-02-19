@@ -52,30 +52,6 @@
         padding: 36px 12px;
         overflow: hidden;
 
-        .IconButton,
-        .ImpressionWidget {
-            margin-left: 8px;
-        }
-        .favorite-icon-button {
-            &.favorite-icon-button-favorited {
-                color: var(--color-yellow);
-                .Icon {
-                    svg {
-                        fill: var(--color-yellow);
-                    }
-                }
-
-                &:hover,
-                &.active {
-                    .Icon {
-                        color: var(--color-yellow-light);
-                        svg {
-                            fill: var(--color-yellow-light);
-                        }
-                    }
-                }
-            }
-        }
         .data-doc-header {
             padding: 36px 12px;
             border-bottom: var(--border);
@@ -94,6 +70,32 @@
                     }
                 }
             }
+
+            .IconButton,
+            .ImpressionWidget {
+                margin-left: 8px;
+            }
+            .favorite-icon-button {
+                &.favorite-icon-button-favorited {
+                    color: var(--color-yellow);
+                    .Icon {
+                        svg {
+                            fill: var(--color-yellow);
+                        }
+                    }
+
+                    &:hover,
+                    &.active {
+                        .Icon {
+                            color: var(--color-yellow-light);
+                            svg {
+                                fill: var(--color-yellow-light);
+                            }
+                        }
+                    }
+                }
+            }
+
             .data-doc-title {
                 color: var(--light-text-color);
                 font-size: var(--xxxlarge-text-size);

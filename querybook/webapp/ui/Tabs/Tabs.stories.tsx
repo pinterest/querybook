@@ -11,7 +11,6 @@ export const _Tab = (args) => {
         <div style={{ width: '500px' }}>
             <Tabs
                 {...args}
-                className="is-toggle"
                 items={['one', 'two', 'three']}
                 selectedTabKey={selectedTabKey}
                 onSelect={setSelectedTabKey}
@@ -20,8 +19,8 @@ export const _Tab = (args) => {
     );
 };
 _Tab.args = {
+    className: '',
     vertical: false,
-    borderless: false,
     pills: false,
     wide: false,
     size: 'small',

@@ -31,6 +31,8 @@ export const Dropdown: React.FunctionComponent<IProps> = ({
     children,
 }) => {
     const selfRef = React.useRef<HTMLDivElement>(null);
+    const popoverRef = React.useRef<HTMLDivElement>(null);
+
     const [active, setActive] = React.useState(false);
     // Hover Based Dropdown control
     const handleMouseEnter = React.useCallback(() => {
@@ -53,8 +55,14 @@ export const Dropdown: React.FunctionComponent<IProps> = ({
         }
     }, []);
     const onDocumentClick = React.useCallback(
-        (event) => {
-            if (!event.composedPath().includes(selfRef.current)) {
+        (event: MouseEvent) => {
+            if (
+                !(
+                    event.composedPath().includes(selfRef.current) ||
+                    (popoverRef.current &&
+                        event.composedPath().includes(popoverRef.current))
+                )
+            ) {
                 setActive(false);
             }
         },
@@ -97,6 +105,7 @@ export const Dropdown: React.FunctionComponent<IProps> = ({
     if (usePortal && dropdownContent) {
         dropdownContent = (
             <Popover
+                ref={popoverRef}
                 onHide={() => setActive(false)}
                 anchor={selfRef.current}
                 layout={[isUp ? 'top' : 'bottom', isRight ? 'right' : 'left']}

@@ -31,7 +31,7 @@ import { useChartSource } from 'hooks/chart/useChartSource';
 
 import { QueryExecutionPicker } from 'components/ExecutionPicker/QueryExecutionPicker';
 import { StatementExecutionPicker } from 'components/ExecutionPicker/StatementExecutionPicker';
-import { StatementResultTable } from 'components/DataDocStatementExecution/StatementResultTable';
+import { StatementResultTable } from 'components/StatementResultTable/StatementResultTable';
 import { queryCellSelector } from 'redux/dataDoc/selector';
 
 import { SoftButton } from 'ui/Button/Button';

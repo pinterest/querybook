@@ -1,3 +1,8 @@
+@mixin small-tag() {
+    font-size: var(--xxsmall-text-size);
+    padding: 2px 4px;
+}
+
 .Tag,
 .TagGroup {
     display: inline-flex;
@@ -32,6 +37,10 @@
             cursor: pointer;
         }
     }
+
+    &.small {
+        @include small-tag();
+    }
 }
 
 .TagGroup {
@@ -40,5 +49,9 @@
     .Tag {
         margin: 0;
         border-radius: 0;
+    }
+
+    &.small .Tag {
+        @include small-tag();
     }
 }
