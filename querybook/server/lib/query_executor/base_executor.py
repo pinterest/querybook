@@ -546,8 +546,8 @@ class QueryExecutorBaseClass(metaclass=ABCMeta):
         return info
 
     def cancel(self):
-        self._logger.on_cancel()
         self.status = QueryExecutionStatus.CANCEL
+        self._logger.on_cancel()
 
         if self._current_query_index >= 0:
             self._cursor.cancel()

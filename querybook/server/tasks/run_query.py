@@ -10,6 +10,8 @@ from const.query_execution import QueryExecutionStatus
 from lib.query_executor.notification import notifiy_on_execution_completion
 from lib.query_executor.executor_factory import create_executor_from_execution
 from lib.query_executor.exc import QueryExecutorException
+from lib.query_executor.utils import format_error_message
+
 from logic import query_execution as qe_logic
 from tasks.log_query_per_table import log_query_per_table_task
 
@@ -37,11 +39,15 @@ def run_query_task(self, query_execution_id):
         # SoftTimeLimitExceeded
         # This exception happens when query has been running for more than
         # the limited time (default 2 days)
-        error_message = "The execution has exceeded the maximum allowed time."
+        error_message = format_error_message(
+            7408, "The execution has exceeded the maximum allowed time."
+        )
     except QueryExecutorException as e:
-        error_message = str(e)
+        error_message = format_error_message(7403, str(e))
     except Exception as e:
-        error_message = "{}\n{}".format(e, traceback.format_exc())
+        error_message = format_error_message(
+            7406, "{}\n{}".format(e, traceback.format_exc())
+        )
     finally:
         # When the finally block is reached, it is expected
         # that the executor should be in one of the end state
@@ -104,7 +110,11 @@ def log_if_incomplete_query_status(
         QueryExecutionStatus.RUNNING,
     ):
         if error_message is None:
-            error_message = "Unknown error, executor not completed when exit"
+            error_message = format_error_message(
+                7500,
+                f"Query stopped execution with status {final_query_status.name}. "
+                + "Please rerun your query to see results, the previous run may have completed, or not. ",
+            )
         LOG.error(error_message)
 
         qe_logic.create_query_execution_error(
