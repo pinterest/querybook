@@ -233,7 +233,6 @@ def _construct_tables_query(
             }
         )
     )
-    print(query)
 
     return json.dumps(query)
 
