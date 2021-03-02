@@ -79,7 +79,7 @@ export class DataDocSocket {
 
     private _activeDataDocId: number = null;
     private socket: SocketIOClient.Socket = null;
-    private socketPromise: Promise<any> = null;
+    private socketPromise: Promise<SocketIOClient.Socket> = null;
 
     private promiseMap: IDataDocSocketEvent = {};
     private eventMap: IDataDocSocketEvent = {};
@@ -101,11 +101,11 @@ export class DataDocSocket {
         if (docId !== this._activeDataDocId && this._activeDataDocId != null) {
             this.removeDataDoc(this._activeDataDocId, false);
         }
-
-        this._activeDataDocId = docId;
         this.eventMap = eventMap;
 
         await this.setupSocket();
+        this._activeDataDocId = docId;
+        this.socket.emit('subscribe', docId);
 
         this.getDataDocEditors(docId);
         this.getDataDocAccessRequests(docId);
@@ -204,7 +204,7 @@ export class DataDocSocket {
         }
     };
 
-    public onSocketConnect(socket: SocketIOClient.Socket) {
+    private onSocketConnect(socket: SocketIOClient.Socket) {
         if (this._activeDataDocId != null) {
             socket.emit('subscribe', this._activeDataDocId);
         }
@@ -220,7 +220,7 @@ export class DataDocSocket {
     }
 
     private checkIsSameOrigin(originator: string) {
-        return originator === this.socket.id;
+        return originator === this.socket?.id;
     }
 
     private resolvePromise(key: string, isSameOrigin: boolean, ...args: any[]) {
