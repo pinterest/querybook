@@ -145,7 +145,8 @@ def _match_table_fields(fields):
     for field in fields:
         # 'table_name', 'description', and 'column' are fields used by Table search
         if field == "table_name":
-            search_fields.append("full_name^20")
+            search_fields.append("full_name^10")
+            search_fields.append("full_name_ngram^15")
         elif field == "description":
             search_fields.append("description")
         elif field == "column":
@@ -232,6 +233,8 @@ def _construct_tables_query(
             }
         )
     )
+    print(query)
+
     return json.dumps(query)
 
 
