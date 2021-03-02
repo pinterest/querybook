@@ -552,7 +552,7 @@ class QueryExecutionSocket {
     // queryExecutionId => docId
     private activeQueryExecutions: Record<number, number> = {};
     private socket: SocketIOClient.Socket = null;
-    private socketPromise: Promise<any> = null;
+    private socketPromise: Promise<SocketIOClient.Socket> = null;
     private dispatch: ThunkDispatch = null;
 
     public addQueryExecution = async (
@@ -568,14 +568,15 @@ class QueryExecutionSocket {
                     updateDataDocPolling(docId, queryExecutionId, true)
                 );
             }
-            this.activeQueryExecutions[queryExecutionId] = docId;
 
             await this.setupSocket();
+            this.activeQueryExecutions[queryExecutionId] = docId;
+            this.socket.emit('subscribe', queryExecutionId);
         }
     };
 
     public onSocketConnect(socket: SocketIOClient.Socket) {
-        // Setup rooms
+        // Setup rooms for existing connections
         const activeQueryExecutionIds = Object.keys(this.activeQueryExecutions);
         if (activeQueryExecutionIds.length > 0) {
             activeQueryExecutionIds.map((queryExecutionId) => {
@@ -680,6 +681,7 @@ class QueryExecutionSocket {
                     this.processQueryExecution(queryExecution);
                 }
             );
+            return this.socket;
         }
     };
 }

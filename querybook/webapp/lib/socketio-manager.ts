@@ -26,7 +26,7 @@ const sendToastForError = throttle((error) => {
 export default {
     getSocket: async (
         nameSpace = '/',
-        onConnection: (socket: SocketIOClient.Socket) => any = null
+        onConnection: (socket: SocketIOClient.Socket) => void = null
     ) => {
         const socket = getSocketFromManager(nameSpace);
 
@@ -53,8 +53,11 @@ export default {
         return socket;
     },
     removeSocket: (socket: SocketIOClient.Socket) => {
-        if (socket && socket.connected) {
-            socket.close();
+        if (socket) {
+            if (socket.connected) {
+                socket.close();
+            }
+            socket.removeAllListeners();
         }
     },
 };
