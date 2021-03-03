@@ -224,7 +224,7 @@ def get_table_weight(table_id: int, session=None) -> int:
 def table_to_es(table, session=None):
     schema = table.data_schema
 
-    column_names = list(map(lambda c: c.name, table.columns))
+    column_names = [c.name for c in table.columns]
     schema_name = schema.name
     table_name = table.name
     description = (
@@ -235,16 +235,14 @@ def table_to_es(table, session=None):
 
     full_name = "{}.{}".format(schema_name, table_name)
     weight = get_table_weight(table.id, session=session)
-    table_name_words = list(filter(lambda s: len(s), table_name.split("_")))
-    schema_words = list(filter(lambda s: len(s), schema_name.split("_")))
-    full_name_spaces = " ".join(schema_words + table_name_words)
 
     expand_table = {
         "id": table.id,
         "metastore_id": schema.metastore_id,
         "schema": schema_name,
         "name": table_name,
-        "full_name": full_name_spaces,
+        "full_name": full_name,
+        "full_name_ngram": full_name,
         "completion_name": {
             "input": [full_name, table_name,],
             "weight": weight,

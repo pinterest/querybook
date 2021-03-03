@@ -45,11 +45,32 @@ tables:
                         tokenizer: standard
                         char_filter:
                             - html_strip
+                    table_name_lowercase:
+                        type: custom
+                        tokenizer: alphanum_tokenizer
+                        filter:
+                            - lowercase
+                    edge_ngram_lowercase:
+                        type: custom
+                        tokenizer: edge_ngram_tokenizer
+                        filter:
+                            - lowercase
                 normalizer:
                     case_insensitive:
                         type: custom
                         filter:
                             - lowercase
+                tokenizer:
+                    edge_ngram_tokenizer:
+                        type: edge_ngram
+                        min_gram: 3
+                        max_gram: 15
+                        token_chars:
+                            - letter
+                            - digit
+                    alphanum_tokenizer:
+                        type: simple_pattern
+                        pattern: '[A-Za-z0-9]+'
         mappings:
             tables:
                 properties:
@@ -65,7 +86,10 @@ tables:
                         normalizer: case_insensitive
                     full_name:
                         type: text
-                        analyzer: whitespace
+                        analyzer: table_name_lowercase
+                    full_name_ngram:
+                        type: text
+                        analyzer: edge_ngram_lowercase
                     completion_name:
                         type: completion
                         analyzer: keyword
