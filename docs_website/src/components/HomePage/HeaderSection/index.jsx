@@ -51,11 +51,9 @@ export default () => {
 
             <div className="container">
                 <div className="used-by text">
-                    <p>
-                        Announced in March 2021 and currently in private beta
-                        mode
-                    </p>
-                    <p>Used by engineers and data scientists from</p>
+                    <p>Announced in March 2021</p>
+                    <p>Currently in Private Beta Mode</p>
+                    <p>Used by Engineers and Data Scientists from</p>
                 </div>
                 <div className="flex-center used-by-logos">
                     <Link to="https://www.pinterest.com">
