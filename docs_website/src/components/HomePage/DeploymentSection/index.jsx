@@ -11,7 +11,7 @@ const deploymentInfos = [
     </p>,
     <p>
         When{' '}
-        <Link to="/docs/admin_guide/deployment_guide">
+        <Link to="/docs/setup_guide/deployment_guide">
             deploying to production
         </Link>
         , Querybook comes with an example K8s file for you to easily deploy to
