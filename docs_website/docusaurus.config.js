@@ -66,7 +66,7 @@ module.exports = {
                         },
                         {
                             label: 'Deployment Guide',
-                            to: 'docs/admin_guide/deployment_guide',
+                            to: 'docs/setup_guide/deployment_guide',
                         },
                         {
                             label: 'Developer Setup',
