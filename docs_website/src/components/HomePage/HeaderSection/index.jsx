@@ -23,8 +23,8 @@ export default () => {
                         />
                     </h1>
                     <p className="hero__subtitle">
-                        <b>Querybook</b> is Pinterest’s open-sourced big data
-                        IDE via a notebook interface.
+                        <b>Querybook</b> is Pinterest’s open-source big data IDE
+                        via a notebook interface.
                     </p>
                     <div className="Querybook-Showcase">
                         <img
@@ -51,8 +51,9 @@ export default () => {
 
             <div className="container">
                 <div className="used-by text">
-                    <p>Announced in Dec 2020</p>
-                    <p>Used by Engineers and Data Scientists From</p>
+                    <p>Announced in March 2021</p>
+                    <p>Currently in Private Beta Mode</p>
+                    <p>Used by Engineers and Data Scientists from</p>
                 </div>
                 <div className="flex-center used-by-logos">
                     <Link to="https://www.pinterest.com">
