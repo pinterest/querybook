@@ -11,7 +11,7 @@ const fs = require('fs');
 const BUILD_DIR = 'dist/webapp';
 
 function getDevServerSettings(env) {
-    const QUERYBOOK_UPSTREAM = env?.QUERYBOOK_UPSTREAM;
+    const QUERYBOOK_UPSTREAM = env && env.QUERYBOOK_UPSTREAM;
     if (!QUERYBOOK_UPSTREAM) {
         throw Error('Upstream API server is required for this to work');
     }
@@ -79,7 +79,7 @@ function getDevServerSettings(env) {
 }
 
 module.exports = (env, options) => {
-    const PROD = (env?.NODE_ENV || options.mode) === 'production';
+    const PROD = ((env && env.NODE_ENV) || options.mode) === 'production';
     const mode = PROD ? 'production' : 'development';
 
     const entry = {
@@ -113,7 +113,7 @@ module.exports = (env, options) => {
         entry.custom = customScriptPath;
     }
 
-    const appName = process.env.QUERYBOOK_APPNAME ?? 'Querybook';
+    const appName = process.env.QUERYBOOK_APPNAME || 'Querybook';
     const devServer = process.env.WEBPACK_DEV_SERVER
         ? getDevServerSettings(env)
         : {};
