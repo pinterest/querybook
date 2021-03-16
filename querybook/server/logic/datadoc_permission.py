@@ -12,7 +12,6 @@ class DocDoesNotExist(Exception):
 
 @with_session
 def user_can_write(doc_id, uid, session=None):
-
     doc, editor = session.query(DataDoc, DataDocEditor).outerjoin(
         DataDocEditor,
         and_(DataDoc.id == DataDocEditor.data_doc_id, DataDocEditor.uid == uid),

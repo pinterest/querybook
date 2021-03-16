@@ -22,9 +22,20 @@ export const Board: React.FunctionComponent<IProps> = ({ boardId }) => {
 
     const dispatch: Dispatch = useDispatch();
 
+    const [error, setError] = React.useState(null);
+
     React.useEffect(() => {
-        dispatch(fetchBoardIfNeeded(boardId));
+        test();
     }, [boardId]);
+
+    const test = async () => {
+        const resp = await dispatch(fetchBoardIfNeeded(boardId));
+        if (resp instanceof Error) {
+            setError(resp);
+        }
+    };
+
+    console.log('board', board);
 
     const boardItemDOM = board?.items
         ?.map((itemIdx) => boardItemById?.[itemIdx])

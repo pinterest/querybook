@@ -83,9 +83,13 @@ export function fetchBoards(
 
 export function fetchBoard(id: number): ThunkResult<Promise<IBoardRaw>> {
     return async (dispatch) => {
-        const board: IBoardRaw = (await ds.fetch(`/board/${id}/`)).data;
-        receiveBoardWithItems(dispatch, board);
-        return board;
+        try {
+            const board: IBoardRaw = (await ds.fetch(`/board/${id}/`)).data;
+            receiveBoardWithItems(dispatch, board);
+            return board;
+        } catch (e) {
+            return e;
+        }
     };
 }
 
