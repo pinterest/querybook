@@ -6,6 +6,7 @@ import { Dispatch, IStoreState } from 'redux/store/types';
 
 import { BoardDataDocItem } from './BoardDataDocItem';
 import { BoardDataTableItem } from './BoardDataTableItem';
+import { BoardError } from './BoardError';
 import { Title } from 'ui/Title/Title';
 
 import './Board.scss';
@@ -35,8 +36,6 @@ export const Board: React.FunctionComponent<IProps> = ({ boardId }) => {
         }
     };
 
-    console.log('board', board);
-
     const boardItemDOM = board?.items
         ?.map((itemIdx) => boardItemById?.[itemIdx])
         .filter((i) => i)
@@ -54,7 +53,7 @@ export const Board: React.FunctionComponent<IProps> = ({ boardId }) => {
             )
         );
 
-    return (
+    const boardDOM = (
         <div className="Board mv24 mh48">
             <div className="Board-top ml4">
                 <Title>{board?.name}</Title>
@@ -63,4 +62,6 @@ export const Board: React.FunctionComponent<IProps> = ({ boardId }) => {
             {boardItemDOM}
         </div>
     );
+
+    return error ? <BoardError errorObj={error} boardId={boardId} /> : boardDOM;
 };
