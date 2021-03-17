@@ -4,6 +4,7 @@ import { useDispatch, useSelector } from 'react-redux';
 import { fetchBoardIfNeeded } from 'redux/board/action';
 import { Dispatch, IStoreState } from 'redux/store/types';
 import { IBoardWithItemIds, IBoardItem } from 'const/board';
+import { AxiosError } from 'axios';
 
 import { BoardDataDocItem } from './BoardDataDocItem';
 import { BoardDataTableItem } from './BoardDataTableItem';
@@ -12,44 +13,10 @@ import { Title } from 'ui/Title/Title';
 
 import './Board.scss';
 
-interface IBoardProps {
-    boardId: number;
-}
-
 interface IBoardDOMProps {
     board: IBoardWithItemIds;
     boardItemById: Record<number, IBoardItem>;
 }
-
-export const Board: React.FunctionComponent<IBoardProps> = ({ boardId }) => {
-    const { board, boardItemById } = useSelector((state: IStoreState) => ({
-        board: state.board.boardById[boardId],
-        boardItemById: state.board.boardItemById,
-    }));
-
-    const dispatch: Dispatch = useDispatch();
-
-    const [error, setError] = React.useState(null);
-
-    const getBoard = React.useCallback(async () => {
-        const resp = await dispatch(fetchBoardIfNeeded(boardId));
-        if (resp instanceof Error) {
-            setError(resp);
-        }
-    }, [boardId]);
-
-    React.useEffect(() => {
-        dispatch(fetchBoardIfNeeded(boardId)).then(null, (e) => {
-            setError(e);
-        });
-    }, [getBoard]);
-
-    return error ? (
-        <BoardError errorObj={error} boardId={boardId} />
-    ) : (
-        <BoardDOM board={board} boardItemById={boardItemById} />
-    );
-};
 
 const BoardDOM: React.FunctionComponent<IBoardDOMProps> = ({
     board,
@@ -80,5 +47,32 @@ const BoardDOM: React.FunctionComponent<IBoardDOMProps> = ({
             </div>
             {boardItemDOM}
         </div>
+    );
+};
+
+interface IBoardProps {
+    boardId: number;
+}
+
+export const Board: React.FunctionComponent<IBoardProps> = ({ boardId }) => {
+    const { board, boardItemById } = useSelector((state: IStoreState) => ({
+        board: state.board.boardById[boardId],
+        boardItemById: state.board.boardItemById,
+    }));
+
+    const dispatch: Dispatch = useDispatch();
+
+    const [error, setError] = React.useState<AxiosError>(null);
+
+    React.useEffect(() => {
+        dispatch(fetchBoardIfNeeded(boardId)).then(null, (e) => {
+            setError(e);
+        });
+    }, [boardId]);
+
+    return error ? (
+        <BoardError errorObj={error} boardId={boardId} />
+    ) : (
+        <BoardDOM board={board} boardItemById={boardItemById} />
     );
 };
