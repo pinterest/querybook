@@ -3,6 +3,7 @@ import { useDispatch, useSelector } from 'react-redux';
 
 import { fetchBoardIfNeeded } from 'redux/board/action';
 import { Dispatch, IStoreState } from 'redux/store/types';
+import { IBoardWithItemIds, IBoardItem } from 'const/board';
 
 import { BoardDataDocItem } from './BoardDataDocItem';
 import { BoardDataTableItem } from './BoardDataTableItem';
@@ -11,11 +12,16 @@ import { Title } from 'ui/Title/Title';
 
 import './Board.scss';
 
-interface IProps {
+interface IBoardProps {
     boardId: number;
 }
 
-export const Board: React.FunctionComponent<IProps> = ({ boardId }) => {
+interface IBoardDOMProps {
+    board: IBoardWithItemIds;
+    boardItemById: Record<number, IBoardItem>;
+}
+
+export const Board: React.FunctionComponent<IBoardProps> = ({ boardId }) => {
     const { board, boardItemById } = useSelector((state: IStoreState) => ({
         board: state.board.boardById[boardId],
         boardItemById: state.board.boardItemById,
@@ -25,17 +31,28 @@ export const Board: React.FunctionComponent<IProps> = ({ boardId }) => {
 
     const [error, setError] = React.useState(null);
 
-    React.useEffect(() => {
-        getBoard();
-    }, [boardId]);
-
-    const getBoard = async () => {
+    const getBoard = React.useCallback(async () => {
         const resp = await dispatch(fetchBoardIfNeeded(boardId));
         if (resp instanceof Error) {
             setError(resp);
         }
-    };
+    }, [boardId]);
 
+    React.useEffect(() => {
+        getBoard();
+    }, [getBoard]);
+
+    return error ? (
+        <BoardError errorObj={error} boardId={boardId} />
+    ) : (
+        <BoardDOM board={board} boardItemById={boardItemById} />
+    );
+};
+
+const BoardDOM: React.FunctionComponent<IBoardDOMProps> = ({
+    board,
+    boardItemById,
+}) => {
     const boardItemDOM = board?.items
         ?.map((itemIdx) => boardItemById?.[itemIdx])
         .filter((i) => i)
@@ -53,7 +70,7 @@ export const Board: React.FunctionComponent<IProps> = ({ boardId }) => {
             )
         );
 
-    const boardDOM = (
+    return (
         <div className="Board mv24 mh48">
             <div className="Board-top ml4">
                 <Title>{board?.name}</Title>
@@ -62,6 +79,4 @@ export const Board: React.FunctionComponent<IProps> = ({ boardId }) => {
             {boardItemDOM}
         </div>
     );
-
-    return error ? <BoardError errorObj={error} boardId={boardId} /> : boardDOM;
 };

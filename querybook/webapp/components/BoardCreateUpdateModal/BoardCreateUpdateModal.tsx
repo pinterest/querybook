@@ -80,7 +80,7 @@ export const BoardCreateUpdateForm: React.FunctionComponent<IBoardCreateUpdateFo
                 const formTitle = isCreateForm ? 'New List' : 'Update List';
                 const nameField = <SimpleField name="name" type="input" />;
                 // TODO: enable when sharing is possible
-                const publicField = <SimpleField name="public" type="toggle" />;
+                // const publicField = <SimpleField name="public" type="toggle" />;
 
                 const descriptionField = (
                     <SimpleField

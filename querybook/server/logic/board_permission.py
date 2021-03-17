@@ -11,7 +11,7 @@ class BoardDoesNotExist(Exception):
 
 @with_session
 def user_can_edit(board_id, uid, session=None):
-    board = session.query(Board).filter(Board.id == board_id).first()
+    board = Board.get(id=board_id, session=session)
 
     if board is None:
         raise BoardDoesNotExist()
@@ -25,7 +25,7 @@ def user_can_edit(board_id, uid, session=None):
 
 @with_session
 def user_can_read(board_id, uid, session=None):
-    board = session.query(Board).filter(Board.id == board_id).first()
+    board = Board.get(id=board_id, session=session)
 
     if board is None:
         raise BoardDoesNotExist()
