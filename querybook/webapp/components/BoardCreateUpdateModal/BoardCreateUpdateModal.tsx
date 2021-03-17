@@ -6,13 +6,15 @@ import { Formik, Form } from 'formik';
 import { sendConfirm } from 'lib/querybookUI';
 import { createBoard, updateBoard, deleteBoard } from 'redux/board/action';
 import { IStoreState, Dispatch } from 'redux/store/types';
-import { Title } from 'ui/Title/Title';
+import { IBoardRaw } from 'const/board';
+
 import { Button } from 'ui/Button/Button';
 import { IStandardModalProps } from 'ui/Modal/types';
 import { Modal } from 'ui/Modal/Modal';
-import { IBoardRaw } from 'const/board';
 import { FormWrapper } from 'ui/Form/FormWrapper';
 import { SimpleField } from 'ui/FormikField/SimpleField';
+import { Title } from 'ui/Title/Title';
+
 import './BoardCreateUpdateModal.scss';
 
 const boardFormSchema = Yup.object().shape({
@@ -77,6 +79,8 @@ export const BoardCreateUpdateForm: React.FunctionComponent<IBoardCreateUpdateFo
             {({ submitForm, isSubmitting, errors, setFieldValue, isValid }) => {
                 const formTitle = isCreateForm ? 'New List' : 'Update List';
                 const nameField = <SimpleField name="name" type="input" />;
+                // TODO: enable when sharing is possible
+                // const publicField = <SimpleField name="public" type="toggle" />;
 
                 const descriptionField = (
                     <SimpleField
@@ -94,6 +98,7 @@ export const BoardCreateUpdateForm: React.FunctionComponent<IBoardCreateUpdateFo
                         <FormWrapper minLabelWidth="150px">
                             <Form>
                                 {nameField}
+                                {/* {publicField} */}
                                 {descriptionField}
                                 <br />
                                 <div className="right-align">

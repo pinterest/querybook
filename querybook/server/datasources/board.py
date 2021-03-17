@@ -8,6 +8,7 @@ from app.auth.permission import (
     get_data_doc_environment_ids,
 )
 from logic import board as logic
+from logic.board_permission import assert_can_read, assert_can_edit
 from models.board import Board
 
 
@@ -29,6 +30,7 @@ def get_my_boards(environment_id, filter_str=None):
 )
 def get_board_by_id(board_id):
     with DBSession() as session:
+        assert_can_read(board_id, session=session)
         board = Board.get(id=board_id, session=session)
         api_assert(board is not None, "Invalid board id", 404)
         verify_environment_permission([board.environment_id])
@@ -59,8 +61,8 @@ def create_board(
 )
 def update_board(board_id, **fields):
     with DBSession() as session:
+        assert_can_edit(board_id, session=session)
         board = Board.get(id=board_id, session=session)
-        api_assert(board and board.owner_uid == current_user.id, "Must be owner")
 
         board = logic.update_board(id=board_id, **fields, session=session)
         return board.to_dict(extra_fields=["docs", "tables", "items"])
@@ -71,8 +73,8 @@ def update_board(board_id, **fields):
 )
 def delete_board(board_id, **fields):
     with DBSession() as session:
+        assert_can_edit(board_id, session=session)
         board = Board.get(id=board_id, session=session)
-        api_assert(board and board.owner_uid == current_user.id, "Must be owner")
         api_assert(not board.board_type == "favorite", "Cannot delete favorite")
 
         Board.delete(board.id, session=session)
@@ -98,10 +100,9 @@ def add_board_item(board_id, item_type, item_id):
     api_assert(item_type == "data_doc" or item_type == "table", "Invalid item type")
 
     with DBSession() as session:
-        # Check if user can edit the board
-        board = Board.get(id=board_id, session=session)
-        api_assert(board and board.owner_uid == current_user.id, "Must be owner")
+        assert_can_edit(board_id, session=session)
 
+        board = Board.get(id=board_id, session=session)
         # You can only add item in the same environment as the board
         item_env_ids = []
         if item_type == "data_doc":
@@ -127,9 +128,9 @@ def add_board_item(board_id, item_type, item_id):
 )
 def move_board_item(board_id, from_index, to_index):
     if from_index != to_index:
-        board = logic.move_item_order(board_id, from_index, to_index)
-        # Check if user can edit the board
-        api_assert(board and board.owner_uid == current_user.id, "Must be owner")
+        with DBSession() as session:
+            assert_can_edit(board_id, session=session)
+            logic.move_item_order(board_id, from_index, to_index, session=session)
 
 
 @register(
@@ -138,10 +139,10 @@ def move_board_item(board_id, from_index, to_index):
 def delete_board_item(board_id, item_type, item_id):
     api_assert(item_type == "data_doc" or item_type == "table", "Invalid item type")
     with DBSession() as session:
-        board = Board.get(id=board_id, session=session)
-        api_assert(board and board.owner_uid == current_user.id, "Must be owner")
+        assert_can_edit(board_id, session=session)
 
-        logic.remove_item_from_board(board_id, item_id, item_type, session=session)
+        board = Board.get(id=board_id, session=session)
+        logic.remove_item_from_board(board.id, item_id, item_type, session=session)
 
 
 @register("/board/favorite/", methods=["POST"])
