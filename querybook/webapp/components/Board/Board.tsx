@@ -26,10 +26,10 @@ export const Board: React.FunctionComponent<IProps> = ({ boardId }) => {
     const [error, setError] = React.useState(null);
 
     React.useEffect(() => {
-        test();
+        getBoard();
     }, [boardId]);
 
-    const test = async () => {
+    const getBoard = async () => {
         const resp = await dispatch(fetchBoardIfNeeded(boardId));
         if (resp instanceof Error) {
             setError(resp);
