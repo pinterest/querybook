@@ -66,7 +66,9 @@ export const Board: React.FunctionComponent<IBoardProps> = ({ boardId }) => {
 
     React.useEffect(() => {
         dispatch(fetchBoardIfNeeded(boardId)).then(null, (e) => {
-            setError(e);
+            if (e.isAxiosError) {
+                setError(e);
+            }
         });
     }, [boardId]);
 
