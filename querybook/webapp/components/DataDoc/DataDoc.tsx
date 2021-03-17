@@ -3,10 +3,10 @@ import { connect } from 'react-redux';
 import { ContentState } from 'draft-js';
 import { findIndex } from 'lodash';
 import { bind, debounce } from 'lodash-decorators';
-
 import { decorate } from 'core-decorators';
 import memoizeOne from 'memoize-one';
 import classNames from 'classnames';
+import toast from 'react-hot-toast';
 
 import {
     CELL_TYPE,
@@ -15,6 +15,7 @@ import {
     DataCellUpdateFields,
     IDataCellMeta,
 } from 'const/datadoc';
+import { ISearchOptions, ISearchResult } from 'const/searchAndReplace';
 import history from 'lib/router-history';
 import { sendConfirm, setBrowserTitle } from 'lib/querybookUI';
 import { scrollToCell, getShareUrl } from 'lib/data-doc/data-doc-utils';
@@ -25,6 +26,8 @@ import {
     deserializeCopyCommand,
     serializeCopyCommand,
 } from 'lib/data-doc/copy';
+import { isAxiosError } from 'lib/utils/error';
+import { searchDataDocCells, replaceDataDoc } from 'lib/data-doc/search';
 
 import {
     closeDataDoc,
@@ -42,6 +45,10 @@ import { DataDocLeftSidebar } from 'components/DataDocLeftSidebar/DataDocLeftSid
 import { DataDocRightSidebar } from 'components/DataDocRightSidebar/DataDocRightSidebar';
 import { DataDocUIGuide } from 'components/UIGuide/DataDocUIGuide';
 import { DataDocCell } from 'components/DataDocCell/DataDocCell';
+import {
+    ISearchAndReplaceHandles,
+    SearchAndReplace,
+} from 'components/SearchAndReplace/SearchAndReplace';
 
 import { Message } from 'ui/Message/Message';
 import { Loading } from 'ui/Loading/Loading';
@@ -50,17 +57,9 @@ import { DataDocHeader } from './DataDocHeader';
 import { DataDocCellControl } from './DataDocCellControl';
 import { DataDocError } from './DataDocError';
 import { DataDocContentContainer } from './DataDocContentContainer';
-
-import './DataDoc.scss';
 import { DataDocLoading } from './DataDocLoading';
 
-import { searchDataDocCells, replaceDataDoc } from 'lib/data-doc/search';
-import {
-    ISearchAndReplaceHandles,
-    SearchAndReplace,
-} from 'components/SearchAndReplace/SearchAndReplace';
-import { ISearchOptions, ISearchResult } from 'const/searchAndReplace';
-import toast from 'react-hot-toast';
+import './DataDoc.scss';
 
 interface IOwnProps {
     docId: number;
@@ -758,7 +757,7 @@ class DataDocComponent extends React.Component<IProps, IState> {
         const { dataDoc } = this.props;
         const { errorObj } = this.state;
 
-        if (errorObj) {
+        if (isAxiosError(errorObj)) {
             return (
                 <DataDocError docId={this.props.docId} errorObj={errorObj} />
             );
