@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useMemo } from 'react';
-import * as classNames from 'classnames';
+import clsx from 'clsx';
 import { orderBy } from 'lodash';
 
 import { IDataDoc } from 'const/datadoc';
@@ -80,7 +80,7 @@ export const DataDocNavigatorSection: React.FC<INavigatorSectionProps> = ({
         const listDOM = orderedDataDocs.map((dataDoc) => {
             const docId = dataDoc.id;
 
-            const itemClassName = classNames({
+            const itemClassName = clsx({
                 selected: selectedDocId === docId,
             });
 

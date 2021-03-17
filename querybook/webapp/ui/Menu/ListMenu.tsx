@@ -1,5 +1,5 @@
 import React from 'react';
-import classNames from 'classnames';
+import clsx from 'clsx';
 
 import { calculateTooltipSize } from 'lib/utils';
 import { TooltipDirection } from 'const/tooltip';
@@ -82,7 +82,7 @@ export const ListMenu: React.FunctionComponent<IProps> = ({
         if (action.items) {
             itemDOM = (
                 <Dropdown
-                    className={classNames({
+                    className={clsx({
                         'Dropdown-nested-menu': true,
                         'nested-right': isRight,
                         MenuItem: true,
@@ -111,7 +111,7 @@ export const ListMenu: React.FunctionComponent<IProps> = ({
     return (
         <Menu
             height={height}
-            className={classNames({
+            className={clsx({
                 soft,
                 [className]: className,
             })}

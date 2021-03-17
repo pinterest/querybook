@@ -1,5 +1,5 @@
 import React from 'react';
-import classNames from 'classnames';
+import clsx from 'clsx';
 import { decorate } from 'core-decorators';
 import memoizeOne from 'memoize-one';
 import ReactTable, { Column, TableProps } from 'react-table';
@@ -101,7 +101,7 @@ export class Table extends React.Component<ITableProps> {
             ...otherProps
         } = this.props;
 
-        const combinedClassName = classNames({
+        const combinedClassName = clsx({
             Table: true,
             [className]: className,
             'hide-header': !showHeader,

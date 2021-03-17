@@ -1,4 +1,4 @@
-import classNames from 'classnames';
+import clsx from 'clsx';
 import React from 'react';
 
 import { formatNumber } from 'lib/utils/number';
@@ -59,7 +59,7 @@ export const StatementResult: React.FC<IProps> = ({
 
         return (
             <span
-                className={classNames({
+                className={clsx({
                     'number-of-rows-message': true,
                     'more-rows-than-shown': !fetchedAllRows,
                 })}
@@ -123,7 +123,7 @@ export const StatementResult: React.FC<IProps> = ({
 
     return (
         <div
-            className={classNames({
+            className={clsx({
                 StatementResult: true,
                 fullscreen: isFullscreen,
             })}

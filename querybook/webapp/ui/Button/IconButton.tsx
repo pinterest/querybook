@@ -1,5 +1,5 @@
 import React from 'react';
-import classNames from 'classnames';
+import clsx from 'clsx';
 
 import { TooltipDirection } from 'const/tooltip';
 
@@ -59,7 +59,7 @@ export const IconButton = React.forwardRef<HTMLAnchorElement, IIconButtonProps>(
             IIconButtonProps['data-balloon-pos'] = tooltipPos;
         }
 
-        const iconButtonClassname = classNames({
+        const iconButtonClassname = clsx({
             IconButton: true,
             active,
             'no-padding': noPadding,

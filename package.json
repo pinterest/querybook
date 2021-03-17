@@ -40,7 +40,6 @@
         "bignumber.js": "^9.0.1",
         "chart.js": "^2.9.3",
         "chartjs-plugin-datalabels": "^0.7.0",
-        "classnames": "2.2.6",
         "clean-webpack-plugin": "0.1.19",
         "clsx": "^1.1.1",
         "codemirror": "5.49.2",

@@ -1,4 +1,4 @@
-import classNames from 'classnames';
+import clsx from 'clsx';
 import { decorate } from 'core-decorators';
 import { find } from 'lodash';
 import { debounce, throttle, bind } from 'lodash-decorators';
@@ -597,7 +597,7 @@ export class QueryEditor extends React.PureComponent<
         const { height, fontSize, className } = this.props;
         const { fullScreen } = this.state;
 
-        const editorClassName = classNames({
+        const editorClassName = clsx({
             fullScreen,
             [className]: !!className,
         });

@@ -1,5 +1,5 @@
 import React, { useMemo } from 'react';
-import classNames from 'classnames';
+import clsx from 'clsx';
 
 import { useDebounceState } from 'hooks/redux/useDebounceState';
 
@@ -87,7 +87,7 @@ export const DebouncedInput: React.FunctionComponent<IDebouncedInputProps> = ({
         [setDebouncedValue]
     );
 
-    const classNameProp = classNames({
+    const classNameProp = clsx({
         DebouncedInput: true,
         [className]: !!className,
         flex,

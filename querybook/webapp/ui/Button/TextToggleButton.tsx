@@ -1,5 +1,5 @@
 import React from 'react';
-import classNames from 'classnames';
+import clsx from 'clsx';
 import './TextToggleButton.scss';
 import { TooltipDirection } from 'const/tooltip';
 
@@ -10,7 +10,7 @@ export const TextToggleButton: React.FC<{
     tooltip?: string;
     tooltipPos?: TooltipDirection;
 }> = ({ value, onChange, text, tooltip, tooltipPos = 'down' }) => {
-    const className = classNames({
+    const className = clsx({
         TextToggleButton: true,
         active: value,
         ml4: true,

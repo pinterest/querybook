@@ -1,5 +1,5 @@
 import React, { useCallback, useState, useEffect } from 'react';
-import classNames from 'classnames';
+import clsx from 'clsx';
 import { useSelector, useDispatch } from 'react-redux';
 import { useHistory } from 'react-router-dom';
 
@@ -155,7 +155,7 @@ export const DataTableNavigator: React.FC<IDataTableNavigatorProps> = ({
     const tableRowRenderer = useCallback(
         (table: ITableResultWithSelection) => {
             const tableName = `${table.schema}.${table.name}`;
-            const className = classNames({
+            const className = clsx({
                 selected: table.selected,
             });
 

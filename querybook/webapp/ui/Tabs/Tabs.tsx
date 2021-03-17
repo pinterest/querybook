@@ -1,5 +1,5 @@
 import React from 'react';
-import classNames from 'classnames';
+import clsx from 'clsx';
 import { Icon } from 'ui/Icon/Icon';
 import { TooltipDirection } from 'const/tooltip';
 
@@ -39,7 +39,7 @@ export const Tabs: React.FunctionComponent<ITabsProps> = ({
     size = null,
     align = 'left',
 }) => {
-    const tabClassName = classNames({
+    const tabClassName = clsx({
         Tabs: true,
         [className]: Boolean(className),
         vertical,
@@ -72,7 +72,7 @@ export const Tabs: React.FunctionComponent<ITabsProps> = ({
         }
 
         const selected = key === selectedTabKey;
-        const liClassName = classNames({
+        const liClassName = clsx({
             active: selected,
         });
 

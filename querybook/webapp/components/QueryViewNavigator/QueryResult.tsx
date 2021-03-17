@@ -1,6 +1,6 @@
 import React from 'react';
 import moment from 'moment';
-import classNames from 'classnames';
+import clsx from 'clsx';
 
 import { queryStatusToStatusIcon } from 'const/queryStatus';
 import { IQueryExecution } from 'redux/queryExecutions/types';
@@ -22,7 +22,7 @@ export const QueryResult: React.FunctionComponent<IProps> = ({
     onClick,
 }) => {
     const queryId = queryExecution.id;
-    const className = classNames({
+    const className = clsx({
         QueryResult: true,
     });
 

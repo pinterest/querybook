@@ -1,5 +1,5 @@
 import * as React from 'react';
-import classNames from 'classnames';
+import clsx from 'clsx';
 
 import './Card.scss';
 
@@ -24,7 +24,7 @@ export const Card: React.FunctionComponent<IProps> = ({
     flexRow,
     alignLeft,
 }) => {
-    const cardClassName = classNames({
+    const cardClassName = clsx({
         Card: true,
         'flex-row': flexRow,
         'flex-column': !flexRow && !alignLeft,

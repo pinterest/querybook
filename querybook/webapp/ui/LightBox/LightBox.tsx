@@ -1,4 +1,4 @@
-import * as classNames from 'classnames';
+import clsx from 'clsx';
 import React from 'react';
 
 import { useAppBlur } from 'hooks/ui/useAppBlur';
@@ -14,7 +14,7 @@ export const LightBox: React.FunctionComponent<{
 }> = ({ className, onHide, children }) => {
     useAppBlur();
 
-    const lightBoxClassName = classNames({
+    const lightBoxClassName = clsx({
         LightBox: true,
         'flex-center': true,
         fullscreen: true,

@@ -1,6 +1,6 @@
 import React from 'react';
 import moment from 'moment';
-import classNames from 'classnames';
+import clsx from 'clsx';
 
 import {
     queryStatusToStatusIcon,
@@ -105,7 +105,7 @@ export const QueryExecutionPicker: React.FunctionComponent<IProps> = React.memo(
                     return (
                         <MenuItem
                             key={execution.id}
-                            className={classNames({
+                            className={clsx({
                                 'query-execution-item': true,
                                 'query-execution-selected':
                                     execution.id === queryExecutionId,

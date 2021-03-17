@@ -1,5 +1,5 @@
 import React from 'react';
-import classNames from 'classnames';
+import clsx from 'clsx';
 
 import { Icon, IIconProps } from 'ui/Icon/Icon';
 import { StyledButton, ISharedButtonProps } from './StyledButton';
@@ -59,7 +59,7 @@ export const Button = React.forwardRef<HTMLSpanElement, ButtonProps>(
         const buttonOnClick = disabled ? null : onClick;
         const themeProps = computeStyleButtonProps(color, theme);
 
-        const buttonClassName = classNames({
+        const buttonClassName = clsx({
             Button: true,
             [className]: !!className,
             active,
