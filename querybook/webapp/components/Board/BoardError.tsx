@@ -1,9 +1,10 @@
 import * as React from 'react';
+import type { AxiosError } from 'axios';
 
 import { ErrorPage } from 'ui/ErrorPage/ErrorPage';
 
 export const BoardError: React.FunctionComponent<{
-    errorObj: any;
+    errorObj: AxiosError;
     boardId: number;
 }> = React.memo(({ boardId, errorObj }) => {
     let errorTitle: string;
