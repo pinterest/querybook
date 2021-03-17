@@ -1,10 +1,11 @@
 import * as React from 'react';
 import { useDispatch, useSelector } from 'react-redux';
+import { AxiosError } from 'axios';
 
 import { fetchBoardIfNeeded } from 'redux/board/action';
 import { Dispatch, IStoreState } from 'redux/store/types';
 import { IBoardWithItemIds, IBoardItem } from 'const/board';
-import { AxiosError } from 'axios';
+import { isAxiosError } from 'lib/utils/error';
 
 import { BoardDataDocItem } from './BoardDataDocItem';
 import { BoardDataTableItem } from './BoardDataTableItem';
@@ -66,7 +67,7 @@ export const Board: React.FunctionComponent<IBoardProps> = ({ boardId }) => {
 
     React.useEffect(() => {
         dispatch(fetchBoardIfNeeded(boardId)).then(null, (e) => {
-            if (e.isAxiosError) {
+            if (isAxiosError(e)) {
                 setError(e);
             }
         });

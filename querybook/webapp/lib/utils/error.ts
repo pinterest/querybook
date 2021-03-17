@@ -1,3 +1,5 @@
+import { AxiosError } from 'axios';
+
 export function formatError(error: any): string {
     const isErrorObject =
         error != null &&
@@ -21,4 +23,8 @@ export function formatError(error: any): string {
     }
 
     return JSON.stringify(error, null, 2);
+}
+
+export function isAxiosError(e: any): e is AxiosError {
+    return e instanceof Error && (e as AxiosError).isAxiosError;
 }
