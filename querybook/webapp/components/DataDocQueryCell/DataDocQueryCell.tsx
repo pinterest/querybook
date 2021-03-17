@@ -1,8 +1,8 @@
-import classNames from 'classnames';
+import React from 'react';
+import clsx from 'clsx';
 import * as DraftJs from 'draft-js';
 import toast from 'react-hot-toast';
 import { debounce, bind } from 'lodash-decorators';
-import React from 'react';
 import { connect } from 'react-redux';
 import Resizable from 're-resizable';
 
@@ -45,9 +45,10 @@ import { Title } from 'ui/Title/Title';
 
 import { ResizableTextArea } from 'ui/ResizableTextArea/ResizableTextArea';
 import { ISelectedRange } from './common';
-import './DataDocQueryCell.scss';
 import { ErrorQueryCell } from './ErrorQueryCell';
 import { CodeHighlight } from 'ui/CodeHighlight/CodeHighlight';
+
+import './DataDocQueryCell.scss';
 
 const ON_CHANGE_DEBOUNCE_MS = 250;
 
@@ -639,7 +640,7 @@ class DataDocQueryCellComponent extends React.Component<IProps, IState> {
             return this.renderInvalidEngineCell();
         }
 
-        const classes = classNames({
+        const classes = clsx({
             DataDocQueryCell: true,
             fullScreen: isFullScreen,
         });

@@ -1,5 +1,5 @@
 import React, { useEffect, useMemo, useContext, useCallback } from 'react';
-import classNames from 'classnames';
+import clsx from 'clsx';
 import toast from 'react-hot-toast';
 
 import { useSelector } from 'react-redux';
@@ -244,7 +244,7 @@ export const DataDocCell: React.FunctionComponent<IDataDocCellProps> = ({
     const dataDocCellClassName = showCollapsed
         ? 'DataDocCell collapsed'
         : 'DataDocCell';
-    const innerCellClassName = classNames({
+    const innerCellClassName = clsx({
         'highlight-cell': highlightCellIndex === index,
         'data-doc-cell-container-pair': true,
     });

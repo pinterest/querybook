@@ -6,15 +6,16 @@ import React, {
     useCallback,
     useContext,
 } from 'react';
-import classNames from 'classnames';
+import clsx from 'clsx';
 
 import { SearchAndReplaceContext } from 'context/searchAndReplace';
 import { DraftJsSearchHighlighter } from 'components/SearchAndReplace/DraftJsSearchHighlighter';
 import { IDataCellMetaBase } from 'const/datadoc';
 import { RichTextEditor } from 'ui/RichTextEditor/RichTextEditor';
 import { useDebounceState } from 'hooks/redux/useDebounceState';
-import './DataDocTextCell.scss';
 import { matchKeyPress } from 'lib/utils/keyboard';
+
+import './DataDocTextCell.scss';
 
 interface IProps {
     cellId: number;
@@ -153,7 +154,7 @@ export const DataDocTextCell: React.FC<IProps> = ({
         [onUpKeyPressed, onDownKeyPressed, onDeleteKeyPressed]
     );
 
-    const className = classNames({
+    const className = clsx({
         DataDocTextCell: true,
         editable: isEditable,
     });

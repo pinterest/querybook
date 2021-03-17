@@ -3,10 +3,10 @@ import { connect } from 'react-redux';
 import { ContentState } from 'draft-js';
 import { findIndex } from 'lodash';
 import { bind, debounce } from 'lodash-decorators';
-
 import { decorate } from 'core-decorators';
 import memoizeOne from 'memoize-one';
-import classNames from 'classnames';
+import clsx from 'clsx';
+import toast from 'react-hot-toast';
 
 import {
     CELL_TYPE,
@@ -21,6 +21,7 @@ import { scrollToCell, getShareUrl } from 'lib/data-doc/data-doc-utils';
 import { sanitizeUrlTitle, copy } from 'lib/utils';
 import { getQueryString } from 'lib/utils/query-string';
 import { matchKeyPress } from 'lib/utils/keyboard';
+import { searchDataDocCells, replaceDataDoc } from 'lib/data-doc/search';
 import {
     deserializeCopyCommand,
     serializeCopyCommand,
@@ -36,31 +37,28 @@ import * as dataDocSelectors from 'redux/dataDoc/selector';
 import { myUserInfoSelector } from 'redux/user/selector';
 import { IStoreState, Dispatch } from 'redux/store/types';
 import { IDataDocSavePromise } from 'redux/dataDoc/types';
+import { ISearchOptions, ISearchResult } from 'const/searchAndReplace';
 
 import { IDataDocContextType, DataDocContext } from 'context/DataDoc';
 import { DataDocLeftSidebar } from 'components/DataDocLeftSidebar/DataDocLeftSidebar';
 import { DataDocRightSidebar } from 'components/DataDocRightSidebar/DataDocRightSidebar';
 import { DataDocUIGuide } from 'components/UIGuide/DataDocUIGuide';
 import { DataDocCell } from 'components/DataDocCell/DataDocCell';
-
-import { Message } from 'ui/Message/Message';
-import { Loading } from 'ui/Loading/Loading';
-
-import { DataDocHeader } from './DataDocHeader';
-import { DataDocCellControl } from './DataDocCellControl';
-import { DataDocError } from './DataDocError';
-import { DataDocContentContainer } from './DataDocContentContainer';
-
-import './DataDoc.scss';
-import { DataDocLoading } from './DataDocLoading';
-
-import { searchDataDocCells, replaceDataDoc } from 'lib/data-doc/search';
 import {
     ISearchAndReplaceHandles,
     SearchAndReplace,
 } from 'components/SearchAndReplace/SearchAndReplace';
-import { ISearchOptions, ISearchResult } from 'const/searchAndReplace';
-import toast from 'react-hot-toast';
+
+import { Message } from 'ui/Message/Message';
+import { Loading } from 'ui/Loading/Loading';
+
+import { DataDocCellControl } from './DataDocCellControl';
+import { DataDocContentContainer } from './DataDocContentContainer';
+import { DataDocError } from './DataDocError';
+import { DataDocHeader } from './DataDocHeader';
+import { DataDocLoading } from './DataDocLoading';
+
+import './DataDoc.scss';
 
 interface IOwnProps {
     docId: number;
@@ -663,7 +661,7 @@ class DataDocComponent extends React.Component<IProps, IState> {
 
         return (
             <div
-                className={classNames({
+                className={clsx({
                     DataDoc: true,
                 })}
                 key="data-hub-data-doc"

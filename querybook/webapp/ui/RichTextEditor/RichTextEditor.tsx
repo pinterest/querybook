@@ -1,6 +1,6 @@
 import React from 'react';
 import { bind } from 'lodash-decorators';
-import classNames from 'classnames';
+import clsx from 'clsx';
 import * as DraftJs from 'draft-js';
 import { List } from 'immutable';
 import { VisibilityProperty } from 'csstype';
@@ -577,7 +577,7 @@ export class RichTextEditor extends React.Component<
             />
         );
 
-        const editorClassName = classNames({
+        const editorClassName = clsx({
             RichTextEditor: true,
             [className]: className,
         });

@@ -226,7 +226,7 @@ export const DataDocChartCell: React.FunctionComponent<IProps> = ({
     ) : null;
 
     return (
-        <div className={'DataDocChartCell'}>
+        <div className="DataDocChartCell">
             <div className="horizontal-space-between">
                 <div>{renderPickerDOM()}</div>
                 <div className="flex-row">
