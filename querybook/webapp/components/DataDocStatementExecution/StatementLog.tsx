@@ -1,4 +1,4 @@
-import classNames from 'classnames';
+import clsx from 'clsx';
 import { debounce } from 'lodash';
 import React from 'react';
 
@@ -109,7 +109,7 @@ export const StatementLog: React.FunctionComponent<IStatementLogProps> = ({
 
     return (
         <div
-            className={classNames({
+            className={clsx({
                 StatementExecutionLog: true,
                 'log-viewer': true,
                 'is-fullscreen': fullScreen,

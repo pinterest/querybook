@@ -1,4 +1,4 @@
-import classNames from 'classnames';
+import clsx from 'clsx';
 import React from 'react';
 
 import { Button } from 'ui/Button/Button';
@@ -128,7 +128,7 @@ export const Pagination: React.FunctionComponent<IPaginationProps> = ({
 
     return (
         <nav
-            className={classNames({
+            className={clsx({
                 Pagination: true,
                 'horizontal-space-between': true,
                 'flex-row': true,

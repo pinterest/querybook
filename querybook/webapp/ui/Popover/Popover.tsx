@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import classNames from 'classnames';
+import clsx from 'clsx';
 import { Overlay, overlayRoot } from 'ui/Overlay/Overlay';
 
 import './Popover.scss';
@@ -239,7 +239,7 @@ export const PopoverContainer = React.forwardRef<
         return (
             <div className={'Popover '} ref={ref}>
                 <div
-                    className={classNames({
+                    className={clsx({
                         'popover-wrapper': true,
                         'animate-popover': !skipAnimation,
                     })}

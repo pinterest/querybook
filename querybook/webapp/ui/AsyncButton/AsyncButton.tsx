@@ -4,7 +4,7 @@ import {
     getButtonComponentByType,
 } from '../Button/Button';
 import React from 'react';
-import classNames from 'classnames';
+import clsx from 'clsx';
 
 export interface IAsyncButtonProps extends ButtonProps {
     onClick: (...args: any[]) => Promise<unknown>;
@@ -67,7 +67,7 @@ export class AsyncButton extends React.PureComponent<
 
             onClick: this.onClick,
             isLoading: loading,
-            className: classNames({
+            className: clsx({
                 [propsForButton.className || '']: true,
             }),
         };

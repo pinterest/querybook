@@ -1,5 +1,5 @@
 import React from 'react';
-import classNames from 'classnames';
+import clsx from 'clsx';
 
 import './ShowMoreText.scss';
 
@@ -30,7 +30,7 @@ export const ShowMoreText: React.FunctionComponent<IShowMoreTextProps> = ({
         setExpanded(!expanded);
     };
 
-    const combinedClassName = classNames({
+    const combinedClassName = clsx({
         ShowMoreText: true,
         [className]: className,
         'is-list': isList,

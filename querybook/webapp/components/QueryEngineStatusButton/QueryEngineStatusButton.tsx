@@ -6,7 +6,7 @@ import React, {
     useMemo,
 } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
-import classNames from 'classnames';
+import clsx from 'clsx';
 
 import { TooltipDirection } from 'const/tooltip';
 import { titleize, capitalize } from 'lib/utils';
@@ -202,7 +202,7 @@ export const QueryEngineStatusButton: React.FC<IProps> = ({
     return (
         <>
             <div
-                className={classNames({
+                className={clsx({
                     QueryEngineStatusButton: true,
                     'status-warning':
                         overallWorstQueryEngineStatus ===

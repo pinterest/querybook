@@ -6,7 +6,7 @@ import React, {
     useCallback,
     useContext,
 } from 'react';
-import classNames from 'classnames';
+import clsx from 'clsx';
 
 import { SearchAndReplaceContext } from 'context/searchAndReplace';
 import { DraftJsSearchHighlighter } from 'components/SearchAndReplace/DraftJsSearchHighlighter';
@@ -153,7 +153,7 @@ export const DataDocTextCell: React.FC<IProps> = ({
         [onUpKeyPressed, onDownKeyPressed, onDeleteKeyPressed]
     );
 
-    const className = classNames({
+    const className = clsx({
         DataDocTextCell: true,
         editable: isEditable,
     });

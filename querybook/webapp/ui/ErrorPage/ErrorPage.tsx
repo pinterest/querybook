@@ -1,5 +1,5 @@
 import React from 'react';
-import classNames from 'classnames';
+import clsx from 'clsx';
 
 import history from 'lib/router-history';
 import { Center } from 'ui/Center/Center';
@@ -51,7 +51,7 @@ export const ErrorPage: React.FunctionComponent<IErrorPageProps> = ({
         </>
     );
 
-    const classNameProp = classNames({
+    const classNameProp = clsx({
         ErrorPage: true,
         [className]: className,
     });

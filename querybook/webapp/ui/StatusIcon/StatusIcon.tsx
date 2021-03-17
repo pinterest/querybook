@@ -1,5 +1,5 @@
 import React from 'react';
-import classNames from 'classnames';
+import clsx from 'clsx';
 
 import { Status } from 'const/queryStatus';
 
@@ -18,7 +18,7 @@ export const StatusIcon: React.FunctionComponent<IStatusIconProps> = ({
 }) => {
     const iconProps = {
         status,
-        className: classNames({
+        className: clsx({
             fas: !hollow,
             far: hollow,
             'fa-circle': true,
@@ -26,7 +26,7 @@ export const StatusIcon: React.FunctionComponent<IStatusIconProps> = ({
     };
 
     const spanProps = {
-        className: classNames({
+        className: clsx({
             StatusIcon: true,
             [status]: true,
         }),

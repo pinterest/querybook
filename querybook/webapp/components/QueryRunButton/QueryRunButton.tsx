@@ -1,4 +1,4 @@
-import classNames from 'classnames';
+import clsx from 'clsx';
 import * as React from 'react';
 
 import { useSelector } from 'react-redux';
@@ -53,7 +53,7 @@ export const QueryRunButton = React.forwardRef<
             <AsyncButton
                 onClick={onRunClick}
                 ref={runButtonRef}
-                className={classNames({
+                className={clsx({
                     'run-selection': !!hasSelection,
                 })}
                 title={hasSelection ? 'Run Selection' : null}
@@ -134,7 +134,7 @@ export const QueryEngineSelector: React.FC<IQueryEngineSelectorProps> = ({
 
     return (
         <div
-            className={classNames({
+            className={clsx({
                 QueryEngineSelector: true,
                 readonly: disabled,
             })}

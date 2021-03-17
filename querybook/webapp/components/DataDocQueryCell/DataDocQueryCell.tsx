@@ -1,4 +1,4 @@
-import classNames from 'classnames';
+import clsx from 'clsx';
 import * as DraftJs from 'draft-js';
 import toast from 'react-hot-toast';
 import { debounce, bind } from 'lodash-decorators';
@@ -639,7 +639,7 @@ class DataDocQueryCellComponent extends React.Component<IProps, IState> {
             return this.renderInvalidEngineCell();
         }
 
-        const classes = classNames({
+        const classes = clsx({
             DataDocQueryCell: true,
             fullScreen: isFullScreen,
         });

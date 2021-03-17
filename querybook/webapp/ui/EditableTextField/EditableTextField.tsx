@@ -1,4 +1,4 @@
-import classNames from 'classnames';
+import clsx from 'clsx';
 import * as DraftJs from 'draft-js';
 import React from 'react';
 
@@ -69,7 +69,7 @@ export const EditableTextField: React.FunctionComponent<IEditableTextFieldProps>
 
     return (
         <div
-            className={classNames({
+            className={clsx({
                 EditableTextField: true,
                 'edit-mode': editMode,
                 [className]: Boolean(className),

@@ -1,4 +1,4 @@
-import classNames from 'classnames';
+import clsx from 'clsx';
 import { throttle } from 'lodash';
 import React, { useRef, useEffect, useCallback } from 'react';
 import styled from 'styled-components';
@@ -84,7 +84,7 @@ export const ResizableTextArea: React.FC<IResizableTextareaProps> = ({
 
     return (
         <StyledTextarea
-            className={classNames({
+            className={clsx({
                 ResizableTextArea: true,
                 [className]: Boolean(className),
             })}

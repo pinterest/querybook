@@ -1,5 +1,5 @@
 import * as React from 'react';
-import classNames from 'classnames';
+import clsx from 'clsx';
 
 import { Icon } from 'ui/Icon/Icon';
 import { Link, ILinkProps } from './Link';
@@ -23,7 +23,7 @@ export const ListLink: React.FunctionComponent<IProps> = ({
     children,
     ...listProps
 }) => {
-    const mergedClassName = classNames({
+    const mergedClassName = clsx({
         ListLink: true,
         [className]: !!className,
         row: isRow,

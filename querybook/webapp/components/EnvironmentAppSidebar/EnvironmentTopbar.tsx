@@ -1,6 +1,6 @@
 import React from 'react';
 import { useSelector } from 'react-redux';
-import classNames from 'classnames';
+import clsx from 'clsx';
 
 import {
     currentEnvironmentSelector,
@@ -53,7 +53,7 @@ export const EnvironmentTopbar: React.FunctionComponent = () => {
                     to={accessible ? `/${environment.name}/` : null}
                 >
                     <span
-                        className={classNames({
+                        className={clsx({
                             'env-icon': true,
                             disabled: !accessible,
                             selected,

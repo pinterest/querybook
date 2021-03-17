@@ -1,4 +1,4 @@
-import * as classNames from 'classnames';
+import clsx from 'clsx';
 import React from 'react';
 
 import { matchKeyPress } from 'lib/utils/keyboard';
@@ -73,7 +73,7 @@ export const SearchBar: React.FunctionComponent<ISearchBarProps> = ({
         </span>
     ) : null;
 
-    const searchBarClassName = classNames({
+    const searchBarClassName = clsx({
         SearchBar: true,
         [className]: Boolean(className),
         transparent,
@@ -98,7 +98,7 @@ export const SearchBar: React.FunctionComponent<ISearchBarProps> = ({
                 transparent={transparent}
                 inputProps={{
                     placeholder,
-                    className: classNames({
+                    className: clsx({
                         [inputClassName]: !!inputClassName,
                     }),
                     type: 'text',

@@ -1,4 +1,4 @@
-import classNames from 'classnames';
+import clsx from 'clsx';
 import React from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 
@@ -64,7 +64,7 @@ export const DataDocHeader = React.forwardRef<HTMLDivElement, IProps>(
                             noPadding
                             size={16}
                             icon="star"
-                            className={classNames({
+                            className={clsx({
                                 'favorite-icon-button': true,
                                 'favorite-icon-button-favorited': isFavorite,
                             })}

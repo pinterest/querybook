@@ -1,5 +1,5 @@
 import React from 'react';
-import classNames from 'classnames';
+import clsx from 'clsx';
 
 import { navigateWithinEnv } from 'lib/utils/query-string';
 
@@ -130,7 +130,7 @@ export const EnvironmentAppSidebar: React.FunctionComponent = () => {
         </>
     );
 
-    const className = classNames({
+    const className = clsx({
         EnvironmentAppSidebar: true,
         collapsed,
     });

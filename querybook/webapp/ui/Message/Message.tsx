@@ -1,5 +1,5 @@
 import React from 'react';
-import classNames from 'classnames';
+import clsx from 'clsx';
 
 import { Icon } from 'ui/Icon/Icon';
 
@@ -30,7 +30,7 @@ export const Message: React.FunctionComponent<IMessageProps> = ({
     size = null,
     center = false,
 }) => {
-    const messageClassName = classNames({
+    const messageClassName = clsx({
         Message: true,
         'Message-simple': !title,
         'Message-has-icon': !!icon,

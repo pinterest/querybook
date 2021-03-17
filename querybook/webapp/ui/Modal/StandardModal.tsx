@@ -1,4 +1,4 @@
-import * as classNames from 'classnames';
+import clsx from 'clsx';
 import React from 'react';
 
 import { useMounted } from 'hooks/useMounted';
@@ -18,7 +18,7 @@ export const StandardModal: React.FunctionComponent<IStandardModalProps> = ({
     const mounted = useMounted();
     const active = useDebounce(mounted, 100); // delay the mount by 100
 
-    const modalClassName = classNames({
+    const modalClassName = clsx({
         StandardModal: true,
         fullscreen: true,
         'is-active': active,

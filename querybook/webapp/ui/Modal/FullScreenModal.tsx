@@ -1,4 +1,4 @@
-import * as classNames from 'classnames';
+import clsx from 'clsx';
 import React from 'react';
 import { IStandardModalProps } from './types';
 import { IconButton } from 'ui/Button/IconButton';
@@ -10,7 +10,7 @@ export const FullScreenModal: React.FunctionComponent<IStandardModalProps> = ({
     onHide,
     children,
 }) => {
-    const modalClassName = classNames({
+    const modalClassName = clsx({
         FullScreenModal: true,
         fullscreen: true,
         [className]: Boolean(className),

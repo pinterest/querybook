@@ -1,5 +1,5 @@
 import React from 'react';
-import classNames from 'classnames';
+import clsx from 'clsx';
 
 import { TooltipDirection } from 'const/tooltip';
 
@@ -48,7 +48,7 @@ export const Tag: React.FunctionComponent<ITagProps> = ({
         tooltipProps['data-balloon-pos'] = tooltipPos;
     }
 
-    const tagClassname = classNames({
+    const tagClassname = clsx({
         Tag: true,
         'flex-row': true,
         highlighted,

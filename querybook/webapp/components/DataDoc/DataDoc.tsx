@@ -5,7 +5,7 @@ import { findIndex } from 'lodash';
 import { bind, debounce } from 'lodash-decorators';
 import { decorate } from 'core-decorators';
 import memoizeOne from 'memoize-one';
-import classNames from 'classnames';
+import clsx from 'clsx';
 import toast from 'react-hot-toast';
 
 import {
@@ -662,7 +662,7 @@ class DataDocComponent extends React.Component<IProps, IState> {
 
         return (
             <div
-                className={classNames({
+                className={clsx({
                     DataDoc: true,
                 })}
                 key="data-hub-data-doc"

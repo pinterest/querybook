@@ -1,4 +1,4 @@
-import classNames from 'classnames';
+import clsx from 'clsx';
 import React from 'react';
 import toast from 'react-hot-toast';
 
@@ -176,7 +176,7 @@ export const DataDocViewersList: React.FunctionComponent<IDataDocViewersListProp
         </>
     );
 
-    const combinedClassname = classNames({
+    const combinedClassname = clsx({
         [className]: className,
         DataDocViewersList: true,
     });

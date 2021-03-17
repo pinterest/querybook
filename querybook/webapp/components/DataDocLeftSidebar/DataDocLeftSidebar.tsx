@@ -1,4 +1,4 @@
-import classNames from 'classnames';
+import clsx from 'clsx';
 import React, { useEffect } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 
@@ -105,7 +105,7 @@ export const DataDocLeftSidebar: React.FunctionComponent<IProps> = ({
 
     return (
         <div
-            className={classNames({
+            className={clsx({
                 DataDocLeftSidebar: true,
                 hidden: cells.length === 0,
             })}

@@ -1,6 +1,6 @@
 import { bind } from 'lodash-decorators';
 import React from 'react';
-import classNames from 'classnames';
+import clsx from 'clsx';
 
 export interface ITimerProps<T> {
     formatter?: (ts: T) => React.ReactChild;
@@ -64,7 +64,7 @@ export class Timer<T = number> extends React.PureComponent<
 
         const { value } = this.state;
 
-        const spanClassNames = classNames({
+        const spanClassNames = clsx({
             Timer: true,
             [className]: Boolean(className),
         });

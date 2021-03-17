@@ -1,6 +1,6 @@
 import React, { useEffect, useState, useMemo } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
-import classNames from 'classnames';
+import clsx from 'clsx';
 
 import { IBoard } from 'const/board';
 import { fetchBoards } from 'redux/board/action';
@@ -47,7 +47,7 @@ export const BoardList: React.FunctionComponent<IProps> = ({
     const boardRowRenderer = React.useCallback(
         (board: IBoard & { selected: boolean }) => {
             const { name, public: publicBoard, selected } = board;
-            const className = classNames({
+            const className = clsx({
                 selected,
             });
             const publicIcon = publicBoard && 'users';

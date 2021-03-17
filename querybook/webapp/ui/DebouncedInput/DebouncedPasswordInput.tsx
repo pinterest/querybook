@@ -1,5 +1,5 @@
 import React, { useMemo } from 'react';
-import classNames from 'classnames';
+import clsx from 'clsx';
 
 import { useToggleState } from 'hooks/useToggleState';
 import { DebouncedInput, IDebouncedInputProps } from './DebouncedInput';
@@ -13,7 +13,7 @@ export const DebouncedPasswordInput: React.FC<IDebouncedInputProps> = (
 
     const className = useMemo(
         () =>
-            classNames({
+            clsx({
                 [props.className]: props.className,
                 DebouncedPasswordInput: true,
             }),
