@@ -1,12 +1,15 @@
 import * as React from 'react';
-import { ErrorPage } from 'ui/ErrorPage/ErrorPage';
-import * as dataDocActions from 'redux/dataDoc/action';
 import { Dispatch } from 'redux/store/types';
 import { useDispatch } from 'react-redux';
+import { AxiosError } from 'axios';
+
+import * as dataDocActions from 'redux/dataDoc/action';
+
 import { AccessRequestButton } from 'components/AccessRequestButton/AccessRequestButton';
+import { ErrorPage } from 'ui/ErrorPage/ErrorPage';
 
 export const DataDocError: React.FunctionComponent<{
-    errorObj: any;
+    errorObj: AxiosError;
     docId: number;
 }> = React.memo(({ docId, errorObj }) => {
     let errorTitle: string;
