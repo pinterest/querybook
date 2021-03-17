@@ -21,29 +21,25 @@ export const DataDocError: React.FunctionComponent<{
         dispatch(dataDocActions.addDataDocAccessRequest(docId));
     }, [docId]);
 
-    if (errorObj) {
-        if (errorObj.response) {
-            // network request fail
-            errorTitle = `${errorObj.response.status}: ${errorObj.response.statusText}`;
+    // network request fail
+    errorTitle = `${errorObj.response.status}: ${errorObj.response.statusText}`;
 
-            if (errorObj.response.data) {
-                // failed due to api exception
-                const exceptionMessage = errorObj.response.data.error;
-                if (exceptionMessage === 'CANNOT_READ_DATADOC') {
-                    errorTitle = 'Access Denied';
-                    errorMessage = 'You cannot read this DataDoc.';
-                    errorContent = (
-                        <AccessRequestButton
-                            onAccessRequest={handleDataDocAccessRequest}
-                        />
-                    );
-                } else if (exceptionMessage === 'DOC_DNE') {
-                    errorTitle = 'Invalid DataDoc';
-                    errorMessage = 'This DataDoc does not exist.';
-                } else {
-                    errorMessage = exceptionMessage;
-                }
-            }
+    if (errorObj.response.data) {
+        // failed due to api exception
+        const exceptionMessage = errorObj.response.data.error;
+        if (exceptionMessage === 'CANNOT_READ_DATADOC') {
+            errorTitle = 'Access Denied';
+            errorMessage = 'You cannot read this DataDoc.';
+            errorContent = (
+                <AccessRequestButton
+                    onAccessRequest={handleDataDocAccessRequest}
+                />
+            );
+        } else if (exceptionMessage === 'DOC_DNE') {
+            errorTitle = 'Invalid DataDoc';
+            errorMessage = 'This DataDoc does not exist.';
+        } else {
+            errorMessage = exceptionMessage;
         }
     }
 
