@@ -49,7 +49,7 @@ import { Title } from 'ui/Title/Title';
 
 import './DataDocQueryCell.scss';
 
-const ON_CHANGE_DEBOUNCE_MS = 250;
+const ON_CHANGE_DEBOUNCE_MS = 1000;
 
 type StateProps = ReturnType<typeof mapStateToProps>;
 type DispatchProps = ReturnType<typeof mapDispatchToProps>;
@@ -121,6 +121,7 @@ class DataDocQueryCellComponent extends React.Component<IProps, IState> {
     @bind
     @debounce(ON_CHANGE_DEBOUNCE_MS)
     public onChangeDebounced(...args) {
+        console.log('happening here');
         this.props.onChange.apply(null, args);
     }
 
