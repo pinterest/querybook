@@ -1,5 +1,5 @@
 // Modified from https://github.com/craftzdog/react-codemirror-runmode
-import classNames from 'classnames';
+import clsx from 'clsx';
 import React, { useMemo } from 'react';
 import styled from 'styled-components';
 
@@ -77,7 +77,7 @@ export const CodeHighlight: React.FC<IProps> = ({
         .split(' ')
         .map((subtheme) => `${prefix}s-${subtheme}`)
         .join(' ');
-    const wrapperClassName = classNames({
+    const wrapperClassName = clsx({
         CodeHighlight: true,
         [themeClassName]: true,
         CodeMirror: true,

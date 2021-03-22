@@ -1,4 +1,4 @@
-import classNames from 'classnames';
+import clsx from 'clsx';
 import React from 'react';
 import toast from 'react-hot-toast';
 import { titleize, sleep, copy } from 'lib/utils';
@@ -235,7 +235,7 @@ export const DataDocCellControl: React.FunctionComponent<IProps> = ({
 
     return (
         <div
-            className={classNames({
+            className={clsx({
                 'block-crud-buttons': true,
                 'flex-center': true,
                 active,

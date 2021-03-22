@@ -1,5 +1,5 @@
 import React from 'react';
-import classNames from 'classnames';
+import clsx from 'clsx';
 import './Select.scss';
 
 export const DESELECT_VALUE = '';
@@ -46,14 +46,14 @@ export const Select: React.FunctionComponent<ISelectProps> = ({
         </select>
     );
 
-    const wrapperClassName = classNames({
+    const wrapperClassName = clsx({
         Select: true,
         'Select-transparent': transparent,
         'Select-full-width': fullWidth,
         [className]: Boolean(className),
     });
 
-    const controlClassName = classNames({
+    const controlClassName = clsx({
         control: true,
     });
 

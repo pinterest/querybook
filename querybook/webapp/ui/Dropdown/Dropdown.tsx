@@ -1,4 +1,4 @@
-import classNames from 'classnames';
+import clsx from 'clsx';
 import React from 'react';
 
 import { IconButton } from 'ui/Button/IconButton';
@@ -88,7 +88,7 @@ export const Dropdown: React.FunctionComponent<IProps> = ({
 
     const customFormatClass = customButtonRenderer ? ' custom-format ' : '';
 
-    const combinedClassName = classNames({
+    const combinedClassName = clsx({
         Dropdown: true,
         [className]: className,
         [customFormatClass]: true,

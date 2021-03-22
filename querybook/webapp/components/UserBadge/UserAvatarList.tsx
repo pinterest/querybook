@@ -1,4 +1,4 @@
-import classNames from 'classnames';
+import clsx from 'clsx';
 import React from 'react';
 
 import { IUserAvatarProps, UserAvatar } from './UserAvatar';
@@ -26,7 +26,7 @@ export const UserAvatarList: React.FC<IUserAvatarListProps> = ({
                 key={userAvatarProps.uid}
             >
                 <div
-                    className={classNames({
+                    className={clsx({
                         'UserAvatarList-user': true,
                     })}
                     aria-label={tooltip}

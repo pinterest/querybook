@@ -1,5 +1,5 @@
 import * as React from 'react';
-import classNames from 'classnames';
+import clsx from 'clsx';
 
 import { titleize } from 'lib/utils';
 
@@ -15,7 +15,7 @@ export const KeyContentDisplay: React.FunctionComponent<IProps> = ({
     children,
     rightAlign,
 }) => {
-    const keyContentDisplayClassName = classNames({
+    const keyContentDisplayClassName = clsx({
         'KeyContentDisplay-content': true,
         'right-align': rightAlign,
     });

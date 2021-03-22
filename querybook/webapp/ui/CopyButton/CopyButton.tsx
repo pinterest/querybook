@@ -1,4 +1,4 @@
-import classNames from 'classnames';
+import clsx from 'clsx';
 import React from 'react';
 
 import { TooltipDirection } from 'const/tooltip';
@@ -38,7 +38,7 @@ export const CopyButton: React.FunctionComponent<ICopyButtonProps> = ({
     const Button = getButtonComponentByType(type);
     return (
         <Button
-            className={classNames({
+            className={clsx({
                 CopyButton: true,
                 [className]: className,
             })}

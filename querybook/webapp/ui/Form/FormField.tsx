@@ -1,5 +1,5 @@
 import React from 'react';
-import classNames from 'classnames';
+import clsx from 'clsx';
 
 import { InfoButton } from 'ui/Button/InfoButton';
 
@@ -72,7 +72,7 @@ export const FormField: React.FunctionComponent<IFormFieldProps> = ({
 
     return (
         <div
-            className={classNames({
+            className={clsx({
                 FormField: true,
                 'FormField-stacked': stacked,
             })}

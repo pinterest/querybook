@@ -1,4 +1,4 @@
-import classNames from 'classnames';
+import clsx from 'clsx';
 import React, { useEffect, useState, useCallback, useMemo } from 'react';
 import { useDrop } from 'react-dnd';
 import toast from 'react-hot-toast';
@@ -323,7 +323,7 @@ const NavigatorBoardView: React.FunctionComponent<{
 
     return (
         <div
-            className={classNames({
+            className={clsx({
                 NavigatorBoardView: true,
                 'dragged-over': isOver,
             })}
@@ -464,7 +464,7 @@ const BoardExpandableList: React.FunctionComponent<{
                 return (
                     <Level key={key} className="board-item-list-row">
                         <ListLink
-                            className={classNames({
+                            className={clsx({
                                 'flex1 pr8': true,
                                 selected,
                             })}

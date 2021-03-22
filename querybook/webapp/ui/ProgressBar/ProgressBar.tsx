@@ -1,5 +1,5 @@
 import React from 'react';
-import classNames from 'classnames';
+import clsx from 'clsx';
 
 import './ProgressBar.scss';
 
@@ -27,7 +27,7 @@ export const ProgressBar: React.FunctionComponent<IProgressBarProps> = ({
     showValue = false,
 }) => (
     <div
-        className={classNames({
+        className={clsx({
             ProgressBar: true,
             'flex-row': true,
             small: isSmall,

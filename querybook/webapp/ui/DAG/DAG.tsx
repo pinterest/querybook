@@ -1,7 +1,7 @@
 import React from 'react';
 import * as d3 from 'd3';
 import * as DagreD3 from 'dagre-d3';
-import classNames from 'classnames';
+import clsx from 'clsx';
 import { uniqueId, debounce } from 'lodash';
 
 import './DAG.scss';
@@ -161,7 +161,7 @@ export const DAG: React.FunctionComponent<IProps> = ({
     return (
         <div
             id={graphId}
-            className={classNames({
+            className={clsx({
                 DAG: true,
                 [className]: className,
             })}

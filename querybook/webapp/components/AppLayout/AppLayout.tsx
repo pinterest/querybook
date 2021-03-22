@@ -1,5 +1,5 @@
 import React from 'react';
-import classNames from 'classnames';
+import clsx from 'clsx';
 
 import { Announcements } from 'components/Announcements/Announcements';
 import { SessionExpirationNotice } from 'components/SessionExpirationNotice/SessionExpirationNotice';
@@ -12,7 +12,7 @@ import './AppLayout.scss';
 
 export const AppLayout: React.FunctionComponent = (props) => {
     const [appBlurred] = useGlobalState('appBlurred', false);
-    const appLayoutClassName = classNames({
+    const appLayoutClassName = clsx({
         AppLayout: true,
         'AppLayout-blurred': appBlurred,
     });

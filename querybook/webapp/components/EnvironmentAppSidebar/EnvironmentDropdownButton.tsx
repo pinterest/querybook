@@ -1,5 +1,5 @@
 import React from 'react';
-import classNames from 'classnames';
+import clsx from 'clsx';
 import { useSelector } from 'react-redux';
 
 import { TooltipDirection } from 'const/tooltip';
@@ -33,7 +33,7 @@ export const EnvironmentDropdownButton: React.FunctionComponent<{
         return {
             name: (
                 <span
-                    className={classNames({
+                    className={clsx({
                         'environment-name': true,
                         'environment-disabled': !accessible,
                     })}

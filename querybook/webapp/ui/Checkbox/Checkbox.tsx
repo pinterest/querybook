@@ -1,5 +1,5 @@
 import React from 'react';
-import classNames from 'classnames';
+import clsx from 'clsx';
 import './Checkbox.scss';
 
 export interface ICheckboxProps {
@@ -20,7 +20,7 @@ export const Checkbox: React.FunctionComponent<ICheckboxProps> = ({
     onChange,
     children,
 }) => {
-    const checkboxClass = classNames({
+    const checkboxClass = clsx({
         [className]: Boolean(className),
         checked: value,
     });

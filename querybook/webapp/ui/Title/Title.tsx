@@ -1,5 +1,5 @@
 import React from 'react';
-import * as classNames from 'classnames';
+import clsx from 'clsx';
 import styled from 'styled-components';
 import { numFontSizeToString } from 'const/font';
 
@@ -57,7 +57,7 @@ export const Title: React.FunctionComponent<ITitleProps> = ({
     tooltip,
     ...elementProps
 }) => {
-    const titleClassName = classNames({
+    const titleClassName = clsx({
         Title: true,
         Subtitle: subtitle,
         [className]: Boolean(className),

@@ -1,4 +1,4 @@
-import classNames from 'classnames';
+import clsx from 'clsx';
 import React, { useState, useCallback, useMemo, useRef } from 'react';
 
 import { IColumnTransformer } from 'lib/query-result/types';
@@ -55,7 +55,7 @@ export const StatementResultTableColumn: React.FC<IStatementResultTableColumnPro
             </span>
             <div className="flex-row">
                 <IconButton
-                    className={classNames({
+                    className={clsx({
                         'column-button': true,
                         'expand-column-button': true,
                         'hidden-button': !isExpanded,
@@ -154,7 +154,7 @@ const ColumnInfoDropdownButton: React.FC<IColumnInfoDropdownButtonProps> = ({
             {getStatusIconsDOM()}
             <IconButton
                 ref={selfRef}
-                className={classNames({
+                className={clsx({
                     'column-button': true,
                     'hidden-button': !showPopover,
                 })}
