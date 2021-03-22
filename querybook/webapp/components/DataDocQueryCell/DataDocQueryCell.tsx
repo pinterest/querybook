@@ -25,6 +25,7 @@ import {
     queryEngineByIdEnvSelector,
 } from 'redux/queryEngine/selector';
 import { IStoreState, Dispatch } from 'redux/store/types';
+import { ISelectedRange } from './common';
 
 import { DataDocQueryExecutions } from 'components/DataDocQueryExecutions/DataDocQueryExecutions';
 import { QueryEditor } from 'components/QueryEditor/QueryEditor';
@@ -35,21 +36,20 @@ import {
     QueryEngineSelector,
 } from 'components/QueryRunButton/QueryRunButton';
 import { BoundQueryEditor } from 'components/QueryEditor/BoundQueryEditor';
+import { ErrorQueryCell } from './ErrorQueryCell';
 
 import { Button, TextButton } from 'ui/Button/Button';
+import { CodeHighlight } from 'ui/CodeHighlight/CodeHighlight';
 import { Dropdown } from 'ui/Dropdown/Dropdown';
 import { Icon } from 'ui/Icon/Icon';
 import { ListMenu, IListMenuItem } from 'ui/Menu/ListMenu';
 import { Modal } from 'ui/Modal/Modal';
+import { ResizableTextArea } from 'ui/ResizableTextArea/ResizableTextArea';
 import { Title } from 'ui/Title/Title';
 
-import { ResizableTextArea } from 'ui/ResizableTextArea/ResizableTextArea';
-import { ISelectedRange } from './common';
 import './DataDocQueryCell.scss';
-import { ErrorQueryCell } from './ErrorQueryCell';
-import { CodeHighlight } from 'ui/CodeHighlight/CodeHighlight';
 
-const ON_CHANGE_DEBOUNCE_MS = 250;
+const ON_CHANGE_DEBOUNCE_MS = 1000;
 
 type StateProps = ReturnType<typeof mapStateToProps>;
 type DispatchProps = ReturnType<typeof mapDispatchToProps>;

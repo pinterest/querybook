@@ -35,7 +35,7 @@ export const DataDocCellWrapper: React.FunctionComponent<IProps> = ({
             placeholder={<Loading height={placeholderHeight} />}
             throttle={500}
         >
-            <>{children}</>
+            {children}
         </ReactLazyLoad>
     );
     const anchorName = getAnchorNameForCell(cellKey);
