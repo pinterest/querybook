@@ -289,9 +289,14 @@ class BaseMetastoreLoader(metaclass=ABCMeta):
         pass
 
     def _get_parallelization_setting(self):
-        """Override this to have different parallelism
-           Currently, calling the loader would use 10 threads with each
-           thread loading at least 50 tables
+        """Override this to have different parallelism.
+
+           The num_threads determines the maximum number of threads
+           that will be used. The min_batch_size determines the minimum
+           number of tables each threads will process.
+
+           For example, if you have num_threads at 2 and min_batch_size at 100.
+           Then only 1 thread would be used unless you process more than 100 tables.
 
         Returns:
             dict: 'num_threads' | 'min_batch_size' -> int
