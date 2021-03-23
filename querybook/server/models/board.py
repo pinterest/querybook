@@ -2,11 +2,7 @@ import sqlalchemy as sql
 from sqlalchemy.orm import relationship, backref
 
 from app import db
-from const.db import (
-    name_length,
-    now,
-    description_length,
-)
+from const.db import name_length, now, mediumtext_length
 from lib.sqlalchemy import CRUDMixin
 
 Base = db.Base
@@ -22,7 +18,7 @@ class Board(CRUDMixin, Base):
     deleted_at = sql.Column(sql.DateTime)
 
     name = sql.Column(sql.String(length=name_length), nullable=False)
-    description = sql.Column(sql.String(length=description_length))
+    description = sql.Column(sql.Text(length=mediumtext_length))
     public = sql.Column(sql.Boolean, default=True)
     board_type = sql.Column(sql.String(length=name_length), default="")
 
@@ -87,6 +83,7 @@ class BoardItem(CRUDMixin, Base):
     )
     item_order = sql.Column(sql.Integer)
     created_at = sql.Column(sql.DateTime, default=now)
+    description = sql.Column(sql.Text(length=mediumtext_length))
 
     board = relationship(
         "Board",
