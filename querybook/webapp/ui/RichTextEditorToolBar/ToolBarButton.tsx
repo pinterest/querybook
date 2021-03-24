@@ -1,7 +1,7 @@
 import React from 'react';
 import styled from 'styled-components';
 
-const StyledButton = styled.button`
+const StyledButton = styled.span`
     background-color: transparent;
     margin: 0px;
     color: var(--text-color);

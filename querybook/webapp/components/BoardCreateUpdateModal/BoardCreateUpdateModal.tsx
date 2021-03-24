@@ -2,8 +2,10 @@ import React, { useCallback } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 import * as Yup from 'yup';
 import { Formik, Form } from 'formik';
+import { ContentState } from 'draft-js';
 
 import { sendConfirm } from 'lib/querybookUI';
+import { convertContentStateToHTML } from 'lib/richtext/serialize';
 import { createBoard, updateBoard, deleteBoard } from 'redux/board/action';
 import { IStoreState, Dispatch } from 'redux/store/types';
 import { IBoardRaw } from 'const/board';
@@ -64,6 +66,9 @@ export const BoardCreateUpdateForm: React.FunctionComponent<IBoardCreateUpdateFo
             validateOnMount={true}
             validationSchema={boardFormSchema}
             onSubmit={async (values) => {
+                values.description = convertContentStateToHTML(
+                    values.description as ContentState
+                );
                 const action = isCreateForm
                     ? createBoard(
                           values.name,
@@ -83,11 +88,7 @@ export const BoardCreateUpdateForm: React.FunctionComponent<IBoardCreateUpdateFo
                 // const publicField = <SimpleField name="public" type="toggle" />;
 
                 const descriptionField = (
-                    <SimpleField
-                        name="description"
-                        type="textarea"
-                        placeholder="Describe the use case of your list here"
-                    />
+                    <SimpleField name="description" type="richtext" />
                 );
 
                 return (
