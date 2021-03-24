@@ -282,7 +282,7 @@ const ScheduleExportsForm: React.FC<{
     const name = 'kwargs.exports';
     const { values, setFieldValue } = useFormikContext<IScheduleFormValues>();
     const queryCellOptions = useSelector((state: IStoreState) =>
-        queryCellSelector(state, { docId })
+        queryCellSelector(state, docId)
     );
     const exportsValues = values.kwargs.exports ?? [];
 
