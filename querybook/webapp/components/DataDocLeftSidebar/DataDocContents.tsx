@@ -11,10 +11,10 @@ import './DataDocContents.scss';
 
 const CELL_TEXT_LEN = 50;
 
-export const DataDocContents: React.FunctionComponent<{
+export const DataDocContents: React.FC<{
     docId: number;
     cells: IDataCell[];
-}> = ({ cells, docId }) => {
+}> = React.memo(({ cells, docId }) => {
     const selfRef = useRef<HTMLDivElement>(null);
     const cellIdToIndex = useMemo(() => {
         const ret = {};
@@ -110,4 +110,4 @@ export const DataDocContents: React.FunctionComponent<{
             />
         </div>
     );
-};
+});
