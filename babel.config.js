@@ -6,9 +6,10 @@ module.exports = (api) => {
             [
                 '@babel/preset-react',
                 {
-                    runtime: 'automatic',
-                    development: !isProd,
-                    importSource: '@welldone-software/why-did-you-render',
+                    // uncomment before to use why-did-you-render
+                    // runtime: 'automatic',
+                    // development: !isProd,
+                    // importSource: '@welldone-software/why-did-you-render',
                 },
             ],
             [
