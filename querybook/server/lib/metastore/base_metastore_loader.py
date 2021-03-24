@@ -137,31 +137,27 @@ class BaseMetastoreLoader(metaclass=ABCMeta):
                 schema_tables += [
                     (schema_id, schema_name, table_name) for table_name in table_names
                 ]
-        self._create_tables_batched(schema_tables, num_thread=10)
+        self._create_tables_batched(schema_tables)
 
-    def _create_tables_batched(self, schema_tables, num_thread, min_batch_size=50):
+    def _create_tables_batched(self, schema_tables):
         """Create greenlets for create table batches
 
         Arguments:
             schema_tables {List[schema_id, schema_name, table_name]} -- List of configs to load table
-            num_thread {[type]} -- [description]
-
-        Keyword Arguments:
-            min_batch_size {int} -- [description] (default: {200})
         """
-
-        assert num_thread >= 1
-        batch_size = max(
-            int(math.ceil(len(schema_tables) / num_thread)), min_batch_size
-        )
-
+        batch_size = self._get_batch_size(len(schema_tables))
         greenlets = []
-        for thread_num in range(num_thread):
+        thread_num = 0
+        while True:
             table_batch = schema_tables[
                 (thread_num * batch_size) : ((thread_num + 1) * batch_size)
             ]
+            thread_num += 1
+
             if len(table_batch):
                 greenlets.append(gevent.spawn(self._create_tables, table_batch))
+            else:
+                break
         gevent.joinall(greenlets)
 
     def _create_tables(self, schema_tables):
@@ -239,6 +235,14 @@ class BaseMetastoreLoader(metaclass=ABCMeta):
             if self.acl_checker.is_table_valid(schema_name, table_name)
         ]
 
+    def _get_batch_size(self, num_tables: int):
+        parallelization_setting = self._get_parallelization_setting()
+        num_threads = parallelization_setting["num_threads"]
+        min_batch_size = parallelization_setting["min_batch_size"]
+
+        batch_size = max(int(math.ceil(num_tables / num_threads)), min_batch_size)
+        return batch_size
+
     @abstractmethod
     def get_all_schema_names(self) -> List[str]:
         """Override this to get a list of all schema names
@@ -283,6 +287,21 @@ class BaseMetastoreLoader(metaclass=ABCMeta):
             AllFormField -- The form field template
         """
         pass
+
+    def _get_parallelization_setting(self):
+        """Override this to have different parallelism.
+
+           The num_threads determines the maximum number of threads
+           that will be used. The min_batch_size determines the minimum
+           number of tables each threads will process.
+
+           For example, if you have num_threads at 2 and min_batch_size at 100.
+           Then only 1 thread would be used unless you process more than 100 tables.
+
+        Returns:
+            dict: 'num_threads' | 'min_batch_size' -> int
+        """
+        return {"num_threads": 10, "min_batch_size": 50}
 
     @classmethod
     def serialize_loader_class(cls):
