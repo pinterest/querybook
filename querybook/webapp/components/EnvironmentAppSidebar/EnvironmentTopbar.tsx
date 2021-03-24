@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import { useSelector } from 'react-redux';
 import clsx from 'clsx';
 
@@ -16,7 +16,7 @@ import { Link } from 'ui/Link/Link';
 
 const NUMBER_OF_ICONS_TO_SHOW = 5;
 
-export const EnvironmentTopbar: React.FunctionComponent = () => {
+export const EnvironmentTopbar: React.FC = React.memo(() => {
     const environments = useSelector(orderedEnvironmentsSelector);
     const currentEnvironment = useSelector(currentEnvironmentSelector);
     const userEnvironmentNames = useSelector(userEnvironmentNamesSelector);
@@ -24,7 +24,6 @@ export const EnvironmentTopbar: React.FunctionComponent = () => {
     if (!environments || environments.length < 2) {
         return null;
     }
-
     const environmentIcons = environments
         .slice(0, NUMBER_OF_ICONS_TO_SHOW)
         .map((environment) => {
@@ -73,4 +72,4 @@ export const EnvironmentTopbar: React.FunctionComponent = () => {
             </div>
         </Level>
     );
-};
+});

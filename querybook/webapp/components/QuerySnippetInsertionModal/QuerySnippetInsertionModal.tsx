@@ -34,7 +34,7 @@ interface IQuerySnippetInsertionModalState {
 
 const SNIPPET_MODES = ['Insert', 'Edit'];
 
-class QuerySnippetInsertionModalComponent extends React.Component<
+class QuerySnippetInsertionModalComponent extends React.PureComponent<
     IQuerySnippetInsertionModalProps,
     IQuerySnippetInsertionModalState
 > {

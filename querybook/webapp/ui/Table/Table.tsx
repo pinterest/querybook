@@ -31,7 +31,7 @@ export interface ITableProps extends Partial<TableProps> {
     sortCell?: (columnIdx: number, cellA: any, cellB: any) => -1 | 0 | 1;
 }
 
-export class Table extends React.Component<ITableProps> {
+export class Table extends React.PureComponent<ITableProps> {
     public static defaultProps = {
         showHeader: true,
         showAllRows: false,

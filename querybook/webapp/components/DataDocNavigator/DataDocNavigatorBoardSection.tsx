@@ -443,9 +443,7 @@ const BoardExpandableList: React.FunctionComponent<{
             canDrop={canDrop}
             itemType={BoardDraggableType}
             items={processedItems}
-            onMove={(fromIndex, toIndex) => {
-                onMoveBoardItem(fromIndex, toIndex);
-            }}
+            onMove={onMoveBoardItem}
             renderItem={(idx, item) => {
                 const {
                     key,

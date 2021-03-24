@@ -25,7 +25,7 @@ interface IState {
     showViewsList: boolean;
 }
 
-class DataDocViewersBadgeComponent extends React.Component<IProps, IState> {
+class DataDocViewersBadgeComponent extends React.PureComponent<IProps, IState> {
     public static defaultProps = {
         numberBadges: 4,
     };
@@ -156,21 +156,24 @@ class DataDocViewersBadgeComponent extends React.Component<IProps, IState> {
 function mapStateToProps(state: IStoreState, ownProps: IOwnProps) {
     const viewerInfos = dataDocSelectors.dataDocViewerInfosSelector(
         state,
-        ownProps
+        ownProps.docId
     );
     return {
         viewerInfos,
         editorsByUid: dataDocSelectors.dataDocEditorByUidSelector(
             state,
-            ownProps
+            ownProps.docId
         ),
         accessRequestsByUid: dataDocSelectors.currentDataDocAccessRequestsByUidSelector(
             state,
-            ownProps
+            ownProps.docId
         ),
-        dataDoc: dataDocSelectors.dataDocSelector(state, ownProps),
+        dataDoc: dataDocSelectors.dataDocSelector(state, ownProps.docId),
         userInfoById: state.user.userInfoById,
-        readonly: !dataDocSelectors.canCurrentUserEditSelector(state, ownProps),
+        readonly: !dataDocSelectors.canCurrentUserEditSelector(
+            state,
+            ownProps.docId
+        ),
         ownerId: state.user.myUserInfo.uid,
     };
 }

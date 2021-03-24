@@ -12,7 +12,7 @@ import {
 
 export type ButtonProps = React.HTMLAttributes<HTMLSpanElement> &
     ISharedButtonProps & {
-        icon?: string | React.ComponentType<IIconProps>;
+        icon?: string | React.PureComponentType<IIconProps>;
         title?: string;
         className?: string;
 
@@ -109,7 +109,7 @@ export type ButtonType = 'soft' | 'text' | 'default';
 
 const buttonComponentByType: Record<
     ButtonType,
-    React.ComponentType<ButtonProps>
+    React.PureComponentType<ButtonProps>
 > = {
     soft: SoftButton,
     text: TextButton,

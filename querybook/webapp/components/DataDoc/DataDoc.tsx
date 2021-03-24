@@ -82,7 +82,7 @@ interface IState {
     showSearchAndReplace: boolean;
 }
 
-class DataDocComponent extends React.Component<IProps, IState> {
+class DataDocComponent extends React.PureComponent<IProps, IState> {
     public readonly state = {
         errorObj: null,
         focusedCellIndex: null,
@@ -157,7 +157,7 @@ class DataDocComponent extends React.Component<IProps, IState> {
     }
 
     @bind
-    @debounce(200)
+    @debounce(500)
     public updateDocCursor(index: number) {
         const {
             docId,
@@ -409,30 +409,42 @@ class DataDocComponent extends React.Component<IProps, IState> {
     }
 
     @bind
+    public onQuerycellSelectExecution(cellId: number, executionId: number) {
+        this.setState(
+            ({ cellIdToExecutionId: oldCellIdToExecutionId }) => ({
+                cellIdToExecutionId: {
+                    ...oldCellIdToExecutionId,
+                    [cellId]: executionId,
+                },
+            }),
+            () => {
+                this.updateDocUrl(cellId, executionId);
+            }
+        );
+    }
+
+    @decorate(memoizeOne)
+    public _getCellFocusProps() {
+        return {
+            onUpKeyPressed: (index: number) => this.focusCellAt(index - 1),
+            onDownKeyPressed: (index: number) => this.focusCellAt(index + 1),
+            onFocus: this.onCellFocus,
+            onBlur: this.onCellBlur,
+        };
+    }
+
+    @bind
     @decorate(memoizeOne)
     public _getDataDocContextState(
         isEditable: boolean,
         defaultCollapse: boolean,
-        focusedCellIndex: number,
         fullScreenCellIndex: number,
         highlightCellIndex: number,
         cellIdToExecutionId: Record<number, number>
     ): IDataDocContextType {
         return {
             cellIdToExecutionId,
-            onQueryCellSelectExecution: (cellId, executionId) => {
-                this.setState(
-                    ({ cellIdToExecutionId: oldCellIdToExecutionId }) => ({
-                        cellIdToExecutionId: {
-                            ...oldCellIdToExecutionId,
-                            [cellId]: executionId,
-                        },
-                    }),
-                    () => {
-                        this.updateDocUrl(cellId, executionId);
-                    }
-                );
-            },
+            onQueryCellSelectExecution: this.onQuerycellSelectExecution,
 
             insertCellAt: this.insertCellAt,
             updateCell: this.updateCell,
@@ -441,17 +453,10 @@ class DataDocComponent extends React.Component<IProps, IState> {
             fullScreenCellAt: this.fullScreenCellAt,
 
             defaultCollapse,
-            focusedCellIndex,
             highlightCellIndex,
             fullScreenCellIndex,
 
-            cellFocus: {
-                onUpKeyPressed: (index: number) => this.focusCellAt(index - 1),
-                onDownKeyPressed: (index: number) =>
-                    this.focusCellAt(index + 1),
-                onFocus: this.onCellFocus,
-                onBlur: this.onCellBlur,
-            },
+            cellFocus: this._getCellFocusProps(),
             isEditable,
         };
     }
@@ -461,7 +466,6 @@ class DataDocComponent extends React.Component<IProps, IState> {
         return this._getDataDocContextState(
             this.props.isEditable,
             this.state.defaultCollapseAllCells,
-            this.state.focusedCellIndex,
             this.state.fullScreenCellIndex,
             this.state.highlightCellIndex,
             this.state.cellIdToExecutionId
@@ -515,6 +519,7 @@ class DataDocComponent extends React.Component<IProps, IState> {
         queryIndexInDoc: number
     ) {
         const { dataDoc, isEditable } = this.props;
+        const { focusedCellIndex } = this.state;
 
         const insertCellAtBinded = this.insertCellAt;
 
@@ -545,11 +550,14 @@ class DataDocComponent extends React.Component<IProps, IState> {
             return (
                 <DataDocCell
                     key={cell.id}
-                    dataDoc={dataDoc}
+                    docId={dataDoc.id}
+                    numberOfCells={dataDoc.dataDocCells.length}
+                    templatedVariables={dataDoc.meta}
                     cell={cell}
                     index={index}
                     queryIndexInDoc={queryIndexInDoc}
                     lastQueryCellId={lastQueryCellId}
+                    isFocused={focusedCellIndex === index}
                 />
             );
         }
@@ -772,18 +780,17 @@ class DataDocComponent extends React.Component<IProps, IState> {
 
 function mapStateToProps(state: IStoreState, ownProps: IOwnProps) {
     const userInfo = myUserInfoSelector(state);
-    const dataDoc = dataDocSelectors.dataDocSelector(state, ownProps);
+    const dataDoc = dataDocSelectors.dataDocSelector(state, ownProps.docId);
     const dataDocSavePromise =
         state.dataDoc.dataDocSavePromiseById[ownProps.docId];
 
     const isEditable = dataDocSelectors.canCurrentUserEditSelector(
         state,
-        ownProps
+        ownProps.docId
     );
-    const userIds = dataDocSelectors.dataDocViewerIdsSelector(state, ownProps);
-    const cellIdtoUid = dataDocSelectors.dataDocCursorByCellIdSelector(
+    const userIds = dataDocSelectors.dataDocViewerIdsSelector(
         state,
-        ownProps
+        ownProps.docId
     );
 
     return {
@@ -795,7 +802,6 @@ function mapStateToProps(state: IStoreState, ownProps: IOwnProps) {
         isEditable,
         userIds,
         environment: currentEnvironmentSelector(state),
-        cellIdtoUid,
     };
 }
 

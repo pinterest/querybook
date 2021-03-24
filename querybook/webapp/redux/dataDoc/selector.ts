@@ -86,10 +86,10 @@ export const recentDataDocsSelector = createSelector(
         }, [])
 );
 
-const currentDataDocSelector = (state: IStoreState, props: { docId }) =>
-    state.dataDoc.dataDocById[props.docId];
+const currentDataDocSelector = (state: IStoreState, docId: number) =>
+    state.dataDoc.dataDocById[docId];
 
-export const dataDocCellsSelector = createSelector(
+const dataDocCellsSelector = createSelector(
     currentDataDocSelector,
     dataDocCellByIdSelector,
     (dataDoc, dataDocCellById) =>
@@ -141,25 +141,26 @@ export const dataDocViewerIdsSelector = createSelector(
             : []
 );
 
-export const dataDocCursorByCellIdSelector = createSelector(
-    currentDataDocSelector,
-    sessionByDocIdSelector,
-    (dataDoc, sessionByDocId) =>
-        dataDoc && dataDoc.id in sessionByDocId
-            ? (Object.entries(sessionByDocId[dataDoc.id]).reduce(
-                  (hash, [sid, { cellId, uid }]) => {
-                      if (cellId != null) {
-                          hash[cellId] = hash[cellId] || [];
-                          if (!hash[cellId].includes(uid)) {
-                              hash[cellId].push(uid);
+export const makeDataDocCursorByCellIdSelector = () =>
+    createSelector(
+        currentDataDocSelector,
+        sessionByDocIdSelector,
+        (dataDoc, sessionByDocId) =>
+            dataDoc && dataDoc.id in sessionByDocId
+                ? (Object.entries(sessionByDocId[dataDoc.id]).reduce(
+                      (hash, [sid, { cellId, uid }]) => {
+                          if (cellId != null) {
+                              hash[cellId] = hash[cellId] || [];
+                              if (!hash[cellId].includes(uid)) {
+                                  hash[cellId].push(uid);
+                              }
                           }
-                      }
-                      return hash;
-                  },
-                  {}
-              ) as Record<number, number[]>)
-            : {}
-);
+                          return hash;
+                      },
+                      {}
+                  ) as Record<number, number[]>)
+                : {}
+    );
 
 export const dataDocViewerInfosSelector = createSelector(
     dataDocSelector,

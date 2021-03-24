@@ -3,7 +3,14 @@ module.exports = (api) => {
 
     return {
         presets: [
-            '@babel/preset-react',
+            [
+                '@babel/preset-react',
+                {
+                    runtime: 'automatic',
+                    development: !isProd,
+                    importSource: '@welldone-software/why-did-you-render',
+                },
+            ],
             [
                 '@babel/preset-typescript',
                 {

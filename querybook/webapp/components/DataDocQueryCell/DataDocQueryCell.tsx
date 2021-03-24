@@ -92,7 +92,7 @@ interface IState {
     showQuerySnippetModal: boolean;
 }
 
-class DataDocQueryCellComponent extends React.Component<IProps, IState> {
+class DataDocQueryCellComponent extends React.PureComponent<IProps, IState> {
     private queryEditorRef = React.createRef<QueryEditor>();
     private runButtonRef = React.createRef<IQueryRunButtonHandles>();
     private keyMap = {

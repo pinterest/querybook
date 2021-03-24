@@ -18,51 +18,55 @@ export interface IDataDocGridItemProps {
     onRemove?: (dataDoc: IDataDoc) => any;
 }
 
-export const DataDocGridItem: React.FunctionComponent<IDataDocGridItemProps> = ({
-    dataDoc,
-    className,
-    url,
-    onRemove,
-}) => {
-    const [, drag] = useDrag({
-        item: {
-            type: DataDocDraggableType,
-            itemInfo: dataDoc,
-        },
-    });
+export const DataDocGridItem: React.FunctionComponent<IDataDocGridItemProps> = React.memo(
+    ({ dataDoc, className, url, onRemove }) => {
+        const [, drag] = useDrag({
+            item: {
+                type: DataDocDraggableType,
+                itemInfo: dataDoc,
+            },
+        });
 
-    const handleClick = React.useCallback(() => {
-        history.push(url);
-    }, [url]);
+        const handleClick = React.useCallback(() => {
+            history.push(url);
+        }, [url]);
 
-    const { title = '', public: publicDataDoc } = dataDoc;
-    const privateIcon = !publicDataDoc && 'lock';
+        const handleRemoveDataDoc = React.useCallback(
+            (event: React.MouseEvent) => {
+                if (onRemove) {
+                    event.stopPropagation();
+                    event.preventDefault();
+                    onRemove(dataDoc);
+                }
+            },
+            [onRemove, dataDoc]
+        );
 
-    return (
-        <div ref={drag} className="DataDocGridItem">
-            <ListLink
-                className={className}
-                onClick={handleClick}
-                to={url}
-                icon={privateIcon}
-                title={title}
-                placeholder="Untitled"
-                isRow
-            >
-                {onRemove && (
-                    <IconButton
-                        className="delete-grid-item-button"
-                        noPadding
-                        size={16}
-                        icon="x"
-                        onClick={(event) => {
-                            event.stopPropagation();
-                            event.preventDefault();
-                            onRemove(dataDoc);
-                        }}
-                    />
-                )}
-            </ListLink>
-        </div>
-    );
-};
+        const { title = '', public: publicDataDoc } = dataDoc;
+        const privateIcon = !publicDataDoc && 'lock';
+
+        return (
+            <div ref={drag} className="DataDocGridItem">
+                <ListLink
+                    className={className}
+                    onClick={handleClick}
+                    to={url}
+                    icon={privateIcon}
+                    title={title}
+                    placeholder="Untitled"
+                    isRow
+                >
+                    {onRemove && (
+                        <IconButton
+                            className="delete-grid-item-button"
+                            noPadding
+                            size={16}
+                            icon="x"
+                            onClick={handleRemoveDataDoc}
+                        />
+                    )}
+                </ListLink>
+            </div>
+        );
+    }
+);

@@ -1,7 +1,7 @@
 import React from 'react';
 
 export function withBoundProps<B extends Partial<P>, P>(
-    Component: React.ComponentType<P>,
+    Component: React.PureComponentType<P>,
     boundProps: B,
     displayName = ''
 ) {

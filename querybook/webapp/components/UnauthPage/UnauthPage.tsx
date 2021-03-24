@@ -28,7 +28,7 @@ const StyledUnauthPage = styled.div`
 `;
 const UNAUTH_TABS = ['Login', 'Signup'];
 
-export class UnauthPage extends React.Component<
+export class UnauthPage extends React.PureComponent<
     IUnauthPageProps,
     IUnauthPageState
 > {
