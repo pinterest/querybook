@@ -17,7 +17,6 @@ export interface IDataDocContextType {
     fullScreenCellAt: (index: number) => void;
 
     defaultCollapse: boolean;
-    focusedCellIndex?: number;
     highlightCellIndex: number;
     fullScreenCellIndex: number;
 

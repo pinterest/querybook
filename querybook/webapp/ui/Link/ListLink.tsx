@@ -14,29 +14,31 @@ interface IProps extends ILinkProps {
     isRow?: boolean;
 }
 
-export const ListLink: React.FunctionComponent<IProps> = ({
-    className,
-    title,
-    icon,
-    isRow,
-    placeholder = 'Untitled',
-    children,
-    ...listProps
-}) => {
-    const mergedClassName = clsx({
-        ListLink: true,
-        [className]: !!className,
-        row: isRow,
-    });
-    return (
-        <Link className={mergedClassName} {...listProps}>
-            {title ? (
-                <span className="ListLinkText">{title}</span>
-            ) : placeholder ? (
-                <span className="ListLinkPlaceholder">{placeholder}</span>
-            ) : null}
-            {icon && <Icon name={icon} />}
-            {children}
-        </Link>
-    );
-};
+export const ListLink: React.FunctionComponent<IProps> = React.memo(
+    ({
+        className,
+        title,
+        icon,
+        isRow,
+        placeholder = 'Untitled',
+        children,
+        ...listProps
+    }) => {
+        const mergedClassName = clsx({
+            ListLink: true,
+            [className]: !!className,
+            row: isRow,
+        });
+        return (
+            <Link className={mergedClassName} {...listProps}>
+                {title ? (
+                    <span className="ListLinkText">{title}</span>
+                ) : placeholder ? (
+                    <span className="ListLinkPlaceholder">{placeholder}</span>
+                ) : null}
+                {icon && <Icon name={icon} />}
+                {children}
+            </Link>
+        );
+    }
+);

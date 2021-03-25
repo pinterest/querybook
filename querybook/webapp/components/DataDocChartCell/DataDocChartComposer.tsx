@@ -138,7 +138,7 @@ const DataDocChartComposerComponent: React.FunctionComponent<
 
     // getting redux state
     const queryCellOptions = useSelector((state: IStoreState) =>
-        queryCellSelector(state, { docId: dataDocId })
+        queryCellSelector(state, dataDocId)
     );
 
     React.useEffect(() => {

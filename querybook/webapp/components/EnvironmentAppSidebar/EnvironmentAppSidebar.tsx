@@ -24,6 +24,11 @@ export const EnvironmentAppSidebar: React.FunctionComponent = () => {
     const [collapsed, setCollapsed] = React.useState(false);
     const [entity, setEntity] = React.useState<Entity>('datadoc');
 
+    const handleEntitySelect = React.useCallback((e: Entity) => {
+        setCollapsed(false);
+        setEntity(e);
+    }, []);
+
     const scrollToCollapseSidebar = React.useCallback(
         (event, direction, elementRef) => {
             if (
@@ -44,7 +49,7 @@ export const EnvironmentAppSidebar: React.FunctionComponent = () => {
         []
     );
 
-    const onCollapseKeyDown = React.useCallback(
+    const handleCollapseKeyDown = React.useCallback(
         (evt) => {
             if (matchKeyPress(evt, 'Cmd-B')) {
                 // command + B
@@ -56,7 +61,7 @@ export const EnvironmentAppSidebar: React.FunctionComponent = () => {
         [collapsed]
     );
 
-    useEvent('keydown', onCollapseKeyDown);
+    useEvent('keydown', handleCollapseKeyDown);
 
     let navigator: React.ReactNode;
     if (!collapsed) {
@@ -116,10 +121,7 @@ export const EnvironmentAppSidebar: React.FunctionComponent = () => {
                 <div className="sidebar-content-main">
                     <EntitySidebar
                         selectedEntity={entity}
-                        onSelectEntity={(e) => {
-                            setCollapsed(false);
-                            setEntity(e);
-                        }}
+                        onSelectEntity={handleEntitySelect}
                     />
                     <div className="sidebar-content-main-navigator">
                         {navigator}

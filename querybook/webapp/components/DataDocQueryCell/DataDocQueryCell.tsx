@@ -92,7 +92,7 @@ interface IState {
     showQuerySnippetModal: boolean;
 }
 
-class DataDocQueryCellComponent extends React.Component<IProps, IState> {
+class DataDocQueryCellComponent extends React.PureComponent<IProps, IState> {
     private queryEditorRef = React.createRef<QueryEditor>();
     private runButtonRef = React.createRef<IQueryRunButtonHandles>();
     private keyMap = {
@@ -680,7 +680,7 @@ class DataDocQueryCellComponent extends React.Component<IProps, IState> {
     }
 }
 
-function mapStateToProps(state: IStoreState, ownProps: IOwnProps) {
+function mapStateToProps(state: IStoreState) {
     const queryEngines = queryEngineSelector(state);
 
     return {
@@ -689,7 +689,7 @@ function mapStateToProps(state: IStoreState, ownProps: IOwnProps) {
     };
 }
 
-function mapDispatchToProps(dispatch: Dispatch, ownProps: IOwnProps) {
+function mapDispatchToProps(dispatch: Dispatch) {
     return {
         fetchDataTableByNameIfNeeded: (schemaName, tableName, metastoreId) =>
             dispatch(

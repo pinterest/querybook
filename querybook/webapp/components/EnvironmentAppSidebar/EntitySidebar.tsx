@@ -23,98 +23,97 @@ interface IEntitySidebarProps {
     onSelectEntity: (entity: Entity) => any;
 }
 
-export const EntitySidebar: React.FunctionComponent<IEntitySidebarProps> = ({
-    selectedEntity,
-    onSelectEntity,
-}) => {
-    const environment = useSelector(currentEnvironmentSelector);
-    const queryMetastores = useSelector(queryMetastoresSelector);
+export const EntitySidebar: React.FunctionComponent<IEntitySidebarProps> = React.memo(
+    ({ selectedEntity, onSelectEntity }) => {
+        const environment = useSelector(currentEnvironmentSelector);
+        const queryMetastores = useSelector(queryMetastoresSelector);
 
-    return (
-        <div className="EntitySidebar">
-            <div className="apps-list flex-column">
-                <Route
-                    render={({ location }) => (
-                        <>
-                            <Link to={`/${environment.name}/`}>
-                                <IconButton
-                                    icon="home"
-                                    tooltip="Home"
-                                    tooltipPos="right"
-                                    active={
-                                        location.pathname ===
-                                        `/${environment.name}/`
-                                    }
-                                />
-                            </Link>
-                            <Divider
-                                marginTop="2px"
-                                marginBottom="2px"
-                                height="1px"
-                                color="transparent"
-                            />
-                            <Link to={`/${environment.name}/adhoc/`}>
-                                <div>
+        return (
+            <div className="EntitySidebar">
+                <div className="apps-list flex-column">
+                    <Route
+                        render={({ location }) => (
+                            <>
+                                <Link to={`/${environment.name}/`}>
                                     <IconButton
-                                        icon="edit"
-                                        tooltip={'Adhoc Query'}
+                                        icon="home"
+                                        tooltip="Home"
                                         tooltipPos="right"
-                                        active={location.pathname.startsWith(
-                                            `/${environment.name}/adhoc/`
-                                        )}
-                                        title="Adhoc"
+                                        active={
+                                            location.pathname ===
+                                            `/${environment.name}/`
+                                        }
                                     />
-                                </div>
-                            </Link>
-                        </>
-                    )}
-                />
-
-                <IconButton
-                    icon="file"
-                    tooltip="DataDocs"
-                    tooltipPos="right"
-                    active={selectedEntity === 'datadoc'}
-                    onClick={() => {
-                        onSelectEntity('datadoc');
-                    }}
-                    title="Docs"
-                />
-                {queryMetastores.length ? (
-                    <IconButton
-                        icon="book"
-                        tooltip="Tables"
-                        tooltipPos="right"
-                        active={selectedEntity === 'table'}
-                        onClick={() => onSelectEntity('table')}
-                        title="Tables"
+                                </Link>
+                                <Divider
+                                    marginTop="2px"
+                                    marginBottom="2px"
+                                    height="1px"
+                                    color="transparent"
+                                />
+                                <Link to={`/${environment.name}/adhoc/`}>
+                                    <div>
+                                        <IconButton
+                                            icon="edit"
+                                            tooltip={'Adhoc Query'}
+                                            tooltipPos="right"
+                                            active={location.pathname.startsWith(
+                                                `/${environment.name}/adhoc/`
+                                            )}
+                                            title="Adhoc"
+                                        />
+                                    </div>
+                                </Link>
+                            </>
+                        )}
                     />
-                ) : null}
-                <IconButton
-                    icon="code"
-                    tooltip="Snippets"
-                    tooltipPos="right"
-                    active={selectedEntity === 'snippet'}
-                    onClick={() => onSelectEntity('snippet')}
-                    title="Snippets"
-                />
-                <QueryExecutionButton
-                    onClick={() => onSelectEntity('execution')}
-                    active={selectedEntity === 'execution'}
-                />
-                <Divider
-                    marginTop="8px"
-                    marginBottom="8px"
-                    height="1px"
-                    color="transparent"
-                />
+
+                    <IconButton
+                        icon="file"
+                        tooltip="DataDocs"
+                        tooltipPos="right"
+                        active={selectedEntity === 'datadoc'}
+                        onClick={() => {
+                            onSelectEntity('datadoc');
+                        }}
+                        title="Docs"
+                    />
+                    {queryMetastores.length ? (
+                        <IconButton
+                            icon="book"
+                            tooltip="Tables"
+                            tooltipPos="right"
+                            active={selectedEntity === 'table'}
+                            onClick={() => onSelectEntity('table')}
+                            title="Tables"
+                        />
+                    ) : null}
+                    <IconButton
+                        icon="code"
+                        tooltip="Snippets"
+                        tooltipPos="right"
+                        active={selectedEntity === 'snippet'}
+                        onClick={() => onSelectEntity('snippet')}
+                        title="Snippets"
+                    />
+                    <QueryExecutionButton
+                        onClick={() => onSelectEntity('execution')}
+                        active={selectedEntity === 'execution'}
+                    />
+                    <Divider
+                        marginTop="8px"
+                        marginBottom="8px"
+                        height="1px"
+                        color="transparent"
+                    />
+                </div>
+                <div className="sidebar-footer flex-column">
+                    <SearchContainer />
+                    <UserMenu />
+                    <QueryEngineStatusButton />
+                    <InfoMenuButton />
+                </div>
             </div>
-            <div className="sidebar-footer flex-column">
-                <SearchContainer />
-                <UserMenu />
-                <QueryEngineStatusButton />
-                <InfoMenuButton />
-            </div>
-        </div>
-    );
-};
+        );
+    }
+);

@@ -66,7 +66,7 @@ export const BoundQueryEditor = React.forwardRef<
                 ...keyMap,
                 ...propKeyMap,
             }),
-            []
+            [keyMap, propKeyMap]
         );
 
         // Function Documentation related props

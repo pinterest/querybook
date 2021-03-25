@@ -3,7 +3,15 @@ module.exports = (api) => {
 
     return {
         presets: [
-            '@babel/preset-react',
+            [
+                '@babel/preset-react',
+                {
+                    // uncomment to use why-did-you-render
+                    // runtime: 'automatic',
+                    // development: !isProd,
+                    // importSource: '@welldone-software/why-did-you-render',
+                },
+            ],
             [
                 '@babel/preset-typescript',
                 {

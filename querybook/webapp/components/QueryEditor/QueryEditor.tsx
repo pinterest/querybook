@@ -1,6 +1,6 @@
 import clsx from 'clsx';
 import { decorate } from 'core-decorators';
-import { find } from 'lodash';
+import { find, isEqual } from 'lodash';
 import { debounce, throttle, bind } from 'lodash-decorators';
 import React from 'react';
 import { Controlled as ReactCodeMirror } from 'react-codemirror2';
@@ -156,7 +156,7 @@ export class QueryEditor extends React.PureComponent<
             language,
             metastoreId,
         } = this.props;
-        // In constructure this.state is not defined
+        // In constructor this.state is not defined
         const { lintingOn = false } = this.state || {};
         return this._createOptions(
             options,

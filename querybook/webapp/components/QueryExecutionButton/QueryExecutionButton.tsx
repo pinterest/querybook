@@ -34,7 +34,10 @@ interface IState {
     hasInitialLoadFinished: boolean;
 }
 
-class QueryExecutionButtonComponent extends React.Component<IProps, IState> {
+class QueryExecutionButtonComponent extends React.PureComponent<
+    IProps,
+    IState
+> {
     public readonly state = {
         hasInitialLoadFinished: false,
         showQueryViewModalForId: null,

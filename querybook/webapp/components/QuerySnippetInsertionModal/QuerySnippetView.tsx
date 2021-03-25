@@ -34,7 +34,7 @@ export interface IQuerySnippetViewState {
     templatedVariables: string[];
 }
 
-export class QuerySnippetView extends React.Component<
+export class QuerySnippetView extends React.PureComponent<
     IQuerySnippetViewProps,
     IQuerySnippetViewState
 > {

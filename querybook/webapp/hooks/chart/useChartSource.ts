@@ -1,8 +1,8 @@
 import React, { useState } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 
+import { useMakeSelector } from 'hooks/redux/useMakeSelector';
 import ds from 'lib/datasource';
-
 import { IStoreState, Dispatch } from 'redux/store/types';
 import { StatementExecutionStatus } from 'const/queryExecution';
 import * as queryExecutionsSelector from 'redux/queryExecutions/selector';
@@ -25,11 +25,9 @@ export function useChartSource(
             cellId
         )
     );
-    const statementIdList = useSelector((state: IStoreState) =>
-        queryExecutionsSelector.queryExecutionStatementExecutionSelector(
-            state,
-            executionId
-        )
+    const statementIdList = useMakeSelector(
+        queryExecutionsSelector.makeQueryExecutionStatementExecutionSelector,
+        executionId
     );
 
     const statementResultData = useSelector(

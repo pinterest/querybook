@@ -1,4 +1,4 @@
-import React, { useMemo, useRef } from 'react';
+import React, { useCallback, useMemo, useRef } from 'react';
 
 import { scrollToCell } from 'lib/data-doc/data-doc-utils';
 import { IDataCell } from 'const/datadoc';
@@ -11,10 +11,10 @@ import './DataDocContents.scss';
 
 const CELL_TEXT_LEN = 50;
 
-export const DataDocContents: React.FunctionComponent<{
+export const DataDocContents: React.FC<{
     docId: number;
     cells: IDataCell[];
-}> = ({ cells, docId }) => {
+}> = React.memo(({ cells, docId }) => {
     const selfRef = useRef<HTMLDivElement>(null);
     const cellIdToIndex = useMemo(() => {
         const ret = {};
@@ -27,20 +27,25 @@ export const DataDocContents: React.FunctionComponent<{
         return ret;
     }, [cells]);
 
+    const handleMoveCell = useCallback(
+        async (from: number, to: number) => {
+            await moveDataDocCell(docId, from, to);
+            // This is to "nudge" the scroll bar of the data doc
+            // to make sure lazy loaded cells gets loaded
+            const scrollParent = getScrollParent(selfRef.current);
+            scrollParent.scrollTo(
+                scrollParent.scrollLeft,
+                scrollParent.scrollTop + 1
+            );
+        },
+        [docId]
+    );
+
     return (
         <div className="DataDocContents" ref={selfRef}>
             <DraggableList
                 items={cells}
-                onMove={async (from, to) => {
-                    await moveDataDocCell(docId, from, to);
-                    // This is to "nudge" the scroll bar of the data doc
-                    // to make sure lazy loaded cells gets loaded
-                    const scrollParent = getScrollParent(selfRef.current);
-                    scrollParent.scrollTo(
-                        scrollParent.scrollLeft,
-                        scrollParent.scrollTop + 1
-                    );
-                }}
+                onMove={handleMoveCell}
                 renderItem={(index, cell) => {
                     let cellText: React.ReactChild = ' ';
                     let cellIcon: React.ReactChild = null;
@@ -105,4 +110,4 @@ export const DataDocContents: React.FunctionComponent<{
             />
         </div>
     );
-};
+});

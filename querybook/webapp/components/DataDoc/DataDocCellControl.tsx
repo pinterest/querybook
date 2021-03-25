@@ -1,11 +1,12 @@
 import clsx from 'clsx';
-import React from 'react';
+import React, { useCallback } from 'react';
 import toast from 'react-hot-toast';
 import { titleize, sleep, copy } from 'lib/utils';
 
 import { IDataCellMeta } from 'const/datadoc';
+import { useBoundFunc } from 'hooks/useBoundFunction';
 import { AsyncButton } from 'ui/AsyncButton/AsyncButton';
-import { Button, SoftButton } from 'ui/Button/Button';
+import { SoftButton } from 'ui/Button/Button';
 import { Dropdown } from 'ui/Dropdown/Dropdown';
 import { ListMenu, IListMenuItem } from 'ui/Menu/ListMenu';
 
@@ -69,6 +70,19 @@ export const DataDocCellControl: React.FunctionComponent<IProps> = ({
         );
     }, [toggleDefaultCollapsed]);
 
+    const handleShare = useCallback(() => {
+        copy(shareUrl);
+        toast('Url Copied!');
+    }, [shareUrl]);
+    const handleCopyCell = useBoundFunc(copyCellAt, index, false);
+    const handleCutCell = useBoundFunc(copyCellAt, index, true);
+    const handlePasteCell = useBoundFunc(pasteCellAt, index);
+    const handleDeleteCell = useBoundFunc(deleteCellAt, index);
+    const handleMoveCellClick = useCallback(
+        () => moveCellAt(index, isHeader ? index - 1 : index + 1),
+        [moveCellAt, index, isHeader]
+    );
+
     const rightButtons: JSX.Element[] = [];
     const centerButtons: JSX.Element[] = [];
 
@@ -79,10 +93,7 @@ export const DataDocCellControl: React.FunctionComponent<IProps> = ({
         if (shareUrl) {
             leftMenuItems.push({
                 name: 'Share',
-                onClick: () => {
-                    copy(shareUrl);
-                    toast('Url Copied!');
-                },
+                onClick: handleShare,
                 tooltip: 'Click to copy',
                 tooltipPos: 'right',
                 icon: 'share',
@@ -93,7 +104,7 @@ export const DataDocCellControl: React.FunctionComponent<IProps> = ({
         if (copyCellAt) {
             leftMenuItems.push({
                 name: 'Copy',
-                onClick: () => copyCellAt(index, false),
+                onClick: handleCopyCell,
                 tooltip: 'Copy cell',
                 tooltipPos: 'right',
                 icon: 'copy',
@@ -103,7 +114,7 @@ export const DataDocCellControl: React.FunctionComponent<IProps> = ({
         if (isEditable && copyCellAt) {
             leftMenuItems.push({
                 name: 'Cut',
-                onClick: () => copyCellAt(index, true),
+                onClick: handleCutCell,
                 tooltip: 'Cut cell',
                 tooltipPos: 'right',
                 icon: 'cut',
@@ -113,7 +124,7 @@ export const DataDocCellControl: React.FunctionComponent<IProps> = ({
         if (isEditable && pasteCellAt) {
             leftMenuItems.push({
                 name: 'Paste',
-                onClick: () => pasteCellAt(index),
+                onClick: handlePasteCell,
                 tooltip: 'Paste cell to above',
                 tooltipPos: 'right',
                 icon: 'paste',
@@ -127,7 +138,7 @@ export const DataDocCellControl: React.FunctionComponent<IProps> = ({
             deleteCellAt && isHeader && numberOfCells > 0 && (
                 <AsyncButton
                     className="block-crud-button"
-                    onClick={deleteCellAt.bind(this, index)}
+                    onClick={handleDeleteCell}
                     icon="x"
                     type="soft"
                     key="delete"
@@ -142,11 +153,7 @@ export const DataDocCellControl: React.FunctionComponent<IProps> = ({
                 moveCellAt && (
                     <AsyncButton
                         className="block-crud-button"
-                        onClick={moveCellAt.bind(
-                            this,
-                            index,
-                            isHeader ? index - 1 : index + 1
-                        )}
+                        onClick={handleMoveCellClick}
                         icon={isHeader ? 'chevrons-up' : 'chevrons-down'}
                         type="soft"
                         key="swap"
@@ -192,23 +199,12 @@ export const DataDocCellControl: React.FunctionComponent<IProps> = ({
             );
         }
 
-        Object.keys(cellTypes).forEach((cellKey) =>
-            centerButtons.push(
-                <AsyncButton
-                    className="block-crud-button"
-                    key={cellKey}
-                    onClick={insertCellAt.bind(
-                        null,
-                        index,
-                        cellKey,
-                        null,
-                        null
-                    )}
-                    icon="plus"
-                    title={titleize(cellKey)}
-                    type="soft"
-                />
-            )
+        centerButtons.push(
+            <InsertCellButtons
+                index={index}
+                key="insert-cell-buttons"
+                insertCellAt={insertCellAt}
+            />
         );
     } else {
         // In case center buttons are empty
@@ -256,3 +252,25 @@ export const DataDocCellControl: React.FunctionComponent<IProps> = ({
         </div>
     );
 };
+
+const InsertCellButtons: React.FC<{
+    insertCellAt: IProps['insertCellAt'];
+    index: number;
+}> = React.memo(({ insertCellAt, index }) => {
+    const handleInsertcell = useCallback(
+        (cellType: string) => insertCellAt(index, cellType, null, null),
+        [insertCellAt, index]
+    );
+
+    const buttonsDOM = Object.keys(cellTypes).map((cellKey) => (
+        <AsyncButton
+            className="block-crud-button"
+            key={cellKey}
+            onClick={() => handleInsertcell(cellKey)}
+            icon="plus"
+            title={titleize(cellKey)}
+            type="soft"
+        />
+    ));
+    return <>{buttonsDOM}</>;
+});

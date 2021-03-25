@@ -3,13 +3,16 @@ import clsx from 'clsx';
 import toast from 'react-hot-toast';
 
 import { useSelector } from 'react-redux';
-import { IStoreState } from 'redux/store/types';
-import { IDataCell, IDataDoc, DataCellUpdateFields } from 'const/datadoc';
+
+import { IDataCell, DataCellUpdateFields } from 'const/datadoc';
 import { DataDocContext } from 'context/DataDoc';
+import { useBoundFunc } from 'hooks/useBoundFunction';
+import { useMakeSelector } from 'hooks/redux/useMakeSelector';
 
 import { sendConfirm } from 'lib/querybookUI';
 import { getShareUrl } from 'lib/data-doc/data-doc-utils';
 
+import { IStoreState } from 'redux/store/types';
 import * as dataDocSelectors from 'redux/dataDoc/selector';
 import * as dataDocActions from 'redux/dataDoc/action';
 
@@ -23,11 +26,15 @@ import { UserAvatar } from 'components/UserBadge/UserAvatar';
 import './DataDocCell.scss';
 
 interface IDataDocCellProps {
-    dataDoc: IDataDoc;
+    docId: number;
+    numberOfCells: number;
+    templatedVariables: Record<string, string>;
+
     cell: IDataCell;
     index: number;
     lastQueryCellId: number;
     queryIndexInDoc: number;
+    isFocused: boolean;
 }
 
 function getEstimatedCellHeight(cell: IDataCell) {
@@ -43,233 +50,244 @@ function getEstimatedCellHeight(cell: IDataCell) {
 }
 
 // renders cell
-export const DataDocCell: React.FunctionComponent<IDataDocCellProps> = ({
-    dataDoc,
-    cell,
-    index,
-    lastQueryCellId,
-    queryIndexInDoc,
-}) => {
-    const {
-        cellIdToExecutionId,
+export const DataDocCell: React.FunctionComponent<IDataDocCellProps> = React.memo(
+    ({
+        docId,
+        numberOfCells,
+        templatedVariables,
 
-        insertCellAt,
-        updateCell,
-        copyCellAt,
-        pasteCellAt,
-        fullScreenCellAt,
+        cell,
+        index,
+        lastQueryCellId,
+        queryIndexInDoc,
+        isFocused,
+    }) => {
+        const {
+            cellIdToExecutionId,
 
-        cellFocus,
-        defaultCollapse,
-        focusedCellIndex,
-        isEditable,
-        highlightCellIndex,
-        fullScreenCellIndex,
-    } = useContext(DataDocContext);
-    const { cellIdtoUid, arrowKeysEnabled } = useSelector(
-        (state: IStoreState) => ({
-            cellIdtoUid: dataDocSelectors.dataDocCursorByCellIdSelector(state, {
-                docId: dataDoc.id,
-            }),
-            arrowKeysEnabled:
-                state.user.computedSettings.datadoc_arrow_key === 'enabled',
-        })
-    );
+            insertCellAt,
+            updateCell,
+            copyCellAt,
+            pasteCellAt,
+            fullScreenCellAt,
 
-    const [showCollapsed, setShowCollapsed] = React.useState(undefined);
-
-    useEffect(() => {
-        if (defaultCollapse != null) {
-            setShowCollapsed(defaultCollapse);
-        } else {
-            setShowCollapsed(
-                cell.cell_type === 'query'
-                    ? Boolean(cell.meta.collapsed)
-                    : undefined
-            );
-        }
-    }, [defaultCollapse]);
-
-    const uncollapseCell = () => setShowCollapsed(false);
-
-    const updateCellAt = React.useCallback(
-        async (fields: DataCellUpdateFields) => updateCell(cell.id, fields),
-        [cell.id]
-    );
-
-    const handleDefaultCollapseChange = React.useCallback(
-        () =>
-            updateCellAt({
-                meta: { ...cell.meta, collapsed: !cell.meta.collapsed },
-            }),
-        [cell]
-    );
-
-    const deleteCellAt = React.useCallback(
-        () =>
-            new Promise<void>((resolve) => {
-                const dataDocCells = dataDoc.dataDocCells;
-                const numberOfCells = (dataDocCells || []).length;
-
-                if (numberOfCells > 0) {
-                    const deleteCell = async () => {
-                        try {
-                            await dataDocActions.deleteDataDocCell(
-                                dataDoc.id,
-                                index
-                            );
-                        } catch (e) {
-                            toast.error(`Delete cell failed, reason: ${e}`);
-                        } finally {
-                            resolve();
-                        }
-                    };
-                    sendConfirm({
-                        header: 'Delete Cell?',
-                        message: 'Deleted cells cannot be recovered',
-                        onConfirm: deleteCell,
-                        onHide: resolve,
-                    });
-                } else {
-                    resolve();
-                }
-            }),
-        [dataDoc]
-    );
-
-    const shareUrl = useMemo(
-        () => getShareUrl(cell.id, cellIdToExecutionId[cell.id]),
-        [cell.id, cellIdToExecutionId[cell.id]]
-    );
-
-    const isFullScreen = index === fullScreenCellIndex;
-    const toggleFullScreen = useCallback(() => {
-        fullScreenCellAt(isFullScreen ? null : index);
-    }, [isFullScreen, fullScreenCellAt, index]);
-
-    const renderCell = () => {
-        const onCellFocusOrBlur = {
-            onFocus: cellFocus.onFocus.bind(null, index),
-            onBlur: cellFocus.onBlur.bind(null, index),
-        };
-        const onCellKeyArrowKeyPressed = arrowKeysEnabled
-            ? {
-                  onUpKeyPressed: cellFocus.onUpKeyPressed.bind(null, index),
-                  onDownKeyPressed: cellFocus.onDownKeyPressed.bind(
-                      null,
-                      index
-                  ),
-              }
-            : {};
-
-        // If we are printing, then print readonly cells
-        const cellProps = {
-            meta: cell.meta,
+            cellFocus,
+            defaultCollapse,
             isEditable,
+            highlightCellIndex,
+            fullScreenCellIndex,
+        } = useContext(DataDocContext);
 
-            shouldFocus: focusedCellIndex === index,
-            showCollapsed,
+        const cellIdtoUid = useMakeSelector(
+            dataDocSelectors.makeDataDocCursorByCellIdSelector,
+            docId
+        );
 
-            onChange: updateCellAt,
-            onDeleteKeyPressed: deleteCellAt,
+        const arrowKeysEnabled = useSelector(
+            (state: IStoreState) =>
+                state.user.computedSettings.datadoc_arrow_key === 'enabled'
+        );
 
-            ...onCellFocusOrBlur,
-            ...onCellKeyArrowKeyPressed,
+        const [showCollapsed, setShowCollapsed] = React.useState(undefined);
+        useEffect(() => {
+            if (defaultCollapse != null) {
+                setShowCollapsed(defaultCollapse);
+            } else {
+                setShowCollapsed(
+                    cell.cell_type === 'query'
+                        ? Boolean(cell.meta.collapsed)
+                        : undefined
+                );
+            }
+        }, [defaultCollapse]);
+        const uncollapseCell = useCallback(() => setShowCollapsed(false), []);
+
+        const handleUpdateCell = React.useCallback(
+            async (fields: DataCellUpdateFields) => updateCell(cell.id, fields),
+            [cell.id]
+        );
+
+        const handleMoveCell = React.useCallback(
+            (fromIndex: number, toIndex: number) => {
+                dataDocActions.moveDataDocCell(docId, fromIndex, toIndex);
+            },
+            [docId]
+        );
+
+        const handleDefaultCollapseChange = React.useCallback(
+            () =>
+                handleUpdateCell({
+                    meta: { ...cell.meta, collapsed: !cell.meta.collapsed },
+                }),
+            [cell]
+        );
+
+        const handleDeleteCell = React.useCallback(
+            () =>
+                new Promise<void>((resolve) => {
+                    if (numberOfCells > 0) {
+                        const deleteCell = async () => {
+                            try {
+                                await dataDocActions.deleteDataDocCell(
+                                    docId,
+                                    index
+                                );
+                            } catch (e) {
+                                toast.error(`Delete cell failed, reason: ${e}`);
+                            } finally {
+                                resolve();
+                            }
+                        };
+                        sendConfirm({
+                            header: 'Delete Cell?',
+                            message: 'Deleted cells cannot be recovered',
+                            onConfirm: deleteCell,
+                            onHide: resolve,
+                        });
+                    } else {
+                        resolve();
+                    }
+                }),
+            [docId, numberOfCells, index]
+        );
+
+        const shareUrl = useMemo(
+            () => getShareUrl(cell.id, cellIdToExecutionId[cell.id]),
+            [cell.id, cellIdToExecutionId[cell.id]]
+        );
+
+        const isFullScreen = index === fullScreenCellIndex;
+        const toggleFullScreen = useCallback(() => {
+            fullScreenCellAt(isFullScreen ? null : index);
+        }, [isFullScreen, fullScreenCellAt, index]);
+        const handleFocus = useBoundFunc(cellFocus.onFocus, index);
+        const handleBlur = useBoundFunc(cellFocus.onBlur, index);
+        const handleUpKeyPressed = useBoundFunc(
+            cellFocus.onUpKeyPressed,
+            index
+        );
+        const handleDownKeyPressed = useBoundFunc(
+            cellFocus.onDownKeyPressed,
+            index
+        );
+
+        const renderCell = () => {
+            const onCellKeyArrowKeyPressed = arrowKeysEnabled
+                ? {
+                      onUpKeyPressed: handleUpKeyPressed,
+                      onDownKeyPressed: handleDownKeyPressed,
+                  }
+                : {};
+
+            // If we are printing, then print readonly cells
+            const cellProps = {
+                meta: cell.meta,
+                isEditable,
+
+                shouldFocus: isFocused,
+                showCollapsed,
+
+                onChange: handleUpdateCell,
+                onDeleteKeyPressed: handleDeleteCell,
+
+                onFocus: handleFocus,
+                onBlur: handleBlur,
+                ...onCellKeyArrowKeyPressed,
+            };
+
+            let cellDOM = null;
+            if (cell.cell_type === 'query') {
+                const allProps = {
+                    ...cellProps,
+                    query: cell.context,
+                    docId,
+                    cellId: cell.id,
+                    queryIndexInDoc,
+                    templatedVariables,
+                    isFullScreen,
+                    toggleFullScreen,
+                };
+                cellDOM = <DataDocQueryCell {...allProps} />;
+            } else if (cell.cell_type === 'chart') {
+                cellDOM = (
+                    <DataDocChartCell
+                        {...cellProps}
+                        previousQueryCellId={lastQueryCellId}
+                        context={cell.context}
+                        meta={cell.meta}
+                        dataDocId={docId}
+                    />
+                );
+            } else if (cell.cell_type === 'text') {
+                // default text
+                cellDOM = (
+                    <DataDocTextCell
+                        {...cellProps}
+                        cellId={cell.id}
+                        context={cell.context}
+                    />
+                );
+            }
+
+            return cellDOM;
         };
 
-        let cellDOM = null;
-        if (cell.cell_type === 'query') {
-            const allProps = {
-                ...cellProps,
-                query: cell.context,
-                docId: dataDoc.id,
-                cellId: cell.id,
-                queryIndexInDoc,
-                templatedVariables: dataDoc.meta,
-                isFullScreen,
-                toggleFullScreen,
-            };
-            cellDOM = <DataDocQueryCell {...allProps} />;
-        } else if (cell.cell_type === 'chart') {
-            cellDOM = (
-                <DataDocChartCell
-                    {...cellProps}
-                    previousQueryCellId={lastQueryCellId}
-                    context={cell.context}
-                    meta={cell.meta}
-                    dataDocId={dataDoc.id}
+        const renderCellControlDOM = (idx: number, isHeaderParam: boolean) => (
+            <div className={'data-doc-cell-divider-container'}>
+                <DataDocCellControl
+                    index={idx}
+                    numberOfCells={numberOfCells}
+                    moveCellAt={handleMoveCell}
+                    pasteCellAt={pasteCellAt}
+                    copyCellAt={copyCellAt}
+                    insertCellAt={insertCellAt}
+                    deleteCellAt={handleDeleteCell}
+                    isHeader={isHeaderParam}
+                    isEditable={isEditable}
+                    showCollapsed={showCollapsed}
+                    setShowCollapsed={setShowCollapsed}
+                    isCollapsedDefault={
+                        Boolean(cell.meta.collapsed) === showCollapsed
+                    }
+                    toggleDefaultCollapsed={handleDefaultCollapseChange}
+                    shareUrl={shareUrl}
                 />
-            );
-        } else if (cell.cell_type === 'text') {
-            // default text
-            cellDOM = (
-                <DataDocTextCell
-                    {...cellProps}
-                    cellId={cell.id}
-                    context={cell.context}
-                />
-            );
-        }
-
-        return cellDOM;
-    };
-
-    const renderCellControlDOM = (idx: number, isHeaderParam: boolean) => (
-        <div className={'data-doc-cell-divider-container'}>
-            <DataDocCellControl
-                index={idx}
-                numberOfCells={dataDoc.dataDocCells.length}
-                moveCellAt={dataDocActions.moveDataDocCell.bind(
-                    null,
-                    dataDoc.id
-                )}
-                pasteCellAt={pasteCellAt}
-                copyCellAt={copyCellAt}
-                insertCellAt={insertCellAt}
-                deleteCellAt={deleteCellAt}
-                isHeader={isHeaderParam}
-                isEditable={isEditable}
-                showCollapsed={showCollapsed}
-                setShowCollapsed={setShowCollapsed}
-                isCollapsedDefault={
-                    Boolean(cell.meta.collapsed) === showCollapsed
-                }
-                toggleDefaultCollapsed={handleDefaultCollapseChange}
-                shareUrl={shareUrl}
-            />
-        </div>
-    );
-    const uids = cellIdtoUid[cell.id] || [];
-    const uidDOM = uids.map((uid) => <UserAvatar key={uid} uid={uid} tiny />);
-    const dataDocCellClassName = showCollapsed
-        ? 'DataDocCell collapsed'
-        : 'DataDocCell';
-    const innerCellClassName = clsx({
-        'highlight-cell': highlightCellIndex === index,
-        'data-doc-cell-container-pair': true,
-    });
-
-    const innerCellContentDOM = (
-        <div className={innerCellClassName}>
-            <div className="data-doc-cell-users flex-column">{uidDOM}</div>
-            {renderCellControlDOM(index, true)}
-            <div
-                className={dataDocCellClassName}
-                onClick={showCollapsed ? uncollapseCell : null}
-            >
-                {renderCell()}
             </div>
-            {renderCellControlDOM(index + 1, false)}
-        </div>
-    );
+        );
+        const uids = cellIdtoUid[cell.id] || [];
+        const uidDOM = uids.map((uid) => (
+            <UserAvatar key={uid} uid={uid} tiny />
+        ));
+        const dataDocCellClassName = showCollapsed
+            ? 'DataDocCell collapsed'
+            : 'DataDocCell';
+        const innerCellClassName = clsx({
+            'highlight-cell': highlightCellIndex === index,
+            'data-doc-cell-container-pair': true,
+        });
 
-    return (
-        <DataDocCellWrapper
-            cellKey={String(cell.id)}
-            placeholderHeight={getEstimatedCellHeight(cell)}
-            key={cell.id}
-        >
-            {innerCellContentDOM}
-        </DataDocCellWrapper>
-    );
-};
+        const innerCellContentDOM = (
+            <div className={innerCellClassName}>
+                <div className="data-doc-cell-users flex-column">{uidDOM}</div>
+                {renderCellControlDOM(index, true)}
+                <div
+                    className={dataDocCellClassName}
+                    onClick={showCollapsed ? uncollapseCell : null}
+                >
+                    {renderCell()}
+                </div>
+                {renderCellControlDOM(index + 1, false)}
+            </div>
+        );
+
+        return (
+            <DataDocCellWrapper
+                cellKey={String(cell.id)}
+                placeholderHeight={getEstimatedCellHeight(cell)}
+                key={cell.id}
+            >
+                {innerCellContentDOM}
+            </DataDocCellWrapper>
+        );
+    }
+);
