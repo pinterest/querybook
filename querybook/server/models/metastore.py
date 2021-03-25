@@ -386,7 +386,7 @@ class DataTableStatistics(Base, CRUDMixin):
     table_id = sql.Column(
         sql.Integer, sql.ForeignKey("data_table.id", ondelete="CASCADE"), nullable=False
     )
-    key = sql.Column(sql.Text(length=utf8mb4_name_length), nullable=False, index=True)
+    key = sql.Column(sql.String(length=utf8mb4_name_length), nullable=False, index=True)
     value = sql.Column(sql.JSON, nullable=False)
     uid = sql.Column(sql.Integer, sql.ForeignKey("user.id",), nullable=True)
 
@@ -408,7 +408,7 @@ class DataTableColumnStatistics(Base, CRUDMixin):
         sql.ForeignKey("data_table_column.id", ondelete="CASCADE"),
         nullable=False,
     )
-    key = sql.Column(sql.Text(length=utf8mb4_name_length), nullable=False, index=True)
+    key = sql.Column(sql.String(length=utf8mb4_name_length), nullable=False, index=True)
     value = sql.Column(sql.JSON, nullable=False)
     uid = sql.Column(sql.Integer, sql.ForeignKey("user.id",), nullable=True)
 
