@@ -12,6 +12,7 @@ import {
 import { Dispatch } from 'redux/store/types';
 import { receiveDataDocs } from 'redux/dataDoc/action';
 import { receiveDataTable } from 'redux/dataSources/action';
+import { ContentState } from 'draft-js';
 
 export const dataDocSchema = new schema.Entity('dataDoc');
 export const tableSchema = new schema.Entity('dataTable');
@@ -100,7 +101,7 @@ export function fetchBoardIfNeeded(id: number): ThunkResult<Promise<any>> {
 
 export function createBoard(
     name: string,
-    description: string,
+    description: string | ContentState,
     publicBoard: boolean
 ): ThunkResult<Promise<IBoardRaw>> {
     return async (dispatch, getState) => {
@@ -123,7 +124,7 @@ export function updateBoard(
     id: number,
     fields: {
         public?: boolean;
-        description?: string;
+        description?: string | ContentState;
         name?: string;
     }
 ): ThunkResult<Promise<IBoardRaw>> {

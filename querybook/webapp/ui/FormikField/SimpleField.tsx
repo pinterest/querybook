@@ -13,6 +13,7 @@ import {
     IToggleSwitchFieldProps,
     ToggleSwitchField,
 } from './ToggleSwitchField';
+import { IRichTextFieldProps, RichTextField } from './RichTextField';
 
 // Simple Field is the amalgamation of all custom field,
 // it contains all the simple use case of field
@@ -41,6 +42,10 @@ interface ISimpleToggleProps extends IBaseProps, IToggleSwitchFieldProps {
     type: 'toggle';
 }
 
+interface ISimpleRichTextProps extends IBaseProps, IRichTextFieldProps {
+    type: 'rich-text';
+}
+
 interface ISimpleTextareaProps extends IBaseProps, ITextareaFieldProps {
     type: 'textarea';
 }
@@ -56,6 +61,7 @@ type Props =
     | ISimpleSelectProps
     | ISimpleToggleProps
     | ISimpleTextareaProps
+    | ISimpleRichTextProps
     | ISimpleReactSelectProps;
 
 export const SimpleField: React.FC<Props> = ({
@@ -115,6 +121,13 @@ export const SimpleField: React.FC<Props> = ({
             <TextareaField
                 name={name}
                 {...(otherProps as ISimpleTextareaProps)}
+            />
+        );
+    } else if (type === 'rich-text') {
+        fieldDOM = (
+            <RichTextField
+                name={name}
+                {...(otherProps as ISimpleRichTextProps)}
             />
         );
     }
