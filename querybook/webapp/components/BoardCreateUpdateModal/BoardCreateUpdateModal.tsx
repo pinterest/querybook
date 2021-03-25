@@ -5,7 +5,10 @@ import { Formik, Form } from 'formik';
 import { ContentState, convertFromHTML } from 'draft-js';
 
 import { sendConfirm } from 'lib/querybookUI';
-import { convertContentStateToHTML } from 'lib/richtext/serialize';
+import {
+    convertContentStateToHTML,
+    convertRawToContentState,
+} from 'lib/richtext/serialize';
 import { createBoard, updateBoard, deleteBoard } from 'redux/board/action';
 import { IStoreState, Dispatch } from 'redux/store/types';
 import { IBoardRaw } from 'const/board';
@@ -48,25 +51,21 @@ export const BoardCreateUpdateForm: React.FunctionComponent<IBoardCreateUpdateFo
         });
     }, [boardId]);
 
-    const getContentStateFromString = React.useCallback((str) => {
-        const blocksFromHTML = convertFromHTML(str);
-        return ContentState.createFromBlockArray(
-            blocksFromHTML.contentBlocks,
-            blocksFromHTML.entityMap
-        );
-    }, []);
-
-    const formValues = isCreateForm
-        ? {
-              name: '',
-              description: getContentStateFromString(''),
-              public: false,
-          }
-        : {
-              name: board.name,
-              description: getContentStateFromString(board.description),
-              public: board.public,
-          };
+    const formValues = React.useMemo(
+        () =>
+            isCreateForm
+                ? {
+                      name: '',
+                      description: convertRawToContentState(''),
+                      public: false,
+                  }
+                : {
+                      name: board.name,
+                      description: convertRawToContentState(board.description),
+                      public: board.public,
+                  },
+        [board, isCreateForm]
+    );
 
     return (
         <Formik
@@ -75,7 +74,7 @@ export const BoardCreateUpdateForm: React.FunctionComponent<IBoardCreateUpdateFo
             validationSchema={boardFormSchema}
             onSubmit={async (values) => {
                 const description = convertContentStateToHTML(
-                    values.description as ContentState
+                    values.description
                 );
                 const action = isCreateForm
                     ? createBoard(values.name, description, values.public)

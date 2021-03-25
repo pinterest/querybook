@@ -2,7 +2,8 @@ import React from 'react';
 import { useField } from 'formik';
 
 import { RichTextEditor } from 'ui/RichTextEditor/RichTextEditor';
-import { ContentState, convertFromHTML } from 'draft-js';
+
+import './RichTextField.scss';
 
 export interface IRichTextFieldProps {
     name: string;
@@ -14,10 +15,10 @@ export const RichTextField: React.FC<IRichTextFieldProps> = ({ name }) => {
     const { value } = meta;
     const { setValue } = helpers;
 
-    return (
-        <RichTextEditor
-            value={value}
-            onChange={(newValue) => setValue(newValue.getCurrentContent())}
-        />
+    const handleChange = React.useCallback(
+        (newValue) => setValue(newValue.getCurrentContent()),
+        []
     );
+
+    return <RichTextEditor value={value} onChange={handleChange} />;
 };
