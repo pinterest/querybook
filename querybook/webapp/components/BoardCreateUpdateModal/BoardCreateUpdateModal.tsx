@@ -2,7 +2,7 @@ import React, { useCallback } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 import * as Yup from 'yup';
 import { Formik, Form } from 'formik';
-import { ContentState } from 'draft-js';
+import { ContentState, convertFromHTML } from 'draft-js';
 
 import { sendConfirm } from 'lib/querybookUI';
 import { convertContentStateToHTML } from 'lib/richtext/serialize';
@@ -48,15 +48,23 @@ export const BoardCreateUpdateForm: React.FunctionComponent<IBoardCreateUpdateFo
         });
     }, [boardId]);
 
+    const getContentStateFromString = React.useCallback((str) => {
+        const blocksFromHTML = convertFromHTML(str);
+        return ContentState.createFromBlockArray(
+            blocksFromHTML.contentBlocks,
+            blocksFromHTML.entityMap
+        );
+    }, []);
+
     const formValues = isCreateForm
         ? {
               name: '',
-              description: '',
+              description: getContentStateFromString(''),
               public: false,
           }
         : {
               name: board.name,
-              description: board.description,
+              description: getContentStateFromString(board.description),
               public: board.public,
           };
 
@@ -66,17 +74,14 @@ export const BoardCreateUpdateForm: React.FunctionComponent<IBoardCreateUpdateFo
             validateOnMount={true}
             validationSchema={boardFormSchema}
             onSubmit={async (values) => {
-                values.description = convertContentStateToHTML(
+                const description = convertContentStateToHTML(
                     values.description as ContentState
                 );
                 const action = isCreateForm
-                    ? createBoard(
-                          values.name,
-                          values.description,
-                          values.public
-                      )
+                    ? createBoard(values.name, description, values.public)
                     : updateBoard(boardId, {
                           ...values,
+                          description,
                       });
                 onComplete(await dispatch(action));
             }}

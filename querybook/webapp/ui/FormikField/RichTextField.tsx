@@ -11,17 +11,7 @@ export interface IRichTextFieldProps {
 export const RichTextField: React.FC<IRichTextFieldProps> = ({ name }) => {
     const [field, meta, helpers] = useField(name);
 
-    let value;
-    if (typeof meta.value === 'object') {
-        value = meta.value;
-    } else {
-        const blocksFromHTML = convertFromHTML(meta.value);
-        value = ContentState.createFromBlockArray(
-            blocksFromHTML.contentBlocks,
-            blocksFromHTML.entityMap
-        );
-    }
-
+    const { value } = meta;
     const { setValue } = helpers;
 
     return (
