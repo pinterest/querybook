@@ -15,7 +15,7 @@ If you do decide to develop locally, please make sure you have the following pyt
 -   Python: ~3.7
 -   Node: >=12
 
-If you do not have the compatible version, we recommend the following methods to install the specific versions required by Querybook.
+If you do not have the compatible version, we recommend the following methods to install the compatible versions required by Querybook.
 
 -   Python: [use pyenv](https://github.com/pyenv/pyenv)
 -   Node: [use nvm](https://github.com/nvm-sh/nvm)
