@@ -1,3 +1,4 @@
+from contextlib import contextmanager
 import datetime
 import re
 from typing import Tuple
@@ -109,42 +110,24 @@ class GoogleSheetsExporter(BaseExporter):
         worksheet_title="Sheet1",
         start_cell="A1",
     ):
+        sheet = None
         try:
             credentials = self.get_credentials(uid)
             gc = gspread.authorize(credentials)
-            sheet = (
-                gc.create(f"Querybook Result {statement_execution_id}")
-                if sheet_url is None
-                else gc.open_by_url(sheet_url)
-            )
-            # Default case where only upload is needed
-            if sheet_url is None and worksheet_title == "Sheet1" and start_cell == "A1":
-                raw_csv = self._get_statement_execution_result(
-                    statement_execution_id, raw=True
-                )
-                gc.import_csv(sheet.id, raw_csv)
-            else:
-                csv = self._get_statement_execution_result(statement_execution_id)
-
-                if len(csv):
-                    num_rows = len(csv)
-                    num_cols = len(csv[0])
-
-                    worksheet = None
-                    try:
-                        worksheet = sheet.worksheet(worksheet_title)
-                    except gspread.exceptions.WorksheetNotFound:
-                        worksheet = sheet.add_worksheet(
-                            worksheet_title, max(num_rows, 1000), max(num_cols, 26)
-                        )
-
-                    if len(csv):
-                        start_cell_coord = worksheet_coord_to_coord(start_cell)
-                        end_cell = coord_to_worksheet_coord(
-                            start_cell_coord[0] + num_cols,
-                            start_cell_coord[1] + num_rows,
-                        )
-                        worksheet.update("{}:{}".format(start_cell, end_cell), csv)
+            with gspread_sheet(
+                gc, sheet_url, f"Querybook Result {statement_execution_id}"
+            ) as sheet:
+                # Default case where only upload is needed
+                if (
+                    sheet_url is None
+                    and worksheet_title == "Sheet1"
+                    and start_cell == "A1"
+                ):
+                    self.upload_raw_csv_to_sheet(gc, sheet, statement_execution_id)
+                else:
+                    self.write_csv_to_sheet(
+                        gc, sheet, statement_execution_id, worksheet_title, start_cell,
+                    )
 
             return f"https://docs.google.com/spreadsheets/d/{sheet.id}"
         except RefreshError:
@@ -152,6 +135,39 @@ class GoogleSheetsExporter(BaseExporter):
             update_user_properties(current_user.id, gspread_token=None)
             # Continue to raise the error for the frontend client to see
             raise Exception("Invalid Google credentials, please try again.")
+
+    def upload_raw_csv_to_sheet(
+        self, gspread_client, sheet, statement_execution_id: int
+    ):
+        raw_csv = self._get_statement_execution_result(statement_execution_id, raw=True)
+        gspread_client.import_csv(sheet.id, raw_csv.encode("utf-8"))
+
+    def write_csv_to_sheet(
+        self,
+        gspread_client,
+        sheet,
+        statement_execution_id: int,
+        worksheet_title: str,
+        start_cell: str,
+    ):
+        csv = self._get_statement_execution_result(statement_execution_id)
+
+        if len(csv):
+            num_rows = len(csv)
+            num_cols = len(csv[0])
+
+            start_cell_coord = worksheet_coord_to_coord(start_cell)
+            end_cell_coord = (
+                start_cell_coord[0] + num_cols - 1,
+                start_cell_coord[1] + num_rows - 1,
+            )
+            end_cell = coord_to_worksheet_coord(end_cell_coord[0], end_cell_coord[1])
+
+            with gspread_worksheet(
+                sheet, worksheet_title, end_cell_coord[0], end_cell_coord[1]
+            ) as worksheet:
+
+                worksheet.update("{}:{}".format(start_cell, end_cell), csv)
 
     def get_credentials(self, uid):
         user = get_user_by_id(uid)
@@ -212,3 +228,51 @@ def coord_to_worksheet_coord(col: int, row: int) -> str:
             col -= 1
         str_col = chr(ordAMinusOne + remainder) + str_col
     return str_col + str_row
+
+
+@contextmanager
+def gspread_sheet(gspread_client, sheet_url: str = None, sheet_name: str = ""):
+    """Opens the sheet if sheet_url exists, otherwise create a new sheet
+       with the give sheet name
+
+    Args:
+        gspread_client: gspread.Client
+        sheet_url (str, optional): The url to the existing sheet. Defaults to None.
+        sheet_name (str, optional): The name assigned to the newly created sheet. Defaults to ''.
+
+    Yields:
+        sheet: gspread sheet
+    """
+    sheet = None
+    try:
+        sheet = (
+            gspread_client.create(sheet_name)
+            if sheet_url is None
+            else gspread_client.open_by_url(sheet_url)
+        )
+        yield sheet
+
+        return
+    except Exception as e:
+        if sheet_url is None and sheet is not None:
+            gspread_client.del_spreadsheet(sheet.id)
+        raise e
+
+
+@contextmanager
+def gspread_worksheet(sheet, worksheet_title, num_cols=26, num_rows=1000):
+    worksheet = None
+    num_cols = max(num_cols, 26)
+    num_rows = max(num_rows, 1000)
+    try:
+        worksheet = sheet.worksheet(worksheet_title)
+
+        # Resize sheet to be at least the size of rows and cols
+        if worksheet.row_count < num_rows:
+            worksheet.add_rows(num_rows - worksheet.row_count)
+        if worksheet.col_count < num_cols:
+            worksheet.add_cols(num_cols - worksheet.col_count)
+    except gspread.exceptions.WorksheetNotFound:
+        worksheet = sheet.add_worksheet(worksheet_title, num_rows, num_cols)
+
+    yield worksheet
