@@ -233,7 +233,7 @@ def coord_to_worksheet_coord(col: int, row: int) -> str:
 @contextmanager
 def gspread_sheet(gspread_client, sheet_url: str = None, sheet_name: str = ""):
     """Opens the sheet if sheet_url exists, otherwise create a new sheet
-       with the give sheet name
+       with the given sheet name
 
     Args:
         gspread_client: gspread.Client
