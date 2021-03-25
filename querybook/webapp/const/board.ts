@@ -21,7 +21,7 @@ export interface IBoard {
     deleted_at: number;
 
     name: string;
-    description: string | ContentState;
+    description: string;
     public: boolean;
     board_type: string;
 

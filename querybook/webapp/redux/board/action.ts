@@ -101,7 +101,7 @@ export function fetchBoardIfNeeded(id: number): ThunkResult<Promise<any>> {
 
 export function createBoard(
     name: string,
-    description: string | ContentState,
+    description: string,
     publicBoard: boolean
 ): ThunkResult<Promise<IBoardRaw>> {
     return async (dispatch, getState) => {
@@ -124,7 +124,7 @@ export function updateBoard(
     id: number,
     fields: {
         public?: boolean;
-        description?: string | ContentState;
+        description?: string;
         name?: string;
     }
 ): ThunkResult<Promise<IBoardRaw>> {
