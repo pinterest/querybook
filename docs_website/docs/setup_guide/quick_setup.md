@@ -26,13 +26,20 @@ Run `sudo sysctl -w vm.max_map_count=262144` to ensure [ElasticSearch](https://w
 Go to the `Docker Desktop` app -> top right gear icon -> Preferences -> Resources -> Advanced. Make sure your memory limit per app is >= 3GB.
 
 #### Windows
+
 Please install WSL 2 as instructed [here](https://docs.microsoft.com/en-us/windows/wsl/install-win10). Now go to Docker Desktop, Settings > General, and check the box "Use the WSL 2 based Engine".
 
 Launch WSL shell and run `sudo sysctl -w vm.max_map_count=262144` to ensure [ElasticSearch](https://www.elastic.co/guide/en/elasticsearch/reference/current/vm-max-map-count.html) works.
 
 ## Getting Started
 
-After cloning the repo, run the following
+Open your terminal, and run:
+
+```sh
+git clone https://github.com/pinterest/querybook.git
+```
+
+Now run the following
 
 ```sh
 make
