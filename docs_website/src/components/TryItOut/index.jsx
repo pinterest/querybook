@@ -1,4 +1,5 @@
 import React from 'react';
+import Link from '@docusaurus/Link';
 import Heading from '../Heading';
 import './index.scss';
 
@@ -6,21 +7,46 @@ export default () => {
     return (
         <div className="TryItOut container">
             <Heading
-                headingKey="Interested in trying it out?"
-                title="Waitlist"
-                subtitle="Please enter your contact information and we will reach out to you once Querybook is ready to be open sourced."
+                headingKey="Try it out"
+                title="Interested?"
+                subtitle="Use the following resources to get a demo instance running in a few minutes."
             />
-            <div className="form-container">
-                <iframe
-                    src="https://docs.google.com/forms/d/e/1FAIpQLScOkqT7IBIhWIGSnfeBEKZ0uNiHvCACpV4C_Jcyk6Z5gzNK-Q/viewform?embedded=true"
-                    width="100%"
-                    height="100%"
-                    frameBorder="0"
-                    marginHeight="0"
-                    marginWidth="0"
-                >
-                    Loading…
-                </iframe>
+            <div className=" cards-container">
+                <div class="card">
+                    <div class="card__header">
+                        <h3>Step 1: Download</h3>
+                    </div>
+                    <div class="card__body">
+                        <p>Visit Github to fork/clone the repo.</p>
+                    </div>
+                    <div class="card__footer">
+                        <Link
+                            class="button button--secondary button--block"
+                            to={'https://github.com/pinterest/querybook'}
+                        >
+                            Github
+                        </Link>
+                    </div>
+                </div>
+                <div class="card">
+                    <div class="card__header">
+                        <h3>Step 2: Run</h3>
+                    </div>
+                    <div class="card__body">
+                        <p>
+                            Run <i>make</i> in the root directory to start the
+                            demo instance.
+                        </p>
+                    </div>
+                    <div class="card__footer">
+                        <Link
+                            class="button button--secondary button--block"
+                            to="/docs/setup_guide/quick_setup"
+                        >
+                            Quick Start Guide
+                        </Link>
+                    </div>
+                </div>
             </div>
         </div>
     );

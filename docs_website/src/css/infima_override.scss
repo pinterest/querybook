@@ -7,6 +7,12 @@
     }
 }
 
+.navbar {
+    .navbar__item {
+        padding-left: 0;
+    }
+}
+
 body {
     &.no-nav-border {
         .navbar {

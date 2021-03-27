@@ -47,9 +47,10 @@ module.exports = {
                     position: 'right',
                 },
                 {
-                    to: '/waitlist',
-                    label: 'Waitlist',
+                    href: 'https://github.com/pinterest/querybook',
                     position: 'right',
+                    className: 'header-github-link',
+                    'aria-label': 'GitHub repository',
                 },
             ],
         },

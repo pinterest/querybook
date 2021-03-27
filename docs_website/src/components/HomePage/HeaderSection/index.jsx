@@ -35,15 +35,9 @@ export default () => {
                     <div className="HeaderActions flex-center">
                         <Link
                             className="button button--primary button--lg"
-                            to="/waitlist"
+                            to="/docs/setup_guide/quick_setup"
                         >
-                            Waitlist
-                        </Link>
-                        <Link
-                            className="button button--secondary button--lg"
-                            to="/docs"
-                        >
-                            Read the Docs
+                            Get Started
                         </Link>
                     </div>
                 </div>
@@ -51,8 +45,6 @@ export default () => {
 
             <div className="container">
                 <div className="used-by text">
-                    <p>Announced in March 2021</p>
-                    <p>Currently in Private Beta Mode</p>
                     <p>Used by Engineers and Data Scientists from</p>
                 </div>
                 <div className="flex-center used-by-logos">
