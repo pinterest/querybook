@@ -23,7 +23,7 @@ Run `sudo sysctl -w vm.max_map_count=262144` to ensure [ElasticSearch](https://w
 
 #### Mac
 
-Go to the `Docker Desktop` app -> top right gear icon -> Preferences -> Resources -> Advanced. Make sure your memory limit per app is >= 3GB.
+Go to the `Docker Desktop` app -> top right gear icon -> Resources -> Advanced. Make sure your memory limit per app is >= 3GB.
 
 #### Windows
 
