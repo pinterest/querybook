@@ -134,12 +134,11 @@ export const DataTableHeader: React.FunctionComponent<IDataTableHeader> = ({
         </div>
     );
 
-    // TODO: add views badge && user badge back
     const viewsBadgeDOM = (
         <ImpressionWidget itemId={table.id} type={'DATA_TABLE'} />
     );
 
-    let featuredBadge;
+    let featuredBadge: React.ReactNode;
     if (userInfo.isAdmin) {
         featuredBadge = (
             <ToggleButton

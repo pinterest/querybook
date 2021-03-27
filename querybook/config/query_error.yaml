@@ -1,16 +1,5 @@
-# TODO: generalize before opensource
-# Majority of these errors come from: https://docs.google.com/spreadsheets/d/1zE8zOIlFfO9jNqFKCBcR0Z-gKCScYprxus2rMgv2OMY/edit#gid=0
-# Credits to @aoh
-
 # Presto Errors
 presto:
-    malformed_presto_error:
-        regex: 'Should not have nextUri if failed'
-        message: >
-            An error ocurred.
-            However, the Presto or Hive engine returned a malformed error.
-            Please click on the "Tracking URL" button to find out the original error.
-            This should not happen any more after May 2018.
     need_predicate_error:
         regex: 'No partition predicate found for Alias'
         message: >
@@ -23,12 +12,11 @@ presto:
     extra_comma_before_from:
         regex: "extraneous input 'FROM' expecting"
         message: >
-            Hi, you problably have a comma before the FROM clause, after the last column in your select clause. Please remove that comma.
+            You problably have a comma before the FROM clause, after the last column in your select clause. Please remove that comma.
     query_exceeded_local_memory:
         regex: 'Query exceeded local memory limit'
         message: >
             See if the query size can be reduced or if sampling the data is an option.
-            If not, you'll need to rewrite the query for Hive.
     reading_past_rle_stream:
         regex: 'Reading past RLE/BitPacking stream.'
         message: >
@@ -38,7 +26,6 @@ presto:
         regex: 'HIVE_CURSOR_ERROR'
         message: >
             This could be due to an incompatiblity issue between the table's schema and Presto.
-            You'll need to write this query in Hive.
     error_opening_split:
         regex: 'Error opening Hive split'
         message: >
@@ -47,7 +34,7 @@ presto:
     access_denied:
         regex: 'Access Denied'
         message: >
-            Get PII access and run with Presto/Hive (PII) engine
+            Presto cannot access the underlying data.
     invalid_function:
         regex: '(Invalid Function)|(Function .* not registered)'
         message: >
@@ -60,17 +47,12 @@ presto:
             Try prefacing the query with the following
             set session hive.parquet_optimized_reader_enabled=false;
             Alternatively, some users have found success by waiting and then trying again
-    cannot_drop_table:
-        regex: 'Cannot drop table'
-        message: >
-            Can't create or drop a table in Presto. Do it in Hive.
     too_many_splits:
         regex: 'Too many splits'
         message: >
             The input data is too large.
             Make sure you're using partitions (like the 'dt' field).
             Use sampling if that is an option.
-            Write the query in Hive.
     error_fetching_results:
         regex: 'Error fetching results'
         message: >
@@ -86,7 +68,6 @@ presto:
         message: >
             The table that was written likely has rows that are written with very large row outputs.
             Check if there is another table that can be used.
-            If not, try writing the query in Hive.
     no_node_available:
         regex: 'No nodes available to run query'
         message: >
@@ -96,7 +77,6 @@ presto:
         regex: 'Hive table is corrupt'
         message: >
             Due to a bucket config that Presto is strict about.
-            You'll need to write this query in Hive.
     table_does_not_exist:
         regex: 'Table [0-9a-zA-Z_\.]+ does not exist'
         message: >
@@ -113,7 +93,7 @@ hive:
     tsocket_zerobyte_error:
         regex: 'TSocket read 0 bytes'
         message: >
-            This error happened due to a HiveServer2 restart. Please check with hive owner
+            This error happened due to a HiveServer2 restart. Please check with hive owner.
     standard_error:
         regex: 'Execution Error, return code 2 from org.apache.hadoop.hive.ql.exec.mr.MapRedTask'
         message: >
@@ -138,41 +118,10 @@ hive:
         message: |
             There are too many mappers for the job (> 15k). Please try
             1) set split size for the input data
-    max_dynamic_partitions:
-        regex: 'Error: java.lang.RuntimeException: org.apache.hadoop.hive.ql.metadata.HiveException: Hive Runtime Error while processing row'
-        message: |
-            Hive Query is checking too many partitions at once. Try
-            1) Setup following HIVE settings
-            set pinterest.script_container.mb=2048;
-            set hadoop.client.opts="-Xmx1800m";
-            2) Cut short the date range if you can.
     file_already_exists_exception:
         regex: 'org.apache.hadoop.fs.FileAlreadyExistsException'
         message: >
             Try to add set hive.exec.sink_operator.delete_target_if_exists=true or Keep speculative execution on, turn off directfileoutputcommitter.
-
-sparksql:
-    # Spark SQL Errors
-    oom_driver_killed:
-        regex: '01] is running beyond physical memory limits'
-        message: >
-            Driver ran out of memory, please increase driver memory (driver.memory) by 2x and retry the query. You can also refer to the Spark Guide for more details on tuning.
-
-    oom_executor_killed:
-        regex: 'is running beyond physical memory limits'
-        message: >
-            Executor ran out of memory, please increase the number of partitions (spark.sql.shuffle.partitions) if the error happened during reduce phase or reduce split size if error happened during initial data read using split configs
-
-    heap_space_driver:
-        regex: 'Java heap space'
-        message: >
-            Driver ran out of memory, please increase driver memory (driver.memory) by 2x and retry the query. You can also refer to the Spark Guide for more details on tuning.
-
-    union_error:
-        regex: 'Union :- Project'
-        message: >
-            Union views are currently not supported
-
 common:
     # Common Errors
     part_number_error:

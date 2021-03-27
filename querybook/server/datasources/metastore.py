@@ -499,13 +499,6 @@ def create_table_column_stats(data):
     return
 
 
-@register("/lineage/", methods=["GET"])
-def get_lineage():
-    with DBSession() as session:
-        # TODO: improve this end point and add permission
-        return logic.get_all_table_lineages(session=session)
-
-
 @register("/lineage/", methods=["POST"])
 @admin_only
 def add_lineage(table_id, parent_table_id, job_metadata_id):

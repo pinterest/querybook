@@ -6,9 +6,4 @@ hints:
     - 'Use ⌘ K to search Docs/Tables.'
     - 'Need to collaborate on a DataDoc? Click the "Share" icon on top right to give access.'
     - 'Press shift + enter to launch queries quickly.'
-    - 'Use  ⌘S to force save DataDocs'
-
-    # Pinterst specific, TODO: generalize
-    - 'Having trouble writing hive query? Read go/hiveguide for help.'
-    - 'Please do not try to count(distinct) on giant tables in presto, it will block other queries.'
-    - 'Remember to add a limit to your presto queries to make sure they finish quickly.'
+    - 'Use ⌘S to force save DataDocs'

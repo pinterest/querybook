@@ -219,7 +219,10 @@ export interface IDataSourcesState {
 
     // By MetastoreId -> name -> tableId
     dataTableNameToId: Record<number, Record<string, number>>;
-    functionDocumentationByNameByLanguage: FunctionDocumentationCollection;
+    functionDocumentation: {
+        byNameByLanguage: FunctionDocumentationCollection;
+        loading: Record<string, Promise<any>>;
+    };
     dataJobMetadataById: Record<number, IDataJobMetadata>;
 
     dataTablesSamplesById: Record<number, IDataTableSamples>;

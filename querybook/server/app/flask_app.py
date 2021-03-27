@@ -45,16 +45,8 @@ def make_flask_app():
     return app
 
 
-# TODO: generlize before opensource
 def make_cache(app):
-    return Cache(
-        app,
-        config={
-            "CACHE_TYPE": "memcached",
-            "CACHE_KEY_PREFIX": "querybook:",
-            "CACHE_MEMCACHED_SERVERS": ["localhost:22000"],
-        },
-    )
+    return Cache(app, config=QuerybookSettings.FLASK_CACHE_CONFIG,)
 
 
 def make_celery(app):

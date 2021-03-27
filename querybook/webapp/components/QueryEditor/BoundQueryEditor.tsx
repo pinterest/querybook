@@ -72,7 +72,7 @@ export const BoundQueryEditor = React.forwardRef<
         // Function Documentation related props
         const functionDocumentationByNameByLanguage = useSelector(
             (state: IStoreState) =>
-                state.dataSources.functionDocumentationByNameByLanguage
+                state.dataSources.functionDocumentation.byNameByLanguage
         );
         useEffect(() => {
             if (engine?.language) {

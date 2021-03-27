@@ -13,7 +13,10 @@ const initialState: IDataSourcesState = {
     dataTableWarningById: {},
     dataTableOwnershipByTableId: {},
     dataTableNameToId: {},
-    functionDocumentationByNameByLanguage: {},
+    functionDocumentation: {
+        byNameByLanguage: {},
+        loading: {},
+    },
     dataJobMetadataById: {},
     queryMetastoreById: {},
 
@@ -55,24 +58,24 @@ function dataTableNameToIdReducer(
     });
 }
 
-function functionDocumentationByNameByLanguageReducer(
-    state = initialState.functionDocumentationByNameByLanguage,
+function functionDocumentationReducer(
+    state = initialState.functionDocumentation,
     action: DataSourcesAction
 ) {
     return produce(state, (draft) => {
         switch (action.type) {
-            // TODO: implement this with correct typing
-            // case '@@dataSources/LOADING_FUNCTION_DOCUMENTATION': {
-            //     const { language, promise } = action.payload;
-            //     draft[language] = promise;
-            //     return;
-            // }
+            case '@@dataSources/LOADING_FUNCTION_DOCUMENTATION': {
+                const { language, promise } = action.payload;
+                draft.loading[language] = promise;
+                return;
+            }
             case '@@dataSources/RECEIVE_FUNCTION_DOCUMENTATION': {
                 const {
                     language,
                     functionDocumentationByName,
                 } = action.payload;
-                draft[language] = functionDocumentationByName;
+                draft.byNameByLanguage[language] = functionDocumentationByName;
+                delete draft.loading[language];
                 return;
             }
         }
@@ -424,7 +427,7 @@ export default combineReducers({
     queryMetastoreById: queryMetastoreByIdReducer,
     goldenTableNameToId: goldenTableNameToIdReducer,
     dataTableNameToId: dataTableNameToIdReducer,
-    functionDocumentationByNameByLanguage: functionDocumentationByNameByLanguageReducer,
+    functionDocumentation: functionDocumentationReducer,
     dataColumnsById: dataColumnsByIdReducer,
     dataTablesById: dataTablesByIdReducer,
     dataSchemasById: dataSchemasByIdReducer,

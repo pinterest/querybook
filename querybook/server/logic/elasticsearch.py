@@ -14,10 +14,7 @@ from lib.utils.decorators import in_mem_memoized
 from lib.logger import get_logger
 from lib.config import get_config_value
 from lib.richtext import richtext_to_plaintext
-from app.db import (
-    # TODO: We should use follower db instead
-    with_session,
-)
+from app.db import with_session
 from logic.datadoc import (
     get_all_data_docs,
     get_data_doc_by_id,
@@ -53,7 +50,7 @@ def get_hosted_es():
     if QuerybookSettings.ELASTICSEARCH_CONNECTION_TYPE == "naive":
         hosted_es = Elasticsearch(hosts=[host], port=port,)
     elif QuerybookSettings.ELASTICSEARCH_CONNECTION_TYPE == "aws":
-        # TODO: GENERALIZE THIS BEFORE OPEN SOURCE
+        # TODO: generialize aws region setup
         from boto3 import session as boto_session
         from lib.utils.assume_role_aws4auth import AssumeRoleAWS4Auth
 

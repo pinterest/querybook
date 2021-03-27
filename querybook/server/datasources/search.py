@@ -1,4 +1,3 @@
-# TODO: refactor
 import re
 import json
 from flask_login import current_user

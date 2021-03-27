@@ -40,7 +40,7 @@ def on_join_room(query_execution_id):
                 == QueryExecutionStatus.RUNNING.value
             ):
                 task = tasks.run_query_task.AsyncResult(execution_dict["task_id"])
-                try:  # TODO: remove this try once we can make task running more stable
+                try:
                     if task is not None and task.info is not None:
                         progress = task.info
                         if str(statement_execution["id"]) in progress:

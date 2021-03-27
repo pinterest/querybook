@@ -28,11 +28,18 @@ Otherwise you can also pass the environment variable directly when launching the
 
 ## Infrastructure
 
+### Core
+
+`FLASK_SECRET_KEY`: (**required**): This is the secret key that's used for securely signing the cookie. See https://flask.palletsprojects.com/en/1.1.x/config/#SECRET_KEY for more details.
+
+`FLASK_CACHE_CONFIG` (optional): This can be used to provide caching for API endpoints and internal logic. Follow https://pythonhosted.org/Flask-Cache/ for more details. You should provide a serialized JSON dictionary to be passed into the config.
+
 ### Database
 
 `DATABASE_CONN` (**required**): A sqlalchemy connection string to the database. Please check here https://docs.sqlalchemy.org/en/13/core/engines.html for formatting.
 
 `DATABASE_POOL_SIZE` (optional, defaults to _10_): The size of the connection pool. See https://docs.sqlalchemy.org/en/13/core/pooling.html#sqlalchemy.pool.QueuePool.params.pool_size for more details.
+
 `DATABASE_POOL_RECYCLE` (optional, defaults to _3600_): Number of seconds until database connection in pool gets recycled. See https://docs.sqlalchemy.org/en/13/core/pooling.html#setting-pool-recycle for more details.
 
 ### Redis
@@ -42,6 +49,7 @@ Otherwise you can also pass the environment variable directly when launching the
 ### ElasticSearch
 
 `ELASTICSEARCH_HOST` (**required**): Connection string to elasticsearch host.
+
 `ELASTICSEARCH_CONNECTION_TYPE` (optional, defaults to _naive_): Setting this to `naive` will connect to elasticsearch as is. If set to `aws`, it will use boto3 to get auth and then connect to elasticsearch.
 
 ### Query Result Store
@@ -108,4 +116,5 @@ By default Querybook supports email and slack notifications for sharing DataDocs
 ### Email
 
 `EMAILER_CONN` (optional, defaults to localhost:22): Location of the emailer server
+
 `QUERYBOOK_EMAIL_ADDRESS` (optional, required for email): Origin address when sending emails

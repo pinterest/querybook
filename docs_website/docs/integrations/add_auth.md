@@ -94,7 +94,7 @@ def init_app(app):
 
 Moving on to the login manager itself, you need to use the `QuerybookLoginManager` from auth/utils.py as the login manager as it provides api token access. Use a class that has this login manager as a field (check oauth_auth.py as an example) if you need to initialize resources when app starts or use only functions (check password_auth.py as an example) if nothing needs to be initialized.
 
-TODO: add examples of adding ldap auth and okta auth as 2 different authentication methods to implement.
+<!-- TODO: add examples of adding ldap auth and okta auth as 2 different authentication methods to implement. -->
 
 ## Plugins
 

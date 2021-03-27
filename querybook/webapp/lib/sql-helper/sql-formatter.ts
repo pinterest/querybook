@@ -148,7 +148,6 @@ export function format(
                 );
             }
 
-            // TODO(querybook) implement formatting for general purposes
             return formattedStatement;
         }
     );
