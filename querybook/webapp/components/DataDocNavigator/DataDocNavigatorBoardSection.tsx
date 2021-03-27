@@ -237,7 +237,7 @@ const NavigatorBoardView: React.FunctionComponent<{
     const handleDeleteBoardItem = React.useCallback(
         async (itemId: number, itemType: BoardItemType) => {
             await dispatch(deleteBoardItem(board.id, itemType, itemId));
-            // TODO: Consider not duplicatiing this logic in BoardItemAddButton
+            // TODO: Consider not duplicating this logic in BoardItemAddButton
             toast.success(`Item removed from the list "${board.name}"`);
         },
         [board]

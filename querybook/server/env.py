@@ -16,6 +16,8 @@ class MissingConfigException(Exception):
 
 def get_env_config(name, optional=True):
     found = True
+    val = None
+
     if name in os.environ:
         val = os.environ.get(name)
     elif name in querybook_config:
@@ -38,7 +40,7 @@ class QuerybookSettings(object):
     PRODUCTION = os.environ.get("production", "false") == "true"
     PUBLIC_URL = get_env_config("PUBLIC_URL")
     FLASK_SECRET_KEY = get_env_config("FLASK_SECRET_KEY", optional=False)
-
+    FLASK_CACHE_CONFIG = json.loads(get_env_config("FLASK_CACHE_CONFIG"))
     # Celery
     REDIS_URL = get_env_config("REDIS_URL", optional=False)
 

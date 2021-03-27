@@ -59,9 +59,8 @@ export function sleep(ms: number) {
 
 export function download(dataUrl: string, fileName: string) {
     const a = document.createElement('a');
-    // a.setAttribute('download', fileName);
     a.href = dataUrl;
-    a.download = fileName; // TODO(querybook): Check why it's not respected
+    a.download = fileName;
     document.body.appendChild(a);
     a.click();
     document.body.removeChild(a);

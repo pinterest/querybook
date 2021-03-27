@@ -698,9 +698,17 @@ export function fetchFunctionDocumentationIfNeeded(
 ): ThunkResult<Promise<any>> {
     return async (dispatch, getState) => {
         const state = getState();
-        const functionDocumentation =
-            state.dataSources.functionDocumentationByNameByLanguage[language];
-        if (functionDocumentation == null) {
+        if (
+            language in state.dataSources.functionDocumentation.byNameByLanguage
+        ) {
+            return state.dataSources.functionDocumentation.byNameByLanguage[
+                language
+            ];
+        }
+
+        const functionDocumentationPromise =
+            state.dataSources.functionDocumentation.loading[language];
+        if (functionDocumentationPromise == null) {
             try {
                 const fetchPromise = ds.fetch(
                     `/function_documentation_language/${language}/`
@@ -743,10 +751,8 @@ export function fetchFunctionDocumentationIfNeeded(
             } catch (e) {
                 console.error(e);
             }
-        } else if (functionDocumentation instanceof Promise) {
-            return functionDocumentation;
-        } else {
-            return functionDocumentation;
+        } else if (functionDocumentationPromise instanceof Promise) {
+            return functionDocumentationPromise;
         }
     };
 }

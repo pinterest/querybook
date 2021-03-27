@@ -390,8 +390,6 @@ export class SqlAutoCompleter {
         };
 
         const flatFormatter: Formatter = (context, word) => {
-            // TODO: when item is a schema, it has trustworthiness score of 0!
-            // we should give it a better rank
             const isGoldenItem = false;
             return {
                 originalText: text,

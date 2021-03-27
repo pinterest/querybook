@@ -148,7 +148,6 @@ class QueryMetastore(CRUDMixin, Base):
 
     acl_control = sql.Column(sql.JSON, default={}, nullable=False)
 
-    # TODO: support multiple types of metastore
     def to_dict(self):
         return {"id": self.id, "name": self.name}
 

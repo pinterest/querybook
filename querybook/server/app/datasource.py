@@ -115,17 +115,6 @@ def register_socket(url, namespace=None, require_auth=True):
                     broadcast=False,
                     room=flask.request.sid,
                 )
-                # opentsdb_client.increment('pinalytics.datasource.exception',
-                #                           sample_rate=1,
-                #                           tags={'url': url.replace('/', '.').strip('.')})
-            finally:
-                # TODO: implement latency check
-                pass
-                # latency_ms = time_utils.now_millis() - start_time
-                # opentsdb_client.timing('pinalytics.datasource.latency',
-                #                        latency_ms,
-                #                        sample_rate=1,
-                #                        tags={'url': url.replace('/', '.').strip('.')})
 
         handler.__raw__ = fn
         return handler
