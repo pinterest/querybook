@@ -2,15 +2,19 @@
 
 ./querybook/scripts/init_db
 
-if [ "$HOT_RELOAD" = "true" ]; then
-    ./querybook/scripts/runservice web ${APIPORT-3000} & PIDSERVER=$!
+flask_server() {
+    ./querybook/scripts/runservice web --debug ${APIPORT-3000}
+}
+webpack_server() {
     yarn run webpack-dev-server \
         --host 0.0.0.0 \
         --port ${PORT-10001} \
         --mode=development --open --hot \
-        --env.QUERYBOOK_UPSTREAM=http://0.0.0.0:${APIPORT-3000}  & PIDWEB=$!
-    wait $PIDSERVER
-    wait $PIDWEB
+        --env.QUERYBOOK_UPSTREAM=http://0.0.0.0:${APIPORT-3000}
+}
+
+if [ "$HOT_RELOAD" = "true" ]; then
+    { flask_server & webpack_server; }
 else
     ./querybook/scripts/runservice web --debug ${PORT-10001}
 fi
