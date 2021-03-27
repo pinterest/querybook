@@ -17,7 +17,7 @@ services:
         environment:
             PORT: ${PORT-10001}
             APIPORT: ${APIPORT-3000}
-            HOT_RELOAD: ${HOT_RELOAD-true}
+            HOT_RELOAD: ${HOT_RELOAD-false}
         restart: 'always'
         volumes:
             # This is for code change via watcher
