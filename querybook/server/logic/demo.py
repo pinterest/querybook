@@ -276,7 +276,11 @@ Score DESC;
   -- This is another example of templating!
   -- Check out: https://jinja.palletsprojects.com/en/2.11.x/templates/
   --    for more usages and information!"""
-    c_meta = {"title": "Top 10 Countries Score", "engine": engine_id, "collapsed": True}
+    c_meta = {
+        "title": "Top 10 Countries Score",
+        "engine": engine_id,
+        "collapsed": False,
+    }
     c_id = data_doc_logic.create_data_cell(
         cell_type="query", context=c_query, meta=c_meta, commit=False, session=session
     ).id
