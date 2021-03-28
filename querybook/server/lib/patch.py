@@ -3,8 +3,8 @@ def monkey_patch_gevent_websocket():
     """
         THIS IS A HACK
           Right now flask-socketio uses gevent websocket handler with
-        gevent.pywsgi server. This is bad since we cannot configure
-        logging for websocket handler. This monkey would revert the
+        gevent.pywsgi server. Therefore Querybook cannot configure
+        logging for websocket handler. This monkey patch would revert the
         websocket handler logging logic (which uses logger instead of stderr)
         to the original gevent.pywsgi logging logic. Please REMOVE if
         either flask-socketio or geventwebsocket fix their code
@@ -16,15 +16,6 @@ def monkey_patch_gevent_websocket():
         WSGIHandler.log_request(self)
 
     handler.WebSocketHandler.log_request = log_request
-
-    # import logging
-    # import sys
-    # # Monkey patch hack to fix WebSocketHandler.logger
-    # logger = logging.getLogger('geventwebsocket.handler')  # I think you could use any name here
-    # logger.setLevel(logging.DEBUG)
-    # stream_handler = logging.StreamHandler(sys.stdout)
-    # logger.addHandler(stream_handler)
-    # handler.WebSocketHandler.logger = property(lambda self: logger)
 
 
 def monkey_patch_disable_watchdog():

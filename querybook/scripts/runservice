@@ -5,7 +5,7 @@ SERVICE_OPTIONS="${@:2}"
 
 if [ -z "$SERVICE_NAME" ]; then
     echo "Usage: $0 [SERVICE] [SERVICE_OPTIONS]"
-    echo "For example: $0 web --debug"
+    echo "For example: $0 web --debug --webpack"
     exit -1
 fi
 
@@ -21,7 +21,7 @@ case "$SERVICE_NAME" in
     COMMAND="watchmedo auto-restart -d querybook -p '*.py' -R -- celery -A tasks.all_tasks beat -S scheduler.DatabaseScheduler --loglevel=INFO"
     ;;
 "worker_scheduler") # FIXME: this doesn't schedule task as desired
-    COMMAND="celery -A tasks.all_tasks worker --beat --scheduler scheduler.DatabaseScheduler --loglevel=INFO"
+    COMMAND="watchmedo auto-restart -d querybook -p '*.py' -R -- celery -A tasks.all_tasks worker --beat --scheduler scheduler.DatabaseScheduler --loglevel=DEBUG"
     ;;
 
 "prod_web")
