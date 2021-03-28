@@ -57,5 +57,5 @@ Check out the [general configuration guide](../configurations/general_config.md)
 
 If the command did not work, checkout [Troubleshoot](troubleshoot.md).
 
-[^1]: Tested on 64GB Mac/32GB Windows & Ubuntu/16GB Mac.
+[^1]: Tested on 16GB/64GB Mac & 32GB Windows/Ubuntu.
 [^2]: Total container memory usage should not exceed 2GB, this is only needed because Elasticsearch has a high peak memory at the start.
