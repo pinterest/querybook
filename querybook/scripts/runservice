@@ -5,7 +5,7 @@ SERVICE_OPTIONS="${@:2}"
 
 if [ -z "$SERVICE_NAME" ]; then
     echo "Usage: $0 [SERVICE] [SERVICE_OPTIONS]"
-    echo "For example: $0 web --debug"
+    echo "For example: $0 web --debug --webpack"
     exit -1
 fi
 

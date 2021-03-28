@@ -29,6 +29,7 @@ def main():
         port = int(sys.argv[-1])
 
     debug = "--debug" in sys.argv
+    run_webpack = "--webpack" in sys.argv
 
     webpack_process = None
 
@@ -39,8 +40,12 @@ def main():
 
         # We are on the parent process
         if os.environ.get("WERKZEUG_RUN_MAIN") != "true":
-            webpack_process = multiprocessing.Process(target=webpack)
-            webpack_process.start()
+            if run_webpack:
+                webpack_process = multiprocessing.Process(target=webpack)
+                webpack_process.start()
+            else:
+                print("Webpack is disabled, so html/js/css will not be built")
+                print("To make web files: python runweb.py --debug --webpack port")
     else:
         print("You are not running in debug mode, so files are not autoreloaded.")
         print("To run in debug mode: python runweb.py --debug port")

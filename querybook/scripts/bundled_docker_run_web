@@ -3,7 +3,12 @@
 ./querybook/scripts/init_db
 
 flask_server() {
-    ./querybook/scripts/runservice web --debug ${APIPORT-3000}
+    # Restart flask server in case of crash; since we are running webpack at the same time
+    # Docker would not restart web container in case of syntax error
+    while true; do
+        ./querybook/scripts/runservice web --debug ${APIPORT-3000} && break
+        sleep 5
+    done
 }
 webpack_server() {
     yarn run webpack-dev-server \
@@ -16,5 +21,5 @@ webpack_server() {
 if [ "$HOT_RELOAD" = "true" ]; then
     { flask_server & webpack_server; }
 else
-    ./querybook/scripts/runservice web --debug ${PORT-10001}
+    ./querybook/scripts/runservice web --debug --webpack ${PORT-10001}
 fi
