@@ -44,7 +44,7 @@ def main():
                 webpack_process = multiprocessing.Process(target=webpack)
                 webpack_process.start()
             else:
-                print("Webpack is disabled, so html/js/css will not be built")
+                print("Webpack is disabled. html/js/css will not be built.")
                 print("To make web files: python runweb.py --debug --webpack port")
     else:
         print("You are not running in debug mode, so files are not autoreloaded.")

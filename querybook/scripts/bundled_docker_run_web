@@ -3,7 +3,7 @@
 ./querybook/scripts/init_db
 
 flask_server() {
-    # Restart flask server in case of crash; since we are running webpack at the same time
+    # Restart flask server in case of crash since we are running webpack at the same time
     # Docker would not restart web container in case of syntax error
     while true; do
         ./querybook/scripts/runservice web --debug ${APIPORT-3000} && break

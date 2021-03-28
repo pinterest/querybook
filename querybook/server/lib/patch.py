@@ -3,7 +3,7 @@ def monkey_patch_gevent_websocket():
     """
         THIS IS A HACK
           Right now flask-socketio uses gevent websocket handler with
-        gevent.pywsgi server. So Querybook cannot configure
+        gevent.pywsgi server. Therefore Querybook cannot configure
         logging for websocket handler. This monkey patch would revert the
         websocket handler logging logic (which uses logger instead of stderr)
         to the original gevent.pywsgi logging logic. Please REMOVE if
