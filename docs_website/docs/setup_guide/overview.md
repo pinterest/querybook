@@ -6,7 +6,7 @@ sidebar_label: Overview
 
 There are two ways to setup Querybook:
 
-1. [Single-Machine Instant Setup (In laptop or server)](quick_setup.md)
+1. [Single-Machine Instant Setup (locally or on server)](quick_setup.md)
 2. [Multi-Machine Setup](prod_setup.md)
 
 The single machine method is a quick way to tryout Querybook for <5 users usage and it uses docker-compose to bring up all the necessary infrastructure. Please check [Single Machine Setup](quick_setup.md) for details.
