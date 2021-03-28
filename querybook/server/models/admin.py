@@ -89,7 +89,9 @@ class QueryEngine(CRUDMixin, Base):
     executor_params = sql.Column(sql.JSON)
     control_params = sql.Column(sql.JSON, default={}, nullable=False)
 
-    metastore_id = sql.Column(sql.Integer, sql.ForeignKey("query_metastore.id"))
+    metastore_id = sql.Column(
+        sql.Integer, sql.ForeignKey("query_metastore.id", ondelete="SET NULL")
+    )
     metastore = relationship("QueryMetastore", backref="query_engine")
 
     environments = relationship(

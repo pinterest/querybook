@@ -64,9 +64,10 @@ def get_db_engine(
                     % (connection_record.info["pid"], pid)
                 )
 
-        # Set mode to traditional so that, among other things,
-        # inserting data in a column that doesn't fit throws an error.
-        __engine.execute("SET SESSION sql_mode='TRADITIONAL'")
+        if conn_string.startswith("mysql"):
+            # Set mode to traditional so that, among other things,
+            # inserting data in a column that doesn't fit throws an error.
+            __engine.execute("SET SESSION sql_mode='TRADITIONAL'")
     return __engine
 
 

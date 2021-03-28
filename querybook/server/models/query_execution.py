@@ -32,7 +32,9 @@ class QueryExecution(Base):
     completed_at = sql.Column(sql.DateTime)
 
     query = sql.Column(sql.Text(length=mediumtext_length))
-    engine_id = sql.Column(sql.Integer, sql.ForeignKey("query_engine.id"))
+    engine_id = sql.Column(
+        sql.Integer, sql.ForeignKey("query_engine.id", ondelete="CASCADE")
+    )
     uid = sql.Column(sql.Integer, sql.ForeignKey("user.id", ondelete="CASCADE"))
 
     owner = relationship("User", uselist=False)
@@ -174,7 +176,9 @@ class QueryExecutionNotification(Base):
     query_execution_id = sql.Column(
         sql.Integer, sql.ForeignKey("query_execution.id", ondelete="CASCADE")
     )
-    user = sql.Column(sql.String(length=name_length), nullable=False)
+    user = sql.Column(
+        sql.Integer, sql.ForeignKey("user.id", ondelete="CASCADE"), nullable=False
+    )
 
     def to_dict(self):
         return {
@@ -201,7 +205,9 @@ class QueryExecutionViewer(CRUDMixin, Base):
     )
     user = relationship("User", foreign_keys="QueryExecutionViewer.uid")
 
-    created_by = sql.Column(sql.Integer, sql.ForeignKey("user.id"), nullable=False)
+    created_by = sql.Column(
+        sql.Integer, sql.ForeignKey("user.id", ondelete="CASCADE"), nullable=False
+    )
     creator = relationship("User", foreign_keys="QueryExecutionViewer.created_by")
     created_at = sql.Column(sql.DateTime, default=now, nullable=False)
     query_execution = relationship(

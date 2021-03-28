@@ -157,7 +157,7 @@ def get_data_doc_by_id(id, session=None):
 def get_data_doc_by_user(uid, environment_id, offset, limit, session=None):
     return (
         session.query(DataDoc)
-        .filter_by(owner_uid=uid, archived=0, environment_id=environment_id)
+        .filter_by(owner_uid=uid, archived=False, environment_id=environment_id)
         .order_by(DataDoc.id.desc())
         .offset(offset)
         .limit(limit)
@@ -169,7 +169,7 @@ def get_data_doc_by_user(uid, environment_id, offset, limit, session=None):
 def get_all_data_docs(offset=0, limit=100, session=None):
     return (
         session.query(DataDoc)
-        .filter(DataDoc.archived == 0)
+        .filter_by(archived=False)
         .order_by(DataDoc.id.desc())
         .offset(offset)
         .limit(limit)
