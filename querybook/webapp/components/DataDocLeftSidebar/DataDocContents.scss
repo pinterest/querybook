@@ -3,11 +3,11 @@
     overflow-x: hidden;
 
     .contents-panel-cell-row {
-        padding: 8px 8px 0px;
+        padding: 4px 8px 4px 8px;
 
         cursor: pointer;
         display: flex;
-        align-items: flex-end;
+        align-items: center;
 
         .contents-panel-cell-row-text {
             overflow: hidden;
