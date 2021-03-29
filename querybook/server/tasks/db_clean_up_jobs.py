@@ -75,7 +75,7 @@ def clean_up_impression(days_to_keep=30, session=None):
 def clean_up_archived_data_doc(days_to_keep=60, session=None):
     last_day = datetime.now() - timedelta(days_to_keep)
 
-    session.query(DataDoc).filter(DataDoc.archived == 1).filter(
+    session.query(DataDoc).filter(archived=False).filter(
         DataDoc.updated_at < last_day
     ).delete(synchronize_session=False)
     session.commit()

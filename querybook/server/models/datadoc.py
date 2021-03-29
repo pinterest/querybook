@@ -21,9 +21,9 @@ class DataDoc(Base, CRUDMixin):
         nullable=False,
     )
     # Controls whether or not anyone can view it
-    public = sql.Column(sql.BOOLEAN, default=True, nullable=False)
+    public = sql.Column(sql.Boolean, default=True, nullable=False)
     # When archived, data doc will be hidden from everyone
-    archived = sql.Column(sql.BOOLEAN, default=False, nullable=False)
+    archived = sql.Column(sql.Boolean, default=False, nullable=False)
 
     # AKA creator
     owner_uid = sql.Column(sql.Integer, sql.ForeignKey("user.id", ondelete="CASCADE"))
@@ -170,7 +170,9 @@ class QuerySnippet(Base):
     context = sql.Column(sql.Text(length=mediumtext_length))
 
     title = sql.Column(sql.String(length=name_length), nullable=False)
-    engine_id = sql.Column(sql.Integer, sql.ForeignKey("query_engine.id"))
+    engine_id = sql.Column(
+        sql.Integer, sql.ForeignKey("query_engine.id", ondelete="CASCADE")
+    )
     description = sql.Column(sql.String(length=description_length))
     is_public = sql.Column(sql.Boolean, nullable=False)
     golden = sql.Column(sql.Boolean, nullable=False, default=False)
@@ -203,7 +205,9 @@ class FavoriteDataDoc(Base):
     __tablename__ = "favorite_data_doc"
 
     id = sql.Column(sql.Integer, primary_key=True)
-    data_doc_id = sql.Column(sql.Integer, sql.ForeignKey("data_doc.id"))
+    data_doc_id = sql.Column(
+        sql.Integer, sql.ForeignKey("data_doc.id", ondelete="CASCADE")
+    )
     uid = sql.Column(sql.Integer, sql.ForeignKey("user.id", ondelete="CASCADE"))
 
     def to_dict(self):
