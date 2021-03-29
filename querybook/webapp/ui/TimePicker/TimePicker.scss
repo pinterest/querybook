@@ -1,0 +1,23 @@
+@import './../../scss_variables.scss';
+
+.rc-time-picker-input {
+    @include standard-textbox();
+}
+
+.rc-time-picker-panel {
+    .rc-time-picker-panel-inner {
+        background-color: var(--bg-color);
+        box-shadow: none;
+        border: var(--border);
+        border-radius: var(--border-radius);
+
+        li {
+            &.rc-time-picker-panel-select-option-selected {
+                background: var(--select-bg-color);
+            }
+            &:hover {
+                background: var(--hover-bg-color);
+            }
+        }
+    }
+}

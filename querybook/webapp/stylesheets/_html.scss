@@ -1,4 +1,6 @@
 /*! minireset.css v0.0.6 | MIT License | github.com/jgthms/minireset.css */
+@import '../scss_variables.scss';
+
 html,
 body,
 p,
@@ -225,27 +227,7 @@ button {
 
 input,
 textarea {
-    background-color: var(--bg-color);
-    border: var(--border);
-    border-radius: var(--border-radius);
-    box-shadow: none;
-    width: 100%;
-    padding: 8px;
-    font-size: inherit;
-    color: inherit;
-
-    &:hover {
-        border-color: var(--hover-border-color);
-    }
-
-    &:active,
-    &:focus {
-        border-color: var(--focus-border-color);
-        outline: none;
-    }
-    &::placeholder {
-        color: var(--light-text-color);
-    }
+    @include standard-textbox();
 }
 
 input:-webkit-autofill,

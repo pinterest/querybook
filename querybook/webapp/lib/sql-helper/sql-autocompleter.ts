@@ -25,7 +25,6 @@ interface ICompletionRow {
 
     tooltip: string;
     render: (element: HTMLElement, self: any, data: ICompletionRow) => void;
-    isGoldenItem?: boolean;
     score: number;
 }
 
@@ -344,24 +343,9 @@ export class SqlAutoCompleter {
                       `<b style='font-weight: bold'>${data.originalText}</b>`
                   );
 
-        const isGoldenItem = data.isGoldenItem;
-        const goldenItemIconDOM =
-            'isGoldenItem' in data
-                ? `<i class="fa fa-check-circle golden-item-icon ${
-                      isGoldenItem ? 'golden' : 'not-golden'
-                  }"></i>`
-                : '';
-
         const div = document.createElement('div');
         div.className = 'code-editor-autocomplete-wrapper';
         div.innerHTML = `
-            <span
-                class="code-editor-autocomplete-span code-editor-golden-span"
-                aria-label={${isGoldenItem ? 'Golden' : 'Not Golden'}}
-                data-balloon-pos={'up'}
-            >
-                ${goldenItemIconDOM}
-            </span>
             <span class="code-editor-autocomplete-span code-editor-text-span">
                 ${text}
             </span>
@@ -384,34 +368,33 @@ export class SqlAutoCompleter {
                 label: upperCasedWord,
                 tooltip: 'keyword',
                 render: this.autoSuggestionRenderer,
-                isGoldenItem: null,
+
                 score,
             };
         };
 
         const flatFormatter: Formatter = (context, word) => {
-            const isGoldenItem = false;
+            const score = 0;
             return {
                 originalText: text,
                 text: word,
                 label: word,
                 tooltip: context,
                 render: this.autoSuggestionRenderer,
-                isGoldenItem,
-                score: 0,
+
+                score,
             };
         };
 
         const hierarchicalFormatter: Formatter = (context, word, label) => {
-            const isGoldenItem = false;
+            const score = 0;
             return {
                 originalText: text,
                 text: word,
                 label,
                 tooltip: context,
                 render: this.autoSuggestionRenderer,
-                isGoldenItem,
-                score: 0,
+                score,
             };
         };
 

@@ -31,6 +31,11 @@ export const RecurrenceEditor: React.FunctionComponent<IProps> = ({
     recurrenceError,
     setRecurrence,
 }) => {
+    const localTime = React.useMemo(
+        () => getRecurrenceLocalTimeString(recurrence),
+        [recurrence]
+    );
+
     const hourSecondField = (
         <FormField label="Hour/Minute (UTC)" error={recurrenceError?.hour}>
             <div className="flex-row">
@@ -53,7 +58,7 @@ export const RecurrenceEditor: React.FunctionComponent<IProps> = ({
                 />
                 <div className="pl8">
                     Local Time:
-                    {getRecurrenceLocalTimeString(recurrence)}
+                    {localTime}
                 </div>
             </div>
         </FormField>
