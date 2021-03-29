@@ -15,6 +15,11 @@ const userReviews = [
         comment:
             "I rely on Querybook every day to query, organize and analyze Pinterest data.  It's a fast and intuitive program that gets out of the way and allows me to focus on identifying trends and opportunities.",
     },
+    {
+        name: 'OJ Bright, Quantitative Researcher @GrandRounds',
+        comment:
+            'I know I am so incredibly late to the party, but I made my first DataDoc yesterday and I think I’m in love…',
+    },
 ];
 
 export default () => {
