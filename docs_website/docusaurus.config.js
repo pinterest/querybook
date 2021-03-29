@@ -104,5 +104,9 @@ module.exports = {
         gtag: {
             trackingID: 'G-ZV2Q3M58R9',
         },
+        algolia: {
+            apiKey: 'fdaa985607f0df46d22edf5e6e01778c',
+            indexName: 'querybook',
+        },
     },
 };
