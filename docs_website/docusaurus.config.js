@@ -85,7 +85,7 @@ module.exports = {
                         {
                             label: 'Slack',
                             href:
-                                'https://querybookchat.slack.com/join/shared_invite/zt-dpr988af-9VwGkjcmPhqTmRoA2Tm3gg#/',
+                                'https://querybook.slack.com/join/shared_invite/zt-dpr988af-9VwGkjcmPhqTmRoA2Tm3gg#/',
                         },
                     ],
                 },

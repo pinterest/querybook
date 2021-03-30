@@ -94,7 +94,7 @@ Here are all the prefix allowed by Querybook:
 Start by reading the developer starter guide [this guide](./developer_setup.md) to setup Querybook/
 If you're having trouble using this project, please go through the docs and search for solutions in the existing open and closed issues.
 
-You can also reach out to us at querybook@pinterest.com or on our [Slack](https://join.slack.com/t/querybookchat/shared_invite/zt-dpr988af-9VwGkjcmPhqTmRoA2Tm3gg).
+You can also reach out to us at querybook@pinterest.com or on our [Slack](https://join.slack.com/t/querybook/shared_invite/zt-dpr988af-9VwGkjcmPhqTmRoA2Tm3gg).
 
 ## Security
 
