@@ -3,10 +3,7 @@ import React from 'react';
 import Link from '@docusaurus/Link';
 import './index.scss';
 
-// Hacking docusaurus to insert a banner
-const mainContainer = document.getElementById('__docusaurus');
-const announcementRoot = document.createElement('div');
-document.body.insertBefore(announcementRoot, mainContainer);
+const ANNOUNCEMENT_DIV_ID = '__announcement_root';
 
 const AnnouncementBanner = () => (
     <div className="AnnouncementSection">
@@ -14,7 +11,9 @@ const AnnouncementBanner = () => (
             🚀 March 30 2021 update: We just <b>open sourced Querybook</b> and
             published our first{' '}
             <b>
-                <Link to="https://google.com">blog post</Link>
+                <Link to="https://medium.com/@Pinterest_Engineering/open-sourcing-querybook-pinterests-collaborative-big-data-hub-ba2605558883">
+                    blog post
+                </Link>
             </b>{' '}
             🚀
         </p>
@@ -22,5 +21,21 @@ const AnnouncementBanner = () => (
 );
 
 export default () => {
-    return ReactDOM.createPortal(<AnnouncementBanner />, announcementRoot);
+    const [announcementRoot, setAnnouncementRoot] = React.useState(null);
+
+    React.useEffect(() => {
+        let rootDiv = document.getElementById(ANNOUNCEMENT_DIV_ID);
+        if (!rootDiv) {
+            // Hacking docusaurus to insert a banner
+            const mainContainer = document.getElementById('__docusaurus');
+            rootDiv = document.createElement('div');
+            rootDiv.setAttribute('id', ANNOUNCEMENT_DIV_ID);
+            document.body.insertBefore(rootDiv, mainContainer);
+        }
+        setAnnouncementRoot(rootDiv);
+    }, []);
+
+    return announcementRoot
+        ? ReactDOM.createPortal(<AnnouncementBanner />, announcementRoot)
+        : null;
 };
