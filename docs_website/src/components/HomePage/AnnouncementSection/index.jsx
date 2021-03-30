@@ -11,8 +11,12 @@ document.body.insertBefore(announcementRoot, mainContainer);
 const AnnouncementBanner = () => (
     <div className="AnnouncementSection">
         <p>
-            🚀 Check out our journey to open source Querybook on the&nbsp;
-            <Link to="https://google.com">Pinterest Engineering Blog</Link>
+            🚀 March 30 2021 update: We just <b>open sourced Querybook</b> and
+            published our first{' '}
+            <b>
+                <Link to="https://google.com">blog post</Link>
+            </b>{' '}
+            🚀
         </p>
     </div>
 );
