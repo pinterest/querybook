@@ -71,13 +71,13 @@ export const DataDocQueryExecutions: React.FunctionComponent<IProps> = React.mem
             dispatch(queryExecutionsActions.fetchQueryExecutionsByCell(cellId));
         }, [cellId]);
 
-        React.useEffect(() => {
+        useEffect(() => {
             selectExecutionIndex(0);
         }, [queryExecutions.length]);
 
         const [usedQueryParam, setUsedQueryParam] = useState(false);
         useEffect(() => {
-            if (!usedQueryParam) {
+            if (!usedQueryParam && queryExecutions.length) {
                 const queryParam = getQueryString();
                 if ('executionId' in queryParam && queryParam['executionId']) {
                     const executionId = Number(queryParam['executionId']);
@@ -87,10 +87,10 @@ export const DataDocQueryExecutions: React.FunctionComponent<IProps> = React.mem
                     ] of queryExecutions.entries()) {
                         if (queryExecution.id === executionId) {
                             selectExecutionIndex(index);
-                            setUsedQueryParam(true);
                         }
                     }
                 }
+                setUsedQueryParam(true);
             }
         }, [queryExecutions, usedQueryParam]);
 
