@@ -1,0 +1,14 @@
+.AnnouncementSection {
+    text-align: center;
+    padding: 4px 0px;
+    background-color: #f2ffff;
+    p {
+        margin: 0;
+    }
+}
+
+html[data-theme='dark'] {
+    .AnnouncementSection {
+        background-color: #3c3c3c;
+    }
+}
