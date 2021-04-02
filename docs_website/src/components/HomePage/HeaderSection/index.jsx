@@ -26,19 +26,35 @@ export default () => {
                         <b>Querybook</b> is Pinterest’s open-source big data IDE
                         via a notebook interface.
                     </p>
-                    <div className="Querybook-Showcase">
-                        <img
-                            src={useBaseUrl('img/homepage.png')}
-                            className="mac-box-shadow"
-                        />
-                    </div>
                     <div className="HeaderActions flex-center">
                         <Link
                             className="button button--primary button--lg"
                             to="/docs/setup_guide/quick_setup"
                         >
-                            Get Started
+                            Try out with 1 command
                         </Link>
+                        <Link
+                            className="button button--link button--lg"
+                            to="https://querybook.slack.com/"
+                        >
+                            Join our Slack Community
+                        </Link>
+                        <span className="github-button">
+                            <iframe
+                                src="https://ghbtns.com/github-btn.html?user=pinterest&repo=querybook&type=star&count=true&size=large"
+                                frameborder="0"
+                                scrolling="0"
+                                width="170"
+                                height="30"
+                                title="GitHub"
+                            ></iframe>
+                        </span>
+                    </div>
+                    <div className="Querybook-Showcase">
+                        <img
+                            src={useBaseUrl('img/homepage.png')}
+                            className="mac-box-shadow"
+                        />
                     </div>
                 </div>
             </div>
