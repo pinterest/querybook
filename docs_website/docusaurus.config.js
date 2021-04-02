@@ -43,14 +43,18 @@ module.exports = {
             items: [
                 {
                     to: 'docs/',
-                    label: 'Documentation',
-                    position: 'right',
+                    label: 'Docs',
+                    position: 'left',
                 },
                 {
                     href: 'https://github.com/pinterest/querybook',
-                    position: 'right',
-                    className: 'header-github-link',
-                    'aria-label': 'GitHub repository',
+                    position: 'left',
+                    label: 'GitHub',
+                },
+                {
+                    href: 'https://querybook.slack.com/',
+                    position: 'left',
+                    label: 'Slack',
                 },
             ],
         },

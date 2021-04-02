@@ -49,9 +49,15 @@
         margin-top: 2rem;
         flex-wrap: wrap;
 
-        > .button {
+        > .button,
+        .github-button {
             margin-right: 1rem;
             margin-bottom: 1rem;
+        }
+
+        .github-button {
+            display: flex;
+            align-items: center;
         }
     }
 
