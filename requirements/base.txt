@@ -43,6 +43,9 @@ pydruid==0.5.7
 google-cloud-bigquery==1.28.0
 # Snowflake
 snowflake-sqlalchemy==1.2.4
+# ClickHouse
+clickhouse-driver==0.2.0
+clickhouse-sqlalchemy==0.1.6
 
 # Query templating
 Jinja2==2.11.3  # From Flask
