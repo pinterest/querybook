@@ -4,9 +4,9 @@ boto3==1.9.16
 boto==2.49.0
 
 # Google GCD
-google-cloud-storage==1.27.0
-google-auth==1.13.1
-google-resumable-media==0.5.0
+google-cloud-storage==1.37.0
+google-auth==1.24.0
+google-resumable-media==1.2.0
 
 # LDAP
 python-ldap==3.3.1
@@ -40,7 +40,7 @@ hmsclient==0.1.1
 # Druid
 pydruid==0.5.7
 # BigQuery
-google-cloud-bigquery==1.24.0
+google-cloud-bigquery==1.28.0
 # Snowflake
 snowflake-sqlalchemy==1.2.4
 
