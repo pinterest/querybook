@@ -52,7 +52,7 @@ module.exports = {
                     label: 'GitHub',
                 },
                 {
-                    href: 'https://querybook.slack.com/',
+                    href: 'https://join.slack.com/t/querybook/shared_invite/zt-dpr988af-9VwGkjcmPhqTmRoA2Tm3gg',
                     position: 'left',
                     label: 'Slack',
                 },
@@ -89,7 +89,7 @@ module.exports = {
                         {
                             label: 'Slack',
                             href:
-                                'https://querybook.slack.com/join/shared_invite/zt-dpr988af-9VwGkjcmPhqTmRoA2Tm3gg#/',
+                                'https://join.slack.com/t/querybook/shared_invite/zt-dpr988af-9VwGkjcmPhqTmRoA2Tm3gg',
                         },
                     ],
                 },
