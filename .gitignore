@@ -47,3 +47,5 @@ querybook/webapp/coverage/
 .docusaurus
 .cache-loader
 build
+
+requirements/local.txt

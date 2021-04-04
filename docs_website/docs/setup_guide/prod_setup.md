@@ -10,7 +10,7 @@ Once further scalability is desired you can start each service individually in d
 
 These items should be prepared before setting up Querybook:
 
--   (**Required**) A MySQL database with version >=5.7. It is recommended to have more than 5GB of space.
+-   (**Required**) A MySQL/PostgresSQL[^1] database with version >=5.7. It is recommended to have more than 5GB of space.
 -   (**Required**) An Elasticsearch server with version 6.6.1.
 -   (**Required**) A 2GB Redis instance, Querybook should not use more than 1GB of memory.
 -   If OAuth will be used for authentication, remember to get the OAuth client information (secrets, token url, etc).
@@ -49,3 +49,5 @@ If you add `prod_` in front of the service name (for example `make prod_web`), i
 4. Create a query engine and now Querybook should be ready to use.
 
 Check out the [general configuration guide](../configurations/general_config.md) for more detailed info about querybook configuration.
+
+[^1]: To use PostgresSQL, you need to install the [psycopg2 driver](https://pypi.org/project/psycopg2/) via pip.

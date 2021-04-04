@@ -3,12 +3,7 @@ from .base_executor import parse_exception
 
 from .executors.hive import HiveQueryExecutor
 from .executors.presto import PrestoQueryExecutor
-from .executors.sqlalchemy import (
-    MysqlQueryExecutor,
-    DruidQueryExecutor,
-    SqliteQueryExecutor,
-    SnowflakeQueryExecutor,
-)
+from .executors.sqlalchemy import SnowflakeQueryExecutor, GenericSqlAlchemyQueryExecutor
 from .executors.bigquery import BigQueryQueryExecutor
 
 
@@ -18,20 +13,15 @@ ALL_PLUGIN_EXECUTORS = import_plugin("executor_plugin", "ALL_PLUGIN_EXECUTORS", 
 ALL_EXECUTORS = [
     HiveQueryExecutor,
     PrestoQueryExecutor,
-    MysqlQueryExecutor,
-    DruidQueryExecutor,
-    SqliteQueryExecutor,
     BigQueryQueryExecutor,
+    GenericSqlAlchemyQueryExecutor,
     SnowflakeQueryExecutor,
 ] + ALL_PLUGIN_EXECUTORS
 
 
 def get_executor_class(language: str, name: str):
     for executor in ALL_EXECUTORS:
-        if (
-            executor.EXECUTOR_LANGUAGE() == language
-            and executor.EXECUTOR_NAME() == name
-        ):
+        if executor.match(language, name):
             return executor
 
     raise ValueError(f"Unknown executor {name} with language {language}")

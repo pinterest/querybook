@@ -1,6 +1,7 @@
 from abc import ABCMeta, abstractclassmethod
 import datetime
 import time
+from typing import Union, List
 
 from app.db import DBSession
 from app.flask_app import socketio
@@ -436,7 +437,7 @@ class QueryExecutorBaseClass(metaclass=ABCMeta):
         raise NotImplementedError
 
     @abstractclassmethod
-    def EXECUTOR_LANGUAGE(cls) -> str:
+    def EXECUTOR_LANGUAGE(cls) -> Union[str, List[str]]:
         """Indicate corresponding the query language
         """
         raise NotImplementedError
@@ -463,6 +464,19 @@ class QueryExecutorBaseClass(metaclass=ABCMeta):
     @classmethod
     def LOGGER_CLASS(cls) -> QueryExecutorLogger:
         return QueryExecutorLogger
+
+    @classmethod
+    def match(cls, language: str, name: str) -> bool:
+        if name != cls.EXECUTOR_NAME():
+            return False
+
+        executor_language = cls.EXECUTOR_LANGUAGE()
+        if isinstance(executor_language, str):
+            return executor_language == language
+        else:
+            # executor_language is List[str]
+            return language in executor_language
+
 
     def __init__(
         self,
