@@ -21,17 +21,17 @@ Querybook supports all Sqlalchemy compatible query engines by default. Basic fun
 | Service discovery              | x          | x                 | ✓                  |
 | Language Specific Autocomplete | x          | x                 | ✓                  |
 
-Tier 1 engines do not mean they can be used in production everywhere since different companies/org require different kinds of integrations. However, tier 1 databases provide an excellent foundation to extend additional functionalities. Use them as a reference or subclass them via the [query engine plugin](../integrations/add_query_engine.md).
+Tier 1 does not mean engines can be used in production everywhere since different companies/org require different kinds of integrations. However, tier 1 databases provide an excellent foundation to extend additional functionalities. Use them as a reference or subclass them via the [query engine plugin](../integrations/add_query_engine.md).
 
 If you have tried any of the tier 3 databases and confirmed it works, please update this doc to let others know.
 
 ## Query Engine Support
 
-Querybook only supports a few of the Tier 2/1 databases by default. When Querybook is launched, it checks with SqlAlchemy to see if any of the databases below are available. If so, the query engine would be automatically available to set up in the Admin UI. Please see the [step by step guide](#step-by-step-guide) below to see an working example.
+Querybook only supports a few of the Tier 1 & 2 databases by default. When Querybook is launched, it checks with SqlAlchemy to see if any of the databases below are available. If so, the query engine would be automatically available to set up in the Admin UI. Please see the [step by step guide](#step-by-step-guide) below to see an working example.
 
 ## Step by step guide
 
-In this guide, we will through all the steps required to get Amazon Redshift to work in Querybook. Other query engines can be added similarly.
+In this guide, we will go through adding Amazon Redshift query engine to Querybook. This serves as an example to adding all sqlalchemy-compatible query engines.
 
 1. Clone and download the repo
 
@@ -62,9 +62,9 @@ make
 6. Visit [https://localhost:10001/admin/query_engine/](https://localhost:10001/admin/query_engine/) and create a new query engine. Put `redshift` as the language and `generic-sqlalchemy` as the executor. In the `Executor Params`, put the connection string (as specified by SqlAlchemy) in the `Connection_string` field.
 7. Go to [https://localhost:10001/admin/environment/1/](https://localhost:10001/admin/environment/1/) and add the Redshift engine under the demo_environment.
 8. Now you can run queries against the new Redshift engine in [https://localhost:10001/demo_environment/adhoc/](https://localhost:10001/demo_environment/adhoc/).
-9. To include table metadata and autocompletion, you would need to add a metastore. Visit [https://localhost:10001/admin/metastore/](https://localhost:10001/admin/metastore/) and create a new metastore. Use SqlAlchemyMetastoreLoader with the exac connection string used for the query engine. Click on `Save` -> `CREATE SCHEDULE` -> `Create Task`. Now click on `Run Task` to sync. You can view the progress in the `History` tab. Wait until it is completed (Should be done in seconds if the number of tables is small).
+9. To include table metadata and autocompletion, you would need to add a metastore. Visit [https://localhost:10001/admin/metastore/](https://localhost:10001/admin/metastore/) and create a new metastore. Use SqlAlchemyMetastoreLoader with the exact connection string used for the query engine. Click on `Save` -> `CREATE SCHEDULE` -> `Create Task`. Now click on `Run Task` to sync. You can view the progress in the `History` tab. Wait until it is completed (Should be done in seconds if the number of tables is small).
 10. Go to your query engine page on [https://localhost:10001/admin/query_engine/](https://localhost:10001/admin/query_engine/), in the Metastore field, choose the metastore you just created and click `Save`.
-11. Visit [https://localhost:10001/demo_environment/adhoc/](https://localhost:10001/demo_environment/adhoc/) again and the auto complete feature should be available. You can also view all tables by clicking on the `Tables` button on the left sidebar and then select the specific metastore.
+11. Visit [https://localhost:10001/demo_environment/adhoc/](https://localhost:10001/demo_environment/adhoc/) again and the auto complete feature should be available. You can also view all tables by clicking on the `Tables` button on the left sidebar and select the specific metastore.
 
 ## All Query Engines
 
