@@ -77,7 +77,7 @@ class QueryExecutorLogger(object):
             ).to_dict()
 
         query_execution = spread_dict(
-            query_execution, {"total": len(self._statement_ranges),}
+            query_execution, {"total": len(self._statement_ranges),},
         )
         socketio.emit(
             "query_start",
@@ -295,7 +295,7 @@ class QueryExecutorLogger(object):
 
     def update_progress(self):
         progress = spread_dict(
-            self._statement_progress, {"total": len(self._statement_ranges),}
+            self._statement_progress, {"total": len(self._statement_ranges),},
         )
 
         self._celery_task.update_state(state="PROGRESS", meta=progress)
@@ -420,11 +420,11 @@ class QueryExecutorLogger(object):
 
 class QueryExecutorBaseClass(metaclass=ABCMeta):
     """Base query executor class to run queries
-       When extending, MUST IMPLEMENT:
-            _get_cursor which returns an extended value of CursorBaseClass
-            EXECUTOR_NAME which should be a string to represent the query executor
-            EXECUTOR_LANGUAGE which the language of query (ex presto, mysql)
-            EXECUTOR_TEMPLATE represents the shape of client_setting
+    When extending, MUST IMPLEMENT:
+         _get_cursor which returns an extended value of CursorBaseClass
+         EXECUTOR_NAME which should be a string to represent the query executor
+         EXECUTOR_LANGUAGE which the language of query (ex presto, mysql)
+         EXECUTOR_TEMPLATE represents the shape of client_setting
     """
 
     @abstractclassmethod
@@ -438,27 +438,24 @@ class QueryExecutorBaseClass(metaclass=ABCMeta):
 
     @abstractclassmethod
     def EXECUTOR_LANGUAGE(cls) -> Union[str, List[str]]:
-        """Indicate corresponding the query language
-        """
+        """Indicate corresponding the query language"""
         raise NotImplementedError
 
     @abstractclassmethod
     def EXECUTOR_NAME(cls) -> str:
         """Distinct name for the executor.
-           Must be distinct under for the same language.
+        Must be distinct under for the same language.
         """
         raise NotImplementedError
 
     @abstractclassmethod
     def EXECUTOR_TEMPLATE(cls) -> AllFormField:
-        """Describes the shape of the client_settings that goes into _get_cursor
-        """
+        """Describes the shape of the client_settings that goes into _get_cursor"""
         raise NotImplementedError
 
     @classmethod
     def SINGLE_QUERY_QUERY_ENGINE(cls) -> bool:
-        """If true, skip parsing and feed the entire query as a statement at once
-        """
+        """If true, skip parsing and feed the entire query as a statement at once"""
         return False
 
     @classmethod
@@ -476,7 +473,6 @@ class QueryExecutorBaseClass(metaclass=ABCMeta):
         else:
             # executor_language is List[str]
             return language in executor_language
-
 
     def __init__(
         self,
