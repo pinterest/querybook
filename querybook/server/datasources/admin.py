@@ -7,7 +7,7 @@ from datasources.admin_audit_log import with_admin_audit_log
 from env import QuerybookSettings
 from lib.engine_status_checker import ALL_ENGINE_STATUS_CHECKERS
 from lib.metastore.loaders import ALL_METASTORE_LOADERS
-from lib.query_executor.all_executors import ALL_EXECUTORS
+from lib.query_executor.all_executors import get_flattened_executor_template
 from logic import admin as logic
 from logic import user as user_logic
 from logic import environment as environment_logic
@@ -82,24 +82,7 @@ def delete_announcement(id):
 @register("/admin/query_engine_template/", methods=["GET"])
 @admin_only
 def get_all_query_engines_templates():
-    all_templates = []
-    for executor_cls in ALL_EXECUTORS:
-        executor_language = executor_cls.EXECUTOR_LANGUAGE()
-        executor_name = executor_cls.EXECUTOR_NAME()
-        executor_template = executor_cls.EXECUTOR_TEMPLATE()
-
-        executor_languages = (
-            [executor_language]
-            if isinstance(executor_language, str)
-            else executor_language
-        )
-
-        for language in executor_languages:
-            all_templates.append(
-                dict(language=language, name=executor_name, template=executor_template,)
-            )
-
-    return all_templates
+    return get_flattened_executor_template()
 
 
 @register("/admin/query_engine_status_checker/", methods=["GET"])

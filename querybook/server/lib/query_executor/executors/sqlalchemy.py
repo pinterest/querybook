@@ -63,7 +63,7 @@ class SnowflakeQueryExecutor(SqlAlchemyQueryExecutor):
 class GenericSqlAlchemyQueryExecutor(SqlAlchemyQueryExecutor):
     @classmethod
     def EXECUTOR_NAME(cls):
-        return "generic-sqlalchemy"
+        return "sqlalchemy"
 
     @classmethod
     def EXECUTOR_LANGUAGE(cls):
@@ -100,7 +100,7 @@ SQLALCHEMY_SUPPORTED_DIALECTS = [
     # be missing
     "mysql",
     "sqlite",
-    "postgres",
+    "postgresql",
     "oracle",
     "mssql",
 ]
@@ -114,14 +114,8 @@ def is_dialect_available(dialect: str) -> bool:
         return False
 
 
-def remove_driver(dialect: str) -> str:
-    if "+" not in dialect:
-        return dialect
-    return dialect.split("+", 1)[0]
-
-
 SQLALCHEMY_AVAILABLE_DIALECTS = [
-    remove_driver(dialect)
+    dialect
     for dialect in SQLALCHEMY_SUPPORTED_DIALECTS
     if is_dialect_available(dialect)
 ]
