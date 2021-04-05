@@ -1,4 +1,5 @@
 import React from 'react';
+import Link from '@docusaurus/Link';
 import Heading from '../../Heading';
 import Grid from '../../Grid';
 import { Databases, CloudPlatforms } from './content';
@@ -30,6 +31,14 @@ export default () => {
                     )}
                     itemClassName={'logo-item'}
                 />
+                <br />
+                <p className="flex-center">
+                    View the full list of supported databases&nbsp;
+                    <Link to="/docs/setup_guide/connect_to_query_engines">
+                        here
+                    </Link>
+                    .
+                </p>
             </div>
             <div className="integrations-grid">
                 <p className="integrations-title">

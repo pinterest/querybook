@@ -324,7 +324,7 @@ export const AdminQueryEngine: React.FunctionComponent<IProps> = ({
                             type="textarea"
                             rows={3}
                         />
-                        <div className="flex-row">
+                        <div className="flex-row flex0-children">
                             <SimpleField
                                 stacked
                                 name="metastore_id"
@@ -351,18 +351,21 @@ export const AdminQueryEngine: React.FunctionComponent<IProps> = ({
                                 options={engineStatusCheckerNames}
                                 withDeselect
                             />
-                            <SimpleField
-                                stacked
-                                name="language"
-                                type="select"
-                                options={querybookLanguages}
-                                onChange={(language) => {
-                                    onChange('language', language);
-                                    updateExecutor(
-                                        executorByLanguage[language][0]
-                                    );
-                                }}
-                            />
+                            <div className="flex1">
+                                <SimpleField
+                                    stacked
+                                    name="language"
+                                    type="react-select"
+                                    options={querybookLanguages}
+                                    onChange={(language) => {
+                                        onChange('language', language);
+                                        updateExecutor(
+                                            executorByLanguage[language][0]
+                                        );
+                                    }}
+                                />
+                            </div>
+
                             <SimpleField
                                 stacked
                                 name="executor"

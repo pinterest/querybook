@@ -171,8 +171,13 @@
 @include margin-classes;
 
 @mixin flex-classes {
-    $flex-size-options: 1, 2, 3, 4, 5;
+    $flex-size-options: 0, 1, 2, 3, 4, 5;
     @each $size in $flex-size-options {
+        .flex#{$size}-children {
+            > * {
+                flex: $size;
+            }
+        }
         .flex#{$size} {
             flex: $size;
         }

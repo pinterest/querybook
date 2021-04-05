@@ -7,7 +7,7 @@ from datasources.admin_audit_log import with_admin_audit_log
 from env import QuerybookSettings
 from lib.engine_status_checker import ALL_ENGINE_STATUS_CHECKERS
 from lib.metastore.loaders import ALL_METASTORE_LOADERS
-from lib.query_executor.all_executors import ALL_EXECUTORS
+from lib.query_executor.all_executors import get_flattened_executor_template
 from logic import admin as logic
 from logic import user as user_logic
 from logic import environment as environment_logic
@@ -82,14 +82,7 @@ def delete_announcement(id):
 @register("/admin/query_engine_template/", methods=["GET"])
 @admin_only
 def get_all_query_engines_templates():
-    return [
-        dict(
-            language=executor_cls.EXECUTOR_LANGUAGE(),
-            name=executor_cls.EXECUTOR_NAME(),
-            template=executor_cls.EXECUTOR_TEMPLATE(),
-        )
-        for executor_cls in ALL_EXECUTORS
-    ]
+    return get_flattened_executor_template()
 
 
 @register("/admin/query_engine_status_checker/", methods=["GET"])
@@ -438,7 +431,7 @@ def remove_query_engine_from_environment(id, engine_id):
 @admin_only
 def update_api_access_token_admin(token_id, enabled=False):
     """
-        Allow admins to enable/disable API Access Tokens
+    Allow admins to enable/disable API Access Tokens
     """
     uid = current_user.id
     return logic.update_api_access_token(uid, token_id, enabled)
@@ -450,7 +443,7 @@ def update_api_access_token_admin(token_id, enabled=False):
 @admin_only
 def get_api_access_tokens_admin():
     """
-        Returns all API Access Tokens
+    Returns all API Access Tokens
     """
     return logic.get_api_access_tokens()
 

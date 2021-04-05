@@ -1,6 +1,7 @@
 import re
-from sqlalchemy.exc import SQLAlchemyError, DBAPIError
+from sqlalchemy.exc import SQLAlchemyError, DBAPIError, NoSuchModuleError
 from snowflake.connector import errors as sf_errors
+from sqlalchemy.dialects import registry as sqlalchemy_registry
 
 from const.query_execution import QueryExecutionErrorType
 from lib.query_executor.base_executor import QueryExecutorBaseClass
@@ -36,40 +37,10 @@ class SqlAlchemyQueryExecutor(QueryExecutorBaseClass):
         return error_type, error_str, error_extracted
 
 
-class MysqlQueryExecutor(SqlAlchemyQueryExecutor):
-    @classmethod
-    def EXECUTOR_NAME(cls):
-        return "sqlalchemy"
-
-    @classmethod
-    def EXECUTOR_LANGUAGE(cls):
-        return "mysql"
-
-
-class DruidQueryExecutor(SqlAlchemyQueryExecutor):
-    @classmethod
-    def EXECUTOR_NAME(cls):
-        return "sqlalchemy"
-
-    @classmethod
-    def EXECUTOR_LANGUAGE(cls):
-        return "druid"
-
-
-class SqliteQueryExecutor(SqlAlchemyQueryExecutor):
-    @classmethod
-    def EXECUTOR_NAME(cls):
-        return "sqlalchemy"
-
-    @classmethod
-    def EXECUTOR_LANGUAGE(cls):
-        return "sqlite"
-
-
 class SnowflakeQueryExecutor(SqlAlchemyQueryExecutor):
     @classmethod
     def EXECUTOR_NAME(cls):
-        return "sqlalchemy"
+        return "sqlalchemy-snowflake"
 
     @classmethod
     def EXECUTOR_LANGUAGE(cls):
@@ -87,3 +58,64 @@ class SnowflakeQueryExecutor(SqlAlchemyQueryExecutor):
                         message, int(match.group(1)) - 1, int(match.group(2))
                     )
         return super(SnowflakeQueryExecutor, self)._parse_exception(e)
+
+
+class GenericSqlAlchemyQueryExecutor(SqlAlchemyQueryExecutor):
+    @classmethod
+    def EXECUTOR_NAME(cls):
+        return "sqlalchemy"
+
+    @classmethod
+    def EXECUTOR_LANGUAGE(cls):
+        return SQLALCHEMY_AVAILABLE_DIALECTS
+
+
+SQLALCHEMY_SUPPORTED_DIALECTS = [
+    "access",
+    "awsathena",
+    "bigquery",
+    "clickHouse",
+    "cockroachdb",
+    "crate",
+    "db2",
+    "dremio",
+    "drill",
+    "druid",
+    "elasticsearch",
+    "exa",
+    "firebird",
+    "gsheets",
+    "hana",
+    "hive",
+    "kylin",
+    "monetdb",
+    "presto",
+    "redshift",
+    "solr",
+    "teradata",
+    "vertica",
+] + [
+    # These are by default provided by Sqlalchemy,
+    # but we still checks them since the driver might
+    # be missing
+    "mysql",
+    "sqlite",
+    "postgresql",
+    "oracle",
+    "mssql",
+]
+
+
+def is_dialect_available(dialect: str) -> bool:
+    try:
+        sqlalchemy_registry.load(dialect)
+        return True
+    except (NoSuchModuleError, ImportError):
+        return False
+
+
+SQLALCHEMY_AVAILABLE_DIALECTS = [
+    dialect
+    for dialect in SQLALCHEMY_SUPPORTED_DIALECTS
+    if is_dialect_available(dialect)
+]
