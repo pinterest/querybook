@@ -37,15 +37,15 @@ dev_image:
 docs:
 	docker-compose -f docs_website/docker-compose.yml --project-directory=. up --build
 
-install:
-	make install_pip_runtime_dependencies
-	make install_yarn_packages
+install: install_pip_runtime_dependencies install_yarn_packages
 
 install_pip_runtime_dependencies:
 	pip install -r ./requirements.txt
 
-install_yarn_packages:
+install_yarn_packages: node_modules
+node_modules: package.json
 	yarn install --ignore-scripts --frozen-lockfile --pure-lockfile --ignore-engines && npm rebuild node-sass
+	touch node_modules
 
 remove_running_dev_image:
 	$(eval RUNNING_CONTAINERS=$(shell sh -c 'docker ps -q --filter name=querybook_devserver'))
