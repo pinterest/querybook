@@ -45,14 +45,14 @@ For general configuration, [click here](docs_website/docs/configurations/general
 -   MySQL
 -   Sqlite
 -   PostgreSQL
--   SQL Server
--   Oracle
+-   [and many more...](https://www.querybook.org/docs/setup_guide/connect_to_query_engines#all-query-engines)
 
 ### Authentication
 
 -   User/Password
 -   OAuth
     -   Google Cloud OAuth
+    -   Okta OAuth
 -   LDAP
 
 ### Metastore
@@ -60,7 +60,7 @@ For general configuration, [click here](docs_website/docs/configurations/general
 Can be used to fetch schema and table information for metadata enrichment.
 
 -   Hive Metastore
--   Sqlalchemy
+-   Sqlalchemy Inspect
 
 ### Result Storage
 
