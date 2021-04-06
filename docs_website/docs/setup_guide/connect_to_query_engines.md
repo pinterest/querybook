@@ -8,18 +8,21 @@ sidebar_label: Connect to Query Engines
 
 Querybook supports all Sqlalchemy compatible query engines by default. Basic functionalities such as query execution, table metadata, and auto-completion are provided out of the box. However, more advanced integrations would require customized code. Overall, the query engines can be categorized into 3-tiers:
 
-| Tier                           | Tier 3     | Tier 2            | Tier 1             |
-| ------------------------------ | ---------- | ----------------- | ------------------ |
-| Summary                        | Not tested | Tested w/ DB      | Used in Production |
-| Library                        | Sqlalchemy | Custom/SqlAlchemy | Custom             |
-| Query Progress                 | x          | ?                 | ✓                  |
-| Query Logs                     | x          | ?                 | ✓                  |
-| Query Metadata                 | x          | ?                 | ✓                  |
-| Cancel Query                   | x          | ?                 | ✓                  |
-| User Authentication            | x          | x                 | ✓                  |
-| Syntax Error Parsing           | x          | ?                 | ✓                  |
-| Service discovery              | x          | x                 | ✓                  |
-| Language Specific Autocomplete | x          | x                 | ✓                  |
+| Tier                            | Tier 3     | Tier 2            | Tier 1             |
+| ------------------------------- | ---------- | ----------------- | ------------------ |
+| Summary                         | Not tested | Tested w/ DB      | Used in Production |
+| Library                         | Sqlalchemy | Custom/SqlAlchemy | Custom             |
+| Run Queries                     | ✓          | ✓                 | ✓                  |
+| Paginated Result Fetch          | ✓          | ✓                 | ✓                  |
+| Syntax highlight & Autocomplete | ✓          | ✓                 | ✓                  |
+| Query Progress                  | x          | ?                 | ✓                  |
+| Query Logs                      | x          | ?                 | ✓                  |
+| Query Metadata                  | x          | ?                 | ✓                  |
+| Cancel Query                    | x          | ?                 | ✓                  |
+| User Authentication             | x          | x                 | ✓                  |
+| Syntax Error Parsing            | x          | ?                 | ✓                  |
+| Service discovery               | x          | x                 | ✓                  |
+| Language Specific Autocomplete  | x          | x                 | ✓                  |
 
 Tier 1 does not mean engines can be used in production everywhere since different companies/org require different kinds of integrations. However, tier 1 databases provide an excellent foundation to extend additional functionalities. Use them as a reference or subclass them via the [query engine plugin](../integrations/add_query_engine.md).
 
@@ -70,227 +73,34 @@ make
 
 **Note**: If the query engine is not included below, but it does have a Sqlalchemy integration, you can still use it in Querybook. Follow the [step by step guide](#step-by-step-guide) with 1 additional step before step 4. Visit `<project_root>/querybook/server/lib/query_executor/sqlalchemy.py` and add the query engine to the list variable `SQLALCHEMY_SUPPORTED_DIALECTS`, and continue to step 4. If it works, please contribute to Querybook by submitting a PR of your changes.
 
-### Microsoft Access
-
-Tier: 3
-
-Package:
-
--   [sqlalchemy-access](https://pypi.org/project/sqlalchemy-access/)
-
-### AWS Athena
-
-Tier: 3
-
-Package:
-
--   [pyathena](https://pypi.org/project/pyathena/)
-
-### BigQuery
-
-Tier: 2
-
-Package (Installed by default):
-
--   [google-cloud-bigquery](https://pypi.org/project/google-cloud-bigquery/)
-
-### ClickHouse
-
-Tier: 3
-
-Packages:
-
--   [clickhouse-sqlalchemy](https://pypi.org/project/clickhouse-sqlalchemy/)
--   [clickhouse-driver](https://pypi.org/project/clickhouse-driver/)
-
-### CockroachDB
-
-Tier: 3
-
-Packages:
-
--   [sqlalchemy-cockroachdb](https://pypi.org/project/sqlalchemy-cockroachdb/)
--   [psycopg2](https://pypi.org/project/psycopg2/)
-
-### CrateDB
-
-Tier: 3
-
-Packages:
-
--   [crate](https://pypi.org/project/crate/)
-
-### IBM DB2 and Informix
-
-Tier: 3
-
-Packages:
-
--   [ibm-db-sa](https://pypi.org/project/ibm-db-sa/)
-
-### Dremio
-
-Tier: 3
-
-Packages:
-
--   [sqlalchemy-dremio](https://pypi.org/project/sqlalchemy-dremio/)
-
-### Apache Drill
-
-Tier: 3
-
-Packages:
-
--   [sqlalchemy-drill](https://pypi.org/project/sqlalchemy-drill/)
-
-### Druid
-
-Tier: 2
-
-Packages:
-
--   [pydruid](https://pypi.org/project/pydruid/)
-
-### ElasticSearch
-
-Tier: 3
-
-Packages:
-
--   [elasticsearch-dbapi](https://pypi.org/project/elasticsearch-dbapi/0.2.1/)
-
-### EXASolution
-
-Tier: 3
-
-Packages:
-
--   [sqlalchemy-exasol](https://pypi.org/project/sqlalchemy-exasol/)
-
-### Firebird
-
-Tier: 3
-
-Packages:
-
--   [sqlalchemy-firebird](https://pypi.org/project/sqlalchemy-firebird/)
-
-### Google Spreasheets
-
-Tier: 3
-
-Packages:
-
--   [gsheetsdb](https://pypi.org/project/gsheetsdb/)
-
-### SAP Hana
-
-Tier: 3
-
-Packages:
-
--   [sqlalchemy-hana](https://pypi.org/project/sqlalchemy-hana/0.2.2/)
-
-### Apache Hive
-
-Tier: 1
-
-Packages (Installed by default):
-
--   [pyhive](https://pypi.org/project/PyHive/)
-
-### Apache Kylin
-
-Tier: 3
-
-Packages:
-
--   [kylinpy](https://pypi.org/project/kylinpy/)
-
-### MonetDB
-
-Tier: 3
-
-Packages:
-
--   [sqlalchemy_monetdb](https://pypi.org/project/sqlalchemy_monetdb/)
-
-### Presto
-
-Tier: 1
-
-Packages (Installed by default):
-
--   [pyhive](https://pypi.org/project/PyHive/)
-
-### Amazon Redshift
-
-Tier: 3
-
-Packages:
-
--   [sqlalchemy-redshift](https://pypi.org/project/sqlalchemy-redshift/)
--   [psycopg2](https://pypi.org/project/psycopg2/)
-
-### Snowflake
-
-Tier: 2
-
-Packages:
-
--   [snowflake-sqlalchemy](https://pypi.org/project/snowflake-sqlalchemy/)
-
-### Apache Solr
-
-Tier: 3
-
-Packages:
-
--   [sqlalchemy-solr](https://pypi.org/project/sqlalchemy-solr/)
-
-### Teradata Vantage
-
-Tier: 3
-
-Packages:
-
--   [teradatasqlalchemy](https://pypi.org/project/teradatasqlalchemy/)
-
-### Vertica
-
-Tier: 3
-
-Packages:
-
--   [sqlalchemy-vertica-python](https://pypi.org/project/sqlalchemy-vertica-python/)
-
-### MySQL
-
-Tier: 1
-
-No additional package required.
-
-### SQLite
-
-Tier: 2
-
-No additional package required.
-
-### PostgreSQL
-
-Tier: 2
-
-No additional package required.
-
-### Oracle
-
-Tier: 3
-
-No additional package required.
-
-### Microsoft SQL Server
-
-Tier: 3
-
-No additional package required.
+| Query Engine         | Tier | Package                                                                                                                                       | Included By Default |
+| -------------------- | ---- | --------------------------------------------------------------------------------------------------------------------------------------------- | ------------------- |
+| Apache Drill         | 3    | [sqlalchemy-drill](https://pypi.org/project/sqlalchemy-drill/)                                                                                | No                  |
+| Apache Hive          | 1    | [pyhive](https://pypi.org/project/PyHive/)                                                                                                    | Yes                 |
+| Apache Kylin         | 3    | [kylinpy](https://pypi.org/project/kylinpy/)                                                                                                  | No                  |
+| Apache Solr          | 3    | [sqlalchemy-solr](https://pypi.org/project/sqlalchemy-solr/)                                                                                  | No                  |
+| Amazon Athena        | 3    | [pyathena](https://pypi.org/project/pyathena/)                                                                                                | No                  |
+| Amazon Redshift      | 3    | [sqlalchemy-redshift](https://pypi.org/project/sqlalchemy-redshift/)<br/>[psycopg2](https://pypi.org/project/psycopg2/)                       | No                  |
+| BigQuery             | 2    | [google-cloud-bigquery](https://pypi.org/project/google-cloud-bigquery/)                                                                      | Yes                 |
+| ClickHouse           | 3    | [clickhouse-sqlalchemy](https://pypi.org/project/clickhouse-sqlalchemy/)<br/>[clickhouse-driver](https://pypi.org/project/clickhouse-driver/) | No                  |
+| CockroachDB          | 3    | [sqlalchemy-cockroachdb](https://pypi.org/project/sqlalchemy-cockroachdb/)<br/>[psycopg2](https://pypi.org/project/psycopg2/)                 | No                  |
+| CrateDB              | 3    | [crate](https://pypi.org/project/crate/)                                                                                                      | No                  |
+| Dremio               | 3    | [sqlalchemy-dremio](https://pypi.org/project/sqlalchemy-dremio/)                                                                              | No                  |
+| Druid                | 2    | [pydruid](https://pypi.org/project/pydruid/)                                                                                                  | Yes                 |
+| ElasticSearch        | 3    | [elasticsearch-dbapi](https://pypi.org/project/elasticsearch-dbapi/0.2.1/)                                                                    | No                  |
+| EXASolution          | 3    | [sqlalchemy-exasol](https://pypi.org/project/sqlalchemy-exasol/)                                                                              | No                  |
+| Firebird             | 3    | [sqlalchemy-firebird](https://pypi.org/project/sqlalchemy-firebird/)                                                                          | No                  |
+| Google Spreasheets   | 3    | [gsheetsdb](https://pypi.org/project/gsheetsdb/)                                                                                              | No                  |
+| IBM DB2              | 3    | [ibm-db-sa](https://pypi.org/project/ibm-db-sa/)                                                                                              | No                  |
+| Microsoft Access     | 3    | [sqlalchemy-access](https://pypi.org/project/sqlalchemy-access/)                                                                              | No                  |
+| Microsoft SQL Server | 3    | None                                                                                                                                          | Yes                 |
+| MySQL                | 1    | None                                                                                                                                          | Yes                 |
+| MonetDB              | 3    | [sqlalchemy_monetdb](https://pypi.org/project/sqlalchemy_monetdb/)                                                                            | No                  |
+| Oracle               | 3    | None                                                                                                                                          | Yes                 |
+| PostgreSQL           | 2    | None                                                                                                                                          | Yes                 |
+| Presto               | 1    | [pyhive](https://pypi.org/project/PyHive/)                                                                                                    | Yes                 |
+| SAP Hana             | 3    | [sqlalchemy-hana](https://pypi.org/project/sqlalchemy-hana/0.2.2/)                                                                            | No                  |
+| Snowflake            | 2    | [snowflake-sqlalchemy](https://pypi.org/project/snowflake-sqlalchemy/)                                                                        | Yes                 |
+| SQLite               | 2    | None                                                                                                                                          | Yes                 |
+| Teradata Vantage     | 3    | [teradatasqlalchemy](https://pypi.org/project/teradatasqlalchemy/)                                                                            | No                  |
+| Vertica              | 3    | [sqlalchemy-vertica-python](https://pypi.org/project/sqlalchemy-vertica-python/)                                                              | No                  |

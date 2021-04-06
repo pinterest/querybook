@@ -33,6 +33,7 @@ import { Content } from 'ui/Content/Content';
 import { Link } from 'ui/Link/Link';
 
 import './AdminQueryEngine.scss';
+import { titleize } from 'lib/utils';
 
 export interface IAdminQueryEngine {
     id: number;
@@ -90,6 +91,15 @@ export const AdminQueryEngine: React.FunctionComponent<IProps> = ({
         ],
         [queryEngineTemplates]
     );
+    const querybookLanguageOptions = React.useMemo(
+        () =>
+            querybookLanguages.map((l) => ({
+                label: titleize(l),
+                value: l,
+            })),
+        [querybookLanguages]
+    );
+
     const executorByLanguage: Record<string, string[]> = React.useMemo(
         () =>
             (queryEngineTemplates || []).reduce((hash, executor) => {
@@ -344,6 +354,7 @@ export const AdminQueryEngine: React.FunctionComponent<IProps> = ({
                                 }}
                                 withDeselect
                             />
+
                             <SimpleField
                                 stacked
                                 name="status_checker"
@@ -351,12 +362,26 @@ export const AdminQueryEngine: React.FunctionComponent<IProps> = ({
                                 options={engineStatusCheckerNames}
                                 withDeselect
                             />
+
                             <div className="flex1">
                                 <SimpleField
                                     stacked
+                                    help={() => (
+                                        <div>
+                                            Didn’t find your engine? Querybook
+                                            supports more, click{' '}
+                                            <Link
+                                                newTab
+                                                to="https://www.querybook.org/docs/setup_guide/connect_to_query_engines/"
+                                            >
+                                                here
+                                            </Link>{' '}
+                                            to find out how to easily enable it.
+                                        </div>
+                                    )}
                                     name="language"
                                     type="react-select"
-                                    options={querybookLanguages}
+                                    options={querybookLanguageOptions}
                                     onChange={(language) => {
                                         onChange('language', language);
                                         updateExecutor(
@@ -365,7 +390,6 @@ export const AdminQueryEngine: React.FunctionComponent<IProps> = ({
                                     }}
                                 />
                             </div>
-
                             <SimpleField
                                 stacked
                                 name="executor"
