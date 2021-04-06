@@ -366,7 +366,7 @@ export const AdminQueryEngine: React.FunctionComponent<IProps> = ({
                             <div className="flex1">
                                 <SimpleField
                                     stacked
-                                    help={
+                                    help={() => (
                                         <div>
                                             Didn’t find your engine? Querybook
                                             supports more, click{' '}
@@ -378,7 +378,7 @@ export const AdminQueryEngine: React.FunctionComponent<IProps> = ({
                                             </Link>{' '}
                                             to find out how to easily enable it.
                                         </div>
-                                    }
+                                    )}
                                     name="language"
                                     type="react-select"
                                     options={querybookLanguageOptions}
