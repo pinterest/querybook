@@ -268,10 +268,7 @@ const InsertCellButtons: React.FC<{
             key={cellKey}
             onClick={() => handleInsertcell(cellKey)}
             icon="plus"
-            title={ !cellTypes[cellKey].name
-                ?? titleize(cellKey)
-                : cellTypes[cellKey].name
-            }
+            title={cellType.name ?? titleize(cellKey)}
             type="soft"
         />
     ));
