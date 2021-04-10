@@ -262,14 +262,14 @@ const InsertCellButtons: React.FC<{
         [insertCellAt, index]
     );
 
-    const buttonsDOM = Object.keys(cellTypes).map((cellKey) => (
+    const buttonsDOM = Object.entries(cellTypes).map(([cellKey, cellType]) => (
         <AsyncButton
             className="block-crud-button"
             key={cellKey}
             onClick={() => handleInsertcell(cellKey)}
             icon="plus"
             title={ !cellTypes[cellKey].name
-                ? titleize(cellKey)
+                ?? titleize(cellKey)
                 : cellTypes[cellKey].name
             }
             type="soft"
