@@ -14,7 +14,7 @@ import { AdminAuditLogButton } from 'components/AdminAuditLog/AdminAuditLogButto
 
 import { TaskEditor } from 'components/Task/TaskEditor';
 
-import { Button, TextButton } from 'ui/Button/Button';
+import { TextButton } from 'ui/Button/Button';
 import { Card } from 'ui/Card/Card';
 import { Icon } from 'ui/Icon/Icon';
 import { Level } from 'ui/Level/Level';
@@ -160,10 +160,12 @@ export const AdminMetastore: React.FunctionComponent<IProps> = ({
                     index,
                     table,
                 ] of metastore.acl_control.tables.entries()) {
-                    errors.acl_control = `Table at index ${index} is empty`;
+                    if (!table) {
+                        errors.acl_control = `Table at index ${index} is empty`;
+                        break;
+                    }
                 }
             }
-
             return errors;
         },
         [metastoreLoaders]
