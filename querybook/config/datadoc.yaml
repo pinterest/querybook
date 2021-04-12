@@ -1,6 +1,7 @@
 cell_types:
     text:
         key: 'text'
+        name: 'Text'
         icon: 'font'
         meta:
             collapsed: false
@@ -8,6 +9,7 @@ cell_types:
             collapsed: false
     query:
         key: 'query'
+        name: 'Query'
         icon: 'code'
         meta:
             title: '' # can be any string
@@ -21,6 +23,7 @@ cell_types:
             query_collapsed: false
     chart:
         key: 'chart'
+        name: 'Chart'
         icon: 'chart-line'
         meta:
             title: ''

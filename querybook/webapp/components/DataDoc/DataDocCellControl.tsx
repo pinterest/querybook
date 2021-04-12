@@ -10,7 +10,16 @@ import { SoftButton } from 'ui/Button/Button';
 import { Dropdown } from 'ui/Dropdown/Dropdown';
 import { ListMenu, IListMenuItem } from 'ui/Menu/ListMenu';
 
-const cellTypes = require('config/datadoc.yaml').cell_types;
+const cellTypes: Record<
+    string,
+    {
+        key: string;
+        icon: string;
+        name?: string;
+        meta: Record<string, unknown>;
+        meta_default: Record<string, unknown>;
+    }
+> = require('config/datadoc.yaml').cell_types;
 
 interface IProps {
     index?: number;
@@ -262,13 +271,13 @@ const InsertCellButtons: React.FC<{
         [insertCellAt, index]
     );
 
-    const buttonsDOM = Object.keys(cellTypes).map((cellKey) => (
+    const buttonsDOM = Object.entries(cellTypes).map(([cellKey, cellType]) => (
         <AsyncButton
             className="block-crud-button"
             key={cellKey}
             onClick={() => handleInsertcell(cellKey)}
             icon="plus"
-            title={titleize(cellKey)}
+            title={cellType.name ?? titleize(cellKey)}
             type="soft"
         />
     ));
