@@ -44,21 +44,38 @@ const taskFormSchema = Yup.object().shape({
     name: Yup.string().required(),
     task: Yup.string().required(),
     isCron: Yup.boolean(),
-    recurrence: Yup.object().shape({
-        hour: Yup.number().min(0).max(23),
-        minute: Yup.number().min(0).max(59),
-        recurrence: Yup.string().oneOf(['daily', 'weekly', 'monthly']),
-        on: Yup.array().when('recurrence', (recurrence: string, schema) => {
-            if (recurrence === 'weekly') {
-                return schema.min(1).of(Yup.number().min(0).max(6));
-            } else if (recurrence === 'monthly') {
-                return schema.min(1).of(Yup.number().min(1).max(31));
-            }
+    recurrence: Yup.object().when('isCron', (isCron, schema) =>
+        !isCron
+            ? schema.shape({
+                  hour: Yup.number().min(0).max(23),
+                  minute: Yup.number().min(0).max(59),
+                  recurrence: Yup.string().oneOf([
+                      'daily',
+                      'weekly',
+                      'monthly',
+                  ]),
+                  on: Yup.array().when(
+                      'recurrence',
+                      (recurrence: string, schema) => {
+                          if (recurrence === 'weekly') {
+                              return schema
+                                  .min(1)
+                                  .of(Yup.number().min(0).max(6));
+                          } else if (recurrence === 'monthly') {
+                              return schema
+                                  .min(1)
+                                  .of(Yup.number().min(1).max(31));
+                          }
 
-            return schema;
-        }),
-    }),
-    cron: Yup.string(),
+                          return schema;
+                      }
+                  ),
+              })
+            : schema
+    ),
+    cron: Yup.string().when('isCron', (isCron, schema) =>
+        isCron ? schema.required() : schema
+    ),
     enabled: Yup.boolean().required(),
     arg: Yup.array().of(Yup.mixed()),
     kwargs: Yup.array().of(Yup.mixed()),
@@ -199,7 +216,13 @@ export const TaskEditor: React.FunctionComponent<IProps> = ({
         };
     }, [task]);
 
-    const getEditDOM = (values, errors, setFieldValue, isValid, submitForm) => {
+    const getEditDOM = (
+        values: typeof formValues,
+        errors,
+        setFieldValue,
+        isValid: boolean,
+        submitForm
+    ) => {
         const argsDOM = (
             <FieldArray
                 name="args"
@@ -310,6 +333,8 @@ export const TaskEditor: React.FunctionComponent<IProps> = ({
             </div>
         );
 
+        const canUseRecurrence = validateCronForReuccrence(values.cron);
+
         return (
             <div className="TaskEditor-form">
                 <FormWrapper minLabelWidth="180px" size={7}>
@@ -359,8 +384,7 @@ export const TaskEditor: React.FunctionComponent<IProps> = ({
                             </div>
                             {values.enabled ? (
                                 <div className="TaskEditor-schedule horizontal-space-between">
-                                    {values.isCron ||
-                                    !validateCronForReuccrence(values.cron) ? (
+                                    {values.isCron || !canUseRecurrence ? (
                                         <SimpleField
                                             label="Cron Schedule"
                                             type="input"
@@ -382,7 +406,7 @@ export const TaskEditor: React.FunctionComponent<IProps> = ({
                                             />
                                         </FormField>
                                     )}
-                                    {validateCronForReuccrence(values.cron) ? (
+                                    {canUseRecurrence ? (
                                         <div className="TaskEditor-schedule-toggle mr16">
                                             <ToggleButton
                                                 checked={values.isCron}
