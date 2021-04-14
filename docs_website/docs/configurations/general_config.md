@@ -6,7 +6,7 @@ sidebar_label: General Config
 
 ## Overview
 
-Other than the basic infrastructure setup such as rdbms and redis, all configurations can be done in the admin tools on the Querybook website directly. Note that it is only accessible for users under the "Admin" role.
+Other than the basic infrastructure setup such as rdbms and redis, all configurations can be done in the admin tools on the Querybook website directly. Note that it is only accessible for users under the "Admin" role. You can access the admin panel by clicking on the user icon at the bottom of the left sidebar, then clicking on "Admin." Alternatively, you can visit the URL [https://localhost:10001/admin](https://localhost:10001/admin).
 
 The first user that installs Querybook gets the "Admin" role. Admins can add other admins and modify anyone's role.
 
