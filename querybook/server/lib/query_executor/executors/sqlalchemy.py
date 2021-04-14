@@ -93,6 +93,7 @@ SQLALCHEMY_SUPPORTED_DIALECTS = [
     "redshift",
     "solr",
     "teradata",
+    "trino",
     "vertica",
 ] + [
     # These are by default provided by Sqlalchemy,

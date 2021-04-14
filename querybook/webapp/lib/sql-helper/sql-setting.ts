@@ -68,6 +68,7 @@ const SettingsByLanguage: Record<string, ILanguageSetting> = {
     },
 };
 SettingsByLanguage['sparksql'] = SettingsByLanguage['hive'];
+SettingsByLanguage['trino'] = SettingsByLanguage['presto'];
 
 export function getLanguageSetting(
     language: string,
