@@ -77,7 +77,7 @@ faqs:
   </p>'
     - - 'I found a bug! How do I report it?'
       - '<p>
-      Please report bugs <i><a href="https://github.com/pinterest/querybook/issues">here</></i>
+      Please report bugs <i><a href="https://github.com/pinterest/querybook/issues">here</a></i>
   </p>'
     - - 'How do I make a feature request?'
       - '<p>
