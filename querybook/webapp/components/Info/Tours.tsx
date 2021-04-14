@@ -15,29 +15,10 @@ import { Title } from 'ui/Title/Title';
 import { Card } from 'ui/Card/Card';
 
 import './Tours.scss';
+import { useCreateDataDoc } from 'hooks/dataDoc/useCreateDataDoc';
 
 export const Tours: React.FunctionComponent = () => {
-    const environment = useSelector(currentEnvironmentSelector);
-    const queryEngines = useSelector(queryEngineSelector);
-    const defaultEngineId = useSelector((state: IStoreState) =>
-        getQueryEngineId(
-            state.user.computedSettings['default_query_engine'],
-            queryEngines.map(({ id }) => id)
-        )
-    );
-    const dispatch: Dispatch = useDispatch();
-    const handleDataDocTour = React.useCallback(() => {
-        const cell = {
-            type: 'query',
-            context: '',
-            meta: { engine: defaultEngineId },
-        };
-        dispatch(dataDocActions.createDataDoc([cell])).then((dataDoc) =>
-            history.push(
-                `/${environment.name}/datadoc/${dataDoc.id}/?tour=true`
-            )
-        );
-    }, [environment, defaultEngineId]);
+    const handleDataDocTour = useCreateDataDoc(true);
 
     return (
         <div className="Tours m12">
