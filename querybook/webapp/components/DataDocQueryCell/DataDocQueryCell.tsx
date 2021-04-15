@@ -49,7 +49,7 @@ import { Title } from 'ui/Title/Title';
 
 import './DataDocQueryCell.scss';
 
-const ON_CHANGE_DEBOUNCE_MS = 1000;
+const ON_CHANGE_DEBOUNCE_MS = 500;
 
 type StateProps = ReturnType<typeof mapStateToProps>;
 type DispatchProps = ReturnType<typeof mapDispatchToProps>;
