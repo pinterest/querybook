@@ -570,7 +570,7 @@ export function getSelectedQuery(query: string, selectedRange: IRange = null) {
 }
 
 export function getQueryAsExplain(query: string, language?: string) {
-    const statementRanges = getStatementRanges(query, language);
+    const statementRanges = getStatementRanges(query, null, language);
     const statements = statementRanges.map(
         (range) => query.slice(range[0], range[1]) + ';'
     );
