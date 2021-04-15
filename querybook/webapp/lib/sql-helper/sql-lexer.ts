@@ -492,7 +492,7 @@ export function getQueryLinePosition(query: string): number[] {
 // selectedRange is either null or { from: {line:num, ch:num}, to: {line:num, ch:num}}
 export function getStatementRanges(
     query: string,
-    selectedRange = null,
+    selectedRange: IRange = null,
     language?: string
 ) {
     language = language || 'hive';

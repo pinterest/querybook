@@ -1,11 +1,17 @@
-import React, { useRef, useCallback, useMemo, useEffect } from 'react';
+import React, {
+    useRef,
+    useCallback,
+    useMemo,
+    useEffect,
+    useState,
+} from 'react';
 import Resizable from 're-resizable';
 import { useSelector, useDispatch } from 'react-redux';
 
 import { ISearchOptions, ISearchResult } from 'const/searchAndReplace';
 import { useDebounceState } from 'hooks/redux/useDebounceState';
 import { getQueryEngineId, sleep, enableResizable } from 'lib/utils';
-import { getSelectedQuery } from 'lib/sql-helper/sql-lexer';
+import { getSelectedQuery, IRange } from 'lib/sql-helper/sql-lexer';
 import { navigateWithinEnv } from 'lib/utils/query-string';
 import { searchText, replaceStringIndices } from 'lib/data-doc/search';
 
@@ -256,6 +262,14 @@ export const QueryComposer: React.FC = () => {
         [clickOnRunButton]
     );
 
+    const [editorHasSelection, setEditorHasSelection] = useState(false);
+    const handleEditorSelection = React.useCallback(
+        (_: string, range: IRange) => {
+            setEditorHasSelection(!!range);
+        },
+        []
+    );
+
     const editorDOM = (
         <>
             <BoundQueryEditor
@@ -266,6 +280,7 @@ export const QueryComposer: React.FC = () => {
                 keyMap={keyMap}
                 height="full"
                 engine={engine}
+                onSelection={handleEditorSelection}
             />
         </>
     );
@@ -311,6 +326,8 @@ export const QueryComposer: React.FC = () => {
                 engineId={engine?.id}
                 onEngineIdSelect={setEngineId}
                 onRunClick={handleRunQuery}
+                hasSelection={editorHasSelection}
+                runButtonTooltipPos={'left'}
             />
         </div>
     );
