@@ -492,7 +492,7 @@ export function getQueryLinePosition(query: string): number[] {
 // selectedRange is either null or { from: {line:num, ch:num}, to: {line:num, ch:num}}
 export function getStatementRanges(
     query: string,
-    selectedRange = null,
+    selectedRange: IRange = null,
     language?: string
 ) {
     language = language || 'hive';
@@ -570,7 +570,7 @@ export function getSelectedQuery(query: string, selectedRange: IRange = null) {
 }
 
 export function getQueryAsExplain(query: string, language?: string) {
-    const statementRanges = getStatementRanges(query, language);
+    const statementRanges = getStatementRanges(query, null, language);
     const statements = statementRanges.map(
         (range) => query.slice(range[0], range[1]) + ';'
     );

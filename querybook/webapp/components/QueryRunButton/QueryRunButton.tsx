@@ -5,6 +5,7 @@ import { useSelector } from 'react-redux';
 import { queryEngineStatusByIdEnvSelector } from 'redux/queryEngine/selector';
 import { IQueryEngine, QueryEngineStatus } from 'const/queryEngine';
 import { queryEngineStatusToIconStatus } from 'const/queryStatusIcon';
+import { TooltipDirection } from 'const/tooltip';
 
 import { AsyncButton } from 'ui/AsyncButton/AsyncButton';
 import { Dropdown } from 'ui/Dropdown/Dropdown';
@@ -16,6 +17,7 @@ import './QueryRunButton.scss';
 interface IQueryRunButtonProps extends IQueryEngineSelectorProps {
     disabled?: boolean;
     hasSelection?: boolean;
+    runButtonTooltipPos?: TooltipDirection;
     onRunClick: () => any;
 }
 
@@ -31,6 +33,7 @@ export const QueryRunButton = React.forwardRef<
         {
             disabled,
             hasSelection,
+            runButtonTooltipPos = 'up',
             onRunClick,
             queryEngineById,
             queryEngines,
@@ -59,7 +62,7 @@ export const QueryRunButton = React.forwardRef<
                 title={hasSelection ? 'Run Selection' : null}
                 icon={hasSelection ? null : 'play'}
                 aria-label={'Execute (⇧↵)'}
-                data-balloon-pos={'up'}
+                data-balloon-pos={runButtonTooltipPos}
                 attached="right"
             />
         );
