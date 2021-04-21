@@ -66,10 +66,11 @@ export function recurrenceToCron(recurrence: IRecurrence): string {
 
     if (recurrence.recurrence === 'yearly') {
         month = recurrence.on.month.join(',');
-    } else if (recurrence.recurrence === 'weekly') {
-        dayWeek = recurrence.on.dayWeek.join(',');
+        dayMonth = recurrence.on.dayMonth.join(',');
     } else if (recurrence.recurrence === 'monthly') {
         dayMonth = recurrence.on.dayMonth.join(',');
+    } else if (recurrence.recurrence === 'weekly') {
+        dayWeek = recurrence.on.dayWeek.join(',');
     } else if (recurrence.recurrence === 'hourly') {
         hour = '*';
     }
