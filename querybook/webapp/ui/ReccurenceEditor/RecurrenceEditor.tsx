@@ -91,89 +91,69 @@ export const RecurrenceEditor: React.FunctionComponent<IProps> = ({
         </FormField>
     );
 
-    let datePickerField;
-    if (recurrence.recurrence !== 'daily') {
-        const name =
-            recurrence.recurrence === 'weekly'
-                ? 'recurrence.on.dayWeek'
-                : 'recurrence.on.dayMonth';
-        const options =
-            recurrence.recurrence === 'weekly'
-                ? getWeekdayOptions()
-                : getMonthdayOptions();
-        const onChange = (value) => {
-            const newRecurrence = {
-                ...recurrence,
-                on: {
-                    ...recurrence.on,
-                    [recurrence.recurrence === 'weekly'
-                        ? 'dayWeek'
-                        : 'dayMonth']: (value as Array<{
-                        value: any;
-                    }>).map((v) => v.value),
-                },
-            };
-            setRecurrence(newRecurrence);
-        };
-        datePickerField = (
-            <FormField label="Recurrence Days">
+    const getDatePickerField = (
+        label: string,
+        onKey: string,
+        options: { value: number; label: string }[]
+    ) => {
+        return (
+            <FormField label={`Recurrence ${label}`}>
                 <Field
-                    name={name}
+                    name={`recurrence.on.${onKey}`}
                     render={({ field }) => (
                         <Select
                             menuPortalTarget={overlayRoot}
                             styles={recurrenceReactSelectStyle}
-                            value={options.filter((option) =>
+                            value={options.filter((option: { value: any }) =>
                                 field.value?.includes(option.value)
                             )}
                             options={options}
-                            onChange={onChange}
+                            onChange={(value) => {
+                                const newRecurrence = {
+                                    ...recurrence,
+                                    on: {
+                                        ...recurrence.on,
+                                        [onKey]: (value as Array<{
+                                            value: any;
+                                        }>).map((v) => v.value),
+                                    },
+                                };
+                                setRecurrence(newRecurrence);
+                            }}
                             isMulti
                         />
                     )}
                 />
             </FormField>
         );
-        if (recurrence.recurrence === 'yearly') {
-            const yearlyOptions = getYearlyMonthOptions();
-            const monthPickerField = (
-                <FormField label="Recurrence Months">
-                    <Field
-                        name="recurrence.on.month"
-                        render={({ field }) => (
-                            <Select
-                                menuPortalTarget={overlayRoot}
-                                styles={recurrenceReactSelectStyle}
-                                value={yearlyOptions.filter((option) =>
-                                    field.value?.includes(option.value)
-                                )}
-                                options={yearlyOptions}
-                                onChange={(value) => {
-                                    const newRecurrence = {
-                                        ...recurrence,
-                                        on: {
-                                            ...recurrence.on,
-                                            month: (value as Array<{
-                                                value: any;
-                                            }>).map((v) => v.value),
-                                        },
-                                    };
-                                    setRecurrence(newRecurrence);
-                                }}
-                                isMulti
-                            />
-                        )}
-                    />
-                </FormField>
-            );
-            datePickerField = (
-                <>
-                    {monthPickerField}
-                    {datePickerField}
-                </>
-            );
-        }
+    };
+
+    let datePickerField: {};
+    if (recurrence.recurrence === 'yearly') {
+        datePickerField = (
+            <>
+                {getDatePickerField('Months', 'month', getYearlyMonthOptions())}
+                {getDatePickerField(
+                    'Month Days',
+                    'dayMonth',
+                    getMonthdayOptions()
+                )}
+            </>
+        );
+    } else if (recurrence.recurrence === 'monthly') {
+        datePickerField = getDatePickerField(
+            'Month Days',
+            'dayMonth',
+            getMonthdayOptions()
+        );
+    } else if (recurrence.recurrence === 'weekly') {
+        datePickerField = getDatePickerField(
+            'Week Days',
+            'dayWeek',
+            getWeekdayOptions()
+        );
     }
+
     return (
         <div className="RecurrenceEditor">
             {hourSecondField}
