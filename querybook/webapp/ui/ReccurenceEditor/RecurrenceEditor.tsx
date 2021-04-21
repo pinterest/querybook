@@ -128,7 +128,7 @@ export const RecurrenceEditor: React.FunctionComponent<IProps> = ({
         );
     };
 
-    let datePickerField: {};
+    let datePickerField: React.ReactElement;
     if (recurrence.recurrence === 'yearly') {
         datePickerField = (
             <>
