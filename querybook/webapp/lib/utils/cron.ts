@@ -14,7 +14,7 @@ export interface IRecurrenceOn {
     dayWeek?: number[];
 }
 
-export const recurrenceType = [
+export const recurrenceTypes = [
     'hourly',
     'daily',
     'weekly',
@@ -22,7 +22,7 @@ export const recurrenceType = [
     'yearly',
 ];
 
-export type RecurrenceType = typeof recurrenceType[number];
+export type RecurrenceType = typeof recurrenceTypes[number];
 
 export function cronToRecurrence(cron: string): IRecurrence {
     const [minute, hour, dayMonth, month, dayWeek] = cron.split(' ');

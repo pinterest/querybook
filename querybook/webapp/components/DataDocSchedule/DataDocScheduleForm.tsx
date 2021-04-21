@@ -7,8 +7,9 @@ import { IDataDocScheduleKwargs, NotifyOn } from 'const/schedule';
 import {
     cronToRecurrence,
     IRecurrence,
+    IRecurrenceOn,
     recurrenceToCron,
-    recurrenceType,
+    recurrenceTypes,
 } from 'lib/utils/cron';
 import { getExporterAuthentication } from 'lib/result-export';
 
@@ -58,11 +59,30 @@ const scheduleFormSchema = Yup.object().shape({
     recurrence: Yup.object().shape({
         hour: Yup.number().min(0).max(23),
         minute: Yup.number().min(0).max(59),
-        recurrence: Yup.string().oneOf(recurrenceType),
-        on: Yup.object().shape({
-            dayMonth: Yup.array().min(1).of(Yup.number().min(1).max(31)),
-            month: Yup.array().min(1).of(Yup.number().min(1).max(12)),
-            dayWeek: Yup.array().min(1).of(Yup.number().min(0).max(6)),
+        recurrence: Yup.string().oneOf(recurrenceTypes),
+        on: Yup.object().when('recurrence', (recurrence: string, schema) => {
+            const onSchema: any = {};
+            if (recurrence === 'weekly') {
+                onSchema.dayWeek = Yup.array()
+                    .min(1)
+                    .of(Yup.number().min(0).max(6))
+                    .required();
+            } else {
+                onSchema.dayMonth = Yup.array()
+                    .min(1)
+                    .of(Yup.number().min(1).max(31))
+                    .required();
+            }
+
+            if (recurrence === 'yearly') {
+                onSchema.month = Yup.array()
+                    .min(1)
+                    .of(Yup.number().min(1).max(12))
+                    .required();
+            }
+            return Yup.object().shape({
+                ...onSchema,
+            });
         }),
     }),
     enabled: Yup.boolean().notRequired(),

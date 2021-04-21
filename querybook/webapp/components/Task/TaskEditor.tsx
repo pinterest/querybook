@@ -9,7 +9,7 @@ import {
     recurrenceToCron,
     cronToRecurrence,
     validateCronForRecurrrence,
-    recurrenceType,
+    recurrenceTypes,
 } from 'lib/utils/cron';
 import { sendConfirm } from 'lib/querybookUI';
 import { useDataFetch } from 'hooks/useDataFetch';
@@ -50,7 +50,7 @@ const taskFormSchema = Yup.object().shape({
             ? schema.shape({
                   hour: Yup.number().min(0).max(23),
                   minute: Yup.number().min(0).max(59),
-                  recurrence: Yup.string().oneOf(recurrenceType),
+                  recurrence: Yup.string().oneOf(recurrenceTypes),
                   on: Yup.object().shape({
                       dayMonth: Yup.array()
                           .min(1)
