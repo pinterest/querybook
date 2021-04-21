@@ -101,31 +101,20 @@ export const RecurrenceEditor: React.FunctionComponent<IProps> = ({
             recurrence.recurrence === 'weekly'
                 ? getWeekdayOptions()
                 : getMonthdayOptions();
-        const onChange =
-            recurrence.recurrence === 'weekly'
-                ? (value) => {
-                      const newRecurrence = {
-                          ...recurrence,
-                          on: {
-                              dayWeek: (value as Array<{
-                                  value: any;
-                              }>).map((v) => v.value),
-                          },
-                      };
-                      setRecurrence(newRecurrence);
-                  }
-                : (value) => {
-                      const newRecurrence = {
-                          ...recurrence,
-                          on: {
-                              ...recurrence.on,
-                              dayMonth: (value as Array<{
-                                  value: any;
-                              }>).map((v) => v.value),
-                          },
-                      };
-                      setRecurrence(newRecurrence);
-                  };
+        const onChange = (value) => {
+            const newRecurrence = {
+                ...recurrence,
+                on: {
+                    ...recurrence.on,
+                    [recurrence.recurrence === 'weekly'
+                        ? 'dayWeek'
+                        : 'dayMonth']: (value as Array<{
+                        value: any;
+                    }>).map((v) => v.value),
+                },
+            };
+            setRecurrence(newRecurrence);
+        };
         datePickerField = (
             <FormField label="Recurrence Days">
                 <Field
