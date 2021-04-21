@@ -2,6 +2,7 @@ import * as React from 'react';
 import { Formik, Form, Field, FieldArray } from 'formik';
 import moment from 'moment';
 import * as Yup from 'yup';
+import toast from 'react-hot-toast';
 
 import ds from 'lib/datasource';
 import { generateFormattedDate } from 'lib/utils/datetime';
@@ -13,9 +14,11 @@ import {
 } from 'lib/utils/cron';
 import { sendConfirm } from 'lib/querybookUI';
 import { useDataFetch } from 'hooks/useDataFetch';
-
 import { ITaskSchedule } from 'const/schedule';
+
 import { TaskStatus } from 'components/Task/TaskStatus';
+import { AdminAuditLogButton } from 'components/AdminAuditLog/AdminAuditLogButton';
+import { recurrenceOnYup } from 'components/DataDocSchedule/DataDocScheduleForm';
 
 import { AsyncButton } from 'ui/AsyncButton/AsyncButton';
 import { SoftButton, TextButton } from 'ui/Button/Button';
@@ -29,8 +32,6 @@ import { Title } from 'ui/Title/Title';
 import { ToggleButton } from 'ui/ToggleButton/ToggleButton';
 
 import './TaskEditor.scss';
-import { AdminAuditLogButton } from 'components/AdminAuditLog/AdminAuditLogButton';
-import toast from 'react-hot-toast';
 
 type TaskEditorTabs = 'edit' | 'history';
 
@@ -51,15 +52,7 @@ const taskFormSchema = Yup.object().shape({
                   hour: Yup.number().min(0).max(23),
                   minute: Yup.number().min(0).max(59),
                   recurrence: Yup.string().oneOf(recurrenceTypes),
-                  on: Yup.object().shape({
-                      dayMonth: Yup.array()
-                          .min(1)
-                          .of(Yup.number().min(1).max(31)),
-                      month: Yup.array().min(1).of(Yup.number().min(1).max(12)),
-                      dayWeek: Yup.array()
-                          .min(1)
-                          .of(Yup.number().min(0).max(6)),
-                  }),
+                  on: recurrenceOnYup,
               })
             : schema
     ),
