@@ -8,6 +8,7 @@ import {
     cronToRecurrence,
     IRecurrence,
     recurrenceToCron,
+    recurrenceType,
 } from 'lib/utils/cron';
 import { getExporterAuthentication } from 'lib/result-export';
 
@@ -57,15 +58,11 @@ const scheduleFormSchema = Yup.object().shape({
     recurrence: Yup.object().shape({
         hour: Yup.number().min(0).max(23),
         minute: Yup.number().min(0).max(59),
-        recurrence: Yup.string().oneOf(['daily', 'weekly', 'monthly']),
-        on: Yup.array().when('recurrence', (recurrence: string, schema) => {
-            if (recurrence === 'weekly') {
-                return schema.min(1).of(Yup.number().min(0).max(6));
-            } else if (recurrence === 'monthly') {
-                return schema.min(1).of(Yup.number().min(1).max(31));
-            }
-
-            return schema;
+        recurrence: Yup.string().oneOf(recurrenceType),
+        on: Yup.object().shape({
+            dayMonth: Yup.array().min(1).of(Yup.number().min(1).max(31)),
+            month: Yup.array().min(1).of(Yup.number().min(1).max(12)),
+            dayWeek: Yup.array().min(1).of(Yup.number().min(0).max(6)),
         }),
     }),
     enabled: Yup.boolean().notRequired(),

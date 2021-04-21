@@ -8,7 +8,8 @@ import { generateFormattedDate } from 'lib/utils/datetime';
 import {
     recurrenceToCron,
     cronToRecurrence,
-    validateCronForReuccrence,
+    validateCronForRecurrrence,
+    recurrenceType,
 } from 'lib/utils/cron';
 import { sendConfirm } from 'lib/querybookUI';
 import { useDataFetch } from 'hooks/useDataFetch';
@@ -49,27 +50,16 @@ const taskFormSchema = Yup.object().shape({
             ? schema.shape({
                   hour: Yup.number().min(0).max(23),
                   minute: Yup.number().min(0).max(59),
-                  recurrence: Yup.string().oneOf([
-                      'daily',
-                      'weekly',
-                      'monthly',
-                  ]),
-                  on: Yup.array().when(
-                      'recurrence',
-                      (recurrence: string, schema) => {
-                          if (recurrence === 'weekly') {
-                              return schema
-                                  .min(1)
-                                  .of(Yup.number().min(0).max(6));
-                          } else if (recurrence === 'monthly') {
-                              return schema
-                                  .min(1)
-                                  .of(Yup.number().min(1).max(31));
-                          }
-
-                          return schema;
-                      }
-                  ),
+                  recurrence: Yup.string().oneOf(recurrenceType),
+                  on: Yup.object().shape({
+                      dayMonth: Yup.array()
+                          .min(1)
+                          .of(Yup.number().min(1).max(31)),
+                      month: Yup.array().min(1).of(Yup.number().min(1).max(12)),
+                      dayWeek: Yup.array()
+                          .min(1)
+                          .of(Yup.number().min(0).max(6)),
+                  }),
               })
             : schema
     ),
@@ -207,7 +197,7 @@ export const TaskEditor: React.FunctionComponent<IProps> = ({
         return {
             name: task.name || '',
             task: task.task || '',
-            isCron: !validateCronForReuccrence(cron),
+            isCron: !validateCronForRecurrrence(cron),
             recurrence,
             cron,
             enabled: task.enabled ?? true,
@@ -333,7 +323,7 @@ export const TaskEditor: React.FunctionComponent<IProps> = ({
             </div>
         );
 
-        const canUseRecurrence = validateCronForReuccrence(values.cron);
+        const canUseRecurrence = validateCronForRecurrrence(values.cron);
 
         return (
             <div className="TaskEditor-form">

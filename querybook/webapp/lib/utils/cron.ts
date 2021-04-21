@@ -4,25 +4,49 @@ export interface IRecurrence {
     hour: number;
     minute: number;
 
-    recurrence: 'daily' | 'weekly' | 'monthly';
-    on: number[];
+    recurrence: RecurrenceType;
+    on: IRecurrenceOn;
 }
 
-export function cronToRecurrence(cron: string): IRecurrence {
-    const [minute, hour, dayMonth, _, dayWeek] = cron.split(' ');
+export interface IRecurrenceOn {
+    dayMonth?: number[];
+    month?: number[];
+    dayWeek?: number[];
+}
 
-    let recurrencePolicy: 'daily' | 'weekly' | 'monthly' = 'daily';
-    let on = [];
-    if (dayMonth !== '*') {
+export const recurrenceType = [
+    'hourly',
+    'daily',
+    'weekly',
+    'monthly',
+    'yearly',
+];
+
+export type RecurrenceType = typeof recurrenceType[number];
+
+export function cronToRecurrence(cron: string): IRecurrence {
+    const [minute, hour, dayMonth, month, dayWeek] = cron.split(' ');
+
+    let recurrencePolicy: RecurrenceType = 'daily';
+    let on = {};
+    if (dayMonth !== '*' && month !== '*') {
+        recurrencePolicy = 'yearly';
+        on = {
+            month: month.split(',').map((d) => Number(d)),
+            dayMonth: dayMonth.split(',').map((d) => Number(d)),
+        };
+    } else if (dayMonth !== '*') {
         recurrencePolicy = 'monthly';
-        on = dayMonth.split(',').map((d) => Number(d));
+        on = { dayMonth: dayMonth.split(',').map((d) => Number(d)) };
     } else if (dayWeek !== '*') {
         recurrencePolicy = 'weekly';
-        on = dayWeek.split(',').map((d) => Number(d));
+        on = { dayWeek: dayWeek.split(',').map((d) => Number(d)) };
+    } else if (hour === '*') {
+        recurrencePolicy = 'hourly';
     }
 
     const recurrence: IRecurrence = {
-        hour: Number(hour),
+        hour: recurrencePolicy === 'hourly' ? 0 : Number(hour),
         minute: Number(minute),
 
         recurrence: recurrencePolicy,
@@ -33,18 +57,24 @@ export function cronToRecurrence(cron: string): IRecurrence {
 }
 
 export function recurrenceToCron(recurrence: IRecurrence): string {
-    const { hour, minute } = recurrence;
+    const { minute } = recurrence;
 
+    let hour = recurrence.hour.toString();
     let dayMonth = '*';
+    let month = '*';
     let dayWeek = '*';
 
-    if (recurrence.recurrence === 'weekly') {
-        dayWeek = recurrence.on.join(',');
+    if (recurrence.recurrence === 'yearly') {
+        month = recurrence.on.month.join(',');
+    } else if (recurrence.recurrence === 'weekly') {
+        dayWeek = recurrence.on.dayWeek.join(',');
     } else if (recurrence.recurrence === 'monthly') {
-        dayMonth = recurrence.on.join(',');
+        dayMonth = recurrence.on.dayMonth.join(',');
+    } else if (recurrence.recurrence === 'hourly') {
+        hour = '*';
     }
 
-    return `${minute} ${hour} ${dayMonth} * ${dayWeek}`;
+    return `${minute} ${hour} ${dayMonth} ${month} ${dayWeek}`;
 }
 
 const WEEKDAYS = [
@@ -55,6 +85,21 @@ const WEEKDAYS = [
     'Thursday',
     'Friday',
     'Saturday',
+];
+
+const MONTHS = [
+    'January',
+    'February',
+    'March',
+    'April',
+    'May',
+    'June',
+    'July',
+    'August',
+    'September',
+    'October',
+    'November',
+    'December',
 ];
 export function getWeekdayOptions() {
     return WEEKDAYS.map((name, index) => ({
@@ -70,6 +115,13 @@ export function getMonthdayOptions() {
     }));
 }
 
+export function getYearlyMonthOptions() {
+    return [...Array(12).keys()].map((month) => ({
+        value: month + 1,
+        label: MONTHS[month],
+    }));
+}
+
 export function getRecurrenceLocalTimeString(recurrence: IRecurrence): string {
     return moment
         .utc()
@@ -79,7 +131,7 @@ export function getRecurrenceLocalTimeString(recurrence: IRecurrence): string {
         .format('HH:mm');
 }
 
-export function validateCronForReuccrence(cron: string) {
+export function validateCronForRecurrrence(cron: string) {
     if (cron.includes('/')) {
         return false;
     }
