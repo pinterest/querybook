@@ -7,7 +7,6 @@ import { IDataDocScheduleKwargs, NotifyOn } from 'const/schedule';
 import {
     cronToRecurrence,
     IRecurrence,
-    IRecurrenceOn,
     recurrenceToCron,
     recurrenceTypes,
 } from 'lib/utils/cron';
@@ -33,7 +32,7 @@ import { AsyncButton } from 'ui/AsyncButton/AsyncButton';
 import { getEnumEntries } from 'lib/typescript';
 import { notificationServiceSelector } from '../../redux/notificationService/selector';
 import { IQueryResultExporter } from 'redux/queryExecutions/types';
-import { Button, SoftButton } from 'ui/Button/Button';
+import { SoftButton } from 'ui/Button/Button';
 import { IconButton } from 'ui/Button/IconButton';
 
 import './DataDocScheduleForm.scss';
