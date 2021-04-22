@@ -7,7 +7,9 @@ import { IDataDocScheduleKwargs, NotifyOn } from 'const/schedule';
 import {
     cronToRecurrence,
     IRecurrence,
+    recurrenceOnYup,
     recurrenceToCron,
+    recurrenceTypes,
 } from 'lib/utils/cron';
 import { getExporterAuthentication } from 'lib/result-export';
 
@@ -31,7 +33,7 @@ import { AsyncButton } from 'ui/AsyncButton/AsyncButton';
 import { getEnumEntries } from 'lib/typescript';
 import { notificationServiceSelector } from '../../redux/notificationService/selector';
 import { IQueryResultExporter } from 'redux/queryExecutions/types';
-import { Button, SoftButton } from 'ui/Button/Button';
+import { SoftButton } from 'ui/Button/Button';
 import { IconButton } from 'ui/Button/IconButton';
 
 import './DataDocScheduleForm.scss';
@@ -57,16 +59,8 @@ const scheduleFormSchema = Yup.object().shape({
     recurrence: Yup.object().shape({
         hour: Yup.number().min(0).max(23),
         minute: Yup.number().min(0).max(59),
-        recurrence: Yup.string().oneOf(['daily', 'weekly', 'monthly']),
-        on: Yup.array().when('recurrence', (recurrence: string, schema) => {
-            if (recurrence === 'weekly') {
-                return schema.min(1).of(Yup.number().min(0).max(6));
-            } else if (recurrence === 'monthly') {
-                return schema.min(1).of(Yup.number().min(1).max(31));
-            }
-
-            return schema;
-        }),
+        recurrence: Yup.string().oneOf(recurrenceTypes),
+        on: recurrenceOnYup,
     }),
     enabled: Yup.boolean().notRequired(),
     kwargs: Yup.object().shape({
