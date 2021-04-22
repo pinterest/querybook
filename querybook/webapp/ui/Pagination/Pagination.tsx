@@ -136,7 +136,9 @@ export const Pagination: React.FunctionComponent<IPaginationProps> = ({
             })}
         >
             {navButtons}
-            <ul className="Pagination-pages flex-row">{paginationListDOM}</ul>
+            <ul className="Pagination-pages flex-center">
+                {paginationListDOM}
+            </ul>
         </nav>
     );
 };
