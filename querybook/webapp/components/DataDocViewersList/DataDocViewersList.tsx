@@ -42,7 +42,6 @@ interface IDataDocViewersListProps {
     rejectDataDocAccessRequest: (uid: number) => any;
 }
 
-// TODO: make this component use React-Redux directly
 export const DataDocViewersList: React.FunctionComponent<IDataDocViewersListProps> = ({
     viewerInfos,
     dataDoc,
@@ -64,9 +63,9 @@ export const DataDocViewersList: React.FunctionComponent<IDataDocViewersListProp
         dispatch(addDataDocAccessRequest(dataDoc.id));
     }, [dataDoc.id]);
 
-    const { isEditor } = useSelector((state: IStoreState) => ({
-        isEditor: canCurrentUserEditSelector(state, dataDoc.id),
-    }));
+    const isEditor = useSelector((state: IStoreState) =>
+        canCurrentUserEditSelector(state, dataDoc.id)
+    );
 
     const addUserRowDOM = readonly ? null : (
         <div className="datadoc-add-user-row">
@@ -187,7 +186,7 @@ export const DataDocViewersList: React.FunctionComponent<IDataDocViewersListProp
                 {isEditor ? null : (
                     <AccessRequestButton
                         onAccessRequest={handleDataDocAccessRequest}
-                        isEditOnly
+                        isEdit
                     />
                 )}
             </div>
