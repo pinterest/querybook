@@ -17,7 +17,7 @@ export const AccessRequestButton: React.FunctionComponent<{
                     }}
                     pushable
                 >
-                    Request Access
+                    Request Edit Access
                 </Button>
             )}
         </div>
