@@ -56,7 +56,6 @@ export function processChartJSData(
             coloredSeries[seriesIdx] = chartMeta.y_axis.series[seriesIdx].color;
         }
     }
-    console.log('coloredSeries', coloredSeries);
 
     const useXYDataPoint =
         xAxesScaleType === 'linear' ||
