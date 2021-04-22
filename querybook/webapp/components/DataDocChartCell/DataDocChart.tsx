@@ -25,6 +25,7 @@ interface IDataDocChartProps {
     meta: IDataChartCellMeta;
     data?: any[][];
     chartJSOptions?: ChartOptions;
+    setChartReference?: (reference) => void;
 }
 
 Chart.plugins.unregister(ChartDataLabels);
@@ -109,6 +110,7 @@ export const DataDocChart: React.FunctionComponent<IDataDocChartProps> = ({
     meta,
     data = [],
     chartJSOptions = {},
+    setChartReference,
 }) => {
     const theme = useSelector(
         (state: IStoreState) => state.user.computedSettings.theme
@@ -156,9 +158,27 @@ export const DataDocChart: React.FunctionComponent<IDataDocChartProps> = ({
     if (meta.chart.type === 'line' || meta.chart.type === 'area') {
         chartDOM = <Line {...chartProps} />;
     } else if (meta.chart.type === 'bar') {
-        chartDOM = <Bar {...chartProps} />;
+        chartDOM = (
+            <Bar
+                {...chartProps}
+                ref={
+                    setChartReference
+                        ? (reference) => setChartReference(reference)
+                        : null
+                }
+            />
+        );
     } else if (meta.chart.type === 'histogram') {
-        chartDOM = <HorizontalBar {...chartProps} />;
+        chartDOM = (
+            <HorizontalBar
+                {...chartProps}
+                ref={
+                    setChartReference
+                        ? (reference) => setChartReference(reference)
+                        : null
+                }
+            />
+        );
     } else if (meta.chart.type === 'pie') {
         chartDOM = <Pie {...chartProps} />;
     } else if (meta.chart.type === 'doughnut') {
@@ -166,7 +186,16 @@ export const DataDocChart: React.FunctionComponent<IDataDocChartProps> = ({
     } else if (meta.chart.type === 'scatter') {
         chartDOM = <Scatter {...chartProps} />;
     } else if (meta.chart.type === 'bubble') {
-        chartDOM = <Bubble {...chartProps} />;
+        chartDOM = (
+            <Bubble
+                {...chartProps}
+                ref={
+                    setChartReference
+                        ? (reference) => setChartReference(reference)
+                        : null
+                }
+            />
+        );
     }
 
     return chartDOM;
