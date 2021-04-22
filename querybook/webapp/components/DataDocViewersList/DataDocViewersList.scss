@@ -7,7 +7,7 @@
     }
 
     .public-row-description {
-        border-top: 1px solid var(--border-color);
+        border-top: var(--border);
         padding-top: 1rem;
         text-align: center;
     }
@@ -36,7 +36,7 @@
         overflow-y: auto;
         padding-bottom: 0rem;
         padding-top: 0rem;
-        border-top: 1px solid var(--border-color);
+        border-top: var(--border);
 
         > div {
             padding-left: 8px;
@@ -44,7 +44,7 @@
         }
 
         > div:not(:last-child) {
-            border-bottom: 1px solid var(--border-color);
+            border-bottom: var(--border);
         }
     }
 

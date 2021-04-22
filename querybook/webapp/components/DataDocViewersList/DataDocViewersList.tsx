@@ -187,13 +187,12 @@ export const DataDocViewersList: React.FunctionComponent<IDataDocViewersListProp
                 {isEditor ? null : (
                     <AccessRequestButton
                         onAccessRequest={handleDataDocAccessRequest}
+                        isEditOnly
                     />
                 )}
             </div>
         </>
     );
-
-    console.log('viewerInfos', viewerInfos);
 
     const combinedClassname = clsx({
         [className]: className,
