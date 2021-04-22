@@ -332,9 +332,7 @@ class DataTableViewComponent extends React.PureComponent<
                     onSelect={this.onTabSelected}
                     className="DataTableView-tabs"
                 />
-                <div className="DataTableView-content">
-                    <Container>{contentDOM}</Container>
-                </div>
+                <div className="DataTableView-content">{contentDOM}</div>
             </Container>
         );
     }
