@@ -3,7 +3,8 @@ import { Button } from 'ui/Button/Button';
 
 export const AccessRequestButton: React.FunctionComponent<{
     onAccessRequest: () => any;
-}> = ({ onAccessRequest }) => {
+    isEdit?: boolean;
+}> = ({ onAccessRequest, isEdit = false }) => {
     const [accessRequsted, setAccessRequested] = useState(false);
     return (
         <div className="AccessRequestButton">
@@ -17,7 +18,7 @@ export const AccessRequestButton: React.FunctionComponent<{
                     }}
                     pushable
                 >
-                    Request Access
+                    Request{isEdit ? ' Edit' : ''} Access
                 </Button>
             )}
         </div>

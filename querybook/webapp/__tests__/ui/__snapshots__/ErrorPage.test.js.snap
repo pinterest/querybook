@@ -8,7 +8,7 @@ exports[`matches enzyme snapshots matches snapshot 1`] = `
     className="flex-column"
   >
     <Title
-      className=""
+      className="mb24"
       gap={false}
       size={2}
       subtitle={false}
@@ -16,7 +16,7 @@ exports[`matches enzyme snapshots matches snapshot 1`] = `
       Unknown Error
     </Title>
     <Title
-      className="ErrorPage-message"
+      className="ErrorPage-message mb16"
       gap={false}
       size={6}
       subtitle={true}

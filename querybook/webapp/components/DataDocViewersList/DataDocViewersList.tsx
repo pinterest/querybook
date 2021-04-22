@@ -1,24 +1,29 @@
 import clsx from 'clsx';
 import React from 'react';
 import toast from 'react-hot-toast';
+import { useDispatch, useSelector } from 'react-redux';
 
 import {
     IViewerInfo,
     permissionToReadWrite,
     DataDocPermission,
 } from 'lib/data-doc/datadoc-permission';
-import { UserBadge } from 'components/UserBadge/UserBadge';
+import { canCurrentUserEditSelector } from 'redux/dataDoc/selector';
+import { addDataDocAccessRequest } from 'redux/dataDoc/action';
+import { Dispatch, IStoreState } from 'redux/store/types';
 
-import './DataDocViewersList.scss';
 import { IDataDoc, IDataDocEditor } from 'const/datadoc';
 import { IAccessRequest } from 'const/accessRequest';
 
-import { Title } from 'ui/Title/Title';
-
-import { ViewerPermissionPicker } from './ViewerPermissionPicker';
-import { UserSelect } from 'components/UserSelect/UserSelect';
-import { Tabs } from 'ui/Tabs/Tabs';
+import { AccessRequestButton } from 'components/AccessRequestButton/AccessRequestButton';
 import { DataDocAccessRequestPermissionPicker } from 'components/DataDocAccessRequestPermissionPicker.tsx/DataDocAccessRequestPermissionPicker';
+import { ViewerPermissionPicker } from './ViewerPermissionPicker';
+import { UserBadge } from 'components/UserBadge/UserBadge';
+import { UserSelect } from 'components/UserSelect/UserSelect';
+
+import { Tabs } from 'ui/Tabs/Tabs';
+import { Title } from 'ui/Title/Title';
+import './DataDocViewersList.scss';
 
 interface IDataDocViewersListProps {
     className?: string;
@@ -37,7 +42,6 @@ interface IDataDocViewersListProps {
     rejectDataDocAccessRequest: (uid: number) => any;
 }
 
-// TODO: make this component use React-Redux directly
 export const DataDocViewersList: React.FunctionComponent<IDataDocViewersListProps> = ({
     viewerInfos,
     dataDoc,
@@ -54,6 +58,15 @@ export const DataDocViewersList: React.FunctionComponent<IDataDocViewersListProp
     updateDataDocOwner,
     rejectDataDocAccessRequest,
 }) => {
+    const dispatch: Dispatch = useDispatch();
+    const handleDataDocAccessRequest = React.useCallback(() => {
+        dispatch(addDataDocAccessRequest(dataDoc.id));
+    }, [dataDoc.id]);
+
+    const isEditor = useSelector((state: IStoreState) =>
+        canCurrentUserEditSelector(state, dataDoc.id)
+    );
+
     const addUserRowDOM = readonly ? null : (
         <div className="datadoc-add-user-row">
             <div className="user-select-wrapper">
@@ -140,16 +153,14 @@ export const DataDocViewersList: React.FunctionComponent<IDataDocViewersListProp
           ));
 
     const contentDOM = (
-        <div>
-            <div className="viewers-list-wrapper">
-                {accessRequestListDOM}
-                {viewersListDOM}
-            </div>
+        <div className="viewers-list-wrapper mt16">
+            {accessRequestListDOM}
+            {viewersListDOM}
         </div>
     );
     const dataDocPublicRow = (
         <>
-            <div className="public-row-switch">
+            <div className="public-row-switch pv16">
                 <Tabs
                     selectedTabKey={dataDoc.public ? 'Public' : 'Private'}
                     pills
@@ -167,11 +178,17 @@ export const DataDocViewersList: React.FunctionComponent<IDataDocViewersListProp
                 />
             </div>
             <div className="public-row-description">
-                <Title size={6} subtitle>
+                <Title size={6} subtitle className="mb8">
                     {dataDoc.public
                         ? 'This document can be viewed by anyone.'
                         : 'Only invited users can view this document.'}
                 </Title>
+                {isEditor ? null : (
+                    <AccessRequestButton
+                        onAccessRequest={handleDataDocAccessRequest}
+                        isEdit
+                    />
+                )}
             </div>
         </>
     );
