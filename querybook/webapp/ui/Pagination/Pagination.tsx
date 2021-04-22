@@ -47,7 +47,7 @@ export const Pagination: React.FunctionComponent<IPaginationProps> = ({
     padding = 2, // number of page on the left and right of current page
     hideNavButton = false,
 }) => {
-    const paginationListDOM: React.ReactElement[] = [];
+    const paginationListDOM: React.ReactNode[] = [];
 
     const pageRanges: number[] = [];
     for (
@@ -108,7 +108,6 @@ export const Pagination: React.FunctionComponent<IPaginationProps> = ({
         <div key="previous-div" className="Pagination-previous">
             {isFirstPage ? null : (
                 <Button
-                    key="previous"
                     title="Previous"
                     onClick={onPageClick.bind(null, currentPage - 1)}
                 />
@@ -120,7 +119,6 @@ export const Pagination: React.FunctionComponent<IPaginationProps> = ({
         <div key="next-div" className="Pagination-next">
             {isLastPage || totalPage === 0 ? null : (
                 <Button
-                    key="next"
                     title="Next"
                     onClick={onPageClick.bind(null, currentPage + 1)}
                 />
