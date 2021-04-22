@@ -59,8 +59,10 @@ export const ErrorPage: React.FunctionComponent<IErrorPageProps> = ({
     return (
         <FullHeight className={classNameProp}>
             <Center className="flex-column">
-                <Title size={2}>{errorTitle}</Title>
-                <Title subtitle size={6} className="ErrorPage-message">
+                <Title size={2} className="mb24">
+                    {errorTitle}
+                </Title>
+                <Title subtitle size={6} className="ErrorPage-message mb16">
                     {message}
                 </Title>
                 {children}
