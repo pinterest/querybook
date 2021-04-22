@@ -5,6 +5,7 @@ import { Field, withFormik, FormikProps } from 'formik';
 import produce from 'immer';
 import { isEmpty, range } from 'lodash';
 import Select from 'react-select';
+import ChartComponent, { ChartComponentProps } from 'react-chartjs-2';
 
 import { IStoreState } from 'redux/store/types';
 import { IDataChartCellMeta } from 'const/datadoc';
@@ -91,7 +92,9 @@ const DataDocChartComposerComponent: React.FunctionComponent<
     const [displayStatementId, setDisplayStatementId] = React.useState(
         undefined
     );
-    const [chartReference, setChartReference] = React.useState();
+    const [chartReference, setChartReference] = React.useState<
+        ChartComponent<ChartComponentProps>
+    >();
 
     // making sure legend color updated for bar/horiz bar/bubble charts
     React.useEffect(() => {
