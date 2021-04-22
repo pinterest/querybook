@@ -1,6 +1,9 @@
 .Container {
+    display: flex;
+    justify-content: center;
+
     .Container-content {
         max-width: var(--max-width);
-        margin: 0 auto;
+        flex: 1;
     }
 }
