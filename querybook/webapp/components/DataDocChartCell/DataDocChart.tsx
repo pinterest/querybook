@@ -1,4 +1,4 @@
-import {
+import ChartComponent, {
     Line,
     Bar,
     HorizontalBar,
@@ -7,8 +7,9 @@ import {
     Doughnut,
     Bubble,
     defaults,
+    ChartComponentProps,
 } from 'react-chartjs-2';
-import React, { useMemo } from 'react';
+import React, { MutableRefObject, useMemo } from 'react';
 import { useSelector } from 'react-redux';
 import Chart, { ChartOptions } from 'chart.js';
 import ChartDataLabels from 'chartjs-plugin-datalabels';
@@ -25,6 +26,7 @@ interface IDataDocChartProps {
     meta: IDataChartCellMeta;
     data?: any[][];
     chartJSOptions?: ChartOptions;
+    chartJSRef?: MutableRefObject<ChartComponent<ChartComponentProps>>;
 }
 
 Chart.plugins.unregister(ChartDataLabels);
@@ -109,6 +111,7 @@ export const DataDocChart: React.FunctionComponent<IDataDocChartProps> = ({
     meta,
     data = [],
     chartJSOptions = {},
+    chartJSRef,
 }) => {
     const theme = useSelector(
         (state: IStoreState) => state.user.computedSettings.theme
@@ -150,6 +153,7 @@ export const DataDocChart: React.FunctionComponent<IDataDocChartProps> = ({
         data: chartData,
         plugins: [ChartDataLabels],
         options: combinedChartJSOptions,
+        ref: chartJSRef,
     };
 
     let chartDOM = null;

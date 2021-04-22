@@ -5,6 +5,7 @@ import { Field, withFormik, FormikProps } from 'formik';
 import produce from 'immer';
 import { isEmpty, range } from 'lodash';
 import Select from 'react-select';
+import ChartComponent, { ChartComponentProps } from 'react-chartjs-2';
 
 import { IStoreState } from 'redux/store/types';
 import { IDataChartCellMeta } from 'const/datadoc';
@@ -91,6 +92,16 @@ const DataDocChartComposerComponent: React.FunctionComponent<
     const [displayStatementId, setDisplayStatementId] = React.useState(
         undefined
     );
+
+    const chartJSRef = React.useRef<ChartComponent<ChartComponentProps>>(null);
+
+    // making sure legend color updated for bar/horiz bar/bubble charts
+    React.useEffect(() => {
+        if (chartJSRef.current) {
+            const chart = chartJSRef.current.chartInstance;
+            chart.update();
+        }
+    }, [values.coloredSeries]);
 
     const {
         statementResultData,
@@ -929,6 +940,7 @@ const DataDocChartComposerComponent: React.FunctionComponent<
                 data={chartData}
                 meta={formValsToMeta(values, meta)}
                 chartJSOptions={{ maintainAspectRatio: false }}
+                chartJSRef={chartJSRef}
             />
         );
 
