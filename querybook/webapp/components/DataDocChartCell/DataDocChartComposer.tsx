@@ -92,17 +92,16 @@ const DataDocChartComposerComponent: React.FunctionComponent<
     const [displayStatementId, setDisplayStatementId] = React.useState(
         undefined
     );
-    const [chartReference, setChartReference] = React.useState<
-        ChartComponent<ChartComponentProps>
-    >();
+
+    const chartJSRef = React.useRef<ChartComponent<ChartComponentProps>>(null);
 
     // making sure legend color updated for bar/horiz bar/bubble charts
     React.useEffect(() => {
-        if (chartReference) {
-            const chart = chartReference.chartInstance;
+        if (chartJSRef.current) {
+            const chart = chartJSRef.current.chartInstance;
             chart.update();
         }
-    }, [values.coloredSeries, chartReference]);
+    }, [values.coloredSeries]);
 
     const {
         statementResultData,
@@ -941,7 +940,7 @@ const DataDocChartComposerComponent: React.FunctionComponent<
                 data={chartData}
                 meta={formValsToMeta(values, meta)}
                 chartJSOptions={{ maintainAspectRatio: false }}
-                setChartReference={setChartReference}
+                chartJSRef={chartJSRef}
             />
         );
 

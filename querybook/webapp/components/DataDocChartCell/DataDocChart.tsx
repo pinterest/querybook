@@ -1,4 +1,4 @@
-import {
+import ChartComponent, {
     Line,
     Bar,
     HorizontalBar,
@@ -7,8 +7,9 @@ import {
     Doughnut,
     Bubble,
     defaults,
+    ChartComponentProps,
 } from 'react-chartjs-2';
-import React, { useMemo } from 'react';
+import React, { MutableRefObject, useMemo } from 'react';
 import { useSelector } from 'react-redux';
 import Chart, { ChartOptions } from 'chart.js';
 import ChartDataLabels from 'chartjs-plugin-datalabels';
@@ -25,7 +26,7 @@ interface IDataDocChartProps {
     meta: IDataChartCellMeta;
     data?: any[][];
     chartJSOptions?: ChartOptions;
-    setChartReference?: (reference) => void;
+    chartJSRef?: MutableRefObject<ChartComponent<ChartComponentProps>>;
 }
 
 Chart.plugins.unregister(ChartDataLabels);
@@ -110,7 +111,7 @@ export const DataDocChart: React.FunctionComponent<IDataDocChartProps> = ({
     meta,
     data = [],
     chartJSOptions = {},
-    setChartReference,
+    chartJSRef,
 }) => {
     const theme = useSelector(
         (state: IStoreState) => state.user.computedSettings.theme
@@ -152,33 +153,16 @@ export const DataDocChart: React.FunctionComponent<IDataDocChartProps> = ({
         data: chartData,
         plugins: [ChartDataLabels],
         options: combinedChartJSOptions,
+        ref: chartJSRef,
     };
 
     let chartDOM = null;
     if (meta.chart.type === 'line' || meta.chart.type === 'area') {
         chartDOM = <Line {...chartProps} />;
     } else if (meta.chart.type === 'bar') {
-        chartDOM = (
-            <Bar
-                {...chartProps}
-                ref={
-                    setChartReference
-                        ? (reference) => setChartReference(reference)
-                        : null
-                }
-            />
-        );
+        chartDOM = <Bar {...chartProps} />;
     } else if (meta.chart.type === 'histogram') {
-        chartDOM = (
-            <HorizontalBar
-                {...chartProps}
-                ref={
-                    setChartReference
-                        ? (reference) => setChartReference(reference)
-                        : null
-                }
-            />
-        );
+        chartDOM = <HorizontalBar {...chartProps} />;
     } else if (meta.chart.type === 'pie') {
         chartDOM = <Pie {...chartProps} />;
     } else if (meta.chart.type === 'doughnut') {
@@ -186,16 +170,7 @@ export const DataDocChart: React.FunctionComponent<IDataDocChartProps> = ({
     } else if (meta.chart.type === 'scatter') {
         chartDOM = <Scatter {...chartProps} />;
     } else if (meta.chart.type === 'bubble') {
-        chartDOM = (
-            <Bubble
-                {...chartProps}
-                ref={
-                    setChartReference
-                        ? (reference) => setChartReference(reference)
-                        : null
-                }
-            />
-        );
+        chartDOM = <Bubble {...chartProps} />;
     }
 
     return chartDOM;
