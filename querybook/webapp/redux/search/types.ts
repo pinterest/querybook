@@ -3,7 +3,7 @@ import { ThunkAction } from 'redux-thunk';
 import { IStoreState } from '../store/types';
 import { ICancelablePromise } from 'lib/datasource';
 
-export const RESULT_PER_PAGE = 20;
+export const RESULT_PER_PAGE = 1;
 export enum SearchOrder {
     Recency = 'Recency',
     Relevance = 'Relevance',
