@@ -7,6 +7,7 @@ import { IDataDocScheduleKwargs, NotifyOn } from 'const/schedule';
 import {
     cronToRecurrence,
     IRecurrence,
+    recurrenceOnYup,
     recurrenceToCron,
     recurrenceTypes,
 } from 'lib/utils/cron';
@@ -53,34 +54,6 @@ interface IDataDocScheduleFormProps {
     onDelete?: () => Promise<void>;
     onRun?: () => Promise<void>;
 }
-
-export const recurrenceOnYup = Yup.object().when(
-    'recurrence',
-    (recurrence: string, schema) => {
-        const onSchema: any = {};
-        if (recurrence === 'weekly') {
-            onSchema.dayWeek = Yup.array()
-                .min(1)
-                .of(Yup.number().min(0).max(6))
-                .required();
-        } else {
-            onSchema.dayMonth = Yup.array()
-                .min(1)
-                .of(Yup.number().min(1).max(31))
-                .required();
-        }
-
-        if (recurrence === 'yearly') {
-            onSchema.month = Yup.array()
-                .min(1)
-                .of(Yup.number().min(1).max(12))
-                .required();
-        }
-        return Yup.object().shape({
-            ...onSchema,
-        });
-    }
-);
 
 const scheduleFormSchema = Yup.object().shape({
     recurrence: Yup.object().shape({

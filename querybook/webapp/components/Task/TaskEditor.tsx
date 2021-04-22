@@ -11,6 +11,7 @@ import {
     cronToRecurrence,
     validateCronForRecurrrence,
     recurrenceTypes,
+    recurrenceOnYup,
 } from 'lib/utils/cron';
 import { sendConfirm } from 'lib/querybookUI';
 import { useDataFetch } from 'hooks/useDataFetch';
@@ -18,7 +19,6 @@ import { ITaskSchedule } from 'const/schedule';
 
 import { TaskStatus } from 'components/Task/TaskStatus';
 import { AdminAuditLogButton } from 'components/AdminAuditLog/AdminAuditLogButton';
-import { recurrenceOnYup } from 'components/DataDocSchedule/DataDocScheduleForm';
 
 import { AsyncButton } from 'ui/AsyncButton/AsyncButton';
 import { SoftButton, TextButton } from 'ui/Button/Button';
