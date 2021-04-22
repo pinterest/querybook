@@ -1,13 +1,9 @@
 .DataDocViewersList {
     width: 400px;
-    padding: 0.5rem;
 
-    > div {
-        padding: 0.5rem;
-    }
-
-    .public-row-switch {
-        padding-bottom: 1rem;
+    > div:not(:last-child) {
+        padding-left: 8px;
+        padding-right: 8px;
     }
 
     .public-row-description {
@@ -21,9 +17,6 @@
         flex-direction: row;
         justify-content: space-between;
         align-items: center;
-        border-bottom: 1px solid var(--border-color);
-        padding-bottom: 1rem;
-        margin-bottom: 0.5rem;
 
         .add-user-icon {
             margin-top: 6px;
@@ -43,6 +36,12 @@
         overflow-y: auto;
         padding-bottom: 0rem;
         padding-top: 0rem;
+        border-top: 1px solid var(--border-color);
+
+        > div {
+            padding-left: 8px;
+            padding-right: 8px;
+        }
 
         > div:not(:last-child) {
             border-bottom: 1px solid var(--border-color);

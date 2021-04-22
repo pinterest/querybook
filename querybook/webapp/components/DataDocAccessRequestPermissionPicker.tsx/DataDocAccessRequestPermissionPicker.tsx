@@ -27,7 +27,7 @@ export const DataDocAccessRequestPermissionPicker: React.FunctionComponent<IPerm
         <Popover
             onHide={() => setShowEditMenu(false)}
             anchor={selfRef.current}
-            layout={['bottom', 'right']}
+            layout={['bottom', 'left']}
             hideArrow
         >
             <Menu>
@@ -46,7 +46,7 @@ export const DataDocAccessRequestPermissionPicker: React.FunctionComponent<IPerm
     );
     const pickerButton = (
         <div
-            className="permission-text flex-row"
+            className="permission-text flex-row mr8"
             onClick={() => setShowEditMenu(true)}
         >
             <i className="fa fa-caret-down caret-icon" />
@@ -59,6 +59,8 @@ export const DataDocAccessRequestPermissionPicker: React.FunctionComponent<IPerm
                 className="access-request-control-button"
                 icon="check-circle"
                 onClick={() => addDataDocEditor(uid, permission)}
+                tooltip={`Allow ${permission} permission`}
+                tooltipPos="left"
             />
             <IconButton
                 className="access-request-control-button"
@@ -69,9 +71,12 @@ export const DataDocAccessRequestPermissionPicker: React.FunctionComponent<IPerm
     );
 
     return (
-        <div className="DataDocAccessRequestPermissionPicker" ref={selfRef}>
-            {accessRequestControlButtonsDOM}
+        <div
+            className="DataDocAccessRequestPermissionPicker flex-row"
+            ref={selfRef}
+        >
             {pickerButton}
+            {accessRequestControlButtonsDOM}
             {editMenuDOM}
         </div>
     );

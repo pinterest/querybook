@@ -154,16 +154,14 @@ export const DataDocViewersList: React.FunctionComponent<IDataDocViewersListProp
           ));
 
     const contentDOM = (
-        <div>
-            <div className="viewers-list-wrapper">
-                {accessRequestListDOM}
-                {viewersListDOM}
-            </div>
+        <div className="viewers-list-wrapper mt16">
+            {accessRequestListDOM}
+            {viewersListDOM}
         </div>
     );
     const dataDocPublicRow = (
         <>
-            <div className="public-row-switch">
+            <div className="public-row-switch pv16">
                 <Tabs
                     selectedTabKey={dataDoc.public ? 'Public' : 'Private'}
                     pills
@@ -181,17 +179,15 @@ export const DataDocViewersList: React.FunctionComponent<IDataDocViewersListProp
                 />
             </div>
             <div className="public-row-description">
-                <Title size={6} subtitle>
+                <Title size={6} subtitle className="mb8">
                     {dataDoc.public
                         ? 'This document can be viewed by anyone.'
                         : 'Only invited users can view this document.'}
                 </Title>
                 {isEditor ? null : (
-                    <div className="mt8">
-                        <AccessRequestButton
-                            onAccessRequest={handleDataDocAccessRequest}
-                        />
-                    </div>
+                    <AccessRequestButton
+                        onAccessRequest={handleDataDocAccessRequest}
+                    />
                 )}
             </div>
         </>
