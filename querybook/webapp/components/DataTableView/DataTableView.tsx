@@ -319,7 +319,7 @@ class DataTableViewComponent extends React.PureComponent<
             );
 
         return (
-            <div className={'DataTableView with-background '}>
+            <Container className="DataTableView with-background">
                 <DataTableHeader
                     table={table}
                     tableName={tableName}
@@ -335,7 +335,7 @@ class DataTableViewComponent extends React.PureComponent<
                 <div className="DataTableView-content">
                     <Container>{contentDOM}</Container>
                 </div>
-            </div>
+            </Container>
         );
     }
 }

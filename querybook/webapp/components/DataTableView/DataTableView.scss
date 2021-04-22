@@ -1,10 +1,5 @@
 .DataTableView {
-    display: flex;
-    flex-direction: column;
     height: 100%;
-    max-width: var(--max-width);
-    margin-right: auto;
-    margin-left: auto;
 
     .DataTableView-tabs {
         z-index: 10;
