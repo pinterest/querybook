@@ -167,14 +167,15 @@ export const recurrenceOnYup = Yup.object().when(
                 .min(1)
                 .of(Yup.number().min(1).max(31))
                 .required();
+
+            if (recurrence === 'yearly') {
+                onSchema.month = Yup.array()
+                    .min(1)
+                    .of(Yup.number().min(1).max(12))
+                    .required();
+            }
         }
 
-        if (recurrence === 'yearly') {
-            onSchema.month = Yup.array()
-                .min(1)
-                .of(Yup.number().min(1).max(12))
-                .required();
-        }
         return Yup.object().shape(onSchema);
     }
 );
