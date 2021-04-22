@@ -155,7 +155,7 @@ export function validateCronForRecurrrence(cron: string) {
 
 export const recurrenceOnYup = Yup.object().when(
     'recurrence',
-    (recurrence: string, schema) => {
+    (recurrence: RecurrenceType, schema) => {
         const onSchema: any = {};
         if (recurrence === 'weekly') {
             onSchema.dayWeek = Yup.array()
