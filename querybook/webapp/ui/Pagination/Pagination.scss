@@ -32,16 +32,16 @@
             .Pagination-page-button {
                 margin: 0 4px;
                 &.current {
-                    border-color: var(--border-color-select);
+                    border-color: var(--select-border-color);
                 }
                 &:hover {
-                    border-color: var(--border-color-hover);
+                    border-color: var(--hover-border-color);
                 }
             }
         }
         .Pagination-ellipsis {
-            margin: 5px;
-            color: var(--text-light);
+            margin: 4px;
+            color: var(--light-text-color);
         }
     }
 }
