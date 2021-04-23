@@ -2,30 +2,36 @@
 
 exports[`matches enzyme snapshots matches snapshot 1`] = `
 <nav
-  className="Pagination horizontal-space-between flex-row"
+  className="Pagination"
 >
-  <Button
+  <div
     className="Pagination-previous"
-    color="default"
-    disabled={false}
-    key="previous"
-    onClick={[Function]}
-    size="medium"
-    theme="outline"
-    title="Previous"
-  />
-  <Button
+    key="previous-div"
+  >
+    <Button
+      className=""
+      color="default"
+      onClick={[Function]}
+      size="medium"
+      theme="outline"
+      title="Previous"
+    />
+  </div>
+  <div
     className="Pagination-next"
-    color="default"
-    disabled={false}
-    key="next"
-    onClick={[Function]}
-    size="medium"
-    theme="outline"
-    title="Next"
-  />
+    key="next-div"
+  >
+    <Button
+      className=""
+      color="default"
+      onClick={[Function]}
+      size="medium"
+      theme="outline"
+      title="Next"
+    />
+  </div>
   <ul
-    className="Pagination-pages flex-row"
+    className="Pagination-pages flex-center"
   >
     <PageButton
       className=""
@@ -76,32 +82,38 @@ exports[`matches enzyme snapshots matches snapshot 1`] = `
 
 exports[`matches test renderer snapshot serializes the styles 1`] = `
 <nav
-  className="Pagination horizontal-space-between flex-row"
+  className="Pagination"
 >
-  <span
-    className="StyledButton-aqwbwz-0 eZYUp Button Pagination-previous"
-    color="var(--text-color)"
-    disabled={false}
-    onClick={[Function]}
-    size="medium"
+  <div
+    className="Pagination-previous"
   >
-    <span>
-      Previous
+    <span
+      className="StyledButton-aqwbwz-0 eZYUp Button"
+      color="var(--text-color)"
+      onClick={[Function]}
+      size="medium"
+    >
+      <span>
+        Previous
+      </span>
     </span>
-  </span>
-  <span
-    className="StyledButton-aqwbwz-0 eZYUp Button Pagination-next"
-    color="var(--text-color)"
-    disabled={false}
-    onClick={[Function]}
-    size="medium"
+  </div>
+  <div
+    className="Pagination-next"
   >
-    <span>
-      Next
+    <span
+      className="StyledButton-aqwbwz-0 eZYUp Button"
+      color="var(--text-color)"
+      onClick={[Function]}
+      size="medium"
+    >
+      <span>
+        Next
+      </span>
     </span>
-  </span>
+  </div>
   <ul
-    className="Pagination-pages flex-row"
+    className="Pagination-pages flex-center"
   >
     <li>
       <span

@@ -1,12 +1,26 @@
 .Pagination {
-    margin: 15px 0px;
-    .Pagination-next {
-        order: 3;
-        margin-right: 0px;
+    margin: 16px 0px;
+    display: flex;
+    flex-direction: row;
+
+    .Pagination-previous,
+    .Pagination-next,
+    .Pagination-pages {
+        flex: 1;
+        display: flex;
     }
+
     .Pagination-previous {
         order: 1;
+        justify-content: flex-start;
         margin-left: 0px;
+        margin-right: auto;
+    }
+    .Pagination-next {
+        order: 3;
+        justify-content: flex-end;
+        margin-left: auto;
+        margin-right: 0px;
     }
 
     .Pagination-pages {
@@ -14,6 +28,7 @@
         > li {
             display: flex;
             .Pagination-page-button {
+                margin: 0 4px;
                 &.current {
                     border-color: var(--select-border-color);
                 }
@@ -23,7 +38,7 @@
             }
         }
         .Pagination-ellipsis {
-            margin: 5px;
+            margin: 4px;
             color: var(--light-text-color);
         }
     }

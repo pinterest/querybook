@@ -47,9 +47,9 @@ export const Pagination: React.FunctionComponent<IPaginationProps> = ({
     padding = 2, // number of page on the left and right of current page
     hideNavButton = false,
 }) => {
-    const paginationListDOM = [];
+    const paginationListDOM: React.ReactNode[] = [];
 
-    const pageRanges = [];
+    const pageRanges: number[] = [];
     for (
         let i = Math.max(currentPage - padding, 0);
         i >= 0 && i < Math.min(totalPage, currentPage + padding + 1);
@@ -62,11 +62,13 @@ export const Pagination: React.FunctionComponent<IPaginationProps> = ({
         paginationListDOM.push(
             <PageButton page={0} key={0} onClick={onPageClick} shift={shift} />
         );
-        paginationListDOM.push(
-            <li key={'first'}>
-                <span className="Pagination-ellipsis">&hellip;</span>
-            </li>
-        );
+        if (pageRanges[0] > 1) {
+            paginationListDOM.push(
+                <li key="first">
+                    <span className="Pagination-ellipsis">&hellip;</span>
+                </li>
+            );
+        }
     }
 
     pageRanges.forEach((page) => {
@@ -82,11 +84,13 @@ export const Pagination: React.FunctionComponent<IPaginationProps> = ({
     });
 
     if (pageRanges[pageRanges.length - 1] < totalPage - 1) {
-        paginationListDOM.push(
-            <li key={'last'}>
-                <span className="Pagination-ellipsis">&hellip;</span>
-            </li>
-        );
+        if (pageRanges[pageRanges.length - 1] < totalPage - 2) {
+            paginationListDOM.push(
+                <li key="last">
+                    <span className="Pagination-ellipsis">&hellip;</span>
+                </li>
+            );
+        }
         paginationListDOM.push(
             <PageButton
                 key={totalPage - 1}
@@ -101,27 +105,25 @@ export const Pagination: React.FunctionComponent<IPaginationProps> = ({
     const isLastPage = currentPage === totalPage - 1;
 
     const previousButton = (
-        <Button
-            key="previous"
-            title="Previous"
-            className="Pagination-previous"
-            onClick={
-                isFirstPage ? null : onPageClick.bind(null, currentPage - 1)
-            }
-            disabled={isFirstPage}
-        />
+        <div key="previous-div" className="Pagination-previous">
+            {isFirstPage ? null : (
+                <Button
+                    title="Previous"
+                    onClick={onPageClick.bind(null, currentPage - 1)}
+                />
+            )}
+        </div>
     );
 
     const nextButton = (
-        <Button
-            key="next"
-            title="Next"
-            className="Pagination-next"
-            onClick={
-                isLastPage ? null : onPageClick.bind(null, currentPage + 1)
-            }
-            disabled={isLastPage}
-        />
+        <div key="next-div" className="Pagination-next">
+            {isLastPage || totalPage === 0 ? null : (
+                <Button
+                    title="Next"
+                    onClick={onPageClick.bind(null, currentPage + 1)}
+                />
+            )}
+        </div>
     );
 
     const navButtons = !hideNavButton ? [previousButton, nextButton] : null;
@@ -130,13 +132,13 @@ export const Pagination: React.FunctionComponent<IPaginationProps> = ({
         <nav
             className={clsx({
                 Pagination: true,
-                'horizontal-space-between': true,
-                'flex-row': true,
                 [className]: Boolean(className),
             })}
         >
             {navButtons}
-            <ul className="Pagination-pages flex-row">{paginationListDOM}</ul>
+            <ul className="Pagination-pages flex-center">
+                {paginationListDOM}
+            </ul>
         </nav>
     );
 };
