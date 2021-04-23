@@ -11,6 +11,7 @@ import {
     RecurrenceType,
     recurrenceTypes,
     getYearlyMonthOptions,
+    IRecurrenceOn,
 } from 'lib/utils/cron';
 import { makeReactSelectStyle } from 'lib/utils/react-select';
 
@@ -97,6 +98,7 @@ export const RecurrenceEditor: React.FunctionComponent<IProps> = ({
                     label="Months"
                     onKey="month"
                     options={getYearlyMonthOptions()}
+                    error={recurrenceError?.on}
                     recurrence={recurrence}
                     setRecurrence={setRecurrence}
                 />
@@ -104,6 +106,7 @@ export const RecurrenceEditor: React.FunctionComponent<IProps> = ({
                     label="Month Days"
                     onKey="dayMonth"
                     options={getMonthdayOptions()}
+                    error={recurrenceError?.on}
                     recurrence={recurrence}
                     setRecurrence={setRecurrence}
                 />
@@ -115,6 +118,7 @@ export const RecurrenceEditor: React.FunctionComponent<IProps> = ({
                 label="Month Days"
                 onKey="dayMonth"
                 options={getMonthdayOptions()}
+                error={recurrenceError?.on}
                 recurrence={recurrence}
                 setRecurrence={setRecurrence}
             />
@@ -125,6 +129,7 @@ export const RecurrenceEditor: React.FunctionComponent<IProps> = ({
                 label="Week Days"
                 onKey="dayWeek"
                 options={getWeekdayOptions()}
+                error={recurrenceError?.on}
                 recurrence={recurrence}
                 setRecurrence={setRecurrence}
             />
@@ -146,17 +151,24 @@ interface IDatePickerProps {
     options: Array<{ value: number; label: string }>;
     recurrence: IRecurrence;
     setRecurrence: (IRecurrence) => void;
+    error: FormikErrors<IRecurrenceOn>;
 }
 
 export const RecurrenceEditorDatePicker: React.FunctionComponent<IDatePickerProps> = ({
     label,
     onKey,
     options,
+    error,
     recurrence,
     setRecurrence,
 }) => {
+    const formattedError = (error?.[onKey] || '').replace(
+        `recurrence.on.${onKey}`,
+        label
+    );
+
     return (
-        <FormField label={`Recurrence ${label}`}>
+        <FormField label={`Recurrence ${label}`} error={formattedError}>
             <Field
                 name={`recurrence.on.${onKey}`}
                 render={({ field }) => (
