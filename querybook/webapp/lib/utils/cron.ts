@@ -162,7 +162,7 @@ export const recurrenceOnYup = Yup.object().when(
                 .min(1)
                 .of(Yup.number().min(0).max(6))
                 .required();
-        } else {
+        } else if (recurrence === 'monthly' || recurrence === 'yearly') {
             onSchema.dayMonth = Yup.array()
                 .min(1)
                 .of(Yup.number().min(1).max(31))
