@@ -156,6 +156,10 @@ export function validateCronForRecurrrence(cron: string) {
 export const recurrenceOnYup = Yup.object().when(
     'recurrence',
     (recurrence: RecurrenceType, schema) => {
+        if (recurrence === 'hourly' || recurrence === 'daily') {
+            return schema;
+        }
+
         const onSchema: any = {};
         if (recurrence === 'weekly') {
             onSchema.dayWeek = Yup.array()
