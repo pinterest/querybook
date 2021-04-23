@@ -60,8 +60,9 @@ export const RecurrenceEditor: React.FunctionComponent<IProps> = ({
                     }}
                 />
                 <div className="pl8">
-                    Local Time:
-                    {localTime}
+                    {recurrence.recurrence === 'hourly'
+                        ? `Every hour at minute ${recurrence.minute} `
+                        : `Local Time: ${localTime}`}
                 </div>
             </div>
         </FormField>
