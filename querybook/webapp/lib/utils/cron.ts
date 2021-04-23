@@ -156,17 +156,13 @@ export function validateCronForRecurrrence(cron: string) {
 export const recurrenceOnYup = Yup.object().when(
     'recurrence',
     (recurrence: RecurrenceType, schema) => {
-        if (recurrence === 'hourly' || recurrence === 'daily') {
-            return schema;
-        }
-
         const onSchema: any = {};
         if (recurrence === 'weekly') {
             onSchema.dayWeek = Yup.array()
                 .min(1)
                 .of(Yup.number().min(0).max(6))
                 .required();
-        } else {
+        } else if (recurrence === 'monthly' || recurrence === 'yearly') {
             onSchema.dayMonth = Yup.array()
                 .min(1)
                 .of(Yup.number().min(1).max(31))
