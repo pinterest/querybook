@@ -48,6 +48,18 @@ export default {
                 socket.on('connect_timeout', (timeout) => {
                     sendToastForError(timeout);
                 });
+
+                socket.on('disconnect', (reason: string) => {
+                    if (reason === 'io server disconnect') {
+                        toast.error(
+                            'Websocket was disconnected due to authentication issue. Please try to refresh the page.'
+                        );
+                    } else {
+                        toast.error(
+                            `Websocket was disconnected due to: ${reason}`
+                        );
+                    }
+                });
             });
         }
         return socket;
