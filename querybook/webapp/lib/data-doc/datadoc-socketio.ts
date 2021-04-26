@@ -416,8 +416,7 @@ export class DataDocSocket {
             );
 
             this.socket.on('error', (e) => {
-                console.error(e);
-                Object.values(this.promiseMap).map(({ reject }) => reject(e));
+                Object.values(this.promiseMap).map(({ reject }) => reject?.(e));
             });
         }
     };

@@ -7,6 +7,7 @@ import socket
 import flask
 from flask_login import current_user
 from flask_limiter import RateLimitExceeded
+from flask_socketio import disconnect
 from werkzeug.exceptions import Forbidden, NotFound
 
 from app.flask_app import flask_app, socketio, limiter
@@ -102,19 +103,20 @@ def register_socket(url, namespace=None, require_auth=True):
         @functools.wraps(fn)
         def handler(*args, **kwargs):
             if require_auth and not current_user.is_authenticated:
-                flask.abort(401)
-            # start_time = time_utils.now_millis()
-            try:
-                fn(*args, **kwargs)
-            except Exception as e:
-                LOG.error(e, exc_info=True)
-                socketio.emit(
-                    "error",
-                    str(e),
-                    namespace=namespace,
-                    broadcast=False,
-                    room=flask.request.sid,
-                )
+                LOG.error("Unauthorized websocket access")
+                disconnect()
+            else:
+                try:
+                    fn(*args, **kwargs)
+                except Exception as e:
+                    LOG.error(e, exc_info=True)
+                    socketio.emit(
+                        "error",
+                        str(e),
+                        namespace=namespace,
+                        broadcast=False,
+                        room=flask.request.sid,
+                    )
 
         handler.__raw__ = fn
         return handler
@@ -174,9 +176,7 @@ def abort_request(
 
 @flask_app.teardown_request
 def teardown_database_session(error):
-    """Clean up the db connection at the end of request
-
-    """
+    """Clean up the db connection at the end of request"""
     database_session = flask.g.pop("database_session", None)
     if database_session is not None:
         get_session().remove()
