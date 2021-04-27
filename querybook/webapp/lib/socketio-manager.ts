@@ -19,7 +19,7 @@ function getSocketFromManager(nameSpace: string) {
     return socketIOManager.socket(nameSpace);
 }
 
-const sendToastForError = debounce(
+const sendErrorToastDebounced = debounce(
     (error) => {
         toast.error(String(error));
     },
@@ -39,7 +39,7 @@ export default {
             // wait for connection
             await new Promise<void>((resolve) => {
                 socket.on('connect', () => {
-                    sendToastForError.cancel();
+                    sendErrorToastDebounced.cancel();
                     if (onConnection) {
                         onConnection(socket);
                     }
@@ -47,20 +47,20 @@ export default {
                 });
 
                 socket.on('connect_error', (error: Error) => {
-                    sendToastForError(error.toString());
+                    sendErrorToastDebounced(error.toString());
                 });
 
                 socket.on('connect_timeout', (timeout) => {
-                    sendToastForError(timeout);
+                    sendErrorToastDebounced(timeout);
                 });
 
                 socket.on('disconnect', (reason: string) => {
                     if (reason === 'io server disconnect') {
-                        sendToastForError(
+                        sendErrorToastDebounced(
                             'Websocket was disconnected due to authentication issue. Please try to refresh the page.'
                         );
-                    } else {
-                        sendToastForError(
+                    } else if (reason !== 'io client disconnect') {
+                        sendErrorToastDebounced(
                             `Websocket was disconnected due to: ${reason}`
                         );
                     }
