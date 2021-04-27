@@ -4,11 +4,9 @@ from app.auth.permission import (
 )
 from app.flask_app import socketio
 from app.db import with_session
-
+from const.data_doc import DATA_DOC_NAMESPACE
 from logic import datadoc as logic
 from logic.datadoc_permission import assert_can_read, assert_can_write
-
-DATA_DOC_NAMESPACE = "/datadoc"
 
 
 @with_session

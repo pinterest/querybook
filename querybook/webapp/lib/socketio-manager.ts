@@ -1,4 +1,4 @@
-import { throttle } from 'lodash';
+import { debounce } from 'lodash';
 import toast from 'react-hot-toast';
 import { Manager } from 'socket.io-client';
 /*
@@ -19,9 +19,13 @@ function getSocketFromManager(nameSpace: string) {
     return socketIOManager.socket(nameSpace);
 }
 
-const sendToastForError = throttle((error) => {
-    toast.error(String(error));
-}, 3000);
+const sendToastForError = debounce(
+    (error) => {
+        toast.error(String(error));
+    },
+    2000,
+    { maxWait: 3000 }
+);
 
 export default {
     getSocket: async (
@@ -35,6 +39,7 @@ export default {
             // wait for connection
             await new Promise<void>((resolve) => {
                 socket.on('connect', () => {
+                    sendToastForError.cancel();
                     if (onConnection) {
                         onConnection(socket);
                     }
@@ -51,11 +56,11 @@ export default {
 
                 socket.on('disconnect', (reason: string) => {
                     if (reason === 'io server disconnect') {
-                        toast.error(
+                        sendToastForError(
                             'Websocket was disconnected due to authentication issue. Please try to refresh the page.'
                         );
                     } else {
-                        toast.error(
+                        sendToastForError(
                             `Websocket was disconnected due to: ${reason}`
                         );
                     }

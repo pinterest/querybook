@@ -2,12 +2,12 @@ from flask_socketio import join_room, leave_room, emit
 
 
 from app.auth.permission import verify_query_engine_permission
-from app.datasource import register_socket, api_assert
 from app.db import DBSession
 from const.query_execution import QueryExecutionStatus, QUERY_EXECUTION_NAMESPACE
 from lib.logger import get_logger
 from logic import query_execution as qe_logic
 from tasks import run_query as tasks
+from .helper import register_socket
 
 LOG = get_logger(__file__)
 
@@ -18,7 +18,7 @@ def on_join_room(query_execution_id):
         execution = qe_logic.get_query_execution_by_id(
             query_execution_id, session=session
         )
-        api_assert(execution, "Invalid execution")
+        assert execution, "Invalid execution"
         verify_query_engine_permission(execution.engine_id, session=session)
 
         execution_dict = execution.to_dict(True) if execution is not None else None

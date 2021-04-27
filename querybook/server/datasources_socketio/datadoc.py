@@ -7,16 +7,13 @@ from flask_socketio import join_room, leave_room, rooms
 
 from app.auth.permission import verify_environment_permission
 from app.flask_app import socketio
-from app.datasource import register_socket
 from app.db import DBSession
 from clients.redis_client import with_redis
-
+from const.data_doc import DATA_DOC_NAMESPACE
 from logic import datadoc as logic
 from logic import datadoc_collab
 from logic.datadoc_permission import assert_can_read
-
-
-DATA_DOC_NAMESPACE = datadoc_collab.DATA_DOC_NAMESPACE
+from .helper import register_socket
 
 
 def to_string(s):
@@ -119,8 +116,7 @@ def update_user_list(data_doc_id, add=False, redis_conn=None):
 
 @with_redis
 def update_user_cursor(data_doc_id, data_cell_id=None, redis_conn=None):
-    """Update the user cursor in redis
-    """
+    """Update the user cursor in redis"""
     key = f"data_doc/{data_doc_id}/cursors"
     if data_cell_id is not None:
         redis_conn.hset(key, request.sid, data_cell_id)
@@ -130,9 +126,9 @@ def update_user_cursor(data_doc_id, data_cell_id=None, redis_conn=None):
 
 def data_doc_socket(fn):
     """
-        If it is a data_doc_socket,
-        The first argument must be the doc Id.
-        It will then refresh the user's session.
+    If it is a data_doc_socket,
+    The first argument must be the doc Id.
+    It will then refresh the user's session.
     """
 
     @functools.wraps(fn)

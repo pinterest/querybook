@@ -7,10 +7,10 @@ import socket
 import flask
 from flask_login import current_user
 from flask_limiter import RateLimitExceeded
-from flask_socketio import disconnect
+
 from werkzeug.exceptions import Forbidden, NotFound
 
-from app.flask_app import flask_app, socketio, limiter
+from app.flask_app import flask_app, limiter
 from app.db import get_session
 from const.datasources import DS_PATH
 from lib.logger import get_logger
@@ -90,33 +90,6 @@ def register(url, methods=None, require_auth=True, custom_response=False):
                 resp = flask.make_response(flask.jsonify(results), status)
                 resp.headers["Content-Type"] = "application/json"
                 return resp
-
-        handler.__raw__ = fn
-        return handler
-
-    return wrapper
-
-
-def register_socket(url, namespace=None, require_auth=True):
-    def wrapper(fn):
-        @socketio.on(url, namespace=namespace)
-        @functools.wraps(fn)
-        def handler(*args, **kwargs):
-            if require_auth and not current_user.is_authenticated:
-                LOG.error("Unauthorized websocket access")
-                disconnect()
-            else:
-                try:
-                    fn(*args, **kwargs)
-                except Exception as e:
-                    LOG.error(e, exc_info=True)
-                    socketio.emit(
-                        "error",
-                        str(e),
-                        namespace=namespace,
-                        broadcast=False,
-                        room=flask.request.sid,
-                    )
 
         handler.__raw__ = fn
         return handler
