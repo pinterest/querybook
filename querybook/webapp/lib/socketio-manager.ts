@@ -23,7 +23,7 @@ const sendToastForError = debounce(
     (error) => {
         toast.error(String(error));
     },
-    1500,
+    2000,
     { maxWait: 3000 }
 );
 
@@ -59,7 +59,6 @@ export default {
                         sendToastForError(
                             'Websocket was disconnected due to authentication issue. Please try to refresh the page.'
                         );
-                        setTimeout(() => socket.connect(), 3000);
                     } else {
                         sendToastForError(
                             `Websocket was disconnected due to: ${reason}`
