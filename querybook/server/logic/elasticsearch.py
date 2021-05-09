@@ -49,6 +49,8 @@ def get_hosted_es():
 
     if QuerybookSettings.ELASTICSEARCH_CONNECTION_TYPE == "naive":
         hosted_es = Elasticsearch(hosts=[host], port=port,)
+    elif QuerybookSettings.ELASTICSEARCH_CONNECTION_TYPE == "https":
+        hosted_es = Elasticsearch(hosts=[host], port=port, scheme="https",)
     elif QuerybookSettings.ELASTICSEARCH_CONNECTION_TYPE == "aws":
         # TODO: generialize aws region setup
         from boto3 import session as boto_session
