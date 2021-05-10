@@ -99,4 +99,18 @@
         border: var(--border);
         padding: 4px;
     }
+
+    table {
+        border-collapse: collapse;
+        th {
+            color: var(--title-color);
+            border: 1px solid var(--focus-border-color);
+            padding: 4px;
+        }
+        td {
+            color: var(--text-color);
+            border: 1px solid var(--focus-border-color);
+            padding: 4px;
+        }
+    }
 }
