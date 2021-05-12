@@ -5,7 +5,6 @@ import { isEmpty } from 'lodash';
 import { IPaginatedQuerySampleFilters } from 'const/metastore';
 
 import { format } from 'lib/sql-helper/sql-formatter';
-import { getCodeEditorTheme } from 'lib/utils';
 import {
     getQueryString,
     replaceQueryString,
@@ -24,13 +23,13 @@ import { UserName } from 'components/UserBadge/UserName';
 
 import { AsyncButton } from 'ui/AsyncButton/AsyncButton';
 import { Button } from 'ui/Button/Button';
-import { CodeHighlight } from 'ui/CodeHighlight/CodeHighlight';
 import { IconButton } from 'ui/Button/IconButton';
 import { Loading } from 'ui/Loading/Loading';
 import { Title } from 'ui/Title/Title';
+import { ThemedCodeHighlight } from 'ui/CodeHighlight/ThemedCodeHighlight';
 
 import { DataTableViewQueryConcurrences } from './DataTableViewQueryConcurrences';
-import { TableName } from './DataTableName';
+
 import './DataTableViewQueryExamples.scss';
 
 interface IProps {
@@ -183,9 +182,6 @@ const QueryExamplesList: React.FC<{
     );
 
     const queryEngineById = useSelector(queryEngineByIdEnvSelector);
-    const editorTheme = useSelector((state: IStoreState) =>
-        getCodeEditorTheme(state.user.computedSettings.theme)
-    );
     const {
         queryExampleIds,
         hasMore,
@@ -261,11 +257,9 @@ const QueryExamplesList: React.FC<{
                         className="DataTableViewQueryExamples-item"
                         key={query.id}
                     >
-                        <CodeHighlight
+                        <ThemedCodeHighlight
                             className="DataTableViewQueryExamples-query"
-                            language={'text/x-hive'}
                             value={formattedQuery}
-                            theme={editorTheme}
                         />
                         <div className="DataTableViewQueryExamples-info">
                             <span>by </span>

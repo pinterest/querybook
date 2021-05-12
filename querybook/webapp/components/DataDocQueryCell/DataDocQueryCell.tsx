@@ -39,7 +39,7 @@ import { BoundQueryEditor } from 'components/QueryEditor/BoundQueryEditor';
 import { ErrorQueryCell } from './ErrorQueryCell';
 
 import { Button, TextButton } from 'ui/Button/Button';
-import { CodeHighlight } from 'ui/CodeHighlight/CodeHighlight';
+import { ThemedCodeHighlight } from 'ui/CodeHighlight/ThemedCodeHighlight';
 import { Dropdown } from 'ui/Dropdown/Dropdown';
 import { Icon } from 'ui/Icon/Icon';
 import { ListMenu, IListMenuItem } from 'ui/Menu/ListMenu';
@@ -619,7 +619,7 @@ class DataDocQueryCellComponent extends React.PureComponent<IProps, IState> {
             >
                 <div className="right-align ph4 mv8">{queryEnginePicker}</div>
 
-                <CodeHighlight value={query} />
+                <ThemedCodeHighlight value={query} />
                 {this.renderExecutionsDOM()}
             </ErrorQueryCell>
         );
