@@ -41,15 +41,10 @@ ES_CONFIG = get_config_value("elasticsearch")
 def get_hosted_es():
     hosted_es = None
 
-    if ":" in QuerybookSettings.ELASTICSEARCH_HOST:
-        host, port = QuerybookSettings.ELASTICSEARCH_HOST.split(":")
-    else:
-        host = QuerybookSettings.ELASTICSEARCH_HOST
-        port = 9200  # Default port for elasticsearch
-
     if QuerybookSettings.ELASTICSEARCH_CONNECTION_TYPE == "naive":
-        hosted_es = Elasticsearch(hosts=[host], port=port,)
+        hosted_es = Elasticsearch(hosts=QuerybookSettings.ELASTICSEARCH_HOST)
     elif QuerybookSettings.ELASTICSEARCH_CONNECTION_TYPE == "aws":
+
         # TODO: generialize aws region setup
         from boto3 import session as boto_session
         from lib.utils.assume_role_aws4auth import AssumeRoleAWS4Auth
@@ -58,7 +53,6 @@ def get_hosted_es():
         auth = AssumeRoleAWS4Auth(credentials, "us-east-1", "es",)
         hosted_es = Elasticsearch(
             hosts=QuerybookSettings.ELASTICSEARCH_HOST,
-            port=443,
             http_auth=auth,
             connection_class=RequestsHttpConnection,
             use_ssl=True,
