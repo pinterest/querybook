@@ -1,5 +1,5 @@
 import clsx from 'clsx';
-import React from 'react';
+import React, { useMemo } from 'react';
 
 import { formatNumber } from 'lib/utils/number';
 import {
@@ -12,6 +12,7 @@ import { Message } from 'ui/Message/Message';
 import { TextButton } from 'ui/Button/Button';
 import { PrettyNumber } from 'ui/PrettyNumber/PrettyNumber';
 import { StatementResultTable } from '../StatementResultTable/StatementResultTable';
+import { ShowMoreText } from 'ui/ShowMoreText/ShowMoreText';
 
 interface IProps {
     statementResult: IStatementResult;
@@ -91,15 +92,8 @@ export const StatementResult: React.FC<IProps> = ({
         visualizationDOM = <Loading />;
     } else {
         const { data, failed, error } = statementResult;
-
         if (failed) {
-            return (
-                <Message
-                    title="Cannot Load Statement Result"
-                    message={error}
-                    type="error"
-                />
-            );
+            return <StatementResultWithError error={error} />;
         }
 
         const resultRowMinusColCount = Math.max(resultRowCount - 1, 0);
@@ -134,5 +128,16 @@ export const StatementResult: React.FC<IProps> = ({
             </div>
             {visualizationDOM}
         </div>
+    );
+};
+
+const StatementResultWithError: React.FC<{ error: any }> = ({ error }) => {
+    const stringfiedError = useMemo(() => String(error), [error]);
+    return (
+        <Message
+            title="Cannot Load Statement Result"
+            message={<ShowMoreText text={stringfiedError} seeLess />}
+            type="error"
+        />
     );
 };

@@ -9,12 +9,8 @@ import { getWithinEnvUrl } from 'lib/utils/query-string';
 import { getAppName } from 'lib/utils/global';
 import { Loading } from 'ui/Loading/Loading';
 import { Table } from 'ui/Table/Table';
-import { CodeHighlight } from 'ui/CodeHighlight/CodeHighlight';
+import { ThemedCodeHighlight } from 'ui/CodeHighlight/ThemedCodeHighlight';
 import { Title } from 'ui/Title/Title';
-
-import { getCodeEditorTheme } from 'lib/utils';
-import { IStoreState } from 'redux/store/types';
-import { useSelector } from 'react-redux';
 import { Divider } from 'ui/Divider/Divider';
 import { Button } from 'ui/Button/Button';
 import { Link } from 'ui/Link/Link';
@@ -37,11 +33,6 @@ export const DataTableViewSourceQuery: React.FunctionComponent<IProps> = ({
     dataJobMetadataById,
 }) => {
     const [showOldJobMetadata, setShowOldJobMetadata] = useState(false);
-
-    const editorTheme = useSelector((state: IStoreState) =>
-        getCodeEditorTheme(state.user.computedSettings.theme)
-    );
-
     const jobMetadataIds = useMemo(
         () =>
             Array.from(
@@ -82,11 +73,7 @@ export const DataTableViewSourceQuery: React.FunctionComponent<IProps> = ({
         const loaded = !(dataJobMetadataById[id] as any).__loading;
         const dataJobMetadata = dataJobMetadataById[id];
         return loaded ? (
-            <DataJobMetadataInfo
-                key={id}
-                editorTheme={editorTheme}
-                dataJobMetadata={dataJobMetadata}
-            />
+            <DataJobMetadataInfo key={id} dataJobMetadata={dataJobMetadata} />
         ) : (
             <Loading key={id} />
         );
@@ -118,8 +105,7 @@ export const DataTableViewSourceQuery: React.FunctionComponent<IProps> = ({
 
 const DataJobMetadataInfo: React.FC<{
     dataJobMetadata: IDataJobMetadata;
-    editorTheme: string;
-}> = ({ dataJobMetadata, editorTheme }) => {
+}> = ({ dataJobMetadata }) => {
     const queryExecutionUrlRows = [];
     if (
         dataJobMetadata.is_adhoc &&
@@ -192,11 +178,7 @@ const DataJobMetadataInfo: React.FC<{
                 <Title size={5}>Source Query</Title>
                 <Divider marginTop="4px" marginBottom="12px" />
             </div>
-            <CodeHighlight
-                language={'text/x-hive'}
-                value={queryText}
-                theme={editorTheme}
-            />
+            <ThemedCodeHighlight value={queryText} />
         </div>
     );
 

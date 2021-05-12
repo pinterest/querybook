@@ -1,6 +1,10 @@
 .CopyPasteModal {
     padding: 3px 15px 15px;
     .CopyPasteModal-text {
+        > pre {
+            word-break: break-all;
+        }
         max-height: 300px;
+        overflow: auto;
     }
 }

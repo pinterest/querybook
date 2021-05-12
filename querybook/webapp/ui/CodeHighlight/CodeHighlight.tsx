@@ -6,7 +6,7 @@ import styled from 'styled-components';
 import CodeMirror from 'lib/codemirror';
 import 'codemirror/lib/codemirror.css';
 
-interface IProps {
+export interface ICodeHighlightProps {
     className?: string;
     theme?: string;
     prefix?: string;
@@ -26,7 +26,7 @@ const CodeHighlightContainer = styled.div.attrs({
     box-shadow: none !important;
 `;
 
-export const CodeHighlight: React.FC<IProps> = ({
+export const CodeHighlight: React.FC<ICodeHighlightProps> = ({
     className = '',
     theme = 'default',
     prefix = 'cm-',
