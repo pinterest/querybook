@@ -92,7 +92,7 @@ def _construct_datadoc_query(
 ):
     # TODO: fields is not used because explicit search for Data Docs is not implemented
     search_query = _match_any_field(
-        keywords, search_fields=["title^5", "cells", "owner",]
+        keywords, search_fields=["title^5", "cells", "owner",],
     )
     search_filter = _match_filters(filters)
     if search_filter == {}:
