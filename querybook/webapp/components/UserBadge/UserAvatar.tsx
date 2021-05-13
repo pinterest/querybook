@@ -27,6 +27,17 @@ const defaultUserIconBackgrounds = [
     '#B469EB',
 ];
 
+function getUserIconBackgroundColor(name: string) {
+    let charCodeSum = 0;
+    for (const c of name) {
+        charCodeSum += c.charCodeAt(0);
+    }
+
+    return defaultUserIconBackgrounds[
+        charCodeSum % defaultUserIconBackgrounds.length
+    ];
+}
+
 const DefaultUserIcon: React.FunctionComponent<{
     name: string | null;
 }> = ({ name }) => {
@@ -34,10 +45,7 @@ const DefaultUserIcon: React.FunctionComponent<{
     useEffect(() => {
         const text = name ? name[0].toUpperCase() : '?';
         const backgroundColor = name
-            ? defaultUserIconBackgrounds[
-                  Math.abs(text.charCodeAt(0) - 'A'.charCodeAt(0)) %
-                      defaultUserIconBackgrounds.length
-              ]
+            ? getUserIconBackgroundColor(name)
             : defaultNoUserBackground;
 
         const ctx = canvasRef.current.getContext('2d');

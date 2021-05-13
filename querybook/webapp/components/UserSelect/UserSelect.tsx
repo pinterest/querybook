@@ -5,6 +5,8 @@ import { debounce } from 'lodash';
 import ds from 'lib/datasource';
 import { makeReactSelectStyle } from 'lib/utils/react-select';
 import { overlayRoot } from 'ui/Overlay/Overlay';
+import { IUserInfo } from 'redux/user/types';
+import { UserAvatar } from 'components/UserBadge/UserAvatar';
 
 interface IUserSearchResultRow {
     id: number;
@@ -19,10 +21,7 @@ const loadOptions = debounce(
                 callback(
                     data.map((user) => ({
                         value: user.id,
-                        label:
-                            (user.fullname || '').trim() ||
-                            (user.username || '').trim() ||
-                            'No Name',
+                        label: <UserSelectOptionRow user={user} />,
                     }))
                 );
             }
@@ -79,5 +78,23 @@ export const UserSelect: React.FunctionComponent<IUserSelectProps> = ({
             {...asyncSelectProps}
             {...selectProps}
         />
+    );
+};
+
+const UserSelectOptionRow: React.FC<{ user: IUserSearchResultRow }> = ({
+    user,
+}) => {
+    const name = React.useMemo(
+        () =>
+            (user.fullname || '').trim() ||
+            (user.username || '').trim() ||
+            'No Name',
+        [user]
+    );
+    return (
+        <div className="flex-row">
+            <UserAvatar tiny uid={user.id} />
+            <span className="ml4">{name}</span>
+        </div>
     );
 };
