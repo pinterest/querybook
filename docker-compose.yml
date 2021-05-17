@@ -9,7 +9,7 @@ services:
         tty: true
         stdin_open: true
         # network_mode: "host"
-        command: './querybook/scripts/bundled_docker_run_web'
+        command: './querybook/scripts/bundled_docker_run_web --initdb --initweb'
         ports:
             - '${PORT-10001}:${PORT-10001}'
         expose:
@@ -22,9 +22,9 @@ services:
         volumes:
             # This is for code change via watcher
             - $PWD:/opt/querybook
-            # See https://stackoverflow.com/questions/29181032/add-a-volume-to-docker-but-exclude-a-sub-folder
+            # # See https://stackoverflow.com/questions/29181032/add-a-volume-to-docker-but-exclude-a-sub-folder
             - /opt/querybook/node_modules/
-            # Make sure the build files don't leak back
+            # # Make sure the build files don't leak back
             - /opt/querybook/dist/
             - $PWD/containers/bundled_querybook_config.yaml:/opt/querybook/querybook/config/querybook_config.yaml
             # - file:/opt/store/

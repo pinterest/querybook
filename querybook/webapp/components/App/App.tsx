@@ -21,7 +21,6 @@ const AppInner = () => (
         </Provider>
     </DndProvider>
 );
-
 export const App = hot(AppInner);
 
 // Setting this because otherwise this would make all not []

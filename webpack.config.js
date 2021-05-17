@@ -1,14 +1,12 @@
 const MiniCssExtractPlugin = require('mini-css-extract-plugin');
-const postcssPresetEnv = require('postcss-preset-env');
 const HtmlWebpackPlugin = require('html-webpack-plugin');
-const CleanWebpackPlugin = require('clean-webpack-plugin');
-const CleanObsoleteChunks = require('webpack-clean-obsolete-chunks');
-const TsconfigPathsWebpackPlugin = require('tsconfig-paths-webpack-plugin');
+const CleanWebpackPlugin = require('clean-webpack-plugin').CleanWebpackPlugin;
 
 const path = require('path');
 const webpack = require('webpack');
 const fs = require('fs');
 const BUILD_DIR = 'dist/webapp';
+const OUTPUT_PATH = path.resolve(__dirname, BUILD_DIR);
 
 function getDevServerSettings(env) {
     const QUERYBOOK_UPSTREAM = env && env.QUERYBOOK_UPSTREAM;
@@ -17,6 +15,7 @@ function getDevServerSettings(env) {
     }
 
     const settings = {
+        contentBase: OUTPUT_PATH,
         disableHostCheck: true,
         hot: true,
 
@@ -85,7 +84,6 @@ module.exports = (env, options) => {
     const entry = {
         react_hot_loader: 'react-hot-loader/patch',
         react_app: './querybook/webapp/index.tsx',
-        vendor: './querybook/webapp/vendor.tsx',
     };
 
     const devTool = PROD
@@ -114,9 +112,7 @@ module.exports = (env, options) => {
     }
 
     const appName = process.env.QUERYBOOK_APPNAME || 'Querybook';
-    const devServer = process.env.WEBPACK_DEV_SERVER
-        ? getDevServerSettings(env)
-        : {};
+    const devServer = env.WEBPACK_SERVE ? getDevServerSettings(env) : {};
 
     return {
         entry,
@@ -125,23 +121,30 @@ module.exports = (env, options) => {
         devServer,
 
         output: {
-            filename: '[name].[hash].js',
-            path: path.resolve(__dirname, BUILD_DIR),
+            filename: '[name].[fullhash].js',
+            path: OUTPUT_PATH,
             publicPath: '/build/',
-
-            // https://github.com/webpack/webpack/issues/6642
-            globalObject: 'this',
+            clean: true,
         },
 
         resolve: {
             // Add '.ts' and '.tsx' as resolvable extensions.
-            extensions: ['.ts', '.tsx', '.js', '.json', '.scss'],
-            plugins: [new TsconfigPathsWebpackPlugin({})],
-            alias: PROD
-                ? {}
-                : {
-                      'react-dom': '@hot-loader/react-dom',
-                  },
+
+            extensions: ['.ts', '.tsx', '.js', '.json', '.scss`'],
+
+            // emulate baseUrl + paths behavior in tsConfig until tsconfig path plugin is fixed
+            modules: [
+                path.resolve(__dirname, './querybook/webapp/'),
+                'node_modules',
+            ],
+            alias: {
+                config: path.resolve(__dirname, './querybook/config/'),
+                ...(PROD
+                    ? {}
+                    : {
+                          'react-dom': '@hot-loader/react-dom',
+                      }),
+            },
         },
 
         module: {
@@ -156,7 +159,19 @@ module.exports = (env, options) => {
                     },
                     exclude: [/[\\/]node_modules[\\/]/],
                 },
-
+                {
+                    test: /.worker.ts$/,
+                    use: [
+                        { loader: 'worker-loader' },
+                        {
+                            loader: 'babel-loader',
+                            options: {
+                                envName: mode,
+                            },
+                        },
+                    ],
+                    exclude: [/[\\/]node_modules[\\/]/],
+                },
                 {
                     test: /\.(css|sass|scss)$/,
                     use: [
@@ -165,10 +180,17 @@ module.exports = (env, options) => {
                         {
                             loader: 'postcss-loader',
                             options: {
-                                ident: 'postcss',
-                                plugins: () => [
-                                    postcssPresetEnv(/* pluginOptions */),
-                                ],
+                                postcssOptions: {
+                                    ident: 'postcss',
+                                    plugins: [
+                                        [
+                                            'postcss-preset-env',
+                                            {
+                                                // Options for Postcss-Present-env
+                                            },
+                                        ],
+                                    ],
+                                },
                             },
                         },
                         {
@@ -193,21 +215,14 @@ module.exports = (env, options) => {
                 {
                     test: /\.ya?ml$/,
                     include: path.resolve(__dirname, 'querybook/config'),
-                    loader: 'json-loader!yaml-loader',
+                    use: ['json-loader', 'yaml-loader'],
                 },
             ],
         },
 
         optimization: {
             splitChunks: {
-                cacheGroups: {
-                    default: false,
-                    commons: {
-                        test: /[\\/]node_modules[\\/]/,
-                        name: 'vendor',
-                        chunks: 'all',
-                    },
-                },
+                chunks: 'all',
             },
         },
 
@@ -215,36 +230,25 @@ module.exports = (env, options) => {
         ...watchOptions,
 
         plugins: [
-            new CleanObsoleteChunks(),
-            new CleanWebpackPlugin([BUILD_DIR]),
+            new CleanWebpackPlugin(),
             new webpack.DefinePlugin({
                 __VERSION__: JSON.stringify(require('./package.json').version),
                 __APPNAME__: JSON.stringify(appName),
             }),
             new webpack.IgnorePlugin(/^\.\/locale$/, /moment$/),
-            new webpack.LoaderOptionsPlugin({
-                options: {
-                    worker: {
-                        output: {
-                            filename: '[hash].worker.js',
-                            chunkFilename: '[id].[hash].worker.js',
-                        },
-                    },
-                },
-            }),
             new MiniCssExtractPlugin({
                 filename: '[name].[contenthash:4].css',
             }),
             new HtmlWebpackPlugin({
                 title: appName,
                 template: './querybook/webapp/index.html',
-                chunks: ['react_hot_loader', 'vendor']
+                chunks: ['react_hot_loader']
                     .concat(entry.custom ? ['custom'] : [])
                     .concat(['react_app']),
                 chunksSortMode: 'manual',
             }),
             new webpack.SourceMapDevToolPlugin({
-                filename: '[name].js.map',
+                filename: '[file].map[query]',
                 exclude: [/vendor/],
             }),
         ],

@@ -66,7 +66,7 @@ def socketio_server(host="0.0.0.0", port=5000, debug=False):
 
 def webpack():
     webpack_subprocess = subprocess.Popen(
-        shlex.split("./node_modules/.bin/webpack --progress --colors --watch"),
+        shlex.split("./node_modules/.bin/webpack --progress --color --watch"),
         stdout=subprocess.PIPE,
     )
     while True:

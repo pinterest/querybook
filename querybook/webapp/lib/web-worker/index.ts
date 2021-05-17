@@ -2,7 +2,8 @@ import { uniqueId, debounce } from 'lodash';
 import { ICodeAnalysis } from 'lib/sql-helper/sql-lexer';
 import { getContextSensitiveWarnings } from 'lib/sql-helper/sql-context-sensitive-linter';
 
-const SqlEditorWorker = require('worker-loader!./sql-editor-worker.ts');
+// @ts-ignore
+import SqlEditorWorker from 'worker-loader!./sql-editor.worker.ts';
 
 const onCompletePromisesById: Record<number, (value?: any) => void> = {};
 let sqlEditorWorker = null;
