@@ -1,6 +1,33 @@
 #!/usr/bin/env bash
 
-./querybook/scripts/init_db
+
+usage() {
+    echo "Helper function to start the development application"
+    echo ''
+    echo "The following environment variables are used:"
+    echo 'HOT_RELOAD: if not false, then start webpack serve and flask, otherwise just flask.'
+    echo 'APIPORT: if HOT_RELOAD, start the flask server on this port. Defaults to 3000.'
+    echo 'PORT: serve traffic on this port, defaults to 10001.'
+    echo ''
+    echo 'Flags:'
+    echo '  --initdb    Create/Update the database via alembic'
+    echo '  --initweb   Create/Update the node_modules to latest'
+    echo
+    echo 'Usage:'
+    echo '  $0 --initdb --initweb'
+    exit 1
+}
+
+while [[ "$#" -gt 0 ]]; do
+  case $1 in
+    --initdb) ./querybook/scripts/init_db; shift;;
+    --initweb) yarn install --pure-lockfile; shift;;
+    --help) usage;;
+      *) echo "Unknown parameter passed: $1"; usage;;
+  esac;
+  shift;
+done
+
 
 flask_server() {
     # Restart flask server in case of crash since we are running webpack at the same time
@@ -11,11 +38,11 @@ flask_server() {
     done
 }
 webpack_server() {
-    yarn run webpack-dev-server \
+    yarn run webpack serve \
         --host 0.0.0.0 \
         --port ${PORT-10001} \
         --mode=development --open --hot \
-        --env.QUERYBOOK_UPSTREAM=http://0.0.0.0:${APIPORT-3000}
+        --env QUERYBOOK_UPSTREAM=http://0.0.0.0:${APIPORT-3000}
 }
 
 if [ "$HOT_RELOAD" = "true" ]; then

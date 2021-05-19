@@ -37,7 +37,7 @@ pre-commit install
 yarn install
 ```
 
-## Running the frontend locally via webpack-dev-server
+## Running the frontend locally via webpack serve
 
 Run the following command
 

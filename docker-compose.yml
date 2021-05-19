@@ -9,7 +9,7 @@ services:
         tty: true
         stdin_open: true
         # network_mode: "host"
-        command: './querybook/scripts/bundled_docker_run_web'
+        command: './querybook/scripts/bundled_docker_run_web --initdb --initweb'
         ports:
             - '${PORT-10001}:${PORT-10001}'
         expose:

@@ -36,7 +36,7 @@ RUN pip install -r requirements/base.txt \
     && pip install -r requirements/local.txt || true
 
 COPY package.json yarn.lock ./
-RUN yarn install --frozen-lockfile --pure-lockfile && npm rebuild node-sass
+RUN yarn install --pure-lockfile && npm rebuild node-sass
 
 
 # Copy everything else

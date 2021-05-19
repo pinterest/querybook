@@ -2,7 +2,8 @@
     "compilerOptions": {
         "outDir": "dist/webapp/",
         "noImplicitAny": false,
-        "module": "commonjs",
+        "module": "es2020",
+        "moduleResolution": "Node",
         "target": "es6",
         "sourceMap": true,
         "jsx": "react",

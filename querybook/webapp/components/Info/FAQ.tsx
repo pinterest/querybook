@@ -6,12 +6,12 @@ import { Markdown } from 'ui/Markdown/Markdown';
 
 import './FAQ.scss';
 
-const faqs: Array<[string, string]> = require('config/faqs.yaml').faqs;
+const faqs: Array<{ q: string; a: string }> = require('config/faqs.yaml').faqs;
 
 export const FAQ: React.FunctionComponent = () => (
     <div className="FAQ m12">
         {faqs.map((faq, idx) => {
-            const [question, answer] = faq;
+            const { q: question, a: answer } = faq;
             return (
                 <div className="FAQ-item mb24" key={idx}>
                     <Title subtitle size={4} className="FAQ-question">
