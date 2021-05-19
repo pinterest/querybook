@@ -46,13 +46,13 @@ function getDevServerSettings(env) {
         },
         publicPath: '/build/',
         onListening: (server) => {
-            let firstTime = true;
+            let firstTimeBuildComplete = true;
             const port = server.listeningApp.address().port;
             server.compiler.hooks.done.tap('done', () => {
-                if (!firstTime) {
+                if (!firstTimeBuildComplete) {
                     return;
                 }
-                firstTime = false;
+                firstTimeBuildComplete = false;
                 setImmediate(() => {
                     console.log('\033c');
                     console.log(`
