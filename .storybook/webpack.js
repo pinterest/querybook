@@ -1,4 +1,3 @@
-const postcssPresetEnv = require('postcss-preset-env');
 const path = require('path');
 const webpack = require('webpack');
 
@@ -11,8 +10,17 @@ module.exports = async (config) => {
             {
                 loader: 'postcss-loader',
                 options: {
-                    ident: 'postcss',
-                    plugins: () => [postcssPresetEnv(/* pluginOptions */)],
+                    postcssOptions: {
+                        ident: 'postcss',
+                        plugins: [
+                            [
+                                'postcss-preset-env',
+                                {
+                                    // Options for Postcss-Present-env
+                                },
+                            ],
+                        ],
+                    },
                 },
             },
             {

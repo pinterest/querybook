@@ -46,8 +46,13 @@ function getDevServerSettings(env) {
         },
         publicPath: '/build/',
         onListening: (server) => {
+            let firstTime = true;
             const port = server.listeningApp.address().port;
             server.compiler.hooks.done.tap('done', () => {
+                if (!firstTime) {
+                    return;
+                }
+                firstTime = false;
                 setImmediate(() => {
                     console.log('\033c');
                     console.log(`
@@ -160,19 +165,6 @@ module.exports = (env, options) => {
                     exclude: [/[\\/]node_modules[\\/]/],
                 },
                 {
-                    test: /.worker.ts$/,
-                    use: [
-                        { loader: 'worker-loader' },
-                        {
-                            loader: 'babel-loader',
-                            options: {
-                                envName: mode,
-                            },
-                        },
-                    ],
-                    exclude: [/[\\/]node_modules[\\/]/],
-                },
-                {
                     test: /\.(css|sass|scss)$/,
                     use: [
                         PROD ? MiniCssExtractPlugin.loader : 'style-loader',
@@ -221,6 +213,7 @@ module.exports = (env, options) => {
         },
 
         optimization: {
+            runtimeChunk: 'single',
             splitChunks: {
                 chunks: 'all',
             },
