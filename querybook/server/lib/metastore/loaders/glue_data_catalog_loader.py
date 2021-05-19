@@ -2,7 +2,7 @@ from datetime import datetime
 from typing import Dict, List, Tuple
 
 from clients.glue_client import GlueDataCatalogClient
-from lib.form import StructFormField, FormField
+from lib.form import StructFormField, FormField, FormFieldType
 from lib.metastore.base_metastore_loader import (
     BaseMetastoreLoader,
     DataTable,
@@ -14,8 +14,8 @@ class GlueDataCatalogLoader(BaseMetastoreLoader):
     def __init__(self, metastore_dict: Dict):
         self.catalog_id = metastore_dict.get("metastore_params").get("catalog_id")
         self.region = metastore_dict.get("metastore_params").get("region")
-        self.load_partitions = eval(
-            metastore_dict.get("metastore_params").get("load_partitions", "False")
+        self.load_partitions = metastore_dict.get("metastore_params").get(
+            "load_partitions"
         )
         self.glue_client = self._get_glue_data_catalog_client(
             self.catalog_id, self.region
@@ -34,7 +34,7 @@ class GlueDataCatalogLoader(BaseMetastoreLoader):
             load_partitions=FormField(
                 required=False,
                 description="Enter True or False",
-                regex=r"(True|False)",
+                field_type=FormFieldType.Boolean,
                 helper="""In case your data catalog is large, loading all partitions for all tables can be quite time consuming.
                 Skipping partition information can reduce your metastore refresh latency
                 """,
@@ -74,24 +74,16 @@ class GlueDataCatalogLoader(BaseMetastoreLoader):
             raw_description=glue_table.get("Description"),
         )
 
-        columns = list(
-            map(
-                lambda col: DataColumn(
-                    col.get("Name"), col.get("Type"), col.get("Comment")
-                ),
-                glue_table.get("StorageDescriptor").get("Columns"),
-            )
-        )
+        columns = [
+            DataColumn(col.get("Name"), col.get("Type"), col.get("Comment"))
+            for col in glue_table.get("StorageDescriptor").get("Columns")
+        ]
 
         columns.extend(
-            list(
-                map(
-                    lambda col: DataColumn(
-                        col.get("Name"), col.get("Type"), col.get("Comment")
-                    ),
-                    glue_table.get("PartitionKeys"),
-                )
-            )
+            [
+                DataColumn(col.get("Name"), col.get("Type"), col.get("Comment"))
+                for col in glue_table.get("PartitionKeys")
+            ]
         )
 
         return table, columns

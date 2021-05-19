@@ -40,7 +40,7 @@ class GlueDataCatalogClient:
         databases = self.get_all_databases()
         database_list = databases.get("DatabaseList")
 
-        result = list(map(lambda database: database.get("Name"), database_list))
+        result = [database.get("Name") for database in database_list]
 
         return result
 
@@ -71,7 +71,7 @@ class GlueDataCatalogClient:
         tables = self.get_all_tables(db_name)
         table_list = tables.get("TableList")
 
-        result = list(map(lambda table: table.get("Name"), table_list))
+        result = [table.get("Name") for table in table_list]
 
         return result
 
@@ -87,8 +87,6 @@ class GlueDataCatalogClient:
             CatalogId=self.catalog_id, DatabaseName=db_name, Name=tb_name
         )
 
-    # todo: Find a better way, this takes too long...!
-    # maybe: https://github.com/boto/botocore/issues/1246#issuecomment-696638421
     def get_partitions(self, db_name, tb_name):
         """
         Gets partition information for db_name.tb_name from the Glue Data Catalog
@@ -125,15 +123,13 @@ class GlueDataCatalogClient:
 
         table = self.get_table(db_name, tb_name)
         partition_keys = table.get("Table").get("PartitionKeys")
-        partition_key_names = list(
-            map(lambda partition_key: partition_key.get("Name"), partition_keys)
-        )
+        partition_key_names = [
+            partition_key.get("Name") for partition_key in partition_keys
+        ]
 
         partitions = self.get_partitions(db_name, tb_name)
         partition_list = partitions.get("Partitions")
-        partition_values = list(
-            map(lambda partition: partition.get("Values"), partition_list)
-        )
+        partition_values = [partition.get("Values") for partition in partition_list]
 
         result = []
 
