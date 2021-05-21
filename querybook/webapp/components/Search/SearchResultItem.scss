@@ -64,6 +64,7 @@
             margin-right: 4px;
             font-weight: 500;
             @include ellipsis(3);
+            word-break: break-all;
         }
     }
 }
