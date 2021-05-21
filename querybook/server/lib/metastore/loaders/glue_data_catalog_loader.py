@@ -1,0 +1,92 @@
+from datetime import datetime
+from typing import Dict, List, Tuple
+
+from clients.glue_client import GlueDataCatalogClient
+from lib.form import StructFormField, FormField, FormFieldType
+from lib.metastore.base_metastore_loader import (
+    BaseMetastoreLoader,
+    DataTable,
+    DataColumn,
+)
+
+
+class GlueDataCatalogLoader(BaseMetastoreLoader):
+    def __init__(self, metastore_dict: Dict):
+        self.catalog_id = metastore_dict.get("metastore_params").get("catalog_id")
+        self.region = metastore_dict.get("metastore_params").get("region")
+        self.load_partitions = metastore_dict.get("metastore_params").get(
+            "load_partitions"
+        )
+        self.glue_client = self._get_glue_data_catalog_client(
+            self.catalog_id, self.region
+        )
+        super(GlueDataCatalogLoader, self).__init__(metastore_dict)
+
+    @classmethod
+    def get_metastore_params_template(cls):
+        return StructFormField(
+            catalog_id=FormField(
+                required=True,
+                description="Enter the Glue Data Catalog ID",
+                regex=r"^\d{12}$",
+            ),
+            region=FormField(required=True, description="Enter the AWS Region"),
+            load_partitions=FormField(
+                required=False,
+                field_type=FormFieldType.Boolean,
+                helper="""In case your data catalog is large, loading all partitions for all tables can be quite time consuming.
+                Skipping partition information can reduce your metastore refresh latency
+                """,
+            ),
+        )
+
+    def get_all_schema_names(self) -> List[str]:
+        return self.glue_client.get_all_database_names()
+
+    def get_all_table_names_in_schema(self, schema_name: str) -> List[str]:
+        return self.glue_client.get_all_table_names(schema_name)
+
+    def get_table_and_columns(
+        self, schema_name: str, table_name: str
+    ) -> Tuple[DataTable, List[DataColumn]]:
+        glue_table = self.glue_client.get_table(schema_name, table_name).get("Table")
+
+        if self.load_partitions:
+            partitions = self.glue_client.get_hms_style_partitions(
+                schema_name, table_name
+            )
+        else:
+            partitions = []
+
+        table = DataTable(
+            name=glue_table.get("Name"),
+            type=glue_table.get("TableType"),
+            owner=glue_table.get("Owner"),
+            table_created_at=int(
+                glue_table.get("CreateTime", datetime(1970, 1, 1)).timestamp()
+            ),
+            table_updated_at=int(
+                glue_table.get("UpdateTime", datetime(1970, 1, 1)).timestamp()
+            ),
+            location=glue_table.get("StorageDescriptor").get("Location"),
+            partitions=partitions,
+            raw_description=glue_table.get("Description"),
+        )
+
+        columns = [
+            DataColumn(col.get("Name"), col.get("Type"), col.get("Comment"))
+            for col in glue_table.get("StorageDescriptor").get("Columns")
+        ]
+
+        columns.extend(
+            [
+                DataColumn(col.get("Name"), col.get("Type"), col.get("Comment"))
+                for col in glue_table.get("PartitionKeys")
+            ]
+        )
+
+        return table, columns
+
+    @staticmethod
+    def _get_glue_data_catalog_client(catalog_id, region):
+        return GlueDataCatalogClient(catalog_id, region)

@@ -61,6 +61,7 @@ Can be used to fetch schema and table information for metadata enrichment.
 
 -   Hive Metastore
 -   Sqlalchemy Inspect
+-   AWS Glue Data Catalog
 
 ### Result Storage
 
