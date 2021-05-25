@@ -49,7 +49,7 @@ export const RecurrenceEditor: React.FunctionComponent<IProps> = ({
                     minuteStep={15}
                     showHour={!(recurrence.recurrence === 'hourly')}
                     showSecond={false}
-                    format="H:mm"
+                    format={recurrence.recurrence === 'hourly' ? "mm" : "H:mm"}
                     onChange={(value) => {
                         const newRecurrence = {
                             ...recurrence,
@@ -81,9 +81,6 @@ export const RecurrenceEditor: React.FunctionComponent<IProps> = ({
                             };
                             if (field.value !== key) {
                                 newRecurrence.on = {};
-                            }
-                            if (key === 'hourly') {
-                                newRecurrence.hour = 0;
                             }
                             setRecurrence(newRecurrence);
                         }}
