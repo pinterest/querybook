@@ -11,7 +11,7 @@ import {
     RecurrenceType,
     recurrenceTypes,
     getYearlyMonthOptions,
-    IRecurrenceOn
+    IRecurrenceOn,
 } from 'lib/utils/cron';
 import { makeReactSelectStyle } from 'lib/utils/react-select';
 
@@ -31,7 +31,7 @@ interface IProps {
 export const RecurrenceEditor: React.FunctionComponent<IProps> = ({
     recurrence,
     recurrenceError,
-    setRecurrence
+    setRecurrence,
 }) => {
     const localTime = React.useMemo(
         () => getRecurrenceLocalTimeString(recurrence),
@@ -59,7 +59,7 @@ export const RecurrenceEditor: React.FunctionComponent<IProps> = ({
                         const newRecurrence = {
                             ...recurrence,
                             hour: value.hour(),
-                            minute: value.minute()
+                            minute: value.minute(),
                         };
                         setRecurrence(newRecurrence);
                     }}
@@ -83,7 +83,7 @@ export const RecurrenceEditor: React.FunctionComponent<IProps> = ({
                         onSelect={(key: RecurrenceType) => {
                             const newRecurrence = {
                                 ...recurrence,
-                                recurrence: key
+                                recurrence: key,
                             };
                             if (field.value !== key) {
                                 newRecurrence.on = {};
@@ -167,7 +167,7 @@ export const RecurrenceEditorDatePicker: React.FunctionComponent<IDatePickerProp
     options,
     error,
     recurrence,
-    setRecurrence
+    setRecurrence,
 }) => {
     const formattedError = (error?.[onKey] || '').replace(
         `recurrence.on.${onKey}`,
@@ -193,8 +193,8 @@ export const RecurrenceEditorDatePicker: React.FunctionComponent<IDatePickerProp
                                     ...recurrence.on,
                                     [onKey]: (value as Array<{
                                         value: any;
-                                    }>).map((v) => v.value)
-                                }
+                                    }>).map((v) => v.value),
+                                },
                             };
                             setRecurrence(newRecurrence);
                         }}
