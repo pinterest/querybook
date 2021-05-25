@@ -38,8 +38,13 @@ export const RecurrenceEditor: React.FunctionComponent<IProps> = ({
         [recurrence]
     );
 
+    const isHourly = recurrence.recurrence === 'hourly';
+
     const hourSecondField = (
-        <FormField label="Hour/Minute (UTC)" error={recurrenceError?.hour}>
+        <FormField
+            label={isHourly ? 'Minute' : 'Hour/Minute (UTC)'}
+            error={recurrenceError?.hour}
+        >
             <div className="flex-row">
                 <TimePicker
                     allowEmpty={false}
@@ -49,7 +54,7 @@ export const RecurrenceEditor: React.FunctionComponent<IProps> = ({
                     minuteStep={15}
                     showHour={!(recurrence.recurrence === 'hourly')}
                     showSecond={false}
-                    format="H:mm"
+                    format={isHourly ? 'mm' : 'H:mm'}
                     onChange={(value) => {
                         const newRecurrence = {
                             ...recurrence,
@@ -67,6 +72,7 @@ export const RecurrenceEditor: React.FunctionComponent<IProps> = ({
             </div>
         </FormField>
     );
+
     const recurrenceTypeField = (
         <FormField label="Recurrence Type">
             <Field name="recurrence.recurrence">
