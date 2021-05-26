@@ -19,7 +19,6 @@ class RExporter(BaseExporter):
 library(tidyverse)
 url <- "{}"
 df <- read.csv(file=url)
-`;
-        """.format(
+""".format(
             download_url
         )
