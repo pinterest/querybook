@@ -1,6 +1,5 @@
 #!/usr/bin/env bash
 
-
 usage() {
     echo "Helper function to start the development application"
     echo ''
@@ -18,14 +17,20 @@ usage() {
     exit 1
 }
 
+
 while [[ "$#" -gt 0 ]]; do
   case $1 in
-    --initdb) ./querybook/scripts/init_db; shift;;
-    --initweb) yarn install --pure-lockfile; shift;;
+    --initdb)
+        ./querybook/scripts/init_db
+        shift
+        ;;
+    --initweb)
+        yarn install --pure-lockfile
+        shift
+        ;;
     --help) usage;;
       *) echo "Unknown parameter passed: $1"; usage;;
   esac;
-  shift;
 done
 
 

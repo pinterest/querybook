@@ -102,14 +102,15 @@ class DataDocComponent extends React.PureComponent<IProps, IState> {
     // Show data doc title in url and document title
     @decorate(memoizeOne)
     public publishDataDocTitle(title: string) {
-        title = title || 'Untitled';
-        setBrowserTitle(title);
-        history.replace(
-            location.pathname.split('/').slice(0, 4).join('/') +
-                `/${sanitizeUrlTitle(title)}/` +
-                location.search +
-                location.hash
-        );
+        setBrowserTitle(title || 'Untitled DataDoc');
+        if (title) {
+            history.replace(
+                location.pathname.split('/').slice(0, 4).join('/') +
+                    `/${sanitizeUrlTitle(title)}/` +
+                    location.search +
+                    location.hash
+            );
+        }
     }
 
     @bind
@@ -694,9 +695,7 @@ class DataDocComponent extends React.PureComponent<IProps, IState> {
     public componentDidMount() {
         this.autoFocusCell({}, this.props);
         this.openDataDoc(this.props.docId);
-        if (this.props.dataDoc?.title != null) {
-            this.publishDataDocTitle(this.props.dataDoc.title);
-        }
+        this.publishDataDocTitle(this.props.dataDoc?.title);
         window.addEventListener('keydown', this.onKeyDown, true);
     }
 
@@ -748,10 +747,7 @@ class DataDocComponent extends React.PureComponent<IProps, IState> {
             }
         }
 
-        if (
-            this.props.dataDoc?.title !== prevProps.dataDoc?.title &&
-            this.props.dataDoc?.title
-        ) {
+        if (this.props.dataDoc?.title !== prevProps.dataDoc?.title) {
             this.publishDataDocTitle(this.props.dataDoc.title);
         }
     }
