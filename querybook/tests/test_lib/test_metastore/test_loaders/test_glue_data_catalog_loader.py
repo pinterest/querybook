@@ -7,10 +7,15 @@ from datetime import datetime
 from lib.metastore.loaders.glue_data_catalog_loader import GlueDataCatalogLoader
 from lib.metastore.base_metastore_loader import DataColumn, DataTable
 
+moto_import_failed = False
 try:
     from moto import mock_glue
 except ImportError:
-    mock_glue = None
+    moto_import_failed = True
+
+    def mock_glue(func):
+        return func
+
 
 METASTORE_DICT = {
     "id": 1,
@@ -101,7 +106,7 @@ TABLE_INPUT_B_3 = {
 
 
 @unittest.skipIf(
-    mock_glue is None, "Skipping test because moto.mock_glue is not available"
+    moto_import_failed, "Skipping test because moto.mock_glue is not available"
 )
 class GlueDataCatalogLoaderTestCase(TestCase):
     @mock_glue

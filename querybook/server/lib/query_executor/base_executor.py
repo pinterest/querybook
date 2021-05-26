@@ -17,7 +17,13 @@ from const.query_execution import (
 from lib.form import AllFormField
 from lib.logger import get_logger
 from lib.query_executor.base_client import ClientBaseClass
-from lib.query_executor.utils import spread_dict, merge_str, row_to_csv, parse_exception
+from lib.query_executor.utils import (
+    spread_dict,
+    merge_str,
+    row_to_csv,
+    parse_exception,
+    format_if_internal_error_with_stack_trace,
+)
 from lib.result_store import GenericUploader
 
 from logic import query_execution as qe_logic
@@ -537,9 +543,10 @@ class QueryExecutorBaseClass(metaclass=ABCMeta):
 
             import traceback
 
-            error_message = "%s\n%s" % (e, traceback.format_exc())
+            stack_trace = "".join(traceback.format_tb(e.__traceback__))
+            error_message = f"{e}\n{stack_trace}"
             LOG.error(error_message)
-            self.on_exception(e)
+            self._handle_exception(e, stack_trace)
 
     def sleep(self):
         # For the first 15 mins, we check every second
@@ -575,7 +582,7 @@ class QueryExecutorBaseClass(metaclass=ABCMeta):
         else:
             self._on_query_completion()
 
-    def on_exception(self, e):
+    def _handle_exception(self, e, stack_trace: str):
         try:
             # Try our best to fetch logs again
             if self._cursor:
@@ -586,7 +593,13 @@ class QueryExecutorBaseClass(metaclass=ABCMeta):
         finally:
             # Update logger
             error_type, error_str, error_extracted = self._parse_exception(e)
-            self._logger.on_exception(error_type, error_str, error_extracted)
+            self._logger.on_exception(
+                error_type,
+                format_if_internal_error_with_stack_trace(
+                    error_type, error_str, stack_trace
+                ),
+                error_extracted,
+            )
 
             # Finally update the executor status
             # The logger might fail as well, so update the executor status last
