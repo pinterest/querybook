@@ -116,27 +116,31 @@ class HiveCursor(CursorBaseClass):
         return self._tracking_url
 
     def _update_percent_complete(self, poll_result):
-        task_status = poll_result.taskStatus
-        if task_status:
-            try:
-                parsed_task_status = json.loads(task_status)
-                map_reduce_stages = [
-                    stage
-                    for stage in parsed_task_status
-                    if stage.get("taskType", "") == "MAPRED"
-                ]
-                if len(map_reduce_stages) > 0:
-                    stage_sum = sum(
-                        map(
-                            lambda stage: stage.get("mapProgress", 0)
-                            + stage.get("reduceProgress", 0),
-                            map_reduce_stages,
+        if poll_result.progressUpdateResponse and poll_result.progressUpdateResponse.progressedPercentage:
+            percent_complete = poll_result.progressUpdateResponse.progressedPercentage
+            self._percent_complete = round(percent_complete, 2) * 100
+        else:
+            task_status = poll_result.taskStatus
+            if task_status:
+                try:
+                    parsed_task_status = json.loads(task_status)
+                    map_reduce_stages = [
+                        stage
+                        for stage in parsed_task_status
+                        if stage.get("taskType", "") == "MAPRED"
+                    ]
+                    if len(map_reduce_stages) > 0:
+                        stage_sum = sum(
+                            map(
+                                lambda stage: stage.get("mapProgress", 0)
+                                + stage.get("reduceProgress", 0),
+                                map_reduce_stages,
+                            )
                         )
-                    )
-                    # Because each stage sum is a total of 200
-                    self._percent_complete = stage_sum / (len(map_reduce_stages) * 2)
-            except Exception as e:
-                e  # to get rid of lint error
+                        # Because each stage sum is a total of 200
+                        self._percent_complete = stage_sum / (len(map_reduce_stages) * 2)
+                except Exception as e:
+                    e  # to get rid of lint error
 
     def _update_tracking_url(self, log: str):
         if self._tracking_url:
