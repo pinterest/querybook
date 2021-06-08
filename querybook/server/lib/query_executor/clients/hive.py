@@ -116,10 +116,13 @@ class HiveCursor(CursorBaseClass):
         return self._tracking_url
 
     def _update_percent_complete(self, poll_result):
+        # Hive 2.3+ includes progressUpdateResponse to provide overall % completion
         if poll_result.progressUpdateResponse and poll_result.progressUpdateResponse.progressedPercentage:
             percent_complete = poll_result.progressUpdateResponse.progressedPercentage
             self._percent_complete = round(percent_complete, 2) * 100
         else:
+            # this is the fallback (in case no progressUpdateResponse is included)
+            # Hive <= 1.2.1. Fallback is to check map/reduce completed tasks
             task_status = poll_result.taskStatus
             if task_status:
                 try:
