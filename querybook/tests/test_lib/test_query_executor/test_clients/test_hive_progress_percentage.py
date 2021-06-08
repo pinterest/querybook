@@ -13,6 +13,12 @@ class ProgressPercentageTestCase(TestCase):
         hive_cursor._update_percent_complete(resp)
         self.assertEqual(hive_cursor._percent_complete, 65)
 
+    def test_progress_percentage_partial_reported(self):
+        resp = TGetOperationStatusResp(operationState=TOperationState.RUNNING_STATE)
+        hive_cursor = HiveCursor(None)
+        hive_cursor._update_percent_complete(resp)
+        self.assertEqual(hive_cursor._percent_complete, 0)
+
     def test_progress_old_hive_version(self):
         task_status_json = '[{"taskType": "MAPRED", "mapProgress": 50, "reduceProgress": 0 }]'
         resp = TGetOperationStatusResp(operationState=TOperationState.RUNNING_STATE,

@@ -117,8 +117,10 @@ class HiveCursor(CursorBaseClass):
 
     def _update_percent_complete(self, poll_result):
         # Hive 2.3+ includes progressUpdateResponse to provide overall % completion
-        if poll_result.progressUpdateResponse and poll_result.progressUpdateResponse.progressedPercentage:
-            percent_complete = poll_result.progressUpdateResponse.progressedPercentage
+        if getattr(poll_result, 'progressUpdateResponse', None):
+            update_resp = poll_result.progressUpdateResponse
+            percent_complete = update_resp.progressedPercentage if hasattr(update_resp, 'progressedPercentage') \
+                else 0
             self._percent_complete = round(percent_complete, 2) * 100
         else:
             # this is the fallback (in case no progressUpdateResponse is included)
