@@ -17,19 +17,20 @@
         outline: none;
     }
 
-    a {
-        color: var(--color-accent-text);
-        font-weight: bold;
-        cursor: pointer;
-
-        &:hover {
-            opacity: 0.7;
-            text-decoration: none;
-        }
-    }
-
     .statement-execution-log-container {
         padding: 0px 4px;
+
+        // Log urls styling
+        a {
+            color: var(--color-accent-text);
+            font-weight: bold;
+            cursor: pointer;
+
+            &:hover {
+                opacity: 0.7;
+                text-decoration: none;
+            }
+        }
     }
 
     &:not(.is-fullscreen) {

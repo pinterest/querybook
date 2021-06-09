@@ -1,6 +1,6 @@
 import clsx from 'clsx';
 import { debounce } from 'lodash';
-import React, { useMemo } from 'react';
+import React from 'react';
 
 import { useSelector, useDispatch } from 'react-redux';
 
@@ -31,7 +31,9 @@ export const StatementLog: React.FunctionComponent<IStatementLogProps> = ({
         failed,
         error,
     } = statementLog || ({} as any);
-    const logText: string = useMemo(() => (data ?? []).join('\n'), [data]);
+    const logText: string = React.useMemo(() => (data ?? []).join('\n'), [
+        data,
+    ]);
 
     React.useEffect(() => {
         // Auto scroll logs to bottom when getting new logs
@@ -43,10 +45,8 @@ export const StatementLog: React.FunctionComponent<IStatementLogProps> = ({
     }, [data]);
 
     const toggleFullscreen = React.useCallback(() => {
-        setScrollPosition(null);
         setFullScreen((fullScreen) => {
             if (!fullScreen && selfRef.current) {
-                console.log('focus');
                 selfRef.current.focus();
             }
             return !fullScreen;
