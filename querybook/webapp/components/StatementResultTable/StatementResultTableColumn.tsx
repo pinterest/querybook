@@ -61,7 +61,7 @@ export const StatementResultTableColumn: React.FC<IStatementResultTableColumnPro
                         'hidden-button': !isExpanded,
                     })}
                     noPadding
-                    icon={isExpanded ? 'minimize-2' : 'maximize-2'}
+                    icon={isExpanded ? 'minimize' : 'maximize'}
                     size={14}
                     onClick={handleExpandColumnClick}
                 />
