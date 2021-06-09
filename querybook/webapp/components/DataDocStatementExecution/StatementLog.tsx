@@ -10,6 +10,9 @@ import { fetchLog } from 'redux/queryExecutions/action';
 import { IStoreState, Dispatch } from 'redux/store/types';
 import { Message } from 'ui/Message/Message';
 import { Loader } from 'ui/Loader/Loader';
+import { SoftButton } from 'ui/Button/Button';
+
+import './StatementLog.scss';
 
 interface IStatementLogProps {
     statementLog: IStatementLog;
@@ -22,46 +25,48 @@ export const StatementLog: React.FunctionComponent<IStatementLogProps> = ({
     const [scrollPosition, setScrollPosition] = React.useState<number>(null);
     const selfRef = React.useRef<HTMLDivElement>();
     const logRef = React.useRef<HTMLDivElement>();
-
-    React.useEffect(() => {
-        if (logRef.current) {
-            const logDiv = logRef.current;
-            logDiv.scrollTop =
-                scrollPosition === null || !fullScreen
-                    ? logDiv.scrollHeight // scroll to bottom
-                    : scrollPosition;
-        }
-    }, [statementLog]);
-
-    const toggleFullscreen = React.useCallback(() => {
-        if (!fullScreen && selfRef.current) {
-            selfRef.current.focus();
-        }
-        setFullScreen(!fullScreen);
-    }, [selfRef, fullScreen]);
-
-    const updateScrollPosition = React.useMemo(
-        () =>
-            debounce((scrollTop: number) => {
-                if (fullScreen && logRef.current) {
-                    const logDiv = logRef.current;
-                    setScrollPosition(
-                        // If at bottom, don't record scroll Position
-                        scrollTop === logDiv.scrollHeight - logDiv.clientHeight
-                            ? null
-                            : scrollTop
-                    );
-                }
-            }, 100),
-        [fullScreen, logRef]
-    );
-
     const {
         data = [],
 
         failed,
         error,
     } = statementLog || ({} as any);
+    const logText: string = React.useMemo(() => (data ?? []).join('\n'), [
+        data,
+    ]);
+
+    React.useEffect(() => {
+        // Auto scroll logs to bottom when getting new logs
+        if (logRef.current) {
+            const logDiv = logRef.current;
+            logDiv.scrollTop =
+                scrollPosition === null ? logDiv.scrollHeight : scrollPosition;
+        }
+    }, [data]);
+
+    const toggleFullscreen = React.useCallback(() => {
+        setFullScreen((fullScreen) => {
+            if (!fullScreen && selfRef.current) {
+                selfRef.current.focus();
+            }
+            return !fullScreen;
+        });
+    }, [selfRef]);
+
+    const updateScrollPosition = React.useCallback(
+        debounce((scrollTop: number) => {
+            if (logRef.current) {
+                const logDiv = logRef.current;
+                setScrollPosition(
+                    // If at bottom, don't record scroll Position
+                    scrollTop === logDiv.scrollHeight - logDiv.clientHeight
+                        ? null
+                        : scrollTop
+                );
+            }
+        }, 100),
+        [logRef]
+    );
 
     if (failed) {
         return (
@@ -73,22 +78,20 @@ export const StatementLog: React.FunctionComponent<IStatementLogProps> = ({
         );
     }
 
-    const logLines = data;
-    if (logLines.length === 0) {
+    if (logText.length === 0) {
         return null;
     }
 
-    const goFullScreenOverlayDOM = fullScreen ? null : (
-        <div className="go-fullscreen-overlay" onClick={toggleFullscreen}>
-            <div className="go-fullscreen-main-button">View</div>
-        </div>
+    const toggleFullScreenButtonDOM = (
+        <SoftButton
+            color="light"
+            icon="maximize"
+            title={fullScreen ? 'Exit Fullscreen (Esc)' : 'Fullscreen'}
+            onClick={toggleFullscreen}
+            className="toggle-fullscreen-button"
+            size={fullScreen ? 'medium' : 'small'}
+        />
     );
-
-    const exitFullScreenButtonDOM = fullScreen ? (
-        <div className="exit-fullscreen-button" onClick={toggleFullscreen}>
-            Exit Fullscreen (Esc)
-        </div>
-    ) : null;
 
     const logViewerDOM = (
         <div
@@ -100,9 +103,7 @@ export const StatementLog: React.FunctionComponent<IStatementLogProps> = ({
             }}
             className="statement-execution-log-container"
             dangerouslySetInnerHTML={{
-                __html: (fullScreen ? logLines : logLines.slice(-15)).join(
-                    '\n'
-                ),
+                __html: logText,
             }}
         />
     );
@@ -111,19 +112,19 @@ export const StatementLog: React.FunctionComponent<IStatementLogProps> = ({
         <div
             className={clsx({
                 StatementExecutionLog: true,
-                'log-viewer': true,
                 'is-fullscreen': fullScreen,
             })}
+            // for keypress to work
+            tabIndex={1}
             onKeyDown={(event) => {
                 if (matchKeyPress(event, 'ESC') && fullScreen) {
                     setFullScreen(false);
+                    event.stopPropagation();
                 }
             }}
             ref={selfRef}
-            tabIndex={1}
         >
-            {goFullScreenOverlayDOM}
-            {exitFullScreenButtonDOM}
+            <div className="right-align">{toggleFullScreenButtonDOM}</div>
             {logViewerDOM}
         </div>
     );

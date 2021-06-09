@@ -1,0 +1,57 @@
+@import './../../scss_variables.scss';
+
+.StatementExecutionLog {
+    overflow: hidden;
+    border-radius: var(--border-radius);
+    height: 240px;
+    position: relative;
+    background: var(--terminal-bg-color);
+    margin: 4px 0px;
+    padding: 4px;
+    color: var(--terminal-text-color);
+    font-family: var(--family-monospace);
+    display: flex;
+    flex-direction: column;
+
+    &:focus {
+        outline: none;
+    }
+
+    .statement-execution-log-container {
+        padding: 0px 4px;
+
+        // Log urls styling
+        a {
+            color: var(--color-accent-text);
+            font-weight: bold;
+            cursor: pointer;
+
+            &:hover {
+                opacity: 0.7;
+                text-decoration: none;
+            }
+        }
+    }
+
+    &:not(.is-fullscreen) {
+        .statement-execution-log-container {
+            white-space: pre-wrap;
+            word-break: break-all;
+            overflow-y: auto;
+            height: 100%;
+        }
+    }
+
+    &.is-fullscreen {
+        @include full-screen(1000, var(--terminal-bg-color));
+        height: 100%;
+        margin: 0px;
+
+        .statement-execution-log-container {
+            white-space: pre-wrap;
+            word-break: break-all;
+            overflow-y: auto;
+            height: 100%;
+        }
+    }
+}
