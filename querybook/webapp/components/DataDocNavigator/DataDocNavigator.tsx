@@ -233,7 +233,7 @@ const FavoriteDataDocsSection: React.FC<ICommonSectionProps> = (props) => {
         >
             <DataDocNavigatorSection
                 sectionHeader={'Favorites'}
-                sectionHeaderIcon="heart"
+                sectionHeaderIcon="star"
                 dataDocs={dataDocs}
                 selectedDocId={selectedDocId}
                 filterString={filterString}
