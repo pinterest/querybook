@@ -5,13 +5,16 @@ import { debounce } from 'lodash';
 import ds from 'lib/datasource';
 import { makeReactSelectStyle } from 'lib/utils/react-select';
 import { overlayRoot } from 'ui/Overlay/Overlay';
-import { IUserInfo } from 'redux/user/types';
 import { UserAvatar } from 'components/UserBadge/UserAvatar';
 
 interface IUserSearchResultRow {
     id: number;
     username: string;
     fullname: string;
+}
+
+function getUserName(user: IUserSearchResultRow) {
+    return (user.fullname || user.username || 'No Name').trim();
 }
 
 const loadOptions = debounce(
@@ -22,6 +25,7 @@ const loadOptions = debounce(
                     data.map((user) => ({
                         value: user.id,
                         label: <UserSelectOptionRow user={user} />,
+                        name: getUserName(user),
                     }))
                 );
             }
@@ -65,7 +69,7 @@ export const UserSelect: React.FunctionComponent<IUserSelectProps> = ({
             placeholder={'username...'}
             onChange={(option: any) => {
                 if (option) {
-                    onSelect(option.value, option.label);
+                    onSelect(option.value, option.name);
                 } else {
                     onSelect(null, null);
                 }
@@ -84,13 +88,7 @@ export const UserSelect: React.FunctionComponent<IUserSelectProps> = ({
 const UserSelectOptionRow: React.FC<{ user: IUserSearchResultRow }> = ({
     user,
 }) => {
-    const name = React.useMemo(
-        () =>
-            (user.fullname || '').trim() ||
-            (user.username || '').trim() ||
-            'No Name',
-        [user]
-    );
+    const name = React.useMemo(() => getUserName(user), [user]);
     return (
         <div className="flex-row">
             <UserAvatar tiny uid={user.id} />
