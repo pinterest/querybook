@@ -90,7 +90,7 @@ def _assert_safe_query(query, engine_id, session=None):
         acl_checker = MetastoreTableACLChecker(metastore.acl_control)
 
         for table in all_tables:
-            schema_name, table_name = table.split(".")
+            schema_name, table_name = table.rsplit(".", 1)
             if not acl_checker.is_table_valid(schema_name, table_name):
                 raise InvalidQueryExecution(
                     f"Table {table} is not allowed by metastore"
