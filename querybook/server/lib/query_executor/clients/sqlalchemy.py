@@ -1,11 +1,16 @@
 import sqlalchemy
 
 from lib.query_executor.base_client import ClientBaseClass, CursorBaseClass
+from lib.query_executor.connection_string.sqlalchemy import create_sqlalchemy_engine
 
 
 class SqlAlchemyClient(ClientBaseClass):
-    def __init__(self, connection_string=None, proxy_user=None, *args, **kwargs):
-        self._engine = sqlalchemy.create_engine(connection_string)
+    def __init__(
+        self, connection_string=None, connect_args=[], proxy_user=None, *args, **kwargs
+    ):
+        self._engine = create_sqlalchemy_engine(
+            {"connection_string": connection_string, "connect_args": connect_args,}
+        )
         super(SqlAlchemyClient, self).__init__()
 
     def __del__(self):

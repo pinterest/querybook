@@ -113,6 +113,14 @@ function ExpandableFormField<T extends []>({
     value: T;
     onChange: onChangeFunc<T>;
 }) {
+    React.useEffect(() => {
+        // If the array maps to a null or undefined key,
+        // mutate the item so that it defaults to an empty array
+        if (value == null) {
+            onChange('', [] as any);
+        }
+    }, [value]);
+
     if (!Array.isArray(value)) {
         return <div className="ExpandableFormField">Invalid Field</div>;
     }

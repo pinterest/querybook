@@ -1,11 +1,12 @@
 from typing import Dict, List, Tuple
 
-from lib.form import StructFormField, FormField
 from lib.metastore.base_metastore_loader import (
     BaseMetastoreLoader,
     DataTable,
     DataColumn,
 )
+from lib.query_executor.executor_template.templates import sqlalchemy_template
+from lib.query_executor.connection_string.sqlalchemy import create_sqlalchemy_engine
 
 
 class SqlAlchemyMetastoreLoader(BaseMetastoreLoader):
@@ -20,11 +21,7 @@ class SqlAlchemyMetastoreLoader(BaseMetastoreLoader):
 
     @classmethod
     def get_metastore_params_template(cls):
-        return StructFormField(
-            connection_string=FormField(
-                required=True, description="Put sqlalchemy connection string here"
-            ),
-        )
+        return sqlalchemy_template
 
     def get_all_schema_names(self) -> List[str]:
         return self._inspect.get_schema_names()
@@ -70,10 +67,9 @@ class SqlAlchemyMetastoreLoader(BaseMetastoreLoader):
         return table, columns
 
     def _get_sqlalchemy(self, metastore_dict):
-        from sqlalchemy import create_engine
         from sqlalchemy.engine import reflection
 
-        engine = create_engine(metastore_dict["metastore_params"]["connection_string"])
+        engine = create_sqlalchemy_engine(metastore_dict["metastore_params"])
         inspect = reflection.Inspector.from_engine(engine)
         conn = engine.connect()
 

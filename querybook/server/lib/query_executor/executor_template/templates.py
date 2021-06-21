@@ -1,4 +1,4 @@
-from lib.form import FormField, StructFormField, FormFieldType
+from lib.form import FormField, StructFormField, FormFieldType, ExpandableFormField
 
 hive_executor_template = StructFormField(
     hive_resource_manager=FormField(
@@ -43,7 +43,17 @@ sqlalchemy_template = StructFormField(
 <p>
     See [here](https://docs.sqlalchemy.org/en/latest/core/engines.html#database-urls) for more details.
 </p>""",
-    )
+    ),
+    connect_args=ExpandableFormField(
+        of=StructFormField(
+            key=FormField(required=True),
+            value=FormField(required=True),
+            isJson=FormField(
+                field_type=FormFieldType.Boolean,
+                helper="If true, then the value will be parsed as JSON",
+            ),
+        )
+    ),
 )
 
 bigquery_template = StructFormField(

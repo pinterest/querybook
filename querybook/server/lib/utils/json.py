@@ -40,5 +40,5 @@ def loads(*args, **kwargs):
 def safe_loads(*args, default_value=None, **kwargs):
     try:
         return loads(*args, **kwargs)
-    except ValueError:
+    except json.JSONDecodeError:
         return default_value
