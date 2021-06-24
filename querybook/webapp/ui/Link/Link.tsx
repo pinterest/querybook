@@ -7,7 +7,10 @@ const StyledLink = styled('a')`
     ${({ naturalLink }) =>
         naturalLink &&
         `
-        color: inherit;
+        color: var(--color-accent-text);
+        &:hover {
+            opacity: 0.9;
+        }
         text-decoration: underline;
     `};
 `;
@@ -45,9 +48,15 @@ const openInTab = (url: string) => (window.location.href = url);
 
 export class Link extends React.PureComponent<ILinkProps> {
     public handleClick = (e: React.MouseEvent<HTMLAnchorElement>) => {
+        if (e.button !== 0) {
+            // If it is not a left click, ignore
+            return;
+        }
+
         e.preventDefault();
         const { to, onClick, newTab } = this.props;
         const isCmdDown = e.metaKey;
+
         if (onClick) {
             onClick(e);
         } else if (to && typeof to === 'string') {
