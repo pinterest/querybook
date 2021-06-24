@@ -21,7 +21,6 @@ export function useLoader({
     const [loading, setLoading] = useState(!item);
     const [hasError, setHasError] = useState(false);
     const [errorObj, setErrorObj] = useState(null);
-
     useEffect(() => {
         if (item == null) {
             setHasError(false);
@@ -34,8 +33,8 @@ export function useLoader({
                     setLoading(false);
                 } catch (errorObj) {
                     console.error(errorObj);
-                    setHasError(true);
                     setErrorObj(errorObj);
+                    setHasError(true);
                 }
             })();
         }
