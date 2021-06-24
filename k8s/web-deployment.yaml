@@ -16,7 +16,6 @@ spec:
                 - args:
                       - ./querybook/scripts/bundled_docker_run_web
                       - --initdb
-                      - --initweb
                   env:
                       - name: PORT
                         value: '10001'
