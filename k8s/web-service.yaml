@@ -3,7 +3,7 @@ kind: Service
 metadata:
     name: web
 spec:
-    type: LoadBalancer
+    type: ClusterIP
     ports:
         - protocol: 'TCP'
           port: 80

@@ -23,8 +23,8 @@ spec:
                           memory: '400Mi'
                           cpu: '500m'
                       limits:
-                          memory: '400Mi'
-                          cpu: '500m'
+                          memory: '800Mi'
+                          cpu: '1'
                   env:
                       - name: FLASK_SECRET_KEY
                         value: SOME_RANDOM_SECRET_KEY

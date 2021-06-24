@@ -15,6 +15,7 @@ spec:
             containers:
                 - args:
                       - ./querybook/scripts/bundled_docker_run_web
+                      - --initdb
                   env:
                       - name: PORT
                         value: '10001'
@@ -35,6 +36,6 @@ spec:
                           memory: '800Mi'
                           cpu: '500m'
                       limits:
-                          memory: '800Mi'
-                          cpu: '500m'
+                          memory: '3Gi'
+                          cpu: '1'
             restartPolicy: Always
