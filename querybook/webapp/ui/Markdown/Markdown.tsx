@@ -8,7 +8,7 @@ const MarkdownLink: React.FC<{ title: string; href: string }> = ({
     href,
     children,
 }) => (
-    <Link to={href} title={title} newTab>
+    <Link to={href} title={title} newTab naturalLink>
         {children}
     </Link>
 );
