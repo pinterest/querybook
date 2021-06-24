@@ -747,7 +747,10 @@ class DataDocComponent extends React.PureComponent<IProps, IState> {
             }
         }
 
-        if (this.props.dataDoc?.title !== prevProps.dataDoc?.title) {
+        if (
+            this.props.dataDoc?.title !== prevProps.dataDoc?.title &&
+            this.props.dataDoc?.title != null
+        ) {
             this.publishDataDocTitle(this.props.dataDoc.title);
         }
     }

@@ -38,7 +38,7 @@ export const QueryView: React.FunctionComponent<IProps> = ({ queryId }) => {
     );
 
     const errorPage = (error) => {
-        if (error.response.status === 403) {
+        if (error?.response?.status === 403) {
             return (
                 <ErrorPage
                     errorTitle="Access Denied"
