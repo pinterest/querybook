@@ -35,7 +35,7 @@ export default () => {
                         </Link>
                         <Link
                             className="button button--link button--lg"
-                            to="https://join.slack.com/t/querybook/shared_invite/zt-dpr988af-9VwGkjcmPhqTmRoA2Tm3gg"
+                            to="https://join.slack.com/t/querybook/shared_invite/zt-se82lvld-yyzRIqvIASsyYozk7jMCYQ"
                         >
                             Join our Slack Community
                         </Link>

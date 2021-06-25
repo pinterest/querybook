@@ -53,7 +53,7 @@ module.exports = {
                 },
                 {
                     href:
-                        'https://join.slack.com/t/querybook/shared_invite/zt-dpr988af-9VwGkjcmPhqTmRoA2Tm3gg',
+                        'https://join.slack.com/t/querybook/shared_invite/zt-se82lvld-yyzRIqvIASsyYozk7jMCYQ',
                     position: 'left',
                     label: 'Slack',
                 },
@@ -90,7 +90,7 @@ module.exports = {
                         {
                             label: 'Slack',
                             href:
-                                'https://join.slack.com/t/querybook/shared_invite/zt-dpr988af-9VwGkjcmPhqTmRoA2Tm3gg',
+                                'https://join.slack.com/t/querybook/shared_invite/zt-se82lvld-yyzRIqvIASsyYozk7jMCYQ',
                         },
                     ],
                 },
