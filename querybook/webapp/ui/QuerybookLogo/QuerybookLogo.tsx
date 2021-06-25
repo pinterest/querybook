@@ -42,7 +42,7 @@ export const QuerybookLogo: React.FC<{
         {withBrandMark && (
             <img
                 className="querybook-brandmark"
-                src={'/static/favicon/favicon.ico'}
+                src={'/static/favicon/querybook.svg'}
             />
         )}
         <span className="querybook-wordmark">{getAppName()}</span>

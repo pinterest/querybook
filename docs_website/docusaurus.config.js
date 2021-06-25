@@ -6,7 +6,7 @@ module.exports = {
     organizationName: 'pinterest',
     projectName: 'querybook-documentation-site',
     scripts: ['https://buttons.github.io/buttons.js'],
-    favicon: 'img/favicon.ico',
+    favicon: 'img/querybook.svg',
     customFields: {
         fonts: {
             myFont: ['Inter', '-apple-system', 'system-ui', 'Segoe UI'],
@@ -37,8 +37,8 @@ module.exports = {
         navbar: {
             title: 'Querybook',
             logo: {
-                src: 'img/favicon.ico',
-                srcDark: 'img/favicon.ico',
+                src: 'img/querybook.svg',
+                srcDark: 'img/querybook.svg',
             },
             items: [
                 {
@@ -52,7 +52,8 @@ module.exports = {
                     label: 'GitHub',
                 },
                 {
-                    href: 'https://join.slack.com/t/querybook/shared_invite/zt-dpr988af-9VwGkjcmPhqTmRoA2Tm3gg',
+                    href:
+                        'https://join.slack.com/t/querybook/shared_invite/zt-dpr988af-9VwGkjcmPhqTmRoA2Tm3gg',
                     position: 'left',
                     label: 'Slack',
                 },
