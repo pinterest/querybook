@@ -13,10 +13,11 @@ jobs:
         runs-on: ubuntu-latest
         steps:
             - uses: actions/checkout@v2
+            - name: Get version from package.json
+              run: |
+                  echo STATE_RELEASE_VERSION=$(cat package.json | grep version | head -1 | awk -F: '{ print $2 }' | sed 's/[\",]//g' | tr -d '[[:space:]]') >> $GITHUB_ENV
             - name: Publish to Registry
               uses: elgohr/Publish-Docker-Github-Action@master
-              pre: >
-                  echo ::save-state name=RELEASE_VERSION::$(cat package.json | grep version | head -1 | awk -F: '{ print $2 }' | sed 's/[\",]//g' | tr -d '[[:space:]]')
               with:
                   name: querybook/querybook
                   username: ${{ secrets.DOCKER_USERNAME }}
