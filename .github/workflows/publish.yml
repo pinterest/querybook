@@ -1,10 +1,13 @@
 name: Publish to Registry
 on:
+    schedule:
+        - cron: '0 17 * * 1' # Monday at 10am PDT
     release:
         types: [published]
     push:
         branches:
             - master
+    pull_request: # Only for testing, remove before land
 jobs:
     update:
         runs-on: ubuntu-latest
@@ -12,9 +15,10 @@ jobs:
             - uses: actions/checkout@v2
             - name: Publish to Registry
               uses: elgohr/Publish-Docker-Github-Action@master
+              pre: >
+                  echo ::save-state name=RELEASE_VERSION::$(cat package.json | grep version | head -1 | awk -F: '{ print $2 }' | sed 's/[\",]//g' | tr -d '[[:space:]]')
               with:
-                  name: ${{ github.repository }}/querybook
-                  username: $GITHUB_ACTOR
-                  password: ${{ secrets.GITHUB_TOKEN }}
-                  registry: docker.pkg.github.com
-                  tag_semver: true
+                  name: querybook/querybook
+                  username: ${{ secrets.DOCKER_USERNAME }}
+                  password: ${{ secrets.DOCKER_PASSWORD }}
+                  tags: 'latest,${{ env.STATE_RELEASE_VERSION }}'
