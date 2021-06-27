@@ -9,4 +9,9 @@ version: 0.1.0
 appVersion: 2.4
 
 maintainers:
-  - Querybook Community
+  - name: Querybook
+    email: querybook@pinterest.com
+  - name: Yongchan Hong
+    email: yongchana@gmail.com
+  - name: Jaehyeok Lee
+    email: q32145@gmail.com
