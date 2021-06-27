@@ -1,0 +1,70 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{ .Values.worker.name }}
+  labels:
+    app: {{ include "querybook.name" . }}
+    chart: {{ include "querybook.chart" . }}
+    component: {{ .Values.worker.name }}
+    release: {{ .Release.Name }}
+    heritage: {{ .Release.Service }}
+spec:
+  replicas: {{ .Values.worker.replicaCount }}
+  selector:
+    matchLabels:
+      app: {{ include "querybook.name" . }}
+      release: {{ .Release.Name }}
+      component: {{ .Values.worker.name }}
+  template:
+    metadata:
+    {{- with .Values.podAnnotations }}
+      annotations:
+        {{- toYaml . | nindent 8 }}
+    {{- end }}
+      labels:
+        app: {{ include "querybook.name" . }}
+        release: {{ .Release.Name }}
+        component: {{ .Values.worker.name }}
+    spec:
+      containers:
+        - name: {{ .Values.worker.name }}
+          args:
+            - ./querybook/scripts/runservice
+            - prod_worker
+          image: "{{ .Values.worker.image.repository }}:{{ .Values.worker.image.tag }}"
+          imagePullPolicy: {{ .Values.worker.image.pullPolicy }}
+          resources:
+            {{- toYaml .Values.worker.resources | nindent 12 }}
+          env:
+            - name: FLASK_SECRET_KEY
+              valueFrom:
+                secretKeyRef:
+                  name: {{ include "querybook.fullname" . }}-secret
+                  key: FLASK_SECRET_KEY
+            - name: DATABASE_CONN
+              valueFrom:
+                secretKeyRef:
+                  name: {{ include "querybook.fullname" . }}-secret
+                  key: DATABASE_CONN
+            - name: REDIS_URL
+              valueFrom:
+                secretKeyRef:
+                  name: {{ include "querybook.fullname" . }}-secret
+                  key: REDIS_URL
+            - name: ELASTICSEARCH_HOST
+              valueFrom:
+                secretKeyRef:
+                  name: {{ include "querybook.fullname" . }}-secret
+                  key: ELASTICSEARCH_HOST
+      {{- with .Values.nodeSelector }}
+      nodeSelector:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      {{- with .Values.affinity }}
+      affinity:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      {{- with .Values.tolerations }}
+      tolerations:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}

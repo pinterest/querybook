@@ -1,0 +1,22 @@
+{{ if .Values.elasticsearch.enabled }}
+apiVersion: v1
+kind: Service
+metadata:
+  name: {{ .Values.elasticsearch.name }}
+  labels:
+    app: {{ include "querybook.name" . }}
+    chart: {{ include "querybook.chart" . }}
+    component: {{ .Values.elasticsearch.name }}
+    release: {{ .Release.Name }}
+    heritage: {{ .Release.Service }}
+spec:
+  type: {{ .Values.elasticsearch.service.serviceType }}
+  selector:
+    app: {{ include "querybook.name" . }}
+    release: {{ .Release.Name }}
+    component: {{ .Values.elasticsearch.name }}
+  ports:
+    - port: {{ .Values.elasticsearch.service.servicePort }}
+      targetPort: {{ .Values.elasticsearch.service.servicePort }}
+      name: 'elasticsearch-service'
+{{ end }}

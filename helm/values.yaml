@@ -1,0 +1,140 @@
+worker:
+  replicaCount: 1
+  name: worker
+  image:
+    repository: docker.pkg.github.com/pinterest/querybook/querybook
+    pullPolicy: IfNotPresent
+    tag: latest
+  resources:
+    requests:
+      memory: 700Mi
+      cpu: 700m
+    limits:
+      memory: 900Mi
+      cpu: 1
+  nodeSelector: {}
+  affinity: {}
+  tolerations: []
+  podAnnotations: {}
+
+scheduler:
+  replicaCount: 1
+  name: scheduler
+  image:
+    repository: docker.pkg.github.com/pinterest/querybook/querybook
+    pullPolicy: IfNotPresent
+    tag: latest
+  resources:
+    requests:
+      memory: '200Mi'
+      cpu: '100m'
+    limits:
+      memory: '200Mi'
+      cpu: '100m'
+  nodeSelector: {}
+  affinity: {}
+  tolerations: []
+  podAnnotations: {}
+
+web:
+  replicaCount: 1
+  name: web
+  image:
+    repository: docker.pkg.github.com/pinterest/querybook/querybook
+    pullPolicy: IfNotPresent
+    tag: latest
+  service:
+    serviceType: ClusterIP
+    servicePort: 80
+  resources:
+    requests:
+      memory: 1Gi
+      cpu: 1
+    limits:
+      memory: 3Gi
+      cpu: 1
+  nodeSelector: {}
+  affinity: {}
+  tolerations: []
+  podAnnotations: {}
+
+mysql:
+  enabled: true
+  replicaCount: 1
+  name: mysql
+  image:
+    repository: mariadb
+    pullPolicy: IfNotPresent
+    tag: "10.5.4"
+  dbsetting:
+    database: querybook2
+    host: mysql:3306
+    pwd: passw0rd
+    rootpwd: hunter2
+    user: test
+  service:
+    serviceType: ClusterIP
+    servicePort: 3306
+  resources:
+    requests:
+      memory: '500Mi'
+      cpu: '300m'
+    limits:
+      memory: '500Mi'
+      cpu: '300m'
+  nodeSelector: {}
+  affinity: {}
+  tolerations: []
+  podAnnotations: {}
+
+redis:
+  enabled: true
+  replicaCount: 1
+  name: redis
+  image:
+    repository: redis
+    pullPolicy: IfNotPresent
+    tag: "5.0.9"
+  service:
+    serviceType: ClusterIP
+    servicePort: 6379
+  resources:
+    requests:
+      memory: '1Gi'
+      cpu: '300m'
+    limits:
+      memory: '1Gi'
+      cpu: '300m'
+  nodeSelector: {}
+  affinity: {}
+  tolerations: []
+  podAnnotations: {}
+
+elasticsearch:
+  enabled: true
+  replicaCount: 1
+  name: elasticsearch
+  image:
+    repository: docker.elastic.co/elasticsearch/elasticsearch
+    pullPolicy: IfNotPresent
+    tag: "6.6.1"
+  service:
+    serviceType: ClusterIP
+    servicePort: 9200
+  resources:
+    requests:
+      memory: '1Gi'
+      cpu: '200m'
+    limits:
+      memory: '1Gi'
+      cpu: '200m'
+  nodeSelector: {}
+  affinity: {}
+  tolerations: []
+  podAnnotations: {}
+
+secret:
+  flask_secret_key: SOME_RANDOM_SECRET_KEY
+  database_conn: mysql+pymysql://test:passw0rd@mysql:3306/querybook2?charset=utf8mb4
+  redis_url:  redis://redis:6379/0
+  elasticsearch_host: elasticsearch:9200

@@ -1,0 +1,75 @@
+{{ if .Values.mysql.enabled }}
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{ .Values.mysql.name }}
+  labels:
+    app: {{ include "querybook.name" . }}
+    chart: {{ include "querybook.chart" . }}
+    component: {{ .Values.mysql.name }}
+    release: {{ .Release.Name }}
+    heritage: {{ .Release.Service }}
+spec:
+  replicas: {{ .Values.mysql.replicaCount }}
+  selector:
+    matchLabels:
+      app: {{ include "querybook.name" . }}
+      release: {{ .Release.Name }}
+      component: {{ .Values.mysql.name }}
+  template:
+    metadata:
+    {{- with .Values.mysql.podAnnotations }}
+      annotations:
+        {{- toYaml . | nindent 8 }}
+    {{- end }}
+      labels:
+        app: {{ include "querybook.name" . }}
+        release: {{ .Release.Name }}
+        component: {{ .Values.mysql.name }}
+    spec:
+      containers:
+        - name: {{ .Values.mysql.name }}
+          image: "{{ .Values.mysql.image.repository }}:{{ .Values.mysql.image.tag }}"
+          imagePullPolicy: {{ .Values.mysql.image.pullPolicy }}
+          ports:
+            - name: mysql
+              containerPort: {{ .Values.mysql.service.servicePort }}
+          env:
+            - name: MYSQL_DATABASE
+              value: {{ .Values.mysql.dbsetting.database }}
+            - name: MYSQL_HOST
+              value: {{ .Values.mysql.dbsetting.host }}
+            - name: MYSQL_PASSWORD
+              value: {{ .Values.mysql.dbsetting.pwd }}
+            - name: MYSQL_ROOT_PASSWORD
+              value: {{ .Values.mysql.dbsetting.rootpwd }}
+            - name: MYSQL_USER
+              value: {{ .Values.mysql.dbsetting.user }}
+          livenessProbe:
+            tcpSocket:
+              port: {{ .Values.mysql.service.servicePort }}
+            failureThreshold: 3
+            periodSeconds: 30
+            timeoutSeconds: 30
+          resources:
+            {{- toYaml .Values.mysql.resources | nindent 12 }}
+          volumeMounts:
+            - name: mysql-persistent-storage
+              mountPath: /var/lib/mysql
+      restartPolicy: Always
+      volumes:
+          - name: mysql-persistent-storage
+            emptyDir: {}
+      {{- with .Values.nodeSelector }}
+      nodeSelector:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      {{- with .Values.affinity }}
+      affinity:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      {{- with .Values.tolerations }}
+      tolerations:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+  {{ end }}

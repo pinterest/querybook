@@ -1,0 +1,20 @@
+{{ if .Values.mysql.enabled }}
+apiVersion: v1
+kind: Service
+metadata:
+  name: {{ .Values.mysql.name }}
+  labels:
+    app: {{ include "querybook.name" . }}
+    chart: {{ include "querybook.chart" . }}
+    component: {{ .Values.mysql.name }}
+    release: {{ .Release.Name }}
+    heritage: {{ .Release.Service }}
+spec:
+  type: {{ .Values.mysql.service.serviceType }}
+  ports:
+    - port: {{ .Values.mysql.service.servicePort }}
+  selector:
+    app: {{ include "querybook.name" . }}
+    release: {{ .Release.Name }}
+    component: {{ .Values.mysql.name }}
+{{ end }}

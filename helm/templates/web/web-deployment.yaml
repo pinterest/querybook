@@ -1,0 +1,75 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{ .Values.web.name }}
+  labels:
+    app: {{ include "querybook.name" . }}
+    chart: {{ include "querybook.chart" . }}
+    component: {{ .Values.web.name }}
+    release: {{ .Release.Name }}
+    heritage: {{ .Release.Service }}
+spec:
+  replicas: {{ .Values.web.replicaCount | default 1 }}
+  selector:
+    matchLabels:
+      app: {{ include "querybook.name" . }}
+      release: {{ .Release.Name }}
+      component: {{ .Values.web.name }}
+  template:
+    metadata:
+    {{- with .Values.podAnnotations }}
+      annotations:
+        {{- toYaml . | nindent 8 }}
+    {{- end }}
+      labels:
+        app: {{ include "querybook.name" . }}
+        release: {{ .Release.Name }}
+        component: {{ .Values.web.name }}
+    spec:
+      containers:
+        - name: {{ .Values.web.name }}
+          args:
+            - ./querybook/scripts/bundled_docker_run_web
+            - --initdb
+          image: "{{ .Values.web.image.repository }}:{{ .Values.web.image.tag }}"
+          imagePullPolicy: {{ .Values.web.image.pullPolicy }}
+          env:
+            - name: PORT
+              value: '10001'
+            - name: FLASK_SECRET_KEY
+              valueFrom:
+                secretKeyRef:
+                  name: {{ include "querybook.fullname" . }}-secret
+                  key: FLASK_SECRET_KEY
+            - name: DATABASE_CONN
+              valueFrom:
+                secretKeyRef:
+                  name: {{ include "querybook.fullname" . }}-secret
+                  key: DATABASE_CONN
+            - name: REDIS_URL
+              valueFrom:
+                secretKeyRef:
+                  name: {{ include "querybook.fullname" . }}-secret
+                  key: REDIS_URL
+            - name: ELASTICSEARCH_HOST
+              valueFrom:
+                secretKeyRef:
+                  name: {{ include "querybook.fullname" . }}-secret
+                  key: ELASTICSEARCH_HOST
+          ports:
+            - containerPort: 10001
+          resources:
+            {{- toYaml .Values.web.resources | nindent 12 }}
+      restartPolicy: Always
+      {{- with .Values.nodeSelector }}
+      nodeSelector:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      {{- with .Values.affinity }}
+      affinity:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      {{- with .Values.tolerations }}
+      tolerations:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}

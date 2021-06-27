@@ -1,0 +1,21 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: {{ .Values.web.name }}
+  labels:
+    app: {{ include "querybook.name" . }}
+    chart: {{ include "querybook.chart" . }}
+    component: {{ .Values.web.name }}
+    release: {{ .Release.Name }}
+    heritage: {{ .Release.Service }}
+spec:
+  type: {{ .Values.web.service.serviceType }}
+  ports:
+    - port: {{ .Values.web.service.servicePort }}
+      targetPort: 10001
+      protocol: TCP
+      name: http
+  selector:
+    app: {{ include "querybook.name" . }}
+    release: {{ .Release.Name }}
+    component: {{ .Values.web.name  }}

@@ -1,0 +1,72 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{ .Values.scheduler.name }}
+  labels:
+    app: {{ include "querybook.name" . }}
+    chart: {{ include "querybook.chart" . }}
+    component: {{ .Values.scheduler.name }}
+    release: {{ .Release.Name }}
+    heritage: {{ .Release.Service }}
+spec:
+  replicas: {{ .Values.scheduler.replicaCount }}
+  selector:
+    matchLabels:
+      app: {{ include "querybook.name" . }}
+      release: {{ .Release.Name }}
+      component: {{ .Values.scheduler.name }}
+  template:
+    metadata:
+    {{- with .Values.podAnnotations }}
+      annotations:
+        {{- toYaml . | nindent 8 }}
+    {{- end }}
+      labels:
+        app: {{ include "querybook.name" . }}
+        release: {{ .Release.Name }}
+        component: {{ .Values.scheduler.name }}
+    spec:
+      containers:
+        - name: {{ .Values.scheduler.name }}
+          args:
+            - ./querybook/scripts/runservice
+            - prod_scheduler
+            - --pidfile=/opt/celerybeat.pid
+          image: "{{ .Values.scheduler.image.repository }}:{{ .Values.scheduler.image.tag }}"
+          imagePullPolicy: {{ .Values.scheduler.image.pullPolicy }}
+          env:
+            - name: FLASK_SECRET_KEY
+              valueFrom:
+                secretKeyRef:
+                  name: {{ include "querybook.fullname" . }}-secret
+                  key: FLASK_SECRET_KEY
+            - name: DATABASE_CONN
+              valueFrom:
+                secretKeyRef:
+                  name: {{ include "querybook.fullname" . }}-secret
+                  key: DATABASE_CONN
+            - name: REDIS_URL
+              valueFrom:
+                secretKeyRef:
+                  name: {{ include "querybook.fullname" . }}-secret
+                  key: REDIS_URL
+            - name: ELASTICSEARCH_HOST
+              valueFrom:
+                secretKeyRef:
+                  name: {{ include "querybook.fullname" . }}-secret
+                  key: ELASTICSEARCH_HOST
+          resources:
+            {{- toYaml .Values.scheduler.resources | nindent 12 }}
+      restartPolicy: Always
+      {{- with .Values.nodeSelector }}
+      nodeSelector:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      {{- with .Values.affinity }}
+      affinity:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      {{- with .Values.tolerations }}
+      tolerations:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}

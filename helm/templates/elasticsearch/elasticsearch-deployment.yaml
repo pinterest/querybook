@@ -1,0 +1,95 @@
+{{ if .Values.elasticsearch.enabled }}
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{ .Values.elasticsearch.name }}
+  labels:
+    app: {{ include "querybook.name" . }}
+    chart: {{ include "querybook.chart" . }}
+    component: {{ .Values.elasticsearch.name }}
+    release: {{ .Release.Name }}
+    heritage: {{ .Release.Service }}
+spec:
+  replicas: {{ .Values.elasticsearch.replicaCount }}
+  selector:
+    matchLabels:
+      app: {{ include "querybook.name" . }}
+      release: {{ .Release.Name }}
+      component: {{ .Values.elasticsearch.name }}
+  strategy:
+    type: Recreate
+  template:
+    metadata:
+    {{- with .Values.elasticsearch.podAnnotations }}
+      annotations:
+        {{- toYaml . | nindent 8 }}
+    {{- end }}
+      labels:
+        app: {{ include "querybook.name" . }}
+        release: {{ .Release.Name }}
+        component: {{ .Values.elasticsearch.name }}
+    spec:
+      securityContext:
+        fsGroup: 1000
+      initContainers:
+        - name: init-sysctl
+          image: busybox
+          command: [ '/bin/sh', '-c' ]
+          args:
+            - sysctl -w vm.max_map_count=262144
+            - ulimit -l unlimited
+          imagePullPolicy: IfNotPresent
+          securityContext:
+            privileged: true
+            capabilities:
+              add:
+                - IPC_LOCK
+                - SYS_RESOURCE
+      containers:
+        - name: {{ .Values.elasticsearch.name }}
+          env:
+            - name: ES_JAVA_OPTS
+              value: -Xms512m -Xmx512m
+            - name: bootstrap.memory_lock
+              value: 'false'
+            - name: cluster.name
+              value: docker-cluster
+          image: "{{ .Values.elasticsearch.image.repository }}:{{ .Values.elasticsearch.image.tag }}"
+          imagePullPolicy: {{ .Values.elasticsearch.image.pullPolicy }}
+          ports:
+            - containerPort: {{ .Values.elasticsearch.service.servicePort }}
+          #   livenessProbe:
+          #       httpGet:
+          #           path: /_cluster/health
+          #           port: 9200
+          #       failureThreshold: 3
+          #       periodSeconds: 30
+          #       timeoutSeconds: 30
+          resources:
+            {{- toYaml .Values.elasticsearch.resources | nindent 12 }}
+          securityContext:
+            privileged: true
+            capabilities:
+              add:
+                - IPC_LOCK
+                - SYS_RESOURCE
+          volumeMounts:
+            - mountPath: /usr/share/elasticsearch/data
+              name: elasticsearch-persistent-storage
+      restartPolicy: Always
+      volumes:
+          - name: elasticsearch-persistent-storage
+            emptyDir: {}
+      {{- with .Values.nodeSelector }}
+      nodeSelector:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      {{- with .Values.affinity }}
+      affinity:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      {{- with .Values.tolerations }}
+      tolerations:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+{{ end }}
