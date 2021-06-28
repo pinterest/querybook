@@ -2,7 +2,7 @@ worker:
   replicaCount: 1
   name: worker
   image:
-    repository: docker.pkg.github.com/pinterest/querybook/querybook
+    repository: querybook/querybook
     pullPolicy: IfNotPresent
     tag: latest
   resources:
@@ -21,7 +21,7 @@ scheduler:
   replicaCount: 1
   name: scheduler
   image:
-    repository: docker.pkg.github.com/pinterest/querybook/querybook
+    repository: querybook/querybook
     pullPolicy: IfNotPresent
     tag: latest
   resources:
@@ -40,7 +40,7 @@ web:
   replicaCount: 1
   name: web
   image:
-    repository: docker.pkg.github.com/pinterest/querybook/querybook
+    repository: querybook/querybook
     pullPolicy: IfNotPresent
     tag: latest
   service:
