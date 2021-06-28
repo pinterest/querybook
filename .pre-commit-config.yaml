@@ -6,6 +6,7 @@ repos:
             exclude: ^querybook/webapp/__tests__/ui/__snapshots__/
           - id: end-of-file-fixer
           - id: check-yaml
+            exclude: ^helm/templates/
           - id: check-added-large-files
             args: ['--maxkb=10000']
     - repo: https://github.com/psf/black
