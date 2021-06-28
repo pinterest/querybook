@@ -9,7 +9,39 @@ on:
             - master
     pull_request: # Only for testing, remove before land
 jobs:
+    preCheck:
+        name: 'Secrets check'
+        runs-on: ubuntu-latest
+        steps:
+            - name: Assert Secrets Present
+              shell: bash
+              run: |
+                  MD5() {
+                    result=($(md5sum <(echo "${1}")))
+                    echo $result
+                  }
+
+                  secretPresent() {
+                    emptyHash=$(MD5 "")
+                    secretHash=$(MD5 "${1}")
+                    ! diff <(echo $secretHash) <(echo $emptyHash) &> /dev/null
+                  }
+
+                  errorMessage() {
+                    echo "Your secret ${1} seems to be missing"
+                    return 1
+                  }
+
+                  secretStatus=0
+
+                  secretPresent "${{ secrets.DOCKER_USERNAME }}" || errorMessage "DOCKER_USERNAME" || secretStatus=1
+                  secretPresent "${{ secrets.DOCKER_PASSWORD }}" || errorMessage "DOCKER_PASSWORD" || secretStatus=2
+
+                  exit $secretStatus
+
+            - run: echo "Everything Checks Out 👍"
     update:
+        needs: preCheck
         runs-on: ubuntu-latest
         steps:
             - uses: actions/checkout@v2
