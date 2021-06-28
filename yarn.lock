@@ -4002,13 +4002,6 @@
   resolved "https://registry.yarnpkg.com/@types/resize-observer-browser/-/resize-observer-browser-0.1.4.tgz#84879a4d6d4aaefde53d4b29c91c0c4cbcffc26f"
   integrity sha512-rPvqs+1hL/5hbES/0HTdUu4lvNmneiwKwccbWe7HGLWbnsLdqKnQHyWLg4Pj0AMO7PLHCwBM1Cs8orChdkDONg==
 
-"@types/socket.io-client@3.0.0":
-  version "3.0.0"
-  resolved "https://registry.yarnpkg.com/@types/socket.io-client/-/socket.io-client-3.0.0.tgz#d0b8ea22121b7c1df68b6a923002f9c8e3cefb42"
-  integrity sha512-s+IPvFoEIjKA3RdJz/Z2dGR4gLgysKi8owcnrVwNjgvc01Lk68LJDDsG2GRqegFITcxmvCMYM7bhMpwEMlHmDg==
-  dependencies:
-    socket.io-client "*"
-
 "@types/source-list-map@*":
   version "0.1.2"
   resolved "https://registry.yarnpkg.com/@types/source-list-map/-/source-list-map-0.1.2.tgz#0078836063ffaf17412349bba364087e0ac02ec9"
@@ -8088,21 +8081,6 @@ engine.io-client@~4.1.0:
     parseuri "0.0.6"
     ws "~7.4.2"
     xmlhttprequest-ssl "~1.5.4"
-    yeast "0.1.2"
-
-engine.io-client@~5.1.1:
-  version "5.1.2"
-  resolved "https://registry.yarnpkg.com/engine.io-client/-/engine.io-client-5.1.2.tgz#27108da9b39ae03262443d945caf2caa3655c4cb"
-  integrity sha512-blRrgXIE0A/eurWXRzvfCLG7uUFJqfTGFsyJzXSK71srMMGJ2VraBLg8Mdw28uUxSpVicepBN9X7asqpD1mZcQ==
-  dependencies:
-    base64-arraybuffer "0.1.4"
-    component-emitter "~1.3.0"
-    debug "~4.3.1"
-    engine.io-parser "~4.0.1"
-    has-cors "1.1.0"
-    parseqs "0.0.6"
-    parseuri "0.0.6"
-    ws "~7.4.2"
     yeast "0.1.2"
 
 engine.io-parser@~4.0.1:
@@ -16084,19 +16062,6 @@ snapdragon@^0.8.1:
     source-map "^0.5.6"
     source-map-resolve "^0.5.0"
     use "^3.1.0"
-
-socket.io-client@*:
-  version "4.1.2"
-  resolved "https://registry.yarnpkg.com/socket.io-client/-/socket.io-client-4.1.2.tgz#95ad7113318ea01fba0860237b96d71e1b1fd2eb"
-  integrity sha512-RDpWJP4DQT1XeexmeDyDkm0vrFc0+bUsHDKiVGaNISJvJonhQQOMqV9Vwfg0ZpPJ27LCdan7iqTI92FRSOkFWQ==
-  dependencies:
-    "@types/component-emitter" "^1.2.10"
-    backo2 "~1.0.2"
-    component-emitter "~1.3.0"
-    debug "~4.3.1"
-    engine.io-client "~5.1.1"
-    parseuri "0.0.6"
-    socket.io-parser "~4.0.4"
 
 socket.io-client@3.1.2:
   version "3.1.2"

@@ -1,6 +1,6 @@
 import { debounce } from 'lodash';
 import toast from 'react-hot-toast';
-import { Manager } from 'socket.io-client';
+import { Manager, Socket } from 'socket.io-client';
 /*
 This module manages all incoming websocket connections using socketIO,
 please do not use socketio individually and only use this to avoid repeated
@@ -30,7 +30,7 @@ const sendErrorToastDebounced = debounce(
 export default {
     getSocket: async (
         nameSpace = '/',
-        onConnection: (socket: SocketIOClient.Socket) => void = null
+        onConnection: (socket: Socket) => void = null
     ) => {
         const socket = getSocketFromManager(nameSpace);
 
@@ -69,12 +69,12 @@ export default {
         }
         return socket;
     },
-    removeSocket: (socket: SocketIOClient.Socket) => {
+    removeSocket: (socket: Socket) => {
         if (socket) {
             if (socket.connected) {
                 socket.close();
             }
-            socket.removeAllListeners();
+            socket.offAny();
         }
     },
 };
