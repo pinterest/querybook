@@ -1,3 +1,4 @@
+import type { Socket } from 'socket.io-client';
 import SocketIOManager from 'lib/socketio-manager';
 import { IDataDocEditor, IDataCellMeta } from 'const/datadoc';
 import { IAccessRequest } from 'const/accessRequest';
@@ -78,8 +79,8 @@ export class DataDocSocket {
     private static NAME_SPACE = '/datadoc';
 
     private _activeDataDocId: number = null;
-    private socket: SocketIOClient.Socket = null;
-    private socketPromise: Promise<SocketIOClient.Socket> = null;
+    private socket: Socket = null;
+    private socketPromise: Promise<Socket> = null;
 
     private promiseMap: IDataDocSocketEvent = {};
     private eventMap: IDataDocSocketEvent = {};
@@ -204,7 +205,7 @@ export class DataDocSocket {
         }
     };
 
-    private onSocketConnect(socket: SocketIOClient.Socket) {
+    private onSocketConnect(socket: Socket) {
         if (this._activeDataDocId != null) {
             socket.emit('subscribe', this._activeDataDocId);
         }

@@ -1,5 +1,5 @@
 import { normalize, schema } from 'normalizr';
-
+import type { Socket } from 'socket.io-client';
 import { updateDataDocPolling } from 'redux/dataDoc/action';
 import SocketIOManager from 'lib/socketio-manager';
 
@@ -551,8 +551,8 @@ class QueryExecutionSocket {
 
     // queryExecutionId => docId
     private activeQueryExecutions: Record<number, number> = {};
-    private socket: SocketIOClient.Socket = null;
-    private socketPromise: Promise<SocketIOClient.Socket> = null;
+    private socket: Socket = null;
+    private socketPromise: Promise<Socket> = null;
     private dispatch: ThunkDispatch = null;
 
     public addQueryExecution = async (
@@ -575,7 +575,7 @@ class QueryExecutionSocket {
         }
     };
 
-    public onSocketConnect(socket: SocketIOClient.Socket) {
+    public onSocketConnect(socket: Socket) {
         // Setup rooms for existing connections
         const activeQueryExecutionIds = Object.keys(this.activeQueryExecutions);
         if (activeQueryExecutionIds.length > 0) {

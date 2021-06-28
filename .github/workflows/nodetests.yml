@@ -8,12 +8,14 @@ on:
             - 'querybook/**/*.tsx?'
             - 'querybook/**/*.s?css'
             - 'querybook/**/*.html'
+            - 'package.json'
     pull_request:
         paths:
             - 'querybook/**/*.jsx?'
             - 'querybook/**/*.tsx?'
             - 'querybook/**/*.s?css'
             - 'querybook/**/*.html'
+            - 'package.json'
 jobs:
     nodetests:
         runs-on: ubuntu-latest
