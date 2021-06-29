@@ -1,0 +1,21 @@
+{{ if .Values.redis.enabled }}
+apiVersion: v1
+kind: Service
+metadata:
+  name: {{ .Values.redis.name }}
+  labels:
+    app: {{ include "querybook.name" . }}
+    chart: {{ include "querybook.chart" . }}
+    component: {{ .Values.redis.name }}
+    release: {{ .Release.Name }}
+    heritage: {{ .Release.Service }}
+spec:
+  type: {{ .Values.redis.service.serviceType }}
+  ports:
+    - port: {{ .Values.redis.service.servicePort }}
+      name: 'redis'
+  selector:
+    app: {{ include "querybook.name" . }}
+    release: {{ .Release.Name }}
+    component: {{ .Values.redis.name }}
+{{ end }}

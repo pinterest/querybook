@@ -1,0 +1,17 @@
+apiVersion: v2
+name: querybook
+description: Querybook Helm Chart
+
+type: application
+
+version: 0.1.0
+
+appVersion: 2.4
+
+maintainers:
+  - name: Querybook
+    email: querybook@pinterest.com
+  - name: Yongchan Hong
+    email: yongchana@gmail.com
+  - name: Jaehyeok Lee
+    email: q32145@gmail.com
