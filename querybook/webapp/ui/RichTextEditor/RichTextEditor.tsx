@@ -14,7 +14,7 @@ import {
     isContentStateInUndoStack,
 } from 'lib/richtext';
 import * as Utils from 'lib/utils';
-import { matchKeyPress } from 'lib/utils/keyboard';
+import { matchKeyPress, matchKeyMap, KeyMap } from 'lib/utils/keyboard';
 
 import { RichTextEditorToolBar } from 'ui/RichTextEditorToolBar/RichTextEditorToolBar';
 
@@ -425,12 +425,18 @@ export class RichTextEditor extends React.PureComponent<
             if (matchKeyPress(e, 'Tab')) {
                 this.onTab(e);
                 handled = true;
-            } else if (matchKeyPress(e, 'Cmd-Shift-X')) {
+            } else if (matchKeyMap(e, KeyMap.richText.strikethrough)) {
                 // Cmd+Shift+X
                 command = 'strikethrough';
                 handled = true;
-            } else if (matchKeyPress(e, 'Cmd-K')) {
+            } else if (matchKeyMap(e, KeyMap.richText.addLink)) {
                 command = 'show-link-input';
+                handled = true;
+            } else if (matchKeyMap(e, KeyMap.richText.bold)) {
+                command = 'bold';
+                handled = true;
+            } else if (matchKeyMap(e, KeyMap.richText.italics)) {
+                command = 'italic';
                 handled = true;
             }
         }

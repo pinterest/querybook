@@ -14,7 +14,7 @@ import { IDataCellMetaBase } from 'const/datadoc';
 import { RichTextEditor } from 'ui/RichTextEditor/RichTextEditor';
 import { useDebounceState } from 'hooks/redux/useDebounceState';
 import './DataDocTextCell.scss';
-import { matchKeyPress } from 'lib/utils/keyboard';
+import { matchKeyMap, KeyMap } from 'lib/utils/keyboard';
 
 interface IProps {
     cellId: number;
@@ -104,7 +104,7 @@ export const DataDocTextCell: React.FC<IProps> = React.memo(
         const handleKeyDown = useCallback(
             (event: React.KeyboardEvent, editorState: DraftJs.EditorState) => {
                 let handled = false;
-                if (matchKeyPress(event, 'up')) {
+                if (matchKeyMap(event, KeyMap.dataDoc.previousCell)) {
                     const firstBlockKey = editorState
                         .getCurrentContent()
                         .getBlockMap()
@@ -120,7 +120,7 @@ export const DataDocTextCell: React.FC<IProps> = React.memo(
                         onUpKeyPressed();
                         handled = true;
                     }
-                } else if (matchKeyPress(event, 'down')) {
+                } else if (matchKeyMap(event, KeyMap.dataDoc.nextCell)) {
                     const lastBlock = editorState
                         .getCurrentContent()
                         .getBlockMap()
@@ -138,13 +138,13 @@ export const DataDocTextCell: React.FC<IProps> = React.memo(
                         onDownKeyPressed();
                         handled = true;
                     }
-                } else if (matchKeyPress(event, 'Shift-Alt-D')) {
+                } else if (matchKeyMap(event, KeyMap.richText.deleteCell)) {
                     onDeleteKeyPressed?.();
                     handled = true;
-                } else if (matchKeyPress(event, 'Cmd-F')) {
+                } else if (matchKeyMap(event, KeyMap.dataDoc.openSearch)) {
                     searchContext.showSearchAndReplace();
                     handled = true;
-                } else if (matchKeyPress(event, 'Esc')) {
+                } else if (matchKeyMap(event, KeyMap.dataDoc.closeSearch)) {
                     searchContext.hideSearchAndReplace();
                     handled = true;
                 }

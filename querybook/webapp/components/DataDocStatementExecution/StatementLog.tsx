@@ -1,10 +1,9 @@
 import clsx from 'clsx';
 import { debounce } from 'lodash';
 import React from 'react';
-
 import { useSelector, useDispatch } from 'react-redux';
 
-import { matchKeyPress } from 'lib/utils/keyboard';
+import { matchKeyMap, KeyMap } from 'lib/utils/keyboard';
 import { IStatementLog } from 'redux/queryExecutions/types';
 import { fetchLog } from 'redux/queryExecutions/action';
 import { IStoreState, Dispatch } from 'redux/store/types';
@@ -117,7 +116,10 @@ export const StatementLog: React.FunctionComponent<IStatementLogProps> = ({
             // for keypress to work
             tabIndex={1}
             onKeyDown={(event) => {
-                if (matchKeyPress(event, 'ESC') && fullScreen) {
+                if (
+                    matchKeyMap(event, KeyMap.overallUI.closeModal) &&
+                    fullScreen
+                ) {
                     setFullScreen(false);
                     event.stopPropagation();
                 }

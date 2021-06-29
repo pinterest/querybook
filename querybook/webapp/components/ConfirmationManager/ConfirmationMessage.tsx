@@ -1,7 +1,7 @@
 import React, { useCallback, useRef, useEffect } from 'react';
 
 import { useEvent } from 'hooks/useEvent';
-import { matchKeyPress } from 'lib/utils/keyboard';
+import { matchKeyMap, KeyMap } from 'lib/utils/keyboard';
 import { Button } from 'ui/Button/Button';
 import { Modal } from 'ui/Modal/Modal';
 import './ConfirmationMessage.scss';
@@ -51,7 +51,7 @@ export const ConfirmationMessage: React.FunctionComponent<IConfirmationMessagePr
 
     const onEnterPress = useCallback(
         (evt: KeyboardEvent) => {
-            if (matchKeyPress(evt, 'Enter')) {
+            if (matchKeyMap(evt, KeyMap.overallUI.confirmModal)) {
                 onCloseButtonClick(true)();
             }
         },

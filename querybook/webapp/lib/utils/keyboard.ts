@@ -46,3 +46,12 @@ export function matchKeyPress(
     }
     return false;
 }
+
+export function matchKeyMap(
+    event: AllKeyboardEvent | React.KeyboardEvent,
+    keyMap: { key: string; name: string }
+) {
+    return matchKeyPress(event, keyMap.key);
+}
+
+export { default as KeyMap } from 'const/keyMap';

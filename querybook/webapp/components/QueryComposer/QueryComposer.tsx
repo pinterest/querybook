@@ -8,6 +8,7 @@ import React, {
 import Resizable from 're-resizable';
 import { useSelector, useDispatch } from 'react-redux';
 
+import KeyMap from 'const/keyMap';
 import { ISearchOptions, ISearchResult } from 'const/searchAndReplace';
 import { useDebounceState } from 'hooks/redux/useDebounceState';
 import { getQueryEngineId, sleep, enableResizable } from 'lib/utils';
@@ -257,7 +258,7 @@ export const QueryComposer: React.FC = () => {
 
     const keyMap = useMemo(
         () => ({
-            'Shift-Enter': clickOnRunButton,
+            [KeyMap.queryEditor.runQuery.key]: clickOnRunButton,
         }),
         [clickOnRunButton]
     );

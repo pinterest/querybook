@@ -1,5 +1,6 @@
 import React from 'react';
 import { Route, RouteComponentProps } from 'react-router-dom';
+import KeyMap from 'const/keyMap';
 import { navigateWithinEnv } from 'lib/utils/query-string';
 import { matchKeyPress } from 'lib/utils/keyboard';
 import { useEvent } from 'hooks/useEvent';
@@ -14,7 +15,7 @@ const CommandKModalInner: React.FunctionComponent<RouteComponentProps> = ({
     const onKeyDown = React.useCallback((evt) => {
         const isAtSearchPage = history.location.pathname.endsWith('/search/');
         if (!isAtSearchPage) {
-            if (matchKeyPress(evt, 'Cmd-K')) {
+            if (matchKeyPress(evt, KeyMap.overallUI.openSearch.key)) {
                 navigateWithinEnv('/search/', { isModal: true });
                 evt.stopPropagation();
                 evt.preventDefault();

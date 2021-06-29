@@ -11,8 +11,8 @@ import { throttle } from 'lodash';
 import { useEvent } from 'hooks/useEvent';
 import { IconButton } from 'ui/Button/IconButton';
 import { DebouncedInput } from 'ui/DebouncedInput/DebouncedInput';
-import { Button, TextButton } from 'ui/Button/Button';
-import { matchKeyPress } from 'lib/utils/keyboard';
+import { TextButton } from 'ui/Button/Button';
+import { matchKeyPress, matchKeyMap, KeyMap } from 'lib/utils/keyboard';
 import { ISearchOptions } from 'const/searchAndReplace';
 import { SearchAndReplaceContext } from 'context/searchAndReplace';
 import { TextToggleButton } from 'ui/Button/TextToggleButton';
@@ -118,9 +118,9 @@ export const SearchAndReplaceBar = React.forwardRef<
                 let handled = true;
                 if (matchKeyPress(evt, 'Enter') && !evt.repeat) {
                     onEnterPressThrottled();
-                } else if (matchKeyPress(evt, 'Cmd-F')) {
+                } else if (matchKeyMap(evt, KeyMap.dataDoc.openSearch)) {
                     focusSearchInput();
-                } else if (matchKeyPress(evt, 'Esc')) {
+                } else if (matchKeyMap(evt, KeyMap.dataDoc.closeSearch)) {
                     handleHide();
                 } else {
                     handled = false;

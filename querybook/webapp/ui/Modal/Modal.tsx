@@ -1,6 +1,6 @@
 import React from 'react';
 
-import { matchKeyPress } from 'lib/utils/keyboard';
+import { matchKeyMap, KeyMap } from 'lib/utils/keyboard';
 import { useEvent } from 'hooks/useEvent';
 
 import { IModalProps } from './types';
@@ -19,7 +19,7 @@ export const Modal: React.FunctionComponent<IModalProps> = ({
 }) => {
     const onEscapeKeyDown = React.useCallback(
         (evt) => {
-            if (matchKeyPress(evt, 'ESC') && onHide) {
+            if (matchKeyMap(evt, KeyMap.overallUI.closeModal) && onHide) {
                 onHide();
             }
         },
