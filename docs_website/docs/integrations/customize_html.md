@@ -61,7 +61,7 @@ If the mode variable is not provided, then Querybook would show this custom cont
 
 ### Customize shortcuts
 
-You can view the list of shortcuts under `querybook/webapp/const/keyMap.ts`. If you want to customize it for users in your workspace, supply the `window.CUSTOM_KEY_MAP` variable. Here is an example that changes the run query shortcut from `shift-enter` to `cmd-enter`. Note that you can only override existing values which means adding a new key would be considered a noop.
+You can view the list of shortcuts under `querybook/webapp/const/keyMap.ts`. If you want to customize it for users in your workspace, supply the `window.CUSTOM_KEY_MAP` variable. Here is an example that changes the run query shortcut from `shift-enter` to `cmd-enter`.
 
 ```typescript
 window.CUSTOM_KEY_MAP = {
@@ -72,3 +72,5 @@ window.CUSTOM_KEY_MAP = {
     },
 };
 ```
+
+When adding a new key binding, follow the format of Codemirror as documented [here](https://codemirror.net/doc/manual.html#keymaps). Use `cmd` in place of `ctrl` whenever possible as it would work for both mac and windows. Note that you can only override existing values which means adding a new key would be considered a noop.
