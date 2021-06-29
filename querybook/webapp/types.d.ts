@@ -24,6 +24,10 @@ declare global {
         CUSTOM_COLUMN_STATS_ANALYZERS?: IColumnStatsAnalyzer[];
         CUSTOM_COLUMN_DETECTORS?: IColumnDetector[];
         CUSTOM_COLUMN_TRANSFORMERS?: IColumnTransformer[];
+        CUSTOM_KEY_MAP?: Record<
+            string,
+            Record<string, { key?: string; name?: string }>
+        >;
     }
 
     // Injected via Webpack

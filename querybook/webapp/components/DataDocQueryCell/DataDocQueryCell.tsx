@@ -6,6 +6,7 @@ import React from 'react';
 import { connect } from 'react-redux';
 import Resizable from 're-resizable';
 
+import KeyMap from 'const/keyMap';
 import CodeMirror from 'lib/codemirror';
 import {
     getSelectedQuery,
@@ -96,8 +97,8 @@ class DataDocQueryCellComponent extends React.PureComponent<IProps, IState> {
     private queryEditorRef = React.createRef<QueryEditor>();
     private runButtonRef = React.createRef<IQueryRunButtonHandles>();
     private keyMap = {
-        'Shift-Enter': this.clickOnRunButton,
-        'Shift-Alt-D': this.props.onDeleteKeyPressed,
+        [KeyMap.queryEditor.runQuery.key]: this.clickOnRunButton,
+        [KeyMap.queryEditor.deleteCell.key]: this.props.onDeleteKeyPressed,
     };
 
     public constructor(props) {
@@ -178,7 +179,7 @@ class DataDocQueryCellComponent extends React.PureComponent<IProps, IState> {
     }
 
     @bind
-    public onKeyDown(editor: CodeMirror.Editor, event) {
+    public onKeyDown(editor: CodeMirror.Editor, event: KeyboardEvent) {
         const keyUpCode = 38;
         const keyDownCode = 40;
 

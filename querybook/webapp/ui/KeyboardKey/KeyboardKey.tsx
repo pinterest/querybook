@@ -15,19 +15,29 @@ const StyledKeyboardKey = styled.span.attrs({
     text-transform: lowercase;
 `;
 
-const OSXToWindows = {
-    '⌘': 'ctrl',
-    '⌥': 'alt',
+const SpecialKeyToSymbol = {
+    OSX: {
+        cmd: '⌘',
+        alt: '⌥',
+        enter: '⏎',
+    },
+    Windows: {
+        cmd: 'Ctrl',
+        enter: '⏎',
+    },
 };
 
 export const KeyboardKey: React.FC<{
     className?: string;
     value: string;
 }> = ({ value, className }) => {
-    const mappedKey = useMemo(
-        () => (!isOSX && value in OSXToWindows ? OSXToWindows[value] : value),
-        [value]
-    );
+    const mappedKey = useMemo(() => {
+        const lowerKey = value.toLowerCase();
+        const specialKeyMap = isOSX
+            ? SpecialKeyToSymbol.OSX
+            : SpecialKeyToSymbol.Windows;
+        return lowerKey in specialKeyMap ? specialKeyMap[lowerKey] : lowerKey;
+    }, [value]);
     return (
         <StyledKeyboardKey className={className}>{mappedKey}</StyledKeyboardKey>
     );

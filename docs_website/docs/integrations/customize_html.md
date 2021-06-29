@@ -58,3 +58,17 @@ interface Window {
 The renderer should be treated as the entry point into your customized react view. You can add any default HTML elements you want or import UI elements from Querybook.
 
 If the mode variable is not provided, then Querybook would show this custom content in the middle section (currently empty) of the default landing page. However, if you specify the mode to be "replace", then the entire landing page will be replaced with your custom content.
+
+### Customize shortcuts
+
+You can view the list of shortcuts under `querybook/webapp/const/keyMap.ts`. If you want to customize it for users in your workspace, supply the `window.CUSTOM_KEY_MAP` variable. Here is an example that changes the run query shortcut from `shift-enter` to `cmd-enter`. Note that you can only override existing values which means adding a new key would be considered a noop.
+
+```typescript
+window.CUSTOM_KEY_MAP = {
+    queryEditor: {
+        runQuery: {
+            key: 'Cmd-Enter',
+        },
+    },
+};
+```

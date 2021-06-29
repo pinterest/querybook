@@ -1,24 +1,20 @@
 import * as React from 'react';
-
+import { startCase } from 'lodash';
+import KeyMap from 'const/keyMap';
 import { KeyboardKey } from 'ui/KeyboardKey/KeyboardKey';
 import { Title } from 'ui/Title/Title';
-
 import './Shortcut.scss';
-
-const shortcuts: Array<{
-    title: string;
-    keys: Array<[string[], string]>;
-}> = require('config/shortcuts.yaml').shortcuts;
 
 export const Shortcut: React.FunctionComponent = () => (
     <div className="Shortcut">
-        {shortcuts.map((box) => (
-            <div className="Shortcut-box" key={box.title}>
-                <Title subtitle size={3}>
-                    {box.title}
+        {Object.entries(KeyMap).map(([sectionTitle, sectionKeys]) => (
+            <div className="Shortcut-box" key={sectionTitle}>
+                <Title subtitle size={4}>
+                    {startCase(sectionTitle)}
                 </Title>
-                {box.keys.map((shortcut, idx) => {
-                    const [keys, text] = shortcut;
+                {Object.values(sectionKeys).map((shortcut, idx) => {
+                    const { key, name: keyComboName } = shortcut;
+                    const keys = (key ?? '').split('-');
                     return (
                         <div className="Shortcut-item" key={idx}>
                             <div className="Shortcut-keys">
@@ -36,7 +32,7 @@ export const Shortcut: React.FunctionComponent = () => (
                                     );
                                 })}
                             </div>
-                            <div className="Shortcut-text">{text}</div>
+                            <div className="Shortcut-text">{keyComboName}</div>
                         </div>
                     );
                 })}

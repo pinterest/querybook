@@ -6,6 +6,7 @@ import React from 'react';
 import { Controlled as ReactCodeMirror } from 'react-codemirror2';
 import memoizeOne from 'memoize-one';
 
+import KeyMap from 'const/keyMap';
 import CodeMirror, { CodeMirrorKeyMap } from 'lib/codemirror';
 
 import {
@@ -101,7 +102,7 @@ export interface IQueryEditorProps extends IStyledQueryEditorProps {
     autoCompleteType?: AutoCompleteType;
 
     onChange?: (value: string) => any;
-    onKeyDown?: (editor: CodeMirror.Editor, event: React.SyntheticEvent) => any;
+    onKeyDown?: (editor: CodeMirror.Editor, event: KeyboardEvent) => any;
     onFocus?: (editor: CodeMirror.Editor, event: React.SyntheticEvent) => any;
     onBlur?: (editor: CodeMirror.Editor, event: React.SyntheticEvent) => any;
     onSelection?: (str: string, selection: IRange) => any;
@@ -207,11 +208,11 @@ export class QueryEditor extends React.PureComponent<
             lineNumbers: true,
             gutters: ['CodeMirror-lint-markers'],
             extraKeys: {
-                'Ctrl-Space': 'autocomplete',
-                'Shift-Tab': 'indentLess',
-                'Cmd-/': 'toggleComment',
-                'Cmd-P': this.onOpenTableModal,
-                'Shift-Alt-F': this.formatQuery,
+                [KeyMap.queryEditor.autocomplete.key]: 'autocomplete',
+                [KeyMap.queryEditor.indentLess.key]: 'indentLess',
+                [KeyMap.queryEditor.toggleComment.key]: 'toggleComment',
+                [KeyMap.queryEditor.openTable.key]: this.onOpenTableModal,
+                [KeyMap.queryEditor.formatQuery.key]: this.formatQuery,
                 ...keyMap,
             },
             indentUnit: 4,
@@ -420,7 +421,7 @@ export class QueryEditor extends React.PureComponent<
     }
 
     @bind
-    public onKeyDown(editor: CodeMirror.Editor, event) {
+    public onKeyDown(editor: CodeMirror.Editor, event: KeyboardEvent) {
         if (this.props.onKeyDown) {
             this.props.onKeyDown(editor, event);
         }

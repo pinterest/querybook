@@ -16,7 +16,7 @@ import { EntitySidebar } from './EntitySidebar';
 import './EnvironmentAppSidebar.scss';
 import { EnvironmentDropdownButton } from './EnvironmentDropdownButton';
 import { useEvent } from 'hooks/useEvent';
-import { matchKeyPress } from 'lib/utils/keyboard';
+import { matchKeyMap, KeyMap } from 'lib/utils/keyboard';
 
 const SIDEBAR_WIDTH = 320;
 
@@ -51,8 +51,7 @@ export const EnvironmentAppSidebar: React.FunctionComponent = () => {
 
     const handleCollapseKeyDown = React.useCallback(
         (evt) => {
-            if (matchKeyPress(evt, 'Cmd-B')) {
-                // command + B
+            if (matchKeyMap(evt, KeyMap.overallUI.toggleSidebar)) {
                 setCollapsed(!collapsed);
                 evt.stopPropagation();
                 evt.preventDefault();
