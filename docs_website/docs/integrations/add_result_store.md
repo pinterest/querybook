@@ -18,3 +18,13 @@ If you cannot include this result store as part of the open source project, you 
 1. Locate the plugin root directory for your customized Querybook, and find the folder called result_store_plugin.
 2. Add your result store code similiar to what's above, which means making sure it inherits from base_store.py.
 3. Add the new reuslt store along with its representative name in the variable ALL_PLUGIN_RESULT_STORES under result_store_plugin/\_\_init\_\_.py
+
+## Necessary Field for Configuration
+
+Following environment variables are required for configuration
+
+### S3
+```yaml
+AWS_ACCESS_KEY: '---Redacted---' # Requred for boto3
+AWS_SECRET_ACCESS_KEY: '---Redacted---'
+```
