@@ -7,7 +7,7 @@ import { Modal } from 'ui/Modal/Modal';
 import { QueryView } from 'components/QueryView/QueryView';
 import { useBrowserTitle } from 'hooks/useBrowserTitle';
 
-export const QueryExecutionRoute: React.FunctionComponent<RouteComponentProps> = ({
+const QueryExecutionRoute: React.FunctionComponent<RouteComponentProps> = ({
     location,
     match,
 }) => {
@@ -24,3 +24,5 @@ export const QueryExecutionRoute: React.FunctionComponent<RouteComponentProps> =
         contentDOM
     );
 };
+
+export default QueryExecutionRoute;

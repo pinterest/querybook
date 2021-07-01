@@ -6,7 +6,7 @@ import { useModalRoute } from 'hooks/useModalRoute';
 import { Modal } from 'ui/Modal/Modal';
 import { QuerySnippetWrapper } from './QuerySnippetWrapper';
 
-export const QuerySnippetRoute: React.FunctionComponent<RouteComponentProps> = ({
+const QuerySnippetRoute: React.FunctionComponent<RouteComponentProps> = ({
     location,
     match,
 }) => {
@@ -21,3 +21,5 @@ export const QuerySnippetRoute: React.FunctionComponent<RouteComponentProps> = (
         contentDOM
     );
 };
+
+export default QuerySnippetRoute;

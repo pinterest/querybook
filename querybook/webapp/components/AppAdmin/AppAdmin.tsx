@@ -31,7 +31,7 @@ import './AppAdmin.scss';
 const ENTITY_SIDEBAR_WIDTH = 200;
 const NAV_SIDEBAR_WIDTH = 200;
 
-export const AppAdmin: React.FunctionComponent = () => {
+const AppAdmin: React.FunctionComponent = () => {
     const { entity: selectedEntity }: { entity: AdminEntity } = useParams();
 
     const { data: environments, forceFetch: loadEnvironments } = useDataFetch<
@@ -280,3 +280,5 @@ const AdminTaskStatus: React.FC = () => (
         <TaskStatus />
     </div>
 );
+
+export default AppAdmin;

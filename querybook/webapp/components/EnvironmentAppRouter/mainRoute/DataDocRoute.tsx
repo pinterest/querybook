@@ -6,10 +6,12 @@ import { Landing } from 'components/Landing/Landing';
 
 import { FourOhFour } from 'ui/ErrorPage/FourOhFour';
 
-export const AppDataDoc: React.FunctionComponent<RouteComponentProps> = () => (
+const DataDocRoute: React.FunctionComponent<RouteComponentProps> = () => (
     <Switch>
         <Route path="/:env/datadoc/:docId/" component={DataDocWrapper} />
         <Route path="/:env/datadoc/" exact={true} component={Landing} />
         <Route component={FourOhFour} />
     </Switch>
 );
+
+export default DataDocRoute;

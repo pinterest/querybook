@@ -6,7 +6,7 @@ import { DataTableView } from 'components/DataTableView/DataTableView';
 import { Modal } from 'ui/Modal/Modal';
 import { useModalRoute } from 'hooks/useModalRoute';
 
-export const DataTableRoute: React.FunctionComponent<RouteComponentProps> = ({
+const DataTableRoute: React.FunctionComponent<RouteComponentProps> = ({
     match,
     location,
 }) => {
@@ -26,3 +26,5 @@ export const DataTableRoute: React.FunctionComponent<RouteComponentProps> = ({
         contentDOM
     );
 };
+
+export default DataTableRoute;

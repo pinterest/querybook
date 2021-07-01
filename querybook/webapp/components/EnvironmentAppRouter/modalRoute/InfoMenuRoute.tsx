@@ -12,7 +12,7 @@ import { Tours } from 'components/Info/Tours';
 
 import { Modal } from 'ui/Modal/Modal';
 
-export const InfoMenuRoute: React.FunctionComponent<RouteComponentProps> = ({
+const InfoMenuRoute: React.FunctionComponent<RouteComponentProps> = ({
     location,
 }) => {
     useBrowserTitle('Info');
@@ -47,3 +47,5 @@ export const InfoMenuRoute: React.FunctionComponent<RouteComponentProps> = ({
         <div className="InfoMenuRoute m24">{getContentDOM()}</div>
     );
 };
+
+export default InfoMenuRoute;
