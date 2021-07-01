@@ -217,6 +217,6 @@ function mapDispatchToProps(dispatch: Dispatch) {
     };
 }
 
-export const EnvironmentsRouter = withRouter(
+export default withRouter(
     connect(mapStateToProps, mapDispatchToProps)(EnvironmentsRouterComponent)
 );

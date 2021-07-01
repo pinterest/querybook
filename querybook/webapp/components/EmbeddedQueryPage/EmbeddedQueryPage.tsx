@@ -1,7 +1,7 @@
 import React from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 
-import { QueryComposer } from 'components/QueryComposer/QueryComposer';
+import QueryComposer from 'components/QueryComposer/QueryComposer';
 import { IAdhocQuery } from 'const/adhocQuery';
 import { IStoreState, Dispatch } from 'redux/store/types';
 import { receiveAdhocQuery } from 'redux/adhocQuery/action';
@@ -9,7 +9,7 @@ import { FullHeight } from 'ui/FullHeight/FullHeight';
 import { Button } from 'ui/Button/Button';
 import './EmbeddedQueryPage.scss';
 
-export const EmbeddedQueryPage: React.FunctionComponent = () => {
+const EmbeddedQueryPage: React.FunctionComponent = () => {
     const environmentId = useSelector(
         (state: IStoreState) => state.environment.currentEnvironmentId
     );
@@ -71,3 +71,5 @@ export const EmbeddedQueryPage: React.FunctionComponent = () => {
         </FullHeight>
     );
 };
+
+export default EmbeddedQueryPage;

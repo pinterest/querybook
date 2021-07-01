@@ -8,7 +8,7 @@ import { useBrowserTitle } from 'hooks/useBrowserTitle';
 import { useModalRoute } from 'hooks/useModalRoute';
 import { UserSettingsMenu } from 'components/UserSettingsMenu/UserSettingsMenu';
 
-export const UserSettingsMenuRoute: React.FunctionComponent<RouteComponentProps> = ({
+const UserSettingsMenuRoute: React.FunctionComponent<RouteComponentProps> = ({
     location,
 }) => {
     useBrowserTitle('User Settings');
@@ -27,3 +27,5 @@ export const UserSettingsMenuRoute: React.FunctionComponent<RouteComponentProps>
         </Modal>
     );
 };
+
+export default UserSettingsMenuRoute;

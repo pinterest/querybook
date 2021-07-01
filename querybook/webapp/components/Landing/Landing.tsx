@@ -131,7 +131,7 @@ const DefaultLanding: React.FC = ({ children }) => {
     );
 };
 
-export const Landing: React.FC = () => {
+const Landing: React.FC = () => {
     useBrowserTitle();
 
     const customLandingConfig = window.CUSTOM_LANDING_PAGE;
@@ -141,3 +141,5 @@ export const Landing: React.FC = () => {
 
     return <DefaultLanding>{customLandingConfig?.renderer()}</DefaultLanding>;
 };
+
+export default Landing;

@@ -10,7 +10,7 @@ import { useModalRoute } from 'hooks/useModalRoute';
 import { SearchOverview } from 'components/Search/SearchOverview';
 import { Modal } from 'ui/Modal/Modal';
 
-export const SearchRoute: React.FunctionComponent<RouteComponentProps> = ({
+const SearchRoute: React.FunctionComponent<RouteComponentProps> = ({
     location,
 }) => {
     useBrowserTitle('Search');
@@ -42,3 +42,5 @@ export const SearchRoute: React.FunctionComponent<RouteComponentProps> = ({
         contentDOM
     );
 };
+
+export default SearchRoute;

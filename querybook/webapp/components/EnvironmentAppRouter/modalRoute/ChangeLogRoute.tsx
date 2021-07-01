@@ -13,7 +13,7 @@ import { ChangeLog } from 'components/ChangeLog/ChangeLog';
 
 import { Modal } from 'ui/Modal/Modal';
 
-export const ChangeLogRoute: React.FunctionComponent<RouteComponentProps> = ({
+const ChangeLogRoute: React.FunctionComponent<RouteComponentProps> = ({
     location,
 }) => {
     useBrowserTitle('Change Log');
@@ -37,3 +37,5 @@ export const ChangeLogRoute: React.FunctionComponent<RouteComponentProps> = ({
         </div>
     );
 };
+
+export default ChangeLogRoute;

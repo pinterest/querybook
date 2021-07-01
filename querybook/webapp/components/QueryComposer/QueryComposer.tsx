@@ -188,7 +188,7 @@ function useQueryEditorHelpers() {
     };
 }
 
-export const QueryComposer: React.FC = () => {
+const QueryComposer: React.FC = () => {
     useBrowserTitle('Adhoc Query');
 
     const environmentId = useSelector(
@@ -370,3 +370,5 @@ export const QueryComposer: React.FC = () => {
         </FullHeight>
     );
 };
+
+export default QueryComposer;

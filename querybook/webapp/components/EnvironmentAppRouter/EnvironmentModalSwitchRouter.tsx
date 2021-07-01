@@ -4,20 +4,35 @@ import { Switch, Route, useHistory, useLocation } from 'react-router-dom';
 import { usePrevious } from 'hooks/usePrevious';
 import { useModalRoute } from 'hooks/useModalRoute';
 
-import { AppDataDoc } from 'components/AppDataDoc/AppDataDoc';
-import { BoardWrapper } from 'components/Board/BoardWrapper';
-import { EmbeddedQueryPage } from 'components/EmbeddedQueryPage/EmbeddedQueryPage';
-import { Landing } from 'components/Landing/Landing';
-import { QueryComposer } from 'components/QueryComposer/QueryComposer';
-import { QuerySnippetRoute } from 'components/QuerySnippetRoute/QuerySnippetRoute';
 import { FourOhFour } from 'ui/ErrorPage/FourOhFour';
+import { Loading } from 'ui/Loading/Loading';
+import { Modal } from 'ui/Modal/Modal';
 
-import { ChangeLogRoute } from './ChangeLogRoute';
-import { DataTableRoute } from './DataTableRoute';
-import { InfoMenuRoute } from './InfoMenuRoute';
-import { QueryExecutionRoute } from './QueryExecutionRoute';
-import { SearchRoute } from './SearchRoute';
-import { UserSettingsMenuRoute } from './UserSettingsMenuRoute';
+// Main Routes
+const Landing = React.lazy(() => import('components/Landing/Landing'));
+const DataDocRoute = React.lazy(() => import('./mainRoute/DataDocRoute'));
+const BoardRoute = React.lazy(() => import('./mainRoute/BoardRoute'));
+const EmbeddedQueryPage = React.lazy(() =>
+    import('components/EmbeddedQueryPage/EmbeddedQueryPage')
+);
+const QueryComposer = React.lazy(() =>
+    import('components/QueryComposer/QueryComposer')
+);
+
+// Modal Routes
+const QuerySnippetRoute = React.lazy(() =>
+    import('components/QuerySnippetRoute/QuerySnippetRoute')
+);
+const ChangeLogRoute = React.lazy(() => import('./modalRoute/ChangeLogRoute'));
+const DataTableRoute = React.lazy(() => import('./modalRoute/DataTableRoute'));
+const InfoMenuRoute = React.lazy(() => import('./modalRoute/InfoMenuRoute'));
+const QueryExecutionRoute = React.lazy(() =>
+    import('./modalRoute/QueryExecutionRoute')
+);
+const SearchRoute = React.lazy(() => import('./modalRoute/SearchRoute'));
+const UserSettingsMenuRoute = React.lazy(() =>
+    import('./modalRoute/UserSettingsMenuRoute')
+);
 
 export const EnvironmentModalSwitchRouter: React.FC = () => {
     const location = useLocation();
@@ -75,32 +90,46 @@ export const EnvironmentModalSwitchRouter: React.FC = () => {
         />,
     ];
 
-    const modalSwitch = needsToShowModal && <Switch>{modalRoutes}</Switch>;
+    const modalSwitch = needsToShowModal && (
+        <React.Suspense
+            fallback={
+                <Modal onHide={() => null}>
+                    <Loading />
+                </Modal>
+            }
+        >
+            <Switch>{modalRoutes}</Switch>
+        </React.Suspense>
+    );
     return (
         <>
-            <Switch
-                location={
-                    // Show lastNotModalLocation when a modal route is presented
-                    // In case we refresh the page (so lastNotModalLocation is null)
-                    // We show the root which is the 404 Page. Null is not passed because
-                    // Switch would use the current browser location instead
-                    needsToShowModal
-                        ? lastNotModalLocation ?? { pathname: '/' }
-                        : location
-                }
-            >
-                <Route path="/:env/" exact component={Landing} />
-                <Route path="/:env/datadoc/" component={AppDataDoc} />
-                <Route path="/:env/adhoc/" render={() => <QueryComposer />} />
-                <Route
-                    path="/:env/_/embedded_editor/"
-                    render={() => <EmbeddedQueryPage />}
-                />
-                <Route path="/:env/list/:boardId/" component={BoardWrapper} />
-                {modalRoutes}
-                <Route component={FourOhFour} />
-            </Switch>
-
+            <React.Suspense fallback={<Loading />}>
+                <Switch
+                    location={
+                        // Show lastNotModalLocation when a modal route is presented
+                        // In case we refresh the page (so lastNotModalLocation is null)
+                        // We show the root which is the 404 Page. Null is not passed because
+                        // Switch would use the current browser location instead
+                        needsToShowModal
+                            ? lastNotModalLocation ?? { pathname: '/' }
+                            : location
+                    }
+                >
+                    <Route path="/:env/" exact component={Landing} />
+                    <Route path="/:env/datadoc/" component={DataDocRoute} />
+                    <Route
+                        path="/:env/adhoc/"
+                        render={() => <QueryComposer />}
+                    />
+                    <Route
+                        path="/:env/_/embedded_editor/"
+                        render={() => <EmbeddedQueryPage />}
+                    />
+                    <Route path="/:env/list/:boardId/" component={BoardRoute} />
+                    {modalRoutes}
+                    <Route component={FourOhFour} />
+                </Switch>
+            </React.Suspense>
             {modalSwitch}
         </>
     );

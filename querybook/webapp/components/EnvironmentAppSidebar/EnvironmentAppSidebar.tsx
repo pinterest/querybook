@@ -13,10 +13,10 @@ import { Icon } from 'ui/Icon/Icon';
 import { Entity } from './types';
 import { EnvironmentTopbar } from './EnvironmentTopbar';
 import { EntitySidebar } from './EntitySidebar';
-import './EnvironmentAppSidebar.scss';
 import { EnvironmentDropdownButton } from './EnvironmentDropdownButton';
 import { useEvent } from 'hooks/useEvent';
 import { matchKeyMap, KeyMap } from 'lib/utils/keyboard';
+import './EnvironmentAppSidebar.scss';
 
 const SIDEBAR_WIDTH = 320;
 
