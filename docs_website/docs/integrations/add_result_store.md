@@ -4,6 +4,19 @@ title: Result Store
 sidebar_label: Result Store
 ---
 
+## S3
+
+### Necessary Field for Configuration
+
+Following environment variables are required for configuration.
+If you use a shared credentials file in a default location of `~/.aws/credentials`, a default profile will be used.
+
+```yaml
+# Requred for boto3
+AWS_ACCESS_KEY: '---Redacted---'
+AWS_SECRET_ACCESS_KEY: '---Redacted---'
+```
+
 ## Adding a new result store for main repo
 
 Add the new store code under lib/result_store/stores/. Make sure both the reader and uploader inherit from base_store.py that's in the same folder.
