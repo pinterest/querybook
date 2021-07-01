@@ -4,13 +4,12 @@ import { Switch, Route, useHistory, useLocation } from 'react-router-dom';
 import { usePrevious } from 'hooks/usePrevious';
 import { useModalRoute } from 'hooks/useModalRoute';
 
-import { Landing } from 'components/Landing/Landing';
-
 import { FourOhFour } from 'ui/ErrorPage/FourOhFour';
 import { Loading } from 'ui/Loading/Loading';
 import { Modal } from 'ui/Modal/Modal';
 
 // Main Routes
+const Landing = React.lazy(() => import('components/Landing/Landing'));
 const DataDocRoute = React.lazy(() => import('./mainRoute/DataDocRoute'));
 const BoardRoute = React.lazy(() => import('./mainRoute/BoardRoute'));
 const EmbeddedQueryPage = React.lazy(() =>

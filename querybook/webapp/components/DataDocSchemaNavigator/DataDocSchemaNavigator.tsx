@@ -5,9 +5,9 @@ import { getCurrentEnv } from 'lib/utils/query-string';
 
 import { DataTableNavigator } from 'components/DataTableNavigator/DataTableNavigator';
 import { FullHeight } from 'ui/FullHeight/FullHeight';
-import './DataDocSchemaNavigator.scss';
 import { DataTableViewMini } from 'components/DataTableViewMini/DataTableViewMini';
 import { enableResizable } from 'lib/utils';
+import './DataDocSchemaNavigator.scss';
 
 export const DataDocSchemaNavigator: React.FunctionComponent = () => {
     const [tableId, setTableId] = React.useState<number>(null);
