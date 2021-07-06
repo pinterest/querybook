@@ -10,6 +10,7 @@ from lib.metastore import get_metastore_loader
 from logic import (
     query_execution as qe_logic,
     metastore as m_logic,
+    lineage as lineage_logic,
 )
 
 
@@ -70,7 +71,7 @@ def create_lineage_from_query(
         is_adhoc=True,
         session=session,
     )
-    m_logic.create_table_lineage_from_metadata(
+    lineage_logic.create_table_lineage_from_metadata(
         data_job_metadata.id, query_execution.engine.language, session=session
     )
 
@@ -146,13 +147,13 @@ def log_table_per_statement(
         )
 
         if query_table:  # Sanity check
-            m_logic.delete_old_able_query_execution_log(
+            lineage_logic.delete_old_able_query_execution_log(
                 cell_id=cell_id,
                 query_execution_id=query_execution_id,
                 commit=False,
                 session=session,
             )
-            m_logic.create_table_query_execution_log(
+            lineage_logic.create_table_query_execution_log(
                 table_id=query_table.id,
                 cell_id=cell_id,
                 query_execution_id=query_execution_id,

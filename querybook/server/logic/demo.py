@@ -6,6 +6,7 @@ from logic import (
     user as user_logic,
 )
 
+from logic.metastore import lineage as lineage_logic
 
 @with_session
 def create_demo_table_stats(table_id, uid, session=None):
@@ -74,7 +75,7 @@ FROM
         is_adhoc=True,
         session=session,
     )
-    m_logic.create_table_lineage_from_metadata(
+    lineage_logic.create_table_lineage_from_metadata(
         data_job_metadata.id, "sqlite", session=session
     )
 
