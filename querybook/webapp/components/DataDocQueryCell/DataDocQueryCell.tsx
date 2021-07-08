@@ -620,7 +620,7 @@ class DataDocQueryCellComponent extends React.PureComponent<IProps, IState> {
             >
                 <div className="right-align ph4 mv8">{queryEnginePicker}</div>
 
-                <ThemedCodeHighlight value={query} />
+                <ThemedCodeHighlight height="" value={query} />
                 {this.renderExecutionsDOM()}
             </ErrorQueryCell>
         );

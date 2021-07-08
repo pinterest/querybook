@@ -10,28 +10,31 @@ export interface ICodeHighlightProps {
     className?: string;
     theme?: string;
     prefix?: string;
-    inline?: boolean;
     language?: string;
+    height?: string;
 
     value: string;
 }
 
-const CodeHighlightContainer = styled.div.attrs({
+const CodeHighlightContainer = styled.div.attrs<{
+    height: string;
+}>({
     className: 'CodeHighlight',
 })`
-    white-space: pre-wrap;
-    height: auto;
-    padding: 8px 16px;
-    overflow-y: auto;
-    box-shadow: none !important;
+    &.CodeHighlight {
+        white-space: pre-wrap;
+        height: ${(props) => props.height};
+        padding: 8px 16px;
+        overflow-y: auto;
+        box-shadow: none;
+    }
 `;
 
 export const CodeHighlight: React.FC<ICodeHighlightProps> = ({
     className = '',
     theme = 'default',
     prefix = 'cm-',
-    inline = false,
-
+    height = 'auto',
     language = 'text/x-hive',
     value,
 }) => {
@@ -82,13 +85,10 @@ export const CodeHighlight: React.FC<ICodeHighlightProps> = ({
         [themeClassName]: true,
         CodeMirror: true,
         [className]: Boolean(className),
-        inline,
     });
 
-    const wrapper = inline ? (
-        <code className={wrapperClassName}>{codeElements}</code>
-    ) : (
-        <CodeHighlightContainer className={wrapperClassName}>
+    const wrapper = (
+        <CodeHighlightContainer height={height} className={wrapperClassName}>
             {codeElements}
         </CodeHighlightContainer>
     );
