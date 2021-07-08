@@ -47,22 +47,23 @@ Here is an minimal example of a story. Please refer to the [storybook documentat
 
 ```ts
 import React from 'react';
+// eslint-disable-next-line import/no-extraneous-dependencies
 import centered from '@storybook/addon-centered/react';
 
 import { Foo } from './Foo';
 
 export default {
     // Title should be in the form of [Section]/[Name]
-    title: 'Stateless/Content',
+    title: 'Stateless/Foo',
     // Include the centered docorator to center the component
     decorators: [centered],
 };
 
-export const _Foo = (args) => <Foo {...args}>;
+export const _Foo = (args) => <Foo {...args} />;
 // Provide default prop values for control
 _Foo.args = {
     prop1: 'foo',
-    prop2: 'bar'
+    prop2: 'bar',
 };
 // Use argTypes to customize the control
 _Foo.argTypes = {
