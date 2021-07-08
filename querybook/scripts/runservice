@@ -38,7 +38,9 @@ case "$SERVICE_NAME" in
 "webpack")
     COMMAND="npx webpack"
     ;;
-
+"flower")
+    COMMAND="celery -A tasks.all_tasks flower"
+    ;;
 esac
 
 if [ -z "$COMMAND" ]; then
