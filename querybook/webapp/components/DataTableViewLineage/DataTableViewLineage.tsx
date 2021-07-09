@@ -79,117 +79,118 @@ function getFullLineage(
     }
 }
 
-export const DataTableViewLineage: React.FunctionComponent<IDataTableViewLineageProps> = ({
-    dataLineageLoader,
-    dataLineages,
-    table,
-}) => {
-    const [selectedTableId, setSelectedTableId] = React.useState<number>(null);
-    const { nodes, edges } = React.useMemo(() => {
-        const { id: tableId, name: tableName } = table;
+export const DataTableViewLineage: React.FunctionComponent<IDataTableViewLineageProps> =
+    ({ dataLineageLoader, dataLineages, table }) => {
+        const [selectedTableId, setSelectedTableId] =
+            React.useState<number>(null);
+        const { nodes, edges } = React.useMemo(() => {
+            const { id: tableId, name: tableName } = table;
 
-        const newNodes = [];
-        const tableIdToNodeIndex = {};
-        const newEdges = [];
-        const seen = new Set<number>();
+            const newNodes = [];
+            const tableIdToNodeIndex = {};
+            const newEdges = [];
+            const seen = new Set<number>();
 
-        for (const lineages of Object.values(dataLineages)) {
-            seen.delete(tableId);
-            getFullLineage(
-                lineages, // parentLineage, childLineage
-                tableId,
-                tableName,
-                newNodes,
-                newEdges,
-                tableIdToNodeIndex,
-                seen,
-                0
-            );
-        }
-
-        return {
-            nodes: newNodes,
-            edges: newEdges,
-        };
-    }, [dataLineages, table]);
-    const focusNode = React.useMemo(
-        () =>
-            selectedTableId != null
-                ? nodes.find((node) => node.id === selectedTableId)
-                : null,
-        [selectedTableId]
-    );
-
-    React.useEffect(() => {
-        dataLineageLoader(table.id);
-        setSelectedTableId(table.id);
-    }, [table]);
-
-    const miniTableView = selectedTableId != null && (
-        <DataTableViewMini
-            onHide={() => setSelectedTableId(null)}
-            tableId={selectedTableId}
-            onViewDetails={(tableId) =>
-                navigateWithinEnv(
-                    `/table/${tableId}/`,
-                    {
-                        isModal: true,
-                    },
-                    true
-                )
+            for (const lineages of Object.values(dataLineages)) {
+                seen.delete(tableId);
+                getFullLineage(
+                    lineages, // parentLineage, childLineage
+                    tableId,
+                    tableName,
+                    newNodes,
+                    newEdges,
+                    tableIdToNodeIndex,
+                    seen,
+                    0
+                );
             }
-        />
-    );
 
-    return (
-        <div className="DataTableViewLineage">
-            <DAG
-                nodes={nodes}
-                edges={edges}
-                focusNode={focusNode}
-                onNodeClicked={(_node, d3) => {
-                    const node = (_node as unknown) as IDAGNode;
-                    const newTableId = Number(node.id);
-                    const prevSelectedNode =
-                        selectedTableId && d3.select(`#node${selectedTableId}`);
-                    const currentSelectedNode = d3.select(`#node${node.id}`);
-                    if (prevSelectedNode) {
-                        // undo focus
-                        prevSelectedNode
-                            .select('rect')
-                            .style('fill', 'var(--select-bg-color)');
-                    }
+            return {
+                nodes: newNodes,
+                edges: newEdges,
+            };
+        }, [dataLineages, table]);
+        const focusNode = React.useMemo(
+            () =>
+                selectedTableId != null
+                    ? nodes.find((node) => node.id === selectedTableId)
+                    : null,
+            [selectedTableId]
+        );
 
-                    if (newTableId !== selectedTableId) {
-                        currentSelectedNode
-                            .select('rect')
-                            .style('fill', 'var(--hover-bg-color)');
+        React.useEffect(() => {
+            dataLineageLoader(table.id);
+            setSelectedTableId(table.id);
+        }, [table]);
 
-                        dataLineageLoader(newTableId);
-                        setSelectedTableId(newTableId);
-                    } else {
-                        setSelectedTableId(null);
-                    }
-                }}
-                customNodeRender={(node) => {
-                    const selected = node.id === selectedTableId;
-                    const nodeColor = selected
-                        ? 'var(--hover-bg-color)'
-                        : 'var(--select-bg-color)';
-                    const borderColor = 'var(--icon-color)';
-                    return {
-                        rx: 5,
-                        ry: 5,
-                        fillColor: nodeColor,
-                        borderColor,
-                        style: `
+        const miniTableView = selectedTableId != null && (
+            <DataTableViewMini
+                onHide={() => setSelectedTableId(null)}
+                tableId={selectedTableId}
+                onViewDetails={(tableId) =>
+                    navigateWithinEnv(
+                        `/table/${tableId}/`,
+                        {
+                            isModal: true,
+                        },
+                        true
+                    )
+                }
+            />
+        );
+
+        return (
+            <div className="DataTableViewLineage">
+                <DAG
+                    nodes={nodes}
+                    edges={edges}
+                    focusNode={focusNode}
+                    onNodeClicked={(_node, d3) => {
+                        const node = _node as unknown as IDAGNode;
+                        const newTableId = Number(node.id);
+                        const prevSelectedNode =
+                            selectedTableId &&
+                            d3.select(`#node${selectedTableId}`);
+                        const currentSelectedNode = d3.select(
+                            `#node${node.id}`
+                        );
+                        if (prevSelectedNode) {
+                            // undo focus
+                            prevSelectedNode
+                                .select('rect')
+                                .style('fill', 'var(--select-bg-color)');
+                        }
+
+                        if (newTableId !== selectedTableId) {
+                            currentSelectedNode
+                                .select('rect')
+                                .style('fill', 'var(--hover-bg-color)');
+
+                            dataLineageLoader(newTableId);
+                            setSelectedTableId(newTableId);
+                        } else {
+                            setSelectedTableId(null);
+                        }
+                    }}
+                    customNodeRender={(node) => {
+                        const selected = node.id === selectedTableId;
+                        const nodeColor = selected
+                            ? 'var(--hover-bg-color)'
+                            : 'var(--select-bg-color)';
+                        const borderColor = 'var(--icon-color)';
+                        return {
+                            rx: 5,
+                            ry: 5,
+                            fillColor: nodeColor,
+                            borderColor,
+                            style: `
                             fill: ${nodeColor};
                             stroke: ${borderColor};`,
-                        class: 'generic-node-class',
-                    };
-                }}
-            />
-            {miniTableView}
-        </div>
-    );
-};
+                            class: 'generic-node-class',
+                        };
+                    }}
+                />
+                {miniTableView}
+            </div>
+        );
+    };

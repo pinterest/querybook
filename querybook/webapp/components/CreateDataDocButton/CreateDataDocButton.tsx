@@ -9,18 +9,16 @@ export interface ICreateDataDocButtonProps {
     tooltip?: string;
 }
 
-export const CreateDataDocButton: React.FunctionComponent<ICreateDataDocButtonProps> = ({
-    tooltipPos = 'left',
-    tooltip = 'New DataDoc',
-}) => {
-    const handleCreateDataDoc = useCreateDataDoc();
+export const CreateDataDocButton: React.FunctionComponent<ICreateDataDocButtonProps> =
+    ({ tooltipPos = 'left', tooltip = 'New DataDoc' }) => {
+        const handleCreateDataDoc = useCreateDataDoc();
 
-    return (
-        <IconButton
-            icon="plus"
-            tooltip={tooltip}
-            tooltipPos={tooltipPos}
-            onClick={handleCreateDataDoc}
-        />
-    );
-};
+        return (
+            <IconButton
+                icon="plus"
+                tooltip={tooltip}
+                tooltipPos={tooltipPos}
+                onClick={handleCreateDataDoc}
+            />
+        );
+    };

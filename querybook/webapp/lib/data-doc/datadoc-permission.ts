@@ -34,9 +34,10 @@ export function readWriteToPermission(
     return DataDocPermission.NULL;
 }
 
-export function permissionToReadWrite(
-    permission: DataDocPermission
-): { read: boolean; write: boolean } {
+export function permissionToReadWrite(permission: DataDocPermission): {
+    read: boolean;
+    write: boolean;
+} {
     if (permission === DataDocPermission.CAN_READ) {
         return {
             read: true,

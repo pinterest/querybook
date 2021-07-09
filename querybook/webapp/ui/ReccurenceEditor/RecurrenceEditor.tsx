@@ -161,47 +161,43 @@ interface IDatePickerProps {
     error: FormikErrors<IRecurrenceOn>;
 }
 
-export const RecurrenceEditorDatePicker: React.FunctionComponent<IDatePickerProps> = ({
-    label,
-    onKey,
-    options,
-    error,
-    recurrence,
-    setRecurrence,
-}) => {
-    const formattedError = (error?.[onKey] || '').replace(
-        `recurrence.on.${onKey}`,
-        label
-    );
+export const RecurrenceEditorDatePicker: React.FunctionComponent<IDatePickerProps> =
+    ({ label, onKey, options, error, recurrence, setRecurrence }) => {
+        const formattedError = (error?.[onKey] || '').replace(
+            `recurrence.on.${onKey}`,
+            label
+        );
 
-    return (
-        <FormField label={`Recurrence ${label}`} error={formattedError}>
-            <Field
-                name={`recurrence.on.${onKey}`}
-                render={({ field }) => (
-                    <Select
-                        menuPortalTarget={overlayRoot}
-                        styles={recurrenceReactSelectStyle}
-                        value={options.filter((option: { value: any }) =>
-                            field.value?.includes(option.value)
-                        )}
-                        options={options}
-                        onChange={(value) => {
-                            const newRecurrence = {
-                                ...recurrence,
-                                on: {
-                                    ...recurrence.on,
-                                    [onKey]: (value as Array<{
-                                        value: any;
-                                    }>).map((v) => v.value),
-                                },
-                            };
-                            setRecurrence(newRecurrence);
-                        }}
-                        isMulti
-                    />
-                )}
-            />
-        </FormField>
-    );
-};
+        return (
+            <FormField label={`Recurrence ${label}`} error={formattedError}>
+                <Field
+                    name={`recurrence.on.${onKey}`}
+                    render={({ field }) => (
+                        <Select
+                            menuPortalTarget={overlayRoot}
+                            styles={recurrenceReactSelectStyle}
+                            value={options.filter((option: { value: any }) =>
+                                field.value?.includes(option.value)
+                            )}
+                            options={options}
+                            onChange={(value) => {
+                                const newRecurrence = {
+                                    ...recurrence,
+                                    on: {
+                                        ...recurrence.on,
+                                        [onKey]: (
+                                            value as Array<{
+                                                value: any;
+                                            }>
+                                        ).map((v) => v.value),
+                                    },
+                                };
+                                setRecurrence(newRecurrence);
+                            }}
+                            isMulti
+                        />
+                    )}
+                />
+            </FormField>
+        );
+    };

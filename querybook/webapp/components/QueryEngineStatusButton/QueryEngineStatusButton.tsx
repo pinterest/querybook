@@ -44,9 +44,8 @@ export const QueryEngineStatusButton: React.FC<IProps> = ({
     popoverLayout = ['right', 'bottom'] as PopoverLayout,
 }) => {
     const [showPanel, setShowPanel] = useState(false);
-    const [showStatusForEngineId, setShowStatusForEngineId] = useState<string>(
-        null
-    );
+    const [showStatusForEngineId, setShowStatusForEngineId] =
+        useState<string>(null);
     const timerRef = useRef<Timer>();
     const buttonRef = useRef<HTMLAnchorElement>();
 

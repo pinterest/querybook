@@ -12,9 +12,8 @@ import { Link } from 'ui/Link/Link';
 
 function getQuerybookSidebarTourSteps() {
     const hasEnvironmentTopbar = !!document.querySelector('.EnvironmentTopbar');
-    const dataDocNavigatorExists = !!document.querySelector(
-        '.DataDocNavigator'
-    );
+    const dataDocNavigatorExists =
+        !!document.querySelector('.DataDocNavigator');
 
     const querybookSidebarTourSteps: ReactourStep[] = [
         {

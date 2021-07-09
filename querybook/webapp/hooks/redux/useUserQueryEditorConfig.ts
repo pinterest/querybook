@@ -54,8 +54,9 @@ export function useUserQueryEditorConfig(
                     const indentUnit = cm.getOption('indentUnit');
                     let shouldDelChar = false;
                     for (const cursorPos of cursorsPos) {
-                        const indentation = cm.getStateAfter(cursorPos.line)
-                            .indented;
+                        const indentation = cm.getStateAfter(
+                            cursorPos.line
+                        ).indented;
                         if (
                             !(
                                 indentation !== 0 &&

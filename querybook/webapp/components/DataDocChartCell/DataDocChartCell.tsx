@@ -66,23 +66,19 @@ export const DataDocChartCell: React.FunctionComponent<IProps> = ({
     const [queryExecutionId, setQueryExecutionId] = React.useState(
         defaultQueryExecutionId
     );
-    const [statementExecutionId, setStatementExecutionId] = React.useState(
-        null
-    );
+    const [statementExecutionId, setStatementExecutionId] =
+        React.useState(null);
     const [showChartComposer, setShowChartComposer] = React.useState(false);
 
-    const {
-        statementResultData,
-        queryExecutions,
-        statementExecutions,
-    } = useChartSource(
-        cellId,
-        queryExecutionId,
-        statementExecutionId,
-        setCellId,
-        setQueryExecutionId,
-        setStatementExecutionId
-    );
+    const { statementResultData, queryExecutions, statementExecutions } =
+        useChartSource(
+            cellId,
+            queryExecutionId,
+            statementExecutionId,
+            setCellId,
+            setQueryExecutionId,
+            setStatementExecutionId
+        );
 
     React.useEffect(() => {
         const sourceType = meta.data.source_type;

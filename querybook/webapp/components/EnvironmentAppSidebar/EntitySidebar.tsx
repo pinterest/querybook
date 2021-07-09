@@ -23,8 +23,8 @@ interface IEntitySidebarProps {
     onSelectEntity: (entity: Entity) => any;
 }
 
-export const EntitySidebar: React.FunctionComponent<IEntitySidebarProps> = React.memo(
-    ({ selectedEntity, onSelectEntity }) => {
+export const EntitySidebar: React.FunctionComponent<IEntitySidebarProps> =
+    React.memo(({ selectedEntity, onSelectEntity }) => {
         const environment = useSelector(currentEnvironmentSelector);
         const queryMetastores = useSelector(queryMetastoresSelector);
 
@@ -115,5 +115,4 @@ export const EntitySidebar: React.FunctionComponent<IEntitySidebarProps> = React
                 </div>
             </div>
         );
-    }
-);
+    });

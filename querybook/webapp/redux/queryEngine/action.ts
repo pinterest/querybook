@@ -82,10 +82,9 @@ export function fetchSystemStatus(
 export function fetchAllSystemStatus(force = false): ThunkResult<Promise<any>> {
     return async (dispatch, getState) =>
         Promise.all(
-            Object.keys(
-                queryEngineByIdEnvSelector(getState())
-            ).map((engineId) =>
-                dispatch(fetchSystemStatus(Number(engineId), force))
+            Object.keys(queryEngineByIdEnvSelector(getState())).map(
+                (engineId) =>
+                    dispatch(fetchSystemStatus(Number(engineId), force))
             )
         );
 }

@@ -24,24 +24,19 @@ import './Landing.scss';
 const querybookHints: string[] = require('config/loading_hints.yaml').hints;
 
 const DefaultLanding: React.FC = ({ children }) => {
-    const {
-        userInfo,
-        recentDataDocs,
-        favoriteDataDocs,
-        environment,
-    } = useSelector((state: IStoreState) => {
-        const recentDataDocsFromState = recentDataDocsSelector(state);
-        const favoriteDataDocsFromState = favoriteDataDocsSelector(state).slice(
-            0,
-            5
-        );
-        return {
-            userInfo: state.user.userInfoById[state.user.myUserInfo.uid],
-            recentDataDocs: recentDataDocsFromState,
-            favoriteDataDocs: favoriteDataDocsFromState,
-            environment: currentEnvironmentSelector(state),
-        };
-    });
+    const { userInfo, recentDataDocs, favoriteDataDocs, environment } =
+        useSelector((state: IStoreState) => {
+            const recentDataDocsFromState = recentDataDocsSelector(state);
+            const favoriteDataDocsFromState = favoriteDataDocsSelector(
+                state
+            ).slice(0, 5);
+            return {
+                userInfo: state.user.userInfoById[state.user.myUserInfo.uid],
+                recentDataDocs: recentDataDocsFromState,
+                favoriteDataDocs: favoriteDataDocsFromState,
+                environment: currentEnvironmentSelector(state),
+            };
+        });
     const descriptionDOM = 'Data made simple.';
 
     const dispatch = useDispatch();

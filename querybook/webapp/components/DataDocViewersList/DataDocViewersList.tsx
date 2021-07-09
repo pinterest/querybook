@@ -42,167 +42,174 @@ interface IDataDocViewersListProps {
     rejectDataDocAccessRequest: (uid: number) => any;
 }
 
-export const DataDocViewersList: React.FunctionComponent<IDataDocViewersListProps> = ({
-    viewerInfos,
-    dataDoc,
-    editorsByUid,
-    readonly,
-    isOwner,
-    className = '',
-    accessRequestsByUid,
+export const DataDocViewersList: React.FunctionComponent<IDataDocViewersListProps> =
+    ({
+        viewerInfos,
+        dataDoc,
+        editorsByUid,
+        readonly,
+        isOwner,
+        className = '',
+        accessRequestsByUid,
 
-    addDataDocEditor,
-    changeDataDocPublic,
-    updateDataDocEditors,
-    deleteDataDocEditor,
-    updateDataDocOwner,
-    rejectDataDocAccessRequest,
-}) => {
-    const dispatch: Dispatch = useDispatch();
-    const handleDataDocAccessRequest = React.useCallback(() => {
-        dispatch(addDataDocAccessRequest(dataDoc.id));
-    }, [dataDoc.id]);
+        addDataDocEditor,
+        changeDataDocPublic,
+        updateDataDocEditors,
+        deleteDataDocEditor,
+        updateDataDocOwner,
+        rejectDataDocAccessRequest,
+    }) => {
+        const dispatch: Dispatch = useDispatch();
+        const handleDataDocAccessRequest = React.useCallback(() => {
+            dispatch(addDataDocAccessRequest(dataDoc.id));
+        }, [dataDoc.id]);
 
-    const isEditor = useSelector((state: IStoreState) =>
-        canCurrentUserEditSelector(state, dataDoc.id)
-    );
+        const isEditor = useSelector((state: IStoreState) =>
+            canCurrentUserEditSelector(state, dataDoc.id)
+        );
 
-    const addUserRowDOM = readonly ? null : (
-        <div className="datadoc-add-user-row">
-            <div className="user-select-wrapper">
-                <UserSelect
-                    onSelect={(uid) => {
-                        if (uid in editorsByUid || uid === dataDoc.owner_uid) {
-                            toast.error('User already added.');
-                        } else {
-                            const newUserPermission = dataDoc.public
-                                ? DataDocPermission.CAN_WRITE
-                                : DataDocPermission.CAN_READ;
-                            addDataDocEditor(uid, newUserPermission);
-                        }
-                    }}
-                    selectProps={{
-                        isClearable: true,
-                    }}
-                    clearAfterSelect
-                />
-            </div>
-        </div>
-    );
-
-    const viewerInfosToShow = dataDoc.public
-        ? viewerInfos.filter(
-              (viewer) => viewer.permission !== DataDocPermission.CAN_READ
-          )
-        : viewerInfos;
-
-    const viewersListDOM = viewerInfosToShow.map((info) => (
-        <div key={info.uid} className="viewers-user-row">
-            <div className="user-badge-wrapper">
-                <UserBadge isOnline={info.online} uid={info.uid} />
-            </div>
-            <div className="access-info">
-                <div>
-                    <ViewerPermissionPicker
-                        readonly={readonly}
-                        publicDataDoc={dataDoc.public}
-                        isOwner={isOwner}
-                        viewerInfo={info}
-                        onPermissionChange={(permission) => {
-                            if (permission === DataDocPermission.OWNER) {
-                                updateDataDocOwner(info.uid);
+        const addUserRowDOM = readonly ? null : (
+            <div className="datadoc-add-user-row">
+                <div className="user-select-wrapper">
+                    <UserSelect
+                        onSelect={(uid) => {
+                            if (
+                                uid in editorsByUid ||
+                                uid === dataDoc.owner_uid
+                            ) {
+                                toast.error('User already added.');
                             } else {
-                                const { read, write } = permissionToReadWrite(
-                                    permission
-                                );
-                                if (info.uid in editorsByUid) {
-                                    updateDataDocEditors(info.uid, read, write);
-                                } else {
-                                    addDataDocEditor(info.uid, permission);
-                                }
+                                const newUserPermission = dataDoc.public
+                                    ? DataDocPermission.CAN_WRITE
+                                    : DataDocPermission.CAN_READ;
+                                addDataDocEditor(uid, newUserPermission);
                             }
                         }}
-                        onRemoveEditor={
-                            info.uid in editorsByUid
-                                ? () => deleteDataDocEditor(info.uid)
-                                : null
-                        }
+                        selectProps={{
+                            isClearable: true,
+                        }}
+                        clearAfterSelect
                     />
                 </div>
             </div>
-        </div>
-    ));
+        );
 
-    const accessRequestListDOM = readonly
-        ? null
-        : Object.values(accessRequestsByUid).map((request) => (
-              <div key={request.uid} className="viewers-user-row">
-                  <div className="user-badge-wrapper">
-                      <UserBadge isOnline={undefined} uid={request.uid} />
-                  </div>
-                  <div className="access-info">
-                      <DataDocAccessRequestPermissionPicker
-                          uid={request.uid}
-                          addDataDocEditor={addDataDocEditor}
-                          rejectDataDocAccessRequest={
-                              rejectDataDocAccessRequest
-                          }
-                      />
-                  </div>
-              </div>
-          ));
+        const viewerInfosToShow = dataDoc.public
+            ? viewerInfos.filter(
+                  (viewer) => viewer.permission !== DataDocPermission.CAN_READ
+              )
+            : viewerInfos;
 
-    const contentDOM = (
-        <div className="viewers-list-wrapper mt16">
-            {accessRequestListDOM}
-            {viewersListDOM}
-        </div>
-    );
-    const dataDocPublicRow = (
-        <>
-            <div className="public-row-switch pv16">
-                <Tabs
-                    selectedTabKey={dataDoc.public ? 'Public' : 'Private'}
-                    pills
-                    align="center"
-                    items={['Private', 'Public']}
-                    onSelect={
-                        readonly
-                            ? null
-                            : (checked) =>
-                                  changeDataDocPublic(
-                                      dataDoc.id,
-                                      checked === 'Public'
-                                  )
-                    }
-                />
+        const viewersListDOM = viewerInfosToShow.map((info) => (
+            <div key={info.uid} className="viewers-user-row">
+                <div className="user-badge-wrapper">
+                    <UserBadge isOnline={info.online} uid={info.uid} />
+                </div>
+                <div className="access-info">
+                    <div>
+                        <ViewerPermissionPicker
+                            readonly={readonly}
+                            publicDataDoc={dataDoc.public}
+                            isOwner={isOwner}
+                            viewerInfo={info}
+                            onPermissionChange={(permission) => {
+                                if (permission === DataDocPermission.OWNER) {
+                                    updateDataDocOwner(info.uid);
+                                } else {
+                                    const { read, write } =
+                                        permissionToReadWrite(permission);
+                                    if (info.uid in editorsByUid) {
+                                        updateDataDocEditors(
+                                            info.uid,
+                                            read,
+                                            write
+                                        );
+                                    } else {
+                                        addDataDocEditor(info.uid, permission);
+                                    }
+                                }
+                            }}
+                            onRemoveEditor={
+                                info.uid in editorsByUid
+                                    ? () => deleteDataDocEditor(info.uid)
+                                    : null
+                            }
+                        />
+                    </div>
+                </div>
             </div>
-            <div className="public-row-description">
-                <Title size={6} subtitle className="mb8">
-                    {dataDoc.public
-                        ? 'This document can be viewed by anyone.'
-                        : 'Only invited users can view this document.'}
-                </Title>
-                {isEditor ? null : (
-                    <AccessRequestButton
-                        onAccessRequest={handleDataDocAccessRequest}
-                        isEdit
+        ));
+
+        const accessRequestListDOM = readonly
+            ? null
+            : Object.values(accessRequestsByUid).map((request) => (
+                  <div key={request.uid} className="viewers-user-row">
+                      <div className="user-badge-wrapper">
+                          <UserBadge isOnline={undefined} uid={request.uid} />
+                      </div>
+                      <div className="access-info">
+                          <DataDocAccessRequestPermissionPicker
+                              uid={request.uid}
+                              addDataDocEditor={addDataDocEditor}
+                              rejectDataDocAccessRequest={
+                                  rejectDataDocAccessRequest
+                              }
+                          />
+                      </div>
+                  </div>
+              ));
+
+        const contentDOM = (
+            <div className="viewers-list-wrapper mt16">
+                {accessRequestListDOM}
+                {viewersListDOM}
+            </div>
+        );
+        const dataDocPublicRow = (
+            <>
+                <div className="public-row-switch pv16">
+                    <Tabs
+                        selectedTabKey={dataDoc.public ? 'Public' : 'Private'}
+                        pills
+                        align="center"
+                        items={['Private', 'Public']}
+                        onSelect={
+                            readonly
+                                ? null
+                                : (checked) =>
+                                      changeDataDocPublic(
+                                          dataDoc.id,
+                                          checked === 'Public'
+                                      )
+                        }
                     />
-                )}
+                </div>
+                <div className="public-row-description">
+                    <Title size={6} subtitle className="mb8">
+                        {dataDoc.public
+                            ? 'This document can be viewed by anyone.'
+                            : 'Only invited users can view this document.'}
+                    </Title>
+                    {isEditor ? null : (
+                        <AccessRequestButton
+                            onAccessRequest={handleDataDocAccessRequest}
+                            isEdit
+                        />
+                    )}
+                </div>
+            </>
+        );
+
+        const combinedClassname = clsx({
+            [className]: className,
+            DataDocViewersList: true,
+        });
+
+        return (
+            <div className={combinedClassname}>
+                {dataDocPublicRow}
+                {addUserRowDOM}
+                {contentDOM}
             </div>
-        </>
-    );
-
-    const combinedClassname = clsx({
-        [className]: className,
-        DataDocViewersList: true,
-    });
-
-    return (
-        <div className={combinedClassname}>
-            {dataDocPublicRow}
-            {addUserRowDOM}
-            {contentDOM}
-        </div>
-    );
-};
+        );
+    };

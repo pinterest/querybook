@@ -16,9 +16,8 @@ export function useChartSource(
     setExecutionId: (executionId: number) => any,
     setStatementId: (statementId: number) => any
 ) {
-    const [initializingExecutionId, setInitializingExecutionId] = useState(
-        false
-    );
+    const [initializingExecutionId, setInitializingExecutionId] =
+        useState(false);
     const executionIdList = useSelector((state: IStoreState) =>
         queryExecutionsSelector.dataCellIdQueryExecutionArraySelector(
             state,

@@ -11,38 +11,37 @@ interface IColumnPanelViewProps {
     columnId: number;
 }
 
-export const ColumnPanelView: React.FunctionComponent<IColumnPanelViewProps> = ({
-    columnId,
-}) => {
-    const column = useSelector(
-        (state: IStoreState) => state.dataSources.dataColumnsById[columnId]
-    );
+export const ColumnPanelView: React.FunctionComponent<IColumnPanelViewProps> =
+    ({ columnId }) => {
+        const column = useSelector(
+            (state: IStoreState) => state.dataSources.dataColumnsById[columnId]
+        );
 
-    const overviewPanel = (
-        <PanelSection title="column">
-            <SubPanelSection title="name">{column.name}</SubPanelSection>
-            <SubPanelSection title="type">{column.type}</SubPanelSection>
-        </PanelSection>
-    );
+        const overviewPanel = (
+            <PanelSection title="column">
+                <SubPanelSection title="name">{column.name}</SubPanelSection>
+                <SubPanelSection title="type">{column.type}</SubPanelSection>
+            </PanelSection>
+        );
 
-    const descriptionPanel = (
-        <PanelSection title="description" hideIfNoContent>
-            {column.description
-                ? (column.description as ContentState).getPlainText()
-                : '-'}
-        </PanelSection>
-    );
+        const descriptionPanel = (
+            <PanelSection title="description" hideIfNoContent>
+                {column.description
+                    ? (column.description as ContentState).getPlainText()
+                    : '-'}
+            </PanelSection>
+        );
 
-    const typeInfo = hiveTypeInfo[column.type];
-    const typeInfoPanel = typeInfo ? (
-        <PanelSection title="type info">{typeInfo}</PanelSection>
-    ) : null;
+        const typeInfo = hiveTypeInfo[column.type];
+        const typeInfoPanel = typeInfo ? (
+            <PanelSection title="type info">{typeInfo}</PanelSection>
+        ) : null;
 
-    return (
-        <div>
-            {overviewPanel}
-            {descriptionPanel}
-            {typeInfoPanel}
-        </div>
-    );
-};
+        return (
+            <div>
+                {overviewPanel}
+                {descriptionPanel}
+                {typeInfoPanel}
+            </div>
+        );
+    };

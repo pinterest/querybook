@@ -77,11 +77,8 @@ class EnvironmentsRouterComponent extends React.PureComponent<
 
     @bind
     public selectEnvironment(name: string) {
-        const {
-            environments,
-            userEnvironmentNames,
-            currentEnvironment,
-        } = this.props;
+        const { environments, userEnvironmentNames, currentEnvironment } =
+            this.props;
         if (userEnvironmentNames.has(name)) {
             for (const environment of environments) {
                 if (

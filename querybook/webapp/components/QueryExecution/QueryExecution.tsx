@@ -100,19 +100,14 @@ export const QueryExecution: React.FC<IProps> = ({
     changeCellContext,
 }) => {
     const [statementIndex, setStatementIndex] = useState(0);
-    const [showExecutedQuery, , toggleShowExecutedQuery] = useToggleState(
-        false
-    );
+    const [showExecutedQuery, , toggleShowExecutedQuery] =
+        useToggleState(false);
     const [showStatementLogs, , toggleLogs] = useToggleState(false);
-    const [showStatementMeta, , toggleShowStatementMeta] = useToggleState(
-        false
-    );
+    const [showStatementMeta, , toggleShowStatementMeta] =
+        useToggleState(false);
 
-    const {
-        queryExecution,
-        statementExecutions,
-        statementResultById,
-    } = useQueryExecutionReduxState(id);
+    const { queryExecution, statementExecutions, statementResultById } =
+        useQueryExecutionReduxState(id);
 
     const statementExecution = useMemo(
         () => statementExecutions?.[statementIndex],
@@ -128,9 +123,8 @@ export const QueryExecution: React.FC<IProps> = ({
 
     const selectStatementId = useCallback(
         (statementId: number) => {
-            const {
-                statement_executions: statementExecutionIds,
-            } = queryExecution;
+            const { statement_executions: statementExecutionIds } =
+                queryExecution;
             setStatementIndex(
                 Math.max(statementExecutionIds.indexOf(statementId), 0)
             );

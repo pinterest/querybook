@@ -177,9 +177,8 @@ const QueryExamplesList: React.FC<{
     filters: IPaginatedQuerySampleFilters;
 }> = ({ tableId, filters }) => {
     const dispatch: Dispatch = useDispatch();
-    const [loadingQueryExecution, setLoadingQueryExecution] = React.useState(
-        false
-    );
+    const [loadingQueryExecution, setLoadingQueryExecution] =
+        React.useState(false);
 
     const queryEngineById = useSelector(queryEngineByIdEnvSelector);
     const {
@@ -229,9 +228,9 @@ const QueryExamplesList: React.FC<{
 
     React.useEffect(() => {
         setLoadingQueryExecution(true);
-        Promise.all(
-            queryExamplesIdsToLoad.map(loadQueryExecution)
-        ).finally(() => setLoadingQueryExecution(false));
+        Promise.all(queryExamplesIdsToLoad.map(loadQueryExecution)).finally(
+            () => setLoadingQueryExecution(false)
+        );
     }, [queryExampleIds]);
 
     const openDisplayModal = (queryId: number) => {

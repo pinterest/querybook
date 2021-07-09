@@ -29,11 +29,10 @@ interface IProps {
     changeCellContext: (context: string) => any;
 }
 
-export const DataDocQueryExecutions: React.FunctionComponent<IProps> = React.memo(
-    ({ cellId, docId, changeCellContext, isQueryCollapsed }) => {
-        const { cellIdToExecutionId, onQueryCellSelectExecution } = useContext(
-            DataDocContext
-        );
+export const DataDocQueryExecutions: React.FunctionComponent<IProps> =
+    React.memo(({ cellId, docId, changeCellContext, isQueryCollapsed }) => {
+        const { cellIdToExecutionId, onQueryCellSelectExecution } =
+            useContext(DataDocContext);
 
         const environment = useSelector(currentEnvironmentSelector);
 
@@ -167,5 +166,4 @@ export const DataDocQueryExecutions: React.FunctionComponent<IProps> = React.mem
                 {placeholderIfNoExecutionsDOM}
             </div>
         );
-    }
-);
+    });

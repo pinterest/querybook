@@ -306,11 +306,8 @@ export class SqlAutoCompleter {
                 }
 
                 const prefix = context[context.length - 1];
-                results = this.getColumnsFromPrefix(
-                    prefix,
-                    tableNames
-                ).map((column) =>
-                    formatter(lineAnalysis.context, column, column)
+                results = this.getColumnsFromPrefix(prefix, tableNames).map(
+                    (column) => formatter(lineAnalysis.context, column, column)
                 );
             }
 
@@ -435,12 +432,14 @@ export class SqlAutoCompleter {
                     cursor.ch
                 )[1];
                 lineAnalysis.context = findLast(line.contexts, cursor.ch)[1];
-                lineAnalysis.reference = this.codeAnalysis.lineage.references[
-                    lineAnalysis.statementNum
-                ];
-                lineAnalysis.alias = this.codeAnalysis.lineage.aliases[
-                    lineAnalysis.statementNum
-                ];
+                lineAnalysis.reference =
+                    this.codeAnalysis.lineage.references[
+                        lineAnalysis.statementNum
+                    ];
+                lineAnalysis.alias =
+                    this.codeAnalysis.lineage.aliases[
+                        lineAnalysis.statementNum
+                    ];
             }
         }
 

@@ -31,9 +31,10 @@ export const DataTableNavigatorSearch: React.FC<{
 }) => {
     const [showSearchFilter, , toggleSearchFilter] = useToggleState(false);
     const filterButtonRef = useRef<HTMLAnchorElement>();
-    const searchFiltersSize = useMemo(() => Object.keys(searchFilters).length, [
-        searchFilters,
-    ]);
+    const searchFiltersSize = useMemo(
+        () => Object.keys(searchFilters).length,
+        [searchFilters]
+    );
 
     const updateTags = useCallback(
         (newTags: string[]) => {

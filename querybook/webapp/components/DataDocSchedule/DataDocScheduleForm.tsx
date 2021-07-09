@@ -89,185 +89,194 @@ interface IScheduleFormValues {
     };
 }
 
-export const DataDocScheduleForm: React.FunctionComponent<IDataDocScheduleFormProps> = ({
-    isEditable,
+export const DataDocScheduleForm: React.FunctionComponent<IDataDocScheduleFormProps> =
+    ({
+        isEditable,
 
-    docId,
-    cron,
-    enabled,
-    kwargs,
+        docId,
+        cron,
+        enabled,
+        kwargs,
 
-    onCreate,
-    onUpdate,
-    onDelete,
-    onRun,
-}) => {
-    const exporters = useSelector(
-        (state: IStoreState) => state.queryExecutions.statementExporters
-    );
-    const notifiers = useSelector(notificationServiceSelector);
-    const isCreateForm = !Boolean(cron);
-    const recurrence = cronToRecurrence(cron || '0 0 * * *');
-    const formValues: IScheduleFormValues = isCreateForm
-        ? {
-              recurrence,
-              kwargs: {
-                  notify_with: null,
-                  notify_on: NotifyOn.ALL,
-                  exports: [],
-              },
-          }
-        : {
-              recurrence,
-              enabled,
-              kwargs: {
-                  notify_with: kwargs.notify_with,
-                  notify_on: kwargs.notify_on,
-                  exports: kwargs.exports,
-              },
-          };
+        onCreate,
+        onUpdate,
+        onDelete,
+        onRun,
+    }) => {
+        const exporters = useSelector(
+            (state: IStoreState) => state.queryExecutions.statementExporters
+        );
+        const notifiers = useSelector(notificationServiceSelector);
+        const isCreateForm = !Boolean(cron);
+        const recurrence = cronToRecurrence(cron || '0 0 * * *');
+        const formValues: IScheduleFormValues = isCreateForm
+            ? {
+                  recurrence,
+                  kwargs: {
+                      notify_with: null,
+                      notify_on: NotifyOn.ALL,
+                      exports: [],
+                  },
+              }
+            : {
+                  recurrence,
+                  enabled,
+                  kwargs: {
+                      notify_with: kwargs.notify_with,
+                      notify_on: kwargs.notify_on,
+                      exports: kwargs.exports,
+                  },
+              };
 
-    return (
-        <Formik
-            validateOnMount
-            initialValues={formValues}
-            validationSchema={scheduleFormSchema}
-            onSubmit={async (values) => {
-                const cronRepr = recurrenceToCron(values.recurrence);
+        return (
+            <Formik
+                validateOnMount
+                initialValues={formValues}
+                validationSchema={scheduleFormSchema}
+                onSubmit={async (values) => {
+                    const cronRepr = recurrenceToCron(values.recurrence);
 
-                for (const exportConf of values.kwargs.exports) {
-                    const exporter = exporters.find(
-                        (exp) => exp.name === exportConf.exporter_name
-                    );
-                    await getExporterAuthentication(exporter);
-                }
+                    for (const exportConf of values.kwargs.exports) {
+                        const exporter = exporters.find(
+                            (exp) => exp.name === exportConf.exporter_name
+                        );
+                        await getExporterAuthentication(exporter);
+                    }
 
-                if (isCreateForm) {
-                    await onCreate(cronRepr, values.kwargs);
-                } else {
-                    await onUpdate(cronRepr, values.enabled, values.kwargs);
-                }
-            }}
-        >
-            {({
-                submitForm,
-                values,
-                errors,
-                setFieldValue,
-                isValid,
-                dirty,
-            }) => {
-                const formTitle = isCreateForm
-                    ? 'Add new schedule'
-                    : 'Edit schedule';
+                    if (isCreateForm) {
+                        await onCreate(cronRepr, values.kwargs);
+                    } else {
+                        await onUpdate(cronRepr, values.enabled, values.kwargs);
+                    }
+                }}
+            >
+                {({
+                    submitForm,
+                    values,
+                    errors,
+                    setFieldValue,
+                    isValid,
+                    dirty,
+                }) => {
+                    const formTitle = isCreateForm
+                        ? 'Add new schedule'
+                        : 'Edit schedule';
 
-                const enabledField = !isCreateForm && (
-                    <SimpleField label="Enabled" name="enabled" type="toggle" />
-                );
-
-                const notificationField = (
-                    <>
-                        <FormSectionHeader>Notification</FormSectionHeader>
+                    const enabledField = !isCreateForm && (
                         <SimpleField
-                            label="Notify With"
-                            name="kwargs.notify_with"
-                            type="react-select"
-                            options={notifiers.map((notifier) => notifier.name)}
-                            withDeselect
+                            label="Enabled"
+                            name="enabled"
+                            type="toggle"
                         />
-                        {values.kwargs.notify_with && (
+                    );
+
+                    const notificationField = (
+                        <>
+                            <FormSectionHeader>Notification</FormSectionHeader>
                             <SimpleField
-                                label="Notify On"
-                                name="kwargs.notify_on"
+                                label="Notify With"
+                                name="kwargs.notify_with"
                                 type="react-select"
-                                options={getEnumEntries(NotifyOn).map(
-                                    ([key, value]) => ({
-                                        value,
-                                        label: key,
-                                    })
+                                options={notifiers.map(
+                                    (notifier) => notifier.name
                                 )}
+                                withDeselect
                             />
-                        )}
-                    </>
-                );
-
-                const exportField = (
-                    <>
-                        <FormSectionHeader>Export</FormSectionHeader>
-                        <ScheduleExportsForm
-                            docId={docId}
-                            exporters={exporters}
-                        />
-                    </>
-                );
-
-                const controlDOM = isEditable && (
-                    <Level>
-                        <div>
-                            {onRun && (
-                                <AsyncButton
-                                    disabled={dirty}
-                                    title="Manual Run"
-                                    onClick={onRun}
+                            {values.kwargs.notify_with && (
+                                <SimpleField
+                                    label="Notify On"
+                                    name="kwargs.notify_on"
+                                    type="react-select"
+                                    options={getEnumEntries(NotifyOn).map(
+                                        ([key, value]) => ({
+                                            value,
+                                            label: key,
+                                        })
+                                    )}
                                 />
                             )}
-                        </div>
-                        <div>
-                            {onDelete && (
-                                <AsyncButton
-                                    title="Delete"
-                                    color="cancel"
-                                    onClick={onDelete}
-                                />
-                            )}
-                            <AsyncButton
-                                disabled={!isValid || (!dirty && !isCreateForm)}
-                                onClick={submitForm}
-                                title={isCreateForm ? 'Create' : 'Update'}
-                            />
-                        </div>
-                    </Level>
-                );
+                        </>
+                    );
 
-                return (
-                    <div className="DataDocScheduleForm">
-                        <div className="horizontal-space-between">
+                    const exportField = (
+                        <>
+                            <FormSectionHeader>Export</FormSectionHeader>
+                            <ScheduleExportsForm
+                                docId={docId}
+                                exporters={exporters}
+                            />
+                        </>
+                    );
+
+                    const controlDOM = isEditable && (
+                        <Level>
                             <div>
-                                <Title size={4}>{formTitle}</Title>
-                            </div>
-                            <div>
-                                <InfoButton>
-                                    Schedule your doc to be ran on a certain
-                                    interval. Query cells will be executed one
-                                    by one.
-                                </InfoButton>
-                            </div>
-                        </div>
-                        <FormWrapper minLabelWidth="180px" size={7}>
-                            <Form>
-                                <DisabledSection disabled={!isEditable}>
-                                    <RecurrenceEditor
-                                        recurrence={values.recurrence}
-                                        recurrenceError={errors?.recurrence}
-                                        setRecurrence={(val) =>
-                                            setFieldValue('recurrence', val)
-                                        }
+                                {onRun && (
+                                    <AsyncButton
+                                        disabled={dirty}
+                                        title="Manual Run"
+                                        onClick={onRun}
                                     />
-                                    {enabledField}
-                                    {notificationField}
-                                    {exportField}
+                                )}
+                            </div>
+                            <div>
+                                {onDelete && (
+                                    <AsyncButton
+                                        title="Delete"
+                                        color="cancel"
+                                        onClick={onDelete}
+                                    />
+                                )}
+                                <AsyncButton
+                                    disabled={
+                                        !isValid || (!dirty && !isCreateForm)
+                                    }
+                                    onClick={submitForm}
+                                    title={isCreateForm ? 'Create' : 'Update'}
+                                />
+                            </div>
+                        </Level>
+                    );
 
-                                    <br />
-                                    {controlDOM}
-                                </DisabledSection>
-                            </Form>
-                        </FormWrapper>
-                    </div>
-                );
-            }}
-        </Formik>
-    );
-};
+                    return (
+                        <div className="DataDocScheduleForm">
+                            <div className="horizontal-space-between">
+                                <div>
+                                    <Title size={4}>{formTitle}</Title>
+                                </div>
+                                <div>
+                                    <InfoButton>
+                                        Schedule your doc to be ran on a certain
+                                        interval. Query cells will be executed
+                                        one by one.
+                                    </InfoButton>
+                                </div>
+                            </div>
+                            <FormWrapper minLabelWidth="180px" size={7}>
+                                <Form>
+                                    <DisabledSection disabled={!isEditable}>
+                                        <RecurrenceEditor
+                                            recurrence={values.recurrence}
+                                            recurrenceError={errors?.recurrence}
+                                            setRecurrence={(val) =>
+                                                setFieldValue('recurrence', val)
+                                            }
+                                        />
+                                        {enabledField}
+                                        {notificationField}
+                                        {exportField}
+
+                                        <br />
+                                        {controlDOM}
+                                    </DisabledSection>
+                                </Form>
+                            </FormWrapper>
+                        </div>
+                    );
+                }}
+            </Formik>
+        );
+    };
 
 const ScheduleExportsForm: React.FC<{
     docId: number;

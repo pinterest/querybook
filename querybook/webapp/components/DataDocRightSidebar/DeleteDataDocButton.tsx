@@ -18,41 +18,38 @@ export interface IDeleteDataDocButtonProps {
     tooltip?: string;
 }
 
-export const DeleteDataDocButton: React.FunctionComponent<IDeleteDataDocButtonProps> = ({
-    docId,
-    tooltip = 'Delete',
-    tooltipPos = 'left',
-}) => {
-    const dispatch: Dispatch = useDispatch();
+export const DeleteDataDocButton: React.FunctionComponent<IDeleteDataDocButtonProps> =
+    ({ docId, tooltip = 'Delete', tooltipPos = 'left' }) => {
+        const dispatch: Dispatch = useDispatch();
 
-    const handleDeleteDataDoc = React.useCallback(
-        () =>
-            sendConfirm({
-                header: 'Remove DataDoc',
-                message: 'Are you sure to delete?',
-                onConfirm: () => {
-                    toast.promise(
-                        dispatch(dataDocActions.deleteDataDoc(docId)).then(() =>
-                            navigateWithinEnv('/datadoc/')
-                        ),
-                        {
-                            loading: 'Deleting DataDoc...',
-                            success: 'DataDoc Deleted!',
-                            error: 'Deletion failed',
-                        }
-                    );
-                },
-            }),
-        [docId]
-    );
+        const handleDeleteDataDoc = React.useCallback(
+            () =>
+                sendConfirm({
+                    header: 'Remove DataDoc',
+                    message: 'Are you sure to delete?',
+                    onConfirm: () => {
+                        toast.promise(
+                            dispatch(dataDocActions.deleteDataDoc(docId)).then(
+                                () => navigateWithinEnv('/datadoc/')
+                            ),
+                            {
+                                loading: 'Deleting DataDoc...',
+                                success: 'DataDoc Deleted!',
+                                error: 'Deletion failed',
+                            }
+                        );
+                    },
+                }),
+            [docId]
+        );
 
-    return (
-        <IconButton
-            icon="trash"
-            tooltip={tooltip}
-            tooltipPos={tooltipPos}
-            onClick={handleDeleteDataDoc}
-            title="Delete"
-        />
-    );
-};
+        return (
+            <IconButton
+                icon="trash"
+                tooltip={tooltip}
+                tooltipPos={tooltipPos}
+                onClick={handleDeleteDataDoc}
+                title="Delete"
+            />
+        );
+    };

@@ -68,9 +68,7 @@ export interface IQuerybookTableViewOverviewProps {
     onExampleFilter: (uid: number, withTableId: number) => any;
 }
 
-export class DataTableViewOverview extends React.PureComponent<
-    IQuerybookTableViewOverviewProps
-> {
+export class DataTableViewOverview extends React.PureComponent<IQuerybookTableViewOverviewProps> {
     @bind
     public onDescriptionSave(description: DraftJs.ContentState) {
         const table = this.props.table;

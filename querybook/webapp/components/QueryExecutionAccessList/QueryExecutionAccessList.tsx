@@ -21,117 +21,124 @@ interface IQueryExecutionAccessListProps {
     rejectQueryExecutionAccessRequest: (uid: number) => any;
 }
 
-export const QueryExecutionAccessList: React.FunctionComponent<IQueryExecutionAccessListProps> = ({
-    accessRequestsByUid,
-    executionViewersByUid,
-    queryExecution,
+export const QueryExecutionAccessList: React.FunctionComponent<IQueryExecutionAccessListProps> =
+    ({
+        accessRequestsByUid,
+        executionViewersByUid,
+        queryExecution,
 
-    addQueryExecutionViewer,
-    deleteQueryExecutionViewer,
-    rejectQueryExecutionAccessRequest,
-}) => {
-    const addUserRowDOM = (
-        <div className="query-execution-add-user-row horizontal-space-between">
-            <div className="user-select-wrapper mr8">
-                <UserSelect
-                    onSelect={(uid) => {
-                        if (
-                            uid in executionViewersByUid ||
-                            uid === queryExecution.uid
-                        ) {
-                            toast.error('User already added.');
-                        } else {
-                            addQueryExecutionViewer(uid);
-                        }
-                    }}
-                    selectProps={{
-                        isClearable: true,
-                    }}
-                    clearAfterSelect
-                />
-            </div>
-        </div>
-    );
-    const shareHeader = (
-        <div className="mb4">
-            <Title size={6} subtitle>
-                Add User
-            </Title>
-        </div>
-    );
-    const accessRequestListDOM = Object.values(accessRequestsByUid).map(
-        (request) => (
-            <div key={request.uid} className="viewers-user-row">
-                <div className="user-badge-wrapper">
-                    <UserBadge uid={request.uid} />
-                </div>
-                <div className="access-info">
-                    <div className="access-request-control-buttons flex-row">
-                        <IconButton
-                            className="access-request-control-button"
-                            icon="check-circle"
-                            onClick={() => addQueryExecutionViewer(request.uid)}
-                        />
-                        <IconButton
-                            className="access-request-control-button"
-                            icon="x-circle"
-                            onClick={() =>
-                                rejectQueryExecutionAccessRequest(request.uid)
+        addQueryExecutionViewer,
+        deleteQueryExecutionViewer,
+        rejectQueryExecutionAccessRequest,
+    }) => {
+        const addUserRowDOM = (
+            <div className="query-execution-add-user-row horizontal-space-between">
+                <div className="user-select-wrapper mr8">
+                    <UserSelect
+                        onSelect={(uid) => {
+                            if (
+                                uid in executionViewersByUid ||
+                                uid === queryExecution.uid
+                            ) {
+                                toast.error('User already added.');
+                            } else {
+                                addQueryExecutionViewer(uid);
                             }
-                        />
+                        }}
+                        selectProps={{
+                            isClearable: true,
+                        }}
+                        clearAfterSelect
+                    />
+                </div>
+            </div>
+        );
+        const shareHeader = (
+            <div className="mb4">
+                <Title size={6} subtitle>
+                    Add User
+                </Title>
+            </div>
+        );
+        const accessRequestListDOM = Object.values(accessRequestsByUid).map(
+            (request) => (
+                <div key={request.uid} className="viewers-user-row">
+                    <div className="user-badge-wrapper">
+                        <UserBadge uid={request.uid} />
+                    </div>
+                    <div className="access-info">
+                        <div className="access-request-control-buttons flex-row">
+                            <IconButton
+                                className="access-request-control-button"
+                                icon="check-circle"
+                                onClick={() =>
+                                    addQueryExecutionViewer(request.uid)
+                                }
+                            />
+                            <IconButton
+                                className="access-request-control-button"
+                                icon="x-circle"
+                                onClick={() =>
+                                    rejectQueryExecutionAccessRequest(
+                                        request.uid
+                                    )
+                                }
+                            />
+                        </div>
                     </div>
                 </div>
-            </div>
-        )
-    );
+            )
+        );
 
-    const viewersListDOM = Object.values(executionViewersByUid).map(
-        (viewer) => (
-            <div key={viewer.uid} className="viewers-user-row">
-                <div className="user-badge-wrapper">
-                    <UserBadge uid={viewer.uid} />
+        const viewersListDOM = Object.values(executionViewersByUid).map(
+            (viewer) => (
+                <div key={viewer.uid} className="viewers-user-row">
+                    <div className="user-badge-wrapper">
+                        <UserBadge uid={viewer.uid} />
+                    </div>
+                    <Button
+                        className="remove-button"
+                        size="small"
+                        title="Remove"
+                        onClick={() => deleteQueryExecutionViewer(viewer.uid)}
+                    />
                 </div>
-                <Button
-                    className="remove-button"
-                    size="small"
-                    title="Remove"
-                    onClick={() => deleteQueryExecutionViewer(viewer.uid)}
-                />
-            </div>
-        )
-    );
+            )
+        );
 
-    const accessRequestHeader =
-        accessRequestListDOM.length > 0 ? (
-            <div className="row-description mr16 mb4">
-                <Title size={6} subtitle>
-                    Access Requests
-                </Title>
-            </div>
-        ) : null;
+        const accessRequestHeader =
+            accessRequestListDOM.length > 0 ? (
+                <div className="row-description mr16 mb4">
+                    <Title size={6} subtitle>
+                        Access Requests
+                    </Title>
+                </div>
+            ) : null;
 
-    const viewersListHeader =
-        viewersListDOM.length > 0 ? (
-            <div className="row-description mr16 mb4">
-                <Title size={6} subtitle>
-                    Users With Access
-                </Title>
-            </div>
-        ) : null;
+        const viewersListHeader =
+            viewersListDOM.length > 0 ? (
+                <div className="row-description mr16 mb4">
+                    <Title size={6} subtitle>
+                        Users With Access
+                    </Title>
+                </div>
+            ) : null;
 
-    const contentDOM = (
-        <div>
-            {accessRequestHeader}
-            <div className="viewers-list-wrapper">{accessRequestListDOM}</div>
-            {viewersListHeader}
-            <div className="viewers-list-wrapper">{viewersListDOM}</div>
-        </div>
-    );
-    return (
-        <div className="QueryExecutionAccessList p8">
-            {shareHeader}
-            {addUserRowDOM}
-            {contentDOM}
-        </div>
-    );
-};
+        const contentDOM = (
+            <div>
+                {accessRequestHeader}
+                <div className="viewers-list-wrapper">
+                    {accessRequestListDOM}
+                </div>
+                {viewersListHeader}
+                <div className="viewers-list-wrapper">{viewersListDOM}</div>
+            </div>
+        );
+        return (
+            <div className="QueryExecutionAccessList p8">
+                {shareHeader}
+                {addUserRowDOM}
+                {contentDOM}
+            </div>
+        );
+    };

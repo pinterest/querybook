@@ -22,11 +22,12 @@ context.addEventListener(
         if (mode === 'autocomplete') {
             codeAnalysis.editorLines = getEditorLines(statements);
         } else if (mode === 'lint') {
-            codeAnalysis.contextFreeLinterWarnings = getContextFreeLinterWarnings(
-                statements,
-                language,
-                codeAnalysis
-            );
+            codeAnalysis.contextFreeLinterWarnings =
+                getContextFreeLinterWarnings(
+                    statements,
+                    language,
+                    codeAnalysis
+                );
         }
 
         context.postMessage(

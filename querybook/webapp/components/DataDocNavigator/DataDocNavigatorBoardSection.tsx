@@ -51,163 +51,167 @@ interface INavigatorBoardSectionProps {
 
 const BoardOrderByOptions = getEnumEntries(BoardOrderBy);
 
-export const DataDocNavigatorBoardSection: React.FC<INavigatorBoardSectionProps> = ({
-    selectedDocId,
-    collapsed,
-    setCollapsed,
-    filterString,
-}) => {
-    const toggleCollapsed = useCallback(() => setCollapsed(!collapsed), [
-        setCollapsed,
-        collapsed,
-    ]);
+export const DataDocNavigatorBoardSection: React.FC<INavigatorBoardSectionProps> =
+    ({ selectedDocId, collapsed, setCollapsed, filterString }) => {
+        const toggleCollapsed = useCallback(
+            () => setCollapsed(!collapsed),
+            [setCollapsed, collapsed]
+        );
 
-    const [showCreateModal, setShowCreateModal] = useState(false);
-    const boardItemById = useSelector(
-        (state: IStoreState) => state.board.boardItemById
-    );
+        const [showCreateModal, setShowCreateModal] = useState(false);
+        const boardItemById = useSelector(
+            (state: IStoreState) => state.board.boardItemById
+        );
 
-    const [orderBoardBy, setOrderBoardBy] = useState(BoardOrderBy.updatedAt);
-    const unorderedBoards = useSelector(myBoardsSelector);
-    const boards = useMemo(
-        () =>
-            orderBoardBy === BoardOrderBy.alphabetical
-                ? [...unorderedBoards].sort((a, b) =>
-                      a.name.localeCompare(b.name)
-                  )
-                : orderBoardBy === BoardOrderBy.createdAt
-                ? [...unorderedBoards].sort(
-                      (a, b) => b.created_at - a.created_at
-                  )
-                : unorderedBoards, // order by updated at by default,
-        [unorderedBoards, orderBoardBy]
-    );
-    const showBoardOrderBy = boards.length > 1;
+        const [orderBoardBy, setOrderBoardBy] = useState(
+            BoardOrderBy.updatedAt
+        );
+        const unorderedBoards = useSelector(myBoardsSelector);
+        const boards = useMemo(
+            () =>
+                orderBoardBy === BoardOrderBy.alphabetical
+                    ? [...unorderedBoards].sort((a, b) =>
+                          a.name.localeCompare(b.name)
+                      )
+                    : orderBoardBy === BoardOrderBy.createdAt
+                    ? [...unorderedBoards].sort(
+                          (a, b) => b.created_at - a.created_at
+                      )
+                    : unorderedBoards, // order by updated at by default,
+            [unorderedBoards, orderBoardBy]
+        );
+        const showBoardOrderBy = boards.length > 1;
 
-    const dispatch: Dispatch = useDispatch();
-    useEffect(() => {
-        if (!collapsed && boards.length === 0) {
-            dispatch(fetchBoards());
-        }
-    }, [collapsed]);
-
-    const handleMoveBoardItem = useCallback(
-        async (
-            itemType: string,
-            itemInfo: IProcessedBoardItem | IDataDoc,
-            toBoardId: number
-        ) => {
-            let sourceType: 'datadoc' | 'board' = null;
-            let sourceBoardId: number = null;
-            let sourceItemId: number = null;
-
-            if (itemType === BoardDraggableType) {
-                const boardItem = itemInfo as IProcessedBoardItem;
-
-                sourceType = 'board';
-                sourceBoardId = boardItem.boardId;
-                sourceItemId = boardItem.id;
-            } else if (itemType === DataDocDraggableType) {
-                sourceType = 'datadoc';
-                sourceItemId = (itemInfo as IDataDoc).id;
+        const dispatch: Dispatch = useDispatch();
+        useEffect(() => {
+            if (!collapsed && boards.length === 0) {
+                dispatch(fetchBoards());
             }
+        }, [collapsed]);
 
-            if (sourceItemId != null) {
-                if (sourceType === 'board' && sourceBoardId != null) {
-                    const boardItem = boardItemById[sourceItemId];
-                    const boardItemType =
-                        boardItem['data_doc_id'] != null ? 'data_doc' : 'table';
-                    const boardItemItemId =
-                        boardItemType === 'data_doc'
-                            ? boardItem.data_doc_id
-                            : boardItem.table_id;
-                    await dispatch(
-                        addBoardItem(toBoardId, boardItemType, boardItemItemId)
-                    );
-                    await dispatch(
-                        deleteBoardItem(
-                            sourceBoardId,
-                            boardItemType,
-                            boardItemItemId
-                        )
-                    );
-                } else if (sourceType === 'datadoc') {
-                    await dispatch(
-                        addBoardItem(toBoardId, 'data_doc', sourceItemId)
-                    );
+        const handleMoveBoardItem = useCallback(
+            async (
+                itemType: string,
+                itemInfo: IProcessedBoardItem | IDataDoc,
+                toBoardId: number
+            ) => {
+                let sourceType: 'datadoc' | 'board' = null;
+                let sourceBoardId: number = null;
+                let sourceItemId: number = null;
+
+                if (itemType === BoardDraggableType) {
+                    const boardItem = itemInfo as IProcessedBoardItem;
+
+                    sourceType = 'board';
+                    sourceBoardId = boardItem.boardId;
+                    sourceItemId = boardItem.id;
+                } else if (itemType === DataDocDraggableType) {
+                    sourceType = 'datadoc';
+                    sourceItemId = (itemInfo as IDataDoc).id;
                 }
-            }
-        },
-        [boards, boardItemById]
-    );
 
-    const sectionHeader = (
-        <Level className="pl8 navigator-board-header">
-            <div className="flex1 flex-row" onClick={toggleCollapsed}>
-                <Icon name="list" className="mr8" size={18} />
-                <Title size={7}>Lists</Title>
-            </div>
-
-            <LevelItem>
-                {showBoardOrderBy ? (
-                    <TextToggleButton
-                        value={false}
-                        onChange={() =>
-                            setOrderBoardBy(
-                                (oldValue) =>
-                                    BoardOrderByOptions[
-                                        (Number(oldValue) + 1) %
-                                            BoardOrderByOptions.length
-                                    ][1] as BoardOrderBy
+                if (sourceItemId != null) {
+                    if (sourceType === 'board' && sourceBoardId != null) {
+                        const boardItem = boardItemById[sourceItemId];
+                        const boardItemType =
+                            boardItem['data_doc_id'] != null
+                                ? 'data_doc'
+                                : 'table';
+                        const boardItemItemId =
+                            boardItemType === 'data_doc'
+                                ? boardItem.data_doc_id
+                                : boardItem.table_id;
+                        await dispatch(
+                            addBoardItem(
+                                toBoardId,
+                                boardItemType,
+                                boardItemItemId
                             )
-                        }
-                        tooltip={`Order By ${BoardOrderToDescription[orderBoardBy]}`}
+                        );
+                        await dispatch(
+                            deleteBoardItem(
+                                sourceBoardId,
+                                boardItemType,
+                                boardItemItemId
+                            )
+                        );
+                    } else if (sourceType === 'datadoc') {
+                        await dispatch(
+                            addBoardItem(toBoardId, 'data_doc', sourceItemId)
+                        );
+                    }
+                }
+            },
+            [boards, boardItemById]
+        );
+
+        const sectionHeader = (
+            <Level className="pl8 navigator-board-header">
+                <div className="flex1 flex-row" onClick={toggleCollapsed}>
+                    <Icon name="list" className="mr8" size={18} />
+                    <Title size={7}>Lists</Title>
+                </div>
+
+                <LevelItem>
+                    {showBoardOrderBy ? (
+                        <TextToggleButton
+                            value={false}
+                            onChange={() =>
+                                setOrderBoardBy(
+                                    (oldValue) =>
+                                        BoardOrderByOptions[
+                                            (Number(oldValue) + 1) %
+                                                BoardOrderByOptions.length
+                                        ][1] as BoardOrderBy
+                                )
+                            }
+                            tooltip={`Order By ${BoardOrderToDescription[orderBoardBy]}`}
+                            tooltipPos="left"
+                            text={BoardOrderToTitle[orderBoardBy]}
+                        />
+                    ) : null}
+
+                    <IconButton
+                        icon="plus"
+                        onClick={() => setShowCreateModal(true)}
+                        tooltip="New List"
                         tooltipPos="left"
-                        text={BoardOrderToTitle[orderBoardBy]}
+                    />
+                    <IconButton
+                        icon={collapsed ? 'chevron-right' : 'chevron-down'}
+                        onClick={toggleCollapsed}
+                    />
+                </LevelItem>
+            </Level>
+        );
+
+        const boardsDOM = collapsed ? null : (
+            <div>
+                {boards.map((board) => (
+                    <NavigatorBoardView
+                        key={board.id}
+                        id={board.id}
+                        selectedDocId={selectedDocId}
+                        filterString={filterString}
+                        onMoveBoardItem={handleMoveBoardItem}
+                    />
+                ))}
+            </div>
+        );
+
+        return (
+            <div className="DataDocNavigatorBoardSection">
+                {sectionHeader}
+                {boardsDOM}
+                {showCreateModal ? (
+                    <BoardCreateUpdateModal
+                        onComplete={() => setShowCreateModal(false)}
+                        onHide={() => setShowCreateModal(false)}
                     />
                 ) : null}
-
-                <IconButton
-                    icon="plus"
-                    onClick={() => setShowCreateModal(true)}
-                    tooltip="New List"
-                    tooltipPos="left"
-                />
-                <IconButton
-                    icon={collapsed ? 'chevron-right' : 'chevron-down'}
-                    onClick={toggleCollapsed}
-                />
-            </LevelItem>
-        </Level>
-    );
-
-    const boardsDOM = collapsed ? null : (
-        <div>
-            {boards.map((board) => (
-                <NavigatorBoardView
-                    key={board.id}
-                    id={board.id}
-                    selectedDocId={selectedDocId}
-                    filterString={filterString}
-                    onMoveBoardItem={handleMoveBoardItem}
-                />
-            ))}
-        </div>
-    );
-
-    return (
-        <div className="DataDocNavigatorBoardSection">
-            {sectionHeader}
-            {boardsDOM}
-            {showCreateModal ? (
-                <BoardCreateUpdateModal
-                    onComplete={() => setShowCreateModal(false)}
-                    onHide={() => setShowCreateModal(false)}
-                />
-            ) : null}
-        </div>
-    );
-};
+            </div>
+        );
+    };
 
 const NavigatorBoardView: React.FunctionComponent<{
     id: number;

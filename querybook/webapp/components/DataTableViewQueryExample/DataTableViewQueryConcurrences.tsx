@@ -64,10 +64,10 @@ const QueryTableButton: React.FC<{
     queryCount: number;
     active: boolean;
 }> = ({ tableId, onClick, queryCount, active }) => {
-    const handleClick = useCallback(() => onClick?.(tableId), [
-        onClick,
-        tableId,
-    ]);
+    const handleClick = useCallback(
+        () => onClick?.(tableId),
+        [onClick, tableId]
+    );
 
     return (
         <Button onClick={handleClick} active={active}>

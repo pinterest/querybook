@@ -89,9 +89,8 @@ const DataDocChartComposerComponent: React.FunctionComponent<
     const [displayExecutionId, setDisplayExecutionId] = React.useState(
         values.executionId
     );
-    const [displayStatementId, setDisplayStatementId] = React.useState(
-        undefined
-    );
+    const [displayStatementId, setDisplayStatementId] =
+        React.useState(undefined);
 
     const chartJSRef = React.useRef<ChartComponent<ChartComponentProps>>(null);
 
@@ -103,18 +102,15 @@ const DataDocChartComposerComponent: React.FunctionComponent<
         }
     }, [values.coloredSeries]);
 
-    const {
-        statementResultData,
-        queryExecutions,
-        statementExecutions,
-    } = useChartSource(
-        values.cellId,
-        displayExecutionId,
-        displayStatementId,
-        setFieldValue.bind(null, 'cellId'),
-        setFieldValue.bind(null, 'executionId'),
-        setDisplayStatementId
-    );
+    const { statementResultData, queryExecutions, statementExecutions } =
+        useChartSource(
+            values.cellId,
+            displayExecutionId,
+            displayStatementId,
+            setFieldValue.bind(null, 'cellId'),
+            setFieldValue.bind(null, 'executionId'),
+            setDisplayStatementId
+        );
 
     const chartData = React.useMemo(
         () =>
@@ -274,10 +270,9 @@ const DataDocChartComposerComponent: React.FunctionComponent<
             const options = optionIdxs.map((i) => ({
                 value: i,
                 label: valsArray[i],
-                color:
-                    colorPalette[
-                        values.coloredSeries[i] ?? i % colorPalette.length
-                    ],
+                color: colorPalette[
+                    values.coloredSeries[i] ?? i % colorPalette.length
+                ],
             }));
             return options;
         },

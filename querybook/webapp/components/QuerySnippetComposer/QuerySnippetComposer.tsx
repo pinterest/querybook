@@ -420,11 +420,8 @@ class QuerySnippetComposerComponent extends React.PureComponent<
     }
 
     public handleSave = async () => {
-        const {
-            querySnippet,
-            updateQuerySnippet,
-            saveQuerySnippet,
-        } = this.props;
+        const { querySnippet, updateQuerySnippet, saveQuerySnippet } =
+            this.props;
 
         const { form, isUpdateForm } = this.state;
 

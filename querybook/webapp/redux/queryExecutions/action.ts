@@ -48,8 +48,7 @@ export function addQueryExecutionAccessRequest(
         );
         if (data != null) {
             dispatch({
-                type:
-                    '@@queryExecutions/RECEIVE_QUERY_EXECUTION_ACCESS_REQUEST',
+                type: '@@queryExecutions/RECEIVE_QUERY_EXECUTION_ACCESS_REQUEST',
                 payload: {
                     executionId,
                     request: data,

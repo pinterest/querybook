@@ -46,9 +46,8 @@ export const DAG: React.FunctionComponent<IProps> = ({
 }) => {
     const [graphId, _] = React.useState(`${uniqueId('querybook-DAG-')}`);
     const [graph, setGraph] = React.useState<DagreD3.graphlib.Graph>(null);
-    const [d3Zoom, setD3Zoom] = React.useState<
-        d3.ZoomBehavior<Element, unknown>
-    >(null);
+    const [d3Zoom, setD3Zoom] =
+        React.useState<d3.ZoomBehavior<Element, unknown>>(null);
     const [scale, setScale] = React.useState(1);
     const setScaleDebounced = debounce(setScale, 300);
 

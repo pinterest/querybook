@@ -18,68 +18,69 @@ interface IStatementResultTableColumnProps
     expandedColumn: Record<string, boolean>;
     toggleExpandedColumn: (c: string) => any;
 }
-export const StatementResultTableColumn: React.FC<IStatementResultTableColumnProps> = ({
-    column,
-    expandedColumn,
-    toggleExpandedColumn,
+export const StatementResultTableColumn: React.FC<IStatementResultTableColumnProps> =
+    ({
+        column,
+        expandedColumn,
+        toggleExpandedColumn,
 
-    colIndex,
-    colType,
-    filteredRows,
-    isPreview,
-    columnTransformer,
-    setTransformerForColumn,
-    filterCondition,
-    setFilterCondition,
-}) => {
-    const isExpanded = column in expandedColumn;
+        colIndex,
+        colType,
+        filteredRows,
+        isPreview,
+        columnTransformer,
+        setTransformerForColumn,
+        filterCondition,
+        setFilterCondition,
+    }) => {
+        const isExpanded = column in expandedColumn;
 
-    const handleExpandColumnClick = useCallback(
-        (e: React.MouseEvent) => {
-            e.preventDefault();
-            e.stopPropagation();
+        const handleExpandColumnClick = useCallback(
+            (e: React.MouseEvent) => {
+                e.preventDefault();
+                e.stopPropagation();
 
-            toggleExpandedColumn(column);
-        },
-        [toggleExpandedColumn, column]
-    );
+                toggleExpandedColumn(column);
+            },
+            [toggleExpandedColumn, column]
+        );
 
-    return (
-        <Level className="result-table-header">
-            <span
-                className={`statement-result-table-title one-line-ellipsis ${
-                    isExpanded ? 'expanded' : ''
-                }`}
-            >
-                {column}
-            </span>
-            <div className="flex-row">
-                <IconButton
-                    className={clsx({
-                        'column-button': true,
-                        'expand-column-button': true,
-                        'hidden-button': !isExpanded,
-                    })}
-                    noPadding
-                    icon={isExpanded ? 'minimize' : 'maximize'}
-                    size={14}
-                    onClick={handleExpandColumnClick}
-                />
-                <ColumnInfoDropdownButton
-                    column={column}
-                    colIndex={colIndex}
-                    colType={colType}
-                    filteredRows={filteredRows}
-                    isPreview={isPreview}
-                    columnTransformer={columnTransformer}
-                    setTransformerForColumn={setTransformerForColumn}
-                    filterCondition={filterCondition}
-                    setFilterCondition={setFilterCondition}
-                />
-            </div>
-        </Level>
-    );
-};
+        return (
+            <Level className="result-table-header">
+                <span
+                    className={`statement-result-table-title one-line-ellipsis ${
+                        isExpanded ? 'expanded' : ''
+                    }`}
+                >
+                    {column}
+                </span>
+                <div className="flex-row">
+                    <IconButton
+                        className={clsx({
+                            'column-button': true,
+                            'expand-column-button': true,
+                            'hidden-button': !isExpanded,
+                        })}
+                        noPadding
+                        icon={isExpanded ? 'minimize' : 'maximize'}
+                        size={14}
+                        onClick={handleExpandColumnClick}
+                    />
+                    <ColumnInfoDropdownButton
+                        column={column}
+                        colIndex={colIndex}
+                        colType={colType}
+                        filteredRows={filteredRows}
+                        isPreview={isPreview}
+                        columnTransformer={columnTransformer}
+                        setTransformerForColumn={setTransformerForColumn}
+                        filterCondition={filterCondition}
+                        setFilterCondition={setFilterCondition}
+                    />
+                </div>
+            </Level>
+        );
+    };
 
 interface IColumnInfoDropdownButtonProps {
     column: string;
@@ -110,9 +111,8 @@ const ColumnInfoDropdownButton: React.FC<IColumnInfoDropdownButtonProps> = ({
 }) => {
     const [showPopover, setShowPopover] = useState(false);
     const selfRef = useRef<HTMLAnchorElement>(null);
-    const [columnInfoTab, setColumnInfoTab] = useState<ColumnInfoTabType>(
-        'main'
-    );
+    const [columnInfoTab, setColumnInfoTab] =
+        useState<ColumnInfoTabType>('main');
 
     const boundSetTransformerForColumn = useCallback(
         (transformer: IColumnTransformer | null) =>

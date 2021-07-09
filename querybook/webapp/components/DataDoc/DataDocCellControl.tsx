@@ -68,9 +68,8 @@ export const DataDocCellControl: React.FunctionComponent<IProps> = ({
     toggleDefaultCollapsed,
     shareUrl,
 }) => {
-    const [animateDefaultChange, setAnimateDefaultChange] = React.useState(
-        false
-    );
+    const [animateDefaultChange, setAnimateDefaultChange] =
+        React.useState(false);
 
     const handleToggleDefaultCollapsed = React.useCallback(() => {
         setAnimateDefaultChange(true);

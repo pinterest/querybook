@@ -114,11 +114,8 @@ export default function userReducer(
                     return;
                 }
 
-                const {
-                    fromLocal,
-                    userSetting,
-                    environmentId,
-                } = action.payload;
+                const { fromLocal, userSetting, environmentId } =
+                    action.payload;
 
                 draft.fromWeb = !fromLocal;
                 draft.rawSettings = userSetting;

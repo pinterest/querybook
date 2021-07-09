@@ -20,69 +20,64 @@ export interface ICodeMirrorTooltipProps {
     hide: () => any;
 }
 
-export const CodeMirrorTooltip: React.FunctionComponent<ICodeMirrorTooltipProps> = ({
-    tableId,
-    hide,
-    functionDocumentations,
-    error,
-    openTableModal,
-}) => {
-    const { table, schema, columns } = useSelector((state: IStoreState) => {
-        const tableFromState = state.dataSources.dataTablesById[tableId];
-        const schemaFromState = tableFromState
-            ? state.dataSources.dataSchemasById[tableFromState.schema]
-            : null;
-        const columnsFromState = tableFromState
-            ? (tableFromState.column || []).map(
-                  (id) => state.dataSources.dataColumnsById[id]
-              )
-            : [];
+export const CodeMirrorTooltip: React.FunctionComponent<ICodeMirrorTooltipProps> =
+    ({ tableId, hide, functionDocumentations, error, openTableModal }) => {
+        const { table, schema, columns } = useSelector((state: IStoreState) => {
+            const tableFromState = state.dataSources.dataTablesById[tableId];
+            const schemaFromState = tableFromState
+                ? state.dataSources.dataSchemasById[tableFromState.schema]
+                : null;
+            const columnsFromState = tableFromState
+                ? (tableFromState.column || []).map(
+                      (id) => state.dataSources.dataColumnsById[id]
+                  )
+                : [];
 
-        return {
-            table: tableFromState,
-            schema: schemaFromState,
-            columns: columnsFromState,
-        };
-    });
+            return {
+                table: tableFromState,
+                schema: schemaFromState,
+                columns: columnsFromState,
+            };
+        });
 
-    const dispatch = useDispatch();
+        const dispatch = useDispatch();
 
-    useEffect(() => {
-        dispatch(dataSourcesActions.fetchDataTableIfNeeded(tableId));
-    }, []);
+        useEffect(() => {
+            dispatch(dataSourcesActions.fetchDataTableIfNeeded(tableId));
+        }, []);
 
-    useEvent('keydown', (evt: KeyboardEvent) => {
-        const specialKeyPress =
-            evt.shiftKey || evt.metaKey || evt.ctrlKey || evt.altKey;
-        if (!specialKeyPress) {
-            hide();
+        useEvent('keydown', (evt: KeyboardEvent) => {
+            const specialKeyPress =
+                evt.shiftKey || evt.metaKey || evt.ctrlKey || evt.altKey;
+            if (!specialKeyPress) {
+                hide();
+            }
+        });
+
+        let contentDOM = null;
+        if (tableId) {
+            contentDOM = (
+                <TableTooltip
+                    table={table}
+                    schema={schema}
+                    columns={columns}
+                    openTableModal={openTableModal}
+                />
+            );
+        } else if (functionDocumentations) {
+            contentDOM = (
+                <FunctionDocumentationTooltip
+                    functionDocumentations={functionDocumentations}
+                />
+            );
+        } else if (error) {
+            contentDOM = (
+                <div className="rich-text-content">
+                    <h3>Error</h3>
+                    <div>{error}</div>
+                </div>
+            );
         }
-    });
 
-    let contentDOM = null;
-    if (tableId) {
-        contentDOM = (
-            <TableTooltip
-                table={table}
-                schema={schema}
-                columns={columns}
-                openTableModal={openTableModal}
-            />
-        );
-    } else if (functionDocumentations) {
-        contentDOM = (
-            <FunctionDocumentationTooltip
-                functionDocumentations={functionDocumentations}
-            />
-        );
-    } else if (error) {
-        contentDOM = (
-            <div className="rich-text-content">
-                <h3>Error</h3>
-                <div>{error}</div>
-            </div>
-        );
-    }
-
-    return <div className="CodeMirrorTooltip">{contentDOM}</div>;
-};
+        return <div className="CodeMirrorTooltip">{contentDOM}</div>;
+    };

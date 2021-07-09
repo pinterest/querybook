@@ -56,7 +56,7 @@ const dataCellSaveManager = new DataCellSaveManager();
 
 export function deserializeCell(cell: IDataCell) {
     if (cell.cell_type === 'text') {
-        const rawContext = (cell.context as any) as string;
+        const rawContext = cell.context as any as string;
         const context: ContentState = convertRawToContentState(rawContext);
 
         const newCell: IDataTextCell = {

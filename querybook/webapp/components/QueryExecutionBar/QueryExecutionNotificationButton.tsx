@@ -8,69 +8,67 @@ interface IProps {
     notificationPreference: string;
 }
 
-export const QueryExecutionNotificationButton: React.FunctionComponent<IProps> = ({
-    queryExecution,
-    notificationPreference,
-}) => {
-    const [notification, setNotification] = useState<boolean>(null);
-    const [loading, setLoading] = useState(true);
+export const QueryExecutionNotificationButton: React.FunctionComponent<IProps> =
+    ({ queryExecution, notificationPreference }) => {
+        const [notification, setNotification] = useState<boolean>(null);
+        const [loading, setLoading] = useState(true);
 
-    useEffect(() => {
-        const request = ds.fetch(
-            `/query_execution_notification/${queryExecution.id}/`
-        );
-
-        request.then(({ data }) => {
-            setLoading(false);
-            setNotification(data);
-        });
-
-        return () => {
-            if (request) {
-                request.cancel();
-            }
-        };
-    }, []);
-
-    const handleNotificationToggle = useCallback(() => {
-        setLoading(true);
-
-        if (notification) {
-            ds.delete(
+        useEffect(() => {
+            const request = ds.fetch(
                 `/query_execution_notification/${queryExecution.id}/`
-            ).then(() => {
+            );
+
+            request.then(({ data }) => {
                 setLoading(false);
-                setNotification(null);
+                setNotification(data);
             });
-        } else {
-            ds.save(`/query_execution_notification/${queryExecution.id}/`).then(
-                ({ data }) => {
+
+            return () => {
+                if (request) {
+                    request.cancel();
+                }
+            };
+        }, []);
+
+        const handleNotificationToggle = useCallback(() => {
+            setLoading(true);
+
+            if (notification) {
+                ds.delete(
+                    `/query_execution_notification/${queryExecution.id}/`
+                ).then(() => {
+                    setLoading(false);
+                    setNotification(null);
+                });
+            } else {
+                ds.save(
+                    `/query_execution_notification/${queryExecution.id}/`
+                ).then(({ data }) => {
                     setLoading(false);
                     setNotification(data);
-                }
-            );
-        }
-    }, [notification]);
+                });
+            }
+        }, [notification]);
 
-    const iconClass = loading
-        ? 'fa fa-spinner fa-pulse'
-        : notification
-        ? 'far fa-check-circle'
-        : 'far fa-circle';
+        const iconClass = loading
+            ? 'fa fa-spinner fa-pulse'
+            : notification
+            ? 'far fa-check-circle'
+            : 'far fa-circle';
 
-    return (
-        <span
-            className="copy-permalink-button"
-            onClick={loading ? null : handleNotificationToggle}
-        >
-            <i className={iconClass} />
+        return (
             <span
-                aria-label={`Notify me with ${notificationPreference} when finished`}
-                data-balloon-pos={'up'}
-                className="ml8"
+                className="copy-permalink-button"
+                onClick={loading ? null : handleNotificationToggle}
             >
-                Notify Me
+                <i className={iconClass} />
+                <span
+                    aria-label={`Notify me with ${notificationPreference} when finished`}
+                    data-balloon-pos={'up'}
+                    className="ml8"
+                >
+                    Notify Me
+                </span>
             </span>
-        </span>
-    );
-};
+        );
+    };

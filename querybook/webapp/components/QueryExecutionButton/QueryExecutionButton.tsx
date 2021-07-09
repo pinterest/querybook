@@ -112,11 +112,8 @@ class QueryExecutionButtonComponent extends React.PureComponent<
             onClick,
             active,
         } = this.props;
-        const {
-            hidePanel,
-            showQueryViewModalForId,
-            hasInitialLoadFinished,
-        } = this.state;
+        const { hidePanel, showQueryViewModalForId, hasInitialLoadFinished } =
+            this.state;
         const activeQueryExecutions = this.getActiveQueryExecutions();
 
         const panel = hidePanel ? null : (

@@ -10,8 +10,8 @@ import { FourOhFour } from 'ui/ErrorPage/FourOhFour';
 import { Loading } from 'ui/Loading/Loading';
 
 const AppAdmin = React.lazy(() => import('components/AppAdmin/AppAdmin'));
-const EnvironmentsRouter = React.lazy(() =>
-    import('components/EnvironmentsRouter/EnvironmentsRouter')
+const EnvironmentsRouter = React.lazy(
+    () => import('components/EnvironmentsRouter/EnvironmentsRouter')
 );
 
 export const AppRouter: React.FunctionComponent = () => (

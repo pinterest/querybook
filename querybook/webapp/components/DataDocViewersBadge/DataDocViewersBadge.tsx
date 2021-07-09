@@ -69,8 +69,8 @@ class DataDocViewersBadgeComponent extends React.PureComponent<IProps, IState> {
             />
         );
 
-        const accessRequestsByUidLength = Object.keys(accessRequestsByUid)
-            .length;
+        const accessRequestsByUidLength =
+            Object.keys(accessRequestsByUid).length;
         const shareButtonDOM = (
             <Button
                 className="viewers-badge-share-button"
@@ -164,10 +164,11 @@ function mapStateToProps(state: IStoreState, ownProps: IOwnProps) {
             state,
             ownProps.docId
         ),
-        accessRequestsByUid: dataDocSelectors.currentDataDocAccessRequestsByUidSelector(
-            state,
-            ownProps.docId
-        ),
+        accessRequestsByUid:
+            dataDocSelectors.currentDataDocAccessRequestsByUidSelector(
+                state,
+                ownProps.docId
+            ),
         dataDoc: dataDocSelectors.dataDocSelector(state, ownProps.docId),
         userInfoById: state.user.userInfoById,
         readonly: !dataDocSelectors.canCurrentUserEditSelector(

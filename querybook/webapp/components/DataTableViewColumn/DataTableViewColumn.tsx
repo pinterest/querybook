@@ -17,54 +17,57 @@ export interface IDataTableViewColumnProps {
     ) => any;
 }
 
-export const DataTableViewColumn: React.FunctionComponent<IDataTableViewColumnProps> = ({
-    updateDataColumnDescription,
-    table = null,
-    tableColumns = [],
-    numberOfRows = null,
-}) => {
-    const [filterString, setFilterString] = React.useState('');
+export const DataTableViewColumn: React.FunctionComponent<IDataTableViewColumnProps> =
+    ({
+        updateDataColumnDescription,
+        table = null,
+        tableColumns = [],
+        numberOfRows = null,
+    }) => {
+        const [filterString, setFilterString] = React.useState('');
 
-    const filteredColumns = React.useMemo(() => {
-        const filteredCols = tableColumns.filter((column) =>
-            !!filterString
-                ? column.name.toLowerCase().includes(filterString.toLowerCase())
-                : true
-        );
-        if (numberOfRows != null) {
-            filteredCols.splice(numberOfRows);
+        const filteredColumns = React.useMemo(() => {
+            const filteredCols = tableColumns.filter((column) =>
+                !!filterString
+                    ? column.name
+                          .toLowerCase()
+                          .includes(filterString.toLowerCase())
+                    : true
+            );
+            if (numberOfRows != null) {
+                filteredCols.splice(numberOfRows);
+            }
+            return filteredCols;
+        }, [tableColumns, filterString, numberOfRows]);
+
+        if (!table || !tableColumns) {
+            return <Loading />;
         }
-        return filteredCols;
-    }, [tableColumns, filterString, numberOfRows]);
 
-    if (!table || !tableColumns) {
-        return <Loading />;
-    }
+        const filterDOM = (
+            <SearchBar
+                value={filterString}
+                onSearch={(s) => setFilterString(s)}
+                isSearching={false}
+                placeholder={`Find Columns`}
+                hasIcon
+                autoFocus
+                className="mb8"
+            />
+        );
 
-    const filterDOM = (
-        <SearchBar
-            value={filterString}
-            onSearch={(s) => setFilterString(s)}
-            isSearching={false}
-            placeholder={`Find Columns`}
-            hasIcon
-            autoFocus
-            className="mb8"
-        />
-    );
+        const columnDOM = filteredColumns.map((col) => (
+            <DataTableColumnCard
+                column={col}
+                updateDataColumnDescription={updateDataColumnDescription}
+                key={col.id}
+            />
+        ));
 
-    const columnDOM = filteredColumns.map((col) => (
-        <DataTableColumnCard
-            column={col}
-            updateDataColumnDescription={updateDataColumnDescription}
-            key={col.id}
-        />
-    ));
-
-    return (
-        <div className="DataTableViewColumn">
-            {filterDOM}
-            {columnDOM}
-        </div>
-    );
-};
+        return (
+            <div className="DataTableViewColumn">
+                {filterDOM}
+                {columnDOM}
+            </div>
+        );
+    };

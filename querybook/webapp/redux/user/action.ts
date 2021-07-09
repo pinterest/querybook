@@ -77,8 +77,8 @@ export function getUserSetting(): ThunkResult<Promise<any>> {
                         type: '@@user/RECEIVE_USER_SETTING',
                         payload: {
                             userSetting,
-                            environmentId: getState().environment
-                                .currentEnvironmentId,
+                            environmentId:
+                                getState().environment.currentEnvironmentId,
                         },
                     });
                 }
@@ -99,8 +99,8 @@ export function getUserSettingLocal(): ThunkResult<void> {
                     payload: {
                         userSetting,
                         fromLocal: true,
-                        environmentId: getState().environment
-                            .currentEnvironmentId,
+                        environmentId:
+                            getState().environment.currentEnvironmentId,
                     },
                 });
             });

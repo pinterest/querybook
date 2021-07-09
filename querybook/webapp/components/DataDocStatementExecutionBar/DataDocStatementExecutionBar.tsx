@@ -26,11 +26,8 @@ interface IProps {
 
 export class DataDocStatementExecutionBar extends React.PureComponent<IProps> {
     public getToggleLogsButtonDOM() {
-        const {
-            statementExecution,
-            toggleLogs,
-            showStatementLogs,
-        } = this.props;
+        const { statementExecution, toggleLogs, showStatementLogs } =
+            this.props;
 
         if (!statementExecution) {
             return null;

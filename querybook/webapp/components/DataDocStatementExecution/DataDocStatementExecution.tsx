@@ -38,9 +38,8 @@ function useStatementMeta(
         if (!metaInfo) {
             return [null, false];
         }
-        const [processedMeta, metaProperties] = sanitizeAndExtraMarkdown(
-            metaInfo
-        );
+        const [processedMeta, metaProperties] =
+            sanitizeAndExtraMarkdown(metaInfo);
         return [processedMeta, Boolean(metaProperties['force_show'])];
     }, [metaInfo]);
 

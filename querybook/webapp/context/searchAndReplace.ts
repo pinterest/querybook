@@ -8,6 +8,5 @@ export interface ISearchAndReplaceContextType {
     hideSearchAndReplace: () => any;
 }
 
-export const SearchAndReplaceContext = React.createContext<
-    ISearchAndReplaceContextType
->(null);
+export const SearchAndReplaceContext =
+    React.createContext<ISearchAndReplaceContextType>(null);

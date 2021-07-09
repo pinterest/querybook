@@ -77,7 +77,7 @@ function SimpleFormField<T>({
 
         controlDOM = (
             <InputComponent
-                value={(value as unknown) as string}
+                value={value as unknown as string}
                 onChange={onFieldChange}
                 inputProps={inputProps}
                 debounceTime={10}
@@ -197,8 +197,8 @@ export function SmartForm<T>({
         fieldType === 'list' ? (
             <ExpandableFormField<[]>
                 formField={formField as IExpandableFormField}
-                value={(value as unknown) as []}
-                onChange={(onChange as unknown) as onChangeFunc<[]>}
+                value={value as unknown as []}
+                onChange={onChange as unknown as onChangeFunc<[]>}
             />
         ) : fieldType === 'struct' ? (
             <StructFormField<Record<string, any>>

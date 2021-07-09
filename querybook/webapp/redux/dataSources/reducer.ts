@@ -70,10 +70,8 @@ function functionDocumentationReducer(
                 return;
             }
             case '@@dataSources/RECEIVE_FUNCTION_DOCUMENTATION': {
-                const {
-                    language,
-                    functionDocumentationByName,
-                } = action.payload;
+                const { language, functionDocumentationByName } =
+                    action.payload;
                 draft.byNameByLanguage[language] = functionDocumentationByName;
                 delete draft.loading[language];
                 return;
@@ -286,12 +284,8 @@ function queryExampleIdsByIdReducer(
     return produce(state, (draft) => {
         switch (action.type) {
             case '@@dataSources/RECEIVE_QUERY_EXAMPLES': {
-                const {
-                    tableId,
-                    exampleIds,
-                    hasMore,
-                    filters,
-                } = action.payload;
+                const { tableId, exampleIds, hasMore, filters } =
+                    action.payload;
                 draft[tableId] = draft[tableId] || {
                     hasMore: true,
                     queryIds: [],
