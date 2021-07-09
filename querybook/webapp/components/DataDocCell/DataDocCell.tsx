@@ -130,7 +130,7 @@ export const DataDocCell: React.FunctionComponent<IDataDocCellProps> = React.mem
                             try {
                                 await dataDocActions.deleteDataDocCell(
                                     docId,
-                                    index
+                                    cell.id
                                 );
                             } catch (e) {
                                 toast.error(`Delete cell failed, reason: ${e}`);
@@ -148,7 +148,7 @@ export const DataDocCell: React.FunctionComponent<IDataDocCellProps> = React.mem
                         resolve();
                     }
                 }),
-            [docId, numberOfCells, index]
+            [docId, numberOfCells, cell.id]
         );
 
         const shareUrl = useMemo(

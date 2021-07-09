@@ -304,17 +304,11 @@ export function insertDataDocCell(
     };
 }
 
-export function deleteDataDocCell(
-    docId: number,
-    index: number
-): Promise<Record<string, unknown>> {
-    return dataDocSocket.deleteDataCell(docId, index);
+export function deleteDataDocCell(docId: number, cellId: number) {
+    return dataDocSocket.deleteDataCell(docId, cellId);
 }
 
-export function moveDataDocCursor(
-    docId: number,
-    cellId?: number
-): Promise<any> {
+export function moveDataDocCursor(docId: number, cellId?: number) {
     return dataDocSocket.moveDataDocCursor(docId, cellId);
 }
 
@@ -322,7 +316,7 @@ export function moveDataDocCell(
     docId: number,
     fromIndex: number,
     toIndex: number
-): Promise<any> {
+) {
     return dataDocSocket.moveDataDocCell(docId, fromIndex, toIndex);
 }
 
@@ -331,7 +325,7 @@ export function pasteDataCell(
     cut: boolean,
     docId: number,
     index: number
-): Promise<any> {
+) {
     return dataDocSocket.pasteDataCell(cellId, cut, docId, index);
 }
 
@@ -363,7 +357,8 @@ export function updateDataDocCell(
         return dataCellSaveManager
             .saveDataCell(docId, id, context, meta, saveCellTimeout)
             .then(onSave.bind(null, false), (e) => {
-                onSave.bind(null, false); // on failure, we pretend it saved!
+                // Clear the saving status
+                onSave(false);
                 throw e; // keep it up with the rejection chain
             });
     };

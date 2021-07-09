@@ -139,7 +139,7 @@ def paste_data_cell(
             )
             socketio.emit(
                 "data_cell_deleted",
-                (sid, index,),
+                (sid, cell_id,),
                 namespace=DATA_DOC_NAMESPACE,
                 room=old_data_doc.id,
                 broadcast=True,
@@ -191,14 +191,16 @@ def update_data_cell(cell_id, fields, sid="", session=None):
 
 
 @with_session
-def delete_data_cell(doc_id, index, sid="", session=None):
+def delete_data_cell(doc_id, cell_id, sid="", session=None):
     assert_can_write(doc_id, session=session)
     verify_data_doc_permission(doc_id, session=session)
-    logic.delete_data_doc_cell(data_doc_id=doc_id, index=int(index), session=session)
+    logic.delete_data_doc_cell(
+        data_doc_id=doc_id, data_cell_id=int(cell_id), session=session
+    )
 
     socketio.emit(
         "data_cell_deleted",
-        (sid, index,),
+        (sid, cell_id,),
         namespace=DATA_DOC_NAMESPACE,
         room=doc_id,
         broadcast=True,

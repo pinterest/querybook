@@ -95,12 +95,12 @@ export function openDataDoc(docId: number): ThunkResult<Promise<any>> {
             },
 
             deleteDataCell: {
-                resolve: (index) => {
+                resolve: (cellId) => {
                     dispatch({
                         type: '@@dataDoc/DELETE_DATA_DOC_CELL',
                         payload: {
                             docId,
-                            index,
+                            cellId,
                         },
                     });
                 },
