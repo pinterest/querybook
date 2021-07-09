@@ -7,24 +7,24 @@ export interface IBatchManagerOptions<T, M> {
 interface IBatchPromise<T> {
     data: T;
     onSuccess: () => void;
-    onFailure: () => void;
+    onFailure: (e: unknown) => void;
 }
 
 export function pickLastMergeFunction<T, M>(changes: Array<IBatchPromise<T>>) {
-    return (changes[changes.length - 1] as unknown) as IBatchPromise<M>;
+    return changes[changes.length - 1] as unknown as IBatchPromise<M>;
 }
 
 export function spreadMergeFunction<
     T = Record<string | number, unknown>,
     M = Record<string | number, unknown>
 >(changes: Array<IBatchPromise<T>>) {
-    const mergedData = (changes.reduce(
+    const mergedData = changes.reduce(
         (hash, change) => ({
             ...hash,
             ...change.data,
         }),
         {}
-    ) as unknown) as M;
+    ) as unknown as M;
     const { onSuccess, onFailure } = changes[changes.length - 1];
     return {
         onSuccess,
@@ -37,7 +37,7 @@ export function mergeSetFunction<T>(changes: Array<IBatchPromise<T>>) {
     return {
         data: [...new Set(changes.map((c) => c.data))],
         onSuccess: () => changes.forEach((c) => c.onSuccess()),
-        onFailure: () => changes.forEach((c) => c.onFailure()),
+        onFailure: (e: unknown) => changes.forEach((c) => c.onFailure(e)),
     };
 }
 
@@ -102,9 +102,11 @@ export class BatchManager<T, M> {
         }
 
         // We only notifiy the last one
-        const { onSuccess, onFailure, data: mergedData } = this.mergeFunction(
-            this.batchStack
-        );
+        const {
+            onSuccess,
+            onFailure,
+            data: mergedData,
+        } = this.mergeFunction(this.batchStack);
         // Clear the batch
         this.batchStack = [];
         try {
@@ -112,7 +114,7 @@ export class BatchManager<T, M> {
             await this.processRequest;
             onSuccess();
         } catch (e) {
-            onFailure();
+            onFailure(e);
         } finally {
             this.processRequest = null;
         }

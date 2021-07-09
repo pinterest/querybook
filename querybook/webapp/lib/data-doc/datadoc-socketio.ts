@@ -4,6 +4,10 @@ import { IDataDocEditor, IDataCellMeta } from 'const/datadoc';
 import { IAccessRequest } from 'const/accessRequest';
 import { IQueryExecution } from 'redux/queryExecutions/types';
 
+interface IDataDocSocketPromise<T> {
+    args: T;
+    isSameOrigin: boolean;
+}
 interface IDataDocSocketEventPromise<A = () => any, R = (e) => any> {
     resolve: A;
     reject?: R;
@@ -17,18 +21,20 @@ export interface IDataDocSocketEvent {
     >;
 
     updateDataDoc?: IDataDocSocketEventPromise<
-        (rawDataDoc, isSameOrigin) => any
+        (rawDataDoc, isSameOrigin: boolean) => any
     >;
 
     updateDataCell?: IDataDocSocketEventPromise<
-        (rawDataCell, isSameOrigin) => any
+        (rawDataCell, isSameOrigin: boolean) => any
     >;
     insertDataCell?: IDataDocSocketEventPromise<
-        (index: number, rawDataCell) => any
+        (index: number, rawDataCell, isSameOrigin: boolean) => any
     >;
-    deleteDataCell?: IDataDocSocketEventPromise<(index: number) => any>;
+    deleteDataCell?: IDataDocSocketEventPromise<
+        (cellId: number, isSameOrigin: boolean) => any
+    >;
     moveDataCell?: IDataDocSocketEventPromise<
-        (fromIndex: number, toIndex: number) => any
+        (fromIndex: number, toIndex: number, isSameOrigin: boolean) => any
     >;
 
     updateDataDocUsers?: IDataDocSocketEventPromise<
@@ -134,17 +140,23 @@ export class DataDocSocket {
 
     public getDataDocEditors = (docId: number) => {
         this.socket.emit('fetch_data_doc_editors', docId);
-        return this.makePromise('receiveDataDocEditors');
+        return this.makePromise<IDataDocSocketPromise<[editors: any[]]>>(
+            'receiveDataDocEditors'
+        );
     };
 
     public getDataDocAccessRequests = (docId: number) => {
         this.socket.emit('fetch_data_doc_access_requests', docId);
-        return this.makePromise('receiveDataDocAccessRequests');
+        return this.makePromise<
+            IDataDocSocketPromise<[requests: IAccessRequest[]]>
+        >('receiveDataDocAccessRequests');
     };
 
     public updateDataDoc = (docId: number, fields: Record<string, any>) => {
         this.socket.emit('update_data_doc', docId, fields);
-        return this.makePromise('updateDataDoc');
+        return this.makePromise<IDataDocSocketPromise<[rawDataDoc: any]>>(
+            'updateDataDoc'
+        );
     };
 
     public updateDataCell = (
@@ -153,12 +165,16 @@ export class DataDocSocket {
         fields: { meta?: IDataCellMeta; context?: string }
     ) => {
         this.socket.emit('update_data_cell', docId, cellId, fields);
-        return this.makePromise('updateDataCell');
+        return this.makePromise<IDataDocSocketPromise<[rawDataCell: any]>>(
+            'updateDataCell'
+        );
     };
 
-    public deleteDataCell = (docId: number, index: number) => {
-        this.socket.emit('delete_data_cell', docId, index);
-        return this.makePromise('deleteDataCell');
+    public deleteDataCell = (docId: number, cellId: number) => {
+        this.socket.emit('delete_data_cell', docId, cellId);
+        return this.makePromise<IDataDocSocketPromise<[index: number]>>(
+            'deleteDataCell'
+        );
     };
 
     public moveDataDocCell = (
@@ -167,7 +183,9 @@ export class DataDocSocket {
         toIndex: number
     ) => {
         this.socket.emit('move_data_cell', docId, fromIndex, toIndex);
-        return this.makePromise('moveDataCell');
+        return this.makePromise<
+            IDataDocSocketPromise<[fromIndex: number, toIndex: number]>
+        >('moveDataCell');
     };
 
     public pasteDataCell = (
@@ -177,7 +195,7 @@ export class DataDocSocket {
         index: number
     ) => {
         this.socket.emit('paste_data_cell', cellId, cut, docId, index);
-        return this.makePromise('pasteDataCell');
+        return this.makePromise<IDataDocSocketPromise<[]>>('pasteDataCell');
     };
 
     public insertDataDocCell = (
@@ -195,13 +213,19 @@ export class DataDocSocket {
             context,
             meta
         );
-        return this.makePromise('insertDataCell');
+        return this.makePromise<
+            IDataDocSocketPromise<[index: number, rawDataCell: any]>
+        >('insertDataCell');
     };
 
     public moveDataDocCursor = (docId: number, cellId?: number) => {
         if (this.activeDataDocId != null) {
             this.socket.emit('move_data_doc_cursor', docId, cellId);
-            return this.makePromise('moveDataDocCursor');
+            return this.makePromise<
+                IDataDocSocketPromise<
+                    [originator: string, cellId: number | null | undefined]
+                >
+            >('moveDataDocCursor');
         }
     };
 
@@ -228,7 +252,10 @@ export class DataDocSocket {
         // Only resolve promise if it is from the same sender
         if (isSameOrigin) {
             if (key in this.promiseMap) {
-                this.promiseMap[key].resolve(...args, isSameOrigin);
+                this.promiseMap[key].resolve({
+                    args,
+                    isSameOrigin,
+                });
                 delete this.promiseMap[key];
             }
         }
@@ -302,11 +329,11 @@ export class DataDocSocket {
                 );
             });
 
-            this.socket.on('data_cell_deleted', (originator, index) => {
+            this.socket.on('data_cell_deleted', (originator, cellId) => {
                 this.resolveProimseAndEvent(
                     'deleteDataCell',
                     originator,
-                    index
+                    cellId
                 );
             });
 
