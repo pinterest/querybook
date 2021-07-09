@@ -66,10 +66,11 @@ export const AdminMetastore: React.FunctionComponent<IProps> = ({
 
     const [showTaskEditor, setShowTaskEditor] = React.useState<boolean>(false);
 
-    const { data: metastoreLoaders }: { data: IMetastoreLoader[] } =
-        useDataFetch<IMetastoreLoader[]>({
-            url: '/admin/query_metastore_loader/',
-        });
+    const {
+        data: metastoreLoaders,
+    }: { data: IMetastoreLoader[] } = useDataFetch<IMetastoreLoader[]>({
+        url: '/admin/query_metastore_loader/',
+    });
 
     const {
         data: metastoreUpdateSchedule,
@@ -356,7 +357,8 @@ export const AdminMetastore: React.FunctionComponent<IProps> = ({
                                                     metastoreUpdateSchedule ?? {
                                                         cron: '0 0 * * *',
                                                         name: `update_metastore_${metastoreId}`,
-                                                        task: 'tasks.update_metastore.update_metastore',
+                                                        task:
+                                                            'tasks.update_metastore.update_metastore',
                                                         task_type: 'prod',
                                                         enabled: true,
                                                         args: [

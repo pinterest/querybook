@@ -39,8 +39,9 @@ export const EnvironmentModalSwitchRouter: React.FC = () => {
     const history = useHistory();
 
     const lastLocation = usePrevious(location);
-    const [lastNotModalLocation, setLastNotModalLocation] =
-        React.useState(null);
+    const [lastNotModalLocation, setLastNotModalLocation] = React.useState(
+        null
+    );
 
     React.useEffect(() => {
         if (history.action !== 'POP' && !lastLocation?.state?.isModal) {

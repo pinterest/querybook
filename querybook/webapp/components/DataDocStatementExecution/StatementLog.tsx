@@ -30,10 +30,9 @@ export const StatementLog: React.FunctionComponent<IStatementLogProps> = ({
         failed,
         error,
     } = statementLog || ({} as any);
-    const logText: string = React.useMemo(
-        () => (data ?? []).join('\n'),
-        [data]
-    );
+    const logText: string = React.useMemo(() => (data ?? []).join('\n'), [
+        data,
+    ]);
 
     React.useEffect(() => {
         // Auto scroll logs to bottom when getting new logs

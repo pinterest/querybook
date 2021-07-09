@@ -18,8 +18,8 @@ export interface IDataDocGridItemProps {
     onRemove?: (dataDoc: IDataDoc) => any;
 }
 
-export const DataDocGridItem: React.FunctionComponent<IDataDocGridItemProps> =
-    React.memo(({ dataDoc, className, url, onRemove }) => {
+export const DataDocGridItem: React.FunctionComponent<IDataDocGridItemProps> = React.memo(
+    ({ dataDoc, className, url, onRemove }) => {
         const [, drag] = useDrag({
             item: {
                 type: DataDocDraggableType,
@@ -68,4 +68,5 @@ export const DataDocGridItem: React.FunctionComponent<IDataDocGridItemProps> =
                 </ListLink>
             </div>
         );
-    });
+    }
+);

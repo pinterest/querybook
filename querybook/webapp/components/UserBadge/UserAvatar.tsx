@@ -72,45 +72,46 @@ const DefaultUserIcon: React.FunctionComponent<{
     return <canvas ref={canvasRef} width="100px" height="100px" />;
 };
 
-export const UserAvatarComponent: React.FunctionComponent<IUserAvatarComponentProps> =
-    ({ loading, userInfo, isOnline, tiny, onClick = null }) => {
-        const profileImage = userInfo ? userInfo.profile_img : null;
-        const userName = userInfo
-            ? userInfo.fullname ?? userInfo.username
-            : null;
+export const UserAvatarComponent: React.FunctionComponent<IUserAvatarComponentProps> = ({
+    loading,
+    userInfo,
+    isOnline,
+    tiny,
+    onClick = null,
+}) => {
+    const profileImage = userInfo ? userInfo.profile_img : null;
+    const userName = userInfo ? userInfo.fullname ?? userInfo.username : null;
 
-        const imageDOM = loading ? (
-            <div className="spinner-wrapper">
-                <span>
-                    <i className="fa fa-spinner fa-pulse" />
-                </span>
-            </div>
-        ) : profileImage == null ? (
-            <DefaultUserIcon name={userName} />
-        ) : (
-            <img src={profileImage} />
-        );
-
-        const isOnlineClasses = isOnline
-            ? 'is-online-dot online'
-            : 'is-online-dot offline';
-
-        const isOnlineDot =
-            isOnline === undefined ? null : (
-                <span className={isOnlineClasses} />
-            );
-
-        return tiny ? (
-            <span className="UserAvatar tiny" onClick={onClick}>
-                {imageDOM}
+    const imageDOM = loading ? (
+        <div className="spinner-wrapper">
+            <span>
+                <i className="fa fa-spinner fa-pulse" />
             </span>
-        ) : (
-            <span className="UserAvatar" onClick={onClick}>
-                {imageDOM}
-                {isOnlineDot}
-            </span>
-        );
-    };
+        </div>
+    ) : profileImage == null ? (
+        <DefaultUserIcon name={userName} />
+    ) : (
+        <img src={profileImage} />
+    );
+
+    const isOnlineClasses = isOnline
+        ? 'is-online-dot online'
+        : 'is-online-dot offline';
+
+    const isOnlineDot =
+        isOnline === undefined ? null : <span className={isOnlineClasses} />;
+
+    return tiny ? (
+        <span className="UserAvatar tiny" onClick={onClick}>
+            {imageDOM}
+        </span>
+    ) : (
+        <span className="UserAvatar" onClick={onClick}>
+            {imageDOM}
+            {isOnlineDot}
+        </span>
+    );
+};
 
 export const UserAvatar: React.FunctionComponent<IUserAvatarProps> = ({
     uid,

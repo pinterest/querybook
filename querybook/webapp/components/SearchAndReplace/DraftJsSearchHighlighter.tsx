@@ -53,15 +53,16 @@ export const DraftJsSearchHighlighter: React.FC<{
     useEffect(() => {
         if (currentSearchItem && editor) {
             // editor.focus();
-            const selectionState: DraftJs.SelectionState =
-                new DraftJs.SelectionState({
+            const selectionState: DraftJs.SelectionState = new DraftJs.SelectionState(
+                {
                     anchorKey: currentSearchItem.blockKey,
                     anchorOffset: currentSearchItem.from,
                     focusKey: currentSearchItem.blockKey,
                     focusOffset: currentSearchItem.to,
                     hasFocus: false,
                     isBackward: false,
-                });
+                }
+            );
             editor.editorState = DraftJs.EditorState.forceSelection(
                 editor.editorState,
                 selectionState

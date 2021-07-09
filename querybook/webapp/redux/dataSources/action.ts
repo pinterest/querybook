@@ -260,8 +260,9 @@ export function receiveDataTable(
             ),
             dataColumnsById: Object.entries(dataColumn).reduce(
                 (hash, [id, column]) => {
-                    const { description: rawDescription } =
-                        column as IDataColumn;
+                    const {
+                        description: rawDescription,
+                    } = column as IDataColumn;
 
                     const description = convertRawToContentState(
                         rawDescription as string
@@ -285,13 +286,15 @@ export function receiveDataTable(
 export function fetchDataLineage(tableId): ThunkResult<Promise<any[]>> {
     return (dispatch, getState) => {
         const promiseArr = [];
-        const cState =
-            getState().dataSources.dataLineages.childLineage[tableId];
+        const cState = getState().dataSources.dataLineages.childLineage[
+            tableId
+        ];
         if (!cState) {
             promiseArr.push(dispatch(fetchChildDataLineage(tableId)));
         }
-        const pState =
-            getState().dataSources.dataLineages.parentLineage[tableId];
+        const pState = getState().dataSources.dataLineages.parentLineage[
+            tableId
+        ];
         if (!pState) {
             promiseArr.push(dispatch(fetchParentDataLineage(tableId)));
         }
@@ -303,8 +306,9 @@ export function fetchParentDataLineage(
     tableId: number
 ): ThunkResult<Promise<void>> {
     return async (dispatch, getState) => {
-        const state =
-            getState().dataSources.dataLineages.parentLineage[tableId];
+        const state = getState().dataSources.dataLineages.parentLineage[
+            tableId
+        ];
         if (!state) {
             const { data } = await ds.fetch(`/lineage/${tableId}/parent/`);
             dispatch(receiveParentDataLineage(data, tableId));
@@ -446,8 +450,9 @@ export function pollDataTableSample(
     return async (dispatch, getState) => {
         let finished = false;
         try {
-            const poll =
-                getState().dataSources.dataTablesSamplesPollingById[tableId];
+            const poll = getState().dataSources.dataTablesSamplesPollingById[
+                tableId
+            ];
             if (poll) {
                 const { data } = await ds.fetch<[boolean, number]>(
                     `/table/${tableId}/samples/poll/`,

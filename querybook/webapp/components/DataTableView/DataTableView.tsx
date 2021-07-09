@@ -348,8 +348,13 @@ function mapStateToProps(state: IStoreState, ownProps) {
 
     const { tableId } = ownProps;
 
-    const { table, schema, tableName, tableColumns, tableWarnings } =
-        fullTableSelector(state, tableId);
+    const {
+        table,
+        schema,
+        tableName,
+        tableColumns,
+        tableWarnings,
+    } = fullTableSelector(state, tableId);
 
     return {
         table,

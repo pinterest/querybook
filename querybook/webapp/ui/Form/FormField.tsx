@@ -85,43 +85,45 @@ export const FormField: React.FunctionComponent<IFormFieldProps> = ({
     );
 };
 
-const FormFieldLabelSection: React.FunctionComponent<IFormFieldSectionProps> =
-    ({ children, className = '' }) => (
-        <div className={`FormFieldLabelSection ${className}`}>{children}</div>
-    );
+const FormFieldLabelSection: React.FunctionComponent<IFormFieldSectionProps> = ({
+    children,
+    className = '',
+}) => <div className={`FormFieldLabelSection ${className}`}>{children}</div>;
 
-export const FormFieldInputSectionRowGroup: React.FunctionComponent<IFormFieldSectionProps> =
-    ({ children, className = '' }) => (
-        <div className={`FormFieldInputSectionRowGroup ${className}`}>
+export const FormFieldInputSectionRowGroup: React.FunctionComponent<IFormFieldSectionProps> = ({
+    children,
+    className = '',
+}) => (
+    <div className={`FormFieldInputSectionRowGroup ${className}`}>
+        {children}
+    </div>
+);
+
+export const FormFieldInputSectionRow: React.FunctionComponent<IFormFieldSectionProps> = ({
+    children,
+    className = '',
+}) => <div className={`FormFieldInputSectionRow ${className}`}>{children}</div>;
+
+export const FormFieldInputSection: React.FunctionComponent<IFormFieldSectionProps> = ({
+    children,
+    className = '',
+}) => <div className={`FormFieldInputSection ${className}`}>{children}</div>;
+
+export const FormFieldHelpSection: React.FunctionComponent<IFormFieldSectionProps> = ({
+    children,
+    className = '',
+}) => (
+    <div className={`FormFieldHelpSection flex-center ${className}`}>
+        <InfoButton
+            layout={['bottom', 'right']}
+            popoverClassName="FormFieldHelpSection"
+        >
             {children}
-        </div>
-    );
+        </InfoButton>
+    </div>
+);
 
-export const FormFieldInputSectionRow: React.FunctionComponent<IFormFieldSectionProps> =
-    ({ children, className = '' }) => (
-        <div className={`FormFieldInputSectionRow ${className}`}>
-            {children}
-        </div>
-    );
-
-export const FormFieldInputSection: React.FunctionComponent<IFormFieldSectionProps> =
-    ({ children, className = '' }) => (
-        <div className={`FormFieldInputSection ${className}`}>{children}</div>
-    );
-
-export const FormFieldHelpSection: React.FunctionComponent<IFormFieldSectionProps> =
-    ({ children, className = '' }) => (
-        <div className={`FormFieldHelpSection flex-center ${className}`}>
-            <InfoButton
-                layout={['bottom', 'right']}
-                popoverClassName="FormFieldHelpSection"
-            >
-                {children}
-            </InfoButton>
-        </div>
-    );
-
-export const FormFieldErrorSection: React.FunctionComponent<IFormFieldSectionProps> =
-    ({ children, className = '' }) => (
-        <div className={`FormFieldErrorSection ${className}`}>{children}</div>
-    );
+export const FormFieldErrorSection: React.FunctionComponent<IFormFieldSectionProps> = ({
+    children,
+    className = '',
+}) => <div className={`FormFieldErrorSection ${className}`}>{children}</div>;

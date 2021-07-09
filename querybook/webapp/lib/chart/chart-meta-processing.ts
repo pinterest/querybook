@@ -204,9 +204,10 @@ export function mapMetaToChartOptions(
         optionsObj.tooltips['callbacks'] = {
             label: (tooltipItem, chartData) => {
                 const dataset = chartData.datasets[tooltipItem.datasetIndex];
-                const datasetMeta: Record<number, { total: number }> = (
-                    dataset as any
-                )._meta;
+                const datasetMeta: Record<
+                    number,
+                    { total: number }
+                > = (dataset as any)._meta;
                 const totalValue =
                     datasetMeta[Object.keys(datasetMeta)[0]].total;
 

@@ -56,12 +56,16 @@ export const AdminAuditLog: React.FC<IAdminAuditLogProps> = ({
         filters['item_id'] = itemId;
     }
 
-    const { data, isLoading, fetchMore, hasMore } =
-        usePaginatedFetch<IAdminAuditLog>({
-            url: `/admin/audit_log/`,
-            batchSize: PAGE_SIZE,
-            params: filters,
-        });
+    const {
+        data,
+        isLoading,
+        fetchMore,
+        hasMore,
+    } = usePaginatedFetch<IAdminAuditLog>({
+        url: `/admin/audit_log/`,
+        batchSize: PAGE_SIZE,
+        params: filters,
+    });
 
     const topDOM = filters && (
         <div className="pv4 mvauto">

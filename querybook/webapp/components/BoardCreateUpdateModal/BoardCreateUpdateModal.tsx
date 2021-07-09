@@ -33,113 +33,103 @@ interface IBoardCreateUpdateFormProps {
     onComplete: (board: IBoardRaw) => any;
 }
 
-export const BoardCreateUpdateForm: React.FunctionComponent<IBoardCreateUpdateFormProps> =
-    ({ boardId, onComplete }) => {
-        const dispatch: Dispatch = useDispatch();
-        const isCreateForm = boardId == null;
-        const board = isCreateForm
-            ? null
-            : useSelector(
-                  (state: IStoreState) => state.board.boardById[boardId]
-              );
-        const handleDeleteBoard = useCallback(() => {
-            sendConfirm({
-                onConfirm: () => {
-                    dispatch(deleteBoard(boardId));
-                },
-                message: 'Your list will be permanently removed.',
-            });
-        }, [boardId]);
+export const BoardCreateUpdateForm: React.FunctionComponent<IBoardCreateUpdateFormProps> = ({
+    boardId,
+    onComplete,
+}) => {
+    const dispatch: Dispatch = useDispatch();
+    const isCreateForm = boardId == null;
+    const board = isCreateForm
+        ? null
+        : useSelector((state: IStoreState) => state.board.boardById[boardId]);
+    const handleDeleteBoard = useCallback(() => {
+        sendConfirm({
+            onConfirm: () => {
+                dispatch(deleteBoard(boardId));
+            },
+            message: 'Your list will be permanently removed.',
+        });
+    }, [boardId]);
 
-        const formValues = React.useMemo(
-            () =>
-                isCreateForm
-                    ? {
-                          name: '',
-                          description: convertRawToContentState(''),
-                          public: false,
-                      }
-                    : {
-                          name: board.name,
-                          description: convertRawToContentState(
-                              board.description
-                          ),
-                          public: board.public,
-                      },
-            [board, isCreateForm]
-        );
+    const formValues = React.useMemo(
+        () =>
+            isCreateForm
+                ? {
+                      name: '',
+                      description: convertRawToContentState(''),
+                      public: false,
+                  }
+                : {
+                      name: board.name,
+                      description: convertRawToContentState(board.description),
+                      public: board.public,
+                  },
+        [board, isCreateForm]
+    );
 
-        return (
-            <Formik
-                initialValues={formValues}
-                validateOnMount={true}
-                validationSchema={boardFormSchema}
-                onSubmit={async (values) => {
-                    const description = convertContentStateToHTML(
-                        values.description
-                    );
-                    const action = isCreateForm
-                        ? createBoard(values.name, description, values.public)
-                        : updateBoard(boardId, {
-                              ...values,
-                              description,
-                          });
-                    onComplete(await dispatch(action));
-                }}
-            >
-                {({
-                    submitForm,
-                    isSubmitting,
-                    errors,
-                    setFieldValue,
-                    isValid,
-                }) => {
-                    const formTitle = isCreateForm ? 'New List' : 'Update List';
-                    const nameField = <SimpleField name="name" type="input" />;
-                    // TODO: enable when sharing is possible
-                    // const publicField = <SimpleField name="public" type="toggle" />;
+    return (
+        <Formik
+            initialValues={formValues}
+            validateOnMount={true}
+            validationSchema={boardFormSchema}
+            onSubmit={async (values) => {
+                const description = convertContentStateToHTML(
+                    values.description
+                );
+                const action = isCreateForm
+                    ? createBoard(values.name, description, values.public)
+                    : updateBoard(boardId, {
+                          ...values,
+                          description,
+                      });
+                onComplete(await dispatch(action));
+            }}
+        >
+            {({ submitForm, isSubmitting, errors, setFieldValue, isValid }) => {
+                const formTitle = isCreateForm ? 'New List' : 'Update List';
+                const nameField = <SimpleField name="name" type="input" />;
+                // TODO: enable when sharing is possible
+                // const publicField = <SimpleField name="public" type="toggle" />;
 
-                    const descriptionField = (
-                        <SimpleField name="description" type="rich-text" />
-                    );
+                const descriptionField = (
+                    <SimpleField name="description" type="rich-text" />
+                );
 
-                    return (
-                        <div className="BoardCreateUpdateForm">
-                            <div>
-                                <Title size={4}>{formTitle}</Title>
-                            </div>
-                            <FormWrapper minLabelWidth="150px">
-                                <Form>
-                                    {nameField}
-                                    {/* {publicField} */}
-                                    {descriptionField}
-                                    <br />
-                                    <div className="right-align">
-                                        {!isCreateForm && (
-                                            <Button
-                                                onClick={handleDeleteBoard}
-                                                title="Delete"
-                                                color="cancel"
-                                            />
-                                        )}
-                                        <Button
-                                            disabled={!isValid || isSubmitting}
-                                            onClick={submitForm}
-                                            title={
-                                                isCreateForm
-                                                    ? 'Create'
-                                                    : 'Update'
-                                            }
-                                        />
-                                    </div>
-                                </Form>
-                            </FormWrapper>
+                return (
+                    <div className="BoardCreateUpdateForm">
+                        <div>
+                            <Title size={4}>{formTitle}</Title>
                         </div>
-                    );
-                }}
-            </Formik>
-        );
-    };
+                        <FormWrapper minLabelWidth="150px">
+                            <Form>
+                                {nameField}
+                                {/* {publicField} */}
+                                {descriptionField}
+                                <br />
+                                <div className="right-align">
+                                    {!isCreateForm && (
+                                        <Button
+                                            onClick={handleDeleteBoard}
+                                            title="Delete"
+                                            color="cancel"
+                                        />
+                                    )}
+                                    <Button
+                                        disabled={!isValid || isSubmitting}
+                                        onClick={submitForm}
+                                        title={
+                                            isCreateForm ? 'Create' : 'Update'
+                                        }
+                                    />
+                                </div>
+                            </Form>
+                        </FormWrapper>
+                    </div>
+                );
+            }}
+        </Formik>
+    );
+};
 
 export const BoardCreateUpdateModal: React.FunctionComponent<
     IBoardCreateUpdateFormProps & IStandardModalProps

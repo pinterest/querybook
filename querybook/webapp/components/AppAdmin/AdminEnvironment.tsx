@@ -325,10 +325,12 @@ const AdminEnvironmentQueryEngine: React.FC<{
         }
     }, []);
 
-    const { data: environmentEngines, forceFetch: fetchEnvironmentEngines } =
-        useDataFetch<IQueryEngine[]>({
-            url: `/admin/environment/${environmentId}/query_engine/`,
-        });
+    const {
+        data: environmentEngines,
+        forceFetch: fetchEnvironmentEngines,
+    } = useDataFetch<IQueryEngine[]>({
+        url: `/admin/environment/${environmentId}/query_engine/`,
+    });
 
     const handleAddQueryEngine = React.useCallback(
         async (engineId: number) => {

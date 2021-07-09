@@ -90,7 +90,7 @@ export function saveQuerySnippet(
         const params = querySnippet;
         const { data } = await ds.save(
             '/query_snippet/',
-            params as unknown as Record<string, unknown>
+            (params as unknown) as Record<string, unknown>
         );
         dispatch({
             type: '@@querySnippets/RECEIVE_QUERY_SNIPPET',

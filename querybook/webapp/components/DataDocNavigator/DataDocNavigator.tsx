@@ -69,8 +69,10 @@ export const DataDocNavigator: React.FC = () => {
         dispatch(getDataDocNavSectionConfigFromStore());
     }, []);
 
-    const { collapsed: boardsCollapsed, setCollapsed: setBoardsCollapsed } =
-        useBoundSectionState('boards', sectionOpen, setSectionOpen);
+    const {
+        collapsed: boardsCollapsed,
+        setCollapsed: setBoardsCollapsed,
+    } = useBoundSectionState('boards', sectionOpen, setSectionOpen);
 
     const commonSectionProps = {
         selectedDocId,
@@ -141,10 +143,9 @@ function useCommonNavigatorState(section: string, props: ICommonSectionProps) {
         props.setSectionOpen
     );
 
-    const load = useCallback(
-        () => props.loadDataDocs(section),
-        [props.loadDataDocs]
-    );
+    const load = useCallback(() => props.loadDataDocs(section), [
+        props.loadDataDocs,
+    ]);
 
     return {
         collapsed,
@@ -212,7 +213,7 @@ const FavoriteDataDocsSection: React.FC<ICommonSectionProps> = (props) => {
             return {
                 isOver:
                     item?.type === BoardDraggableType &&
-                    (item?.itemInfo as unknown as IProcessedBoardItem)
+                    ((item?.itemInfo as unknown) as IProcessedBoardItem)
                         .itemType === 'table'
                         ? false
                         : monitor.isOver(),

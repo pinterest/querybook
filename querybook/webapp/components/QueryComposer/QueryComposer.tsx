@@ -205,8 +205,10 @@ const QueryComposer: React.FC = () => {
         environmentId
     );
 
-    const { searchAndReplaceProps, searchAndReplaceRef } =
-        useQueryComposerSearchAndReplace(query, setQuery);
+    const {
+        searchAndReplaceProps,
+        searchAndReplaceRef,
+    } = useQueryComposerSearchAndReplace(query, setQuery);
 
     const runButtonRef = useRef<IQueryRunButtonHandles>(null);
     const clickOnRunButton = useCallback(() => {

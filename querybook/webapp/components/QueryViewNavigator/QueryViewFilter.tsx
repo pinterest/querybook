@@ -60,8 +60,12 @@ export class QueryViewFilter extends React.PureComponent<
     }
 
     public render() {
-        const { filters, onRefresh, updateFilter, queryEngineById } =
-            this.props;
+        const {
+            filters,
+            onRefresh,
+            updateFilter,
+            queryEngineById,
+        } = this.props;
         const { showFilterPicker } = this.state;
 
         const filterTagsDOM = Object.entries(filters)

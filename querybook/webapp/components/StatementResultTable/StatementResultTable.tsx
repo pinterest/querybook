@@ -98,11 +98,16 @@ export const StatementResultTable: React.FunctionComponent<{
         [data, rows]
     );
 
-    const { getTransformerForColumn, setTransformerForColumn } =
-        useColumnTransformer(columnTypes);
+    const {
+        getTransformerForColumn,
+        setTransformerForColumn,
+    } = useColumnTransformer(columnTypes);
 
-    const { filteredRows, setFilterCondition, filterConditionByColumn } =
-        useFilterCell(rows);
+    const {
+        filteredRows,
+        setFilterCondition,
+        filterConditionByColumn,
+    } = useFilterCell(rows);
 
     const columns = data[0].map((column, index) => ({
         Header: () => (

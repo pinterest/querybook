@@ -161,7 +161,8 @@ export const TaskEditor: React.FunctionComponent<IProps> = ({
                     {
                         loading: 'Creating task...',
                         success: 'Task created!',
-                        error: 'Task creation failed - task name must be unique',
+                        error:
+                            'Task creation failed - task name must be unique',
                     }
                 );
             }

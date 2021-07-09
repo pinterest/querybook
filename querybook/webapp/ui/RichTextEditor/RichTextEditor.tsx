@@ -331,8 +331,9 @@ export class RichTextEditor extends React.PureComponent<
             'apply-entity'
         );
 
-        const emptySelectionState =
-            DraftJs.SelectionState.createEmpty(anchorKey);
+        const emptySelectionState = DraftJs.SelectionState.createEmpty(
+            anchorKey
+        );
         const linkSelectionState = emptySelectionState.merge({
             anchorOffset: start,
             focusKey: anchorKey,

@@ -49,9 +49,9 @@ export const ChangeLog: React.FunctionComponent = () => {
             if (currentLog) {
                 setChangeLogContent([currentLog.content]);
             } else {
-                ds.fetch(`/utils/change_log/${changeLogDate}/`).then(
-                    ({ data }) => setChangeLogContent([data])
-                );
+                ds.fetch(
+                    `/utils/change_log/${changeLogDate}/`
+                ).then(({ data }) => setChangeLogContent([data]));
             }
         } else {
             Promise.all([

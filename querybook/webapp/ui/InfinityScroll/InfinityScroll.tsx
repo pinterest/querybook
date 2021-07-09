@@ -41,8 +41,13 @@ export class InfinityScroll<T> extends React.PureComponent<
         style, // Style object to be applied to row (to position it);
         // This must be passed through to the rendered row element.
     }) {
-        const { itemClass, itemRenderer, elements, labelField, onClick } =
-            this.props;
+        const {
+            itemClass,
+            itemRenderer,
+            elements,
+            labelField,
+            onClick,
+        } = this.props;
 
         if (index >= this.props.elements.length) {
             return (

@@ -153,8 +153,11 @@ function queryExecutionByIdReducer(
                     return;
                 }
 
-                draft[queryExecutionId].statement_executions =
-                    statementExecutions.concat([statementExecution.id]);
+                draft[
+                    queryExecutionId
+                ].statement_executions = statementExecutions.concat([
+                    statementExecution.id,
+                ]);
                 return;
             }
         }

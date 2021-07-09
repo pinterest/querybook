@@ -46,8 +46,13 @@ export const BoundQueryEditor = React.forwardRef<
         const editorRef = useForwardedRef(ref);
 
         // Code Editor related Props
-        const { codeEditorTheme, keyMap, options, fontSize, autoCompleteType } =
-            useUserQueryEditorConfig(searchContext);
+        const {
+            codeEditorTheme,
+            keyMap,
+            options,
+            fontSize,
+            autoCompleteType,
+        } = useUserQueryEditorConfig(searchContext);
         const combinedOptions = useMemo(
             () => ({
                 ...options,

@@ -113,8 +113,9 @@ export const PopoverContainer = React.forwardRef<
         );
 
         // Popover position calculation code
-        const [wrapperStyle, setWrapperStyle] =
-            React.useState(initialWrapperStyle);
+        const [wrapperStyle, setWrapperStyle] = React.useState(
+            initialWrapperStyle
+        );
         const [arrowStyle, setArrowStyle] = React.useState(initialArrowStyle);
         React.useEffect(() => {
             const newArrowStyle = { ...initialArrowStyle };

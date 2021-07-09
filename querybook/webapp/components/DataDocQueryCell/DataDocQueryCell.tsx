@@ -594,8 +594,12 @@ class DataDocQueryCellComponent extends React.PureComponent<IProps, IState> {
     }
 
     public renderInvalidEngineCell() {
-        const { showCollapsed, isEditable, queryEngineById, queryEngines } =
-            this.props;
+        const {
+            showCollapsed,
+            isEditable,
+            queryEngineById,
+            queryEngines,
+        } = this.props;
         const { query } = this.state;
         const errorMessage = isEditable
             ? 'Please choose another engine for this cell since it uses an invalid engine.'
@@ -623,8 +627,12 @@ class DataDocQueryCellComponent extends React.PureComponent<IProps, IState> {
     }
 
     public render() {
-        const { queryEngines, queryEngineById, showCollapsed, isFullScreen } =
-            this.props;
+        const {
+            queryEngines,
+            queryEngineById,
+            showCollapsed,
+            isFullScreen,
+        } = this.props;
 
         if (!queryEngines.length) {
             return this.renderNoEngineCell();
