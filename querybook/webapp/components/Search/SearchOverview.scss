@@ -37,8 +37,7 @@
 
     .search-body {
         background-color: var(--light-bg-color);
-        overflow-y: auto;
-        overflow-x: hidden;
+        overflow: auto;
         padding: 12px 16px;
         flex: 1;
 
