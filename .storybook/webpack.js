@@ -2,6 +2,11 @@ const path = require('path');
 const webpack = require('webpack');
 
 module.exports = async (config) => {
+    // Remove the existing css rule, since it breaks codemirror
+    // theme import
+    config.module.rules = config.module.rules.filter(
+        (f) => f.test.toString() !== '/\\.css$/'
+    );
     config.module.rules.push({
         test: /\.(css|sass|scss)$/,
         use: [
