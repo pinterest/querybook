@@ -35,7 +35,8 @@
         "Developer Guide": [
             "developer_guide/contributing",
             "developer_guide/developer_setup",
-            "developer_guide/run_db_migration"
+            "developer_guide/run_db_migration",
+            "developer_guide/storybook"
         ],
 
         "User Guide": ["user_guide/api_token", "user_guide/faq"],

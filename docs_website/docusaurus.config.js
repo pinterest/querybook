@@ -47,12 +47,12 @@ module.exports = {
                     position: 'left',
                 },
                 {
-                    href: 'https://github.com/pinterest/querybook',
+                    to: 'https://github.com/pinterest/querybook',
                     position: 'left',
                     label: 'GitHub',
                 },
                 {
-                    href:
+                    to:
                         'https://join.slack.com/t/querybook/shared_invite/zt-se82lvld-yyzRIqvIASsyYozk7jMCYQ',
                     position: 'left',
                     label: 'Slack',
