@@ -100,9 +100,10 @@ export const ResultExportDropdown: React.FunctionComponent<IProps> = ({
         info: string;
         type: 'url' | 'text';
     }>(null);
-    const [exporterForForm, setExporterForForm] = React.useState<
-        IQueryResultExporter
-    >(null);
+    const [
+        exporterForForm,
+        setExporterForForm,
+    ] = React.useState<IQueryResultExporter>(null);
 
     const dispatch: Dispatch = useDispatch();
     const statementExporters = useSelector(

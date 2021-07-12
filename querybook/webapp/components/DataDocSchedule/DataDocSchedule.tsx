@@ -37,9 +37,12 @@ export const DataDocSchedule: React.FunctionComponent<IDataDocScheduleProps> = (
     onDelete,
     isEditable,
 }) => {
-    const { isLoading, isError, data, forceFetch } = useDataFetch<
-        IDataDocTaskSchedule
-    >({
+    const {
+        isLoading,
+        isError,
+        data,
+        forceFetch,
+    } = useDataFetch<IDataDocTaskSchedule>({
         url: `/datadoc/${docId}/schedule/`,
     });
     const [currentTab, setCurrentTab] = React.useState('schedule');

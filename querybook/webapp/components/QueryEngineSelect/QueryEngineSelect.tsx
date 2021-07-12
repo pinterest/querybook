@@ -19,9 +19,10 @@ export const QueryEngineSelect: React.FunctionComponent<IProps> = ({
     queryEngines,
     handleAddQueryEngine,
 }) => {
-    const [selectedQueryEngineId, setSelectedQueryEngineId] = React.useState<
-        number
-    >(0);
+    const [
+        selectedQueryEngineId,
+        setSelectedQueryEngineId,
+    ] = React.useState<number>(0);
 
     const selectOptions = React.useMemo(() => {
         const emptyOption: {

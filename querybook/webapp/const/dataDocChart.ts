@@ -69,10 +69,9 @@ export const ChartScaleOptions: ChartScaleType[] = [
     'linear',
     'logarithmic',
 ];
-export const chartTypeToAllowedAxisType: Partial<Record<
-    ChartType,
-    { x: ChartScaleType[]; y: ChartScaleType[] }
->> = {
+export const chartTypeToAllowedAxisType: Partial<
+    Record<ChartType, { x: ChartScaleType[]; y: ChartScaleType[] }>
+> = {
     line: {
         x: ChartScaleOptions,
         y: ['linear', 'logarithmic'],
