@@ -19,12 +19,6 @@ from models.metastore import (
 from models.query_execution import QueryExecution
 from tasks.sync_elasticsearch import sync_elasticsearch
 
-from env import QuerybookSettings
-
-from lib.utils.plugin import import_plugin
-
-lineage = import_plugin(QuerybookSettings.DATA_LINEAGE_BACKEND)
-
 
 @with_session
 def get_all_schema(offset=0, limit=100, session=None):

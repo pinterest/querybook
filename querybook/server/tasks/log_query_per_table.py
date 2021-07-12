@@ -10,8 +10,8 @@ from lib.metastore import get_metastore_loader
 from logic import (
     query_execution as qe_logic,
     metastore as m_logic,
-    lineage as lineage_logic,
 )
+from lib.lineage.utils import lineage as lineage_logic
 
 
 @celery.task(bind=True)
@@ -147,13 +147,13 @@ def log_table_per_statement(
         )
 
         if query_table:  # Sanity check
-            lineage_logic.delete_old_able_query_execution_log(
+            m_logic.delete_old_able_query_execution_log(
                 cell_id=cell_id,
                 query_execution_id=query_execution_id,
                 commit=False,
                 session=session,
             )
-            lineage_logic.create_table_query_execution_log(
+            m_logic.create_table_query_execution_log(
                 table_id=query_table.id,
                 cell_id=cell_id,
                 query_execution_id=query_execution_id,

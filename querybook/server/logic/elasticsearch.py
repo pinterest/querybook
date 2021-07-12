@@ -23,7 +23,7 @@ from logic.datadoc import (
 from logic.metastore import (
     get_all_table,
     get_table_by_id,
-    lineage
+    get_table_query_samples_count,
 )
 
 from logic.impression import (
@@ -198,7 +198,7 @@ def get_table_weight(table_id: int, session=None) -> int:
     Returns:
         int -- The integer weight
     """
-    num_samples = lineage.get_table_query_samples_count(table_id, session=session)
+    num_samples = get_table_query_samples_count(table_id, session=session)
     num_impressions = get_viewers_count_by_item_after_date(
         ImpressionItemType.DATA_TABLE,
         table_id,

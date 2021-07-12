@@ -14,11 +14,11 @@ from app.flask_app import cache
 from const.impression import ImpressionItemType
 from const.metastore import DataTableWarningSeverity
 from const.time import seconds_in_a_day
+from lib.lineage.utils import lineage
 from lib.metastore.utils import DataTableFinder
 from lib.query_analysis.samples import make_samples_query
 from lib.utils import mysql_cache
 from logic import metastore as logic
-from logic.metastore import lineage
 from logic import admin as admin_logic
 from models.metastore import (
     DataTableWarning,
@@ -308,7 +308,7 @@ def get_table_query_examples(
             environment_id, session=session
         )
         engine_ids = [engine.id for engine in engines]
-        query_logs = lineage.get_table_query_examples(
+        query_logs = logic.get_table_query_examples(
             table_id,
             engine_ids,
             uid=uid,
@@ -329,7 +329,7 @@ def get_table_query_examples_users(table_id, environment_id, limit=5):
     verify_data_table_permission(table_id)
     engines = admin_logic.get_query_engines_by_environment(environment_id)
     engine_ids = [engine.id for engine in engines]
-    users = lineage.get_query_example_users(table_id, engine_ids, limit=limit)
+    users = logic.get_query_example_users(table_id, engine_ids, limit=limit)
 
     return [{"uid": r[0], "count": r[1]} for r in users]
 
@@ -338,7 +338,7 @@ def get_table_query_examples_users(table_id, environment_id, limit=5):
 def get_table_query_examples_concurrences(table_id, limit=5):
     api_assert(limit <= 10)
     verify_data_table_permission(table_id)
-    concurrences = lineage.get_query_example_concurrences(table_id, limit=limit)
+    concurrences = logic.get_query_example_concurrences(table_id, limit=limit)
     return [{"table_id": r[0], "count": r[1]} for r in concurrences]
 
 

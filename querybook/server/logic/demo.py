@@ -6,7 +6,8 @@ from logic import (
     user as user_logic,
 )
 
-from logic.metastore import lineage as lineage_logic
+from lib.lineage.utils import lineage as lineage_logic
+
 
 @with_session
 def create_demo_table_stats(table_id, uid, session=None):
