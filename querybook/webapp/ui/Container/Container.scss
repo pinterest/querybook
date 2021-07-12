@@ -1,9 +1,15 @@
 .Container {
     display: flex;
-    justify-content: center;
+    flex-flow: row nowrap;
 
     .Container-content {
         max-width: var(--max-width);
         flex: 1;
+    }
+
+    &::before,
+    &::after {
+        content: ''; /* Insert pseudo-element */
+        margin: auto; /* Make it push flex items to the center */
     }
 }
