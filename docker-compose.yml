@@ -143,6 +143,8 @@ services:
             interval: 30s
             timeout: 30s
             retries: 3
+
+    # EMAIL SERVER EXAMPLE
     # If you need email to work use this
     # dockerhostforward:
     #     expose:
@@ -151,6 +153,33 @@ services:
     #     cap_add: ['NET_ADMIN', 'NET_RAW']
     #     mem_limit: 8M
     #     restart: on-failure
+    # CELERY FLOWER EXAMPLE
+    # If you want flower monitoring, use this
+    # Remember to put flower as part of local.txt
+    # flower:
+    #     image: querybook-dev:latest
+    #     cap_add:
+    #         - SYS_PTRACE
+    #     tmpfs: /tmp:exec,mode=777
+    #     tty: true
+    #     stdin_open: true
+    #     # network_mode: "host"
+    #     command: './querybook/scripts/runservice flower --port=5566'
+    #     ports:
+    #         - '5566:5566'
+    #     expose:
+    #         - '5566'
+    #     restart: 'always'
+    #     volumes:
+    #         # This is for code change via watcher
+    #         - $PWD:/opt/querybook
+    #         - $PWD/containers/bundled_querybook_config.yaml:/opt/querybook/querybook/config/querybook_config.yaml
+    #     depends_on:
+    #         mysql:
+    #             condition: service_healthy
+    #         redis:
+    #             condition: service_healthy
+
 volumes:
     my-db:
     esdata1:
