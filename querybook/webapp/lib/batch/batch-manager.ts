@@ -7,7 +7,7 @@ export interface IBatchManagerOptions<T, M> {
 interface IBatchPromise<T> {
     data: T;
     onSuccess: () => void;
-    onFailure: () => void;
+    onFailure: (e: unknown) => void;
 }
 
 export function pickLastMergeFunction<T, M>(changes: Array<IBatchPromise<T>>) {
@@ -37,7 +37,7 @@ export function mergeSetFunction<T>(changes: Array<IBatchPromise<T>>) {
     return {
         data: [...new Set(changes.map((c) => c.data))],
         onSuccess: () => changes.forEach((c) => c.onSuccess()),
-        onFailure: () => changes.forEach((c) => c.onFailure()),
+        onFailure: (e: unknown) => changes.forEach((c) => c.onFailure(e)),
     };
 }
 
@@ -112,7 +112,7 @@ export class BatchManager<T, M> {
             await this.processRequest;
             onSuccess();
         } catch (e) {
-            onFailure();
+            onFailure(e);
         } finally {
             this.processRequest = null;
         }

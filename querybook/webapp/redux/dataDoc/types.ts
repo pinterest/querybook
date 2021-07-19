@@ -86,7 +86,7 @@ export interface IInsertDataDocCellAction extends Action {
 export interface IDeleteDataDocCellAction extends Action {
     type: '@@dataDoc/DELETE_DATA_DOC_CELL';
     payload: {
-        index: number;
+        cellId: number;
         docId: number;
     };
 }

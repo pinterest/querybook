@@ -228,8 +228,8 @@ def update_data_cell(doc_id, cell_id, fields):
 
 @register_socket("delete_data_cell", namespace=DATA_DOC_NAMESPACE)
 @data_doc_socket
-def delete_data_cell(doc_id, index):
-    datadoc_collab.delete_data_cell(doc_id, index, sid=request.sid)
+def delete_data_cell(doc_id, cell_id):
+    datadoc_collab.delete_data_cell(doc_id, cell_id, sid=request.sid)
 
 
 @register_socket("move_data_cell", namespace=DATA_DOC_NAMESPACE)

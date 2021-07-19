@@ -841,13 +841,15 @@ function mapDispatchToProps(dispatch: Dispatch) {
                 )
             ),
 
-        updateDataDocCell: (
+        updateDataDocCell: async (
             docId: number,
             cellId: number,
             fields: DataCellUpdateFields
         ) => {
             try {
-                return dispatch(
+                // Await the result so it can be caught by
+                // try catch
+                return await dispatch(
                     dataDocActions.updateDataDocCell(
                         docId,
                         cellId,

@@ -113,15 +113,16 @@ function dataDocCellsArrayHelper(cells: number[] = [], action: DataDocAction) {
                 cell: { id },
                 index,
             } = action.payload;
-
-            return [...cells.slice(0, index), id, ...cells.slice(index)];
+            const filteredCells = cells.filter((cell) => cell !== id);
+            return [
+                ...filteredCells.slice(0, index),
+                id,
+                ...filteredCells.slice(index),
+            ];
         }
         case '@@dataDoc/DELETE_DATA_DOC_CELL': {
-            const { index } = action.payload;
-            const newCells = [...cells];
-            newCells.splice(index, 1);
-
-            return newCells;
+            const { cellId } = action.payload;
+            return cells.filter((id) => id !== cellId);
         }
         case '@@dataDoc/MOVE_DATA_DOC_CELL': {
             const { fromIndex, toIndex } = action.payload;
