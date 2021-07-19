@@ -11,6 +11,7 @@ from logic import (
     query_execution as qe_logic,
     metastore as m_logic,
 )
+from lib.lineage.utils import lineage as lineage_logic
 
 
 @celery.task(bind=True)
@@ -70,7 +71,7 @@ def create_lineage_from_query(
         is_adhoc=True,
         session=session,
     )
-    m_logic.create_table_lineage_from_metadata(
+    lineage_logic.create_table_lineage_from_metadata(
         data_job_metadata.id, query_execution.engine.language, session=session
     )
 

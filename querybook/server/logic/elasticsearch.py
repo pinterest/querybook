@@ -25,6 +25,7 @@ from logic.metastore import (
     get_table_by_id,
     get_table_query_samples_count,
 )
+
 from logic.impression import (
     get_viewers_count_by_item_after_date,
     get_last_impressions_date,

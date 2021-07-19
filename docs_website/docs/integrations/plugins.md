@@ -56,6 +56,10 @@ Task plugin lets you implement custom async tasks on querybook. For example, you
 
 Web page plugin allows you to inject custom js, css to Querybook. Place your custom logic under webpage_plugin/custom_script.ts to inject it into the Querybook webapp.
 
+### Lineage plugin
+
+Lineage plugin allows you to extend Querybook to fetch lineage information from a custom data lineage backend. Please check [Add Lineage guide](./add_lineage.md) for more details.
+
 ## Installing Plugins
 
 1. Ensure you can run the vanilla Querybook

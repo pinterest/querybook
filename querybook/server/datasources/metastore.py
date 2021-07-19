@@ -14,6 +14,7 @@ from app.flask_app import cache
 from const.impression import ImpressionItemType
 from const.metastore import DataTableWarningSeverity
 from const.time import seconds_in_a_day
+from lib.lineage.utils import lineage
 from lib.metastore.utils import DataTableFinder
 from lib.query_analysis.samples import make_samples_query
 from lib.utils import mysql_cache
@@ -118,7 +119,7 @@ def add_data_job_metadata(
         )
         table_lineage_ids = None
         if query_text:
-            table_lineage_ids = logic.create_table_lineage_from_metadata(
+            table_lineage_ids = lineage.create_table_lineage_from_metadata(
                 data_job_metadata.id
             )
         return {
@@ -513,7 +514,7 @@ def add_lineage(table_id, parent_table_id, job_metadata_id):
         Returns new table lineage dictionary
     """
     with DBSession() as session:
-        table_lineage = logic.add_table_lineage(
+        table_lineage = lineage.add_table_lineage(
             table_id, parent_table_id, job_metadata_id, True, session=session
         )
         return table_lineage.to_dict()
@@ -522,13 +523,13 @@ def add_lineage(table_id, parent_table_id, job_metadata_id):
 @register("/lineage/<int:table_id>/parent/", methods=["GET"])
 def get_table_parent_lineages(table_id):
     with DBSession() as session:
-        return logic.get_table_parent_lineages(table_id, session=session)
+        return lineage.get_table_parent_lineages(table_id, session=session)
 
 
 @register("/lineage/<int:table_id>/child/", methods=["GET"])
 def get_table_child_lineages(table_id):
     with DBSession() as session:
-        return logic.get_table_child_lineages(table_id, session=session)
+        return lineage.get_table_child_lineages(table_id, session=session)
 
 
 @register("/table_warning/", methods=["POST"])

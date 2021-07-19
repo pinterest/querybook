@@ -24,6 +24,7 @@
             "integrations/add_auth",
             "integrations/add_query_engine",
             "integrations/add_metastore",
+            "integrations/add_lineage",
             "integrations/add_result_store",
             "integrations/add_exporter",
             "integrations/add_engine_status_checker",

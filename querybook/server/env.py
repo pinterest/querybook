@@ -48,6 +48,9 @@ class QuerybookSettings(object):
     ELASTICSEARCH_HOST = get_env_config("ELASTICSEARCH_HOST", optional=False)
     ELASTICSEARCH_CONNECTION_TYPE = get_env_config("ELASTICSEARCH_CONNECTION_TYPE")
 
+    # Lineage
+    DATA_LINEAGE_BACKEND = get_env_config("DATA_LINEAGE_BACKEND")
+
     # Database
     DATABASE_CONN = get_env_config("DATABASE_CONN", optional=False)
     DATABASE_POOL_SIZE = int(get_env_config("DATABASE_POOL_SIZE"))
