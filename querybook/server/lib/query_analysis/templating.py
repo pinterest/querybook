@@ -28,7 +28,7 @@ class QueryJinjaSyntaxException(QueryTemplatingError):
 
 # The first part is regex for single line comment, ie -- some comment
 # the second part is for multi line comment, ie /* test */
-comment_re = re.compile(r"((?:--.*)|(?:\/\*(?:.*\n.*?)*?.*?\*\/))", re.MULTILINE)
+comment_re = re.compile(r"((?:--.*)|(?:\/\*(?:.|\n)*?\*\/))", re.MULTILINE)
 
 
 def _escape_sql_comments(query: str):
