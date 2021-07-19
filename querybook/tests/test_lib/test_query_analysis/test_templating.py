@@ -3,6 +3,7 @@ from datetime import datetime, date
 
 from lib.query_analysis.templating import (
     _detect_cycle,
+    _escape_sql_comments,
     get_templated_variables_in_string,
     render_templated_query,
     flatten_recursive_variables,
@@ -236,3 +237,50 @@ render
    {{ end_date2 }}
 */""",
         )
+
+
+class EscapeSQLCommentsTestCase(TestCase):
+    def test_single_line(self):
+        self.assertEqual(
+            _escape_sql_comments("select 1 -- test"), 'select 1 {{ "-- test" }}'
+        )
+
+    def test_multi_line(self):
+        self.assertEqual(
+            _escape_sql_comments("select 1 \n/* \ntest\n */"),
+            'select 1 \n{{ "/* \\ntest\\n */" }}',
+        )
+
+    def test_no_backtracking(self):
+        # This query caused catastrophic backtracking, adding it as
+        # test case to ensure it doesn't happen in future
+        query = """
+WITH a AS (
+  SELECT
+  COALESCE(get_json(json, 'a.id'), 0) AS aid,
+  get_json(json, 'b') AS b,
+  MAX(if(TRANSLATE(COALESCE(LOWER(TRANSLATE(get_json_object(json, '$.b.c'), ' ', '')), ''), '|', '-') = 'e', 1, 0)) AS e,
+  MAX(if(TRANSLATE(COALESCE(LOWER(TRANSLATE(get_json_object(json, '$.f.g'), ' ', '')), ''), '|', '-') like '%h%', 1, 0)) AS h
+
+  FROM i.j
+  WHERE h = '2020-01-01'
+  AND get_json(json, 'i') RLIKE '/j/(k|l|m|n)/*'
+  group by 1, 2
+)
+
+SELECT * FROM (
+SELECT
+   a,
+   SUM(b) as b_sum,
+   SUM(c) as c_sum,
+   SUM(1) as num_sum,
+   SUM(d) / SUM(1) as frac_d,
+   SUM(e) / SUM(1) as frac_e
+FROM f
+GROUP BY 1
+)
+WHERE a > 20
+AND b > 0.8
+order by c DESC
+limit 100"""
+        self.assertEqual(_escape_sql_comments(query), query)
