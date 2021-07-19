@@ -14,7 +14,7 @@ ELASTICSEARCH_HOST: ~
 ELASTICSEARCH_CONNECTION_TYPE: naive
 
 # --------------- Lineage ---------------
-DATA_LINEAGE_BACKEND: logic.lineage
+DATA_LINEAGE_BACKEND: lib.lineage.db
 
 # --------------- Database ---------------
 DATABASE_CONN: ~
