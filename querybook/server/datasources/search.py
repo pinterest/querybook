@@ -76,9 +76,9 @@ def _match_filters(filters):
             continue
 
         if filter_name == "startdate":
-            created_at_filter["gte"] = {filter_name: filter_val}
+            created_at_filter["gte"] = filter_val
         elif filter_name == "enddate":
-            created_at_filter["lte"] = {filter_name: filter_val}
+            created_at_filter["lte"] = filter_val
         else:
             filter_terms.append(_make_singular_filter(filter_name, filter_val))
     filters = {"filter": {"bool": {"must": filter_terms}}}
@@ -293,7 +293,7 @@ def search_datadoc(
         sort_key=sort_key,
         sort_order=sort_order,
     )
-
+    print(query)
     results, count = _get_matching_objects(
         query,
         ES_CONFIG["datadocs"]["index_name"],
