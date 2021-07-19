@@ -40,16 +40,9 @@ import { PrettyNumber } from 'ui/PrettyNumber/PrettyNumber';
 
 import './SearchOverview.scss';
 import { TableTagGroupSelect } from 'components/DataTableTags/TableTagGroupSelect';
+import { SearchDatePicker } from './SearchDatePicker';
 
 const secondsPerDay = 60 * 60 * 24;
-const inputDateFormat = 'YYYY-MM-DD';
-const getFormattedDateFromSeconds = (
-    seconds: string | number,
-    format: string
-) =>
-    seconds != null
-        ? moment(parseInt(seconds as string, 10) * 1000).format(format)
-        : '';
 
 const userReactSelectStyle = makeReactSelectStyle(true, miniReactSelectStyles);
 export const SearchOverview: React.FunctionComponent = () => {
@@ -77,23 +70,6 @@ export const SearchOverview: React.FunctionComponent = () => {
 
     const results = resultByPage[currentPage] || [];
     const isLoading = !!searchRequest;
-
-    const minDate = results.length
-        ? Math.floor(
-              Math.min.apply(
-                  Math,
-                  results.map((result) => result.created_at)
-              ) / secondsPerDay
-          ) * secondsPerDay
-        : null;
-    const maxDate = results.length
-        ? Math.ceil(
-              Math.max.apply(
-                  Math,
-                  results.map((result) => result.created_at)
-              ) / secondsPerDay
-          ) * secondsPerDay
-        : null;
 
     const dispatch = useDispatch();
     const handleUpdateSearchString = React.useCallback(
@@ -334,30 +310,18 @@ export const SearchOverview: React.FunctionComponent = () => {
 
     const dateFilterDOM = (
         <div className="filter-date">
-            <div className="search-date-picker horizontal-space-between">
-                <span>start</span>
-                <input
-                    id="start-date"
-                    type="date"
-                    value={getFormattedDateFromSeconds(
-                        searchFilters?.startDate,
-                        inputDateFormat
-                    )}
-                    onChange={(event) => onStartDateChange(event)}
-                />
-            </div>
-            <div className="search-date-picker horizontal-space-between">
-                <span>end</span>
-                <input
-                    id="end-date"
-                    type="date"
-                    value={getFormattedDateFromSeconds(
-                        searchFilters?.endDate,
-                        inputDateFormat
-                    )}
-                    onChange={(event) => onEndDateChange(event)}
-                />
-            </div>
+            <SearchDatePicker
+                name="start"
+                id="start-date"
+                value={searchFilters?.startDate}
+                onChange={onStartDateChange}
+            />
+            <SearchDatePicker
+                name="end"
+                id="end-date"
+                value={searchFilters?.endDate}
+                onChange={onEndDateChange}
+            />
         </div>
     );
 
@@ -434,7 +398,7 @@ export const SearchOverview: React.FunctionComponent = () => {
                         Date
                         <hr className="dh-hr" />
                     </span>
-                    {minDate && maxDate && dateFilterDOM}
+                    {dateFilterDOM}
                 </div>
             </>
         ) : (
