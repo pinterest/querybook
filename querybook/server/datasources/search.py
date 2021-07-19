@@ -293,7 +293,6 @@ def search_datadoc(
         sort_key=sort_key,
         sort_order=sort_order,
     )
-    print(query)
     results, count = _get_matching_objects(
         query,
         ES_CONFIG["datadocs"]["index_name"],
