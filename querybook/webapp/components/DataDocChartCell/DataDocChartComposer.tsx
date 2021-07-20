@@ -281,15 +281,7 @@ const DataDocChartComposerComponent: React.FunctionComponent<
             }));
             return options;
         },
-        [
-            chartData,
-            statementResultData,
-            values.xIndex,
-            values.hiddenSeries,
-            values.coloredSeries,
-            values.aggregate,
-            values.switch,
-        ]
+        [chartData, values.xIndex, values.hiddenSeries, values.coloredSeries]
     );
 
     const getAxesScaleType = React.useCallback(
@@ -323,7 +315,7 @@ const DataDocChartComposerComponent: React.FunctionComponent<
     ) => {
         const hiddenSeries = [];
         const selectedSeries = selectedVals.map((obj) => obj.value);
-        for (let i = 0; i < statementResultData[0].length; i++) {
+        for (let i = 0; i < chartData[0].length; i++) {
             if (i !== values.xIndex && !selectedSeries.includes(i)) {
                 hiddenSeries.push(i);
             }
