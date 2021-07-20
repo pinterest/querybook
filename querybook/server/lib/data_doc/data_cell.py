@@ -3,17 +3,6 @@ from lib.config import get_config_value
 cell_types = get_config_value("datadoc.cell_types")
 
 
-def _validate_series(valid_val, input_val):
-    valid_series_keys = valid_val[0].keys()
-    # Do a shallow key validation
-    if all(
-        all([item_key in valid_series_keys for item_key in series_item])
-        for series_item in input_val.values()
-    ):
-        return True
-    return False
-
-
 def get_valid_meta(input_vals, valid_vals, default_vals=None):
     if input_vals is None:
         return default_vals
@@ -54,6 +43,15 @@ def get_valid_meta(input_vals, valid_vals, default_vals=None):
         ]
     else:
         return input_vals
+
+
+def _validate_series(valid_val, input_val):
+    valid_series_keys = valid_val[0].keys()
+    # Do a shallow key validation
+    return all(
+        all([item_key in valid_series_keys for item_key in series_item])
+        for series_item in input_val.values()
+    )
 
 
 def sanitize_data_cell_meta(cell_type: str, meta):
