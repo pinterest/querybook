@@ -43,16 +43,16 @@ cell_types:
                     col_idx: 0
                     label: ''
                     scale: ''
-                    min: 0
-                    max: 0
+                    min: 0.0
+                    max: 0.0
                     sort:
                         idx: 0
                         asc: true
                 y_axis:
                     label: ''
                     scale: ''
-                    min: 0
-                    max: 0
+                    min: 0.0
+                    max: 0.0
                     stack: false
                     series:
                         0:
