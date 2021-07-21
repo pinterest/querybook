@@ -215,7 +215,7 @@ export function mapMetaToChartOptions(
             meta.visual.connect_missing;
     }
 
-    // Tool tip
+    // Tooltip
     if (meta.chart.type === 'pie' || meta.chart.type === 'doughnut') {
         optionsObj.plugins.tooltip.callbacks = {
             label: (context) => {
