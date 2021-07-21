@@ -1,17 +1,7 @@
-import ChartComponent, {
-    Line,
-    Bar,
-    HorizontalBar,
-    Pie,
-    Scatter,
-    Doughnut,
-    Bubble,
-    defaults,
-    ChartComponentProps,
-} from 'react-chartjs-2';
+import { Line, Bar, Pie, Scatter, Doughnut, Bubble } from 'react-chartjs-2';
 import React, { MutableRefObject, useMemo } from 'react';
 import { useSelector } from 'react-redux';
-import Chart, { ChartOptions } from 'chart.js';
+import { Chart, ChartOptions } from 'chart.js';
 import ChartDataLabels from 'chartjs-plugin-datalabels';
 
 import { IDataChartCellMeta } from 'const/datadoc';
@@ -26,10 +16,10 @@ interface IDataDocChartProps {
     meta: IDataChartCellMeta;
     data?: any[][];
     chartJSOptions?: ChartOptions;
-    chartJSRef?: MutableRefObject<ChartComponent<ChartComponentProps>>;
+    chartJSRef?: MutableRefObject<Chart>;
 }
 
-Chart.plugins.unregister(ChartDataLabels);
+Chart.registry.remove(ChartDataLabels);
 
 function isChartValNull(val: any): boolean {
     // checks if chart value is null or "null"
@@ -118,14 +108,19 @@ export const DataDocChart: React.FunctionComponent<IDataDocChartProps> = ({
     );
 
     React.useEffect(() => {
-        defaults.global.defaultFontColor = `rgb(
-                ${fontColor[theme][0]},
-                ${fontColor[theme][1]},
-                ${fontColor[theme][2]}
-                )`;
-        defaults.global.defaultFontFamily = 'Avenir Next';
-        defaults.global.defaultFontSize = 14;
-        defaults.global.plugins.filler.propagate = true;
+        Chart.defaults.color = `rgb(
+            ${fontColor[theme][0]},
+            ${fontColor[theme][1]},
+            ${fontColor[theme][2]}
+        )`;
+        Chart.defaults.font = {
+            family: 'Avenir Next',
+            size: 14,
+            style: 'normal',
+            weight: undefined,
+            lineHeight: 1.2,
+        };
+        Chart.defaults.plugins.filler.propagate = true;
     }, [theme]);
 
     const [xAxesScaleType, yAxesScaleType] = useChartScale(meta, data);
@@ -155,14 +150,11 @@ export const DataDocChart: React.FunctionComponent<IDataDocChartProps> = ({
         options: combinedChartJSOptions,
         ref: chartJSRef,
     };
-
     let chartDOM = null;
     if (meta.chart.type === 'line' || meta.chart.type === 'area') {
         chartDOM = <Line {...chartProps} />;
-    } else if (meta.chart.type === 'bar') {
+    } else if (meta.chart.type === 'bar' || meta.chart.type === 'histogram') {
         chartDOM = <Bar {...chartProps} />;
-    } else if (meta.chart.type === 'histogram') {
-        chartDOM = <HorizontalBar {...chartProps} />;
     } else if (meta.chart.type === 'pie') {
         chartDOM = <Pie {...chartProps} />;
     } else if (meta.chart.type === 'doughnut') {

@@ -1,5 +1,8 @@
-import { ChartDataSets, ChartData as ChartJsData } from 'chart.js';
-import { ChartData } from 'react-chartjs-2';
+import {
+    ChartDataset,
+    ChartData,
+    FillerControllerDatasetOptions,
+} from 'chart.js';
 
 import { IDataChartCellMeta } from 'const/datadoc';
 import { ChartScaleType } from 'const/dataDocChart';
@@ -29,7 +32,7 @@ export function processChartJSData(
     theme: string,
     xAxesScaleType: ChartScaleType,
     yAxesScaleType: ChartScaleType
-): ChartData<ChartJsData> {
+): ChartData {
     // The default input for all chart type is wide
     if (!data.length) {
         return { labels: [], datasets: [] };
@@ -68,18 +71,13 @@ export function processChartJSData(
                 return null;
             }
 
-            const dataset: ChartDataSets = {
+            const dataset: Partial<ChartDataset> = {
                 label: seriesName,
                 borderWidth: 2,
-                lineTension: 0,
             };
 
             // scatter and bubble has a different data structure
             if (useXYDataPoint) {
-                if (chartMeta.type === 'scatter') {
-                    dataset['pointRadius'] = 4;
-                }
-
                 dataset['data'] = dataRows.map((row) => ({
                     x: processDataPoint(row[xAxisIdx], xAxesScaleType),
                     y: processDataPoint(row[idx], yAxesScaleType),
@@ -136,7 +134,7 @@ export function processChartJSData(
             }
 
             // only area gets fill
-            dataset.fill =
+            (dataset as FillerControllerDatasetOptions).fill =
                 chartMeta.type === 'area'
                     ? firstDataset
                         ? 'origin'
@@ -144,11 +142,11 @@ export function processChartJSData(
                     : false;
             firstDataset = false;
 
-            return dataset;
+            return dataset as ChartDataset;
         })
         .filter((dataset) => dataset);
 
-    const chartData = {
+    const chartData: ChartData = {
         datasets: chartDatasets,
     };
 

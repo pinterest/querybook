@@ -1,4 +1,9 @@
-import { ChartOptions, CommonAxe } from 'chart.js';
+import {
+    ChartOptions,
+    LineControllerDatasetOptions,
+    TimeScaleOptions,
+    ScaleOptions,
+} from 'chart.js';
 
 import { IDataChartCellMeta } from 'const/datadoc';
 import {
@@ -10,6 +15,7 @@ import {
 } from 'const/dataDocChart';
 import { fontColor, fillColor, backgroundColor } from 'const/chartColors';
 import { formatNumber } from 'lib/utils/number';
+import { DeepPartial } from 'redux';
 
 function filterSeries<T, K extends keyof T>(
     series: Record<number, T>,
@@ -146,33 +152,54 @@ export function mapMetaToChartOptions(
 ): ChartOptions {
     const optionsObj: ChartOptions = {
         responsive: true,
-        legend: {
-            position: meta.visual.legend_position ?? 'top',
-            display: meta.visual.legend_display ?? true,
+
+        interaction: {
+            mode: 'index',
+            intersect: true,
+        },
+        plugins: {
+            legend: {
+                position: meta.visual.legend_position ?? 'top',
+                display: meta.visual.legend_display ?? true,
+            },
+            title: {
+                display: !!meta.title.length,
+                text: meta.title,
+                font: {
+                    size: 16,
+                },
+            },
+            tooltip: {
+                position: 'nearest',
+                backgroundColor: backgroundColor[theme],
+                bodyColor: rgb(fontColor[theme]),
+                titleColor: rgb(fontColor[theme]),
+                bodySpacing: 8,
+                multiKeyBackground: fillColor[theme],
+                padding: 8,
+                caretSize: 8,
+                cornerRadius: 4,
+                bodyFont: {
+                    weight: '500',
+                },
+                titleMarginBottom: 8,
+            },
+            datalabels: {
+                display:
+                    meta.visual.values?.display === chartValueDisplayType.TRUE
+                        ? true
+                        : meta.visual.values?.display ===
+                          chartValueDisplayType.AUTO
+                        ? 'auto'
+                        : false,
+                anchor: meta.visual.values?.position,
+                align: meta.visual.values?.alignment,
+            },
         },
         animation: {
             duration: 0,
         },
-        title: {
-            display: !!meta.title.length,
-            text: meta.title,
-            fontSize: 16,
-        },
-        tooltips: {
-            mode: 'index',
-            position: 'nearest',
-            backgroundColor: backgroundColor[theme],
-            bodyFontColor: rgb(fontColor[theme]),
-            titleFontColor: rgb(fontColor[theme]),
-            bodySpacing: 8,
-            multiKeyBackground: fillColor[theme],
-            xPadding: 8,
-            yPadding: 8,
-            caretSize: 8,
-            cornerRadius: 4,
-            bodyFontStyle: '500',
-            titleMarginBottom: 8,
-        },
+
         elements: {
             point: {
                 radius: 0,
@@ -184,72 +211,56 @@ export function mapMetaToChartOptions(
     };
 
     if (meta.visual.connect_missing != null) {
-        optionsObj.spanGaps = meta.visual.connect_missing;
+        (optionsObj as LineControllerDatasetOptions).spanGaps =
+            meta.visual.connect_missing;
     }
 
-    optionsObj['plugins'] = {
-        datalabels: {
-            display:
-                meta.visual.values?.display === chartValueDisplayType.TRUE
-                    ? true
-                    : meta.visual.values?.display === chartValueDisplayType.AUTO
-                    ? 'auto'
-                    : false,
-            anchor: meta.visual.values?.position,
-            align: meta.visual.values?.alignment,
-        },
-    };
-
+    // Tooltip
     if (meta.chart.type === 'pie' || meta.chart.type === 'doughnut') {
-        optionsObj.tooltips['callbacks'] = {
-            label: (tooltipItem, chartData) => {
-                const dataset = chartData.datasets[tooltipItem.datasetIndex];
-                const datasetMeta: Record<
-                    number,
-                    { total: number }
-                > = (dataset as any)._meta;
-                const totalValue =
-                    datasetMeta[Object.keys(datasetMeta)[0]].total;
-
-                const currentValue = dataset.data[tooltipItem.index] as number;
-                const percentage = parseFloat(
-                    ((currentValue / totalValue) * 100).toFixed(1)
-                );
-                return `${dataset.label}: ${formatNumber(
+        optionsObj.plugins.tooltip.callbacks = {
+            label: (context) => {
+                const label = context.dataset.label;
+                const currentValue = context.parsed;
+                const percentage = (
+                    ((context.element as any).circumference * 100) /
+                    (2 * Math.PI)
+                ).toFixed(1);
+                return `${label}: ${formatNumber(
                     currentValue
                 )} (${percentage}%)`;
             },
-            title: (tooltipItem, chartData) =>
-                String(chartData.labels[tooltipItem[0].index]),
+            title: (titleContext) => titleContext[0].label,
         };
     } else {
-        optionsObj.tooltips['callbacks'] = {
-            label: (tooltipItem, chartData) => {
-                const label =
-                    chartData.datasets[tooltipItem.datasetIndex].label || '';
-                const value = tooltipItem.value;
+        const invertAxis = meta.chart.type === 'histogram';
+        optionsObj.plugins.tooltip.callbacks = {
+            label: (context) => {
+                const label = context.dataset.label ?? '';
+                const value = invertAxis ? context.parsed.x : context.parsed.y;
                 return ` ${label}: ${formatNumber(value)}`;
             },
-            title: (tooltipItem, chartData): string => {
+            title: (titleContext): string => {
                 if (meta.chart.y_axis.stack) {
                     let totalValue = 0;
-                    for (const value of tooltipItem) {
-                        totalValue += Number(value.yLabel);
+                    for (const metricContext of titleContext) {
+                        totalValue += Number(
+                            invertAxis
+                                ? metricContext.parsed.x
+                                : metricContext.parsed.y
+                        );
                     }
-                    if (isNaN(totalValue)) {
-                        return String(chartData.labels[tooltipItem[0].index]);
-                    } else {
+                    if (!isNaN(totalValue)) {
                         return (
-                            chartData.labels[tooltipItem[0].index] +
+                            String(titleContext[0].label) +
                             ' Total: ' +
                             formatNumber(totalValue)
                         );
                     }
-                } else {
-                    return String(chartData.labels[tooltipItem[0].index]);
                 }
+                return String(titleContext[0].label);
             },
         };
+
         let xAxesOptions = computeScaleOptions(
             xAxesScaleType,
             meta.chart.x_axis,
@@ -264,16 +275,19 @@ export function mapMetaToChartOptions(
             meta.chart.y_axis.stack
         );
 
-        // Because histogram is horizontal bar
-        // We need to reverse the x, y axes settings
-        if (meta.chart.type === 'histogram') {
+        if (invertAxis) {
+            optionsObj.indexAxis = 'y';
             [xAxesOptions, yAxesOptions] = [yAxesOptions, xAxesOptions];
         }
 
-        optionsObj['scales'] = {
-            xAxes: [xAxesOptions],
-            yAxes: [yAxesOptions],
+        optionsObj.scales = {
+            x: xAxesOptions,
+            y: yAxesOptions,
         };
+    }
+
+    if (meta.chart.type === 'scatter') {
+        optionsObj.elements.point.radius = 4;
     }
 
     return optionsObj;
@@ -285,18 +299,17 @@ function computeScaleOptions(
     theme: string,
     stack: boolean,
     isXAxis = false
-): CommonAxe {
+): ScaleOptions {
     // Known bug: if scale type change from log to time, the graph crash
     // I think it is a chart js issue
-
-    const axis: CommonAxe = {
-        gridLines: {
+    const axis: ScaleOptions = {
+        grid: {
             display: true,
             color: rgb(fontColor[theme].concat([0.25])),
         },
-        scaleLabel: {
+        title: {
             display: !!axisMeta.label.length,
-            labelString: axisMeta.label,
+            text: axisMeta.label,
         },
         stacked: stack,
     };
@@ -306,34 +319,24 @@ function computeScaleOptions(
     }
 
     if (scaleType === 'time') {
-        axis.time = {
+        (axis as DeepPartial<TimeScaleOptions>).time = {
             tooltipFormat: 'll HH:mm',
             displayFormats: {
                 day: 'MM/DD',
                 hour: 'MM/DD hA',
                 minute: 'h:mm a',
             },
-            // unit: 'day',
         };
     } else if (scaleType === 'linear' || scaleType === 'logarithmic') {
         // for empty case, it might be null or ""
         if (axisMeta.max != null && typeof axisMeta.max === 'number') {
-            axis.ticks = {
-                ...axis.ticks,
-                max: axisMeta.max,
-            };
+            axis.max = axisMeta.max;
         }
         if (axisMeta.min != null && typeof axisMeta.min === 'number') {
-            axis.ticks = {
-                ...axis.ticks,
-                min: axisMeta.min,
-            };
+            axis.min = axisMeta.min;
         } else if (!isXAxis) {
             // for yAxis, default min to 0 unless specified
-            axis.ticks = {
-                ...axis.ticks,
-                min: 0,
-            };
+            axis.min = 0;
         }
     }
 
