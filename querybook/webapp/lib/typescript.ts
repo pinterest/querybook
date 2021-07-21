@@ -19,3 +19,7 @@ export type WithOptional<T, K extends keyof T> = Omit<T, K> &
 export type DropFirst<T extends unknown[]> = T extends [any, ...infer U]
     ? U
     : never;
+
+export type DeepPartial<T> = {
+    [P in keyof T]?: DeepPartial<T[P]>;
+};
