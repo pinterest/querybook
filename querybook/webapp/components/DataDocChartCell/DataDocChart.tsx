@@ -1,7 +1,7 @@
 import { Line, Bar, Pie, Scatter, Doughnut, Bubble } from 'react-chartjs-2';
 import React, { MutableRefObject, useMemo } from 'react';
 import { useSelector } from 'react-redux';
-import { Chart, ChartOptions, registerables } from 'chart.js';
+import { Chart, ChartOptions } from 'chart.js';
 import ChartDataLabels from 'chartjs-plugin-datalabels';
 
 import { IDataChartCellMeta } from 'const/datadoc';
@@ -19,7 +19,6 @@ interface IDataDocChartProps {
     chartJSRef?: MutableRefObject<Chart>;
 }
 
-Chart.register(...registerables);
 Chart.registry.remove(ChartDataLabels);
 
 function isChartValNull(val: any): boolean {

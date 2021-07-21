@@ -3,7 +3,6 @@ import {
     LineControllerDatasetOptions,
     TimeScaleOptions,
     ScaleOptions,
-    ArcElement,
 } from 'chart.js';
 
 import { IDataChartCellMeta } from 'const/datadoc';
