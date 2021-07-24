@@ -12,17 +12,21 @@ from env import QuerybookSettings
 FILE_STORE_PATH = "/opt/store/"
 
 
+def get_file_uri(raw_uri: str) -> str:
+    if raw_uri.startswith("/"):
+        raw_uri = raw_uri[1:]
+    if len(raw_uri) == 0:
+        raise ValueError("Invalid empty uri provided")
+    return f"{FILE_STORE_PATH}{raw_uri}"
+
+
 class FileUploader(BaseUploader):
     def __init__(self, uri: str):
-        self._uri = uri
-        if not os.path.exists("{}querybook_temp".format(FILE_STORE_PATH)):
-            os.makedirs("{}querybook_temp".format(FILE_STORE_PATH))
+        self.uri = get_file_uri(uri)
 
     def start(self):
         self._chunks_length = 0
-        os.makedirs(
-            "{}querybook_temp/{}".format(FILE_STORE_PATH, self._uri.split("/")[1])
-        )
+        os.makedirs(self.uri_dir_path, exist_ok=True)
 
     def write(self, data: str):
         # write each line into csv
@@ -35,21 +39,21 @@ class FileUploader(BaseUploader):
 
         self._chunks_length += data_len
         with open(self.uri, "a") as result_file:
-            writer = csv.writer(result_file, delimiter=",")
-            writer.writerow(data.split(","))
+            result_file.write(data)
         return True
 
     def end(self):
         pass
 
     @property
-    def uri(self):
-        return f"{FILE_STORE_PATH}{self._uri}"
+    def uri_dir_path(self):
+        uri = self.uri
+        return "/".join(uri.split("/")[:-1])
 
 
 class FileReader(BaseReader):
     def __init__(self, uri: str):
-        self._uri = uri
+        self.uri = get_file_uri(uri)
 
     def start(self):
         pass
@@ -84,7 +88,3 @@ class FileReader(BaseReader):
 
     def get_download_url(self):
         return None
-
-    @property
-    def uri(self):
-        return f"{FILE_STORE_PATH}{self._uri}"
