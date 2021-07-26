@@ -8,16 +8,16 @@ services:
         tmpfs: /tmp:exec,mode=777
         tty: true
         stdin_open: true
-        # network_mode: "host"
+        # network_mode: 'host'
         command: './querybook/scripts/bundled_docker_run_web --initdb --initweb'
         ports:
-            - '${PORT-10001}:${PORT-10001}'
+            - '${PORT:-10001}:${PORT:-10001}'
         expose:
-            - '${PORT-10001}'
+            - '${PORT:-10001}'
         environment:
-            PORT: ${PORT-10001}
-            APIPORT: ${APIPORT-3000}
-            HOT_RELOAD: ${HOT_RELOAD-true}
+            PORT: '${PORT:-10001}'
+            APIPORT: '${APIPORT:-3000}'
+            HOT_RELOAD: '${HOT_RELOAD:-true}'
         restart: 'always'
         volumes:
             # This is for code change via watcher
