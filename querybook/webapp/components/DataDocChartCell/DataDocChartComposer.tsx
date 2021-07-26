@@ -18,9 +18,10 @@ import {
     aggTypes,
     IChartAxisMeta,
     ChartScaleType,
-    chartValueDisplayType,
+    ChartValueDisplayType,
     ChartScaleOptions,
     chartTypeToAllowedAxisType,
+    ChartSize,
 } from 'const/dataDocChart';
 import { colorPalette, colorPaletteNames } from 'const/chartColors';
 
@@ -36,7 +37,6 @@ import { queryCellSelector } from 'redux/dataDoc/selector';
 
 import { SoftButton } from 'ui/Button/Button';
 import { IconButton } from 'ui/Button/IconButton';
-import { ErrorBoundary } from 'ui/ErrorBoundary/ErrorBoundary';
 import { FormField, FormSectionHeader } from 'ui/Form/FormField';
 import { Tabs } from 'ui/Tabs/Tabs';
 
@@ -727,6 +727,31 @@ const DataDocChartComposerComponent: React.FunctionComponent<
                         />
                     </>
                 )}
+                <SimpleField
+                    stacked
+                    label="Chart Height"
+                    name="size"
+                    type="react-select"
+                    help="If set from not auto to auto height, refresh the page to see change."
+                    options={[
+                        {
+                            value: ChartSize.SMALL,
+                            label: 'Small (1/3 height)',
+                        },
+                        {
+                            value: ChartSize.MEDIUM,
+                            label: 'Medium (1/2 height)',
+                        },
+                        {
+                            value: ChartSize.LARGE,
+                            label: 'Large (full height)',
+                        },
+                        {
+                            value: ChartSize.AUTO,
+                            label: 'Auto height',
+                        },
+                    ]}
+                />
                 <FormSectionHeader>Legend</FormSectionHeader>
                 <SimpleField
                     label="Visible"
@@ -749,15 +774,15 @@ const DataDocChartComposerComponent: React.FunctionComponent<
                     type="react-select"
                     options={[
                         {
-                            value: chartValueDisplayType.FALSE,
+                            value: ChartValueDisplayType.FALSE,
                             label: 'Hide Values',
                         },
                         {
-                            value: chartValueDisplayType.TRUE,
+                            value: ChartValueDisplayType.TRUE,
                             label: 'Show Values',
                         },
                         {
-                            value: chartValueDisplayType.AUTO,
+                            value: ChartValueDisplayType.AUTO,
                             label: 'Show Values without Overlap',
                         },
                     ]}
@@ -930,7 +955,7 @@ const DataDocChartComposerComponent: React.FunctionComponent<
             <div className="DataDocChartComposer-chart">
                 {renderPickerDOM()}
                 <div className="DataDocChartComposer-chart-sizer">
-                    <ErrorBoundary>{chartData ? chartDOM : null}</ErrorBoundary>
+                    {chartData ? chartDOM : null}
                 </div>
             </div>
             {tableDOM}
@@ -1052,9 +1077,10 @@ function formValsToMeta(vals: IChartFormValues, meta: IDataChartCellMeta) {
         draft.visual.legend_position = vals.legendPosition;
         draft.visual.legend_display = vals.legendDisplay;
         draft.visual.connect_missing = vals.connectMissing;
+        draft.visual.size = vals.size;
 
         draft.visual.values = {
-            display: vals.valueDisplay ?? chartValueDisplayType.FALSE,
+            display: vals.valueDisplay ?? ChartValueDisplayType.FALSE,
             position: vals.valuePosition,
             alignment: vals.valueAlignment,
         };
