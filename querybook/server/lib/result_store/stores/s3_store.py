@@ -56,9 +56,15 @@ class S3Reader(BaseReader):
     def has_download_url(self):
         return True
 
-    def get_download_url(self):
+    def get_download_url(self, custom_name=None):
+        url_params = {}
+        if custom_name is not None:
+            url_params[
+                "ResponseContentDisposition"
+            ] = f'attachment; filename="{custom_name}"'
+
         key_signer = S3KeySigner(QuerybookSettings.STORE_BUCKET_NAME)
-        download_url = key_signer.generate_presigned_url(self.uri)
+        download_url = key_signer.generate_presigned_url(self.uri, params=url_params,)
         return download_url
 
     @property

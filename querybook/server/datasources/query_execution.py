@@ -197,24 +197,24 @@ def download_statement_execution_result(statement_execution_id):
             statement_execution.query_execution_id, session=session
         )
 
+        download_file_name = f"result_{statement_execution.query_execution_id}_{statement_execution_id}.csv"
+
         reader = GenericReader(statement_execution.result_path)
         response = None
         if reader.has_download_url:
             # If the Reader can generate a download,
             # we let user download the file by redirection
-            download_url = reader.get_download_url()
+            download_url = reader.get_download_url(custom_name=download_file_name)
             response = redirect(download_url)
         else:
             # We read the raw file and download it for the user
             reader.start()
             raw = reader.read_raw()
             response = Response(raw)
-        response.headers["Content-Type"] = "text/plain"
-        response.headers[
-            "Content-Disposition"
-        ] = 'attachment; filename="result_{}_{}.csv"'.format(
-            statement_execution.query_execution_id, statement_execution_id
-        )
+            response.headers["Content-Type"] = "text/csv"
+            response.headers[
+                "Content-Disposition"
+            ] = f'attachment; filename="{download_file_name}"'
         return response
 
 

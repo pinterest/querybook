@@ -86,5 +86,5 @@ class FileReader(BaseReader):
     def has_download_url(self):
         return False
 
-    def get_download_url(self):
+    def get_download_url(self, custom_name=None):
         return None

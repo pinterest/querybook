@@ -118,12 +118,12 @@ class BaseReader(ABC):
         pass
 
     @abstractmethod
-    def get_download_url(self) -> str:
+    def get_download_url(self, custom_name=None) -> str:
         """Get the download url as string
 
-        Arguments:
-
+        Args:
+            custom_name (str, optional): Optional name for the file downloaded. You may ignore this field if you don't intend to rename the download. Defaults to None.
         Returns:
-            str -- the downloadable url
+            str: the downloadable url
         """
         pass
