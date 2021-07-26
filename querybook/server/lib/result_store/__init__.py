@@ -55,8 +55,8 @@ class GenericReader(BaseReader):
     def has_download_url(self):
         return self._reader.has_download_url
 
-    def get_download_url(self):
-        return self._reader.get_download_url()
+    def get_download_url(self, custom_name=None):
+        return self._reader.get_download_url(custom_name=custom_name)
 
     def end(self):
         self._reader.end()
