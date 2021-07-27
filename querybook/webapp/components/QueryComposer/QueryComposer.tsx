@@ -46,6 +46,7 @@ import { Level, LevelItem } from 'ui/Level/Level';
 import { Button } from 'ui/Button/Button';
 
 import './QueryComposer.scss';
+import { IQueryEngine } from 'const/queryEngine';
 
 const useExecution = (dispatch: Dispatch, environmentId: number) => {
     const executionId = useSelector(
@@ -188,6 +189,31 @@ function useQueryEditorHelpers() {
     };
 }
 
+function useKeyMap(
+    clickOnRunButton: () => void,
+    queryEngines: IQueryEngine[],
+    setEngineId: (id: number) => void
+) {
+    return useMemo(() => {
+        const keyMap = {
+            [KeyMap.queryEditor.runQuery.key]: clickOnRunButton,
+        };
+
+        for (const [index, engine] of queryEngines.entries()) {
+            const key = index + 1;
+            if (key > 9) {
+                // We have exhausted all number keys on the keyboard
+                break;
+            }
+            keyMap[
+                KeyMap.queryEditor.changeEngine.key + '-' + String(key)
+            ] = () => setEngineId(engine.id);
+        }
+
+        return keyMap;
+    }, [clickOnRunButton, queryEngines, setEngineId]);
+}
+
 const QueryComposer: React.FC = () => {
     useBrowserTitle('Adhoc Query');
 
@@ -256,12 +282,7 @@ const QueryComposer: React.FC = () => {
         setExecutionId(id);
     }, [queryEditorRef.current, query, engine]);
 
-    const keyMap = useMemo(
-        () => ({
-            [KeyMap.queryEditor.runQuery.key]: clickOnRunButton,
-        }),
-        [clickOnRunButton]
-    );
+    const keyMap = useKeyMap(clickOnRunButton, queryEngines, setEngineId);
 
     const [editorHasSelection, setEditorHasSelection] = useState(false);
     const handleEditorSelection = React.useCallback(

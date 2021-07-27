@@ -5,8 +5,11 @@ import { debounce, bind } from 'lodash-decorators';
 import React from 'react';
 import { connect } from 'react-redux';
 import Resizable from 're-resizable';
+import memoizeOne from 'memoize-one';
+import { decorate } from 'core-decorators';
 
 import KeyMap from 'const/keyMap';
+import type { IQueryEngine } from 'const/queryEngine';
 import CodeMirror from 'lib/codemirror';
 import {
     getSelectedQuery,
@@ -37,7 +40,7 @@ import {
     QueryEngineSelector,
 } from 'components/QueryRunButton/QueryRunButton';
 import { BoundQueryEditor } from 'components/QueryEditor/BoundQueryEditor';
-import { ErrorQueryCell } from './ErrorQueryCell';
+import { matchKeyPress } from 'lib/utils/keyboard';
 
 import { Button, TextButton } from 'ui/Button/Button';
 import { ThemedCodeHighlight } from 'ui/CodeHighlight/ThemedCodeHighlight';
@@ -48,6 +51,7 @@ import { Modal } from 'ui/Modal/Modal';
 import { ResizableTextArea } from 'ui/ResizableTextArea/ResizableTextArea';
 import { Title } from 'ui/Title/Title';
 
+import { ErrorQueryCell } from './ErrorQueryCell';
 import './DataDocQueryCell.scss';
 
 const ON_CHANGE_DEBOUNCE_MS = 500;
@@ -96,10 +100,6 @@ interface IState {
 class DataDocQueryCellComponent extends React.PureComponent<IProps, IState> {
     private queryEditorRef = React.createRef<QueryEditor>();
     private runButtonRef = React.createRef<IQueryRunButtonHandles>();
-    private keyMap = {
-        [KeyMap.queryEditor.runQuery.key]: this.clickOnRunButton,
-        [KeyMap.queryEditor.deleteCell.key]: this.props.onDeleteKeyPressed,
-    };
 
     public constructor(props) {
         super(props);
@@ -112,6 +112,32 @@ class DataDocQueryCellComponent extends React.PureComponent<IProps, IState> {
             queryCollapsedOverride: null,
             showQuerySnippetModal: false,
         };
+    }
+
+    @decorate(memoizeOne)
+    public _keyMapMemo(engines: IQueryEngine[]) {
+        const keyMap = {
+            [KeyMap.queryEditor.runQuery.key]: this.clickOnRunButton,
+            [KeyMap.queryEditor.deleteCell.key]: this.props.onDeleteKeyPressed,
+        };
+
+        for (const [index, engine] of engines.entries()) {
+            const key = index + 1;
+            if (key > 9) {
+                // We have exhausted all number keys on the keyboard
+                break;
+            }
+
+            keyMap[
+                KeyMap.queryEditor.changeEngine.key + '-' + String(key)
+            ] = () => this.handleMetaChange('engine', engine.id);
+        }
+
+        return keyMap;
+    }
+
+    @bind public get keyMap() {
+        return this._keyMapMemo(this.props.queryEngines);
     }
 
     @bind
@@ -180,9 +206,6 @@ class DataDocQueryCellComponent extends React.PureComponent<IProps, IState> {
 
     @bind
     public onKeyDown(editor: CodeMirror.Editor, event: KeyboardEvent) {
-        const keyUpCode = 38;
-        const keyDownCode = 40;
-
         const doc = editor.getDoc();
 
         const cursor = doc.getCursor();
@@ -193,18 +216,18 @@ class DataDocQueryCellComponent extends React.PureComponent<IProps, IState> {
         let stopEvent = true;
         if (
             this.props.onUpKeyPressed &&
-            event.keyCode === keyUpCode &&
             !autocompleteWidgetOpen &&
             cursor.line === 0 &&
-            cursor.ch === 0
+            cursor.ch === 0 &&
+            matchKeyPress(event, 'up')
         ) {
             this.props.onUpKeyPressed();
         } else if (
             this.props.onDownKeyPressed &&
-            event.keyCode === keyDownCode &&
             !autocompleteWidgetOpen &&
             cursor.line === doc.lineCount() - 1 &&
-            cursor.ch === doc.getLine(doc.lineCount() - 1).length
+            cursor.ch === doc.getLine(doc.lineCount() - 1).length &&
+            matchKeyPress(event, 'down')
         ) {
             this.props.onDownKeyPressed();
         } else {
