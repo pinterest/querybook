@@ -2,10 +2,15 @@ import { Line, Bar, Pie, Scatter, Doughnut, Bubble } from 'react-chartjs-2';
 import React, { MutableRefObject, useMemo } from 'react';
 import { useSelector } from 'react-redux';
 import { Chart, ChartOptions } from 'chart.js';
+import 'chartjs-adapter-moment';
 import ChartDataLabels from 'chartjs-plugin-datalabels';
 
 import { IDataChartCellMeta } from 'const/datadoc';
-import { ChartScaleType, chartTypeToAllowedAxisType } from 'const/dataDocChart';
+import {
+    ChartScaleType,
+    ChartSize,
+    chartTypeToAllowedAxisType,
+} from 'const/dataDocChart';
 import { fontColor } from 'const/chartColors';
 import { mapMetaToChartOptions } from 'lib/chart/chart-meta-processing';
 import { getDefaultScaleType } from 'lib/chart/chart-utils';

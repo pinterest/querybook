@@ -215,7 +215,8 @@ export function mapMetaToChartOptions(
 
     // If auto size, then let aspect ratio be auto maintained, otherwise
     // fit the content to the height, so no need to maintain ratio
-    if (meta.visual.size !== ChartSize.AUTO) {
+    const chartSize = meta.visual?.size ?? ChartSize.AUTO;
+    if (chartSize !== ChartSize.AUTO) {
         optionsObj.maintainAspectRatio = false;
     }
 
@@ -347,6 +348,12 @@ function computeScaleOptions(
             // for yAxis, make sure 0 is shown unless specificed
             (axis as LinearScaleOptions).beginAtZero = true;
         }
+
+        // Prevent ticks from erroring out if there is no data provided
+        // See https://github.com/chartjs/Chart.js/issues/8092
+        axis.ticks = {
+            callback: (val) => val,
+        };
     }
 
     return axis;

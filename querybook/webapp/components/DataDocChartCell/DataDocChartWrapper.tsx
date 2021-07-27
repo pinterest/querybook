@@ -27,11 +27,11 @@ const StyledChartWrapper = styled.div<{ size: ChartSize }>`
 export const DataDocChartWrapper: React.FC<IDataDocChartWrapper> = ({
     children,
     className,
-    size = ChartSize.AUTO,
+    size,
 }) => (
     <StyledChartWrapper
         className={clsx(className, 'DataDocChartWrapper')}
-        size={size}
+        size={size ?? ChartSize.AUTO}
     >
         <ErrorBoundary>{children}</ErrorBoundary>
     </StyledChartWrapper>

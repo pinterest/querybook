@@ -127,25 +127,19 @@ const ImpressionWidgetTimeseries: React.FC<IProps> = ({ type, itemId }) => {
                     },
                 },
                 scales: {
-                    xAxes: [
-                        {
-                            type: 'time',
+                    x: {
+                        type: 'time',
 
-                            time: {
-                                unit: 'week',
-                                displayFormats: {
-                                    week: 'l',
-                                },
+                        time: {
+                            unit: 'week',
+                            displayFormats: {
+                                week: 'l',
                             },
                         },
-                    ],
-                    yAxes: [
-                        {
-                            ticks: {
-                                min: 0,
-                            },
-                        },
-                    ],
+                    },
+                    y: {
+                        beginAtZero: 0,
+                    },
                 },
             }}
         />
