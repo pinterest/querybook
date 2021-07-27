@@ -240,7 +240,7 @@ export const DataDocChartCell: React.FunctionComponent<IProps> = ({
                     </InfoButton>
                 </div>
             </div>
-            <div>{renderChartDOM()}</div>
+            {renderChartDOM()}
             {chartComposerDOM}
         </div>
     );
