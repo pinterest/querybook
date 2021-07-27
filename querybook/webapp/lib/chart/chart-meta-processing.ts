@@ -3,6 +3,7 @@ import {
     LineControllerDatasetOptions,
     TimeScaleOptions,
     ScaleOptions,
+    LinearScaleOptions,
 } from 'chart.js';
 
 import { IDataChartCellMeta } from 'const/datadoc';
@@ -344,7 +345,7 @@ function computeScaleOptions(
             axis.min = axisMeta.min;
         } else if (!isXAxis) {
             // for yAxis, make sure 0 is shown unless specificed
-            axis.beginAtZero = true;
+            (axis as LinearScaleOptions).beginAtZero = true;
         }
     }
 
