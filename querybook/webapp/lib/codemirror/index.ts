@@ -43,6 +43,10 @@ declare module 'codemirror' {
         callback: HTMLElement | ((text: string, style: string | null) => void),
         options?: { tabSize?: number; state?: any }
     ): void;
+
+    function normalizeKeyMap(
+        keyMap: Record<string, string | (() => any)>
+    ): Record<string, string | (() => any)>;
 }
 
 export default CodeMirror;
