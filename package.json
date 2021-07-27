@@ -39,7 +39,7 @@
         "@welldone-software/why-did-you-render": "^6.1.1",
         "axios": "0.21.1",
         "bignumber.js": "^9.0.1",
-        "chart.js": "^3.4.1",
+        "chart.js": "^3.5.0",
         "chartjs-plugin-datalabels": "^2.0.0",
         "clean-webpack-plugin": "3.0.0",
         "clsx": "^1.1.1",

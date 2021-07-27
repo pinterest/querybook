@@ -343,8 +343,8 @@ function computeScaleOptions(
         if (axisMeta.min != null && typeof axisMeta.min === 'number') {
             axis.min = axisMeta.min;
         } else if (!isXAxis) {
-            // for yAxis, default min to 0 unless specified
-            axis.min = 0;
+            // for yAxis, make sure 0 is shown unless specificed
+            axis.beginAtZero = true;
         }
     }
 
