@@ -70,6 +70,7 @@ cell_types:
                     display: 0
                     position: 'center'
                     alignment: 'center'
+                size: 'auto' # Can be one of 'sm' | 'md' | 'lg' | 'auto'
             collapsed: false
         meta_default:
             title: ''

@@ -26,11 +26,13 @@
                 overflow-y: hidden;
                 .DataDocChartComposer-chart-sizer {
                     flex: 1;
-                    position: relative;
-                    display: flex;
-                    flex-direction: column;
-                    overflow: hidden;
                     width: 100%;
+                    display: flex;
+                    overflow-y: auto;
+
+                    .DataDocChartWrapper {
+                        flex: 1;
+                    }
                 }
                 .DataDocChartComposer-exec-picker {
                     margin-left: 4px;

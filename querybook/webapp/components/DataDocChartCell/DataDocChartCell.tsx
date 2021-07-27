@@ -11,8 +11,7 @@ import { IDataChartCellMeta } from 'const/datadoc';
 import { StatementExecutionPicker } from 'components/ExecutionPicker/StatementExecutionPicker';
 import { QueryExecutionPicker } from 'components/ExecutionPicker/QueryExecutionPicker';
 
-import { Button, TextButton } from 'ui/Button/Button';
-import { ErrorBoundary } from 'ui/ErrorBoundary/ErrorBoundary';
+import { TextButton } from 'ui/Button/Button';
 import { DataDocChart } from './DataDocChart';
 import { DataDocChartCellTable } from './DataDocChartCellTable';
 import { DataDocChartComposer } from './DataDocChartComposer';
@@ -203,7 +202,7 @@ export const DataDocChartCell: React.FunctionComponent<IProps> = ({
             );
         }
 
-        return <ErrorBoundary>{visualizationDOM}</ErrorBoundary>;
+        return visualizationDOM;
     };
 
     const chartComposerDOM = showChartComposer ? (

@@ -11,11 +11,12 @@ import {
     IChartAxisMeta,
     IChartFormValues,
     ChartScaleType,
-    chartValueDisplayType,
+    ChartValueDisplayType,
+    ChartSize,
 } from 'const/dataDocChart';
 import { fontColor, fillColor, backgroundColor } from 'const/chartColors';
+import type { DeepPartial } from 'lib/typescript';
 import { formatNumber } from 'lib/utils/number';
-import { DeepPartial } from 'redux';
 
 function filterSeries<T, K extends keyof T>(
     series: Record<number, T>,
@@ -136,9 +137,10 @@ export function mapMetaToFormVals(
         legendPosition: meta.visual.legend_position ?? 'top',
         legendDisplay: meta.visual.legend_display ?? true,
         connectMissing: meta.visual.connect_missing ?? false,
+        size: meta.visual.size ?? ChartSize.AUTO,
 
         valueDisplay:
-            meta.visual.values?.display ?? chartValueDisplayType.FALSE,
+            meta.visual.values?.display ?? ChartValueDisplayType.FALSE,
         valuePosition: meta.visual.values?.position,
         valueAlignment: meta.visual.values?.alignment,
     };
@@ -186,10 +188,10 @@ export function mapMetaToChartOptions(
             },
             datalabels: {
                 display:
-                    meta.visual.values?.display === chartValueDisplayType.TRUE
+                    meta.visual.values?.display === ChartValueDisplayType.TRUE
                         ? true
                         : meta.visual.values?.display ===
-                          chartValueDisplayType.AUTO
+                          ChartValueDisplayType.AUTO
                         ? 'auto'
                         : false,
                 anchor: meta.visual.values?.position,
@@ -209,6 +211,12 @@ export function mapMetaToChartOptions(
             },
         },
     };
+
+    // If auto size, then let aspect ratio be auto maintained, otherwise
+    // fit the content to the height, so no need to maintain ratio
+    if (meta.visual.size !== ChartSize.AUTO) {
+        optionsObj.maintainAspectRatio = false;
+    }
 
     if (meta.visual.connect_missing != null) {
         (optionsObj as LineControllerDatasetOptions).spanGaps =

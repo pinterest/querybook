@@ -11,6 +11,7 @@ import { mapMetaToChartOptions } from 'lib/chart/chart-meta-processing';
 import { getDefaultScaleType } from 'lib/chart/chart-utils';
 import { processChartJSData } from 'lib/chart/chart-data-processing';
 import { IStoreState } from 'redux/store/types';
+import { DataDocChartWrapper } from './DataDocChartWrapper';
 
 interface IDataDocChartProps {
     meta: IDataChartCellMeta;
@@ -165,5 +166,9 @@ export const DataDocChart: React.FunctionComponent<IDataDocChartProps> = ({
         chartDOM = <Bubble {...chartProps} />;
     }
 
-    return chartDOM;
+    return (
+        <DataDocChartWrapper size={meta.visual.size}>
+            {chartDOM}
+        </DataDocChartWrapper>
+    );
 };
