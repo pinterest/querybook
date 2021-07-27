@@ -124,6 +124,7 @@ class DataDocQueryCellComponent extends React.PureComponent<IProps, IState> {
         for (const [index, engine] of engines.entries()) {
             const key = index + 1;
             if (key > 9) {
+                // We have exhausted all number keys on the keyboard
                 break;
             }
 

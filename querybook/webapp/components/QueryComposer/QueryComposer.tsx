@@ -202,6 +202,7 @@ function useKeyMap(
         for (const [index, engine] of queryEngines.entries()) {
             const key = index + 1;
             if (key > 9) {
+                // We have exhausted all number keys on the keyboard
                 break;
             }
             keyMap[
