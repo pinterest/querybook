@@ -35,6 +35,4 @@ jobs:
                   restore-keys: |
                       ${{ runner.os }}-yarn-
             - run: yarn install --frozen-lockfile --prefer-offline
-            - run: cat node_modules/react-select/package.json
-            - run: cat node_modules/@types/react-select/package.json
             - run: ./querybook/scripts/run_test --node
