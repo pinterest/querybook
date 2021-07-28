@@ -1,5 +1,5 @@
 import React from 'react';
-import AsyncSelect, { Props as AsyncProps } from 'react-select/Async';
+import AsyncSelect, { Props as AsyncProps } from 'react-select/async';
 import { debounce } from 'lodash';
 
 import ds from 'lib/datasource';
