@@ -103,77 +103,77 @@ const useChartScale = (meta: IDataChartCellMeta, data?: any[][]) => {
     return [xAxesScaleType, yAxesScaleType];
 };
 
-export const DataDocChart: React.FunctionComponent<IDataDocChartProps> = ({
-    meta,
-    data = [],
-    chartJSOptions = {},
-    chartJSRef,
-}) => {
-    const theme = useSelector(
-        (state: IStoreState) => state.user.computedSettings.theme
-    );
+export const DataDocChart = React.memo<IDataDocChartProps>(
+    ({ meta, data = [], chartJSOptions = {}, chartJSRef }) => {
+        const theme = useSelector(
+            (state: IStoreState) => state.user.computedSettings.theme
+        );
 
-    React.useEffect(() => {
-        Chart.defaults.color = `rgb(
+        React.useEffect(() => {
+            Chart.defaults.color = `rgb(
             ${fontColor[theme][0]},
             ${fontColor[theme][1]},
             ${fontColor[theme][2]}
         )`;
-        Chart.defaults.font = {
-            family: 'Avenir Next',
-            size: 14,
-            style: 'normal',
-            weight: undefined,
-            lineHeight: 1.2,
+            Chart.defaults.font = {
+                family: 'Avenir Next',
+                size: 14,
+                style: 'normal',
+                weight: undefined,
+                lineHeight: 1.2,
+            };
+            Chart.defaults.plugins.filler.propagate = true;
+        }, [theme]);
+
+        const [xAxesScaleType, yAxesScaleType] = useChartScale(meta, data);
+        const chartData = processChartJSData(
+            data,
+            meta,
+            theme,
+            xAxesScaleType,
+            yAxesScaleType
+        );
+        const combinedChartJSOptions = useMemo(
+            () => ({
+                ...mapMetaToChartOptions(
+                    meta,
+                    theme,
+                    xAxesScaleType,
+                    yAxesScaleType
+                ),
+                ...chartJSOptions,
+            }),
+            [meta, theme, xAxesScaleType, yAxesScaleType, chartJSOptions]
+        );
+
+        const chartProps = {
+            data: chartData,
+            plugins: [ChartDataLabels],
+            options: combinedChartJSOptions,
+            ref: chartJSRef,
         };
-        Chart.defaults.plugins.filler.propagate = true;
-    }, [theme]);
+        let chartDOM = null;
+        if (meta.chart.type === 'line' || meta.chart.type === 'area') {
+            chartDOM = <Line {...chartProps} />;
+        } else if (
+            meta.chart.type === 'bar' ||
+            meta.chart.type === 'histogram'
+        ) {
+            chartDOM = <Bar {...chartProps} />;
+        } else if (meta.chart.type === 'pie') {
+            chartDOM = <Pie {...chartProps} />;
+        } else if (meta.chart.type === 'doughnut') {
+            chartDOM = <Doughnut {...chartProps} />;
+        } else if (meta.chart.type === 'scatter') {
+            chartDOM = <Scatter {...chartProps} />;
+        } else if (meta.chart.type === 'bubble') {
+            chartDOM = <Bubble {...chartProps} />;
+        }
 
-    const [xAxesScaleType, yAxesScaleType] = useChartScale(meta, data);
-    const chartData = processChartJSData(
-        data,
-        meta,
-        theme,
-        xAxesScaleType,
-        yAxesScaleType
-    );
-    const combinedChartJSOptions = useMemo(
-        () => ({
-            ...mapMetaToChartOptions(
-                meta,
-                theme,
-                xAxesScaleType,
-                yAxesScaleType
-            ),
-            ...chartJSOptions,
-        }),
-        [meta, theme, xAxesScaleType, yAxesScaleType, chartJSOptions]
-    );
-
-    const chartProps = {
-        data: chartData,
-        plugins: [ChartDataLabels],
-        options: combinedChartJSOptions,
-        ref: chartJSRef,
-    };
-    let chartDOM = null;
-    if (meta.chart.type === 'line' || meta.chart.type === 'area') {
-        chartDOM = <Line {...chartProps} />;
-    } else if (meta.chart.type === 'bar' || meta.chart.type === 'histogram') {
-        chartDOM = <Bar {...chartProps} />;
-    } else if (meta.chart.type === 'pie') {
-        chartDOM = <Pie {...chartProps} />;
-    } else if (meta.chart.type === 'doughnut') {
-        chartDOM = <Doughnut {...chartProps} />;
-    } else if (meta.chart.type === 'scatter') {
-        chartDOM = <Scatter {...chartProps} />;
-    } else if (meta.chart.type === 'bubble') {
-        chartDOM = <Bubble {...chartProps} />;
+        return (
+            <DataDocChartWrapper size={meta.visual.size}>
+                {chartDOM}
+            </DataDocChartWrapper>
+        );
     }
-
-    return (
-        <DataDocChartWrapper size={meta.visual.size}>
-            {chartDOM}
-        </DataDocChartWrapper>
-    );
-};
+);

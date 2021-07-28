@@ -36,7 +36,7 @@ interface IProps {
     onDownKeyPressed?: () => any;
 }
 
-export const DataDocTextCell: React.FC<IProps> = React.memo(
+export const DataDocTextCell = React.memo<IProps>(
     ({
         cellId,
         context,
