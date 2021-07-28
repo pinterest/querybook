@@ -1,5 +1,5 @@
 import React from 'react';
-import AsyncSelect, { Props as AsyncProps } from 'react-select/lib/Async';
+import AsyncSelect, { Props as AsyncProps } from 'react-select/async';
 import { debounce } from 'lodash';
 
 import ds from 'lib/datasource';
@@ -41,7 +41,7 @@ interface IUserSelectProps {
     onSelect: (uid: number, name: string) => any;
     usePortalMenu?: boolean;
 
-    selectProps?: Partial<AsyncProps<any>>;
+    selectProps?: Partial<AsyncProps<any, false>>;
 
     // remove the selected user name after select
     clearAfterSelect?: boolean;
@@ -54,7 +54,7 @@ export const UserSelect: React.FunctionComponent<IUserSelectProps> = ({
     clearAfterSelect = false,
 }) => {
     const [searchText, setSearchText] = React.useState('');
-    const asyncSelectProps: Partial<AsyncProps<any>> = {};
+    const asyncSelectProps: Partial<AsyncProps<any, false>> = {};
     const userReactSelectStyle = makeReactSelectStyle(usePortalMenu);
     if (usePortalMenu) {
         asyncSelectProps.menuPortalTarget = overlayRoot;

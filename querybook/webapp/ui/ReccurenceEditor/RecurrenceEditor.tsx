@@ -152,12 +152,16 @@ export const RecurrenceEditor: React.FunctionComponent<IProps> = ({
     );
 };
 
+interface IOptionType {
+    value: number;
+    label: string;
+}
 interface IDatePickerProps {
     label: string;
     onKey: string;
-    options: Array<{ value: number; label: string }>;
+    options: IOptionType[];
     recurrence: IRecurrence;
-    setRecurrence: (IRecurrence) => void;
+    setRecurrence: (recurrence: IRecurrence) => void;
     error: FormikErrors<IRecurrenceOn>;
 }
 
@@ -173,13 +177,12 @@ export const RecurrenceEditorDatePicker: React.FunctionComponent<IDatePickerProp
         `recurrence.on.${onKey}`,
         label
     );
-
     return (
         <FormField label={`Recurrence ${label}`} error={formattedError}>
             <Field
                 name={`recurrence.on.${onKey}`}
                 render={({ field }) => (
-                    <Select
+                    <Select<IOptionType, true>
                         menuPortalTarget={overlayRoot}
                         styles={recurrenceReactSelectStyle}
                         value={options.filter((option: { value: any }) =>
@@ -191,9 +194,7 @@ export const RecurrenceEditorDatePicker: React.FunctionComponent<IDatePickerProp
                                 ...recurrence,
                                 on: {
                                     ...recurrence.on,
-                                    [onKey]: (value as Array<{
-                                        value: any;
-                                    }>).map((v) => v.value),
+                                    [onKey]: value.map((v) => v.value),
                                 },
                             };
                             setRecurrence(newRecurrence);

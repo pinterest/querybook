@@ -1,6 +1,5 @@
 import React, { useMemo, useCallback } from 'react';
-import { Props as ReactSelectProps } from 'react-select/lib/Select';
-import Select from 'react-select';
+import Select, { Props as ReactSelectProps } from 'react-select';
 
 import { makeReactSelectStyle } from 'lib/utils/react-select';
 

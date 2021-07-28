@@ -35,5 +35,4 @@ jobs:
                   restore-keys: |
                       ${{ runner.os }}-yarn-
             - run: yarn install --frozen-lockfile --prefer-offline
-              # if: steps.yarn-cache.outputs.cache-hit != 'true'
             - run: ./querybook/scripts/run_test --node

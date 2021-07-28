@@ -81,7 +81,7 @@ export class Link extends React.PureComponent<ILinkProps> {
         } = this.props;
 
         const linkComponent = isInternalUrl(to) ? (
-            <LinkImport to={to} {...elementProps} {...linkProps}>
+            <LinkImport to={to} {...(elementProps as LinkProps)} {...linkProps}>
                 {children}
             </LinkImport>
         ) : (
