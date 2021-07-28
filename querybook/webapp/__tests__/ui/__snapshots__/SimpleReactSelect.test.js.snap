@@ -32,24 +32,30 @@ exports[`matches enzyme snapshots matches snapshot 1`] = `
 
 exports[`matches test renderer snapshot serializes the styles 1`] = `
 <div
-  className="css-10nd86i"
+  className=" css-2b097c-container"
   onKeyDown={[Function]}
 >
+  <span
+    aria-atomic="false"
+    aria-live="polite"
+    aria-relevant="additions text"
+    className="css-1f43avz-a11yText-A11yText"
+  />
   <div
-    className="css-1b05evb"
+    className=" css-hdojnb-control"
     onMouseDown={[Function]}
     onTouchEnd={[Function]}
   >
     <div
-      className="css-1hwfws3"
+      className=" css-g1d714-ValueContainer"
     >
       <div
-        className="css-1xoklqz"
+        className=" css-1x7g0sm-placeholder"
       >
         Select...
       </div>
       <div
-        className="css-c0vc31"
+        className="css-10elmgk-Input"
       >
         <div
           className=""
@@ -77,6 +83,7 @@ exports[`matches test renderer snapshot serializes the styles 1`] = `
                 "boxSizing": "content-box",
                 "color": "inherit",
                 "fontSize": "inherit",
+                "label": "input",
                 "opacity": 1,
                 "outline": 0,
                 "padding": 0,
@@ -106,20 +113,20 @@ exports[`matches test renderer snapshot serializes the styles 1`] = `
       </div>
     </div>
     <div
-      className="css-1wy0on6"
+      className=" css-1hb7zxy-IndicatorsContainer"
     >
       <span
-        className="css-1rhm1a1"
+        className=" css-shgobz-indicatorSeparator"
       />
       <div
         aria-hidden="true"
-        className="css-cqt1d8"
+        className=" css-1d1y4uz-indicatorContainer"
         onMouseDown={[Function]}
         onTouchEnd={[Function]}
       >
         <svg
           aria-hidden="true"
-          className="css-19bqh2r"
+          className="css-tj5bde-Svg"
           focusable="false"
           height={20}
           viewBox="0 0 20 20"

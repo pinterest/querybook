@@ -191,7 +191,7 @@ export const RecurrenceEditorDatePicker: React.FunctionComponent<IDatePickerProp
                                 ...recurrence,
                                 on: {
                                     ...recurrence.on,
-                                    [onKey]: (value as Array<{
+                                    [onKey]: ((value as unknown) as Array<{
                                         value: any;
                                     }>).map((v) => v.value),
                                 },

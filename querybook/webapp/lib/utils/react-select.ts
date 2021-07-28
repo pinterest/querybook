@@ -1,3 +1,4 @@
+import { StylesConfig, mergeStyles } from 'react-select';
 export interface IOption<T = any> {
     label: string;
     value: T;
@@ -24,15 +25,15 @@ const dot = (color = 'transparent') => ({
 export const valueFromId = (opts: IOptions, id: any) =>
     opts.find((o) => o.value === id);
 
-export const defaultReactSelectStyles = {
-    control: (styles, { isFocused, isSelected }) => ({
+export const defaultReactSelectStyles: Partial<
+    StylesConfig<any, false, any>
+> = {
+    control: (styles, { isFocused }) => ({
         ...styles,
         backgroundColor: 'var(--bg-color)',
         boxShadow: 'none',
         borderRadius: 'var(--border-radius)',
         borderColor: isFocused
-            ? 'var(--focus-border-color)'
-            : isSelected
             ? 'var(--focus-border-color)'
             : 'var(--border-color)',
         '&:hover': {
@@ -54,9 +55,9 @@ export const defaultReactSelectStyles = {
         ...styles,
         backgroundColor: 'transparent', // invisible
     }),
-    clearIndicator: (styles, { isHovered }) => ({
+    clearIndicator: (styles, { isFocused }) => ({
         ...styles,
-        color: isHovered ? 'var(--text-hover-color)' : 'var(--text-color)',
+        color: isFocused ? 'var(--text-hover-color)' : 'var(--text-color)',
         '&:hover': {
             color: 'var(--text-hover-color)',
         },
@@ -68,22 +69,16 @@ export const defaultReactSelectStyles = {
             color: 'var(--text-hover-color)',
         },
     }),
-    option: (
-        styles,
-        { data, isDisabled, isSelected, isHovered, isFocused }
-    ) => ({
+    option: (styles, { data, isDisabled, isSelected, isFocused }) => ({
         ...styles,
         backgroundColor: isDisabled
             ? 'var(--color-null)'
             : isSelected
             ? 'var(--select-bg-color)'
-            : isHovered || isFocused
+            : isFocused
             ? 'var(--hover-bg-color)'
             : 'inherit',
-        color:
-            isHovered || isFocused
-                ? 'var(--text-hover-color)'
-                : 'var(--text-color)',
+        color: isFocused ? 'var(--text-hover-color)' : 'var(--text-color)',
         cursor: isDisabled ? 'not-allowed' : 'default',
         ...(data.color ? dot(data.color) : {}),
     }),
@@ -123,31 +118,30 @@ export const defaultReactSelectStyles = {
     }),
 };
 
-export const miniReactSelectStyles = {
-    ...defaultReactSelectStyles,
-    control: (styles, { isFocused, isSelected }) => ({
-        ...styles,
-        ...defaultReactSelectStyles.control(styles, { isFocused, isSelected }),
-        padding: '0px',
-        margin: '0px,',
-        minHeight: '0px',
-        '&:hover': {
-            borderColor: 'var(--hover-border-color)',
-        },
-    }),
-    input: (styles) => ({
-        ...styles,
-        ...defaultReactSelectStyles.input(styles),
-        padding: '0px',
-        margin: '0px,',
-        minHeight: '0px',
-    }),
-    dropdownIndicator: (styles) => ({
-        ...styles,
-        ...defaultReactSelectStyles.dropdownIndicator(styles),
-        padding: '0px 4px',
-    }),
-};
+export const miniReactSelectStyles: StylesConfig<any, false, any> = mergeStyles(
+    defaultReactSelectStyles,
+    {
+        control: (styles) => ({
+            ...styles,
+            padding: '0px',
+            margin: '0px,',
+            minHeight: '0px',
+            '&:hover': {
+                borderColor: 'var(--hover-border-color)',
+            },
+        }),
+        input: (styles) => ({
+            ...styles,
+            padding: '0px',
+            margin: '0px,',
+            minHeight: '0px',
+        }),
+        dropdownIndicator: (styles) => ({
+            ...styles,
+            padding: '0px 4px',
+        }),
+    }
+);
 
 export function makeReactSelectStyle(
     modalMenu?: boolean,
@@ -155,13 +149,12 @@ export function makeReactSelectStyle(
 ) {
     let styles: Record<string, unknown> = style ?? defaultReactSelectStyles;
     if (modalMenu) {
-        styles = {
-            ...styles,
+        styles = mergeStyles(styles, {
             menuPortal: (base) => ({
                 ...base,
                 zIndex: 9999,
             }),
-        };
+        });
     }
 
     return styles;

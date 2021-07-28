@@ -22,7 +22,7 @@ const specialKeyChecker: Record<string, (e: AllKeyboardEvent) => boolean> = {
 };
 
 export function matchKeyPress(
-    event: AllKeyboardEvent | React.KeyboardEvent,
+    event: AllKeyboardEvent,
     ...keyStrings: string[]
 ): boolean {
     // This function aims to simulate codemirror's key map functionality

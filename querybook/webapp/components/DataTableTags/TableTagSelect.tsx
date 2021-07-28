@@ -77,9 +77,11 @@ export const TableTagSelect: React.FunctionComponent<IProps> = ({
                     onBlur: () => setIsTyping(false),
                     noOptionsMessage: () => null,
                     onKeyDown: (evt) => {
-                        if (matchKeyPress(evt, 'Enter')) {
+                        // FIXME: this is due to ReactSelect using React 16.4 typedefs
+                        const keydownEvent = (evt as unknown) as React.KeyboardEvent;
+                        if (matchKeyPress(keydownEvent, 'Enter')) {
                             handleSelect();
-                        } else if (matchKeyPress(evt, 'Esc')) {
+                        } else if (matchKeyPress(keydownEvent, 'Esc')) {
                             setTagString('');
                         }
                     },
