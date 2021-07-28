@@ -36,4 +36,5 @@ jobs:
                       ${{ runner.os }}-yarn-
             - run: yarn install --frozen-lockfile --prefer-offline
               # if: steps.yarn-cache.outputs.cache-hit != 'true'
+            - run: yarn list --depth=0
             - run: ./querybook/scripts/run_test --node
