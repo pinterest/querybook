@@ -243,6 +243,7 @@ module.exports = (env, options) => {
             new webpack.SourceMapDevToolPlugin({
                 filename: '[file].map[query]',
                 exclude: [/vendor/],
+                test: /[jt]sx?/,
             }),
         ],
     };
