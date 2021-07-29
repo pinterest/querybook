@@ -1,5 +1,6 @@
 module.exports = (api) => {
-    const isProd = api.env('production');
+    const isDev = api.env('development');
+    const isTest = api.env('test');
 
     return {
         presets: [
@@ -8,7 +9,7 @@ module.exports = (api) => {
                 {
                     // uncomment to use why-did-you-render
                     // runtime: 'automatic',
-                    // development: !isProd,
+                    // development: isDev,
                     // importSource: '@welldone-software/why-did-you-render',
                 },
             ],
@@ -56,10 +57,12 @@ module.exports = (api) => {
                 'babel-plugin-styled-components',
                 {
                     pure: true,
-                    displayName: !isProd,
+                    // dev: for html className
+                    // test: for snapshot
+                    displayName: isDev || isTest,
                 },
             ],
-            !isProd && require.resolve('react-refresh/babel'),
+            isDev && require.resolve('react-refresh/babel'),
         ].filter(Boolean),
         sourceMaps: true,
     };
