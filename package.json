@@ -65,7 +65,7 @@
         "lodash-decorators": "6.0.1",
         "markdown-to-jsx": "^7.1.0",
         "memoize-one": "5.0.2",
-        "mini-css-extract-plugin": "1.6.0",
+        "mini-css-extract-plugin": "2.1.0",
         "moment": "2.24.0",
         "node-sass": "6.0.1",
         "normalizr": "3.3.0",

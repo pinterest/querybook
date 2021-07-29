@@ -230,7 +230,7 @@ module.exports = (env, options) => {
             }),
             new webpack.IgnorePlugin(/^\.\/locale$/, /moment$/),
             new MiniCssExtractPlugin({
-                filename: '[name].[contenthash:4].css',
+                filename: '[name].[contenthash].css',
             }),
             new HtmlWebpackPlugin({
                 title: appName,
