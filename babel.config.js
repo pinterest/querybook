@@ -52,7 +52,6 @@ module.exports = (api) => {
                     },
                 },
             ],
-            'react-hot-loader/babel',
             [
                 'babel-plugin-styled-components',
                 {
@@ -60,7 +59,8 @@ module.exports = (api) => {
                     displayName: !isProd,
                 },
             ],
-        ],
+            !isProd && require.resolve('react-refresh/babel'),
+        ].filter(Boolean),
         sourceMaps: true,
     };
 };
