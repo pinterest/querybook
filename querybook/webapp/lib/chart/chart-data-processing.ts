@@ -19,7 +19,7 @@ function processDataPoint(val: any, scale: ChartScaleType) {
     if (scale === 'category') {
         return val;
     } else if (scale === 'time' && isNaN(val)) {
-        return new Date(val);
+        return val;
     }
 
     // by default, a point is a number
