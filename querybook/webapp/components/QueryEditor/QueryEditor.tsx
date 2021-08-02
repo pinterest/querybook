@@ -33,6 +33,7 @@ import {
     IStyledQueryEditorProps,
 } from './StyledQueryEditor';
 import './QueryEditor.scss';
+import { Button } from 'ui/Button/Button';
 
 // Checks if token is in table, returns the table if found, false otherwise
 async function isTokenInTable(
@@ -100,6 +101,7 @@ export interface IQueryEditorProps extends IStyledQueryEditorProps {
     keyMap?: CodeMirrorKeyMap;
     className?: string;
     autoCompleteType?: AutoCompleteType;
+    allowFullScreen?: boolean;
 
     onChange?: (value: string) => any;
     onKeyDown?: (editor: CodeMirror.Editor, event: KeyboardEvent) => any;
@@ -129,6 +131,8 @@ export class QueryEditor extends React.PureComponent<
         functionDocumentationByNameByLanguage: {},
         language: 'hive',
         autoCompleteType: 'all',
+
+        allowFullScreen: false,
     };
 
     private marker = null;
@@ -595,7 +599,7 @@ export class QueryEditor extends React.PureComponent<
     }
 
     public render() {
-        const { height, fontSize, className } = this.props;
+        const { height, fontSize, className, allowFullScreen } = this.props;
         const { fullScreen } = this.state;
 
         const editorClassName = clsx({
@@ -603,12 +607,24 @@ export class QueryEditor extends React.PureComponent<
             [className]: !!className,
         });
 
+        const fullScreenButton = allowFullScreen && (
+            <div className="fullscreen-button-wrapper">
+                <Button
+                    icon="maximize"
+                    onClick={this.toggleFullScreen}
+                    theme="text"
+                    pushable
+                />
+            </div>
+        );
+
         return (
             <StyledQueryEditor
                 className={editorClassName}
                 height={height}
                 fontSize={fontSize}
             >
+                {fullScreenButton}
                 <ReactCodeMirror
                     editorDidMount={this.editorDidMount}
                     options={this.state.options}

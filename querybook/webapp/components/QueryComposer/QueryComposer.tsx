@@ -303,6 +303,7 @@ const QueryComposer: React.FC = () => {
                 height="full"
                 engine={engine}
                 onSelection={handleEditorSelection}
+                allowFullScreen
             />
         </>
     );

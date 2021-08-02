@@ -16,6 +16,25 @@
     .CodeMirror-hover {
         background-color: var(--text-select-bg-color);
     }
+
+    .fullscreen-button-wrapper {
+        position: absolute;
+        top: 0;
+        z-index: 9;
+        right: 0;
+
+        .Button {
+            background-color: transparent;
+        }
+    }
+
+    &.fullScreen {
+        .react-codemirror2,
+        .CodeMirror {
+            height: 100%;
+        }
+        @include full-screen(39);
+    }
 }
 
 .CodeMirror-hints {

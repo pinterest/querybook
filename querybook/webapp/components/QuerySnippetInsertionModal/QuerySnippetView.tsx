@@ -182,6 +182,7 @@ export class QuerySnippetView extends React.PureComponent<
                     readOnly={true}
                     lineWrapping={true}
                     engine={engine}
+                    allowFullScreen
                 />
                 {templateDOM}
             </div>
