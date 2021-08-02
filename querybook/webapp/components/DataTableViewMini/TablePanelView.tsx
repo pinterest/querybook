@@ -1,18 +1,15 @@
 import React from 'react';
 import { ContentState } from 'draft-js';
-import { useSelector, useDispatch } from 'react-redux';
 import styled from 'styled-components';
 
 import { getHumanReadableByteSize } from 'lib/utils/number';
 import { generateFormattedDate } from 'lib/utils/datetime';
-import { fullTableSelector } from 'redux/dataSources/selector';
-import { IStoreState } from 'redux/store/types';
-import * as dataSourcesActions from 'redux/dataSources/action';
 
 import { DataTableTags } from 'components/DataTableTags/DataTableTags';
 import { PanelSection, SubPanelSection } from './PanelSection';
 
 import { Loader } from 'ui/Loader/Loader';
+import { useDataTable } from 'hooks/redux/useDataTable';
 
 interface ITablePanelViewProps {
     tableId: number;
@@ -29,14 +26,7 @@ export const TablePanelView: React.FunctionComponent<ITablePanelViewProps> = ({
     onColumnRowClick,
     columnId,
 }) => {
-    const { table, schema, tableColumns } = useSelector((state: IStoreState) =>
-        fullTableSelector(state, tableId)
-    );
-
-    const dispatch = useDispatch();
-
-    const getTable = () =>
-        dispatch(dataSourcesActions.fetchDataTableIfNeeded(tableId));
+    const { table, schema, tableColumns, getTable } = useDataTable(tableId);
 
     const renderPanelView = () => {
         const overviewSection = (
@@ -108,7 +98,7 @@ export const TablePanelView: React.FunctionComponent<ITablePanelViewProps> = ({
         <Loader
             item={table}
             itemKey={tableId}
-            itemLoader={getTable.bind(null, tableId)}
+            itemLoader={getTable}
             renderer={renderPanelView}
         />
     );

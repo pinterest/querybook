@@ -213,7 +213,7 @@ def _construct_tables_query(
     }
 
     if concise:
-        query["_source"] = ["id", "schema", "name"]
+        query["_source"] = ["id", "full_name"]
 
     if sort_key:
         if not isinstance(sort_key, list):
