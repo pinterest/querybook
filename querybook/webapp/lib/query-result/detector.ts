@@ -9,6 +9,19 @@ const columnDetectors: IColumnDetector[] = [
         checker: (colName: string, values: any[]) => true,
     },
     {
+        type: 'json',
+        priority: 0.1,
+        checker: (colName: string, values: any[]) =>
+            detectTypeForValues(values, (value) => {
+                try {
+                    JSON.parse(value);
+                    return true;
+                } catch (e) {
+                    return false;
+                }
+            }),
+    },
+    {
         type: 'number',
         priority: 1,
         checker: (colName: string, values: any[]) =>
