@@ -563,6 +563,7 @@ class DataDocQueryCellComponent extends React.PureComponent<IProps, IState> {
                     engine={queryEngine}
                     cellId={cellId}
                     height={isFullScreen ? 'full' : 'auto'}
+                    allowFullScreen={false}
                 />
             </div>
         );
