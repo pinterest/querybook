@@ -5,8 +5,7 @@ import { ICancelablePromise } from 'lib/datasource';
 
 export interface ITableSearchResult {
     id: number;
-    name: string;
-    schema: string;
+    full_name: string;
 }
 
 export interface ITableSearchFilters {

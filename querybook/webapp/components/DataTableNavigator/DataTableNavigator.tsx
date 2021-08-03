@@ -1,4 +1,4 @@
-import React, { useCallback, useState, useEffect } from 'react';
+import React, { useCallback, useEffect } from 'react';
 import clsx from 'clsx';
 import { useSelector, useDispatch } from 'react-redux';
 import { useHistory } from 'react-router-dom';
@@ -14,11 +14,15 @@ import { queryMetastoresSelector } from 'redux/dataSources/selector';
 import { InfinityScroll } from 'ui/InfinityScroll/InfinityScroll';
 import { Select, makeSelectOptions } from 'ui/Select/Select';
 import { ListLink } from 'ui/Link/ListLink';
+import { PopoverHoverWrapper } from 'ui/Popover/PopoverHoverWrapper';
+import { Popover } from 'ui/Popover/Popover';
+
+import { DataTableHoverContent } from './DataTableHoverContent';
 import { DataTableNavigatorSearch } from './DataTableNavigatorSearch';
 
 import './DataTableNavigator.scss';
 
-interface ITableResultWithSelection extends ITableSearchResult {
+export interface ITableResultWithSelection extends ITableSearchResult {
     selected: boolean;
 }
 
@@ -154,18 +158,38 @@ export const DataTableNavigator: React.FC<IDataTableNavigatorProps> = ({
 
     const tableRowRenderer = useCallback(
         (table: ITableResultWithSelection) => {
-            const tableName = `${table.schema}.${table.name}`;
+            const tableName = table.full_name;
             const className = clsx({
                 selected: table.selected,
             });
 
             return (
-                <ListLink
-                    className={className}
-                    onClick={(event) => handleTableRowClick(table.id, event)}
-                    isRow
-                    title={tableName}
-                />
+                <PopoverHoverWrapper>
+                    {(showPopover, anchorElement) => (
+                        <>
+                            <ListLink
+                                className={className}
+                                onClick={(event) =>
+                                    handleTableRowClick(table.id, event)
+                                }
+                                isRow
+                                title={tableName}
+                            />
+                            {showPopover && (
+                                <Popover
+                                    onHide={() => null}
+                                    anchor={anchorElement}
+                                    layout={['right', 'top']}
+                                >
+                                    <DataTableHoverContent
+                                        tableId={table.id}
+                                        tableName={tableName}
+                                    />
+                                </Popover>
+                            )}
+                        </>
+                    )}
+                </PopoverHoverWrapper>
             );
         },
         [handleTableRowClick]

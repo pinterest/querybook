@@ -11,7 +11,7 @@ import { SearchBar } from 'ui/SearchBar/SearchBar';
 import { TableTagGroupSelect } from 'components/DataTableTags/TableTagGroupSelect';
 
 import './DataTableNavigatorSearch.scss';
-import { Button, SoftButton } from 'ui/Button/Button';
+import { SoftButton } from 'ui/Button/Button';
 
 export const DataTableNavigatorSearch: React.FC<{
     searchString: string;

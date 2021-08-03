@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useMemo } from 'react';
 
 import history from 'lib/router-history';
 import { IDataDoc } from 'const/datadoc';
@@ -9,6 +9,12 @@ import { DataDocDraggableType } from './navigatorConst';
 import { IconButton } from 'ui/Button/IconButton';
 
 import './DataDocGridItem.scss';
+import { Popover } from 'ui/Popover/Popover';
+import { PopoverHoverWrapper } from 'ui/Popover/PopoverHoverWrapper';
+import { Title } from 'ui/Title/Title';
+import { UserBadge } from 'components/UserBadge/UserBadge';
+import { generateFormattedDate } from 'lib/utils/datetime';
+import { Tag } from 'ui/Tag/Tag';
 
 export interface IDataDocGridItemProps {
     dataDoc: IDataDoc;
@@ -47,26 +53,62 @@ export const DataDocGridItem: React.FunctionComponent<IDataDocGridItemProps> = R
 
         return (
             <div ref={drag} className="DataDocGridItem">
-                <ListLink
-                    className={className}
-                    onClick={handleClick}
-                    to={url}
-                    icon={privateIcon}
-                    title={title}
-                    placeholder="Untitled"
-                    isRow
-                >
-                    {onRemove && (
-                        <IconButton
-                            className="delete-grid-item-button"
-                            noPadding
-                            size={16}
-                            icon="x"
-                            onClick={handleRemoveDataDoc}
-                        />
+                <PopoverHoverWrapper>
+                    {(showPopover, anchorElement) => (
+                        <>
+                            <ListLink
+                                className={className}
+                                onClick={handleClick}
+                                to={url}
+                                icon={privateIcon}
+                                title={title}
+                                placeholder="Untitled"
+                                isRow
+                            >
+                                {onRemove && (
+                                    <IconButton
+                                        className="delete-grid-item-button"
+                                        noPadding
+                                        size={16}
+                                        icon="x"
+                                        onClick={handleRemoveDataDoc}
+                                    />
+                                )}
+                            </ListLink>
+                            {showPopover && anchorElement && (
+                                <Popover
+                                    onHide={() => {
+                                        /* ignore */
+                                    }}
+                                    anchor={anchorElement}
+                                >
+                                    <DataDocHoverContent dataDoc={dataDoc} />
+                                </Popover>
+                            )}
+                        </>
                     )}
-                </ListLink>
+                </PopoverHoverWrapper>
             </div>
         );
     }
 );
+
+const DataDocHoverContent: React.FC<{
+    dataDoc: IDataDoc;
+}> = ({ dataDoc }) => {
+    const { title, owner_uid: ownerUid, updated_at: updatedAt } = dataDoc;
+    const updatedAtDate = useMemo(() => generateFormattedDate(updatedAt), [
+        updatedAt,
+    ]);
+    return (
+        <div className="p8 DataDocHoverContent">
+            <div className="mb4">
+                <Title size={6}>{title || 'Untitled'}</Title>
+            </div>
+            <UserBadge uid={ownerUid} mini />
+            <div className="DataDocHoverContent-date">
+                Last updated: {updatedAtDate}
+            </div>
+        </div>
+    );
+};
