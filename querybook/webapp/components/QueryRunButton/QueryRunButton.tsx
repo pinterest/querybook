@@ -6,6 +6,7 @@ import { queryEngineStatusByIdEnvSelector } from 'redux/queryEngine/selector';
 import { IQueryEngine, QueryEngineStatus } from 'const/queryEngine';
 import { queryEngineStatusToIconStatus } from 'const/queryStatusIcon';
 import { TooltipDirection } from 'const/tooltip';
+import { getShortcutSymbols, KeyMap } from 'lib/utils/keyboard';
 
 import { AsyncButton } from 'ui/AsyncButton/AsyncButton';
 import { Dropdown } from 'ui/Dropdown/Dropdown';
@@ -13,6 +14,10 @@ import { ListMenu } from 'ui/Menu/ListMenu';
 import { StatusIcon } from 'ui/StatusIcon/StatusIcon';
 
 import './QueryRunButton.scss';
+
+const EXECUTE_QUERY_SHORTCUT = getShortcutSymbols(
+    KeyMap.queryEditor.runQuery.key
+);
 
 interface IQueryRunButtonProps extends IQueryEngineSelectorProps {
     disabled?: boolean;
@@ -61,7 +66,7 @@ export const QueryRunButton = React.forwardRef<
                 })}
                 title={hasSelection ? 'Run Selection' : null}
                 icon={hasSelection ? null : 'play'}
-                aria-label={'Execute (⇧↵)'}
+                aria-label={`Execute (${EXECUTE_QUERY_SHORTCUT})`}
                 data-balloon-pos={runButtonTooltipPos}
                 attached="right"
             />

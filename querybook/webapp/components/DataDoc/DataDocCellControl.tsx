@@ -9,6 +9,10 @@ import { AsyncButton } from 'ui/AsyncButton/AsyncButton';
 import { SoftButton } from 'ui/Button/Button';
 import { Dropdown } from 'ui/Dropdown/Dropdown';
 import { ListMenu, IListMenuItem } from 'ui/Menu/ListMenu';
+import { getShortcutSymbols, KeyMap } from 'lib/utils/keyboard';
+
+const COPY_CELL_SHORTCUT = getShortcutSymbols(KeyMap.dataDoc.copyCell.key);
+const PASTE_CELL_SHORTCUT = getShortcutSymbols(KeyMap.dataDoc.pasteCell.key);
 
 const cellTypes: Record<
     string,
@@ -112,7 +116,7 @@ export const DataDocCellControl: React.FunctionComponent<IProps> = ({
         // Copy paste buttons
         if (copyCellAt) {
             leftMenuItems.push({
-                name: 'Copy',
+                name: `Copy (${COPY_CELL_SHORTCUT})`,
                 onClick: handleCopyCell,
                 tooltip: 'Copy cell',
                 tooltipPos: 'right',
@@ -132,7 +136,7 @@ export const DataDocCellControl: React.FunctionComponent<IProps> = ({
 
         if (isEditable && pasteCellAt) {
             leftMenuItems.push({
-                name: 'Paste',
+                name: `Paste (${PASTE_CELL_SHORTCUT})`,
                 onClick: handlePasteCell,
                 tooltip: 'Paste cell to above',
                 tooltipPos: 'right',

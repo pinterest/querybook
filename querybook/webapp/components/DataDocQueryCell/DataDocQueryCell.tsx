@@ -8,7 +8,6 @@ import Resizable from 're-resizable';
 import memoizeOne from 'memoize-one';
 import { decorate } from 'core-decorators';
 
-import KeyMap from 'const/keyMap';
 import type { IQueryEngine } from 'const/queryEngine';
 import CodeMirror from 'lib/codemirror';
 import {
@@ -40,7 +39,7 @@ import {
     QueryEngineSelector,
 } from 'components/QueryRunButton/QueryRunButton';
 import { BoundQueryEditor } from 'components/QueryEditor/BoundQueryEditor';
-import { matchKeyPress } from 'lib/utils/keyboard';
+import { getShortcutSymbols, matchKeyPress, KeyMap } from 'lib/utils/keyboard';
 
 import { Button, TextButton } from 'ui/Button/Button';
 import { ThemedCodeHighlight } from 'ui/CodeHighlight/ThemedCodeHighlight';
@@ -55,6 +54,9 @@ import { ErrorQueryCell } from './ErrorQueryCell';
 import './DataDocQueryCell.scss';
 
 const ON_CHANGE_DEBOUNCE_MS = 500;
+const FORMAT_QUERY_SHORTCUT = getShortcutSymbols(
+    KeyMap.queryEditor.formatQuery.key
+);
 
 type StateProps = ReturnType<typeof mapStateToProps>;
 type DispatchProps = ReturnType<typeof mapDispatchToProps>;
@@ -371,7 +373,7 @@ class DataDocQueryCellComponent extends React.PureComponent<IProps, IState> {
         const additionalButtons: IListMenuItem[] = [];
         if (isEditable) {
             additionalButtons.push({
-                name: 'Format Query (⇧⎇F)',
+                name: `Format Query (${FORMAT_QUERY_SHORTCUT})`,
                 onClick: this.formatQuery.bind(this, { case: 'upper' }),
                 icon: 'fas fa-file-code',
                 items: [
