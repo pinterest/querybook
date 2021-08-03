@@ -54,6 +54,20 @@ const queryResultTransformers: IColumnTransformer[] = [
         auto: false,
         transform: (v: string): React.ReactNode => v.toLocaleUpperCase(),
     },
+    {
+        key: 'prettify',
+        name: 'Prettify',
+        appliesToType: ['json'],
+        priority: 0,
+        auto: false,
+        transform: (v: string): React.ReactNode => {
+            try {
+                return JSON.stringify(JSON.parse(v), null, 2);
+            } catch (e) {
+                return v;
+            }
+        },
+    },
 ]
     .concat(window.CUSTOM_COLUMN_TRANSFORMERS ?? [])
     .sort((a, b) => b.priority - a.priority) as IColumnTransformer[];
