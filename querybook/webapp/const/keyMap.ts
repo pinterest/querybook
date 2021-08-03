@@ -40,6 +40,18 @@ const DEFAULT_KEY_MAP = {
             key: 'Down',
             name: 'Go to next cell',
         },
+        copyCell: {
+            key: 'Alt-Shift-C',
+            name: 'Copy current cell',
+        },
+        pasteCell: {
+            key: 'Alt-Shift-V',
+            name: 'Paste below current cell',
+        },
+        deleteCell: {
+            key: 'Alt-Shift-D',
+            name: 'Delete current cell',
+        },
     },
     richText: {
         addLink: {

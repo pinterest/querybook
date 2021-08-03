@@ -498,11 +498,25 @@ class DataDocComponent extends React.PureComponent<IProps, IState> {
     public onKeyDown(event: KeyboardEvent) {
         let stopEvent = false;
 
-        const repeat = event.repeat;
+        if (event.repeat) {
+            return;
+        }
 
-        if (matchKeyMap(event, KeyMap.dataDoc.saveDataDoc) && !repeat) {
+        if (matchKeyMap(event, KeyMap.dataDoc.saveDataDoc)) {
             stopEvent = true;
             this.props.forceSaveDataDoc(this.props.docId);
+        } else if (matchKeyMap(event, KeyMap.dataDoc.copyCell)) {
+            const { focusedCellIndex } = this.state;
+            if (focusedCellIndex != null) {
+                stopEvent = true;
+                this.copyCellAt(this.state.focusedCellIndex, false);
+            }
+        } else if (matchKeyMap(event, KeyMap.dataDoc.pasteCell)) {
+            const { focusedCellIndex } = this.state;
+            if (focusedCellIndex != null) {
+                stopEvent = true;
+                this.pasteCellAt(this.state.focusedCellIndex);
+            }
         }
 
         if (stopEvent) {
