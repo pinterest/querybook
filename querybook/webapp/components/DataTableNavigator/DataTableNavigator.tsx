@@ -181,7 +181,10 @@ export const DataTableNavigator: React.FC<IDataTableNavigatorProps> = ({
                                     anchor={anchorElement}
                                     layout={['right', 'top']}
                                 >
-                                    <DataTableHoverContent tableId={table.id} />
+                                    <DataTableHoverContent
+                                        tableId={table.id}
+                                        tableName={tableName}
+                                    />
                                 </Popover>
                             )}
                         </>

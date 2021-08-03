@@ -101,10 +101,14 @@ const DataDocHoverContent: React.FC<{
         updatedAt,
     ]);
     return (
-        <div className="p8">
-            <Title size={7}>{title || 'Untitled'}</Title>
+        <div className="p8 DataDocHoverContent">
+            <div className="mb4">
+                <Title size={6}>{title || 'Untitled'}</Title>
+            </div>
             <UserBadge uid={ownerUid} mini />
-            <div>Last updated: {updatedAtDate}</div>
+            <div className="DataDocHoverContent-date">
+                Last updated: {updatedAtDate}
+            </div>
         </div>
     );
 };

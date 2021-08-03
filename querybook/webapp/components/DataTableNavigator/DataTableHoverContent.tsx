@@ -11,8 +11,9 @@ import { DataTableTags } from 'components/DataTableTags/DataTableTags';
 
 export const DataTableHoverContent: React.FC<{
     tableId: number;
-}> = ({ tableId }) => {
-    const { table, schema, tableColumns, getTable } = useDataTable(tableId);
+    tableName: string;
+}> = ({ tableId, tableName }) => {
+    const { table, tableColumns, getTable } = useDataTable(tableId);
     const tableDescription = useMemo(
         () =>
             table?.description
@@ -26,7 +27,6 @@ export const DataTableHoverContent: React.FC<{
     );
 
     const renderTableView = () => {
-        const tableName = `${schema.name}.${table.name}`;
         const tagsDOM = <DataTableTags tableId={tableId} readonly />;
         const descriptionDOM = Boolean(tableDescription) && (
             <div className="mt8">
@@ -45,23 +45,25 @@ export const DataTableHoverContent: React.FC<{
         );
 
         return (
-            <div className="p12 DataTableHoverContent">
-                <Title className="DataTableHoverContent-table-name" size={6}>
-                    {tableName}
-                </Title>
+            <>
                 {tagsDOM}
                 {descriptionDOM}
                 {columnsDOM}
-            </div>
+            </>
         );
     };
 
     return (
-        <Loader
-            item={table}
-            itemKey={tableId}
-            itemLoader={getTable}
-            renderer={renderTableView}
-        />
+        <div className="p12 DataTableHoverContent">
+            <Title className="DataTableHoverContent-table-name" size={6}>
+                {tableName}
+            </Title>
+            <Loader
+                item={table}
+                itemKey={tableId}
+                itemLoader={getTable}
+                renderer={renderTableView}
+            />
+        </div>
     );
 };
