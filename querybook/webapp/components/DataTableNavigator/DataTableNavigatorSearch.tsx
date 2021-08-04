@@ -100,7 +100,6 @@ export const DataTableNavigatorSearch: React.FC<{
                 onSearch={onSearch}
                 placeholder="Search by Table Name..."
                 transparent
-                delayMethod="throttle"
             />
             <IconButton
                 ref={filterButtonRef}

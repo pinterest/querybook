@@ -1,4 +1,3 @@
-import re
 import json
 from flask_login import current_user
 
@@ -281,9 +280,7 @@ def search_datadoc(
 ):
     verify_environment_permission([environment_id])
     filters.append(["environment_id", environment_id])
-    # Unfortuantely currently we can't search including underscore,
-    # so split. # TODO: Allow for both.
-    # parsed_keywords = map(lambda x: re.split('(-|_)', x), keywords)
+
     query = _construct_datadoc_query(
         keywords=keywords,
         filters=filters,
@@ -316,11 +313,9 @@ def search_tables(
 ):
     verify_metastore_permission(metastore_id)
     filters.append(["metastore_id", metastore_id])
-    # Unfortuantely currently we can't search including underscore,
-    # so split. # TODO: Allow for both.
-    parsed_keywords = " ".join(re.split("-|_|\\.", keywords))
+
     query = _construct_tables_query(
-        keywords=parsed_keywords,
+        keywords=keywords,
         filters=filters,
         fields=fields,
         limit=limit,
@@ -341,9 +336,7 @@ def search_tables(
 @register("/suggest/<int:metastore_id>/tables/", methods=["GET"])
 def suggest_tables(metastore_id, prefix, limit=10):
     verify_metastore_permission(metastore_id)
-    # Unfortuantely currently we can't search including underscore,
-    # so split. # TODO: Allow for both.
-    # parsed_keywords = map(lambda x: re.split('(-|_)', x), keywords)
+
     query = {
         "suggest": {
             "suggest": {
@@ -362,7 +355,6 @@ def suggest_tables(metastore_id, prefix, limit=10):
 
     result = None
     try:
-        # print '\n--ES latest hosted_index %s\n' % hosted_index
         result = get_hosted_es().search(index_name, type_name, body=query)
     except Exception as e:
         LOG.info(e)
