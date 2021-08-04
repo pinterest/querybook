@@ -5,6 +5,7 @@ import { IStoreState } from 'redux/store/types';
 
 /**
  * Provide getter for fetching and displaying a table, use with <Loader /> component
+ *
  * @param tableId the id of a data table
  */
 export function useDataTable(tableId: number) {
