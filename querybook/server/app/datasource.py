@@ -80,7 +80,11 @@ def register(url, methods=None, require_auth=True, custom_response=False):
             except Exception as e:
                 LOG.error(e, exc_info=True)
                 status = 500
-                results = {"host": _host, "error": traceback.format_exc()}
+                results = {
+                    "host": _host,
+                    "error": str(e),
+                    "traceback": traceback.format_exc(),
+                }
             finally:
                 if status != 200 and "database_session" in flask.g:
                     flask.g.database_session.rollback()

@@ -148,7 +148,7 @@ def update_table(table_id, description=None, golden=None):
 
 @register("/table/<int:table_id>/ownership/", methods=["GET"])
 def get_all_table_ownerships_by_table_id(table_id):
-    """ Add all table ownerships"""
+    """Add all table ownerships"""
     with DBSession() as session:
         verify_data_table_permission(table_id, session=session)
 
@@ -159,7 +159,7 @@ def get_all_table_ownerships_by_table_id(table_id):
 
 @register("/table/<int:table_id>/ownership/", methods=["POST"])
 def create_table_ownership(table_id):
-    """ Add a table ownership"""
+    """Add a table ownership"""
     with DBSession() as session:
         verify_data_table_permission(table_id, session=session)
         return logic.create_table_ownership(
@@ -169,7 +169,7 @@ def create_table_ownership(table_id):
 
 @register("/table/<int:table_id>/ownership/", methods=["DELETE"])
 def remove_table_ownership(table_id):
-    """ Remove a table ownership"""
+    """Remove a table ownership"""
     with DBSession() as session:
         verify_data_table_permission(table_id, session=session)
         return logic.delete_table_ownership(
@@ -504,14 +504,14 @@ def create_table_column_stats(data):
 @admin_only
 def add_lineage(table_id, parent_table_id, job_metadata_id):
     """
-        Adds a table lineage to DB
-        Example data structure:
-        {
-            "table_id": 1,
-            "parent_table_id": 2,
-            "job_metadata_id": 3
-        }
-        Returns new table lineage dictionary
+    Adds a table lineage to DB
+    Example data structure:
+    {
+        "table_id": 1,
+        "parent_table_id": 2,
+        "job_metadata_id": 3
+    }
+    Returns new table lineage dictionary
     """
     with DBSession() as session:
         table_lineage = lineage.add_table_lineage(

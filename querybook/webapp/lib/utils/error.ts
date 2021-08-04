@@ -1,6 +1,10 @@
 import { AxiosError } from 'axios';
 
 export function formatError(error: any): string {
+    if (typeof error === 'string') {
+        return error;
+    }
+
     const isErrorObject =
         error != null &&
         typeof error === 'object' &&
