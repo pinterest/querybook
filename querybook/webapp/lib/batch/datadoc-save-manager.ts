@@ -78,13 +78,9 @@ export class DataCellSaveManager {
                     };
 
                     if (dataDocSocket.activeDataDocId === docId) {
-                        return dataDocSocket.updateDataCell(
-                            docId,
-                            cellId,
-                            fields
-                        );
+                        return dataDocSocket.updateDataCell(cellId, fields);
                     } else {
-                        return ds.update(`/data_cell/${cellId}/`, fields);
+                        return ds.update(`/data_cell/${cellId}/`, { fields });
                     }
                 },
                 batchFrequency: frequency,

@@ -173,8 +173,8 @@ def clone_data_doc(id):
 
 
 @register("/data_cell/<int:cell_id>/", methods=["PUT"])
-def update_data_cell(cell_id, **fields):
-    return datadoc_collab.update_data_cell(cell_id, fields,)
+def update_data_cell(cell_id, fields={}, sid=""):
+    return datadoc_collab.update_data_cell(cell_id, fields, sid=sid)
 
 
 @register("/data_cell/<int:id>/query_execution/", methods=["GET"])
