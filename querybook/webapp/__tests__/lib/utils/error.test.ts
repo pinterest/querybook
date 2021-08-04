@@ -8,7 +8,5 @@ test('format error object', () => {
 });
 
 test('format error string', () => {
-    expect(formatError('test error message')).toBe(
-        JSON.stringify('test error message')
-    );
+    expect(formatError('test error message')).toBe('test error message');
 });
