@@ -11,15 +11,16 @@ import {
 const BATCH_LOAD_SIZE = 100;
 
 function mapStateToSearch(state: IDataTableSearchState) {
-    const searchString = state.searchString;
+    let searchString = state.searchString;
 
     const filters = Object.entries(state.searchFilters).filter(
         ([_, filterValue]) => filterValue != null
     );
 
-    const matchSchemaName = searchString.match(/(\w+)\.\w*/);
+    const matchSchemaName = searchString.match(/(\w+)\.(\w*)/);
     if (matchSchemaName) {
         filters.push(['schema', matchSchemaName[1]]);
+        searchString = searchString.replace(/(\w+)\.(\w*)/, '$2');
     }
 
     const searchParam = {

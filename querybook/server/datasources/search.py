@@ -143,8 +143,8 @@ def _match_table_fields(fields):
     for field in fields:
         # 'table_name', 'description', and 'column' are fields used by Table search
         if field == "table_name":
-            search_fields.append("full_name^10")
-            search_fields.append("full_name_ngram^15")
+            search_fields.append("full_name^15")
+            search_fields.append("full_name_ngram")
         elif field == "description":
             search_fields.append("description")
         elif field == "column":
@@ -171,14 +171,15 @@ def _construct_tables_query(
     keywords, filters, fields, limit, offset, concise, sort_key=None, sort_order=None,
 ):
 
-    search_fields = _match_table_fields(fields)
-
     search_query = {}
     if keywords:
+        search_fields = _match_table_fields(fields)
         search_query["multi_match"] = {
             "query": keywords,
             "fields": search_fields,
             "minimum_should_match": "100%",
+            "type": "phrase",
+            "operator": "and",
         }
     else:
         search_query["match_all"] = {}
