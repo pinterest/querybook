@@ -11,6 +11,7 @@ import { useMakeSelector } from 'hooks/redux/useMakeSelector';
 
 import { sendConfirm } from 'lib/querybookUI';
 import { getShareUrl } from 'lib/data-doc/data-doc-utils';
+import { formatError } from 'lib/utils/error';
 
 import { IStoreState } from 'redux/store/types';
 import * as dataDocSelectors from 'redux/dataDoc/selector';
@@ -133,7 +134,11 @@ export const DataDocCell: React.FunctionComponent<IDataDocCellProps> = React.mem
                                     cell.id
                                 );
                             } catch (e) {
-                                toast.error(`Delete cell failed, reason: ${e}`);
+                                toast.error(
+                                    `Delete cell failed, reason: ${formatError(
+                                        e
+                                    )}`
+                                );
                             } finally {
                                 resolve();
                             }
