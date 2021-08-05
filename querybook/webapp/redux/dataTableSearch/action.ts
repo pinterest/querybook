@@ -20,7 +20,7 @@ function mapStateToSearch(state: IDataTableSearchState) {
     const matchSchemaName = searchString.match(/(\w+)\.(\w*)/);
     if (matchSchemaName) {
         filters.push(['schema', matchSchemaName[1]]);
-        searchString = matchSchemaName[2];
+        searchString = searchString.replace(/(\w+)\.(\w*)/, '$2');
     }
 
     const searchParam = {
