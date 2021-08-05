@@ -22,7 +22,7 @@ import {
     DataTableViewQueryUsers,
     useLoadQueryUsers,
 } from 'components/DataTableViewQueryExample/DataTableViewQueryUsers';
-import { Button, TextButton } from 'ui/Button/Button';
+import { TextButton } from 'ui/Button/Button';
 import { EditableTextField } from 'ui/EditableTextField/EditableTextField';
 import { Message } from 'ui/Message/Message';
 import { Table } from 'ui/Table/Table';

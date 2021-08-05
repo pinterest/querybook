@@ -1,7 +1,6 @@
 import React from 'react';
 import { shallow } from 'enzyme';
 import toJson from 'enzyme-to-json';
-import renderer from 'react-test-renderer';
 
 import { InfoButton } from '../../ui/Button/InfoButton';
 

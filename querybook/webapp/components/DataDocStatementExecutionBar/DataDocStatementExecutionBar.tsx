@@ -7,7 +7,7 @@ import {
     QueryExecutionStatus,
     StatementExecutionStatus,
 } from 'const/queryExecution';
-import { Button, TextButton } from 'ui/Button/Button';
+import { TextButton } from 'ui/Button/Button';
 import { ResultExportDropdown } from './ResultExportDropdown';
 
 interface IProps {

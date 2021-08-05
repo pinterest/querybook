@@ -5,7 +5,6 @@ import { getAppName } from 'lib/utils/global';
 import { IStoreState, Dispatch } from 'redux/store/types';
 import { fetchTopQueryUsersIfNeeded } from 'redux/dataSources/action';
 
-import { UserAvatarList } from 'components/UserBadge/UserAvatarList';
 import { Loading } from 'ui/Loading/Loading';
 import { Button } from 'ui/Button/Button';
 import { UserBadge } from 'components/UserBadge/UserBadge';

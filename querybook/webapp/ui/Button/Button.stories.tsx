@@ -2,7 +2,7 @@ import React from 'react';
 // eslint-disable-next-line import/no-extraneous-dependencies
 import centered from '@storybook/addon-centered/react';
 
-import { Button, ButtonProps, SoftButton, TextButton } from './Button';
+import { Button, ButtonProps } from './Button';
 import { ButtonColors, ButtonThemes } from './ButtonTheme';
 
 export default {

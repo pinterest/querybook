@@ -3,7 +3,7 @@ import React from 'react';
 import { titleize } from 'lib/utils';
 import { getDefaultFormValue } from './formFunctions';
 
-import { Button, SoftButton } from 'ui/Button/Button';
+import { SoftButton } from 'ui/Button/Button';
 import { IconButton } from 'ui/Button/IconButton';
 import { DebouncedInput } from 'ui/DebouncedInput/DebouncedInput';
 import { DebouncedPasswordInput } from 'ui/DebouncedInput/DebouncedPasswordInput';

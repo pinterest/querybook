@@ -2,7 +2,6 @@ import React, { useCallback } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 import * as Yup from 'yup';
 import { Formik, Form } from 'formik';
-import { ContentState, convertFromHTML } from 'draft-js';
 
 import { sendConfirm } from 'lib/querybookUI';
 import {

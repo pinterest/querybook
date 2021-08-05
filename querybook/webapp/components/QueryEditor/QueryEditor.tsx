@@ -1,6 +1,6 @@
 import clsx from 'clsx';
 import { decorate } from 'core-decorators';
-import { find, isEqual } from 'lodash';
+import { find } from 'lodash';
 import { debounce, throttle, bind } from 'lodash-decorators';
 import React from 'react';
 import { Controlled as ReactCodeMirror } from 'react-codemirror2';

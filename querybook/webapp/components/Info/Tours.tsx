@@ -1,14 +1,6 @@
 import * as React from 'react';
-import { useSelector, useDispatch } from 'react-redux';
 
-import * as dataDocActions from 'redux/dataDoc/action';
-import { currentEnvironmentSelector } from 'redux/environment/selector';
-import { Dispatch, IStoreState } from 'redux/store/types';
-import { queryEngineSelector } from 'redux/queryEngine/selector';
-
-import history from 'lib/router-history';
 import { getAppName } from 'lib/utils/global';
-import { getQueryEngineId } from 'lib/utils';
 import { navigateWithinEnv } from 'lib/utils/query-string';
 
 import { Title } from 'ui/Title/Title';
