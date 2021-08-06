@@ -4,7 +4,6 @@ import clsx from 'clsx';
 import { Announcements } from 'components/Announcements/Announcements';
 import { SessionExpirationNotice } from 'components/SessionExpirationNotice/SessionExpirationNotice';
 import { CommandKModal } from 'components/Search/CommandKModal';
-import { ErrorBoundary } from 'ui/ErrorBoundary/ErrorBoundary';
 import { FullHeight } from 'ui/FullHeight/FullHeight';
 import { useGlobalState } from 'hooks/redux/useGlobalState';
 
@@ -22,7 +21,7 @@ export const AppLayout: React.FunctionComponent = (props) => {
             <FullHeight className="app-content-wrapper" flex="column">
                 <SessionExpirationNotice />
                 <Announcements />
-                <ErrorBoundary>{props.children}</ErrorBoundary>
+                {props.children}
             </FullHeight>
             <CommandKModal />
         </FullHeight>

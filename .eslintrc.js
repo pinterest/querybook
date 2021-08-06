@@ -23,6 +23,7 @@ module.exports = {
         'eslint-plugin-react',
         'eslint-plugin-prefer-arrow',
         'eslint-plugin-jsdoc',
+        'unused-imports',
         '@typescript-eslint',
         '@typescript-eslint/tslint',
     ],
@@ -154,12 +155,7 @@ module.exports = {
             'undefined',
         ],
         'id-match': 'error',
-        'import/no-extraneous-dependencies': [
-            'error',
-            {
-                devDependencies: false,
-            },
-        ],
+        'import/no-extraneous-dependencies': ['error', {}],
         'import/no-internal-modules': 'off',
         'import/order': 'off',
         'jsdoc/check-alignment': 'error',
@@ -249,5 +245,15 @@ module.exports = {
         ],
         'use-isnan': 'error',
         'valid-typeof': 'off',
+        'unused-imports/no-unused-imports': 'error',
+        'unused-imports/no-unused-vars': [
+            'warn',
+            {
+                vars: 'all',
+                varsIgnorePattern: '^_',
+                args: 'after-used',
+                argsIgnorePattern: '^_',
+            },
+        ],
     },
 };

@@ -14,7 +14,6 @@ import { PopoverHoverWrapper } from 'ui/Popover/PopoverHoverWrapper';
 import { Title } from 'ui/Title/Title';
 import { UserBadge } from 'components/UserBadge/UserBadge';
 import { generateFormattedDate } from 'lib/utils/datetime';
-import { Tag } from 'ui/Tag/Tag';
 
 export interface IDataDocGridItemProps {
     dataDoc: IDataDoc;

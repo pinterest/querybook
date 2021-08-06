@@ -6,11 +6,7 @@ import 'chartjs-adapter-moment';
 import ChartDataLabels from 'chartjs-plugin-datalabels';
 
 import { IDataChartCellMeta } from 'const/datadoc';
-import {
-    ChartScaleType,
-    ChartSize,
-    chartTypeToAllowedAxisType,
-} from 'const/dataDocChart';
+import { ChartScaleType, chartTypeToAllowedAxisType } from 'const/dataDocChart';
 import { fontColor } from 'const/chartColors';
 import { mapMetaToChartOptions } from 'lib/chart/chart-meta-processing';
 import { getDefaultScaleType } from 'lib/chart/chart-utils';
