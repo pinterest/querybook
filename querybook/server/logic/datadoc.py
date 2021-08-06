@@ -259,6 +259,8 @@ def update_data_cell(
     data_cell = get_data_cell_by_id(id, session=session)
     if not data_cell:
         return
+    if not data_cell.doc:
+        raise Exception("A detached cell is read only")
 
     if "meta" in fields:
         fields["meta"] = sanitize_data_cell_meta(
@@ -274,8 +276,7 @@ def update_data_cell(
 
         if commit:
             session.commit()
-            if data_cell.doc:
-                update_es_data_doc_by_id(data_cell.doc.id)
+            update_es_data_doc_by_id(data_cell.doc.id)
 
     return data_cell
 

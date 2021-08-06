@@ -47,8 +47,7 @@ def on_join_room(query_execution_id):
                             statement_execution["percent_complete"] = progress[
                                 str(statement_execution["id"])
                             ].get("percent_complete")
-                    execution_dict["total"] = progress.get("total", 0)
-
+                        execution_dict["total"] = progress.get("total", 0)
                 except Exception as e:
                     LOG.info(e)
 
