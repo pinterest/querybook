@@ -187,7 +187,8 @@ def get_tables_iter(batch_size=5000, session=None):
 @with_session
 def get_table_weight(table_id: int, session=None) -> int:
     """Calculate the weight of table. Used for ranking in auto completion
-       and sidebar table search.
+       and sidebar table search. It produces a number >= 0
+
 
     Arguments:
         table_id {int} -- Id of DataTable

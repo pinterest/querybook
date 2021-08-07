@@ -138,19 +138,30 @@ def _data_doc_access_terms(user_id):
     ]
 
 
-def _match_table_fields(fields):
+def _match_table_word_fields(fields):
     search_fields = []
     for field in fields:
         # 'table_name', 'description', and 'column' are fields used by Table search
         if field == "table_name":
-            search_fields.append("full_name^15")
+            search_fields.append("full_name^2")
             search_fields.append("full_name_ngram")
         elif field == "description":
             search_fields.append("description")
         elif field == "column":
             search_fields.append("columns")
-
     return search_fields
+
+
+def _match_table_phrase_queries(fields, keywords):
+    phrase_queries = []
+    for field in fields:
+        if field == "table_name":
+            phrase_queries.append(
+                {"match_phrase": {"full_name": {"query": keywords, "boost": 10}}}
+            )
+        elif field == "column":
+            phrase_queries.append({"match_phrase": {"columns": {"query": keywords}}})
+    return phrase_queries
 
 
 def _match_data_doc_fields(fields):
@@ -170,19 +181,23 @@ def _match_data_doc_fields(fields):
 def _construct_tables_query(
     keywords, filters, fields, limit, offset, concise, sort_key=None, sort_order=None,
 ):
-
     search_query = {}
     if keywords:
-        search_fields = _match_table_fields(fields)
-        search_query["multi_match"] = {
-            "query": keywords,
-            "fields": search_fields,
-            "minimum_should_match": "100%",
-            "type": "phrase",
-            "operator": "and",
+        search_query = {
+            "bool": {
+                "must": {
+                    "multi_match": {
+                        "query": keywords,
+                        "fields": _match_table_word_fields(fields),
+                        # All words must appear in a field
+                        "operator": "and",
+                    },
+                },
+                "should": _match_table_phrase_queries(fields, keywords),
+            }
         }
     else:
-        search_query["match_all"] = {}
+        search_query = {"match_all": {}}
 
     search_query = {
         "function_score": {
@@ -190,7 +205,7 @@ def _construct_tables_query(
             "boost_mode": "multiply",
             "script_score": {
                 "script": {
-                    "source": "doc['importance_score'].value + (doc['golden'].value ? 2 : 0)"
+                    "source": "1 + (doc['importance_score'].value + (doc['golden'].value ? 1 : 0))"
                 }
             },
         }
