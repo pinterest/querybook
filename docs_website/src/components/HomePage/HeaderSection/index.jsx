@@ -1,10 +1,13 @@
-import React from 'react';
-import useBaseUrl from '@docusaurus/useBaseUrl';
 import Link from '@docusaurus/Link';
-import './index.scss';
+import useBaseUrl from '@docusaurus/useBaseUrl';
+import React from 'react';
+import useThemeContext from '@theme/hooks/useThemeContext';
+
 import GradientText from './GradientText';
+import './index.scss';
 
 export default () => {
+    const { isDarkTheme } = useThemeContext();
     return (
         <div className="HeaderSection HomePageSection">
             <div className="hero ">
@@ -66,14 +69,28 @@ export default () => {
                 <div className="flex-center used-by-logos">
                     <Link to="https://www.pinterest.com">
                         <img
-                            src={useBaseUrl('img/orgs/pinterest_badge.png')}
-                            height="50px"
+                            src={useBaseUrl('img/orgs/pinterest_logo.svg')}
+                            className="used-by-logo"
                         />
                     </Link>
                     <Link to="https://grandrounds.com/">
                         <img
-                            src={useBaseUrl('img/orgs/grandrounds_badge.png')}
-                            height="50px"
+                            src={useBaseUrl(
+                                isDarkTheme
+                                    ? 'img/orgs/grand_rounds_health_dark.svg'
+                                    : 'img/orgs/grand_rounds_health.png'
+                            )}
+                            className="used-by-logo"
+                        />
+                    </Link>
+                    <Link to="https://razorpay.com/">
+                        <img
+                            src={useBaseUrl(
+                                isDarkTheme
+                                    ? 'img/orgs/razorpay_logo_dark.svg'
+                                    : 'img/orgs/razorpay_logo.svg'
+                            )}
+                            className="used-by-logo"
                         />
                     </Link>
                 </div>
