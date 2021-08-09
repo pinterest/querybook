@@ -74,9 +74,19 @@
     .used-by-logos {
         animation: fadeIn 1s ease-in-out backwards;
         animation-delay: 1s;
+        flex-wrap: wrap;
 
-        > a:not(:first-child) {
-            margin-left: 1rem;
+        .used-by-logo {
+            display: block;
+            box-sizing: border-box;
+            height: 50px;
+        }
+
+        > a {
+            margin-top: 10px;
+            &:not(:first-child) {
+                margin-left: 2rem;
+            }
         }
     }
 }
