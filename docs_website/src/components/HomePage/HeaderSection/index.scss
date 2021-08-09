@@ -75,6 +75,9 @@
         animation: fadeIn 1s ease-in-out backwards;
         animation-delay: 1s;
         flex-wrap: wrap;
+        // To offset the margin top of child elements
+        // which is used for flex wrap
+        margin-top: -10px;
 
         .used-by-logo {
             display: block;
