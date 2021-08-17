@@ -81,11 +81,11 @@ export const chartTypeToAllowedAxisType: Partial<
         y: ['linear', 'logarithmic'],
     },
     bar: {
-        x: ['category'],
+        x: ['time', 'category'],
         y: ['linear', 'logarithmic'],
     },
     histogram: {
-        x: ['category'],
+        x: ['time', 'category'],
         y: ['linear', 'logarithmic'],
     },
     pie: {
