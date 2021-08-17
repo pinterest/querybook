@@ -63,9 +63,7 @@ const useChartScale = (meta: IDataChartCellMeta, data?: any[][]) => {
 
         // If the configured scale is not allowed, then just pick the first
         // one from the allowed axis type
-        return allowedXAxisType.includes(defaultScale)
-            ? defaultScale
-            : allowedXAxisType[0];
+        return getAutoDetectedScaleType(allowedXAxisType, defaultScale);
     }, [data, xIndex, xScale]);
 
     const yScale = meta?.chart?.y_axis?.scale;

@@ -578,6 +578,7 @@ const DataDocChartComposerComponent: React.FunctionComponent<
                 {getAxisDOM(
                     'xAxis',
                     values.xAxis,
+
                     detectedXAxisScale === 'linear'
                         ? 'category'
                         : detectedXAxisScale,
