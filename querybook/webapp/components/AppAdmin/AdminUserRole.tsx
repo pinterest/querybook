@@ -5,7 +5,7 @@ import ds from 'lib/datasource';
 import { getEnumEntries } from 'lib/typescript';
 import { getQueryString } from 'lib/utils/query-string';
 import { useDataFetch } from 'hooks/useDataFetch';
-import { UserRoleType } from 'const/userRoles';
+import { UserRoleType } from 'const/user';
 
 import { IStoreState } from 'redux/store/types';
 import * as userActions from 'redux/user/action';

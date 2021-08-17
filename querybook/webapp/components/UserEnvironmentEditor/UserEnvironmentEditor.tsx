@@ -1,5 +1,5 @@
 import React from 'react';
-import { IUserInfo } from 'redux/user/types';
+import { IUserInfo } from 'const/user';
 import { InfinityScroll } from 'ui/InfinityScroll/InfinityScroll';
 
 import ds from 'lib/datasource';

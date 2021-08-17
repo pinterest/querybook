@@ -156,10 +156,6 @@ export default function userReducer(
                 );
                 return;
             }
-            case '@@user/LOGOUT_USER': {
-                delete draft.myUserInfo;
-                return;
-            }
             case '@@notificationService/RECEIVE_NOTIFIERS': {
                 if (!('notification_preference' in state.rawSettings)) {
                     draft.rawSettings['notification_preference'] =
