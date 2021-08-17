@@ -9,7 +9,10 @@ import { IDataChartCellMeta } from 'const/datadoc';
 import { ChartScaleType, chartTypeToAllowedAxisType } from 'const/dataDocChart';
 import { fontColor } from 'const/chartColors';
 import { mapMetaToChartOptions } from 'lib/chart/chart-meta-processing';
-import { getDefaultScaleType } from 'lib/chart/chart-utils';
+import {
+    getAutoDetectedScaleType,
+    getDefaultScaleType,
+} from 'lib/chart/chart-utils';
 import { processChartJSData } from 'lib/chart/chart-data-processing';
 import { IStoreState } from 'redux/store/types';
 import { DataDocChartWrapper } from './DataDocChartWrapper';
@@ -87,10 +90,10 @@ const useChartScale = (meta: IDataChartCellMeta, data?: any[][]) => {
                     j !== xIndex &&
                     !isChartValNull(val)
                 ) {
-                    const defaultScale = getDefaultScaleType(val);
-                    return allowedYAxisType.includes(defaultScale)
-                        ? defaultScale
-                        : allowedYAxisType[0];
+                    return getAutoDetectedScaleType(
+                        allowedYAxisType,
+                        getDefaultScaleType(val)
+                    );
                 }
             }
         }

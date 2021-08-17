@@ -35,6 +35,25 @@ export function getDefaultScaleType(value: any): ChartScaleType {
     }
 }
 
+/**
+ * Sometimes, the detected scale type from
+ * the input cannot be used for the chart.
+ *
+ * This function provides a default behavior to pick
+ * from the list of allowed options
+ *
+ * @param allowedScaleType list of scale type supported by chart
+ * @param detectedScaleType auto detected scale type
+ */
+export function getAutoDetectedScaleType(
+    allowedScaleType: ChartScaleType[],
+    detectedScaleType: ChartScaleType
+) {
+    return allowedScaleType.includes(detectedScaleType)
+        ? detectedScaleType
+        : allowedScaleType[0];
+}
+
 export function sortTable(
     tableRows: any[][],
     columnIndex: number = 0,

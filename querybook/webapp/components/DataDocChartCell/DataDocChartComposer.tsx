@@ -42,7 +42,10 @@ import { Tabs } from 'ui/Tabs/Tabs';
 
 import { Level, LevelItem } from 'ui/Level/Level';
 import { SimpleReactSelect } from 'ui/SimpleReactSelect/SimpleReactSelect';
-import { getDefaultScaleType } from 'lib/chart/chart-utils';
+import {
+    getAutoDetectedScaleType,
+    getDefaultScaleType,
+} from 'lib/chart/chart-utils';
 import { NumberField } from 'ui/FormikField/NumberField';
 import { ReactSelectField } from 'ui/FormikField/ReactSelectField';
 import { FormWrapper } from 'ui/Form/FormWrapper';
@@ -514,6 +517,8 @@ const DataDocChartComposerComponent: React.FunctionComponent<
             if (noAxesConfig) {
                 return null;
             }
+
+            scaleType = getAutoDetectedScaleType(scaleOptions, scaleType);
 
             const allScaleOptions = [
                 {
