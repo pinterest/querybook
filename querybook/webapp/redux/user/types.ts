@@ -1,22 +1,7 @@
+import { IMyUserInfo, IUserInfo } from 'const/user';
 import { Action } from 'redux';
 import { ThunkAction } from 'redux-thunk';
 import { IStoreState } from '../store/types';
-
-export interface IUserInfo {
-    id: number;
-    username: string;
-    fullname: string;
-    profile_img: string;
-    deleted: boolean;
-
-    roles?: number[];
-}
-
-export interface IMyUserInfo {
-    uid: number;
-    permission?: number;
-    isAdmin: boolean;
-}
 
 export interface IUserSettingState {
     rawSettings: Record<string, string>;
@@ -36,10 +21,6 @@ export interface ILoginUserAction extends Action {
         userInfo: IUserInfo;
         myUserInfo: IMyUserInfo;
     };
-}
-
-export interface ILogoutUserAction extends Action {
-    type: '@@user/LOGOUT_USER';
 }
 
 export interface IReceiveUserAction extends Action {
@@ -68,7 +49,6 @@ export interface IReceiveUserKeySettingAction extends Action {
 export type UserAction =
     | IReceiveUserAction
     | ILoginUserAction
-    | ILogoutUserAction
     | IReceiveUserSettingAction
     | IReceiveUserKeySettingAction;
 

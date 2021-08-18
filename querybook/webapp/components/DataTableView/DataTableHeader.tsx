@@ -4,7 +4,7 @@ import { useSelector, useDispatch } from 'react-redux';
 
 import * as Utils from 'lib/utils';
 
-import { IMyUserInfo } from 'redux/user/types';
+import { IMyUserInfo } from 'const/user';
 import { IStoreState, Dispatch } from 'redux/store/types';
 import { IDataTable } from 'const/metastore';
 import {

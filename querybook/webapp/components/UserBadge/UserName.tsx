@@ -1,6 +1,6 @@
 import React from 'react';
 
-import { IUserInfo } from 'redux/user/types';
+import { IUserInfo } from 'const/user';
 import { titleize } from 'lib/utils';
 import { useUser } from 'hooks/redux/useUser';
 import { ICommonUserLoaderProps } from './types';

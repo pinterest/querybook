@@ -1,7 +1,7 @@
 import React, { useEffect } from 'react';
 
 import { useUser } from 'hooks/redux/useUser';
-import { IUserInfo } from 'redux/user/types';
+import { IUserInfo } from 'const/user';
 import { ICommonUserLoaderProps } from './types';
 import './UserAvatar.scss';
 

@@ -1,33 +1,15 @@
 import localStore from 'lib/local-store';
 import { USER_SETTINGS_KEY, UserSettingsValue } from 'lib/local-store/const';
 import { userLoadManager } from 'lib/batch/user-load-manager';
-import ds from 'lib/datasource';
-
-import { UserRoleType } from 'const/userRoles';
-import { IUserInfo, ThunkResult } from './types';
-
-export function logoutUser(): ThunkResult<Promise<any>> {
-    return (dispatch) =>
-        ds.fetch('/logout/').then(() =>
-            dispatch({
-                type: '@@user/LOGOUT_USER',
-            })
-        );
-}
+import { UserRoleType } from 'const/user';
+import * as UserResource from 'resource/user';
+import { ThunkResult } from './types';
 
 export function loginUser(): ThunkResult<Promise<void>> {
     return (dispatch) =>
-        ds.fetch('/user/me/').then(({ data }) => {
+        UserResource.loginUser().then(({ data }) => {
             if (data) {
-                const {
-                    uid,
-                    permission,
-                    info,
-                }: {
-                    uid: number;
-                    permission: number;
-                    info: IUserInfo;
-                } = data;
+                const { uid, permission, info } = data;
 
                 const isAdmin = UserRoleType.ADMIN in (info.roles || []);
 
@@ -54,7 +36,7 @@ export function getUser(uid: number): ThunkResult<Promise<void>> {
 
 export function getUserByName(name: string): ThunkResult<Promise<void>> {
     return async (dispatch) => {
-        const { data } = await ds.fetch(`/user/name/${name}/`);
+        const { data } = await UserResource.getUserByName(name);
         dispatch({
             type: '@@user/RECEIVE_USER',
             payload: data,
@@ -64,25 +46,23 @@ export function getUserByName(name: string): ThunkResult<Promise<void>> {
 
 export function getUserSetting(): ThunkResult<Promise<any>> {
     return (dispatch, getState) =>
-        ds
-            .fetch<Array<{ key: string; value: string }>>(`/user/setting/`)
-            .then(({ data }) => {
-                if (data) {
-                    const userSetting = data.reduce((hash, val) => {
-                        hash[val.key] = val.value;
-                        return hash;
-                    }, {});
+        UserResource.getUserSetting().then(({ data }) => {
+            if (data) {
+                const userSetting = data.reduce((hash, val) => {
+                    hash[val.key] = val.value;
+                    return hash;
+                }, {});
 
-                    dispatch({
-                        type: '@@user/RECEIVE_USER_SETTING',
-                        payload: {
-                            userSetting,
-                            environmentId: getState().environment
-                                .currentEnvironmentId,
-                        },
-                    });
-                }
-            });
+                dispatch({
+                    type: '@@user/RECEIVE_USER_SETTING',
+                    payload: {
+                        userSetting,
+                        environmentId: getState().environment
+                            .currentEnvironmentId,
+                    },
+                });
+            }
+        });
 }
 
 export function getUserSettingLocal(): ThunkResult<void> {
@@ -116,11 +96,7 @@ export function setUserSettings(
         if (settings[key] === value) {
             return;
         }
-
-        const { data } = await ds.save(`/user/setting/${key}/`, {
-            value,
-        });
-
+        const { data } = await UserResource.setUserSettings(key, value);
         dispatch({
             type: '@@user/RECEIVE_USER_KEY_SETTING',
             payload: {

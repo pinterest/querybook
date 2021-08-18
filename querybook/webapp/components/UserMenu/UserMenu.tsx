@@ -1,10 +1,11 @@
 import React, { useState, useRef, useCallback } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 
+import { logoutUser } from 'resource/user';
+import { TooltipDirection } from 'const/tooltip';
 import { IStoreState, Dispatch } from 'redux/store/types';
 import * as UserActions from 'redux/user/action';
 import { navigateWithinEnv } from 'lib/utils/query-string';
-import { TooltipDirection } from 'const/tooltip';
 
 import { UserBadge } from 'components/UserBadge/UserBadge';
 import { TokenCreation } from 'components/Token/TokenCreation';
@@ -52,10 +53,7 @@ export const UserMenu: React.FC<IUserMenuProps> = ({
     );
     const dispatch: Dispatch = useDispatch();
     const logout = useCallback(
-        () =>
-            dispatch(UserActions.logoutUser()).then(() =>
-                window.location.reload()
-            ),
+        () => logoutUser().then(() => window.location.reload()),
         []
     );
     const setTheme = useCallback(
