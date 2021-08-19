@@ -2,12 +2,12 @@ import localStore from 'lib/local-store';
 import { USER_SETTINGS_KEY, UserSettingsValue } from 'lib/local-store/const';
 import { userLoadManager } from 'lib/batch/user-load-manager';
 import { UserRoleType } from 'const/user';
-import * as UserResource from 'resource/user';
+import { UserResource } from 'resource/user';
 import { ThunkResult } from './types';
 
 export function loginUser(): ThunkResult<Promise<void>> {
     return (dispatch) =>
-        UserResource.loginUser().then(({ data }) => {
+        UserResource.login().then(({ data }) => {
             if (data) {
                 const { uid, permission, info } = data;
 

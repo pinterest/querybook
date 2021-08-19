@@ -1,4 +1,4 @@
-import { ContentState } from 'draft-js';
+import type { ContentState } from 'draft-js';
 
 export interface IQueryMetastore {
     id: number;
@@ -155,4 +155,12 @@ export interface ITableStats {
     key: string;
     value: TableStatValue;
     uid: number;
+}
+
+export interface ITableSampleParams {
+    partition?: string;
+    where?: [string, string, string];
+    order_by?: string;
+    order_by_asc?: boolean;
+    limit?: number;
 }

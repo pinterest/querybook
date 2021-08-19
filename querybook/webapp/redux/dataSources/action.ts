@@ -1,6 +1,6 @@
 import { normalize, schema } from 'normalizr';
 import type { ContentState } from 'draft-js';
-import JSONBig from 'json-bigint';
+import { isEqual } from 'lodash';
 
 import {
     IDataTable,
@@ -16,12 +16,15 @@ import {
     IDataTableOwnership,
     ITableStats,
     ITopQueryConcurrences,
+    IFunctionDescription,
 } from 'const/metastore';
 import {
     convertContentStateToHTML,
     convertRawToContentState,
 } from 'lib/richtext/serialize';
 import ds from 'lib/datasource';
+import * as TableResource from 'resource/metastore/table';
+import { getFunctionDocumentation } from 'resource/utils/functionDocumentation';
 import {
     IReceiveDataTableAction,
     ThunkResult,
@@ -33,7 +36,6 @@ import {
     IReceiveQueryExampleIdsAction,
     ITableSampleParams,
 } from './types';
-import { isEqual } from 'lodash';
 
 interface IUpdateTableParams {
     description: ContentState;
@@ -387,15 +389,9 @@ export function fetchDataTableSamples(
 ): ThunkResult<Promise<IDataTableSamples>> {
     return async (dispatch, getState) => {
         try {
-            const environmentId = getState().environment.currentEnvironmentId;
-            const { data } = await ds.fetch(
-                {
-                    url: `/table/${tableId}/samples/`,
-                    transformResponse: [JSONBig.parse],
-                },
-                {
-                    environment_id: environmentId,
-                }
+            const { data } = await TableResource.getTableSamples(
+                tableId,
+                getState().environment.currentEnvironmentId
             );
             dispatch(receiveDataTableSamples(tableId, data));
             return data;
@@ -424,17 +420,11 @@ export function createDataTableSamples(
 ): ThunkResult<Promise<number>> {
     return async (dispatch, getState) => {
         try {
-            const environmentId = getState().environment.currentEnvironmentId;
-            const { data: taskId } = await ds.save<number>(
-                {
-                    url: `/table/${tableId}/samples/`,
-                    transformResponse: [JSONBig.parse],
-                },
-                {
-                    environment_id: environmentId,
-                    engine_id: engineId,
-                    ...sampleParams,
-                }
+            const { data: taskId } = await TableResource.createTableSamples(
+                tableId,
+                getState().environment.currentEnvironmentId,
+                engineId,
+                sampleParams
             );
             dispatch(receiveDataTableSamplesPolling(tableId, taskId));
             return taskId;
@@ -454,11 +444,9 @@ export function pollDataTableSample(
                 tableId
             ];
             if (poll) {
-                const { data } = await ds.fetch<[boolean, number]>(
-                    `/table/${tableId}/samples/poll/`,
-                    {
-                        task_id: poll.taskId,
-                    }
+                const { data } = await TableResource.pollTableSamples(
+                    tableId,
+                    poll.taskId
                 );
 
                 finished = !data || data[0];
@@ -511,20 +499,12 @@ export function fetchQueryExampleIds(
 ): ThunkResult<Promise<number[]>> {
     return async (dispatch, getState) => {
         try {
-            const state = getState();
-            const environmentId = state.environment.currentEnvironmentId;
-
-            const { data } = await ds.fetch<[]>(
-                {
-                    url: `/table/${tableId}/query_examples/`,
-                },
-                {
-                    table_id: tableId,
-                    environment_id: environmentId,
-                    ...filters,
-                    limit,
-                    offset,
-                }
+            const { data } = await TableResource.getTableQueryExamples(
+                tableId,
+                getState().environment.currentEnvironmentId,
+                filters,
+                limit,
+                offset
             );
             dispatch(
                 receiveQueryExampleIds(
@@ -590,16 +570,10 @@ export function fetchTopQueryUsersIfNeeded(
                 return Promise.resolve(users);
             }
 
-            const environmentId = state.environment.currentEnvironmentId;
-            const { data } = await ds.fetch<ITopQueryUser[]>(
-                {
-                    url: `/table/${tableId}/query_examples/users/`,
-                },
-                {
-                    table_id: tableId,
-                    environment_id: environmentId,
-                    limit,
-                }
+            const { data } = await TableResource.getTableTopUsers(
+                tableId,
+                state.environment.currentEnvironmentId,
+                limit
             );
             dispatch({
                 type: '@@dataSources/RECEIVE_TOP_QUERY_USERS',
@@ -628,14 +602,9 @@ export function fetchTopQueryConcurrencesIfNeeded(
                 return Promise.resolve(joins);
             }
 
-            const { data } = await ds.fetch<ITopQueryConcurrences[]>(
-                {
-                    url: `/table/${tableId}/query_examples/concurrences/`,
-                },
-                {
-                    table_id: tableId,
-                    limit,
-                }
+            const { data } = await TableResource.getTableTopConcurrences(
+                tableId,
+                limit
             );
             dispatch({
                 type: '@@dataSources/RECEIVE_TOP_QUERY_CONCURRENCES',
@@ -710,9 +679,7 @@ export function fetchFunctionDocumentationIfNeeded(
             state.dataSources.functionDocumentation.loading[language];
         if (functionDocumentationPromise == null) {
             try {
-                const fetchPromise = ds.fetch(
-                    `/function_documentation_language/${language}/`
-                );
+                const fetchPromise = getFunctionDocumentation(language);
                 dispatch({
                     type: '@@dataSources/LOADING_FUNCTION_DOCUMENTATION',
                     payload: {
@@ -736,7 +703,7 @@ export function fetchFunctionDocumentationIfNeeded(
 
                         return hash;
                     },
-                    {}
+                    {} as Record<string, IFunctionDescription[]>
                 );
 
                 dispatch({

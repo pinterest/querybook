@@ -406,7 +406,7 @@ def add_query_engine_to_environment(id, engine_id):
 @admin_only
 @with_admin_audit_log(AdminItemType.Environment, AdminOperation.UPDATE)
 def swap_query_engine_order_in_environment(id, from_index, to_index):
-    return logic.swap_query_engine_order_in_environment(id, from_index, to_index)
+    logic.swap_query_engine_order_in_environment(id, from_index, to_index)
 
 
 @register(

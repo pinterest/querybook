@@ -3,37 +3,25 @@ import * as Yup from 'yup';
 import { clone } from 'lodash';
 import { useParams } from 'react-router-dom';
 
-import ds from 'lib/datasource';
 import history from 'lib/router-history';
 
-import { IAdminQueryEngine } from './AdminQueryEngine';
-import { AdminDeletedList } from './AdminDeletedList';
-
+import { IAdminEnvironment, IAdminQueryEngine } from 'const/admin';
 import { QueryEngineSelect } from 'components/QueryEngineSelect/QueryEngineSelect';
 import { UserEnvironmentEditor } from 'components/UserEnvironmentEditor/UserEnvironmentEditor';
 import { AdminAuditLogButton } from 'components/AdminAuditLog/AdminAuditLogButton';
-
+import * as AdminResource from 'resource/admin';
 import { Card } from 'ui/Card/Card';
 import { GenericCRUD } from 'ui/GenericCRUD/GenericCRUD';
 import { Level } from 'ui/Level/Level';
 import { SimpleField } from 'ui/FormikField/SimpleField';
 
-import './AdminEnvironment.scss';
 import { IconButton } from 'ui/Button/IconButton';
 import { useDataFetch } from 'hooks/useDataFetch';
 import { IQueryEngine } from 'const/queryEngine';
 import { DraggableList } from 'ui/DraggableList/DraggableList';
 
-export interface IAdminEnvironment {
-    id: number;
-    name: string;
-    description: string;
-    image: string;
-    public: boolean;
-    hidden: boolean;
-    shareable: boolean;
-    deleted_at: number;
-}
+import { AdminDeletedList } from './AdminDeletedList';
+import './AdminEnvironment.scss';
 
 const environmentSchema = Yup.object().shape({
     name: Yup.string()
@@ -63,27 +51,27 @@ export const AdminEnvironment: React.FunctionComponent<IProps> = ({
     const { id: environmentId } = useParams();
     const createEnvironment = React.useCallback(
         async (environment: IAdminEnvironment) => {
-            const { data } = await ds.save(`/admin/environment/`, {
-                name: environment.name,
-                description: environment.description,
-                image: environment.image,
-                public: environment.public,
-                hidden: environment.hidden,
-                shareable: environment.shareable,
-            });
+            const { data } = await AdminResource.createEnvironment(
+                environment.name,
+                environment.description,
+                environment.image,
+                environment.public,
+                environment.hidden,
+                environment.shareable
+            );
 
             await loadEnvironments();
             history.push(`/admin/environment/${data.id}/`);
 
-            return data as IAdminEnvironment;
+            return data;
         },
         []
     );
 
     const saveEnvironment = React.useCallback(
         async (environment: Partial<IAdminEnvironment>) => {
-            const { data } = await ds.update(
-                `/admin/environment/${environmentId}/`,
+            const { data } = await AdminResource.updateEnvironment(
+                environmentId,
                 environment
             );
 
@@ -94,19 +82,17 @@ export const AdminEnvironment: React.FunctionComponent<IProps> = ({
 
     const deleteEnvironment = React.useCallback(
         (environment: IAdminEnvironment) =>
-            ds.delete(`/admin/environment/${environment.id}/`),
+            AdminResource.deleteEnvironment(environment.id),
         []
     );
 
     const recoverEnvironment = React.useCallback(async (envId: number) => {
-        const { data } = await ds.update(
-            `/admin/environment/${envId}/recover/`
-        );
+        const { data } = await AdminResource.recoverEnvironment(envId);
 
         await loadEnvironments();
         history.push(`/admin/environment/${envId}/`);
 
-        return data as IAdminEnvironment;
+        return data;
     }, []);
 
     const renderEnvironmentItem = (item: IAdminEnvironment) => {
@@ -329,13 +315,17 @@ const AdminEnvironmentQueryEngine: React.FC<{
         data: environmentEngines,
         forceFetch: fetchEnvironmentEngines,
     } = useDataFetch<IQueryEngine[]>({
-        url: `/admin/environment/${environmentId}/query_engine/`,
+        resource: React.useCallback(
+            () => AdminResource.getQueryEnginesInEnvironment(environmentId),
+            [environmentId]
+        ),
     });
 
     const handleAddQueryEngine = React.useCallback(
         async (engineId: number) => {
-            await ds.save(
-                `/admin/environment/${environmentId}/query_engine/${engineId}/`
+            await AdminResource.addQueryEngineToEnvironment(
+                environmentId,
+                engineId
             );
             await fetchEnvironmentEngines();
         },
@@ -344,8 +334,9 @@ const AdminEnvironmentQueryEngine: React.FC<{
 
     const handleDeleteQueryEngine = React.useCallback(
         async (engineId: number) => {
-            await ds.delete(
-                `/admin/environment/${environmentId}/query_engine/${engineId}/`
+            await AdminResource.removeQueryEngineToEnvironment(
+                environmentId,
+                engineId
             );
             await fetchEnvironmentEngines();
         },
@@ -354,8 +345,10 @@ const AdminEnvironmentQueryEngine: React.FC<{
 
     const handleSwapQueryEngine = React.useCallback(
         async (fromIndex: number, toIndex: number) => {
-            await ds.save(
-                `/admin/environment/${environmentId}/query_engine/${fromIndex}/${toIndex}/`
+            await AdminResource.swapQueryEnginesInEnvironment(
+                environmentId,
+                fromIndex,
+                toIndex
             );
             await fetchEnvironmentEngines();
         },

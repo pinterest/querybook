@@ -3,11 +3,11 @@ import moment from 'moment';
 import { useParams } from 'react-router-dom';
 import toast from 'react-hot-toast';
 
-import ds from 'lib/datasource';
 import { generateFormattedDate } from 'lib/utils/datetime';
 import history from 'lib/router-history';
 
 import { useDataFetch } from 'hooks/useDataFetch';
+import * as TaskResource from 'resource/admin/task';
 
 import { ITaskSchedule, TaskType } from 'const/schedule';
 import { TaskEditor } from 'components/Task/TaskEditor';
@@ -64,7 +64,7 @@ export const AdminTask: React.FC = () => {
     const { data: taskList, forceFetch: loadTaskList } = useDataFetch<
         ITaskSchedule[]
     >({
-        url: '/schedule/',
+        resource: TaskResource.getTasks,
     });
 
     const filteredTaskList = React.useMemo(
@@ -80,14 +80,10 @@ export const AdminTask: React.FC = () => {
     const handleChangeEnabled = React.useCallback(
         async (taskId: number, val: boolean) => {
             toast.promise(
-                ds
-                    .update(`/schedule/${taskId}/`, {
-                        enabled: val,
-                    })
-                    .then(({ data }) => {
-                        loadTaskList();
-                        return data;
-                    }),
+                TaskResource.toggleTaskEnabled(taskId, val).then(({ data }) => {
+                    loadTaskList();
+                    return data;
+                }),
                 {
                     loading: 'Updating schedule...',
                     success: val ? 'Schedule enabled!' : 'Schedule disabled!',

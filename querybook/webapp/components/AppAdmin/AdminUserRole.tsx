@@ -1,7 +1,6 @@
 import React from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 
-import ds from 'lib/datasource';
 import { getEnumEntries } from 'lib/typescript';
 import { getQueryString } from 'lib/utils/query-string';
 import { useDataFetch } from 'hooks/useDataFetch';
@@ -20,16 +19,10 @@ import { Card } from 'ui/Card/Card';
 import { FormField } from 'ui/Form/FormField';
 import { Icon } from 'ui/Icon/Icon';
 import { Level } from 'ui/Level/Level';
-
+import * as UserRoleResource from 'resource/admin/userRole';
 import { Select, makeSelectOptions } from 'ui/Select/Select';
 
 import './AdminUserRole.scss';
-
-interface IAdminUserRole {
-    id: number;
-    uid: number;
-    role: number;
-}
 
 export const AdminUserRole: React.FunctionComponent = () => {
     // const [userRoles, setUserRoles] = React.useState<IAdminUserRole[]>([]);
@@ -41,11 +34,8 @@ export const AdminUserRole: React.FunctionComponent = () => {
         role: null,
     });
 
-    const {
-        data: userRoles,
-        forceFetch: loadUserRoles,
-    }: { data: IAdminUserRole[]; forceFetch } = useDataFetch({
-        url: '/admin/user_role/',
+    const { data: userRoles, forceFetch: loadUserRoles } = useDataFetch({
+        resource: UserRoleResource.getUserRoles,
     });
 
     const uid = useSelector((state: IStoreState) => state.user.myUserInfo.uid);
@@ -57,16 +47,16 @@ export const AdminUserRole: React.FunctionComponent = () => {
     );
 
     const deleteUserRole = React.useCallback(async (userRoleId: number) => {
-        await ds.delete(`/admin/user_role/${userRoleId}/`);
+        await UserRoleResource.deleteUserRole(userRoleId);
         await loadUserRoles();
     }, []);
 
     const createUserRole = React.useCallback(async () => {
         setDisplayNewForm(false);
-        await ds.save(`/admin/user_role/`, {
-            uid: newUserRoleState.uid,
-            role: newUserRoleState.role,
-        });
+        await UserRoleResource.createUserRole(
+            newUserRoleState.uid,
+            newUserRoleState.role
+        );
         if (newUserRoleState.uid === uid) {
             loginUser();
         }

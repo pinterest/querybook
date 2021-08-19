@@ -21,7 +21,7 @@ function handleRequestException(error: any, notifyOnError?: boolean) {
     return Promise.reject(error);
 }
 
-function syncDatasource<T = any>(
+function syncDatasource<T>(
     method: Method,
     urlOrOptions: UrlOrOptions,
     data?: Record<string, unknown>,
@@ -75,7 +75,7 @@ function syncDatasource<T = any>(
     return request;
 }
 
-function fetchDatasource<T = any>(
+function fetchDatasource<T>(
     urlOrOptions: UrlOrOptions,
     data?: Record<string, unknown>,
     notifyOnError = false
@@ -83,7 +83,7 @@ function fetchDatasource<T = any>(
     return syncDatasource<T>('GET', urlOrOptions, data, notifyOnError);
 }
 
-function saveDatasource<T = any>(
+function saveDatasource<T>(
     urlOrOptions: UrlOrOptions,
     data?: Record<string, unknown>,
     notifyOnError = true
@@ -91,14 +91,14 @@ function saveDatasource<T = any>(
     return syncDatasource<T>('POST', urlOrOptions, data, notifyOnError);
 }
 
-function updateDatasource<T = any>(
+function updateDatasource<T>(
     urlOrOptions: UrlOrOptions,
     data?: Record<string, unknown>,
     notifyOnError = true
 ) {
     return syncDatasource<T>('PUT', urlOrOptions, data, notifyOnError);
 }
-function deleteDatasource<T = any>(
+function deleteDatasource<T = null>(
     urlOrOptions: UrlOrOptions,
     data?: Record<string, unknown>,
     notifyOnError = true

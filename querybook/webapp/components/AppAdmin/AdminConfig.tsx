@@ -2,12 +2,11 @@ import React, { useMemo, useState } from 'react';
 import { useDataFetch } from 'hooks/useDataFetch';
 import { Table } from 'ui/Table/Table';
 import { SearchBar } from 'ui/SearchBar/SearchBar';
+import { getQuerybookConfig } from 'resource/admin';
 
 export const AdminConfig = ({}) => {
-    const { data: querybookConfig, isLoading } = useDataFetch<
-        Record<string, unknown>
-    >({
-        url: '/admin/querybook_config/',
+    const { data: querybookConfig, isLoading } = useDataFetch({
+        resource: getQuerybookConfig,
     });
     const [filterStr, setFilterStr] = useState('');
 

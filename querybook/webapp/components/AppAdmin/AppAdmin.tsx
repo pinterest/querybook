@@ -9,21 +9,21 @@ import { useDataFetch } from 'hooks/useDataFetch';
 
 import { AdminAppEntitySidebar } from 'components/AdminAppSidebar/AdminAppEntitySidebar';
 import { AdminAppNavigator } from 'components/AdminAppSidebar/AdminAppNavigator';
-import { IAdminEnvironment } from 'components/AppAdmin/AdminEnvironment';
 import { TaskStatus } from 'components/Task/TaskStatus';
 
 import { AdminAnnouncement } from './AdminAnnouncement';
 import { AdminApiAccessToken } from './AdminApiAccessToken';
 import { AdminConfig } from './AdminConfig';
 import { AdminEnvironment } from './AdminEnvironment';
-import { AdminMetastore, IAdminMetastore } from './AdminMetastore';
-import { AdminQueryEngine, IAdminQueryEngine } from './AdminQueryEngine';
+import { AdminMetastore } from './AdminMetastore';
+import { AdminQueryEngine } from './AdminQueryEngine';
 import { AdminTask } from './AdminTask';
 import { AdminUserRole } from './AdminUserRole';
 import { Card } from 'ui/Card/Card';
 import { FourOhThree } from 'ui/ErrorPage/FourOhThree';
 import { Icon } from 'ui/Icon/Icon';
 import { Sidebar } from 'ui/Sidebar/Sidebar';
+import * as AdminResource from 'resource/admin';
 
 import { AdminEntity } from './types';
 import './AppAdmin.scss';
@@ -34,20 +34,14 @@ const NAV_SIDEBAR_WIDTH = 200;
 const AppAdmin: React.FunctionComponent = () => {
     const { entity: selectedEntity }: { entity: AdminEntity } = useParams();
 
-    const { data: environments, forceFetch: loadEnvironments } = useDataFetch<
-        IAdminEnvironment[]
-    >({
-        url: '/admin/environment/',
+    const { data: environments, forceFetch: loadEnvironments } = useDataFetch({
+        resource: AdminResource.getEnvironments,
     });
-    const { data: metastores, forceFetch: loadMetastores } = useDataFetch<
-        IAdminMetastore[]
-    >({
-        url: '/admin/query_metastore/',
+    const { data: metastores, forceFetch: loadMetastores } = useDataFetch({
+        resource: AdminResource.getAdminMetastores,
     });
-    const { data: queryEngines, forceFetch: loadQueryEngines } = useDataFetch<
-        IAdminQueryEngine[]
-    >({
-        url: '/admin/query_engine/',
+    const { data: queryEngines, forceFetch: loadQueryEngines } = useDataFetch({
+        resource: AdminResource.getAdminQueryEngines,
     });
 
     const isAdmin = useSelector(

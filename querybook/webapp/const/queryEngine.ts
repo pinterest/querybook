@@ -9,6 +9,13 @@ export interface IQueryEngine {
     executor: string;
 }
 
+export interface IQueryEngineEnvironment {
+    id: number;
+    query_engine_id: number;
+    environment_id: number;
+    engine_order: number;
+}
+
 // Keep in sync with const/query_execution.py
 export enum QueryEngineStatus {
     UNAVAILABLE = 0, // Information is not available
