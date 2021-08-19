@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { Line } from 'react-chartjs-2';
-
+import 'chartjs-adapter-moment';
 import { generateFormattedDate } from 'lib/utils/datetime';
 import { ImpressionType } from 'const/impression';
 import { useDataFetch } from 'hooks/useDataFetch';

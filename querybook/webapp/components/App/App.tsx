@@ -6,7 +6,6 @@ import { HTML5Backend } from 'react-dnd-html5-backend';
 import { Provider } from 'react-redux';
 
 import { AppRouter } from 'components/AppRouter/AppRouter';
-
 import { reduxStore } from 'redux/store';
 
 // Make debugging easier
