@@ -4,11 +4,11 @@ import { escapeRegExp } from 'lodash';
 import history from 'lib/router-history';
 import { generateFormattedDate } from 'lib/utils/datetime';
 import { UserAvatar } from 'components/UserBadge/UserAvatar';
-import './SearchResultItem.scss';
+import { IDataDocPreview, ITablePreview } from 'const/search';
 import { Icon } from 'ui/Icon/Icon';
 import { useUser } from 'hooks/redux/useUser';
 import { Level } from 'ui/Level/Level';
-import { IDataDocPreview, ITablePreview } from 'redux/search/types';
+import './SearchResultItem.scss';
 
 const HighlightTitle: React.FunctionComponent<{
     title: string;

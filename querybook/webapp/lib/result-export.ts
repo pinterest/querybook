@@ -1,5 +1,5 @@
 import { IQueryResultExporter } from 'const/queryExecution';
-import { acquireExporterAuth } from 'resource/queryExecution';
+import { StatementResource } from 'resource/queryExecution';
 
 export function getExporterAuthentication(
     exporter: IQueryResultExporter
@@ -10,7 +10,9 @@ export function getExporterAuthentication(
             return;
         }
 
-        const { data: url } = await acquireExporterAuth(exporter.name);
+        const { data: url } = await StatementResource.getExporterAuth(
+            exporter.name
+        );
         if (!url) {
             resolve();
             return;

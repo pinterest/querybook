@@ -1,7 +1,7 @@
 import React from 'react';
 import { useSelector } from 'react-redux';
 
-import { IQueryExecution } from 'redux/queryExecutions/types';
+import { IQueryExecution } from 'const/queryExecution';
 import { currentEnvironmentSelector } from 'redux/environment/selector';
 import { QueryExecutionBar } from 'components/QueryExecutionBar/QueryExecutionBar';
 import { QueryExecution } from 'components/QueryExecution/QueryExecution';

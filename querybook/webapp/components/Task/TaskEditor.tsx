@@ -4,7 +4,6 @@ import moment from 'moment';
 import * as Yup from 'yup';
 import toast from 'react-hot-toast';
 
-import ds from 'lib/datasource';
 import { generateFormattedDate } from 'lib/utils/datetime';
 import {
     recurrenceToCron,
@@ -14,7 +13,7 @@ import {
     recurrenceOnYup,
 } from 'lib/utils/cron';
 import { sendConfirm } from 'lib/querybookUI';
-import { useDataFetch } from 'hooks/useDataFetch';
+import { useResource } from 'hooks/useResource';
 import { ITaskSchedule } from 'const/schedule';
 
 import { TaskStatus } from 'components/Task/TaskStatus';
@@ -32,6 +31,7 @@ import { Title } from 'ui/Title/Title';
 import { ToggleButton } from 'ui/ToggleButton/ToggleButton';
 
 import './TaskEditor.scss';
+import { TaskScheduleResource } from 'resource/taskSchedule';
 
 type TaskEditorTabs = 'edit' | 'history';
 
@@ -89,23 +89,19 @@ export const TaskEditor: React.FunctionComponent<IProps> = ({
 }) => {
     const [tab, setTab] = React.useState<TaskEditorTabs>('edit');
 
-    const { data: registeredTaskList } = useDataFetch<string[]>({
-        url: '/schedule/tasks_list/',
-    });
-    const { data: registeredTaskParamList } = useDataFetch<{
-        [task: string]: {
-            [taskParam: string]: string;
-        };
-    }>({
-        url: '/schedule/tasks_list/params/',
-    });
+    const { data: registeredTaskList } = useResource(
+        TaskScheduleResource.getRegisteredTasks
+    );
+    const { data: registeredTaskParamList } = useResource(
+        TaskScheduleResource.getRegisteredTaskParams
+    );
 
     React.useEffect(() => {
         setTab('edit');
     }, [task.id]);
 
     const runTask = React.useCallback(async () => {
-        await ds.save(`/schedule/${task.id}/run/`);
+        await TaskScheduleResource.run(task.id);
         toast.success('Task has started!');
         onTaskUpdate?.();
     }, [task]);
@@ -133,9 +129,8 @@ export const TaskEditor: React.FunctionComponent<IProps> = ({
             }
 
             if (task.id) {
-                ds.update(`/schedule/${task.id}/`, {
+                TaskScheduleResource.update(task.id, {
                     cron: editedCron,
-                    name: editedValues.name,
                     enabled: editedValues.enabled,
                     args: editedArgs,
                     kwargs: editedKwargs,
@@ -145,19 +140,17 @@ export const TaskEditor: React.FunctionComponent<IProps> = ({
                 });
             } else {
                 toast.promise(
-                    ds
-                        .save(`/schedule/`, {
-                            cron: editedCron,
-                            name: editedValues.name,
-                            task: editedValues.task,
-                            task_type: isTaskUserTask(editedValues.task),
-                            enabled: editedValues.enabled,
-                            args: editedArgs,
-                            kwargs: editedKwargs,
-                        })
-                        .then(({ data }) => {
-                            onTaskCreate?.(data.id);
-                        }),
+                    TaskScheduleResource.create({
+                        cron: editedCron,
+                        name: editedValues.name,
+                        task: editedValues.task,
+                        task_type: isTaskUserTask(editedValues.task),
+                        enabled: editedValues.enabled,
+                        args: editedArgs,
+                        kwargs: editedKwargs,
+                    }).then(({ data }) => {
+                        onTaskCreate?.(data.id);
+                    }),
                     {
                         loading: 'Creating task...',
                         success: 'Task created!',
@@ -176,7 +169,7 @@ export const TaskEditor: React.FunctionComponent<IProps> = ({
             header: `Delete ${task.name}?`,
             message: 'Deleted tasks cannot be recovered.',
             onConfirm: () => {
-                ds.delete(`/schedule/${task.id}/`).then(() => {
+                TaskScheduleResource.delete(task.id).then(() => {
                     toast.success('Task deleted!');
                     onTaskDelete?.();
                 });

@@ -5,14 +5,14 @@ import { useParams } from 'react-router-dom';
 
 import history from 'lib/router-history';
 import { generateFormattedDate } from 'lib/utils/datetime';
-import { useDataFetch } from 'hooks/useDataFetch';
+import { useResource } from 'hooks/useResource';
 
 import { AdminDeletedList } from './AdminDeletedList';
 import { AdminAuditLogButton } from 'components/AdminAuditLog/AdminAuditLogButton';
 
 import { TaskEditor } from 'components/Task/TaskEditor';
 import { IAdminACLControl, IAdminMetastore } from 'const/admin';
-import * as AdminMetastoreResource from 'resource/admin/metastore';
+import { AdminMetastoreResource } from 'resource/admin/metastore';
 import { TextButton } from 'ui/Button/Button';
 import { Card } from 'ui/Card/Card';
 import { Icon } from 'ui/Icon/Icon';
@@ -43,22 +43,19 @@ export const AdminMetastore: React.FunctionComponent<IProps> = ({
 
     const [showTaskEditor, setShowTaskEditor] = React.useState<boolean>(false);
 
-    const { data: metastoreLoaders } = useDataFetch({
-        resource: AdminMetastoreResource.getAdminMetastoreLoaders,
-    });
+    const { data: metastoreLoaders } = useResource(
+        AdminMetastoreResource.getAllLoaders
+    );
 
     const {
         data: metastoreUpdateSchedule,
         forceFetch: loadMetastoreUpdateSchedule,
-    } = useDataFetch({
-        resource: React.useCallback(
-            () =>
-                AdminMetastoreResource.getAdminMetastoreUpdateSchedule(
-                    metastoreId
-                ),
+    } = useResource(
+        React.useCallback(
+            () => AdminMetastoreResource.getUpdateSchedule(metastoreId),
             [metastoreId]
-        ),
-    });
+        )
+    );
 
     React.useEffect(() => {
         if (metastoreUpdateSchedule?.id) {
@@ -68,7 +65,7 @@ export const AdminMetastore: React.FunctionComponent<IProps> = ({
 
     const createMetastore = React.useCallback(
         async (metastore: IAdminMetastore) => {
-            const { data } = await AdminMetastoreResource.createAdminMetastore(
+            const { data } = await AdminMetastoreResource.create(
                 metastore.name,
                 metastore.metastore_params,
                 metastore.loader,
@@ -85,7 +82,7 @@ export const AdminMetastore: React.FunctionComponent<IProps> = ({
 
     const saveMetastore = React.useCallback(
         async (metastore: Partial<IAdminMetastore>) => {
-            const { data } = await AdminMetastoreResource.updateAdminMetastore(
+            const { data } = await AdminMetastoreResource.update(
                 metastoreId,
                 metastore
             );
@@ -97,14 +94,12 @@ export const AdminMetastore: React.FunctionComponent<IProps> = ({
 
     const deleteMetastore = React.useCallback(
         (metastore: IAdminMetastore) =>
-            AdminMetastoreResource.deleteAdminMetastore(metastore.id),
+            AdminMetastoreResource.delete(metastore.id),
         []
     );
 
     const recoverMetastore = React.useCallback(async (mId: number) => {
-        const { data } = await AdminMetastoreResource.recoverAdminMetastore(
-            mId
-        );
+        const { data } = await AdminMetastoreResource.recover(mId);
 
         await loadMetastores();
         history.push(`/admin/metastore/${mId}/`);

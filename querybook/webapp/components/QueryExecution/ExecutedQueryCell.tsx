@@ -4,10 +4,10 @@ import { useSelector } from 'react-redux';
 import { UnControlled as ReactCodeMirror } from 'react-codemirror2';
 import styled from 'styled-components';
 
+import { IQueryExecution } from 'const/queryExecution';
 import { titleize, getCodeEditorTheme } from 'lib/utils';
 import { queryEngineByIdEnvSelector } from 'redux/queryEngine/selector';
 import { IStoreState } from 'redux/store/types';
-import { IQueryExecution } from 'redux/queryExecutions/types';
 
 import { Loading } from 'ui/Loading/Loading';
 import './ExecutedQueryCell.scss';

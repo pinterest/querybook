@@ -3,7 +3,7 @@ import { useDispatch, useSelector } from 'react-redux';
 
 import { getEnumEntries } from 'lib/typescript';
 import { getQueryString } from 'lib/utils/query-string';
-import { useDataFetch } from 'hooks/useDataFetch';
+import { useResource } from 'hooks/useResource';
 import { UserRoleType } from 'const/user';
 
 import { IStoreState } from 'redux/store/types';
@@ -19,7 +19,7 @@ import { Card } from 'ui/Card/Card';
 import { FormField } from 'ui/Form/FormField';
 import { Icon } from 'ui/Icon/Icon';
 import { Level } from 'ui/Level/Level';
-import * as UserRoleResource from 'resource/admin/userRole';
+import { UserRoleResource } from 'resource/admin/userRole';
 import { Select, makeSelectOptions } from 'ui/Select/Select';
 
 import './AdminUserRole.scss';
@@ -34,9 +34,9 @@ export const AdminUserRole: React.FunctionComponent = () => {
         role: null,
     });
 
-    const { data: userRoles, forceFetch: loadUserRoles } = useDataFetch({
-        resource: UserRoleResource.getUserRoles,
-    });
+    const { data: userRoles, forceFetch: loadUserRoles } = useResource(
+        UserRoleResource.getAll
+    );
 
     const uid = useSelector((state: IStoreState) => state.user.myUserInfo.uid);
 
@@ -47,13 +47,13 @@ export const AdminUserRole: React.FunctionComponent = () => {
     );
 
     const deleteUserRole = React.useCallback(async (userRoleId: number) => {
-        await UserRoleResource.deleteUserRole(userRoleId);
+        await UserRoleResource.delete(userRoleId);
         await loadUserRoles();
     }, []);
 
     const createUserRole = React.useCallback(async () => {
         setDisplayNewForm(false);
-        await UserRoleResource.createUserRole(
+        await UserRoleResource.create(
             newUserRoleState.uid,
             newUserRoleState.role
         );

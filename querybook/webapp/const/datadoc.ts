@@ -67,6 +67,10 @@ export interface IDataDoc {
     cells?: number[];
 }
 
+export type IRawDataDoc = Omit<IDataDoc, 'cells' | 'dataDocCells'> & {
+    cells: IDataCell[];
+};
+
 export interface IDataDocEditor {
     id: number;
     data_doc_id: number;

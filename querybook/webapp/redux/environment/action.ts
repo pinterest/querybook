@@ -1,13 +1,12 @@
-import ds from 'lib/datasource';
-
 import { arrayGroupByField } from 'lib/utils';
+import { UserResource } from 'resource/user';
 import { ThunkResult } from './types';
 
 export function fetchEnvironments(): ThunkResult<Promise<void>> {
     return async (dispatch) => {
         const {
             data: [visibleEnvironments, userEnvironmentIds],
-        } = await ds.fetch(`/user/environment/`);
+        } = await UserResource.getEnvironments();
 
         dispatch({
             type: '@@environment/RECEIVE_ENVIRONMENTS',

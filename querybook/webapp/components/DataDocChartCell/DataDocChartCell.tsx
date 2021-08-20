@@ -7,7 +7,7 @@ import { useChartSource } from 'hooks/chart/useChartSource';
 
 import { IDataChartCellMeta } from 'const/datadoc';
 
-import { getDataDocFromExecution } from 'resource/queryExecution';
+import { QueryExecutionResource } from 'resource/queryExecution';
 import { StatementExecutionPicker } from 'components/ExecutionPicker/StatementExecutionPicker';
 import { QueryExecutionPicker } from 'components/ExecutionPicker/QueryExecutionPicker';
 
@@ -101,7 +101,7 @@ export const DataDocChartCell = React.memo<IProps>(
                 sourceType === 'execution' &&
                 meta.data.source_ids[0] != null
             ) {
-                getDataDocFromExecution(meta.data.source_ids[0]).then(
+                QueryExecutionResource.getDataDoc(meta.data.source_ids[0]).then(
                     ({ data }) => {
                         setCellId(data.cell_id);
                         setQueryExecutionId(meta.data.source_ids[0]);

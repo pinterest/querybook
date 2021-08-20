@@ -2,50 +2,40 @@ import { IAdminMetastore, IMetastoreLoader } from 'const/admin';
 import { ITaskSchedule } from 'const/schedule';
 import ds from 'lib/datasource';
 
-export function getAdminMetastores() {
-    return ds.fetch<IAdminMetastore[]>('/admin/query_metastore/');
-}
+export const AdminMetastoreResource = {
+    getAll: () => ds.fetch<IAdminMetastore[]>('/admin/query_metastore/'),
+    getAllLoaders: () =>
+        ds.fetch<IMetastoreLoader[]>('/admin/query_metastore_loader/'),
 
-export function getAdminMetastoreLoaders() {
-    return ds.fetch<IMetastoreLoader[]>('/admin/query_metastore_loader/');
-}
+    getUpdateSchedule: (metastoreId: number) =>
+        ds.fetch<ITaskSchedule>(
+            `/schedule/name/update_metastore_${metastoreId}/`
+        ),
 
-export function getAdminMetastoreUpdateSchedule(metastoreId: number) {
-    return ds.fetch<ITaskSchedule>(
-        `/schedule/name/update_metastore_${metastoreId}/`
-    );
-}
+    create: (
+        name: IAdminMetastore['name'],
+        metastoreParams: IAdminMetastore['metastore_params'],
+        loader: IAdminMetastore['loader'],
+        aclControl: IAdminMetastore['acl_control']
+    ) =>
+        ds.save<IAdminMetastore>(`/admin/query_metastore/`, {
+            name,
+            metastore_params: metastoreParams,
+            loader,
+            acl_control: aclControl,
+        }),
 
-export function createAdminMetastore(
-    name: IAdminMetastore['name'],
-    metastoreParams: IAdminMetastore['metastore_params'],
-    loader: IAdminMetastore['loader'],
-    aclControl: IAdminMetastore['acl_control']
-) {
-    return ds.save<IAdminMetastore>(`/admin/query_metastore/`, {
-        name,
-        metastore_params: metastoreParams,
-        loader,
-        acl_control: aclControl,
-    });
-}
+    update: (metastoreId: number, metastore: Partial<IAdminMetastore>) =>
+        ds.update<IAdminMetastore>(
+            `/admin/query_metastore/${metastoreId}/`,
+            metastore
+        ),
 
-export function updateAdminMetastore(
-    metastoreId: number,
-    metastore: Partial<IAdminMetastore>
-) {
-    return ds.update<IAdminMetastore>(
-        `/admin/query_metastore/${metastoreId}/`,
-        metastore
-    );
-}
+    delete: (metastoreId: number) =>
+        ds.delete(`/admin/query_metastore/${metastoreId}/`),
 
-export function deleteAdminMetastore(metastoreId: number) {
-    return ds.delete(`/admin/query_metastore/${metastoreId}/`);
-}
-
-export function recoverAdminMetastore(metastoreId: number) {
-    return ds.update<IAdminMetastore>(
-        `/admin/query_metastore/${metastoreId}/recover/`
-    );
-}
+    recover: (metastoreId: number) =>
+        ds.update<IAdminMetastore>(
+            `/admin/query_metastore/${metastoreId}/recover/`
+        ),
+};

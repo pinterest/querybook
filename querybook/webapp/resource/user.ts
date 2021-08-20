@@ -1,15 +1,39 @@
 import { IUserInfo } from 'const/user';
 import ds from 'lib/datasource';
+import { IEnvironment } from 'redux/environment/types';
+import { INotifier } from 'redux/notificationService/types';
 
 export const UserResource = {
-    login: () =>
+    login: (username: string, password: string) =>
+        ds.save<IUserInfo>('/login/', {
+            username,
+            password,
+        }),
+    signup: (username: string, password: string, email: string) =>
+        ds.save('/signup/', {
+            username,
+            password,
+            email,
+        }),
+    logout: () => ds.fetch<null>('/logout/'),
+
+    getMyInfo: () =>
         ds.fetch<{
             uid: number;
             permission: number;
             info: IUserInfo;
         }>('/user/me/'),
-    logout: ds.fetch<null>('/logout/'),
     getUserByName: (name: string) => ds.fetch<IUserInfo>(`/user/name/${name}/`),
+    getLoginMethods: () =>
+        ds.fetch<{
+            has_login: boolean;
+            has_signup: boolean;
+        }>('/user/login_method/'),
+    getEnvironments: () =>
+        ds.fetch<
+            [visibleEnvironments: IEnvironment[], userEnvironmentIds: number[]]
+        >('/user/environment/'),
+    getNotifiers: () => ds.fetch<INotifier[]>('/user/notifiers/'),
 };
 
 export const UserSettingResource = {
@@ -23,39 +47,3 @@ export const UserSettingResource = {
             value,
         }),
 };
-
-export function loginUser() {
-    return ds.fetch<{
-        uid: number;
-        permission: number;
-        info: IUserInfo;
-    }>('/user/me/');
-}
-
-export function logoutUser() {
-    return ds.fetch<null>('/logout/');
-}
-
-export function getUserByName(name: string) {
-    return ds.fetch<IUserInfo>(`/user/name/${name}/`);
-}
-
-export function getUserSetting() {
-    return ds.fetch<Array<{ key: string; value: string }>>(`/user/setting/`);
-}
-
-export function setUserSettings(key: string, value: string) {
-    return ds.save<{
-        key: string;
-        value: string;
-    }>(`/user/setting/${key}/`, {
-        value,
-    });
-}
-
-export function getLoginMethods() {
-    return ds.fetch<{
-        has_login: boolean;
-        has_signup: boolean;
-    }>(`/user/login_method/`);
-}

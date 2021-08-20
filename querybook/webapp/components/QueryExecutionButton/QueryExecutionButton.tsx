@@ -6,13 +6,12 @@ import { connect } from 'react-redux';
 
 import { TooltipDirection } from 'const/tooltip';
 import { fetchActiveQueryExecutionForUser } from 'redux/queryExecutions/action';
-import { IQueryExecution } from 'redux/queryExecutions/types';
 import { IStoreState, Dispatch } from 'redux/store/types';
 import { Popover, PopoverLayout } from 'ui/Popover/Popover';
 import { Modal } from 'ui/Modal/Modal';
 import { QueryViewNavigator } from 'components/QueryViewNavigator/QueryViewNavigator';
 import { QueryView } from 'components/QueryView/QueryView';
-import { QueryExecutionStatus } from 'const/queryExecution';
+import { QueryExecutionStatus, IQueryExecution } from 'const/queryExecution';
 import { IconButton } from 'ui/Button/IconButton';
 
 import './QueryExecutionButton.scss';

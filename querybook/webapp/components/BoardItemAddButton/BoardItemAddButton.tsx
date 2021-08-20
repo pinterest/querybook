@@ -6,7 +6,7 @@ import { Dispatch } from 'redux/store/types';
 import { addBoardItem, deleteBoardItem } from 'redux/board/action';
 import { currentEnvironmentSelector } from 'redux/environment/selector';
 import { TooltipDirection } from 'const/tooltip';
-import { useDataFetch } from 'hooks/useDataFetch';
+import { useResource } from 'hooks/useResource';
 
 import { IconButton, IIconButtonProps } from 'ui/Button/IconButton';
 import { BoardItemType, IBoardRaw } from 'const/board';
@@ -17,6 +17,7 @@ import { BoardList } from 'components/BoardList/BoardList';
 
 import './BoardItemAddButton.scss';
 import { Loading } from 'ui/Loading/Loading';
+import { BoardResource } from 'resource/board';
 
 export interface ICreateDataDocButtonProps extends Partial<IIconButtonProps> {
     // from own Props
@@ -43,13 +44,16 @@ export const BoardItemAddButton: React.FunctionComponent<ICreateDataDocButtonPro
         data: boardIds,
         forceFetch: fetchBoardIds,
         isLoading: isLoadingBoardIds,
-    } = useDataFetch<number[]>({
-        url: `/board_item/${itemType}/${itemId}/board/`,
-        params: {
-            environment_id: environment.id,
-        },
-        fetchOnMount: false,
-    });
+    } = useResource(
+        React.useCallback(
+            () =>
+                BoardResource.getItemBoardIds(environment.id, itemType, itemId),
+            [environment.id, itemType, itemId]
+        ),
+        {
+            fetchOnMount: false,
+        }
+    );
 
     // Controls on/off of the board picker popover
     const [showSelectBoardPopover, setShowSelectBoardPopover] = useState(false);

@@ -387,7 +387,7 @@ def suggest_tables(metastore_id, prefix, limit=10):
         )
         for option in options
     ]
-    return {"data": texts}
+    return texts
 
 
 # /search/ but it is actually suggest

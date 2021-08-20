@@ -1,12 +1,13 @@
 import React, { useCallback, useMemo } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 
-import { QueryExecutionErrorType } from 'const/queryExecution';
 import {
+    QueryExecutionErrorType,
     IQueryError,
     IQueryExecution,
     IStatementExecution,
-} from 'redux/queryExecutions/types';
+} from 'const/queryExecution';
+
 import {
     tokenize,
     getQueryLinePosition,

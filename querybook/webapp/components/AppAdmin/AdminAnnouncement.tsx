@@ -2,7 +2,7 @@ import React from 'react';
 import * as Yup from 'yup';
 
 import { getQueryString } from 'lib/utils/query-string';
-import { useDataFetch } from 'hooks/useDataFetch';
+import { useResource } from 'hooks/useResource';
 import { IAdminAnnouncement } from 'const/admin';
 
 import { Card } from 'ui/Card/Card';
@@ -23,10 +23,8 @@ const announcementSchema = Yup.object().shape({
 });
 
 export const AdminAnnouncement: React.FunctionComponent = () => {
-    const { data: announcements, forceFetch: loadAnnouncements } = useDataFetch(
-        {
-            resource: AnnouncementResource.getAll,
-        }
+    const { data: announcements, forceFetch: loadAnnouncements } = useResource(
+        AnnouncementResource.getAll
     );
     const [displayNewForm, setDisplayNewForm] = React.useState<boolean>(
         () => getQueryString()['new'] === 'true'

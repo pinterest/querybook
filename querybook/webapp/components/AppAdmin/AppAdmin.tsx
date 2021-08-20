@@ -5,7 +5,7 @@ import { Route, Switch, useParams } from 'react-router-dom';
 import history from 'lib/router-history';
 import { getAppName } from 'lib/utils/global';
 import { IStoreState } from 'redux/store/types';
-import { useDataFetch } from 'hooks/useDataFetch';
+import { useResource } from 'hooks/useResource';
 
 import { AdminAppEntitySidebar } from 'components/AdminAppSidebar/AdminAppEntitySidebar';
 import { AdminAppNavigator } from 'components/AdminAppSidebar/AdminAppNavigator';
@@ -23,7 +23,11 @@ import { Card } from 'ui/Card/Card';
 import { FourOhThree } from 'ui/ErrorPage/FourOhThree';
 import { Icon } from 'ui/Icon/Icon';
 import { Sidebar } from 'ui/Sidebar/Sidebar';
-import * as AdminResource from 'resource/admin';
+import {
+    AdminEnvironmentResource,
+    AdminMetastoreResource,
+    AdminQueryEngineResource,
+} from 'resource/admin';
 
 import { AdminEntity } from './types';
 import './AppAdmin.scss';
@@ -34,15 +38,15 @@ const NAV_SIDEBAR_WIDTH = 200;
 const AppAdmin: React.FunctionComponent = () => {
     const { entity: selectedEntity }: { entity: AdminEntity } = useParams();
 
-    const { data: environments, forceFetch: loadEnvironments } = useDataFetch({
-        resource: AdminResource.getEnvironments,
-    });
-    const { data: metastores, forceFetch: loadMetastores } = useDataFetch({
-        resource: AdminResource.getAdminMetastores,
-    });
-    const { data: queryEngines, forceFetch: loadQueryEngines } = useDataFetch({
-        resource: AdminResource.getAdminQueryEngines,
-    });
+    const { data: environments, forceFetch: loadEnvironments } = useResource(
+        AdminEnvironmentResource.getAll
+    );
+    const { data: metastores, forceFetch: loadMetastores } = useResource(
+        AdminMetastoreResource.getAll
+    );
+    const { data: queryEngines, forceFetch: loadQueryEngines } = useResource(
+        AdminQueryEngineResource.getAll
+    );
 
     const isAdmin = useSelector(
         (state: IStoreState) => state.user.myUserInfo.isAdmin

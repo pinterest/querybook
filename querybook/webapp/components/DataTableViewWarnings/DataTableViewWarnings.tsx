@@ -35,7 +35,9 @@ export const DataTableViewWarnings: React.FC<IProps> = ({
     );
     const createWarning = useCallback(
         (item: IDataTableWarning) =>
-            dispatch(createTableWarnings(tableId, item.message, item.severity)),
+            dispatch(
+                createTableWarnings(tableId, item.message, item.severity)
+            ).then(() => setDisplayNewForm(false)),
         []
     );
     const updateWarning = useCallback(

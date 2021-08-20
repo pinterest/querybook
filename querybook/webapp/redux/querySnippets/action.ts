@@ -1,4 +1,4 @@
-import ds from 'lib/datasource';
+import { QuerySnippetResource } from 'resource/querySnippet';
 import {
     ThunkResult,
     IQueryForm,
@@ -19,8 +19,8 @@ export function fetchQuerySnippetIfNeeded(
 }
 
 function fetchQuerySnippet(id: number): ThunkResult<Promise<void>> {
-    return async (dispatch, getState) => {
-        const { data } = await ds.fetch(`/query_snippet/${id}/`);
+    return async (dispatch) => {
+        const { data } = await QuerySnippetResource.get(id);
         dispatch({
             type: '@@querySnippets/RECEIVE_QUERY_SNIPPET',
             payload: {
@@ -35,10 +35,10 @@ export function searchQuerySnippets(
 ): ThunkResult<Promise<void>> {
     return async (dispatch, getState) => {
         const environmentId = getState().environment.currentEnvironmentId;
-        const { data } = await ds.fetch(`/query_snippet_search/`, {
-            environment_id: environmentId,
-            ...searchParams,
-        });
+        const { data } = await QuerySnippetResource.search(
+            environmentId,
+            searchParams
+        );
         dispatch({
             type: '@@querySnippets/RECEIVE_QUERY_SNIPPETS',
             payload: {
@@ -62,16 +62,14 @@ export function updateQuerySnippet(
             golden,
         } = querySnippet;
 
-        const params = {
+        const { data } = await QuerySnippetResource.update(id, {
             context,
             title,
             description,
             engine_id: engineId,
             is_public: isPublic,
             golden,
-        };
-
-        const { data } = await ds.update(`/query_snippet/${id}/`, params);
+        });
         dispatch({
             type: '@@querySnippets/RECEIVE_QUERY_SNIPPET',
             payload: {
@@ -87,11 +85,7 @@ export function saveQuerySnippet(
     querySnippet: IQueryForm
 ): ThunkResult<Promise<IQuerySnippet>> {
     return async (dispatch) => {
-        const params = querySnippet;
-        const { data } = await ds.save(
-            '/query_snippet/',
-            (params as unknown) as Record<string, unknown>
-        );
+        const { data } = await QuerySnippetResource.create(querySnippet);
         dispatch({
             type: '@@querySnippets/RECEIVE_QUERY_SNIPPET',
             payload: {
@@ -106,10 +100,8 @@ export function saveQuerySnippet(
 export function deleteQuerySnippet(
     querySnippet: IQuerySnippet
 ): ThunkResult<Promise<void>> {
-    return async (dispatch, getState) => {
-        const { id } = querySnippet;
-
-        await ds.delete(`/query_snippet/${id}/`);
+    return async (dispatch) => {
+        await QuerySnippetResource.delete(querySnippet.id);
 
         dispatch({
             type: '@@querySnippets/REMOVE_QUERY_SNIPPET',

@@ -11,7 +11,7 @@ import {
 import { Dispatch } from 'redux/store/types';
 import { receiveDataDocs } from 'redux/dataDoc/action';
 import { receiveDataTable } from 'redux/dataSources/action';
-import * as BoardResource from 'resource/board';
+import { BoardResource } from 'resource/board';
 
 export const dataDocSchema = new schema.Entity('dataDoc');
 export const tableSchema = new schema.Entity('dataTable');
@@ -71,7 +71,7 @@ export function fetchBoards(
     return async (dispatch, getState) => {
         const state = getState();
         const rawBoards = (
-            await BoardResource.getBoards(
+            await BoardResource.getAll(
                 state.environment.currentEnvironmentId,
                 filterStr
             )
@@ -83,7 +83,7 @@ export function fetchBoards(
 
 export function fetchBoard(id: number): ThunkResult<Promise<IBoardRaw>> {
     return (dispatch) =>
-        BoardResource.getBoard(id).then(({ data: board }) => {
+        BoardResource.get(id).then(({ data: board }) => {
             receiveBoardWithItems(dispatch, board);
             return board;
         });
@@ -106,7 +106,7 @@ export function createBoard(
     return async (dispatch, getState) => {
         const state = getState();
         const board = (
-            await BoardResource.createBoard(
+            await BoardResource.create(
                 name,
                 state.environment.currentEnvironmentId,
                 state.user.myUserInfo.uid,
@@ -124,7 +124,7 @@ export function updateBoard(
     fields: IBoardUpdatableField
 ): ThunkResult<Promise<IBoardRaw>> {
     return async (dispatch) => {
-        const board = (await BoardResource.updateBoard(id, fields)).data;
+        const board = (await BoardResource.update(id, fields)).data;
         receiveBoardWithItems(dispatch, board);
         return board;
     };
@@ -132,7 +132,7 @@ export function updateBoard(
 
 export function deleteBoard(id: number): ThunkResult<Promise<void>> {
     return async (dispatch) => {
-        await BoardResource.deleteBoard(id);
+        await BoardResource.delete(id);
         dispatch({
             type: '@board/REMOVE_BOARD',
             payload: {
@@ -148,7 +148,7 @@ export function addBoardItem(
     itemId: number
 ): ThunkResult<Promise<void>> {
     return async (dispatch) => {
-        const { data: boardItem } = await BoardResource.addBoardItem(
+        const { data: boardItem } = await BoardResource.addItem(
             boardId,
             itemType,
             itemId
@@ -166,7 +166,7 @@ export function moveBoardItem(
     toIndex: number
 ): ThunkResult<Promise<void>> {
     return async (dispatch) => {
-        await BoardResource.moveBoardItem(boardId, fromIndex, toIndex);
+        await BoardResource.moveItem(boardId, fromIndex, toIndex);
 
         dispatch({
             type: '@@board/MOVE_BOARD_ITEM',
@@ -185,7 +185,7 @@ export function deleteBoardItem(
     itemId: number
 ): ThunkResult<Promise<void>> {
     return async (dispatch) => {
-        await BoardResource.deleteBoardItem(boardId, itemType, itemId);
+        await BoardResource.deleteItem(boardId, itemType, itemId);
         dispatch({
             type: '@@board/REMOVE_BOARD_ITEM',
             payload: {

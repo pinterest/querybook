@@ -6,8 +6,8 @@ import toast from 'react-hot-toast';
 import { generateFormattedDate } from 'lib/utils/datetime';
 import history from 'lib/router-history';
 
-import { useDataFetch } from 'hooks/useDataFetch';
-import * as TaskResource from 'resource/admin/task';
+import { useResource } from 'hooks/useResource';
+import { AdminTaskResource } from 'resource/admin/task';
 
 import { ITaskSchedule, TaskType } from 'const/schedule';
 import { TaskEditor } from 'components/Task/TaskEditor';
@@ -61,11 +61,9 @@ export const AdminTask: React.FC = () => {
     const [type, setType] = React.useState<TaskType>('prod');
     const [searchString, setSearchString] = React.useState<string>('');
 
-    const { data: taskList, forceFetch: loadTaskList } = useDataFetch<
-        ITaskSchedule[]
-    >({
-        resource: TaskResource.getTasks,
-    });
+    const { data: taskList, forceFetch: loadTaskList } = useResource(
+        AdminTaskResource.getAll
+    );
 
     const filteredTaskList = React.useMemo(
         () =>
@@ -80,10 +78,12 @@ export const AdminTask: React.FC = () => {
     const handleChangeEnabled = React.useCallback(
         async (taskId: number, val: boolean) => {
             toast.promise(
-                TaskResource.toggleTaskEnabled(taskId, val).then(({ data }) => {
-                    loadTaskList();
-                    return data;
-                }),
+                AdminTaskResource.toggleEnabled(taskId, val).then(
+                    ({ data }) => {
+                        loadTaskList();
+                        return data;
+                    }
+                ),
                 {
                     loading: 'Updating schedule...',
                     success: val ? 'Schedule enabled!' : 'Schedule disabled!',

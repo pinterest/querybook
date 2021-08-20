@@ -1,5 +1,7 @@
 import { getQueryString, replaceQueryString } from 'lib/utils/query-string';
-import ds from 'lib/datasource';
+import { queryMetastoresSelector } from 'redux/dataSources/selector';
+import { SearchDataDocResource, SearchTableResource } from 'resource/search';
+import { ISearchPreview } from 'const/search';
 import {
     ISearchResultResetAction,
     ISearchAddAuthorAction,
@@ -7,10 +9,8 @@ import {
     RESULT_PER_PAGE,
     SearchOrder,
     SearchType,
-    ISearchPreview,
     IResetSearchAction,
 } from './types';
-import { queryMetastoresSelector } from 'redux/dataSources/selector';
 
 export function mapQueryParamToState(): ThunkResult<void> {
     return (dispatch) => {
@@ -97,25 +97,22 @@ export function performSearch(): ThunkResult<Promise<ISearchPreview[]>> {
 
             const { currentPage, searchType } = searchState;
 
-            let searchEndPoint = null;
             const searchParams = mapStateToSearch(searchState);
 
-            if (searchType === SearchType.DataDoc) {
-                searchEndPoint = '/search/datadoc/';
-                searchParams['environment_id'] =
-                    state.environment.currentEnvironmentId;
-            } else if (searchType === SearchType.Table) {
-                searchEndPoint = '/search/tables/';
-                const selectedMetastoreId = state.dataTableSearch.metastoreId;
-                searchParams['metastore_id'] =
-                    selectedMetastoreId || queryMetastoresSelector(state)[0].id;
-                searchParams['fields'] = Object.keys(searchState.searchFields);
-            }
-
-            const searchRequest = ds.fetch<{
-                count: number;
-                results: ISearchPreview[];
-            }>(searchEndPoint, searchParams);
+            const searchRequest =
+                searchType === SearchType.DataDoc
+                    ? SearchDataDocResource.search({
+                          ...searchParams,
+                          environment_id:
+                              state.environment.currentEnvironmentId,
+                      })
+                    : SearchTableResource.search({
+                          ...searchParams,
+                          metastore_id:
+                              state.dataTableSearch.metastoreId ||
+                              queryMetastoresSelector(state)[0].id,
+                          fields: Object.keys(searchState.searchFields),
+                      });
 
             dispatch({
                 type: '@@search/SEARCH_STARTED',

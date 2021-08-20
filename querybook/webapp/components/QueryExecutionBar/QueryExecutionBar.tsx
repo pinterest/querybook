@@ -3,12 +3,11 @@ import { useSelector } from 'react-redux';
 import moment from 'moment';
 
 import { IStoreState } from 'redux/store/types';
-import { IQueryExecution } from 'redux/queryExecutions/types';
+import { IQueryExecution, QueryExecutionStatus } from 'const/queryExecution';
 import { generateFormattedDate } from 'lib/utils/datetime';
 
 import { CopyButton } from 'ui/CopyButton/CopyButton';
 import { QueryExecutionNotificationButton } from './QueryExecutionNotificationButton';
-import { QueryExecutionStatus } from 'const/queryExecution';
 
 import './QueryExecutionBar.scss';
 

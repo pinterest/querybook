@@ -1,11 +1,11 @@
 import * as React from 'react';
 import { useDispatch } from 'react-redux';
 
-import ds from 'lib/datasource';
 import history from 'lib/router-history';
 import { getAppName } from 'lib/utils/global';
 import * as EnvironmentActions from 'redux/environment/action';
 
+import { DemoResource } from 'resource/admin';
 import { Card } from 'ui/Card/Card';
 import { LoadingIcon } from 'ui/Loading/Loading';
 
@@ -21,7 +21,7 @@ export const SetUp: React.FunctionComponent = () => {
 
     const handleDemoSetUp = async () => {
         setDemoLoading(true);
-        const resp = await ds.save('/admin/demo_set_up/', {});
+        const resp = await DemoResource.setup();
         if (resp.data) {
             await fetchEnvironments();
             history.push(

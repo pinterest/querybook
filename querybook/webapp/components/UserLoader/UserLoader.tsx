@@ -5,7 +5,7 @@ import { UnauthPage } from 'components/UnauthPage/UnauthPage';
 import { formatError } from 'lib/utils/error';
 import * as UserActions from 'redux/user/action';
 import { IStoreState, Dispatch } from 'redux/store/types';
-import { getLoginMethods } from 'resource/user';
+import { UserResource } from 'resource/user';
 import { Loader } from 'ui/Loader/Loader';
 import { ErrorPage } from 'ui/ErrorPage/ErrorPage';
 
@@ -32,7 +32,7 @@ export const UserLoader: React.FunctionComponent = ({ children }) => {
                 try {
                     const {
                         data: { has_login: hasLogin, has_signup: hasSignup },
-                    } = await getLoginMethods();
+                    } = await UserResource.getLoginMethods();
                     setShowSignup(hasSignup);
                     setShowUnauth(hasLogin);
                 } catch (e2) {

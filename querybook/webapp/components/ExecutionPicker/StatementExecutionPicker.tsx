@@ -1,7 +1,7 @@
 import React from 'react';
 
 import { queryStatusToStatusIcon, Status } from 'const/queryStatus';
-import { IStatementExecution } from 'redux/queryExecutions/types';
+import { IStatementExecution } from 'const/queryExecution';
 
 import { Dropdown } from 'ui/Dropdown/Dropdown';
 import { StatusIcon } from 'ui/StatusIcon/StatusIcon';

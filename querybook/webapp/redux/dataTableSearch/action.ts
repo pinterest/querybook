@@ -1,4 +1,4 @@
-import ds from 'lib/datasource';
+import { SearchTableResource } from 'resource/search';
 import {
     ThunkResult,
     IDataTableSearchResultResetAction,
@@ -52,10 +52,9 @@ function searchDataTable(): ThunkResult<Promise<ITableSearchResult[]>> {
             if (state.searchRequest) {
                 state.searchRequest.cancel();
             }
-            const searchRequest = ds.fetch<{
-                results: ITableSearchResult[];
-                count: number;
-            }>('/search/tables/', mapStateToSearch(state));
+            const searchRequest = SearchTableResource.searchConcise(
+                mapStateToSearch(state)
+            );
             dispatch(resetSearchResult());
             dispatch({
                 type: '@@dataTableSearch/DATA_TABLE_SEARCH_STARTED',
@@ -112,10 +111,9 @@ export function getMoreDataTable(): ThunkResult<Promise<ITableSearchResult[]>> {
                 offset: resultsCount,
             };
 
-            const searchRequest = ds.fetch<{
-                results: ITableSearchResult[];
-                count: number;
-            }>('/search/tables/', searchParams);
+            const searchRequest = SearchTableResource.searchConcise(
+                searchParams
+            );
 
             dispatch({
                 type: '@@dataTableSearch/DATA_TABLE_SEARCH_STARTED',

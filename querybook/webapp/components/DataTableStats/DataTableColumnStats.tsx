@@ -1,27 +1,22 @@
 import * as React from 'react';
 
-import { TableStatValue } from 'const/metastore';
-import { useDataFetch } from 'hooks/useDataFetch';
+import { useResource } from 'hooks/useResource';
 import { KeyContentDisplay } from 'ui/KeyContentDisplay/KeyContentDisplay';
 import { TableStats } from './DataTableStatsCommon';
+import { TableColumnResource } from 'resource/table';
 
 interface IProps {
     columnId: number;
 }
 
-interface ITableColumnStats {
-    id: number;
-    column_id: number;
-    key: string;
-    value: TableStatValue;
-    uid: number;
-}
 export const DataTableColumnStats: React.FunctionComponent<IProps> = ({
     columnId,
 }) => {
-    const { data: tableColumnStats } = useDataFetch<ITableColumnStats[]>({
-        url: `/column/stats/${columnId}/`,
-    });
+    const { data: tableColumnStats } = useResource(
+        React.useCallback(() => TableColumnResource.getStats(columnId), [
+            columnId,
+        ])
+    );
 
     const statsDOM = (tableColumnStats || []).map((tableColumnStat) => (
         <KeyContentDisplay

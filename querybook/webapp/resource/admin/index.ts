@@ -6,3 +6,5 @@ export * from './metastore';
 export * from './queryEngine';
 export * from './task';
 export * from './userRole';
+export * from './demo';
+export * from './auditLog';

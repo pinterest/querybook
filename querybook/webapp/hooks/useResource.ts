@@ -42,13 +42,12 @@ function dataFetchReducer<T>(state: IDataFetchState<T>, action) {
     }
 }
 
-interface IFetchArgs<T> {
-    resource: IResource<T>;
+interface IFetchArgs {
     cancelFetch?: boolean;
     fetchOnMount?: boolean;
 }
 
-export function useDataFetch<T = any>(args: IFetchArgs<T>) {
+export function useResource<T>(resource: IResource<T>, args: IFetchArgs = {}) {
     const [version, setVersion] = useState(0);
     const initialState: IDataFetchState<T> = {
         isLoading: true,
@@ -80,7 +79,7 @@ export function useDataFetch<T = any>(args: IFetchArgs<T>) {
             });
 
             try {
-                request = fetchParams.resource();
+                request = resource();
                 const result = await request;
 
                 if (!didCancel) {
@@ -111,7 +110,7 @@ export function useDataFetch<T = any>(args: IFetchArgs<T>) {
                 request.cancel();
             }
         };
-    }, [fetchParams.resource, version]);
+    }, [resource, version]);
 
     // const doFetch = (url = ,params = {}, cancelFetch = false) => {
     const forceFetch = useCallback(() => {
@@ -121,7 +120,7 @@ export function useDataFetch<T = any>(args: IFetchArgs<T>) {
         });
     }, []);
 
-    if (!fetchParams.resource) {
+    if (!resource) {
         throw new Error('Please provide a resource resource');
     }
 

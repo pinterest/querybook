@@ -14,7 +14,7 @@ import {
     IDataSchema,
     IDataColumn,
 } from 'const/metastore';
-import { getTableSamplesQuery } from 'resource/metastore/table';
+import { TableSamplesResource } from 'resource/table';
 
 import { AsyncButton } from 'ui/AsyncButton/AsyncButton';
 import { Loading } from 'ui/Loading/Loading';
@@ -162,7 +162,10 @@ export const DataTableViewSamples: React.FunctionComponent<IDataTableViewSamples
 
     const getDataTableSamplesQuery = React.useCallback(
         async (tableId, params: ITableSampleParams, language: string) => {
-            const { data: query } = await getTableSamplesQuery(tableId, params);
+            const { data: query } = await TableSamplesResource.getQuery(
+                tableId,
+                params
+            );
             setRawSamplesQuery(format(query, language));
         },
         []
@@ -191,7 +194,7 @@ export const DataTableViewSamples: React.FunctionComponent<IDataTableViewSamples
                     )
                 }
             >
-                {({ submitForm, isSubmitting, isValid, values }) => (
+                {({ submitForm, isSubmitting, values }) => (
                     <div className="mb12">
                         <div className="DataTableViewSamples-top flex-row">
                             <SimpleField

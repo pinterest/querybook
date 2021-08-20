@@ -1,19 +1,14 @@
-import ds from 'lib/datasource';
-
-import {
-    IQueryEngine,
-    IEngineStatusData,
-    QueryEngineStatus,
-} from 'const/queryEngine';
+import { IQueryEngine, QueryEngineStatus } from 'const/queryEngine';
 import { ThunkResult } from './types';
 import { queryEngineByIdEnvSelector } from './selector';
+import { QueryEngineResource } from 'resource/queryEngine';
 
-export function loadQueryEngine(): ThunkResult<Promise<IQueryEngine>> {
+export function loadQueryEngine(): ThunkResult<Promise<IQueryEngine[]>> {
     return async (dispatch, getState) => {
         const environmentId = getState().environment.currentEnvironmentId;
-        const { data } = await ds.fetch('/query_engine/', {
-            environment_id: environmentId,
-        });
+        const { data } = await QueryEngineResource.getByEnvironmentId(
+            environmentId
+        );
         dispatch({
             type: '@@queryEngine/RECEIVE',
             payload: {
@@ -46,8 +41,8 @@ export function fetchSystemStatus(
                 },
             });
 
-            const { data } = await ds.fetch<IEngineStatusData>(
-                `/query_engine/${engineId}/status/`
+            const { data } = await QueryEngineResource.getSystemStatus(
+                engineId
             );
 
             dispatch({

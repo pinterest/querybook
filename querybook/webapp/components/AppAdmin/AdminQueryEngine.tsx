@@ -8,7 +8,7 @@ import { sendConfirm } from 'lib/querybookUI';
 import history from 'lib/router-history';
 import { generateFormattedDate } from 'lib/utils/datetime';
 import { titleize } from 'lib/utils';
-import { useDataFetch } from 'hooks/useDataFetch';
+import { useResource } from 'hooks/useResource';
 
 import { AdminAuditLogButton } from 'components/AdminAuditLog/AdminAuditLogButton';
 
@@ -30,7 +30,7 @@ import { AdminDeletedList } from './AdminDeletedList';
 import { Content } from 'ui/Content/Content';
 import { Link } from 'ui/Link/Link';
 import { IAdminMetastore, IAdminQueryEngine } from 'const/admin';
-import * as AdminQueryEngineResource from 'resource/admin/queryEngine';
+import { AdminQueryEngineResource } from 'resource/admin/queryEngine';
 import './AdminQueryEngine.scss';
 
 interface IProps {
@@ -48,13 +48,13 @@ export const AdminQueryEngine: React.FunctionComponent<IProps> = ({
 }) => {
     const { id: queryEngineId } = useParams();
 
-    const { data: queryEngineTemplates } = useDataFetch({
-        resource: AdminQueryEngineResource.getQueryEngineTemplate,
-    });
+    const { data: queryEngineTemplates } = useResource(
+        AdminQueryEngineResource.getTemplates
+    );
 
-    const { data: engineStatusCheckerNames } = useDataFetch({
-        resource: AdminQueryEngineResource.getQueryEngineCheckerNames,
-    });
+    const { data: engineStatusCheckerNames } = useResource(
+        AdminQueryEngineResource.getCheckerNames
+    );
 
     const querybookLanguages: string[] = React.useMemo(
         () => [
@@ -103,9 +103,7 @@ export const AdminQueryEngine: React.FunctionComponent<IProps> = ({
 
     const createQueryEngine = React.useCallback(
         async (queryEngine: IAdminQueryEngine) => {
-            const { data } = await AdminQueryEngineResource.createQueryEngine(
-                queryEngine
-            );
+            const { data } = await AdminQueryEngineResource.create(queryEngine);
 
             await loadQueryEngines();
             history.push(`/admin/query_engine/${data.id}/`);
@@ -117,7 +115,7 @@ export const AdminQueryEngine: React.FunctionComponent<IProps> = ({
 
     const saveQueryEngine = React.useCallback(
         async (queryEngine: Partial<IAdminQueryEngine>) => {
-            const { data } = await AdminQueryEngineResource.updateQueryEngine(
+            const { data } = await AdminQueryEngineResource.update(
                 queryEngineId,
                 queryEngine
             );
@@ -166,9 +164,9 @@ export const AdminQueryEngine: React.FunctionComponent<IProps> = ({
                         </Content>
                     ),
                     onConfirm: () =>
-                        AdminQueryEngineResource.deleteQueryEngine(
-                            queryEngine.id
-                        ).then(resolve),
+                        AdminQueryEngineResource.delete(queryEngine.id).then(
+                            resolve
+                        ),
                     onDismiss: reject,
                 });
             }),
@@ -176,9 +174,7 @@ export const AdminQueryEngine: React.FunctionComponent<IProps> = ({
     );
 
     const recoverQueryEngine = React.useCallback(async (engineId: number) => {
-        const { data } = await AdminQueryEngineResource.recoverQueryEngine(
-            engineId
-        );
+        const { data } = await AdminQueryEngineResource.recover(engineId);
 
         await loadQueryEngines();
         history.push(`/admin/query_engine/${engineId}/`);

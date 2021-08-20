@@ -1,10 +1,10 @@
 import type { ContentState } from 'draft-js';
 
 import type { IDataCellMeta } from 'const/datadoc';
-import ds from 'lib/datasource';
 import { BatchManager, spreadMergeFunction } from 'lib/batch/batch-manager';
 import dataDocSocket from 'lib/data-doc/datadoc-socketio';
 import { convertIfContentStateToHTML } from 'lib/richtext/serialize';
+import { DataDocResource } from 'resource/dataDoc';
 
 export class DataDocSaveManager {
     private dataDocSaverByDocId: Record<
@@ -24,7 +24,7 @@ export class DataDocSaveManager {
                     if (dataDocSocket.activeDataDocId === docId) {
                         return dataDocSocket.updateDataDoc(docId, fields);
                     } else {
-                        return ds.update(`/datadoc/${docId}/`, fields);
+                        return DataDocResource.update(docId, fields);
                     }
                 },
                 batchFrequency: frequency,
@@ -80,7 +80,7 @@ export class DataCellSaveManager {
                     if (dataDocSocket.activeDataDocId === docId) {
                         return dataDocSocket.updateDataCell(cellId, fields);
                     } else {
-                        return ds.update(`/data_cell/${cellId}/`, { fields });
+                        return DataDocResource.updateCell(cellId, fields);
                     }
                 },
                 batchFrequency: frequency,

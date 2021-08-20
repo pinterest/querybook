@@ -34,14 +34,18 @@ export function updateValue<T>(
 // First boolean represents True if valid, False otherwise
 // Second string represents the error Message
 // Third string represents the path
-type validationResp = [boolean, string, string];
+type ValidationResp = [valid: boolean, errorMessage: string, subpath: string];
 
-export function validateForm(value: any, form: AllFormField): validationResp {
+export function validateForm(value: any, form: AllFormField): ValidationResp {
     const fieldType = form.field_type;
 
     if (fieldType === 'list') {
         if (value == null) {
             return [false, 'Invalid value for list', ''];
+        }
+
+        if (!Array.isArray(value)) {
+            return [false, 'Value is not array', ''];
         }
 
         const arrayForm = form as IExpandableFormField;
@@ -85,7 +89,7 @@ export function validateForm(value: any, form: AllFormField): validationResp {
     return [true, null, null];
 }
 
-function validateFormField(value: any, field: IFormField): validationResp {
+function validateFormField(value: any, field: IFormField): ValidationResp {
     const { required, regex } = field;
     if (required) {
         if (!value) {

@@ -1,6 +1,6 @@
 import { createSelector } from 'reselect';
+import { IQueryExecution } from 'const/queryExecution';
 import { IStoreState } from 'redux/store/types';
-import { IQueryExecution } from './types';
 
 const queryExecutionIdSetSelector = (state: IStoreState, cellId: number) =>
     cellId in state.queryExecutions.dataCellIdQueryExecution

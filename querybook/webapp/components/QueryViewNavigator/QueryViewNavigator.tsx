@@ -8,7 +8,7 @@ import {
     queryEngineSelector,
     queryEngineByIdEnvSelector,
 } from 'redux/queryEngine/selector';
-import { IQueryExecution } from 'redux/queryExecutions/types';
+import { QueryExecutionStatus, IQueryExecution } from 'const/queryExecution';
 import * as queryExecutionsActions from 'redux/queryExecutions/action';
 import { IStoreState, Dispatch } from 'redux/store/types';
 
@@ -16,7 +16,6 @@ import { QueryViewFilter } from './QueryViewFilter';
 import { QueryResult } from './QueryResult';
 
 import './QueryViewNavigator.scss';
-import { QueryExecutionStatus } from 'const/queryExecution';
 
 interface IOwnProps {
     onQueryExecutionClick: (queryExecution: IQueryExecution) => any;

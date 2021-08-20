@@ -9,15 +9,14 @@ import { IAdminEnvironment, IAdminQueryEngine } from 'const/admin';
 import { QueryEngineSelect } from 'components/QueryEngineSelect/QueryEngineSelect';
 import { UserEnvironmentEditor } from 'components/UserEnvironmentEditor/UserEnvironmentEditor';
 import { AdminAuditLogButton } from 'components/AdminAuditLog/AdminAuditLogButton';
-import * as AdminResource from 'resource/admin';
+import { AdminEnvironmentResource } from 'resource/admin';
 import { Card } from 'ui/Card/Card';
 import { GenericCRUD } from 'ui/GenericCRUD/GenericCRUD';
 import { Level } from 'ui/Level/Level';
 import { SimpleField } from 'ui/FormikField/SimpleField';
 
 import { IconButton } from 'ui/Button/IconButton';
-import { useDataFetch } from 'hooks/useDataFetch';
-import { IQueryEngine } from 'const/queryEngine';
+import { useResource } from 'hooks/useResource';
 import { DraggableList } from 'ui/DraggableList/DraggableList';
 
 import { AdminDeletedList } from './AdminDeletedList';
@@ -51,7 +50,7 @@ export const AdminEnvironment: React.FunctionComponent<IProps> = ({
     const { id: environmentId } = useParams();
     const createEnvironment = React.useCallback(
         async (environment: IAdminEnvironment) => {
-            const { data } = await AdminResource.createEnvironment(
+            const { data } = await AdminEnvironmentResource.create(
                 environment.name,
                 environment.description,
                 environment.image,
@@ -70,7 +69,7 @@ export const AdminEnvironment: React.FunctionComponent<IProps> = ({
 
     const saveEnvironment = React.useCallback(
         async (environment: Partial<IAdminEnvironment>) => {
-            const { data } = await AdminResource.updateEnvironment(
+            const { data } = await AdminEnvironmentResource.update(
                 environmentId,
                 environment
             );
@@ -82,12 +81,12 @@ export const AdminEnvironment: React.FunctionComponent<IProps> = ({
 
     const deleteEnvironment = React.useCallback(
         (environment: IAdminEnvironment) =>
-            AdminResource.deleteEnvironment(environment.id),
+            AdminEnvironmentResource.delete(environment.id),
         []
     );
 
     const recoverEnvironment = React.useCallback(async (envId: number) => {
-        const { data } = await AdminResource.recoverEnvironment(envId);
+        const { data } = await AdminEnvironmentResource.recover(envId);
 
         await loadEnvironments();
         history.push(`/admin/environment/${envId}/`);
@@ -314,16 +313,16 @@ const AdminEnvironmentQueryEngine: React.FC<{
     const {
         data: environmentEngines,
         forceFetch: fetchEnvironmentEngines,
-    } = useDataFetch<IQueryEngine[]>({
-        resource: React.useCallback(
-            () => AdminResource.getQueryEnginesInEnvironment(environmentId),
+    } = useResource(
+        React.useCallback(
+            () => AdminEnvironmentResource.getQueryEngines(environmentId),
             [environmentId]
-        ),
-    });
+        )
+    );
 
     const handleAddQueryEngine = React.useCallback(
         async (engineId: number) => {
-            await AdminResource.addQueryEngineToEnvironment(
+            await AdminEnvironmentResource.addQueryEngine(
                 environmentId,
                 engineId
             );
@@ -334,7 +333,7 @@ const AdminEnvironmentQueryEngine: React.FC<{
 
     const handleDeleteQueryEngine = React.useCallback(
         async (engineId: number) => {
-            await AdminResource.removeQueryEngineToEnvironment(
+            await AdminEnvironmentResource.removeQueryEngine(
                 environmentId,
                 engineId
             );
@@ -345,7 +344,7 @@ const AdminEnvironmentQueryEngine: React.FC<{
 
     const handleSwapQueryEngine = React.useCallback(
         async (fromIndex: number, toIndex: number) => {
-            await AdminResource.swapQueryEnginesInEnvironment(
+            await AdminEnvironmentResource.swapQueryEngines(
                 environmentId,
                 fromIndex,
                 toIndex

@@ -47,6 +47,10 @@ export interface IQueryExecution {
     total?: number;
 }
 
+export type IRawQueryExecution = IQueryExecution & {
+    statement_executions: IStatementExecution[];
+};
+
 export interface IStatementExecution {
     id: number;
 

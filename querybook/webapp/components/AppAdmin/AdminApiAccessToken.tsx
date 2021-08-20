@@ -4,7 +4,7 @@ import moment from 'moment';
 import { IAdminApiAccessToken } from 'const/admin';
 import { UserName } from 'components/UserBadge/UserName';
 import { generateFormattedDate } from 'lib/utils/datetime';
-import { getAllAdminTokens, toggleAdminTokenEnable } from 'resource/admin';
+import { AdminTokenResource } from 'resource/admin';
 import { Table, TableAlign } from 'ui/Table/Table';
 import { ToggleSwitch } from 'ui/ToggleSwitch/ToggleSwitch';
 
@@ -39,7 +39,7 @@ export const AdminApiAccessToken: React.FunctionComponent = () => {
     );
 
     const getAllApiAccessTokens = React.useCallback(async () => {
-        const resp = await getAllAdminTokens();
+        const resp = await AdminTokenResource.getAll();
         setTokenList(resp.data);
     }, []);
 
@@ -49,7 +49,7 @@ export const AdminApiAccessToken: React.FunctionComponent = () => {
 
     const handleChangeEnabled = React.useCallback(
         async (tokenId: number, val: boolean) => {
-            const resp = await toggleAdminTokenEnable(tokenId, val);
+            const resp = await AdminTokenResource.toggleEnabled(tokenId, val);
             if (resp) {
                 getAllApiAccessTokens();
             }

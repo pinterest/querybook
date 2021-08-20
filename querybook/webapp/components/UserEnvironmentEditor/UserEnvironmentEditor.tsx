@@ -1,20 +1,17 @@
 import React from 'react';
 import { IUserInfo } from 'const/user';
-import { InfinityScroll } from 'ui/InfinityScroll/InfinityScroll';
-
-import ds from 'lib/datasource';
-import { usePaginatedFetch } from 'hooks/usePaginatedFetch';
-
 import { UserSelect } from 'components/UserSelect/UserSelect';
+import { usePaginatedResource } from 'hooks/usePaginatedResource';
+import { AdminEnvironmentResource } from 'resource/admin';
 import { AsyncButton } from 'ui/AsyncButton/AsyncButton';
-
-import './UserEnvironmentEditor.scss';
+import { InfinityScroll } from 'ui/InfinityScroll/InfinityScroll';
 import {
     FormField,
     FormFieldInputSectionRow,
     FormFieldInputSection,
 } from 'ui/Form/FormField';
 import { IconButton } from 'ui/Button/IconButton';
+import './UserEnvironmentEditor.scss';
 
 interface IProps {
     environmentId: number;
@@ -25,9 +22,12 @@ export const UserEnvironmentEditor: React.FunctionComponent<IProps> = ({
 }) => {
     const [selectedUserId, setSelectedUserId] = React.useState<number>(null);
 
-    const { data, hasMore, fetchMore, reset } = usePaginatedFetch<IUserInfo>({
-        url: `/admin/environment/${environmentId}/users/`,
-    });
+    const { data, hasMore, fetchMore, reset } = usePaginatedResource(
+        React.useMemo(
+            () => AdminEnvironmentResource.getPaginatedUsers(environmentId),
+            [environmentId]
+        )
+    );
 
     const userRenderer = React.useCallback(
         (user: IUserInfo) => (
@@ -35,11 +35,10 @@ export const UserEnvironmentEditor: React.FunctionComponent<IProps> = ({
                 <IconButton
                     icon="x"
                     onClick={() =>
-                        ds
-                            .delete(
-                                `/admin/environment/${environmentId}/user/${user.id}/`
-                            )
-                            .then(reset)
+                        AdminEnvironmentResource.removeUser(
+                            environmentId,
+                            user.id
+                        ).then(reset)
                     }
                 />
                 <div className="UserEnvironmentEditor-username">
@@ -66,14 +65,13 @@ export const UserEnvironmentEditor: React.FunctionComponent<IProps> = ({
                         onClick={
                             selectedUserId
                                 ? () =>
-                                      ds
-                                          .save(
-                                              `/admin/environment/${environmentId}/user/${selectedUserId}/`
-                                          )
-                                          .then(() => {
-                                              setSelectedUserId(null);
-                                              reset();
-                                          })
+                                      AdminEnvironmentResource.addUser(
+                                          environmentId,
+                                          selectedUserId
+                                      ).then(() => {
+                                          setSelectedUserId(null);
+                                          reset();
+                                      })
                                 : null
                         }
                         disabled={!selectedUserId}

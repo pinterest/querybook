@@ -14,6 +14,7 @@ import * as Utils from 'lib/utils';
 import { getStatementExecutionResultDownloadUrl } from 'lib/query-execution';
 import { getExporterAuthentication } from 'lib/result-export';
 import { tableToTSV } from 'lib/utils/table-export';
+import { StatementResource } from 'resource/queryExecution';
 
 import { Dropdown } from 'ui/Dropdown/Dropdown';
 import { Button, TextButton } from 'ui/Button/Button';
@@ -26,7 +27,6 @@ import { validateForm, updateValue } from 'ui/SmartForm/formFunctions';
 import { SmartForm } from 'ui/SmartForm/SmartForm';
 import { IconButton } from 'ui/Button/IconButton';
 import './ResultExportDropdown.scss';
-import { exportStatementExecution } from 'resource/queryExecution';
 
 interface IProps {
     statementExecution: IStatementExecution;
@@ -147,7 +147,7 @@ export const ResultExportDropdown: React.FunctionComponent<IProps> = ({
                 if (formData) {
                     params['exporter_params'] = formData;
                 }
-                const { data } = await exportStatementExecution(
+                const { data } = await StatementResource.export(
                     statementId,
                     exporter.name,
                     formData

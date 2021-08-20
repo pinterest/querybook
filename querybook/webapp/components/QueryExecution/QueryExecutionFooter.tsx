@@ -1,13 +1,13 @@
 import React from 'react';
 import moment from 'moment';
 
-import { QueryExecutionStatus } from 'const/queryExecution';
-import { UserName } from 'components/UserBadge/UserName';
-import { generateFormattedDate, formatDuration } from 'lib/utils/datetime';
 import {
+    QueryExecutionStatus,
     IQueryExecution,
     IStatementExecution,
-} from 'redux/queryExecutions/types';
+} from 'const/queryExecution';
+import { UserName } from 'components/UserBadge/UserName';
+import { generateFormattedDate, formatDuration } from 'lib/utils/datetime';
 
 export const QueryExecutionFooter: React.FunctionComponent<{
     queryExecution: IQueryExecution;

@@ -6,7 +6,7 @@ import localStore from 'lib/local-store';
 import { sanitizeAndExtraMarkdown } from 'lib/markdown';
 import { navigateWithinEnv } from 'lib/utils/query-string';
 import { ChangeLogValue, CHANGE_LOG_KEY } from 'lib/local-store/const';
-import * as ChangelogResource from 'resource/utils/changelog';
+import { ChangeLogResource } from 'resource/utils/changelog';
 
 import { Markdown } from 'ui/Markdown/Markdown';
 import { Content } from 'ui/Content/Content';
@@ -45,14 +45,14 @@ export const ChangeLog: React.FunctionComponent = () => {
             if (currentLog) {
                 setChangeLogContent([currentLog.content]);
             } else {
-                ChangelogResource.getChangeLogByDate(
-                    changeLogDate
-                ).then(({ data }) => setChangeLogContent([data]));
+                ChangeLogResource.getByDate(changeLogDate).then(({ data }) =>
+                    setChangeLogContent([data])
+                );
             }
         } else {
             Promise.all([
                 localStore.get<ChangeLogValue>(CHANGE_LOG_KEY),
-                ChangelogResource.getChangeLogs(),
+                ChangeLogResource.getAll(),
             ]).then(([localStorageDate, { data }]) => {
                 setChangeLogList(data);
 

@@ -4,11 +4,7 @@ import {
     IQueryExecution,
     IQueryExecutionNotification,
 } from 'const/queryExecution';
-import {
-    createQueryExecutionNotification,
-    deleteQueryExecutionNotification,
-    getQueryExecutionNotification,
-} from 'resource/queryExecution';
+import { QueryExecutionNotificationResource } from 'resource/queryExecution';
 
 interface IProps {
     queryExecution: IQueryExecution;
@@ -26,7 +22,9 @@ export const QueryExecutionNotificationButton: React.FunctionComponent<IProps> =
     const [loading, setLoading] = useState(true);
 
     useEffect(() => {
-        const request = getQueryExecutionNotification(queryExecution.id);
+        const request = QueryExecutionNotificationResource.get(
+            queryExecution.id
+        );
 
         request.then(({ data }) => {
             setLoading(false);
@@ -44,12 +42,14 @@ export const QueryExecutionNotificationButton: React.FunctionComponent<IProps> =
         setLoading(true);
 
         if (notification) {
-            deleteQueryExecutionNotification(queryExecution.id).then(() => {
-                setLoading(false);
-                setNotification(null);
-            });
+            QueryExecutionNotificationResource.delete(queryExecution.id).then(
+                () => {
+                    setLoading(false);
+                    setNotification(null);
+                }
+            );
         } else {
-            createQueryExecutionNotification(queryExecution.id).then(
+            QueryExecutionNotificationResource.create(queryExecution.id).then(
                 ({ data }) => {
                     setLoading(false);
                     setNotification(data);

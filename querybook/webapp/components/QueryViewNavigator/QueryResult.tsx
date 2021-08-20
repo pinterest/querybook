@@ -3,7 +3,7 @@ import moment from 'moment';
 import clsx from 'clsx';
 
 import { queryStatusToStatusIcon } from 'const/queryStatus';
-import { IQueryExecution } from 'redux/queryExecutions/types';
+import { IQueryExecution } from 'const/queryExecution';
 import { IQueryEngine } from 'const/queryEngine';
 import { UserName } from 'components/UserBadge/UserName';
 import { StatusIcon } from 'ui/StatusIcon/StatusIcon';

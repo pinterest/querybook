@@ -13,8 +13,8 @@ import {
     DATA_DOC_NAV_SECTION_KEY,
     DataDocNavSectionValue,
 } from 'lib/local-store/const';
-import ds from 'lib/datasource';
 import { ISetGlobalStateAction } from 'redux/globalState/types';
+import { AnnouncementResource } from 'resource/admin';
 
 export function setConfirmation(props): ISetConfirmationAction {
     return {
@@ -31,7 +31,7 @@ export function removeConfirmation(): IRemoveConfirmationAction {
 
 export function loadAnnouncements(): ThunkResult<Promise<IAnnouncement[]>> {
     return async (dispatch) => {
-        const { data } = await ds.fetch('/announcement/');
+        const { data } = await AnnouncementResource.getAll();
         dispatch({
             type: '@@querybookUI/RECEIVE_ANNOUNCEMENTS',
             payload: data,
