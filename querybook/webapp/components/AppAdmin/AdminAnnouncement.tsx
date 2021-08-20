@@ -1,9 +1,9 @@
 import React from 'react';
 import * as Yup from 'yup';
 
-import ds from 'lib/datasource';
 import { getQueryString } from 'lib/utils/query-string';
-import { useDataFetch } from 'hooks/useDataFetch';
+import { useResource } from 'hooks/useResource';
+import { IAdminAnnouncement } from 'const/admin';
 
 import { Card } from 'ui/Card/Card';
 import { Icon } from 'ui/Icon/Icon';
@@ -11,9 +11,10 @@ import { GenericCRUD } from 'ui/GenericCRUD/GenericCRUD';
 import { Loading } from 'ui/Loading/Loading';
 import { SimpleField } from 'ui/FormikField/SimpleField';
 
-import './AdminAnnouncement.scss';
 import { AdminAuditLogButton } from 'components/AdminAuditLog/AdminAuditLogButton';
 import { Level } from 'ui/Level/Level';
+import { AnnouncementResource } from 'resource/admin';
+import './AdminAnnouncement.scss';
 
 const announcementSchema = Yup.object().shape({
     url_regex: Yup.string().min(0),
@@ -21,23 +22,10 @@ const announcementSchema = Yup.object().shape({
     can_dismiss: Yup.bool(),
 });
 
-interface IAdminAnnouncement {
-    id: number;
-    created_at: number;
-    updated_at: number;
-    message: string;
-    uid: number;
-    url_regex: string;
-    can_dismiss: boolean;
-}
-
 export const AdminAnnouncement: React.FunctionComponent = () => {
-    const {
-        data: announcements,
-        forceFetch: loadAnnouncements,
-    }: { data: IAdminAnnouncement[]; forceFetch } = useDataFetch({
-        url: '/admin/announcement/',
-    });
+    const { data: announcements, forceFetch: loadAnnouncements } = useResource(
+        AnnouncementResource.getAll
+    );
     const [displayNewForm, setDisplayNewForm] = React.useState<boolean>(
         () => getQueryString()['new'] === 'true'
     );
@@ -49,30 +37,30 @@ export const AdminAnnouncement: React.FunctionComponent = () => {
     const createAnnouncement = React.useCallback(
         async (announcement: IAdminAnnouncement) => {
             setDisplayNewForm(false);
-            const { data } = await ds.save(`/admin/announcement/`, {
-                message: announcement.message,
-                url_regex: announcement.url_regex,
-                can_dismiss: announcement.can_dismiss,
-            });
-            return data as IAdminAnnouncement;
+            const { data } = await AnnouncementResource.create(
+                announcement.message,
+                announcement.url_regex,
+                announcement.can_dismiss
+            );
+            return data;
         },
         []
     );
 
     const saveAnnouncement = React.useCallback(
         (id: number) => async (announcement: Partial<IAdminAnnouncement>) => {
-            const { data } = await ds.update(
-                `/admin/announcement/${id}/`,
+            const { data } = await AnnouncementResource.update(
+                id,
                 announcement
             );
-            return data as IAdminAnnouncement;
+            return data;
         },
         []
     );
 
     const deleteAnnouncement = React.useCallback(
         (announcement: IAdminAnnouncement) =>
-            ds.delete(`/admin/announcement/${announcement.id}/`),
+            AnnouncementResource.delete(announcement.id),
         []
     );
 

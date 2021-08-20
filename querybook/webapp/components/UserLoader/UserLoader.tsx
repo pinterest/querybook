@@ -1,12 +1,13 @@
 import React from 'react';
 import { useSelector, useDispatch } from 'react-redux';
-import ds from 'lib/datasource';
+
 import { UnauthPage } from 'components/UnauthPage/UnauthPage';
+import { formatError } from 'lib/utils/error';
 import * as UserActions from 'redux/user/action';
 import { IStoreState, Dispatch } from 'redux/store/types';
+import { UserResource } from 'resource/user';
 import { Loader } from 'ui/Loader/Loader';
 import { ErrorPage } from 'ui/ErrorPage/ErrorPage';
-import { formatError } from 'lib/utils/error';
 
 export const UserLoader: React.FunctionComponent = ({ children }) => {
     const [showUnauthPage, setShowUnauth] = React.useState(false);
@@ -31,10 +32,7 @@ export const UserLoader: React.FunctionComponent = ({ children }) => {
                 try {
                     const {
                         data: { has_login: hasLogin, has_signup: hasSignup },
-                    } = await ds.fetch<{
-                        has_login: boolean;
-                        has_signup: boolean;
-                    }>(`/user/login_method/`);
+                    } = await UserResource.getLoginMethods();
                     setShowSignup(hasSignup);
                     setShowUnauth(hasLogin);
                 } catch (e2) {

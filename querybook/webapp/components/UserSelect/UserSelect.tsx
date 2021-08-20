@@ -2,10 +2,10 @@ import React from 'react';
 import AsyncSelect, { Props as AsyncProps } from 'react-select/async';
 import { debounce } from 'lodash';
 
-import ds from 'lib/datasource';
 import { makeReactSelectStyle } from 'lib/utils/react-select';
 import { overlayRoot } from 'ui/Overlay/Overlay';
 import { UserAvatar } from 'components/UserBadge/UserAvatar';
+import { SearchUserResource } from 'resource/search';
 
 interface IUserSearchResultRow {
     id: number;
@@ -19,17 +19,15 @@ function getUserName(user: IUserSearchResultRow) {
 
 const loadOptions = debounce(
     (name, callback) => {
-        ds.fetch('/search/user/', { name }).then(
-            ({ data }: { data: IUserSearchResultRow[] }) => {
-                callback(
-                    data.map((user) => ({
-                        value: user.id,
-                        label: <UserSelectOptionRow user={user} />,
-                        name: getUserName(user),
-                    }))
-                );
-            }
-        );
+        SearchUserResource.search({ name }).then(({ data }) => {
+            callback(
+                data.map((user) => ({
+                    value: user.id,
+                    label: <UserSelectOptionRow user={user} />,
+                    name: getUserName(user),
+                }))
+            );
+        });
     },
     1000,
     {

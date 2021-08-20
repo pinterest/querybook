@@ -5,13 +5,12 @@ import { useParams } from 'react-router-dom';
 
 import { sendConfirm } from 'lib/querybookUI';
 
-import ds from 'lib/datasource';
 import history from 'lib/router-history';
 import { generateFormattedDate } from 'lib/utils/datetime';
-import { useDataFetch } from 'hooks/useDataFetch';
+import { titleize } from 'lib/utils';
+import { useResource } from 'hooks/useResource';
 
 import { AdminAuditLogButton } from 'components/AdminAuditLog/AdminAuditLogButton';
-import { IEnvironment } from 'redux/environment/types';
 
 import { Card } from 'ui/Card/Card';
 import { Loading } from 'ui/Loading/Loading';
@@ -27,30 +26,12 @@ import { Loader } from 'ui/Loader/Loader';
 import { SimpleField } from 'ui/FormikField/SimpleField';
 import { Level } from 'ui/Level/Level';
 
-import { IAdminMetastore } from './AdminMetastore';
 import { AdminDeletedList } from './AdminDeletedList';
 import { Content } from 'ui/Content/Content';
 import { Link } from 'ui/Link/Link';
-
+import { IAdminMetastore, IAdminQueryEngine } from 'const/admin';
+import { AdminQueryEngineResource } from 'resource/admin/queryEngine';
 import './AdminQueryEngine.scss';
-import { titleize } from 'lib/utils';
-
-export interface IAdminQueryEngine {
-    id: number;
-    created_at: number;
-    updated_at: number;
-    deleted_at: number;
-    name: string;
-    language: string;
-    description: string;
-
-    metastore_id: number;
-    executor: string;
-    executor_params: Record<string, any>;
-    status_checker: string;
-
-    environments?: IEnvironment[];
-}
 
 interface IProps {
     queryEngines: IAdminQueryEngine[];
@@ -67,19 +48,13 @@ export const AdminQueryEngine: React.FunctionComponent<IProps> = ({
 }) => {
     const { id: queryEngineId } = useParams();
 
-    const { data: queryEngineTemplates } = useDataFetch<
-        Array<{
-            language: string;
-            name: string;
-            template: TemplatedForm;
-        }>
-    >({
-        url: `/admin/query_engine_template/`,
-    });
+    const { data: queryEngineTemplates } = useResource(
+        AdminQueryEngineResource.getTemplates
+    );
 
-    const { data: engineStatusCheckerNames } = useDataFetch<string[]>({
-        url: `/admin/query_engine_status_checker/`,
-    });
+    const { data: engineStatusCheckerNames } = useResource(
+        AdminQueryEngineResource.getCheckerNames
+    );
 
     const querybookLanguages: string[] = React.useMemo(
         () => [
@@ -128,32 +103,23 @@ export const AdminQueryEngine: React.FunctionComponent<IProps> = ({
 
     const createQueryEngine = React.useCallback(
         async (queryEngine: IAdminQueryEngine) => {
-            const { data } = await ds.save(`/admin/query_engine/`, {
-                name: queryEngine.name,
-                description: queryEngine.description,
-                language: queryEngine.language,
-                executor: queryEngine.executor,
-                executor_params: queryEngine.executor_params,
-                metastore_id: queryEngine.metastore_id ?? null,
-                status_checker: queryEngine.status_checker,
-            });
+            const { data } = await AdminQueryEngineResource.create(queryEngine);
 
             await loadQueryEngines();
             history.push(`/admin/query_engine/${data.id}/`);
 
-            return data as IAdminQueryEngine;
+            return data;
         },
         []
     );
 
     const saveQueryEngine = React.useCallback(
         async (queryEngine: Partial<IAdminQueryEngine>) => {
-            const { data } = await ds.update(
-                `/admin/query_engine/${queryEngineId}/`,
+            const { data } = await AdminQueryEngineResource.update(
+                queryEngineId,
                 queryEngine
             );
-
-            return data as IAdminQueryEngine;
+            return data;
         },
         [queryEngineId]
     );
@@ -198,9 +164,9 @@ export const AdminQueryEngine: React.FunctionComponent<IProps> = ({
                         </Content>
                     ),
                     onConfirm: () =>
-                        ds
-                            .delete(`/admin/query_engine/${queryEngine.id}/`)
-                            .then(resolve),
+                        AdminQueryEngineResource.delete(queryEngine.id).then(
+                            resolve
+                        ),
                     onDismiss: reject,
                 });
             }),
@@ -208,14 +174,12 @@ export const AdminQueryEngine: React.FunctionComponent<IProps> = ({
     );
 
     const recoverQueryEngine = React.useCallback(async (engineId: number) => {
-        const { data } = await ds.save(
-            `/admin/query_engine/${engineId}/recover/`
-        );
+        const { data } = await AdminQueryEngineResource.recover(engineId);
 
         await loadQueryEngines();
         history.push(`/admin/query_engine/${engineId}/`);
 
-        return data as IAdminQueryEngine;
+        return data;
     }, []);
 
     const itemValidator = React.useCallback(

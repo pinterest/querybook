@@ -5,6 +5,7 @@ import { useDispatch } from 'react-redux';
 import { generateFormattedDate } from 'lib/utils/datetime';
 import { Dispatch } from 'redux/store/types';
 import { getEnumEntries } from 'lib/typescript';
+import { UserName } from 'components/UserBadge/UserName';
 import { SimpleField } from 'ui/FormikField/SimpleField';
 import { Card } from 'ui/Card/Card';
 import { GenericCRUD } from 'ui/GenericCRUD/GenericCRUD';
@@ -17,7 +18,6 @@ import { Icon } from 'ui/Icon/Icon';
 import { FormWrapper } from 'ui/Form/FormWrapper';
 
 import './DataTableViewWarnings.scss';
-import { UserName } from 'components/UserBadge/UserName';
 
 interface IProps {
     tableId: number;
@@ -35,7 +35,12 @@ export const DataTableViewWarnings: React.FC<IProps> = ({
     );
     const createWarning = useCallback(
         (item: IDataTableWarning) =>
-            dispatch(createTableWarnings(tableId, item.message, item.severity)),
+            dispatch(
+                createTableWarnings(tableId, item.message, item.severity)
+            ).then((newWarning) => {
+                setDisplayNewForm(false);
+                return newWarning;
+            }),
         []
     );
     const updateWarning = useCallback(

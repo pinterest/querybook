@@ -1,13 +1,13 @@
 import React from 'react';
 import * as DraftJs from 'draft-js';
 
-import ds from 'lib/datasource';
 import { transformData } from 'lib/chart/chart-data-transformation';
 import { getDataTransformationOptions } from 'lib/chart/chart-meta-processing';
 import { useChartSource } from 'hooks/chart/useChartSource';
 
 import { IDataChartCellMeta } from 'const/datadoc';
 
+import { QueryExecutionResource } from 'resource/queryExecution';
 import { StatementExecutionPicker } from 'components/ExecutionPicker/StatementExecutionPicker';
 import { QueryExecutionPicker } from 'components/ExecutionPicker/QueryExecutionPicker';
 
@@ -101,12 +101,12 @@ export const DataDocChartCell = React.memo<IProps>(
                 sourceType === 'execution' &&
                 meta.data.source_ids[0] != null
             ) {
-                ds.fetch(
-                    `/query_execution/${meta.data.source_ids[0]}/datadoc_cell_info/`
-                ).then((resp) => {
-                    setCellId(resp.data.cell_id);
-                    setQueryExecutionId(meta.data.source_ids[0]);
-                });
+                QueryExecutionResource.getDataDoc(meta.data.source_ids[0]).then(
+                    ({ data }) => {
+                        setCellId(data.cell_id);
+                        setQueryExecutionId(meta.data.source_ids[0]);
+                    }
+                );
             }
         }, [meta.data, previousQueryCellId]);
 

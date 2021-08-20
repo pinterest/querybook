@@ -3,7 +3,7 @@ import { Line } from 'react-chartjs-2';
 import 'chartjs-adapter-moment';
 import { generateFormattedDate } from 'lib/utils/datetime';
 import { ImpressionType } from 'const/impression';
-import { useDataFetch } from 'hooks/useDataFetch';
+import { useResource } from 'hooks/useResource';
 
 import { UserName } from 'components/UserBadge/UserName';
 
@@ -12,6 +12,7 @@ import { Table } from 'ui/Table/Table';
 import { Tabs } from 'ui/Tabs/Tabs';
 
 import './ImpressionWidgetMenu.scss';
+import { ImpressionResource } from 'resource/impression';
 
 interface IProps {
     type: ImpressionType;
@@ -44,15 +45,12 @@ export const ImpressionWidgetMenu: React.FunctionComponent<IProps> = (
 };
 
 const ImpressionWidgetUsers: React.FC<IProps> = ({ type, itemId }) => {
-    const { data: users, isLoading } = useDataFetch<
-        Array<{
-            latest_view_at: number;
-            uid: number;
-            views_count: number;
-        }>
-    >({
-        url: `/impression/${type}/${itemId}/users/`,
-    });
+    const { data: users, isLoading } = useResource(
+        React.useCallback(() => ImpressionResource.getUsers(type, itemId), [
+            type,
+            itemId,
+        ])
+    );
 
     if (isLoading) {
         return <Loading />;
@@ -93,11 +91,12 @@ const ImpressionWidgetUsers: React.FC<IProps> = ({ type, itemId }) => {
 };
 
 const ImpressionWidgetTimeseries: React.FC<IProps> = ({ type, itemId }) => {
-    const { data: viewsDates, isLoading } = useDataFetch<
-        Array<[number, number]>
-    >({
-        url: `/impression/${type}/${itemId}/timeseries/`,
-    });
+    const { data: viewsDates, isLoading } = useResource(
+        React.useCallback(
+            () => ImpressionResource.getTimeSeries(type, itemId),
+            [type, itemId]
+        )
+    );
 
     if (isLoading) {
         return <Loading />;

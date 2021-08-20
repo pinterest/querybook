@@ -4,7 +4,6 @@ import { Formik } from 'formik';
 
 import * as dataSourcesActions from 'redux/dataSources/action';
 import { IStoreState, Dispatch } from 'redux/store/types';
-import ds from 'lib/datasource';
 import { format } from 'lib/sql-helper/sql-formatter';
 import { downloadString } from 'lib/utils';
 import { tableToCSV, tableToTSV } from 'lib/utils/table-export';
@@ -15,10 +14,10 @@ import {
     IDataSchema,
     IDataColumn,
 } from 'const/metastore';
+import { TableSamplesResource } from 'resource/table';
+
 import { AsyncButton } from 'ui/AsyncButton/AsyncButton';
-
 import { Loading } from 'ui/Loading/Loading';
-
 import { ITableSampleParams } from 'redux/dataSources/types';
 import { SimpleField } from 'ui/FormikField/SimpleField';
 import { useInterval } from 'hooks/useInterval';
@@ -163,9 +162,9 @@ export const DataTableViewSamples: React.FunctionComponent<IDataTableViewSamples
 
     const getDataTableSamplesQuery = React.useCallback(
         async (tableId, params: ITableSampleParams, language: string) => {
-            const { data: query } = await ds.fetch<string>(
-                `/table/${tableId}/raw_samples_query/`,
-                params as Record<string, any>
+            const { data: query } = await TableSamplesResource.getQuery(
+                tableId,
+                params
             );
             setRawSamplesQuery(format(query, language));
         },
@@ -195,7 +194,7 @@ export const DataTableViewSamples: React.FunctionComponent<IDataTableViewSamples
                     )
                 }
             >
-                {({ submitForm, isSubmitting, isValid, values }) => (
+                {({ submitForm, isSubmitting, values }) => (
                     <div className="mb12">
                         <div className="DataTableViewSamples-top flex-row">
                             <SimpleField

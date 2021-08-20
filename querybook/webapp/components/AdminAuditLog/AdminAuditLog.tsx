@@ -1,13 +1,13 @@
 import React from 'react';
 import { LogItemType, ActionType } from 'const/adminAuditLog';
-import { usePaginatedFetch } from 'hooks/usePaginatedFetch';
+import { usePaginatedResource } from 'hooks/usePaginatedResource';
 import { Table } from 'ui/Table/Table';
 import { generateFormattedDate } from 'lib/utils/datetime';
 import { UserBadge } from 'components/UserBadge/UserBadge';
 import { AsyncButton } from 'ui/AsyncButton/AsyncButton';
 import { Loading } from 'ui/Loading/Loading';
 import { TagGroup, Tag } from 'ui/Tag/Tag';
-import { titleize } from 'lib/utils';
+import { AuditLogResource } from 'resource/admin';
 
 export interface IAdminAuditLogProps {
     itemType?: LogItemType;
@@ -48,30 +48,28 @@ export const AdminAuditLog: React.FC<IAdminAuditLogProps> = ({
     itemType,
     itemId,
 }) => {
-    const filters = {};
-    if (itemType != null) {
-        filters['item_type'] = itemType;
-    }
-    if (itemId != null) {
-        filters['item_id'] = itemId;
-    }
-
     const {
         data,
         isLoading,
         fetchMore,
         hasMore,
-    } = usePaginatedFetch<IAdminAuditLog>({
-        url: `/admin/audit_log/`,
-        batchSize: PAGE_SIZE,
-        params: filters,
-    });
+    } = usePaginatedResource<IAdminAuditLog>(
+        React.useMemo(
+            () => AuditLogResource.getPaginatedLogs(itemType, itemId),
+            [itemType, itemId]
+        ),
+        { batchSize: PAGE_SIZE }
+    );
 
-    const topDOM = filters && (
+    const filters = [
+        ['Item Type', itemType] as const,
+        ['Item Id', itemId] as const,
+    ].filter((v) => v[1] != null);
+    const topDOM = filters.length && (
         <div className="pv4 mvauto">
-            {Object.entries(filters).map(([key, value]) => (
+            {filters.map(([key, value]) => (
                 <TagGroup key={key}>
-                    <Tag>{titleize(key, '_', ' ')}</Tag>
+                    <Tag>{key}</Tag>
                     <Tag highlighted>{value}</Tag>
                 </TagGroup>
             ))}

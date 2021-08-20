@@ -1,5 +1,5 @@
-import ds from 'lib/datasource';
-import { IQueryResultExporter } from 'redux/queryExecutions/types';
+import { IQueryResultExporter } from 'const/queryExecution';
+import { StatementResource } from 'resource/queryExecution';
 
 export function getExporterAuthentication(
     exporter: IQueryResultExporter
@@ -10,11 +10,8 @@ export function getExporterAuthentication(
             return;
         }
 
-        const { data: url } = await ds.fetch(
-            '/query_execution_exporter/auth/',
-            {
-                export_name: exporter.name,
-            }
+        const { data: url } = await StatementResource.getExporterAuth(
+            exporter.name
         );
         if (!url) {
             resolve();

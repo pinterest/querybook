@@ -1,17 +1,17 @@
 import { normalize, schema } from 'normalizr';
 import { ThunkResult, IReceiveBoardsAction } from './types';
-import ds from 'lib/datasource';
 import { arrayGroupByField } from 'lib/utils';
 import {
     IBoardWithItemIds,
     IBoard,
     IBoardRaw,
     BoardItemType,
-    IBoardItem,
+    IBoardUpdatableField,
 } from 'const/board';
 import { Dispatch } from 'redux/store/types';
 import { receiveDataDocs } from 'redux/dataDoc/action';
 import { receiveDataTable } from 'redux/dataSources/action';
+import { BoardResource } from 'resource/board';
 
 export const dataDocSchema = new schema.Entity('dataDoc');
 export const tableSchema = new schema.Entity('dataTable');
@@ -70,11 +70,11 @@ export function fetchBoards(
 ): ThunkResult<Promise<IBoard[]>> {
     return async (dispatch, getState) => {
         const state = getState();
-        const rawBoards: IBoard[] = (
-            await ds.fetch('/board/', {
-                environment_id: state.environment.currentEnvironmentId,
-                filter_str: filterStr,
-            })
+        const rawBoards = (
+            await BoardResource.getAll(
+                state.environment.currentEnvironmentId,
+                filterStr
+            )
         ).data;
         dispatch(receiveBoards(rawBoards));
         return rawBoards;
@@ -82,8 +82,8 @@ export function fetchBoards(
 }
 
 export function fetchBoard(id: number): ThunkResult<Promise<IBoardRaw>> {
-    return async (dispatch) =>
-        ds.fetch<IBoardRaw>(`/board/${id}/`).then(({ data: board }) => {
+    return (dispatch) =>
+        BoardResource.get(id).then(({ data: board }) => {
             receiveBoardWithItems(dispatch, board);
             return board;
         });
@@ -105,14 +105,14 @@ export function createBoard(
 ): ThunkResult<Promise<IBoardRaw>> {
     return async (dispatch, getState) => {
         const state = getState();
-        const board: IBoardRaw = (
-            await ds.save('/board/', {
+        const board = (
+            await BoardResource.create(
                 name,
-                environment_id: state.environment.currentEnvironmentId,
-                owner_uid: state.user.myUserInfo.uid,
+                state.environment.currentEnvironmentId,
+                state.user.myUserInfo.uid,
                 description,
-                public: publicBoard,
-            })
+                publicBoard
+            )
         ).data;
         receiveBoardWithItems(dispatch, board);
         return board;
@@ -121,15 +121,10 @@ export function createBoard(
 
 export function updateBoard(
     id: number,
-    fields: {
-        public?: boolean;
-        description?: string;
-        name?: string;
-    }
+    fields: IBoardUpdatableField
 ): ThunkResult<Promise<IBoardRaw>> {
     return async (dispatch) => {
-        const board: IBoardRaw = (await ds.update(`/board/${id}/`, fields))
-            .data;
+        const board = (await BoardResource.update(id, fields)).data;
         receiveBoardWithItems(dispatch, board);
         return board;
     };
@@ -137,7 +132,7 @@ export function updateBoard(
 
 export function deleteBoard(id: number): ThunkResult<Promise<void>> {
     return async (dispatch) => {
-        await ds.delete(`/board/${id}/`);
+        await BoardResource.delete(id);
         dispatch({
             type: '@board/REMOVE_BOARD',
             payload: {
@@ -153,8 +148,10 @@ export function addBoardItem(
     itemId: number
 ): ThunkResult<Promise<void>> {
     return async (dispatch) => {
-        const { data: boardItem } = await ds.save<IBoardItem>(
-            `/board/${boardId}/${itemType}/${itemId}/`
+        const { data: boardItem } = await BoardResource.addItem(
+            boardId,
+            itemType,
+            itemId
         );
         dispatch({
             type: '@@board/RECEIVE_BOARD_ITEM',
@@ -168,8 +165,8 @@ export function moveBoardItem(
     fromIndex: number,
     toIndex: number
 ): ThunkResult<Promise<void>> {
-    return async (dispatch, getState) => {
-        await ds.save(`/board/${boardId}/move/${fromIndex}/${toIndex}/`);
+    return async (dispatch) => {
+        await BoardResource.moveItem(boardId, fromIndex, toIndex);
 
         dispatch({
             type: '@@board/MOVE_BOARD_ITEM',
@@ -188,7 +185,7 @@ export function deleteBoardItem(
     itemId: number
 ): ThunkResult<Promise<void>> {
     return async (dispatch) => {
-        await ds.delete(`/board/${boardId}/${itemType}/${itemId}/`);
+        await BoardResource.deleteItem(boardId, itemType, itemId);
         dispatch({
             type: '@@board/REMOVE_BOARD_ITEM',
             payload: {

@@ -1,7 +1,10 @@
 import React, { useCallback, useState, useEffect } from 'react';
 
-import ds from 'lib/datasource';
-import { IQueryExecution } from 'redux/queryExecutions/types';
+import {
+    IQueryExecution,
+    IQueryExecutionNotification,
+} from 'const/queryExecution';
+import { QueryExecutionNotificationResource } from 'resource/queryExecution';
 
 interface IProps {
     queryExecution: IQueryExecution;
@@ -12,12 +15,15 @@ export const QueryExecutionNotificationButton: React.FunctionComponent<IProps> =
     queryExecution,
     notificationPreference,
 }) => {
-    const [notification, setNotification] = useState<boolean>(null);
+    const [
+        notification,
+        setNotification,
+    ] = useState<IQueryExecutionNotification>(null);
     const [loading, setLoading] = useState(true);
 
     useEffect(() => {
-        const request = ds.fetch(
-            `/query_execution_notification/${queryExecution.id}/`
+        const request = QueryExecutionNotificationResource.get(
+            queryExecution.id
         );
 
         request.then(({ data }) => {
@@ -36,14 +42,14 @@ export const QueryExecutionNotificationButton: React.FunctionComponent<IProps> =
         setLoading(true);
 
         if (notification) {
-            ds.delete(
-                `/query_execution_notification/${queryExecution.id}/`
-            ).then(() => {
-                setLoading(false);
-                setNotification(null);
-            });
+            QueryExecutionNotificationResource.delete(queryExecution.id).then(
+                () => {
+                    setLoading(false);
+                    setNotification(null);
+                }
+            );
         } else {
-            ds.save(`/query_execution_notification/${queryExecution.id}/`).then(
+            QueryExecutionNotificationResource.create(queryExecution.id).then(
                 ({ data }) => {
                     setLoading(false);
                     setNotification(data);

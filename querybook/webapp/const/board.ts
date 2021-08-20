@@ -28,6 +28,12 @@ export interface IBoard {
     owner_uid: number;
 }
 
+export interface IBoardUpdatableField {
+    public?: boolean;
+    description?: string;
+    name?: string;
+}
+
 export interface IBoardItem {
     id: number;
     board_id: number;

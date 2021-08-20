@@ -6,9 +6,9 @@ import {
     useRef,
     Reducer,
 } from 'react';
-import stringify from 'fast-json-stable-stringify';
 
-import ds, { ICancelablePromise } from 'lib/datasource';
+import { ICancelablePromise } from 'lib/datasource';
+import { IPaginatedResource } from 'resource/types';
 
 interface IDataFetchState<T = any> {
     isLoading: boolean;
@@ -54,22 +54,15 @@ function dataFetchReducer<T>(state: IDataFetchState<T>, action) {
 }
 
 interface IFetchArgs {
-    url: string;
-    params?: Record<string | number, unknown>;
-    type?: 'fetch' | 'save' | 'delete' | 'update';
     initialOffset?: number;
     batchSize?: number;
     fetchOnInit?: boolean;
 }
 
-export function usePaginatedFetch<T>({
-    url,
-    params = {},
-    type = 'fetch',
-    initialOffset = 0,
-    batchSize = 50,
-    fetchOnInit = true,
-}: IFetchArgs) {
+export function usePaginatedResource<T>(
+    resource: IPaginatedResource<T>,
+    { initialOffset = 0, batchSize = 50, fetchOnInit = true }: IFetchArgs = {}
+) {
     const [version, setVersion] = useState(0);
     const [shouldFetch, setShouldFetch] = useState(fetchOnInit);
     const [offset, setOffset] = useState(initialOffset);
@@ -84,7 +77,7 @@ export function usePaginatedFetch<T>({
             type: 'INIT_STATE',
         });
         setOffset(initialOffset);
-    }, [url, stringify(params), type, initialOffset, version]);
+    }, [resource, initialOffset, version]);
 
     useEffect(() => {
         let didCancel = false;
@@ -96,11 +89,7 @@ export function usePaginatedFetch<T>({
             });
 
             try {
-                request = ds[type](url, {
-                    ...params,
-                    limit: batchSize,
-                    offset,
-                });
+                request = resource(batchSize, offset);
                 promiseRef.current = request;
 
                 const result = await request;
@@ -133,7 +122,7 @@ export function usePaginatedFetch<T>({
                 request.cancel();
             }
         };
-    }, [stringify(params), url, type, batchSize, offset, shouldFetch, version]);
+    }, [resource, batchSize, offset, shouldFetch, version]);
 
     const fetchMore = useCallback(async () => {
         if (promiseRef.current) {

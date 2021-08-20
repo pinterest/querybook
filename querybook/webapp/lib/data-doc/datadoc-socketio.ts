@@ -2,9 +2,9 @@ import type { Socket } from 'socket.io-client';
 
 import { IAccessRequest } from 'const/accessRequest';
 import { IDataDocEditor, IDataCellMeta } from 'const/datadoc';
-import ds from 'lib/datasource';
 import SocketIOManager from 'lib/socketio-manager';
-import { IQueryExecution } from 'redux/queryExecutions/types';
+import { IQueryExecution } from 'const/queryExecution';
+import { DataDocResource } from 'resource/dataDoc';
 
 interface IDataDocSocketPromise<T> {
     args: T;
@@ -165,9 +165,9 @@ export class DataDocSocket {
         cellId: number,
         fields: { meta?: IDataCellMeta; context?: string }
     ) =>
-        ds
-            .update(`/data_cell/${cellId}/`, { fields, sid: this.socketId })
-            .then((resp) => resp.data);
+        DataDocResource.updateCell(cellId, fields, this.socketId).then(
+            (resp) => resp.data
+        );
 
     public deleteDataCell = (docId: number, cellId: number) => {
         this.socket.emit('delete_data_cell', docId, cellId);

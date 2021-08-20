@@ -2,7 +2,7 @@ import { QueryExecutionAccessList } from 'components/QueryExecutionAccessList/Qu
 import React, { useRef, useState } from 'react';
 import { Button } from 'ui/Button/Button';
 import { Popover } from 'ui/Popover/Popover';
-import { IQueryExecution } from 'redux/queryExecutions/types';
+import { IQueryExecution } from 'const/queryExecution';
 import { useSelector, useDispatch } from 'react-redux';
 import * as queryExecutionActions from 'redux/queryExecutions/action';
 import * as queryExecutionSelectors from 'redux/queryExecutions/selector';

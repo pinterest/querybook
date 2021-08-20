@@ -1,6 +1,6 @@
 import { normalize, schema } from 'normalizr';
 import type { ContentState } from 'draft-js';
-import JSONBig from 'json-bigint';
+import { isEqual } from 'lodash';
 
 import {
     IDataTable,
@@ -13,15 +13,24 @@ import {
     DataTableWarningSeverity,
     ITopQueryUser,
     IPaginatedQuerySampleFilters,
-    IDataTableOwnership,
-    ITableStats,
     ITopQueryConcurrences,
+    IFunctionDescription,
+    IUpdateTableParams,
+    IDataTableWarningUpdateFields,
 } from 'const/metastore';
+import { convertRawToContentState } from 'lib/richtext/serialize';
 import {
-    convertContentStateToHTML,
-    convertRawToContentState,
-} from 'lib/richtext/serialize';
-import ds from 'lib/datasource';
+    QueryMetastoreResource,
+    TableColumnResource,
+    TableLineageResource,
+    TableOwnershipResource,
+    TableQueryExampleResource,
+    TableResource,
+    TableSamplesResource,
+    TableStatsResource,
+    TableWarningResource,
+} from 'resource/table';
+import { FunctionDocumentationResource } from 'resource/utils/functionDocumentation';
 import {
     IReceiveDataTableAction,
     ThunkResult,
@@ -33,12 +42,6 @@ import {
     IReceiveQueryExampleIdsAction,
     ITableSampleParams,
 } from './types';
-import { isEqual } from 'lodash';
-
-interface IUpdateTableParams {
-    description: ContentState;
-    golden: boolean;
-}
 
 const dataTableColumnSchema = new schema.Entity(
     'dataColumn',
@@ -64,13 +67,9 @@ const dataTableSchema = new schema.Entity('dataTable', {
 
 export function fetchQueryMetastore(): ThunkResult<Promise<IQueryMetastore[]>> {
     return async (dispatch, getState) => {
-        const {
-            data,
-        }: {
-            data: IQueryMetastore[];
-        } = await ds.fetch('/query_metastore/', {
-            environment_id: getState().environment.currentEnvironmentId,
-        });
+        const { data } = await QueryMetastoreResource.getAll(
+            getState().environment.currentEnvironmentId
+        );
 
         dispatch({
             type: '@@dataSources/RECEIVE_QUERY_METASTORES',
@@ -85,7 +84,7 @@ export function fetchQueryMetastore(): ThunkResult<Promise<IQueryMetastore[]>> {
 
 export function fetchDataTable(tableId: number): ThunkResult<Promise<any>> {
     return async (dispatch) => {
-        const { data } = await ds.fetch(`/table/${tableId}/`);
+        const { data } = await TableResource.get(tableId);
         const normalizedData = normalize(data, dataTableSchema);
         const {
             dataSchema = {},
@@ -106,7 +105,7 @@ export function fetchDataTable(tableId: number): ThunkResult<Promise<any>> {
 }
 
 export function fetchDataTableIfNeeded(
-    tableId
+    tableId: number
 ): ThunkResult<Promise<IDataTable>> {
     return (dispatch, getState) => {
         if (tableId) {
@@ -128,11 +127,10 @@ export function fetchDataTableByName(
 ): ThunkResult<Promise<IDataTable>> {
     return async (dispatch) => {
         try {
-            const { data } = await ds.fetch(
-                `/table_name/${schemaName}/${tableName}/`,
-                {
-                    metastore_id: metastoreId,
-                }
+            const { data } = await TableResource.getByName(
+                metastoreId,
+                schemaName,
+                tableName
             );
 
             const normalizedData = normalize(data, dataTableSchema);
@@ -181,21 +179,11 @@ export function fetchDataTableByNameIfNeeded(
 
 export function updateDataTable(
     tableId: number,
-    { description, golden }: IUpdateTableParams
+    params: IUpdateTableParams
 ): ThunkResult<Promise<void>> {
     return async (dispatch) => {
-        const params: Partial<IDataTable> = {};
-
-        if (description != null) {
-            params.description = convertContentStateToHTML(description);
-        }
-        if (golden != null) {
-            params.golden = golden;
-        }
-
         try {
-            const { data } = await ds.update(`/table/${tableId}/`, params);
-
+            const { data } = await TableResource.update(tableId, params);
             const normalizedData = normalize(data, dataTableSchema);
             const { dataTable = {}, dataColumn = {} } = normalizedData.entities;
 
@@ -214,11 +202,11 @@ export function updateDataColumnDescription(
     description: ContentState
 ): ThunkResult<Promise<void>> {
     return async (dispatch) => {
-        const params = {
-            description: convertContentStateToHTML(description),
-        };
         try {
-            const { data } = await ds.update(`/column/${columnId}/`, params);
+            const { data } = await TableColumnResource.update(
+                columnId,
+                description
+            );
 
             const normalizedData = normalize(data, dataTableColumnSchema);
             const { dataColumn = {} } = normalizedData.entities;
@@ -283,7 +271,7 @@ export function receiveDataTable(
     };
 }
 
-export function fetchDataLineage(tableId): ThunkResult<Promise<any[]>> {
+export function fetchDataLineage(tableId: number): ThunkResult<Promise<any[]>> {
     return (dispatch, getState) => {
         const promiseArr = [];
         const cState = getState().dataSources.dataLineages.childLineage[
@@ -310,7 +298,7 @@ export function fetchParentDataLineage(
             tableId
         ];
         if (!state) {
-            const { data } = await ds.fetch(`/lineage/${tableId}/parent/`);
+            const { data } = await TableLineageResource.getParents(tableId);
             dispatch(receiveParentDataLineage(data, tableId));
         }
     };
@@ -329,11 +317,13 @@ function receiveParentDataLineage(
     };
 }
 
-export function fetchChildDataLineage(tableId): ThunkResult<Promise<void>> {
+export function fetchChildDataLineage(
+    tableId: number
+): ThunkResult<Promise<void>> {
     return async (dispatch, getState) => {
         const state = getState().dataSources.dataLineages.childLineage[tableId];
         if (!state) {
-            const { data } = await ds.fetch(`/lineage/${tableId}/child/`);
+            const { data } = await TableLineageResource.getChildren(tableId);
             dispatch(receiveChildDataLineage(data, tableId));
         }
     };
@@ -387,15 +377,9 @@ export function fetchDataTableSamples(
 ): ThunkResult<Promise<IDataTableSamples>> {
     return async (dispatch, getState) => {
         try {
-            const environmentId = getState().environment.currentEnvironmentId;
-            const { data } = await ds.fetch(
-                {
-                    url: `/table/${tableId}/samples/`,
-                    transformResponse: [JSONBig.parse],
-                },
-                {
-                    environment_id: environmentId,
-                }
+            const { data } = await TableSamplesResource.get(
+                tableId,
+                getState().environment.currentEnvironmentId
             );
             dispatch(receiveDataTableSamples(tableId, data));
             return data;
@@ -424,17 +408,11 @@ export function createDataTableSamples(
 ): ThunkResult<Promise<number>> {
     return async (dispatch, getState) => {
         try {
-            const environmentId = getState().environment.currentEnvironmentId;
-            const { data: taskId } = await ds.save<number>(
-                {
-                    url: `/table/${tableId}/samples/`,
-                    transformResponse: [JSONBig.parse],
-                },
-                {
-                    environment_id: environmentId,
-                    engine_id: engineId,
-                    ...sampleParams,
-                }
+            const { data: taskId } = await TableSamplesResource.create(
+                tableId,
+                getState().environment.currentEnvironmentId,
+                engineId,
+                sampleParams
             );
             dispatch(receiveDataTableSamplesPolling(tableId, taskId));
             return taskId;
@@ -454,11 +432,9 @@ export function pollDataTableSample(
                 tableId
             ];
             if (poll) {
-                const { data } = await ds.fetch<[boolean, number]>(
-                    `/table/${tableId}/samples/poll/`,
-                    {
-                        task_id: poll.taskId,
-                    }
+                const { data } = await TableSamplesResource.poll(
+                    tableId,
+                    poll.taskId
                 );
 
                 finished = !data || data[0];
@@ -511,20 +487,12 @@ export function fetchQueryExampleIds(
 ): ThunkResult<Promise<number[]>> {
     return async (dispatch, getState) => {
         try {
-            const state = getState();
-            const environmentId = state.environment.currentEnvironmentId;
-
-            const { data } = await ds.fetch<[]>(
-                {
-                    url: `/table/${tableId}/query_examples/`,
-                },
-                {
-                    table_id: tableId,
-                    environment_id: environmentId,
-                    ...filters,
-                    limit,
-                    offset,
-                }
+            const { data } = await TableQueryExampleResource.get(
+                tableId,
+                getState().environment.currentEnvironmentId,
+                filters,
+                limit,
+                offset
             );
             dispatch(
                 receiveQueryExampleIds(
@@ -590,16 +558,10 @@ export function fetchTopQueryUsersIfNeeded(
                 return Promise.resolve(users);
             }
 
-            const environmentId = state.environment.currentEnvironmentId;
-            const { data } = await ds.fetch<ITopQueryUser[]>(
-                {
-                    url: `/table/${tableId}/query_examples/users/`,
-                },
-                {
-                    table_id: tableId,
-                    environment_id: environmentId,
-                    limit,
-                }
+            const { data } = await TableQueryExampleResource.getTopUsers(
+                tableId,
+                state.environment.currentEnvironmentId,
+                limit
             );
             dispatch({
                 type: '@@dataSources/RECEIVE_TOP_QUERY_USERS',
@@ -628,14 +590,9 @@ export function fetchTopQueryConcurrencesIfNeeded(
                 return Promise.resolve(joins);
             }
 
-            const { data } = await ds.fetch<ITopQueryConcurrences[]>(
-                {
-                    url: `/table/${tableId}/query_examples/concurrences/`,
-                },
-                {
-                    table_id: tableId,
-                    limit,
-                }
+            const { data } = await TableQueryExampleResource.getTopConcurrences(
+                tableId,
+                limit
             );
             dispatch({
                 type: '@@dataSources/RECEIVE_TOP_QUERY_CONCURRENCES',
@@ -672,11 +629,11 @@ export function fetchDataJobMetadata(
                 __loading: true,
             })
         );
-        return ds
-            .fetch(`/data_job_metadata/${dataJobMetadataId}/`)
-            .then((resp) => {
+        return TableLineageResource.getJobMetadata(dataJobMetadataId).then(
+            (resp) => {
                 dispatch(receiveDataJobMetadata(resp.data));
-            });
+            }
+        );
     };
 }
 
@@ -710,8 +667,8 @@ export function fetchFunctionDocumentationIfNeeded(
             state.dataSources.functionDocumentation.loading[language];
         if (functionDocumentationPromise == null) {
             try {
-                const fetchPromise = ds.fetch(
-                    `/function_documentation_language/${language}/`
+                const fetchPromise = FunctionDocumentationResource.getByLanguage(
+                    language
                 );
                 dispatch({
                     type: '@@dataSources/LOADING_FUNCTION_DOCUMENTATION',
@@ -736,7 +693,7 @@ export function fetchFunctionDocumentationIfNeeded(
 
                         return hash;
                     },
-                    {}
+                    {} as Record<string, IFunctionDescription[]>
                 );
 
                 dispatch({
@@ -759,16 +716,10 @@ export function fetchFunctionDocumentationIfNeeded(
 
 export function updateTableWarnings(
     warningId: number,
-    fields: Partial<{
-        message: string;
-        severity: DataTableWarningSeverity;
-    }>
+    fields: IDataTableWarningUpdateFields
 ): ThunkResult<Promise<any>> {
     return async (dispatch) => {
-        const { data } = await ds.update(
-            `/table_warning/${warningId}/`,
-            fields
-        );
+        const { data } = await TableWarningResource.update(warningId, fields);
         dispatch({
             type: '@@dataSources/RECEIVE_DATA_TABLE_WARNING',
             payload: data,
@@ -781,13 +732,13 @@ export function createTableWarnings(
     tableId: number,
     message: string,
     severity: DataTableWarningSeverity
-): ThunkResult<Promise<any>> {
+): ThunkResult<Promise<IDataTableWarning>> {
     return async (dispatch) => {
-        const { data } = await ds.save('/table_warning/', {
-            table_id: tableId,
+        const { data } = await TableWarningResource.create(
+            tableId,
             message,
-            severity,
-        });
+            severity
+        );
         dispatch({
             type: '@@dataSources/RECEIVE_DATA_TABLE_WARNING',
             payload: data,
@@ -802,7 +753,7 @@ export function deleteTableWarnings(
     return async (dispatch, getState) => {
         const warning = getState().dataSources.dataTableWarningById[warningId];
         if (warning) {
-            await ds.delete(`/table_warning/${warning.id}/`);
+            await TableWarningResource.delete(warning.id);
             dispatch({
                 type: '@@dataSources/REMOVE_DATA_TABLE_WARNING',
                 payload: warning,
@@ -813,10 +764,7 @@ export function deleteTableWarnings(
 
 function fetchDataTableOwnership(tableId: number): ThunkResult<Promise<any>> {
     return async (dispatch) => {
-        const { data } = await ds.fetch<IDataTableOwnership[]>(
-            `/table/${tableId}/ownership/`,
-            {}
-        );
+        const { data } = await TableOwnershipResource.get(tableId);
         dispatch({
             type: '@@dataSources/RECEIVE_DATA_TABLE_OWNERSHIPS',
             payload: { tableId, ownerships: data },
@@ -843,9 +791,7 @@ export function createDataTableOwnership(
 ): ThunkResult<Promise<any>> {
     return async (dispatch) => {
         try {
-            const { data } = await ds.save<IDataTableOwnership>(
-                `/table/${tableId}/ownership/`
-            );
+            const { data } = await TableOwnershipResource.create(tableId);
             dispatch({
                 type: '@@dataSources/RECEIVE_DATA_TABLE_OWNERSHIP',
                 payload: { tableId, ownership: data },
@@ -861,7 +807,7 @@ export function deleteDataTableOwnership(
 ): ThunkResult<Promise<void>> {
     return async (dispatch, getState) => {
         try {
-            await ds.delete(`/table/${tableId}/ownership/`);
+            await TableOwnershipResource.delete(tableId);
             dispatch({
                 type: '@@dataSources/REMOVE_DATA_TABLE_OWNERSHIP',
                 payload: { tableId, uid: getState().user.myUserInfo.uid },
@@ -877,9 +823,7 @@ export function fetchDataTableStats(
 ): ThunkResult<Promise<void>> {
     return async (dispatch) => {
         try {
-            const { data: stat } = await ds.fetch<ITableStats[]>(
-                `/table/stats/${tableId}/`
-            );
+            const { data: stat } = await TableStatsResource.get(tableId);
             dispatch({
                 type: '@@dataSources/RECEIVE_DATA_TABLE_STATS',
                 payload: { tableId, stat },

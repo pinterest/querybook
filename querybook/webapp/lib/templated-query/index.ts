@@ -1,27 +1,21 @@
-import ds from 'lib/datasource';
+import { TemplatedQueryResource } from 'resource/queryExecution';
 
 export async function getTemplatedQueryVariables(query: string) {
     // Skip a common request
     if (query === '') {
         return [];
     }
-    const { data } = await ds.save('/query_execution/templated_query_params/', {
-        query,
-    });
-    return data as string[];
+    const { data } = await TemplatedQueryResource.getVariables(query);
+    return data;
 }
 
 export async function renderTemplatedQuery(
     query: string,
     variables: Record<string, string>
 ) {
-    const { data } = await ds.save<string>(
-        '/query_execution/templated_query/',
-        {
-            query,
-            variables,
-        },
-        false
+    const { data } = await TemplatedQueryResource.renderTemplatedQuery(
+        query,
+        variables
     );
     return data;
 }

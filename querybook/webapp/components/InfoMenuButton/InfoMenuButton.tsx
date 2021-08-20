@@ -1,6 +1,5 @@
 import * as React from 'react';
 
-import ds from 'lib/datasource';
 import localStore from 'lib/local-store';
 import { navigateWithinEnv } from 'lib/utils/query-string';
 import { ChangeLogValue, CHANGE_LOG_KEY } from 'lib/local-store/const';
@@ -15,6 +14,7 @@ import {
     MenuInfoItem,
 } from 'ui/Menu/Menu';
 import { QuerybookVersion } from './QuerybookVersion';
+import { ChangeLogResource } from 'resource/utils/changelog';
 
 export const InfoMenuButton: React.FunctionComponent = () => {
     const [showPanel, setShowPanel] = React.useState(false);
@@ -26,9 +26,7 @@ export const InfoMenuButton: React.FunctionComponent = () => {
         localStore
             .get<ChangeLogValue>(CHANGE_LOG_KEY)
             .then((lastViewedDate) => {
-                ds.fetch(`/utils/change_logs/`, {
-                    last_viewed_date: lastViewedDate,
-                }).then(({ data }) => {
+                ChangeLogResource.getAll(lastViewedDate).then(({ data }) => {
                     if (data) {
                         setNotification(true);
                     }

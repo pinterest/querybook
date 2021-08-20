@@ -2,7 +2,7 @@ import React from 'react';
 
 import { ITaskStatusRecord } from 'const/schedule';
 import { generateFormattedDate } from 'lib/utils/datetime';
-import { usePaginatedFetch } from 'hooks/usePaginatedFetch';
+import { usePaginatedResource } from 'hooks/usePaginatedResource';
 
 import { useInterval } from 'hooks/useInterval';
 import { AsyncButton } from 'ui/AsyncButton/AsyncButton';
@@ -15,6 +15,7 @@ import { ToggleButton } from 'ui/ToggleButton/ToggleButton';
 import { ShowMoreText } from 'ui/ShowMoreText/ShowMoreText';
 
 import './TaskStatus.scss';
+import { TaskScheduleResource } from 'resource/taskSchedule';
 
 const PAGE_SIZE = 30;
 
@@ -102,19 +103,25 @@ export const TaskStatus: React.FunctionComponent<ITaskStatusProps> = ({
         fetchMore,
         hasMore,
         reset,
-    } = usePaginatedFetch<ITaskStatusRecord>({
-        url: taskId ? `/schedule/${taskId}/record/` : `/schedule/record/`,
-        batchSize: PAGE_SIZE,
-        params: taskId
-            ? {
-                  hide_successful_jobs: fetchInfo.hideSuccessfulJobs,
-              }
-            : {
-                  hide_successful_jobs: fetchInfo.hideSuccessfulJobs,
-                  name: nameSearchString,
-                  task_type: type,
-              },
-    });
+    } = usePaginatedResource(
+        React.useMemo(
+            () =>
+                taskId
+                    ? TaskScheduleResource.getPaginatedRunRecordsById(
+                          taskId,
+                          fetchInfo.hideSuccessfulJobs
+                      )
+                    : TaskScheduleResource.getPaginatedRunRecords(
+                          nameSearchString,
+                          fetchInfo.hideSuccessfulJobs,
+                          type
+                      ),
+            [taskId, fetchInfo.hideSuccessfulJobs, nameSearchString, type]
+        ),
+        {
+            batchSize: PAGE_SIZE,
+        }
+    );
 
     React.useEffect(() => {
         reset();

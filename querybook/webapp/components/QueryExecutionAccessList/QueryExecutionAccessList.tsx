@@ -1,10 +1,9 @@
 import React from 'react';
 import toast from 'react-hot-toast';
 
-import { IQueryExecutionViewer } from 'const/queryExecution';
+import { IQueryExecutionViewer, IQueryExecution } from 'const/queryExecution';
 import { IAccessRequest } from 'const/accessRequest';
 import { UserSelect } from 'components/UserSelect/UserSelect';
-import { IQueryExecution } from 'redux/queryExecutions/types';
 import { UserBadge } from 'components/UserBadge/UserBadge';
 import { Button } from 'ui/Button/Button';
 import { IconButton } from 'ui/Button/IconButton';

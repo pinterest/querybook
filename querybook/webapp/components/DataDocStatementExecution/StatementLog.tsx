@@ -4,7 +4,7 @@ import React from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 
 import { matchKeyMap, KeyMap } from 'lib/utils/keyboard';
-import { IStatementLog } from 'redux/queryExecutions/types';
+import { IStatementLog } from 'const/queryExecution';
 import { fetchLog } from 'redux/queryExecutions/action';
 import { IStoreState, Dispatch } from 'redux/store/types';
 import { Message } from 'ui/Message/Message';

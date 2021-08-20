@@ -10,10 +10,10 @@ import {
     CELL_TYPE,
     IDataDocEditor,
     IDataCellMeta,
+    IRawDataDoc,
 } from 'const/datadoc';
 import { IAccessRequest } from 'const/accessRequest';
 
-import ds from 'lib/datasource';
 import {
     DataDocSaveManager,
     DataCellSaveManager,
@@ -33,6 +33,11 @@ import {
     DataDocPermission,
     permissionToReadWrite,
 } from 'lib/data-doc/datadoc-permission';
+import {
+    DataDocAccessRequestResource,
+    DataDocEditorResource,
+    DataDocResource,
+} from 'resource/dataDoc';
 
 export const dataDocCellSchema = new schema.Entity(
     'dataDocCell',
@@ -93,10 +98,10 @@ export function fetchDataDocs(filterMode: string): ThunkResult<Promise<void>> {
             return;
         }
 
-        const { data: rawDataDocs } = await ds.fetch('/datadoc/', {
-            filter_mode: filterMode,
-            environment_id: environmentId,
-        });
+        const { data: rawDataDocs } = await DataDocResource.getAll(
+            filterMode,
+            environmentId
+        );
         const normalizedData = normalize(rawDataDocs, dataDocListSchema);
 
         const { dataDoc: dataDocById = {} } = normalizedData.entities;
@@ -112,14 +117,10 @@ export function updateDataDocOwner(
         const nextOwnerEditor = (getState().dataDoc.editorsByDocIdUserId[
             docId
         ] || {})[nextOwnerId];
-        const {
-            data,
-        }: {
-            data: IDataDocEditor;
-        } = await ds.save(`/datadoc/${docId}/owner/`, {
-            next_owner_id: nextOwnerEditor.id,
-            originator: dataDocSocket.socketId,
-        });
+        const { data } = await DataDocResource.updateOwner(
+            docId,
+            nextOwnerEditor.id
+        );
         dispatch({
             type: '@@dataDoc/REMOVE_DATA_DOC_EDITOR',
             payload: {
@@ -175,8 +176,7 @@ export function receiveDataDocs(
 
 export function fetchDataDoc(docId: number): ThunkResult<Promise<any>> {
     return async (dispatch) => {
-        const { data: rawDataDoc } = await ds.fetch(`/datadoc/${docId}/`);
-
+        const { data: rawDataDoc } = await DataDocResource.get(docId);
         const { dataDoc, dataDocCellById } = normalizeRawDataDoc(rawDataDoc);
         dispatch(receiveDataDoc(dataDoc, dataDocCellById));
 
@@ -194,9 +194,9 @@ export function fetchDataDocIfNeeded(docId: number): ThunkResult<Promise<any>> {
     };
 }
 
-export function cloneDataDoc(docId: number): ThunkResult<Promise<IDataDoc>> {
+export function cloneDataDoc(docId: number): ThunkResult<Promise<IRawDataDoc>> {
     return async (dispatch) => {
-        const { data: rawDataDoc } = await ds.save(`/datadoc/${docId}/clone/`);
+        const { data: rawDataDoc } = await DataDocResource.clone(docId);
         const { dataDoc, dataDocCellById } = normalizeRawDataDoc(rawDataDoc);
 
         dispatch(receiveDataDoc(dataDoc, dataDocCellById));
@@ -208,13 +208,10 @@ export function createDataDoc(
     cells: Array<Partial<IDataCell>> = []
 ): ThunkResult<Promise<IDataDoc>> {
     return async (dispatch, getState) => {
-        const state = getState();
-
-        const { data: rawDataDoc } = await ds.save('/datadoc/', {
-            title: '',
-            environment_id: state.environment.currentEnvironmentId,
+        const { data: rawDataDoc } = await DataDocResource.create(
             cells,
-        });
+            getState().environment.currentEnvironmentId
+        );
         const { dataDoc, dataDocCellById } = normalizeRawDataDoc(rawDataDoc);
         dispatch(receiveDataDoc(dataDoc, dataDocCellById));
 
@@ -230,13 +227,12 @@ export function createDataDocFromAdhoc(
     return async (dispatch, getState) => {
         const state = getState();
 
-        const { data: rawDataDoc } = await ds.save('/datadoc/from_execution/', {
-            title: '',
-            environment_id: state.environment.currentEnvironmentId,
-            execution_id: queryExecutionId,
-            engine_id: engineId,
-            query_string: queryString,
-        });
+        const { data: rawDataDoc } = await DataDocResource.createFromExecution(
+            state.environment.currentEnvironmentId,
+            queryExecutionId,
+            engineId,
+            queryString
+        );
         const { dataDoc, dataDocCellById } = normalizeRawDataDoc(rawDataDoc);
         dispatch(receiveDataDoc(dataDoc, dataDocCellById));
 
@@ -246,7 +242,7 @@ export function createDataDocFromAdhoc(
 
 export function deleteDataDoc(docId: number): ThunkResult<Promise<void>> {
     return async (dispatch) => {
-        await ds.delete(`/datadoc/${docId}/`);
+        await DataDocResource.delete(docId);
         dispatch({
             type: '@@dataDoc/REMOVE_DATA_DOC',
             payload: {
@@ -413,7 +409,7 @@ export function updateDataDocPolling(
 
 export function favoriteDataDoc(docId: number): ThunkResult<void> {
     return async (dispatch) => {
-        await ds.save(`/favorite_data_doc/${docId}/`);
+        await DataDocResource.favorite(docId);
         dispatch({
             type: '@@dataDoc/RECEIVE_PINNED_DATA_DOC_ID',
             payload: {
@@ -425,7 +421,7 @@ export function favoriteDataDoc(docId: number): ThunkResult<void> {
 
 export function unfavoriteDataDoc(docId: number): ThunkResult<void> {
     return async (dispatch) => {
-        await ds.delete(`/favorite_data_doc/${docId}/`);
+        await DataDocResource.unfavorite(docId);
         dispatch({
             type: '@@dataDoc/REMOVE_PINNED_DATA_DOC_ID',
             payload: {
@@ -486,11 +482,7 @@ export function getDataDocEditors(
     docId: number
 ): ThunkResult<Promise<IDataDocEditor[]>> {
     return async (dispatch) => {
-        const {
-            data,
-        }: {
-            data: IDataDocEditor[];
-        } = await ds.fetch(`/datadoc/${docId}/editor/`);
+        const { data } = await DataDocEditorResource.get(docId);
 
         dispatch({
             type: '@@dataDoc/RECEIVE_DATA_DOC_EDITORS',
@@ -510,20 +502,16 @@ export function addDataDocEditors(
     permission: DataDocPermission
 ): ThunkResult<Promise<IDataDocEditor>> {
     return async (dispatch, getState) => {
-        const { read, write } = permissionToReadWrite(permission);
         const request = (getState().dataDoc.accessRequestsByDocIdUserId[
             docId
         ] || {})[uid];
-
-        const {
-            data,
-        }: {
-            data: IDataDocEditor;
-        } = await ds.save(`/datadoc/${docId}/editor/${uid}/`, {
+        const { read, write } = permissionToReadWrite(permission);
+        const { data } = await DataDocEditorResource.create(
+            docId,
+            uid,
             read,
-            write,
-            originator: dataDocSocket.socketId,
-        });
+            write
+        );
         if (request) {
             dispatch({
                 type: '@@dataDoc/REMOVE_DATA_DOC_ACCESS_REQUEST',
@@ -560,11 +548,7 @@ export function updateDataDocEditors(
                 data,
             }: {
                 data: IDataDocEditor;
-            } = await ds.update(`/datadoc_editor/${editor.id}/`, {
-                read,
-                write,
-                originator: dataDocSocket.socketId,
-            });
+            } = await DataDocEditorResource.update(editor.id, read, write);
 
             dispatch({
                 type: '@@dataDoc/RECEIVE_DATA_DOC_EDITOR',
@@ -587,10 +571,7 @@ export function deleteDataDocEditor(
             uid
         ];
         if (editor) {
-            await ds.delete(`/datadoc_editor/${editor.id}/`, {
-                originator: dataDocSocket.socketId,
-            });
-
+            await DataDocEditorResource.delete(editor.id);
             dispatch({
                 type: '@@dataDoc/REMOVE_DATA_DOC_EDITOR',
                 payload: {
@@ -606,13 +587,7 @@ export function addDataDocAccessRequest(
     docId: number
 ): ThunkResult<Promise<IAccessRequest>> {
     return async (dispatch) => {
-        const {
-            data,
-        }: {
-            data: IAccessRequest;
-        } = await ds.save(`/datadoc/${docId}/access_request/`, {
-            originator: dataDocSocket.socketId,
-        });
+        const { data } = await DataDocAccessRequestResource.create(docId);
         if (data != null) {
             dispatch({
                 type: '@@dataDoc/RECEIVE_DATA_DOC_ACCESS_REQUEST',
@@ -635,11 +610,7 @@ export function rejectDataDocAccessRequest(
             docId
         ] || {})[uid];
         if (accessRequest) {
-            await ds.delete(`/datadoc/${docId}/access_request/`, {
-                uid,
-                originator: dataDocSocket.socketId,
-            });
-
+            await DataDocAccessRequestResource.delete(docId, uid);
             dispatch({
                 type: '@@dataDoc/REMOVE_DATA_DOC_ACCESS_REQUEST',
                 payload: {

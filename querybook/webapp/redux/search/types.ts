@@ -2,6 +2,7 @@ import { Action } from 'redux';
 import { ThunkAction } from 'redux-thunk';
 import { IStoreState } from '../store/types';
 import { ICancelablePromise } from 'lib/datasource';
+import { ISearchPreview } from 'const/search';
 
 export const RESULT_PER_PAGE = 20;
 export enum SearchOrder {
@@ -18,31 +19,6 @@ export enum SearchType {
     DataDoc = 'DataDoc',
     Table = 'Table',
 }
-
-export interface IDataDocPreview {
-    id: number;
-    created_at: number;
-    title: string;
-    owner_uid: number;
-    highlight?: {
-        cells?: string[];
-    };
-}
-
-export interface ITablePreview {
-    id: number;
-    schema: string;
-    name: string;
-    created_at: number;
-    description: string;
-    golden: boolean;
-    highlight?: {
-        columns?: string[];
-        description?: string[];
-    };
-}
-
-export type ISearchPreview = IDataDocPreview | ITablePreview;
 
 export interface ISearchDoneAction extends Action {
     type: '@@search/SEARCH_DONE';

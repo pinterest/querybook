@@ -1,22 +1,18 @@
 import * as React from 'react';
 import { useParams } from 'react-router-dom';
 
-import ds from 'lib/datasource';
+import { IChangeLogItem } from 'const/changeLog';
 import localStore from 'lib/local-store';
 import { sanitizeAndExtraMarkdown } from 'lib/markdown';
 import { navigateWithinEnv } from 'lib/utils/query-string';
 import { ChangeLogValue, CHANGE_LOG_KEY } from 'lib/local-store/const';
+import { ChangeLogResource } from 'resource/utils/changelog';
 
 import { Markdown } from 'ui/Markdown/Markdown';
 import { Content } from 'ui/Content/Content';
 import { Icon } from 'ui/Icon/Icon';
 
 import './ChangeLog.scss';
-
-interface IChangeLogItem {
-    content: string;
-    date: string;
-}
 
 const ChangeLogMarkdown: React.FC<{ markdown: string }> = ({ markdown }) => {
     const processedMarkdown = React.useMemo(() => {
@@ -49,14 +45,14 @@ export const ChangeLog: React.FunctionComponent = () => {
             if (currentLog) {
                 setChangeLogContent([currentLog.content]);
             } else {
-                ds.fetch(
-                    `/utils/change_log/${changeLogDate}/`
-                ).then(({ data }) => setChangeLogContent([data]));
+                ChangeLogResource.getByDate(changeLogDate).then(({ data }) =>
+                    setChangeLogContent([data])
+                );
             }
         } else {
             Promise.all([
                 localStore.get<ChangeLogValue>(CHANGE_LOG_KEY),
-                ds.fetch<IChangeLogItem[]>(`/utils/change_logs/`),
+                ChangeLogResource.getAll(),
             ]).then(([localStorageDate, { data }]) => {
                 setChangeLogList(data);
 

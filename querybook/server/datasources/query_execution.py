@@ -334,9 +334,9 @@ def get_all_query_result_exporters():
 @register(
     "/query_execution_exporter/auth/", methods=["GET"],
 )
-def export_statement_execution_acquire_auth(export_name):
-    exporter = get_exporter(export_name)
-    api_assert(exporter is not None, f"Invalid export name {export_name}")
+def export_statement_execution_acquire_auth(exporter_name):
+    exporter = get_exporter(exporter_name)
+    api_assert(exporter is not None, f"Invalid export name {exporter_name}")
     if not exporter.requires_auth:
         return None
     return exporter.acquire_auth(current_user.id)
@@ -348,7 +348,7 @@ def export_statement_execution_acquire_auth(export_name):
     require_auth=True,
 )
 def export_statement_execution_result(
-    statement_execution_id, export_name, exporter_params=None
+    statement_execution_id, exporter_name, exporter_params=None
 ):
     with DBSession() as session:
         statement_execution = logic.get_statement_execution_by_id(
@@ -361,8 +361,8 @@ def export_statement_execution_result(
             statement_execution.query_execution_id, session=session
         )
 
-    exporter = get_exporter(export_name)
-    api_assert(exporter is not None, f"Invalid export name {export_name}")
+    exporter = get_exporter(exporter_name)
+    api_assert(exporter is not None, f"Invalid export name {exporter_name}")
 
     if exporter_params:
         valid, reason = validate_form(exporter.export_form, exporter_params)

@@ -3,7 +3,24 @@ import type { Socket } from 'socket.io-client';
 import { updateDataDocPolling } from 'redux/dataDoc/action';
 import SocketIOManager from 'lib/socketio-manager';
 
-import ds from 'lib/datasource';
+import { queryEngineSelector } from 'redux/queryEngine/selector';
+import {
+    QueryExecutionStatus,
+    IQueryExecutionViewer,
+    IQueryResultExporter,
+    IQueryExecution,
+    IStatementExecution,
+    IRawQueryExecution,
+} from 'const/queryExecution';
+import { IAccessRequest } from 'const/accessRequest';
+
+import { queryCellExecutionManager } from 'lib/batch/query-execution-manager';
+import {
+    QueryExecutionResource,
+    QueryExecutionAccessRequestResource,
+    QueryExecutionViewerResource,
+    StatementResource,
+} from 'resource/queryExecution';
 import {
     IReceiveQueryExecutionsAction,
     IReceiveQueryExecutionAction,
@@ -11,20 +28,9 @@ import {
     ThunkResult,
     ThunkDispatch,
     IReceiveStatementExecutionUpdateAction,
-    IQueryExecution,
-    IStatementExecution,
     IReceiveQueryExecutionAccessRequestsAction,
     IReceiveQueryExecutionViewersAction,
 } from './types';
-import { queryEngineSelector } from 'redux/queryEngine/selector';
-import {
-    QueryExecutionStatus,
-    IQueryExecutionViewer,
-} from 'const/queryExecution';
-import { IAccessRequest } from 'const/accessRequest';
-
-import dataDocSocket from 'lib/data-doc/datadoc-socketio';
-import { queryCellExecutionManager } from 'lib/batch/query-execution-manager';
 
 const statementExecutionSchema = new schema.Entity('statementExecution');
 const dataCellSchema = new schema.Entity('dataCell');
@@ -38,13 +44,8 @@ export function addQueryExecutionAccessRequest(
     executionId: number
 ): ThunkResult<Promise<IAccessRequest>> {
     return async (dispatch) => {
-        const {
-            data,
-        }: {
-            data: IAccessRequest;
-        } = await ds.save(
-            `/query_execution/${executionId}/access_request/`,
-            {}
+        const { data } = await QueryExecutionAccessRequestResource.create(
+            executionId
         );
         if (data != null) {
             dispatch({
@@ -68,9 +69,7 @@ export function rejectQueryExecutionAccessRequest(
         const accessRequest = (getState().queryExecutions
             .accessRequestsByExecutionIdUserId[executionId] || {})[uid];
         if (accessRequest) {
-            await ds.delete(`/query_execution/${executionId}/access_request/`, {
-                uid,
-            });
+            await QueryExecutionAccessRequestResource.delete(executionId, uid);
 
             dispatch({
                 type: '@@queryExecutions/REMOVE_QUERY_EXECUTION_ACCESS_REQUEST',
@@ -91,13 +90,10 @@ export function addQueryExecutionViewer(
         const request = (getState().queryExecutions
             .accessRequestsByExecutionIdUserId[executionId] || {})[uid];
 
-        const {
-            data,
-        }: {
-            data: IQueryExecutionViewer;
-        } = await ds.save(`/query_execution/${executionId}/viewer/`, {
-            uid,
-        });
+        const { data } = await QueryExecutionViewerResource.create(
+            executionId,
+            uid
+        );
         if (request) {
             dispatch({
                 type: '@@queryExecutions/REMOVE_QUERY_EXECUTION_ACCESS_REQUEST',
@@ -128,7 +124,7 @@ export function deleteQueryExecutionViewer(
             executionId
         ] || {})[uid];
         if (viewer) {
-            await ds.delete(`/query_execution_viewer/${viewer.id}/`, {});
+            await QueryExecutionViewerResource.delete(viewer.id);
 
             dispatch({
                 type: '@@queryExecutions/REMOVE_QUERY_EXECUTION_VIEWER',
@@ -163,7 +159,7 @@ export function receiveQueryExecutionsByCell(
 }
 
 export function receiveQueryExecution(
-    queryExecution,
+    queryExecution: IRawQueryExecution | IQueryExecution,
     dataCellId?: number
 ): IReceiveQueryExecutionAction {
     const normalizedData = normalize(queryExecution, queryExecutionSchema);
@@ -254,11 +250,9 @@ export function fetchDataDocInfoByQueryExecutionId(
     }>
 > {
     return async (dispatch) => {
-        const { data: result } = await ds.fetch<{
-            doc_id: number;
-            cell_id: number;
-            cell_title: string;
-        }>(`/query_execution/${executionId}/datadoc_cell_info/`);
+        const { data: result } = await QueryExecutionResource.getDataDoc(
+            executionId
+        );
 
         dispatch({
             type: '@@queryExecutions/RECEIVE_QUERY_CELL_ID_FROM_EXECUTION',
@@ -289,8 +283,8 @@ function fetchQueryExecution(
     queryExecutionId: number
 ): ThunkResult<Promise<IQueryExecution>> {
     return async (dispatch) => {
-        const { data: execution } = await ds.fetch<IQueryExecution>(
-            `/query_execution/${queryExecutionId}/`
+        const { data: execution } = await QueryExecutionResource.get(
+            queryExecutionId
         );
         dispatch(receiveQueryExecution(execution));
         return execution;
@@ -301,9 +295,9 @@ export function fetchQueryExecutionAccessRequests(
     queryExecutionId: number
 ): ThunkResult<Promise<void>> {
     return async (dispatch) => {
-        const { data: queryExecutionAccessRequests } = await ds.fetch<
-            IAccessRequest[]
-        >(`/query_execution/${queryExecutionId}/access_request/`);
+        const {
+            data: queryExecutionAccessRequests,
+        } = await QueryExecutionAccessRequestResource.get(queryExecutionId);
         dispatch(
             receiveQueryExecutionAccessRequests(
                 queryExecutionId,
@@ -317,9 +311,9 @@ export function fetchQueryExecutionViewers(
     queryExecutionId: number
 ): ThunkResult<Promise<void>> {
     return async (dispatch) => {
-        const { data: queryExecutionViewers } = await ds.fetch<
-            IQueryExecutionViewer[]
-        >(`/query_execution/${queryExecutionId}/viewer/`);
+        const {
+            data: queryExecutionViewers,
+        } = await QueryExecutionViewerResource.get(queryExecutionId);
         dispatch(
             receiveQueryExecutionViewers(
                 queryExecutionId,
@@ -333,15 +327,9 @@ export function fetchActiveQueryExecutionForUser(
     uid: number
 ): ThunkResult<Promise<IQueryExecution[]>> {
     return async (dispatch, getState) => {
-        const { data: queryExecutions } = await ds.fetch(
-            '/query_execution/search/',
-            {
-                filters: {
-                    user: uid,
-                    running: true,
-                },
-                environment_id: getState().environment.currentEnvironmentId,
-            }
+        const { data: queryExecutions } = await QueryExecutionResource.search(
+            uid,
+            getState().environment.currentEnvironmentId
         );
 
         const normalizedData = normalize(
@@ -385,22 +373,12 @@ export function createQueryExecution(
 ): ThunkResult<Promise<IQueryExecution>> {
     return async (dispatch, getState) => {
         const state = getState();
-
         const selectedEngineId = engineId ?? queryEngineSelector(state)[0].id;
 
-        const params = {
+        const { data: queryExecution } = await QueryExecutionResource.create(
             query,
-            engine_id: selectedEngineId,
-        };
-
-        if (cellId != null) {
-            params['data_cell_id'] = cellId;
-            params['originator'] = dataDocSocket.socketId;
-        }
-
-        const { data: queryExecution } = await ds.save(
-            '/query_execution/',
-            params
+            selectedEngineId,
+            cellId
         );
         dispatch(receiveQueryExecution(queryExecution, cellId));
 
@@ -408,12 +386,9 @@ export function createQueryExecution(
     };
 }
 
-export function fetchExporters(): ThunkResult<Promise<any>> {
+export function fetchExporters(): ThunkResult<Promise<IQueryResultExporter[]>> {
     return async (dispatch) => {
-        const { data: exporters } = await ds.fetch(
-            '/query_execution_exporter/'
-        );
-
+        const { data: exporters } = await StatementResource.getExporters();
         dispatch({
             type: '@@queryExecutions/RECEIVE_QUERY_RESULT_EXPORTERS',
             payload: {
@@ -438,9 +413,7 @@ export function fetchResult(
                 state.queryExecutions.statementResultById[statementExecutionId];
             if (resultRowCount > 0 && !statementResult) {
                 try {
-                    const { data } = await ds.fetch({
-                        url: `/statement_execution/${id}/result/`,
-                    });
+                    const { data } = await StatementResource.getResult(id);
                     dispatch({
                         type: '@@queryExecutions/RECEIVE_RESULT',
                         payload: {
@@ -479,9 +452,7 @@ export function fetchLog(
                 state.queryExecutions.statementLogById[statementExecutionId];
             if (hasLog && (!statementLog || statementLog.isPartialLog)) {
                 try {
-                    const { data } = await ds.fetch(
-                        `/statement_execution/${id}/log/`
-                    );
+                    const { data } = await StatementResource.getLogs(id);
                     dispatch({
                         type: '@@queryExecutions/RECEIVE_LOG',
                         payload: {
@@ -517,9 +488,7 @@ export function fetchQueryError(
                 state.queryExecutions.queryErrorById[queryExecutionId];
             if (status === QueryExecutionStatus.ERROR && !queryError) {
                 try {
-                    const { data } = await ds.fetch(
-                        `/query_execution/${id}/error/`
-                    );
+                    const { data } = await QueryExecutionResource.getError(id);
                     dispatch({
                         type: '@@queryExecutions/RECEIVE_QUERY_ERROR',
                         payload: {
@@ -540,10 +509,6 @@ export function fetchQueryError(
             }
         }
     };
-}
-
-export function cancelQueryExecution(queryExecutionId: number) {
-    return ds.delete(`/query_execution/${queryExecutionId}/`);
 }
 
 class QueryExecutionSocket {

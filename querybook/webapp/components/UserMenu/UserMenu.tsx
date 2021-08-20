@@ -1,7 +1,7 @@
 import React, { useState, useRef, useCallback } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 
-import { logoutUser } from 'resource/user';
+import { UserResource } from 'resource/user';
 import { TooltipDirection } from 'const/tooltip';
 import { IStoreState, Dispatch } from 'redux/store/types';
 import * as UserActions from 'redux/user/action';
@@ -53,7 +53,7 @@ export const UserMenu: React.FC<IUserMenuProps> = ({
     );
     const dispatch: Dispatch = useDispatch();
     const logout = useCallback(
-        () => logoutUser().then(() => window.location.reload()),
+        () => UserResource.logout().then(() => window.location.reload()),
         []
     );
     const setTheme = useCallback(

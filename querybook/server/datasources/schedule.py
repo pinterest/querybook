@@ -125,9 +125,7 @@ def get_task_run_records(
     "/schedule/<int:id>/record/", methods=["GET"],
 )
 @admin_only
-def get_task_run_records_by_name(
-    id, offset=0, limit=10, hide_successful_jobs=False, task_type=None
-):
+def get_task_run_records_by_name(id, offset=0, limit=10, hide_successful_jobs=False):
     api_assert(limit < 100, "You are requesting too much data")
 
     with DBSession() as session:

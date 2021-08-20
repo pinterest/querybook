@@ -6,9 +6,9 @@ import {
     useCallback,
     useRef,
 } from 'react';
-import stringify from 'fast-json-stable-stringify';
 
-import ds, { ICancelablePromise } from 'lib/datasource';
+import { ICancelablePromise } from 'lib/datasource';
+import { IResource } from 'resource/types';
 
 interface IDataFetchState<T> {
     isLoading: boolean;
@@ -43,15 +43,11 @@ function dataFetchReducer<T>(state: IDataFetchState<T>, action) {
 }
 
 interface IFetchArgs {
-    url?: string;
-    params?: Record<string | number, unknown>;
     cancelFetch?: boolean;
     fetchOnMount?: boolean;
-
-    type?: 'fetch' | 'save' | 'delete' | 'update';
 }
 
-export function useDataFetch<T = any>(args: IFetchArgs = {}) {
+export function useResource<T>(resource: IResource<T>, args: IFetchArgs = {}) {
     const [version, setVersion] = useState(0);
     const initialState: IDataFetchState<T> = {
         isLoading: true,
@@ -63,9 +59,6 @@ export function useDataFetch<T = any>(args: IFetchArgs = {}) {
         initialState
     );
     const fetchParams = {
-        url: undefined,
-        params: {},
-        type: 'fetch',
         cancelFetch: false,
         fetchOnMount: true,
         ...args,
@@ -86,10 +79,7 @@ export function useDataFetch<T = any>(args: IFetchArgs = {}) {
             });
 
             try {
-                request = ds[fetchParams.type](
-                    fetchParams.url,
-                    fetchParams.params
-                );
+                request = resource();
                 const result = await request;
 
                 if (!didCancel) {
@@ -120,7 +110,7 @@ export function useDataFetch<T = any>(args: IFetchArgs = {}) {
                 request.cancel();
             }
         };
-    }, [stringify(fetchParams.params), fetchParams.url, version]);
+    }, [resource, version]);
 
     // const doFetch = (url = ,params = {}, cancelFetch = false) => {
     const forceFetch = useCallback(() => {
@@ -130,8 +120,8 @@ export function useDataFetch<T = any>(args: IFetchArgs = {}) {
         });
     }, []);
 
-    if (!fetchParams.url) {
-        throw new Error('Please provide fetch url');
+    if (!resource) {
+        throw new Error('Please provide a resource resource');
     }
 
     return {

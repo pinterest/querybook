@@ -3,6 +3,7 @@ import { FieldArray, Form, Formik, useFormikContext } from 'formik';
 import * as Yup from 'yup';
 import { useSelector } from 'react-redux';
 
+import type { IQueryResultExporter } from 'const/queryExecution';
 import { IDataDocScheduleKwargs, NotifyOn } from 'const/schedule';
 import {
     cronToRecurrence,
@@ -32,7 +33,6 @@ import {
 import { AsyncButton } from 'ui/AsyncButton/AsyncButton';
 import { getEnumEntries } from 'lib/typescript';
 import { notificationServiceSelector } from '../../redux/notificationService/selector';
-import { IQueryResultExporter } from 'redux/queryExecutions/types';
 import { SoftButton } from 'ui/Button/Button';
 import { IconButton } from 'ui/Button/IconButton';
 

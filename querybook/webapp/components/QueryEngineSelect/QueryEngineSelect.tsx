@@ -1,7 +1,6 @@
 import * as React from 'react';
 
-import { IAdminQueryEngine } from 'components/AppAdmin/AdminQueryEngine';
-
+import { IAdminQueryEngine } from 'const/admin';
 import { AsyncButton } from 'ui/AsyncButton/AsyncButton';
 import {
     FormFieldInputSection,

@@ -5,12 +5,13 @@ import {
     miniReactSelectStyles,
 } from 'lib/utils/react-select';
 import { matchKeyPress } from 'lib/utils/keyboard';
-import { useDataFetch } from 'hooks/useDataFetch';
+import { useResource } from 'hooks/useResource';
 import { useDebounce } from 'hooks/useDebounce';
 
 import { SimpleReactSelect } from 'ui/SimpleReactSelect/SimpleReactSelect';
 
 import './TableTagSelect.scss';
+import { TableTagResource } from 'resource/table';
 
 interface IProps {
     onSelect: (val: string) => any;
@@ -27,13 +28,13 @@ export const TableTagSelect: React.FunctionComponent<IProps> = ({
 }) => {
     const [tagString, setTagString] = React.useState('');
     const [isTyping, setIsTyping] = React.useState(false);
+    const debouncedTagString = useDebounce(tagString, 500);
 
-    const { data: rawTagSuggestions } = useDataFetch<string[]>({
-        url: '/tag/keyword/',
-        params: {
-            keyword: useDebounce(tagString, 500),
-        },
-    });
+    const { data: rawTagSuggestions } = useResource(
+        React.useCallback(() => TableTagResource.search(debouncedTagString), [
+            debouncedTagString,
+        ])
+    );
 
     const tagSuggestions = React.useMemo(
         () =>

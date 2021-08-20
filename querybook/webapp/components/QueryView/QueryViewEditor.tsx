@@ -2,17 +2,17 @@ import React from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 
 import { queryStatusToStatusIcon } from 'const/queryStatus';
+import { IQueryExecution } from 'const/queryExecution';
 
 import { navigateWithinEnv } from 'lib/utils/query-string';
-
 import * as dataSourcesActions from 'redux/dataSources/action';
 import * as adhocQueryActions from 'redux/adhocQuery/action';
-import { IQueryExecution } from 'redux/queryExecutions/types';
 import { queryEngineByIdEnvSelector } from 'redux/queryEngine/selector';
+import { QueryExecutionResource } from 'resource/queryExecution';
 import { Title } from 'ui/Title/Title';
 import { StatusIcon } from 'ui/StatusIcon/StatusIcon';
 import { Button } from 'ui/Button/Button';
-import { useDataFetch } from 'hooks/useDataFetch';
+import { useResource } from 'hooks/useResource';
 import { Tag } from 'ui/Tag/Tag';
 import { BoundQueryEditor } from 'components/QueryEditor/BoundQueryEditor';
 import * as queryExecutionActions from 'redux/queryExecutions/action';
@@ -32,13 +32,12 @@ export const QueryViewEditor: React.FunctionComponent<{
         queryExecution.uid === userInfo.id && !environment.shareable;
 
     const dispatch = useDispatch();
-    const { data: cellInfo } = useDataFetch<{
-        doc_id: number;
-        cell_id: number;
-        cell_title?: string;
-    }>({
-        url: `/query_execution/${queryExecution.id}/datadoc_cell_info/`,
-    });
+    const { data: cellInfo } = useResource(
+        React.useCallback(
+            () => QueryExecutionResource.getDataDoc(queryExecution.id),
+            [queryExecution.id]
+        )
+    );
 
     const goToDataDoc = React.useCallback(() => {
         if (cellInfo != null) {

@@ -3,75 +3,16 @@ import { ThunkAction, ThunkDispatch as ReduxThunkDispatch } from 'redux-thunk';
 
 import { DataDocAction } from '../dataDoc/types';
 import { IStoreState } from '../store/types';
-import { IQueryExecutionViewer } from 'const/queryExecution';
+import {
+    IQueryError,
+    IQueryExecution,
+    IQueryExecutionViewer,
+    IQueryResultExporter,
+    IStatementExecution,
+    IStatementLog,
+    IStatementResult,
+} from 'const/queryExecution';
 import { IAccessRequest } from 'const/accessRequest';
-
-export interface IQueryExecution {
-    id: number;
-    created_at: number;
-    status: number;
-    task_id: string;
-
-    query: string;
-    engine_id: number;
-    uid: number;
-
-    statement_executions?: number[];
-
-    // If the query is still running
-    // it may have a field called total which
-    // indicates the total number of statements
-    total?: number;
-}
-
-export interface IStatementExecution {
-    id: number;
-
-    completed_at: number;
-    created_at: number;
-    error_msg?: string;
-    has_log: boolean;
-    result_row_count: number;
-    statement_range_end: number;
-    statement_range_start: number;
-    status: number;
-    meta_info: string;
-
-    // These fields exist when the query is running
-    percent_complete?: number;
-
-    // These properties may or may not be there during the initial load
-    query_execution_id?: number;
-    log?: string[];
-    downloadUrl?: string;
-    downloadUrlFailed?: boolean;
-}
-
-export interface IStatementResult {
-    data: string[][];
-    error?: any;
-    failed?: boolean;
-}
-
-export interface IStatementLog {
-    data: string[];
-    error?: any;
-    failed?: boolean;
-    isPartialLog?: boolean;
-}
-
-export interface IQueryError {
-    error_type: number;
-    error_message_extracted: string;
-    error_message: string;
-}
-
-export interface IQueryResultExporter {
-    name: string;
-    type: 'url' | 'text';
-    requires_auth: boolean;
-    form: IStructFormField;
-}
 
 export interface IReceiveQueryExecutionsAction extends Action {
     type: '@@queryExecutions/RECEIVE_QUERY_EXECUTIONS';

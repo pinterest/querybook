@@ -1,4 +1,4 @@
-import { ContentState } from 'draft-js';
+import type { ContentState } from 'draft-js';
 
 export interface IQueryMetastore {
     id: number;
@@ -63,6 +63,11 @@ export interface IDataTableWarning {
     updated_by: number;
 }
 
+export interface IDataTableWarningUpdateFields {
+    message?: string;
+    severity?: DataTableWarningSeverity;
+}
+
 export interface IDataTableSamples {
     id: number;
     created_at: number;
@@ -99,7 +104,6 @@ export interface ILineageCollection {
 
 export interface IDataJobMetadata {
     id: number;
-
     job_name: string;
     job_info: Record<string, string>;
     job_owner: string;
@@ -152,6 +156,27 @@ export type TableStatValue = number | string | Array<number | string>;
 export interface ITableStats {
     id: number;
     table_id: number;
+    key: string;
+    value: TableStatValue;
+    uid: number;
+}
+
+export interface ITableSampleParams {
+    partition?: string;
+    where?: [string, string, string];
+    order_by?: string;
+    order_by_asc?: boolean;
+    limit?: number;
+}
+
+export interface IUpdateTableParams {
+    description?: ContentState;
+    golden?: boolean;
+}
+
+export interface ITableColumnStats {
+    id: number;
+    column_id: number;
     key: string;
     value: TableStatValue;
     uid: number;

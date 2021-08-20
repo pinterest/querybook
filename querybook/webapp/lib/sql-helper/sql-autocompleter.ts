@@ -1,7 +1,7 @@
 import CodeMirror from 'lib/codemirror';
-import ds from 'lib/datasource';
 import { ICodeAnalysis, TableToken } from 'lib/sql-helper/sql-lexer';
 import { reduxStore } from 'redux/store';
+import { SearchTableResource } from 'resource/search';
 import { getLanguageSetting } from './sql-setting';
 
 interface ILineAnalysis {
@@ -188,16 +188,15 @@ export class SqlAutoCompleter {
 
     private async getTableNamesFromPrefix(prefix: string): Promise<string[]> {
         const metastoreId = this.metastoreId;
-        if (metastoreId != null) {
-            const { data: names } = await ds.fetch(
-                `/suggest/${metastoreId}/tables/`,
-                {
-                    prefix,
-                }
-            );
-            return names as string[];
+        if (metastoreId == null) {
+            return [];
         }
-        return [];
+
+        const { data: names } = await SearchTableResource.suggest(
+            metastoreId,
+            prefix
+        );
+        return names;
     }
 
     private getColumnsFromPrefix(

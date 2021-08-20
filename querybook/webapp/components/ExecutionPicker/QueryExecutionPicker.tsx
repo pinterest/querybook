@@ -6,9 +6,8 @@ import {
     queryStatusToStatusIcon,
     STATUS_TO_TEXT_MAPPING,
 } from 'const/queryStatus';
-import { QueryExecutionStatus } from 'const/queryExecution';
+import { QueryExecutionStatus, IQueryExecution } from 'const/queryExecution';
 import { generateFormattedDate } from 'lib/utils/datetime';
-import { IQueryExecution } from 'redux/queryExecutions/types';
 
 import { UserName } from 'components/UserBadge/UserName';
 

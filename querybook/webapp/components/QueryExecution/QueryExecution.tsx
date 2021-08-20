@@ -6,6 +6,7 @@ import { QueryExecutionStatus } from 'const/queryExecution';
 import { useMakeSelector } from 'hooks/redux/useMakeSelector';
 import { useToggleState } from 'hooks/useToggleState';
 import * as queryExecutionsActions from 'redux/queryExecutions/action';
+import { QueryExecutionResource } from 'resource/queryExecution';
 import { IStoreState, Dispatch } from 'redux/store/types';
 import {
     queryExecutionSelector,
@@ -77,13 +78,11 @@ function useQueryExecutionDispatch(queryExecutionId: number) {
 
     const cancelQueryExecution = useCallback(
         () =>
-            queryExecutionsActions
-                .cancelQueryExecution(queryExecutionId)
-                .then(() => {
-                    toast(
-                        'Cancelled! Please be patient as the cancellation takes some time.'
-                    );
-                }),
+            QueryExecutionResource.cancel(queryExecutionId).then(() => {
+                toast(
+                    'Cancelled! Please be patient as the cancellation takes some time.'
+                );
+            }),
         [queryExecutionId]
     );
     return {

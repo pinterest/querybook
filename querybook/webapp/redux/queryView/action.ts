@@ -1,11 +1,10 @@
 import { normalize } from 'normalizr';
 
-import ds from 'lib/datasource';
 import { getQueryString, replaceQueryString } from 'lib/utils/query-string';
 import * as Utils from 'lib/utils';
 import { ThunkResult, IQueryViewResetAction, IQueryViewState } from './types';
-import { IQueryExecution } from 'redux/queryExecutions/types';
 import { queryExecutionSchemaList } from 'redux/queryExecutions/action';
+import { IRawQueryExecution, QueryViewResource } from 'resource/queryView';
 
 export const CHUNK_LOAD_SIZE = 50;
 
@@ -52,7 +51,7 @@ function mapStateToSearch(state: IQueryViewState) {
     return searchParam;
 }
 
-export function searchQueries(): ThunkResult<Promise<IQueryExecution>> {
+export function searchQueries(): ThunkResult<Promise<IRawQueryExecution[]>> {
     return async (dispatch, getState) => {
         try {
             const state = getState();
@@ -66,10 +65,10 @@ export function searchQueries(): ThunkResult<Promise<IQueryExecution>> {
             }
 
             const { offset } = queryViewState;
-            const searchRequest = ds.fetch('/query_execution/search/', {
-                ...mapStateToSearch(queryViewState),
-                environment_id: state.environment.currentEnvironmentId,
-            });
+            const searchRequest = QueryViewResource.search(
+                state.environment.currentEnvironmentId,
+                mapStateToSearch(queryViewState)
+            );
 
             dispatch({
                 type: '@@querySnippets/QUERY_VIEW_SEARCH_STARTED',

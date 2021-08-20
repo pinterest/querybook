@@ -1,17 +1,17 @@
 import React from 'react';
-import ds from 'lib/datasource';
 import toast from 'react-hot-toast';
 
-import { useDataFetch } from 'hooks/useDataFetch';
+import { useResource } from 'hooks/useResource';
 import { Loading } from 'ui/Loading/Loading';
 import { ErrorMessage } from 'ui/Message/ErrorMessage';
+
+import { Tabs } from 'ui/Tabs/Tabs';
+import { Title } from 'ui/Title/Title';
+import { DataDocScheduleResource } from 'resource/dataDoc';
 
 import { DataDocScheduleForm } from './DataDocScheduleForm';
 import { DataDocScheduleRunLogs } from './DataDocScheduleRunLogs';
 import './DataDocSchedule.scss';
-import { Tabs } from 'ui/Tabs/Tabs';
-import { Title } from 'ui/Title/Title';
-import { IDataDocTaskSchedule } from 'const/schedule';
 
 interface IDataDocScheduleProps {
     docId: number;
@@ -37,14 +37,9 @@ export const DataDocSchedule: React.FunctionComponent<IDataDocScheduleProps> = (
     onDelete,
     isEditable,
 }) => {
-    const {
-        isLoading,
-        isError,
-        data,
-        forceFetch,
-    } = useDataFetch<IDataDocTaskSchedule>({
-        url: `/datadoc/${docId}/schedule/`,
-    });
+    const { isLoading, isError, data, forceFetch } = useResource(
+        React.useCallback(() => DataDocScheduleResource.get(docId), [docId])
+    );
     const [currentTab, setCurrentTab] = React.useState('schedule');
 
     const tabsDOM = (
@@ -83,57 +78,54 @@ export const DataDocSchedule: React.FunctionComponent<IDataDocScheduleProps> = (
                     enabled={data?.enabled ?? false}
                     kwargs={data?.kwargs ?? {}}
                     onCreate={(cron, kwargs) =>
-                        ds
-                            .save(`/datadoc/${docId}/schedule/`, {
-                                cron,
-                                kwargs,
-                            })
-                            .then(() => {
-                                toast.success('Schedule Created!');
-                                forceFetch();
-                                if (onSave) {
-                                    onSave();
-                                }
-                            })
+                        DataDocScheduleResource.create(
+                            docId,
+                            cron,
+                            kwargs
+                        ).then(() => {
+                            toast.success('Schedule Created!');
+                            forceFetch();
+                            if (onSave) {
+                                onSave();
+                            }
+                        })
                     }
                     onUpdate={(cron, enabled, kwargs) =>
-                        ds
-                            .update(`/datadoc/${docId}/schedule/`, {
-                                cron,
-                                enabled,
-                                kwargs,
-                            })
-                            .then(() => {
-                                toast.success('Schedule Updated!');
-                                forceFetch();
-                                if (onSave) {
-                                    onSave();
-                                }
-                            })
+                        DataDocScheduleResource.update(docId, {
+                            cron,
+                            enabled,
+                            kwargs,
+                        }).then(() => {
+                            toast.success('Schedule Updated!');
+                            forceFetch();
+                            if (onSave) {
+                                onSave();
+                            }
+                        })
                     }
                     onDelete={
                         data
                             ? () =>
-                                  ds
-                                      .delete(`/datadoc/${docId}/schedule/`)
-                                      .then(() => {
+                                  DataDocScheduleResource.delete(docId).then(
+                                      () => {
                                           forceFetch();
                                           if (onDelete) {
                                               onDelete();
                                           }
-                                      })
+                                      }
+                                  )
                             : null
                     }
                     onRun={
                         data
                             ? () =>
-                                  ds
-                                      .save(`/datadoc/${docId}/schedule/run/`)
-                                      .then(() => {
+                                  DataDocScheduleResource.run(docId).then(
+                                      () => {
                                           toast.success(
                                               'DataDoc execution started!'
                                           );
-                                      })
+                                      }
+                                  )
                             : null
                     }
                 />

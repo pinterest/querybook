@@ -1,23 +1,14 @@
 import React from 'react';
 import moment from 'moment';
 
-import ds from 'lib/datasource';
-import { generateFormattedDate } from 'lib/utils/datetime';
-
+import { IAdminApiAccessToken } from 'const/admin';
 import { UserName } from 'components/UserBadge/UserName';
+import { generateFormattedDate } from 'lib/utils/datetime';
+import { AdminTokenResource } from 'resource/admin';
 import { Table, TableAlign } from 'ui/Table/Table';
 import { ToggleSwitch } from 'ui/ToggleSwitch/ToggleSwitch';
 
 import './AdminApiAccessToken.scss';
-
-interface IAdminApiAccessToken {
-    id: number;
-    created_at: number;
-    updated_at: number;
-    creator_uid: number;
-    updater_uid: number;
-    enabled: boolean;
-}
 
 const tableColumns = [
     'id',
@@ -48,9 +39,7 @@ export const AdminApiAccessToken: React.FunctionComponent = () => {
     );
 
     const getAllApiAccessTokens = React.useCallback(async () => {
-        const resp = await ds.fetch<IAdminApiAccessToken[]>(
-            `/admin/api_access_tokens/`
-        );
+        const resp = await AdminTokenResource.getAll();
         setTokenList(resp.data);
     }, []);
 
@@ -60,12 +49,7 @@ export const AdminApiAccessToken: React.FunctionComponent = () => {
 
     const handleChangeEnabled = React.useCallback(
         async (tokenId: number, val: boolean) => {
-            const resp = await ds.update(
-                `/admin/api_access_token/${tokenId}/`,
-                {
-                    enabled: val,
-                }
-            );
+            const resp = await AdminTokenResource.toggleEnabled(tokenId, val);
             if (resp) {
                 getAllApiAccessTokens();
             }

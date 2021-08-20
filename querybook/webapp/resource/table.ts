@@ -1,0 +1,209 @@
+import type { ContentState } from 'draft-js';
+import type {
+    DataTableWarningSeverity,
+    IDataColumn,
+    IDataJobMetadata,
+    IDataTable,
+    IDataTableOwnership,
+    IDataTableSamples,
+    IDataTableWarning,
+    IDataTableWarningUpdateFields,
+    ILineage,
+    IPaginatedQuerySampleFilters,
+    IQueryMetastore,
+    ITableColumnStats,
+    ITableSampleParams,
+    ITableStats,
+    ITopQueryConcurrences,
+    ITopQueryUser,
+    IUpdateTableParams,
+} from 'const/metastore';
+import type { ITagItem } from 'const/tag';
+import ds from 'lib/datasource';
+import JSONBig from 'json-bigint';
+import { convertContentStateToHTML } from 'lib/richtext/serialize';
+
+export const TableSamplesResource = {
+    getQuery: (tableId: number, sampleParams: ITableSampleParams) =>
+        ds.fetch<string>(
+            `/table/${tableId}/raw_samples_query/`,
+            sampleParams as Record<string, any>
+        ),
+
+    get: (tableId: number, environmentId: number) =>
+        ds.fetch<IDataTableSamples>(
+            {
+                url: `/table/${tableId}/samples/`,
+                transformResponse: [JSONBig.parse],
+            },
+            {
+                environment_id: environmentId,
+            }
+        ),
+
+    create: (
+        tableId: number,
+        environmentId: number,
+        engineId: number,
+        sampleParams: ITableSampleParams
+    ) =>
+        ds.save<number>(
+            {
+                url: `/table/${tableId}/samples/`,
+                transformResponse: [JSONBig.parse],
+            },
+            {
+                environment_id: environmentId,
+                engine_id: engineId,
+                ...sampleParams,
+            }
+        ),
+
+    poll: (tableId: number, taskId: number) =>
+        ds.fetch<[finished: boolean, progress: number]>(
+            `/table/${tableId}/samples/poll/`,
+            {
+                task_id: taskId,
+            }
+        ),
+};
+
+export const TableQueryExampleResource = {
+    get: (
+        tableId: number,
+        environmentId: number,
+        filters: IPaginatedQuerySampleFilters,
+        limit: number,
+        offset: number
+    ) =>
+        ds.fetch<number[]>(
+            {
+                url: `/table/${tableId}/query_examples/`,
+            },
+            {
+                table_id: tableId,
+                environment_id: environmentId,
+                ...filters,
+                limit,
+                offset,
+            }
+        ),
+
+    getTopUsers: (tableId: number, environmentId: number, limit: number) =>
+        ds.fetch<ITopQueryUser[]>(
+            {
+                url: `/table/${tableId}/query_examples/users/`,
+            },
+            {
+                table_id: tableId,
+                environment_id: environmentId,
+                limit,
+            }
+        ),
+
+    getTopConcurrences: (tableId: number, limit: number) =>
+        ds.fetch<ITopQueryConcurrences[]>(
+            {
+                url: `/table/${tableId}/query_examples/concurrences/`,
+            },
+            {
+                table_id: tableId,
+                limit,
+            }
+        ),
+};
+
+export const QueryMetastoreResource = {
+    getAll: (environmentId: number) =>
+        ds.fetch<IQueryMetastore[]>('/query_metastore/', {
+            environment_id: environmentId,
+        }),
+};
+
+export const TableResource = {
+    get: (tableId: number) => ds.fetch<IDataTable>(`/table/${tableId}/`),
+    getByName: (metastoreId: number, schemaName: string, tableName: string) =>
+        ds.fetch<IDataTable>(`/table_name/${schemaName}/${tableName}/`, {
+            metastore_id: metastoreId,
+        }),
+
+    update: (tableId: number, updatedParams: IUpdateTableParams) => {
+        const params: Partial<IDataTable> = {};
+        if (updatedParams.description != null) {
+            params.description = convertContentStateToHTML(
+                updatedParams.description
+            );
+        }
+        if (updatedParams.golden != null) {
+            params.golden = updatedParams.golden;
+        }
+
+        return ds.update<IDataTable>(`/table/${tableId}/`, params);
+    },
+};
+
+export const TableColumnResource = {
+    getStats: (columnId: number) =>
+        ds.fetch<ITableColumnStats[]>(`/column/stats/${columnId}/`),
+    update: (columnId: number, description: ContentState) => {
+        const params = {
+            description: convertContentStateToHTML(description),
+        };
+
+        return ds.update<IDataColumn>(`/column/${columnId}/`, params);
+    },
+};
+
+export const TableLineageResource = {
+    getParents: (tableId: number) =>
+        ds.fetch<ILineage[]>(`/lineage/${tableId}/parent/`),
+    getChildren: (tableId: number) =>
+        ds.fetch<ILineage[]>(`/lineage/${tableId}/child/`),
+
+    getJobMetadata: (dataJobMetadataId: number) =>
+        ds.fetch<IDataJobMetadata>(`/data_job_metadata/${dataJobMetadataId}/`),
+};
+
+export const TableWarningResource = {
+    update: (warningId: number, fields: IDataTableWarningUpdateFields) =>
+        ds.update<IDataTableWarning>(
+            `/table_warning/${warningId}/`,
+            fields as Record<string, unknown>
+        ),
+
+    create: (
+        tableId: number,
+        message: string,
+        severity: DataTableWarningSeverity
+    ) =>
+        ds.save<IDataTableWarning>('/table_warning/', {
+            table_id: tableId,
+            message,
+            severity,
+        }),
+
+    delete: (warningId: number) => ds.delete(`/table_warning/${warningId}/`),
+};
+
+export const TableOwnershipResource = {
+    get: (tableId: number) =>
+        ds.fetch<IDataTableOwnership[]>(`/table/${tableId}/ownership/`),
+    create: (tableId: number) =>
+        ds.save<IDataTableOwnership>(`/table/${tableId}/ownership/`),
+    delete: (tableId: number) => ds.delete(`/table/${tableId}/ownership/`),
+};
+
+export const TableStatsResource = {
+    get: (tableId: number) =>
+        ds.fetch<ITableStats[]>(`/table/stats/${tableId}/`),
+};
+
+export const TableTagResource = {
+    get: (tableId: number) => ds.fetch<ITagItem[]>(`/tag/table/${tableId}/`),
+    search: (keyword: string) =>
+        ds.fetch<string[]>(`/tag/keyword/`, { keyword }),
+    create: (tableId: number, tag: string) =>
+        ds.save<ITagItem>(`/tag/table/${tableId}/`, { tag }),
+    delete: (tableId: number, tagId: number) =>
+        ds.delete(`/tag/table/${tableId}/${tagId}/`),
+};

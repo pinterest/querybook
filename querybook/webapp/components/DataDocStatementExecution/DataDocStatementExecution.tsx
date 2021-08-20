@@ -1,12 +1,12 @@
 import React, { useEffect, useMemo } from 'react';
 
-import { StatementExecutionStatus } from 'const/queryExecution';
-
-import { useToggleState } from 'hooks/useToggleState';
 import {
+    StatementExecutionStatus,
     IStatementExecution,
     IStatementResult,
-} from 'redux/queryExecutions/types';
+} from 'const/queryExecution';
+
+import { useToggleState } from 'hooks/useToggleState';
 
 import { StatementLogWrapper } from './StatementLog';
 import { StatementMeta } from './StatementMeta';

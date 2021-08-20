@@ -2,11 +2,12 @@ import React from 'react';
 
 import { ITaskStatusRecord } from 'const/schedule';
 import { generateFormattedDate } from 'lib/utils/datetime';
-import { useDataFetch } from 'hooks/useDataFetch';
+import { useResource } from 'hooks/useResource';
 import { Loading } from 'ui/Loading/Loading';
 import { ErrorMessage } from 'ui/Message/ErrorMessage';
 import { Table, TableAlign } from 'ui/Table/Table';
 import { TaskStatusIcon } from 'components/Task/TaskStatusIcon';
+import { DataDocScheduleResource } from 'resource/dataDoc';
 
 function formatCell(
     index: number,
@@ -64,9 +65,9 @@ const tableColumnAligns: Partial<Record<TableColumn, TableAlign>> = {
 export const DataDocScheduleRunLogs: React.FunctionComponent<{
     docId: number;
 }> = ({ docId }) => {
-    const { isLoading, isError, data } = useDataFetch<ITaskStatusRecord[]>({
-        url: `/datadoc/${docId}/schedule/logs/`,
-    });
+    const { isLoading, isError, data } = useResource(
+        React.useCallback(() => DataDocScheduleResource.getLogs(docId), [docId])
+    );
 
     if (isLoading) {
         return <Loading />;

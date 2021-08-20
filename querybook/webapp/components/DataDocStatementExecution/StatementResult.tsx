@@ -2,10 +2,7 @@ import clsx from 'clsx';
 import React, { useMemo } from 'react';
 
 import { formatNumber } from 'lib/utils/number';
-import {
-    IStatementExecution,
-    IStatementResult,
-} from 'redux/queryExecutions/types';
+import { IStatementExecution, IStatementResult } from 'const/queryExecution';
 
 import { Loading } from 'ui/Loading/Loading';
 import { Message } from 'ui/Message/Message';

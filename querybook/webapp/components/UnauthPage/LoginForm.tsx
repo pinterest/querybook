@@ -1,11 +1,11 @@
 import React from 'react';
 import { Formik, Form } from 'formik';
 
-import ds from 'lib/datasource';
 import { Button } from 'ui/Button/Button';
 import { Message } from 'ui/Message/Message';
 import { FormWrapper } from 'ui/Form/FormWrapper';
 import { SimpleField } from 'ui/FormikField/SimpleField';
+import { UserResource } from 'resource/user';
 
 export interface ILoginFormProps {
     onSuccessLogin: () => any;
@@ -22,14 +22,10 @@ export const LoginForm: React.FunctionComponent<ILoginFormProps> = ({
                 password: '',
             }}
             onSubmit={({ username, password }) =>
-                ds
-                    .save('/login/', {
-                        username,
-                        password,
-                    })
-                    .then(onSuccessLogin, (error) =>
-                        setErrorMessage(String(error))
-                    )
+                UserResource.login(username, password).then(
+                    onSuccessLogin,
+                    (error) => setErrorMessage(String(error))
+                )
             }
         >
             {({ handleSubmit, isSubmitting, isValid }) => {

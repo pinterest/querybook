@@ -1,10 +1,10 @@
 import React from 'react';
-import ds from 'lib/datasource';
 
+import { ApiTokenResource } from 'resource/apiToken';
 import { Button } from 'ui/Button/Button';
 import { CopyButton } from 'ui/CopyButton/CopyButton';
-import './TokenCreation.scss';
 import { InfoButton } from 'ui/Button/InfoButton';
+import './TokenCreation.scss';
 
 interface IProps {
     uid: number;
@@ -13,7 +13,7 @@ interface IProps {
 export const TokenCreation: React.FunctionComponent<IProps> = () => {
     const [token, setToken] = React.useState<string | null>(null);
     const handleCreateNewApiAccessToken = React.useCallback(async () => {
-        const { data } = await ds.save(`/api_access_token/`);
+        const { data } = await ApiTokenResource.create();
         setToken(data);
     }, []);
 

@@ -1,14 +1,13 @@
 import React, { useMemo, useState } from 'react';
-import { useDataFetch } from 'hooks/useDataFetch';
+import { useResource } from 'hooks/useResource';
 import { Table } from 'ui/Table/Table';
 import { SearchBar } from 'ui/SearchBar/SearchBar';
+import { AdminConfigResource } from 'resource/admin';
 
 export const AdminConfig = ({}) => {
-    const { data: querybookConfig, isLoading } = useDataFetch<
-        Record<string, unknown>
-    >({
-        url: '/admin/querybook_config/',
-    });
+    const { data: querybookConfig, isLoading } = useResource(
+        AdminConfigResource.get
+    );
     const [filterStr, setFilterStr] = useState('');
 
     const processedConfigs = useMemo(

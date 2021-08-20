@@ -1,12 +1,12 @@
 import React, { useState } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 
-import { useMakeSelector } from 'hooks/redux/useMakeSelector';
-import ds from 'lib/datasource';
-import { IStoreState, Dispatch } from 'redux/store/types';
 import { StatementExecutionStatus } from 'const/queryExecution';
+import { useMakeSelector } from 'hooks/redux/useMakeSelector';
+import { IStoreState, Dispatch } from 'redux/store/types';
 import * as queryExecutionsSelector from 'redux/queryExecutions/selector';
 import * as queryExecutionsActions from 'redux/queryExecutions/action';
+import { QueryExecutionResource } from 'resource/queryExecution';
 
 export function useChartSource(
     cellId: number,
@@ -69,11 +69,9 @@ export function useChartSource(
     React.useEffect(() => {
         if (cellId == null && executionId) {
             setInitializingExecutionId(true);
-            ds.fetch(`/query_execution/${executionId}/datadoc_cell_info/`).then(
-                (resp) => {
-                    setCellId(resp.data.cell_id);
-                }
-            );
+            QueryExecutionResource.getDataDoc(executionId).then(({ data }) => {
+                setCellId(data.cell_id);
+            });
         } else if (executionId == null && executionIdList?.length) {
             setExecutionId(executionIdList[0]);
         }

@@ -1,6 +1,6 @@
 import React, { useState, useRef, useCallback } from 'react';
 import { ImpressionType } from 'const/impression';
-import { useDataFetch } from 'hooks/useDataFetch';
+import { useResource } from 'hooks/useResource';
 import { Icon } from 'ui/Icon/Icon';
 
 import { ImpressionWidgetMenu } from './ImpressionWidgetMenu';
@@ -8,6 +8,7 @@ import { Popover, PopoverLayout } from 'ui/Popover/Popover';
 import { PrettyNumber } from 'ui/PrettyNumber/PrettyNumber';
 
 import './ImpressionWidget.scss';
+import { ImpressionResource } from 'resource/impression';
 
 interface IProps {
     type: ImpressionType;
@@ -23,9 +24,12 @@ export const ImpressionWidget: React.FunctionComponent<IProps> = ({
     const selfRef = useRef<HTMLSpanElement>(null);
     const [showMenu, setShowMenu] = useState(false);
 
-    const { data: totalViews, isLoading } = useDataFetch<number>({
-        url: `/impression/${type}/${itemId}/count/`,
-    });
+    const { data: totalViews, isLoading } = useResource(
+        React.useCallback(() => ImpressionResource.getUserCount(type, itemId), [
+            type,
+            itemId,
+        ])
+    );
 
     const onHidePopover = useCallback(() => setShowMenu(false), []);
     const widgetMenu = showMenu && (

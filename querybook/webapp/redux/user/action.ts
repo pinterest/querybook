@@ -2,12 +2,12 @@ import localStore from 'lib/local-store';
 import { USER_SETTINGS_KEY, UserSettingsValue } from 'lib/local-store/const';
 import { userLoadManager } from 'lib/batch/user-load-manager';
 import { UserRoleType } from 'const/user';
-import * as UserResource from 'resource/user';
+import { UserResource, UserSettingResource } from 'resource/user';
 import { ThunkResult } from './types';
 
 export function loginUser(): ThunkResult<Promise<void>> {
     return (dispatch) =>
-        UserResource.loginUser().then(({ data }) => {
+        UserResource.getMyInfo().then(({ data }) => {
             if (data) {
                 const { uid, permission, info } = data;
 
@@ -46,7 +46,7 @@ export function getUserByName(name: string): ThunkResult<Promise<void>> {
 
 export function getUserSetting(): ThunkResult<Promise<any>> {
     return (dispatch, getState) =>
-        UserResource.getUserSetting().then(({ data }) => {
+        UserSettingResource.getAll().then(({ data }) => {
             if (data) {
                 const userSetting = data.reduce((hash, val) => {
                     hash[val.key] = val.value;
@@ -96,7 +96,7 @@ export function setUserSettings(
         if (settings[key] === value) {
             return;
         }
-        const { data } = await UserResource.setUserSettings(key, value);
+        const { data } = await UserSettingResource.set(key, value);
         dispatch({
             type: '@@user/RECEIVE_USER_KEY_SETTING',
             payload: {

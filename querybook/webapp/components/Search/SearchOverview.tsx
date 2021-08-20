@@ -1,14 +1,10 @@
 import React from 'react';
 import moment from 'moment';
 import { useSelector, useDispatch } from 'react-redux';
+
+import { IDataDocPreview, ITablePreview } from 'const/search';
 import { IStoreState } from 'redux/store/types';
-import {
-    RESULT_PER_PAGE,
-    SearchOrder,
-    SearchType,
-    IDataDocPreview,
-    ITablePreview,
-} from 'redux/search/types';
+import { RESULT_PER_PAGE, SearchOrder, SearchType } from 'redux/search/types';
 
 import { getCurrentEnv } from 'lib/utils/query-string';
 import {

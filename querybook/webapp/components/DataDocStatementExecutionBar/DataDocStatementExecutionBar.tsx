@@ -1,11 +1,10 @@
 import React from 'react';
 
-import { IStatementExecution } from 'redux/queryExecutions/types';
-
 import './DataDocStatementExecutionBar.scss';
 import {
     QueryExecutionStatus,
     StatementExecutionStatus,
+    IStatementExecution,
 } from 'const/queryExecution';
 import { TextButton } from 'ui/Button/Button';
 import { ResultExportDropdown } from './ResultExportDropdown';

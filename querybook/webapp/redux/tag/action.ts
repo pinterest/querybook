@@ -1,11 +1,10 @@
-import ds from 'lib/datasource';
-
 import { ITagItem } from 'const/tag';
+import { TableTagResource } from 'resource/table';
 import { ThunkResult } from './types';
 
 function fetchTableTagItems(tableId: number): ThunkResult<Promise<ITagItem[]>> {
     return async (dispatch) => {
-        const { data } = await ds.fetch<ITagItem[]>(`/tag/table/${tableId}/`);
+        const { data } = await TableTagResource.get(tableId);
         dispatch({
             type: '@@tag/RECEIVE_TAG_ITEMS',
             payload: { tableId, tags: data },
@@ -32,7 +31,7 @@ export function createTableTagItem(
 ): ThunkResult<Promise<ITagItem>> {
     return async (dispatch) => {
         try {
-            const { data } = await ds.save(`/tag/table/${tableId}/`, { tag });
+            const { data } = await TableTagResource.create(tableId, tag);
             dispatch({
                 type: '@@tag/RECEIVE_TAG_ITEM',
                 payload: { tableId, tag: data },
@@ -49,7 +48,7 @@ export function deleteTableTagItem(
 ): ThunkResult<Promise<void>> {
     return async (dispatch) => {
         try {
-            await ds.delete(`/tag/table/${tableId}/${tagId}/`);
+            await TableTagResource.delete(tableId, tagId);
             dispatch({
                 type: '@@tag/REMOVE_TAG_ITEM',
                 payload: { tableId, tagId },

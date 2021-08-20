@@ -6,15 +6,15 @@ import {
     IStatementExecution,
     IStatementResult,
     IQueryResultExporter,
-} from 'redux/queryExecutions/types';
+} from 'const/queryExecution';
 import * as queryExecutionsActions from 'redux/queryExecutions/action';
 import { IStoreState, Dispatch } from 'redux/store/types';
 
-import ds from 'lib/datasource';
 import * as Utils from 'lib/utils';
 import { getStatementExecutionResultDownloadUrl } from 'lib/query-execution';
 import { getExporterAuthentication } from 'lib/result-export';
 import { tableToTSV } from 'lib/utils/table-export';
+import { StatementResource } from 'resource/queryExecution';
 
 import { Dropdown } from 'ui/Dropdown/Dropdown';
 import { Button, TextButton } from 'ui/Button/Button';
@@ -147,9 +147,10 @@ export const ResultExportDropdown: React.FunctionComponent<IProps> = ({
                 if (formData) {
                     params['exporter_params'] = formData;
                 }
-                const { data } = await ds.fetch(
-                    `/query_execution_exporter/statement_execution/${statementId}/`,
-                    params
+                const { data } = await StatementResource.export(
+                    statementId,
+                    exporter.name,
+                    formData
                 );
                 setExportedInfo({
                     info: data,
