@@ -732,7 +732,7 @@ export function createTableWarnings(
     tableId: number,
     message: string,
     severity: DataTableWarningSeverity
-): ThunkResult<Promise<any>> {
+): ThunkResult<Promise<IDataTableWarning>> {
     return async (dispatch) => {
         const { data } = await TableWarningResource.create(
             tableId,
