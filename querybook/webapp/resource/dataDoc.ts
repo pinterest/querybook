@@ -59,7 +59,7 @@ export const DataDocResource = {
             title: string;
             meta: Record<any, any>;
         }>
-    ) => ds.update(`/datadoc/${docId}/`, fields),
+    ) => ds.update<IRawDataDoc>(`/datadoc/${docId}/`, fields),
 
     updateCell: (
         cellId: number,

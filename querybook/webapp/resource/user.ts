@@ -10,7 +10,7 @@ export const UserResource = {
             password,
         }),
     signup: (username: string, password: string, email: string) =>
-        ds.save('/signup/', {
+        ds.save<IUserInfo>('/signup/', {
             username,
             password,
             email,
