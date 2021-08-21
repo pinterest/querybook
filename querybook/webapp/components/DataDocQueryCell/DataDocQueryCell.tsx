@@ -52,6 +52,7 @@ import { Title } from 'ui/Title/Title';
 
 import { ErrorQueryCell } from './ErrorQueryCell';
 import './DataDocQueryCell.scss';
+import { TemplatedQueryView } from 'components/TemplateQueryView/TemplatedQueryView';
 
 const ON_CHANGE_DEBOUNCE_MS = 500;
 const FORMAT_QUERY_SHORTCUT = getShortcutSymbols(
@@ -97,6 +98,7 @@ interface IState {
     selectedRange: ISelectedRange;
     queryCollapsedOverride: boolean;
     showQuerySnippetModal: boolean;
+    showRenderedTemplateModal: boolean;
 }
 
 class DataDocQueryCellComponent extends React.PureComponent<IProps, IState> {
@@ -113,6 +115,7 @@ class DataDocQueryCellComponent extends React.PureComponent<IProps, IState> {
             selectedRange: null,
             queryCollapsedOverride: null,
             showQuerySnippetModal: false,
+            showRenderedTemplateModal: false,
         };
     }
 
@@ -344,6 +347,12 @@ class DataDocQueryCellComponent extends React.PureComponent<IProps, IState> {
     }
 
     @bind
+    public handleRunFromRenderedTemplateModal() {
+        this.toggleShowRenderedTemplateModal();
+        this.clickOnRunButton();
+    }
+
+    @bind
     public toggleQueryCollapsing(forceCollapse: boolean) {
         const { isEditable } = this.props;
         if (isEditable) {
@@ -391,10 +400,18 @@ class DataDocQueryCellComponent extends React.PureComponent<IProps, IState> {
                 name: 'Explain Query',
                 onClick: this.explainQuery,
                 icon: 'fas fa-info',
-                tooltip: 'Run Query as Explain',
+                tooltip: 'Run query as explain',
                 tooltipPos: 'left',
             });
         }
+
+        additionalButtons.push({
+            name: 'Render template',
+            onClick: this.toggleShowRenderedTemplateModal,
+            icon: 'fas fa-code',
+            tooltip: 'Show the rendered templated query',
+            tooltipPos: 'left',
+        });
 
         additionalButtons.push({
             name: queryCollapsed ? 'Show Query' : 'Hide Query',
@@ -427,6 +444,13 @@ class DataDocQueryCellComponent extends React.PureComponent<IProps, IState> {
     public toggleInsertQuerySnippetModal() {
         this.setState(({ showQuerySnippetModal }) => ({
             showQuerySnippetModal: !showQuerySnippetModal,
+        }));
+    }
+
+    @bind
+    public toggleShowRenderedTemplateModal() {
+        this.setState(({ showRenderedTemplateModal }) => ({
+            showRenderedTemplateModal: !showRenderedTemplateModal,
         }));
     }
 
@@ -531,8 +555,13 @@ class DataDocQueryCellComponent extends React.PureComponent<IProps, IState> {
             isEditable,
             isFullScreen,
             toggleFullScreen,
+            templatedVariables,
         } = this.props;
-        const { query, showQuerySnippetModal } = this.state;
+        const {
+            query,
+            showQuerySnippetModal,
+            showRenderedTemplateModal,
+        } = this.state;
         const queryEngine = queryEngineById[this.engineId];
         const queryCollapsed = this.queryCollapsed;
 
@@ -590,11 +619,25 @@ class DataDocQueryCellComponent extends React.PureComponent<IProps, IState> {
             </Modal>
         ) : null;
 
+        const templatedQueryViewModalDOM = showRenderedTemplateModal ? (
+            <Modal
+                onHide={this.toggleShowRenderedTemplateModal}
+                title="Rendered Templated Query"
+            >
+                <TemplatedQueryView
+                    query={query}
+                    templatedVariables={templatedVariables}
+                    onRunQueryClick={this.handleRunFromRenderedTemplateModal}
+                />
+            </Modal>
+        ) : null;
+
         return (
             <>
                 {editorDOM}
                 {openSnippetDOM}
                 {insertQuerySnippetModalDOM}
+                {templatedQueryViewModalDOM}
             </>
         );
     }

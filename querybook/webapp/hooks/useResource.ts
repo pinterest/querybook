@@ -14,6 +14,7 @@ interface IDataFetchState<T> {
     isLoading: boolean;
     isError: boolean;
     data: T;
+    error: any;
 }
 
 function dataFetchReducer<T>(state: IDataFetchState<T>, action) {
@@ -23,6 +24,7 @@ function dataFetchReducer<T>(state: IDataFetchState<T>, action) {
                 ...state,
                 isLoading: true,
                 isError: false,
+                error: null,
             };
         case 'FETCH_SUCCESS':
             return {
@@ -36,6 +38,7 @@ function dataFetchReducer<T>(state: IDataFetchState<T>, action) {
                 ...state,
                 isLoading: false,
                 isError: true,
+                error: action.payload,
             };
         default:
             throw new Error();
@@ -53,6 +56,7 @@ export function useResource<T>(resource: IResource<T>, args: IFetchArgs = {}) {
         isLoading: true,
         isError: false,
         data: null,
+        error: null,
     };
     const [state, dispatch] = useReducer<Reducer<IDataFetchState<T>, any>>(
         dataFetchReducer,
@@ -96,6 +100,7 @@ export function useResource<T>(resource: IResource<T>, args: IFetchArgs = {}) {
                 if (!didCancel || error.name !== 'AbortError') {
                     dispatch({
                         type: 'FETCH_FAILURE',
+                        payload: error,
                     });
                 }
             }
