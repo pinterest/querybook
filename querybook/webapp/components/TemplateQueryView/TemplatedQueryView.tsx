@@ -42,7 +42,7 @@ export const TemplatedQueryView: React.FC<ITemplatedQueryViewProps> = ({
                     {formatError(error)}
                 </ErrorMessage>
 
-                <div className="code-wrapper code-error mt4">
+                <div className="code-wrapper code-error mt16">
                     <ThemedCodeHighlight value={query} />
                 </div>
             </div>
@@ -53,7 +53,7 @@ export const TemplatedQueryView: React.FC<ITemplatedQueryViewProps> = ({
                 <div className="code-wrapper">
                     <ThemedCodeHighlight value={renderedQuery} />
                 </div>
-                <div className="flex-right mt8">
+                <div className="flex-right mt16">
                     {onRunQueryClick && (
                         <Button
                             icon="play"
@@ -68,5 +68,5 @@ export const TemplatedQueryView: React.FC<ITemplatedQueryViewProps> = ({
         );
     }
 
-    return <div className="TemplatedQueryView p8">{contentDOM}</div>;
+    return <div className="TemplatedQueryView p16">{contentDOM}</div>;
 };
