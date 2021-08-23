@@ -1,0 +1,10 @@
+.TemplatedQueryView {
+    .code-wrapper {
+        max-height: 60vh;
+        overflow: auto;
+
+        &.code-error {
+            border: 1px solid var(--color-false);
+        }
+    }
+}
