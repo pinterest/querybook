@@ -1,16 +1,17 @@
 import * as React from 'react';
-import { useDispatch, useSelector } from 'react-redux';
+import { useDispatch } from 'react-redux';
 import { ContentState } from 'draft-js';
 import { Link } from 'react-router-dom';
 
-import { Dispatch, IStoreState } from 'redux/store/types';
+import { useShallowSelector } from 'hooks/redux/useShallowSelector';
 import { getWithinEnvUrl } from 'lib/utils/query-string';
 
 import { BoardItemAddButton } from 'components/BoardItemAddButton/BoardItemAddButton';
+import { Dispatch, IStoreState } from 'redux/store/types';
+import { fetchDataTableIfNeeded } from 'redux/dataSources/action';
 import { Icon } from 'ui/Icon/Icon';
 import { RichTextEditor } from 'ui/RichTextEditor/RichTextEditor';
 import { Title } from 'ui/Title/Title';
-import { fetchDataTableIfNeeded } from 'redux/dataSources/action';
 
 interface IProps {
     tableId: number;
@@ -19,7 +20,7 @@ interface IProps {
 export const BoardDataTableItem: React.FunctionComponent<IProps> = ({
     tableId,
 }) => {
-    const { table, schema } = useSelector((state: IStoreState) => {
+    const { table, schema } = useShallowSelector((state: IStoreState) => {
         const tableFromState = state.dataSources.dataTablesById[tableId];
         const schemaFromState = tableFromState
             ? state.dataSources.dataSchemasById[tableFromState.schema]

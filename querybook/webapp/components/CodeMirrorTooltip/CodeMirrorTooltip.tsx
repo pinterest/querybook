@@ -1,8 +1,9 @@
 import React, { useEffect } from 'react';
-import { useSelector, useDispatch } from 'react-redux';
+import { useDispatch } from 'react-redux';
 
 import { IFunctionDescription } from 'const/metastore';
 import { useEvent } from 'hooks/useEvent';
+import { useShallowSelector } from 'hooks/redux/useShallowSelector';
 import { IStoreState } from 'redux/store/types';
 import * as dataSourcesActions from 'redux/dataSources/action';
 
@@ -27,23 +28,25 @@ export const CodeMirrorTooltip: React.FunctionComponent<ICodeMirrorTooltipProps>
     error,
     openTableModal,
 }) => {
-    const { table, schema, columns } = useSelector((state: IStoreState) => {
-        const tableFromState = state.dataSources.dataTablesById[tableId];
-        const schemaFromState = tableFromState
-            ? state.dataSources.dataSchemasById[tableFromState.schema]
-            : null;
-        const columnsFromState = tableFromState
-            ? (tableFromState.column || []).map(
-                  (id) => state.dataSources.dataColumnsById[id]
-              )
-            : [];
+    const { table, schema, columns } = useShallowSelector(
+        (state: IStoreState) => {
+            const tableFromState = state.dataSources.dataTablesById[tableId];
+            const schemaFromState = tableFromState
+                ? state.dataSources.dataSchemasById[tableFromState.schema]
+                : null;
+            const columnsFromState = tableFromState
+                ? (tableFromState.column || []).map(
+                      (id) => state.dataSources.dataColumnsById[id]
+                  )
+                : [];
 
-        return {
-            table: tableFromState,
-            schema: schemaFromState,
-            columns: columnsFromState,
-        };
-    });
+            return {
+                table: tableFromState,
+                schema: schemaFromState,
+                columns: columnsFromState,
+            };
+        }
+    );
 
     const dispatch = useDispatch();
 

@@ -1,23 +1,25 @@
 import React from 'react';
 import moment from 'moment';
-import { useSelector, useDispatch } from 'react-redux';
+import { useDispatch } from 'react-redux';
 
 import { IDataDocPreview, ITablePreview } from 'const/search';
-import { IStoreState } from 'redux/store/types';
-import { RESULT_PER_PAGE, SearchOrder, SearchType } from 'redux/search/types';
 
+import { useShallowSelector } from 'hooks/redux/useShallowSelector';
 import { getCurrentEnv } from 'lib/utils/query-string';
 import {
     makeReactSelectStyle,
     miniReactSelectStyles,
 } from 'lib/utils/react-select';
 import * as searchActions from 'redux/search/action';
+import { IStoreState } from 'redux/store/types';
+import { RESULT_PER_PAGE, SearchOrder, SearchType } from 'redux/search/types';
 import * as dataTableSearchActions from 'redux/dataTableSearch/action';
 import { queryMetastoresSelector } from 'redux/dataSources/selector';
 import { currentEnvironmentSelector } from 'redux/environment/selector';
 
 import { UserSelect } from 'components/UserSelect/UserSelect';
 import { UserAvatar } from 'components/UserBadge/UserAvatar';
+import { TableTagGroupSelect } from 'components/DataTableTags/TableTagGroupSelect';
 import { DataDocItem, DataTableItem } from './SearchResultItem';
 
 import { Button } from 'ui/Button/Button';
@@ -34,11 +36,8 @@ import { Select } from 'ui/Select/Select';
 import { Tabs } from 'ui/Tabs/Tabs';
 import { PrettyNumber } from 'ui/PrettyNumber/PrettyNumber';
 
-import './SearchOverview.scss';
-import { TableTagGroupSelect } from 'components/DataTableTags/TableTagGroupSelect';
 import { SearchDatePicker } from './SearchDatePicker';
-
-const secondsPerDay = 60 * 60 * 24;
+import './SearchOverview.scss';
 
 const userReactSelectStyle = makeReactSelectStyle(true, miniReactSelectStyles);
 export const SearchOverview: React.FunctionComponent = () => {
@@ -57,7 +56,7 @@ export const SearchOverview: React.FunctionComponent = () => {
         searchRequest,
         queryMetastores,
         metastoreId,
-    } = useSelector((state: IStoreState) => ({
+    } = useShallowSelector((state: IStoreState) => ({
         ...state.search,
         environment: currentEnvironmentSelector(state),
         queryMetastores: queryMetastoresSelector(state),

@@ -3,6 +3,7 @@ import clsx from 'clsx';
 import { useSelector, useDispatch } from 'react-redux';
 import { useHistory } from 'react-router-dom';
 
+import { useShallowSelector } from 'hooks/redux/useShallowSelector';
 import * as dataTableSearchActions from 'redux/dataTableSearch/action';
 import { IStoreState, Dispatch } from 'redux/store/types';
 import {
@@ -33,7 +34,7 @@ interface IDataTableNavigatorProps {
 
 const useDataTableNavigatorReduxState = () => {
     const queryMetastores = useSelector(queryMetastoresSelector);
-    const dataTableSearchState = useSelector((state: IStoreState) => ({
+    const dataTableSearchState = useShallowSelector((state: IStoreState) => ({
         dataTables: state.dataTableSearch.results,
         numDataTables: state.dataTableSearch.count,
         searchString: state.dataTableSearch.searchString,
