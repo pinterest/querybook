@@ -116,7 +116,7 @@ export const StatementResource = {
      */
     getExporterAuth: (exporterName: string) =>
         ds.fetch<string>('/query_execution_exporter/auth/', {
-            export_name: exporterName,
+            exporter_name: exporterName,
         }),
 };
 

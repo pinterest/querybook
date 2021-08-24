@@ -143,10 +143,6 @@ export const ResultExportDropdown: React.FunctionComponent<IProps> = ({
         ) => {
             const performExport = async () => {
                 await getExporterAuthentication(exporter);
-                const params = { export_name: exporter.name };
-                if (formData) {
-                    params['exporter_params'] = formData;
-                }
                 const { data } = await StatementResource.export(
                     statementId,
                     exporter.name,
