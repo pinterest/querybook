@@ -343,15 +343,12 @@ def get_table_query_examples_users(table_id, environment_id, limit=5):
 
 
 @register("/table/<int:table_id>/query_examples/engines/", methods=["GET"])
-def get_table_query_examples_engines(table_id, environment_id, limit=5):
-    api_assert(limit <= 10)
+def get_table_query_examples_engines(table_id, environment_id):
     verify_environment_permission([environment_id])
     verify_data_table_permission(table_id)
-    all_engines = admin_logic.get_query_engines_by_environment(environment_id)
-    engine_ids = [engine.id for engine in all_engines]
-    top_engines = logic.get_query_example_engines(table_id, engine_ids, limit=limit)
+    engines = logic.get_query_example_engines(table_id, environment_id=environment_id)
 
-    return [{"engine_id": r[0], "count": r[1]} for r in top_engines]
+    return [{"engine_id": r[0], "count": r[1]} for r in engines]
 
 
 @register("/table/<int:table_id>/query_examples/concurrences/", methods=["GET"])

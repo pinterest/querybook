@@ -142,7 +142,7 @@ export interface ITopQueryUser {
     count: number;
 }
 
-export interface ITopQueryEngine {
+export interface ITableQueryEngine {
     engine_id: number;
     count: number;
 }

@@ -20,7 +20,7 @@ import {
     IDataTableOwnership,
     ITableStats,
     ITopQueryConcurrences,
-    ITopQueryEngine,
+    ITableQueryEngine,
 } from 'const/metastore';
 import { IStoreState } from '../store/types';
 
@@ -131,11 +131,11 @@ export interface IReceiveTopQueryUsersAction extends Action {
     };
 }
 
-export interface IReceiveTopQueryEnginesAction extends Action {
-    type: '@@dataSources/RECEIVE_TOP_QUERY_ENGINES';
+export interface IReceiveTableQueryEnginesAction extends Action {
+    type: '@@dataSources/RECEIVE_TABLE_QUERY_ENGINES';
     payload: {
         tableId: number;
-        engines: ITopQueryEngine[];
+        engines: ITableQueryEngine[];
     };
 }
 
@@ -207,7 +207,7 @@ export type DataSourcesAction =
     | IAddDataTableOwnership
     | IRemoveDataTableOwnership
     | IReceiveTopQueryUsersAction
-    | IReceiveTopQueryEnginesAction
+    | IReceiveTableQueryEnginesAction
     | IReceiveTopQueryJoinsAction;
 
 export type ThunkResult<R> = ThunkAction<
@@ -240,7 +240,7 @@ export interface IDataSourcesState {
 
     queryExampleIdsById: Record<number, IPaginatedQuerySamples>;
     queryTopUsersByTableId: Record<number, ITopQueryUser[]>;
-    queryTopEnginesByTableId: Record<number, ITopQueryEngine[]>;
+    queryEnginesByTableId: Record<number, ITableQueryEngine[]>;
     queryTopConcurrencesByTableId: Record<number, ITopQueryConcurrences[]>;
 
     dataLineages: ILineageCollection;

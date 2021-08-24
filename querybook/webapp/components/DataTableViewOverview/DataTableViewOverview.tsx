@@ -32,7 +32,10 @@ import { DataTableViewOverviewSection } from './DataTableViewOverviewSection';
 import { LoadingRow } from 'ui/Loading/Loading';
 import { DataTableViewQueryConcurrences } from 'components/DataTableViewQueryExample/DataTableViewQueryConcurrences';
 import { Title } from 'ui/Title/Title';
-import { DataTableViewQueryEngines } from 'components/DataTableViewQueryExample/DataTableViewQueryEngines';
+import {
+    DataTableViewQueryEngines,
+    useLoadQueryEngines,
+} from 'components/DataTableViewQueryExample/DataTableViewQueryEngines';
 
 const dataTableDetailsColumns = [
     {
@@ -216,7 +219,10 @@ const TableInsightsSection: React.FC<{
     tableId: number;
     onClick: (uid: number, engineId: number, withTableId: number) => any;
 }> = ({ tableId, onClick }) => {
-    const { loading, topQueryUsers } = useLoadQueryUsers(tableId);
+    const { loading: loadingUsers, topQueryUsers } = useLoadQueryUsers(tableId);
+    const { loading: loadingEngines, queryEngines } = useLoadQueryEngines(
+        tableId
+    );
     const handleUserClick = useCallback(
         (uid: number) => {
             onClick(uid, null, null);
@@ -236,7 +242,7 @@ const TableInsightsSection: React.FC<{
         [onClick]
     );
 
-    return loading ? (
+    return loadingUsers || loadingEngines ? (
         <LoadingRow />
     ) : topQueryUsers?.length ? (
         <DataTableViewOverviewSection title="Table Insights">
@@ -247,13 +253,15 @@ const TableInsightsSection: React.FC<{
                     onClick={handleUserClick}
                 />
             </div>
-            <div className="mt8">
-                <Title size={6}>Top Query Engines</Title>
-                <DataTableViewQueryEngines
-                    tableId={tableId}
-                    onClick={handleEngineClick}
-                />
-            </div>
+            {queryEngines.length && (
+                <div className="mt8">
+                    <Title size={6}>Query Engines</Title>
+                    <DataTableViewQueryEngines
+                        tableId={tableId}
+                        onClick={handleEngineClick}
+                    />
+                </div>
+            )}
             <div className="mt8">
                 <Title size={6}>Top Co-occurring Tables</Title>
                 <DataTableViewQueryConcurrences

@@ -15,7 +15,7 @@ import type {
     ITableSampleParams,
     ITableStats,
     ITopQueryConcurrences,
-    ITopQueryEngine,
+    ITableQueryEngine,
     ITopQueryUser,
     IUpdateTableParams,
 } from 'const/metastore';
@@ -102,15 +102,14 @@ export const TableQueryExampleResource = {
             }
         ),
 
-    getTopEngines: (tableId: number, environmentId: number, limit: number) =>
-        ds.fetch<ITopQueryEngine[]>(
+    getEngines: (tableId: number, environmentId: number) =>
+        ds.fetch<ITableQueryEngine[]>(
             {
                 url: `/table/${tableId}/query_examples/engines/`,
             },
             {
                 table_id: tableId,
                 environment_id: environmentId,
-                limit,
             }
         ),
 

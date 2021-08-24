@@ -25,7 +25,7 @@ const initialState: IDataSourcesState = {
 
     queryExampleIdsById: {},
     queryTopUsersByTableId: {},
-    queryTopEnginesByTableId: {},
+    queryEnginesByTableId: {},
     queryTopConcurrencesByTableId: {},
 
     dataTableStatByTableId: {},
@@ -327,13 +327,13 @@ function queryTopUsersByTableIdReducer(
     });
 }
 
-function queryTopEnginesByTableIdReducer(
-    state = initialState.queryTopEnginesByTableId,
+function queryEnginesByTableIdReducer(
+    state = initialState.queryEnginesByTableId,
     action: DataSourcesAction
 ) {
     return produce(state, (draft) => {
         switch (action.type) {
-            case '@@dataSources/RECEIVE_TOP_QUERY_ENGINES': {
+            case '@@dataSources/RECEIVE_TABLE_QUERY_ENGINES': {
                 const { tableId, engines } = action.payload;
                 draft[tableId] = engines;
                 return;
@@ -452,7 +452,7 @@ export default combineReducers({
     dataTablesSamplesPollingById: dataTablesSamplesPollingByIdReducer,
     queryExampleIdsById: queryExampleIdsByIdReducer,
     queryTopUsersByTableId: queryTopUsersByTableIdReducer,
-    queryTopEnginesByTableId: queryTopEnginesByTableIdReducer,
+    queryEnginesByTableId: queryEnginesByTableIdReducer,
     queryTopConcurrencesByTableId: queryTopConcurrencesByTableIdReducer,
     dataLineages: dataLineagesReducer,
     dataTableWarningById: dataTableWarningByIdReducer,

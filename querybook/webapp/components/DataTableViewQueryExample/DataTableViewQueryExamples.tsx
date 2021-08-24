@@ -166,7 +166,7 @@ export const DataTableViewQueryExamples: React.FunctionComponent<IProps> = ({
                 </div>
                 <div className="mt12">
                     <Title subtitle size={6}>
-                        Top query engines
+                        Query engines
                     </Title>
                     <DataTableViewQueryEngines
                         tableId={tableId}
