@@ -253,7 +253,7 @@ const TableInsightsSection: React.FC<{
                     onClick={handleUserClick}
                 />
             </div>
-            {queryEngines.length && (
+            {queryEngines.length > 1 && (
                 <div className="mt8">
                     <Title size={6}>Query Engines</Title>
                     <DataTableViewQueryEngines
