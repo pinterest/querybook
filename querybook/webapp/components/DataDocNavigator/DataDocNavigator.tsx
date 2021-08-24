@@ -29,12 +29,13 @@ import { DataDocDraggableType, BoardDraggableType } from './navigatorConst';
 import { IDragItem } from 'ui/DraggableList/types';
 
 export const DataDocNavigator: React.FC = () => {
-    const loadedFilterModes = useSelector(
-        (state: IStoreState) =>
-            state.dataDoc.loadedEnvironmentFilterMode[
-                state.environment.currentEnvironmentId
-            ] ?? {}
-    );
+    const loadedFilterModes =
+        useSelector(
+            (state: IStoreState) =>
+                state.dataDoc.loadedEnvironmentFilterMode[
+                    state.environment.currentEnvironmentId
+                ]
+        ) ?? {};
 
     const dispatch: Dispatch = useDispatch();
     const loadDataDocs = useCallback(

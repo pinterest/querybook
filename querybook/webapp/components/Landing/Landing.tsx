@@ -1,7 +1,8 @@
 import React from 'react';
-import { useSelector, useDispatch } from 'react-redux';
+import { useDispatch } from 'react-redux';
 import { sample } from 'lodash';
 
+import { useShallowSelector } from 'hooks/redux/useShallowSelector';
 import { useBrowserTitle } from 'hooks/useBrowserTitle';
 import { titleize } from 'lib/utils';
 import { navigateWithinEnv } from 'lib/utils/query-string';
@@ -29,7 +30,7 @@ const DefaultLanding: React.FC = ({ children }) => {
         recentDataDocs,
         favoriteDataDocs,
         environment,
-    } = useSelector((state: IStoreState) => {
+    } = useShallowSelector((state: IStoreState) => {
         const recentDataDocsFromState = recentDataDocsSelector(state);
         const favoriteDataDocsFromState = favoriteDataDocsSelector(state).slice(
             0,

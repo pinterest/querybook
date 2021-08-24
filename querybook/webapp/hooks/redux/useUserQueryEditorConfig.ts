@@ -1,5 +1,4 @@
 import { useMemo } from 'react';
-import { useSelector } from 'react-redux';
 import { IStoreState } from 'redux/store/types';
 
 import { UserSettingsFontSizeToCSSFontSize } from 'const/font';
@@ -7,6 +6,7 @@ import { ISearchAndReplaceContextType } from 'context/searchAndReplace';
 import CodeMirror, { CodeMirrorKeyMap } from 'lib/codemirror';
 import { AutoCompleteType } from 'lib/sql-helper/sql-autocompleter';
 import { getCodeEditorTheme } from 'lib/utils';
+import { useShallowSelector } from './useShallowSelector';
 
 export function useUserQueryEditorConfig(
     searchContext: ISearchAndReplaceContextType
@@ -17,7 +17,7 @@ export function useUserQueryEditorConfig(
     options: CodeMirror.EditorConfiguration;
     autoCompleteType: AutoCompleteType;
 } {
-    const editorSettings = useSelector((state: IStoreState) => ({
+    const editorSettings = useShallowSelector((state: IStoreState) => ({
         theme: getCodeEditorTheme(state.user.computedSettings['theme']),
         fontSize:
             UserSettingsFontSizeToCSSFontSize[
