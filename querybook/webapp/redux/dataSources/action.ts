@@ -14,6 +14,7 @@ import {
     ITopQueryUser,
     IPaginatedQuerySampleFilters,
     ITopQueryConcurrences,
+    ITopQueryEngine,
     IFunctionDescription,
     IUpdateTableParams,
     IDataTableWarningUpdateFields,
@@ -568,6 +569,37 @@ export function fetchTopQueryUsersIfNeeded(
                 payload: {
                     tableId,
                     users: data,
+                },
+            });
+            return data;
+        } catch (e) {
+            console.error(e);
+        }
+    };
+}
+
+export function fetchTopQueryEnginesIfNeeded(
+    tableId: number,
+    limit = 5
+): ThunkResult<Promise<ITopQueryEngine[]>> {
+    return async (dispatch, getState) => {
+        try {
+            const state = getState();
+            const engines = state.dataSources.queryTopEnginesByTableId[tableId];
+            if (engines != null) {
+                return Promise.resolve(engines);
+            }
+
+            const { data } = await TableQueryExampleResource.getTopEngines(
+                tableId,
+                state.environment.currentEnvironmentId,
+                limit
+            );
+            dispatch({
+                type: '@@dataSources/RECEIVE_TOP_QUERY_ENGINES',
+                payload: {
+                    tableId,
+                    engines: data,
                 },
             });
             return data;

@@ -32,6 +32,7 @@ import { DataTableViewOverviewSection } from './DataTableViewOverviewSection';
 import { LoadingRow } from 'ui/Loading/Loading';
 import { DataTableViewQueryConcurrences } from 'components/DataTableViewQueryExample/DataTableViewQueryConcurrences';
 import { Title } from 'ui/Title/Title';
+import { DataTableViewQueryEngines } from 'components/DataTableViewQueryExample/DataTableViewQueryEngines';
 
 const dataTableDetailsColumns = [
     {
@@ -65,7 +66,11 @@ export interface IQuerybookTableViewOverviewProps {
         tableId: number,
         description: DraftJs.ContentState
     ) => any;
-    onExampleFilter: (uid: number, withTableId: number) => any;
+    onExampleFilter: (
+        uid: number,
+        engineId: number,
+        withTableId: number
+    ) => any;
 }
 
 export class DataTableViewOverview extends React.PureComponent<IQuerybookTableViewOverviewProps> {
@@ -76,12 +81,7 @@ export class DataTableViewOverview extends React.PureComponent<IQuerybookTableVi
     }
 
     public render() {
-        const {
-            table,
-            tableName,
-            tableWarnings,
-            onExampleFilter: onExampleUidFilter,
-        } = this.props;
+        const { table, tableName, tableWarnings, onExampleFilter } = this.props;
         const description = table.description ? (
             <EditableTextField
                 value={table.description as DraftJs.ContentState}
@@ -200,7 +200,7 @@ export class DataTableViewOverview extends React.PureComponent<IQuerybookTableVi
                 {descriptionSection}
                 <TableInsightsSection
                     tableId={table.id}
-                    onClick={onExampleUidFilter}
+                    onClick={onExampleFilter}
                 />
                 {detailsSection}
                 <TableStatsSection tableId={table.id} />
@@ -214,18 +214,24 @@ export class DataTableViewOverview extends React.PureComponent<IQuerybookTableVi
 
 const TableInsightsSection: React.FC<{
     tableId: number;
-    onClick: (uid: number, withTableId: number) => any;
+    onClick: (uid: number, engineId: number, withTableId: number) => any;
 }> = ({ tableId, onClick }) => {
     const { loading, topQueryUsers } = useLoadQueryUsers(tableId);
     const handleUserClick = useCallback(
         (uid: number) => {
-            onClick(uid, null);
+            onClick(uid, null, null);
+        },
+        [onClick]
+    );
+    const handleEngineClick = useCallback(
+        (engine_id: number) => {
+            onClick(null, engine_id, null);
         },
         [onClick]
     );
     const handleTableClick = useCallback(
         (tableId: number) => {
-            onClick(null, tableId);
+            onClick(null, null, tableId);
         },
         [onClick]
     );
@@ -242,7 +248,14 @@ const TableInsightsSection: React.FC<{
                 />
             </div>
             <div className="mt8">
-                <Title size={6}>Top co-occuring tables</Title>
+                <Title size={6}>Top Query Engines</Title>
+                <DataTableViewQueryEngines
+                    tableId={tableId}
+                    onClick={handleEngineClick}
+                />
+            </div>
+            <div className="mt8">
+                <Title size={6}>Top Co-occurring Tables</Title>
                 <DataTableViewQueryConcurrences
                     tableId={tableId}
                     onClick={handleTableClick}

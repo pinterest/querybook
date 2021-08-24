@@ -297,7 +297,13 @@ def update_column_by_id(
 
 @register("/table/<int:table_id>/query_examples/", methods=["GET"])
 def get_table_query_examples(
-    table_id, environment_id, uid=None, with_table_id=None, limit=10, offset=0
+    table_id,
+    environment_id,
+    uid=None,
+    engine_id=None,
+    with_table_id=None,
+    limit=10,
+    offset=0,
 ):
     api_assert(limit < 100)
 
@@ -308,10 +314,12 @@ def get_table_query_examples(
             environment_id, session=session
         )
         engine_ids = [engine.id for engine in engines]
+        api_assert(engine_id is None or engine_id in engine_ids, "Invalid engine id")
         query_logs = logic.get_table_query_examples(
             table_id,
             engine_ids,
             uid=uid,
+            engine_id=engine_id,
             with_table_id=with_table_id,
             limit=limit,
             offset=offset,
@@ -332,6 +340,18 @@ def get_table_query_examples_users(table_id, environment_id, limit=5):
     users = logic.get_query_example_users(table_id, engine_ids, limit=limit)
 
     return [{"uid": r[0], "count": r[1]} for r in users]
+
+
+@register("/table/<int:table_id>/query_examples/engines/", methods=["GET"])
+def get_table_query_examples_engines(table_id, environment_id, limit=5):
+    api_assert(limit <= 10)
+    verify_environment_permission([environment_id])
+    verify_data_table_permission(table_id)
+    all_engines = admin_logic.get_query_engines_by_environment(environment_id)
+    engine_ids = [engine.id for engine in all_engines]
+    top_engines = logic.get_query_example_engines(table_id, engine_ids, limit=limit)
+
+    return [{"engine_id": r[0], "count": r[1]} for r in top_engines]
 
 
 @register("/table/<int:table_id>/query_examples/concurrences/", methods=["GET"])

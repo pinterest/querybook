@@ -125,10 +125,15 @@ class DataTableViewComponent extends React.PureComponent<
     }
 
     @bind
-    public handleExampleFilter(uid: number, withTableId: number) {
+    public handleExampleFilter(
+        uid: number,
+        engineId: number,
+        withTableId: number
+    ) {
         replaceQueryString({
             tab: 'query_examples',
             uid,
+            engine_id: engineId,
             with_table_id: withTableId,
         });
         this.setState({ selectedTabKey: 'query_examples' });
