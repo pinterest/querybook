@@ -336,7 +336,7 @@ def get_all_query_result_exporters():
 )
 def export_statement_execution_acquire_auth(exporter_name):
     exporter = get_exporter(exporter_name)
-    api_assert(exporter is not None, f"Invalid export name {exporter_name}")
+    api_assert(exporter is not None, f"Invalid exporter name {exporter_name}")
     if not exporter.requires_auth:
         return None
     return exporter.acquire_auth(current_user.id)
