@@ -7,6 +7,7 @@ import {
     IDataColumn,
     IDataTableWarning,
     DataTableWarningSeverity,
+    IPaginatedQuerySampleFilters,
 } from 'const/metastore';
 import { navigateWithinEnv } from 'lib/utils/query-string';
 import { generateFormattedDate } from 'lib/utils/datetime';
@@ -32,6 +33,10 @@ import { DataTableViewOverviewSection } from './DataTableViewOverviewSection';
 import { LoadingRow } from 'ui/Loading/Loading';
 import { DataTableViewQueryConcurrences } from 'components/DataTableViewQueryExample/DataTableViewQueryConcurrences';
 import { Title } from 'ui/Title/Title';
+import {
+    DataTableViewQueryEngines,
+    useLoadQueryEngines,
+} from 'components/DataTableViewQueryExample/DataTableViewQueryEngines';
 
 const dataTableDetailsColumns = [
     {
@@ -65,7 +70,7 @@ export interface IQuerybookTableViewOverviewProps {
         tableId: number,
         description: DraftJs.ContentState
     ) => any;
-    onExampleFilter: (uid: number, withTableId: number) => any;
+    onExampleFilter: (params: IPaginatedQuerySampleFilters) => any;
 }
 
 export class DataTableViewOverview extends React.PureComponent<IQuerybookTableViewOverviewProps> {
@@ -76,12 +81,7 @@ export class DataTableViewOverview extends React.PureComponent<IQuerybookTableVi
     }
 
     public render() {
-        const {
-            table,
-            tableName,
-            tableWarnings,
-            onExampleFilter: onExampleUidFilter,
-        } = this.props;
+        const { table, tableName, tableWarnings, onExampleFilter } = this.props;
         const description = table.description ? (
             <EditableTextField
                 value={table.description as DraftJs.ContentState}
@@ -200,7 +200,7 @@ export class DataTableViewOverview extends React.PureComponent<IQuerybookTableVi
                 {descriptionSection}
                 <TableInsightsSection
                     tableId={table.id}
-                    onClick={onExampleUidFilter}
+                    onClick={onExampleFilter}
                 />
                 {detailsSection}
                 <TableStatsSection tableId={table.id} />
@@ -214,23 +214,32 @@ export class DataTableViewOverview extends React.PureComponent<IQuerybookTableVi
 
 const TableInsightsSection: React.FC<{
     tableId: number;
-    onClick: (uid: number, withTableId: number) => any;
+    onClick: (params: IPaginatedQuerySampleFilters) => any;
 }> = ({ tableId, onClick }) => {
-    const { loading, topQueryUsers } = useLoadQueryUsers(tableId);
+    const { loading: loadingUsers, topQueryUsers } = useLoadQueryUsers(tableId);
+    const { loading: loadingEngines, queryEngines } = useLoadQueryEngines(
+        tableId
+    );
     const handleUserClick = useCallback(
         (uid: number) => {
-            onClick(uid, null);
+            onClick({ uid });
+        },
+        [onClick]
+    );
+    const handleEngineClick = useCallback(
+        (engineId: number) => {
+            onClick({ engine_id: engineId });
         },
         [onClick]
     );
     const handleTableClick = useCallback(
         (tableId: number) => {
-            onClick(null, tableId);
+            onClick({ with_table_id: tableId });
         },
         [onClick]
     );
 
-    return loading ? (
+    return loadingUsers || loadingEngines ? (
         <LoadingRow />
     ) : topQueryUsers?.length ? (
         <DataTableViewOverviewSection title="Table Insights">
@@ -241,8 +250,17 @@ const TableInsightsSection: React.FC<{
                     onClick={handleUserClick}
                 />
             </div>
+            {queryEngines.length > 1 && (
+                <div className="mt8">
+                    <Title size={6}>Query Engines</Title>
+                    <DataTableViewQueryEngines
+                        tableId={tableId}
+                        onClick={handleEngineClick}
+                    />
+                </div>
+            )}
             <div className="mt8">
-                <Title size={6}>Top co-occuring tables</Title>
+                <Title size={6}>Top Co-occurring Tables</Title>
                 <DataTableViewQueryConcurrences
                     tableId={tableId}
                     onClick={handleTableClick}

@@ -28,6 +28,7 @@ import { Loading } from 'ui/Loading/Loading';
 import { Title } from 'ui/Title/Title';
 import { ThemedCodeHighlight } from 'ui/CodeHighlight/ThemedCodeHighlight';
 
+import { DataTableViewQueryEngines } from './DataTableViewQueryEngines';
 import { DataTableViewQueryConcurrences } from './DataTableViewQueryConcurrences';
 
 import './DataTableViewQueryExamples.scss';
@@ -62,11 +63,15 @@ function useQueryExampleState(tableId: number) {
 function getInitialFilterState(): IPaginatedQuerySampleFilters {
     const queryString = getQueryString();
     const uid: string = queryString['uid'];
+    const engineId: string = queryString['engine_id'];
     const withTableId: string = queryString['with_table_id'];
     const filters: IPaginatedQuerySampleFilters = {};
 
     if (uid) {
         filters.uid = Number(uid);
+    }
+    if (engineId) {
+        filters.engine_id = Number(engineId);
     }
     if (withTableId) {
         filters.with_table_id = Number(withTableId);
@@ -120,6 +125,16 @@ export const DataTableViewQueryExamples: React.FunctionComponent<IProps> = ({
         [filters]
     );
 
+    const setEngineIdFilter = React.useCallback(
+        (engineId: number) => {
+            setFilter(
+                'engine_id',
+                engineId === filters.engine_id ? null : engineId
+            );
+        },
+        [filters]
+    );
+
     const setTableIdFilter = React.useCallback(
         (tableId: number) => {
             setFilter(
@@ -149,10 +164,19 @@ export const DataTableViewQueryExamples: React.FunctionComponent<IProps> = ({
                         selectedUid={filters.uid}
                     />
                 </div>
-
                 <div className="mt12">
                     <Title subtitle size={6}>
-                        Top co-occuring tables
+                        Query engines
+                    </Title>
+                    <DataTableViewQueryEngines
+                        tableId={tableId}
+                        onClick={setEngineIdFilter}
+                        selectedEngineId={filters.engine_id}
+                    />
+                </div>
+                <div className="mt12">
+                    <Title subtitle size={6}>
+                        Top co-occurring tables
                     </Title>
                     <DataTableViewQueryConcurrences
                         tableId={tableId}

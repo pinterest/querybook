@@ -1,4 +1,5 @@
 import datetime
+from models.admin import QueryEngineEnvironment
 from sqlalchemy import func, and_
 from sqlalchemy.orm import aliased
 
@@ -562,7 +563,14 @@ def delete_old_able_query_execution_log(
 
 @with_session
 def get_table_query_examples(
-    table_id, engine_ids, uid=None, with_table_id=None, limit=5, offset=0, session=None
+    table_id,
+    engine_ids,
+    uid=None,
+    engine_id=None,
+    with_table_id=None,
+    limit=5,
+    offset=0,
+    session=None,
 ):
     main_table_qe = aliased(DataTableQueryExecution)
     query = (
@@ -574,6 +582,9 @@ def get_table_query_examples(
 
     if uid is not None:
         query = query.filter(QueryExecution.uid == uid)
+
+    if engine_id is not None:
+        query = query.filter(QueryExecution.engine_id == engine_id)
 
     if with_table_id is not None:
         join_table_qe = aliased(DataTableQueryExecution)
@@ -603,6 +614,26 @@ def get_query_example_users(table_id, engine_ids, limit=5, session=None):
     )
 
     return users
+
+
+@with_session
+def get_query_example_engines(table_id, environment_id, session=None):
+    engines = (
+        session.query(QueryExecution.engine_id, func.count(QueryExecution.id))
+        .select_from(DataTableQueryExecution)
+        .join(QueryExecution)
+        .join(
+            QueryEngineEnvironment,
+            QueryExecution.engine_id == QueryEngineEnvironment.query_engine_id,
+        )
+        .filter(DataTableQueryExecution.table_id == table_id)
+        .filter(QueryEngineEnvironment.environment_id == environment_id)
+        .group_by(QueryExecution.engine_id)
+        .order_by(func.count(QueryExecution.id).desc())
+        .all()
+    )
+
+    return engines
 
 
 @with_session

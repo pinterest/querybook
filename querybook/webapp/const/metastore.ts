@@ -127,6 +127,7 @@ export type FunctionDocumentationCollection = Record<
 
 export interface IPaginatedQuerySampleFilters {
     uid?: number;
+    engine_id?: number;
     with_table_id?: number;
 }
 
@@ -138,6 +139,11 @@ export interface IPaginatedQuerySamples {
 
 export interface ITopQueryUser {
     uid: number;
+    count: number;
+}
+
+export interface ITableQueryEngine {
+    engine_id: number;
     count: number;
 }
 

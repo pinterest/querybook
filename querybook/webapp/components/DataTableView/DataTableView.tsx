@@ -32,6 +32,7 @@ import { Loader } from 'ui/Loader/Loader';
 import { Tabs } from 'ui/Tabs/Tabs';
 
 import './DataTableView.scss';
+import { IPaginatedQuerySampleFilters } from 'const/metastore';
 
 const tabDefinitions = [
     {
@@ -125,11 +126,10 @@ class DataTableViewComponent extends React.PureComponent<
     }
 
     @bind
-    public handleExampleFilter(uid: number, withTableId: number) {
+    public handleExampleFilter(params: IPaginatedQuerySampleFilters) {
         replaceQueryString({
             tab: 'query_examples',
-            uid,
-            with_table_id: withTableId,
+            ...params,
         });
         this.setState({ selectedTabKey: 'query_examples' });
     }

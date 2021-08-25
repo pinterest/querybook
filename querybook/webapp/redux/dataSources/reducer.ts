@@ -25,6 +25,7 @@ const initialState: IDataSourcesState = {
 
     queryExampleIdsById: {},
     queryTopUsersByTableId: {},
+    queryEnginesByTableId: {},
     queryTopConcurrencesByTableId: {},
 
     dataTableStatByTableId: {},
@@ -326,6 +327,21 @@ function queryTopUsersByTableIdReducer(
     });
 }
 
+function queryEnginesByTableIdReducer(
+    state = initialState.queryEnginesByTableId,
+    action: DataSourcesAction
+) {
+    return produce(state, (draft) => {
+        switch (action.type) {
+            case '@@dataSources/RECEIVE_TABLE_QUERY_ENGINES': {
+                const { tableId, engines } = action.payload;
+                draft[tableId] = engines;
+                return;
+            }
+        }
+    });
+}
+
 function queryTopConcurrencesByTableIdReducer(
     state = initialState.queryTopConcurrencesByTableId,
     action: DataSourcesAction
@@ -436,6 +452,7 @@ export default combineReducers({
     dataTablesSamplesPollingById: dataTablesSamplesPollingByIdReducer,
     queryExampleIdsById: queryExampleIdsByIdReducer,
     queryTopUsersByTableId: queryTopUsersByTableIdReducer,
+    queryEnginesByTableId: queryEnginesByTableIdReducer,
     queryTopConcurrencesByTableId: queryTopConcurrencesByTableIdReducer,
     dataLineages: dataLineagesReducer,
     dataTableWarningById: dataTableWarningByIdReducer,

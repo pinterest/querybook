@@ -15,6 +15,7 @@ import type {
     ITableSampleParams,
     ITableStats,
     ITopQueryConcurrences,
+    ITableQueryEngine,
     ITopQueryUser,
     IUpdateTableParams,
 } from 'const/metastore';
@@ -90,22 +91,24 @@ export const TableQueryExampleResource = {
         ),
 
     getTopUsers: (tableId: number, environmentId: number, limit: number) =>
-        ds.fetch<ITopQueryUser[]>(
-            {
-                url: `/table/${tableId}/query_examples/users/`,
-            },
+        ds.fetch<ITopQueryUser[]>(`/table/${tableId}/query_examples/users/`, {
+            table_id: tableId,
+            environment_id: environmentId,
+            limit,
+        }),
+
+    getEngines: (tableId: number, environmentId: number) =>
+        ds.fetch<ITableQueryEngine[]>(
+            `/table/${tableId}/query_examples/engines/`,
             {
                 table_id: tableId,
                 environment_id: environmentId,
-                limit,
             }
         ),
 
     getTopConcurrences: (tableId: number, limit: number) =>
         ds.fetch<ITopQueryConcurrences[]>(
-            {
-                url: `/table/${tableId}/query_examples/concurrences/`,
-            },
+            `/table/${tableId}/query_examples/concurrences/`,
             {
                 table_id: tableId,
                 limit,
