@@ -7,6 +7,7 @@ import {
     IDataColumn,
     IDataTableWarning,
     DataTableWarningSeverity,
+    IPaginatedQuerySampleFilters,
 } from 'const/metastore';
 import { navigateWithinEnv } from 'lib/utils/query-string';
 import { generateFormattedDate } from 'lib/utils/datetime';
@@ -69,11 +70,7 @@ export interface IQuerybookTableViewOverviewProps {
         tableId: number,
         description: DraftJs.ContentState
     ) => any;
-    onExampleFilter: (
-        uid: number,
-        engineId: number,
-        withTableId: number
-    ) => any;
+    onExampleFilter: (params: IPaginatedQuerySampleFilters) => any;
 }
 
 export class DataTableViewOverview extends React.PureComponent<IQuerybookTableViewOverviewProps> {
@@ -217,7 +214,7 @@ export class DataTableViewOverview extends React.PureComponent<IQuerybookTableVi
 
 const TableInsightsSection: React.FC<{
     tableId: number;
-    onClick: (uid: number, engineId: number, withTableId: number) => any;
+    onClick: (params: IPaginatedQuerySampleFilters) => any;
 }> = ({ tableId, onClick }) => {
     const { loading: loadingUsers, topQueryUsers } = useLoadQueryUsers(tableId);
     const { loading: loadingEngines, queryEngines } = useLoadQueryEngines(
@@ -225,19 +222,19 @@ const TableInsightsSection: React.FC<{
     );
     const handleUserClick = useCallback(
         (uid: number) => {
-            onClick(uid, null, null);
+            onClick({ uid });
         },
         [onClick]
     );
     const handleEngineClick = useCallback(
-        (engine_id: number) => {
-            onClick(null, engine_id, null);
+        (engineId: number) => {
+            onClick({ engine_id: engineId });
         },
         [onClick]
     );
     const handleTableClick = useCallback(
         (tableId: number) => {
-            onClick(null, null, tableId);
+            onClick({ with_table_id: tableId });
         },
         [onClick]
     );

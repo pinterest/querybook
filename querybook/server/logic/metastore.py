@@ -1,5 +1,5 @@
 import datetime
-from models.admin import QueryEngine, QueryEngineEnvironment
+from models.admin import QueryEngineEnvironment
 from sqlalchemy import func, and_
 from sqlalchemy.orm import aliased
 
@@ -619,14 +619,16 @@ def get_query_example_users(table_id, engine_ids, limit=5, session=None):
 @with_session
 def get_query_example_engines(table_id, environment_id, session=None):
     engines = (
-        session.query(QueryEngine.id, func.count(QueryExecution.id))
+        session.query(QueryExecution.engine_id, func.count(QueryExecution.id))
         .select_from(DataTableQueryExecution)
         .join(QueryExecution)
-        .join(QueryEngine)
-        .join(QueryEngineEnvironment)
+        .join(
+            QueryEngineEnvironment,
+            QueryExecution.engine_id == QueryEngineEnvironment.query_engine_id,
+        )
         .filter(DataTableQueryExecution.table_id == table_id)
         .filter(QueryEngineEnvironment.environment_id == environment_id)
-        .group_by(QueryEngine.id)
+        .group_by(QueryExecution.engine_id)
         .order_by(func.count(QueryExecution.id).desc())
         .all()
     )

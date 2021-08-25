@@ -11,7 +11,8 @@ import { queryEngineByIdEnvSelector } from 'redux/queryEngine/selector';
 export function useLoadQueryEngines(tableId: number) {
     const [loading, setLoading] = useState(false);
     const queryEngines = useSelector(
-        (state: IStoreState) => state.dataSources.queryEnginesByTableId[tableId]
+        (state: IStoreState) =>
+            state.dataSources.queryEnginesByTableId[tableId] ?? []
     );
 
     const dispatch: Dispatch = useDispatch();
@@ -70,14 +71,11 @@ const QueryEngineButton: React.FC<{
         engineId,
     ]);
     const queryEngineById = useSelector(queryEngineByIdEnvSelector);
-    const queryEngine = queryEngineById[engineId];
-    const { name: queryEngineName } = queryEngine;
+    const queryEngineName = queryEngineById[engineId].name;
 
     return (
         <Button onClick={handleClick} active={active}>
-            <span className="ml4">
-                {queryEngineName} ({queryCount})
-            </span>
+            {queryEngineName} ({queryCount})
         </Button>
     );
 };
