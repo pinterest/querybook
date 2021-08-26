@@ -1,27 +1,27 @@
 
-# Server
-Werkzeug==0.15.5
-flask==1.1.2
-Flask-Caching==1.7.2
-Flask-Compress==1.4.0
+# Server requirements
+Werkzeug==2.0.1
+flask==2.0.1
+Flask-Caching==1.10.1
+Flask-Compress==1.10.1
 Flask-Login==0.4.1
-Flask-Limiter==1.1.0
+Flask-Limiter==1.4
 python-memcached==1.59
 redis==3.5.3
 
-gevent==21.1.2
-greenlet==1.0.0
+gevent==21.8.0
+greenlet==1.1.1
 
 alembic==1.4.3
 
 gevent-websocket==0.10.1
-flask-socketio==5.0.1
+flask-socketio==5.1.1
 
 # Fixing the version of python-socketio due to change in 5.3.0
 python-socketio==5.2.1
 
 # Query templating
-Jinja2==2.11.3  # From Flask
+Jinja2==3.0.1  # From Flask
 
 # Celery
 celery[redis]==5.0.5
@@ -63,7 +63,7 @@ snowflake-sqlalchemy==1.2.4
 requests-aws4auth==0.9
 boto3==1.9.201
 boto==2.49.0
-moto==2.0.7
+moto==2.2.4
 
 # Google GCD
 google-cloud-storage==1.37.0
