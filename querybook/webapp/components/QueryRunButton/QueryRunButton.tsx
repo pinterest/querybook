@@ -8,7 +8,7 @@ import { queryEngineStatusToIconStatus } from 'const/queryStatusIcon';
 import { TooltipDirection } from 'const/tooltip';
 import { getShortcutSymbols, KeyMap } from 'lib/utils/keyboard';
 
-import { AsyncButton } from 'ui/AsyncButton/AsyncButton';
+import { AsyncButton, IAsyncButtonHandles } from 'ui/AsyncButton/AsyncButton';
 import { Dropdown } from 'ui/Dropdown/Dropdown';
 import { ListMenu } from 'ui/Menu/ListMenu';
 import { StatusIcon } from 'ui/StatusIcon/StatusIcon';
@@ -47,15 +47,19 @@ export const QueryRunButton = React.forwardRef<
         },
         ref
     ) => {
-        const runButtonRef = React.useRef<AsyncButton>();
+        const runButtonRef = React.useRef<IAsyncButtonHandles>();
 
-        React.useImperativeHandle(ref, () => ({
-            clickRunButton: () => {
-                if (runButtonRef.current) {
-                    runButtonRef.current.onClick();
-                }
-            },
-        }));
+        React.useImperativeHandle(
+            ref,
+            () => ({
+                clickRunButton: () => {
+                    if (runButtonRef.current) {
+                        runButtonRef.current.onClick();
+                    }
+                },
+            }),
+            []
+        );
 
         const runButtonDOM = disabled ? null : (
             <AsyncButton

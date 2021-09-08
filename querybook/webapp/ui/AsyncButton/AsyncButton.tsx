@@ -3,7 +3,13 @@ import {
     ButtonType,
     getButtonComponentByType,
 } from '../Button/Button';
-import React, { useCallback, useEffect, useRef, useState } from 'react';
+import React, {
+    useCallback,
+    useEffect,
+    useImperativeHandle,
+    useRef,
+    useState,
+} from 'react';
 import clsx from 'clsx';
 
 export interface IAsyncButtonProps extends ButtonProps {
@@ -12,8 +18,8 @@ export interface IAsyncButtonProps extends ButtonProps {
     type?: ButtonType;
 }
 
-export interface IAsyncButtonState {
-    loading?: boolean;
+export interface IAsyncButtonHandles {
+    onClick: () => Promise<void>;
 }
 
 function useSafeState<T>(initialValue: T | (() => T)) {
@@ -40,14 +46,20 @@ function useSafeState<T>(initialValue: T | (() => T)) {
     return [state, safeSetState] as const;
 }
 
-export const AsyncButton = React.memo<IAsyncButtonProps>(
-    ({
-        disableWhileAsync = true,
-        onClick,
-        type,
-        children,
-        ...propsForButton
-    }) => {
+export const AsyncButton = React.forwardRef<
+    IAsyncButtonHandles,
+    IAsyncButtonProps
+>(
+    (
+        {
+            disableWhileAsync = true,
+            onClick,
+            type,
+            children,
+            ...propsForButton
+        },
+        ref
+    ) => {
         const [loading, setLoading] = useSafeState(false);
 
         const handleAsyncClick = useCallback(async (...args: any[]) => {
@@ -58,6 +70,14 @@ export const AsyncButton = React.memo<IAsyncButtonProps>(
                 setLoading(false);
             }
         }, []);
+
+        useImperativeHandle(
+            ref,
+            () => ({
+                onClick: handleAsyncClick,
+            }),
+            [handleAsyncClick]
+        );
 
         const buttonProps: ButtonProps = {
             isLoading: loading,
