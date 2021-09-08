@@ -8,10 +8,10 @@ import 'react-table/react-table.css';
 import './Table.scss';
 
 export type TableAlign = 'center' | 'left' | 'right';
-
+export type TableColumn = Column | string;
 export interface ITableProps extends Partial<TableProps> {
     rows: any[];
-    cols: Array<Column | string>;
+    cols: TableColumn[];
     showHeader?: boolean;
     stickyHeader?: boolean;
 
@@ -55,7 +55,7 @@ export const Table = React.memo<ITableProps>(
         );
         const columnDefs = useMemo(
             () =>
-                cols.map((column: Column | string, columnIndex: number) => {
+                cols.map((column: TableColumn, columnIndex: number) => {
                     let formattedColumn: Column;
                     if (typeof column === 'string') {
                         formattedColumn = {

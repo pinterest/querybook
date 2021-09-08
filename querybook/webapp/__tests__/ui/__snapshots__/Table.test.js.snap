@@ -56,8 +56,16 @@ exports[`matches enzyme snapshots matches snapshot 1`] = `
   }
   columns={
     Array [
-      1,
-      2,
+      Object {
+        "Cell": [Function],
+        "Header": "1",
+        "accessor": "1",
+      },
+      Object {
+        "Cell": [Function],
+        "Header": "2",
+        "accessor": "2",
+      },
     ]
   }
   data={
@@ -182,7 +190,9 @@ exports[`matches test renderer snapshot serializes the styles 1`] = `
         >
           <div
             className="rt-resizable-header-content"
-          />
+          >
+            1
+          </div>
           <div
             className="rt-resizer"
             onMouseDown={[Function]}
@@ -204,7 +214,9 @@ exports[`matches test renderer snapshot serializes the styles 1`] = `
         >
           <div
             className="rt-resizable-header-content"
-          />
+          >
+            2
+          </div>
           <div
             className="rt-resizer"
             onMouseDown={[Function]}
