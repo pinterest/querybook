@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useCallback } from 'react';
 import { LocationDescriptor } from 'history';
 import styled from 'styled-components';
 import { Link as LinkImport, LinkProps } from 'react-router-dom';
@@ -46,65 +46,64 @@ export interface ILinkProps extends AnchorProps {
 const openNewTab = (url: string) => window.open(url);
 const openInTab = (url: string) => (window.location.href = url);
 
-export class Link extends React.PureComponent<ILinkProps> {
-    public handleClick = (e: React.MouseEvent<HTMLAnchorElement>) => {
-        if (e.button !== 0) {
-            // If it is not a left click, ignore
-            return;
-        }
+export const Link: React.FC<ILinkProps> = ({
+    to,
+    onClick,
+    newTab,
+    children,
 
-        e.preventDefault();
-        const { to, onClick, newTab } = this.props;
-        const isCmdDown = e.metaKey;
-
-        if (onClick) {
-            onClick(e);
-        } else if (to && typeof to === 'string') {
-            if (isCmdDown || newTab) {
-                openNewTab(to);
-            } else {
-                openInTab(to);
+    naturalLink,
+    stopProgation,
+    linkProps,
+    ...elementProps
+}) => {
+    const handleClick = useCallback(
+        (e: React.MouseEvent<HTMLAnchorElement>) => {
+            if (e.button !== 0) {
+                // If it is not a left click, ignore
+                return;
             }
-        }
-    };
 
-    public render() {
-        const {
-            children,
-            to,
-            onClick,
-            newTab,
-            naturalLink,
-            stopProgation,
-            linkProps,
-            ...elementProps
-        } = this.props;
+            e.preventDefault();
+            const isCmdDown = e.metaKey;
 
-        const linkComponent = isInternalUrl(to) ? (
-            <LinkImport to={to} {...(elementProps as LinkProps)} {...linkProps}>
-                {children}
-            </LinkImport>
-        ) : (
-            <StyledLink
-                href={to}
-                naturalLink={naturalLink}
-                onMouseDown={this.handleClick}
-                {...elementProps}
-                {...(newTab
-                    ? {}
-                    : { target: '_blank', rel: 'noopener noreferrer' })}
-            >
-                {children}
-            </StyledLink>
+            if (onClick) {
+                onClick(e);
+            } else if (to && typeof to === 'string') {
+                if (isCmdDown || newTab) {
+                    openNewTab(to);
+                } else {
+                    openInTab(to);
+                }
+            }
+        },
+        [to, onClick, newTab]
+    );
+
+    const linkComponent = isInternalUrl(to) ? (
+        <LinkImport to={to} {...(elementProps as LinkProps)} {...linkProps}>
+            {children}
+        </LinkImport>
+    ) : (
+        <StyledLink
+            href={to}
+            naturalLink={naturalLink}
+            onMouseDown={handleClick}
+            {...elementProps}
+            {...(newTab
+                ? {}
+                : { target: '_blank', rel: 'noopener noreferrer' })}
+        >
+            {children}
+        </StyledLink>
+    );
+
+    if (stopProgation) {
+        return (
+            <span onClick={(event) => event.stopPropagation()}>
+                {linkComponent}
+            </span>
         );
-
-        if (stopProgation) {
-            return (
-                <span onClick={(event) => event.stopPropagation()}>
-                    {linkComponent}
-                </span>
-            );
-        }
-        return linkComponent;
     }
-}
+    return linkComponent;
+};

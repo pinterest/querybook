@@ -162,7 +162,7 @@ export function getQueryEngineId(
 export function arrayGroupByField<
     T,
     K extends keyof PickType<T, string | number>
->(array: T[], byField?: K): Record<string, T> {
+>(array: T[], byField?: K): Record<T[K], T> {
     if (array.length === 0) {
         return {};
     }

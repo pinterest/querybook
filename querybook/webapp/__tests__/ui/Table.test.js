@@ -11,7 +11,7 @@ it('renders without crashing', () => {
 
 describe('matches enzyme snapshots', () => {
     it('matches snapshot', () => {
-        const wrapper = shallow(<Table rows={[1, 2]} cols={[1, 2]} />);
+        const wrapper = shallow(<Table rows={[1, 2]} cols={['1', '2']} />);
         const serialized = toJson(wrapper);
         expect(serialized).toMatchSnapshot();
     });
@@ -19,7 +19,9 @@ describe('matches enzyme snapshots', () => {
 
 describe('matches test renderer snapshot', () => {
     it('serializes the styles', () => {
-        const output = renderer.create(<Table rows={[1, 2]} cols={[1, 2]} />);
+        const output = renderer.create(
+            <Table rows={[1, 2]} cols={['1', '2']} />
+        );
         expect(output).toMatchSnapshot();
     });
 });

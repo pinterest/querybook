@@ -1,7 +1,5 @@
-import React from 'react';
+import React, { useCallback, useMemo } from 'react';
 import clsx from 'clsx';
-import { decorate } from 'core-decorators';
-import memoizeOne from 'memoize-one';
 import ReactTable, { Column, TableProps } from 'react-table';
 
 import { titleize } from 'lib/utils';
@@ -10,10 +8,10 @@ import 'react-table/react-table.css';
 import './Table.scss';
 
 export type TableAlign = 'center' | 'left' | 'right';
-
+export type TableColumn = Column | string;
 export interface ITableProps extends Partial<TableProps> {
     rows: any[];
-    cols: Array<Column | string>;
+    cols: TableColumn[];
     showHeader?: boolean;
     stickyHeader?: boolean;
 
@@ -31,75 +29,76 @@ export interface ITableProps extends Partial<TableProps> {
     sortCell?: (columnIdx: number, cellA: any, cellB: any) => -1 | 0 | 1;
 }
 
-export class Table extends React.PureComponent<ITableProps> {
-    public static defaultProps = {
-        showHeader: true,
-        showAllRows: false,
-    };
+export const Table = React.memo<ITableProps>(
+    ({
+        rows,
+        cols,
+        showHeader = true,
+        stickyHeader = false,
+        showAllRows = false,
 
-    @decorate(memoizeOne)
-    public formatColumns(
-        columns: Array<Column | string>,
-        showHeader: boolean,
-        formatCell?: ITableProps['formatCell'],
-        sortCell?: ITableProps['sortCell'],
-        widthObj?: Record<string, number>,
-        alignObj?: Record<string, 'left' | 'right' | 'center'>
-    ): Column[] {
-        return columns.map((column: Column | string, columnIndex: number) => {
-            let formattedColumn: Column;
-            if (typeof column === 'string') {
-                formattedColumn = {
-                    Header: titleize(column, '_', ' '),
-                    accessor: column,
-                };
-                if (widthObj && widthObj[column]) {
-                    formattedColumn.minWidth = widthObj[column];
-                }
+        colNameToWidths,
+        colNameToTextAlign,
 
-                if (alignObj && alignObj[column]) {
-                    formattedColumn.style = {
-                        textAlign: alignObj[column],
-                    };
-                }
-            } else {
-                formattedColumn = column;
-            }
+        formatCell,
+        sortCell,
 
-            if (formatCell) {
-                formattedColumn.Cell = this.formatCell.bind(
-                    this,
-                    formattedColumn.accessor,
-                    columnIndex
-                );
-            }
-            if (sortCell) {
-                formattedColumn.sortMethod = sortCell.bind(null, columnIndex);
-            }
+        className,
+        ...otherProps
+    }) => {
+        const handleFormatCell = useCallback(
+            (column: string, columnIndex: number, row) =>
+                formatCell
+                    ? formatCell(columnIndex, column, row.row._original)
+                    : null,
+            [formatCell]
+        );
+        const columnDefs = useMemo(
+            () =>
+                cols.map((column: TableColumn, columnIndex: number) => {
+                    let formattedColumn: Column;
+                    if (typeof column === 'string') {
+                        formattedColumn = {
+                            Header: titleize(column, '_', ' '),
+                            accessor: column,
+                        };
+                        if (colNameToWidths && colNameToWidths[column]) {
+                            formattedColumn.minWidth = colNameToWidths[column];
+                        }
 
-            return formattedColumn;
-        });
-    }
+                        if (colNameToTextAlign && colNameToTextAlign[column]) {
+                            formattedColumn.style = {
+                                textAlign: colNameToTextAlign[column],
+                            };
+                        }
+                    } else {
+                        formattedColumn = column;
+                    }
 
-    public formatCell(column: string, columnIndex: number, row) {
-        return this.props.formatCell(columnIndex, column, row.row._original);
-    }
+                    if (handleFormatCell) {
+                        formattedColumn.Cell = handleFormatCell.bind(
+                            null,
+                            formattedColumn.accessor,
+                            columnIndex
+                        );
+                    }
+                    if (sortCell) {
+                        formattedColumn.sortMethod = sortCell.bind(
+                            null,
+                            columnIndex
+                        );
+                    }
 
-    public render() {
-        const {
-            rows,
-            cols,
-            showHeader,
-            stickyHeader,
-
-            formatCell,
-            sortCell,
-            colNameToWidths,
-            colNameToTextAlign,
-            showAllRows,
-            className,
-            ...otherProps
-        } = this.props;
+                    return formattedColumn;
+                }),
+            [
+                cols,
+                colNameToWidths,
+                colNameToTextAlign,
+                handleFormatCell,
+                sortCell,
+            ]
+        );
 
         const combinedClassName = clsx({
             Table: true,
@@ -118,16 +117,9 @@ export class Table extends React.PureComponent<ITableProps> {
             <ReactTable
                 className={combinedClassName}
                 data={rows}
-                columns={this.formatColumns(
-                    cols,
-                    showHeader,
-                    formatCell,
-                    sortCell,
-                    colNameToWidths,
-                    colNameToTextAlign
-                )}
+                columns={columnDefs}
                 {...otherProps}
             />
         );
     }
-}
+);

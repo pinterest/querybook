@@ -3,75 +3,91 @@ import {
     ButtonType,
     getButtonComponentByType,
 } from '../Button/Button';
-import React from 'react';
+import React, {
+    useCallback,
+    useEffect,
+    useImperativeHandle,
+    useRef,
+    useState,
+} from 'react';
 import clsx from 'clsx';
 
 export interface IAsyncButtonProps extends ButtonProps {
-    onClick: (...args: any[]) => Promise<unknown>;
+    onClick?: (...args: any[]) => Promise<unknown>;
     disableWhileAsync?: boolean;
     type?: ButtonType;
 }
 
-export interface IAsyncButtonState {
-    loading?: boolean;
+export interface IAsyncButtonHandles {
+    onClick: () => Promise<void>;
 }
 
-export class AsyncButton extends React.PureComponent<
-    IAsyncButtonProps,
-    IAsyncButtonState
-> {
-    public static defaultProps: Partial<IAsyncButtonProps> = {
-        disableWhileAsync: true,
-    };
-    private canSetState: boolean = true;
-
-    public constructor(props: IAsyncButtonProps) {
-        super(props);
-
-        this.state = {
-            loading: false,
+function useSafeState<T>(initialValue: T | (() => T)) {
+    const canSetStateRef = useRef(true);
+    useEffect(() => {
+        canSetStateRef.current = true;
+        return () => {
+            canSetStateRef.current = false;
         };
-    }
+    }, []);
 
-    public componentWillUnmount() {
-        this.canSetState = false;
-    }
+    const [state, setState] = useState(initialValue);
 
-    public asyncSetState(newState: Partial<IAsyncButtonState>) {
-        return new Promise<void>((resolve) => {
-            if (this.canSetState) {
-                this.setState(newState, resolve);
-            }
-        });
-    }
-
-    public onClick = async (...args: any[]) => {
-        const { disableWhileAsync } = this.props;
-        const { loading } = this.state;
-        if (!(loading && disableWhileAsync)) {
-            await this.asyncSetState({ loading: true });
-            try {
-                await this.props.onClick(...args);
-            } finally {
-                await this.asyncSetState({ loading: false });
-            }
+    /**
+     * setState would throw an error if the component is
+     * not mounted, so
+     */
+    const safeSetState = useCallback((newValue: T) => {
+        if (canSetStateRef.current) {
+            setState(newValue);
         }
-    };
+    }, []);
 
-    public render() {
-        const { disableWhileAsync, type, ...propsForButton } = this.props;
-        const { loading } = this.state;
+    return [state, safeSetState] as const;
+}
+
+export const AsyncButton = React.forwardRef<
+    IAsyncButtonHandles,
+    IAsyncButtonProps
+>(
+    (
+        {
+            disableWhileAsync = true,
+            onClick,
+            type,
+            children,
+            ...propsForButton
+        },
+        ref
+    ) => {
+        const [loading, setLoading] = useSafeState(false);
+
+        const handleAsyncClick = useCallback(async (...args: any[]) => {
+            setLoading(true);
+            try {
+                await onClick?.(...args);
+            } finally {
+                setLoading(false);
+            }
+        }, []);
+
+        useImperativeHandle(
+            ref,
+            () => ({
+                onClick: handleAsyncClick,
+            }),
+            [handleAsyncClick]
+        );
 
         const buttonProps: ButtonProps = {
-            ...propsForButton,
-
-            onClick: this.onClick,
             isLoading: loading,
-            className: clsx({
-                [propsForButton.className || '']: true,
-            }),
+            disabled: disableWhileAsync && loading,
+            onClick: handleAsyncClick,
+
+            ...propsForButton,
+            className: clsx(propsForButton.className || ''),
         };
         const Button = getButtonComponentByType(type);
-        return <Button {...buttonProps}>{this.props.children}</Button>;
+        return <Button {...buttonProps}>{children}</Button>;
     }
-}
+);
