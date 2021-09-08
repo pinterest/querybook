@@ -1,68 +1,54 @@
-import { bind } from 'lodash-decorators';
-import React from 'react';
+import React, { useCallback, useImperativeHandle, useState } from 'react';
 import clsx from 'clsx';
+import { useInterval } from 'hooks/useInterval';
 
-export interface ITimerProps<T> {
-    formatter?: (ts: T) => React.ReactChild;
-    updater?: (ts: T) => T;
+export interface ITimerProps {
+    formatter?: (ts: number) => React.ReactChild;
+    updater?: (ts: number) => number;
 
     updateFrequency?: number;
-    initialValue?: T;
+    initialValue?: number;
     className?: string;
 }
 
-interface ITimerState<T> {
-    value: T;
+const defaultFormatter = (timestamp: number) => timestamp;
+const defaultUpdater = (timestamp: number) => timestamp + 1;
+
+export interface ITimerHandles {
+    updateTimer: (overrideValue: number | null) => void;
 }
 
-export class Timer<T = number> extends React.PureComponent<
-    ITimerProps<T>,
-    ITimerState<T>
-> {
-    public static defaultProps = {
-        formatter: (timestamp: number) => timestamp,
-        updater: (timestamp: number) => timestamp + 1,
+export const Timer = React.forwardRef<ITimerHandles, ITimerProps>(
+    (
+        {
+            formatter = defaultFormatter,
+            updater = defaultUpdater,
 
-        updateFrequency: 1000, // 1 second
-        className: '',
-        initialValue: 0,
-    };
+            updateFrequency = 1000,
+            className = '',
+            initialValue = 0,
+        },
+        ref
+    ) => {
+        const [value, setValue] = useState(initialValue);
 
-    private updateInterval: number = null;
-
-    public constructor(props: ITimerProps<T>) {
-        super(props);
-
-        this.state = {
-            value: this.props.initialValue,
-        };
-    }
-
-    @bind
-    public updateTimer(overrideValue = null) {
-        this.setState(({ value }) => ({
-            value:
-                overrideValue != null
-                    ? this.props.updater(overrideValue)
-                    : this.props.updater(value),
-        }));
-    }
-
-    public componentDidMount() {
-        this.updateInterval = setInterval(
-            this.updateTimer,
-            this.props.updateFrequency
+        const updateTimer = useCallback(
+            (overrideValue: number | null = null) => {
+                setValue((oldValue) =>
+                    overrideValue != null ? overrideValue : updater(oldValue)
+                );
+            },
+            [updater]
         );
-    }
+        useInterval(updateTimer, updateFrequency);
 
-    public componentWillUnmount() {
-        clearInterval(this.updateInterval);
-    }
-
-    public render() {
-        const { formatter, className } = this.props;
-
-        const { value } = this.state;
+        useImperativeHandle(
+            ref,
+            () => ({
+                updateTimer,
+            }),
+            [updateTimer]
+        );
 
         const spanClassNames = clsx({
             Timer: true,
@@ -70,4 +56,4 @@ export class Timer<T = number> extends React.PureComponent<
         });
         return <span className={spanClassNames}>{formatter(value)}</span>;
     }
-}
+);

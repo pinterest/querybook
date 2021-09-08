@@ -17,6 +17,7 @@ exports[`matches enzyme snapshots matches snapshot 1`] = `
 <Button
   className=""
   color="default"
+  disabled={false}
   isLoading={false}
   onClick={[Function]}
   size="medium"
@@ -29,6 +30,7 @@ exports[`matches test renderer snapshot serializes the styles 1`] = `
 <span
   className="StyledButton-aqwbwz-0 eZYUp Button"
   color="var(--text-color)"
+  disabled={false}
   onClick={[Function]}
   size="medium"
 >

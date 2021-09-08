@@ -1,8 +1,7 @@
-import { bind } from 'lodash-decorators';
-import { connect } from 'react-redux';
-import React from 'react';
+import { useDispatch } from 'react-redux';
+import React, { useCallback, useRef, useState } from 'react';
 
-import { IStoreState, Dispatch } from 'redux/store/types';
+import { IStoreState } from 'redux/store/types';
 import * as dataDocActions from 'redux/dataDoc/action';
 import * as dataDocSelectors from 'redux/dataDoc/selector';
 
@@ -12,109 +11,160 @@ import { Popover } from 'ui/Popover/Popover';
 import { Button } from 'ui/Button/Button';
 import { DataDocPermission } from 'lib/data-doc/datadoc-permission';
 import { UserAvatarList } from 'components/UserBadge/UserAvatarList';
+import { useShallowSelector } from 'hooks/redux/useShallowSelector';
 
-interface IOwnProps {
+interface IDataDocViewersBadgeProps {
     numberBadges?: number;
     docId: number;
 }
-type StateProps = ReturnType<typeof mapStateToProps>;
-type DispatchProps = ReturnType<typeof mapDispatchToProps>;
 
-type IProps = IOwnProps & StateProps & DispatchProps;
-interface IState {
-    showViewsList: boolean;
-}
+const useDataDocEditorReduxActions = (docId: number) => {
+    const dispatch = useDispatch();
+    const addDataDocEditor = useCallback(
+        (uid: number, permission: DataDocPermission) =>
+            dispatch(dataDocActions.addDataDocEditors(docId, uid, permission)),
+        [docId]
+    );
 
-class DataDocViewersBadgeComponent extends React.PureComponent<IProps, IState> {
-    public static defaultProps = {
-        numberBadges: 4,
+    const updateDataDocEditors = useCallback(
+        (uid: number, read: boolean, write: boolean) =>
+            dispatch(
+                dataDocActions.updateDataDocEditors(docId, uid, read, write)
+            ),
+        [docId]
+    );
+
+    const changeDataDocPublic = useCallback(
+        (docId: number, docPublic: boolean) =>
+            dispatch(
+                dataDocActions.updateDataDocField(docId, 'public', docPublic)
+            ),
+        []
+    );
+
+    const deleteDataDocEditor = useCallback(
+        (uid: number) =>
+            dispatch(dataDocActions.deleteDataDocEditor(docId, uid)),
+        [docId]
+    );
+
+    const updateDataDocOwner = useCallback(
+        (nextOwnerId: number) => {
+            dispatch(dataDocActions.updateDataDocOwner(docId, nextOwnerId));
+        },
+        [docId]
+    );
+
+    const rejectDataDocAccessRequest = useCallback(
+        (uid: number) => {
+            dispatch(dataDocActions.rejectDataDocAccessRequest(docId, uid));
+        },
+        [docId]
+    );
+
+    return {
+        addDataDocEditor,
+        changeDataDocPublic,
+        updateDataDocEditors,
+        updateDataDocOwner,
+        deleteDataDocEditor,
+        rejectDataDocAccessRequest,
     };
+};
 
-    public readonly state = {
-        showViewsList: false,
-    };
-    public selfRef = React.createRef<HTMLDivElement>();
+export const DataDocViewersBadge = React.memo<IDataDocViewersBadgeProps>(
+    ({ numberBadges = 4, docId }) => {
+        const [showViewsList, setShowViewsList] = useState(false);
+        const selfRef = useRef<HTMLDivElement>();
 
-    @bind
-    public setShowViewsList(showViewsList: boolean) {
-        this.setState({
-            showViewsList,
-        });
-    }
-
-    @bind
-    public getBadgeContentDOM() {
         const {
             viewerInfos,
-            numberBadges,
-            userInfoById,
-            dataDoc,
-            accessRequestsByUid,
-            readonly,
-        } = this.props;
-        const { showViewsList } = this.state;
-        const extraViewersCount = viewerInfos.length - numberBadges;
-
-        const viewersDOM = (
-            <UserAvatarList
-                users={viewerInfos.slice(0, numberBadges).map((viewerInfo) => ({
-                    uid: viewerInfo.uid,
-                    tooltip:
-                        viewerInfo.uid in userInfoById
-                            ? userInfoById[viewerInfo.uid].username
-                            : null,
-                    isOnline: viewerInfo.online,
-                }))}
-                extraCount={extraViewersCount}
-            />
-        );
-
-        const accessRequestsByUidLength = Object.keys(accessRequestsByUid)
-            .length;
-        const shareButtonDOM = (
-            <Button
-                className="viewers-badge-share-button"
-                icon={dataDoc.public ? 'users' : 'lock'}
-                title="Share"
-                color="light"
-                pushable
-                ping={
-                    !readonly && accessRequestsByUidLength > 0
-                        ? accessRequestsByUidLength.toString()
-                        : null
-                }
-            />
-        );
-
-        return (
-            <div
-                className="viewers-badge-viewers"
-                onClick={() => this.setShowViewsList(!showViewsList)}
-            >
-                {viewersDOM}
-                {shareButtonDOM}
-            </div>
-        );
-    }
-
-    public render() {
-        const {
-            viewerInfos,
-            dataDoc,
             editorsByUid,
+            accessRequestsByUid,
+            dataDoc,
+            userInfoById,
             readonly,
             ownerId,
-            accessRequestsByUid,
+        } = useShallowSelector((state: IStoreState) => {
+            const viewerInfos = dataDocSelectors.dataDocViewerInfosSelector(
+                state,
+                docId
+            );
+            return {
+                viewerInfos,
+                editorsByUid: dataDocSelectors.dataDocEditorByUidSelector(
+                    state,
+                    docId
+                ),
+                accessRequestsByUid: dataDocSelectors.currentDataDocAccessRequestsByUidSelector(
+                    state,
+                    docId
+                ),
+                dataDoc: dataDocSelectors.dataDocSelector(state, docId),
+                userInfoById: state.user.userInfoById,
+                readonly: !dataDocSelectors.canCurrentUserEditSelector(
+                    state,
+                    docId
+                ),
+                ownerId: state.user.myUserInfo.uid,
+            };
+        });
 
+        const {
             addDataDocEditor,
             changeDataDocPublic,
             updateDataDocEditors,
-            deleteDataDocEditor,
             updateDataDocOwner,
+            deleteDataDocEditor,
             rejectDataDocAccessRequest,
-        } = this.props;
+        } = useDataDocEditorReduxActions(docId);
 
-        const { showViewsList } = this.state;
+        const getBadgeContentDOM = () => {
+            const extraViewersCount = viewerInfos.length - numberBadges;
+
+            const viewersDOM = (
+                <UserAvatarList
+                    users={viewerInfos
+                        .slice(0, numberBadges)
+                        .map((viewerInfo) => ({
+                            uid: viewerInfo.uid,
+                            tooltip:
+                                viewerInfo.uid in userInfoById
+                                    ? userInfoById[viewerInfo.uid].username
+                                    : null,
+                            isOnline: viewerInfo.online,
+                        }))}
+                    extraCount={extraViewersCount}
+                />
+            );
+
+            const accessRequestsByUidLength = Object.keys(accessRequestsByUid)
+                .length;
+            const shareButtonDOM = (
+                <Button
+                    className="viewers-badge-share-button"
+                    icon={dataDoc.public ? 'users' : 'lock'}
+                    title="Share"
+                    color="light"
+                    pushable
+                    ping={
+                        !readonly && accessRequestsByUidLength > 0
+                            ? accessRequestsByUidLength.toString()
+                            : null
+                    }
+                />
+            );
+
+            return (
+                <div
+                    className="viewers-badge-viewers"
+                    onClick={() => setShowViewsList((v) => !v)}
+                >
+                    {viewersDOM}
+                    {shareButtonDOM}
+                </div>
+            );
+        };
 
         if (!(viewerInfos && viewerInfos.length)) {
             return null;
@@ -122,8 +172,8 @@ class DataDocViewersBadgeComponent extends React.PureComponent<IProps, IState> {
 
         const viewsListDOM = showViewsList && (
             <Popover
-                anchor={this.selfRef.current}
-                onHide={this.setShowViewsList.bind(this, false)}
+                anchor={selfRef.current}
+                onHide={() => setShowViewsList(false)}
                 layout={['bottom', 'right']}
                 resizeOnChange
             >
@@ -145,84 +195,10 @@ class DataDocViewersBadgeComponent extends React.PureComponent<IProps, IState> {
         );
 
         return (
-            <div className="DataDocViewersBadge" ref={this.selfRef}>
-                {this.getBadgeContentDOM()}
+            <div className="DataDocViewersBadge" ref={selfRef}>
+                {getBadgeContentDOM()}
                 {viewsListDOM}
             </div>
         );
     }
-}
-
-function mapStateToProps(state: IStoreState, ownProps: IOwnProps) {
-    const viewerInfos = dataDocSelectors.dataDocViewerInfosSelector(
-        state,
-        ownProps.docId
-    );
-    return {
-        viewerInfos,
-        editorsByUid: dataDocSelectors.dataDocEditorByUidSelector(
-            state,
-            ownProps.docId
-        ),
-        accessRequestsByUid: dataDocSelectors.currentDataDocAccessRequestsByUidSelector(
-            state,
-            ownProps.docId
-        ),
-        dataDoc: dataDocSelectors.dataDocSelector(state, ownProps.docId),
-        userInfoById: state.user.userInfoById,
-        readonly: !dataDocSelectors.canCurrentUserEditSelector(
-            state,
-            ownProps.docId
-        ),
-        ownerId: state.user.myUserInfo.uid,
-    };
-}
-
-function mapDispatchToProps(dispatch: Dispatch, ownProps: IOwnProps) {
-    return {
-        changeDataDocPublic: (docId: number, docPublic: boolean) =>
-            dispatch(
-                dataDocActions.updateDataDocField(docId, 'public', docPublic)
-            ),
-
-        updateDataDocEditors: (uid: number, read: boolean, write: boolean) =>
-            dispatch(
-                dataDocActions.updateDataDocEditors(
-                    ownProps.docId,
-                    uid,
-                    read,
-                    write
-                )
-            ),
-
-        deleteDataDocEditor: (uid: number) =>
-            dispatch(dataDocActions.deleteDataDocEditor(ownProps.docId, uid)),
-
-        addDataDocEditor: (uid: number, permission: DataDocPermission) => {
-            dispatch(
-                dataDocActions.addDataDocEditors(
-                    ownProps.docId,
-                    uid,
-                    permission
-                )
-            );
-        },
-
-        updateDataDocOwner: (nextOwnerId: number) => {
-            dispatch(
-                dataDocActions.updateDataDocOwner(ownProps.docId, nextOwnerId)
-            );
-        },
-
-        rejectDataDocAccessRequest: (uid: number) => {
-            dispatch(
-                dataDocActions.rejectDataDocAccessRequest(ownProps.docId, uid)
-            );
-        },
-    };
-}
-
-export const DataDocViewersBadge = connect(
-    mapStateToProps,
-    mapDispatchToProps
-)(DataDocViewersBadgeComponent);
+);

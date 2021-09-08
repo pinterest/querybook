@@ -25,7 +25,7 @@ import {
 import { Popover, PopoverLayout } from 'ui/Popover/Popover';
 import { Modal } from 'ui/Modal/Modal';
 import { StatusIcon } from 'ui/StatusIcon/StatusIcon';
-import { Timer } from 'ui/Timer/Timer';
+import { Timer, ITimerHandles } from 'ui/Timer/Timer';
 import { IconButton } from 'ui/Button/IconButton';
 import { Icon } from 'ui/Icon/Icon';
 
@@ -47,7 +47,7 @@ export const QueryEngineStatusButton: React.FC<IProps> = ({
     const [showStatusForEngineId, setShowStatusForEngineId] = useState<string>(
         null
     );
-    const timerRef = useRef<Timer>();
+    const timerRef = useRef<ITimerHandles>();
     const buttonRef = useRef<HTMLAnchorElement>();
 
     const queryEngineById = useSelector(queryEngineByIdEnvSelector);

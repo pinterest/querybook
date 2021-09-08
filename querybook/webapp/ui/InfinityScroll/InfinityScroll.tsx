@@ -1,5 +1,4 @@
-import { bind } from 'lodash-decorators';
-import React from 'react';
+import React, { CSSProperties, useCallback, useEffect, useRef } from 'react';
 
 import { AutoSizer, List, InfiniteLoader } from 'react-virtualized';
 
@@ -19,124 +18,123 @@ export interface IInfinityScrollProps<T> {
     hasMore?: boolean;
 }
 
-export class InfinityScroll<T> extends React.PureComponent<
-    IInfinityScrollProps<T>
-> {
-    public static defaultProps = {
-        labelField: 'name',
-        itemClass: '',
-        itemHeight: 24,
-    };
+function InfinityScrollComponent<T>({
+    labelField = 'name',
+    itemClass = '',
+    itemHeight = 24,
 
-    public state = {
-        isLoadingMore: false,
-    };
+    elements,
+    className,
+    onClick,
+    itemRenderer,
 
-    private listRef: List;
+    onLoadMore,
+    hasMore,
+}: React.PropsWithChildren<IInfinityScrollProps<T>>) {
+    const listRef = useRef<List>();
 
-    @bind
-    public rowRenderer({
-        index, // Index of row
-        key, // Unique key within array of rendered rows
-        style, // Style object to be applied to row (to position it);
-        // This must be passed through to the rendered row element.
-    }) {
-        const {
-            itemClass,
-            itemRenderer,
-            elements,
-            labelField,
-            onClick,
-        } = this.props;
-
-        if (index >= this.props.elements.length) {
-            return (
-                <div
-                    key={key}
-                    style={style}
-                    className="InfiniteScroll-loader flex-center"
-                >
-                    <div style={{ textAlign: 'center' }}>
-                        <i className="fa fa-spinner fa-pulse" /> Loading
+    const rowRenderer = useCallback(
+        ({
+            index, // Index of row
+            key, // Unique key within array of rendered rows
+            style, // Style object to be applied to row (to position it);
+        }: // This must be passed through to the rendered row element.
+        {
+            index: number;
+            key: string;
+            style: CSSProperties;
+        }) => {
+            if (index >= elements.length) {
+                return (
+                    <div
+                        key={key}
+                        style={style}
+                        className="InfiniteScroll-loader flex-center"
+                    >
+                        <div style={{ textAlign: 'center' }}>
+                            <i className="fa fa-spinner fa-pulse" /> Loading
+                        </div>
                     </div>
+                );
+            }
+
+            const element = elements[index];
+
+            const content = itemRenderer ? (
+                itemRenderer(element)
+            ) : (
+                <span
+                    className={itemClass}
+                    onClick={onClick.bind(null, element)}
+                >
+                    {element[labelField]}
+                </span>
+            );
+
+            return (
+                <div key={key} style={style}>
+                    {content}
                 </div>
             );
-        }
+        },
+        [itemClass, itemRenderer, elements, labelField, onClick]
+    );
 
-        const element = elements[index];
-
-        const content = itemRenderer ? (
-            itemRenderer(element)
-        ) : (
-            <span className={itemClass} onClick={onClick.bind(null, element)}>
-                {element[labelField]}
-            </span>
-        );
-
-        return (
-            <div key={key} style={style}>
-                {content}
-            </div>
-        );
-    }
-
-    @bind
-    public isRowLoaded({ index }) {
-        return index < this.props.elements.length;
-    }
-
-    @bind
-    public handleLoadMoreRows() {
-        return new Promise<void>((resolve) => {
-            this.setState({ isLoadingMore: true }, async () => {
+    const isRowLoaded = useCallback(
+        ({ index }: { index: number }) => index < elements.length,
+        [elements.length]
+    );
+    const handleLoadMoreRows = useCallback(
+        () =>
+            new Promise<void>(async (resolve) => {
                 try {
-                    if (this.props.onLoadMore) {
-                        await this.props.onLoadMore();
+                    if (onLoadMore) {
+                        await onLoadMore();
                     }
                 } finally {
-                    this.setState({ isLoadingMore: false });
                     resolve();
                 }
-            });
-        });
-    }
+            }),
+        [onLoadMore]
+    );
 
-    public componentDidUpdate(prevProps) {
-        if (this.props.elements !== prevProps.elements && this.listRef) {
-            this.listRef.forceUpdateGrid();
+    useEffect(() => {
+        if (listRef.current) {
+            listRef.current.forceUpdateGrid();
         }
-    }
+    }, [elements]);
 
-    public render() {
-        const { elements, itemHeight, className, hasMore } = this.props;
-        const rowCount = hasMore ? elements.length + 1 : elements.length;
+    const rowCount = hasMore ? elements.length + 1 : elements.length;
 
-        return (
-            <InfiniteLoader
-                isRowLoaded={this.isRowLoaded}
-                loadMoreRows={this.handleLoadMoreRows}
-                rowCount={rowCount}
-            >
-                {({ onRowsRendered, registerChild }) => (
-                    <AutoSizer>
-                        {({ height, width }) => (
-                            <List
-                                className={className}
-                                onRowsRendered={onRowsRendered}
-                                ref={(ref) => {
-                                    registerChild(ref);
-                                    this.listRef = ref;
-                                }}
-                                height={height}
-                                width={width}
-                                rowCount={rowCount}
-                                rowHeight={itemHeight}
-                                rowRenderer={this.rowRenderer}
-                            />
-                        )}
-                    </AutoSizer>
-                )}
-            </InfiniteLoader>
-        );
-    }
+    return (
+        <InfiniteLoader
+            isRowLoaded={isRowLoaded}
+            loadMoreRows={handleLoadMoreRows}
+            rowCount={rowCount}
+        >
+            {({ onRowsRendered, registerChild }) => (
+                <AutoSizer>
+                    {({ height, width }) => (
+                        <List
+                            className={className}
+                            onRowsRendered={onRowsRendered}
+                            ref={(ref) => {
+                                registerChild(ref);
+                                listRef.current = ref;
+                            }}
+                            height={height}
+                            width={width}
+                            rowCount={rowCount}
+                            rowHeight={itemHeight}
+                            rowRenderer={rowRenderer}
+                        />
+                    )}
+                </AutoSizer>
+            )}
+        </InfiniteLoader>
+    );
 }
+
+export const InfinityScroll = React.memo(
+    InfinityScrollComponent
+) as typeof InfinityScrollComponent;
