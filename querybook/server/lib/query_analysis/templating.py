@@ -240,7 +240,7 @@ class TemplatedQueryRenderer(object):
         )
 
     def render_templated_query(self, query: str, variables: Dict[str, str]) -> str:
-        """Renders the templated query, with global variables such as today, yesterday.
+        """Renders the templated query, with global variables such as today/yesterday and functions such as `latest_partition`.
         All the default html escape is ignore since it is not applicable.
         It also checks if a variable is a partial (in which it can refer other variables).
 

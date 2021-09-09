@@ -26,10 +26,11 @@ You can copy/cut the cell by hovering over the ⋮ menu on the right and paste t
 
 ### Q: How do I use templating? What capabilities does it have?
 
-You can add templating for DataDoc query cells. Querybook’s templating uses Jinja2 syntax and supports all of its functionalities. You can also define any custom templated variable that can be shared across different cells by clicking the `<>` button on the bottom right, they can infer other variables and be recursively rendered. Some variables are provided automatically. Such as:
+You can add templating for DataDoc query cells. Querybook’s templating uses Jinja2 syntax and supports all of its functionalities. You can also define any custom templated variable that can be shared across different cells by clicking the `<>` button on the bottom right, they can infer other variables and be recursively rendered. Some variables/functions are provided automatically. Such as:
 
 -   `{{today}}` which maps to todays date in yyyy-mm-dd
 -   `{{yesterday}}` which maps to yesterday’s date
+-   `{{latest_partition('<schema_name>.<table_name>', '<partition_key')}}` which is a function to get the latest partition of a table
 
 ### Q:How do I schedule a DataDoc?
 
