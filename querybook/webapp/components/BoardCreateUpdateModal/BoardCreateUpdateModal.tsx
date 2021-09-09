@@ -38,9 +38,9 @@ export const BoardCreateUpdateForm: React.FunctionComponent<IBoardCreateUpdateFo
 }) => {
     const dispatch: Dispatch = useDispatch();
     const isCreateForm = boardId == null;
-    const board = isCreateForm
-        ? null
-        : useSelector((state: IStoreState) => state.board.boardById[boardId]);
+    const board = useSelector((state: IStoreState) =>
+        isCreateForm ? null : state.board.boardById[boardId]
+    );
     const handleDeleteBoard = useCallback(() => {
         sendConfirm({
             onConfirm: () => {
@@ -84,7 +84,7 @@ export const BoardCreateUpdateForm: React.FunctionComponent<IBoardCreateUpdateFo
                 onComplete(await dispatch(action));
             }}
         >
-            {({ submitForm, isSubmitting, errors, setFieldValue, isValid }) => {
+            {({ submitForm, isSubmitting, isValid }) => {
                 const formTitle = isCreateForm ? 'New List' : 'Update List';
                 const nameField = <SimpleField name="name" type="input" />;
                 // TODO: enable when sharing is possible
