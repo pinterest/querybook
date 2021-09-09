@@ -1,4 +1,4 @@
-import React, { useCallback, useMemo } from 'react';
+import React, { useMemo } from 'react';
 import clsx from 'clsx';
 import ReactTable, { Column, TableProps } from 'react-table';
 
@@ -46,10 +46,11 @@ export const Table = React.memo<ITableProps>(
         className,
         ...otherProps
     }) => {
-        const handleFormatCell = useCallback(
-            (column: string, columnIndex: number, row) =>
+        const handleFormatCell = useMemo(
+            () =>
                 formatCell
-                    ? formatCell(columnIndex, column, row.row._original)
+                    ? (column: string, columnIndex: number, row) =>
+                          formatCell(columnIndex, column, row.row._original)
                     : null,
             [formatCell]
         );

@@ -12,7 +12,7 @@ FROM
     );
     expect(format('select ARRAY [1] || ARRAY [2];', 'presto')).toBe(
         `SELECT
-  ARRAY [1] || ARRAY [2];`
+  ARRAY [ 1 ] || ARRAY [ 2 ];`
     );
 });
 test('Simple formatting with templating case', () => {
@@ -119,4 +119,30 @@ ADD JAR s3://test-bucket/hadoopusrs/bob/test-0.5-SNAPSHOT/test-0.5-SNAPSHOT.jar;
         `DELETE JAR s3://test-bucket/hadoopusrs/prod/test-0.5-SNAPSHOT/test-0.5-SNAPSHOT.jar;
 ADD JAR s3://test-bucket/hadoopusrs/bob/test-0.5-SNAPSHOT/test-0.5-SNAPSHOT.jar;`
     );
+});
+
+test('Bitwise select case', () => {
+    expect(format('SELECT ~0, 64 << 2, 5 & 6;', 'hive')).toBe(
+        `SELECT
+  ~ 0,
+  64 << 2,
+  5 & 6;`
+    );
+});
+
+test('Bitwise where case', () => {
+    expect(
+        format('select * from example where field & 123456 = 0;', 'hive')
+    ).toBe(
+        `SELECT
+  *
+FROM
+  example
+WHERE
+  field & 123456 = 0;`
+    );
+});
+
+test('Do not remove unknown symbols', () => {
+    expect(format('¡™£¢∞§¶•ªº', 'mysql')).toBe('¡™£¢∞§¶•ªº');
 });

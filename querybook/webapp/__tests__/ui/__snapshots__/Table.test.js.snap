@@ -57,12 +57,10 @@ exports[`matches enzyme snapshots matches snapshot 1`] = `
   columns={
     Array [
       Object {
-        "Cell": [Function],
         "Header": "1",
         "accessor": "1",
       },
       Object {
-        "Cell": [Function],
         "Header": "2",
         "accessor": "2",
       },

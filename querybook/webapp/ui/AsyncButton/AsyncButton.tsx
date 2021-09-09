@@ -62,14 +62,17 @@ export const AsyncButton = React.forwardRef<
     ) => {
         const [loading, setLoading] = useSafeState(false);
 
-        const handleAsyncClick = useCallback(async (...args: any[]) => {
-            setLoading(true);
-            try {
-                await onClick?.(...args);
-            } finally {
-                setLoading(false);
-            }
-        }, []);
+        const handleAsyncClick = useCallback(
+            async (...args: any[]) => {
+                setLoading(true);
+                try {
+                    await onClick?.(...args);
+                } finally {
+                    setLoading(false);
+                }
+            },
+            [onClick]
+        );
 
         useImperativeHandle(
             ref,
