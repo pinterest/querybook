@@ -296,7 +296,11 @@ class DataDocQueryCellComponent extends React.PureComponent<IProps, IState> {
 
         try {
             const rawQuery = getSelectedQuery(query, selectedRange);
-            return await renderTemplatedQuery(rawQuery, templatedVariables);
+            return await renderTemplatedQuery(
+                rawQuery,
+                templatedVariables,
+                this.engineId
+            );
         } catch (e) {
             toast.error(
                 <div>
@@ -627,6 +631,7 @@ class DataDocQueryCellComponent extends React.PureComponent<IProps, IState> {
                 <TemplatedQueryView
                     query={query}
                     templatedVariables={templatedVariables}
+                    engineId={this.engineId}
                     onRunQueryClick={this.handleRunFromRenderedTemplateModal}
                 />
             </Modal>

@@ -136,15 +136,20 @@ export const QueryExecutionNotificationResource = {
 
 export const TemplatedQueryResource = {
     getVariables: (query: string) =>
-        ds.save<string[]>('/query_execution/templated_query_params/', {
+        ds.fetch<string[]>('/query_execution/templated_query_params/', {
             query,
         }),
-    renderTemplatedQuery: (query: string, variables: Record<string, string>) =>
-        ds.save<string>(
+    renderTemplatedQuery: (
+        query: string,
+        variables: Record<string, string>,
+        engineId: number
+    ) =>
+        ds.fetch<string>(
             '/query_execution/templated_query/',
             {
                 query,
                 variables,
+                engine_id: engineId,
             },
             false
         ),

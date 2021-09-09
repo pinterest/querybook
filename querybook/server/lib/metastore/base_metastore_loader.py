@@ -139,6 +139,12 @@ class BaseMetastoreLoader(metaclass=ABCMeta):
                 ]
         self._create_tables_batched(schema_tables)
 
+    def get_latest_partition(self, schema_name, table_name):
+        table, _ = self.get_table_and_columns(schema_name, table_name)
+        partitions = table.partitions or []
+        latest_partition = partitions[-1] if len(partitions) else None
+        return latest_partition
+
     def _create_tables_batched(self, schema_tables):
         """Create greenlets for create table batches
 
