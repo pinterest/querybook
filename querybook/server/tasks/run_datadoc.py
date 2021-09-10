@@ -7,7 +7,7 @@ from const.query_execution import QueryExecutionStatus
 from const.schedule import NotifyOn, TaskRunStatus
 
 from lib.logger import get_logger
-from lib.query_analysis.templating import TemplatedQueryRenderer
+from lib.query_analysis.templating import render_templated_query
 from lib.scheduled_datadoc.export import export_datadoc
 from lib.scheduled_datadoc.legacy import convert_if_legacy_datadoc_schedule
 from lib.scheduled_datadoc.notification import notifiy_on_datadoc_complete
@@ -58,8 +58,8 @@ def run_datadoc_with_config(
         # Preping chain jobs each unit is a [make_qe_task, run_query_task] combo
         for index, query_cell in enumerate(query_cells):
             engine_id = query_cell.meta["engine"]
-            query = TemplatedQueryRenderer(engine_id).render_templated_query(
-                query_cell.context, data_doc.meta
+            query = render_templated_query(
+                query_cell.context, data_doc.meta, engine_id=engine_id
             )
 
             start_query_execution_kwargs = {

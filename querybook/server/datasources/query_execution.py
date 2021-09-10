@@ -15,8 +15,9 @@ from clients.s3_client import FileDoesNotExist
 from lib.export.all_exporters import ALL_EXPORTERS, get_exporter
 from lib.result_store import GenericReader
 from lib.query_analysis.templating import (
-    TemplatedQueryRenderer,
     QueryTemplatingError,
+    get_templated_variables_in_string,
+    render_templated_query,
 )
 from lib.form import validate_form
 from const.query_execution import QueryExecutionStatus
@@ -375,16 +376,14 @@ def export_statement_execution_result(
 @register("/query_execution/templated_query/", methods=["POST"])
 def get_templated_query(query: str, variables: Dict[str, str], engine_id: int = None):
     try:
-        return TemplatedQueryRenderer(engine_id).render_templated_query(
-            query, variables
-        )
+        return render_templated_query(query, variables, engine_id=engine_id)
     except QueryTemplatingError as e:
         raise RequestException(e)
 
 
 @register("/query_execution/templated_query_params/", methods=["POST"])
 def get_templated_query_params(query: str):
-    return list(TemplatedQueryRenderer().get_templated_variables_in_string(query))
+    return list(get_templated_variables_in_string(query))
 
 
 @register("/query_execution/<int:execution_id>/viewer/", methods=["POST"])

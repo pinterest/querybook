@@ -3,7 +3,12 @@ from datetime import datetime, date
 
 from lib.query_analysis.templating import (
     LatestPartitionException,
-    TemplatedQueryRenderer,
+    _detect_cycle,
+    _escape_sql_comments,
+    create_get_latest_partition,
+    get_templated_variables_in_string,
+    render_templated_query,
+    flatten_recursive_variables,
     UndefinedVariableException,
     QueryHasCycleException,
     QueryJinjaSyntaxException,
@@ -13,14 +18,14 @@ from lib.query_analysis.templating import (
 class DetectCycleTestCase(TestCase):
     def test_simple_no_cycle(self):
         dag = {"a": ["c"], "b": ["a"], "c": ["d"]}
-        self.assertEqual(TemplatedQueryRenderer._detect_cycle(dag), False)
+        self.assertEqual(_detect_cycle(dag), False)
 
     def test_simple_cycle(self):
         dag = {"a": ["c"], "b": ["a"], "c": ["b"]}
-        self.assertEqual(TemplatedQueryRenderer._detect_cycle(dag), True)
+        self.assertEqual(_detect_cycle(dag), True)
 
         dag = {"a": ["b"], "b": ["a"]}
-        self.assertEqual(TemplatedQueryRenderer._detect_cycle(dag), True)
+        self.assertEqual(_detect_cycle(dag), True)
 
     def test_complex_no_cycle(self):
         dag = {
@@ -31,7 +36,7 @@ class DetectCycleTestCase(TestCase):
             "e": ["f", "g"],
             "f": ["g"],
         }
-        self.assertEqual(TemplatedQueryRenderer._detect_cycle(dag), False)
+        self.assertEqual(_detect_cycle(dag), False)
 
     def test_complex_cycle(self):
         dag = {
@@ -43,45 +48,40 @@ class DetectCycleTestCase(TestCase):
             "f": ["g"],
             "g": ["a"],
         }
-        self.assertEqual(TemplatedQueryRenderer._detect_cycle(dag), True)
+        self.assertEqual(_detect_cycle(dag), True)
 
 
 class GetTemplatedVariablesInStringTestCase(TestCase):
-    def setUp(self):
-        self.query_renderer = TemplatedQueryRenderer()
-
     def test_basic(self):
         self.assertEqual(
-            self.query_renderer.get_templated_variables_in_string(
+            get_templated_variables_in_string(
                 "some random text {{ test }} some random text"
             ),
             set(["test"]),
         )
 
         self.assertEqual(
-            self.query_renderer.get_templated_variables_in_string(
+            get_templated_variables_in_string(
                 "{{ test }} Some random text {{ another_test }}"
             ),
             set(["test", "another_test"]),
         )
 
         self.assertEqual(
-            self.query_renderer.get_templated_variables_in_string(
-                "{# some comments #}<b>{{name}}</b>"
-            ),
+            get_templated_variables_in_string("{# some comments #}<b>{{name}}</b>"),
             set(["name",]),
         )
 
     def test_nested(self):
         self.assertEqual(
-            self.query_renderer.get_templated_variables_in_string(
+            get_templated_variables_in_string(
                 "{% set nums = [1,2,3] %}{% for i in nums %}{{ test }} Some random text {{ another_test }} {% endfor %}"
             ),
             set(["test", "another_test"]),
         )
 
         self.assertEqual(
-            self.query_renderer.get_templated_variables_in_string(
+            get_templated_variables_in_string(
                 "{% for i in range(5) %}{{ test }} Some {{ another_test }}{% endfor %}"
             ),
             set(["test", "another_test"]),
@@ -89,19 +89,16 @@ class GetTemplatedVariablesInStringTestCase(TestCase):
 
 
 class FlattenRecursiveVariablesTestCase(TestCase):
-    def setUp(self):
-        self.query_renderer = TemplatedQueryRenderer()
-
     def test_simple(self):
         self.assertEqual(
-            self.query_renderer.flatten_recursive_variables(
+            flatten_recursive_variables(
                 {"foo": "{{ bar }}", "bar": "hello world", "baz": "foo"}
             ),
             ({"foo": "hello world", "bar": "hello world", "baz": "foo"}),
         )
 
         self.assertEqual(
-            self.query_renderer.flatten_recursive_variables(
+            flatten_recursive_variables(
                 {"foo": "{{ bar }}", "bar": "hello world", "baz": None}
             ),
             ({"foo": "hello world", "bar": "hello world", "baz": ""}),
@@ -109,7 +106,7 @@ class FlattenRecursiveVariablesTestCase(TestCase):
 
     def test_complex(self):
         self.assertEqual(
-            self.query_renderer.flatten_recursive_variables(
+            flatten_recursive_variables(
                 {
                     "foo": "{{ bar }}",
                     "bar": "hello {{ baz }}",
@@ -130,27 +127,24 @@ class FlattenRecursiveVariablesTestCase(TestCase):
     def test_has_cycle(self):
         self.assertRaises(
             QueryHasCycleException,
-            self.query_renderer.flatten_recursive_variables,
+            flatten_recursive_variables,
             {"foo": "{{ bar }}", "bar": "{{ foo }}", "baz": "hello world"},
         )
 
     def test_undefined_var(self):
         self.assertRaises(
             UndefinedVariableException,
-            self.query_renderer.flatten_recursive_variables,
+            flatten_recursive_variables,
             {"foo": "{{ bar }}", "bar": "{{ baz }}", "baz": "{{ boo }}"},
         )
 
 
 class RenderTemplatedQueryTestCase(TestCase):
-    def setUp(self):
-        self.query_renderer = TemplatedQueryRenderer()
-
     def test_basic(self):
         query = 'select * from table where dt="{{ date }}"'
         variable = {"date": "1970-01-01"}
         self.assertEqual(
-            self.query_renderer.render_templated_query(query, variable),
+            render_templated_query(query, variable),
             'select * from table where dt="1970-01-01"',
         )
 
@@ -162,7 +156,7 @@ class RenderTemplatedQueryTestCase(TestCase):
             "date3": "01",
         }
         self.assertEqual(
-            self.query_renderer.render_templated_query(query, variable),
+            render_templated_query(query, variable),
             'select * from table where dt="1970-01-01"',
         )
 
@@ -172,9 +166,7 @@ class RenderTemplatedQueryTestCase(TestCase):
         with mock.patch("lib.query_analysis.templating.datetime", new=datetime_mock):
             query = 'select * from table where dt="{{ date }}"'
             self.assertEqual(
-                self.query_renderer.render_templated_query(
-                    query, {"date": "{{ today }}"}
-                ),
+                render_templated_query(query, {"date": "{{ today }}"}),
                 'select * from table where dt="1970-01-01"',
             )
 
@@ -182,7 +174,7 @@ class RenderTemplatedQueryTestCase(TestCase):
         # Missing variable
         self.assertRaises(
             UndefinedVariableException,
-            self.query_renderer.render_templated_query,
+            render_templated_query,
             'select * from {{ table }} where dt="{{ date }}"',
             {"table": "foo"},
         )
@@ -190,7 +182,7 @@ class RenderTemplatedQueryTestCase(TestCase):
         # Missing variable but recursive
         self.assertRaises(
             UndefinedVariableException,
-            self.query_renderer.render_templated_query,
+            render_templated_query,
             'select * from {{ table }} where dt="{{ date }}"',
             {"table": "foo", "date": "{{ bar }}"},
         )
@@ -198,7 +190,7 @@ class RenderTemplatedQueryTestCase(TestCase):
         # Circular dependency
         self.assertRaises(
             QueryHasCycleException,
-            self.query_renderer.render_templated_query,
+            render_templated_query,
             'select * from {{ table }} where dt="{{ date }}"',
             {"date": "{{ date2 }}", "date2": "{{ date }}"},
         )
@@ -206,7 +198,7 @@ class RenderTemplatedQueryTestCase(TestCase):
         # Invalid template usage
         self.assertRaises(
             QueryJinjaSyntaxException,
-            self.query_renderer.render_templated_query,
+            render_templated_query,
             'select * from {{ table  where dt="{{ date }}"',
             {"table": "foo", "date": "{{ bar }}"},
         )
@@ -224,7 +216,7 @@ sample_table limit 5;
 /*
 {{ end_date}}*/
 -- {{ end_date }}"""
-        self.assertEqual(self.query_renderer.render_templated_query(query, {}), query)
+        self.assertEqual(render_templated_query(query, {}), query)
 
     def test_escape_comments_non_greedy(self):
         query_non_greedy = """select * from
@@ -237,9 +229,7 @@ sample_table limit 5;
 */
 """
         self.assertEqual(
-            self.query_renderer.render_templated_query(
-                query_non_greedy, {"test": "render"}
-            ),
+            render_templated_query(query_non_greedy, {"test": "render"}),
             """select * from
 /*
    {{ end_date }}
@@ -254,13 +244,12 @@ render
 class EscapeSQLCommentsTestCase(TestCase):
     def test_single_line(self):
         self.assertEqual(
-            TemplatedQueryRenderer._escape_sql_comments("select 1 -- test"),
-            'select 1 {{ "-- test" }}',
+            _escape_sql_comments("select 1 -- test"), 'select 1 {{ "-- test" }}'
         )
 
     def test_multi_line(self):
         self.assertEqual(
-            TemplatedQueryRenderer._escape_sql_comments("select 1 \n/* \ntest\n */"),
+            _escape_sql_comments("select 1 \n/* \ntest\n */"),
             'select 1 \n{{ "/* \\ntest\\n */" }}',
         )
 
@@ -296,7 +285,7 @@ WHERE a > 20
 AND b > 0.8
 order by c DESC
 limit 100"""
-        self.assertEqual(TemplatedQueryRenderer._escape_sql_comments(query), query)
+        self.assertEqual(_escape_sql_comments(query), query)
 
 
 class LatestPartitionTestCase(TestCase):
@@ -315,50 +304,49 @@ class LatestPartitionTestCase(TestCase):
         self.addCleanup(get_metastore_loader_patch.stop)
         self.get_metastore_loader_mock.return_value = self.metastore_loader_mock
 
-        self.query_renderer = TemplatedQueryRenderer(1)
-
     def test_invalid_engine_id(self):
         self.get_query_engine_by_id_mock.return_value = None
-        # Need to create new query_renderer to recreate `get_latest_partition` function in constructor
-        # to apply new mock return value above
-        query_renderer = TemplatedQueryRenderer()
         self.assertRaises(
             LatestPartitionException,
-            query_renderer.render_templated_query,
+            render_templated_query,
             'select * from table where dt="{{ latest_partition("default.table", "dt") }}"',
             {},
+            1,
         )
 
     def test_invalid_table_name(self):
         self.assertRaises(
             LatestPartitionException,
-            self.query_renderer.render_templated_query,
+            render_templated_query,
             'select * from table where dt="{{ latest_partition("table", "dt") }}"',
             {},
+            1,
         )
 
     def test_invalid_partition_name(self):
         self.assertRaises(
             LatestPartitionException,
-            self.query_renderer.render_templated_query,
+            render_templated_query,
             'select * from table where dt="{{ latest_partition("default.table", "date") }}"',
             {},
+            1,
         )
 
     def test_no_latest_partition(self):
         self.metastore_loader_mock.get_latest_partition.return_value = None
         self.assertRaises(
             LatestPartitionException,
-            self.query_renderer.render_templated_query,
+            render_templated_query,
             'select * from table where dt="{{ latest_partition("default.table", "dt") }}"',
             {},
+            1,
         )
 
     def test_multiple_partition_columns(self):
         self.metastore_loader_mock.get_latest_partition.return_value = (
             "dt=2021-01-01/hr=01"
         )
-        get_latest_partition = self.query_renderer.create_get_latest_partition()
+        get_latest_partition = create_get_latest_partition(1)
         latest_partition = get_latest_partition("default.table", "dt")
         self.assertEqual(latest_partition, "2021-01-01")
 
@@ -366,16 +354,14 @@ class LatestPartitionTestCase(TestCase):
         self.assertEqual(latest_partition, "01")
 
     def test_single_partition_column(self):
-        latest_partition = self.query_renderer.create_get_latest_partition()(
-            "default.table", "dt"
-        )
+        get_latest_partition = create_get_latest_partition(1)
+        latest_partition = get_latest_partition("default.table", "dt")
         self.assertEqual(latest_partition, "2021-01-01")
 
     def test_render_templated_query(self):
-        templated_query = self.query_renderer.render_templated_query(
+        templated_query = render_templated_query(
             'select * from table where dt="{{ latest_partition("default.table", "dt") }}"',
             {},
+            1,
         )
-        self.assertEqual(
-            templated_query, 'select * from table where dt="2021-01-01"',
-        )
+        self.assertEqual(templated_query, 'select * from table where dt="2021-01-01"')
