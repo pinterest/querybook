@@ -2,7 +2,7 @@ from unittest import TestCase, mock
 from datetime import datetime, date
 
 from lib.query_analysis.templating import (
-    LatestPartitionFunctionException,
+    LatestPartitionException,
     TemplatedQueryRenderer,
     UndefinedVariableException,
     QueryHasCycleException,
@@ -301,8 +301,6 @@ limit 100"""
 
 class LatestPartitionTestCase(TestCase):
     def setUp(self):
-        self.query_renderer = TemplatedQueryRenderer(1)
-
         self.engine_mock = mock.Mock()
         self.engine_mock.metastore_id = 2  # arbitrary metastore_id
         get_query_engine_by_id_patch = mock.patch("logic.admin.get_query_engine_by_id")
@@ -317,18 +315,23 @@ class LatestPartitionTestCase(TestCase):
         self.addCleanup(get_metastore_loader_patch.stop)
         self.get_metastore_loader_mock.return_value = self.metastore_loader_mock
 
+        self.query_renderer = TemplatedQueryRenderer(1)
+
     def test_invalid_engine_id(self):
         self.get_query_engine_by_id_mock.return_value = None
+        # Need to create new query_renderer to recreate `get_latest_partition` function in constructor
+        # to apply new mock return value above
+        query_renderer = TemplatedQueryRenderer()
         self.assertRaises(
-            LatestPartitionFunctionException,
-            self.query_renderer.render_templated_query,
+            LatestPartitionException,
+            query_renderer.render_templated_query,
             'select * from table where dt="{{ latest_partition("default.table", "dt") }}"',
             {},
         )
 
     def test_invalid_table_name(self):
         self.assertRaises(
-            LatestPartitionFunctionException,
+            LatestPartitionException,
             self.query_renderer.render_templated_query,
             'select * from table where dt="{{ latest_partition("table", "dt") }}"',
             {},
@@ -336,7 +339,7 @@ class LatestPartitionTestCase(TestCase):
 
     def test_invalid_partition_name(self):
         self.assertRaises(
-            LatestPartitionFunctionException,
+            LatestPartitionException,
             self.query_renderer.render_templated_query,
             'select * from table where dt="{{ latest_partition("default.table", "date") }}"',
             {},
@@ -345,7 +348,7 @@ class LatestPartitionTestCase(TestCase):
     def test_no_latest_partition(self):
         self.metastore_loader_mock.get_latest_partition.return_value = None
         self.assertRaises(
-            LatestPartitionFunctionException,
+            LatestPartitionException,
             self.query_renderer.render_templated_query,
             'select * from table where dt="{{ latest_partition("default.table", "dt") }}"',
             {},
@@ -355,18 +358,15 @@ class LatestPartitionTestCase(TestCase):
         self.metastore_loader_mock.get_latest_partition.return_value = (
             "dt=2021-01-01/hr=01"
         )
-        latest_partition = self.query_renderer.get_latest_partition(
-            "default.table", "dt"
-        )
+        get_latest_partition = self.query_renderer.create_get_latest_partition()
+        latest_partition = get_latest_partition("default.table", "dt")
         self.assertEqual(latest_partition, "2021-01-01")
 
-        latest_partition = self.query_renderer.get_latest_partition(
-            "default.table", "hr"
-        )
+        latest_partition = get_latest_partition("default.table", "hr")
         self.assertEqual(latest_partition, "01")
 
     def test_single_partition_column(self):
-        latest_partition = self.query_renderer.get_latest_partition(
+        latest_partition = self.query_renderer.create_get_latest_partition()(
             "default.table", "dt"
         )
         self.assertEqual(latest_partition, "2021-01-01")

@@ -30,7 +30,7 @@ You can add templating for DataDoc query cells. Querybook’s templating uses Ji
 
 -   `{{today}}` which maps to todays date in yyyy-mm-dd
 -   `{{yesterday}}` which maps to yesterday’s date
--   `{{latest_partition('<schema_name>.<table_name>', '<partition_key')}}` which is a function to get the latest partition of a table
+-   `{{latest_partition('<schema_name>.<table_name>', '<partition_key>')}}` which is a function to get the latest partition of a table
 
 ### Q:How do I schedule a DataDoc?
 

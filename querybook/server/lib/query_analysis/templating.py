@@ -1,13 +1,13 @@
 from datetime import datetime, timedelta
 import json
 import re
-from typing import Dict, Set
+from typing import Callable, Dict, Set
 
 from jinja2.exceptions import TemplateSyntaxError
 from jinja2.sandbox import SandboxedEnvironment
 from jinja2 import meta
 
-from app.db import with_session
+from app.db import DBSession
 from lib import metastore
 from logic import admin as admin_logic
 
@@ -30,7 +30,7 @@ class QueryJinjaSyntaxException(QueryTemplatingError):
     pass
 
 
-class LatestPartitionFunctionException(QueryTemplatingError):
+class LatestPartitionException(QueryTemplatingError):
     pass
 
 
@@ -43,7 +43,7 @@ class TemplatedQueryRenderer(object):
     def __init__(self, engine_id: int = None):
         self.env = SandboxedEnvironment()
         self.engine_id = engine_id
-        self.env.globals.update(latest_partition=self.get_latest_partition)
+        self.env.globals.update(latest_partition=self.create_get_latest_partition())
 
     @staticmethod
     def _escape_sql_comments(query: str):
@@ -80,53 +80,56 @@ class TemplatedQueryRenderer(object):
             "yesterday": (datetime.today() - timedelta(1)).strftime("%Y-%m-%d"),
         }
 
-    @with_session
-    def get_latest_partition(
-        self, full_table_name: str, partition: str, session=None
-    ) -> str:
-        """Returns latest partition value of a given table and partition key
-        Args:
-            full_table_name {str} - full table name in the format <schema_name>.<table_name>
-            partition {str} - partition key
-
-        Raises:
-            LatestPartitionFunctionException: If unable to get latest partition with engine_id, partition, and full_table_name
-
-        Returns:
-            str - value of latest partition
-        """
-        engine = admin_logic.get_query_engine_by_id(self.engine_id, session=session)
-        metastore_id = engine.metastore_id if engine else None
-        metastore_loader = (
-            metastore.get_metastore_loader(metastore_id, session=session)
-            if metastore_id is not None
-            else None
-        )
-        if metastore_loader is None:
-            raise LatestPartitionFunctionException(
-                "Unable to load metastore for engine id {}".format(self.engine_id)
+    def create_get_latest_partition(self) -> Callable[[str, str], str]:
+        metastore_loader = None
+        with DBSession() as session:
+            engine = admin_logic.get_query_engine_by_id(self.engine_id, session=session)
+            metastore_id = engine.metastore_id if engine else None
+            metastore_loader = (
+                metastore.get_metastore_loader(metastore_id, session=session)
+                if metastore_id is not None
+                else None
             )
-        full_table_name_parts = full_table_name.split(".")
-        if not len(full_table_name_parts) == 2:
-            raise LatestPartitionFunctionException(
-                "Full table name '{}' is invalid. Must be in the format <schema_name>.<table_name>".format(
-                    full_table_name
+
+        def get_latest_partition(full_table_name: str, partition: str) -> str:
+            """Returns latest partition function of a given table and partition key
+                Args:
+                full_table_name {str} - full table name in the format <schema_name>.<table_name>
+                partition {str} - partition key
+
+            Raises:
+                LatestPartitionException: If unable to get latest partition with engine_id, partition, and full_table_name
+
+            Returns:
+                str - value of latest partition
+            """
+            full_table_name_parts = full_table_name.split(".")
+            if not len(full_table_name_parts) == 2:
+                raise LatestPartitionException(
+                    f"Full table name '{full_table_name}' is invalid. Must be in the format <schema_name>.<table_name>"
                 )
+            [schema_name, table_name] = full_table_name_parts
+
+            # metastore_loader only needs to be available for `get_latest_partition` function call,
+            # so this check is made here
+            if metastore_loader is None:
+                raise LatestPartitionException(
+                    f"Unable to load metastore for engine id {self.engine_id}"
+                )
+
+            latest_partition = metastore_loader.get_latest_partition(
+                schema_name, table_name
             )
-        [schema_name, table_name] = full_table_name_parts
-        latest_partition = metastore_loader.get_latest_partition(
-            schema_name, table_name
-        )
-        if latest_partition:  # latest_partitions is like dt=2015-01-01/column1=val1
-            for partition_col in latest_partition.split("/"):
-                partition_key, partition_val = partition_col.split("=")
-                if partition_key == partition:
-                    return partition_val
-        raise LatestPartitionFunctionException(
-            "Partitition '{}' not found on table '{}'".format(
-                partition, full_table_name
+            if latest_partition:  # latest_partitions is like dt=2015-01-01/column1=val1
+                for partition_col in latest_partition.split("/"):
+                    partition_key, partition_val = partition_col.split("=")
+                    if partition_key == partition:
+                        return partition_val
+            raise LatestPartitionException(
+                f"Partitition '{partition}' not found on table '{full_table_name}'"
             )
-        )
+
+        return get_latest_partition
 
     def get_templated_variables_in_string(self, s: str) -> Set[str]:
         """Find possible templated variables within a string
@@ -168,7 +171,7 @@ class TemplatedQueryRenderer(object):
         flattened_variables: Dict[str, str],
     ):
         """ Helper function for flatten_recursive_variables.
-            Recurisvely resolve each variable definition
+            Recursively resolve each variable definition
         """
         var_deps = variables_dag[var_name]
         for dep_var_name in var_deps:

@@ -372,7 +372,7 @@ def export_statement_execution_result(
     )
 
 
-@register("/query_execution/templated_query/", methods=["GET"])
+@register("/query_execution/templated_query/", methods=["POST"])
 def get_templated_query(query: str, variables: Dict[str, str], engine_id: int = None):
     try:
         return TemplatedQueryRenderer(engine_id).render_templated_query(
@@ -382,7 +382,7 @@ def get_templated_query(query: str, variables: Dict[str, str], engine_id: int = 
         raise RequestException(e)
 
 
-@register("/query_execution/templated_query_params/", methods=["GET"])
+@register("/query_execution/templated_query_params/", methods=["POST"])
 def get_templated_query_params(query: str):
     return list(TemplatedQueryRenderer().get_templated_variables_in_string(query))
 
