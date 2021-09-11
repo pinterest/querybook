@@ -376,7 +376,7 @@ def export_statement_execution_result(
 @register("/query_execution/templated_query/", methods=["POST"])
 def get_templated_query(query: str, variables: Dict[str, str], engine_id: int = None):
     try:
-        return render_templated_query(query, variables, engine_id=engine_id)
+        return render_templated_query(query, variables, engine_id)
     except QueryTemplatingError as e:
         raise RequestException(e)
 

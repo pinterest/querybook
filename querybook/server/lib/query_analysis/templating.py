@@ -71,7 +71,7 @@ def get_default_variables():
     }
 
 
-def create_get_latest_partition(engine_id) -> Callable[[str, str], str]:
+def create_get_latest_partition(engine_id: int) -> Callable[[str, str], str]:
     metastore_loader = None
     with DBSession() as session:
         engine = admin_logic.get_query_engine_by_id(engine_id, session=session)
@@ -81,10 +81,15 @@ def create_get_latest_partition(engine_id) -> Callable[[str, str], str]:
             if metastore_id is not None
             else None
         )
+    if metastore_loader is None:
+        raise LatestPartitionException(
+            f"Unable to load metastore for engine id {engine_id}"
+        )
 
     def get_latest_partition(full_table_name: str, partition: str) -> str:
         """Returns latest partition function of a given table and partition key
-            Args:
+
+        Arguments:
             full_table_name {str} - full table name in the format <schema_name>.<table_name>
             partition {str} - partition key
 
@@ -101,13 +106,6 @@ def create_get_latest_partition(engine_id) -> Callable[[str, str], str]:
             )
         [schema_name, table_name] = full_table_name_parts
 
-        # metastore_loader only needs to be available for `get_latest_partition` function call,
-        # so this check is made here
-        if metastore_loader is None:
-            raise LatestPartitionException(
-                f"Unable to load metastore for engine id {engine_id}"
-            )
-
         latest_partition = metastore_loader.get_latest_partition(
             schema_name, table_name
         )
@@ -123,7 +121,13 @@ def create_get_latest_partition(engine_id) -> Callable[[str, str], str]:
     return get_latest_partition
 
 
-def get_templated_variables_in_string(s: str, env=None) -> Set[str]:
+def get_templated_query_env(engine_id: int):
+    jinja_env = SandboxedEnvironment()
+    jinja_env.globals.update(latest_partition=create_get_latest_partition(engine_id))
+    return jinja_env
+
+
+def get_templated_variables_in_string(s: str, jinja_env=None) -> Set[str]:
     """Find possible templated variables within a string
 
     Arguments:
@@ -131,15 +135,15 @@ def get_templated_variables_in_string(s: str, env=None) -> Set[str]:
     Returns:
         Set[str] - set of variable names
     """
-    env = env or SandboxedEnvironment()
-    ast = env.parse(s)
+    jinja_env = jinja_env or SandboxedEnvironment()
+    ast = jinja_env.parse(s)
     variables = meta.find_undeclared_variables(ast)
 
     # temporarily applying https://github.com/pallets/jinja/pull/994/files
     # since the current version is binded by flask
     filtered_variables = set()
     for variable in variables:
-        if variable not in env.globals:
+        if variable not in jinja_env.globals:
             filtered_variables.add(variable)
 
     return filtered_variables
@@ -153,8 +157,8 @@ def verify_all_variables_are_defined(variables_required, variables_provided):
             )
 
 
-def render_query_with_variables(s, variables, env):
-    template = env.from_string(s)
+def render_query_with_variables(s, variables, jinja_env):
+    template = jinja_env.from_string(s)
 
     return template.render(**variables)
 
@@ -177,15 +181,15 @@ def _flatten_variable(
             )
 
     # Now all dependencies are solved
-    env = SandboxedEnvironment(autoescape=False)
-    template = env.from_string(variable_defs[var_name])
+    jinja_env = SandboxedEnvironment(autoescape=False)
+    template = jinja_env.from_string(variable_defs[var_name])
     flattened_variables[var_name] = template.render(
         **{dep_var_name: flattened_variables[dep_var_name] for dep_var_name in var_deps}
     )
 
 
 def flatten_recursive_variables(
-    raw_variables: Dict[str, str], env=None
+    raw_variables: Dict[str, str], jinja_env=None
 ) -> Dict[str, str]:
     """Given a list of variables, recursively replace variables that refers other variables
 
@@ -205,7 +209,7 @@ def flatten_recursive_variables(
         if not value:
             value = ""
 
-        variables_in_value = get_templated_variables_in_string(value, env)
+        variables_in_value = get_templated_variables_in_string(value, jinja_env)
 
         if len(variables_in_value) == 0:
             flattened_variables[key] = value
@@ -229,19 +233,19 @@ def flatten_recursive_variables(
     return flattened_variables
 
 
-def get_templated_query_variables(variables_provided, env=None):
+def get_templated_query_variables(variables_provided, jinja_env=None):
     return flatten_recursive_variables(
-        {**get_default_variables(), **variables_provided,}, env
+        {**get_default_variables(), **variables_provided,}, jinja_env
     )
 
 
 def render_templated_query(
-    query: str, variables: Dict[str, str], engine_id: int = None
+    query: str, variables: Dict[str, str], engine_id: int
 ) -> str:
     """Renders the templated query, with global variables such as today/yesterday
-    and functions such as `latest_partition`.
-    All the default html escape is ignore since it is not applicable.
-    It also checks if a variable is a partial (in which it can refer other variables).
+       and functions such as `latest_partition`.
+       All the default html escape is ignore since it is not applicable.
+       It also checks if a variable is a partial (in which it can refer other variables).
 
 
     Arguments:
@@ -255,15 +259,14 @@ def render_templated_query(
     Returns:
         str -- The rendered string
     """
-    env = SandboxedEnvironment()
-    env.globals.update(latest_partition=create_get_latest_partition(engine_id))
+    jinja_env = get_templated_query_env(engine_id)
     try:
         escaped_query = _escape_sql_comments(query)
-        variables_in_query = get_templated_variables_in_string(escaped_query, env)
+        variables_in_query = get_templated_variables_in_string(escaped_query, jinja_env)
 
-        all_variables = get_templated_query_variables(variables, env)
+        all_variables = get_templated_query_variables(variables, jinja_env)
         verify_all_variables_are_defined(variables_in_query, all_variables)
 
-        return render_query_with_variables(escaped_query, all_variables, env)
+        return render_query_with_variables(escaped_query, all_variables, jinja_env)
     except TemplateSyntaxError as e:
         raise QueryJinjaSyntaxException(f"Line {e.lineno}: {e.message}")
