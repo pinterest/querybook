@@ -139,12 +139,17 @@ export const TemplatedQueryResource = {
         ds.save<string[]>('/query_execution/templated_query_params/', {
             query,
         }),
-    renderTemplatedQuery: (query: string, variables: Record<string, string>) =>
+    renderTemplatedQuery: (
+        query: string,
+        variables: Record<string, string>,
+        engineId: number
+    ) =>
         ds.save<string>(
             '/query_execution/templated_query/',
             {
                 query,
                 variables,
+                engine_id: engineId,
             },
             false
         ),

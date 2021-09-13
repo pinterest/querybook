@@ -57,13 +57,14 @@ def run_datadoc_with_config(
 
         # Preping chain jobs each unit is a [make_qe_task, run_query_task] combo
         for index, query_cell in enumerate(query_cells):
-            query = render_templated_query(query_cell.context, data_doc.meta)
+            engine_id = query_cell.meta["engine"]
+            query = render_templated_query(query_cell.context, data_doc.meta, engine_id)
 
             start_query_execution_kwargs = {
                 "cell_id": query_cell.id,
                 "query_execution_params": {
                     "query": query,
-                    "engine_id": query_cell.meta["engine"],
+                    "engine_id": engine_id,
                     "uid": runner_id,
                 },
             }

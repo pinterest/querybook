@@ -128,6 +128,11 @@ export const DataDocTemplateVarForm: React.FunctionComponent<IDataDocTemplateVar
                                                         "{{yesterday}} which maps to yesterday's date"
                                                     }
                                                 </li>
+                                                <li>
+                                                    {
+                                                        "{{latest_partition('<schema_name>.<table_name>', '<partition_key>')}} which is a function to get the latest partition of a table"
+                                                    }
+                                                </li>
                                             </ul>
                                         </p>
                                         <p>

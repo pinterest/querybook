@@ -45,9 +45,7 @@ class HMSMetastoreLoader(BaseMetastoreLoader):
 
         parameters = description.parameters
         sd = description.sd
-        partitions = get_hive_metastore_table_partitions(
-            self.hmc, schema_name, table_name
-        )
+        partitions = self.get_partitions(schema_name, table_name)
 
         last_modified_time = parameters.get("last_modified_time")
         last_modified_time = (
@@ -79,6 +77,9 @@ class HMSMetastoreLoader(BaseMetastoreLoader):
             )
         )
         return table, columns
+
+    def get_partitions(self, schema_name: str, table_name: str) -> List[str]:
+        return get_hive_metastore_table_partitions(self.hmc, schema_name, table_name)
 
     def _get_hmc(self, metastore_dict):
         return HiveMetastoreClient(hmss_ro_addrs=metastore_dict["metastore_params"])

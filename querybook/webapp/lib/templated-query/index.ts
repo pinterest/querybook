@@ -11,11 +11,13 @@ export async function getTemplatedQueryVariables(query: string) {
 
 export async function renderTemplatedQuery(
     query: string,
-    variables: Record<string, string>
+    variables: Record<string, string>,
+    engineId: number
 ) {
     const { data } = await TemplatedQueryResource.renderTemplatedQuery(
         query,
-        variables
+        variables,
+        engineId
     );
     return data;
 }
