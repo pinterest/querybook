@@ -96,7 +96,7 @@ export const PopoverContainer = React.forwardRef<
                     }
                 }
             },
-            [onHide, container, wrapperElement.current]
+            [onHide, container]
         );
         React.useEffect(() => {
             document.addEventListener('mousedown', onDocumentClick);
