@@ -1,11 +1,8 @@
 import { find, uniqueId, invert } from 'lodash';
-import { format as sqlFormatterFormat } from 'sql-formatter';
+import sqlFormatter from 'sql-formatter';
 
 import { tokenize, IToken, getQueryLinePosition } from './sql-lexer';
-import { getLanguageSetting } from './sql-setting';
 
-// If the token falls under these types then do not
-// format the insides of the token
 const skipTokenType = new Set(['TEMPLATED_TAG', 'TEMPLATED_BLOCK', 'URL']);
 
 const allowedStatement = new Set([
@@ -137,7 +134,7 @@ export function format(
                 firstKeyWord &&
                 allowedStatement.has(firstKeyWord.text.toLocaleLowerCase())
             ) {
-                formattedStatement = sqlFormatterFormat(statementText, {
+                formattedStatement = sqlFormatter.format(statementText, {
                     indent: options.indent,
                     language: getLanguageForSqlFormatter(language),
                 });
@@ -161,18 +158,7 @@ export function format(
     );
 }
 
-const SQL_FORMATTER_LANGUAGES = [
-    'db2',
-    'mariadb',
-    'mysql',
-    'n1ql',
-    'plsql',
-    'postgresql',
-    'redshift',
-    'spark',
-    'sql',
-    'tsql',
-] as const;
+const SQL_FORMATTER_LANGUAGES = ['db2', 'n1ql', 'pl/sql', 'sql'] as const;
 
 type SqlFormatterLanguage = typeof SQL_FORMATTER_LANGUAGES[number];
 
@@ -181,7 +167,5 @@ function getLanguageForSqlFormatter(language: string): SqlFormatterLanguage {
         return language as SqlFormatterLanguage;
     }
 
-    const languageSetting = getLanguageSetting(language);
-    const requireBitwiseSupport = '|'.match(languageSetting.operatorChars);
-    return requireBitwiseSupport ? 'mysql' : 'sql';
+    return 'sql';
 }
