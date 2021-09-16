@@ -12,7 +12,7 @@ FROM
     );
     expect(format('select ARRAY [1] || ARRAY [2];', 'presto')).toBe(
         `SELECT
-  ARRAY [ 1 ] || ARRAY [ 2 ];`
+  ARRAY [1] || ARRAY [2];`
     );
 });
 test('Simple formatting with templating case', () => {
@@ -122,10 +122,9 @@ ADD JAR s3://test-bucket/hadoopusrs/bob/test-0.5-SNAPSHOT/test-0.5-SNAPSHOT.jar;
 });
 
 test('Bitwise select case', () => {
-    expect(format('SELECT ~0, 64 << 2, 5 & 6;', 'hive')).toBe(
+    expect(format('SELECT ~0, 5 & 6;', 'hive')).toBe(
         `SELECT
   ~ 0,
-  64 << 2,
   5 & 6;`
     );
 });
