@@ -24,7 +24,14 @@ RUN npm i -g npm@6.14.5 \
     && yarn config set cache-folder /mnt/yarn-cache/cache \
     && yarn config set yarn-offline-mirror /mnt/yarn-offline-mirror
 
+# Install OpenJDK-11
+RUN apt-get update && \
+    apt-get install --assume-yes -y openjdk-11-jre-headless && \
+    apt-get clean;
+
 WORKDIR /opt/querybook
+
+RUN wget -P /opt/querybook/ https://github.com/forcedotcom/Salesforce-CDP-jdbc/releases/download/release_2021.9A/Salesforce-cdp-1.8.0-java8.jar
 
 COPY requirements requirements/
 RUN pip install -r requirements/base.txt \
