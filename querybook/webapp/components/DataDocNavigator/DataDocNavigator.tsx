@@ -20,12 +20,13 @@ import { SearchBar } from 'ui/SearchBar/SearchBar';
 import './DataDocNavigator.scss';
 import { DataDocNavigatorSection } from './DataDocNavigatorSection';
 import { IDataDoc } from 'const/datadoc';
-import {
-    DataDocNavigatorBoardSection,
-    IProcessedBoardItem,
-} from './DataDocNavigatorBoardSection';
+import { DataDocNavigatorBoardSection } from './DataDocNavigatorBoardSection';
 import { useDrop } from 'react-dnd';
-import { DataDocDraggableType, BoardDraggableType } from './navigatorConst';
+import {
+    DataDocDraggableType,
+    BoardDraggableType,
+    IProcessedBoardItem,
+} from './navigatorConst';
 import { IDragItem } from 'ui/DraggableList/types';
 
 export const DataDocNavigator: React.FC = () => {

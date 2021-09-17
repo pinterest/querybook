@@ -13,7 +13,6 @@ import {
 } from 'const/board';
 
 import { BoardCreateUpdateModal } from 'components/BoardCreateUpdateModal/BoardCreateUpdateModal';
-import { getWithinEnvUrl } from 'lib/utils/query-string';
 
 import { myBoardsSelector, makeBoardItemsSelector } from 'redux/board/selector';
 import {
@@ -35,12 +34,16 @@ import { DraggableList } from 'ui/DraggableList/DraggableList';
 import { Icon } from 'ui/Icon/Icon';
 import { IDataTable } from 'const/metastore';
 import { Title } from 'ui/Title/Title';
-import { ListLink } from 'ui/Link/ListLink';
 import { IDragItem } from 'ui/DraggableList/types';
-
-import { BoardDraggableType, DataDocDraggableType } from './navigatorConst';
-import './DataDocNavigatorBoardSection.scss';
 import { TextToggleButton } from 'ui/Button/TextToggleButton';
+
+import {
+    BoardDraggableType,
+    DataDocDraggableType,
+    IProcessedBoardItem,
+} from './navigatorConst';
+import { BoardListItemRow } from './DataDocNavigatorBoardItem';
+import './DataDocNavigatorBoardSection.scss';
 
 interface INavigatorBoardSectionProps {
     selectedDocId: number;
@@ -279,7 +282,14 @@ const NavigatorBoardView: React.FunctionComponent<{
     });
 
     const headerSectionDOM = (
-        <div className="horizontal-space-between board-header-section pl12">
+        <div
+            className={clsx(
+                'horizontal-space-between',
+                'board-header-section',
+                'pl12',
+                !collapsed && 'active'
+            )}
+        >
             <div
                 onClick={() => setCollapsed(!collapsed)}
                 className="board-header-title flex1"
@@ -342,24 +352,12 @@ const NavigatorBoardView: React.FunctionComponent<{
     );
 };
 
-export interface IProcessedBoardItem {
-    id: number;
-    key: string;
-    icon: string;
-    itemUrl: string;
-    itemId: number;
-    itemType: BoardItemType;
-    title: string;
-    selected: boolean;
-    boardId: number;
-}
-
 const BoardExpandableList: React.FunctionComponent<{
     selectedDocId: number;
     filterString: string;
     boardId: number;
-    onDeleteBoardItem: (itemId: number, itemType: BoardItemType) => any;
-    onMoveBoardItem: (fromIndex: number, toIndex: number) => any;
+    onDeleteBoardItem: (itemId: number, itemType: BoardItemType) => void;
+    onMoveBoardItem: (fromIndex: number, toIndex: number) => void;
 }> = ({
     filterString,
     selectedDocId,
@@ -445,57 +443,16 @@ const BoardExpandableList: React.FunctionComponent<{
             items={processedItems}
             onMove={onMoveBoardItem}
             renderItem={(idx, item) => {
-                const {
-                    key,
-                    itemType,
-                    icon,
-                    title,
-                    itemUrl,
-                    selected,
-                    itemId,
-                    id,
-                } = item;
+                const { id } = item;
                 if (itemsToHideSet.has(id)) {
                     return null;
                 }
 
                 return (
-                    <Level key={key} className="board-item-list-row">
-                        <ListLink
-                            className={clsx({
-                                'flex1 pr8': true,
-                                selected,
-                            })}
-                            to={{
-                                pathname: getWithinEnvUrl(itemUrl),
-                                state: {
-                                    isModal: itemType !== 'data_doc',
-                                },
-                            }}
-                            placeholder={null}
-                            isRow
-                        >
-                            <Icon size={16} className="mr4" name={icon} />
-                            {title.length ? (
-                                <span className="ListLinkText">{title}</span>
-                            ) : (
-                                <span className="ListLinkPlaceholder">
-                                    Untitled
-                                </span>
-                            )}
-                            <IconButton
-                                className="delete-board-item-button"
-                                noPadding
-                                size={16}
-                                icon="x"
-                                onClick={(event) => {
-                                    event.stopPropagation();
-                                    event.preventDefault();
-                                    onDeleteBoardItem(itemId, itemType);
-                                }}
-                            />
-                        </ListLink>
-                    </Level>
+                    <BoardListItemRow
+                        item={item}
+                        onDeleteBoardItem={onDeleteBoardItem}
+                    />
                 );
             }}
         />

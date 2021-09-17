@@ -1,0 +1,21 @@
+.BoardListItemRow {
+    .Icon svg {
+        padding: 0;
+    }
+
+    .ListLink {
+        max-width: 100%;
+        padding-left: 8px;
+    }
+
+    .delete-board-item-button {
+        padding: 0;
+        display: none;
+    }
+
+    &:hover {
+        .delete-board-item-button {
+            display: flex;
+        }
+    }
+}
