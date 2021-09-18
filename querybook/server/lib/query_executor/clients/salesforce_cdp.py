@@ -45,7 +45,14 @@ class SalesforceCdpCursor(CursorBaseClass):
         return self._convert_row(self._cursor.fetchone())
 
     def get_n_rows(self, n: int):
-        return [self._convert_row(row) for row in self._cursor.fetchmany(size=n)]
+        converted_records = []
+        if self._cursor:
+            records = self._cursor.fetchmany(size=n)
+            if records:
+                for r in records:
+                    converted_record = self._convert_row(r)
+                    converted_records.append(converted_record)
+        return converted_records
 
     def get_columns(self):
         columns = []
