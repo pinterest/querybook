@@ -26,7 +26,7 @@ RUN npm i -g npm@6.14.5 \
 
 # Install OpenJDK-11
 RUN apt-get update && \
-    apt-get install --assume-yes -y openjdk-11-jre-headless && \
+    apt-get install --assume-yes openjdk-11-jre-headless && \
     apt-get clean;
 
 WORKDIR /opt/querybook
