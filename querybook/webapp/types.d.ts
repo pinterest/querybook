@@ -21,6 +21,9 @@ declare global {
             mode?: 'replace';
             renderer: () => React.ReactElement;
         };
+        DATA_TABLE_SEARCH_CONFIG?: {
+            calculateInitialState: <T>(initialState: T) => typeof initialState;
+        };
         CUSTOM_COLUMN_STATS_ANALYZERS?: IColumnStatsAnalyzer[];
         CUSTOM_COLUMN_DETECTORS?: IColumnDetector[];
         CUSTOM_COLUMN_TRANSFORMERS?: IColumnTransformer[];
