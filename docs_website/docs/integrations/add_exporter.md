@@ -29,4 +29,13 @@ Here are some fields of exporter that you must configure in the setup process:
 
 To ensure Querybook more generalizable, all exporters are not included by default. If you want to add an exporter, please do so through plugins (See this [Plugin Guide](plugins.md) to learn how to setup plugins for Querybook).
 
-Once plugins folder is setup, import the exporter class under `ALL_PLUGIN_EXPORTERS` in exporter_plugin/**init**.py .
+Once plugins folder is setup, import the exporter class under `ALL_PLUGIN_EXPORTERS` in `exporter_plugin/__init__.py`. As an example, here is how you can add PythonExporter and RExporter:
+```python
+from lib.export.exporters.python_exporter import PythonExporter
+from lib.export.exporters.r_exporter import RExporter
+
+ALL_PLUGIN_EXPORTERS = [
+    PythonExporter(),
+    RExporter()
+]
+```
