@@ -5,6 +5,8 @@ import type {
     IColumnTransformer,
 } from 'lib/query-result/types';
 
+import { IDataTableSearchState } from 'redux/dataTableSearch/types';
+
 declare global {
     /* eslint-disable @typescript-eslint/naming-convention */
     interface Window {
@@ -22,7 +24,7 @@ declare global {
             renderer: () => React.ReactElement;
         };
         DATA_TABLE_SEARCH_CONFIG?: {
-            calculateInitialState: <T>(initialState: T) => typeof initialState;
+            getInitialState: (initialState: IDataTableSearchState) => IDataTableSearchState;
         };
         CUSTOM_COLUMN_STATS_ANALYZERS?: IColumnStatsAnalyzer[];
         CUSTOM_COLUMN_DETECTORS?: IColumnDetector[];

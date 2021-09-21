@@ -19,12 +19,11 @@ const initialState: IDataTableSearchState = {
     ...initialResultState,
 };
 
-function calculateInitialState() {
+function getInitialState() {
     if (
-        window.DATA_TABLE_SEARCH_CONFIG &&
-        window.DATA_TABLE_SEARCH_CONFIG.calculateInitialState
+        window.DATA_TABLE_SEARCH_CONFIG?.getInitialState
     ) {
-        return window.DATA_TABLE_SEARCH_CONFIG.calculateInitialState(
+        return window.DATA_TABLE_SEARCH_CONFIG.getInitialState(
             initialState
         );
     }
@@ -33,7 +32,7 @@ function calculateInitialState() {
 }
 
 export default function dataTableSearch(
-    state = calculateInitialState(),
+    state = getInitialState(),
     action: DataTableSearchAction
 ) {
     return produce(state, (draft) => {
@@ -46,7 +45,7 @@ export default function dataTableSearch(
             }
             case '@@dataTableSearch/DATA_TABLE_SEARCH_RESET': {
                 return {
-                    ...calculateInitialState(),
+                    ...getInitialState(),
                 };
             }
             case '@@dataTableSearch/DATA_TABLE_SEARCH_STARTED': {

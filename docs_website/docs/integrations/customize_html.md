@@ -74,3 +74,50 @@ window.CUSTOM_KEY_MAP = {
 ```
 
 When adding a new key binding, follow the format of Codemirror as documented [here](https://codemirror.net/doc/manual.html#keymaps). Use `cmd` in place of `ctrl` whenever possible as it would work for both mac and windows. Note that you can only override existing values which means adding a new key would be considered a noop.
+
+### Customize data table filters
+
+You can set default parameters for table filters. You can add all examples from this part to file `querybook/plugins/webpage_plugin/custom_script.ts`.
+
+Which parameters you can customize:
+
+1. `Featured` flag. You can set up this filter selected by default using next code:
+
+```typescript
+window.DATA_TABLE_SEARCH_CONFIG = {
+    getInitialState: (initialState) => ({
+        ...initialState,
+        searchFilters: {
+            golden: true
+        }
+    })
+}
+```
+
+2. If you want to use searching for some schema by default, you can set this parameter using next code:
+
+```typescript
+window.DATA_TABLE_SEARCH_CONFIG = {
+    getInitialState: (initialState) => ({
+        ...initialState,
+        searchFilters: {
+            schema: "main"
+        }
+    })
+}
+```
+
+3. By default search field works for `table_name` field but you set any other valid field (table_name, description or column). 
+   So, you can set the field with value `true`. This is the example of setting `description` as default search field.
+
+```typescript
+window.DATA_TABLE_SEARCH_CONFIG = {
+    getInitialState: (initialState) => ({
+        ...initialState,
+        searchFields: {
+           description: true
+        }
+    })
+}
+```
+ 
