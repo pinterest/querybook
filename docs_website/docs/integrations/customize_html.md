@@ -88,10 +88,10 @@ window.DATA_TABLE_SEARCH_CONFIG = {
     getInitialState: (initialState) => ({
         ...initialState,
         searchFilters: {
-            golden: true
-        }
-    })
-}
+            golden: true,
+        },
+    }),
+};
 ```
 
 2. If you want to use searching for some schema by default, you can set this parameter using next code:
@@ -101,13 +101,13 @@ window.DATA_TABLE_SEARCH_CONFIG = {
     getInitialState: (initialState) => ({
         ...initialState,
         searchFilters: {
-            schema: "main"
-        }
-    })
-}
+            schema: 'main',
+        },
+    }),
+};
 ```
 
-3. By default search field works for `table_name` field but you set any other valid field (table_name, description or column). 
+3. By default search field works for `table_name` field but you set any other valid field (table_name, description or column).
    So, you can set the field with value `true`. This is the example of setting `description` as default search field.
 
 ```typescript
@@ -115,9 +115,8 @@ window.DATA_TABLE_SEARCH_CONFIG = {
     getInitialState: (initialState) => ({
         ...initialState,
         searchFields: {
-           description: true
-        }
-    })
-}
+            description: true,
+        },
+    }),
+};
 ```
- 
