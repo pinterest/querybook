@@ -24,7 +24,9 @@ declare global {
             renderer: () => React.ReactElement;
         };
         DATA_TABLE_SEARCH_CONFIG?: {
-            getInitialState: (initialState: IDataTableSearchState) => IDataTableSearchState;
+            getInitialState: (
+                initialState: IDataTableSearchState
+            ) => IDataTableSearchState;
         };
         CUSTOM_COLUMN_STATS_ANALYZERS?: IColumnStatsAnalyzer[];
         CUSTOM_COLUMN_DETECTORS?: IColumnDetector[];

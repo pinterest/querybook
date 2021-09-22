@@ -20,12 +20,8 @@ const initialState: IDataTableSearchState = {
 };
 
 function getInitialState() {
-    if (
-        window.DATA_TABLE_SEARCH_CONFIG?.getInitialState
-    ) {
-        return window.DATA_TABLE_SEARCH_CONFIG.getInitialState(
-            initialState
-        );
+    if (window.DATA_TABLE_SEARCH_CONFIG?.getInitialState) {
+        return window.DATA_TABLE_SEARCH_CONFIG.getInitialState(initialState);
     }
 
     return initialState;
