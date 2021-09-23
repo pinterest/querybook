@@ -32,10 +32,11 @@ class OAuthLoginManager(object):
 
     @property
     def oauth_session(self):
+        oauth_config = self.oauth_config
         return OAuth2Session(
-            self.oauth_config["client_id"],
-            scope=self.oauth_config["scope"],
-            redirect_uri=self.oauth_config["callback_url"],
+            oauth_config["client_id"],
+            scope=oauth_config["scope"],
+            redirect_uri=oauth_config["callback_url"],
         )
 
     @property
@@ -77,7 +78,6 @@ class OAuthLoginManager(object):
             return f"<h1>Error: {request.args.get('error')}</h1>"
 
         code = request.args.get("code")
-
         try:
             access_token = self._fetch_access_token(code)
             username, email = self._get_user_profile(access_token)
@@ -85,7 +85,8 @@ class OAuthLoginManager(object):
                 flask_login.login_user(
                     AuthUser(self.login_user(username, email, session=session))
                 )
-        except AuthenticationError:
+        except AuthenticationError as e:
+            LOG.error("Failed authenticate oauth user", e)
             abort_unauthorized()
 
         next_url = "/"
@@ -125,6 +126,9 @@ class OAuthLoginManager(object):
 
     @with_session
     def login_user(self, username, email, session=None):
+        if not username:
+            raise AuthenticationError("User name must not be empty!")
+
         user = get_user_by_name(username, session=session)
         if not user:
             user = create_user(

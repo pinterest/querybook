@@ -44,6 +44,10 @@ function getDevServerSettings(env) {
                 target: QUERYBOOK_UPSTREAM,
                 changeOrigin: true,
             },
+            '/oauth2callback': {
+                target: QUERYBOOK_UPSTREAM,
+                changeOrigin: true,
+            },
         },
         publicPath: '/build/',
         onListening: (server) => {
