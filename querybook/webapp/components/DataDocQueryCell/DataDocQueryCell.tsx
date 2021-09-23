@@ -648,14 +648,14 @@ class DataDocQueryCellComponent extends React.PureComponent<IProps, IState> {
     }
 
     public renderExecutionsDOM() {
-        const { cellId, docId } = this.props;
+        const { cellId, docId, isEditable } = this.props;
 
         return (
             <DataDocQueryExecutions
                 docId={docId}
                 cellId={cellId}
                 isQueryCollapsed={this.queryCollapsed}
-                changeCellContext={this.handleChange}
+                changeCellContext={isEditable ? this.handleChange : null}
             />
         );
     }

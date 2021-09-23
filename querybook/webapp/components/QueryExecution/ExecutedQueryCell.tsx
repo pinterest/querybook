@@ -33,7 +33,7 @@ export interface IHighlightRange {
 interface IProps {
     queryExecution: IQueryExecution;
     highlightRange?: IHighlightRange;
-    changeCellContext?: (context: string) => any;
+    changeCellContext?: (context: string) => void;
 
     editorHeight?: string;
 }
