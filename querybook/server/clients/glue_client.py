@@ -1,13 +1,14 @@
 from typing import List
 
 import boto3
+from env import QuerybookSettings
 from lib.logger import get_logger
 
 _LOG = get_logger(__file__)
 
 
 class GlueDataCatalogClient:
-    def __init__(self, catalog_id, region="us-east-1"):
+    def __init__(self, catalog_id, region=QuerybookSettings.AWS_REGION):
         self.catalog_id = catalog_id
         self._glue_client = boto3.client("glue", region_name=region)
 
