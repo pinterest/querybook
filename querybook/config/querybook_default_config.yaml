@@ -44,6 +44,10 @@ OAUTH_AUTHORIZATION_URL: ~
 OAUTH_TOKEN_URL: ~
 OAUTH_USER_PROFILE: ~
 
+# User identifier which will be passed to query engines.
+# Possible values are 'username' and 'email'. Defaults to 'username'.
+QUERY_USER_IDENTIFIER: username
+
 # LDAP
 LDAP_CONN: ~
 LDAP_USER_DN: uid={},dc=example,dc=com

@@ -71,6 +71,9 @@ class QuerybookSettings(object):
     OAUTH_TOKEN_URL = get_env_config("OAUTH_TOKEN_URL")
     OAUTH_USER_PROFILE = get_env_config("OAUTH_USER_PROFILE")
 
+    # User identifier which will be passed to query engines.
+    QUERY_USER_IDENTIFIER = get_env_config("QUERY_USER_IDENTIFIER")
+
     LDAP_CONN = get_env_config("LDAP_CONN")
     LDAP_USER_DN = get_env_config("LDAP_USER_DN")
 

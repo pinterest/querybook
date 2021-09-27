@@ -1,5 +1,6 @@
 from app.db import with_session
 from const.query_execution import QueryExecutionStatus
+from env import QuerybookSettings
 from lib.logger import get_logger
 from lib.query_analysis import get_statement_ranges
 from lib.query_analysis.lineage import process_query
@@ -33,6 +34,7 @@ def _get_executor_params_and_engine(query_execution_id, celery_task, session=Non
     if engine.deleted_at is not None:
         raise ArchivedQueryEngine("This query engine is disabled.")
 
+    proxy_user = user.email if QuerybookSettings.QUERY_USER_IDENTIFIER == "email" else user.username
     return (
         {
             "query_execution_id": query_execution_id,
@@ -41,7 +43,7 @@ def _get_executor_params_and_engine(query_execution_id, celery_task, session=Non
             "statement_ranges": statement_ranges,
             "client_setting": {
                 **engine.get_engine_params(),
-                "proxy_user": user.username,
+                "proxy_user": proxy_user,
             },
         },
         engine,
