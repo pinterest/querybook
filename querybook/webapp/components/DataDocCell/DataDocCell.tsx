@@ -1,6 +1,7 @@
 import React, { useEffect, useMemo, useContext, useCallback } from 'react';
 import clsx from 'clsx';
 import toast from 'react-hot-toast';
+import type { ContentState } from 'draft-js';
 
 import { useSelector } from 'react-redux';
 
@@ -48,6 +49,17 @@ function getEstimatedCellHeight(cell: IDataCell) {
         return 240;
     }
     return 80;
+}
+
+function isCellEmpty(cell: IDataCell): boolean {
+    const cellType = cell.cell_type;
+    if (cellType === 'query') {
+        return cell.context === '';
+    } else if (cellType === 'text') {
+        return !(cell.context as ContentState).hasText();
+    }
+
+    return false;
 }
 
 // renders cell
@@ -100,12 +112,12 @@ export const DataDocCell: React.FunctionComponent<IDataDocCellProps> = React.mem
                         : undefined
                 );
             }
-        }, [defaultCollapse]);
+        }, [defaultCollapse, cell.meta.collapsed, cell.cell_type]);
         const uncollapseCell = useCallback(() => setShowCollapsed(false), []);
 
         const handleUpdateCell = React.useCallback(
             async (fields: DataCellUpdateFields) => updateCell(cell.id, fields),
-            [cell.id]
+            [cell.id, updateCell]
         );
 
         const handleMoveCell = React.useCallback(
@@ -120,13 +132,15 @@ export const DataDocCell: React.FunctionComponent<IDataDocCellProps> = React.mem
                 handleUpdateCell({
                     meta: { ...cell.meta, collapsed: !cell.meta.collapsed },
                 }),
-            [cell]
+            [cell.meta, handleUpdateCell]
         );
 
+        const cellIsEmpty = useMemo(() => isCellEmpty(cell), [cell]);
         const handleDeleteCell = React.useCallback(
             () =>
                 new Promise<void>((resolve) => {
                     if (numberOfCells > 0) {
+                        const shouldConfirm = !cellIsEmpty;
                         const deleteCell = async () => {
                             try {
                                 await dataDocActions.deleteDataDocCell(
@@ -143,17 +157,21 @@ export const DataDocCell: React.FunctionComponent<IDataDocCellProps> = React.mem
                                 resolve();
                             }
                         };
-                        sendConfirm({
-                            header: 'Delete Cell?',
-                            message: 'Deleted cells cannot be recovered',
-                            onConfirm: deleteCell,
-                            onHide: resolve,
-                        });
+                        if (shouldConfirm) {
+                            sendConfirm({
+                                header: 'Delete Cell?',
+                                message: 'Deleted cells cannot be recovered',
+                                onConfirm: deleteCell,
+                                onHide: resolve,
+                            });
+                        } else {
+                            deleteCell().finally(resolve);
+                        }
                     } else {
                         resolve();
                     }
                 }),
-            [docId, numberOfCells, cell.id]
+            [docId, numberOfCells, cell.id, cellIsEmpty]
         );
 
         const shareUrl = useMemo(
