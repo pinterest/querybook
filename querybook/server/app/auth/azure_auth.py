@@ -1,7 +1,7 @@
 import requests
 
 from app.auth.oauth_auth import OAuthLoginManager, OAUTH_CALLBACK_PATH
-from env import QuerybookSettings
+from env import QuerybookSettings, get_env_config
 from .utils import AuthenticationError
 
 
@@ -15,10 +15,10 @@ class AzureLoginManager(OAuthLoginManager):
             "client_id": QuerybookSettings.OAUTH_CLIENT_ID,
             "client_secret": QuerybookSettings.OAUTH_CLIENT_SECRET,
             "authorization_url": "https://login.microsoftonline.com/{}/oauth2/v2.0/authorize".format(
-                QuerybookSettings.AZURE_TENANT_ID
+                get_env_config("AZURE_TENANT_ID")
             ),
             "token_url": "https://login.microsoftonline.com/{}/oauth2/v2.0/token".format(
-                QuerybookSettings.AZURE_TENANT_ID
+                get_env_config("AZURE_TENANT_ID")
             ),
             "profile_url": "https://graph.microsoft.com/oidc/userinfo",
             "scope": ["openid", "profile", "email", "User.Read"],
