@@ -70,6 +70,7 @@ class QuerybookSettings(object):
     OAUTH_AUTHORIZATION_URL = get_env_config("OAUTH_AUTHORIZATION_URL")
     OAUTH_TOKEN_URL = get_env_config("OAUTH_TOKEN_URL")
     OAUTH_USER_PROFILE = get_env_config("OAUTH_USER_PROFILE")
+    AZURE_TENANT_ID = get_env_config("AZURE_TENANT_ID")
 
     LDAP_CONN = get_env_config("LDAP_CONN")
     LDAP_USER_DN = get_env_config("LDAP_USER_DN")
