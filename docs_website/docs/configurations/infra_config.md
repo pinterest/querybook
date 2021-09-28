@@ -73,6 +73,11 @@ The following settings are only relevant if you are using `s3` or `gcs` (Google 
 -   `STORE_READ_SIZE` (optional, defaults to 131072): The size of chunk when reading from store.
 -   `STORE_MAX_READ_SIZE` (optional, defaults to 5242880): The max size of file Querybook will read for users to view.
 
+The following settings are only relevant if you are using `s3` and your S3 bucket requires signature V4:
+
+-   `S3_BUCKET_S3V4_ENABLED`(optional, defaults to false): `true`, if you want to enable signature v4.
+-   `AWS_REGION`(optional, defaults to us-east-1): AWS region of your S3 bucket.
+
 ### Logging
 
 `LOG_LOCATION` (optional): By default server logs goes to stderr. Supply a log path if you want the log to appear in a file.

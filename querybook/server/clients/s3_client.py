@@ -80,7 +80,7 @@ class S3KeySigner(object):
             self._s3 = boto3.client(
                 "s3",
                 QuerybookSettings.AWS_REGION,
-                config=Config(signature_version='s3v4'),
+                config=Config(signature_version="s3v4"),
             )
         else:
             self._s3 = boto3.client("s3")
