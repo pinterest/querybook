@@ -52,6 +52,8 @@ TABLE_INPUT_A_1 = {
 }
 PARTITION_INPUT_A_1 = {"Values": ["2021-01-01", "15"]}
 PARTITION_INPUT_A_2 = {"Values": ["2021-03-03", "20"]}
+PARTITION_INPUT_A_3 = {"Values": ["2021-03-03", "22"]}
+PARTITION_INPUT_A_4 = {"Values": ["2021-04-04", "20"]}
 
 # Second database with three tables
 DB_NAME_B = "db_b"
@@ -198,3 +200,47 @@ class GlueDataCatalogLoaderTestCase(TestCase):
 
         self.assertEqual(result_table, table)
         self.assertEqual(result_columns, columns)
+
+    @mock_glue
+    def test_get_partitions(self):
+        self.client.create_database(DatabaseInput={"Name": DB_NAME_A})
+        self.client.create_table(DatabaseName=DB_NAME_A, TableInput=TABLE_INPUT_A_1)
+        self.client.create_partition(
+            DatabaseName=DB_NAME_A,
+            TableName=TABLE_NAME_A_1,
+            PartitionInput=PARTITION_INPUT_A_1,
+        )
+        self.client.create_partition(
+            DatabaseName=DB_NAME_A,
+            TableName=TABLE_NAME_A_1,
+            PartitionInput=PARTITION_INPUT_A_2,
+        )
+        self.client.create_partition(
+            DatabaseName=DB_NAME_A,
+            TableName=TABLE_NAME_A_1,
+            PartitionInput=PARTITION_INPUT_A_3,
+        )
+        self.client.create_partition(
+            DatabaseName=DB_NAME_A,
+            TableName=TABLE_NAME_A_1,
+            PartitionInput=PARTITION_INPUT_A_4,
+        )
+
+        conditions = {"partition_date": "2021-03-03"}
+        expected_partitions = [
+            "partition_date=2021-03-03/partition_hour=20",
+            "partition_date=2021-03-03/partition_hour=22",
+        ]
+        result_partitions = self.loader.get_partitions(
+            DB_NAME_A, TABLE_NAME_A_1, conditions
+        )
+        self.assertEqual(result_partitions, expected_partitions)
+
+        conditions["partition_hour"] = "20"
+        expected_partitions = [
+            "partition_date=2021-03-03/partition_hour=20",
+        ]
+        result_partitions = self.loader.get_partitions(
+            DB_NAME_A, TABLE_NAME_A_1, conditions
+        )
+        self.assertEqual(result_partitions, expected_partitions)

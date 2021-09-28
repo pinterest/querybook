@@ -210,18 +210,47 @@ class HiveMetastoreClient:
             lambda: self._read_client.get_table(db_name, tb_name)
         )
 
-    def get_partitions(self, db_name, tb_name):
+    def get_table_partition_keys(self, db_name, tb_name):
+        table = self._perform_read_op(
+            lambda: self._read_client.get_table(db_name, tb_name)
+        )
+        partition_keys = [key.name for key in table.partitionKeys or []]
+        return partition_keys
+
+    @staticmethod
+    def get_partition_name_from_keys_and_values(partition_keys, partition_values):
+        partition_name = "/".join(
+            [f"{key}={value}" for key, value in zip(partition_keys, partition_values)]
+        )
+        return partition_name
+
+    def get_partitions(self, db_name, tb_name, filter: str = None):
         """
         Queries the hive metastore DB for table partitions
 
         Args:
             db_name: The name of the db
             tb_name: The name of the table
+            filter: Filter conditions formatted as a SQL WHERE clause. i.e. "dt=2016-03-14 AND hr=00"
 
         Returns: The partitions of db_name.tb_name in the format ['dt=2016-03-14/hr=00', 'dt=2016-03-14/hr=01', ...]
 
         """
         _LOG.info("Get partitions of %s.%s", db_name, tb_name)
+        if filter:
+            partitions = self._perform_read_op(
+                lambda: self._read_client.get_partitions_by_filter(
+                    db_name, tb_name, filter, -1
+                )
+            )
+            partition_keys = self.get_table_partition_keys(db_name, tb_name)
+            partition_names = [
+                HiveMetastoreClient.get_partition_name_from_keys_and_values(
+                    partition_keys, partition.values
+                )
+                for partition in partitions
+            ]
+            return partition_names
         return self._perform_read_op(
             lambda: self._read_client.get_partition_names(db_name, tb_name, -1)
         )
