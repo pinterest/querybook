@@ -63,6 +63,16 @@ OAUTH_CLIENT_ID: '---Redacted---'
 OAUTH_CLIENT_SECRET: '---Redacted---'
 ```
 
+#### Azure
+
+```yaml
+AUTH_BACKEND: app.auth.azure_auth
+PUBLIC_URL: http://localhost:10001
+AZURE_TENANT_ID: '---Redacted---'
+OAUTH_CLIENT_ID: '---Redacted---'
+OAUTH_CLIENT_SECRET: '---Redacted---'
+```
+
 :::caution
 DO NOT CHECK IN `OAUTH_CLIENT_SECRET` to the codebase. The example above is for testing only. For production, please use environment variables to provide this value.
 :::
