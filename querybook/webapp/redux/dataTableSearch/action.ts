@@ -1,4 +1,4 @@
-import { SearchTableResource } from 'resource/search';
+import { SearchTableResource, SearchSchemaResource } from 'resource/search';
 import {
     ThunkResult,
     IDataTableSearchResultResetAction,
@@ -7,6 +7,8 @@ import {
     IDataTableSearchState,
     ITableSearchFilters,
 } from './types';
+
+import { IDataSchema } from 'const/metastore';
 
 const BATCH_LOAD_SIZE = 100;
 
@@ -87,6 +89,83 @@ function searchDataTable(): ThunkResult<Promise<ITableSearchResult[]>> {
                     },
                 });
             }
+        }
+
+        return [];
+    };
+}
+
+export function searchSchemas(): ThunkResult<Promise<IDataSchema[]>> {
+    return async (dispatch, getState) => {
+        try {
+            const offset = getState().dataTableSearch.schemas.list.length;
+            const searchRequest = SearchSchemaResource.getMore({
+                limit: 5,
+                offset,
+            });
+            dispatch({
+                type: '@@dataTableSearch/SCHEMA_SEARCH_STARTED',
+            });
+
+            const { data } = await searchRequest;
+
+            dispatch({
+                type: '@@dataTableSearch/SCHEMA_SEARCH_DONE',
+                payload: {
+                    results: data.results,
+                    count: data.count,
+                },
+            });
+
+            return data.results;
+        } catch (error) {
+            dispatch({
+                type: '@@dataTableSearch/SCHEMA_SEARCH_FAILED',
+                payload: {
+                    error,
+                },
+            });
+        }
+
+        return [];
+    };
+}
+
+export function searchTableBySchema(
+    schemaName: string,
+    id: number
+): ThunkResult<Promise<ITableSearchResult[]>> {
+    return async (dispatch, getState) => {
+        try {
+            const state = getState().dataTableSearch;
+            const searchRequest = SearchTableResource.searchConcise(
+                mapStateToSearch({
+                    ...state,
+                    searchFilters: { schema: schemaName },
+                })
+            );
+            dispatch({
+                type: '@@dataTableSearch/SEARCH_TABLE_BY_SCHEMA_STARTED',
+            });
+
+            const { data } = await searchRequest;
+
+            dispatch({
+                type: '@@dataTableSearch/SEARCH_TABLE_BY_SCHEMA_DONE',
+                payload: {
+                    results: data.results,
+                    id,
+                },
+            });
+
+            return data.results;
+        } catch (error) {
+            dispatch({
+                type: '@@dataTableSearch/SEARCH_TABLE_BY_SCHEMA_FAILED',
+                payload: {
+                    error,
+                },
+            });
         }
 
         return [];

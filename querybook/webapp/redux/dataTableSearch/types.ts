@@ -2,6 +2,7 @@ import { Action } from 'redux';
 import { ThunkAction } from 'redux-thunk';
 import { IStoreState } from '../store/types';
 import { ICancelablePromise } from 'lib/datasource';
+import { IDataSchema } from 'const/metastore';
 
 export interface ITableSearchResult {
     id: number;
@@ -14,6 +15,10 @@ export interface ITableSearchFilters {
     startDate?: number;
     endDate?: number;
     schema?: string;
+}
+
+interface ISchemaTableSearch extends IDataSchema {
+    tables?: ITableSearchResult[]
 }
 
 export interface IDataTableSearchResultResetAction extends Action {
@@ -79,6 +84,44 @@ export interface IDataTableSearchMoreAction extends Action {
     };
 }
 
+export interface ISchemaSearchMoreAction extends Action {
+    type: '@@dataTableSearch/SCHEMA_SEARCH_STARTED';
+}
+
+export interface ISchemaSearchResultAction extends Action {
+    type: '@@dataTableSearch/SCHEMA_SEARCH_DONE';
+    payload: {
+        results: IDataSchema[];
+        count: number;
+    };
+}
+
+export interface ISchemaSearchFailedAction extends Action {
+    type: '@@dataTableSearch/SCHEMA_SEARCH_FAILED';
+    payload: {
+        error: any;
+    };
+}
+
+export interface ISearchTableBySchemaAction extends Action {
+    type: '@@dataTableSearch/SEARCH_TABLE_BY_SCHEMA_STARTED';
+}
+
+export interface ISearchTableBySchemaResultAction extends Action {
+    type: '@@dataTableSearch/SEARCH_TABLE_BY_SCHEMA_DONE';
+    payload: {
+        results: ITableSearchResult[];
+        id: number;
+    };
+}
+
+export interface ISearchTableBySchemaFailedAction extends Action {
+    type: '@@dataTableSearch/SEARCH_TABLE_BY_SCHEMA_FAILED';
+    payload: {
+        error: any;
+    };
+}
+
 export type DataTableSearchAction =
     | IDataTableSearchResultResetAction
     | IDataTableSearchResultClearAction
@@ -89,11 +132,21 @@ export type DataTableSearchAction =
     | IDataTableSearchFilterUpdateAction
     | IDataTableSearchResetFilterAction
     | IDataTableSearchMoreAction
-    | IDataTableSearchSelectMetastoreAction;
+    | IDataTableSearchSelectMetastoreAction
+    | ISchemaSearchMoreAction
+    | ISchemaSearchResultAction
+    | ISearchTableBySchemaAction
+    | ISearchTableBySchemaResultAction
+    | ISchemaSearchFailedAction
+    | ISearchTableBySchemaFailedAction;
 
 export interface IDataTableSearchPaginationState {
     results: ITableSearchResult[];
     count: number;
+    schemas: {
+        list: ISchemaTableSearch[],
+        count: number
+    }
 }
 
 export interface IDataTableSearchState extends IDataTableSearchPaginationState {

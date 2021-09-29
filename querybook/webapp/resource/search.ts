@@ -9,6 +9,8 @@ import type {
     IUserSearchResultRow,
 } from 'const/search';
 
+import { IDataSchema } from 'const/metastore';
+
 export const SearchTableResource = {
     searchConcise: (params: ISearchTableParams) =>
         ds.fetch<{
@@ -26,6 +28,14 @@ export const SearchTableResource = {
         ds.fetch<string[]>(`/suggest/${metastoreId}/tables/`, {
             prefix,
         }),
+};
+
+export const SearchSchemaResource = {
+    getMore: (params: { offset: number; limit: number }) =>
+        ds.fetch<{
+            results: IDataSchema[];
+            count: number;
+        }>('/schemas/', { ...params }),
 };
 
 export const SearchDataDocResource = {

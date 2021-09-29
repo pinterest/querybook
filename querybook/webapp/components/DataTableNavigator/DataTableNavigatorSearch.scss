@@ -46,3 +46,10 @@
         }
     }
 }
+
+.table-tree {
+    &-item {
+        width: calc(100% - 30px) !important;
+    }
+}
+

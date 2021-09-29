@@ -8,6 +8,10 @@ import {
 const initialResultState: IDataTableSearchPaginationState = {
     results: [],
     count: 0,
+    schemas: {
+        list: [],
+        count: 0
+    }
 };
 
 const initialState: IDataTableSearchState = {
@@ -74,6 +78,20 @@ export default function dataTableSearch(
             }
             case '@@dataTableSearch/DATA_TABLE_SEARCH_SELECT_METASTORE': {
                 draft.metastoreId = action.payload.metastoreId;
+                return;
+            }
+            case '@@dataTableSearch/SCHEMA_SEARCH_DONE': {
+                draft.schemas.list = [...state.schemas.list, ...action.payload.results];
+                draft.schemas.count = action.payload.count
+                return;
+            }
+
+            case '@@dataTableSearch/SEARCH_TABLE_BY_SCHEMA_DONE': {
+                const index = state.schemas.list.findIndex(i => i.id === action.payload.id);
+
+                const tables = state.schemas.list[index].tables || [];
+
+                draft.schemas.list[index].tables = [...tables, ...action.payload.results];
                 return;
             }
         }

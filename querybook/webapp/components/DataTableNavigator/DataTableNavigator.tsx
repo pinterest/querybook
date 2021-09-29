@@ -21,6 +21,8 @@ import { Popover } from 'ui/Popover/Popover';
 import { DataTableHoverContent } from './DataTableHoverContent';
 import { DataTableNavigatorSearch } from './DataTableNavigatorSearch';
 
+import { SchemaTableView } from './SchemaTableView/SchemaTableView';
+
 import './DataTableNavigator.scss';
 
 export interface ITableResultWithSelection extends ITableSearchResult {
@@ -222,7 +224,7 @@ export const DataTableNavigator: React.FC<IDataTableNavigatorProps> = ({
         })
     );
 
-    const tablesDOM = (
+    let tablesDOM = (
         <div className="table-scroll-wrapper">
             <InfinityScroll<ITableSearchResult>
                 elements={dataTablesWithSelection}
@@ -233,6 +235,15 @@ export const DataTableNavigator: React.FC<IDataTableNavigatorProps> = ({
             />
         </div>
     );
+
+    if (!searchString && !searchFilters.schema) {
+        tablesDOM = <SchemaTableView tableRowRenderer={tableRowRenderer} />;
+    }
+
+    /* let tablesDOM = (
+
+      <DataTableTree dataTables={dataTablesWithSelection} handleTableRowClick={() => {}} />
+    ); */
 
     return (
         <div className={'DataTableNavigator '}>
