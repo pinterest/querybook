@@ -18,7 +18,7 @@ export interface ITableSearchFilters {
 }
 
 interface ISchemaTableSearch extends IDataSchema {
-    tables?: ITableSearchResult[]
+    tables?: ITableSearchResult[];
 }
 
 export interface IDataTableSearchResultResetAction extends Action {
@@ -144,9 +144,9 @@ export interface IDataTableSearchPaginationState {
     results: ITableSearchResult[];
     count: number;
     schemas: {
-        list: ISchemaTableSearch[],
-        count: number
-    }
+        list: ISchemaTableSearch[];
+        count: number;
+    };
 }
 
 export interface IDataTableSearchState extends IDataTableSearchPaginationState {

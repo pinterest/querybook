@@ -73,10 +73,12 @@ export const SchemaTableView: React.FunctionComponent<{
             {schemas.list.map((category) => {
                 return (
                     <SchemaTableItem
+                        key={category.name}
                         name={category.name}
                         total={schemas.count}
                         data={prepareSchemaNames(
-                            schemas.list.find((s) => s.id === category.id)?.tables
+                            schemas.list.find((s) => s.id === category.id)
+                                ?.tables
                         )}
                         tableRowRenderer={tableRowRenderer}
                         onLoadMore={() =>

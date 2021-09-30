@@ -236,7 +236,11 @@ export const DataTableNavigator: React.FC<IDataTableNavigatorProps> = ({
         </div>
     );
 
-    if (window.IS_DISPLAY_SCHEMA_TABLE && !searchString && !searchFilters.schema) {
+    if (
+        window.IS_DISPLAY_SCHEMA_TABLE &&
+        !searchString &&
+        !searchFilters.schema
+    ) {
         tablesDOM = <SchemaTableView tableRowRenderer={tableRowRenderer} />;
     }
 

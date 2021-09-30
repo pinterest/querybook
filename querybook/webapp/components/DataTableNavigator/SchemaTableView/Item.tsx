@@ -40,7 +40,7 @@ export const SchemaTableItem: React.FC<{
                         itemRenderer={tableRowRenderer}
                         itemHeight={28}
                         defaultListHeight={120}
-                        autoSizerStyles={{ height: "80px" }}
+                        autoSizerStyles={{ height: '120px' }}
                     />
                 </div>
             )}

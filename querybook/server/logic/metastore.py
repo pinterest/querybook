@@ -24,7 +24,14 @@ from tasks.sync_elasticsearch import sync_elasticsearch
 @with_session
 def get_all_schema(offset=0, limit=5, session=None):
     """Get all the schemas."""
-    return session.query(DataSchema).order_by(desc(DataSchema.name)).offset(offset).limit(limit).all(), session.query(DataSchema).count()
+    return (
+        session.query(DataSchema)
+        .order_by(desc(DataSchema.name))
+        .offset(offset)
+        .limit(limit)
+        .all(),
+        session.query(DataSchema).count(),
+    )
 
 
 def get_schema_by_name_and_metastore_id(schema_name, metastore_id, session=None):
