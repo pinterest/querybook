@@ -1,13 +1,14 @@
 import React, { useEffect, useRef } from 'react';
 import styled from 'styled-components';
 import { useDispatch, useSelector } from 'react-redux';
-import { Dispatch } from 'redux/store/types';
+import { Dispatch, IStoreState } from 'redux/store/types';
+import type { ITableSearchResult } from 'redux/dataTableSearch/types';
 
 import {
     searchSchemas,
     searchTableBySchema,
 } from 'redux/dataTableSearch/action';
-import Item from './Item';
+import { SchemaTableItem } from './Item';
 
 const CategoriesList = styled.div`
     height: 50vh;
@@ -19,14 +20,29 @@ const IntersectionElement = styled.div`
     height: 1px;
 `;
 
+function prepareSchemaNames(
+    tables: ITableSearchResult[]
+): ITableSearchResult[] {
+    if (!tables) {
+        return [];
+    }
+
+    return tables.map((table) => ({
+        ...table,
+        full_name: table.full_name.split('.').slice(1).join('.'),
+    }));
+}
+
 export const SchemaTableView: React.FunctionComponent<{
-    tableRowRenderer: Function;
+    tableRowRenderer: (item: any) => React.ReactNode;
 }> = ({ tableRowRenderer }) => {
-    const schemas = useSelector((state) => state.dataTableSearch.schemas);
+    const schemas = useSelector(
+        (state: IStoreState) => state.dataTableSearch.schemas
+    );
     const dispatch: Dispatch = useDispatch();
-    const categoriesList = useRef(null);
-    const lastElem = useRef(null);
-    const interseptor = useRef(null);
+    const categoriesList = useRef<HTMLDivElement>(null);
+    const lastElement = useRef<HTMLDivElement>(null);
+    const interseptor = useRef<IntersectionObserver>(null);
 
     useEffect(() => {
         dispatch(searchSchemas());
@@ -36,7 +52,7 @@ export const SchemaTableView: React.FunctionComponent<{
         interseptor.current = new IntersectionObserver(
             (entries, observer) => {
                 if (entries.some((entry) => entry.isIntersecting)) {
-                    observer.unobserve(lastElem.current);
+                    observer.unobserve(lastElement.current);
                     dispatch(searchSchemas());
                 }
             },
@@ -44,11 +60,11 @@ export const SchemaTableView: React.FunctionComponent<{
                 root: categoriesList.current,
             }
         );
-    }, [lastElem]);
+    }, [lastElement]);
 
     useEffect(() => {
         if (schemas.count && schemas.list.length < schemas.count) {
-            interseptor.current.observe(lastElem.current);
+            interseptor.current.observe(lastElement.current);
         }
     }, [schemas]);
 
@@ -56,24 +72,23 @@ export const SchemaTableView: React.FunctionComponent<{
         <CategoriesList ref={categoriesList}>
             {schemas.list.map((category) => {
                 return (
-                    <Item
+                    <SchemaTableItem
                         name={category.name}
-                        total={category.table_count}
-                        data={
-                            schemas.list.find((s) => s.id === category.id)
-                                ?.tables || []
-                        }
+                        total={schemas.count}
+                        data={prepareSchemaNames(
+                            schemas.list.find((s) => s.id === category.id)?.tables
+                        )}
                         tableRowRenderer={tableRowRenderer}
-                        onLoadMore={() => {
+                        onLoadMore={() =>
                             dispatch(
                                 searchTableBySchema(category.name, category.id)
-                            );
-                        }}
+                            )
+                        }
                     />
                 );
             })}
 
-            <IntersectionElement ref={lastElem}></IntersectionElement>
+            <IntersectionElement ref={lastElement}></IntersectionElement>
         </CategoriesList>
     );
 };

@@ -138,12 +138,14 @@ export function searchTableBySchema(
     return async (dispatch, getState) => {
         try {
             const state = getState().dataTableSearch;
-            const searchRequest = SearchTableResource.searchConcise(
-                mapStateToSearch({
+            const searchRequest = SearchTableResource.searchConcise({
+                ...mapStateToSearch({
                     ...state,
                     searchFilters: { schema: schemaName },
-                })
-            );
+                }),
+                sort_key: 'importance_score',
+                sort_order: 'desc',
+            });
             dispatch({
                 type: '@@dataTableSearch/SEARCH_TABLE_BY_SCHEMA_STARTED',
             });

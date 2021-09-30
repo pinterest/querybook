@@ -236,14 +236,9 @@ export const DataTableNavigator: React.FC<IDataTableNavigatorProps> = ({
         </div>
     );
 
-    if (!searchString && !searchFilters.schema) {
+    if (window.IS_DISPLAY_SCHEMA_TABLE && !searchString && !searchFilters.schema) {
         tablesDOM = <SchemaTableView tableRowRenderer={tableRowRenderer} />;
     }
-
-    /* let tablesDOM = (
-
-      <DataTableTree dataTables={dataTablesWithSelection} handleTableRowClick={() => {}} />
-    ); */
 
     return (
         <div className={'DataTableNavigator '}>

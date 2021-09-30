@@ -28,6 +28,7 @@ declare global {
             string,
             Record<string, { key?: string; name?: string }>
         >;
+        IS_DISPLAY_SCHEMA_TABLE: boolean;
     }
 
     // Injected via Webpack
