@@ -102,7 +102,7 @@ def get_partition_filter_from_conditions(conditions: Dict[str, str] = None):
         return None
     conditions_list = [
         f"{condition_key}='{condition_value}'"
-        for (condition_key, condition_value) in conditions.items()
+        for condition_key, condition_value in conditions.items()
     ]
     condition_str = " AND ".join(conditions_list)
     return condition_str
@@ -111,8 +111,8 @@ def get_partition_filter_from_conditions(conditions: Dict[str, str] = None):
 def get_hive_metastore_table_partitions(
     hmc, db_name, table_name, conditions: Dict[str, str] = None
 ):
-    filter = get_partition_filter_from_conditions(conditions)
+    filter_clause = get_partition_filter_from_conditions(conditions)
     try:
-        return hmc.get_partitions(db_name, table_name, filter)
+        return hmc.get_partitions(db_name, table_name, filter_clause)
     except NoSuchObjectException:
         return None

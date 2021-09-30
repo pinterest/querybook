@@ -71,7 +71,15 @@ def get_default_variables():
     }
 
 
-def get_global_variables(jinja_env):
+def get_jinja_global_variables(jinja_env):
+    """ Returns list of global variable keys from jinja environment
+
+    Arguments:
+        jinja_env {Any} -- jinja Environment
+
+    Returns:
+        List[str] List of global variable keys
+    """
     return list(jinja_env.globals.keys())
 
 
@@ -106,28 +114,40 @@ def create_get_latest_partition(engine_id: int) -> Callable[[str, str], str]:
             str - value of latest partition
         """
         full_table_name_parts = full_table_name.split(".")
+
         if not len(full_table_name_parts) == 2:
             raise LatestPartitionException(
                 f"Full table name '{full_table_name}' is invalid. Must be in the format <schema_name>.<table_name>"
             )
+
         [schema_name, table_name] = full_table_name_parts
 
         latest_partition = metastore_loader.get_latest_partition(
             schema_name, table_name, conditions
         )
-        if latest_partition:  # latest_partitions is like dt=2015-01-01/column1=val1
-            partition_cols = latest_partition.split("/")
-            if len(partition_cols) == 1:
+
+        if latest_partition:
+            partition_cols = latest_partition.split(
+                "/"
+            )  # latest_partition is like dt=2015-01-01/column1=val1
+
+            if len(partition_cols) == 1:  # there is only one partition column
                 partition_val = partition_cols[0].split("=")[1]
                 return partition_val
-            if not partition:
+
+            elif (
+                not partition
+            ):  # there is more than one partition column and partition key is not specified
                 raise LatestPartitionException(
                     f"Table {full_table_name} has multiple partition columns. Please provide a parition key."
                 )
+
             for partition_col in partition_cols:
                 partition_key, partition_val = partition_col.split("=")
+
                 if partition_key == partition:
                     return partition_val
+
         raise LatestPartitionException(
             f"Partitition '{partition}' not found on table '{full_table_name}'"
         )
@@ -165,10 +185,10 @@ def get_templated_variables_in_string(s: str) -> Set[str]:
 
 
 def verify_all_variables_are_defined(variables_required, variables_provided, jinja_env):
-    global_variables = get_global_variables(jinja_env)
+    jinja_global_variables = get_jinja_global_variables(jinja_env)
     for variable_name in variables_required:
         if (variable_name not in variables_provided) and (
-            variable_name not in global_variables
+            variable_name not in jinja_global_variables
         ):
             raise UndefinedVariableException(
                 "Invalid variable name {}".format(variable_name)
@@ -191,9 +211,9 @@ def _flatten_variable(
     """ Helper function for flatten_recursive_variables.
         Recursively resolve each variable definition
     """
-    global_variables = get_global_variables(jinja_env)
+    jinja_global_variables = get_jinja_global_variables(jinja_env)
     var_deps = variables_dag[var_name]
-    filtered_var_deps = list(filter(lambda var: var not in global_variables, var_deps))
+    filtered_var_deps = [var for var in var_deps if var not in jinja_global_variables]
     for dep_var_name in filtered_var_deps:
         # Resolve anything that is not defined
         if dep_var_name not in flattened_variables:
@@ -233,7 +253,7 @@ def flatten_recursive_variables(
     flattened_variables = {}
     variables_dag = {}
 
-    global_variables = get_global_variables(jinja_env)
+    jinja_global_variables = get_jinja_global_variables(jinja_env)
 
     for key, value in raw_variables.items():
         if not value:
@@ -247,7 +267,7 @@ def flatten_recursive_variables(
             for var_in_value in variables_in_value:
                 # Double check if the recursive referred variable is valid
                 if (var_in_value not in raw_variables) and (
-                    var_in_value not in global_variables
+                    var_in_value not in jinja_global_variables
                 ):
                     raise UndefinedVariableException(
                         "Invalid variable name: {}.".format(var_in_value)
