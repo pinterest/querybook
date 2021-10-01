@@ -71,18 +71,6 @@ def get_default_variables():
     }
 
 
-def get_jinja_global_variables(jinja_env):
-    """ Returns list of global variable keys from jinja environment
-
-    Arguments:
-        jinja_env {Any} -- jinja Environment
-
-    Returns:
-        List[str] List of global variable keys
-    """
-    return list(jinja_env.globals.keys())
-
-
 def create_get_latest_partition(engine_id: int) -> Callable[[str, str], str]:
     metastore_loader = None
     with DBSession() as session:
@@ -127,17 +115,15 @@ def create_get_latest_partition(engine_id: int) -> Callable[[str, str], str]:
         )
 
         if latest_partition:
-            partition_cols = latest_partition.split(
-                "/"
-            )  # latest_partition is like dt=2015-01-01/column1=val1
+            # latest_partition is like dt=2015-01-01/column1=val1
+            partition_cols = latest_partition.split("/")
 
             if len(partition_cols) == 1:  # there is only one partition column
                 partition_val = partition_cols[0].split("=")[1]
                 return partition_val
 
-            elif (
-                not partition
-            ):  # there is more than one partition column and partition key is not specified
+            # there is more than one partition column and partition key is not specified
+            elif not partition:
                 raise LatestPartitionException(
                     f"Table {full_table_name} has multiple partition columns. Please provide a parition key."
                 )
@@ -161,15 +147,16 @@ def get_templated_query_env(engine_id: int):
     return jinja_env
 
 
-def get_templated_variables_in_string(s: str) -> Set[str]:
+def get_templated_variables_in_string(s: str, jinja_env=None) -> Set[str]:
     """Find possible templated variables within a string
 
     Arguments:
         s {str}
+        jinja_env {Any} -- jinja Environment
     Returns:
         Set[str] - set of variable names
     """
-    jinja_env = SandboxedEnvironment()
+    jinja_env = jinja_env or SandboxedEnvironment()
 
     ast = jinja_env.parse(s)
     variables = meta.find_undeclared_variables(ast)
@@ -184,12 +171,14 @@ def get_templated_variables_in_string(s: str) -> Set[str]:
     return filtered_variables
 
 
-def verify_all_variables_are_defined(variables_required, variables_provided, jinja_env):
-    jinja_global_variables = get_jinja_global_variables(jinja_env)
+def check_string_contains_variables(s: str) -> bool:
+    templated_variables = get_templated_variables_in_string(s)
+    return len(templated_variables) > 0
+
+
+def verify_all_variables_are_defined(variables_required, variables_provided):
     for variable_name in variables_required:
-        if (variable_name not in variables_provided) and (
-            variable_name not in jinja_global_variables
-        ):
+        if variable_name not in variables_provided:
             raise UndefinedVariableException(
                 "Invalid variable name {}".format(variable_name)
             )
@@ -211,10 +200,11 @@ def _flatten_variable(
     """ Helper function for flatten_recursive_variables.
         Recursively resolve each variable definition
     """
-    jinja_global_variables = get_jinja_global_variables(jinja_env)
+    if var_name in flattened_variables:
+        return
+
     var_deps = variables_dag[var_name]
-    filtered_var_deps = [var for var in var_deps if var not in jinja_global_variables]
-    for dep_var_name in filtered_var_deps:
+    for dep_var_name in var_deps:
         # Resolve anything that is not defined
         if dep_var_name not in flattened_variables:
             _flatten_variable(
@@ -229,10 +219,7 @@ def _flatten_variable(
     jinja_env = jinja_env or SandboxedEnvironment(autoescape=False)
     template = jinja_env.from_string(variable_defs[var_name])
     flattened_variables[var_name] = template.render(
-        **{
-            dep_var_name: flattened_variables[dep_var_name]
-            for dep_var_name in filtered_var_deps
-        }
+        **{dep_var_name: flattened_variables[dep_var_name] for dep_var_name in var_deps}
     )
 
 
@@ -253,22 +240,21 @@ def flatten_recursive_variables(
     flattened_variables = {}
     variables_dag = {}
 
-    jinja_global_variables = get_jinja_global_variables(jinja_env)
-
     for key, value in raw_variables.items():
         if not value:
             value = ""
 
-        variables_in_value = get_templated_variables_in_string(value)
+        variables_in_value = get_templated_variables_in_string(value, jinja_env)
 
-        if len(variables_in_value) == 0:
+        # check if a string has any custom global functions or raw variables
+        has_any_variable = check_string_contains_variables(value)
+
+        if len(variables_in_value) == 0 and not has_any_variable:
             flattened_variables[key] = value
         else:
             for var_in_value in variables_in_value:
                 # Double check if the recursive referred variable is valid
-                if (var_in_value not in raw_variables) and (
-                    var_in_value not in jinja_global_variables
-                ):
+                if var_in_value not in raw_variables:
                     raise UndefinedVariableException(
                         "Invalid variable name: {}.".format(var_in_value)
                     )
@@ -316,10 +302,10 @@ def render_templated_query(
     jinja_env = get_templated_query_env(engine_id)
     try:
         escaped_query = _escape_sql_comments(query)
-        variables_in_query = get_templated_variables_in_string(escaped_query)
+        variables_in_query = get_templated_variables_in_string(escaped_query, jinja_env)
 
         all_variables = get_templated_query_variables(variables, jinja_env)
-        verify_all_variables_are_defined(variables_in_query, all_variables, jinja_env)
+        verify_all_variables_are_defined(variables_in_query, all_variables)
 
         return render_query_with_variables(escaped_query, all_variables, jinja_env)
     except TemplateSyntaxError as e:
