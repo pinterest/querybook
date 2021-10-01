@@ -62,4 +62,3 @@ declare global {
         }
     }
 }
-

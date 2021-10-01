@@ -1,6 +1,6 @@
 import datetime
 from models.admin import QueryEngineEnvironment
-from sqlalchemy import func, and_, desc
+from sqlalchemy import func, and_
 from sqlalchemy.orm import aliased
 
 from app.db import with_session
@@ -28,16 +28,13 @@ def get_all_schema(offset=0, limit=5, sort_key="name", sort_order="desc", sessio
 
     col = getattr(DataSchema, sort_key)
 
-    if (sort_order == "desc"):
+    if sort_order == "desc":
         col = col.desc()
 
     query.order_by(col)
-       
+
     return (
-        query
-        .offset(offset)
-        .limit(limit)
-        .all(),
+        query.offset(offset).limit(limit).all(),
         session.query(DataSchema).count(),
     )
 
