@@ -72,19 +72,37 @@ def get_default_variables():
 
 
 def create_get_latest_partition(engine_id: int) -> Callable[[str, str], str]:
-    metastore_loader = None
-    with DBSession() as session:
-        engine = admin_logic.get_query_engine_by_id(engine_id, session=session)
-        metastore_id = engine.metastore_id if engine else None
-        metastore_loader = (
-            metastore.get_metastore_loader(metastore_id, session=session)
-            if metastore_id is not None
-            else None
-        )
-    if metastore_loader is None:
-        raise LatestPartitionException(
-            f"Unable to load metastore for engine id {engine_id}"
-        )
+    _metastore_loader = None
+
+    def get_metastore():
+        """Lazily initialize metastore_loader from DB.
+           Use outer-scope variable to memoized initialization
+
+        Raises:
+            LatestPartitionException: If the metastore does not exist for engine_id, throw error
+
+        Returns:
+           BaseMetastoreLoader: metastore loader to fetch table/schema info
+        """
+        nonlocal _metastore_loader
+        if _metastore_loader is not None:
+            return _metastore_loader
+
+        with DBSession() as session:
+            engine = admin_logic.get_query_engine_by_id(engine_id, session=session)
+            metastore_id = engine.metastore_id if engine else None
+            _metastore_loader = (
+                metastore.get_metastore_loader(metastore_id, session=session)
+                if metastore_id is not None
+                else None
+            )
+
+            if _metastore_loader is None:
+                raise LatestPartitionException(
+                    f"Unable to load metastore for engine id {engine_id}"
+                )
+
+        return _metastore_loader
 
     def get_latest_partition(full_table_name: str, partition: str) -> str:
         """Returns latest partition function of a given table and partition key
@@ -99,6 +117,8 @@ def create_get_latest_partition(engine_id: int) -> Callable[[str, str], str]:
         Returns:
             str - value of latest partition
         """
+
+        # Validate table name input
         full_table_name_parts = full_table_name.split(".")
         if not len(full_table_name_parts) == 2:
             raise LatestPartitionException(
@@ -106,6 +126,7 @@ def create_get_latest_partition(engine_id: int) -> Callable[[str, str], str]:
             )
         [schema_name, table_name] = full_table_name_parts
 
+        metastore_loader = get_metastore()
         latest_partition = metastore_loader.get_latest_partition(
             schema_name, table_name
         )
