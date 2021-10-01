@@ -19,6 +19,7 @@ export interface ITableSearchFilters {
 
 interface ISchemaTableSearch extends IDataSchema {
     tables?: ITableSearchResult[];
+    count?: number;
 }
 
 export interface IDataTableSearchResultResetAction extends Action {
@@ -112,6 +113,7 @@ export interface ISearchTableBySchemaResultAction extends Action {
     payload: {
         results: ITableSearchResult[];
         id: number;
+        count: number;
     };
 }
 

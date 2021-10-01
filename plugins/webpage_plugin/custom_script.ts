@@ -49,5 +49,17 @@ declare global {
             string,
             Record<string, { key?: string; name?: string }>
         >;
+
+        DISPLAY_SCHEMA_TABLE?: {
+            sortSchemasBy?: {
+                sort_key: "name" | "table_count",
+                sort_order: "desc" | "asc"
+            },
+            sortTablesBy?: {
+                sort_key: "importance_score" | "name",
+                sort_order: "desc" | "asc"
+            }
+        }
     }
 }
+

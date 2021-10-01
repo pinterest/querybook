@@ -70,6 +70,11 @@ export default function dataTableSearch(
                 } else {
                     delete draft.searchFilters[filterKey];
                 }
+
+                draft.schemas = {
+                    list: [],
+                    count: 0,
+                };
                 return;
             }
             case '@@dataTableSearch/DATA_TABLE_FILTER_RESET': {
@@ -100,6 +105,7 @@ export default function dataTableSearch(
                     ...tables,
                     ...action.payload.results,
                 ];
+                draft.schemas.list[index].count = action.payload.count;
                 return;
             }
         }

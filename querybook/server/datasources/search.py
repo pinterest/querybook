@@ -317,8 +317,8 @@ def search_datadoc(
 
 
 @register("/schemas/", methods=["GET"])
-def get_schemas(limit=5, offset=0):
-    schema, count = logic.get_all_schema(offset, limit)
+def get_schemas(limit=5, offset=0, sort_key="name", sort_order="desc"):
+    schema, count = logic.get_all_schema(offset, limit, sort_key, sort_order)
     return {"results": schema, "count": count}
 
 

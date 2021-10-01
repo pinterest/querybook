@@ -70,12 +70,14 @@ export const SchemaTableView: React.FunctionComponent<{
 
     return (
         <CategoriesList ref={categoriesList}>
-            {schemas.list.map((category) => {
-                return (
+            {schemas.list.map((category) => (
                     <SchemaTableItem
                         key={category.name}
                         name={category.name}
-                        total={schemas.count}
+                        total={
+                            schemas.list.find((s) => s.id === category.id)
+                                ?.count || 1
+                        }
                         data={prepareSchemaNames(
                             schemas.list.find((s) => s.id === category.id)
                                 ?.tables
@@ -87,10 +89,9 @@ export const SchemaTableView: React.FunctionComponent<{
                             )
                         }
                     />
-                );
-            })}
+                ))}
 
-            <IntersectionElement ref={lastElement}></IntersectionElement>
+            <IntersectionElement ref={lastElement} />
         </CategoriesList>
     );
 };

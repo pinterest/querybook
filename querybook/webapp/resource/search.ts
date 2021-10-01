@@ -31,7 +31,12 @@ export const SearchTableResource = {
 };
 
 export const SearchSchemaResource = {
-    getMore: (params: { offset: number; limit: number }) =>
+    getMore: (params: {
+        offset: number;
+        limit: number;
+        sort_key: string;
+        sort_order;
+    }) =>
         ds.fetch<{
             results: IDataSchema[];
             count: number;

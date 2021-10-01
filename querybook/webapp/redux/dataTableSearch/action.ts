@@ -97,11 +97,17 @@ function searchDataTable(): ThunkResult<Promise<ITableSearchResult[]>> {
 
 export function searchSchemas(): ThunkResult<Promise<IDataSchema[]>> {
     return async (dispatch, getState) => {
+        const defaultSorting = window.DISPLAY_SCHEMA_TABLE?.sortSchemasBy || {
+            sort_key: 'name',
+            sort_order: 'desc',
+        };
         try {
             const offset = getState().dataTableSearch.schemas.list.length;
             const searchRequest = SearchSchemaResource.getMore({
                 limit: 5,
                 offset,
+                sort_key: defaultSorting.sort_key,
+                sort_order: defaultSorting.sort_order,
             });
             dispatch({
                 type: '@@dataTableSearch/SCHEMA_SEARCH_STARTED',
@@ -136,15 +142,23 @@ export function searchTableBySchema(
     id: number
 ): ThunkResult<Promise<ITableSearchResult[]>> {
     return async (dispatch, getState) => {
+        const defaultSorting = window.DISPLAY_SCHEMA_TABLE?.sortTablesBy || {
+            sort_key: 'name',
+            sort_order: 'desc',
+        };
+
         try {
             const state = getState().dataTableSearch;
             const searchRequest = SearchTableResource.searchConcise({
                 ...mapStateToSearch({
                     ...state,
-                    searchFilters: { schema: schemaName },
+                    searchFilters: {
+                        ...state.searchFilters,
+                        schema: schemaName,
+                    },
                 }),
-                sort_key: 'importance_score',
-                sort_order: 'desc',
+                sort_key: defaultSorting.sort_key,
+                sort_order: defaultSorting.sort_order,
             });
             dispatch({
                 type: '@@dataTableSearch/SEARCH_TABLE_BY_SCHEMA_STARTED',
@@ -156,6 +170,7 @@ export function searchTableBySchema(
                 type: '@@dataTableSearch/SEARCH_TABLE_BY_SCHEMA_DONE',
                 payload: {
                     results: data.results,
+                    count: data.count,
                     id,
                 },
             });
