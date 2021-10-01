@@ -265,14 +265,13 @@ def flatten_recursive_variables(
         if not value:
             value = ""
 
-        variables_in_value = get_templated_variables_in_string(value, jinja_env)
-
         # check if a string has any custom global functions or raw variables
         has_any_variable = check_string_contains_variables(value)
 
-        if len(variables_in_value) == 0 and not has_any_variable:
+        if not has_any_variable:
             flattened_variables[key] = value
         else:
+            variables_in_value = get_templated_variables_in_string(value, jinja_env)
             for var_in_value in variables_in_value:
                 # Double check if the recursive referred variable is valid
                 if var_in_value not in raw_variables:
