@@ -104,8 +104,8 @@ def get_partition_filter_from_conditions(conditions: Dict[str, str] = None):
         f"{condition_key}='{condition_value}'"
         for condition_key, condition_value in conditions.items()
     ]
-    condition_str = " AND ".join(conditions_list)
-    return condition_str
+    filter_clause = " AND ".join(conditions_list)
+    return filter_clause
 
 
 def get_hive_metastore_table_partitions(

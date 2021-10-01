@@ -221,9 +221,7 @@ class HiveMetastoreClient:
 
         Returns:  List[str] The partitions keys of the table
         """
-        table = self._perform_read_op(
-            lambda: self._read_client.get_table(db_name, tb_name)
-        )
+        table = self.get_table(db_name, tb_name)
         partition_keys = [key.name for key in table.partitionKeys or []]
         return partition_keys
 

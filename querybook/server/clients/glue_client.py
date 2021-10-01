@@ -140,13 +140,11 @@ class GlueDataCatalogClient:
         if conditions:
             for condition_key, condition_value in conditions.items():
                 condition_key_index = partition_key_names.index(condition_key)
-                partition_values = list(
-                    filter(
-                        lambda partition_value: partition_value[condition_key_index]
-                        == condition_value,
-                        partition_values,
-                    )
-                )
+                partition_values = [
+                    partition_value
+                    for partition_value in partition_values
+                    if partition_value[condition_key_index] == condition_value
+                ]
 
         for partition_value in partition_values:
             result.append(
