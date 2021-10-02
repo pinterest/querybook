@@ -1,6 +1,8 @@
 from unittest import TestCase, mock
 from datetime import datetime, date
 
+from jinja2.sandbox import SandboxedEnvironment
+
 from lib.query_analysis.templating import (
     LatestPartitionException,
     _detect_cycle,
@@ -108,17 +110,22 @@ class GetTemplatedVariablesInStringTestCase(TemplatingTestCase):
 
 
 class FlattenRecursiveVariablesTestCase(TemplatingTestCase):
+    def setUp(self):
+        self.jinja_env = SandboxedEnvironment()
+        self.jinja_global_function_mock = lambda: "bar"
+
     def test_simple(self):
         self.assertEqual(
             flatten_recursive_variables(
-                {"foo": "{{ bar }}", "bar": "hello world", "baz": "foo"}
+                {"foo": "{{ bar }}", "bar": "hello world", "baz": "foo"},
+                self.jinja_env,
             ),
             ({"foo": "hello world", "bar": "hello world", "baz": "foo"}),
         )
 
         self.assertEqual(
             flatten_recursive_variables(
-                {"foo": "{{ bar }}", "bar": "hello world", "baz": None}
+                {"foo": "{{ bar }}", "bar": "hello world", "baz": None}, self.jinja_env,
             ),
             ({"foo": "hello world", "bar": "hello world", "baz": ""}),
         )
@@ -131,7 +138,8 @@ class FlattenRecursiveVariablesTestCase(TemplatingTestCase):
                     "bar": "hello {{ baz }}",
                     "baz": "world{{end}}",
                     "end": "!",
-                }
+                },
+                self.jinja_env,
             ),
             (
                 {
@@ -148,6 +156,7 @@ class FlattenRecursiveVariablesTestCase(TemplatingTestCase):
             QueryHasCycleException,
             flatten_recursive_variables,
             {"foo": "{{ bar }}", "bar": "{{ foo }}", "baz": "hello world"},
+            self.jinja_env,
         )
 
     def test_undefined_var(self):
@@ -155,6 +164,31 @@ class FlattenRecursiveVariablesTestCase(TemplatingTestCase):
             UndefinedVariableException,
             flatten_recursive_variables,
             {"foo": "{{ bar }}", "bar": "{{ baz }}", "baz": "{{ boo }}"},
+            self.jinja_env,
+        )
+
+    def test_global_function_as_var_value(self):
+        jinja_env = SandboxedEnvironment()
+        jinja_env.globals.update(
+            jinja_global_function_mock=self.jinja_global_function_mock
+        )
+
+        self.assertEqual(
+            flatten_recursive_variables(
+                {"foo": "{{ jinja_global_function_mock() }}",}, jinja_env,
+            ),
+            ({"foo": "bar",}),
+        )
+
+    def test_global_function_vars_ignored(self):
+        jinja_env = SandboxedEnvironment()
+        jinja_env.globals.update(
+            jinja_global_function_mock=self.jinja_global_function_mock
+        )
+
+        self.assertEqual(
+            flatten_recursive_variables({"foo": "{{ bar }}", "bar": "baz"}, jinja_env,),
+            ({"foo": "baz", "bar": "baz"}),
         )
 
 
@@ -353,6 +387,9 @@ class LatestPartitionTestCase(TemplatingTestCase):
         )
 
     def test_invalid_partition_name(self):
+        self.metastore_loader_mock.get_latest_partition.return_value = (
+            "dt=2021-01-01/hr=01"
+        )
         self.assertRaises(
             LatestPartitionException,
             render_templated_query,
@@ -384,7 +421,7 @@ class LatestPartitionTestCase(TemplatingTestCase):
 
     def test_single_partition_column(self):
         get_latest_partition = create_get_latest_partition(1)
-        latest_partition = get_latest_partition("default.table", "dt")
+        latest_partition = get_latest_partition("default.table")
         self.assertEqual(latest_partition, "2021-01-01")
 
     def test_render_templated_query(self):
@@ -394,3 +431,23 @@ class LatestPartitionTestCase(TemplatingTestCase):
             self.DEFAULT_ENGINE_ID,
         )
         self.assertEqual(templated_query, 'select * from table where dt="2021-01-01"')
+
+    def test_recursive_get_latest_partition_variable(self):
+        templated_query = render_templated_query(
+            'select * from table where dt="{{ latest_part }}"',
+            {"latest_part": '{{latest_partition("default.table", "dt")}}'},
+            self.DEFAULT_ENGINE_ID,
+        )
+        self.assertEqual(templated_query, 'select * from table where dt="2021-01-01"')
+
+    def test_multiple_partition_columns_partition_not_provided(self):
+        self.metastore_loader_mock.get_latest_partition.return_value = (
+            "dt=2021-01-01/hr=01"
+        )
+        self.assertRaises(
+            LatestPartitionException,
+            render_templated_query,
+            'select * from table where dt="{{ latest_partition("default.table") }}"',
+            {},
+            self.DEFAULT_ENGINE_ID,
+        )

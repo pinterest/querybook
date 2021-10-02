@@ -104,7 +104,9 @@ def create_get_latest_partition(engine_id: int) -> Callable[[str, str], str]:
 
         return _metastore_loader
 
-    def get_latest_partition(full_table_name: str, partition: str) -> str:
+    def get_latest_partition(
+        full_table_name: str, partition: str = None, conditions: Dict[str, str] = None
+    ) -> str:
         """Returns latest partition function of a given table and partition key
 
         Arguments:
@@ -120,21 +122,39 @@ def create_get_latest_partition(engine_id: int) -> Callable[[str, str], str]:
 
         # Validate table name input
         full_table_name_parts = full_table_name.split(".")
+
         if not len(full_table_name_parts) == 2:
             raise LatestPartitionException(
                 f"Full table name '{full_table_name}' is invalid. Must be in the format <schema_name>.<table_name>"
             )
+
         [schema_name, table_name] = full_table_name_parts
 
         metastore_loader = get_metastore()
         latest_partition = metastore_loader.get_latest_partition(
-            schema_name, table_name
+            schema_name, table_name, conditions
         )
-        if latest_partition:  # latest_partitions is like dt=2015-01-01/column1=val1
-            for partition_col in latest_partition.split("/"):
+
+        if latest_partition:
+            # latest_partition is like dt=2015-01-01/column1=val1
+            partition_cols = latest_partition.split("/")
+
+            if len(partition_cols) == 1:  # there is only one partition column
+                partition_val = partition_cols[0].split("=")[1]
+                return partition_val
+
+            # there is more than one partition column and partition key is not specified
+            elif not partition:
+                raise LatestPartitionException(
+                    f"Table {full_table_name} has multiple partition columns. Please provide a parition key."
+                )
+
+            for partition_col in partition_cols:
                 partition_key, partition_val = partition_col.split("=")
+
                 if partition_key == partition:
                     return partition_val
+
         raise LatestPartitionException(
             f"Partitition '{partition}' not found on table '{full_table_name}'"
         )
@@ -153,10 +173,12 @@ def get_templated_variables_in_string(s: str, jinja_env=None) -> Set[str]:
 
     Arguments:
         s {str}
+        jinja_env {Any} -- jinja Environment
     Returns:
         Set[str] - set of variable names
     """
     jinja_env = jinja_env or SandboxedEnvironment()
+
     ast = jinja_env.parse(s)
     variables = meta.find_undeclared_variables(ast)
 
@@ -168,6 +190,11 @@ def get_templated_variables_in_string(s: str, jinja_env=None) -> Set[str]:
             filtered_variables.add(variable)
 
     return filtered_variables
+
+
+def check_string_contains_variables(s: str) -> bool:
+    templated_variables = get_templated_variables_in_string(s)
+    return len(templated_variables) > 0
 
 
 def verify_all_variables_are_defined(variables_required, variables_provided):
@@ -189,20 +216,28 @@ def _flatten_variable(
     variable_defs: Dict[str, str],
     variables_dag: Dict[str, Set[str]],
     flattened_variables: Dict[str, str],
+    jinja_env,
 ):
     """ Helper function for flatten_recursive_variables.
         Recursively resolve each variable definition
     """
+    if var_name in flattened_variables:
+        return
+
     var_deps = variables_dag[var_name]
     for dep_var_name in var_deps:
         # Resolve anything that is not defined
         if dep_var_name not in flattened_variables:
             _flatten_variable(
-                dep_var_name, variable_defs, variables_dag, flattened_variables,
+                dep_var_name,
+                variable_defs,
+                variables_dag,
+                flattened_variables,
+                jinja_env,
             )
 
     # Now all dependencies are solved
-    jinja_env = SandboxedEnvironment(autoescape=False)
+    jinja_env = jinja_env or SandboxedEnvironment(autoescape=False)
     template = jinja_env.from_string(variable_defs[var_name])
     flattened_variables[var_name] = template.render(
         **{dep_var_name: flattened_variables[dep_var_name] for dep_var_name in var_deps}
@@ -210,7 +245,7 @@ def _flatten_variable(
 
 
 def flatten_recursive_variables(
-    raw_variables: Dict[str, str], jinja_env=None
+    raw_variables: Dict[str, str], jinja_env
 ) -> Dict[str, str]:
     """Given a list of variables, recursively replace variables that refers other variables
 
@@ -230,11 +265,13 @@ def flatten_recursive_variables(
         if not value:
             value = ""
 
-        variables_in_value = get_templated_variables_in_string(value, jinja_env)
+        # check if a string has any custom global functions or raw variables
+        has_any_variable = check_string_contains_variables(value)
 
-        if len(variables_in_value) == 0:
+        if not has_any_variable:
             flattened_variables[key] = value
         else:
+            variables_in_value = get_templated_variables_in_string(value, jinja_env)
             for var_in_value in variables_in_value:
                 # Double check if the recursive referred variable is valid
                 if var_in_value not in raw_variables:
@@ -250,11 +287,13 @@ def flatten_recursive_variables(
 
     # Resolve everything within the dag
     for var_name in variables_dag:
-        _flatten_variable(var_name, raw_variables, variables_dag, flattened_variables)
+        _flatten_variable(
+            var_name, raw_variables, variables_dag, flattened_variables, jinja_env
+        )
     return flattened_variables
 
 
-def get_templated_query_variables(variables_provided, jinja_env=None):
+def get_templated_query_variables(variables_provided, jinja_env):
     return flatten_recursive_variables(
         {**get_default_variables(), **variables_provided,}, jinja_env
     )

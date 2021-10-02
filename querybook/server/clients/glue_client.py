@@ -1,4 +1,4 @@
-from typing import List
+from typing import Dict, List
 
 import boto3
 from env import QuerybookSettings
@@ -93,7 +93,7 @@ class GlueDataCatalogClient:
         Gets partition information for db_name.tb_name from the Glue Data Catalog
 
         :param db_name: The name of the database
-        :param tb_name: Then name of the table
+        :param tb_name: The name of the table
         :return: The Glue partition objects of db_name.tb_name
         """
         _LOG.info(f"Get Glue partitions for ${db_name}.${tb_name}")
@@ -111,13 +111,16 @@ class GlueDataCatalogClient:
 
         return result
 
-    def get_hms_style_partitions(self, db_name, tb_name) -> List[str]:
+    def get_hms_style_partitions(
+        self, db_name, tb_name, conditions: Dict[str, str] = None
+    ) -> List[str]:
         """
         Gets partitiion information for db_name.tb_name from Glue Data Catalog and converts into a
         Hive Metastore style representation
 
         :param db_name: The name of the database
         :param tb_name: The name of the table
+        :param conditions: Filter conditions for the partition in the format { dt: '2016-03-14'}
         :return: The partitions of db_name.tb_name in the format ['dt=2016-03-14/hr=00', 'dt=2016-03-14/hr=01', ...]
         """
         _LOG.info(f"Get hms style partitions for ${db_name}.${tb_name}")
@@ -133,6 +136,15 @@ class GlueDataCatalogClient:
         partition_values = [partition.get("Values") for partition in partition_list]
 
         result = []
+
+        if conditions:
+            for condition_key, condition_value in conditions.items():
+                condition_key_index = partition_key_names.index(condition_key)
+                partition_values = [
+                    partition_value
+                    for partition_value in partition_values
+                    if partition_value[condition_key_index] == condition_value
+                ]
 
         for partition_value in partition_values:
             result.append(
