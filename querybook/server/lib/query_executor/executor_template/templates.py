@@ -34,6 +34,13 @@ presto_executor_template = StructFormField(
     username=FormField(regex="\\w+"),
     password=FormField(hidden=True),
     impersonate=FormField(field_type=FormFieldType.Boolean),
+    proxy_user_id=FormField(
+        field_type=FormFieldType.String,
+        helper="""
+<p>User field used as proxy_user. proxy_user will be forwaded to Presto as the session user.</p>
+<p>Defaults to username. Possible values are username, email, fullname </p>
+<p>See [here](https://prestodb.github.io/docs/current/installation/jdbc.html) for more details.</p>""",
+    ),
 )
 
 sqlalchemy_template = StructFormField(
