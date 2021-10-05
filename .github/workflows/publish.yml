@@ -14,11 +14,17 @@ jobs:
             - uses: actions/checkout@v2
             - name: Get version from package.json
               run: |
-                  echo STATE_RELEASE_VERSION=$(cat package.json | grep version | head -1 | awk -F: '{ print $2 }' | sed 's/[\",]//g' | tr -d '[[:space:]]') >> $GITHUB_ENV
+                  PATCH_VERSION=$(cat package.json | grep version | head -1 | awk -F: '{ print $2 }' | sed 's/[\",]//g' | tr -d '[[:space:]]')
+                  MINOR_VERSION=${PATCH_VERSION%.*}
+                  MAJOR_VERSION=${MINOR_VERSION%.*}
+
+                  echo PATCH_VERSION=$PATCH_VERSION >> $GITHUB_ENV
+                  echo MINOR_VERSION=$MINOR_VERSION >> $GITHUB_ENV
+                  echo MAJOR_VERSION=$MAJOR_VERSION >> $GITHUB_ENV
             - name: Publish to Registry
               uses: elgohr/Publish-Docker-Github-Action@master
               with:
                   name: querybook/querybook
                   username: ${{ secrets.DOCKER_USERNAME }}
                   password: ${{ secrets.DOCKER_PASSWORD }}
-                  tags: 'latest,${{ env.STATE_RELEASE_VERSION }}'
+                  tags: 'latest,${{ env.PATCH_VERSION }},${{ env.MINOR_VERSION }},${{ env.MAJOR_VERSION }}'
