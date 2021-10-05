@@ -29,13 +29,19 @@ class ExecuteQuery(object):
             Any[][]: Returns the result if sync, otherwise None
         """
         engine = get_query_engine_by_id(engine_id, session=session)
-
+        executor_params = engine.get_engine_params()
         client_settings = {
-            **engine.get_engine_params(),
+            **executor_params,
         }
         if uid:
             user = get_user_by_id(uid, session=session)
-            client_settings["proxy_user"] = user.username
+            proxy_user = user.username
+            if executor_params.get("proxy_user_id", "") != "":
+                try:
+                    proxy_user = user.to_dict()[executor_params["proxy_user_id"]]
+                except KeyError as e:
+                    raise e
+            client_settings["proxy_user"] = proxy_user
 
         executor = get_executor_class(engine.language, engine.executor)
 
