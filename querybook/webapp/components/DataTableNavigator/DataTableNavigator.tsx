@@ -25,6 +25,15 @@ import { SchemaTableView } from './SchemaTableView/SchemaTableView';
 
 import './DataTableNavigator.scss';
 
+function isFilteringTables(searchString, searchFilters) {
+    return (
+        searchString ||
+        Object.keys(searchFilters)
+            .filter((key) => !['golden'].includes(key))
+            .some((key) => searchFilters[key])
+    );
+}
+
 export interface ITableResultWithSelection extends ITableSearchResult {
     selected: boolean;
 }
@@ -236,8 +245,11 @@ export const DataTableNavigator: React.FC<IDataTableNavigatorProps> = ({
         </div>
     );
 
-    if (window.DISPLAY_SCHEMA_TABLE && !searchString && !searchFilters.schema) {
-        tablesDOM = <SchemaTableView tableRowRenderer={tableRowRenderer} />;
+    if (
+        window.DISPLAY_SCHEMA_TABLE &&
+        !isFilteringTables(searchString, searchFilters)
+    ) {
+        tablesDOM = <SchemaTableView tableRowRenderer={tableRowRenderer} selectedTableId={selectedTableId} />;
     }
 
     return (

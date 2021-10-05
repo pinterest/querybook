@@ -32,15 +32,16 @@ export const SearchTableResource = {
 
 export const SearchSchemaResource = {
     getMore: (params: {
+        metastore_id: number;
         offset: number;
         limit: number;
-        sort_key: string;
-        sort_order;
+        sort_key: 'name' | 'table_count';
+        sort_order: 'desc' | 'asc';
     }) =>
         ds.fetch<{
             results: IDataSchema[];
-            count: number;
-        }>('/schemas/', { ...params }),
+            done: boolean;
+        }>('/schemas/', params),
 };
 
 export const SearchDataDocResource = {

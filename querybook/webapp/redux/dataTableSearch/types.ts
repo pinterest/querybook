@@ -7,6 +7,7 @@ import { IDataSchema } from 'const/metastore';
 export interface ITableSearchResult {
     id: number;
     full_name: string;
+    name: string;
 }
 
 export interface ITableSearchFilters {
@@ -93,7 +94,7 @@ export interface ISchemaSearchResultAction extends Action {
     type: '@@dataTableSearch/SCHEMA_SEARCH_DONE';
     payload: {
         results: IDataSchema[];
-        count: number;
+        done: boolean;
     };
 }
 
@@ -146,8 +147,9 @@ export interface IDataTableSearchPaginationState {
     results: ITableSearchResult[];
     count: number;
     schemas: {
-        list: ISchemaTableSearch[];
-        count: number;
+        schemaResultById: Record<number, ISchemaTableSearch>;
+        schemaIds: number[];
+        done: boolean;
     };
 }
 

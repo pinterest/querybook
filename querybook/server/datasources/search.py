@@ -229,7 +229,7 @@ def _construct_tables_query(
     }
 
     if concise:
-        query["_source"] = ["id", "full_name"]
+        query["_source"] = ["id", "full_name", "name"]
 
     if sort_key:
         if not isinstance(sort_key, list):
@@ -317,9 +317,10 @@ def search_datadoc(
 
 
 @register("/schemas/", methods=["GET"])
-def get_schemas(limit=5, offset=0, sort_key="name", sort_order="desc"):
-    schema, count = logic.get_all_schema(offset, limit, sort_key, sort_order)
-    return {"results": schema, "count": count}
+def get_schemas(metastore_id, limit=5, offset=0, sort_key="name", sort_order="desc"):
+    verify_metastore_permission(metastore_id)
+    schema, done = logic.get_all_schema(metastore_id, offset, limit, sort_key, sort_order)
+    return {"results": schema, "done": done}
 
 
 @register("/search/tables/", methods=["GET"])
@@ -347,6 +348,7 @@ def search_tables(
         sort_key=sort_key,
         sort_order=sort_order,
     )
+    print (query);
     results, count = _get_matching_objects(
         query,
         ES_CONFIG["tables"]["index_name"],

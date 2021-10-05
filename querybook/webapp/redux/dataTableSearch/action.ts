@@ -8,6 +8,8 @@ import {
     ITableSearchFilters,
 } from './types';
 
+import { queryMetastoresSelector } from 'redux/dataSources/selector';
+
 import { IDataSchema } from 'const/metastore';
 
 const BATCH_LOAD_SIZE = 100;
@@ -102,8 +104,10 @@ export function searchSchemas(): ThunkResult<Promise<IDataSchema[]>> {
             sort_order: 'desc',
         };
         try {
-            const offset = getState().dataTableSearch.schemas.list.length;
+            const offset = getState().dataTableSearch.schemas.schemaIds.length;
             const searchRequest = SearchSchemaResource.getMore({
+                metastore_id: getState().dataTableSearch.metastoreId ||
+                queryMetastoresSelector(getState())[0].id,
                 limit: 5,
                 offset,
                 sort_key: defaultSorting.sort_key,
@@ -119,18 +123,13 @@ export function searchSchemas(): ThunkResult<Promise<IDataSchema[]>> {
                 type: '@@dataTableSearch/SCHEMA_SEARCH_DONE',
                 payload: {
                     results: data.results,
-                    count: data.count,
+                    done: data.done,
                 },
             });
 
             return data.results;
         } catch (error) {
-            dispatch({
-                type: '@@dataTableSearch/SCHEMA_SEARCH_FAILED',
-                payload: {
-                    error,
-                },
-            });
+            console.error(error);
         }
 
         return [];
@@ -177,12 +176,7 @@ export function searchTableBySchema(
 
             return data.results;
         } catch (error) {
-            dispatch({
-                type: '@@dataTableSearch/SEARCH_TABLE_BY_SCHEMA_FAILED',
-                payload: {
-                    error,
-                },
-            });
+            console.error(error);
         }
 
         return [];

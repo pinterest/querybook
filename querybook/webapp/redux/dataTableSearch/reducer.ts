@@ -9,8 +9,9 @@ const initialResultState: IDataTableSearchPaginationState = {
     results: [],
     count: 0,
     schemas: {
-        list: [],
-        count: 0,
+        schemaIds: [],
+        schemaResultById: {},
+        done: false,
     },
 };
 
@@ -64,6 +65,7 @@ export default function dataTableSearch(
                 return;
             }
             case '@@dataTableSearch/DATA_TABLE_SEARCH_FILTER_UPDATE': {
+                debugger;
                 const { filterKey, filterValue } = action.payload;
                 if (filterValue != null) {
                     draft.searchFilters[filterKey] = filterValue;
@@ -72,13 +74,19 @@ export default function dataTableSearch(
                 }
 
                 draft.schemas = {
-                    list: [],
-                    count: 0,
+                    schemaIds: [],
+                    schemaResultById: {},
+                    done: false,
                 };
                 return;
             }
             case '@@dataTableSearch/DATA_TABLE_FILTER_RESET': {
                 draft.searchFilters = {};
+                draft.schemas = {
+                    schemaIds: [],
+                    schemaResultById: {},
+                    done: false,
+                };
                 return;
             }
             case '@@dataTableSearch/DATA_TABLE_SEARCH_SELECT_METASTORE': {
@@ -86,26 +94,39 @@ export default function dataTableSearch(
                 return;
             }
             case '@@dataTableSearch/SCHEMA_SEARCH_DONE': {
-                draft.schemas.list = [
-                    ...state.schemas.list,
-                    ...action.payload.results,
-                ];
-                draft.schemas.count = action.payload.count;
+                draft.schemas.schemaIds = draft.schemas.schemaIds.concat(
+                    action.payload.results.map((r) => r.id)
+                );
+
+                draft.schemas.schemaResultById = {
+                    ...state.schemas.schemaResultById,
+                    ...action.payload.results.reduce(
+                        (acc, item) => ({
+                            ...acc,
+                            [item.id]: item,
+                        }),
+                        {}
+                    ),
+                };
+
+                draft.schemas.done = action.payload.done;
                 return;
             }
 
             case '@@dataTableSearch/SEARCH_TABLE_BY_SCHEMA_DONE': {
-                const index = state.schemas.list.findIndex(
-                    (i) => i.id === action.payload.id
+                const schemaId = state.schemas.schemaIds.find(
+                    (id) => id === action.payload.id
                 );
 
-                const tables = state.schemas.list[index].tables || [];
+                const tables =
+                    state.schemas.schemaResultById[schemaId]?.tables || [];
 
-                draft.schemas.list[index].tables = [
+                draft.schemas.schemaResultById[schemaId].tables = [
                     ...tables,
                     ...action.payload.results,
                 ];
-                draft.schemas.list[index].count = action.payload.count;
+                draft.schemas.schemaResultById[schemaId].count =
+                    action.payload.count;
                 return;
             }
         }

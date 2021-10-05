@@ -17,7 +17,7 @@ export interface IInfinityScrollProps<T> {
     // the actual number of elements, including not loaded
     hasMore?: boolean;
     defaultListHeight?: number;
-    autoSizerStyles?: { [key: string]: string };
+    autoSizerStyles?: React.CSSProperties;
 }
 
 function InfinityScrollComponent<T>({

@@ -1,17 +1,18 @@
-import React, { useEffect, useRef } from 'react';
+import React, { useRef } from 'react';
 import styled from 'styled-components';
 import { useDispatch, useSelector } from 'react-redux';
 import { Dispatch, IStoreState } from 'redux/store/types';
 import type { ITableSearchResult } from 'redux/dataTableSearch/types';
+import { useIntersectionObserver } from 'hooks/useIntersectionObserver';
 
 import {
     searchSchemas,
     searchTableBySchema,
 } from 'redux/dataTableSearch/action';
-import { SchemaTableItem } from './Item';
+import { SchemaTableItem } from './SchemaTableItem';
 
-const CategoriesList = styled.div`
-    height: 50vh;
+const SchemasList = styled.div`
+    flex: 1 1 200px;
     overflow-y: auto;
 `;
 
@@ -21,7 +22,8 @@ const IntersectionElement = styled.div`
 `;
 
 function prepareSchemaNames(
-    tables: ITableSearchResult[]
+    tables: ITableSearchResult[],
+    selectedTableId: number
 ): ITableSearchResult[] {
     if (!tables) {
         return [];
@@ -29,68 +31,52 @@ function prepareSchemaNames(
 
     return tables.map((table) => ({
         ...table,
-        full_name: table.full_name.split('.').slice(1).join('.'),
+        selected: table.id === selectedTableId,
+        full_name: table.name,
     }));
 }
 
 export const SchemaTableView: React.FunctionComponent<{
-    tableRowRenderer: (item: any) => React.ReactNode;
-}> = ({ tableRowRenderer }) => {
+    tableRowRenderer: (table: ITableSearchResult) => React.ReactNode;
+    selectedTableId: number;
+}> = ({ tableRowRenderer, selectedTableId }) => {
     const schemas = useSelector(
         (state: IStoreState) => state.dataTableSearch.schemas
     );
     const dispatch: Dispatch = useDispatch();
-    const categoriesList = useRef<HTMLDivElement>(null);
-    const lastElement = useRef<HTMLDivElement>(null);
-    const interseptor = useRef<IntersectionObserver>(null);
+    const schemasListRef = useRef<HTMLDivElement>(null);
+    const intersectionElementRef = useRef<HTMLDivElement>(null);
 
-    useEffect(() => {
-        dispatch(searchSchemas());
-    }, []);
-
-    useEffect(() => {
-        interseptor.current = new IntersectionObserver(
-            (entries, observer) => {
-                if (entries.some((entry) => entry.isIntersecting)) {
-                    observer.unobserve(lastElement.current);
-                    dispatch(searchSchemas());
-                }
-            },
-            {
-                root: categoriesList.current,
-            }
-        );
-    }, [lastElement]);
-
-    useEffect(() => {
-        if (schemas.count && schemas.list.length < schemas.count) {
-            interseptor.current.observe(lastElement.current);
-        }
-    }, [schemas]);
+    useIntersectionObserver({
+        rootElement: schemasListRef.current,
+        intersectElement: intersectionElementRef.current,
+        onIntersect: () => {
+            dispatch(searchSchemas());
+        },
+        listData: schemas,
+    });
 
     return (
-        <CategoriesList ref={categoriesList}>
-            {schemas.list.map((category) => (
-                <SchemaTableItem
-                    key={category.name}
-                    name={category.name}
-                    total={
-                        schemas.list.find((s) => s.id === category.id)?.count ||
-                        1
-                    }
-                    data={prepareSchemaNames(
-                        schemas.list.find((s) => s.id === category.id)?.tables
-                    )}
-                    tableRowRenderer={tableRowRenderer}
-                    onLoadMore={() =>
-                        dispatch(
-                            searchTableBySchema(category.name, category.id)
-                        )
-                    }
-                />
-            ))}
+        <SchemasList ref={schemasListRef}>
+            {schemas.schemaIds.map((schemaId) => {
+                const schema = schemas.schemaResultById[schemaId];
+                return (
+                    <SchemaTableItem
+                        key={schema.name}
+                        name={schema.name}
+                        total={schema?.count}
+                        data={prepareSchemaNames(schema?.tables, selectedTableId)}
+                        tableRowRenderer={tableRowRenderer}
+                        onLoadMore={() =>
+                            dispatch(
+                                searchTableBySchema(schema.name, schema.id)
+                            )
+                        }
+                    />
+                );
+            })}
 
-            <IntersectionElement ref={lastElement} />
-        </CategoriesList>
+            <IntersectionElement ref={intersectionElementRef} />
+        </SchemasList>
     );
 };
