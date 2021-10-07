@@ -428,7 +428,7 @@ export function pollDataTableSample(
     tableId: number
 ): ThunkResult<Promise<boolean>> {
     let finished = false;
-    let failed = false;
+    let failed = null;
     let progress = 0;
 
     return async (dispatch, getState) => {
@@ -444,7 +444,7 @@ export function pollDataTableSample(
 
                 if (!data) {
                     finished = true;
-                    failed = true;
+                    failed = 'Failed due to unknown reasons';
                 } else {
                     [finished, failed, progress] = data;
                 }
@@ -459,7 +459,9 @@ export function pollDataTableSample(
                 );
 
                 if (failed) {
-                    toast.error('Failed to run sample query.');
+                    toast.error(
+                        'Failed to run sample query. reason: ' + failed
+                    );
                 }
 
                 if (finished && !failed) {

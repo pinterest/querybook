@@ -1,4 +1,4 @@
-from typing import Tuple
+from typing import Tuple, Union
 from flask_login import current_user
 
 from app.auth.permission import (
@@ -237,7 +237,7 @@ def create_table_samples(
 
 
 @register("/table/<int:table_id>/samples/poll/", methods=["GET"])
-def poll_table_samples(table_id, task_id) -> Tuple[bool, bool, int]:
+def poll_table_samples(table_id, task_id) -> Tuple[bool, Union[str, None], int]:
     """Poll the sample query status
 
     Args:
@@ -250,7 +250,8 @@ def poll_table_samples(table_id, task_id) -> Tuple[bool, bool, int]:
     task = run_sample_query.AsyncResult(task_id)
     if task is not None:
         if task.ready():
-            return [True, task.failed(), 100]
+            failed_message = str(task.result) if task.failed() else None
+            return [True, failed_message, 100]
 
         progress = 0
         if task.info is not None:

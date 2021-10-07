@@ -147,19 +147,23 @@ def _format_where_clause_filter(
     """
     column_name, filter_op, filter_val = where_filter
     if column_name not in column_type_by_name:
-        raise SamplesError("Invalid filter column " + column_name)
+        raise SamplesError(f"Invalid filter column {column_name}")
     column_type = column_type_by_name[column_name]
 
     if filter_op not in COMPARSION_OP:
-        raise SamplesError("Invalid filter op " + filter_op)
+        raise SamplesError(f"Invalid filter op {filter_op} for column {column_name}")
 
     if filter_op in COMPARSION_OP_WITH_VALUE:
         if column_type == QuerybookColumnType.Number:
             if not filter_val or not filter_val.replace(".", "", 1).isdigit():
-                raise SamplesError("Invalid numeric filter value " + filter_val)
+                raise SamplesError(
+                    f"Invalid numeric filter value '{filter_val}' for column {column_name}"
+                )
         elif column_type == QuerybookColumnType.Boolean:
             if filter_val != "true" and filter_val != "false":
-                raise SamplesError("Invalid boolean filter value " + filter_val)
+                raise SamplesError(
+                    f"Invalid boolean filter value '{filter_val}' for column {column_name}"
+                )
         else:  # column_type == QuerybookColumnType.String
             filter_val = "'{}'".format(json.dumps(filter_val)[1:-1])
     else:

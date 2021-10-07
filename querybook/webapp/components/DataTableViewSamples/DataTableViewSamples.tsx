@@ -1,16 +1,15 @@
 import React, { useState, useMemo } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { FieldArray, Formik } from 'formik';
+import toast from 'react-hot-toast';
 
 import * as dataSourcesActions from 'redux/dataSources/action';
 import { IStoreState, Dispatch } from 'redux/store/types';
 import { format } from 'lib/sql-helper/sql-formatter';
-import { downloadString } from 'lib/utils';
-import { tableToCSV, tableToTSV } from 'lib/utils/table-export';
+import { isAxiosError } from 'lib/utils/error';
 
 import {
     IDataTable,
-    IDataTableSamples,
     IDataSchema,
     IDataColumn,
     ITableSampleParams,
@@ -18,109 +17,24 @@ import {
 import { TableSamplesResource } from 'resource/table';
 
 import { AsyncButton } from 'ui/AsyncButton/AsyncButton';
-import { Loading } from 'ui/Loading/Loading';
 import { SimpleField } from 'ui/FormikField/SimpleField';
-import { useInterval } from 'hooks/useInterval';
-import { ProgressBar } from 'ui/ProgressBar/ProgressBar';
 import { CopyPasteModal } from 'ui/CopyPasteModal/CopyPasteModal';
-import { StatementResultTable } from 'components/StatementResultTable/StatementResultTable';
-import { SoftButton, TextButton } from 'ui/Button/Button';
-import { CopyButton } from 'ui/CopyButton/CopyButton';
-
-import './DataTableViewSamples.scss';
+import { SoftButton } from 'ui/Button/Button';
 import { IconButton } from 'ui/Button/IconButton';
+
+import { DataTableViewSamplesTable } from './DataTableViewSamplesTable';
+import {
+    COMPARSION_OPS,
+    COMPARSION_OPS_WITH_VALUE,
+    ITableSamplesFormValues,
+    tableSamplesFormValuesToParams,
+} from './sampleQueryFormSchema';
+import './DataTableViewSamples.scss';
 
 export interface IDataTableViewSamplesProps {
     table: IDataTable;
     tableColumns: IDataColumn[];
     schema: IDataSchema;
-}
-
-const COMPARSION_OPS_WITH_VALUE = ['=', '!=', '>', '>=', '<', '<=', 'LIKE'];
-const COMPARSION_OPS = COMPARSION_OPS_WITH_VALUE.concat([
-    'IS NULL',
-    'IS NOT NULL',
-]);
-
-const SamplesTableView: React.FunctionComponent<{
-    samples: IDataTableSamples;
-    tableName: string;
-    numberOfRows?: number;
-}> = ({ samples, numberOfRows, tableName }) => {
-    const processedData: string[][] = useMemo(
-        () =>
-            samples?.value.map((row) =>
-                row.map((value) =>
-                    typeof value === 'string'
-                        ? value
-                        : value?._isBigNumber || typeof value === 'number'
-                        ? value.toString()
-                        : // this is for functions, objects and arrays
-                          JSON.stringify(value)
-                )
-            ),
-        [samples?.value]
-    );
-
-    const tableDOM = (
-        <StatementResultTable
-            data={processedData}
-            paginate={true}
-            maxNumberOfRowsToShow={numberOfRows}
-        />
-    );
-
-    return (
-        <div className="QuerybookTableViewSamples">
-            <div className="flex-row">
-                <TextButton
-                    title="Download as csv"
-                    onClick={() => {
-                        downloadString(
-                            tableToCSV(processedData),
-                            `${tableName}_samples.csv`,
-                            'text/csv'
-                        );
-                    }}
-                    icon="download"
-                    size="small"
-                />
-                <span className="mr8" />
-                <CopyButton
-                    title="Copy as tsv"
-                    copyText={() => tableToTSV(processedData)}
-                    size="small"
-                    type="text"
-                />
-            </div>
-
-            {tableDOM}
-        </div>
-    );
-};
-
-interface ITableSamplesFormValues {
-    engineId: number;
-    partition?: string;
-    where: [[string, string, string]];
-    order_by?: string;
-    order_by_asc: boolean;
-}
-
-function valuesToParams(values: ITableSamplesFormValues) {
-    const sampleParams: ITableSampleParams = {};
-    if (values.partition) {
-        sampleParams.partition = values.partition;
-    }
-    if (values.order_by) {
-        sampleParams.order_by = values.order_by;
-    }
-    sampleParams.order_by_asc = values.order_by_asc;
-
-    if (values.where[0]) {
-        sampleParams.where = values.where.filter((clause) => clause[0]);
-    }
-    return sampleParams;
 }
 
 export const DataTableViewSamples: React.FunctionComponent<IDataTableViewSamplesProps> = ({
@@ -169,11 +83,22 @@ export const DataTableViewSamples: React.FunctionComponent<IDataTableViewSamples
 
     const getDataTableSamplesQuery = React.useCallback(
         async (tableId, params: ITableSampleParams, language: string) => {
-            const { data: query } = await TableSamplesResource.getQuery(
-                tableId,
-                params
-            );
-            setRawSamplesQuery(format(query, language));
+            try {
+                const { data: query } = await TableSamplesResource.getQuery(
+                    tableId,
+                    params
+                );
+                setRawSamplesQuery(format(query, language));
+            } catch (error) {
+                if (isAxiosError(error)) {
+                    const possibleErrorMessage = error?.response?.data?.error;
+                    if (possibleErrorMessage) {
+                        toast.error(
+                            `Failed to generate query, reason: ${possibleErrorMessage}`
+                        );
+                    }
+                }
+            }
         },
         []
     );
@@ -197,7 +122,7 @@ export const DataTableViewSamples: React.FunctionComponent<IDataTableViewSamples
                     createDataTableSamples(
                         table.id,
                         values.engineId,
-                        valuesToParams(values)
+                        tableSamplesFormValuesToParams(values)
                     )
                 }
             >
@@ -331,7 +256,9 @@ export const DataTableViewSamples: React.FunctionComponent<IDataTableViewSamples
                                     onClick={() =>
                                         getDataTableSamplesQuery(
                                             table.id,
-                                            valuesToParams(values),
+                                            tableSamplesFormValuesToParams(
+                                                values
+                                            ),
                                             queryEngines.find(
                                                 (engine) =>
                                                     values.engineId ===
@@ -371,53 +298,4 @@ export const DataTableViewSamples: React.FunctionComponent<IDataTableViewSamples
             )}
         </div>
     );
-};
-
-const DataTableViewSamplesTable: React.FC<{
-    tableId: number;
-    tableName: string;
-    loadDataTableSamples: () => Promise<any>;
-    pollDataTableSamples: () => Promise<any>;
-}> = ({ tableId, loadDataTableSamples, pollDataTableSamples, tableName }) => {
-    const [loading, setLoading] = useState(false);
-
-    const samples = useSelector(
-        (state: IStoreState) => state.dataSources.dataTablesSamplesById[tableId]
-    );
-    const poll = useSelector(
-        (state: IStoreState) =>
-            state.dataSources.dataTablesSamplesPollingById[tableId]
-    );
-
-    React.useEffect(() => {
-        // Try to load the data initially
-        if (samples == null) {
-            setLoading(true);
-            loadDataTableSamples().finally(() => setLoading(false));
-        }
-    }, [tableId]);
-
-    useInterval(
-        () => {
-            pollDataTableSamples();
-        },
-        1000,
-        !poll
-    );
-
-    const samplesTableDOM = loading ? (
-        <Loading />
-    ) : poll ? (
-        <div className="center-align p12">
-            <ProgressBar value={poll.progress} showValue />
-        </div>
-    ) : samples ? (
-        <SamplesTableView tableName={tableName} samples={samples} />
-    ) : (
-        <div className="samples-not-found">
-            Samples not found, Click "Generate" to create samples.
-        </div>
-    );
-
-    return samplesTableDOM;
 };
