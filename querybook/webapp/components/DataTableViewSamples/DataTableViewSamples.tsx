@@ -203,7 +203,7 @@ export const DataTableViewSamples: React.FunctionComponent<IDataTableViewSamples
                                     return (
                                         <>
                                             {whereDOM}
-                                            <div className="center-align mt4">
+                                            <div className="center-align add-where-clause">
                                                 <SoftButton
                                                     size="small"
                                                     title="Add Where Clause"

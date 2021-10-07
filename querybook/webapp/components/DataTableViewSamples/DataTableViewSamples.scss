@@ -10,6 +10,11 @@
     .DataTableViewSamples-mid {
         display: flex;
         flex-direction: column;
+
+        .add-where-clause {
+            margin-top: 8px;
+            margin-bottom: -8px;
+        }
     }
     .DataTableViewSamples-bottom {
         display: flex;
