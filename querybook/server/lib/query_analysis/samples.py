@@ -165,7 +165,7 @@ def _format_where_clause_filter(
     else:
         filter_val = ""
 
-    return f"{column_name} {filter_op} {filter_val}"
+    return f"{column_name} {filter_op} {filter_val}".strip()
 
 
 COMPARSION_OP_WITH_VALUE = [
