@@ -1,4 +1,6 @@
 .DataTableView {
+    height: 100%;
+
     .DataTableView-tabs {
         z-index: 10;
         position: sticky;
@@ -16,9 +18,5 @@
     .DataTableView-content {
         padding: 16px 24px;
         flex: 1;
-
-        .Container {
-            height: 100%;
-        }
     }
 }
