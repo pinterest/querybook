@@ -24,14 +24,6 @@ import {
 } from 'const/metastore';
 import { IStoreState } from '../store/types';
 
-export interface ITableSampleParams {
-    partition?: string;
-    where?: [string, string, string];
-    order_by?: string;
-    order_by_asc?: boolean;
-    limit?: number;
-}
-
 export interface IReceiveQueryMetastoresAction extends Action {
     type: '@@dataSources/RECEIVE_QUERY_METASTORES';
     payload: {

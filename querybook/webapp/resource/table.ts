@@ -61,7 +61,7 @@ export const TableSamplesResource = {
         ),
 
     poll: (tableId: number, taskId: number) =>
-        ds.fetch<[finished: boolean, progress: number]>(
+        ds.fetch<[finished: boolean, failed: string | null, progress: number]>(
             `/table/${tableId}/samples/poll/`,
             {
                 task_id: taskId,

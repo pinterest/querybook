@@ -1,3 +1,5 @@
+from typing import Dict
+
 from app.db import with_session
 from const.query_execution import QueryExecutionStatus
 from lib.logger import get_logger
@@ -28,18 +30,12 @@ def _get_executor_params_and_engine(query_execution_id, celery_task, session=Non
     query, statement_ranges, uid, engine_id = _get_query_execution_info(
         query_execution_id, session=session
     )
-    user = user_logic.get_user_by_id(uid, session=session)
+
     engine = admin_logic.get_query_engine_by_id(engine_id, session=session)
     if engine.deleted_at is not None:
         raise ArchivedQueryEngine("This query engine is disabled.")
 
-    proxy_user = user.username
-    executor_params = engine.get_engine_params()
-    if executor_params.get("proxy_user_id", "") != "":
-        try:
-            proxy_user = user.to_dict()[executor_params["proxy_user_id"]]
-        except KeyError as e:
-            raise e
+    client_setting = get_client_setting_from_engine(engine, uid, session=session)
 
     return (
         {
@@ -47,10 +43,33 @@ def _get_executor_params_and_engine(query_execution_id, celery_task, session=Non
             "celery_task": celery_task,
             "query": query,
             "statement_ranges": statement_ranges,
-            "client_setting": {**executor_params, "proxy_user": proxy_user,},
+            "client_setting": client_setting,
         },
         engine,
     )
+
+
+@with_session
+def get_client_setting_from_engine(engine, uid=None, session=None) -> Dict:
+    """Compute the settings passed to the query engine.
+       Both engine and user must be attached to a sqlalchemy session.
+
+    Args:
+        engine (QueryEngine): Corresponds to the DB QueryEngine
+        uid (int, optional): Optional User id executed the query. Defaults to None.
+
+    Returns:
+        Dict: Dictionary of Kwargs send to the query engine client
+    """
+    executor_params = {**engine.get_engine_params()}
+    if uid is not None:
+        user = user_logic.get_user_by_id(uid, session=session)
+        proxy_user = user.username
+        if executor_params.get("proxy_user_id", "") != "":
+            proxy_user = user.to_dict()[executor_params["proxy_user_id"]]
+        executor_params["proxy_user"] = proxy_user
+
+    return executor_params
 
 
 @with_session

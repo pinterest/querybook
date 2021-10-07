@@ -1,3 +1,4 @@
+from typing import Tuple, Union
 from flask_login import current_user
 
 from app.auth.permission import (
@@ -236,16 +237,27 @@ def create_table_samples(
 
 
 @register("/table/<int:table_id>/samples/poll/", methods=["GET"])
-def poll_table_samples(table_id, task_id):
+def poll_table_samples(table_id, task_id) -> Tuple[bool, Union[str, None], int]:
+    """Poll the sample query status
+
+    Args:
+        table_id (int): Ignored
+        task_id (int): Celery task id
+
+    Returns:
+        Tuple[bool, Union[str, None], int]: length 3 tuple [Completed, Failed Message, Progress]
+    """
     task = run_sample_query.AsyncResult(task_id)
     if task is not None:
         if task.ready():
-            return [True, 100]
-        elif task.info is not None:
+            failed_message = str(task.result) if task.failed() else None
+            return [True, failed_message, 100]
+
+        progress = 0
+        if task.info is not None:
             progress = task.info if isinstance(task.info, (float, int)) else 0
-            return [False, progress]
-        else:
-            return [False, 0]
+        return [False, None, progress]
+
     return None
 
 

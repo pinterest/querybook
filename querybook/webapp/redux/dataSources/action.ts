@@ -1,6 +1,7 @@
 import { normalize, schema } from 'normalizr';
 import type { ContentState } from 'draft-js';
 import { isEqual } from 'lodash';
+import toast from 'react-hot-toast';
 
 import {
     IDataTable,
@@ -18,6 +19,7 @@ import {
     IFunctionDescription,
     IUpdateTableParams,
     IDataTableWarningUpdateFields,
+    ITableSampleParams,
 } from 'const/metastore';
 import { convertRawToContentState } from 'lib/richtext/serialize';
 import {
@@ -41,7 +43,6 @@ import {
     IReceiveParentDataLineageAction,
     IReceiveChildDataLineageAction,
     IReceiveQueryExampleIdsAction,
-    ITableSampleParams,
 } from './types';
 
 const dataTableColumnSchema = new schema.Entity(
@@ -426,8 +427,11 @@ export function createDataTableSamples(
 export function pollDataTableSample(
     tableId: number
 ): ThunkResult<Promise<boolean>> {
+    let finished = false;
+    let failed = null;
+    let progress = 0;
+
     return async (dispatch, getState) => {
-        let finished = false;
         try {
             const poll = getState().dataSources.dataTablesSamplesPollingById[
                 tableId
@@ -438,17 +442,29 @@ export function pollDataTableSample(
                     poll.taskId
                 );
 
-                finished = !data || data[0];
+                if (!data) {
+                    finished = true;
+                    failed = 'Failed due to unknown reasons';
+                } else {
+                    [finished, failed, progress] = data;
+                }
+
                 dispatch(
                     receiveDataTableSamplesPolling(
                         tableId,
                         poll.taskId,
-                        data?.[1],
+                        progress,
                         finished
                     )
                 );
 
-                if (finished) {
+                if (failed) {
+                    toast.error(
+                        'Failed to run sample query. reason: ' + failed
+                    );
+                }
+
+                if (finished && !failed) {
                     await dispatch(fetchDataTableSamples(tableId));
                 }
 

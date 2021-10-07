@@ -9,7 +9,12 @@
     }
     .DataTableViewSamples-mid {
         display: flex;
-        align-items: flex-end;
+        flex-direction: column;
+
+        .add-where-clause {
+            margin-top: 8px;
+            margin-bottom: -8px;
+        }
     }
     .DataTableViewSamples-bottom {
         display: flex;

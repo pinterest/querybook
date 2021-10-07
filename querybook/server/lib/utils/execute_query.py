@@ -1,7 +1,7 @@
 from app.db import with_session
 from logic.admin import get_query_engine_by_id
-from logic.user import get_user_by_id
 from lib.query_executor.all_executors import get_executor_class
+from lib.query_executor.executor_factory import get_client_setting_from_engine
 from lib.query_analysis import get_statements
 
 
@@ -29,29 +29,13 @@ class ExecuteQuery(object):
             Any[][]: Returns the result if sync, otherwise None
         """
         engine = get_query_engine_by_id(engine_id, session=session)
-        executor_params = engine.get_engine_params()
-        client_settings = {
-            **executor_params,
-        }
-        if uid:
-            user = get_user_by_id(uid, session=session)
-            proxy_user = user.username
-            if executor_params.get("proxy_user_id", "") != "":
-                try:
-                    proxy_user = user.to_dict()[executor_params["proxy_user_id"]]
-                except KeyError as e:
-                    raise e
-            client_settings["proxy_user"] = proxy_user
-
+        client_settings = get_client_setting_from_engine(engine, uid, session=session)
         executor = get_executor_class(engine.language, engine.executor)
 
-        if executor.SINGLE_QUERY_QUERY_ENGINE():
-            statements = [query]
-        else:
-            statements = get_statements(query)
-
+        statements = parse_statement_from_query(executor, query)
         if len(statements) == 0:
-            return None  # Empty statement, return None
+            # Empty statement, return None
+            return None
 
         cursor = executor._get_client(client_settings).cursor()
         if self._async:
@@ -129,6 +113,15 @@ class ExecuteQuery(object):
         self._progress = []
         self._cur_index = 0
         self._result = None
+
+
+def parse_statement_from_query(executor, query):
+    if executor.SINGLE_QUERY_QUERY_ENGINE():
+        statements = [query]
+    else:
+        statements = get_statements(query)
+
+    return statements
 
 
 execute_query = ExecuteQuery(False)
