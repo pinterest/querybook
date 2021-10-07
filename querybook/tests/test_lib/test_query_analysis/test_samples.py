@@ -85,7 +85,7 @@ WHERE
 dt='2019-11-09' AND id = 5 AND id IS NOT NULL
 
 LIMIT 4""" == make_samples_query(
-        table_id=1234, limit=4, where=[["id", "=", "5"], ["id", "IS NOT NULL"]]
+        table_id=1234, limit=4, where=[["id", "=", "5"], ["id", "IS NOT NULL", ""]]
     )
 
 
