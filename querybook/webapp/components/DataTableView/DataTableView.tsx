@@ -319,7 +319,7 @@ class DataTableViewComponent extends React.PureComponent<
             );
 
         return (
-            <Container className="DataTableView with-background">
+            <Container className="DataTableView with-background" flex="column">
                 <DataTableHeader
                     table={table}
                     tableName={tableName}
