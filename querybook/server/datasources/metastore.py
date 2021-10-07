@@ -245,7 +245,7 @@ def poll_table_samples(table_id, task_id) -> Tuple[bool, Union[str, None], int]:
         task_id (int): Celery task id
 
     Returns:
-        Tuple[bool, bool, int]: length 3 tuple [Completed, Failed, Progress]
+        Tuple[bool, Union[str, None], int]: length 3 tuple [Completed, Failed Message, Progress]
     """
     task = run_sample_query.AsyncResult(task_id)
     if task is not None:
