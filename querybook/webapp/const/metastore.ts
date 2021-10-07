@@ -169,7 +169,7 @@ export interface ITableStats {
 
 export interface ITableSampleParams {
     partition?: string;
-    where?: [string, string, string];
+    where?: Array<[string, string, string]>;
     order_by?: string;
     order_by_asc?: boolean;
     limit?: number;

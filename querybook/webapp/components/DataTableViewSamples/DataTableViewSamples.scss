@@ -9,7 +9,7 @@
     }
     .DataTableViewSamples-mid {
         display: flex;
-        align-items: flex-end;
+        flex-direction: column;
     }
     .DataTableViewSamples-bottom {
         display: flex;
