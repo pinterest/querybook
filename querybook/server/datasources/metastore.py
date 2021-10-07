@@ -256,7 +256,7 @@ def poll_table_samples(table_id, task_id) -> Tuple[bool, Union[str, None], int]:
         progress = 0
         if task.info is not None:
             progress = task.info if isinstance(task.info, (float, int)) else 0
-        return [False, False, progress]
+        return [False, None, progress]
 
     return None
 
