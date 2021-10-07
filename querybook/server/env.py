@@ -70,6 +70,7 @@ class QuerybookSettings(object):
     OAUTH_AUTHORIZATION_URL = get_env_config("OAUTH_AUTHORIZATION_URL")
     OAUTH_TOKEN_URL = get_env_config("OAUTH_TOKEN_URL")
     OAUTH_USER_PROFILE = get_env_config("OAUTH_USER_PROFILE")
+    AZURE_TENANT_ID = get_env_config("AZURE_TENANT_ID")
 
     LDAP_CONN = get_env_config("LDAP_CONN")
     LDAP_USER_DN = get_env_config("LDAP_USER_DN")
@@ -83,6 +84,8 @@ class QuerybookSettings(object):
     STORE_MAX_UPLOAD_CHUNK_NUM = int(get_env_config("STORE_MAX_UPLOAD_CHUNK_NUM"))
     STORE_MAX_READ_SIZE = int(get_env_config("STORE_MAX_READ_SIZE"))
     STORE_READ_SIZE = int(get_env_config("STORE_READ_SIZE"))
+    S3_BUCKET_S3V4_ENABLED = get_env_config("S3_BUCKET_S3V4_ENABLED") == "true"
+    AWS_REGION = get_env_config("AWS_REGION")
 
     DB_MAX_UPLOAD_SIZE = int(get_env_config("DB_MAX_UPLOAD_SIZE"))
 

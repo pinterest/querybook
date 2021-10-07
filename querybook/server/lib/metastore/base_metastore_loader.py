@@ -139,8 +139,10 @@ class BaseMetastoreLoader(metaclass=ABCMeta):
                 ]
         self._create_tables_batched(schema_tables)
 
-    def get_latest_partition(self, schema_name, table_name):
-        partitions = self.get_partitions(schema_name, table_name)
+    def get_latest_partition(
+        self, schema_name: str, table_name: str, conditions: Dict[str, str] = None
+    ):
+        partitions = self.get_partitions(schema_name, table_name, conditions)
         latest_partition = partitions[-1] if partitions and len(partitions) else None
         return latest_partition
 
@@ -248,7 +250,9 @@ class BaseMetastoreLoader(metaclass=ABCMeta):
         batch_size = max(int(math.ceil(num_tables / num_threads)), min_batch_size)
         return batch_size
 
-    def get_partitions(self, schema_name: str, table_name: str) -> List[str]:
+    def get_partitions(
+        self, schema_name: str, table_name: str, conditions: Dict[str, str] = None
+    ) -> List[str]:
         """Override this method to return a list of the given table's partitions
         Returns None by default.
 

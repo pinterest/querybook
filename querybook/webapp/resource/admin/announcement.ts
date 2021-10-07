@@ -1,7 +1,7 @@
 import { IAdminAnnouncement } from 'const/admin';
 import ds from 'lib/datasource';
 
-export const AnnouncementResource = {
+export const AdminAnnouncementResource = {
     getAll: () => ds.fetch<IAdminAnnouncement[]>('/admin/announcement/'),
     create: (message: string, urlRegex: string, canDismiss: boolean) =>
         ds.save<IAdminAnnouncement>(`/admin/announcement/`, {

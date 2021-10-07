@@ -13,7 +13,7 @@ import { SimpleField } from 'ui/FormikField/SimpleField';
 
 import { AdminAuditLogButton } from 'components/AdminAuditLog/AdminAuditLogButton';
 import { Level } from 'ui/Level/Level';
-import { AnnouncementResource } from 'resource/admin';
+import { AdminAnnouncementResource } from 'resource/admin';
 import './AdminAnnouncement.scss';
 
 const announcementSchema = Yup.object().shape({
@@ -24,7 +24,7 @@ const announcementSchema = Yup.object().shape({
 
 export const AdminAnnouncement: React.FunctionComponent = () => {
     const { data: announcements, forceFetch: loadAnnouncements } = useResource(
-        AnnouncementResource.getAll
+        AdminAnnouncementResource.getAll
     );
     const [displayNewForm, setDisplayNewForm] = React.useState<boolean>(
         () => getQueryString()['new'] === 'true'
@@ -37,7 +37,7 @@ export const AdminAnnouncement: React.FunctionComponent = () => {
     const createAnnouncement = React.useCallback(
         async (announcement: IAdminAnnouncement) => {
             setDisplayNewForm(false);
-            const { data } = await AnnouncementResource.create(
+            const { data } = await AdminAnnouncementResource.create(
                 announcement.message,
                 announcement.url_regex,
                 announcement.can_dismiss
@@ -49,7 +49,7 @@ export const AdminAnnouncement: React.FunctionComponent = () => {
 
     const saveAnnouncement = React.useCallback(
         (id: number) => async (announcement: Partial<IAdminAnnouncement>) => {
-            const { data } = await AnnouncementResource.update(
+            const { data } = await AdminAnnouncementResource.update(
                 id,
                 announcement
             );
@@ -60,7 +60,7 @@ export const AdminAnnouncement: React.FunctionComponent = () => {
 
     const deleteAnnouncement = React.useCallback(
         (announcement: IAdminAnnouncement) =>
-            AnnouncementResource.delete(announcement.id),
+            AdminAnnouncementResource.delete(announcement.id),
         []
     );
 

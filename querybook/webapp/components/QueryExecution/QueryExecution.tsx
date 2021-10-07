@@ -28,7 +28,7 @@ import './QueryExecution.scss';
 interface IProps {
     id: number;
     docId?: number;
-    changeCellContext?: (context: string) => any;
+    changeCellContext?: (context: string) => void;
 }
 
 function useQueryExecutionReduxState(queryId: number) {

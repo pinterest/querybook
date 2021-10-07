@@ -51,7 +51,7 @@ def get_hosted_es():
         from lib.utils.assume_role_aws4auth import AssumeRoleAWS4Auth
 
         credentials = boto_session.Session().get_credentials()
-        auth = AssumeRoleAWS4Auth(credentials, "us-east-1", "es",)
+        auth = AssumeRoleAWS4Auth(credentials, QuerybookSettings.AWS_REGION, "es",)
         hosted_es = Elasticsearch(
             hosts=QuerybookSettings.ELASTICSEARCH_HOST,
             http_auth=auth,

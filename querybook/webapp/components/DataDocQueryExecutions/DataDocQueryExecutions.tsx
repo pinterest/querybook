@@ -26,7 +26,7 @@ interface IProps {
     cellId: number;
     isQueryCollapsed: boolean;
 
-    changeCellContext: (context: string) => any;
+    changeCellContext?: (context: string) => void;
 }
 
 export const DataDocQueryExecutions: React.FunctionComponent<IProps> = React.memo(

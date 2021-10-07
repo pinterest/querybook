@@ -85,8 +85,12 @@ class GlueDataCatalogLoader(BaseMetastoreLoader):
 
         return table, columns
 
-    def get_partitions(self, schema_name: str, table_name: str) -> List[str]:
-        return self.glue_client.get_hms_style_partitions(schema_name, table_name)
+    def get_partitions(
+        self, schema_name: str, table_name: str, conditions: Dict[str, str] = None
+    ) -> List[str]:
+        return self.glue_client.get_hms_style_partitions(
+            schema_name, table_name, conditions
+        )
 
     @staticmethod
     def _get_glue_data_catalog_client(catalog_id, region):

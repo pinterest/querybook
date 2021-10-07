@@ -17,7 +17,7 @@ spec:
                       - ./querybook/scripts/runservice
                       - prod_scheduler
                       - --pidfile=/opt/celerybeat.pid
-                  image: docker.pkg.github.com/pinterest/querybook/querybook:latest
+                  image: querybook/querybook:latest
                   env:
                       - name: FLASK_SECRET_KEY
                         value: SOME_RANDOM_SECRET_KEY

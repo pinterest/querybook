@@ -33,16 +33,21 @@ def _get_executor_params_and_engine(query_execution_id, celery_task, session=Non
     if engine.deleted_at is not None:
         raise ArchivedQueryEngine("This query engine is disabled.")
 
+    proxy_user = user.username
+    executor_params = engine.get_engine_params()
+    if executor_params.get("proxy_user_id", "") != "":
+        try:
+            proxy_user = user.to_dict()[executor_params["proxy_user_id"]]
+        except KeyError as e:
+            raise e
+
     return (
         {
             "query_execution_id": query_execution_id,
             "celery_task": celery_task,
             "query": query,
             "statement_ranges": statement_ranges,
-            "client_setting": {
-                **engine.get_engine_params(),
-                "proxy_user": user.username,
-            },
+            "client_setting": {**executor_params, "proxy_user": proxy_user,},
         },
         engine,
     )

@@ -78,8 +78,12 @@ class HMSMetastoreLoader(BaseMetastoreLoader):
         )
         return table, columns
 
-    def get_partitions(self, schema_name: str, table_name: str) -> List[str]:
-        return get_hive_metastore_table_partitions(self.hmc, schema_name, table_name)
+    def get_partitions(
+        self, schema_name: str, table_name: str, conditions: Dict[str, str] = None
+    ) -> List[str]:
+        return get_hive_metastore_table_partitions(
+            self.hmc, schema_name, table_name, conditions
+        )
 
     def _get_hmc(self, metastore_dict):
         return HiveMetastoreClient(hmss_ro_addrs=metastore_dict["metastore_params"])
@@ -93,8 +97,22 @@ def get_hive_metastore_table_description(hmc, db_name, table_name):
         return None
 
 
-def get_hive_metastore_table_partitions(hmc, db_name, table_name):
+def get_partition_filter_from_conditions(conditions: Dict[str, str] = None):
+    if conditions is None:
+        return None
+    conditions_list = [
+        f"{condition_key}='{condition_value}'"
+        for condition_key, condition_value in conditions.items()
+    ]
+    filter_clause = " AND ".join(conditions_list)
+    return filter_clause
+
+
+def get_hive_metastore_table_partitions(
+    hmc, db_name, table_name, conditions: Dict[str, str] = None
+):
+    filter_clause = get_partition_filter_from_conditions(conditions)
     try:
-        return hmc.get_partitions(db_name, table_name)
+        return hmc.get_partitions(db_name, table_name, filter_clause)
     except NoSuchObjectException:
         return None
