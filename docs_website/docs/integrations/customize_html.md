@@ -79,7 +79,7 @@ When adding a new key binding, follow the format of Codemirror as documented [he
 
 For the table page you can select two methods of viewing tables. First, the default view is the infinite list with tables (This is the default view).
 
-Second variant, groupping all tables by schemas. Displaying tables groupping by schemas you should add next parameters:
+Second variant, grouping all tables by schemas. Displaying tables grouping by schemas you should add next parameters:
 
 ```typescript
 window.DISPLAY_SCHEMA_TABLE = {
