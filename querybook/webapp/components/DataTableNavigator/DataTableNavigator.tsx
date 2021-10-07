@@ -249,7 +249,12 @@ export const DataTableNavigator: React.FC<IDataTableNavigatorProps> = ({
         window.DISPLAY_SCHEMA_TABLE &&
         !isFilteringTables(searchString, searchFilters)
     ) {
-        tablesDOM = <SchemaTableView tableRowRenderer={tableRowRenderer} selectedTableId={selectedTableId} />;
+        tablesDOM = (
+            <SchemaTableView
+                tableRowRenderer={tableRowRenderer}
+                selectedTableId={selectedTableId}
+            />
+        );
     }
 
     return (

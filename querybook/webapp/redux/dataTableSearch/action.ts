@@ -106,8 +106,9 @@ export function searchSchemas(): ThunkResult<Promise<IDataSchema[]>> {
         try {
             const offset = getState().dataTableSearch.schemas.schemaIds.length;
             const searchRequest = SearchSchemaResource.getMore({
-                metastore_id: getState().dataTableSearch.metastoreId ||
-                queryMetastoresSelector(getState())[0].id,
+                metastore_id:
+                    getState().dataTableSearch.metastoreId ||
+                    queryMetastoresSelector(getState())[0].id,
                 limit: 5,
                 offset,
                 sort_key: defaultSorting.sort_key,

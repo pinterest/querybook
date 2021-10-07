@@ -31,8 +31,13 @@ def get_all_schema(metastore_id, offset=0, limit=5, sort_key="name", sort_order=
     if sort_order == "desc":
         col = col.desc()
 
-    result = query.order_by(col).filter(DataSchema.metastore_id == metastore_id).offset(offset).limit(limit).all()
-
+    result = (
+        query.order_by(col)
+        .filter(DataSchema.metastore_id == metastore_id)
+        .offset(offset)
+        .limit(limit)
+        .all()
+    )
     return (
         result,
         len(result) < limit,

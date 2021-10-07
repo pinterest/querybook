@@ -319,7 +319,9 @@ def search_datadoc(
 @register("/schemas/", methods=["GET"])
 def get_schemas(metastore_id, limit=5, offset=0, sort_key="name", sort_order="desc"):
     verify_metastore_permission(metastore_id)
-    schema, done = logic.get_all_schema(metastore_id, offset, limit, sort_key, sort_order)
+    schema, done = logic.get_all_schema(
+        metastore_id, offset, limit, sort_key, sort_order
+    )
     return {"results": schema, "done": done}
 
 
@@ -348,7 +350,6 @@ def search_tables(
         sort_key=sort_key,
         sort_order=sort_order,
     )
-    print (query);
     results, count = _get_matching_objects(
         query,
         ES_CONFIG["tables"]["index_name"],

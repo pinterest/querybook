@@ -73,7 +73,6 @@ export default function dataTableSearch(
                 return;
             }
             case '@@dataTableSearch/DATA_TABLE_SEARCH_FILTER_UPDATE': {
-                debugger;
                 const { filterKey, filterValue } = action.payload;
                 if (filterValue != null) {
                     draft.searchFilters[filterKey] = filterValue;

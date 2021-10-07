@@ -65,7 +65,10 @@ export const SchemaTableView: React.FunctionComponent<{
                         key={schema.name}
                         name={schema.name}
                         total={schema?.count}
-                        data={prepareSchemaNames(schema?.tables, selectedTableId)}
+                        data={prepareSchemaNames(
+                            schema?.tables,
+                            selectedTableId
+                        )}
                         tableRowRenderer={tableRowRenderer}
                         onLoadMore={() =>
                             dispatch(
