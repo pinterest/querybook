@@ -56,6 +56,10 @@ services:
                 condition: service_healthy
             elasticsearch:
                 condition: service_healthy
+    trino:
+        image: trinodb/trino:latest
+        ports:
+            - 8080:8080
     scheduler:
         image: querybook-dev:latest
         cap_add:

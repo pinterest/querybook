@@ -43,6 +43,27 @@ presto_executor_template = StructFormField(
     ),
 )
 
+trino_executor_template = StructFormField(
+    connection_string=FormField(
+        required=True,
+        regex="^(?:jdbc:)?trino:\\/\\/([\\w.-]+(?:\\:\\d+)?(?:,[\\w.-]+(?:\\:\\d+)?)*)(\\/\\w+)?(\\/\\w+)?(\\?[\\w.-]+=[\\w.-]+(?:&[\\w.-]+=[\\w.-]+)*)?$",  # noqa: E501
+        helper="""
+<p>Format jdbc:presto://&lt;host:port&gt;/&lt;catalog&gt;/&lt;schema&gt;?presto_conf_list</p>
+<p>Catalog and schema are optional. We only support SSL as the conf option.</p>
+<p>See [here](https://prestodb.github.io/docs/current/installation/jdbc.html) for more details.</p>""",
+    ),
+    username=FormField(regex="\\w+"),
+    password=FormField(hidden=True),
+    impersonate=FormField(field_type=FormFieldType.Boolean),
+    proxy_user_id=FormField(
+        field_type=FormFieldType.String,
+        helper="""
+<p>User field used as proxy_user. proxy_user will be forwaded to Presto as the session user.</p>
+<p>Defaults to username. Possible values are username, email, fullname </p>
+<p>See [here](https://prestodb.github.io/docs/current/installation/jdbc.html) for more details.</p>""",
+    ),
+)
+
 sqlalchemy_template = StructFormField(
     connection_string=FormField(
         required=True,

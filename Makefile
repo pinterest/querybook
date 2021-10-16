@@ -2,7 +2,7 @@ SHELL := /bin/bash
 .PHONY: bundled_off prod_web prod_worker prod_scheduler docs remove_running_dev_image clean
 
 bundled: dev_image
-	docker-compose up
+	COMPOSE_HTTP_TIMEOUT=500 docker-compose up
 
 bundled_off:
 	docker-compose down
