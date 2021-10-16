@@ -103,5 +103,5 @@ make
 | Snowflake            | 2    | [snowflake-sqlalchemy](https://pypi.org/project/snowflake-sqlalchemy/)                                                                        | Yes                 |
 | SQLite               | 2    | None                                                                                                                                          | Yes                 |
 | Teradata Vantage     | 3    | [teradatasqlalchemy](https://pypi.org/project/teradatasqlalchemy/)                                                                            | No                  |
-| Trino                | 3    | [sqlalchemy-trino](https://pypi.org/project/sqlalchemy-trino/)                                                                                | No                  |
+| Trino                | 2    | [trino](https://github.com/trinodb/trino-python-client)                                                                                | No                  |
 | Vertica              | 3    | [sqlalchemy-vertica-python](https://pypi.org/project/sqlalchemy-vertica-python/)                                                              | No                  |

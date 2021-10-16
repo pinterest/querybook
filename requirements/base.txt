@@ -68,6 +68,9 @@ boto3==1.9.201
 boto==2.49.0
 moto==2.2.4
 
+# Trino Plugin
+trino==0.305.0
+
 # Google GCD
 google-cloud-storage==1.37.0
 google-auth==1.24.0
