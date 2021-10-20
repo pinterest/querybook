@@ -313,6 +313,7 @@ def search_datadoc(
     )
     return {"count": count, "results": results}
 
+
 @register("/search/tables/", methods=["GET"])
 def search_tables(
     metastore_id,

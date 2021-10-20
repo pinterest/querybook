@@ -12,7 +12,7 @@ const initialResultState: IDataTableSearchPaginationState = {
         schemaIds: [],
         schemaResultById: {},
         schemaSortByIds: {},
-        sortSchemasBy: "name",
+        sortSchemasBy: 'name',
         done: false,
     },
 };
@@ -118,7 +118,8 @@ export default function dataTableSearch(
             }
 
             case '@@dataTableSearch/SEARCH_TABLE_BY_SORT_CHANGED': {
-                draft.schemas.schemaSortByIds[action.payload.id] = action.payload.sort_key;
+                draft.schemas.schemaSortByIds[action.payload.id] =
+                    action.payload.sort_key;
                 draft.schemas.schemaResultById[action.payload.id].count = 1;
                 draft.schemas.schemaResultById[action.payload.id].tables = [];
                 return;

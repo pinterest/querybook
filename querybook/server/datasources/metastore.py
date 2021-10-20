@@ -584,11 +584,10 @@ def delete_table_warning(warning_id):
     verify_data_table_permission(warning.table_id)
     DataTableWarning.delete(warning_id)
 
+
 @register("/schemas/", methods=["GET"])
 def get_schemas(metastore_id, limit=5, offset=0, sort_key="name", sort_order="desc"):
     verify_metastore_permission(metastore_id)
-    schemas = logic.get_all_schemas(
-        metastore_id, offset, limit, sort_key, sort_order
-    )
-    return {"results": schemas, "done": len(schemas) < limit}
+    schemas = logic.get_all_schemas(metastore_id, offset, limit, sort_key, sort_order)
 
+    return {"results": schemas, "done": len(schemas) < limit}
