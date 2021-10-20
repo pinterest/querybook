@@ -8,7 +8,9 @@ import { useIntersectionObserver } from 'hooks/useIntersectionObserver';
 import {
     searchSchemas,
     searchTableBySchema,
+    changeSort,
 } from 'redux/dataTableSearch/action';
+
 import { SchemaTableItem } from './SchemaTableItem';
 
 const SchemasList = styled.div`
@@ -21,21 +23,6 @@ const IntersectionElement = styled.div`
     height: 1px;
 `;
 
-function prepareSchemaNames(
-    tables: ITableSearchResult[],
-    selectedTableId: number
-): ITableSearchResult[] {
-    if (!tables) {
-        return [];
-    }
-
-    return tables.map((table) => ({
-        ...table,
-        selected: table.id === selectedTableId,
-        full_name: table.name,
-    }));
-}
-
 export const SchemaTableView: React.FunctionComponent<{
     tableRowRenderer: (table: ITableSearchResult) => React.ReactNode;
     selectedTableId: number;
@@ -44,20 +31,19 @@ export const SchemaTableView: React.FunctionComponent<{
         (state: IStoreState) => state.dataTableSearch.schemas
     );
     const dispatch: Dispatch = useDispatch();
-    const schemasListRef = useRef<HTMLDivElement>(null);
     const intersectionElementRef = useRef<HTMLDivElement>(null);
 
     useIntersectionObserver({
-        rootElement: schemasListRef.current,
         intersectElement: intersectionElementRef.current,
         onIntersect: () => {
             dispatch(searchSchemas());
         },
-        listData: schemas,
+        deps: schemas.schemaIds,
+        enabled: schemas.done,
     });
 
     return (
-        <SchemasList ref={schemasListRef}>
+        <SchemasList>
             {schemas.schemaIds.map((schemaId) => {
                 const schema = schemas.schemaResultById[schemaId];
                 return (
@@ -65,11 +51,12 @@ export const SchemaTableView: React.FunctionComponent<{
                         key={schema.name}
                         name={schema.name}
                         total={schema?.count}
-                        data={prepareSchemaNames(
-                            schema?.tables,
-                            selectedTableId
-                        )}
+                        tables={schema?.tables}
+                        selectedTableId={selectedTableId}
                         tableRowRenderer={tableRowRenderer}
+                        onSortChanged={(value: boolean) =>
+                            dispatch(changeSort(schema.id, value))
+                        }
                         onLoadMore={() =>
                             dispatch(
                                 searchTableBySchema(schema.name, schema.id)

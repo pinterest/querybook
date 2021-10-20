@@ -6,6 +6,8 @@ import {
     ITableSearchResult,
     IDataTableSearchState,
     ITableSearchFilters,
+    ISchemaTableSortChangedAction,
+    ISchemasSortChangedAction,
 } from './types';
 
 import { queryMetastoresSelector } from 'redux/dataSources/selector';
@@ -46,6 +48,30 @@ function resetSearchResult(): IDataTableSearchResultResetAction {
 export function resetSearch(): IDataTableSearchResultClearAction {
     return {
         type: '@@dataTableSearch/DATA_TABLE_SEARCH_RESET',
+    };
+}
+
+export function changeSort(
+    id: number,
+    isImportance: boolean
+): ISchemaTableSortChangedAction {
+    return {
+        type: '@@dataTableSearch/SEARCH_TABLE_BY_SORT_CHANGED',
+        payload: {
+            id,
+            sort_key: isImportance ? 'importance_score' : 'name',
+        },
+    };
+}
+
+export function changeSchemasSort(
+    isSortByName: boolean
+): ISchemasSortChangedAction {
+    return {
+        type: '@@dataTableSearch/SCHEMAS_SORT_CHANGED',
+        payload: {
+            sort_key: isSortByName ? 'name' : 'table_count',
+        },
     };
 }
 
@@ -99,20 +125,18 @@ function searchDataTable(): ThunkResult<Promise<ITableSearchResult[]>> {
 
 export function searchSchemas(): ThunkResult<Promise<IDataSchema[]>> {
     return async (dispatch, getState) => {
-        const defaultSorting = window.DISPLAY_SCHEMA_TABLE?.sortSchemasBy || {
-            sort_key: 'name',
-            sort_order: 'desc',
-        };
         try {
-            const offset = getState().dataTableSearch.schemas.schemaIds.length;
+            const tableSearch = getState().dataTableSearch;
+            const offset = tableSearch.schemas.schemaIds.length;
+            const sortKey = tableSearch.schemas.sortSchemasBy || 'name';
             const searchRequest = SearchSchemaResource.getMore({
                 metastore_id:
-                    getState().dataTableSearch.metastoreId ||
+                    tableSearch.metastoreId ||
                     queryMetastoresSelector(getState())[0].id,
-                limit: 5,
+                limit: 30,
                 offset,
-                sort_key: defaultSorting.sort_key,
-                sort_order: defaultSorting.sort_order,
+                sort_key: sortKey,
+                sort_order: sortKey === 'name' ? 'asc' : 'desc',
             });
             dispatch({
                 type: '@@dataTableSearch/SCHEMA_SEARCH_STARTED',
@@ -122,10 +146,7 @@ export function searchSchemas(): ThunkResult<Promise<IDataSchema[]>> {
 
             dispatch({
                 type: '@@dataTableSearch/SCHEMA_SEARCH_DONE',
-                payload: {
-                    results: data.results,
-                    done: data.done,
-                },
+                payload: data,
             });
 
             return data.results;
@@ -142,11 +163,6 @@ export function searchTableBySchema(
     id: number
 ): ThunkResult<Promise<ITableSearchResult[]>> {
     return async (dispatch, getState) => {
-        const defaultSorting = window.DISPLAY_SCHEMA_TABLE?.sortTablesBy || {
-            sort_key: 'name',
-            sort_order: 'desc',
-        };
-
         try {
             const state = getState().dataTableSearch;
             const searchRequest = SearchTableResource.searchConcise({
@@ -157,8 +173,8 @@ export function searchTableBySchema(
                         schema: schemaName,
                     },
                 }),
-                sort_key: defaultSorting.sort_key,
-                sort_order: defaultSorting.sort_order,
+                sort_key: state.schemas.schemaSortByIds[id] || 'name',
+                sort_order: 'desc',
             });
             dispatch({
                 type: '@@dataTableSearch/SEARCH_TABLE_BY_SCHEMA_STARTED',

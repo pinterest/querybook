@@ -1,46 +1,100 @@
-import React, { useEffect, useState, useRef } from 'react';
+import React, { useState, useMemo } from 'react';
+import styled from 'styled-components';
 import { Title } from 'ui/Title/Title';
 import { IconButton } from 'ui/Button/IconButton';
 import { InfinityScroll } from 'ui/InfinityScroll/InfinityScroll';
+import { TextToggleButton } from 'ui/Button/TextToggleButton';
 import type { ITableSearchResult } from 'redux/dataTableSearch/types';
+import type { ITableResultWithSelection } from '../DataTableNavigator';
 
-function calculateMaxHeight(amountOfItems = 1) {
-    const TABLE_ITEM_HEIGHT = 28;
-    const MAX_VISIBLE_AMOUNT = 10;
-    return amountOfItems >= MAX_VISIBLE_AMOUNT
-        ? TABLE_ITEM_HEIGHT * MAX_VISIBLE_AMOUNT
-        : amountOfItems * TABLE_ITEM_HEIGHT;
+const TABLE_ITEM_HEIGHT = 28;
+const MAX_VISIBLE_AMOUNT = 10;
+
+function calculateMaxHeight(numberOfItems = 1) {
+    return Math.min(numberOfItems, MAX_VISIBLE_AMOUNT) * TABLE_ITEM_HEIGHT;
+}
+
+const StyledItem = styled.div`
+    height: 32px;
+`;
+
+const SchemaIconButton = styled(IconButton)`
+    padding: 4px;
+`;
+
+function prepareSchemaNames(
+    tables: ITableSearchResult[],
+    selectedTableId: number
+): ITableResultWithSelection[] {
+    if (!tables) {
+        return [];
+    }
+
+    return tables.map((table) => ({
+        ...table,
+        selected: table.id === selectedTableId,
+        full_name: table.name,
+    }));
 }
 
 export const SchemaTableItem: React.FC<{
     name: string;
     onLoadMore: () => Promise<any>;
-    data: ITableSearchResult[];
+    tables: ITableSearchResult[];
+    selectedTableId: number;
     total: number;
     tableRowRenderer: (table: ITableSearchResult) => React.ReactNode;
-}> = ({ name, onLoadMore, data, total, tableRowRenderer }) => {
+    onSortChanged: (sort: boolean) => void;
+}> = ({
+    name,
+    onLoadMore,
+    tables,
+    selectedTableId,
+    total,
+    tableRowRenderer,
+    onSortChanged,
+}) => {
     const [isExpanded, setIsExpanded] = useState<boolean>(false);
+    const [
+        isSortByImportanceScore,
+        setIsSortByImportanceScore,
+    ] = useState<boolean>(false);
+
+    const data = useMemo(() => prepareSchemaNames(tables, selectedTableId), [
+        tables,
+        selectedTableId,
+    ]);
 
     return (
         <div className={'DataDocNavigatorSection'}>
-            <div
-                style={{ borderBottom: '1px solid #e5e1e1' }}
-                className="horizontal-space-between navigator-header pl8"
-            >
+            <StyledItem className="horizontal-space-between navigator-header pl8">
                 <div
                     className="flex1 flex-row"
                     onClick={() => setIsExpanded(!isExpanded)}
                 >
                     <Title size={7}>{name}</Title>
                 </div>
+                <TextToggleButton
+                    onChange={(value) => {
+                        setIsSortByImportanceScore(value);
+                        onSortChanged(value);
+                    }}
+                    text={isSortByImportanceScore ? '↓Is' : '↓Aa'}
+                    value={isSortByImportanceScore}
+                    tooltip={
+                        isSortByImportanceScore
+                            ? 'Order By Importance Score'
+                            : 'Order By Name'
+                    }
+                    tooltipPos="left"
+                />
                 <div className="flex-row">
-                    <IconButton
+                    <SchemaIconButton
                         onClick={() => setIsExpanded(!isExpanded)}
                         icon={isExpanded ? 'chevron-down' : 'chevron-right'}
-                        className="ml4"
                     />
                 </div>
-            </div>
+            </StyledItem>
 
             {isExpanded && (
                 <div className="board-scroll-wrapper">
@@ -52,7 +106,7 @@ export const SchemaTableItem: React.FC<{
                             onLoadMore={onLoadMore}
                             hasMore={!total || total > data.length}
                             itemRenderer={tableRowRenderer}
-                            itemHeight={28}
+                            itemHeight={TABLE_ITEM_HEIGHT}
                             defaultListHeight={calculateMaxHeight(total)}
                             autoSizerStyles={{
                                 height: `${calculateMaxHeight(total)}px`,

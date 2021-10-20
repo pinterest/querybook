@@ -120,27 +120,3 @@ window.DATA_TABLE_SEARCH_CONFIG = {
     }),
 };
 ```
-### Customize table view
-
-For the table page you can select two methods of viewing tables. First, the default view is the infinite list with tables (This is the default view).
-
-Second variant, grouping all tables by schemas. Displaying tables grouping by schemas you should add next parameters:
-
-```typescript
-window.DISPLAY_SCHEMA_TABLE = {
-    sortSchemasBy: {
-        sort_key: 'name' | 'table_count',
-        sort_order: 'asc' | 'desc',
-    },
-    sortTablesBy: {
-        sort_key: 'importance_score' | 'name',
-        sort_order: 'desc' | 'asc',
-    },
-};
-```
-
-So, as you see, you should add `DISPLAY_SCHEMA_TABLE` object and set up next parameters:
-
-`sortSchemaBy` - the parameters for sorting schemas.
-
-`sortTablesBy` - the parameters for sorting tables in schemas list.

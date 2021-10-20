@@ -8,8 +8,6 @@ from app.auth.permission import (
 from app.datasource import register, api_assert
 from lib.logger import get_logger
 from logic.elasticsearch import ES_CONFIG, get_hosted_es
-from logic import metastore as logic
-
 
 LOG = get_logger(__file__)
 
@@ -229,7 +227,7 @@ def _construct_tables_query(
     }
 
     if concise:
-        query["_source"] = ["id", "full_name", "name"]
+        query["_source"] = ["id", "schema", "name"]
 
     if sort_key:
         if not isinstance(sort_key, list):
@@ -314,16 +312,6 @@ def search_datadoc(
         True,
     )
     return {"count": count, "results": results}
-
-
-@register("/schemas/", methods=["GET"])
-def get_schemas(metastore_id, limit=5, offset=0, sort_key="name", sort_order="desc"):
-    verify_metastore_permission(metastore_id)
-    schema, done = logic.get_all_schema(
-        metastore_id, offset, limit, sort_key, sort_order
-    )
-    return {"results": schema, "done": done}
-
 
 @register("/search/tables/", methods=["GET"])
 def search_tables(

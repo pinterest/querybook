@@ -22,7 +22,7 @@ from tasks.sync_elasticsearch import sync_elasticsearch
 
 
 @with_session
-def get_all_schema(
+def get_all_schemas(
     metastore_id, offset=0, limit=5, sort_key="name", sort_order="desc", session=None
 ):
     """Get all the schemas."""
@@ -40,10 +40,7 @@ def get_all_schema(
         .limit(limit)
         .all()
     )
-    return (
-        result,
-        len(result) < limit,
-    )
+    return result
 
 
 def get_schema_by_name_and_metastore_id(schema_name, metastore_id, session=None):

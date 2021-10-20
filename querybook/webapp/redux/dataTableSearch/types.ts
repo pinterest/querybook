@@ -6,7 +6,7 @@ import { IDataSchema } from 'const/metastore';
 
 export interface ITableSearchResult {
     id: number;
-    full_name: string;
+    schema: string;
     name: string;
 }
 
@@ -125,6 +125,21 @@ export interface ISearchTableBySchemaFailedAction extends Action {
     };
 }
 
+export interface ISchemaTableSortChangedAction extends Action {
+    type: '@@dataTableSearch/SEARCH_TABLE_BY_SORT_CHANGED';
+    payload: {
+        id: number;
+        sort_key: 'name' | 'importance_score';
+    };
+}
+
+export interface ISchemasSortChangedAction extends Action {
+    type: '@@dataTableSearch/SCHEMAS_SORT_CHANGED';
+    payload: {
+        sort_key: 'name' | 'table_count';
+    };
+}
+
 export type DataTableSearchAction =
     | IDataTableSearchResultResetAction
     | IDataTableSearchResultClearAction
@@ -141,7 +156,9 @@ export type DataTableSearchAction =
     | ISearchTableBySchemaAction
     | ISearchTableBySchemaResultAction
     | ISchemaSearchFailedAction
-    | ISearchTableBySchemaFailedAction;
+    | ISearchTableBySchemaFailedAction
+    | ISchemaTableSortChangedAction
+    | ISchemasSortChangedAction;
 
 export interface IDataTableSearchPaginationState {
     results: ITableSearchResult[];
@@ -150,6 +167,8 @@ export interface IDataTableSearchPaginationState {
         schemaResultById: Record<number, ISchemaTableSearch>;
         schemaIds: number[];
         done: boolean;
+        schemaSortByIds: Record<number, 'name' | 'importance_score'>;
+        sortSchemasBy: 'name' | 'table_count';
     };
 }
 

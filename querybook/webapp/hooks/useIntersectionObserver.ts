@@ -1,17 +1,18 @@
 import { useEffect, useRef, useCallback } from 'react';
 
 export function useIntersectionObserver({
-    rootElement,
     intersectElement,
     onIntersect,
-    listData,
+    deps,
+    enabled,
 }: {
-    rootElement: HTMLElement;
     intersectElement: HTMLElement;
     onIntersect: () => void;
-    listData: any;
+    deps: any[];
+    enabled: boolean;
 }) {
     const interseptor = useRef<IntersectionObserver>(null);
+    const rootElement = intersectElement?.parentElement;
 
     const intersectCallback = useCallback(() => {
         interseptor.current.unobserve(intersectElement);
@@ -36,8 +37,8 @@ export function useIntersectionObserver({
     }, [rootElement]);
 
     useEffect(() => {
-        if (!listData.done && intersectElement) {
+        if (!enabled && intersectElement) {
             interseptor.current.observe(intersectElement);
         }
-    }, [listData, intersectElement]);
+    }, [deps, intersectElement]);
 }

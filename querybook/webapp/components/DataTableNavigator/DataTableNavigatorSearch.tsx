@@ -3,6 +3,7 @@ import { ITableSearchFilters } from 'redux/dataTableSearch/types';
 
 import { useToggleState } from 'hooks/useToggleState';
 
+import { useDispatch } from 'react-redux';
 import { Popover } from 'ui/Popover/Popover';
 import { ToggleSwitch } from 'ui/ToggleSwitch/ToggleSwitch';
 import { Title } from 'ui/Title/Title';
@@ -12,6 +13,9 @@ import { TableTagGroupSelect } from 'components/DataTableTags/TableTagGroupSelec
 
 import './DataTableNavigatorSearch.scss';
 import { SoftButton } from 'ui/Button/Button';
+import { SchemaSortIcon } from './SchemaSortIcon';
+
+import { changeSchemasSort } from 'redux/dataTableSearch/action';
 
 export const DataTableNavigatorSearch: React.FC<{
     searchString: string;
@@ -41,6 +45,8 @@ export const DataTableNavigatorSearch: React.FC<{
         },
         [updateSearchFilter]
     );
+
+    const dispatch = useDispatch();
 
     const searchFiltersPickerDOM = showSearchFilter && (
         <Popover
@@ -100,6 +106,11 @@ export const DataTableNavigatorSearch: React.FC<{
                 onSearch={onSearch}
                 placeholder="Search by Table Name..."
                 transparent
+            />
+            <SchemaSortIcon
+                onSortChanged={(value: boolean) => {
+                    dispatch(changeSchemasSort(value));
+                }}
             />
             <IconButton
                 ref={filterButtonRef}

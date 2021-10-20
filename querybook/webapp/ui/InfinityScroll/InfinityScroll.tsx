@@ -126,7 +126,7 @@ function InfinityScrollComponent<T>({
                                 registerChild(ref);
                                 listRef.current = ref;
                             }}
-                            height={defaultListHeight || height}
+                            height={defaultListHeight ?? height}
                             width={width}
                             rowCount={rowCount}
                             rowHeight={itemHeight}
