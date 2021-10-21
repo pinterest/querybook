@@ -40,5 +40,5 @@ export function useIntersectionObserver({
         if (!enabled && intersectElement) {
             interseptor.current.observe(intersectElement);
         }
-    }, [deps, intersectElement]);
+    }, [...deps, intersectElement]);
 }

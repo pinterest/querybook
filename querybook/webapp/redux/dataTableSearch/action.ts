@@ -51,7 +51,7 @@ export function resetSearch(): IDataTableSearchResultClearAction {
     };
 }
 
-export function changeSort(
+export function changeTableSort(
     id: number,
     isImportance: boolean
 ): ISchemaTableSortChangedAction {

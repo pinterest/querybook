@@ -8,7 +8,7 @@ import { useIntersectionObserver } from 'hooks/useIntersectionObserver';
 import {
     searchSchemas,
     searchTableBySchema,
-    changeSort,
+    changeTableSort,
 } from 'redux/dataTableSearch/action';
 
 import { SchemaTableItem } from './SchemaTableItem';
@@ -38,7 +38,7 @@ export const SchemaTableView: React.FunctionComponent<{
         onIntersect: () => {
             dispatch(searchSchemas());
         },
-        deps: schemas.schemaIds,
+        deps: [...schemas.schemaIds],
         enabled: schemas.done,
     });
 
@@ -55,7 +55,7 @@ export const SchemaTableView: React.FunctionComponent<{
                         selectedTableId={selectedTableId}
                         tableRowRenderer={tableRowRenderer}
                         onSortChanged={(value: boolean) =>
-                            dispatch(changeSort(schema.id, value))
+                            dispatch(changeTableSort(schema.id, value))
                         }
                         onLoadMore={() =>
                             dispatch(
