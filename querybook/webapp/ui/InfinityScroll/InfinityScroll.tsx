@@ -16,6 +16,8 @@ export interface IInfinityScrollProps<T> {
     onLoadMore?: () => Promise<any>;
     // the actual number of elements, including not loaded
     hasMore?: boolean;
+    defaultListHeight?: number;
+    autoSizerStyles?: React.CSSProperties;
 }
 
 function InfinityScrollComponent<T>({
@@ -30,6 +32,8 @@ function InfinityScrollComponent<T>({
 
     onLoadMore,
     hasMore,
+    defaultListHeight,
+    autoSizerStyles,
 }: React.PropsWithChildren<IInfinityScrollProps<T>>) {
     const listRef = useRef<List>();
 
@@ -113,7 +117,7 @@ function InfinityScrollComponent<T>({
             rowCount={rowCount}
         >
             {({ onRowsRendered, registerChild }) => (
-                <AutoSizer>
+                <AutoSizer style={autoSizerStyles}>
                     {({ height, width }) => (
                         <List
                             className={className}
@@ -122,7 +126,7 @@ function InfinityScrollComponent<T>({
                                 registerChild(ref);
                                 listRef.current = ref;
                             }}
-                            height={height}
+                            height={defaultListHeight ?? height}
                             width={width}
                             rowCount={rowCount}
                             rowHeight={itemHeight}

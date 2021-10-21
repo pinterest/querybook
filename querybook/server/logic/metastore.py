@@ -22,9 +22,25 @@ from tasks.sync_elasticsearch import sync_elasticsearch
 
 
 @with_session
-def get_all_schema(offset=0, limit=100, session=None):
+def get_all_schemas(
+    metastore_id, offset=0, limit=5, sort_key="name", sort_order="desc", session=None
+):
     """Get all the schemas."""
-    return session.query(DataSchema).offset(offset).limit(limit).all()
+    query = session.query(DataSchema)
+
+    col = getattr(DataSchema, sort_key)
+
+    if sort_order == "desc":
+        col = col.desc()
+
+    result = (
+        query.order_by(col)
+        .filter(DataSchema.metastore_id == metastore_id)
+        .offset(offset)
+        .limit(limit)
+        .all()
+    )
+    return result
 
 
 def get_schema_by_name_and_metastore_id(schema_name, metastore_id, session=None):

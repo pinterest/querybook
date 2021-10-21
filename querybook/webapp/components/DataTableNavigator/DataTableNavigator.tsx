@@ -21,9 +21,26 @@ import { Popover } from 'ui/Popover/Popover';
 import { DataTableHoverContent } from './DataTableHoverContent';
 import { DataTableNavigatorSearch } from './DataTableNavigatorSearch';
 
+import { SchemaTableView } from './SchemaTableView/SchemaTableView';
+
 import './DataTableNavigator.scss';
 
+const PRESELECTED_FILTERS = ['golden'];
+
+function isFilteringTables(
+    searchString: string,
+    searchFilters: ITableSearchFilters
+): boolean {
+    return (
+        !!searchString ||
+        Object.keys(searchFilters)
+            .filter((key) => !PRESELECTED_FILTERS.includes(key))
+            .some((key) => searchFilters[key])
+    );
+}
+
 export interface ITableResultWithSelection extends ITableSearchResult {
+    full_name: string;
     selected: boolean;
 }
 
@@ -159,7 +176,6 @@ export const DataTableNavigator: React.FC<IDataTableNavigatorProps> = ({
 
     const tableRowRenderer = useCallback(
         (table: ITableResultWithSelection) => {
-            const tableName = table.full_name;
             const className = clsx({
                 selected: table.selected,
             });
@@ -174,7 +190,7 @@ export const DataTableNavigator: React.FC<IDataTableNavigatorProps> = ({
                                     handleTableRowClick(table.id, event)
                                 }
                                 isRow
-                                title={tableName}
+                                title={table.full_name}
                             />
                             {showPopover && (
                                 <Popover
@@ -184,7 +200,7 @@ export const DataTableNavigator: React.FC<IDataTableNavigatorProps> = ({
                                 >
                                     <DataTableHoverContent
                                         tableId={table.id}
-                                        tableName={tableName}
+                                        tableName={table.full_name}
                                     />
                                 </Popover>
                             )}
@@ -218,21 +234,33 @@ export const DataTableNavigator: React.FC<IDataTableNavigatorProps> = ({
     const dataTablesWithSelection: ITableResultWithSelection[] = dataTables.map(
         (table) => ({
             ...table,
+            full_name: `${table.schema}.${table.name}`,
             selected: selectedTableId === table.id,
         })
     );
 
-    const tablesDOM = (
-        <div className="table-scroll-wrapper">
-            <InfinityScroll<ITableSearchResult>
-                elements={dataTablesWithSelection}
-                onLoadMore={getMoreDataTable}
-                hasMore={numDataTables > dataTables.length || isSearching}
-                itemRenderer={tableRowRenderer}
-                itemHeight={28}
+    let tablesDOM = null;
+
+    if (!isFilteringTables(searchString, searchFilters)) {
+        tablesDOM = (
+            <SchemaTableView
+                tableRowRenderer={tableRowRenderer}
+                selectedTableId={selectedTableId}
             />
-        </div>
-    );
+        );
+    } else {
+        tablesDOM = (
+            <div className="table-scroll-wrapper">
+                <InfinityScroll<ITableSearchResult>
+                    elements={dataTablesWithSelection}
+                    onLoadMore={getMoreDataTable}
+                    hasMore={numDataTables > dataTables.length || isSearching}
+                    itemRenderer={tableRowRenderer}
+                    itemHeight={28}
+                />
+            </div>
+        );
+    }
 
     return (
         <div className={'DataTableNavigator '}>
