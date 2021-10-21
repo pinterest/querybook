@@ -120,6 +120,8 @@ export default function dataTableSearch(
             case '@@dataTableSearch/SEARCH_TABLE_BY_SORT_CHANGED': {
                 draft.schemas.schemaSortByIds[action.payload.id] =
                     action.payload.sort_key;
+                /* We have to set .count = 1 because InfinityScroll should make at least
+                 one request after sorting for getting the real count. */
                 draft.schemas.schemaResultById[action.payload.id].count = 1;
                 draft.schemas.schemaResultById[action.payload.id].tables = [];
                 return;

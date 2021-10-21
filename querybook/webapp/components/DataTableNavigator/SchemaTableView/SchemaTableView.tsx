@@ -38,7 +38,7 @@ export const SchemaTableView: React.FunctionComponent<{
         onIntersect: () => {
             dispatch(searchSchemas());
         },
-        deps: [...schemas.schemaIds],
+        deps: [schemas.schemaIds],
         enabled: schemas.done,
     });
 
