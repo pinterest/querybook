@@ -8,8 +8,9 @@
 
 
 package-lock.json
-# jenkins job should not delete .env
-.env/
+.env
+# virtualenv for development
+.virtualenv
 
 # Frontend logs
 npm-debug.log*

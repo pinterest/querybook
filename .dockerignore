@@ -6,3 +6,6 @@ node_modules
 
 # ignore our build file
 dist
+
+# virtual env used for development
+.virtualenv
