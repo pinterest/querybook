@@ -1,11 +1,14 @@
+import { startCase } from 'lodash';
 import React, { useState, useMemo } from 'react';
 import styled from 'styled-components';
+
+import { SchemaTableSortKey } from 'const/metastore';
 import { Title } from 'ui/Title/Title';
 import { IconButton } from 'ui/Button/IconButton';
 import { InfinityScroll } from 'ui/InfinityScroll/InfinityScroll';
-import { TextToggleButton } from 'ui/Button/TextToggleButton';
 import type { ITableSearchResult } from 'redux/dataTableSearch/types';
 import type { ITableResultWithSelection } from '../DataTableNavigator';
+import { OrderByButton } from 'ui/OrderByButton/OrderByButton';
 
 const TABLE_ITEM_HEIGHT = 28;
 const MAX_VISIBLE_AMOUNT = 10;
@@ -44,7 +47,14 @@ export const SchemaTableItem: React.FC<{
     selectedTableId: number;
     total: number;
     tableRowRenderer: (table: ITableSearchResult) => React.ReactNode;
-    onSortChanged: (sort: boolean) => void;
+    onSortChanged: (
+        sortKey?: SchemaTableSortKey | null,
+        sortAsc?: boolean | null
+    ) => void;
+    sortOrder: {
+        asc: boolean;
+        key: SchemaTableSortKey;
+    };
 }> = ({
     name,
     onLoadMore,
@@ -53,13 +63,9 @@ export const SchemaTableItem: React.FC<{
     total,
     tableRowRenderer,
     onSortChanged,
+    sortOrder,
 }) => {
     const [isExpanded, setIsExpanded] = useState<boolean>(false);
-    const [
-        isSortByImportanceScore,
-        setIsSortByImportanceScore,
-    ] = useState<boolean>(false);
-
     const data = useMemo(() => prepareSchemaNames(tables, selectedTableId), [
         tables,
         selectedTableId,
@@ -74,20 +80,20 @@ export const SchemaTableItem: React.FC<{
                 >
                     <Title size={7}>{name}</Title>
                 </div>
-                <TextToggleButton
-                    onChange={(value) => {
-                        setIsSortByImportanceScore(value);
-                        onSortChanged(value);
-                    }}
-                    text={isSortByImportanceScore ? '↓Is' : '↓Aa'}
-                    value={isSortByImportanceScore}
-                    tooltip={
-                        isSortByImportanceScore
-                            ? 'Order By Importance Score'
-                            : 'Order By Name'
+                <OrderByButton
+                    asc={sortOrder.asc}
+                    orderByField={startCase(sortOrder.key)}
+                    orderByFieldSymbol={sortOrder.key === 'name' ? 'Aa' : 'Is'}
+                    onAscToggle={() => onSortChanged(null, !sortOrder.asc)}
+                    onOrderByFieldToggle={() =>
+                        onSortChanged(
+                            sortOrder.key === 'name'
+                                ? 'importance_score'
+                                : 'name'
+                        )
                     }
-                    tooltipPos="left"
                 />
+
                 <div className="flex-row">
                     <SchemaIconButton
                         onClick={() => setIsExpanded(!isExpanded)}

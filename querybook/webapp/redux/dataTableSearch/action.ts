@@ -12,7 +12,12 @@ import {
 
 import { queryMetastoresSelector } from 'redux/dataSources/selector';
 
-import { IDataSchema } from 'const/metastore';
+import {
+    IDataSchema,
+    SchemaSortKey,
+    SchemaTableSortKey,
+} from 'const/metastore';
+import { defaultSortSchemaBy, defaultSortSchemaTableBy } from './const';
 
 const BATCH_LOAD_SIZE = 100;
 
@@ -53,24 +58,28 @@ export function resetSearch(): IDataTableSearchResultClearAction {
 
 export function changeTableSort(
     id: number,
-    isImportance: boolean
+    sortKey?: SchemaTableSortKey | undefined | null,
+    sortAsc?: boolean | undefined | null
 ): ISchemaTableSortChangedAction {
     return {
         type: '@@dataTableSearch/SEARCH_TABLE_BY_SORT_CHANGED',
         payload: {
             id,
-            sort_key: isImportance ? 'importance_score' : 'name',
+            sortKey,
+            sortAsc,
         },
     };
 }
 
 export function changeSchemasSort(
-    isSortByName: boolean
+    sortKey?: SchemaSortKey | undefined | null,
+    sortAsc?: boolean | undefined | null
 ): ISchemasSortChangedAction {
     return {
         type: '@@dataTableSearch/SCHEMAS_SORT_CHANGED',
         payload: {
-            sort_key: isSortByName ? 'name' : 'table_count',
+            sortKey,
+            sortAsc,
         },
     };
 }
@@ -128,15 +137,16 @@ export function searchSchemas(): ThunkResult<Promise<IDataSchema[]>> {
         try {
             const tableSearch = getState().dataTableSearch;
             const offset = tableSearch.schemas.schemaIds.length;
-            const sortKey = tableSearch.schemas.sortSchemasBy || 'name';
+            const sortSchemasBy =
+                tableSearch.schemas.sortSchemasBy || defaultSortSchemaBy;
             const searchRequest = SearchSchemaResource.getMore({
                 metastore_id:
                     tableSearch.metastoreId ||
                     queryMetastoresSelector(getState())[0].id,
                 limit: 30,
                 offset,
-                sort_key: sortKey,
-                sort_order: sortKey === 'name' ? 'asc' : 'desc',
+                sort_key: sortSchemasBy.key,
+                sort_order: sortSchemasBy.asc ? 'asc' : 'desc',
             });
             dispatch({
                 type: '@@dataTableSearch/SCHEMA_SEARCH_STARTED',
@@ -165,6 +175,8 @@ export function searchTableBySchema(
     return async (dispatch, getState) => {
         try {
             const state = getState().dataTableSearch;
+            const orderBy =
+                state.schemas.schemaSortByIds[id] || defaultSortSchemaTableBy;
             const searchRequest = SearchTableResource.searchConcise({
                 ...mapStateToSearch({
                     ...state,
@@ -173,8 +185,8 @@ export function searchTableBySchema(
                         schema: schemaName,
                     },
                 }),
-                sort_key: state.schemas.schemaSortByIds[id] || 'name',
-                sort_order: 'desc',
+                sort_key: orderBy.key,
+                sort_order: orderBy.asc ? 'asc' : 'desc',
             });
             dispatch({
                 type: '@@dataTableSearch/SEARCH_TABLE_BY_SCHEMA_STARTED',

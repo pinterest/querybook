@@ -1,4 +1,5 @@
 import { produce } from 'immer';
+import { defaultSortSchemaBy, defaultSortSchemaTableBy } from './const';
 import {
     IDataTableSearchState,
     IDataTableSearchPaginationState,
@@ -12,7 +13,7 @@ const initialResultState: IDataTableSearchPaginationState = {
         schemaIds: [],
         schemaResultById: {},
         schemaSortByIds: {},
-        sortSchemasBy: 'name',
+        sortSchemasBy: defaultSortSchemaBy,
         done: false,
     },
 };
@@ -118,21 +119,40 @@ export default function dataTableSearch(
             }
 
             case '@@dataTableSearch/SEARCH_TABLE_BY_SORT_CHANGED': {
-                draft.schemas.schemaSortByIds[action.payload.id] =
-                    action.payload.sort_key;
+                const { sortKey, sortAsc, id: schemaId } = action.payload;
+                draft.schemas.schemaSortByIds[schemaId] = draft.schemas
+                    .schemaSortByIds[schemaId] || {
+                    ...defaultSortSchemaTableBy,
+                };
+                if (sortKey != null) {
+                    draft.schemas.schemaSortByIds[schemaId].key = sortKey;
+                }
+                if (sortAsc != null) {
+                    draft.schemas.schemaSortByIds[schemaId].asc = sortAsc;
+                }
+
                 /* We have to set .count = 1 because InfinityScroll should make at least
                  one request after sorting for getting the real count. */
-                draft.schemas.schemaResultById[action.payload.id].count = 1;
-                draft.schemas.schemaResultById[action.payload.id].tables = [];
+                draft.schemas.schemaResultById[schemaId].count = 1;
+                draft.schemas.schemaResultById[schemaId].tables = [];
                 return;
             }
 
             case '@@dataTableSearch/SCHEMAS_SORT_CHANGED': {
-                draft.schemas.sortSchemasBy = action.payload.sort_key;
-                draft.schemas.schemaIds = [];
-                draft.schemas.schemaResultById = {};
-                draft.schemas.schemaSortByIds = {};
-                draft.schemas.done = false;
+                const { sortKey, sortAsc } = action.payload;
+
+                if (sortKey != null) {
+                    draft.schemas.sortSchemasBy.key = sortKey;
+                }
+                if (sortAsc != null) {
+                    draft.schemas.sortSchemasBy.asc = sortAsc;
+                }
+
+                // reset search state
+                draft.schemas = {
+                    ...initialResultState.schemas,
+                    sortSchemasBy: draft.schemas.sortSchemasBy,
+                };
                 return;
             }
         }

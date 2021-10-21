@@ -187,3 +187,6 @@ export interface ITableColumnStats {
     value: TableStatValue;
     uid: number;
 }
+
+export type SchemaSortKey = 'name' | 'table_count';
+export type SchemaTableSortKey = 'name' | 'importance_score';

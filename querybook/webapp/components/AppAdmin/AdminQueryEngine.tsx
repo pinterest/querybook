@@ -8,6 +8,7 @@ import { sendConfirm } from 'lib/querybookUI';
 import history from 'lib/router-history';
 import { generateFormattedDate } from 'lib/utils/datetime';
 import { titleize } from 'lib/utils';
+import NOOP from 'lib/utils/noop';
 import { useResource } from 'hooks/useResource';
 
 import { AdminAuditLogButton } from 'components/AdminAuditLog/AdminAuditLogButton';
@@ -379,9 +380,7 @@ export const AdminQueryEngine: React.FunctionComponent<IProps> = ({
                                         )
                                     }
                                     item={executorTemplate[item.executor]}
-                                    itemLoader={() => {
-                                        /* do nothing */
-                                    }}
+                                    itemLoader={NOOP}
                                 />
                             </div>
                         </div>
