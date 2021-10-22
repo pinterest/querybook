@@ -120,7 +120,7 @@ export const DataDocNavigatorSection: React.FC<INavigatorSectionProps> = ({
                         asc={dataDocOrderByAsc}
                         onAscToggle={() => setDataDocOrderByAsc((v) => !v)}
                         orderByFieldSymbol={
-                            dataDocOrderBy === 'alphabetical' ? 'Aa' : 'Lt'
+                            dataDocOrderBy === 'alphabetical' ? 'Aa' : 'U@'
                         }
                         orderByField={
                             dataDocOrderBy === 'alphabetical'
