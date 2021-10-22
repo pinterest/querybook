@@ -1,17 +1,19 @@
 import React from 'react';
+import { useDrag } from 'react-dnd';
+
+import { IDataDoc } from 'const/datadoc';
+import { DataDocHoverContent } from 'components/DataDocHoverContent/DataDocHoverContent';
 
 import history from 'lib/router-history';
-import { IDataDoc } from 'const/datadoc';
+import NOOP from 'lib/utils/noop';
 
 import { ListLink } from 'ui/Link/ListLink';
-import { useDrag } from 'react-dnd';
-import { DataDocDraggableType } from './navigatorConst';
 import { IconButton } from 'ui/Button/IconButton';
 
-import './DataDocGridItem.scss';
 import { Popover } from 'ui/Popover/Popover';
 import { PopoverHoverWrapper } from 'ui/Popover/PopoverHoverWrapper';
-import { DataDocHoverContent } from 'components/DataDocHoverContent/DataDocHoverContent';
+import { DataDocDraggableType } from './navigatorConst';
+import './DataDocGridItem.scss';
 
 export interface IDataDocGridItemProps {
     dataDoc: IDataDoc;
@@ -74,9 +76,7 @@ export const DataDocGridItem: React.FunctionComponent<IDataDocGridItemProps> = R
                             </ListLink>
                             {showPopover && anchorElement && (
                                 <Popover
-                                    onHide={() => {
-                                        /* ignore */
-                                    }}
+                                    onHide={NOOP}
                                     anchor={anchorElement}
                                     layout={['right', 'top']}
                                 >

@@ -5,6 +5,7 @@ import { BoardItemType } from 'const/board';
 import { DataDocHoverContent } from 'components/DataDocHoverContent/DataDocHoverContent';
 import { DataTableHoverContent } from 'components/DataTableNavigator/DataTableHoverContent';
 import { getWithinEnvUrl } from 'lib/utils/query-string';
+import NOOP from 'lib/utils/noop';
 import { Level } from 'ui/Level/Level';
 import { ListLink } from 'ui/Link/ListLink';
 import { PopoverHoverWrapper } from 'ui/Popover/PopoverHoverWrapper';
@@ -62,9 +63,7 @@ export const BoardListItemRow: React.FC<{
                     </Level>
                     {showPopover && anchorElement && (
                         <Popover
-                            onHide={() => {
-                                /* ignore */
-                            }}
+                            onHide={NOOP}
                             layout={['right', 'top']}
                             anchor={anchorElement}
                         >

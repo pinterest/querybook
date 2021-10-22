@@ -6,11 +6,13 @@ import React from 'react';
 import { connect } from 'react-redux';
 import { withRouter, RouteComponentProps } from 'react-router-dom';
 
+import { IPaginatedQuerySampleFilters } from 'const/metastore';
 import { sanitizeUrlTitle } from 'lib/utils';
 import history from 'lib/router-history';
 import { formatError } from 'lib/utils/error';
 import { getQueryString, replaceQueryString } from 'lib/utils/query-string';
 import { setBrowserTitle } from 'lib/querybookUI';
+import NOOP from 'lib/utils/noop';
 
 import { fullTableSelector } from 'redux/dataSources/selector';
 import { IStoreState, Dispatch } from 'redux/store/types';
@@ -32,7 +34,6 @@ import { Loader } from 'ui/Loader/Loader';
 import { Tabs } from 'ui/Tabs/Tabs';
 
 import './DataTableView.scss';
-import { IPaginatedQuerySampleFilters } from 'const/metastore';
 
 const tabDefinitions = [
     {
@@ -170,12 +171,7 @@ class DataTableViewComponent extends React.PureComponent<
         const { table, schema, tableColumns } = this.props;
 
         return (
-            <Loader
-                item={table}
-                itemLoader={() => {
-                    /* */
-                }}
-            >
+            <Loader item={table} itemLoader={NOOP}>
                 <DataTableViewSamples
                     table={table}
                     schema={schema}
@@ -189,12 +185,7 @@ class DataTableViewComponent extends React.PureComponent<
     public makeWarningsDOM() {
         const { tableWarnings, table } = this.props;
         return (
-            <Loader
-                item={table}
-                itemLoader={() => {
-                    /* */
-                }}
-            >
+            <Loader item={table} itemLoader={NOOP}>
                 <DataTableViewWarnings
                     tableWarnings={tableWarnings}
                     tableId={table.id}

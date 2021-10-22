@@ -1,21 +1,23 @@
+import { startCase } from 'lodash';
+import { useDispatch, useSelector } from 'react-redux';
 import React, { useRef, useMemo, useCallback } from 'react';
+
 import { ITableSearchFilters } from 'redux/dataTableSearch/types';
 
 import { useToggleState } from 'hooks/useToggleState';
 
-import { useDispatch } from 'react-redux';
+import { TableTagGroupSelect } from 'components/DataTableTags/TableTagGroupSelect';
+import { changeSchemasSort } from 'redux/dataTableSearch/action';
+import { IStoreState } from 'redux/store/types';
 import { Popover } from 'ui/Popover/Popover';
 import { ToggleSwitch } from 'ui/ToggleSwitch/ToggleSwitch';
 import { Title } from 'ui/Title/Title';
 import { IconButton } from 'ui/Button/IconButton';
 import { SearchBar } from 'ui/SearchBar/SearchBar';
-import { TableTagGroupSelect } from 'components/DataTableTags/TableTagGroupSelect';
+import { SoftButton } from 'ui/Button/Button';
+import { OrderByButton } from 'ui/OrderByButton/OrderByButton';
 
 import './DataTableNavigatorSearch.scss';
-import { SoftButton } from 'ui/Button/Button';
-import { SchemaSortIcon } from './SchemaSortIcon';
-
-import { changeSchemasSort } from 'redux/dataTableSearch/action';
 
 export const DataTableNavigatorSearch: React.FC<{
     searchString: string;
@@ -26,18 +28,25 @@ export const DataTableNavigatorSearch: React.FC<{
         filterVal: ITableSearchFilters[K]
     ) => void;
     resetSearchFilter: () => void;
+
+    showTableSearchResult: boolean;
 }> = ({
     searchString,
     onSearch,
     searchFilters,
     updateSearchFilter,
     resetSearchFilter,
+
+    showTableSearchResult,
 }) => {
     const [showSearchFilter, , toggleSearchFilter] = useToggleState(false);
     const filterButtonRef = useRef<HTMLAnchorElement>();
     const searchFiltersSize = useMemo(() => Object.keys(searchFilters).length, [
         searchFilters,
     ]);
+    const { key: sortSchemaKey, asc: sortSchemaAsc } = useSelector(
+        (state: IStoreState) => state.dataTableSearch.schemas.sortSchemasBy
+    );
 
     const updateTags = useCallback(
         (newTags: string[]) => {
@@ -107,11 +116,28 @@ export const DataTableNavigatorSearch: React.FC<{
                 placeholder="Search by Table Name..."
                 transparent
             />
-            <SchemaSortIcon
-                onSortChanged={(value: boolean) => {
-                    dispatch(changeSchemasSort(value));
-                }}
-            />
+
+            {!showTableSearchResult && (
+                <OrderByButton
+                    className="mr4"
+                    asc={sortSchemaAsc}
+                    orderByField={startCase(sortSchemaKey)}
+                    orderByFieldSymbol={sortSchemaKey === 'name' ? 'Aa' : 'Tc'}
+                    onAscToggle={() => {
+                        dispatch(changeSchemasSort(null, !sortSchemaAsc));
+                    }}
+                    onOrderByFieldToggle={() => {
+                        dispatch(
+                            changeSchemasSort(
+                                sortSchemaKey === 'table_count'
+                                    ? 'name'
+                                    : 'table_count'
+                            )
+                        );
+                    }}
+                />
+            )}
+
             <IconButton
                 ref={filterButtonRef}
                 className=""

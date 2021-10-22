@@ -55,7 +55,7 @@ export const BoardOrderToDescription = {
     [BoardOrderBy.updatedAt]: 'Last Updated',
 };
 export const BoardOrderToTitle = {
-    [BoardOrderBy.alphabetical]: '↓Aa',
-    [BoardOrderBy.createdAt]: '↑C',
-    [BoardOrderBy.updatedAt]: '↑U',
+    [BoardOrderBy.alphabetical]: 'Aa',
+    [BoardOrderBy.createdAt]: 'C@',
+    [BoardOrderBy.updatedAt]: 'U@',
 };

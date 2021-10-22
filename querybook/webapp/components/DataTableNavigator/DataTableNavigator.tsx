@@ -1,4 +1,4 @@
-import React, { useCallback, useEffect } from 'react';
+import React, { useCallback, useEffect, useMemo } from 'react';
 import clsx from 'clsx';
 import { useSelector, useDispatch } from 'react-redux';
 import { useHistory } from 'react-router-dom';
@@ -212,6 +212,11 @@ export const DataTableNavigator: React.FC<IDataTableNavigatorProps> = ({
         [handleTableRowClick]
     );
 
+    const showTableSearchResult = useMemo(
+        () => isFilteringTables(searchString, searchFilters),
+        [searchString, searchFilters]
+    );
+
     const metastorePicker =
         queryMetastores.length > 1 ? (
             <div className="navigator-metastore-picker">
@@ -241,7 +246,7 @@ export const DataTableNavigator: React.FC<IDataTableNavigatorProps> = ({
 
     let tablesDOM = null;
 
-    if (!isFilteringTables(searchString, searchFilters)) {
+    if (!showTableSearchResult) {
         tablesDOM = (
             <SchemaTableView
                 tableRowRenderer={tableRowRenderer}
@@ -271,6 +276,7 @@ export const DataTableNavigator: React.FC<IDataTableNavigatorProps> = ({
                 onSearch={handleSearch}
                 updateSearchFilter={updateSearchFilter}
                 resetSearchFilter={resetSearchFilter}
+                showTableSearchResult={showTableSearchResult}
             />
             {tablesDOM}
         </div>

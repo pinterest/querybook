@@ -35,7 +35,6 @@ import { Icon } from 'ui/Icon/Icon';
 import { IDataTable } from 'const/metastore';
 import { Title } from 'ui/Title/Title';
 import { IDragItem } from 'ui/DraggableList/types';
-import { TextToggleButton } from 'ui/Button/TextToggleButton';
 
 import {
     BoardDraggableType,
@@ -44,6 +43,8 @@ import {
 } from './navigatorConst';
 import { BoardListItemRow } from './DataDocNavigatorBoardItem';
 import './DataDocNavigatorBoardSection.scss';
+import { OrderByButton } from 'ui/OrderByButton/OrderByButton';
+import { orderBy } from 'lodash';
 
 interface INavigatorBoardSectionProps {
     selectedDocId: number;
@@ -70,20 +71,22 @@ export const DataDocNavigatorBoardSection: React.FC<INavigatorBoardSectionProps>
         (state: IStoreState) => state.board.boardItemById
     );
 
+    const [orderBoardByAsc, setOrderBoardByAsc] = useState(false);
     const [orderBoardBy, setOrderBoardBy] = useState(BoardOrderBy.updatedAt);
     const unorderedBoards = useSelector(myBoardsSelector);
     const boards = useMemo(
         () =>
-            orderBoardBy === BoardOrderBy.alphabetical
-                ? [...unorderedBoards].sort((a, b) =>
-                      a.name.localeCompare(b.name)
-                  )
-                : orderBoardBy === BoardOrderBy.createdAt
-                ? [...unorderedBoards].sort(
-                      (a, b) => b.created_at - a.created_at
-                  )
-                : unorderedBoards, // order by updated at by default,
-        [unorderedBoards, orderBoardBy]
+            orderBy(
+                unorderedBoards,
+                orderBoardBy === BoardOrderBy.alphabetical
+                    ? 'name'
+                    : orderBoardBy === BoardOrderBy.createdAt
+                    ? 'created_at'
+                    : 'updated_at',
+                orderBoardByAsc ? 'asc' : 'desc'
+            ),
+
+        [unorderedBoards, orderBoardBy, orderBoardByAsc]
     );
     const showBoardOrderBy = boards.length > 1;
 
@@ -153,9 +156,12 @@ export const DataDocNavigatorBoardSection: React.FC<INavigatorBoardSectionProps>
 
             <LevelItem>
                 {showBoardOrderBy ? (
-                    <TextToggleButton
-                        value={false}
-                        onChange={() =>
+                    <OrderByButton
+                        asc={orderBoardByAsc}
+                        onAscToggle={() => setOrderBoardByAsc((v) => !v)}
+                        orderByField={BoardOrderToDescription[orderBoardBy]}
+                        orderByFieldSymbol={BoardOrderToTitle[orderBoardBy]}
+                        onOrderByFieldToggle={() =>
                             setOrderBoardBy(
                                 (oldValue) =>
                                     BoardOrderByOptions[
@@ -164,9 +170,6 @@ export const DataDocNavigatorBoardSection: React.FC<INavigatorBoardSectionProps>
                                     ][1] as BoardOrderBy
                             )
                         }
-                        tooltip={`Order By ${BoardOrderToDescription[orderBoardBy]}`}
-                        tooltipPos="left"
-                        text={BoardOrderToTitle[orderBoardBy]}
                     />
                 ) : null}
 

@@ -2,7 +2,11 @@ import { Action } from 'redux';
 import { ThunkAction } from 'redux-thunk';
 import { IStoreState } from '../store/types';
 import { ICancelablePromise } from 'lib/datasource';
-import { IDataSchema } from 'const/metastore';
+import {
+    IDataSchema,
+    SchemaSortKey,
+    SchemaTableSortKey,
+} from 'const/metastore';
 
 export interface ITableSearchResult {
     id: number;
@@ -129,14 +133,17 @@ export interface ISchemaTableSortChangedAction extends Action {
     type: '@@dataTableSearch/SEARCH_TABLE_BY_SORT_CHANGED';
     payload: {
         id: number;
-        sort_key: 'name' | 'importance_score';
+
+        sortKey?: SchemaTableSortKey | undefined;
+        sortAsc?: boolean | undefined;
     };
 }
 
 export interface ISchemasSortChangedAction extends Action {
     type: '@@dataTableSearch/SCHEMAS_SORT_CHANGED';
     payload: {
-        sort_key: 'name' | 'table_count';
+        sortKey?: SchemaSortKey | undefined;
+        sortAsc?: boolean | undefined;
     };
 }
 
@@ -164,11 +171,18 @@ export interface IDataTableSearchPaginationState {
     results: ITableSearchResult[];
     count: number;
     schemas: {
+        done: boolean;
+
         schemaResultById: Record<number, ISchemaTableSearch>;
         schemaIds: number[];
-        done: boolean;
-        schemaSortByIds: Record<number, 'name' | 'importance_score'>;
-        sortSchemasBy: 'name' | 'table_count';
+        schemaSortByIds: Record<
+            number,
+            { asc: boolean; key: SchemaTableSortKey }
+        >;
+        sortSchemasBy: {
+            asc: boolean;
+            key: SchemaSortKey;
+        };
     };
 }
 
