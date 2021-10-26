@@ -37,6 +37,7 @@ import {
     DataTableViewQueryEngines,
     useLoadQueryEngines,
 } from 'components/DataTableViewQueryExample/DataTableViewQueryEngines';
+import { ShowMoreText } from 'ui/ShowMoreText/ShowMoreText';
 
 const dataTableDetailsColumns = [
     {
@@ -122,8 +123,14 @@ export class DataTableViewOverview extends React.PureComponent<IQuerybookTableVi
             />
         );
 
-        const hiveMetastoreDOM = table.hive_metastore_description ? (
-            <pre>{table.hive_metastore_description}</pre>
+        const rawMetastoreInfoDOM = table.hive_metastore_description ? (
+            <pre>
+                <ShowMoreText
+                    seeLess
+                    length={200}
+                    text={table.hive_metastore_description}
+                />
+            </pre>
         ) : null;
 
         const descriptionSection = (
@@ -153,8 +160,8 @@ export class DataTableViewOverview extends React.PureComponent<IQuerybookTableVi
         );
 
         const hiveMetastoreSection = (
-            <DataTableViewOverviewSection title="Hive Metastore Raw">
-                {hiveMetastoreDOM}
+            <DataTableViewOverviewSection title="Raw Metastore Info">
+                {rawMetastoreInfoDOM}
             </DataTableViewOverviewSection>
         );
 

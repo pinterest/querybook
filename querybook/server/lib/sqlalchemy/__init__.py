@@ -160,9 +160,9 @@ class CRUDMixin(SerializeMixin):
 
 
 # from https://stackoverflow.com/questions/32364499/truncating-too-long-varchar-when-inserting-to-mysql-via-sqlalchemy
-def TruncateString(fields):
+def TruncateString(*fields):
     class TruncateStringMixin:
-        @validates(fields)
+        @validates(*fields)
         def validate_string_field_length(self, key, value):
             max_len = getattr(self.__class__, key).prop.columns[0].type.length
             if value and len(value) > max_len:

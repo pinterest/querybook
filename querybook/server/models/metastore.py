@@ -11,7 +11,7 @@ from const.db import (
     mediumtext_length,
 )
 from const.metastore import DataTableWarningSeverity
-from lib.sqlalchemy import CRUDMixin
+from lib.sqlalchemy import CRUDMixin, TruncateString
 
 Base = db.Base
 
@@ -120,7 +120,7 @@ class DataJobMetadata(Base):
         return complete_dict
 
 
-class DataSchema(Base):
+class DataSchema(TruncateString("name"), Base):
     __tablename__ = "data_schema"
 
     id = sql.Column(sql.Integer, primary_key=True)
@@ -162,7 +162,7 @@ class DataSchema(Base):
         return schema_dict
 
 
-class DataTable(Base, CRUDMixin):
+class DataTable(TruncateString("name", "type", "location"), Base, CRUDMixin):
     __tablename__ = "data_table"
 
     id = sql.Column(sql.Integer, primary_key=True)
@@ -241,7 +241,9 @@ class DataTable(Base, CRUDMixin):
         return table
 
 
-class DataTableInformation(Base):
+class DataTableInformation(
+    TruncateString("latest_partitions", "earliest_partitions"), Base
+):
     __tablename__ = "data_table_information"
     __table_args__ = {"mysql_engine": "InnoDB", "mysql_charset": "utf8mb4"}
 
@@ -268,7 +270,7 @@ class DataTableInformation(Base):
         return self.description
 
 
-class DataTableColumn(Base):
+class DataTableColumn(TruncateString("name", "type", "comment"), Base):
     __tablename__ = "data_table_column"
 
     id = sql.Column(sql.Integer, primary_key=True)

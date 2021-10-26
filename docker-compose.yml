@@ -42,7 +42,7 @@ services:
         tmpfs: /tmp:exec,mode=777
         tty: true
         stdin_open: true
-        command: './querybook/scripts/runservice worker'
+        command: './querybook/scripts/runservice worker -c 5'
         # restart: "always"
         volumes:
             # This is for code change via watcher
