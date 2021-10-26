@@ -96,7 +96,7 @@ listen(TaskSchedule, "after_update", task_schedules_updated)
 listen(TaskSchedule, "after_delete", task_schedules_updated)
 
 
-class TaskRunRecord(db.Base, CRUDMixin, TruncateString("error_message")):
+class TaskRunRecord(CRUDMixin, TruncateString("error_message"), db.Base):
     __tablename__ = "task_run_record"
 
     id = sql.Column(sql.Integer, primary_key=True)

@@ -120,7 +120,7 @@ class DataJobMetadata(Base):
         return complete_dict
 
 
-class DataSchema(Base, TruncateString("name")):
+class DataSchema(TruncateString("name"), Base):
     __tablename__ = "data_schema"
 
     id = sql.Column(sql.Integer, primary_key=True)
@@ -162,7 +162,7 @@ class DataSchema(Base, TruncateString("name")):
         return schema_dict
 
 
-class DataTable(Base, CRUDMixin, TruncateString("name", "type", "location")):
+class DataTable(CRUDMixin, TruncateString("name", "type", "location"), Base):
     __tablename__ = "data_table"
 
     id = sql.Column(sql.Integer, primary_key=True)
@@ -242,7 +242,7 @@ class DataTable(Base, CRUDMixin, TruncateString("name", "type", "location")):
 
 
 class DataTableInformation(
-    Base, TruncateString("latest_partitions", "earliest_partitions")
+    TruncateString("latest_partitions", "earliest_partitions"), Base
 ):
     __tablename__ = "data_table_information"
     __table_args__ = {"mysql_engine": "InnoDB", "mysql_charset": "utf8mb4"}
@@ -270,7 +270,7 @@ class DataTableInformation(
         return self.description
 
 
-class DataTableColumn(Base, TruncateString("name", "type", "comment")):
+class DataTableColumn(TruncateString("name", "type", "comment"), Base):
     __tablename__ = "data_table_column"
 
     id = sql.Column(sql.Integer, primary_key=True)
@@ -327,7 +327,7 @@ class DataTableOwnership(Base):
         return item
 
 
-class DataTableQueryExecution(Base, CRUDMixin):
+class DataTableQueryExecution(CRUDMixin, Base):
     __tablename__ = "data_table_query_execution"
 
     id = sql.Column(sql.Integer, primary_key=True, autoincrement=True)
@@ -362,7 +362,7 @@ class DataTableQueryExecution(Base, CRUDMixin):
     )
 
 
-class DataTableWarning(Base, CRUDMixin):
+class DataTableWarning(CRUDMixin, Base):
     __tablename__ = "data_table_warnings"
 
     id = sql.Column(sql.Integer, primary_key=True, autoincrement=True)
@@ -384,7 +384,7 @@ class DataTableWarning(Base, CRUDMixin):
     )
 
 
-class DataTableStatistics(Base, CRUDMixin):
+class DataTableStatistics(CRUDMixin, Base):
     __tablename__ = "data_table_statistics"
 
     id = sql.Column(sql.Integer, primary_key=True)
@@ -406,7 +406,7 @@ class DataTableStatistics(Base, CRUDMixin):
     )
 
 
-class DataTableColumnStatistics(Base, CRUDMixin):
+class DataTableColumnStatistics(CRUDMixin, Base):
     __tablename__ = "data_table_column_statistics"
 
     id = sql.Column(sql.Integer, primary_key=True)
