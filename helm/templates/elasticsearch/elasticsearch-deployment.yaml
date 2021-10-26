@@ -47,13 +47,7 @@ spec:
                 - SYS_RESOURCE
       containers:
         - name: {{ .Values.elasticsearch.name }}
-          env:
-            - name: ES_JAVA_OPTS
-              value: -Xms512m -Xmx512m
-            - name: bootstrap.memory_lock
-              value: 'false'
-            - name: cluster.name
-              value: docker-cluster
+          env: {{ toYaml .Values.elasticsearch.extraEnvs | nindent 12 }}
           image: "{{ .Values.elasticsearch.image.repository }}:{{ .Values.elasticsearch.image.tag }}"
           imagePullPolicy: {{ .Values.elasticsearch.image.pullPolicy }}
           ports:

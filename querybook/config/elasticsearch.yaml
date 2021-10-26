@@ -13,26 +13,25 @@ datadocs:
                         filter:
                             - lowercase
         mappings:
-            datadocs:
-                properties:
-                    id:
-                        type: long
-                    environment_id:
-                        type: long
-                    owner_uid:
-                        type: long
-                    title:
-                        type: text
-                        analyzer: snowball
-                    cells:
-                        type: text
-                        analyzer: user_content_analyzer
-                    created_at:
-                        type: long
-                    public:
-                        type: boolean
-                    readable_user_ids:
-                        type: integer
+            properties:
+                id:
+                    type: long
+                environment_id:
+                    type: long
+                owner_uid:
+                    type: long
+                title:
+                    type: text
+                    analyzer: snowball
+                cells:
+                    type: text
+                    analyzer: user_content_analyzer
+                created_at:
+                    type: long
+                public:
+                    type: boolean
+                readable_user_ids:
+                    type: integer
 tables:
     index_name: search_tables_v1
     type_name: tables # Keep this same in mappings
@@ -72,57 +71,55 @@ tables:
                         type: simple_pattern
                         pattern: '[A-Za-z0-9]+'
         mappings:
-            tables:
-                properties:
-                    id:
-                        type: long
-                    metastore_id:
-                        type: long
-                    schema:
-                        type: keyword
-                        normalizer: case_insensitive
-                    name:
-                        type: keyword
-                        normalizer: case_insensitive
-                    full_name:
-                        type: text
-                        analyzer: table_name_lowercase
-                    full_name_ngram:
-                        type: text
-                        analyzer: edge_ngram_lowercase
-                    completion_name:
-                        type: completion
-                        analyzer: keyword
-                        contexts:
-                            name: metastore_id
-                            type: category
-                    description:
-                        type: text
-                        analyzer: user_content_analyzer
-                    created_at:
-                        type: long
-                    columns:
-                        type: keyword
-                        normalizer: case_insensitive
-                    golden:
-                        type: boolean
-                    importance_score:
-                        type: long
-                    tags:
-                        type: keyword
+            properties:
+                id:
+                    type: long
+                metastore_id:
+                    type: long
+                schema:
+                    type: keyword
+                    normalizer: case_insensitive
+                name:
+                    type: keyword
+                    normalizer: case_insensitive
+                full_name:
+                    type: text
+                    analyzer: table_name_lowercase
+                full_name_ngram:
+                    type: text
+                    analyzer: edge_ngram_lowercase
+                completion_name:
+                    type: completion
+                    analyzer: keyword
+                    contexts:
+                        name: metastore_id
+                        type: category
+                description:
+                    type: text
+                    analyzer: user_content_analyzer
+                created_at:
+                    type: long
+                columns:
+                    type: keyword
+                    normalizer: case_insensitive
+                golden:
+                    type: boolean
+                importance_score:
+                    type: long
+                tags:
+                    type: keyword
 users:
     index_name: search_users_v1
     type_name: users
     mappings:
         mappings:
-            users:
-                properties:
-                    id:
-                        type: long
-                    username:
-                        type: keyword
-                    fullname:
-                        type: text
-                        analyzer: whitespace
-                    suggest:
-                        type: completion
+            properties:
+                id:
+                    type: long
+                username:
+                    type: keyword
+                fullname:
+                    type: text
+                    analyzer: whitespace
+                suggest:
+                    type: completion

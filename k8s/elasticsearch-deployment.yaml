@@ -39,7 +39,9 @@ spec:
                         value: 'false'
                       - name: cluster.name
                         value: docker-cluster
-                  image: docker.elastic.co/elasticsearch/elasticsearch:6.6.1
+                      - name: discovery.type
+                        value: single-node
+                  image: docker.elastic.co/elasticsearch/elasticsearch:7.15.1
                   #   livenessProbe:
                   #       httpGet:
                   #           path: /_cluster/health

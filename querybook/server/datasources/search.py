@@ -269,10 +269,10 @@ def _parse_results(results, get_count):
     return ret
 
 
-def _get_matching_objects(query, index_name, doc_type, get_count=False):
+def _get_matching_objects(query, index_name, get_count=False):
     result = None
     try:
-        result = get_hosted_es().search(index_name, doc_type, body=query)
+        result = get_hosted_es().search(index=index_name, body=query)
     except Exception as e:
         LOG.warning("Got ElasticSearch exception: \n " + str(e))
 
@@ -306,10 +306,7 @@ def search_datadoc(
         sort_order=sort_order,
     )
     results, count = _get_matching_objects(
-        query,
-        ES_CONFIG["datadocs"]["index_name"],
-        ES_CONFIG["datadocs"]["type_name"],
-        True,
+        query, ES_CONFIG["datadocs"]["index_name"], True
     )
     return {"count": count, "results": results}
 
@@ -340,10 +337,7 @@ def search_tables(
         sort_order=sort_order,
     )
     results, count = _get_matching_objects(
-        query,
-        ES_CONFIG["tables"]["index_name"],
-        ES_CONFIG["tables"]["type_name"],
-        True,
+        query, ES_CONFIG["tables"]["index_name"], True
     )
     return {"count": count, "results": results}
 
@@ -366,11 +360,10 @@ def suggest_tables(metastore_id, prefix, limit=10):
     }
 
     index_name = ES_CONFIG["tables"]["index_name"]
-    type_name = ES_CONFIG["tables"]["type_name"]
 
     result = None
     try:
-        result = get_hosted_es().search(index_name, type_name, body=query)
+        result = get_hosted_es().search(index=index_name, body=query)
     except Exception as e:
         LOG.info(e)
     finally:
@@ -404,12 +397,11 @@ def suggest_user(name, limit=10, offset=None):
     }
 
     index_name = ES_CONFIG["users"]["index_name"]
-    type_name = ES_CONFIG["users"]["type_name"]
 
     result = None
     try:
         # print '\n--ES latest hosted_index %s\n' % hosted_index
-        result = get_hosted_es().search(index_name, type_name, body=query)
+        result = get_hosted_es().search(index=index_name, body=query)
     except Exception as e:
         LOG.info(e)
     finally:
