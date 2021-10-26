@@ -120,7 +120,7 @@ class DataJobMetadata(Base):
         return complete_dict
 
 
-class DataSchema(TruncateString("name"), Base):
+class DataSchema(Base, TruncateString("name")):
     __tablename__ = "data_schema"
 
     id = sql.Column(sql.Integer, primary_key=True)
@@ -162,7 +162,7 @@ class DataSchema(TruncateString("name"), Base):
         return schema_dict
 
 
-class DataTable(TruncateString("name", "type", "location"), Base, CRUDMixin):
+class DataTable(Base, CRUDMixin, TruncateString("name", "type", "location")):
     __tablename__ = "data_table"
 
     id = sql.Column(sql.Integer, primary_key=True)
@@ -242,7 +242,7 @@ class DataTable(TruncateString("name", "type", "location"), Base, CRUDMixin):
 
 
 class DataTableInformation(
-    TruncateString("latest_partitions", "earliest_partitions"), Base
+    Base, TruncateString("latest_partitions", "earliest_partitions")
 ):
     __tablename__ = "data_table_information"
     __table_args__ = {"mysql_engine": "InnoDB", "mysql_charset": "utf8mb4"}
@@ -270,7 +270,7 @@ class DataTableInformation(
         return self.description
 
 
-class DataTableColumn(TruncateString("name", "type", "comment"), Base):
+class DataTableColumn(Base, TruncateString("name", "type", "comment")):
     __tablename__ = "data_table_column"
 
     id = sql.Column(sql.Integer, primary_key=True)
