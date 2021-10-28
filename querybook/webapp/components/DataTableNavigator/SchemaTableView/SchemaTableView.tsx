@@ -42,7 +42,6 @@ export const SchemaTableView: React.FunctionComponent<{
     useIntersectionObserver({
         intersectElement,
         onIntersect: () => {
-            console.log('Search Schemas');
             dispatch(searchSchemas());
         },
         deps: [schemas.schemaIds],
