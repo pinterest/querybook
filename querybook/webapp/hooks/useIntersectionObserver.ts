@@ -4,12 +4,12 @@ export function useIntersectionObserver({
     intersectElement,
     onIntersect,
     deps,
-    enabled,
+    disabled,
 }: {
     intersectElement: HTMLElement;
     onIntersect: () => void;
     deps: any[];
-    enabled: boolean;
+    disabled: boolean;
 }) {
     const interseptor = useRef<IntersectionObserver>(null);
     const rootElement = intersectElement?.parentElement;
@@ -20,24 +20,30 @@ export function useIntersectionObserver({
     }, [intersectElement]);
 
     useEffect(() => {
-        interseptor.current = new IntersectionObserver(
-            (entries) => {
-                if (entries.some((entry) => entry.isIntersecting)) {
-                    intersectCallback();
+        let observer: IntersectionObserver = null;
+        if (rootElement) {
+            observer = new IntersectionObserver(
+                (entries) => {
+                    if (entries.some((entry) => entry.isIntersecting)) {
+                        intersectCallback();
+                    }
+                },
+                {
+                    root: rootElement,
                 }
-            },
-            {
-                root: rootElement,
-            }
-        );
+            );
+        }
+        interseptor.current = observer;
 
         return () => {
-            interseptor.current.disconnect();
+            if (observer) {
+                interseptor.current.disconnect();
+            }
         };
     }, [rootElement]);
 
     useEffect(() => {
-        if (!enabled && intersectElement) {
+        if (!disabled && intersectElement) {
             interseptor.current.observe(intersectElement);
         }
     }, [...deps, intersectElement]);
