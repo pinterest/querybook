@@ -1,4 +1,4 @@
-import React, { useRef } from 'react';
+import React, { useState } from 'react';
 import styled from 'styled-components';
 import { useDispatch, useSelector } from 'react-redux';
 
@@ -35,15 +35,17 @@ export const SchemaTableView: React.FunctionComponent<{
     );
 
     const dispatch: Dispatch = useDispatch();
-    const intersectionElementRef = useRef<HTMLDivElement>(null);
+    const [intersectElement, setIntersectElement] = useState<HTMLDivElement>(
+        null
+    );
 
     useIntersectionObserver({
-        intersectElement: intersectionElementRef.current,
+        intersectElement,
         onIntersect: () => {
             dispatch(searchSchemas());
         },
         deps: [schemas.schemaIds],
-        enabled: schemas.done,
+        disabled: schemas.done,
     });
 
     return (
@@ -79,7 +81,7 @@ export const SchemaTableView: React.FunctionComponent<{
                 );
             })}
 
-            <IntersectionElement ref={intersectionElementRef} />
+            <IntersectionElement ref={setIntersectElement} />
         </SchemasList>
     );
 };
