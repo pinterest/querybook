@@ -27,6 +27,9 @@ class Announcement(CRUDMixin, Base):
     message = sql.Column(sql.String(length=description_length))
     url_regex = sql.Column(sql.String(length=name_length))
     can_dismiss = sql.Column(sql.Boolean, default=True)
+    active_from = sql.Column(sql.Date)
+    active_till = sql.Column(sql.Date)
+    title = sql.Column(sql.String(length=250))
 
     def to_dict(self):
         return {
@@ -34,6 +37,9 @@ class Announcement(CRUDMixin, Base):
             "message": self.message,
             "url_regex": self.url_regex,
             "can_dismiss": self.can_dismiss,
+            "active_from": self.active_from,
+            "active_till": self.active_till,
+            "title": self.title,
         }
 
     def to_dict_admin(self):
@@ -45,6 +51,9 @@ class Announcement(CRUDMixin, Base):
             "uid": self.uid,
             "url_regex": self.url_regex,
             "can_dismiss": self.can_dismiss,
+            "active_from": self.active_from,
+            "active_till": self.active_till,
+            "title": self.title,
         }
 
 

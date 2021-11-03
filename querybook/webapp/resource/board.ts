@@ -8,11 +8,12 @@ import type {
 import ds from 'lib/datasource';
 
 export const BoardResource = {
-    getAll: (environmentId: number, filterString: string) =>
-        ds.fetch<IBoard[]>('/board/', {
+    getAll: (environmentId: number, filterString: string) => {
+        return ds.fetch<IBoard[]>('/board/', {
             environment_id: environmentId,
             filter_str: filterString,
-        }),
+        });
+    },
 
     get: (boardId: number) => ds.fetch<IBoardRaw>(`/board/${boardId}/`),
 

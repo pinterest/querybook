@@ -8,6 +8,9 @@ export interface IAdminAnnouncement {
     uid: number;
     url_regex: string;
     can_dismiss: boolean;
+    active_from?: number;
+    active_till?: number;
+    title?: string;
 }
 
 export interface IAdminApiAccessToken {
