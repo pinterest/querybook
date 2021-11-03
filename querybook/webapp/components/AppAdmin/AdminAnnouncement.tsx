@@ -59,7 +59,6 @@ export const AdminAnnouncement: React.FunctionComponent = () => {
                 announcement.message,
                 announcement.url_regex,
                 announcement.can_dismiss,
-                announcement.title,
                 announcement.active_from,
                 announcement.active_till
             );
@@ -91,12 +90,6 @@ export const AdminAnnouncement: React.FunctionComponent = () => {
                 <div className="AdminForm-left">
                     <SimpleField
                         stacked
-                        name="title"
-                        type="input"
-                        help="You can describe the main idea of your announcement"
-                    />
-                    <SimpleField
-                        stacked
                         name="message"
                         type="textarea"
                         placeholder="Announcements can be written in markdown format."
@@ -120,8 +113,6 @@ export const AdminAnnouncement: React.FunctionComponent = () => {
                                 key: name,
                             })),
                         ]}
-                        type="select"
-                        help="You can specify the announcement for this announcement."
                     />
                 </div>
                 <div className="AdminForm-right">

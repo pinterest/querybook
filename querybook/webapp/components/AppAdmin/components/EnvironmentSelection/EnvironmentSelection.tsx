@@ -10,15 +10,16 @@ type OptionsType = {
 export const EnvironmentSelection = ({
     options = [],
     name,
-    ...rest
+    label,
 }: {
+    label: string;
     options: OptionsType[];
     name: string;
 }) => {
     const [field, , helper] = useField({ name });
     const { values, setFieldValue } = useFormikContext<{
-        setFieldValue: Function;
-        values: Record<string, string>;
+        setFieldValue: () => void;
+        url_regex: string;
     }>();
 
     const value = options.find((o) => {
@@ -30,6 +31,7 @@ export const EnvironmentSelection = ({
         <SimpleField
             type="select"
             {...field}
+            label={label}
             value={value?.key}
             onChange={(selectedValue) => {
                 helper.setValue(selectedValue);
@@ -43,7 +45,7 @@ export const EnvironmentSelection = ({
                 },
                 ...options,
             ]}
-            {...rest}
+            help="You can specify the announcement for this announcement."
         />
     );
 };

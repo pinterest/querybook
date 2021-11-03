@@ -12,7 +12,6 @@ export const AdminAnnouncementResource = {
         message: string,
         urlRegex: string,
         canDismiss: boolean,
-        title: string,
         active_from?: number,
         active_till?: number
     ) =>
@@ -20,7 +19,6 @@ export const AdminAnnouncementResource = {
             message,
             url_regex: urlRegex,
             can_dismiss: canDismiss,
-            title,
             active_from: formatDate(active_from),
             active_till: formatDate(active_till),
         }),

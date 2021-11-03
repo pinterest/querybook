@@ -29,7 +29,6 @@ class Announcement(CRUDMixin, Base):
     can_dismiss = sql.Column(sql.Boolean, default=True)
     active_from = sql.Column(sql.Date)
     active_till = sql.Column(sql.Date)
-    title = sql.Column(sql.String(length=250))
 
     def to_dict(self):
         return {
@@ -39,7 +38,6 @@ class Announcement(CRUDMixin, Base):
             "can_dismiss": self.can_dismiss,
             "active_from": self.active_from,
             "active_till": self.active_till,
-            "title": self.title,
         }
 
     def to_dict_admin(self):
@@ -53,7 +51,6 @@ class Announcement(CRUDMixin, Base):
             "can_dismiss": self.can_dismiss,
             "active_from": self.active_from,
             "active_till": self.active_till,
-            "title": self.title,
         }
 
 

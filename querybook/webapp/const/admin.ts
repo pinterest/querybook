@@ -10,7 +10,6 @@ export interface IAdminAnnouncement {
     can_dismiss: boolean;
     active_from?: number;
     active_till?: number;
-    title?: string;
 }
 
 export interface IAdminApiAccessToken {

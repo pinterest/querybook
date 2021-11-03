@@ -19,10 +19,8 @@ depends_on = None
 def upgrade():
     op.add_column('announcements', sa.Column('active_from', sa.Date(), nullable=True))
     op.add_column('announcements', sa.Column('active_till', sa.Date(), nullable=True))
-    op.add_column('announcements', sa.Column('title', sa.String(length=250), nullable=True))
 
 
 def downgrade():
     op.drop_column('announcements', 'active_from')
     op.drop_column('announcements', 'active_till')
-    op.drop_column('announcements', 'title')

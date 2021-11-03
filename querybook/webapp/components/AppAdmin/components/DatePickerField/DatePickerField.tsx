@@ -16,8 +16,8 @@ const StyledDatePicker = styled(DatePicker)`
 `;
 
 const StyledLabel = styled.label`
- white-space: nowrap;
- padding-right: 12px;
+    white-space: nowrap;
+    padding-right: 12px;
 `;
 
 function formatDate(dateInSeconds?: number): Date {
