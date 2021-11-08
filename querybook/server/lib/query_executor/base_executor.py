@@ -192,12 +192,13 @@ class QueryExecutorLogger(object):
         qe_logic.update_statement_execution(
             statement_execution_id, status=StatementExecutionStatus.UPLOADING,
         )
+
         socketio.emit(
             "statement_update",
             {
                 "query_execution_id": self._query_execution_id,
                 "id": statement_execution_id,
-                "status": StatementExecutionStatus.UPLOADING,
+                "status": StatementExecutionStatus.UPLOADING.value,
             },
             namespace=QUERY_EXECUTION_NAMESPACE,
             room=self._query_execution_id,
