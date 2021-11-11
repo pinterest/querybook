@@ -52,7 +52,7 @@ touch requirements/local.txt
 3. Add the required packages
 
 ```sh
-echo -e "sqlalchemy-redshift\npsycopg2" > requirements/local.txt
+echo -e "sqlalchemy-redshift\nredshift_connector" > requirements/local.txt
 ```
 
 4. Start the container
@@ -80,7 +80,7 @@ make
 | Apache Kylin         | 3    | [kylinpy](https://pypi.org/project/kylinpy/)                                                                                                  | No                  |
 | Apache Solr          | 3    | [sqlalchemy-solr](https://pypi.org/project/sqlalchemy-solr/)                                                                                  | No                  |
 | Amazon Athena        | 3    | [pyathena](https://pypi.org/project/pyathena/)                                                                                                | No                  |
-| Amazon Redshift      | 3    | [sqlalchemy-redshift](https://pypi.org/project/sqlalchemy-redshift/)<br/>[psycopg2](https://pypi.org/project/psycopg2/)                       | No                  |
+| Amazon Redshift      | 3    | [sqlalchemy-redshift](https://pypi.org/project/sqlalchemy-redshift/)<br/>[redshift_connector](https://pypi.org/project/redshift-connector/)                       | No                  |
 | BigQuery             | 2    | [google-cloud-bigquery](https://pypi.org/project/google-cloud-bigquery/)                                                                      | Yes                 |
 | ClickHouse           | 3    | [clickhouse-sqlalchemy](https://pypi.org/project/clickhouse-sqlalchemy/)<br/>[clickhouse-driver](https://pypi.org/project/clickhouse-driver/) | No                  |
 | CockroachDB          | 3    | [sqlalchemy-cockroachdb](https://pypi.org/project/sqlalchemy-cockroachdb/)<br/>[psycopg2](https://pypi.org/project/psycopg2/)                 | No                  |
