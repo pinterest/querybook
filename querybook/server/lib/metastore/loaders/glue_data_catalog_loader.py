@@ -2,12 +2,13 @@ from datetime import datetime
 from typing import Dict, List, Tuple
 
 from clients.glue_client import GlueDataCatalogClient
-from lib.form import StructFormField, FormField, FormFieldType
+from lib.form import StructFormField, FormField
 from lib.metastore.base_metastore_loader import (
     BaseMetastoreLoader,
     DataTable,
     DataColumn,
 )
+from lib.metastore.loaders.form_fileds import load_partitions
 
 
 class GlueDataCatalogLoader(BaseMetastoreLoader):
@@ -31,13 +32,7 @@ class GlueDataCatalogLoader(BaseMetastoreLoader):
                 regex=r"^\d{12}$",
             ),
             region=FormField(required=True, description="Enter the AWS Region"),
-            load_partitions=FormField(
-                required=False,
-                field_type=FormFieldType.Boolean,
-                helper="""In case your data catalog is large, loading all partitions for all tables can be quite time consuming.
-                Skipping partition information can reduce your metastore refresh latency
-                """,
-            ),
+            load_partitions=load_partitions,
         )
 
     def get_all_schema_names(self) -> List[str]:
