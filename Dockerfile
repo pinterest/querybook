@@ -31,7 +31,7 @@ RUN apt-get update && \
 
 WORKDIR /opt/querybook
 
-RUN wget -P /opt/querybook/ https://github.com/forcedotcom/Salesforce-CDP-jdbc/releases/download/release_2021.9A/Salesforce-cdp-1.8.0-java8.jar
+RUN wget -P /opt/querybook/ https://github.com/forcedotcom/Salesforce-CDP-jdbc/releases/download/release_2021.10A/Salesforce-CDP-jdbc-1.10.0-java8.jar
 
 COPY requirements requirements/
 RUN pip install -r requirements/base.txt \

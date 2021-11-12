@@ -20,12 +20,3 @@ class SalesforceCdpExecutor(QueryExecutorBaseClass):
     @classmethod
     def EXECUTOR_TEMPLATE(cls):
         return salesforce_cdp_template
-
-    # def _parse_exception(self, e):
-    #     error_type = QueryExecutionErrorType.INTERNAL.value
-    #     error_str = str(e)
-    #     error_extracted = None
-
-    #     if isinstance(e, BigQueryError):
-    #         error_type = QueryExecutionErrorType.ENGINE.value
-    #     return error_type, error_str, error_extracted

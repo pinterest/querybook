@@ -10,7 +10,7 @@ class SalesforceCdpClient(ClientBaseClass):
         self._conn = jaydebeapi.connect('com.salesforce.cdp.queryservice.QueryServiceDriver',
                         connection_string,
                         props,
-                        '/opt/querybook/Salesforce-cdp-1.8.0-java8.jar')
+                        '/opt/querybook/Salesforce-CDP-jdbc-1.10.0-java8.jar')
         super(SalesforceCdpClient, self).__init__()
 
     def cursor(self) -> CursorBaseClass:
@@ -24,10 +24,6 @@ class SalesforceCdpCursor(CursorBaseClass):
     def run(self, query):
         self._cursor.execute(query)
 
-        # Caching the first row to allow column names
-        # self._first_row = self._cursor.fetchone()
-        # self._should_send_first_row = True
-
     def cancel(self):
         # Can't cancel (yet)
         pass
@@ -39,9 +35,6 @@ class SalesforceCdpCursor(CursorBaseClass):
         return True
 
     def get_one_row(self):
-        # if self._should_send_first_row:
-        #     self._should_send_first_row = False
-        #     return self._convert_row(self._first_row)
         return self._convert_row(self._cursor.fetchone())
 
     def get_n_rows(self, n: int):
