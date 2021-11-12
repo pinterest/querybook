@@ -1,13 +1,6 @@
 // Place your custom css/js logic here
 import React from 'react';
-import { useAnnouncements } from 'hooks/redux/useAnnouncements';
-import { Title } from 'ui/Title/Title';
-import styled from 'styled-components';
-import { useInterval } from 'hooks/useInterval';
-import { Dispatch } from 'redux/store/types';
-import * as querybookUIActions from 'redux/querybookUI/action';
-import { useDispatch } from 'react-redux';
-import { Markdown } from 'ui/Markdown/Markdown';
+export {};
 
 interface IColumnDetector {
     type: string;
@@ -58,44 +51,3 @@ declare global {
         >;
     }
 }
-
-const NotificationItem = styled.div`
-    border: 1px solid var(--icon-color);
-    border-left: 5px solid var(--icon-color);
-    padding: 4px 12px;
-    margin: 12px;
-`;
-
-const NotificationItemsStyled = styled.div`
-    max-width: 960px;
-`;
-
-window.CUSTOM_LANDING_PAGE = {
-    mode: 'replace',
-    renderer: () => {
-        const dispatch: Dispatch = useDispatch();
-        const loadAnnouncements = () =>
-            dispatch(querybookUIActions.loadAnnouncements());
-
-        React.useEffect(() => {
-            loadAnnouncements();
-        }, []);
-        const announcements = useAnnouncements();
-        console.log(announcements, 'announcement');
-
-        useInterval(loadAnnouncements, 300000);
-
-        return (
-            <NotificationItemsStyled>
-                <Title className="ml12">Environment announcements</Title>
-                {announcements?.map((announcement) => (
-                    <NotificationItem key={announcement.id}>
-                        <Title subtitle size={7} className="query-context mb4">
-                            <Markdown>{announcement.message}</Markdown>
-                        </Title>
-                    </NotificationItem>
-                ))}
-            </NotificationItemsStyled>
-        );
-    },
-};

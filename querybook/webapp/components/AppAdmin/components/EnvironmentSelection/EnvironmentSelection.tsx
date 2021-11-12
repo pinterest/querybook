@@ -1,10 +1,11 @@
-import React from 'react';
+import React, { useMemo } from 'react';
 import { useField, useFormikContext } from 'formik';
 import { SimpleField } from 'ui/FormikField/SimpleField';
 
 type OptionsType = {
     value: string;
     key: string;
+    hidden?: boolean;
 };
 
 export const EnvironmentSelection = ({
@@ -22,10 +23,14 @@ export const EnvironmentSelection = ({
         url_regex: string;
     }>();
 
-    const value = options.find((o) => {
-        const regexPattern = new RegExp(values.url_regex);
-        return !!`/${o.value}/`.match(regexPattern);
-    });
+    const value = useMemo(
+        () =>
+            options.find((o) => {
+                const regexPattern = new RegExp(values.url_regex);
+                return !!`/${o.value}/`.match(regexPattern);
+            }),
+        [options, values.url_regex]
+    );
 
     return (
         <SimpleField

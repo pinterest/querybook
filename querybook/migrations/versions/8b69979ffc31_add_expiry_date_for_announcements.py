@@ -1,7 +1,7 @@
 """add expiry date for announcements
 
 Revision ID: 8b69979ffc31
-Revises: ea497b49195e
+Revises: aceefd7708b6
 Create Date: 2021-10-22 09:04:47.064570
 
 """
@@ -11,7 +11,7 @@ import sqlalchemy as sa
 
 # revision identifiers, used by Alembic.
 revision = '8b69979ffc31'
-down_revision = 'ea497b49195e'
+down_revision = 'aceefd7708b6'
 branch_labels = None
 depends_on = None
 

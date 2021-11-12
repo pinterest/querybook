@@ -82,7 +82,11 @@ export function makeSelectOptions(options: IOptions) {
                     {option}
                 </option>
             ) : (
-                <option value={option.key} key={option.key} {...option}>
+                <option
+                    value={option.key}
+                    key={option.key}
+                    hidden={option.hidden}
+                >
                     {option.value}
                 </option>
             )

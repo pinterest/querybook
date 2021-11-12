@@ -1,8 +1,7 @@
 from flask_login import current_user
 
 from app.datasource import register, admin_only, api_assert
-from app.db import DBSession, with_session
-from datetime import date
+from app.db import DBSession
 from const.admin import AdminOperation, AdminItemType
 from datasources.admin_audit_log import with_admin_audit_log
 from env import QuerybookSettings
@@ -17,30 +16,13 @@ from logic import metastore as metastore_logic
 from logic import demo as demo_logic
 from models.admin import Announcement, QueryMetastore, QueryEngine, AdminAuditLog
 from models.schedule import TaskSchedule
-from sqlalchemy import or_
 
 
 @register(
     "/announcement/", methods=["GET"],
 )
-@with_session
-def get_announcements(session=None):
-    return (
-        session.query(Announcement)
-        .filter(
-            or_(
-                Announcement.active_from is None,
-                Announcement.active_from <= date.today(),
-            )
-        )
-        .filter(
-            or_(
-                Announcement.active_till is None,
-                Announcement.active_till >= date.today(),
-            )
-        )
-        .all()
-    )
+def get_announcements():
+    return logic.get_admin_announcements()
 
 
 # ADMIN ONLY APIs

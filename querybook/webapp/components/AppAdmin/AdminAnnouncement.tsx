@@ -18,7 +18,6 @@ import {
     AdminAnnouncementResource,
     AdminEnvironmentResource,
 } from 'resource/admin';
-import { DatePickerField } from './components/DatePickerField/DatePickerField';
 import { EnvironmentSelection } from './components/EnvironmentSelection/EnvironmentSelection';
 
 import './AdminAnnouncement.scss';
@@ -108,6 +107,7 @@ export const AdminAnnouncement: React.FunctionComponent = () => {
                         name="environment"
                         label="Environment"
                         options={[
+                            { value: '', key: '', hidden: true },
                             ...(environments || []).map(({ name }) => ({
                                 value: name,
                                 key: name,
@@ -124,8 +124,16 @@ export const AdminAnnouncement: React.FunctionComponent = () => {
                 </div>
             </div>
             <StyledDateWrapper>
-                <DatePickerField label="Active from" name="active_from" />
-                <DatePickerField label="Till" name="active_till" />
+                <SimpleField
+                    type="datepicker"
+                    label="Active From"
+                    name="active_from"
+                />
+                <SimpleField
+                    type="datepicker"
+                    label="Till"
+                    name="active_till"
+                />
             </StyledDateWrapper>
         </div>
     );

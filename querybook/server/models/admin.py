@@ -36,8 +36,6 @@ class Announcement(CRUDMixin, Base):
             "message": self.message,
             "url_regex": self.url_regex,
             "can_dismiss": self.can_dismiss,
-            "active_from": self.active_from,
-            "active_till": self.active_till,
         }
 
     def to_dict_admin(self):
