@@ -31,8 +31,6 @@ RUN apt-get update && \
 
 WORKDIR /opt/querybook
 
-RUN wget -P /opt/querybook/ https://github.com/forcedotcom/Salesforce-CDP-jdbc/releases/download/release_2021.10A/Salesforce-CDP-jdbc-1.10.0-java8.jar
-
 COPY requirements requirements/
 RUN pip install -r requirements/base.txt \
     && if [ "${PRODUCTION}" = "true" ] ; then \
@@ -45,9 +43,10 @@ RUN pip install -r requirements/base.txt \
 COPY package.json yarn.lock ./
 RUN yarn install --pure-lockfile && npm rebuild node-sass
 
-
 # Copy everything else
 COPY . .
+
+RUN wget -P /opt/querybook/ https://github.com/forcedotcom/Salesforce-CDP-jdbc/releases/download/release_2021.10A/Salesforce-CDP-jdbc-1.10.0-java8.jar
 
 # Webpack if prod
 RUN if [ "${PRODUCTION}" = "true" ] ; then ./node_modules/.bin/webpack --mode=production; fi
