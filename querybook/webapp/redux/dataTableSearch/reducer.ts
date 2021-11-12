@@ -1,4 +1,5 @@
 import { produce } from 'immer';
+import { defaultSortSchemaBy, defaultSortSchemaTableBy } from './const';
 import {
     IDataTableSearchState,
     IDataTableSearchPaginationState,
@@ -8,6 +9,13 @@ import {
 const initialResultState: IDataTableSearchPaginationState = {
     results: [],
     count: 0,
+    schemas: {
+        schemaIds: [],
+        schemaResultById: {},
+        schemaSortByIds: {},
+        sortSchemasBy: defaultSortSchemaBy,
+        done: false,
+    },
 };
 
 const initialState: IDataTableSearchState = {
@@ -19,8 +27,16 @@ const initialState: IDataTableSearchState = {
     ...initialResultState,
 };
 
+function getInitialState() {
+    if (window.DATA_TABLE_SEARCH_CONFIG?.getInitialState) {
+        return window.DATA_TABLE_SEARCH_CONFIG.getInitialState(initialState);
+    }
+
+    return initialState;
+}
+
 export default function dataTableSearch(
-    state = initialState,
+    state = getInitialState(),
     action: DataTableSearchAction
 ) {
     return produce(state, (draft) => {
@@ -33,7 +49,7 @@ export default function dataTableSearch(
             }
             case '@@dataTableSearch/DATA_TABLE_SEARCH_RESET': {
                 return {
-                    ...initialState,
+                    ...getInitialState(),
                 };
             }
             case '@@dataTableSearch/DATA_TABLE_SEARCH_STARTED': {
@@ -66,6 +82,7 @@ export default function dataTableSearch(
                 } else {
                     delete draft.searchFilters[filterKey];
                 }
+
                 return;
             }
             case '@@dataTableSearch/DATA_TABLE_FILTER_RESET': {
@@ -74,6 +91,68 @@ export default function dataTableSearch(
             }
             case '@@dataTableSearch/DATA_TABLE_SEARCH_SELECT_METASTORE': {
                 draft.metastoreId = action.payload.metastoreId;
+                return;
+            }
+            case '@@dataTableSearch/SCHEMA_SEARCH_DONE': {
+                for (const schema of action.payload.results) {
+                    draft.schemas.schemaIds.push(schema.id);
+                    draft.schemas.schemaResultById[schema.id] = schema;
+                }
+
+                draft.schemas.done = action.payload.done;
+                return;
+            }
+
+            case '@@dataTableSearch/SEARCH_TABLE_BY_SCHEMA_DONE': {
+                const schemaId = action.payload.id;
+
+                const tables =
+                    state.schemas.schemaResultById[schemaId]?.tables || [];
+
+                draft.schemas.schemaResultById[schemaId].tables = [
+                    ...tables,
+                    ...action.payload.results,
+                ];
+                draft.schemas.schemaResultById[schemaId].count =
+                    action.payload.count;
+                return;
+            }
+
+            case '@@dataTableSearch/SEARCH_TABLE_BY_SORT_CHANGED': {
+                const { sortKey, sortAsc, id: schemaId } = action.payload;
+                draft.schemas.schemaSortByIds[schemaId] = draft.schemas
+                    .schemaSortByIds[schemaId] || {
+                    ...defaultSortSchemaTableBy,
+                };
+                if (sortKey != null) {
+                    draft.schemas.schemaSortByIds[schemaId].key = sortKey;
+                }
+                if (sortAsc != null) {
+                    draft.schemas.schemaSortByIds[schemaId].asc = sortAsc;
+                }
+
+                /* We have to set .count = 1 because InfinityScroll should make at least
+                 one request after sorting for getting the real count. */
+                draft.schemas.schemaResultById[schemaId].count = 1;
+                draft.schemas.schemaResultById[schemaId].tables = [];
+                return;
+            }
+
+            case '@@dataTableSearch/SCHEMAS_SORT_CHANGED': {
+                const { sortKey, sortAsc } = action.payload;
+
+                if (sortKey != null) {
+                    draft.schemas.sortSchemasBy.key = sortKey;
+                }
+                if (sortAsc != null) {
+                    draft.schemas.sortSchemasBy.asc = sortAsc;
+                }
+
+                // reset search state
+                draft.schemas = {
+                    ...initialResultState.schemas,
+                    sortSchemasBy: draft.schemas.sortSchemasBy,
+                };
                 return;
             }
         }

@@ -1,19 +1,19 @@
-import React, { useMemo } from 'react';
+import React from 'react';
+import { useDrag } from 'react-dnd';
+
+import { IDataDoc } from 'const/datadoc';
+import { DataDocHoverContent } from 'components/DataDocHoverContent/DataDocHoverContent';
 
 import history from 'lib/router-history';
-import { IDataDoc } from 'const/datadoc';
+import NOOP from 'lib/utils/noop';
 
 import { ListLink } from 'ui/Link/ListLink';
-import { useDrag } from 'react-dnd';
-import { DataDocDraggableType } from './navigatorConst';
 import { IconButton } from 'ui/Button/IconButton';
 
-import './DataDocGridItem.scss';
 import { Popover } from 'ui/Popover/Popover';
 import { PopoverHoverWrapper } from 'ui/Popover/PopoverHoverWrapper';
-import { Title } from 'ui/Title/Title';
-import { UserBadge } from 'components/UserBadge/UserBadge';
-import { generateFormattedDate } from 'lib/utils/datetime';
+import { DataDocDraggableType } from './navigatorConst';
+import './DataDocGridItem.scss';
 
 export interface IDataDocGridItemProps {
     dataDoc: IDataDoc;
@@ -76,12 +76,14 @@ export const DataDocGridItem: React.FunctionComponent<IDataDocGridItemProps> = R
                             </ListLink>
                             {showPopover && anchorElement && (
                                 <Popover
-                                    onHide={() => {
-                                        /* ignore */
-                                    }}
+                                    onHide={NOOP}
                                     anchor={anchorElement}
+                                    layout={['right', 'top']}
                                 >
-                                    <DataDocHoverContent dataDoc={dataDoc} />
+                                    <DataDocHoverContent
+                                        docId={dataDoc.id}
+                                        title={title}
+                                    />
                                 </Popover>
                             )}
                         </>
@@ -91,23 +93,3 @@ export const DataDocGridItem: React.FunctionComponent<IDataDocGridItemProps> = R
         );
     }
 );
-
-const DataDocHoverContent: React.FC<{
-    dataDoc: IDataDoc;
-}> = ({ dataDoc }) => {
-    const { title, owner_uid: ownerUid, updated_at: updatedAt } = dataDoc;
-    const updatedAtDate = useMemo(() => generateFormattedDate(updatedAt), [
-        updatedAt,
-    ]);
-    return (
-        <div className="p8 DataDocHoverContent">
-            <div className="mb4">
-                <Title size={6}>{title || 'Untitled'}</Title>
-            </div>
-            <UserBadge uid={ownerUid} mini />
-            <div className="DataDocHoverContent-date">
-                Last updated: {updatedAtDate}
-            </div>
-        </div>
-    );
-};

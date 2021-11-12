@@ -21,7 +21,7 @@ We will go through how to setup authentication with OAuth and LDAP starting from
 
 ### OAuth
 
-Start by creating an OAuth client with the authentication provider (e.g. [Google](https://developers.google.com/identity/protocols/oauth2), [Okta](https://developer.okta.com/docs/guides/implement-oauth-for-okta/create-oauth-app/)). Make sure "http://localhost:10001/oauth2callback" is entered as allowed redirect uri. Once created, the next step is to change the querybook config by editing `containers/bundled_querybook_config.yaml`. Open that file and enter the following:
+Start by creating an OAuth client with the authentication provider (e.g. [Google](https://developers.google.com/identity/protocols/oauth2), [Okta](https://developer.okta.com/docs/guides/implement-oauth-for-okta/create-oauth-app/), [GitHub](https://docs.github.com/en/developers/apps/building-oauth-apps/creating-an-oauth-app)). Make sure "http://localhost:10001/oauth2callback" is entered as allowed redirect uri. Once created, the next step is to change the querybook config by editing `containers/bundled_querybook_config.yaml`. Open that file and enter the following:
 
 #### Generic OAuth
 
@@ -52,6 +52,25 @@ OAUTH_CLIENT_ID: '---Redacted---'
 OAUTH_CLIENT_SECRET: '---Redacted---'
 OKTA_BASE_URL: https://[Redacted].okta.com/oauth2
 PUBLIC_URL: http://localhost:10001
+```
+
+#### GitHub
+
+```yaml
+AUTH_BACKEND: app.auth.github_auth
+PUBLIC_URL: http://localhost:10001
+OAUTH_CLIENT_ID: '---Redacted---'
+OAUTH_CLIENT_SECRET: '---Redacted---'
+```
+
+#### Azure
+
+```yaml
+AUTH_BACKEND: app.auth.azure_auth
+PUBLIC_URL: http://localhost:10001
+AZURE_TENANT_ID: '---Redacted---'
+OAUTH_CLIENT_ID: '---Redacted---'
+OAUTH_CLIENT_SECRET: '---Redacted---'
 ```
 
 :::caution

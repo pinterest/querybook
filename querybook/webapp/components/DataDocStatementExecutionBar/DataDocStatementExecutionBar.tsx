@@ -23,66 +23,58 @@ interface IProps {
     toggleShowStatementMeta: () => any;
 }
 
-export class DataDocStatementExecutionBar extends React.PureComponent<IProps> {
-    public getToggleLogsButtonDOM() {
-        const {
-            statementExecution,
-            toggleLogs,
-            showStatementLogs,
-        } = this.props;
+export const DataDocStatementExecutionBar = React.memo<IProps>(
+    ({
+        statementExecution,
+        toggleLogs,
+        showStatementLogs,
 
-        if (!statementExecution) {
-            return null;
-        }
+        toggleShowStatementMeta,
+        showStatementMeta,
 
-        const { has_log: hasLog, status } = statementExecution;
+        queryStatus,
+        cancelQueryExecution,
+        toggleShowExecutedQuery,
+        showExecutedQuery,
+    }) => {
+        const getToggleLogsButtonDOM = () => {
+            if (!statementExecution) {
+                return null;
+            }
 
-        const toggleLogsButton = hasLog &&
-            status === StatementExecutionStatus.DONE && (
-                <TextButton
-                    size="small"
-                    onClick={toggleLogs}
-                    icon="list"
-                    title={showStatementLogs ? 'Show Result' : 'Show Logs'}
-                />
+            const { has_log: hasLog, status } = statementExecution;
+
+            const toggleLogsButton = hasLog &&
+                status === StatementExecutionStatus.DONE && (
+                    <TextButton
+                        size="small"
+                        onClick={toggleLogs}
+                        icon="list"
+                        title={showStatementLogs ? 'Show Result' : 'Show Logs'}
+                    />
+                );
+
+            return toggleLogsButton;
+        };
+
+        const getToggleMetaButtonDOM = () => {
+            if (!statementExecution) {
+                return null;
+            }
+
+            const { meta_info: metaInfo, status } = statementExecution;
+            return (
+                metaInfo &&
+                status === StatementExecutionStatus.DONE && (
+                    <TextButton
+                        size="small"
+                        onClick={toggleShowStatementMeta}
+                        icon="activity"
+                        title={showStatementMeta ? 'Hide Meta' : 'Show Meta'}
+                    />
+                )
             );
-
-        return toggleLogsButton;
-    }
-
-    public getToggleMetaButtonDOM() {
-        const {
-            toggleShowStatementMeta,
-            showStatementMeta,
-            statementExecution,
-        } = this.props;
-
-        if (!statementExecution) {
-            return null;
-        }
-
-        const { meta_info: metaInfo, status } = statementExecution;
-        return (
-            metaInfo &&
-            status === StatementExecutionStatus.DONE && (
-                <TextButton
-                    size="small"
-                    onClick={toggleShowStatementMeta}
-                    icon="activity"
-                    title={showStatementMeta ? 'Hide Meta' : 'Show Meta'}
-                />
-            )
-        );
-    }
-
-    public render() {
-        const {
-            queryStatus,
-            statementExecution,
-            cancelQueryExecution,
-            toggleShowExecutedQuery,
-            showExecutedQuery,
-        } = this.props;
+        };
 
         const cancelQueryButton =
             queryStatus === QueryExecutionStatus.RUNNING ? (
@@ -103,15 +95,14 @@ export class DataDocStatementExecutionBar extends React.PureComponent<IProps> {
             />
         );
 
-        const statementExecutionBar = (
+        return (
             <div className={'DataDocStatementExecutionBar flex-row'}>
                 {showExecutedQueryButton}
-                {this.getToggleLogsButtonDOM()}
-                {this.getToggleMetaButtonDOM()}
+                {getToggleLogsButtonDOM()}
+                {getToggleMetaButtonDOM()}
                 {cancelQueryButton}
                 <ResultExportDropdown statementExecution={statementExecution} />
             </div>
         );
-        return statementExecutionBar;
     }
-}
+);

@@ -62,14 +62,15 @@ export class QuerySnippetView extends React.PureComponent<
 
     @bind
     public async handleQuerySnippetInsert() {
-        const context = this.props.querySnippet.context;
+        const { context, engine_id: engineId } = this.props.querySnippet;
         const { templatedVariables } = this.state;
 
         let renderedQuery = context;
         if (templatedVariables.length) {
             renderedQuery = await renderTemplatedQuery(
                 context,
-                this.state.templatedQueryForm
+                this.state.templatedQueryForm,
+                engineId
             );
         }
 

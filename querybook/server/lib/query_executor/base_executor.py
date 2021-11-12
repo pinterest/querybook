@@ -143,7 +143,7 @@ class QueryExecutorLogger(object):
         statement_execution_id = self.statement_execution_ids[-1]
 
         updated_meta_info = False
-        if self._meta_info != meta_info:
+        if meta_info is not None and self._meta_info != meta_info:
             self._meta_info = meta_info
             qe_logic.update_statement_execution(
                 statement_execution_id, meta_info=meta_info
@@ -192,12 +192,13 @@ class QueryExecutorLogger(object):
         qe_logic.update_statement_execution(
             statement_execution_id, status=StatementExecutionStatus.UPLOADING,
         )
+
         socketio.emit(
             "statement_update",
             {
                 "query_execution_id": self._query_execution_id,
                 "id": statement_execution_id,
-                "status": StatementExecutionStatus.UPLOADING,
+                "status": StatementExecutionStatus.UPLOADING.value,
             },
             namespace=QUERY_EXECUTION_NAMESPACE,
             room=self._query_execution_id,

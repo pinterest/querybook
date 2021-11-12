@@ -1,10 +1,8 @@
 import { find, uniqueId, invert } from 'lodash';
-import SqlFormattor from 'sql-formatter';
+import sqlFormatter from 'sql-formatter';
 
 import { tokenize, IToken, getQueryLinePosition } from './sql-lexer';
 
-// If the token falls under these types then do not
-// format the insides of the token
 const skipTokenType = new Set(['TEMPLATED_TAG', 'TEMPLATED_BLOCK', 'URL']);
 
 const allowedStatement = new Set([
@@ -68,7 +66,7 @@ export function format(
         ...options,
     };
 
-    const tokens = tokenize(query, language);
+    const tokens = tokenize(query, { language, includeUnknown: true });
     const statements: IToken[][] = [];
     tokens.reduce((statement, token, index) => {
         if (token.type === 'KEYWORD' && options.case) {
@@ -136,8 +134,9 @@ export function format(
                 firstKeyWord &&
                 allowedStatement.has(firstKeyWord.text.toLocaleLowerCase())
             ) {
-                formattedStatement = SqlFormattor.format(statementText, {
+                formattedStatement = sqlFormatter.format(statementText, {
                     indent: options.indent,
+                    language: getLanguageForSqlFormatter(language),
                 });
             }
 
@@ -151,9 +150,22 @@ export function format(
             return formattedStatement;
         }
     );
+
     return formattedStatements.reduce(
         (acc, statement, index) =>
             acc + '\n'.repeat(newLineBetweenStatement[index]) + statement,
         ''
     );
+}
+
+const SQL_FORMATTER_LANGUAGES = ['db2', 'n1ql', 'pl/sql', 'sql'] as const;
+
+type SqlFormatterLanguage = typeof SQL_FORMATTER_LANGUAGES[number];
+
+function getLanguageForSqlFormatter(language: string): SqlFormatterLanguage {
+    if ((SQL_FORMATTER_LANGUAGES as readonly string[]).includes(language)) {
+        return language as SqlFormatterLanguage;
+    }
+
+    return 'sql';
 }

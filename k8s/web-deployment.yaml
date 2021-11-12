@@ -27,7 +27,7 @@ spec:
                         value: redis://redis:6379/0
                       - name: ELASTICSEARCH_HOST
                         value: elasticsearch:9200
-                  image: docker.pkg.github.com/pinterest/querybook/querybook:latest
+                  image: querybook:latest
                   name: web
                   ports:
                       - containerPort: 10001

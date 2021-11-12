@@ -1,0 +1,8 @@
+.OrderByButton {
+    display: inline-flex;
+    align-items: center;
+
+    .TextToggleButton + .TextToggleButton {
+        margin-left: 0;
+    }
+}

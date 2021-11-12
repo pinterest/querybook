@@ -1,4 +1,4 @@
-import { SearchTableResource } from 'resource/search';
+import { SearchTableResource, SearchSchemaResource } from 'resource/search';
 import {
     ThunkResult,
     IDataTableSearchResultResetAction,
@@ -6,7 +6,18 @@ import {
     ITableSearchResult,
     IDataTableSearchState,
     ITableSearchFilters,
+    ISchemaTableSortChangedAction,
+    ISchemasSortChangedAction,
 } from './types';
+
+import { queryMetastoresSelector } from 'redux/dataSources/selector';
+
+import {
+    IDataSchema,
+    SchemaSortKey,
+    SchemaTableSortKey,
+} from 'const/metastore';
+import { defaultSortSchemaBy, defaultSortSchemaTableBy } from './const';
 
 const BATCH_LOAD_SIZE = 100;
 
@@ -42,6 +53,34 @@ function resetSearchResult(): IDataTableSearchResultResetAction {
 export function resetSearch(): IDataTableSearchResultClearAction {
     return {
         type: '@@dataTableSearch/DATA_TABLE_SEARCH_RESET',
+    };
+}
+
+export function changeTableSort(
+    id: number,
+    sortKey?: SchemaTableSortKey | undefined | null,
+    sortAsc?: boolean | undefined | null
+): ISchemaTableSortChangedAction {
+    return {
+        type: '@@dataTableSearch/SEARCH_TABLE_BY_SORT_CHANGED',
+        payload: {
+            id,
+            sortKey,
+            sortAsc,
+        },
+    };
+}
+
+export function changeSchemasSort(
+    sortKey?: SchemaSortKey | undefined | null,
+    sortAsc?: boolean | undefined | null
+): ISchemasSortChangedAction {
+    return {
+        type: '@@dataTableSearch/SCHEMAS_SORT_CHANGED',
+        payload: {
+            sortKey,
+            sortAsc,
+        },
     };
 }
 
@@ -87,6 +126,86 @@ function searchDataTable(): ThunkResult<Promise<ITableSearchResult[]>> {
                     },
                 });
             }
+        }
+
+        return [];
+    };
+}
+
+export function searchSchemas(): ThunkResult<Promise<IDataSchema[]>> {
+    return async (dispatch, getState) => {
+        try {
+            const tableSearch = getState().dataTableSearch;
+            const offset = tableSearch.schemas.schemaIds.length;
+            const sortSchemasBy =
+                tableSearch.schemas.sortSchemasBy || defaultSortSchemaBy;
+            const searchRequest = SearchSchemaResource.getMore({
+                metastore_id:
+                    tableSearch.metastoreId ||
+                    queryMetastoresSelector(getState())[0].id,
+                limit: 30,
+                offset,
+                sort_key: sortSchemasBy.key,
+                sort_order: sortSchemasBy.asc ? 'asc' : 'desc',
+            });
+            dispatch({
+                type: '@@dataTableSearch/SCHEMA_SEARCH_STARTED',
+            });
+
+            const { data } = await searchRequest;
+
+            dispatch({
+                type: '@@dataTableSearch/SCHEMA_SEARCH_DONE',
+                payload: data,
+            });
+
+            return data.results;
+        } catch (error) {
+            console.error(error);
+        }
+
+        return [];
+    };
+}
+
+export function searchTableBySchema(
+    schemaName: string,
+    id: number
+): ThunkResult<Promise<ITableSearchResult[]>> {
+    return async (dispatch, getState) => {
+        try {
+            const state = getState().dataTableSearch;
+            const orderBy =
+                state.schemas.schemaSortByIds[id] || defaultSortSchemaTableBy;
+            const searchRequest = SearchTableResource.searchConcise({
+                ...mapStateToSearch({
+                    ...state,
+                    searchFilters: {
+                        ...state.searchFilters,
+                        schema: schemaName,
+                    },
+                }),
+                sort_key: orderBy.key,
+                sort_order: orderBy.asc ? 'asc' : 'desc',
+            });
+            dispatch({
+                type: '@@dataTableSearch/SEARCH_TABLE_BY_SCHEMA_STARTED',
+            });
+
+            const { data } = await searchRequest;
+
+            dispatch({
+                type: '@@dataTableSearch/SEARCH_TABLE_BY_SCHEMA_DONE',
+                payload: {
+                    results: data.results,
+                    count: data.count,
+                    id,
+                },
+            });
+
+            return data.results;
+        } catch (error) {
+            console.error(error);
         }
 
         return [];

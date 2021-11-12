@@ -11,7 +11,7 @@ import { Icon } from 'ui/Icon/Icon';
 import { LoadingIcon } from 'ui/Loading/Loading';
 
 import './DataDocNavigatorSection.scss';
-import { TextToggleButton } from 'ui/Button/TextToggleButton';
+import { OrderByButton } from 'ui/OrderByButton/OrderByButton';
 
 interface INavigatorSectionProps {
     className?: string;
@@ -52,6 +52,7 @@ export const DataDocNavigatorSection: React.FC<INavigatorSectionProps> = ({
     collapsed,
     setCollapsed,
 }) => {
+    const [dataDocOrderByAsc, setDataDocOrderByAsc] = useState(false);
     const [dataDocOrderBy, setOrderBy] = useState<DataDocOrderBy>('default');
     useEffect(() => {
         if (!collapsed && !loaded && loadDataDocs) {
@@ -64,13 +65,17 @@ export const DataDocNavigatorSection: React.FC<INavigatorSectionProps> = ({
         filterString,
         collapsed
     );
-    const orderedDataDocs = useMemo(
-        () =>
+    const orderedDataDocs = useMemo(() => {
+        // the default order of filteredDataDocs is descending by
+        // last editing time
+        // so we ensure all ordering is down by descending
+        const orderedDocs =
             dataDocOrderBy === 'default'
                 ? filteredDataDocs
-                : orderBy(filteredDataDocs, 'title'),
-        [dataDocOrderBy, filteredDataDocs]
-    );
+                : orderBy(filteredDataDocs, 'title', 'desc');
+
+        return dataDocOrderByAsc ? [...orderedDocs].reverse() : orderedDocs;
+    }, [dataDocOrderBy, filteredDataDocs, dataDocOrderByAsc]);
 
     const makeDataDocListDOM = () => {
         if (orderedDataDocs.length === 0) {
@@ -111,18 +116,24 @@ export const DataDocNavigatorSection: React.FC<INavigatorSectionProps> = ({
             </div>
             <div className="flex-row">
                 {allowReorder && (
-                    <TextToggleButton
-                        value={dataDocOrderBy === 'alphabetical'}
-                        onChange={(v) =>
-                            setOrderBy(v ? 'alphabetical' : 'default')
+                    <OrderByButton
+                        asc={dataDocOrderByAsc}
+                        onAscToggle={() => setDataDocOrderByAsc((v) => !v)}
+                        orderByFieldSymbol={
+                            dataDocOrderBy === 'alphabetical' ? 'Aa' : 'U@'
                         }
-                        tooltip={
+                        orderByField={
                             dataDocOrderBy === 'alphabetical'
-                                ? 'Order By Last Edited Time'
-                                : 'Order By Title'
+                                ? 'title'
+                                : 'last edited time'
                         }
-                        tooltipPos="left"
-                        text={'↓Aa'}
+                        onOrderByFieldToggle={() =>
+                            setOrderBy((v) =>
+                                v === 'alphabetical'
+                                    ? 'default'
+                                    : 'alphabetical'
+                            )
+                        }
                     />
                 )}
                 <IconButton

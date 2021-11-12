@@ -92,7 +92,7 @@ WHERE table_2.field_1 = (
     order by letter
     )
     select * from z`,
-                    'presto'
+                    { language: 'presto' }
                 )
             )[0]
         )

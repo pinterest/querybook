@@ -88,7 +88,8 @@ type TokenType =
     | 'WORD'
     | 'KEYWORD'
     | 'BOOL'
-    | 'TYPE';
+    | 'TYPE'
+    | 'UNKNOWN';
 
 function getTokenTypeMatcher(
     language: string
@@ -315,7 +316,7 @@ function categorizeWord(token: IToken, language: string) {
     }
 }
 
-function makeTokenizer(language: string) {
+function makeTokenizer(language: string, includeUnknown: boolean) {
     const tokenTypes = getTokenTypeMatcher(language);
     const tokenizeString = (
         token: IToken,
@@ -412,7 +413,16 @@ function makeTokenizer(language: string) {
 
             tokens.push(token);
         } else {
-            stream.next();
+            const unknownToken = stream.next();
+            if (includeUnknown && unknownToken) {
+                tokens.push({
+                    type: 'UNKNOWN',
+                    text: unknownToken,
+                    line: lineNum,
+                    start: stream.pos - 1,
+                    end: stream.pos,
+                });
+            }
         }
 
         return tokenizeBase;
@@ -421,10 +431,16 @@ function makeTokenizer(language: string) {
     return tokenizeBase;
 }
 
-export function tokenize(code: string, language?: string) {
+export function tokenize(
+    code: string,
+    options: { language?: string; includeUnknown?: boolean } = {}
+) {
     const lines = code.split('\n');
     const tokens: IToken[] = [];
-    let tokenizer = makeTokenizer(language ?? 'presto');
+    let tokenizer = makeTokenizer(
+        options.language ?? 'presto',
+        !!options.includeUnknown
+    );
     lines.forEach((line, lineNum) => {
         const stream = new StringStream(line);
         while (!stream.eol()) {
@@ -511,7 +527,7 @@ export function getStatementRanges(
     const selectedQuery = query.substring(queryStartPos, queryEndPos);
     const lineLength = getQueryLinePosition(selectedQuery);
 
-    const tokens = tokenize(selectedQuery, language);
+    const tokens = tokenize(selectedQuery, { language });
 
     // a list of statement tokens
     const tokenStatements: IToken[][] = [];

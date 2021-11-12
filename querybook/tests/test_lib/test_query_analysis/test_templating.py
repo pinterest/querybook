@@ -1,9 +1,13 @@
 from unittest import TestCase, mock
 from datetime import datetime, date
 
+from jinja2.sandbox import SandboxedEnvironment
+
 from lib.query_analysis.templating import (
+    LatestPartitionException,
     _detect_cycle,
     _escape_sql_comments,
+    create_get_latest_partition,
     get_templated_variables_in_string,
     render_templated_query,
     flatten_recursive_variables,
@@ -13,7 +17,26 @@ from lib.query_analysis.templating import (
 )
 
 
-class DetectCycleTestCase(TestCase):
+class TemplatingTestCase(TestCase):
+    DEFAULT_ENGINE_ID = 1
+
+    def setUp(self):
+        self.engine_mock = mock.Mock()
+        self.engine_mock.metastore_id = 2  # arbitrary metastore_id
+        get_query_engine_by_id_patch = mock.patch("logic.admin.get_query_engine_by_id")
+        self.get_query_engine_by_id_mock = get_query_engine_by_id_patch.start()
+        self.addCleanup(get_query_engine_by_id_patch.stop)
+        self.get_query_engine_by_id_mock.return_value = self.engine_mock
+
+        self.metastore_loader_mock = mock.Mock()
+        self.metastore_loader_mock.get_latest_partition.return_value = "dt=2021-01-01"
+        get_metastore_loader_patch = mock.patch("lib.metastore.get_metastore_loader")
+        self.get_metastore_loader_mock = get_metastore_loader_patch.start()
+        self.addCleanup(get_metastore_loader_patch.stop)
+        self.get_metastore_loader_mock.return_value = self.metastore_loader_mock
+
+
+class DetectCycleTestCase(TemplatingTestCase):
     def test_simple_no_cycle(self):
         dag = {"a": ["c"], "b": ["a"], "c": ["d"]}
         self.assertEqual(_detect_cycle(dag), False)
@@ -49,7 +72,7 @@ class DetectCycleTestCase(TestCase):
         self.assertEqual(_detect_cycle(dag), True)
 
 
-class GetTemplatedVariablesInStringTestCase(TestCase):
+class GetTemplatedVariablesInStringTestCase(TemplatingTestCase):
     def test_basic(self):
         self.assertEqual(
             get_templated_variables_in_string(
@@ -86,18 +109,23 @@ class GetTemplatedVariablesInStringTestCase(TestCase):
         )
 
 
-class FlattenRecursiveVariablesTestCase(TestCase):
+class FlattenRecursiveVariablesTestCase(TemplatingTestCase):
+    def setUp(self):
+        self.jinja_env = SandboxedEnvironment()
+        self.jinja_global_function_mock = lambda: "bar"
+
     def test_simple(self):
         self.assertEqual(
             flatten_recursive_variables(
-                {"foo": "{{ bar }}", "bar": "hello world", "baz": "foo"}
+                {"foo": "{{ bar }}", "bar": "hello world", "baz": "foo"},
+                self.jinja_env,
             ),
             ({"foo": "hello world", "bar": "hello world", "baz": "foo"}),
         )
 
         self.assertEqual(
             flatten_recursive_variables(
-                {"foo": "{{ bar }}", "bar": "hello world", "baz": None}
+                {"foo": "{{ bar }}", "bar": "hello world", "baz": None}, self.jinja_env,
             ),
             ({"foo": "hello world", "bar": "hello world", "baz": ""}),
         )
@@ -110,7 +138,8 @@ class FlattenRecursiveVariablesTestCase(TestCase):
                     "bar": "hello {{ baz }}",
                     "baz": "world{{end}}",
                     "end": "!",
-                }
+                },
+                self.jinja_env,
             ),
             (
                 {
@@ -127,6 +156,7 @@ class FlattenRecursiveVariablesTestCase(TestCase):
             QueryHasCycleException,
             flatten_recursive_variables,
             {"foo": "{{ bar }}", "bar": "{{ foo }}", "baz": "hello world"},
+            self.jinja_env,
         )
 
     def test_undefined_var(self):
@@ -134,15 +164,40 @@ class FlattenRecursiveVariablesTestCase(TestCase):
             UndefinedVariableException,
             flatten_recursive_variables,
             {"foo": "{{ bar }}", "bar": "{{ baz }}", "baz": "{{ boo }}"},
+            self.jinja_env,
+        )
+
+    def test_global_function_as_var_value(self):
+        jinja_env = SandboxedEnvironment()
+        jinja_env.globals.update(
+            jinja_global_function_mock=self.jinja_global_function_mock
+        )
+
+        self.assertEqual(
+            flatten_recursive_variables(
+                {"foo": "{{ jinja_global_function_mock() }}",}, jinja_env,
+            ),
+            ({"foo": "bar",}),
+        )
+
+    def test_global_function_vars_ignored(self):
+        jinja_env = SandboxedEnvironment()
+        jinja_env.globals.update(
+            jinja_global_function_mock=self.jinja_global_function_mock
+        )
+
+        self.assertEqual(
+            flatten_recursive_variables({"foo": "{{ bar }}", "bar": "baz"}, jinja_env,),
+            ({"foo": "baz", "bar": "baz"}),
         )
 
 
-class RenderTemplatedQueryTestCase(TestCase):
+class RenderTemplatedQueryTestCase(TemplatingTestCase):
     def test_basic(self):
         query = 'select * from table where dt="{{ date }}"'
         variable = {"date": "1970-01-01"}
         self.assertEqual(
-            render_templated_query(query, variable),
+            render_templated_query(query, variable, self.DEFAULT_ENGINE_ID),
             'select * from table where dt="1970-01-01"',
         )
 
@@ -154,7 +209,7 @@ class RenderTemplatedQueryTestCase(TestCase):
             "date3": "01",
         }
         self.assertEqual(
-            render_templated_query(query, variable),
+            render_templated_query(query, variable, self.DEFAULT_ENGINE_ID),
             'select * from table where dt="1970-01-01"',
         )
 
@@ -164,7 +219,9 @@ class RenderTemplatedQueryTestCase(TestCase):
         with mock.patch("lib.query_analysis.templating.datetime", new=datetime_mock):
             query = 'select * from table where dt="{{ date }}"'
             self.assertEqual(
-                render_templated_query(query, {"date": "{{ today }}"}),
+                render_templated_query(
+                    query, {"date": "{{ today }}"}, self.DEFAULT_ENGINE_ID
+                ),
                 'select * from table where dt="1970-01-01"',
             )
 
@@ -175,6 +232,7 @@ class RenderTemplatedQueryTestCase(TestCase):
             render_templated_query,
             'select * from {{ table }} where dt="{{ date }}"',
             {"table": "foo"},
+            self.DEFAULT_ENGINE_ID,
         )
 
         # Missing variable but recursive
@@ -183,6 +241,7 @@ class RenderTemplatedQueryTestCase(TestCase):
             render_templated_query,
             'select * from {{ table }} where dt="{{ date }}"',
             {"table": "foo", "date": "{{ bar }}"},
+            self.DEFAULT_ENGINE_ID,
         )
 
         # Circular dependency
@@ -191,6 +250,7 @@ class RenderTemplatedQueryTestCase(TestCase):
             render_templated_query,
             'select * from {{ table }} where dt="{{ date }}"',
             {"date": "{{ date2 }}", "date2": "{{ date }}"},
+            self.DEFAULT_ENGINE_ID,
         )
 
         # Invalid template usage
@@ -199,6 +259,7 @@ class RenderTemplatedQueryTestCase(TestCase):
             render_templated_query,
             'select * from {{ table  where dt="{{ date }}"',
             {"table": "foo", "date": "{{ bar }}"},
+            self.DEFAULT_ENGINE_ID,
         )
 
     def test_escape_comments(self):
@@ -214,7 +275,9 @@ sample_table limit 5;
 /*
 {{ end_date}}*/
 -- {{ end_date }}"""
-        self.assertEqual(render_templated_query(query, {}), query)
+        self.assertEqual(
+            render_templated_query(query, {}, self.DEFAULT_ENGINE_ID), query
+        )
 
     def test_escape_comments_non_greedy(self):
         query_non_greedy = """select * from
@@ -227,7 +290,9 @@ sample_table limit 5;
 */
 """
         self.assertEqual(
-            render_templated_query(query_non_greedy, {"test": "render"}),
+            render_templated_query(
+                query_non_greedy, {"test": "render"}, self.DEFAULT_ENGINE_ID
+            ),
             """select * from
 /*
    {{ end_date }}
@@ -239,7 +304,7 @@ render
         )
 
 
-class EscapeSQLCommentsTestCase(TestCase):
+class EscapeSQLCommentsTestCase(TemplatingTestCase):
     def test_single_line(self):
         self.assertEqual(
             _escape_sql_comments("select 1 -- test"), 'select 1 {{ "-- test" }}'
@@ -284,3 +349,105 @@ AND b > 0.8
 order by c DESC
 limit 100"""
         self.assertEqual(_escape_sql_comments(query), query)
+
+
+class LatestPartitionTestCase(TemplatingTestCase):
+    def setUp(self):
+        self.engine_mock = mock.Mock()
+        self.engine_mock.metastore_id = 2  # arbitrary metastore_id
+        get_query_engine_by_id_patch = mock.patch("logic.admin.get_query_engine_by_id")
+        self.get_query_engine_by_id_mock = get_query_engine_by_id_patch.start()
+        self.addCleanup(get_query_engine_by_id_patch.stop)
+        self.get_query_engine_by_id_mock.return_value = self.engine_mock
+
+        self.metastore_loader_mock = mock.Mock()
+        self.metastore_loader_mock.get_latest_partition.return_value = "dt=2021-01-01"
+        get_metastore_loader_patch = mock.patch("lib.metastore.get_metastore_loader")
+        self.get_metastore_loader_mock = get_metastore_loader_patch.start()
+        self.addCleanup(get_metastore_loader_patch.stop)
+        self.get_metastore_loader_mock.return_value = self.metastore_loader_mock
+
+    def test_invalid_engine_id(self):
+        self.get_query_engine_by_id_mock.return_value = None
+        self.assertRaises(
+            LatestPartitionException,
+            render_templated_query,
+            'select * from table where dt="{{ latest_partition("default.table", "dt") }}"',
+            {},
+            self.DEFAULT_ENGINE_ID,
+        )
+
+    def test_invalid_table_name(self):
+        self.assertRaises(
+            LatestPartitionException,
+            render_templated_query,
+            'select * from table where dt="{{ latest_partition("table", "dt") }}"',
+            {},
+            self.DEFAULT_ENGINE_ID,
+        )
+
+    def test_invalid_partition_name(self):
+        self.metastore_loader_mock.get_latest_partition.return_value = (
+            "dt=2021-01-01/hr=01"
+        )
+        self.assertRaises(
+            LatestPartitionException,
+            render_templated_query,
+            'select * from table where dt="{{ latest_partition("default.table", "date") }}"',
+            {},
+            self.DEFAULT_ENGINE_ID,
+        )
+
+    def test_no_latest_partition(self):
+        self.metastore_loader_mock.get_latest_partition.return_value = None
+        self.assertRaises(
+            LatestPartitionException,
+            render_templated_query,
+            'select * from table where dt="{{ latest_partition("default.table", "dt") }}"',
+            {},
+            self.DEFAULT_ENGINE_ID,
+        )
+
+    def test_multiple_partition_columns(self):
+        self.metastore_loader_mock.get_latest_partition.return_value = (
+            "dt=2021-01-01/hr=01"
+        )
+        get_latest_partition = create_get_latest_partition(1)
+        latest_partition = get_latest_partition("default.table", "dt")
+        self.assertEqual(latest_partition, "2021-01-01")
+
+        latest_partition = get_latest_partition("default.table", "hr")
+        self.assertEqual(latest_partition, "01")
+
+    def test_single_partition_column(self):
+        get_latest_partition = create_get_latest_partition(1)
+        latest_partition = get_latest_partition("default.table")
+        self.assertEqual(latest_partition, "2021-01-01")
+
+    def test_render_templated_query(self):
+        templated_query = render_templated_query(
+            'select * from table where dt="{{ latest_partition("default.table", "dt") }}"',
+            {},
+            self.DEFAULT_ENGINE_ID,
+        )
+        self.assertEqual(templated_query, 'select * from table where dt="2021-01-01"')
+
+    def test_recursive_get_latest_partition_variable(self):
+        templated_query = render_templated_query(
+            'select * from table where dt="{{ latest_part }}"',
+            {"latest_part": '{{latest_partition("default.table", "dt")}}'},
+            self.DEFAULT_ENGINE_ID,
+        )
+        self.assertEqual(templated_query, 'select * from table where dt="2021-01-01"')
+
+    def test_multiple_partition_columns_partition_not_provided(self):
+        self.metastore_loader_mock.get_latest_partition.return_value = (
+            "dt=2021-01-01/hr=01"
+        )
+        self.assertRaises(
+            LatestPartitionException,
+            render_templated_query,
+            'select * from table where dt="{{ latest_partition("default.table") }}"',
+            {},
+            self.DEFAULT_ENGINE_ID,
+        )

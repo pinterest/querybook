@@ -13,12 +13,14 @@ import './TemplatedQueryView.scss';
 export interface ITemplatedQueryViewProps {
     query: string;
     templatedVariables: Record<string, string>;
+    engineId: number;
     onRunQueryClick?: () => void;
 }
 
 export const TemplatedQueryView: React.FC<ITemplatedQueryViewProps> = ({
     query,
     templatedVariables,
+    engineId,
     onRunQueryClick,
 }) => {
     const { data: renderedQuery, isLoading, error } = useResource(
@@ -26,7 +28,8 @@ export const TemplatedQueryView: React.FC<ITemplatedQueryViewProps> = ({
             () =>
                 TemplatedQueryResource.renderTemplatedQuery(
                     query,
-                    templatedVariables
+                    templatedVariables,
+                    engineId
                 ),
             [query, templatedVariables]
         )

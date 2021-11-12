@@ -1,10 +1,10 @@
 .DataDocNavigatorSection {
     .navigator-header {
-        background-color: var(--light-bg-color);
+        background-color: var(--select-bg-color);
         user-select: none;
         cursor: pointer;
         .Title {
-            color: var(--light-text-color);
+            color: var(--title-color);
             text-transform: capitalize;
         }
     }

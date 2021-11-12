@@ -14,7 +14,7 @@ import {
     DataDocNavSectionValue,
 } from 'lib/local-store/const';
 import { ISetGlobalStateAction } from 'redux/globalState/types';
-import { AnnouncementResource } from 'resource/admin';
+import { AnnouncementResource } from 'resource/announcement';
 
 export function setConfirmation(props): ISetConfirmationAction {
     return {

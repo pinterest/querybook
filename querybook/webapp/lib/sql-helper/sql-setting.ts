@@ -27,7 +27,7 @@ const SettingsByLanguage: Record<string, ILanguageSetting> = {
             )
         ),
         bool: new Set('false true null'.split(' ')),
-        operatorChars: /^[*+\-%<>!=|]/,
+        operatorChars: /^[*+\-%<>!=&|^~]/,
         punctuationChars: /^[/:.]/,
         placeholderVariable: /^\${.*?}/,
         // These are code mirror specific
@@ -63,7 +63,7 @@ const SettingsByLanguage: Record<string, ILanguageSetting> = {
             )
         ),
         bool: new Set('false true null'.split(' ')),
-        operatorChars: /^[*+\-%<>!=&|^]/,
+        operatorChars: /^[*+\-%<>!=&|^~]/,
         punctuationChars: /^[/:.]/,
     },
 };

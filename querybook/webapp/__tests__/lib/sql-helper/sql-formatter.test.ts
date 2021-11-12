@@ -120,3 +120,28 @@ ADD JAR s3://test-bucket/hadoopusrs/bob/test-0.5-SNAPSHOT/test-0.5-SNAPSHOT.jar;
 ADD JAR s3://test-bucket/hadoopusrs/bob/test-0.5-SNAPSHOT/test-0.5-SNAPSHOT.jar;`
     );
 });
+
+test('Bitwise select case', () => {
+    expect(format('SELECT ~0, 5 & 6;', 'hive')).toBe(
+        `SELECT
+  ~ 0,
+  5 & 6;`
+    );
+});
+
+test('Bitwise where case', () => {
+    expect(
+        format('select * from example where field & 123456 = 0;', 'hive')
+    ).toBe(
+        `SELECT
+  *
+FROM
+  example
+WHERE
+  field & 123456 = 0;`
+    );
+});
+
+test('Do not remove unknown symbols', () => {
+    expect(format('¡™£¢∞§¶•ªº', 'mysql')).toBe('¡™£¢∞§¶•ªº');
+});

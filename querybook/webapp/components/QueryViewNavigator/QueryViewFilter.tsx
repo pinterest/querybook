@@ -1,5 +1,4 @@
-import React from 'react';
-import { bind } from 'lodash-decorators';
+import React, { useMemo, useRef } from 'react';
 
 import { IQueryEngine } from 'const/queryEngine';
 import { QueryExecutionStatus } from 'const/queryExecution';
@@ -11,62 +10,37 @@ import { UserName } from 'components/UserBadge/UserName';
 import { Popover } from 'ui/Popover/Popover';
 import { IconButton } from 'ui/Button/IconButton';
 import { TagGroup, Tag } from 'ui/Tag/Tag';
+import { useToggleState } from 'hooks/useToggleState';
 import { QueryViewFilterPicker } from './QueryViewFilterPicker';
 
 interface IQueryViewFilterProps {
     queryEngines: IQueryEngine[];
     queryEngineById: Record<number, IQueryEngine>;
     filters: IQueryViewFilter;
-    updateFilter: (key: string, value: string) => any;
-    onRefresh: () => any;
+    updateFilter: (key: string, value: string) => void;
+    onRefresh: () => void;
 }
 
-interface IQueryViewFilterState {
-    showFilterPicker: boolean;
-}
+const statusOptions: IOptions = getEnumEntries(QueryExecutionStatus).map(
+    ([status, statusEnum]) => ({
+        label: status,
+        value: statusEnum,
+    })
+);
 
-export class QueryViewFilter extends React.PureComponent<
-    IQueryViewFilterProps,
-    IQueryViewFilterState
-> {
-    private configButtonRef = React.createRef<HTMLAnchorElement>();
-    private engineOptions: IOptions;
-    private statusOptions: IOptions;
-
-    public constructor(props: IQueryViewFilterProps) {
-        super(props);
-        this.engineOptions = props.queryEngines.map((queryEngine) => ({
-            label: queryEngine.name,
-            value: queryEngine.id,
-        }));
-
-        this.statusOptions = getEnumEntries(QueryExecutionStatus).map(
-            ([status, statusEnum]) => ({
-                label: status,
-                value: statusEnum,
-            })
+export const QueryViewFilter = React.memo<IQueryViewFilterProps>(
+    ({ queryEngines, queryEngineById, filters, updateFilter, onRefresh }) => {
+        const configButtonRef = useRef<HTMLAnchorElement>();
+        const engineOptions: IOptions = useMemo(
+            () =>
+                queryEngines.map((queryEngine) => ({
+                    label: queryEngine.name,
+                    value: queryEngine.id,
+                })),
+            [queryEngines]
         );
 
-        this.state = {
-            showFilterPicker: false,
-        };
-    }
-
-    @bind
-    public toggleFilterPicker() {
-        this.setState((state) => ({
-            showFilterPicker: !state.showFilterPicker,
-        }));
-    }
-
-    public render() {
-        const {
-            filters,
-            onRefresh,
-            updateFilter,
-            queryEngineById,
-        } = this.props;
-        const { showFilterPicker } = this.state;
+        const [showFilterPicker, _, toggleFilterPicker] = useToggleState(false);
 
         const filterTagsDOM = Object.entries(filters)
             // Skip showing user filter since its not mutable
@@ -99,15 +73,15 @@ export class QueryViewFilter extends React.PureComponent<
 
         const filterPickerDOM = showFilterPicker && (
             <Popover
-                onHide={this.toggleFilterPicker}
-                anchor={this.configButtonRef.current}
+                onHide={toggleFilterPicker}
+                anchor={configButtonRef.current}
                 layout={['right', 'top']}
             >
                 <QueryViewFilterPicker
                     filters={filters}
                     updateFilter={updateFilter}
-                    engineOptions={this.engineOptions}
-                    statusOptions={this.statusOptions}
+                    engineOptions={engineOptions}
+                    statusOptions={statusOptions}
                 />
             </Popover>
         );
@@ -115,8 +89,8 @@ export class QueryViewFilter extends React.PureComponent<
         const configButton = (
             <IconButton
                 icon="sliders"
-                ref={this.configButtonRef}
-                onClick={this.toggleFilterPicker}
+                ref={configButtonRef}
+                onClick={toggleFilterPicker}
             />
         );
         const refreshButton = (
@@ -138,4 +112,4 @@ export class QueryViewFilter extends React.PureComponent<
             </div>
         );
     }
-}
+);

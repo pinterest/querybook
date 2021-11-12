@@ -4,6 +4,12 @@
     }
 
     .board-header-section {
+        &.active {
+            background-color: var(--hover-bg-color);
+        }
+        &:hover {
+            background-color: var(--light-bg-color);
+        }
         .board-header-title {
             cursor: pointer;
             overflow: hidden;
@@ -30,39 +36,16 @@
             }
         }
     }
-
-    .board-item-list {
-        .board-item-list-row {
-            .Icon svg {
-                padding: 0;
-            }
-
-            .ListLink {
-                max-width: 100%;
-            }
-
-            .delete-board-item-button {
-                padding: 0;
-                visibility: hidden;
-            }
-
-            &:hover {
-                .delete-board-item-button {
-                    visibility: visible;
-                }
-            }
-        }
-    }
 }
 
 .DataDocNavigatorBoardSection {
     .navigator-board-header {
-        background-color: var(--light-bg-color);
+        background-color: var(--select-bg-color);
         user-select: none;
         cursor: pointer;
 
         .Title {
-            color: var(--light-text-color);
+            color: var(--title-color);
         }
     }
 }

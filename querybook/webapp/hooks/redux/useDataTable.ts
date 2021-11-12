@@ -1,3 +1,4 @@
+import { useCallback } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { fetchDataTableIfNeeded } from 'redux/dataSources/action';
 import { fullTableSelector } from 'redux/dataSources/selector';
@@ -14,8 +15,10 @@ export function useDataTable(tableId: number) {
     );
 
     const dispatch = useDispatch();
-
-    const getTable = () => dispatch(fetchDataTableIfNeeded(tableId));
+    const getTable = useCallback(
+        () => dispatch(fetchDataTableIfNeeded(tableId)),
+        [dispatch, tableId]
+    );
 
     return {
         getTable,

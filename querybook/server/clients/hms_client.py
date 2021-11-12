@@ -1,5 +1,6 @@
 import random
 import time
+from typing import List
 from thrift.transport.TTransport import TTransportException
 from socket import error as SocketError
 
@@ -210,18 +211,78 @@ class HiveMetastoreClient:
             lambda: self._read_client.get_table(db_name, tb_name)
         )
 
-    def get_partitions(self, db_name, tb_name):
+    def _get_table_partition_keys(self, db_name: str, tb_name: str) -> List[str]:
+        """
+        Queries the hive metastore DB for table partition keys
+
+        Args:
+            db_name: The name of the db
+            tb_name: The name of the table
+
+        Returns:  List[str] The partitions keys of the table
+        """
+        table = self.get_table(db_name, tb_name)
+        partition_keys = [key.name for key in table.partitionKeys or []]
+        return partition_keys
+
+    def get_filtered_partitions(
+        self, db_name: str, tb_name: str, filter_clause: str
+    ) -> List[str]:
+        """
+        Queries the hive metastore DB for table partitions given a filter
+
+        Args:
+            db_name: The name of the db
+            tb_name: The name of the table
+            filter_clause: Filter conditions formatted as a SQL WHERE clause. e.g. "dt=2016-03-14 AND hr=00"
+
+        Returns: List[str] The partitions of db_name.tb_name in the format ['dt=2016-03-14/hr=00', 'dt=2016-03-14/hr=01', ...]
+        """
+        partitions = self._perform_read_op(
+            lambda: self._read_client.get_partitions_by_filter(
+                db_name, tb_name, filter_clause, -1
+            )
+        )
+        partition_keys = self._get_table_partition_keys(db_name, tb_name)
+        partition_names = [
+            format_partition_from_keys_and_values(partition_keys, partition.values)
+            for partition in partitions
+        ]
+        return partition_names
+
+    def get_partitions(self, db_name, tb_name, filter_clause: str = None):
         """
         Queries the hive metastore DB for table partitions
 
         Args:
             db_name: The name of the db
             tb_name: The name of the table
+            filter_clause: Filter conditions formatted as a SQL WHERE clause. e.g. "dt=2016-03-14 AND hr=00"
 
         Returns: The partitions of db_name.tb_name in the format ['dt=2016-03-14/hr=00', 'dt=2016-03-14/hr=01', ...]
 
         """
         _LOG.info("Get partitions of %s.%s", db_name, tb_name)
+        if filter_clause:
+            return self.get_filtered_partitions(db_name, tb_name, filter_clause)
         return self._perform_read_op(
             lambda: self._read_client.get_partition_names(db_name, tb_name, -1)
         )
+
+
+def format_partition_from_keys_and_values(
+    partition_keys: List[str], partition_values: List[str]
+) -> str:
+    """Returns formatted partition name from partition_keys list and partition_values list
+
+    Args:
+        partition_keys {List[str]} -- List of partition keys e.g. ["dt", "hr"]
+        partition_values {List[str]} -- List of partition values e.g. ["2021-01-01", "01"]
+
+    Returns:
+        str -- Formatted partition name e.g. "dt=2021-01-01/hr=01"
+    """
+    partition_name = "/".join(
+        f"{key}={value}" for key, value in zip(partition_keys, partition_values)
+    )
+    return partition_name

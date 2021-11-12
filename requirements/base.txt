@@ -56,6 +56,9 @@ pydruid==0.5.7
 # BigQuery
 google-cloud-bigquery==1.28.0
 # Snowflake
+# snake-connector-python version needs to specified since it is a transitive dependency of snowflake-sqlalchemy
+# https://github.com/pinterest/querybook/pull/669
+snowflake-connector-python==2.6.1
 snowflake-sqlalchemy==1.2.4
 
 # Query Store
@@ -64,6 +67,9 @@ requests-aws4auth==0.9
 boto3==1.9.201
 boto==2.49.0
 moto==2.2.4
+
+# Trino Plugin
+trino==0.305.0
 
 # Google GCD
 google-cloud-storage==1.37.0

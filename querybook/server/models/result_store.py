@@ -4,7 +4,7 @@ from lib.sqlalchemy import CRUDMixin
 from const.db import utf8mb4_name_length, mediumtext_length, now
 
 
-class KeyValueStore(db.Base, CRUDMixin):
+class KeyValueStore(CRUDMixin, db.Base):
     __tablename__ = "key_value_store"
     __table_args__ = {"mysql_engine": "InnoDB", "mysql_charset": "utf8mb4"}
 

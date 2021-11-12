@@ -86,7 +86,7 @@ const useEngine = (dispatch: Dispatch, environmentId: number) => {
                     environmentId
                 )
             ),
-        []
+        [environmentId, dispatch]
     );
 
     const actualEngineId =
@@ -115,7 +115,7 @@ const useQuery = (dispatch: Dispatch, environmentId: number) => {
                     environmentId
                 )
             ),
-        []
+        [environmentId]
     );
     const [query, setQuery] = useDebounceState(reduxQuery, setReduxQuery, 500);
     return { query, setQuery };
@@ -142,10 +142,11 @@ const useQueryComposerSearchAndReplace = (
                 )
             );
         },
-        [query]
+        [query, setQuery]
     );
+
     const jumpToResult = useCallback(
-        (ignore: ISearchResult) => Promise.resolve(),
+        (_ignore: ISearchResult) => Promise.resolve(),
         []
     );
 
@@ -171,13 +172,13 @@ function useQueryEditorHelpers() {
         if (queryEditorRef.current) {
             queryEditorRef.current.formatQuery();
         }
-    }, [queryEditorRef.current]);
+    }, []);
 
     const handleFocusEditor = useCallback(() => {
         if (queryEditorRef.current) {
             queryEditorRef.current.getEditor()?.focus();
         }
-    }, [queryEditorRef.current]);
+    }, []);
 
     useEffect(() => {
         handleFocusEditor();
@@ -241,7 +242,7 @@ const QueryComposer: React.FC = () => {
         if (runButtonRef.current) {
             runButtonRef.current.clickRunButton();
         }
-    }, [runButtonRef.current]);
+    }, []);
 
     const { queryEditorRef, handleFormatQuery } = useQueryEditorHelpers();
 
@@ -264,14 +265,13 @@ const QueryComposer: React.FC = () => {
             dataDoc = await dispatch(dataDocActions.createDataDoc([cell]));
         }
         navigateWithinEnv(`/datadoc/${dataDoc.id}/`);
-    }, [executionId, query]);
+    }, [executionId, query, engine.id]);
 
     const handleRunQuery = React.useCallback(async () => {
         // Just to throttle to prevent double running
         await sleep(250);
 
         const selectedRange = queryEditorRef.current?.getEditorSelection();
-
         const { id } = await dispatch(
             queryExecutionsAction.createQueryExecution(
                 getSelectedQuery(query, selectedRange),
@@ -280,7 +280,7 @@ const QueryComposer: React.FC = () => {
         );
 
         setExecutionId(id);
-    }, [queryEditorRef.current, query, engine]);
+    }, [query, engine]);
 
     const keyMap = useKeyMap(clickOnRunButton, queryEngines, setEngineId);
 

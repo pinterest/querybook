@@ -27,11 +27,10 @@ THIS PART IS IMPORTANT! This is required so that pre-commit hook can be used cor
 ```sh
 git clone ...
 
-cd ../
-python3 -m venv .dhvenv
-source .dhvenv/bin/activate
+cd querybook
+python3 -m venv .virtualenv
+source .virtualenv/bin/activate
 
-cd -
 pip install -r requirements.txt
 pre-commit install
 yarn install

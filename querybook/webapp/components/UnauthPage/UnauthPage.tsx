@@ -1,5 +1,4 @@
-import { bind } from 'lodash-decorators';
-import React from 'react';
+import React, { useState } from 'react';
 import styled from 'styled-components';
 
 import { Center } from 'ui/Center/Center';
@@ -28,25 +27,9 @@ const StyledUnauthPage = styled.div`
 `;
 const UNAUTH_TABS = ['Login', 'Signup'];
 
-export class UnauthPage extends React.PureComponent<
-    IUnauthPageProps,
-    IUnauthPageState
-> {
-    public readonly state = {
-        tabKey: UNAUTH_TABS[0],
-    };
-
-    @bind
-    public handleTabChange(tabKey) {
-        this.setState({
-            tabKey,
-        });
-    }
-
-    public render() {
-        const { onSuccessLogin, showSignUp } = this.props;
-        const { tabKey } = this.state;
-
+export const UnauthPage = React.memo<IUnauthPageProps>(
+    ({ onSuccessLogin, showSignUp }) => {
+        const [tabKey, setTabKey] = useState(UNAUTH_TABS[0]);
         const form =
             tabKey === 'Login' || !showSignUp ? (
                 <LoginForm onSuccessLogin={onSuccessLogin} />
@@ -96,7 +79,7 @@ export class UnauthPage extends React.PureComponent<
                                 align="center"
                                 items={UNAUTH_TABS}
                                 selectedTabKey={tabKey}
-                                onSelect={this.handleTabChange}
+                                onSelect={setTabKey}
                             />
                         )}
                         {form}
@@ -105,4 +88,4 @@ export class UnauthPage extends React.PureComponent<
             </Center>
         );
     }
-}
+);

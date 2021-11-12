@@ -82,6 +82,7 @@ export const SimpleField: React.FC<Props> = ({
     }, [name, label]);
 
     const [field, meta, helpers] = useField(name);
+
     let fieldDOM = null;
     if (type === 'checkbox') {
         fieldDOM = (
