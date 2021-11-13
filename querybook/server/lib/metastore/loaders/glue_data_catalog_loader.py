@@ -8,7 +8,7 @@ from lib.metastore.base_metastore_loader import (
     DataTable,
     DataColumn,
 )
-from lib.metastore.loaders.form_fileds import load_partitions
+from lib.metastore.loaders.form_fileds import load_partitions_field
 
 
 class GlueDataCatalogLoader(BaseMetastoreLoader):
@@ -32,7 +32,7 @@ class GlueDataCatalogLoader(BaseMetastoreLoader):
                 regex=r"^\d{12}$",
             ),
             region=FormField(required=True, description="Enter the AWS Region"),
-            load_partitions=load_partitions,
+            load_partitions=load_partitions_field,
         )
 
     def get_all_schema_names(self) -> List[str]:

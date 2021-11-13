@@ -8,7 +8,7 @@ from lib.metastore.base_metastore_loader import (
     DataTable,
     DataColumn,
 )
-from lib.metastore.loaders.form_fileds import load_partitions
+from lib.metastore.loaders.form_fileds import load_partitions_field
 from lib.utils import json as ujson
 
 
@@ -35,7 +35,7 @@ class HMSMetastoreLoader(BaseMetastoreLoader):
                 ),
                 min=1,
             ),
-            load_partitions=load_partitions,
+            load_partitions=load_partitions_field,
         )
 
     def get_all_schema_names(self) -> List[str]:
