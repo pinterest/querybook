@@ -1,5 +1,5 @@
 from typing import Dict, List, Tuple
-from lib.form import ExpandableFormField, FormField
+from lib.form import ExpandableFormField, FormField, FormFieldType, StructFormField
 from hmsclient.genthrift.hive_metastore.ttypes import NoSuchObjectException
 
 from clients.hms_client import HiveMetastoreClient
@@ -8,12 +8,17 @@ from lib.metastore.base_metastore_loader import (
     DataTable,
     DataColumn,
 )
+from lib.metastore.loaders.form_fileds import load_partitions_field
 from lib.utils import json as ujson
 
 
 class HMSMetastoreLoader(BaseMetastoreLoader):
     def __init__(self, metastore_dict: Dict):
         self.hmc = self._get_hmc(metastore_dict)
+        # load_partitions may not be present in the JSON, if the button wasn't touched during metastore creation
+        self.load_partitions = metastore_dict["metastore_params"].get(
+            "load_partitions", False
+        )
         super(HMSMetastoreLoader, self).__init__(metastore_dict)
 
     def __del__(self):
@@ -21,11 +26,16 @@ class HMSMetastoreLoader(BaseMetastoreLoader):
 
     @classmethod
     def get_metastore_params_template(cls):
-        return ExpandableFormField(
-            of=FormField(
-                required=True, description="Put url to hive metastore server here"
+        return StructFormField(
+            hms_connection=ExpandableFormField(
+                of=FormField(
+                    required=True,
+                    description="Put url to hive metastore server here",
+                    field_type=FormFieldType.String,
+                ),
+                min=1,
             ),
-            min=1,
+            load_partitions=load_partitions_field,
         )
 
     def get_all_schema_names(self) -> List[str]:
@@ -45,7 +55,9 @@ class HMSMetastoreLoader(BaseMetastoreLoader):
 
         parameters = description.parameters
         sd = description.sd
-        partitions = self.get_partitions(schema_name, table_name)
+        partitions = (
+            self.get_partitions(schema_name, table_name) if self.load_partitions else []
+        )
 
         last_modified_time = parameters.get("last_modified_time")
         last_modified_time = (
@@ -86,7 +98,9 @@ class HMSMetastoreLoader(BaseMetastoreLoader):
         )
 
     def _get_hmc(self, metastore_dict):
-        return HiveMetastoreClient(hmss_ro_addrs=metastore_dict["metastore_params"])
+        return HiveMetastoreClient(
+            hmss_ro_addrs=metastore_dict["metastore_params"]["hms_connection"]
+        )
 
 
 def get_hive_metastore_table_description(hmc, db_name, table_name):
