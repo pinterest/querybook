@@ -30,14 +30,14 @@ class ExecuteQuery(object):
         """
         engine = get_query_engine_by_id(engine_id, session=session)
         client_settings = get_client_setting_from_engine(engine, uid, session=session)
-        executor = get_executor_class(engine.language, engine.executor)
+        self.executor = get_executor_class(engine.language, engine.executor)
 
-        statements = parse_statement_from_query(executor, query)
+        statements = parse_statement_from_query(self.executor, query)
         if len(statements) == 0:
             # Empty statement, return None
             return None
 
-        cursor = executor._get_client(client_settings).cursor()
+        cursor = self.executor._get_client(client_settings).cursor()
         if self._async:
             self._async_run(cursor, statements)
             return None

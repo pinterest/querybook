@@ -10,6 +10,10 @@ from lib.utils.execute_query import ExecuteQuery
 from lib.utils import mysql_cache
 
 
+class SampleQueryRunTimeError(Exception):
+    pass
+
+
 @celery.task(bind=True)
 def run_sample_query(
     self, table_id, engine_id, uid, limit, partition, where, order_by, order_by_asc,
@@ -30,8 +34,7 @@ def run_sample_query(
 
         async_execute_query = ExecuteQuery(True)
         async_execute_query(query, engine_id, uid=uid, session=session)
-        while not async_execute_query.poll():
-            self.update_state(state="PROGRESS", meta=async_execute_query.progress)
+        poll_query_until_finish(self, async_execute_query)
 
         results = {
             "created_at": DATETIME_TO_UTC(datetime.now()),
@@ -46,3 +49,16 @@ def run_sample_query(
             expires_after=seconds_in_a_day,
             session=session,
         )
+
+
+def poll_query_until_finish(task, async_execute_query):
+    try:
+        while not async_execute_query.poll():
+            task.update_state(state="PROGRESS", meta=async_execute_query.progress)
+    except Exception as exc:
+        executor = async_execute_query.executor
+        _, raw_error, extracted_error = executor._parse_exception(executor, exc)
+        if extracted_error is not None:
+            raise SampleQueryRunTimeError(extracted_error) from exc
+        else:
+            raise SampleQueryRunTimeError(raw_error) from exc
