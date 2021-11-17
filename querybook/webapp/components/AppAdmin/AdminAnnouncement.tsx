@@ -1,5 +1,6 @@
 import React from 'react';
 import * as Yup from 'yup';
+import styled from 'styled-components';
 
 import { getQueryString } from 'lib/utils/query-string';
 import { useResource } from 'hooks/useResource';
@@ -13,7 +14,12 @@ import { SimpleField } from 'ui/FormikField/SimpleField';
 
 import { AdminAuditLogButton } from 'components/AdminAuditLog/AdminAuditLogButton';
 import { Level } from 'ui/Level/Level';
-import { AdminAnnouncementResource } from 'resource/admin';
+import {
+    AdminAnnouncementResource,
+    AdminEnvironmentResource,
+} from 'resource/admin';
+import { EnvironmentSelection } from './components/EnvironmentSelection/EnvironmentSelection';
+
 import './AdminAnnouncement.scss';
 
 const announcementSchema = Yup.object().shape({
@@ -22,7 +28,18 @@ const announcementSchema = Yup.object().shape({
     can_dismiss: Yup.bool(),
 });
 
+const StyledDateWrapper = styled.div`
+    flex-grow: 1;
+    text-align: left;
+    margin: 4px;
+    padding: 4px;
+    display: flex;
+    max-width: calc(100% - 180px);
+`;
+
 export const AdminAnnouncement: React.FunctionComponent = () => {
+    const { data: environments } = useResource(AdminEnvironmentResource.getAll);
+
     const { data: announcements, forceFetch: loadAnnouncements } = useResource(
         AdminAnnouncementResource.getAll
     );
@@ -40,7 +57,9 @@ export const AdminAnnouncement: React.FunctionComponent = () => {
             const { data } = await AdminAnnouncementResource.create(
                 announcement.message,
                 announcement.url_regex,
-                announcement.can_dismiss
+                announcement.can_dismiss,
+                announcement.active_from,
+                announcement.active_till
             );
             return data;
         },
@@ -84,6 +103,17 @@ export const AdminAnnouncement: React.FunctionComponent = () => {
                             " (ex. '/default/')"
                         }
                     />
+                    <EnvironmentSelection
+                        name="environment"
+                        label="Environment"
+                        options={[
+                            { value: '', key: '', hidden: true },
+                            ...(environments || []).map(({ name }) => ({
+                                value: name,
+                                key: name,
+                            })),
+                        ]}
+                    />
                 </div>
                 <div className="AdminForm-right">
                     <SimpleField
@@ -93,6 +123,18 @@ export const AdminAnnouncement: React.FunctionComponent = () => {
                     />
                 </div>
             </div>
+            <StyledDateWrapper>
+                <SimpleField
+                    type="datepicker"
+                    label="Active From"
+                    name="active_from"
+                />
+                <SimpleField
+                    type="datepicker"
+                    label="Till"
+                    name="active_till"
+                />
+            </StyledDateWrapper>
         </div>
     );
 

@@ -1,4 +1,5 @@
 import React, { useMemo } from 'react';
+import clsx from 'clsx';
 import moment from 'moment';
 import './SearchDatePicker.scss';
 
@@ -21,6 +22,7 @@ interface ISearchDatePickerProps {
     dateFormat?: string;
 
     onChange: (event: React.ChangeEvent<HTMLInputElement>) => void;
+    className?: string;
 }
 
 const defaultInputDateFormat = 'YYYY-MM-DD';
@@ -31,13 +33,20 @@ export const SearchDatePicker: React.FC<ISearchDatePickerProps> = ({
     value,
     dateFormat = defaultInputDateFormat,
     onChange,
+    className,
 }) => {
     const dateValue = useMemo(
         () => getFormattedDateFromSeconds(value, dateFormat),
         [value, dateFormat]
     );
     return (
-        <div className="SearchDatePicker horizontal-space-between">
+        <div
+            className={clsx(
+                'SearchDatePicker',
+                'horizontal-space-between',
+                className
+            )}
+        >
             <span>{name}</span>
             <input id={id} type="date" value={dateValue} onChange={onChange} />
         </div>

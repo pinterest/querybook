@@ -9,6 +9,7 @@ import { INumberFieldProps, NumberField } from './NumberField';
 import { IReactSelectFieldProps, ReactSelectField } from './ReactSelectField';
 import { ITextareaFieldProps, TextareaField } from './TextareaField';
 import { ISelectFieldProps, SelectField } from './SelectField';
+import { DatePickerField } from './DatePickerField';
 import {
     IToggleSwitchFieldProps,
     ToggleSwitchField,
@@ -54,6 +55,10 @@ interface ISimpleSelectProps extends IBaseProps, ISelectFieldProps {
     type: 'select';
 }
 
+interface ISimpleDatePickerProps extends IBaseProps {
+    type: 'datepicker';
+}
+
 type Props =
     | ISimpleCheckboxProps
     | ISimpleInputProps
@@ -62,7 +67,8 @@ type Props =
     | ISimpleToggleProps
     | ISimpleTextareaProps
     | ISimpleRichTextProps
-    | ISimpleReactSelectProps;
+    | ISimpleReactSelectProps
+    | ISimpleDatePickerProps;
 
 export const SimpleField: React.FC<Props> = ({
     name,
@@ -131,6 +137,8 @@ export const SimpleField: React.FC<Props> = ({
                 {...(otherProps as ISimpleRichTextProps)}
             />
         );
+    } else if (type === 'datepicker') {
+        fieldDOM = <DatePickerField name={name} />;
     }
     return (
         <FormField

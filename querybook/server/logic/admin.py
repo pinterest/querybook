@@ -2,6 +2,8 @@ from datetime import datetime
 import hashlib
 import uuid
 from sqlalchemy import func
+from sqlalchemy import or_
+from datetime import date
 
 from app.db import with_session
 
@@ -10,6 +12,7 @@ from models.admin import (
     QueryEngineEnvironment,
     QueryMetastore,
     APIAccessToken,
+    Announcement,
 )
 from logic.schedule import (
     create_task_schedule,
@@ -156,6 +159,26 @@ def recover_query_engine_by_id(id, commit=True, session=None):
         query_engine.deleted_at = None
         if commit:
             session.commit()
+
+
+@with_session
+def get_admin_announcements(session=None):
+    return (
+        session.query(Announcement)
+        .filter(
+            or_(
+                Announcement.active_from.is_(None),
+                Announcement.active_from <= date.today(),
+            )
+        )
+        .filter(
+            or_(
+                Announcement.active_till.is_(None),
+                Announcement.active_till >= date.today(),
+            )
+        )
+        .all()
+    )
 
 
 """

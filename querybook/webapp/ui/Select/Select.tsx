@@ -68,6 +68,7 @@ export type IOptions = Array<
     | {
           key: any;
           value: string;
+          hidden?: boolean;
       }
     | string
 >;
@@ -81,7 +82,11 @@ export function makeSelectOptions(options: IOptions) {
                     {option}
                 </option>
             ) : (
-                <option value={option.key} key={option.key}>
+                <option
+                    value={option.key}
+                    key={option.key}
+                    hidden={option.hidden}
+                >
                     {option.value}
                 </option>
             )

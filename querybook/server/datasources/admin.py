@@ -22,7 +22,7 @@ from models.schedule import TaskSchedule
     "/announcement/", methods=["GET"],
 )
 def get_announcements():
-    return Announcement.get_all()
+    return logic.get_admin_announcements()
 
 
 # ADMIN ONLY APIs
@@ -41,7 +41,9 @@ def get_announcements_admin():
 @register("/admin/announcement/", methods=["POST"])
 @admin_only
 @with_admin_audit_log(AdminItemType.Announcement, AdminOperation.CREATE)
-def create_announcement(message, url_regex="", can_dismiss=True):
+def create_announcement(
+    message, url_regex="", can_dismiss=True, active_from=None, active_till=None,
+):
     with DBSession() as session:
         announcement = Announcement.create(
             {
@@ -49,6 +51,8 @@ def create_announcement(message, url_regex="", can_dismiss=True):
                 "url_regex": url_regex,
                 "can_dismiss": can_dismiss,
                 "message": message,
+                "active_from": active_from,
+                "active_till": active_till,
             },
             session=session,
         )
@@ -65,7 +69,14 @@ def update_announcement(id, **kwargs):
         announcement = Announcement.update(
             id=id,
             fields={**kwargs, "uid": current_user.id,},
-            field_names=["uid", "message", "url_regex", "can_dismiss"],
+            field_names=[
+                "uid",
+                "message",
+                "url_regex",
+                "can_dismiss",
+                "active_from",
+                "active_till",
+            ],
             session=session,
         )
         announcement_dict = announcement.to_dict_admin()
