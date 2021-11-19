@@ -20,7 +20,7 @@ import { TaskStatus } from 'components/Task/TaskStatus';
 import { AdminAuditLogButton } from 'components/AdminAuditLog/AdminAuditLogButton';
 
 import { AsyncButton } from 'ui/AsyncButton/AsyncButton';
-import { SoftButton, TextButton } from 'ui/Button/Button';
+import { Button, SoftButton } from 'ui/Button/Button';
 import { FormField, FormFieldInputSection } from 'ui/Form/FormField';
 import { FormWrapper } from 'ui/Form/FormWrapper';
 import { IconButton } from 'ui/Button/IconButton';
@@ -420,14 +420,17 @@ export const TaskEditor: React.FunctionComponent<IProps> = ({
                         </div>
                         <div className="TaskEditor-form-controls right-align mt16">
                             {task.id ? (
-                                <TextButton
-                                    className="TaskEditor-delete-button"
+                                <Button
                                     disabled={!isValid}
                                     onClick={handleDeleteTask}
                                     title={'Delete Task'}
+                                    color="cancel"
+                                    icon="trash"
                                 />
                             ) : null}
                             <AsyncButton
+                                icon="save"
+                                color="accent"
                                 disabled={!isValid}
                                 onClick={submitForm}
                                 title={task.id ? 'Update Task' : 'Create Task'}
