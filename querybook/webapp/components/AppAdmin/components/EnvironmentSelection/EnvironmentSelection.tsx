@@ -2,11 +2,11 @@ import React, { useMemo } from 'react';
 import { useField, useFormikContext } from 'formik';
 import { SimpleField } from 'ui/FormikField/SimpleField';
 
-type OptionsType = {
+interface OptionsType {
     value: string;
     key: string;
     hidden?: boolean;
-};
+}
 
 export const EnvironmentSelection = ({
     options = [],
@@ -50,7 +50,7 @@ export const EnvironmentSelection = ({
                 },
                 ...options,
             ]}
-            help="You can specify the announcement for this announcement."
+            help="You can specify the environment for this announcement."
         />
     );
 };

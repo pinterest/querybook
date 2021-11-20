@@ -88,6 +88,7 @@ export function GenericCRUD<T extends Record<any, any>>({
                             title={createItem ? 'Cancel' : 'Delete'}
                             icon="trash"
                             onClick={handleDeleteItem}
+                            color="cancel"
                         />
                     );
 
@@ -98,6 +99,7 @@ export function GenericCRUD<T extends Record<any, any>>({
                             }
                             title={createItem ? 'Create' : 'Save'}
                             icon="save"
+                            color="accent"
                             onClick={() => handleSubmit()}
                         />
                     );
@@ -105,12 +107,9 @@ export function GenericCRUD<T extends Record<any, any>>({
                     return (
                         <div>
                             {renderItem(values, setFieldValue)}
-                            <div>
-                                <br />
-                                <div className="right-align">
-                                    <div>{deleteButton}</div>
-                                    <div>{saveButton}</div>
-                                </div>
+                            <div className="pv8 right-align">
+                                <div>{deleteButton}</div>
+                                <div>{saveButton}</div>
                             </div>
                         </div>
                     );

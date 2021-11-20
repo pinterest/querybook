@@ -114,6 +114,18 @@ export const AdminAnnouncement: React.FunctionComponent = () => {
                             })),
                         ]}
                     />
+                    <StyledDateWrapper>
+                        <SimpleField
+                            type="datepicker"
+                            label="Active From"
+                            name="active_from"
+                        />
+                        <SimpleField
+                            type="datepicker"
+                            label="Till"
+                            name="active_till"
+                        />
+                    </StyledDateWrapper>
                 </div>
                 <div className="AdminForm-right">
                     <SimpleField
@@ -123,18 +135,6 @@ export const AdminAnnouncement: React.FunctionComponent = () => {
                     />
                 </div>
             </div>
-            <StyledDateWrapper>
-                <SimpleField
-                    type="datepicker"
-                    label="Active From"
-                    name="active_from"
-                />
-                <SimpleField
-                    type="datepicker"
-                    label="Till"
-                    name="active_till"
-                />
-            </StyledDateWrapper>
         </div>
     );
 
