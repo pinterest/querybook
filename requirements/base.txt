@@ -83,3 +83,6 @@ gspread==3.6.0
 # LDAP
 python-ldap==3.3.1
 requests-oauthlib==1.0.0
+
+# Salesforce CDP
+jaydebeapi==1.2.3

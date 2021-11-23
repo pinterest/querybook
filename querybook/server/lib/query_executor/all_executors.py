@@ -7,6 +7,7 @@ from .executors.presto import PrestoQueryExecutor
 from .executors.sqlalchemy import SnowflakeQueryExecutor, GenericSqlAlchemyQueryExecutor
 from .executors.bigquery import BigQueryQueryExecutor
 from .executors.trino import TrinoQueryExecutor
+from .executors.salesforce_cdp import SalesforceCdpExecutor
 
 ALL_PLUGIN_EXECUTORS = import_plugin("executor_plugin", "ALL_PLUGIN_EXECUTORS", [])
 
@@ -18,6 +19,7 @@ ALL_EXECUTORS = [
     GenericSqlAlchemyQueryExecutor,
     SnowflakeQueryExecutor,
     TrinoQueryExecutor,
+    SalesforceCdpExecutor,
 ] + ALL_PLUGIN_EXECUTORS
 
 

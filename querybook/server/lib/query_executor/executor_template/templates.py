@@ -88,3 +88,9 @@ bigquery_template = StructFormField(
         helper="The JSON string used to log in as service account. If not provided then **GOOGLE_CREDS** from settings will be used.",
     )
 )
+
+salesforce_cdp_template = StructFormField(
+    password=FormField(hidden=True,helper="The password for the CDP Salesforce org instance."),
+    username=FormField(regex="\\w+",helper="The user name for the CDP Salesforce org instance."),
+    loginurl=FormField(helper="Login url, example https://login.salesforce.com")
+)
