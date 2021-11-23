@@ -1,0 +1,4 @@
+# snake-connector-python version needs to specified since it is a transitive dependency of snowflake-sqlalchemy
+# https://github.com/pinterest/querybook/pull/669
+snowflake-connector-python==2.6.1
+snowflake-sqlalchemy==1.2.4

@@ -18,6 +18,7 @@ This may happen for example when your `web` component is not started with `query
 In such a cases, one has the following options how to initialize them manually:
 
 1. In Docker based deployments, attach to `web` or `worker` component and run
+
     ```shell
     python ./querybook/server/scripts/init_es.py
     ```
@@ -35,13 +36,36 @@ In such a cases, one has the following options how to initialize them manually:
     ```
 
 #### Make and Docker-compose
+
 In case some inconsistency occurs in ES indices source data in development deployment using `make`,
 or deployment using `docker-compose`, one can clear cached ES data by stopping and removing `querybook_elasticsearch_1` container
 and then removing Docker volume `querybook_esdata1`. Next `make` or `docker-compose` will create fresh volume again.
 
 #### Kubernetes
+
 Kubernetes base deployments that uses ElasticSearch templates as they are should work without any impact,
 as the volumes are always recreated with deployment of a new (updated) pod.
+
+### Query Engines
+
+The following query engines will not be auto installed by default:
+
+-   Hive
+-   Presto
+-   BigQuery
+-   Druid
+-   Snowflake
+-   Trino
+
+To include them, edit `requirements/local.txt` and add the following:
+
+```
+-r engines/presto.txt  # To include Presto
+-r engines/snowflake.txt # To include Snowflake
+sqlalchemy-access # To install any other query engines
+```
+
+See [connect to query engines guide](../setup_guide/connect_to_query_engines.md) for more detailed examples.
 
 ## v2.9.0
 

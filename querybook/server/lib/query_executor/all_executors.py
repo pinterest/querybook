@@ -1,24 +1,42 @@
 from typing import Dict
+from importlib import import_module
 from lib.utils.plugin import import_plugin
 from .base_executor import parse_exception
+from lib.logger import get_logger
 
-from .executors.hive import HiveQueryExecutor
-from .executors.presto import PrestoQueryExecutor
-from .executors.sqlalchemy import SnowflakeQueryExecutor, GenericSqlAlchemyQueryExecutor
-from .executors.bigquery import BigQueryQueryExecutor
-from .executors.trino import TrinoQueryExecutor
+from .executors.sqlalchemy import GenericSqlAlchemyQueryExecutor
 
+LOG = get_logger(__file__)
+
+
+def import_provided_executors():
+    # Pairs of
+    # path <- relative to lib/query_executor/executors/*
+    # name <- name of the executor, example: class HiveQueryExecutor
+    provided_executor_paths = [
+        ("hive", "HiveQueryExecutor"),
+        ("presto", "PrestoQueryExecutor"),
+        ("bigquery", "BigQueryQueryExecutor"),
+        ("snowflake", "SnowflakeQueryExecutor"),
+        ("trino", "TrinoQueryExecutor"),
+    ]
+    imported_executors = []
+    for path, executor_name in provided_executor_paths:
+        try:
+            executor = getattr(
+                import_module(f"lib.query_executor.executors.{path}"), executor_name
+            )
+            imported_executors.append(executor)
+        except (ImportError, ModuleNotFoundError) as err:
+            LOG.debug(f"Cannot import {executor_name} due to {err}")
+    return imported_executors
+
+
+PROVIDED_EXECUTORS = import_provided_executors()
 ALL_PLUGIN_EXECUTORS = import_plugin("executor_plugin", "ALL_PLUGIN_EXECUTORS", [])
-
-
-ALL_EXECUTORS = [
-    HiveQueryExecutor,
-    PrestoQueryExecutor,
-    BigQueryQueryExecutor,
-    GenericSqlAlchemyQueryExecutor,
-    SnowflakeQueryExecutor,
-    TrinoQueryExecutor,
-] + ALL_PLUGIN_EXECUTORS
+ALL_EXECUTORS = (
+    [GenericSqlAlchemyQueryExecutor] + PROVIDED_EXECUTORS + ALL_PLUGIN_EXECUTORS
+)
 
 
 def get_executor_class(language: str, name: str):
