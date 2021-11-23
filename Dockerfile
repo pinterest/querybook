@@ -1,5 +1,6 @@
 FROM python:3.7.9
 ARG PRODUCTION=true
+ARG TEST=false
 
 ## Install Querybook package requirements + NodeJS
 # Installing build-essential and python-dev for uwsgi
@@ -30,6 +31,8 @@ COPY requirements requirements/
 RUN pip install -r requirements/base.txt \
     && if [ "${PRODUCTION}" = "true" ] ; then \
     pip install -r requirements/prod.txt; \
+    elif [ "${TEST}" = "true" ] ; then \
+    pip install -r requirements/test.txt; \
     else \
     pip install -r requirements/dev.txt; \
     fi \

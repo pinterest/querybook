@@ -34,6 +34,9 @@ prod_image:
 dev_image:
 	docker build --pull -t querybook-dev . --build-arg PRODUCTION=false
 
+test_image:
+	docker build --pull -t querybook-test . --build-arg PRODUCTION=false --build-arg TEST=true
+
 docs:
 	docker-compose -f docs_website/docker-compose.yml --project-directory=. up --build
 
@@ -51,7 +54,7 @@ remove_running_dev_image:
 	$(eval RUNNING_CONTAINERS=$(shell sh -c 'docker ps -q --filter name=querybook_devserver'))
 	docker kill $(RUNNING_CONTAINERS) || true
 
-test: dev_image
+test: test_image
 	docker-compose --file containers/docker-compose.test.yml up --abort-on-container-exit
 
 clean: clean_pyc clean_docker

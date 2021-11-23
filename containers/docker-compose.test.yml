@@ -3,5 +3,5 @@ version: '2.1'
 services:
     test:
         container_name: querybook_test
-        image: querybook-dev:latest
+        image: querybook-test:latest
         command: './querybook/scripts/run_test'
