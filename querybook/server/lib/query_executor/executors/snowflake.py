@@ -4,9 +4,7 @@ from snowflake.connector import errors as sf_errors
 from sqlalchemy.exc import SQLAlchemyError
 
 from lib.query_executor.utils import get_parsed_syntax_error
-from querybook.server.lib.query_executor.executors.sqlalchemy import (
-    SqlAlchemyQueryExecutor,
-)
+from lib.query_executor.executors.sqlalchemy import SqlAlchemyQueryExecutor
 
 
 class SnowflakeQueryExecutor(SqlAlchemyQueryExecutor):

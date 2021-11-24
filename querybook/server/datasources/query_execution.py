@@ -11,7 +11,7 @@ from app.auth.permission import (
     verify_query_execution_permission,
     verify_query_engine_permission,
 )
-from clients.s3_client import FileDoesNotExist
+from clients.common import FileDoesNotExist
 from lib.export.all_exporters import ALL_EXPORTERS, get_exporter
 from lib.result_store import GenericReader
 from lib.query_analysis.templating import (

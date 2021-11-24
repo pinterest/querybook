@@ -6,7 +6,13 @@ sidebar_label: Production Setup
 
 Once further scalability is desired you can start each service individually in different machines, so you can scale them independently as needed.
 
-#### Step 1: Setup Infrastructure
+#### Step 1: Custom build Docker image
+
+The public docker image provided by Querybook only contains the essentials. To intergrate with your tech stack,
+please check the [Infra Installations Guide](../configurations/infra_installation.md) to see how to install and use
+different integrations such as Presto, OAuth, AWS and more.
+
+#### Step 2: Setup Infrastructure
 
 These items should be prepared before setting up Querybook:
 
@@ -18,17 +24,17 @@ These items should be prepared before setting up Querybook:
     -   Slack: Slack API Token
     -   Email: An email address andthe email server running on port 25 of the web server.
 
-#### Step 2: Choose the instances
+#### Step 3: Choose the instances
 
 You will need to deploy 3 different services for Querybook. The web servers handle the HTTP/WebSocket traffic, the workers handle the async tasks such as running the query, and the scheduler sends scheduled tasks to the workers. Since the scheduler doesn't do much, it is recommended to use the smallest instance possible. On the other hand, we recommend having as few workers as possible, so choose the CPU with the maximum number of threads. The amount of memory a worker needs depends on the number of celery processes and the query engines your org uses. For example, Presto would consume a lot of memory because all the query results are returned at once whereas Hive would consume a lot less with chunk loading.
 
 Last but not least, please make sure to only have 1 instance of scheduler running to prevent duplication in scheduled tasks and have at least 2 workers for rolling restart deployments.
 
-#### Step 3: Update your environment variables configuration
+#### Step 4: Update your environment variables configuration
 
 See the [Infra Config](../configurations/infra_config.md) section for this.
 
-#### Step 4: Start each service
+#### Step 5: Start each service
 
 You can start each service by the following commands:
 

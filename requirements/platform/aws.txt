@@ -1,0 +1,4 @@
+# AWS Support
+requests-aws4auth==0.9
+boto3==1.9.201
+boto==2.49.0

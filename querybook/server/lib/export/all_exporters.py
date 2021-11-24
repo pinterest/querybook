@@ -1,7 +1,9 @@
-from lib.utils.plugin import import_plugin
+from lib.utils.import_helper import import_module_with_default
 
 
-ALL_PLUGIN_EXPORTERS = import_plugin("exporter_plugin", "ALL_PLUGIN_EXPORTERS", [])
+ALL_PLUGIN_EXPORTERS = import_module_with_default(
+    "exporter_plugin", "ALL_PLUGIN_EXPORTERS", default=[]
+)
 
 # No default exporter is provided
 ALL_EXPORTERS = ALL_PLUGIN_EXPORTERS

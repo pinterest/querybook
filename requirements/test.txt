@@ -1,3 +1,7 @@
 pytest==5.2.2
 coverage==5.4
--r engines/hive.txt
+moto==2.2.4
+
+-r engine/hive.txt
+-r metastore/glue.txt
+-r exporter/gspread.txt

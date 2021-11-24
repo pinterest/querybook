@@ -40,31 +40,3 @@ markdown2
 
 # Utils
 typing-extensions==3.7.4.1
-
-# Optional Packages ----------
-# HMS
-sasl==0.2.1
-thrift==0.11.0
-thrift-sasl==0.3.0
-kazoo==2.5.0
-hmsclient==0.1.1
-
-# Query Store
-# AWS Support
-requests-aws4auth==0.9
-boto3==1.9.201
-boto==2.49.0
-moto==2.2.4
-
-# Google GCD
-google-cloud-storage==1.37.0
-google-auth==1.24.0
-google-resumable-media==1.2.0
-
-# Exporters
-gspread==3.6.0
-
-# Authentication
-# LDAP
-python-ldap==3.3.1
-requests-oauthlib==1.0.0

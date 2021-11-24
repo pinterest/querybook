@@ -1,6 +1,8 @@
 from typing import Dict
-from importlib import import_module
-from lib.utils.plugin import import_plugin
+from lib.utils.import_helper import (
+    import_module_with_default,
+    import_modules,
+)
 from .base_executor import parse_exception
 from lib.logger import get_logger
 
@@ -8,32 +10,18 @@ from .executors.sqlalchemy import GenericSqlAlchemyQueryExecutor
 
 LOG = get_logger(__file__)
 
-
-def import_provided_executors():
-    # Pairs of
-    # path <- relative to lib/query_executor/executors/*
-    # name <- name of the executor, example: class HiveQueryExecutor
-    provided_executor_paths = [
-        ("hive", "HiveQueryExecutor"),
-        ("presto", "PrestoQueryExecutor"),
-        ("bigquery", "BigQueryQueryExecutor"),
-        ("snowflake", "SnowflakeQueryExecutor"),
-        ("trino", "TrinoQueryExecutor"),
+PROVIDED_EXECUTORS = import_modules(
+    [
+        ("lib.query_executor.executors.hive", "HiveQueryExecutor"),
+        ("lib.query_executor.executors.presto", "PrestoQueryExecutor"),
+        ("lib.query_executor.executors.bigquery", "BigQueryQueryExecutor"),
+        ("lib.query_executor.executors.snowflake", "SnowflakeQueryExecutor"),
+        ("lib.query_executor.executors.trino", "TrinoQueryExecutor"),
     ]
-    imported_executors = []
-    for path, executor_name in provided_executor_paths:
-        try:
-            executor = getattr(
-                import_module(f"lib.query_executor.executors.{path}"), executor_name
-            )
-            imported_executors.append(executor)
-        except (ImportError, ModuleNotFoundError) as err:
-            LOG.debug(f"Cannot import {executor_name} due to {err}")
-    return imported_executors
-
-
-PROVIDED_EXECUTORS = import_provided_executors()
-ALL_PLUGIN_EXECUTORS = import_plugin("executor_plugin", "ALL_PLUGIN_EXECUTORS", [])
+)
+ALL_PLUGIN_EXECUTORS = import_module_with_default(
+    "executor_plugin", "ALL_PLUGIN_EXECUTORS", default=[]
+)
 ALL_EXECUTORS = (
     [GenericSqlAlchemyQueryExecutor] + PROVIDED_EXECUTORS + ALL_PLUGIN_EXECUTORS
 )

@@ -1,0 +1,2 @@
+-r ../platform/gcp.txt
+gspread==3.6.0

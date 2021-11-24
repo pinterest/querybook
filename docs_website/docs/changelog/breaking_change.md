@@ -67,6 +67,37 @@ sqlalchemy-access # To install any other query engines
 
 See [connect to query engines guide](../setup_guide/connect_to_query_engines.md) for more detailed examples.
 
+### All optional Python dependencies are removed
+
+To ensure the build time is scalable with the increasing amount of custom integrations, optional
+python packages such as pyhive (for Hive, Presto support) and oauth are removed from the default installation.
+
+The following integrations will now require custom installation:
+
+-   Query Engine:
+    -   BigQuery (google-cloud-bigquery)
+    -   Druid (pydruid)
+    -   Hive (pyhive)
+    -   Presto (pyhive)
+    -   Snowflake (snowflake-sqlalchemy)
+    -   Trino (trino)
+-   Metastore:
+    -   Hive Metastore (w/ Thrift) (hmsclient)
+    -   Glue (boto)
+-   Authentication:
+    -   OAuth (requests-oauthlib)
+    -   LDAP (python-ldap)
+-   Exporter:
+    -   GSpread exporter (gspread)
+-   Result Store:
+    -   AWS S3 (boto3)
+    -   Google GCS (google-cloud-storage)
+-   Elasticsearch:
+    -   AWS Based (requests-aws4auth)
+
+Even though these packages are removed from the default installation, these dependencies are
+quite easy to add back! Checkout the [Infra Installation Guide](../configurations/infra_installation.md) to learn how.
+
 ## v2.9.0
 
 Now announcements have two extra fields - `active_from` and `active_till`. These fields are not required and a user can still create an announcement without these two fields and if an announcement has two one these fields and the date in these fields are not in the range, this announcement will be filtered.
