@@ -69,6 +69,10 @@ See [connect to query engines guide](../setup_guide/connect_to_query_engines.md)
 
 ### All optional Python dependencies are removed
 
+:::info
+If you use the public docker image on https://hub.docker.com/r/querybook/querybook, no action is required.
+:::
+
 To ensure the build time is scalable with the increasing amount of custom integrations, optional
 python packages such as pyhive (for Hive, Presto support) and oauth are removed from the default installation.
 

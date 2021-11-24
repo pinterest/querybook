@@ -1,0 +1,26 @@
+# This file is for publishing prod docker image of Querybook
+# https://hub.docker.com/r/querybook/querybook
+# You can also include it in local.txt for local development
+
+# Engines
+-r engine/bigquery.txt
+-r engine/druid.txt
+-r engine/hive.txt
+-r engine/presto.txt
+-r engine/snowflake.txt
+-r engine/trino.txt
+
+# Metastores
+-r metastore/hms.txt
+-r metastore/glue.txt
+
+# Auth
+-r auth/oauth.txt
+-r auth/ldap.txt
+
+# Exporter
+-r exporter/gspread.txt
+
+# Result Store
+-r platform/aws.txt
+-r platform/gcp.txt

@@ -35,7 +35,7 @@ dev_image:
 	docker build --pull -t querybook-dev . --build-arg PRODUCTION=false
 
 test_image:
-	docker build --pull -t querybook-test . --build-arg PRODUCTION=false --build-arg TEST=true
+	docker build --pull -t querybook-test . --build-arg PRODUCTION=false --build-arg EXTRA_PIP_INSTALLS=test.txt
 
 docs:
 	docker-compose -f docs_website/docker-compose.yml --project-directory=. up --build
