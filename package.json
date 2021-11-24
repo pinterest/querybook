@@ -69,7 +69,7 @@
         "moment": "2.24.0",
         "node-sass": "6.0.1",
         "normalizr": "3.3.0",
-        "qs": "6.5.2",
+        "qs": "6.10.1",
         "rc-time-picker": "3.6.4",
         "re-resizable": "4.9.0",
         "react": "17.0.2",
