@@ -33,7 +33,7 @@ RUN pip install -r requirements/base.txt \
     pip install -r requirements/prod.txt; \
     fi \
     && if  [ -n "$EXTRA_PIP_INSTALLS" ] ; then \
-    for PACKAGE in ${EXTRA_PIP_INSTALLS//,/ } ; do \
+    for PACKAGE in $(echo $EXTRA_PIP_INSTALLS | sed "s/,/ /g") ; do \
     pip install -r requirements/${PACKAGE}; \
     done \
     fi \
