@@ -80,8 +80,7 @@ function parseOptions(cm, options) {
 
 CodeMirror.defineOption('textHover', false, (cm, val, old) => {
     if (old && old !== (CodeMirror as any).Init) {
-        CodeMirror.off(
-            cm.getWrapperElement(),
+        cm.getWrapperElement().removeEventListener(
             'mousemove',
             cm.state.textHover.onMouseMove
         );
@@ -93,6 +92,6 @@ CodeMirror.defineOption('textHover', false, (cm, val, old) => {
             cm,
             parseOptions(cm, val)
         ));
-        CodeMirror.on(cm.getWrapperElement(), 'mousemove', state.onMouseMove);
+        cm.getWrapperElement().addEventListener('mousemove', state.onMouseMove);
     }
 });
