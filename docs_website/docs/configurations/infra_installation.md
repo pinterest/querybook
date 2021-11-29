@@ -4,7 +4,7 @@ title: Infra Installation
 sidebar_label: Infra Installation
 ---
 
-By default, the Querybook image build would only the core packages that ensure it can run.
+By default, the Querybook image build only includes the core packages that ensure it can run.
 
 To add more integrations such as query engines, metastores, or authentications, you would need to
 install the Python packages yourself.
@@ -39,7 +39,9 @@ Here are all supported integrations included by default:
 ## Integrations that can be supported via package install
 
 :::info
-The public docker image includes all of the custom dependencies listed below
+The public docker image includes all of the custom dependencies listed below.
+
+You can also include all subdependencies by adding `-r extra.txt` in `requirements/local.txt` or putting `EXTRA_PIP_INSTALLS=extra.txt` in docker build args.
 :::
 
 If you install the required packages, these integrations will be automatically supported:
