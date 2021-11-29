@@ -6,11 +6,11 @@ sidebar_label: Production Setup
 
 Once further scalability is desired you can start each service individually in different machines, so you can scale them independently as needed.
 
-#### Step 1: Custom build Docker image
+#### Step 1: Choose and Build Docker image
 
-The public docker image provided by Querybook only contains the essentials. To intergrate with your tech stack,
-please check the [Infra Installations Guide](../configurations/infra_installation.md) to see how to install and use
-different integrations such as Presto, OAuth, AWS and more.
+The [public docker image](https://hub.docker.com/r/querybook/querybook) provided only contains a subset of all integrations possible with Querybook.
+To intergrate with your tech stack, please check the [Infra Installations Guide](../configurations/infra_installation.md) and [Query Engines Guide](./connect_to_query_engines.md)
+to see how to install and use different integrations such as Presto, OAuth, AWS and more.
 
 #### Step 2: Setup Infrastructure
 

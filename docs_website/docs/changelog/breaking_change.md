@@ -81,27 +81,6 @@ and then removing Docker volume `querybook_esdata1`. Next `make` or `docker-comp
 Kubernetes base deployments that uses ElasticSearch templates as they are should work without any impact,
 as the volumes are always recreated with deployment of a new (updated) pod.
 
-### Query Engines
-
-The following query engines will not be auto installed by default:
-
--   Hive
--   Presto
--   BigQuery
--   Druid
--   Snowflake
--   Trino
-
-To include them, edit `requirements/local.txt` and add the following:
-
-```
--r engines/presto.txt  # To include Presto
--r engines/snowflake.txt # To include Snowflake
-sqlalchemy-access # To install any other query engines
-```
-
-See [connect to query engines guide](../setup_guide/connect_to_query_engines.md) for more detailed examples.
-
 ## v2.9.0
 
 Now announcements have two extra fields - `active_from` and `active_till`. These fields are not required and a user can still create an announcement without these two fields and if an announcement has two one these fields and the date in these fields are not in the range, this announcement will be filtered.
