@@ -117,7 +117,16 @@ elasticsearch:
   image:
     repository: docker.elastic.co/elasticsearch/elasticsearch
     pullPolicy: IfNotPresent
-    tag: "6.6.1"
+    tag: "7.15.1"
+  extraEnvs:
+    - name: ES_JAVA_OPTS
+      value: -Xms512m -Xmx512m
+    - name: bootstrap.memory_lock
+      value: 'false'
+    - name: cluster.name
+      value: docker-cluster
+    - name: discovery.type
+      value: single-node
   service:
     serviceType: ClusterIP
     servicePort: 9200

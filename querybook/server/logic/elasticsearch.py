@@ -130,23 +130,21 @@ def datadocs_to_es(datadoc, session=None):
 
 @with_exception
 def _bulk_insert_datadocs():
-    type_name = ES_CONFIG["datadocs"]["type_name"]
     index_name = ES_CONFIG["datadocs"]["index_name"]
 
     for datadoc in get_datadocs_iter():
-        _insert(index_name, type_name, datadoc["id"], datadoc)
+        _insert(index_name, datadoc["id"], datadoc)
 
 
 @with_exception
 @with_session
 def update_data_doc_by_id(doc_id, session=None):
-    type_name = ES_CONFIG["datadocs"]["type_name"]
     index_name = ES_CONFIG["datadocs"]["index_name"]
 
     doc = get_data_doc_by_id(doc_id, session=session)
     if doc is None or doc.archived:
         try:
-            _delete(index_name, type_name, id=doc_id)
+            _delete(index_name, id=doc_id)
         except Exception:
             LOG.error("failed to delete {}. Will pass.".format(doc_id))
     else:
@@ -157,7 +155,7 @@ def update_data_doc_by_id(doc_id, session=None):
                 "doc": formatted_object,
                 "doc_as_upsert": True,
             }  # ES requires this format for updates
-            _update(index_name, type_name, doc_id, updated_body)
+            _update(index_name, doc_id, updated_body)
         except Exception:
             LOG.error("failed to upsert {}. Will pass.".format(doc_id))
 
@@ -252,17 +250,15 @@ def table_to_es(table, session=None):
 
 
 def _bulk_insert_tables():
-    type_name = ES_CONFIG["tables"]["type_name"]
     index_name = ES_CONFIG["tables"]["index_name"]
 
     for table in get_tables_iter():
-        _insert(index_name, type_name, table["id"], table)
+        _insert(index_name, table["id"], table)
 
 
 @with_exception
 @with_session
 def update_table_by_id(table_id, session=None):
-    type_name = ES_CONFIG["tables"]["type_name"]
     index_name = ES_CONFIG["tables"]["index_name"]
 
     table = get_table_by_id(table_id, session=session)
@@ -276,17 +272,16 @@ def update_table_by_id(table_id, session=None):
                 "doc": formatted_object,
                 "doc_as_upsert": True,
             }  # ES requires this format for updates
-            _update(index_name, type_name, table_id, updated_body)
+            _update(index_name, table_id, updated_body)
         except Exception:
             # Otherwise insert as new
             LOG.error("failed to upsert {}. Will pass.".format(table_id))
 
 
 def delete_es_table_by_id(table_id,):
-    type_name = ES_CONFIG["tables"]["type_name"]
     index_name = ES_CONFIG["tables"]["index_name"]
     try:
-        _delete(index_name, type_name, id=table_id)
+        _delete(index_name, id=table_id)
     except Exception:
         LOG.error("failed to delete {}. Will pass.".format(table_id))
 
@@ -343,23 +338,21 @@ def get_users_iter(batch_size=5000, session=None):
 
 
 def _bulk_insert_users():
-    type_name = ES_CONFIG["users"]["type_name"]
     index_name = ES_CONFIG["users"]["index_name"]
 
     for user in get_users_iter():
-        _insert(index_name, type_name, user["id"], user)
+        _insert(index_name, user["id"], user)
 
 
 @with_exception
 @with_session
 def update_user_by_id(uid, session=None):
-    type_name = ES_CONFIG["users"]["type_name"]
     index_name = ES_CONFIG["users"]["index_name"]
 
     user = User.get(id=uid, session=session)
     if user is None or user.deleted:
         try:
-            _delete(index_name, type_name, id=uid)
+            _delete(index_name, id=uid)
         except Exception:
             LOG.error("failed to delete {}. Will pass.".format(uid))
     else:
@@ -370,7 +363,7 @@ def update_user_by_id(uid, session=None):
                 "doc": formatted_object,
                 "doc_as_upsert": True,
             }  # ES requires this format for updates
-            _update(index_name, type_name, uid, updated_body)
+            _update(index_name, uid, updated_body)
         except Exception:
             LOG.error("failed to upsert {}. Will pass.".format(uid))
 
@@ -380,16 +373,16 @@ def update_user_by_id(uid, session=None):
 """
 
 
-def _insert(index_name, doc_type, id, content):
-    get_hosted_es().index(index=index_name, doc_type=doc_type, id=id, body=content)
+def _insert(index_name, id, content):
+    get_hosted_es().index(index=index_name, id=id, body=content)
 
 
-def _delete(index_name, doc_type, id):
-    get_hosted_es().delete(index=index_name, doc_type=doc_type, id=id)
+def _delete(index_name, id):
+    get_hosted_es().delete(index=index_name, id=id)
 
 
-def _update(index_name, doc_type, id, content):
-    get_hosted_es().update(index=index_name, doc_type=doc_type, id=id, body=content)
+def _update(index_name, id, content):
+    get_hosted_es().update(index=index_name, id=id, body=content)
 
 
 def create_indices(*config_names):

@@ -11,7 +11,7 @@ Once further scalability is desired you can start each service individually in d
 These items should be prepared before setting up Querybook:
 
 -   (**Required**) A MySQL/PostgresSQL[^1] database with version >=5.7. It is recommended to have more than 5GB of space.
--   (**Required**) An Elasticsearch server with version 6.6.1.
+-   (**Required**) An Elasticsearch server with version 7.
 -   (**Required**) A 2GB Redis instance, Querybook should not use more than 1GB of memory.
 -   If OAuth will be used for authentication, remember to get the OAuth client information (secrets, token url, etc).
 -   For notifications, you would need

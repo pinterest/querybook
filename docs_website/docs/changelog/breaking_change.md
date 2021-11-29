@@ -7,6 +7,42 @@ slug: /changelog
 
 Here are the list of breaking changes that you should be aware of when updating Querybook:
 
+## v3.0.0
+
+### ElasticSearch
+
+Depending on deployment of Querybook, re-initialization of indices in ElasticSearch 7 cluster might be needed.
+
+This may happen for example when your `web` component is not started with `querybook/scripts/bundled_docker_run_web` script with `--initdb` option.
+
+In such a cases, one has the following options how to initialize them manually:
+
+1. In Docker based deployments, attach to `web` or `worker` component and run
+    ```shell
+    python ./querybook/server/scripts/init_es.py
+    ```
+
+2. Locally, set following keys to proper values in `querybook/config/querybook_config.yaml`
+    ```shell
+    FLASK_SECRET_KEY: ...
+    DATABASE_CONN: ...
+    REDIS_URL: ...
+    ELASTICSEARCH_HOST: ...
+    ```
+    and run
+    ```shell
+    PYTHONPATH=querybook/server python ./querybook/server/scripts/init_es.py
+    ```
+
+#### Make and Docker-compose
+In case some inconsistency occurs in ES indices source data in development deployment using `make`,
+or deployment using `docker-compose`, one can clear cached ES data by stopping and removing `querybook_elasticsearch_1` container
+and then removing Docker volume `querybook_esdata1`. Next `make` or `docker-compose` will create fresh volume again.
+
+#### Kubernetes
+Kubernetes base deployments that uses ElasticSearch templates as they are should work without any impact,
+as the volumes are always recreated with deployment of a new (updated) pod.
+
 ## v2.9.0
 
 Now announcements have two extra fields - `active_from` and `active_till`. These fields are not required and a user can still create an announcement without these two fields and if an announcement has two one these fields and the date in these fields are not in the range, this announcement will be filtered.
