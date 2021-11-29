@@ -32,4 +32,3 @@ jobs:
                   tags: 'latest,${{ env.PATCH_VERSION }},${{ env.MINOR_VERSION }},${{ env.MAJOR_VERSION }}'
                   cache: ${{ github.event_name != 'schedule' }}
                   buildargs: EXTRA_PIP_INSTALLS
-                  no_push: true
