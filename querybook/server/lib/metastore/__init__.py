@@ -4,7 +4,7 @@ from logic.admin import get_query_metastore_by_id
 
 
 def get_metastore_loader_class_by_name(name: str):
-    from .loaders import ALL_METASTORE_LOADERS
+    from lib.metastore.all_loaders import ALL_METASTORE_LOADERS
 
     for loader in ALL_METASTORE_LOADERS:
         if loader.__name__ == name:

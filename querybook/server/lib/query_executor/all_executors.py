@@ -1,24 +1,30 @@
 from typing import Dict
-from lib.utils.plugin import import_plugin
+from lib.utils.import_helper import (
+    import_module_with_default,
+    import_modules,
+)
 from .base_executor import parse_exception
+from lib.logger import get_logger
 
-from .executors.hive import HiveQueryExecutor
-from .executors.presto import PrestoQueryExecutor
-from .executors.sqlalchemy import SnowflakeQueryExecutor, GenericSqlAlchemyQueryExecutor
-from .executors.bigquery import BigQueryQueryExecutor
-from .executors.trino import TrinoQueryExecutor
+from .executors.sqlalchemy import GenericSqlAlchemyQueryExecutor
 
-ALL_PLUGIN_EXECUTORS = import_plugin("executor_plugin", "ALL_PLUGIN_EXECUTORS", [])
+LOG = get_logger(__file__)
 
-
-ALL_EXECUTORS = [
-    HiveQueryExecutor,
-    PrestoQueryExecutor,
-    BigQueryQueryExecutor,
-    GenericSqlAlchemyQueryExecutor,
-    SnowflakeQueryExecutor,
-    TrinoQueryExecutor,
-] + ALL_PLUGIN_EXECUTORS
+PROVIDED_EXECUTORS = import_modules(
+    [
+        ("lib.query_executor.executors.hive", "HiveQueryExecutor"),
+        ("lib.query_executor.executors.presto", "PrestoQueryExecutor"),
+        ("lib.query_executor.executors.bigquery", "BigQueryQueryExecutor"),
+        ("lib.query_executor.executors.snowflake", "SnowflakeQueryExecutor"),
+        ("lib.query_executor.executors.trino", "TrinoQueryExecutor"),
+    ]
+)
+ALL_PLUGIN_EXECUTORS = import_module_with_default(
+    "executor_plugin", "ALL_PLUGIN_EXECUTORS", default=[]
+)
+ALL_EXECUTORS = (
+    [GenericSqlAlchemyQueryExecutor] + PROVIDED_EXECUTORS + ALL_PLUGIN_EXECUTORS
+)
 
 
 def get_executor_class(language: str, name: str):

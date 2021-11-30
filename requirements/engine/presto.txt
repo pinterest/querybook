@@ -1,0 +1,1 @@
+PyHive[presto]==0.6.3

@@ -1,7 +1,6 @@
 ipython
 watchdog_gevent
 watchdog[watchmedo]
-pytest==5.2.2
+
 black==19.10b0
 pre-commit==2.2.0
-coverage==5.4

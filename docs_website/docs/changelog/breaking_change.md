@@ -9,6 +9,41 @@ Here are the list of breaking changes that you should be aware of when updating 
 
 ## v3.0.0
 
+### All optional Python dependencies are removed
+
+:::info
+If you use the public docker image on https://hub.docker.com/r/querybook/querybook, no action is required.
+:::
+
+To ensure the build time is scalable with the increasing amount of custom integrations, optional
+python packages such as pyhive (for Hive, Presto support) and oauth are removed from the default installation.
+
+The following integrations will now require custom installation:
+
+-   Query Engine:
+    -   BigQuery (google-cloud-bigquery)
+    -   Druid (pydruid)
+    -   Hive (pyhive)
+    -   Presto (pyhive)
+    -   Snowflake (snowflake-sqlalchemy)
+    -   Trino (trino)
+-   Metastore:
+    -   Hive Metastore (w/ Thrift) (hmsclient)
+    -   Glue (boto)
+-   Authentication:
+    -   OAuth (requests-oauthlib)
+    -   LDAP (python-ldap)
+-   Exporter:
+    -   GSpread exporter (gspread)
+-   Result Store:
+    -   AWS S3 (boto3)
+    -   Google GCS (google-cloud-storage)
+-   Elasticsearch:
+    -   AWS Based (requests-aws4auth)
+
+Even though these packages are removed from the default installation, these dependencies are
+quite easy to add back! Checkout the [Infra Installation Guide](../configurations/infra_installation.md) to learn how.
+
 ### ElasticSearch
 
 Depending on deployment of Querybook, re-initialization of indices in ElasticSearch 7 cluster might be needed.
@@ -18,6 +53,7 @@ This may happen for example when your `web` component is not started with `query
 In such a cases, one has the following options how to initialize them manually:
 
 1. In Docker based deployments, attach to `web` or `worker` component and run
+
     ```shell
     python ./querybook/server/scripts/init_es.py
     ```
@@ -35,11 +71,13 @@ In such a cases, one has the following options how to initialize them manually:
     ```
 
 #### Make and Docker-compose
+
 In case some inconsistency occurs in ES indices source data in development deployment using `make`,
 or deployment using `docker-compose`, one can clear cached ES data by stopping and removing `querybook_elasticsearch_1` container
 and then removing Docker volume `querybook_esdata1`. Next `make` or `docker-compose` will create fresh volume again.
 
 #### Kubernetes
+
 Kubernetes base deployments that uses ElasticSearch templates as they are should work without any impact,
 as the volumes are always recreated with deployment of a new (updated) pod.
 

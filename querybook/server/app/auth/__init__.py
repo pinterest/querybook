@@ -4,7 +4,7 @@ from flask_login import logout_user, current_user
 from const.path import BUILD_PATH
 from const.datasources import DS_PATH
 from env import QuerybookSettings
-from lib.utils.plugin import import_plugin
+from lib.utils.import_helper import import_module_with_default
 
 
 auth = None
@@ -34,7 +34,7 @@ def init_app(flask_app):
 
 def load_auth():
     global auth
-    auth = import_plugin(QuerybookSettings.AUTH_BACKEND)
+    auth = import_module_with_default(QuerybookSettings.AUTH_BACKEND)
     get_login_config()
 
 

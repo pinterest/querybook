@@ -1,5 +1,6 @@
 FROM python:3.7.9
 ARG PRODUCTION=true
+ARG EXTRA_PIP_INSTALLS=""
 
 ## Install Querybook package requirements + NodeJS
 # Installing build-essential and python-dev for uwsgi
@@ -30,8 +31,11 @@ COPY requirements requirements/
 RUN pip install -r requirements/base.txt \
     && if [ "${PRODUCTION}" = "true" ] ; then \
     pip install -r requirements/prod.txt; \
-    else \
-    pip install -r requirements/dev.txt; \
+    fi \
+    && if  [ -n "$EXTRA_PIP_INSTALLS" ] ; then \
+    for PACKAGE in $(echo $EXTRA_PIP_INSTALLS | sed "s/,/ /g") ; do \
+    pip install -r requirements/${PACKAGE}; \
+    done \
     fi \
     && pip install -r requirements/local.txt || true
 

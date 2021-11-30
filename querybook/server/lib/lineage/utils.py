@@ -1,5 +1,5 @@
 from env import QuerybookSettings
 
-from lib.utils.plugin import import_plugin
+from lib.utils.import_helper import import_module_with_default
 
-lineage = import_plugin(QuerybookSettings.DATA_LINEAGE_BACKEND)
+lineage = import_module_with_default(QuerybookSettings.DATA_LINEAGE_BACKEND)

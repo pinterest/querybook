@@ -23,8 +23,12 @@ jobs:
                   echo MAJOR_VERSION=$MAJOR_VERSION >> $GITHUB_ENV
             - name: Publish to Registry
               uses: elgohr/Publish-Docker-Github-Action@master
+              env:
+                  EXTRA_PIP_INSTALLS: extra.txt
               with:
                   name: querybook/querybook
                   username: ${{ secrets.DOCKER_USERNAME }}
                   password: ${{ secrets.DOCKER_PASSWORD }}
                   tags: 'latest,${{ env.PATCH_VERSION }},${{ env.MINOR_VERSION }},${{ env.MAJOR_VERSION }}'
+                  cache: ${{ github.event_name != 'schedule' }}
+                  buildargs: EXTRA_PIP_INSTALLS

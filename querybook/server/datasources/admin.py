@@ -6,7 +6,7 @@ from const.admin import AdminOperation, AdminItemType
 from datasources.admin_audit_log import with_admin_audit_log
 from env import QuerybookSettings
 from lib.engine_status_checker import ALL_ENGINE_STATUS_CHECKERS
-from lib.metastore.loaders import ALL_METASTORE_LOADERS
+from lib.metastore.all_loaders import ALL_METASTORE_LOADERS
 from lib.query_executor.all_executors import get_flattened_executor_template
 from logic import admin as logic
 from logic import user as user_logic
