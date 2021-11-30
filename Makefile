@@ -32,7 +32,7 @@ prod_image:
 	docker build --pull -t querybook .
 
 dev_image:
-	docker build --pull -t querybook-dev . --build-arg PRODUCTION=false
+	docker build --pull -t querybook-dev . --build-arg PRODUCTION=false --build-arg EXTRA_PIP_INSTALLS=dev.txt
 
 test_image:
 	docker build --pull -t querybook-test . --build-arg PRODUCTION=false --build-arg EXTRA_PIP_INSTALLS=test.txt
