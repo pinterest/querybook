@@ -251,11 +251,9 @@ def _construct_tables_query(
 
 
 def _parse_results(results, get_count):
-    def extract_hits(results):
-        return results.get("hits", {}).get("hits", [])
-
+    hits = results.get("hits", {})
     ret = []
-    elements = extract_hits(results)
+    elements = hits.get("hits", [])
     for element in elements:
         r = element.get("_source", {})
         if element.get("highlight"):
@@ -263,7 +261,7 @@ def _parse_results(results, get_count):
         ret.append(r)
 
     if get_count:
-        total_found = results.get("hits", {}).get("total", 0)
+        total_found = hits.get("total", {}).get("value", 0)
         return ret, total_found
 
     return ret
