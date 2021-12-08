@@ -17,6 +17,7 @@
         "Configurations": [
             "configurations/infra_config",
             "configurations/general_config",
+            "configurations/infra_installation",
             "configurations/custom_app_name"
         ],
         "Integrations": [
