@@ -173,8 +173,15 @@ export function searchTableBySchema(
     id: number
 ): ThunkResult<Promise<ITableSearchResult[]>> {
     return async (dispatch, getState) => {
+        const state = getState().dataTableSearch;
+        const schemaTables = state.schemas.schemaResultById[id];
+        const resultsCount = schemaTables.tables?.length ?? 0;
+
+        if (resultsCount >= schemaTables.count) {
+            return;
+        }
+
         try {
-            const state = getState().dataTableSearch;
             const orderBy =
                 state.schemas.schemaSortByIds[id] || defaultSortSchemaTableBy;
             const searchRequest = SearchTableResource.searchConcise({
@@ -187,6 +194,7 @@ export function searchTableBySchema(
                 }),
                 sort_key: orderBy.key,
                 sort_order: orderBy.asc ? 'asc' : 'desc',
+                offset: resultsCount,
             });
             dispatch({
                 type: '@@dataTableSearch/SEARCH_TABLE_BY_SCHEMA_STARTED',
