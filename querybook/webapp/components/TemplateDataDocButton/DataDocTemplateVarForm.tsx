@@ -1,14 +1,14 @@
 import React from 'react';
-import { Formik, Form, Field, FieldArray } from 'formik';
+import { Formik, Form, FieldArray } from 'formik';
 import * as Yup from 'yup';
 
-import { FormField, FormFieldInputSection } from 'ui/Form/FormField';
 import { Title } from 'ui/Title/Title';
 import { Button } from 'ui/Button/Button';
 import { InfoButton } from 'ui/Button/InfoButton';
 import { IconButton } from 'ui/Button/IconButton';
 import './DataDocTemplateVarForm.scss';
 import { Link } from 'ui/Link/Link';
+import { SimpleField } from 'ui/FormikField/SimpleField';
 
 export interface IDataDocTemplateVarFormProps {
     onSave: (vars: Record<string, string>) => any;
@@ -17,7 +17,9 @@ export interface IDataDocTemplateVarFormProps {
 }
 
 const templatedVarSchema = Yup.object().shape({
-    variables: Yup.array().of(Yup.string().min(1)),
+    variables: Yup.array().of(
+        Yup.array().of(Yup.string().required().min(1)).min(2)
+    ),
 });
 
 export const DataDocTemplateVarForm: React.FunctionComponent<IDataDocTemplateVarFormProps> = ({
@@ -38,7 +40,8 @@ export const DataDocTemplateVarForm: React.FunctionComponent<IDataDocTemplateVar
                 }, {})
             )
         }
-        render={({ handleSubmit, isSubmitting, isValid, values }) => {
+        render={({ handleSubmit, isSubmitting, isValid, values, errors }) => {
+            console.log({ errors });
             const variablesField = (
                 <FieldArray
                     name="variables"
@@ -49,20 +52,23 @@ export const DataDocTemplateVarForm: React.FunctionComponent<IDataDocTemplateVar
                                       key={index}
                                       className="horizontal-space-between template-key-value-row"
                                   >
-                                      <FormField>
-                                          <FormFieldInputSection>
-                                              <Field
-                                                  name={`variables.${index}[0]`}
-                                                  placeholder="Insert name"
-                                              />
-                                          </FormFieldInputSection>
-                                          <FormFieldInputSection>
-                                              <Field
-                                                  name={`variables.${index}[1]`}
-                                                  placeholder="Insert value"
-                                              />
-                                          </FormFieldInputSection>
-                                      </FormField>
+                                      <SimpleField
+                                          label={() => null}
+                                          type="input"
+                                          name={`variables.${index}[0]`}
+                                          inputProps={{
+                                              placeholder: 'Insert name',
+                                          }}
+                                      />
+                                      <SimpleField
+                                          label={() => null}
+                                          type="input"
+                                          name={`variables.${index}[1]`}
+                                          inputProps={{
+                                              placeholder: 'Insert value',
+                                          }}
+                                      />
+
                                       <div>
                                           <IconButton
                                               disabled={!isEditable}
