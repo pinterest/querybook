@@ -40,8 +40,7 @@ export const DataDocTemplateVarForm: React.FunctionComponent<IDataDocTemplateVar
                 }, {})
             )
         }
-        render={({ handleSubmit, isSubmitting, isValid, values, errors }) => {
-            console.log({ errors });
+        render={({ handleSubmit, isSubmitting, isValid, values }) => {
             const variablesField = (
                 <FieldArray
                     name="variables"
