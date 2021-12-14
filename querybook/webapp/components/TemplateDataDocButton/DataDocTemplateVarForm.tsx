@@ -18,7 +18,7 @@ export interface IDataDocTemplateVarFormProps {
 
 const templatedVarSchema = Yup.object().shape({
     variables: Yup.array().of(
-        Yup.array().of(Yup.string().required().min(1)).min(2)
+        Yup.array().of(Yup.string().required('Must not be empty')).length(2)
     ),
 });
 
