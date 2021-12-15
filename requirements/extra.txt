@@ -7,6 +7,7 @@
 -r engine/druid.txt
 -r engine/hive.txt
 -r engine/presto.txt
+-r engine/redshift.txt
 -r engine/snowflake.txt
 -r engine/trino.txt
 
