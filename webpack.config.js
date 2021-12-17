@@ -240,7 +240,10 @@ module.exports = (env, options) => {
                 filename: '[file].map[query]',
                 exclude: [/vendor/],
             }),
-            !PROD && new ReactRefreshWebpackPlugin(),
+            !PROD &&
+                new ReactRefreshWebpackPlugin({
+                    overlay: false,
+                }),
         ].filter(Boolean),
     };
 };
