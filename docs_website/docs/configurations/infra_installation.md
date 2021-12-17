@@ -51,6 +51,7 @@ If you install the required packages, these integrations will be automatically s
     -   Druid (via `-r engine/druid.txt`)
     -   Hive (via `-r engine/hive.txt`)
     -   Presto (via `-r engine/presto.txt`)
+    -   Redshift (via `-r engine/redshift.txt`)
     -   Snowflake (via `-r engine/snowflake.txt`)
     -   Trino (via `-r engine/trino.txt`)
     -   And [any sqlalchemy supported engines](../setup_guide/connect_to_query_engines.md)

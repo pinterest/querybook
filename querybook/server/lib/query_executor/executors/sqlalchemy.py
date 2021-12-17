@@ -67,7 +67,6 @@ SQLALCHEMY_SUPPORTED_DIALECTS = [
     "kylin",
     "monetdb",
     "presto",
-    "redshift",
     "solr",
     "teradata",
     "trino",
