@@ -17,6 +17,7 @@ PROVIDED_EXECUTORS = import_modules(
         ("lib.query_executor.executors.bigquery", "BigQueryQueryExecutor"),
         ("lib.query_executor.executors.snowflake", "SnowflakeQueryExecutor"),
         ("lib.query_executor.executors.trino", "TrinoQueryExecutor"),
+        ("lib.query_executor.executors.redshift", "RedshiftQueryExecutor"),
     ]
 )
 ALL_PLUGIN_EXECUTORS = import_module_with_default(
