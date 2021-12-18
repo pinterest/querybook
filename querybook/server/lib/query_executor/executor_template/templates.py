@@ -25,7 +25,7 @@ jdbc:hive2://&lt;host1&gt;:&lt;port1&gt;,&lt;host2&gt;:&lt;port2&gt;/dbName;sess
 presto_executor_template = StructFormField(
     connection_string=FormField(
         required=True,
-        regex="^(?:jdbc:)?presto:\\/\\/([\\w.-]+(?:\\:\\d+)?(?:,[\\w.-]+(?:\\:\\d+)?)*)(\\/\\w+)?(\\/\\w+)?(\\?[\\w.-]+=[\\w.-]+(?:&[\\w.-]+=[\\w.-]+)*)?$",  # noqa: E501
+        regex="^(?:jdbc:)?presto:\\/\\/([\\w.-]+(?:\\:\\d+)?(?:,[\\w.-]+(?:\\:\\d+)?)*)(\\/\\w+)?(\\/\\w+)?(\\?[\\w]+=[^&]+(?:&[\\w]+=[^&]+)*)?$",  # noqa: E501
         helper="""
 <p>Format jdbc:presto://&lt;host:port&gt;/&lt;catalog&gt;/&lt;schema&gt;?presto_conf_list</p>
 <p>Catalog and schema are optional. We only support SSL as the conf option.</p>
@@ -46,7 +46,7 @@ presto_executor_template = StructFormField(
 trino_executor_template = StructFormField(
     connection_string=FormField(
         required=True,
-        regex="^(?:jdbc:)?trino:\\/\\/([\\w.-]+(?:\\:\\d+)?(?:,[\\w.-]+(?:\\:\\d+)?)*)(\\/\\w+)?(\\/\\w+)?(\\?[\\w.-]+=[\\w.-]+(?:&[\\w.-]+=[\\w.-]+)*)?$",  # noqa: E501
+        regex="^(?:jdbc:)?trino:\\/\\/([\\w.-]+(?:\\:\\d+)?(?:,[\\w.-]+(?:\\:\\d+)?)*)(\\/\\w+)?(\\/\\w+)?(\\?[\\w]+=[^&]+(?:&[\\w]+=[^&]+)*)?$",  # noqa: E501
         helper="""
 <p>Format jdbc:trino://&lt;host:port&gt;/&lt;catalog&gt;/&lt;schema&gt;?trino_conf_list</p>
 <p>Catalog and schema are optional. We only support SSL as the conf option.</p>
