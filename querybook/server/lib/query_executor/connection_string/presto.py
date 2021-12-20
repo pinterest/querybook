@@ -1,4 +1,4 @@
-from typing import NamedTuple, Optional
+from typing import Dict, NamedTuple, Optional
 import re
 
 from .helpers.common import split_hostport, get_parsed_variables, random_choice
@@ -16,10 +16,12 @@ class PrestoConnectionConf(NamedTuple):
     # From Settings
     protocol: Optional[str]
 
+    properties: Optional[Dict[str, str]]
+
 
 def get_presto_connection_conf(connection_string: str) -> PrestoConnectionConf:
     match = re.search(
-        r"^(?:jdbc:)?presto:\/\/([\w.-]+(?:\:\d+)?(?:,[\w.-]+(?:\:\d+)?)*)(\/\w+)?(\/\w+)?(\?[\w.-]+=[\w.-]+(?:&[\w.-]+=[\w.-]+)*)?$",  # noqa: E501
+        r"^(?:jdbc:)?presto:\/\/([\w.-]+(?:\:\d+)?(?:,[\w.-]+(?:\:\d+)?)*)(\/\w+)?(\/\w+)?(\?[\w]+=[^&]+(?:&[\w]+=[^&]+)*)?$",  # noqa: E501
         connection_string,
     )
 
@@ -29,11 +31,17 @@ def get_presto_connection_conf(connection_string: str) -> PrestoConnectionConf:
     raw_conf = (match.group(4) or "?")[1:]
 
     parsed_hosts = [split_hostport(hostport) for hostport in raw_hosts.split(",")]
-    configurations = get_parsed_variables(raw_conf)
-
     hostname, port = random_choice(parsed_hosts, default=(None, None))
-    protocol = "https" if configurations.get("SSL", False) else "http"
+
+    properties = get_parsed_variables(raw_conf, separator="&")
+    protocol = "https" if properties.get("SSL", False) else "http"
+    properties.pop("SSL", None)
 
     return PrestoConnectionConf(
-        host=hostname, port=port, catalog=catalog, schema=schema, protocol=protocol
+        host=hostname,
+        port=port,
+        catalog=catalog,
+        schema=schema,
+        protocol=protocol,
+        properties=properties,
     )

@@ -1,11 +1,13 @@
 import React from 'react';
 import { Formik, FormikConfig } from 'formik';
+import { isEmpty } from 'lodash';
 
 import { AsyncButton } from 'ui/AsyncButton/AsyncButton';
-import './GenericCRUD.scss';
 import { Button } from 'ui/Button/Button';
 import { getChangedObject } from 'lib/utils';
 import toast from 'react-hot-toast';
+import './GenericCRUD.scss';
+import { FormError } from 'ui/Form/FormError';
 
 export interface IGenericCRUDProps<T> extends Partial<FormikConfig<T>> {
     item: T;
@@ -82,6 +84,7 @@ export function GenericCRUD<T extends Record<any, any>>({
                     setFieldValue,
                     handleSubmit,
                     isSubmitting,
+                    errors,
                 }) => {
                     const deleteButton = deleteItem && (
                         <AsyncButton
@@ -104,9 +107,14 @@ export function GenericCRUD<T extends Record<any, any>>({
                         />
                     );
 
+                    const errorSection = !isEmpty(errors) ? (
+                        <FormError errors={errors} />
+                    ) : null;
+
                     return (
                         <div>
                             {renderItem(values, setFieldValue)}
+                            {errorSection}
                             <div className="pv8 right-align">
                                 <div>{deleteButton}</div>
                                 <div>{saveButton}</div>

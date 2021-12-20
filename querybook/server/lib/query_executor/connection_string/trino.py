@@ -16,7 +16,7 @@ class TrinoConnectionConf(NamedTuple):
 
 def get_trino_connection_conf(connection_string: str) -> TrinoConnectionConf:
     match = re.search(
-        r"^(?:jdbc:)?trino:\/\/([\w.-]+(?:\:\d+)?(?:,[\w.-]+(?:\:\d+)?)*)(\/\w+)?(\/\w+)?(\?[\w.-]+=[\w.-]+(?:&[\w.-]+=[\w.-]+)*)?$",  # noqa: E501
+        r"^(?:jdbc:)?trino:\/\/([\w.-]+(?:\:\d+)?(?:,[\w.-]+(?:\:\d+)?)*)(\/\w+)?(\/\w+)?(\?[\w]+=[^&]+(?:&[\w]+=[^&]+)*)?$",  # noqa: E501
         connection_string,
     )
 
@@ -26,7 +26,7 @@ def get_trino_connection_conf(connection_string: str) -> TrinoConnectionConf:
     raw_conf = (match.group(4) or "?")[1:]
 
     parsed_hosts = [split_hostport(hostport) for hostport in raw_hosts.split(",")]
-    configurations = get_parsed_variables(raw_conf)
+    configurations = get_parsed_variables(raw_conf, separator="&")
 
     hostname, port = random_choice(parsed_hosts, default=(None, None))
     protocol = "https" if configurations.get("SSL", False) else "http"
