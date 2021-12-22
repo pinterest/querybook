@@ -2,6 +2,7 @@ pytest==5.2.2
 coverage==5.4
 moto==2.2.4
 
+-r auth/ldap.txt
 -r engine/hive.txt
 -r metastore/glue.txt
 -r exporter/gspread.txt
