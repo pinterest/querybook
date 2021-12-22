@@ -2,6 +2,7 @@ import datetime
 from sqlalchemy import func
 
 from app.db import with_session
+from const.data_doc import DataCellType
 from const.elasticsearch import ElasticsearchItem
 from const.impression import ImpressionItemType
 from lib.sqlalchemy import update_model_fields
@@ -18,6 +19,7 @@ from models.datadoc import (
 )
 from models.access_request import AccessRequest
 from models.impression import Impression
+from models.query_execution import QueryExecution
 from tasks.sync_elasticsearch import sync_elasticsearch
 
 
@@ -51,6 +53,7 @@ def create_data_doc(
     session.add(data_doc)
     session.flush()
 
+    data_cell_ids = []
     for index, cell in enumerate(cells):
         data_cell = create_data_cell(
             cell_type=cell["type"],
@@ -66,9 +69,12 @@ def create_data_doc(
             commit=False,
             session=session,
         )
+        data_cell_ids.append(data_cell.id)
     if commit:
         session.commit()
         update_es_data_doc_by_id(data_doc.id)
+        for cell_id in data_cell_ids:
+            update_es_query_cell_by_id(cell_id)
     else:
         session.flush()
 
@@ -140,6 +146,9 @@ def update_data_doc(id, commit=True, session=None, **fields):
         if commit:
             session.commit()
             update_es_data_doc_by_id(data_doc.id)
+
+            # ensure es queries are updated if doc is archived
+            update_es_queries_by_data_doc_id(data_doc.id)
         else:
             session.flush()
         session.refresh(data_doc)
@@ -200,6 +209,7 @@ def clone_data_doc(id, owner_uid, commit=True, session=None):
         session=session,
     )
 
+    new_data_cell_ids = []
     for index, cell in enumerate(data_doc.cells):
         data_cell = create_data_cell(
             cell_type=cell.cell_type.name,
@@ -215,9 +225,12 @@ def clone_data_doc(id, owner_uid, commit=True, session=None):
             commit=False,
             session=session,
         )
+        new_data_cell_ids.append(data_cell.id)
     if commit:
         session.commit()
         update_es_data_doc_by_id(new_data_doc.id)
+        for cell_id in new_data_cell_ids:
+            update_es_query_cell_by_id(cell_id)
     else:
         session.flush()
     session.refresh(new_data_doc)
@@ -246,6 +259,8 @@ def create_data_cell(
     if commit:
         session.commit()
         data_cell.id
+        if data_cell.cell_type == DataCellType.query:
+            update_es_query_cell_by_id(data_cell.id)
     else:
         session.flush()
 
@@ -351,6 +366,7 @@ def insert_data_doc_cell(data_doc_id, cell_id, index, commit=True, session=None)
     if commit:
         session.commit()
         update_es_data_doc_by_id(data_doc_id)
+        update_es_query_cell_by_id(cell_id)
     else:
         session.flush()
 
@@ -383,6 +399,7 @@ def delete_data_doc_cell(data_doc_id, data_cell_id, commit=True, session=None):
     if commit:
         session.commit()
         update_es_data_doc_by_id(data_doc_id)
+        update_es_query_cell_by_id(data_cell_id)
 
 
 @with_session
@@ -856,6 +873,17 @@ def remove_datadoc_access_request(doc_id, uid, session=None, commit=True):
 
 
 @with_session
+def get_latest_query_execution_by_data_cell_id(data_cell_id, session=None):
+    return (
+        session.query(QueryExecution)
+        .join(DataCellQueryExecution)
+        .filter(DataCellQueryExecution.data_cell_id == data_cell_id)
+        .order_by(QueryExecution.id.desc())
+        .first()
+    )
+
+
+@with_session
 def append_query_executions_to_data_cell(
     data_cell_id, query_execution_ids=[], commit=True, session=None
 ):
@@ -863,11 +891,14 @@ def append_query_executions_to_data_cell(
         DataCellQueryExecution.data_cell_id == data_cell_id
     ).update({DataCellQueryExecution.latest: False})
 
-    for index, qid in enumerate(query_execution_ids):
+    for qid in query_execution_ids:
+        latest_query_execution = get_latest_query_execution_by_data_cell_id(
+            data_cell_id, session=session
+        )
         dcqe = DataCellQueryExecution(
             data_cell_id=data_cell_id,
             query_execution_id=qid,
-            latest=(index == len(query_execution_ids)),
+            latest=(not latest_query_execution or qid > latest_query_execution.id),
         )
         session.add(dcqe)
 
@@ -894,5 +925,60 @@ def get_data_cells_executions(ids, session=None):
 """
 
 
+@with_session
+def get_unarchived_query_cell_by_id(id, session=None):
+    return (
+        session.query(DataCell)
+        .filter(DataCell.id == id)
+        .filter(DataCell.cell_type == DataCellType.query)
+        .join(DataDocDataCell)
+        .join(DataDoc)
+        .filter(DataDoc.archived.is_(False))
+        .first()
+    )
+
+
 def update_es_data_doc_by_id(id):
     sync_elasticsearch.apply_async(args=[ElasticsearchItem.datadocs.value, id])
+
+
+def update_es_query_cell_by_id(id):
+    sync_elasticsearch.apply_async(args=[ElasticsearchItem.query_cells.value, id])
+
+
+@with_session
+def update_es_queries_by_data_doc_id(id, session=None):
+    data_cells = (
+        session.query(DataCell)
+        .filter(DataCell.cell_type == DataCellType.query)
+        .join(DataDocDataCell)
+        .join(DataDoc)
+        .filter(DataDoc.id == id)
+        .all()
+    )
+    for data_cell in data_cells:
+        update_es_query_cell_by_id(data_cell.id)
+
+
+@with_session
+def get_all_query_cells(offset=0, limit=100, session=None):
+    return (
+        session.query(DataCell)
+        .filter_by(cell_type=DataCellType.query)
+        .join(DataDocDataCell)
+        .join(DataDoc)
+        .filter(DataDoc.archived.is_(False))
+        .order_by(DataCell.id.desc())
+        .offset(offset)
+        .limit(limit)
+        .all()
+    )
+
+
+def get_data_cell_by_query_execution_id(query_execution_id, session=None):
+    return (
+        session.query(DataCell)
+        .join(DataCellQueryExecution)
+        .filter(DataCellQueryExecution.query_execution_id == query_execution_id)
+        .first()
+    )

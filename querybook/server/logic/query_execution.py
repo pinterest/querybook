@@ -3,6 +3,7 @@ from datetime import datetime
 from sqlalchemy.orm import joinedload
 from app.db import with_session
 from app.flask_app import celery
+from const.elasticsearch import ElasticsearchItem
 
 from const.query_execution import QueryExecutionStatus, StatementExecutionStatus
 from lib.logger import get_logger
@@ -16,6 +17,7 @@ from models.query_execution import (
 from models.datadoc import DataCellQueryExecution, DataDocDataCell
 from models.admin import QueryEngine, QueryEngineEnvironment
 from models.environment import Environment
+from tasks.sync_elasticsearch import sync_elasticsearch
 
 CLEAN_UP_TIME_THRESHOLD = 20 * 60  # 20 mins
 LOG = get_logger(__file__)
@@ -517,6 +519,42 @@ def clean_up_query_execution(dry_run=False, session=None):
                     LOG.info("Updating statement: {}".format(statement_execution.id))
     if should_commit and not dry_run:
         session.commit()
+
+
+"""
+    ----------------------------------------------------------------------------------------------------------
+    ELASTICSEARCH
+    ---------------------------------------------------------------------------------------------------------
+"""
+
+
+@with_session
+def get_successful_adhoc_query_executions(offset=0, limit=100, session=None):
+    return (
+        session.query(QueryExecution)
+        .filter(QueryExecution.status == QueryExecutionStatus.DONE)
+        .join(DataCellQueryExecution, isouter=True)
+        .filter(DataCellQueryExecution.id.is_(None))
+        .order_by(QueryExecution.id.desc())
+        .offset(offset)
+        .limit(limit)
+        .all()
+    )
+
+
+@with_session
+def get_successful_query_executions_by_data_cell_id(data_cell_id, session=None):
+    return (
+        session.query(QueryExecution)
+        .filter(QueryExecution.status == QueryExecutionStatus.DONE)
+        .join(DataCellQueryExecution)
+        .filter(DataCellQueryExecution.data_cell_id == data_cell_id)
+        .all()
+    )
+
+
+def update_es_query_execution_by_id(id):
+    sync_elasticsearch.apply_async(args=[ElasticsearchItem.query_executions.value, id])
 
 
 """

@@ -1,26 +1,33 @@
 import React from 'react';
 import moment from 'moment';
 import { useDispatch } from 'react-redux';
+import ReactSelect from 'react-select';
 
-import { IDataDocPreview, ITablePreview } from 'const/search';
+import { IDataDocPreview, IQueryPreview, ITablePreview } from 'const/search';
 
 import { useShallowSelector } from 'hooks/redux/useShallowSelector';
 import { getCurrentEnv } from 'lib/utils/query-string';
 import {
+    defaultReactSelectStyles,
     makeReactSelectStyle,
     miniReactSelectStyles,
 } from 'lib/utils/react-select';
+import { titleize } from 'lib/utils';
 import * as searchActions from 'redux/search/action';
 import { IStoreState } from 'redux/store/types';
 import { RESULT_PER_PAGE, SearchOrder, SearchType } from 'redux/search/types';
 import * as dataTableSearchActions from 'redux/dataTableSearch/action';
 import { queryMetastoresSelector } from 'redux/dataSources/selector';
 import { currentEnvironmentSelector } from 'redux/environment/selector';
+import {
+    queryEngineByIdEnvSelector,
+    queryEngineSelector,
+} from 'redux/queryEngine/selector';
 
 import { UserSelect } from 'components/UserSelect/UserSelect';
 import { UserAvatar } from 'components/UserBadge/UserAvatar';
 import { TableTagGroupSelect } from 'components/DataTableTags/TableTagGroupSelect';
-import { DataDocItem, DataTableItem } from './SearchResultItem';
+import { DataDocItem, DataTableItem, QueryItem } from './SearchResultItem';
 
 import { Button } from 'ui/Button/Button';
 import { Checkbox } from 'ui/Checkbox/Checkbox';
@@ -37,6 +44,7 @@ import { Tabs } from 'ui/Tabs/Tabs';
 import { PrettyNumber } from 'ui/PrettyNumber/PrettyNumber';
 
 import { SearchDatePicker } from './SearchDatePicker';
+import { TableSelect } from './TableSelect';
 import './SearchOverview.scss';
 
 const userReactSelectStyle = makeReactSelectStyle(true, miniReactSelectStyles);
@@ -55,10 +63,14 @@ export const SearchOverview: React.FunctionComponent = () => {
 
         searchRequest,
         queryMetastores,
+        queryEngines,
+        queryEngineById,
         metastoreId,
     } = useShallowSelector((state: IStoreState) => ({
         ...state.search,
         environment: currentEnvironmentSelector(state),
+        queryEngines: queryEngineSelector(state),
+        queryEngineById: queryEngineByIdEnvSelector(state),
         queryMetastores: queryMetastoresSelector(state),
         metastoreId: state.dataTableSearch.metastoreId,
     }));
@@ -105,6 +117,10 @@ export const SearchOverview: React.FunctionComponent = () => {
     const SEARCH_TABS = queryMetastores.length
         ? [
               {
+                  name: 'Query',
+                  key: SearchType.Query,
+              },
+              {
                   name: 'DataDoc',
                   key: SearchType.DataDoc,
               },
@@ -114,6 +130,10 @@ export const SearchOverview: React.FunctionComponent = () => {
               },
           ]
         : [
+              {
+                  name: 'Query',
+                  key: SearchType.Query,
+              },
               {
                   name: 'DataDoc',
                   key: SearchType.DataDoc,
@@ -149,9 +169,27 @@ export const SearchOverview: React.FunctionComponent = () => {
         updateSearchFilter('endDate', isNaN(newDate) ? null : newDate);
     }, []);
 
+    const onMinDurationChange = React.useCallback(
+        (event: React.ChangeEvent<HTMLInputElement>) => {
+            const value = event.target.value;
+            updateSearchFilter('minDuration', value);
+        },
+        []
+    );
+
+    const onMaxDurationChange = React.useCallback(
+        (event: React.ChangeEvent<HTMLInputElement>) => {
+            const value = event.target.value;
+            updateSearchFilter('maxDuration', value);
+        },
+        []
+    );
+
     const getSearchBarDOM = () => {
         const placeholder =
-            searchType === SearchType.DataDoc
+            searchType === SearchType.Query
+                ? 'Search queries'
+                : searchType === SearchType.DataDoc
                 ? 'Search data docs'
                 : 'Search tables';
         return (
@@ -274,7 +312,16 @@ export const SearchOverview: React.FunctionComponent = () => {
 
     const environment = getCurrentEnv();
     const resultsDOM =
-        searchType === SearchType.DataDoc
+        searchType === SearchType.Query
+            ? (results as IQueryPreview[]).map((result) => (
+                  <QueryItem
+                      searchString={searchString}
+                      key={`${result.query_type}-${result.id}`}
+                      preview={result}
+                      environmentName={environment.name}
+                  />
+              ))
+            : searchType === SearchType.DataDoc
             ? (results as IDataDocPreview[]).map((result) => (
                   <DataDocItem
                       searchString={searchString}
@@ -320,73 +367,263 @@ export const SearchOverview: React.FunctionComponent = () => {
         </div>
     );
 
-    const getAuthorFiltersDOM = React.useCallback(() => {
-        const filterVal = searchFilters['owner_uid'];
-
-        const options = searchAuthorChoices.map(({ id, name }) => {
-            const checked = filterVal === id;
-            return (
-                <div className="data-doc-filter-owner" key={id}>
-                    <span className="tiny-avatar">
-                        <UserAvatar uid={id} tiny />
-                    </span>
-                    <span className="filter-owner-name">{name}</span>
-                    <Checkbox
-                        value={checked}
-                        onChange={updateSearchFilter.bind(
-                            null,
-                            'owner_uid',
-                            checked ? null : id
-                        )}
-                    />
-                </div>
-            );
-        });
-
-        const addAuthorDOM = showAddSearchAuthor ? (
-            <div className="add-authors">
-                <UserSelect
-                    onSelect={(uid, name) => {
-                        addSearchAuthorChoice(uid, name);
-                        updateSearchFilter('owner_uid', uid);
-                        toggleShowAddSearchAuthor();
-                    }}
-                    selectProps={{
-                        autoFocus: true,
-                        styles: userReactSelectStyle,
-                    }}
-                    clearAfterSelect
+    const durationFilterDOM = (
+        <div className="filter-duration">
+            <div className="horizontal-space-between mb12">
+                <span>min</span>
+                <input
+                    type="number"
+                    id="min-duration"
+                    placeholder="seconds"
+                    value={searchFilters['minDuration'] ?? ''}
+                    onChange={onMinDurationChange}
+                    min="0"
                 />
             </div>
-        ) : (
-            <Button
-                onClick={toggleShowAddSearchAuthor}
-                className="add-authors"
-                icon="plus"
-                title="more authors"
-                theme="text"
-                color="light"
-                size="small"
-            />
-        );
+            <div className="horizontal-space-between mb12">
+                <span>max</span>
+                <input
+                    type="number"
+                    id="max-duration"
+                    placeholder="seconds"
+                    value={searchFilters['maxDuration'] ?? ''}
+                    onChange={onMaxDurationChange}
+                    min="0"
+                />
+            </div>
+        </div>
+    );
 
-        return (
-            <>
-                {options}
-                {addAuthorDOM}
-            </>
-        );
-    }, [searchAuthorChoices, showAddSearchAuthor, searchFilters]);
+    const queryEngineFilterDOM = (
+        <div className="filter-query-engine">
+            <ReactSelect
+                styles={defaultReactSelectStyles}
+                value={
+                    searchFilters['engine_id'] && {
+                        label: queryEngineById[searchFilters['engine_id']].name,
+                        value: searchFilters['engine_id'],
+                    }
+                }
+                onChange={(option) => {
+                    const engineId = option?.value;
+                    updateSearchFilter('engine_id', engineId);
+                }}
+                options={queryEngines.map((engine) => ({
+                    label: engine.name,
+                    value: engine.id,
+                }))}
+                isClearable
+            />
+        </div>
+    );
+
+    const queryTypeFilterDOM = (
+        <div className="filter-query-type">
+            <ReactSelect
+                styles={defaultReactSelectStyles}
+                value={
+                    searchFilters['query_type'] && {
+                        label: titleize(searchFilters['query_type'], '_', ' '),
+                        value: searchFilters['query_type'],
+                    }
+                }
+                onChange={(option) =>
+                    updateSearchFilter('query_type', option?.value)
+                }
+                options={['query_cell', 'query_execution'].map((queryType) => ({
+                    label: titleize(queryType, '_', ' '),
+                    value: queryType,
+                }))}
+                isClearable
+            />
+        </div>
+    );
+
+    const statementTypeFilterDOM = (
+        <div className="filter-statement-type">
+            <ReactSelect
+                styles={defaultReactSelectStyles}
+                value={
+                    searchFilters['statement_type']
+                        ? searchFilters['statement_type'].map((statement) => ({
+                              label: statement.toUpperCase(),
+                              value: statement,
+                          }))
+                        : null
+                }
+                onChange={(values) => {
+                    const statementTypes =
+                        values && values.length
+                            ? values.map(({ value }) => value)
+                            : null;
+                    updateSearchFilter('statement_type', statementTypes);
+                }}
+                options={['SELECT', 'INSERT', 'CREATE', 'DELETE'].map(
+                    (statement) => ({
+                        label: statement,
+                        value: statement,
+                    })
+                )}
+                isMulti
+                isClearable
+            />
+        </div>
+    );
+
+    const tableFilterDOM = (
+        <TableSelect
+            tableNames={searchFilters['full_table_name'] || []}
+            onSelect={(tableName) => {
+                if (tableName == null) {
+                    updateSearchFilter('full_table_name', null);
+                    return;
+                }
+                const tableNames = searchFilters['full_table_name'] || [];
+                if (tableNames.indexOf(tableName) === -1) {
+                    const newTableNames = tableNames.concat(tableName);
+                    updateSearchFilter('full_table_name', newTableNames);
+                }
+            }}
+            onRemove={(tableName) => {
+                const newTableNames =
+                    searchFilters['full_table_name']?.filter(
+                        (name) => name !== tableName
+                    ) ?? null;
+                updateSearchFilter('full_table_name', newTableNames);
+            }}
+            selectProps={{
+                autoFocus: true,
+            }}
+            clearAfterSelect
+        />
+    );
+
+    const getAuthorFiltersDOM = React.useCallback(
+        (searchFilterKey: string) => {
+            const filterVal = searchFilters[searchFilterKey];
+
+            const options = searchAuthorChoices.map(({ id, name }) => {
+                const checked = filterVal === id;
+                return (
+                    <div className="data-doc-filter-owner" key={id}>
+                        <span className="tiny-avatar">
+                            <UserAvatar uid={id} tiny />
+                        </span>
+                        <span className="filter-owner-name">{name}</span>
+                        <Checkbox
+                            value={checked}
+                            onChange={updateSearchFilter.bind(
+                                null,
+                                searchFilterKey,
+                                checked ? null : id
+                            )}
+                        />
+                    </div>
+                );
+            });
+
+            const addAuthorDOM = showAddSearchAuthor ? (
+                <div className="add-authors">
+                    <UserSelect
+                        onSelect={(uid, name) => {
+                            addSearchAuthorChoice(uid, name);
+                            updateSearchFilter(searchFilterKey, uid);
+                            toggleShowAddSearchAuthor();
+                        }}
+                        selectProps={{
+                            autoFocus: true,
+                            styles: userReactSelectStyle,
+                        }}
+                        clearAfterSelect
+                    />
+                </div>
+            ) : (
+                <Button
+                    onClick={toggleShowAddSearchAuthor}
+                    className="add-authors"
+                    icon="plus"
+                    title="more authors"
+                    theme="text"
+                    color="light"
+                    size="small"
+                />
+            );
+
+            return (
+                <>
+                    {options}
+                    {addAuthorDOM}
+                </>
+            );
+        },
+        [searchAuthorChoices, showAddSearchAuthor, searchFilters]
+    );
 
     const FilterDOM =
-        searchType === 'DataDoc' ? (
+        searchType === 'Query' ? (
             <>
                 <div className="search-filter">
                     <span className="filter-title">
                         Authors
                         <hr className="dh-hr" />
                     </span>
-                    {getAuthorFiltersDOM()}
+                    {getAuthorFiltersDOM('author_uid')}
+                </div>
+                <div className="search-filter">
+                    <span className="filter-title">
+                        Query Engine
+                        <hr className="dh-hr" />
+                    </span>
+                    {queryEngineFilterDOM}
+                </div>
+                {queryMetastores.length && (
+                    <div className="search-filter">
+                        <span className="filter-title">
+                            Tables
+                            <hr className="dh-hr" />
+                        </span>
+                        {tableFilterDOM}
+                    </div>
+                )}
+                <div className="search-filter">
+                    <span className="filter-title">
+                        Query Type
+                        <hr className="dh-hr" />
+                    </span>
+                    {queryTypeFilterDOM}
+                </div>
+                <div className="search-filter">
+                    <span className="filter-title">
+                        Statement Type
+                        <hr className="dh-hr" />
+                    </span>
+                    <div className="result-item-golden horizontal-space-between">
+                        {statementTypeFilterDOM}
+                    </div>
+                </div>
+                <div className="search-filter">
+                    <span className="filter-title">
+                        Created At
+                        <hr className="dh-hr" />
+                    </span>
+                    {dateFilterDOM}
+                </div>
+                <div className="search-filter">
+                    <span className="filter-title">
+                        Duration
+                        <hr className="dh-hr" />
+                    </span>
+                    {durationFilterDOM}
+                </div>
+            </>
+        ) : searchType === 'DataDoc' ? (
+            <>
+                <div className="search-filter">
+                    <span className="filter-title">
+                        Authors
+                        <hr className="dh-hr" />
+                    </span>
+                    {getAuthorFiltersDOM('owner_uid')}
                 </div>
                 <div className="search-filter">
                     <span className="filter-title">

@@ -177,7 +177,7 @@ def update_data_cell(cell_id, fields, sid="", session=None):
     assert_can_write(data_doc.id, session=session)
     verify_environment_permission([data_doc.environment_id])
     session.commit()
-
+    logic.update_es_query_cell_by_id(data_cell.id)
     data_cell_dict = data_cell.to_dict()
     socketio.emit(
         "data_cell_updated",

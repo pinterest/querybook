@@ -6,7 +6,7 @@ import styled from 'styled-components';
 import CodeMirror from 'lib/codemirror';
 import 'codemirror/lib/codemirror.css';
 
-export interface ICodeHighlightProps {
+export interface ICodeHighlightProps extends React.HTMLProps<HTMLDivElement> {
     className?: string;
     theme?: string;
     prefix?: string;
@@ -37,6 +37,7 @@ export const CodeHighlight: React.FC<ICodeHighlightProps> = ({
     height = 'auto',
     language = 'text/x-hive',
     value,
+    ...props
 }) => {
     const styledTokens = useMemo(() => {
         let lastStyle = null;
@@ -88,7 +89,11 @@ export const CodeHighlight: React.FC<ICodeHighlightProps> = ({
     });
 
     const wrapper = (
-        <CodeHighlightContainer height={height} className={wrapperClassName}>
+        <CodeHighlightContainer
+            height={height}
+            className={wrapperClassName}
+            {...props}
+        >
             {codeElements}
         </CodeHighlightContainer>
     );

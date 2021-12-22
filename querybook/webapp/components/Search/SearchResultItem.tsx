@@ -4,10 +4,15 @@ import { escapeRegExp } from 'lodash';
 import history from 'lib/router-history';
 import { generateFormattedDate } from 'lib/utils/datetime';
 import { UserAvatar } from 'components/UserBadge/UserAvatar';
-import { IDataDocPreview, ITablePreview } from 'const/search';
+import { IDataDocPreview, IQueryPreview, ITablePreview } from 'const/search';
 import { Icon } from 'ui/Icon/Icon';
+import { Tag } from 'ui/Tag/Tag';
 import { useUser } from 'hooks/redux/useUser';
 import { Level } from 'ui/Level/Level';
+import { ThemedCodeHighlight } from 'ui/CodeHighlight/ThemedCodeHighlight';
+import { useSelector } from 'react-redux';
+import { queryEngineByIdEnvSelector } from 'redux/queryEngine/selector';
+import { format } from 'lib/sql-helper/sql-formatter';
 import './SearchResultItem.scss';
 
 const HighlightTitle: React.FunctionComponent<{
@@ -46,6 +51,93 @@ function openClick(
         history.push(url);
     }
 }
+
+interface IQueryItemProps {
+    preview: IQueryPreview;
+    searchString: string;
+    environmentName: string;
+}
+
+export const QueryItem: React.FunctionComponent<IQueryItemProps> = ({
+    preview,
+    environmentName,
+    searchString,
+}) => {
+    const {
+        author_uid: authorUid,
+        created_at: createdAt,
+        engine_id: engineId,
+        id,
+        query_text: queryText,
+        title,
+    } = preview;
+    const { userInfo: authorInfo, loading } = useUser({ uid: authorUid });
+
+    const isQueryCell = preview.query_type === 'query_cell';
+
+    const url = isQueryCell
+        ? `/${environmentName}/datadoc/${preview.data_doc_id}/?cellId=${id}`
+        : `/${environmentName}/query_execution/${id}/`;
+    const handleClick = React.useMemo(() => openClick.bind(null, url), [url]);
+    const queryEngineById = useSelector(queryEngineByIdEnvSelector);
+
+    if (loading) {
+        return <div className="SearchResultItem QueryItem">Loading...</div>;
+    }
+
+    // Query cell title is data cell title
+    // Query execution title is "<title> > Execution <id>" for data cell executions
+    // or "Adhoc Execution <id>" for adhoc exeuctions
+    const resultTitle = isQueryCell
+        ? title ?? 'Untitled'
+        : `${title != null ? `${title} >` : 'Adhoc'} Execution ${id}`;
+    const queryTextHighlightedContent = (preview.highlight || {}).query_text;
+    const getQueryTextHighlightedDOM = (queryTextContent: string[]) => (
+        <span
+            className="result-item-description"
+            dangerouslySetInnerHTML={{
+                __html: formatHighlightStrings(queryTextContent),
+            }}
+        />
+    );
+
+    const queryEngine = queryEngineById[engineId];
+    const language = queryEngine?.language ?? 'presto';
+    const formattedQuery = format(queryText, language, {
+        case: 'upper',
+    });
+
+    return (
+        <div className="SearchResultItem QueryItem" onClick={handleClick}>
+            <div className="result-items">
+                <a className="result-items-top horizontal-space-between">
+                    <HighlightTitle
+                        title={resultTitle}
+                        searchString={searchString}
+                    />
+                    <Tag>{queryEngine?.name}</Tag>
+                </a>
+                {queryTextHighlightedContent ? (
+                    getQueryTextHighlightedDOM(queryTextHighlightedContent)
+                ) : (
+                    <ThemedCodeHighlight
+                        className="result-item-query"
+                        value={formattedQuery}
+                        onClick={(event) => event.stopPropagation()}
+                    />
+                )}
+                <Level className="result-items-bottom">
+                    <span className="result-item-owner">
+                        {authorInfo.username}
+                    </span>
+                    <span className="result-item-date">
+                        {generateFormattedDate(createdAt, 'X')}
+                    </span>
+                </Level>
+            </div>
+        </div>
+    );
+};
 
 interface IDataDocItemProps {
     preview: IDataDocPreview;

@@ -61,6 +61,7 @@ def _match_filters(filters):
 
     filter_terms = []
     created_at_filter = {}
+    duration_filter = {}
 
     for f in filters:
         filter_name = str(f[0]).lower()
@@ -77,12 +78,82 @@ def _match_filters(filters):
             created_at_filter["gte"] = filter_val
         elif filter_name == "enddate":
             created_at_filter["lte"] = filter_val
+        elif filter_name == "minduration":
+            duration_filter["gte"] = filter_val
+        elif filter_name == "maxduration":
+            duration_filter["lte"] = filter_val
         else:
             filter_terms.append(_make_singular_filter(filter_name, filter_val))
     filters = {"filter": {"bool": {"must": filter_terms}}}
     if created_at_filter:
-        filters["range"] = {"created_at": created_at_filter}
+        filters["range"] = [{"range": {"created_at": created_at_filter,}}]
+    if duration_filter:
+        filters["range"] = filters.get("range", [])
+        filters["range"] += [{"range": {"duration": duration_filter,}}]
     return filters
+
+
+def _construct_query_search_query(
+    keywords, filters, limit, offset, sort_key=None, sort_order=None,
+):
+    search_query = {}
+    if keywords:
+        search_query = {
+            "bool": {
+                "must": {
+                    "multi_match": {
+                        "query": keywords,
+                        "fields": ["query_text", "title"],
+                        # All words must appear in a field
+                        "operator": "and",
+                    },
+                },
+                "should": [
+                    {"match_phrase": {"query_text": {"query": keywords, "boost": 10,}}},
+                    {"match_phrase": {"title": {"query": keywords,}}},
+                ],
+            }
+        }
+    else:
+        search_query = {"match_all": {}}
+
+    search_filter = _match_filters(filters)
+
+    bool_query = {}
+    if search_query != {}:
+        bool_query["must"] = [search_query]
+    if search_filter != {}:
+        bool_query["filter"] = search_filter["filter"]
+        if "range" in search_filter:
+            bool_query.setdefault("must", [])
+            bool_query["must"] += search_filter["range"]
+
+    query = {
+        "query": {"bool": bool_query},
+        "size": limit,
+        "from": offset,
+    }
+
+    if sort_key:
+        if not isinstance(sort_key, list):
+            sort_key = [sort_key]
+            sort_order = [sort_order]
+        sort_query = [
+            {val: {"order": order}} for order, val in zip(sort_order, sort_key)
+        ]
+
+        query.update({"sort": sort_query})
+
+    query.update(
+        _highlight_fields(
+            {
+                "query_text": {"fragment_size": 150, "number_of_fragments": 3,},
+                "title": {"fragment_size": 20, "number_of_fragments": 3,},
+            }
+        )
+    )
+
+    return json.dumps(query)
 
 
 def _construct_datadoc_query(
@@ -104,7 +175,7 @@ def _construct_datadoc_query(
         bool_query["filter"] = search_filter["filter"]
         if "range" in search_filter:
             bool_query.setdefault("must", [])
-            bool_query["must"].append({"range": search_filter["range"]})
+            bool_query["must"] += search_filter["range"]
 
     query = {
         "query": {"bool": bool_query},
@@ -218,7 +289,8 @@ def _construct_tables_query(
     if search_filter != {}:
         bool_query["filter"] = search_filter["filter"]
         if "range" in search_filter:
-            bool_query["must"].append({"range": search_filter["range"]})
+            bool_query.setdefault("must", [])
+            bool_query["must"] += search_filter["range"]
 
     query = {
         "query": {"bool": bool_query},
@@ -306,6 +378,41 @@ def search_datadoc(
     results, count = _get_matching_objects(
         query, ES_CONFIG["datadocs"]["index_name"], True
     )
+    return {"count": count, "results": results}
+
+
+@register("/search/queries/", methods=["GET"])
+def search_query(
+    environment_id,
+    keywords,
+    filters=[],
+    sort_key=None,
+    sort_order=None,
+    limit=1000,
+    offset=0,
+):
+    verify_environment_permission([environment_id])
+    filters.append(["environment_id", environment_id])
+
+    query = _construct_query_search_query(
+        keywords=keywords,
+        filters=filters,
+        limit=limit,
+        offset=offset,
+        sort_key=sort_key,
+        sort_order=sort_order,
+    )
+
+    index_name = "{},{}".format(
+        ES_CONFIG["query_cells"]["index_name"],
+        ES_CONFIG["query_executions"]["index_name"],
+    )
+    doc_type = "{},{}".format(
+        ES_CONFIG["query_cells"]["type_name"],
+        ES_CONFIG["query_executions"]["type_name"],
+    )
+
+    results, count = _get_matching_objects(query, index_name, doc_type, True,)
     return {"count": count, "results": results}
 
 

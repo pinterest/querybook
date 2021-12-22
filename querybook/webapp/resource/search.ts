@@ -2,11 +2,13 @@ import ds from 'lib/datasource';
 import type { ITableSearchResult } from 'redux/dataTableSearch/types';
 import type {
     IDataDocPreview,
+    ISearchQueryParams,
     ISearchDataDocParams,
     ISearchTableParams,
     ISearchUserParams,
     ITablePreview,
     IUserSearchResultRow,
+    IQueryPreview,
 } from 'const/search';
 
 import { IDataSchema } from 'const/metastore';
@@ -42,6 +44,14 @@ export const SearchSchemaResource = {
             results: IDataSchema[];
             done: boolean;
         }>('/schemas/', params),
+};
+
+export const SearchQueryResource = {
+    search: (params: ISearchQueryParams) =>
+        ds.fetch<{
+            results: IQueryPreview[];
+            count: number;
+        }>('/search/queries/', (params as unknown) as Record<string, unknown>),
 };
 
 export const SearchDataDocResource = {

@@ -28,7 +28,7 @@ const engineIdsInEnvironmentSelector = (state: IStoreState) =>
 export const queryEngineSelector = createSelector(
     queryEngineByIdSelector,
     engineIdsInEnvironmentSelector,
-    (queryEgnineById, engineIds) => engineIds.map((id) => queryEgnineById[id])
+    (queryEngineById, engineIds) => engineIds.map((id) => queryEngineById[id])
 );
 
 export const queryEngineByIdEnvSelector = createSelector(
