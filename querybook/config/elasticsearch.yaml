@@ -5,11 +5,6 @@ query_executions:
         settings:
             analysis:
                 analyzer:
-                    table_name_lowercase:
-                        type: custom
-                        tokenizer: alphanum_tokenizer
-                        filter:
-                            - lowercase
                     query_lowercase:
                         type: custom
                         tokenizer: query_tokenizer
@@ -32,34 +27,34 @@ query_executions:
                             - '_'
                             - \n
         mappings:
-            query_executions:
-                properties:
-                    id:
-                        type: long
-                    query_type:
-                        type: keyword # use constant_keyword in elasticsearch 7
-                    title:
-                        type: text
-                        analyzer: snowball
-                    environment_id:
-                        type: long
-                    author_uid:
-                        type: long
-                    engine_id:
-                        type: long
-                    statement_type:
-                        type: keyword
-                        normalizer: case_insensitive
-                    created_at:
-                        type: long
-                    duration:
-                        type: long
-                    full_table_name:
-                        type: text
-                        analyzer: table_name_lowercase
-                    query_text:
-                        type: text
-                        analyzer: query_lowercase
+            properties:
+                id:
+                    type: long
+                query_type:
+                    type: constant_keyword
+                    value: 'query_execution'
+                title:
+                    type: text
+                    analyzer: snowball
+                environment_id:
+                    type: long
+                author_uid:
+                    type: long
+                engine_id:
+                    type: long
+                statement_type:
+                    type: keyword
+                    normalizer: case_insensitive
+                created_at:
+                    type: long
+                duration:
+                    type: long
+                full_table_name:
+                    type: keyword
+                    normalizer: case_insensitive
+                query_text:
+                    type: text
+                    analyzer: query_lowercase
 
 query_cells:
     index_name: search_query_cells_v1
@@ -68,11 +63,6 @@ query_cells:
         settings:
             analysis:
                 analyzer:
-                    table_name_lowercase:
-                        type: custom
-                        tokenizer: alphanum_tokenizer
-                        filter:
-                            - lowercase
                     query_lowercase:
                         type: custom
                         tokenizer: query_tokenizer
@@ -95,34 +85,34 @@ query_cells:
                             - '_'
                             - \n
         mappings:
-            query_cells:
-                properties:
-                    id: # data_cell id
-                        type: long
-                    query_type:
-                        type: keyword # use constant_keyword in elasticsearch 7
-                    title:
-                        type: text
-                        analyzer: snowball
-                    data_doc_id:
-                        type: long
-                    environment_id:
-                        type: long
-                    author_uid:
-                        type: long
-                    engine_id:
-                        type: long
-                    statement_type:
-                        type: keyword
-                        normalizer: case_insensitive
-                    created_at:
-                        type: long
-                    full_table_name:
-                        type: text
-                        analyzer: table_name_lowercase
-                    query_text:
-                        type: text
-                        analyzer: query_lowercase
+            properties:
+                id: # data_cell id
+                    type: long
+                query_type:
+                    type: constant_keyword
+                    value: 'query_cell'
+                title:
+                    type: text
+                    analyzer: snowball
+                data_doc_id:
+                    type: long
+                environment_id:
+                    type: long
+                author_uid:
+                    type: long
+                engine_id:
+                    type: long
+                statement_type:
+                    type: keyword
+                    normalizer: case_insensitive
+                created_at:
+                    type: long
+                full_table_name:
+                    type: keyword
+                    normalizer: case_insensitive
+                query_text:
+                    type: text
+                    analyzer: query_lowercase
 datadocs:
     index_name: search_datadocs_v1
     type_name: datadocs

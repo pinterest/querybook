@@ -176,23 +176,21 @@ def query_execution_to_es(query_execution, data_cell=None, session=None):
 
 @with_exception
 def _bulk_insert_query_executions():
-    type_name = ES_CONFIG["query_executions"]["type_name"]
     index_name = ES_CONFIG["query_executions"]["index_name"]
 
     for query_execution in get_query_executions_iter():
-        _insert(index_name, type_name, query_execution["id"], query_execution)
+        _insert(index_name, query_execution["id"], query_execution)
 
 
 @with_exception
 @with_session
 def update_query_execution_by_id(query_execution_id, session=None):
-    type_name = ES_CONFIG["query_executions"]["type_name"]
     index_name = ES_CONFIG["query_executions"]["index_name"]
 
     query_execution = get_query_execution_by_id(query_execution_id, session=session)
     if query_execution is None or query_execution.status != QueryExecutionStatus.DONE:
         try:
-            _delete(index_name, type_name, id=query_execution_id)
+            _delete(index_name, id=query_execution_id)
         except Exception:
             LOG.error("failed to delete {}. Will pass.".format(query_execution_id))
     else:
@@ -208,7 +206,7 @@ def update_query_execution_by_id(query_execution_id, session=None):
                 "doc": formatted_object,
                 "doc_as_upsert": True,
             }  # ES requires this format for updates
-            _update(index_name, type_name, query_execution_id, updated_body)
+            _update(index_name, query_execution_id, updated_body)
         except Exception:
             LOG.error("failed to upsert {}. Will pass.".format(query_execution_id))
 
@@ -271,23 +269,21 @@ def query_cell_to_es(query_cell, session=None):
 
 @with_exception
 def _bulk_insert_query_cells():
-    type_name = ES_CONFIG["query_cells"]["type_name"]
     index_name = ES_CONFIG["query_cells"]["index_name"]
 
     for query_cell in get_query_cells_iter():
-        _insert(index_name, type_name, query_cell["id"], query_cell)
+        _insert(index_name, query_cell["id"], query_cell)
 
 
 @with_exception
 @with_session
 def update_query_cell_by_id(query_cell_id, session=None):
-    type_name = ES_CONFIG["query_cells"]["type_name"]
     index_name = ES_CONFIG["query_cells"]["index_name"]
 
     query_cell = get_unarchived_query_cell_by_id(query_cell_id, session=session)
     if query_cell is None:
         try:
-            _delete(index_name, type_name, id=query_cell_id)
+            _delete(index_name, id=query_cell_id)
         except Exception:
             LOG.error("failed to delete {}. Will pass.".format(query_cell_id))
     else:
@@ -298,7 +294,7 @@ def update_query_cell_by_id(query_cell_id, session=None):
                 "doc": formatted_object,
                 "doc_as_upsert": True,
             }  # ES requires this format for updates
-            _update(index_name, type_name, query_cell_id, updated_body)
+            _update(index_name, query_cell_id, updated_body)
         except Exception:
             LOG.error("failed to upsert {}. Will pass.".format(query_cell_id))
 

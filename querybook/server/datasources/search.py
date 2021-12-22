@@ -407,12 +407,8 @@ def search_query(
         ES_CONFIG["query_cells"]["index_name"],
         ES_CONFIG["query_executions"]["index_name"],
     )
-    doc_type = "{},{}".format(
-        ES_CONFIG["query_cells"]["type_name"],
-        ES_CONFIG["query_executions"]["type_name"],
-    )
 
-    results, count = _get_matching_objects(query, index_name, doc_type, True,)
+    results, count = _get_matching_objects(query, index_name, True)
     return {"count": count, "results": results}
 
 
