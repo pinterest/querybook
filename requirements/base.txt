@@ -24,7 +24,7 @@ python-socketio==5.2.1
 Jinja2==3.0.1  # From Flask
 
 # Celery
-celery[redis]==5.0.5
+celery==5.2.3
 
 # Ops
 pyyaml==5.4.1
