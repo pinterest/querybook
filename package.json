@@ -67,7 +67,7 @@
         "memoize-one": "5.0.2",
         "mini-css-extract-plugin": "2.1.0",
         "moment": "2.24.0",
-        "node-sass": "6.0.1",
+        "node-sass": "7.0.1",
         "normalizr": "3.3.0",
         "qs": "6.5.2",
         "rc-time-picker": "3.6.4",
