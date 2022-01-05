@@ -226,7 +226,10 @@ module.exports = (env, options) => {
                 __VERSION__: JSON.stringify(require('./package.json').version),
                 __APPNAME__: JSON.stringify(appName),
             }),
-            new webpack.IgnorePlugin(/^\.\/locale$/, /moment$/),
+            new webpack.IgnorePlugin({
+                resourceRegExp: /^\.\/locale$/,
+                contextRegExp: /moment$/,
+            }),
             new MiniCssExtractPlugin({
                 filename: '[name].[contenthash].css',
             }),
