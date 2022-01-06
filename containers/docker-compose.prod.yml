@@ -3,9 +3,6 @@ version: '2.1'
 services:
     base:
         image: querybook:latest
-        cap_add:
-            - SYS_PTRACE
-        tmpfs: /tmp:exec,mode=777
         # tty: true
         # stdin_open: true
         network_mode: 'host'

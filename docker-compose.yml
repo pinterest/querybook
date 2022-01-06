@@ -3,9 +3,6 @@ version: '2.1'
 services:
     web:
         image: querybook-dev:latest
-        cap_add:
-            - SYS_PTRACE
-        tmpfs: /tmp:exec,mode=777
         tty: true
         stdin_open: true
         # network_mode: 'host'
@@ -37,9 +34,6 @@ services:
                 condition: service_healthy
     worker:
         image: querybook-dev:latest
-        cap_add:
-            - SYS_PTRACE
-        tmpfs: /tmp:exec,mode=777
         tty: true
         stdin_open: true
         command: './querybook/scripts/runservice worker -c 5'
@@ -58,9 +52,6 @@ services:
                 condition: service_healthy
     scheduler:
         image: querybook-dev:latest
-        cap_add:
-            - SYS_PTRACE
-        tmpfs: /tmp:exec,mode=777
         tty: true
         stdin_open: true
         command: './querybook/scripts/runservice scheduler --pidfile="/opt/celerybeat.pid"'
@@ -159,9 +150,6 @@ services:
     # Remember to put flower as part of local.txt
     # flower:
     #     image: querybook-dev:latest
-    #     cap_add:
-    #         - SYS_PTRACE
-    #     tmpfs: /tmp:exec,mode=777
     #     tty: true
     #     stdin_open: true
     #     # network_mode: "host"
