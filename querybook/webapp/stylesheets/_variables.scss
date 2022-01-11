@@ -119,9 +119,13 @@ body {
     --text-highlight: rgba(255, 255, 0, 0.5);
 
     // Type
-    --family-sans-serif: 'Avenir Next', 'Avenir', 'Helvetica Neue', 'Arial',
-        sans-serif;
-    --family-monospace: monaco, monospace;
+    --font-sans-serif: BlinkMacSystemFont, -apple-system, 'Avenir Next',
+        'Avenir', 'Segoe UI', Helvetica, 'Apple Color Emoji', Arial,
+        sans-serif, 'Segoe UI Emoji', 'Segoe UI Symbol';
+    --font-display: 'Poppins', BlinkMacSystemFont, -apple-system, 'Avenir Next',
+    'Avenir', 'Segoe UI', Helvetica, 'Apple Color Emoji', Arial,
+    sans-serif, 'Segoe UI Emoji', 'Segoe UI Symbol';
+    --font-monospace: monaco, monospace;
     --bold-font: 600;
     --extra-bold-font: 700;
 
