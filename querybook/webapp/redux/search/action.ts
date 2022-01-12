@@ -15,6 +15,7 @@ import {
     SearchType,
     IResetSearchAction,
 } from './types';
+import { ICancelablePromise } from 'lib/datasource';
 
 export function mapQueryParamToState(): ThunkResult<void> {
     return (dispatch) => {
@@ -103,7 +104,12 @@ export function performSearch(): ThunkResult<Promise<ISearchPreview[]>> {
 
             const searchParams = mapStateToSearch(searchState);
 
-            let searchRequest;
+            let searchRequest: ICancelablePromise<{
+                data: {
+                    results: ISearchPreview[];
+                    count: number;
+                };
+            }>;
             switch (searchType) {
                 case SearchType.Query:
                     searchRequest = SearchQueryResource.search({

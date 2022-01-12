@@ -1,7 +1,6 @@
-import React, { useState } from 'react';
+import React, { useCallback, useState } from 'react';
 import Select from 'react-select';
 import AsyncSelect, { Props as AsyncProps } from 'react-select/async';
-import { debounce } from 'lodash';
 
 import { makeReactSelectStyle } from 'lib/utils/react-select';
 import { overlayRoot } from 'ui/Overlay/Overlay';
@@ -15,8 +14,7 @@ import './TableSelect.scss';
 
 interface ITableSelectProps {
     tableNames: string[];
-    onSelect: (tableName: string) => any;
-    onRemove: (tableName: string) => any;
+    setTableNames: (tableNames: string[]) => void;
     usePortalMenu?: boolean;
 
     selectProps?: Partial<AsyncProps<any, false>>;
@@ -27,8 +25,7 @@ interface ITableSelectProps {
 
 export const TableSelect: React.FunctionComponent<ITableSelectProps> = ({
     tableNames,
-    onSelect,
-    onRemove,
+    setTableNames,
     usePortalMenu = true,
     selectProps = {},
     clearAfterSelect = false,
@@ -48,31 +45,25 @@ export const TableSelect: React.FunctionComponent<ITableSelectProps> = ({
         asyncSelectProps.value = null;
     }
 
-    const loadOptions = debounce(
-        (tableName, callback) => {
-            SearchTableResource.searchConcise({
+    const loadOptions = useCallback(
+        async (tableName: string) => {
+            const { data } = await SearchTableResource.searchConcise({
                 metastore_id: metastoreId,
                 keywords: tableName,
-            }).then(({ data }) => {
-                const filteredTableNames = data.results.filter(
-                    (result) =>
-                        tableNames.indexOf(
-                            `${result.schema}.${result.name}`
-                        ) === -1
-                );
-                const tableNameOptions = filteredTableNames.map(
-                    ({ id, schema, name }) => ({
-                        value: id,
-                        label: `${schema}.${name}`,
-                    })
-                );
-                callback(tableNameOptions);
             });
+            const filteredTableNames = data.results.filter(
+                (result) =>
+                    tableNames.indexOf(`${result.schema}.${result.name}`) === -1
+            );
+            const tableNameOptions = filteredTableNames.map(
+                ({ id, schema, name }) => ({
+                    value: id,
+                    label: `${schema}.${name}`,
+                })
+            );
+            return tableNameOptions;
         },
-        1000,
-        {
-            leading: true,
-        }
+        [metastoreId, tableNames]
     );
 
     return (
@@ -100,11 +91,13 @@ export const TableSelect: React.FunctionComponent<ITableSelectProps> = ({
                 styles={tableReactSelectStyle}
                 placeholder={'search table name...'}
                 onChange={(option: any) => {
-                    if (option) {
-                        onSelect(option.label);
-                    } else {
-                        onSelect(null);
+                    const newTableName = option?.label ?? null;
+                    if (newTableName == null) {
+                        setTableNames([]);
+                        return;
                     }
+                    const newTableNames = tableNames.concat(newTableName);
+                    setTableNames(newTableNames);
                 }}
                 loadOptions={loadOptions}
                 defaultOptions={[]}
@@ -115,13 +108,18 @@ export const TableSelect: React.FunctionComponent<ITableSelectProps> = ({
                 {...selectProps}
             />
             <div className="pv8">
-                {tableNames.map((name) => (
+                {tableNames.map((tableName) => (
                     <HoverIconTag
-                        key={name}
+                        key={tableName}
                         iconOnHover={'x'}
-                        onIconHoverClick={() => onRemove(name)}
+                        onIconHoverClick={() => {
+                            const newTableNames = tableNames.filter(
+                                (name) => name !== tableName
+                            );
+                            setTableNames(newTableNames);
+                        }}
                     >
-                        <span>{name}</span>
+                        <span>{tableName}</span>
                     </HoverIconTag>
                 ))}
             </div>

@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useCallback } from 'react';
 import { escapeRegExp } from 'lodash';
 
 import history from 'lib/router-history';
@@ -12,7 +12,6 @@ import { Level } from 'ui/Level/Level';
 import { ThemedCodeHighlight } from 'ui/CodeHighlight/ThemedCodeHighlight';
 import { useSelector } from 'react-redux';
 import { queryEngineByIdEnvSelector } from 'redux/queryEngine/selector';
-import { format } from 'lib/sql-helper/sql-formatter';
 import './SearchResultItem.scss';
 
 const HighlightTitle: React.FunctionComponent<{
@@ -91,7 +90,7 @@ export const QueryItem: React.FunctionComponent<IQueryItemProps> = ({
     const resultTitle = isQueryCell
         ? title ?? 'Untitled'
         : `${title != null ? `${title} >` : 'Adhoc'} Execution ${id}`;
-    const queryTextHighlightedContent = (preview.highlight || {}).query_text;
+    const queryTextHighlightedContent = preview.highlight?.query_text;
     const getQueryTextHighlightedDOM = (queryTextContent: string[]) => (
         <span
             className="result-item-description"
@@ -102,10 +101,6 @@ export const QueryItem: React.FunctionComponent<IQueryItemProps> = ({
     );
 
     const queryEngine = queryEngineById[engineId];
-    const language = queryEngine?.language ?? 'presto';
-    const formattedQuery = format(queryText, language, {
-        case: 'upper',
-    });
 
     return (
         <div className="SearchResultItem QueryItem" onClick={handleClick}>
@@ -115,14 +110,14 @@ export const QueryItem: React.FunctionComponent<IQueryItemProps> = ({
                         title={resultTitle}
                         searchString={searchString}
                     />
-                    <Tag>{queryEngine?.name}</Tag>
+                    {queryEngine && <Tag>{queryEngine.name}</Tag>}
                 </a>
                 {queryTextHighlightedContent ? (
                     getQueryTextHighlightedDOM(queryTextHighlightedContent)
                 ) : (
                     <ThemedCodeHighlight
                         className="result-item-query"
-                        value={formattedQuery}
+                        value={queryText}
                         onClick={(event) => event.stopPropagation()}
                     />
                 )}
@@ -210,7 +205,11 @@ export const DataTableItem: React.FunctionComponent<IDataTableItemProps> = ({
         name,
         schema,
     } = preview;
-    const handleClick = React.useMemo(() => openClick.bind(null, url), [url]);
+    const handleClick = useCallback(
+        (evt: React.MouseEvent<HTMLDivElement, MouseEvent>) =>
+            openClick(url, evt),
+        [url]
+    );
 
     const goldenIcon = golden ? (
         <div className="result-item-golden">

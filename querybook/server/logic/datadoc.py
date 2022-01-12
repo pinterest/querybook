@@ -7,6 +7,7 @@ from const.elasticsearch import ElasticsearchItem
 from const.impression import ImpressionItemType
 from lib.sqlalchemy import update_model_fields
 from lib.data_doc.data_cell import cell_types, sanitize_data_cell_meta
+from logic.query_execution import get_last_query_execution_from_cell
 from models.datadoc import (
     DataDoc,
     DataDocDataCell,
@@ -19,7 +20,6 @@ from models.datadoc import (
 )
 from models.access_request import AccessRequest
 from models.impression import Impression
-from models.query_execution import QueryExecution
 from tasks.sync_elasticsearch import sync_elasticsearch
 
 
@@ -148,7 +148,7 @@ def update_data_doc(id, commit=True, session=None, **fields):
             update_es_data_doc_by_id(data_doc.id)
 
             # ensure es queries are updated if doc is archived
-            update_es_queries_by_data_doc_id(data_doc.id)
+            update_es_query_cells_by_data_doc_id(data_doc.id)
         else:
             session.flush()
         session.refresh(data_doc)
@@ -873,17 +873,6 @@ def remove_datadoc_access_request(doc_id, uid, session=None, commit=True):
 
 
 @with_session
-def get_latest_query_execution_by_data_cell_id(data_cell_id, session=None):
-    return (
-        session.query(QueryExecution)
-        .join(DataCellQueryExecution)
-        .filter(DataCellQueryExecution.data_cell_id == data_cell_id)
-        .order_by(QueryExecution.id.desc())
-        .first()
-    )
-
-
-@with_session
 def append_query_executions_to_data_cell(
     data_cell_id, query_execution_ids=[], commit=True, session=None
 ):
@@ -892,7 +881,7 @@ def append_query_executions_to_data_cell(
     ).update({DataCellQueryExecution.latest: False})
 
     for qid in query_execution_ids:
-        latest_query_execution = get_latest_query_execution_by_data_cell_id(
+        latest_query_execution = get_last_query_execution_from_cell(
             data_cell_id, session=session
         )
         dcqe = DataCellQueryExecution(
@@ -947,7 +936,7 @@ def update_es_query_cell_by_id(id):
 
 
 @with_session
-def update_es_queries_by_data_doc_id(id, session=None):
+def update_es_query_cells_by_data_doc_id(id, session=None):
     data_cells = (
         session.query(DataCell)
         .filter(DataCell.cell_type == DataCellType.query)

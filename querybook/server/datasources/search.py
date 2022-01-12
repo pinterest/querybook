@@ -88,8 +88,8 @@ def _match_filters(filters):
     if created_at_filter:
         filters["range"] = [{"range": {"created_at": created_at_filter,}}]
     if duration_filter:
-        filters["range"] = filters.get("range", [])
-        filters["range"] += [{"range": {"duration": duration_filter,}}]
+        filters.setdefault("range", [])
+        filters["range"].append({"range": {"duration": duration_filter,}})
     return filters
 
 

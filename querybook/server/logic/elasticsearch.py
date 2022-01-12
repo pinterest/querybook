@@ -40,7 +40,6 @@ from logic.impression import (
 )
 from logic.query_execution import (
     get_successful_adhoc_query_executions,
-    get_environments_by_execution_id,
     get_query_execution_by_id,
     get_successful_query_executions_by_data_cell_id,
 )
@@ -81,13 +80,11 @@ def get_hosted_es():
 """
 
 
-@with_session
-def get_query_executions_iter(batch_size=5000, session=None):
-    # get all data cell query executions
-    query_cell_offset = 0
+def _get_query_cell_executions_iter(batch_size=5000, session=None):
+    offset = 0
     while True:
         query_cells = get_all_query_cells(
-            limit=batch_size, offset=query_cell_offset, session=session,
+            limit=batch_size, offset=offset, session=session,
         )
         query_executions_count = 0
         for query_cell in query_cells:
@@ -102,22 +99,23 @@ def get_query_executions_iter(batch_size=5000, session=None):
             query_executions_count += len(query_cell_executions)
         LOG.info(
             "\n--Query cell count: {}, query cell executions count: {}, offset: {}".format(
-                len(query_cells), query_executions_count, query_cell_offset
+                len(query_cells), query_executions_count, offset
             )
         )
         if len(query_cells) < batch_size:
             break
-        query_cell_offset += batch_size
+        offset += batch_size
 
-    # get all adhoc query executions
-    query_execution_offset = 0
+
+def _get_adhoc_query_executions_iter(batch_size=5000, session=None):
+    offset = 0
     while True:
         query_executions = get_successful_adhoc_query_executions(
-            limit=batch_size, offset=query_execution_offset, session=session,
+            limit=batch_size, offset=offset, session=session,
         )
         LOG.info(
             "\n--Adhoc query executions count: {}, offset: {}".format(
-                len(query_executions), query_execution_offset
+                len(query_executions), offset
             )
         )
 
@@ -129,7 +127,13 @@ def get_query_executions_iter(batch_size=5000, session=None):
 
         if len(query_executions) < batch_size:
             break
-        query_execution_offset += batch_size
+        offset += batch_size
+
+
+@with_session
+def get_query_executions_iter(batch_size=5000, session=None):
+    yield from _get_query_cell_executions_iter(batch_size=batch_size, session=session)
+    yield from _get_adhoc_query_executions_iter(batch_size=batch_size, session=session)
 
 
 @with_session
@@ -139,7 +143,7 @@ def query_execution_to_es(query_execution, data_cell=None, session=None):
     query_execution_id = query_execution.id
 
     engine_id = query_execution.engine_id
-    engine = get_query_engine_by_id(engine_id)
+    engine = get_query_engine_by_id(engine_id, session=session)
 
     table_names, _ = process_query(
         query_execution.query, language=(engine and engine.language)
@@ -153,7 +157,7 @@ def query_execution_to_es(query_execution, data_cell=None, session=None):
         else None
     )
 
-    environments = get_environments_by_execution_id(query_execution_id, session=session)
+    environments = engine.environments
     environment_ids = [env.id for env in environments]
 
     title = data_cell.meta.get("title", "Untitled") if data_cell else None
@@ -243,7 +247,7 @@ def query_cell_to_es(query_cell, session=None):
     query_cell_meta = query_cell.meta
 
     engine_id = query_cell_meta.get("engine")
-    engine = get_query_engine_by_id(engine_id)
+    engine = get_query_engine_by_id(engine_id, session=session)
 
     query = query_cell.context
     table_names, _ = process_query(query, language=(engine and engine.language))

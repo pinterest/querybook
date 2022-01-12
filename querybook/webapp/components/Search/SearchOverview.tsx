@@ -2,6 +2,7 @@ import React from 'react';
 import moment from 'moment';
 import { useDispatch } from 'react-redux';
 import ReactSelect from 'react-select';
+import { isEmpty } from 'lodash';
 
 import { IDataDocPreview, IQueryPreview, ITablePreview } from 'const/search';
 
@@ -37,12 +38,13 @@ import { Icon } from 'ui/Icon/Icon';
 import { KeyboardKey } from 'ui/KeyboardKey/KeyboardKey';
 import { Level } from 'ui/Level/Level';
 import { ListMenu } from 'ui/Menu/ListMenu';
+import NumberInput from 'ui/NumberInput/NumberInput';
 import { Pagination } from 'ui/Pagination/Pagination';
 import { SearchBar } from 'ui/SearchBar/SearchBar';
 import { Select } from 'ui/Select/Select';
+import { SimpleReactSelect } from 'ui/SimpleReactSelect/SimpleReactSelect';
 import { Tabs } from 'ui/Tabs/Tabs';
 import { PrettyNumber } from 'ui/PrettyNumber/PrettyNumber';
-
 import { SearchDatePicker } from './SearchDatePicker';
 import { TableSelect } from './TableSelect';
 import './SearchOverview.scss';
@@ -169,19 +171,13 @@ export const SearchOverview: React.FunctionComponent = () => {
         updateSearchFilter('endDate', isNaN(newDate) ? null : newDate);
     }, []);
 
-    const onMinDurationChange = React.useCallback(
-        (event: React.ChangeEvent<HTMLInputElement>) => {
-            const value = event.target.value;
-            updateSearchFilter('minDuration', value);
-        },
+    const setMinDuration = React.useCallback(
+        (value: number | null) => updateSearchFilter('minDuration', value),
         []
     );
 
-    const onMaxDurationChange = React.useCallback(
-        (event: React.ChangeEvent<HTMLInputElement>) => {
-            const value = event.target.value;
-            updateSearchFilter('maxDuration', value);
-        },
+    const setMaxDuration = React.useCallback(
+        (value: number | null) => updateSearchFilter('maxDuration', value),
         []
     );
 
@@ -371,23 +367,21 @@ export const SearchOverview: React.FunctionComponent = () => {
         <div className="filter-duration">
             <div className="horizontal-space-between mb12">
                 <span>min</span>
-                <input
-                    type="number"
+                <NumberInput
                     id="min-duration"
                     placeholder="seconds"
                     value={searchFilters['minDuration'] ?? ''}
-                    onChange={onMinDurationChange}
+                    setValue={setMinDuration}
                     min="0"
                 />
             </div>
             <div className="horizontal-space-between mb12">
                 <span>max</span>
-                <input
-                    type="number"
+                <NumberInput
                     id="max-duration"
                     placeholder="seconds"
                     value={searchFilters['maxDuration'] ?? ''}
-                    onChange={onMaxDurationChange}
+                    setValue={setMaxDuration}
                     min="0"
                 />
             </div>
@@ -419,22 +413,14 @@ export const SearchOverview: React.FunctionComponent = () => {
 
     const queryTypeFilterDOM = (
         <div className="filter-query-type">
-            <ReactSelect
-                styles={defaultReactSelectStyles}
-                value={
-                    searchFilters['query_type'] && {
-                        label: titleize(searchFilters['query_type'], '_', ' '),
-                        value: searchFilters['query_type'],
-                    }
-                }
-                onChange={(option) =>
-                    updateSearchFilter('query_type', option?.value)
-                }
+            <SimpleReactSelect
+                value={searchFilters['query_type']}
+                onChange={(value) => updateSearchFilter('query_type', value)}
                 options={['query_cell', 'query_execution'].map((queryType) => ({
                     label: titleize(queryType, '_', ' '),
                     value: queryType,
                 }))}
-                isClearable
+                withDeselect
             />
         </div>
     );
@@ -473,24 +459,12 @@ export const SearchOverview: React.FunctionComponent = () => {
     const tableFilterDOM = (
         <TableSelect
             tableNames={searchFilters['full_table_name'] || []}
-            onSelect={(tableName) => {
-                if (tableName == null) {
-                    updateSearchFilter('full_table_name', null);
-                    return;
-                }
-                const tableNames = searchFilters['full_table_name'] || [];
-                if (tableNames.indexOf(tableName) === -1) {
-                    const newTableNames = tableNames.concat(tableName);
-                    updateSearchFilter('full_table_name', newTableNames);
-                }
-            }}
-            onRemove={(tableName) => {
-                const newTableNames =
-                    searchFilters['full_table_name']?.filter(
-                        (name) => name !== tableName
-                    ) ?? null;
-                updateSearchFilter('full_table_name', newTableNames);
-            }}
+            setTableNames={(tableNames: string[]) =>
+                updateSearchFilter(
+                    'full_table_name',
+                    !isEmpty(tableNames) ? tableNames : null
+                )
+            }
             selectProps={{
                 autoFocus: true,
             }}
@@ -498,66 +472,63 @@ export const SearchOverview: React.FunctionComponent = () => {
         />
     );
 
-    const getAuthorFiltersDOM = React.useCallback(
-        (searchFilterKey: string) => {
-            const filterVal = searchFilters[searchFilterKey];
+    const getAuthorFiltersDOM = (searchFilterKey: string) => {
+        const filterVal = searchFilters[searchFilterKey];
 
-            const options = searchAuthorChoices.map(({ id, name }) => {
-                const checked = filterVal === id;
-                return (
-                    <div className="data-doc-filter-owner" key={id}>
-                        <span className="tiny-avatar">
-                            <UserAvatar uid={id} tiny />
-                        </span>
-                        <span className="filter-owner-name">{name}</span>
-                        <Checkbox
-                            value={checked}
-                            onChange={updateSearchFilter.bind(
-                                null,
-                                searchFilterKey,
-                                checked ? null : id
-                            )}
-                        />
-                    </div>
-                );
-            });
-
-            const addAuthorDOM = showAddSearchAuthor ? (
-                <div className="add-authors">
-                    <UserSelect
-                        onSelect={(uid, name) => {
-                            addSearchAuthorChoice(uid, name);
-                            updateSearchFilter(searchFilterKey, uid);
-                            toggleShowAddSearchAuthor();
-                        }}
-                        selectProps={{
-                            autoFocus: true,
-                            styles: userReactSelectStyle,
-                        }}
-                        clearAfterSelect
+        const options = searchAuthorChoices.map(({ id, name }) => {
+            const checked = filterVal === id;
+            return (
+                <div className="data-doc-filter-owner" key={id}>
+                    <span className="tiny-avatar">
+                        <UserAvatar uid={id} tiny />
+                    </span>
+                    <span className="filter-owner-name">{name}</span>
+                    <Checkbox
+                        value={checked}
+                        onChange={updateSearchFilter.bind(
+                            null,
+                            searchFilterKey,
+                            checked ? null : id
+                        )}
                     />
                 </div>
-            ) : (
-                <Button
-                    onClick={toggleShowAddSearchAuthor}
-                    className="add-authors"
-                    icon="plus"
-                    title="more authors"
-                    theme="text"
-                    color="light"
-                    size="small"
-                />
             );
+        });
 
-            return (
-                <>
-                    {options}
-                    {addAuthorDOM}
-                </>
-            );
-        },
-        [searchAuthorChoices, showAddSearchAuthor, searchFilters]
-    );
+        const addAuthorDOM = showAddSearchAuthor ? (
+            <div className="add-authors">
+                <UserSelect
+                    onSelect={(uid, name) => {
+                        addSearchAuthorChoice(uid, name);
+                        updateSearchFilter(searchFilterKey, uid);
+                        toggleShowAddSearchAuthor();
+                    }}
+                    selectProps={{
+                        autoFocus: true,
+                        styles: userReactSelectStyle,
+                    }}
+                    clearAfterSelect
+                />
+            </div>
+        ) : (
+            <Button
+                onClick={toggleShowAddSearchAuthor}
+                className="add-authors"
+                icon="plus"
+                title="more authors"
+                theme="text"
+                color="light"
+                size="small"
+            />
+        );
+
+        return (
+            <>
+                {options}
+                {addAuthorDOM}
+            </>
+        );
+    };
 
     const FilterDOM =
         searchType === 'Query' ? (

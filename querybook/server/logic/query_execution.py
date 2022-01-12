@@ -535,7 +535,6 @@ def get_successful_adhoc_query_executions(offset=0, limit=100, session=None):
         .filter(QueryExecution.status == QueryExecutionStatus.DONE)
         .join(DataCellQueryExecution, isouter=True)
         .filter(DataCellQueryExecution.id.is_(None))
-        .order_by(QueryExecution.id.desc())
         .offset(offset)
         .limit(limit)
         .all()
