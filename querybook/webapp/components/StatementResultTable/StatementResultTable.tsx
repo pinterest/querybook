@@ -19,7 +19,7 @@ const StyledTableWrapper = styled.div.attrs({
     className: 'StatementResultTable',
 })`
     .Table {
-        font-family: var(--family-monospace);
+        font-family: var(--font-monospace);
         font-size: ${(props) => props.fontSize ?? 'var(--xsmall-text-size)'};
         margin: 8px 0px;
         text-transform: none;
