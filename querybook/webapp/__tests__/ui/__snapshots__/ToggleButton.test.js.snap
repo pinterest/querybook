@@ -1,33 +1,25 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
 exports[`matches enzyme snapshots matches snapshot - unchecked 1`] = `
-<div
-  className="ToggleButton "
+<Button
+  className="ToggleButton"
+  color="default"
   onClick={[Function]}
+  size="medium"
+  theme="outline"
 >
-  <Button
-    className=""
-    color="default"
-    size="medium"
-    theme="outline"
-  >
-    Testing
-  </Button>
-</div>
+  Testing
+</Button>
 `;
 
 exports[`matches enzyme snapshots matches snapshot 1`] = `
-<div
+<Button
   className="ToggleButton checked"
+  color="default"
   onClick={[Function]}
+  size="medium"
+  theme="outline"
 >
-  <Button
-    className=""
-    color="default"
-    size="medium"
-    theme="outline"
-  >
-    Testing
-  </Button>
-</div>
+  Testing
+</Button>
 `;
