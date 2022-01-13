@@ -11,7 +11,7 @@ import { Overlay } from 'ui/Overlay/Overlay';
 
 export const Modal: React.FunctionComponent<IModalProps> = ({
     type = 'standard',
-    hideClose = false,
+    hideModalTitle = false,
     className = '',
     children,
     onHide,
@@ -34,7 +34,7 @@ export const Modal: React.FunctionComponent<IModalProps> = ({
         modalDOM = (
             <FullScreenModal
                 onHide={onHide}
-                hideClose={hideClose}
+                hideModalTitle={hideModalTitle}
                 className={className}
                 title={title}
             >
@@ -46,7 +46,7 @@ export const Modal: React.FunctionComponent<IModalProps> = ({
         modalDOM = (
             <StandardModal
                 onHide={onHide}
-                hideClose={hideClose}
+                hideModalTitle={hideModalTitle}
                 className={className}
                 title={title}
             >
