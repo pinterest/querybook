@@ -172,7 +172,7 @@ export const TaskStatus: React.FunctionComponent<ITaskStatusProps> = ({
                                     hideSuccessfulJobs,
                                 });
                             }}
-                            title="Hide Succes"
+                            title="Hide Success"
                         />
                     </div>
                 </div>
