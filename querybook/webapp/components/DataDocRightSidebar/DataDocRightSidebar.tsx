@@ -81,7 +81,7 @@ export const DataDocRightSidebar: React.FunctionComponent<IProps> = ({
     );
 
     const buttonSection = (
-        <div className="DataDocRightSidebar-button-section">
+        <div className="DataDocRightSidebar-button-section vertical-space-between">
             <div className="DataDocRightSidebar-button-section-top flex-column">
                 <IconButton
                     icon="arrow-up"
