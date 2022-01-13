@@ -81,10 +81,6 @@ export const ConfirmationMessage: React.FunctionComponent<IConfirmationMessagePr
         actionButtons.shift();
     }
 
-    const actionsDOM = actionButtons.map((buttonDOM, index) => (
-        <div key={index}>{buttonDOM}</div>
-    ));
-
     return (
         <Modal
             onHide={onHide}
@@ -97,7 +93,7 @@ export const ConfirmationMessage: React.FunctionComponent<IConfirmationMessagePr
                     <div className="confirmation-message">{message}</div>
                 </div>
                 <div className="confirmation-buttons flex-right">
-                    {actionsDOM}
+                    {actionButtons}
                 </div>
             </div>
         </Modal>
