@@ -1,3 +1,4 @@
+import clsx from 'clsx';
 import React from 'react';
 
 import { Button, ButtonProps } from 'ui/Button/Button';
@@ -16,10 +17,11 @@ export const ToggleButton: React.FunctionComponent<IToggleButtonProps> = ({
     title,
     ...otherProps
 }) => (
-    <div
-        className={`ToggleButton ${checked ? 'checked' : ''}`}
+    <Button
+        {...otherProps}
         onClick={() => onClick(!checked)}
+        className={clsx('ToggleButton', checked && 'checked')}
     >
-        <Button {...otherProps}>{title}</Button>
-    </div>
+        {title}
+    </Button>
 );

@@ -1,13 +1,6 @@
 .DataDocRightSidebar {
     .DataDocRightSidebar-button-section {
-        display: flex;
-        flex-direction: column;
-        justify-content: space-between;
-
         .DataDocRightSidebar-button-section-top {
-            display: flex;
-            flex-direction: column;
-
             .connected-button {
                 color: var(--color-false);
             }
@@ -18,10 +11,6 @@
                     cursor: unset;
                 }
             }
-        }
-        .DataDocRightSidebar-button-section-bottom {
-            display: flex;
-            flex-direction: column;
         }
     }
 
