@@ -116,8 +116,8 @@ export function GenericCRUD<T extends Record<any, any>>({
                             {renderItem(values, setFieldValue)}
                             {errorSection}
                             <div className="pv8 right-align">
-                                <div>{deleteButton}</div>
-                                <div>{saveButton}</div>
+                                {deleteButton}
+                                {saveButton}
                             </div>
                         </div>
                     );

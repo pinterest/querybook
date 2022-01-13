@@ -33,6 +33,9 @@ export const StyledButton = styled.span<StyledButtonProps>`
 
     color: ${(props) => props.color || 'inherit'};
     background-color: ${(props) => props.bgColor || 'inherit'};
+    & + & {
+        ${(props) => (props.size === 'small' ? '' : 'margin-left: 4px;')};
+    }
 
     &:hover,
     &.active {
@@ -58,7 +61,6 @@ export const StyledButton = styled.span<StyledButtonProps>`
     ${(props) => (props.fontWeight ? `font-weight: ${props.fontWeight}` : '')};
 
     cursor: ${(props) => (props.disabled ? 'not-allowed' : 'pointer')};
-    margin: ${(props) => (props.size === 'small' ? '0px' : '0px 4px')};
     padding: ${(props) => (props.size === 'small' ? '1px 4px' : '4px 8px')};
 
     white-space: nowrap;
