@@ -8,7 +8,7 @@ import { useDebounce } from 'hooks/useDebounce';
 import { useAppBlur } from 'hooks/ui/useAppBlur';
 
 export const StandardModal: React.FunctionComponent<IStandardModalProps> = ({
-    hideClose = false,
+    hideModalTitle = false,
     className = '',
     children,
     onHide,
@@ -25,30 +25,29 @@ export const StandardModal: React.FunctionComponent<IStandardModalProps> = ({
         [className]: Boolean(className),
     });
 
-    const closeButton = hideClose ? null : (
-        <IconButton
-            className="Modal-close"
-            aria-label="close"
-            icon="x"
-            onClick={onHide}
-        />
-    );
-
-    const titleDOM =
-        title !== null && closeButton ? (
-            <div className="Modal-title">{title}</div>
-        ) : null;
+    let modalTitleDOM: React.ReactNode;
+    if (!hideModalTitle) {
+        modalTitleDOM = (
+            <>
+                {title !== null ? (
+                    <div className="Modal-title">{title}</div>
+                ) : null}
+                <IconButton
+                    className="Modal-close"
+                    aria-label="close"
+                    icon="x"
+                    onClick={onHide}
+                />
+            </>
+        );
+    }
 
     return (
         <div className={modalClassName}>
-            <div
-                className="Modal-background fullscreen"
-                onClick={hideClose ? null : onHide}
-            />
+            <div className="Modal-background fullscreen" onClick={onHide} />
             <div className="Modal-box">
-                {titleDOM}
+                {modalTitleDOM}
                 <div className="Modal-content">{children}</div>
-                {closeButton}
             </div>
         </div>
     );
