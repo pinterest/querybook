@@ -1,5 +1,5 @@
 interface IBaseModalProps {
-    hideClose?: boolean;
+    hideModalTitle?: boolean;
     className?: string;
 
     // defaults to '', set to null to hide title

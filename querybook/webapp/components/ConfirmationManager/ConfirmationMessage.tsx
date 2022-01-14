@@ -84,8 +84,8 @@ export const ConfirmationMessage: React.FunctionComponent<IConfirmationMessagePr
     return (
         <Modal
             onHide={onHide}
-            hideClose={true}
             className="message-size with-padding"
+            hideModalTitle
         >
             <div className="ConfirmationMessage" ref={selfRef} tabIndex={0}>
                 <div className="confirmation-top">
