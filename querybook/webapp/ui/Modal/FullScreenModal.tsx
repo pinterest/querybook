@@ -4,7 +4,7 @@ import { IStandardModalProps } from './types';
 import { IconButton } from 'ui/Button/IconButton';
 
 export const FullScreenModal: React.FunctionComponent<IStandardModalProps> = ({
-    hideClose = false,
+    hideModalTitle = false,
     className = '',
     title,
     onHide,
@@ -16,24 +16,26 @@ export const FullScreenModal: React.FunctionComponent<IStandardModalProps> = ({
         [className]: Boolean(className),
     });
 
-    const closeButton = !hideClose ? (
-        <IconButton
-            className="Modal-close"
-            aria-label="close"
-            icon="x"
-            onClick={onHide}
-        />
-    ) : null;
-
-    const titleDOM =
-        title !== null && closeButton ? (
-            <div className="Modal-title">{title}</div>
-        ) : null;
+    let modalTitleDOM: React.ReactNode;
+    if (!hideModalTitle) {
+        modalTitleDOM = (
+            <>
+                <IconButton
+                    className="Modal-close"
+                    aria-label="close"
+                    icon="x"
+                    onClick={onHide}
+                />
+                {title !== null ? (
+                    <div className="Modal-title">{title}</div>
+                ) : null}
+            </>
+        );
+    }
 
     return (
         <div className={modalClassName}>
-            {titleDOM}
-            {closeButton}
+            {modalTitleDOM}
             <div className="Modal-content">{children}</div>
         </div>
     );
