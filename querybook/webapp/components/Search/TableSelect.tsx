@@ -14,7 +14,7 @@ import './TableSelect.scss';
 
 interface ITableSelectProps {
     tableNames: string[];
-    setTableNames: (tableNames: string[]) => void;
+    onTableNamesChange: (tableNames: string[]) => void;
     usePortalMenu?: boolean;
 
     selectProps?: Partial<AsyncProps<any, false>>;
@@ -25,7 +25,7 @@ interface ITableSelectProps {
 
 export const TableSelect: React.FunctionComponent<ITableSelectProps> = ({
     tableNames,
-    setTableNames,
+    onTableNamesChange,
     usePortalMenu = true,
     selectProps = {},
     clearAfterSelect = false,
@@ -93,11 +93,11 @@ export const TableSelect: React.FunctionComponent<ITableSelectProps> = ({
                 onChange={(option: any) => {
                     const newTableName = option?.label ?? null;
                     if (newTableName == null) {
-                        setTableNames([]);
+                        onTableNamesChange([]);
                         return;
                     }
                     const newTableNames = tableNames.concat(newTableName);
-                    setTableNames(newTableNames);
+                    onTableNamesChange(newTableNames);
                 }}
                 loadOptions={loadOptions}
                 defaultOptions={[]}
@@ -116,7 +116,7 @@ export const TableSelect: React.FunctionComponent<ITableSelectProps> = ({
                             const newTableNames = tableNames.filter(
                                 (name) => name !== tableName
                             );
-                            setTableNames(newTableNames);
+                            onTableNamesChange(newTableNames);
                         }}
                     >
                         <span>{tableName}</span>

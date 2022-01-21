@@ -18,7 +18,7 @@ export const NumberField: React.FC<INumberFieldProps> = (props) => {
             {...field}
             {...props}
             value={value ?? ''}
-            setValue={setValue}
+            onChange={setValue}
         />
     );
 };

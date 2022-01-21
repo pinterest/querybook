@@ -53,7 +53,6 @@ def create_data_doc(
     session.add(data_doc)
     session.flush()
 
-    data_cell_ids = []
     for index, cell in enumerate(cells):
         data_cell = create_data_cell(
             cell_type=cell["type"],
@@ -69,12 +68,10 @@ def create_data_doc(
             commit=False,
             session=session,
         )
-        data_cell_ids.append(data_cell.id)
     if commit:
         session.commit()
         update_es_data_doc_by_id(data_doc.id)
-        for cell_id in data_cell_ids:
-            update_es_query_cell_by_id(cell_id)
+        update_es_query_cells_by_data_doc_id(data_doc.id, session=session)
     else:
         session.flush()
 
@@ -148,7 +145,8 @@ def update_data_doc(id, commit=True, session=None, **fields):
             update_es_data_doc_by_id(data_doc.id)
 
             # ensure es queries are updated if doc is archived
-            update_es_query_cells_by_data_doc_id(data_doc.id)
+            if fields.get("archived") is True:
+                update_es_query_cells_by_data_doc_id(data_doc.id, session=session)
         else:
             session.flush()
         session.refresh(data_doc)
@@ -209,7 +207,6 @@ def clone_data_doc(id, owner_uid, commit=True, session=None):
         session=session,
     )
 
-    new_data_cell_ids = []
     for index, cell in enumerate(data_doc.cells):
         data_cell = create_data_cell(
             cell_type=cell.cell_type.name,
@@ -225,12 +222,10 @@ def clone_data_doc(id, owner_uid, commit=True, session=None):
             commit=False,
             session=session,
         )
-        new_data_cell_ids.append(data_cell.id)
     if commit:
         session.commit()
         update_es_data_doc_by_id(new_data_doc.id)
-        for cell_id in new_data_cell_ids:
-            update_es_query_cell_by_id(cell_id)
+        update_es_query_cells_by_data_doc_id(new_data_doc.id, session=session)
     else:
         session.flush()
     session.refresh(new_data_doc)
@@ -292,6 +287,9 @@ def update_data_cell(
         if commit:
             session.commit()
             update_es_data_doc_by_id(data_cell.doc.id)
+
+            if data_cell.cell_type == DataCellType.query:
+                update_es_query_cell_by_id(data_cell.id)
 
     return data_cell
 
@@ -366,7 +364,6 @@ def insert_data_doc_cell(data_doc_id, cell_id, index, commit=True, session=None)
     if commit:
         session.commit()
         update_es_data_doc_by_id(data_doc_id)
-        update_es_query_cell_by_id(cell_id)
     else:
         session.flush()
 
@@ -957,7 +954,6 @@ def get_all_query_cells(offset=0, limit=100, session=None):
         .join(DataDocDataCell)
         .join(DataDoc)
         .filter(DataDoc.archived.is_(False))
-        .order_by(DataCell.id.desc())
         .offset(offset)
         .limit(limit)
         .all()

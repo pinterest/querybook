@@ -169,15 +169,10 @@ def paste_data_cell(
 
 @with_session
 def update_data_cell(cell_id, fields, sid="", session=None):
-    data_cell = logic.update_data_cell(
-        id=cell_id, session=session, commit=False, **fields,
-    )
-
-    data_doc = data_cell.doc
+    data_doc = logic.get_data_doc_by_data_cell_id(cell_id, session=session)
     assert_can_write(data_doc.id, session=session)
     verify_environment_permission([data_doc.environment_id])
-    session.commit()
-    logic.update_es_query_cell_by_id(data_cell.id)
+    data_cell = logic.update_data_cell(id=cell_id, session=session, **fields,)
     data_cell_dict = data_cell.to_dict()
     socketio.emit(
         "data_cell_updated",

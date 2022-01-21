@@ -1,4 +1,4 @@
-import React, { useCallback } from 'react';
+import React from 'react';
 import { escapeRegExp } from 'lodash';
 
 import history from 'lib/router-history';
@@ -205,11 +205,7 @@ export const DataTableItem: React.FunctionComponent<IDataTableItemProps> = ({
         name,
         schema,
     } = preview;
-    const handleClick = useCallback(
-        (evt: React.MouseEvent<HTMLDivElement, MouseEvent>) =>
-            openClick(url, evt),
-        [url]
-    );
+    const handleClick = React.useMemo(() => openClick.bind(null, url), [url]);
 
     const goldenIcon = golden ? (
         <div className="result-item-golden">

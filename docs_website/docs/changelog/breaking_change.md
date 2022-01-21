@@ -7,6 +7,10 @@ slug: /changelog
 
 Here are the list of breaking changes that you should be aware of when updating Querybook:
 
+## v3.1.0
+
+Added query cells & query executions to elastic search index.
+
 ## v3.0.0
 
 ### All optional Python dependencies are removed

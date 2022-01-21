@@ -371,7 +371,7 @@ export const SearchOverview: React.FunctionComponent = () => {
                     id="min-duration"
                     placeholder="seconds"
                     value={searchFilters['minDuration'] ?? ''}
-                    setValue={setMinDuration}
+                    onChange={setMinDuration}
                     min="0"
                 />
             </div>
@@ -381,7 +381,7 @@ export const SearchOverview: React.FunctionComponent = () => {
                     id="max-duration"
                     placeholder="seconds"
                     value={searchFilters['maxDuration'] ?? ''}
-                    setValue={setMaxDuration}
+                    onChange={setMaxDuration}
                     min="0"
                 />
             </div>
@@ -394,7 +394,8 @@ export const SearchOverview: React.FunctionComponent = () => {
                 styles={defaultReactSelectStyles}
                 value={
                     searchFilters['engine_id'] && {
-                        label: queryEngineById[searchFilters['engine_id']].name,
+                        label:
+                            queryEngineById[searchFilters['engine_id']]?.name,
                         value: searchFilters['engine_id'],
                     }
                 }
@@ -459,7 +460,7 @@ export const SearchOverview: React.FunctionComponent = () => {
     const tableFilterDOM = (
         <TableSelect
             tableNames={searchFilters['full_table_name'] || []}
-            setTableNames={(tableNames: string[]) =>
+            onTableNamesChange={(tableNames: string[]) =>
                 updateSearchFilter(
                     'full_table_name',
                     !isEmpty(tableNames) ? tableNames : null
