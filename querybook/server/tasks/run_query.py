@@ -57,7 +57,7 @@ def run_query_task(self, query_execution_id):
                 query_execution_id, executor, error_message, session=session
             )
             notifiy_on_execution_completion(query_execution_id, session=session)
-            update_query_execution_by_id(query_execution_id)
+            update_query_execution_by_id(query_execution_id, session=session)
 
             # Executor exists means the query actually executed
             # This prevents cases when query_execution got executed twice

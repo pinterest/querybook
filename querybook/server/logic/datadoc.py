@@ -116,6 +116,7 @@ def create_data_doc_from_execution(
     if commit:
         session.commit()
         update_es_data_doc_by_id(data_doc.id)
+        update_es_query_cell_by_id(data_doc.cells[0].id)
     else:
         session.flush()
 
@@ -364,6 +365,9 @@ def insert_data_doc_cell(data_doc_id, cell_id, index, commit=True, session=None)
     if commit:
         session.commit()
         update_es_data_doc_by_id(data_doc_id)
+
+        if data_cell.cell_type == DataCellType.query:
+            update_es_query_cell_by_id(data_cell.id)
     else:
         session.flush()
 
@@ -518,6 +522,10 @@ def move_data_doc_cell_to_doc(cell_id, data_doc_id, index, commit=True, session=
         session.commit()
         update_es_data_doc_by_id(data_doc.id)
         update_es_data_doc_by_id(old_data_doc.id)
+
+        data_cell = get_data_cell_by_id(datadoc_datacell.data_cell_id, session=session)
+        if data_cell.cell_type == DataCellType.query:
+            update_es_query_cell_by_id(data_cell.id)
     return data_doc
 
 

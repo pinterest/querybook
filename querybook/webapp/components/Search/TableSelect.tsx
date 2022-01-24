@@ -35,7 +35,7 @@ export const TableSelect: React.FunctionComponent<ITableSelectProps> = ({
     );
     const queryMetastores = useSelector(queryMetastoresSelector);
     const [metastoreId, setMetastoreId] = useState(queryMetastores[0].id);
-    const [searchText, setSearchText] = React.useState('');
+    const [searchText, setSearchText] = useState('');
     const asyncSelectProps: Partial<AsyncProps<any, false>> = {};
     const tableReactSelectStyle = makeReactSelectStyle(usePortalMenu);
     if (usePortalMenu) {

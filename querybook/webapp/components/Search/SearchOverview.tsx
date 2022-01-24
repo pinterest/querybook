@@ -389,27 +389,17 @@ export const SearchOverview: React.FunctionComponent = () => {
     );
 
     const queryEngineFilterDOM = (
-        <div className="filter-query-engine">
-            <ReactSelect
-                styles={defaultReactSelectStyles}
-                value={
-                    searchFilters['engine_id'] && {
-                        label:
-                            queryEngineById[searchFilters['engine_id']]?.name,
-                        value: searchFilters['engine_id'],
-                    }
-                }
-                onChange={(option) => {
-                    const engineId = option?.value;
-                    updateSearchFilter('engine_id', engineId);
-                }}
-                options={queryEngines.map((engine) => ({
-                    label: engine.name,
-                    value: engine.id,
-                }))}
-                isClearable
-            />
-        </div>
+        <SimpleReactSelect
+            value={searchFilters['engine_id']}
+            onChange={(value) => {
+                updateSearchFilter('engine_id', value);
+            }}
+            options={queryEngines.map((engine) => ({
+                label: engine.name,
+                value: engine.id,
+            }))}
+            withDeselect
+        />
     );
 
     const queryTypeFilterDOM = (
