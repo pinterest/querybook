@@ -367,6 +367,32 @@ def get_datadoc_editors(doc_id):
     return logic.get_data_doc_editors_by_doc_id(doc_id)
 
 
+@register("/datadoc/getDocsWithSchedule/", methods=["GET"])
+def get_datadoc_with_schedule(
+    environment_id, filter_mode=None, offset=0, limit=10, filter=None, archived=False
+):
+    with DBSession() as session:
+        verify_environment_permission([environment_id])
+
+        docs = []
+
+        docs, count = logic.get_data_doc_by_user_wit_data_doc(
+                current_user.id,
+                environment_id=environment_id,
+                offset=offset,
+                limit=limit,
+                filter=filter,
+                session=session,
+            )
+
+        all_docs_id = map(lambda doc : get_data_doc_schedule_name(doc.id), docs)
+
+
+        res = schedule_logic.get_task_run_record_run_with_schedule(names=all_docs_id, docs=docs, session=session)
+
+        return { 'docs': list(res), 'count': count }
+
+
 @register("/datadoc/<int:doc_id>/editor/<int:uid>/", methods=["POST"])
 def add_datadoc_editor(
     doc_id,

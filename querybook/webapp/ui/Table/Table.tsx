@@ -76,7 +76,7 @@ export const Table = React.memo<ITableProps>(
                         formattedColumn = column;
                     }
 
-                    if (handleFormatCell) {
+                    if (handleFormatCell && !formattedColumn.Cell) {
                         formattedColumn.Cell = handleFormatCell.bind(
                             null,
                             formattedColumn.accessor,
