@@ -15,11 +15,11 @@ export const CopyPasteModal: React.FunctionComponent<IProps> = (props) => {
     const { text, onHide, displayText = true } = props;
 
     const actionsDOM = [
-        <CopyButton key="copy" copyText={text} title="Copy To Clipboard" />,
+        <CopyButton key="copy" copyText={text} title="Copy To Clipboard" />
     ];
 
     const textDOM = displayText ? (
-        <blockquote className="CopyPasteModal-text">
+        <blockquote className="CopyPasteModal-text mv16 mh8">
             <pre>
                 <ShowMoreText text={text} length={400} />
             </pre>

@@ -8,7 +8,7 @@ import memoizeOne from 'memoize-one';
 
 import {
     IQuerySnippetSearchFilter,
-    IQuerySnippet,
+    IQuerySnippet
 } from 'redux/querySnippets/types';
 import { queryEngineSelector } from 'redux/queryEngine/selector';
 import * as querySnippetsActions from 'redux/querySnippets/action';
@@ -31,16 +31,16 @@ import './QuerySnippetNavigator.scss';
 const NAVIGATOR_TABS = [
     {
         name: 'Golden',
-        key: 'golden',
+        key: 'golden'
     },
     {
         name: 'Public',
-        key: 'public',
+        key: 'public'
     },
     {
         name: 'Private',
-        key: 'private',
-    },
+        key: 'private'
+    }
 ];
 
 interface IOwnProps {
@@ -72,7 +72,7 @@ class QuerySnippetNavigatorComponent extends React.PureComponent<
         searching: false,
         selectedTabKey: NAVIGATOR_TABS[0].key,
         showFilterMenu: false,
-        showCreateSnippetModal: false,
+        showCreateSnippetModal: false
     };
 
     private filterButton = React.createRef<HTMLAnchorElement>();
@@ -103,12 +103,12 @@ class QuerySnippetNavigatorComponent extends React.PureComponent<
 
         this.setState(
             {
-                searching: true,
+                searching: true
             },
             async () => {
                 await this.props.searchQuerySnippets(searchFilters);
                 this.setState({
-                    searching: false,
+                    searching: false
                 });
             }
         );
@@ -181,7 +181,7 @@ class QuerySnippetNavigatorComponent extends React.PureComponent<
     @debounce(500)
     public onTitleFilter(titleFilter: string) {
         this.setState({
-            titleFilter,
+            titleFilter
         });
     }
 
@@ -191,8 +191,8 @@ class QuerySnippetNavigatorComponent extends React.PureComponent<
             {
                 filters: {
                     ...this.state.filters,
-                    [filterKey]: filterVal,
-                },
+                    [filterKey]: filterVal
+                }
             },
             this.searchQuerySnippets
         );
@@ -201,28 +201,28 @@ class QuerySnippetNavigatorComponent extends React.PureComponent<
     @bind
     public toggleSnippetFilterPopover() {
         this.setState({
-            showFilterMenu: !this.state.showFilterMenu,
+            showFilterMenu: !this.state.showFilterMenu
         });
     }
 
     @bind
     public showCreateSnippetModal() {
         this.setState({
-            showCreateSnippetModal: true,
+            showCreateSnippetModal: true
         });
     }
 
     @bind
     public hideCreateSnippetModal() {
         this.setState({
-            showCreateSnippetModal: false,
+            showCreateSnippetModal: false
         });
     }
 
     public componentDidMount() {
         this.setState(
             {
-                filters: this.getInitialSearchFilters(),
+                filters: this.getInitialSearchFilters()
             },
             this.searchQuerySnippets
         );
@@ -232,7 +232,7 @@ class QuerySnippetNavigatorComponent extends React.PureComponent<
         const { titleFilter } = this.state;
 
         return (
-            <div className="snippet-search flex-row">
+            <div className="snippet-search list-header flex-row">
                 <SearchBar
                     value={titleFilter}
                     onSearch={this.onTitleFilter}
@@ -313,7 +313,7 @@ function mapStateToProps(state: IStoreState) {
     return {
         querySnippetById: state.querySnippets.querySnippetById,
         querySnippetIds: state.querySnippets.querySnippetIds,
-        queryEngines: queryEngineSelector(state),
+        queryEngines: queryEngineSelector(state)
     };
 }
 
@@ -322,7 +322,7 @@ function mapDispatchToProps(dispatch: Dispatch) {
         searchQuerySnippets: bindActionCreators(
             querySnippetsActions.searchQuerySnippets,
             dispatch
-        ),
+        )
     };
 }
 

@@ -8,7 +8,7 @@ interface IProps {
 }
 
 export const FunctionDocumentationTooltip: React.FunctionComponent<IProps> = ({
-    functionDocumentations,
+    functionDocumentations
 }) => {
     const functionsDOM = functionDocumentations.map(
         (functionDocumentation, index) => {
@@ -16,15 +16,13 @@ export const FunctionDocumentationTooltip: React.FunctionComponent<IProps> = ({
                 description,
                 name,
                 params,
-                return_type: returnType,
+                return_type: returnType
             } = functionDocumentation;
 
             const signature = `${name}(${params})`;
-            const separator = index > 0 ? <hr className="dh-hr" /> : null;
 
             return (
                 <div key={index}>
-                    {separator}
                     <div className="rich-text-content">
                         <div className="table-tooltip-header">{signature}</div>
 

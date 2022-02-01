@@ -10,22 +10,14 @@
     .DataTableViewSamples-mid {
         display: flex;
         flex-direction: column;
-
-        .add-where-clause {
-            margin-top: 8px;
-            margin-bottom: -8px;
-        }
     }
     .DataTableViewSamples-bottom {
         display: flex;
         flex-direction: row;
         justify-content: space-between;
         align-items: flex-end;
-        .FormField:first-child {
+        .FormField {
             min-width: 320px;
-        }
-        .FormField:last-child {
-            min-width: 200px;
         }
     }
 

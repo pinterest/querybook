@@ -9,7 +9,7 @@ import {
     BoardItemType,
     BoardOrderBy,
     BoardOrderToDescription,
-    BoardOrderToTitle,
+    BoardOrderToTitle
 } from 'const/board';
 
 import { BoardCreateUpdateModal } from 'components/BoardCreateUpdateModal/BoardCreateUpdateModal';
@@ -20,7 +20,7 @@ import {
     deleteBoardItem,
     moveBoardItem,
     fetchBoardIfNeeded,
-    addBoardItem,
+    addBoardItem
 } from 'redux/board/action';
 import { setDataDocNavBoard } from 'redux/querybookUI/action';
 import { dataDocNavBoardOpenSelector } from 'redux/querybookUI/selector';
@@ -39,7 +39,7 @@ import { IDragItem } from 'ui/DraggableList/types';
 import {
     BoardDraggableType,
     DataDocDraggableType,
-    IProcessedBoardItem,
+    IProcessedBoardItem
 } from './navigatorConst';
 import { BoardListItemRow } from './DataDocNavigatorBoardItem';
 import './DataDocNavigatorBoardSection.scss';
@@ -59,11 +59,11 @@ export const DataDocNavigatorBoardSection: React.FC<INavigatorBoardSectionProps>
     selectedDocId,
     collapsed,
     setCollapsed,
-    filterString,
+    filterString
 }) => {
     const toggleCollapsed = useCallback(() => setCollapsed(!collapsed), [
         setCollapsed,
-        collapsed,
+        collapsed
     ]);
 
     const [showCreateModal, setShowCreateModal] = useState(false);
@@ -148,7 +148,7 @@ export const DataDocNavigatorBoardSection: React.FC<INavigatorBoardSectionProps>
     );
 
     const sectionHeader = (
-        <Level className="pl8 navigator-board-header">
+        <Level className="pl8 navigator-header">
             <div className="flex1 flex-row" onClick={toggleCollapsed}>
                 <Icon name="list" className="mr8" size={18} />
                 <Title size={7}>Lists</Title>
@@ -202,7 +202,7 @@ export const DataDocNavigatorBoardSection: React.FC<INavigatorBoardSectionProps>
     );
 
     return (
-        <div className="DataDocNavigatorBoardSection">
+        <div className="DataDocNavigatorSection">
             {sectionHeader}
             {boardsDOM}
             {showCreateModal ? (
@@ -279,9 +279,9 @@ const NavigatorBoardView: React.FunctionComponent<{
                     item?.type === BoardDraggableType &&
                     item.itemInfo['boardId'] === id
                         ? false
-                        : monitor.isOver(),
+                        : monitor.isOver()
             };
-        },
+        }
     });
 
     const headerSectionDOM = (
@@ -338,7 +338,7 @@ const NavigatorBoardView: React.FunctionComponent<{
         <div
             className={clsx({
                 NavigatorBoardView: true,
-                'dragged-over': isOver,
+                'dragged-over': isOver
             })}
             ref={dropRef}
         >
@@ -366,7 +366,7 @@ const BoardExpandableList: React.FunctionComponent<{
     selectedDocId,
     boardId,
     onDeleteBoardItem,
-    onMoveBoardItem,
+    onMoveBoardItem
 }) => {
     const boardItemsSelector = useMemo(() => makeBoardItemsSelector(), []);
     const items = useSelector((state: IStoreState) =>
@@ -410,7 +410,7 @@ const BoardExpandableList: React.FunctionComponent<{
                     itemType,
                     title,
                     selected,
-                    boardId: item.boardItem.board_id,
+                    boardId: item.boardItem.board_id
                 };
             }),
         [items, selectedDocId]

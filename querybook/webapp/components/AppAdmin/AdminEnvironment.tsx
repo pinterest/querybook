@@ -31,7 +31,7 @@ const environmentSchema = Yup.object().shape({
     image: Yup.string().max(2083),
     public: Yup.boolean(),
     hidden: Yup.boolean().nullable(),
-    id: Yup.number().nullable(),
+    id: Yup.number().nullable()
 });
 
 interface IProps {
@@ -45,7 +45,7 @@ export const AdminEnvironment: React.FunctionComponent<IProps> = ({
     environments,
     queryEngines,
     loadEnvironments,
-    loadQueryEngines,
+    loadQueryEngines
 }) => {
     const { id: environmentId } = useParams();
     const createEnvironment = React.useCallback(
@@ -134,7 +134,6 @@ export const AdminEnvironment: React.FunctionComponent<IProps> = ({
                                         <div className="AdminForm-section-title">
                                             Access Control
                                         </div>
-                                        <hr className="dh-hr" />
                                     </div>
                                     <div className="AdminForm-section-content">
                                         <UserEnvironmentEditor
@@ -176,7 +175,7 @@ export const AdminEnvironment: React.FunctionComponent<IProps> = ({
             public: true,
             hidden: false,
             shareable: true,
-            deleted_at: null,
+            deleted_at: null
         };
         return (
             <div className="AdminEnvironment">
@@ -218,7 +217,7 @@ export const AdminEnvironment: React.FunctionComponent<IProps> = ({
                             'deleted_at',
                             'description',
                             'hidden',
-                            'public',
+                            'public'
                         ]}
                     />
                 </div>
@@ -312,7 +311,7 @@ const AdminEnvironmentQueryEngine: React.FC<{
 
     const {
         data: environmentEngines,
-        forceFetch: fetchEnvironmentEngines,
+        forceFetch: fetchEnvironmentEngines
     } = useResource(
         React.useCallback(
             () => AdminEnvironmentResource.getQueryEngines(environmentId),
@@ -395,7 +394,6 @@ const AdminEnvironmentQueryEngine: React.FC<{
         <div className="AdminForm-section">
             <div className="AdminForm-section-top flex-row">
                 <div className="AdminForm-section-title">Query Engines</div>
-                <hr className="dh-hr" />
             </div>
             <div className="AdminForm-section-content">
                 <div className="AdminForm-section-top">

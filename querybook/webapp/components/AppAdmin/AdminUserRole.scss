@@ -11,7 +11,7 @@
                 }
             }
             .AdminUserRole-new-form {
-                background-color: var(--light-bg-color);
+                background-color: var(--bg-light);
                 border-radius: var(--border-radius);
                 border: var(--border);
                 margin: 8px 0px;
@@ -20,7 +20,7 @@
                 .FormField {
                     width: 280px;
                     .Select {
-                        background-color: var(--bg-color);
+                        background-color: var(--bg);
                     }
                 }
                 .AdminUserRole-new-button {

@@ -7,7 +7,7 @@ import history from 'lib/router-history';
 import {
     environmentsSelector,
     currentEnvironmentSelector,
-    userEnvironmentNamesSelector,
+    userEnvironmentNamesSelector
 } from 'redux/environment/selector';
 
 import { Dropdown } from 'ui/Dropdown/Dropdown';
@@ -35,7 +35,7 @@ export const EnvironmentDropdownButton: React.FunctionComponent<{
                 <span
                     className={clsx({
                         'environment-name': true,
-                        'environment-disabled': !accessible,
+                        'environment-disabled': !accessible
                     })}
                 >
                     {environment.name}
@@ -46,7 +46,7 @@ export const EnvironmentDropdownButton: React.FunctionComponent<{
                 : null,
             checked: environment === currentEnvironment,
             tooltip: environment.description,
-            tooltipPos: 'right' as TooltipDirection,
+            tooltipPos: 'right' as TooltipDirection
         };
     });
 

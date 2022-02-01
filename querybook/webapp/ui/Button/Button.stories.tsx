@@ -7,7 +7,7 @@ import { ButtonColors, ButtonThemes } from './ButtonTheme';
 
 export default {
     title: 'Button/Button',
-    decorators: [centered],
+    decorators: [centered]
 };
 
 export const _Button = ({ ...args }: ButtonProps) => <Button {...args} />;
@@ -15,7 +15,7 @@ _Button.args = {
     icon: 'zap',
     title: 'Button',
     color: 'default',
-    theme: 'outline',
+    theme: 'fil',
     disabled: false,
     isLoading: false,
 
@@ -25,34 +25,34 @@ _Button.args = {
     uppercase: false,
     attached: '',
     fontWeight: '',
-    ping: '',
+    ping: ''
 };
 
 _Button.argTypes = {
     color: {
         control: {
             type: 'select',
-            options: ButtonColors,
-        },
+            options: ButtonColors
+        }
     },
     theme: {
         control: {
             type: 'select',
-            options: ButtonThemes,
-        },
+            options: ButtonThemes
+        }
     },
     size: {
         control: {
             type: 'select',
-            options: ['small', 'medium'],
-        },
+            options: ['small', 'medium']
+        }
     },
     attached: {
         control: {
             type: 'select',
-            options: ['', 'left', 'right'],
-        },
-    },
+            options: ['', 'left', 'right']
+        }
+    }
 };
 
 export const ButtonThemeColorExamples = () => (

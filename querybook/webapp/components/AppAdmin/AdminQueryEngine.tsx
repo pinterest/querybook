@@ -21,7 +21,7 @@ import {
     TemplatedForm,
     validateForm,
     updateValue,
-    getDefaultFormValue,
+    getDefaultFormValue
 } from 'ui/SmartForm/SmartForm';
 import { Loader } from 'ui/Loader/Loader';
 import { SimpleField } from 'ui/FormikField/SimpleField';
@@ -45,7 +45,7 @@ export const AdminQueryEngine: React.FunctionComponent<IProps> = ({
     queryEngines,
     metastores,
     loadQueryEngines,
-    loadMetastores,
+    loadMetastores
 }) => {
     const { id: queryEngineId } = useParams();
 
@@ -63,7 +63,7 @@ export const AdminQueryEngine: React.FunctionComponent<IProps> = ({
                 (queryEngineTemplates || []).map(
                     (executor) => executor.language
                 )
-            ),
+            )
         ],
         [queryEngineTemplates]
     );
@@ -71,7 +71,7 @@ export const AdminQueryEngine: React.FunctionComponent<IProps> = ({
         () =>
             querybookLanguages.map((l) => ({
                 label: titleize(l),
-                value: l,
+                value: l
             })),
         [querybookLanguages]
     );
@@ -168,7 +168,7 @@ export const AdminQueryEngine: React.FunctionComponent<IProps> = ({
                         AdminQueryEngineResource.delete(queryEngine.id).then(
                             resolve
                         ),
-                    onDismiss: reject,
+                    onDismiss: reject
                 });
             }),
         []
@@ -253,7 +253,6 @@ export const AdminQueryEngine: React.FunctionComponent<IProps> = ({
             <div className="AdminForm-section">
                 <div className="AdminForm-section-top flex-row">
                     <div className="AdminForm-section-title">Environments</div>
-                    <hr className="dh-hr" />
                 </div>
                 <div className="AdminForm-section-content">
                     <p>
@@ -308,7 +307,7 @@ export const AdminQueryEngine: React.FunctionComponent<IProps> = ({
                                 options={(metastores || []).map(
                                     (metastore: IAdminMetastore) => ({
                                         key: metastore.id,
-                                        value: metastore.name,
+                                        value: metastore.name
                                     })
                                 )}
                                 onChange={(value) => {
@@ -368,7 +367,6 @@ export const AdminQueryEngine: React.FunctionComponent<IProps> = ({
                                 <div className="AdminForm-section-title">
                                     Executor Params
                                 </div>
-                                <hr className="dh-hr" />
                             </div>
                             <div className="AdminForm-section-content">
                                 <Loader
@@ -414,7 +412,7 @@ export const AdminQueryEngine: React.FunctionComponent<IProps> = ({
                     string,
                     any
                 >,
-                status_checker: null,
+                status_checker: null
             };
             return (
                 <div className="AdminQueryEngine">
@@ -459,7 +457,7 @@ export const AdminQueryEngine: React.FunctionComponent<IProps> = ({
                             'created_at',
                             'deleted_at',
                             'executor',
-                            'executor_params',
+                            'executor_params'
                         ]}
                     />
                 </div>

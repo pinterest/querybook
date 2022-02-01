@@ -3,12 +3,12 @@ import { getKeySymbol } from 'lib/utils/keyboard';
 import React, { useMemo } from 'react';
 
 const StyledKeyboardKey = styled.span.attrs({
-    className: 'KeyboardKey mr4',
+    className: 'KeyboardKey mr4'
 })`
     cursor: default;
     border: var(--border);
     border-radius: var(--border-radius);
-    background-color: var(--bg-color);
+    background-color: var(--bg-light);
     padding: 4px 12px;
     font-family: var(--font-monospace);
     font-size: var(--small-text-size);

@@ -68,7 +68,7 @@ const useDataDocEditorReduxActions = (docId: number) => {
         updateDataDocEditors,
         updateDataDocOwner,
         deleteDataDocEditor,
-        rejectDataDocAccessRequest,
+        rejectDataDocAccessRequest
     };
 };
 
@@ -84,7 +84,7 @@ export const DataDocViewersBadge = React.memo<IDataDocViewersBadgeProps>(
             dataDoc,
             userInfoById,
             readonly,
-            ownerId,
+            ownerId
         } = useShallowSelector((state: IStoreState) => {
             const viewerInfos = dataDocSelectors.dataDocViewerInfosSelector(
                 state,
@@ -106,7 +106,7 @@ export const DataDocViewersBadge = React.memo<IDataDocViewersBadgeProps>(
                     state,
                     docId
                 ),
-                ownerId: state.user.myUserInfo.uid,
+                ownerId: state.user.myUserInfo.uid
             };
         });
 
@@ -116,7 +116,7 @@ export const DataDocViewersBadge = React.memo<IDataDocViewersBadgeProps>(
             updateDataDocEditors,
             updateDataDocOwner,
             deleteDataDocEditor,
-            rejectDataDocAccessRequest,
+            rejectDataDocAccessRequest
         } = useDataDocEditorReduxActions(docId);
 
         const getBadgeContentDOM = () => {
@@ -132,7 +132,7 @@ export const DataDocViewersBadge = React.memo<IDataDocViewersBadgeProps>(
                                 viewerInfo.uid in userInfoById
                                     ? userInfoById[viewerInfo.uid].username
                                     : null,
-                            isOnline: viewerInfo.online,
+                            isOnline: viewerInfo.online
                         }))}
                     extraCount={extraViewersCount}
                 />
@@ -145,7 +145,7 @@ export const DataDocViewersBadge = React.memo<IDataDocViewersBadgeProps>(
                     className="viewers-badge-share-button"
                     icon={dataDoc.public ? 'users' : 'lock'}
                     title="Share"
-                    color="light"
+                    // color="light"
                     pushable
                     ping={
                         !readonly && accessRequestsByUidLength > 0

@@ -12,7 +12,7 @@ const StyledButton = styled.span`
 
     &:hover,
     &.active {
-        background-color: var(--light-bg-color);
+        background-color: var(--bg-light);
         color: var(--dark-text-color);
     }
 `;
@@ -34,7 +34,7 @@ export const ToolBarButton: React.FunctionComponent<IToolBarButtonProps> = ({
     onClick,
     className = '',
     tooltip = '',
-    buttonRef,
+    buttonRef
 }) => {
     const iconDOM = icon ? <i className={'fa ' + ('fa-' + icon)} /> : null;
     const buttonClassName = className + (active ? 'active' : '');

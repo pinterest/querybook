@@ -18,8 +18,8 @@ const dot = (color = 'transparent') => ({
         display: 'block',
         marginRight: 12,
         height: 12,
-        width: 12,
-    },
+        width: 12
+    }
 });
 
 export const valueFromId = (opts: IOptions, id: any) =>
@@ -30,92 +30,105 @@ export const defaultReactSelectStyles: Partial<
 > = {
     control: (styles, { isFocused }) => ({
         ...styles,
-        backgroundColor: 'var(--bg-color)',
+        backgroundColor: isFocused ? 'var(--bg-lightest)' : 'var(--bg-light)',
         boxShadow: 'none',
-        borderRadius: 'var(--border-radius)',
-        borderColor: isFocused
-            ? 'var(--focus-border-color)'
-            : 'var(--border-color)',
+        borderRadius: 'var(--border-radius-sm)',
+        border: 'none',
+        borderWidth: '0px',
         '&:hover': {
-            borderColor: 'var(--hover-border-color)',
-        },
+            backgroundColor: 'var(--bg-hover)'
+        }
     }),
     input: (styles) => ({
         ...styles,
         color: 'var(--text-color)',
         '&:hover': {
-            color: 'var(--text-hover-color)',
-        },
+            color: 'var(--text-hover-color)'
+        }
     }),
     placeholder: (styles) => ({
         ...styles,
-        color: 'var(--light-text-color)',
+        color: 'var(--light-text-color)'
     }),
     indicatorSeparator: (styles) => ({
         ...styles,
-        backgroundColor: 'transparent', // invisible
+        backgroundColor: 'transparent' // invisible
     }),
     clearIndicator: (styles, { isFocused }) => ({
         ...styles,
         color: isFocused ? 'var(--text-hover-color)' : 'var(--text-color)',
         '&:hover': {
-            color: 'var(--text-hover-color)',
-        },
+            color: 'var(--text-hover-color)'
+        }
     }),
     dropdownIndicator: (styles) => ({
         ...styles,
         color: 'var(--text-color)',
         '&:hover': {
-            color: 'var(--text-hover-color)',
-        },
+            color: 'var(--text-hover-color)'
+        }
     }),
     option: (styles, { data, isDisabled, isSelected, isFocused }) => ({
         ...styles,
         backgroundColor: isDisabled
             ? 'var(--color-null)'
             : isSelected
-            ? 'var(--select-bg-color)'
+            ? 'var(--bg-light)'
             : isFocused
-            ? 'var(--hover-bg-color)'
-            : 'inherit',
-        color: isFocused ? 'var(--text-hover-color)' : 'var(--text-color)',
+            ? 'var(--bg-hover)'
+            : 'var(--bg-lightest)',
+        color: isDisabled
+            ? 'var(--light-text-color)'
+            : isSelected
+            ? 'var(--dark-text-color)'
+            : isFocused
+            ? 'var(--text-hover-color)'
+            : 'var(--text-color)',
         cursor: isDisabled ? 'not-allowed' : 'default',
         ...(data.color ? dot(data.color) : {}),
+        ':active': {
+            ...styles[':active'],
+            backgroundColor: !isDisabled ? 'var(--color-accent-bg)' : undefined,
+            color: !isDisabled ? 'var(--color-accent-text)' : undefined
+        }
     }),
     menu: (styles) => ({
         ...styles,
-        backgroundColor: 'var(--bg-color)',
+        backgroundColor: 'var(--bg-lightest)',
+        borderRadius: 'var(--border-radius-sm)',
+        border: 'none',
+        boxShadow: 'none'
     }),
     singleValue: (styles, { data }) => ({
         ...styles,
         color: 'var(--title-color)',
-        ...(data.color ? dot(data.color) : {}),
+        ...(data.color ? dot(data.color) : {})
     }),
     multiValue: (styles, { data }) => ({
         ...styles,
-        backgroundColor: data.color || 'var(--light-bg-color)',
+        backgroundColor: data.color || 'var(--bg-light)',
         color: data.color ? '#000' : 'var(--text-color)',
         ':hover': {
-            backgroundColor: 'var(--hover-bg-color)',
-            color: 'var(--text-color)',
-        },
+            backgroundColor: 'var(--bg-hover)',
+            color: 'var(--text-color)'
+        }
     }),
     multiValueLabel: (styles) => ({
         ...styles,
         color: 'inherit',
         ':hover': {
             backgroundColor: 'inherit',
-            color: 'inherit',
-        },
+            color: 'inherit'
+        }
     }),
     multiValueRemove: (styles) => ({
         ...styles,
         color: 'inherit',
         ':hover': {
             backgroundColor: 'inherit',
-            color: 'inherit',
-        },
-    }),
+            color: 'inherit'
+        }
+    })
 };
 
 export const miniReactSelectStyles: StylesConfig<any, false, any> = mergeStyles(
@@ -127,19 +140,19 @@ export const miniReactSelectStyles: StylesConfig<any, false, any> = mergeStyles(
             margin: '0px,',
             minHeight: '0px',
             '&:hover': {
-                borderColor: 'var(--hover-border-color)',
-            },
+                borderColor: 'var(--hover-border-color)'
+            }
         }),
         input: (styles) => ({
             ...styles,
             padding: '0px',
             margin: '0px,',
-            minHeight: '0px',
+            minHeight: '0px'
         }),
         dropdownIndicator: (styles) => ({
             ...styles,
-            padding: '0px 4px',
-        }),
+            padding: '0px 4px'
+        })
     }
 );
 
@@ -152,8 +165,8 @@ export function makeReactSelectStyle(
         styles = mergeStyles(styles, {
             menuPortal: (base) => ({
                 ...base,
-                zIndex: 9999,
-            }),
+                zIndex: 9999
+            })
         });
     }
 

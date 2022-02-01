@@ -24,7 +24,7 @@ interface IQueryViewFilterProps {
 const statusOptions: IOptions = getEnumEntries(QueryExecutionStatus).map(
     ([status, statusEnum]) => ({
         label: status,
-        value: statusEnum,
+        value: statusEnum
     })
 );
 
@@ -35,7 +35,7 @@ export const QueryViewFilter = React.memo<IQueryViewFilterProps>(
             () =>
                 queryEngines.map((queryEngine) => ({
                     label: queryEngine.name,
-                    value: queryEngine.id,
+                    value: queryEngine.id
                 })),
             [queryEngines]
         );
@@ -105,7 +105,7 @@ export const QueryViewFilter = React.memo<IQueryViewFilterProps>(
         );
 
         return (
-            <div className="QueryViewFilter">
+            <div className="QueryViewFilter list-header">
                 {filterTagSectionDOM}
                 {configSection}
                 {filterPickerDOM}

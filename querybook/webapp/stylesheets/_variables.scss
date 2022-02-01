@@ -4,9 +4,10 @@
 body {
     // Colors
     --color-primary: #ffffff; // BG-background
-    --color-primary-1: #fafafa; // BG-hover background
-    --color-primary-2: #f6f6f6; // BG-light background
-    --color-primary-3: #efefef; // C-icon
+    --color-primary-0: #fafafa; // BG-hover background
+    --color-primary-1: #f6f6f6; // BG-light background
+    --color-primary-2: #f2f2f2; // C-icon
+    --color-primary-3: #e4e4e4;
     --color-primary-4: #d3d3d3; // BG-border
     --color-primary-5: #bfbfbf; // C-hover content
 
@@ -71,6 +72,9 @@ body {
     --pill-tab-color: var(--color-primary-3);
     --tag-text-color: var(--text-color);
 
+    --hr: var(--bg);
+    --progress: var(--color-invert-3);
+
     // For boolean + warning cases
     --color-true-light: var(--color-green-light);
     --color-true: var(--color-green);
@@ -82,23 +86,18 @@ body {
     --color-warning-dark: var(--color-yellow-dark);
 
     // Colors: Background + Borders
-    --bg-color: var(--color-primary);
-    --hover-bg-color: var(--color-primary-2);
-    --light-bg-color: var(--color-primary-1);
-    --select-bg-color: var(--color-primary-3);
-    --dark-bg-color: var(--color-primary-4);
-    --invert-select-color: var(--color-invert-2);
-    --invert-bg-color: var(--color-invert-1);
-    --modal-bg-color: var(--color-invert-1);
-    --text-select-bg-color: var(--color-transparent-light);
-    --progress-bg-color: var(--color-primary-3);
-    --progress-color: var(--color-invert-3);
-    --tag-bg-color: var(--color-primary-3);
-    --hr-color: var(--color-invert-5);
+    --bg: var(--color-primary);
+    --bg-lightest: var(--color-primary-0);
+    --bg-hover: var(--color-primary-1);
+    --bg-light: var(--color-primary-2);
+    --bg-select: var(--color-primary-3);
+    --bg-dark: var(--color-primary-4);
+    --bg-darkest: var(--color-primary-5);
 
-    --scroll-bar-size: 16px;
-    --scroll-bar-color: var(--color-primary-4);
-    --scroll-bar-active-color: var(--color-primary-5);
+    --bg-invert-select: var(--color-invert-2);
+    --bg-invert: var(--color-invert-1);
+
+    --bg-text-select: var(--color-transparent-light);
 
     --border-color: var(--color-primary-3);
     --hover-border-color: var(--color-primary-4);
@@ -106,17 +105,21 @@ body {
     --select-border-color: var(--color-invert-5);
 
     // Colors: Special Elements
-    --query-editor-default-bg-color: var(--color-primary-1);
+    --query-editor-default-bg: var(--color-primary-1);
     --query-editor-default-gutter-color: var(--color-primary-2);
 
-    --terminal-bg-color: var(--color-primary-1);
+    --terminal-bg: var(--color-primary-1);
     --terminal-text-color: var(--color-invert-3);
 
-    --table-element-bg-color: var(--color-primary-2);
-    --table-hover-bg-color: var(--color-primary-3);
+    --table-element-bg: var(--color-primary-2);
+    --table-hover-bg: var(--color-primary-3);
 
     --red-highlight: rgba(189, 8, 28, 0.5);
     --text-highlight: rgba(255, 255, 0, 0.5);
+
+    --scroll-bar-size: 16px;
+    --scroll-bar-color: var(--color-primary-4);
+    --scroll-bar-active-color: var(--color-primary-5);
 
     // Type
     --font-sans-serif: BlinkMacSystemFont, -apple-system, 'Avenir Next',
@@ -139,9 +142,18 @@ body {
 
     // Structure
     --max-width: 1200px;
-    --border-radius: 4px;
-    --border: solid 1px var(--border-color);
-    --box-shadow: 0px 0px 8px var(--border-color);
+    --border-radius-sm: 6px;
+    --border-radius: 12px;
+    --border-radius-lg: 24px;
+    --border: none;
+    --box-shadow: 0px 5px 40px 0px rgb(0 0 0 / 20%);
+    --padding-sm: 6px;
+    --padding: 12px;
+    --padding-lg: 16px;
+    --margin-xs: 8px;
+    --margin-sm: 12px;
+    --margin: 24px;
+    --margin-lg: 36px;
 }
 
 body.dawn-theme {
@@ -197,8 +209,8 @@ body.dark-theme {
 
     --color-green-dark: #a8d017;
 
-    --modal-bg-color: var(--color-primary-1);
-    --text-select-bg-color: var(--color-transparent-dark);
+    --bg-invert: var(--color-primary-1);
+    --bg-text-select: var(--color-transparent-dark);
 
     --scroll-bar-color: var(--color-primary-3);
 
@@ -231,8 +243,8 @@ body.night-theme {
 
     --text-active-color: #afc4f0;
 
-    --modal-bg-color: var(--color-primary-1);
-    --text-select-bg-color: var(--color-transparent-dark);
+    --bg-invert: var(--color-primary-1);
+    --bg-text-select: var(--color-transparent-dark);
 
     --scroll-bar-color: var(--color-primary-3);
 
@@ -266,14 +278,14 @@ body.lush-theme {
 
     --color-accent: var(--color-orange);
     --color-accent-text: var(--color-orange-light);
-    --color-accent-bg: var(--select-bg-color);
-    --color-accent-bg-hover: var(--hover-bg-color);
+    --color-accent-bg: var(--bg-select);
+    --color-accent-bg-hover: var(--bg-hover);
 
     --text-hover-color: #f9bb78;
     --text-active-color: #fbc37b;
 
-    --modal-bg-color: var(--color-primary-1);
-    --text-select-bg-color: var(--color-transparent-dark);
+    --bg-invert: var(--color-primary-1);
+    --bg-text-select: var(--color-transparent-dark);
 
     --scroll-bar-color: var(--color-primary-3);
 

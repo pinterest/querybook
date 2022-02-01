@@ -3,7 +3,7 @@
 exports[`matches enzyme snapshots matches snapshot - attached right 1`] = `
 <StyledButton
   attached="right"
-  bgColor="var(--bg-color)"
+  bgColor="var(--bg)"
   borderColor="var(--border-color)"
   className="Button"
   color="var(--text-color)"
@@ -20,7 +20,7 @@ exports[`matches enzyme snapshots matches snapshot - attached right 1`] = `
 
 exports[`matches enzyme snapshots matches snapshot - disbled 1`] = `
 <StyledButton
-  bgColor="var(--bg-color)"
+  bgColor="var(--bg)"
   borderColor="var(--border-color)"
   className="Button"
   color="var(--text-color)"
@@ -38,7 +38,7 @@ exports[`matches enzyme snapshots matches snapshot - disbled 1`] = `
 
 exports[`matches enzyme snapshots matches snapshot - isLoading 1`] = `
 <StyledButton
-  bgColor="var(--bg-color)"
+  bgColor="var(--bg)"
   borderColor="var(--border-color)"
   className="Button flex-row"
   color="var(--text-color)"
@@ -59,7 +59,7 @@ exports[`matches enzyme snapshots matches snapshot - isLoading 1`] = `
 exports[`matches enzyme snapshots matches snapshot - mixed 1`] = `
 <StyledButton
   attached="left"
-  bgColor="var(--bg-color)"
+  bgColor="var(--bg)"
   borderColor="var(--border-color)"
   className="Button"
   color="var(--text-color)"
@@ -80,7 +80,7 @@ exports[`matches enzyme snapshots matches snapshot - text button 1`] = `
   bgColor="transparent"
   className="Button"
   color="var(--text-color)"
-  hoverBgColor="var(--light-bg-color)"
+  hoverBgColor="var(--bg-light)"
   hoverColor="var(--dark-text-color)"
   onClick={[Function]}
   size="medium"
@@ -93,10 +93,10 @@ exports[`matches enzyme snapshots matches snapshot - text button 1`] = `
 
 exports[`matches enzyme snapshots matches snapshot - typed 1`] = `
 <StyledButton
-  bgColor="var(--light-bg-color)"
+  bgColor="var(--bg-light)"
   className="Button"
   color="var(--light-text-color)"
-  hoverBgColor="var(--hover-bg-color)"
+  hoverBgColor="var(--bg-hover)"
   hoverColor="var(--text-color)"
   onClick={[Function]}
   size="medium"
@@ -109,7 +109,7 @@ exports[`matches enzyme snapshots matches snapshot - typed 1`] = `
 
 exports[`matches enzyme snapshots matches snapshot 1`] = `
 <StyledButton
-  bgColor="var(--bg-color)"
+  bgColor="var(--bg)"
   borderColor="var(--border-color)"
   className="Button"
   color="var(--text-color)"
