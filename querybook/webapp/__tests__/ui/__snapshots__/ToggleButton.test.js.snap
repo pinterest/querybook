@@ -6,6 +6,7 @@ exports[`matches enzyme snapshots matches snapshot - unchecked 1`] = `
   color="default"
   onClick={[Function]}
   size="medium"
+  theme="fill"
 >
   Testing
 </Button>
@@ -17,6 +18,7 @@ exports[`matches enzyme snapshots matches snapshot 1`] = `
   color="default"
   onClick={[Function]}
   size="medium"
+  theme="fill"
 >
   Testing
 </Button>

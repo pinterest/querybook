@@ -8,6 +8,7 @@ exports[`matches enzyme snapshots matches snapshot - disbled 1`] = `
   isLoading={false}
   onClick={[Function]}
   size="medium"
+  theme="fill"
   title="test"
 />
 `;
@@ -20,14 +21,15 @@ exports[`matches enzyme snapshots matches snapshot 1`] = `
   isLoading={false}
   onClick={[Function]}
   size="medium"
+  theme="fill"
   title="test"
 />
 `;
 
 exports[`matches test renderer snapshot serializes the styles 1`] = `
 <span
-  className="StyledButton-aqwbwz-0 bodqBd Button"
-  color="var(--text-color)"
+  className="StyledButton-aqwbwz-0 FteAE Button"
+  color="var(--light-text-color)"
   disabled={false}
   onClick={[Function]}
   size="medium"
