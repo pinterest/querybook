@@ -376,21 +376,22 @@ def get_datadoc_with_schedule(
 
         docs = []
 
-        docs, count = logic.get_data_doc_by_user_wit_data_doc(
-                current_user.id,
-                environment_id=environment_id,
-                offset=offset,
-                limit=limit,
-                filter=filter,
-                session=session,
-            )
+        docs, count = logic.get_data_doc_by_user_with_data_doc(
+            current_user.id,
+            environment_id=environment_id,
+            offset=offset,
+            limit=limit,
+            filter=filter,
+            session=session,
+        )
 
-        all_docs_id = map(lambda doc : get_data_doc_schedule_name(doc.id), docs)
+        all_docs_id = map(lambda doc: get_data_doc_schedule_name(doc.id), docs)
 
+        res = schedule_logic.get_task_run_record_run_with_schedule(
+            names=all_docs_id, docs=docs, session=session
+        )
 
-        res = schedule_logic.get_task_run_record_run_with_schedule(names=all_docs_id, docs=docs, session=session)
-
-        return { 'docs': list(res), 'count': count }
+        return {"docs": list(res), "count": count}
 
 
 @register("/datadoc/<int:doc_id>/editor/<int:uid>/", methods=["POST"])

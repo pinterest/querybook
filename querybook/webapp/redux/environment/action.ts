@@ -51,7 +51,7 @@ export function setEnvironment(name: string): ThunkResult<any> {
     };
 }
 
-export function setCollapsed(value: boolean): ISetCollapsedAction  {
+export function setCollapsed(value: boolean): ISetCollapsedAction {
     return {
         type: '@@environment/SET_COLLAPSED',
         payload: value,

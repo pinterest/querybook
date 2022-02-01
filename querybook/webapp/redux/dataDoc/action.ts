@@ -628,8 +628,12 @@ export function rejectDataDocAccessRequest(
 export function getDataDocWithSchema({
     paginationPage,
     paginationPageSize,
-    paginationFilter
-}: { paginationPage?: number, paginationPageSize?: number, paginationFilter?: string }): ThunkResult<Promise<ScheduledDocType[]>> {
+    paginationFilter,
+}: {
+    paginationPage?: number;
+    paginationPageSize?: number;
+    paginationFilter?: [{ value: string }];
+}): ThunkResult<Promise<ScheduledDocType[]>> {
     return async (dispatch, getState) => {
         const env = getState().environment.currentEnvironmentId;
         const schemaDataDoc = getState().dataDoc.dataDocWithSchema;
@@ -642,7 +646,7 @@ export function getDataDocWithSchema({
             env,
             limit: pageSize,
             offset: page * pageSize,
-            filter: filtered[0]?.value
+            filter: filtered[0]?.value,
         });
 
         dispatch({

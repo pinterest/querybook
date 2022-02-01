@@ -25,7 +25,7 @@ const initialState: Readonly<IDataDocState> = {
         total: 0,
         page: 0,
         pageSize: 10,
-        filtered: ""
+        filtered: [{ value: '' }],
     },
 };
 

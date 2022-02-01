@@ -24,7 +24,9 @@ import './EnvironmentAppSidebar.scss';
 const SIDEBAR_WIDTH = 320;
 
 export const EnvironmentAppSidebar: React.FunctionComponent = () => {
-    const collapsed:boolean = useSelector((state: IStoreState) => state.environment.isEnvCollapsed);
+    const collapsed: boolean = useSelector(
+        (state: IStoreState) => state.environment.isEnvCollapsed
+    );
     const dispatch: Dispatch = useDispatch();
     const [entity, setEntity] = React.useState<Entity>('datadoc');
 

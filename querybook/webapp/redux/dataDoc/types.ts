@@ -251,14 +251,14 @@ export interface IMoveDataDocCursor extends Action {
 }
 
 export interface IReceiveDataWithSchema extends Action {
-    type: '@@dataDoc/RECEIVE_DATA_WITH_SCHEMA',
+    type: '@@dataDoc/RECEIVE_DATA_WITH_SCHEMA';
     payload: {
-        docs: ScheduledDocType[],
-        total: number,
-        page: number,
-        pageSize: number,
-        filtered: string
-    }
+        docs: ScheduledDocType[];
+        total: number;
+        page: number;
+        pageSize: number;
+        filtered: [{ value: string }];
+    };
 }
 
 export type DataDocAction =
@@ -288,7 +288,8 @@ export type DataDocAction =
     | IReceiveDataDocAccessRequestsAction
     | IReceiveDataDocAccessRequestAction
     | IRemoveDataDocAccessRequestAction
-    | IMoveDataDocCursor;
+    | IMoveDataDocCursor
+    | IReceiveDataWithSchema;
 
 export type ThunkResult<R> = ThunkAction<
     R,
@@ -324,10 +325,10 @@ export interface IDataDocState {
     favoriteDataDocIds: number[];
     recentDataDocIds: number[];
     dataDocWithSchema: {
-        docs: ScheduledDocType[],
-        total: number,
-        page: number,
-        pageSize: number,
-        filtered: string
-    }
+        docs: ScheduledDocType[];
+        total: number;
+        page: number;
+        pageSize: number;
+        filtered: [{ value: string }];
+    };
 }

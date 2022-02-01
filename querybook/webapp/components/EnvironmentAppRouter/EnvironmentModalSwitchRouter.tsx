@@ -21,7 +21,7 @@ const QueryComposer = React.lazy(
 
 const ListDataDoc = React.lazy(
     () => import('components/ListDataDoc/ListDataDoc')
-)
+);
 
 // Modal Routes
 const QuerySnippetRoute = React.lazy(

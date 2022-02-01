@@ -7,13 +7,13 @@ const UntitledText = styled.span`
 `;
 
 const Link = styled.a`
-  text-align: left;
-  display: block;
+    text-align: left;
+    display: block;
 `;
 
 export const DataDocsName: React.FunctionComponent<{
     data: { title: string; id: number };
-    env: { name: string }
+    env: { name: string };
 }> = ({ data, env }) => {
     return (
         <Link href={`/${env.name}/datadoc/${data.id}/`} title={data.title}>

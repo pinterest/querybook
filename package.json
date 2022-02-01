@@ -48,7 +48,7 @@
         "codemirror": "^5.64.0",
         "core-decorators": "0.20.0",
         "core-js": "^3.12.1",
-        "cronstrue": "^1.122.0",
+        "cronstrue": "^1.123.0",
         "d3": "5.7.0",
         "dagre-d3": "0.6.1",
         "draft-js": "0.11.7",

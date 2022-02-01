@@ -21,7 +21,9 @@ const ListDataDoc: React.FC = () => {
         const { currentEnvironmentId, environmentById } = state.environment;
         return environmentById[currentEnvironmentId];
     });
-    const dataDocs = useSelector((state: IStoreState) => state.dataDoc.dataDocWithSchema);
+    const dataDocs = useSelector(
+        (state: IStoreState) => state.dataDoc.dataDocWithSchema
+    );
     useEffect(() => {
         dispatch(setCollapsed(true));
 
@@ -31,10 +33,7 @@ const ListDataDoc: React.FC = () => {
     }, []);
 
     return (
-        <FullHeight
-            flex={'column'}
-            className="ListDataTable"
-        >
+        <FullHeight flex={'column'} className="ListDataTable">
             <Table
                 rows={dataDocs.docs}
                 cols={[
@@ -102,7 +101,7 @@ const ListDataDoc: React.FC = () => {
                         dataDocActions.getDataDocWithSchema({
                             paginationPage: page,
                             paginationPageSize: pageSize,
-                            paginationFilter: filtered
+                            paginationFilter: filtered,
                         })
                     );
                 }}

@@ -9,9 +9,6 @@ from models.schedule import (
     TaskSchedule,
     TaskRunRecord,
 )
-from sqlalchemy.orm import joinedload, subqueryload, Load
-from sqlalchemy import func, desc
-from logic import schedule as schedule_logic
 
 
 @with_session
@@ -92,7 +89,7 @@ def update_task_schedule(id, commit=True, session=None, no_changes=False, **kwar
             "no_changes",
         ],
         no_changes=no_changes,
-        **kwargs
+        **kwargs,
     )
 
     if commit:
@@ -152,19 +149,39 @@ def get_data_doc_schedule_name(id: int):
 
 
 @with_session
-def get_task_run_record_run_with_schedule(
-    names, docs, session
-):
+def get_task_run_record_run_with_schedule(names, docs, session):
     list_of_names = list(names)
-    allSchedules = session.query(TaskSchedule).filter(TaskSchedule.name.in_(list_of_names)).all()
+    allSchedules = (
+        session.query(TaskSchedule).filter(TaskSchedule.name.in_(list_of_names)).all()
+    )
 
     allTaskRunRecordsGroupedBy = session.execute(
-        'SELECT * FROM task_run_record WHERE (name, created_at) IN (SELECT name, MAX(created_at) max_date FROM task_run_record GROUP BY name);'
+        "SELECT * FROM task_run_record WHERE (name, created_at) IN (SELECT name, MAX(created_at) max_date FROM task_run_record GROUP BY name);"
     )
     taskRunRecordsIds = map(lambda task: task[0], allTaskRunRecordsGroupedBy)
-    allTaskRunRecords = session.query(TaskRunRecord).filter(TaskRunRecord.id.in_(taskRunRecordsIds));
+    allTaskRunRecords = session.query(TaskRunRecord).filter(
+        TaskRunRecord.id.in_(taskRunRecordsIds)
+    )
 
-    allDocs = map(lambda name: dict({ 'lastRecord': next(filter(lambda task: task.name == name, allTaskRunRecords), None), 'schedule': next(filter(lambda task: task.name == name, allSchedules), None), 'doc': next(filter(lambda docs: get_data_doc_schedule_name(docs.id) == name, docs), None) }), list_of_names)
+    allDocs = map(
+        lambda name: dict(
+            {
+                "lastRecord": next(
+                    filter(lambda task: task.name == name, allTaskRunRecords), None
+                ),
+                "schedule": next(
+                    filter(lambda task: task.name == name, allSchedules), None
+                ),
+                "doc": next(
+                    filter(
+                        lambda docs: get_data_doc_schedule_name(docs.id) == name, docs
+                    ),
+                    None,
+                ),
+            }
+        ),
+        list_of_names,
+    )
     return allDocs
 
 
