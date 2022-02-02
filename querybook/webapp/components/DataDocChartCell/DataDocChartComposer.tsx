@@ -387,7 +387,7 @@ const DataDocChartComposerComponent: React.FunctionComponent<
             ) : null}
         </>
     );
-    console.log({ values });
+
     const dataTransformationDOM = (
         <>
             <FormSectionHeader>Transformation</FormSectionHeader>
