@@ -27,9 +27,7 @@ export const StyledButton = styled.span<StyledButtonProps>`
     display: inline-flex;
     align-items: center;
 
-    border: ${(props) =>
-        props.borderColor ? `1px solid ${props.borderColor}` : 'none'};
-    border-radius: var(--border-radius);
+    border-radius: var(--border-radius-sm);
 
     color: ${(props) => props.color || 'inherit'};
     background-color: ${(props) => props.bgColor || 'inherit'};
@@ -61,7 +59,7 @@ export const StyledButton = styled.span<StyledButtonProps>`
     ${(props) => (props.fontWeight ? `font-weight: ${props.fontWeight}` : '')};
 
     cursor: ${(props) => (props.disabled ? 'not-allowed' : 'pointer')};
-    padding: ${(props) => (props.size === 'small' ? '1px 4px' : '4px 8px')};
+    padding: ${(props) => (props.size === 'small' ? '2px 6px' : '4px 12px')};
 
     white-space: nowrap;
     position: relative;

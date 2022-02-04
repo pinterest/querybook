@@ -20,7 +20,7 @@ export const CopyPasteModal: React.FunctionComponent<IProps> = (props) => {
     ];
 
     const textDOM = displayText ? (
-        <blockquote className="CopyPasteModal-text">
+        <blockquote className="CopyPasteModal-text mv16 mh8">
             <pre>
                 <ShowMoreText text={text} length={400} />
             </pre>

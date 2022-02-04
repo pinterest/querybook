@@ -159,7 +159,7 @@ export default function userReducer(
             case '@@notificationService/RECEIVE_NOTIFIERS': {
                 if (!('notification_preference' in state.rawSettings)) {
                     draft.rawSettings['notification_preference'] =
-                        action.payload.notificationServices[0].name;
+                        action.payload.notificationServices[0]?.name;
                     draft.computedSettings = computeUserSettings(
                         draft.rawSettings
                     );

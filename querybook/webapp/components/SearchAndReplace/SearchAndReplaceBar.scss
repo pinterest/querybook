@@ -4,7 +4,7 @@
     border-bottom-left-radius: var(--border-radius);
     border-bottom-right-radius: var(--border-radius);
 
-    background-color: var(--bg-color);
+    background-color: var(--bg);
     box-shadow: var(--box-shadow);
 
     .position-info {
@@ -25,7 +25,7 @@
 
         &:focus-within {
             border-color: var(--focus-border-color);
-            background-color: var(--bg-color);
+            background-color: var(--bg);
         }
 
         .DebouncedInput {

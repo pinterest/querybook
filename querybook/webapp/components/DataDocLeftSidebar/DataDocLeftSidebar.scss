@@ -8,11 +8,14 @@
     flex-direction: column;
 
     .sidebar-content {
-        margin-top: 88px;
+        margin-top: 48px;
+
+        &:not(.sidebar-content-default) {
+            background-color: var(--bg-light);
+        }
     }
 
     .contents-toggle-button {
-        border: var(--border);
         border-left: none;
         margin-right: 0;
         padding-right: 8px;
@@ -21,7 +24,7 @@
     .sidebar-content-table,
     .sidebar-content-contents {
         width: 280px;
-        height: 80vh;
+        height: calc(100vh - 48px);
     }
 
     .sidebar-content-table {
@@ -36,16 +39,14 @@
         margin-right: 8px;
         border: var(--border);
         border-left: none;
-        border-radius: var(--border-radius);
-        border-bottom-left-radius: 0px;
-        border-top-left-radius: 0px;
+        border-top-right-radius: var(--border-radius);
         display: flex;
         flex-direction: column;
 
         .contents-panel-header {
-            padding: 0px 12px;
-            border-bottom: var(--border);
-
+            padding-right: var(--padding);
+            background-color: var(--bg-lightest);
+            margin-bottom: var(--margin-xs);
             .Title {
                 user-select: none;
             }

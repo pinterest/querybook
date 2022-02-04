@@ -37,14 +37,14 @@ const buttonThemeToProps: Record<ButtonColorType, IButtonColorConfig> = {
     light: {
         primary: 'var(--light-text-color)',
         primaryHover: 'var(--text-color)',
-        secondary: 'var(--light-bg-color)',
-        secondaryHover: 'var(--hover-bg-color)',
+        secondary: 'var(--bg-lightest)',
+        secondaryHover: 'var(--bg-hover)',
     },
     default: {
-        primary: 'var(--text-color)',
-        primaryHover: 'var(--dark-text-color)',
-        secondary: 'var(--border-color)',
-        secondaryHover: 'var(--hover-border-color)',
+        primary: 'var(--light-text-color)',
+        primaryHover: 'var(--text-color)',
+        secondary: 'var(--bg-light)',
+        secondaryHover: 'var(--bg-hover)',
     },
 };
 
@@ -65,25 +65,17 @@ export function computeStyleButtonProps(
             themeProps.hoverBgColor =
                 colorConfig.secondaryHover || colorConfig.secondary;
         } else {
-            themeProps.color = 'var(--bg-color)';
-            themeProps.hoverColor = 'var(--light-bg-color)';
+            themeProps.color = 'var(--bg)';
+            themeProps.hoverColor = 'var(--bg-light)';
             themeProps.bgColor = colorConfig.primary;
             themeProps.hoverBgColor =
                 colorConfig.primaryHover || colorConfig.primary;
         }
-    } else if (theme === 'outline') {
-        themeProps.color = colorConfig.primary;
-        themeProps.hoverColor = colorConfig.primaryHover || colorConfig.primary;
-
-        themeProps.bgColor = 'var(--bg-color)';
-        themeProps.borderColor = colorConfig.secondary;
-        themeProps.hoverBorderColor =
-            colorConfig.secondaryHover || colorConfig.secondary;
     } else if (theme === 'text') {
         themeProps.color = colorConfig.primary;
         themeProps.hoverColor = colorConfig.primaryHover || colorConfig.primary;
         themeProps.bgColor = 'transparent';
-        themeProps.hoverBgColor = 'var(--light-bg-color)';
+        themeProps.hoverBgColor = 'var(--bg-light)';
     }
 
     return themeProps;

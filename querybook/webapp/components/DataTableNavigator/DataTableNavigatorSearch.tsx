@@ -109,7 +109,7 @@ export const DataTableNavigatorSearch: React.FC<{
     );
 
     return (
-        <div className="DataTableNavigatorSearch flex-row">
+        <div className="DataTableNavigatorSearch list-header flex-row">
             <SearchBar
                 value={searchString}
                 onSearch={onSearch}
