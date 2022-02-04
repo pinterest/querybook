@@ -32,7 +32,7 @@
                 content: '';
 
                 border-color: transparent;
-                border-bottom-color: var(--bg-color);
+                border-bottom-color: var(--bg);
                 border-width: 10px;
 
                 bottom: -12px;
@@ -46,9 +46,12 @@
     }
 
     .popover-content {
-        background: var(--bg-color);
+        background: var(--bg);
         border: var(--border);
-        border-radius: var(--border-radius);
+        border-radius: var(--border-radius-sm);
+        box-shadow: var(--box-shadow);
+        padding: var(--padding);
+        overflow: hidden;
 
         position: relative;
         min-width: 20px;

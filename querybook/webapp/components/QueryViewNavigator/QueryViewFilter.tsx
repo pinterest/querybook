@@ -117,7 +117,7 @@ export const QueryViewFilter = React.memo<IQueryViewFilterProps>(
         );
 
         return (
-            <div className="QueryViewFilter">
+            <div className="QueryViewFilter list-header">
                 {filterTagSectionDOM}
                 {configSection}
                 {filterPickerDOM}

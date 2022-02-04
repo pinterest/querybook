@@ -232,7 +232,7 @@ class QuerySnippetNavigatorComponent extends React.PureComponent<
         const { titleFilter } = this.state;
 
         return (
-            <div className="snippet-search flex-row">
+            <div className="snippet-search list-header flex-row">
                 <SearchBar
                     value={titleFilter}
                     onSearch={this.onTitleFilter}

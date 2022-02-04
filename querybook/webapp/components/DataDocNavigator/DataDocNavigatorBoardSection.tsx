@@ -148,7 +148,7 @@ export const DataDocNavigatorBoardSection: React.FC<INavigatorBoardSectionProps>
     );
 
     const sectionHeader = (
-        <Level className="pl8 navigator-board-header">
+        <Level className="pl8 navigator-header">
             <div className="flex1 flex-row" onClick={toggleCollapsed}>
                 <Icon name="list" className="mr8" size={18} />
                 <Title size={7}>Lists</Title>
@@ -202,7 +202,7 @@ export const DataDocNavigatorBoardSection: React.FC<INavigatorBoardSectionProps>
     );
 
     return (
-        <div className="DataDocNavigatorBoardSection">
+        <div className="DataDocNavigatorSection">
             {sectionHeader}
             {boardsDOM}
             {showCreateModal ? (

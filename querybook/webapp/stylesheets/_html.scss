@@ -173,7 +173,7 @@ body {
     padding: 0px;
     height: 100%;
     overflow: auto;
-    background-color: var(--bg-color);
+    background-color: var(--bg);
     color: var(--text-color);
     font-weight: 400;
     line-height: 1.5;
@@ -190,7 +190,7 @@ textarea {
 
 code {
     border-radius: var(--border-radius);
-    background-color: var(--light-bg-color);
+    background-color: var(--bg-light);
     color: var(--code-text-color);
     font-size: var(--small-text-size);
     font-weight: 500;
@@ -249,10 +249,10 @@ input:-webkit-autofill {
 
 #___reactour {
     .reactour__helper {
-        background-color: var(--bg-color);
+        background-color: var(--bg);
         color: var(--text-color);
         > span {
-            color: var(--bg-color);
+            color: var(--bg);
             font-weight: var(--bold-font);
         }
         .reactour__dot {
@@ -272,7 +272,7 @@ input:-webkit-autofill {
 }
 
 hr {
-    background-color: var(--hr-color);
+    background-color: var(--hr);
     border: none;
     display: block;
     height: 1px;
@@ -281,7 +281,7 @@ hr {
 
 pre {
     border-radius: var(--border-radius);
-    background-color: var(--light-bg-color);
+    background-color: var(--bg-light);
     margin: 4px;
     padding: 12px;
     color: var(--text-color);
@@ -290,14 +290,9 @@ pre {
 }
 
 blockquote {
-    background-color: var(--light-bg-color);
-    border-left: 4px solid var(--border-color);
-    color: var(--light-text-color);
-    border-radius: 0px;
-    border-bottom-right-radius: var(--border-radius);
-    border-top-right-radius: var(--border-radius);
-    padding: 12px;
-    margin: 12px 0px;
+    background-color: var(--bg-light);
+    border-radius: var(--border-radius-sm);
+    padding: var(--padding);
 }
 
 ::-webkit-scrollbar {

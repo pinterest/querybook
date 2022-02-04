@@ -17,7 +17,7 @@
     position: relative;
 
     &::before {
-        background: var(--hover-bg-color);
+        background: var(--bg-hover);
         border-radius: var(--border-radius);
         content: ' ' !important;
         height: 100%;
@@ -59,7 +59,7 @@
     text-overflow: ellipsis;
 }
 
-@mixin full-screen($z-index: 201, $background: var(--bg-color)) {
+@mixin full-screen($z-index: 201, $background: var(--bg)) {
     position: fixed;
     top: 0px;
     left: 0px;
@@ -88,9 +88,9 @@
 }
 
 @mixin standard-textbox() {
-    background-color: var(--bg-color);
+    background-color: var(--bg-light);
     border: var(--border);
-    border-radius: var(--border-radius);
+    border-radius: var(--border-radius-sm);
     box-shadow: none;
     width: 100%;
     padding: 8px;
@@ -98,12 +98,12 @@
     color: inherit;
 
     &:hover {
-        border-color: var(--hover-border-color);
+        background-color: var(--bg-hover);
     }
 
     &:active,
     &:focus {
-        border-color: var(--focus-border-color);
+        background-color: var(--bg-lightest);
         outline: none;
     }
 }

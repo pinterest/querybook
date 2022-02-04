@@ -2,7 +2,7 @@
 
 exports[`matches enzyme snapshots matches snapshot 1`] = `
 <div
-  className="Box-sc-11jncwz-0 UciDk Box"
+  className="Box-sc-11jncwz-0 daXhWU Box"
 >
   Test
 </div>
@@ -10,7 +10,7 @@ exports[`matches enzyme snapshots matches snapshot 1`] = `
 
 exports[`matches test renderer snapshot serializes the styles 1`] = `
 <div
-  className="Box-sc-11jncwz-0 UciDk Box"
+  className="Box-sc-11jncwz-0 daXhWU Box"
 >
   Test
 </div>

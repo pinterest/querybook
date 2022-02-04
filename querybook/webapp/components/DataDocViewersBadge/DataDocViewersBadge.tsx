@@ -145,7 +145,7 @@ export const DataDocViewersBadge = React.memo<IDataDocViewersBadgeProps>(
                     className="viewers-badge-share-button"
                     icon={dataDoc.public ? 'users' : 'lock'}
                     title="Share"
-                    color="light"
+                    // color="light"
                     pushable
                     ping={
                         !readonly && accessRequestsByUidLength > 0

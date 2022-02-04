@@ -14,7 +14,6 @@ export interface ISidebarProps extends ResizableProps {
     left?: boolean;
 
     className?: string;
-    borderless?: boolean;
 }
 
 const StyledSidebar = styled.div.attrs({
@@ -22,19 +21,13 @@ const StyledSidebar = styled.div.attrs({
 })`
     position: relative;
 
-    ${({ left, right, isVisible, borderless }) => {
+    ${({ left, right, isVisible }) => {
         if (!left && !right) {
             return '';
         }
 
         const side = left ? 'left' : 'right';
         const otherSide = left ? 'right' : 'left';
-
-        const border = !borderless
-            ? `
-            border-${otherSide}: 1px solid var(--border-color);
-        `
-            : '';
 
         const button = `
             .toggle-button {
@@ -56,7 +49,7 @@ const StyledSidebar = styled.div.attrs({
         `
             : '';
 
-        return border + button + visible;
+        return button + visible;
     }};
 `;
 
@@ -65,7 +58,6 @@ export const Sidebar: React.FunctionComponent<ISidebarProps> = ({
     initialWidth = 250,
     right = false,
     left = true,
-    borderless = false,
     className = '',
 
     ...resizableProps
@@ -74,7 +66,6 @@ export const Sidebar: React.FunctionComponent<ISidebarProps> = ({
         isVisible={true}
         left={left}
         right={right}
-        borderless={borderless}
         className={className}
     >
         <FullHeight className="sidebar-content">

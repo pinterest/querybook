@@ -2,7 +2,7 @@
     .Modal-title {
         padding: 8px 8px 8px 16px;
         min-height: 38px;
-        background-color: var(--light-bg-color);
+        background-color: var(--bg-light);
         border-bottom: var(--border);
     }
 
@@ -48,7 +48,7 @@
         }
 
         .Modal-background {
-            background-color: var(--modal-bg-color);
+            background-color: var(--bg-invert);
             opacity: 0.75;
         }
 
@@ -65,7 +65,7 @@
             margin: 0 auto;
             border: var(--border);
             border-radius: var(--border-radius);
-            background-color: var(--bg-color);
+            background-color: var(--bg);
             overflow-y: hidden;
             display: flex;
             flex-direction: column;
@@ -84,7 +84,7 @@
     }
 
     .FullScreenModal {
-        background-color: var(--bg-color);
+        background-color: var(--bg);
         max-height: 100vh;
         max-width: 100vw;
         .Modal-content {

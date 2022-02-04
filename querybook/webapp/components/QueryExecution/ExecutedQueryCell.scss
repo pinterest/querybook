@@ -1,6 +1,6 @@
 .ExecutedQueryCell {
     border-radius: 5px;
-    background: var(--query-editor-default-bg-color);
+    background: var(--query-editor-default-bg);
 
     .execution-header {
         margin: 0;
@@ -9,6 +9,6 @@
     }
 
     .code-highlight {
-        background-color: var(--text-select-bg-color);
+        background-color: var(--bg-text-select);
     }
 }

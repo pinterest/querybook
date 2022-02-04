@@ -1,7 +1,7 @@
 .Table.ReactTable {
     border: none;
     border-radius: var(--border-radius);
-    background: var(--light-bg-color);
+    background: var(--bg-light);
     font-weight: 500;
     overflow: hidden;
 
@@ -12,7 +12,7 @@
     .rt-thead {
         &.-header {
             box-shadow: none;
-            background-color: var(--hover-bg-color);
+            background-color: var(--bg-hover);
             letter-spacing: 0.25px;
             font-weight: var(--bold-font);
         }
@@ -33,7 +33,7 @@
         }
 
         .rt-tr:not(.-padRow):hover {
-            background: var(--select-bg-color);
+            background: var(--bg-select);
         }
     }
 
@@ -77,7 +77,7 @@
             padding: 0px;
 
             button.-btn {
-                background: var(--hover-bg-color);
+                background: var(--bg-hover);
                 color: var(--light-text-color);
                 border-radius: 0px;
                 font-weight: 700;
@@ -96,7 +96,7 @@
             }
 
             button.-btn:not([disabled]):hover {
-                background: var(--select-bg-color);
+                background: var(--bg-select);
                 color: var(--text-hover-color);
             }
         }
@@ -123,6 +123,7 @@
     select {
         color: inherit;
         // override ReactTable default
-        background-color: inherit !important;
+        background-color: var(--bg-lightest) !important;
+        border: none;
     }
 }

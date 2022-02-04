@@ -24,7 +24,7 @@ exports[`matches test renderer snapshot serializes the styles 1`] = `
     />
   </span>
   <div
-    className="Menu__MenuDivider-sc-13z76nv-3 ixcCKO MenuDivider"
+    className="Menu__MenuDivider-sc-13z76nv-3 fCTKBX MenuDivider"
   />
   <div
     className="Menu__MenuInfoItem-sc-13z76nv-2 MenuInfoItem"
