@@ -253,7 +253,6 @@ export const AdminQueryEngine: React.FunctionComponent<IProps> = ({
             <div className="AdminForm-section">
                 <div className="AdminForm-section-top flex-row">
                     <div className="AdminForm-section-title">Environments</div>
-                    <hr className="dh-hr" />
                 </div>
                 <div className="AdminForm-section-content">
                     <p>
@@ -368,7 +367,6 @@ export const AdminQueryEngine: React.FunctionComponent<IProps> = ({
                                 <div className="AdminForm-section-title">
                                     Executor Params
                                 </div>
-                                <hr className="dh-hr" />
                             </div>
                             <div className="AdminForm-section-content">
                                 <Loader

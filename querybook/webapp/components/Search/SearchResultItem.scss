@@ -2,11 +2,10 @@
 
 .SearchResultItem {
     display: flex;
-    border: var(--border);
-    border-radius: 5px;
-    margin: 10px 0px;
-    padding: 10px;
-    background-color: var(--bg-color);
+    border-radius: var(--border-radius-sm);
+    margin: var(--margin-sm);
+    padding: var(--padding);
+    background-color: var(--bg);
     cursor: pointer;
 
     mark {

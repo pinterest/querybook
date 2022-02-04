@@ -6,7 +6,6 @@
     position: relative;
 
     .QueryViewFilter {
-        background-color: var(--light-bg-color);
         display: flex;
         flex-direction: row;
         justify-content: space-between;
@@ -59,12 +58,14 @@
 
 .QueryResult {
     cursor: pointer;
-    border-bottom: var(--border);
-    padding: 4px 12px;
+    background: var(--bg-light);
+    border-radius: var(--border-radius-sm);
+    padding: 4px 8px;
+    margin-bottom: var(--margin-xs);
 
     &:hover,
     &.selected {
-        background-color: var(--hover-bg-color);
+        background-color: var(--bg-hover);
     }
 
     .exec-header {

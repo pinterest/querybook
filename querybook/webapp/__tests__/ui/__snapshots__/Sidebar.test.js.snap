@@ -2,7 +2,6 @@
 
 exports[`matches enzyme snapshots matches snapshot 1`] = `
 <Sidebar__StyledSidebar
-  borderless={false}
   className=""
   isVisible={true}
   left={true}

@@ -8,7 +8,7 @@ const StyledKeyboardKey = styled.span.attrs({
     cursor: default;
     border: var(--border);
     border-radius: var(--border-radius);
-    background-color: var(--bg-color);
+    background-color: var(--bg-light);
     padding: 4px 12px;
     font-family: var(--font-monospace);
     font-size: var(--small-text-size);

@@ -31,15 +31,13 @@
             }
 
             &.active {
-                border-bottom-color: var(--select-border-color);
                 a {
-                    color: var(--text-color);
+                    color: var(--color-accent-text);
                 }
             }
 
             &:not(.active):hover {
                 cursor: pointer;
-                border-bottom-color: var(--hover-border-color);
                 a {
                     color: var(--text-color);
                 }
@@ -64,14 +62,14 @@
                     background-color: var(--pill-tab-color);
 
                     &.active {
-                        background-color: var(--invert-select-color);
+                        background-color: var(--bg-invert-select);
                         a {
                             color: var(--invert-text-color);
                         }
                     }
 
                     &:not(.active):hover {
-                        background-color: var(--hover-bg-color);
+                        background-color: var(--bg-hover);
                     }
                 }
             }
@@ -79,14 +77,14 @@
         &.light-pills {
             ul {
                 li {
-                    background-color: var(--hover-bg-color);
+                    background-color: var(--bg-hover);
 
                     &.active {
-                        background-color: var(--bg-color);
+                        background-color: var(--bg);
                     }
 
                     &:not(.active):hover {
-                        background-color: var(--light-bg-color);
+                        background-color: var(--bg-light);
                     }
                 }
             }

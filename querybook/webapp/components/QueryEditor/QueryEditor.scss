@@ -14,7 +14,7 @@
     }
 
     .CodeMirror-hover {
-        background-color: var(--text-select-bg-color);
+        background-color: var(--bg-text-select);
     }
 
     .fullscreen-button-wrapper {
@@ -47,7 +47,7 @@
     z-index: 30;
 
     // New style
-    background: var(--bg-color);
+    background: var(--bg);
     box-shadow: var(--box-shadow);
     border-radius: 8px;
 

@@ -14,7 +14,6 @@
 
     .list-header {
         display: flex;
-        border-bottom: 1px solid var(--border-color);
         justify-content: space-between;
 
         // for safari
@@ -37,10 +36,6 @@
         margin: 10px;
         position: relative;
         box-sizing: border-box;
-    }
-
-    .data-docs-list-separator {
-        border-bottom: 5px solid var(--border-color);
     }
 
     .data-docs-list-header {

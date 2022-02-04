@@ -8,7 +8,6 @@ import './FormField.scss';
 export const FormSectionHeader: React.FC = ({ children }) => (
     <div className="FormSectionHeader flex-row">
         <span>{children}</span>
-        <hr />
     </div>
 );
 
