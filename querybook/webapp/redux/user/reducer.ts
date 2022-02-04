@@ -85,7 +85,7 @@ const initialState: Readonly<IUserState> = {
     fromWeb: false,
 
     userInfoById: {},
-    userNameToId: {}
+    userNameToId: {},
 };
 
 export default function userReducer(
@@ -117,7 +117,7 @@ export default function userReducer(
                 const {
                     fromLocal,
                     userSetting,
-                    environmentId
+                    environmentId,
                 } = action.payload;
 
                 draft.fromWeb = !fromLocal;
