@@ -1,19 +1,7 @@
+@import '../../scss_variables.scss';
+
 .FormFieldInputSection {
     .RichTextEditor {
-        background-color: var(--bg-color);
-        border: var(--border);
-        border-radius: var(--border-radius);
-        min-height: 40px;
-        padding: 8px;
-
-        &:hover {
-            border-color: var(--hover-border-color);
-        }
-
-        &:active,
-        &:focus {
-            border-color: var(--focus-border-color);
-            outline: none;
-        }
+        @include standard-textbox();
     }
 }

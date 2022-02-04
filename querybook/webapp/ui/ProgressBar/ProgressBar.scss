@@ -13,15 +13,15 @@
         overflow: hidden;
         padding: 0;
         width: 100%;
-        background-color: var(--progress-bg-color);
+        background-color: var(--bg-light);
         &::-webkit-progress-bar {
-            background-color: var(--progress-bg-color);
+            background-color: var(--bg-light);
         }
         &::-webkit-progress-value {
-            background-color: var(--progress-color);
+            background-color: var(--progress);
         }
         &::-moz-progress-bar {
-            background-color: var(--progress-color);
+            background-color: var(--progress);
         }
 
         &.success {
@@ -57,27 +57,27 @@
             }
         }
         &.light {
-            background-color: var(--light-bg-color);
+            background-color: var(--bg-light);
             &::-webkit-progress-bar {
-                background-color: var(--light-bg-color);
+                background-color: var(--bg-light);
             }
             &::-webkit-progress-value {
-                background-color: var(--dark-bg-color);
+                background-color: var(--bg-dark);
             }
             &::-moz-progress-bar {
-                background-color: var(--dark-bg-color);
+                background-color: var(--bg-dark);
             }
         }
         &.dark {
-            background-color: var(--dark-bg-color);
+            background-color: var(--bg-dark);
             &::-webkit-progress-bar {
-                background-color: var(--dark-bg-color);
+                background-color: var(--bg-dark);
             }
             &::-webkit-progress-value {
-                background-color: var(--invert-bg-color);
+                background-color: var(--bg-invert);
             }
             &::-moz-progress-bar {
-                background-color: var(--invert-bg-color);
+                background-color: var(--bg-invert);
             }
         }
     }

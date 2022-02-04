@@ -3,7 +3,6 @@
 .ListLink {
     display: flex;
     align-items: center;
-    border-left: solid 6px transparent;
     padding: 4px 10px 4px 4px;
     color: var(--dark-text-color);
     cursor: pointer;
@@ -43,11 +42,10 @@
         }
     }
     &.selected {
-        border-color: var(--color-accent-bg);
         font-weight: var(--bold-font);
+        color: var(--color-accent-text);
     }
     &:hover {
-        background-color: var(--color-accent-bg-hover);
         color: var(--dark-text-color);
     }
 }

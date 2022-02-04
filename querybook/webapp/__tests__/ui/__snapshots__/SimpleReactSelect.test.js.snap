@@ -42,7 +42,7 @@ exports[`matches test renderer snapshot serializes the styles 1`] = `
     className="css-1f43avz-a11yText-A11yText"
   />
   <div
-    className=" css-hdojnb-control"
+    className=" css-1klw407-control"
     onMouseDown={[Function]}
     onTouchEnd={[Function]}
   >

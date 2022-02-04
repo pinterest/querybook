@@ -12,6 +12,18 @@
             .sidebar-content-main-navigator {
                 flex: 1;
                 overflow: hidden;
+                background-color: var(--bg-lightest);
+                > div {
+                    padding: var(--padding);
+                }
+
+                .list-header {
+                    background: var(--bg-light);
+                    margin-bottom: var(--margin-sm);
+                    border-radius: var(--border-radius-sm);
+                    overflow: hidden;
+                    padding-right: var(--padding-sm);
+                }
 
                 .QueryViewNavigator,
                 .QuerySnippetNavigator {

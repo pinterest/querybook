@@ -588,27 +588,18 @@ export const SearchOverview: React.FunctionComponent = () => {
                     {getAuthorFiltersDOM('owner_uid')}
                 </div>
                 <div className="search-filter">
-                    <span className="filter-title">
-                        Date
-                        <hr className="dh-hr" />
-                    </span>
+                    <span className="filter-title">Date</span>
                     {dateFilterDOM}
                 </div>
             </>
         ) : (
             <>
                 <div className="search-filter">
-                    <span className="filter-title">
-                        Metastore
-                        <hr className="dh-hr" />
-                    </span>
+                    <span className="filter-title">Metastore</span>
                     {metastoreSelectDOM}
                 </div>
                 <div className="search-filter">
-                    <span className="filter-title">
-                        Featured
-                        <hr className="dh-hr" />
-                    </span>
+                    <span className="filter-title">Featured</span>
                     <div className="result-item-golden horizontal-space-between">
                         <span>
                             <span>featured only</span>
@@ -625,24 +616,15 @@ export const SearchOverview: React.FunctionComponent = () => {
                     </div>
                 </div>
                 <div className="search-filter">
-                    <span className="filter-title">
-                        Date
-                        <hr className="dh-hr" />
-                    </span>
+                    <span className="filter-title">Date</span>
                     {dateFilterDOM}
                 </div>
                 <div className="search-filter">
-                    <span className="filter-title">
-                        Tags
-                        <hr className="dh-hr" />
-                    </span>
+                    <span className="filter-title">Tags</span>
                     {tagDOM}
                 </div>
                 <div className="search-filter">
-                    <span className="filter-title">
-                        Search Settings
-                        <hr className="dh-hr" />
-                    </span>
+                    <span className="filter-title">Search Settings</span>
                     {searchSettingsDOM}
                 </div>
             </>

@@ -28,7 +28,7 @@ export type ButtonProps = React.HTMLAttributes<HTMLSpanElement> &
 const defaultProps: ButtonProps = {
     className: '',
     color: 'default',
-    theme: 'outline',
+    theme: 'fill',
     size: 'medium',
 };
 
