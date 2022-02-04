@@ -1,24 +1,23 @@
 .EnvironmentTopbar {
     display: flex;
     flex-direction: row;
-    padding: 0px 5px;
+    padding: var(--padding-sm);
+    background-color: var(--bg-lightest);
 
     .env-icon-wrapper {
         display: inline-block;
-        padding: 4px 0px;
 
         &:not(:first-child) {
-            margin-left: 5px;
+            margin-left: var(--margin-xs);
         }
     }
     .env-icon {
         font-size: var(--xxxsmall-text-size);
         font-family: var(--font-monospace);
-        background-color: var(--light-bg-color);
+        background-color: var(--bg-light);
         color: var(--text-color);
-        border-radius: 10px;
-        border: 3px solid transparent;
-        transition: border 0.3s ease-out;
+        border-radius: var(--border-radius-sm);
+        transition: background-color 0.3s ease-out;
         user-select: none;
 
         display: inline-flex;
@@ -29,7 +28,7 @@
         height: 36px;
 
         &.selected {
-            border: 3px solid var(--focus-border-color);
+            background-color: var(--bg-select);
         }
 
         &.disabled {

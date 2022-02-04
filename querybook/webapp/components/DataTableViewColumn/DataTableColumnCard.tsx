@@ -5,7 +5,6 @@ import { IDataColumn } from 'const/metastore';
 
 import { DataTableColumnStats } from '../DataTableStats/DataTableColumnStats';
 import { Card } from 'ui/Card/Card';
-import { Divider } from 'ui/Divider/Divider';
 import { EditableTextField } from 'ui/EditableTextField/EditableTextField';
 import { Icon } from 'ui/Icon/Icon';
 import { KeyContentDisplay } from 'ui/KeyContentDisplay/KeyContentDisplay';
@@ -51,12 +50,7 @@ export const DataTableColumnCard: React.FunctionComponent<IProps> = ({
                     <Icon name={expanded ? 'chevron-up' : 'chevron-down'} />
                 </div>
                 {expanded ? (
-                    <>
-                        <Divider
-                            marginTop="8px"
-                            marginBottom="16px"
-                            color="var(--color-primary-5)"
-                        />
+                    <div className="mt16">
                         {column.comment && (
                             <KeyContentDisplay keyString="Definition">
                                 {column.comment}
@@ -66,7 +60,7 @@ export const DataTableColumnCard: React.FunctionComponent<IProps> = ({
                             {userCommentsContent}
                         </KeyContentDisplay>
                         <DataTableColumnStats columnId={column.id} />
-                    </>
+                    </div>
                 ) : (
                     <div className="DataTableColumnCard-preview">
                         {(column.description as ContentState).getPlainText()}

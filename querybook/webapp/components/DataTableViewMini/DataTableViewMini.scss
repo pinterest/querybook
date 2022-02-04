@@ -1,12 +1,12 @@
 .DataTableViewMini {
     display: flex;
     flex-direction: column;
-    background: var(--light-bg-color);
+    background: var(--bg-light);
 
     .DataTableViewMini-header {
         position: sticky;
         top: 0;
-        background: var(--light-bg-color);
+        background: var(--bg-light);
     }
 
     .DataTableViewMini-content {

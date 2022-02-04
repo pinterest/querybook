@@ -88,6 +88,7 @@ export const DataDocLeftSidebar: React.FunctionComponent<IProps> = ({
                     onClick={() => setContentState('contents')}
                     aria-label="Show doc contents"
                     data-balloon-pos="right"
+                    color="light"
                 />
                 <br />
                 <IconButton

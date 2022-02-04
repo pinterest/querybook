@@ -6,7 +6,7 @@
     &.cm-s-default {
         &.CodeHighlight,
         .CodeMirror-scroll {
-            background-color: var(--query-editor-default-bg-color);
+            background-color: var(--query-editor-default-bg);
         }
         .CodeMirror-gutters {
             background-color: var(--query-editor-default-gutter-color);

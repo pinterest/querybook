@@ -12,7 +12,7 @@ const StyledButton = styled.span`
 
     &:hover,
     &.active {
-        background-color: var(--light-bg-color);
+        background-color: var(--bg-light);
         color: var(--dark-text-color);
     }
 `;

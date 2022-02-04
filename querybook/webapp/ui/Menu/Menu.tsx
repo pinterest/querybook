@@ -22,9 +22,8 @@ export const MenuInfoItem = styled.div.attrs({
 export const MenuDivider = styled.div.attrs({
     className: 'MenuDivider',
 })`
-    background-color: var(--border-color);
     display: block;
-    height: 1px;
+    height: 12px;
     margin: 0px;
 `;
 export const MenuItemPing = styled.div.attrs({

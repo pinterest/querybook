@@ -48,7 +48,7 @@
     &.fullscreen {
         display: flex;
         flex-direction: column;
-        background-color: var(--bg-color);
+        background-color: var(--bg);
         padding: 15px;
 
         .StatementResultTable {
