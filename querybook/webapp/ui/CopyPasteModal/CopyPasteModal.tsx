@@ -15,7 +15,7 @@ export const CopyPasteModal: React.FunctionComponent<IProps> = (props) => {
     const { text, onHide, displayText = true } = props;
 
     const actionsDOM = [
-        <CopyButton key="copy" copyText={text} title="Copy To Clipboard" />
+        <CopyButton key="copy" copyText={text} title="Copy To Clipboard" />,
     ];
 
     const textDOM = displayText ? (

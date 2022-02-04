@@ -34,7 +34,7 @@ export const ToolBarButton: React.FunctionComponent<IToolBarButtonProps> = ({
     onClick,
     className = '',
     tooltip = '',
-    buttonRef
+    buttonRef,
 }) => {
     const iconDOM = icon ? <i className={'fa ' + ('fa-' + icon)} /> : null;
     const buttonClassName = className + (active ? 'active' : '');

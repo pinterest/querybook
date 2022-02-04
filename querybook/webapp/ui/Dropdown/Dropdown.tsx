@@ -28,7 +28,7 @@ export const Dropdown: React.FunctionComponent<IProps> = ({
     isUp,
     usePortal,
 
-    children
+    children,
 }) => {
     const selfRef = React.useRef<HTMLDivElement>(null);
     const popoverRef = React.useRef<HTMLDivElement>(null);
@@ -93,7 +93,7 @@ export const Dropdown: React.FunctionComponent<IProps> = ({
         [className]: className,
         [customFormatClass]: true,
         'is-right': isRight,
-        'is-up': isUp
+        'is-up': isUp,
     });
 
     let dropdownContent =

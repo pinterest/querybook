@@ -5,7 +5,7 @@ export const ButtonColors = [
     'cancel',
     'accent',
     'light',
-    'default'
+    'default',
 ] as const;
 export const ButtonThemes = ['outline', 'text', 'fill'] as const;
 
@@ -23,29 +23,29 @@ const buttonThemeToProps: Record<ButtonColorType, IButtonColorConfig> = {
     confirm: {
         primary: 'var(--color-true-dark)',
         secondary: 'var(--color-true-dark)',
-        secondaryHover: 'var(--color-true)'
+        secondaryHover: 'var(--color-true)',
     },
     cancel: {
         primary: 'var(--color-false-dark)',
         secondary: 'var(--color-false-dark)',
-        secondaryHover: 'var(--color-false)'
+        secondaryHover: 'var(--color-false)',
     },
     accent: {
         primary: 'var(--color-accent-text)',
-        secondary: 'var(--color-accent-bg)'
+        secondary: 'var(--color-accent-bg)',
     },
     light: {
         primary: 'var(--light-text-color)',
         primaryHover: 'var(--text-color)',
         secondary: 'var(--bg-lightest)',
-        secondaryHover: 'var(--bg-hover)'
+        secondaryHover: 'var(--bg-hover)',
     },
     default: {
         primary: 'var(--light-text-color)',
         primaryHover: 'var(--text-color)',
         secondary: 'var(--bg-light)',
-        secondaryHover: 'var(--bg-hover)'
-    }
+        secondaryHover: 'var(--bg-hover)',
+    },
 };
 
 export function computeStyleButtonProps(

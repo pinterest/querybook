@@ -1,7 +1,7 @@
 import styled from 'styled-components';
 
 export const Box = styled.div.attrs({
-    className: 'Box'
+    className: 'Box',
 })`
     background-color: var(--bg);
     box-shadow: var(--box-shadow);

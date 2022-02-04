@@ -30,7 +30,7 @@ export const FormField: React.FunctionComponent<IFormFieldProps> = ({
     label,
     help,
     required,
-    error
+    error,
 }) => {
     const labelDOM = label ? (
         <>
@@ -73,7 +73,7 @@ export const FormField: React.FunctionComponent<IFormFieldProps> = ({
         <div
             className={clsx({
                 FormField: true,
-                'FormField-stacked': stacked
+                'FormField-stacked': stacked,
             })}
         >
             {labelDOM}
@@ -86,12 +86,12 @@ export const FormField: React.FunctionComponent<IFormFieldProps> = ({
 
 const FormFieldLabelSection: React.FunctionComponent<IFormFieldSectionProps> = ({
     children,
-    className = ''
+    className = '',
 }) => <div className={`FormFieldLabelSection ${className}`}>{children}</div>;
 
 export const FormFieldInputSectionRowGroup: React.FunctionComponent<IFormFieldSectionProps> = ({
     children,
-    className = ''
+    className = '',
 }) => (
     <div className={`FormFieldInputSectionRowGroup ${className}`}>
         {children}
@@ -100,17 +100,17 @@ export const FormFieldInputSectionRowGroup: React.FunctionComponent<IFormFieldSe
 
 export const FormFieldInputSectionRow: React.FunctionComponent<IFormFieldSectionProps> = ({
     children,
-    className = ''
+    className = '',
 }) => <div className={`FormFieldInputSectionRow ${className}`}>{children}</div>;
 
 export const FormFieldInputSection: React.FunctionComponent<IFormFieldSectionProps> = ({
     children,
-    className = ''
+    className = '',
 }) => <div className={`FormFieldInputSection ${className}`}>{children}</div>;
 
 export const FormFieldHelpSection: React.FunctionComponent<IFormFieldSectionProps> = ({
     children,
-    className = ''
+    className = '',
 }) => (
     <div className={`FormFieldHelpSection flex-center ${className}`}>
         <InfoButton
@@ -124,5 +124,5 @@ export const FormFieldHelpSection: React.FunctionComponent<IFormFieldSectionProp
 
 export const FormFieldErrorSection: React.FunctionComponent<IFormFieldSectionProps> = ({
     children,
-    className = ''
+    className = '',
 }) => <div className={`FormFieldErrorSection ${className}`}>{children}</div>;

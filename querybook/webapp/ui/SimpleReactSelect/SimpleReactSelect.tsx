@@ -32,7 +32,7 @@ export function SimpleReactSelect<T>({
 
     selectProps = {},
     withDeselect = false,
-    clearAfterSelect = false
+    clearAfterSelect = false,
 }: ISimpleReactSelectProps<T>) {
     const overrideSelectProps = useMemo(() => {
         const override: Partial<ReactSelectProps<T>> = {};
@@ -49,7 +49,7 @@ export function SimpleReactSelect<T>({
                 typeof option === 'string'
                     ? {
                           label: option,
-                          value: option
+                          value: option,
                       }
                     : option
             ),

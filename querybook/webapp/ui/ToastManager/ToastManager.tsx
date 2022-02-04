@@ -13,11 +13,11 @@ export const ToastManager: React.FC = () => (
                 backgroundColor: 'var(--bg-light)',
                 color: 'var(--dark-text-color)',
                 zIndex: 301,
-                borderRadius: 'var(--border-radius)'
+                borderRadius: 'var(--border-radius)',
             },
             success: {
-                duration: 3000
-            }
+                duration: 3000,
+            },
         }}
     />
 );

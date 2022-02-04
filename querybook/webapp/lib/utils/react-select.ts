@@ -18,8 +18,8 @@ const dot = (color = 'transparent') => ({
         display: 'block',
         marginRight: 12,
         height: 12,
-        width: 12
-    }
+        width: 12,
+    },
 });
 
 export const valueFromId = (opts: IOptions, id: any) =>
@@ -36,37 +36,37 @@ export const defaultReactSelectStyles: Partial<
         border: 'none',
         borderWidth: '0px',
         '&:hover': {
-            backgroundColor: 'var(--bg-hover)'
-        }
+            backgroundColor: 'var(--bg-hover)',
+        },
     }),
     input: (styles) => ({
         ...styles,
         color: 'var(--text-color)',
         '&:hover': {
-            color: 'var(--text-hover-color)'
-        }
+            color: 'var(--text-hover-color)',
+        },
     }),
     placeholder: (styles) => ({
         ...styles,
-        color: 'var(--light-text-color)'
+        color: 'var(--light-text-color)',
     }),
     indicatorSeparator: (styles) => ({
         ...styles,
-        backgroundColor: 'transparent' // invisible
+        backgroundColor: 'transparent', // invisible
     }),
     clearIndicator: (styles, { isFocused }) => ({
         ...styles,
         color: isFocused ? 'var(--text-hover-color)' : 'var(--text-color)',
         '&:hover': {
-            color: 'var(--text-hover-color)'
-        }
+            color: 'var(--text-hover-color)',
+        },
     }),
     dropdownIndicator: (styles) => ({
         ...styles,
         color: 'var(--text-color)',
         '&:hover': {
-            color: 'var(--text-hover-color)'
-        }
+            color: 'var(--text-hover-color)',
+        },
     }),
     option: (styles, { data, isDisabled, isSelected, isFocused }) => ({
         ...styles,
@@ -89,20 +89,20 @@ export const defaultReactSelectStyles: Partial<
         ':active': {
             ...styles[':active'],
             backgroundColor: !isDisabled ? 'var(--color-accent-bg)' : undefined,
-            color: !isDisabled ? 'var(--color-accent-text)' : undefined
-        }
+            color: !isDisabled ? 'var(--color-accent-text)' : undefined,
+        },
     }),
     menu: (styles) => ({
         ...styles,
         backgroundColor: 'var(--bg-lightest)',
         borderRadius: 'var(--border-radius-sm)',
         border: 'none',
-        boxShadow: 'none'
+        boxShadow: 'none',
     }),
     singleValue: (styles, { data }) => ({
         ...styles,
         color: 'var(--title-color)',
-        ...(data.color ? dot(data.color) : {})
+        ...(data.color ? dot(data.color) : {}),
     }),
     multiValue: (styles, { data }) => ({
         ...styles,
@@ -110,25 +110,25 @@ export const defaultReactSelectStyles: Partial<
         color: data.color ? '#000' : 'var(--text-color)',
         ':hover': {
             backgroundColor: 'var(--bg-hover)',
-            color: 'var(--text-color)'
-        }
+            color: 'var(--text-color)',
+        },
     }),
     multiValueLabel: (styles) => ({
         ...styles,
         color: 'inherit',
         ':hover': {
             backgroundColor: 'inherit',
-            color: 'inherit'
-        }
+            color: 'inherit',
+        },
     }),
     multiValueRemove: (styles) => ({
         ...styles,
         color: 'inherit',
         ':hover': {
             backgroundColor: 'inherit',
-            color: 'inherit'
-        }
-    })
+            color: 'inherit',
+        },
+    }),
 };
 
 export const miniReactSelectStyles: StylesConfig<any, false, any> = mergeStyles(
@@ -140,19 +140,19 @@ export const miniReactSelectStyles: StylesConfig<any, false, any> = mergeStyles(
             margin: '0px,',
             minHeight: '0px',
             '&:hover': {
-                borderColor: 'var(--hover-border-color)'
-            }
+                borderColor: 'var(--hover-border-color)',
+            },
         }),
         input: (styles) => ({
             ...styles,
             padding: '0px',
             margin: '0px,',
-            minHeight: '0px'
+            minHeight: '0px',
         }),
         dropdownIndicator: (styles) => ({
             ...styles,
-            padding: '0px 4px'
-        })
+            padding: '0px 4px',
+        }),
     }
 );
 
@@ -165,8 +165,8 @@ export function makeReactSelectStyle(
         styles = mergeStyles(styles, {
             menuPortal: (base) => ({
                 ...base,
-                zIndex: 9999
-            })
+                zIndex: 9999,
+            }),
         });
     }
 

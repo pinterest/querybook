@@ -5,7 +5,7 @@ import './Menu.scss';
 export const Menu = styled.div.attrs<{
     height: number;
 }>({
-    className: 'Menu'
+    className: 'Menu',
 })`
     ${(props) =>
         props.height &&
@@ -14,20 +14,20 @@ export const Menu = styled.div.attrs<{
         overflow-y: auto;`};
 `;
 export const MenuItem = styled.span.attrs({
-    className: 'MenuItem'
+    className: 'MenuItem',
 })``;
 export const MenuInfoItem = styled.div.attrs({
-    className: 'MenuInfoItem'
+    className: 'MenuInfoItem',
 })``;
 export const MenuDivider = styled.div.attrs({
-    className: 'MenuDivider'
+    className: 'MenuDivider',
 })`
     display: block;
     height: 12px;
     margin: 0px;
 `;
 export const MenuItemPing = styled.div.attrs({
-    className: 'MenuItemPing'
+    className: 'MenuItemPing',
 })`
     pointer-events: none;
     border-radius: 100px;
