@@ -72,7 +72,6 @@ export const QueryRunButton = React.forwardRef<
                 icon={hasSelection ? null : 'play'}
                 aria-label={`Execute (${EXECUTE_QUERY_SHORTCUT})`}
                 data-balloon-pos={runButtonTooltipPos}
-                // attached="right"
             />
         );
 
