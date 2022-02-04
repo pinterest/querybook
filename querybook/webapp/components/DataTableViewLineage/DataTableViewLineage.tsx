@@ -34,7 +34,7 @@ function getFullLineage(
             nodes.push({
                 id: tid,
                 label: tName,
-                rank: level
+                rank: level,
             });
             tableIdToNodeIndex[tid] = nodes.length - 1;
         }
@@ -51,14 +51,14 @@ function getFullLineage(
                 parent_table_id: sourceId,
                 parent_name: parentName,
                 table_id: targetId,
-                table_name: lineageTableName
+                table_name: lineageTableName,
             } = lineage;
 
             const source = getNodeIndex(sourceId, parentName);
             const target = getNodeIndex(targetId, lineageTableName);
             edges.push({
                 source,
-                target
+                target,
             });
 
             const nextTableId = sourceId === tableId ? targetId : sourceId;
@@ -82,7 +82,7 @@ function getFullLineage(
 export const DataTableViewLineage: React.FunctionComponent<IDataTableViewLineageProps> = ({
     dataLineageLoader,
     dataLineages,
-    table
+    table,
 }) => {
     const [selectedTableId, setSelectedTableId] = React.useState<number>(null);
     const { nodes, edges } = React.useMemo(() => {
@@ -109,7 +109,7 @@ export const DataTableViewLineage: React.FunctionComponent<IDataTableViewLineage
 
         return {
             nodes: newNodes,
-            edges: newEdges
+            edges: newEdges,
         };
     }, [dataLineages, table]);
     const focusNode = React.useMemo(
@@ -133,7 +133,7 @@ export const DataTableViewLineage: React.FunctionComponent<IDataTableViewLineage
                 navigateWithinEnv(
                     `/table/${tableId}/`,
                     {
-                        isModal: true
+                        isModal: true,
                     },
                     true
                 )
@@ -185,7 +185,7 @@ export const DataTableViewLineage: React.FunctionComponent<IDataTableViewLineage
                         style: `
                             fill: ${nodeColor};
                             stroke: ${borderColor};`,
-                        class: 'generic-node-class'
+                        class: 'generic-node-class',
                     };
                 }}
             />

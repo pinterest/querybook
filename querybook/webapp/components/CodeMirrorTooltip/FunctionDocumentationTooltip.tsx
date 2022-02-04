@@ -8,7 +8,7 @@ interface IProps {
 }
 
 export const FunctionDocumentationTooltip: React.FunctionComponent<IProps> = ({
-    functionDocumentations
+    functionDocumentations,
 }) => {
     const functionsDOM = functionDocumentations.map(
         (functionDocumentation, index) => {
@@ -16,7 +16,7 @@ export const FunctionDocumentationTooltip: React.FunctionComponent<IProps> = ({
                 description,
                 name,
                 params,
-                return_type: returnType
+                return_type: returnType,
             } = functionDocumentation;
 
             const signature = `${name}(${params})`;

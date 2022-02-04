@@ -8,7 +8,7 @@ import { useShallowSelector } from 'hooks/redux/useShallowSelector';
 import { getCurrentEnv } from 'lib/utils/query-string';
 import {
     makeReactSelectStyle,
-    miniReactSelectStyles
+    miniReactSelectStyles,
 } from 'lib/utils/react-select';
 import * as searchActions from 'redux/search/action';
 import { IStoreState } from 'redux/store/types';
@@ -55,12 +55,12 @@ export const SearchOverview: React.FunctionComponent = () => {
 
         searchRequest,
         queryMetastores,
-        metastoreId
+        metastoreId,
     } = useShallowSelector((state: IStoreState) => ({
         ...state.search,
         environment: currentEnvironmentSelector(state),
         queryMetastores: queryMetastoresSelector(state),
-        metastoreId: state.dataTableSearch.metastoreId
+        metastoreId: state.dataTableSearch.metastoreId,
     }));
 
     const results = resultByPage[currentPage] || [];
@@ -106,18 +106,18 @@ export const SearchOverview: React.FunctionComponent = () => {
         ? [
               {
                   name: 'DataDoc',
-                  key: SearchType.DataDoc
+                  key: SearchType.DataDoc,
               },
               {
                   name: 'Tables',
-                  key: SearchType.Table
-              }
+                  key: SearchType.Table,
+              },
           ]
         : [
               {
                   name: 'DataDoc',
-                  key: SearchType.DataDoc
-              }
+                  key: SearchType.DataDoc,
+              },
           ];
 
     const [showAddSearchAuthor, setShowAddSearchAuthor] = React.useState(false);
@@ -263,7 +263,7 @@ export const SearchOverview: React.FunctionComponent = () => {
                             searchOrder === choice
                                 ? null
                                 : updateSearchOrder.bind(null, choice),
-                        checked: searchOrder === choice
+                        checked: searchOrder === choice,
                     })
                 )}
                 type="select"
@@ -353,7 +353,7 @@ export const SearchOverview: React.FunctionComponent = () => {
                     }}
                     selectProps={{
                         autoFocus: true,
-                        styles: userReactSelectStyle
+                        styles: userReactSelectStyle,
                     }}
                     clearAfterSelect
                 />

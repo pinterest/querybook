@@ -24,7 +24,7 @@ import {
     getDefaultFormValue,
     SmartForm,
     validateForm,
-    updateValue
+    updateValue,
 } from 'ui/SmartForm/SmartForm';
 import { Tabs } from 'ui/Tabs/Tabs';
 
@@ -37,7 +37,7 @@ interface IProps {
 
 export const AdminMetastore: React.FunctionComponent<IProps> = ({
     metastores,
-    loadMetastores
+    loadMetastores,
 }) => {
     const { id: metastoreId } = useParams();
 
@@ -49,7 +49,7 @@ export const AdminMetastore: React.FunctionComponent<IProps> = ({
 
     const {
         data: metastoreUpdateSchedule,
-        forceFetch: loadMetastoreUpdateSchedule
+        forceFetch: loadMetastoreUpdateSchedule,
     } = useResource(
         React.useCallback(
             () => AdminMetastoreResource.getUpdateSchedule(metastoreId),
@@ -134,7 +134,7 @@ export const AdminMetastore: React.FunctionComponent<IProps> = ({
             if (metastore.acl_control.type) {
                 for (const [
                     index,
-                    table
+                    table,
                 ] of metastore.acl_control.tables.entries()) {
                     if (!table) {
                         errors.acl_control = `Table at index ${index} is empty`;
@@ -158,7 +158,7 @@ export const AdminMetastore: React.FunctionComponent<IProps> = ({
                         onClick={() =>
                             onChange('acl_control', {
                                 type: 'denylist',
-                                tables: []
+                                tables: [],
                             })
                         }
                         title="Create Allowlist/Denylist"
@@ -179,10 +179,10 @@ export const AdminMetastore: React.FunctionComponent<IProps> = ({
                         field_type: 'string',
                         helper: '',
                         hidden: false,
-                        required: true
+                        required: true,
                     },
                     max: null,
-                    min: 1
+                    min: 1,
                 }}
                 value={aclControl.tables}
                 onChange={(path, value) =>
@@ -206,7 +206,7 @@ export const AdminMetastore: React.FunctionComponent<IProps> = ({
                         selectedTabKey={aclControl.type}
                         items={[
                             { name: 'Denylist', key: 'denylist' },
-                            { name: 'Allowlist', key: 'allowlist' }
+                            { name: 'Allowlist', key: 'allowlist' },
                         ]}
                         onSelect={(key) => {
                             onChange('acl_control', { type: key, tables: [] });
@@ -271,7 +271,7 @@ export const AdminMetastore: React.FunctionComponent<IProps> = ({
                             options={Object.values(metastoreLoaders).map(
                                 (l) => ({
                                     value: l.name,
-                                    label: l.name
+                                    label: l.name,
                                 })
                             )}
                             onChange={updateLoader}
@@ -335,8 +335,8 @@ export const AdminMetastore: React.FunctionComponent<IProps> = ({
                                                         task_type: 'prod',
                                                         enabled: true,
                                                         args: [
-                                                            Number(metastoreId)
-                                                        ]
+                                                            Number(metastoreId),
+                                                        ],
                                                     }
                                                 }
                                                 onTaskCreate={
@@ -378,7 +378,7 @@ export const AdminMetastore: React.FunctionComponent<IProps> = ({
                 metastore_params: getDefaultFormValue(
                     defaultLoader.template
                 ) as Record<string, unknown>,
-                acl_control: {}
+                acl_control: {},
             };
             return (
                 <div className="AdminMetastore">
@@ -423,7 +423,7 @@ export const AdminMetastore: React.FunctionComponent<IProps> = ({
                             'created_at',
                             'deleted_at',
                             'loader',
-                            'metastore_params'
+                            'metastore_params',
                         ]}
                     />
                 </div>

@@ -6,7 +6,7 @@ interface IProps {
 }
 export const DataTableViewOverviewSection: React.FC<IProps> = ({
     title,
-    children
+    children,
 }) =>
     children ? (
         <div>

@@ -22,7 +22,7 @@ interface IProps {
 
 export const DataTableColumnCard: React.FunctionComponent<IProps> = ({
     column,
-    updateDataColumnDescription
+    updateDataColumnDescription,
 }) => {
     const [expanded, setExpanded] = React.useState(false);
 

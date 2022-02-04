@@ -7,7 +7,7 @@ export const adminEntityToTitle = {
     user_role: 'User Role',
     api_access_token: 'API Access Token',
     announcement: 'Announcement',
-    config: 'Configuration',
+    config: 'Configuration'
 };
 
 export type AdminEntity =

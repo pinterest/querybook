@@ -15,7 +15,7 @@ _Button.args = {
     icon: 'zap',
     title: 'Button',
     color: 'default',
-    theme: 'fil',
+    theme: 'fill',
     disabled: false,
     isLoading: false,
 

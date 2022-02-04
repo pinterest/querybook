@@ -43,7 +43,7 @@ export const QueryRunButton = React.forwardRef<
             queryEngineById,
             queryEngines,
             engineId,
-            onEngineIdSelect
+            onEngineIdSelect,
         },
         ref
     ) => {
@@ -56,7 +56,7 @@ export const QueryRunButton = React.forwardRef<
                     if (runButtonRef.current) {
                         runButtonRef.current.onClick();
                     }
-                }
+                },
             }),
             []
         );
@@ -66,7 +66,7 @@ export const QueryRunButton = React.forwardRef<
                 onClick={onRunClick}
                 ref={runButtonRef}
                 className={clsx({
-                    'run-selection': !!hasSelection
+                    'run-selection': !!hasSelection,
                 })}
                 title={hasSelection ? 'Run Selection' : null}
                 icon={hasSelection ? null : 'play'}
@@ -104,7 +104,7 @@ export const QueryEngineSelector: React.FC<IQueryEngineSelectorProps> = ({
     queryEngines,
     engineId,
     onEngineIdSelect,
-    disabled
+    disabled,
 }) => {
     const queryEngineStatusById = useSelector(queryEngineStatusByIdEnvSelector);
 
@@ -133,7 +133,7 @@ export const QueryEngineSelector: React.FC<IQueryEngineSelectorProps> = ({
             name: <span className="query-engine-name">{engineInfo.name}</span>,
             onClick: onEngineIdSelect.bind(null, engineInfo.id),
             checked: engineInfo.id === engineId,
-            tooltip: engineInfo.description
+            tooltip: engineInfo.description,
         }));
         engineButtonDOM = (
             <Dropdown customButtonRenderer={getEngineSelectorButtonDOM} isRight>
@@ -148,7 +148,7 @@ export const QueryEngineSelector: React.FC<IQueryEngineSelectorProps> = ({
         <div
             className={clsx({
                 QueryEngineSelector: true,
-                readonly: disabled
+                readonly: disabled,
             })}
         >
             {engineButtonDOM}

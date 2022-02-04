@@ -26,7 +26,7 @@ interface IUserMenuProps {
 
 export const UserMenu: React.FC<IUserMenuProps> = ({
     tooltipPos = 'right',
-    popoverLayout = ['right', 'bottom'] as PopoverLayout
+    popoverLayout = ['right', 'bottom'] as PopoverLayout,
 }) => {
     const [showUserMenuPopover, setShowUserMenuPopover] = useState(false);
     const toggleUserMenuPopover = useCallback(
@@ -43,7 +43,7 @@ export const UserMenu: React.FC<IUserMenuProps> = ({
     const selfRef = useRef<HTMLSpanElement>(null);
     const goToUserSettingsMenu = useCallback(() => {
         navigateWithinEnv('/user_settings/', {
-            isModal: true
+            isModal: true,
         });
     }, []);
 

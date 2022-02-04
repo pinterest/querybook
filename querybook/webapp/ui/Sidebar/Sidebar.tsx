@@ -17,7 +17,7 @@ export interface ISidebarProps extends ResizableProps {
 }
 
 const StyledSidebar = styled.div.attrs({
-    className: 'Sidebar'
+    className: 'Sidebar',
 })`
     position: relative;
 
@@ -28,8 +28,6 @@ const StyledSidebar = styled.div.attrs({
 
         const side = left ? 'left' : 'right';
         const otherSide = left ? 'right' : 'left';
-
-        const border = '';
 
         const button = `
             .toggle-button {
@@ -51,7 +49,7 @@ const StyledSidebar = styled.div.attrs({
         `
             : '';
 
-        return border + button + visible;
+        return button + visible;
     }};
 `;
 
@@ -74,7 +72,7 @@ export const Sidebar: React.FunctionComponent<ISidebarProps> = ({
             <Resizable
                 defaultSize={{
                     width: `${initialWidth}px`,
-                    height: '100%'
+                    height: '100%',
                 }}
                 enable={enableResizable({ right: left, left: right })}
                 {...resizableProps}

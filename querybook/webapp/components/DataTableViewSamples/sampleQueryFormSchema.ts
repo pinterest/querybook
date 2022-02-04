@@ -7,11 +7,11 @@ export const COMPARSION_OPS_WITH_VALUE = [
     '>=',
     '<',
     '<=',
-    'LIKE',
+    'LIKE'
 ];
 export const COMPARSION_OPS = COMPARSION_OPS_WITH_VALUE.concat([
     'IS NULL',
-    'IS NOT NULL',
+    'IS NOT NULL'
 ]);
 
 export interface ITableSamplesFormValues {

@@ -26,7 +26,7 @@ export const DataDocLeftSidebar: React.FunctionComponent<IProps> = ({
     docId,
     cells,
     defaultCollapse,
-    onCollapse
+    onCollapse,
 }) => {
     const dispatch = useDispatch();
     const sidebarTableId = useSelector(
@@ -36,7 +36,7 @@ export const DataDocLeftSidebar: React.FunctionComponent<IProps> = ({
 
     const [
         contentState,
-        setContentState
+        setContentState,
     ] = React.useState<LeftSidebarContentState>('default');
 
     useEffect(
@@ -109,7 +109,7 @@ export const DataDocLeftSidebar: React.FunctionComponent<IProps> = ({
         <div
             className={clsx({
                 DataDocLeftSidebar: true,
-                hidden: cells.length === 0
+                hidden: cells.length === 0,
             })}
         >
             {contentDOM}

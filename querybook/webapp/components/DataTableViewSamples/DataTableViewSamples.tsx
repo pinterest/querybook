@@ -12,7 +12,7 @@ import {
     IDataTable,
     IDataSchema,
     IDataColumn,
-    ITableSampleParams
+    ITableSampleParams,
 } from 'const/metastore';
 import { TableSamplesResource } from 'resource/table';
 
@@ -27,7 +27,7 @@ import {
     COMPARSION_OPS,
     COMPARSION_OPS_WITH_VALUE,
     ITableSamplesFormValues,
-    tableSamplesFormValuesToParams
+    tableSamplesFormValuesToParams,
 } from './sampleQueryFormSchema';
 import './DataTableViewSamples.scss';
 
@@ -40,7 +40,7 @@ export interface IDataTableViewSamplesProps {
 export const DataTableViewSamples: React.FunctionComponent<IDataTableViewSamplesProps> = ({
     table,
     tableColumns,
-    schema
+    schema,
 }) => {
     // Used to display the raw query that will be used for samples
     // only shown if view query is clicked
@@ -116,7 +116,7 @@ export const DataTableViewSamples: React.FunctionComponent<IDataTableViewSamples
                     partition: null,
                     where: [['', '=', '']] as [[string, string, string]],
                     order_by: null,
-                    order_by_asc: true
+                    order_by_asc: true,
                 }}
                 onSubmit={(values) =>
                     createDataTableSamples(
@@ -135,7 +135,7 @@ export const DataTableViewSamples: React.FunctionComponent<IDataTableViewSamples
                                 name="engineId"
                                 options={queryEngines.map((engine) => ({
                                     value: engine.id,
-                                    label: engine.name
+                                    label: engine.name,
                                 }))}
                             />
                             <SimpleField
@@ -154,7 +154,7 @@ export const DataTableViewSamples: React.FunctionComponent<IDataTableViewSamples
                                             <div className="flex-row" key={idx}>
                                                 <div
                                                     style={{
-                                                        flex: 3
+                                                        flex: 3,
                                                     }}
                                                 >
                                                     <SimpleField
@@ -212,7 +212,7 @@ export const DataTableViewSamples: React.FunctionComponent<IDataTableViewSamples
                                                         arrayHelpers.push([
                                                             '',
                                                             '=',
-                                                            ''
+                                                            '',
                                                         ])
                                                     }
                                                 />
@@ -240,12 +240,12 @@ export const DataTableViewSamples: React.FunctionComponent<IDataTableViewSamples
                                         options={[
                                             {
                                                 label: 'Ascending',
-                                                value: true
+                                                value: true,
                                             },
                                             {
                                                 label: 'Descending',
-                                                value: false
-                                            }
+                                                value: false,
+                                            },
                                         ]}
                                     />
                                 )}

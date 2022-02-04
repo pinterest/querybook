@@ -9,6 +9,6 @@ if (process.env.NODE_ENV === 'development') {
         trackAllPureComponents: true,
         trackHooks: true,
         trackExtraHooks: [[require('react-redux/lib'), 'useSelector']],
-        exclude: [],
+        exclude: []
     });
 }

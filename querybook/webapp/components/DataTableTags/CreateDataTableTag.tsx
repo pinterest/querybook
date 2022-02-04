@@ -17,7 +17,7 @@ interface IProps {
 
 export const CreateDataTableTag: React.FunctionComponent<IProps> = ({
     tableId,
-    tags
+    tags,
 }) => {
     const dispatch: Dispatch = useDispatch();
     const [showSelect, setShowSelect] = React.useState(false);

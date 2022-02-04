@@ -37,12 +37,12 @@ export const DataTableNavigatorSearch: React.FC<{
     updateSearchFilter,
     resetSearchFilter,
 
-    showTableSearchResult
+    showTableSearchResult,
 }) => {
     const [showSearchFilter, , toggleSearchFilter] = useToggleState(false);
     const filterButtonRef = useRef<HTMLAnchorElement>();
     const searchFiltersSize = useMemo(() => Object.keys(searchFilters).length, [
-        searchFilters
+        searchFilters,
     ]);
     const { key: sortSchemaKey, asc: sortSchemaAsc } = useSelector(
         (state: IStoreState) => state.dataTableSearch.schemas.sortSchemasBy
@@ -156,7 +156,7 @@ export const DataTableNavigatorSearch: React.FC<{
 const SearchFilterRow: React.FC<{ title: string; className?: string }> = ({
     title,
     children,
-    className
+    className,
 }) => (
     <div className={`search-filter-row ${className ?? ''}`}>
         <Title className="mr8" size={7}>
