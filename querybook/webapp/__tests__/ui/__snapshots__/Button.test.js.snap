@@ -5,9 +5,9 @@ exports[`matches enzyme snapshots matches snapshot - attached right 1`] = `
   attached="right"
   bgColor="var(--bg-light)"
   className="Button"
-  color="var(--light-text-color)"
+  color="var(--text-light)"
   hoverBgColor="var(--bg-hover)"
-  hoverColor="var(--text-color)"
+  hoverColor="var(--text)"
   onClick={[Function]}
   size="medium"
 >
@@ -21,10 +21,10 @@ exports[`matches enzyme snapshots matches snapshot - disbled 1`] = `
 <StyledButton
   bgColor="var(--bg-light)"
   className="Button"
-  color="var(--light-text-color)"
+  color="var(--text-light)"
   disabled={true}
   hoverBgColor="var(--bg-hover)"
-  hoverColor="var(--text-color)"
+  hoverColor="var(--text)"
   onClick={null}
   size="medium"
 >
@@ -38,9 +38,9 @@ exports[`matches enzyme snapshots matches snapshot - isLoading 1`] = `
 <StyledButton
   bgColor="var(--bg-light)"
   className="Button flex-row"
-  color="var(--light-text-color)"
+  color="var(--text-light)"
   hoverBgColor="var(--bg-hover)"
-  hoverColor="var(--text-color)"
+  hoverColor="var(--text)"
   onClick={[Function]}
   size="medium"
 >
@@ -58,9 +58,9 @@ exports[`matches enzyme snapshots matches snapshot - mixed 1`] = `
   attached="left"
   bgColor="var(--bg-light)"
   className="Button"
-  color="var(--light-text-color)"
+  color="var(--text-light)"
   hoverBgColor="var(--bg-hover)"
-  hoverColor="var(--text-color)"
+  hoverColor="var(--text)"
   onClick={[Function]}
   pushable={true}
   size="small"
@@ -75,9 +75,9 @@ exports[`matches enzyme snapshots matches snapshot - text button 1`] = `
 <StyledButton
   bgColor="transparent"
   className="Button"
-  color="var(--light-text-color)"
+  color="var(--text-light)"
   hoverBgColor="var(--bg-light)"
-  hoverColor="var(--text-color)"
+  hoverColor="var(--text)"
   onClick={[Function]}
   size="medium"
 >
@@ -91,9 +91,9 @@ exports[`matches enzyme snapshots matches snapshot - typed 1`] = `
 <StyledButton
   bgColor="var(--bg-lightest)"
   className="Button"
-  color="var(--light-text-color)"
+  color="var(--text-light)"
   hoverBgColor="var(--bg-hover)"
-  hoverColor="var(--text-color)"
+  hoverColor="var(--text)"
   onClick={[Function]}
   size="medium"
 >
@@ -107,9 +107,9 @@ exports[`matches enzyme snapshots matches snapshot 1`] = `
 <StyledButton
   bgColor="var(--bg-light)"
   className="Button"
-  color="var(--light-text-color)"
+  color="var(--text-light)"
   hoverBgColor="var(--bg-hover)"
-  hoverColor="var(--text-color)"
+  hoverColor="var(--text)"
   onClick={[Function]}
   size="medium"
 >
@@ -122,7 +122,7 @@ exports[`matches enzyme snapshots matches snapshot 1`] = `
 exports[`matches test renderer snapshot serializes the styles 1`] = `
 <span
   className="StyledButton-aqwbwz-0 FteAE Button"
-  color="var(--light-text-color)"
+  color="var(--text-light)"
   onClick={[Function]}
   size="medium"
 >

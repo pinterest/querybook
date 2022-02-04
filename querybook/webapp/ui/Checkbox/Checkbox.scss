@@ -13,7 +13,6 @@
 
         input[type='checkbox'] {
             appearance: unset;
-            border: solid 1px var(--border-color);
             background-color: var(--bg);
             cursor: pointer;
 
@@ -25,7 +24,7 @@
 
         &.checked::before {
             content: ' ';
-            background-color: var(--border-color);
+            background-color: var(--bg-light);
             width: 12px;
             height: 12px;
             display: block;

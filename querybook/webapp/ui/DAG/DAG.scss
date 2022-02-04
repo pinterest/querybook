@@ -14,22 +14,22 @@
     }
 
     .node rect {
-        fill: var(--icon-color);
-        stroke: var(--icon-color);
+        fill: var(--icon);
+        stroke: var(--icon);
         stroke-width: 4px;
     }
 
     .node text {
-        fill: var(--text-color);
+        fill: var(--text);
         font-weight: bold;
     }
 
     .edgePath path {
-        stroke: var(--light-text-color);
+        stroke: var(--text-light);
         stroke-width: 1.5px;
     }
 
     .edgePath marker {
-        fill: var(--light-text-color);
+        fill: var(--text-light);
     }
 }

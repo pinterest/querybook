@@ -17,7 +17,7 @@ exports[`matches test renderer snapshot serializes the styles 1`] = `
 <span
   aria-label="Click To Copy"
   className="StyledButton-aqwbwz-0 emzBVq Button CopyButton flex-row"
-  color="var(--light-text-color)"
+  color="var(--text-light)"
   data-balloon-pos="up"
   fontWeight="700"
   onClick={[Function]}

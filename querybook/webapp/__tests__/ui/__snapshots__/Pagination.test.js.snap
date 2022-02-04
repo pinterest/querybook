@@ -89,7 +89,7 @@ exports[`matches test renderer snapshot serializes the styles 1`] = `
   >
     <span
       className="StyledButton-aqwbwz-0 FteAE Button"
-      color="var(--light-text-color)"
+      color="var(--text-light)"
       onClick={[Function]}
       size="medium"
     >
@@ -103,7 +103,7 @@ exports[`matches test renderer snapshot serializes the styles 1`] = `
   >
     <span
       className="StyledButton-aqwbwz-0 FteAE Button"
-      color="var(--light-text-color)"
+      color="var(--text-light)"
       onClick={[Function]}
       size="medium"
     >
@@ -118,7 +118,7 @@ exports[`matches test renderer snapshot serializes the styles 1`] = `
     <li>
       <span
         className="StyledButton-aqwbwz-0 FteAE Button Pagination-page-button "
-        color="var(--light-text-color)"
+        color="var(--text-light)"
         onClick={[Function]}
         size="medium"
       >
@@ -130,7 +130,7 @@ exports[`matches test renderer snapshot serializes the styles 1`] = `
     <li>
       <span
         className="StyledButton-aqwbwz-0 FteAE Button Pagination-page-button current"
-        color="var(--light-text-color)"
+        color="var(--text-light)"
         onClick={[Function]}
         size="medium"
       >
@@ -142,7 +142,7 @@ exports[`matches test renderer snapshot serializes the styles 1`] = `
     <li>
       <span
         className="StyledButton-aqwbwz-0 FteAE Button Pagination-page-button "
-        color="var(--light-text-color)"
+        color="var(--text-light)"
         onClick={[Function]}
         size="medium"
       >
@@ -154,7 +154,7 @@ exports[`matches test renderer snapshot serializes the styles 1`] = `
     <li>
       <span
         className="StyledButton-aqwbwz-0 FteAE Button Pagination-page-button "
-        color="var(--light-text-color)"
+        color="var(--text-light)"
         onClick={[Function]}
         size="medium"
       >
@@ -173,7 +173,7 @@ exports[`matches test renderer snapshot serializes the styles 1`] = `
     <li>
       <span
         className="StyledButton-aqwbwz-0 FteAE Button Pagination-page-button "
-        color="var(--light-text-color)"
+        color="var(--text-light)"
         onClick={[Function]}
         size="medium"
       >
