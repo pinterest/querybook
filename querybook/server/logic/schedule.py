@@ -9,6 +9,7 @@ from models.schedule import (
     TaskSchedule,
     TaskRunRecord,
 )
+from sqlalchemy.sql.expression import func, and_
 
 
 @with_session
@@ -155,10 +156,22 @@ def get_task_run_record_run_with_schedule(names, docs, session):
         session.query(TaskSchedule).filter(TaskSchedule.name.in_(list_of_names)).all()
     )
 
-    allTaskRunRecordsGroupedBy = session.execute(
-        "SELECT * FROM task_run_record WHERE (name, created_at) IN (SELECT name, MAX(created_at) max_date FROM task_run_record GROUP BY name);"
+    subquery = (
+        session.query(
+            TaskRunRecord.name, func.max(TaskRunRecord.created_at).label("max_date")
+        )
+        .group_by(TaskRunRecord.name)
+        .subquery()
     )
-    taskRunRecordsIds = map(lambda task: task[0], allTaskRunRecordsGroupedBy)
+    allTaskRunRecordsGroupedBy = session.query(TaskRunRecord).join(
+        subquery,
+        and_(
+            TaskRunRecord.created_at == subquery.c.max_date,
+            subquery.c.name == TaskRunRecord.name,
+        ),
+    )
+
+    taskRunRecordsIds = map(lambda task: task.id, allTaskRunRecordsGroupedBy)
     allTaskRunRecords = session.query(TaskRunRecord).filter(
         TaskRunRecord.id.in_(taskRunRecordsIds)
     )

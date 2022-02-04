@@ -11,6 +11,6 @@ export const LastRecord: React.FunctionComponent<{
 
     const date = new Date(null);
     date.setSeconds(time);
-    const hhmmsstime = date.toISOString().substr(11, 8);
-    return <div>{hhmmsstime}</div>;
+    const hoursAndMinutesTime = date.toISOString().substr(11, 8);
+    return <div>{hoursAndMinutesTime}</div>;
 };

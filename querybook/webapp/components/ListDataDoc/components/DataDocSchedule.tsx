@@ -2,22 +2,15 @@ import React from 'react';
 import cronstrue from 'cronstrue';
 
 export const DataDocSchedule: React.FunctionComponent<{
-    date: string;
-}> = ({ date }) => {
-    if (date) {
-        return (
-            <div
-                title={cronstrue.toString(date, {
-                    verbose: true,
-                    use24HourTimeFormat: true,
-                })}
-            >
-                {cronstrue.toString(date, {
-                    verbose: true,
-                    use24HourTimeFormat: true,
-                })}
-            </div>
-        );
+    cron: string;
+}> = ({ cron }) => {
+    if (cron) {
+        const friedlyCronSchedule = cronstrue.toString(cron, {
+            verbose: true,
+            use24HourTimeFormat: true,
+        });
+
+        return <div title={friedlyCronSchedule}>{friedlyCronSchedule}</div>;
     }
 
     return <div />;

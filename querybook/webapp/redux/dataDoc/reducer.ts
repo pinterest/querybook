@@ -34,7 +34,9 @@ function getDataDocWithSchema(state = initialState.dataDocWithSchema, action) {
         switch (action.type) {
             case '@@dataDoc/RECEIVE_DATA_WITH_SCHEMA': {
                 draft.docs = action.payload.docs;
-                draft.total = action.payload.total;
+                draft.total = Math.ceil(
+                    action.payload.total / action.payload.pageSize
+                );
                 draft.page = action.payload.page;
                 draft.pageSize = action.payload.pageSize;
                 draft.filtered = action.payload.filtered;

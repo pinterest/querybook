@@ -51,7 +51,7 @@ const ListDataDoc: React.FC = () => {
                         Header: 'Schedule (UTC)',
                         sortable: false,
                         accessor: 'schedule.cron',
-                        Cell: (data) => <DataDocSchedule date={data.value} />,
+                        Cell: (data) => <DataDocSchedule cron={data.value} />,
                     },
                     {
                         width: 200,
