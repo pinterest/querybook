@@ -1,3 +1,4 @@
+import toast from 'react-hot-toast';
 import React, {
     useRef,
     useCallback,
@@ -25,6 +26,7 @@ import * as queryExecutionsAction from 'redux/queryExecutions/action';
 import * as adhocQueryActions from 'redux/adhocQuery/action';
 import * as dataDocActions from 'redux/dataDoc/action';
 
+import { IQueryEngine } from 'const/queryEngine';
 import { BoundQueryEditor } from 'components/QueryEditor/BoundQueryEditor';
 import {
     SearchAndReplace,
@@ -37,6 +39,7 @@ import {
 } from 'components/QueryRunButton/QueryRunButton';
 import { QueryComposerExecution } from './QueryComposerExecution';
 import { QueryEditor } from 'components/QueryEditor/QueryEditor';
+import { UDFForm } from 'components/UDFForm/UDFForm';
 
 import { useBrowserTitle } from 'hooks/useBrowserTitle';
 
@@ -44,9 +47,10 @@ import { FullHeight } from 'ui/FullHeight/FullHeight';
 import { IconButton } from 'ui/Button/IconButton';
 import { Level, LevelItem } from 'ui/Level/Level';
 import { Button } from 'ui/Button/Button';
+import { Modal } from 'ui/Modal/Modal';
 
 import './QueryComposer.scss';
-import { IQueryEngine } from 'const/queryEngine';
+import { doesLanguageSupportUDF } from 'lib/utils/udf';
 
 const useExecution = (dispatch: Dispatch, environmentId: number) => {
     const executionId = useSelector(
@@ -237,6 +241,12 @@ const QueryComposer: React.FC = () => {
         searchAndReplaceRef,
     } = useQueryComposerSearchAndReplace(query, setQuery);
 
+    const canShowUDFForm = useMemo(
+        () => doesLanguageSupportUDF(engine.language),
+        [engine.language]
+    );
+    const [showUDFForm, setShowUDFForm] = useState(false);
+
     const runButtonRef = useRef<IQueryRunButtonHandles>(null);
     const clickOnRunButton = useCallback(() => {
         if (runButtonRef.current) {
@@ -326,6 +336,22 @@ const QueryComposer: React.FC = () => {
         </Resizable>
     );
 
+    const udfModalDOM = showUDFForm && (
+        <Modal
+            title="Insert User Defined Function"
+            onHide={() => setShowUDFForm(false)}
+        >
+            <UDFForm
+                onConfirm={(udfScript) => {
+                    setQuery(udfScript + '\n\n' + query);
+                    setShowUDFForm(false);
+                    toast('UDF Added!');
+                }}
+                engineLanguage={engine.language}
+            />
+        </Modal>
+    );
+
     const contentDOM = (
         <div className="QueryComposer-content-editor">
             <div className="query-editor-wrapper">
@@ -337,6 +363,7 @@ const QueryComposer: React.FC = () => {
                 </SearchAndReplace>
             </div>
             {executionDOM}
+            {udfModalDOM}
         </div>
     );
 
@@ -379,7 +406,19 @@ const QueryComposer: React.FC = () => {
                             onClick={handleCreateDataDoc}
                         />
                     </LevelItem>
-                    <LevelItem>{queryRunDOM}</LevelItem>
+                    <LevelItem>
+                        {canShowUDFForm && (
+                            <Button
+                                icon="plus"
+                                title="Add UDF"
+                                aria-label="Add New User Defined Function"
+                                data-balloon-pos="left"
+                                onClick={() => setShowUDFForm(true)}
+                            />
+                        )}
+
+                        {queryRunDOM}
+                    </LevelItem>
                 </Level>
             </div>
         </div>

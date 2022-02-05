@@ -2,7 +2,6 @@ import * as CodeMirror from 'codemirror';
 import 'codemirror/lib/codemirror.css';
 
 // From codemirror non-react package:
-import 'codemirror/mode/python/python';
 import 'codemirror/mode/sql/sql';
 
 // Lint addon

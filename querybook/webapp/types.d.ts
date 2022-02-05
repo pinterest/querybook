@@ -4,7 +4,7 @@ import type {
     IColumnDetector,
     IColumnTransformer,
 } from 'lib/query-result/types';
-
+import type { IUDFEngineConfig } from 'lib/utils/udf';
 import { IDataTableSearchState } from 'redux/dataTableSearch/types';
 
 declare global {
@@ -35,6 +35,7 @@ declare global {
             string,
             Record<string, { key?: string; name?: string }>
         >;
+        CUSTOM_ENGINE_UDFS?: IUDFEngineConfig[];
     }
 
     // Injected via Webpack
