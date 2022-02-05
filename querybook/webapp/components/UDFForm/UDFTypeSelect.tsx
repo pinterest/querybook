@@ -2,6 +2,7 @@ import { useField } from 'formik';
 import { IOptions, makeReactSelectStyle } from 'lib/utils/react-select';
 import React, { useMemo } from 'react';
 import CreatableSelect from 'react-select/creatable';
+import { overlayRoot } from 'ui/Overlay/Overlay';
 
 const reactSelectStyle = makeReactSelectStyle(true);
 
@@ -34,6 +35,7 @@ export const UDFTypeSelect: React.FC<IUDFTypeSelectProps> = ({
             onChange={(option) => {
                 helper.setValue(option ? option.value : '');
             }}
+            menuPortalTarget={overlayRoot}
             options={typeOptions}
         />
     );

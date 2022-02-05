@@ -9,6 +9,7 @@ import { KeyMap } from 'lib/utils/keyboard';
 
 import 'codemirror/mode/javascript/javascript';
 import 'codemirror/mode/clike/clike';
+import { StyledQueryEditor } from 'components/QueryEditor/StyledQueryEditor';
 
 export interface ICodeEditorFieldProps {
     name: string;
@@ -56,16 +57,18 @@ const CodeEditorField: React.FC<ICodeEditorFieldProps> = ({
     );
 
     return (
-        <ReactCodeMirror
-            editorDidMount={handleEditorMount}
-            options={options}
-            value={value}
-            onBeforeChange={(_, __, newValue) => {
-                setTouched(true);
-                setValue(newValue);
-            }}
-            {...CodeEditorProps}
-        />
+        <StyledQueryEditor height="auto">
+            <ReactCodeMirror
+                editorDidMount={handleEditorMount}
+                options={options}
+                value={value}
+                onBeforeChange={(_, __, newValue) => {
+                    setTouched(true);
+                    setValue(newValue);
+                }}
+                {...CodeEditorProps}
+            />
+        </StyledQueryEditor>
     );
 };
 
