@@ -137,7 +137,7 @@ span {
 }
 
 strong {
-    color: var(--dark-text-color);
+    color: var(--text-dark);
     font-weight: 700;
 }
 
@@ -163,7 +163,7 @@ table th:not([align]) {
 }
 
 table th {
-    color: var(--border-color);
+    color: var(--text-subtitle);
 }
 
 // in-house
@@ -174,7 +174,7 @@ body {
     height: 100%;
     overflow: auto;
     background-color: var(--bg);
-    color: var(--text-color);
+    color: var(--text);
     font-weight: 400;
     line-height: 1.5;
     overscroll-behavior-y: none;
@@ -191,14 +191,14 @@ textarea {
 code {
     border-radius: var(--border-radius);
     background-color: var(--bg-light);
-    color: var(--code-text-color);
+    color: var(--text-code);
     font-size: var(--small-text-size);
     font-weight: 500;
     padding: 4px;
 }
 
 strong {
-    color: var(--dark-text-color);
+    color: var(--text-dark);
 }
 
 a {
@@ -232,12 +232,12 @@ textarea {
 
 input:-webkit-autofill,
 input:-internal-autofill-selected {
-    -webkit-text-fill-color: var(--text-color);
+    -webkit-text-fill-color: var(--text);
 }
 
 @keyframes autofill {
     to {
-        color: var(--text-color);
+        color: var(--text);
         background: transparent;
     }
 }
@@ -250,7 +250,7 @@ input:-webkit-autofill {
 #___reactour {
     .reactour__helper {
         background-color: var(--bg);
-        color: var(--text-color);
+        color: var(--text);
         > span {
             color: var(--bg);
             font-weight: var(--bold-font);
@@ -272,7 +272,7 @@ input:-webkit-autofill {
 }
 
 hr {
-    background-color: var(--hr);
+    background-color: transparent;
     border: none;
     display: block;
     height: 1px;
@@ -284,7 +284,7 @@ pre {
     background-color: var(--bg-light);
     margin: 4px;
     padding: 12px;
-    color: var(--text-color);
+    color: var(--text);
     font-size: var(--small-text-size);
     white-space: pre-wrap;
 }

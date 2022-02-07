@@ -15,7 +15,7 @@
             justify-content: center;
 
             a {
-                color: var(--text-color);
+                color: var(--text);
 
                 .Icon {
                     & ~ span {
@@ -39,7 +39,7 @@
             &:not(.active):hover {
                 cursor: pointer;
                 a {
-                    color: var(--text-color);
+                    color: var(--text);
                 }
             }
         }
@@ -59,12 +59,12 @@
         &:not(.light-pills) {
             ul {
                 li {
-                    background-color: var(--pill-tab-color);
+                    background-color: var(--pill);
 
                     &.active {
                         background-color: var(--bg-invert-select);
                         a {
-                            color: var(--invert-text-color);
+                            color: var(--text-invert);
                         }
                     }
 

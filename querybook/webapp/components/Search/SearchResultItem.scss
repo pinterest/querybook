@@ -36,10 +36,10 @@
                 overflow: hidden;
                 white-space: nowrap;
                 text-overflow: ellipsis;
-                color: var(--text-color);
+                color: var(--text);
 
                 &:hover {
-                    color: var(--text-hover-color);
+                    color: var(--text-hover);
                 }
             }
         }
@@ -47,7 +47,7 @@
         .result-items-bottom {
             margin-right: 8px;
             align-items: baseline;
-            color: var(--light-text-color);
+            color: var(--text-light);
 
             .result-item-owner {
                 font-weight: 500;
