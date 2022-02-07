@@ -50,12 +50,12 @@ exports[`matches test renderer snapshot serializes the styles 1`] = `
       className=" css-g1d714-ValueContainer"
     >
       <div
-        className=" css-1x7g0sm-placeholder"
+        className=" css-phc9i8-placeholder"
       >
         Select...
       </div>
       <div
-        className="css-10elmgk-Input"
+        className="css-1d7tz1b-Input"
       >
         <div
           className=""
@@ -120,7 +120,7 @@ exports[`matches test renderer snapshot serializes the styles 1`] = `
       />
       <div
         aria-hidden="true"
-        className=" css-1d1y4uz-indicatorContainer"
+        className=" css-1mkmlcg-indicatorContainer"
         onMouseDown={[Function]}
         onTouchEnd={[Function]}
       >

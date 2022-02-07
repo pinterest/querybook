@@ -1,10 +1,10 @@
 .UserMenu {
     padding: 10px 10px 0px 10px;
 
-    color: var(--icon-color);
+    color: var(--icon);
 
     &:hover {
-        color: var(--icon-hover-color);
+        color: var(--icon-hover);
     }
 
     .user-menu-title {

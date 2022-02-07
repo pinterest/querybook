@@ -19,7 +19,7 @@
     h4,
     h5,
     h6 {
-        color: var(--dark-text-color);
+        color: var(--text-dark);
         font-weight: 600;
         line-height: 1.125;
     }
@@ -65,7 +65,6 @@
 
     blockquote {
         background-color: var(--bg-light);
-        border-left: var(--border-color);
         padding: 24px;
     }
 
@@ -103,13 +102,11 @@
     table {
         border-collapse: collapse;
         th {
-            color: var(--title-color);
-            border: 1px solid var(--focus-border-color);
+            color: var(--text-subtitle);
             padding: 4px;
         }
         td {
-            color: var(--text-color);
-            border: 1px solid var(--focus-border-color);
+            color: var(--text);
             padding: 4px;
         }
     }

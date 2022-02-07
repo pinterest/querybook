@@ -71,7 +71,7 @@ const SubPanelTitle = styled.p`
     user-select: none;
 
     font-size: var(--text-size);
-    color: var(--light-text-color);
+    color: var(--text-light);
 `;
 
 const StyledSubPanelSection = styled.div`
