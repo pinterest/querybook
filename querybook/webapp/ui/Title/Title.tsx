@@ -15,7 +15,7 @@ const StyledTitle = styled.p<IStyledTitleProps>`
     ${(props) => (props.inline ? 'display: inline;' : '')};
     ${(props) => (props.gap ? 'margin-bottom: 1.5rem;' : '')};
 
-    color: ${(props) => props.color || 'var(--text-color)'};
+    color: ${(props) => props.color || 'var(--text)'};
     font-weight: ${(props) => props.weight || 'inherit'};
     font-size: ${(props) => props.size || 'var(--large-text-size)'};
 
@@ -71,11 +71,7 @@ export const Title: React.FunctionComponent<ITitleProps> = ({
     const fontWeight = weight ?? (subtitle ? '400' : '600');
     const fontSize = numFontSizeToString[size];
     const fontColor =
-        color != null
-            ? color
-            : subtitle
-            ? 'var(--dark-text-color)'
-            : 'var(--text-color)';
+        color != null ? color : subtitle ? 'var(--text-dark)' : 'var(--text)';
     return (
         <StyledTitle
             color={fontColor}

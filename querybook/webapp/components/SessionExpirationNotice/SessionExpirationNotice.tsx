@@ -16,7 +16,7 @@ export const SessionExpirationNotice: React.FC = () => {
                 backgroundColor: 'var(--bg-invert)',
             }}
         >
-            <Title size={3} color={'var(--invert-text-color)'}>
+            <Title size={3} color={'var(--text-invert)'}>
                 Your session has expired. Click HERE to refresh the page.
             </Title>
         </div>

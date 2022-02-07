@@ -114,11 +114,11 @@ const StyledColumnRow = styled.div<IStyledColumnRowProps>`
     word-break: break-all;
 
     .column-row-name {
-        color: var(--dark-text-color);
+        color: var(--text-dark);
     }
 
     .column-row-type {
-        color: var(--light-text-color);
+        color: var(--text-light);
     }
 
     ${({ selected }) =>

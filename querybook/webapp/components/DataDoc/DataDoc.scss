@@ -55,7 +55,7 @@
         .data-doc-header {
             padding: 36px 12px;
             border-bottom: var(--border);
-            color: var(--light-text-color);
+            color: var(--text-light);
 
             .data-doc-header-top {
                 .data-doc-header-time {
@@ -97,12 +97,12 @@
             }
 
             .data-doc-title {
-                color: var(--light-text-color);
+                color: var(--text-light);
                 font-size: var(--xxxlarge-text-size);
                 font-weight: bold;
 
                 &::placeholder {
-                    color: var(--light-text-color);
+                    color: var(--text-light);
                 }
             }
         }

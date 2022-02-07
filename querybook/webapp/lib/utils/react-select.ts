@@ -41,14 +41,14 @@ export const defaultReactSelectStyles: Partial<
     }),
     input: (styles) => ({
         ...styles,
-        color: 'var(--text-color)',
+        color: 'var(--text)',
         '&:hover': {
-            color: 'var(--text-hover-color)',
+            color: 'var(--text-hover)',
         },
     }),
     placeholder: (styles) => ({
         ...styles,
-        color: 'var(--light-text-color)',
+        color: 'var(--text-light)',
     }),
     indicatorSeparator: (styles) => ({
         ...styles,
@@ -56,16 +56,16 @@ export const defaultReactSelectStyles: Partial<
     }),
     clearIndicator: (styles, { isFocused }) => ({
         ...styles,
-        color: isFocused ? 'var(--text-hover-color)' : 'var(--text-color)',
+        color: isFocused ? 'var(--text-hover)' : 'var(--text)',
         '&:hover': {
-            color: 'var(--text-hover-color)',
+            color: 'var(--text-hover)',
         },
     }),
     dropdownIndicator: (styles) => ({
         ...styles,
-        color: 'var(--text-color)',
+        color: 'var(--text)',
         '&:hover': {
-            color: 'var(--text-hover-color)',
+            color: 'var(--text-hover)',
         },
     }),
     option: (styles, { data, isDisabled, isSelected, isFocused }) => ({
@@ -78,12 +78,12 @@ export const defaultReactSelectStyles: Partial<
             ? 'var(--bg-hover)'
             : 'var(--bg-lightest)',
         color: isDisabled
-            ? 'var(--light-text-color)'
+            ? 'var(--text-light)'
             : isSelected
-            ? 'var(--dark-text-color)'
+            ? 'var(--text-dark)'
             : isFocused
-            ? 'var(--text-hover-color)'
-            : 'var(--text-color)',
+            ? 'var(--text-hover)'
+            : 'var(--text)',
         cursor: isDisabled ? 'not-allowed' : 'default',
         ...(data.color ? dot(data.color) : {}),
         ':active': {
@@ -101,16 +101,16 @@ export const defaultReactSelectStyles: Partial<
     }),
     singleValue: (styles, { data }) => ({
         ...styles,
-        color: 'var(--title-color)',
+        color: 'var(--text-title)',
         ...(data.color ? dot(data.color) : {}),
     }),
     multiValue: (styles, { data }) => ({
         ...styles,
         backgroundColor: data.color || 'var(--bg-light)',
-        color: data.color ? '#000' : 'var(--text-color)',
+        color: data.color ? '#000' : 'var(--text)',
         ':hover': {
             backgroundColor: 'var(--bg-hover)',
-            color: 'var(--text-color)',
+            color: 'var(--text)',
         },
     }),
     multiValueLabel: (styles) => ({
@@ -139,9 +139,6 @@ export const miniReactSelectStyles: StylesConfig<any, false, any> = mergeStyles(
             padding: '0px',
             margin: '0px,',
             minHeight: '0px',
-            '&:hover': {
-                borderColor: 'var(--hover-border-color)',
-            },
         }),
         input: (styles) => ({
             ...styles,

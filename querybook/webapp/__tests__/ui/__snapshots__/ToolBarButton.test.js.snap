@@ -15,7 +15,7 @@ exports[`matches enzyme snapshots matches snapshot 1`] = `
 exports[`matches test renderer snapshot serializes the styles 1`] = `
 <span
   aria-label=""
-  className="ToolBarButton__StyledButton-qi1boi-0 eEEtEG"
+  className="ToolBarButton__StyledButton-qi1boi-0 kDxJqy"
   data-balloon-pos="up"
 >
   <i

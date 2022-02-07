@@ -35,14 +35,14 @@ const buttonThemeToProps: Record<ButtonColorType, IButtonColorConfig> = {
         secondary: 'var(--color-accent-bg)',
     },
     light: {
-        primary: 'var(--light-text-color)',
-        primaryHover: 'var(--text-color)',
+        primary: 'var(--text-light)',
+        primaryHover: 'var(--text)',
         secondary: 'var(--bg-lightest)',
         secondaryHover: 'var(--bg-hover)',
     },
     default: {
-        primary: 'var(--light-text-color)',
-        primaryHover: 'var(--text-color)',
+        primary: 'var(--text-light)',
+        primaryHover: 'var(--text)',
         secondary: 'var(--bg-light)',
         secondaryHover: 'var(--bg-hover)',
     },

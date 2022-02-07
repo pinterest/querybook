@@ -151,6 +151,7 @@ export const SearchAndReplaceBar = React.forwardRef<
                             onKeyDown,
                             ref: searchInputRef,
                         }}
+                        className="flex-center"
                     />
                     <TextToggleButton
                         text="Aa"
@@ -176,7 +177,7 @@ export const SearchAndReplaceBar = React.forwardRef<
                     />
                 </div>
 
-                <span className="position-info mh8">
+                <span className="position-info mh12">
                     {searchResults.length
                         ? `${
                               searchResults.length > currentSearchResultIndex
@@ -211,6 +212,7 @@ export const SearchAndReplaceBar = React.forwardRef<
                         value={replaceString}
                         onChange={onReplaceStringChange}
                         inputProps={{ ref: replaceInputRef, onKeyDown }}
+                        className="flex-center"
                     />
                 </div>
 

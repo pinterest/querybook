@@ -1,6 +1,6 @@
 .Menu {
     background-color: var(--bg);
-    color: var(--text-color);
+    color: var(--text);
     user-select: none;
     border-radius: var(--border-radius-sm);
     // overflow: hidden;
@@ -45,12 +45,12 @@
 
     &.soft {
         background: var(--bg-light);
-        color: var(--light-text-color);
+        color: var(--text-light);
         border: none;
 
         .MenuItem:hover,
         .MenuItem.is-active {
-            color: var(--text-color);
+            color: var(--text);
         }
     }
 }
