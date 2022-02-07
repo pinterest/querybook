@@ -176,7 +176,7 @@ export const DataTableViewLineage: React.FunctionComponent<IDataTableViewLineage
                     const nodeColor = selected
                         ? 'var(--bg-hover)'
                         : 'var(--bg-select)';
-                    const borderColor = 'var(--icon-color)';
+                    const borderColor = 'var(--icon)';
                     return {
                         rx: 5,
                         ry: 5,

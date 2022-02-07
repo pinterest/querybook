@@ -1,6 +1,4 @@
 .SearchAndReplaceBar {
-    border: var(--border);
-    border-top: none;
     border-bottom-left-radius: var(--border-radius);
     border-bottom-right-radius: var(--border-radius);
 
@@ -10,23 +8,19 @@
     .position-info {
         user-select: none;
         font-size: var(--xsmall-text-size);
+        color: var(--text-light);
+        line-height: normal;
     }
 
     .datadoc-search-input {
-        border: var(--border);
         padding: 4px;
 
-        border-radius: var(--border-radius);
+        border-radius: var(--border-radius-sm);
 
         background-color: transparent;
         width: 250px;
         display: flex;
         align-items: center;
-
-        &:focus-within {
-            border-color: var(--focus-border-color);
-            background-color: var(--bg);
-        }
 
         .DebouncedInput {
             flex: 1;
@@ -35,6 +29,13 @@
                 padding: 0;
                 color: inherit;
                 font-size: var(--text-size);
+                min-height: 24px;
+            }
+        }
+
+        &:focus-within {
+            input {
+                background-color: var(--bg-select);
             }
         }
     }

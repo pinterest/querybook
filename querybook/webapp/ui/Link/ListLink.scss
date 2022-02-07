@@ -4,7 +4,7 @@
     display: flex;
     align-items: center;
     padding: 4px 10px 4px 4px;
-    color: var(--dark-text-color);
+    color: var(--text-dark);
     cursor: pointer;
     user-select: none;
 
@@ -44,8 +44,5 @@
     &.selected {
         font-weight: var(--bold-font);
         color: var(--color-accent-text);
-    }
-    &:hover {
-        color: var(--dark-text-color);
     }
 }
