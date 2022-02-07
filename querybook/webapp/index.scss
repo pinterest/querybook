@@ -7,7 +7,7 @@
 #overlay-root,
 #notification-root {
     background-color: var(--bg);
-    color: var(--text-color);
+    color: var(--text);
     font-family: var(--font-sans-serif);
     font-size: var(--small-text-size);
 }
@@ -22,7 +22,7 @@
 }
 
 .app-splash-text {
-    color: var(--light-text-color);
+    color: var(--text-light);
     font-size: var(--small-text-size);
 
     &:after {
@@ -41,7 +41,7 @@
     text-align: center;
     font-size: var(--xxxlarge-text-size);
     font-weight: bold;
-    color: var(--border-color);
+    color: var(--text-light);
     user-select: none;
 }
 

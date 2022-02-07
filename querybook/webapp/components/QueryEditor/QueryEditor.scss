@@ -54,11 +54,11 @@
     .CodeMirror-hint {
         font-size: var(--small-text-size);
         line-height: 1.5;
-        color: var(--dark-text-color);
+        color: var(--text-dark);
         white-space: nowrap;
 
         b {
-            color: var(--text-color);
+            color: var(--text);
         }
 
         &.CodeMirror-hint-active {
@@ -96,7 +96,7 @@
                     }
 
                     &.not-golden {
-                        color: var(--dark-text-color);
+                        color: var(--text-dark);
                     }
                 }
             }
@@ -113,7 +113,7 @@
                     }
 
                     &.not-warning {
-                        color: var(--dark-text-color);
+                        color: var(--text-dark);
                     }
                 }
             }

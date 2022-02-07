@@ -1,7 +1,7 @@
 .IconButton {
     cursor: pointer;
     padding: 10px;
-    color: var(--icon-color);
+    color: var(--icon);
     transition: color 0.2s ease-out;
     transition: fill 0.2s ease-out;
     display: inline-flex;
@@ -17,23 +17,23 @@
         padding: 0px;
     }
     &:hover {
-        color: var(--icon-hover-color);
+        color: var(--icon-hover);
     }
     &.active {
-        color: var(--icon-active-color);
+        color: var(--icon-active);
     }
     &.fill {
         svg {
-            fill: var(--icon-color);
+            fill: var(--icon);
         }
         &:hover {
             svg {
-                fill: var(--icon-hover-color);
+                fill: var(--icon-hover);
             }
         }
         &.active {
             svg {
-                fill: var(--icon-active-color);
+                fill: var(--icon-active);
             }
         }
     }

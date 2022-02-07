@@ -24,7 +24,7 @@
                 border-color: transparent;
 
                 border-top-width: 0;
-                border-bottom-color: var(--border-color);
+                border-bottom-color: transparent;
                 border-width: 10px;
             }
 
@@ -32,7 +32,7 @@
                 content: '';
 
                 border-color: transparent;
-                border-bottom-color: var(--bg);
+                border-bottom-color: transparent;
                 border-width: 10px;
 
                 bottom: -12px;

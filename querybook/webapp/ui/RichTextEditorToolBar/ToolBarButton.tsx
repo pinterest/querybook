@@ -4,7 +4,7 @@ import styled from 'styled-components';
 const StyledButton = styled.span`
     background-color: transparent;
     margin: 0px;
-    color: var(--text-color);
+    color: var(--text);
     font-weight: bold;
     font-size: var(--text-size);
     padding: 5px 10px;
@@ -13,7 +13,7 @@ const StyledButton = styled.span`
     &:hover,
     &.active {
         background-color: var(--bg-light);
-        color: var(--dark-text-color);
+        color: var(--text-dark);
     }
 `;
 

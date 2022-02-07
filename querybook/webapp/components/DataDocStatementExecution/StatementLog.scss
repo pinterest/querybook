@@ -5,10 +5,10 @@
     border-radius: var(--border-radius);
     height: 240px;
     position: relative;
-    background: var(--terminal-bg);
+    background: var(--bg-terminal);
     margin: 4px 0px;
     padding: 4px;
-    color: var(--terminal-text-color);
+    color: var(--text-terminal);
     font-family: var(--font-monospace);
     display: flex;
     flex-direction: column;
@@ -43,7 +43,7 @@
     }
 
     &.is-fullscreen {
-        @include full-screen(1000, var(--terminal-bg));
+        @include full-screen(1000, var(--bg-terminal));
         height: 100%;
         margin: 0px;
 

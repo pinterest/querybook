@@ -5,9 +5,9 @@
     padding: 8px 8px 8px 16px;
     font-weight: var(--bold-font);
 
-    color: var(--invert-text-color);
+    color: var(--text-invert);
     strong {
-        color: var(--invert-text-color);
+        color: var(--text-invert);
     }
     + .Announcement {
         border-top: var(--border);
