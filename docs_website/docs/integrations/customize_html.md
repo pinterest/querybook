@@ -120,3 +120,56 @@ window.DATA_TABLE_SEARCH_CONFIG = {
     }),
 };
 ```
+
+### Customize UDF Support
+
+If your query engine supports UDFs/Stored Procedures, you can use the custom UDF plugin to let users add UDFs easily in the query editor. The UDF editor in Querybook allows users to quickly create UDFs by filling out a form.
+
+Also note that if it something standard, please contribute it to the open source repo!
+
+Here is an minimal example that adds mysql UDF, it is not an complete example:
+
+```typescript
+window.CUSTOM_ENGINE_UDFS = {
+    engineLanguage: 'mysql',
+    supportedUDFLanguages: [
+        {
+            displayName: 'SQL',
+            name: 'sql', // Used as LANGUAGE ... in UDF, for mysql only sql works
+            codeEditorMode: 'text/x-mysql', // this mode is used by codemirror for editor support
+        },
+    ],
+    dataTypes: [
+        'varchar',
+        'double',
+        'integer',
+    ],
+    renderer: (config) => {
+       renderer: (config) => {
+        const {
+            functionName,
+            udfLanguage,
+            outputType,
+            parameters,
+            script,
+        } = config;
+
+        /*
+            Example MYSQL stored procedure:
+            CREATE PROCEDURE exampleFunc(IN rating varchar(50))
+            BEGIN
+                select abc from table where r = rating;
+            END
+        */
+
+        const createStatement = `CREATE PROCEDURE ${functionName}`;
+        const udfSignature = `(${parameters
+            .map((param) => `IN ${param.name} ${param.type}`)
+            .join(', ')})`;
+        const code = `BEGIN\n${script}\nEND`;
+
+        return `${createStatement}${udfSignature}\n${code};`;
+    },
+    },
+}
+```

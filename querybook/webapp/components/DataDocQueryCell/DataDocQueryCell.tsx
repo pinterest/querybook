@@ -53,6 +53,8 @@ import { Title } from 'ui/Title/Title';
 import { ErrorQueryCell } from './ErrorQueryCell';
 import './DataDocQueryCell.scss';
 import { TemplatedQueryView } from 'components/TemplateQueryView/TemplatedQueryView';
+import { doesLanguageSupportUDF } from 'lib/utils/udf';
+import { UDFForm } from 'components/UDFForm/UDFForm';
 
 const ON_CHANGE_DEBOUNCE_MS = 500;
 const FORMAT_QUERY_SHORTCUT = getShortcutSymbols(
@@ -99,6 +101,7 @@ interface IState {
     queryCollapsedOverride: boolean;
     showQuerySnippetModal: boolean;
     showRenderedTemplateModal: boolean;
+    showUDFModal: boolean;
 }
 
 class DataDocQueryCellComponent extends React.PureComponent<IProps, IState> {
@@ -116,6 +119,7 @@ class DataDocQueryCellComponent extends React.PureComponent<IProps, IState> {
             queryCollapsedOverride: null,
             showQuerySnippetModal: false,
             showRenderedTemplateModal: false,
+            showUDFModal: false,
         };
     }
 
@@ -148,6 +152,19 @@ class DataDocQueryCellComponent extends React.PureComponent<IProps, IState> {
     @bind
     public get engineId() {
         return this.state.meta.engine;
+    }
+
+    @bind
+    public get queryEngine() {
+        return this.props.queryEngineById[this.engineId];
+    }
+
+    public get hasUDFSupport() {
+        const queryEngine = this.queryEngine;
+        if (!queryEngine) {
+            return false;
+        }
+        return doesLanguageSupportUDF(queryEngine.language);
     }
 
     @bind
@@ -423,6 +440,14 @@ class DataDocQueryCellComponent extends React.PureComponent<IProps, IState> {
             icon: queryCollapsed ? 'far fa-eye' : 'far fa-eye-slash',
         });
 
+        if (this.hasUDFSupport) {
+            additionalButtons.push({
+                name: 'Add UDF',
+                onClick: () => this.setState({ showUDFModal: true }),
+                icon: 'fas fa-plus',
+            });
+        }
+
         return additionalButtons.length > 0 ? (
             <Dropdown
                 customButtonRenderer={this.additionalDropDownButtonFormatter}
@@ -565,6 +590,7 @@ class DataDocQueryCellComponent extends React.PureComponent<IProps, IState> {
             query,
             showQuerySnippetModal,
             showRenderedTemplateModal,
+            showUDFModal,
         } = this.state;
         const queryEngine = queryEngineById[this.engineId];
         const queryCollapsed = this.queryCollapsed;
@@ -637,12 +663,29 @@ class DataDocQueryCellComponent extends React.PureComponent<IProps, IState> {
             </Modal>
         ) : null;
 
+        const UDFModal = showUDFModal ? (
+            <Modal
+                title="Insert User Defined Function"
+                onHide={() => this.setState({ showUDFModal: false })}
+            >
+                <UDFForm
+                    onConfirm={(udfScript) => {
+                        this.handleChange(udfScript + '\n\n' + query);
+                        this.setState({ showUDFModal: false });
+                        toast('UDF Added!');
+                    }}
+                    engineLanguage={this.queryEngine.language}
+                />
+            </Modal>
+        ) : null;
+
         return (
             <>
                 {editorDOM}
                 {openSnippetDOM}
                 {insertQuerySnippetModalDOM}
                 {templatedQueryViewModalDOM}
+                {UDFModal}
             </>
         );
     }
