@@ -1,13 +1,12 @@
 import Link from '@docusaurus/Link';
 import useBaseUrl from '@docusaurus/useBaseUrl';
 import React from 'react';
-import useThemeContext from '@theme/hooks/useThemeContext';
-
+import { useColorMode } from '@docusaurus/theme-common';
 import GradientText from './GradientText';
 import './index.scss';
 
 export default () => {
-    const { isDarkTheme } = useThemeContext();
+    const { isDarkTheme } = useColorMode();
     return (
         <div className="HeaderSection HomePageSection">
             <div className="hero ">
