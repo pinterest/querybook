@@ -43,7 +43,22 @@ export interface IUDFEngineConfig {
      * is recursive, like STRUCT<...>
      */
     dataTypes: string[];
+
+    /**
+     * Convert IUDFRendererValues to SQL string
+     */
     renderer: (config: IUDFRendererValues) => string;
+
+    /**
+     * If provided, doc links will be shown on top of modal to provide a guide
+     * for the user. Name is optional, if not provided, the url link is shown.
+     */
+    docs?: Array<{ name?: string; url: string }>;
+
+    /**
+     * If provided, the forms will be prefilled with the initial values
+     */
+    prefills?: Partial<IUDFRendererValues>;
 }
 
 function indentCode(code: string, numberOfSpaces: number) {
@@ -96,6 +111,7 @@ const bigqueryUDFConfig: IUDFEngineConfig = {
         'TIMESTAMP',
         'ANY TYPE',
     ],
+
     renderer: (config) => {
         const {
             functionName,
@@ -129,53 +145,14 @@ const bigqueryUDFConfig: IUDFEngineConfig = {
 
         return `${createStatement}${udfSignature}\n${code};`;
     },
-};
 
-// This is non-standard, so it is only included as a reference
-// If your SparkSQL supports it, consider adding it via plugins
-// eslint-disable-next-line unused-imports/no-unused-vars
-const sparkSQLScalaUDF: IUDFEngineConfig = {
-    engineLanguage: 'sparksql',
-    supportedUDFLanguages: [
+    docs: [
         {
-            displayName: 'Scala',
-            name: 'scala',
-            codeEditorMode: 'text/x-scala',
-            noParameters: true,
+            name: 'BigQuery UDF Guide',
+            url:
+                'https://cloud.google.com/bigquery/docs/reference/standard-sql/user-defined-functions#sql-udf-structure',
         },
     ],
-    dataTypes: [
-        'StringType',
-        'ShortType',
-        'ArrayType',
-        'IntegerType',
-        'MapType',
-        'LongType',
-        'StructType',
-        'FloatType',
-        'DateType',
-        'DoubleType',
-        'TimestampType',
-        'DecimalType',
-        'BooleanType',
-        'ByteType',
-        'CalendarIntervalType',
-        'HiveStringType',
-        'BinaryType',
-        'ObjectType',
-        'NumericType',
-        'NullType',
-    ],
-    renderer: (config) => {
-        const indentedScript = indentCode(config.script, 4);
-
-        return `CREATE FUNCTION ${config.functionName}
-LANGUAGE ${config.udfLanguage}
-RETURNS ${config.outputType}
-BEGIN
-${indentedScript}
-END;`;
-    },
 };
 
 const UDFEngineConfigs: IUDFEngineConfig[] = [bigqueryUDFConfig].concat(

@@ -13,6 +13,8 @@ import { Title } from 'ui/Title/Title';
 
 import { UDFTypeSelect } from './UDFTypeSelect';
 import './UDFForm.scss';
+import { Message } from 'ui/Message/Message';
+import { Link } from 'ui/Link/Link';
 
 interface IUDFFormProps {
     onConfirm: (udfScript: string) => void;
@@ -47,8 +49,9 @@ export const UDFForm: React.FC<IUDFFormProps> = ({
             outputType: '',
             parameters: [],
             script: '',
+            ...engineUDFConfig.prefills,
         }),
-        [languageOptions]
+        [languageOptions, engineUDFConfig]
     );
 
     return (
@@ -146,6 +149,18 @@ export const UDFForm: React.FC<IUDFFormProps> = ({
 
                     return (
                         <>
+                            {engineUDFConfig.docs?.length > 0 && (
+                                <Message type="tip">
+                                    <div>
+                                        <b>UDF Docs:</b>
+                                    </div>
+                                    {engineUDFConfig.docs.map((doc, idx) => (
+                                        <Link key={idx} to={doc.url}>
+                                            {doc.name ?? doc.url}
+                                        </Link>
+                                    ))}
+                                </Message>
+                            )}
                             <SimpleField
                                 name="functionName"
                                 type="input"
