@@ -10,11 +10,11 @@ import { IconButton } from 'ui/Button/IconButton';
 import { FormField } from 'ui/Form/FormField';
 import { SimpleField } from 'ui/FormikField/SimpleField';
 import { Title } from 'ui/Title/Title';
+import { Link } from 'ui/Link/Link';
+import { Message } from 'ui/Message/Message';
 
 import { UDFTypeSelect } from './UDFTypeSelect';
 import './UDFForm.scss';
-import { Message } from 'ui/Message/Message';
-import { Link } from 'ui/Link/Link';
 
 interface IUDFFormProps {
     onConfirm: (udfScript: string) => void;
