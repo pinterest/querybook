@@ -3,13 +3,13 @@ import { useDispatch } from 'react-redux';
 import { Dispatch } from 'redux/store/types';
 import { SoftButton } from 'ui/Button/Button';
 import { Modal } from 'ui/Modal/Modal';
-import * as dataDocActions from 'redux/dataDoc/action';
+import { getScheduledDocs } from 'redux/scheduledDataDoc/action';
 import { DataDocScheduleRunLogs } from 'components/DataDocSchedule/DataDocScheduleRunLogs';
-import { DocScheduleForm } from 'components/DataDocSchedule/DataDocSchedule';
+import { DataDocScheduleFormWrapper } from 'components/DataDocSchedule/DataDocSchedule';
 
-export const ActiveButtons: React.FunctionComponent<{ docId: number }> = ({
-    docId,
-}) => {
+export const DataDocScheduleActionButtons: React.FunctionComponent<{
+    docId: number;
+}> = ({ docId }) => {
     const [showForm, setShowForm] = useState(false);
     const [showHistory, setShowHistory] = useState(false);
     const dispatch: Dispatch = useDispatch();
@@ -20,20 +20,19 @@ export const ActiveButtons: React.FunctionComponent<{ docId: number }> = ({
                 <Modal
                     onHide={() => {
                         setShowForm(false);
-                        dispatch(dataDocActions.getDataDocWithSchema({}));
+                        dispatch(getScheduledDocs({}));
                     }}
-                    title="Schedule DataDoc"
                 >
                     <div className="DataDocSchedule">
-                        <DocScheduleForm docId={docId} isEditable={true} />
+                        <DataDocScheduleFormWrapper
+                            docId={docId}
+                            isEditable={true}
+                        />
                     </div>
                 </Modal>
             )}
             {showHistory && (
-                <Modal
-                    onHide={() => setShowHistory(false)}
-                    title="History DataDoc"
-                >
+                <Modal onHide={() => setShowHistory(false)}>
                     <div className="schedule-options">
                         <DataDocScheduleRunLogs docId={docId} />
                     </div>

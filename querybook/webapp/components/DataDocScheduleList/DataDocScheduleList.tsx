@@ -1,34 +1,38 @@
 import React, { useEffect } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 import { Dispatch, IStoreState } from 'redux/store/types';
+import { currentEnvironmentSelector } from 'redux/environment/selector';
 import { FullHeight } from 'ui/FullHeight/FullHeight';
 import { Table } from 'ui/Table/Table';
-import * as dataDocActions from 'redux/dataDoc/action';
+import { getScheduledDocs } from 'redux/scheduledDataDoc/action';
 import { TaskStatusIcon } from 'components/Task/TaskStatusIcon';
-import { NextRun } from './components/NextRun';
-import { ActiveButtons } from './components/ActiveButtons';
-import { DataDocsName } from './components/DataDocsName';
-import { DataDocSchedule } from './components/DataDocSchedule';
-import { LastRecord } from './components/LastRecord';
-import { LastRun } from './components/LastRun';
-import { setCollapsed } from 'redux/environment/action';
+import { NextRun } from './NextRun';
+import { DataDocScheduleActionButtons } from './DataDocScheduleActionButtons';
+import { DataDocName } from './DataDocName';
+import { HumanReadableCronSchedule } from './HumanReadableCronSchedule';
+import { LastRecord } from './LastRecord';
+import { LastRun } from './LastRun';
+import { setCollapsed } from 'redux/querybookUI/action';
 
-import './ListDataDoc.scss';
+import { get } from 'lodash';
 
-const ListDataDoc: React.FC = () => {
+import './DataDocScheduleList.scss';
+
+const DataDocScheduleList: React.FC = () => {
     const dispatch: Dispatch = useDispatch();
-    const env = useSelector((state: IStoreState) => {
-        const { currentEnvironmentId, environmentById } = state.environment;
-        return environmentById[currentEnvironmentId];
-    });
-    const dataDocs = useSelector(
-        (state: IStoreState) => state.dataDoc.dataDocWithSchema
+    const environment = useSelector(currentEnvironmentSelector);
+    const dataDocs = useSelector((state: IStoreState) => state.scheduledDocs);
+    const collapsed: boolean = useSelector(
+        (state: IStoreState) => state.querybookUI.isEnvCollapsed
     );
+
     useEffect(() => {
+        // or better option is to add two actions and move it to reducer?
+        const restoredValue = collapsed;
         dispatch(setCollapsed(true));
 
         return () => {
-            dispatch(setCollapsed(false));
+            dispatch(setCollapsed(restoredValue));
         };
     }, []);
 
@@ -43,25 +47,29 @@ const ListDataDoc: React.FC = () => {
                         accessor: 'doc',
                         Header: 'DataDoc',
                         Cell: (data) => (
-                            <DataDocsName data={data.value} env={env} />
+                            <DataDocName
+                                data={data.value}
+                                environment={environment}
+                            />
                         ),
                     },
                     {
-                        width: 300,
-                        Header: 'Schedule (UTC)',
+                        Header: 'Schedule',
                         sortable: false,
                         accessor: 'schedule.cron',
-                        Cell: (data) => <DataDocSchedule cron={data.value} />,
+                        Cell: (data) => (
+                            <HumanReadableCronSchedule cron={data.value} />
+                        ),
                     },
                     {
                         width: 200,
-                        Header: 'Last Run (UTC)',
+                        Header: 'Last Run',
                         sortable: false,
-                        accessor: 'lastRecord.created_at',
+                        accessor: 'last_record.created_at',
                         Cell: (data) => <LastRun createdAt={data.value} />,
                     },
                     {
-                        Header: 'Next Run (UTC)',
+                        Header: 'Next Run',
                         width: 200,
                         sortable: false,
                         accessor: 'schedule.cron',
@@ -71,14 +79,14 @@ const ListDataDoc: React.FC = () => {
                         Header: 'Execution Time',
                         width: 200,
                         sortable: false,
-                        accessor: 'lastRecord',
-                        Cell: (data) => <LastRecord value={data.value} />,
+                        accessor: 'last_record',
+                        Cell: (data) => <LastRecord recordDates={data.value} />,
                     },
                     {
                         Header: 'Status',
                         maxWidth: 150,
                         sortable: false,
-                        accessor: 'lastRecord',
+                        accessor: 'last_record',
                         Cell: ({ value }) => {
                             if (!value) {
                                 return <div>No History</div>;
@@ -91,24 +99,26 @@ const ListDataDoc: React.FC = () => {
                         sortable: false,
                         maxWidth: 150,
                         accessor: 'doc.id',
-                        Cell: (data) => <ActiveButtons docId={data.value} />,
+                        Cell: (data) => (
+                            <DataDocScheduleActionButtons docId={data.value} />
+                        ),
                     },
                 ]}
                 manual
                 defaultPageSize={10}
                 onFetchData={({ page, pageSize, filtered }) => {
                     dispatch(
-                        dataDocActions.getDataDocWithSchema({
+                        getScheduledDocs({
                             paginationPage: page,
                             paginationPageSize: pageSize,
-                            paginationFilter: filtered,
+                            paginationFilter: get(filtered, '[0].value', ''),
                         })
                     );
                 }}
-                pages={dataDocs.total}
+                pages={dataDocs.totalPages}
             />
         </FullHeight>
     );
 };
 
-export default ListDataDoc;
+export default DataDocScheduleList;

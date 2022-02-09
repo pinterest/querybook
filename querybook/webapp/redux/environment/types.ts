@@ -38,16 +38,10 @@ export interface ISetEnvironmentByIdAction extends Action {
     };
 }
 
-export interface ISetCollapsedAction extends Action {
-    type: '@@environment/SET_COLLAPSED';
-    payload: boolean;
-}
-
 export type EnvironmentAction =
     | IReceiveEnvironmentsAction
     | ISetEnvironmentByIdAction
-    | IReceiveUserEnvironmentsAction
-    | ISetCollapsedAction;
+    | IReceiveUserEnvironmentsAction;
 
 export interface IEnvironmentState {
     environmentById: Record<number, IEnvironment>;
@@ -55,7 +49,6 @@ export interface IEnvironmentState {
     currentEnvironmentId?: number;
 
     environmentEngineIds: Record<number, number[]>;
-    isEnvCollapsed: boolean;
 }
 
 export type ThunkResult<R> = ThunkAction<

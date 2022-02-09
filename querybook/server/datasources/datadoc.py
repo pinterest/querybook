@@ -367,31 +367,29 @@ def get_datadoc_editors(doc_id):
     return logic.get_data_doc_editors_by_doc_id(doc_id)
 
 
-@register("/datadoc/getDocsWithSchedule/", methods=["GET"])
-def get_datadoc_with_schedule(
-    environment_id, filter_mode=None, offset=0, limit=10, filter=None, archived=False
+@register("/datadoc/scheduled/", methods=["GET"])
+def get_my_datadoc_with_schedule(
+    environment_id, offset=0, limit=10, filters=None, archived=False,
 ):
-    with DBSession() as session:
-        verify_environment_permission([environment_id])
+    verify_environment_permission([environment_id])
 
-        docs = []
+    docs = []
 
-        docs, count = logic.get_data_doc_by_user_with_data_doc(
-            current_user.id,
-            environment_id=environment_id,
-            offset=offset,
-            limit=limit,
-            filter=filter,
-            session=session,
-        )
+    docs, count = logic.get_data_doc_by_user(
+        current_user.id,
+        environment_id=environment_id,
+        offset=offset,
+        limit=limit,
+        filters=filters,
+    )
 
-        all_docs_id = map(lambda doc: get_data_doc_schedule_name(doc.id), docs)
+    scheduled_doc_names = [get_data_doc_schedule_name(doc.id) for doc in docs]
 
-        res = schedule_logic.get_task_run_record_run_with_schedule(
-            names=all_docs_id, docs=docs, session=session
-        )
+    res = schedule_logic.get_task_run_record_run_with_schedule(
+        data_doc_names=scheduled_doc_names, docs=docs
+    )
 
-        return {"docs": list(res), "count": count}
+    return {"docs": list(res), "count": count}
 
 
 @register("/datadoc/<int:doc_id>/editor/<int:uid>/", methods=["POST"])

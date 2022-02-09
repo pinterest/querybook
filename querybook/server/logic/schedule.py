@@ -150,52 +150,49 @@ def get_data_doc_schedule_name(id: int):
 
 
 @with_session
-def get_task_run_record_run_with_schedule(names, docs, session):
-    list_of_names = list(names)
-    allSchedules = (
-        session.query(TaskSchedule).filter(TaskSchedule.name.in_(list_of_names)).all()
+def get_task_run_record_run_with_schedule(data_doc_names, docs, session):
+    all_schedules = (
+        session.query(TaskSchedule).filter(TaskSchedule.name.in_(data_doc_names)).all()
     )
 
-    subquery = (
+    last_run_record_subquery = (
         session.query(
             TaskRunRecord.name, func.max(TaskRunRecord.created_at).label("max_date")
         )
         .group_by(TaskRunRecord.name)
         .subquery()
     )
-    allTaskRunRecordsGroupedBy = session.query(TaskRunRecord).join(
-        subquery,
+    all_task_run_records_grouped_by = session.query(TaskRunRecord).join(
+        last_run_record_subquery,
         and_(
-            TaskRunRecord.created_at == subquery.c.max_date,
-            subquery.c.name == TaskRunRecord.name,
+            TaskRunRecord.created_at == last_run_record_subquery.c.max_date,
+            last_run_record_subquery.c.name == TaskRunRecord.name,
         ),
     )
 
-    taskRunRecordsIds = map(lambda task: task.id, allTaskRunRecordsGroupedBy)
-    allTaskRunRecords = session.query(TaskRunRecord).filter(
-        TaskRunRecord.id.in_(taskRunRecordsIds)
-    )
-
-    allDocs = map(
-        lambda name: dict(
+    all_docs = map(
+        lambda doc: dict(
             {
-                "lastRecord": next(
-                    filter(lambda task: task.name == name, allTaskRunRecords), None
-                ),
-                "schedule": next(
-                    filter(lambda task: task.name == name, allSchedules), None
-                ),
-                "doc": next(
+                "last_record": next(
                     filter(
-                        lambda docs: get_data_doc_schedule_name(docs.id) == name, docs
+                        lambda task: task.name == get_data_doc_schedule_name(doc.id),
+                        all_task_run_records_grouped_by,
                     ),
                     None,
                 ),
+                "schedule": next(
+                    filter(
+                        lambda task: task.name == get_data_doc_schedule_name(doc.id),
+                        all_schedules,
+                    ),
+                    None,
+                ),
+                "doc": doc,
             }
         ),
-        list_of_names,
+        docs,
     )
-    return allDocs
+    return all_docs
 
 
 @with_session

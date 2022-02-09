@@ -28,7 +28,6 @@ import {
     ISaveDataDocEndAction,
     ISaveDataDocStartAction,
     IReceiveDataDocsAction,
-    ScheduledDocType,
 } from './types';
 import {
     DataDocPermission,
@@ -39,8 +38,6 @@ import {
     DataDocEditorResource,
     DataDocResource,
 } from 'resource/dataDoc';
-
-import { TaskScheduleResource } from 'resource/taskSchedule';
 
 export const dataDocCellSchema = new schema.Entity(
     'dataDocCell',
@@ -622,45 +619,5 @@ export function rejectDataDocAccessRequest(
                 },
             });
         }
-    };
-}
-
-export function getDataDocWithSchema({
-    paginationPage,
-    paginationPageSize,
-    paginationFilter,
-}: {
-    paginationPage?: number;
-    paginationPageSize?: number;
-    paginationFilter?: [{ value: string }];
-}): ThunkResult<Promise<ScheduledDocType[]>> {
-    return async (dispatch, getState) => {
-        const env = getState().environment.currentEnvironmentId;
-        const schemaDataDoc = getState().dataDoc.dataDocWithSchema;
-        const page = paginationPage ?? schemaDataDoc.page;
-        const filtered = paginationFilter ?? schemaDataDoc.filtered;
-        const pageSize = paginationPageSize ?? schemaDataDoc.pageSize;
-        const {
-            data: { docs, count },
-        } = await TaskScheduleResource.getTasksWithSchedule({
-            env,
-            limit: pageSize,
-            offset: page * pageSize,
-            filter: filtered[0]?.value,
-        });
-
-        dispatch({
-            type: '@@dataDoc/RECEIVE_DATA_WITH_SCHEMA',
-            payload: {
-                docs,
-                page,
-                pageSize,
-                pages: Math.ceil(count / pageSize),
-                total: count,
-                filtered,
-            },
-        });
-
-        return docs;
     };
 }

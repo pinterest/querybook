@@ -3,7 +3,7 @@ import clsx from 'clsx';
 
 import { navigateWithinEnv } from 'lib/utils/query-string';
 import { useSelector, useDispatch } from 'react-redux';
-import { setCollapsed } from 'redux/environment/action';
+import { setCollapsed } from 'redux/querybookUI/action';
 
 import { QuerySnippetNavigator } from 'components/QuerySnippetNavigator/QuerySnippetNavigator';
 import { DataDocSchemaNavigator } from 'components/DataDocSchemaNavigator/DataDocSchemaNavigator';
@@ -25,7 +25,7 @@ const SIDEBAR_WIDTH = 320;
 
 export const EnvironmentAppSidebar: React.FunctionComponent = () => {
     const collapsed: boolean = useSelector(
-        (state: IStoreState) => state.environment.isEnvCollapsed
+        (state: IStoreState) => state.querybookUI.isEnvCollapsed
     );
     const dispatch: Dispatch = useDispatch();
     const [entity, setEntity] = React.useState<Entity>('datadoc');

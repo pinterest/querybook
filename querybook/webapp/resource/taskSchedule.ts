@@ -1,7 +1,7 @@
 import { ITaskSchedule, ITaskStatusRecord, TaskType } from 'const/schedule';
 import ds from 'lib/datasource';
 import { IPaginatedResource } from './types';
-import { ScheduledDocType } from 'redux/dataDoc/types';
+import { IScheduledDoc } from 'redux/scheduledDataDoc/types';
 
 export const TaskScheduleResource = {
     getRegisteredTasks: () => ds.fetch<string[]>('/schedule/tasks_list/'),
@@ -34,23 +34,23 @@ export const TaskScheduleResource = {
             hide_successful_jobs: hideSuccessfulJobs,
         }),
     getTasksWithSchedule: ({
-        env,
+        envId,
         limit,
         offset,
-        filter,
+        filtered_title,
     }: {
-        env: number;
+        envId: number;
         limit: number;
         offset: number;
-        filter: string;
+        filtered_title: string;
     }) =>
-        ds.fetch<{ docs: ScheduledDocType[]; count: number }>(
-            '/datadoc/getDocsWithSchedule/',
+        ds.fetch<{ docs: IScheduledDoc[]; count: number }>(
+            '/datadoc/scheduled/',
             {
-                environment_id: env,
+                environment_id: envId,
                 limit,
                 offset,
-                filter,
+                filters: filtered_title ? { name: filtered_title } : {},
             }
         ),
     run: (taskId: number) => ds.save<null>(`/schedule/${taskId}/run/`),

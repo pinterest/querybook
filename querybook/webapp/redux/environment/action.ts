@@ -1,6 +1,6 @@
 import { arrayGroupByField } from 'lib/utils';
 import { UserResource } from 'resource/user';
-import { ThunkResult, ISetCollapsedAction } from './types';
+import { ThunkResult } from './types';
 
 export function fetchEnvironments(): ThunkResult<Promise<void>> {
     return async (dispatch) => {
@@ -48,12 +48,5 @@ export function setEnvironment(name: string): ThunkResult<any> {
         } else {
             console.error(`Setting invalid environment ${name}`);
         }
-    };
-}
-
-export function setCollapsed(value: boolean): ISetCollapsedAction {
-    return {
-        type: '@@environment/SET_COLLAPSED',
-        payload: value,
     };
 }

@@ -31,7 +31,7 @@ const SCHEDULE_TABS = [
     },
 ];
 
-export const DocScheduleForm: React.FunctionComponent<IDataDocScheduleProps> = ({
+export const DataDocScheduleFormWrapper: React.FunctionComponent<IDataDocScheduleProps> = ({
     docId,
     isEditable,
     onSave,
@@ -142,7 +142,7 @@ export const DataDocSchedule: React.FunctionComponent<IDataDocScheduleProps> = (
             {tabsDOM}
             <div className="DataDocSchedule">
                 {currentTab === 'schedule' ? (
-                    <DocScheduleForm
+                    <DataDocScheduleFormWrapper
                         docId={docId}
                         isEditable={isEditable}
                         onSave={onSave}

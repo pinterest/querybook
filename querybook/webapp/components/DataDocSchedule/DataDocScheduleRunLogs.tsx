@@ -1,5 +1,4 @@
 import React from 'react';
-import { get } from 'lodash';
 
 import { ITaskStatusRecord } from 'const/schedule';
 import { generateFormattedDate } from 'lib/utils/datetime';
@@ -15,9 +14,8 @@ function formatCell(
     column: keyof ITaskStatusRecord,
     row: ITaskStatusRecord
 ) {
-    const value = get(row, column);
+    const value = row[column];
     let dom: React.ReactNode = value;
-
     switch (column) {
         case 'updated_at':
         case 'created_at': {

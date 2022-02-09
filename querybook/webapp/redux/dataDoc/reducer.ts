@@ -20,31 +20,7 @@ const initialState: Readonly<IDataDocState> = {
     sessionByDocId: {},
     editorsByDocIdUserId: {},
     accessRequestsByDocIdUserId: {},
-    dataDocWithSchema: {
-        docs: [],
-        total: 0,
-        page: 0,
-        pageSize: 10,
-        filtered: [{ value: '' }],
-    },
 };
-
-function getDataDocWithSchema(state = initialState.dataDocWithSchema, action) {
-    return produce(state, (draft) => {
-        switch (action.type) {
-            case '@@dataDoc/RECEIVE_DATA_WITH_SCHEMA': {
-                draft.docs = action.payload.docs;
-                draft.total = Math.ceil(
-                    action.payload.total / action.payload.pageSize
-                );
-                draft.page = action.payload.page;
-                draft.pageSize = action.payload.pageSize;
-                draft.filtered = action.payload.filtered;
-                return;
-            }
-        }
-    });
-}
 
 function loadedEnvironmentFilterModeReducer(
     state = initialState.loadedEnvironmentFilterMode,
@@ -464,7 +440,6 @@ function editorsByDocIdUserIdReducer(
 }
 
 export default combineReducers({
-    dataDocWithSchema: getDataDocWithSchema,
     dataDocById: dataDocByIdReducer,
     dataDocCellById: dataDocCellByIdReducer,
     loadedEnvironmentFilterMode: loadedEnvironmentFilterModeReducer,

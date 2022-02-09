@@ -79,7 +79,7 @@ export function recurrenceToCron(recurrence: IRecurrence): string {
     return `${minute} ${hour} ${dayMonth} ${month} ${dayWeek}`;
 }
 
-const WEEKDAYS = [
+export const WEEKDAYS = [
     'Sunday',
     'Monday',
     'Tuesday',
@@ -89,7 +89,7 @@ const WEEKDAYS = [
     'Saturday',
 ];
 
-const MONTHS = [
+export const MONTHS = [
     'January',
     'February',
     'March',
@@ -124,13 +124,16 @@ export function getYearlyMonthOptions() {
     }));
 }
 
-export function getRecurrenceLocalTimeString(recurrence: IRecurrence): string {
+export function getRecurrenceLocalTimeString(
+    recurrence: IRecurrence,
+    format = 'HH:mm'
+): string {
     return moment
         .utc()
         .hour(recurrence.hour)
         .minute(recurrence.minute)
         .local()
-        .format('HH:mm');
+        .format(format);
 }
 
 export function validateCronForRecurrrence(cron: string) {

@@ -9,7 +9,6 @@ const initialState: IEnvironmentState = {
     currentEnvironmentId: null,
 
     environmentEngineIds: {},
-    isEnvCollapsed: false,
 };
 
 export default function environment(
@@ -40,11 +39,6 @@ export default function environment(
                 draft.environmentEngineIds[environmentId] = queryEngines.map(
                     ({ id }) => id
                 );
-                return;
-            }
-
-            case '@@environment/SET_COLLAPSED': {
-                draft.isEnvCollapsed = action.payload;
                 return;
             }
         }

@@ -13,7 +13,6 @@ import {
 } from 'const/datadoc';
 import { IAccessRequest } from 'const/accessRequest';
 import { IStoreState } from '../store/types';
-import { ITaskStatusRecord, ITaskSchedule } from 'const/schedule';
 
 export interface IDataDocSavePromise {
     // Key: cell-<cell id> or doc-<doc-id>
@@ -21,12 +20,6 @@ export interface IDataDocSavePromise {
     itemToSave: Record<string, number>;
     lastUpdatedAt: number;
 }
-
-export type ScheduledDocType = {
-    doc: IDataDoc;
-    lastRecord: ITaskStatusRecord;
-    schedule: ITaskSchedule;
-};
 
 export interface IReceiveDataDocsAction extends Action {
     type: '@@dataDoc/RECEIVE_DATA_DOCS';
@@ -250,17 +243,6 @@ export interface IMoveDataDocCursor extends Action {
     };
 }
 
-export interface IReceiveDataWithSchema extends Action {
-    type: '@@dataDoc/RECEIVE_DATA_WITH_SCHEMA';
-    payload: {
-        docs: ScheduledDocType[];
-        total: number;
-        page: number;
-        pageSize: number;
-        filtered: [{ value: string }];
-    };
-}
-
 export type DataDocAction =
     | IReceiveDataDocsAction
     | IReceiveDataDocAction
@@ -288,8 +270,7 @@ export type DataDocAction =
     | IReceiveDataDocAccessRequestsAction
     | IReceiveDataDocAccessRequestAction
     | IRemoveDataDocAccessRequestAction
-    | IMoveDataDocCursor
-    | IReceiveDataWithSchema;
+    | IMoveDataDocCursor;
 
 export type ThunkResult<R> = ThunkAction<
     R,
@@ -324,11 +305,4 @@ export interface IDataDocState {
     accessRequestsByDocIdUserId: Record<number, Record<number, IAccessRequest>>;
     favoriteDataDocIds: number[];
     recentDataDocIds: number[];
-    dataDocWithSchema: {
-        docs: ScheduledDocType[];
-        total: number;
-        page: number;
-        pageSize: number;
-        filtered: [{ value: string }];
-    };
 }

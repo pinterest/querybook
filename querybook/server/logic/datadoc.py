@@ -152,29 +152,15 @@ def get_data_doc_by_id(id, session=None):
 
 
 @with_session
-def get_data_doc_by_user(uid, environment_id, offset, limit, session=None):
-    return (
-        session.query(DataDoc)
-        .filter_by(owner_uid=uid, archived=False, environment_id=environment_id)
-        .order_by(DataDoc.id.desc())
-        .offset(offset)
-        .limit(limit)
-        .all()
-    )
-
-
-@with_session
-def get_data_doc_by_user_with_data_doc(
-    uid, environment_id, offset, limit, filter, session=None
-):
+def get_data_doc_by_user(uid, environment_id, offset, limit, filters={}, session=None):
     query = (
         session.query(DataDoc)
         .filter_by(owner_uid=uid, archived=False, environment_id=environment_id)
         .order_by(DataDoc.id.desc())
     )
 
-    if filter:
-        query = query.filter(DataDoc.title.contains(filter))
+    if "name" in filters:
+        query = query.filter(DataDoc.title.contains(filters.get("name")))
 
     count = query.count()
     data = query.offset(offset).limit(limit).all()
