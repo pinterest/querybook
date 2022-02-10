@@ -1,6 +1,7 @@
-import React from 'react';
+import React, { useMemo } from 'react';
 import moment from 'moment';
 import clsx from 'clsx';
+import styled from 'styled-components';
 
 import { queryStatusToStatusIcon } from 'const/queryStatus';
 import { IQueryExecution } from 'const/queryExecution';
@@ -15,6 +16,41 @@ interface IProps {
     queryEngineById: Record<number, IQueryEngine>;
     onClick: (queryExecution: IQueryExecution) => any;
 }
+
+const TimeContainer = styled.div`
+    display: flex;
+`;
+
+const ExecutionTime = styled.div`
+    margin-right: 10px;
+`;
+
+function calculateExecutionTime(createdAt: number, completedAt: number) {
+    const executionTime = Math.ceil(completedAt - createdAt);
+    const date = new Date(null);
+    date.setSeconds(executionTime);
+
+    return date.toISOString().substr(11, 8);
+}
+
+const GetExecutionTime: React.FunctionComponent<{
+    createdAt: number;
+    completedAt: number;
+}> = ({ createdAt, completedAt }) => {
+    const hoursAndMinutesTime = useMemo(() => {
+        if (!completedAt) {
+            return 'Ex. time: --:--:--';
+        }
+
+        if (createdAt - completedAt === 0) {
+            return 'Ex. time: Less 1 sec.';
+        }
+
+        return `Ex. time: ${calculateExecutionTime(createdAt, completedAt)}`;
+    }, [createdAt, completedAt]);
+
+    return <ExecutionTime>{hoursAndMinutesTime}</ExecutionTime>;
+};
 
 export const QueryResult: React.FunctionComponent<IProps> = ({
     queryEngineById,
@@ -48,9 +84,13 @@ export const QueryResult: React.FunctionComponent<IProps> = ({
                 <div>
                     <UserName uid={queryExecution.uid} />
                 </div>
-                <div>
+                <TimeContainer>
+                    <GetExecutionTime
+                        completedAt={queryExecution.completed_at}
+                        createdAt={queryExecution.created_at}
+                    />
                     {moment.utc(queryExecution.created_at, 'X').fromNow()}
-                </div>
+                </TimeContainer>
             </div>
         </div>
     );

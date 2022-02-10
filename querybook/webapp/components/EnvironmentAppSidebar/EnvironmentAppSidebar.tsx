@@ -18,7 +18,7 @@ import { useEvent } from 'hooks/useEvent';
 import { matchKeyMap, KeyMap } from 'lib/utils/keyboard';
 import './EnvironmentAppSidebar.scss';
 
-const SIDEBAR_WIDTH = 320;
+const SIDEBAR_WIDTH = 360;
 
 export const EnvironmentAppSidebar: React.FunctionComponent = () => {
     const [collapsed, setCollapsed] = React.useState(false);
