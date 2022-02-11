@@ -72,7 +72,17 @@
     }
 
     .query-context {
-        @include ellipsis(3);
+        @include ellipsis(2);
         word-break: break-all;
+        font-family: var(--family-monospace);
+    }
+}
+
+.ExecutionTime {
+    .Icon {
+        margin-right: 2px;
+
+        // Shifting it up to align with the text
+        margin-bottom: 1.6px;
     }
 }

@@ -1,10 +1,17 @@
 import moment from 'moment';
 
+/**
+ * Format a moment js duration into readable format
+ * Can show hours, minutes, seconds
+ * Example output: "1h 2m 5s", "2m 5s", "5s"
+ *
+ * @param duration moment.Duration
+ * @returns string
+ */
 export function formatDuration(duration: moment.Duration) {
-    // Format a moment js duration
-    const hours = Number(duration.hours()); // highest level
-    const minutes = duration.minutes();
     const seconds = duration.seconds();
+    const minutes = duration.minutes();
+    const hours = Number(duration.hours()); // highest level
 
     const durationString = [
         hours > 0 ? `${hours}h` : '',

@@ -32,6 +32,7 @@ export interface IQueryExecutionViewer {
 export interface IQueryExecution {
     id: number;
     created_at: number;
+    completed_at?: number;
     status: number;
     task_id: string;
 
