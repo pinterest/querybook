@@ -7,7 +7,7 @@
         font-weight: var(--bold-font);
 
         li {
-            padding: 8px 8px 4px;
+            padding: 8px 12px;
             box-sizing: border-box;
             border-bottom: solid 1px transparent;
             display: flex;
@@ -31,13 +31,15 @@
             }
 
             &.active {
+                border-radius: var(--border-radius-sm);
                 a {
-                    color: var(--color-accent-text);
+                    color: var(--color-accent-dark);
                 }
             }
 
             &:not(.active):hover {
                 cursor: pointer;
+                border-radius: var(--border-radius-sm);
                 a {
                     color: var(--text);
                 }
@@ -56,53 +58,32 @@
     }
 
     &.pills {
-        &:not(.light-pills) {
-            ul {
-                li {
-                    background-color: var(--pill);
-
-                    &.active {
-                        background-color: var(--bg-invert-select);
-                        a {
-                            color: var(--text-invert);
-                        }
-                    }
-
-                    &:not(.active):hover {
-                        background-color: var(--bg-hover);
-                    }
-                }
-            }
-        }
-        &.light-pills {
-            ul {
-                li {
-                    background-color: var(--bg-hover);
-
-                    &.active {
-                        background-color: var(--bg);
-                    }
-
-                    &:not(.active):hover {
-                        background-color: var(--bg-light);
-                    }
-                }
-            }
-        }
-
         ul {
-            border-radius: var(--border-radius);
+            border-radius: var(--border-radius-sm);
             li {
+                background-color: var(--bg-lightest);
                 padding: 4px 16px;
                 border-bottom: none;
 
+                &.active {
+                    border-radius: 0px;
+                    background-color: var(--bg-light);
+                    a {
+                        color: var(--color-accent-dark);
+                    }
+                }
+
+                &:not(.active):hover {
+                    background-color: var(--bg-hover);
+                }
+
                 &:first-child {
-                    border-top-left-radius: var(--border-radius);
-                    border-bottom-left-radius: var(--border-radius);
+                    border-top-left-radius: var(--border-radius-sm);
+                    border-bottom-left-radius: var(--border-radius-sm);
                 }
                 &:last-child {
-                    border-top-right-radius: var(--border-radius);
-                    border-bottom-right-radius: var(--border-radius);
+                    border-top-right-radius: var(--border-radius-sm);
+                    border-bottom-right-radius: var(--border-radius-sm);
                 }
             }
         }
@@ -110,12 +91,7 @@
 
     &.wide {
         ul {
-            width: 100%;
-            li {
-                padding-left: 0;
-                padding-right: 0;
-                flex: 1;
-            }
+            justify-content: space-evenly;
         }
     }
 
@@ -133,6 +109,31 @@
     &.left-align {
         ul {
             justify-content: left;
+        }
+    }
+
+    &.bg {
+        ul {
+            li {
+                &.active {
+                    background-color: var(--bg);
+                }
+                &:not(.active):hover {
+                    background-color: var(--bg-hover);
+                }
+            }
+        }
+    }
+    &.light {
+        ul {
+            li {
+                &.active {
+                    background-color: var(--bg-lightest);
+                }
+                &:not(.active):hover {
+                    background-color: var(--bg-hover);
+                }
+            }
         }
     }
 }

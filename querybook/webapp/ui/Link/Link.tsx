@@ -7,7 +7,7 @@ const StyledLink = styled('a')`
     ${({ naturalLink }) =>
         naturalLink &&
         `
-        color: var(--color-accent-text);
+        color: var(--color-accent-dark);
         &:hover {
             opacity: 0.9;
         }

@@ -24,9 +24,9 @@ const StyledQuerybookLogo = styled.span`
 
         background: -webkit-linear-gradient(
             45deg,
-            var(--color-accent-text),
+            var(--color-accent-dark),
             var(--color-accent),
-            var(--color-accent-bg)
+            var(--color-accent-light)
         );
         background-clip: text;
         -webkit-background-clip: text;

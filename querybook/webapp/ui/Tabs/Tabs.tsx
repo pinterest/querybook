@@ -26,6 +26,7 @@ export interface ITabsProps {
     wide?: boolean;
     size?: 'small' | 'large';
     align?: 'right' | 'left' | 'center';
+    color?: 'light' | 'bg';
 }
 
 export const Tabs: React.FunctionComponent<ITabsProps> = ({
@@ -38,6 +39,7 @@ export const Tabs: React.FunctionComponent<ITabsProps> = ({
     wide,
     size = null,
     align = 'left',
+    color = '',
 }) => {
     const tabClassName = clsx({
         Tabs: true,
@@ -46,6 +48,7 @@ export const Tabs: React.FunctionComponent<ITabsProps> = ({
         pills,
         wide,
         [size]: !!size,
+        [color]: color.length,
 
         'center-align': align === 'center',
         'right-align': align === 'right',

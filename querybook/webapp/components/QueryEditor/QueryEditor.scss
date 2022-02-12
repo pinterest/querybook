@@ -62,11 +62,11 @@
         }
 
         &.CodeMirror-hint-active {
-            color: var(--color-accent-text);
+            color: var(--color-accent-dark);
             background: none;
 
             b {
-                color: var(--color-accent-text);
+                color: var(--color-accent-dark);
             }
         }
 

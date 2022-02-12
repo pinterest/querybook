@@ -88,8 +88,10 @@ export const defaultReactSelectStyles: Partial<
         ...(data.color ? dot(data.color) : {}),
         ':active': {
             ...styles[':active'],
-            backgroundColor: !isDisabled ? 'var(--color-accent-bg)' : undefined,
-            color: !isDisabled ? 'var(--color-accent-text)' : undefined,
+            backgroundColor: !isDisabled
+                ? 'var(--color-accent-light)'
+                : undefined,
+            color: !isDisabled ? 'var(--color-accent-dark)' : undefined,
         },
     }),
     menu: (styles) => ({

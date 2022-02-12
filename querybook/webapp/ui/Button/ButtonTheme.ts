@@ -31,8 +31,8 @@ const buttonThemeToProps: Record<ButtonColorType, IButtonColorConfig> = {
         secondaryHover: 'var(--color-false)',
     },
     accent: {
-        primary: 'var(--color-accent-text)',
-        secondary: 'var(--color-accent-bg)',
+        primary: 'var(--color-accent-dark)',
+        secondary: 'var(--color-accent-light)',
     },
     light: {
         primary: 'var(--text-light)',
