@@ -20,7 +20,7 @@ exports[`matches test renderer snapshot serializes the styles 1`] = `
     className="Menu__MenuItem-sc-13z76nv-1 MenuItem"
   >
     <div
-      className="Menu__MenuItemPing-sc-13z76nv-4 COjBt MenuItemPing"
+      className="Menu__MenuItemPing-sc-13z76nv-4 gcRlsS MenuItemPing"
     />
   </span>
   <div
