@@ -112,19 +112,7 @@
         }
     }
 
-    &.bg {
-        ul {
-            li {
-                &.active {
-                    background-color: var(--bg);
-                }
-                &:not(.active):hover {
-                    background-color: var(--bg-hover);
-                }
-            }
-        }
-    }
-    &.light {
+    &.selectColor {
         ul {
             li {
                 &.active {
