@@ -1,7 +1,7 @@
 .FormField {
     position: relative;
     display: flex;
-    align-items: center;
+    align-items: start;
     margin: 4px;
     padding: 4px;
 
@@ -27,6 +27,7 @@
         // min-width: 120px;
         cursor: default;
         white-space: nowrap;
+        margin-top: 6px;
     }
 
     .FormFieldInputSectionRowGroup {
@@ -78,7 +79,7 @@
             margin-bottom: 8px;
         }
         a {
-            color: var(--color-accent-text);
+            color: var(--color-accent-dark);
             font-weight: var(--bold-font);
         }
     }
