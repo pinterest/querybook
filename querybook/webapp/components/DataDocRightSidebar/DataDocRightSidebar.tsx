@@ -105,6 +105,7 @@ export const DataDocRightSidebar: React.FunctionComponent<IProps> = ({
                     className={
                         'connected-button ' + (isConnected ? 'hide-button' : '')
                     }
+                    color="accent"
                 />
             </div>
             <div className="DataDocRightSidebar-button-section-bottom flex-column">
