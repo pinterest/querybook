@@ -3,7 +3,7 @@ import clsx from 'clsx';
 
 import { TooltipDirection } from 'const/tooltip';
 
-import { Icon } from 'ui/Icon/Icon';
+import { TButtonColors, Icon } from 'ui/Icon/Icon';
 
 import './IconButton.scss';
 
@@ -21,6 +21,7 @@ export interface IIconButtonProps {
     active?: boolean;
     noPadding?: boolean;
     fill?: boolean;
+    color?: TButtonColors;
     size?: string | number;
     ping?: boolean | string;
     title?: string;
@@ -46,6 +47,7 @@ export const IconButton = React.forwardRef<HTMLAnchorElement, IIconButtonProps>(
             fill,
             ping,
             title,
+            color,
         },
         ref
     ) => {
@@ -75,7 +77,9 @@ export const IconButton = React.forwardRef<HTMLAnchorElement, IIconButtonProps>(
         ) : (
             <div className="ping-message">{ping}</div>
         );
-        const iconDOM = <Icon name={icon} size={size} fill={fill} />;
+        const iconDOM = (
+            <Icon name={icon} size={size} fill={fill} color={color} />
+        );
         const contentDOM = title ? (
             <div className="flex-column">
                 {iconDOM}

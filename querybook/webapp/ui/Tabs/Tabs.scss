@@ -39,9 +39,11 @@
 
             &:not(.active):hover {
                 cursor: pointer;
-                border-radius: var(--border-radius-sm);
                 a {
                     color: var(--text);
+                }
+                &:not(.pills) {
+                    border-radius: var(--border-radius-sm);
                 }
             }
         }
