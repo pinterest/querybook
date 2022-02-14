@@ -1,16 +1,26 @@
 .Message {
-    --message-color: var(--bg-dark);
+    --message-color: var(--text-dark);
+    --message-bg: var(--bg-light);
+    --message-bg-light: var(--bg-lightest);
     &.error {
-        --message-color: var(--color-false);
+        --message-color: var(--color-false-dark);
+        --message-bg: var(--color-false-lightest);
+        --message-bg-light: var(--color-false-lightest-0);
     }
     &.warning {
-        --message-color: var(--color-yellow);
+        --message-color: var(--color-warning-dark);
+        --message-bg: var(--color-warning-lightest);
+        --message-bg-light: var(--color-warning-lightest-0);
     }
     &.success {
-        --message-color: var(--color-true);
+        --message-color: var(--color-true-dark);
+        --message-bg: var(--color-true-lightest);
+        --message-bg-light: var(--color-true-lightest-0);
     }
     &.tip {
-        --message-color: var(--color-accent);
+        --message-color: var(--color-accent-dark);
+        --message-bg: var(--color-accent-lightest);
+        --message-bg-light: var(--color-accent-lightest-0);
     }
 
     --message-header-text-size: var(--text-size);
@@ -30,28 +40,24 @@
         text-align: center;
     }
 
-    color: var(--text-light);
+    color: var(--message-color);
     margin-bottom: 8px;
-    border-radius: var(--border-radius);
-    background-color: var(--bg-light);
+    border-radius: var(--border-radius-sm);
+    background-color: var(--message-bg-light);
     white-space: pre-wrap;
     overflow: hidden;
 
     .Message-header {
         font-size: var(--message-header-text-size);
-        background-color: var(--message-color);
-        color: var(--bg);
-        padding: 8px 8px 4px;
+        background-color: var(--message-bg);
+        padding: 6px 12px;
         font-weight: var(--bold-font);
     }
 
     .Message-body {
-        padding: 8px;
+        padding: 4px 12px 8px;
         font-size: var(--message-text-size);
-    }
-
-    &.Message-simple {
-        border-left: solid 8px var(--message-color);
+        font-weight: normal;
     }
 
     &.Message-has-icon {

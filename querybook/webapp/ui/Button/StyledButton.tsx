@@ -88,14 +88,14 @@ export const StyledButton = styled.span<StyledButtonProps>`
         position: absolute;
         cursor: default;
         border-radius: 100px;
-        background-color: var(--color-accent-bg);
+        background-color: var(--color-accent-light);
 
         right: -8px;
         top: -8px;
 
         padding: 1px 6px 0px 6px;
 
-        color: var(--color-accent-text);
+        color: var(--color-accent-dark);
         font-size: var(--xsmall-text-size);
         font-weight: var(--bold-font);
     }

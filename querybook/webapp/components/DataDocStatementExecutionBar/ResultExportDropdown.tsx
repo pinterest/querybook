@@ -223,7 +223,7 @@ export const ResultExportDropdown: React.FunctionComponent<IProps> = ({
                         ) ? (
                             'Full Result'
                         ) : (
-                            <span style={{ color: 'var(--color-accent-text)' }}>
+                            <span style={{ color: 'var(--color-accent-dark)' }}>
                                 Preview
                             </span>
                         )}{' '}

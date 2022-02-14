@@ -5,7 +5,7 @@
         background-color: transparent;
     }
     25% {
-        background-color: var(--color-accent-bg);
+        background-color: var(--color-accent-lightest);
     }
     100% {
         background-color: transparent;
@@ -111,7 +111,7 @@
             .data-doc-cell-container-pair {
                 &.highlight-cell {
                     animation-name: highlight-fade;
-                    animation-duration: 5s;
+                    animation-duration: 2s;
                 }
 
                 position: relative;

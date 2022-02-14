@@ -31,7 +31,7 @@ export const MenuItemPing = styled.div.attrs({
 })`
     pointer-events: none;
     border-radius: 100px;
-    background-color: var(--color-accent-bg);
+    background-color: var(--color-accent-light);
     width: 8px;
     height: 8px;
     margin-left: 8px;

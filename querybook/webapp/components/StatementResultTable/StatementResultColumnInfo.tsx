@@ -19,16 +19,6 @@ const StyledColumnInfo = styled.div.attrs({
     width: 160px;
     font-size: var(--xsmall-text-size);
 
-    .PopoverTabs.Tabs.pills {
-        ul li {
-            &:first-child,
-            &:last-child {
-                border-bottom-left-radius: 0;
-                border-bottom-right-radius: 0;
-            }
-        }
-    }
-
     .preview-warning {
         word-break: break-word;
         font-weight: var(--bold-font);
@@ -109,8 +99,7 @@ export const StatementResultColumnInfo: React.FC<IColumnInfoProps> = ({
     return (
         <StyledColumnInfo>
             <Tabs
-                className="PopoverTabs light-pills"
-                wide
+                className="PopoverTabs"
                 items={ColumnInfoTabs.map((tab) => ({
                     icon: ColumnInfoTabToIcons[tab],
                     tooltip: tab,
@@ -119,6 +108,7 @@ export const StatementResultColumnInfo: React.FC<IColumnInfoProps> = ({
                 onSelect={(k: ColumnInfoTabType) => setTab(k)}
                 selectedTabKey={tab}
                 pills
+                align="center"
             />
             <div className="column-content p8">{contentDOM}</div>
         </StyledColumnInfo>

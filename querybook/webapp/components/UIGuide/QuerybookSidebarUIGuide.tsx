@@ -231,14 +231,7 @@ export const QuerybookSidebarUIGuide: React.FC = () => {
 
     return (
         <>
-            <Button
-                className="Tour-button"
-                onClick={startTour}
-                color="accent"
-                theme="fill"
-            >
-                UI Tutorial
-            </Button>
+            <Button onClick={startTour}>UI Tutorial</Button>
             <Tour
                 isOpen={showTour}
                 onRequestClose={() => setShowTour(false)}
