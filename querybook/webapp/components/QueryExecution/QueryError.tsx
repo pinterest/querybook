@@ -178,12 +178,17 @@ export const QueryError: React.FunctionComponent<IProps> = ({
                 errorMsg={errorMsg}
                 language={queryEngine.language}
             />
-            <Message type="error" size="small">
-                <div className="QueryError-top">
+            <Message
+                type="error"
+                size="small"
+                title={
                     <div className="QueryError-title flex-row">
-                        <Icon name="alert-circle" size={20} />
+                        <Icon name="alert-circle" size={20} className="mr8" />
                         {errorTitle}
                     </div>
+                }
+            >
+                <div className="QueryError-top">
                     <div className="QueryError-tabs">{showRawTabs}</div>
                 </div>
                 <div className="QueryError-content">{errorContentDOM}</div>
