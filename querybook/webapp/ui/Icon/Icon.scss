@@ -10,6 +10,19 @@
     svg.feather-loader {
         animation: loading 3s linear forwards infinite;
     }
+
+    &.accent {
+        color: var(--color-accent-dark);
+    }
+    &.true {
+        color: var(--color-true-dark);
+    }
+    &.false {
+        color: var(--color-false-dark);
+    }
+    &.warning {
+        color: var(--color-warning-dark);
+    }
 }
 
 @keyframes loading {

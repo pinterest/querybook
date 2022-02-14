@@ -10,10 +10,20 @@ export interface IIconProps {
     name: string;
     options?: FeatherAttributes;
     fill?: boolean;
+    color?: TButtonColors;
 }
 
+export type TButtonColors = 'accent' | 'true' | 'false' | 'warning';
+
 export const Icon: React.FunctionComponent<IIconProps> = React.memo(
-    ({ name, className = '', size, options = {}, fill = false }) => {
+    ({
+        name,
+        className = '',
+        size,
+        options = {},
+        fill = false,
+        color = '',
+    }) => {
         if (!(name in feather.icons)) {
             return null;
         }
@@ -26,7 +36,7 @@ export const Icon: React.FunctionComponent<IIconProps> = React.memo(
 
         return (
             <span
-                className={`${className} Icon ${fill ? 'fill' : ''}`}
+                className={`${className} Icon ${fill ? 'fill' : ''} ${color}`}
                 dangerouslySetInnerHTML={{ __html: rawSvg }}
             />
         );
