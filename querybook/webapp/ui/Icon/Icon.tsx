@@ -10,10 +10,10 @@ export interface IIconProps {
     name: string;
     options?: FeatherAttributes;
     fill?: boolean;
-    color?: buttonColors;
+    color?: TButtonColors;
 }
 
-export type buttonColors = 'accent' | 'true' | 'false' | 'warning';
+export type TButtonColors = 'accent' | 'true' | 'false' | 'warning';
 
 export const Icon: React.FunctionComponent<IIconProps> = React.memo(
     ({

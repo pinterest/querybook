@@ -3,7 +3,7 @@ import clsx from 'clsx';
 
 import { TooltipDirection } from 'const/tooltip';
 
-import { buttonColors, Icon } from 'ui/Icon/Icon';
+import { TButtonColors, Icon } from 'ui/Icon/Icon';
 
 import './IconButton.scss';
 
@@ -21,7 +21,7 @@ export interface IIconButtonProps {
     active?: boolean;
     noPadding?: boolean;
     fill?: boolean;
-    color?: buttonColors;
+    color?: TButtonColors;
     size?: string | number;
     ping?: boolean | string;
     title?: string;
