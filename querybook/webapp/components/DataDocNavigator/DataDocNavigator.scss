@@ -39,10 +39,10 @@
     }
 
     .nav-favorite-dragged-over {
-        background-color: var(--color-accent-bg-hover);
+        background-color: var(--color-accent-lightest);
 
         .DataDocNavigatorSection .navigator-header {
-            background-color: var(--color-accent-bg-hover);
+            background-color: var(--color-accent-lightest);
         }
     }
 }

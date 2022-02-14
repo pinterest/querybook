@@ -9,13 +9,13 @@ import { navigateWithinEnv } from 'lib/utils/query-string';
 
 import { UserBadge } from 'components/UserBadge/UserBadge';
 import { TokenCreation } from 'components/Token/TokenCreation';
-import { UserAvatar } from 'components/UserBadge/UserAvatar';
 
 import { Link } from 'ui/Link/Link';
 import { MenuInfoItem, Menu, MenuDivider, MenuItem } from 'ui/Menu/Menu';
 import { Modal } from 'ui/Modal/Modal';
 import { Popover, PopoverLayout } from 'ui/Popover/Popover';
 import { ToggleSwitch } from 'ui/ToggleSwitch/ToggleSwitch';
+import { Icon } from 'ui/Icon/Icon';
 
 import './UserMenu.scss';
 
@@ -128,8 +128,7 @@ export const UserMenu: React.FC<IUserMenuProps> = ({
                 aria-label={'User Settings'}
                 data-balloon-pos={tooltipPos}
             >
-                <UserAvatar uid={userInfo.uid} />
-
+                <Icon name="settings" />
                 <span className="user-menu-title">Settings</span>
             </span>
             {tokenCreationModalDOM}

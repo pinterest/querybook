@@ -28,7 +28,9 @@
         height: 36px;
 
         &.selected {
-            background-color: var(--bg-select);
+            font-weight: var(--bold-font);
+            color: var(--color-accent-dark);
+            background-color: var(--color-accent-lightest);
         }
 
         &.disabled {

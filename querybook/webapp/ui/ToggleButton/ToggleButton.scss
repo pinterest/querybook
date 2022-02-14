@@ -1,7 +1,7 @@
 .ToggleButton.Button {
     &.checked {
-        background-color: var(--color-accent-bg);
-        border-color: var(--color-accent-text);
-        color: var(--color-accent-text);
+        background-color: var(--color-accent-light);
+        border-color: var(--color-accent-dark);
+        color: var(--color-accent-dark);
     }
 }
