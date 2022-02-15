@@ -77,7 +77,10 @@ export const TableSelect: React.FunctionComponent<ITableSelectProps> = ({
                             label: queryMetastoreById[metastoreId].name,
                             value: queryMetastoreById[metastoreId].id,
                         }}
-                        onChange={({ value }) => setMetastoreId(value)}
+                        onChange={({ value }) => {
+                            setMetastoreId(value);
+                            onTableNamesChange([]);
+                        }}
                         options={queryMetastores.map((metastore) => ({
                             label: metastore.name,
                             value: metastore.id,

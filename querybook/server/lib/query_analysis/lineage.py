@@ -1,4 +1,5 @@
 from typing import List
+from lib.logger import get_logger
 import sqlparse
 
 
@@ -11,6 +12,8 @@ initial_statement_keywords = set(["DESCRIBE", "DESC", "SHOW", "MSCK"])
 continue_table_search_key_word = set(
     ["IF", "NOT", "EXISTS", "FORMATTED", "REPAIR", "PARTITIONS", "EXTENDED",]
 )
+
+LOG = get_logger(__file__)
 
 
 def process_query(query, language=None):
@@ -103,7 +106,10 @@ def get_statement_placeholders(statement):
             placeholders.append(token.get_real_name())
         elif token and isinstance(token, sqlparse.sql.IdentifierList):
             for identifier in token.get_identifiers():
-                placeholders.append(identifier.get_real_name())
+                try:
+                    placeholders.append(identifier.get_real_name())
+                except Exception as e:
+                    LOG.error(e)
         elif hasattr(token, "ttype") and token.ttype == sqlparse.tokens.Keyword.DML:
             break
         index, token = statement.token_next(index)
@@ -216,9 +222,7 @@ def compute_lineage(table_list, from_list):
 
 def tokenize_by_statement(query: str):
     statements = sqlparse.parse(
-        sqlparse.format(
-            query.strip(), strip_comments=True, keyword_case="upper", reindent=True
-        )
+        sqlparse.format(query.strip(), strip_comments=True, keyword_case="upper")
     )
 
     # Filter out empty statements

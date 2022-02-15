@@ -31,8 +31,7 @@ query_executions:
                 id:
                     type: long
                 query_type:
-                    type: constant_keyword
-                    value: 'query_execution'
+                    type: keyword
                 title:
                     type: text
                     analyzer: snowball
@@ -89,8 +88,7 @@ query_cells:
                 id: # data_cell id
                     type: long
                 query_type:
-                    type: constant_keyword
-                    value: 'query_cell'
+                    type: keyword
                 title:
                     type: text
                     analyzer: snowball

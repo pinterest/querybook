@@ -542,12 +542,16 @@ def get_successful_adhoc_query_executions(offset=0, limit=100, session=None):
 
 
 @with_session
-def get_successful_query_executions_by_data_cell_id(data_cell_id, session=None):
+def get_successful_query_executions_by_data_cell_id(
+    data_cell_id, offset=0, limit=100, session=None
+):
     return (
         session.query(QueryExecution)
         .filter(QueryExecution.status == QueryExecutionStatus.DONE)
         .join(DataCellQueryExecution)
         .filter(DataCellQueryExecution.data_cell_id == data_cell_id)
+        .offset(offset)
+        .limit(limit)
         .all()
     )
 

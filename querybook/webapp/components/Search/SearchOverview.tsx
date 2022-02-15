@@ -1,7 +1,7 @@
 import React from 'react';
 import moment from 'moment';
 import { useDispatch } from 'react-redux';
-import ReactSelect from 'react-select';
+import CreatableSelect from 'react-select/creatable';
 import { isEmpty } from 'lodash';
 
 import { IDataDocPreview, IQueryPreview, ITablePreview } from 'const/search';
@@ -418,7 +418,7 @@ export const SearchOverview: React.FunctionComponent = () => {
 
     const statementTypeFilterDOM = (
         <div className="filter-statement-type">
-            <ReactSelect
+            <CreatableSelect
                 styles={defaultReactSelectStyles}
                 value={
                     searchFilters['statement_type']
@@ -435,7 +435,7 @@ export const SearchOverview: React.FunctionComponent = () => {
                             : null;
                     updateSearchFilter('statement_type', statementTypes);
                 }}
-                options={['SELECT', 'INSERT', 'CREATE', 'DELETE'].map(
+                options={['ALTER', 'CREATE', 'DROP', 'INSERT', 'SELECT'].map(
                     (statement) => ({
                         label: statement,
                         value: statement,

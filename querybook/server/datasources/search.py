@@ -416,16 +416,17 @@ def search_query(
 def search_tables(
     metastore_id,
     keywords,
-    filters=[],
-    fields=[],
+    filters=None,
+    fields=None,
     sort_key=None,
     sort_order=None,
     limit=1000,
     offset=0,
     concise=False,
 ):
+    filters = filters or []
+    fields = fields or []
     verify_metastore_permission(metastore_id)
-    filters.append(["metastore_id", metastore_id])
 
     query = _construct_tables_query(
         keywords=keywords,

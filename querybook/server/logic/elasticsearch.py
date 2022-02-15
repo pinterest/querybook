@@ -23,7 +23,6 @@ from logic.datadoc import (
     get_all_data_docs,
     get_all_query_cells,
     get_data_cell_by_query_execution_id,
-    get_data_doc_by_data_cell_id,
     get_data_doc_by_id,
     get_data_doc_editors_by_doc_id,
     get_unarchived_query_cell_by_id,
@@ -80,7 +79,8 @@ def get_hosted_es():
 """
 
 
-def _get_query_cell_executions_iter(batch_size=5000, session=None):
+@with_session
+def _get_query_cell_executions_iter(batch_size=1000, session=None):
     offset = 0
     while True:
         query_cells = get_all_query_cells(
@@ -88,15 +88,23 @@ def _get_query_cell_executions_iter(batch_size=5000, session=None):
         )
         query_executions_count = 0
         for query_cell in query_cells:
-            query_cell_executions = get_successful_query_executions_by_data_cell_id(
-                query_cell.id, session=session
-            )
-            for query_execution in query_cell_executions:
-                expand_query_execution = query_execution_to_es(
-                    query_execution, data_cell=query_cell, session=session
+            query_cell_executions_offset = 0
+            while True:
+                query_cell_executions = get_successful_query_executions_by_data_cell_id(
+                    query_cell.id,
+                    limit=batch_size,
+                    offset=query_cell_executions_offset,
+                    session=session,
                 )
-                yield expand_query_execution
-            query_executions_count += len(query_cell_executions)
+                for query_execution in query_cell_executions:
+                    expand_query_execution = query_execution_to_es(
+                        query_execution, data_cell=query_cell, session=session,
+                    )
+                    yield expand_query_execution
+                query_executions_count += len(query_cell_executions)
+                if len(query_cell_executions) < batch_size:
+                    break
+                query_cell_executions_offset += batch_size
         LOG.info(
             "\n--Query cell count: {}, query cell executions count: {}, offset: {}".format(
                 len(query_cells), query_executions_count, offset
@@ -107,7 +115,8 @@ def _get_query_cell_executions_iter(batch_size=5000, session=None):
         offset += batch_size
 
 
-def _get_adhoc_query_executions_iter(batch_size=5000, session=None):
+@with_session
+def _get_adhoc_query_executions_iter(batch_size=1000, session=None):
     offset = 0
     while True:
         query_executions = get_successful_adhoc_query_executions(
@@ -131,7 +140,7 @@ def _get_adhoc_query_executions_iter(batch_size=5000, session=None):
 
 
 @with_session
-def get_query_executions_iter(batch_size=5000, session=None):
+def get_query_executions_iter(batch_size=1000, session=None):
     yield from _get_query_cell_executions_iter(batch_size=batch_size, session=session)
     yield from _get_adhoc_query_executions_iter(batch_size=batch_size, session=session)
 
@@ -221,7 +230,7 @@ def update_query_execution_by_id(query_execution_id, session=None):
 
 
 @with_session
-def get_query_cells_iter(batch_size=5000, session=None):
+def get_query_cells_iter(batch_size=1000, session=None):
     offset = 0
 
     while True:
@@ -253,7 +262,7 @@ def query_cell_to_es(query_cell, session=None):
     table_names, _ = process_query(query, language=(engine and engine.language))
     table_names = list(chain.from_iterable(table_names))
 
-    datadoc = get_data_doc_by_data_cell_id(query_cell_id, session=session)
+    datadoc = query_cell.doc
 
     expand_query = {
         "id": query_cell_id,

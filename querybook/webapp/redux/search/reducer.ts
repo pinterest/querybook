@@ -19,7 +19,7 @@ const initialPaginationState: ISearchPaginationState = {
 const initialSearchParamState = {
     searchFilters: {},
     searchFields: {},
-    searchOrder: SearchOrder.Relevance,
+    searchOrder: SearchOrder.Recency,
     searchString: '',
     searchType: SearchType.Query,
 };
@@ -150,6 +150,9 @@ export default function search(
                         id,
                     });
                 }
+                // Ensure that current user's queries are initially selected
+                // by default for query search
+                draft.searchFilters['author_uid'] = id;
                 return;
             }
         }
