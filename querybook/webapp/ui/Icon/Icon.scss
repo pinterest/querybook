@@ -23,6 +23,9 @@
     &.warning {
         color: var(--color-warning-dark);
     }
+    &.light {
+        color: var(--icon);
+    }
 }
 
 @keyframes loading {

@@ -20,6 +20,9 @@ interface IProps {
 
     changeDataDocMeta: (docId: number, meta: Record<string, any>) => any;
     onClone: () => any;
+
+    onCollapse: () => any;
+    defaultCollapse: boolean;
 }
 
 export const DataDocRightSidebar: React.FunctionComponent<IProps> = ({
@@ -31,6 +34,9 @@ export const DataDocRightSidebar: React.FunctionComponent<IProps> = ({
     isConnected,
 
     dataDoc,
+
+    onCollapse,
+    defaultCollapse,
 }) => {
     const numAnnouncements = useAnnouncements().length;
 
@@ -106,6 +112,16 @@ export const DataDocRightSidebar: React.FunctionComponent<IProps> = ({
                         'connected-button ' + (isConnected ? 'hide-button' : '')
                     }
                     color="accent"
+                />
+                <IconButton
+                    icon={defaultCollapse ? 'maximize-2' : 'minimize-2'}
+                    tooltip={
+                        defaultCollapse
+                            ? 'Uncollapse query cells'
+                            : 'Collapse query cells'
+                    }
+                    tooltipPos="left"
+                    onClick={onCollapse}
                 />
             </div>
             <div className="DataDocRightSidebar-button-section-bottom flex-column">

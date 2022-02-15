@@ -1,8 +1,16 @@
 .DataDocCell {
     border-radius: var(--border-radius);
-    margin: 48px 16px;
+    margin: 36px 12px;
     &.collapsed {
         min-height: 0px;
         cursor: nesw-resize;
+    }
+
+    .empty-message {
+        color: var(--text-lightest);
+        font-weight: var(--bold-font);
+        display: flex;
+        justify-content: center;
+        font-size: var(--xlarge-text-size);
     }
 }

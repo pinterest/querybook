@@ -17,7 +17,6 @@ import { DataDocChartCellTable } from './DataDocChartCellTable';
 import { DataDocChartComposer } from './DataDocChartComposer';
 import { InfoButton } from 'ui/Button/InfoButton';
 import { Modal } from 'ui/Modal/Modal';
-import { Title } from 'ui/Title/Title';
 
 interface IProps {
     context: string;
@@ -186,13 +185,7 @@ export const DataDocChartCell = React.memo<IProps>(
                 transformedChartData == null ||
                 transformedChartData.length === 0
             ) {
-                return (
-                    <div>
-                        <Title subtitle size={1}>
-                            No Data
-                        </Title>
-                    </div>
-                );
+                return <div className="empty-message">No Data for Chart</div>;
             }
 
             let visualizationDOM: React.ReactChild;
@@ -235,7 +228,7 @@ export const DataDocChartCell = React.memo<IProps>(
 
         return (
             <div className={'DataDocChartCell'}>
-                <div className="horizontal-space-between">
+                <div className="chart-cell-controls horizontal-space-between">
                     <div>{renderPickerDOM()}</div>
                     <div className="flex-row">
                         <TextButton

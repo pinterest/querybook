@@ -494,6 +494,7 @@ class DataDocQueryCellComponent extends React.PureComponent<IProps, IState> {
             <Icon
                 className="additional-dropdown-button flex-center"
                 name="more-vertical"
+                color="light"
             />
         );
     }
@@ -570,15 +571,25 @@ class DataDocQueryCellComponent extends React.PureComponent<IProps, IState> {
         const queryCollapsed = this.queryCollapsed;
 
         const fullScreenButton = (
-            <div className="fullscreen-button-wrapper">
+            <div className="fullscreen-button-wrapper mt4">
                 <Button
-                    icon="maximize"
+                    icon={isFullScreen ? 'minimize-2' : 'maximize-2'}
                     onClick={toggleFullScreen}
                     theme="text"
                     pushable
                 />
             </div>
         );
+        const openSnippetDOM =
+            query.trim().length === 0 && isEditable ? (
+                <div className="add-snippet-wrapper">
+                    <TextButton
+                        title="Add Template"
+                        onClick={this.toggleInsertQuerySnippetModal}
+                    />
+                </div>
+            ) : null;
+
         const editorDOM = !queryCollapsed && (
             <div className="editor">
                 {fullScreenButton}
@@ -598,18 +609,9 @@ class DataDocQueryCellComponent extends React.PureComponent<IProps, IState> {
                     height={isFullScreen ? 'full' : 'auto'}
                     allowFullScreen={false}
                 />
+                {openSnippetDOM}
             </div>
         );
-
-        const openSnippetDOM =
-            query.trim().length === 0 && isEditable ? (
-                <div className="add-snippet-wrapper flex-center">
-                    <TextButton
-                        title="Add Template"
-                        onClick={this.toggleInsertQuerySnippetModal}
-                    />
-                </div>
-            ) : null;
 
         const insertQuerySnippetModalDOM = showQuerySnippetModal ? (
             <Modal
@@ -640,7 +642,6 @@ class DataDocQueryCellComponent extends React.PureComponent<IProps, IState> {
         return (
             <>
                 {editorDOM}
-                {openSnippetDOM}
                 {insertQuerySnippetModalDOM}
                 {templatedQueryViewModalDOM}
             </>
@@ -721,9 +722,9 @@ class DataDocQueryCellComponent extends React.PureComponent<IProps, IState> {
 
         return showCollapsed ? (
             <div className={classes}>
-                <div className="query-title flex-row">
+                <div className="collapsed-query flex-row">
+                    <Icon name="terminal" className="mt4 mr8" />
                     <span>{this.dataCellTitle}</span>
-                    <span>{'{...}'}</span>
                 </div>
             </div>
         ) : isFullScreen ? (

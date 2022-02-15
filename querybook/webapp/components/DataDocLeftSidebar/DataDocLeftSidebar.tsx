@@ -5,19 +5,18 @@ import { useSelector, useDispatch } from 'react-redux';
 import { setSidebarTableId } from 'redux/querybookUI/action';
 import { IStoreState } from 'redux/store/types';
 import { IDataCell } from 'const/datadoc';
-import { Button } from 'ui/Button/Button';
-import { Level } from 'ui/Level/Level';
-import { IconButton } from 'ui/Button/IconButton';
-import { Title } from 'ui/Title/Title';
-import './DataDocLeftSidebar.scss';
+
 import { DataDocContents } from './DataDocContents';
 import { DataTableViewMini } from 'components/DataTableViewMini/DataTableViewMini';
 
+import { Button } from 'ui/Button/Button';
+import { Level } from 'ui/Level/Level';
+import { IconButton } from 'ui/Button/IconButton';
+
+import './DataDocLeftSidebar.scss';
 interface IProps {
     docId: number;
     cells: IDataCell[];
-    onCollapse: () => any;
-    defaultCollapse: boolean;
 }
 
 type LeftSidebarContentState = 'contents' | 'table' | 'default';
@@ -25,8 +24,6 @@ type LeftSidebarContentState = 'contents' | 'table' | 'default';
 export const DataDocLeftSidebar: React.FunctionComponent<IProps> = ({
     docId,
     cells,
-    defaultCollapse,
-    onCollapse,
 }) => {
     const dispatch = useDispatch();
     const sidebarTableId = useSelector(
@@ -64,7 +61,7 @@ export const DataDocLeftSidebar: React.FunctionComponent<IProps> = ({
                         icon="arrow-left"
                         onClick={() => setContentState('default')}
                     />
-                    <Title size={6}>contents</Title>
+                    <div>contents</div>
                 </Level>
                 <DataDocContents cells={cells} docId={docId} />
             </div>
@@ -89,17 +86,6 @@ export const DataDocLeftSidebar: React.FunctionComponent<IProps> = ({
                     aria-label="Show doc contents"
                     data-balloon-pos="right"
                     color="light"
-                />
-                <br />
-                <IconButton
-                    icon={defaultCollapse ? 'maximize' : 'minimize'}
-                    tooltip={
-                        defaultCollapse
-                            ? 'Uncollapse all cells'
-                            : 'Collapse all cells'
-                    }
-                    tooltipPos="right"
-                    onClick={onCollapse}
                 />
             </div>
         );
