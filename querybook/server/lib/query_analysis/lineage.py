@@ -222,7 +222,9 @@ def compute_lineage(table_list, from_list):
 
 def tokenize_by_statement(query: str):
     statements = sqlparse.parse(
-        sqlparse.format(query.strip(), strip_comments=True, keyword_case="upper")
+        sqlparse.format(
+            query.strip(), strip_comments=True, keyword_case="upper", reindent=True
+        )
     )
 
     # Filter out empty statements
