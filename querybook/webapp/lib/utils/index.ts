@@ -293,3 +293,10 @@ export function getChangedObject(
 
     return ret;
 }
+
+export function getAbbrEnvName(name: string = '') {
+    const firstWordMatch = name.match(/([a-zA-Z0-9]+)/);
+    return firstWordMatch
+        ? firstWordMatch[1].slice(0, 10).toLocaleUpperCase()
+        : '';
+}

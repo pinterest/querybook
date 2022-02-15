@@ -21,17 +21,20 @@ interface IButtonColorConfig {
 
 const buttonThemeToProps: Record<ButtonColorType, IButtonColorConfig> = {
     confirm: {
-        primary: 'var(--color-true-dark)',
+        primary: 'var(--color-true)',
+        primaryHover: 'var(--color-true-dark)',
         secondary: 'var(--color-true-lightest-0)',
         secondaryHover: 'var(--color-true-lightest)',
     },
     cancel: {
-        primary: 'var(--color-false-dark)',
+        primary: 'var(--color-false)',
+        primaryHover: 'var(--color-false-dark)',
         secondary: 'var(--color-false-lightest-0)',
         secondaryHover: 'var(--color-false-lightest)',
     },
     accent: {
-        primary: 'var(--color-accent-dark)',
+        primary: 'var(--color-accent)',
+        primaryHover: 'var(--color-accent-dark)',
         secondary: 'var(--color-accent-lightest-0)',
         secondaryHover: 'var(--color-accent-lightest)',
     },

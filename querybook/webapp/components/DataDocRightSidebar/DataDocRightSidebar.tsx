@@ -100,6 +100,16 @@ export const DataDocRightSidebar: React.FunctionComponent<IProps> = ({
                     }}
                 />
                 <IconButton
+                    icon={defaultCollapse ? 'maximize-2' : 'minimize-2'}
+                    tooltip={
+                        defaultCollapse
+                            ? 'Uncollapse query cells'
+                            : 'Collapse query cells'
+                    }
+                    tooltipPos="left"
+                    onClick={onCollapse}
+                />
+                <IconButton
                     icon="loader"
                     className={isSaving ? '' : 'hide-button'}
                     title="Saving"
@@ -112,16 +122,6 @@ export const DataDocRightSidebar: React.FunctionComponent<IProps> = ({
                         'connected-button ' + (isConnected ? 'hide-button' : '')
                     }
                     color="accent"
-                />
-                <IconButton
-                    icon={defaultCollapse ? 'maximize-2' : 'minimize-2'}
-                    tooltip={
-                        defaultCollapse
-                            ? 'Uncollapse query cells'
-                            : 'Collapse query cells'
-                    }
-                    tooltipPos="left"
-                    onClick={onCollapse}
                 />
             </div>
             <div className="DataDocRightSidebar-button-section-bottom flex-column">

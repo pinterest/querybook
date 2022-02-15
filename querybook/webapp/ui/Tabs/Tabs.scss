@@ -42,7 +42,14 @@
                 a {
                     color: var(--text);
                 }
-                &:not(&.pills) {
+            }
+        }
+    }
+
+    &:not(.pills) {
+        ul {
+            li {
+                &:not(.active):hover {
                     border-radius: var(--border-radius-sm);
                 }
             }

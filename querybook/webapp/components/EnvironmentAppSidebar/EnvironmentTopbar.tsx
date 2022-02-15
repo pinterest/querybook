@@ -7,14 +7,16 @@ import {
     userEnvironmentNamesSelector,
     orderedEnvironmentsSelector,
 } from 'redux/environment/selector';
-import { titleize } from 'lib/utils';
+import { getAbbrEnvName, titleize } from 'lib/utils';
 
-import './EnvironmentTopbar.scss';
-import { Level } from 'ui/Level/Level';
 import { EnvironmentDropdownButton } from './EnvironmentDropdownButton';
+
+import { Level } from 'ui/Level/Level';
 import { Link } from 'ui/Link/Link';
 
-const NUMBER_OF_ICONS_TO_SHOW = 5;
+import './EnvironmentTopbar.scss';
+
+const NUMBER_OF_ICONS_TO_SHOW = 1;
 
 export const EnvironmentTopbar: React.FC = React.memo(() => {
     const environments = useSelector(orderedEnvironmentsSelector);
@@ -32,10 +34,7 @@ export const EnvironmentTopbar: React.FC = React.memo(() => {
                 : false;
             const accessible = userEnvironmentNames.has(environment.name);
 
-            const firstWordMatch = environment.name.match(/([a-zA-Z0-9]+)/);
-            const envName = firstWordMatch
-                ? firstWordMatch[1].slice(0, 10).toLocaleUpperCase()
-                : '';
+            const envName = getAbbrEnvName(environment.name);
 
             return (
                 <Link
