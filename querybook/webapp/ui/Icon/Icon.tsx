@@ -13,7 +13,7 @@ export interface IIconProps {
     color?: TButtonColors;
 }
 
-export type TButtonColors = 'accent' | 'true' | 'false' | 'warning';
+export type TButtonColors = 'accent' | 'true' | 'false' | 'warning' | 'light';
 
 export const Icon: React.FunctionComponent<IIconProps> = React.memo(
     ({
