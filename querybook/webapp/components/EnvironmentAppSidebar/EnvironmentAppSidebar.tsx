@@ -4,7 +4,6 @@ import clsx from 'clsx';
 import { navigateWithinEnv } from 'lib/utils/query-string';
 import { useEvent } from 'hooks/useEvent';
 import { matchKeyMap, KeyMap } from 'lib/utils/keyboard';
-import { getAbbrEnvName } from 'lib/utils';
 import { useSelector } from 'react-redux';
 import { currentEnvironmentSelector } from 'redux/environment/selector';
 import { Entity } from './types';
@@ -16,6 +15,7 @@ import { DataDocNavigator } from 'components/DataDocNavigator/DataDocNavigator';
 import { EnvironmentTopbar } from './EnvironmentTopbar';
 import { EntitySidebar } from './EntitySidebar';
 import { EnvironmentDropdownButton } from './EnvironmentDropdownButton';
+import { EnvironmentIcon } from './EnvironmentIcon';
 
 import { Sidebar } from 'ui/Sidebar/Sidebar';
 import { Icon } from 'ui/Icon/Icon';
@@ -115,11 +115,11 @@ export const EnvironmentAppSidebar: React.FunctionComponent = () => {
         <div className="collapsed-env">
             <EnvironmentDropdownButton
                 customButtonRenderer={() => (
-                    <div className="env-icon selected">
-                        <span className="env-icon-text">
-                            {getAbbrEnvName(currentEnvironment?.name)}
-                        </span>
-                    </div>
+                    <EnvironmentIcon
+                        disabled={false}
+                        selected={true}
+                        environmentName={currentEnvironment.name}
+                    />
                 )}
             />
         </div>

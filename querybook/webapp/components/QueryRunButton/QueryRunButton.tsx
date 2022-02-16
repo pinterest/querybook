@@ -120,7 +120,7 @@ export const QueryEngineSelector: React.FC<IQueryEngineSelectorProps> = ({
         return (
             <div className="engine-selector-button flex-center ph8">
                 <StatusIcon status={iconClass} />
-                <div className="ml4"> {queryEngineName}</div>
+                <div className="ml4">{queryEngineName}</div>
                 <Icon
                     name="chevron-down"
                     className="ml4"

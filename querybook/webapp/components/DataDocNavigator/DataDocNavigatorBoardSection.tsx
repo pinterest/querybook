@@ -188,7 +188,7 @@ export const DataDocNavigatorBoardSection: React.FC<INavigatorBoardSectionProps>
     );
 
     const boardsDOM = collapsed ? null : (
-        <div>
+        <div className="ml8">
             {boards.map((board) => (
                 <NavigatorBoardView
                     key={board.id}
