@@ -75,7 +75,7 @@ export const StatementResult: React.FC<IProps> = ({
     const exploreButtonDOM = (
         <TextButton
             onClick={onFullscreenToggle}
-            icon={isFullscreen ? 'minimize' : 'maximize'}
+            icon={isFullscreen ? 'x' : 'maximize-2'}
             title={isFullscreen ? 'Exit Fullscreen' : 'Fullscreen'}
             size="small"
         />

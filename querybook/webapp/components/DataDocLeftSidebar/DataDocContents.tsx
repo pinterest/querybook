@@ -66,7 +66,9 @@ export const DataDocContents: React.FC<{
                                     {cellQueryText}
                                 </>
                             );
-                            cellIcon = <Icon name="code" size={19} />;
+                            cellIcon = (
+                                <Icon name="terminal" size={16} color="light" />
+                            );
                             break;
                         }
                         case 'text': {
@@ -79,12 +81,24 @@ export const DataDocContents: React.FC<{
                                 })`}</i>
                             );
 
-                            cellIcon = <Icon name="type" size={19} />;
+                            cellIcon = (
+                                <Icon
+                                    name="align-left"
+                                    size={16}
+                                    color="light"
+                                />
+                            );
 
                             break;
                         }
                         case 'chart': {
-                            cellIcon = <Icon name="pie-chart" size={19} />;
+                            cellIcon = (
+                                <Icon
+                                    name="pie-chart"
+                                    size={16}
+                                    color="light"
+                                />
+                            );
                             cellText = (
                                 <b>
                                     {cell.meta['title'] ||

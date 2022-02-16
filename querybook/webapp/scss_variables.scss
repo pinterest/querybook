@@ -18,7 +18,7 @@
 
     &::before {
         background: var(--bg-hover);
-        border-radius: var(--border-radius);
+        border-radius: var(--border-radius-sm);
         content: ' ' !important;
         height: 100%;
         left: 0;

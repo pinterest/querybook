@@ -74,13 +74,44 @@
     &.collapsed {
         .sidebar-environment-picker {
             text-align: center;
-            border-bottom: solid 1px transparent;
-            .EnvironmentDropdownButton .Dropdown-trigger {
-                display: flex;
-                justify-content: center;
+            .collapsed-env {
+                padding: var(--padding-sm);
             }
         }
 
         border-right: var(--border);
+    }
+
+    .env-icon {
+        font-size: var(--xxxsmall-text-size);
+        font-family: var(--font-monospace);
+        background-color: var(--bg-light);
+        color: var(--text);
+        border-radius: var(--border-radius-sm);
+        transition: background-color 0.3s ease-out;
+        user-select: none;
+
+        display: inline-flex;
+        justify-content: center;
+        align-items: center;
+
+        width: 36px;
+        height: 36px;
+
+        &.selected {
+            font-weight: var(--bold-font);
+            color: var(--color-accent-dark);
+            background-color: var(--color-accent-lightest-0);
+        }
+
+        &.disabled {
+            opacity: 0.45;
+            cursor: not-allowed;
+        }
+
+        .env-icon-text {
+            word-break: break-all;
+            text-align: center;
+        }
     }
 }

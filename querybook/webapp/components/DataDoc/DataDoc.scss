@@ -1,17 +1,3 @@
-@import './../../scss_variables.scss';
-
-@keyframes highlight-fade {
-    0% {
-        background-color: transparent;
-    }
-    25% {
-        background-color: var(--color-accent-lightest);
-    }
-    100% {
-        background-color: transparent;
-    }
-}
-
 // Temporal
 .temporal-edit-title-modal-wrapper {
     .close {
@@ -49,20 +35,21 @@
 
     .data-doc-content-container {
         flex: 0 1 var(--max-width);
-        padding: 36px 12px;
+        padding: 36px 0px 36px 24px;
         overflow: hidden;
 
         .data-doc-header {
-            padding: 36px 12px;
-            border-bottom: var(--border);
+            padding: 0px 12px 24px;
             color: var(--text-light);
 
             .data-doc-header-top {
+                align-items: end;
                 .data-doc-header-time {
-                    text-transform: uppercase;
                     font-size: var(--text-size);
-                    font-weight: bold;
-                    padding-left: 4px;
+                    padding-left: 8px;
+                    text-transform: uppercase;
+                    font-weight: var(--bold-font);
+                    color: var(--text-lightest);
                 }
                 .data-doc-header-users {
                     .ImpressionWidget {
@@ -73,7 +60,7 @@
 
             .IconButton,
             .ImpressionWidget {
-                margin-left: 8px;
+                margin-left: 16px;
             }
             .favorite-icon-button {
                 &.favorite-icon-button-favorited {
@@ -100,28 +87,12 @@
                 color: var(--text-light);
                 font-size: var(--xxxlarge-text-size);
                 font-weight: bold;
-
-                &::placeholder {
-                    color: var(--text-light);
-                }
             }
         }
 
         .data-doc-container {
             .data-doc-cell-container-pair {
-                &.highlight-cell {
-                    animation-name: highlight-fade;
-                    animation-duration: 2s;
-                }
-
                 position: relative;
-                &:hover {
-                    .data-doc-cell-divider-container {
-                        .block-crud-buttons {
-                            opacity: 1;
-                        }
-                    }
-                }
 
                 &.data-doc-cell-container-pair-final {
                     min-height: 48px;
@@ -134,7 +105,7 @@
 
                 .data-doc-cell-users {
                     top: 48px;
-                    left: -12px;
+                    left: -16px;
                     position: absolute;
 
                     .UserAvatar {
@@ -185,8 +156,35 @@
                     }
                 }
 
+                .DataDocQueryCell-more-button,
+                .QueryRunButton,
+                .additional-dropdown-button,
+                .add-snippet-wrapper,
+                .fullscreen-button-wrapper,
+                .chart-cell-controls {
+                    opacity: 0;
+                    transition: opacity 0.2s ease-out;
+                }
+
                 &:hover .add-new-line-button {
                     opacity: 1;
+                }
+
+                &:hover {
+                    .data-doc-cell-divider-container {
+                        .block-crud-buttons {
+                            opacity: 1;
+                        }
+                    }
+
+                    .DataDocQueryCell-more-button,
+                    .QueryRunButton,
+                    .additional-dropdown-button,
+                    .add-snippet-wrapper,
+                    .fullscreen-button-wrapper,
+                    .chart-cell-controls {
+                        opacity: 1;
+                    }
                 }
             }
         }

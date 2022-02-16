@@ -673,8 +673,6 @@ class DataDocComponent extends React.PureComponent<IProps, IState> {
             <DataDocLeftSidebar
                 docId={dataDoc.id}
                 cells={dataDoc.dataDocCells}
-                defaultCollapse={defaultCollapseAllCells}
-                onCollapse={this.handleToggleCollapse}
             />
         );
 
@@ -686,6 +684,8 @@ class DataDocComponent extends React.PureComponent<IProps, IState> {
                 isSaving={isSavingDataDoc}
                 isEditable={isEditable}
                 isConnected={connected}
+                defaultCollapse={defaultCollapseAllCells}
+                onCollapse={this.handleToggleCollapse}
             />
         );
 
