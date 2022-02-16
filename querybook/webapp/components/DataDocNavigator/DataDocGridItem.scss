@@ -1,14 +1,12 @@
 .DataDocGridItem {
     .delete-grid-item-button {
-        padding: 0;
-        .Icon svg {
-            padding: 0;
-        }
-        visibility: hidden;
+        display: none;
+        padding: 0px;
     }
+
     &:hover {
         .delete-grid-item-button {
-            visibility: visible;
+            display: flex;
         }
     }
 }

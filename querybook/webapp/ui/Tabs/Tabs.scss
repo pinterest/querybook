@@ -42,7 +42,14 @@
                 a {
                     color: var(--text);
                 }
-                &:not(.pills) {
+            }
+        }
+    }
+
+    &:not(.pills) {
+        ul {
+            li {
+                &:not(.active):hover {
                     border-radius: var(--border-radius-sm);
                 }
             }
@@ -63,13 +70,13 @@
         ul {
             border-radius: var(--border-radius-sm);
             li {
-                background-color: var(--bg-lightest);
+                background-color: var(--bg-light);
                 padding: 4px 16px;
                 border-bottom: none;
 
                 &.active {
                     border-radius: 0px;
-                    background-color: var(--bg-light);
+                    background-color: var(--color-accent-lightest-0);
                     a {
                         color: var(--color-accent-dark);
                     }

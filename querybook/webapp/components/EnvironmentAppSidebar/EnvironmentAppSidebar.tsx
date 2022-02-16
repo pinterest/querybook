@@ -2,20 +2,24 @@ import React from 'react';
 import clsx from 'clsx';
 
 import { navigateWithinEnv } from 'lib/utils/query-string';
+import { useEvent } from 'hooks/useEvent';
+import { matchKeyMap, KeyMap } from 'lib/utils/keyboard';
+import { useSelector } from 'react-redux';
+import { currentEnvironmentSelector } from 'redux/environment/selector';
+import { Entity } from './types';
 
 import { QuerySnippetNavigator } from 'components/QuerySnippetNavigator/QuerySnippetNavigator';
 import { DataDocSchemaNavigator } from 'components/DataDocSchemaNavigator/DataDocSchemaNavigator';
 import { QueryViewNavigator } from 'components/QueryViewNavigator/QueryViewNavigator';
 import { DataDocNavigator } from 'components/DataDocNavigator/DataDocNavigator';
-import { Sidebar } from 'ui/Sidebar/Sidebar';
-import { Icon } from 'ui/Icon/Icon';
-
-import { Entity } from './types';
 import { EnvironmentTopbar } from './EnvironmentTopbar';
 import { EntitySidebar } from './EntitySidebar';
 import { EnvironmentDropdownButton } from './EnvironmentDropdownButton';
-import { useEvent } from 'hooks/useEvent';
-import { matchKeyMap, KeyMap } from 'lib/utils/keyboard';
+import { EnvironmentIcon } from './EnvironmentIcon';
+
+import { Sidebar } from 'ui/Sidebar/Sidebar';
+import { Icon } from 'ui/Icon/Icon';
+
 import './EnvironmentAppSidebar.scss';
 
 const SIDEBAR_WIDTH = 320;
@@ -23,6 +27,8 @@ const SIDEBAR_WIDTH = 320;
 export const EnvironmentAppSidebar: React.FunctionComponent = () => {
     const [collapsed, setCollapsed] = React.useState(false);
     const [entity, setEntity] = React.useState<Entity>('datadoc');
+
+    const currentEnvironment = useSelector(currentEnvironmentSelector);
 
     const handleEntitySelect = React.useCallback((e: Entity) => {
         setCollapsed(false);
@@ -106,7 +112,17 @@ export const EnvironmentAppSidebar: React.FunctionComponent = () => {
     );
 
     const environmentPickerSection = collapsed ? (
-        <EnvironmentDropdownButton />
+        <div className="collapsed-env">
+            <EnvironmentDropdownButton
+                customButtonRenderer={() => (
+                    <EnvironmentIcon
+                        disabled={false}
+                        selected={true}
+                        environmentName={currentEnvironment.name}
+                    />
+                )}
+            />
+        </div>
     ) : (
         <EnvironmentTopbar />
     );

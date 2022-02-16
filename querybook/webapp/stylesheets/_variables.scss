@@ -70,6 +70,7 @@ body {
     --text: var(--color-invert-2);
     --text-dark: var(--color-invert);
     --text-light: var(--color-invert-5);
+    --text-lightest: var(--color-primary-5);
     --text-hover: var(--color-invert-3);
 
     --text-title: var(--color-invert-3);
@@ -121,8 +122,8 @@ body {
     --bg-text-select: var(--color-transparent-light);
 
     --bg-terminal: var(--color-primary-1);
-    --bg-query-editor: var(--color-primary-1);
-    --bg-query-editor-gutter: var(--color-primary-2);
+    --bg-query-editor: var(--bg-lightest);
+    --bg-query-editor-gutter: var(--bg-light);
 
     // Colors: Special Elements
     --red-highlight: rgba(189, 8, 28, 0.5);

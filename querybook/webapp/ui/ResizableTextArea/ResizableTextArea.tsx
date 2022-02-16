@@ -21,7 +21,7 @@ export interface IResizableTextareaProps
 
 const StyledTextarea = styled.textarea`
     color: inherit;
-    border-radius: var(--border-radius);
+    border-radius: var(--border-radius-sm);
     border: var(--border);
     display: block;
     max-width: 100%;

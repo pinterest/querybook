@@ -12,7 +12,7 @@ import {
 
 export type ButtonProps = React.HTMLAttributes<HTMLSpanElement> &
     ISharedButtonProps & {
-        icon?: string | React.ComponentType<IIconProps>;
+        icon?: string | React.ReactElement<IIconProps>;
         title?: string;
         className?: string;
 

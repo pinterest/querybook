@@ -40,7 +40,7 @@ export const BoardListItemRow: React.FC<{
                             placeholder={null}
                             isRow
                         >
-                            <Icon size={16} className="mr4" name={icon} />
+                            <Icon size={16} name={icon} />
                             {title.length ? (
                                 <span className="ListLinkText">{title}</span>
                             ) : (

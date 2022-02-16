@@ -7,6 +7,7 @@
     .Dropdown-trigger {
         cursor: pointer;
         display: flex;
+        justify-content: center;
     }
 
     .Dropdown-menu {
@@ -17,7 +18,7 @@
         z-index: 20;
         box-shadow: var(--box-shadow);
         border-radius: var(--border-radius-sm);
-        // overflow: hidden;
+        font-size: var(--small-text-size);
     }
 
     &.is-right {

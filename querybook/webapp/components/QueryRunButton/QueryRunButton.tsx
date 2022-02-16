@@ -14,6 +14,7 @@ import { ListMenu } from 'ui/Menu/ListMenu';
 import { StatusIcon } from 'ui/StatusIcon/StatusIcon';
 
 import './QueryRunButton.scss';
+import { Icon } from 'ui/Icon/Icon';
 
 const EXECUTE_QUERY_SHORTCUT = getShortcutSymbols(
     KeyMap.queryEditor.runQuery.key
@@ -69,15 +70,15 @@ export const QueryRunButton = React.forwardRef<
                     'run-selection': !!hasSelection,
                 })}
                 title={hasSelection ? 'Run Selection' : null}
-                icon={hasSelection ? null : 'play'}
+                icon={<Icon name="play" fill />}
                 aria-label={`Execute (${EXECUTE_QUERY_SHORTCUT})`}
                 data-balloon-pos={runButtonTooltipPos}
+                color="accent"
             />
         );
 
         return (
-            <div className="QueryRunButton flex-row">
-                {runButtonDOM}
+            <div className="QueryRunButton flex-row ml16">
                 <QueryEngineSelector
                     disabled={disabled}
                     queryEngineById={queryEngineById}
@@ -85,6 +86,7 @@ export const QueryRunButton = React.forwardRef<
                     engineId={engineId}
                     onEngineIdSelect={onEngineIdSelect}
                 />
+                {runButtonDOM}
             </div>
         );
     }
@@ -116,12 +118,15 @@ export const QueryEngineSelector: React.FC<IQueryEngineSelectorProps> = ({
         const queryEngineName = queryEngineById[engineId].name;
 
         return (
-            <div className="engine-selector-button flex-row">
-                <StatusIcon status={iconClass} />{' '}
-                <span>
-                    {queryEngineName}{' '}
-                    <i className="fa fa-caret-down caret-icon" />
-                </span>
+            <div className="engine-selector-button flex-center ph8">
+                <StatusIcon status={iconClass} />
+                <div className="ml4">{queryEngineName}</div>
+                <Icon
+                    name="chevron-down"
+                    className="ml4"
+                    size={24}
+                    color="light"
+                />
             </div>
         );
     };

@@ -36,7 +36,7 @@ export const ListLink: React.FunctionComponent<IProps> = React.memo(
                 ) : placeholder ? (
                     <span className="ListLinkPlaceholder">{placeholder}</span>
                 ) : null}
-                {icon && <Icon name={icon} />}
+                {icon && <Icon name={icon} size={16} />}
                 {children}
             </Link>
         );
