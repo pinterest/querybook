@@ -1,15 +1,13 @@
 .DataDocViewersList {
     width: 400px;
 
-    > div:not(:last-child) {
-        padding-left: 8px;
-        padding-right: 8px;
+    > div {
+        margin-top: 16px;
     }
 
     .public-row-description {
-        border-top: var(--border);
-        padding-top: 1rem;
         text-align: center;
+        color: var(--text-light);
     }
 
     .datadoc-add-user-row {
@@ -36,16 +34,6 @@
         overflow-y: auto;
         padding-bottom: 0rem;
         padding-top: 0rem;
-        border-top: var(--border);
-
-        > div {
-            padding-left: 8px;
-            padding-right: 8px;
-        }
-
-        > div:not(:last-child) {
-            border-bottom: var(--border);
-        }
     }
 
     .viewers-user-row {

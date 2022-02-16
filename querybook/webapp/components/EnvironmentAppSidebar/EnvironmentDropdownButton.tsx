@@ -17,7 +17,8 @@ import './EnvironmentDropdownButton.scss';
 
 export const EnvironmentDropdownButton: React.FunctionComponent<{
     skip?: number;
-}> = ({ skip = 0 }) => {
+    customButtonRenderer?: () => React.ReactNode;
+}> = ({ skip = 0, customButtonRenderer }) => {
     const environments = useSelector(environmentsSelector);
     const currentEnvironment = useSelector(currentEnvironmentSelector);
     const userEnvironmentNames = useSelector(userEnvironmentNamesSelector);
@@ -51,7 +52,10 @@ export const EnvironmentDropdownButton: React.FunctionComponent<{
     });
 
     return (
-        <Dropdown className="EnvironmentDropdownButton">
+        <Dropdown
+            className="EnvironmentDropdownButton"
+            customButtonRenderer={customButtonRenderer}
+        >
             <ListMenu items={environmentItems} type="select" />
         </Dropdown>
     );

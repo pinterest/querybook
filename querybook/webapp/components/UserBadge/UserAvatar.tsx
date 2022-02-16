@@ -18,13 +18,13 @@ export interface IUserAvatarComponentProps
     onClick?: () => any;
 }
 
-const defaultNoUserBackground = '#F65B50';
+const defaultNoUserBackground = '#909090';
 const defaultUserIconBackgrounds = [
-    '#FF6400',
-    '#FAB904',
-    '#0FA573',
-    '#4A90E2',
-    '#B469EB',
+    '#f683ad',
+    '#85d0ce',
+    '#bdda57',
+    '#ffd275',
+    '#f5ac72',
 ];
 
 function getUserIconBackgroundColor(name: string) {

@@ -1,9 +1,11 @@
 import React, { useState } from 'react';
 import { Line } from 'react-chartjs-2';
 import 'chartjs-adapter-moment';
+
 import { generateFormattedDate } from 'lib/utils/datetime';
 import { ImpressionType } from 'const/impression';
 import { useResource } from 'hooks/useResource';
+import { ImpressionResource } from 'resource/impression';
 
 import { UserName } from 'components/UserBadge/UserName';
 
@@ -12,7 +14,6 @@ import { Table } from 'ui/Table/Table';
 import { Tabs } from 'ui/Tabs/Tabs';
 
 import './ImpressionWidgetMenu.scss';
-import { ImpressionResource } from 'resource/impression';
 
 interface IProps {
     type: ImpressionType;
@@ -30,7 +31,7 @@ export const ImpressionWidgetMenu: React.FunctionComponent<IProps> = (
             <ImpressionWidgetTimeseries {...props} />
         );
     return (
-        <div className="ImpressionWidgetMenu flex-column">
+        <div className="ImpressionWidgetMenu flex-column p8">
             <Tabs
                 selectedTabKey={menuTab}
                 items={[
@@ -38,6 +39,8 @@ export const ImpressionWidgetMenu: React.FunctionComponent<IProps> = (
                     { key: 'timeseries', name: 'Views Over Time' },
                 ]}
                 onSelect={setMenuTab}
+                pills
+                className="mb16"
             />
             {contentDOM}
         </div>
