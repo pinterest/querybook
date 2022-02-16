@@ -5,7 +5,7 @@
     font-size: var(--text-size);
 
     &:focus-within {
-        background-color: var(--bg-light);
+        background-color: var(--bg-lightest);
     }
 
     &:hover {

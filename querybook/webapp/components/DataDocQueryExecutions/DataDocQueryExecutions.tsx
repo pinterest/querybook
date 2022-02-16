@@ -124,7 +124,7 @@ export const DataDocQueryExecutions: React.FunctionComponent<IProps> = React.mem
             }
 
             return (
-                <div className="execution-selector-section flex-row">
+                <div className="execution-selector-section horizontal-space-between">
                     <QueryExecutionPicker
                         queryExecutionId={currentExecution?.id}
                         onSelection={handleQueryExecutionSelected}

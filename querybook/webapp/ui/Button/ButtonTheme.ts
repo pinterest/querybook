@@ -21,28 +21,32 @@ interface IButtonColorConfig {
 
 const buttonThemeToProps: Record<ButtonColorType, IButtonColorConfig> = {
     confirm: {
-        primary: 'var(--color-true-dark)',
-        secondary: 'var(--color-true-dark)',
-        secondaryHover: 'var(--color-true)',
+        primary: 'var(--color-true)',
+        primaryHover: 'var(--color-true-dark)',
+        secondary: 'var(--color-true-lightest-0)',
+        secondaryHover: 'var(--color-true-lightest)',
     },
     cancel: {
-        primary: 'var(--color-false-dark)',
-        secondary: 'var(--color-false-dark)',
-        secondaryHover: 'var(--color-false)',
+        primary: 'var(--color-false)',
+        primaryHover: 'var(--color-false-dark)',
+        secondary: 'var(--color-false-lightest-0)',
+        secondaryHover: 'var(--color-false-lightest)',
     },
     accent: {
-        primary: 'var(--color-accent-dark)',
-        secondary: 'var(--color-accent-light)',
+        primary: 'var(--color-accent)',
+        primaryHover: 'var(--color-accent-dark)',
+        secondary: 'var(--color-accent-lightest-0)',
+        secondaryHover: 'var(--color-accent-lightest)',
     },
     light: {
         primary: 'var(--text-light)',
-        primaryHover: 'var(--text)',
+        primaryHover: 'var(--text-hover)',
         secondary: 'var(--bg-lightest)',
         secondaryHover: 'var(--bg-hover)',
     },
     default: {
         primary: 'var(--text-light)',
-        primaryHover: 'var(--text)',
+        primaryHover: 'var(--text-hover)',
         secondary: 'var(--bg-light)',
         secondaryHover: 'var(--bg-hover)',
     },
@@ -66,7 +70,7 @@ export function computeStyleButtonProps(
                 colorConfig.secondaryHover || colorConfig.secondary;
         } else {
             themeProps.color = 'var(--bg)';
-            themeProps.hoverColor = 'var(--bg-light)';
+            themeProps.hoverColor = 'var(--text-hover)';
             themeProps.bgColor = colorConfig.primary;
             themeProps.hoverBgColor =
                 colorConfig.primaryHover || colorConfig.primary;
@@ -75,7 +79,7 @@ export function computeStyleButtonProps(
         themeProps.color = colorConfig.primary;
         themeProps.hoverColor = colorConfig.primaryHover || colorConfig.primary;
         themeProps.bgColor = 'transparent';
-        themeProps.hoverBgColor = 'var(--bg-light)';
+        themeProps.hoverBgColor = 'var(--bg-hover)';
     }
 
     return themeProps;

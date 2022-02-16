@@ -11,7 +11,7 @@
         margin-top: 48px;
 
         &:not(.sidebar-content-default) {
-            background-color: var(--bg-light);
+            background-color: var(--bg-lightest);
         }
     }
 
@@ -45,11 +45,13 @@
 
         .contents-panel-header {
             padding-right: var(--padding);
-            background-color: var(--bg-lightest);
+            background-color: var(--bg-light);
             margin-bottom: var(--margin-xs);
-            .Title {
-                user-select: none;
-            }
+            border-top-right-radius: var(--border-radius);
+
+            user-select: none;
+            font-weight: var(--bold-font);
+            color: var(--text-light);
         }
     }
 

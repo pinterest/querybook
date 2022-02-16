@@ -46,18 +46,18 @@ export const BoardList: React.FunctionComponent<IProps> = ({
     );
     const boardRowRenderer = React.useCallback(
         (board: IBoard & { selected: boolean }) => {
-            const { name, public: publicBoard, selected } = board;
+            const { name, selected } = board;
             const className = clsx({
                 selected,
             });
-            const publicIcon = publicBoard && 'users';
+            const selectedIcon = selected && 'check';
 
             return (
                 <ListLink
                     className={className}
                     onClick={() => onBoardClick(board)}
                     isRow
-                    icon={publicIcon}
+                    icon={selectedIcon}
                     title={name}
                 />
             );
@@ -76,22 +76,22 @@ export const BoardList: React.FunctionComponent<IProps> = ({
                 />
             </div>
         ) : (
-            <div className="empty-message">No list found.</div>
+            <div className="empty-message m16">No list found</div>
         );
 
     return (
         <div className="BoardList">
-            <div className="list-header flex-row">
+            <div className="list-header flex-row mb8">
                 <SearchBar
                     value={filterStr}
                     onSearch={setFilterStr}
                     placeholder="Filter..."
-                    transparent
+                    className="mr12"
                 />
                 <IconButton
                     icon="plus"
                     tooltip={'New List'}
-                    tooltipPos={'right'}
+                    tooltipPos={'left'}
                     onClick={
                         onCreateBoardClick
                             ? onCreateBoardClick

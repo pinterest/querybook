@@ -231,7 +231,7 @@ export const QueryExecution: React.FC<IProps> = ({
         );
 
         return (
-            <div className="statement-header">
+            <div className="statement-header horizontal-space-between mb4">
                 <div className="statement-header-top">
                     <div className="run-header-left">{statementTab}</div>
                 </div>

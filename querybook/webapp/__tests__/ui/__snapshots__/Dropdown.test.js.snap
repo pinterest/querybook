@@ -12,6 +12,7 @@ exports[`matches enzyme snapshots matches snapshot 1`] = `
   >
     <ForwardRef
       icon="menu"
+      noPadding={true}
     />
   </div>
 </div>
@@ -28,7 +29,7 @@ exports[`matches test renderer snapshot serializes the styles 1`] = `
     className="Dropdown-trigger"
   >
     <span
-      className="IconButton"
+      className="IconButton no-padding"
     >
       <span
         className=" Icon  "
