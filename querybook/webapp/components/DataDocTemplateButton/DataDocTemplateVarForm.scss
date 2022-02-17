@@ -1,0 +1,17 @@
+.DataDocTemplateVarForm {
+    .DataDocTemplateVarForm-content {
+        .template-key-value-row {
+            .FormField {
+                .FormFieldLabelSection {
+                    display: none;
+                }
+            }
+            .FormField:nth-child(1) {
+                flex-grow: 1;
+            }
+            .FormField:nth-child(2) {
+                flex-grow: 5;
+            }
+        }
+    }
+}

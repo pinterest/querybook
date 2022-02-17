@@ -7,7 +7,7 @@ import { Modal } from 'ui/Modal/Modal';
 import './ConfirmationMessage.scss';
 
 export interface IConfirmationMessageProps {
-    header?: React.ReactChild;
+    header?: string;
     message?: React.ReactChild;
 
     // event when user clicks confirm
@@ -82,17 +82,10 @@ export const ConfirmationMessage: React.FunctionComponent<IConfirmationMessagePr
     }
 
     return (
-        <Modal
-            onHide={onHide}
-            className="message-size with-padding"
-            hideModalTitle
-        >
+        <Modal onHide={onHide} className="message-size" title={header}>
             <div className="ConfirmationMessage" ref={selfRef} tabIndex={0}>
-                <div className="confirmation-top">
-                    <div className="confirmation-header">{header}</div>
-                    <div className="confirmation-message">{message}</div>
-                </div>
-                <div className="confirmation-buttons flex-right">
+                <div className="confirmation-message">{message}</div>
+                <div className="confirmation-buttons flex-right mt36">
                     {actionButtons}
                 </div>
             </div>

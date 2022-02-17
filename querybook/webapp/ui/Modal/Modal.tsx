@@ -6,16 +6,19 @@ import { useEvent } from 'hooks/useEvent';
 import { IModalProps } from './types';
 import { FullScreenModal } from './FullScreenModal';
 import { StandardModal } from './StandardModal';
-import './Modal.scss';
+
 import { Overlay } from 'ui/Overlay/Overlay';
+
+import './Modal.scss';
 
 export const Modal: React.FunctionComponent<IModalProps> = ({
     type = 'standard',
-    hideModalTitle = false,
     className = '',
     children,
     onHide,
     title,
+    topDOM,
+    bottomDOM,
 }) => {
     const onEscapeKeyDown = React.useCallback(
         (evt) => {
@@ -34,7 +37,6 @@ export const Modal: React.FunctionComponent<IModalProps> = ({
         modalDOM = (
             <FullScreenModal
                 onHide={onHide}
-                hideModalTitle={hideModalTitle}
                 className={className}
                 title={title}
             >
@@ -46,9 +48,10 @@ export const Modal: React.FunctionComponent<IModalProps> = ({
         modalDOM = (
             <StandardModal
                 onHide={onHide}
-                hideModalTitle={hideModalTitle}
                 className={className}
                 title={title}
+                topDOM={topDOM}
+                bottomDOM={bottomDOM}
             >
                 {children}
             </StandardModal>

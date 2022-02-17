@@ -66,7 +66,7 @@ export const UserMenu: React.FC<IUserMenuProps> = ({
         const showThemeToggle = theme === 'dark' || theme === 'default';
         const themeToggle = showThemeToggle ? (
             <MenuInfoItem className="horizontal-space-between">
-                <span className="mr8">Dark Theme</span>
+                <span className="mr12">Dark Theme</span>
                 <ToggleSwitch
                     checked={theme === 'dark'}
                     onChange={(val) => setTheme(val ? 'dark' : 'default')}
@@ -79,8 +79,8 @@ export const UserMenu: React.FC<IUserMenuProps> = ({
                     <UserBadge uid={userInfo.uid} />
                 </MenuInfoItem>
                 <MenuDivider />
-                <MenuItem onClick={goToUserSettingsMenu}>Settings</MenuItem>
                 {themeToggle}
+                <MenuItem onClick={goToUserSettingsMenu}>Settings</MenuItem>
                 <MenuDivider />
                 <MenuItem onClick={toggleShowTokenModal}>
                     API Access Token

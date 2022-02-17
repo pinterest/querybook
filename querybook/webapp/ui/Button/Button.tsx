@@ -65,6 +65,7 @@ export const Button = React.forwardRef<HTMLSpanElement, ButtonProps>(
             active,
             'flex-row': Boolean(iconDOM && textDOM),
             'icon-only': Boolean(iconDOM && !textDOM),
+            [theme]: true,
         });
 
         const pingDOM = !ping ? null : (

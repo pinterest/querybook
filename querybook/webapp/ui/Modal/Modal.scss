@@ -1,9 +1,16 @@
 .Modal {
-    .Modal-title {
-        padding: 8px 8px 8px 16px;
-        min-height: 38px;
-        background-color: var(--bg-light);
-        border-bottom: var(--border);
+    .Modal-top,
+    .Modal-bottom {
+        margin: 16px 24px 0px;
+    }
+
+    .Modal-top {
+        font-family: var(--font-title);
+        .Modal-title {
+            font-size: var(--xlarge-text-size);
+            font-weight: var(--extra-bold-font);
+            color: var(--text-dark);
+        }
     }
 
     .Modal-close {
@@ -34,12 +41,6 @@
         &.message-size {
             .Modal-box {
                 width: 600px;
-            }
-        }
-
-        &.with-padding {
-            .Modal-box .Modal-content {
-                padding: 16px 20px;
             }
         }
 
@@ -79,6 +80,7 @@
                 max-height: inherit;
                 height: auto;
                 overflow-y: auto;
+                padding: var(--padding-xl);
             }
         }
     }
