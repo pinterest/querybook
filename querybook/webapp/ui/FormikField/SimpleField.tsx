@@ -15,6 +15,11 @@ import {
     ToggleSwitchField,
 } from './ToggleSwitchField';
 import { IRichTextFieldProps, RichTextField } from './RichTextField';
+import type { ICodeEditorFieldProps } from './CodeEditorField';
+
+// Since this is rarely used (only UDF) and quite heavy (multiple language defs), it is
+// lazily imported
+const CodeEditorField = React.lazy(() => import('./CodeEditorField'));
 
 // Simple Field is the amalgamation of all custom field,
 // it contains all the simple use case of field
@@ -59,6 +64,10 @@ interface ISimpleDatePickerProps extends IBaseProps {
     type: 'datepicker';
 }
 
+interface ISimpleCodeEditorProps extends IBaseProps, ICodeEditorFieldProps {
+    type: 'code-editor';
+}
+
 type Props =
     | ISimpleCheckboxProps
     | ISimpleInputProps
@@ -68,7 +77,8 @@ type Props =
     | ISimpleTextareaProps
     | ISimpleRichTextProps
     | ISimpleReactSelectProps
-    | ISimpleDatePickerProps;
+    | ISimpleDatePickerProps
+    | ISimpleCodeEditorProps;
 
 export const SimpleField: React.FC<Props> = ({
     name,
@@ -139,7 +149,15 @@ export const SimpleField: React.FC<Props> = ({
         );
     } else if (type === 'datepicker') {
         fieldDOM = <DatePickerField name={name} />;
+    } else if (type === 'code-editor') {
+        fieldDOM = (
+            <CodeEditorField
+                name={name}
+                {...(otherProps as ICodeEditorFieldProps)}
+            />
+        );
     }
+
     return (
         <FormField
             label={title}

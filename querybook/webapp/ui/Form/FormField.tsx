@@ -19,6 +19,7 @@ export interface IFormFieldProps {
     label?: StringOrRender;
     help?: StringOrRender;
     error?: StringOrRender;
+    className?: string;
 }
 export interface IFormFieldSectionProps {
     className?: string;
@@ -31,6 +32,7 @@ export const FormField: React.FunctionComponent<IFormFieldProps> = ({
     help,
     required,
     error,
+    className,
 }) => {
     const labelDOM = label ? (
         <>
@@ -71,10 +73,11 @@ export const FormField: React.FunctionComponent<IFormFieldProps> = ({
 
     return (
         <div
-            className={clsx({
-                FormField: true,
-                'FormField-stacked': stacked,
-            })}
+            className={clsx(
+                'FormField',
+                stacked && 'FormField-stacked',
+                className
+            )}
         >
             {labelDOM}
             {contentDOM}

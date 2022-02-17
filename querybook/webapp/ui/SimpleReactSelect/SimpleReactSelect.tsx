@@ -5,7 +5,7 @@ import { makeReactSelectStyle } from 'lib/utils/react-select';
 
 import { overlayRoot } from 'ui/Overlay/Overlay';
 
-interface ISelectOption<T> {
+export interface ISelectOption<T> {
     value: T;
     label: string;
 }

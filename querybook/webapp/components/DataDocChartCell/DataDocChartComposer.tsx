@@ -41,7 +41,10 @@ import { FormField, FormSectionHeader } from 'ui/Form/FormField';
 import { Tabs } from 'ui/Tabs/Tabs';
 
 import { Level, LevelItem } from 'ui/Level/Level';
-import { SimpleReactSelect } from 'ui/SimpleReactSelect/SimpleReactSelect';
+import {
+    SimpleReactSelect,
+    ISelectOption,
+} from 'ui/SimpleReactSelect/SimpleReactSelect';
 import {
     getAutoDetectedScaleType,
     getDefaultScaleType,
@@ -131,7 +134,6 @@ const DataDocChartComposerComponent: React.FunctionComponent<
             values.formatAggCol,
             values.formatSeriesCol,
             values.formatValueCols,
-            values.aggType,
             values.aggSeries,
             values.sortIndex,
             values.sortAsc,
@@ -207,21 +209,26 @@ const DataDocChartComposerComponent: React.FunctionComponent<
         if (!statementResultData) {
             return [];
         }
-        const options = statementResultData[0]
-            .filter((label, idx) => idx !== values.formatSeriesCol)
-            .map((label, idx) => ({
-                value: idx,
-                label,
-            }));
-        return options;
-    }, [statementResultData, values.formatAggCol, values.formatSeriesCol]);
+        return statementResultData[0].reduce<Array<ISelectOption<number>>>(
+            (optionsAcc, label, idx) => {
+                if (idx !== values.formatSeriesCol) {
+                    optionsAcc.push({
+                        value: idx,
+                        label,
+                    });
+                }
+                return optionsAcc;
+            },
+            []
+        );
+    }, [statementResultData, values.formatSeriesCol]);
 
     const makeFormatSeriesOptions = React.useMemo(() => {
         if (!statementResultData) {
             return [];
         }
         const columns = statementResultData[0];
-        const options = [];
+        const options: Array<ISelectOption<number>> = [];
         for (let i = 0; i < columns.length; i++) {
             if (i !== values.formatAggCol) {
                 options.push({
@@ -238,7 +245,7 @@ const DataDocChartComposerComponent: React.FunctionComponent<
             return [];
         }
         const columns = statementResultData[0];
-        const options = [];
+        const options: Array<ISelectOption<number>> = [];
         for (let i = 0; i < columns.length; i++) {
             if (i !== values.xIndex && i !== values.formatSeriesCol) {
                 options.push({
@@ -248,7 +255,7 @@ const DataDocChartComposerComponent: React.FunctionComponent<
             }
         }
         return options;
-    }, [statementResultData, values.formatAggCol, values.formatSeriesCol]);
+    }, [statementResultData, values.formatSeriesCol, values.xIndex]);
 
     const makeSeriesValsAndOptions = React.useCallback(
         (selectedValues: boolean) => {
@@ -303,7 +310,7 @@ const DataDocChartComposerComponent: React.FunctionComponent<
 
     // ------------- event handlers ------------------------------------------------------------------
     const handleHiddenSeriesChange = (
-        selectedVals: Array<{ value: number; label: string }>
+        selectedVals: Array<ISelectOption<number>>
     ) => {
         const hiddenSeries = [];
         const selectedSeries = selectedVals.map((obj) => obj.value);
