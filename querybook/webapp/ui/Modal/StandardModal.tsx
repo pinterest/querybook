@@ -27,17 +27,9 @@ export const StandardModal: React.FunctionComponent<IStandardModalProps> = ({
 
     const modalTopDOM =
         title || topDOM ? (
-            <div className="Modal-top">
-                {title && topDOM ? (
-                    <div className="horizontal-space-between">
-                        <div className="Modal-title">{title}</div>
-                        {topDOM}
-                    </div>
-                ) : title ? (
-                    <div className="Modal-title">{title}</div>
-                ) : (
-                    topDOM
-                )}
+            <div className="Modal-top horizontal-space-between">
+                {title && <div className="Modal-title">{title}</div>}
+                {topDOM}
             </div>
         ) : null;
 
