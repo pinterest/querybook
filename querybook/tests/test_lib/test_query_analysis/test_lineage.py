@@ -104,11 +104,13 @@ class TokenizeByStatementTestCase(TestCase):
         self.assertEqual(len(statements), 1)
 
         statement = statements[0]
-        self.assertEqual(len(list(statement.flatten())), 26)
+        self.assertEqual(len(list(statement.flatten())), 27)
 
         statement_text = "".join(map(lambda t: t.value, list(statement.flatten())))
         self.assertEqual(
-            statement_text, "SELECT b\nFROM test\nWHERE abc=1\nGROUP BY b\nORDER BY b;"
+            statement_text,
+            """SELECT b FROM test
+                WHERE abc=1 GROUP BY b ORDER BY b;""",
         )
 
 

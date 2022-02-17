@@ -150,9 +150,6 @@ export default function search(
                         id,
                     });
                 }
-                // Ensure that current user's queries are initially selected
-                // by default for query search
-                draft.searchFilters['author_uid'] = id;
                 return;
             }
         }

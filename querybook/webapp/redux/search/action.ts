@@ -16,6 +16,7 @@ import {
     IResetSearchAction,
 } from './types';
 import { ICancelablePromise } from 'lib/datasource';
+import { isEmpty } from 'lodash';
 
 export function mapQueryParamToState(): ThunkResult<void> {
     return (dispatch) => {
@@ -93,9 +94,18 @@ export function resetSearch(): IResetSearchAction {
 
 export function performSearch(): ThunkResult<Promise<ISearchPreview[]>> {
     return async (dispatch, getState) => {
+        const state = getState();
+        const searchState = state.search;
+        const { searchType, searchFilters, searchString } = searchState;
+        // Don't perform search for query search if none of the filters/search string are applied
+        if (
+            searchType === SearchType.Query &&
+            isEmpty(searchFilters) &&
+            !searchString
+        ) {
+            return;
+        }
         try {
-            const state = getState();
-            const searchState = state.search;
             if (searchState.searchRequest) {
                 searchState.searchRequest.cancel();
             }

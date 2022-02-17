@@ -665,15 +665,33 @@ export const SearchOverview: React.FunctionComponent = () => {
         </Level>
     );
 
+    const hasBegunSearch =
+        numberOfResult > 0 ||
+        searchType !== SearchType.Query ||
+        !isEmpty(searchFilters) ||
+        !!searchString;
+    const beginSearchPromptDOM = (
+        <div className="begin-search-prompt">
+            Please enter a search string or apply search filters to begin
+            search.
+        </div>
+    );
+
     const searchBodyDOM = (
         <Container className="search-body" flex={'row'}>
             <div className="search-results">
                 <div className="search-result-top horizontal-space-between">
-                    <span className="search-result-count">
-                        <PrettyNumber val={numberOfResult} />{' '}
-                        {numberOfResult <= 1 ? 'result' : 'results'}
-                    </span>
-                    <span>{orderByDOM}</span>
+                    {hasBegunSearch ? (
+                        <>
+                            <span className="search-result-count">
+                                <PrettyNumber val={numberOfResult} />{' '}
+                                {numberOfResult === 1 ? 'result' : 'results'}
+                            </span>
+                            <span>{orderByDOM}</span>
+                        </>
+                    ) : (
+                        beginSearchPromptDOM
+                    )}
                 </div>
                 {resultsDOM}
                 {paginationDOM}

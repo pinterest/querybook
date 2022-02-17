@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { escapeRegExp } from 'lodash';
 
 import history from 'lib/router-history';
@@ -13,6 +13,7 @@ import { ThemedCodeHighlight } from 'ui/CodeHighlight/ThemedCodeHighlight';
 import { useSelector } from 'react-redux';
 import { queryEngineByIdEnvSelector } from 'redux/queryEngine/selector';
 import './SearchResultItem.scss';
+import { IconButton } from 'ui/Button/IconButton';
 
 const HighlightTitle: React.FunctionComponent<{
     title: string;
@@ -72,6 +73,8 @@ export const QueryItem: React.FunctionComponent<IQueryItemProps> = ({
     } = preview;
     const { userInfo: authorInfo, loading } = useUser({ uid: authorUid });
 
+    const [isQueryTextExpanded, setIsQueryTextExpanded] = useState(false);
+
     const isQueryCell = preview.query_type === 'query_cell';
 
     const url = isQueryCell
@@ -90,17 +93,54 @@ export const QueryItem: React.FunctionComponent<IQueryItemProps> = ({
     const resultTitle = isQueryCell
         ? title ?? 'Untitled'
         : `${title != null ? `${title} >` : 'Adhoc'} Execution ${id}`;
+
     const queryTextHighlightedContent = preview.highlight?.query_text;
-    const getQueryTextHighlightedDOM = (queryTextContent: string[]) => (
-        <span
-            className="result-item-description"
-            dangerouslySetInnerHTML={{
-                __html: formatHighlightStrings(queryTextContent),
-            }}
+
+    const getSyntaxHighlightedQueryDOM = () => (
+        <ThemedCodeHighlight
+            className="result-item-query"
+            value={queryText}
+            onClick={(event) => event.stopPropagation()}
         />
     );
 
+    const getSearchResultHighlightedQueryDOM = () => (
+        <div
+            className="highlighted-query pl16 pr24 pv8"
+            onClick={(event) => event.stopPropagation()}
+        >
+            <IconButton
+                className="toggle-expand-query-icon"
+                noPadding
+                icon={isQueryTextExpanded ? 'minimize-2' : 'maximize-2'}
+                size={14}
+                onClick={() =>
+                    setIsQueryTextExpanded((isExpaneded) => !isExpaneded)
+                }
+            />
+            {!isQueryTextExpanded ? (
+                <span
+                    dangerouslySetInnerHTML={{
+                        __html: formatHighlightStrings(
+                            queryTextHighlightedContent
+                        ),
+                    }}
+                />
+            ) : (
+                getSyntaxHighlightedQueryDOM()
+            )}
+        </div>
+    );
+
+    // If there are no highlighted sections in query text returned, display
+    // syntax-highlighted query, otherwise allow user to toggle between
+    // syntax-highlighted content and matched search results
+    const queryTextDOM = !queryTextHighlightedContent
+        ? getSyntaxHighlightedQueryDOM()
+        : getSearchResultHighlightedQueryDOM();
+
     const queryEngine = queryEngineById[engineId];
+    const queryType = isQueryCell ? 'data cell' : 'execution';
 
     return (
         <div className="SearchResultItem QueryItem" onClick={handleClick}>
@@ -110,17 +150,12 @@ export const QueryItem: React.FunctionComponent<IQueryItemProps> = ({
                         title={resultTitle}
                         searchString={searchString}
                     />
-                    {queryEngine && <Tag>{queryEngine.name}</Tag>}
+                    <div>
+                        <Tag>{queryType}</Tag>
+                        {queryEngine && <Tag>{queryEngine.name}</Tag>}
+                    </div>
                 </a>
-                {queryTextHighlightedContent ? (
-                    getQueryTextHighlightedDOM(queryTextHighlightedContent)
-                ) : (
-                    <ThemedCodeHighlight
-                        className="result-item-query"
-                        value={queryText}
-                        onClick={(event) => event.stopPropagation()}
-                    />
-                )}
+                <div className="mv8">{queryTextDOM}</div>
                 <Level className="result-items-bottom">
                     <span className="result-item-owner">
                         {authorInfo.username}
