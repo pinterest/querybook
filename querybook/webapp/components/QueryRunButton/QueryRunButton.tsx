@@ -140,7 +140,11 @@ export const QueryEngineSelector: React.FC<IQueryEngineSelectorProps> = ({
             tooltip: engineInfo.description,
         }));
         engineButtonDOM = (
-            <Dropdown customButtonRenderer={getEngineSelectorButtonDOM} isRight>
+            <Dropdown
+                customButtonRenderer={getEngineSelectorButtonDOM}
+                isRight
+                className="engine-selector-dropdown"
+            >
                 <ListMenu items={engineItems} type="select" isRight />
             </Dropdown>
         );

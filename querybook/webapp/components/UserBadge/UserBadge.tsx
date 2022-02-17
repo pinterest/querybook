@@ -1,11 +1,11 @@
 import React, { useMemo } from 'react';
 
 import { useUser } from 'hooks/redux/useUser';
-import { Title } from 'ui/Title/Title';
+import { ICommonUserLoaderProps } from './types';
 
 import { UserNameComponent } from './UserName';
 import { UserAvatarComponent } from './UserAvatar';
-import { ICommonUserLoaderProps } from './types';
+
 import './UserBadge.scss';
 
 type IProps = {
@@ -56,12 +56,10 @@ export const UserBadge: React.FunctionComponent<IProps> = ({
                 <figure>{avatarDOM}</figure>
             </div>
             <div className="UserBadge-names">
-                <Title size={4} className="user-name one-line-ellipsis">
+                <div className="username one-line-ellipsis">
                     <UserNameComponent userInfo={userInfo} loading={loading} />
-                </Title>
-                <Title subtitle size={7}>
-                    @{userName}
-                </Title>
+                </div>
+                <div className="handle">@{userName}</div>
             </div>
         </div>
     );

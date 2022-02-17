@@ -10,11 +10,11 @@
 
         .query-metadata {
             padding: 0px 8px;
-        }
-
-        .engine-selector-button {
-            padding-top: 8px;
-            padding-bottom: 8px;
+            .QueryRunButton .Button,
+            .engine-selector-dropdown .Dropdown-trigger,
+            .query-cell-additional-dropdown .Dropdown-trigger {
+                height: 28px;
+            }
         }
 
         .query-content {
@@ -78,10 +78,14 @@
         .query-engine-name {
             font-size: var(--text-size);
         }
+        .QueryRunButton .Button,
+        .engine-selector-dropdown .Dropdown-trigger,
+        .query-cell-additional-dropdown .Dropdown-trigger {
+            height: 100%;
+        }
 
         .query-cell-additional-dropdown {
             .Dropdown-trigger {
-                height: 100%;
                 .additional-dropdown-button {
                     cursor: pointer;
 

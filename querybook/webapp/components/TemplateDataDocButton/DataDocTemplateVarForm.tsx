@@ -2,13 +2,11 @@ import React from 'react';
 import { Formik, Form, FieldArray } from 'formik';
 import * as Yup from 'yup';
 
-import { Title } from 'ui/Title/Title';
-import { Button } from 'ui/Button/Button';
-import { InfoButton } from 'ui/Button/InfoButton';
+import { Button, TextButton } from 'ui/Button/Button';
 import { IconButton } from 'ui/Button/IconButton';
-import './DataDocTemplateVarForm.scss';
-import { Link } from 'ui/Link/Link';
 import { SimpleField } from 'ui/FormikField/SimpleField';
+
+import './DataDocTemplateVarForm.scss';
 
 export interface IDataDocTemplateVarFormProps {
     onSave: (vars: Record<string, string>) => any;
@@ -49,7 +47,7 @@ export const DataDocTemplateVarForm: React.FunctionComponent<IDataDocTemplateVar
                             ? values.variables.map((ignore, index) => (
                                   <div
                                       key={index}
-                                      className="horizontal-space-between template-key-value-row"
+                                      className="flex-row template-key-value-row"
                                   >
                                       <SimpleField
                                           label={() => null}
@@ -67,23 +65,22 @@ export const DataDocTemplateVarForm: React.FunctionComponent<IDataDocTemplateVar
                                               placeholder: 'Insert value',
                                           }}
                                       />
-
-                                      <div>
-                                          <IconButton
-                                              disabled={!isEditable}
-                                              icon="x"
-                                              onClick={() =>
-                                                  arrayHelpers.remove(index)
-                                              }
-                                          />
-                                      </div>
+                                      <IconButton
+                                          disabled={!isEditable}
+                                          icon="x"
+                                          onClick={() =>
+                                              arrayHelpers.remove(index)
+                                          }
+                                      />
                                   </div>
                               ))
                             : null;
+
                         const controlDOM = isEditable && (
-                            <div className="flex-right">
-                                <Button
-                                    title="Add New Variable"
+                            <div className="horizontal-space-between mt12">
+                                <TextButton
+                                    icon="plus"
+                                    title="New Variable"
                                     onClick={() => arrayHelpers.push(['', ''])}
                                 />
                                 <Button
@@ -95,7 +92,7 @@ export const DataDocTemplateVarForm: React.FunctionComponent<IDataDocTemplateVar
                         );
 
                         return (
-                            <div className="DataDocTemplateVarForm-content">
+                            <div className="DataDocTemplateVarForm-content mh4">
                                 <fieldset
                                     disabled={!isEditable}
                                     className="mb8"
@@ -111,55 +108,7 @@ export const DataDocTemplateVarForm: React.FunctionComponent<IDataDocTemplateVar
 
             return (
                 <div className="DataDocTemplateVarForm">
-                    <Form>
-                        <div className="horizontal-space-between">
-                            <div>
-                                <Title>Templated Variables</Title>
-                            </div>
-                            <div>
-                                <InfoButton layout={['bottom', 'right']}>
-                                    <div>
-                                        <p>
-                                            {'Put {{variable_name}} in your query and it will get substituted with ' +
-                                                'variable_value. Some variables are provided automatically. Such as:'}
-                                            <ul>
-                                                <li>
-                                                    {
-                                                        '{{today}} which maps to todays date in yyyy-mm-dd'
-                                                    }
-                                                </li>
-                                                <li>
-                                                    {
-                                                        "{{yesterday}} which maps to yesterday's date"
-                                                    }
-                                                </li>
-                                                <li>
-                                                    {
-                                                        "{{latest_partition('<schema_name>.<table_name>', '<partition_key>')}} which is a function to get the latest partition of a table"
-                                                    }
-                                                </li>
-                                            </ul>
-                                        </p>
-                                        <p>
-                                            {
-                                                'You can also put variable definitions in variables for recursive rendering.'
-                                            }
-                                        </p>
-                                        <p>
-                                            <Link
-                                                to={
-                                                    'https://jinja.palletsprojects.com/en/2.11.x/templates/'
-                                                }
-                                            >
-                                                See complete guide here.
-                                            </Link>
-                                        </p>
-                                    </div>
-                                </InfoButton>
-                            </div>
-                        </div>
-                        {variablesField}
-                    </Form>
+                    <Form>{variablesField}</Form>
                 </div>
             );
         }}

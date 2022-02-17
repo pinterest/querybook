@@ -2,17 +2,18 @@ import clsx from 'clsx';
 import React from 'react';
 
 import { useMounted } from 'hooks/useMounted';
-import { IconButton } from 'ui/Button/IconButton';
 import { IStandardModalProps } from './types';
 import { useDebounce } from 'hooks/useDebounce';
 import { useAppBlur } from 'hooks/ui/useAppBlur';
 
 export const StandardModal: React.FunctionComponent<IStandardModalProps> = ({
-    hideModalTitle = false,
     className = '',
     children,
     onHide,
     title = '',
+    infoDOM = null,
+    topDOM = null,
+    bottomDOM = null,
 }) => {
     useAppBlur();
     const mounted = useMounted();
@@ -25,29 +26,30 @@ export const StandardModal: React.FunctionComponent<IStandardModalProps> = ({
         [className]: Boolean(className),
     });
 
-    let modalTitleDOM: React.ReactNode;
-    if (!hideModalTitle) {
-        modalTitleDOM = (
-            <>
-                {title !== null ? (
-                    <div className="Modal-title">{title}</div>
+    const modalTopDOM =
+        title !== null ? (
+            <div className="Modal-top">
+                {title ? (
+                    <div className="horizontal-space-between">
+                        <div className="Modal-title">{title}</div>
+                        {infoDOM}
+                    </div>
                 ) : null}
-                <IconButton
-                    className="Modal-close"
-                    aria-label="close"
-                    icon="x"
-                    onClick={onHide}
-                />
-            </>
-        );
-    }
+                {topDOM}
+            </div>
+        ) : null;
+
+    const modalBottomDOM = bottomDOM ? (
+        <div className="Modal-bottom">{bottomDOM}</div>
+    ) : null;
 
     return (
         <div className={modalClassName}>
             <div className="Modal-background fullscreen" onClick={onHide} />
             <div className="Modal-box">
-                {modalTitleDOM}
+                {modalTopDOM}
                 <div className="Modal-content">{children}</div>
+                {modalBottomDOM}
             </div>
         </div>
     );

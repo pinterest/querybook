@@ -2,15 +2,15 @@ import React from 'react';
 import toast from 'react-hot-toast';
 
 import { useResource } from 'hooks/useResource';
-import { Loading } from 'ui/Loading/Loading';
-import { ErrorMessage } from 'ui/Message/ErrorMessage';
-
-import { Tabs } from 'ui/Tabs/Tabs';
-import { Title } from 'ui/Title/Title';
 import { DataDocScheduleResource } from 'resource/dataDoc';
+import { IScheduleTabs } from 'components/DataDocRightSidebar/ScheduleDataDocButton';
 
 import { DataDocScheduleForm } from './DataDocScheduleForm';
 import { DataDocScheduleRunLogs } from './DataDocScheduleRunLogs';
+
+import { Loading } from 'ui/Loading/Loading';
+import { ErrorMessage } from 'ui/Message/ErrorMessage';
+
 import './DataDocSchedule.scss';
 
 interface IDataDocScheduleProps {
@@ -18,39 +18,18 @@ interface IDataDocScheduleProps {
     isEditable: boolean;
     onSave?: () => void;
     onDelete?: () => void;
+    currentTab: IScheduleTabs;
 }
-
-const SCHEDULE_TABS = [
-    {
-        name: 'Schedule',
-        key: 'schedule',
-    },
-    {
-        name: 'History',
-        key: 'history',
-    },
-];
 
 export const DataDocSchedule: React.FunctionComponent<IDataDocScheduleProps> = ({
     docId,
     onSave,
     onDelete,
     isEditable,
+    currentTab,
 }) => {
     const { isLoading, isError, data, forceFetch } = useResource(
         React.useCallback(() => DataDocScheduleResource.get(docId), [docId])
-    );
-    const [currentTab, setCurrentTab] = React.useState('schedule');
-
-    const tabsDOM = (
-        <div className="data-doc-schedule-tabs">
-            <Tabs
-                items={SCHEDULE_TABS}
-                selectedTabKey={currentTab}
-                onSelect={setCurrentTab}
-                wide
-            />
-        </div>
     );
 
     if (isLoading) {
@@ -132,22 +111,15 @@ export const DataDocSchedule: React.FunctionComponent<IDataDocScheduleProps> = (
             );
         } else {
             // Readonly and no schedule
-            formDOM = (
-                <div>
-                    <Title>No Schedules</Title>
-                </div>
-            );
+            formDOM = <div className="empty-message m16">No Schedules</div>;
         }
 
         return formDOM;
     };
 
     return (
-        <>
-            {tabsDOM}
-            <div className="DataDocSchedule">
-                {currentTab === 'schedule' ? getScheduleDOM() : getHistoryDOM()}
-            </div>
-        </>
+        <div className="DataDocSchedule">
+            {currentTab === 'schedule' ? getScheduleDOM() : getHistoryDOM()}
+        </div>
     );
 };

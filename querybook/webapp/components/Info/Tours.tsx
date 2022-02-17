@@ -13,7 +13,7 @@ export const Tours: React.FunctionComponent = () => {
     const handleDataDocTour = useCreateDataDoc(true);
 
     return (
-        <div className="Tours m12">
+        <div className="Tours">
             <Title subtitle className="mb12">
                 Welcome to the {getAppName()} Tutorial!
             </Title>

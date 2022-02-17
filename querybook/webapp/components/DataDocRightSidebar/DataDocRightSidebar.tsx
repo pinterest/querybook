@@ -124,7 +124,7 @@ export const DataDocRightSidebar: React.FunctionComponent<IProps> = ({
                     color="accent"
                 />
             </div>
-            <div className="DataDocRightSidebar-button-section-bottom flex-column">
+            <div className="DataDocRightSidebar-button-section-bottom flex-column mb8">
                 {templateButtonDOM}
                 {scheduleButtonDOM}
                 <IconButton

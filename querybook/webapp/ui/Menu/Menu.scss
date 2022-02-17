@@ -44,6 +44,10 @@
         }
     }
 
+    .MenuInfoItem {
+        color: var(--text-light);
+    }
+
     &.soft {
         background: var(--bg-light);
         color: var(--text-light);

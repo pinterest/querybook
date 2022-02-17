@@ -1,10 +1,11 @@
 import clsx from 'clsx';
 import React from 'react';
+
 import { IStandardModalProps } from './types';
+
 import { IconButton } from 'ui/Button/IconButton';
 
 export const FullScreenModal: React.FunctionComponent<IStandardModalProps> = ({
-    hideModalTitle = false,
     className = '',
     title,
     onHide,
@@ -16,22 +17,17 @@ export const FullScreenModal: React.FunctionComponent<IStandardModalProps> = ({
         [className]: Boolean(className),
     });
 
-    let modalTitleDOM: React.ReactNode;
-    if (!hideModalTitle) {
-        modalTitleDOM = (
-            <>
-                <IconButton
-                    className="Modal-close"
-                    aria-label="close"
-                    icon="x"
-                    onClick={onHide}
-                />
-                {title !== null ? (
-                    <div className="Modal-title">{title}</div>
-                ) : null}
-            </>
-        );
-    }
+    const modalTitleDOM = (
+        <>
+            <IconButton
+                className="Modal-close"
+                aria-label="close"
+                icon="x"
+                onClick={onHide}
+            />
+            {title !== null ? <div className="Modal-title">{title}</div> : null}
+        </>
+    );
 
     return (
         <div className={modalClassName}>
