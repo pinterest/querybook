@@ -1,12 +1,5 @@
 .ConfirmationMessage {
-    .confirmation-header {
-        font-size: var(--xxlarge-text-size);
-        font-weight: var(--bold-font);
-    }
     .confirmation-message {
-        font-size: var(--med-text-size);
-    }
-    .confirmation-buttons {
-        margin-top: 15px;
+        font-size: var(--text-size);
     }
 }

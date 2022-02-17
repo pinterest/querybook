@@ -1,6 +1,5 @@
 .QueryRunButton {
     .Button {
-        height: 100%;
         width: 120px;
         display: flex;
         justify-content: center;
@@ -15,16 +14,13 @@
 .QueryEngineSelector {
     display: inline-block;
     height: 100%;
-    .Dropdown {
+    .engine-selector-dropdown {
         height: 100%;
         .Dropdown-trigger {
-            height: 100%;
             .engine-selector-button {
                 min-width: 120px;
                 border-radius: var(--border-radius-sm);
-
                 user-select: none;
-
                 font-size: var(--small-text-size);
 
                 &:hover {

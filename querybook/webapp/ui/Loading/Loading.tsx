@@ -24,6 +24,8 @@ const StyledSpinner = styled.div`
     top: 50%;
     transform: translateY(-50%);
     margin: auto;
+    padding-top: 16px;
+    padding-bottom: 16px;
     width: 20px;
     height: 20px;
     font-size: var(--large-text-size);

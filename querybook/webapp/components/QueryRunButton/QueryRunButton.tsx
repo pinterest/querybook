@@ -70,7 +70,7 @@ export const QueryRunButton = React.forwardRef<
                     'run-selection': !!hasSelection,
                 })}
                 title={hasSelection ? 'Run Selection' : null}
-                icon={<Icon name="play" fill />}
+                icon={hasSelection ? null : <Icon name="play" fill />}
                 aria-label={`Execute (${EXECUTE_QUERY_SHORTCUT})`}
                 data-balloon-pos={runButtonTooltipPos}
                 color="accent"
@@ -140,7 +140,11 @@ export const QueryEngineSelector: React.FC<IQueryEngineSelectorProps> = ({
             tooltip: engineInfo.description,
         }));
         engineButtonDOM = (
-            <Dropdown customButtonRenderer={getEngineSelectorButtonDOM} isRight>
+            <Dropdown
+                customButtonRenderer={getEngineSelectorButtonDOM}
+                isRight
+                className="engine-selector-dropdown"
+            >
                 <ListMenu items={engineItems} type="select" isRight />
             </Dropdown>
         );
