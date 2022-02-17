@@ -24,7 +24,7 @@ export const ScheduleDataDocModal: React.FunctionComponent<IProps> = ({
     );
 
     const topDOM = (
-        <div className="horizontal-space-between">
+        <div className="horizontal-space-between flex1">
             <Tabs
                 items={scheduleTabs}
                 selectedTabKey={currentTab}
