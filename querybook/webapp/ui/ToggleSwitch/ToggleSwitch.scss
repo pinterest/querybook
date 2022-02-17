@@ -20,9 +20,10 @@
     }
 
     &.checked {
-        background-color: var(--color-accent-light);
+        background-color: var(--color-accent-lightest);
         .ToggleSwitch-circle {
             left: 25px;
+            background-color: var(--color-accent);
         }
     }
 }

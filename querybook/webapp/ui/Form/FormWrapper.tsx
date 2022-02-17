@@ -39,7 +39,7 @@ export const FormWrapper: React.FC<
         size?: NumFontSize;
     } & ISharedProps
 > = ({ size = 6, children, ...styleProps }) => {
-    const sectionFontSize = numFontSizeToString[Math.max(size - 1, 1)];
+    const sectionFontSize = numFontSizeToString[Math.max(size - 2, 1)];
     const fontSize = numFontSizeToString[size];
     const errorFontSize = numFontSizeToString[Math.min(size + 1, 9)];
 

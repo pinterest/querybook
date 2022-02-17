@@ -2,7 +2,7 @@
 
 .UserBadge {
     .UserBadge-icon {
-        margin-right: 1rem;
+        margin-right: 16px;
         figure {
             width: 48px;
             height: 48px;
@@ -16,7 +16,7 @@
             width: 24px;
             height: 24px;
 
-            ~ .user-name {
+            ~ .username {
                 margin-left: 4px;
             }
         }
@@ -27,5 +27,16 @@
 
     .UserBadge-names {
         max-width: 180px;
+        .username {
+            font-size: var(--large-text-size);
+            font-weight: var(--extra-bold-font);
+            color: var(--text-dark);
+            margin-top: -4px;
+        }
+        .handle {
+            font-size: var(--small-text-size);
+            margin-top: -6px;
+            color: var(--text-light);
+        }
     }
 }

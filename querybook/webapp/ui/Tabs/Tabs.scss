@@ -102,6 +102,11 @@
         ul {
             justify-content: space-evenly;
         }
+        &.pills {
+            li {
+                width: 100%;
+            }
+        }
     }
 
     &.vertical {

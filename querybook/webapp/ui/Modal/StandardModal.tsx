@@ -2,17 +2,17 @@ import clsx from 'clsx';
 import React from 'react';
 
 import { useMounted } from 'hooks/useMounted';
-import { IconButton } from 'ui/Button/IconButton';
 import { IStandardModalProps } from './types';
 import { useDebounce } from 'hooks/useDebounce';
 import { useAppBlur } from 'hooks/ui/useAppBlur';
 
 export const StandardModal: React.FunctionComponent<IStandardModalProps> = ({
-    hideModalTitle = false,
     className = '',
     children,
     onHide,
-    title = '',
+    title = null,
+    topDOM = null,
+    bottomDOM = null,
 }) => {
     useAppBlur();
     const mounted = useMounted();
@@ -25,29 +25,25 @@ export const StandardModal: React.FunctionComponent<IStandardModalProps> = ({
         [className]: Boolean(className),
     });
 
-    let modalTitleDOM: React.ReactNode;
-    if (!hideModalTitle) {
-        modalTitleDOM = (
-            <>
-                {title !== null ? (
-                    <div className="Modal-title">{title}</div>
-                ) : null}
-                <IconButton
-                    className="Modal-close"
-                    aria-label="close"
-                    icon="x"
-                    onClick={onHide}
-                />
-            </>
-        );
-    }
+    const modalTopDOM =
+        title || topDOM ? (
+            <div className="Modal-top horizontal-space-between">
+                {title && <div className="Modal-title">{title}</div>}
+                {topDOM}
+            </div>
+        ) : null;
+
+    const modalBottomDOM = bottomDOM ? (
+        <div className="Modal-bottom">{bottomDOM}</div>
+    ) : null;
 
     return (
         <div className={modalClassName}>
             <div className="Modal-background fullscreen" onClick={onHide} />
             <div className="Modal-box">
-                {modalTitleDOM}
+                {modalTopDOM}
                 <div className="Modal-content">{children}</div>
+                {modalBottomDOM}
             </div>
         </div>
     );

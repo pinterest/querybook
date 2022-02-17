@@ -46,8 +46,8 @@ body {
     --color-yellow-lightest: rgba(252, 227, 183, 0.4);
     --color-yellow-lightest-0: rgba(252, 227, 183, 0.2);
 
-    --color-green: #bdda57;
-    --color-green-dark: #81a011; // confirm button
+    --color-green: #81a011;
+    --color-green-dark: #6a830e; // confirm button
     --color-green-light: #dbeaa3;
     --color-green-lightest: rgba(219, 234, 163, 0.4);
     --color-green-lightest-0: rgba(219, 234, 163, 0.2);
@@ -137,6 +137,9 @@ body {
     --font-sans-serif: BlinkMacSystemFont, -apple-system, 'Avenir Next',
         'Avenir', 'Segoe UI', Helvetica, 'Apple Color Emoji', Arial, sans-serif,
         'Segoe UI Emoji', 'Segoe UI Symbol';
+    --font-title: 'Poppins', BlinkMacSystemFont, -apple-system, 'Avenir Next',
+        'Avenir', 'Segoe UI', Helvetica, 'Apple Color Emoji', Arial, sans-serif,
+        'Segoe UI Emoji', 'Segoe UI Symbol';
     --font-monospace: monaco, monospace;
 
     --bold-font: 600;
@@ -146,7 +149,7 @@ body {
     --xxsmall-text-size: 0.7rem;
     --xsmall-text-size: 0.8rem;
     --small-text-size: 0.9rem;
-    --text-size: 1rem;
+    --text-size: 0.95rem;
     --med-text-size: 1.25rem;
     --large-text-size: 1.5rem;
     --xlarge-text-size: 2rem;
@@ -166,6 +169,7 @@ body {
     --padding-sm: 6px;
     --padding: 12px;
     --padding-lg: 16px;
+    --padding-xl: 24px;
 
     --margin-xs: 8px;
     --margin-sm: 12px;
