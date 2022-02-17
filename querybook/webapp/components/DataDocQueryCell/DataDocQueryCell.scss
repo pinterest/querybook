@@ -12,11 +12,6 @@
             padding: 0px 8px;
         }
 
-        .engine-selector-button {
-            padding-top: 8px;
-            padding-bottom: 8px;
-        }
-
         .query-content {
             flex: 1;
             display: flex;
@@ -58,6 +53,9 @@
         font-weight: var(--bold-font);
 
         padding-top: 6px;
+        .collapsed-query-title {
+            @include one-line-ellipsis();
+        }
     }
 
     .query-title {
@@ -75,31 +73,40 @@
     .query-metadata {
         display: flex;
 
-        .query-engine-name {
-            font-size: var(--text-size);
-        }
+        .query-controls {
+            align-self: flex-end;
+            height: 48px;
+            .query-engine-name {
+                font-size: var(--text-size);
+            }
 
-        .query-cell-additional-dropdown {
-            .Dropdown-trigger {
-                height: 100%;
-                .additional-dropdown-button {
-                    cursor: pointer;
+            .QueryRunButton .Button,
+            .engine-selector-dropdown .Dropdown-trigger,
+            .query-cell-additional-dropdown .Dropdown-trigger {
+                height: 36px;
+            }
 
-                    height: 100%;
-                    width: 36px;
-                    font-size: 20px;
-                    line-height: 38px;
+            .query-cell-additional-dropdown {
+                .Dropdown-trigger {
+                    .additional-dropdown-button {
+                        cursor: pointer;
 
-                    border-radius: var(--border-radius-sm);
+                        height: 100%;
+                        width: 36px;
+                        font-size: 20px;
+                        line-height: 38px;
 
-                    svg {
-                        z-index: 4;
-                    }
-                    &:hover {
-                        background-color: var(--bg-hover);
-                    }
-                    &:focus {
-                        background-color: var(--bg-lightest);
+                        border-radius: var(--border-radius-sm);
+
+                        svg {
+                            z-index: 4;
+                        }
+                        &:hover {
+                            background-color: var(--bg-hover);
+                        }
+                        &:focus {
+                            background-color: var(--bg-lightest);
+                        }
                     }
                 }
             }

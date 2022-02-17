@@ -20,6 +20,8 @@ import { Tabs } from 'ui/Tabs/Tabs';
 import { TimePicker } from 'ui/TimePicker/TimePicker';
 import { overlayRoot } from 'ui/Overlay/Overlay';
 
+import './RecurrenceEditor.scss';
+
 const recurrenceReactSelectStyle = makeReactSelectStyle(true);
 
 interface IProps {
@@ -64,7 +66,7 @@ export const RecurrenceEditor: React.FunctionComponent<IProps> = ({
                         setRecurrence(newRecurrence);
                     }}
                 />
-                <div className="pl8">
+                <div className="editor-text ml12">
                     {recurrence.recurrence === 'hourly'
                         ? `Every hour at minute ${recurrence.minute} `
                         : `Local Time: ${localTime}`}

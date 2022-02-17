@@ -228,7 +228,7 @@ export const DataDocCellControl: React.FunctionComponent<IProps> = ({
     if (leftMenuItems.length) {
         leftButtons.unshift(
             <Dropdown
-                className={'inline mr4'}
+                className={'inline mr8'}
                 key="dropdown-menu"
                 customButtonRenderer={() => (
                     <SoftButton

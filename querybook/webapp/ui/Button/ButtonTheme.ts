@@ -7,7 +7,7 @@ export const ButtonColors = [
     'light',
     'default',
 ] as const;
-export const ButtonThemes = ['outline', 'text', 'fill'] as const;
+export const ButtonThemes = ['text', 'fill'] as const;
 
 export type ButtonColorType = typeof ButtonColors[number];
 export type ButtonThemeType = typeof ButtonThemes[number];
