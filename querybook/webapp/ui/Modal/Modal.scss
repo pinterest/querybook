@@ -5,11 +5,11 @@
     }
 
     .Modal-top {
+        font-family: var(--font-title);
         .Modal-title {
             font-size: var(--xlarge-text-size);
             font-weight: var(--extra-bold-font);
             color: var(--text-dark);
-            font-family: var(--font-display);
         }
     }
 

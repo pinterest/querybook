@@ -3,10 +3,10 @@ import toast from 'react-hot-toast';
 
 import { useResource } from 'hooks/useResource';
 import { DataDocScheduleResource } from 'resource/dataDoc';
-import { IScheduleTabs } from 'components/DataDocRightSidebar/ScheduleDataDocButton';
 
 import { DataDocScheduleForm } from './DataDocScheduleForm';
 import { DataDocScheduleRunLogs } from './DataDocScheduleRunLogs';
+import { IScheduleTabs } from 'components/DataDocRightSidebar/ScheduleDataDocModal';
 
 import { Loading } from 'ui/Loading/Loading';
 import { ErrorMessage } from 'ui/Message/ErrorMessage';

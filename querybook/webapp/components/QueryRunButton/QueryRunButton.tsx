@@ -70,7 +70,7 @@ export const QueryRunButton = React.forwardRef<
                     'run-selection': !!hasSelection,
                 })}
                 title={hasSelection ? 'Run Selection' : null}
-                icon={<Icon name="play" fill />}
+                icon={hasSelection ? null : <Icon name="play" fill />}
                 aria-label={`Execute (${EXECUTE_QUERY_SHORTCUT})`}
                 data-balloon-pos={runButtonTooltipPos}
                 color="accent"

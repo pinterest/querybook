@@ -27,7 +27,7 @@ export const StandardModal: React.FunctionComponent<IStandardModalProps> = ({
     });
 
     const modalTopDOM =
-        title !== null ? (
+        title != null ? (
             <div className="Modal-top">
                 {title ? (
                     <div className="horizontal-space-between">
