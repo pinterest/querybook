@@ -104,7 +104,6 @@ export const QueryEngineStatusButton: React.FC<IProps> = ({
         <Modal
             onHide={() => setShowStatusForEngineId(null)}
             title="Query Engine Status"
-            className="with-padding"
         >
             <QueryEngineStatusViewer engineId={Number(engineId)} />
         </Modal>

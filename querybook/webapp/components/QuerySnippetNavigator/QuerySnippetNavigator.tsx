@@ -262,12 +262,13 @@ class QuerySnippetNavigatorComponent extends React.PureComponent<
         const { filters, showFilterMenu, showCreateSnippetModal } = this.state;
 
         const tabsDOM = (
-            <div>
+            <div className="mb4">
                 <Tabs
                     items={NAVIGATOR_TABS}
                     selectedTabKey={this.state.selectedTabKey}
                     onSelect={this.onTabSelect}
                     wide
+                    pills
                 />
             </div>
         );

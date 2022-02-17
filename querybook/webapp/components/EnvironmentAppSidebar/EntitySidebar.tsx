@@ -107,7 +107,7 @@ export const EntitySidebar: React.FunctionComponent<IEntitySidebarProps> = React
                         color="transparent"
                     />
                 </div>
-                <div className="sidebar-footer flex-column">
+                <div className="sidebar-footer flex-column mb8">
                     <SearchContainer />
                     <UserMenu />
                     <QueryEngineStatusButton />

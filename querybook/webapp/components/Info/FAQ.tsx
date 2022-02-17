@@ -9,7 +9,7 @@ import './FAQ.scss';
 const faqs: Array<{ q: string; a: string }> = require('config/faqs.yaml').faqs;
 
 export const FAQ: React.FunctionComponent = () => (
-    <div className="FAQ m12">
+    <div className="FAQ">
         {faqs.map((faq, idx) => {
             const { q: question, a: answer } = faq;
             return (

@@ -21,7 +21,6 @@ const UserSettingsMenuRoute: React.FunctionComponent<RouteComponentProps> = ({
                 isModalRoute ? history.goBack : () => navigateWithinEnv('/')
             }
             title="User Settings"
-            className="with-padding"
         >
             {contentDOM}
         </Modal>

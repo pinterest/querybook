@@ -561,20 +561,22 @@ class DataDocQueryCellComponent extends React.PureComponent<IProps, IState> {
         return (
             <div className="query-metadata">
                 <div className="query-title">{queryTitleDOM}</div>
-                <QueryRunButton
-                    ref={this.runButtonRef}
-                    queryEngineById={queryEngineById}
-                    queryEngines={queryEngines}
-                    disabled={!isEditable}
-                    hasSelection={selectedRange != null}
-                    engineId={this.engineId}
-                    onRunClick={this.onRunButtonClick}
-                    onEngineIdSelect={this.handleMetaChange.bind(
-                        this,
-                        'engine'
-                    )}
-                />
-                {this.getAdditionalDropDownButtonDOM()}
+                <div className="query-controls flex-row">
+                    <QueryRunButton
+                        ref={this.runButtonRef}
+                        queryEngineById={queryEngineById}
+                        queryEngines={queryEngines}
+                        disabled={!isEditable}
+                        hasSelection={selectedRange != null}
+                        engineId={this.engineId}
+                        onRunClick={this.onRunButtonClick}
+                        onEngineIdSelect={this.handleMetaChange.bind(
+                            this,
+                            'engine'
+                        )}
+                    />
+                    {this.getAdditionalDropDownButtonDOM()}
+                </div>
             </div>
         );
     }
@@ -768,7 +770,9 @@ class DataDocQueryCellComponent extends React.PureComponent<IProps, IState> {
             <div className={classes}>
                 <div className="collapsed-query flex-row">
                     <Icon name="terminal" className="mt4 mr8" />
-                    <span>{this.dataCellTitle}</span>
+                    <span className="collapsed-query-title pr16">
+                        {this.dataCellTitle}
+                    </span>
                 </div>
             </div>
         ) : isFullScreen ? (
