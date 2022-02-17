@@ -106,10 +106,8 @@ def get_statement_placeholders(statement):
             placeholders.append(token.get_real_name())
         elif token and isinstance(token, sqlparse.sql.IdentifierList):
             for identifier in token.get_identifiers():
-                try:
+                if isinstance(identifier, sqlparse.sql.Identifier):
                     placeholders.append(identifier.get_real_name())
-                except Exception as e:
-                    LOG.error(e)
         elif hasattr(token, "ttype") and token.ttype == sqlparse.tokens.Keyword.DML:
             break
         index, token = statement.token_next(index)

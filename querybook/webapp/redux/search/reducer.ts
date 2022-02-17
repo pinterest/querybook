@@ -19,7 +19,7 @@ const initialPaginationState: ISearchPaginationState = {
 const initialSearchParamState = {
     searchFilters: {},
     searchFields: {},
-    searchOrder: SearchOrder.Recency,
+    searchOrder: SearchOrder.Relevance,
     searchString: '',
     searchType: SearchType.Query,
 };
