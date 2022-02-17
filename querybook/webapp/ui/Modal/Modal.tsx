@@ -17,7 +17,6 @@ export const Modal: React.FunctionComponent<IModalProps> = ({
     children,
     onHide,
     title,
-    infoDOM,
     topDOM,
     bottomDOM,
 }) => {
@@ -51,7 +50,6 @@ export const Modal: React.FunctionComponent<IModalProps> = ({
                 onHide={onHide}
                 className={className}
                 title={title}
-                infoDOM={infoDOM}
                 topDOM={topDOM}
                 bottomDOM={bottomDOM}
             >

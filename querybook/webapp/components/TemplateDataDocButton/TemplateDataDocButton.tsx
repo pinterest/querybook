@@ -27,7 +27,7 @@ export const TemplateDataDocButton: React.FunctionComponent<IProps> = ({
                 setShowTemplateForm(false);
             }}
             title="Variables"
-            infoDOM={<TemplateDataDocInfoButton />}
+            topDOM={<TemplateDataDocInfoButton />}
         >
             <DataDocTemplateVarForm
                 isEditable={isEditable}

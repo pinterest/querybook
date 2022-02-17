@@ -6,7 +6,6 @@ interface IBaseModalProps {
 
     // defaults to '', set to null to hide title
     title?: string;
-    infoDOM?: React.ReactElement;
     topDOM?: React.ReactElement;
     bottomDOM?: React.ReactElement;
 }

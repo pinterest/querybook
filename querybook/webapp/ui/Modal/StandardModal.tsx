@@ -10,8 +10,7 @@ export const StandardModal: React.FunctionComponent<IStandardModalProps> = ({
     className = '',
     children,
     onHide,
-    title = '',
-    infoDOM = null,
+    title = null,
     topDOM = null,
     bottomDOM = null,
 }) => {
@@ -27,15 +26,18 @@ export const StandardModal: React.FunctionComponent<IStandardModalProps> = ({
     });
 
     const modalTopDOM =
-        title != null ? (
+        title || topDOM ? (
             <div className="Modal-top">
-                {title ? (
+                {title && topDOM ? (
                     <div className="horizontal-space-between">
                         <div className="Modal-title">{title}</div>
-                        {infoDOM}
+                        {topDOM}
                     </div>
-                ) : null}
-                {topDOM}
+                ) : title ? (
+                    <div className="Modal-title">{title}</div>
+                ) : (
+                    topDOM
+                )}
             </div>
         ) : null;
 
