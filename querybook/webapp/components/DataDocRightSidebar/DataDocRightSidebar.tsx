@@ -5,8 +5,8 @@ import { IDataDoc } from 'const/datadoc';
 import { IconButton } from 'ui/Button/IconButton';
 
 import { DeleteDataDocButton } from './DeleteDataDocButton';
-import { TemplateDataDocButton } from 'components/TemplateDataDocButton/TemplateDataDocButton';
-import { ScheduleDataDocButton } from './ScheduleDataDocButton';
+import { DataDocTemplateButton } from 'components/DataDocTemplateButton/DataDocTemplateButton';
+import { DataDocScheduleButton } from './DataDocScheduleButton';
 import { getScrollParent, smoothScroll } from 'lib/utils';
 
 import './DataDocRightSidebar.scss';
@@ -76,14 +76,14 @@ export const DataDocRightSidebar: React.FunctionComponent<IProps> = ({
         />
     );
     const templateButtonDOM = (
-        <TemplateDataDocButton
+        <DataDocTemplateButton
             dataDoc={dataDoc}
             isEditable={isEditable}
             changeDataDocMeta={changeDataDocMeta}
         />
     );
     const scheduleButtonDOM = (
-        <ScheduleDataDocButton isEditable={isEditable} docId={dataDoc.id} />
+        <DataDocScheduleButton isEditable={isEditable} docId={dataDoc.id} />
     );
 
     const buttonSection = (

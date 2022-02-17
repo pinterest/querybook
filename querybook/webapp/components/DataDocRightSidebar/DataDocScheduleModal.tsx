@@ -14,7 +14,7 @@ const scheduleTabs = ['schedule', 'history'];
 
 export type IScheduleTabs = typeof scheduleTabs[number];
 
-export const ScheduleDataDocModal: React.FunctionComponent<IProps> = ({
+export const DataDocScheduleModal: React.FunctionComponent<IProps> = ({
     docId,
     isEditable,
     onHide,

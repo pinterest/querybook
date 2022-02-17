@@ -6,12 +6,10 @@ import { DataDocScheduleResource } from 'resource/dataDoc';
 
 import { DataDocScheduleForm } from './DataDocScheduleForm';
 import { DataDocScheduleRunLogs } from './DataDocScheduleRunLogs';
-import { IScheduleTabs } from 'components/DataDocRightSidebar/ScheduleDataDocModal';
+import { IScheduleTabs } from 'components/DataDocRightSidebar/DataDocScheduleModal';
 
 import { Loading } from 'ui/Loading/Loading';
 import { ErrorMessage } from 'ui/Message/ErrorMessage';
-
-import './DataDocSchedule.scss';
 
 interface IDataDocScheduleProps {
     docId: number;

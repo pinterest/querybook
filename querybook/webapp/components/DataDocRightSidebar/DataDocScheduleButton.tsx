@@ -1,14 +1,14 @@
 import React from 'react';
 
 import { IconButton } from 'ui/Button/IconButton';
-import { ScheduleDataDocModal } from './ScheduleDataDocModal';
+import { DataDocScheduleModal } from './DataDocScheduleModal';
 
 interface IProps {
     docId: number;
     isEditable: boolean;
 }
 
-export const ScheduleDataDocButton: React.FunctionComponent<IProps> = ({
+export const DataDocScheduleButton: React.FunctionComponent<IProps> = ({
     docId,
     isEditable,
 }) => {
@@ -24,7 +24,7 @@ export const ScheduleDataDocButton: React.FunctionComponent<IProps> = ({
                 title="Schedule"
             />
             {showModal ? (
-                <ScheduleDataDocModal
+                <DataDocScheduleModal
                     docId={docId}
                     isEditable={isEditable}
                     onHide={() => setShowModal(false)}

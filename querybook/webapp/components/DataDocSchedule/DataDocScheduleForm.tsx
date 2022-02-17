@@ -34,8 +34,6 @@ import { notificationServiceSelector } from '../../redux/notificationService/sel
 import { SoftButton } from 'ui/Button/Button';
 import { IconButton } from 'ui/Button/IconButton';
 
-import './DataDocScheduleForm.scss';
-
 interface IDataDocScheduleFormProps {
     isEditable: boolean;
     docId: number;

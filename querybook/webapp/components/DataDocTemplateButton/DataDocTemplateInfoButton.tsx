@@ -4,7 +4,7 @@ import { Link } from 'react-router-dom';
 import { InfoButton } from 'ui/Button/InfoButton';
 import { Content } from 'ui/Content/Content';
 
-export const TemplateDataDocInfoButton: React.FunctionComponent = () => (
+export const DataDocTemplateInfoButton: React.FunctionComponent = () => (
     <InfoButton layout={['bottom', 'right']}>
         <Content>
             <p>
