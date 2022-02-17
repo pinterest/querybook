@@ -1,14 +1,19 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { escapeRegExp } from 'lodash';
 
 import history from 'lib/router-history';
 import { generateFormattedDate } from 'lib/utils/datetime';
 import { UserAvatar } from 'components/UserBadge/UserAvatar';
-import { IDataDocPreview, ITablePreview } from 'const/search';
+import { IDataDocPreview, IQueryPreview, ITablePreview } from 'const/search';
 import { Icon } from 'ui/Icon/Icon';
+import { Tag } from 'ui/Tag/Tag';
 import { useUser } from 'hooks/redux/useUser';
 import { Level } from 'ui/Level/Level';
+import { ThemedCodeHighlight } from 'ui/CodeHighlight/ThemedCodeHighlight';
+import { useSelector } from 'react-redux';
+import { queryEngineByIdEnvSelector } from 'redux/queryEngine/selector';
 import './SearchResultItem.scss';
+import { IconButton } from 'ui/Button/IconButton';
 
 const HighlightTitle: React.FunctionComponent<{
     title: string;
@@ -46,6 +51,123 @@ function openClick(
         history.push(url);
     }
 }
+
+interface IQueryItemProps {
+    preview: IQueryPreview;
+    searchString: string;
+    environmentName: string;
+}
+
+export const QueryItem: React.FunctionComponent<IQueryItemProps> = ({
+    preview,
+    environmentName,
+    searchString,
+}) => {
+    const {
+        author_uid: authorUid,
+        created_at: createdAt,
+        engine_id: engineId,
+        id,
+        query_text: queryText,
+        title,
+    } = preview;
+    const { userInfo: authorInfo, loading } = useUser({ uid: authorUid });
+
+    const [isQueryTextExpanded, setIsQueryTextExpanded] = useState(false);
+
+    const isQueryCell = preview.query_type === 'query_cell';
+
+    const url = isQueryCell
+        ? `/${environmentName}/datadoc/${preview.data_doc_id}/?cellId=${id}`
+        : `/${environmentName}/query_execution/${id}/`;
+    const handleClick = React.useMemo(() => openClick.bind(null, url), [url]);
+    const queryEngineById = useSelector(queryEngineByIdEnvSelector);
+
+    if (loading) {
+        return <div className="SearchResultItem QueryItem">Loading...</div>;
+    }
+
+    // Query cell title is data cell title
+    // Query execution title is "<title> > Execution <id>" for data cell executions
+    // or "Adhoc Execution <id>" for adhoc exeuctions
+    const resultTitle = isQueryCell
+        ? title ?? 'Untitled'
+        : `${title != null ? `${title} >` : 'Adhoc'} Execution ${id}`;
+
+    const queryTextHighlightedContent = preview.highlight?.query_text;
+
+    const getSyntaxHighlightedQueryDOM = () => (
+        <ThemedCodeHighlight
+            className="result-item-query"
+            value={queryText}
+            onClick={(event) => event.stopPropagation()}
+        />
+    );
+
+    const getSearchResultHighlightedQueryDOM = () => (
+        <div
+            className="highlighted-query pl16 pr24 pv8"
+            onClick={(event) => event.stopPropagation()}
+        >
+            <IconButton
+                className="toggle-expand-query-icon"
+                noPadding
+                icon={isQueryTextExpanded ? 'minimize-2' : 'maximize-2'}
+                size={14}
+                onClick={() =>
+                    setIsQueryTextExpanded((isExpaneded) => !isExpaneded)
+                }
+            />
+            {!isQueryTextExpanded ? (
+                <span
+                    dangerouslySetInnerHTML={{
+                        __html: formatHighlightStrings(
+                            queryTextHighlightedContent
+                        ),
+                    }}
+                />
+            ) : (
+                getSyntaxHighlightedQueryDOM()
+            )}
+        </div>
+    );
+
+    // If there are no highlighted sections in query text returned, display
+    // syntax-highlighted query, otherwise allow user to toggle between
+    // syntax-highlighted content and matched search results
+    const queryTextDOM = !queryTextHighlightedContent
+        ? getSyntaxHighlightedQueryDOM()
+        : getSearchResultHighlightedQueryDOM();
+
+    const queryEngine = queryEngineById[engineId];
+    const queryType = isQueryCell ? 'data cell' : 'execution';
+
+    return (
+        <div className="SearchResultItem QueryItem" onClick={handleClick}>
+            <div className="result-items">
+                <a className="result-items-top horizontal-space-between">
+                    <HighlightTitle
+                        title={resultTitle}
+                        searchString={searchString}
+                    />
+                    <div>
+                        <Tag>{queryType}</Tag>
+                        {queryEngine && <Tag>{queryEngine.name}</Tag>}
+                    </div>
+                </a>
+                <div className="mv8">{queryTextDOM}</div>
+                <Level className="result-items-bottom">
+                    <span className="result-item-owner">
+                        {authorInfo.username}
+                    </span>
+                    <span className="result-item-date">
+                        {generateFormattedDate(createdAt, 'X')}
+                    </span>
+                </Level>
+            </div>
+        </div>
+    );
+};
 
 interface IDataDocItemProps {
     preview: IDataDocPreview;

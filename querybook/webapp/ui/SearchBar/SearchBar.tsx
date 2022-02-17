@@ -46,7 +46,7 @@ export const SearchBar: React.FunctionComponent<ISearchBarProps> = ({
             // setTimeout is needed to make the focus work
             // otherwise the component
             setTimeout(() => {
-                inputRef.current.focus();
+                inputRef.current?.focus();
             }, 0);
         }
     }, []);

@@ -1,26 +1,34 @@
 import React from 'react';
 import moment from 'moment';
 import { useDispatch } from 'react-redux';
+import CreatableSelect from 'react-select/creatable';
+import { isEmpty } from 'lodash';
 
-import { IDataDocPreview, ITablePreview } from 'const/search';
+import { IDataDocPreview, IQueryPreview, ITablePreview } from 'const/search';
 
 import { useShallowSelector } from 'hooks/redux/useShallowSelector';
 import { getCurrentEnv } from 'lib/utils/query-string';
 import {
+    defaultReactSelectStyles,
     makeReactSelectStyle,
     miniReactSelectStyles,
 } from 'lib/utils/react-select';
+import { titleize } from 'lib/utils';
 import * as searchActions from 'redux/search/action';
 import { IStoreState } from 'redux/store/types';
 import { RESULT_PER_PAGE, SearchOrder, SearchType } from 'redux/search/types';
 import * as dataTableSearchActions from 'redux/dataTableSearch/action';
 import { queryMetastoresSelector } from 'redux/dataSources/selector';
 import { currentEnvironmentSelector } from 'redux/environment/selector';
+import {
+    queryEngineByIdEnvSelector,
+    queryEngineSelector,
+} from 'redux/queryEngine/selector';
 
 import { UserSelect } from 'components/UserSelect/UserSelect';
 import { UserAvatar } from 'components/UserBadge/UserAvatar';
 import { TableTagGroupSelect } from 'components/DataTableTags/TableTagGroupSelect';
-import { DataDocItem, DataTableItem } from './SearchResultItem';
+import { DataDocItem, DataTableItem, QueryItem } from './SearchResultItem';
 
 import { Button } from 'ui/Button/Button';
 import { Checkbox } from 'ui/Checkbox/Checkbox';
@@ -30,13 +38,15 @@ import { Icon } from 'ui/Icon/Icon';
 import { KeyboardKey } from 'ui/KeyboardKey/KeyboardKey';
 import { Level } from 'ui/Level/Level';
 import { ListMenu } from 'ui/Menu/ListMenu';
+import NumberInput from 'ui/NumberInput/NumberInput';
 import { Pagination } from 'ui/Pagination/Pagination';
 import { SearchBar } from 'ui/SearchBar/SearchBar';
 import { Select } from 'ui/Select/Select';
+import { SimpleReactSelect } from 'ui/SimpleReactSelect/SimpleReactSelect';
 import { Tabs } from 'ui/Tabs/Tabs';
 import { PrettyNumber } from 'ui/PrettyNumber/PrettyNumber';
-
 import { SearchDatePicker } from './SearchDatePicker';
+import { TableSelect } from './TableSelect';
 import './SearchOverview.scss';
 
 const userReactSelectStyle = makeReactSelectStyle(true, miniReactSelectStyles);
@@ -55,10 +65,14 @@ export const SearchOverview: React.FunctionComponent = () => {
 
         searchRequest,
         queryMetastores,
+        queryEngines,
+        queryEngineById,
         metastoreId,
     } = useShallowSelector((state: IStoreState) => ({
         ...state.search,
         environment: currentEnvironmentSelector(state),
+        queryEngines: queryEngineSelector(state),
+        queryEngineById: queryEngineByIdEnvSelector(state),
         queryMetastores: queryMetastoresSelector(state),
         metastoreId: state.dataTableSearch.metastoreId,
     }));
@@ -105,6 +119,10 @@ export const SearchOverview: React.FunctionComponent = () => {
     const SEARCH_TABS = queryMetastores.length
         ? [
               {
+                  name: 'Query',
+                  key: SearchType.Query,
+              },
+              {
                   name: 'DataDoc',
                   key: SearchType.DataDoc,
               },
@@ -114,6 +132,10 @@ export const SearchOverview: React.FunctionComponent = () => {
               },
           ]
         : [
+              {
+                  name: 'Query',
+                  key: SearchType.Query,
+              },
               {
                   name: 'DataDoc',
                   key: SearchType.DataDoc,
@@ -149,9 +171,21 @@ export const SearchOverview: React.FunctionComponent = () => {
         updateSearchFilter('endDate', isNaN(newDate) ? null : newDate);
     }, []);
 
+    const setMinDuration = React.useCallback(
+        (value: number | null) => updateSearchFilter('minDuration', value),
+        []
+    );
+
+    const setMaxDuration = React.useCallback(
+        (value: number | null) => updateSearchFilter('maxDuration', value),
+        []
+    );
+
     const getSearchBarDOM = () => {
         const placeholder =
-            searchType === SearchType.DataDoc
+            searchType === SearchType.Query
+                ? 'Search queries'
+                : searchType === SearchType.DataDoc
                 ? 'Search data docs'
                 : 'Search tables';
         return (
@@ -274,7 +308,16 @@ export const SearchOverview: React.FunctionComponent = () => {
 
     const environment = getCurrentEnv();
     const resultsDOM =
-        searchType === SearchType.DataDoc
+        searchType === SearchType.Query
+            ? (results as IQueryPreview[]).map((result) => (
+                  <QueryItem
+                      searchString={searchString}
+                      key={`${result.query_type}-${result.id}`}
+                      preview={result}
+                      environmentName={environment.name}
+                  />
+              ))
+            : searchType === SearchType.DataDoc
             ? (results as IDataDocPreview[]).map((result) => (
                   <DataDocItem
                       searchString={searchString}
@@ -320,8 +363,108 @@ export const SearchOverview: React.FunctionComponent = () => {
         </div>
     );
 
-    const getAuthorFiltersDOM = React.useCallback(() => {
-        const filterVal = searchFilters['owner_uid'];
+    const durationFilterDOM = (
+        <div className="filter-duration">
+            <div className="horizontal-space-between mb12">
+                <span>min</span>
+                <NumberInput
+                    id="min-duration"
+                    placeholder="seconds"
+                    value={searchFilters['minDuration'] ?? ''}
+                    onChange={setMinDuration}
+                    min="0"
+                />
+            </div>
+            <div className="horizontal-space-between mb12">
+                <span>max</span>
+                <NumberInput
+                    id="max-duration"
+                    placeholder="seconds"
+                    value={searchFilters['maxDuration'] ?? ''}
+                    onChange={setMaxDuration}
+                    min="0"
+                />
+            </div>
+        </div>
+    );
+
+    const queryEngineFilterDOM = (
+        <SimpleReactSelect
+            value={searchFilters['engine_id']}
+            onChange={(value) => {
+                updateSearchFilter('engine_id', value);
+            }}
+            options={queryEngines.map((engine) => ({
+                label: engine.name,
+                value: engine.id,
+            }))}
+            withDeselect
+        />
+    );
+
+    const queryTypeFilterDOM = (
+        <div className="filter-query-type">
+            <SimpleReactSelect
+                value={searchFilters['query_type']}
+                onChange={(value) => updateSearchFilter('query_type', value)}
+                options={['query_cell', 'query_execution'].map((queryType) => ({
+                    label: titleize(queryType, '_', ' '),
+                    value: queryType,
+                }))}
+                withDeselect
+            />
+        </div>
+    );
+
+    const statementTypeFilterDOM = (
+        <div className="filter-statement-type">
+            <CreatableSelect
+                styles={defaultReactSelectStyles}
+                value={
+                    searchFilters['statement_type']
+                        ? searchFilters['statement_type'].map((statement) => ({
+                              label: statement.toUpperCase(),
+                              value: statement,
+                          }))
+                        : null
+                }
+                onChange={(values) => {
+                    const statementTypes =
+                        values && values.length
+                            ? values.map(({ value }) => value)
+                            : null;
+                    updateSearchFilter('statement_type', statementTypes);
+                }}
+                options={['ALTER', 'CREATE', 'DROP', 'INSERT', 'SELECT'].map(
+                    (statement) => ({
+                        label: statement,
+                        value: statement,
+                    })
+                )}
+                isMulti
+                isClearable
+            />
+        </div>
+    );
+
+    const tableFilterDOM = (
+        <TableSelect
+            tableNames={searchFilters['full_table_name'] || []}
+            onTableNamesChange={(tableNames: string[]) =>
+                updateSearchFilter(
+                    'full_table_name',
+                    !isEmpty(tableNames) ? tableNames : null
+                )
+            }
+            selectProps={{
+                autoFocus: true,
+            }}
+            clearAfterSelect
+        />
+    );
+
+    const getAuthorFiltersDOM = (searchFilterKey: string) => {
+        const filterVal = searchFilters[searchFilterKey];
 
         const options = searchAuthorChoices.map(({ id, name }) => {
             const checked = filterVal === id;
@@ -335,7 +478,7 @@ export const SearchOverview: React.FunctionComponent = () => {
                         value={checked}
                         onChange={updateSearchFilter.bind(
                             null,
-                            'owner_uid',
+                            searchFilterKey,
                             checked ? null : id
                         )}
                     />
@@ -348,7 +491,7 @@ export const SearchOverview: React.FunctionComponent = () => {
                 <UserSelect
                     onSelect={(uid, name) => {
                         addSearchAuthorChoice(uid, name);
-                        updateSearchFilter('owner_uid', uid);
+                        updateSearchFilter(searchFilterKey, uid);
                         toggleShowAddSearchAuthor();
                     }}
                     selectProps={{
@@ -376,17 +519,73 @@ export const SearchOverview: React.FunctionComponent = () => {
                 {addAuthorDOM}
             </>
         );
-    }, [searchAuthorChoices, showAddSearchAuthor, searchFilters]);
+    };
 
     const FilterDOM =
-        searchType === 'DataDoc' ? (
+        searchType === 'Query' ? (
             <>
                 <div className="search-filter">
                     <span className="filter-title">
                         Authors
                         <hr className="dh-hr" />
                     </span>
-                    {getAuthorFiltersDOM()}
+                    {getAuthorFiltersDOM('author_uid')}
+                </div>
+                <div className="search-filter">
+                    <span className="filter-title">
+                        Query Engine
+                        <hr className="dh-hr" />
+                    </span>
+                    {queryEngineFilterDOM}
+                </div>
+                {queryMetastores.length && (
+                    <div className="search-filter">
+                        <span className="filter-title">
+                            Tables
+                            <hr className="dh-hr" />
+                        </span>
+                        {tableFilterDOM}
+                    </div>
+                )}
+                <div className="search-filter">
+                    <span className="filter-title">
+                        Query Type
+                        <hr className="dh-hr" />
+                    </span>
+                    {queryTypeFilterDOM}
+                </div>
+                <div className="search-filter">
+                    <span className="filter-title">
+                        Statement Type
+                        <hr className="dh-hr" />
+                    </span>
+                    <div className="result-item-golden horizontal-space-between">
+                        {statementTypeFilterDOM}
+                    </div>
+                </div>
+                <div className="search-filter">
+                    <span className="filter-title">
+                        Created At
+                        <hr className="dh-hr" />
+                    </span>
+                    {dateFilterDOM}
+                </div>
+                <div className="search-filter">
+                    <span className="filter-title">
+                        Duration
+                        <hr className="dh-hr" />
+                    </span>
+                    {durationFilterDOM}
+                </div>
+            </>
+        ) : searchType === 'DataDoc' ? (
+            <>
+                <div className="search-filter">
+                    <span className="filter-title">
+                        Authors
+                        <hr className="dh-hr" />
+                    </span>
+                    {getAuthorFiltersDOM('owner_uid')}
                 </div>
                 <div className="search-filter">
                     <span className="filter-title">
@@ -466,15 +665,33 @@ export const SearchOverview: React.FunctionComponent = () => {
         </Level>
     );
 
+    const hasBegunSearch =
+        numberOfResult > 0 ||
+        searchType !== SearchType.Query ||
+        !isEmpty(searchFilters) ||
+        !!searchString;
+    const beginSearchPromptDOM = (
+        <div className="begin-search-prompt">
+            Please enter a search string or apply search filters to begin
+            search.
+        </div>
+    );
+
     const searchBodyDOM = (
         <Container className="search-body" flex={'row'}>
             <div className="search-results">
                 <div className="search-result-top horizontal-space-between">
-                    <span className="search-result-count">
-                        <PrettyNumber val={numberOfResult} />{' '}
-                        {numberOfResult <= 1 ? 'result' : 'results'}
-                    </span>
-                    <span>{orderByDOM}</span>
+                    {hasBegunSearch ? (
+                        <>
+                            <span className="search-result-count">
+                                <PrettyNumber val={numberOfResult} />{' '}
+                                {numberOfResult === 1 ? 'result' : 'results'}
+                            </span>
+                            <span>{orderByDOM}</span>
+                        </>
+                    ) : (
+                        beginSearchPromptDOM
+                    )}
                 </div>
                 {resultsDOM}
                 {paginationDOM}

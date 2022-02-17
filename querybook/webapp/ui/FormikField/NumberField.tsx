@@ -1,5 +1,6 @@
 import React from 'react';
 import { useField } from 'formik';
+import NumberInput from 'ui/NumberInput/NumberInput';
 
 export interface INumberFieldProps
     extends Omit<React.HTMLProps<HTMLInputElement>, 'label'> {
@@ -13,15 +14,11 @@ export const NumberField: React.FC<INumberFieldProps> = (props) => {
     const { setValue } = helpers;
 
     return (
-        <input
+        <NumberInput
             {...field}
             {...props}
             value={value ?? ''}
-            type="number"
-            onChange={(event: React.ChangeEvent<HTMLInputElement>) => {
-                const v = event.target.value;
-                setValue(v === '' ? null : Number(v));
-            }}
+            onChange={setValue}
         />
     );
 };

@@ -54,6 +54,10 @@
             }
         }
 
+        .begin-search-prompt {
+            font-size: var(--med-text-size);
+        }
+
         .search-result-top {
             margin: 12px 4px 0px 12px;
             padding-bottom: 4px;
@@ -89,8 +93,21 @@
                     white-space: nowrap;
                 }
 
-                .filter-date {
+                .filter-date,
+                .filter-duration {
                     font-weight: 500;
+                }
+
+                .filter-statement-type,
+                .filter-query-type {
+                    width: 100%;
+                }
+
+                .filter-duration {
+                    input {
+                        width: 50%;
+                        padding: 2px 4px;
+                    }
                 }
 
                 .data-doc-filter-owner {

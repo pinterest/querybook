@@ -66,5 +66,27 @@
             @include ellipsis(3);
             word-break: break-all;
         }
+
+        .result-item-query {
+            height: auto;
+            max-height: 240px;
+            overflow-y: auto;
+            border-radius: var(--border-radius);
+        }
+
+        .CodeHighlight, .highlighted-query {
+            cursor: text;
+        }
+
+        .highlighted-query {
+            background: var(--query-editor-default-bg-color);
+            border-radius: var(--border-radius);
+            position: relative;
+
+            .toggle-expand-query-icon {
+                position: absolute;
+                right: 8px;
+            }
+        }
     }
 }

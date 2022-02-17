@@ -17,6 +17,7 @@ export enum DisplayOption {
 
 export enum SearchType {
     DataDoc = 'DataDoc',
+    Query = 'Query',
     Table = 'Table',
 }
 

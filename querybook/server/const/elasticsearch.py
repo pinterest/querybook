@@ -4,6 +4,8 @@ from enum import Enum
 
 
 class ElasticsearchItem(Enum):
+    query_executions = "query_executions"
+    query_cells = "query_cells"
     datadocs = "datadocs"
     tables = "tables"
     users = "users"

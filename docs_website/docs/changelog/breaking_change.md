@@ -7,6 +7,14 @@ slug: /changelog
 
 Here are the list of breaking changes that you should be aware of when updating Querybook:
 
+## v3.1.0
+
+Query cells and query executions are now added as new indices in ElasticSearch.
+
+Depending on your deployment of ElasticSearch, you might need to manually re-initialize the ElasticSearch to create the new query indices and bulk insert existing query cells & executions.
+
+Follow the instructions at [Re-Initialize ElasticSearch](../developer_guide/reinitialize_es.md) to ensure that ElasticSearch will be re-initialized in your deployment.
+
 ## v3.0.0
 
 ### All optional Python dependencies are removed
@@ -46,29 +54,7 @@ quite easy to add back! Checkout the [Infra Installation Guide](../configuration
 
 ### ElasticSearch
 
-Depending on deployment of Querybook, re-initialization of indices in ElasticSearch 7 cluster might be needed.
-
-This may happen for example when your `web` component is not started with `querybook/scripts/bundled_docker_run_web` script with `--initdb` option.
-
-In such a cases, one has the following options how to initialize them manually:
-
-1. In Docker based deployments, attach to `web` or `worker` component and run
-
-    ```shell
-    python ./querybook/server/scripts/init_es.py
-    ```
-
-2. Locally, set following keys to proper values in `querybook/config/querybook_config.yaml`
-    ```shell
-    FLASK_SECRET_KEY: ...
-    DATABASE_CONN: ...
-    REDIS_URL: ...
-    ELASTICSEARCH_HOST: ...
-    ```
-    and run
-    ```shell
-    PYTHONPATH=querybook/server python ./querybook/server/scripts/init_es.py
-    ```
+Depending on deployment of Querybook, re-initialization of indices in ElasticSearch 7 cluster might be needed. Follow the instructions in [Re-Initialize ElasticSearch](../developer_guide/reinitialize_es.md).
 
 #### Make and Docker-compose
 
