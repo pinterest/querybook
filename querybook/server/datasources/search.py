@@ -427,6 +427,7 @@ def search_tables(
     filters = filters or []
     fields = fields or []
     verify_metastore_permission(metastore_id)
+    filters.append(["metastore_id", metastore_id])
 
     query = _construct_tables_query(
         keywords=keywords,
