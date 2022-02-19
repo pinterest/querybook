@@ -20,11 +20,11 @@ import { matchKeyMap, KeyMap } from 'lib/utils/keyboard';
 import './EnvironmentAppSidebar.scss';
 
 const SIDEBAR_WIDTH = 320;
-const EMBED_PATH_STRING = "embedded"
+const EMBED_PATH_STRING = 'embedded';
 
 export const EnvironmentAppSidebar: React.FunctionComponent = () => {
     const location = useLocation();
-    const isEmbed = location.pathname.includes(EMBED_PATH_STRING)
+    const isEmbed = location.pathname.includes(EMBED_PATH_STRING);
     const [collapsed, setCollapsed] = React.useState(isEmbed);
     const [entity, setEntity] = React.useState<Entity>('datadoc');
 

@@ -130,7 +130,9 @@ export const EnvironmentModalSwitchRouter: React.FC = () => {
                     />
                     <Route
                         path="/:env/embedded_datadoc/:docId"
-                        render={({ match }) => <EmbeddedDataDocPage id={match.params['docId']} />}
+                        render={({ match }) => (
+                            <EmbeddedDataDocPage id={match.params['docId']} />
+                        )}
                     />
                     <Route path="/:env/list/:boardId/" component={BoardRoute} />
                     {modalRoutes}
