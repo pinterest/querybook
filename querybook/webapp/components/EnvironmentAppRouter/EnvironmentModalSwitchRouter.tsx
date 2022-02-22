@@ -129,7 +129,7 @@ export const EnvironmentModalSwitchRouter: React.FC = () => {
                         render={() => <EmbeddedQueryPage />}
                     />
                     <Route
-                        path="/:env/embedded_datadoc/:docId"
+                        path="/:env/_/embedded_datadoc/:docId"
                         render={({ match }) => (
                             <EmbeddedDataDocPage id={match.params['docId']} />
                         )}
