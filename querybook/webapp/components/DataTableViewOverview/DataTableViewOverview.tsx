@@ -13,7 +13,7 @@ import { navigateWithinEnv } from 'lib/utils/query-string';
 import { generateFormattedDate } from 'lib/utils/datetime';
 import { getAppName } from 'lib/utils/global';
 import { titleize } from 'lib/utils';
-import { getHumanReadableByteSize } from 'lib/utils/number';
+import { getHumanReadableByteSize, isNumeric } from 'lib/utils/number';
 
 import {
     DataTableStats,
@@ -26,26 +26,16 @@ import {
 import { TextButton } from 'ui/Button/Button';
 import { EditableTextField } from 'ui/EditableTextField/EditableTextField';
 import { Message } from 'ui/Message/Message';
-import { Table } from 'ui/Table/Table';
-
 import './DataTableViewOverview.scss';
 import { DataTableViewOverviewSection } from './DataTableViewOverviewSection';
 import { LoadingRow } from 'ui/Loading/Loading';
 import { DataTableViewQueryConcurrences } from 'components/DataTableViewQueryExample/DataTableViewQueryConcurrences';
-import { Title } from 'ui/Title/Title';
 import {
     DataTableViewQueryEngines,
     useLoadQueryEngines,
 } from 'components/DataTableViewQueryExample/DataTableViewQueryEngines';
 import { ShowMoreText } from 'ui/ShowMoreText/ShowMoreText';
-
-const dataTableDetailsColumns = [
-    {
-        accessor: 'name',
-        width: 200,
-    },
-    { accessor: 'value' },
-];
+import { KeyContentDisplay } from 'ui/KeyContentDisplay/KeyContentDisplay';
 
 const dataTableDetailsRows = [
     'type',
@@ -90,38 +80,35 @@ export class DataTableViewOverview extends React.PureComponent<IQuerybookTableVi
             />
         ) : null;
 
-        const detailsDOM = (
-            <Table
-                className="data-table-details-table"
-                showHeader={false}
-                rows={dataTableDetailsRows
-                    .filter((row) => table[row] != null)
-                    .map((row) => {
-                        let value: string = '';
-                        switch (row) {
-                            case 'table_created_at':
-                            case 'table_updated_at': {
-                                value = table[row]
-                                    ? generateFormattedDate(table[row])
-                                    : '';
-                                break;
-                            }
-                            case 'data_size_bytes': {
-                                value = getHumanReadableByteSize(table[row]);
-                                break;
-                            }
-                            default:
-                                value = table[row];
-                        }
-                        return {
-                            name: titleize(row, '_', ' '),
-                            value,
-                        };
-                    })}
-                showAllRows={true}
-                cols={dataTableDetailsColumns}
-            />
-        );
+        const detailsDOM = dataTableDetailsRows
+            .filter((row) => table[row] != null)
+            .map((row) => {
+                let value: string = '';
+                switch (row) {
+                    case 'table_created_at':
+                    case 'table_updated_at': {
+                        value = table[row]
+                            ? generateFormattedDate(table[row])
+                            : '';
+                        break;
+                    }
+                    case 'data_size_bytes': {
+                        value = getHumanReadableByteSize(table[row]);
+                        break;
+                    }
+                    default:
+                        value = table[row];
+                }
+                return (
+                    <KeyContentDisplay
+                        key={row}
+                        keyString={titleize(row, '_', ' ')}
+                        rightAlign={isNumeric(value)}
+                    >
+                        {value}
+                    </KeyContentDisplay>
+                );
+            });
 
         const rawMetastoreInfoDOM = table.hive_metastore_description ? (
             <pre>
@@ -177,7 +164,7 @@ export class DataTableViewOverview extends React.PureComponent<IQuerybookTableVi
                         )
                     }
                 >
-                    Click to View Sample DataDocs
+                    View Sample DataDocs
                 </TextButton>
             </DataTableViewOverviewSection>
         );
@@ -202,7 +189,7 @@ export class DataTableViewOverview extends React.PureComponent<IQuerybookTableVi
         ) : null;
 
         return (
-            <div className="QuerybookTableViewOverview">
+            <div className="QuerybookTableViewOverview pb24">
                 {warningSection}
                 {descriptionSection}
                 <TableInsightsSection
@@ -251,23 +238,23 @@ const TableInsightsSection: React.FC<{
     ) : topQueryUsers?.length ? (
         <DataTableViewOverviewSection title="Table Insights">
             <div>
-                <Title size={6}>Frequent Users</Title>
+                <div className="overview-subtitle">Frequent Users</div>
                 <DataTableViewQueryUsers
                     tableId={tableId}
                     onClick={handleUserClick}
                 />
             </div>
             {queryEngines.length > 1 && (
-                <div className="mt8">
-                    <Title size={6}>Query Engines</Title>
+                <div className="mt16">
+                    <div className="overview-subtitle">Query Engines</div>
                     <DataTableViewQueryEngines
                         tableId={tableId}
                         onClick={handleEngineClick}
                     />
                 </div>
             )}
-            <div className="mt8">
-                <Title size={6}>Top Co-occurring Tables</Title>
+            <div className="mt16">
+                <div className="overview-subtitle">Top Co-occurring Tables</div>
                 <DataTableViewQueryConcurrences
                     tableId={tableId}
                     onClick={handleTableClick}

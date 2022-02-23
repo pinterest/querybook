@@ -1,16 +1,24 @@
 .DataTableView {
     height: 100%;
+    margin: 0px 16px;
+
+    .Container-content {
+        width: 100%;
+    }
 
     .DataTableView-tabs {
         z-index: 10;
         position: sticky;
         top: 0;
         background-color: var(--bg);
-        margin: 0px 16px;
     }
 
     .DataTableView-content {
-        padding: 16px 24px;
         flex: 1;
+    }
+
+    .info-text {
+        font-size: var(--text-size);
+        color: var(--text-light);
     }
 }

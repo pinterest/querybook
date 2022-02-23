@@ -102,7 +102,6 @@ export function GenericCRUD<T extends Record<any, any>>({
                             }
                             title={createItem ? 'Create' : 'Save'}
                             icon="save"
-                            color="accent"
                             onClick={() => handleSubmit()}
                         />
                     );

@@ -11,6 +11,7 @@ import './UserBadge.scss';
 type IProps = {
     isOnline?: boolean;
     mini?: boolean;
+    styled?: boolean;
 } & ICommonUserLoaderProps;
 
 export const UserBadge: React.FunctionComponent<IProps> = ({
@@ -18,6 +19,7 @@ export const UserBadge: React.FunctionComponent<IProps> = ({
     name,
     isOnline,
     mini,
+    styled,
 }) => {
     const { loading, userInfo } = useUser({ uid, name });
 
@@ -36,14 +38,16 @@ export const UserBadge: React.FunctionComponent<IProps> = ({
                 : name
                 ? `Unknown (${name})`
                 : 'Unknown',
-        [userInfo?.username, name]
+        [userInfo, name]
     );
 
     if (mini) {
         return (
-            <span className="UserBadge mini">
+            <span
+                className={styled ? 'UserBadge mini styled' : 'UserBadge mini'}
+            >
                 <figure>{avatarDOM}</figure>
-                <span className="user-name">
+                <span className="username">
                     {userInfo?.fullname ?? userName}
                 </span>
             </span>

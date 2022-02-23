@@ -36,8 +36,8 @@ export const SamplesTableView: React.FunctionComponent<{
     );
 
     return (
-        <div className="QuerybookTableViewSamples">
-            <div className="flex-row">
+        <div className="QuerybookTableViewSamples pb24">
+            <div className="flex-row right-align">
                 <TextButton
                     title="Download as csv"
                     onClick={() => {

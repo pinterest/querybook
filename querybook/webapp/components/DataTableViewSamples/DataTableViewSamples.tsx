@@ -19,7 +19,7 @@ import { TableSamplesResource } from 'resource/table';
 import { AsyncButton } from 'ui/AsyncButton/AsyncButton';
 import { SimpleField } from 'ui/FormikField/SimpleField';
 import { CopyPasteModal } from 'ui/CopyPasteModal/CopyPasteModal';
-import { SoftButton } from 'ui/Button/Button';
+import { Button } from 'ui/Button/Button';
 import { IconButton } from 'ui/Button/IconButton';
 
 import { DataTableViewSamplesTable } from './DataTableViewSamplesTable';
@@ -186,16 +186,13 @@ export const DataTableViewSamples: React.FunctionComponent<IDataTableViewSamples
                                                         />
                                                     )}
                                                 </div>
-                                                <div>
-                                                    <IconButton
-                                                        icon="x"
-                                                        onClick={() =>
-                                                            arrayHelpers.remove(
-                                                                idx
-                                                            )
-                                                        }
-                                                    />
-                                                </div>
+                                                <IconButton
+                                                    icon="x"
+                                                    onClick={() =>
+                                                        arrayHelpers.remove(idx)
+                                                    }
+                                                    className="mt8"
+                                                />
                                             </div>
                                         )
                                     );
@@ -203,10 +200,9 @@ export const DataTableViewSamples: React.FunctionComponent<IDataTableViewSamples
                                     return (
                                         <>
                                             {whereDOM}
-                                            <div className="center-align add-where-clause m8">
-                                                <SoftButton
-                                                    size="small"
-                                                    title="Add Where Clause"
+                                            <div className="center-align add-where-clause mt16">
+                                                <Button
+                                                    title="New Where Clause"
                                                     icon="plus"
                                                     onClick={() =>
                                                         arrayHelpers.push([

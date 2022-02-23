@@ -1,6 +1,8 @@
 @import '../../scss_variables.scss';
 
 .UserBadge {
+    cursor: default;
+
     .UserBadge-icon {
         margin-right: 16px;
         figure {
@@ -23,6 +25,16 @@
         display: inline-flex;
         flex-direction: row;
         align-items: center;
+
+        &.styled {
+            .username {
+                border-radius: var(--border-radius-sm);
+                background-color: var(--bg-light);
+                margin-right: 12px;
+                margin-left: -12px;
+                padding: 4px 8px 4px 18px;
+            }
+        }
     }
 
     .UserBadge-names {
@@ -38,5 +50,9 @@
             margin-top: -6px;
             color: var(--text-light);
         }
+    }
+
+    + .UserBadge {
+        margin-left: 12px;
     }
 }

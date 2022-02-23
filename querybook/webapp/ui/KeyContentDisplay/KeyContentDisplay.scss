@@ -7,6 +7,8 @@
     .KeyContentDisplay-key {
         width: 180px;
         margin-right: 12px;
+        color: var(--text-dark);
+        font-size: var(--text-size);
     }
     .KeyContentDisplay-content {
         width: 100%;
@@ -20,7 +22,7 @@
             }
         }
         &.right-align {
-            max-width: 120px;
+            max-width: 80px;
         }
     }
 }

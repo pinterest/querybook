@@ -15,18 +15,24 @@ export type StringOrRender = string | (() => React.ReactNode);
 
 export interface IFormFieldProps {
     stacked?: boolean;
+    inputFlexed?: boolean;
+    labelAtTop?: boolean;
     required?: boolean;
     label?: StringOrRender;
     help?: StringOrRender;
     error?: StringOrRender;
 }
 export interface IFormFieldSectionProps {
+    onTop?: boolean;
+    flexed?: boolean;
     className?: string;
 }
 
 export const FormField: React.FunctionComponent<IFormFieldProps> = ({
     children,
     stacked,
+    inputFlexed = false,
+    labelAtTop = false,
     label,
     help,
     required,
@@ -34,7 +40,7 @@ export const FormField: React.FunctionComponent<IFormFieldProps> = ({
 }) => {
     const labelDOM = label ? (
         <>
-            <FormFieldLabelSection>
+            <FormFieldLabelSection onTop={labelAtTop}>
                 {typeof label === 'function' ? label() : label}
             </FormFieldLabelSection>
             {stacked ? <div className="break-flex" /> : null}
@@ -61,7 +67,7 @@ export const FormField: React.FunctionComponent<IFormFieldProps> = ({
     // in input section
     const contentDOM =
         labelDOM || helpDOM || errorDOM ? (
-            <FormFieldInputSection>
+            <FormFieldInputSection flexed={inputFlexed}>
                 {children}
                 {errorDOM}
             </FormFieldInputSection>
@@ -85,9 +91,16 @@ export const FormField: React.FunctionComponent<IFormFieldProps> = ({
 };
 
 const FormFieldLabelSection: React.FunctionComponent<IFormFieldSectionProps> = ({
+    onTop,
     children,
     className = '',
-}) => <div className={`FormFieldLabelSection ${className}`}>{children}</div>;
+}) => (
+    <div
+        className={`FormFieldLabelSection ${className} ${onTop ? 'onTop' : ''}`}
+    >
+        {children}
+    </div>
+);
 
 export const FormFieldInputSectionRowGroup: React.FunctionComponent<IFormFieldSectionProps> = ({
     children,
@@ -104,9 +117,18 @@ export const FormFieldInputSectionRow: React.FunctionComponent<IFormFieldSection
 }) => <div className={`FormFieldInputSectionRow ${className}`}>{children}</div>;
 
 export const FormFieldInputSection: React.FunctionComponent<IFormFieldSectionProps> = ({
+    flexed,
     children,
     className = '',
-}) => <div className={`FormFieldInputSection ${className}`}>{children}</div>;
+}) => (
+    <div
+        className={`FormFieldInputSection ${className} ${
+            flexed ? 'flex-row' : ''
+        }`}
+    >
+        {children}
+    </div>
+);
 
 export const FormFieldHelpSection: React.FunctionComponent<IFormFieldSectionProps> = ({
     children,

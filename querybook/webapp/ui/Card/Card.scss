@@ -1,13 +1,11 @@
 .Card {
     justify-content: center;
-    background-color: var(--bg-light);
-    border-radius: var(--border-radius);
-    border: var(--border);
+    background-color: var(--bg-lightest);
+    border-radius: var(--border-radius-sm);
     padding: 8px;
-    margin: 16px;
 
-    &:hover {
-        border: var(--border);
+    + .Card {
+        margin-top: 16px;
     }
 
     .Card-title {
