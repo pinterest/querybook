@@ -88,10 +88,8 @@ export const defaultReactSelectStyles: Partial<
         ...(data.color ? dot(data.color) : {}),
         ':active': {
             ...styles[':active'],
-            backgroundColor: !isDisabled
-                ? 'var(--color-accent-lightest)'
-                : undefined,
-            color: !isDisabled ? 'var(--color-accent-dark)' : undefined,
+            backgroundColor: !isDisabled ? 'var(--bg-light)' : undefined,
+            color: !isDisabled ? 'var(--text-dark)' : undefined,
         },
     }),
     menu: (styles) => ({
@@ -99,6 +97,11 @@ export const defaultReactSelectStyles: Partial<
         backgroundColor: 'var(--bg-lightest)',
         borderRadius: 'var(--border-radius-sm)',
         border: 'none',
+        boxShadow: 'var(--box-shadow-sm)',
+    }),
+    menuList: (styles) => ({
+        ...styles,
+        borderRadius: 'var(--border-radius-sm)',
         boxShadow: 'var(--box-shadow-sm)',
     }),
     singleValue: (styles, { data }) => ({
