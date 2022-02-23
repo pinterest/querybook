@@ -146,7 +146,7 @@ export const DataTableViewQueryExamples: React.FunctionComponent<IProps> = ({
     const queryExampleFiltersSection = (
         <div className="mb12">
             <div className="horizontal-space-between mb16">
-                <div className="info-text">
+                <div className="info-text mv8">
                     Select any user, query engine, and/or co-occuring tables to
                     filter.
                 </div>

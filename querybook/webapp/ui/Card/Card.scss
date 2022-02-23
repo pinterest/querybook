@@ -1,8 +1,8 @@
 .Card {
     justify-content: center;
-    background-color: var(--bg-lightest);
     border-radius: var(--border-radius-sm);
     padding: 8px;
+    box-shadow: var(--box-shadow-sm);
 
     + .Card {
         margin-top: 16px;

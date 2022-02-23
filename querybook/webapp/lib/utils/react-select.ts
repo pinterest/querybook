@@ -89,7 +89,7 @@ export const defaultReactSelectStyles: Partial<
         ':active': {
             ...styles[':active'],
             backgroundColor: !isDisabled
-                ? 'var(--color-accent-light)'
+                ? 'var(--color-accent-lightest)'
                 : undefined,
             color: !isDisabled ? 'var(--color-accent-dark)' : undefined,
         },
@@ -99,7 +99,7 @@ export const defaultReactSelectStyles: Partial<
         backgroundColor: 'var(--bg-lightest)',
         borderRadius: 'var(--border-radius-sm)',
         border: 'none',
-        boxShadow: 'none',
+        boxShadow: 'var(--box-shadow-sm)',
     }),
     singleValue: (styles, { data }) => ({
         ...styles,
