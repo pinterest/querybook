@@ -71,7 +71,7 @@ export const DataTableViewWarnings: React.FC<IProps> = ({
 
                 <div className="right-align flex1">
                     {item.updated_by != null ? (
-                        <div className="edit-text mt8">
+                        <div className="edit-text mt8 mr8">
                             Edited by <UserName uid={item.updated_by} /> on{' '}
                             {generateFormattedDate(item.updated_at)}
                         </div>
