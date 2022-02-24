@@ -2,7 +2,7 @@
     justify-content: center;
     border-radius: var(--border-radius);
     padding: 8px;
-    box-shadow: var(--box-shadow-sm);
+    background-color: var(--bg-lightest);
 
     + .Card {
         margin-top: 16px;
@@ -29,5 +29,13 @@
     }
     &.clickable {
         cursor: pointer;
+    }
+
+    input,
+    textarea {
+        &:active,
+        &:focus {
+            background-color: var(--bg-light);
+        }
     }
 }

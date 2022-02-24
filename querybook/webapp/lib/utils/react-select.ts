@@ -30,7 +30,7 @@ export const defaultReactSelectStyles: Partial<
 > = {
     control: (styles, { isFocused }) => ({
         ...styles,
-        backgroundColor: isFocused ? 'var(--bg-lightest)' : 'var(--bg-light)',
+        backgroundColor: 'var(--bg-light)',
         boxShadow: 'none',
         borderRadius: 'var(--border-radius-sm)',
         border: 'none',
