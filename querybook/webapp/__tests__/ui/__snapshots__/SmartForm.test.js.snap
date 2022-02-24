@@ -29,7 +29,7 @@ exports[`matches test renderer snapshot serializes the styles 1`] = `
       className="FormField"
     >
       <div
-        className="FormFieldInputSection  "
+        className="FormFieldInputSection "
       />
     </div>
   </div>
