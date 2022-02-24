@@ -21,6 +21,13 @@
         }
     }
 
+    &:not(.FormField-stacked) {
+        .FormFieldLabelSection {
+            align-self: flex-start;
+            margin-top: 6px;
+        }
+    }
+
     .FormFieldLabelSection {
         box-sizing: border-box;
         padding-right: 12px;
@@ -28,11 +35,6 @@
         white-space: nowrap;
         color: var(--text-light);
         font-weight: var(--bold-font);
-
-        &.onTop {
-            align-self: flex-start;
-            margin-top: 6px;
-        }
     }
 
     .FormFieldInputSectionRowGroup {

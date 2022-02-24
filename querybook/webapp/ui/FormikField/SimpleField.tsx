@@ -146,8 +146,6 @@ export const SimpleField: React.FC<Props> = ({
             help={help}
             stacked={stacked}
             error={meta.touched ? meta.error : null}
-            inputFlexed={type === 'toggle'}
-            labelAtTop={['textarea', 'rich-text'].includes(type)}
         >
             {fieldDOM}
         </FormField>

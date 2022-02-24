@@ -26,13 +26,30 @@
         flex-direction: row;
         align-items: center;
 
-        &.styled {
+        &.card-style {
             .username {
                 border-radius: var(--border-radius-sm);
                 background-color: var(--bg-light);
                 margin-right: 12px;
                 margin-left: -12px;
                 padding: 4px 8px 4px 18px;
+            }
+        }
+    }
+    &:not(.mini) {
+        &.card-style {
+            .UserBadge-icon {
+                border-radius: 100%;
+                border-color: var(--bg);
+                border-style: solid;
+                border-width: 4px;
+                z-index: 1;
+            }
+            .UserBadge-names {
+                background-color: var(--bg-light);
+                border-radius: var(--border-radius);
+                margin-left: -36px;
+                padding: 4px 16px 4px 32px;
             }
         }
     }

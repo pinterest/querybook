@@ -114,7 +114,7 @@ export const DataTableHeader: React.FunctionComponent<IDataTableHeader> = ({
     );
 
     const ownershipDOM = (tableOwnerships || []).map((ownership) => (
-        <UserBadge key={ownership.uid} uid={ownership.uid} mini styled />
+        <UserBadge key={ownership.uid} uid={ownership.uid} mini cardStyle />
     ));
 
     // Ownership cannot be removed if owner in db
@@ -123,14 +123,8 @@ export const DataTableHeader: React.FunctionComponent<IDataTableHeader> = ({
             <div className="DataTableHeader-owner-list flex-row ">
                 <span className="header-subtitle mr16">Owners</span>
                 <div className="owner-badges mr8 flex-row">
-                    {dbTableOwner || tableOwnerships?.length ? (
-                        <>
-                            {dbTableOwner && (
-                                <UserBadge name={dbTableOwner} mini styled />
-                            )}
-                            {ownershipDOM}
-                        </>
-                    ) : null}
+                    {dbTableOwner && <UserBadge name={dbTableOwner} mini />}
+                    {ownershipDOM}
                     {isDBTableOwner ? null : isTableOwner ? (
                         <IconButton
                             tooltip={'Remove my table ownership'}
