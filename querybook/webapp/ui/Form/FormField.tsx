@@ -22,6 +22,7 @@ export interface IFormFieldProps {
     className?: string;
 }
 export interface IFormFieldSectionProps {
+    flexed?: boolean;
     className?: string;
 }
 

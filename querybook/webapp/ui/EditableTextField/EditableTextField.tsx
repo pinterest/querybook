@@ -3,7 +3,7 @@ import * as DraftJs from 'draft-js';
 import React from 'react';
 
 import { AsyncButton } from 'ui/AsyncButton/AsyncButton';
-import { Button } from 'ui/Button/Button';
+import { Button, TextButton } from 'ui/Button/Button';
 
 import { RichTextEditor } from 'ui/RichTextEditor/RichTextEditor';
 import './EditableTextField.scss';
@@ -44,9 +44,12 @@ export const EditableTextField: React.FunctionComponent<IEditableTextFieldProps>
     }, [value]);
 
     const toggleEditModeButton = !editMode ? (
-        <span onClick={toggleEditMode} className="edit-mode-button">
-            <i className="fa fa-edit" />
-        </span>
+        <TextButton
+            icon="edit"
+            title="Edit"
+            onClick={toggleEditMode}
+            className="edit-mode-button"
+        />
     ) : null;
 
     const editor = (
