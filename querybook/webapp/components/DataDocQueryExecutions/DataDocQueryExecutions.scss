@@ -1,16 +1,4 @@
 .DataDocQueryExecutions {
     font-size: var(--xsmall-text-size);
     font-weight: 700;
-
-    .execution-selector-section {
-        margin-bottom: 4px;
-        .date-text {
-            color: var(--text-light);
-        }
-    }
-
-    .QueryExecution {
-        margin-top: 4px;
-        margin-bottom: 4px;
-    }
 }

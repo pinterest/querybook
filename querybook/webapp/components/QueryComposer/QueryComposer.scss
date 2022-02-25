@@ -3,7 +3,7 @@
     overflow: hidden;
 
     .QueryComposer-header {
-        padding: 0px 20px;
+        padding-left: var(--padding);
         height: 45px;
         display: table;
 
@@ -41,7 +41,12 @@
             border-top: var(--border);
 
             .QueryComposerExecution {
-                padding: 0px 20px;
+                padding: 0px 16px 16px;
+
+                .execution-text {
+                    text-transform: uppercase;
+                    font-weight: var(--bold-font);
+                }
             }
         }
     }

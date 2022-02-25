@@ -21,10 +21,34 @@
     }
 
     .FullScreenModal,
-    .StandardModal {
+    .StandardModal,
+    .CustomModal {
         z-index: 300;
         display: flex;
         flex-direction: column;
+    }
+
+    .Modal-background {
+        background-color: var(--bg-invert);
+        opacity: 0.75;
+    }
+
+    .Modal-box {
+        width: 90vw;
+        min-width: 400px;
+        max-width: var(--max-width);
+        max-height: 84vh;
+        margin: 0 auto;
+        border: var(--border);
+        border-radius: var(--border-radius);
+        background-color: var(--bg);
+        overflow-y: hidden;
+        display: flex;
+        flex-direction: column;
+        position: relative;
+
+        transform: translate(0, 5vh);
+        transition: all 0.2s ease-out;
     }
 
     .StandardModal {
@@ -48,33 +72,13 @@
             overflow: hidden;
         }
 
-        .Modal-background {
-            background-color: var(--bg-invert);
-            opacity: 0.75;
-        }
-
         &.is-active .Modal-box {
             opacity: 1;
             transform: none;
         }
 
         .Modal-box {
-            width: 90vw;
-            min-width: 400px;
-            max-width: var(--max-width);
-            max-height: 84vh;
-            margin: 0 auto;
-            border: var(--border);
-            border-radius: var(--border-radius);
-            background-color: var(--bg);
-            overflow-y: hidden;
-            display: flex;
-            flex-direction: column;
-            position: relative;
-
             opacity: 0;
-            transform: translate(0, 5vh);
-            transition: all 0.2s ease-out;
 
             .Modal-content {
                 max-height: inherit;

@@ -26,7 +26,7 @@ export const QueryExecutionBar: React.FunctionComponent<IProps> = ({
     );
 
     const executionDateDOM = (
-        <div className="date-text mr16">
+        <div className="date-text mr12">
             {generateFormattedDate(queryExecution.created_at, 'X') +
                 ', ' +
                 moment.utc(queryExecution.created_at, 'X').fromNow()}
@@ -42,7 +42,7 @@ export const QueryExecutionBar: React.FunctionComponent<IProps> = ({
     );
 
     return (
-        <>
+        <div className="QueryExecutionBar">
             {executionDateDOM}
             {notificationButtonDOM}
             <CopyButton
@@ -52,6 +52,6 @@ export const QueryExecutionBar: React.FunctionComponent<IProps> = ({
                 title="Share Execution"
                 type="text"
             />
-        </>
+        </div>
     );
 };

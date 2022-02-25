@@ -1,3 +1,5 @@
+@import './../../scss_variables.scss';
+
 @mixin small-tag() {
     font-size: var(--xxsmall-text-size);
     padding: 2px 4px;
@@ -17,6 +19,11 @@
     color: var(--text-light);
     font-weight: var(--bold-font);
     font-size: var(--small-text-size);
+    max-width: 100%;
+
+    span {
+        @include one-line-ellipsis();
+    }
 
     &.highlighted {
         background-color: var(--color-accent-lightest-0);

@@ -1,4 +1,8 @@
 .QueryExecutionBar {
     display: flex;
     align-items: center;
+    .date-text {
+        color: var(--text-light);
+        font-weight: normal;
+    }
 }
