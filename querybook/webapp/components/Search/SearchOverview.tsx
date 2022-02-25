@@ -601,7 +601,6 @@ export const SearchOverview: React.FunctionComponent = () => {
                     {metastoreSelectDOM}
                 </div>
                 <div className="search-filter">
-
                     <span className="filter-title">Featured</span>
                     <div className="result-item-golden horizontal-space-between">
                         <span>
