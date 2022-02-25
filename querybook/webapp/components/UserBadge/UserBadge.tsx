@@ -7,10 +7,12 @@ import { UserNameComponent } from './UserName';
 import { UserAvatarComponent } from './UserAvatar';
 
 import './UserBadge.scss';
+import clsx from 'clsx';
 
 type IProps = {
     isOnline?: boolean;
     mini?: boolean;
+    cardStyle?: boolean;
 } & ICommonUserLoaderProps;
 
 export const UserBadge: React.FunctionComponent<IProps> = ({
@@ -18,6 +20,7 @@ export const UserBadge: React.FunctionComponent<IProps> = ({
     name,
     isOnline,
     mini,
+    cardStyle,
 }) => {
     const { loading, userInfo } = useUser({ uid, name });
 
@@ -36,14 +39,20 @@ export const UserBadge: React.FunctionComponent<IProps> = ({
                 : name
                 ? `Unknown (${name})`
                 : 'Unknown',
-        [userInfo?.username, name]
+        [userInfo, name]
     );
 
     if (mini) {
         return (
-            <span className="UserBadge mini">
+            <span
+                className={clsx({
+                    UserBadge: true,
+                    mini: true,
+                    'card-style': cardStyle,
+                })}
+            >
                 <figure>{avatarDOM}</figure>
-                <span className="user-name">
+                <span className="username">
                     {userInfo?.fullname ?? userName}
                 </span>
             </span>
@@ -51,7 +60,13 @@ export const UserBadge: React.FunctionComponent<IProps> = ({
     }
 
     return (
-        <div className="UserBadge flex-row">
+        <div
+            className={clsx({
+                UserBadge: true,
+                'flex-row': true,
+                'card-style': cardStyle,
+            })}
+        >
             <div className="UserBadge-icon">
                 <figure>{avatarDOM}</figure>
             </div>

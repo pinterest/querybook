@@ -76,7 +76,7 @@ export const UserMenu: React.FC<IUserMenuProps> = ({
         return (
             <Menu>
                 <MenuInfoItem>
-                    <UserBadge uid={userInfo.uid} />
+                    <UserBadge uid={userInfo.uid} cardStyle />
                 </MenuInfoItem>
                 <MenuDivider />
                 {themeToggle}

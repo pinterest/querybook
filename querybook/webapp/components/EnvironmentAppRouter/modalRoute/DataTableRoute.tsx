@@ -14,12 +14,7 @@ const DataTableRoute: React.FunctionComponent<RouteComponentProps> = ({
     const contentDOM = <DataTableView tableId={Number(match.params['id'])} />;
 
     return isModal ? (
-        <Modal
-            onHide={history.goBack}
-            type="standard"
-            className="wide"
-            title="Data Table Details"
-        >
+        <Modal onHide={history.goBack} type="standard" className="wide">
             {contentDOM}
         </Modal>
     ) : (

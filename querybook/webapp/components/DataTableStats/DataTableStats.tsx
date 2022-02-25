@@ -8,7 +8,6 @@ import { KeyContentDisplay } from 'ui/KeyContentDisplay/KeyContentDisplay';
 import { LoadingIcon } from 'ui/Loading/Loading';
 
 import { TableStats } from './DataTableStatsCommon';
-import './DataTableStats.scss';
 
 interface IProps {
     tableId: number;

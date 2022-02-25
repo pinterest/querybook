@@ -157,13 +157,13 @@ export const DataTableViewLineage: React.FunctionComponent<IDataTableViewLineage
                         // undo focus
                         prevSelectedNode
                             .select('rect')
-                            .style('fill', 'var(--bg-select)');
+                            .style('fill', 'var(--bg-light)');
                     }
 
                     if (newTableId !== selectedTableId) {
                         currentSelectedNode
                             .select('rect')
-                            .style('fill', 'var(--bg-hover)');
+                            .style('fill', 'var(--color-accent-lightest)');
 
                         dataLineageLoader(newTableId);
                         setSelectedTableId(newTableId);
@@ -174,17 +174,16 @@ export const DataTableViewLineage: React.FunctionComponent<IDataTableViewLineage
                 customNodeRender={(node) => {
                     const selected = node.id === selectedTableId;
                     const nodeColor = selected
-                        ? 'var(--bg-hover)'
-                        : 'var(--bg-select)';
-                    const borderColor = 'var(--icon)';
+                        ? 'var(--color-accent-lightest)'
+                        : 'var(--bg-lightest)';
+
                     return {
                         rx: 5,
                         ry: 5,
                         fillColor: nodeColor,
-                        borderColor,
                         style: `
                             fill: ${nodeColor};
-                            stroke: ${borderColor};`,
+                        `,
                         class: 'generic-node-class',
                     };
                 }}

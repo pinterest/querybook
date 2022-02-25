@@ -12,14 +12,15 @@
 }
 
 .Tag {
-    background-color: var(--bg-select);
+    background-color: var(--bg-light);
     padding: 2px 8px;
-    color: var(--tag);
+    color: var(--text-light);
     font-weight: var(--bold-font);
     font-size: var(--small-text-size);
 
     &.highlighted {
-        background-color: var(--color-accent-light);
+        background-color: var(--color-accent-lightest-0);
+        color: var(--color-accent-dark);
     }
     .HoverIconTag-hover {
         display: none;

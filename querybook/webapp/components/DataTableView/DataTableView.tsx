@@ -325,7 +325,7 @@ class DataTableViewComponent extends React.PureComponent<
                     wide
                     selectColor
                 />
-                <div className="DataTableView-content">{contentDOM}</div>
+                <div className="DataTableView-content mt16">{contentDOM}</div>
             </Container>
         );
     }

@@ -48,7 +48,7 @@ export const DataTableViewSamplesTable: React.FC<{
     ) : samples ? (
         <SamplesTableView tableName={tableName} samples={samples} />
     ) : (
-        <div className="samples-not-found">
+        <div className="empty-message m16">
             Samples not found, Click "Generate" to create samples.
         </div>
     );

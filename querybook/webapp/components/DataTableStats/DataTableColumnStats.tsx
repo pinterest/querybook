@@ -4,6 +4,7 @@ import { useResource } from 'hooks/useResource';
 import { KeyContentDisplay } from 'ui/KeyContentDisplay/KeyContentDisplay';
 import { TableStats } from './DataTableStatsCommon';
 import { TableColumnResource } from 'resource/table';
+import { isNumeric } from 'lib/utils/number';
 
 interface IProps {
     columnId: number;
@@ -22,6 +23,7 @@ export const DataTableColumnStats: React.FunctionComponent<IProps> = ({
         <KeyContentDisplay
             key={tableColumnStat.id}
             keyString={tableColumnStat.key}
+            rightAlign={isNumeric(tableColumnStat.value)}
         >
             <TableStats val={tableColumnStat.value} />
         </KeyContentDisplay>

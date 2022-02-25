@@ -8,7 +8,6 @@ import { Card } from 'ui/Card/Card';
 import { EditableTextField } from 'ui/EditableTextField/EditableTextField';
 import { Icon } from 'ui/Icon/Icon';
 import { KeyContentDisplay } from 'ui/KeyContentDisplay/KeyContentDisplay';
-import { Title } from 'ui/Title/Title';
 
 import './DataTableColumnCard.scss';
 
@@ -44,8 +43,8 @@ export const DataTableColumnCard: React.FunctionComponent<IProps> = ({
                     data-balloon-pos="down-right"
                 >
                     <div className="DataTableColumnCard-left">
-                        <Title size={6}>{column.name}</Title>
-                        <div className="ml8">{column.type}</div>
+                        <div className="column-name mr12">{column.name}</div>
+                        <div className="column-type">{column.type}</div>
                     </div>
                     <Icon name={expanded ? 'chevron-up' : 'chevron-down'} />
                 </div>
