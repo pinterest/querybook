@@ -31,12 +31,12 @@ const SearchRoute: React.FunctionComponent<RouteComponentProps> = ({
 
     return isModal ? (
         <Modal
-            type="standard"
+            type="custom"
             onHide={history.goBack}
-            className="SearchModal no-scroll"
+            className="SearchModal no-scroll fullscreen"
             title={null}
         >
-            {contentDOM}
+            <div className="Modal-box">{contentDOM}</div>
         </Modal>
     ) : (
         contentDOM

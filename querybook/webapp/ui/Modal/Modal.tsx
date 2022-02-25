@@ -32,7 +32,12 @@ export const Modal: React.FunctionComponent<IModalProps> = ({
 
     let modalDOM: React.ReactNode;
     if (type === 'custom') {
-        modalDOM = children;
+        modalDOM = (
+            <div className={'CustomModal ' + className}>
+                <div className="Modal-background fullscreen" onClick={onHide} />
+                {children}
+            </div>
+        );
     } else if (type === 'fullscreen') {
         modalDOM = (
             <FullScreenModal
