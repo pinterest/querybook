@@ -13,6 +13,7 @@ from lib.query_executor.exc import QueryExecutorException
 from lib.query_executor.utils import format_error_message
 
 from logic import query_execution as qe_logic
+from logic.elasticsearch import update_query_execution_by_id
 from tasks.log_query_per_table import log_query_per_table_task
 
 
@@ -56,6 +57,7 @@ def run_query_task(self, query_execution_id):
                 query_execution_id, executor, error_message, session=session
             )
             notifiy_on_execution_completion(query_execution_id, session=session)
+            update_query_execution_by_id(query_execution_id, session=session)
 
             # Executor exists means the query actually executed
             # This prevents cases when query_execution got executed twice

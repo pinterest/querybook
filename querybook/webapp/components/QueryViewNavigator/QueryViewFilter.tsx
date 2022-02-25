@@ -1,4 +1,4 @@
-import React, { useMemo, useRef } from 'react';
+import React, { useCallback, useMemo, useRef } from 'react';
 
 import { IQueryEngine } from 'const/queryEngine';
 import { QueryExecutionStatus } from 'const/queryExecution';
@@ -12,6 +12,7 @@ import { IconButton } from 'ui/Button/IconButton';
 import { TagGroup, Tag } from 'ui/Tag/Tag';
 import { useToggleState } from 'hooks/useToggleState';
 import { QueryViewFilterPicker } from './QueryViewFilterPicker';
+import { navigateWithinEnv } from 'lib/utils/query-string';
 
 interface IQueryViewFilterProps {
     queryEngines: IQueryEngine[];
@@ -30,6 +31,12 @@ const statusOptions: IOptions = getEnumEntries(QueryExecutionStatus).map(
 
 export const QueryViewFilter = React.memo<IQueryViewFilterProps>(
     ({ queryEngines, queryEngineById, filters, updateFilter, onRefresh }) => {
+        const navigateToSearch = useCallback(() => {
+            navigateWithinEnv(
+                '/search/?searchFilters[query_type]=query_execution',
+                { isModal: true }
+            );
+        }, []);
         const configButtonRef = useRef<HTMLAnchorElement>();
         const engineOptions: IOptions = useMemo(
             () =>
@@ -86,6 +93,10 @@ export const QueryViewFilter = React.memo<IQueryViewFilterProps>(
             </Popover>
         );
 
+        const searchButton = (
+            <IconButton icon="search" onClick={navigateToSearch} />
+        );
+
         const configButton = (
             <IconButton
                 icon="sliders"
@@ -99,6 +110,7 @@ export const QueryViewFilter = React.memo<IQueryViewFilterProps>(
 
         const configSection = (
             <div className="QueryViewFilter-icons">
+                {searchButton}
                 {configButton}
                 {refreshButton}
             </div>

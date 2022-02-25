@@ -3,6 +3,7 @@ from datetime import datetime, timedelta
 
 from app.db import DBSession, with_session
 from const.query_execution import QueryExecutionStatus
+from logic.query_execution import update_es_query_execution_by_id
 from models.schedule import TaskRunRecord
 from models.query_execution import QueryExecution
 from models.impression import Impression
@@ -48,17 +49,28 @@ def clean_up_query_execution(days_to_keep_done=90, days_to_keep_else=30, session
     last_day_for_done = datetime.now() - timedelta(days_to_keep_done)
     last_day_for_else = datetime.now() - timedelta(days_to_keep_else)
 
-    session.query(QueryExecution).filter(
-        QueryExecution.status == QueryExecutionStatus.DONE
-    ).filter(QueryExecution.completed_at < last_day_for_done).delete(
-        synchronize_session=False
+    # Delete completed queries
+    query = (
+        session.query(QueryExecution)
+        .filter(QueryExecution.status == QueryExecutionStatus.DONE)
+        .filter(QueryExecution.completed_at < last_day_for_done)
     )
-    session.query(QueryExecution).filter(
-        QueryExecution.status != QueryExecutionStatus.DONE
-    ).filter(QueryExecution.created_at < last_day_for_else).delete(
-        synchronize_session=False
+    query_execution_ids_to_delete = [query_exec.id for query_exec in query.all()]
+    query.delete(synchronize_session=False)
+
+    # Delete else
+    query = (
+        session.query(QueryExecution)
+        .filter(QueryExecution.status != QueryExecutionStatus.DONE)
+        .filter(QueryExecution.created_at < last_day_for_else)
     )
+    query_execution_ids_to_delete += [query_exec.id for query_exec in query.all()]
+    query.delete(synchronize_session=False)
+
     session.commit()
+
+    for query_exec_id in query_execution_ids_to_delete:
+        update_es_query_execution_by_id(query_exec_id)
 
 
 @with_session

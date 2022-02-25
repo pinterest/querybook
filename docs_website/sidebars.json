@@ -37,6 +37,7 @@
         "Developer Guide": [
             "developer_guide/contributing",
             "developer_guide/developer_setup",
+            "developer_guide/reinitialize_es",
             "developer_guide/run_db_migration",
             "developer_guide/storybook"
         ],

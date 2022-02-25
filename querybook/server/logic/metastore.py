@@ -44,7 +44,7 @@ def get_all_schemas(
 
 
 def get_schema_by_name_and_metastore_id(schema_name, metastore_id, session=None):
-    """"Get schema by name and metastore id"""
+    """Get schema by name and metastore id"""
     return (
         session.query(DataSchema)
         .filter(DataSchema.name == schema_name)
@@ -181,7 +181,7 @@ def create_table(
     commit=True,
     session=None,
 ):
-    """ Create a new table row given settings. """
+    """Create a new table row given settings."""
     fields_to_update = {
         "name": name,
         "type": type,
@@ -564,7 +564,7 @@ def create_table_query_execution_log(
 
 
 @with_session
-def delete_old_able_query_execution_log(
+def delete_old_table_query_execution_log(
     cell_id, query_execution_id, commit=True, session=None
 ):
     session.query(DataTableQueryExecution).filter(

@@ -1,10 +1,13 @@
 from html import escape
+from itertools import chain
 import math
 import re
 
 from const.impression import ImpressionItemType
+from const.query_execution import QueryExecutionStatus
 from env import QuerybookSettings
 from elasticsearch import Elasticsearch, RequestsHttpConnection
+from lib.query_analysis.lineage import get_table_statement_type, process_query
 
 from lib.utils.utils import (
     DATETIME_TO_UTC,
@@ -15,10 +18,14 @@ from lib.logger import get_logger
 from lib.config import get_config_value
 from lib.richtext import richtext_to_plaintext
 from app.db import with_session
+from logic.admin import get_query_engine_by_id
 from logic.datadoc import (
     get_all_data_docs,
+    get_all_query_cells,
+    get_data_cell_by_query_execution_id,
     get_data_doc_by_id,
     get_data_doc_editors_by_doc_id,
+    get_unarchived_query_cell_by_id,
 )
 from logic.metastore import (
     get_all_table,
@@ -29,6 +36,11 @@ from logic.metastore import (
 from logic.impression import (
     get_viewers_count_by_item_after_date,
     get_last_impressions_date,
+)
+from logic.query_execution import (
+    get_successful_adhoc_query_executions,
+    get_query_execution_by_id,
+    get_successful_query_executions_by_data_cell_id,
 )
 from models.user import User
 from models.datadoc import DataCellType
@@ -60,6 +72,244 @@ def get_hosted_es():
             verify_certs=True,
         )
     return hosted_es
+
+
+"""
+    QUERY EXECUTIONS
+"""
+
+
+@with_session
+def _get_query_cell_executions_iter(batch_size=1000, session=None):
+    offset = 0
+    while True:
+        query_cells = get_all_query_cells(
+            limit=batch_size, offset=offset, session=session,
+        )
+        query_executions_count = 0
+        for query_cell in query_cells:
+            query_cell_executions_offset = 0
+            while True:
+                query_cell_executions = get_successful_query_executions_by_data_cell_id(
+                    query_cell.id,
+                    limit=batch_size,
+                    offset=query_cell_executions_offset,
+                    session=session,
+                )
+                for query_execution in query_cell_executions:
+                    expand_query_execution = query_execution_to_es(
+                        query_execution, data_cell=query_cell, session=session,
+                    )
+                    yield expand_query_execution
+                query_executions_count += len(query_cell_executions)
+                if len(query_cell_executions) < batch_size:
+                    break
+                query_cell_executions_offset += batch_size
+        LOG.info(
+            "\n--Query cell count: {}, query cell executions count: {}, offset: {}".format(
+                len(query_cells), query_executions_count, offset
+            )
+        )
+        if len(query_cells) < batch_size:
+            break
+        offset += batch_size
+
+
+@with_session
+def _get_adhoc_query_executions_iter(batch_size=1000, session=None):
+    offset = 0
+    while True:
+        query_executions = get_successful_adhoc_query_executions(
+            limit=batch_size, offset=offset, session=session,
+        )
+        LOG.info(
+            "\n--Adhoc query executions count: {}, offset: {}".format(
+                len(query_executions), offset
+            )
+        )
+
+        for query_execution in query_executions:
+            expand_query_execution = query_execution_to_es(
+                query_execution, session=session
+            )
+            yield expand_query_execution
+
+        if len(query_executions) < batch_size:
+            break
+        offset += batch_size
+
+
+@with_session
+def get_query_executions_iter(batch_size=1000, session=None):
+    yield from _get_query_cell_executions_iter(batch_size=batch_size, session=session)
+    yield from _get_adhoc_query_executions_iter(batch_size=batch_size, session=session)
+
+
+@with_session
+def query_execution_to_es(query_execution, data_cell=None, session=None):
+    """data_cell is added as a parameter so that bulk insert of query executions won't require
+    re-retrieval of data_cell"""
+    query_execution_id = query_execution.id
+
+    engine_id = query_execution.engine_id
+    engine = get_query_engine_by_id(engine_id, session=session)
+
+    table_names, _ = process_query(
+        query_execution.query, language=(engine and engine.language)
+    )
+    table_names = list(chain.from_iterable(table_names))
+
+    duration = (
+        DATETIME_TO_UTC(query_execution.completed_at)
+        - DATETIME_TO_UTC(query_execution.created_at)
+        if query_execution.completed_at is not None
+        else None
+    )
+
+    environments = engine.environments
+    environment_ids = [env.id for env in environments]
+
+    title = data_cell.meta.get("title", "Untitled") if data_cell else None
+
+    expand_query_execution = {
+        "id": query_execution_id,
+        "query_type": "query_execution",
+        "title": title,
+        "environment_id": environment_ids,
+        "author_uid": query_execution.uid,
+        "engine_id": engine_id,
+        "statement_type": get_table_statement_type(query_execution.query),
+        "created_at": DATETIME_TO_UTC(query_execution.created_at),
+        "duration": duration,
+        "full_table_name": table_names,
+        "query_text": query_execution.query,
+    }
+    return expand_query_execution
+
+
+@with_exception
+def _bulk_insert_query_executions():
+    index_name = ES_CONFIG["query_executions"]["index_name"]
+
+    for query_execution in get_query_executions_iter():
+        _insert(index_name, query_execution["id"], query_execution)
+
+
+@with_exception
+@with_session
+def update_query_execution_by_id(query_execution_id, session=None):
+    index_name = ES_CONFIG["query_executions"]["index_name"]
+
+    query_execution = get_query_execution_by_id(query_execution_id, session=session)
+    if query_execution is None or query_execution.status != QueryExecutionStatus.DONE:
+        try:
+            _delete(index_name, id=query_execution_id)
+        except Exception:
+            LOG.error("failed to delete {}. Will pass.".format(query_execution_id))
+    else:
+        data_cell = get_data_cell_by_query_execution_id(
+            query_execution_id, session=session
+        )
+        formatted_object = query_execution_to_es(
+            query_execution, data_cell=data_cell, session=session
+        )
+        try:
+            # Try to update if present
+            updated_body = {
+                "doc": formatted_object,
+                "doc_as_upsert": True,
+            }  # ES requires this format for updates
+            _update(index_name, query_execution_id, updated_body)
+        except Exception:
+            LOG.error("failed to upsert {}. Will pass.".format(query_execution_id))
+
+
+"""
+    QUERY CELLS
+"""
+
+
+@with_session
+def get_query_cells_iter(batch_size=1000, session=None):
+    offset = 0
+
+    while True:
+        query_cells = get_all_query_cells(
+            limit=batch_size, offset=offset, session=session,
+        )
+        LOG.info(
+            "\n--Query cells count: {}, offset: {}".format(len(query_cells), offset)
+        )
+
+        for query_cell in query_cells:
+            expand_query_cell = query_cell_to_es(query_cell, session=session)
+            yield expand_query_cell
+
+        if len(query_cells) < batch_size:
+            break
+        offset += batch_size
+
+
+@with_session
+def query_cell_to_es(query_cell, session=None):
+    query_cell_id = query_cell.id
+    query_cell_meta = query_cell.meta
+
+    engine_id = query_cell_meta.get("engine")
+    engine = get_query_engine_by_id(engine_id, session=session)
+
+    query = query_cell.context
+    table_names, _ = process_query(query, language=(engine and engine.language))
+    table_names = list(chain.from_iterable(table_names))
+
+    datadoc = query_cell.doc
+
+    expand_query = {
+        "id": query_cell_id,
+        "query_type": "query_cell",
+        "title": query_cell_meta.get("title", "Untitled"),
+        "data_doc_id": datadoc and datadoc.id,
+        "environment_id": datadoc and datadoc.environment_id,
+        "author_uid": datadoc and datadoc.owner_uid,
+        "engine_id": engine_id,
+        "statement_type": get_table_statement_type(query),
+        "created_at": DATETIME_TO_UTC(query_cell.created_at),
+        "full_table_name": table_names,
+        "query_text": query,
+    }
+    return expand_query
+
+
+@with_exception
+def _bulk_insert_query_cells():
+    index_name = ES_CONFIG["query_cells"]["index_name"]
+
+    for query_cell in get_query_cells_iter():
+        _insert(index_name, query_cell["id"], query_cell)
+
+
+@with_exception
+@with_session
+def update_query_cell_by_id(query_cell_id, session=None):
+    index_name = ES_CONFIG["query_cells"]["index_name"]
+
+    query_cell = get_unarchived_query_cell_by_id(query_cell_id, session=session)
+    if query_cell is None:
+        try:
+            _delete(index_name, id=query_cell_id)
+        except Exception:
+            LOG.error("failed to delete {}. Will pass.".format(query_cell_id))
+    else:
+        formatted_object = query_cell_to_es(query_cell, session=session)
+        try:
+            # Try to update if present
+            updated_body = {
+                "doc": formatted_object,
+                "doc_as_upsert": True,
+            }  # ES requires this format for updates
+            _update(index_name, query_cell_id, updated_body)
+        except Exception:
+            LOG.error("failed to upsert {}. Will pass.".format(query_cell_id))
 
 
 """
@@ -390,6 +640,12 @@ def create_indices(*config_names):
     for es_config in es_configs:
         get_hosted_es().indices.create(es_config["index_name"], es_config["mappings"])
 
+    LOG.info("Inserting query executions")
+    _bulk_insert_query_executions()
+
+    LOG.info("Inserting query cells")
+    _bulk_insert_query_cells()
+
     LOG.info("Inserting datadocs")
     _bulk_insert_datadocs()
 
@@ -407,7 +663,13 @@ def create_indices_if_not_exist(*config_names):
             get_hosted_es().indices.create(
                 es_config["index_name"], es_config["mappings"]
             )
-            if es_config["type_name"] == "datadocs":
+            if es_config["type_name"] == "query_executions":
+                LOG.info("Inserting query executions")
+                _bulk_insert_query_executions()
+            elif es_config["type_name"] == "query_cells":
+                LOG.info("Inserting query cells")
+                _bulk_insert_query_cells()
+            elif es_config["type_name"] == "datadocs":
                 LOG.info("Inserting datadocs")
                 _bulk_insert_datadocs()
             elif es_config["type_name"] == "tables":

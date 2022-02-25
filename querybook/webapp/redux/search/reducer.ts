@@ -21,7 +21,7 @@ const initialSearchParamState = {
     searchFields: {},
     searchOrder: SearchOrder.Relevance,
     searchString: '',
-    searchType: SearchType.DataDoc,
+    searchType: SearchType.Query,
 };
 
 const initialState: ISearchState = {

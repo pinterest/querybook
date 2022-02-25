@@ -43,7 +43,44 @@ export interface ISearchTableParams {
     offset?: number;
 }
 
-export type ISearchPreview = IDataDocPreview | ITablePreview;
+interface IQueryPreviewBase {
+    id: number;
+    title: string | null;
+    created_at: number;
+    author_uid: number;
+    engine_id: number;
+    statement_type: string | string[];
+    full_table_name: string | string[];
+    query_text: string;
+    highlight?: {
+        query_text?: string[];
+        title?: string[];
+    };
+}
+
+interface IQueryCellPreview extends IQueryPreviewBase {
+    query_type: 'query_cell';
+    data_doc_id: number;
+}
+
+interface IQueryExecutionPreview extends IQueryPreviewBase {
+    query_type: 'query_execution';
+    duration: number;
+}
+
+export type IQueryPreview = IQueryCellPreview | IQueryExecutionPreview;
+
+export interface ISearchQueryParams {
+    environment_id: number;
+    keywords: string;
+    filters?: Array<[filterName: string, filterValue: any]>;
+    sort_key?: string | string[];
+    sort_order?: 'desc' | 'asc';
+    limit?: number;
+    offset?: number;
+}
+
+export type ISearchPreview = IQueryPreview | IDataDocPreview | ITablePreview;
 
 export interface IUserSearchResultRow {
     id: number;

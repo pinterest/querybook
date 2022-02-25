@@ -147,7 +147,7 @@ def log_table_per_statement(
         )
 
         if query_table:  # Sanity check
-            m_logic.delete_old_able_query_execution_log(
+            m_logic.delete_old_table_query_execution_log(
                 cell_id=cell_id,
                 query_execution_id=query_execution_id,
                 commit=False,
