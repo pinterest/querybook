@@ -48,7 +48,7 @@ export const UserBadge: React.FunctionComponent<IProps> = ({
                 className={clsx({
                     UserBadge: true,
                     mini: true,
-                    'card-style': Boolean(cardStyle),
+                    'card-style': cardStyle,
                 })}
             >
                 <figure>{avatarDOM}</figure>
@@ -64,7 +64,7 @@ export const UserBadge: React.FunctionComponent<IProps> = ({
             className={clsx({
                 UserBadge: true,
                 'flex-row': true,
-                'card-style': Boolean(cardStyle),
+                'card-style': cardStyle,
             })}
         >
             <div className="UserBadge-icon">
