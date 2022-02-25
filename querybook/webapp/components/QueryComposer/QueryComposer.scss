@@ -26,6 +26,8 @@
             flex: 2;
             overflow: auto;
             position: relative;
+            margin: 0px 12px 8px;
+            border-radius: var(--border-radius);
 
             .SearchAndReplaceBar {
                 position: absolute;
@@ -41,7 +43,7 @@
             border-top: var(--border);
 
             .QueryComposerExecution {
-                padding: 0px 16px 16px;
+                padding: 0px 16px 16px 24px;
 
                 .execution-text {
                     text-transform: uppercase;

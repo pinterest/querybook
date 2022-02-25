@@ -13,8 +13,14 @@
                 flex: 1;
                 overflow: hidden;
                 background-color: var(--bg-lightest);
+
                 > div {
-                    padding: var(--padding);
+                    padding-top: var(--padding-sm);
+                    padding-bottom: var(-padding-sm);
+                    > div {
+                        margin-left: var(--margin-sm);
+                        margin-right: var(--margin-sm);
+                    }
                 }
 
                 .list-header {
@@ -22,7 +28,6 @@
                     margin-bottom: var(--margin-sm);
                     border-radius: var(--border-radius-sm);
                     overflow: hidden;
-                    padding-right: var(--padding-sm);
                 }
 
                 .QueryViewNavigator,
