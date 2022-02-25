@@ -140,7 +140,7 @@ export const QueryItem: React.FunctionComponent<IQueryItemProps> = ({
         : getSearchResultHighlightedQueryDOM();
 
     const queryEngine = queryEngineById[engineId];
-    const queryType = isQueryCell ? 'data cell' : 'execution';
+    const queryType = isQueryCell ? 'query cell' : 'execution';
 
     return (
         <div className="SearchResultItem QueryItem" onClick={handleClick}>
@@ -263,18 +263,20 @@ export const DataTableItem: React.FunctionComponent<IDataTableItemProps> = ({
         <div className="SearchResultItem flex-row" onClick={handleClick}>
             <div className="result-items">
                 <a className="result-items-top horizontal-space-between">
-                    <HighlightTitle
-                        title={`${schema}.${name}`}
-                        searchString={searchString}
-                    />
-                    {goldenIcon}
+                    <div className="flex-row">
+                        <HighlightTitle
+                            title={`${schema}.${name}`}
+                            searchString={searchString}
+                        />
+                        {goldenIcon}
+                    </div>
+                    <span className="result-item-date">
+                        {generateFormattedDate(createdAt, 'X')}
+                    </span>
                 </a>
                 <Level className="result-items-bottom">
                     <span className="result-item-description">
                         {descriptionDOM}
-                    </span>
-                    <span className="result-item-date">
-                        {generateFormattedDate(createdAt, 'X')}
                     </span>
                 </Level>
             </div>

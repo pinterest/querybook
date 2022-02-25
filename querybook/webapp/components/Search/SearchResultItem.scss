@@ -2,11 +2,15 @@
 
 .SearchResultItem {
     display: flex;
-    border-radius: var(--border-radius-sm);
-    margin: var(--margin-sm);
-    padding: var(--padding);
-    background-color: var(--bg);
+    border-radius: var(--border-radius);
+    padding: 8px 16px;
+    background-color: var(--bg-lightest);
     cursor: pointer;
+    margin-bottom: var(--margin);
+
+    &:hover {
+        background-color: var(--bg-hover);
+    }
 
     mark {
         background-color: var(--color-accent-light);
@@ -27,7 +31,7 @@
         overflow: hidden;
 
         .result-items-top {
-            padding-right: 5px;
+            padding-right: var(--padding-sm);
             align-items: baseline;
 
             .result-item-title {
@@ -44,24 +48,24 @@
             }
         }
 
+        .result-item-date {
+            font-size: var(--small-text-size);
+            font-weight: var(--bold-font);
+            color: var(--text-lightest);
+            white-space: nowrap;
+        }
+
         .result-items-bottom {
-            margin-right: 8px;
             align-items: baseline;
             color: var(--text-light);
 
             .result-item-owner {
                 font-weight: 500;
             }
-
-            .result-item-date {
-                font-size: var(--small-text-size);
-                white-space: nowrap;
-            }
         }
 
         .result-item-description {
-            margin-right: 4px;
-            font-weight: 500;
+            margin-top: var(--margin-xs);
             @include ellipsis(3);
             word-break: break-all;
         }
@@ -73,8 +77,10 @@
             border-radius: var(--border-radius);
         }
 
-        .CodeHighlight, .highlighted-query {
+        .CodeHighlight,
+        .highlighted-query {
             cursor: text;
+            background-color: var(--bg-light);
         }
 
         .highlighted-query {

@@ -47,7 +47,7 @@ export const QueryComposerExecution: React.FunctionComponent<IProps> = ({
     return (
         <div className="QueryComposerExecution">
             <Level>
-                <div>
+                <div className="execution-text">
                     {statusIcon} Execution {execution.id}
                 </div>
                 <div className="flex-row">

@@ -5,7 +5,7 @@
         display: flex;
 
         .statement-header-top {
-            font-weight: bold;
+            font-weight: var(--bold-font);
         }
 
         .statement-header-bottom {
@@ -28,5 +28,6 @@
 
     .run-time-message {
         color: var(--text-light);
+        font-weight: var(--bold-font);
     }
 }

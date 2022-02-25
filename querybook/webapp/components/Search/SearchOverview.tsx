@@ -210,7 +210,7 @@ export const SearchOverview: React.FunctionComponent = () => {
     }, []);
 
     const searchTypeDOM = (
-        <div className="search-types">
+        <div className="search-types mv4">
             <Tabs
                 items={SEARCH_TABS}
                 selectedTabKey={searchType}
@@ -274,12 +274,12 @@ export const SearchOverview: React.FunctionComponent = () => {
 
     const orderByButtonFormatter = React.useCallback(
         () => (
-            <span>
+            <div className="flex-row">
                 {searchOrder === SearchOrder.Recency
                     ? 'Most recent'
                     : 'Most relevant'}
-                <i className="fa fa-caret-down caret-icon ml8" />
-            </span>
+                <Icon className="ml8" name="chevron-down" size={16} />
+            </div>
         ),
         [searchOrder]
     );
@@ -525,68 +525,42 @@ export const SearchOverview: React.FunctionComponent = () => {
         searchType === 'Query' ? (
             <>
                 <div className="search-filter">
-                    <span className="filter-title">
-                        Authors
-                        <hr className="dh-hr" />
-                    </span>
+                    <span className="filter-title">Authors</span>
                     {getAuthorFiltersDOM('author_uid')}
                 </div>
                 <div className="search-filter">
-                    <span className="filter-title">
-                        Query Engine
-                        <hr className="dh-hr" />
-                    </span>
+                    <span className="filter-title">Query Engine</span>
                     {queryEngineFilterDOM}
                 </div>
                 {queryMetastores.length && (
                     <div className="search-filter">
-                        <span className="filter-title">
-                            Tables
-                            <hr className="dh-hr" />
-                        </span>
+                        <span className="filter-title">Tables</span>
                         {tableFilterDOM}
                     </div>
                 )}
                 <div className="search-filter">
-                    <span className="filter-title">
-                        Query Type
-                        <hr className="dh-hr" />
-                    </span>
+                    <span className="filter-title">Query Type</span>
                     {queryTypeFilterDOM}
                 </div>
                 <div className="search-filter">
-                    <span className="filter-title">
-                        Statement Type
-                        <hr className="dh-hr" />
-                    </span>
+                    <span className="filter-title">Statement Type</span>
                     <div className="result-item-golden horizontal-space-between">
                         {statementTypeFilterDOM}
                     </div>
                 </div>
                 <div className="search-filter">
-                    <span className="filter-title">
-                        Created At
-                        <hr className="dh-hr" />
-                    </span>
+                    <span className="filter-title">Created At</span>
                     {dateFilterDOM}
                 </div>
                 <div className="search-filter">
-                    <span className="filter-title">
-                        Duration
-                        <hr className="dh-hr" />
-                    </span>
+                    <span className="filter-title">Duration</span>
                     {durationFilterDOM}
-                    <span className="filter-title">Metastore</span>
-                    {metastoreSelectDOM}
                 </div>
             </>
         ) : searchType === 'DataDoc' ? (
             <>
                 <div className="search-filter">
-                    <span className="filter-title">
-                        Authors
-                        <hr className="dh-hr" />
-                    </span>
+                    <span className="filter-title">Authors</span>
                     {getAuthorFiltersDOM('owner_uid')}
                 </div>
                 <div className="search-filter">
@@ -655,9 +629,8 @@ export const SearchOverview: React.FunctionComponent = () => {
         !isEmpty(searchFilters) ||
         !!searchString;
     const beginSearchPromptDOM = (
-        <div className="begin-search-prompt">
-            Please enter a search string or apply search filters to begin
-            search.
+        <div className="empty-message">
+            Enter a search string or apply filters to begin.
         </div>
     );
 
@@ -680,10 +653,7 @@ export const SearchOverview: React.FunctionComponent = () => {
                 {resultsDOM}
                 {paginationDOM}
             </div>
-            <div className="search-filters">
-                <div className="search-filters-by">Filter by</div>
-                {FilterDOM}
-            </div>
+            <div className="search-filters">{FilterDOM}</div>
         </Container>
     );
 
