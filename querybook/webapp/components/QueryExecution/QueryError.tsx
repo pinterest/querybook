@@ -173,7 +173,7 @@ export const QueryError: React.FunctionComponent<IProps> = ({
     }
 
     return (
-        <div className="QueryError">
+        <div className="QueryError mt4">
             <ErrorSuggestion
                 errorMsg={errorMsg}
                 language={queryEngine.language}
