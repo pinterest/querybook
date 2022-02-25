@@ -60,7 +60,7 @@ export const CreateDataTableTag: React.FunctionComponent<IProps> = ({
                     icon="plus"
                     onClick={() => setShowSelect(true)}
                     tooltip="Add tag"
-                    tooltipPos="right"
+                    tooltipPos="down"
                     size={18}
                     invertCircle
                 />

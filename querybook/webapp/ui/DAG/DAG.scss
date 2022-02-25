@@ -14,8 +14,7 @@
     }
 
     .node rect {
-        fill: var(--icon);
-        stroke: var(--icon);
+        fill: var(--bg-light);
         stroke-width: 4px;
     }
 
@@ -25,11 +24,11 @@
     }
 
     .edgePath path {
-        stroke: var(--text-light);
+        stroke: var(--bg-dark);
         stroke-width: 1.5px;
     }
 
     .edgePath marker {
-        fill: var(--text-light);
+        fill: var(--bg-dark);
     }
 }

@@ -80,7 +80,9 @@
                 max-height: inherit;
                 height: auto;
                 overflow-y: auto;
+                margin-top: var(--margin);
                 padding: var(--padding-xl);
+                padding-top: 0px;
             }
         }
     }
