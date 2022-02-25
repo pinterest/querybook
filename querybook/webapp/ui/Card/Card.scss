@@ -1,13 +1,11 @@
 .Card {
     justify-content: center;
-    background-color: var(--bg-light);
     border-radius: var(--border-radius);
-    border: var(--border);
     padding: 8px;
-    margin: 16px;
+    background-color: var(--bg-lightest);
 
-    &:hover {
-        border: var(--border);
+    + .Card {
+        margin-top: 16px;
     }
 
     .Card-title {
@@ -31,5 +29,13 @@
     }
     &.clickable {
         cursor: pointer;
+    }
+
+    input,
+    textarea {
+        &:active,
+        &:focus {
+            background-color: var(--bg-light);
+        }
     }
 }

@@ -102,7 +102,6 @@ export function GenericCRUD<T extends Record<any, any>>({
                             }
                             title={createItem ? 'Create' : 'Save'}
                             icon="save"
-                            color="accent"
                             onClick={() => handleSubmit()}
                         />
                     );
@@ -115,7 +114,7 @@ export function GenericCRUD<T extends Record<any, any>>({
                         <div>
                             {renderItem(values, setFieldValue)}
                             {errorSection}
-                            <div className="pv8 right-align">
+                            <div className="pv8 right-align mr8">
                                 {deleteButton}
                                 {saveButton}
                             </div>

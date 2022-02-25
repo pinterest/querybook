@@ -22,10 +22,8 @@ import { DataTableViewQueryUsers } from './DataTableViewQueryUsers';
 import { UserName } from 'components/UserBadge/UserName';
 
 import { AsyncButton } from 'ui/AsyncButton/AsyncButton';
-import { Button } from 'ui/Button/Button';
-import { IconButton } from 'ui/Button/IconButton';
+import { Button, TextButton } from 'ui/Button/Button';
 import { Loading } from 'ui/Loading/Loading';
-import { Title } from 'ui/Title/Title';
 import { ThemedCodeHighlight } from 'ui/CodeHighlight/ThemedCodeHighlight';
 
 import { DataTableViewQueryEngines } from './DataTableViewQueryEngines';
@@ -147,37 +145,34 @@ export const DataTableViewQueryExamples: React.FunctionComponent<IProps> = ({
 
     const queryExampleFiltersSection = (
         <div className="mb12">
-            <div className="horizontal-space-between">
-                <Title size={4}>Queries with this table</Title>
+            <div className="horizontal-space-between mb16">
+                <div className="info-text mv8">
+                    Select any user, query engine, and/or co-occuring tables to
+                    filter.
+                </div>
                 {!isEmpty(filters) && (
                     <Button onClick={clearFilter}>Clear Filter</Button>
                 )}
             </div>
-            <div className="filter-selection-section mb16 mt4">
-                <div>
-                    <Title subtitle size={6}>
-                        Top users
-                    </Title>
+            <div className="filter-selection-section mb24">
+                <div className="mb16">
+                    <div className="section-title">Top users</div>
                     <DataTableViewQueryUsers
                         tableId={tableId}
                         onClick={setUidFilter}
                         selectedUid={filters.uid}
                     />
                 </div>
-                <div className="mt12">
-                    <Title subtitle size={6}>
-                        Query engines
-                    </Title>
+                <div className="mb16">
+                    <div className="section-title">Query engines</div>
                     <DataTableViewQueryEngines
                         tableId={tableId}
                         onClick={setEngineIdFilter}
                         selectedEngineId={filters.engine_id}
                     />
                 </div>
-                <div className="mt12">
-                    <Title subtitle size={6}>
-                        Top co-occurring tables
-                    </Title>
+                <div className="mb16">
+                    <div className="section-title">Top co-occurring tables</div>
                     <DataTableViewQueryConcurrences
                         tableId={tableId}
                         onClick={setTableIdFilter}
@@ -189,7 +184,7 @@ export const DataTableViewQueryExamples: React.FunctionComponent<IProps> = ({
     );
 
     return (
-        <div className="DataTableViewQueryExamples">
+        <div className="DataTableViewQueryExamples pb24">
             {queryExampleFiltersSection}
             <QueryExamplesList tableId={tableId} filters={filters} />
         </div>
@@ -289,8 +284,10 @@ const QueryExamplesList: React.FC<{
                             <span>by </span>
                             <UserName uid={query.uid} />
                         </div>
-                        <IconButton
-                            icon="external-link"
+                        <TextButton
+                            icon="arrow-right"
+                            title="Open Execution"
+                            className="mt8"
                             onClick={() => openDisplayModal(query.id)}
                         />
                     </div>

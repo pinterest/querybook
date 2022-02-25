@@ -39,10 +39,10 @@ export const ColumnPanelView: React.FunctionComponent<IColumnPanelViewProps> = (
     ) : null;
 
     return (
-        <div>
+        <>
             {overviewPanel}
             {descriptionPanel}
             {typeInfoPanel}
-        </div>
+        </>
     );
 };

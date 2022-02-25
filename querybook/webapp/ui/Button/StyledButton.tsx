@@ -33,7 +33,7 @@ export const StyledButton = styled.span<StyledButtonProps>`
     background-color: ${(props) => props.bgColor || 'inherit'};
 
     + .Button {
-        margin-left: 8px;
+        margin-left: 12px;
     }
 
     &:hover,
