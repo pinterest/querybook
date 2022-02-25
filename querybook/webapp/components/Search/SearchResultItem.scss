@@ -8,6 +8,10 @@
     cursor: pointer;
     margin-bottom: var(--margin);
 
+    &:hover {
+        background-color: var(--bg-hover);
+    }
+
     mark {
         background-color: var(--color-accent-light);
         color: var(--color-accent-dark);
