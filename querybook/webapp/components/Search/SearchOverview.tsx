@@ -525,8 +525,69 @@ export const SearchOverview: React.FunctionComponent = () => {
         searchType === 'Query' ? (
             <>
                 <div className="search-filter">
-                    <span className="filter-title">Authors</span>
-                    {getAuthorFiltersDOM()}
+                    <span className="filter-title">
+                        Authors
+                        <hr className="dh-hr" />
+                    </span>
+                    {getAuthorFiltersDOM('author_uid')}
+                </div>
+                <div className="search-filter">
+                    <span className="filter-title">
+                        Query Engine
+                        <hr className="dh-hr" />
+                    </span>
+                    {queryEngineFilterDOM}
+                </div>
+                {queryMetastores.length && (
+                    <div className="search-filter">
+                        <span className="filter-title">
+                            Tables
+                            <hr className="dh-hr" />
+                        </span>
+                        {tableFilterDOM}
+                    </div>
+                )}
+                <div className="search-filter">
+                    <span className="filter-title">
+                        Query Type
+                        <hr className="dh-hr" />
+                    </span>
+                    {queryTypeFilterDOM}
+                </div>
+                <div className="search-filter">
+                    <span className="filter-title">
+                        Statement Type
+                        <hr className="dh-hr" />
+                    </span>
+                    <div className="result-item-golden horizontal-space-between">
+                        {statementTypeFilterDOM}
+                    </div>
+                </div>
+                <div className="search-filter">
+                    <span className="filter-title">
+                        Created At
+                        <hr className="dh-hr" />
+                    </span>
+                    {dateFilterDOM}
+                </div>
+                <div className="search-filter">
+                    <span className="filter-title">
+                        Duration
+                        <hr className="dh-hr" />
+                    </span>
+                    {durationFilterDOM}
+                    <span className="filter-title">Metastore</span>
+                    {metastoreSelectDOM}
+                </div>
+            </>
+        ) : searchType === 'DataDoc' ? (
+            <>
+                <div className="search-filter">
+                    <span className="filter-title">
+                        Authors
+                        <hr className="dh-hr" />
+                    </span>
+                    {getAuthorFiltersDOM('owner_uid')}
                 </div>
                 <div className="search-filter">
                     <span className="filter-title">Date</span>

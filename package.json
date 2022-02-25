@@ -1,6 +1,10 @@
 {
     "name": "querybook",
+<<<<<<< HEAD
     "version": "3.1.2",
+=======
+    "version": "3.1.0",
+>>>>>>> 2f737eb (rebase master (#750))
     "description": "A Big Data Webapp",
     "private": true,
     "scripts": {
