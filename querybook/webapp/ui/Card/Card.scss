@@ -30,12 +30,4 @@
     &.clickable {
         cursor: pointer;
     }
-
-    input,
-    textarea {
-        &:active,
-        &:focus {
-            background-color: var(--bg-light);
-        }
-    }
 }
