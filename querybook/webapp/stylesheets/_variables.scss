@@ -69,8 +69,9 @@ body {
     // Colors: Text
     --text: var(--color-invert-2);
     --text-dark: var(--color-invert);
-    --text-light: var(--color-invert-5);
-    --text-lightest: var(--color-primary-5);
+    --text-light: var(--color-invert-4);
+    --text-lightest: var(--color-invert-5);
+
     --text-hover: var(--color-invert-3);
 
     --text-title: var(--color-invert-3);
@@ -218,11 +219,11 @@ body.dark-theme {
     --color-primary-4: #656465; // BG-border
     --color-primary-5: #706f70; // C-hover content
 
-    --color-invert-5: #9e9e9e; // C-light text
+    --color-invert-5: #afafaf; // C-light text
     --color-invert-4: #bfbfbf; // BG-modal background
-    --color-invert-3: #d3d3d3; // C-large text
-    --color-invert-2: #efefef; // C-small text
-    --color-invert-1: #f7f7f7; // BG-invert background
+    --color-invert-3: #cfcfcf; // C-large text
+    --color-invert-2: #dfdfdf; // C-small text
+    --color-invert-1: #efefef; // BG-invert background
     --color-invert: #ffffff; // C-dark text
 
     --color-accent: var(--color-blue-dark);
@@ -241,6 +242,8 @@ body.dark-theme {
     --scroll-bar-color: var(--color-primary-3);
 
     --text-highlight: rgba(52, 101, 127, 0.5);
+
+    --bold-font: var(--extra-bold-font);
 
     font-weight: 500;
 }
@@ -282,6 +285,8 @@ body.night-theme {
 
     --color-green-dark: #a8d017;
 
+    --bold-font: var(--extra-bold-font);
+
     --tag: var(--text-invert);
 }
 
@@ -320,6 +325,8 @@ body.lush-theme {
 
     --color-red: #e87d6a;
     --color-red-dark: #e87d6a;
+
+    --bold-font: var(--extra-bold-font);
 
     --tag: var(--text-invert);
 }
