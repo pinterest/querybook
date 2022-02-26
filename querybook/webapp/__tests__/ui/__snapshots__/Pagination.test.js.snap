@@ -88,7 +88,7 @@ exports[`matches test renderer snapshot serializes the styles 1`] = `
     className="Pagination-previous"
   >
     <span
-      className="StyledButton-aqwbwz-0 gaapIk Button fill"
+      className="StyledButton-aqwbwz-0 gaPCFS Button fill"
       color="var(--text-light)"
       onClick={[Function]}
       size="medium"
@@ -102,7 +102,7 @@ exports[`matches test renderer snapshot serializes the styles 1`] = `
     className="Pagination-next"
   >
     <span
-      className="StyledButton-aqwbwz-0 gaapIk Button fill"
+      className="StyledButton-aqwbwz-0 gaPCFS Button fill"
       color="var(--text-light)"
       onClick={[Function]}
       size="medium"
@@ -117,7 +117,7 @@ exports[`matches test renderer snapshot serializes the styles 1`] = `
   >
     <li>
       <span
-        className="StyledButton-aqwbwz-0 gaapIk Button Pagination-page-button  fill"
+        className="StyledButton-aqwbwz-0 gaPCFS Button Pagination-page-button  fill"
         color="var(--text-light)"
         onClick={[Function]}
         size="medium"
@@ -129,7 +129,7 @@ exports[`matches test renderer snapshot serializes the styles 1`] = `
     </li>
     <li>
       <span
-        className="StyledButton-aqwbwz-0 gaapIk Button Pagination-page-button current fill"
+        className="StyledButton-aqwbwz-0 gaPCFS Button Pagination-page-button current fill"
         color="var(--text-light)"
         onClick={[Function]}
         size="medium"
@@ -141,7 +141,7 @@ exports[`matches test renderer snapshot serializes the styles 1`] = `
     </li>
     <li>
       <span
-        className="StyledButton-aqwbwz-0 gaapIk Button Pagination-page-button  fill"
+        className="StyledButton-aqwbwz-0 gaPCFS Button Pagination-page-button  fill"
         color="var(--text-light)"
         onClick={[Function]}
         size="medium"
@@ -153,7 +153,7 @@ exports[`matches test renderer snapshot serializes the styles 1`] = `
     </li>
     <li>
       <span
-        className="StyledButton-aqwbwz-0 gaapIk Button Pagination-page-button  fill"
+        className="StyledButton-aqwbwz-0 gaPCFS Button Pagination-page-button  fill"
         color="var(--text-light)"
         onClick={[Function]}
         size="medium"
@@ -172,7 +172,7 @@ exports[`matches test renderer snapshot serializes the styles 1`] = `
     </li>
     <li>
       <span
-        className="StyledButton-aqwbwz-0 gaapIk Button Pagination-page-button  fill"
+        className="StyledButton-aqwbwz-0 gaPCFS Button Pagination-page-button  fill"
         color="var(--text-light)"
         onClick={[Function]}
         size="medium"

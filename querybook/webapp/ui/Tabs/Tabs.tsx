@@ -14,9 +14,9 @@ export interface ITabItem {
 }
 
 export interface ITabsProps {
-    items: Array<ITabItem | string>;
+    items: Array<ITabItem | string> | readonly string[];
     selectedTabKey?: string;
-    onSelect: (key: string) => any;
+    onSelect: (key: string) => void;
 
     className?: string;
     vertical?: boolean;
