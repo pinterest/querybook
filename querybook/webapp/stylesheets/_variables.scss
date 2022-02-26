@@ -24,39 +24,39 @@ body {
     --color-pink: #f683ad;
     --color-pink-dark: #e64680;
     --color-pink-light: #f9a8c5;
-    --color-pink-lightest: rgba(249, 168, 197, 0.4);
-    --color-pink-lightest-0: rgba(249, 168, 197, 0.2);
+    --color-pink-lightest: #fddce7;
+    --color-pink-lightest-0: #feedf3;
 
     --color-red: #f68a83;
     --color-red-dark: #f65b50; // cancel button
     --color-red-light: #faa198;
-    --color-red-lightest: rgba(250, 161, 152, 0.4);
-    --color-red-lightest-0: rgba(250, 161, 152, 0.2);
+    --color-red-lightest: #fddad6;
+    --color-red-lightest-0: #feecea;
 
     // dawn theme
     --color-orange: #f5ac72;
     --color-orange-dark: #ec8d3e;
     --color-orange-light: var(--color-yellow);
-    --color-orange-lightest: rgba(255, 210, 117, 0.4);
-    --color-orange-lightest-0: rgba(255, 210, 117, 0.2);
+    --color-orange-lightest: #ffeec9;
+    --color-orange-lightest-0: #fff6e4;
 
     --color-yellow: #ffd275;
     --color-yellow-dark: var(--color-orange);
     --color-yellow-light: #fce3b7;
-    --color-yellow-lightest: rgba(252, 227, 183, 0.4);
-    --color-yellow-lightest-0: rgba(252, 227, 183, 0.2);
+    --color-yellow-lightest: #fdf4e2;
+    --color-yellow-lightest-0: #fffaf1;
 
     --color-green: #81a011;
     --color-green-dark: #6a830e; // confirm button
     --color-green-light: #dbeaa3;
-    --color-green-lightest: rgba(219, 234, 163, 0.4);
-    --color-green-lightest-0: rgba(219, 234, 163, 0.2);
+    --color-green-lightest: #f1f6da;
+    --color-green-lightest-0: #f7fbec;
 
     --color-blue: #85d0ce;
     --color-blue-dark: #34657f;
     --color-blue-light: #c5e2ee;
-    --color-blue-lightest: rgba(197, 226, 238, 0.4);
-    --color-blue-lightest-0: rgba(197, 226, 238, 0.2);
+    --color-blue-lightest: #e8f3f8;
+    --color-blue-lightest-0: #f4f9fb;
 
     --color-null: var(--color-primary-4);
 
@@ -180,11 +180,12 @@ body {
 
 body.dawn-theme {
     --color-primary: #fcf9f4; // BG-background
-    --color-primary-1: #faf3e9; // BG-hover background
-    --color-primary-2: #f7ecdf; // BG-light background
-    --color-primary-3: #f5e6d4; // C-icon
-    --color-primary-4: #f1ddc4; // BG-border
-    --color-primary-5: #ecd1af; // C-hover content
+    --color-primary-0: #f9f2e9; // BG-hover background
+    --color-primary-1: #f7ecdd; // BG-hover background
+    --color-primary-2: #f4e5d2; // BG-light background
+    --color-primary-3: #f1dec6; // C-icon
+    --color-primary-4: #efd8bb; // BG-border
+    --color-primary-5: #e5c6a3; // C-hover content
 
     --color-transparent: rgba(0, 0, 0, 0.1); // text-select color
 
@@ -198,7 +199,8 @@ body.dawn-theme {
     --color-accent: var(--color-orange);
     --color-accent-dark: #9d5828;
     --color-accent-light: var(--color-orange-light);
-    --color-accent-lightest: #fdf0e3;
+    --color-accent-lightest: var(--color-orange-lightest);
+    --color-accent-lightest-0: var(--color-orange-lightest-0);
 
     --color-false: var(--color-orange);
     --color-false-dark: #9d5828;
@@ -209,11 +211,12 @@ body.dawn-theme {
 
 body.dark-theme {
     --color-primary: #302e2f; // BG-background
-    --color-primary-1: #3b393b; // BG-hover background
-    --color-primary-2: #484547; // BG-light background
-    --color-primary-3: #5f5c5d; // C-icon
-    --color-primary-4: #7d7d7d; // BG-border
-    --color-primary-5: #909090; // C-hover content
+    --color-primary-0: #3b393a; // BG-hover background
+    --color-primary-1: #454445; // BG-hover background
+    --color-primary-2: #504f50; // BG-light background
+    --color-primary-3: #5b595a; // C-icon
+    --color-primary-4: #656465; // BG-border
+    --color-primary-5: #706f70; // C-hover content
 
     --color-invert-5: #9e9e9e; // C-light text
     --color-invert-4: #bfbfbf; // BG-modal background
@@ -226,6 +229,7 @@ body.dark-theme {
     --color-accent-dark: var(--color-blue);
     --color-accent-light: var(--color-blue-dark);
     --color-accent-lightest: #254a5d;
+    --color-accent-lightest-0: #13252f;
 
     --color-red-dark: #faa198;
 
@@ -243,11 +247,12 @@ body.dark-theme {
 
 body.night-theme {
     --color-primary: #1d335e; // BG-background
-    --color-primary-1: #223b6d; // BG-hover background
-    --color-primary-2: #2b4b8b; // BG-light background
-    --color-primary-3: #345ca9; // C-icon
-    --color-primary-4: #406dc4; // BG-border
-    --color-primary-5: #5e84cd; // C-hover content
+    --color-primary-0: #233d6f; // BG-hover background
+    --color-primary-1: #294680; // BG-hover background
+    --color-primary-2: #2f5091; // BG-light background
+    --color-primary-3: #345aa2; // C-icon
+    --color-primary-4: #3a63b3; // BG-border
+    --color-primary-5: #406dc4; // C-hover content
 
     --color-transparent: rgba(255, 255, 255, 0.1); // text-select color
 
@@ -262,6 +267,7 @@ body.night-theme {
     --color-accent-dark: var(--color-yellow-light);
     --color-accent-light: #534b94;
     --color-accent-lightest: #3c3c77;
+    --color-accent-lightest-0: #1e1e3c;
 
     --bg-invert: var(--color-primary-1);
     --bg-text-select: var(--color-transparent-dark);
@@ -281,11 +287,12 @@ body.night-theme {
 
 body.lush-theme {
     --color-primary: #2b433f; // BG-background
-    --color-primary-1: #334f4a; // BG-hover background
-    --color-primary-2: #3a5b55; // BG-light background
+    --color-primary-0: #334f4a; // BG-hover background
+    --color-primary-1: #3a5b55; // BG-hover background
+    --color-primary-2: #426761; // BG-light background
     --color-primary-3: #4a736c; // C-icon
-    --color-primary-4: #598b82; // BG-border
-    --color-primary-5: #6ba097; // C-hover content
+    --color-primary-4: #517f77; // BG-border
+    --color-primary-5: #598b82; // C-hover content
 
     --color-transparent: rgba(255, 255, 255, 0.1); // text-select color
 
@@ -297,9 +304,10 @@ body.lush-theme {
     --color-invert: #ffd889; // C-dark text
 
     --color-accent: var(--color-orange);
-    --color-accent-dark: var(--color-orange-light);
-    --color-accent-light: var(--bg-select);
-    --color-accent-lightest: var(--bg-hover);
+    --color-accent-dark: var(--color-orange-dark);
+    --color-accent-light: var(--color-yellow);
+    --color-accent-lightest: var(--color-orange-light);
+    --color-accent-lightest-0: var(--color-yellow-light);
 
     --text-hover: #f9bb78;
 
