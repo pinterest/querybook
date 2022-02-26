@@ -29,3 +29,21 @@ export const TemplateGuideModal: React.FC<{
         </Modal>
     );
 };
+
+export const TemplateGuide: React.FC = () => {
+    const [section, setSection] = useState<TTemplateGuideSection>('Syntax');
+
+    return (
+        <div>
+            <div className="right-align">
+                <Tabs
+                    selectedTabKey={section}
+                    items={GUIDE_SECTIONS}
+                    onSelect={setSection as any}
+                />
+            </div>
+
+            <Markdown>{GUIDE_CONTENT_PER_SECTION[section]}</Markdown>
+        </div>
+    );
+};
