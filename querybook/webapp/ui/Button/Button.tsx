@@ -71,6 +71,7 @@ export const Button = React.forwardRef<HTMLSpanElement, ButtonProps>(
         const pingDOM = !ping ? null : (
             <div className="ping-message">{ping}</div>
         );
+
         return (
             <StyledButton
                 className={buttonClassName}

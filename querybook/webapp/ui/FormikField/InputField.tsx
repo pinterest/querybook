@@ -14,7 +14,7 @@ export interface IInputFieldProps extends Partial<IDebouncedInputProps> {
 export const InputField: React.FC<IInputFieldProps> = ({
     name,
     inputType = 'text',
-    ...inputProps
+    ...debouncedInputProps
 }) => {
     const [_, meta, helpers] = useField(name);
 
@@ -26,14 +26,15 @@ export const InputField: React.FC<IInputFieldProps> = ({
 
     return (
         <InputComponent
-            {...inputProps}
-            value={inputProps.value ?? value}
-            onChange={inputProps.onChange ?? setValue}
+            {...debouncedInputProps}
+            value={debouncedInputProps.value ?? value}
+            onChange={debouncedInputProps.onChange ?? setValue}
             inputProps={{
                 className: 'input',
                 onBlur: () => helpers.setTouched(true),
+                ...debouncedInputProps.inputProps,
             }}
-            flex={inputProps.flex ?? true}
+            flex={debouncedInputProps.flex ?? true}
         />
     );
 };
