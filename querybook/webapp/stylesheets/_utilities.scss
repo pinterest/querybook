@@ -23,6 +23,12 @@
     align-items: center;
 }
 
+.flex-row-top {
+    display: flex;
+    flex-direction: row;
+    align-items: flex-start;
+}
+
 .flex-column {
     display: flex;
     flex-direction: column;
