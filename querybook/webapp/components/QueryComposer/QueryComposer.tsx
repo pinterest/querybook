@@ -391,6 +391,7 @@ const QueryComposer: React.FC = () => {
                             icon="edit-3"
                             title="Format"
                             onClick={handleFormatQuery}
+                            theme="text"
                         />
                         <Button
                             icon="delete"
@@ -399,11 +400,13 @@ const QueryComposer: React.FC = () => {
                                 setQuery('');
                                 setExecutionId(null);
                             }}
+                            theme="text"
                         />
                         <Button
                             icon="plus"
                             title="Create DataDoc"
                             onClick={handleCreateDataDoc}
+                            theme="text"
                         />
                     </LevelItem>
                     <LevelItem>

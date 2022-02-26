@@ -110,22 +110,24 @@ export const TableSelect: React.FunctionComponent<ITableSelectProps> = ({
                 {...asyncSelectProps}
                 {...selectProps}
             />
-            <div className="pv8">
-                {tableNames.map((tableName) => (
-                    <HoverIconTag
-                        key={tableName}
-                        iconOnHover={'x'}
-                        onIconHoverClick={() => {
-                            const newTableNames = tableNames.filter(
-                                (name) => name !== tableName
-                            );
-                            onTableNamesChange(newTableNames);
-                        }}
-                    >
-                        <span>{tableName}</span>
-                    </HoverIconTag>
-                ))}
-            </div>
+            {tableNames.length ? (
+                <div className="mt8">
+                    {tableNames.map((tableName) => (
+                        <HoverIconTag
+                            key={tableName}
+                            iconOnHover={'x'}
+                            onIconHoverClick={() => {
+                                const newTableNames = tableNames.filter(
+                                    (name) => name !== tableName
+                                );
+                                onTableNamesChange(newTableNames);
+                            }}
+                        >
+                            <span>{tableName}</span>
+                        </HoverIconTag>
+                    ))}
+                </div>
+            ) : null}
         </div>
     );
 };
