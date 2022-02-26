@@ -60,6 +60,7 @@ import { DataDocContentContainer } from './DataDocContentContainer';
 import { DataDocLoading } from './DataDocLoading';
 
 import './DataDoc.scss';
+import { DataDocTemplateCell } from 'components/DataDocTemplateButton/DataDocTemplateCell';
 
 interface IOwnProps {
     docId: number;
@@ -659,6 +660,11 @@ class DataDocComponent extends React.PureComponent<IProps, IState> {
                         lastUpdated={lastUpdated}
                     />
                     <div className="data-doc-container">
+                        <DataDocTemplateCell
+                            dataDoc={dataDoc}
+                            isEditable={isEditable}
+                            changeDataDocMeta={changeDataDocMeta}
+                        />
                         {this.renderDataDocCells(
                             (dataDoc.dataDocCells || []).length
                         )}

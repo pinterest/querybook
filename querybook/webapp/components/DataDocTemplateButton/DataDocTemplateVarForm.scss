@@ -2,15 +2,24 @@
     .DataDocTemplateVarForm-content {
         .template-key-value-row {
             .FormField {
+                margin-top: 4px;
+
                 .FormFieldLabelSection {
                     display: none;
                 }
+                .FormFieldInputSection input {
+                    // To match with select
+                    padding: 10.5px 8px;
+                }
             }
             .FormField:nth-child(1) {
-                flex-grow: 1;
+                flex: 2;
             }
             .FormField:nth-child(2) {
-                flex-grow: 5;
+                flex: 1;
+            }
+            .FormField:nth-child(3) {
+                flex: 6;
             }
         }
     }

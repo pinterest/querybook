@@ -72,6 +72,15 @@ export const InfoMenuButton: React.FunctionComponent = () => {
                 </MenuItem>
                 <MenuItem
                     onClick={() =>
+                        navigateWithinEnv('/info/templating/', {
+                            isModal: true,
+                        })
+                    }
+                >
+                    Templating
+                </MenuItem>
+                <MenuItem
+                    onClick={() =>
                         navigateWithinEnv('/info/tour/', {
                             isModal: true,
                         })
