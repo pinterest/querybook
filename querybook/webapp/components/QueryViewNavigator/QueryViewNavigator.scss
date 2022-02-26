@@ -75,7 +75,7 @@
     .query-id {
         font-size: var(--small-text-size);
         color: var(--text-light);
-        font-weight: var(--text-light);
+        font-weight: var(--bold-font);
     }
 
     .query-context {
@@ -84,8 +84,8 @@
     }
 
     .query-time {
-        color: var(--text-lightest);
         font-size: var(--xsmall-text-size);
-        font-weight: var(--text-light);
+        color: var(--text-lightest);
+        font-weight: var(--bold-font);
     }
 }
