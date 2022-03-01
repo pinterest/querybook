@@ -322,3 +322,9 @@ blockquote {
 ::placeholder {
     color: var(--text-lightest);
 }
+
+// tooltip
+// Make sure this takes the highest priority
+[aria-label][data-balloon-pos]:after {
+    z-index: 1000;
+}

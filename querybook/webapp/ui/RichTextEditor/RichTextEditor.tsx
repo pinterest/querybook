@@ -37,6 +37,7 @@ export interface IRichTextEditorProps {
     onBlur?: () => any;
 
     decorator?: DraftJs.CompositeDecorator;
+    autoFocus?: boolean;
 }
 
 export interface IRichTextEditorState {
@@ -492,6 +493,12 @@ export class RichTextEditor extends React.PureComponent<
         }
 
         return 'not-handled';
+    }
+
+    public componentDidMount() {
+        if (this.props.autoFocus) {
+            this.focus();
+        }
     }
 
     public componentDidUpdate(prevProps: IRichTextEditorProps) {

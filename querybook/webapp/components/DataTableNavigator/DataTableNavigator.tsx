@@ -277,7 +277,7 @@ export const DataTableNavigator: React.FC<IDataTableNavigatorProps> = ({
     }
 
     return (
-        <div className="DataTableNavigator">
+        <div className="DataTableNavigator SidebarNavigator">
             <div className="list-header">
                 {metastorePicker}
                 <DataTableNavigatorSearch
