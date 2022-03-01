@@ -120,7 +120,10 @@ export const DataTableViewSamples: React.FunctionComponent<IDataTableViewSamples
             <Formik<ITableSamplesFormValues>
                 initialValues={{
                     engineId: queryEngines?.[0]?.id,
-                    partition: tablePartitions?.[0],
+                    partition:
+                        tablePartitions && tablePartitions.length > 0
+                            ? tablePartitions[tablePartitions.length - 1]
+                            : null,
                     where: [['', '=', '']] as [[string, string, string]],
                     order_by: null,
                     order_by_asc: true,
