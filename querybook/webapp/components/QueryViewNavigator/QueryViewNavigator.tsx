@@ -117,7 +117,7 @@ class QueryViewNavigatorComponent extends React.PureComponent<IProps> {
             ) : null;
 
         return (
-            <div className="QueryViewNavigator">
+            <div className="QueryViewNavigator SidebarNavigator">
                 <div className="list-header">{queryViewFilterDOM}</div>
                 <div
                     ref={this.navigatorScrollRef}

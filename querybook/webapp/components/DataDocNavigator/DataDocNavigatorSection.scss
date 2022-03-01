@@ -3,12 +3,15 @@
     .navigator-header {
         background-color: var(--bg-light);
         border-radius: var(--border-radius-sm);
-        margin-bottom: var(--margin-xs);
         user-select: none;
         cursor: pointer;
         .Title {
             color: var(--text-title);
             text-transform: capitalize;
+        }
+
+        & + div {
+            margin-top: var(--margin-xs);
         }
     }
 }

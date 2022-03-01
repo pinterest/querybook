@@ -468,6 +468,7 @@ class DataDocQueryCellComponent extends React.PureComponent<IProps, IState> {
     @bind
     public handleInsertSnippet(query: string) {
         this.handleChange(query);
+        this.toggleInsertQuerySnippetModal();
     }
 
     @bind
