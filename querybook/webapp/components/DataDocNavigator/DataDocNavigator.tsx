@@ -87,7 +87,7 @@ export const DataDocNavigator: React.FC = () => {
     };
 
     return (
-        <div className="DataDocNavigator">
+        <div className="DataDocNavigator SidebarNavigator">
             <div className="list-header flex-row">
                 <SearchBar
                     value={titleFilterString}

@@ -295,7 +295,7 @@ class QuerySnippetNavigatorComponent extends React.PureComponent<
 
         return (
             <>
-                <div className="QuerySnippetNavigator">
+                <div className="QuerySnippetNavigator SidebarNavigator">
                     <div className="list-header">
                         {this.makeSearchFilterDOM()}
                         {tabsDOM}
