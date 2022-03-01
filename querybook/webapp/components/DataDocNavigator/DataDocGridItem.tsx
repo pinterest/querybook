@@ -14,6 +14,7 @@ import { Popover } from 'ui/Popover/Popover';
 import { PopoverHoverWrapper } from 'ui/Popover/PopoverHoverWrapper';
 import { DataDocDraggableType } from './navigatorConst';
 import './DataDocGridItem.scss';
+import { UrlContextMenu } from 'ui/ContextMenu/UrlContextMenu';
 
 export interface IDataDocGridItemProps {
     dataDoc: IDataDoc;
@@ -74,6 +75,10 @@ export const DataDocGridItem: React.FunctionComponent<IDataDocGridItemProps> = R
                                     />
                                 )}
                             </ListLink>
+                            <UrlContextMenu
+                                url={url}
+                                anchorRef={{ current: anchorElement }}
+                            />
                             {showPopover && anchorElement && (
                                 <Popover
                                     onHide={NOOP}

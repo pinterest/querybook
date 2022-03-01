@@ -11,6 +11,7 @@ import {
 import { IFilterCondition, conditionsNotEmpty } from './useFilterCell';
 import { withBoundProps } from 'lib/utils/react-bind';
 import { Popover } from 'ui/Popover/Popover';
+import { stopPropagationAndDefault } from 'lib/utils/noop';
 
 interface IStatementResultTableColumnProps
     extends IColumnInfoDropdownButtonProps {
@@ -174,12 +175,7 @@ const ColumnInfoDropdownButton: React.FC<IColumnInfoDropdownButtonProps> = ({
             resizeOnChange
             hideArrow
         >
-            <div
-                onClick={(e) => {
-                    e.preventDefault();
-                    e.stopPropagation();
-                }}
-            >
+            <div onClick={stopPropagationAndDefault}>
                 <StatementResultColumnInfo
                     filteredRows={filteredRows}
                     colName={column}

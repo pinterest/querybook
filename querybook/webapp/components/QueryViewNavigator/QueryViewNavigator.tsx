@@ -17,13 +17,10 @@ import { QueryResult } from './QueryResult';
 
 import './QueryViewNavigator.scss';
 
-interface IOwnProps {
-    onQueryExecutionClick: (queryExecution: IQueryExecution) => any;
-}
 type StateProps = ReturnType<typeof mapStateToProps>;
 type DispatchProps = ReturnType<typeof mapDispatchToProps>;
 
-export type IProps = IOwnProps & StateProps & DispatchProps;
+export type IProps = StateProps & DispatchProps;
 
 class QueryViewNavigatorComponent extends React.PureComponent<IProps> {
     private navigatorScrollRef = React.createRef<HTMLDivElement>();
@@ -79,8 +76,6 @@ class QueryViewNavigatorComponent extends React.PureComponent<IProps> {
 
     public render() {
         const {
-            onQueryExecutionClick,
-
             queryResults,
             isLoadingQueries,
             queryViewFilters,
@@ -106,7 +101,6 @@ class QueryViewNavigatorComponent extends React.PureComponent<IProps> {
                 key={queryResult.id}
                 queryExecution={queryResult}
                 queryEngineById={queryEngineById}
-                onClick={onQueryExecutionClick}
             />
         ));
 
