@@ -310,7 +310,7 @@ export const TaskEditor: React.FunctionComponent<IProps> = ({
         );
 
         const canUseRecurrence = validateCronForRecurrrence(values.cron);
-        console.log({ values, canUseRecurrence });
+
         return (
             <div className="TaskEditor-form">
                 <FormWrapper minLabelWidth="180px" size={7}>
