@@ -31,19 +31,19 @@ export const BoardList: React.FunctionComponent<IProps> = ({
         dispatch(fetchBoards());
     }, []);
 
-    const filteredBoards = useMemo(
-        () =>
-            boards
-                .filter(
-                    (board) =>
-                        filterStr === '' || board.name.includes(filterStr)
-                )
-                .map((board) => ({
-                    ...board,
-                    selected: selectedBoardIds.includes(board.id),
-                })),
-        [filterStr, boards, selectedBoardIds]
-    );
+    const filteredBoards = useMemo(() => {
+        const filterStrLower = filterStr.toLowerCase();
+        return boards
+            .filter(
+                (board) =>
+                    filterStrLower === '' ||
+                    board.name.toLowerCase().includes(filterStrLower)
+            )
+            .map((board) => ({
+                ...board,
+                selected: selectedBoardIds.includes(board.id),
+            }));
+    }, [filterStr, boards, selectedBoardIds]);
     const boardRowRenderer = React.useCallback(
         (board: IBoard & { selected: boolean }) => {
             const { name, selected } = board;
