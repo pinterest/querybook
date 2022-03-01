@@ -21,6 +21,7 @@ export interface IPopoverProps {
     hideArrow?: boolean;
     resizeOnChange?: boolean;
     skipAnimation?: boolean;
+    noPadding?: boolean;
 
     // Included because of a typescript bug
     // for react.forwardRef
@@ -74,6 +75,7 @@ export const PopoverContainer = React.forwardRef<
             hideArrow,
             resizeOnChange,
             skipAnimation,
+            noPadding,
 
             children,
         },
@@ -247,7 +249,14 @@ export const PopoverContainer = React.forwardRef<
                     ref={wrapperElement}
                 >
                     {arrowDOM}
-                    <div className={'popover-content'}>{children}</div>
+                    <div
+                        className={clsx({
+                            'popover-content': true,
+                            'no-padding': noPadding,
+                        })}
+                    >
+                        {children}
+                    </div>
                 </div>
             </div>
         );

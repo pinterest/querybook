@@ -81,7 +81,7 @@ export const BoardList: React.FunctionComponent<IProps> = ({
 
     return (
         <div className="BoardList">
-            <div className="list-header flex-row mb8">
+            <div className="BoardList-header flex-row mb8">
                 <SearchBar
                     value={filterStr}
                     onSearch={setFilterStr}

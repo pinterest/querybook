@@ -268,17 +268,19 @@ export const DataTableNavigator: React.FC<IDataTableNavigatorProps> = ({
     }
 
     return (
-        <div className={'DataTableNavigator '}>
-            {metastorePicker}
-            <DataTableNavigatorSearch
-                searchFilters={searchFilters}
-                searchString={searchString}
-                onSearch={handleSearch}
-                updateSearchFilter={updateSearchFilter}
-                resetSearchFilter={resetSearchFilter}
-                showTableSearchResult={showTableSearchResult}
-            />
-            {tablesDOM}
+        <div className="DataTableNavigator">
+            <div className="list-header">
+                {metastorePicker}
+                <DataTableNavigatorSearch
+                    searchFilters={searchFilters}
+                    searchString={searchString}
+                    onSearch={handleSearch}
+                    updateSearchFilter={updateSearchFilter}
+                    resetSearchFilter={resetSearchFilter}
+                    showTableSearchResult={showTableSearchResult}
+                />
+            </div>
+            <div className="list-content">{tablesDOM}</div>
         </div>
     );
 };
