@@ -1,15 +1,12 @@
 .DataTableNavigator {
-    height: 100%;
-    display: flex;
-    flex-direction: column;
-
     .navigator-metastore-picker {
         display: flex;
         justify-content: center;
-        border-bottom: var(--border);
+        padding-top: 4px;
 
-        .control {
-            margin: 5px;
+        .control select {
+            background-color: var(--bg-select);
+            border-radius: var(--border-radius-sm);
         }
     }
 

@@ -146,10 +146,15 @@ export function validateCronForRecurrrence(cron: string) {
         return false;
     }
 
-    const [minute, hour, month, monthDay, weekDay] = cronValArr.map((s) =>
-        Number.isInteger(Number(s))
+    const [minute, hour, month, monthDay, weekDay] = cronValArr.map(
+        (s) => s !== '*'
     );
-    if (month || (monthDay && weekDay) || !(minute && hour)) {
+    // Minute and hour must be provided
+    if (!(minute && hour)) {
+        return false;
+    }
+    // Recurrence don't current support having both monthday and weekday
+    if ((monthDay || month) && weekDay) {
         return false;
     }
 

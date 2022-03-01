@@ -19,21 +19,6 @@
                     padding-bottom: var(-padding-sm);
                 }
 
-                .list-header {
-                    background: var(--bg-light);
-                    margin-bottom: var(--margin-sm);
-                    border-radius: var(--border-radius-sm);
-                    overflow: hidden;
-                    margin-left: var(--margin-sm);
-                    margin-right: 16px; // match scrollbar width
-                }
-
-                .list-content {
-                    overflow-y: scroll;
-                    padding-left: var(--padding);
-                    padding-right: 0px;
-                }
-
                 .QueryViewNavigator,
                 .QuerySnippetNavigator {
                     height: 100%;
@@ -122,5 +107,29 @@
             word-break: break-all;
             text-align: center;
         }
+    }
+}
+
+.SidebarNavigator {
+    display: flex;
+    flex-direction: column;
+
+    .list-header {
+        background: var(--bg-light);
+        margin-bottom: var(--margin-sm);
+        border-radius: var(--border-radius-sm);
+        overflow: hidden;
+        margin-left: var(--margin-sm);
+        margin-right: 16px; // match scrollbar width
+    }
+
+    .list-content {
+        flex: 1;
+        overflow-y: scroll;
+        padding-left: var(--padding);
+        padding-right: 0px;
+
+        display: flex;
+        flex-direction: column;
     }
 }

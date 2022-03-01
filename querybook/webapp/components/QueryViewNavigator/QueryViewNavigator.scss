@@ -1,8 +1,6 @@
 @import './../../scss_variables.scss';
 
 .QueryViewNavigator {
-    display: flex;
-    flex-direction: column;
     position: relative;
 
     .QueryViewFilter {
