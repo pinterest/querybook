@@ -6,14 +6,12 @@ import { queryStatusToStatusIcon } from 'const/queryStatus';
 import { IQueryExecution } from 'const/queryExecution';
 import { IQueryEngine } from 'const/queryEngine';
 import { StatusIcon } from 'ui/StatusIcon/StatusIcon';
-import { Title } from 'ui/Title/Title';
 import { Tag } from 'ui/Tag/Tag';
 import {
     formatDuration,
     fromNow,
     generateFormattedDate,
 } from 'lib/utils/datetime';
-import { Icon } from 'ui/Icon/Icon';
 
 interface IProps {
     queryExecution: IQueryExecution;
@@ -46,12 +44,7 @@ const ExecutionTime: React.FC<{ queryExecution: IQueryExecution }> = ({
         return null;
     }
 
-    return (
-        <div className="ExecutionTime flex-row">
-            <Icon name="clock" size={14} />
-            <span>{durationText}</span>
-        </div>
-    );
+    return <span>{durationText}</span>;
 };
 
 export const QueryResult: React.FunctionComponent<IProps> = ({
@@ -77,18 +70,19 @@ export const QueryResult: React.FunctionComponent<IProps> = ({
                     <StatusIcon
                         status={queryStatusToStatusIcon[queryExecution.status]}
                     />
-                    <Title size={6} className="mr8">
-                        Run {queryId}
-                    </Title>
+                    <div className="query-id mr8">#{queryId}</div>
                 </div>
-                <Tag>{queryEngineById[queryExecution.engine_id].name}</Tag>
+                <Tag mini light>
+                    {queryEngineById[queryExecution.engine_id].name}
+                </Tag>
             </div>
-            <Title subtitle size={8} className="query-context mb4">
-                {queryCode.slice(0, 60)}
-            </Title>
-            <div className="horizontal-space-between">
+            <div className="query-context mb4">{queryCode.slice(0, 60)}</div>
+            <div className="query-time horizontal-space-between">
                 <ExecutionTime queryExecution={queryExecution} />
-                <div aria-label={formattedCreatedAtDate} data-balloon-pos="up">
+                <div
+                    aria-label={formattedCreatedAtDate}
+                    data-balloon-pos="left"
+                >
                     {createdAtFromNow}
                 </div>
             </div>

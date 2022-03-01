@@ -67,7 +67,6 @@ export const EntitySidebar: React.FunctionComponent<IEntitySidebarProps> = React
                             </>
                         )}
                     />
-
                     <IconButton
                         icon="file"
                         tooltip="DataDocs"

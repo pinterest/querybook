@@ -97,7 +97,7 @@ export const DataDocNavigator: React.FC = () => {
                 />
                 <CreateDataDocButton />
             </div>
-            <div className="data-docs">
+            <div className="list-content data-docs">
                 <RecentDataDocsSection {...commonSectionProps} />
                 <FavoriteDataDocsSection {...commonSectionProps} />
                 <DataDocNavigatorBoardSection

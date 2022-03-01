@@ -60,7 +60,7 @@
     cursor: pointer;
     background: var(--bg-light);
     border-radius: var(--border-radius-sm);
-    padding: 4px 8px;
+    padding: 8px;
     margin-bottom: var(--margin-xs);
 
     &:hover,
@@ -72,18 +72,20 @@
         white-space: nowrap;
     }
 
+    .query-id {
+        font-size: var(--small-text-size);
+        color: var(--text-light);
+        font-weight: var(--bold-font);
+    }
+
     .query-context {
         @include ellipsis(2);
         word-break: break-all;
-        font-family: var(--family-monospace);
     }
-}
 
-.ExecutionTime {
-    .Icon {
-        margin-right: 2px;
-
-        // Shifting it up to align with the text
-        margin-bottom: 1.6px;
+    .query-time {
+        font-size: var(--xsmall-text-size);
+        color: var(--text-lightest);
+        font-weight: var(--bold-font);
     }
 }
