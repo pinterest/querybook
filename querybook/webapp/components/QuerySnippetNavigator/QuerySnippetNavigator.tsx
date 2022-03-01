@@ -232,7 +232,7 @@ class QuerySnippetNavigatorComponent extends React.PureComponent<
         const { titleFilter } = this.state;
 
         return (
-            <div className="snippet-search list-header flex-row">
+            <div className="snippet-search flex-row">
                 <SearchBar
                     value={titleFilter}
                     onSearch={this.onTitleFilter}
@@ -262,15 +262,12 @@ class QuerySnippetNavigatorComponent extends React.PureComponent<
         const { filters, showFilterMenu, showCreateSnippetModal } = this.state;
 
         const tabsDOM = (
-            <div className="mb4">
-                <Tabs
-                    items={NAVIGATOR_TABS}
-                    selectedTabKey={this.state.selectedTabKey}
-                    onSelect={this.onTabSelect}
-                    wide
-                    pills
-                />
-            </div>
+            <Tabs
+                items={NAVIGATOR_TABS}
+                selectedTabKey={this.state.selectedTabKey}
+                onSelect={this.onTabSelect}
+                wide
+            />
         );
 
         const filterDOM = showFilterMenu ? (
@@ -298,10 +295,14 @@ class QuerySnippetNavigatorComponent extends React.PureComponent<
 
         return (
             <>
-                <div className={'QuerySnippetNavigator '}>
-                    {this.makeSearchFilterDOM()}
-                    {tabsDOM}
-                    {this.makeQuerySnippetsListDOM()}
+                <div className="QuerySnippetNavigator">
+                    <div className="list-header">
+                        {this.makeSearchFilterDOM()}
+                        {tabsDOM}
+                    </div>
+                    <div className="list-content">
+                        {this.makeQuerySnippetsListDOM()}
+                    </div>
                 </div>
                 {filterDOM}
                 {createModal}

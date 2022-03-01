@@ -8,6 +8,7 @@ import {
 import { Popover } from 'ui/Popover/Popover';
 import { MenuItem, MenuDivider, Menu } from 'ui/Menu/Menu';
 import { sendConfirm } from 'lib/querybookUI';
+import { Icon } from 'ui/Icon/Icon';
 
 interface IProp {
     viewerInfo: IViewerInfo;
@@ -35,6 +36,7 @@ export const ViewerPermissionPicker: React.FunctionComponent<IProp> = ({
             anchor={selfRef.current}
             layout={['bottom', 'right']}
             hideArrow
+            noPadding
         >
             <Menu>
                 {!publicDataDoc && (
@@ -92,8 +94,8 @@ export const ViewerPermissionPicker: React.FunctionComponent<IProp> = ({
                 className="permission-text flex-row"
                 onClick={() => setShowEditMenu(true)}
             >
-                <i className="fa fa-caret-down caret-icon" />
-                <span> {viewerInfo.permission}</span>
+                <span>{viewerInfo.permission}</span>
+                <Icon className="ml8" name="chevron-down" size={16} />
             </div>
         ) : (
             <div className="permission-text flex-row">

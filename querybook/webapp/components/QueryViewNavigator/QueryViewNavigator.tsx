@@ -124,10 +124,10 @@ class QueryViewNavigatorComponent extends React.PureComponent<IProps> {
 
         return (
             <div className="QueryViewNavigator">
-                {queryViewFilterDOM}
+                <div className="list-header">{queryViewFilterDOM}</div>
                 <div
                     ref={this.navigatorScrollRef}
-                    className="scroll-wrapper"
+                    className="list-content scroll-wrapper"
                     onScroll={this.onNavigatorScroll}
                 >
                     {queryResultsListDOM}

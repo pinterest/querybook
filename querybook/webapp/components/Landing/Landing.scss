@@ -6,18 +6,35 @@
     align-items: flex-start;
 
     .Landing-top {
-        .Landing-greeting {
-            margin-left: 4px;
-            font-weight: bold;
-            font-size: var(--xlarge-text-size);
+        width: 100%;
+        .Landing-greeting,
+        .Landing-subtitle {
+            font-weight: var(--extra-bold-font);
+            font-family: var(--font-title);
         }
 
-        .Landing-desc {
-            margin-left: 4px;
-
-            font-weight: bold;
-            font-size: var(--large-text-size);
+        .Landing-subtitle {
+            font-size: var(--med-text-size);
             color: var(--text-light);
+        }
+
+        .Landing-greeting {
+            font-size: var(--xxxlarge-text-size);
+            color: var(--color-accent);
+
+            background: -webkit-linear-gradient(
+                45deg,
+                var(--color-accent-dark),
+                var(--color-accent),
+                var(--color-accent-light)
+            );
+            background-clip: text;
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+        .QuerybookSidebarUIGuide {
+            align-self: flex-start;
+            margin: 4px;
         }
     }
 
@@ -28,9 +45,24 @@
         max-width: 960px;
         padding: 0px 12px;
 
+        > div:first-child {
+            margin-bottom: 24px;
+        }
+
+        .Landing-section-title {
+            font-size: var(--med-text-size);
+            font-weight: var(--bold-font);
+            font-family: var(--font-title);
+            margin-bottom: 4px;
+        }
+
         .Landing-list {
             .Landing-data-doc {
                 cursor: pointer;
+                margin: 4px 0px;
+                &:hover {
+                    color: var(--color-accent-dark);
+                }
             }
         }
     }
