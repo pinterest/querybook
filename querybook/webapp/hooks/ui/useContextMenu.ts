@@ -2,8 +2,6 @@ import { useEvent } from 'hooks/useEvent';
 import { useMounted } from 'hooks/useMounted';
 import React, { useCallback, useRef, useState } from 'react';
 
-export const CONTEXTMENU_ID = 'custom-context-menu';
-
 export const useContextMenu = (ref: React.RefObject<HTMLElement>) => {
     const contextMenuRef = useRef<HTMLDivElement>();
     const [anchorPoint, setAnchorPoint] = useState({ x: 0, y: 0 });
