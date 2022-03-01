@@ -6,17 +6,22 @@ import { useEffect } from 'react';
  *
  * @param eventName
  * @param func
- * @param useCapture Defaults to false
- * @param element Defaults to window
- * @param disabled if True, then eventListener is not added
+ * @param options.useCapture Defaults to false
+ * @param options.element Defaults to window
+ * @param options.disabled if True, then eventListener is not added
  */
 export const useEvent = (
     eventName: string,
     func: EventListenerOrEventListenerObject,
-    useCapture = false,
-    element: Element | Document | Window = window,
-    disabled = false
+    options?: {
+        useCapture?: boolean;
+        element?: Element | Document | Window;
+        disabled?: boolean;
+    }
 ) => {
+    const { useCapture = false, element = window, disabled = false } =
+        options ?? {};
+
     useEffect(() => {
         if (!disabled) {
             element.addEventListener(eventName, func, useCapture);

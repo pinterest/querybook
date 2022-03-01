@@ -101,7 +101,7 @@ export const PopoverContainer = React.forwardRef<
             },
             [onHide, container]
         );
-        useEvent('mousedown', onDocumentClick, false, document);
+        useEvent('mousedown', onDocumentClick, { element: document.body });
 
         // Behaivor related to resizing event
         const [resizeVersion, setResizeVersion] = useState(0);

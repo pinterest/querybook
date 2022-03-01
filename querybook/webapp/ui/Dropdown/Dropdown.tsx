@@ -69,13 +69,10 @@ export const Dropdown: React.FunctionComponent<IProps> = ({
         },
         [selfRef.current]
     );
-    useEvent(
-        'mousedown',
-        onDocumentClick,
-        false,
-        document,
-        hoverable || !active
-    );
+    useEvent('mousedown', onDocumentClick, {
+        element: document,
+        disabled: hoverable || !active,
+    });
 
     const buttonDOM = customButtonRenderer ? (
         customButtonRenderer()
