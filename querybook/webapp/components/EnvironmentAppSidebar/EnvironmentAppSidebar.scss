@@ -13,8 +13,10 @@
                 flex: 1;
                 overflow: hidden;
                 background-color: var(--bg-lightest);
+
                 > div {
-                    padding: var(--padding);
+                    padding-top: var(--padding-sm);
+                    padding-bottom: var(-padding-sm);
                 }
 
                 .list-header {
@@ -22,7 +24,14 @@
                     margin-bottom: var(--margin-sm);
                     border-radius: var(--border-radius-sm);
                     overflow: hidden;
-                    padding-right: var(--padding-sm);
+                    margin-left: var(--margin-sm);
+                    margin-right: 16px; // match scrollbar width
+                }
+
+                .list-content {
+                    overflow-y: scroll;
+                    padding-left: var(--padding);
+                    padding-right: 0px;
                 }
 
                 .QueryViewNavigator,

@@ -139,7 +139,6 @@ export const UserSettingsMenu: React.FC = () => {
     return (
         <div className="UserSettingsMenu">
             <Tabs
-                wide
                 className="mb8"
                 items={[
                     { key: 'general', name: 'General' },

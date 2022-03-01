@@ -8,9 +8,13 @@
 .Tag,
 .TagGroup {
     display: inline-flex;
-    margin: 2px 4px;
+    margin: 2px 0px;
     border-radius: var(--border-radius-sm);
     cursor: default;
+}
+.Tag + .Tag,
+.TagGroup + .TagGroup {
+    margin-left: 4px;
 }
 
 .Tag {
@@ -29,6 +33,16 @@
         background-color: var(--color-accent-lightest-0);
         color: var(--color-accent-dark);
     }
+
+    &.mini {
+        padding: 2px 4px;
+        font-size: var(--xsmall-text-size);
+    }
+
+    &.light {
+        background-color: var(--bg-lightest);
+    }
+
     .HoverIconTag-hover {
         display: none;
         .Icon {
