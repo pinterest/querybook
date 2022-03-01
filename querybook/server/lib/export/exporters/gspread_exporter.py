@@ -30,6 +30,7 @@ SCOPES = [
 
 GSPREAD_OAUTH_CALLBACK = "/gspread_oauth2callback"
 
+MAX_SHEETS_CELLS = 5000000
 
 _google_flow = None
 
@@ -76,7 +77,7 @@ class GoogleSheetsExporter(BaseExporter):
 
     @property
     def exporter_name(self):
-        return "Export Preview to Google Sheets"
+        return "Export Result to Google Sheets"
 
     @property
     def exporter_type(self):
@@ -101,6 +102,25 @@ class GoogleSheetsExporter(BaseExporter):
                 regex="^[A-Z]{1,3}[1-9][0-9]*$",
             ),
         )
+
+    def _get_max_rows(self, statement_execution_id, start_cell: str = "A1"):
+        result_columns_len = (
+            self._get_statement_execution_columns_len(statement_execution_id) or 0
+        )
+        start_cell_coord = worksheet_coord_to_coord(start_cell)
+        sheet_start_coord = worksheet_coord_to_coord("A1")
+
+        column_offset = start_cell_coord[0] - sheet_start_coord[0]
+        row_offset = start_cell_coord[1] - sheet_start_coord[1]
+
+        total_column_cells = result_columns_len + column_offset
+
+        max_result_rows = (
+            (MAX_SHEETS_CELLS // total_column_cells)
+            if total_column_cells != 0
+            else MAX_SHEETS_CELLS
+        )
+        return max_result_rows - row_offset
 
     def export(
         self,
@@ -139,7 +159,10 @@ class GoogleSheetsExporter(BaseExporter):
     def upload_raw_csv_to_sheet(
         self, gspread_client, sheet, statement_execution_id: int
     ):
-        raw_csv = self._get_statement_execution_result(statement_execution_id, raw=True)
+        max_rows = self._get_max_rows(statement_execution_id, start_cell="A1")
+        raw_csv = self._get_statement_execution_result(
+            statement_execution_id, raw=True, number_of_lines=max_rows
+        )
         gspread_client.import_csv(sheet.id, raw_csv.encode("utf-8"))
 
     def write_csv_to_sheet(
@@ -150,7 +173,10 @@ class GoogleSheetsExporter(BaseExporter):
         worksheet_title: str,
         start_cell: str,
     ):
-        csv = self._get_statement_execution_result(statement_execution_id)
+        max_rows = self._get_max_rows(statement_execution_id, start_cell=start_cell)
+        csv = self._get_statement_execution_result(
+            statement_execution_id, number_of_lines=max_rows
+        )
 
         if len(csv):
             num_rows = len(csv)

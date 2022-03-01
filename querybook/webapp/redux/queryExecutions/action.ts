@@ -11,6 +11,8 @@ import {
     IQueryExecution,
     IStatementExecution,
     IRawQueryExecution,
+    IQueryExecutionExportStatusInfo,
+    QueryExecutionExportStatus,
 } from 'const/queryExecution';
 import { IAccessRequest } from 'const/accessRequest';
 
@@ -31,6 +33,9 @@ import {
     IReceiveQueryExecutionAccessRequestsAction,
     IReceiveQueryExecutionViewersAction,
 } from './types';
+import toast from 'react-hot-toast';
+import { getExporterAuthentication } from 'lib/result-export';
+import { ResultExportSuccessToast } from 'components/DataDocStatementExecutionBar/ResultExportSuccessToast';
 
 const statementExecutionSchema = new schema.Entity('statementExecution');
 const dataCellSchema = new schema.Entity('dataCell');
@@ -397,6 +402,78 @@ export function fetchExporters(): ThunkResult<Promise<IQueryResultExporter[]>> {
         });
 
         return exporters;
+    };
+}
+
+export function exportStatementExecutionResults(
+    statementId: number,
+    exporter: IQueryResultExporter,
+    formData?: Record<string, unknown>
+): ThunkResult<Promise<void>> {
+    return async (dispatch) => {
+        await getExporterAuthentication(exporter);
+        const { data: taskId } = await StatementResource.export(
+            statementId,
+            exporter.name,
+            formData
+        );
+        toast.loading('Exporting statement execution results', {
+            id: taskId,
+        });
+        dispatch({
+            type:
+                '@@queryExecutions/RECEIVE_STATEMENT_EXECUTION_EXPORT_TASK_ID',
+            payload: { taskId },
+        });
+    };
+}
+
+export function receiveStatementExecutionExportStatus(
+    data: IQueryExecutionExportStatusInfo
+): ThunkResult<Promise<void>> {
+    return async (dispatch) => {
+        const { status, task_id: taskId } = data;
+        if (status === QueryExecutionExportStatus.RUNNING) {
+            toast.loading('Exporting statement execution results', {
+                id: taskId,
+            });
+        } else if (status === QueryExecutionExportStatus.DONE) {
+            toast.custom(() => ResultExportSuccessToast(data), {
+                id: taskId,
+            });
+        } else if (status === QueryExecutionExportStatus.ERROR) {
+            const errorMessage = data.message || '';
+            toast.error(
+                `Failed to export statement execution results\n${errorMessage}`,
+                {
+                    id: taskId,
+                }
+            );
+        }
+
+        if (
+            status === QueryExecutionExportStatus.DONE ||
+            status === QueryExecutionExportStatus.ERROR
+        ) {
+            dispatch({
+                type:
+                    '@@queryExecutions/REMOVE_STATEMENT_EXECUTION_EXPORT_TASK_ID',
+                payload: { taskId },
+            });
+        }
+    };
+}
+
+export function clearActiveExportTaskIds(): ThunkResult<Promise<void>> {
+    return async (dispatch, getState) => {
+        getState().queryExecutions.activeStatementExportTaskIds.forEach(
+            (taskId) => {
+                toast.dismiss(taskId);
+            }
+        );
+        dispatch({
+            type: '@@queryExecutions/CLEAR_STATEMENT_EXECUTION_EXPORT_TASK_IDS',
+        });
     };
 }
 

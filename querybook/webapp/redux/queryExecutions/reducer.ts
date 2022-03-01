@@ -15,6 +15,7 @@ const initialState: IQueryExecutionState = {
     statementLogById: {},
     queryErrorById: {},
     statementExporters: [],
+    activeStatementExportTaskIds: [],
 
     viewersByExecutionIdUserId: {},
     accessRequestsByExecutionIdUserId: {},
@@ -377,6 +378,25 @@ function statementExportersReducer(
     return state;
 }
 
+function statementExporterTaskIdsReducer(
+    state = initialState.activeStatementExportTaskIds,
+    action: QueryExecutionAction
+) {
+    switch (action.type) {
+        case '@@queryExecutions/RECEIVE_STATEMENT_EXECUTION_EXPORT_TASK_ID': {
+            const taskId = action.payload.taskId;
+            return state.includes(taskId) ? state : state.concat(taskId);
+        }
+        case '@@queryExecutions/REMOVE_STATEMENT_EXECUTION_EXPORT_TASK_ID': {
+            return state.filter((id) => id !== action.payload.taskId);
+        }
+        case '@@queryExecutions/CLEAR_STATEMENT_EXECUTION_EXPORT_TASK_IDS': {
+            return [];
+        }
+    }
+    return state;
+}
+
 export default combineReducers({
     dataCellIdQueryExecution: dataCellIdQueryExecutionReducer,
     statementExecutionById: statementExecutionByIdReducer,
@@ -386,6 +406,7 @@ export default combineReducers({
     statementLogById: statementLogByIdReducer,
     queryErrorById: queryErrorByIdReducer,
     statementExporters: statementExportersReducer,
+    activeStatementExportTaskIds: statementExporterTaskIdsReducer,
     accessRequestsByExecutionIdUserId: accessRequestsByExecutionIdUserIdReducer,
     viewersByExecutionIdUserId: viewersByExecutionIdUserIdReducer,
 });
