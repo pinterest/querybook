@@ -1,6 +1,7 @@
 from abc import ABCMeta, abstractmethod
 from logic import query_execution as logic
 from lib.result_store import GenericReader
+from logic.result_store import string_to_csv
 
 
 class BaseExporter(metaclass=ABCMeta):
@@ -64,17 +65,40 @@ class BaseExporter(metaclass=ABCMeta):
         """
         raise NotImplementedError()
 
-    def _get_statement_execution_result(
-        self,
-        statement_execution_id: int,
-        raw: bool = False,  # If raw, return unparsed csv text
-        number_of_lines: int = 2001,
+    def _get_statement_execution_columns_len(
+        self, statement_execution_id: int,
     ):
         statement_execution = logic.get_statement_execution_by_id(
             statement_execution_id
         )
         if statement_execution.result_path:
             with GenericReader(statement_execution.result_path) as reader:
+                csv = reader.read_csv(number_of_lines=1)
+                if len(csv):
+                    return len(csv[0])
+        return None
+
+    def _get_statement_execution_result(
+        self,
+        statement_execution_id: int,
+        raw: bool = False,  # If raw, return unparsed csv text
+        number_of_lines: int = None,  # By default, read all lines
+    ):
+        statement_execution = logic.get_statement_execution_by_id(
+            statement_execution_id
+        )
+        if statement_execution.result_path:
+            with GenericReader(statement_execution.result_path) as reader:
+                if number_of_lines is None:
+                    try:
+                        result = reader.read_raw()
+                        if not raw:
+                            result = string_to_csv(result)
+                        return result
+                    except NotImplementedError:
+                        # Readers in which `read_raw` is not implemented (i.e. GoogleReader, S3Reader)
+                        # can support reading all lines in `read_lines` with number_of_lines=None
+                        pass
                 if raw:
                     result = "\n".join(
                         reader.read_lines(number_of_lines=number_of_lines)

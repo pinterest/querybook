@@ -27,6 +27,7 @@ from logic.datadoc_permission import user_can_read
 from logic.query_execution_permission import (
     get_default_user_environment_by_execution_id,
 )
+from tasks.export_query_execution import export_query_execution_task
 from tasks.run_query import run_query_task
 from app.auth.permission import verify_query_execution_owner
 from models.query_execution import QueryExecutionViewer
@@ -348,7 +349,7 @@ def export_statement_execution_acquire_auth(exporter_name):
     require_auth=True,
 )
 def export_statement_execution_result(
-    statement_execution_id, exporter_name, exporter_params=None
+    statement_execution_id, exporter_name, originator=None, exporter_params=None
 ):
     with DBSession() as session:
         statement_execution = logic.get_statement_execution_by_id(
@@ -368,9 +369,17 @@ def export_statement_execution_result(
         valid, reason = validate_form(exporter.export_form, exporter_params)
         api_assert(valid, "Invalid exporter params, reason: " + reason)
 
-    return exporter.export(
-        statement_execution_id, current_user.id, **(exporter_params or {})
+    task = export_query_execution_task.apply_async(
+        args=[
+            exporter.exporter_name,
+            statement_execution_id,
+            current_user.id,
+            originator,
+        ],
+        kwargs=(exporter_params or {}),
     )
+
+    return task.task_id
 
 
 @register("/query_execution/templated_query/", methods=["POST"])

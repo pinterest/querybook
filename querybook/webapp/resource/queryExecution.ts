@@ -98,7 +98,10 @@ export const StatementResource = {
         exporterName: string,
         exporterParams?: Record<any, any>
     ) => {
-        const params = { exporter_name: exporterName };
+        const params = {
+            exporter_name: exporterName,
+            originator: dataDocSocket.socketId,
+        };
         if (exporterParams) {
             params['exporter_params'] = exporterParams;
         }
