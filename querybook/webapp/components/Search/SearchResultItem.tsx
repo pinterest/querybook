@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useRef, useState } from 'react';
 import { escapeRegExp } from 'lodash';
 
 import history from 'lib/router-history';
@@ -14,6 +14,8 @@ import { useSelector } from 'react-redux';
 import { queryEngineByIdEnvSelector } from 'redux/queryEngine/selector';
 import './SearchResultItem.scss';
 import { IconButton } from 'ui/Button/IconButton';
+import { UrlContextMenu } from 'ui/ContextMenu/UrlContextMenu';
+import { stopPropagation } from 'lib/utils/noop';
 
 const HighlightTitle: React.FunctionComponent<{
     title: string;
@@ -44,10 +46,11 @@ function openClick(
     url: string,
     e: React.MouseEvent<HTMLDivElement, MouseEvent>
 ) {
-    // cmd or ctrl or middle button
-    if (e.metaKey || e.ctrlKey || e.button === 1) {
+    // cmd or middle button
+    if (e.metaKey || e.button === 1) {
         window.open(url);
-    } else {
+    } else if (e.button === 0) {
+        // left click
         history.push(url);
     }
 }
@@ -74,7 +77,6 @@ export const QueryItem: React.FunctionComponent<IQueryItemProps> = ({
     const { userInfo: authorInfo, loading } = useUser({ uid: authorUid });
 
     const [isQueryTextExpanded, setIsQueryTextExpanded] = useState(false);
-
     const isQueryCell = preview.query_type === 'query_cell';
 
     const url = isQueryCell
@@ -82,6 +84,7 @@ export const QueryItem: React.FunctionComponent<IQueryItemProps> = ({
         : `/${environmentName}/query_execution/${id}/`;
     const handleClick = React.useMemo(() => openClick.bind(null, url), [url]);
     const queryEngineById = useSelector(queryEngineByIdEnvSelector);
+    const selfRef = useRef<HTMLDivElement>();
 
     if (loading) {
         return <div className="SearchResultItem QueryItem">Loading...</div>;
@@ -100,14 +103,16 @@ export const QueryItem: React.FunctionComponent<IQueryItemProps> = ({
         <ThemedCodeHighlight
             className="result-item-query"
             value={queryText}
-            onClick={(event) => event.stopPropagation()}
+            onClick={stopPropagation}
+            onContextMenuCapture={stopPropagation}
         />
     );
 
     const getSearchResultHighlightedQueryDOM = () => (
         <div
             className="highlighted-query pl16 pr24 pv8"
-            onClick={(event) => event.stopPropagation()}
+            onClick={stopPropagation}
+            onContextMenuCapture={stopPropagation}
         >
             <IconButton
                 className="toggle-expand-query-icon"
@@ -143,29 +148,36 @@ export const QueryItem: React.FunctionComponent<IQueryItemProps> = ({
     const queryType = isQueryCell ? 'query cell' : 'execution';
 
     return (
-        <div className="SearchResultItem QueryItem" onClick={handleClick}>
-            <div className="result-items">
-                <a className="result-items-top horizontal-space-between">
-                    <HighlightTitle
-                        title={resultTitle}
-                        searchString={searchString}
-                    />
-                    <div>
-                        <Tag>{queryType}</Tag>
-                        {queryEngine && <Tag>{queryEngine.name}</Tag>}
-                    </div>
-                </a>
-                <div className="mv8">{queryTextDOM}</div>
-                <Level className="result-items-bottom">
-                    <span className="result-item-owner">
-                        {authorInfo.username}
-                    </span>
-                    <span className="result-item-date">
-                        {generateFormattedDate(createdAt, 'X')}
-                    </span>
-                </Level>
+        <>
+            <div
+                className="SearchResultItem QueryItem"
+                onClick={handleClick}
+                ref={selfRef}
+            >
+                <div className="result-items">
+                    <a className="result-items-top horizontal-space-between">
+                        <HighlightTitle
+                            title={resultTitle}
+                            searchString={searchString}
+                        />
+                        <div>
+                            <Tag>{queryType}</Tag>
+                            {queryEngine && <Tag>{queryEngine.name}</Tag>}
+                        </div>
+                    </a>
+                    <div className="mv8">{queryTextDOM}</div>
+                    <Level className="result-items-bottom">
+                        <span className="result-item-owner">
+                            {authorInfo.username}
+                        </span>
+                        <span className="result-item-date">
+                            {generateFormattedDate(createdAt, 'X')}
+                        </span>
+                    </Level>
+                </div>
             </div>
-        </div>
+            <UrlContextMenu anchorRef={selfRef} url={url} />
+        </>
     );
 };
 
@@ -180,6 +192,7 @@ export const DataDocItem: React.FunctionComponent<IDataDocItemProps> = ({
     url,
     searchString,
 }) => {
+    const selfRef = useRef<HTMLDivElement>();
     const { owner_uid: ownerUid, created_at: createdAt } = preview;
     const { userInfo: ownerInfo, loading } = useUser({ uid: ownerUid });
     const handleClick = React.useMemo(() => openClick.bind(null, url), [url]);
@@ -200,25 +213,35 @@ export const DataDocItem: React.FunctionComponent<IDataDocItemProps> = ({
     );
 
     return (
-        <div className="SearchResultItem DataDocItem" onMouseDown={handleClick}>
-            <div className="result-item-icon">
-                <UserAvatar uid={ownerUid} />
+        <>
+            <div
+                className="SearchResultItem DataDocItem"
+                onClick={handleClick}
+                ref={selfRef}
+            >
+                <div className="result-item-icon">
+                    <UserAvatar uid={ownerUid} />
+                </div>
+                <div className="result-items">
+                    <a className="result-items-top horizontal-space-between">
+                        <HighlightTitle
+                            title={title}
+                            searchString={searchString}
+                        />
+                    </a>
+                    {descriptionDOM}
+                    <Level className="result-items-bottom">
+                        <span className="result-item-owner">
+                            {ownerInfo.username}
+                        </span>
+                        <span className="result-item-date">
+                            {generateFormattedDate(createdAt, 'X')}
+                        </span>
+                    </Level>
+                </div>
             </div>
-            <div className="result-items">
-                <a className="result-items-top horizontal-space-between">
-                    <HighlightTitle title={title} searchString={searchString} />
-                </a>
-                {descriptionDOM}
-                <Level className="result-items-bottom">
-                    <span className="result-item-owner">
-                        {ownerInfo.username}
-                    </span>
-                    <span className="result-item-date">
-                        {generateFormattedDate(createdAt, 'X')}
-                    </span>
-                </Level>
-            </div>
-        </div>
+            <UrlContextMenu anchorRef={selfRef} url={url} />
+        </>
     );
 };
 
@@ -233,6 +256,7 @@ export const DataTableItem: React.FunctionComponent<IDataTableItemProps> = ({
     searchString,
     url,
 }) => {
+    const selfRef = useRef<HTMLDivElement>();
     const {
         golden,
         description,
@@ -260,26 +284,33 @@ export const DataTableItem: React.FunctionComponent<IDataTableItemProps> = ({
     );
 
     return (
-        <div className="SearchResultItem flex-row" onClick={handleClick}>
-            <div className="result-items">
-                <a className="result-items-top horizontal-space-between">
-                    <div className="flex-row">
-                        <HighlightTitle
-                            title={`${schema}.${name}`}
-                            searchString={searchString}
-                        />
-                        {goldenIcon}
-                    </div>
-                    <span className="result-item-date">
-                        {generateFormattedDate(createdAt, 'X')}
-                    </span>
-                </a>
-                <Level className="result-items-bottom">
-                    <span className="result-item-description">
-                        {descriptionDOM}
-                    </span>
-                </Level>
+        <>
+            <div
+                className="SearchResultItem flex-row"
+                onClick={handleClick}
+                ref={selfRef}
+            >
+                <div className="result-items">
+                    <a className="result-items-top horizontal-space-between">
+                        <div className="flex-row">
+                            <HighlightTitle
+                                title={`${schema}.${name}`}
+                                searchString={searchString}
+                            />
+                            {goldenIcon}
+                        </div>
+                        <span className="result-item-date">
+                            {generateFormattedDate(createdAt, 'X')}
+                        </span>
+                    </a>
+                    <Level className="result-items-bottom">
+                        <span className="result-item-description">
+                            {descriptionDOM}
+                        </span>
+                    </Level>
+                </div>
             </div>
-        </div>
+            <UrlContextMenu url={url} anchorRef={selfRef} />
+        </>
     );
 };

@@ -4,6 +4,7 @@ import './Menu.scss';
 
 export const Menu = styled.div.attrs<{
     height: number;
+    boxShadow: boolean;
 }>({
     className: 'Menu',
 })`
@@ -11,7 +12,8 @@ export const Menu = styled.div.attrs<{
         props.height &&
         `maxHeight: ${props.height};
         overflow-x: hidden;
-        overflow-y: auto;`};
+        overflow-y: auto;`}
+    ${(props) => props.boxShadow && 'box-shadow: var(--box-shadow);'}
 `;
 export const MenuItem = styled.span.attrs({
     className: 'MenuItem',

@@ -92,16 +92,7 @@ export const EnvironmentAppSidebar: React.FunctionComponent = () => {
                     }
                 />
             ) : entity === 'execution' ? (
-                <QueryViewNavigator
-                    onQueryExecutionClick={(queryExecution) =>
-                        navigateWithinEnv(
-                            `/query_execution/${queryExecution.id}/`,
-                            {
-                                isModal: true,
-                            }
-                        )
-                    }
-                />
+                <QueryViewNavigator />
             ) : (
                 <div />
             );
