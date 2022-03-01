@@ -1,4 +1,5 @@
 import clsx from 'clsx';
+import { useEvent } from 'hooks/useEvent';
 import React from 'react';
 
 import { IconButton } from 'ui/Button/IconButton';
@@ -68,17 +69,13 @@ export const Dropdown: React.FunctionComponent<IProps> = ({
         },
         [selfRef.current]
     );
-
-    React.useEffect(() => {
-        if (!hoverable && active) {
-            document.addEventListener('mousedown', onDocumentClick);
-        }
-        return () => {
-            if (!hoverable && active) {
-                document.removeEventListener('mousedown', onDocumentClick);
-            }
-        };
-    }, [hoverable, active, onDocumentClick]);
+    useEvent(
+        'mousedown',
+        onDocumentClick,
+        false,
+        document,
+        hoverable || !active
+    );
 
     const buttonDOM = customButtonRenderer ? (
         customButtonRenderer()

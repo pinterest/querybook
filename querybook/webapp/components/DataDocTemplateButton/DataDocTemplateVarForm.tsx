@@ -27,10 +27,12 @@ const templatedVarSchema = Yup.object().shape({
     ),
 });
 
+const defaultTemplatedVariablesValue = { '': '' };
+
 export const DataDocTemplateVarForm: React.FunctionComponent<IDataDocTemplateVarFormProps> = ({
     onSave,
     templatedVariables,
-    defaultTemplatedVariables = {},
+    defaultTemplatedVariables = defaultTemplatedVariablesValue,
     isEditable,
 }) => {
     const initialValue = useMemo(

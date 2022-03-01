@@ -15,8 +15,6 @@ interface IProps {
     isEditable?: boolean;
 }
 
-const defaultTemplatedVariablesValue = { '': '' };
-
 export const DataDocTemplateCell: React.FunctionComponent<IProps> = ({
     changeDataDocMeta,
     dataDoc,
@@ -66,7 +64,6 @@ export const DataDocTemplateCell: React.FunctionComponent<IProps> = ({
                             setShowFacde(true);
                         }
                     }}
-                    defaultTemplatedVariables={defaultTemplatedVariablesValue}
                 />
             </>
         );
