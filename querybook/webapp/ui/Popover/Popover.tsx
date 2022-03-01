@@ -3,6 +3,7 @@ import clsx from 'clsx';
 import { Overlay, overlayRoot } from 'ui/Overlay/Overlay';
 
 import './Popover.scss';
+import { useEvent } from 'hooks/useEvent';
 
 export type PopoverDirection = 'left' | 'right' | 'top' | 'bottom';
 export type PopoverLayout =
@@ -100,11 +101,7 @@ export const PopoverContainer = React.forwardRef<
             },
             [onHide, container]
         );
-        React.useEffect(() => {
-            document.addEventListener('mousedown', onDocumentClick);
-            return () =>
-                document.removeEventListener('mousedown', onDocumentClick);
-        }, [onDocumentClick]);
+        useEvent('mousedown', onDocumentClick, { element: document.body });
 
         // Behaivor related to resizing event
         const [resizeVersion, setResizeVersion] = useState(0);

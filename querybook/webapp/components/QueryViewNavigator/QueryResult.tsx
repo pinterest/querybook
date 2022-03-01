@@ -1,10 +1,12 @@
-import React, { useMemo } from 'react';
+import React, { useCallback, useMemo, useRef } from 'react';
 import moment from 'moment';
 import clsx from 'clsx';
 
 import { queryStatusToStatusIcon } from 'const/queryStatus';
 import { IQueryExecution } from 'const/queryExecution';
 import { IQueryEngine } from 'const/queryEngine';
+import history from 'lib/router-history';
+import { getWithinEnvUrl } from 'lib/utils/query-string';
 import { StatusIcon } from 'ui/StatusIcon/StatusIcon';
 import { Tag } from 'ui/Tag/Tag';
 import {
@@ -12,11 +14,11 @@ import {
     fromNow,
     generateFormattedDate,
 } from 'lib/utils/datetime';
+import { UrlContextMenu } from 'ui/ContextMenu/UrlContextMenu';
 
 interface IProps {
     queryExecution: IQueryExecution;
     queryEngineById: Record<number, IQueryEngine>;
-    onClick: (queryExecution: IQueryExecution) => any;
 }
 
 const ExecutionTime: React.FC<{ queryExecution: IQueryExecution }> = ({
@@ -50,8 +52,8 @@ const ExecutionTime: React.FC<{ queryExecution: IQueryExecution }> = ({
 export const QueryResult: React.FunctionComponent<IProps> = ({
     queryEngineById,
     queryExecution,
-    onClick,
 }) => {
+    const selfRef = useRef<HTMLDivElement>();
     const queryId = queryExecution.id;
     const queryCode = queryExecution.query;
 
@@ -60,32 +62,48 @@ export const QueryResult: React.FunctionComponent<IProps> = ({
         return [fromNow(createdAt), generateFormattedDate(createdAt)];
     }, [queryExecution.created_at]);
 
+    const queryExecutionUrl = useMemo(
+        () => getWithinEnvUrl(`/query_execution/${queryId}/`),
+        [queryId]
+    );
+    const handleClick = useCallback(() => {
+        history.push(queryExecutionUrl, { isModal: true });
+    }, [queryExecutionUrl]);
+
     return (
-        <div
-            className={clsx('QueryResult')}
-            onClick={() => onClick(queryExecution)}
-        >
-            <div className="exec-header horizontal-space-between mb4">
-                <div className="flex-row">
-                    <StatusIcon
-                        status={queryStatusToStatusIcon[queryExecution.status]}
-                    />
-                    <div className="query-id mr8">#{queryId}</div>
+        <>
+            <div
+                className={clsx('QueryResult')}
+                onClick={handleClick}
+                ref={selfRef}
+            >
+                <div className="exec-header horizontal-space-between mb4">
+                    <div className="flex-row">
+                        <StatusIcon
+                            status={
+                                queryStatusToStatusIcon[queryExecution.status]
+                            }
+                        />
+                        <div className="query-id mr8">#{queryId}</div>
+                    </div>
+                    <Tag mini light>
+                        {queryEngineById[queryExecution.engine_id].name}
+                    </Tag>
                 </div>
-                <Tag mini light>
-                    {queryEngineById[queryExecution.engine_id].name}
-                </Tag>
-            </div>
-            <div className="query-context mb4">{queryCode.slice(0, 60)}</div>
-            <div className="query-time horizontal-space-between">
-                <ExecutionTime queryExecution={queryExecution} />
-                <div
-                    aria-label={formattedCreatedAtDate}
-                    data-balloon-pos="left"
-                >
-                    {createdAtFromNow}
+                <div className="query-context mb4">
+                    {queryCode.slice(0, 60)}
+                </div>
+                <div className="query-time horizontal-space-between">
+                    <ExecutionTime queryExecution={queryExecution} />
+                    <div
+                        aria-label={formattedCreatedAtDate}
+                        data-balloon-pos="left"
+                    >
+                        {createdAtFromNow}
+                    </div>
                 </div>
             </div>
-        </div>
+            <UrlContextMenu anchorRef={selfRef} url={queryExecutionUrl} />
+        </>
     );
 };

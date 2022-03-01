@@ -97,8 +97,9 @@ export const SearchAndReplaceBar = React.forwardRef<
                     lastActiveElementRef.current = activeElement;
                 }
             },
-            false,
-            document
+            {
+                element: document,
+            }
         );
 
         // Throttling because if you press enter to focus it
