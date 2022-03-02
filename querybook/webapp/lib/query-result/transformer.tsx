@@ -1,4 +1,5 @@
 import React from 'react';
+import JSONBig from 'json-bigint';
 
 import { IColumnTransformer } from './types';
 import {
@@ -62,7 +63,7 @@ const queryResultTransformers: IColumnTransformer[] = [
         auto: false,
         transform: (v: string): React.ReactNode => {
             try {
-                return JSON.stringify(JSON.parse(v), null, 2);
+                return JSONBig.stringify(JSONBig.parse(v), null, 2);
             } catch (e) {
                 return v;
             }
