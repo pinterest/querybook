@@ -50,6 +50,8 @@ class OAuthLoginManager(object):
             "authorization_url": QuerybookSettings.OAUTH_AUTHORIZATION_URL,
             "token_url": QuerybookSettings.OAUTH_TOKEN_URL,
             "profile_url": QuerybookSettings.OAUTH_USER_PROFILE,
+            "token_place": QuerybookSettings.OAUTH_TOKEN_PLACE,
+            "token_header_prefix": QuerybookSettings.OAUTH_TOKEN_HEADER_PREFIX,
             "scope": "user",
         }
 
@@ -109,9 +111,19 @@ class OAuthLoginManager(object):
         return resp["access_token"]
 
     def _get_user_profile(self, access_token):
-        resp = requests.get(
-            self.oauth_config["profile_url"], params={"access_token": access_token}
-        )
+        if(self.oauth_config["token_place"] == 'headers'):
+            resp = requests.get(
+                self.oauth_config["profile_url"],
+                headers={"Authorization": "{} {}".format(
+                    self.oauth_config["token_header_prefix"] or 'Bearer', 
+                    access_token
+                )}
+            )
+        else:
+            resp = requests.get(
+                self.oauth_config["profile_url"],
+                params={"access_token": access_token}
+            )
         if not resp or resp.status_code != 200:
             raise AuthenticationError(
                 "Failed to fetch user profile, status ({0})".format(
