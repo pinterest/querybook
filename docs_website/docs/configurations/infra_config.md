@@ -98,8 +98,6 @@ the next few configurations are only relevant if you are using OAuth based authe
 -   `OAUTH_AUTHORIZATION_URL` (**required**): Url for oauth redirection
 -   `OAUTH_TOKEN_URL` (**required**): Url to get the oauth token
 -   `OAUTH_USER_PROFILE` (**required**): Url to get the user profile
--   `OAUTH_TOKEN_PLACE`: Place to send the obtained access_token (headers) or default if not informed (url params)
--   `OAUTH_TOKEN_HEADER_PREFIX`: Prefix to add to the Authorization header (i.e: Bearer)
 
 for LDAP authentication:
 
