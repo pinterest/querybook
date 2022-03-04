@@ -15,7 +15,7 @@ function formatMultipleItems(data, executor, initialParam) {
     }, initialParam);
 }
 
-const hourly = ({ minute }: { minute: string }) =>
+const hourly = ({ minute }: IRecurrence) =>
     `At ${minute} minutes past the hour, every hour, every day`;
 
 const daily = (cronRecurrence: IRecurrence) => {
