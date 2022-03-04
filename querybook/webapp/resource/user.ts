@@ -28,6 +28,7 @@ export const UserResource = {
         ds.fetch<{
             has_login: boolean;
             has_signup: boolean;
+            oauth_url: string;
         }>('/user/login_method/'),
     getEnvironments: () =>
         ds.fetch<

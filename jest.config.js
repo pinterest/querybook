@@ -19,6 +19,7 @@ const config = {
     globals: {
         __VERSION__: '1.0.0',
         __APPNAME__: 'Querybook',
+        __ENVIRONMENT__: 'production'
     },
 };
 

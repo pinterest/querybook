@@ -48,8 +48,11 @@ def get_login_config():
     global auth
     global login_config
     if login_config is None:
+        oauth_url = ""
         has_login = hasattr(auth, "login_user_endpoint")
         has_signup = hasattr(auth, "signup_user_endpoint")
+        has_oauthURL = hasattr(auth, "oauth_authorization_url")
+
         if has_login:
             register("/login/", methods=["POST"], require_auth=False)(
                 auth.login_user_endpoint
@@ -59,5 +62,13 @@ def get_login_config():
             register("/signup/", methods=["POST"], require_auth=False)(
                 auth.signup_user_endpoint
             )
-        login_config = {"has_login": has_login, "has_signup": has_signup}
+
+        if has_oauthURL:
+            oauth_url = auth.oauth_authorization_url()
+
+        login_config = {
+            "has_login": has_login,
+            "has_signup": has_signup,
+            "oauth_url": oauth_url,
+        }
     return login_config
