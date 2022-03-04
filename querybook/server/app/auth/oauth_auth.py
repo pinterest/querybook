@@ -111,7 +111,7 @@ class OAuthLoginManager(object):
     def _get_user_profile(self, access_token):
         resp = requests.get(
             self.oauth_config["profile_url"],
-            headers={"Authorization": "Bearer {}".format(access_token)}
+            headers={"Authorization": "Bearer {}".format(access_token)},
         )
         if not resp or resp.status_code != 200:
             raise AuthenticationError(
