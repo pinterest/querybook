@@ -7,6 +7,10 @@ slug: /changelog
 
 Here are the list of breaking changes that you should be aware of when updating Querybook:
 
+## v3.1.2
+
+Generic OAuth flow now works with HOT-RELOAD activated (development mode).
+
 ## v3.1.1
 
 Generic OAuth flow now works with the retrieved access_token in its 'Authorization Bearer' header parameter by default.
