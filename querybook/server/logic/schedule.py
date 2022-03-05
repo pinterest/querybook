@@ -153,7 +153,9 @@ def get_data_doc_schedule_name(id: int):
 def get_task_run_record_run_with_schedule(docs, session):
     scheduled_doc_names = [get_data_doc_schedule_name(doc.id) for doc in docs]
     all_schedules = (
-        session.query(TaskSchedule).filter(TaskSchedule.name.in_(scheduled_doc_names)).all()
+        session.query(TaskSchedule)
+        .filter(TaskSchedule.name.in_(scheduled_doc_names))
+        .all()
     )
 
     last_run_record_subquery = (

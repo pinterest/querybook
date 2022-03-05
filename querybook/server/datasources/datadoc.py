@@ -383,8 +383,6 @@ def get_my_datadoc_with_schedule(
         filters=filters,
     )
 
-    scheduled_doc_names = [get_data_doc_schedule_name(doc.id) for doc in docs]
-
     res = schedule_logic.get_task_run_record_run_with_schedule(docs=docs)
 
     return {"docs": list(res), "count": count}
