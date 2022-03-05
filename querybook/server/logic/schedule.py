@@ -150,9 +150,10 @@ def get_data_doc_schedule_name(id: int):
 
 
 @with_session
-def get_task_run_record_run_with_schedule(data_doc_names, docs, session):
+def get_task_run_record_run_with_schedule(docs, session):
+    scheduled_doc_names = [get_data_doc_schedule_name(doc.id) for doc in docs]
     all_schedules = (
-        session.query(TaskSchedule).filter(TaskSchedule.name.in_(data_doc_names)).all()
+        session.query(TaskSchedule).filter(TaskSchedule.name.in_(scheduled_doc_names)).all()
     )
 
     last_run_record_subquery = (
@@ -162,7 +163,7 @@ def get_task_run_record_run_with_schedule(data_doc_names, docs, session):
         .group_by(TaskRunRecord.name)
         .subquery()
     )
-    all_task_run_records_grouped_by = session.query(TaskRunRecord).join(
+    all_task_run_records_subquery = session.query(TaskRunRecord).join(
         last_run_record_subquery,
         and_(
             TaskRunRecord.created_at == last_run_record_subquery.c.max_date,
@@ -176,7 +177,7 @@ def get_task_run_record_run_with_schedule(data_doc_names, docs, session):
                 "last_record": next(
                     filter(
                         lambda task: task.name == get_data_doc_schedule_name(doc.id),
-                        all_task_run_records_grouped_by,
+                        all_task_run_records_subquery,
                     ),
                     None,
                 ),
