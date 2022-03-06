@@ -4,6 +4,7 @@ import {
     IRemoveConfirmationAction,
     IAnnouncement,
     ISetSidebarTableId,
+    ISetCollapsedAction,
 } from './types';
 
 import localStore from 'lib/local-store';
@@ -139,5 +140,12 @@ export function getDataDocNavSectionConfigFromStore(): ThunkResult<void> {
             type: '@@querybookUI/RECEIVE_DATA_DOC_NAV_SECTION',
             payload,
         });
+    };
+}
+
+export function setCollapsed(value: boolean): ISetCollapsedAction {
+    return {
+        type: '@@environment/SET_COLLAPSED',
+        payload: value,
     };
 }

@@ -31,15 +31,93 @@ const SCHEDULE_TABS = [
     },
 ];
 
+export const DataDocScheduleFormWrapper: React.FunctionComponent<IDataDocScheduleProps> = ({
+    docId,
+    isEditable,
+    onSave,
+    onDelete,
+}) => {
+    const { isLoading, isError, data, forceFetch } = useResource(
+        React.useCallback(() => DataDocScheduleResource.get(docId), [docId])
+    );
+
+    if (isLoading) {
+        return <Loading />;
+    }
+    if (isError) {
+        return <ErrorMessage>Error Loading DataDoc Schedule</ErrorMessage>;
+    }
+
+    if (data || isEditable) {
+        // When editable, make create/update form
+        return (
+            <DataDocScheduleForm
+                isEditable={isEditable}
+                docId={docId}
+                cron={data?.cron ?? null}
+                enabled={data?.enabled ?? false}
+                kwargs={data?.kwargs ?? {}}
+                onCreate={(cron, kwargs) =>
+                    DataDocScheduleResource.create(docId, cron, kwargs).then(
+                        () => {
+                            toast.success('Schedule Created!');
+                            forceFetch();
+                            if (onSave) {
+                                onSave();
+                            }
+                        }
+                    )
+                }
+                onUpdate={(cron, enabled, kwargs) =>
+                    DataDocScheduleResource.update(docId, {
+                        cron,
+                        enabled,
+                        kwargs,
+                    }).then(() => {
+                        toast.success('Schedule Updated!');
+                        forceFetch();
+                        if (onSave) {
+                            onSave();
+                        }
+                    })
+                }
+                onDelete={
+                    data
+                        ? () =>
+                              DataDocScheduleResource.delete(docId).then(() => {
+                                  forceFetch();
+                                  if (onDelete) {
+                                      onDelete();
+                                  }
+                              })
+                        : null
+                }
+                onRun={
+                    data
+                        ? () =>
+                              DataDocScheduleResource.run(docId).then(() => {
+                                  toast.success('DataDoc execution started!');
+                              })
+                        : null
+                }
+            />
+        );
+    } else {
+        // Readonly and no schedule
+        return (
+            <div>
+                <Title>No Schedules</Title>
+            </div>
+        );
+    }
+};
+
 export const DataDocSchedule: React.FunctionComponent<IDataDocScheduleProps> = ({
     docId,
     onSave,
     onDelete,
     isEditable,
 }) => {
-    const { isLoading, isError, data, forceFetch } = useResource(
-        React.useCallback(() => DataDocScheduleResource.get(docId), [docId])
-    );
     const [currentTab, setCurrentTab] = React.useState('schedule');
 
     const tabsDOM = (
@@ -53,100 +131,26 @@ export const DataDocSchedule: React.FunctionComponent<IDataDocScheduleProps> = (
         </div>
     );
 
-    if (isLoading) {
-        return <Loading />;
-    }
-    if (isError) {
-        return <ErrorMessage>Error Loading DataDoc Schedule</ErrorMessage>;
-    }
-
     const getHistoryDOM = () => (
         <div className="schedule-options">
             <DataDocScheduleRunLogs docId={docId} />
         </div>
     );
 
-    const getScheduleDOM = () => {
-        let formDOM = null;
-        if (data || isEditable) {
-            // When editable, make create/update form
-            formDOM = (
-                <DataDocScheduleForm
-                    isEditable={isEditable}
-                    docId={docId}
-                    cron={data?.cron ?? null}
-                    enabled={data?.enabled ?? false}
-                    kwargs={data?.kwargs ?? {}}
-                    onCreate={(cron, kwargs) =>
-                        DataDocScheduleResource.create(
-                            docId,
-                            cron,
-                            kwargs
-                        ).then(() => {
-                            toast.success('Schedule Created!');
-                            forceFetch();
-                            if (onSave) {
-                                onSave();
-                            }
-                        })
-                    }
-                    onUpdate={(cron, enabled, kwargs) =>
-                        DataDocScheduleResource.update(docId, {
-                            cron,
-                            enabled,
-                            kwargs,
-                        }).then(() => {
-                            toast.success('Schedule Updated!');
-                            forceFetch();
-                            if (onSave) {
-                                onSave();
-                            }
-                        })
-                    }
-                    onDelete={
-                        data
-                            ? () =>
-                                  DataDocScheduleResource.delete(docId).then(
-                                      () => {
-                                          forceFetch();
-                                          if (onDelete) {
-                                              onDelete();
-                                          }
-                                      }
-                                  )
-                            : null
-                    }
-                    onRun={
-                        data
-                            ? () =>
-                                  DataDocScheduleResource.run(docId).then(
-                                      () => {
-                                          toast.success(
-                                              'DataDoc execution started!'
-                                          );
-                                      }
-                                  )
-                            : null
-                    }
-                />
-            );
-        } else {
-            // Readonly and no schedule
-            formDOM = (
-                <div>
-                    <Title>No Schedules</Title>
-                </div>
-            );
-        }
-
-        return formDOM;
-    };
-
     return (
         <>
             {tabsDOM}
             <div className="DataDocSchedule">
-                {currentTab === 'schedule' ? getScheduleDOM() : getHistoryDOM()}
+                {currentTab === 'schedule' ? (
+                    <DataDocScheduleFormWrapper
+                        docId={docId}
+                        isEditable={isEditable}
+                        onSave={onSave}
+                        onDelete={onDelete}
+                    />
+                ) : (
+                    getHistoryDOM()
+                )}
             </div>
         </>
     );
