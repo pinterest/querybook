@@ -4,10 +4,6 @@
     padding: 8px;
     background-color: var(--bg-lightest);
 
-    + .Card {
-        margin-top: 16px;
-    }
-
     .Card-title {
         margin: 0px 16px 16px;
         font-size: var(--med-text-size);
@@ -18,8 +14,16 @@
         text-align: center;
     }
     &.flex-row {
+        + .Card {
+            margin-top: 16px;
+        }
         .Card-title {
             margin: 16px;
+        }
+    }
+    &.flex-column {
+        + .Card {
+            margin-left: 16px;
         }
     }
     &.align-left {
