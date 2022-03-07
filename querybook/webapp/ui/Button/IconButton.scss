@@ -51,7 +51,7 @@
         position: absolute;
         cursor: default;
         border-radius: 100px;
-        background-color: var(--color-accent);
+        background-color: var(--color-accent-dark);
     }
 
     .ping {
@@ -74,5 +74,6 @@
 
     .icon-title {
         font-size: var(--xxxsmall-text-size);
+        padding-top: 2px;
     }
 }

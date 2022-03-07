@@ -82,8 +82,8 @@ body {
     --text-terminal: var(--color-invert-3);
 
     // Colors:  Content
-    --icon: var(--color-primary-5);
-    --icon-hover: var(--color-invert-4);
+    --icon: var(--color-invert-4);
+    --icon-hover: var(--color-primary-5);
     --icon-active: var(--color-invert-3);
 
     --pill: var(--color-primary-3);
@@ -143,6 +143,7 @@ body {
         'Segoe UI Emoji', 'Segoe UI Symbol';
     --font-monospace: monaco, monospace;
 
+    --light-bold-font: 500;
     --bold-font: 600;
     --extra-bold-font: 700;
 
@@ -208,6 +209,9 @@ body.dawn-theme {
 
     --color-blue: #79cdc7;
     --color-blue-dark: #1e7a75;
+
+    --box-shadow: 0px 5px 40px 0px rgb(158 88 39 / 20%);
+    --box-shadow-sm: 0px 0px 24px 0px rgb(158 88 39 / 5%);
 }
 
 body.dark-theme {
@@ -246,6 +250,9 @@ body.dark-theme {
     --bold-font: var(--extra-bold-font);
 
     font-weight: 500;
+
+    --box-shadow: 0px 5px 40px 0px rgb(255 255 255 / 20%);
+    --box-shadow-sm: 0px 0px 24px 0px rgb(255 255 255 / 5%);
 }
 
 body.night-theme {
@@ -288,6 +295,9 @@ body.night-theme {
     --bold-font: var(--extra-bold-font);
 
     --tag: var(--text-invert);
+
+    --box-shadow: 0px 5px 40px 0px rgb(253 227 183 / 20%);
+    --box-shadow-sm: 0px 0px 24px 0px rgb(253 227 183 / 5%);
 }
 
 body.lush-theme {
@@ -329,4 +339,7 @@ body.lush-theme {
     --bold-font: var(--extra-bold-font);
 
     --tag: var(--text-invert);
+
+    --box-shadow: 0px 5px 40px 0px rgb(89 139 130 / 20%);
+    --box-shadow-sm: 0px 0px 24px 0px rgb(89 139 130 / 5%);
 }

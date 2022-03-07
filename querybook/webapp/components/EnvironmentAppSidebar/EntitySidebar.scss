@@ -8,4 +8,21 @@
     flex-direction: column;
     justify-content: space-between;
     text-align: center;
+    .apps-list {
+        margin-bottom: 8px;
+        > * {
+            padding-bottom: 4px;
+            display: flex;
+            justify-content: center;
+        }
+    }
+    .sidebar-list {
+        .IconButton,
+        .QueryExecutionButton {
+            width: 100%;
+        }
+        .active {
+            background-color: var(--bg-lightest);
+        }
+    }
 }

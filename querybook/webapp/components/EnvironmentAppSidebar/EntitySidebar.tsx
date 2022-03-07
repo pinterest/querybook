@@ -12,7 +12,6 @@ import { QueryExecutionButton } from 'components/QueryExecutionButton/QueryExecu
 import { SearchContainer } from 'components/Search/SearchContainer';
 import { UserMenu } from 'components/UserMenu/UserMenu';
 
-import { Divider } from 'ui/Divider/Divider';
 import { IconButton } from 'ui/Button/IconButton';
 import { Link } from 'ui/Link/Link';
 
@@ -45,12 +44,7 @@ export const EntitySidebar: React.FunctionComponent<IEntitySidebarProps> = React
                                         }
                                     />
                                 </Link>
-                                <Divider
-                                    marginTop="2px"
-                                    marginBottom="2px"
-                                    height="1px"
-                                    color="transparent"
-                                />
+                                <SearchContainer />
                                 <Link to={`/${environment.name}/adhoc/`}>
                                     <div>
                                         <IconButton
@@ -67,6 +61,8 @@ export const EntitySidebar: React.FunctionComponent<IEntitySidebarProps> = React
                             </>
                         )}
                     />
+                </div>
+                <div className="apps-list sidebar-list flex-column">
                     <IconButton
                         icon="file"
                         tooltip="DataDocs"
@@ -93,23 +89,16 @@ export const EntitySidebar: React.FunctionComponent<IEntitySidebarProps> = React
                         tooltipPos="right"
                         active={selectedEntity === 'snippet'}
                         onClick={() => onSelectEntity('snippet')}
-                        title="Snippets"
+                        title="Snips"
                     />
                     <QueryExecutionButton
                         onClick={() => onSelectEntity('execution')}
                         active={selectedEntity === 'execution'}
                     />
-                    <Divider
-                        marginTop="8px"
-                        marginBottom="8px"
-                        height="1px"
-                        color="transparent"
-                    />
                 </div>
-                <div className="sidebar-footer flex-column mb8">
-                    <SearchContainer />
-                    <UserMenu />
+                <div className="apps-list flex-column">
                     <QueryEngineStatusButton />
+                    <UserMenu />
                     <InfoMenuButton />
                 </div>
             </div>
