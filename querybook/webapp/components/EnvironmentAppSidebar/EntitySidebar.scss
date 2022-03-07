@@ -15,12 +15,20 @@
             display: flex;
             justify-content: center;
         }
-    }
-    .sidebar-list {
+        .IconButton {
+            padding: 10px 4px 8px;
+            display: flex;
+            justify-content: center;
+        }
         .IconButton,
-        .QueryExecutionButton {
+        .QueryExecutionButton,
+        .InfoMenuButton,
+        .QueryEngineStatusButton,
+        .UserMenu {
             width: 100%;
         }
+    }
+    .sidebar-list {
         .active {
             background-color: var(--bg-lightest);
         }
