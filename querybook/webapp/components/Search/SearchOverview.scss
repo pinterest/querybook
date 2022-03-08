@@ -75,10 +75,7 @@
                     z-index: 11;
                     padding: var(--padding);
                     color: var(--text-light);
-
-                    .search-result-count {
-                        font-weight: var(--bold-font);
-                    }
+                    font-weight: var(--light-bold-font);
                 }
             }
 

@@ -644,15 +644,10 @@ class DataDocQueryCellComponent extends React.PureComponent<IProps, IState> {
         );
 
         const insertQuerySnippetModalDOM = showQuerySnippetModal ? (
-            <Modal
+            <QuerySnippetInsertionModal
+                onInsert={this.handleInsertSnippet}
                 onHide={this.toggleInsertQuerySnippetModal}
-                className="wide"
-                title="Insert Query Snippet"
-            >
-                <QuerySnippetInsertionModal
-                    onInsert={this.handleInsertSnippet}
-                />
-            </Modal>
+            />
         ) : null;
 
         const templatedQueryViewModalDOM = showRenderedTemplateModal ? (

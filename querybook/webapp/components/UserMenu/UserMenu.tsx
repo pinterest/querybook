@@ -15,7 +15,7 @@ import { MenuInfoItem, Menu, MenuDivider, MenuItem } from 'ui/Menu/Menu';
 import { Modal } from 'ui/Modal/Modal';
 import { Popover, PopoverLayout } from 'ui/Popover/Popover';
 import { ToggleSwitch } from 'ui/ToggleSwitch/ToggleSwitch';
-import { Icon } from 'ui/Icon/Icon';
+import { IconButton } from 'ui/Button/IconButton';
 
 import './UserMenu.scss';
 
@@ -128,8 +128,7 @@ export const UserMenu: React.FC<IUserMenuProps> = ({
                 aria-label={'User Settings'}
                 data-balloon-pos={tooltipPos}
             >
-                <Icon name="settings" />
-                <span className="user-menu-title">Settings</span>
+                <IconButton icon="settings" title="Settings" />
             </span>
             {tokenCreationModalDOM}
             {userSettingsPopover}

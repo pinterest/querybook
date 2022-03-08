@@ -14,7 +14,7 @@
 }
 .Tag + .Tag,
 .TagGroup + .TagGroup {
-    margin-left: 4px;
+    margin-left: 6px;
 }
 
 .Tag {
@@ -71,6 +71,11 @@
     .Tag {
         margin: 0;
         border-radius: 0;
+
+        &.highlighted {
+            background-color: var(--color-accent-dark);
+            color: var(--color-accent-lightest-0);
+        }
     }
 
     &.small .Tag {

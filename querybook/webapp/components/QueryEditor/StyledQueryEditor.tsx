@@ -30,6 +30,7 @@ export const StyledQueryEditor = styled.div.attrs({
             ? `
         .CodeMirror {
             height: auto;
+            min-height: 48px;
         }
     `
             : ''}

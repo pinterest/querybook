@@ -78,7 +78,7 @@ export const QueryExecutionButton = React.memo<IQueryExecutionButtonProps>(
                                 ? activeQueryExecutions.length.toString()
                                 : null
                         }
-                        title="Runs"
+                        title="Execs"
                     />
                 </span>
             </>

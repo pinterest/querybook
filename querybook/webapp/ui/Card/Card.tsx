@@ -12,6 +12,7 @@ interface IProps {
     width?: string;
     flexRow?: boolean;
     alignLeft?: boolean;
+    className?: string;
 }
 
 export const Card: React.FunctionComponent<IProps> = ({
@@ -23,6 +24,7 @@ export const Card: React.FunctionComponent<IProps> = ({
     width,
     flexRow,
     alignLeft,
+    className = '',
 }) => {
     const cardClassName = clsx({
         Card: true,
@@ -30,6 +32,7 @@ export const Card: React.FunctionComponent<IProps> = ({
         'flex-column': !flexRow && !alignLeft,
         'align-left': alignLeft,
         clickable: onClick,
+        [className]: true,
     });
     return (
         <div

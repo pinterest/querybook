@@ -3,24 +3,24 @@
     --message-bg: var(--bg-light);
     --message-bg-light: var(--bg-lightest);
     &.error {
-        --message-color: var(--color-false-dark);
-        --message-bg: var(--color-false-lightest);
-        --message-bg-light: var(--color-false-lightest-0);
+        --message-color: var(--color-false-darkest);
+        --message-bg: var(--color-false-transp-lightest);
+        --message-bg-light: var(--color-false-transp-lightest-0);
     }
     &.warning {
-        --message-color: var(--color-warning-dark);
-        --message-bg: var(--color-warning-lightest);
-        --message-bg-light: var(--color-warning-lightest-0);
+        --message-color: var(--color-warning-darkest);
+        --message-bg: var(--color-warning-transp-lightest);
+        --message-bg-light: var(--color-warning-transp-lightest-0);
     }
     &.success {
-        --message-color: var(--color-true-dark);
-        --message-bg: var(--color-true-lightest);
-        --message-bg-light: var(--color-true-lightest-0);
+        --message-color: var(--color-true-darkest);
+        --message-bg: var(--color-true-transp-lightest);
+        --message-bg-light: var(--color-true-transp-lightest-0);
     }
     &.tip {
-        --message-color: var(--color-accent-dark);
-        --message-bg: var(--color-accent-lightest);
-        --message-bg-light: var(--color-accent-lightest-0);
+        --message-color: var(--color-accent-darkest);
+        --message-bg: var(--color-accent-transp-lightest);
+        --message-bg-light: var(--color-accent-transp-lightest-0);
     }
 
     --message-header-text-size: var(--text-size);
