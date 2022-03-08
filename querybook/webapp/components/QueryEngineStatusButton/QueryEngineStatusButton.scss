@@ -25,6 +25,13 @@
             li:not(:last-child) {
                 padding-bottom: 8px;
             }
+            .engine-name {
+                color: var(--text);
+                font-weight: var(--light-bold-font);
+            }
+            .engine-status {
+                text-transform: uppercase;
+            }
         }
     }
 }

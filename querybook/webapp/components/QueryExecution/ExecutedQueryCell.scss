@@ -4,7 +4,7 @@
     .engine-text {
         color: var(--text-light);
         text-transform: uppercase;
-        font-weight: normal;
+        font-weight: var(--light-bold-font);
     }
 
     .code-highlight {

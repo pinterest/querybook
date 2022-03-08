@@ -12,7 +12,6 @@ exports[`matches enzyme snapshots matches snapshot 1`] = `
       readOnly={true}
       type="checkbox"
     />
-     
   </label>
 </div>
 `;

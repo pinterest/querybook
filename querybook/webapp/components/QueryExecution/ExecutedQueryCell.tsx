@@ -112,7 +112,7 @@ export const ExecutedQueryCell: React.FunctionComponent<IProps> = ({
 
     const queryEngine = queryEngineById[queryExecution.engine_id];
     const headerDOM = (
-        <div className="execution-header horizontal-space-between">
+        <div className="execution-header horizontal-space-between mb4">
             <div className="flex-row">
                 <div className="engine-text mr8">Engine</div>
                 <div className="engine-name">{queryEngine.name}</div>
