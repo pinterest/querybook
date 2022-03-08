@@ -285,10 +285,7 @@ class QuerySnippetNavigatorComponent extends React.PureComponent<
         ) : null;
 
         const createModal = showCreateSnippetModal ? (
-            <Modal
-                onHide={this.hideCreateSnippetModal}
-                title="Query Snippet Composer"
-            >
+            <Modal onHide={this.hideCreateSnippetModal} title="Create Snippet">
                 <QuerySnippetComposer onSave={this.hideCreateSnippetModal} />
             </Modal>
         ) : null;

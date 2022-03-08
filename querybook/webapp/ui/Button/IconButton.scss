@@ -43,7 +43,10 @@
     }
 
     &.with-title {
-        padding-bottom: 0px;
+        width: 100%;
+        padding: 10px 4px 8px;
+        display: flex;
+        justify-content: center;
     }
 
     .ping,

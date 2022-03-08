@@ -2,6 +2,7 @@
     .snippets-wrapper {
         flex: 1;
         position: relative;
+        overflow: hidden;
     }
 
     .snippet-search {
@@ -20,4 +21,14 @@
 
 .QuerySnippetFilterPicker {
     padding: 10px;
+}
+
+.Modal {
+    .QuerySnippetNavigator {
+        .list-header,
+        .list-content {
+            margin-right: 0px;
+            margin-left: 0px;
+        }
+    }
 }

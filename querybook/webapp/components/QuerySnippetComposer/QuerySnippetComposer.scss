@@ -1,6 +1,12 @@
 .QuerySnippetComposer {
-    margin: 24px;
     .Message {
         margin: 12px 0px;
+    }
+    .Card {
+        color: var(--text-light);
+        .mh4 {
+            color: var(--text);
+            font-weight: var(--light-bold-font);
+        }
     }
 }

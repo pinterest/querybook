@@ -14,7 +14,7 @@ const QuerySnippetRoute: React.FunctionComponent<RouteComponentProps> = ({
     const contentDOM = <QuerySnippetWrapper id={match.params['id']} />;
 
     return isModal ? (
-        <Modal type="standard" onHide={history.goBack}>
+        <Modal type="standard" onHide={history.goBack} title="Query Snippet">
             {contentDOM}
         </Modal>
     ) : (

@@ -128,16 +128,18 @@ export class DataTableViewOverview extends React.PureComponent<IQuerybookTableVi
 
         const metaSection = (
             <DataTableViewOverviewSection title="Meta info">
-                <div>
-                    <p>
-                        First created in {getAppName()} at{' '}
-                        {generateFormattedDate(table.created_at)}.
-                    </p>
-                    <p>
-                        Last pulled from metastore at{' '}
-                        {generateFormattedDate(table.updated_at)}.
-                    </p>
-                </div>
+                <KeyContentDisplay
+                    key="created"
+                    keyString={`First created in ${getAppName()}`}
+                >
+                    {generateFormattedDate(table.created_at)}
+                </KeyContentDisplay>
+                <KeyContentDisplay
+                    key="pulled"
+                    keyString="Last pulled from metastore"
+                >
+                    {generateFormattedDate(table.updated_at)}
+                </KeyContentDisplay>
             </DataTableViewOverviewSection>
         );
         const detailsSection = (

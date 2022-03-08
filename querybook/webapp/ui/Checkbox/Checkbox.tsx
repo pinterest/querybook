@@ -46,7 +46,7 @@ export const Checkbox: React.FunctionComponent<ICheckboxProps> = ({
                     disabled={disabled}
                     checked={value}
                     readOnly
-                />{' '}
+                />
                 {title}
                 {children}
             </label>

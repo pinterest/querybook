@@ -10,32 +10,14 @@
         display: flex;
         overflow: hidden;
 
-        .query-snippet-navigator-wrapper {
+        .QuerySnippetNavigator {
             height: 100%;
-
-            .QuerySnippetNavigator {
-                height: 100%;
-            }
         }
 
         .query-snippet-view-wrapper {
             flex: 1;
-            padding: 16px;
             overflow: auto;
-        }
-    }
-
-    .query-snippet-insertion-header {
-        padding: 12px 16px;
-        border-bottom: var(--border);
-    }
-
-    .snippet-author-info {
-        font-size: var(--text-size);
-
-        figure.image {
-            display: inline-block;
-            vertical-align: middle;
+            margin-left: var(--margin);
         }
     }
 
