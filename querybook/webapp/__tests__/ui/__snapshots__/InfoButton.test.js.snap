@@ -4,9 +4,11 @@ exports[`matches enzyme snapshots matches snapshot 1`] = `
 <span
   className="InfoButtonIcon"
 >
-  <i
-    className="fas fa-info-circle"
+  <ForwardRef
+    icon="info"
+    noPadding={true}
     onClick={[Function]}
+    size={18}
   />
 </span>
 `;

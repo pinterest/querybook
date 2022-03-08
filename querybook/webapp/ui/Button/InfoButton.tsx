@@ -4,6 +4,7 @@ import { PopoverLayout, Popover, PopoverDirection } from 'ui/Popover/Popover';
 import { useToggleState } from 'hooks/useToggleState';
 
 import { SoftButton } from './Button';
+import { IconButton } from './IconButton';
 import './InfoButton.scss';
 
 interface ICommonInfoButtonProps {
@@ -42,6 +43,7 @@ export const InfoButton: React.FunctionComponent<IInfoButtonProps> = ({
             layout={layout}
             onHide={() => setShowInfo(false)}
             resizeOnChange
+            noPadding
         >
             <div
                 className={
@@ -66,7 +68,12 @@ export const InfoButton: React.FunctionComponent<IInfoButtonProps> = ({
         </SoftButton>
     ) : (
         <span className="InfoButtonIcon" ref={buttonRef}>
-            <i className="fas fa-info-circle" onClick={toggleShowInfo} />
+            <IconButton
+                icon="info"
+                size={18}
+                onClick={toggleShowInfo}
+                noPadding
+            />
             {popover}
         </span>
     );
