@@ -281,21 +281,21 @@ class QuerySnippetComposerComponent extends React.PureComponent<
             <Card alignLeft>
                 <div>
                     <span>Created by</span>
-                    <span className="mh4">
+                    <span className="mh4 snippet-info">
                         <UserName uid={querySnippet.created_by} />
                     </span>
                     <span>on</span>
-                    <span className="mh4">
+                    <span className="mh4 snippet-info">
                         {generateFormattedDate(querySnippet.created_at)}
                     </span>
                 </div>
                 <div>
                     <span>Last updated by</span>
-                    <span className="mh4">
+                    <span className="mh4 snippet-info">
                         <UserName uid={querySnippet.last_updated_by} />
                     </span>
                     <span>on</span>
-                    <span className="mh4">
+                    <span className="mh4 snippet-info">
                         {generateFormattedDate(querySnippet.updated_at)}
                     </span>
                 </div>

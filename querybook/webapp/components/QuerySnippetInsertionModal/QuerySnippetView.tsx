@@ -163,21 +163,21 @@ export class QuerySnippetView extends React.PureComponent<
             <Card alignLeft className="mb12">
                 <div>
                     <span>Created by</span>
-                    <span className="mh4">
+                    <span className="mh4 author-info">
                         <UserName uid={createdBy} />
                     </span>
                     <span>on</span>
-                    <span className="mh4">
+                    <span className="mh4 author-info">
                         {generateFormattedDate(createdAt)}
                     </span>
                 </div>
                 <div>
                     <span>Last updated by</span>
-                    <span className="mh4">
+                    <span className="mh4 author-info">
                         <UserName uid={lastUpdatedBy} />
                     </span>
                     <span>on</span>
-                    <span className="mh4">
+                    <span className="mh4 author-info">
                         {generateFormattedDate(updatedAt)}
                     </span>
                 </div>

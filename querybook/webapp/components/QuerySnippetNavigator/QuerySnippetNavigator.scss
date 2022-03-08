@@ -23,15 +23,13 @@
     padding: 10px;
 }
 
-.Modal {
-    .QuerySnippetNavigator {
-        .list-header,
-        .list-content {
-            margin-right: 0px;
-            margin-left: 0px;
-        }
-        .list-header {
-            background-color: var(--bg-lightest);
-        }
+.Modal .QuerySnippetNavigator {
+    .list-header,
+    .list-content {
+        margin-right: 0px;
+        margin-left: 0px;
+    }
+    .list-header {
+        background-color: var(--bg-lightest);
     }
 }
