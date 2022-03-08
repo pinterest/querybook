@@ -14,18 +14,11 @@
         text-align: center;
     }
     &.flex-row {
-        + .Card {
-            margin-top: 16px;
-        }
         .Card-title {
             margin: 16px;
         }
     }
-    &.flex-column {
-        + .Card {
-            margin-left: 16px;
-        }
-    }
+
     &.align-left {
         .Card-content {
             text-align: left;

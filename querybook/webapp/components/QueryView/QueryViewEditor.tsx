@@ -98,7 +98,7 @@ export const QueryViewEditor: React.FunctionComponent<{
     const dataCellTitle = cellInfo?.cell_title;
     const queryExecutionTitleDOM = queryExecution ? (
         <div className="flex-row">
-            <Title size={5}>
+            <Title size={5} className="mr16">
                 <StatusIcon
                     status={queryStatusToStatusIcon[queryExecution.status]}
                 />
@@ -107,9 +107,7 @@ export const QueryViewEditor: React.FunctionComponent<{
                     <span className="ml8">{dataCellTitle}</span>
                 ) : null}
             </Title>
-            <Tag className="ml16">
-                {queryEngineById[queryExecution.engine_id].name}
-            </Tag>
+            <Tag>{queryEngineById[queryExecution.engine_id].name}</Tag>
         </div>
     ) : null;
 
