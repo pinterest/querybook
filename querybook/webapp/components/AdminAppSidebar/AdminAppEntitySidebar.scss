@@ -24,15 +24,13 @@
             font-weight: 500;
 
             .IconButton {
-                margin-right: 8px;
+                margin-right: 6px;
             }
             &:hover {
-                .AdminAppEntitySidebar-title {
-                    color: var(--text);
-                }
-                .IconButton {
-                    color: var(--icon-active);
-                }
+                color: var(--text-hover);
+            }
+            &.active {
+                color: var(--color-accent-dark);
             }
         }
     }
