@@ -38,7 +38,7 @@ export const AdminConfig = ({}) => {
                     value={filterStr}
                     onSearch={setFilterStr}
                     placeholder="Filter Key"
-                    className="mb4"
+                    className="mb8"
                 />
                 <Table
                     colNameToWidths={{ value: 200 }}

@@ -12,9 +12,12 @@
     border-radius: var(--border-radius-sm);
     cursor: default;
 }
-.Tag + .Tag,
-.TagGroup + .TagGroup {
+.Tag + .Tag {
     margin-left: 6px;
+}
+
+.TagGroup + .TagGroup {
+    margin-left: 8px;
 }
 
 .Tag {
