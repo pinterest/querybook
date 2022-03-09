@@ -66,7 +66,7 @@ export const AdminAuditLog: React.FC<IAdminAuditLogProps> = ({
         ['Item Id', itemId] as const,
     ].filter((v) => v[1] != null);
     const topDOM = filters.length && (
-        <div className="pv4 mvauto">
+        <div className="mb12">
             {filters.map(([key, value]) => (
                 <TagGroup key={key}>
                     <Tag>{key}</Tag>

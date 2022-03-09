@@ -2,14 +2,15 @@
     position: relative;
     display: flex;
     align-items: center;
-    margin: 12px 0px 4px;
+    margin-top: 12px;
+    margin-bottom: 4px;
     padding: 4px 0px;
 
     &.FormField-stacked {
         flex-wrap: wrap;
 
         .FormFieldLabelSection {
-            margin-bottom: 4px;
+            margin-bottom: 6px;
         }
         .FormFieldInputSectionRow {
             flex: 1;

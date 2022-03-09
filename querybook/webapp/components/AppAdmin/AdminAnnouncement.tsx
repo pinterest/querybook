@@ -31,8 +31,6 @@ const announcementSchema = Yup.object().shape({
 const StyledDateWrapper = styled.div`
     flex-grow: 1;
     text-align: left;
-    margin: 4px;
-    padding: 4px;
     display: flex;
     max-width: calc(100% - 180px);
 `;

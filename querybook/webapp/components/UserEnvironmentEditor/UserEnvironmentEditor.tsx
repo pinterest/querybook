@@ -75,6 +75,7 @@ export const UserEnvironmentEditor: React.FunctionComponent<IProps> = ({
                                 : null
                         }
                         disabled={!selectedUserId}
+                        className="ml8"
                     />
                 </FormFieldInputSectionRow>
             </FormField>
