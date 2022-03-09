@@ -22,11 +22,13 @@ export const AdminAppEntitySidebar: React.FunctionComponent<IAdminAppEntitySideb
 }) => {
     const makeSidebarItem = (key: AdminEntity, icon: string) => (
         <div
-            className="AdminAppEntitySidebar-item flex-row"
+            className={`AdminAppEntitySidebar-item flex-row ${
+                selectedEntity === key ? 'active' : ''
+            }`}
             onClick={() => onSelectEntity(key)}
         >
             <IconButton icon={icon} active={selectedEntity === key} />
-            <span className="AdminAppEntitySidebar-title">
+            <span className={`AdminAppEntitySidebar-title`}>
                 {adminEntityToTitle[key]}
             </span>
         </div>
@@ -59,7 +61,6 @@ export const AdminAppEntitySidebar: React.FunctionComponent<IAdminAppEntitySideb
                 {divider}
                 {makeSidebarItem('user_role', 'users')}
                 {makeSidebarItem('api_access_token', 'key')}
-
                 {makeSidebarItem('announcement', 'volume-2')}
                 {divider}
                 {makeSidebarItem('config', 'settings')}
