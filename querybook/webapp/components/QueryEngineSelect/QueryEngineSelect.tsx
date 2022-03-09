@@ -60,6 +60,7 @@ export const QueryEngineSelect: React.FunctionComponent<IProps> = ({
                             handleAddQueryEngine(selectedQueryEngineId)
                         }
                         disabled={!selectedQueryEngineId}
+                        className="ml8"
                     />
                 </FormFieldInputSectionRow>
             </FormField>
