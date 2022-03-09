@@ -33,6 +33,9 @@ const StyledDateWrapper = styled.div`
     text-align: left;
     display: flex;
     max-width: calc(100% - 180px);
+    .FormField {
+        margin-right: 16px;
+    }
 `;
 
 export const AdminAnnouncement: React.FunctionComponent = () => {
@@ -114,11 +117,13 @@ export const AdminAnnouncement: React.FunctionComponent = () => {
                     />
                     <StyledDateWrapper>
                         <SimpleField
+                            stacked
                             type="datepicker"
                             label="Active From"
                             name="active_from"
                         />
                         <SimpleField
+                            stacked
                             type="datepicker"
                             label="Till"
                             name="active_till"
@@ -127,6 +132,7 @@ export const AdminAnnouncement: React.FunctionComponent = () => {
                 </div>
                 <div className="AdminForm-right">
                     <SimpleField
+                        stacked
                         name="can_dismiss"
                         type="toggle"
                         help="Enabling will allow users to dismiss the announcement"
