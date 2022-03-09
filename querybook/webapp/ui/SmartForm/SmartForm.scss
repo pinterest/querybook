@@ -1,10 +1,12 @@
 .SmartForm {
     .SmartForm-array-section {
+        padding: var(--padding);
+        background-color: var(--bg-lightest);
+        border-radius: var(--border-radius-sm);
+
         &:not(:last-child) {
             margin-bottom: 16px;
         }
-        border-left: 4px solid var(--color-accent);
-        padding-left: 4px;
 
         > .FormField {
             padding: 0px;

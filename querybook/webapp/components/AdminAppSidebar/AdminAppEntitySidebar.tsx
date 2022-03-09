@@ -44,7 +44,7 @@ export const AdminAppEntitySidebar: React.FunctionComponent<IAdminAppEntitySideb
         <div className="AdminAppEntitySidebar">
             <div className="AdminAppEntitySidebar-main">
                 <div
-                    className="AdminAppEntitySidebar-top p4"
+                    className="AdminAppEntitySidebar-top mv16"
                     onClick={() => history.push('/admin/')}
                 >
                     <QuerybookLogo size={1.3} withBrandMark />
@@ -64,7 +64,7 @@ export const AdminAppEntitySidebar: React.FunctionComponent<IAdminAppEntitySideb
                 {divider}
                 {makeSidebarItem('config', 'settings')}
             </div>
-            <div className="AdminAppEntitySidebar-bottom">
+            <div className="AdminAppEntitySidebar-bottom mb8">
                 <div
                     className="AdminAppEntitySidebar-item flex-row"
                     onClick={() => history.push('/')}
