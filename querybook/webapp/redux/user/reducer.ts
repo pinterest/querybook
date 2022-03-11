@@ -59,11 +59,9 @@ function applyUserSettings(
                 case 'dark':
                     document.body.className = 'dark-theme';
                     break;
+                // legacy
                 case 'night':
-                    document.body.className = 'night-theme';
-                    break;
-                case 'dawn':
-                    document.body.className = 'dawn-theme';
+                    document.body.className = 'dark-theme';
                     break;
                 case 'lush':
                     document.body.className = 'lush-theme';
