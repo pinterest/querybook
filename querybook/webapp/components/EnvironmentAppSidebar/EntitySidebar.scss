@@ -8,6 +8,8 @@
     flex-direction: column;
     justify-content: space-between;
     text-align: center;
+    border-top-right-radius: var(--border-radius);
+
     .apps-list {
         margin-bottom: 8px;
         > * {
@@ -26,6 +28,14 @@
     .sidebar-list {
         .active {
             background-color: var(--bg-lightest);
+        }
+    }
+}
+.collapsed .EntitySidebar {
+    .sidebar-list {
+        .active {
+            background-color: transparent;
+            color: var(--icon);
         }
     }
 }

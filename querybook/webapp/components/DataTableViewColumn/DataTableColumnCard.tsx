@@ -43,8 +43,8 @@ export const DataTableColumnCard: React.FunctionComponent<IProps> = ({
                     data-balloon-pos="down-right"
                 >
                     <div className="DataTableColumnCard-left">
-                        <div className="column-name mr12">{column.name}</div>
-                        <div className="column-type">{column.type}</div>
+                        <div className="column-type mr12">{column.type}</div>
+                        <div className="column-name">{column.name}</div>
                     </div>
                     <Icon name={expanded ? 'chevron-up' : 'chevron-down'} />
                 </div>

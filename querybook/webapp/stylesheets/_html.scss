@@ -251,6 +251,7 @@ input:-webkit-autofill {
     .reactour__helper {
         background-color: var(--bg);
         color: var(--text);
+        border-radius: var(--border-radius);
         > span {
             color: var(--bg);
             font-weight: var(--bold-font);

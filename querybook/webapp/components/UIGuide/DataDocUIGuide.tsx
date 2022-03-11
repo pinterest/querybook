@@ -79,7 +79,7 @@ export const DataDocTourSteps: ReactourStep[] = [
     },
     {
         selector:
-            '.DataDoc .DataDocRightSidebar-button-section-bottom [aria-label="Set Templated Variables"]',
+            '.DataDoc .DataDocRightSidebar-button-section-bottom [aria-label="Set Variables"]',
         content: (
             <>
                 <p>
