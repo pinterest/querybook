@@ -9,11 +9,11 @@
     flex-direction: column;
 
     .sidebar-content {
-        margin-top: 40px;
+        margin-top: 38px;
 
         .contents-toggle-button {
-            margin-top: 6px;
-            margin-left: 2px;
+            margin-top: 8px;
+            margin-left: 8px;
         }
 
         &:not(.sidebar-content-default) {
@@ -24,7 +24,7 @@
     .sidebar-content-table,
     .sidebar-content-contents {
         width: 280px;
-        height: calc(100vh - 48px);
+        height: calc(100vh - 38px);
     }
 
     .sidebar-content-table {
