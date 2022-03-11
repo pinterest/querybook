@@ -3,11 +3,12 @@
 exports[`matches enzyme snapshots matches snapshot 1`] = `
 <span
   className="InfoButtonIcon"
+  onMouseEnter={[Function]}
+  onMouseLeave={[Function]}
 >
   <ForwardRef
     icon="info"
     noPadding={true}
-    onClick={[Function]}
     size={18}
   />
 </span>
