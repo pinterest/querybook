@@ -43,7 +43,10 @@
     }
 
     &.with-title {
-        padding-bottom: 0px;
+        width: 100%;
+        padding: 10px 4px 8px;
+        display: flex;
+        justify-content: center;
     }
 
     .ping,
@@ -51,7 +54,7 @@
         position: absolute;
         cursor: default;
         border-radius: 100px;
-        background-color: var(--color-accent);
+        background-color: var(--color-accent-dark);
     }
 
     .ping {
@@ -74,5 +77,6 @@
 
     .icon-title {
         font-size: var(--xxxsmall-text-size);
+        padding-top: 2px;
     }
 }

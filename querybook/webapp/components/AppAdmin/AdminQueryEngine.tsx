@@ -261,7 +261,7 @@ export const AdminQueryEngine: React.FunctionComponent<IProps> = ({
                         <Link to="/admin/environment/">environment config</Link>
                         .
                     </p>
-                    <div className="AdmingQueryEngine-environment-list m8 p8">
+                    <div className="AdmingQueryEngine-environment-list mt8 p8">
                         {item.environments?.length
                             ? item.environments.map((environment) => (
                                   <div key={environment.id}>
@@ -298,7 +298,7 @@ export const AdminQueryEngine: React.FunctionComponent<IProps> = ({
                             type="textarea"
                             rows={3}
                         />
-                        <div className="flex-row flex0-children">
+                        <div className="flex-row stacked-fields flex0-children">
                             <SimpleField
                                 stacked
                                 name="metastore_id"
@@ -326,34 +326,32 @@ export const AdminQueryEngine: React.FunctionComponent<IProps> = ({
                                 options={engineStatusCheckerNames}
                                 withDeselect
                             />
-
-                            <div className="flex1">
-                                <SimpleField
-                                    stacked
-                                    help={() => (
-                                        <div>
-                                            Didn’t find your engine? Querybook
-                                            supports more, click{' '}
-                                            <Link
-                                                newTab
-                                                to="https://www.querybook.org/docs/setup_guide/connect_to_query_engines/"
-                                            >
-                                                here
-                                            </Link>{' '}
-                                            to find out how to easily enable it.
-                                        </div>
-                                    )}
-                                    name="language"
-                                    type="react-select"
-                                    options={querybookLanguageOptions}
-                                    onChange={(language) => {
-                                        onChange('language', language);
-                                        updateExecutor(
-                                            executorByLanguage[language][0]
-                                        );
-                                    }}
-                                />
-                            </div>
+                            <SimpleField
+                                stacked
+                                help={() => (
+                                    <div>
+                                        Didn’t find your engine? Querybook
+                                        supports more, click{' '}
+                                        <Link
+                                            newTab
+                                            to="https://www.querybook.org/docs/setup_guide/connect_to_query_engines/"
+                                        >
+                                            here
+                                        </Link>{' '}
+                                        to find out how to easily enable it.
+                                    </div>
+                                )}
+                                name="language"
+                                type="react-select"
+                                options={querybookLanguageOptions}
+                                onChange={(language) => {
+                                    onChange('language', language);
+                                    updateExecutor(
+                                        executorByLanguage[language][0]
+                                    );
+                                }}
+                                className="flex1"
+                            />
                             <SimpleField
                                 stacked
                                 name="executor"

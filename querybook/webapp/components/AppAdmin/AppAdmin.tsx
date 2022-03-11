@@ -33,7 +33,7 @@ import { AdminEntity } from './types';
 import './AppAdmin.scss';
 
 const ENTITY_SIDEBAR_WIDTH = 200;
-const NAV_SIDEBAR_WIDTH = 200;
+const NAV_SIDEBAR_WIDTH = 260;
 
 const AppAdmin: React.FunctionComponent = () => {
     const { entity: selectedEntity }: { entity: AdminEntity } = useParams();

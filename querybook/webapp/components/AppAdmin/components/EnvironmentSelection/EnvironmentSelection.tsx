@@ -34,6 +34,7 @@ export const EnvironmentSelection = ({
 
     return (
         <SimpleField
+            stacked
             type="select"
             {...field}
             label={label}

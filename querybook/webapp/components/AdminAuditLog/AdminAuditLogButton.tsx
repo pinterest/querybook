@@ -7,9 +7,7 @@ export const AdminAuditLogButton: React.FC<IAdminAuditLogProps> = (props) => {
     const [showModal, setShowModal] = useState(false);
     const modal = showModal && (
         <Modal onHide={() => setShowModal(false)} title={'Change Logs'}>
-            <div className="p12">
-                <AdminAuditLog {...props} />
-            </div>
+            <AdminAuditLog {...props} />
         </Modal>
     );
 

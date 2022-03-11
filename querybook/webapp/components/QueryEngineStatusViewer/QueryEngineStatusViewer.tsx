@@ -1,23 +1,21 @@
 import React, { useCallback, useEffect } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 
-import { titleize } from 'lib/utils';
 import { getAppName } from 'lib/utils/global';
 
 import { generateFormattedDate } from 'lib/utils/datetime';
 import { fetchSystemStatus } from 'redux/queryEngine/action';
 import { IStoreState } from 'redux/store/types';
 
-import { IconButton } from 'ui/Button/IconButton';
 import { FormSectionHeader } from 'ui/Form/FormField';
 import { Loading } from 'ui/Loading/Loading';
 import { Markdown } from 'ui/Markdown/Markdown';
 import { Message, MessageType } from 'ui/Message/Message';
 import { Level } from 'ui/Level/Level';
 import { QueryEngineStatus } from 'const/queryEngine';
-import { Title } from 'ui/Title/Title';
 
 import './QueryEngineStatusViewer.scss';
+import { Button } from 'ui/Button/Button';
 
 interface IProps {
     engineId: number;
@@ -55,14 +53,20 @@ export const QueryEngineStatusViewer: React.FC<IProps> = ({ engineId }) => {
     } else if (queryEngineStatus.data) {
         const header = (
             <Level>
-                <div>
-                    <Title inline>{titleize(queryEngine.name)}</Title>
-                    <IconButton icon="refresh-cw" onClick={loadSystemStatus} />
+                <div className="updated-text">
+                    <span>Last updated</span>
+                    <span className="ml4">
+                        {generateFormattedDate(
+                            queryEngineStatus.updated_at,
+                            'X'
+                        )}
+                    </span>
                 </div>
-                <div>
-                    Updated at:{' '}
-                    {generateFormattedDate(queryEngineStatus.updated_at, 'X')}
-                </div>
+                <Button
+                    icon="refresh-cw"
+                    title="Refresh Status"
+                    onClick={loadSystemStatus}
+                />
             </Level>
         );
         const { data } = queryEngineStatus;
@@ -86,7 +90,7 @@ export const QueryEngineStatusViewer: React.FC<IProps> = ({ engineId }) => {
         }
 
         const statusSectionDOM = (
-            <div>
+            <div className="status">
                 <FormSectionHeader>Status</FormSectionHeader>
                 <Message
                     title={infoTitle}

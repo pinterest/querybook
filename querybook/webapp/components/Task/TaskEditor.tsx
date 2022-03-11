@@ -455,33 +455,29 @@ export const TaskEditor: React.FunctionComponent<IProps> = ({
                     <>
                         {task.id ? (
                             <>
-                                <div className="TaskEditor-top horizontal-space-between mv24 mh36">
+                                <div className="TaskEditor-top horizontal-space-between mb24">
                                     <div className="TaskEditor-info">
                                         <Title size={3} weight="bold">
                                             {values.name}
                                         </Title>
-
                                         <div className="mb16">
                                             {values.task}
                                         </div>
-
-                                        <>
-                                            <div>
-                                                Last Run:{' '}
-                                                {generateFormattedDate(
-                                                    task.last_run_at,
-                                                    'X'
-                                                )}
-                                                ,{' '}
-                                                {moment
-                                                    .utc(task.last_run_at, 'X')
-                                                    .fromNow()}
-                                            </div>
-                                            <div>
-                                                Total Run Count:{' '}
-                                                {task.total_run_count}
-                                            </div>
-                                        </>
+                                        <div>
+                                            Last Run:{' '}
+                                            {generateFormattedDate(
+                                                task.last_run_at,
+                                                'X'
+                                            )}
+                                            ,{' '}
+                                            {moment
+                                                .utc(task.last_run_at, 'X')
+                                                .fromNow()}
+                                        </div>
+                                        <div>
+                                            Total Run Count:{' '}
+                                            {task.total_run_count}
+                                        </div>
                                     </div>
                                     <div className="TaskEditor-controls vertical-space-between">
                                         <AdminAuditLogButton
@@ -499,7 +495,6 @@ export const TaskEditor: React.FunctionComponent<IProps> = ({
                                 </div>
                                 <Tabs
                                     selectedTabKey={tab}
-                                    className="mh16 mb16"
                                     items={[
                                         { name: 'Edit', key: 'edit' },
                                         { name: 'History', key: 'history' },
@@ -510,7 +505,7 @@ export const TaskEditor: React.FunctionComponent<IProps> = ({
                                 />
                             </>
                         ) : null}
-                        <div className="TaskEditor-content m24">
+                        <div className="TaskEditor-content">
                             {tab === 'edit' ? (
                                 getEditDOM(
                                     values,

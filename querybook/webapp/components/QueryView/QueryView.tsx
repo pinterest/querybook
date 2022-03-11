@@ -62,10 +62,8 @@ export const QueryView: React.FunctionComponent<IProps> = ({ queryId }) => {
                 itemLoader={fetchQueryExecution}
                 errorRenderer={(error) => errorPage(error)}
             >
-                <>
-                    <QueryViewEditor queryExecution={queryExecution} />
-                    <QueryViewExecution queryExecution={queryExecution} />
-                </>
+                <QueryViewEditor queryExecution={queryExecution} />
+                <QueryViewExecution queryExecution={queryExecution} />
             </Loader>
         </Container>
     );

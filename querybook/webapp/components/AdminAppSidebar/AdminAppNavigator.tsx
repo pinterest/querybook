@@ -60,7 +60,7 @@ export const AdminAppNavigator: React.FunctionComponent<IProps> = ({
     );
 
     return (
-        <div className="AdminAppNavigator">
+        <div className="AdminAppNavigator ph8">
             <div className="AdminAppNavigator-top flex-row">
                 <SearchBar
                     value={titleFilterString}
