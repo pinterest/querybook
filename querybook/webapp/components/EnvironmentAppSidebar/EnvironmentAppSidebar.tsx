@@ -30,18 +30,17 @@ export const EnvironmentAppSidebar: React.FunctionComponent = () => {
 
     const currentEnvironment = useSelector(currentEnvironmentSelector);
 
-    const handleEntitySelect = React.useCallback(
-        (e: Entity | null) => {
-            if (e === entity) {
+    const handleEntitySelect = React.useCallback((newEntity: Entity | null) => {
+        setEntity((oldEntity) => {
+            if (oldEntity === newEntity) {
                 setCollapsed(true);
-                setEntity(null);
+                return null;
             } else {
                 setCollapsed(false);
-                setEntity(e);
+                return newEntity;
             }
-        },
-        [entity]
-    );
+        });
+    }, []);
 
     const scrollToCollapseSidebar = React.useCallback(
         (event, direction, elementRef) => {

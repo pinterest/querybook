@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useMemo } from 'react';
 import clsx from 'clsx';
-import { lowerCase, orderBy } from 'lodash';
+import { orderBy } from 'lodash';
 
 import { IDataDoc } from 'const/datadoc';
 import { DataDocGridItem } from './DataDocGridItem';
@@ -81,7 +81,7 @@ export const DataDocNavigatorSection: React.FC<INavigatorSectionProps> = ({
         if (orderedDataDocs.length === 0) {
             return (
                 <div className="empty-section-message">
-                    No {lowerCase(sectionHeader)}
+                    No {sectionHeader?.toLowerCase()}
                 </div>
             );
         }
