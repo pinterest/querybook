@@ -105,7 +105,9 @@ export const SchemaTableItem: React.FC<{
             {isExpanded && (
                 <div className="board-scroll-wrapper">
                     {total === 0 ? (
-                        <div className="ph12">No items in this section.</div>
+                        <div className="empty-section-message">
+                            No {name?.toLowerCase()}
+                        </div>
                     ) : (
                         <InfinityScroll
                             elements={data}

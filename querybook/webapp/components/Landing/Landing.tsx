@@ -81,7 +81,9 @@ const DefaultLanding: React.FC = ({ children }) => {
                 <div className="Landing-greeting">
                     Hi {titleize(userInfo.fullname || userInfo.username)},
                 </div>
-                <div className="Landing-subtitle">Welcome back</div>
+                <div className="Landing-subtitle">
+                    Welcome back to Querybook
+                </div>
             </div>
             <QuerybookSidebarUIGuide />
         </div>

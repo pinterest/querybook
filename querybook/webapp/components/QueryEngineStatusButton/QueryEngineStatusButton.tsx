@@ -149,16 +149,16 @@ export const QueryEngineStatusButton: React.FC<IProps> = ({
 
                 return <span key={engineId}>{systemStatusContent}</span>;
             })
-            .map((usage, index) => <li key={index}>{usage}</li>);
-
-        const systemStatusSectionDOM = (
-            <MenuInfoItem className="QueryEngineStatusPopover-status">
-                <span className="mv4">
-                    <div className="mb8">Click for detailed status</div>
-                    <ul>{systemStatusDOM}</ul>
-                </span>
-            </MenuInfoItem>
-        );
+            .map((usage, index) => (
+                <MenuItem
+                    className="QueryEngineStatusPopover-status"
+                    key={index}
+                    aria-label="see detailed status"
+                    data-balloon-pos="right"
+                >
+                    {usage}
+                </MenuItem>
+            ));
 
         const panelContent = (
             <div className="QueryEngineStatusPopover">
@@ -172,7 +172,7 @@ export const QueryEngineStatusButton: React.FC<IProps> = ({
                         />
                     </MenuInfoItem>
                     <MenuDivider />
-                    {systemStatusSectionDOM}
+                    {systemStatusDOM}
                     <MenuDivider />
                     <MenuItem
                         className="QueryEngineStatusPopover-refresh flex-row"

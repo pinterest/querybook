@@ -16,17 +16,23 @@
         text-transform: uppercase;
         font-weight: var(--bold-font);
         color: var(--text-lightest);
-        margin-top: 6px;
+        margin-top: 2px;
         align-self: flex-start;
     }
-    .owner-badges {
-        flex-wrap: wrap;
-        .UserBadge {
-            margin-top: 4px;
-            margin-bottom: 4px;
+    .owner-list {
+        .header-subtitle {
+            margin-top: 6px;
         }
-        .UserBadge + .IconButton {
-            margin-left: 12px;
+        .owner-badges {
+            flex-wrap: wrap;
+            min-height: 36px;
+            .UserBadge {
+                margin-top: 4px;
+                margin-bottom: 4px;
+            }
+            .UserBadge + .IconButton {
+                margin-left: 12px;
+            }
         }
     }
 }

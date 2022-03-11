@@ -40,7 +40,7 @@ export const DataDocTemplateCell: React.FunctionComponent<IProps> = ({
                 <TextButton
                     icon="plus"
                     className="mr4"
-                    title="New Templated Variable"
+                    title="New Variable"
                     onClick={() => setShowFacde(false)}
                 />
                 <DataDocTemplateInfoButton style="icon" />

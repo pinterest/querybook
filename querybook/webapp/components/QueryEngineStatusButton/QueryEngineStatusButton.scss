@@ -20,18 +20,13 @@
         }
     }
     .QueryEngineStatusPopover-status {
-        ul {
-            cursor: pointer;
-            li:not(:last-child) {
-                padding-bottom: 8px;
-            }
-            .engine-name {
-                color: var(--text);
-                font-weight: var(--light-bold-font);
-            }
-            .engine-status {
-                text-transform: uppercase;
-            }
+        .engine-name {
+            color: var(--text);
+            font-weight: var(--bold-font);
+        }
+        .engine-status {
+            text-transform: uppercase;
+            color: var(--text-light);
         }
     }
 }

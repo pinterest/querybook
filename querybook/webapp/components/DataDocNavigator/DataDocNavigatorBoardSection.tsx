@@ -187,7 +187,7 @@ export const DataDocNavigatorBoardSection: React.FC<INavigatorBoardSectionProps>
         </Level>
     );
 
-    const boardsDOM = collapsed ? null : (
+    const boardsDOM = collapsed ? null : boards.length ? (
         <div className="ml8">
             {boards.map((board) => (
                 <NavigatorBoardView
@@ -199,6 +199,8 @@ export const DataDocNavigatorBoardSection: React.FC<INavigatorBoardSectionProps>
                 />
             ))}
         </div>
+    ) : (
+        <div className="empty-section-message">No boards</div>
     );
 
     return (
@@ -466,14 +468,10 @@ const BoardExpandableList: React.FunctionComponent<{
             items.length > itemsToHideSet.size ? (
                 makeItemsDOM()
             ) : (
-                <div className="empty-message m16 flex-center">
-                    No items found in this list
-                </div>
+                <div className="empty-section-message">No items found</div>
             )
         ) : (
-            <div className="empty-message m16 flex-center">
-                No items in this list yet
-            </div>
+            <div className="empty-section-message">No items</div>
         );
 
     return <div className="board-item-list">{itemsDOM}</div>;
