@@ -9,7 +9,12 @@
     flex-direction: column;
 
     .sidebar-content {
-        margin-top: 46px;
+        margin-top: 40px;
+
+        .contents-toggle-button {
+            margin-top: 6px;
+            margin-left: 2px;
+        }
 
         &:not(.sidebar-content-default) {
             background-color: var(--bg-lightest);
