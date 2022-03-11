@@ -144,41 +144,49 @@ export const SearchOverview: React.FunctionComponent = () => {
 
     const [showAddSearchAuthor, setShowAddSearchAuthor] = React.useState(false);
 
-    const onSearchTabSelect = React.useCallback((newSearchType: string) => {
-        updateSearchType(newSearchType);
-        handleUpdateSearchString('');
-    }, []);
+    const onSearchTabSelect = React.useCallback(
+        (newSearchType: string) => {
+            updateSearchType(newSearchType);
+        },
+        [updateSearchType]
+    );
 
     const toggleShowAddSearchAuthor = React.useCallback(() => {
-        setShowAddSearchAuthor(!showAddSearchAuthor);
-    }, []);
+        setShowAddSearchAuthor((v) => !v);
+    }, [setShowAddSearchAuthor]);
 
     const handleMetastoreChange = React.useCallback(
         (evt: React.ChangeEvent<HTMLSelectElement>) => {
             selectMetastore(Number(evt.target.value));
         },
-        []
+        [selectMetastore]
     );
 
-    const onStartDateChange = React.useCallback((evt) => {
-        const newDate = Number(moment(evt.target.value).format('X'));
-        updateSearchFilter('startDate', isNaN(newDate) ? null : newDate);
-    }, []);
+    const onStartDateChange = React.useCallback(
+        (evt) => {
+            const newDate = Number(moment(evt.target.value).format('X'));
+            updateSearchFilter('startDate', isNaN(newDate) ? null : newDate);
+        },
+        [updateSearchFilter]
+    );
 
-    const onEndDateChange = React.useCallback((evt) => {
-        const newDate = Number(moment(evt.target.value).format('X'));
+    const onEndDateChange = React.useCallback(
+        (evt) => {
+            const newDate = Number(moment(evt.target.value).format('X'));
 
-        updateSearchFilter('endDate', isNaN(newDate) ? null : newDate);
-    }, []);
+            updateSearchFilter('endDate', isNaN(newDate) ? null : newDate);
+        },
+        [updateSearchFilter]
+    );
 
     const setMinDuration = React.useCallback(
         (value: number | null) => updateSearchFilter('minDuration', value),
-        []
+        [updateSearchFilter]
     );
 
     const setMaxDuration = React.useCallback(
         (value: number | null) => updateSearchFilter('maxDuration', value),
-        []
+        [updateSearchFilter]
     );
 
     const getSearchBarDOM = () => {

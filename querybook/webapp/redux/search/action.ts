@@ -260,7 +260,6 @@ export function updateSearchOrder(orderKey: SearchOrder): ThunkResult<void> {
 
 export function updateSearchType(searchType: SearchType): ThunkResult<void> {
     return (dispatch, getState) => {
-        updateSearchString('');
         dispatch(resetSearchResult());
         dispatch({
             type: '@@search/SEARCH_TYPE_UPDATE',

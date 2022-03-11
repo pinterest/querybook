@@ -175,6 +175,7 @@ export function mapMetaToChartOptions(
             tooltip: {
                 position: 'nearest',
                 backgroundColor: backgroundColor[theme],
+
                 bodyColor: rgb(fontColor[theme]),
                 titleColor: rgb(fontColor[theme]),
                 bodySpacing: 8,
