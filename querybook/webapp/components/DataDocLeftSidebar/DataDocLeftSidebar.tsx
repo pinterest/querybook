@@ -81,11 +81,11 @@ export const DataDocLeftSidebar: React.FunctionComponent<IProps> = ({
                     className="contents-toggle-button"
                     icon="list"
                     onClick={() => setContentState('contents')}
-                    aria-label="Show doc contents"
-                    data-balloon-pos="right"
                     color="light"
                     invertCircle
                     size={20}
+                    tooltip="Table of Contents"
+                    tooltipPos="right"
                 />
             </div>
         );
