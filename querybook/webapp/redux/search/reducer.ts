@@ -32,6 +32,8 @@ const initialState: ISearchState = {
     // authors
     searchAuthorChoices: [],
 
+    pastSearchStateByType: {},
+
     ...initialPaginationState,
     ...initialSearchParamState,
 };
@@ -104,17 +106,33 @@ export default function search(
                 return;
             }
             case '@@search/SEARCH_TYPE_UPDATE': {
+                // Save the current state into past state
+                draft.pastSearchStateByType[draft.searchType] = {
+                    searchString: draft.searchString,
+                    searchFields: draft.searchFields,
+                    searchFilters: draft.searchFilters,
+                };
+
+                // rehydrate from past state
+                const searchStateForNewType = draft.pastSearchStateByType[
+                    action.payload.searchType
+                ] ?? {
+                    searchString: '',
+                    searchFilters: {},
+                    searchFields:
+                        draft.searchType === SearchType.Table
+                            ? {
+                                  table_name: true,
+                                  description: true,
+                                  column: true,
+                              }
+                            : {},
+                };
+
                 draft.searchType = action.payload.searchType;
-                draft.searchFilters = {};
-                if (draft.searchType === SearchType.Table) {
-                    draft.searchFields = {
-                        table_name: true,
-                        description: true,
-                        column: true,
-                    };
-                } else {
-                    draft.searchFields = {};
-                }
+                draft.searchString = searchStateForNewType.searchString;
+                draft.searchFilters = searchStateForNewType.searchFilters;
+                draft.searchFields = searchStateForNewType.searchFields;
                 return;
             }
             case '@@search/SEARCH_GO_TO_PAGE': {

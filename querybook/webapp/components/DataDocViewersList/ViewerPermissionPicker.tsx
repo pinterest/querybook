@@ -98,7 +98,7 @@ export const ViewerPermissionPicker: React.FunctionComponent<IProp> = ({
                 <Icon className="ml8" name="chevron-down" size={16} />
             </div>
         ) : (
-            <div className="permission-text flex-row">
+            <div className="permission-text read-only flex-row">
                 {viewerInfo.permission}
             </div>
         );

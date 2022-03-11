@@ -138,11 +138,13 @@ export interface ISearchPaginationState {
     numberOfResult: number;
 }
 
+type TSearchField = Partial<
+    Record<'table_name' | 'description' | 'column', boolean>
+>;
+
 export interface ISearchState extends ISearchPaginationState {
     searchFilters: Record<string, any>;
-    searchFields: Partial<
-        Record<'table_name' | 'description' | 'column', boolean>
-    >;
+    searchFields: TSearchField;
     searchOrder: SearchOrder;
     searchType: SearchType;
     searchString: string;
@@ -156,4 +158,15 @@ export interface ISearchState extends ISearchPaginationState {
         name: string;
         id: number;
     }>;
+
+    pastSearchStateByType: Partial<
+        Record<
+            SearchType,
+            {
+                searchString: string;
+                searchFilters: Record<string, any>;
+                searchFields: TSearchField;
+            }
+        >
+    >;
 }
