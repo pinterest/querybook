@@ -1,5 +1,7 @@
-import { copy } from 'lib/utils';
 import React, { useCallback, useRef } from 'react';
+import toast from 'react-hot-toast';
+
+import { copy } from 'lib/utils';
 import { Icon } from 'ui/Icon/Icon';
 import { MenuItem, Menu } from 'ui/Menu/Menu';
 import { ContextMenu } from './ContextMenu';
@@ -19,10 +21,10 @@ export const UrlContextMenu: React.FC<IUrlContextMenuProps> = ({
 
     const handleUrlCopy = useCallback(() => {
         const isRelative = !url.startsWith('http');
-
         copy(
             (isRelative ? location.protocol + '//' + location.host : '') + url
         );
+        toast.success('Copied');
     }, [url]);
 
     const renderMenu = () => (

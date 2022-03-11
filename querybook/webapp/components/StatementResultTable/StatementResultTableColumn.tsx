@@ -2,7 +2,6 @@ import clsx from 'clsx';
 import React, { useState, useCallback, useMemo, useRef } from 'react';
 
 import { IColumnTransformer } from 'lib/query-result/types';
-import { Level } from 'ui/Level/Level';
 import { IconButton } from 'ui/Button/IconButton';
 import {
     ColumnInfoTabType,
@@ -12,6 +11,7 @@ import { IFilterCondition, conditionsNotEmpty } from './useFilterCell';
 import { withBoundProps } from 'lib/utils/react-bind';
 import { Popover } from 'ui/Popover/Popover';
 import { stopPropagationAndDefault } from 'lib/utils/noop';
+import { CopyContextMenuWrapper } from 'ui/ContextMenu/CopyContextMenu';
 
 interface IStatementResultTableColumnProps
     extends IColumnInfoDropdownButtonProps {
@@ -46,7 +46,11 @@ export const StatementResultTableColumn: React.FC<IStatementResultTableColumnPro
     );
 
     return (
-        <Level className="result-table-header">
+        <CopyContextMenuWrapper
+            className="result-table-header horizontal-space-between"
+            text={column}
+            copyName="Copy column name"
+        >
             <span
                 className={`statement-result-table-title one-line-ellipsis ${
                     isExpanded ? 'expanded' : ''
@@ -78,7 +82,7 @@ export const StatementResultTableColumn: React.FC<IStatementResultTableColumnPro
                     setFilterCondition={setFilterCondition}
                 />
             </div>
-        </Level>
+        </CopyContextMenuWrapper>
     );
 };
 

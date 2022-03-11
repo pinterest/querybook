@@ -1,41 +1,31 @@
-import React from 'react';
+import clsx from 'clsx';
+import React, { useState } from 'react';
 
 import { PopoverLayout, Popover, PopoverDirection } from 'ui/Popover/Popover';
-import { useToggleState } from 'hooks/useToggleState';
 
-import { SoftButton } from './Button';
 import { IconButton } from './IconButton';
 import './InfoButton.scss';
 
-interface ICommonInfoButtonProps {
+interface IInfoButtonProps {
     layout?: PopoverLayout;
     popoverClassName?: string;
-}
-
-type IIconInfoButtonProps = {
-    type?: 'icon';
-    /**
-     * This is only used if type is button
-     */
     title?: string;
-} & ICommonInfoButtonProps;
-
-type IButtonInfoButtonProps = {
-    type: 'button';
-    title: string;
-} & ICommonInfoButtonProps;
-
-export type IInfoButtonProps = IIconInfoButtonProps | IButtonInfoButtonProps;
+}
 
 export const InfoButton: React.FunctionComponent<IInfoButtonProps> = ({
     layout = ['top'] as [PopoverDirection],
 
-    type,
-    title,
     popoverClassName,
     children,
 }) => {
-    const [showInfo, setShowInfo, toggleShowInfo] = useToggleState(false);
+    const [showInfo, setShowInfo] = useState(false);
+    const handleMouseEnter = React.useCallback(() => {
+        setShowInfo(true);
+    }, [setShowInfo]);
+    const handleMouseExit = React.useCallback(() => {
+        setShowInfo(false);
+    }, [setShowInfo]);
+
     const buttonRef = React.useRef<HTMLElement>();
     const popover = showInfo && (
         <Popover
@@ -45,35 +35,20 @@ export const InfoButton: React.FunctionComponent<IInfoButtonProps> = ({
             resizeOnChange
             noPadding
         >
-            <div
-                className={
-                    popoverClassName
-                        ? `info-button-popover ${popoverClassName}`
-                        : 'info-button-popover '
-                }
-            >
+            <div className={clsx('info-button-popover', popoverClassName)}>
                 {children}
             </div>
         </Popover>
     );
 
-    return type === 'button' ? (
-        <SoftButton
+    return (
+        <span
+            className="InfoButtonIcon"
             ref={buttonRef}
-            title={title}
-            onClick={toggleShowInfo}
-            icon="info"
+            onMouseEnter={handleMouseEnter}
+            onMouseLeave={handleMouseExit}
         >
-            {popover}
-        </SoftButton>
-    ) : (
-        <span className="InfoButtonIcon" ref={buttonRef}>
-            <IconButton
-                icon="info"
-                size={18}
-                onClick={toggleShowInfo}
-                noPadding
-            />
+            <IconButton icon="info" size={18} noPadding />
             {popover}
         </span>
     );
