@@ -24,7 +24,8 @@
     .sidebar-content-table,
     .sidebar-content-contents {
         width: 280px;
-        height: calc(100vh - 38px);
+        height: calc(100vh - 158px);
+        max-height: 1200px;
     }
 
     .sidebar-content-table {
@@ -39,8 +40,7 @@
         margin-right: 8px;
         border: var(--border);
         border-left: none;
-        border-top-right-radius: var(--border-radius);
-        border-top-left-radius: var(--border-radius);
+        border-radius: var(--border-radius);
         display: flex;
         flex-direction: column;
 
