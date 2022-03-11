@@ -9,7 +9,6 @@ import { IDataCell } from 'const/datadoc';
 import { DataDocContents } from './DataDocContents';
 import { DataTableViewMini } from 'components/DataTableViewMini/DataTableViewMini';
 
-import { Button } from 'ui/Button/Button';
 import { Level } from 'ui/Level/Level';
 import { IconButton } from 'ui/Button/IconButton';
 
@@ -78,14 +77,15 @@ export const DataDocLeftSidebar: React.FunctionComponent<IProps> = ({
     } else {
         contentDOM = (
             <div className={'sidebar-content sidebar-content-default'}>
-                <Button
+                <IconButton
                     className="contents-toggle-button"
                     icon="list"
-                    attached="left"
                     onClick={() => setContentState('contents')}
                     aria-label="Show doc contents"
                     data-balloon-pos="right"
                     color="light"
+                    invertCircle
+                    size={20}
                 />
             </div>
         );

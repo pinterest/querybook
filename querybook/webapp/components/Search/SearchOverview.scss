@@ -22,14 +22,12 @@
     }
 
     .search-bar-wrapper {
-        background-color: var(--bg-lightest);
-        padding: 4px 16px;
-
         .SearchBar {
             flex-grow: 1;
+            padding: 0px var(--padding) 4px;
             .DebouncedInput {
                 input {
-                    padding-left: 4px;
+                    padding: var(--padding);
                 }
                 ::placeholder {
                     color: var(--text-light);

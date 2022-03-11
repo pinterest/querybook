@@ -232,7 +232,7 @@ class QuerySnippetNavigatorComponent extends React.PureComponent<
         const { titleFilter } = this.state;
 
         return (
-            <div className="snippet-search flex-row">
+            <div className="snippet-search flex-row list-header">
                 <SearchBar
                     value={titleFilter}
                     onSearch={this.onTitleFilter}
@@ -267,6 +267,7 @@ class QuerySnippetNavigatorComponent extends React.PureComponent<
                 selectedTabKey={this.state.selectedTabKey}
                 onSelect={this.onTabSelect}
                 wide
+                className="list-header"
             />
         );
 
@@ -275,6 +276,7 @@ class QuerySnippetNavigatorComponent extends React.PureComponent<
                 anchor={this.filterButton.current}
                 onHide={this.toggleSnippetFilterPopover}
                 layout={['bottom']}
+                noPadding
             >
                 <QuerySnippetFilterPicker
                     filters={filters}
@@ -293,10 +295,8 @@ class QuerySnippetNavigatorComponent extends React.PureComponent<
         return (
             <>
                 <div className="QuerySnippetNavigator SidebarNavigator">
-                    <div className="list-header">
-                        {this.makeSearchFilterDOM()}
-                        {tabsDOM}
-                    </div>
+                    {this.makeSearchFilterDOM()}
+                    {tabsDOM}
                     <div className="list-content">
                         {this.makeQuerySnippetsListDOM()}
                     </div>

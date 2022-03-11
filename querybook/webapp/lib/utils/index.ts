@@ -132,10 +132,6 @@ export function getCodeEditorTheme(theme: string) {
     switch (theme) {
         case 'dark':
             return 'monokai';
-        case 'night':
-            return 'material-palenight';
-        case 'dawn':
-            return 'duotone-light';
         case 'lush':
             return 'solarized dark';
         default:

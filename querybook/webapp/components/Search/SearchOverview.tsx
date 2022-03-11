@@ -198,7 +198,6 @@ export const SearchOverview: React.FunctionComponent = () => {
                     hasIcon={isLoading}
                     hasClearSearch={true}
                     placeholder={placeholder}
-                    transparent
                     autoFocus
                 />
             </div>

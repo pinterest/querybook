@@ -1,4 +1,4 @@
-import { startCase } from 'lodash';
+import { startCase, lowerCase } from 'lodash';
 import React, { useState, useMemo } from 'react';
 import styled from 'styled-components';
 
@@ -105,7 +105,9 @@ export const SchemaTableItem: React.FC<{
             {isExpanded && (
                 <div className="board-scroll-wrapper">
                     {total === 0 ? (
-                        <div className="ph12">No items in this section.</div>
+                        <div className="empty-section-message">
+                            No {lowerCase(name)}
+                        </div>
                     ) : (
                         <InfinityScroll
                             elements={data}

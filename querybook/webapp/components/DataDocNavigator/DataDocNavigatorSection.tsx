@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useMemo } from 'react';
 import clsx from 'clsx';
-import { orderBy } from 'lodash';
+import { lowerCase, orderBy } from 'lodash';
 
 import { IDataDoc } from 'const/datadoc';
 import { DataDocGridItem } from './DataDocGridItem';
@@ -79,7 +79,11 @@ export const DataDocNavigatorSection: React.FC<INavigatorSectionProps> = ({
 
     const makeDataDocListDOM = () => {
         if (orderedDataDocs.length === 0) {
-            return <div className="ph12">No items in this section.</div>;
+            return (
+                <div className="empty-section-message">
+                    No {lowerCase(sectionHeader)}
+                </div>
+            );
         }
 
         const listDOM = orderedDataDocs.map((dataDoc) => {

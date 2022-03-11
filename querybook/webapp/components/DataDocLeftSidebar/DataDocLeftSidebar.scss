@@ -3,22 +3,17 @@
     position: sticky;
     top: 0;
     z-index: 5;
+    margin-left: var(--margin-sm);
 
     display: flex;
     flex-direction: column;
 
     .sidebar-content {
-        margin-top: 48px;
+        margin-top: 46px;
 
         &:not(.sidebar-content-default) {
             background-color: var(--bg-lightest);
         }
-    }
-
-    .contents-toggle-button {
-        border-left: none;
-        margin-right: 0;
-        padding-right: 8px;
     }
 
     .sidebar-content-table,
@@ -40,6 +35,7 @@
         border: var(--border);
         border-left: none;
         border-top-right-radius: var(--border-radius);
+        border-top-left-radius: var(--border-radius);
         display: flex;
         flex-direction: column;
 
@@ -48,6 +44,7 @@
             background-color: var(--bg-light);
             margin-bottom: var(--margin-xs);
             border-top-right-radius: var(--border-radius);
+            border-top-left-radius: var(--border-radius);
 
             user-select: none;
             font-weight: var(--bold-font);

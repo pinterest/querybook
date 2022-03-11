@@ -13,7 +13,7 @@ import { navigateWithinEnv } from 'lib/utils/query-string';
 import { generateFormattedDate } from 'lib/utils/datetime';
 import { getAppName } from 'lib/utils/global';
 import { titleize } from 'lib/utils';
-import { getHumanReadableByteSize, isNumeric } from 'lib/utils/number';
+import { getHumanReadableByteSize } from 'lib/utils/number';
 
 import {
     DataTableStats,
@@ -103,7 +103,6 @@ export class DataTableViewOverview extends React.PureComponent<IQuerybookTableVi
                     <KeyContentDisplay
                         key={row}
                         keyString={titleize(row, '_', ' ')}
-                        rightAlign={isNumeric(value)}
                     >
                         {value}
                     </KeyContentDisplay>
