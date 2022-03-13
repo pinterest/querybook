@@ -655,7 +655,12 @@ class DataDocComponent extends React.PureComponent<IProps, IState> {
                         isSaving={isSaving}
                         lastUpdated={lastUpdated}
                     />
-                    <div className="data-doc-container">
+                    <div
+                        className={
+                            'data-doc-container' +
+                            (isEditable ? '' : ' readonly')
+                        }
+                    >
                         <DataDocTemplateCell
                             dataDoc={dataDoc}
                             isEditable={isEditable}
