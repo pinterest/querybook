@@ -90,7 +90,7 @@ export const StyledButton = styled.span<StyledButtonProps>`
         position: absolute;
         cursor: default;
         border-radius: 100px;
-        background-color: var(--color-accent-light);
+        background-color: var(--color-accent-lightest);
 
         right: -8px;
         top: -8px;
