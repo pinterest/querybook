@@ -407,6 +407,8 @@ class DataDocComponent extends React.PureComponent<IProps, IState> {
                         error: 'Cloning failed.',
                     }
                 ),
+            cancelColor: 'default',
+            confirmIcon: 'copy',
         });
     }
 
@@ -790,7 +792,7 @@ class DataDocComponent extends React.PureComponent<IProps, IState> {
             );
         }
         if (!(dataDoc && dataDoc.cells)) {
-            return <Loading />;
+            return <Loading fullHeight />;
         }
 
         return this.renderDataDoc();

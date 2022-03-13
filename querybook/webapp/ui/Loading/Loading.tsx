@@ -1,5 +1,6 @@
 import React from 'react';
 import styled from 'styled-components';
+import { Icon } from 'ui/Icon/Icon';
 import { Title } from 'ui/Title/Title';
 
 export interface ILoadingProps {
@@ -7,6 +8,7 @@ export interface ILoadingProps {
     text?: string;
     className?: string;
 
+    fullHeight?: boolean;
     height?: number;
 }
 
@@ -15,21 +17,18 @@ const StyledLoading = styled.div`
     overflow: hidden;
     display: block;
     min-width: 100px;
-    min-height: ${(props) => `${props.height ?? 200}px`};
-    height: ${(props) => `${props.height ?? 330}px`};
-`;
+    min-height: ${(props) => `${props.height ?? 240}px`};
+    height: ${(props) => `${props.height ?? 360}px`};
 
-const StyledSpinner = styled.div`
-    position: relative;
-    top: 50%;
-    transform: translateY(-50%);
-    margin: auto;
-    padding-top: 16px;
-    padding-bottom: 16px;
-    width: 20px;
-    height: 20px;
-    font-size: var(--large-text-size);
-    color: var(--icon);
+    ${({ fullHeight }) =>
+        fullHeight &&
+        `
+        height: 100%;
+    `};
+
+    > div {
+        height: 100%;
+    }
 `;
 
 const StyledLoadingText = styled.div`
@@ -38,9 +37,9 @@ const StyledLoadingText = styled.div`
 `;
 
 export const LoadingIcon: React.FC = () => (
-    <StyledSpinner>
-        <i className="fa fa-spinner fa-pulse" />
-    </StyledSpinner>
+    <div className="flex-center">
+        <Icon name="loader" className="p8" color="light" />
+    </div>
 );
 
 export const LoadingRow: React.FC = () => (
@@ -54,6 +53,7 @@ export const Loading: React.FunctionComponent<ILoadingProps> = ({
     text = '',
     className = '',
     height,
+    fullHeight,
 }) => {
     const loadingIcon = useSpinner ? <LoadingIcon /> : null;
 
@@ -65,7 +65,11 @@ export const Loading: React.FunctionComponent<ILoadingProps> = ({
         ) : null;
 
     return (
-        <StyledLoading className={className} height={height}>
+        <StyledLoading
+            className={'Loading flex-center ' + className}
+            height={height}
+            fullHeight={fullHeight}
+        >
             {loadingIcon}
             {loadingText}
         </StyledLoading>

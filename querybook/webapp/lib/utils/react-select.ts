@@ -158,6 +158,28 @@ export const miniReactSelectStyles: StylesConfig<any, false, any> = mergeStyles(
     }
 );
 
+export const asyncReactSelectStyles: StylesConfig<
+    any,
+    false,
+    any
+> = mergeStyles(defaultReactSelectStyles, {
+    dropdownIndicator: (styles) => ({
+        ...styles,
+        display: 'none',
+    }),
+});
+
+export const miniAsyncReactSelectStyles: StylesConfig<
+    any,
+    false,
+    any
+> = mergeStyles(miniReactSelectStyles, {
+    dropdownIndicator: (styles) => ({
+        ...styles,
+        display: 'none',
+    }),
+});
+
 export function makeReactSelectStyle(
     modalMenu?: boolean,
     style?: Record<string, unknown>

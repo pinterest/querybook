@@ -42,6 +42,10 @@ export const DeleteDataDocButton: React.FunctionComponent<IDeleteDataDocButtonPr
                         }
                     );
                 },
+                confirmColor: 'cancel',
+                cancelColor: 'default',
+                confirmText: 'Confirm Deletion',
+                confirmIcon: 'alert-triangle',
             }),
         [docId]
     );

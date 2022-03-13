@@ -53,7 +53,7 @@ export const Loader: React.FunctionComponent<ILoaderProps> = ({
             <ErrorMessage>{formatError(errorObj)}</ErrorMessage>
         );
     } else if (loading) {
-        return placeHolder ? placeHolder : <Loading />;
+        return placeHolder ? placeHolder : <Loading fullHeight />;
     } else if (item == null) {
         // We already tried to load and nothing gets returned;
         // temporaily just return null

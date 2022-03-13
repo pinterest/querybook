@@ -175,6 +175,7 @@ export const DataDocViewersList: React.FunctionComponent<IDataDocViewersListProp
                                       checked === 'Public'
                                   )
                     }
+                    disabled={readonly}
                 />
             </div>
             <div className="public-row-description">

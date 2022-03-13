@@ -16,6 +16,7 @@ import './SearchResultItem.scss';
 import { IconButton } from 'ui/Button/IconButton';
 import { UrlContextMenu } from 'ui/ContextMenu/UrlContextMenu';
 import { stopPropagation } from 'lib/utils/noop';
+import { LoadingRow } from 'ui/Loading/Loading';
 
 const HighlightTitle: React.FunctionComponent<{
     title: string;
@@ -87,7 +88,11 @@ export const QueryItem: React.FunctionComponent<IQueryItemProps> = ({
     const selfRef = useRef<HTMLDivElement>();
 
     if (loading) {
-        return <div className="SearchResultItem QueryItem">Loading...</div>;
+        return (
+            <div className="SearchResultItem QueryItem flex-center">
+                <LoadingRow />
+            </div>
+        );
     }
 
     // Query cell title is data cell title
@@ -198,7 +203,11 @@ export const DataDocItem: React.FunctionComponent<IDataDocItemProps> = ({
     const handleClick = React.useMemo(() => openClick.bind(null, url), [url]);
 
     if (loading) {
-        return <div className="SearchResultItem DataDocItem">Loading...</div>;
+        return (
+            <div className="SearchResultItem DataDocItem flex-center">
+                <LoadingRow />
+            </div>
+        );
     }
 
     const title = preview.title || 'Untitled Doc';

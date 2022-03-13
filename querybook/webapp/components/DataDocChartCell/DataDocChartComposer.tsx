@@ -466,9 +466,49 @@ const DataDocChartComposerComponent: React.FunctionComponent<
         </>
     );
 
+    const renderPickerDOM = () => {
+        if (values.sourceType === 'custom') {
+            return null; // Custom data is sourced from internal context
+        }
+
+        const queryExecutionPicker =
+            values.sourceType !== 'execution' && queryExecutions.length ? (
+                <FormField label="Query Execution" stacked>
+                    <QueryExecutionPicker
+                        queryExecutionId={displayExecutionId}
+                        onSelection={setDisplayExecutionId}
+                        queryExecutions={queryExecutions}
+                        autoSelect
+                        shortVersion
+                    />
+                </FormField>
+            ) : null;
+
+        const statementExecutionPicker =
+            displayExecutionId != null && statementExecutions.length ? (
+                <FormField label="Execution Statement" stacked>
+                    <StatementExecutionPicker
+                        statementExecutionId={displayStatementId}
+                        onSelection={setDisplayStatementId}
+                        statementExecutions={statementExecutions}
+                        total={statementExecutions.length}
+                        autoSelect
+                    />
+                </FormField>
+            ) : null;
+
+        return (
+            <div className="DataDocChartComposer-exec-picker">
+                {queryExecutionPicker}
+                {statementExecutionPicker}
+            </div>
+        );
+    };
+
     const dataTabDOM = (
         <>
             {dataSourceDOM}
+            {renderPickerDOM()}
             {dataTransformationDOM}
         </>
     );
@@ -918,40 +958,6 @@ const DataDocChartComposerComponent: React.FunctionComponent<
         </div>
     );
 
-    const renderPickerDOM = () => {
-        if (values.sourceType === 'custom') {
-            return null; // Custom data is sourced from internal context
-        }
-
-        const queryExecutionPicker =
-            values.sourceType !== 'execution' && queryExecutions.length ? (
-                <QueryExecutionPicker
-                    queryExecutionId={displayExecutionId}
-                    onSelection={setDisplayExecutionId}
-                    queryExecutions={queryExecutions}
-                    autoSelect
-                />
-            ) : null;
-
-        const statementExecutionPicker =
-            displayExecutionId != null && statementExecutions.length ? (
-                <StatementExecutionPicker
-                    statementExecutionId={displayStatementId}
-                    onSelection={setDisplayStatementId}
-                    statementExecutions={statementExecutions}
-                    total={statementExecutions.length}
-                    autoSelect
-                />
-            ) : null;
-
-        return (
-            <div className="DataDocChartComposer-exec-picker">
-                <div>{queryExecutionPicker}</div>
-                <div>{statementExecutionPicker}</div>
-            </div>
-        );
-    };
-
     const chartDOM =
         values.chartType === 'table' ? (
             <DataDocChartCellTable data={chartData} title={values.title} />
@@ -964,9 +970,8 @@ const DataDocChartComposerComponent: React.FunctionComponent<
         );
 
     const makeLeftDOM = () => (
-        <div className="DataDocChartComposer-left">
-            <div className="DataDocChartComposer-chart">
-                {renderPickerDOM()}
+        <div className="DataDocChartComposer-left mr16">
+            <div className="DataDocChartComposer-chart pt16">
                 <div className="DataDocChartComposer-chart-sizer">
                     {chartData ? chartDOM : null}
                 </div>
@@ -976,23 +981,21 @@ const DataDocChartComposerComponent: React.FunctionComponent<
     );
 
     return (
-        <div className="DataDocChartComposer">
-            <div className="DataDocChartComposer-content">
-                {makeLeftDOM()}
-                <div className="DataDocChartComposer-right">
-                    {tabsDOM}
-                    {formDOM}
-                    {isEditable ? (
-                        <div className="DataDocChartComposer-button">
-                            <SoftButton
-                                onClick={() => handleSubmit()}
-                                title="Submit"
-                                fullWidth
-                                pushable={false}
-                            />
-                        </div>
-                    ) : null}
-                </div>
+        <div className="DataDocChartComposer mh16 pb16">
+            {makeLeftDOM()}
+            <div className="DataDocChartComposer-right">
+                {tabsDOM}
+                {formDOM}
+                {isEditable ? (
+                    <div className="DataDocChartComposer-button">
+                        <SoftButton
+                            onClick={() => handleSubmit()}
+                            title="Save"
+                            fullWidth
+                            pushable={false}
+                        />
+                    </div>
+                ) : null}
             </div>
         </div>
     );

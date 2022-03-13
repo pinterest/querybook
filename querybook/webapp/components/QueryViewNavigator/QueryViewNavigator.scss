@@ -3,6 +3,10 @@
 .QueryViewNavigator {
     position: relative;
 
+    .list-header {
+        background-color: transparent !important;
+    }
+
     .QueryViewFilter {
         display: flex;
         flex-direction: row;
@@ -37,10 +41,6 @@
     .scroll-wrapper {
         flex: 1;
         overflow-y: auto;
-    }
-
-    .loading-queries-message {
-        padding: 36px 20px;
     }
 
     .no-result-message {

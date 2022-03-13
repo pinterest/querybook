@@ -16,6 +16,7 @@ import { QueryViewFilter } from './QueryViewFilter';
 import { QueryResult } from './QueryResult';
 
 import './QueryViewNavigator.scss';
+import { Icon } from 'ui/Icon/Icon';
 
 type StateProps = ReturnType<typeof mapStateToProps>;
 type DispatchProps = ReturnType<typeof mapDispatchToProps>;
@@ -105,15 +106,15 @@ class QueryViewNavigatorComponent extends React.PureComponent<IProps> {
         ));
 
         const loadingDOM = isLoadingQueries ? (
-            <div className="loading-queries-message flex-center">
-                <i className="fa fa-spinner fa-pulse mr8" />
-                Loading Queries
+            <div className="flex-column m24">
+                <Icon name="loader" className="mb16" />
+                <span>Loading Queries</span>
             </div>
         ) : null;
 
         const noResultDOM =
             queryResults.length === 0 && !loadingDOM ? (
-                <div className="no-result-message">No Execution</div>
+                <div className="empty-section-message">No Executions</div>
             ) : null;
 
         return (
