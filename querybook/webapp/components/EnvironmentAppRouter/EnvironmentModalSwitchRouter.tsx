@@ -94,7 +94,7 @@ export const EnvironmentModalSwitchRouter: React.FC = () => {
         <React.Suspense
             fallback={
                 <Modal onHide={() => null}>
-                    <Loading />
+                    <Loading fullHeight />
                 </Modal>
             }
         >
@@ -103,7 +103,7 @@ export const EnvironmentModalSwitchRouter: React.FC = () => {
     );
     return (
         <>
-            <React.Suspense fallback={<Loading />}>
+            <React.Suspense fallback={<Loading fullHeight />}>
                 <Switch
                     location={
                         // Show lastNotModalLocation when a modal route is presented

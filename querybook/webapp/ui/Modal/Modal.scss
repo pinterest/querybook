@@ -13,13 +13,6 @@
         }
     }
 
-    .Modal-close {
-        position: absolute;
-        right: 8px;
-        top: 8px;
-        padding: 0;
-    }
-
     .FullScreenModal,
     .StandardModal,
     .CustomModal {
@@ -95,9 +88,17 @@
         background-color: var(--bg);
         max-height: 100vh;
         max-width: 100vw;
+        overflow: hidden;
+        .Modal-top {
+            margin: var(--margin-xs) var(--margin-sm);
+            .Modal-title {
+                font-size: var(--text-size);
+            }
+        }
         .Modal-content {
             position: relative;
             height: 100%;
+            overflow-y: auto;
         }
     }
 }

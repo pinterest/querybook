@@ -104,7 +104,7 @@ class EnvironmentsRouterComponent extends React.PureComponent<
         const { environmentsLoaded } = this.state;
 
         if (!environmentsLoaded) {
-            return <Loading />;
+            return <Loading fullHeight />;
         }
 
         const {

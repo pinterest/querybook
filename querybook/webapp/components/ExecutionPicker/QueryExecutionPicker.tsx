@@ -14,18 +14,25 @@ import { UserName } from 'components/UserBadge/UserName';
 import { Dropdown } from 'ui/Dropdown/Dropdown';
 import { StatusIcon } from 'ui/StatusIcon/StatusIcon';
 import { ToggleSwitch } from 'ui/ToggleSwitch/ToggleSwitch';
+import { Menu, MenuItem } from 'ui/Menu/Menu';
 
 import './QueryExecutionPicker.scss';
-import { Menu, MenuItem } from 'ui/Menu/Menu';
 
 interface IProps {
     queryExecutionId: number;
     onSelection: (id: number) => any;
     queryExecutions?: IQueryExecution[];
     autoSelect?: boolean;
+    shortVersion?: boolean;
 }
 export const QueryExecutionPicker: React.FunctionComponent<IProps> = React.memo(
-    ({ queryExecutionId, onSelection, queryExecutions, autoSelect }) => {
+    ({
+        queryExecutionId,
+        onSelection,
+        queryExecutions,
+        autoSelect,
+        shortVersion,
+    }) => {
         const [hideFailed, setHideFailed] = React.useState(false);
         const filteredQueryExecutions =
             React.useMemo(() => {
@@ -99,7 +106,9 @@ export const QueryExecutionPicker: React.FunctionComponent<IProps> = React.memo(
                     const dateString =
                         generateFormattedDate(createdAt, 'X') +
                         ', ' +
-                        moment.utc(createdAt, 'X').fromNow();
+                        (shortVersion
+                            ? ''
+                            : moment.utc(createdAt, 'X').fromNow(true));
 
                     return (
                         <MenuItem
@@ -111,7 +120,8 @@ export const QueryExecutionPicker: React.FunctionComponent<IProps> = React.memo(
                             })}
                             onClick={() => onSelection(execution.id)}
                         >
-                            Execution {execution.id}: {dateString} by
+                            {shortVersion ? '#' : 'Execution '}
+                            {execution.id}: {dateString} by
                             <span className="ml4 mr12">
                                 <UserName uid={execution.uid} />
                             </span>

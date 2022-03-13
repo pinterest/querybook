@@ -2,7 +2,10 @@ import React, { useCallback, useState } from 'react';
 import Select from 'react-select';
 import AsyncSelect, { Props as AsyncProps } from 'react-select/async';
 
-import { makeReactSelectStyle } from 'lib/utils/react-select';
+import {
+    asyncReactSelectStyles,
+    makeReactSelectStyle,
+} from 'lib/utils/react-select';
 import { overlayRoot } from 'ui/Overlay/Overlay';
 import { SearchTableResource } from 'resource/search';
 import { useSelector } from 'react-redux';
@@ -37,7 +40,10 @@ export const TableSelect: React.FunctionComponent<ITableSelectProps> = ({
     const [metastoreId, setMetastoreId] = useState(queryMetastores[0].id);
     const [searchText, setSearchText] = useState('');
     const asyncSelectProps: Partial<AsyncProps<any, false>> = {};
-    const tableReactSelectStyle = makeReactSelectStyle(usePortalMenu);
+    const tableReactSelectStyle = makeReactSelectStyle(
+        usePortalMenu,
+        asyncReactSelectStyles
+    );
     if (usePortalMenu) {
         asyncSelectProps.menuPortalTarget = overlayRoot;
     }

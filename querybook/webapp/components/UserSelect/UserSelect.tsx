@@ -2,7 +2,10 @@ import React from 'react';
 import AsyncSelect, { Props as AsyncProps } from 'react-select/async';
 import { debounce } from 'lodash';
 
-import { makeReactSelectStyle } from 'lib/utils/react-select';
+import {
+    asyncReactSelectStyles,
+    makeReactSelectStyle,
+} from 'lib/utils/react-select';
 import { overlayRoot } from 'ui/Overlay/Overlay';
 import { UserAvatar } from 'components/UserBadge/UserAvatar';
 import { SearchUserResource } from 'resource/search';
@@ -53,7 +56,10 @@ export const UserSelect: React.FunctionComponent<IUserSelectProps> = ({
 }) => {
     const [searchText, setSearchText] = React.useState('');
     const asyncSelectProps: Partial<AsyncProps<any, false>> = {};
-    const userReactSelectStyle = makeReactSelectStyle(usePortalMenu);
+    const userReactSelectStyle = makeReactSelectStyle(
+        usePortalMenu,
+        asyncReactSelectStyles
+    );
     if (usePortalMenu) {
         asyncSelectProps.menuPortalTarget = overlayRoot;
     }

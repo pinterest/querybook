@@ -50,7 +50,7 @@ export const EnvironmentAppRouter: React.FunctionComponent<
     }, [envName, selectEnvironment]);
 
     if (!envSelected || !engineLoaded) {
-        return <Loading />;
+        return <Loading fullHeight />;
     }
 
     return (
