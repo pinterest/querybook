@@ -62,13 +62,14 @@ def get_data_docs(
         docs = []
 
         if filter_mode == "mine":
-            docs = logic.get_data_doc_by_user(
+            docs, _ = logic.get_data_doc_by_user(
                 current_user.id,
                 environment_id=environment_id,
                 offset=offset,
                 limit=limit,
                 session=session,
             )
+            return docs
         elif filter_mode == "favorite":
             docs = logic.get_user_favorite_data_docs(
                 current_user.id, environment_id=environment_id, session=session
