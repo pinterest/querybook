@@ -69,7 +69,6 @@ def get_data_docs(
                 limit=limit,
                 session=session,
             )
-            return docs
         elif filter_mode == "favorite":
             docs = logic.get_user_favorite_data_docs(
                 current_user.id, environment_id=environment_id, session=session
