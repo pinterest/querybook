@@ -6,7 +6,8 @@
 
     .Card-title {
         margin: 0px 16px 16px;
-        font-size: var(--med-text-size);
+        font-size: var(--large-text-size);
+        font-family: var(--font-title);
     }
 
     .Card-content {
@@ -26,5 +27,8 @@
     }
     &.clickable {
         cursor: pointer;
+        &:hover {
+            background-color: var(--bg-hover);
+        }
     }
 }

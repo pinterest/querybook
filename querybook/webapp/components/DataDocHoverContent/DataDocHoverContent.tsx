@@ -18,16 +18,16 @@ export const DataDocHoverContent: React.FC<{
         return (
             <>
                 <UserBadge uid={ownerUid} mini />
-                <div className="DataDocHoverContent-date">
-                    Last updated: {updatedAtDate}
+                <div className="DataDocHoverContent-date mt4">
+                    Updated {updatedAtDate}
                 </div>
             </>
         );
     };
 
     return (
-        <div className="p8 DataDocHoverContent">
-            <div className="mb4">
+        <div className="DataDocHoverContent">
+            <div className="mb8">
                 <Title size={6}>{title || 'Untitled'}</Title>
             </div>
             <Loader

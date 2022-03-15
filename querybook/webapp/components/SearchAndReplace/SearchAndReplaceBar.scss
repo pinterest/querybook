@@ -5,6 +5,10 @@
     background-color: var(--bg);
     box-shadow: var(--box-shadow);
 
+    .expand-icon {
+        align-self: flex-start;
+    }
+
     .position-info {
         user-select: none;
         font-size: var(--xsmall-text-size);
@@ -26,7 +30,7 @@
             flex: 1;
             input {
                 border: none;
-                padding: 0;
+                padding: 0px 8px;
                 color: inherit;
                 font-size: var(--text-size);
                 min-height: 24px;

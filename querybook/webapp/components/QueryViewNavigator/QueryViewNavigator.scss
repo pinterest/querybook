@@ -24,6 +24,14 @@
         .QueryViewFilter-tags {
             flex-wrap: wrap;
             min-height: 100%;
+
+            .TagGroup {
+                margin-right: 8px;
+                margin-top: 2px;
+                + .TagGroup {
+                    margin-left: 0px;
+                }
+            }
         }
         .QueryViewFilter-icons {
             .IconButton {
