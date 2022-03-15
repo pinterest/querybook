@@ -40,7 +40,6 @@ export const UserLoader: React.FunctionComponent = ({ children }) => {
                     } = await UserResource.getLoginMethods();
 
                     if (getEnvironment() !== 'production' && oauthURL) {
-                        console.log('webpack is running');
                         window.location.href = oauthURL;
                     }
                     setShowSignup(hasSignup);
