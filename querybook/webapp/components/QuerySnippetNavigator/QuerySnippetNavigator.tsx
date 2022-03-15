@@ -27,6 +27,7 @@ import { SearchBar } from 'ui/SearchBar/SearchBar';
 import { Tabs } from 'ui/Tabs/Tabs';
 
 import './QuerySnippetNavigator.scss';
+import { titleize } from 'lib/utils';
 
 const NAVIGATOR_TABS = [
     {
@@ -153,7 +154,7 @@ class QuerySnippetNavigatorComponent extends React.PureComponent<
     public makeQuerySnippetsListDOM() {
         const { querySnippetById, querySnippetIds } = this.props;
 
-        const { searching, titleFilter } = this.state;
+        const { searching, titleFilter, selectedTabKey } = this.state;
 
         if (searching) {
             return <Loading />;
@@ -165,13 +166,17 @@ class QuerySnippetNavigatorComponent extends React.PureComponent<
             titleFilter
         );
 
-        const snippetsDOM = (
+        const snippetsDOM = snippets.length ? (
             <InfinityScroll<IQuerySnippet>
                 elements={snippets}
                 labelField={'title'}
                 itemHeight={28}
                 itemRenderer={this.snippetRowRenderer}
             />
+        ) : (
+            <div className="empty-section-message">
+                No {titleize(selectedTabKey)} Snippets
+            </div>
         );
 
         return <div className="snippets-wrapper">{snippetsDOM}</div>;
@@ -276,7 +281,6 @@ class QuerySnippetNavigatorComponent extends React.PureComponent<
                 anchor={this.filterButton.current}
                 onHide={this.toggleSnippetFilterPopover}
                 layout={['bottom']}
-                noPadding
             >
                 <QuerySnippetFilterPicker
                     filters={filters}

@@ -15,6 +15,7 @@ import { StatusIcon } from 'ui/StatusIcon/StatusIcon';
 
 import './QueryRunButton.scss';
 import { Icon } from 'ui/Icon/Icon';
+import { Tag } from 'ui/Tag/Tag';
 
 const EXECUTE_QUERY_SHORTCUT = getShortcutSymbols(
     KeyMap.queryEditor.runQuery.key
@@ -131,35 +132,25 @@ export const QueryEngineSelector: React.FC<IQueryEngineSelectorProps> = ({
         );
     };
 
-    let engineButtonDOM = null;
-    if (!disabled) {
-        const engineItems = queryEngines.map((engineInfo) => ({
-            name: <span className="query-engine-name">{engineInfo.name}</span>,
-            onClick: onEngineIdSelect.bind(null, engineInfo.id),
-            checked: engineInfo.id === engineId,
-            tooltip: engineInfo.description,
-        }));
-        engineButtonDOM = (
-            <Dropdown
-                customButtonRenderer={getEngineSelectorButtonDOM}
-                isRight
-                className="engine-selector-dropdown"
-            >
-                <ListMenu items={engineItems} type="select" isRight />
-            </Dropdown>
-        );
-    } else {
-        engineButtonDOM = queryEngineById[engineId].name;
-    }
-
-    return (
-        <div
-            className={clsx({
-                QueryEngineSelector: true,
-                readonly: disabled,
-            })}
+    const engineItems = queryEngines.map((engineInfo) => ({
+        name: <span className="query-engine-name">{engineInfo.name}</span>,
+        onClick: onEngineIdSelect.bind(null, engineInfo.id),
+        checked: engineInfo.id === engineId,
+        tooltip: engineInfo.description,
+    }));
+    const engineButtonDOM = (
+        <Dropdown
+            customButtonRenderer={getEngineSelectorButtonDOM}
+            isRight
+            className="engine-selector-dropdown"
         >
-            {engineButtonDOM}
-        </div>
+            <ListMenu items={engineItems} type="select" isRight />
+        </Dropdown>
+    );
+
+    return disabled ? (
+        <Tag className="mr16">{queryEngineById[engineId].name}</Tag>
+    ) : (
+        <div className="QueryEngineSelector">{engineButtonDOM}</div>
     );
 };

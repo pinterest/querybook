@@ -9,10 +9,12 @@ import {
     defaultReactSelectStyles,
 } from 'lib/utils/react-select';
 import { IQueryViewFilter } from 'redux/queryView/types';
-import { Title } from 'ui/Title/Title';
+import { FormField } from 'ui/Form/FormField';
 
 const StyledPicker = styled.div`
-    padding: 10px;
+    .FormField:first-child {
+        margin-top: 0px;
+    }
 `;
 
 interface IQueryViewFilterPickerProps {
@@ -29,49 +31,37 @@ export const QueryViewFilterPicker: React.FunctionComponent<IQueryViewFilterPick
     statusOptions,
 }) => {
     const enginePickerField = (
-        <div className="field mb8">
-            <div>
-                <Title size={6}>Filter by Engine</Title>
-            </div>
-            <div className="control">
-                <Select
-                    styles={defaultReactSelectStyles}
-                    value={valueFromId(engineOptions, filters.engine)}
-                    onChange={(value: IOption) => {
-                        const val = value ? value.value : null;
-                        updateFilter('engine', val);
-                    }}
-                    options={engineOptions}
-                    isClearable={true}
-                />
-            </div>
-        </div>
+        <FormField label="Engine" stacked>
+            <Select
+                styles={defaultReactSelectStyles}
+                value={valueFromId(engineOptions, filters.engine)}
+                onChange={(value: IOption) => {
+                    const val = value ? value.value : null;
+                    updateFilter('engine', val);
+                }}
+                options={engineOptions}
+                isClearable={true}
+            />
+        </FormField>
     );
 
     const statusPickerField = (
-        <div className="field">
-            <div>
-                <Title size={6}>Filter by Status</Title>
-            </div>
-
-            <div className="control">
-                <Select
-                    styles={defaultReactSelectStyles}
-                    value={valueFromId(statusOptions, filters.status)}
-                    onChange={(value: IOption) => {
-                        const val = value ? value.value : null;
-                        updateFilter('status', val);
-                    }}
-                    options={statusOptions}
-                    isClearable={true}
-                />
-            </div>
-        </div>
+        <FormField label="Status" stacked>
+            <Select
+                styles={defaultReactSelectStyles}
+                value={valueFromId(statusOptions, filters.status)}
+                onChange={(value: IOption) => {
+                    const val = value ? value.value : null;
+                    updateFilter('status', val);
+                }}
+                options={statusOptions}
+                isClearable={true}
+            />
+        </FormField>
     );
 
     return (
         <StyledPicker>
-            {/* {userPickerField} */}
             {enginePickerField}
             {statusPickerField}
         </StyledPicker>

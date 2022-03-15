@@ -20,7 +20,9 @@
 }
 
 .QuerySnippetFilterPicker {
-    padding: 10px;
+    .FormField:first-child {
+        margin-top: 0px;
+    }
 }
 
 .Modal .QuerySnippetNavigator {

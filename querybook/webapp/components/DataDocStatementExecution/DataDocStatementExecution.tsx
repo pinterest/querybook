@@ -17,6 +17,7 @@ import { ProgressBar } from 'ui/ProgressBar/ProgressBar';
 
 import './DataDocStatementExecution.scss';
 import { sanitizeAndExtraMarkdown } from 'lib/markdown';
+import { Icon } from 'ui/Icon/Icon';
 
 interface IProps {
     statementExecution: IStatementExecution;
@@ -129,10 +130,10 @@ export const DataDocStatementExecution: React.FC<IProps> = ({
                         </span>
                     </div>
                     {getMetaInfoDOM()}
-                    <span>
-                        <i className="fa fa-spinner fa-pulse mr8" />
+                    <div className="flex-row">
+                        <Icon name="loader" className="mr8" />
                         Loading query results...
-                    </span>
+                    </div>
                     {getLogDOM()}
                 </div>
             );

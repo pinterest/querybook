@@ -137,5 +137,6 @@
         font-weight: var(--extra-bold-font);
         padding: var(--padding-lg);
         color: var(--text-lightest-0);
+        user-select: none;
     }
 }

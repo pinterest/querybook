@@ -27,6 +27,7 @@ export interface ITabsProps {
     size?: 'small' | 'large';
     align?: 'right' | 'left' | 'center';
     selectColor?: boolean;
+    disabled?: boolean;
 }
 
 export const Tabs: React.FunctionComponent<ITabsProps> = ({
@@ -34,6 +35,7 @@ export const Tabs: React.FunctionComponent<ITabsProps> = ({
     selectedTabKey,
     onSelect,
     className,
+    disabled,
     vertical,
     pills,
     wide,
@@ -49,6 +51,7 @@ export const Tabs: React.FunctionComponent<ITabsProps> = ({
         wide,
         [size]: !!size,
         selectColor,
+        disabled,
 
         'center-align': align === 'center',
         'right-align': align === 'right',

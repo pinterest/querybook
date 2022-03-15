@@ -36,7 +36,10 @@
                     color: var(--color-accent-dark);
                 }
             }
-
+        }
+    }
+    &:not(.disabled) {
+        ul li {
             &:not(.active):hover {
                 cursor: pointer;
                 a {
@@ -82,10 +85,6 @@
                     }
                 }
 
-                &:not(.active):hover {
-                    background-color: var(--bg-hover);
-                }
-
                 &:first-child {
                     border-top-left-radius: var(--border-radius-sm);
                     border-bottom-left-radius: var(--border-radius-sm);
@@ -93,6 +92,14 @@
                 &:last-child {
                     border-top-right-radius: var(--border-radius-sm);
                     border-bottom-right-radius: var(--border-radius-sm);
+                }
+            }
+        }
+
+        &:not(.disabled) {
+            ul li {
+                &:not(.active):hover {
+                    background-color: var(--bg-hover);
                 }
             }
         }
@@ -137,5 +144,9 @@
                 }
             }
         }
+    }
+
+    &.disabled {
+        cursor: not-allowed;
     }
 }

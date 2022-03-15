@@ -89,7 +89,7 @@
 
 @mixin standard-textbox() {
     background-color: var(--bg-light);
-    border: var(--border);
+    border: none;
     border-radius: var(--border-radius-sm);
     box-shadow: none;
     width: 100%;

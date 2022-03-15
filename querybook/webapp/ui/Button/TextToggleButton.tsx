@@ -1,7 +1,9 @@
 import React from 'react';
 import clsx from 'clsx';
-import './TextToggleButton.scss';
+
 import { TooltipDirection } from 'const/tooltip';
+
+import './TextToggleButton.scss';
 
 export const TextToggleButton: React.FC<{
     value: boolean;
@@ -9,15 +11,17 @@ export const TextToggleButton: React.FC<{
     text: string;
     tooltip?: string;
     tooltipPos?: TooltipDirection;
-}> = ({ value, onChange, text, tooltip, tooltipPos = 'down' }) => {
-    const className = clsx({
+    className?: string;
+}> = ({ value, onChange, text, tooltip, tooltipPos = 'down', className }) => {
+    const combinedClassName = clsx({
         TextToggleButton: true,
         active: value,
         ml4: true,
+        [className]: true,
     });
     return (
         <span
-            className={className}
+            className={combinedClassName}
             onClick={() => onChange(!value)}
             aria-label={tooltip}
             data-balloon-pos={tooltipPos}

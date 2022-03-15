@@ -407,6 +407,8 @@ class DataDocComponent extends React.PureComponent<IProps, IState> {
                         error: 'Cloning failed.',
                     }
                 ),
+            cancelColor: 'default',
+            confirmIcon: 'copy',
         });
     }
 
@@ -643,6 +645,11 @@ class DataDocComponent extends React.PureComponent<IProps, IState> {
             );
             isSavingDataDoc = isSaving;
 
+            const docClassName = clsx({
+                'data-doc-container': true,
+                readonly: !isEditable,
+            });
+
             docDOM = (
                 <DataDocContentContainer>
                     {archiveMessageDOM}
@@ -653,7 +660,7 @@ class DataDocComponent extends React.PureComponent<IProps, IState> {
                         isSaving={isSaving}
                         lastUpdated={lastUpdated}
                     />
-                    <div className="data-doc-container">
+                    <div className={docClassName}>
                         <DataDocTemplateCell
                             dataDoc={dataDoc}
                             isEditable={isEditable}
@@ -790,7 +797,7 @@ class DataDocComponent extends React.PureComponent<IProps, IState> {
             );
         }
         if (!(dataDoc && dataDoc.cells)) {
-            return <Loading />;
+            return <Loading fullHeight />;
         }
 
         return this.renderDataDoc();

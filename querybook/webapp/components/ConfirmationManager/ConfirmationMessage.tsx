@@ -5,6 +5,7 @@ import { matchKeyMap, KeyMap } from 'lib/utils/keyboard';
 import { Button } from 'ui/Button/Button';
 import { Modal } from 'ui/Modal/Modal';
 import './ConfirmationMessage.scss';
+import { ButtonColorType } from 'ui/Button/ButtonTheme';
 
 export interface IConfirmationMessageProps {
     header?: string;
@@ -19,6 +20,15 @@ export interface IConfirmationMessageProps {
 
     // The hide dismiss makes confirmation modal a notification modal
     hideDismiss?: boolean;
+
+    confirmColor?: ButtonColorType;
+    cancelColor?: ButtonColorType;
+
+    confirmIcon?: string;
+    cancelIcon?: string;
+
+    confirmText?: string;
+    cancelText?: string;
 }
 
 export const ConfirmationMessage: React.FunctionComponent<IConfirmationMessageProps> = ({
@@ -28,6 +38,12 @@ export const ConfirmationMessage: React.FunctionComponent<IConfirmationMessagePr
     onDismiss,
     onHide,
     hideDismiss,
+    confirmColor = 'confirm',
+    cancelColor = 'cancel',
+    confirmIcon = 'check',
+    cancelIcon = 'x',
+    confirmText = 'Confirm',
+    cancelText = 'Cancel',
 }) => {
     const selfRef = useRef<HTMLDivElement>(null);
     useEffect(() => {
@@ -62,18 +78,18 @@ export const ConfirmationMessage: React.FunctionComponent<IConfirmationMessagePr
 
     const actionButtons = [
         <Button
-            onClick={onCloseButtonClick(false)}
-            icon="x"
-            title="Cancel"
             key="cancel"
-            color="cancel"
+            onClick={onCloseButtonClick(false)}
+            icon={cancelIcon}
+            title={cancelText}
+            color={cancelColor}
         />,
         <Button
-            color="confirm"
-            onClick={onCloseButtonClick(true)}
-            icon="check"
-            title="Confirm"
             key="confirm"
+            onClick={onCloseButtonClick(true)}
+            icon={confirmIcon}
+            title={confirmText}
+            color={confirmColor}
         />,
     ];
 

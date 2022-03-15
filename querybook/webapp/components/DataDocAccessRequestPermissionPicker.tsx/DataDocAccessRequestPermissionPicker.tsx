@@ -4,6 +4,7 @@ import { Popover } from 'ui/Popover/Popover';
 import { MenuItem, Menu } from 'ui/Menu/Menu';
 import { IconButton } from 'ui/Button/IconButton';
 import './DataDocAccessRequestPermissionPicker.scss';
+import { Icon } from 'ui/Icon/Icon';
 
 interface IPermissionPickerProp {
     uid: number;
@@ -49,8 +50,8 @@ export const DataDocAccessRequestPermissionPicker: React.FunctionComponent<IPerm
             className="permission-text flex-row mr8"
             onClick={() => setShowEditMenu(true)}
         >
-            <i className="fa fa-caret-down caret-icon" />
-            <span> {permission}</span>
+            <span>{permission}</span>
+            <Icon name="chevron-down" className="ml4" size={16} />
         </div>
     );
     const accessRequestControlButtonsDOM = (
@@ -60,12 +61,14 @@ export const DataDocAccessRequestPermissionPicker: React.FunctionComponent<IPerm
                 icon="check-circle"
                 onClick={() => addDataDocEditor(uid, permission)}
                 tooltip={`Allow ${permission} permission`}
-                tooltipPos="left"
+                tooltipPos="up"
             />
             <IconButton
                 className="access-request-control-button"
                 icon="x-circle"
                 onClick={() => rejectDataDocAccessRequest(uid)}
+                tooltip="Reject access request"
+                tooltipPos="up"
             />
         </div>
     );

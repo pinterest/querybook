@@ -60,3 +60,11 @@
         color: var(--color-accent-dark);
     }
 }
+.readonly {
+    .DataDocTextCell {
+        &:focus-within,
+        &:hover {
+            background-color: transparent;
+        }
+    }
+}
