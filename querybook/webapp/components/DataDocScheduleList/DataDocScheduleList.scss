@@ -1,0 +1,16 @@
+.ListDataTable {
+    margin: 40px;
+    width: calc(100% - 80px);
+
+    .ReactTable {
+        .rt-tbody {
+            .rt-tr-group {
+                border-bottom: 1px solid rgba(0, 0, 0, 0.09);
+            }
+
+            .rt-td {
+                text-align: center;
+            }
+        }
+    }
+}

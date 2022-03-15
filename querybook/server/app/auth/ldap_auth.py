@@ -36,11 +36,7 @@ def authenticate(username, password, session=None):
     conn.set_option(ldap.OPT_REFERRALS, 0)
 
     try:
-        if username.startswith("uid="):
-            dn = username
-        else:
-            dn = QuerybookSettings.LDAP_USER_DN.format(username)
-        conn.simple_bind_s(dn, password)
+        conn.simple_bind_s(username, password)
     except ldap.INVALID_CREDENTIALS:
         raise AuthenticationError("User does not exist or wrong password")
     return True

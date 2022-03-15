@@ -100,6 +100,14 @@ export const EntitySidebar: React.FunctionComponent<IEntitySidebarProps> = React
                         onClick={() => onSelectEntity('execution')}
                         active={selectedEntity === 'execution'}
                     />
+                    <Link to={`/${environment.name}/doc_schedules`}>
+                        <IconButton
+                            icon="clock"
+                            tooltip="Scheduled Docs"
+                            tooltipPos="right"
+                            title="Scheduled Docs"
+                        />
+                    </Link>
                     <Divider
                         marginTop="8px"
                         marginBottom="8px"

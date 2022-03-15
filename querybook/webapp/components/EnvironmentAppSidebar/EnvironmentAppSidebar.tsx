@@ -3,6 +3,8 @@ import { useLocation } from 'react-router-dom';
 import clsx from 'clsx';
 
 import { navigateWithinEnv } from 'lib/utils/query-string';
+import { useSelector, useDispatch } from 'react-redux';
+import { setCollapsed } from 'redux/querybookUI/action';
 
 import { QuerySnippetNavigator } from 'components/QuerySnippetNavigator/QuerySnippetNavigator';
 import { DataDocSchemaNavigator } from 'components/DataDocSchemaNavigator/DataDocSchemaNavigator';
@@ -12,6 +14,7 @@ import { Sidebar } from 'ui/Sidebar/Sidebar';
 import { Icon } from 'ui/Icon/Icon';
 
 import { Entity } from './types';
+import { Dispatch, IStoreState } from 'redux/store/types';
 import { EnvironmentTopbar } from './EnvironmentTopbar';
 import { EntitySidebar } from './EntitySidebar';
 import { EnvironmentDropdownButton } from './EnvironmentDropdownButton';
@@ -26,10 +29,14 @@ export const EnvironmentAppSidebar: React.FunctionComponent = () => {
     const location = useLocation();
     const isEmbed = location.pathname.includes(EMBED_PATH_STRING);
     const [collapsed, setCollapsed] = React.useState(isEmbed);
+    const collapsed: boolean = useSelector(
+        (state: IStoreState) => state.querybookUI.isEnvCollapsed
+    );
+    const dispatch: Dispatch = useDispatch();
     const [entity, setEntity] = React.useState<Entity>('datadoc');
 
     const handleEntitySelect = React.useCallback((e: Entity) => {
-        setCollapsed(false);
+        dispatch(setCollapsed(false));
         setEntity(e);
     }, []);
 
@@ -46,7 +53,7 @@ export const EnvironmentAppSidebar: React.FunctionComponent = () => {
                     sidebarRect.left + sidebarRect.width - event.clientX >
                         SIDEBAR_WIDTH / 2
                 ) {
-                    setCollapsed(true);
+                    dispatch(setCollapsed(true));
                 }
             }
         },
@@ -56,7 +63,7 @@ export const EnvironmentAppSidebar: React.FunctionComponent = () => {
     const handleCollapseKeyDown = React.useCallback(
         (evt) => {
             if (matchKeyMap(evt, KeyMap.overallUI.toggleSidebar)) {
-                setCollapsed(!collapsed);
+                dispatch(setCollapsed(!collapsed));
                 evt.stopPropagation();
                 evt.preventDefault();
             }
@@ -102,7 +109,7 @@ export const EnvironmentAppSidebar: React.FunctionComponent = () => {
 
     const collapseButton = (
         <span
-            onClick={() => setCollapsed(!collapsed)}
+            onClick={() => dispatch(setCollapsed(!collapsed))}
             className="collapse-sidebar-button"
         >
             <Icon name={collapsed ? 'chevron-right' : 'chevron-left'} />

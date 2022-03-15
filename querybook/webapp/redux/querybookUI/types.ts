@@ -54,6 +54,11 @@ export interface IReceiveDataDocNavSection extends Action {
     payload: Record<string, boolean>;
 }
 
+export interface ISetCollapsedAction extends Action {
+    type: '@@environment/SET_COLLAPSED';
+    payload: boolean;
+}
+
 export type QuerybookUIAction =
     | ISetConfirmationAction
     | IRemoveConfirmationAction
@@ -63,7 +68,8 @@ export type QuerybookUIAction =
     | ISetSidebarTableId
     | GlobalStateAction
     | ISetDataDocNavSection
-    | IReceiveDataDocNavSection;
+    | IReceiveDataDocNavSection
+    | ISetCollapsedAction;
 
 export interface IQuerybookUIState {
     announcements: IAnnouncement[];
@@ -74,6 +80,8 @@ export interface IQuerybookUIState {
     sidebarTableId: number;
 
     dataDocNavigatorSectionOpen: Record<string, boolean>;
+
+    isEnvCollapsed: boolean;
 }
 
 export type ThunkResult<R> = ThunkAction<

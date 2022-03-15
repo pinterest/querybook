@@ -9,6 +9,7 @@ from models.schedule import (
     TaskSchedule,
     TaskRunRecord,
 )
+from sqlalchemy.sql.expression import func, and_
 
 
 @with_session
@@ -89,7 +90,7 @@ def update_task_schedule(id, commit=True, session=None, no_changes=False, **kwar
             "no_changes",
         ],
         no_changes=no_changes,
-        **kwargs
+        **kwargs,
     )
 
     if commit:
@@ -142,6 +143,59 @@ def get_task_run_record_run_by_name(
     tasks = query.offset(offset).limit(limit).all()
     count = query.count()
     return tasks, count
+
+
+def get_data_doc_schedule_name(id: int):
+    return f"run_data_doc_{id}"
+
+
+@with_session
+def get_task_run_record_run_with_schedule(docs, session):
+    scheduled_doc_names = [get_data_doc_schedule_name(doc.id) for doc in docs]
+    all_schedules = (
+        session.query(TaskSchedule)
+        .filter(TaskSchedule.name.in_(scheduled_doc_names))
+        .all()
+    )
+
+    last_run_record_subquery = (
+        session.query(
+            TaskRunRecord.name, func.max(TaskRunRecord.created_at).label("max_date")
+        )
+        .group_by(TaskRunRecord.name)
+        .subquery()
+    )
+    all_task_run_records_subquery = session.query(TaskRunRecord).join(
+        last_run_record_subquery,
+        and_(
+            TaskRunRecord.created_at == last_run_record_subquery.c.max_date,
+            last_run_record_subquery.c.name == TaskRunRecord.name,
+        ),
+    )
+
+    all_docs = map(
+        lambda doc: dict(
+            {
+                "last_record": next(
+                    filter(
+                        lambda task: task.name == get_data_doc_schedule_name(doc.id),
+                        all_task_run_records_subquery,
+                    ),
+                    None,
+                ),
+                "schedule": next(
+                    filter(
+                        lambda task: task.name == get_data_doc_schedule_name(doc.id),
+                        all_schedules,
+                    ),
+                    None,
+                ),
+                "doc": doc,
+            }
+        ),
+        docs,
+    )
+    return all_docs
 
 
 @with_session
