@@ -233,13 +233,6 @@ export const SearchAndReplaceBar = React.forwardRef<
             </div>
         );
 
-        console.log(
-            'currentSearchResultIndex',
-            currentSearchResultIndex,
-            searchResults.length,
-            currentSearchResultIndex <= searchResults.length,
-            currentSearchResultIndex >= searchResults.length
-        );
         const replaceRow = showReplace && (
             <div className="flex-row mt4">
                 <div className="datadoc-search-input">
