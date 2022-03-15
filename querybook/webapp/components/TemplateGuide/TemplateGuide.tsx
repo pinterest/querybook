@@ -35,14 +35,12 @@ export const TemplateGuide: React.FC = () => {
 
     return (
         <div>
-            <div className="right-align">
-                <Tabs
-                    selectedTabKey={section}
-                    items={GUIDE_SECTIONS}
-                    onSelect={setSection as any}
-                />
-            </div>
-
+            <Tabs
+                selectedTabKey={section}
+                items={GUIDE_SECTIONS}
+                onSelect={setSection as any}
+                className="mb8"
+            />
             <Markdown>{GUIDE_CONTENT_PER_SECTION[section]}</Markdown>
         </div>
     );
