@@ -1,6 +1,7 @@
 import React from 'react';
 import { sample } from 'lodash';
 import { Title } from 'ui/Title/Title';
+import { Icon } from 'ui/Icon/Icon';
 
 const loadingHints: string[] = require('config/loading_hints.yaml').hints;
 
@@ -10,8 +11,8 @@ export const DataDocLoading: React.FC = () => {
     return (
         <div className="datadoc-loading">
             <div className="datadoc-loading-message">
-                <Title className="flex-center">
-                    <i className="fa fa-spinner fa-pulse mr8" />
+                <Title className="flex-column">
+                    <Icon name="loader" className="mb16" />
                     Loading DataDoc
                 </Title>
 

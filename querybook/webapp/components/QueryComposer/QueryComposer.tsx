@@ -328,8 +328,13 @@ const QueryComposer: React.FC = () => {
             minHeight={200}
         >
             <div className="query-execution-wrapper">
-                <div className="right-align">
-                    <IconButton icon="x" onClick={() => setExecutionId(null)} />
+                <div
+                    className="hide-execution flex-center pt8 mb4"
+                    onClick={() => setExecutionId(null)}
+                    aria-label="Hide Query Execution"
+                    data-balloon-pos="bottom"
+                >
+                    <IconButton icon="chevron-down" noPadding />
                 </div>
                 <QueryComposerExecution id={executionId} />
             </div>
@@ -354,7 +359,7 @@ const QueryComposer: React.FC = () => {
 
     const contentDOM = (
         <div className="QueryComposer-content-editor">
-            <div className="query-editor-wrapper">
+            <div className="query-editor-wrapper mb12">
                 <SearchAndReplace
                     ref={searchAndReplaceRef}
                     {...searchAndReplaceProps}
@@ -377,7 +382,7 @@ const QueryComposer: React.FC = () => {
                 onEngineIdSelect={setEngineId}
                 onRunClick={handleRunQuery}
                 hasSelection={editorHasSelection}
-                runButtonTooltipPos={'left'}
+                runButtonTooltipPos={'down'}
             />
         </div>
     );

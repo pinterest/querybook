@@ -9,6 +9,7 @@
 
     svg.feather-loader {
         animation: loading 3s linear forwards infinite;
+        color: var(--icon-light);
     }
 
     &.accent {
@@ -24,7 +25,7 @@
         color: var(--color-warning-dark);
     }
     &.light {
-        color: var(--icon);
+        color: var(--icon-light);
     }
 }
 

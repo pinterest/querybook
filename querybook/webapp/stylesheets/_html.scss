@@ -227,7 +227,12 @@ button {
 
 input,
 textarea {
-    @include standard-textbox();
+    &:not([disabled]) {
+        @include standard-textbox();
+    }
+    &:disabled {
+        cursor: not-allowed;
+    }
 }
 
 input:-webkit-autofill,

@@ -28,8 +28,8 @@ const signupSchema = Yup.object().shape({
 function validatePassword(values) {
     const errors = {};
 
-    if (values.password !== values.reapeatPassword) {
-        errors['reapeatPassword'] = 'Password must match';
+    if (values.password !== values.repeatPassword) {
+        errors['repeatPassword'] = 'Password must match';
     }
 
     return errors;
@@ -46,7 +46,7 @@ export const SignupForm: React.FunctionComponent<ISignupFormProps> = ({
             initialValues={{
                 username: '',
                 password: '',
-                reapeatPassword: '',
+                repeatPassword: '',
                 email: '',
             }}
             onSubmit={({ username, password, email }) =>
@@ -81,10 +81,10 @@ export const SignupForm: React.FunctionComponent<ISignupFormProps> = ({
                     />
                 );
 
-                const reapeatPasswordField = (
+                const repeatPasswordField = (
                     <SimpleField
                         type="input"
-                        name="reapeatPassword"
+                        name="repeatPassword"
                         inputType="password"
                         label="Repeat Password"
                     />
@@ -107,7 +107,7 @@ export const SignupForm: React.FunctionComponent<ISignupFormProps> = ({
                             {usernameField}
                             {emailField}
                             {passwordField}
-                            {reapeatPasswordField}
+                            {repeatPasswordField}
                             {errorMessageDOM}
                             <br />
                             <div className="center-align">{signupButton}</div>

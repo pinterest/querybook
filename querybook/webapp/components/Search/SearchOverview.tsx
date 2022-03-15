@@ -11,7 +11,7 @@ import { getCurrentEnv } from 'lib/utils/query-string';
 import {
     defaultReactSelectStyles,
     makeReactSelectStyle,
-    miniReactSelectStyles,
+    miniAsyncReactSelectStyles,
 } from 'lib/utils/react-select';
 import { titleize } from 'lib/utils';
 import * as searchActions from 'redux/search/action';
@@ -49,7 +49,10 @@ import { SearchDatePicker } from './SearchDatePicker';
 import { TableSelect } from './TableSelect';
 import './SearchOverview.scss';
 
-const userReactSelectStyle = makeReactSelectStyle(true, miniReactSelectStyles);
+const userReactSelectStyle = makeReactSelectStyle(
+    true,
+    miniAsyncReactSelectStyles
+);
 export const SearchOverview: React.FunctionComponent = () => {
     const {
         resultByPage,
@@ -494,7 +497,7 @@ export const SearchOverview: React.FunctionComponent = () => {
         });
 
         const addAuthorDOM = showAddSearchAuthor ? (
-            <div className="add-authors">
+            <div className="add-authors mt4">
                 <UserSelect
                     onSelect={(uid, name) => {
                         addSearchAuthorChoice(uid, name);

@@ -12,7 +12,6 @@ import { IQuerySnippet, IQueryForm } from 'redux/querySnippets/types';
 import { Dispatch, IStoreState } from 'redux/store/types';
 
 import { sendConfirm } from 'lib/querybookUI';
-import history from 'lib/router-history';
 import { generateFormattedDate } from 'lib/utils/datetime';
 
 import { BoundQueryEditor } from 'components/QueryEditor/BoundQueryEditor';
@@ -28,6 +27,7 @@ import { FormWrapper } from 'ui/Form/FormWrapper';
 import { Card } from 'ui/Card/Card';
 
 import './QuerySnippetComposer.scss';
+import { navigateWithinEnv } from 'lib/utils/query-string';
 
 function showErrorModal(error) {
     sendConfirm({
@@ -236,7 +236,7 @@ class QuerySnippetComposerComponent extends React.PureComponent<
                 onConfirm: async () => {
                     try {
                         await this.props.deleteQuerySnippet(querySnippet);
-                        history.push('/template/');
+                        navigateWithinEnv('/');
                     } catch (error) {
                         showErrorModal(error);
                     }

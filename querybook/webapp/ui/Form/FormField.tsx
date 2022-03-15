@@ -57,7 +57,7 @@ export const FormField: React.FunctionComponent<IFormFieldProps> = ({
     ) : null;
 
     const requiredIndicator = required ? (
-        <i className="FormFieldRequired">*Required</i>
+        <span className="FormFieldRequired">*Required</span>
     ) : null;
 
     // If user uses props to supply label, then auto wrap children to be
