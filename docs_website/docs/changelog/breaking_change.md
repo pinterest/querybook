@@ -7,13 +7,10 @@ slug: /changelog
 
 Here are the list of breaking changes that you should be aware of when updating Querybook:
 
-<<<<<<< HEAD
 ## v3.1.1
 
 Generic OAuth flow now works with the retrieved access_token in its 'Authorization Bearer' header parameter by default.
 
-=======
->>>>>>> 2f737eb (rebase master (#750))
 ## v3.1.0
 
 Query cells and query executions are now added as new indices in ElasticSearch.

@@ -63,9 +63,9 @@ export const EntitySidebar: React.FunctionComponent<IEntitySidebarProps> = React
                                         icon="clock"
                                         tooltip="Scheduled Docs"
                                         tooltipPos="right"
-                                        title="Scheduled Docs"
+                                        title="Scheds"
                                     />
-                                </Link> 
+                                </Link>
                             </>
                         )}
                     />
@@ -103,7 +103,6 @@ export const EntitySidebar: React.FunctionComponent<IEntitySidebarProps> = React
                         onClick={() => onSelectEntity('execution')}
                         active={selectedEntity === 'execution'}
                     />
-                   
                 </div>
                 <div className="apps-list flex-column">
                     <QueryEngineStatusButton />
