@@ -56,9 +56,9 @@ export const UserSelect: React.FunctionComponent<IUserSelectProps> = ({
 }) => {
     const [searchText, setSearchText] = React.useState('');
     const asyncSelectProps: Partial<AsyncProps<any, false>> = {};
-    const userReactSelectStyle = makeReactSelectStyle(
-        usePortalMenu,
-        asyncReactSelectStyles
+    const userReactSelectStyle = React.useMemo(
+        () => makeReactSelectStyle(usePortalMenu, asyncReactSelectStyles),
+        [usePortalMenu]
     );
     if (usePortalMenu) {
         asyncSelectProps.menuPortalTarget = overlayRoot;

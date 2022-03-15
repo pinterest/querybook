@@ -474,7 +474,7 @@ const DataDocChartComposerComponent: React.FunctionComponent<
         const queryExecutionPicker =
             values.sourceType !== 'execution' && queryExecutions.length ? (
                 <FormField
-                    label="Query Execution*"
+                    label="Query Execution (Display Only)"
                     stacked
                     help="Not Saved. Defaults to latest."
                 >
@@ -491,7 +491,7 @@ const DataDocChartComposerComponent: React.FunctionComponent<
         const statementExecutionPicker =
             displayExecutionId != null && statementExecutions.length ? (
                 <FormField
-                    label="Execution Statement*"
+                    label="Execution Statement (Display Only)"
                     stacked
                     help="Not Saved. Defaults to 1st."
                 >

@@ -19,7 +19,7 @@ export const FullScreenModal: React.FunctionComponent<IStandardModalProps> = ({
 
     const modalTitleDOM = (
         <div className="Modal-top horizontal-space-between">
-            {title && <div className="Modal-title">{title}</div>}
+            <div className="Modal-title">{title}</div>
             <IconButton
                 aria-label="close"
                 icon="x"
