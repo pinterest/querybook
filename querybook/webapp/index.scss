@@ -22,6 +22,7 @@
     display: flex;
     justify-content: center;
     font-size: var(--large-text-size);
+    user-select: none;
 }
 
 .ReactVirtualized__Grid {
