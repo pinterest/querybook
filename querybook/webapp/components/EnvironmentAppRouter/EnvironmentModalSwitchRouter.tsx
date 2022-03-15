@@ -19,6 +19,10 @@ const QueryComposer = React.lazy(
     () => import('components/QueryComposer/QueryComposer')
 );
 
+const DataDocScheduleList = React.lazy(
+    () => import('components/DataDocScheduleList/DataDocScheduleList')
+);
+
 // Modal Routes
 const QuerySnippetRoute = React.lazy(
     () => import('components/QuerySnippetRoute/QuerySnippetRoute')
@@ -120,6 +124,10 @@ export const EnvironmentModalSwitchRouter: React.FC = () => {
                     <Route
                         path="/:env/adhoc/"
                         render={() => <QueryComposer />}
+                    />
+                    <Route
+                        path="/:env/doc_schedules/"
+                        render={() => <DataDocScheduleList />}
                     />
                     <Route
                         path="/:env/_/embedded_editor/"

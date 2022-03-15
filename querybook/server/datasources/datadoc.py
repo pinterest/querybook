@@ -62,7 +62,7 @@ def get_data_docs(
         docs = []
 
         if filter_mode == "mine":
-            docs = logic.get_data_doc_by_user(
+            docs, _ = logic.get_data_doc_by_user(
                 current_user.id,
                 environment_id=environment_id,
                 offset=offset,
@@ -365,6 +365,27 @@ def run_data_doc(id):
 @register("/datadoc/<int:doc_id>/editor/", methods=["GET"])
 def get_datadoc_editors(doc_id):
     return logic.get_data_doc_editors_by_doc_id(doc_id)
+
+
+@register("/datadoc/scheduled/", methods=["GET"])
+def get_my_datadoc_with_schedule(
+    environment_id, offset=0, limit=10, filters=None, archived=False,
+):
+    verify_environment_permission([environment_id])
+
+    docs = []
+
+    docs, count = logic.get_data_doc_by_user(
+        current_user.id,
+        environment_id=environment_id,
+        offset=offset,
+        limit=limit,
+        filters=filters,
+    )
+
+    res = schedule_logic.get_task_run_record_run_with_schedule(docs=docs)
+
+    return {"docs": list(res), "count": count}
 
 
 @register("/datadoc/<int:doc_id>/editor/<int:uid>/", methods=["POST"])

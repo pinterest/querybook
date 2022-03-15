@@ -28,6 +28,10 @@ import {
     NotificationServiceAction,
 } from 'redux/notificationService/types';
 import { ITagState, TagAction } from 'redux/tag/types';
+import {
+    IScheduledDataDocState,
+    IReceiveDataWithSchemaAction,
+} from 'redux/scheduledDataDoc/types';
 
 export interface IStoreState {
     readonly user: IUserState;
@@ -46,6 +50,7 @@ export interface IStoreState {
     readonly board: IBoardState;
     readonly globalState: IGlobalStateState;
     readonly tag: ITagState;
+    readonly scheduledDocs: IScheduledDataDocState;
 }
 
 export type AllAction =
@@ -64,6 +69,7 @@ export type AllAction =
     | AdhocQueryAction
     | BoardAction
     | GlobalStateAction
-    | TagAction;
+    | TagAction
+    | IReceiveDataWithSchemaAction;
 
 export type Dispatch = ThunkDispatch<IStoreState, null, AllAction>;

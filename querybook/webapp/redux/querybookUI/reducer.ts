@@ -10,6 +10,7 @@ const initialState: IQuerybookUIState = {
         recent: true,
         favorite: true,
     },
+    isEnvCollapsed: false,
 };
 
 export default function querybookUI(
@@ -58,6 +59,11 @@ export default function querybookUI(
                     ...draft.dataDocNavigatorSectionOpen,
                     ...action.payload,
                 };
+                return;
+            }
+
+            case '@@environment/SET_COLLAPSED': {
+                draft.isEnvCollapsed = action.payload;
                 return;
             }
         }

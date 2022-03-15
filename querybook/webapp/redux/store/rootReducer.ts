@@ -16,6 +16,7 @@ import queryView from '../queryView/reducer';
 import search from '../search/reducer';
 import user from '../user/reducer';
 import tag from '../tag/reducer';
+import scheduledDocs from '../scheduledDataDoc/reducer';
 
 export default combineReducers({
     adhocQuery,
@@ -34,4 +35,5 @@ export default combineReducers({
     search,
     user,
     tag,
+    scheduledDocs,
 });

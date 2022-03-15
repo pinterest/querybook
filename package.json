@@ -36,6 +36,7 @@
         "@babel/preset-env": "^7.16.0",
         "@babel/preset-react": "^7.16.0",
         "@babel/preset-typescript": "^7.16.0",
+        "@datasert/cronjs-matcher": "^1.2.0",
         "@welldone-software/why-did-you-render": "^6.1.1",
         "axios": "0.21.1",
         "bignumber.js": "^9.0.1",
