@@ -40,9 +40,9 @@ export const TableSelect: React.FunctionComponent<ITableSelectProps> = ({
     const [metastoreId, setMetastoreId] = useState(queryMetastores[0].id);
     const [searchText, setSearchText] = useState('');
     const asyncSelectProps: Partial<AsyncProps<any, false>> = {};
-    const tableReactSelectStyle = makeReactSelectStyle(
-        usePortalMenu,
-        asyncReactSelectStyles
+    const tableReactSelectStyle = React.useMemo(
+        () => makeReactSelectStyle(usePortalMenu, asyncReactSelectStyles),
+        [usePortalMenu]
     );
     if (usePortalMenu) {
         asyncSelectProps.menuPortalTarget = overlayRoot;

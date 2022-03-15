@@ -645,6 +645,11 @@ class DataDocComponent extends React.PureComponent<IProps, IState> {
             );
             isSavingDataDoc = isSaving;
 
+            const docClassName = clsx({
+                'data-doc-container': true,
+                readonly: !isEditable,
+            });
+
             docDOM = (
                 <DataDocContentContainer>
                     {archiveMessageDOM}
@@ -655,12 +660,7 @@ class DataDocComponent extends React.PureComponent<IProps, IState> {
                         isSaving={isSaving}
                         lastUpdated={lastUpdated}
                     />
-                    <div
-                        className={
-                            'data-doc-container' +
-                            (isEditable ? '' : ' readonly')
-                        }
-                    >
+                    <div className={docClassName}>
                         <DataDocTemplateCell
                             dataDoc={dataDoc}
                             isEditable={isEditable}
