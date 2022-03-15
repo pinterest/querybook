@@ -614,7 +614,7 @@ class DataDocQueryCellComponent extends React.PureComponent<IProps, IState> {
             query.trim().length === 0 && isEditable ? (
                 <div className="add-snippet-wrapper">
                     <TextButton
-                        title="Add Template"
+                        title="Add Snippet"
                         onClick={this.toggleInsertQuerySnippetModal}
                     />
                 </div>
