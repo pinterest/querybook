@@ -17,3 +17,10 @@ export function getAppVersion() {
 export function getAppName() {
     return __APPNAME__;
 }
+
+/**
+ * Get the mode of the app, defaults to 'development'
+ */
+export function getEnvironment() {
+    return __ENVIRONMENT__;
+}

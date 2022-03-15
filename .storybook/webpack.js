@@ -59,6 +59,9 @@ module.exports = async (config) => {
             __APPNAME__: JSON.stringify(
                 process.env.QUERYBOOK_APPNAME ?? 'Querybook'
             ),
+            __ENVIRONMENT__: JSON.stringify(
+                (env && env.NODE_ENV) ?? 'production'
+            ),
         })
     );
 

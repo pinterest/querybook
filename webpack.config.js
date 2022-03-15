@@ -225,6 +225,7 @@ module.exports = (env, options) => {
             new webpack.DefinePlugin({
                 __VERSION__: JSON.stringify(require('./package.json').version),
                 __APPNAME__: JSON.stringify(appName),
+                __ENVIRONMENT__: JSON.stringify(mode)
             }),
             new webpack.IgnorePlugin({
                 resourceRegExp: /^\.\/locale$/,
