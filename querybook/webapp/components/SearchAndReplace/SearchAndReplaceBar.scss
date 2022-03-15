@@ -18,13 +18,17 @@
 
     .datadoc-search-input {
         padding: 4px;
-
         border-radius: var(--border-radius-sm);
-
         background-color: transparent;
-        width: 250px;
+        width: 240px;
         display: flex;
         align-items: center;
+
+        &:first-child {
+            .DebouncedInput input {
+                padding-right: 64px;
+            }
+        }
 
         .DebouncedInput {
             flex: 1;
@@ -42,5 +46,9 @@
                 background-color: var(--bg-select);
             }
         }
+    }
+    .data-doc-search-buttons {
+        margin-left: -72px;
+        margin-right: 16px;
     }
 }

@@ -141,6 +141,19 @@ export const SearchAndReplaceBar = React.forwardRef<
             },
         }));
 
+        const noPrevRes = React.useMemo(
+            () =>
+                searchResults.length === 0 ||
+                currentSearchResultIndex <= searchResults.length,
+            [searchResults.length, currentSearchResultIndex]
+        );
+        const noNextRes = React.useMemo(
+            () =>
+                searchResults.length === 0 ||
+                currentSearchResultIndex >= searchResults.length,
+            [searchResults.length, currentSearchResultIndex]
+        );
+
         const searchRow = (
             <div className="flex-row ">
                 <div className="datadoc-search-input">
@@ -154,6 +167,8 @@ export const SearchAndReplaceBar = React.forwardRef<
                         }}
                         className="flex-center mr8"
                     />
+                </div>
+                <div className="data-doc-search-buttons">
                     <TextToggleButton
                         text="Aa"
                         value={searchOptions.matchCase}
@@ -191,26 +206,20 @@ export const SearchAndReplaceBar = React.forwardRef<
                     icon="arrow-up"
                     noPadding
                     onClick={() => moveResultIndex(-1)}
-                    tooltip="Previous Result"
+                    tooltip={noPrevRes ? null : 'Previous Result'}
                     tooltipPos="down"
                     size={16}
-                    disabled={
-                        searchResults.length === 0 ||
-                        currentSearchResultIndex <= searchResults.length
-                    }
+                    disabled={noPrevRes}
                 />
                 <IconButton
                     icon="arrow-down"
                     noPadding
                     onClick={() => moveResultIndex(1)}
-                    tooltip="Next Result"
+                    tooltip={noNextRes ? null : 'Next Result'}
                     tooltipPos="down"
                     size={16}
                     className="ml4"
-                    disabled={
-                        searchResults.length === 0 ||
-                        currentSearchResultIndex >= searchResults.length
-                    }
+                    disabled={noNextRes}
                 />
                 <IconButton
                     className="ml16"

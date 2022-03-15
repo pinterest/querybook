@@ -45,14 +45,14 @@ export const OrderByButton: React.FC<ISortButtonProps> = ({
                 value={false}
                 onChange={onAscToggle}
                 tooltip={asc ? 'Ascending' : 'Descending'}
-                tooltipPos="up"
+                tooltipPos="left"
                 text={asc ? '↑' : '↓'}
             />
             <TextToggleButton
                 value={false}
                 onChange={onOrderByFieldToggle}
                 tooltip={`Order by ${orderByField}`}
-                tooltipPos="up"
+                tooltipPos="left"
                 text={buttonSymbol}
             />
         </span>
