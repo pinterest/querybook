@@ -1,5 +1,4 @@
 import React from 'react';
-import { useLocation } from 'react-router-dom';
 import clsx from 'clsx';
 
 import { navigateWithinEnv } from 'lib/utils/query-string';
@@ -23,19 +22,13 @@ import { matchKeyMap, KeyMap } from 'lib/utils/keyboard';
 import './EnvironmentAppSidebar.scss';
 
 const SIDEBAR_WIDTH = 320;
-const EMBED_PATH_STRING = 'embedded';
 
 export const EnvironmentAppSidebar: React.FunctionComponent = () => {
-    const location = useLocation();
-    const isEmbed = location.pathname.includes(EMBED_PATH_STRING);
-    const isEnvCollapsed: boolean = useSelector(
+    const collapsed: boolean = useSelector(
         (state: IStoreState) => state.querybookUI.isEnvCollapsed
     );
     const dispatch: Dispatch = useDispatch();
     const [entity, setEntity] = React.useState<Entity>('datadoc');
-    const [collapsed, setCollapsed] = React.useState<boolean>(
-        isEnvCollapsed || isEmbed
-    );
 
     const handleEntitySelect = React.useCallback((e: Entity) => {
         dispatch(setCollapsed(false));

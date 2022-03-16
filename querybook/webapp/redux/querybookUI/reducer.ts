@@ -1,4 +1,5 @@
 import { produce } from 'immer';
+import { isEmbedPath } from 'lib/utils/embed';
 import { IQuerybookUIState, QuerybookUIAction } from './types';
 
 const initialState: IQuerybookUIState = {
@@ -10,7 +11,7 @@ const initialState: IQuerybookUIState = {
         recent: true,
         favorite: true,
     },
-    isEnvCollapsed: false,
+    isEnvCollapsed: false || isEmbedPath(window.location.pathname),
 };
 
 export default function querybookUI(
