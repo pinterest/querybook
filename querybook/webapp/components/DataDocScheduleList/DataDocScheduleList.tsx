@@ -22,7 +22,7 @@ function useDataDocScheduleFiltersAndPagination() {
 
     const [docName, setDocName] = useState(initFilters.name ?? '');
     const [scheduledOnly, setScheduledOnly] = useState(
-        initFilters.scheduled_only ?? true
+        initFilters.scheduled_only ?? false
     );
 
     const filters: IScheduledDocFilters = useMemo(() => {
@@ -98,6 +98,9 @@ const DataDocScheduleList: React.FC = () => {
         totalPages,
 
         setPage,
+        // Page size is fixed for now, we can
+        // expand the option to let users customize
+        // the number of results in future
         setPageSize,
 
         filters,
@@ -139,74 +142,13 @@ const DataDocScheduleList: React.FC = () => {
                     key={docWithSchedule.doc.id}
                 />
             ))}
-
-            {/* <Table
-                rows={dataDocsWithSchedule}
-                cols={[
-                    {
-                        filterable: true,
-                        sortable: false,
-                        accessor: 'doc',
-                        Header: 'DataDoc',
-                        Cell: (data) => <DataDocName data={data.value} />,
-                    },
-                    {
-                        Header: 'Schedule',
-                        sortable: false,
-                        accessor: 'schedule.cron',
-                        Cell: (data) => (
-                            <HumanReadableCronSchedule cron={data.value} />
-                        ),
-                    },
-                    {
-                        width: 200,
-                        Header: 'Last Run',
-                        sortable: false,
-                        accessor: 'last_record.created_at',
-                        Cell: (data) => <LastRun createdAt={data.value} />,
-                    },
-                    {
-                        Header: 'Next Run',
-                        width: 200,
-                        sortable: false,
-                        accessor: 'schedule.cron',
-                        Cell: (data) => <NextRun cron={data.value} />,
-                    },
-                    {
-                        Header: 'Execution Time',
-                        width: 200,
-                        sortable: false,
-                        accessor: 'last_record',
-                        Cell: (data) => <LastRecord recordDates={data.value} />,
-                    },
-                    {
-                        Header: 'Status',
-                        maxWidth: 150,
-                        sortable: false,
-                        accessor: 'last_record',
-                        Cell: ({ value }) => {
-                            if (!value) {
-                                return <div>No History</div>;
-                            }
-                            return <TaskStatusIcon type={value.status} />;
-                        },
-                    },
-                    {
-                        Header: 'Actions',
-                        sortable: false,
-                        maxWidth: 150,
-                        accessor: 'doc.id',
-                        Cell: (data) => (
-                            <DataDocScheduleActionButtons docId={data.value} />
-                        ),
-                    },
-                ]}
-            /> */}
-            <Pagination
-                currentPage={page}
-                totalPage={totalPages}
-                onPageClick={setPage}
-            />
+            {totalPages > 1 && (
+                <Pagination
+                    currentPage={page}
+                    totalPage={totalPages}
+                    onPageClick={setPage}
+                />
+            )}
         </Container>
     );
 };

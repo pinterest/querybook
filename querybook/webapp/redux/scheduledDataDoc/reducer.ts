@@ -6,8 +6,10 @@ const initialState: Readonly<IScheduledDataDocState> = {
     docs: [],
     totalPages: 0,
     page: 0,
-    pageSize: 20,
-    filters: {},
+    pageSize: 10,
+    filters: {
+        scheduled_only: true,
+    },
 };
 
 function scheduledDocsReducer(state = initialState, action) {
