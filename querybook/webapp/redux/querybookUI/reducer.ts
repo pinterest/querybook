@@ -1,6 +1,7 @@
 import { produce } from 'immer';
-import { isEmbedPath } from 'lib/utils/embed';
 import { IQuerybookUIState, QuerybookUIAction } from './types';
+
+const EMBED_PATH_STRING = '/_/embedded';
 
 const initialState: IQuerybookUIState = {
     announcements: [],
@@ -11,7 +12,7 @@ const initialState: IQuerybookUIState = {
         recent: true,
         favorite: true,
     },
-    isEnvCollapsed: false || isEmbedPath(window.location.pathname),
+    isEnvCollapsed: window.location.pathname.includes(EMBED_PATH_STRING),
 };
 
 export default function querybookUI(
