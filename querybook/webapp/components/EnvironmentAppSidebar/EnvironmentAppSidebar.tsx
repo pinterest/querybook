@@ -28,12 +28,14 @@ const EMBED_PATH_STRING = 'embedded';
 export const EnvironmentAppSidebar: React.FunctionComponent = () => {
     const location = useLocation();
     const isEmbed = location.pathname.includes(EMBED_PATH_STRING);
-    const [collapsed, setCollapsed] = React.useState(isEmbed);
-    const collapsed: boolean = useSelector(
+    const isEnvCollapsed: boolean = useSelector(
         (state: IStoreState) => state.querybookUI.isEnvCollapsed
     );
     const dispatch: Dispatch = useDispatch();
     const [entity, setEntity] = React.useState<Entity>('datadoc');
+    const [collapsed, setCollapsed] = React.useState<boolean>(
+        isEnvCollapsed || isEmbed
+    );
 
     const handleEntitySelect = React.useCallback((e: Entity) => {
         dispatch(setCollapsed(false));
