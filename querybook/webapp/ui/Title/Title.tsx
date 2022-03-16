@@ -23,6 +23,8 @@ const StyledTitle = styled.p<IStyledTitleProps>`
         margin-top: ${(props) =>
             `calc(${props.size || 'var(--large-text-size)'} * -0.4)`};
     }
+
+    font-family: var(--font-title);
 `;
 
 export interface ITitleProps extends React.HTMLProps<HTMLParagraphElement> {

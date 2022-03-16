@@ -1,11 +1,16 @@
 import React from 'react';
 import styled from 'styled-components';
 import { Link } from 'ui/Link/Link';
-import { IEnvironment } from 'redux/environment/types';
+import { getWithinEnvUrl } from 'lib/utils/query-string';
 
-const UntitledText = styled.span`
+const DocTitle = styled.span`
+    font-weight: bold;
+    ${(props) =>
+        props.untitled &&
+        `
     opacity: 0.7;
     font-style: italic;
+    `}
 `;
 
 const StyledLink = styled(Link)`
@@ -15,11 +20,10 @@ const StyledLink = styled(Link)`
 
 export const DataDocName: React.FunctionComponent<{
     data: { title: string; id: number };
-    environment: IEnvironment;
-}> = ({ data, environment }) => {
-    return (
-        <StyledLink to={`/${environment.name}/datadoc/${data.id}/`}>
-            {data.title ? data.title : <UntitledText>Untitled</UntitledText>}
-        </StyledLink>
-    );
-};
+}> = ({ data }) => (
+    <StyledLink to={getWithinEnvUrl(`/datadoc/${data.id}/`)}>
+        <DocTitle untitled={!data.title}>
+            {data.title ? data.title : 'Untitled'}
+        </DocTitle>
+    </StyledLink>
+);

@@ -13,6 +13,10 @@ import type {
 
 import dataDocSocket from 'lib/data-doc/datadoc-socketio';
 import ds from 'lib/datasource';
+import {
+    IScheduledDoc,
+    IScheduledDocFilters,
+} from 'redux/scheduledDataDoc/types';
 
 export const DataDocResource = {
     getAll: (filterMode: string, environmentId: number) =>
@@ -144,4 +148,25 @@ export const DataDocScheduleResource = {
     run: (docId: number) => ds.save<null>(`/datadoc/${docId}/schedule/run/`),
     getLogs: (docId: number) =>
         ds.fetch<ITaskStatusRecord[]>(`/datadoc/${docId}/schedule/logs/`),
+
+    getAll: ({
+        envId,
+        limit,
+        offset,
+        filters,
+    }: {
+        envId: number;
+        limit: number;
+        offset: number;
+        filters: IScheduledDocFilters;
+    }) =>
+        ds.fetch<{ docs: IScheduledDoc[]; count: number }>(
+            '/datadoc/scheduled/',
+            {
+                environment_id: envId,
+                limit,
+                offset,
+                filters,
+            }
+        ),
 };

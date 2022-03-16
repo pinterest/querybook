@@ -5,9 +5,9 @@ export const LastRun: React.FunctionComponent<{ createdAt: number }> = ({
     createdAt,
 }) => {
     if (!createdAt) {
-        return <div />;
+        return null;
     }
 
     const lastRunDate = generateFormattedDate(createdAt);
-    return <div>{lastRunDate}</div>;
+    return <>{lastRunDate}</>;
 };

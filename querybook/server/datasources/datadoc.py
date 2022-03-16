@@ -62,7 +62,7 @@ def get_data_docs(
         docs = []
 
         if filter_mode == "mine":
-            docs, _ = logic.get_data_doc_by_user(
+            docs = logic.get_data_doc_by_user(
                 current_user.id,
                 environment_id=environment_id,
                 offset=offset,
@@ -240,17 +240,13 @@ def delete_favorite_data_doc(data_doc_id,):
     logic.unfavorite_data_doc(data_doc_id=data_doc_id, uid=current_user.id)
 
 
-def get_data_doc_schedule_name(id: int):
-    return f"run_data_doc_{id}"
-
-
 @register("/datadoc/<int:id>/schedule/", methods=["GET"])
 def get_datadoc_schedule(id):
     with DBSession() as session:
         assert_can_read(id, session=session)
         verify_data_doc_permission(id, session=session)
 
-        schedule_name = get_data_doc_schedule_name(id)
+        schedule_name = schedule_logic.get_data_doc_schedule_name(id)
         schedule = schedule_logic.get_task_schedule_by_name(
             schedule_name, session=session
         )
@@ -272,7 +268,7 @@ def create_datadoc_schedule(
     api_assert(kwargs_valid, kwargs_valid_reason)
     api_assert(validate_cron(cron), "Invalid cron expression")
 
-    schedule_name = get_data_doc_schedule_name(id)
+    schedule_name = schedule_logic.get_data_doc_schedule_name(id)
     with DBSession() as session:
         assert_can_write(id, session=session)
         data_doc = logic.get_data_doc_by_id(id, session=session)
@@ -296,7 +292,7 @@ def update_datadoc_schedule(id, cron=None, enabled=None, kwargs=None):
     if cron is not None:
         api_assert(validate_cron(cron), "Invalid cron expression")
 
-    schedule_name = get_data_doc_schedule_name(id)
+    schedule_name = schedule_logic.get_data_doc_schedule_name(id)
     with DBSession() as session:
         assert_can_write(id, session=session)
 
@@ -325,7 +321,7 @@ def update_datadoc_schedule(id, cron=None, enabled=None, kwargs=None):
 
 @register("/datadoc/<int:id>/schedule/", methods=["DELETE"])
 def delete_datadoc_schedule(id):
-    schedule_name = get_data_doc_schedule_name(id)
+    schedule_name = schedule_logic.get_data_doc_schedule_name(id)
     with DBSession() as session:
         assert_can_write(id, session=session)
         verify_data_doc_permission(id, session=session)
@@ -344,14 +340,14 @@ def get_datadoc_schedule_run(id):
         verify_data_doc_permission(id, session=session)
 
         runs, _ = schedule_logic.get_task_run_record_run_by_name(
-            name=get_data_doc_schedule_name(id), session=session
+            name=schedule_logic.get_data_doc_schedule_name(id), session=session
         )
         return runs
 
 
 @register("/datadoc/<int:id>/schedule/run/", methods=["POST"])
 def run_data_doc(id):
-    schedule_name = get_data_doc_schedule_name(id)
+    schedule_name = schedule_logic.get_data_doc_schedule_name(id)
     with DBSession() as session:
         assert_can_write(id, session=session)
         verify_data_doc_permission(id, session=session)
@@ -368,14 +364,12 @@ def get_datadoc_editors(doc_id):
 
 
 @register("/datadoc/scheduled/", methods=["GET"])
-def get_my_datadoc_with_schedule(
-    environment_id, offset=0, limit=10, filters=None, archived=False,
-):
+def get_my_datadoc_with_schedule(environment_id, offset=0, limit=10, filters=None):
+    assert limit <= 100, "Too many docs"
+
     verify_environment_permission([environment_id])
-
     docs = []
-
-    docs, count = logic.get_data_doc_by_user(
+    docs, count = schedule_logic.get_scheduled_data_docs_by_user(
         current_user.id,
         environment_id=environment_id,
         offset=offset,
@@ -383,9 +377,7 @@ def get_my_datadoc_with_schedule(
         filters=filters,
     )
 
-    res = schedule_logic.get_task_run_record_run_with_schedule(docs=docs)
-
-    return {"docs": list(res), "count": count}
+    return {"docs": docs, "count": count}
 
 
 @register("/datadoc/<int:doc_id>/editor/<int:uid>/", methods=["POST"])
