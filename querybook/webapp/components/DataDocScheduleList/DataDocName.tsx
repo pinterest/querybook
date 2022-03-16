@@ -2,11 +2,15 @@ import React from 'react';
 import styled from 'styled-components';
 import { Link } from 'ui/Link/Link';
 import { getWithinEnvUrl } from 'lib/utils/query-string';
-import { Icon } from 'ui/Icon/Icon';
 
-const UntitledText = styled.span`
+const DocTitle = styled.span`
+    font-weight: bold;
+    ${(props) =>
+        props.untitled &&
+        `
     opacity: 0.7;
     font-style: italic;
+    `}
 `;
 
 const StyledLink = styled(Link)`
@@ -18,9 +22,8 @@ export const DataDocName: React.FunctionComponent<{
     data: { title: string; id: number };
 }> = ({ data }) => (
     <StyledLink to={getWithinEnvUrl(`/datadoc/${data.id}/`)}>
-        <span className="flex-row">
-            {data.title ? data.title : <UntitledText>Untitled</UntitledText>}
-            <Icon name="external-link" className="ml4" size={14} />
-        </span>
+        <DocTitle untitled={!data.title}>
+            {data.title ? data.title : 'Untitled'}
+        </DocTitle>
     </StyledLink>
 );

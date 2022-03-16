@@ -48,7 +48,7 @@ export const DataDocScheduleItem: React.FC<IDataDocScheduleItemProps> = ({
             return null;
         }
 
-        const { doc, last_record: lastRecord } = docWithSchedule;
+        const { last_record: lastRecord } = docWithSchedule;
 
         if (!lastRecord) {
             return (
@@ -63,7 +63,7 @@ export const DataDocScheduleItem: React.FC<IDataDocScheduleItemProps> = ({
                 <div className="flex-row">
                     Last ran on <LastRun createdAt={lastRecord.created_at} />{' '}
                     for <LastRecordRunTime recordDates={lastRecord} />. The
-                    status of the run is{' '}
+                    status of the last run was{' '}
                     <TaskStatusIcon type={lastRecord.status} />.
                 </div>
             </div>
