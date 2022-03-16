@@ -104,8 +104,14 @@ class DataDocComponent extends React.PureComponent<IProps, IState> {
     public publishDataDocTitle(title: string) {
         setBrowserTitle(title || 'Untitled DataDoc');
         if (title) {
+            const pathParts = location.pathname.split('/');
+            const pathPrefix =
+                pathParts[2] === '_' && pathParts[3] === 'embedded_datadoc'
+                    ? pathParts.slice(0, 5).join('/')
+                    : pathParts.slice(0, 4).join('/');
+
             history.replace(
-                location.pathname.split('/').slice(0, 4).join('/') +
+                pathPrefix +
                     `/${sanitizeUrlTitle(title)}/` +
                     location.search +
                     location.hash
