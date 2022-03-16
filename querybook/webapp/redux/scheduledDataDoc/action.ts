@@ -1,5 +1,5 @@
-import { ThunkResult, IScheduledDoc } from './types';
-import { TaskScheduleResource } from 'resource/taskSchedule';
+import { ThunkResult, IScheduledDoc, IScheduledDocFilters } from './types';
+import { DataDocScheduleResource } from 'resource/dataDoc';
 
 export function getScheduledDocs({
     paginationPage,
@@ -8,31 +8,33 @@ export function getScheduledDocs({
 }: {
     paginationPage?: number;
     paginationPageSize?: number;
-    paginationFilter?: string;
+    paginationFilter?: IScheduledDocFilters;
 }): ThunkResult<Promise<IScheduledDoc[]>> {
     return async (dispatch, getState) => {
         const envId = getState().environment.currentEnvironmentId;
-        const scheduledDocs = getState().scheduledDocs;
-        const page = paginationPage ?? scheduledDocs.page;
-        const filtered = paginationFilter ?? scheduledDocs.filtered;
-        const pageSize = paginationPageSize ?? scheduledDocs.pageSize;
+        const scheduledDocsState = getState().scheduledDocs;
+
+        const page = paginationPage ?? scheduledDocsState.page;
+        const filters = paginationFilter ?? scheduledDocsState.filters;
+        const pageSize = paginationPageSize ?? scheduledDocsState.pageSize;
+
         const {
             data: { docs, count },
-        } = await TaskScheduleResource.getTasksWithSchedule({
+        } = await DataDocScheduleResource.getAll({
             envId,
             limit: pageSize,
             offset: page * pageSize,
-            filtered_title: filtered,
+            filters,
         });
 
         dispatch({
-            type: '@@dataDoc/RECEIVE_DATA_WITH_SCHEMA',
+            type: '@@scheduledDataDoc/RECEIVE_DOC_WITH_SCHEMA',
             payload: {
                 docs,
                 page,
                 pageSize,
                 total: count,
-                filtered,
+                filters,
             },
         });
 

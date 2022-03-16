@@ -4,44 +4,62 @@ import { Dispatch } from 'redux/store/types';
 import { SoftButton } from 'ui/Button/Button';
 import { Modal } from 'ui/Modal/Modal';
 import { getScheduledDocs } from 'redux/scheduledDataDoc/action';
-import { DataDocScheduleRunLogs } from 'components/DataDocSchedule/DataDocScheduleRunLogs';
-import { DataDocScheduleFormWrapper } from 'components/DataDocSchedule/DataDocSchedule';
+import { DataDocSchedule } from 'components/DataDocSchedule/DataDocSchedule';
 
-export const DataDocScheduleActionButtons: React.FunctionComponent<{
+export const DataDocScheduleActionEdit: React.FunctionComponent<{
     docId: number;
-}> = ({ docId }) => {
-    const [showForm, setShowForm] = useState(false);
-    const [showHistory, setShowHistory] = useState(false);
+    actionText?: string;
+}> = ({ docId, actionText = 'Edit' }) => {
+    const [showModal, setShowModal] = useState(false);
     const dispatch: Dispatch = useDispatch();
 
     return (
-        <div>
-            {showForm && (
+        <>
+            {showModal && (
                 <Modal
                     onHide={() => {
-                        setShowForm(false);
+                        setShowModal(false);
                         dispatch(getScheduledDocs({}));
                     }}
                 >
                     <div className="DataDocSchedule">
-                        <DataDocScheduleFormWrapper
+                        <DataDocSchedule
                             docId={docId}
                             isEditable={true}
+                            currentTab={'schedule'}
                         />
                     </div>
                 </Modal>
             )}
-            {showHistory && (
-                <Modal onHide={() => setShowHistory(false)}>
+            <SoftButton onClick={() => setShowModal(true)}>
+                {actionText}
+            </SoftButton>
+        </>
+    );
+};
+
+export const DataDocScheduleActionHistory: React.FunctionComponent<{
+    docId: number;
+    actionText?: string;
+}> = ({ docId, actionText = 'History' }) => {
+    const [showModal, setShowModal] = useState(false);
+
+    return (
+        <>
+            {showModal && (
+                <Modal onHide={() => setShowModal(false)}>
                     <div className="schedule-options">
-                        <DataDocScheduleRunLogs docId={docId} />
+                        <DataDocSchedule
+                            docId={docId}
+                            isEditable={false}
+                            currentTab={'history'}
+                        />
                     </div>
                 </Modal>
             )}
-            <SoftButton onClick={() => setShowForm(true)}>Edit</SoftButton>
-            <SoftButton onClick={() => setShowHistory(true)}>
-                History
+            <SoftButton onClick={() => setShowModal(true)}>
+                {actionText}
             </SoftButton>
-        </div>
+        </>
     );
 };

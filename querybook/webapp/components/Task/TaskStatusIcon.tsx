@@ -1,6 +1,6 @@
 import React from 'react';
 import styled from 'styled-components';
-import { TaskRunStatus } from 'const/schedule';
+import { StatusTypes, TaskRunStatus } from 'const/schedule';
 
 const StyledStatusIcon = styled.div`
     &.status-success {
@@ -16,32 +16,6 @@ const StyledStatusIcon = styled.div`
     }
 `;
 
-interface IStatusTypeList {
-    [key: number]: {
-        class: string;
-        iconClass: string;
-        text: string;
-    };
-}
-
-const statusTypes: IStatusTypeList = {
-    [TaskRunStatus.RUNNING]: {
-        class: 'status-in-progress',
-        iconClass: 'fas fa-spinner fa-spin',
-        text: 'In Progress',
-    },
-    [TaskRunStatus.SUCCESS]: {
-        class: 'status-success',
-        iconClass: 'fas fa-thumbs-up',
-        text: 'Success',
-    },
-    [TaskRunStatus.FAILURE]: {
-        class: 'status-failure',
-        iconClass: 'fas fa-thumbs-down',
-        text: 'Failure',
-    },
-};
-
 interface IStatusProps {
     type: TaskRunStatus;
 }
@@ -49,7 +23,7 @@ interface IStatusProps {
 export const TaskStatusIcon: React.FunctionComponent<IStatusProps> = ({
     type = 0,
 }) => {
-    const status = statusTypes[type];
+    const status = StatusTypes[type];
     return (
         <StyledStatusIcon className={status.class}>
             <span className="m4">
