@@ -2,7 +2,7 @@ import React, { useMemo } from 'react';
 import moment from 'moment';
 import { formatDuration } from 'lib/utils/datetime';
 
-export const LastRecord: React.FunctionComponent<{
+export const LastRecordRunTime: React.FunctionComponent<{
     recordDates: { created_at: number; updated_at: number };
 }> = ({ recordDates }) => {
     const hoursAndMinutesTime = useMemo(() => {
@@ -21,5 +21,5 @@ export const LastRecord: React.FunctionComponent<{
         return formatDuration(moment.duration(timeDiff, 'seconds'));
     }, [recordDates]);
 
-    return <div>{hoursAndMinutesTime}</div>;
+    return <>{hoursAndMinutesTime}</>;
 };

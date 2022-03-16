@@ -5,6 +5,32 @@ export enum TaskRunStatus {
     FAILURE,
 }
 
+export interface IStatusTypeList {
+    [key: number]: {
+        class: string;
+        iconClass: string;
+        text: string;
+    };
+}
+
+export const StatusTypes: IStatusTypeList = {
+    [TaskRunStatus.RUNNING]: {
+        class: 'status-in-progress',
+        iconClass: 'fas fa-spinner fa-spin',
+        text: 'In Progress',
+    },
+    [TaskRunStatus.SUCCESS]: {
+        class: 'status-success',
+        iconClass: 'fas fa-thumbs-up',
+        text: 'Success',
+    },
+    [TaskRunStatus.FAILURE]: {
+        class: 'status-failure',
+        iconClass: 'fas fa-thumbs-down',
+        text: 'Failure',
+    },
+};
+
 export type TaskType = 'prod' | 'user';
 
 export interface ITaskSchedule {

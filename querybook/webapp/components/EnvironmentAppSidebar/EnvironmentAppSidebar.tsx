@@ -35,17 +35,21 @@ export const EnvironmentAppSidebar: React.FunctionComponent = () => {
 
     const currentEnvironment = useSelector(currentEnvironmentSelector);
 
-    const handleEntitySelect = React.useCallback((newEntity: Entity | null) => {
-        setEntity((oldEntity) => {
-            if (oldEntity === newEntity) {
-                setCollapsed(true);
-                return null;
-            } else {
-                setCollapsed(false);
+    const handleEntitySelect = React.useCallback(
+        (newEntity: Entity | null) => {
+            setEntity((oldEntity) => {
+                if (collapsed) {
+                    dispatch(setCollapsed(false));
+                } else if (newEntity === oldEntity) {
+                    // Collapse sidebar if the entity is the same
+                    dispatch(setCollapsed(true));
+                }
+
                 return newEntity;
-            }
-        });
-    }, []);
+            });
+        },
+        [dispatch, collapsed]
+    );
 
     const scrollToCollapseSidebar = React.useCallback(
         (event, direction, elementRef) => {
@@ -75,7 +79,7 @@ export const EnvironmentAppSidebar: React.FunctionComponent = () => {
                 evt.preventDefault();
             }
         },
-        [collapsed]
+        [collapsed, dispatch]
     );
 
     useEvent('keydown', handleCollapseKeyDown);
