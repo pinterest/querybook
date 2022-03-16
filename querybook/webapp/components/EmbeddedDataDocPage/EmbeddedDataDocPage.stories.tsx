@@ -2,7 +2,8 @@ import React from 'react';
 
 export const _EmbeddedDataDocPage = (args) => {
     const iframeRef = React.useRef<HTMLIFrameElement>();
-    return <div
+    return (
+        <div
             style={{
                 display: 'flex',
                 flexDirection: 'column',
@@ -17,12 +18,13 @@ export const _EmbeddedDataDocPage = (args) => {
                 src={`${args.QUERYBOOK_URL}/${args.ENVIRONMENT_NAME}/_/embedded_datadoc/${args.DATADOC_ID}`}
             />
         </div>
+    );
 };
 
 _EmbeddedDataDocPage.args = {
     QUERYBOOK_URL: 'http://localhost:10001',
     ENVIRONMENT_NAME: 'demo_environment',
-    DATADOC_ID: 1
+    DATADOC_ID: 1,
 };
 
 export default {
