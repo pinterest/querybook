@@ -66,7 +66,7 @@ export const EntitySidebar: React.FunctionComponent<IEntitySidebarProps> = React
                                         active={location.pathname.startsWith(
                                             `/${environment.name}/doc_schedules/`
                                         )}
-                                        title="Scheds"
+                                        title="Schedule"
                                     />
                                 </Link>
                             </>

@@ -23,6 +23,7 @@ const EmbeddedCodeMirrorContainer = styled.div`
             max-height: ${(props) => props.height || '300px'};
         }
         font-size: var(--small-text-size);
+        border-radius: var(--border-radius-sm);
     }
 `;
 
