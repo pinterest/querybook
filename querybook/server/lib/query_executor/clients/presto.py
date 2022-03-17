@@ -1,6 +1,5 @@
 from pyhive import presto
 
-from lib.utils.utils import HTTPBasicAndProxyAuth
 from lib.query_executor.base_client import ClientBaseClass, CursorBaseClass
 from lib.query_executor.connection_string.presto import get_presto_connection_conf
 
@@ -21,30 +20,16 @@ class PrestoClient(ClientBaseClass):
         host = presto_conf.host
         port = 8080 if not presto_conf.port else presto_conf.port
 
-        # default to querybook credentials if user/pwd is not supplied
-        # we pass auth credentials through requests_kwargs instead of
-        # using requests library's builtin auth to bypass the https requirement
-        # and set the proper Authorization header
-        req_kwargs = {}
-
-        if username and password:
-            auth = (username, password)
-            if proxy_user and impersonate:
-                auth = HTTPBasicAndProxyAuth(
-                    auth,  # Basic Auth
-                    (proxy_user, "no pass"),  # proxy user auth, password not required
-                )
-            req_kwargs["auth"] = auth
-
         connection = presto.connect(
             host,
             port=port,
-            username=proxy_user or username,
+            principal_username=proxy_user if impersonate and proxy_user else username,
+            username=username,
+            password=password,
             catalog=presto_conf.catalog,
             schema=presto_conf.schema,
             source="querybook",
             protocol=presto_conf.protocol,
-            requests_kwargs=req_kwargs,
         )
         self._connection = connection
         super(PrestoClient, self).__init__()
