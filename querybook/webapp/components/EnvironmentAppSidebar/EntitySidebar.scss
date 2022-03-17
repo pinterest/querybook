@@ -11,9 +11,9 @@
     border-top-right-radius: var(--border-radius);
 
     .apps-list {
-        margin-bottom: 8px;
+        margin: 4px 0px;
         > * {
-            padding-bottom: 4px;
+            margin-bottom: 2px;
             display: flex;
             justify-content: center;
         }
@@ -23,6 +23,12 @@
         .QueryEngineStatusButton,
         .UserMenu {
             width: 100%;
+        }
+        .IconButton {
+            .Icon {
+                margin-bottom: 2px;
+                height: 24px;
+            }
         }
     }
     .sidebar-list {

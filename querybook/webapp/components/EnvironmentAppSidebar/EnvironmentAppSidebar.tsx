@@ -119,7 +119,7 @@ export const EnvironmentAppSidebar: React.FunctionComponent = () => {
     );
 
     const environmentPickerSection = collapsed ? (
-        <div className="collapsed-env">
+        <div className="collapsed-env flex-center">
             <EnvironmentDropdownButton
                 customButtonRenderer={() => (
                     <EnvironmentIcon

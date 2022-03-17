@@ -1,10 +1,10 @@
 .QueryComposer {
     width: 100%;
     overflow: hidden;
-    padding: 0px 16px;
+    padding: 0px 16px 16px;
 
     .QueryComposer-header {
-        height: 42px;
+        height: 48px;
         display: table;
 
         // for safari
@@ -36,7 +36,7 @@
             .SearchAndReplaceBar {
                 position: absolute;
                 z-index: 9;
-                right: 40px;
+                right: 48px;
             }
         }
 
@@ -45,8 +45,7 @@
             flex: 1;
             overflow-y: scroll;
             background-color: var(--bg-lightest);
-            border-top-right-radius: var(--border-radius);
-            border-top-left-radius: var(--border-radius);
+            border-radius: var(--border-radius);
 
             .hide-execution {
                 cursor: pointer;
