@@ -65,7 +65,7 @@ export const DataDocScheduleItem: React.FC<IDataDocScheduleItemProps> = ({
             return null;
         }
 
-        const tooltipText = `Run at ${generateFormattedDate(
+        const tooltipText = `Run on ${generateFormattedDate(
             lastRecord.created_at
         )} for ${getRunTime(lastRecord.created_at, lastRecord.updated_at)}`;
 
