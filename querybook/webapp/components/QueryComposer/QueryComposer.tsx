@@ -51,6 +51,7 @@ import { Modal } from 'ui/Modal/Modal';
 
 import './QueryComposer.scss';
 import { doesLanguageSupportUDF } from 'lib/utils/udf';
+import clsx from 'clsx';
 
 const useExecution = (dispatch: Dispatch, environmentId: number) => {
     const executionId = useSelector(
@@ -357,9 +358,14 @@ const QueryComposer: React.FC = () => {
         </Modal>
     );
 
+    const queryEditorWrapperClassname = clsx({
+        'query-editor-wrapper': true,
+        mb16: executionId != null,
+    });
+
     const contentDOM = (
         <div className="QueryComposer-content-editor">
-            <div className="query-editor-wrapper mb12">
+            <div className={queryEditorWrapperClassname}>
                 <SearchAndReplace
                     ref={searchAndReplaceRef}
                     {...searchAndReplaceProps}

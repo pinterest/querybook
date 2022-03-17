@@ -86,6 +86,12 @@ export const StyledButton = styled.span<StyledButtonProps>`
         }
     }
 
+    &:not(.icon-only) {
+        .Icon {
+            margin-right: 4px;
+        }
+    }
+
     .ping-message {
         position: absolute;
         cursor: default;

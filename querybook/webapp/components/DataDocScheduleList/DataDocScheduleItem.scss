@@ -1,6 +1,12 @@
 .DataDocScheduleItem {
-    background-color: var(--bg-light);
+    background-color: var(--bg-lightest);
     border-radius: var(--border-radius-sm);
 
-    padding: 12px;
+    padding: var(--padding) var(--padding-lg);
+    .schedule-text {
+        font-size: var(--text-size);
+    }
+    .next-text {
+        color: var(--text-light);
+    }
 }

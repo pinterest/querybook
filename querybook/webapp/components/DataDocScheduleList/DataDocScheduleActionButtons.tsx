@@ -1,15 +1,15 @@
 import React, { useState } from 'react';
 import { useDispatch } from 'react-redux';
 import { Dispatch } from 'redux/store/types';
-import { SoftButton } from 'ui/Button/Button';
+import { Button } from 'ui/Button/Button';
 import { Modal } from 'ui/Modal/Modal';
 import { getScheduledDocs } from 'redux/scheduledDataDoc/action';
 import { DataDocSchedule } from 'components/DataDocSchedule/DataDocSchedule';
 
 export const DataDocScheduleActionEdit: React.FunctionComponent<{
     docId: number;
-    actionText?: string;
-}> = ({ docId, actionText = 'Edit' }) => {
+    actionText: string;
+}> = ({ docId, actionText }) => {
     const [showModal, setShowModal] = useState(false);
     const dispatch: Dispatch = useDispatch();
 
@@ -31,23 +31,29 @@ export const DataDocScheduleActionEdit: React.FunctionComponent<{
                     </div>
                 </Modal>
             )}
-            <SoftButton onClick={() => setShowModal(true)}>
-                {actionText}
-            </SoftButton>
+            <Button
+                onClick={() => setShowModal(true)}
+                icon={actionText === 'Edit Schedule' ? 'edit' : 'plus'}
+                title={actionText}
+            />
         </>
     );
 };
 
 export const DataDocScheduleActionHistory: React.FunctionComponent<{
     docId: number;
+    docTitle: string;
     actionText?: string;
-}> = ({ docId, actionText = 'History' }) => {
+}> = ({ docId, docTitle, actionText = 'History' }) => {
     const [showModal, setShowModal] = useState(false);
 
     return (
         <>
             {showModal && (
-                <Modal onHide={() => setShowModal(false)}>
+                <Modal
+                    onHide={() => setShowModal(false)}
+                    title={docTitle + ' Run Record'}
+                >
                     <div className="schedule-options">
                         <DataDocSchedule
                             docId={docId}
@@ -57,9 +63,11 @@ export const DataDocScheduleActionHistory: React.FunctionComponent<{
                     </div>
                 </Modal>
             )}
-            <SoftButton onClick={() => setShowModal(true)}>
-                {actionText}
-            </SoftButton>
+            <Button
+                onClick={() => setShowModal(true)}
+                icon="list"
+                title={actionText}
+            />
         </>
     );
 };

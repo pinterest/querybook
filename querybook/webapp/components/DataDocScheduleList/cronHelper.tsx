@@ -22,11 +22,11 @@ function formatItemsSentence(items: string[]) {
 }
 
 const hourly = ({ minute }: IRecurrence) =>
-    `At ${minute} minutes past the hour, every hour, every day`;
+    `at ${minute} minutes past the hour, every hour, daily`;
 
 const daily = (cronRecurrence: IRecurrence) => {
     const localTime = getRecurrenceLocalTimeString(cronRecurrence, 'hh:mm a');
-    return `At ${localTime}, every day daily`;
+    return `at ${localTime}, daily`;
 };
 
 const weekly = (cronRecurrence: IRecurrence) => {
@@ -35,7 +35,7 @@ const weekly = (cronRecurrence: IRecurrence) => {
         cronRecurrence.on.dayWeek.map((day) => WEEKDAYS[day])
     );
 
-    return `At ${localTime}, only on ${daysOfWeek}, weekly`;
+    return `at ${localTime}, only on ${daysOfWeek}, weekly`;
 };
 
 const monthly = (cronRecurrence: IRecurrence) => {
@@ -44,7 +44,7 @@ const monthly = (cronRecurrence: IRecurrence) => {
         cronRecurrence.on.dayMonth.map(String)
     );
 
-    return `At ${localTime}, on day ${daysOfMonth} of the month`;
+    return `at ${localTime}, on day ${daysOfMonth} of the month`;
 };
 
 const yearly = (cronRecurrence: IRecurrence) => {
@@ -56,7 +56,7 @@ const yearly = (cronRecurrence: IRecurrence) => {
     const months = formatItemsSentence(
         cronRecurrence.on.month.map((m) => MONTHS[m - 1])
     );
-    return `At ${localTime}, on day ${daysOfMonth} of the month, only in ${months}`;
+    return `at ${localTime}, on day ${daysOfMonth} of the month, only in ${months}`;
 };
 
 export const cronFormatter = (recurrence: IRecurrence) => {

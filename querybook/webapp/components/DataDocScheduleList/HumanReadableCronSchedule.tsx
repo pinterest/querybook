@@ -15,5 +15,5 @@ export const HumanReadableCronSchedule: React.FunctionComponent<{
         return null;
     }
 
-    return <>{humanReadableCron(cron)}.</>;
+    return <>{humanReadableCron(cron)}</>;
 };
