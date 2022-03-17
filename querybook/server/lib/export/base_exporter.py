@@ -1,15 +1,14 @@
 from abc import ABCMeta, abstractmethod
+from typing import Generator, List
 from logic import query_execution as logic
 from lib.result_store import GenericReader
-from logic.result_store import string_to_csv
 
 
 class BaseExporter(metaclass=ABCMeta):
     @property
     @abstractmethod
     def exporter_name(self) -> str:
-        """Name of the exporter that will be shown on the frontend
-        """
+        """Name of the exporter that will be shown on the frontend"""
         raise NotImplementedError()
 
     @property
@@ -65,6 +64,14 @@ class BaseExporter(metaclass=ABCMeta):
         """
         raise NotImplementedError()
 
+    def _get_statement_execution_rows_len(
+        self, statement_execution_id: int,
+    ):
+        statement_execution = logic.get_statement_execution_by_id(
+            statement_execution_id
+        )
+        return statement_execution.result_row_count or 0
+
     def _get_statement_execution_columns_len(
         self, statement_execution_id: int,
     ):
@@ -76,36 +83,22 @@ class BaseExporter(metaclass=ABCMeta):
                 csv = reader.read_csv(number_of_lines=1)
                 if len(csv):
                     return len(csv[0])
-        return None
+        return 0
 
     def _get_statement_execution_result(
         self,
         statement_execution_id: int,
-        raw: bool = False,  # If raw, return unparsed csv text
         number_of_lines: int = None,  # By default, read all lines
-    ):
+    ) -> Generator[List[List[str]], None, None]:
         statement_execution = logic.get_statement_execution_by_id(
             statement_execution_id
         )
         if statement_execution.result_path:
-            with GenericReader(statement_execution.result_path) as reader:
-                if number_of_lines is None:
-                    try:
-                        result = reader.read_raw()
-                        if not raw:
-                            result = string_to_csv(result)
-                        return result
-                    except NotImplementedError:
-                        # Readers in which `read_raw` is not implemented (i.e. GoogleReader, S3Reader)
-                        # can support reading all lines in `read_lines` with number_of_lines=None
-                        pass
-                if raw:
-                    result = "\n".join(
-                        reader.read_lines(number_of_lines=number_of_lines)
-                    )
-                else:
-                    result = reader.read_csv(number_of_lines=number_of_lines)
-                return result
+            with GenericReader(
+                statement_execution.result_path,
+                max_read_size=number_of_lines,  # override max_read_size in some readers
+            ) as reader:
+                return reader.get_csv_iter(number_of_lines=number_of_lines)
         return None
 
     def _get_statement_execution_download_url(self, statement_execution_id: int):

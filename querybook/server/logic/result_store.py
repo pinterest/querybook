@@ -1,7 +1,7 @@
 import csv
 from io import StringIO
 import sys
-from typing import List
+from typing import Generator, List
 from datetime import datetime
 
 
@@ -58,13 +58,13 @@ def delete_key_value_store(key, commit=True, session=None):
             session.commit()
 
 
-def string_to_csv(raw_csv_str: str) -> List[List[str]]:
+def get_csv_reader(raw_csv_str: str) -> Generator[List[List[str]], None, None]:
     # Remove NULL byte to make sure csv conversion works
     raw_csv_str = raw_csv_str.replace("\x00", "")
-    result = []
+    raw_results = StringIO(raw_csv_str)
+    return csv.reader(raw_results, delimiter=",")
 
-    if len(raw_csv_str) > 0:
-        raw_results = StringIO(raw_csv_str)
-        csv_reader = csv.reader(raw_results, delimiter=",")
-        result = [row for row in csv_reader]
-    return result
+
+def string_to_csv(raw_csv_str: str) -> List[List[str]]:
+    csv_reader = get_csv_reader(raw_csv_str)
+    return [row for row in csv_reader]

@@ -7,6 +7,20 @@ slug: /changelog
 
 Here are the list of breaking changes that you should be aware of when updating Querybook:
 
+## v3.2.0
+
+Exporters can now export all rows of statement result (limited to the size of the exporter).
+`lib.export.exporters.gspread_exporter` was updated to support exporting all rows (up to google
+spreadsheets limits).
+
+-   Breaking changes:
+    -   custom exporter plugins will need to be updated to ensure exporter file/csv size limits are not exceeded
+    -   `_get_statement_execution_result` in `lib.export.base_exporter.BaseExporter`:
+        -   no longer takes `raw` as an argument
+        -   returns csv iterator of type `Generator[List[List[str]], None, None]`
+        -   by default returns all rows of result if `number_of_lines` parameter is not specified
+    -   `get_csv_iter` is a new abstract method of `lib.result_store.stores.BaseReader`, and needs to be implemented by any classes inheriting from this
+
 ## v3.1.2
 
 Generic OAuth flow now works with HOT-RELOAD activated (development mode).

@@ -1,5 +1,7 @@
 import csv
+from itertools import islice
 import os
+from typing import Optional
 from lib.result_store.stores.base_store import BaseReader, BaseUploader
 from env import QuerybookSettings
 
@@ -52,16 +54,16 @@ class FileUploader(BaseUploader):
 
 
 class FileReader(BaseReader):
-    def __init__(self, uri: str):
+    def __init__(self, uri: str, **kwargs):
         self.uri = get_file_uri(uri)
 
     def start(self):
         pass
 
-    def read_csv(self, number_of_lines: int):
+    def get_csv_iter(self, number_of_lines: Optional[int]):
         with open(self.uri) as result_file:
             reader = csv.reader(result_file)
-            return list(reader)
+            return islice(reader, number_of_lines)
 
     def read_lines(self, number_of_lines: int):
         with open(self.uri) as result_file:
