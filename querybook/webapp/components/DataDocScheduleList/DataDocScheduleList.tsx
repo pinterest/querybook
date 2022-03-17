@@ -8,7 +8,7 @@ import { DataDocScheduleItem } from './DataDocScheduleItem';
 import { Pagination } from 'ui/Pagination/Pagination';
 import { DebouncedInput } from 'ui/DebouncedInput/DebouncedInput';
 import { Checkbox } from 'ui/Checkbox/Checkbox';
-import { FullHeight } from 'ui/FullHeight/FullHeight';
+import { Container } from 'ui/Container/Container';
 
 import './DataDocScheduleList.scss';
 
@@ -98,7 +98,7 @@ const DataDocScheduleList: React.FC = () => {
     );
 
     return (
-        <FullHeight>
+        <Container>
             <div className="DataDocScheduleList">
                 <div className="horizontal-space-between mb16">
                     <div className="flex1 mr12">
@@ -132,7 +132,7 @@ const DataDocScheduleList: React.FC = () => {
                     />
                 )}
             </div>
-        </FullHeight>
+        </Container>
     );
 };
 

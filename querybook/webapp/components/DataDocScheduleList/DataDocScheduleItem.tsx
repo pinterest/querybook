@@ -1,9 +1,10 @@
 import React from 'react';
+import moment from 'moment';
+
 import { IScheduledDoc } from 'redux/scheduledDataDoc/types';
 import { DataDocName } from './DataDocName';
 import { HumanReadableCronSchedule } from './HumanReadableCronSchedule';
 
-import './DataDocScheduleItem.scss';
 import {
     DataDocScheduleActionEdit,
     DataDocScheduleActionHistory,
@@ -11,7 +12,8 @@ import {
 import { NextRun } from './NextRun';
 import { TaskStatusIcon } from 'components/Task/TaskStatusIcon';
 import { formatDuration, generateFormattedDate } from 'lib/utils/datetime';
-import moment from 'moment';
+
+import './DataDocScheduleItem.scss';
 
 interface IDataDocScheduleItemProps {
     docWithSchedule: IScheduledDoc;
