@@ -46,23 +46,26 @@ export const EntitySidebar: React.FunctionComponent<IEntitySidebarProps> = React
                                 </Link>
                                 <SearchContainer />
                                 <Link to={`/${environment.name}/adhoc/`}>
-                                    <div>
-                                        <IconButton
-                                            icon="edit"
-                                            tooltip={'Adhoc Query'}
-                                            tooltipPos="right"
-                                            active={location.pathname.startsWith(
-                                                `/${environment.name}/adhoc/`
-                                            )}
-                                            title="Adhoc"
-                                        />
-                                    </div>
+                                    <IconButton
+                                        icon="edit"
+                                        tooltip={'Adhoc Query'}
+                                        tooltipPos="right"
+                                        active={location.pathname.startsWith(
+                                            `/${environment.name}/adhoc/`
+                                        )}
+                                        title="Adhoc"
+                                    />
                                 </Link>
-                                <Link to={`/${environment.name}/doc_schedules`}>
+                                <Link
+                                    to={`/${environment.name}/doc_schedules/`}
+                                >
                                     <IconButton
                                         icon="clock"
                                         tooltip="Scheduled Docs"
                                         tooltipPos="right"
+                                        active={location.pathname.startsWith(
+                                            `/${environment.name}/doc_schedules/`
+                                        )}
                                         title="Scheds"
                                     />
                                 </Link>

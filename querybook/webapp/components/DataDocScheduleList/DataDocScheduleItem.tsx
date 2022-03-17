@@ -9,9 +9,9 @@ import {
     DataDocScheduleActionHistory,
 } from './DataDocScheduleActionButtons';
 import { NextRun } from './NextRun';
-import { LastRun } from './LastRun';
-import { LastRecordRunTime } from './LastRecordRunTime';
 import { TaskStatusIcon } from 'components/Task/TaskStatusIcon';
+import { formatDuration, generateFormattedDate } from 'lib/utils/datetime';
+import moment from 'moment';
 
 interface IDataDocScheduleItemProps {
     docWithSchedule: IScheduledDoc;
@@ -21,27 +21,36 @@ export const DataDocScheduleItem: React.FC<IDataDocScheduleItemProps> = ({
     docWithSchedule,
 }) => {
     const renderScheduleInfo = () => {
-        const { doc, schedule } = docWithSchedule;
+        const { schedule } = docWithSchedule;
+
         if (!schedule) {
             return null;
         }
 
-        const nextRunDOM = (
-            <div>
-                Next time to run: <NextRun cron={schedule.cron} />.
-            </div>
-        );
-
         return (
-            <div className="flex-row">
-                <span className="mr8">
-                    Scheduled to run:{' '}
-                    <HumanReadableCronSchedule cron={schedule.cron} />
-                </span>
-                {nextRunDOM}
+            <div className="mt4">
+                <div className="schedule-text">
+                    Runs <HumanReadableCronSchedule cron={schedule.cron} />
+                </div>
+                <div className="next-text mt4">
+                    Next Run: <NextRun cron={schedule.cron} />
+                </div>
             </div>
         );
     };
+
+    const getRunTime = React.useCallback(
+        (startTime: number, endTime: number) => {
+            const timeDiff = Math.ceil(endTime - startTime);
+
+            if (timeDiff === 0) {
+                return 'less than 1s';
+            }
+
+            return formatDuration(moment.duration(timeDiff, 'seconds'));
+        },
+        []
+    );
 
     const renderLastRunRecordInfo = () => {
         if (!docWithSchedule.schedule) {
@@ -51,25 +60,22 @@ export const DataDocScheduleItem: React.FC<IDataDocScheduleItemProps> = ({
         const { last_record: lastRecord } = docWithSchedule;
 
         if (!lastRecord) {
-            return (
-                <div>
-                    <div>No run records found.</div>
-                </div>
-            );
+            return null;
         }
 
-        const lastRunHistoryDOM = (
-            <div className="horizontal-space-between">
-                <div className="flex-row">
-                    Last ran on <LastRun createdAt={lastRecord.created_at} />{' '}
-                    for <LastRecordRunTime recordDates={lastRecord} />. The
-                    status of the last run was{' '}
-                    <TaskStatusIcon type={lastRecord.status} />.
-                </div>
+        const tooltipText = `Run at ${generateFormattedDate(
+            lastRecord.created_at
+        )} for ${getRunTime(lastRecord.created_at, lastRecord.updated_at)}`;
+
+        return (
+            <div
+                className="ml12 mt4"
+                aria-label={tooltipText}
+                data-balloon-pos="right"
+            >
+                <TaskStatusIcon type={lastRecord.status} />
             </div>
         );
-
-        return <div>{lastRunHistoryDOM}</div>;
     };
 
     const { doc, schedule, last_record: lastRecord } = docWithSchedule;
@@ -77,12 +83,16 @@ export const DataDocScheduleItem: React.FC<IDataDocScheduleItemProps> = ({
     return (
         <div className="DataDocScheduleItem mb12">
             <div className="horizontal-space-between">
-                <DataDocName data={docWithSchedule.doc} />
+                <div className="flex-row">
+                    <DataDocName data={docWithSchedule.doc} />
+                    {renderLastRunRecordInfo()}
+                </div>
                 <div>
                     {lastRecord && (
                         <DataDocScheduleActionHistory
                             docId={doc.id}
-                            actionText="View all records"
+                            actionText="View Run Record"
+                            docTitle={doc.title}
                         />
                     )}
                     <DataDocScheduleActionEdit
@@ -92,7 +102,6 @@ export const DataDocScheduleItem: React.FC<IDataDocScheduleItemProps> = ({
                 </div>
             </div>
             {renderScheduleInfo()}
-            {renderLastRunRecordInfo()}
         </div>
     );
 };

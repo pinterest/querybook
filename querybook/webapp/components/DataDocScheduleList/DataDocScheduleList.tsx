@@ -2,15 +2,15 @@ import React, { useEffect, useMemo, useState } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 import { Dispatch, IStoreState } from 'redux/store/types';
 import { getScheduledDocs } from 'redux/scheduledDataDoc/action';
-import { setCollapsed } from 'redux/querybookUI/action';
 
-import './DataDocScheduleList.scss';
 import { IScheduledDocFilters } from 'redux/scheduledDataDoc/types';
+import { DataDocScheduleItem } from './DataDocScheduleItem';
 import { Pagination } from 'ui/Pagination/Pagination';
 import { DebouncedInput } from 'ui/DebouncedInput/DebouncedInput';
 import { Checkbox } from 'ui/Checkbox/Checkbox';
-import { DataDocScheduleItem } from './DataDocScheduleItem';
-import { Container } from 'ui/Container/Container';
+import { FullHeight } from 'ui/FullHeight/FullHeight';
+
+import './DataDocScheduleList.scss';
 
 function useDataDocScheduleFiltersAndPagination() {
     const {
@@ -74,22 +74,6 @@ function useDataDocWithSchedules(
     return dataDocsWithSchedule;
 }
 
-function useCollapseSidebar() {
-    const dispatch: Dispatch = useDispatch();
-    const collapsed: boolean = useSelector(
-        (state: IStoreState) => state.querybookUI.isEnvCollapsed
-    );
-    useEffect(() => {
-        // or better option is to add two actions and move it to reducer?
-        const restoredValue = collapsed;
-        dispatch(setCollapsed(true));
-
-        return () => {
-            dispatch(setCollapsed(restoredValue));
-        };
-    }, []);
-}
-
 const DataDocScheduleList: React.FC = () => {
     const {
         page,
@@ -112,44 +96,43 @@ const DataDocScheduleList: React.FC = () => {
         pageSize,
         filters
     );
-    useCollapseSidebar();
 
     return (
-        <Container className="DataDocScheduleList">
-            <div className="horizontal-space-between mb12">
-                <div className="flex1 mr12">
-                    <DebouncedInput
-                        value={filters.name}
-                        onChange={setDocName}
-                        inputProps={{
-                            placeholder: 'Filter By Name',
-                        }}
-                    />
+        <FullHeight>
+            <div className="DataDocScheduleList">
+                <div className="horizontal-space-between mb16">
+                    <div className="flex1 mr12">
+                        <DebouncedInput
+                            value={filters.name}
+                            onChange={setDocName}
+                            inputProps={{
+                                placeholder: 'Filter by DataDoc Title',
+                            }}
+                        />
+                    </div>
+                    <div>
+                        <Checkbox
+                            title="Scheduled DataDocs Only"
+                            value={filters.scheduled_only}
+                            onChange={setScheduledOnly}
+                        />
+                    </div>
                 </div>
-
-                <div>
-                    <Checkbox
-                        title="Scheduled Only"
-                        value={filters.scheduled_only}
-                        onChange={setScheduledOnly}
+                {dataDocsWithSchedule.map((docWithSchedule) => (
+                    <DataDocScheduleItem
+                        docWithSchedule={docWithSchedule}
+                        key={docWithSchedule.doc.id}
                     />
-                </div>
+                ))}
+                {totalPages > 1 && (
+                    <Pagination
+                        currentPage={page}
+                        totalPage={totalPages}
+                        onPageClick={setPage}
+                    />
+                )}
             </div>
-
-            {dataDocsWithSchedule.map((docWithSchedule) => (
-                <DataDocScheduleItem
-                    docWithSchedule={docWithSchedule}
-                    key={docWithSchedule.doc.id}
-                />
-            ))}
-            {totalPages > 1 && (
-                <Pagination
-                    currentPage={page}
-                    totalPage={totalPages}
-                    onPageClick={setPage}
-                />
-            )}
-        </Container>
+        </FullHeight>
     );
 };
 

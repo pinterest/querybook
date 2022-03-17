@@ -64,7 +64,7 @@ export const Button = React.forwardRef<HTMLSpanElement, ButtonProps>(
             [className]: !!className,
             active,
             'flex-row': Boolean(iconDOM && textDOM),
-            'icon-only': Boolean(iconDOM && !textDOM),
+            'icon-only': Boolean(iconDOM && !textDOM && !children),
             [theme]: true,
         });
 
