@@ -200,6 +200,7 @@ common_sql_types = {
     "real": QuerybookColumnType.Number,
     "numeric": QuerybookColumnType.Number,
     "decimal": QuerybookColumnType.Number,
+    "float": QuerybookColumnType.Number,
     "double": QuerybookColumnType.Number,
     # Time
     "date": QuerybookColumnType.String,
