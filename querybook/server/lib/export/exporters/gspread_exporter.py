@@ -1,7 +1,8 @@
 from contextlib import contextmanager
 import datetime
+from itertools import islice
 import re
-from typing import Tuple
+from typing import Generator, List, Tuple
 
 from flask import request
 from flask_login import current_user
@@ -31,6 +32,7 @@ SCOPES = [
 GSPREAD_OAUTH_CALLBACK = "/gspread_oauth2callback"
 
 MAX_SHEETS_CELLS = 5000000
+MAX_NEW_ROWS = 40000
 
 _google_flow = None
 
@@ -104,8 +106,8 @@ class GoogleSheetsExporter(BaseExporter):
         )
 
     def _get_max_rows(self, statement_execution_id, start_cell: str = "A1"):
-        result_columns_len = (
-            self._get_statement_execution_columns_len(statement_execution_id) or 0
+        result_columns_len = self._get_statement_execution_columns_len(
+            statement_execution_id
         )
         start_cell_coord = worksheet_coord_to_coord(start_cell)
         sheet_start_coord = worksheet_coord_to_coord("A1")
@@ -137,17 +139,9 @@ class GoogleSheetsExporter(BaseExporter):
             with gspread_sheet(
                 gc, sheet_url, f"Querybook Result {statement_execution_id}"
             ) as sheet:
-                # Default case where only upload is needed
-                if (
-                    sheet_url is None
-                    and worksheet_title == "Sheet1"
-                    and start_cell == "A1"
-                ):
-                    self.upload_raw_csv_to_sheet(gc, sheet, statement_execution_id)
-                else:
-                    self.write_csv_to_sheet(
-                        gc, sheet, statement_execution_id, worksheet_title, start_cell,
-                    )
+                self.write_csv_to_sheet(
+                    gc, sheet, statement_execution_id, worksheet_title, start_cell,
+                )
 
             return f"https://docs.google.com/spreadsheets/d/{sheet.id}"
         except RefreshError:
@@ -156,14 +150,24 @@ class GoogleSheetsExporter(BaseExporter):
             # Continue to raise the error for the frontend client to see
             raise Exception("Invalid Google credentials, please try again.")
 
-    def upload_raw_csv_to_sheet(
-        self, gspread_client, sheet, statement_execution_id: int
+    def _update_worksheet(
+        self,
+        worksheet,
+        start_cell,
+        end_cell,
+        csv: Generator[List[List[str]], None, None],
     ):
-        max_rows = self._get_max_rows(statement_execution_id, start_cell="A1")
-        raw_csv = self._get_statement_execution_result(
-            statement_execution_id, raw=True, number_of_lines=max_rows
-        )
-        gspread_client.import_csv(sheet.id, raw_csv.encode("utf-8"))
+        curr_start_cell = start_cell
+        while True:
+            csv_chunk = list(islice(csv, MAX_NEW_ROWS))
+            worksheet.update("{}:{}".format(curr_start_cell, end_cell), csv_chunk)
+
+            chunk_len = len(csv_chunk)
+            if chunk_len < MAX_NEW_ROWS:
+                break
+
+            curr_col, curr_row = worksheet_coord_to_coord(curr_start_cell)
+            curr_start_cell = coord_to_worksheet_coord(curr_col, curr_row + chunk_len)
 
     def write_csv_to_sheet(
         self,
@@ -178,22 +182,20 @@ class GoogleSheetsExporter(BaseExporter):
             statement_execution_id, number_of_lines=max_rows
         )
 
-        if len(csv):
-            num_rows = len(csv)
-            num_cols = len(csv[0])
+        num_rows = self._get_statement_execution_rows_len(statement_execution_id)
+        num_cols = self._get_statement_execution_columns_len(statement_execution_id)
 
-            start_cell_coord = worksheet_coord_to_coord(start_cell)
-            end_cell_coord = (
-                start_cell_coord[0] + num_cols - 1,
-                start_cell_coord[1] + num_rows - 1,
-            )
-            end_cell = coord_to_worksheet_coord(end_cell_coord[0], end_cell_coord[1])
+        start_cell_coord = worksheet_coord_to_coord(start_cell)
+        end_cell_coord = (
+            start_cell_coord[0] + num_cols - 1,
+            start_cell_coord[1] + num_rows - 1,
+        )
+        end_cell = coord_to_worksheet_coord(end_cell_coord[0], end_cell_coord[1])
 
-            with gspread_worksheet(
-                sheet, worksheet_title, end_cell_coord[0], end_cell_coord[1]
-            ) as worksheet:
-
-                worksheet.update("{}:{}".format(start_cell, end_cell), csv)
+        with gspread_worksheet(
+            sheet, worksheet_title, end_cell_coord[0], end_cell_coord[1]
+        ) as worksheet:
+            self._update_worksheet(worksheet, start_cell, end_cell, csv)
 
     def get_credentials(self, uid):
         user = get_user_by_id(uid)

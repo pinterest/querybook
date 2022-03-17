@@ -48,6 +48,7 @@ def export_query_execution_task(
             broadcast=True,
         )
     except Exception as e:
+        LOG.error(e)
         socketio.emit(
             "export_status_info",
             {

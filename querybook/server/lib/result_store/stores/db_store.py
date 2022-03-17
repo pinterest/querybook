@@ -1,38 +1,40 @@
-from typing import List
+from typing import Generator, List, Optional
 
 from env import QuerybookSettings
 from lib.result_store.stores.base_store import BaseReader, BaseUploader
+from logic import result_store
 from logic.result_store import (
-    get_key_value_store,
     create_key_value_store,
-    string_to_csv,
+    get_csv_reader,
 )
 
 
 class DBReader(BaseReader):
-    def __init__(self, uri: str):
+    def __init__(self, uri: str, **kwargs):
         self._uri = uri
         self._text = ""
 
     def start(self):
-        kvs = get_key_value_store(self._uri)
+        kvs = result_store.get_key_value_store(self._uri)
         if kvs:
             self._text = kvs.value
 
-    def _get_first_n_lines(self, n: int) -> List[str]:
-        n_plus_one = n + 1
-        lines = self._text.split("\n", n_plus_one)
-        if len(lines) == n_plus_one:
+    def _get_first_n_lines(self, n: Optional[int]) -> List[str]:
+        maxsplit = n if n is not None else -1
+        lines = self._text.split("\n", maxsplit)
+        if n is not None and len(lines) == n + 1:
             self._text = lines[-1]
             return lines[:-1]
         else:
             self._text = ""
             return lines
 
-    def read_csv(self, number_of_lines: int) -> List[List[str]]:
+    def get_csv_iter(
+        self, number_of_lines: Optional[int] = None
+    ) -> Generator[List[List[str]], None, None]:
         curr_lines = self._get_first_n_lines(number_of_lines)
         raw_csv_str = "\n".join(curr_lines)
-        return string_to_csv(raw_csv_str)
+        return get_csv_reader(raw_csv_str)
 
     def read_lines(self, number_of_lines: int) -> List[str]:
         return self._get_first_n_lines(number_of_lines)
