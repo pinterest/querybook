@@ -1,5 +1,5 @@
 import React from 'react';
-import { Title } from 'ui/Title/Title';
+import { AccentText } from 'ui/StyledText/StyledText';
 
 interface IProps {
     title: React.ReactNode;
@@ -10,9 +10,9 @@ export const DataTableViewOverviewSection: React.FC<IProps> = ({
 }) =>
     children ? (
         <div className="mb36">
-            <div className="overview-section-top mb12">
-                <Title size={5}>{title}</Title>
-            </div>
+            <AccentText className="mb12" size="med" color="text" weight="bold">
+                {title}
+            </AccentText>
             <div className="overview-section-content">{children}</div>
         </div>
     ) : null;

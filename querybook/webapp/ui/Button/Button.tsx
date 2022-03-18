@@ -85,7 +85,7 @@ export const Button = React.forwardRef<HTMLSpanElement, ButtonProps>(
                 {pingDOM}
                 {iconDOM}
                 {textDOM}
-                <AccentText>{children}</AccentText>
+                <AccentText className="flex-row">{children}</AccentText>
             </StyledButton>
         );
     }

@@ -29,9 +29,9 @@ exports[`matches test renderer snapshot serializes the styles 1`] = `
   <span
     className="Menu__MenuItem-sc-13z76nv-1 MenuItem"
   >
-    <span
+    <div
       accent={true}
-      className="StyledText__StyledTextSpan-sc-1ldibmc-0 gAWWUQ Text"
+      className="StyledText__StyledTextSpan-sc-1ldibmc-0 dFZulM Text"
       noUserSelect={false}
     >
       <span
@@ -43,7 +43,7 @@ exports[`matches test renderer snapshot serializes the styles 1`] = `
           test
         </span>
       </span>
-    </span>
+    </div>
   </span>
 </div>
 `;

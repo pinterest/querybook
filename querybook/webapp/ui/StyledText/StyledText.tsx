@@ -37,7 +37,7 @@ interface IProps extends IStyledTextProps {
     tooltipPos?: 'up' | 'left' | 'right' | 'down';
 }
 
-const StyledTextSpan = styled((props: IStyledTextProps) => <span {...props} />)`
+const StyledTextSpan = styled((props: IStyledTextProps) => <div {...props} />)`
     ${(props) =>
         props.weight
             ? ` font-weight: ${

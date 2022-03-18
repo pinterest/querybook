@@ -60,6 +60,11 @@ export const StyledButton = styled.span<StyledButtonProps>`
     ${(props) => (props.fontWeight ? `font-weight: ${props.fontWeight}` : '')};
 
     cursor: ${(props) => (props.disabled ? 'not-allowed' : 'pointer')};
+
+    * {
+        cursor: ${(props) =>
+            props.disabled ? 'not-allowed' : 'pointer'} !important;
+    }
     padding: ${(props) => (props.size === 'small' ? '2px 6px' : '4px 12px')};
 
     white-space: nowrap;

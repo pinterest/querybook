@@ -7,14 +7,23 @@ import { AccentText } from 'ui/StyledText/StyledText';
 const StyledStatusIcon = styled.div`
     &.status-success {
         color: var(--color-true);
+        * {
+            color: var(--color-true);
+        }
     }
 
     &.status-in-progress {
         color: var(--color-warning-dark);
+        * {
+            color: var(--color-warning-dark);
+        }
     }
 
     &.status-failure {
         color: var(--color-false);
+        * {
+            color: var(--color-false);
+        }
     }
 `;
 

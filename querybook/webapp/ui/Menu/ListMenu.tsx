@@ -1,7 +1,6 @@
 import React from 'react';
 import clsx from 'clsx';
 
-import { calculateTooltipSize } from 'lib/utils';
 import { TooltipDirection } from 'const/tooltip';
 
 import { Dropdown } from 'ui/Dropdown/Dropdown';
@@ -65,9 +64,6 @@ export const ListMenu: React.FunctionComponent<IProps> = ({
         if (action.tooltip) {
             actionProps['aria-label'] = action.tooltip;
             actionProps['data-balloon-pos'] = action.tooltipPos || 'left';
-            actionProps['data-balloon-length'] = calculateTooltipSize(
-                action.tooltip
-            );
         }
 
         const buttonContent = (

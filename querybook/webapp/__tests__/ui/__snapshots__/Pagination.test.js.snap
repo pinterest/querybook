@@ -88,36 +88,46 @@ exports[`matches test renderer snapshot serializes the styles 1`] = `
     className="Pagination-previous"
   >
     <span
-      className="StyledButton-aqwbwz-0 dVMIdD Button fill"
+      className="StyledButton-aqwbwz-0 gCGLEB Button fill"
       color="var(--text-light)"
       onClick={[Function]}
       size="medium"
     >
-      <span
+      <div
         accent={true}
-        className="StyledText__StyledTextSpan-sc-1ldibmc-0 gAWWUQ Text"
+        className="StyledText__StyledTextSpan-sc-1ldibmc-0 dFZulM Text"
         noUserSelect={false}
       >
         Previous
-      </span>
+      </div>
+      <div
+        accent={true}
+        className="StyledText__StyledTextSpan-sc-1ldibmc-0 dFZulM Text flex-row"
+        noUserSelect={false}
+      />
     </span>
   </div>
   <div
     className="Pagination-next"
   >
     <span
-      className="StyledButton-aqwbwz-0 dVMIdD Button fill"
+      className="StyledButton-aqwbwz-0 gCGLEB Button fill"
       color="var(--text-light)"
       onClick={[Function]}
       size="medium"
     >
-      <span
+      <div
         accent={true}
-        className="StyledText__StyledTextSpan-sc-1ldibmc-0 gAWWUQ Text"
+        className="StyledText__StyledTextSpan-sc-1ldibmc-0 dFZulM Text"
         noUserSelect={false}
       >
         Next
-      </span>
+      </div>
+      <div
+        accent={true}
+        className="StyledText__StyledTextSpan-sc-1ldibmc-0 dFZulM Text flex-row"
+        noUserSelect={false}
+      />
     </span>
   </div>
   <ul
@@ -125,66 +135,86 @@ exports[`matches test renderer snapshot serializes the styles 1`] = `
   >
     <li>
       <span
-        className="StyledButton-aqwbwz-0 dVMIdD Button Pagination-page-button  fill"
+        className="StyledButton-aqwbwz-0 gCGLEB Button Pagination-page-button  fill"
         color="var(--text-light)"
         onClick={[Function]}
         size="medium"
       >
-        <span
+        <div
           accent={true}
-          className="StyledText__StyledTextSpan-sc-1ldibmc-0 gAWWUQ Text"
+          className="StyledText__StyledTextSpan-sc-1ldibmc-0 dFZulM Text"
           noUserSelect={false}
         >
           1
-        </span>
+        </div>
+        <div
+          accent={true}
+          className="StyledText__StyledTextSpan-sc-1ldibmc-0 dFZulM Text flex-row"
+          noUserSelect={false}
+        />
       </span>
     </li>
     <li>
       <span
-        className="StyledButton-aqwbwz-0 dVMIdD Button Pagination-page-button current fill"
+        className="StyledButton-aqwbwz-0 gCGLEB Button Pagination-page-button current fill"
         color="var(--text-light)"
         onClick={[Function]}
         size="medium"
       >
-        <span
+        <div
           accent={true}
-          className="StyledText__StyledTextSpan-sc-1ldibmc-0 gAWWUQ Text"
+          className="StyledText__StyledTextSpan-sc-1ldibmc-0 dFZulM Text"
           noUserSelect={false}
         >
           2
-        </span>
+        </div>
+        <div
+          accent={true}
+          className="StyledText__StyledTextSpan-sc-1ldibmc-0 dFZulM Text flex-row"
+          noUserSelect={false}
+        />
       </span>
     </li>
     <li>
       <span
-        className="StyledButton-aqwbwz-0 dVMIdD Button Pagination-page-button  fill"
+        className="StyledButton-aqwbwz-0 gCGLEB Button Pagination-page-button  fill"
         color="var(--text-light)"
         onClick={[Function]}
         size="medium"
       >
-        <span
+        <div
           accent={true}
-          className="StyledText__StyledTextSpan-sc-1ldibmc-0 gAWWUQ Text"
+          className="StyledText__StyledTextSpan-sc-1ldibmc-0 dFZulM Text"
           noUserSelect={false}
         >
           3
-        </span>
+        </div>
+        <div
+          accent={true}
+          className="StyledText__StyledTextSpan-sc-1ldibmc-0 dFZulM Text flex-row"
+          noUserSelect={false}
+        />
       </span>
     </li>
     <li>
       <span
-        className="StyledButton-aqwbwz-0 dVMIdD Button Pagination-page-button  fill"
+        className="StyledButton-aqwbwz-0 gCGLEB Button Pagination-page-button  fill"
         color="var(--text-light)"
         onClick={[Function]}
         size="medium"
       >
-        <span
+        <div
           accent={true}
-          className="StyledText__StyledTextSpan-sc-1ldibmc-0 gAWWUQ Text"
+          className="StyledText__StyledTextSpan-sc-1ldibmc-0 dFZulM Text"
           noUserSelect={false}
         >
           4
-        </span>
+        </div>
+        <div
+          accent={true}
+          className="StyledText__StyledTextSpan-sc-1ldibmc-0 dFZulM Text flex-row"
+          noUserSelect={false}
+        />
       </span>
     </li>
     <li>
@@ -196,18 +226,23 @@ exports[`matches test renderer snapshot serializes the styles 1`] = `
     </li>
     <li>
       <span
-        className="StyledButton-aqwbwz-0 dVMIdD Button Pagination-page-button  fill"
+        className="StyledButton-aqwbwz-0 gCGLEB Button Pagination-page-button  fill"
         color="var(--text-light)"
         onClick={[Function]}
         size="medium"
       >
-        <span
+        <div
           accent={true}
-          className="StyledText__StyledTextSpan-sc-1ldibmc-0 gAWWUQ Text"
+          className="StyledText__StyledTextSpan-sc-1ldibmc-0 dFZulM Text"
           noUserSelect={false}
         >
           10
-        </span>
+        </div>
+        <div
+          accent={true}
+          className="StyledText__StyledTextSpan-sc-1ldibmc-0 dFZulM Text flex-row"
+          noUserSelect={false}
+        />
       </span>
     </li>
   </ul>

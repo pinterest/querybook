@@ -1,15 +1,8 @@
 .DataTableViewQueryExamples {
     .filter-selection-section {
         .Button.active {
-            background-color: var(--color-accent-lightest);
+            background-color: var(--color-accent-lightest-0);
             color: var(--color-accent-dark);
-        }
-
-        .section-title {
-            margin-bottom: 4px;
-            font-size: var(--text-size);
-            font-weight: var(--bold-font);
-            color: var(--text-light);
         }
     }
 
@@ -45,15 +38,35 @@
 }
 
 .DataTableViewQueryUsers,
+.DataTableViewQueryEngines,
 .DataTableViewQueryConcurrences {
     .query-filter-wrapper {
         display: flex;
         flex-direction: row;
         flex-wrap: wrap;
+        margin-top: 12px;
+        margin-left: 16px;
 
         .Button {
-            margin-right: 4px;
-            margin-top: 4px;
+            &.active {
+                .UserBadge .username {
+                    background-color: var(--color-accent-lightest-0);
+                    color: var(--color-accent-dark);
+                }
+                .Icon svg {
+                    color: var(--color-accent-dark);
+                }
+            }
+            .UserBadge .username {
+                margin-right: 0px;
+            }
+            .Tag + .Tag {
+                margin-left: 0px;
+            }
         }
+    }
+    .empty-message {
+        justify-content: flex-start;
+        font-size: var(--small-font-size);
     }
 }

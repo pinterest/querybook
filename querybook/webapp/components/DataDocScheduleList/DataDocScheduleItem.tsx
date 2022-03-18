@@ -30,13 +30,22 @@ export const DataDocScheduleItem: React.FC<IDataDocScheduleItemProps> = ({
         }
 
         return (
-            <div className="mt4">
-                <div className="schedule-text">
-                    Runs <HumanReadableCronSchedule cron={schedule.cron} />
+            <div className="DataDocScheduleItem-bottom mt4 horizontal-space-between">
+                <div>
+                    <div className="schedule-text">
+                        Runs <HumanReadableCronSchedule cron={schedule.cron} />
+                    </div>
+                    <div className="next-text mt4">
+                        Next Run: <NextRun cron={schedule.cron} />
+                    </div>
                 </div>
-                <div className="next-text mt4">
-                    Next Run: <NextRun cron={schedule.cron} />
-                </div>
+                {lastRecord && (
+                    <DataDocScheduleActionHistory
+                        docId={doc.id}
+                        actionText="View Run Record"
+                        docTitle={doc.title}
+                    />
+                )}
             </div>
         );
     };
@@ -71,7 +80,7 @@ export const DataDocScheduleItem: React.FC<IDataDocScheduleItemProps> = ({
 
         return (
             <div
-                className="ml12 mt4"
+                className="ml12"
                 aria-label={tooltipText}
                 data-balloon-pos="right"
             >
@@ -90,13 +99,6 @@ export const DataDocScheduleItem: React.FC<IDataDocScheduleItemProps> = ({
                     {renderLastRunRecordInfo()}
                 </div>
                 <div>
-                    {lastRecord && (
-                        <DataDocScheduleActionHistory
-                            docId={doc.id}
-                            actionText="View Run Record"
-                            docTitle={doc.title}
-                        />
-                    )}
                     <DataDocScheduleActionEdit
                         docId={doc.id}
                         actionText={schedule ? 'Edit Schedule' : 'New Schedule'}

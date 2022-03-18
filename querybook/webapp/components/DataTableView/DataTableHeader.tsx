@@ -20,8 +20,8 @@ import { UserBadge } from 'components/UserBadge/UserBadge';
 
 import { IconButton } from 'ui/Button/IconButton';
 import { Tag } from 'ui/Tag/Tag';
-import { Title } from 'ui/Title/Title';
 import { ToggleButton } from 'ui/ToggleButton/ToggleButton';
+import { AccentText } from 'ui/StyledText/StyledText';
 
 import './DataTableHeader.scss';
 
@@ -104,13 +104,17 @@ export const DataTableHeader: React.FunctionComponent<IDataTableHeader> = ({
 
     const topDOM = (
         <div className="DataTableHeader-top horizontal-space-between">
-            <div className="table-key">{tableName}</div>
+            <AccentText size="text" weight="bold" color="light">
+                {tableName}
+            </AccentText>
             {iconDOM}
         </div>
     );
 
     const titleDOM = (
-        <Title className="table-title mb12">{shortTableName}</Title>
+        <AccentText className="mb8" color="text" size="xlarge" weight="bold">
+            {shortTableName}
+        </AccentText>
     );
 
     const ownershipDOM = (tableOwnerships || []).map((ownership) => (
@@ -121,7 +125,13 @@ export const DataTableHeader: React.FunctionComponent<IDataTableHeader> = ({
     const ownerDOM = (
         <div className="DataTableHeader-owner mb8">
             <div className="DataTableHeader-owner-list flex-row ">
-                <span className="header-subtitle mr16">Owners</span>
+                <AccentText
+                    className="header-subtitle mr20"
+                    weight="bold"
+                    color="lightest"
+                >
+                    Owners
+                </AccentText>
                 <div className="owner-badges mr8 flex-row">
                     {dbTableOwner && <UserBadge name={dbTableOwner} mini />}
                     {ownershipDOM}
@@ -155,7 +165,13 @@ export const DataTableHeader: React.FunctionComponent<IDataTableHeader> = ({
 
     const tagDOM = (
         <div className="flex-row">
-            <div className="header-subtitle mr16">Tags</div>
+            <AccentText
+                className="header-subtitle mr20"
+                weight="bold"
+                color="lightest"
+            >
+                Tags
+            </AccentText>
             <DataTableTags tableId={table.id} />
         </div>
     );

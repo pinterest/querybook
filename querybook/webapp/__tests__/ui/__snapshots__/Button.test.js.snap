@@ -11,11 +11,12 @@ exports[`matches enzyme snapshots matches snapshot - attached right 1`] = `
   onClick={[Function]}
   size="medium"
 >
-  <StyledText
-    accent={true}
-  >
+  <AccentText>
     test
-  </StyledText>
+  </AccentText>
+  <AccentText
+    className="flex-row"
+  />
 </StyledButton>
 `;
 
@@ -30,11 +31,12 @@ exports[`matches enzyme snapshots matches snapshot - disbled 1`] = `
   onClick={null}
   size="medium"
 >
-  <StyledText
-    accent={true}
-  >
+  <AccentText>
     test
-  </StyledText>
+  </AccentText>
+  <AccentText
+    className="flex-row"
+  />
 </StyledButton>
 `;
 
@@ -51,11 +53,12 @@ exports[`matches enzyme snapshots matches snapshot - isLoading 1`] = `
   <Memo()
     name="loader"
   />
-  <StyledText
-    accent={true}
-  >
+  <AccentText>
     test
-  </StyledText>
+  </AccentText>
+  <AccentText
+    className="flex-row"
+  />
 </StyledButton>
 `;
 
@@ -71,11 +74,12 @@ exports[`matches enzyme snapshots matches snapshot - mixed 1`] = `
   pushable={true}
   size="small"
 >
-  <StyledText
-    accent={true}
-  >
+  <AccentText>
     test
-  </StyledText>
+  </AccentText>
+  <AccentText
+    className="flex-row"
+  />
 </StyledButton>
 `;
 
@@ -89,11 +93,12 @@ exports[`matches enzyme snapshots matches snapshot - text button 1`] = `
   onClick={[Function]}
   size="medium"
 >
-  <StyledText
-    accent={true}
-  >
+  <AccentText>
     test
-  </StyledText>
+  </AccentText>
+  <AccentText
+    className="flex-row"
+  />
 </StyledButton>
 `;
 
@@ -107,11 +112,12 @@ exports[`matches enzyme snapshots matches snapshot - typed 1`] = `
   onClick={[Function]}
   size="medium"
 >
-  <StyledText
-    accent={true}
-  >
+  <AccentText>
     test
-  </StyledText>
+  </AccentText>
+  <AccentText
+    className="flex-row"
+  />
 </StyledButton>
 `;
 
@@ -125,27 +131,33 @@ exports[`matches enzyme snapshots matches snapshot 1`] = `
   onClick={[Function]}
   size="medium"
 >
-  <StyledText
-    accent={true}
-  >
+  <AccentText>
     test
-  </StyledText>
+  </AccentText>
+  <AccentText
+    className="flex-row"
+  />
 </StyledButton>
 `;
 
 exports[`matches test renderer snapshot serializes the styles 1`] = `
 <span
-  className="StyledButton-aqwbwz-0 dVMIdD Button fill"
+  className="StyledButton-aqwbwz-0 gCGLEB Button fill"
   color="var(--text-light)"
   onClick={[Function]}
   size="medium"
 >
-  <span
+  <div
     accent={true}
-    className="StyledText__StyledTextSpan-sc-1ldibmc-0 gAWWUQ Text"
+    className="StyledText__StyledTextSpan-sc-1ldibmc-0 dFZulM Text"
     noUserSelect={false}
   >
     test
-  </span>
+  </div>
+  <div
+    accent={true}
+    className="StyledText__StyledTextSpan-sc-1ldibmc-0 dFZulM Text flex-row"
+    noUserSelect={false}
+  />
 </span>
 `;

@@ -95,17 +95,18 @@ test('linkifyLog', () => {
 });
 
 test('calculateTooltipSize', () => {
-    expect(utils.calculateTooltipSize('short tip')).toBe('');
+    expect(utils.calculateTooltipSize('tip')).toBe('');
+    expect(utils.calculateTooltipSize('short tip')).toBe('medium');
     expect(
         utils.calculateTooltipSize(
             'somewhat long tip about something important'
         )
-    ).toBe('medium');
+    ).toBe('large');
     expect(
         utils.calculateTooltipSize(
             'really long tip about something really, really, really important. and another really long tip about something else really, really, really important.'
         )
-    ).toBe('large');
+    ).toBe('xlarge');
     expect(
         utils.calculateTooltipSize(
             'insanely long tip that has a lot of tips. really long tip about something really, really, really important. and another really long tip about something else really, really, really important. really long tip about something really, really, really important. and another really long tip about something else really, really, really important.'

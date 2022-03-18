@@ -7,6 +7,7 @@ import { fetchTopQueryConcurrencesIfNeeded } from 'redux/dataSources/action';
 import { Loading } from 'ui/Loading/Loading';
 import { Button } from 'ui/Button/Button';
 import { TableName } from './DataTableName';
+import { Tag } from 'ui/Tag/Tag';
 
 export function useLoadQueryConcurrences(tableId: number) {
     const [loading, setLoading] = useState(false);
@@ -40,7 +41,9 @@ export const DataTableViewQueryConcurrences: React.FC<{
     const tablesDOM = loading ? (
         <Loading />
     ) : !topConcurrences?.length ? (
-        <div>Cannot find examples where this table is used with others.</div>
+        <div className="empty-message">
+            Cannot find examples where this table is used with others
+        </div>
     ) : (
         <div className="query-filter-wrapper">
             {topConcurrences.map(({ table_id: tableId, count }) => (
@@ -71,8 +74,10 @@ const QueryTableButton: React.FC<{
 
     return (
         <Button onClick={handleClick} active={active}>
-            <TableName tableId={tableId} />
-            <span className="ml4">({queryCount})</span>
+            <Tag highlighted={active}>
+                <TableName tableId={tableId} />
+            </Tag>
+            <Tag highlighted={active}>{queryCount}</Tag>
         </Button>
     );
 };

@@ -96,8 +96,8 @@ export const DebouncedInput: React.FunctionComponent<IDebouncedInputProps> = ({
     });
 
     return (
-        <AccentText>
-            <div className={classNameProp}>
+        <div className={classNameProp}>
+            <AccentText>
                 <input
                     type="text"
                     ref={inputRef}
@@ -106,7 +106,7 @@ export const DebouncedInput: React.FunctionComponent<IDebouncedInputProps> = ({
                     {...inputProps}
                 />
                 {children}
-            </div>
-        </AccentText>
+            </AccentText>
+        </div>
     );
 };

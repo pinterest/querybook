@@ -26,9 +26,9 @@ exports[`matches test renderer snapshot serializes the styles 1`] = `
   onMouseEnter={[Function]}
   onMouseLeave={[Function]}
 >
-  <span
+  <div
     accent={true}
-    className="StyledText__StyledTextSpan-sc-1ldibmc-0 gAWWUQ Text Dropdown-trigger"
+    className="StyledText__StyledTextSpan-sc-1ldibmc-0 dFZulM Text Dropdown-trigger"
     noUserSelect={false}
   >
     <span
@@ -44,6 +44,6 @@ exports[`matches test renderer snapshot serializes the styles 1`] = `
       />
        
     </span>
-  </span>
+  </div>
 </div>
 `;

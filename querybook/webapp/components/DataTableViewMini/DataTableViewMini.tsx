@@ -65,7 +65,7 @@ export const DataTableViewMini: React.FunctionComponent<IProps> = ({
                               })
                     }
                     title="View Table"
-                    className="table-details-button"
+                    className="table-details-button mr8"
                 />
             </Level>
             <div className="DataTableViewMini-content">{infoContentDOM}</div>

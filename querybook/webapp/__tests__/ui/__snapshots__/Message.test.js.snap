@@ -57,9 +57,9 @@ exports[`matches test renderer snapshot serializes the styles - error 1`] = `
 <article
   className="Message error"
 >
-  <span
+  <div
     accent={true}
-    className="StyledText__StyledTextSpan-sc-1ldibmc-0 dAfgBM Text"
+    className="StyledText__StyledTextSpan-sc-1ldibmc-0 hjSGwQ Text"
     noUserSelect={false}
     weight="bold"
   >
@@ -70,7 +70,7 @@ exports[`matches test renderer snapshot serializes the styles - error 1`] = `
         Error
       </p>
     </div>
-  </span>
+  </div>
   <div
     className="Message-body"
   >

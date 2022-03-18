@@ -135,7 +135,7 @@ export const DataTableViewWarnings: React.FC<IProps> = ({
 
     return (
         <div className="DataTableViewWarnings">
-            <AccentText size="text" color="light">
+            <AccentText className="mb12" size="text" color="light" noUserSelect>
                 Warning message will show up in the query editor when the table
                 is used
             </AccentText>

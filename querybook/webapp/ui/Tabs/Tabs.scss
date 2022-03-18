@@ -137,7 +137,7 @@
         ul {
             li {
                 &.active {
-                    background-color: var(--bg-light);
+                    background-color: var(--color-accent-lightest-0);
                 }
                 &:not(.active):hover {
                     background-color: var(--bg-hover);

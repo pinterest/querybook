@@ -252,7 +252,7 @@ export function linkifyLog(log: string) {
 export function calculateTooltipSize(tooltip: string) {
     tooltip = tooltip || '';
 
-    if (tooltip.length < 10) {
+    if (tooltip.length < 5) {
         return '';
     }
 

@@ -14,7 +14,6 @@ exports[`matches enzyme snapshots matches snapshot 1`] = `
     />
     <AccentText
       size="small"
-      weight="bold"
     />
   </label>
 </div>
