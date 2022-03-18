@@ -50,7 +50,7 @@ export const BoardList: React.FunctionComponent<IProps> = ({
             const className = clsx({
                 selected,
             });
-            const selectedIcon = selected && 'check';
+            const selectedIcon = selected ? 'check-circle' : 'circle';
 
             return (
                 <ListLink
@@ -76,7 +76,7 @@ export const BoardList: React.FunctionComponent<IProps> = ({
                 />
             </div>
         ) : (
-            <div className="empty-message m16">No list found</div>
+            <div className="empty-message m24">No list found</div>
         );
 
     return (
@@ -85,7 +85,7 @@ export const BoardList: React.FunctionComponent<IProps> = ({
                 <SearchBar
                     value={filterStr}
                     onSearch={setFilterStr}
-                    placeholder="Filter..."
+                    placeholder="Filter list"
                     className="mr12"
                 />
                 <IconButton

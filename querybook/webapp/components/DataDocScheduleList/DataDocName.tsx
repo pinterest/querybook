@@ -6,6 +6,8 @@ import { getWithinEnvUrl } from 'lib/utils/query-string';
 const DocTitle = styled.span`
     font-weight: bold;
     font-size: var(--med-text-size);
+    font-family: var(--font-accent);
+
     ${(props) =>
         props.untitled &&
         `

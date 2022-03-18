@@ -9,6 +9,7 @@ import {
 import { overlayRoot } from 'ui/Overlay/Overlay';
 import { UserAvatar } from 'components/UserBadge/UserAvatar';
 import { SearchUserResource } from 'resource/search';
+import { AccentText } from 'ui/StyledText/StyledText';
 
 interface IUserSearchResultRow {
     id: number;
@@ -68,24 +69,26 @@ export const UserSelect: React.FunctionComponent<IUserSelectProps> = ({
     }
 
     return (
-        <AsyncSelect
-            styles={userReactSelectStyle}
-            placeholder={'username...'}
-            onChange={(option: any) => {
-                if (option) {
-                    onSelect(option.value, option.name);
-                } else {
-                    onSelect(null, null);
-                }
-            }}
-            loadOptions={loadOptions}
-            defaultOptions={[]}
-            inputValue={searchText}
-            onInputChange={(text) => setSearchText(text)}
-            noOptionsMessage={() => (searchText ? 'No user found.' : null)}
-            {...asyncSelectProps}
-            {...selectProps}
-        />
+        <AccentText>
+            <AsyncSelect
+                styles={userReactSelectStyle}
+                placeholder={'username'}
+                onChange={(option: any) => {
+                    if (option) {
+                        onSelect(option.value, option.name);
+                    } else {
+                        onSelect(null, null);
+                    }
+                }}
+                loadOptions={loadOptions}
+                defaultOptions={[]}
+                inputValue={searchText}
+                onInputChange={(text) => setSearchText(text)}
+                noOptionsMessage={() => (searchText ? 'No user found.' : null)}
+                {...asyncSelectProps}
+                {...selectProps}
+            />
+        </AccentText>
     );
 };
 

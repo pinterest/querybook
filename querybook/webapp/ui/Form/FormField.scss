@@ -34,8 +34,6 @@
         padding-right: 12px;
         cursor: default;
         white-space: nowrap;
-        color: var(--text-light);
-        font-weight: var(--bold-font);
     }
 
     .FormFieldInputSectionRowGroup {
@@ -73,7 +71,7 @@
     padding-top: 8px;
     margin: 16px 0px 8px;
     font-weight: var(--bold-font);
-    font-family: var(--font-title);
+    font-family: var(--font-accent);
     span {
         font-size: var(--med-text-size);
         white-space: nowrap;

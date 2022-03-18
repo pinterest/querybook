@@ -30,6 +30,7 @@ import { DataTableViewQueryEngines } from './DataTableViewQueryEngines';
 import { DataTableViewQueryConcurrences } from './DataTableViewQueryConcurrences';
 
 import './DataTableViewQueryExamples.scss';
+import { AccentText } from 'ui/StyledText/StyledText';
 
 interface IProps {
     tableId: number;
@@ -146,10 +147,10 @@ export const DataTableViewQueryExamples: React.FunctionComponent<IProps> = ({
     const queryExampleFiltersSection = (
         <div className="mb12">
             <div className="horizontal-space-between mb16">
-                <div className="info-text mv8">
+                <AccentText className="mv8" size="text" color="light">
                     Select any user, query engine, and/or co-occuring tables to
-                    filter.
-                </div>
+                    filter
+                </AccentText>
                 {!isEmpty(filters) && (
                     <Button onClick={clearFilter}>Clear Filter</Button>
                 )}

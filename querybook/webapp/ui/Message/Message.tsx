@@ -2,6 +2,7 @@ import React from 'react';
 import clsx from 'clsx';
 
 import { Icon } from 'ui/Icon/Icon';
+import { AccentText } from 'ui/StyledText/StyledText';
 
 import './Message.scss';
 
@@ -49,7 +50,7 @@ export const Message: React.FunctionComponent<IMessageProps> = ({
 
     return (
         <article className={messageClassName}>
-            {messageTitle}
+            <AccentText weight="bold">{messageTitle}</AccentText>
             <div className="Message-body">
                 {icon && (
                     <Icon

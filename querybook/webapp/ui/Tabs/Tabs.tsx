@@ -4,6 +4,7 @@ import { Icon } from 'ui/Icon/Icon';
 import { TooltipDirection } from 'const/tooltip';
 
 import './Tabs.scss';
+import { StyledText } from 'ui/StyledText/StyledText';
 
 export interface ITabItem {
     name?: string;
@@ -92,7 +93,7 @@ export const Tabs: React.FunctionComponent<ITabsProps> = ({
             >
                 <a className="flex-center" {...tooltipProps}>
                     {icon && <Icon name={icon} />}
-                    {name && <span>{name}</span>}
+                    {name && <StyledText accent>{name}</StyledText>}
                 </a>
             </li>
         );

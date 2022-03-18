@@ -1,6 +1,8 @@
 import React from 'react';
 import styled from 'styled-components';
 import { StatusTypes, TaskRunStatus } from 'const/schedule';
+import { Icon } from 'ui/Icon/Icon';
+import { AccentText } from 'ui/StyledText/StyledText';
 
 const StyledStatusIcon = styled.div`
     &.status-success {
@@ -25,11 +27,9 @@ export const TaskStatusIcon: React.FunctionComponent<IStatusProps> = ({
 }) => {
     const status = StatusTypes[type];
     return (
-        <StyledStatusIcon className={status.class}>
-            <span className="m4">
-                <i className={status.iconClass} />
-            </span>
-            <span>{status.text}</span>
+        <StyledStatusIcon className={status.class + ' flex-row'}>
+            <Icon className="mr4" name={status.iconName} size={16} />
+            <AccentText>{status.text}</AccentText>
         </StyledStatusIcon>
     );
 };

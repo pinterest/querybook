@@ -10,7 +10,7 @@
         .Landing-greeting,
         .Landing-subtitle {
             font-weight: var(--extra-bold-font);
-            font-family: var(--font-title);
+            font-family: var(--font-accent);
         }
 
         .Landing-subtitle {
@@ -42,7 +42,7 @@
         .Landing-section-title {
             font-size: var(--med-text-size);
             font-weight: var(--bold-font);
-            font-family: var(--font-title);
+            font-family: var(--font-accent);
             margin-bottom: 4px;
         }
 

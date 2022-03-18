@@ -1,6 +1,8 @@
+import { titleize } from 'lib/utils';
 import React, { useCallback } from 'react';
 import styled from 'styled-components';
 import { Icon } from 'ui/Icon/Icon';
+import { AccentText } from 'ui/StyledText/StyledText';
 
 export interface IPanelSectionProps {
     title: string;
@@ -28,15 +30,9 @@ const PanelTitle = styled.p`
     margin-left: 8px;
     margin-bottom: 4px;
     padding: 4px 8px;
-    text-transform: uppercase;
-    user-select: none;
-    color: var(--text-light);
 
     background-color: var(--bg-light);
     border-radius: var(--border-radius-sm);
-
-    font-size: var(--text-size);
-    font-weight: var(--bold-font);
 `;
 
 export const PanelSection: React.FunctionComponent<IPanelSectionProps> = ({
@@ -56,7 +52,14 @@ export const PanelSection: React.FunctionComponent<IPanelSectionProps> = ({
     const headerDOM = (
         <div onClick={toggleSectionOpen}>
             <PanelTitle>
-                {title}
+                <AccentText
+                    noUserSelect
+                    size="text"
+                    weight="bold"
+                    color="light"
+                >
+                    {titleize(title)}
+                </AccentText>
                 <Icon name={isOpen ? 'chevron-down' : 'chevron-right'} />
             </PanelTitle>
         </div>

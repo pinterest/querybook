@@ -83,9 +83,12 @@ export const SearchBar: React.FunctionComponent<ISearchBarProps> = ({
         !searchIcon && hasClearSearch && value ? (
             <>
                 <span className="search-bar-clear-sep" />
-                <Button theme="text" pushable onClick={() => onSearch('')}>
-                    Clear
-                </Button>
+                <Button
+                    theme="text"
+                    pushable
+                    onClick={() => onSearch('')}
+                    title="Clear"
+                />
             </>
         ) : null;
 

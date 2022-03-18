@@ -4,6 +4,7 @@ import React from 'react';
 
 import { IconButton } from 'ui/Button/IconButton';
 import { Popover } from 'ui/Popover/Popover';
+import { StyledText } from 'ui/StyledText/StyledText';
 
 import './Dropdown.scss';
 
@@ -105,6 +106,7 @@ export const Dropdown: React.FunctionComponent<IProps> = ({
                 layout={[isUp ? 'top' : 'bottom', isRight ? 'right' : 'left']}
                 hideArrow
                 skipAnimation
+                noPadding
             >
                 {dropdownContent}
             </Popover>
@@ -119,7 +121,9 @@ export const Dropdown: React.FunctionComponent<IProps> = ({
             onClick={handleClick}
             ref={selfRef}
         >
-            <div className="Dropdown-trigger">{buttonDOM}</div>
+            <StyledText className="Dropdown-trigger" accent>
+                {buttonDOM}
+            </StyledText>
             {dropdownContent}
         </div>
     );

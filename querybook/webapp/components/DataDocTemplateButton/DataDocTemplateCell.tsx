@@ -8,6 +8,7 @@ import { isEmpty } from 'lodash';
 import { TextButton } from 'ui/Button/Button';
 import { Title } from 'ui/Title/Title';
 import { DataDocTemplateInfoButton } from './DataDocTemplateInfoButton';
+import { StyledText } from 'ui/StyledText/StyledText';
 
 interface IProps {
     changeDataDocMeta: (docId: number, meta: Record<string, any>) => any;
@@ -50,9 +51,9 @@ export const DataDocTemplateCell: React.FunctionComponent<IProps> = ({
         contentDOM = (
             <>
                 <div className=" flex-row ph8">
-                    <Title size={6} className="mr8">
+                    <StyledText className="mr12" size="text" accent>
                         Variables
-                    </Title>
+                    </StyledText>
                     <DataDocTemplateInfoButton style="icon" />
                 </div>
                 <DataDocTemplateVarForm

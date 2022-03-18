@@ -163,6 +163,8 @@ export const DataDocCell: React.FunctionComponent<IDataDocCellProps> = React.mem
                                 message: 'Deleted cells cannot be recovered',
                                 onConfirm: deleteCell,
                                 onHide: resolve,
+                                confirmColor: 'cancel',
+                                cancelColor: 'default',
                             });
                         } else {
                             deleteCell().finally(resolve);

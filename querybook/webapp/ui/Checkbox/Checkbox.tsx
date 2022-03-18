@@ -1,6 +1,7 @@
 import React from 'react';
 import clsx from 'clsx';
 import './Checkbox.scss';
+import { AccentText } from 'ui/StyledText/StyledText';
 
 export interface ICheckboxProps {
     className?: string;
@@ -47,8 +48,10 @@ export const Checkbox: React.FunctionComponent<ICheckboxProps> = ({
                     checked={value}
                     readOnly
                 />
-                {title}
-                {children}
+                <AccentText size="small">
+                    {title}
+                    {children}
+                </AccentText>
             </label>
         </div>
     );

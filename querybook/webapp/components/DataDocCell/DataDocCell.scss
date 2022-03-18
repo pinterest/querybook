@@ -9,4 +9,12 @@
     .empty-message {
         font-size: var(--xlarge-text-size);
     }
+
+    .DataDocChartCell .ChartCell-picker {
+        .QueryExecutionPicker {
+            + .StatementExecutionPicker {
+                margin-top: 4px;
+            }
+        }
+    }
 }

@@ -4,6 +4,7 @@ import clsx from 'clsx';
 import { useDebounceState } from 'hooks/redux/useDebounceState';
 
 import './DebouncedInput.scss';
+import { AccentText } from 'ui/StyledText/StyledText';
 
 interface IDebouncedInputStylingProps {
     className?: string;
@@ -95,15 +96,17 @@ export const DebouncedInput: React.FunctionComponent<IDebouncedInputProps> = ({
     });
 
     return (
-        <div className={classNameProp}>
-            <input
-                type="text"
-                ref={inputRef}
-                value={debouncedValue}
-                onChange={onChangeFn}
-                {...inputProps}
-            />
-            {children}
-        </div>
+        <AccentText>
+            <div className={classNameProp}>
+                <input
+                    type="text"
+                    ref={inputRef}
+                    value={debouncedValue}
+                    onChange={onChangeFn}
+                    {...inputProps}
+                />
+                {children}
+            </div>
+        </AccentText>
     );
 };

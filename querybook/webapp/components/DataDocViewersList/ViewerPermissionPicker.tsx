@@ -1,5 +1,4 @@
 import React from 'react';
-import './ViewerPermissionPicker.scss';
 
 import {
     DataDocPermission,
@@ -9,6 +8,7 @@ import { Popover } from 'ui/Popover/Popover';
 import { MenuItem, MenuDivider, Menu } from 'ui/Menu/Menu';
 import { sendConfirm } from 'lib/querybookUI';
 import { Icon } from 'ui/Icon/Icon';
+import { AccentText } from 'ui/StyledText/StyledText';
 
 interface IProp {
     viewerInfo: IViewerInfo;
@@ -91,16 +91,18 @@ export const ViewerPermissionPicker: React.FunctionComponent<IProp> = ({
     const pickerButton =
         canShowEditMenu && !readonly ? (
             <div
-                className="permission-text flex-row"
+                className="permission-text flex-row mr8"
                 onClick={() => setShowEditMenu(true)}
             >
-                <span>{viewerInfo.permission}</span>
+                <AccentText noUserSelect cursor="pointer">
+                    {viewerInfo.permission}
+                </AccentText>
                 <Icon className="ml8" name="chevron-down" size={16} />
             </div>
         ) : (
-            <div className="permission-text read-only flex-row">
+            <AccentText noUserSelect cursor="default">
                 {viewerInfo.permission}
-            </div>
+            </AccentText>
         );
 
     return (

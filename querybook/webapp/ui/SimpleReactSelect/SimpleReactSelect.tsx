@@ -4,6 +4,7 @@ import Select, { Props as ReactSelectProps } from 'react-select';
 import { makeReactSelectStyle } from 'lib/utils/react-select';
 
 import { overlayRoot } from 'ui/Overlay/Overlay';
+import { AccentText } from 'ui/StyledText/StyledText';
 
 export interface ISelectOption<T> {
     value: T;
@@ -67,17 +68,20 @@ export function SimpleReactSelect<T>({
     );
 
     return (
-        <Select
-            styles={reactSelectStyle}
-            menuPortalTarget={overlayRoot}
-            value={selectedOption}
-            onChange={onSelectChange}
-            options={computedOptions}
-            isDisabled={isDisabled}
-            isClearable={withDeselect}
-            menuPlacement={'auto'}
-            {...selectProps}
-            {...overrideSelectProps}
-        />
+        <AccentText>
+            <Select
+                styles={reactSelectStyle}
+                menuPortalTarget={overlayRoot}
+                value={selectedOption}
+                onChange={onSelectChange}
+                options={computedOptions}
+                isDisabled={isDisabled}
+                isClearable={withDeselect}
+                menuPlacement={'auto'}
+                placeholder="Select"
+                {...selectProps}
+                {...overrideSelectProps}
+            />
+        </AccentText>
     );
 }

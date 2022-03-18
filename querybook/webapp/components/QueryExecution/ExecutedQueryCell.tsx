@@ -13,6 +13,7 @@ import { Loading } from 'ui/Loading/Loading';
 import { TextButton } from 'ui/Button/Button';
 
 import './ExecutedQueryCell.scss';
+import { Tag } from 'ui/Tag/Tag';
 
 const EmbeddedCodeMirrorContainer = styled.div`
     .CodeMirror {
@@ -114,10 +115,7 @@ export const ExecutedQueryCell: React.FunctionComponent<IProps> = ({
     const queryEngine = queryEngineById[queryExecution.engine_id];
     const headerDOM = (
         <div className="execution-header horizontal-space-between mb4">
-            <div className="flex-row">
-                <div className="engine-text mr8">Engine</div>
-                <div className="engine-name">{queryEngine.name}</div>
-            </div>
+            <Tag mini>{queryEngine.name}</Tag>
             {changeCellContextButton}
         </div>
     );

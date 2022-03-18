@@ -48,13 +48,13 @@ import { Icon } from 'ui/Icon/Icon';
 import { ListMenu, IListMenuItem } from 'ui/Menu/ListMenu';
 import { Modal } from 'ui/Modal/Modal';
 import { ResizableTextArea } from 'ui/ResizableTextArea/ResizableTextArea';
-import { Title } from 'ui/Title/Title';
 
 import { ErrorQueryCell } from './ErrorQueryCell';
 import './DataDocQueryCell.scss';
 import { TemplatedQueryView } from 'components/TemplateQueryView/TemplatedQueryView';
 import { doesLanguageSupportUDF } from 'lib/utils/udf';
 import { UDFForm } from 'components/UDFForm/UDFForm';
+import { AccentText, StyledText } from 'ui/StyledText/StyledText';
 
 const ON_CHANGE_DEBOUNCE_MS = 500;
 const FORMAT_QUERY_SHORTCUT = getShortcutSymbols(
@@ -556,12 +556,19 @@ class DataDocQueryCellComponent extends React.PureComponent<IProps, IState> {
                 className="Title"
             />
         ) : (
-            <Title size={4}>{this.dataCellTitle}</Title>
+            <span className="p8">{this.dataCellTitle}</span>
         );
 
         return (
             <div className="query-metadata">
-                <div className="query-title">{queryTitleDOM}</div>
+                <StyledText
+                    className="query-title"
+                    weight="bold"
+                    size="large"
+                    accent
+                >
+                    {queryTitleDOM}
+                </StyledText>
                 <div className="query-controls flex-row">
                     <QueryRunButton
                         ref={this.runButtonRef}
@@ -766,9 +773,9 @@ class DataDocQueryCellComponent extends React.PureComponent<IProps, IState> {
             <div className={classes}>
                 <div className="collapsed-query flex-row">
                     <Icon name="terminal" className="mt4 mr8" />
-                    <span className="collapsed-query-title pr16">
+                    <AccentText className="one-line-ellipsis pr16">
                         {this.dataCellTitle}
-                    </span>
+                    </AccentText>
                 </div>
             </div>
         ) : isFullScreen ? (

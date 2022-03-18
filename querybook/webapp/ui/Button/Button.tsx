@@ -9,6 +9,7 @@ import {
     ButtonThemeType,
     computeStyleButtonProps,
 } from './ButtonTheme';
+import { AccentText } from 'ui/StyledText/StyledText';
 
 export type ButtonProps = React.HTMLAttributes<HTMLSpanElement> &
     ISharedButtonProps & {
@@ -54,7 +55,7 @@ export const Button = React.forwardRef<HTMLSpanElement, ButtonProps>(
         ) : (
             icon && (typeof icon === 'string' ? <Icon name={icon} /> : icon)
         );
-        const textDOM = title && <span>{title}</span>;
+        const textDOM = title ? <AccentText>{title}</AccentText> : null;
 
         const buttonOnClick = disabled ? null : onClick;
         const themeProps = computeStyleButtonProps(color, theme);
@@ -84,7 +85,7 @@ export const Button = React.forwardRef<HTMLSpanElement, ButtonProps>(
                 {pingDOM}
                 {iconDOM}
                 {textDOM}
-                {children}
+                <AccentText>{children}</AccentText>
             </StyledButton>
         );
     }
@@ -96,7 +97,6 @@ Button.displayName = 'Button';
 export const TextButton = withBoundProps(Button, {
     theme: 'text',
     fontWeight: '700',
-    uppercase: true,
     pushable: true,
 });
 

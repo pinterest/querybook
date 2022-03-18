@@ -5,6 +5,7 @@ import { MenuItem, Menu } from 'ui/Menu/Menu';
 import { IconButton } from 'ui/Button/IconButton';
 import './DataDocAccessRequestPermissionPicker.scss';
 import { Icon } from 'ui/Icon/Icon';
+import { AccentText } from 'ui/StyledText/StyledText';
 
 interface IPermissionPickerProp {
     uid: number;
@@ -30,6 +31,7 @@ export const DataDocAccessRequestPermissionPicker: React.FunctionComponent<IPerm
             anchor={selfRef.current}
             layout={['bottom', 'left']}
             hideArrow
+            noPadding
         >
             <Menu>
                 <MenuItem
@@ -50,7 +52,7 @@ export const DataDocAccessRequestPermissionPicker: React.FunctionComponent<IPerm
             className="permission-text flex-row mr8"
             onClick={() => setShowEditMenu(true)}
         >
-            <span>{permission}</span>
+            <AccentText>{permission}</AccentText>
             <Icon name="chevron-down" className="ml4" size={16} />
         </div>
     );
@@ -61,14 +63,14 @@ export const DataDocAccessRequestPermissionPicker: React.FunctionComponent<IPerm
                 icon="check-circle"
                 onClick={() => addDataDocEditor(uid, permission)}
                 tooltip={`Allow ${permission} permission`}
-                tooltipPos="up"
+                tooltipPos="left"
             />
             <IconButton
                 className="access-request-control-button"
                 icon="x-circle"
                 onClick={() => rejectDataDocAccessRequest(uid)}
                 tooltip="Reject access request"
-                tooltipPos="up"
+                tooltipPos="left"
             />
         </div>
     );

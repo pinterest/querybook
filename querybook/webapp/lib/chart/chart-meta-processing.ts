@@ -169,7 +169,7 @@ export function mapMetaToChartOptions(
                 display: !!meta.title.length,
                 text: meta.title,
                 font: {
-                    size: 16,
+                    family: 'var(--font-accent)',
                 },
             },
             tooltip: {

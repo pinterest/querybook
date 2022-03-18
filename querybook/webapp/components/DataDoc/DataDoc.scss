@@ -44,13 +44,6 @@
 
             .data-doc-header-top {
                 align-items: end;
-                .data-doc-header-time {
-                    font-size: var(--text-size);
-                    padding-left: 8px;
-                    text-transform: uppercase;
-                    font-weight: var(--bold-font);
-                    color: var(--text-lightest);
-                }
                 .data-doc-header-users {
                     .ImpressionWidget {
                         margin-right: 4px;
@@ -81,13 +74,6 @@
                         }
                     }
                 }
-            }
-
-            .data-doc-title {
-                color: var(--text-light);
-                font-size: var(--xxlarge-text-size);
-                font-weight: bold;
-                font-family: var(--font-title);
             }
         }
 

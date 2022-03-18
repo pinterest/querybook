@@ -589,7 +589,7 @@ export const SearchOverview: React.FunctionComponent = () => {
                     <div className="result-item-golden horizontal-space-between">
                         <span>
                             <span>featured only</span>
-                            <Icon className="award" name="award" />
+                            <Icon className="award ml4" name="award" />
                         </span>
                         <Checkbox
                             value={!!searchFilters.golden}

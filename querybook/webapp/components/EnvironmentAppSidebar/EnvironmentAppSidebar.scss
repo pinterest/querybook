@@ -89,6 +89,7 @@
 
         width: 36px;
         height: 36px;
+        padding: 2px;
 
         &.selected {
             font-weight: var(--bold-font);
@@ -135,6 +136,7 @@
         text-align: center;
         font-size: var(--large-text-size);
         font-weight: var(--extra-bold-font);
+        font-family: var(--font-accent);
         padding: var(--padding-lg);
         color: var(--text-lightest-0);
         user-select: none;

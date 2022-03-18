@@ -5,6 +5,7 @@ import { useMounted } from 'hooks/useMounted';
 import { IStandardModalProps } from './types';
 import { useDebounce } from 'hooks/useDebounce';
 import { useAppBlur } from 'hooks/ui/useAppBlur';
+import { AccentText } from 'ui/StyledText/StyledText';
 
 export const StandardModal: React.FunctionComponent<IStandardModalProps> = ({
     className = '',
@@ -27,10 +28,14 @@ export const StandardModal: React.FunctionComponent<IStandardModalProps> = ({
 
     const modalTopDOM =
         title || topDOM ? (
-            <div className="Modal-top horizontal-space-between">
-                {title && <div className="Modal-title">{title}</div>}
+            <AccentText className="Modal-top horizontal-space-between">
+                {title && (
+                    <AccentText size="xlarge" weight="extra" color="dark">
+                        {title}
+                    </AccentText>
+                )}
                 {topDOM}
-            </div>
+            </AccentText>
         ) : null;
 
     const modalBottomDOM = bottomDOM ? (

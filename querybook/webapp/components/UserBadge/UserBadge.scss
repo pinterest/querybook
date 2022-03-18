@@ -36,6 +36,21 @@
             }
         }
     }
+
+    .UserBadge-names {
+        max-width: 180px;
+        .username {
+            margin-top: -4px;
+        }
+        .handle {
+            margin-top: -6px;
+        }
+    }
+
+    + .UserBadge {
+        margin-left: 12px;
+    }
+
     &:not(.mini) {
         &.card-style {
             .UserBadge-icon {
@@ -49,27 +64,14 @@
                 background-color: var(--bg-light);
                 border-radius: var(--border-radius);
                 margin-left: -36px;
-                padding: 4px 16px 4px 32px;
+                padding: 6px 20px 6px 32px;
+                .username {
+                    margin-top: 0px;
+                }
+                .handle {
+                    margin-left: -4px;
+                }
             }
         }
-    }
-
-    .UserBadge-names {
-        max-width: 180px;
-        .username {
-            font-size: var(--large-text-size);
-            font-weight: var(--extra-bold-font);
-            color: var(--text-dark);
-            margin-top: -4px;
-        }
-        .handle {
-            font-size: var(--small-text-size);
-            margin-top: -6px;
-            color: var(--text-light);
-        }
-    }
-
-    + .UserBadge {
-        margin-left: 12px;
     }
 }

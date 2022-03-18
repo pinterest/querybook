@@ -78,20 +78,8 @@
         white-space: nowrap;
     }
 
-    .query-id {
-        font-size: var(--small-text-size);
-        color: var(--text-light);
-        font-weight: var(--bold-font);
-    }
-
     .query-context {
         @include ellipsis(2);
         word-break: break-all;
-    }
-
-    .query-time {
-        font-size: var(--xsmall-text-size);
-        color: var(--text-lightest);
-        font-weight: var(--bold-font);
     }
 }

@@ -92,7 +92,7 @@ export const DataDocNavigator: React.FC = () => {
                 <SearchBar
                     value={titleFilterString}
                     onSearch={setTitleFilterString}
-                    placeholder="Search by Title..."
+                    placeholder="Search by Title"
                     transparent
                 />
                 <CreateDataDocButton />
@@ -261,7 +261,7 @@ const MyDataDocsSection: React.FC<ICommonSectionProps> = (props) => {
 
     return (
         <DataDocNavigatorSection
-            sectionHeader="all my docs"
+            sectionHeader="my docs"
             sectionHeaderIcon="file-text"
             dataDocs={dataDocs}
             selectedDocId={selectedDocId}

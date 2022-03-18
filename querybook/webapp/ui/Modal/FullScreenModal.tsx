@@ -4,6 +4,7 @@ import React from 'react';
 import { IStandardModalProps } from './types';
 
 import { IconButton } from 'ui/Button/IconButton';
+import { AccentText } from 'ui/StyledText/StyledText';
 
 export const FullScreenModal: React.FunctionComponent<IStandardModalProps> = ({
     className = '',
@@ -19,7 +20,7 @@ export const FullScreenModal: React.FunctionComponent<IStandardModalProps> = ({
 
     const modalTitleDOM = (
         <div className="Modal-top horizontal-space-between">
-            <div className="Modal-title">{title}</div>
+            <AccentText size="text">{title}</AccentText>
             <IconButton
                 aria-label="close"
                 icon="x"

@@ -22,11 +22,6 @@
     .MenuItem {
         cursor: pointer;
 
-        .Menu-icon {
-            width: 18px;
-            margin-top: 2px;
-        }
-
         &:hover {
             background-color: var(--bg-hover);
             color: var(--hover-text-color);

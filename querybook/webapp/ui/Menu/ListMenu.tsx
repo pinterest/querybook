@@ -7,6 +7,8 @@ import { TooltipDirection } from 'const/tooltip';
 import { Dropdown } from 'ui/Dropdown/Dropdown';
 
 import { Menu, MenuItem } from './Menu';
+import { Icon } from 'ui/Icon/Icon';
+import { AccentText } from 'ui/StyledText/StyledText';
 
 export interface IListMenuItem {
     checked?: boolean;
@@ -45,12 +47,12 @@ export const ListMenu: React.FunctionComponent<IProps> = ({
     const isSelect = type === 'select';
 
     const menuActionsDOM = items.map((action, index) => {
-        const iconClass = isSelect
+        const iconName = isSelect
             ? action.checked
-                ? 'fas fa-circle'
-                : 'far fa-circle'
+                ? 'check-circle'
+                : 'circle'
             : action.icon
-            ? 'fa fa-' + action.icon
+            ? action.icon
             : null;
 
         const actionProps: React.HTMLProps<HTMLAnchorElement> = {};
@@ -70,10 +72,8 @@ export const ListMenu: React.FunctionComponent<IProps> = ({
 
         const buttonContent = (
             <span className="flex-row flex1">
-                {iconClass ? (
-                    <span className="Menu-icon flex-center mr8">
-                        <i className={iconClass} />
-                    </span>
+                {iconName ? (
+                    <Icon name={iconName} className="mr8" size={16} />
                 ) : null}
                 <span className="Menu-text flex1">{action.name}</span>
             </span>
@@ -100,7 +100,7 @@ export const ListMenu: React.FunctionComponent<IProps> = ({
         } else {
             itemDOM = (
                 <MenuItem {...actionProps} key={index}>
-                    {buttonContent}
+                    <AccentText>{buttonContent}</AccentText>
                 </MenuItem>
             );
         }

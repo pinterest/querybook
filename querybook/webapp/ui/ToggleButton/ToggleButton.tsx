@@ -21,7 +21,6 @@ export const ToggleButton: React.FunctionComponent<IToggleButtonProps> = ({
         {...otherProps}
         onClick={() => onClick(!checked)}
         className={clsx('ToggleButton', checked && 'checked')}
-    >
-        {title}
-    </Button>
+        title={title}
+    />
 );

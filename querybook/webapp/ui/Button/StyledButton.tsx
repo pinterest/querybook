@@ -28,7 +28,6 @@ export const StyledButton = styled.span<StyledButtonProps>`
     align-items: center;
 
     border-radius: var(--border-radius-sm);
-    font-family: var(--font-sans-serif);
 
     color: ${(props) => props.color || 'inherit'};
     background-color: ${(props) => props.bgColor || 'inherit'};
@@ -88,7 +87,7 @@ export const StyledButton = styled.span<StyledButtonProps>`
 
     &:not(.icon-only) {
         .Icon {
-            margin-right: 4px;
+            margin-right: 2px;
         }
     }
 

@@ -1,5 +1,6 @@
 import clsx from 'clsx';
 import * as React from 'react';
+import { AccentText } from 'ui/StyledText/StyledText';
 
 interface IProps {
     selected: boolean;
@@ -15,7 +16,7 @@ export const EnvironmentIcon: React.FunctionComponent<IProps> = ({
     const envName = React.useMemo(() => {
         const firstWordMatch = environmentName.match(/([a-zA-Z0-9]+)/);
         return firstWordMatch
-            ? firstWordMatch[1].slice(0, 10).toLocaleUpperCase()
+            ? firstWordMatch[1].slice(0, 9).toLocaleUpperCase()
             : '';
     }, [environmentName]);
 
@@ -27,7 +28,7 @@ export const EnvironmentIcon: React.FunctionComponent<IProps> = ({
                 selected,
             })}
         >
-            <span className="env-icon-text">{envName}</span>
+            <AccentText className="env-icon-text">{envName}</AccentText>
         </span>
     );
 };

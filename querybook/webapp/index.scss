@@ -17,8 +17,9 @@
 }
 
 .empty-message {
-    color: var(--text-lightest);
+    color: var(--text-lightest-0);
     font-weight: var(--bold-font);
+    font-family: var(--font-accent);
     display: flex;
     justify-content: center;
     font-size: var(--large-text-size);

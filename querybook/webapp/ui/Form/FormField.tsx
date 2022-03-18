@@ -4,6 +4,7 @@ import clsx from 'clsx';
 import { InfoButton } from 'ui/Button/InfoButton';
 
 import './FormField.scss';
+import { StyledText } from 'ui/StyledText/StyledText';
 
 export const FormSectionHeader: React.FC = ({ children }) => (
     <div className="FormSectionHeader flex-row">
@@ -91,7 +92,16 @@ export const FormField: React.FunctionComponent<IFormFieldProps> = ({
 const FormFieldLabelSection: React.FunctionComponent<IFormFieldSectionProps> = ({
     children,
     className = '',
-}) => <div className={`FormFieldLabelSection ${className}`}>{children}</div>;
+}) => (
+    <StyledText
+        color="light"
+        weight="bold"
+        accent
+        className={`FormFieldLabelSection ${className}`}
+    >
+        {children}
+    </StyledText>
+);
 
 export const FormFieldInputSectionRowGroup: React.FunctionComponent<IFormFieldSectionProps> = ({
     children,

@@ -17,9 +17,6 @@ import { IStandardModalProps } from 'ui/Modal/types';
 import { Modal } from 'ui/Modal/Modal';
 import { FormWrapper } from 'ui/Form/FormWrapper';
 import { SimpleField } from 'ui/FormikField/SimpleField';
-import { Title } from 'ui/Title/Title';
-
-import './BoardCreateUpdateModal.scss';
 
 const boardFormSchema = Yup.object().shape({
     name: Yup.string().max(255).min(1).required(),
@@ -85,7 +82,6 @@ export const BoardCreateUpdateForm: React.FunctionComponent<IBoardCreateUpdateFo
             }}
         >
             {({ submitForm, isSubmitting, isValid }) => {
-                const formTitle = isCreateForm ? 'New List' : 'Update List';
                 const nameField = <SimpleField name="name" type="input" />;
                 // TODO: enable when sharing is possible
                 // const publicField = <SimpleField name="public" type="toggle" />;
@@ -96,9 +92,6 @@ export const BoardCreateUpdateForm: React.FunctionComponent<IBoardCreateUpdateFo
 
                 return (
                     <div className="BoardCreateUpdateForm">
-                        <div>
-                            <Title size={4}>{formTitle}</Title>
-                        </div>
                         <FormWrapper minLabelWidth="150px">
                             <Form>
                                 {nameField}
@@ -132,10 +125,16 @@ export const BoardCreateUpdateForm: React.FunctionComponent<IBoardCreateUpdateFo
 
 export const BoardCreateUpdateModal: React.FunctionComponent<
     IBoardCreateUpdateFormProps & IStandardModalProps
-> = ({ boardId, onComplete, ...modalProps }) => (
-    <Modal {...modalProps}>
-        <div className="BoardCreateUpdateModal">
-            <BoardCreateUpdateForm boardId={boardId} onComplete={onComplete} />
-        </div>
-    </Modal>
-);
+> = ({ boardId, onComplete, ...modalProps }) => {
+    const modalTitle = boardId == null ? 'Create List' : 'Update List';
+    return (
+        <Modal {...modalProps} title={modalTitle}>
+            <div className="BoardCreateUpdateModal">
+                <BoardCreateUpdateForm
+                    boardId={boardId}
+                    onComplete={onComplete}
+                />
+            </div>
+        </Modal>
+    );
+};

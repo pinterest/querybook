@@ -94,7 +94,7 @@ export const DataDocScheduleFormWrapper: React.FunctionComponent<IDataDocSchedul
         );
     } else {
         // Readonly and no schedule
-        return <div className="empty-message m16">No Schedules</div>;
+        return <div className="empty-message m24">No Schedules</div>;
     }
 };
 
