@@ -15,6 +15,7 @@ import { Divider } from 'ui/Divider/Divider';
 import { Button } from 'ui/Button/Button';
 import { Link } from 'ui/Link/Link';
 import './DataTableViewSourceQuery.scss';
+import { EmptyText } from 'ui/StyledText/StyledText';
 
 const dataJobMetadataTableColumns = ['name', 'value'];
 
@@ -81,9 +82,9 @@ export const DataTableViewSourceQuery: React.FunctionComponent<IProps> = ({
 
     const errorDOM =
         jobMetadataIds.length > 0 ? null : (
-            <div className="empty-message m24">
+            <EmptyText className="m24">
                 The source query is not available.
-            </div>
+            </EmptyText>
         );
 
     const showMoreDOM =

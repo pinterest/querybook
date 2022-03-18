@@ -17,6 +17,7 @@ import { DataDocChartCellTable } from './DataDocChartCellTable';
 import { DataDocChartComposer } from './DataDocChartComposer';
 import { InfoButton } from 'ui/Button/InfoButton';
 import { Modal } from 'ui/Modal/Modal';
+import { EmptyText } from 'ui/StyledText/StyledText';
 
 interface IProps {
     context: string;
@@ -185,7 +186,7 @@ export const DataDocChartCell = React.memo<IProps>(
                 transformedChartData == null ||
                 transformedChartData.length === 0
             ) {
-                return <div className="empty-message">No Data for Chart</div>;
+                return <EmptyText size="xlarge">No Data for Chart</EmptyText>;
             }
 
             let visualizationDOM: React.ReactChild;

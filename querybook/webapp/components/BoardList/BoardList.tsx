@@ -11,6 +11,7 @@ import { BoardCreateUpdateModal } from 'components/BoardCreateUpdateModal/BoardC
 import { InfinityScroll } from 'ui/InfinityScroll/InfinityScroll';
 import { ListLink } from 'ui/Link/ListLink';
 import './BoardList.scss';
+import { EmptyText } from 'ui/StyledText/StyledText';
 
 interface IProps {
     onBoardClick: (id: IBoard) => any;
@@ -76,7 +77,7 @@ export const BoardList: React.FunctionComponent<IProps> = ({
                 />
             </div>
         ) : (
-            <div className="empty-message m24">No list found</div>
+            <EmptyText className="m24">No list found</EmptyText>
         );
 
     return (

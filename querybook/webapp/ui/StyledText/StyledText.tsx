@@ -17,6 +17,7 @@ interface IStyledTextProps {
         | 'xxlarge'
         | 'xxxlarge';
     color?:
+        | 'lightest-0'
         | 'lightest'
         | 'light'
         | 'text'
@@ -25,9 +26,13 @@ interface IStyledTextProps {
         | 'accent'
         | 'accent-dark';
     cursor?: 'default' | 'pointer' | 'not-allowed';
+
     accent?: boolean;
     noUserSelect?: boolean;
     hover?: boolean;
+
+    untitled?: boolean;
+    center?: boolean;
 }
 
 interface IProps extends IStyledTextProps {
@@ -87,6 +92,18 @@ const StyledTextSpan = styled((props: IStyledTextProps) => <div {...props} />)`
                 &:hover {
                     color: var(--text-hover);
                 }`
+            : ''};
+    ${(props) =>
+        props.untitled
+            ? `  
+                opacity: 0.7;
+                font-style: italic;`
+            : ''};
+    ${(props) =>
+        props.center
+            ? `  
+                display: flex;
+                justify-content: center;`
             : ''};
 
     * {
@@ -174,4 +191,30 @@ export const AccentText: React.FunctionComponent<IProps> = ({
     <StyledText className={className} accent {...elementProps}>
         {children}
     </StyledText>
+);
+
+export const UntitledText: React.FunctionComponent<IProps> = ({
+    className,
+    ...elementProps
+}) => (
+    <StyledText className={className} untitled {...elementProps}>
+        Untitled
+    </StyledText>
+);
+
+export const EmptyText: React.FunctionComponent<IProps> = ({
+    children,
+    className,
+    ...elementProps
+}) => (
+    <AccentText
+        className={'Empty Text ' + className}
+        color="lightest-0"
+        weight="bold"
+        size="large"
+        center
+        {...elementProps}
+    >
+        {children}
+    </AccentText>
 );

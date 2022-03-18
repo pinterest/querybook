@@ -161,7 +161,7 @@ export const DataTableViewQueryExamples: React.FunctionComponent<IProps> = ({
                 )}
             </div>
             <div className="filter-selection-section mb24">
-                <div className="mb16">
+                <div className="mb8">
                     <AccentText size="med" color="text" weight="bold">
                         Top users
                     </AccentText>
@@ -171,7 +171,7 @@ export const DataTableViewQueryExamples: React.FunctionComponent<IProps> = ({
                         selectedUid={filters.uid}
                     />
                 </div>
-                <div className="mb16">
+                <div className="mb8">
                     <AccentText size="med" color="text" weight="bold">
                         Query engines
                     </AccentText>
@@ -181,7 +181,7 @@ export const DataTableViewQueryExamples: React.FunctionComponent<IProps> = ({
                         selectedEngineId={filters.engine_id}
                     />
                 </div>
-                <div className="mb16">
+                <div className="mb8">
                     <AccentText size="med" color="text" weight="bold">
                         Top co-occurring tables
                     </AccentText>

@@ -8,6 +8,7 @@ import { Loading } from 'ui/Loading/Loading';
 import { Button } from 'ui/Button/Button';
 import { queryEngineByIdEnvSelector } from 'redux/queryEngine/selector';
 import { Tag } from 'ui/Tag/Tag';
+import { EmptyText } from 'ui/StyledText/StyledText';
 
 export function useLoadQueryEngines(tableId: number) {
     const [loading, setLoading] = useState(false);
@@ -41,9 +42,9 @@ export const DataTableViewQueryEngines: React.FC<{
     const enginesDOM = loading ? (
         <Loading />
     ) : !queryEngines?.length ? (
-        <div className="empty-message">
+        <EmptyText size="small" center={false}>
             This table has not been queried by any engines in this environment
-        </div>
+        </EmptyText>
     ) : (
         <div className="query-filter-wrapper">
             {queryEngines.map(({ engine_id: engineId, count }) => (

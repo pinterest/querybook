@@ -169,7 +169,9 @@ export function mapMetaToChartOptions(
                 display: !!meta.title.length,
                 text: meta.title,
                 font: {
-                    family: 'var(--font-accent)',
+                    family: 'Poppins',
+                    weight: 'bold',
+                    size: 16,
                 },
             },
             tooltip: {

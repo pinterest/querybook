@@ -280,23 +280,23 @@ class QuerySnippetComposerComponent extends React.PureComponent<
 
         return (
             <Card alignLeft>
-                <div>
+                <div className="flex-row">
                     <span>Created by</span>
-                    <AccentText color="text" weight="light" className="mh4">
+                    <AccentText color="text" weight="bold" className="mh4">
                         <UserName uid={querySnippet.created_by} />
                     </AccentText>
                     <span>on</span>
-                    <AccentText color="text" weight="light" className="mh4">
+                    <AccentText color="text" weight="bold" className="mh4">
                         {generateFormattedDate(querySnippet.created_at)}
                     </AccentText>
                 </div>
-                <div>
+                <div className="flex-row">
                     <span>Last updated by</span>
-                    <AccentText color="text" weight="light" className="mh4">
+                    <AccentText color="text" weight="bold" className="mh4">
                         <UserName uid={querySnippet.last_updated_by} />
                     </AccentText>
                     <span>on</span>
-                    <AccentText color="text" weight="light" className="mh4">
+                    <AccentText color="text" weight="bold" className="mh4">
                         {generateFormattedDate(querySnippet.updated_at)}
                     </AccentText>
                 </div>

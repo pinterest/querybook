@@ -10,6 +10,7 @@ import { IScheduleTabs } from 'components/DataDocRightSidebar/DataDocScheduleMod
 
 import { Loading } from 'ui/Loading/Loading';
 import { ErrorMessage } from 'ui/Message/ErrorMessage';
+import { EmptyText } from 'ui/StyledText/StyledText';
 
 interface IDataDocScheduleFormWrapperProps {
     docId: number;
@@ -94,7 +95,7 @@ export const DataDocScheduleFormWrapper: React.FunctionComponent<IDataDocSchedul
         );
     } else {
         // Readonly and no schedule
-        return <div className="empty-message m24">No Schedules</div>;
+        return <EmptyText className="m24">No Schedules</EmptyText>;
     }
 };
 

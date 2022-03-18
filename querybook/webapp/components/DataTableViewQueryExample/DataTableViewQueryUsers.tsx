@@ -9,6 +9,7 @@ import { Loading } from 'ui/Loading/Loading';
 import { Button } from 'ui/Button/Button';
 import { UserBadge } from 'components/UserBadge/UserBadge';
 import { Tag } from 'ui/Tag/Tag';
+import { EmptyText } from 'ui/StyledText/StyledText';
 
 export function useLoadQueryUsers(tableId: number) {
     const [loading, setLoading] = useState(false);
@@ -42,9 +43,9 @@ export const DataTableViewQueryUsers: React.FC<{
     const viewersDOM = loading ? (
         <Loading />
     ) : !topQueryUsers?.length ? (
-        <div className="empty-message">
+        <EmptyText size="small" center={false}>
             No user has queried this table on {getAppName()}
-        </div>
+        </EmptyText>
     ) : (
         <div className="query-filter-wrapper">
             {topQueryUsers.map(({ uid, count }) => (

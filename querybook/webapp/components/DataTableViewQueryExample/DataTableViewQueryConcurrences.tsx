@@ -8,6 +8,7 @@ import { Loading } from 'ui/Loading/Loading';
 import { Button } from 'ui/Button/Button';
 import { TableName } from './DataTableName';
 import { Tag } from 'ui/Tag/Tag';
+import { EmptyText } from 'ui/StyledText/StyledText';
 
 export function useLoadQueryConcurrences(tableId: number) {
     const [loading, setLoading] = useState(false);
@@ -41,9 +42,9 @@ export const DataTableViewQueryConcurrences: React.FC<{
     const tablesDOM = loading ? (
         <Loading />
     ) : !topConcurrences?.length ? (
-        <div className="empty-message">
+        <EmptyText size="small" center={false}>
             Cannot find examples where this table is used with others
-        </div>
+        </EmptyText>
     ) : (
         <div className="query-filter-wrapper">
             {topConcurrences.map(({ table_id: tableId, count }) => (

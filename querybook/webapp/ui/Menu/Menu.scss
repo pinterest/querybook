@@ -21,6 +21,9 @@
 
     .MenuItem {
         cursor: pointer;
+        * {
+            cursor: pointer;
+        }
 
         &:hover {
             background-color: var(--bg-hover);

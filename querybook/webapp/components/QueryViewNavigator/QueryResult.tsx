@@ -85,7 +85,7 @@ export const QueryResult: React.FunctionComponent<IProps> = ({
                                 queryStatusToStatusIcon[queryExecution.status]
                             }
                         />
-                        <AccentText className="mr8" size="small" color="light">
+                        <AccentText className="mr8" size="small" weight="bold">
                             Execution {queryId}
                         </AccentText>
                     </div>

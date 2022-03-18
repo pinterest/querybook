@@ -112,7 +112,7 @@ export const DataTableHeader: React.FunctionComponent<IDataTableHeader> = ({
     );
 
     const titleDOM = (
-        <AccentText className="mb8" color="text" size="xlarge" weight="bold">
+        <AccentText className="mb4" color="text" size="xlarge" weight="bold">
             {shortTableName}
         </AccentText>
     );
