@@ -1,4 +1,4 @@
-import React, { useMemo, useCallback } from 'react';
+import React, { useMemo, useCallback, useState, useRef } from 'react';
 import { useSelector } from 'react-redux';
 import styled from 'styled-components';
 
@@ -9,11 +9,13 @@ import { findColumnType } from 'lib/query-result/detector';
 
 import { IStoreState } from 'redux/store/types';
 import { Table } from 'ui/Table/Table';
+import { ToggleSwitch } from 'ui/ToggleSwitch/ToggleSwitch';
 
 import { getTransformersForType } from 'lib/query-result/transformer';
 import { StatementResultTableColumn } from './StatementResultTableColumn';
 import { useSortCell } from './useSortCell';
 import { useFilterCell } from './useFilterCell';
+import { BooleanLiteral } from 'typescript';
 
 const StyledTableWrapper = styled.div.attrs({
     className: 'StatementResultTable',
@@ -72,6 +74,16 @@ function useTableFontSize() {
     );
 }
 
+const ShowFullContentCellSwitch = styled.div`
+    display: flex;
+    font-weight: 400;
+    align-items: center;
+`;
+
+const FullContentText = styled.div`
+    margin-right: 12px;
+`;
+
 export const StatementResultTable: React.FunctionComponent<{
     // If isPreview, then it is only showing partial results instead of
     // all rows
@@ -81,7 +93,11 @@ export const StatementResultTable: React.FunctionComponent<{
     paginate: boolean;
     maxNumberOfRowsToShow?: number;
 }> = ({ data, paginate, maxNumberOfRowsToShow = 20, isPreview = false }) => {
-    const [expandedColumn, toggleExpandedColumn] = useExpandedColumn();
+    const [
+        expandedColumn,
+        toggleExpandedColumn,
+        setExpandedColumn,
+    ] = useExpandedColumn();
 
     const tableFontSize = useTableFontSize();
 
@@ -107,6 +123,27 @@ export const StatementResultTable: React.FunctionComponent<{
         setFilterCondition,
         filterConditionByColumn,
     } = useFilterCell(rows);
+
+    const [isDisplayFull, setIsDisplayFull] = useState(false);
+
+    const visibilityToggle = useCallback(() => {
+        const columnNames = data[0];
+
+        setIsDisplayFull((old) => {
+            const newDisplayFull = !old;
+            setExpandedColumn((old) => {
+                columnNames.forEach((columnName) => {
+                    if (newDisplayFull) {
+                        old[columnName] = true;
+                    } else {
+                        delete old[columnName];
+                    }
+                });
+            });
+
+            return newDisplayFull;
+        });
+    }, [data, setExpandedColumn]);
 
     const columns = data[0].map((column, index) => ({
         Header: () => (
@@ -143,6 +180,15 @@ export const StatementResultTable: React.FunctionComponent<{
 
     return (
         <StyledTableWrapper fontSize={tableFontSize}>
+            <ShowFullContentCellSwitch>
+                <FullContentText>
+                    {isDisplayFull ? 'Hide' : 'Show'} full cell content:
+                </FullContentText>
+                <ToggleSwitch
+                    checked={isDisplayFull}
+                    onChange={visibilityToggle}
+                />
+            </ShowFullContentCellSwitch>
             <Table
                 minRows={0}
                 pageSize={
@@ -186,7 +232,7 @@ function useExpandedColumn() {
             }
         });
     }, []);
-    return [expandedColumn, toggleExpandedColumn] as const;
+    return [expandedColumn, toggleExpandedColumn, setExpandedColumn] as const;
 }
 
 function useColumnTransformer(columnTypes: string[]) {
