@@ -1,7 +1,8 @@
 import type { IAccessRequest } from 'const/accessRequest';
-import type {
+import {
     IQueryError,
     IQueryExecution,
+    IQueryExecutionExportStatusInfo,
     IQueryExecutionNotification,
     IQueryExecutionViewer,
     IQueryResultExporter,
@@ -98,10 +99,7 @@ export const StatementResource = {
         exporterName: string,
         exporterParams?: Record<any, any>
     ) => {
-        const params = {
-            exporter_name: exporterName,
-            originator: dataDocSocket.socketId,
-        };
+        const params = { exporter_name: exporterName };
         if (exporterParams) {
             params['exporter_params'] = exporterParams;
         }
@@ -111,6 +109,11 @@ export const StatementResource = {
             params
         );
     },
+
+    pollExportTask: (taskId: string) =>
+        ds.fetch<IQueryExecutionExportStatusInfo>(
+            `/query_execution_exporter/task/${taskId}/poll/`
+        ),
 
     /**
      * Get the Authorization url for the exporter

@@ -90,7 +90,7 @@ class BaseReader(ABC):
         Returns:
             Generator[List[List[str]], None, None] -- generator for parsed csv
         """
-        pass
+        raise NotImplementedError()
 
     @abstractmethod
     def read_lines(self, number_of_lines: int) -> List[str]:

@@ -58,7 +58,7 @@ def delete_key_value_store(key, commit=True, session=None):
             session.commit()
 
 
-def get_csv_reader(raw_csv_str: str) -> Generator[List[List[str]], None, None]:
+def str_to_csv_iter(raw_csv_str: str) -> Generator[List[List[str]], None, None]:
     # Remove NULL byte to make sure csv conversion works
     raw_csv_str = raw_csv_str.replace("\x00", "")
     raw_results = StringIO(raw_csv_str)
@@ -66,5 +66,5 @@ def get_csv_reader(raw_csv_str: str) -> Generator[List[List[str]], None, None]:
 
 
 def string_to_csv(raw_csv_str: str) -> List[List[str]]:
-    csv_reader = get_csv_reader(raw_csv_str)
+    csv_reader = str_to_csv_iter(raw_csv_str)
     return [row for row in csv_reader]

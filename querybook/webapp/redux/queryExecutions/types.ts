@@ -149,24 +149,6 @@ export interface IReceiveQueryExecutionAccessRequestsAction extends Action {
     };
 }
 
-export interface IReceiveStatementExecutionExportTaskIdAction extends Action {
-    type: '@@queryExecutions/RECEIVE_STATEMENT_EXECUTION_EXPORT_TASK_ID';
-    payload: {
-        taskId: string;
-    };
-}
-
-export interface IRemoveStatementExecutionExportTaskIdAction extends Action {
-    type: '@@queryExecutions/REMOVE_STATEMENT_EXECUTION_EXPORT_TASK_ID';
-    payload: {
-        taskId: string;
-    };
-}
-
-export interface IClearStatementExecutionExportTaskIdsAction extends Action {
-    type: '@@queryExecutions/CLEAR_STATEMENT_EXECUTION_EXPORT_TASK_IDS';
-}
-
 export type QueryExecutionAction =
     | IReceiveQueryExecutionsAction
     | IReceiveQueryExecutionAction
@@ -183,10 +165,7 @@ export type QueryExecutionAction =
     | IReceiveQueryExecutionViewerAction
     | IReceiveQueryExecutionViewersAction
     | IRemoveQueryExectionViewerAction
-    | IReceiveQueryExecutionAccessRequestsAction
-    | IReceiveStatementExecutionExportTaskIdAction
-    | IRemoveStatementExecutionExportTaskIdAction
-    | IClearStatementExecutionExportTaskIdsAction;
+    | IReceiveQueryExecutionAccessRequestsAction;
 
 export interface IQueryExecutionState {
     queryExecutionById: Record<number, IQueryExecution>;
@@ -198,7 +177,6 @@ export interface IQueryExecutionState {
     statementLogById: Record<number, IStatementLog>;
 
     statementExporters: IQueryResultExporter[];
-    activeStatementExportTaskIds: string[];
 
     viewersByExecutionIdUserId: Record<
         number,

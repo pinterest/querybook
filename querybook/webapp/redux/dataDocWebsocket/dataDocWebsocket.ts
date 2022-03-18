@@ -6,11 +6,7 @@ import { IDataDocEditor } from 'const/datadoc';
 import { IAccessRequest } from 'const/accessRequest';
 
 import { ThunkDispatch as QueryExecutionDispatch } from 'redux/queryExecutions/types';
-import {
-    clearActiveExportTaskIds,
-    receiveQueryExecution,
-    receiveStatementExecutionExportStatus,
-} from 'redux/queryExecutions/action';
+import { receiveQueryExecution } from 'redux/queryExecutions/action';
 import { ThunkResult } from 'redux/dataDoc/types';
 import {
     normalizeRawDataDoc,
@@ -240,18 +236,6 @@ export function openDataDoc(docId: number): ThunkResult<Promise<any>> {
                                   },
                               }
                     );
-                },
-            },
-
-            receiveExportStatus: {
-                resolve: (data) => {
-                    dispatch(receiveStatementExecutionExportStatus(data));
-                },
-            },
-
-            clearActiveExportTaskIds: {
-                resolve: () => {
-                    dispatch(clearActiveExportTaskIds());
                 },
             },
         };

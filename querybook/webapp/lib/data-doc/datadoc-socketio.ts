@@ -3,10 +3,7 @@ import type { Socket } from 'socket.io-client';
 import { IAccessRequest } from 'const/accessRequest';
 import { IDataDocEditor, IDataCellMeta } from 'const/datadoc';
 import SocketIOManager from 'lib/socketio-manager';
-import {
-    IQueryExecution,
-    IQueryExecutionExportStatusInfo,
-} from 'const/queryExecution';
+import { IQueryExecution } from 'const/queryExecution';
 import { DataDocResource } from 'resource/dataDoc';
 
 interface IDataDocSocketPromise<T> {
@@ -72,12 +69,6 @@ export interface IDataDocSocketEvent {
             isSameOrigin: boolean
         ) => any
     >;
-
-    receiveExportStatus?: IDataDocSocketEventPromise<
-        (data: IQueryExecutionExportStatusInfo) => any
-    >;
-
-    clearActiveExportTaskIds?: IDataDocSocketEventPromise<() => any>;
 
     receiveFocusCell?: IDataDocSocketEventPromise<
         (dataCellId: number, uid: number, isSameOrigin: boolean) => any
@@ -450,21 +441,6 @@ export class DataDocSocket {
                         uid
                     )
             );
-
-            this.socket.on(
-                'export_status_info',
-                (data: IQueryExecutionExportStatusInfo) => {
-                    this.resolvePromiseAndEvent(
-                        'receiveExportStatus',
-                        '',
-                        data
-                    );
-                }
-            );
-
-            this.socket.on('disconnect', () => {
-                this.resolvePromiseAndEvent('clearActiveExportTaskIds', '');
-            });
 
             this.socket.on('error', (e) => {
                 Object.values(this.promiseMap).map(({ reject }) => reject?.(e));

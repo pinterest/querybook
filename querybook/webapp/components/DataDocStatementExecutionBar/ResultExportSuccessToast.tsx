@@ -25,12 +25,8 @@ const UrlModal: React.FunctionComponent<{
 export const ResultExportSuccessToast = (
     data: IQueryExecutionExportStatusInfo
 ) => {
-    const {
-        result: exportedInfo,
-        statement_id: statementId,
-        task_id: taskId,
-    } = data;
-    const title = `Completed exporting statement ${statementId}!`;
+    const { result: exportedInfo, task_id: taskId } = data;
+    const title = 'Completed exporting statement execution results!';
 
     return exportedInfo.type === 'url' ? (
         <UrlModal

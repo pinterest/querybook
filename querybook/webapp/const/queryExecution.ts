@@ -61,7 +61,6 @@ export interface IQueryExecutionExportResult {
 
 export interface IQueryExecutionExportStatusInfo {
     task_id: string;
-    statement_id: number;
     status: number;
     message?: string;
     result?: IQueryExecutionExportResult;

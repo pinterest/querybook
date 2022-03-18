@@ -6,6 +6,8 @@ import {
     IStatementExecution,
     IStatementResult,
     IQueryResultExporter,
+    QueryExecutionExportStatus,
+    IQueryExecutionExportStatusInfo,
 } from 'const/queryExecution';
 import * as queryExecutionsActions from 'redux/queryExecutions/action';
 import { IStoreState, Dispatch } from 'redux/store/types';
@@ -22,6 +24,9 @@ import { validateForm, updateValue } from 'ui/SmartForm/formFunctions';
 import { SmartForm } from 'ui/SmartForm/SmartForm';
 import { IconButton } from 'ui/Button/IconButton';
 import './ResultExportDropdown.scss';
+import { getExporterAuthentication } from 'lib/result-export';
+import { StatementResource } from 'resource/queryExecution';
+import { ResultExportSuccessToast } from './ResultExportSuccessToast';
 
 interface IProps {
     statementExecution: IStatementExecution;
@@ -113,16 +118,49 @@ export const ResultExportDropdown: React.FunctionComponent<IProps> = ({
     }, [statementId, statementResult, loadStatementResult]);
 
     const handleExport = React.useCallback(
-        (
+        async (
             exporter: IQueryResultExporter,
             formData?: Record<string, unknown>
         ) => {
-            dispatch(
-                queryExecutionsActions.exportStatementExecutionResults(
-                    statementId,
-                    exporter,
-                    formData
-                )
+            await getExporterAuthentication(exporter);
+            const { data: taskId } = await StatementResource.export(
+                statementId,
+                exporter.name,
+                formData
+            );
+
+            const pollExportPromise = new Promise((res, rej) => {
+                const poll = setInterval(async () => {
+                    const { data } = await StatementResource.pollExportTask(
+                        taskId
+                    );
+                    const { status } = data;
+                    if (status === QueryExecutionExportStatus.ERROR) {
+                        clearInterval(poll);
+                        rej(data.message ?? 'unknown error');
+                    } else if (status === QueryExecutionExportStatus.DONE) {
+                        clearInterval(poll);
+                        res(data);
+                    }
+                }, 5000);
+            });
+            return toast.promise(
+                pollExportPromise,
+                {
+                    loading: 'Exporting, please wait',
+                    success: (data: IQueryExecutionExportStatusInfo) =>
+                        ResultExportSuccessToast(data),
+                    error: (e) =>
+                        `Cannot ${exporter.name.toLowerCase()}, reason: ${e}`,
+                },
+                {
+                    id: taskId,
+                    success: {
+                        style: {
+                            display: 'none',
+                        },
+                    },
+                }
             );
         },
         [statementId]

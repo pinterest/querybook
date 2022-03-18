@@ -46,9 +46,7 @@ class GetMaxRowsTestCase(TestCase):
         self.mock_create_google_flow = create_google_flow_patch.start()
 
         statement_columns_len_patch = mock.patch.object(
-            GoogleSheetsExporter,
-            "_get_statement_execution_columns_len",
-            return_value=10,
+            GoogleSheetsExporter, "_get_statement_execution_num_cols", return_value=10,
         )
         self.addCleanup(statement_columns_len_patch.stop)
         self.statement_columns_len_mock = statement_columns_len_patch.start()
@@ -57,7 +55,7 @@ class GetMaxRowsTestCase(TestCase):
         # edge case - 0 columns (ie no statement results) shouldn't break this function
         self.statement_columns_len_mock.return_value = 0
         exporter = GoogleSheetsExporter({})
-        self.assertEqual(exporter._get_max_rows(1), MAX_SHEETS_CELLS)
+        self.assertEqual(exporter._get_max_rows(1), MAX_SHEETS_CELLS // 26)
 
     def test_column_offset(self):
         self.statement_columns_len_mock.return_value = 1000000

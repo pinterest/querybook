@@ -14,11 +14,11 @@ Exporters can now export all rows of statement result (limited to the size of th
 spreadsheets limits).
 
 -   Breaking changes:
-    -   custom exporter plugins will need to be updated to ensure exporter file/csv size limits are not exceeded
-    -   `_get_statement_execution_result` in `lib.export.base_exporter.BaseExporter`:
-        -   no longer takes `raw` as an argument
-        -   returns csv iterator of type `Generator[List[List[str]], None, None]`
-        -   by default returns all rows of result if `number_of_lines` parameter is not specified
+    -   custom exporter plugins will need to be updated to ensure exporter file/csv size limits are not exceeded and should be updated to use `_get_statement_execution_result_iter` to export full
+        csv result
+    -   `_get_statement_execution_result` in `lib.export.base_exporter.BaseExporter` will be deprecated
+        since exporters will now use `_get_statement_execution_result_iter` to export entire statement
+        results
     -   `get_csv_iter` is a new abstract method of `lib.result_store.stores.BaseReader`, and needs to be implemented by any classes inheriting from this
 
 ## v3.1.2

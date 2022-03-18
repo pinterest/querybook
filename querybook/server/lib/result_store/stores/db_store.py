@@ -5,7 +5,7 @@ from lib.result_store.stores.base_store import BaseReader, BaseUploader
 from logic import result_store
 from logic.result_store import (
     create_key_value_store,
-    get_csv_reader,
+    str_to_csv_iter,
 )
 
 
@@ -34,7 +34,7 @@ class DBReader(BaseReader):
     ) -> Generator[List[List[str]], None, None]:
         curr_lines = self._get_first_n_lines(number_of_lines)
         raw_csv_str = "\n".join(curr_lines)
-        return get_csv_reader(raw_csv_str)
+        return str_to_csv_iter(raw_csv_str)
 
     def read_lines(self, number_of_lines: int) -> List[str]:
         return self._get_first_n_lines(number_of_lines)
