@@ -47,7 +47,7 @@ export const pollExporterTaskPromise = (taskId: string) =>
             const { status } = data;
             if (status === QueryExecutionExportStatus.ERROR) {
                 clearInterval(poll);
-                rej(data.message ?? 'unknown error');
+                rej(new Error(data.message ?? 'unknown error'));
             } else if (status === QueryExecutionExportStatus.DONE) {
                 clearInterval(poll);
                 res(data);
