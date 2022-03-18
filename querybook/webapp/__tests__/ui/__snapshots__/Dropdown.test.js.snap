@@ -7,8 +7,7 @@ exports[`matches enzyme snapshots matches snapshot 1`] = `
   onMouseEnter={[Function]}
   onMouseLeave={[Function]}
 >
-  <StyledText
-    accent={true}
+  <AccentText
     className="Dropdown-trigger"
     weight="bold"
   >
@@ -16,7 +15,7 @@ exports[`matches enzyme snapshots matches snapshot 1`] = `
       icon="menu"
       noPadding={true}
     />
-  </StyledText>
+  </AccentText>
 </div>
 `;
 
@@ -28,9 +27,8 @@ exports[`matches test renderer snapshot serializes the styles 1`] = `
   onMouseLeave={[Function]}
 >
   <div
-    accent={true}
-    accentFont={false}
-    className="StyledText__StyledTextDiv-sc-1ldibmc-0 kYeIdz Text Dropdown-trigger"
+    accentFont={true}
+    className="StyledText__StyledTextDiv-sc-1ldibmc-0 dgoMHH Text Dropdown-trigger"
     noUserSelect={false}
     weight="bold"
   >

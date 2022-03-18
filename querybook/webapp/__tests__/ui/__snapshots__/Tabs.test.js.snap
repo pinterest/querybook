@@ -34,11 +34,9 @@ exports[`matches enzyme snapshots matches snapshot 2`] = `
         <Memo()
           name="check"
         />
-        <StyledText
-          accent={true}
-        >
+        <AccentText>
           test
-        </StyledText>
+        </AccentText>
       </a>
     </li>
   </ul>
