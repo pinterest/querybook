@@ -72,7 +72,7 @@ const StyledTextSpan = styled((props: IStyledTextProps) => <div {...props} />)`
     ${(props) =>
         props.accent
             ? `
-                font-family: var(--font-accent); 
+                font-family: var(--font-accent);
                 letter-spacing: var(--letter-spacing${
                     props.weight === 'bold' || props.weight === 'extra'
                         ? '-bold'
@@ -88,20 +88,20 @@ const StyledTextSpan = styled((props: IStyledTextProps) => <div {...props} />)`
             : ''};
     ${(props) =>
         props.hover
-            ? `  
+            ? `
                 &:hover {
                     color: var(--text-hover);
                 }`
             : ''};
     ${(props) =>
         props.untitled
-            ? `  
+            ? `
                 opacity: 0.7;
                 font-style: italic;`
             : ''};
     ${(props) =>
         props.center
-            ? `  
+            ? `
                 display: flex;
                 justify-content: center;`
             : ''};
@@ -136,7 +136,7 @@ const StyledTextSpan = styled((props: IStyledTextProps) => <div {...props} />)`
         ${(props) =>
             props.accent
                 ? `
-                        font-family: var(--font-accent); 
+                        font-family: var(--font-accent);
                         letter-spacing: var(--letter-spacing${
                             props.weight === 'bold' || props.weight === 'extra'
                                 ? '-bold'
@@ -146,7 +146,7 @@ const StyledTextSpan = styled((props: IStyledTextProps) => <div {...props} />)`
                 : ''};
         ${(props) =>
             props.hover
-                ? `  
+                ? `
                     &:hover {
                         color: var(--text-hover);
                     }`
