@@ -54,7 +54,7 @@ import './DataDocQueryCell.scss';
 import { TemplatedQueryView } from 'components/TemplateQueryView/TemplatedQueryView';
 import { doesLanguageSupportUDF } from 'lib/utils/udf';
 import { UDFForm } from 'components/UDFForm/UDFForm';
-import { AccentText, StyledText } from 'ui/StyledText/StyledText';
+import { AccentText } from 'ui/StyledText/StyledText';
 
 const ON_CHANGE_DEBOUNCE_MS = 500;
 const FORMAT_QUERY_SHORTCUT = getShortcutSymbols(
@@ -561,14 +561,9 @@ class DataDocQueryCellComponent extends React.PureComponent<IProps, IState> {
 
         return (
             <div className="query-metadata">
-                <StyledText
-                    className="query-title"
-                    weight="bold"
-                    size="large"
-                    accent
-                >
+                <AccentText className="query-title" weight="bold" size="large">
                     {queryTitleDOM}
-                </StyledText>
+                </AccentText>
                 <div className="query-controls flex-row">
                     <QueryRunButton
                         ref={this.runButtonRef}

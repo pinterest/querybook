@@ -1,10 +1,11 @@
 import React from 'react';
 import clsx from 'clsx';
-import { Icon } from 'ui/Icon/Icon';
 import { TooltipDirection } from 'const/tooltip';
 
+import { Icon } from 'ui/Icon/Icon';
+import { AccentText } from 'ui/StyledText/StyledText';
+
 import './Tabs.scss';
-import { StyledText } from 'ui/StyledText/StyledText';
 
 export interface ITabItem {
     name?: string;
@@ -93,7 +94,7 @@ export const Tabs: React.FunctionComponent<ITabsProps> = ({
             >
                 <a className="flex-center" {...tooltipProps}>
                     {icon && <Icon name={icon} />}
-                    {name && <StyledText accent>{name}</StyledText>}
+                    {name && <AccentText>{name}</AccentText>}
                 </a>
             </li>
         );

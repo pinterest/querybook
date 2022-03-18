@@ -13,7 +13,7 @@ import { IconButton } from 'ui/Button/IconButton';
 import { ImpressionWidget } from 'components/ImpressionWidget/ImpressionWidget';
 import { BoardItemAddButton } from 'components/BoardItemAddButton/BoardItemAddButton';
 import { Icon } from 'ui/Icon/Icon';
-import { StyledText } from 'ui/StyledText/StyledText';
+import { AccentText } from 'ui/StyledText/StyledText';
 
 interface IProps {
     dataDoc: IDataDoc;
@@ -61,15 +61,14 @@ export const DataDocHeader = React.forwardRef<HTMLDivElement, IProps>(
             <div className="data-doc-header" ref={ref} key="data-doc-header">
                 <div className="data-doc-header-top horizontal-space-between mb4">
                     <div className="data-doc-header-time flex-row mr8">
-                        <StyledText
+                        <AccentText
                             className="ml8"
                             size="text"
-                            accent
                             weight="bold"
                             color="lightest"
                         >
                             {timeMessage}
-                        </StyledText>
+                        </AccentText>
                         <IconButton
                             noPadding
                             size={16}
@@ -96,7 +95,7 @@ export const DataDocHeader = React.forwardRef<HTMLDivElement, IProps>(
                         <DataDocViewersBadge docId={dataDoc.id} />
                     </div>
                 </div>
-                <StyledText color="light" size="xlarge" weight="extra" accent>
+                <AccentText color="light" size="xlarge" weight="extra">
                     <ResizableTextArea
                         value={dataDoc.title}
                         onChange={changeDataDocTitle.bind(this, dataDoc.id)}
@@ -105,7 +104,7 @@ export const DataDocHeader = React.forwardRef<HTMLDivElement, IProps>(
                         disabled={!isEditable}
                         transparent
                     />
-                </StyledText>
+                </AccentText>
             </div>
         );
     }

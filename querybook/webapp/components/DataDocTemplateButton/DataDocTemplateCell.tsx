@@ -6,9 +6,8 @@ import { DataDocTemplateVarForm } from 'components/DataDocTemplateButton/DataDoc
 
 import { isEmpty } from 'lodash';
 import { TextButton } from 'ui/Button/Button';
-import { Title } from 'ui/Title/Title';
 import { DataDocTemplateInfoButton } from './DataDocTemplateInfoButton';
-import { StyledText } from 'ui/StyledText/StyledText';
+import { AccentText } from 'ui/StyledText/StyledText';
 
 interface IProps {
     changeDataDocMeta: (docId: number, meta: Record<string, any>) => any;
@@ -51,9 +50,9 @@ export const DataDocTemplateCell: React.FunctionComponent<IProps> = ({
         contentDOM = (
             <>
                 <div className=" flex-row ph8">
-                    <StyledText className="mr12" size="text" accent>
+                    <AccentText className="mr12" size="text">
                         Variables
-                    </StyledText>
+                    </AccentText>
                     <DataDocTemplateInfoButton style="icon" />
                 </div>
                 <DataDocTemplateVarForm

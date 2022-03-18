@@ -4,7 +4,7 @@ import React from 'react';
 
 import { IconButton } from 'ui/Button/IconButton';
 import { Popover } from 'ui/Popover/Popover';
-import { StyledText } from 'ui/StyledText/StyledText';
+import { AccentText } from 'ui/StyledText/StyledText';
 
 import './Dropdown.scss';
 
@@ -121,9 +121,9 @@ export const Dropdown: React.FunctionComponent<IProps> = ({
             onClick={handleClick}
             ref={selfRef}
         >
-            <StyledText className="Dropdown-trigger" accent weight="bold">
+            <AccentText className="Dropdown-trigger" weight="bold">
                 {buttonDOM}
-            </StyledText>
+            </AccentText>
             {dropdownContent}
         </div>
     );
