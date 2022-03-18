@@ -28,7 +28,7 @@ exports[`matches test renderer snapshot serializes the styles 1`] = `
 >
   <div
     accent={true}
-    className="StyledText__StyledTextSpan-sc-1ldibmc-0 dFZulM Text Dropdown-trigger"
+    className="StyledText__StyledTextSpan-sc-1ldibmc-0 gnMAcA Text Dropdown-trigger"
     noUserSelect={false}
   >
     <span

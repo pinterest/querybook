@@ -31,7 +31,7 @@ exports[`matches test renderer snapshot serializes the styles 1`] = `
   >
     <div
       accent={true}
-      className="StyledText__StyledTextSpan-sc-1ldibmc-0 dFZulM Text"
+      className="StyledText__StyledTextSpan-sc-1ldibmc-0 gnMAcA Text"
       noUserSelect={false}
     >
       <span
