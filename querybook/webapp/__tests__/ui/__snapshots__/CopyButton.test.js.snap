@@ -34,14 +34,14 @@ exports[`matches test renderer snapshot serializes the styles 1`] = `
   />
   <div
     accent={true}
-    className="StyledText__StyledTextSpan-sc-1ldibmc-0 gnMAcA Text"
+    className="StyledText__StyledTextSpan-sc-1ldibmc-0 fjBCQA Text"
     noUserSelect={false}
   >
     Test Copy
   </div>
   <div
     accent={true}
-    className="StyledText__StyledTextSpan-sc-1ldibmc-0 gnMAcA Text flex-row"
+    className="StyledText__StyledTextSpan-sc-1ldibmc-0 fjBCQA Text flex-row"
     noUserSelect={false}
   />
 </span>

@@ -95,14 +95,14 @@ exports[`matches test renderer snapshot serializes the styles 1`] = `
     >
       <div
         accent={true}
-        className="StyledText__StyledTextSpan-sc-1ldibmc-0 gnMAcA Text"
+        className="StyledText__StyledTextSpan-sc-1ldibmc-0 fjBCQA Text"
         noUserSelect={false}
       >
         Previous
       </div>
       <div
         accent={true}
-        className="StyledText__StyledTextSpan-sc-1ldibmc-0 gnMAcA Text flex-row"
+        className="StyledText__StyledTextSpan-sc-1ldibmc-0 fjBCQA Text flex-row"
         noUserSelect={false}
       />
     </span>
@@ -118,14 +118,14 @@ exports[`matches test renderer snapshot serializes the styles 1`] = `
     >
       <div
         accent={true}
-        className="StyledText__StyledTextSpan-sc-1ldibmc-0 gnMAcA Text"
+        className="StyledText__StyledTextSpan-sc-1ldibmc-0 fjBCQA Text"
         noUserSelect={false}
       >
         Next
       </div>
       <div
         accent={true}
-        className="StyledText__StyledTextSpan-sc-1ldibmc-0 gnMAcA Text flex-row"
+        className="StyledText__StyledTextSpan-sc-1ldibmc-0 fjBCQA Text flex-row"
         noUserSelect={false}
       />
     </span>
@@ -142,14 +142,14 @@ exports[`matches test renderer snapshot serializes the styles 1`] = `
       >
         <div
           accent={true}
-          className="StyledText__StyledTextSpan-sc-1ldibmc-0 gnMAcA Text"
+          className="StyledText__StyledTextSpan-sc-1ldibmc-0 fjBCQA Text"
           noUserSelect={false}
         >
           1
         </div>
         <div
           accent={true}
-          className="StyledText__StyledTextSpan-sc-1ldibmc-0 gnMAcA Text flex-row"
+          className="StyledText__StyledTextSpan-sc-1ldibmc-0 fjBCQA Text flex-row"
           noUserSelect={false}
         />
       </span>
@@ -163,14 +163,14 @@ exports[`matches test renderer snapshot serializes the styles 1`] = `
       >
         <div
           accent={true}
-          className="StyledText__StyledTextSpan-sc-1ldibmc-0 gnMAcA Text"
+          className="StyledText__StyledTextSpan-sc-1ldibmc-0 fjBCQA Text"
           noUserSelect={false}
         >
           2
         </div>
         <div
           accent={true}
-          className="StyledText__StyledTextSpan-sc-1ldibmc-0 gnMAcA Text flex-row"
+          className="StyledText__StyledTextSpan-sc-1ldibmc-0 fjBCQA Text flex-row"
           noUserSelect={false}
         />
       </span>
@@ -184,14 +184,14 @@ exports[`matches test renderer snapshot serializes the styles 1`] = `
       >
         <div
           accent={true}
-          className="StyledText__StyledTextSpan-sc-1ldibmc-0 gnMAcA Text"
+          className="StyledText__StyledTextSpan-sc-1ldibmc-0 fjBCQA Text"
           noUserSelect={false}
         >
           3
         </div>
         <div
           accent={true}
-          className="StyledText__StyledTextSpan-sc-1ldibmc-0 gnMAcA Text flex-row"
+          className="StyledText__StyledTextSpan-sc-1ldibmc-0 fjBCQA Text flex-row"
           noUserSelect={false}
         />
       </span>
@@ -205,14 +205,14 @@ exports[`matches test renderer snapshot serializes the styles 1`] = `
       >
         <div
           accent={true}
-          className="StyledText__StyledTextSpan-sc-1ldibmc-0 gnMAcA Text"
+          className="StyledText__StyledTextSpan-sc-1ldibmc-0 fjBCQA Text"
           noUserSelect={false}
         >
           4
         </div>
         <div
           accent={true}
-          className="StyledText__StyledTextSpan-sc-1ldibmc-0 gnMAcA Text flex-row"
+          className="StyledText__StyledTextSpan-sc-1ldibmc-0 fjBCQA Text flex-row"
           noUserSelect={false}
         />
       </span>
@@ -233,14 +233,14 @@ exports[`matches test renderer snapshot serializes the styles 1`] = `
       >
         <div
           accent={true}
-          className="StyledText__StyledTextSpan-sc-1ldibmc-0 gnMAcA Text"
+          className="StyledText__StyledTextSpan-sc-1ldibmc-0 fjBCQA Text"
           noUserSelect={false}
         >
           10
         </div>
         <div
           accent={true}
-          className="StyledText__StyledTextSpan-sc-1ldibmc-0 gnMAcA Text flex-row"
+          className="StyledText__StyledTextSpan-sc-1ldibmc-0 fjBCQA Text flex-row"
           noUserSelect={false}
         />
       </span>
