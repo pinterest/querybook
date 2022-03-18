@@ -370,8 +370,12 @@ def export_statement_execution_result(
         api_assert(valid, "Invalid exporter params, reason: " + reason)
 
     task = export_query_execution_task.apply_async(
-        args=[exporter.exporter_name, statement_execution_id, current_user.id,],
-        kwargs=(exporter_params or {}),
+        args=[
+            exporter.exporter_name,
+            statement_execution_id,
+            current_user.id,
+            exporter_params or {},
+        ],
     )
 
     return task.task_id

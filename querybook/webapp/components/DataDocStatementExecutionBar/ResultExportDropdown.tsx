@@ -6,8 +6,6 @@ import {
     IStatementExecution,
     IStatementResult,
     IQueryResultExporter,
-    QueryExecutionExportStatus,
-    IQueryExecutionExportStatusInfo,
 } from 'const/queryExecution';
 import * as queryExecutionsActions from 'redux/queryExecutions/action';
 import { IStoreState, Dispatch } from 'redux/store/types';
@@ -24,7 +22,10 @@ import { validateForm, updateValue } from 'ui/SmartForm/formFunctions';
 import { SmartForm } from 'ui/SmartForm/SmartForm';
 import { IconButton } from 'ui/Button/IconButton';
 import './ResultExportDropdown.scss';
-import { getExporterAuthentication } from 'lib/result-export';
+import {
+    getExporterAuthentication,
+    pollExporterTaskPromise,
+} from 'lib/result-export';
 import { StatementResource } from 'resource/queryExecution';
 import { ResultExportSuccessToast } from './ResultExportSuccessToast';
 
@@ -129,27 +130,11 @@ export const ResultExportDropdown: React.FunctionComponent<IProps> = ({
                 formData
             );
 
-            const pollExportPromise = new Promise((res, rej) => {
-                const poll = setInterval(async () => {
-                    const { data } = await StatementResource.pollExportTask(
-                        taskId
-                    );
-                    const { status } = data;
-                    if (status === QueryExecutionExportStatus.ERROR) {
-                        clearInterval(poll);
-                        rej(data.message ?? 'unknown error');
-                    } else if (status === QueryExecutionExportStatus.DONE) {
-                        clearInterval(poll);
-                        res(data);
-                    }
-                }, 5000);
-            });
             return toast.promise(
-                pollExportPromise,
+                pollExporterTaskPromise(taskId),
                 {
                     loading: 'Exporting, please wait',
-                    success: (data: IQueryExecutionExportStatusInfo) =>
-                        ResultExportSuccessToast(data),
+                    success: ResultExportSuccessToast,
                     error: (e) =>
                         `Cannot ${exporter.name.toLowerCase()}, reason: ${e}`,
                 },

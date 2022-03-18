@@ -1,7 +1,6 @@
 from unittest import TestCase, mock
 
 from lib.export.exporters.gspread_exporter import (
-    MAX_SHEETS_CELLS,
     GoogleSheetsExporter,
     worksheet_coord_to_coord,
     coord_to_worksheet_coord,
@@ -55,7 +54,12 @@ class GetMaxRowsTestCase(TestCase):
         # edge case - 0 columns (ie no statement results) shouldn't break this function
         self.statement_columns_len_mock.return_value = 0
         exporter = GoogleSheetsExporter({})
-        self.assertEqual(exporter._get_max_rows(1), MAX_SHEETS_CELLS // 26)
+        try:
+            self.assertNotEqual(exporter._get_max_rows(1), 0)
+        except Exception:
+            self.fail(
+                "_get_max_rows raised an exception with 0 columns in statement execution result"
+            )
 
     def test_column_offset(self):
         self.statement_columns_len_mock.return_value = 1000000

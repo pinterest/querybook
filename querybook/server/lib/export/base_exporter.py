@@ -1,8 +1,12 @@
 from abc import ABCMeta, abstractmethod
 from typing import Generator, List
 from app.db import with_session
+from lib.logger import get_logger
 from logic import query_execution as logic
 from lib.result_store import GenericReader
+
+
+LOG = get_logger(__file__)
 
 
 class BaseExporter(metaclass=ABCMeta):
@@ -94,9 +98,9 @@ class BaseExporter(metaclass=ABCMeta):
         raw: bool = False,  # If raw, return unparsed csv text
         number_of_lines: int = 2001,
     ):
-        """Warning: This function will be deprecated shortly as we move towards exporting full
-        statement execution results to exporters
-        """
+        LOG.warning(
+            "_get_statement_execution_result will be deprecated since we are moving towards exporting full statement execution results"
+        )
         statement_execution = logic.get_statement_execution_by_id(
             statement_execution_id
         )

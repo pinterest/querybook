@@ -34,6 +34,7 @@ GSPREAD_OAUTH_CALLBACK = "/gspread_oauth2callback"
 
 MAX_SHEETS_CELLS = 5000000
 MAX_SHEETS_NEW_ROWS = 40000
+DEFAULT_GSPREAD_NUM_COLS = 26
 
 _google_flow = None
 
@@ -119,7 +120,9 @@ class GoogleSheetsExporter(BaseExporter):
         column_offset = start_cell_coord[0] - sheet_start_coord[0]
         row_offset = start_cell_coord[1] - sheet_start_coord[1]
 
-        total_column_cells = max(result_columns_len + column_offset, 26)
+        total_column_cells = max(
+            result_columns_len + column_offset, DEFAULT_GSPREAD_NUM_COLS
+        )
 
         max_result_rows = (
             (MAX_SHEETS_CELLS // total_column_cells)
@@ -299,9 +302,11 @@ def gspread_sheet(gspread_client, sheet_url: str = None, sheet_name: str = ""):
 
 
 @contextmanager
-def gspread_worksheet(sheet, worksheet_title, num_cols=26, num_rows=1000):
+def gspread_worksheet(
+    sheet, worksheet_title, num_cols=DEFAULT_GSPREAD_NUM_COLS, num_rows=1000
+):
     worksheet = None
-    num_cols = max(num_cols, 26)
+    num_cols = max(num_cols, DEFAULT_GSPREAD_NUM_COLS)
     num_rows = max(num_rows, 1000)
     try:
         worksheet = sheet.worksheet(worksheet_title)
