@@ -180,7 +180,7 @@ export const DataDocViewersList: React.FunctionComponent<IDataDocViewersListProp
                 />
             </div>
             <div className="flex-center">
-                <StyledText color="light">
+                <StyledText color="light" noUserSelect>
                     {dataDoc.public
                         ? 'This document can be viewed by anyone'
                         : 'Only invited users can view this document'}

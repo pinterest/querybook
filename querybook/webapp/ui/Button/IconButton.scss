@@ -21,30 +21,12 @@
         padding: 0px;
     }
 
-    &.fill {
-        svg {
-            fill: var(--icon);
-        }
-    }
-
     &:not(.disabled) {
         &:hover {
             color: var(--icon-hover);
         }
         &.active {
             color: var(--color-accent-dark);
-        }
-        &.fill {
-            &:hover {
-                svg {
-                    fill: var(--icon-hover);
-                }
-            }
-            &.active {
-                svg {
-                    fill: var(--icon-active);
-                }
-            }
         }
     }
 

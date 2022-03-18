@@ -54,7 +54,7 @@ export const DataDocHeader = React.forwardRef<HTMLDivElement, IProps>(
                 <Icon name="loader" className="ml8" />
             </div>
         ) : (
-            `Updated at ${generateFormattedDate(lastUpdated, 'X')}`
+            `Updated ${generateFormattedDate(lastUpdated, 'X')}`
         );
 
         return (
@@ -96,7 +96,7 @@ export const DataDocHeader = React.forwardRef<HTMLDivElement, IProps>(
                         <DataDocViewersBadge docId={dataDoc.id} />
                     </div>
                 </div>
-                <StyledText color="light" size="xxlarge" weight="bold" accent>
+                <StyledText color="light" size="xlarge" weight="extra" accent>
                     <ResizableTextArea
                         value={dataDoc.title}
                         onChange={changeDataDocTitle.bind(this, dataDoc.id)}

@@ -58,8 +58,8 @@ exports[`matches test renderer snapshot serializes the styles - error 1`] = `
   className="Message error"
 >
   <div
-    accent={true}
-    className="StyledText__StyledTextSpan-sc-1ldibmc-0 kxSvhg Text"
+    accentFont={true}
+    className="StyledText__StyledTextDiv-sc-1ldibmc-0 dgoMHH Text"
     noUserSelect={false}
     weight="bold"
   >

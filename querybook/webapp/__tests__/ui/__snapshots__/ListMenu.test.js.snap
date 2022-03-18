@@ -30,8 +30,8 @@ exports[`matches test renderer snapshot serializes the styles 1`] = `
     className="Menu__MenuItem-sc-13z76nv-1 MenuItem"
   >
     <div
-      accent={true}
-      className="StyledText__StyledTextSpan-sc-1ldibmc-0 fjBCQA Text"
+      accentFont={true}
+      className="StyledText__StyledTextDiv-sc-1ldibmc-0 jYMIFP Text"
       noUserSelect={false}
     >
       <span

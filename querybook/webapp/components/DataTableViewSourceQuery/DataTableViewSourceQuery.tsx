@@ -83,7 +83,7 @@ export const DataTableViewSourceQuery: React.FunctionComponent<IProps> = ({
     const errorDOM =
         jobMetadataIds.length > 0 ? null : (
             <EmptyText className="m24">
-                The source query is not available.
+                The source query is not available
             </EmptyText>
         );
 

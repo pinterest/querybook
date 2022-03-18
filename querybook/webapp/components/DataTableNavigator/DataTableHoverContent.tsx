@@ -29,14 +29,14 @@ export const DataTableHoverContent: React.FC<{
     const renderTableView = () => {
         const tagsDOM = <DataTableTags tableId={tableId} readonly />;
         const descriptionDOM = Boolean(tableDescription) && (
-            <div className="mt8">
+            <div className="mb4">
                 <Title size={8}>Description</Title>
                 <ShowMoreText text={tableDescription} />
             </div>
         );
 
         const columnsDOM = Boolean(columnNames) && (
-            <div className="mt8">
+            <div className="mb4">
                 <Title size={8}>Columns</Title>
                 <div>
                     <ShowMoreText text={columnNames} />
@@ -55,7 +55,7 @@ export const DataTableHoverContent: React.FC<{
 
     return (
         <div className="DataTableHoverContent">
-            <Title className="DataTableHoverContent-table-name" size={6}>
+            <Title className="DataTableHoverContent-table-name mb4" size={6}>
                 {tableName}
             </Title>
             <Loader

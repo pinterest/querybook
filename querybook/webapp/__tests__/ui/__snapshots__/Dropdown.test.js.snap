@@ -10,6 +10,7 @@ exports[`matches enzyme snapshots matches snapshot 1`] = `
   <StyledText
     accent={true}
     className="Dropdown-trigger"
+    weight="bold"
   >
     <ForwardRef
       icon="menu"
@@ -28,8 +29,10 @@ exports[`matches test renderer snapshot serializes the styles 1`] = `
 >
   <div
     accent={true}
-    className="StyledText__StyledTextSpan-sc-1ldibmc-0 fjBCQA Text Dropdown-trigger"
+    accentFont={false}
+    className="StyledText__StyledTextDiv-sc-1ldibmc-0 kYeIdz Text Dropdown-trigger"
     noUserSelect={false}
+    weight="bold"
   >
     <span
       className="IconButton no-padding"

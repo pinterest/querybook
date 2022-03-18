@@ -121,7 +121,7 @@ export const Dropdown: React.FunctionComponent<IProps> = ({
             onClick={handleClick}
             ref={selfRef}
         >
-            <StyledText className="Dropdown-trigger" accent>
+            <StyledText className="Dropdown-trigger" accent weight="bold">
                 {buttonDOM}
             </StyledText>
             {dropdownContent}

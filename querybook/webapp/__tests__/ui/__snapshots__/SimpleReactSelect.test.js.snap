@@ -36,8 +36,8 @@ exports[`matches enzyme snapshots matches snapshot 1`] = `
 
 exports[`matches test renderer snapshot serializes the styles 1`] = `
 <div
-  accent={true}
-  className="StyledText__StyledTextSpan-sc-1ldibmc-0 fjBCQA Text"
+  accentFont={true}
+  className="StyledText__StyledTextDiv-sc-1ldibmc-0 jYMIFP Text"
   noUserSelect={false}
 >
   <div

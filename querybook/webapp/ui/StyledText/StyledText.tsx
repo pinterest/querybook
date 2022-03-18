@@ -27,7 +27,7 @@ interface IStyledTextProps {
         | 'accent-dark';
     cursor?: 'default' | 'pointer' | 'not-allowed';
 
-    accent?: boolean;
+    accentFont?: boolean;
     noUserSelect?: boolean;
     hover?: boolean;
 
@@ -42,7 +42,7 @@ interface IProps extends IStyledTextProps {
     tooltipPos?: 'up' | 'left' | 'right' | 'down';
 }
 
-const StyledTextSpan = styled((props: IStyledTextProps) => <div {...props} />)`
+const StyledTextDiv = styled((props: IStyledTextProps) => <div {...props} />)`
     ${(props) =>
         props.weight
             ? ` font-weight: ${
@@ -70,7 +70,7 @@ const StyledTextSpan = styled((props: IStyledTextProps) => <div {...props} />)`
               }`
             : ''};
     ${(props) =>
-        props.accent
+        props.accentFont
             ? `
                 font-family: var(--font-accent);
                 letter-spacing: var(--letter-spacing${
@@ -134,7 +134,7 @@ const StyledTextSpan = styled((props: IStyledTextProps) => <div {...props} />)`
                   }`
                 : ''};
         ${(props) =>
-            props.accent
+            props.accentFont
                 ? `
                         font-family: var(--font-accent);
                         letter-spacing: var(--letter-spacing${
@@ -159,7 +159,7 @@ export const StyledText: React.FunctionComponent<IProps> = ({
     className,
     tooltip,
     tooltipPos = 'up',
-    accent,
+    accentFont,
     noUserSelect,
     ...elementProps
 }) => {
@@ -173,31 +173,29 @@ export const StyledText: React.FunctionComponent<IProps> = ({
         elementProps['data-balloon-pos'] = tooltipPos;
     }
 
-    elementProps['accent'] = Boolean(accent);
+    elementProps['accentFont'] = Boolean(accentFont);
     elementProps['noUserSelect'] = Boolean(noUserSelect);
 
     return (
-        <StyledTextSpan {...elementProps} className={textClassName}>
+        <StyledTextDiv {...elementProps} className={textClassName}>
             {children}
-        </StyledTextSpan>
+        </StyledTextDiv>
     );
 };
 
 export const AccentText: React.FunctionComponent<IProps> = ({
     children,
-    className,
     ...elementProps
 }) => (
-    <StyledText className={className} accent {...elementProps}>
+    <StyledText accentFont {...elementProps}>
         {children}
     </StyledText>
 );
 
 export const UntitledText: React.FunctionComponent<IProps> = ({
-    className,
     ...elementProps
 }) => (
-    <StyledText className={className} untitled {...elementProps}>
+    <StyledText untitled {...elementProps}>
         Untitled
     </StyledText>
 );
