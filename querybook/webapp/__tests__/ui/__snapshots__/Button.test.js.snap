@@ -11,9 +11,12 @@ exports[`matches enzyme snapshots matches snapshot - attached right 1`] = `
   onClick={[Function]}
   size="medium"
 >
-  <span>
+  <AccentText>
     test
-  </span>
+  </AccentText>
+  <AccentText
+    className="flex-row"
+  />
 </StyledButton>
 `;
 
@@ -28,9 +31,12 @@ exports[`matches enzyme snapshots matches snapshot - disbled 1`] = `
   onClick={null}
   size="medium"
 >
-  <span>
+  <AccentText>
     test
-  </span>
+  </AccentText>
+  <AccentText
+    className="flex-row"
+  />
 </StyledButton>
 `;
 
@@ -47,9 +53,12 @@ exports[`matches enzyme snapshots matches snapshot - isLoading 1`] = `
   <Memo()
     name="loader"
   />
-  <span>
+  <AccentText>
     test
-  </span>
+  </AccentText>
+  <AccentText
+    className="flex-row"
+  />
 </StyledButton>
 `;
 
@@ -65,9 +74,12 @@ exports[`matches enzyme snapshots matches snapshot - mixed 1`] = `
   pushable={true}
   size="small"
 >
-  <span>
+  <AccentText>
     test
-  </span>
+  </AccentText>
+  <AccentText
+    className="flex-row"
+  />
 </StyledButton>
 `;
 
@@ -81,9 +93,12 @@ exports[`matches enzyme snapshots matches snapshot - text button 1`] = `
   onClick={[Function]}
   size="medium"
 >
-  <span>
+  <AccentText>
     test
-  </span>
+  </AccentText>
+  <AccentText
+    className="flex-row"
+  />
 </StyledButton>
 `;
 
@@ -97,9 +112,12 @@ exports[`matches enzyme snapshots matches snapshot - typed 1`] = `
   onClick={[Function]}
   size="medium"
 >
-  <span>
+  <AccentText>
     test
-  </span>
+  </AccentText>
+  <AccentText
+    className="flex-row"
+  />
 </StyledButton>
 `;
 
@@ -113,21 +131,33 @@ exports[`matches enzyme snapshots matches snapshot 1`] = `
   onClick={[Function]}
   size="medium"
 >
-  <span>
+  <AccentText>
     test
-  </span>
+  </AccentText>
+  <AccentText
+    className="flex-row"
+  />
 </StyledButton>
 `;
 
 exports[`matches test renderer snapshot serializes the styles 1`] = `
 <span
-  className="StyledButton-aqwbwz-0 wZihz Button fill"
+  className="StyledButton-aqwbwz-0 gCGLEB Button fill"
   color="var(--text-light)"
   onClick={[Function]}
   size="medium"
 >
-  <span>
+  <div
+    accentFont={true}
+    className="StyledText__StyledTextDiv-sc-1ldibmc-0 jYMIFP Text"
+    noUserSelect={false}
+  >
     test
-  </span>
+  </div>
+  <div
+    accentFont={true}
+    className="StyledText__StyledTextDiv-sc-1ldibmc-0 jYMIFP Text flex-row"
+    noUserSelect={false}
+  />
 </span>
 `;

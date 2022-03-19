@@ -2,6 +2,7 @@ import * as React from 'react';
 import clsx from 'clsx';
 
 import './Card.scss';
+import { AccentText } from 'ui/StyledText/StyledText';
 
 interface IProps {
     title?: React.ReactNode;
@@ -40,7 +41,11 @@ export const Card: React.FunctionComponent<IProps> = ({
             onClick={onClick}
             style={height || width ? { height, width } : null}
         >
-            {title && <div className="Card-title">{title}</div>}
+            {title && (
+                <AccentText className="mt8 mb16" size="large" weight="bold">
+                    {title}
+                </AccentText>
+            )}
             <div className="Card-content">{children}</div>
         </div>
     );

@@ -13,6 +13,7 @@ import { IconButton } from 'ui/Button/IconButton';
 import { ImpressionWidget } from 'components/ImpressionWidget/ImpressionWidget';
 import { BoardItemAddButton } from 'components/BoardItemAddButton/BoardItemAddButton';
 import { Icon } from 'ui/Icon/Icon';
+import { AccentText } from 'ui/StyledText/StyledText';
 
 interface IProps {
     dataDoc: IDataDoc;
@@ -53,14 +54,21 @@ export const DataDocHeader = React.forwardRef<HTMLDivElement, IProps>(
                 <Icon name="loader" className="ml8" />
             </div>
         ) : (
-            `Updated at ${generateFormattedDate(lastUpdated, 'X')}`
+            `Updated ${generateFormattedDate(lastUpdated, 'X')}`
         );
 
         return (
             <div className="data-doc-header" ref={ref} key="data-doc-header">
-                <div className="data-doc-header-top horizontal-space-between mb8">
+                <div className="data-doc-header-top horizontal-space-between mb4">
                     <div className="data-doc-header-time flex-row mr8">
-                        <p>{timeMessage}</p>
+                        <AccentText
+                            className="ml8"
+                            size="text"
+                            weight="bold"
+                            color="lightest"
+                        >
+                            {timeMessage}
+                        </AccentText>
                         <IconButton
                             noPadding
                             size={16}
@@ -87,14 +95,16 @@ export const DataDocHeader = React.forwardRef<HTMLDivElement, IProps>(
                         <DataDocViewersBadge docId={dataDoc.id} />
                     </div>
                 </div>
-                <ResizableTextArea
-                    value={dataDoc.title}
-                    onChange={changeDataDocTitle.bind(this, dataDoc.id)}
-                    className="data-doc-title"
-                    placeholder={emptyDataDocTitleMessage}
-                    disabled={!isEditable}
-                    transparent
-                />
+                <AccentText color="light" size="xlarge" weight="extra">
+                    <ResizableTextArea
+                        value={dataDoc.title}
+                        onChange={changeDataDocTitle.bind(this, dataDoc.id)}
+                        className="data-doc-title"
+                        placeholder={emptyDataDocTitleMessage}
+                        disabled={!isEditable}
+                        transparent
+                    />
+                </AccentText>
             </div>
         );
     }

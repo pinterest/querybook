@@ -2,27 +2,15 @@
     align-items: flex-start;
     .DataTableHeader-top {
         width: 100%;
-        .table-key {
-            font-size: var(--text-size);
-            text-transform: uppercase;
-            font-weight: var(--bold-font);
-            color: var(--text-light);
-        }
     }
     .table-title {
-        font-family: var(--font-title);
+        font-family: var(--font-accent);
     }
     .header-subtitle {
-        text-transform: uppercase;
-        font-weight: var(--bold-font);
-        color: var(--text-lightest);
-        margin-top: 2px;
+        margin-top: 6px;
         align-self: flex-start;
     }
     .owner-list {
-        .header-subtitle {
-            margin-top: 6px;
-        }
         .owner-badges {
             flex-wrap: wrap;
             min-height: 36px;
@@ -34,5 +22,8 @@
                 margin-left: 12px;
             }
         }
+    }
+    .DataTableTags {
+        min-height: 34px;
     }
 }

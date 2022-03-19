@@ -17,6 +17,7 @@ import { ToggleSwitch } from 'ui/ToggleSwitch/ToggleSwitch';
 import { Menu, MenuItem } from 'ui/Menu/Menu';
 
 import './QueryExecutionPicker.scss';
+import { Icon } from 'ui/Icon/Icon';
 
 interface IProps {
     queryExecutionId: number;
@@ -75,17 +76,15 @@ export const QueryExecutionPicker: React.FunctionComponent<IProps> = React.memo(
                 />
             ) : null;
 
-            const textDOM = execution ? (
-                <span>Execution {execution.id}</span>
-            ) : (
-                <span>Execution not found</span>
-            );
+            const text = execution
+                ? `Execution ${execution.id}`
+                : 'Execution not found';
 
             return (
-                <div className="execution-selector-button">
-                    {textDOM}
-                    <span className=" ml8 mr4">{statusIcon}</span>
-                    <i className="fa fa-caret-down caret-icon" />
+                <div className="execution-selector-button flex-row">
+                    <span className="mr8">{text}</span>
+                    {statusIcon}
+                    <Icon name="chevron-down" size={16} />
                 </div>
             );
         }, [queryExecutionId, queryExecutions]);

@@ -21,10 +21,8 @@
 
     .MenuItem {
         cursor: pointer;
-
-        .Menu-icon {
-            width: 18px;
-            margin-top: 2px;
+        * {
+            cursor: pointer;
         }
 
         &:hover {

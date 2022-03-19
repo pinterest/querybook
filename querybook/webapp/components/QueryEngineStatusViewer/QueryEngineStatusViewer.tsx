@@ -6,16 +6,17 @@ import { getAppName } from 'lib/utils/global';
 import { generateFormattedDate } from 'lib/utils/datetime';
 import { fetchSystemStatus } from 'redux/queryEngine/action';
 import { IStoreState } from 'redux/store/types';
+import { QueryEngineStatus } from 'const/queryEngine';
 
 import { FormSectionHeader } from 'ui/Form/FormField';
 import { Loading } from 'ui/Loading/Loading';
 import { Markdown } from 'ui/Markdown/Markdown';
 import { Message, MessageType } from 'ui/Message/Message';
 import { Level } from 'ui/Level/Level';
-import { QueryEngineStatus } from 'const/queryEngine';
+import { Button } from 'ui/Button/Button';
+import { AccentText, StyledText } from 'ui/StyledText/StyledText';
 
 import './QueryEngineStatusViewer.scss';
-import { Button } from 'ui/Button/Button';
 
 interface IProps {
     engineId: number;
@@ -53,14 +54,16 @@ export const QueryEngineStatusViewer: React.FC<IProps> = ({ engineId }) => {
     } else if (queryEngineStatus.data) {
         const header = (
             <Level>
-                <div className="updated-text">
-                    <span>Last updated</span>
-                    <span className="ml4">
+                <div className="flex-row">
+                    <StyledText color="light" className="mr4">
+                        Last updated
+                    </StyledText>
+                    <AccentText weight="bold">
                         {generateFormattedDate(
                             queryEngineStatus.updated_at,
                             'X'
                         )}
-                    </span>
+                    </AccentText>
                 </div>
                 <Button
                     icon="refresh-cw"

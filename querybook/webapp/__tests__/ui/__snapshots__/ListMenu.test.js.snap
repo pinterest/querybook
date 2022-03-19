@@ -7,15 +7,17 @@ exports[`matches enzyme snapshots matches snapshot 1`] = `
   <Menu__MenuItem
     key="0"
   >
-    <span
-      className="flex-row flex1"
-    >
+    <AccentText>
       <span
-        className="Menu-text flex1"
+        className="flex-row flex1"
       >
-        test
+        <span
+          className="Menu-text flex1"
+        >
+          test
+        </span>
       </span>
-    </span>
+    </AccentText>
   </Menu__MenuItem>
 </Menu>
 `;
@@ -27,15 +29,21 @@ exports[`matches test renderer snapshot serializes the styles 1`] = `
   <span
     className="Menu__MenuItem-sc-13z76nv-1 MenuItem"
   >
-    <span
-      className="flex-row flex1"
+    <div
+      accentFont={true}
+      className="StyledText__StyledTextDiv-sc-1ldibmc-0 jYMIFP Text"
+      noUserSelect={false}
     >
       <span
-        className="Menu-text flex1"
+        className="flex-row flex1"
       >
-        test
+        <span
+          className="Menu-text flex1"
+        >
+          test
+        </span>
       </span>
-    </span>
+    </div>
   </span>
 </div>
 `;

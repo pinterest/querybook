@@ -29,11 +29,14 @@ exports[`matches enzyme snapshots matches snapshot - mixed 1`] = `
   className="IconButton no-padding fill"
   onClick={[Function]}
 >
-  <div
+  <StyledText
     className="ping-message"
+    color="accent-dark"
+    size="xsmall"
+    weight="bold"
   >
     1
-  </div>
+  </StyledText>
   <Memo()
     fill={true}
     name="check"
@@ -62,11 +65,14 @@ exports[`matches enzyme snapshots matches snapshot - with ping message 1`] = `
   className="IconButton"
   onClick={[Function]}
 >
-  <div
+  <StyledText
     className="ping-message"
+    color="accent-dark"
+    size="xsmall"
+    weight="bold"
   >
     1
-  </div>
+  </StyledText>
   <Memo()
     name="check"
   />

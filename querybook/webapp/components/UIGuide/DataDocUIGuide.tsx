@@ -146,9 +146,10 @@ export const DataDocUIGuide: React.FunctionComponent<{
     return (
         <div className="DataDocUIGuide flex-center">
             {hideButton ? null : (
-                <Button onClick={() => setIsOpen(true)}>
-                    Begin DataDoc Tour
-                </Button>
+                <Button
+                    onClick={() => setIsOpen(true)}
+                    title="Begin DataDoc Tour"
+                />
             )}
             <Tour
                 isOpen={isOpen}

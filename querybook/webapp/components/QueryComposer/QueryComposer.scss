@@ -16,7 +16,7 @@
         }
         .QueryRunButton .Button {
             margin-right: 0px;
-            height: 28px;
+            height: 36px;
         }
     }
 
@@ -57,11 +57,6 @@
 
             .QueryComposerExecution {
                 padding: 0px 8px 16px 16px;
-
-                .execution-text {
-                    text-transform: uppercase;
-                    font-weight: var(--bold-font);
-                }
             }
         }
     }

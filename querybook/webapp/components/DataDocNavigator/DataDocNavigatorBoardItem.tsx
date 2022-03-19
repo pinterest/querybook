@@ -15,6 +15,7 @@ import { Popover } from 'ui/Popover/Popover';
 import { IProcessedBoardItem } from './navigatorConst';
 import './DataDocNavigatorBoardItem.scss';
 import { UrlContextMenu } from 'ui/ContextMenu/UrlContextMenu';
+import { UntitledText } from 'ui/StyledText/StyledText';
 
 export const BoardListItemRow: React.FC<{
     item: IProcessedBoardItem;
@@ -45,9 +46,7 @@ export const BoardListItemRow: React.FC<{
                             {title.length ? (
                                 <span className="ListLinkText">{title}</span>
                             ) : (
-                                <span className="ListLinkPlaceholder">
-                                    Untitled
-                                </span>
+                                <UntitledText className="ListLinkPlaceholder" />
                             )}
                             <IconButton
                                 className="delete-board-item-button"

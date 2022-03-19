@@ -17,6 +17,7 @@ import { IconButton } from 'ui/Button/IconButton';
 import { UrlContextMenu } from 'ui/ContextMenu/UrlContextMenu';
 import { stopPropagation } from 'lib/utils/noop';
 import { LoadingRow } from 'ui/Loading/Loading';
+import { AccentText, StyledText } from 'ui/StyledText/StyledText';
 
 const HighlightTitle: React.FunctionComponent<{
     title: string;
@@ -30,12 +31,14 @@ const HighlightTitle: React.FunctionComponent<{
     }
 
     return (
-        <div
-            className="result-item-title"
-            dangerouslySetInnerHTML={{
-                __html: highlightedTitle,
-            }}
-        />
+        <AccentText size="text-0" weight="bold" color="text" hover>
+            <div
+                className="result-item-title"
+                dangerouslySetInnerHTML={{
+                    __html: highlightedTitle,
+                }}
+            />
+        </AccentText>
     );
 };
 
@@ -166,8 +169,8 @@ export const QueryItem: React.FunctionComponent<IQueryItemProps> = ({
                             searchString={searchString}
                         />
                         <div>
-                            <Tag>{queryType}</Tag>
-                            {queryEngine && <Tag>{queryEngine.name}</Tag>}
+                            <Tag mini>{queryType}</Tag>
+                            {queryEngine && <Tag mini>{queryEngine.name}</Tag>}
                         </div>
                     </a>
                     <div className="mv8">{queryTextDOM}</div>
@@ -175,9 +178,9 @@ export const QueryItem: React.FunctionComponent<IQueryItemProps> = ({
                         <span className="result-item-owner">
                             {authorInfo.username}
                         </span>
-                        <span className="result-item-date">
+                        <StyledText size="small" color="lightest">
                             {generateFormattedDate(createdAt, 'X')}
-                        </span>
+                        </StyledText>
                     </Level>
                 </div>
             </div>
@@ -243,9 +246,9 @@ export const DataDocItem: React.FunctionComponent<IDataDocItemProps> = ({
                         <span className="result-item-owner">
                             {ownerInfo.username}
                         </span>
-                        <span className="result-item-date">
+                        <StyledText size="small" color="lightest">
                             {generateFormattedDate(createdAt, 'X')}
-                        </span>
+                        </StyledText>
                     </Level>
                 </div>
             </div>
@@ -276,7 +279,7 @@ export const DataTableItem: React.FunctionComponent<IDataTableItemProps> = ({
     const handleClick = React.useMemo(() => openClick.bind(null, url), [url]);
 
     const goldenIcon = golden ? (
-        <div className="result-item-golden">
+        <div className="result-item-golden ml4">
             <Icon className="award" name="award" />
         </div>
     ) : null;
@@ -308,9 +311,9 @@ export const DataTableItem: React.FunctionComponent<IDataTableItemProps> = ({
                             />
                             {goldenIcon}
                         </div>
-                        <span className="result-item-date">
+                        <StyledText size="small" color="lightest">
                             {generateFormattedDate(createdAt, 'X')}
-                        </span>
+                        </StyledText>
                     </a>
                     <Level className="result-items-bottom">
                         <span className="result-item-description">

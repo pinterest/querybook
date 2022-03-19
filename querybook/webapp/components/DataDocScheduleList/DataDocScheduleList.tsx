@@ -91,6 +91,7 @@ const DataDocScheduleList: React.FC = () => {
         setDocName,
         setScheduledOnly,
     } = useDataDocScheduleFiltersAndPagination();
+
     const dataDocsWithSchedule = useDataDocWithSchedules(
         page,
         pageSize,

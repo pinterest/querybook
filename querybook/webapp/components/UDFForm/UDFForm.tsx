@@ -208,9 +208,8 @@ export const UDFForm: React.FC<IUDFFormProps> = ({
                                 <Button
                                     onClick={() => handleSubmit()}
                                     disabled={!isValid}
-                                >
-                                    Submit
-                                </Button>
+                                    title="Submit"
+                                />
                             </div>
                         </>
                     );

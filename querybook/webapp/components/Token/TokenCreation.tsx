@@ -27,7 +27,11 @@ export const TokenCreation: React.FunctionComponent<IProps> = () => {
             <div className="TokenCreation-content">
                 {token ? (
                     <div className="token-copy-button flex-row">
-                        <CopyButton copyText={token} title="Copy" />
+                        <CopyButton
+                            copyText={token}
+                            title="Copy"
+                            className="mr8"
+                        />
                         <InfoButton layout={['bottom']}>
                             <div>
                                 <b>{'usage instructions'}</b>

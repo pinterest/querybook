@@ -1,7 +1,8 @@
 .DebouncedInput {
     &.flex {
         display: flex;
-        input {
+        input,
+        .Text {
             flex-grow: 1;
         }
     }

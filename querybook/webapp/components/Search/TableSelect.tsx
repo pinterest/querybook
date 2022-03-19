@@ -14,6 +14,7 @@ import { IStoreState } from 'redux/store/types';
 import { HoverIconTag } from 'ui/Tag/Tag';
 
 import './TableSelect.scss';
+import { AccentText } from 'ui/StyledText/StyledText';
 
 interface ITableSelectProps {
     tableNames: string[];
@@ -96,26 +97,30 @@ export const TableSelect: React.FunctionComponent<ITableSelectProps> = ({
                     <div className="TableSelect-label">tables</div>
                 </>
             )}
-            <AsyncSelect
-                styles={tableReactSelectStyle}
-                placeholder={'search table name...'}
-                onChange={(option: any) => {
-                    const newTableName = option?.label ?? null;
-                    if (newTableName == null) {
-                        onTableNamesChange([]);
-                        return;
+            <AccentText>
+                <AsyncSelect
+                    styles={tableReactSelectStyle}
+                    placeholder={'search table name'}
+                    onChange={(option: any) => {
+                        const newTableName = option?.label ?? null;
+                        if (newTableName == null) {
+                            onTableNamesChange([]);
+                            return;
+                        }
+                        const newTableNames = tableNames.concat(newTableName);
+                        onTableNamesChange(newTableNames);
+                    }}
+                    loadOptions={loadOptions}
+                    defaultOptions={[]}
+                    inputValue={searchText}
+                    onInputChange={(text) => setSearchText(text)}
+                    noOptionsMessage={() =>
+                        searchText ? 'No table found.' : null
                     }
-                    const newTableNames = tableNames.concat(newTableName);
-                    onTableNamesChange(newTableNames);
-                }}
-                loadOptions={loadOptions}
-                defaultOptions={[]}
-                inputValue={searchText}
-                onInputChange={(text) => setSearchText(text)}
-                noOptionsMessage={() => (searchText ? 'No table found.' : null)}
-                {...asyncSelectProps}
-                {...selectProps}
-            />
+                    {...asyncSelectProps}
+                    {...selectProps}
+                />
+            </AccentText>
             {tableNames.length ? (
                 <div className="mt8">
                     {tableNames.map((tableName) => (

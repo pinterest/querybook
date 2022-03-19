@@ -9,7 +9,7 @@
     margin: 0px auto;
 
     .search-types {
-        font-family: var(--font-title);
+        font-family: var(--font-accent);
         .Tabs {
             width: 100%;
             ul {
@@ -62,7 +62,7 @@
                 max-width: 70%;
                 overflow-y: scroll;
 
-                .empty-message {
+                .EmptyText {
                     padding-top: var(--padding);
                     margin: 0px auto;
                 }
@@ -74,6 +74,7 @@
                     padding: var(--padding);
                     color: var(--text-light);
                     font-weight: var(--light-bold-font);
+                    font-family: var(--font-accent);
                 }
             }
 
@@ -92,7 +93,7 @@
                     .filter-title {
                         margin-bottom: 8px;
                         display: flex;
-                        font-family: var(--font-title);
+                        font-family: var(--font-accent);
                         align-items: center;
                         white-space: nowrap;
                         font-size: var(--text-size);

@@ -1,7 +1,9 @@
 import React from 'react';
 import clsx from 'clsx';
-import { Icon } from 'ui/Icon/Icon';
 import { TooltipDirection } from 'const/tooltip';
+
+import { Icon } from 'ui/Icon/Icon';
+import { AccentText } from 'ui/StyledText/StyledText';
 
 import './Tabs.scss';
 
@@ -92,7 +94,7 @@ export const Tabs: React.FunctionComponent<ITabsProps> = ({
             >
                 <a className="flex-center" {...tooltipProps}>
                     {icon && <Icon name={icon} />}
-                    {name && <span>{name}</span>}
+                    {name && <AccentText>{name}</AccentText>}
                 </a>
             </li>
         );

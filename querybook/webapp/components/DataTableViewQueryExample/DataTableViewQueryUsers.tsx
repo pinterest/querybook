@@ -8,6 +8,8 @@ import { fetchTopQueryUsersIfNeeded } from 'redux/dataSources/action';
 import { Loading } from 'ui/Loading/Loading';
 import { Button } from 'ui/Button/Button';
 import { UserBadge } from 'components/UserBadge/UserBadge';
+import { Tag } from 'ui/Tag/Tag';
+import { EmptyText } from 'ui/StyledText/StyledText';
 
 export function useLoadQueryUsers(tableId: number) {
     const [loading, setLoading] = useState(false);
@@ -41,7 +43,9 @@ export const DataTableViewQueryUsers: React.FC<{
     const viewersDOM = loading ? (
         <Loading />
     ) : !topQueryUsers?.length ? (
-        <div>No user has queried this table on {getAppName()}.</div>
+        <EmptyText size="small" center={false}>
+            No user has queried this table on {getAppName()}
+        </EmptyText>
     ) : (
         <div className="query-filter-wrapper">
             {topQueryUsers.map(({ uid, count }) => (
@@ -69,8 +73,10 @@ const QueryUserButton: React.FC<{
 
     return (
         <Button onClick={handleClick} active={active}>
-            <UserBadge uid={uid} mini />
-            <span className="ml4">({queryCount})</span>
+            <UserBadge uid={uid} mini cardStyle />
+            <Tag className="ml4" highlighted={active}>
+                {queryCount}
+            </Tag>
         </Button>
     );
 };

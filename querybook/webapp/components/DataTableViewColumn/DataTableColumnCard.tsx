@@ -10,6 +10,7 @@ import { Icon } from 'ui/Icon/Icon';
 import { KeyContentDisplay } from 'ui/KeyContentDisplay/KeyContentDisplay';
 
 import './DataTableColumnCard.scss';
+import { AccentText, StyledText } from 'ui/StyledText/StyledText';
 
 interface IProps {
     column: IDataColumn;
@@ -43,8 +44,10 @@ export const DataTableColumnCard: React.FunctionComponent<IProps> = ({
                     data-balloon-pos="down-right"
                 >
                     <div className="DataTableColumnCard-left">
-                        <div className="column-type mr12">{column.type}</div>
-                        <div className="column-name">{column.name}</div>
+                        <StyledText color="light" className="column-type mr12">
+                            {column.type}
+                        </StyledText>
+                        <AccentText weight="extra">{column.name}</AccentText>
                     </div>
                     <Icon name={expanded ? 'chevron-up' : 'chevron-down'} />
                 </div>

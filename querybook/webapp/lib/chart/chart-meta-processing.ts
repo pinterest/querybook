@@ -169,6 +169,8 @@ export function mapMetaToChartOptions(
                 display: !!meta.title.length,
                 text: meta.title,
                 font: {
+                    family: 'Poppins',
+                    weight: 'bold',
                     size: 16,
                 },
             },

@@ -169,10 +169,12 @@ body {
     --font-sans-serif: BlinkMacSystemFont, -apple-system, 'Avenir Next',
         'Avenir', 'Segoe UI', Helvetica, 'Apple Color Emoji', Arial, sans-serif,
         'Segoe UI Emoji', 'Segoe UI Symbol';
-    --font-title: 'Poppins', BlinkMacSystemFont, -apple-system, 'Avenir Next',
+    --font-accent: 'Poppins', BlinkMacSystemFont, -apple-system, 'Avenir Next',
         'Avenir', 'Segoe UI', Helvetica, 'Apple Color Emoji', Arial, sans-serif,
         'Segoe UI Emoji', 'Segoe UI Symbol';
     --font-monospace: monaco, monospace;
+    --letter-spacing-bold: 0.5px;
+    --letter-spacing: 0.05px;
 
     --light-bold-font: 500;
     --bold-font: 600;
@@ -183,6 +185,7 @@ body {
     --xsmall-text-size: 0.8rem;
     --small-text-size: 0.9rem;
     --text-size: 0.95rem;
+    --text-0-size: 1.1rem;
     --med-text-size: 1.25rem;
     --large-text-size: 1.5rem;
     --xlarge-text-size: 2rem;
@@ -199,6 +202,7 @@ body {
 
     --box-shadow: 0px 5px 40px 0px rgb(0 0 0 / 20%);
     --box-shadow-sm: 0px 0px 24px 0px rgb(0 0 0 / 5%);
+    --box-shadow-md: 0px 2px 36px 0px rgb(0 0 0 / 10%);
 
     --padding-sm: 6px;
     --padding: 12px;

@@ -130,7 +130,7 @@ export const DataDocCellControl: React.FunctionComponent<IProps> = ({
                 onClick: handleCutCell,
                 tooltip: 'Cut cell',
                 tooltipPos: 'right',
-                icon: 'cut',
+                icon: 'scissors',
             });
         }
 
@@ -140,7 +140,7 @@ export const DataDocCellControl: React.FunctionComponent<IProps> = ({
                 onClick: handlePasteCell,
                 tooltip: 'Paste cell to above',
                 tooltipPos: 'right',
-                icon: 'paste',
+                icon: 'clipboard',
             });
         }
     }
@@ -206,7 +206,7 @@ export const DataDocCellControl: React.FunctionComponent<IProps> = ({
                     ? {
                           onClick: () => setShowCollapsed(!showCollapsed),
                           name: showCollapsed ? 'Uncollapse' : 'Collapse',
-                          icon: showCollapsed ? 'expand' : 'compress',
+                          icon: showCollapsed ? 'maximize-2' : 'minimize-2',
                       }
                     : null
             );
@@ -256,7 +256,6 @@ export const DataDocCellControl: React.FunctionComponent<IProps> = ({
                 </div>
             ) : null}
             {centerButtons}
-            <span>&nbsp;</span>
             {rightButtons.length ? (
                 <div className="block-right-buttons-wrapper flex-row">
                     {rightButtons}

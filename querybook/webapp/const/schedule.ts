@@ -8,7 +8,7 @@ export enum TaskRunStatus {
 export interface IStatusTypeList {
     [key: number]: {
         class: string;
-        iconClass: string;
+        iconName: string;
         text: string;
     };
 }
@@ -16,17 +16,17 @@ export interface IStatusTypeList {
 export const StatusTypes: IStatusTypeList = {
     [TaskRunStatus.RUNNING]: {
         class: 'status-in-progress',
-        iconClass: 'fas fa-spinner fa-spin',
+        iconName: 'loader',
         text: 'In Progress',
     },
     [TaskRunStatus.SUCCESS]: {
         class: 'status-success',
-        iconClass: 'fas fa-thumbs-up',
+        iconName: 'thumbs-up',
         text: 'Success',
     },
     [TaskRunStatus.FAILURE]: {
         class: 'status-failure',
-        iconClass: 'fas fa-thumbs-down',
+        iconName: 'thumbs-down',
         text: 'Failure',
     },
 };

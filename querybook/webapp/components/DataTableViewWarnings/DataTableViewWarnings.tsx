@@ -18,6 +18,7 @@ import { FormWrapper } from 'ui/Form/FormWrapper';
 import { TextButton } from 'ui/Button/Button';
 
 import './DataTableViewWarnings.scss';
+import { AccentText } from 'ui/StyledText/StyledText';
 
 interface IProps {
     tableId: number;
@@ -134,10 +135,10 @@ export const DataTableViewWarnings: React.FC<IProps> = ({
 
     return (
         <div className="DataTableViewWarnings">
-            <div className="info-text">
+            <AccentText className="mb12" size="text" color="light" noUserSelect>
                 Warning message will show up in the query editor when the table
-                is used.
-            </div>
+                is used
+            </AccentText>
             {tableWarnings.length ? (
                 <div className="DataTableViewWarnings-list flex-column mt16">
                     {getCardsDOM()}

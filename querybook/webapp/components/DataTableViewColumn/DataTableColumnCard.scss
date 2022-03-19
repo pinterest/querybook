@@ -11,13 +11,7 @@
                 flex-direction: row;
                 align-items: baseline;
 
-                .column-name {
-                    font-weight: var(--extra-bold-font);
-                    color: var(--text-dark);
-                }
                 .column-type {
-                    color: var(--text-light);
-                    font-weight: var(--bold-font);
                     min-width: 80px;
                 }
             }

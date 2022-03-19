@@ -8,6 +8,7 @@ import { UserAvatarComponent } from './UserAvatar';
 
 import './UserBadge.scss';
 import clsx from 'clsx';
+import { AccentText } from 'ui/StyledText/StyledText';
 
 type IProps = {
     isOnline?: boolean;
@@ -52,9 +53,9 @@ export const UserBadge: React.FunctionComponent<IProps> = ({
                 })}
             >
                 <figure>{avatarDOM}</figure>
-                <span className="username">
+                <AccentText className="username" weight="bold" color="light">
                     {userInfo?.fullname ?? userName}
-                </span>
+                </AccentText>
             </span>
         );
     }
@@ -70,11 +71,18 @@ export const UserBadge: React.FunctionComponent<IProps> = ({
             <div className="UserBadge-icon">
                 <figure>{avatarDOM}</figure>
             </div>
-            <div className="UserBadge-names">
-                <div className="username one-line-ellipsis">
+            <div className="UserBadge-names flex-column">
+                <AccentText
+                    className="username one-line-ellipsis mb4"
+                    size="med"
+                    weight="extra"
+                    color="dark"
+                >
                     <UserNameComponent userInfo={userInfo} loading={loading} />
-                </div>
-                <div className="handle">@{userName}</div>
+                </AccentText>
+                <AccentText className="handle" size="small" color="light">
+                    @{userName}
+                </AccentText>
             </div>
         </div>
     );

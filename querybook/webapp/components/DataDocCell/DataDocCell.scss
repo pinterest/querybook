@@ -5,8 +5,7 @@
         min-height: 0px;
         cursor: nesw-resize;
     }
-
-    .empty-message {
-        font-size: var(--xlarge-text-size);
+    .chart-cell-controls {
+        align-items: flex-start;
     }
 }

@@ -16,15 +16,6 @@
     background-color: var(--bg);
 }
 
-.empty-message {
-    color: var(--text-lightest);
-    font-weight: var(--bold-font);
-    display: flex;
-    justify-content: center;
-    font-size: var(--large-text-size);
-    user-select: none;
-}
-
 .ReactVirtualized__Grid {
     outline: none;
 }

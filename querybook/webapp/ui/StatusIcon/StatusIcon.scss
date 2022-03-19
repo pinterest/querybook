@@ -2,10 +2,6 @@
     display: inline-flex;
     color: var(--color-null);
     margin-right: 6px;
-    margin-top: 2px;
-    i {
-        vertical-align: middle;
-    }
 
     &.success {
         color: var(--color-true-light);

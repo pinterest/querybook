@@ -53,21 +53,10 @@
         font-weight: var(--bold-font);
 
         padding-top: 6px;
-        .collapsed-query-title {
-            @include one-line-ellipsis();
-        }
     }
 
     .query-title {
         flex: 1;
-
-        .Title,
-        p {
-            font-weight: bold;
-            font-size: var(--large-text-size);
-            color: var(--text-dark);
-            padding: 8px;
-        }
     }
 
     .query-metadata {
@@ -84,6 +73,9 @@
             .engine-selector-dropdown .Dropdown-trigger,
             .query-cell-additional-dropdown .Dropdown-trigger {
                 height: 36px;
+            }
+            .Menu .MenuItem .Dropdown-trigger {
+                height: auto;
             }
 
             .query-cell-additional-dropdown {
@@ -117,10 +109,6 @@
         position: relative;
         box-sizing: border-box;
         margin: 8px 0px;
-
-        .QueryEditor .CodeMirror {
-            border-radius: var(--border-radius-sm);
-        }
 
         .fullscreen-button-wrapper {
             position: absolute;

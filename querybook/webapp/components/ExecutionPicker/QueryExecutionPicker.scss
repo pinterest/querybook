@@ -3,8 +3,6 @@
 .QueryExecutionPicker {
     .execution-selector-button {
         cursor: pointer;
-        font-weight: 700;
-        text-transform: uppercase;
     }
 
     .query-execution-item {
@@ -32,5 +30,6 @@
         padding: 8px 12px;
         border-bottom: var(--border);
         align-items: flex-end;
+        white-space: nowrap;
     }
 }

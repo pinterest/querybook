@@ -2,6 +2,7 @@ import React from 'react';
 import clsx from 'clsx';
 
 import { InfoButton } from 'ui/Button/InfoButton';
+import { AccentText } from 'ui/StyledText/StyledText';
 
 import './FormField.scss';
 
@@ -91,7 +92,15 @@ export const FormField: React.FunctionComponent<IFormFieldProps> = ({
 const FormFieldLabelSection: React.FunctionComponent<IFormFieldSectionProps> = ({
     children,
     className = '',
-}) => <div className={`FormFieldLabelSection ${className}`}>{children}</div>;
+}) => (
+    <AccentText
+        color="light"
+        weight="bold"
+        className={`FormFieldLabelSection ${className}`}
+    >
+        {children}
+    </AccentText>
+);
 
 export const FormFieldInputSectionRowGroup: React.FunctionComponent<IFormFieldSectionProps> = ({
     children,

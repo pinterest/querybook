@@ -24,6 +24,7 @@ import { UserSelect } from 'components/UserSelect/UserSelect';
 import { Tabs } from 'ui/Tabs/Tabs';
 
 import './DataDocViewersList.scss';
+import { StyledText } from 'ui/StyledText/StyledText';
 
 interface IDataDocViewersListProps {
     className?: string;
@@ -178,12 +179,12 @@ export const DataDocViewersList: React.FunctionComponent<IDataDocViewersListProp
                     disabled={readonly}
                 />
             </div>
-            <div className="public-row-description">
-                <div>
+            <div className="flex-center">
+                <StyledText color="light" noUserSelect>
                     {dataDoc.public
-                        ? 'This document can be viewed by anyone.'
-                        : 'Only invited users can view this document.'}
-                </div>
+                        ? 'This document can be viewed by anyone'
+                        : 'Only invited users can view this document'}
+                </StyledText>
                 {isEditor ? null : (
                     <div className="mt12">
                         <AccessRequestButton

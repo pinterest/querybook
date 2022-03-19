@@ -6,6 +6,7 @@ import { TooltipDirection } from 'const/tooltip';
 import { TButtonColors, Icon } from 'ui/Icon/Icon';
 
 import './IconButton.scss';
+import { AccentText, StyledText } from 'ui/StyledText/StyledText';
 
 // A simple Bulma-based button
 export interface IIconButtonProps {
@@ -75,7 +76,14 @@ export const IconButton = React.forwardRef<HTMLAnchorElement, IIconButtonProps>(
         const pingDOM = !ping ? null : typeof ping === 'boolean' ? (
             <div className="ping" />
         ) : (
-            <div className="ping-message">{ping}</div>
+            <StyledText
+                className="ping-message"
+                color="accent-dark"
+                size="xsmall"
+                weight="bold"
+            >
+                {ping}
+            </StyledText>
         );
         const iconDOM = (
             <Icon name={icon} size={size} fill={fill} color={color} />
@@ -83,7 +91,13 @@ export const IconButton = React.forwardRef<HTMLAnchorElement, IIconButtonProps>(
         const contentDOM = title ? (
             <div className="flex-column">
                 {iconDOM}
-                <span className="icon-title">{title}</span>
+                <AccentText
+                    className="icon-title"
+                    size="xxxsmall"
+                    weight="light"
+                >
+                    {title}
+                </AccentText>
             </div>
         ) : (
             iconDOM
