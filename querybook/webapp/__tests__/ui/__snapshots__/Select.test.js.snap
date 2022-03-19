@@ -7,11 +7,13 @@ exports[`matches enzyme snapshots matches snapshot - placeholder 1`] = `
   <div
     className="Select"
   >
-    <select
-      disabled={true}
-      onChange={[Function]}
-      value="test"
-    />
+    <AccentText>
+      <select
+        disabled={true}
+        onChange={[Function]}
+        value="test"
+      />
+    </AccentText>
   </div>
 </div>
 `;
@@ -23,11 +25,13 @@ exports[`matches enzyme snapshots matches snapshot 1`] = `
   <div
     className="Select"
   >
-    <select
-      disabled={false}
-      onChange={[Function]}
-      value="test"
-    />
+    <AccentText>
+      <select
+        disabled={false}
+        onChange={[Function]}
+        value="test"
+      />
+    </AccentText>
   </div>
 </div>
 `;

@@ -18,6 +18,7 @@ const StyledTitle = styled.p<IStyledTitleProps>`
     color: ${(props) => props.color || 'var(--text)'};
     font-weight: ${(props) => props.weight || 'inherit'};
     font-size: ${(props) => props.size || 'var(--large-text-size)'};
+    font-family: var(--font-accent);
 
     & + .Subtitle:not(:empty) {
         margin-top: ${(props) =>

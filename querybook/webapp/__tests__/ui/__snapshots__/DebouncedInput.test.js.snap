@@ -4,12 +4,14 @@ exports[`matches enzyme snapshots matches snapshot - placeholder 1`] = `
 <div
   className="DebouncedInput"
 >
-  <input
-    onChange={[Function]}
-    placeholder="test placeholder"
-    type="text"
-    value="test"
-  />
+  <AccentText>
+    <input
+      onChange={[Function]}
+      placeholder="test placeholder"
+      type="text"
+      value="test"
+    />
+  </AccentText>
 </div>
 `;
 
@@ -17,10 +19,12 @@ exports[`matches enzyme snapshots matches snapshot 1`] = `
 <div
   className="DebouncedInput"
 >
-  <input
-    onChange={[Function]}
-    type="text"
-    value="test"
-  />
+  <AccentText>
+    <input
+      onChange={[Function]}
+      type="text"
+      value="test"
+    />
+  </AccentText>
 </div>
 `;

@@ -1,6 +1,7 @@
 .CodeMirror {
     font-family: var(--font-monospace);
     font-size: var(--small-text-size);
+    border-radius: var(--border-radius-sm);
     line-height: 17px;
 
     &.cm-s-default {

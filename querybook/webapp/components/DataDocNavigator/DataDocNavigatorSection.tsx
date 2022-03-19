@@ -81,7 +81,10 @@ export const DataDocNavigatorSection: React.FC<INavigatorSectionProps> = ({
         if (orderedDataDocs.length === 0) {
             return (
                 <div className="empty-section-message">
-                    No {sectionHeader?.toLowerCase()}
+                    No{' '}
+                    {sectionHeader === 'my docs'
+                        ? 'docs'
+                        : sectionHeader?.toLowerCase()}
                 </div>
             );
         }

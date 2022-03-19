@@ -1,6 +1,7 @@
 import React from 'react';
 import clsx from 'clsx';
 import './Select.scss';
+import { AccentText } from 'ui/StyledText/StyledText';
 
 export const DESELECT_VALUE = '';
 export interface ISelectProps {
@@ -59,7 +60,9 @@ export const Select: React.FunctionComponent<ISelectProps> = ({
 
     return (
         <div className={controlClassName}>
-            <div className={wrapperClassName}>{selectDOM}</div>
+            <div className={wrapperClassName}>
+                <AccentText>{selectDOM}</AccentText>
+            </div>
         </div>
     );
 };

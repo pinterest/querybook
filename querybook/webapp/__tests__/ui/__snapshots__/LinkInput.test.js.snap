@@ -8,7 +8,7 @@ exports[`matches enzyme snapshots matches snapshot 1`] = `
     autoFocus={true}
     onClick={[Function]}
     onKeyDown={[Function]}
-    placeholder="Enter url here..."
+    placeholder="Enter url here"
   />
 </div>
 `;

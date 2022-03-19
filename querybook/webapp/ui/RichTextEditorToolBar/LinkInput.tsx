@@ -24,7 +24,7 @@ export const LinkInput: React.FunctionComponent<{
             <input
                 onClick={stopPropagationAndDefault}
                 ref={inputRef}
-                placeholder="Enter url here..."
+                placeholder="Enter url here"
                 onKeyDown={(event) => {
                     if (matchKeyMap(event, KeyMap.overallUI.confirmModal)) {
                         const inputEl = inputRef.current;

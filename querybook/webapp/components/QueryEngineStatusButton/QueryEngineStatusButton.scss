@@ -19,14 +19,4 @@
             }
         }
     }
-    .QueryEngineStatusPopover-status {
-        .engine-name {
-            color: var(--text);
-            font-weight: var(--bold-font);
-        }
-        .engine-status {
-            text-transform: uppercase;
-            color: var(--text-light);
-        }
-    }
 }

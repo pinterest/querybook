@@ -20,9 +20,8 @@ export const AccessRequestButton: React.FunctionComponent<{
                         setAccessRequested(true);
                     }}
                     pushable
-                >
-                    Request{isEdit ? ' Edit' : ''} Access
-                </Button>
+                    title={`Request${isEdit ? ' Edit' : ''} Access`}
+                />
             )}
         </div>
     );

@@ -28,6 +28,7 @@ import { Card } from 'ui/Card/Card';
 
 import './QuerySnippetComposer.scss';
 import { navigateWithinEnv } from 'lib/utils/query-string';
+import { AccentText } from 'ui/StyledText/StyledText';
 
 function showErrorModal(error) {
     sendConfirm({
@@ -279,25 +280,25 @@ class QuerySnippetComposerComponent extends React.PureComponent<
 
         return (
             <Card alignLeft>
-                <div>
+                <div className="flex-row">
                     <span>Created by</span>
-                    <span className="mh4 snippet-info">
+                    <AccentText color="text" weight="bold" className="mh4">
                         <UserName uid={querySnippet.created_by} />
-                    </span>
+                    </AccentText>
                     <span>on</span>
-                    <span className="mh4 snippet-info">
+                    <AccentText color="text" weight="bold" className="mh4">
                         {generateFormattedDate(querySnippet.created_at)}
-                    </span>
+                    </AccentText>
                 </div>
-                <div>
+                <div className="flex-row">
                     <span>Last updated by</span>
-                    <span className="mh4 snippet-info">
+                    <AccentText color="text" weight="bold" className="mh4">
                         <UserName uid={querySnippet.last_updated_by} />
-                    </span>
+                    </AccentText>
                     <span>on</span>
-                    <span className="mh4 snippet-info">
+                    <AccentText color="text" weight="bold" className="mh4">
                         {generateFormattedDate(querySnippet.updated_at)}
-                    </span>
+                    </AccentText>
                 </div>
             </Card>
         );
@@ -410,7 +411,7 @@ class QuerySnippetComposerComponent extends React.PureComponent<
                     onChange={user.isAdmin ? this.onGoldenChange : null}
                     value={form.golden}
                     disabled={!user.isAdmin}
-                    title="This is a golden snippet."
+                    title="Golden Snippet"
                 />
             </FormField>
         );

@@ -10,6 +10,7 @@ import { CopyButton } from 'ui/CopyButton/CopyButton';
 import { QueryExecutionNotificationButton } from './QueryExecutionNotificationButton';
 
 import './QueryExecutionBar.scss';
+import { StyledText } from 'ui/StyledText/StyledText';
 
 interface IProps {
     queryExecution: IQueryExecution;
@@ -26,11 +27,11 @@ export const QueryExecutionBar: React.FunctionComponent<IProps> = ({
     );
 
     const executionDateDOM = (
-        <div className="date-text mr12">
+        <StyledText className="mr12" color="light">
             {generateFormattedDate(queryExecution.created_at, 'X') +
                 ', ' +
                 moment.utc(queryExecution.created_at, 'X').fromNow()}
-        </div>
+        </StyledText>
     );
 
     const notificationButtonDOM = queryExecution.status <=

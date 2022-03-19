@@ -113,7 +113,7 @@ export const DataTableNavigatorSearch: React.FC<{
             <SearchBar
                 value={searchString}
                 onSearch={onSearch}
-                placeholder="Search by Table Name..."
+                placeholder="Search by Name"
                 transparent
             />
 

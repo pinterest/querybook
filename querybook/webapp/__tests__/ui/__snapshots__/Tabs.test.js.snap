@@ -34,9 +34,9 @@ exports[`matches enzyme snapshots matches snapshot 2`] = `
         <Memo()
           name="check"
         />
-        <span>
+        <AccentText>
           test
-        </span>
+        </AccentText>
       </a>
     </li>
   </ul>

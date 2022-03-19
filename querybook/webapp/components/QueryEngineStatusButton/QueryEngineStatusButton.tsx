@@ -31,6 +31,8 @@ import { Icon } from 'ui/Icon/Icon';
 import { Menu, MenuDivider, MenuInfoItem, MenuItem } from 'ui/Menu/Menu';
 
 import './QueryEngineStatusButton.scss';
+import { Tag } from 'ui/Tag/Tag';
+import { StyledText } from 'ui/StyledText/StyledText';
 
 const REFRESH_INTERVAL = 60;
 
@@ -119,9 +121,7 @@ export const QueryEngineStatusButton: React.FC<IProps> = ({
                     systemStatusContent = (
                         <span>
                             <Icon name="loader" size={16} className="mr8" />
-                            <span className="engine-name">
-                                {titleize(engine.name)}
-                            </span>
+                            <Tag>{titleize(engine.name)}</Tag>
                         </span>
                     );
                 } else {
@@ -137,12 +137,13 @@ export const QueryEngineStatusButton: React.FC<IProps> = ({
                             onClick={() =>
                                 setShowStatusForEngineId(String(engineId))
                             }
+                            className="flex-row"
                         >
                             <StatusIcon status={iconClass} />
-                            <span className="engine-name ml4 mr8">
-                                {titleize(engine.name)}
-                            </span>
-                            <span className="engine-status">{message}</span>
+                            <Tag>{titleize(engine.name)}</Tag>
+                            <StyledText className="ml8" color="light">
+                                {message}
+                            </StyledText>
                         </span>
                     );
                 }

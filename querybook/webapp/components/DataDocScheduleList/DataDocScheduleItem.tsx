@@ -2,8 +2,8 @@ import React from 'react';
 import moment from 'moment';
 
 import { IScheduledDoc } from 'redux/scheduledDataDoc/types';
-import { DataDocName } from './DataDocName';
 import { HumanReadableCronSchedule } from './HumanReadableCronSchedule';
+import { getWithinEnvUrl } from 'lib/utils/query-string';
 
 import {
     DataDocScheduleActionEdit,
@@ -12,6 +12,9 @@ import {
 import { NextRun } from './NextRun';
 import { TaskStatusIcon } from 'components/Task/TaskStatusIcon';
 import { formatDuration, generateFormattedDate } from 'lib/utils/datetime';
+
+import { Link } from 'ui/Link/Link';
+import { AccentText, StyledText, UntitledText } from 'ui/StyledText/StyledText';
 
 import './DataDocScheduleItem.scss';
 
@@ -30,13 +33,22 @@ export const DataDocScheduleItem: React.FC<IDataDocScheduleItemProps> = ({
         }
 
         return (
-            <div className="mt4">
-                <div className="schedule-text">
-                    Runs <HumanReadableCronSchedule cron={schedule.cron} />
+            <div className="DataDocScheduleItem-bottom  horizontal-space-between">
+                <div>
+                    <StyledText size="text">
+                        Runs <HumanReadableCronSchedule cron={schedule.cron} />
+                    </StyledText>
+                    <StyledText color="light" className="mt4">
+                        Next Run: <NextRun cron={schedule.cron} />
+                    </StyledText>
                 </div>
-                <div className="next-text mt4">
-                    Next Run: <NextRun cron={schedule.cron} />
-                </div>
+                {lastRecord && (
+                    <DataDocScheduleActionHistory
+                        docId={doc.id}
+                        actionText="View Run Record"
+                        docTitle={doc.title}
+                    />
+                )}
             </div>
         );
     };
@@ -71,7 +83,7 @@ export const DataDocScheduleItem: React.FC<IDataDocScheduleItemProps> = ({
 
         return (
             <div
-                className="ml12 mt4"
+                className="ml12"
                 aria-label={tooltipText}
                 data-balloon-pos="right"
             >
@@ -86,17 +98,18 @@ export const DataDocScheduleItem: React.FC<IDataDocScheduleItemProps> = ({
         <div className="DataDocScheduleItem mb12">
             <div className="horizontal-space-between">
                 <div className="flex-row">
-                    <DataDocName data={docWithSchedule.doc} />
+                    <Link to={getWithinEnvUrl(`/datadoc/${doc.id}/`)}>
+                        {doc.title ? (
+                            <AccentText weight="bold" size="med">
+                                {doc.title}
+                            </AccentText>
+                        ) : (
+                            <UntitledText />
+                        )}
+                    </Link>
                     {renderLastRunRecordInfo()}
                 </div>
                 <div>
-                    {lastRecord && (
-                        <DataDocScheduleActionHistory
-                            docId={doc.id}
-                            actionText="View Run Record"
-                            docTitle={doc.title}
-                        />
-                    )}
                     <DataDocScheduleActionEdit
                         docId={doc.id}
                         actionText={schedule ? 'Edit Schedule' : 'New Schedule'}

@@ -30,6 +30,7 @@ import { DataTableViewQueryEngines } from './DataTableViewQueryEngines';
 import { DataTableViewQueryConcurrences } from './DataTableViewQueryConcurrences';
 
 import './DataTableViewQueryExamples.scss';
+import { AccentText } from 'ui/StyledText/StyledText';
 
 interface IProps {
     tableId: number;
@@ -145,34 +146,45 @@ export const DataTableViewQueryExamples: React.FunctionComponent<IProps> = ({
 
     const queryExampleFiltersSection = (
         <div className="mb12">
-            <div className="horizontal-space-between mb16">
-                <div className="info-text mv8">
+            <div className="horizontal-space-between">
+                <AccentText
+                    className="mb12"
+                    size="text"
+                    color="light"
+                    noUserSelect
+                >
                     Select any user, query engine, and/or co-occuring tables to
-                    filter.
-                </div>
+                    filter
+                </AccentText>
                 {!isEmpty(filters) && (
                     <Button onClick={clearFilter}>Clear Filter</Button>
                 )}
             </div>
             <div className="filter-selection-section mb24">
-                <div className="mb16">
-                    <div className="section-title">Top users</div>
+                <div className="mb8">
+                    <AccentText size="med" color="text" weight="bold">
+                        Top users
+                    </AccentText>
                     <DataTableViewQueryUsers
                         tableId={tableId}
                         onClick={setUidFilter}
                         selectedUid={filters.uid}
                     />
                 </div>
-                <div className="mb16">
-                    <div className="section-title">Query engines</div>
+                <div className="mb8">
+                    <AccentText size="med" color="text" weight="bold">
+                        Query engines
+                    </AccentText>
                     <DataTableViewQueryEngines
                         tableId={tableId}
                         onClick={setEngineIdFilter}
                         selectedEngineId={filters.engine_id}
                     />
                 </div>
-                <div className="mb16">
-                    <div className="section-title">Top co-occurring tables</div>
+                <div className="mb8">
+                    <AccentText size="med" color="text" weight="bold">
+                        Top co-occurring tables
+                    </AccentText>
                     <DataTableViewQueryConcurrences
                         tableId={tableId}
                         onClick={setTableIdFilter}

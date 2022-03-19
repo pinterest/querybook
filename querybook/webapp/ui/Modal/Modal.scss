@@ -4,15 +4,6 @@
         margin: 16px 24px 0px;
     }
 
-    .Modal-top {
-        font-family: var(--font-title);
-        .Modal-title {
-            font-size: var(--xlarge-text-size);
-            font-weight: var(--extra-bold-font);
-            color: var(--text-dark);
-        }
-    }
-
     .FullScreenModal,
     .StandardModal,
     .CustomModal {
@@ -32,7 +23,6 @@
         max-width: var(--max-width);
         max-height: 84vh;
         margin: 0 auto;
-        border: var(--border);
         border-radius: var(--border-radius);
         background-color: var(--bg);
         overflow-y: hidden;

@@ -16,6 +16,7 @@ import { QuerySnippetView } from './QuerySnippetView';
 import './QuerySnippetInsertionModal.scss';
 import { QuerySnippetComposer } from 'components/QuerySnippetComposer/QuerySnippetComposer';
 import { Modal } from 'ui/Modal/Modal';
+import { EmptyText } from 'ui/StyledText/StyledText';
 
 interface IOwnProps {
     onInsert: (query: string) => any;
@@ -126,9 +127,9 @@ class QuerySnippetInsertionModalComponent extends React.PureComponent<
             }
         } else {
             querySnippetViewDOM = (
-                <div className="empty-message mt24">
+                <EmptyText className="mt24">
                     Choose a snippet on the left.
-                </div>
+                </EmptyText>
             );
         }
 

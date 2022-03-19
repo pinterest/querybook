@@ -4,6 +4,7 @@ import { useUser } from 'hooks/redux/useUser';
 import { IUserInfo } from 'const/user';
 import { ICommonUserLoaderProps } from './types';
 import './UserAvatar.scss';
+import { Icon } from 'ui/Icon/Icon';
 
 export type IUserAvatarProps = {
     isOnline?: boolean;
@@ -84,9 +85,7 @@ export const UserAvatarComponent: React.FunctionComponent<IUserAvatarComponentPr
 
     const imageDOM = loading ? (
         <div className="spinner-wrapper">
-            <span>
-                <i className="fa fa-spinner fa-pulse" />
-            </span>
+            <Icon name="loader" size={16} />
         </div>
     ) : profileImage == null ? (
         <DefaultUserIcon name={userName} />

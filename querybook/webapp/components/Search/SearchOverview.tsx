@@ -48,6 +48,7 @@ import { PrettyNumber } from 'ui/PrettyNumber/PrettyNumber';
 import { SearchDatePicker } from './SearchDatePicker';
 import { TableSelect } from './TableSelect';
 import './SearchOverview.scss';
+import { EmptyText } from 'ui/StyledText/StyledText';
 
 const userReactSelectStyle = makeReactSelectStyle(
     true,
@@ -589,7 +590,7 @@ export const SearchOverview: React.FunctionComponent = () => {
                     <div className="result-item-golden horizontal-space-between">
                         <span>
                             <span>featured only</span>
-                            <Icon className="award" name="award" />
+                            <Icon className="award ml4" name="award" />
                         </span>
                         <Checkbox
                             value={!!searchFilters.golden}
@@ -639,9 +640,7 @@ export const SearchOverview: React.FunctionComponent = () => {
         !isEmpty(searchFilters) ||
         !!searchString;
     const beginSearchPromptDOM = (
-        <div className="empty-message">
-            Enter a search string or apply filters to begin.
-        </div>
+        <EmptyText>Enter a search string or apply filters to begin.</EmptyText>
     );
 
     const searchBodyDOM = (

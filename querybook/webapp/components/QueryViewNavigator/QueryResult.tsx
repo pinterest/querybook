@@ -15,6 +15,7 @@ import {
     generateFormattedDate,
 } from 'lib/utils/datetime';
 import { UrlContextMenu } from 'ui/ContextMenu/UrlContextMenu';
+import { AccentText } from 'ui/StyledText/StyledText';
 
 interface IProps {
     queryExecution: IQueryExecution;
@@ -84,7 +85,9 @@ export const QueryResult: React.FunctionComponent<IProps> = ({
                                 queryStatusToStatusIcon[queryExecution.status]
                             }
                         />
-                        <div className="query-id mr8">#{queryId}</div>
+                        <AccentText className="mr8" size="small" weight="bold">
+                            Execution {queryId}
+                        </AccentText>
                     </div>
                     <Tag mini light>
                         {queryEngineById[queryExecution.engine_id].name}
@@ -93,7 +96,11 @@ export const QueryResult: React.FunctionComponent<IProps> = ({
                 <div className="query-context mb4">
                     {queryCode.slice(0, 60)}
                 </div>
-                <div className="query-time horizontal-space-between">
+                <AccentText
+                    className="horizontal-space-between"
+                    size="xsmall"
+                    color="lightest"
+                >
                     <ExecutionTime queryExecution={queryExecution} />
                     <div
                         aria-label={formattedCreatedAtDate}
@@ -101,7 +108,7 @@ export const QueryResult: React.FunctionComponent<IProps> = ({
                     >
                         {createdAtFromNow}
                     </div>
-                </div>
+                </AccentText>
             </div>
             <UrlContextMenu anchorRef={selfRef} url={queryExecutionUrl} />
         </>

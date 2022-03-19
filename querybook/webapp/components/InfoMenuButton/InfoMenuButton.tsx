@@ -77,7 +77,7 @@ export const InfoMenuButton: React.FunctionComponent = () => {
                         })
                     }
                 >
-                    Templating
+                    Template Guide
                 </MenuItem>
                 <MenuItem
                     onClick={() =>

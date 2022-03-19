@@ -17,6 +17,7 @@ import { DataDocChartCellTable } from './DataDocChartCellTable';
 import { DataDocChartComposer } from './DataDocChartComposer';
 import { InfoButton } from 'ui/Button/InfoButton';
 import { Modal } from 'ui/Modal/Modal';
+import { EmptyText } from 'ui/StyledText/StyledText';
 
 interface IProps {
     context: string;
@@ -174,8 +175,8 @@ export const DataDocChartCell = React.memo<IProps>(
 
             return (
                 <div className="ChartCell-picker">
-                    <div>{queryExecutionPicker}</div>
-                    <div>{statementExecutionPicker}</div>
+                    {queryExecutionPicker}
+                    {statementExecutionPicker}
                 </div>
             );
         };
@@ -185,7 +186,7 @@ export const DataDocChartCell = React.memo<IProps>(
                 transformedChartData == null ||
                 transformedChartData.length === 0
             ) {
-                return <div className="empty-message">No Data for Chart</div>;
+                return <EmptyText size="xlarge">No Data for Chart</EmptyText>;
             }
 
             let visualizationDOM: React.ReactChild;
@@ -228,13 +229,14 @@ export const DataDocChartCell = React.memo<IProps>(
 
         return (
             <div className={'DataDocChartCell'}>
-                <div className="chart-cell-controls horizontal-space-between">
+                <div className="chart-cell-controls horizontal-space-between mb8">
                     <div>{renderPickerDOM()}</div>
                     <div className="flex-row">
                         <TextButton
                             title="Config Chart"
                             onClick={() => setShowChartComposer(true)}
                             size="small"
+                            className="mr8"
                         />
                         <InfoButton>
                             Chart data comes from the last query cell above.

@@ -28,7 +28,6 @@ export const StyledButton = styled.span<StyledButtonProps>`
     align-items: center;
 
     border-radius: var(--border-radius-sm);
-    font-family: var(--font-sans-serif);
 
     color: ${(props) => props.color || 'inherit'};
     background-color: ${(props) => props.bgColor || 'inherit'};
@@ -61,6 +60,11 @@ export const StyledButton = styled.span<StyledButtonProps>`
     ${(props) => (props.fontWeight ? `font-weight: ${props.fontWeight}` : '')};
 
     cursor: ${(props) => (props.disabled ? 'not-allowed' : 'pointer')};
+
+    * {
+        cursor: ${(props) =>
+            props.disabled ? 'not-allowed' : 'pointer'} !important;
+    }
     padding: ${(props) => (props.size === 'small' ? '2px 6px' : '4px 12px')};
 
     white-space: nowrap;
@@ -88,7 +92,7 @@ export const StyledButton = styled.span<StyledButtonProps>`
 
     &:not(.icon-only) {
         .Icon {
-            margin-right: 4px;
+            margin-right: 2px;
         }
     }
 

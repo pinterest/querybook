@@ -258,7 +258,7 @@ export const DataTableViewSamples: React.FunctionComponent<IDataTableViewSamples
                     );
 
                     const controlsField = (
-                        <div className="DataTableViewSamples-button ">
+                        <div className="DataTableViewSamples-button  flex-row">
                             <ToggleButton
                                 checked={showAdvancedOptions}
                                 onClick={toggleShowAdvancedOptions}
@@ -290,7 +290,7 @@ export const DataTableViewSamples: React.FunctionComponent<IDataTableViewSamples
                     );
 
                     const formFields = showAdvancedOptions && (
-                        <div className="DataTableViewSamples-form">
+                        <div className="DataTableViewSamples-form mb12">
                             <div className="DataTableViewSamples-top flex-row">
                                 {engineField}
                                 {partitionField}

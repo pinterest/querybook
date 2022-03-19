@@ -16,14 +16,19 @@
         font-size: var(--xlarge-text-size);
         // So it visually aligns
         margin-left: -3px;
-        font-weight: bold;
     }
 
     h2 {
         font-size: var(--large-text-size);
         // So it visually aligns
         margin-left: -2px;
-        font-weight: bold;
+    }
+
+    h1,
+    h2 {
+        font-weight: var(--bold-font);
+        font-family: var(--font-accent);
+        letter-spacing: var(--letter-spacing-bold);
     }
 
     blockquote {

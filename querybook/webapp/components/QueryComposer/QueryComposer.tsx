@@ -332,7 +332,7 @@ const QueryComposer: React.FC = () => {
                 <div
                     className="hide-execution flex-center pt8 mb4"
                     onClick={() => setExecutionId(null)}
-                    aria-label="Hide Query Execution"
+                    aria-label="Close Query Execution"
                     data-balloon-pos="bottom"
                 >
                     <IconButton icon="chevron-down" noPadding />

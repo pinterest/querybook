@@ -252,15 +252,15 @@ export function linkifyLog(log: string) {
 export function calculateTooltipSize(tooltip: string) {
     tooltip = tooltip || '';
 
-    if (tooltip.length < 20) {
+    if (tooltip.length < 5) {
         return '';
     }
 
-    if (tooltip.length < 100) {
+    if (tooltip.length < 30) {
         return 'medium';
     }
 
-    if (tooltip.length < 200) {
+    if (tooltip.length < 100) {
         return 'large';
     }
 

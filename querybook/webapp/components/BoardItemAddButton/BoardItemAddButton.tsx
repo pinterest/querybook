@@ -130,6 +130,7 @@ export const BoardItemAddButton: React.FunctionComponent<ICreateDataDocButtonPro
             <IconButton
                 fill={true}
                 ref={selfRef}
+                color="light"
                 icon="briefcase"
                 tooltip={tooltip}
                 tooltipPos="right"

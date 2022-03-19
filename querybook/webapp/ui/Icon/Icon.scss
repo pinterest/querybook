@@ -1,17 +1,6 @@
 .Icon {
     display: inline-flex;
 
-    &.fill {
-        svg {
-            fill: currentColor;
-        }
-    }
-
-    svg.feather-loader {
-        animation: loading 3s linear forwards infinite;
-        color: var(--icon-light);
-    }
-
     &.accent {
         color: var(--color-accent-dark);
     }
@@ -25,6 +14,17 @@
         color: var(--color-warning-dark);
     }
     &.light {
+        color: var(--icon-light);
+    }
+
+    &.fill {
+        svg {
+            fill: currentColor;
+        }
+    }
+
+    svg.feather-loader {
+        animation: loading 3s linear forwards infinite;
         color: var(--icon-light);
     }
 }

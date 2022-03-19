@@ -35,33 +35,15 @@
             align-items: baseline;
 
             .result-item-title {
-                font-size: var(--med-text-size);
-                font-weight: var(--bold-font);
                 overflow: hidden;
                 white-space: nowrap;
                 text-overflow: ellipsis;
-                color: var(--text);
-
-                &:hover {
-                    color: var(--text-hover);
-                }
             }
-        }
-
-        .result-item-date {
-            font-size: var(--small-text-size);
-            font-weight: var(--light-bold-font);
-            color: var(--text-lightest);
-            white-space: nowrap;
         }
 
         .result-items-bottom {
             align-items: baseline;
             color: var(--text-light);
-
-            .result-item-owner {
-                font-weight: 500;
-            }
         }
 
         .result-item-description {

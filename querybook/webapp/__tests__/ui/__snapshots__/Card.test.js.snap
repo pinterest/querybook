@@ -11,11 +11,13 @@ exports[`matches enzyme snapshots matches snapshot - height/width 1`] = `
     }
   }
 >
-  <div
-    className="Card-title"
+  <AccentText
+    className="mt8 mb16"
+    size="large"
+    weight="bold"
   >
     test
-  </div>
+  </AccentText>
   <div
     className="Card-content"
   >
@@ -30,11 +32,13 @@ exports[`matches enzyme snapshots matches snapshot 1`] = `
   onClick={[Function]}
   style={null}
 >
-  <div
-    className="Card-title"
+  <AccentText
+    className="mt8 mb16"
+    size="large"
+    weight="bold"
   >
     test
-  </div>
+  </AccentText>
   <div
     className="Card-content"
   >
