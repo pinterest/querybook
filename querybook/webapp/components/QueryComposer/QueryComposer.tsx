@@ -335,7 +335,7 @@ const QueryComposer: React.FC = () => {
                     aria-label="Close Query Execution"
                     data-balloon-pos="bottom"
                 >
-                    <IconButton icon="chevron-down" noPadding />
+                    <IconButton icon="ChevronDown" noPadding />
                 </div>
                 <QueryComposerExecution id={executionId} />
             </div>
@@ -399,13 +399,13 @@ const QueryComposer: React.FC = () => {
                 <Level>
                     <LevelItem>
                         <Button
-                            icon="edit-3"
+                            icon="Edit3"
                             title="Format"
                             onClick={handleFormatQuery}
                             theme="text"
                         />
                         <Button
-                            icon="delete"
+                            icon="Delete"
                             title="Clear"
                             onClick={() => {
                                 setQuery('');
@@ -414,7 +414,7 @@ const QueryComposer: React.FC = () => {
                             theme="text"
                         />
                         <Button
-                            icon="plus"
+                            icon="Plus"
                             title="Create DataDoc"
                             onClick={handleCreateDataDoc}
                             theme="text"
@@ -423,7 +423,7 @@ const QueryComposer: React.FC = () => {
                     <LevelItem>
                         {canShowUDFForm && (
                             <Button
-                                icon="plus"
+                                icon="Plus"
                                 title="Add UDF"
                                 aria-label="Add New User Defined Function"
                                 data-balloon-pos="left"

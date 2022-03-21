@@ -67,7 +67,7 @@ export const DataDocContents: React.FC<{
                                 </>
                             );
                             cellIcon = (
-                                <Icon name="terminal" size={16} color="light" />
+                                <Icon name="Terminal" size={16} color="light" />
                             );
                             break;
                         }
@@ -83,7 +83,7 @@ export const DataDocContents: React.FC<{
 
                             cellIcon = (
                                 <Icon
-                                    name="align-left"
+                                    name="AlignLeft"
                                     size={16}
                                     color="light"
                                 />
@@ -93,11 +93,7 @@ export const DataDocContents: React.FC<{
                         }
                         case 'chart': {
                             cellIcon = (
-                                <Icon
-                                    name="pie-chart"
-                                    size={16}
-                                    color="light"
-                                />
+                                <Icon name="PieChart" size={16} color="light" />
                             );
                             cellText = (
                                 <b>

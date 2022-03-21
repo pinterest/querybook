@@ -297,7 +297,7 @@ const QueryExamplesList: React.FC<{
                             <UserName uid={query.uid} />
                         </div>
                         <TextButton
-                            icon="arrow-right"
+                            icon="ArrowRight"
                             title="Open Execution"
                             className="mt8"
                             onClick={() => openDisplayModal(query.id)}

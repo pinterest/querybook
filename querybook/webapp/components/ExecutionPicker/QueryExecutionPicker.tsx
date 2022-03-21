@@ -84,7 +84,7 @@ export const QueryExecutionPicker: React.FunctionComponent<IProps> = React.memo(
                 <div className="execution-selector-button flex-row">
                     <span className="mr8">{text}</span>
                     {statusIcon}
-                    <Icon name="chevron-down" size={16} />
+                    <Icon name="ChevronDown" size={16} />
                 </div>
             );
         }, [queryExecutionId, queryExecutions]);

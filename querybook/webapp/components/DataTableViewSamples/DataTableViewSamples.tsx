@@ -199,7 +199,7 @@ export const DataTableViewSamples: React.FunctionComponent<IDataTableViewSamples
                                                 )}
                                             </div>
                                             <IconButton
-                                                icon="x"
+                                                icon="X"
                                                 onClick={() =>
                                                     arrayHelpers.remove(idx)
                                                 }
@@ -215,7 +215,7 @@ export const DataTableViewSamples: React.FunctionComponent<IDataTableViewSamples
                                         <div className="center-align add-where-clause mt16">
                                             <Button
                                                 title="New Where Clause"
-                                                icon="plus"
+                                                icon="Plus"
                                                 onClick={() =>
                                                     arrayHelpers.push([
                                                         '',

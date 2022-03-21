@@ -150,7 +150,7 @@ export const DataDocNavigatorBoardSection: React.FC<INavigatorBoardSectionProps>
     const sectionHeader = (
         <Level className="pl8 navigator-header">
             <div className="flex1 flex-row" onClick={toggleCollapsed}>
-                <Icon name="list" className="mr8" size={18} />
+                <Icon name="List" className="mr8" size={18} />
                 <Title size={7}>Lists</Title>
             </div>
 
@@ -174,13 +174,13 @@ export const DataDocNavigatorBoardSection: React.FC<INavigatorBoardSectionProps>
                 ) : null}
 
                 <IconButton
-                    icon="plus"
+                    icon="Plus"
                     onClick={() => setShowCreateModal(true)}
                     tooltip="New List"
                     tooltipPos="left"
                 />
                 <IconButton
-                    icon={collapsed ? 'chevron-right' : 'chevron-down'}
+                    icon={collapsed ? 'ChevronRight' : 'ChevronDown'}
                     onClick={toggleCollapsed}
                 />
             </LevelItem>
@@ -308,14 +308,14 @@ const NavigatorBoardView: React.FunctionComponent<{
                 <span className="hover-control-section">
                     <IconButton
                         size={18}
-                        icon="edit-3"
+                        icon="Edit3"
                         onClick={() => setShowUpdateModal(true)}
                         noPadding
                     />
                 </span>
 
                 <IconButton
-                    icon={collapsed ? 'chevron-right' : 'chevron-down'}
+                    icon={collapsed ? 'ChevronRight' : 'ChevronDown'}
                     onClick={() => setCollapsed(!collapsed)}
                 />
             </div>

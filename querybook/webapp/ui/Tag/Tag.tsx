@@ -4,6 +4,7 @@ import clsx from 'clsx';
 import { TooltipDirection } from 'const/tooltip';
 
 import { Icon } from 'ui/Icon/Icon';
+import type { AllLucideIconNames } from 'ui/Icon/LucideIcons';
 
 import './Tag.scss';
 
@@ -27,7 +28,7 @@ export interface ITagProps {
     className?: string;
 }
 export interface IHoverIconTagProps extends ITagProps {
-    iconOnHover?: string;
+    iconOnHover?: AllLucideIconNames;
     onIconHoverClick?: () => any;
 }
 

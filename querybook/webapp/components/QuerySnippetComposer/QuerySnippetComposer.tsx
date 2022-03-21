@@ -498,7 +498,7 @@ class QuerySnippetComposerComponent extends React.PureComponent<
                 disableWhileAsync={true}
                 key={'delete'}
                 onClick={this.handleDelete}
-                icon="trash"
+                icon="Trash"
                 title="Delete"
             />
         );

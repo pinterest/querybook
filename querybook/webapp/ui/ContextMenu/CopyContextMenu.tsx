@@ -32,7 +32,7 @@ export const CopyContextMenu: React.FC<ICopyContextMenuProps> = ({
     const renderMenu = () => (
         <Menu boxShadow>
             <MenuItem onClick={handleCopy}>
-                <Icon name="copy" className="mr4" />
+                <Icon name="Copy" className="mr4" />
                 {copyName ?? 'Copy'}
             </MenuItem>
         </Menu>

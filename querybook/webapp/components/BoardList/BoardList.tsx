@@ -51,7 +51,7 @@ export const BoardList: React.FunctionComponent<IProps> = ({
             const className = clsx({
                 selected,
             });
-            const selectedIcon = selected ? 'check-circle' : 'circle';
+            const selectedIcon = selected ? 'CheckCircle' : 'Circle';
 
             return (
                 <ListLink
@@ -90,7 +90,7 @@ export const BoardList: React.FunctionComponent<IProps> = ({
                     className="mr12"
                 />
                 <IconButton
-                    icon="plus"
+                    icon="Plus"
                     tooltip={'New List'}
                     tooltipPos={'left'}
                     onClick={

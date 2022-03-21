@@ -4,8 +4,9 @@ import { useEvent } from 'hooks/useEvent';
 import { matchKeyMap, KeyMap } from 'lib/utils/keyboard';
 import { Button } from 'ui/Button/Button';
 import { Modal } from 'ui/Modal/Modal';
-import './ConfirmationMessage.scss';
 import { ButtonColorType } from 'ui/Button/ButtonTheme';
+import type { AllLucideIconNames } from 'ui/Icon/LucideIcons';
+import './ConfirmationMessage.scss';
 
 export interface IConfirmationMessageProps {
     header?: string;
@@ -24,8 +25,8 @@ export interface IConfirmationMessageProps {
     confirmColor?: ButtonColorType;
     cancelColor?: ButtonColorType;
 
-    confirmIcon?: string;
-    cancelIcon?: string;
+    confirmIcon?: AllLucideIconNames;
+    cancelIcon?: AllLucideIconNames;
 
     confirmText?: string;
     cancelText?: string;
@@ -40,8 +41,8 @@ export const ConfirmationMessage: React.FunctionComponent<IConfirmationMessagePr
     hideDismiss,
     confirmColor = 'confirm',
     cancelColor = 'cancel',
-    confirmIcon = 'check',
-    cancelIcon = 'x',
+    confirmIcon = 'Check',
+    cancelIcon = 'X',
     confirmText = 'Confirm',
     cancelText = 'Cancel',
 }) => {

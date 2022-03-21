@@ -3,13 +3,14 @@ import { useEvent } from 'hooks/useEvent';
 import React from 'react';
 
 import { IconButton } from 'ui/Button/IconButton';
+import type { AllLucideIconNames } from 'ui/Icon/LucideIcons';
 import { Popover } from 'ui/Popover/Popover';
 import { AccentText } from 'ui/StyledText/StyledText';
 
 import './Dropdown.scss';
 
 interface IProps {
-    menuIcon?: string;
+    menuIcon?: AllLucideIconNames;
     className?: string;
     customButtonRenderer?: () => React.ReactNode;
 
@@ -21,7 +22,7 @@ interface IProps {
 }
 
 export const Dropdown: React.FunctionComponent<IProps> = ({
-    menuIcon = 'menu',
+    menuIcon = 'Menu',
     className,
     customButtonRenderer,
 

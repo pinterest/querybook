@@ -89,7 +89,7 @@ export function GenericCRUD<T extends Record<any, any>>({
                     const deleteButton = deleteItem && (
                         <AsyncButton
                             title={createItem ? 'Cancel' : 'Delete'}
-                            icon="trash"
+                            icon="Trash"
                             onClick={handleDeleteItem}
                             color="cancel"
                         />
@@ -101,7 +101,7 @@ export function GenericCRUD<T extends Record<any, any>>({
                                 !isValid || item === values || isSubmitting
                             }
                             title={createItem ? 'Create' : 'Save'}
-                            icon="save"
+                            icon="Save"
                             onClick={() => handleSubmit()}
                         />
                     );

@@ -143,7 +143,7 @@ export const DataDocViewersBadge = React.memo<IDataDocViewersBadgeProps>(
             const shareButtonDOM = (
                 <Button
                     className="viewers-badge-share-button"
-                    icon={dataDoc.public ? 'users' : 'lock'}
+                    icon={dataDoc.public ? 'Users' : 'Lock'}
                     title="Share"
                     pushable
                     ping={

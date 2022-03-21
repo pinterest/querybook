@@ -66,7 +66,7 @@ export const QueryEngineStatusViewer: React.FC<IProps> = ({ engineId }) => {
                     </AccentText>
                 </div>
                 <Button
-                    icon="refresh-cw"
+                    icon="RefreshCw"
                     title="Refresh Status"
                     onClick={loadSystemStatus}
                 />

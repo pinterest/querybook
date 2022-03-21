@@ -49,7 +49,7 @@ export const DataDocGridItem: React.FunctionComponent<IDataDocGridItemProps> = R
         );
 
         const { title = '', public: publicDataDoc } = dataDoc;
-        const privateIcon = !publicDataDoc && 'lock';
+        const privateIcon = !publicDataDoc ? 'Lock' : null;
 
         return (
             <div ref={drag} className="DataDocGridItem">
@@ -70,7 +70,7 @@ export const DataDocGridItem: React.FunctionComponent<IDataDocGridItemProps> = R
                                         className="delete-grid-item-button"
                                         noPadding
                                         size={16}
-                                        icon="x"
+                                        icon="X"
                                         onClick={handleRemoveDataDoc}
                                     />
                                 )}

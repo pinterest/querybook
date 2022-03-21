@@ -94,16 +94,12 @@ exports[`matches test renderer snapshot serializes the styles 1`] = `
       size="medium"
     >
       <div
-        accentFont={true}
         className="StyledText__StyledTextDiv-sc-1ldibmc-0 jYMIFP Text"
-        noUserSelect={false}
       >
         Previous
       </div>
       <div
-        accentFont={true}
         className="StyledText__StyledTextDiv-sc-1ldibmc-0 jYMIFP Text flex-row"
-        noUserSelect={false}
       />
     </span>
   </div>
@@ -117,16 +113,12 @@ exports[`matches test renderer snapshot serializes the styles 1`] = `
       size="medium"
     >
       <div
-        accentFont={true}
         className="StyledText__StyledTextDiv-sc-1ldibmc-0 jYMIFP Text"
-        noUserSelect={false}
       >
         Next
       </div>
       <div
-        accentFont={true}
         className="StyledText__StyledTextDiv-sc-1ldibmc-0 jYMIFP Text flex-row"
-        noUserSelect={false}
       />
     </span>
   </div>
@@ -141,16 +133,12 @@ exports[`matches test renderer snapshot serializes the styles 1`] = `
         size="medium"
       >
         <div
-          accentFont={true}
           className="StyledText__StyledTextDiv-sc-1ldibmc-0 jYMIFP Text"
-          noUserSelect={false}
         >
           1
         </div>
         <div
-          accentFont={true}
           className="StyledText__StyledTextDiv-sc-1ldibmc-0 jYMIFP Text flex-row"
-          noUserSelect={false}
         />
       </span>
     </li>
@@ -162,16 +150,12 @@ exports[`matches test renderer snapshot serializes the styles 1`] = `
         size="medium"
       >
         <div
-          accentFont={true}
           className="StyledText__StyledTextDiv-sc-1ldibmc-0 jYMIFP Text"
-          noUserSelect={false}
         >
           2
         </div>
         <div
-          accentFont={true}
           className="StyledText__StyledTextDiv-sc-1ldibmc-0 jYMIFP Text flex-row"
-          noUserSelect={false}
         />
       </span>
     </li>
@@ -183,16 +167,12 @@ exports[`matches test renderer snapshot serializes the styles 1`] = `
         size="medium"
       >
         <div
-          accentFont={true}
           className="StyledText__StyledTextDiv-sc-1ldibmc-0 jYMIFP Text"
-          noUserSelect={false}
         >
           3
         </div>
         <div
-          accentFont={true}
           className="StyledText__StyledTextDiv-sc-1ldibmc-0 jYMIFP Text flex-row"
-          noUserSelect={false}
         />
       </span>
     </li>
@@ -204,16 +184,12 @@ exports[`matches test renderer snapshot serializes the styles 1`] = `
         size="medium"
       >
         <div
-          accentFont={true}
           className="StyledText__StyledTextDiv-sc-1ldibmc-0 jYMIFP Text"
-          noUserSelect={false}
         >
           4
         </div>
         <div
-          accentFont={true}
           className="StyledText__StyledTextDiv-sc-1ldibmc-0 jYMIFP Text flex-row"
-          noUserSelect={false}
         />
       </span>
     </li>
@@ -232,16 +208,12 @@ exports[`matches test renderer snapshot serializes the styles 1`] = `
         size="medium"
       >
         <div
-          accentFont={true}
           className="StyledText__StyledTextDiv-sc-1ldibmc-0 jYMIFP Text"
-          noUserSelect={false}
         >
           10
         </div>
         <div
-          accentFont={true}
           className="StyledText__StyledTextDiv-sc-1ldibmc-0 jYMIFP Text flex-row"
-          noUserSelect={false}
         />
       </span>
     </li>

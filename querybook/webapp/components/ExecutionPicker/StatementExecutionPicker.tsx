@@ -45,7 +45,7 @@ export const StatementExecutionPicker: React.FunctionComponent<IProps> = ({
         return (
             <div className="custom-statement-picker-button">
                 Statement {current} out of {total}
-                <Icon name="chevron-down" size={16} className="ml4" />
+                <Icon name="ChevronDown" size={16} className="ml4" />
             </div>
         );
     };

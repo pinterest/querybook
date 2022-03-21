@@ -216,7 +216,7 @@ export const TaskEditor: React.FunctionComponent<IProps> = ({
                                   </FormField>
                                   <div>
                                       <IconButton
-                                          icon="x"
+                                          icon="X"
                                           onClick={() =>
                                               arrayHelpers.remove(index)
                                           }
@@ -278,7 +278,7 @@ export const TaskEditor: React.FunctionComponent<IProps> = ({
                                           </FormField>
                                           <div>
                                               <IconButton
-                                                  icon="x"
+                                                  icon="X"
                                                   onClick={() =>
                                                       arrayHelpers.remove(index)
                                                   }
@@ -425,11 +425,11 @@ export const TaskEditor: React.FunctionComponent<IProps> = ({
                                     onClick={handleDeleteTask}
                                     title={'Delete Task'}
                                     color="cancel"
-                                    icon="trash"
+                                    icon="Trash"
                                 />
                             ) : null}
                             <AsyncButton
-                                icon="save"
+                                icon="Save"
                                 color="accent"
                                 disabled={!isValid}
                                 onClick={submitForm}
@@ -487,7 +487,7 @@ export const TaskEditor: React.FunctionComponent<IProps> = ({
                                         <div className="TaskEditor-run">
                                             <AsyncButton
                                                 title="Run Task"
-                                                icon="play"
+                                                icon="Play"
                                                 onClick={runTask}
                                             />
                                         </div>

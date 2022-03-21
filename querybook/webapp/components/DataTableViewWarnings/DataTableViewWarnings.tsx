@@ -127,7 +127,7 @@ export const DataTableViewWarnings: React.FC<IProps> = ({
                         setDisplayNewForm(true);
                     }}
                 >
-                    <TextButton icon="plus" title="New Warning" />
+                    <TextButton icon="Plus" title="New Warning" />
                 </Card>
             );
         }

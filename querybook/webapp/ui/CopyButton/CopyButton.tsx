@@ -8,13 +8,14 @@ import {
     ButtonType,
     getButtonComponentByType,
 } from 'ui/Button/Button';
+import type { AllLucideIconNames } from 'ui/Icon/LucideIcons';
 
 const DEFAULT_TOOL_TIP = 'Click To Copy';
 const DEFAULT_COPIED_TOOL_TIP = 'Copied!';
 
 export interface ICopyButtonProps extends ButtonProps {
     copyText: string | (() => string);
-    icon?: string;
+    icon?: AllLucideIconNames;
     title?: string;
     className?: string;
 
@@ -51,7 +52,7 @@ export const CopyButton: React.FunctionComponent<ICopyButtonProps> = ({
                 setTooltipToShow(copiedTooltip);
             }}
             onMouseLeave={() => setTooltipToShow(tooltip)}
-            icon="copy"
+            icon="Copy"
             {...propsForButton}
         />
     );

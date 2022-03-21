@@ -60,7 +60,7 @@ export const EditableTextField: React.FunctionComponent<IEditableTextFieldProps>
 
     const toggleEditModeButton = !editMode ? (
         <TextButton
-            icon="edit"
+            icon="Edit"
             title="Edit"
             onClick={toggleEditMode}
             className="edit-mode-button"

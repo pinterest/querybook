@@ -59,7 +59,7 @@ export const ErrorSuggestion: React.FunctionComponent<IProps> = ({
     return matchedError ? (
         <Message
             className="ErrorSuggestion"
-            icon="zap"
+            icon="Zap"
             iconSize={20}
             type="tip"
         >

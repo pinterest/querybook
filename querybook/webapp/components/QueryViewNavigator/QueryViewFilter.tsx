@@ -94,18 +94,18 @@ export const QueryViewFilter = React.memo<IQueryViewFilterProps>(
         );
 
         const searchButton = (
-            <IconButton icon="search" onClick={navigateToSearch} />
+            <IconButton icon="Search" onClick={navigateToSearch} />
         );
 
         const configButton = (
             <IconButton
-                icon="sliders"
+                icon="Sliders"
                 ref={configButtonRef}
                 onClick={toggleFilterPicker}
             />
         );
         const refreshButton = (
-            <IconButton icon="refresh-cw" onClick={onRefresh} />
+            <IconButton icon="RefreshCw" onClick={onRefresh} />
         );
 
         const configSection = (

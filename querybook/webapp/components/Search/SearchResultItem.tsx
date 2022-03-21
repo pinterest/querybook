@@ -125,7 +125,7 @@ export const QueryItem: React.FunctionComponent<IQueryItemProps> = ({
             <IconButton
                 className="toggle-expand-query-icon"
                 noPadding
-                icon={isQueryTextExpanded ? 'minimize-2' : 'maximize-2'}
+                icon={isQueryTextExpanded ? 'Minimize2' : 'Maximize2'}
                 size={14}
                 onClick={() =>
                     setIsQueryTextExpanded((isExpaneded) => !isExpaneded)
@@ -280,7 +280,7 @@ export const DataTableItem: React.FunctionComponent<IDataTableItemProps> = ({
 
     const goldenIcon = golden ? (
         <div className="result-item-golden ml4">
-            <Icon className="award" name="award" />
+            <Icon className="award" name="Award" />
         </div>
     ) : null;
 

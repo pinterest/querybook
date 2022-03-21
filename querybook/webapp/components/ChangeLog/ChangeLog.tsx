@@ -87,7 +87,7 @@ export const ChangeLog: React.FunctionComponent = () => {
                 >
                     <AccentText size="med">{log.date}</AccentText>
                     <div className="ChangeLog-arrow">
-                        <Icon name="arrow-right" />
+                        <Icon name="ArrowRight" />
                     </div>
                 </div>
             ))}

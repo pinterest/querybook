@@ -97,7 +97,7 @@ export const SchemaTableItem: React.FC<{
                 <div className="flex-row">
                     <SchemaIconButton
                         onClick={() => setIsExpanded(!isExpanded)}
-                        icon={isExpanded ? 'chevron-down' : 'chevron-right'}
+                        icon={isExpanded ? 'ChevronDown' : 'ChevronRight'}
                     />
                 </div>
             </StyledItem>

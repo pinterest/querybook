@@ -120,7 +120,7 @@ export const QueryEngineStatusButton: React.FC<IProps> = ({
                 if (!engineStatus || engineStatus.loading) {
                     systemStatusContent = (
                         <span>
-                            <Icon name="loader" size={16} className="mr8" />
+                            <Icon name="Loader" size={16} className="mr8" />
                             <Tag>{titleize(engine.name)}</Tag>
                         </span>
                     );
@@ -179,7 +179,7 @@ export const QueryEngineStatusButton: React.FC<IProps> = ({
                         className="QueryEngineStatusPopover-refresh flex-row"
                         onClick={onRefreshClick}
                     >
-                        <Icon name="refresh-cw" />
+                        <Icon name="RefreshCw" />
                         <span>Refresh</span>
                     </MenuItem>
                 </Menu>
@@ -221,7 +221,7 @@ export const QueryEngineStatusButton: React.FC<IProps> = ({
                     className="query-engine-status-button"
                     onClick={() => setShowPanel(true)}
                     ref={buttonRef}
-                    icon={'activity'}
+                    icon={'Activity'}
                     tooltip={`Summary: ${queryEngineStatusToMessage[overallWorstQueryEngineStatus]}. Click to see details.`}
                     tooltipPos={tooltipPos}
                     title="Status"

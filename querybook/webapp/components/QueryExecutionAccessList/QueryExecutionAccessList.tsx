@@ -68,12 +68,12 @@ export const QueryExecutionAccessList: React.FunctionComponent<IQueryExecutionAc
                     <div className="access-request-control-buttons flex-row">
                         <IconButton
                             className="access-request-control-button"
-                            icon="check-circle"
+                            icon="CheckCircle"
                             onClick={() => addQueryExecutionViewer(request.uid)}
                         />
                         <IconButton
                             className="access-request-control-button"
-                            icon="x-circle"
+                            icon="XCircle"
                             onClick={() =>
                                 rejectQueryExecutionAccessRequest(request.uid)
                             }

@@ -107,7 +107,7 @@ export const ExecutedQueryCell: React.FunctionComponent<IProps> = ({
             data-balloon-pos={'left'}
             key="replace"
             size="small"
-            icon="terminal"
+            icon="Terminal"
             title="Paste Query in Editor"
         />
     );

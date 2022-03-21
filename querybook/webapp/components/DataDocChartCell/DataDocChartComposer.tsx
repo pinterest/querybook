@@ -918,7 +918,7 @@ const DataDocChartComposerComponent: React.FunctionComponent<
 
     const hideTableButtonDOM = (
         <IconButton
-            icon={showTable ? 'chevron-down' : 'chevron-up'}
+            icon={showTable ? 'ChevronDown' : 'ChevronUp'}
             onClick={() => setShowTable(!showTable)}
             noPadding
         />

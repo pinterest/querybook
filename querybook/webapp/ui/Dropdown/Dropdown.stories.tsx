@@ -21,7 +21,7 @@ export const _Dropdown = (args) => (
         <Dropdown
             {...args}
             customButtonRenderer={() => (
-                <Button icon={'heart'} title="Dropdown" />
+                <Button icon={'ChevronDown'} title="Dropdown" />
             )}
         >
             <ListMenu

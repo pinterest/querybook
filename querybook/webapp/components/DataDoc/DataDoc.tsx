@@ -408,7 +408,7 @@ class DataDocComponent extends React.PureComponent<IProps, IState> {
                     }
                 ),
             cancelColor: 'default',
-            confirmIcon: 'copy',
+            confirmIcon: 'Copy',
         });
     }
 

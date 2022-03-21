@@ -43,7 +43,7 @@ export const DataDocTemplateButton: React.FunctionComponent<IProps> = ({
     return (
         <div>
             <IconButton
-                icon="code"
+                icon="Code"
                 onClick={() => setShowTemplateForm(true)}
                 tooltip="Set Variables"
                 tooltipPos="left"

@@ -10,6 +10,7 @@ import { IconButton } from 'ui/Button/IconButton';
 import './AdminAppEntitySidebar.scss';
 import { QuerybookLogo } from 'ui/QuerybookLogo/QuerybookLogo';
 import { getAppName } from 'lib/utils/global';
+import { AllLucideIconNames } from 'ui/Icon/LucideIcons';
 
 interface IAdminAppEntitySidebarProps {
     selectedEntity: AdminEntity;
@@ -20,7 +21,7 @@ export const AdminAppEntitySidebar: React.FunctionComponent<IAdminAppEntitySideb
     selectedEntity,
     onSelectEntity,
 }) => {
-    const makeSidebarItem = (key: AdminEntity, icon: string) => (
+    const makeSidebarItem = (key: AdminEntity, icon: AllLucideIconNames) => (
         <div
             className={`AdminAppEntitySidebar-item flex-row ${
                 selectedEntity === key ? 'active' : ''
@@ -52,18 +53,18 @@ export const AdminAppEntitySidebar: React.FunctionComponent<IAdminAppEntitySideb
                     <QuerybookLogo size={1.3} withBrandMark />
                     <div>ADMIN APP</div>
                 </div>
-                {makeSidebarItem('environment', 'box')}
-                {makeSidebarItem('metastore', 'database')}
-                {makeSidebarItem('query_engine', 'server')}
+                {makeSidebarItem('environment', 'Box')}
+                {makeSidebarItem('metastore', 'Database')}
+                {makeSidebarItem('query_engine', 'Server')}
                 {divider}
-                {makeSidebarItem('task', 'clipboard')}
-                {makeSidebarItem('task_status', 'activity')}
+                {makeSidebarItem('task', 'Clipboard')}
+                {makeSidebarItem('task_status', 'Activity')}
                 {divider}
-                {makeSidebarItem('user_role', 'users')}
-                {makeSidebarItem('api_access_token', 'key')}
-                {makeSidebarItem('announcement', 'volume-2')}
+                {makeSidebarItem('user_role', 'Users')}
+                {makeSidebarItem('api_access_token', 'Key')}
+                {makeSidebarItem('announcement', 'Volume2')}
                 {divider}
-                {makeSidebarItem('config', 'settings')}
+                {makeSidebarItem('config', 'Settings')}
             </div>
             <div className="AdminAppEntitySidebar-bottom mb8">
                 <div
@@ -71,7 +72,7 @@ export const AdminAppEntitySidebar: React.FunctionComponent<IAdminAppEntitySideb
                     onClick={() => history.push('/')}
                 >
                     <IconButton
-                        icon="log-out"
+                        icon="LogOut"
                         tooltipPos="right"
                         active={false}
                     />

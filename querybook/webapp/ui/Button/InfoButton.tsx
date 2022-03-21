@@ -48,7 +48,7 @@ export const InfoButton: React.FunctionComponent<IInfoButtonProps> = ({
             onMouseEnter={handleMouseEnter}
             onMouseLeave={handleMouseExit}
         >
-            <IconButton icon="info" size={18} noPadding />
+            <IconButton icon="Info" size={18} noPadding />
             {popover}
         </span>
     );

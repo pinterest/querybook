@@ -66,7 +66,7 @@ export const StatementResultTableColumn: React.FC<IStatementResultTableColumnPro
                         'hidden-button': !isExpanded,
                     })}
                     noPadding
-                    icon={isExpanded ? 'minimize-2' : 'maximize-2'}
+                    icon={isExpanded ? 'Minimize2' : 'Maximize2'}
                     size={14}
                     onClick={handleExpandColumnClick}
                 />
@@ -140,10 +140,10 @@ const ColumnInfoDropdownButton: React.FC<IColumnInfoDropdownButtonProps> = ({
     const getStatusIconsDOM = () => {
         const iconDOMs = [];
         if (columnTransformer) {
-            iconDOMs.push(<ActiveStatusIcon icon="zap" key="zap" />);
+            iconDOMs.push(<ActiveStatusIcon icon="Zap" key="zap" />);
         }
         if (filterConditionExists) {
-            iconDOMs.push(<ActiveStatusIcon icon="filter" key="filter" />);
+            iconDOMs.push(<ActiveStatusIcon icon="Filter" key="filter" />);
         }
         return iconDOMs;
     };
@@ -164,7 +164,7 @@ const ColumnInfoDropdownButton: React.FC<IColumnInfoDropdownButtonProps> = ({
                     'hidden-button': !showPopover,
                 })}
                 noPadding
-                icon={'menu'}
+                icon="Menu"
                 active={showPopover}
                 size={14}
             />

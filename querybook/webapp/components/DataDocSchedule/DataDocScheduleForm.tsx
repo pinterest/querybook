@@ -341,7 +341,7 @@ const ScheduleExportsForm: React.FC<{
                             </div>
                             <div>
                                 <IconButton
-                                    icon="x"
+                                    icon="X"
                                     onClick={() => arrayHelpers.remove(index)}
                                 />
                             </div>
@@ -352,7 +352,7 @@ const ScheduleExportsForm: React.FC<{
                 const controlDOM = (
                     <div className="center-align mt8">
                         <SoftButton
-                            icon="plus"
+                            icon="Plus"
                             title="New Query Cell Result Export"
                             onClick={() =>
                                 arrayHelpers.push({

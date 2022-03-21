@@ -8,7 +8,7 @@ import { ErrorMessage } from '../../ui/Message/ErrorMessage';
 
 it('renders without crashing', () => {
     shallow(
-        <Message className="TestMessage" icon="zap" iconSize={20} type="tip">
+        <Message className="TestMessage" icon="Zap" iconSize={20} type="tip">
             Test
         </Message>
     );

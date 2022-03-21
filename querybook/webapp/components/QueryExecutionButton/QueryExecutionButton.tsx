@@ -71,7 +71,7 @@ export const QueryExecutionButton = React.memo<IQueryExecutionButtonProps>(
                         onClick={onClick}
                         tooltip={buttonTitle}
                         tooltipPos={tooltipPos}
-                        icon={'play-circle'}
+                        icon={'PlayCircle'}
                         active={active}
                         ping={
                             activeQueryExecutions.length > 0

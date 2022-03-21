@@ -52,7 +52,7 @@ export const BoardListItemRow: React.FC<{
                                 className="delete-board-item-button"
                                 noPadding
                                 size={16}
-                                icon="x"
+                                icon="X"
                                 onClick={(event) => {
                                     event.stopPropagation();
                                     event.preventDefault();

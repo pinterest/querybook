@@ -33,7 +33,7 @@ export const DataDocScheduleActionEdit: React.FunctionComponent<{
             )}
             <Button
                 onClick={() => setShowModal(true)}
-                icon={actionText === 'Edit Schedule' ? 'edit' : 'plus'}
+                icon={actionText === 'Edit Schedule' ? 'Edit' : 'Plus'}
                 title={actionText}
             />
         </>
@@ -65,7 +65,7 @@ export const DataDocScheduleActionHistory: React.FunctionComponent<{
             )}
             <Button
                 onClick={() => setShowModal(true)}
-                icon="list"
+                icon="List"
                 title={actionText}
             />
         </>

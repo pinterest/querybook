@@ -10,6 +10,7 @@ import { Tabs } from 'ui/Tabs/Tabs';
 import { SoftButton } from 'ui/Button/Button';
 import { DebouncedInput } from 'ui/DebouncedInput/DebouncedInput';
 import { Select, makeSelectOptions } from 'ui/Select/Select';
+import type { AllLucideIconNames } from 'ui/Icon/LucideIcons';
 
 import { IFilterCondition, tableColumnFiltersByType } from './useFilterCell';
 
@@ -44,10 +45,13 @@ const StyledColumnInfo = styled.div.attrs({
 
 export const ColumnInfoTabs = ['main', 'filter', 'insights'] as const;
 export type ColumnInfoTabType = typeof ColumnInfoTabs[number];
-export const ColumnInfoTabToIcons: Record<ColumnInfoTabType, string> = {
-    main: 'menu',
-    filter: 'filter',
-    insights: 'info',
+export const ColumnInfoTabToIcons: Record<
+    ColumnInfoTabType,
+    AllLucideIconNames
+> = {
+    main: 'Menu',
+    filter: 'Filter',
+    insights: 'Info',
 };
 
 interface IColumnInfoProps
