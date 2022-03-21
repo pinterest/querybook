@@ -1,7 +1,7 @@
 import type { AllLucideIconNames } from 'ui/Icon/LucideIcons';
 
 export interface IToolBarButtonConfig {
-    icon: AllLucideIconNames;
+    icon?: AllLucideIconNames;
     tooltip: string;
     type?: string;
     style?: string;
@@ -14,9 +14,8 @@ export const styleButtonsConfig: IToolBarButtonConfig[] = [
     { icon: 'Underline', style: 'UNDERLINE', tooltip: 'Underline ⌘U' },
 ];
 export const blockButtonsConfig: IToolBarButtonConfig[] = [
-    { icon: 'Type', style: 'header-one', label: 'Title', tooltip: 'Title' },
+    { style: 'header-one', label: 'Title', tooltip: 'Title' },
     {
-        icon: 'Type',
         style: 'header-two',
         label: 'Subtitle',
         tooltip: 'Subtitle',

@@ -560,7 +560,6 @@ export class RichTextEditor extends React.PureComponent<
         const { className, onFocus, onBlur, readOnly } = this.props;
 
         const { editorState, toolBarStyle } = this.state;
-
         const toolBar = readOnly ? null : (
             <div className="toolbar-wrapper" style={toolBarStyle}>
                 <RichTextEditorToolBar
