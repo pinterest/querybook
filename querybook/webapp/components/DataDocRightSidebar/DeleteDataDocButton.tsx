@@ -45,14 +45,14 @@ export const DeleteDataDocButton: React.FunctionComponent<IDeleteDataDocButtonPr
                 confirmColor: 'cancel',
                 cancelColor: 'default',
                 confirmText: 'Confirm Deletion',
-                confirmIcon: 'alert-triangle',
+                confirmIcon: 'AlertOctagon',
             }),
         [docId]
     );
 
     return (
         <IconButton
-            icon="trash"
+            icon="Trash"
             tooltip={tooltip}
             tooltipPos={tooltipPos}
             onClick={handleDeleteDataDoc}

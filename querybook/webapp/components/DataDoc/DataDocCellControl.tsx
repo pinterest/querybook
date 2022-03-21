@@ -109,7 +109,7 @@ export const DataDocCellControl: React.FunctionComponent<IProps> = ({
                 onClick: handleShare,
                 tooltip: 'Click to copy',
                 tooltipPos: 'right',
-                icon: 'share',
+                icon: 'Share',
             });
         }
 
@@ -120,7 +120,7 @@ export const DataDocCellControl: React.FunctionComponent<IProps> = ({
                 onClick: handleCopyCell,
                 tooltip: 'Copy cell',
                 tooltipPos: 'right',
-                icon: 'copy',
+                icon: 'Copy',
             });
         }
 
@@ -130,7 +130,7 @@ export const DataDocCellControl: React.FunctionComponent<IProps> = ({
                 onClick: handleCutCell,
                 tooltip: 'Cut cell',
                 tooltipPos: 'right',
-                icon: 'scissors',
+                icon: 'Scissors',
             });
         }
 
@@ -140,7 +140,7 @@ export const DataDocCellControl: React.FunctionComponent<IProps> = ({
                 onClick: handlePasteCell,
                 tooltip: 'Paste cell to above',
                 tooltipPos: 'right',
-                icon: 'clipboard',
+                icon: 'Clipboard',
             });
         }
     }
@@ -152,7 +152,7 @@ export const DataDocCellControl: React.FunctionComponent<IProps> = ({
                 <AsyncButton
                     className="block-crud-button"
                     onClick={handleDeleteCell}
-                    icon="x"
+                    icon="X"
                     type="soft"
                     key="delete"
                 />
@@ -167,7 +167,7 @@ export const DataDocCellControl: React.FunctionComponent<IProps> = ({
                     <AsyncButton
                         className="block-crud-button"
                         onClick={handleMoveCellClick}
-                        icon={isHeader ? 'chevrons-up' : 'chevrons-down'}
+                        icon={isHeader ? 'ChevronsUp' : 'ChevronsDown'}
                         type="soft"
                         key="swap"
                     />
@@ -189,7 +189,7 @@ export const DataDocCellControl: React.FunctionComponent<IProps> = ({
                                 ? null
                                 : handleToggleDefaultCollapsed
                         }
-                        icon={animateDefaultChange ? 'lock' : 'unlock'}
+                        icon={animateDefaultChange ? 'Lock' : 'Unlock'}
                         aria-label={
                             showCollapsed
                                 ? 'default to collapsed'
@@ -206,7 +206,7 @@ export const DataDocCellControl: React.FunctionComponent<IProps> = ({
                     ? {
                           onClick: () => setShowCollapsed(!showCollapsed),
                           name: showCollapsed ? 'Uncollapse' : 'Collapse',
-                          icon: showCollapsed ? 'maximize-2' : 'minimize-2',
+                          icon: showCollapsed ? 'Maximize2' : 'Minimize2',
                       }
                     : null
             );
@@ -233,7 +233,7 @@ export const DataDocCellControl: React.FunctionComponent<IProps> = ({
                 customButtonRenderer={() => (
                     <SoftButton
                         className="block-crud-button "
-                        icon={'more-vertical'}
+                        icon="MoreVertical"
                     />
                 )}
             >
@@ -279,7 +279,7 @@ const InsertCellButtons: React.FC<{
             className="block-crud-button"
             key={cellKey}
             onClick={() => handleInsertcell(cellKey)}
-            icon="plus"
+            icon="Plus"
             title={cellType.name ?? titleize(cellKey)}
             type="soft"
         />

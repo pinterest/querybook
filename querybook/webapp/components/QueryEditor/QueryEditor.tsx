@@ -610,7 +610,7 @@ export class QueryEditor extends React.PureComponent<
         const fullScreenButton = allowFullScreen && (
             <div className="fullscreen-button-wrapper mt4">
                 <Button
-                    icon={fullScreen ? 'minimize-2' : 'maximize-2'}
+                    icon={fullScreen ? 'Minimize2' : 'Maximize2'}
                     onClick={this.toggleFullScreen}
                     theme="text"
                     pushable

@@ -32,7 +32,7 @@ export const StatusIcon: React.FunctionComponent<IStatusIconProps> = ({
 
     return (
         <span {...spanProps}>
-            <Icon className={status} name="circle" size={16} fill={!hollow} />
+            <Icon className={status} name="Circle" size={16} fill={!hollow} />
         </span>
     );
 };

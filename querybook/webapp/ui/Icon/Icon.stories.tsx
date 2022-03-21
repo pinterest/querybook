@@ -8,7 +8,7 @@ export const _Icon = (args: IIconProps) => <Icon {...args} />;
 
 _Icon.args = {
     size: 16,
-    name: 'feather',
+    name: 'lucide',
     fill: false,
 };
 

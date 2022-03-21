@@ -6,12 +6,12 @@ import renderer from 'react-test-renderer';
 import { Icon } from '../../ui/Icon/Icon';
 
 it('renders without crashing', () => {
-    mount(<Icon name="check" />);
+    mount(<Icon name="Check" />);
 });
 
 describe('matches enzyme snapshots', () => {
     it('matches snapshot', () => {
-        const wrapper = mount(<Icon name="check" />);
+        const wrapper = mount(<Icon name="Check" />);
         const serialized = toJson(wrapper);
         expect(serialized).toMatchSnapshot();
     });
@@ -19,7 +19,7 @@ describe('matches enzyme snapshots', () => {
 
 describe('matches test renderer snapshot', () => {
     it('serializes the styles', () => {
-        const output = renderer.create(<Icon name="check" />);
+        const output = renderer.create(<Icon name="Check" />);
         expect(output).toMatchSnapshot();
     });
 });

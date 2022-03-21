@@ -57,7 +57,7 @@ export const DataDocLeftSidebar: React.FunctionComponent<IProps> = ({
             <div className="sidebar-content sidebar-content-contents">
                 <Level className="contents-panel-header">
                     <IconButton
-                        icon="arrow-left"
+                        icon="ArrowLeft"
                         onClick={() => setContentState('default')}
                     />
                     <div>contents</div>
@@ -79,7 +79,7 @@ export const DataDocLeftSidebar: React.FunctionComponent<IProps> = ({
             <div className={'sidebar-content sidebar-content-default'}>
                 <IconButton
                     className="contents-toggle-button"
-                    icon="list"
+                    icon="List"
                     onClick={() => setContentState('contents')}
                     color="light"
                     invertCircle

@@ -51,7 +51,7 @@ export const DataDocHeader = React.forwardRef<HTMLDivElement, IProps>(
         const timeMessage = isSaving ? (
             <div className="flex-row">
                 Saving
-                <Icon name="loader" className="ml8" />
+                <Icon name="Loader" className="ml8" />
             </div>
         ) : (
             `Updated ${generateFormattedDate(lastUpdated, 'X')}`
@@ -72,7 +72,7 @@ export const DataDocHeader = React.forwardRef<HTMLDivElement, IProps>(
                         <IconButton
                             noPadding
                             size={16}
-                            icon="star"
+                            icon="Star"
                             className={clsx({
                                 'favorite-icon-button': true,
                                 'favorite-icon-button-favorited': isFavorite,

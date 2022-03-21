@@ -61,13 +61,8 @@ export const DataDocTemplateVarForm: React.FunctionComponent<IDataDocTemplateVar
                     }, {})
                 )
             }
-            render={({
-                handleSubmit,
-                isSubmitting,
-                isValid,
-                values,
-                dirty,
-            }) => {
+        >
+            {({ handleSubmit, isSubmitting, isValid, values, dirty }) => {
                 const variablesField = (
                     <FieldArray
                         name="variables"
@@ -137,7 +132,7 @@ export const DataDocTemplateVarForm: React.FunctionComponent<IDataDocTemplateVar
 
                                               {isEditable && (
                                                   <IconButton
-                                                      icon="x"
+                                                      icon="X"
                                                       onClick={() =>
                                                           arrayHelpers.remove(
                                                               index
@@ -153,7 +148,7 @@ export const DataDocTemplateVarForm: React.FunctionComponent<IDataDocTemplateVar
                             const controlDOM = isEditable && (
                                 <div className="horizontal-space-between mt4">
                                     <TextButton
-                                        icon="plus"
+                                        icon="Plus"
                                         title="New Variable"
                                         onClick={() =>
                                             arrayHelpers.push([
@@ -194,6 +189,6 @@ export const DataDocTemplateVarForm: React.FunctionComponent<IDataDocTemplateVar
                     </div>
                 );
             }}
-        />
+        </Formik>
     );
 };

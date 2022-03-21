@@ -7,11 +7,12 @@ import { Dropdown } from 'ui/Dropdown/Dropdown';
 
 import { Menu, MenuItem } from './Menu';
 import { Icon } from 'ui/Icon/Icon';
+import type { AllLucideIconNames } from 'ui/Icon/LucideIcons';
 import { AccentText } from 'ui/StyledText/StyledText';
 
 export interface IListMenuItem {
     checked?: boolean;
-    icon?: string;
+    icon?: AllLucideIconNames;
     onClick?: () => any;
     link?: string;
     tooltip?: string;
@@ -48,8 +49,8 @@ export const ListMenu: React.FunctionComponent<IProps> = ({
     const menuActionsDOM = items.map((action, index) => {
         const iconName = isSelect
             ? action.checked
-                ? 'check-circle'
-                : 'circle'
+                ? 'CheckCircle'
+                : 'Circle'
             : action.icon
             ? action.icon
             : null;

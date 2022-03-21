@@ -49,7 +49,7 @@ export const DataDocStatementExecutionBar = React.memo<IProps>(
                     <TextButton
                         size="small"
                         onClick={toggleLogs}
-                        icon="list"
+                        icon="List"
                         title={showStatementLogs ? 'Show Result' : 'Show Logs'}
                     />
                 );
@@ -69,7 +69,7 @@ export const DataDocStatementExecutionBar = React.memo<IProps>(
                     <TextButton
                         size="small"
                         onClick={toggleShowStatementMeta}
-                        icon="activity"
+                        icon="Activity"
                         title={showStatementMeta ? 'Hide Meta' : 'Show Meta'}
                     />
                 )
@@ -81,7 +81,7 @@ export const DataDocStatementExecutionBar = React.memo<IProps>(
                 <TextButton
                     size="small"
                     onClick={cancelQueryExecution}
-                    icon="x"
+                    icon="X"
                     title="Cancel Query"
                 />
             ) : null;
@@ -90,7 +90,7 @@ export const DataDocStatementExecutionBar = React.memo<IProps>(
             <TextButton
                 onClick={toggleShowExecutedQuery}
                 size="small"
-                icon="eye"
+                icon="Eye"
                 title={showExecutedQuery ? 'Hide Query' : 'Show Query'}
             />
         );

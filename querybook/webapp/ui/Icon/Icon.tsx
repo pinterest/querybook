@@ -1,14 +1,14 @@
 import React from 'react';
-import feather, { FeatherAttributes } from 'feather-icons';
-
+import type { LucideProps, Icon as LucideIcon } from 'lucide-react';
+import AllLucideIcons, { AllLucideIconNames } from './LucideIcons';
 import './Icon.scss';
 
 // Wrapper for feather icon
 export interface IIconProps {
     className?: string;
     size?: string | number;
-    name: string;
-    options?: FeatherAttributes;
+    name: AllLucideIconNames;
+    options?: LucideProps;
     fill?: boolean;
     color?: TButtonColors;
 }
@@ -24,21 +24,17 @@ export const Icon: React.FunctionComponent<IIconProps> = React.memo(
         fill = false,
         color = '',
     }) => {
-        if (!(name in feather.icons)) {
+        if (!(name in AllLucideIcons)) {
             return null;
         }
-        if (size != null) {
-            options.width = size;
-            options.height = size;
-        }
-
-        const rawSvg = feather.icons[name].toSvg(options);
+        const LucideIconComponent: LucideIcon = AllLucideIcons[name];
 
         return (
             <span
                 className={`${className} Icon ${fill ? 'fill' : ''} ${color}`}
-                dangerouslySetInnerHTML={{ __html: rawSvg }}
-            />
+            >
+                <LucideIconComponent {...options} size={size} />
+            </span>
         );
     }
 );

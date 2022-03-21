@@ -2,6 +2,7 @@ import React from 'react';
 import clsx from 'clsx';
 
 import { Icon } from 'ui/Icon/Icon';
+import type { AllLucideIconNames } from 'ui/Icon/LucideIcons';
 import { AccentText } from 'ui/StyledText/StyledText';
 
 import './Message.scss';
@@ -13,7 +14,7 @@ export interface IMessageProps {
     title?: React.ReactNode;
     message?: React.ReactNode;
     className?: string;
-    icon?: string;
+    icon?: AllLucideIconNames;
     iconSize?: number;
     type?: MessageType;
     size?: MessageSize;

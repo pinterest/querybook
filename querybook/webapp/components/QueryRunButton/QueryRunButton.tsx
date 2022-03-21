@@ -71,7 +71,7 @@ export const QueryRunButton = React.forwardRef<
                     'run-selection': !!hasSelection,
                 })}
                 title={hasSelection ? 'Run Selection' : null}
-                icon={hasSelection ? null : <Icon name="play" fill />}
+                icon={hasSelection ? null : <Icon name="Play" fill />}
                 aria-label={`Execute (${EXECUTE_QUERY_SHORTCUT})`}
                 data-balloon-pos={runButtonTooltipPos}
                 color="accent"
@@ -123,7 +123,7 @@ export const QueryEngineSelector: React.FC<IQueryEngineSelectorProps> = ({
                 <StatusIcon status={iconClass} />
                 <div className="ml4">{queryEngineName}</div>
                 <Icon
-                    name="chevron-down"
+                    name="ChevronDown"
                     className="ml4"
                     size={24}
                     color="light"

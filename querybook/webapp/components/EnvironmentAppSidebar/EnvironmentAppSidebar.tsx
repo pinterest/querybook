@@ -114,7 +114,7 @@ export const EnvironmentAppSidebar: React.FunctionComponent = () => {
             onClick={() => dispatch(setCollapsed(!collapsed))}
             className="collapse-sidebar-button"
         >
-            <Icon name={collapsed ? 'chevron-right' : 'chevron-left'} />
+            <Icon name={collapsed ? 'ChevronRight' : 'ChevronLeft'} />
         </span>
     );
 

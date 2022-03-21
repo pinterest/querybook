@@ -23,7 +23,7 @@ export const FullScreenModal: React.FunctionComponent<IStandardModalProps> = ({
             <AccentText size="text">{title}</AccentText>
             <IconButton
                 aria-label="close"
-                icon="x"
+                icon="X"
                 onClick={onHide}
                 noPadding
             />

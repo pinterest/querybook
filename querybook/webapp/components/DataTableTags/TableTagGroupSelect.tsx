@@ -27,7 +27,7 @@ export const TableTagGroupSelect: React.FC<{
             {tags.map((tag) => (
                 <HoverIconTag
                     key={tag}
-                    iconOnHover={'x'}
+                    iconOnHover={'X'}
                     onIconHoverClick={() => handleTagRemove(tag)}
                 >
                     <span>{tag}</span>

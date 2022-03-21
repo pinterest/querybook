@@ -96,7 +96,7 @@ export const UDFForm: React.FC<IUDFFormProps> = ({
 
                                             <div className="flex1">
                                                 <IconButton
-                                                    icon="x"
+                                                    icon="X"
                                                     onClick={() =>
                                                         arrayHelper.remove(idx)
                                                     }
@@ -132,7 +132,7 @@ export const UDFForm: React.FC<IUDFFormProps> = ({
                                             <SoftButton
                                                 size="small"
                                                 title="Add New Parameter"
-                                                icon="plus"
+                                                icon="Plus"
                                                 onClick={() =>
                                                     arrayHelper.push({
                                                         name: '',

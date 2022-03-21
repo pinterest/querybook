@@ -43,7 +43,7 @@ export const BoardDataDocItem: React.FunctionComponent<IProps> = ({
                         itemId={docId}
                     />
                 </div>
-                <Icon name="file" className="BoardItemIcon mh8" />
+                <Icon name="File" className="BoardItemIcon mh8" />
             </div>
         </div>
     );

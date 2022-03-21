@@ -47,7 +47,7 @@ export const SamplesTableView: React.FunctionComponent<{
                             'text/csv'
                         );
                     }}
-                    icon="download"
+                    icon="Download"
                     size="small"
                 />
                 <span className="mr8" />

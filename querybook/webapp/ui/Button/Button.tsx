@@ -2,6 +2,7 @@ import React from 'react';
 import clsx from 'clsx';
 
 import { Icon, IIconProps } from 'ui/Icon/Icon';
+import type { AllLucideIconNames } from 'ui/Icon/LucideIcons';
 import { StyledButton, ISharedButtonProps } from './StyledButton';
 import { withBoundProps } from 'lib/utils/react-bind';
 import {
@@ -13,7 +14,7 @@ import { AccentText } from 'ui/StyledText/StyledText';
 
 export type ButtonProps = React.HTMLAttributes<HTMLSpanElement> &
     ISharedButtonProps & {
-        icon?: string | React.ReactElement<IIconProps>;
+        icon?: AllLucideIconNames | React.ReactElement<IIconProps>;
         title?: string;
         className?: string;
 
@@ -51,7 +52,7 @@ export const Button = React.forwardRef<HTMLSpanElement, ButtonProps>(
         } = props;
 
         const iconDOM = isLoading ? (
-            <Icon name="loader" />
+            <Icon name="Loader" />
         ) : (
             icon && (typeof icon === 'string' ? <Icon name={icon} /> : icon)
         );

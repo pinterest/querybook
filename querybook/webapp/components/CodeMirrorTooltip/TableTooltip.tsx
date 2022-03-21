@@ -36,7 +36,7 @@ export const TableTooltip: React.FunctionComponent<IProps> = ({
             size={18}
             onClick={openTableModal}
             noPadding
-            icon={'external-link'}
+            icon={'ExternalLink'}
             tooltip={'Details'}
             tooltipPos={'left'}
             className="ml4"
@@ -47,7 +47,7 @@ export const TableTooltip: React.FunctionComponent<IProps> = ({
             noPadding
             size={18}
             onClick={() => setSidebarTableId(table.id)}
-            icon={'sidebar'}
+            icon={'Sidebar'}
             tooltip={'Pin'}
             tooltipPos={'left'}
         />

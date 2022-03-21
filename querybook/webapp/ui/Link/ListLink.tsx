@@ -2,6 +2,7 @@ import * as React from 'react';
 import clsx from 'clsx';
 
 import { Icon } from 'ui/Icon/Icon';
+import type { AllLucideIconNames } from 'ui/Icon/LucideIcons';
 import { Link, ILinkProps } from './Link';
 
 import './ListLink.scss';
@@ -10,7 +11,7 @@ interface IProps extends ILinkProps {
     className?: string;
     title?: string;
     placeholder?: string;
-    icon?: string;
+    icon?: AllLucideIconNames;
     isRow?: boolean;
 }
 

@@ -144,7 +144,7 @@ export const DataTableNavigatorSearch: React.FC<{
                 size={'18px'}
                 noPadding
                 onClick={toggleSearchFilter}
-                icon="sliders"
+                icon="Sliders"
                 active={searchFiltersSize > 0}
                 ping={searchFiltersSize > 0 ? String(searchFiltersSize) : null}
             />

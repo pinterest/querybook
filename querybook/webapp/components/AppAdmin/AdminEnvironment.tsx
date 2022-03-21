@@ -392,7 +392,7 @@ const AdminEnvironmentQueryEngine: React.FC<{
                     <IconButton
                         className="delete-query-engine-button"
                         noPadding
-                        icon="x"
+                        icon="X"
                         onClick={() => handleDeleteQueryEngine(engine.id)}
                     />
                 </div>

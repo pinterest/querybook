@@ -49,7 +49,7 @@ export const DataTableColumnCard: React.FunctionComponent<IProps> = ({
                         </StyledText>
                         <AccentText weight="extra">{column.name}</AccentText>
                     </div>
-                    <Icon name={expanded ? 'chevron-up' : 'chevron-down'} />
+                    <Icon name={expanded ? 'ChevronUp' : 'ChevronDown'} />
                 </div>
                 {expanded ? (
                     <div className="mt16">

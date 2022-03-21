@@ -38,7 +38,7 @@ export const DataDocTemplateCell: React.FunctionComponent<IProps> = ({
         contentDOM = (
             <div className="flex-row ">
                 <TextButton
-                    icon="plus"
+                    icon="Plus"
                     className="mr4"
                     title="New Variable"
                     onClick={() => setShowFacde(false)}

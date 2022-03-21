@@ -53,21 +53,21 @@ export const DataDocAccessRequestPermissionPicker: React.FunctionComponent<IPerm
             onClick={() => setShowEditMenu(true)}
         >
             <AccentText>{permission}</AccentText>
-            <Icon name="chevron-down" className="ml4" size={16} />
+            <Icon name="ChevronDown" className="ml4" size={16} />
         </div>
     );
     const accessRequestControlButtonsDOM = (
         <div className="access-request-control-buttons flex-row">
             <IconButton
                 className="access-request-control-button"
-                icon="check-circle"
+                icon="CheckCircle"
                 onClick={() => addDataDocEditor(uid, permission)}
                 tooltip={`Allow ${permission} permission`}
                 tooltipPos="left"
             />
             <IconButton
                 className="access-request-control-button"
-                icon="x-circle"
+                icon="XCircle"
                 onClick={() => rejectDataDocAccessRequest(uid)}
                 tooltip="Reject access request"
                 tooltipPos="left"

@@ -116,7 +116,7 @@ export const QueryViewEditor: React.FunctionComponent<{
             <Button
                 onClick={goToDataDoc}
                 title="Go To DataDoc"
-                icon="arrow-right"
+                icon="ArrowRight"
                 theme="text"
             />
         ) : null;
@@ -133,7 +133,7 @@ export const QueryViewEditor: React.FunctionComponent<{
                 <Button
                     onClick={exportToAdhocQuery}
                     title="Edit"
-                    icon="edit"
+                    icon="Edit"
                     theme="text"
                 />
                 {goToDataDocButton}

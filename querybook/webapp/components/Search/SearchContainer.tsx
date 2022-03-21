@@ -11,7 +11,7 @@ export const SearchContainer: React.FC = () => {
 
     return (
         <IconButton
-            icon="search"
+            icon="Search"
             tooltipPos="right"
             tooltip="Search Docs/Tables"
             onClick={navigateToSearch}

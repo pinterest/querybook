@@ -162,7 +162,7 @@ export const AdminUserRole: React.FunctionComponent = () => {
                             }}
                         >
                             <div className="AdminUserRole-new-msg flex-row">
-                                <Icon name="plus" />
+                                <Icon name="Plus" />
                                 <span>create a new user role</span>
                             </div>
                         </Card>
