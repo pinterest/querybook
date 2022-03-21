@@ -139,7 +139,7 @@ export const DataTableHeader: React.FunctionComponent<IDataTableHeader> = ({
                         <IconButton
                             tooltip={'Remove my table ownership'}
                             tooltipPos="down"
-                            icon="user-minus"
+                            icon="UserMinus"
                             size={18}
                             onClick={deleteTableOwnership}
                             invertCircle
@@ -152,7 +152,7 @@ export const DataTableHeader: React.FunctionComponent<IDataTableHeader> = ({
                                     : 'Add myself as an owner'
                             }
                             tooltipPos="down"
-                            icon="user-plus"
+                            icon="UserPlus"
                             size={18}
                             onClick={createTableOwnership}
                             invertCircle

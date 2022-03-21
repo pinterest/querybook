@@ -14,7 +14,7 @@ export const DataDocTemplateInfoButton: React.FunctionComponent<{
     const buttonDOM =
         style === 'icon' ? (
             <IconButton
-                icon="info"
+                icon="Info"
                 onClick={toggleShowModal}
                 tooltip={title ?? 'Templating Guide'}
                 size={18}
@@ -22,7 +22,7 @@ export const DataDocTemplateInfoButton: React.FunctionComponent<{
             />
         ) : (
             <SoftButton
-                icon="info"
+                icon="Info"
                 title={title ?? 'Templating Guide'}
                 onClick={toggleShowModal}
             />

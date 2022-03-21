@@ -1,5 +1,7 @@
 import React from 'react';
 import styled from 'styled-components';
+import { Icon } from 'ui/Icon/Icon';
+import type { AllLucideIconNames } from 'ui/Icon/LucideIcons';
 
 const StyledButton = styled.span`
     background-color: transparent;
@@ -19,7 +21,7 @@ const StyledButton = styled.span`
 
 export interface IToolBarButtonProps {
     active?: boolean;
-    icon: string;
+    icon: AllLucideIconNames;
     title?: string;
     onClick: (event: React.MouseEvent<HTMLButtonElement>) => any;
     className?: string;
@@ -36,7 +38,7 @@ export const ToolBarButton: React.FunctionComponent<IToolBarButtonProps> = ({
     tooltip = '',
     buttonRef,
 }) => {
-    const iconDOM = icon ? <i className={'fa ' + ('fa-' + icon)} /> : null;
+    const iconDOM = icon ? <Icon name={icon} /> : null;
     const buttonClassName = className + (active ? 'active' : '');
 
     return (

@@ -128,7 +128,7 @@ export const UserMenu: React.FC<IUserMenuProps> = ({
                 aria-label={'User Settings'}
                 data-balloon-pos={tooltipPos}
             >
-                <IconButton icon="settings" title="Settings" />
+                <IconButton icon="Settings" title="Settings" />
             </span>
             {tokenCreationModalDOM}
             {userSettingsPopover}

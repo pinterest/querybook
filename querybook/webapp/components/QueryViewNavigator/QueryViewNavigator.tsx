@@ -107,7 +107,7 @@ class QueryViewNavigatorComponent extends React.PureComponent<IProps> {
 
         const loadingDOM = isLoadingQueries ? (
             <div className="flex-column m24">
-                <Icon name="loader" className="mb16" />
+                <Icon name="Loader" className="mb16" />
                 <span>Loading Queries</span>
             </div>
         ) : null;

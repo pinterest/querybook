@@ -60,7 +60,7 @@ export const PanelSection: React.FunctionComponent<IPanelSectionProps> = ({
                 >
                     {titleize(title)}
                 </AccentText>
-                <Icon name={isOpen ? 'chevron-down' : 'chevron-right'} />
+                <Icon name={isOpen ? 'ChevronDown' : 'ChevronRight'} />
             </PanelTitle>
         </div>
     );

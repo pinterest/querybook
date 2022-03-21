@@ -405,7 +405,7 @@ class DataDocQueryCellComponent extends React.PureComponent<IProps, IState> {
             additionalButtons.push({
                 name: `Format Query (${FORMAT_QUERY_SHORTCUT})`,
                 onClick: this.formatQuery.bind(this, { case: 'upper' }),
-                icon: 'fas fa-file-code',
+                icon: 'Edit',
                 items: [
                     {
                         name: 'Format (Uppercase)',
@@ -420,7 +420,7 @@ class DataDocQueryCellComponent extends React.PureComponent<IProps, IState> {
             additionalButtons.push({
                 name: 'Explain Query',
                 onClick: this.explainQuery,
-                icon: 'fas fa-info',
+                icon: 'Info',
                 tooltip: 'Run query as explain',
                 tooltipPos: 'left',
             });
@@ -429,7 +429,7 @@ class DataDocQueryCellComponent extends React.PureComponent<IProps, IState> {
         additionalButtons.push({
             name: 'Render template',
             onClick: this.toggleShowRenderedTemplateModal,
-            icon: 'fas fa-code',
+            icon: 'Code',
             tooltip: 'Show the rendered templated query',
             tooltipPos: 'left',
         });
@@ -437,14 +437,14 @@ class DataDocQueryCellComponent extends React.PureComponent<IProps, IState> {
         additionalButtons.push({
             name: queryCollapsed ? 'Show Query' : 'Hide Query',
             onClick: this.toggleQueryCollapsing.bind(this, !queryCollapsed),
-            icon: queryCollapsed ? 'far fa-eye' : 'far fa-eye-slash',
+            icon: queryCollapsed ? 'Eye' : 'EyeOff',
         });
 
         if (this.hasUDFSupport) {
             additionalButtons.push({
                 name: 'Add UDF',
                 onClick: () => this.setState({ showUDFModal: true }),
-                icon: 'fas fa-plus',
+                icon: 'Plus',
             });
         }
 
@@ -520,7 +520,7 @@ class DataDocQueryCellComponent extends React.PureComponent<IProps, IState> {
         return (
             <Icon
                 className="additional-dropdown-button flex-center"
-                name="more-vertical"
+                name="MoreVertical"
                 color="light"
             />
         );
@@ -605,7 +605,7 @@ class DataDocQueryCellComponent extends React.PureComponent<IProps, IState> {
         const fullScreenButton = (
             <div className="fullscreen-button-wrapper mt4">
                 <Button
-                    icon={isFullScreen ? 'minimize-2' : 'maximize-2'}
+                    icon={isFullScreen ? 'Minimize2' : 'Maximize2'}
                     onClick={toggleFullScreen}
                     theme="text"
                     pushable
@@ -767,7 +767,7 @@ class DataDocQueryCellComponent extends React.PureComponent<IProps, IState> {
         return showCollapsed ? (
             <div className={classes}>
                 <div className="collapsed-query flex-row">
-                    <Icon name="terminal" className="mt4 mr8" />
+                    <Icon name="Terminal" className="mt4 mr8" />
                     <AccentText className="one-line-ellipsis pr16">
                         {this.dataCellTitle}
                     </AccentText>

@@ -49,7 +49,7 @@ export const QueryExecutionBar: React.FunctionComponent<IProps> = ({
             <CopyButton
                 size="small"
                 copyText={permalink}
-                icon="link"
+                icon="Link"
                 title="Share Execution"
                 type="text"
             />

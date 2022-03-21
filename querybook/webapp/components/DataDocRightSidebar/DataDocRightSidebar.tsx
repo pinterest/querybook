@@ -68,7 +68,7 @@ export const DataDocRightSidebar: React.FunctionComponent<IProps> = ({
         <DeleteDataDocButton docId={dataDoc.id} />
     ) : (
         <IconButton
-            icon="trash"
+            icon="Trash"
             disabled={true}
             tooltipPos="left"
             tooltip="Only editor can delete"
@@ -90,7 +90,7 @@ export const DataDocRightSidebar: React.FunctionComponent<IProps> = ({
         <div className="DataDocRightSidebar-button-section vertical-space-between">
             <div className="DataDocRightSidebar-button-section-top flex-column">
                 <IconButton
-                    icon="arrow-up"
+                    icon="ArrowUp"
                     className={showScrollToTop ? '' : 'hide-button'}
                     onClick={() => {
                         const scrollParent = getScrollParent(selfRef.current);
@@ -100,7 +100,7 @@ export const DataDocRightSidebar: React.FunctionComponent<IProps> = ({
                     }}
                 />
                 <IconButton
-                    icon={defaultCollapse ? 'maximize-2' : 'minimize-2'}
+                    icon={defaultCollapse ? 'Maximize2' : 'Minimize2'}
                     tooltip={
                         defaultCollapse
                             ? 'Uncollapse query cells'
@@ -110,12 +110,12 @@ export const DataDocRightSidebar: React.FunctionComponent<IProps> = ({
                     onClick={onCollapse}
                 />
                 <IconButton
-                    icon="loader"
+                    icon="Loader"
                     className={isSaving ? '' : 'hide-button'}
                     title="Saving"
                 />
                 <IconButton
-                    icon="link"
+                    icon="Link"
                     tooltip="Connecting to websocket"
                     tooltipPos="left"
                     className={
@@ -128,7 +128,7 @@ export const DataDocRightSidebar: React.FunctionComponent<IProps> = ({
                 {templateButtonDOM}
                 {scheduleButtonDOM}
                 <IconButton
-                    icon="copy"
+                    icon="Copy"
                     onClick={onClone}
                     tooltip={'Clone'}
                     tooltipPos={'left'}

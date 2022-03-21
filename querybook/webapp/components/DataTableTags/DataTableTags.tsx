@@ -45,7 +45,7 @@ export const DataTableTags: React.FunctionComponent<IProps> = ({
     const listDOM = (tags || []).map((tag) => (
         <HoverIconTag
             key={tag.id}
-            iconOnHover={readonly ? null : 'x'}
+            iconOnHover={readonly ? null : 'X'}
             onIconHoverClick={readonly ? null : () => deleteTag(tag.id)}
         >
             <span

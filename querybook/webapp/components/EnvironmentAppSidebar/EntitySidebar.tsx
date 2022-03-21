@@ -35,7 +35,7 @@ export const EntitySidebar: React.FunctionComponent<IEntitySidebarProps> = React
                             <>
                                 <Link to={`/${environment.name}/`}>
                                     <IconButton
-                                        icon="home"
+                                        icon="Home"
                                         tooltip="Home"
                                         tooltipPos="right"
                                         active={
@@ -47,7 +47,7 @@ export const EntitySidebar: React.FunctionComponent<IEntitySidebarProps> = React
                                 <SearchContainer />
                                 <Link to={`/${environment.name}/adhoc/`}>
                                     <IconButton
-                                        icon="edit"
+                                        icon="Edit"
                                         tooltip={'Adhoc Query'}
                                         tooltipPos="right"
                                         active={location.pathname.startsWith(
@@ -60,7 +60,7 @@ export const EntitySidebar: React.FunctionComponent<IEntitySidebarProps> = React
                                     to={`/${environment.name}/doc_schedules/`}
                                 >
                                     <IconButton
-                                        icon="clock"
+                                        icon="Clock"
                                         tooltip="Scheduled Docs"
                                         tooltipPos="right"
                                         active={location.pathname.startsWith(
@@ -75,7 +75,7 @@ export const EntitySidebar: React.FunctionComponent<IEntitySidebarProps> = React
                 </div>
                 <div className="apps-list sidebar-list flex-column">
                     <IconButton
-                        icon="file"
+                        icon="File"
                         tooltip="DataDocs"
                         tooltipPos="right"
                         active={selectedEntity === 'datadoc'}
@@ -86,7 +86,7 @@ export const EntitySidebar: React.FunctionComponent<IEntitySidebarProps> = React
                     />
                     {queryMetastores.length ? (
                         <IconButton
-                            icon="book"
+                            icon="Book"
                             tooltip="Tables"
                             tooltipPos="right"
                             active={selectedEntity === 'table'}
@@ -95,7 +95,7 @@ export const EntitySidebar: React.FunctionComponent<IEntitySidebarProps> = React
                         />
                     ) : null}
                     <IconButton
-                        icon="code"
+                        icon="Code"
                         tooltip="Snippets"
                         tooltipPos="right"
                         active={selectedEntity === 'snippet'}

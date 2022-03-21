@@ -71,7 +71,7 @@ export const AdminAppNavigator: React.FunctionComponent<IProps> = ({
                     transparent
                 />
                 <IconButton
-                    icon="plus"
+                    icon="Plus"
                     tooltip={tooltipString}
                     tooltipPos="left"
                     onClick={() =>
@@ -97,7 +97,7 @@ export const AdminAppNavigator: React.FunctionComponent<IProps> = ({
                     );
                 })}
                 <IconButton
-                    icon="trash-2"
+                    icon="Trash2"
                     tooltip={`Manage Deleted ${titleize(
                         selectedEntity,
                         '_',

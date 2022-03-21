@@ -3,13 +3,14 @@ import clsx from 'clsx';
 import { TooltipDirection } from 'const/tooltip';
 
 import { Icon } from 'ui/Icon/Icon';
+import type { AllLucideIconNames } from 'ui/Icon/LucideIcons';
 import { AccentText } from 'ui/StyledText/StyledText';
 
 import './Tabs.scss';
 
 export interface ITabItem {
     name?: string;
-    icon?: string;
+    icon?: AllLucideIconNames;
     key: string;
     tooltip?: string;
     tooltipPos?: TooltipDirection;
@@ -62,7 +63,7 @@ export const Tabs: React.FunctionComponent<ITabsProps> = ({
     const tabItemsDOM = items.map((item, index) => {
         let name: string;
         let key: string;
-        let icon: string;
+        let icon: AllLucideIconNames;
         const tooltipProps = {};
 
         if (typeof item === 'string') {

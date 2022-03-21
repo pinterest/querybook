@@ -2,7 +2,7 @@ cell_types:
     text:
         key: 'text'
         name: 'Text'
-        icon: 'font'
+        icon: 'Type'
         meta:
             collapsed: false
         meta_default:
@@ -10,7 +10,7 @@ cell_types:
     query:
         key: 'query'
         name: 'Query'
-        icon: 'code'
+        icon: 'Code'
         meta:
             title: '' # can be any string
             engine: 0 # Engine Id
@@ -24,7 +24,7 @@ cell_types:
     chart:
         key: 'chart'
         name: 'Chart'
-        icon: 'chart-line'
+        icon: 'Activity'
         meta:
             title: ''
             data:

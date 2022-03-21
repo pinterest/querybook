@@ -35,16 +35,12 @@ exports[`matches test renderer snapshot serializes the styles 1`] = `
   size="medium"
 >
   <div
-    accentFont={true}
     className="StyledText__StyledTextDiv-sc-1ldibmc-0 jYMIFP Text"
-    noUserSelect={false}
   >
     test
   </div>
   <div
-    accentFont={true}
     className="StyledText__StyledTextDiv-sc-1ldibmc-0 jYMIFP Text flex-row"
-    noUserSelect={false}
   />
 </span>
 `;

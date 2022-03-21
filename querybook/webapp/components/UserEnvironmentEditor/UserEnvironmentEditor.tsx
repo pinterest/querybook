@@ -33,7 +33,7 @@ export const UserEnvironmentEditor: React.FunctionComponent<IProps> = ({
         (user: IUserInfo) => (
             <div className="UserEnvironmentEditor-user flex-row">
                 <IconButton
-                    icon="x"
+                    icon="X"
                     onClick={() =>
                         AdminEnvironmentResource.removeUser(
                             environmentId,

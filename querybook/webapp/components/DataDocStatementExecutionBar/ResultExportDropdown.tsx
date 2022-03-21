@@ -211,7 +211,7 @@ export const ResultExportDropdown: React.FunctionComponent<IProps> = ({
             {
                 name: 'Download Full Result (as CSV)',
                 onClick: onDownloadClick,
-                icon: 'fas fa-download',
+                icon: 'download',
             },
             {
                 name: (
@@ -231,7 +231,7 @@ export const ResultExportDropdown: React.FunctionComponent<IProps> = ({
                     </span>
                 ),
                 onClick: onExportTSVClick,
-                icon: 'fas fa-copy',
+                icon: 'copy',
             },
             ...statementExporters.map((exporter) => ({
                 name: (
@@ -243,7 +243,7 @@ export const ResultExportDropdown: React.FunctionComponent<IProps> = ({
                                 tooltip="Detailed Export"
                                 tooltipPos="left"
                                 size={16}
-                                icon="share"
+                                icon="Share"
                                 onClick={(e) => {
                                     e.stopPropagation();
                                     e.preventDefault();
@@ -254,10 +254,7 @@ export const ResultExportDropdown: React.FunctionComponent<IProps> = ({
                     </div>
                 ),
                 onClick: onGenericExportClick.bind(null, exporter, false),
-                icon:
-                    exporter.type === 'url'
-                        ? 'fas fa-file-export'
-                        : 'fas fa-copy',
+                icon: exporter.type === 'url' ? 'external-link' : 'copy',
             })),
         ]);
     }
@@ -271,7 +268,7 @@ export const ResultExportDropdown: React.FunctionComponent<IProps> = ({
                     <TextButton
                         size="small"
                         onClick={onDownloadClick}
-                        icon="download"
+                        icon="Download"
                         title="Export"
                     />
                 )}

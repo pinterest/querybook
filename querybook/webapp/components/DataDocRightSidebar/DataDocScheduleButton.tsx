@@ -17,7 +17,7 @@ export const DataDocScheduleButton: React.FunctionComponent<IProps> = ({
     return (
         <div>
             <IconButton
-                icon="clock"
+                icon="Clock"
                 onClick={() => setShowModal(true)}
                 tooltip="Schedule DataDoc"
                 tooltipPos="left"

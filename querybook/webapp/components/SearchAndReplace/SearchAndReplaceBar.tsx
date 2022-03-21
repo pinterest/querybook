@@ -203,7 +203,7 @@ export const SearchAndReplaceBar = React.forwardRef<
                         : 'No results'}
                 </span>
                 <IconButton
-                    icon="arrow-up"
+                    icon="ArrowUp"
                     noPadding
                     onClick={() => moveResultIndex(-1)}
                     tooltip={noPrevRes ? null : 'Previous Result'}
@@ -212,7 +212,7 @@ export const SearchAndReplaceBar = React.forwardRef<
                     disabled={noPrevRes}
                 />
                 <IconButton
-                    icon="arrow-down"
+                    icon="ArrowDown"
                     noPadding
                     onClick={() => moveResultIndex(1)}
                     tooltip={noNextRes ? null : 'Next Result'}
@@ -224,7 +224,7 @@ export const SearchAndReplaceBar = React.forwardRef<
                 <IconButton
                     className="ml16"
                     noPadding
-                    icon="x"
+                    icon="X"
                     onClick={handleHide}
                     tooltip="Exit"
                     tooltipPos="right"
@@ -248,14 +248,14 @@ export const SearchAndReplaceBar = React.forwardRef<
                     />
                 </div>
                 <TextButton
-                    icon="repeat"
+                    icon="Repeat"
                     aria-label="Replace"
                     data-balloon-pos="down"
                     size="small"
                     onClick={() => onReplace()}
                 />
                 <Button
-                    icon="repeat"
+                    icon="Repeat"
                     title="All"
                     aria-label="Replace all"
                     data-balloon-pos="down"
@@ -270,7 +270,7 @@ export const SearchAndReplaceBar = React.forwardRef<
             <div className="SearchAndReplaceBar flex-row p8" ref={selfRef}>
                 <IconButton
                     noPadding
-                    icon={showReplace ? 'chevron-down' : 'chevron-right'}
+                    icon={showReplace ? 'ChevronDown' : 'ChevronRight'}
                     onClick={() => setShowReplace(!showReplace)}
                     className="expand-icon m4"
                 />

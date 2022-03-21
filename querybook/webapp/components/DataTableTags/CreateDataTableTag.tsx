@@ -57,7 +57,7 @@ export const CreateDataTableTag: React.FunctionComponent<IProps> = ({
                 </div>
             ) : (
                 <IconButton
-                    icon="plus"
+                    icon="Plus"
                     onClick={() => setShowSelect(true)}
                     tooltip="Add tag"
                     tooltipPos="down"

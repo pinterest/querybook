@@ -13,7 +13,7 @@ exports[`matches enzyme snapshots matches snapshot 1`] = `
     />
     <Button
       className="edit-mode-button"
-      icon="edit"
+      icon="Edit"
       onClick={[Function]}
       title="Edit"
     />

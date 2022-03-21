@@ -4,13 +4,14 @@ import clsx from 'clsx';
 import { TooltipDirection } from 'const/tooltip';
 
 import { TButtonColors, Icon } from 'ui/Icon/Icon';
+import type { AllLucideIconNames } from 'ui/Icon/LucideIcons';
+import { AccentText, StyledText } from 'ui/StyledText/StyledText';
 
 import './IconButton.scss';
-import { AccentText, StyledText } from 'ui/StyledText/StyledText';
 
 // A simple Bulma-based button
 export interface IIconButtonProps {
-    icon: string;
+    icon: AllLucideIconNames;
     className?: string;
     onClick?: (event?: React.MouseEvent<HTMLSpanElement, MouseEvent>) => any;
 

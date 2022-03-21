@@ -59,7 +59,7 @@ export const TemplatedQueryView: React.FC<ITemplatedQueryViewProps> = ({
                 <div className="flex-right mt16">
                     {onRunQueryClick && (
                         <Button
-                            icon="play"
+                            icon="Play"
                             title="Run Query"
                             onClick={onRunQueryClick}
                             className="mr4"

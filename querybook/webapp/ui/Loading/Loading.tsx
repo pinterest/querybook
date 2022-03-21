@@ -38,7 +38,7 @@ const StyledLoadingText = styled.div`
 
 export const LoadingIcon: React.FC = () => (
     <div className="flex-center">
-        <Icon name="loader" className="p8" color="light" />
+        <Icon name="Loader" className="p8" color="light" />
     </div>
 );
 

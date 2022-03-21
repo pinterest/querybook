@@ -61,7 +61,7 @@ export const BoardDataTableItem: React.FunctionComponent<IProps> = ({
                         itemId={tableId}
                     />
                 </div>
-                <Icon name="database" className="BoardItemIcon mh8" />
+                <Icon name="Database" className="BoardItemIcon mh8" />
             </div>
             <div className="BoardDataTableItem-desc">
                 {(table.description as ContentState).getPlainText().length ? (

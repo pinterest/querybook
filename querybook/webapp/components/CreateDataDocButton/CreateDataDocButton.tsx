@@ -17,7 +17,7 @@ export const CreateDataDocButton: React.FunctionComponent<ICreateDataDocButtonPr
 
     return (
         <IconButton
-            icon="plus"
+            icon="Plus"
             tooltip={tooltip}
             tooltipPos={tooltipPos}
             onClick={handleCreateDataDoc}

@@ -138,7 +138,7 @@ function getQuerybookSidebarTourSteps() {
                     <hr />
                     <p>For quick access, you can use,</p>
                     <div className="flex-row">
-                        <Icon name="command" size={16} />
+                        <Icon name="Command" size={16} />
                         <span> + K</span>
                     </div>
                 </>
@@ -232,7 +232,7 @@ export const QuerybookSidebarUIGuide: React.FC = () => {
             <Button
                 className="QuerybookSidebarUIGuide"
                 onClick={startTour}
-                icon="layout"
+                icon="Layout"
                 title="UI Tutorial"
             />
             <Tour

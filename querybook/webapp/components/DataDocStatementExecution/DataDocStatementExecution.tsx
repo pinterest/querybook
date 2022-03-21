@@ -131,7 +131,7 @@ export const DataDocStatementExecution: React.FC<IProps> = ({
                     </div>
                     {getMetaInfoDOM()}
                     <div className="flex-row">
-                        <Icon name="loader" className="mr8" />
+                        <Icon name="Loader" className="mr8" />
                         Loading query results...
                     </div>
                     {getLogDOM()}

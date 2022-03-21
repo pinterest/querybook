@@ -6,8 +6,8 @@ exports[`matches enzyme snapshots matches snapshot 1`] = `
   className=""
   data-balloon-pos="up"
 >
-  <i
-    className="fa fa-check"
+  <Memo()
+    name="check"
   />
 </ToolBarButton__StyledButton>
 `;
@@ -18,9 +18,6 @@ exports[`matches test renderer snapshot serializes the styles 1`] = `
   className="ToolBarButton__StyledButton-qi1boi-0 kDxJqy"
   data-balloon-pos="up"
 >
-  <i
-    className="fa fa-check"
-  />
   
 </span>
 `;

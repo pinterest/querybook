@@ -30,11 +30,11 @@ export const UrlContextMenu: React.FC<IUrlContextMenuProps> = ({
     const renderMenu = () => (
         <Menu boxShadow>
             <MenuItem onClick={handleUrlOpen}>
-                <Icon name="external-link" className="mr4" />
+                <Icon name="ExternalLink" className="mr4" />
                 Open in new tab
             </MenuItem>
             <MenuItem onClick={handleUrlCopy}>
-                <Icon name="copy" className="mr4" />
+                <Icon name="Copy" className="mr4" />
                 Copy Url
             </MenuItem>
         </Menu>

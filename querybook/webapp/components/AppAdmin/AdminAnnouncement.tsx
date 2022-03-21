@@ -184,7 +184,7 @@ export const AdminAnnouncement: React.FunctionComponent = () => {
                     }}
                 >
                     <div className="AdminAnnouncement-new-msg flex-row">
-                        <Icon name="plus" />
+                        <Icon name="Plus" />
                         <span>create a new announcement</span>
                     </div>
                 </Card>

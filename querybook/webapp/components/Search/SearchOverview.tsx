@@ -289,7 +289,7 @@ export const SearchOverview: React.FunctionComponent = () => {
                 {searchOrder === SearchOrder.Recency
                     ? 'Most recent'
                     : 'Most relevant'}
-                <Icon className="ml8" name="chevron-down" size={16} />
+                <Icon className="ml8" name="ChevronDown" size={16} />
             </div>
         ),
         [searchOrder]
@@ -516,7 +516,7 @@ export const SearchOverview: React.FunctionComponent = () => {
             <Button
                 onClick={toggleShowAddSearchAuthor}
                 className="add-authors"
-                icon="plus"
+                icon="Plus"
                 title="more authors"
                 theme="text"
                 color="light"
@@ -590,7 +590,7 @@ export const SearchOverview: React.FunctionComponent = () => {
                     <div className="result-item-golden horizontal-space-between">
                         <span>
                             <span>featured only</span>
-                            <Icon className="award ml4" name="award" />
+                            <Icon className="award ml4" name="Award" />
                         </span>
                         <Checkbox
                             value={!!searchFilters.golden}

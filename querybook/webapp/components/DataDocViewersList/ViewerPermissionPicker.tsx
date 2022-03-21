@@ -97,7 +97,7 @@ export const ViewerPermissionPicker: React.FunctionComponent<IProp> = ({
                 <AccentText noUserSelect cursor="pointer">
                     {viewerInfo.permission}
                 </AccentText>
-                <Icon className="ml8" name="chevron-down" size={16} />
+                <Icon className="ml8" name="ChevronDown" size={16} />
             </div>
         ) : (
             <AccentText noUserSelect cursor="default">

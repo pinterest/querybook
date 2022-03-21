@@ -183,7 +183,7 @@ export const QueryError: React.FunctionComponent<IProps> = ({
                 size="small"
                 title={
                     <span className="QueryError-title flex-row">
-                        <Icon name="alert-circle" size={20} className="mr8" />
+                        <Icon name="AlertCircle" size={20} className="mr8" />
                         {errorTitle}
                     </span>
                 }

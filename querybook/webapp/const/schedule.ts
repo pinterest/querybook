@@ -1,3 +1,5 @@
+import type { AllLucideIconNames } from 'ui/Icon/LucideIcons';
+
 // Keep this the same as the Enum defined in const/schedule.py
 export enum TaskRunStatus {
     RUNNING = 0,
@@ -8,7 +10,7 @@ export enum TaskRunStatus {
 export interface IStatusTypeList {
     [key: number]: {
         class: string;
-        iconName: string;
+        iconName: AllLucideIconNames;
         text: string;
     };
 }
@@ -16,17 +18,17 @@ export interface IStatusTypeList {
 export const StatusTypes: IStatusTypeList = {
     [TaskRunStatus.RUNNING]: {
         class: 'status-in-progress',
-        iconName: 'loader',
+        iconName: 'Loader',
         text: 'In Progress',
     },
     [TaskRunStatus.SUCCESS]: {
         class: 'status-success',
-        iconName: 'thumbs-up',
+        iconName: 'ThumbsUp',
         text: 'Success',
     },
     [TaskRunStatus.FAILURE]: {
         class: 'status-failure',
-        iconName: 'thumbs-down',
+        iconName: 'ThumbsDown',
         text: 'Failure',
     },
 };
