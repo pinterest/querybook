@@ -46,6 +46,7 @@ const CodeEditorField: React.FC<ICodeEditorFieldProps> = ({
                 [KeyMap.queryEditor.autocomplete.key]: 'autocomplete',
                 [KeyMap.queryEditor.indentLess.key]: 'indentLess',
                 [KeyMap.queryEditor.toggleComment.key]: 'toggleComment',
+                [KeyMap.queryEditor.toggleCommentCtrl.key]: 'toggleComment',
             },
             indentUnit: 4,
             theme: editorTheme,

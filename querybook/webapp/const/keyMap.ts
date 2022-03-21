@@ -92,6 +92,10 @@ const DEFAULT_KEY_MAP = {
             key: 'Cmd-/',
             name: 'Toggle comment',
         },
+        toggleCommentCtrl: {
+            key: 'Ctrl-/',
+            name: 'Toggle comment',
+        },
         openTable: {
             key: 'Cmd-P',
             name: 'Open table modal if on a table',

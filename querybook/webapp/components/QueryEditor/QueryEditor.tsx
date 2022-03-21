@@ -217,6 +217,7 @@ export class QueryEditor extends React.PureComponent<
                 [KeyMap.queryEditor.toggleComment.key]: 'toggleComment',
                 [KeyMap.queryEditor.openTable.key]: this.onOpenTableModal,
                 [KeyMap.queryEditor.formatQuery.key]: this.formatQuery,
+                [KeyMap.queryEditor.toggleCommentCtrl.key]: 'toggleComment',
                 ...keyMap,
             },
             indentUnit: 4,
