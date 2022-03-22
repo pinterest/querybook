@@ -50,6 +50,21 @@ function isPreviewFullResult(
     );
 }
 
+const UrlModal: React.FunctionComponent<{
+    url: string;
+    onHide: () => any;
+}> = ({ url, onHide }) => (
+    <Modal onHide={onHide}>
+        <div className="flex-center mv24">
+            <Title size="med">
+                <Link to={url} newTab>
+                    View Export
+                </Link>
+            </Title>
+        </div>
+    </Modal>
+);
+
 const FormModal: React.FunctionComponent<{
     form: IStructFormField;
     onSubmit: (data: Record<string, unknown>) => any;
