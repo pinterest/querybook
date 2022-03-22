@@ -2,16 +2,14 @@ import * as React from 'react';
 import { startCase } from 'lodash';
 import KeyMap from 'const/keyMap';
 import { KeyboardKey } from 'ui/KeyboardKey/KeyboardKey';
-import { Title } from 'ui/Title/Title';
+import { Subtitle } from 'ui/Title/Title';
 import './Shortcut.scss';
 
 export const Shortcut: React.FunctionComponent = () => (
     <div className="Shortcut">
         {Object.entries(KeyMap).map(([sectionTitle, sectionKeys]) => (
             <div className="Shortcut-box" key={sectionTitle}>
-                <Title subtitle size={4}>
-                    {startCase(sectionTitle)}
-                </Title>
+                <Subtitle>{startCase(sectionTitle)}</Subtitle>
                 {Object.values(sectionKeys).map((shortcut, idx) => {
                     const { key, name: keyComboName } = shortcut;
                     const keys = (key ?? '').split('-');

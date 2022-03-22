@@ -98,7 +98,7 @@ export const QueryViewEditor: React.FunctionComponent<{
     const dataCellTitle = cellInfo?.cell_title;
     const queryExecutionTitleDOM = queryExecution ? (
         <div className="flex-row">
-            <Title size={5} className="mr16">
+            <Title size="med" className="mr16">
                 <StatusIcon
                     status={queryStatusToStatusIcon[queryExecution.status]}
                 />

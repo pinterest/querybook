@@ -45,6 +45,7 @@ import { BoardListItemRow } from './DataDocNavigatorBoardItem';
 import './DataDocNavigatorBoardSection.scss';
 import { OrderByButton } from 'ui/OrderByButton/OrderByButton';
 import { orderBy } from 'lodash';
+import { titleize } from 'lib/utils';
 
 interface INavigatorBoardSectionProps {
     selectedDocId: number;
@@ -151,7 +152,7 @@ export const DataDocNavigatorBoardSection: React.FC<INavigatorBoardSectionProps>
         <Level className="pl8 navigator-header">
             <div className="flex1 flex-row" onClick={toggleCollapsed}>
                 <Icon name="List" className="mr8" size={18} />
-                <Title size={7}>Lists</Title>
+                <Title size="small">Lists</Title>
             </div>
 
             <LevelItem>
@@ -200,7 +201,7 @@ export const DataDocNavigatorBoardSection: React.FC<INavigatorBoardSectionProps>
             ))}
         </div>
     ) : (
-        <div className="empty-section-message">No boards</div>
+        <div className="empty-section-message">No lists</div>
     );
 
     return (
@@ -299,8 +300,8 @@ const NavigatorBoardView: React.FunctionComponent<{
                 onClick={() => setCollapsed(!collapsed)}
                 className="board-header-title flex1"
             >
-                <Title size={7} className="one-line-ellipsis">
-                    {board.name}
+                <Title size="small" className="one-line-ellipsis">
+                    {titleize(board.name)}
                 </Title>
             </div>
 

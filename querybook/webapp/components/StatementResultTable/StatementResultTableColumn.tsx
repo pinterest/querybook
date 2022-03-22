@@ -61,6 +61,7 @@ export const StatementResultTableColumn: React.FC<IStatementResultTableColumnPro
             <div className="flex-row">
                 <IconButton
                     className={clsx({
+                        mr4: true,
                         'column-button': true,
                         'expand-column-button': true,
                         'hidden-button': !isExpanded,

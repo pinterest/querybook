@@ -10,6 +10,7 @@ export interface ICheckboxProps {
     title?: string;
     value?: boolean;
     onChange?: (value: boolean) => any;
+    small?: boolean;
 }
 
 export const Checkbox: React.FunctionComponent<ICheckboxProps> = ({
@@ -20,6 +21,7 @@ export const Checkbox: React.FunctionComponent<ICheckboxProps> = ({
     value,
     onChange,
     children,
+    small,
 }) => {
     const checkboxClass = clsx({
         [className]: Boolean(className),
@@ -48,7 +50,7 @@ export const Checkbox: React.FunctionComponent<ICheckboxProps> = ({
                     checked={value}
                     readOnly
                 />
-                <AccentText size="small">
+                <AccentText size={small ? 'small' : 'xsmall'}>
                     {title}
                     {children}
                 </AccentText>

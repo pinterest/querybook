@@ -1,7 +1,7 @@
 import * as React from 'react';
 
 import { Content } from 'ui/Content/Content';
-import { Title } from 'ui/Title/Title';
+import { Subtitle } from 'ui/Title/Title';
 import { Markdown } from 'ui/Markdown/Markdown';
 
 import './FAQ.scss';
@@ -14,9 +14,7 @@ export const FAQ: React.FunctionComponent = () => (
             const { q: question, a: answer } = faq;
             return (
                 <div className="FAQ-item mb24" key={idx}>
-                    <Title subtitle size={4} className="FAQ-question">
-                        {question}
-                    </Title>
+                    <Subtitle className="FAQ-question">{question}</Subtitle>
                     <div className="FAQ-answer m12">
                         <Content>
                             <Markdown>{answer}</Markdown>

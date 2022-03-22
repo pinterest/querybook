@@ -2,7 +2,11 @@ import clsx from 'clsx';
 import * as React from 'react';
 import styled from 'styled-components';
 
-interface IStyledTextProps {
+export interface IStyledTextProps {
+    className?: string;
+
+    tooltip?: string;
+    tooltipPos?: 'up' | 'left' | 'right' | 'down';
     weight?: 'normal' | 'light' | 'bold' | 'extra';
     size?:
         | 'xxxsmall'
@@ -24,7 +28,9 @@ interface IStyledTextProps {
         | 'dark'
         | 'invert'
         | 'accent'
-        | 'accent-dark';
+        | 'accent-dark'
+        | 'title'
+        | 'subtitle';
     cursor?: 'default' | 'pointer' | 'not-allowed';
 
     accentFont?: boolean;
@@ -33,13 +39,6 @@ interface IStyledTextProps {
 
     untitled?: boolean;
     center?: boolean;
-}
-
-interface IProps extends IStyledTextProps {
-    className?: string;
-
-    tooltip?: string;
-    tooltipPos?: 'up' | 'left' | 'right' | 'down';
 }
 
 const StyledTextDiv = styled.div`
@@ -54,8 +53,8 @@ const StyledTextDiv = styled.div`
     ${(props) =>
         props.size
             ? ` font-size: ${
-                  props.size === 'text'
-                      ? 'var(--text-size)'
+                  props.size.startsWith('text')
+                      ? `var(--${props.size}-size)`
                       : `var(--${props.size}-text-size)`
               }`
             : ''};
@@ -118,8 +117,8 @@ const StyledTextDiv = styled.div`
         ${(props) =>
             props.size
                 ? ` font-size: ${
-                      props.size === 'text'
-                          ? 'var(--text-size)'
+                      props.size.startsWith('text')
+                          ? `var(--${props.size}-size)`
                           : `var(--${props.size}-text-size)`
                   }`
                 : ''};
@@ -154,7 +153,7 @@ const StyledTextDiv = styled.div`
     }
 `;
 
-export const StyledText: React.FunctionComponent<IProps> = ({
+export const StyledText: React.FunctionComponent<IStyledTextProps> = ({
     children,
     className,
     tooltip,
@@ -183,7 +182,7 @@ export const StyledText: React.FunctionComponent<IProps> = ({
     );
 };
 
-export const AccentText: React.FunctionComponent<IProps> = ({
+export const AccentText: React.FunctionComponent<IStyledTextProps> = ({
     children,
     ...elementProps
 }) => (
@@ -192,7 +191,7 @@ export const AccentText: React.FunctionComponent<IProps> = ({
     </StyledText>
 );
 
-export const UntitledText: React.FunctionComponent<IProps> = ({
+export const UntitledText: React.FunctionComponent<IStyledTextProps> = ({
     ...elementProps
 }) => (
     <StyledText untitled {...elementProps}>
@@ -200,7 +199,7 @@ export const UntitledText: React.FunctionComponent<IProps> = ({
     </StyledText>
 );
 
-export const EmptyText: React.FunctionComponent<IProps> = ({
+export const EmptyText: React.FunctionComponent<IStyledTextProps> = ({
     children,
     className,
     ...elementProps

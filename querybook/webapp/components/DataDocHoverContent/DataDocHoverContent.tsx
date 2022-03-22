@@ -28,7 +28,7 @@ export const DataDocHoverContent: React.FC<{
     return (
         <div className="DataDocHoverContent">
             <div className="mb8">
-                <Title size={6}>{title || 'Untitled'}</Title>
+                <Title size="text-0">{title || 'Untitled'}</Title>
             </div>
             <Loader
                 item={dataDoc}

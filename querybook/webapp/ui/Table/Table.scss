@@ -4,6 +4,7 @@
     background: var(--bg-lightest);
     font-weight: 500;
     overflow: hidden;
+    font-variant-numeric: tabular-nums;
 
     .rt-table {
         overflow: visible;

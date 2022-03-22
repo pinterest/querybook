@@ -51,7 +51,7 @@ export const BoardDataTableItem: React.FunctionComponent<IProps> = ({
                         }}
                         className="BoardItem-title"
                     >
-                        <Title size={4}>
+                        <Title size="med">
                             {schema?.name}.{table.name}
                         </Title>
                     </Link>

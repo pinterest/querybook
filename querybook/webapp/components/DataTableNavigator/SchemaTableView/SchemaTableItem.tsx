@@ -78,7 +78,7 @@ export const SchemaTableItem: React.FC<{
                     className="flex1 flex-row"
                     onClick={() => setIsExpanded(!isExpanded)}
                 >
-                    <Title size={7}>{name}</Title>
+                    <Title size="text">{name}</Title>
                 </div>
                 <OrderByButton
                     asc={sortOrder.asc}
