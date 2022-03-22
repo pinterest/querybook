@@ -31,8 +31,8 @@ body {
     --color-pink-transp-lightest-0: rgba(249, 168, 197, 0.2);
 
     --color-red: #f68a83;
-    --color-red-dark: #f65b50; // cancel button
-    --color-red-darkest: #d61e11;
+    --color-red-dark: #ea5349; // cancel button
+    --color-red-darkest: #930c03;
     --color-red-light: #faa198;
     --color-red-lightest: #fddad6;
     --color-red-lightest-0: #feecea;
@@ -226,23 +226,26 @@ body.dark-theme {
     --color-invert-1: #efefef; // BG-invert background
     --color-invert: #ffffff; // C-dark text
 
-    --color-pink-dark: var(--color-pink-light);
-    --color-pink-darkest: var(--color-pink-lightest);
+    --color-true-light: var(--color-green);
+    --color-true-lightest: var(--color-green-dark);
+    --color-true-lightest-0: var(--color-green-darkest);
+    --color-true: var(--color-green-light);
+    --color-true-dark: var(--color-green-lightest);
+    --color-true-darkest: var(--color-green-lightest-0);
 
-    --color-red-dark: var(--color-red-light);
-    --color-red-darkest: var(--color-red-lightest);
+    --color-false-light: var(--color-red);
+    --color-false-lightest: var(--color-red-dark);
+    --color-false-lightest-0: var(--color-red-darkest);
+    --color-false: var(--color-red-light);
+    --color-false-dark: var(--color-red-lightest);
+    --color-false-darkest: var(--color-red-lightest-0);
 
-    --color-blue-dark: var(--color-blue-light);
-    --color-blue-darkest: var(--color-blue-lightest);
-
-    --color-green-dark: var(--color-green-light);
-    --color-green-darkest: var(--color-green-lightest);
-
-    --color-yellow-dark: var(--color-yellow-light);
-    --color-yellow-darkest: var(--color-yellow-lightest);
-
-    --color-orange-dark: var(--color-orange-light);
-    --color-orange-darkest: var(--color-orange-lightest);
+    --color-warning-light: var(--color-yellow);
+    --color-warning-lightest: var(--color-yellow-dark);
+    --color-warning-lightest-0: var(--color-yellow-darkest);
+    --color-warning: var(--color-yellowlight);
+    --color-warning-dark: var(--color-yellow-lightest);
+    --color-warning-darkest: var(--color-yellow-lightest-0);
 
     --color-accent: var(--color-blue-light);
     --color-accent-dark: var(--color-blue);
