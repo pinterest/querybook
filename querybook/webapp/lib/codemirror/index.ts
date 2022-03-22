@@ -31,6 +31,9 @@ import 'codemirror/addon/runmode/runmode';
 // Search highlighting
 import 'codemirror/addon/search/match-highlighter.js';
 
+// Custom editor command
+import { attachCustomCommand } from './custom-commands';
+
 // Local styling
 import './editor_styles.scss';
 
@@ -47,6 +50,8 @@ declare module 'codemirror' {
         keyMap: Record<string, string | (() => any)>
     ): Record<string, string | (() => any)>;
 }
+
+attachCustomCommand(CodeMirror.commands);
 
 export default CodeMirror;
 
