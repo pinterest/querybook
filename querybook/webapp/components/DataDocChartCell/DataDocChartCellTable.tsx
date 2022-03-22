@@ -14,7 +14,7 @@ export const DataDocChartCellTable: React.FunctionComponent<IProps> = ({
 }) => (
     <div>
         {title?.length ? (
-            <Title size={6} className="mv4 center-align">
+            <Title size="text" className="mv4 center-align">
                 {title}
             </Title>
         ) : null}

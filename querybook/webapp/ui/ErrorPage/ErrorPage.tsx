@@ -3,7 +3,7 @@ import clsx from 'clsx';
 
 import history from 'lib/router-history';
 import { Center } from 'ui/Center/Center';
-import { Title } from 'ui/Title/Title';
+import { Subtitle, Title } from 'ui/Title/Title';
 import { FullHeight } from 'ui/FullHeight/FullHeight';
 
 import './ErrorPage.scss';
@@ -59,12 +59,12 @@ export const ErrorPage: React.FunctionComponent<IErrorPageProps> = ({
     return (
         <FullHeight className={classNameProp}>
             <Center className="flex-column">
-                <Title size={2} className="mb24">
+                <Title size="xxlarge" className="mb24">
                     {errorTitle}
                 </Title>
-                <Title subtitle size={6} className="ErrorPage-message mb16">
+                <Subtitle className="ErrorPage-message mb16">
                     {message}
-                </Title>
+                </Subtitle>
                 {children}
             </Center>
         </FullHeight>

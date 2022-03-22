@@ -11,7 +11,7 @@ export const DataDocTourSteps: ReactourStep[] = [
     {
         content: (
             <div>
-                <Title size={5}>Welcome to DataDoc!</Title>
+                <Title size="med">Welcome to DataDoc!</Title>
                 <p>Let's go over the DataDoc interface.</p>
             </div>
         ),

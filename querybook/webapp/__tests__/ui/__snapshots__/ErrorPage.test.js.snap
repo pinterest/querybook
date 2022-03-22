@@ -9,17 +9,12 @@ exports[`matches enzyme snapshots matches snapshot 1`] = `
   >
     <Title
       className="mb24"
-      gap={false}
-      size={2}
-      subtitle={false}
+      size="xxlarge"
     >
       Unknown Error
     </Title>
-    <Title
+    <Subtitle
       className="ErrorPage-message mb16"
-      gap={false}
-      size={6}
-      subtitle={true}
     >
       Unknown error occured at
       <code
@@ -39,7 +34,7 @@ exports[`matches enzyme snapshots matches snapshot 1`] = `
         </a>
          to go back.
       </span>
-    </Title>
+    </Subtitle>
   </Center>
 </FullHeight>
 `;

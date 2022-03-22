@@ -35,7 +35,7 @@ export const BoardDataDocItem: React.FunctionComponent<IProps> = ({
                         to={getWithinEnvUrl(`/datadoc/${doc.id}/`)}
                         className="BoardItem-title"
                     >
-                        <Title size={4}>{doc.title}</Title>
+                        <Title size="med">{doc.title}</Title>
                     </Link>
                     <BoardItemAddButton
                         size={16}

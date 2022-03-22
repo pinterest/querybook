@@ -9,7 +9,7 @@ import { Button, SoftButton } from 'ui/Button/Button';
 import { IconButton } from 'ui/Button/IconButton';
 import { FormField } from 'ui/Form/FormField';
 import { SimpleField } from 'ui/FormikField/SimpleField';
-import { Title } from 'ui/Title/Title';
+import { Subtitle, Title } from 'ui/Title/Title';
 import { Link } from 'ui/Link/Link';
 import { Message } from 'ui/Message/Message';
 
@@ -108,22 +108,14 @@ export const UDFForm: React.FC<IUDFFormProps> = ({
 
                                 return (
                                     <div className="UDFForm-parameters">
-                                        <Title size={6}>Parameters</Title>
+                                        <Title size="smedium">Parameters</Title>
                                         <div className="flex-row">
-                                            <Title
-                                                className="flex4 ml16"
-                                                size={7}
-                                                subtitle
-                                            >
+                                            <Subtitle className="flex4 ml16">
                                                 Name
-                                            </Title>
-                                            <Title
-                                                className="flex4 ml16"
-                                                size={7}
-                                                subtitle
-                                            >
+                                            </Subtitle>
+                                            <Subtitle className="flex4 ml16">
                                                 Type
-                                            </Title>
+                                            </Subtitle>
                                             <div className="flex1" />
                                         </div>
 
