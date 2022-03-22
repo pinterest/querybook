@@ -108,7 +108,7 @@ export const UDFForm: React.FC<IUDFFormProps> = ({
 
                                 return (
                                     <div className="UDFForm-parameters">
-                                        <Title size="text-0">Parameters</Title>
+                                        <Title size="smedium">Parameters</Title>
                                         <div className="flex-row">
                                             <Subtitle className="flex4 ml16">
                                                 Name

@@ -14,7 +14,7 @@ export interface IStyledTextProps {
         | 'xsmall'
         | 'small'
         | 'text'
-        | 'text-0'
+        | 'smedium'
         | 'med'
         | 'large'
         | 'xlarge'

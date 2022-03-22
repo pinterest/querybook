@@ -31,7 +31,7 @@ const HighlightTitle: React.FunctionComponent<{
     }
 
     return (
-        <AccentText size="text-0" weight="bold" color="text" hover>
+        <AccentText size="smedium" weight="bold" color="text" hover>
             <div
                 className="result-item-title"
                 dangerouslySetInnerHTML={{

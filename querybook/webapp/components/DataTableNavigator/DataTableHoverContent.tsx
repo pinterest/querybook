@@ -57,7 +57,7 @@ export const DataTableHoverContent: React.FC<{
         <div className="DataTableHoverContent">
             <Title
                 className="DataTableHoverContent-table-name mb4"
-                size="text-0"
+                size="smedium"
             >
                 {tableName}
             </Title>
