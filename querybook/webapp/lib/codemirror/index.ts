@@ -31,9 +31,11 @@ import 'codemirror/addon/runmode/runmode';
 // Search highlighting
 import 'codemirror/addon/search/match-highlighter.js';
 
+// Custom editor command
+import { attachCustomCommand } from './custom-commands';
+
 // Local styling
 import './editor_styles.scss';
-import { attachCustomCommand } from './custom-commands';
 
 declare module 'codemirror' {
     // This is copied from runmode.d.ts. Not sure how to import it :(
