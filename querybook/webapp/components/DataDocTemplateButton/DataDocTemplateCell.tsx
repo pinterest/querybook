@@ -50,7 +50,12 @@ export const DataDocTemplateCell: React.FunctionComponent<IProps> = ({
         contentDOM = (
             <>
                 <div className=" flex-row ph8">
-                    <AccentText className="mr12" size="text">
+                    <AccentText
+                        className="mr12"
+                        size="text"
+                        weight="bold"
+                        color="light"
+                    >
                         Variables
                     </AccentText>
                     <DataDocTemplateInfoButton style="icon" />

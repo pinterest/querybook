@@ -105,8 +105,6 @@ body {
     --icon-active: var(--color-invert-3);
     --icon-light: var(--color-primary-4);
 
-    --pill: var(--color-primary-3);
-    --tag: var(--color-invert-2);
     --progress: var(--color-invert-3);
 
     // Colors: For boolean + warning cases
@@ -182,7 +180,7 @@ body {
     --xsmall-text-size: 0.8rem;
     --small-text-size: 0.9rem;
     --text-size: 0.95rem;
-    --smedium-size: 1.1rem;
+    --smedium-text-size: 1.1rem;
     --med-text-size: 1.25rem;
     --large-text-size: 1.5rem;
     --xlarge-text-size: 2rem;
@@ -262,9 +260,10 @@ body.dark-theme {
 
     --text-highlight: rgba(52, 101, 127, 0.5);
 
-    --bold-font: var(--extra-bold-font);
-
     font-weight: 500;
+    --light-bold-font: 600;
+    --bold-font: 700;
+    --extra-bold-font: 800;
 }
 
 body.lush-theme {
@@ -320,8 +319,7 @@ body.lush-theme {
     --scroll-bar-color: var(--color-primary-3);
 
     font-weight: 500;
-
-    --bold-font: var(--extra-bold-font);
-
-    --tag: var(--text-invert);
+    --light-bold-font: 600;
+    --bold-font: 700;
+    --extra-bold-font: 800;
 }

@@ -6,11 +6,12 @@ import type { AllLucideIconNames } from 'ui/Icon/LucideIcons';
 import { Link, ILinkProps } from './Link';
 
 import './ListLink.scss';
+import { StyledText, UntitledText } from 'ui/StyledText/StyledText';
 
 interface IProps extends ILinkProps {
     className?: string;
     title?: string;
-    placeholder?: string;
+    noPlaceHolder?: boolean;
     icon?: AllLucideIconNames;
     isRow?: boolean;
 }
@@ -21,7 +22,7 @@ export const ListLink: React.FunctionComponent<IProps> = React.memo(
         title,
         icon,
         isRow,
-        placeholder = 'Untitled',
+        noPlaceHolder = false,
         children,
         ...listProps
     }) => {
@@ -33,10 +34,12 @@ export const ListLink: React.FunctionComponent<IProps> = React.memo(
         return (
             <Link className={mergedClassName} {...listProps}>
                 {title ? (
-                    <span className="ListLinkText">{title}</span>
-                ) : placeholder ? (
-                    <span className="ListLinkPlaceholder">{placeholder}</span>
-                ) : null}
+                    <StyledText className="ListLinkText" size="small">
+                        {title}
+                    </StyledText>
+                ) : noPlaceHolder ? null : (
+                    <UntitledText size="small" />
+                )}
                 {icon && <Icon name={icon} size={16} />}
                 {children}
             </Link>

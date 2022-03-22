@@ -94,13 +94,13 @@ export const ViewerPermissionPicker: React.FunctionComponent<IProp> = ({
                 className="permission-text flex-row mr8"
                 onClick={() => setShowEditMenu(true)}
             >
-                <AccentText noUserSelect cursor="pointer">
+                <AccentText noUserSelect cursor="pointer" weight="bold">
                     {viewerInfo.permission}
                 </AccentText>
                 <Icon className="ml8" name="ChevronDown" size={16} />
             </div>
         ) : (
-            <AccentText noUserSelect cursor="default">
+            <AccentText noUserSelect cursor="default" weight="bold">
                 {viewerInfo.permission}
             </AccentText>
         );

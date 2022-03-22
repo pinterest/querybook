@@ -17,6 +17,7 @@ import { QueryResult } from './QueryResult';
 
 import './QueryViewNavigator.scss';
 import { Icon } from 'ui/Icon/Icon';
+import { AccentText } from 'ui/StyledText/StyledText';
 
 type StateProps = ReturnType<typeof mapStateToProps>;
 type DispatchProps = ReturnType<typeof mapDispatchToProps>;
@@ -108,7 +109,9 @@ class QueryViewNavigatorComponent extends React.PureComponent<IProps> {
         const loadingDOM = isLoadingQueries ? (
             <div className="flex-column m24">
                 <Icon name="Loader" className="mb16" />
-                <span>Loading Queries</span>
+                <AccentText color="light" weight="bold">
+                    Loading Executions
+                </AccentText>
             </div>
         ) : null;
 

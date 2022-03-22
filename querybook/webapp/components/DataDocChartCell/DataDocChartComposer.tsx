@@ -979,7 +979,7 @@ const DataDocChartComposerComponent: React.FunctionComponent<
 
     const makeLeftDOM = () => (
         <div className="DataDocChartComposer-left mr16">
-            <div className="DataDocChartComposer-chart pt16">
+            <div className="DataDocChartComposer-chart mt8">
                 <div className="DataDocChartComposer-chart-sizer">
                     {chartData ? chartDOM : null}
                 </div>
