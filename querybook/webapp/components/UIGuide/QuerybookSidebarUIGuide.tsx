@@ -21,7 +21,7 @@ function getQuerybookSidebarTourSteps() {
             selector: '.EnvironmentAppSidebar',
             content: ({ goTo }) => (
                 <div>
-                    <Title size={5}>Welcome!</Title>
+                    <Title size="med">Welcome!</Title>
                     <p>Let's go over the sidebar functionalities.</p>
                     <hr />
                     <div>

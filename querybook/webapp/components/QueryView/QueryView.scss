@@ -11,3 +11,10 @@
         min-height: 360px;
     }
 }
+
+.EnvironmentAppRouter-content .QueryView {
+    padding: 24px 36px;
+    overflow-x: scroll;
+    overflow-y: auto;
+    height: 100%;
+}

@@ -13,6 +13,7 @@ import type { AllLucideIconNames } from 'ui/Icon/LucideIcons';
 import { OrderByButton } from 'ui/OrderByButton/OrderByButton';
 
 import './DataDocNavigatorSection.scss';
+import { titleize } from 'lib/utils';
 
 interface INavigatorSectionProps {
     className?: string;
@@ -120,7 +121,7 @@ export const DataDocNavigatorSection: React.FC<INavigatorSectionProps> = ({
                 {sectionHeaderIcon && (
                     <Icon size={18} className="mr8" name={sectionHeaderIcon} />
                 )}
-                <Title size={7}>{sectionHeader}</Title>
+                <Title size="small">{titleize(sectionHeader)}</Title>
             </div>
             <div className="flex-row">
                 {allowReorder && (

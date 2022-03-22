@@ -178,20 +178,10 @@
     }
 
     .datadoc-loading {
-        width: 100%;
-        height: 100%;
+        width: 480px;
+        height: 100vh;
         position: relative;
-
-        .datadoc-loading-message {
-            position: absolute;
-            top: 30%;
-            left: 50%;
-            transform: translate(-50%, -50%);
-
-            p {
-                text-align: center;
-            }
-        }
+        text-align: center;
     }
 
     .SearchAndReplaceBar {

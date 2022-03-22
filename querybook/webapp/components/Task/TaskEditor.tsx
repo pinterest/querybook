@@ -457,7 +457,7 @@ export const TaskEditor: React.FunctionComponent<IProps> = ({
                             <>
                                 <div className="TaskEditor-top horizontal-space-between mb24">
                                     <div className="TaskEditor-info">
-                                        <Title size={3} weight="bold">
+                                        <Title size="xlarge" weight="bold">
                                             {values.name}
                                         </Title>
                                         <div className="mb16">

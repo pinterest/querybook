@@ -60,7 +60,7 @@ export const Loading: React.FunctionComponent<ILoadingProps> = ({
     const loadingText =
         (text || '').length > 0 ? (
             <StyledLoadingText>
-                <Title size={1}>{text}</Title>
+                <Title size="xxxlarge">{text}</Title>
             </StyledLoadingText>
         ) : null;
 

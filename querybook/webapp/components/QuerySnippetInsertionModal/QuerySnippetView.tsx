@@ -151,7 +151,7 @@ export class QuerySnippetView extends React.PureComponent<
 
         const titleDOM = (
             <div className="flex-row mb8">
-                <Title size={4}>{title}</Title>
+                <Title size="large">{title}</Title>
                 <div className="flex-row ml12">
                     {publicTag}
                     {goldenTag}
