@@ -106,6 +106,7 @@ export const defaultReactSelectStyles: Partial<
     }),
     singleValue: (styles, { data }) => ({
         ...styles,
+        color: 'var(--text)',
         ...(data.color ? dot(data.color) : {}),
     }),
     multiValue: (styles, { data }) => ({
