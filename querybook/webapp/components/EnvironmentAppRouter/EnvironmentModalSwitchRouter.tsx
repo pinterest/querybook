@@ -15,6 +15,9 @@ const BoardRoute = React.lazy(() => import('./mainRoute/BoardRoute'));
 const EmbeddedQueryPage = React.lazy(
     () => import('components/EmbeddedQueryPage/EmbeddedQueryPage')
 );
+const EmbeddedDataDocPage = React.lazy(
+    () => import('components/EmbeddedDataDocPage/EmbeddedDataDocPage')
+);
 const QueryComposer = React.lazy(
     () => import('components/QueryComposer/QueryComposer')
 );
@@ -132,6 +135,12 @@ export const EnvironmentModalSwitchRouter: React.FC = () => {
                     <Route
                         path="/:env/_/embedded_editor/"
                         render={() => <EmbeddedQueryPage />}
+                    />
+                    <Route
+                        path="/:env/_/embedded_datadoc/:docId"
+                        render={({ match }) => (
+                            <EmbeddedDataDocPage id={match.params['docId']} />
+                        )}
                     />
                     <Route path="/:env/list/:boardId/" component={BoardRoute} />
                     {modalRoutes}

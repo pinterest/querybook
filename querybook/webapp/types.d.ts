@@ -41,4 +41,5 @@ declare global {
     // Injected via Webpack
     const __VERSION__: string;
     const __APPNAME__: string;
+    const __ENVIRONMENT__: string;
 }

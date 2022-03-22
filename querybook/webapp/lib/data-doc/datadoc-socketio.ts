@@ -260,7 +260,7 @@ export class DataDocSocket {
         }
     }
 
-    private resolveProimseAndEvent(
+    private resolvePromiseAndEvent(
         key: string,
         originator: string,
         ...args: any[]
@@ -286,7 +286,7 @@ export class DataDocSocket {
             this.socket = await this.socketPromise;
 
             this.socket.on('data_doc', (originator, rawDataDoc) => {
-                this.resolveProimseAndEvent(
+                this.resolvePromiseAndEvent(
                     'receiveDataDoc',
                     originator,
                     rawDataDoc
@@ -294,7 +294,7 @@ export class DataDocSocket {
             });
 
             this.socket.on('data_doc_editors', (originator, editors) => {
-                this.resolveProimseAndEvent(
+                this.resolvePromiseAndEvent(
                     'receiveDataDocEditors',
                     originator,
                     editors
@@ -304,7 +304,7 @@ export class DataDocSocket {
             this.socket.on(
                 'data_doc_access_requests',
                 (originator, requests) => {
-                    this.resolveProimseAndEvent(
+                    this.resolvePromiseAndEvent(
                         'receiveDataDocAccessRequests',
                         originator,
                         requests
@@ -313,7 +313,7 @@ export class DataDocSocket {
             );
 
             this.socket.on('data_doc_updated', (originator, rawDataDoc) => {
-                this.resolveProimseAndEvent(
+                this.resolvePromiseAndEvent(
                     'updateDataDoc',
                     originator,
                     rawDataDoc
@@ -321,7 +321,7 @@ export class DataDocSocket {
             });
 
             this.socket.on('data_cell_updated', (originator, rawDataCell) => {
-                this.resolveProimseAndEvent(
+                this.resolvePromiseAndEvent(
                     'updateDataCell',
                     originator,
                     rawDataCell
@@ -329,7 +329,7 @@ export class DataDocSocket {
             });
 
             this.socket.on('data_cell_deleted', (originator, cellId) => {
-                this.resolveProimseAndEvent(
+                this.resolvePromiseAndEvent(
                     'deleteDataCell',
                     originator,
                     cellId
@@ -339,7 +339,7 @@ export class DataDocSocket {
             this.socket.on(
                 'data_cell_inserted',
                 (originator, index, rawDataCell) => {
-                    this.resolveProimseAndEvent(
+                    this.resolvePromiseAndEvent(
                         'insertDataCell',
                         originator,
                         index,
@@ -351,7 +351,7 @@ export class DataDocSocket {
             this.socket.on(
                 'data_cell_moved',
                 (originator, fromIndex, toIndex) => {
-                    this.resolveProimseAndEvent(
+                    this.resolvePromiseAndEvent(
                         'moveDataCell',
                         originator,
                         fromIndex,
@@ -376,7 +376,7 @@ export class DataDocSocket {
                     users: Record<string, number>;
                     cursors: Record<string, number>;
                 }) =>
-                    this.resolveProimseAndEvent(
+                    this.resolvePromiseAndEvent(
                         'updateDataDocUsers',
                         '',
                         sidToUid,
@@ -387,7 +387,7 @@ export class DataDocSocket {
             this.socket.on(
                 'data_doc_editor',
                 (originator, docId, uid, editor) => {
-                    this.resolveProimseAndEvent(
+                    this.resolvePromiseAndEvent(
                         'updateDataDocEditor',
                         originator,
                         docId,
@@ -400,7 +400,7 @@ export class DataDocSocket {
             this.socket.on(
                 'data_doc_access_request',
                 (originator, docId, uid, request) => {
-                    this.resolveProimseAndEvent(
+                    this.resolvePromiseAndEvent(
                         'updateDataDocAccessRequest',
                         originator,
                         docId,
@@ -413,7 +413,7 @@ export class DataDocSocket {
             this.socket.on(
                 'data_doc_query_execution',
                 (originator, rawQueryExecution, dataCellId) =>
-                    this.resolveProimseAndEvent(
+                    this.resolvePromiseAndEvent(
                         'receiveQueryExecution',
                         originator,
                         rawQueryExecution,
@@ -422,7 +422,7 @@ export class DataDocSocket {
             );
 
             this.socket.on('data_doc_cursor_moved', (originator, cellId) =>
-                this.resolveProimseAndEvent(
+                this.resolvePromiseAndEvent(
                     'moveDataDocCursor',
                     originator,
                     originator,
@@ -433,7 +433,7 @@ export class DataDocSocket {
             this.socket.on(
                 'data_doc_user',
                 (add: boolean, sid: string, uid: number) =>
-                    this.resolveProimseAndEvent(
+                    this.resolvePromiseAndEvent(
                         'receiveDataDocUser',
                         '',
                         add,

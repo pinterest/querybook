@@ -1,4 +1,7 @@
-import { IQueryResultExporter } from 'const/queryExecution';
+import {
+    IQueryResultExporter,
+    QueryExecutionExportStatus,
+} from 'const/queryExecution';
 import { StatementResource } from 'resource/queryExecution';
 
 export function getExporterAuthentication(
@@ -36,3 +39,18 @@ export function getExporterAuthentication(
         }, 1000);
     });
 }
+
+export const pollExporterTaskPromise = (taskId: string) =>
+    new Promise((res, rej) => {
+        const poll = setInterval(async () => {
+            const { data } = await StatementResource.pollExportTask(taskId);
+            const { status } = data;
+            if (status === QueryExecutionExportStatus.ERROR) {
+                clearInterval(poll);
+                rej(new Error(data.message ?? 'unknown error'));
+            } else if (status === QueryExecutionExportStatus.DONE) {
+                clearInterval(poll);
+                res(data);
+            }
+        }, 5000);
+    });

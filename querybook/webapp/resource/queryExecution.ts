@@ -1,7 +1,8 @@
 import type { IAccessRequest } from 'const/accessRequest';
-import type {
+import {
     IQueryError,
     IQueryExecution,
+    IQueryExecutionExportStatusInfo,
     IQueryExecutionNotification,
     IQueryExecutionViewer,
     IQueryResultExporter,
@@ -108,6 +109,11 @@ export const StatementResource = {
             params
         );
     },
+
+    pollExportTask: (taskId: string) =>
+        ds.fetch<IQueryExecutionExportStatusInfo>(
+            `/query_execution_exporter/task/${taskId}/poll/`
+        ),
 
     /**
      * Get the Authorization url for the exporter

@@ -21,6 +21,12 @@ class StatementExecutionStatus(Enum):
     CANCEL = 5
 
 
+class QueryExecutionExportStatus(Enum):
+    RUNNING = 0
+    DONE = 1
+    ERROR = 2
+
+
 class QueryExecutionErrorType(Enum):
     INTERNAL = 0  # Error came from python exception caused by celery worker
     ENGINE = 1  # Error was thrown from the query engine

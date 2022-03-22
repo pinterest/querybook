@@ -23,6 +23,12 @@ export enum QueryExecutionErrorType {
     SYNTAX,
 }
 
+export enum QueryExecutionExportStatus {
+    RUNNING = 0,
+    DONE,
+    ERROR,
+}
+
 export interface IQueryExecutionViewer {
     id: number;
     uid: number;
@@ -46,6 +52,18 @@ export interface IQueryExecution {
     // it may have a field called total which
     // indicates the total number of statements
     total?: number;
+}
+
+export interface IQueryExecutionExportResult {
+    type: 'url' | 'text';
+    info: string;
+}
+
+export interface IQueryExecutionExportStatusInfo {
+    task_id: string;
+    status: number;
+    message?: string;
+    result?: IQueryExecutionExportResult;
 }
 
 export type IRawQueryExecution = IQueryExecution & {

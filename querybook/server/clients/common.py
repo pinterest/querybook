@@ -29,11 +29,11 @@ class ChunkReader(metaclass=ABCMeta):
         self._buffer_deque = deque([])
         self._raw_buffer = ""
 
-    def read_csv(self, number_of_lines=None):
-        raw_csv_str = "\n".join(
-            [line for line in islice(self.read_line(), number_of_lines)]
-        )
-        return string_to_csv(raw_csv_str)
+    def get_csv_iter(self, number_of_lines=None):
+        for line in islice(self.read_line(), number_of_lines):
+            csv = string_to_csv(line)
+            if len(csv):
+                yield csv[0]  # yield single row of csv
 
     def read_lines(self, number_of_lines=None) -> List[str]:
         return [line for line in islice(self.read_line(), number_of_lines)]
@@ -73,7 +73,12 @@ class ChunkReader(metaclass=ABCMeta):
         # or fake eof when we read enough data
         self._eof = True
         if real_eof and len(self._raw_buffer):
-            self._buffer_deque.append(self._raw_buffer)
+            self._num_char_read += len(self._raw_buffer)
+            if (
+                self._max_read_size is None
+                or self._num_char_read <= self._max_read_size
+            ):
+                self._buffer_deque.append(self._raw_buffer)
 
     @abstractmethod
     def read(self) -> str:

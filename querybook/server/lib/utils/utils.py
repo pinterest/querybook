@@ -5,30 +5,8 @@ from datetime import datetime, date
 from functools import wraps
 
 from lib.logger import get_logger
-from requests.auth import HTTPBasicAuth, HTTPProxyAuth
-
 
 LOG = get_logger(__file__)
-
-
-# from: https://stackoverflow.com/questions/9026016/python-requests-library-combine-httpproxyauth-with-httpbasicauth
-class HTTPBasicAndProxyAuth:
-    def __init__(self, basic_up, proxy_up):
-        # basic_up is a tuple with username, password
-        self.basic_auth = HTTPBasicAuth(*basic_up)
-        # proxy_up is a tuple with proxy username, password
-        self.proxy_auth = HTTPProxyAuth(*proxy_up)
-
-    def __call__(self, r):
-        # this emulates what basicauth and proxyauth do in their __call__()
-        # first add r.headers['Authorization']
-        r = self.basic_auth(r)
-        # then add r.headers['Proxy-Authorization']
-        r = self.proxy_auth(r)
-        # and return the request, as the auth object should do
-        return r
-
-
 _epoch = datetime.utcfromtimestamp(0)
 
 

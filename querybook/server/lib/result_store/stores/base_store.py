@@ -1,10 +1,9 @@
 from abc import ABC, abstractmethod
-from typing import List
+from typing import Generator, List, Optional
 
 
 class BaseUploader(ABC):
-    """Base interface for result uploader
-    """
+    """Base interface for result uploader"""
 
     @abstractmethod
     def __init__(self, uri: str):
@@ -42,14 +41,13 @@ class BaseUploader(ABC):
 
     @abstractmethod
     def end(self):
-        """Finish the upload
-        """
+        """Finish the upload"""
         pass
 
 
 class BaseReader(ABC):
     @abstractmethod
-    def __init__(self, uri: str):
+    def __init__(self, uri: str, **kwargs):
         pass
 
     def __enter__(self):
@@ -69,17 +67,30 @@ class BaseReader(ABC):
 
         pass
 
-    @abstractmethod
-    def read_csv(self, number_of_lines: int) -> List[List[str]]:
-        """Uses the read_raw method and then parses to csv
+    def read_csv(self, number_of_lines: Optional[int]) -> List[List[str]]:
+        """Unpacks generator from `get_csv_iter` to return parsed csv
 
         Arguments:
-            number_of_lines {int} -- The number lines of csv to return
+            number_of_lines {Optional[int]} -- The number lines of csv to return, by default if the
+                value is None, the entire file is read
 
         Returns:
             List[List[str]] -- the parsed csv
         """
-        pass
+        return [row for row in self.get_csv_iter(number_of_lines)]
+
+    @abstractmethod
+    def get_csv_iter(self, number_of_lines) -> Generator[List[List[str]], None, None]:
+        """Uses the read_raw method and then parses to csv
+
+        Arguments:
+            number_of_lines {Optional[int]} -- The number lines of csv to return, by default if the
+                value is None, the entire file is read
+
+        Returns:
+            Generator[List[List[str]], None, None] -- generator for parsed csv
+        """
+        raise NotImplementedError()
 
     @abstractmethod
     def read_lines(self, number_of_lines: int) -> List[str]:
@@ -106,15 +117,13 @@ class BaseReader(ABC):
 
     @abstractmethod
     def end(self):
-        """End the reading process
-        """
+        """End the reading process"""
         pass
 
     @property
     @abstractmethod
     def has_download_url(self):
-        """Indicates if this reader can generate a download url
-        """
+        """Indicates if this reader can generate a download url"""
         pass
 
     @abstractmethod

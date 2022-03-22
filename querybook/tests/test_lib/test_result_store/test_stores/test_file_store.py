@@ -96,4 +96,9 @@ class FileReaderTestCase(TestCase):
     def test_read_csv(self):
         with mock.patch("builtins.open", mock.mock_open(read_data=self.mock_raw_csv)):
             reader = FileReader("test")
-            self.assertEqual(reader.read_csv(0), self.mock_csv)
+            self.assertEqual(reader.read_csv(0), [])
+
+    def test_read_csv_with_num_lines_not_specified(self):
+        with mock.patch("builtins.open", mock.mock_open(read_data=self.mock_raw_csv)):
+            reader = FileReader("test")
+            self.assertEqual(reader.read_csv(None), self.mock_csv)

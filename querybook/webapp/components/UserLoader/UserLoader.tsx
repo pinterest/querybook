@@ -8,6 +8,7 @@ import { IStoreState, Dispatch } from 'redux/store/types';
 import { UserResource } from 'resource/user';
 import { Loader } from 'ui/Loader/Loader';
 import { ErrorPage } from 'ui/ErrorPage/ErrorPage';
+import { getEnvironment } from 'lib/utils/global';
 
 export const UserLoader: React.FunctionComponent = ({ children }) => {
     const [showUnauthPage, setShowUnauth] = React.useState(false);
@@ -31,8 +32,16 @@ export const UserLoader: React.FunctionComponent = ({ children }) => {
             if (e?.response?.status === 401) {
                 try {
                     const {
-                        data: { has_login: hasLogin, has_signup: hasSignup },
+                        data: {
+                            has_login: hasLogin,
+                            has_signup: hasSignup,
+                            oauth_url: oauthURL,
+                        },
                     } = await UserResource.getLoginMethods();
+
+                    if (getEnvironment() !== 'production' && oauthURL) {
+                        window.location.href = oauthURL;
+                    }
                     setShowSignup(hasSignup);
                     setShowUnauth(hasLogin);
                 } catch (e2) {
