@@ -1,14 +1,19 @@
 from abc import ABCMeta, abstractmethod
+from typing import Generator, List
+from app.db import with_session
+from lib.logger import get_logger
 from logic import query_execution as logic
 from lib.result_store import GenericReader
+
+
+LOG = get_logger(__file__)
 
 
 class BaseExporter(metaclass=ABCMeta):
     @property
     @abstractmethod
     def exporter_name(self) -> str:
-        """Name of the exporter that will be shown on the frontend
-        """
+        """Name of the exporter that will be shown on the frontend"""
         raise NotImplementedError()
 
     @property
@@ -64,12 +69,38 @@ class BaseExporter(metaclass=ABCMeta):
         """
         raise NotImplementedError()
 
+    @with_session
+    def _get_statement_execution_num_rows(
+        self, statement_execution_id: int, session=None,
+    ):
+        statement_execution = logic.get_statement_execution_by_id(
+            statement_execution_id, session=session,
+        )
+        return statement_execution.result_row_count or 0
+
+    @with_session
+    def _get_statement_execution_num_cols(
+        self, statement_execution_id: int, session=None,
+    ):
+        statement_execution = logic.get_statement_execution_by_id(
+            statement_execution_id, session=session,
+        )
+        if statement_execution.result_path:
+            with GenericReader(statement_execution.result_path) as reader:
+                csv = reader.read_csv(number_of_lines=1)
+                if len(csv):
+                    return len(csv[0])
+        return 0
+
     def _get_statement_execution_result(
         self,
         statement_execution_id: int,
         raw: bool = False,  # If raw, return unparsed csv text
         number_of_lines: int = 2001,
     ):
+        LOG.warning(
+            "_get_statement_execution_result will be deprecated since we are moving towards exporting full statement execution results"
+        )
         statement_execution = logic.get_statement_execution_by_id(
             statement_execution_id
         )
@@ -83,6 +114,22 @@ class BaseExporter(metaclass=ABCMeta):
                     result = reader.read_csv(number_of_lines=number_of_lines)
                 return result
         return None
+
+    def _get_statement_execution_result_iter(
+        self,
+        statement_execution_id: int,
+        number_of_lines: int = None,  # By default, read all lines
+    ) -> Generator[List[List[str]], None, None]:
+        statement_execution = logic.get_statement_execution_by_id(
+            statement_execution_id
+        )
+        if statement_execution.result_path:
+            with GenericReader(
+                statement_execution.result_path,
+                max_read_size=None,  # override max_read_size in some readers
+            ) as reader:
+                return reader.get_csv_iter(number_of_lines=number_of_lines)
+        return iter(())
 
     def _get_statement_execution_download_url(self, statement_execution_id: int):
         statement_execution = logic.get_statement_execution_by_id(

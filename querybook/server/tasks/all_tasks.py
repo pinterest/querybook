@@ -6,6 +6,7 @@ from app.flask_app import celery
 from env import QuerybookSettings
 from lib.logger import get_logger
 
+from .export_query_execution import export_query_execution_task
 from .run_query import run_query_task
 from .run_sample_query import run_sample_query
 from .dummy_task import dummy_task
@@ -26,6 +27,7 @@ except (ImportError, ModuleNotFoundError) as err:
 
 # Linter
 celery
+export_query_execution_task
 run_query_task
 dummy_task
 update_metastore

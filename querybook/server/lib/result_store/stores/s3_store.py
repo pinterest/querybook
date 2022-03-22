@@ -1,8 +1,9 @@
-from typing import List
+from typing import Generator, List, Optional
 
 from lib.result_store.stores.base_store import BaseReader, BaseUploader
 from env import QuerybookSettings
-from clients.s3_client import MultiPartUploader, S3FileReader, S3KeySigner
+from clients import s3_client  # Needed to patch S3FileReader in tests
+from clients.s3_client import MultiPartUploader, S3KeySigner
 
 
 class S3Uploader(BaseUploader):
@@ -32,15 +33,23 @@ class S3Uploader(BaseUploader):
 
 
 class S3Reader(BaseReader):
-    def __init__(self, uri: str):
+    def __init__(self, uri: str, **kwargs):
         self._uri = uri
+        self._kwargs = kwargs
         self._reader = None
 
     def start(self):
-        self._reader = S3FileReader(QuerybookSettings.STORE_BUCKET_NAME, self.uri)
+        reader_kwargs = {}
+        if "max_read_size" in self._kwargs:
+            reader_kwargs["max_read_size"] = self._kwargs.get("max_read_size")
+        self._reader = s3_client.S3FileReader(
+            QuerybookSettings.STORE_BUCKET_NAME, self.uri, **reader_kwargs,
+        )
 
-    def read_csv(self, number_of_lines: int) -> List[List[str]]:
-        return self._reader.read_csv(number_of_lines)
+    def get_csv_iter(
+        self, number_of_lines: Optional[int]
+    ) -> Generator[List[List[str]], None, None]:
+        return self._reader.get_csv_iter(number_of_lines)
 
     def read_lines(self, number_of_lines: int) -> List[str]:
         return self._reader.read_lines(number_of_lines)

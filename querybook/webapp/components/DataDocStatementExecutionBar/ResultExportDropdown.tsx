@@ -12,21 +12,22 @@ import { IStoreState, Dispatch } from 'redux/store/types';
 
 import * as Utils from 'lib/utils';
 import { getStatementExecutionResultDownloadUrl } from 'lib/query-execution';
-import { getExporterAuthentication } from 'lib/result-export';
 import { tableToTSV } from 'lib/utils/table-export';
-import { StatementResource } from 'resource/queryExecution';
 
 import { Dropdown } from 'ui/Dropdown/Dropdown';
 import { Button, TextButton } from 'ui/Button/Button';
-import { CopyPasteModal } from 'ui/CopyPasteModal/CopyPasteModal';
 import { Modal } from 'ui/Modal/Modal';
-import { Link } from 'ui/Link/Link';
 import { ListMenu } from 'ui/Menu/ListMenu';
-import { Title } from 'ui/Title/Title';
 import { validateForm, updateValue } from 'ui/SmartForm/formFunctions';
 import { SmartForm } from 'ui/SmartForm/SmartForm';
 import { IconButton } from 'ui/Button/IconButton';
 import './ResultExportDropdown.scss';
+import {
+    getExporterAuthentication,
+    pollExporterTaskPromise,
+} from 'lib/result-export';
+import { StatementResource } from 'resource/queryExecution';
+import { ResultExportSuccessToast } from './ResultExportSuccessToast';
 
 interface IProps {
     statementExecution: IStatementExecution;
@@ -48,21 +49,6 @@ function isPreviewFullResult(
         statementResult.data.length === resultRowCount
     );
 }
-
-const UrlModal: React.FunctionComponent<{
-    url: string;
-    onHide: () => any;
-}> = ({ url, onHide }) => (
-    <Modal onHide={onHide}>
-        <div className="flex-center mv24">
-            <Title size={5}>
-                <Link to={url} newTab>
-                    View Export
-                </Link>
-            </Title>
-        </div>
-    </Modal>
-);
 
 const FormModal: React.FunctionComponent<{
     form: IStructFormField;
@@ -96,10 +82,6 @@ export const ResultExportDropdown: React.FunctionComponent<IProps> = ({
 }) => {
     const statementId = statementExecution.id;
 
-    const [exportedInfo, setExportedInfo] = React.useState<{
-        info: string;
-        type: 'url' | 'text';
-    }>(null);
     const [
         exporterForForm,
         setExporterForForm,
@@ -137,29 +119,34 @@ export const ResultExportDropdown: React.FunctionComponent<IProps> = ({
     }, [statementId, statementResult, loadStatementResult]);
 
     const handleExport = React.useCallback(
-        (
+        async (
             exporter: IQueryResultExporter,
             formData?: Record<string, unknown>
         ) => {
-            const performExport = async () => {
-                await getExporterAuthentication(exporter);
-                const { data } = await StatementResource.export(
-                    statementId,
-                    exporter.name,
-                    formData
-                );
-                setExportedInfo({
-                    info: data,
-                    type: exporter.type,
-                });
-            };
+            await getExporterAuthentication(exporter);
+            const { data: taskId } = await StatementResource.export(
+                statementId,
+                exporter.name,
+                formData
+            );
 
-            return toast.promise(performExport(), {
-                loading: 'Exporting, please wait',
-                success: 'Exported!',
-                error: (e) =>
-                    `Cannot ${exporter.name.toLowerCase()}, reason: ${e}`,
-            });
+            return toast.promise(
+                pollExporterTaskPromise(taskId),
+                {
+                    loading: 'Exporting, please wait',
+                    success: ResultExportSuccessToast,
+                    error: (e) =>
+                        `Cannot ${exporter.name.toLowerCase()}, reason: ${e}`,
+                },
+                {
+                    id: taskId,
+                    success: {
+                        style: {
+                            display: 'none',
+                        },
+                    },
+                }
+            );
         },
         [statementId]
     );
@@ -178,21 +165,6 @@ export const ResultExportDropdown: React.FunctionComponent<IProps> = ({
         },
         [handleExport]
     );
-
-    const exportedInfoModal =
-        exportedInfo != null ? (
-            exportedInfo.type === 'url' ? (
-                <UrlModal
-                    url={exportedInfo.info}
-                    onHide={() => setExportedInfo(null)}
-                />
-            ) : (
-                <CopyPasteModal
-                    text={exportedInfo.info}
-                    onHide={() => setExportedInfo(null)}
-                />
-            )
-        ) : null;
 
     const formModal = exporterForForm ? (
         <FormModal
@@ -288,7 +260,6 @@ export const ResultExportDropdown: React.FunctionComponent<IProps> = ({
     return (
         <>
             {ellipsesDropDownButton}
-            {exportedInfoModal}
             {formModal}
         </>
     );

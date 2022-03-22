@@ -20,13 +20,14 @@ from lib.query_analysis.templating import (
     render_templated_query,
 )
 from lib.form import validate_form
-from const.query_execution import QueryExecutionStatus
+from const.query_execution import QueryExecutionExportStatus, QueryExecutionStatus
 from const.datasources import RESOURCE_NOT_FOUND_STATUS_CODE
 from logic import query_execution as logic, datadoc as datadoc_logic, user as user_logic
 from logic.datadoc_permission import user_can_read
 from logic.query_execution_permission import (
     get_default_user_environment_by_execution_id,
 )
+from tasks.export_query_execution import export_query_execution_task
 from tasks.run_query import run_query_task
 from app.auth.permission import verify_query_execution_owner
 from models.query_execution import QueryExecutionViewer
@@ -368,9 +369,47 @@ def export_statement_execution_result(
         valid, reason = validate_form(exporter.export_form, exporter_params)
         api_assert(valid, "Invalid exporter params, reason: " + reason)
 
-    return exporter.export(
-        statement_execution_id, current_user.id, **(exporter_params or {})
+    task = export_query_execution_task.apply_async(
+        args=[
+            exporter.exporter_name,
+            statement_execution_id,
+            current_user.id,
+            exporter_params or {},
+        ],
     )
+
+    return task.task_id
+
+
+@register(
+    "/query_execution_exporter/task/<task_id>/poll/",
+    methods=["GET"],
+    require_auth=True,
+)
+def poll_export_statement_execution_result(task_id):
+    task = export_query_execution_task.AsyncResult(task_id)
+    if task is not None:
+        if task.ready():
+            if task.failed():
+                return {
+                    "task_id": task_id,
+                    "status": QueryExecutionExportStatus.ERROR.value,
+                    "message": str(task.result),
+                }
+
+            if task.info is not None:
+                return {
+                    "task_id": task_id,
+                    "status": QueryExecutionExportStatus.DONE.value,
+                    "result": task.result,
+                }
+
+            return {
+                "task_id": task_id,
+                "status": QueryExecutionExportStatus.RUNNING.value,
+            }
+
+    return None
 
 
 @register("/query_execution/templated_query/", methods=["POST"])

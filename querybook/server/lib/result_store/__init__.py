@@ -1,4 +1,4 @@
-from typing import List
+from typing import Generator, List, Optional
 
 from .all_result_stores import ALL_RESULT_STORES
 from .stores.base_store import BaseReader, BaseUploader
@@ -35,15 +35,17 @@ class GenericUploader(BaseUploader):
 
 
 class GenericReader(BaseReader):
-    def __init__(self, uri: str):
+    def __init__(self, uri: str, **kwargs):
         store_type, uri_suffix = uri.split("://")
-        self._reader = ALL_RESULT_STORES[store_type].reader(uri_suffix)
+        self._reader = ALL_RESULT_STORES[store_type].reader(uri_suffix, **kwargs)
 
     def start(self):
         self._reader.start()
 
-    def read_csv(self, number_of_lines: int) -> List[List[str]]:
-        return self._reader.read_csv(number_of_lines)
+    def get_csv_iter(
+        self, number_of_lines: Optional[int]
+    ) -> Generator[List[List[str]], None, None]:
+        return self._reader.get_csv_iter(number_of_lines)
 
     def read_lines(self, number_of_lines: int) -> List[str]:
         return self._reader.read_lines(number_of_lines)

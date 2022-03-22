@@ -8,11 +8,12 @@ import './CopyPasteModal.scss';
 interface IProps {
     text: string;
     displayText?: boolean;
+    title?: string;
     onHide: () => any;
 }
 
 export const CopyPasteModal: React.FunctionComponent<IProps> = (props) => {
-    const { text, onHide, displayText = true } = props;
+    const { text, onHide, displayText = true, title } = props;
 
     const actionsDOM = [
         <CopyButton key="copy" copyText={text} title="Copy To Clipboard" />,
@@ -27,7 +28,7 @@ export const CopyPasteModal: React.FunctionComponent<IProps> = (props) => {
     ) : null;
 
     return (
-        <Modal onHide={onHide} title="Copy Paste Modal">
+        <Modal onHide={onHide} title={title ?? 'Copy Paste Modal'}>
             <div className="CopyPasteModal">
                 <div>
                     <div>{textDOM}</div>
