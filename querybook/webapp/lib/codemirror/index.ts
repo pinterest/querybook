@@ -33,6 +33,7 @@ import 'codemirror/addon/search/match-highlighter.js';
 
 // Local styling
 import './editor_styles.scss';
+import { attachCustomCommand } from './custom-commands';
 
 declare module 'codemirror' {
     // This is copied from runmode.d.ts. Not sure how to import it :(
@@ -47,6 +48,8 @@ declare module 'codemirror' {
         keyMap: Record<string, string | (() => any)>
     ): Record<string, string | (() => any)>;
 }
+
+attachCustomCommand(CodeMirror.commands);
 
 export default CodeMirror;
 

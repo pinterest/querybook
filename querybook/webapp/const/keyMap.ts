@@ -92,6 +92,15 @@ const DEFAULT_KEY_MAP = {
             key: 'Cmd-/',
             name: 'Toggle comment',
         },
+        swapLineUp: {
+            key: 'Alt-Up',
+            name: 'Swap current line with the previous line',
+        },
+        swapLineDown: {
+            key: 'Alt-Down',
+            name: 'Swap current line with the next line',
+        },
+
         openTable: {
             key: 'Cmd-P',
             name: 'Open table modal if on a table',
