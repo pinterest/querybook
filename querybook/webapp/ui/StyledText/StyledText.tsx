@@ -28,9 +28,7 @@ export interface IStyledTextProps {
         | 'dark'
         | 'invert'
         | 'accent'
-        | 'accent-dark'
-        | 'title'
-        | 'subtitle';
+        | 'accent-dark';
     cursor?: 'default' | 'pointer' | 'not-allowed';
 
     accentFont?: boolean;

@@ -6,7 +6,7 @@ export const Title: React.FunctionComponent<IStyledTextProps> = ({
     children,
     ...elementProps
 }) => (
-    <AccentText size="xlarge" weight="bold" color="title" {...elementProps}>
+    <AccentText size="xlarge" weight="bold" color="text" {...elementProps}>
         {children}
     </AccentText>
 );
@@ -15,7 +15,7 @@ export const Subtitle: React.FunctionComponent<IStyledTextProps> = ({
     children,
     ...elementProps
 }) => (
-    <AccentText size="med" color="subtitle" {...elementProps}>
+    <AccentText size="med" color="light" {...elementProps}>
         {children}
     </AccentText>
 );
