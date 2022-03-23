@@ -18,7 +18,12 @@
             }
         }
     }
-    .DataTableTags {
-        min-height: 34px;
+    .DataTableHeader-tags {
+        .header-subtitle {
+            margin-top: 6px;
+        }
+        .DataTableTags {
+            min-height: 34px;
+        }
     }
 }

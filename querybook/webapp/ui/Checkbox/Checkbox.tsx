@@ -50,7 +50,7 @@ export const Checkbox: React.FunctionComponent<ICheckboxProps> = ({
                     checked={value}
                     readOnly
                 />
-                <AccentText size={small ? 'small' : 'xsmall'}>
+                <AccentText size={small ? 'xsmall' : 'small'}>
                     {title}
                     {children}
                 </AccentText>
