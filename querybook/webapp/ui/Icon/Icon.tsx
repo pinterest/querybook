@@ -8,7 +8,7 @@ import './Icon.scss';
 export interface IIconProps {
     className?: string;
     size?: string | number;
-    name: AllLucideIconNames | 'Loading';
+    name: AllLucideIconNames;
     options?: LucideProps;
     fill?: boolean;
     color?: TButtonColors;
@@ -25,17 +25,13 @@ export const Icon: React.FunctionComponent<IIconProps> = React.memo(
         fill = false,
         color = '',
     }) => {
-        if (!(name in AllLucideIcons) && name !== 'Loading') {
+        if (!(name in AllLucideIcons)) {
             return null;
         }
-        const LucideIconComponent: LucideIcon =
-            AllLucideIcons[name === 'Loading' ? 'Circle' : name];
+        const LucideIconComponent: LucideIcon = AllLucideIcons[name];
 
-        const iconClassName = clsx({
-            Icon: true,
-            [className]: Boolean(className),
+        const iconClassName = clsx('Icon', className, color, {
             fill,
-            [color]: Boolean(color),
             'loading-icon': name === 'Loading',
         });
 

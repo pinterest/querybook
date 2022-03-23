@@ -25,24 +25,24 @@
 
     &.loading-icon {
         svg.lucide-circle {
-            animation: rotate 2s linear infinite;
+            animation: loading-icon-rotate 2s linear infinite;
             color: var(--icon-light);
             circle {
                 stroke-linecap: round;
-                animation: dash 1.5s ease-in-out infinite;
+                animation: loading-icon-dash 1.5s ease-in-out infinite;
             }
         }
     }
 }
 
-@keyframes rotate {
+@keyframes loading-icon-rotate {
     100% {
         transform: rotate(360deg);
     }
 }
 
 // animation based on https://codepen.io/supah/pen/BjYLdW
-@keyframes dash {
+@keyframes loading-icon-dash {
     0% {
         stroke-dasharray: 1, 150;
         stroke-dashoffset: 0;

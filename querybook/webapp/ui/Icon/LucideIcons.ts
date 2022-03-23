@@ -143,6 +143,7 @@ const AllLucideIcons = {
     Link,
     List,
     ListOrdered,
+    Loading: Circle, // Custom loading icon
     Lock,
     LogOut,
     Maximize2,
