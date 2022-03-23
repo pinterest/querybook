@@ -134,7 +134,7 @@ export const ExecutedQueryCell: React.FunctionComponent<IProps> = ({
     );
 
     return (
-        <div className="ExecutedQueryCell mb4">
+        <div className="ExecutedQueryCell">
             {headerDOM}
             {codeDOM}
         </div>

@@ -16,7 +16,7 @@ import { Link } from 'ui/Link/Link';
 import './EnvironmentTopbar.scss';
 import { EnvironmentIcon } from './EnvironmentIcon';
 
-const NUMBER_OF_ICONS_TO_SHOW = 5;
+const NUMBER_OF_ICONS_TO_SHOW = 6;
 
 export const EnvironmentTopbar: React.FC = React.memo(() => {
     const environments = useSelector(orderedEnvironmentsSelector);

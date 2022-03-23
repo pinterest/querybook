@@ -71,7 +71,7 @@ export const UserBadge: React.FunctionComponent<IProps> = ({
             <div className="UserBadge-icon">
                 <figure>{avatarDOM}</figure>
             </div>
-            <div className="UserBadge-names flex-column">
+            <div className="UserBadge-names">
                 <AccentText
                     className="username one-line-ellipsis mb4"
                     size="med"

@@ -57,21 +57,19 @@ const FormModal: React.FunctionComponent<{
 }> = ({ form, onSubmit, onHide }) => {
     const [formData, setFormData] = React.useState({});
     return (
-        <Modal onHide={onHide}>
-            <div className="m24">
-                <SmartForm
-                    formField={form}
-                    value={formData}
-                    onChange={(path, value) =>
-                        setFormData(
-                            updateValue(formData, path, value, [undefined, ''])
-                        )
-                    }
-                />
-                <br />
-                <div className="right-align mb12">
-                    <Button onClick={() => onSubmit(formData)}>Submit</Button>
-                </div>
+        <Modal onHide={onHide} title="Exporter Form">
+            <SmartForm
+                formField={form}
+                value={formData}
+                onChange={(path, value) =>
+                    setFormData(
+                        updateValue(formData, path, value, [undefined, ''])
+                    )
+                }
+            />
+            <br />
+            <div className="right-align mb12">
+                <Button onClick={() => onSubmit(formData)}>Submit</Button>
             </div>
         </Modal>
     );
@@ -208,15 +206,15 @@ export const ResultExportDropdown: React.FunctionComponent<IProps> = ({
             },
             ...statementExporters.map((exporter) => ({
                 name: (
-                    <div className="horizontal-space-between flex1">
+                    <div className="horizontal-space-between">
                         <span>{exporter.name}</span>
                         {exporter.form ? (
                             <IconButton
                                 noPadding
-                                tooltip="Detailed Export"
+                                tooltip="More Export Options"
                                 tooltipPos="left"
                                 size={16}
-                                icon="Share"
+                                icon="FormInput"
                                 onClick={(e) => {
                                     e.stopPropagation();
                                     e.preventDefault();
