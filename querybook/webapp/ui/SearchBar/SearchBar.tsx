@@ -66,7 +66,7 @@ export const SearchBar: React.FunctionComponent<ISearchBarProps> = ({
 
     const searchIcon = hasIcon ? (
         <span className="SearchIcon">
-            <Icon name={isSearching ? 'Loader' : 'Search'} />
+            <Icon name={isSearching ? 'Loading' : 'Search'} />
         </span>
     ) : null;
 

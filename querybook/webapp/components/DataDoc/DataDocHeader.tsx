@@ -12,8 +12,8 @@ import { ResizableTextArea } from 'ui/ResizableTextArea/ResizableTextArea';
 import { IconButton } from 'ui/Button/IconButton';
 import { ImpressionWidget } from 'components/ImpressionWidget/ImpressionWidget';
 import { BoardItemAddButton } from 'components/BoardItemAddButton/BoardItemAddButton';
-import { Icon } from 'ui/Icon/Icon';
 import { AccentText } from 'ui/StyledText/StyledText';
+import { LoadingIcon } from 'ui/Loading/Loading';
 
 interface IProps {
     dataDoc: IDataDoc;
@@ -51,7 +51,7 @@ export const DataDocHeader = React.forwardRef<HTMLDivElement, IProps>(
         const timeMessage = isSaving ? (
             <div className="flex-row">
                 Saving
-                <Icon name="Loader" className="ml8" />
+                <LoadingIcon className="ml8" />
             </div>
         ) : (
             `Updated ${generateFormattedDate(lastUpdated, 'X')}`

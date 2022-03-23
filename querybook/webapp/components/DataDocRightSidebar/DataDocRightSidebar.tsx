@@ -110,7 +110,7 @@ export const DataDocRightSidebar: React.FunctionComponent<IProps> = ({
                     onClick={onCollapse}
                 />
                 <IconButton
-                    icon="Loader"
+                    icon="Loading"
                     className={isSaving ? '' : 'hide-button'}
                     title="Saving"
                 />
