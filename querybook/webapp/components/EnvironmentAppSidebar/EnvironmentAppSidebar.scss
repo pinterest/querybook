@@ -61,6 +61,7 @@
     &.collapsed {
         .sidebar-environment-picker {
             text-align: center;
+            height: 50px;
             .collapsed-env {
                 padding: var(--padding-sm);
             }

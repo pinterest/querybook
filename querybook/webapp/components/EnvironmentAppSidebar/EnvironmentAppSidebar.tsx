@@ -134,10 +134,15 @@ export const EnvironmentAppSidebar: React.FunctionComponent = () => {
         <EnvironmentTopbar />
     );
 
+    const envPickerClassName = clsx({
+        'sidebar-environment-picker': true,
+        'flex-center': collapsed,
+    });
+
     const contentDOM = (
         <>
             <div className="EnvironmentAppSidebar-content">
-                <div className="sidebar-environment-picker">
+                <div className={envPickerClassName}>
                     {environmentPickerSection}
                 </div>
                 <div className="sidebar-content-main">

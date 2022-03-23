@@ -61,8 +61,8 @@ export const QueryExecutionButton = React.memo<IQueryExecutionButtonProps>(
         const buttonTitle = loading
             ? 'Checking running queries'
             : activeQueryExecutions.length > 0
-            ? `You have ${activeQueryExecutions.length} running queries.`
-            : 'No running queries.';
+            ? `You have ${activeQueryExecutions.length} running queries`
+            : 'No running queries';
 
         return (
             <>

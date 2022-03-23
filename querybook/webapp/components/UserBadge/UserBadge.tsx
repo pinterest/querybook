@@ -53,7 +53,7 @@ export const UserBadge: React.FunctionComponent<IProps> = ({
                 })}
             >
                 <figure>{avatarDOM}</figure>
-                <AccentText className="username" weight="bold" color="light">
+                <AccentText className="username" weight="bold">
                     {userInfo?.fullname ?? userName}
                 </AccentText>
             </span>

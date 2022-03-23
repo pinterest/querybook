@@ -8,6 +8,7 @@ import './DataTableHoverContent.scss';
 import { useDataTable } from 'hooks/redux/useDataTable';
 import { Loader } from 'ui/Loader/Loader';
 import { DataTableTags } from 'components/DataTableTags/DataTableTags';
+import { StyledText } from 'ui/StyledText/StyledText';
 
 export const DataTableHoverContent: React.FC<{
     tableId: number;
@@ -31,16 +32,18 @@ export const DataTableHoverContent: React.FC<{
         const descriptionDOM = Boolean(tableDescription) && (
             <div className="mb4">
                 <Title size="small">Description</Title>
-                <ShowMoreText text={tableDescription} />
+                <StyledText size="xsmall">
+                    <ShowMoreText text={tableDescription} />
+                </StyledText>
             </div>
         );
 
         const columnsDOM = Boolean(columnNames) && (
             <div className="mb4">
                 <Title size="small">Columns</Title>
-                <div>
+                <StyledText size="xsmall">
                     <ShowMoreText text={columnNames} />
-                </div>
+                </StyledText>
             </div>
         );
 
@@ -55,10 +58,7 @@ export const DataTableHoverContent: React.FC<{
 
     return (
         <div className="DataTableHoverContent">
-            <Title
-                className="DataTableHoverContent-table-name mb4"
-                size="smedium"
-            >
+            <Title className="mb4" size="smedium">
                 {tableName}
             </Title>
             <Loader

@@ -39,8 +39,8 @@ export const BoardListItemRow: React.FC<{
                                     isModal: itemType !== 'data_doc',
                                 },
                             }}
-                            placeholder={null}
                             isRow
+                            noPlaceHolder
                         >
                             <Icon size={16} name={icon} />
                             {title.length ? (

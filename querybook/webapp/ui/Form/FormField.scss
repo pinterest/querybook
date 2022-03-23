@@ -2,7 +2,7 @@
     position: relative;
     display: flex;
     align-items: center;
-    margin-top: 12px;
+    margin-top: 8px;
     margin-bottom: 4px;
     padding: 4px 0px;
 
@@ -10,7 +10,7 @@
         flex-wrap: wrap;
 
         .FormFieldLabelSection {
-            margin-bottom: 6px;
+            margin-bottom: 8px;
         }
         .FormFieldInputSectionRow {
             flex: 1;
@@ -73,7 +73,7 @@
     font-weight: var(--bold-font);
     font-family: var(--font-accent);
     span {
-        font-size: var(--med-text-size);
+        font-size: var(--smedium-text-size);
         white-space: nowrap;
     }
 }

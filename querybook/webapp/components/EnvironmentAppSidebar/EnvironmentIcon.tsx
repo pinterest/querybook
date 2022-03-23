@@ -28,7 +28,9 @@ export const EnvironmentIcon: React.FunctionComponent<IProps> = ({
                 selected,
             })}
         >
-            <AccentText className="env-icon-text">{envName}</AccentText>
+            <AccentText className="env-icon-text" weight="bold">
+                {envName}
+            </AccentText>
         </span>
     );
 };

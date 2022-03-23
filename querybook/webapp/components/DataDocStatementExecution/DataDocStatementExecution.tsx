@@ -18,6 +18,7 @@ import { ProgressBar } from 'ui/ProgressBar/ProgressBar';
 import './DataDocStatementExecution.scss';
 import { sanitizeAndExtraMarkdown } from 'lib/markdown';
 import { Icon } from 'ui/Icon/Icon';
+import { AccentText } from 'ui/StyledText/StyledText';
 
 interface IProps {
     statementExecution: IStatementExecution;
@@ -132,7 +133,9 @@ export const DataDocStatementExecution: React.FC<IProps> = ({
                     {getMetaInfoDOM()}
                     <div className="flex-row">
                         <Icon name="Loader" className="mr8" />
-                        Loading query results...
+                        <AccentText color="light" weight="bold">
+                            Loading query results
+                        </AccentText>
                     </div>
                     {getLogDOM()}
                 </div>

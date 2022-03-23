@@ -10,6 +10,6 @@ exports[`matches enzyme snapshots matches snapshot 2`] = `
 <FormWrapper__StyledFormWrapper
   errorFontSize="var(--small-text-size)"
   fontSize="var(--text-size)"
-  sectionFontSize="var(--large-text-size)"
+  sectionFontSize="var(--med-text-size)"
 />
 `;

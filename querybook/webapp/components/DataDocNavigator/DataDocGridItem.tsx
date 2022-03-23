@@ -62,12 +62,11 @@ export const DataDocGridItem: React.FunctionComponent<IDataDocGridItemProps> = R
                                 to={url}
                                 icon={privateIcon}
                                 title={title}
-                                placeholder="Untitled"
                                 isRow
                             >
                                 {onRemove && (
                                     <IconButton
-                                        className="delete-grid-item-button"
+                                        className="delete-grid-item-button ml8"
                                         noPadding
                                         size={16}
                                         icon="X"

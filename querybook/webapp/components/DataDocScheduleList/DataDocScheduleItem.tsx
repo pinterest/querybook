@@ -104,7 +104,7 @@ export const DataDocScheduleItem: React.FC<IDataDocScheduleItemProps> = ({
                                 {doc.title}
                             </AccentText>
                         ) : (
-                            <UntitledText />
+                            <UntitledText size="med" />
                         )}
                     </Link>
                     {renderLastRunRecordInfo()}
