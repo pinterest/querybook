@@ -133,7 +133,9 @@ export const DataTableHeader: React.FunctionComponent<IDataTableHeader> = ({
                     Owners
                 </AccentText>
                 <div className="owner-badges mr8 flex-row">
-                    {dbTableOwner && <UserBadge name={dbTableOwner} mini />}
+                    {dbTableOwner && (
+                        <UserBadge name={dbTableOwner} mini cardStyle />
+                    )}
                     {ownershipDOM}
                     {isDBTableOwner ? null : isTableOwner ? (
                         <IconButton

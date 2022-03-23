@@ -10,6 +10,8 @@ import type { ITableSearchResult } from 'redux/dataTableSearch/types';
 import type { ITableResultWithSelection } from '../DataTableNavigator';
 import { OrderByButton } from 'ui/OrderByButton/OrderByButton';
 
+import './SchemaTableItem.scss';
+
 const TABLE_ITEM_HEIGHT = 28;
 const MAX_VISIBLE_AMOUNT = 10;
 
@@ -72,7 +74,7 @@ export const SchemaTableItem: React.FC<{
     ]);
 
     return (
-        <div className={'DataDocNavigatorSection'}>
+        <div className="SchemaTableItem">
             <StyledItem className="horizontal-space-between navigator-header pl8">
                 <div
                     className="schema-name flex1 flex-row"

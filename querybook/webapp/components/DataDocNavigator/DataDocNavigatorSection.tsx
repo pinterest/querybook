@@ -12,7 +12,6 @@ import { LoadingIcon } from 'ui/Loading/Loading';
 import type { AllLucideIconNames } from 'ui/Icon/LucideIcons';
 import { OrderByButton } from 'ui/OrderByButton/OrderByButton';
 
-import './DataDocNavigatorSection.scss';
 import { titleize } from 'lib/utils';
 
 interface INavigatorSectionProps {
@@ -38,7 +37,7 @@ interface INavigatorSectionProps {
 type DataDocOrderBy = 'default' | 'alphabetical';
 
 export const DataDocNavigatorSection: React.FC<INavigatorSectionProps> = ({
-    className,
+    className = '',
     selectedDocId,
     filterString,
     dataDocs,
@@ -163,7 +162,7 @@ export const DataDocNavigatorSection: React.FC<INavigatorSectionProps> = ({
     );
 
     return (
-        <div className={'DataDocNavigatorSection ' + (className ?? '')}>
+        <div className={'DataDocNavigatorSection mb12 ' + className}>
             {headerSectionDOM}
             {dataDocListDOM}
         </div>
