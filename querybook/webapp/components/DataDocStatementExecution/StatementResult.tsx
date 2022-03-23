@@ -41,7 +41,8 @@ export const StatementResult: React.FC<IProps> = ({
             <div className="flex-row">
                 <span className="warning-word mr4">Previewing</span>
                 <span className="mr8">
-                    <span className="mr4">{actualRowMinusColCount} of</span>
+                    <PrettyNumber val={actualRowMinusColCount} />
+                    <span className="mh4">of</span>
                     <PrettyNumber val={resultRowMinusColCount} unit="Row" />
                 </span>
                 <InfoButton>{resultPreviewTooltip}</InfoButton>
