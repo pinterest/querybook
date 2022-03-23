@@ -13,6 +13,7 @@ import { Level } from 'ui/Level/Level';
 import { IconButton } from 'ui/Button/IconButton';
 
 import './DataDocLeftSidebar.scss';
+import { InfoButton } from 'ui/Button/InfoButton';
 interface IProps {
     docId: number;
     cells: IDataCell[];
@@ -60,7 +61,13 @@ export const DataDocLeftSidebar: React.FunctionComponent<IProps> = ({
                         icon="ArrowLeft"
                         onClick={() => setContentState('default')}
                     />
-                    <div>contents</div>
+                    <div className="flex-row">
+                        <span>contents</span>
+                        <InfoButton layout={['right', 'top']}>
+                            Click to jump to the corresponding cell. Drag the
+                            cells to reorder them.
+                        </InfoButton>
+                    </div>
                 </Level>
                 <DataDocContents cells={cells} docId={docId} />
             </div>

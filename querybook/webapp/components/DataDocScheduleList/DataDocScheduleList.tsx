@@ -11,6 +11,7 @@ import { Checkbox } from 'ui/Checkbox/Checkbox';
 import { Container } from 'ui/Container/Container';
 
 import './DataDocScheduleList.scss';
+import { EmptyText } from 'ui/StyledText/StyledText';
 
 function useDataDocScheduleFiltersAndPagination() {
     const {
@@ -125,6 +126,9 @@ const DataDocScheduleList: React.FC = () => {
                         key={docWithSchedule.doc.id}
                     />
                 ))}
+                {dataDocsWithSchedule.length === 0 && (
+                    <EmptyText>No DataDocs found</EmptyText>
+                )}
                 {totalPages > 1 && (
                     <Pagination
                         currentPage={page}
