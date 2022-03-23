@@ -13,7 +13,7 @@ const UrlModal: React.FunctionComponent<{
     onHide: () => any;
 }> = ({ url, title, onHide }) => (
     <Modal onHide={onHide}>
-        <div className="flex-center mv24">
+        <div className="flex-column mv24">
             <Title size="med">{title}</Title>
             <Link to={url} newTab>
                 View Export
