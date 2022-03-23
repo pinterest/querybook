@@ -82,9 +82,11 @@ export const FormField: React.FunctionComponent<IFormFieldProps> = ({
             )}
         >
             {labelDOM}
-            {contentDOM}
-            {helpDOM}
-            {requiredIndicator}
+            <div className="FormFieldInput flex-row">
+                {contentDOM}
+                {helpDOM}
+                {requiredIndicator}
+            </div>
         </div>
     );
 };

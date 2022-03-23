@@ -6,6 +6,10 @@
     margin-bottom: 4px;
     padding: 4px 0px;
 
+    .FormFieldInput {
+        width: 100%;
+    }
+
     &.FormField-stacked {
         flex-wrap: wrap;
 

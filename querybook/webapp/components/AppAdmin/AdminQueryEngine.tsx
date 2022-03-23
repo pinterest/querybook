@@ -318,14 +318,6 @@ export const AdminQueryEngine: React.FunctionComponent<IProps> = ({
                                 }}
                                 withDeselect
                             />
-
-                            <SimpleField
-                                stacked
-                                name="status_checker"
-                                type="select"
-                                options={engineStatusCheckerNames}
-                                withDeselect
-                            />
                             <SimpleField
                                 stacked
                                 help={() => (
@@ -358,6 +350,15 @@ export const AdminQueryEngine: React.FunctionComponent<IProps> = ({
                                 type="select"
                                 options={executorByLanguage[item.language]}
                                 onChange={updateExecutor}
+                            />
+                        </div>
+                        <div className="flex-row stacked-fields flex0-children">
+                            <SimpleField
+                                stacked
+                                name="status_checker"
+                                type="select"
+                                options={engineStatusCheckerNames}
+                                withDeselect
                             />
                         </div>
                         <div className="AdminForm-section">
