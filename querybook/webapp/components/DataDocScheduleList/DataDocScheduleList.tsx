@@ -9,16 +9,17 @@ import { Pagination } from 'ui/Pagination/Pagination';
 import { DebouncedInput } from 'ui/DebouncedInput/DebouncedInput';
 import { Checkbox } from 'ui/Checkbox/Checkbox';
 import { Container } from 'ui/Container/Container';
-import { EmptyText } from 'ui/StyledText/StyledText';
+import { AccentText, EmptyText } from 'ui/StyledText/StyledText';
 
 import './DataDocScheduleList.scss';
+import { PrettyNumber } from 'ui/PrettyNumber/PrettyNumber';
 
 function useDataDocScheduleFiltersAndPagination() {
     const {
         page: initPage,
         filters: initFilters,
         pageSize: initPageSize,
-        totalPages,
+        numberOfResults,
     } = useSelector((state: IStoreState) => state.scheduledDocs);
 
     const [docName, setDocName] = useState(initFilters.name ?? '');
@@ -45,7 +46,7 @@ function useDataDocScheduleFiltersAndPagination() {
         setDocName,
         setScheduledOnly,
 
-        totalPages,
+        numberOfResults,
         page,
         setPage,
         pageSize,
@@ -80,7 +81,7 @@ const DataDocScheduleList: React.FC = () => {
         page,
         pageSize,
 
-        totalPages,
+        numberOfResults,
 
         setPage,
         // Page size is fixed for now, we can
@@ -99,10 +100,12 @@ const DataDocScheduleList: React.FC = () => {
         filters
     );
 
+    const totalPages = Math.ceil(numberOfResults / pageSize);
+
     return (
         <Container>
             <div className="DataDocScheduleList">
-                <div className="horizontal-space-between mb16">
+                <div className="DataDocScheduleList-top horizontal-space-between mb16">
                     <div className="flex1 mr12">
                         <DebouncedInput
                             value={filters.name}
@@ -120,26 +123,32 @@ const DataDocScheduleList: React.FC = () => {
                         />
                     </div>
                 </div>
-                {dataDocsWithSchedule.map((docWithSchedule) => (
-                    <DataDocScheduleItem
-                        docWithSchedule={docWithSchedule}
-                        key={docWithSchedule.doc.id}
-                    />
-                ))}
-                {dataDocsWithSchedule.length === 0 && (
-                    <EmptyText>
-                        {filters.scheduled_only
-                            ? 'No Scheduled DataDocs'
-                            : 'No DataDocs'}
-                    </EmptyText>
-                )}
-                {totalPages > 1 && (
-                    <Pagination
-                        currentPage={page}
-                        totalPage={totalPages}
-                        onPageClick={setPage}
-                    />
-                )}
+                <div className="DataDocScheduleList-list">
+                    {dataDocsWithSchedule.length === 0 ? (
+                        <EmptyText className="mt36">
+                            {filters.scheduled_only
+                                ? 'No Scheduled DataDocs'
+                                : 'No DataDocs'}
+                        </EmptyText>
+                    ) : (
+                        <AccentText color="light" className="ml4 mb8">
+                            <PrettyNumber val={numberOfResults} unit="result" />
+                        </AccentText>
+                    )}
+                    {dataDocsWithSchedule.map((docWithSchedule) => (
+                        <DataDocScheduleItem
+                            docWithSchedule={docWithSchedule}
+                            key={docWithSchedule.doc.id}
+                        />
+                    ))}
+                    {totalPages > 1 && (
+                        <Pagination
+                            currentPage={page}
+                            totalPage={totalPages}
+                            onPageClick={setPage}
+                        />
+                    )}
+                </div>
             </div>
         </Container>
     );

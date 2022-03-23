@@ -17,7 +17,7 @@ import { IconButton } from 'ui/Button/IconButton';
 import { UrlContextMenu } from 'ui/ContextMenu/UrlContextMenu';
 import { stopPropagation } from 'lib/utils/noop';
 import { LoadingRow } from 'ui/Loading/Loading';
-import { AccentText, StyledText } from 'ui/StyledText/StyledText';
+import { AccentText, StyledText, UntitledText } from 'ui/StyledText/StyledText';
 
 const HighlightTitle: React.FunctionComponent<{
     title: string;
@@ -30,7 +30,7 @@ const HighlightTitle: React.FunctionComponent<{
         highlightedTitle = title.replace(searchStringRegex, highlightReplace);
     }
 
-    return (
+    return highlightedTitle && highlightedTitle !== 'Untitled' ? (
         <AccentText size="smedium" weight="bold" color="text" hover>
             <div
                 className="result-item-title"
@@ -39,6 +39,8 @@ const HighlightTitle: React.FunctionComponent<{
                 }}
             />
         </AccentText>
+    ) : (
+        <UntitledText size="smedium" />
     );
 };
 

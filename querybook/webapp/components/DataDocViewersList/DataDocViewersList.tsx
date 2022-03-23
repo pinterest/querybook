@@ -179,7 +179,7 @@ export const DataDocViewersList: React.FunctionComponent<IDataDocViewersListProp
                     disabled={readonly}
                 />
             </div>
-            <div className="flex-center">
+            <div className="flex-column">
                 <StyledText color="light" noUserSelect>
                     {dataDoc.public
                         ? 'This document can be viewed by anyone'

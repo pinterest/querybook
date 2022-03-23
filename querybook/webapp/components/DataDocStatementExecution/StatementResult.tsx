@@ -36,12 +36,13 @@ export const StatementResult: React.FC<IProps> = ({
         )}) through Export.`;
 
         const fetchRowInfo = fetchedAllRows ? (
-            `Full Result (${formatNumber(actualRowMinusColCount, 'row')})`
+            `${formatNumber(actualRowMinusColCount, 'Row')} (Full Result)`
         ) : (
             <div className="flex-row">
                 <span className="warning-word mr4">Previewing</span>
-                <span className="mr8">
-                    <span className="mr4">{actualRowMinusColCount} of</span>
+                <span className="mr4">
+                    <PrettyNumber val={actualRowMinusColCount} />
+                    <span className="mh4">of</span>
                     <PrettyNumber val={resultRowMinusColCount} unit="Row" />
                 </span>
                 <InfoButton>{resultPreviewTooltip}</InfoButton>

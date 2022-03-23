@@ -119,10 +119,10 @@ export const QueryEngineStatusButton: React.FC<IProps> = ({
                 let systemStatusContent = null;
                 if (!engineStatus || engineStatus.loading) {
                     systemStatusContent = (
-                        <span>
+                        <>
                             <Icon name="Loading" size={16} className="mr8" />
                             <Tag>{titleize(engine.name)}</Tag>
-                        </span>
+                        </>
                     );
                 } else {
                     const warningLevel = engineStatus?.data?.status;
@@ -148,7 +148,11 @@ export const QueryEngineStatusButton: React.FC<IProps> = ({
                     );
                 }
 
-                return <span key={engineId}>{systemStatusContent}</span>;
+                return (
+                    <span className="status-row" key={engineId}>
+                        {systemStatusContent}
+                    </span>
+                );
             })
             .map((usage, index) => (
                 <MenuItem

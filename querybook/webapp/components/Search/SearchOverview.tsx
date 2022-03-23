@@ -650,8 +650,10 @@ export const SearchOverview: React.FunctionComponent = () => {
                     {hasBegunSearch ? (
                         <>
                             <span className="search-result-count">
-                                <PrettyNumber val={numberOfResult} />{' '}
-                                {numberOfResult === 1 ? 'result' : 'results'}
+                                <PrettyNumber
+                                    val={numberOfResult}
+                                    unit="result"
+                                />
                             </span>
                             <span>{orderByDOM}</span>
                         </>

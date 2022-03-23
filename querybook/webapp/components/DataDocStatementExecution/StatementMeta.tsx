@@ -6,7 +6,7 @@ export const StatementMeta: React.FunctionComponent<{ metaInfo?: string }> = ({
     metaInfo,
 }) =>
     metaInfo && (
-        <div className="StatementMeta">
+        <div className="StatementMeta mt8">
             <Message className="StatementMeta-Message" size="small">
                 <Markdown>{metaInfo}</Markdown>
             </Message>

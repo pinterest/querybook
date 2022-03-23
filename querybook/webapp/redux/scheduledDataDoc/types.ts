@@ -46,7 +46,7 @@ export type ThunkDispatch = UntypedThunkDispatch<
 
 export interface IScheduledDataDocState {
     docs: IScheduledDoc[];
-    totalPages: number;
+    numberOfResults: number;
     page: number;
     pageSize: number;
     filters: IScheduledDocFilters;

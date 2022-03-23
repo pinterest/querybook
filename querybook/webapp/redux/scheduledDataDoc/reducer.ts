@@ -4,9 +4,9 @@ import { IScheduledDataDocState } from './types';
 
 const initialState: Readonly<IScheduledDataDocState> = {
     docs: [],
-    totalPages: 0,
     page: 0,
-    pageSize: 10,
+    pageSize: 20,
+    numberOfResults: 0,
     filters: {
         scheduled_only: true,
     },
@@ -19,7 +19,7 @@ function scheduledDocsReducer(state = initialState, action) {
                 const { docs, total, pageSize, page, filters } = action.payload;
 
                 draft.docs = docs;
-                draft.totalPages = Math.ceil(total / pageSize);
+                draft.numberOfResults = total;
                 draft.page = page;
                 draft.pageSize = pageSize;
                 draft.filters = filters;
