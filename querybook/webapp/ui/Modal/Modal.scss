@@ -30,8 +30,7 @@
         flex-direction: column;
         position: relative;
 
-        transform: translate(0, 5vh);
-        transition: all 0.2s ease-out;
+        animation: translateFadeModalUp 0.2s ease-in-out;
     }
 
     .StandardModal {
@@ -55,14 +54,7 @@
             overflow: hidden;
         }
 
-        &.is-active .Modal-box {
-            opacity: 1;
-            transform: none;
-        }
-
         .Modal-box {
-            opacity: 0;
-
             .Modal-content {
                 max-height: inherit;
                 height: auto;
@@ -90,5 +82,22 @@
             height: 100%;
             overflow-y: auto;
         }
+    }
+
+    // Custom Modal for Search
+    .SearchModal {
+        padding-top: 8vh;
+    }
+
+}
+
+@keyframes translateFadeModalUp {
+    0% {
+        opacity: 0.2;
+        transform: translate(0, 5vh);
+    }
+    100% {
+        opacity: 1;
+        transform: none;
     }
 }

@@ -1,9 +1,7 @@
 import clsx from 'clsx';
 import React from 'react';
 
-import { useMounted } from 'hooks/useMounted';
 import { IStandardModalProps } from './types';
-import { useDebounce } from 'hooks/useDebounce';
 import { useAppBlur } from 'hooks/ui/useAppBlur';
 import { AccentText } from 'ui/StyledText/StyledText';
 
@@ -16,13 +14,9 @@ export const StandardModal: React.FunctionComponent<IStandardModalProps> = ({
     bottomDOM = null,
 }) => {
     useAppBlur();
-    const mounted = useMounted();
-    const active = useDebounce(mounted, 100); // delay the mount by 100
-
     const modalClassName = clsx({
         StandardModal: true,
         fullscreen: true,
-        'is-active': active,
         [className]: Boolean(className),
     });
 
