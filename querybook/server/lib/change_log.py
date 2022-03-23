@@ -20,6 +20,11 @@ def load_all_change_logs():
         __change_logs = []
         change_log_files = sorted(os.listdir(CHANGE_LOG_PATH), reverse=True)
         for filename in change_log_files:
+            if filename.startswith("breaking_change"):
+                # Breaking change is not included for change logs UI
+                # These are used for developer references when upgrading
+                continue
+
             with open(os.path.join(CHANGE_LOG_PATH, "./{}".format(filename))) as f:
                 changelog_date = filename.split(".")[0]
                 __change_logs.append(
