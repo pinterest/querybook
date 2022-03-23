@@ -120,7 +120,7 @@ export const QueryEngineStatusButton: React.FC<IProps> = ({
                 if (!engineStatus || engineStatus.loading) {
                     systemStatusContent = (
                         <span>
-                            <Icon name="Loader2" size={16} className="mr8" />
+                            <Icon name="Loading" size={16} className="mr8" />
                             <Tag>{titleize(engine.name)}</Tag>
                         </span>
                     );

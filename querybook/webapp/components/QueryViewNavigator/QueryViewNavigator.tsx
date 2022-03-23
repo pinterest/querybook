@@ -108,7 +108,7 @@ class QueryViewNavigatorComponent extends React.PureComponent<IProps> {
 
         const loadingDOM = isLoadingQueries ? (
             <div className="flex-column m24">
-                <Icon name="Loader2" className="mb16" />
+                <Icon name="Loading" className="mb16" />
                 <AccentText color="light" weight="bold">
                     Loading Executions
                 </AccentText>

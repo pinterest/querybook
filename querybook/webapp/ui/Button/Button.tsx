@@ -52,7 +52,7 @@ export const Button = React.forwardRef<HTMLSpanElement, ButtonProps>(
         } = props;
 
         const iconDOM = isLoading ? (
-            <Icon name="Loader2" />
+            <Icon name="Loading" />
         ) : (
             icon && (typeof icon === 'string' ? <Icon name={icon} /> : icon)
         );

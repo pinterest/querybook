@@ -11,7 +11,7 @@ import './IconButton.scss';
 
 // A simple Bulma-based button
 export interface IIconButtonProps {
-    icon: AllLucideIconNames;
+    icon: AllLucideIconNames | 'Loading';
     className?: string;
     onClick?: (event?: React.MouseEvent<HTMLSpanElement, MouseEvent>) => any;
 

@@ -51,7 +51,7 @@ exports[`matches enzyme snapshots matches snapshot - isLoading 1`] = `
   size="medium"
 >
   <Memo()
-    name="Loader2"
+    name="Circle"
   />
   <AccentText>
     test

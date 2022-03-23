@@ -266,7 +266,7 @@ export const AdminMetastore: React.FunctionComponent<IProps> = ({
                     <div className="AdminForm-left">
                         <SimpleField
                             stacked
-                            name="Loader2"
+                            name="Loader"
                             type="react-select"
                             options={Object.values(metastoreLoaders).map(
                                 (l) => ({

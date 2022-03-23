@@ -85,7 +85,7 @@ export const UserAvatarComponent: React.FunctionComponent<IUserAvatarComponentPr
 
     const imageDOM = loading ? (
         <div className="spinner-wrapper">
-            <Icon name="Loader2" size={16} />
+            <Icon name="Loading" size={16} />
         </div>
     ) : profileImage == null ? (
         <DefaultUserIcon name={userName} />
