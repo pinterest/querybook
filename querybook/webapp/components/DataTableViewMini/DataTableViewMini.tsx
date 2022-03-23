@@ -41,7 +41,7 @@ export const DataTableViewMini: React.FunctionComponent<IProps> = ({
     const closeButton =
         showColumn || onHide ? (
             <IconButton
-                icon={showColumn ? 'arrow-left' : 'x'}
+                icon={showColumn ? 'ArrowLeft' : 'X'}
                 onClick={() => {
                     if (showColumn) {
                         setColumnId(null);
@@ -65,7 +65,7 @@ export const DataTableViewMini: React.FunctionComponent<IProps> = ({
                               })
                     }
                     title="View Table"
-                    className="table-details-button"
+                    className="table-details-button mr8"
                 />
             </Level>
             <div className="DataTableViewMini-content">{infoContentDOM}</div>

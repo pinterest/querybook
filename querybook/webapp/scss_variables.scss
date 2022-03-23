@@ -17,8 +17,8 @@
     position: relative;
 
     &::before {
-        background: var(--hover-bg-color);
-        border-radius: var(--border-radius);
+        background: var(--bg-hover);
+        border-radius: var(--border-radius-sm);
         content: ' ' !important;
         height: 100%;
         left: 0;
@@ -59,7 +59,7 @@
     text-overflow: ellipsis;
 }
 
-@mixin full-screen($z-index: 201, $background: var(--bg-color)) {
+@mixin full-screen($z-index: 201, $background: var(--bg)) {
     position: fixed;
     top: 0px;
     left: 0px;
@@ -73,7 +73,7 @@
     font-weight: bold;
     text-transform: uppercase;
     font-size: var(--small-text-size);
-    color: var(--text-color);
+    color: var(--text);
     line-height: 1.5;
 }
 
@@ -88,9 +88,9 @@
 }
 
 @mixin standard-textbox() {
-    background-color: var(--bg-color);
-    border: var(--border);
-    border-radius: var(--border-radius);
+    background-color: var(--bg-light);
+    border: none;
+    border-radius: var(--border-radius-sm);
     box-shadow: none;
     width: 100%;
     padding: 8px;
@@ -98,12 +98,11 @@
     color: inherit;
 
     &:hover {
-        border-color: var(--hover-border-color);
+        background-color: var(--bg-hover);
     }
 
     &:active,
     &:focus {
-        border-color: var(--focus-border-color);
         outline: none;
     }
 }

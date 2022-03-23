@@ -7,7 +7,7 @@
 }
 
 .CodeMirrorTooltip {
-    background-color: var(--bg-color);
+    background-color: var(--bg);
     border: var(--border);
     border-radius: var(--border-radius);
 
@@ -22,7 +22,7 @@
 
         .table-tooltip-header {
             font-size: var(--text-size);
-            color: var(--dark-text-color);
+            color: var(--text-dark);
             font-weight: var(--bold-font);
             justify-content: space-between;
             align-items: start;

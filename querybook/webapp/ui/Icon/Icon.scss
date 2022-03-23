@@ -1,19 +1,58 @@
 .Icon {
     display: inline-flex;
 
+    &.accent {
+        color: var(--color-accent-dark);
+    }
+    &.true {
+        color: var(--color-true-dark);
+    }
+    &.false {
+        color: var(--color-false-dark);
+    }
+    &.warning {
+        color: var(--color-warning-dark);
+    }
+    &.light {
+        color: var(--icon-light);
+    }
+
     &.fill {
         svg {
             fill: currentColor;
         }
     }
 
-    svg.feather-loader {
-        animation: loading 3s linear forwards infinite;
+    &.loading-icon {
+        svg.lucide-circle {
+            animation: loading-icon-rotate 2s linear infinite;
+            color: var(--icon-light);
+            circle {
+                stroke-linecap: round;
+                animation: loading-icon-dash 1.5s ease-in-out infinite;
+            }
+        }
     }
 }
 
-@keyframes loading {
+@keyframes loading-icon-rotate {
     100% {
         transform: rotate(360deg);
+    }
+}
+
+// animation based on https://codepen.io/supah/pen/BjYLdW
+@keyframes loading-icon-dash {
+    0% {
+        stroke-dasharray: 1, 150;
+        stroke-dashoffset: 0;
+    }
+    50% {
+        stroke-dasharray: 90, 150;
+        stroke-dashoffset: -30;
+    }
+    100% {
+        stroke-dasharray: 90, 150;
+        stroke-dashoffset: -60;
     }
 }

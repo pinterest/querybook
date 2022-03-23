@@ -2,7 +2,6 @@ import clsx from 'clsx';
 import React, { useState, useCallback, useMemo, useRef } from 'react';
 
 import { IColumnTransformer } from 'lib/query-result/types';
-import { Level } from 'ui/Level/Level';
 import { IconButton } from 'ui/Button/IconButton';
 import {
     ColumnInfoTabType,
@@ -11,6 +10,8 @@ import {
 import { IFilterCondition, conditionsNotEmpty } from './useFilterCell';
 import { withBoundProps } from 'lib/utils/react-bind';
 import { Popover } from 'ui/Popover/Popover';
+import { stopPropagationAndDefault } from 'lib/utils/noop';
+import { CopyContextMenuWrapper } from 'ui/ContextMenu/CopyContextMenu';
 
 interface IStatementResultTableColumnProps
     extends IColumnInfoDropdownButtonProps {
@@ -45,7 +46,11 @@ export const StatementResultTableColumn: React.FC<IStatementResultTableColumnPro
     );
 
     return (
-        <Level className="result-table-header">
+        <CopyContextMenuWrapper
+            className="result-table-header horizontal-space-between"
+            text={column}
+            copyName="Copy column name"
+        >
             <span
                 className={`statement-result-table-title one-line-ellipsis ${
                     isExpanded ? 'expanded' : ''
@@ -56,12 +61,13 @@ export const StatementResultTableColumn: React.FC<IStatementResultTableColumnPro
             <div className="flex-row">
                 <IconButton
                     className={clsx({
+                        mr4: true,
                         'column-button': true,
                         'expand-column-button': true,
                         'hidden-button': !isExpanded,
                     })}
                     noPadding
-                    icon={isExpanded ? 'minimize-2' : 'maximize-2'}
+                    icon={isExpanded ? 'Minimize2' : 'Maximize2'}
                     size={14}
                     onClick={handleExpandColumnClick}
                 />
@@ -77,7 +83,7 @@ export const StatementResultTableColumn: React.FC<IStatementResultTableColumnPro
                     setFilterCondition={setFilterCondition}
                 />
             </div>
-        </Level>
+        </CopyContextMenuWrapper>
     );
 };
 
@@ -135,10 +141,10 @@ const ColumnInfoDropdownButton: React.FC<IColumnInfoDropdownButtonProps> = ({
     const getStatusIconsDOM = () => {
         const iconDOMs = [];
         if (columnTransformer) {
-            iconDOMs.push(<ActiveStatusIcon icon="zap" key="zap" />);
+            iconDOMs.push(<ActiveStatusIcon icon="Zap" key="zap" />);
         }
         if (filterConditionExists) {
-            iconDOMs.push(<ActiveStatusIcon icon="filter" key="filter" />);
+            iconDOMs.push(<ActiveStatusIcon icon="Filter" key="filter" />);
         }
         return iconDOMs;
     };
@@ -159,7 +165,7 @@ const ColumnInfoDropdownButton: React.FC<IColumnInfoDropdownButtonProps> = ({
                     'hidden-button': !showPopover,
                 })}
                 noPadding
-                icon={'menu'}
+                icon="Menu"
                 active={showPopover}
                 size={14}
             />
@@ -174,12 +180,7 @@ const ColumnInfoDropdownButton: React.FC<IColumnInfoDropdownButtonProps> = ({
             resizeOnChange
             hideArrow
         >
-            <div
-                onClick={(e) => {
-                    e.preventDefault();
-                    e.stopPropagation();
-                }}
-            >
+            <div onClick={stopPropagationAndDefault}>
                 <StatementResultColumnInfo
                     filteredRows={filteredRows}
                     colName={column}

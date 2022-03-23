@@ -8,10 +8,17 @@
         .sidebar-content-main {
             display: flex;
             flex: 1;
+            background-color: var(--bg-lightest);
 
             .sidebar-content-main-navigator {
                 flex: 1;
                 overflow: hidden;
+                background-color: var(--bg-lightest);
+
+                > div {
+                    padding-top: var(--padding-sm);
+                    padding-bottom: var(-padding-sm);
+                }
 
                 .QueryViewNavigator,
                 .QuerySnippetNavigator {
@@ -46,14 +53,6 @@
     }
 
     &:not(.collapsed) {
-        .EntitySidebar {
-            border-right: var(--border);
-        }
-
-        .sidebar-environment-picker {
-            border-bottom: var(--border);
-        }
-
         .sidebar-content-main {
             overflow: hidden;
         }
@@ -62,13 +61,85 @@
     &.collapsed {
         .sidebar-environment-picker {
             text-align: center;
-            border-bottom: solid 1px transparent;
-            .EnvironmentDropdownButton .Dropdown-trigger {
-                display: flex;
-                justify-content: center;
+            height: 50px;
+            .collapsed-env {
+                padding: var(--padding-sm);
             }
         }
 
-        border-right: var(--border);
+        .EnvironmentAppSidebar-content {
+            background-color: var(--bg-lightest);
+            .EntitySidebar {
+                background-color: var(--bg-lightest);
+            }
+        }
+    }
+
+    .env-icon {
+        font-size: var(--xxxsmall-text-size);
+        font-family: var(--font-monospace);
+        background-color: var(--bg-light);
+        color: var(--text);
+        border-radius: var(--border-radius-sm);
+        transition: background-color 0.3s ease-out;
+        user-select: none;
+
+        display: inline-flex;
+        justify-content: center;
+        align-items: center;
+
+        width: 36px;
+        height: 36px;
+        padding: 2px;
+
+        &.selected {
+            font-weight: var(--bold-font);
+            color: var(--color-accent-dark);
+            background-color: var(--color-accent-lightest-0);
+        }
+
+        &.disabled {
+            opacity: 0.45;
+            cursor: not-allowed;
+        }
+
+        .env-icon-text {
+            word-break: break-all;
+            text-align: center;
+        }
+    }
+}
+
+.SidebarNavigator {
+    display: flex;
+    flex-direction: column;
+
+    .list-header {
+        background: var(--bg-light);
+        margin-bottom: var(--margin-sm);
+        border-radius: var(--border-radius-sm);
+        overflow: hidden;
+        margin-left: var(--margin-sm);
+        margin-right: 16px; // match scrollbar width
+    }
+
+    .list-content {
+        flex: 1;
+        overflow-y: scroll;
+        padding-left: var(--padding);
+        padding-right: 0px;
+
+        display: flex;
+        flex-direction: column;
+    }
+
+    .empty-section-message {
+        text-align: center;
+        font-size: var(--large-text-size);
+        font-weight: var(--extra-bold-font);
+        font-family: var(--font-accent);
+        padding: var(--padding-lg);
+        color: var(--text-lightest-0);
+        user-select: none;
     }
 }

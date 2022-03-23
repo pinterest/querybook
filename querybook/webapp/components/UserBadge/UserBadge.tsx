@@ -1,16 +1,19 @@
 import React, { useMemo } from 'react';
 
 import { useUser } from 'hooks/redux/useUser';
-import { Title } from 'ui/Title/Title';
+import { ICommonUserLoaderProps } from './types';
 
 import { UserNameComponent } from './UserName';
 import { UserAvatarComponent } from './UserAvatar';
-import { ICommonUserLoaderProps } from './types';
+
 import './UserBadge.scss';
+import clsx from 'clsx';
+import { AccentText } from 'ui/StyledText/StyledText';
 
 type IProps = {
     isOnline?: boolean;
     mini?: boolean;
+    cardStyle?: boolean;
 } & ICommonUserLoaderProps;
 
 export const UserBadge: React.FunctionComponent<IProps> = ({
@@ -18,6 +21,7 @@ export const UserBadge: React.FunctionComponent<IProps> = ({
     name,
     isOnline,
     mini,
+    cardStyle,
 }) => {
     const { loading, userInfo } = useUser({ uid, name });
 
@@ -36,32 +40,49 @@ export const UserBadge: React.FunctionComponent<IProps> = ({
                 : name
                 ? `Unknown (${name})`
                 : 'Unknown',
-        [userInfo?.username, name]
+        [userInfo, name]
     );
 
     if (mini) {
         return (
-            <span className="UserBadge mini">
+            <span
+                className={clsx({
+                    UserBadge: true,
+                    mini: true,
+                    'card-style': cardStyle,
+                })}
+            >
                 <figure>{avatarDOM}</figure>
-                <span className="user-name">
+                <AccentText className="username" weight="bold">
                     {userInfo?.fullname ?? userName}
-                </span>
+                </AccentText>
             </span>
         );
     }
 
     return (
-        <div className="UserBadge flex-row">
+        <div
+            className={clsx({
+                UserBadge: true,
+                'flex-row': true,
+                'card-style': cardStyle,
+            })}
+        >
             <div className="UserBadge-icon">
                 <figure>{avatarDOM}</figure>
             </div>
-            <div className="UserBadge-names">
-                <Title size={4} className="user-name one-line-ellipsis">
+            <div className="UserBadge-names flex-column">
+                <AccentText
+                    className="username one-line-ellipsis mb4"
+                    size="med"
+                    weight="extra"
+                    color="dark"
+                >
                     <UserNameComponent userInfo={userInfo} loading={loading} />
-                </Title>
-                <Title subtitle size={7}>
+                </AccentText>
+                <AccentText className="handle" size="small" color="light">
                     @{userName}
-                </Title>
+                </AccentText>
             </div>
         </div>
     );

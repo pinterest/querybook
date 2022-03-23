@@ -9,7 +9,7 @@
         flex-direction: column;
 
         .query-metadata {
-            padding: 0px 10px;
+            padding: 0px 8px;
         }
 
         .query-content {
@@ -47,38 +47,60 @@
         }
     }
 
+    .collapsed-query {
+        color: var(--text-lightest);
+        font-size: var(--med-text-size);
+        font-weight: var(--bold-font);
+
+        padding-top: 6px;
+    }
+
     .query-title {
         flex: 1;
-
-        .Title,
-        p {
-            font-weight: bold;
-            font-size: var(--large-text-size);
-            color: var(--dark-text-color);
-            padding: 8px;
-        }
     }
 
     .query-metadata {
         display: flex;
 
-        .query-engine-name {
-            font-size: var(--text-size);
-        }
+        .query-controls {
+            align-self: flex-end;
+            height: 48px;
+            .query-engine-name {
+                font-size: var(--text-size);
+            }
 
-        .additional-dropdown-button {
-            @include pushable();
-            @include fancy-hover();
+            .QueryRunButton .Button,
+            .engine-selector-dropdown .Dropdown-trigger,
+            .query-cell-additional-dropdown .Dropdown-trigger {
+                height: 36px;
+            }
+            .Menu .MenuItem .Dropdown-trigger {
+                height: auto;
+            }
 
-            cursor: pointer;
-            margin-left: 5px;
+            .query-cell-additional-dropdown {
+                .Dropdown-trigger {
+                    .additional-dropdown-button {
+                        cursor: pointer;
 
-            height: 100%;
-            font-size: 20px;
-            line-height: 38px;
+                        height: 100%;
+                        width: 36px;
+                        font-size: 20px;
+                        line-height: 38px;
 
-            svg {
-                z-index: 4;
+                        border-radius: var(--border-radius-sm);
+
+                        svg {
+                            z-index: 4;
+                        }
+                        &:hover {
+                            background-color: var(--bg-hover);
+                        }
+                        &:focus {
+                            background-color: var(--bg-lightest);
+                        }
+                    }
+                }
             }
         }
     }
@@ -86,11 +108,7 @@
     .editor {
         position: relative;
         box-sizing: border-box;
-        margin: 5px 0px;
-
-        .QueryEditor .CodeMirror {
-            border-radius: var(--border-radius);
-        }
+        margin: 8px 0px;
 
         .fullscreen-button-wrapper {
             position: absolute;
@@ -102,10 +120,11 @@
                 background-color: transparent;
             }
         }
-    }
 
-    .add-snippet-wrapper {
-        text-align: center;
-        margin-top: 5px;
+        .add-snippet-wrapper {
+            position: absolute;
+            top: 10px;
+            right: 42px;
+        }
     }
 }

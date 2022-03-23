@@ -6,16 +6,19 @@ import { useEvent } from 'hooks/useEvent';
 import { IModalProps } from './types';
 import { FullScreenModal } from './FullScreenModal';
 import { StandardModal } from './StandardModal';
-import './Modal.scss';
+
 import { Overlay } from 'ui/Overlay/Overlay';
+
+import './Modal.scss';
 
 export const Modal: React.FunctionComponent<IModalProps> = ({
     type = 'standard',
-    hideClose = false,
     className = '',
     children,
     onHide,
     title,
+    topDOM,
+    bottomDOM,
 }) => {
     const onEscapeKeyDown = React.useCallback(
         (evt) => {
@@ -29,12 +32,16 @@ export const Modal: React.FunctionComponent<IModalProps> = ({
 
     let modalDOM: React.ReactNode;
     if (type === 'custom') {
-        modalDOM = children;
+        modalDOM = (
+            <div className={'CustomModal ' + className}>
+                <div className="Modal-background fullscreen" onClick={onHide} />
+                {children}
+            </div>
+        );
     } else if (type === 'fullscreen') {
         modalDOM = (
             <FullScreenModal
                 onHide={onHide}
-                hideClose={hideClose}
                 className={className}
                 title={title}
             >
@@ -46,9 +53,10 @@ export const Modal: React.FunctionComponent<IModalProps> = ({
         modalDOM = (
             <StandardModal
                 onHide={onHide}
-                hideClose={hideClose}
                 className={className}
                 title={title}
+                topDOM={topDOM}
+                bottomDOM={bottomDOM}
             >
                 {children}
             </StandardModal>

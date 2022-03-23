@@ -1,15 +1,15 @@
 .Announcement {
-    border-radius: 0;
-    margin-bottom: 0px;
-    background-color: var(--invert-bg-color);
-    padding: 8px 8px 8px 16px;
+    border-radius: var(--border-radius-sm);
+    background-color: var(--bg-light);
     font-weight: var(--bold-font);
+    color: var(--text);
+    margin: 8px;
+    padding: 4px 8px;
 
-    color: var(--invert-text-color);
     strong {
-        color: var(--invert-text-color);
+        color: var(--color-accent-dark);
     }
     + .Announcement {
-        border-top: var(--border);
+        margin-top: 0px;
     }
 }

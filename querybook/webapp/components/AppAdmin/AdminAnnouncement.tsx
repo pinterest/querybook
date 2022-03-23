@@ -31,10 +31,11 @@ const announcementSchema = Yup.object().shape({
 const StyledDateWrapper = styled.div`
     flex-grow: 1;
     text-align: left;
-    margin: 4px;
-    padding: 4px;
     display: flex;
     max-width: calc(100% - 180px);
+    .FormField {
+        margin-right: 16px;
+    }
 `;
 
 export const AdminAnnouncement: React.FunctionComponent = () => {
@@ -116,11 +117,13 @@ export const AdminAnnouncement: React.FunctionComponent = () => {
                     />
                     <StyledDateWrapper>
                         <SimpleField
+                            stacked
                             type="datepicker"
                             label="Active From"
                             name="active_from"
                         />
                         <SimpleField
+                            stacked
                             type="datepicker"
                             label="Till"
                             name="active_till"
@@ -129,6 +132,7 @@ export const AdminAnnouncement: React.FunctionComponent = () => {
                 </div>
                 <div className="AdminForm-right">
                     <SimpleField
+                        stacked
                         name="can_dismiss"
                         type="toggle"
                         help="Enabling will allow users to dismiss the announcement"
@@ -180,7 +184,7 @@ export const AdminAnnouncement: React.FunctionComponent = () => {
                     }}
                 >
                     <div className="AdminAnnouncement-new-msg flex-row">
-                        <Icon name="plus" />
+                        <Icon name="Plus" />
                         <span>create a new announcement</span>
                     </div>
                 </Card>

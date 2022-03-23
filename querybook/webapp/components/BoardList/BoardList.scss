@@ -1,12 +1,10 @@
 .BoardList {
     display: flex;
     flex-direction: column;
-    .list-header {
+    .BoardList-header {
         .SearchBar {
             flex: 1;
         }
-        border-bottom: var(--border);
-        padding-right: 4px;
     }
 
     .board-scroll-wrapper {

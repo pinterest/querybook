@@ -4,10 +4,12 @@ import { useEvent } from 'hooks/useEvent';
 import { matchKeyMap, KeyMap } from 'lib/utils/keyboard';
 import { Button } from 'ui/Button/Button';
 import { Modal } from 'ui/Modal/Modal';
+import { ButtonColorType } from 'ui/Button/ButtonTheme';
+import type { AllLucideIconNames } from 'ui/Icon/LucideIcons';
 import './ConfirmationMessage.scss';
 
 export interface IConfirmationMessageProps {
-    header?: React.ReactChild;
+    header?: string;
     message?: React.ReactChild;
 
     // event when user clicks confirm
@@ -19,6 +21,15 @@ export interface IConfirmationMessageProps {
 
     // The hide dismiss makes confirmation modal a notification modal
     hideDismiss?: boolean;
+
+    confirmColor?: ButtonColorType;
+    cancelColor?: ButtonColorType;
+
+    confirmIcon?: AllLucideIconNames;
+    cancelIcon?: AllLucideIconNames;
+
+    confirmText?: string;
+    cancelText?: string;
 }
 
 export const ConfirmationMessage: React.FunctionComponent<IConfirmationMessageProps> = ({
@@ -28,6 +39,12 @@ export const ConfirmationMessage: React.FunctionComponent<IConfirmationMessagePr
     onDismiss,
     onHide,
     hideDismiss,
+    confirmColor = 'confirm',
+    cancelColor = 'cancel',
+    confirmIcon = 'Check',
+    cancelIcon = 'X',
+    confirmText = 'Confirm',
+    cancelText = 'Cancel',
 }) => {
     const selfRef = useRef<HTMLDivElement>(null);
     useEffect(() => {
@@ -62,18 +79,18 @@ export const ConfirmationMessage: React.FunctionComponent<IConfirmationMessagePr
 
     const actionButtons = [
         <Button
-            onClick={onCloseButtonClick(false)}
-            icon="x"
-            title="Cancel"
             key="cancel"
-            color="cancel"
+            onClick={onCloseButtonClick(false)}
+            icon={cancelIcon}
+            title={cancelText}
+            color={cancelColor}
         />,
         <Button
-            color="confirm"
-            onClick={onCloseButtonClick(true)}
-            icon="check"
-            title="Confirm"
             key="confirm"
+            onClick={onCloseButtonClick(true)}
+            icon={confirmIcon}
+            title={confirmText}
+            color={confirmColor}
         />,
     ];
 
@@ -81,23 +98,12 @@ export const ConfirmationMessage: React.FunctionComponent<IConfirmationMessagePr
         actionButtons.shift();
     }
 
-    const actionsDOM = actionButtons.map((buttonDOM, index) => (
-        <div key={index}>{buttonDOM}</div>
-    ));
-
     return (
-        <Modal
-            onHide={onHide}
-            hideClose={true}
-            className="message-size with-padding"
-        >
+        <Modal onHide={onHide} className="message-size" title={header}>
             <div className="ConfirmationMessage" ref={selfRef} tabIndex={0}>
-                <div className="confirmation-top">
-                    <div className="confirmation-header">{header}</div>
-                    <div className="confirmation-message">{message}</div>
-                </div>
-                <div className="confirmation-buttons flex-right">
-                    {actionsDOM}
+                <div className="confirmation-message">{message}</div>
+                <div className="confirmation-buttons flex-right mt36">
+                    {actionButtons}
                 </div>
             </div>
         </Modal>

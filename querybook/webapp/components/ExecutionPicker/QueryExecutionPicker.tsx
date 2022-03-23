@@ -14,18 +14,26 @@ import { UserName } from 'components/UserBadge/UserName';
 import { Dropdown } from 'ui/Dropdown/Dropdown';
 import { StatusIcon } from 'ui/StatusIcon/StatusIcon';
 import { ToggleSwitch } from 'ui/ToggleSwitch/ToggleSwitch';
+import { Menu, MenuItem } from 'ui/Menu/Menu';
 
 import './QueryExecutionPicker.scss';
-import { Menu, MenuItem } from 'ui/Menu/Menu';
+import { Icon } from 'ui/Icon/Icon';
 
 interface IProps {
     queryExecutionId: number;
     onSelection: (id: number) => any;
     queryExecutions?: IQueryExecution[];
     autoSelect?: boolean;
+    shortVersion?: boolean;
 }
 export const QueryExecutionPicker: React.FunctionComponent<IProps> = React.memo(
-    ({ queryExecutionId, onSelection, queryExecutions, autoSelect }) => {
+    ({
+        queryExecutionId,
+        onSelection,
+        queryExecutions,
+        autoSelect,
+        shortVersion,
+    }) => {
         const [hideFailed, setHideFailed] = React.useState(false);
         const filteredQueryExecutions =
             React.useMemo(() => {
@@ -68,17 +76,15 @@ export const QueryExecutionPicker: React.FunctionComponent<IProps> = React.memo(
                 />
             ) : null;
 
-            const textDOM = execution ? (
-                <span>Execution {execution.id}</span>
-            ) : (
-                <span>Execution not found</span>
-            );
+            const text = execution
+                ? `Execution ${execution.id}`
+                : 'Execution not found';
 
             return (
-                <div className="execution-selector-button">
-                    {textDOM}
-                    <span className="mh4">{statusIcon}</span>
-                    <i className="fa fa-caret-down caret-icon" />
+                <div className="execution-selector-button flex-row">
+                    <span className="mr8">{text}</span>
+                    {statusIcon}
+                    <Icon name="ChevronDown" size={16} />
                 </div>
             );
         }, [queryExecutionId, queryExecutions]);
@@ -99,7 +105,9 @@ export const QueryExecutionPicker: React.FunctionComponent<IProps> = React.memo(
                     const dateString =
                         generateFormattedDate(createdAt, 'X') +
                         ', ' +
-                        moment.utc(createdAt, 'X').fromNow();
+                        (shortVersion
+                            ? ''
+                            : moment.utc(createdAt, 'X').fromNow(true));
 
                     return (
                         <MenuItem
@@ -111,8 +119,9 @@ export const QueryExecutionPicker: React.FunctionComponent<IProps> = React.memo(
                             })}
                             onClick={() => onSelection(execution.id)}
                         >
-                            Execution {execution.id}: {dateString} by
-                            <span className="mh4">
+                            {shortVersion ? '#' : 'Execution '}
+                            {execution.id}: {dateString} ago by
+                            <span className="ml4 mr12">
                                 <UserName uid={execution.uid} />
                             </span>
                             {statusIcon}
@@ -123,7 +132,7 @@ export const QueryExecutionPicker: React.FunctionComponent<IProps> = React.memo(
             return (
                 <Menu>
                     <div className="query-execution-item-header flex-row">
-                        <span className="mr8">Hide Failed</span>
+                        <span className="mr12">Hide Failed</span>
                         <ToggleSwitch
                             checked={hideFailed}
                             onChange={setHideFailed}

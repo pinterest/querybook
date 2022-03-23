@@ -169,12 +169,15 @@ export function mapMetaToChartOptions(
                 display: !!meta.title.length,
                 text: meta.title,
                 font: {
+                    family: 'Poppins',
+                    weight: 'bold',
                     size: 16,
                 },
             },
             tooltip: {
                 position: 'nearest',
                 backgroundColor: backgroundColor[theme],
+
                 bodyColor: rgb(fontColor[theme]),
                 titleColor: rgb(fontColor[theme]),
                 bodySpacing: 8,

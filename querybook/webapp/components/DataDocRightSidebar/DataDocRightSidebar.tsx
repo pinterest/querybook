@@ -5,8 +5,8 @@ import { IDataDoc } from 'const/datadoc';
 import { IconButton } from 'ui/Button/IconButton';
 
 import { DeleteDataDocButton } from './DeleteDataDocButton';
-import { TemplateDataDocButton } from 'components/TemplateDataDocButton/TemplateDataDocButton';
-import { ScheduleDataDocButton } from './ScheduleDataDocButton';
+import { DataDocTemplateButton } from 'components/DataDocTemplateButton/DataDocTemplateButton';
+import { DataDocScheduleButton } from './DataDocScheduleButton';
 import { getScrollParent, smoothScroll } from 'lib/utils';
 
 import './DataDocRightSidebar.scss';
@@ -20,6 +20,9 @@ interface IProps {
 
     changeDataDocMeta: (docId: number, meta: Record<string, any>) => any;
     onClone: () => any;
+
+    onCollapse: () => any;
+    defaultCollapse: boolean;
 }
 
 export const DataDocRightSidebar: React.FunctionComponent<IProps> = ({
@@ -31,6 +34,9 @@ export const DataDocRightSidebar: React.FunctionComponent<IProps> = ({
     isConnected,
 
     dataDoc,
+
+    onCollapse,
+    defaultCollapse,
 }) => {
     const numAnnouncements = useAnnouncements().length;
 
@@ -62,7 +68,7 @@ export const DataDocRightSidebar: React.FunctionComponent<IProps> = ({
         <DeleteDataDocButton docId={dataDoc.id} />
     ) : (
         <IconButton
-            icon="trash"
+            icon="Trash"
             disabled={true}
             tooltipPos="left"
             tooltip="Only editor can delete"
@@ -70,21 +76,21 @@ export const DataDocRightSidebar: React.FunctionComponent<IProps> = ({
         />
     );
     const templateButtonDOM = (
-        <TemplateDataDocButton
+        <DataDocTemplateButton
             dataDoc={dataDoc}
             isEditable={isEditable}
             changeDataDocMeta={changeDataDocMeta}
         />
     );
     const scheduleButtonDOM = (
-        <ScheduleDataDocButton isEditable={isEditable} docId={dataDoc.id} />
+        <DataDocScheduleButton isEditable={isEditable} docId={dataDoc.id} />
     );
 
     const buttonSection = (
-        <div className="DataDocRightSidebar-button-section">
+        <div className="DataDocRightSidebar-button-section vertical-space-between">
             <div className="DataDocRightSidebar-button-section-top flex-column">
                 <IconButton
-                    icon="arrow-up"
+                    icon="ArrowUp"
                     className={showScrollToTop ? '' : 'hide-button'}
                     onClick={() => {
                         const scrollParent = getScrollParent(selfRef.current);
@@ -94,24 +100,35 @@ export const DataDocRightSidebar: React.FunctionComponent<IProps> = ({
                     }}
                 />
                 <IconButton
-                    icon="loader"
+                    icon={defaultCollapse ? 'Maximize2' : 'Minimize2'}
+                    tooltip={
+                        defaultCollapse
+                            ? 'Uncollapse query cells'
+                            : 'Collapse query cells'
+                    }
+                    tooltipPos="left"
+                    onClick={onCollapse}
+                />
+                <IconButton
+                    icon="Loading"
                     className={isSaving ? '' : 'hide-button'}
                     title="Saving"
                 />
                 <IconButton
-                    icon="link"
+                    icon="Link"
                     tooltip="Connecting to websocket"
                     tooltipPos="left"
                     className={
                         'connected-button ' + (isConnected ? 'hide-button' : '')
                     }
+                    color="accent"
                 />
             </div>
-            <div className="DataDocRightSidebar-button-section-bottom flex-column">
+            <div className="DataDocRightSidebar-button-section-bottom flex-column mb8">
                 {templateButtonDOM}
                 {scheduleButtonDOM}
                 <IconButton
-                    icon="copy"
+                    icon="Copy"
                     onClick={onClone}
                     tooltip={'Clone'}
                     tooltipPos={'left'}

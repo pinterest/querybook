@@ -14,10 +14,11 @@ import {
     createTableWarnings,
     updateTableWarnings,
 } from 'redux/dataSources/action';
-import { Icon } from 'ui/Icon/Icon';
 import { FormWrapper } from 'ui/Form/FormWrapper';
+import { TextButton } from 'ui/Button/Button';
 
 import './DataTableViewWarnings.scss';
+import { AccentText } from 'ui/StyledText/StyledText';
 
 interface IProps {
     tableId: number;
@@ -71,7 +72,7 @@ export const DataTableViewWarnings: React.FC<IProps> = ({
 
                 <div className="right-align flex1">
                     {item.updated_by != null ? (
-                        <div>
+                        <div className="edit-text mt8 mr8">
                             Edited by <UserName uid={item.updated_by} /> on{' '}
                             {generateFormattedDate(item.updated_at)}
                         </div>
@@ -121,14 +122,12 @@ export const DataTableViewWarnings: React.FC<IProps> = ({
                     title=""
                     width="100%"
                     flexRow
+                    alignLeft
                     onClick={() => {
                         setDisplayNewForm(true);
                     }}
                 >
-                    <div className=" flex-row">
-                        <Icon name="plus" className="mr8" />
-                        <span>create a new warning</span>
-                    </div>
+                    <TextButton icon="Plus" title="New Warning" />
                 </Card>
             );
         }
@@ -136,13 +135,17 @@ export const DataTableViewWarnings: React.FC<IProps> = ({
 
     return (
         <div className="DataTableViewWarnings">
-            <div className="mb16">
-                Warning message added here will show up in the query editor when
-                the table is used by the user.
-            </div>
-            <div className="DataTableViewWarnings-new">{getNewFormDOM()}</div>
-            <div className="DataTableViewWarnings-list flex-column">
-                {getCardsDOM()}
+            <AccentText className="mb12" size="text" color="light" noUserSelect>
+                Warning message will show up in the query editor when the table
+                is used
+            </AccentText>
+            {tableWarnings.length ? (
+                <div className="DataTableViewWarnings-list flex-column mt16">
+                    {getCardsDOM()}
+                </div>
+            ) : null}
+            <div className="DataTableViewWarnings-new mt16">
+                {getNewFormDOM()}
             </div>
         </div>
     );

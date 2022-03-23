@@ -16,14 +16,13 @@ import { QueryViewFilter } from './QueryViewFilter';
 import { QueryResult } from './QueryResult';
 
 import './QueryViewNavigator.scss';
+import { Icon } from 'ui/Icon/Icon';
+import { AccentText } from 'ui/StyledText/StyledText';
 
-interface IOwnProps {
-    onQueryExecutionClick: (queryExecution: IQueryExecution) => any;
-}
 type StateProps = ReturnType<typeof mapStateToProps>;
 type DispatchProps = ReturnType<typeof mapDispatchToProps>;
 
-export type IProps = IOwnProps & StateProps & DispatchProps;
+export type IProps = StateProps & DispatchProps;
 
 class QueryViewNavigatorComponent extends React.PureComponent<IProps> {
     private navigatorScrollRef = React.createRef<HTMLDivElement>();
@@ -79,8 +78,6 @@ class QueryViewNavigatorComponent extends React.PureComponent<IProps> {
 
     public render() {
         const {
-            onQueryExecutionClick,
-
             queryResults,
             isLoadingQueries,
             queryViewFilters,
@@ -106,28 +103,29 @@ class QueryViewNavigatorComponent extends React.PureComponent<IProps> {
                 key={queryResult.id}
                 queryExecution={queryResult}
                 queryEngineById={queryEngineById}
-                onClick={onQueryExecutionClick}
             />
         ));
 
         const loadingDOM = isLoadingQueries ? (
-            <div className="loading-queries-message flex-center">
-                <i className="fa fa-spinner fa-pulse mr8" />
-                Loading Queries
+            <div className="flex-column m24">
+                <Icon name="Loading" className="mb16" />
+                <AccentText color="light" weight="bold">
+                    Loading Executions
+                </AccentText>
             </div>
         ) : null;
 
         const noResultDOM =
             queryResults.length === 0 && !loadingDOM ? (
-                <div className="no-result-message">No Execution</div>
+                <div className="empty-section-message">No Executions</div>
             ) : null;
 
         return (
-            <div className="QueryViewNavigator">
-                {queryViewFilterDOM}
+            <div className="QueryViewNavigator SidebarNavigator">
+                <div className="list-header">{queryViewFilterDOM}</div>
                 <div
                     ref={this.navigatorScrollRef}
-                    className="scroll-wrapper"
+                    className="list-content scroll-wrapper"
                     onScroll={this.onNavigatorScroll}
                 >
                     {queryResultsListDOM}

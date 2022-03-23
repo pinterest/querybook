@@ -5,60 +5,58 @@ import {
     IRecurrence,
 } from 'lib/utils/cron';
 
-function formatMultipleItems(data, executor, initialParam) {
-    return data.slice(1).reduce((acc, item, idx, arr) => {
-        if (idx === arr.length - 1) {
-            return `${acc} and ${executor(item)}`;
-        } else {
-            return `${acc}, ${executor(item)}`;
-        }
-    }, initialParam);
+/**
+ * Turns a list of items into a sentence, for example
+ * ['apple', 'banana'] -> apple and banana
+ * ['apple', 'banana', 'milk'] -> apple, banana and milk
+ *
+ * @param items string[] list of items
+ */
+function formatItemsSentence(items: string[]) {
+    if (items.length < 3) {
+        return items.join(' and ');
+    } else {
+        const allExceptLast = items.slice(0, -1).join(', ');
+        return allExceptLast + ` and ${items[items.length - 1]}`;
+    }
 }
 
 const hourly = ({ minute }: IRecurrence) =>
-    `At ${minute} minutes past the hour, every hour, every day`;
+    `at ${minute} minutes past the hour, every hour, daily`;
 
 const daily = (cronRecurrence: IRecurrence) => {
     const localTime = getRecurrenceLocalTimeString(cronRecurrence, 'hh:mm a');
-    return `At ${localTime}, every day daily`;
+    return `at ${localTime}, daily`;
 };
 
 const weekly = (cronRecurrence: IRecurrence) => {
     const localTime = getRecurrenceLocalTimeString(cronRecurrence, 'hh:mm a');
-    const daysOfWeek = formatMultipleItems(
-        cronRecurrence.on.dayWeek,
-        (i) => WEEKDAYS[i],
-        WEEKDAYS[1]
+    const daysOfWeek = formatItemsSentence(
+        cronRecurrence.on.dayWeek.map((day) => WEEKDAYS[day])
     );
 
-    return `At ${localTime}, only on ${daysOfWeek}, weekly`;
+    return `at ${localTime}, only on ${daysOfWeek}, weekly`;
 };
 
 const monthly = (cronRecurrence: IRecurrence) => {
     const localTime = getRecurrenceLocalTimeString(cronRecurrence, 'hh:mm a');
-    const daysOfMonth = formatMultipleItems(
-        cronRecurrence.on.dayMonth,
-        (i) => i,
-        cronRecurrence.on.dayMonth[0].toString()
+    const daysOfMonth = formatItemsSentence(
+        cronRecurrence.on.dayMonth.map(String)
     );
 
-    return `At ${localTime}, on day ${daysOfMonth} of the month`;
+    return `at ${localTime}, on day ${daysOfMonth} of the month`;
 };
 
 const yearly = (cronRecurrence: IRecurrence) => {
     const localTime = getRecurrenceLocalTimeString(cronRecurrence, 'hh:mm a');
-    const daysOfMonth = formatMultipleItems(
-        cronRecurrence.on.dayMonth,
-        (i) => i,
-        cronRecurrence.on.dayMonth[0].toString()
+    const daysOfMonth = formatItemsSentence(
+        cronRecurrence.on.dayMonth.map(String)
     );
 
-    const months = formatMultipleItems(
-        cronRecurrence.on.month,
-        (i) => MONTHS[i],
-        MONTHS[cronRecurrence.on.month[0]]
+    const months = formatItemsSentence(
+        cronRecurrence.on.month.map((m) => MONTHS[m - 1])
     );
-    return `At ${localTime}, on day ${daysOfMonth} of the month, only in ${months}`;
+    return `at ${localTime}, on day ${daysOfMonth} of the month, only in ${months}`;
 };
 
 export const cronFormatter = (recurrence: IRecurrence) => {

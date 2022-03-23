@@ -13,6 +13,7 @@ import { Content } from 'ui/Content/Content';
 import { Icon } from 'ui/Icon/Icon';
 
 import './ChangeLog.scss';
+import { AccentText } from 'ui/StyledText/StyledText';
 
 const ChangeLogMarkdown: React.FC<{ markdown: string }> = ({ markdown }) => {
     const processedMarkdown = React.useMemo(() => {
@@ -70,16 +71,23 @@ export const ChangeLog: React.FunctionComponent = () => {
     ));
     const changeLogListDOM = changeLogDate ? null : (
         <div className="ChangeLog-list">
-            <div className="ChangeLog-list-title mt12">Change Logs</div>
+            <AccentText
+                className="mt12"
+                weight="bold"
+                size="large"
+                color="dark"
+            >
+                Change Logs
+            </AccentText>
             {changeLogList.map((log) => (
                 <div
-                    className="ChangeLog-log-item horizontal-space-between mv8 mh12 pv12"
+                    className="ChangeLog-log-item horizontal-space-between mt16 ml16"
                     key={log.date}
                     onClick={() => navigateWithinEnv(`/changelog/${log.date}/`)}
                 >
-                    <div>{log.date}</div>
+                    <AccentText size="med">{log.date}</AccentText>
                     <div className="ChangeLog-arrow">
-                        <Icon name="arrow-right" />
+                        <Icon name="ArrowRight" />
                     </div>
                 </div>
             ))}

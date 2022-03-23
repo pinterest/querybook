@@ -87,17 +87,17 @@ export const DataDocNavigator: React.FC = () => {
     };
 
     return (
-        <div className="DataDocNavigator">
+        <div className="DataDocNavigator SidebarNavigator">
             <div className="list-header flex-row">
                 <SearchBar
                     value={titleFilterString}
                     onSearch={setTitleFilterString}
-                    placeholder="Search by Title..."
+                    placeholder="Search by Title"
                     transparent
                 />
                 <CreateDataDocButton />
             </div>
-            <div className="data-docs">
+            <div className="list-content data-docs">
                 <RecentDataDocsSection {...commonSectionProps} />
                 <FavoriteDataDocsSection {...commonSectionProps} />
                 <DataDocNavigatorBoardSection
@@ -166,7 +166,7 @@ const RecentDataDocsSection: React.FC<ICommonSectionProps> = (props) => {
     const dataDocs = useSelector(recentDataDocsSelector);
     return (
         <DataDocNavigatorSection
-            sectionHeaderIcon="watch"
+            sectionHeaderIcon="Watch"
             sectionHeader={section}
             dataDocs={dataDocs}
             selectedDocId={selectedDocId}
@@ -235,7 +235,7 @@ const FavoriteDataDocsSection: React.FC<ICommonSectionProps> = (props) => {
         >
             <DataDocNavigatorSection
                 sectionHeader={'Favorites'}
-                sectionHeaderIcon="star"
+                sectionHeaderIcon="Star"
                 dataDocs={dataDocs}
                 selectedDocId={selectedDocId}
                 filterString={filterString}
@@ -261,8 +261,8 @@ const MyDataDocsSection: React.FC<ICommonSectionProps> = (props) => {
 
     return (
         <DataDocNavigatorSection
-            sectionHeader="all my docs"
-            sectionHeaderIcon="file-text"
+            sectionHeader="my docs"
+            sectionHeaderIcon="FileText"
             dataDocs={dataDocs}
             selectedDocId={selectedDocId}
             filterString={filterString}

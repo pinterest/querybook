@@ -43,7 +43,7 @@ export const ImpressionWidget: React.FunctionComponent<IProps> = ({
     );
 
     const icon = (
-        <Icon name={isLoading ? 'loader' : 'eye'} size={14} className="mr8" />
+        <Icon name={isLoading ? 'Loading' : 'Eye'} size={14} className="mr8" />
     );
     return (
         <>

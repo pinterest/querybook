@@ -6,6 +6,7 @@ import { IStoreState } from 'redux/store/types';
 import { Loading } from 'ui/Loading/Loading';
 import { ProgressBar } from 'ui/ProgressBar/ProgressBar';
 import { SamplesTableView } from './SamplesTableView';
+import { EmptyText } from 'ui/StyledText/StyledText';
 
 export const DataTableViewSamplesTable: React.FC<{
     tableId: number;
@@ -48,9 +49,9 @@ export const DataTableViewSamplesTable: React.FC<{
     ) : samples ? (
         <SamplesTableView tableName={tableName} samples={samples} />
     ) : (
-        <div className="samples-not-found">
+        <EmptyText className="m24">
             Samples not found, Click "Generate" to create samples.
-        </div>
+        </EmptyText>
     );
 
     return samplesTableDOM;

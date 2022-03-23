@@ -7,7 +7,7 @@
         font-weight: var(--bold-font);
 
         li {
-            padding: 8px 8px 4px;
+            padding: 8px 12px;
             box-sizing: border-box;
             border-bottom: solid 1px transparent;
             display: flex;
@@ -15,7 +15,7 @@
             justify-content: center;
 
             a {
-                color: var(--text-color);
+                color: var(--text);
 
                 .Icon {
                     & ~ span {
@@ -31,17 +31,29 @@
             }
 
             &.active {
-                border-bottom-color: var(--select-border-color);
+                border-radius: var(--border-radius-sm);
                 a {
-                    color: var(--text-color);
+                    color: var(--color-accent-dark);
                 }
             }
-
+        }
+    }
+    &:not(.disabled) {
+        ul li {
             &:not(.active):hover {
                 cursor: pointer;
-                border-bottom-color: var(--hover-border-color);
                 a {
-                    color: var(--text-color);
+                    color: var(--text);
+                }
+            }
+        }
+    }
+
+    &:not(.pills) {
+        ul {
+            li {
+                &:not(.active):hover {
+                    border-radius: var(--border-radius-sm);
                 }
             }
         }
@@ -58,53 +70,36 @@
     }
 
     &.pills {
-        &:not(.light-pills) {
-            ul {
-                li {
-                    background-color: var(--pill-tab-color);
-
-                    &.active {
-                        background-color: var(--invert-select-color);
-                        a {
-                            color: var(--invert-text-color);
-                        }
-                    }
-
-                    &:not(.active):hover {
-                        background-color: var(--hover-bg-color);
-                    }
-                }
-            }
-        }
-        &.light-pills {
-            ul {
-                li {
-                    background-color: var(--hover-bg-color);
-
-                    &.active {
-                        background-color: var(--bg-color);
-                    }
-
-                    &:not(.active):hover {
-                        background-color: var(--light-bg-color);
-                    }
-                }
-            }
-        }
-
         ul {
-            border-radius: var(--border-radius);
+            border-radius: var(--border-radius-sm);
             li {
+                background-color: var(--bg-light);
                 padding: 4px 16px;
                 border-bottom: none;
 
+                &.active {
+                    border-radius: 0px;
+                    background-color: var(--color-accent-lightest-0);
+                    a {
+                        color: var(--color-accent-dark);
+                    }
+                }
+
                 &:first-child {
-                    border-top-left-radius: var(--border-radius);
-                    border-bottom-left-radius: var(--border-radius);
+                    border-top-left-radius: var(--border-radius-sm);
+                    border-bottom-left-radius: var(--border-radius-sm);
                 }
                 &:last-child {
-                    border-top-right-radius: var(--border-radius);
-                    border-bottom-right-radius: var(--border-radius);
+                    border-top-right-radius: var(--border-radius-sm);
+                    border-bottom-right-radius: var(--border-radius-sm);
+                }
+            }
+        }
+
+        &:not(.disabled) {
+            ul li {
+                &:not(.active):hover {
+                    background-color: var(--bg-hover);
                 }
             }
         }
@@ -112,11 +107,11 @@
 
     &.wide {
         ul {
-            width: 100%;
+            justify-content: space-between;
+        }
+        &.pills {
             li {
-                padding-left: 0;
-                padding-right: 0;
-                flex: 1;
+                width: 100%;
             }
         }
     }
@@ -136,5 +131,22 @@
         ul {
             justify-content: left;
         }
+    }
+
+    &.selectColor {
+        ul {
+            li {
+                &.active {
+                    background-color: var(--color-accent-lightest-0);
+                }
+                &:not(.active):hover {
+                    background-color: var(--bg-hover);
+                }
+            }
+        }
+    }
+
+    &.disabled {
+        cursor: not-allowed;
     }
 }

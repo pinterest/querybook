@@ -1,39 +1,32 @@
 .DataTableViewSamples {
-    .DataTableViewSamples-top {
-        .FormField:first-child {
-            min-width: 200px;
-        }
-        .FormField:last-child {
-            min-width: 480px;
-        }
-    }
-    .DataTableViewSamples-mid {
-        display: flex;
-        flex-direction: column;
+    .DataTableViewSamples-form {
+        background-color: var(--bg-lightest);
+        padding: 4px 8px;
 
-        .add-where-clause {
-            margin-top: 8px;
-            margin-bottom: -8px;
+        .DataTableViewSamples-top {
+            .FormField:first-child {
+                min-width: 200px;
+            }
+            .FormField:last-child {
+                min-width: 480px;
+            }
         }
-    }
-    .DataTableViewSamples-bottom {
-        display: flex;
-        flex-direction: row;
-        justify-content: space-between;
-        align-items: flex-end;
-        .FormField:first-child {
-            min-width: 320px;
+        .DataTableViewSamples-mid {
+            display: flex;
+            flex-direction: column;
         }
-        .FormField:last-child {
-            min-width: 200px;
+        .DataTableViewSamples-bottom {
+            display: flex;
+            flex-direction: row;
+            justify-content: space-between;
+            align-items: flex-end;
+            .FormField {
+                min-width: 320px;
+            }
         }
     }
 
     .samples-control {
-        margin-bottom: 5px;
-    }
-
-    .samples-not-found {
-        text-align: center;
+        margin-bottom: 4px;
     }
 }

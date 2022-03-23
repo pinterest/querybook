@@ -4,6 +4,7 @@ import './Menu.scss';
 
 export const Menu = styled.div.attrs<{
     height: number;
+    boxShadow: boolean;
 }>({
     className: 'Menu',
 })`
@@ -11,7 +12,8 @@ export const Menu = styled.div.attrs<{
         props.height &&
         `maxHeight: ${props.height};
         overflow-x: hidden;
-        overflow-y: auto;`};
+        overflow-y: auto;`}
+    ${(props) => props.boxShadow && 'box-shadow: var(--box-shadow);'}
 `;
 export const MenuItem = styled.span.attrs({
     className: 'MenuItem',
@@ -22,9 +24,8 @@ export const MenuInfoItem = styled.div.attrs({
 export const MenuDivider = styled.div.attrs({
     className: 'MenuDivider',
 })`
-    background-color: var(--border-color);
     display: block;
-    height: 1px;
+    height: 12px;
     margin: 0px;
 `;
 export const MenuItemPing = styled.div.attrs({
@@ -32,7 +33,7 @@ export const MenuItemPing = styled.div.attrs({
 })`
     pointer-events: none;
     border-radius: 100px;
-    background-color: var(--color-accent-bg);
+    background-color: var(--color-accent-light);
     width: 8px;
     height: 8px;
     margin-left: 8px;

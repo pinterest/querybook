@@ -2,12 +2,13 @@ import React, { useCallback } from 'react';
 import { LocationDescriptor } from 'history';
 import styled from 'styled-components';
 import { Link as LinkImport, LinkProps } from 'react-router-dom';
+import { stopPropagation as stopPropagationFunc } from 'lib/utils/noop';
 
 const StyledLink = styled('a')`
     ${({ naturalLink }) =>
         naturalLink &&
         `
-        color: var(--color-accent-text);
+        color: var(--color-accent-dark);
         &:hover {
             opacity: 0.9;
         }
@@ -39,6 +40,7 @@ export interface ILinkProps extends AnchorProps {
     className?: string;
     naturalLink?: boolean;
     stopProgation?: boolean;
+    contextmenu?: boolean;
 
     linkProps?: Partial<LinkProps>;
 }
@@ -99,11 +101,7 @@ export const Link: React.FC<ILinkProps> = ({
     );
 
     if (stopProgation) {
-        return (
-            <span onClick={(event) => event.stopPropagation()}>
-                {linkComponent}
-            </span>
-        );
+        return <span onClick={stopPropagationFunc}>{linkComponent}</span>;
     }
     return linkComponent;
 };

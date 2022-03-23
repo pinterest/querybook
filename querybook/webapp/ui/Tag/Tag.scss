@@ -1,3 +1,5 @@
+@import './../../scss_variables.scss';
+
 @mixin small-tag() {
     font-size: var(--xxsmall-text-size);
     padding: 2px 4px;
@@ -6,21 +8,45 @@
 .Tag,
 .TagGroup {
     display: inline-flex;
-    margin: 2px 4px;
-    border-radius: var(--border-radius);
+    margin: 2px 0px;
+    border-radius: var(--border-radius-sm);
     cursor: default;
+}
+.Tag + .Tag {
+    margin-left: 6px;
+}
+
+.TagGroup + .TagGroup {
+    margin-left: 8px;
 }
 
 .Tag {
-    background-color: var(--tag-bg-color);
+    background-color: var(--bg-light);
     padding: 2px 8px;
-    color: var(--tag-text-color);
+    color: var(--text-light);
     font-weight: var(--bold-font);
     font-size: var(--small-text-size);
+    font-family: var(--font-accent);
+    max-width: 100%;
+
+    span {
+        @include one-line-ellipsis();
+    }
 
     &.highlighted {
-        background-color: var(--color-accent-bg);
+        background-color: var(--color-accent-lightest-0);
+        color: var(--color-accent-dark);
     }
+
+    &.mini {
+        padding: 2px 4px;
+        font-size: var(--xsmall-text-size);
+    }
+
+    &.light {
+        background-color: var(--bg-lightest);
+    }
+
     .HoverIconTag-hover {
         display: none;
         .Icon {
@@ -49,6 +75,11 @@
     .Tag {
         margin: 0;
         border-radius: 0;
+
+        &.highlighted {
+            background-color: var(--color-accent-dark);
+            color: var(--color-accent-lightest-0);
+        }
     }
 
     &.small .Tag {

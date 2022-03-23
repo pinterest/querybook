@@ -1,17 +1,3 @@
-@import './../../scss_variables.scss';
-
-@keyframes highlight-fade {
-    0% {
-        background-color: transparent;
-    }
-    25% {
-        background-color: var(--color-accent-bg);
-    }
-    100% {
-        background-color: transparent;
-    }
-}
-
 // Temporal
 .temporal-edit-title-modal-wrapper {
     .close {
@@ -49,21 +35,15 @@
 
     .data-doc-content-container {
         flex: 0 1 var(--max-width);
-        padding: 36px 12px;
+        padding: 36px 8px 36px 16px;
         overflow: hidden;
 
         .data-doc-header {
-            padding: 36px 12px;
-            border-bottom: var(--border);
-            color: var(--light-text-color);
+            padding: 0px 12px 8px;
+            color: var(--text-light);
 
             .data-doc-header-top {
-                .data-doc-header-time {
-                    text-transform: uppercase;
-                    font-size: var(--text-size);
-                    font-weight: bold;
-                    padding-left: 4px;
-                }
+                align-items: end;
                 .data-doc-header-users {
                     .ImpressionWidget {
                         margin-right: 4px;
@@ -73,7 +53,7 @@
 
             .IconButton,
             .ImpressionWidget {
-                margin-left: 8px;
+                margin-left: 16px;
             }
             .favorite-icon-button {
                 &.favorite-icon-button-favorited {
@@ -95,33 +75,11 @@
                     }
                 }
             }
-
-            .data-doc-title {
-                color: var(--light-text-color);
-                font-size: var(--xxxlarge-text-size);
-                font-weight: bold;
-
-                &::placeholder {
-                    color: var(--light-text-color);
-                }
-            }
         }
 
         .data-doc-container {
             .data-doc-cell-container-pair {
-                &.highlight-cell {
-                    animation-name: highlight-fade;
-                    animation-duration: 5s;
-                }
-
                 position: relative;
-                &:hover {
-                    .data-doc-cell-divider-container {
-                        .block-crud-buttons {
-                            opacity: 1;
-                        }
-                    }
-                }
 
                 &.data-doc-cell-container-pair-final {
                     min-height: 48px;
@@ -133,8 +91,8 @@
                 }
 
                 .data-doc-cell-users {
-                    top: 48px;
-                    left: -12px;
+                    top: 52px;
+                    left: -16px;
                     position: absolute;
 
                     .UserAvatar {
@@ -179,34 +137,51 @@
                         .block-crud-button {
                             margin: 0;
                             & + .block-crud-button {
-                                margin-left: 4px;
+                                margin-left: 8px;
                             }
                         }
                     }
                 }
 
+                .DataDocQueryCell-more-button,
+                .QueryRunButton,
+                .additional-dropdown-button,
+                .add-snippet-wrapper,
+                .fullscreen-button-wrapper,
+                .chart-cell-controls {
+                    opacity: 0;
+                    transition: opacity 0.2s ease-out;
+                }
+
                 &:hover .add-new-line-button {
                     opacity: 1;
+                }
+
+                &:hover {
+                    .data-doc-cell-divider-container {
+                        .block-crud-buttons {
+                            opacity: 1;
+                        }
+                    }
+
+                    .DataDocQueryCell-more-button,
+                    .QueryRunButton,
+                    .additional-dropdown-button,
+                    .add-snippet-wrapper,
+                    .fullscreen-button-wrapper,
+                    .chart-cell-controls {
+                        opacity: 1;
+                    }
                 }
             }
         }
     }
 
     .datadoc-loading {
-        width: 100%;
-        height: 100%;
+        width: 480px;
+        height: 100vh;
         position: relative;
-
-        .datadoc-loading-message {
-            position: absolute;
-            top: 30%;
-            left: 50%;
-            transform: translate(-50%, -50%);
-
-            p {
-                text-align: center;
-            }
-        }
+        text-align: center;
     }
 
     .SearchAndReplaceBar {

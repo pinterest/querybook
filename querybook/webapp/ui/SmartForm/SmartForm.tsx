@@ -135,7 +135,7 @@ function ExpandableFormField<T extends []>({
                 />
             </FormField>
             <IconButton
-                icon="x"
+                icon="X"
                 onClick={onChange.bind(null, String(index), undefined)}
             />
         </div>
@@ -147,7 +147,7 @@ function ExpandableFormField<T extends []>({
             <div className="SmartForm-button-box flex-row">
                 <SoftButton
                     title="Add More"
-                    icon="plus"
+                    icon="Plus"
                     onClick={onChange.bind(
                         null,
                         `${value.length}`,

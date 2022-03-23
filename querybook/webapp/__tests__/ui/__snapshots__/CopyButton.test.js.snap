@@ -16,24 +16,21 @@ exports[`matches enzyme snapshots matches snapshot 1`] = `
 exports[`matches test renderer snapshot serializes the styles 1`] = `
 <span
   aria-label="Click To Copy"
-  className="StyledButton-aqwbwz-0 jBXKFp Button CopyButton flex-row"
-  color="var(--text-color)"
+  className="StyledButton-aqwbwz-0 cAsKHB Button CopyButton flex-row text"
+  color="var(--text-light)"
   data-balloon-pos="up"
   fontWeight="700"
   onClick={[Function]}
   onMouseLeave={[Function]}
   size="small"
 >
-  <span
-    className=" Icon "
-    dangerouslySetInnerHTML={
-      Object {
-        "__html": "<svg xmlns=\\"http://www.w3.org/2000/svg\\" width=\\"24\\" height=\\"24\\" viewBox=\\"0 0 24 24\\" fill=\\"none\\" stroke=\\"currentColor\\" stroke-width=\\"2\\" stroke-linecap=\\"round\\" stroke-linejoin=\\"round\\" class=\\"feather feather-link\\"><path d=\\"M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71\\"></path><path d=\\"M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71\\"></path></svg>",
-      }
-    }
-  />
-  <span>
+  <div
+    className="StyledText__StyledTextDiv-sc-1ldibmc-0 jYMIFP Text"
+  >
     Test Copy
-  </span>
+  </div>
+  <div
+    className="StyledText__StyledTextDiv-sc-1ldibmc-0 jYMIFP Text flex-row"
+  />
 </span>
 `;

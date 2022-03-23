@@ -3,13 +3,15 @@ import clsx from 'clsx';
 
 import { TooltipDirection } from 'const/tooltip';
 
-import { Icon } from 'ui/Icon/Icon';
+import { TButtonColors, Icon } from 'ui/Icon/Icon';
+import type { AllLucideIconNames } from 'ui/Icon/LucideIcons';
+import { AccentText, StyledText } from 'ui/StyledText/StyledText';
 
 import './IconButton.scss';
 
 // A simple Bulma-based button
 export interface IIconButtonProps {
-    icon: string;
+    icon: AllLucideIconNames;
     className?: string;
     onClick?: (event?: React.MouseEvent<HTMLSpanElement, MouseEvent>) => any;
 
@@ -21,6 +23,7 @@ export interface IIconButtonProps {
     active?: boolean;
     noPadding?: boolean;
     fill?: boolean;
+    color?: TButtonColors;
     size?: string | number;
     ping?: boolean | string;
     title?: string;
@@ -46,6 +49,7 @@ export const IconButton = React.forwardRef<HTMLAnchorElement, IIconButtonProps>(
             fill,
             ping,
             title,
+            color,
         },
         ref
     ) => {
@@ -73,13 +77,28 @@ export const IconButton = React.forwardRef<HTMLAnchorElement, IIconButtonProps>(
         const pingDOM = !ping ? null : typeof ping === 'boolean' ? (
             <div className="ping" />
         ) : (
-            <div className="ping-message">{ping}</div>
+            <StyledText
+                className="ping-message"
+                color="accent-dark"
+                size="xsmall"
+                weight="bold"
+            >
+                {ping}
+            </StyledText>
         );
-        const iconDOM = <Icon name={icon} size={size} fill={fill} />;
+        const iconDOM = (
+            <Icon name={icon} size={size} fill={fill} color={color} />
+        );
         const contentDOM = title ? (
             <div className="flex-column">
                 {iconDOM}
-                <span className="icon-title">{title}</span>
+                <AccentText
+                    className="icon-title"
+                    size="xxxsmall"
+                    weight="light"
+                >
+                    {title}
+                </AccentText>
             </div>
         ) : (
             iconDOM

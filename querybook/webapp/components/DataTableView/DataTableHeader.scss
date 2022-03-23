@@ -1,48 +1,29 @@
 .DataTableHeader {
-    .DataTableHeader-top,
-    .DataTableHeader-bottom {
-        display: flex;
-        justify-content: space-between;
-    }
+    align-items: flex-start;
     .DataTableHeader-top {
-        display: flex;
-        flex-direction: row;
-        justify-content: space-between;
+        width: 100%;
     }
-    .DataTableHeader-bottom {
-        .DataTableHeader-left {
-            .DataTableHeader-owner {
-                .DataTableHeader-owner-list {
-                    flex-wrap: wrap;
-                    span:first-child {
-                        font-weight: 600;
-                    }
-                    .UserBadge {
-                        margin-right: 8px;
-                    }
-                }
-                .Button {
-                    margin-left: 0px;
-                }
+    .table-title {
+        font-family: var(--font-accent);
+    }
+    .header-subtitle {
+        margin-top: 6px;
+        align-self: flex-start;
+    }
+    .owner-list {
+        .owner-badges {
+            flex-wrap: wrap;
+            min-height: 36px;
+            .UserBadge {
+                margin-top: 4px;
+                margin-bottom: 4px;
+            }
+            .UserBadge + .IconButton {
+                margin-left: 12px;
             }
         }
-        .DataTableHeader-right {
-            display: flex;
-            flex-direction: column;
-            align-items: flex-end;
-            .DataTableHeader-featured {
-                .golden-switch-text {
-                    text-transform: uppercase;
-                    font-size: var(--xsmall-text-size);
-                    font-weight: 600;
-                    margin-top: 4px;
-                    margin-right: 8px;
-                }
-                .Tag,
-                .Button {
-                    margin-right: 0px;
-                }
-            }
-        }
+    }
+    .DataTableTags {
+        min-height: 34px;
     }
 }

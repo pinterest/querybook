@@ -1,5 +1,8 @@
+import { titleize } from 'lib/utils';
 import React, { useCallback } from 'react';
 import styled from 'styled-components';
+import { Icon } from 'ui/Icon/Icon';
+import { AccentText } from 'ui/StyledText/StyledText';
 
 export interface IPanelSectionProps {
     title: string;
@@ -7,7 +10,8 @@ export interface IPanelSectionProps {
 }
 
 const PanelContentWrapper = styled.div`
-    padding: 5px 32px;
+    margin-left: 16px;
+    margin-bottom: 4px;
     word-break: break-all;
 
     ${({ isOpen }) =>
@@ -19,13 +23,16 @@ const PanelContentWrapper = styled.div`
 `;
 
 const PanelTitle = styled.p`
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
     cursor: pointer;
-    padding: 5px 10px;
-    text-transform: uppercase;
-    user-select: none;
+    margin-left: 8px;
+    margin-bottom: 4px;
+    padding: 4px 8px;
 
-    font-size: var(--med-text-size);
-    font-weight: bold;
+    background-color: var(--bg-light);
+    border-radius: var(--border-radius-sm);
 `;
 
 export const PanelSection: React.FunctionComponent<IPanelSectionProps> = ({
@@ -45,19 +52,20 @@ export const PanelSection: React.FunctionComponent<IPanelSectionProps> = ({
     const headerDOM = (
         <div onClick={toggleSectionOpen}>
             <PanelTitle>
-                <span>
-                    <i
-                        className={
-                            'mr8 fa fa-angle-' + (isOpen ? 'down' : 'right')
-                        }
-                    />
-                </span>
-                {title}
+                <AccentText
+                    noUserSelect
+                    size="text"
+                    weight="bold"
+                    color="light"
+                >
+                    {titleize(title)}
+                </AccentText>
+                <Icon name={isOpen ? 'ChevronDown' : 'ChevronRight'} />
             </PanelTitle>
         </div>
     );
     return (
-        <div>
+        <div className="mb8">
             {headerDOM}
             <PanelContentWrapper isOpen={isOpen}>
                 {children}
@@ -66,16 +74,19 @@ export const PanelSection: React.FunctionComponent<IPanelSectionProps> = ({
     );
 };
 
+const StyledSubPanelSection = styled.div`
+    margin-bottom: 12px;
+`;
+
 const SubPanelTitle = styled.p`
-    text-transform: uppercase;
     user-select: none;
 
     font-size: var(--text-size);
-    color: var(--light-text-color);
+    color: var(--text-light);
 `;
 
-const StyledSubPanelSection = styled.div`
-    margin-bottom: 10px;
+const SubPanelValue = styled.p`
+    font-size: var(--small-text-size);
 `;
 
 export const SubPanelSection: React.FunctionComponent<{
@@ -84,9 +95,7 @@ export const SubPanelSection: React.FunctionComponent<{
 }> = ({ title, children, hideIfNoContent }) =>
     hideIfNoContent && !children ? null : (
         <StyledSubPanelSection>
-            <div>
-                <SubPanelTitle>{title}</SubPanelTitle>
-            </div>
-            <div>{children}</div>
+            <SubPanelTitle>{title}</SubPanelTitle>
+            <SubPanelValue>{children}</SubPanelValue>
         </StyledSubPanelSection>
     );

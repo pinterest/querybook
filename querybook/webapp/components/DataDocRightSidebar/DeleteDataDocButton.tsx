@@ -28,8 +28,8 @@ export const DeleteDataDocButton: React.FunctionComponent<IDeleteDataDocButtonPr
     const handleDeleteDataDoc = React.useCallback(
         () =>
             sendConfirm({
-                header: 'Remove DataDoc',
-                message: 'Are you sure to delete?',
+                header: 'Delete DataDoc?',
+                message: 'This action is irreversible.',
                 onConfirm: () => {
                     toast.promise(
                         dispatch(dataDocActions.deleteDataDoc(docId)).then(() =>
@@ -42,13 +42,17 @@ export const DeleteDataDocButton: React.FunctionComponent<IDeleteDataDocButtonPr
                         }
                     );
                 },
+                confirmColor: 'cancel',
+                cancelColor: 'default',
+                confirmText: 'Confirm Deletion',
+                confirmIcon: 'AlertOctagon',
             }),
         [docId]
     );
 
     return (
         <IconButton
-            icon="trash"
+            icon="Trash"
             tooltip={tooltip}
             tooltipPos={tooltipPos}
             onClick={handleDeleteDataDoc}

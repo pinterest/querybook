@@ -19,10 +19,9 @@
     }
     .AdminMetastore-TaskEditor {
         .TaskEditor {
-            background-color: var(--light-bg-color);
+            background-color: var(--bg-lightest);
             border-radius: var(--border-radius);
-            padding-top: 4px;
-            padding-bottom: 4px;
+            padding: var(--padding-lg) var(--padding-xl);
             overflow-x: scroll;
         }
     }

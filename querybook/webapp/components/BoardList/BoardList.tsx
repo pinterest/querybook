@@ -11,6 +11,7 @@ import { BoardCreateUpdateModal } from 'components/BoardCreateUpdateModal/BoardC
 import { InfinityScroll } from 'ui/InfinityScroll/InfinityScroll';
 import { ListLink } from 'ui/Link/ListLink';
 import './BoardList.scss';
+import { EmptyText } from 'ui/StyledText/StyledText';
 
 interface IProps {
     onBoardClick: (id: IBoard) => any;
@@ -31,33 +32,33 @@ export const BoardList: React.FunctionComponent<IProps> = ({
         dispatch(fetchBoards());
     }, []);
 
-    const filteredBoards = useMemo(
-        () =>
-            boards
-                .filter(
-                    (board) =>
-                        filterStr === '' || board.name.includes(filterStr)
-                )
-                .map((board) => ({
-                    ...board,
-                    selected: selectedBoardIds.includes(board.id),
-                })),
-        [filterStr, boards, selectedBoardIds]
-    );
+    const filteredBoards = useMemo(() => {
+        const filterStrLower = filterStr.toLowerCase();
+        return boards
+            .filter(
+                (board) =>
+                    filterStrLower === '' ||
+                    board.name.toLowerCase().includes(filterStrLower)
+            )
+            .map((board) => ({
+                ...board,
+                selected: selectedBoardIds.includes(board.id),
+            }));
+    }, [filterStr, boards, selectedBoardIds]);
     const boardRowRenderer = React.useCallback(
         (board: IBoard & { selected: boolean }) => {
-            const { name, public: publicBoard, selected } = board;
+            const { name, selected } = board;
             const className = clsx({
                 selected,
             });
-            const publicIcon = publicBoard && 'users';
+            const selectedIcon = selected ? 'CheckCircle' : 'Circle';
 
             return (
                 <ListLink
                     className={className}
                     onClick={() => onBoardClick(board)}
                     isRow
-                    icon={publicIcon}
+                    icon={selectedIcon}
                     title={name}
                 />
             );
@@ -76,22 +77,22 @@ export const BoardList: React.FunctionComponent<IProps> = ({
                 />
             </div>
         ) : (
-            <div className="empty-message">No list found.</div>
+            <EmptyText className="m24">No list found</EmptyText>
         );
 
     return (
         <div className="BoardList">
-            <div className="list-header flex-row">
+            <div className="BoardList-header flex-row mb8">
                 <SearchBar
                     value={filterStr}
                     onSearch={setFilterStr}
-                    placeholder="Filter..."
-                    transparent
+                    placeholder="Filter list"
+                    className="mr12"
                 />
                 <IconButton
-                    icon="plus"
+                    icon="Plus"
                     tooltip={'New List'}
-                    tooltipPos={'right'}
+                    tooltipPos={'left'}
                     onClick={
                         onCreateBoardClick
                             ? onCreateBoardClick

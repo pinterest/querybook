@@ -1,22 +1,25 @@
 import React from 'react';
 import clsx from 'clsx';
-import { Icon } from 'ui/Icon/Icon';
 import { TooltipDirection } from 'const/tooltip';
+
+import { Icon } from 'ui/Icon/Icon';
+import type { AllLucideIconNames } from 'ui/Icon/LucideIcons';
+import { AccentText } from 'ui/StyledText/StyledText';
 
 import './Tabs.scss';
 
 export interface ITabItem {
     name?: string;
-    icon?: string;
+    icon?: AllLucideIconNames;
     key: string;
     tooltip?: string;
     tooltipPos?: TooltipDirection;
 }
 
 export interface ITabsProps {
-    items: Array<ITabItem | string>;
+    items: Array<ITabItem | string> | readonly string[];
     selectedTabKey?: string;
-    onSelect: (key: string) => any;
+    onSelect: (key: string) => void;
 
     className?: string;
     vertical?: boolean;
@@ -26,6 +29,8 @@ export interface ITabsProps {
     wide?: boolean;
     size?: 'small' | 'large';
     align?: 'right' | 'left' | 'center';
+    selectColor?: boolean;
+    disabled?: boolean;
 }
 
 export const Tabs: React.FunctionComponent<ITabsProps> = ({
@@ -33,11 +38,13 @@ export const Tabs: React.FunctionComponent<ITabsProps> = ({
     selectedTabKey,
     onSelect,
     className,
+    disabled,
     vertical,
     pills,
     wide,
     size = null,
     align = 'left',
+    selectColor = false,
 }) => {
     const tabClassName = clsx({
         Tabs: true,
@@ -46,6 +53,8 @@ export const Tabs: React.FunctionComponent<ITabsProps> = ({
         pills,
         wide,
         [size]: !!size,
+        selectColor,
+        disabled,
 
         'center-align': align === 'center',
         'right-align': align === 'right',
@@ -54,7 +63,7 @@ export const Tabs: React.FunctionComponent<ITabsProps> = ({
     const tabItemsDOM = items.map((item, index) => {
         let name: string;
         let key: string;
-        let icon: string;
+        let icon: AllLucideIconNames;
         const tooltipProps = {};
 
         if (typeof item === 'string') {
@@ -86,7 +95,7 @@ export const Tabs: React.FunctionComponent<ITabsProps> = ({
             >
                 <a className="flex-center" {...tooltipProps}>
                     {icon && <Icon name={icon} />}
-                    {name && <span>{name}</span>}
+                    {name && <AccentText>{name}</AccentText>}
                 </a>
             </li>
         );

@@ -5,11 +5,11 @@
     border-radius: var(--border-radius);
     height: 240px;
     position: relative;
-    background: var(--terminal-bg-color);
+    background: var(--bg-terminal);
     margin: 4px 0px;
     padding: 4px;
-    color: var(--terminal-text-color);
-    font-family: var(--family-monospace);
+    color: var(--text-terminal);
+    font-family: var(--font-monospace);
     display: flex;
     flex-direction: column;
 
@@ -22,7 +22,7 @@
 
         // Log urls styling
         a {
-            color: var(--color-accent-text);
+            color: var(--color-accent-dark);
             font-weight: bold;
             cursor: pointer;
 
@@ -43,7 +43,7 @@
     }
 
     &.is-fullscreen {
-        @include full-screen(1000, var(--terminal-bg-color));
+        @include full-screen(1000, var(--bg-terminal));
         height: 100%;
         margin: 0px;
 

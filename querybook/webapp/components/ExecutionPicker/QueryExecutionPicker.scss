@@ -3,8 +3,6 @@
 .QueryExecutionPicker {
     .execution-selector-button {
         cursor: pointer;
-        font-weight: 700;
-        text-transform: uppercase;
     }
 
     .query-execution-item {
@@ -13,8 +11,8 @@
 
         &.query-execution-selected,
         &:hover {
-            color: var(--text-color);
-            background-color: var(--hover-bg-color);
+            color: var(--text);
+            background-color: var(--bg-hover);
         }
     }
 
@@ -22,11 +20,16 @@
         max-height: 300px;
         overflow-y: auto;
         overflow-x: hidden;
+        border-top-left-radius: 0px;
+        border-top-right-radius: 0px;
+        border-bottom-left-radius: var(--border-radius-sm);
+        border-bottom-right-radius: var(--border-radius-sm);
     }
 
     .query-execution-item-header {
         padding: 8px 12px;
         border-bottom: var(--border);
         align-items: flex-end;
+        white-space: nowrap;
     }
 }

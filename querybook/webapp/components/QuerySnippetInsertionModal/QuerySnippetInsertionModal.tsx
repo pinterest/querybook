@@ -10,16 +10,18 @@ import { queryEngineByIdEnvSelector } from 'redux/queryEngine/selector';
 import { Tabs } from 'ui/Tabs/Tabs';
 import { Loading } from 'ui/Loading/Loading';
 import { Sidebar } from 'ui/Sidebar/Sidebar';
-import { Title } from 'ui/Title/Title';
 import { QuerySnippetNavigator } from 'components/QuerySnippetNavigator/QuerySnippetNavigator';
 
 import { QuerySnippetView } from './QuerySnippetView';
 import './QuerySnippetInsertionModal.scss';
 import { QuerySnippetComposer } from 'components/QuerySnippetComposer/QuerySnippetComposer';
+import { Modal } from 'ui/Modal/Modal';
+import { EmptyText } from 'ui/StyledText/StyledText';
 
 interface IOwnProps {
     onInsert: (query: string) => any;
     onDismiss: () => any;
+    onHide: () => void;
 }
 type StateProps = ReturnType<typeof mapStateToProps>;
 type DispatchProps = ReturnType<typeof mapDispatchToProps>;
@@ -86,9 +88,20 @@ class QuerySnippetInsertionModalComponent extends React.PureComponent<
     }
 
     public render() {
-        const { querySnippetById, queryEngineById } = this.props;
+        const { querySnippetById, queryEngineById, onHide } = this.props;
 
         const { snippetId, loadingSnippet, editSnippetMode } = this.state;
+
+        const modeToggleDOM = (
+            <Tabs
+                pills
+                items={SNIPPET_MODES}
+                selectedTabKey={
+                    editSnippetMode ? SNIPPET_MODES[1] : SNIPPET_MODES[0]
+                }
+                onSelect={this.handleUpdateEditMode}
+            />
+        );
 
         let querySnippetViewDOM;
         if (snippetId) {
@@ -114,44 +127,32 @@ class QuerySnippetInsertionModalComponent extends React.PureComponent<
             }
         } else {
             querySnippetViewDOM = (
-                <div className="empty-message">
-                    Choose a template on the left.
-                </div>
+                <EmptyText className="mt24">
+                    Choose a snippet on the left.
+                </EmptyText>
             );
         }
 
         return (
-            <div className={'QuerySnippetInsertionModal '}>
-                <div className="query-snippet-insertion-header horizontal-space-between">
-                    <div>
-                        <Title size={3}>Query Template</Title>
-                    </div>
-                    <div>
-                        <Tabs
-                            pills
-                            items={SNIPPET_MODES}
-                            selectedTabKey={
-                                editSnippetMode
-                                    ? SNIPPET_MODES[1]
-                                    : SNIPPET_MODES[0]
-                            }
-                            onSelect={this.handleUpdateEditMode}
-                        />
-                    </div>
-                </div>
-                <div className="query-snippet-insertion-content">
-                    <Sidebar key={'navigator'} initialWidth={400} left>
-                        <div className="query-snippet-navigator-wrapper">
+            <Modal
+                onHide={onHide}
+                className="wide"
+                title="Insert Snippet"
+                topDOM={snippetId ? modeToggleDOM : null}
+            >
+                <div className="QuerySnippetInsertionModal">
+                    <div className="query-snippet-insertion-content">
+                        <Sidebar key={'navigator'} initialWidth={360} left>
                             <QuerySnippetNavigator
                                 onQuerySnippetSelect={this.onQuerySnippetSelect}
                             />
+                        </Sidebar>
+                        <div className="query-snippet-view-wrapper">
+                            {querySnippetViewDOM}
                         </div>
-                    </Sidebar>
-                    <div className="query-snippet-view-wrapper">
-                        {querySnippetViewDOM}
                     </div>
                 </div>
-            </div>
+            </Modal>
         );
     }
 }

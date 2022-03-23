@@ -6,4 +6,18 @@
             }
         }
     }
+    .overview-section-content {
+        margin-left: 16px;
+
+        .overview-subtitle {
+            color: var(--text-light);
+            font-weight: var(--bold-font);
+            margin-bottom: 4px;
+        }
+        .KeyContentDisplay {
+            .KeyContentDisplay-key {
+                width: 280px;
+            }
+        }
+    }
 }

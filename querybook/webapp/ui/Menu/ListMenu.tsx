@@ -1,16 +1,18 @@
 import React from 'react';
 import clsx from 'clsx';
 
-import { calculateTooltipSize } from 'lib/utils';
 import { TooltipDirection } from 'const/tooltip';
 
 import { Dropdown } from 'ui/Dropdown/Dropdown';
 
 import { Menu, MenuItem } from './Menu';
+import { Icon } from 'ui/Icon/Icon';
+import type { AllLucideIconNames } from 'ui/Icon/LucideIcons';
+import { AccentText } from 'ui/StyledText/StyledText';
 
 export interface IListMenuItem {
     checked?: boolean;
-    icon?: string;
+    icon?: AllLucideIconNames;
     onClick?: () => any;
     link?: string;
     tooltip?: string;
@@ -45,12 +47,12 @@ export const ListMenu: React.FunctionComponent<IProps> = ({
     const isSelect = type === 'select';
 
     const menuActionsDOM = items.map((action, index) => {
-        const iconClass = isSelect
+        const iconName = isSelect
             ? action.checked
-                ? 'fas fa-circle'
-                : 'far fa-circle'
+                ? 'CheckCircle'
+                : 'Circle'
             : action.icon
-            ? 'fa fa-' + action.icon
+            ? action.icon
             : null;
 
         const actionProps: React.HTMLProps<HTMLAnchorElement> = {};
@@ -63,17 +65,12 @@ export const ListMenu: React.FunctionComponent<IProps> = ({
         if (action.tooltip) {
             actionProps['aria-label'] = action.tooltip;
             actionProps['data-balloon-pos'] = action.tooltipPos || 'left';
-            actionProps['data-balloon-length'] = calculateTooltipSize(
-                action.tooltip
-            );
         }
 
         const buttonContent = (
             <span className="flex-row flex1">
-                {iconClass ? (
-                    <span className="Menu-icon flex-center mr8">
-                        <i className={iconClass} />
-                    </span>
+                {iconName ? (
+                    <Icon name={iconName} className="mr8" size={16} />
                 ) : null}
                 <span className="Menu-text flex1">{action.name}</span>
             </span>
@@ -100,7 +97,7 @@ export const ListMenu: React.FunctionComponent<IProps> = ({
         } else {
             itemDOM = (
                 <MenuItem {...actionProps} key={index}>
-                    {buttonContent}
+                    <AccentText>{buttonContent}</AccentText>
                 </MenuItem>
             );
         }

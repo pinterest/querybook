@@ -28,9 +28,11 @@ import { StatusIcon } from 'ui/StatusIcon/StatusIcon';
 import { Timer, ITimerHandles } from 'ui/Timer/Timer';
 import { IconButton } from 'ui/Button/IconButton';
 import { Icon } from 'ui/Icon/Icon';
+import { Menu, MenuDivider, MenuInfoItem, MenuItem } from 'ui/Menu/Menu';
 
 import './QueryEngineStatusButton.scss';
-import { Menu, MenuDivider, MenuInfoItem, MenuItem } from 'ui/Menu/Menu';
+import { Tag } from 'ui/Tag/Tag';
+import { StyledText } from 'ui/StyledText/StyledText';
 
 const REFRESH_INTERVAL = 60;
 
@@ -79,7 +81,7 @@ export const QueryEngineStatusButton: React.FC<IProps> = ({
     );
 
     const timerFormatter = useCallback(
-        (timestamp: number) => `Next auto-refresh: ${timestamp}s`,
+        (timestamp: number) => `Auto refresh in ${timestamp}s`,
         []
     );
 
@@ -103,8 +105,7 @@ export const QueryEngineStatusButton: React.FC<IProps> = ({
     const getQueryEngineStatusModal = (engineId: string) => (
         <Modal
             onHide={() => setShowStatusForEngineId(null)}
-            title="Query Engine Status"
-            className="with-padding"
+            title={`${titleize(queryEngineById[engineId]?.name)} Status`}
         >
             <QueryEngineStatusViewer engineId={Number(engineId)} />
         </Modal>
@@ -119,8 +120,8 @@ export const QueryEngineStatusButton: React.FC<IProps> = ({
                 if (!engineStatus || engineStatus.loading) {
                     systemStatusContent = (
                         <span>
-                            <i className={'fa fa-spinner fa-pulse'} />
-                            {titleize(engine.name)}
+                            <Icon name="Loading" size={16} className="mr8" />
+                            <Tag>{titleize(engine.name)}</Tag>
                         </span>
                     );
                 } else {
@@ -136,25 +137,29 @@ export const QueryEngineStatusButton: React.FC<IProps> = ({
                             onClick={() =>
                                 setShowStatusForEngineId(String(engineId))
                             }
+                            className="flex-row"
                         >
                             <StatusIcon status={iconClass} />
-                            {titleize(engine.name)}: {message}{' '}
+                            <Tag>{titleize(engine.name)}</Tag>
+                            <StyledText className="ml8" color="light">
+                                {message}
+                            </StyledText>
                         </span>
                     );
                 }
 
                 return <span key={engineId}>{systemStatusContent}</span>;
             })
-            .map((usage, index) => <li key={index}>{usage}</li>);
-
-        const systemStatusSectionDOM = (
-            <MenuInfoItem className="QueryEngineStatusPopover-status">
-                <span className="mv4">
-                    <div className="mb8">Click for details</div>
-                    <ul>{systemStatusDOM}</ul>
-                </span>
-            </MenuInfoItem>
-        );
+            .map((usage, index) => (
+                <MenuItem
+                    className="QueryEngineStatusPopover-status"
+                    key={index}
+                    aria-label="see detailed status"
+                    data-balloon-pos="right"
+                >
+                    {usage}
+                </MenuItem>
+            ));
 
         const panelContent = (
             <div className="QueryEngineStatusPopover">
@@ -168,13 +173,13 @@ export const QueryEngineStatusButton: React.FC<IProps> = ({
                         />
                     </MenuInfoItem>
                     <MenuDivider />
-                    {systemStatusSectionDOM}
+                    {systemStatusDOM}
                     <MenuDivider />
                     <MenuItem
                         className="QueryEngineStatusPopover-refresh flex-row"
                         onClick={onRefreshClick}
                     >
-                        <Icon name="refresh-cw" />
+                        <Icon name="RefreshCw" />
                         <span>Refresh</span>
                     </MenuItem>
                 </Menu>
@@ -216,10 +221,10 @@ export const QueryEngineStatusButton: React.FC<IProps> = ({
                     className="query-engine-status-button"
                     onClick={() => setShowPanel(true)}
                     ref={buttonRef}
-                    icon={'activity'}
+                    icon={'Activity'}
                     tooltip={`Summary: ${queryEngineStatusToMessage[overallWorstQueryEngineStatus]}. Click to see details.`}
                     tooltipPos={tooltipPos}
-                    title="Engine"
+                    title="Status"
                 />
             </div>
             {panel}

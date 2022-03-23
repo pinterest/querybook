@@ -3,14 +3,14 @@
     display: flex;
     .SearchButton {
         flex-grow: 1;
-        background-color: var(--light-bg-color);
+        background-color: var(--bg-light);
         border-radius: var(--border-radius);
         .Button {
             padding: 10px 15px;
             > span {
                 width: 100%;
                 .SearchButton-tip {
-                    color: var(--light-text-color);
+                    color: var(--text-light);
                     .Icon {
                         padding-bottom: 1px;
                     }

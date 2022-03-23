@@ -24,7 +24,7 @@
                 border-color: transparent;
 
                 border-top-width: 0;
-                border-bottom-color: var(--border-color);
+                border-bottom-color: transparent;
                 border-width: 10px;
             }
 
@@ -32,7 +32,7 @@
                 content: '';
 
                 border-color: transparent;
-                border-bottom-color: var(--bg-color);
+                border-bottom-color: transparent;
                 border-width: 10px;
 
                 bottom: -12px;
@@ -46,13 +46,19 @@
     }
 
     .popover-content {
-        background: var(--bg-color);
+        background: var(--bg);
         border: var(--border);
-        border-radius: var(--border-radius);
+        border-radius: var(--border-radius-sm);
+        box-shadow: var(--box-shadow-md);
+        padding: var(--padding-lg);
 
         position: relative;
         min-width: 20px;
         min-height: 20px;
+
+        &.no-padding {
+            padding: 0px;
+        }
     }
 }
 

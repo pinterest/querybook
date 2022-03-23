@@ -5,12 +5,6 @@
         <title><%= htmlWebpackPlugin.options.title %></title>
         <link
             rel="stylesheet"
-            href="https://use.fontawesome.com/releases/v5.8.1/css/all.css"
-            integrity="sha384-50oBUHEmvpQ+1lW4y57PTFmhCaXp0ML5d60M1M7uH2+nqUivzIebhndOJK28anvf"
-            crossorigin="anonymous"
-        />
-        <link
-            rel="stylesheet"
             href="https://unpkg.com/balloon-css/balloon.min.css"
         />
         <link
@@ -18,12 +12,38 @@
             type="image/x-icon"
             href="/static/favicon/querybook.svg"
         />
+        <link
+            rel="stylesheet"
+            href="https://fonts.googleapis.com/css?family=Poppins"
+        />
     </head>
 
     <body>
         <div id="root">
-            <div class="app-splash">
-                <div class="app-splash-text">LOADING</div>
+            <div
+                class="app-splash"
+                style="
+                    height: 100vh;
+                    display: flex;
+                    justify-content: center;
+                    align-items: center;
+                    position: fixed;
+                    left: 0;
+                    right: 0;
+                "
+            >
+                <div
+                    class="app-splash-text"
+                    style="
+                        font-family: sans-serif;
+                        letter-spacing: 2px;
+                        font-weight: 200;
+                        color: #808080;
+                        font-size: 0.9rem;
+                    "
+                >
+                    LOADING
+                </div>
             </div>
         </div>
         <div id="overlay-root"></div>

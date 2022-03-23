@@ -20,9 +20,7 @@ import { queryCellSelector } from 'redux/dataDoc/selector';
 import { RecurrenceEditor } from 'ui/ReccurenceEditor/RecurrenceEditor';
 import { FormSectionHeader } from 'ui/Form/FormField';
 import { FormWrapper } from 'ui/Form/FormWrapper';
-import { InfoButton } from 'ui/Button/InfoButton';
 import { Level } from 'ui/Level/Level';
-import { Title } from 'ui/Title/Title';
 import { SimpleField } from 'ui/FormikField/SimpleField';
 import { DisabledSection } from 'ui/DisabledSection/DisabledSection';
 import {
@@ -35,8 +33,6 @@ import { getEnumEntries } from 'lib/typescript';
 import { notificationServiceSelector } from '../../redux/notificationService/selector';
 import { SoftButton } from 'ui/Button/Button';
 import { IconButton } from 'ui/Button/IconButton';
-
-import './DataDocScheduleForm.scss';
 
 interface IDataDocScheduleFormProps {
     isEditable: boolean;
@@ -157,10 +153,6 @@ export const DataDocScheduleForm: React.FunctionComponent<IDataDocScheduleFormPr
                 isValid,
                 dirty,
             }) => {
-                const formTitle = isCreateForm
-                    ? 'Add new schedule'
-                    : 'Edit schedule';
-
                 const enabledField = !isCreateForm && (
                     <SimpleField label="Enabled" name="enabled" type="toggle" />
                 );
@@ -231,18 +223,6 @@ export const DataDocScheduleForm: React.FunctionComponent<IDataDocScheduleFormPr
 
                 return (
                     <div className="DataDocScheduleForm">
-                        <div className="horizontal-space-between">
-                            <div>
-                                <Title size={4}>{formTitle}</Title>
-                            </div>
-                            <div>
-                                <InfoButton>
-                                    Schedule your doc to be ran on a certain
-                                    interval. Query cells will be executed one
-                                    by one.
-                                </InfoButton>
-                            </div>
-                        </div>
                         <FormWrapper minLabelWidth="180px" size={7}>
                             <Form>
                                 <DisabledSection disabled={!isEditable}>
@@ -352,16 +332,16 @@ const ScheduleExportsForm: React.FC<{
                     return (
                         <div
                             key={index}
-                            className="cell-export-field ph12 pv4 mt16 flex-row"
+                            className="cell-export-field mb24 flex-row"
                         >
-                            <div className="flex1">
+                            <div className="flex1 mr16">
                                 {cellPickerField}
                                 {exporterPickerField}
                                 {exporterFormField}
                             </div>
                             <div>
                                 <IconButton
-                                    icon="x"
+                                    icon="X"
                                     onClick={() => arrayHelpers.remove(index)}
                                 />
                             </div>
@@ -372,8 +352,8 @@ const ScheduleExportsForm: React.FC<{
                 const controlDOM = (
                     <div className="center-align mt8">
                         <SoftButton
-                            icon="plus"
-                            title="Export Query Cell Result"
+                            icon="Plus"
+                            title="New Query Cell Result Export"
                             onClick={() =>
                                 arrayHelpers.push({
                                     exporter_cell_id: null,

@@ -17,7 +17,10 @@
         }
 
         &:hover {
-            background-color: var(--color-accent-bg-hover);
+            color: var(--color-accent-dark);
+            .Icon {
+                color: var(--color-accent-dark);
+            }
         }
     }
 }

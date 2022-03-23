@@ -1,6 +1,7 @@
 import React, { CSSProperties, useCallback, useEffect, useRef } from 'react';
 
 import { AutoSizer, List, InfiniteLoader } from 'react-virtualized';
+import { LoadingRow } from 'ui/Loading/Loading';
 
 export interface IInfinityScrollProps<T> {
     elements: T[];
@@ -55,9 +56,7 @@ function InfinityScrollComponent<T>({
                         style={style}
                         className="InfiniteScroll-loader flex-center"
                     >
-                        <div style={{ textAlign: 'center' }}>
-                            <i className="fa fa-spinner fa-pulse" /> Loading
-                        </div>
+                        <LoadingRow />
                     </div>
                 );
             }

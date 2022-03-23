@@ -2,6 +2,7 @@ import * as React from 'react';
 import clsx from 'clsx';
 
 import './Card.scss';
+import { AccentText } from 'ui/StyledText/StyledText';
 
 interface IProps {
     title?: React.ReactNode;
@@ -12,6 +13,7 @@ interface IProps {
     width?: string;
     flexRow?: boolean;
     alignLeft?: boolean;
+    className?: string;
 }
 
 export const Card: React.FunctionComponent<IProps> = ({
@@ -23,6 +25,7 @@ export const Card: React.FunctionComponent<IProps> = ({
     width,
     flexRow,
     alignLeft,
+    className = '',
 }) => {
     const cardClassName = clsx({
         Card: true,
@@ -30,6 +33,7 @@ export const Card: React.FunctionComponent<IProps> = ({
         'flex-column': !flexRow && !alignLeft,
         'align-left': alignLeft,
         clickable: onClick,
+        [className]: true,
     });
     return (
         <div
@@ -37,7 +41,11 @@ export const Card: React.FunctionComponent<IProps> = ({
             onClick={onClick}
             style={height || width ? { height, width } : null}
         >
-            {title && <div className="Card-title">{title}</div>}
+            {title && (
+                <AccentText className="mt8 mb16" size="large" weight="bold">
+                    {title}
+                </AccentText>
+            )}
             <div className="Card-content">{children}</div>
         </div>
     );

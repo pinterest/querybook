@@ -1,6 +1,5 @@
 import React from 'react';
 import { useSelector } from 'react-redux';
-import clsx from 'clsx';
 
 import {
     currentEnvironmentSelector,
@@ -9,10 +8,13 @@ import {
 } from 'redux/environment/selector';
 import { titleize } from 'lib/utils';
 
-import './EnvironmentTopbar.scss';
-import { Level } from 'ui/Level/Level';
 import { EnvironmentDropdownButton } from './EnvironmentDropdownButton';
+
+import { Level } from 'ui/Level/Level';
 import { Link } from 'ui/Link/Link';
+
+import './EnvironmentTopbar.scss';
+import { EnvironmentIcon } from './EnvironmentIcon';
 
 const NUMBER_OF_ICONS_TO_SHOW = 5;
 
@@ -32,11 +34,6 @@ export const EnvironmentTopbar: React.FC = React.memo(() => {
                 : false;
             const accessible = userEnvironmentNames.has(environment.name);
 
-            const firstWordMatch = environment.name.match(/([a-zA-Z0-9]+)/);
-            const envName = firstWordMatch
-                ? firstWordMatch[1].slice(0, 10).toLocaleUpperCase()
-                : '';
-
             return (
                 <Link
                     key={environment.id}
@@ -51,15 +48,11 @@ export const EnvironmentTopbar: React.FC = React.memo(() => {
                     data-balloon-length="medium"
                     to={accessible ? `/${environment.name}/` : null}
                 >
-                    <span
-                        className={clsx({
-                            'env-icon': true,
-                            disabled: !accessible,
-                            selected,
-                        })}
-                    >
-                        <span className="env-icon-text">{envName}</span>
-                    </span>
+                    <EnvironmentIcon
+                        disabled={!accessible}
+                        selected={selected}
+                        environmentName={environment.name}
+                    />
                 </Link>
             );
         });

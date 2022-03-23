@@ -2,10 +2,14 @@ import React from 'react';
 import AsyncSelect, { Props as AsyncProps } from 'react-select/async';
 import { debounce } from 'lodash';
 
-import { makeReactSelectStyle } from 'lib/utils/react-select';
+import {
+    asyncReactSelectStyles,
+    makeReactSelectStyle,
+} from 'lib/utils/react-select';
 import { overlayRoot } from 'ui/Overlay/Overlay';
 import { UserAvatar } from 'components/UserBadge/UserAvatar';
 import { SearchUserResource } from 'resource/search';
+import { AccentText } from 'ui/StyledText/StyledText';
 
 interface IUserSearchResultRow {
     id: number;
@@ -53,7 +57,10 @@ export const UserSelect: React.FunctionComponent<IUserSelectProps> = ({
 }) => {
     const [searchText, setSearchText] = React.useState('');
     const asyncSelectProps: Partial<AsyncProps<any, false>> = {};
-    const userReactSelectStyle = makeReactSelectStyle(usePortalMenu);
+    const userReactSelectStyle = React.useMemo(
+        () => makeReactSelectStyle(usePortalMenu, asyncReactSelectStyles),
+        [usePortalMenu]
+    );
     if (usePortalMenu) {
         asyncSelectProps.menuPortalTarget = overlayRoot;
     }
@@ -62,24 +69,26 @@ export const UserSelect: React.FunctionComponent<IUserSelectProps> = ({
     }
 
     return (
-        <AsyncSelect
-            styles={userReactSelectStyle}
-            placeholder={'username...'}
-            onChange={(option: any) => {
-                if (option) {
-                    onSelect(option.value, option.name);
-                } else {
-                    onSelect(null, null);
-                }
-            }}
-            loadOptions={loadOptions}
-            defaultOptions={[]}
-            inputValue={searchText}
-            onInputChange={(text) => setSearchText(text)}
-            noOptionsMessage={() => (searchText ? 'No user found.' : null)}
-            {...asyncSelectProps}
-            {...selectProps}
-        />
+        <AccentText>
+            <AsyncSelect
+                styles={userReactSelectStyle}
+                placeholder={'username'}
+                onChange={(option: any) => {
+                    if (option) {
+                        onSelect(option.value, option.name);
+                    } else {
+                        onSelect(null, null);
+                    }
+                }}
+                loadOptions={loadOptions}
+                defaultOptions={[]}
+                inputValue={searchText}
+                onInputChange={(text) => setSearchText(text)}
+                noOptionsMessage={() => (searchText ? 'No user found.' : null)}
+                {...asyncSelectProps}
+                {...selectProps}
+            />
+        </AccentText>
     );
 };
 

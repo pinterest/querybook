@@ -1,9 +1,13 @@
+import React from 'react';
+
 interface IBaseModalProps {
-    hideClose?: boolean;
+    hideModalTitle?: boolean;
     className?: string;
 
     // defaults to '', set to null to hide title
     title?: string;
+    topDOM?: React.ReactElement;
+    bottomDOM?: React.ReactElement;
 }
 
 export interface ICustomModalProps extends IBaseModalProps {

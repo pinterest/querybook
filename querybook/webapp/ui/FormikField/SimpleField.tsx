@@ -86,6 +86,7 @@ export const SimpleField: React.FC<Props> = ({
     help,
     type,
     stacked,
+    className,
 
     ...otherProps
 }) => {
@@ -164,6 +165,7 @@ export const SimpleField: React.FC<Props> = ({
             help={help}
             stacked={stacked}
             error={meta.touched ? meta.error : null}
+            className={className}
         >
             {fieldDOM}
         </FormField>

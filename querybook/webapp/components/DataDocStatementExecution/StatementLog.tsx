@@ -84,7 +84,7 @@ export const StatementLog: React.FunctionComponent<IStatementLogProps> = ({
     const toggleFullScreenButtonDOM = (
         <SoftButton
             color="light"
-            icon="maximize"
+            icon="Maximize2"
             title={fullScreen ? 'Exit Fullscreen (Esc)' : 'Fullscreen'}
             onClick={toggleFullscreen}
             className="toggle-fullscreen-button"

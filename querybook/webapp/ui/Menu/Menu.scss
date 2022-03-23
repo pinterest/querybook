@@ -1,8 +1,9 @@
 .Menu {
-    background-color: var(--bg-color);
-    color: var(--text-color);
+    background-color: var(--bg);
+    color: var(--text);
     user-select: none;
-    border-radius: 3px;
+    border-radius: var(--border-radius-sm);
+    // overflow: hidden;
 
     .MenuItem,
     .MenuInfoItem {
@@ -20,36 +21,39 @@
 
     .MenuItem {
         cursor: pointer;
-
-        .Menu-icon {
-            width: 18px;
+        * {
+            cursor: pointer;
         }
 
         &:hover {
-            background-color: var(--hover-bg-color);
+            background-color: var(--bg-hover);
             color: var(--hover-text-color);
             a {
                 color: inherit;
             }
         }
         &:first-child {
-            border-top-left-radius: 3px;
-            border-top-right-radius: 3px;
+            border-top-left-radius: inherit;
+            border-top-right-radius: inherit;
         }
         &:last-child {
-            border-bottom-left-radius: 3px;
-            border-bottom-right-radius: 3px;
+            border-bottom-left-radius: inherit;
+            border-bottom-right-radius: inherit;
         }
     }
 
+    .MenuInfoItem {
+        color: var(--text-light);
+    }
+
     &.soft {
-        background: var(--light-bg-color);
-        color: var(--light-text-color);
+        background: var(--bg-light);
+        color: var(--text-light);
         border: none;
 
         .MenuItem:hover,
         .MenuItem.is-active {
-            color: var(--text-color);
+            color: var(--text);
         }
     }
 }

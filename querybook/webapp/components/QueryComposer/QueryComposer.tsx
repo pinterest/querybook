@@ -51,6 +51,7 @@ import { Modal } from 'ui/Modal/Modal';
 
 import './QueryComposer.scss';
 import { doesLanguageSupportUDF } from 'lib/utils/udf';
+import clsx from 'clsx';
 
 const useExecution = (dispatch: Dispatch, environmentId: number) => {
     const executionId = useSelector(
@@ -328,8 +329,13 @@ const QueryComposer: React.FC = () => {
             minHeight={200}
         >
             <div className="query-execution-wrapper">
-                <div className="right-align">
-                    <IconButton icon="x" onClick={() => setExecutionId(null)} />
+                <div
+                    className="hide-execution flex-center pt8 mb4"
+                    onClick={() => setExecutionId(null)}
+                    aria-label="Close Query Execution"
+                    data-balloon-pos="bottom"
+                >
+                    <IconButton icon="ChevronDown" noPadding />
                 </div>
                 <QueryComposerExecution id={executionId} />
             </div>
@@ -352,9 +358,14 @@ const QueryComposer: React.FC = () => {
         </Modal>
     );
 
+    const queryEditorWrapperClassname = clsx({
+        'query-editor-wrapper': true,
+        mb16: executionId != null,
+    });
+
     const contentDOM = (
         <div className="QueryComposer-content-editor">
-            <div className="query-editor-wrapper">
+            <div className={queryEditorWrapperClassname}>
                 <SearchAndReplace
                     ref={searchAndReplaceRef}
                     {...searchAndReplaceProps}
@@ -377,7 +388,7 @@ const QueryComposer: React.FC = () => {
                 onEngineIdSelect={setEngineId}
                 onRunClick={handleRunQuery}
                 hasSelection={editorHasSelection}
-                runButtonTooltipPos={'left'}
+                runButtonTooltipPos={'down'}
             />
         </div>
     );
@@ -388,28 +399,31 @@ const QueryComposer: React.FC = () => {
                 <Level>
                     <LevelItem>
                         <Button
-                            icon="edit-3"
+                            icon="Edit3"
                             title="Format"
                             onClick={handleFormatQuery}
+                            theme="text"
                         />
                         <Button
-                            icon="delete"
+                            icon="Delete"
                             title="Clear"
                             onClick={() => {
                                 setQuery('');
                                 setExecutionId(null);
                             }}
+                            theme="text"
                         />
                         <Button
-                            icon="plus"
+                            icon="Plus"
                             title="Create DataDoc"
                             onClick={handleCreateDataDoc}
+                            theme="text"
                         />
                     </LevelItem>
                     <LevelItem>
                         {canShowUDFForm && (
                             <Button
-                                icon="plus"
+                                icon="Plus"
                                 title="Add UDF"
                                 aria-label="Add New User Defined Function"
                                 data-balloon-pos="left"

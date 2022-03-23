@@ -22,16 +22,15 @@ import { DataTableViewQueryUsers } from './DataTableViewQueryUsers';
 import { UserName } from 'components/UserBadge/UserName';
 
 import { AsyncButton } from 'ui/AsyncButton/AsyncButton';
-import { Button } from 'ui/Button/Button';
-import { IconButton } from 'ui/Button/IconButton';
+import { Button, TextButton } from 'ui/Button/Button';
 import { Loading } from 'ui/Loading/Loading';
-import { Title } from 'ui/Title/Title';
 import { ThemedCodeHighlight } from 'ui/CodeHighlight/ThemedCodeHighlight';
 
 import { DataTableViewQueryEngines } from './DataTableViewQueryEngines';
 import { DataTableViewQueryConcurrences } from './DataTableViewQueryConcurrences';
 
 import './DataTableViewQueryExamples.scss';
+import { AccentText } from 'ui/StyledText/StyledText';
 
 interface IProps {
     tableId: number;
@@ -148,36 +147,44 @@ export const DataTableViewQueryExamples: React.FunctionComponent<IProps> = ({
     const queryExampleFiltersSection = (
         <div className="mb12">
             <div className="horizontal-space-between">
-                <Title size={4}>Queries with this table</Title>
+                <AccentText
+                    className="mb12"
+                    size="text"
+                    color="light"
+                    noUserSelect
+                >
+                    Select any user, query engine, and/or co-occuring tables to
+                    filter
+                </AccentText>
                 {!isEmpty(filters) && (
                     <Button onClick={clearFilter}>Clear Filter</Button>
                 )}
             </div>
-            <div className="filter-selection-section mb16 mt4">
-                <div>
-                    <Title subtitle size={6}>
+            <div className="filter-selection-section mb24">
+                <div className="mb8">
+                    <AccentText size="med" color="text" weight="bold">
                         Top users
-                    </Title>
+                    </AccentText>
                     <DataTableViewQueryUsers
                         tableId={tableId}
                         onClick={setUidFilter}
                         selectedUid={filters.uid}
                     />
                 </div>
-                <div className="mt12">
-                    <Title subtitle size={6}>
+                <div className="mb8">
+                    <AccentText size="med" color="text" weight="bold">
                         Query engines
-                    </Title>
+                    </AccentText>
                     <DataTableViewQueryEngines
                         tableId={tableId}
                         onClick={setEngineIdFilter}
                         selectedEngineId={filters.engine_id}
                     />
                 </div>
-                <div className="mt12">
-                    <Title subtitle size={6}>
+                <div className="mb8">
+                    <AccentText size="med" color="text" weight="bold">
                         Top co-occurring tables
-                    </Title>
+                    </AccentText>
                     <DataTableViewQueryConcurrences
                         tableId={tableId}
                         onClick={setTableIdFilter}
@@ -189,7 +196,7 @@ export const DataTableViewQueryExamples: React.FunctionComponent<IProps> = ({
     );
 
     return (
-        <div className="DataTableViewQueryExamples">
+        <div className="DataTableViewQueryExamples pb24">
             {queryExampleFiltersSection}
             <QueryExamplesList tableId={tableId} filters={filters} />
         </div>
@@ -289,8 +296,10 @@ const QueryExamplesList: React.FC<{
                             <span>by </span>
                             <UserName uid={query.uid} />
                         </div>
-                        <IconButton
-                            icon="external-link"
+                        <TextButton
+                            icon="ArrowRight"
+                            title="Open Execution"
+                            className="mt8"
                             onClick={() => openDisplayModal(query.id)}
                         />
                     </div>

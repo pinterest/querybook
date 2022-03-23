@@ -7,8 +7,9 @@ import { UserSelect } from 'components/UserSelect/UserSelect';
 import { UserBadge } from 'components/UserBadge/UserBadge';
 import { Button } from 'ui/Button/Button';
 import { IconButton } from 'ui/Button/IconButton';
+import { Subtitle } from 'ui/Title/Title';
+
 import './QueryExecutionAccessList.scss';
-import { Title } from 'ui/Title/Title';
 
 interface IQueryExecutionAccessListProps {
     accessRequestsByUid: Record<number, IAccessRequest>;
@@ -53,9 +54,7 @@ export const QueryExecutionAccessList: React.FunctionComponent<IQueryExecutionAc
     );
     const shareHeader = (
         <div className="mb4">
-            <Title size={6} subtitle>
-                Add User
-            </Title>
+            <Subtitle>Add User</Subtitle>
         </div>
     );
     const accessRequestListDOM = Object.values(accessRequestsByUid).map(
@@ -68,12 +67,12 @@ export const QueryExecutionAccessList: React.FunctionComponent<IQueryExecutionAc
                     <div className="access-request-control-buttons flex-row">
                         <IconButton
                             className="access-request-control-button"
-                            icon="check-circle"
+                            icon="CheckCircle"
                             onClick={() => addQueryExecutionViewer(request.uid)}
                         />
                         <IconButton
                             className="access-request-control-button"
-                            icon="x-circle"
+                            icon="XCircle"
                             onClick={() =>
                                 rejectQueryExecutionAccessRequest(request.uid)
                             }
@@ -103,18 +102,14 @@ export const QueryExecutionAccessList: React.FunctionComponent<IQueryExecutionAc
     const accessRequestHeader =
         accessRequestListDOM.length > 0 ? (
             <div className="row-description mr16 mb4">
-                <Title size={6} subtitle>
-                    Access Requests
-                </Title>
+                <Subtitle>Access Requests</Subtitle>
             </div>
         ) : null;
 
     const viewersListHeader =
         viewersListDOM.length > 0 ? (
             <div className="row-description mr16 mb4">
-                <Title size={6} subtitle>
-                    Users With Access
-                </Title>
+                <Subtitle>Users With Access</Subtitle>
             </div>
         ) : null;
 

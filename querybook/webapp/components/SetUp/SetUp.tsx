@@ -56,6 +56,7 @@ export const SetUp: React.FunctionComponent = () => {
                     onClick={() => history.push('/admin/')}
                     height="180px"
                     width="240px"
+                    className="ml24"
                 >
                     customize your configurations one step at a time
                 </Card>

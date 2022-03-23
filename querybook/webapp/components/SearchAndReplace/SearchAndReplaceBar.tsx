@@ -11,7 +11,7 @@ import { throttle } from 'lodash';
 import { useEvent } from 'hooks/useEvent';
 import { IconButton } from 'ui/Button/IconButton';
 import { DebouncedInput } from 'ui/DebouncedInput/DebouncedInput';
-import { TextButton } from 'ui/Button/Button';
+import { Button, TextButton } from 'ui/Button/Button';
 import { matchKeyPress, matchKeyMap, KeyMap } from 'lib/utils/keyboard';
 import { ISearchOptions } from 'const/searchAndReplace';
 import { SearchAndReplaceContext } from 'context/searchAndReplace';
@@ -97,8 +97,9 @@ export const SearchAndReplaceBar = React.forwardRef<
                     lastActiveElementRef.current = activeElement;
                 }
             },
-            false,
-            document
+            {
+                element: document,
+            }
         );
 
         // Throttling because if you press enter to focus it
@@ -140,6 +141,19 @@ export const SearchAndReplaceBar = React.forwardRef<
             },
         }));
 
+        const noPrevRes = React.useMemo(
+            () =>
+                searchResults.length === 0 ||
+                currentSearchResultIndex <= searchResults.length,
+            [searchResults.length, currentSearchResultIndex]
+        );
+        const noNextRes = React.useMemo(
+            () =>
+                searchResults.length === 0 ||
+                currentSearchResultIndex >= searchResults.length,
+            [searchResults.length, currentSearchResultIndex]
+        );
+
         const searchRow = (
             <div className="flex-row ">
                 <div className="datadoc-search-input">
@@ -151,7 +165,10 @@ export const SearchAndReplaceBar = React.forwardRef<
                             onKeyDown,
                             ref: searchInputRef,
                         }}
+                        className="flex-center mr8"
                     />
+                </div>
+                <div className="data-doc-search-buttons">
                     <TextToggleButton
                         text="Aa"
                         value={searchOptions.matchCase}
@@ -173,10 +190,10 @@ export const SearchAndReplaceBar = React.forwardRef<
                             })
                         }
                         tooltip="Use Regex"
+                        className="ml16"
                     />
                 </div>
-
-                <span className="position-info mh8">
+                <span className="position-info mh12">
                     {searchResults.length
                         ? `${
                               searchResults.length > currentSearchResultIndex
@@ -185,48 +202,65 @@ export const SearchAndReplaceBar = React.forwardRef<
                           } of ${searchResults.length}`
                         : 'No results'}
                 </span>
-
                 <IconButton
-                    icon="arrow-up"
+                    icon="ArrowUp"
                     noPadding
                     onClick={() => moveResultIndex(-1)}
+                    tooltip={noPrevRes ? null : 'Previous Result'}
+                    tooltipPos="down"
+                    size={16}
+                    disabled={noPrevRes}
                 />
                 <IconButton
-                    icon="arrow-down"
+                    icon="ArrowDown"
                     noPadding
                     onClick={() => moveResultIndex(1)}
+                    tooltip={noNextRes ? null : 'Next Result'}
+                    tooltipPos="down"
+                    size={16}
+                    className="ml4"
+                    disabled={noNextRes}
                 />
                 <IconButton
-                    className={'ml8'}
+                    className="ml16"
                     noPadding
-                    icon="x"
+                    icon="X"
                     onClick={handleHide}
+                    tooltip="Exit"
+                    tooltipPos="right"
+                    size={16}
                 />
             </div>
         );
+
         const replaceRow = showReplace && (
             <div className="flex-row mt4">
                 <div className="datadoc-search-input">
                     <DebouncedInput
                         value={replaceString}
                         onChange={onReplaceStringChange}
-                        inputProps={{ ref: replaceInputRef, onKeyDown }}
+                        inputProps={{
+                            ref: replaceInputRef,
+                            onKeyDown,
+                            placeholder: 'Replace',
+                        }}
+                        className="flex-center mr8"
                     />
                 </div>
-
                 <TextButton
-                    icon="repeat"
+                    icon="Repeat"
                     aria-label="Replace"
                     data-balloon-pos="down"
                     size="small"
                     onClick={() => onReplace()}
                 />
-                <TextButton
-                    icon="repeat"
+                <Button
+                    icon="Repeat"
                     title="All"
                     aria-label="Replace all"
                     data-balloon-pos="down"
                     size="small"
+                    theme="text"
                     onClick={() => onReplace(true)}
                 />
             </div>
@@ -236,9 +270,9 @@ export const SearchAndReplaceBar = React.forwardRef<
             <div className="SearchAndReplaceBar flex-row p8" ref={selfRef}>
                 <IconButton
                     noPadding
-                    icon={showReplace ? 'chevron-down' : 'chevron-right'}
+                    icon={showReplace ? 'ChevronDown' : 'ChevronRight'}
                     onClick={() => setShowReplace(!showReplace)}
-                    className="mr4"
+                    className="expand-icon m4"
                 />
                 <div>
                     {searchRow}

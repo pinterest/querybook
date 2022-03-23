@@ -21,8 +21,7 @@ export interface IResizableTextareaProps
 
 const StyledTextarea = styled.textarea`
     color: inherit;
-    border-radius: var(--border-radius);
-    border: var(--border);
+    border-radius: var(--border-radius-sm);
     display: block;
     max-width: 100%;
     min-width: 100%;
@@ -34,7 +33,7 @@ const StyledTextarea = styled.textarea`
     ${({ transparent }) =>
         transparent &&
         `
-        background: none;
+        background-color: transparent !important;
         resize: none;
         border: none;
         outline: none;

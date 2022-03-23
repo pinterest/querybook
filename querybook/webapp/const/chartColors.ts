@@ -67,8 +67,6 @@ export const colorPaletteFill = [
 export const fontColor = {
     default: [69, 69, 69],
     dark: [239, 239, 239],
-    dawn: [92, 99, 119],
-    night: [220, 230, 252],
     lush: [255, 216, 137],
 };
 
@@ -76,8 +74,6 @@ export const fontColor = {
 export const accentColor = {
     default: [133, 208, 206],
     dark: [52, 101, 127],
-    dawn: [245, 172, 114],
-    night: [255, 210, 117],
     lush: [245, 172, 114],
 };
 
@@ -85,15 +81,11 @@ export const accentColor = {
 export const fillColor = {
     default: 'rgba(191,191,191, 0.1)',
     dark: 'rgba(144,144,144, 0.1)',
-    dawn: 'rgba(236,209,175, 0.1)',
-    night: 'rgba(94,132,205, 0.1)',
     lush: 'rgba(107,160,151, 0.1)',
 };
 
 export const backgroundColor = {
     default: 'rgba(255,255,255, 0.95)',
     dark: 'rgba(48,46,47, 0.95)',
-    dawn: 'rgba(252,249,244, 0.95)',
-    night: 'rgba(29,51,94, 0.95)',
     lush: 'rgba(51,79,74, 0.95)',
 };

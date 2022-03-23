@@ -1,4 +1,4 @@
-import React, { useState, useMemo } from 'react';
+import React, { useMemo } from 'react';
 import { IStoreState } from 'redux/store/types';
 import { useSelector, useDispatch } from 'react-redux';
 import { titleize } from 'lib/utils';
@@ -7,12 +7,12 @@ import { queryEngineSelector } from 'redux/queryEngine/selector';
 import * as userActions from 'redux/user/action';
 
 import { Select, makeSelectOptions } from 'ui/Select/Select';
-import './UserSettingsMenu.scss';
 import { availableEnvironmentsSelector } from 'redux/environment/selector';
-import { Tabs } from 'ui/Tabs/Tabs';
 import { notificationServiceSelector } from 'redux/notificationService/selector';
 
-type UseerSettingsTab = 'general' | 'editor';
+import './UserSettingsMenu.scss';
+import { UserSettingsTab } from 'components/EnvironmentAppRouter/modalRoute/UserSettingsMenuRoute';
+
 const userSettingConfig: Record<
     string,
     {
@@ -25,12 +25,14 @@ const userSettingConfig: Record<
         >;
         default: string;
         helper: string;
-        tab: UseerSettingsTab;
+        tab: UserSettingsTab;
         per_env?: boolean;
     }
 > = require('config/user_setting.yaml');
 
-export const UserSettingsMenu: React.FC = () => {
+export const UserSettingsMenu: React.FC<{ tab: UserSettingsTab }> = ({
+    tab,
+}) => {
     const userSettingByKey = useSelector(
         (state: IStoreState) => state.user.rawSettings
     );
@@ -48,7 +50,6 @@ export const UserSettingsMenu: React.FC = () => {
         []
     );
 
-    const [tab, setTab] = useState<UseerSettingsTab>('general');
     const settingsToShow = useMemo(
         () =>
             Object.entries(userSettingConfig).filter(
@@ -136,19 +137,5 @@ export const UserSettingsMenu: React.FC = () => {
         </div>
     ));
 
-    return (
-        <div className="UserSettingsMenu">
-            <Tabs
-                wide
-                className="mb8"
-                items={[
-                    { key: 'general', name: 'General' },
-                    { key: 'editor', name: 'Editor' },
-                ]}
-                selectedTabKey={tab}
-                onSelect={(newTab: UseerSettingsTab) => setTab(newTab)}
-            />
-            {fieldsDOM}
-        </div>
-    );
+    return <div className="UserSettingsMenu">{fieldsDOM}</div>;
 };

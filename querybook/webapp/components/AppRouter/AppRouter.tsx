@@ -18,7 +18,7 @@ export const AppRouter: React.FunctionComponent = () => (
     <Router history={history}>
         <UserLoader>
             <AppLayout>
-                <React.Suspense fallback={<Loading />}>
+                <React.Suspense fallback={<Loading fullHeight />}>
                     <Switch>
                         <Route path="/admin/:entity?" component={AppAdmin} />
                         <Route

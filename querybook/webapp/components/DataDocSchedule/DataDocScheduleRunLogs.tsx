@@ -8,6 +8,7 @@ import { ErrorMessage } from 'ui/Message/ErrorMessage';
 import { Table, TableAlign } from 'ui/Table/Table';
 import { TaskStatusIcon } from 'components/Task/TaskStatusIcon';
 import { DataDocScheduleResource } from 'resource/dataDoc';
+import { ShowMoreText } from 'ui/ShowMoreText/ShowMoreText';
 
 function formatCell(
     index: number,
@@ -30,9 +31,24 @@ function formatCell(
             dom = <TaskStatusIcon type={row[column]} />;
             break;
         }
+        case 'error_message': {
+            dom = <ShowMoreText text={row[column]} />;
+            break;
+        }
     }
     return (
-        <div key={`${row.id}-${column}`} className={`col-${column}`}>
+        <div
+            key={`${row.id}-${column}`}
+            className={`col-${column}`}
+            style={
+                column === 'error_message'
+                    ? {
+                          whiteSpace: 'pre-wrap',
+                          wordBreak: 'break-all',
+                      }
+                    : {}
+            }
+        >
             {dom}
         </div>
     );

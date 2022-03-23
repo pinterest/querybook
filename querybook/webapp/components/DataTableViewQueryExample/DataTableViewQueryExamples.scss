@@ -1,14 +1,14 @@
 .DataTableViewQueryExamples {
     .filter-selection-section {
         .Button.active {
-            border-color: var(--color-accent-text);
-            background-color: var(--color-accent-bg);
+            background-color: var(--color-accent-lightest-0);
+            color: var(--color-accent-dark);
         }
     }
 
     .DataTableViewQueryExamples-item {
         position: relative;
-        margin-bottom: 16px;
+        margin-top: 24px;
 
         .DataTableViewQueryExamples-query {
             height: auto;
@@ -19,10 +19,17 @@
 
         .DataTableViewQueryExamples-info {
             text-align: right;
-            margin-right: 12px;
+            margin-right: 8px;
+            margin-top: 8px;
+            span:first-child {
+                color: var(--text-light);
+            }
+            span:last-child {
+                font-weight: var(--bold-font);
+            }
         }
 
-        .IconButton {
+        .Button {
             position: absolute;
             top: 0px;
             right: 20px;
@@ -31,15 +38,50 @@
 }
 
 .DataTableViewQueryUsers,
+.DataTableViewQueryEngines,
 .DataTableViewQueryConcurrences {
     .query-filter-wrapper {
         display: flex;
         flex-direction: row;
         flex-wrap: wrap;
+        margin-top: 12px;
+        margin-left: 16px;
 
         .Button {
-            margin-right: 4px;
-            margin-top: 4px;
+            margin-bottom: 8px;
+            margin-left: 0px;
+            margin-right: 12px;
+
+            &:hover {
+                .UserBadge .username,
+                .Tag {
+                    background-color: var(--bg-hover);
+                }
+            }
+
+            &.active {
+                .UserBadge .username {
+                    background-color: var(--color-accent-lightest-0);
+                    color: var(--color-accent-dark);
+                }
+                .Icon svg {
+                    color: var(--color-accent-dark);
+                }
+                &:hover {
+                    background-color: var(--color-accent-lightest);
+                    .UserBadge .username,
+                    .Tag {
+                        background-color: var(--color-accent-lightest);
+                    }
+                }
+            }
+
+            .UserBadge .username {
+                margin-right: 0px;
+            }
+            .Tag + .Tag {
+                margin-left: 0px;
+            }
         }
     }
 }

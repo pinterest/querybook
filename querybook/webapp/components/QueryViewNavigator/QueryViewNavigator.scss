@@ -1,12 +1,13 @@
 @import './../../scss_variables.scss';
 
 .QueryViewNavigator {
-    display: flex;
-    flex-direction: column;
     position: relative;
 
+    .list-header {
+        background-color: transparent !important;
+    }
+
     .QueryViewFilter {
-        background-color: var(--light-bg-color);
         display: flex;
         flex-direction: row;
         justify-content: space-between;
@@ -23,14 +24,22 @@
         .QueryViewFilter-tags {
             flex-wrap: wrap;
             min-height: 100%;
+
+            .TagGroup {
+                margin-right: 8px;
+                margin-top: 2px;
+                + .TagGroup {
+                    margin-left: 0px;
+                }
+            }
         }
         .QueryViewFilter-icons {
             .IconButton {
                 padding: 4px;
-                .feather-filter {
+                .lucide-filter {
                     padding: 1px;
                 }
-                .feather-refresh-cw {
+                .lucide-refresh-cw {
                     padding: 2px;
                 }
             }
@@ -42,10 +51,6 @@
         overflow-y: auto;
     }
 
-    .loading-queries-message {
-        padding: 36px 20px;
-    }
-
     .no-result-message {
         text-align: center;
         font-size: var(--xlarge-text-size);
@@ -53,18 +58,20 @@
 
         padding: 16px;
         font-weight: bold;
-        color: var(--border-color);
+        color: var(--text-light);
     }
 }
 
 .QueryResult {
     cursor: pointer;
-    border-bottom: var(--border);
-    padding: 4px 12px;
+    background: var(--bg-light);
+    border-radius: var(--border-radius-sm);
+    padding: 8px;
+    margin-bottom: var(--margin-xs);
 
     &:hover,
     &.selected {
-        background-color: var(--hover-bg-color);
+        background-color: var(--bg-hover);
     }
 
     .exec-header {
@@ -74,15 +81,5 @@
     .query-context {
         @include ellipsis(2);
         word-break: break-all;
-        font-family: var(--family-monospace);
-    }
-}
-
-.ExecutionTime {
-    .Icon {
-        margin-right: 2px;
-
-        // Shifting it up to align with the text
-        margin-bottom: 1.6px;
     }
 }

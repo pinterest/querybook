@@ -1,16 +1,21 @@
 .DataTableViewMini {
     display: flex;
     flex-direction: column;
-    background: var(--light-bg-color);
+    background: var(--bg-lightest);
+    overflow: hidden;
+    border-radius: var(--border-radius-sm);
 
     .DataTableViewMini-header {
         position: sticky;
         top: 0;
-        background: var(--light-bg-color);
+        background: var(--bg-lightest);
     }
 
     .DataTableViewMini-content {
         overflow-y: auto;
+        > div {
+            margin-right: 4px;
+        }
     }
     .DataTableTags {
         margin-top: -4px;

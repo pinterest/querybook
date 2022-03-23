@@ -5,19 +5,17 @@ import { useSelector, useDispatch } from 'react-redux';
 import { setSidebarTableId } from 'redux/querybookUI/action';
 import { IStoreState } from 'redux/store/types';
 import { IDataCell } from 'const/datadoc';
-import { Button } from 'ui/Button/Button';
-import { Level } from 'ui/Level/Level';
-import { IconButton } from 'ui/Button/IconButton';
-import { Title } from 'ui/Title/Title';
-import './DataDocLeftSidebar.scss';
+
 import { DataDocContents } from './DataDocContents';
 import { DataTableViewMini } from 'components/DataTableViewMini/DataTableViewMini';
 
+import { Level } from 'ui/Level/Level';
+import { IconButton } from 'ui/Button/IconButton';
+
+import './DataDocLeftSidebar.scss';
 interface IProps {
     docId: number;
     cells: IDataCell[];
-    onCollapse: () => any;
-    defaultCollapse: boolean;
 }
 
 type LeftSidebarContentState = 'contents' | 'table' | 'default';
@@ -25,8 +23,6 @@ type LeftSidebarContentState = 'contents' | 'table' | 'default';
 export const DataDocLeftSidebar: React.FunctionComponent<IProps> = ({
     docId,
     cells,
-    defaultCollapse,
-    onCollapse,
 }) => {
     const dispatch = useDispatch();
     const sidebarTableId = useSelector(
@@ -61,10 +57,10 @@ export const DataDocLeftSidebar: React.FunctionComponent<IProps> = ({
             <div className="sidebar-content sidebar-content-contents">
                 <Level className="contents-panel-header">
                     <IconButton
-                        icon="arrow-left"
+                        icon="ArrowLeft"
                         onClick={() => setContentState('default')}
                     />
-                    <Title size={6}>contents</Title>
+                    <div>contents</div>
                 </Level>
                 <DataDocContents cells={cells} docId={docId} />
             </div>
@@ -81,24 +77,15 @@ export const DataDocLeftSidebar: React.FunctionComponent<IProps> = ({
     } else {
         contentDOM = (
             <div className={'sidebar-content sidebar-content-default'}>
-                <Button
-                    className="contents-toggle-button"
-                    icon="list"
-                    attached="left"
-                    onClick={() => setContentState('contents')}
-                    aria-label="Show doc contents"
-                    data-balloon-pos="right"
-                />
-                <br />
                 <IconButton
-                    icon={defaultCollapse ? 'maximize' : 'minimize'}
-                    tooltip={
-                        defaultCollapse
-                            ? 'Uncollapse all cells'
-                            : 'Collapse all cells'
-                    }
+                    className="contents-toggle-button"
+                    icon="List"
+                    onClick={() => setContentState('contents')}
+                    color="light"
+                    invertCircle
+                    size={20}
+                    tooltip="Table of Contents"
                     tooltipPos="right"
-                    onClick={onCollapse}
                 />
             </div>
         );

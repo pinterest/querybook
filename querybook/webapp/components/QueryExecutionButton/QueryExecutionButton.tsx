@@ -61,8 +61,8 @@ export const QueryExecutionButton = React.memo<IQueryExecutionButtonProps>(
         const buttonTitle = loading
             ? 'Checking running queries'
             : activeQueryExecutions.length > 0
-            ? `You have ${activeQueryExecutions.length} running queries.`
-            : 'No running queries.';
+            ? `You have ${activeQueryExecutions.length} running queries`
+            : 'No running queries';
 
         return (
             <>
@@ -71,14 +71,14 @@ export const QueryExecutionButton = React.memo<IQueryExecutionButtonProps>(
                         onClick={onClick}
                         tooltip={buttonTitle}
                         tooltipPos={tooltipPos}
-                        icon={'list'}
+                        icon={'PlayCircle'}
                         active={active}
                         ping={
                             activeQueryExecutions.length > 0
                                 ? activeQueryExecutions.length.toString()
                                 : null
                         }
-                        title="Runs"
+                        title="Execs"
                     />
                 </span>
             </>

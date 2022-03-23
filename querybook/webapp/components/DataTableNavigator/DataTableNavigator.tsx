@@ -24,6 +24,8 @@ import { DataTableNavigatorSearch } from './DataTableNavigatorSearch';
 import { SchemaTableView } from './SchemaTableView/SchemaTableView';
 
 import './DataTableNavigator.scss';
+import { currentEnvironmentSelector } from 'redux/environment/selector';
+import { UrlContextMenu } from 'ui/ContextMenu/UrlContextMenu';
 
 const PRESELECTED_FILTERS = ['golden'];
 
@@ -114,6 +116,7 @@ export const DataTableNavigator: React.FC<IDataTableNavigatorProps> = ({
     selectedTableId,
 }) => {
     const history = useHistory();
+    const environmentName = useSelector(currentEnvironmentSelector).name;
     const {
         queryMetastores,
         dataTables,
@@ -161,10 +164,10 @@ export const DataTableNavigator: React.FC<IDataTableNavigatorProps> = ({
                 onTableRowClick(tableId, event);
             } else {
                 // default behavior
-                history.push(`/table/${tableId}/`);
+                history.push(`/${environmentName}/table/${tableId}/`);
             }
         },
-        [onTableRowClick, history]
+        [onTableRowClick, history, environmentName]
     );
 
     const handleSearch = useCallback(
@@ -179,6 +182,7 @@ export const DataTableNavigator: React.FC<IDataTableNavigatorProps> = ({
             const className = clsx({
                 selected: table.selected,
             });
+            const tableUrl = `/${environmentName}/table/${table.id}/`;
 
             return (
                 <PopoverHoverWrapper>
@@ -192,6 +196,11 @@ export const DataTableNavigator: React.FC<IDataTableNavigatorProps> = ({
                                 isRow
                                 title={table.full_name}
                             />
+                            <UrlContextMenu
+                                url={tableUrl}
+                                anchorRef={{ current: anchorElement }}
+                            />
+
                             {showPopover && (
                                 <Popover
                                     onHide={() => null}
@@ -209,7 +218,7 @@ export const DataTableNavigator: React.FC<IDataTableNavigatorProps> = ({
                 </PopoverHoverWrapper>
             );
         },
-        [handleTableRowClick]
+        [handleTableRowClick, environmentName]
     );
 
     const showTableSearchResult = useMemo(
@@ -268,17 +277,19 @@ export const DataTableNavigator: React.FC<IDataTableNavigatorProps> = ({
     }
 
     return (
-        <div className={'DataTableNavigator '}>
-            {metastorePicker}
-            <DataTableNavigatorSearch
-                searchFilters={searchFilters}
-                searchString={searchString}
-                onSearch={handleSearch}
-                updateSearchFilter={updateSearchFilter}
-                resetSearchFilter={resetSearchFilter}
-                showTableSearchResult={showTableSearchResult}
-            />
-            {tablesDOM}
+        <div className="DataTableNavigator SidebarNavigator">
+            <div className="list-header">
+                {metastorePicker}
+                <DataTableNavigatorSearch
+                    searchFilters={searchFilters}
+                    searchString={searchString}
+                    onSearch={handleSearch}
+                    updateSearchFilter={updateSearchFilter}
+                    resetSearchFilter={resetSearchFilter}
+                    showTableSearchResult={showTableSearchResult}
+                />
+            </div>
+            <div className="list-content">{tablesDOM}</div>
         </div>
     );
 };

@@ -1,8 +1,11 @@
 .DataDocCell {
     border-radius: var(--border-radius);
-    margin: 48px 16px;
+    margin: 36px 12px;
     &.collapsed {
         min-height: 0px;
         cursor: nesw-resize;
+    }
+    .chart-cell-controls {
+        align-items: flex-start;
     }
 }

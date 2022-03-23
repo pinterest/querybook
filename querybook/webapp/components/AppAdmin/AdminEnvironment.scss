@@ -9,22 +9,20 @@
             width: 100%;
         }
     }
-    .AdminEnvironment-engine-label {
-        margin-left: 8px;
-    }
     .AdminEnvironment-engine-list {
         max-height: 160px;
         overflow-y: auto;
-        margin: 8px;
+        margin: 8px 0px;
         padding: 8px;
-        background-color: var(--light-bg-color);
+        background-color: var(--bg-light);
+        border-radius: var(--border-radius-sm);
         .AdminEnvironment-engine {
             padding: 4px;
 
             .AdminEnvironment-engine-name {
                 cursor: pointer;
                 &:hover {
-                    color: var(--color-accent-text);
+                    color: var(--color-accent-dark);
                 }
             }
 
@@ -37,5 +35,10 @@
                 }
             }
         }
+    }
+
+    .AdminForm-right .FormField .ToggleSwitch {
+        margin-left: auto;
+        margin-right: 0px;
     }
 }

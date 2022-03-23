@@ -33,7 +33,7 @@ import { AdminEntity } from './types';
 import './AppAdmin.scss';
 
 const ENTITY_SIDEBAR_WIDTH = 200;
-const NAV_SIDEBAR_WIDTH = 200;
+const NAV_SIDEBAR_WIDTH = 260;
 
 const AppAdmin: React.FunctionComponent = () => {
     const { entity: selectedEntity }: { entity: AdminEntity } = useParams();
@@ -130,7 +130,7 @@ const AppAdmin: React.FunctionComponent = () => {
             <div className="AdminLanding-content">
                 <div className="AdminLanding-cards flex-row">
                     <Card
-                        title={<Icon name="box" />}
+                        title={<Icon name="Box" />}
                         onClick={() => history.push('/admin/environment/new/')}
                         height="160px"
                         width="240px"
@@ -138,7 +138,7 @@ const AppAdmin: React.FunctionComponent = () => {
                         create a new environment
                     </Card>
                     <Card
-                        title={<Icon name="database" />}
+                        title={<Icon name="Database" />}
                         onClick={() => history.push('/admin/metastore/new/')}
                         height="160px"
                         width="240px"
@@ -146,7 +146,7 @@ const AppAdmin: React.FunctionComponent = () => {
                         create a new metastore
                     </Card>
                     <Card
-                        title={<Icon name="server" />}
+                        title={<Icon name="Server" />}
                         onClick={() => history.push('/admin/query_engine/new/')}
                         height="160px"
                         width="240px"
@@ -154,7 +154,7 @@ const AppAdmin: React.FunctionComponent = () => {
                         create a new query engine
                     </Card>
                     <Card
-                        title={<Icon name="users" />}
+                        title={<Icon name="Users" />}
                         onClick={() =>
                             history.push('/admin/user_role/?new=true/')
                         }
@@ -164,7 +164,7 @@ const AppAdmin: React.FunctionComponent = () => {
                         create a new user role
                     </Card>
                     <Card
-                        title={<Icon name="clipboard" />}
+                        title={<Icon name="Clipboard" />}
                         onClick={() =>
                             history.push('/admin/announcement/?new=true/')
                         }

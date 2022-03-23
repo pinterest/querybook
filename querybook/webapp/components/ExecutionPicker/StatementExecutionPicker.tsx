@@ -8,6 +8,7 @@ import { StatusIcon } from 'ui/StatusIcon/StatusIcon';
 import { ListMenu } from 'ui/Menu/ListMenu';
 
 import './StatementExecutionPicker.scss';
+import { Icon } from 'ui/Icon/Icon';
 
 interface IProps {
     statementExecutionId?: number;
@@ -43,8 +44,8 @@ export const StatementExecutionPicker: React.FunctionComponent<IProps> = ({
         const current = selectedIndex >= 0 ? selectedIndex + 1 : 'n/a';
         return (
             <div className="custom-statement-picker-button">
-                Statement {current} out of {total}{' '}
-                <i className="fa fa-caret-down dropdown-icon" />
+                Statement {current} out of {total}
+                <Icon name="ChevronDown" size={16} className="ml4" />
             </div>
         );
     };
@@ -64,7 +65,7 @@ export const StatementExecutionPicker: React.FunctionComponent<IProps> = ({
 
         statementItems.push({
             name: (
-                <span className="statement-execution-tab-name">
+                <span className="statement-execution-tab-name flex-row">
                     {statusIcon} Statement {i + 1}
                 </span>
             ),

@@ -72,6 +72,15 @@ export const InfoMenuButton: React.FunctionComponent = () => {
                 </MenuItem>
                 <MenuItem
                     onClick={() =>
+                        navigateWithinEnv('/info/templating/', {
+                            isModal: true,
+                        })
+                    }
+                >
+                    Template Guide
+                </MenuItem>
+                <MenuItem
+                    onClick={() =>
                         navigateWithinEnv('/info/tour/', {
                             isModal: true,
                         })
@@ -98,11 +107,11 @@ export const InfoMenuButton: React.FunctionComponent = () => {
                 className="InfoMenuButton-button"
                 onClick={() => setShowPanel(true)}
                 ref={buttonRef}
-                icon={'help-circle'}
+                icon={'HelpCircle'}
                 tooltip={'Logs, Tips, Shortcuts, & FAQs'}
                 tooltipPos="right"
                 ping={notification}
-                title="Info"
+                title="Help"
             />
             {showPanel ? getPanelDOM() : null}
         </div>

@@ -2,7 +2,8 @@ import React from 'react';
 
 import { IDataDoc } from 'const/datadoc';
 
-import { DataDocTemplateVarForm } from 'components/TemplateDataDocButton/DataDocTemplateVarForm';
+import { DataDocTemplateVarForm } from 'components/DataDocTemplateButton/DataDocTemplateVarForm';
+import { DataDocTemplateInfoButton } from './DataDocTemplateInfoButton';
 
 import { IconButton } from 'ui/Button/IconButton';
 import { Modal } from 'ui/Modal/Modal';
@@ -13,7 +14,7 @@ interface IProps {
     isEditable?: boolean;
 }
 
-export const TemplateDataDocButton: React.FunctionComponent<IProps> = ({
+export const DataDocTemplateButton: React.FunctionComponent<IProps> = ({
     changeDataDocMeta,
     dataDoc,
     isEditable,
@@ -25,7 +26,8 @@ export const TemplateDataDocButton: React.FunctionComponent<IProps> = ({
             onHide={() => {
                 setShowTemplateForm(false);
             }}
-            title="Configure Template"
+            title="Variables"
+            topDOM={<DataDocTemplateInfoButton />}
         >
             <DataDocTemplateVarForm
                 isEditable={isEditable}
@@ -41,13 +43,12 @@ export const TemplateDataDocButton: React.FunctionComponent<IProps> = ({
     return (
         <div>
             <IconButton
-                icon="code"
+                icon="Code"
                 onClick={() => setShowTemplateForm(true)}
-                tooltip="Set Templated Variables"
+                tooltip="Set Variables"
                 tooltipPos="left"
                 title="Template"
             />
-
             {templatedModal}
         </div>
     );

@@ -99,7 +99,7 @@ export const AdminUserRole: React.FunctionComponent = () => {
                 <div className="AdminUserRole-new">
                     {displayNewForm ? (
                         <div className="AdminUserRole-new-form horizontal-space-between">
-                            <FormField stacked label="Username">
+                            <FormField stacked label="Username" className="mr8">
                                 <UserSelect
                                     onSelect={(selectedUid) => {
                                         setNewUserRoleState({
@@ -162,7 +162,7 @@ export const AdminUserRole: React.FunctionComponent = () => {
                             }}
                         >
                             <div className="AdminUserRole-new-msg flex-row">
-                                <Icon name="plus" />
+                                <Icon name="Plus" />
                                 <span>create a new user role</span>
                             </div>
                         </Card>

@@ -37,6 +37,7 @@ export interface IRichTextEditorProps {
     onBlur?: () => any;
 
     decorator?: DraftJs.CompositeDecorator;
+    autoFocus?: boolean;
 }
 
 export interface IRichTextEditorState {
@@ -494,6 +495,12 @@ export class RichTextEditor extends React.PureComponent<
         return 'not-handled';
     }
 
+    public componentDidMount() {
+        if (this.props.autoFocus) {
+            this.focus();
+        }
+    }
+
     public componentDidUpdate(prevProps: IRichTextEditorProps) {
         if (
             prevProps.value !== this.props.value &&
@@ -553,7 +560,6 @@ export class RichTextEditor extends React.PureComponent<
         const { className, onFocus, onBlur, readOnly } = this.props;
 
         const { editorState, toolBarStyle } = this.state;
-
         const toolBar = readOnly ? null : (
             <div className="toolbar-wrapper" style={toolBarStyle}>
                 <RichTextEditorToolBar

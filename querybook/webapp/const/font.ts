@@ -4,11 +4,12 @@ export const numFontSizeToString = {
     3: 'var(--xlarge-text-size)',
     4: 'var(--large-text-size)',
     5: 'var(--med-text-size)',
-    6: 'var(--text-size)',
-    7: 'var(--small-text-size)',
-    8: 'var(--xsmall-text-size)',
-    9: 'var(--xxsmall-text-size)',
-    10: 'var(--xxxsmall-text-size)',
+    6: 'var(--smedium-text-size)',
+    7: 'var(--text-size)',
+    8: 'var(--small-text-size)',
+    9: 'var(--xsmall-text-size)',
+    10: 'var(--xxsmall-text-size)',
+    11: 'var(--xxxsmall-text-size)',
 };
 
 export const UserSettingsFontSizeToCSSFontSize = {

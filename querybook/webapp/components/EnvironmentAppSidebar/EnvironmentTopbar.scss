@@ -1,45 +1,19 @@
 .EnvironmentTopbar {
     display: flex;
     flex-direction: row;
-    padding: 0px 5px;
+    padding: var(--padding-sm);
+    background-color: var(--bg-lightest);
+    // match when collapsed
+    margin-left: 1px;
 
     .env-icon-wrapper {
         display: inline-block;
-        padding: 4px 0px;
 
         &:not(:first-child) {
-            margin-left: 5px;
+            margin-left: var(--margin-xs);
         }
     }
-    .env-icon {
-        font-size: var(--xxxsmall-text-size);
-        font-family: var(--family-monospace);
-        background-color: var(--light-bg-color);
-        color: var(--text-color);
-        border-radius: 10px;
-        border: 3px solid transparent;
-        transition: border 0.3s ease-out;
-        user-select: none;
-
-        display: inline-flex;
-        justify-content: center;
-        align-items: center;
-
-        width: 36px;
-        height: 36px;
-
-        &.selected {
-            border: 3px solid var(--focus-border-color);
-        }
-
-        &.disabled {
-            opacity: 0.45;
-            cursor: not-allowed;
-        }
-
-        .env-icon-text {
-            word-break: break-all;
-            text-align: center;
-        }
+    .Dropdown {
+        margin-right: 8px;
     }
 }

@@ -78,7 +78,7 @@ export const SchemaTableItem: React.FC<{
                     className="flex1 flex-row"
                     onClick={() => setIsExpanded(!isExpanded)}
                 >
-                    <Title size={7}>{name}</Title>
+                    <Title size="text">{name}</Title>
                 </div>
                 <OrderByButton
                     asc={sortOrder.asc}
@@ -97,7 +97,7 @@ export const SchemaTableItem: React.FC<{
                 <div className="flex-row">
                     <SchemaIconButton
                         onClick={() => setIsExpanded(!isExpanded)}
-                        icon={isExpanded ? 'chevron-down' : 'chevron-right'}
+                        icon={isExpanded ? 'ChevronDown' : 'ChevronRight'}
                     />
                 </div>
             </StyledItem>
@@ -105,7 +105,9 @@ export const SchemaTableItem: React.FC<{
             {isExpanded && (
                 <div className="board-scroll-wrapper">
                     {total === 0 ? (
-                        <div className="ph12">No items in this section.</div>
+                        <div className="empty-section-message">
+                            No {name?.toLowerCase()}
+                        </div>
                     ) : (
                         <InfinityScroll
                             elements={data}

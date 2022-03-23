@@ -5,14 +5,13 @@
     justify-content: space-between;
     flex-grow: 1;
     height: 100%;
-    background-color: var(--bg-color);
+    background-color: var(--bg-lightest);
     text-align: center;
 
     .AdminAppEntitySidebar-main,
     .AdminAppEntitySidebar-bottom {
         .AdminAppEntitySidebar-top {
             box-sizing: content-box;
-            border-bottom: var(--border);
             font-size: var(--small-text-size);
             letter-spacing: 1px;
             cursor: pointer;
@@ -25,15 +24,13 @@
             font-weight: 500;
 
             .IconButton {
-                margin-right: 8px;
+                margin-right: 6px;
             }
             &:hover {
-                .AdminAppEntitySidebar-title {
-                    color: var(--text-color);
-                }
-                .IconButton {
-                    color: var(--icon-active-color);
-                }
+                color: var(--text-hover);
+            }
+            &.active {
+                color: var(--color-accent-dark);
             }
         }
     }

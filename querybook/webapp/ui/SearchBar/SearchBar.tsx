@@ -6,6 +6,7 @@ import { DebouncedInput } from 'ui/DebouncedInput/DebouncedInput';
 import { Button } from 'ui/Button/Button';
 
 import './SearchBar.scss';
+import { Icon } from 'ui/Icon/Icon';
 
 export interface ISearchBarProps {
     className?: string;
@@ -65,11 +66,7 @@ export const SearchBar: React.FunctionComponent<ISearchBarProps> = ({
 
     const searchIcon = hasIcon ? (
         <span className="SearchIcon">
-            <i
-                className={`fas ${
-                    isSearching ? 'fa-spinner fa-pulse' : 'fa-search'
-                }`}
-            />
+            <Icon name={isSearching ? 'Loading' : 'Search'} />
         </span>
     ) : null;
 
@@ -83,9 +80,12 @@ export const SearchBar: React.FunctionComponent<ISearchBarProps> = ({
         !searchIcon && hasClearSearch && value ? (
             <>
                 <span className="search-bar-clear-sep" />
-                <Button theme="text" pushable onClick={() => onSearch('')}>
-                    Clear
-                </Button>
+                <Button
+                    theme="text"
+                    pushable
+                    onClick={() => onSearch('')}
+                    title="Clear"
+                />
             </>
         ) : null;
 

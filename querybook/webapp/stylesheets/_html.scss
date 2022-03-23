@@ -137,7 +137,7 @@ span {
 }
 
 strong {
-    color: var(--dark-text-color);
+    color: var(--text-dark);
     font-weight: 700;
 }
 
@@ -163,7 +163,7 @@ table th:not([align]) {
 }
 
 table th {
-    color: var(--border-color);
+    color: var(--text-light);
 }
 
 // in-house
@@ -173,8 +173,8 @@ body {
     padding: 0px;
     height: 100%;
     overflow: auto;
-    background-color: var(--bg-color);
-    color: var(--text-color);
+    background-color: var(--bg);
+    color: var(--text);
     font-weight: 400;
     line-height: 1.5;
     overscroll-behavior-y: none;
@@ -185,27 +185,27 @@ button,
 input,
 select,
 textarea {
-    font-family: 'Avenir Next', 'Avenir', 'Helvetica Neue', 'Arial', sans-serif;
+    font-family: var(--font-sans-serif);
 }
 
 code {
     border-radius: var(--border-radius);
-    background-color: var(--light-bg-color);
-    color: var(--code-text-color);
+    background-color: var(--bg-light);
+    color: var(--text-code);
     font-size: var(--small-text-size);
     font-weight: 500;
     padding: 4px;
 }
 
 strong {
-    color: var(--dark-text-color);
+    color: var(--text-dark);
 }
 
 a {
     color: inherit;
     text-decoration: none;
     &:hover {
-        color: var(--color-accent-text);
+        color: var(--color-accent-dark);
     }
     &:active,
     &:focus {
@@ -227,17 +227,22 @@ button {
 
 input,
 textarea {
-    @include standard-textbox();
+    &:not([disabled]) {
+        @include standard-textbox();
+    }
+    &:disabled {
+        cursor: not-allowed;
+    }
 }
 
 input:-webkit-autofill,
 input:-internal-autofill-selected {
-    -webkit-text-fill-color: var(--text-color);
+    -webkit-text-fill-color: var(--text);
 }
 
 @keyframes autofill {
     to {
-        color: var(--text-color);
+        color: var(--text);
         background: transparent;
     }
 }
@@ -249,10 +254,11 @@ input:-webkit-autofill {
 
 #___reactour {
     .reactour__helper {
-        background-color: var(--bg-color);
-        color: var(--text-color);
+        background-color: var(--bg);
+        color: var(--text);
+        border-radius: var(--border-radius);
         > span {
-            color: var(--bg-color);
+            color: var(--bg);
             font-weight: var(--bold-font);
         }
         .reactour__dot {
@@ -272,7 +278,7 @@ input:-webkit-autofill {
 }
 
 hr {
-    background-color: var(--hr-color);
+    background-color: transparent;
     border: none;
     display: block;
     height: 1px;
@@ -281,23 +287,18 @@ hr {
 
 pre {
     border-radius: var(--border-radius);
-    background-color: var(--light-bg-color);
+    background-color: var(--bg-light);
     margin: 4px;
     padding: 12px;
-    color: var(--text-color);
+    color: var(--text);
     font-size: var(--small-text-size);
     white-space: pre-wrap;
 }
 
 blockquote {
-    background-color: var(--light-bg-color);
-    border-left: 4px solid var(--border-color);
-    color: var(--light-text-color);
-    border-radius: 0px;
-    border-bottom-right-radius: var(--border-radius);
-    border-top-right-radius: var(--border-radius);
-    padding: 12px;
-    margin: 12px 0px;
+    background-color: var(--bg-light);
+    border-radius: var(--border-radius-sm);
+    padding: var(--padding);
 }
 
 ::-webkit-scrollbar {
@@ -322,4 +323,14 @@ blockquote {
 }
 ::-webkit-scrollbar-corner {
     background: rgba(0, 0, 0, 0);
+}
+
+::placeholder {
+    color: var(--text-lightest);
+}
+
+// tooltip
+// Make sure this takes the highest priority
+[aria-label][data-balloon-pos]:after {
+    z-index: 1000;
 }

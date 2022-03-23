@@ -45,6 +45,7 @@ import { BoardListItemRow } from './DataDocNavigatorBoardItem';
 import './DataDocNavigatorBoardSection.scss';
 import { OrderByButton } from 'ui/OrderByButton/OrderByButton';
 import { orderBy } from 'lodash';
+import { titleize } from 'lib/utils';
 
 interface INavigatorBoardSectionProps {
     selectedDocId: number;
@@ -148,10 +149,10 @@ export const DataDocNavigatorBoardSection: React.FC<INavigatorBoardSectionProps>
     );
 
     const sectionHeader = (
-        <Level className="pl8 navigator-board-header">
+        <Level className="pl8 navigator-header">
             <div className="flex1 flex-row" onClick={toggleCollapsed}>
-                <Icon name="list" className="mr8" size={18} />
-                <Title size={7}>Lists</Title>
+                <Icon name="List" className="mr8" size={18} />
+                <Title size="small">Lists</Title>
             </div>
 
             <LevelItem>
@@ -174,21 +175,21 @@ export const DataDocNavigatorBoardSection: React.FC<INavigatorBoardSectionProps>
                 ) : null}
 
                 <IconButton
-                    icon="plus"
+                    icon="Plus"
                     onClick={() => setShowCreateModal(true)}
                     tooltip="New List"
                     tooltipPos="left"
                 />
                 <IconButton
-                    icon={collapsed ? 'chevron-right' : 'chevron-down'}
+                    icon={collapsed ? 'ChevronRight' : 'ChevronDown'}
                     onClick={toggleCollapsed}
                 />
             </LevelItem>
         </Level>
     );
 
-    const boardsDOM = collapsed ? null : (
-        <div>
+    const boardsDOM = collapsed ? null : boards.length ? (
+        <div className="ml8">
             {boards.map((board) => (
                 <NavigatorBoardView
                     key={board.id}
@@ -199,10 +200,12 @@ export const DataDocNavigatorBoardSection: React.FC<INavigatorBoardSectionProps>
                 />
             ))}
         </div>
+    ) : (
+        <div className="empty-section-message">No lists</div>
     );
 
     return (
-        <div className="DataDocNavigatorBoardSection">
+        <div className="DataDocNavigatorSection">
             {sectionHeader}
             {boardsDOM}
             {showCreateModal ? (
@@ -297,8 +300,8 @@ const NavigatorBoardView: React.FunctionComponent<{
                 onClick={() => setCollapsed(!collapsed)}
                 className="board-header-title flex1"
             >
-                <Title size={7} className="one-line-ellipsis">
-                    {board.name}
+                <Title size="small" color="light" className="one-line-ellipsis">
+                    {titleize(board.name)}
                 </Title>
             </div>
 
@@ -306,14 +309,14 @@ const NavigatorBoardView: React.FunctionComponent<{
                 <span className="hover-control-section">
                     <IconButton
                         size={18}
-                        icon="edit-3"
+                        icon="Edit3"
                         onClick={() => setShowUpdateModal(true)}
                         noPadding
                     />
                 </span>
 
                 <IconButton
-                    icon={collapsed ? 'chevron-right' : 'chevron-down'}
+                    icon={collapsed ? 'ChevronRight' : 'ChevronDown'}
                     onClick={() => setCollapsed(!collapsed)}
                 />
             </div>
@@ -466,14 +469,10 @@ const BoardExpandableList: React.FunctionComponent<{
             items.length > itemsToHideSet.size ? (
                 makeItemsDOM()
             ) : (
-                <div className="board-item-list-empty ph12">
-                    No items found in this list.
-                </div>
+                <div className="empty-section-message">No items found</div>
             )
         ) : (
-            <div className="board-item-list-empty ph12">
-                No items in this list yet.
-            </div>
+            <div className="empty-section-message">No items</div>
         );
 
     return <div className="board-item-list">{itemsDOM}</div>;

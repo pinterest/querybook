@@ -5,10 +5,10 @@ export function withBoundProps<B extends Partial<P>, P>(
     boundProps: B,
     displayName = ''
 ) {
-    const boundComponent: React.FC<P> = (props) => {
-        const mergedProps = { ...boundProps, ...props };
+    const boundComponent = React.forwardRef<HTMLElement, P>((props, ref) => {
+        const mergedProps = { ...boundProps, ...props, ref };
         return <Component {...mergedProps} />;
-    };
+    });
 
     if (displayName) {
         boundComponent.displayName = displayName;

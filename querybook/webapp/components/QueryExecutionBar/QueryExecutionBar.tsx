@@ -10,6 +10,7 @@ import { CopyButton } from 'ui/CopyButton/CopyButton';
 import { QueryExecutionNotificationButton } from './QueryExecutionNotificationButton';
 
 import './QueryExecutionBar.scss';
+import { StyledText } from 'ui/StyledText/StyledText';
 
 interface IProps {
     queryExecution: IQueryExecution;
@@ -26,11 +27,11 @@ export const QueryExecutionBar: React.FunctionComponent<IProps> = ({
     );
 
     const executionDateDOM = (
-        <span>
+        <StyledText className="mr12" color="light">
             {generateFormattedDate(queryExecution.created_at, 'X') +
                 ', ' +
                 moment.utc(queryExecution.created_at, 'X').fromNow()}
-        </span>
+        </StyledText>
     );
 
     const notificationButtonDOM = queryExecution.status <=
@@ -42,16 +43,16 @@ export const QueryExecutionBar: React.FunctionComponent<IProps> = ({
     );
 
     return (
-        <>
+        <div className="QueryExecutionBar">
             {executionDateDOM}
             {notificationButtonDOM}
             <CopyButton
-                type="text"
                 size="small"
                 copyText={permalink}
-                icon="link"
+                icon="Link"
                 title="Share Execution"
+                type="text"
             />
-        </>
+        </div>
     );
 };

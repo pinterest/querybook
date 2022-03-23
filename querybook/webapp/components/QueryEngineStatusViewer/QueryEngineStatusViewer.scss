@@ -1,8 +1,7 @@
 .QueryEngineStatusViewer {
-    .QueryEngineStatus-tabs {
-        .tabs {
-            padding: 10px 0px;
-            border-bottom: var(--border);
+    .status {
+        .FormSectionHeader {
+            margin-top: 0px;
         }
     }
 }

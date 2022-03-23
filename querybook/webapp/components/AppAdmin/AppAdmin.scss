@@ -15,7 +15,7 @@
             margin: 0px auto;
             max-width: 960px;
             height: 100%;
-            padding: 48px 0px;
+            padding: 24px 0px;
         }
 
         .AdminLanding {
@@ -29,9 +29,12 @@
 
             .AdminLanding-title {
                 font-size: var(--xxxlarge-text-size);
+                font-family: var(--font-accent);
             }
             .AdminLanding-desc {
-                font-size: var(--med-text-size);
+                color: var(--text-light);
+                font-size: var(--text-size);
+                font-weight: var(--light-bold-font);
             }
         }
         .AdminLanding-content {
@@ -87,10 +90,6 @@
                         .FormFieldInputSection {
                             display: flex;
                             align-items: center;
-                            .ToggleSwitch {
-                                margin-left: auto;
-                                margin-right: 0px;
-                            }
                         }
                     }
 
@@ -120,7 +119,7 @@
                         margin-left: 4px;
                         cursor: pointer;
 
-                        .feather-chevron-down {
+                        .lucide-chevron-down {
                             margin-top: 6px;
                         }
                     }
@@ -139,7 +138,7 @@
                 }
                 .rt-tbody {
                     .rt-tr {
-                        background-color: var(--bg-color);
+                        background-color: var(--bg);
                     }
                 }
             }

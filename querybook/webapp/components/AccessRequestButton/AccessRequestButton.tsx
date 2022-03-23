@@ -1,5 +1,8 @@
 import React, { useState } from 'react';
+
 import { Button } from 'ui/Button/Button';
+
+import './AccessRequestButton.scss';
 
 export const AccessRequestButton: React.FunctionComponent<{
     onAccessRequest: () => any;
@@ -9,7 +12,7 @@ export const AccessRequestButton: React.FunctionComponent<{
     return (
         <div className="AccessRequestButton">
             {accessRequsted ? (
-                'Access Request Sent!'
+                <div className="success-message">'Access Request Sent!'</div>
             ) : (
                 <Button
                     onClick={() => {
@@ -17,9 +20,8 @@ export const AccessRequestButton: React.FunctionComponent<{
                         setAccessRequested(true);
                     }}
                     pushable
-                >
-                    Request{isEdit ? ' Edit' : ''} Access
-                </Button>
+                    title={`Request${isEdit ? ' Edit' : ''} Access`}
+                />
             )}
         </div>
     );

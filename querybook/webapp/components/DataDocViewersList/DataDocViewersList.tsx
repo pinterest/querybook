@@ -22,8 +22,9 @@ import { UserBadge } from 'components/UserBadge/UserBadge';
 import { UserSelect } from 'components/UserSelect/UserSelect';
 
 import { Tabs } from 'ui/Tabs/Tabs';
-import { Title } from 'ui/Title/Title';
+
 import './DataDocViewersList.scss';
+import { StyledText } from 'ui/StyledText/StyledText';
 
 interface IDataDocViewersListProps {
     className?: string;
@@ -153,14 +154,14 @@ export const DataDocViewersList: React.FunctionComponent<IDataDocViewersListProp
           ));
 
     const contentDOM = (
-        <div className="viewers-list-wrapper mt16">
+        <div className="viewers-list-wrapper">
             {accessRequestListDOM}
             {viewersListDOM}
         </div>
     );
     const dataDocPublicRow = (
         <>
-            <div className="public-row-switch pv16">
+            <div className="public-row-switch">
                 <Tabs
                     selectedTabKey={dataDoc.public ? 'Public' : 'Private'}
                     pills
@@ -175,19 +176,22 @@ export const DataDocViewersList: React.FunctionComponent<IDataDocViewersListProp
                                       checked === 'Public'
                                   )
                     }
+                    disabled={readonly}
                 />
             </div>
-            <div className="public-row-description">
-                <Title size={6} subtitle className="mb8">
+            <div className="flex-center">
+                <StyledText color="light" noUserSelect>
                     {dataDoc.public
-                        ? 'This document can be viewed by anyone.'
-                        : 'Only invited users can view this document.'}
-                </Title>
+                        ? 'This document can be viewed by anyone'
+                        : 'Only invited users can view this document'}
+                </StyledText>
                 {isEditor ? null : (
-                    <AccessRequestButton
-                        onAccessRequest={handleDataDocAccessRequest}
-                        isEdit
-                    />
+                    <div className="mt12">
+                        <AccessRequestButton
+                            onAccessRequest={handleDataDocAccessRequest}
+                            isEdit
+                        />
+                    </div>
                 )}
             </div>
         </>

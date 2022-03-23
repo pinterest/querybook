@@ -4,10 +4,6 @@
     .statement-header {
         display: flex;
 
-        .statement-header-top {
-            font-weight: bold;
-        }
-
         .statement-header-bottom {
             margin-left: auto;
         }
@@ -24,5 +20,10 @@
 
     .statement-selector-button {
         display: inline-block;
+    }
+
+    .run-time-message {
+        color: var(--text-light);
+        font-weight: normal;
     }
 }

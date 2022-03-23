@@ -1,0 +1,10 @@
+.DataDocScheduleItem {
+    background-color: var(--bg-lightest);
+    border-radius: var(--border-radius-sm);
+
+    padding: var(--padding) var(--padding-lg);
+
+    .DataDocScheduleItem-bottom {
+        align-items: flex-end;
+    }
+}

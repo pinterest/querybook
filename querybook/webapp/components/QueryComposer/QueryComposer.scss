@@ -1,11 +1,10 @@
 .QueryComposer {
     width: 100%;
     overflow: hidden;
+    padding: 0px 16px 16px;
 
     .QueryComposer-header {
-        border-bottom: 1px solid var(--border-color);
-        padding: 0px 20px;
-        height: 45px;
+        height: 48px;
         display: table;
 
         // for safari
@@ -14,6 +13,10 @@
         .QueryComposer-header-vertical {
             display: table-cell;
             vertical-align: middle;
+        }
+        .QueryRunButton .Button {
+            margin-right: 0px;
+            height: 36px;
         }
     }
 
@@ -25,24 +28,35 @@
 
         .query-editor-wrapper {
             flex: 2;
-            overflow: auto;
+            overflow-y: auto;
+            overflow-x: hidden;
             position: relative;
+            border-radius: var(--border-radius);
 
             .SearchAndReplaceBar {
                 position: absolute;
                 z-index: 9;
-                right: 40px;
+                right: 48px;
             }
         }
 
         .query-execution-wrapper {
             height: 100%;
             flex: 1;
-            overflow-y: auto;
-            border-top: var(--border);
+            overflow-y: scroll;
+            background-color: var(--bg-lightest);
+            border-radius: var(--border-radius);
+
+            .hide-execution {
+                cursor: pointer;
+                position: sticky;
+                top: 0;
+                z-index: 3;
+                background-color: inherit;
+            }
 
             .QueryComposerExecution {
-                padding: 0px 20px;
+                padding: 0px 8px 16px 16px;
             }
         }
     }

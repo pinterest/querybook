@@ -10,8 +10,8 @@ export const ToastManager: React.FC = () => (
             style: {
                 padding: '12px',
                 marginBottom: '12px',
-                backgroundColor: 'var(--light-bg-color)',
-                color: 'var(--dark-text-color)',
+                backgroundColor: 'var(--bg-light)',
+                color: 'var(--text-dark)',
                 zIndex: 301,
                 borderRadius: 'var(--border-radius)',
             },

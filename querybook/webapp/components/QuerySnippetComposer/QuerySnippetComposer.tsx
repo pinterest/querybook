@@ -12,22 +12,23 @@ import { IQuerySnippet, IQueryForm } from 'redux/querySnippets/types';
 import { Dispatch, IStoreState } from 'redux/store/types';
 
 import { sendConfirm } from 'lib/querybookUI';
-import history from 'lib/router-history';
 import { generateFormattedDate } from 'lib/utils/datetime';
 
 import { BoundQueryEditor } from 'components/QueryEditor/BoundQueryEditor';
 import { UserName } from 'components/UserBadge/UserName';
 import { AsyncButton } from 'ui/AsyncButton/AsyncButton';
 import { Message } from 'ui/Message/Message';
-import { Title } from 'ui/Title/Title';
 import { FormField } from 'ui/Form/FormField';
 import { Checkbox } from 'ui/Checkbox/Checkbox';
 import { Tabs } from 'ui/Tabs/Tabs';
 import { ResizableTextArea } from 'ui/ResizableTextArea/ResizableTextArea';
 import { SimpleReactSelect } from 'ui/SimpleReactSelect/SimpleReactSelect';
 import { FormWrapper } from 'ui/Form/FormWrapper';
+import { Card } from 'ui/Card/Card';
 
 import './QuerySnippetComposer.scss';
+import { navigateWithinEnv } from 'lib/utils/query-string';
+import { AccentText } from 'ui/StyledText/StyledText';
 
 function showErrorModal(error) {
     sendConfirm({
@@ -236,7 +237,7 @@ class QuerySnippetComposerComponent extends React.PureComponent<
                 onConfirm: async () => {
                     try {
                         await this.props.deleteQuerySnippet(querySnippet);
-                        history.push('/template/');
+                        navigateWithinEnv('/');
                     } catch (error) {
                         showErrorModal(error);
                     }
@@ -277,21 +278,30 @@ class QuerySnippetComposerComponent extends React.PureComponent<
             return null;
         }
 
-        const contentDOM = (
-            <div>
-                <div>
-                    Created by: <UserName uid={querySnippet.created_by} /> on{' '}
-                    {generateFormattedDate(querySnippet.created_at)}
+        return (
+            <Card alignLeft>
+                <div className="flex-row">
+                    <span>Created by</span>
+                    <AccentText color="text" weight="bold" className="mh4">
+                        <UserName uid={querySnippet.created_by} />
+                    </AccentText>
+                    <span>on</span>
+                    <AccentText color="text" weight="bold" className="mh4">
+                        {generateFormattedDate(querySnippet.created_at)}
+                    </AccentText>
                 </div>
-                <div>
-                    Last updated by:{' '}
-                    <UserName uid={querySnippet.last_updated_by} /> on{' '}
-                    {generateFormattedDate(querySnippet.updated_at)}
+                <div className="flex-row">
+                    <span>Last updated by</span>
+                    <AccentText color="text" weight="bold" className="mh4">
+                        <UserName uid={querySnippet.last_updated_by} />
+                    </AccentText>
+                    <span>on</span>
+                    <AccentText color="text" weight="bold" className="mh4">
+                        {generateFormattedDate(querySnippet.updated_at)}
+                    </AccentText>
                 </div>
-            </div>
+            </Card>
         );
-
-        return <Message message={contentDOM} type="info" />;
     }
 
     public getQuerySnippetForm() {
@@ -333,16 +343,14 @@ class QuerySnippetComposerComponent extends React.PureComponent<
 
         const contextField = (
             <FormField label="Query">
-                <div>
-                    <BoundQueryEditor
-                        value={form.context}
-                        lineWrapping={true}
-                        onChange={this.onQueryChange}
-                        engine={queryEngine}
-                        allowFullScreen
-                    />
-                    {templatedQueriesDOM}
-                </div>
+                <BoundQueryEditor
+                    value={form.context}
+                    lineWrapping={true}
+                    onChange={this.onQueryChange}
+                    engine={queryEngine}
+                    allowFullScreen
+                />
+                {templatedQueriesDOM}
             </FormField>
         );
 
@@ -403,7 +411,7 @@ class QuerySnippetComposerComponent extends React.PureComponent<
                     onChange={user.isAdmin ? this.onGoldenChange : null}
                     value={form.golden}
                     disabled={!user.isAdmin}
-                    title="I certify this golden snippet."
+                    title="Golden Snippet"
                 />
             </FormField>
         );
@@ -481,7 +489,22 @@ class QuerySnippetComposerComponent extends React.PureComponent<
                 />
             ) : null;
 
+        const canUserDelete =
+            isUpdateForm &&
+            (querySnippet.created_by === user.uid || user.isAdmin);
+
+        const deleteButton = (
+            <AsyncButton
+                disableWhileAsync={true}
+                key={'delete'}
+                onClick={this.handleDelete}
+                icon="Trash"
+                title="Delete"
+            />
+        );
+
         const controls = [
+            canUserDelete ? deleteButton : null,
             <AsyncButton
                 color="confirm"
                 onClick={
@@ -489,40 +512,14 @@ class QuerySnippetComposerComponent extends React.PureComponent<
                 }
                 disabled={formInvalid}
                 key="save"
-                title="Save"
+                title={isUpdateForm ? 'Update' : 'Save'}
             />,
         ];
 
         const controlsDOM = <div className="right-align">{controls}</div>;
 
-        const composerTitle = isUpdateForm
-            ? 'Update Template'
-            : 'Create Template';
-
-        const canUserDelete =
-            isUpdateForm &&
-            (querySnippet.created_by === user.uid || user.isAdmin);
-
-        const titleDOM = canUserDelete ? (
-            <div className="horizontal-space-between">
-                {isUpdateForm ? <Title>{composerTitle}</Title> : null}
-                <div>
-                    <AsyncButton
-                        disableWhileAsync={true}
-                        key={'delete'}
-                        onClick={this.handleDelete}
-                        icon="trash"
-                        title="Delete"
-                    />
-                </div>
-            </div>
-        ) : isUpdateForm ? (
-            <Title>{composerTitle}</Title>
-        ) : null;
-
         return (
             <div className={'QuerySnippetComposer '}>
-                {titleDOM}
                 {this.getSnippetUpdateInfoDOM()}
                 {this.getQuerySnippetForm()}
                 {invalidWarningMessage}

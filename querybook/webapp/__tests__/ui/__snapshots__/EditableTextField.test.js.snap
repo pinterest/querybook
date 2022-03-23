@@ -11,14 +11,12 @@ exports[`matches enzyme snapshots matches snapshot 1`] = `
       readOnly={true}
       value="test"
     />
-    <span
+    <Button
       className="edit-mode-button"
+      icon="Edit"
       onClick={[Function]}
-    >
-      <i
-        className="fa fa-edit"
-      />
-    </span>
+      title="Edit"
+    />
   </div>
 </div>
 `;

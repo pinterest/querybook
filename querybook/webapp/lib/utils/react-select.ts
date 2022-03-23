@@ -30,26 +30,25 @@ export const defaultReactSelectStyles: Partial<
 > = {
     control: (styles, { isFocused }) => ({
         ...styles,
-        backgroundColor: 'var(--bg-color)',
+        backgroundColor: 'var(--bg-light)',
         boxShadow: 'none',
-        borderRadius: 'var(--border-radius)',
-        borderColor: isFocused
-            ? 'var(--focus-border-color)'
-            : 'var(--border-color)',
+        borderRadius: 'var(--border-radius-sm)',
+        border: 'none',
+        borderWidth: '0px',
         '&:hover': {
-            borderColor: 'var(--hover-border-color)',
+            backgroundColor: 'var(--bg-hover)',
         },
     }),
     input: (styles) => ({
         ...styles,
-        color: 'var(--text-color)',
+        color: 'var(--text)',
         '&:hover': {
-            color: 'var(--text-hover-color)',
+            color: 'var(--text-hover)',
         },
     }),
     placeholder: (styles) => ({
         ...styles,
-        color: 'var(--light-text-color)',
+        color: 'var(--text-light)',
     }),
     indicatorSeparator: (styles) => ({
         ...styles,
@@ -57,16 +56,16 @@ export const defaultReactSelectStyles: Partial<
     }),
     clearIndicator: (styles, { isFocused }) => ({
         ...styles,
-        color: isFocused ? 'var(--text-hover-color)' : 'var(--text-color)',
+        color: isFocused ? 'var(--text-hover)' : 'var(--text)',
         '&:hover': {
-            color: 'var(--text-hover-color)',
+            color: 'var(--text-hover)',
         },
     }),
     dropdownIndicator: (styles) => ({
         ...styles,
-        color: 'var(--text-color)',
+        color: 'var(--text)',
         '&:hover': {
-            color: 'var(--text-hover-color)',
+            color: 'var(--text-hover)',
         },
     }),
     option: (styles, { data, isDisabled, isSelected, isFocused }) => ({
@@ -74,30 +73,49 @@ export const defaultReactSelectStyles: Partial<
         backgroundColor: isDisabled
             ? 'var(--color-null)'
             : isSelected
-            ? 'var(--select-bg-color)'
+            ? 'var(--bg-light)'
             : isFocused
-            ? 'var(--hover-bg-color)'
-            : 'inherit',
-        color: isFocused ? 'var(--text-hover-color)' : 'var(--text-color)',
+            ? 'var(--bg-hover)'
+            : 'var(--bg-lightest)',
+        color: isDisabled
+            ? 'var(--text-light)'
+            : isSelected
+            ? 'var(--text-dark)'
+            : isFocused
+            ? 'var(--text-hover)'
+            : 'var(--text)',
         cursor: isDisabled ? 'not-allowed' : 'default',
         ...(data.color ? dot(data.color) : {}),
+        ':active': {
+            ...styles[':active'],
+            backgroundColor: !isDisabled ? 'var(--bg-light)' : undefined,
+            color: !isDisabled ? 'var(--text-dark)' : undefined,
+        },
     }),
     menu: (styles) => ({
         ...styles,
-        backgroundColor: 'var(--bg-color)',
+        backgroundColor: 'var(--bg-lightest)',
+        borderRadius: 'var(--border-radius-sm)',
+        border: 'none',
+        boxShadow: 'var(--box-shadow-sm)',
+    }),
+    menuList: (styles) => ({
+        ...styles,
+        borderRadius: 'var(--border-radius-sm)',
+        boxShadow: 'var(--box-shadow-sm)',
     }),
     singleValue: (styles, { data }) => ({
         ...styles,
-        color: 'var(--title-color)',
+        color: 'var(--text)',
         ...(data.color ? dot(data.color) : {}),
     }),
     multiValue: (styles, { data }) => ({
         ...styles,
-        backgroundColor: data.color || 'var(--light-bg-color)',
-        color: data.color ? '#000' : 'var(--text-color)',
+        backgroundColor: data.color || 'var(--bg-light)',
+        color: data.color ? '#000' : 'var(--text)',
         ':hover': {
-            backgroundColor: 'var(--hover-bg-color)',
-            color: 'var(--text-color)',
+            backgroundColor: 'var(--bg-hover)',
+            color: 'var(--text)',
         },
     }),
     multiValueLabel: (styles) => ({
@@ -126,9 +144,6 @@ export const miniReactSelectStyles: StylesConfig<any, false, any> = mergeStyles(
             padding: '0px',
             margin: '0px,',
             minHeight: '0px',
-            '&:hover': {
-                borderColor: 'var(--hover-border-color)',
-            },
         }),
         input: (styles) => ({
             ...styles,
@@ -142,6 +157,28 @@ export const miniReactSelectStyles: StylesConfig<any, false, any> = mergeStyles(
         }),
     }
 );
+
+export const asyncReactSelectStyles: StylesConfig<
+    any,
+    false,
+    any
+> = mergeStyles(defaultReactSelectStyles, {
+    dropdownIndicator: (styles) => ({
+        ...styles,
+        display: 'none',
+    }),
+});
+
+export const miniAsyncReactSelectStyles: StylesConfig<
+    any,
+    false,
+    any
+> = mergeStyles(miniReactSelectStyles, {
+    dropdownIndicator: (styles) => ({
+        ...styles,
+        display: 'none',
+    }),
+});
 
 export function makeReactSelectStyle(
     modalMenu?: boolean,

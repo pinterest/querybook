@@ -35,7 +35,7 @@ export const Announcements: React.FunctionComponent = () => {
             const deleteButton = item.can_dismiss ? (
                 <IconButton
                     onClick={() => dismissAnnouncement(item.id)}
-                    icon="x"
+                    icon="X"
                     noPadding
                 />
             ) : null;

@@ -1,6 +1,9 @@
 .Select {
     display: inline-block;
     position: relative;
+    background-color: var(--bg-light);
+    border-radius: var(--border-radius-sm);
+    padding-left: var(--padding-sm);
 
     select {
         -webkit-appearance: none;
@@ -10,14 +13,6 @@
         border: var(--border);
         font-size: inherit;
         padding: 8px 32px 8px 8px;
-
-        &:hover {
-            border-color: var(--hover-border-color);
-        }
-        &:active,
-        &:focus {
-            border-color: var(--focus-border-color);
-        }
     }
 
     &::after {

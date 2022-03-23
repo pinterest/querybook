@@ -5,6 +5,7 @@ import {
     IQueryExecutionNotification,
 } from 'const/queryExecution';
 import { QueryExecutionNotificationResource } from 'resource/queryExecution';
+import { Icon } from 'ui/Icon/Icon';
 
 interface IProps {
     queryExecution: IQueryExecution;
@@ -58,18 +59,18 @@ export const QueryExecutionNotificationButton: React.FunctionComponent<IProps> =
         }
     }, [notification]);
 
-    const iconClass = loading
-        ? 'fa fa-spinner fa-pulse'
+    const iconName = loading
+        ? 'Loading'
         : notification
-        ? 'far fa-check-circle'
-        : 'far fa-circle';
+        ? 'CheckCircle'
+        : 'Circle';
 
     return (
         <span
             className="copy-permalink-button"
             onClick={loading ? null : handleNotificationToggle}
         >
-            <i className={iconClass} />
+            <Icon name={iconName} size={16} />
             <span
                 aria-label={`Notify me with ${notificationPreference} when finished`}
                 data-balloon-pos={'up'}

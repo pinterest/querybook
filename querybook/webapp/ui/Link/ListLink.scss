@@ -3,9 +3,8 @@
 .ListLink {
     display: flex;
     align-items: center;
-    border-left: solid 6px transparent;
-    padding: 4px 10px 4px 4px;
-    color: var(--dark-text-color);
+    padding: 6px 4px;
+    color: var(--text-dark);
     cursor: pointer;
     user-select: none;
 
@@ -13,8 +12,6 @@
     .ListLinkPlaceholder {
         flex-grow: 1;
         margin-left: 4px;
-        margin-right: 12px;
-        font-size: var(--small-text-size);
         line-height: 27px;
         @include one-line-ellipsis();
 
@@ -22,32 +19,25 @@
             margin-right: 28px;
         }
     }
-    .ListLinkPlaceholder {
-        opacity: 0.7;
-        font-style: italic;
-    }
 
-    .Icon {
-        flex-shrink: 1;
-        svg {
-            padding: 20%;
-        }
+    .ListLinkText + .Icon,
+    .Icon + .Icon {
+        margin-left: 8px;
     }
 
     &.row {
-        padding: 4.5px 10px 4.5px 4.5px;
         .ListLinkText,
         .ListLinkPlaceholder {
             line-height: normal;
             margin-left: 0px;
         }
+        .Icon + .ListLinkText {
+            margin-left: 4px !important;
+        }
     }
+
     &.selected {
-        border-color: var(--color-accent-bg);
         font-weight: var(--bold-font);
-    }
-    &:hover {
-        background-color: var(--color-accent-bg-hover);
-        color: var(--dark-text-color);
+        color: var(--color-accent-dark);
     }
 }

@@ -14,13 +14,17 @@ exports[`matches enzyme snapshots matches snapshot - with options 1`] = `
 <article
   className="Message Message-has-icon tip TestMessage"
 >
-  <div
-    className="Message-header"
+  <AccentText
+    weight="bold"
   >
-    <p>
-      Test Message
-    </p>
-  </div>
+    <div
+      className="Message-header"
+    >
+      <p>
+        Test Message
+      </p>
+    </div>
+  </AccentText>
   <div
     className="Message-body"
   >
@@ -38,6 +42,9 @@ exports[`matches enzyme snapshots matches snapshot 1`] = `
 <article
   className="Message Message-simple"
 >
+  <AccentText
+    weight="bold"
+  />
   <div
     className="Message-body"
   >
@@ -51,11 +58,15 @@ exports[`matches test renderer snapshot serializes the styles - error 1`] = `
   className="Message error"
 >
   <div
-    className="Message-header"
+    className="StyledText__StyledTextDiv-sc-1ldibmc-0 dgoMHH Text"
   >
-    <p>
-      Error
-    </p>
+    <div
+      className="Message-header"
+    >
+      <p>
+        Error
+      </p>
+    </div>
   </div>
   <div
     className="Message-body"

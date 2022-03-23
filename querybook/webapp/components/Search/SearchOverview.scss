@@ -5,12 +5,11 @@
     overflow: hidden;
     display: flex;
     flex-direction: column;
-
-    > div:not(:last-child) {
-        border-bottom: 1px solid var(--border-color);
-    }
+    max-width: var(--max-width);
+    margin: 0px auto;
 
     .search-types {
+        font-family: var(--font-accent);
         .Tabs {
             width: 100%;
             ul {
@@ -23,22 +22,22 @@
     }
 
     .search-bar-wrapper {
-        padding: 4px 16px;
-
         .SearchBar {
             flex-grow: 1;
+            padding: 0px var(--padding) 4px;
             .DebouncedInput {
                 input {
-                    padding-left: 4px;
+                    padding: var(--padding);
+                }
+                ::placeholder {
+                    color: var(--text-light);
                 }
             }
         }
     }
 
     .search-body {
-        background-color: var(--light-bg-color);
         overflow: auto;
-        padding: 12px 16px;
         flex: 1;
 
         .result-item-golden {
@@ -54,94 +53,98 @@
             }
         }
 
-        .begin-search-prompt {
-            font-size: var(--med-text-size);
-        }
+        .Container-content {
+            overflow: hidden;
 
-        .search-result-top {
-            margin: 12px 4px 0px 12px;
-            padding-bottom: 4px;
+            .search-results {
+                flex: 7 1 0;
+                padding: 0px 16px;
+                max-width: 70%;
+                overflow-y: scroll;
 
-            .search-result-count {
-                font-weight: 500;
-            }
-        }
-
-        .search-results {
-            flex: 7 1 0;
-            padding-right: 12px;
-            max-width: 70%;
-        }
-
-        .search-filters {
-            flex: 3 1 0;
-            margin: 12px 0px 12px 12px;
-
-            .search-filters-by {
-                font-weight: var(--bold-font);
-                margin-bottom: 12px;
+                .EmptyText {
+                    padding-top: var(--padding);
+                    margin: 0px auto;
+                }
+                .search-result-top {
+                    background-color: var(--bg);
+                    position: sticky;
+                    top: 0;
+                    z-index: 11;
+                    padding: var(--padding);
+                    color: var(--text-light);
+                    font-weight: var(--light-bold-font);
+                    font-family: var(--font-accent);
+                }
             }
 
-            .search-filter {
-                margin: 4px 0px 16px;
+            .search-filters {
+                flex: 3 1 0;
+                padding: 8px 8px 0px;
+                overflow-y: scroll;
 
-                .filter-title {
-                    margin-bottom: 12px;
-                    display: flex;
-                    font-weight: 500;
-                    align-items: center;
-                    white-space: nowrap;
-                }
+                .search-filter {
+                    margin: 4px 0px;
 
-                .filter-date,
-                .filter-duration {
-                    font-weight: 500;
-                }
-
-                .filter-statement-type,
-                .filter-query-type {
-                    width: 100%;
-                }
-
-                .filter-duration {
-                    input {
-                        width: 50%;
-                        padding: 2px 4px;
-                    }
-                }
-
-                .data-doc-filter-owner {
-                    margin-top: 5px;
-                    display: flex;
-                    width: 100%;
-                    justify-content: space-between;
-
-                    .UserAvatar {
-                        margin-right: 12px;
-                        display: inline-block;
+                    &:not(:last-child) {
+                        margin-bottom: 24px;
                     }
 
-                    .filter-owner-name {
-                        flex: 1;
+                    .filter-title {
+                        margin-bottom: 8px;
+                        display: flex;
+                        font-family: var(--font-accent);
+                        align-items: center;
+                        white-space: nowrap;
+                        font-size: var(--text-size);
+                        font-weight: var(--bold-font);
                     }
-                }
 
-                .add-authors {
-                    margin-top: 4px;
-
-                    &.Button:hover {
-                        background-color: var(--hover-bg-color);
+                    .filter-statement-type,
+                    .filter-query-type {
+                        width: 100%;
                     }
-                }
-                .TableTagGroupSelect .tables-tag-list {
-                    margin-left: -4px;
+
+                    .filter-duration {
+                        input {
+                            width: 50%;
+                            padding: 2px 4px;
+                        }
+                    }
+
+                    .data-doc-filter-owner {
+                        margin-top: 5px;
+                        display: flex;
+                        width: 100%;
+                        justify-content: space-between;
+
+                        .UserAvatar {
+                            margin-right: 12px;
+                            display: inline-block;
+                        }
+
+                        .filter-owner-name {
+                            flex: 1;
+                        }
+                    }
+
+                    .add-authors {
+                        margin-top: 4px;
+
+                        &.Button:hover {
+                            background-color: var(--bg-hover);
+                        }
+                    }
+                    .TableTagGroupSelect .tables-tag-list {
+                        margin-left: -4px;
+                    }
                 }
             }
         }
     }
 
     .search-instructions-tip {
-        background-color: var(--light-bg-color);
+        background-color: var(--bg-lightest);
         padding: 12px 16px;
         user-select: none;
 
@@ -156,5 +159,11 @@
 .Modal-content {
     .SearchOverview {
         max-height: inherit;
+    }
+}
+
+.EnvironmentAppRouter-content {
+    .search-instructions-tip {
+        display: none;
     }
 }

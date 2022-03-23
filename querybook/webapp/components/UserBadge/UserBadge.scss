@@ -1,8 +1,10 @@
 @import '../../scss_variables.scss';
 
 .UserBadge {
+    cursor: default;
+
     .UserBadge-icon {
-        margin-right: 1rem;
+        margin-right: 16px;
         figure {
             width: 48px;
             height: 48px;
@@ -16,16 +18,60 @@
             width: 24px;
             height: 24px;
 
-            ~ .user-name {
-                margin-left: 4px;
+            ~ .username {
+                margin-left: 6px;
             }
         }
         display: inline-flex;
         flex-direction: row;
         align-items: center;
+
+        &.card-style {
+            .username {
+                border-radius: var(--border-radius-sm);
+                background-color: var(--bg-light);
+                margin-right: 12px;
+                margin-left: -12px;
+                padding: 4px 8px 4px 18px;
+            }
+        }
     }
 
     .UserBadge-names {
         max-width: 180px;
+        .username {
+            margin-top: -4px;
+        }
+        .handle {
+            margin-top: -6px;
+        }
+    }
+
+    + .UserBadge {
+        margin-left: 12px;
+    }
+
+    &:not(.mini) {
+        &.card-style {
+            .UserBadge-icon {
+                border-radius: 100%;
+                border-color: var(--bg);
+                border-style: solid;
+                border-width: 4px;
+                z-index: 1;
+            }
+            .UserBadge-names {
+                background-color: var(--bg-light);
+                border-radius: var(--border-radius);
+                margin-left: -36px;
+                padding: 6px 20px 6px 32px;
+                .username {
+                    margin-top: 0px;
+                }
+                .handle {
+                    margin-left: -4px;
+                }
+            }
+        }
     }
 }

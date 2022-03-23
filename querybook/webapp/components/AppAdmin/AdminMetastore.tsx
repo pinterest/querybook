@@ -196,7 +196,7 @@ export const AdminMetastore: React.FunctionComponent<IProps> = ({
         return (
             <>
                 <div className="AdminMetastore-acl-warning flex-row">
-                    <Icon name="alert-octagon" />
+                    <Icon name="AlertOctagon" />
                     {aclControl.type === 'denylist'
                         ? 'All tables will be allowed unless specified.'
                         : 'All tables will be denied unless specified.'}
@@ -266,7 +266,7 @@ export const AdminMetastore: React.FunctionComponent<IProps> = ({
                     <div className="AdminForm-left">
                         <SimpleField
                             stacked
-                            name="loader"
+                            name="Loader"
                             type="react-select"
                             options={Object.values(metastoreLoaders).map(
                                 (l) => ({
@@ -283,7 +283,6 @@ export const AdminMetastore: React.FunctionComponent<IProps> = ({
                                     <div className="AdminForm-section-title">
                                         Loader Params
                                     </div>
-                                    <hr className="dh-hr" />
                                 </div>
                                 <div className="AdminForm-section-content">
                                     <SmartForm
@@ -308,7 +307,6 @@ export const AdminMetastore: React.FunctionComponent<IProps> = ({
                                 <div className="AdminForm-section-title">
                                     ACL Control
                                 </div>
-                                <hr className="dh-hr" />
                             </div>
                             <div className="AdminForm-section-content">
                                 {getMetastoreACLControlDOM(
@@ -323,7 +321,6 @@ export const AdminMetastore: React.FunctionComponent<IProps> = ({
                                     <div className="AdminForm-section-title">
                                         Update Schedule
                                     </div>
-                                    <hr className="dh-hr" />
                                 </div>
                                 <div className="AdminForm-section-content">
                                     {showTaskEditor ? (

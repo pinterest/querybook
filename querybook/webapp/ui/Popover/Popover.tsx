@@ -3,6 +3,7 @@ import clsx from 'clsx';
 import { Overlay, overlayRoot } from 'ui/Overlay/Overlay';
 
 import './Popover.scss';
+import { useEvent } from 'hooks/useEvent';
 
 export type PopoverDirection = 'left' | 'right' | 'top' | 'bottom';
 export type PopoverLayout =
@@ -21,6 +22,7 @@ export interface IPopoverProps {
     hideArrow?: boolean;
     resizeOnChange?: boolean;
     skipAnimation?: boolean;
+    noPadding?: boolean;
 
     // Included because of a typescript bug
     // for react.forwardRef
@@ -74,6 +76,7 @@ export const PopoverContainer = React.forwardRef<
             hideArrow,
             resizeOnChange,
             skipAnimation,
+            noPadding,
 
             children,
         },
@@ -98,11 +101,7 @@ export const PopoverContainer = React.forwardRef<
             },
             [onHide, container]
         );
-        React.useEffect(() => {
-            document.addEventListener('mousedown', onDocumentClick);
-            return () =>
-                document.removeEventListener('mousedown', onDocumentClick);
-        }, [onDocumentClick]);
+        useEvent('mousedown', onDocumentClick, { element: document.body });
 
         // Behaivor related to resizing event
         const [resizeVersion, setResizeVersion] = useState(0);
@@ -247,7 +246,14 @@ export const PopoverContainer = React.forwardRef<
                     ref={wrapperElement}
                 >
                     {arrowDOM}
-                    <div className={'popover-content'}>{children}</div>
+                    <div
+                        className={clsx({
+                            'popover-content': true,
+                            'no-padding': noPadding,
+                        })}
+                    >
+                        {children}
+                    </div>
                 </div>
             </div>
         );

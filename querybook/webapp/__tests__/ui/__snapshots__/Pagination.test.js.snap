@@ -13,7 +13,7 @@ exports[`matches enzyme snapshots matches snapshot 1`] = `
       color="default"
       onClick={[Function]}
       size="medium"
-      theme="outline"
+      theme="fill"
       title="Previous"
     />
   </div>
@@ -26,7 +26,7 @@ exports[`matches enzyme snapshots matches snapshot 1`] = `
       color="default"
       onClick={[Function]}
       size="medium"
-      theme="outline"
+      theme="fill"
       title="Next"
     />
   </div>
@@ -88,28 +88,38 @@ exports[`matches test renderer snapshot serializes the styles 1`] = `
     className="Pagination-previous"
   >
     <span
-      className="StyledButton-aqwbwz-0 eZYUp Button"
-      color="var(--text-color)"
+      className="StyledButton-aqwbwz-0 gCGLEB Button fill"
+      color="var(--text-light)"
       onClick={[Function]}
       size="medium"
     >
-      <span>
+      <div
+        className="StyledText__StyledTextDiv-sc-1ldibmc-0 jYMIFP Text"
+      >
         Previous
-      </span>
+      </div>
+      <div
+        className="StyledText__StyledTextDiv-sc-1ldibmc-0 jYMIFP Text flex-row"
+      />
     </span>
   </div>
   <div
     className="Pagination-next"
   >
     <span
-      className="StyledButton-aqwbwz-0 eZYUp Button"
-      color="var(--text-color)"
+      className="StyledButton-aqwbwz-0 gCGLEB Button fill"
+      color="var(--text-light)"
       onClick={[Function]}
       size="medium"
     >
-      <span>
+      <div
+        className="StyledText__StyledTextDiv-sc-1ldibmc-0 jYMIFP Text"
+      >
         Next
-      </span>
+      </div>
+      <div
+        className="StyledText__StyledTextDiv-sc-1ldibmc-0 jYMIFP Text flex-row"
+      />
     </span>
   </div>
   <ul
@@ -117,50 +127,70 @@ exports[`matches test renderer snapshot serializes the styles 1`] = `
   >
     <li>
       <span
-        className="StyledButton-aqwbwz-0 eZYUp Button Pagination-page-button "
-        color="var(--text-color)"
+        className="StyledButton-aqwbwz-0 gCGLEB Button Pagination-page-button  fill"
+        color="var(--text-light)"
         onClick={[Function]}
         size="medium"
       >
-        <span>
+        <div
+          className="StyledText__StyledTextDiv-sc-1ldibmc-0 jYMIFP Text"
+        >
           1
-        </span>
+        </div>
+        <div
+          className="StyledText__StyledTextDiv-sc-1ldibmc-0 jYMIFP Text flex-row"
+        />
       </span>
     </li>
     <li>
       <span
-        className="StyledButton-aqwbwz-0 eZYUp Button Pagination-page-button current"
-        color="var(--text-color)"
+        className="StyledButton-aqwbwz-0 gCGLEB Button Pagination-page-button current fill"
+        color="var(--text-light)"
         onClick={[Function]}
         size="medium"
       >
-        <span>
+        <div
+          className="StyledText__StyledTextDiv-sc-1ldibmc-0 jYMIFP Text"
+        >
           2
-        </span>
+        </div>
+        <div
+          className="StyledText__StyledTextDiv-sc-1ldibmc-0 jYMIFP Text flex-row"
+        />
       </span>
     </li>
     <li>
       <span
-        className="StyledButton-aqwbwz-0 eZYUp Button Pagination-page-button "
-        color="var(--text-color)"
+        className="StyledButton-aqwbwz-0 gCGLEB Button Pagination-page-button  fill"
+        color="var(--text-light)"
         onClick={[Function]}
         size="medium"
       >
-        <span>
+        <div
+          className="StyledText__StyledTextDiv-sc-1ldibmc-0 jYMIFP Text"
+        >
           3
-        </span>
+        </div>
+        <div
+          className="StyledText__StyledTextDiv-sc-1ldibmc-0 jYMIFP Text flex-row"
+        />
       </span>
     </li>
     <li>
       <span
-        className="StyledButton-aqwbwz-0 eZYUp Button Pagination-page-button "
-        color="var(--text-color)"
+        className="StyledButton-aqwbwz-0 gCGLEB Button Pagination-page-button  fill"
+        color="var(--text-light)"
         onClick={[Function]}
         size="medium"
       >
-        <span>
+        <div
+          className="StyledText__StyledTextDiv-sc-1ldibmc-0 jYMIFP Text"
+        >
           4
-        </span>
+        </div>
+        <div
+          className="StyledText__StyledTextDiv-sc-1ldibmc-0 jYMIFP Text flex-row"
+        />
       </span>
     </li>
     <li>
@@ -172,14 +202,19 @@ exports[`matches test renderer snapshot serializes the styles 1`] = `
     </li>
     <li>
       <span
-        className="StyledButton-aqwbwz-0 eZYUp Button Pagination-page-button "
-        color="var(--text-color)"
+        className="StyledButton-aqwbwz-0 gCGLEB Button Pagination-page-button  fill"
+        color="var(--text-light)"
         onClick={[Function]}
         size="medium"
       >
-        <span>
+        <div
+          className="StyledText__StyledTextDiv-sc-1ldibmc-0 jYMIFP Text"
+        >
           10
-        </span>
+        </div>
+        <div
+          className="StyledText__StyledTextDiv-sc-1ldibmc-0 jYMIFP Text flex-row"
+        />
       </span>
     </li>
   </ul>

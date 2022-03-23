@@ -24,7 +24,7 @@
 
             padding: 8px;
             font-weight: bold;
-            color: var(--light-text-color);
+            color: var(--text-light);
         }
 
         .statement-execution-progress-wrapper {
@@ -48,11 +48,10 @@
     &.fullscreen {
         display: flex;
         flex-direction: column;
-        background-color: var(--bg-color);
-        padding: 15px;
+        background-color: var(--bg);
+        padding: 8px 16px;
 
         .StatementResultTable {
-            flex: 1;
             overflow: hidden;
             display: flex;
             .Table {
@@ -64,8 +63,7 @@
 
     .statement-results-summary {
         .number-of-rows-message {
-            font-weight: 700;
-            text-transform: uppercase;
+            font-weight: normal;
             .warning-word {
                 color: var(--color-false);
             }
@@ -83,7 +81,7 @@
                 cursor: pointer;
 
                 &.selected {
-                    color: var(--light-text-color);
+                    color: var(--text-light);
                 }
             }
         }

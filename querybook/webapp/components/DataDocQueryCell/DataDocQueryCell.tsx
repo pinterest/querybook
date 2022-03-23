@@ -48,13 +48,13 @@ import { Icon } from 'ui/Icon/Icon';
 import { ListMenu, IListMenuItem } from 'ui/Menu/ListMenu';
 import { Modal } from 'ui/Modal/Modal';
 import { ResizableTextArea } from 'ui/ResizableTextArea/ResizableTextArea';
-import { Title } from 'ui/Title/Title';
 
 import { ErrorQueryCell } from './ErrorQueryCell';
 import './DataDocQueryCell.scss';
 import { TemplatedQueryView } from 'components/TemplateQueryView/TemplatedQueryView';
 import { doesLanguageSupportUDF } from 'lib/utils/udf';
 import { UDFForm } from 'components/UDFForm/UDFForm';
+import { AccentText } from 'ui/StyledText/StyledText';
 
 const ON_CHANGE_DEBOUNCE_MS = 500;
 const FORMAT_QUERY_SHORTCUT = getShortcutSymbols(
@@ -405,7 +405,7 @@ class DataDocQueryCellComponent extends React.PureComponent<IProps, IState> {
             additionalButtons.push({
                 name: `Format Query (${FORMAT_QUERY_SHORTCUT})`,
                 onClick: this.formatQuery.bind(this, { case: 'upper' }),
-                icon: 'fas fa-file-code',
+                icon: 'Edit',
                 items: [
                     {
                         name: 'Format (Uppercase)',
@@ -420,7 +420,7 @@ class DataDocQueryCellComponent extends React.PureComponent<IProps, IState> {
             additionalButtons.push({
                 name: 'Explain Query',
                 onClick: this.explainQuery,
-                icon: 'fas fa-info',
+                icon: 'Info',
                 tooltip: 'Run query as explain',
                 tooltipPos: 'left',
             });
@@ -429,7 +429,7 @@ class DataDocQueryCellComponent extends React.PureComponent<IProps, IState> {
         additionalButtons.push({
             name: 'Render template',
             onClick: this.toggleShowRenderedTemplateModal,
-            icon: 'fas fa-code',
+            icon: 'Code',
             tooltip: 'Show the rendered templated query',
             tooltipPos: 'left',
         });
@@ -437,19 +437,20 @@ class DataDocQueryCellComponent extends React.PureComponent<IProps, IState> {
         additionalButtons.push({
             name: queryCollapsed ? 'Show Query' : 'Hide Query',
             onClick: this.toggleQueryCollapsing.bind(this, !queryCollapsed),
-            icon: queryCollapsed ? 'far fa-eye' : 'far fa-eye-slash',
+            icon: queryCollapsed ? 'Eye' : 'EyeOff',
         });
 
         if (this.hasUDFSupport) {
             additionalButtons.push({
                 name: 'Add UDF',
                 onClick: () => this.setState({ showUDFModal: true }),
-                icon: 'fas fa-plus',
+                icon: 'Plus',
             });
         }
 
         return additionalButtons.length > 0 ? (
             <Dropdown
+                className="query-cell-additional-dropdown"
                 customButtonRenderer={this.additionalDropDownButtonFormatter}
                 isRight
             >
@@ -467,6 +468,7 @@ class DataDocQueryCellComponent extends React.PureComponent<IProps, IState> {
     @bind
     public handleInsertSnippet(query: string) {
         this.handleChange(query);
+        this.toggleInsertQuerySnippetModal();
     }
 
     @bind
@@ -518,7 +520,8 @@ class DataDocQueryCellComponent extends React.PureComponent<IProps, IState> {
         return (
             <Icon
                 className="additional-dropdown-button flex-center"
-                name="more-vertical"
+                name="MoreVertical"
+                color="light"
             />
         );
     }
@@ -553,26 +556,30 @@ class DataDocQueryCellComponent extends React.PureComponent<IProps, IState> {
                 className="Title"
             />
         ) : (
-            <Title size={4}>{this.dataCellTitle}</Title>
+            <span className="p8">{this.dataCellTitle}</span>
         );
 
         return (
             <div className="query-metadata">
-                <div className="query-title">{queryTitleDOM}</div>
-                <QueryRunButton
-                    ref={this.runButtonRef}
-                    queryEngineById={queryEngineById}
-                    queryEngines={queryEngines}
-                    disabled={!isEditable}
-                    hasSelection={selectedRange != null}
-                    engineId={this.engineId}
-                    onRunClick={this.onRunButtonClick}
-                    onEngineIdSelect={this.handleMetaChange.bind(
-                        this,
-                        'engine'
-                    )}
-                />
-                {this.getAdditionalDropDownButtonDOM()}
+                <AccentText className="query-title" weight="bold" size="large">
+                    {queryTitleDOM}
+                </AccentText>
+                <div className="query-controls flex-row">
+                    <QueryRunButton
+                        ref={this.runButtonRef}
+                        queryEngineById={queryEngineById}
+                        queryEngines={queryEngines}
+                        disabled={!isEditable}
+                        hasSelection={selectedRange != null}
+                        engineId={this.engineId}
+                        onRunClick={this.onRunButtonClick}
+                        onEngineIdSelect={this.handleMetaChange.bind(
+                            this,
+                            'engine'
+                        )}
+                    />
+                    {this.getAdditionalDropDownButtonDOM()}
+                </div>
             </div>
         );
     }
@@ -596,15 +603,25 @@ class DataDocQueryCellComponent extends React.PureComponent<IProps, IState> {
         const queryCollapsed = this.queryCollapsed;
 
         const fullScreenButton = (
-            <div className="fullscreen-button-wrapper">
+            <div className="fullscreen-button-wrapper mt4">
                 <Button
-                    icon="maximize"
+                    icon={isFullScreen ? 'Minimize2' : 'Maximize2'}
                     onClick={toggleFullScreen}
                     theme="text"
                     pushable
                 />
             </div>
         );
+        const openSnippetDOM =
+            query.trim().length === 0 && isEditable ? (
+                <div className="add-snippet-wrapper">
+                    <TextButton
+                        title="Add Snippet"
+                        onClick={this.toggleInsertQuerySnippetModal}
+                    />
+                </div>
+            ) : null;
+
         const editorDOM = !queryCollapsed && (
             <div className="editor">
                 {fullScreenButton}
@@ -624,29 +641,15 @@ class DataDocQueryCellComponent extends React.PureComponent<IProps, IState> {
                     height={isFullScreen ? 'full' : 'auto'}
                     allowFullScreen={false}
                 />
+                {openSnippetDOM}
             </div>
         );
 
-        const openSnippetDOM =
-            query.trim().length === 0 && isEditable ? (
-                <div className="add-snippet-wrapper flex-center">
-                    <TextButton
-                        title="Add Template"
-                        onClick={this.toggleInsertQuerySnippetModal}
-                    />
-                </div>
-            ) : null;
-
         const insertQuerySnippetModalDOM = showQuerySnippetModal ? (
-            <Modal
+            <QuerySnippetInsertionModal
+                onInsert={this.handleInsertSnippet}
                 onHide={this.toggleInsertQuerySnippetModal}
-                className="wide"
-                title="Insert Query Snippet"
-            >
-                <QuerySnippetInsertionModal
-                    onInsert={this.handleInsertSnippet}
-                />
-            </Modal>
+            />
         ) : null;
 
         const templatedQueryViewModalDOM = showRenderedTemplateModal ? (
@@ -682,7 +685,6 @@ class DataDocQueryCellComponent extends React.PureComponent<IProps, IState> {
         return (
             <>
                 {editorDOM}
-                {openSnippetDOM}
                 {insertQuerySnippetModalDOM}
                 {templatedQueryViewModalDOM}
                 {UDFModal}
@@ -764,9 +766,11 @@ class DataDocQueryCellComponent extends React.PureComponent<IProps, IState> {
 
         return showCollapsed ? (
             <div className={classes}>
-                <div className="query-title flex-row">
-                    <span>{this.dataCellTitle}</span>
-                    <span>{'{...}'}</span>
+                <div className="collapsed-query flex-row">
+                    <Icon name="Terminal" className="mt4 mr8" />
+                    <AccentText className="one-line-ellipsis pr16">
+                        {this.dataCellTitle}
+                    </AccentText>
                 </div>
             </div>
         ) : isFullScreen ? (

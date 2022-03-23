@@ -14,7 +14,7 @@
     }
 
     .CodeMirror-hover {
-        background-color: var(--text-select-bg-color);
+        background-color: var(--bg-text-select);
     }
 
     .fullscreen-button-wrapper {
@@ -47,26 +47,26 @@
     z-index: 30;
 
     // New style
-    background: var(--bg-color);
+    background: var(--bg);
     box-shadow: var(--box-shadow);
     border-radius: 8px;
 
     .CodeMirror-hint {
         font-size: var(--small-text-size);
         line-height: 1.5;
-        color: var(--dark-text-color);
+        color: var(--text-dark);
         white-space: nowrap;
 
         b {
-            color: var(--text-color);
+            color: var(--text);
         }
 
         &.CodeMirror-hint-active {
-            color: var(--color-accent-text);
+            color: var(--color-accent-dark);
             background: none;
 
             b {
-                color: var(--color-accent-text);
+                color: var(--color-accent-dark);
             }
         }
 
@@ -96,7 +96,7 @@
                     }
 
                     &.not-golden {
-                        color: var(--dark-text-color);
+                        color: var(--text-dark);
                     }
                 }
             }
@@ -113,7 +113,7 @@
                     }
 
                     &.not-warning {
-                        color: var(--dark-text-color);
+                        color: var(--text-dark);
                     }
                 }
             }

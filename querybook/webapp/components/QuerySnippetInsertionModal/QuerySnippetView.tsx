@@ -21,6 +21,8 @@ import { FormField, FormFieldInputSectionRowGroup } from 'ui/Form/FormField';
 import { Tag, TagGroup } from 'ui/Tag/Tag';
 import { Title } from 'ui/Title/Title';
 import { UserName } from 'components/UserBadge/UserName';
+import { Card } from 'ui/Card/Card';
+
 import './QuerySnippetView.scss';
 
 export interface IQuerySnippetViewProps {
@@ -138,29 +140,52 @@ export class QuerySnippetView extends React.PureComponent<
 
         const goldenTag = golden ? <Tag>Golden</Tag> : null;
 
+        const topDOM = (
+            <div className="mb8">
+                <TagGroup>
+                    <Tag>Engine</Tag>
+                    <Tag highlighted>{engine.name}</Tag>
+                </TagGroup>
+            </div>
+        );
+
         const titleDOM = (
-            <div className="flex-row">
-                <Title className="mr8">{title}</Title>
-                {publicTag}
-                {goldenTag}
+            <div className="flex-row mb8">
+                <Title size="large">{title}</Title>
+                <div className="flex-row ml12">
+                    {publicTag}
+                    {goldenTag}
+                </div>
             </div>
         );
 
         const authorInfoDOM = (
-            <div className="snippet-author-info">
+            <Card alignLeft className="mb12">
                 <div>
-                    Created by <UserName uid={createdBy} /> on{' '}
-                    {generateFormattedDate(createdAt)}
+                    <span>Created by</span>
+                    <span className="mh4 author-info">
+                        <UserName uid={createdBy} />
+                    </span>
+                    <span>on</span>
+                    <span className="mh4 author-info">
+                        {generateFormattedDate(createdAt)}
+                    </span>
                 </div>
                 <div>
-                    Last updated by <UserName uid={lastUpdatedBy} /> on{' '}
-                    {generateFormattedDate(updatedAt)}
+                    <span>Last updated by</span>
+                    <span className="mh4 author-info">
+                        <UserName uid={lastUpdatedBy} />
+                    </span>
+                    <span>on</span>
+                    <span className="mh4 author-info">
+                        {generateFormattedDate(updatedAt)}
+                    </span>
                 </div>
-            </div>
+            </Card>
         );
 
         const descriptionDOM = description ? (
-            <div className="snippet-description">
+            <div className="snippet-description mb12">
                 <blockquote>
                     <p>{description}</p>
                 </blockquote>
@@ -171,13 +196,6 @@ export class QuerySnippetView extends React.PureComponent<
 
         const editorDOM = (
             <div>
-                <div className="right-align">
-                    <TagGroup>
-                        <Tag>Engine</Tag>
-                        <Tag highlighted>{engine.name}</Tag>
-                    </TagGroup>
-                    <br />
-                </div>
                 <BoundQueryEditor
                     value={context}
                     readOnly={true}
@@ -190,7 +208,7 @@ export class QuerySnippetView extends React.PureComponent<
         );
 
         const controlDOM = (
-            <div className="right-align">
+            <div className="right-align mt12">
                 <CopyButton copyText={context} title="Copy To Clipboard" />
                 <Button
                     color="confirm"
@@ -202,9 +220,9 @@ export class QuerySnippetView extends React.PureComponent<
 
         return (
             <div className="QuerySnippetView">
+                {topDOM}
                 {titleDOM}
                 {authorInfoDOM}
-                <br />
                 {descriptionDOM}
                 {editorDOM}
                 {controlDOM}

@@ -5,12 +5,15 @@ import { UnControlled as ReactCodeMirror } from 'react-codemirror2';
 import styled from 'styled-components';
 
 import { IQueryExecution } from 'const/queryExecution';
-import { titleize, getCodeEditorTheme } from 'lib/utils';
+import { getCodeEditorTheme } from 'lib/utils';
 import { queryEngineByIdEnvSelector } from 'redux/queryEngine/selector';
 import { IStoreState } from 'redux/store/types';
 
 import { Loading } from 'ui/Loading/Loading';
+import { TextButton } from 'ui/Button/Button';
+
 import './ExecutedQueryCell.scss';
+import { Tag } from 'ui/Tag/Tag';
 
 const EmbeddedCodeMirrorContainer = styled.div`
     .CodeMirror {
@@ -21,6 +24,7 @@ const EmbeddedCodeMirrorContainer = styled.div`
             max-height: ${(props) => props.height || '300px'};
         }
         font-size: var(--small-text-size);
+        border-radius: var(--border-radius-sm);
     }
 `;
 
@@ -95,26 +99,24 @@ export const ExecutedQueryCell: React.FunctionComponent<IProps> = ({
     };
 
     const changeCellContextButton = changeCellContext && (
-        <span
-            className="query-execution-button"
-            aria-label={'Copy and Paste this into the query editor above'}
-            data-balloon-pos={'up'}
-            key={'replace'}
+        <TextButton
             onClick={() => {
                 changeCellContext(query);
             }}
-        >
-            Paste in Editor
-        </span>
+            aria-label={'Copy and Paste this into the query editor above'}
+            data-balloon-pos={'left'}
+            key="replace"
+            size="small"
+            icon="Terminal"
+            title="Paste Query in Editor"
+        />
     );
 
     const queryEngine = queryEngineById[queryExecution.engine_id];
     const headerDOM = (
-        <div className="execution-header horizontal-space-between">
-            <div>
-                <div>{`Engine: ${titleize(queryEngine.name)}`}</div>
-            </div>
-            <div>{changeCellContextButton}</div>
+        <div className="execution-header horizontal-space-between mb4">
+            <Tag mini>{queryEngine.name}</Tag>
+            {changeCellContextButton}
         </div>
     );
 
@@ -132,7 +134,7 @@ export const ExecutedQueryCell: React.FunctionComponent<IProps> = ({
     );
 
     return (
-        <div className="ExecutedQueryCell">
+        <div className="ExecutedQueryCell mb4">
             {headerDOM}
             {codeDOM}
         </div>

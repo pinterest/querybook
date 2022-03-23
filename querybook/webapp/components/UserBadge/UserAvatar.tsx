@@ -4,6 +4,7 @@ import { useUser } from 'hooks/redux/useUser';
 import { IUserInfo } from 'const/user';
 import { ICommonUserLoaderProps } from './types';
 import './UserAvatar.scss';
+import { Icon } from 'ui/Icon/Icon';
 
 export type IUserAvatarProps = {
     isOnline?: boolean;
@@ -18,13 +19,13 @@ export interface IUserAvatarComponentProps
     onClick?: () => any;
 }
 
-const defaultNoUserBackground = '#F65B50';
+const defaultNoUserBackground = '#909090';
 const defaultUserIconBackgrounds = [
-    '#FF6400',
-    '#FAB904',
-    '#0FA573',
-    '#4A90E2',
-    '#B469EB',
+    '#f683ad',
+    '#85d0ce',
+    '#bdda57',
+    '#ffd275',
+    '#f5ac72',
 ];
 
 function getUserIconBackgroundColor(name: string) {
@@ -84,9 +85,7 @@ export const UserAvatarComponent: React.FunctionComponent<IUserAvatarComponentPr
 
     const imageDOM = loading ? (
         <div className="spinner-wrapper">
-            <span>
-                <i className="fa fa-spinner fa-pulse" />
-            </span>
+            <Icon name="Loading" size={16} />
         </div>
     ) : profileImage == null ? (
         <DefaultUserIcon name={userName} />

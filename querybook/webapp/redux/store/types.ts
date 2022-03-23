@@ -30,7 +30,7 @@ import {
 import { ITagState, TagAction } from 'redux/tag/types';
 import {
     IScheduledDataDocState,
-    IReceiveDataWithSchemaAction,
+    ScheduledDataDocAction,
 } from 'redux/scheduledDataDoc/types';
 
 export interface IStoreState {
@@ -70,6 +70,6 @@ export type AllAction =
     | BoardAction
     | GlobalStateAction
     | TagAction
-    | IReceiveDataWithSchemaAction;
+    | ScheduledDataDocAction;
 
 export type Dispatch = ThunkDispatch<IStoreState, null, AllAction>;

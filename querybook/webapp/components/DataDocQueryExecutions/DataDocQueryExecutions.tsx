@@ -17,9 +17,9 @@ import * as queryExecutionsSelectors from 'redux/queryExecutions/selector';
 import { QueryExecutionBar } from 'components/QueryExecutionBar/QueryExecutionBar';
 import { QueryExecution } from 'components/QueryExecution/QueryExecution';
 
-import './DataDocQueryExecutions.scss';
 import { QueryExecutionPicker } from 'components/ExecutionPicker/QueryExecutionPicker';
 import { DataDocContext } from 'context/DataDoc';
+import { StyledText } from 'ui/StyledText/StyledText';
 
 interface IProps {
     docId: number;
@@ -124,7 +124,7 @@ export const DataDocQueryExecutions: React.FunctionComponent<IProps> = React.mem
             }
 
             return (
-                <div className="execution-selector-section flex-row">
+                <div className="execution-selector-section horizontal-space-between">
                     <QueryExecutionPicker
                         queryExecutionId={currentExecution?.id}
                         onSelection={handleQueryExecutionSelected}
@@ -162,9 +162,11 @@ export const DataDocQueryExecutions: React.FunctionComponent<IProps> = React.mem
 
         return (
             <div className="DataDocQueryExecutions">
-                {generateExecutionsPickerDOM()}
-                {queryExecutionDOM}
-                {placeholderIfNoExecutionsDOM}
+                <StyledText size="xsmall">
+                    {generateExecutionsPickerDOM()}
+                    {queryExecutionDOM}
+                    {placeholderIfNoExecutionsDOM}
+                </StyledText>
             </div>
         );
     }

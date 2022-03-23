@@ -109,16 +109,32 @@ interface IStyledColumnRowProps {
 }
 const StyledColumnRow = styled.div<IStyledColumnRowProps>`
     cursor: pointer;
-    margin-left: -32px;
-    padding: 2px 0px 2px 28px;
-    word-break: break-all;
+    padding: 2px 0px;
+
+    margin-bottom: 4px;
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
 
     .column-row-name {
-        color: var(--dark-text-color);
+        user-select: none;
+
+        font-size: var(--small-text-size);
+        overflow: hidden;
+        white-space: nowrap;
+        text-overflow: ellipsis;
+        margin-right: 8px;
+
+        color: var(--text-dark);
     }
 
     .column-row-type {
-        color: var(--light-text-color);
+        text-transform: uppercase;
+        user-select: none;
+
+        font-size: var(--xxsmall-text-size);
+        color: var(--text-light);
+        white-space: nowrap;
     }
 
     ${({ selected }) =>
@@ -130,7 +146,7 @@ const StyledColumnRow = styled.div<IStyledColumnRowProps>`
     :hover {
         .column-row-name,
         .column-row-type {
-            color: var(--color-accent);
+            color: var(--color-accent-dark);
         }
     }
             `};
@@ -142,7 +158,7 @@ const ColumnRow: React.FunctionComponent<{
     selected?: boolean;
 }> = ({ name, type, onClick, selected }) => (
     <StyledColumnRow onClick={onClick} selected={selected}>
-        <span className="column-row-name">{name}:</span>
+        <span className="column-row-name">{name}</span>
         <span className="column-row-type">{type}</span>
     </StyledColumnRow>
 );

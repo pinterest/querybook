@@ -1,5 +1,6 @@
 import React from 'react';
 import { matchKeyMap, KeyMap } from 'lib/utils/keyboard';
+import { stopPropagationAndDefault } from 'lib/utils/noop';
 
 export const LinkInput: React.FunctionComponent<{
     onDismiss: () => any;
@@ -21,12 +22,9 @@ export const LinkInput: React.FunctionComponent<{
     return (
         <div className="toolbar-link-input-wrapper">
             <input
-                onClick={(event) => {
-                    event.stopPropagation();
-                    event.preventDefault();
-                }}
+                onClick={stopPropagationAndDefault}
                 ref={inputRef}
-                placeholder="Enter url here..."
+                placeholder="Enter url here"
                 onKeyDown={(event) => {
                     if (matchKeyMap(event, KeyMap.overallUI.confirmModal)) {
                         const inputEl = inputRef.current;

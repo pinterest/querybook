@@ -1,8 +1,9 @@
 .UserEnvironmentEditor {
     .UserEnvironmentEditor-list {
         height: 160px;
-        margin: 12px 8px;
-        background-color: var(--light-bg-color);
+        background-color: var(--bg-light);
+        border-radius: var(--border-radius-sm);
+        margin-top: 8px;
         .ReactVirtualized__Grid {
             padding-bottom: 12px;
 

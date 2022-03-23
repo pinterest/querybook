@@ -27,6 +27,7 @@ import { SearchBar } from 'ui/SearchBar/SearchBar';
 import { Tabs } from 'ui/Tabs/Tabs';
 
 import './QuerySnippetNavigator.scss';
+import { titleize } from 'lib/utils';
 
 const NAVIGATOR_TABS = [
     {
@@ -153,7 +154,7 @@ class QuerySnippetNavigatorComponent extends React.PureComponent<
     public makeQuerySnippetsListDOM() {
         const { querySnippetById, querySnippetIds } = this.props;
 
-        const { searching, titleFilter } = this.state;
+        const { searching, titleFilter, selectedTabKey } = this.state;
 
         if (searching) {
             return <Loading />;
@@ -165,13 +166,17 @@ class QuerySnippetNavigatorComponent extends React.PureComponent<
             titleFilter
         );
 
-        const snippetsDOM = (
+        const snippetsDOM = snippets.length ? (
             <InfinityScroll<IQuerySnippet>
                 elements={snippets}
                 labelField={'title'}
                 itemHeight={28}
                 itemRenderer={this.snippetRowRenderer}
             />
+        ) : (
+            <div className="empty-section-message">
+                No {titleize(selectedTabKey)} Snippets
+            </div>
         );
 
         return <div className="snippets-wrapper">{snippetsDOM}</div>;
@@ -232,23 +237,23 @@ class QuerySnippetNavigatorComponent extends React.PureComponent<
         const { titleFilter } = this.state;
 
         return (
-            <div className="snippet-search flex-row">
+            <div className="snippet-search flex-row list-header">
                 <SearchBar
                     value={titleFilter}
                     onSearch={this.onTitleFilter}
                     isSearching={false}
-                    placeholder="Search by Title..."
+                    placeholder="Search by Title"
                     transparent
                 />
                 <IconButton
                     onClick={this.toggleSnippetFilterPopover}
-                    icon="sliders"
+                    icon="Sliders"
                     aria-label="Filter"
                     data-balloon-pos="down"
                     ref={this.filterButton}
                 />
                 <IconButton
-                    icon="plus"
+                    icon="Plus"
                     onClick={this.showCreateSnippetModal}
                     aria-label="New"
                     data-balloon-pos="down"
@@ -262,14 +267,13 @@ class QuerySnippetNavigatorComponent extends React.PureComponent<
         const { filters, showFilterMenu, showCreateSnippetModal } = this.state;
 
         const tabsDOM = (
-            <div>
-                <Tabs
-                    items={NAVIGATOR_TABS}
-                    selectedTabKey={this.state.selectedTabKey}
-                    onSelect={this.onTabSelect}
-                    wide
-                />
-            </div>
+            <Tabs
+                items={NAVIGATOR_TABS}
+                selectedTabKey={this.state.selectedTabKey}
+                onSelect={this.onTabSelect}
+                wide
+                className="list-header"
+            />
         );
 
         const filterDOM = showFilterMenu ? (
@@ -287,20 +291,19 @@ class QuerySnippetNavigatorComponent extends React.PureComponent<
         ) : null;
 
         const createModal = showCreateSnippetModal ? (
-            <Modal
-                onHide={this.hideCreateSnippetModal}
-                title="Query Snippet Composer"
-            >
+            <Modal onHide={this.hideCreateSnippetModal} title="Create Snippet">
                 <QuerySnippetComposer onSave={this.hideCreateSnippetModal} />
             </Modal>
         ) : null;
 
         return (
             <>
-                <div className={'QuerySnippetNavigator '}>
+                <div className="QuerySnippetNavigator SidebarNavigator">
                     {this.makeSearchFilterDOM()}
                     {tabsDOM}
-                    {this.makeQuerySnippetsListDOM()}
+                    <div className="list-content">
+                        {this.makeQuerySnippetsListDOM()}
+                    </div>
                 </div>
                 {filterDOM}
                 {createModal}

@@ -98,14 +98,14 @@ export const QueryViewEditor: React.FunctionComponent<{
     const dataCellTitle = cellInfo?.cell_title;
     const queryExecutionTitleDOM = queryExecution ? (
         <div className="flex-row">
-            <Title size={5}>
+            <Title size="med" className="mr16">
                 <StatusIcon
                     status={queryStatusToStatusIcon[queryExecution.status]}
                 />
-                Execution {queryExecution.id}
-                <span className="mh4">
-                    {dataCellTitle ? `(${dataCellTitle})` : ''}
-                </span>
+                <span className="ml8">Execution {queryExecution.id}</span>
+                {dataCellTitle ? (
+                    <span className="ml8">{dataCellTitle}</span>
+                ) : null}
             </Title>
             <Tag>{queryEngineById[queryExecution.engine_id].name}</Tag>
         </div>
@@ -113,7 +113,12 @@ export const QueryViewEditor: React.FunctionComponent<{
 
     const goToDataDocButton =
         cellInfo != null ? (
-            <Button onClick={goToDataDoc} title="Go To DataDoc" />
+            <Button
+                onClick={goToDataDoc}
+                title="Go To DataDoc"
+                icon="ArrowRight"
+                theme="text"
+            />
         ) : null;
 
     const shareExecutionButton = showAccessControls ? (
@@ -123,10 +128,14 @@ export const QueryViewEditor: React.FunctionComponent<{
     const editorSectionHeader = (
         <div className="editor-section-header horizontal-space-between">
             <div>{queryExecutionTitleDOM}</div>
-
             <div className="horizontal-space-between">
                 {shareExecutionButton}
-                <Button onClick={exportToAdhocQuery} title="Edit" />
+                <Button
+                    onClick={exportToAdhocQuery}
+                    title="Edit"
+                    icon="Edit"
+                    theme="text"
+                />
                 {goToDataDocButton}
             </div>
         </div>

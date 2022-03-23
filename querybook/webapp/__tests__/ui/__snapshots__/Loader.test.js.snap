@@ -1,19 +1,42 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
-exports[`matches enzyme snapshots matches snapshot 1`] = `<Loading />`;
+exports[`matches enzyme snapshots matches snapshot 1`] = `
+<Loading
+  fullHeight={true}
+/>
+`;
 
 exports[`matches enzyme snapshots matches snapshot 2`] = `"children"`;
 
 exports[`matches test renderer snapshot serializes the styles 1`] = `
 <div
-  className="Loading__StyledLoading-sc-1xendm7-0 cdKARu"
+  className="Loading__StyledLoading-sc-1xendm7-0 IsqoY Loading flex-center "
 >
   <div
-    className="Loading__StyledSpinner-sc-1xendm7-1 dUUxro"
+    className="flex-center"
   >
-    <i
-      className="fa fa-spinner fa-pulse"
-    />
+    <span
+      className="Icon p8 light loading-icon"
+    >
+      <svg
+        className="lucide lucide-circle"
+        fill="none"
+        height={24}
+        stroke="currentColor"
+        strokeLinecap="round"
+        strokeLinejoin="round"
+        strokeWidth={2}
+        viewBox="0 0 24 24"
+        width={24}
+        xmlns="http://www.w3.org/2000/svg"
+      >
+        <circle
+          cx="12"
+          cy="12"
+          r="10"
+        />
+      </svg>
+    </span>
   </div>
 </div>
 `;

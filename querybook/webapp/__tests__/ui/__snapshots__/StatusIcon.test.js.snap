@@ -2,22 +2,26 @@
 
 exports[`matches enzyme snapshots matches snapshot - warning 1`] = `
 <span
-  className="StatusIcon warning"
+  className="StatusIcon warning flex-center"
 >
-  <i
-    className="fas fa-circle"
-    status="warning"
+  <Memo()
+    className="warning"
+    fill={true}
+    name="Circle"
+    size={16}
   />
 </span>
 `;
 
 exports[`matches enzyme snapshots matches snapshot 1`] = `
 <span
-  className="StatusIcon success"
+  className="StatusIcon success flex-center"
 >
-  <i
-    className="fas fa-circle"
-    status="success"
+  <Memo()
+    className="success"
+    fill={true}
+    name="Circle"
+    size={16}
   />
 </span>
 `;

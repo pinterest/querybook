@@ -4,6 +4,7 @@ import clsx from 'clsx';
 import { TooltipDirection } from 'const/tooltip';
 
 import { Icon } from 'ui/Icon/Icon';
+import type { AllLucideIconNames } from 'ui/Icon/LucideIcons';
 
 import './Tag.scss';
 
@@ -16,6 +17,8 @@ export interface ITagProps {
     children: React.ReactNode;
 
     highlighted?: boolean;
+    mini?: boolean;
+    light?: boolean;
 
     tooltip?: React.ReactNode;
     tooltipPos?: TooltipDirection;
@@ -25,7 +28,7 @@ export interface ITagProps {
     className?: string;
 }
 export interface IHoverIconTagProps extends ITagProps {
-    iconOnHover?: string;
+    iconOnHover?: AllLucideIconNames;
     onIconHoverClick?: () => any;
 }
 
@@ -41,6 +44,8 @@ export const Tag: React.FunctionComponent<ITagProps> = ({
     tooltipPos = 'top',
     onClick,
     className,
+    mini,
+    light,
 }) => {
     const tooltipProps = {};
     if (tooltip) {
@@ -52,6 +57,8 @@ export const Tag: React.FunctionComponent<ITagProps> = ({
         Tag: true,
         'flex-row': true,
         highlighted,
+        mini,
+        light,
         [className]: Boolean(className),
     });
 

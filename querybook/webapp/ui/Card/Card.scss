@@ -1,19 +1,8 @@
 .Card {
     justify-content: center;
-    background-color: var(--light-bg-color);
     border-radius: var(--border-radius);
-    border: var(--border);
     padding: 8px;
-    margin: 16px;
-
-    &:hover {
-        border: var(--border);
-    }
-
-    .Card-title {
-        margin: 0px 16px 16px;
-        font-size: var(--med-text-size);
-    }
+    background-color: var(--bg-lightest);
 
     .Card-content {
         margin: 0px 8px;
@@ -24,6 +13,7 @@
             margin: 16px;
         }
     }
+
     &.align-left {
         .Card-content {
             text-align: left;
@@ -31,5 +21,8 @@
     }
     &.clickable {
         cursor: pointer;
+        &:hover {
+            background-color: var(--bg-hover);
+        }
     }
 }

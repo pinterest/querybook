@@ -27,12 +27,14 @@ export const StyledButton = styled.span<StyledButtonProps>`
     display: inline-flex;
     align-items: center;
 
-    border: ${(props) =>
-        props.borderColor ? `1px solid ${props.borderColor}` : 'none'};
-    border-radius: var(--border-radius);
+    border-radius: var(--border-radius-sm);
 
     color: ${(props) => props.color || 'inherit'};
     background-color: ${(props) => props.bgColor || 'inherit'};
+
+    + .Button {
+        margin-left: 12px;
+    }
 
     &:hover,
     &.active {
@@ -58,8 +60,12 @@ export const StyledButton = styled.span<StyledButtonProps>`
     ${(props) => (props.fontWeight ? `font-weight: ${props.fontWeight}` : '')};
 
     cursor: ${(props) => (props.disabled ? 'not-allowed' : 'pointer')};
-    margin: ${(props) => (props.size === 'small' ? '0px' : '0px 4px')};
-    padding: ${(props) => (props.size === 'small' ? '1px 4px' : '4px 8px')};
+
+    * {
+        cursor: ${(props) =>
+            props.disabled ? 'not-allowed' : 'pointer'} !important;
+    }
+    padding: ${(props) => (props.size === 'small' ? '2px 6px' : '4px 12px')};
 
     white-space: nowrap;
     position: relative;
@@ -84,18 +90,24 @@ export const StyledButton = styled.span<StyledButtonProps>`
         }
     }
 
+    &:not(.icon-only) {
+        .Icon {
+            margin-right: 2px;
+        }
+    }
+
     .ping-message {
         position: absolute;
         cursor: default;
         border-radius: 100px;
-        background-color: var(--color-accent-bg);
+        background-color: var(--color-accent-lightest);
 
         right: -8px;
         top: -8px;
 
         padding: 1px 6px 0px 6px;
 
-        color: var(--color-accent-text);
+        color: var(--color-accent-dark);
         font-size: var(--xsmall-text-size);
         font-weight: var(--bold-font);
     }

@@ -2,26 +2,53 @@
 
 exports[`matches enzyme snapshots matches snapshot 1`] = `
 <Memo()
-  name="check"
+  name="Check"
 >
   <span
-    className=" Icon "
-    dangerouslySetInnerHTML={
-      Object {
-        "__html": "<svg xmlns=\\"http://www.w3.org/2000/svg\\" width=\\"24\\" height=\\"24\\" viewBox=\\"0 0 24 24\\" fill=\\"none\\" stroke=\\"currentColor\\" stroke-width=\\"2\\" stroke-linecap=\\"round\\" stroke-linejoin=\\"round\\" class=\\"feather feather-check\\"><polyline points=\\"20 6 9 17 4 12\\"></polyline></svg>",
-      }
-    }
-  />
+    className="Icon"
+  >
+    <Check>
+      <svg
+        className="lucide lucide-check"
+        fill="none"
+        height={24}
+        stroke="currentColor"
+        strokeLinecap="round"
+        strokeLinejoin="round"
+        strokeWidth={2}
+        viewBox="0 0 24 24"
+        width={24}
+        xmlns="http://www.w3.org/2000/svg"
+      >
+        <polyline
+          key="10jjfj"
+          points="20 6 9 17 4 12"
+        />
+      </svg>
+    </Check>
+  </span>
 </Memo()>
 `;
 
 exports[`matches test renderer snapshot serializes the styles 1`] = `
 <span
-  className=" Icon "
-  dangerouslySetInnerHTML={
-    Object {
-      "__html": "<svg xmlns=\\"http://www.w3.org/2000/svg\\" width=\\"24\\" height=\\"24\\" viewBox=\\"0 0 24 24\\" fill=\\"none\\" stroke=\\"currentColor\\" stroke-width=\\"2\\" stroke-linecap=\\"round\\" stroke-linejoin=\\"round\\" class=\\"feather feather-check\\"><polyline points=\\"20 6 9 17 4 12\\"></polyline></svg>",
-    }
-  }
-/>
+  className="Icon"
+>
+  <svg
+    className="lucide lucide-check"
+    fill="none"
+    height={24}
+    stroke="currentColor"
+    strokeLinecap="round"
+    strokeLinejoin="round"
+    strokeWidth={2}
+    viewBox="0 0 24 24"
+    width={24}
+    xmlns="http://www.w3.org/2000/svg"
+  >
+    <polyline
+      points="20 6 9 17 4 12"
+    />
+  </svg>
+</span>
 `;

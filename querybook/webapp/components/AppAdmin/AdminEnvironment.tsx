@@ -24,9 +24,10 @@ import './AdminEnvironment.scss';
 
 const environmentSchema = Yup.object().shape({
     name: Yup.string()
-        .matches(/^[a-z_0-9]+$/)
         .min(1)
-        .max(255),
+        .max(255)
+        .matches(/^[a-z_0-9]+$/)
+        .required(),
     description: Yup.string().max(5000),
     image: Yup.string().max(2083),
     public: Yup.boolean(),
@@ -104,7 +105,14 @@ export const AdminEnvironment: React.FunctionComponent<IProps> = ({
             <>
                 <div className="AdminForm-top">
                     {logDOM}
-                    <SimpleField stacked name="name" type="input" />
+                    <SimpleField
+                        stacked
+                        name="name"
+                        label="Key"
+                        type="input"
+                        help="Lower case alphanumeric and underscore only"
+                        required
+                    />
                 </div>
                 <div className="AdminForm-main">
                     <div className="AdminForm-left">
@@ -134,7 +142,6 @@ export const AdminEnvironment: React.FunctionComponent<IProps> = ({
                                         <div className="AdminForm-section-title">
                                             Access Control
                                         </div>
-                                        <hr className="dh-hr" />
                                     </div>
                                     <div className="AdminForm-section-content">
                                         <UserEnvironmentEditor
@@ -149,17 +156,20 @@ export const AdminEnvironment: React.FunctionComponent<IProps> = ({
                         <SimpleField
                             name="public"
                             type="toggle"
-                            help="Public environment are open to all users"
+                            help="If public, all users on Querybook can access this environment."
                         />
                         <SimpleField
                             name="hidden"
                             type="toggle"
-                            help="Hidden environments will not be shown to unauthorized users"
+                            help="Hidden environments will not be shown to unauthorized users in their environment picker."
                         />
                         <SimpleField
                             name="shareable"
                             type="toggle"
-                            help="If true, Docs/Queries are readable by default"
+                            help={
+                                "If true, all docs and query executions in the environment are readable to users even if they don't have access. " +
+                                'If false, users would need to be explicitly invited to view docs/queries'
+                            }
                         />
                     </div>
                 </div>
@@ -382,7 +392,7 @@ const AdminEnvironmentQueryEngine: React.FC<{
                     <IconButton
                         className="delete-query-engine-button"
                         noPadding
-                        icon="x"
+                        icon="X"
                         onClick={() => handleDeleteQueryEngine(engine.id)}
                     />
                 </div>
@@ -395,7 +405,6 @@ const AdminEnvironmentQueryEngine: React.FC<{
         <div className="AdminForm-section">
             <div className="AdminForm-section-top flex-row">
                 <div className="AdminForm-section-title">Query Engines</div>
-                <hr className="dh-hr" />
             </div>
             <div className="AdminForm-section-content">
                 <div className="AdminForm-section-top">

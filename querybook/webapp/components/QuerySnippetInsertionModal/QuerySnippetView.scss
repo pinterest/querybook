@@ -4,4 +4,11 @@
         border-radius: var(--border-radius);
         overflow: hidden;
     }
+    .Card {
+        color: var(--text-light);
+        .author-info {
+            color: var(--text);
+            font-weight: var(--light-bold-font);
+        }
+    }
 }

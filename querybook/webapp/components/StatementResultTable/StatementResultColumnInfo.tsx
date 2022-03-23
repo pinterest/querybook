@@ -10,6 +10,7 @@ import { Tabs } from 'ui/Tabs/Tabs';
 import { SoftButton } from 'ui/Button/Button';
 import { DebouncedInput } from 'ui/DebouncedInput/DebouncedInput';
 import { Select, makeSelectOptions } from 'ui/Select/Select';
+import type { AllLucideIconNames } from 'ui/Icon/LucideIcons';
 
 import { IFilterCondition, tableColumnFiltersByType } from './useFilterCell';
 
@@ -18,16 +19,6 @@ const StyledColumnInfo = styled.div.attrs({
 })`
     width: 160px;
     font-size: var(--xsmall-text-size);
-
-    .PopoverTabs.Tabs.pills {
-        ul li {
-            &:first-child,
-            &:last-child {
-                border-bottom-left-radius: 0;
-                border-bottom-right-radius: 0;
-            }
-        }
-    }
 
     .preview-warning {
         word-break: break-word;
@@ -54,10 +45,13 @@ const StyledColumnInfo = styled.div.attrs({
 
 export const ColumnInfoTabs = ['main', 'filter', 'insights'] as const;
 export type ColumnInfoTabType = typeof ColumnInfoTabs[number];
-export const ColumnInfoTabToIcons: Record<ColumnInfoTabType, string> = {
-    main: 'menu',
-    filter: 'filter',
-    insights: 'info',
+export const ColumnInfoTabToIcons: Record<
+    ColumnInfoTabType,
+    AllLucideIconNames
+> = {
+    main: 'Menu',
+    filter: 'Filter',
+    insights: 'Info',
 };
 
 interface IColumnInfoProps
@@ -109,8 +103,7 @@ export const StatementResultColumnInfo: React.FC<IColumnInfoProps> = ({
     return (
         <StyledColumnInfo>
             <Tabs
-                className="PopoverTabs light-pills"
-                wide
+                className="PopoverTabs"
                 items={ColumnInfoTabs.map((tab) => ({
                     icon: ColumnInfoTabToIcons[tab],
                     tooltip: tab,
@@ -119,6 +112,7 @@ export const StatementResultColumnInfo: React.FC<IColumnInfoProps> = ({
                 onSelect={(k: ColumnInfoTabType) => setTab(k)}
                 selectedTabKey={tab}
                 pills
+                align="center"
             />
             <div className="column-content p8">{contentDOM}</div>
         </StyledColumnInfo>
@@ -148,7 +142,7 @@ const ColumnInfoMenu: React.FC<IColumnInfoMenuProps> = ({
     const transformerPicker = columnTransformers.length ? (
         <div className="column-info-section mt4">
             <div className="column-info-header">
-                <Title weight="var(--extra-bold-font)" size={8}>
+                <Title className="mb4" weight="extra" size="small">
                     Transform Result
                 </Title>
             </div>
@@ -163,6 +157,7 @@ const ColumnInfoMenu: React.FC<IColumnInfoMenuProps> = ({
                             transformer?.key !== colTrans.key ? colTrans : null
                         )
                     }
+                    small
                 />
             ))}
         </div>
@@ -177,23 +172,18 @@ const ColumnInfoMenu: React.FC<IColumnInfoMenuProps> = ({
     const columnHeader = (
         <div className="column-info-section">
             {incompleteDataWarning}
-
             <div className="column-info-header">
                 <div>
-                    <Title weight="var(--extra-bold-font)" size={8}>
+                    <Title className="mb4" weight="extra" size="small">
                         Name
                     </Title>
-                    <Title size={8} subtitle className="column-name">
-                        {colName}
-                    </Title>
+                    <div>{colName}</div>
                 </div>
                 <div className="mt4">
-                    <Title weight="var(--extra-bold-font)" size={8}>
+                    <Title className="mb4" weight="extra" size="small">
                         Type
                     </Title>
-                    <Title size={8} subtitle>
-                        {colType}
-                    </Title>
+                    <div>{colType}</div>
                 </div>
             </div>
         </div>
@@ -245,8 +235,8 @@ const ColumnQuickInsights: React.FC<IColumnQuickInsightsProps> = ({
     return statistics.length ? (
         <div className="column-info-section">
             <div className="column-info-header">
-                <Title weight="var(--extra-bold-font)" size={8}>
-                    QUICK INSIGHTS
+                <Title className="mb4" weight="extra" size="small">
+                    Quick Insights
                 </Title>
             </div>
             <div className="column-dropdown-content">

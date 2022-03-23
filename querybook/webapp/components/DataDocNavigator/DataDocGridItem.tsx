@@ -14,6 +14,7 @@ import { Popover } from 'ui/Popover/Popover';
 import { PopoverHoverWrapper } from 'ui/Popover/PopoverHoverWrapper';
 import { DataDocDraggableType } from './navigatorConst';
 import './DataDocGridItem.scss';
+import { UrlContextMenu } from 'ui/ContextMenu/UrlContextMenu';
 
 export interface IDataDocGridItemProps {
     dataDoc: IDataDoc;
@@ -48,7 +49,7 @@ export const DataDocGridItem: React.FunctionComponent<IDataDocGridItemProps> = R
         );
 
         const { title = '', public: publicDataDoc } = dataDoc;
-        const privateIcon = !publicDataDoc && 'lock';
+        const privateIcon = !publicDataDoc ? 'Lock' : null;
 
         return (
             <div ref={drag} className="DataDocGridItem">
@@ -61,19 +62,22 @@ export const DataDocGridItem: React.FunctionComponent<IDataDocGridItemProps> = R
                                 to={url}
                                 icon={privateIcon}
                                 title={title}
-                                placeholder="Untitled"
                                 isRow
                             >
                                 {onRemove && (
                                     <IconButton
-                                        className="delete-grid-item-button"
+                                        className="delete-grid-item-button ml8"
                                         noPadding
                                         size={16}
-                                        icon="x"
+                                        icon="X"
                                         onClick={handleRemoveDataDoc}
                                     />
                                 )}
                             </ListLink>
+                            <UrlContextMenu
+                                url={url}
+                                anchorRef={{ current: anchorElement }}
+                            />
                             {showPopover && anchorElement && (
                                 <Popover
                                     onHide={NOOP}

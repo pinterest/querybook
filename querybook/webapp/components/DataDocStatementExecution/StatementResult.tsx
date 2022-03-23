@@ -10,6 +10,7 @@ import { TextButton } from 'ui/Button/Button';
 import { PrettyNumber } from 'ui/PrettyNumber/PrettyNumber';
 import { StatementResultTable } from '../StatementResultTable/StatementResultTable';
 import { ShowMoreText } from 'ui/ShowMoreText/ShowMoreText';
+import { InfoButton } from 'ui/Button/InfoButton';
 
 interface IProps {
     statementResult: IStatementResult;
@@ -37,22 +38,14 @@ export const StatementResult: React.FC<IProps> = ({
         const fetchRowInfo = fetchedAllRows ? (
             `Full Result (${formatNumber(actualRowMinusColCount, 'row')})`
         ) : (
-            <span>
-                <span className="warning-word">
-                    Previewing First{' '}
-                    <PrettyNumber val={actualRowMinusColCount} unit="Row" />{' '}
+            <div className="flex-row">
+                <span className="warning-word mr4">Previewing</span>
+                <span className="mr8">
+                    <span className="mr4">{actualRowMinusColCount} of</span>
+                    <PrettyNumber val={resultRowMinusColCount} unit="Row" />
                 </span>
-                <span>
-                    Full Result (
-                    <PrettyNumber
-                        val={resultRowMinusColCount}
-                        unit="Row"
-                    />){' '}
-                </span>
-                <span aria-label={resultPreviewTooltip} data-balloon-pos={'up'}>
-                    <i className="fas fa-info-circle" />
-                </span>
-            </span>
+                <InfoButton>{resultPreviewTooltip}</InfoButton>
+            </div>
         );
 
         return (
@@ -75,7 +68,7 @@ export const StatementResult: React.FC<IProps> = ({
     const exploreButtonDOM = (
         <TextButton
             onClick={onFullscreenToggle}
-            icon={isFullscreen ? 'minimize' : 'maximize'}
+            icon={isFullscreen ? 'X' : 'Maximize2'}
             title={isFullscreen ? 'Exit Fullscreen' : 'Fullscreen'}
             size="small"
         />

@@ -14,13 +14,15 @@ import { Icon } from 'ui/Icon/Icon';
 import { Popover } from 'ui/Popover/Popover';
 import { IProcessedBoardItem } from './navigatorConst';
 import './DataDocNavigatorBoardItem.scss';
+import { UrlContextMenu } from 'ui/ContextMenu/UrlContextMenu';
+import { UntitledText } from 'ui/StyledText/StyledText';
 
 export const BoardListItemRow: React.FC<{
     item: IProcessedBoardItem;
     onDeleteBoardItem: (itemId: number, itemType: BoardItemType) => void;
 }> = ({ item, onDeleteBoardItem }) => {
     const { key, itemType, icon, title, itemUrl, selected, itemId } = item;
-
+    const itemUrlWithinEnv = getWithinEnvUrl(itemUrl);
     return (
         <PopoverHoverWrapper>
             {(showPopover, anchorElement) => (
@@ -32,27 +34,25 @@ export const BoardListItemRow: React.FC<{
                                 selected,
                             })}
                             to={{
-                                pathname: getWithinEnvUrl(itemUrl),
+                                pathname: itemUrlWithinEnv,
                                 state: {
                                     isModal: itemType !== 'data_doc',
                                 },
                             }}
-                            placeholder={null}
                             isRow
+                            noPlaceHolder
                         >
-                            <Icon size={16} className="mr4" name={icon} />
+                            <Icon size={16} name={icon} />
                             {title.length ? (
                                 <span className="ListLinkText">{title}</span>
                             ) : (
-                                <span className="ListLinkPlaceholder">
-                                    Untitled
-                                </span>
+                                <UntitledText className="ListLinkPlaceholder" />
                             )}
                             <IconButton
                                 className="delete-board-item-button"
                                 noPadding
                                 size={16}
-                                icon="x"
+                                icon="X"
                                 onClick={(event) => {
                                     event.stopPropagation();
                                     event.preventDefault();
@@ -61,6 +61,12 @@ export const BoardListItemRow: React.FC<{
                             />
                         </ListLink>
                     </Level>
+
+                    <UrlContextMenu
+                        url={itemUrlWithinEnv}
+                        anchorRef={{ current: anchorElement }}
+                    />
+
                     {showPopover && anchorElement && (
                         <Popover
                             onHide={NOOP}

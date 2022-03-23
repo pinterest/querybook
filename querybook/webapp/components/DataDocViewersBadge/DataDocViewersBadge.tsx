@@ -143,15 +143,22 @@ export const DataDocViewersBadge = React.memo<IDataDocViewersBadgeProps>(
             const shareButtonDOM = (
                 <Button
                     className="viewers-badge-share-button"
-                    icon={dataDoc.public ? 'users' : 'lock'}
+                    icon={dataDoc.public ? 'Users' : 'Lock'}
                     title="Share"
-                    color="light"
                     pushable
                     ping={
                         !readonly && accessRequestsByUidLength > 0
                             ? accessRequestsByUidLength.toString()
                             : null
                     }
+                    aria-label={
+                        !readonly && accessRequestsByUidLength > 0
+                            ? `${accessRequestsByUidLength} Access Request${
+                                  accessRequestsByUidLength === 1 ? '' : 's'
+                              }`
+                            : null
+                    }
+                    data-balloon-pos="left"
                 />
             );
 

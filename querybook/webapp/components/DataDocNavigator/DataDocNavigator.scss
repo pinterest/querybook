@@ -1,6 +1,4 @@
 .DataDocNavigator {
-    display: flex;
-    flex-direction: column;
     height: 100%;
 
     .data-docs {
@@ -14,7 +12,6 @@
 
     .list-header {
         display: flex;
-        border-bottom: 1px solid var(--border-color);
         justify-content: space-between;
 
         // for safari
@@ -39,21 +36,11 @@
         box-sizing: border-box;
     }
 
-    .data-docs-list-separator {
-        border-bottom: 5px solid var(--border-color);
-    }
-
-    .data-docs-list-header {
-        background: var(--border-color);
-        padding: 2px 10px;
-        font-size: var(--xsmall-text-size);
-    }
-
     .nav-favorite-dragged-over {
-        background-color: var(--color-accent-bg-hover);
+        background-color: var(--color-accent-lightest);
 
         .DataDocNavigatorSection .navigator-header {
-            background-color: var(--color-accent-bg-hover);
+            background-color: var(--color-accent-lightest);
         }
     }
 }

@@ -1,9 +1,9 @@
 import clsx from 'clsx';
 import * as DraftJs from 'draft-js';
-import React from 'react';
+import React, { useCallback } from 'react';
 
 import { AsyncButton } from 'ui/AsyncButton/AsyncButton';
-import { Button } from 'ui/Button/Button';
+import { Button, TextButton } from 'ui/Button/Button';
 
 import { RichTextEditor } from 'ui/RichTextEditor/RichTextEditor';
 import './EditableTextField.scss';
@@ -22,31 +22,49 @@ export const EditableTextField: React.FunctionComponent<IEditableTextFieldProps>
     const [editMode, setEditMode] = React.useState(false);
     const editorRef = React.useRef<RichTextEditor>(null);
 
-    const toggleEditMode = () => setEditMode(!editMode);
-    const setEditorContent = (content: DraftJs.ContentState) => {
+    const toggleEditMode = useCallback(
+        () =>
+            setEditMode((oldMode) => {
+                if (!oldMode) {
+                    // Wait for some time for the editor to be editable to focus
+                    // TODO: once RichTextEditor is in hooks, use autoFocus prop to
+                    // control the behavior instead
+                    setTimeout(() => {
+                        editorRef.current?.focus();
+                    }, 500);
+                }
+                return !oldMode;
+            }),
+        []
+    );
+    const setEditorContent = useCallback((content: DraftJs.ContentState) => {
         if (editorRef.current) {
             editorRef.current.setContent(content);
         }
-    };
-    const handleCancel = () => {
+    }, []);
+    const handleCancel = useCallback(() => {
         setEditorContent(value);
         toggleEditMode();
-    };
-    const handleSave = async () => {
+    }, [setEditorContent, toggleEditMode, value]);
+
+    const handleSave = useCallback(async () => {
         if (onSave && editorRef.current) {
             await onSave(editorRef.current.getContent());
         }
         toggleEditMode();
-    };
+    }, [toggleEditMode, onSave]);
 
     React.useEffect(() => {
         setEditorContent(value);
     }, [value]);
 
     const toggleEditModeButton = !editMode ? (
-        <span onClick={toggleEditMode} className="edit-mode-button">
-            <i className="fa fa-edit" />
-        </span>
+        <TextButton
+            icon="Edit"
+            title="Edit"
+            onClick={toggleEditMode}
+            className="edit-mode-button"
+        />
     ) : null;
 
     const editor = (

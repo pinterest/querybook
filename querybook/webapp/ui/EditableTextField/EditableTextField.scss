@@ -1,11 +1,25 @@
 .EditableTextField {
     .edit-mode-button {
         cursor: pointer;
-        opacity: 0;
+        opacity: 0.5;
 
         display: flex;
-        margin-top: 4px;
+        margin-top: -2px;
         margin-right: 4px;
+    }
+
+    .editor-wrapper {
+        display: flex;
+        padding: var(--padding);
+        word-break: break-word;
+        align-items: flex-start;
+        border-radius: var(--border-radius);
+
+        .RichTextEditor {
+            flex: 1;
+        }
+
+        border: 1px solid transparent;
     }
 
     &:hover {
@@ -15,21 +29,7 @@
     }
 
     &.edit-mode .editor-wrapper {
-        border: 1px dashed var(--focus-border-color);
-        border-radius: var(--border-radius);
-    }
-
-    .editor-wrapper {
-        display: flex;
-        padding: 8px;
-        word-break: break-word;
-        align-items: flex-start;
-
-        .RichTextEditor {
-            flex: 1;
-        }
-
-        border: 1px solid transparent;
+        background-color: var(--bg-light);
     }
 
     .edit-mode-footer {

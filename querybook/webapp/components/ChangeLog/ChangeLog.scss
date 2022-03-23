@@ -1,17 +1,12 @@
 .ChangeLog {
     .ChangeLog-list {
-        color: var(--dark-text-color);
-        .ChangeLog-list-title {
-            font-size: var(--large-text-size);
-            font-weight: bold;
-            text-transform: uppercase;
-        }
         .ChangeLog-log-item {
             cursor: pointer;
             font-size: var(--xlarge-text-size);
             font-weight: 600;
             .Icon {
                 color: transparent;
+                margin-right: 36px;
                 svg {
                     width: 28px;
                     height: 28px;
@@ -20,7 +15,7 @@
 
             &:hover {
                 .Icon {
-                    color: var(--dark-text-color);
+                    color: var(--icon);
                 }
             }
         }

@@ -1,10 +1,8 @@
 .QuerySnippetNavigator {
-    display: flex;
-    flex-direction: column;
-
     .snippets-wrapper {
         flex: 1;
         position: relative;
+        overflow: hidden;
     }
 
     .snippet-search {
@@ -14,7 +12,7 @@
         }
         .IconButton {
             padding: 4px;
-            .feather-filter {
+            .lucide-filter {
                 padding: 1px;
             }
         }
@@ -22,5 +20,18 @@
 }
 
 .QuerySnippetFilterPicker {
-    padding: 10px;
+    .FormField:first-child {
+        margin-top: 0px;
+    }
+}
+
+.Modal .QuerySnippetNavigator {
+    .list-header,
+    .list-content {
+        margin-right: 0px;
+        margin-left: 0px;
+    }
+    .list-header {
+        background-color: var(--bg-lightest);
+    }
 }

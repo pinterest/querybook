@@ -215,6 +215,9 @@ export class QueryEditor extends React.PureComponent<
                 [KeyMap.queryEditor.autocomplete.key]: 'autocomplete',
                 [KeyMap.queryEditor.indentLess.key]: 'indentLess',
                 [KeyMap.queryEditor.toggleComment.key]: 'toggleComment',
+                [KeyMap.queryEditor.swapLineUp.key]: 'swapLineUp',
+                [KeyMap.queryEditor.swapLineDown.key]: 'swapLineDown',
+
                 [KeyMap.queryEditor.openTable.key]: this.onOpenTableModal,
                 [KeyMap.queryEditor.formatQuery.key]: this.formatQuery,
                 ...keyMap,
@@ -608,9 +611,9 @@ export class QueryEditor extends React.PureComponent<
         });
 
         const fullScreenButton = allowFullScreen && (
-            <div className="fullscreen-button-wrapper">
+            <div className="fullscreen-button-wrapper mt4">
                 <Button
-                    icon="maximize"
+                    icon={fullScreen ? 'Minimize2' : 'Maximize2'}
                     onClick={this.toggleFullScreen}
                     theme="text"
                     pushable

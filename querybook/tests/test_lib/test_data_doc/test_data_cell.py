@@ -90,5 +90,4 @@ class GetValidMetaTestCase(TestCase):
             }
         }
         series_meta_type = {"series": {0: {"source": 0, "color": 0}}}
-        print(get_valid_meta(series_meta, series_meta_type))
         self.assertDictEqual(get_valid_meta(series_meta, series_meta_type), series_meta)

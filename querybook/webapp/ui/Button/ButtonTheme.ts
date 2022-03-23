@@ -7,7 +7,7 @@ export const ButtonColors = [
     'light',
     'default',
 ] as const;
-export const ButtonThemes = ['outline', 'text', 'fill'] as const;
+export const ButtonThemes = ['text', 'fill'] as const;
 
 export type ButtonColorType = typeof ButtonColors[number];
 export type ButtonThemeType = typeof ButtonThemes[number];
@@ -21,30 +21,34 @@ interface IButtonColorConfig {
 
 const buttonThemeToProps: Record<ButtonColorType, IButtonColorConfig> = {
     confirm: {
-        primary: 'var(--color-true-dark)',
-        secondary: 'var(--color-true-dark)',
-        secondaryHover: 'var(--color-true)',
+        primary: 'var(--color-true)',
+        primaryHover: 'var(--color-true-dark)',
+        secondary: 'var(--color-true-lightest-0)',
+        secondaryHover: 'var(--color-true-lightest)',
     },
     cancel: {
-        primary: 'var(--color-false-dark)',
-        secondary: 'var(--color-false-dark)',
-        secondaryHover: 'var(--color-false)',
+        primary: 'var(--color-false)',
+        primaryHover: 'var(--color-false-dark)',
+        secondary: 'var(--color-false-lightest-0)',
+        secondaryHover: 'var(--color-false-lightest)',
     },
     accent: {
-        primary: 'var(--color-accent-text)',
-        secondary: 'var(--color-accent-bg)',
+        primary: 'var(--color-accent)',
+        primaryHover: 'var(--color-accent-dark)',
+        secondary: 'var(--color-accent-lightest-0)',
+        secondaryHover: 'var(--color-accent-lightest)',
     },
     light: {
-        primary: 'var(--light-text-color)',
-        primaryHover: 'var(--text-color)',
-        secondary: 'var(--light-bg-color)',
-        secondaryHover: 'var(--hover-bg-color)',
+        primary: 'var(--text-light)',
+        primaryHover: 'var(--text-hover)',
+        secondary: 'var(--bg-lightest)',
+        secondaryHover: 'var(--bg-hover)',
     },
     default: {
-        primary: 'var(--text-color)',
-        primaryHover: 'var(--dark-text-color)',
-        secondary: 'var(--border-color)',
-        secondaryHover: 'var(--hover-border-color)',
+        primary: 'var(--text-light)',
+        primaryHover: 'var(--text-hover)',
+        secondary: 'var(--bg-light)',
+        secondaryHover: 'var(--bg-hover)',
     },
 };
 
@@ -65,25 +69,17 @@ export function computeStyleButtonProps(
             themeProps.hoverBgColor =
                 colorConfig.secondaryHover || colorConfig.secondary;
         } else {
-            themeProps.color = 'var(--bg-color)';
-            themeProps.hoverColor = 'var(--light-bg-color)';
+            themeProps.color = 'var(--bg)';
+            themeProps.hoverColor = 'var(--text-hover)';
             themeProps.bgColor = colorConfig.primary;
             themeProps.hoverBgColor =
                 colorConfig.primaryHover || colorConfig.primary;
         }
-    } else if (theme === 'outline') {
-        themeProps.color = colorConfig.primary;
-        themeProps.hoverColor = colorConfig.primaryHover || colorConfig.primary;
-
-        themeProps.bgColor = 'var(--bg-color)';
-        themeProps.borderColor = colorConfig.secondary;
-        themeProps.hoverBorderColor =
-            colorConfig.secondaryHover || colorConfig.secondary;
     } else if (theme === 'text') {
         themeProps.color = colorConfig.primary;
         themeProps.hoverColor = colorConfig.primaryHover || colorConfig.primary;
         themeProps.bgColor = 'transparent';
-        themeProps.hoverBgColor = 'var(--light-bg-color)';
+        themeProps.hoverBgColor = 'var(--bg-hover)';
     }
 
     return themeProps;

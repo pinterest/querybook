@@ -22,7 +22,6 @@ import { Loading } from 'ui/Loading/Loading';
 import { ExecutedQueryCell } from './ExecutedQueryCell';
 import { QueryErrorWrapper } from './QueryError';
 import { QuerySteps } from './QuerySteps';
-import { QueryExecutionFooter } from './QueryExecutionFooter';
 import './QueryExecution.scss';
 
 interface IProps {
@@ -182,8 +181,6 @@ export const QueryExecution: React.FC<IProps> = ({
             />
         ) : null;
 
-        const footerDOM = getQueryExecutionFooterDOM();
-
         return (
             <div className="QueryExecution ">
                 <div className="execution-wrapper">
@@ -194,8 +191,6 @@ export const QueryExecution: React.FC<IProps> = ({
                     <div className="query-execution-content">
                         {statementExecutionDOM}
                     </div>
-
-                    {footerDOM}
                 </div>
             </div>
         );
@@ -231,7 +226,7 @@ export const QueryExecution: React.FC<IProps> = ({
         );
 
         return (
-            <div className="statement-header">
+            <div className="statement-header horizontal-space-between">
                 <div className="statement-header-top">
                     <div className="run-header-left">{statementTab}</div>
                 </div>
@@ -251,19 +246,6 @@ export const QueryExecution: React.FC<IProps> = ({
                 />
             );
         }
-    };
-
-    const getQueryExecutionFooterDOM = () => {
-        if (!queryExecution) {
-            return;
-        }
-
-        return (
-            <QueryExecutionFooter
-                queryExecution={queryExecution}
-                statementExecutions={statementExecutions}
-            />
-        );
     };
 
     return (

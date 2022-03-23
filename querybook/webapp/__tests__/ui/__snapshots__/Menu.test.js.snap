@@ -2,7 +2,7 @@
 
 exports[`matches enzyme snapshots matches snapshot 1`] = `
 <div
-  className="Menu-sc-13z76nv-0 dbaXzY Menu"
+  className="Menu-sc-13z76nv-0 jonXBt Menu"
 >
   <Menu__MenuItem>
     <Menu__MenuItemPing />
@@ -14,17 +14,17 @@ exports[`matches enzyme snapshots matches snapshot 1`] = `
 
 exports[`matches test renderer snapshot serializes the styles 1`] = `
 <div
-  className="Menu-sc-13z76nv-0 dbaXzY Menu"
+  className="Menu-sc-13z76nv-0 jonXBt Menu"
 >
   <span
     className="Menu__MenuItem-sc-13z76nv-1 MenuItem"
   >
     <div
-      className="Menu__MenuItemPing-sc-13z76nv-4 COjBt MenuItemPing"
+      className="Menu__MenuItemPing-sc-13z76nv-4 gcRlsS MenuItemPing"
     />
   </span>
   <div
-    className="Menu__MenuDivider-sc-13z76nv-3 ixcCKO MenuDivider"
+    className="Menu__MenuDivider-sc-13z76nv-3 fCTKBX MenuDivider"
   />
   <div
     className="Menu__MenuInfoItem-sc-13z76nv-2 MenuInfoItem"

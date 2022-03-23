@@ -2,7 +2,10 @@ import React, { useCallback, useState } from 'react';
 import Select from 'react-select';
 import AsyncSelect, { Props as AsyncProps } from 'react-select/async';
 
-import { makeReactSelectStyle } from 'lib/utils/react-select';
+import {
+    asyncReactSelectStyles,
+    makeReactSelectStyle,
+} from 'lib/utils/react-select';
 import { overlayRoot } from 'ui/Overlay/Overlay';
 import { SearchTableResource } from 'resource/search';
 import { useSelector } from 'react-redux';
@@ -11,6 +14,7 @@ import { IStoreState } from 'redux/store/types';
 import { HoverIconTag } from 'ui/Tag/Tag';
 
 import './TableSelect.scss';
+import { AccentText } from 'ui/StyledText/StyledText';
 
 interface ITableSelectProps {
     tableNames: string[];
@@ -37,7 +41,10 @@ export const TableSelect: React.FunctionComponent<ITableSelectProps> = ({
     const [metastoreId, setMetastoreId] = useState(queryMetastores[0].id);
     const [searchText, setSearchText] = useState('');
     const asyncSelectProps: Partial<AsyncProps<any, false>> = {};
-    const tableReactSelectStyle = makeReactSelectStyle(usePortalMenu);
+    const tableReactSelectStyle = React.useMemo(
+        () => makeReactSelectStyle(usePortalMenu, asyncReactSelectStyles),
+        [usePortalMenu]
+    );
     if (usePortalMenu) {
         asyncSelectProps.menuPortalTarget = overlayRoot;
     }
@@ -90,42 +97,48 @@ export const TableSelect: React.FunctionComponent<ITableSelectProps> = ({
                     <div className="TableSelect-label">tables</div>
                 </>
             )}
-            <AsyncSelect
-                styles={tableReactSelectStyle}
-                placeholder={'search table name...'}
-                onChange={(option: any) => {
-                    const newTableName = option?.label ?? null;
-                    if (newTableName == null) {
-                        onTableNamesChange([]);
-                        return;
+            <AccentText>
+                <AsyncSelect
+                    styles={tableReactSelectStyle}
+                    placeholder={'search table name'}
+                    onChange={(option: any) => {
+                        const newTableName = option?.label ?? null;
+                        if (newTableName == null) {
+                            onTableNamesChange([]);
+                            return;
+                        }
+                        const newTableNames = tableNames.concat(newTableName);
+                        onTableNamesChange(newTableNames);
+                    }}
+                    loadOptions={loadOptions}
+                    defaultOptions={[]}
+                    inputValue={searchText}
+                    onInputChange={(text) => setSearchText(text)}
+                    noOptionsMessage={() =>
+                        searchText ? 'No table found.' : null
                     }
-                    const newTableNames = tableNames.concat(newTableName);
-                    onTableNamesChange(newTableNames);
-                }}
-                loadOptions={loadOptions}
-                defaultOptions={[]}
-                inputValue={searchText}
-                onInputChange={(text) => setSearchText(text)}
-                noOptionsMessage={() => (searchText ? 'No table found.' : null)}
-                {...asyncSelectProps}
-                {...selectProps}
-            />
-            <div className="pv8">
-                {tableNames.map((tableName) => (
-                    <HoverIconTag
-                        key={tableName}
-                        iconOnHover={'x'}
-                        onIconHoverClick={() => {
-                            const newTableNames = tableNames.filter(
-                                (name) => name !== tableName
-                            );
-                            onTableNamesChange(newTableNames);
-                        }}
-                    >
-                        <span>{tableName}</span>
-                    </HoverIconTag>
-                ))}
-            </div>
+                    {...asyncSelectProps}
+                    {...selectProps}
+                />
+            </AccentText>
+            {tableNames.length ? (
+                <div className="mt8">
+                    {tableNames.map((tableName) => (
+                        <HoverIconTag
+                            key={tableName}
+                            iconOnHover="X"
+                            onIconHoverClick={() => {
+                                const newTableNames = tableNames.filter(
+                                    (name) => name !== tableName
+                                );
+                                onTableNamesChange(newTableNames);
+                            }}
+                        >
+                            <span>{tableName}</span>
+                        </HoverIconTag>
+                    ))}
+                </div>
+            ) : null}
         </div>
     );
 };

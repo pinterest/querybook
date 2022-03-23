@@ -12,8 +12,8 @@ export const HumanReadableCronSchedule: React.FunctionComponent<{
     cron: string;
 }> = ({ cron }) => {
     if (!cron) {
-        return <div />;
+        return null;
     }
 
-    return <div>{humanReadableCron(cron)}</div>;
+    return <>{humanReadableCron(cron)}</>;
 };

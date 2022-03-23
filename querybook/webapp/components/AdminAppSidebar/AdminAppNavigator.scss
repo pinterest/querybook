@@ -4,11 +4,12 @@
     flex-grow: 1;
     height: 100%;
     overflow-y: auto;
+    background-color: var(--bg-lightest);
+
     .AdminAppNavigator-top {
         display: flex;
         height: 44px;
         box-sizing: content-box;
-        border-bottom: 1px solid var(--border-color);
         justify-content: space-between;
         flex-shrink: 0;
         .SearchBar {
@@ -24,8 +25,8 @@
         overflow-y: auto;
         .IconButton {
             position: absolute;
-            bottom: 0px;
-            right: 0px;
+            bottom: 4px;
+            right: 4px;
             padding: 8px;
         }
     }

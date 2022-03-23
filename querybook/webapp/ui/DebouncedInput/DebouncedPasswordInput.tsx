@@ -37,7 +37,7 @@ export const DebouncedPasswordInput: React.FC<IDebouncedInputProps> = (
             <IconButton
                 className="password-eye-icon"
                 onClick={toggleRevealPassword}
-                icon={revealPassword ? 'eye-off' : 'eye'}
+                icon={revealPassword ? 'EyeOff' : 'Eye'}
                 noPadding
             />
         </DebouncedInput>

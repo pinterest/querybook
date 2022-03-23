@@ -4,6 +4,9 @@ import clsx from 'clsx';
 import { navigateWithinEnv } from 'lib/utils/query-string';
 import { useSelector, useDispatch } from 'react-redux';
 import { setCollapsed } from 'redux/querybookUI/action';
+import { useEvent } from 'hooks/useEvent';
+import { matchKeyMap, KeyMap } from 'lib/utils/keyboard';
+import { currentEnvironmentSelector } from 'redux/environment/selector';
 
 import { QuerySnippetNavigator } from 'components/QuerySnippetNavigator/QuerySnippetNavigator';
 import { DataDocSchemaNavigator } from 'components/DataDocSchemaNavigator/DataDocSchemaNavigator';
@@ -12,13 +15,13 @@ import { DataDocNavigator } from 'components/DataDocNavigator/DataDocNavigator';
 import { Sidebar } from 'ui/Sidebar/Sidebar';
 import { Icon } from 'ui/Icon/Icon';
 
-import { Entity } from './types';
 import { Dispatch, IStoreState } from 'redux/store/types';
 import { EnvironmentTopbar } from './EnvironmentTopbar';
 import { EntitySidebar } from './EntitySidebar';
 import { EnvironmentDropdownButton } from './EnvironmentDropdownButton';
-import { useEvent } from 'hooks/useEvent';
-import { matchKeyMap, KeyMap } from 'lib/utils/keyboard';
+import { EnvironmentIcon } from './EnvironmentIcon';
+import { Entity } from './types';
+
 import './EnvironmentAppSidebar.scss';
 
 const SIDEBAR_WIDTH = 320;
@@ -30,10 +33,23 @@ export const EnvironmentAppSidebar: React.FunctionComponent = () => {
     const dispatch: Dispatch = useDispatch();
     const [entity, setEntity] = React.useState<Entity>('datadoc');
 
-    const handleEntitySelect = React.useCallback((e: Entity) => {
-        dispatch(setCollapsed(false));
-        setEntity(e);
-    }, []);
+    const currentEnvironment = useSelector(currentEnvironmentSelector);
+
+    const handleEntitySelect = React.useCallback(
+        (newEntity: Entity | null) => {
+            setEntity((oldEntity) => {
+                if (collapsed) {
+                    dispatch(setCollapsed(false));
+                } else if (newEntity === oldEntity) {
+                    // Collapse sidebar if the entity is the same
+                    dispatch(setCollapsed(true));
+                }
+
+                return newEntity;
+            });
+        },
+        [dispatch, collapsed]
+    );
 
     const scrollToCollapseSidebar = React.useCallback(
         (event, direction, elementRef) => {
@@ -63,7 +79,7 @@ export const EnvironmentAppSidebar: React.FunctionComponent = () => {
                 evt.preventDefault();
             }
         },
-        [collapsed]
+        [collapsed, dispatch]
     );
 
     useEvent('keydown', handleCollapseKeyDown);
@@ -87,16 +103,7 @@ export const EnvironmentAppSidebar: React.FunctionComponent = () => {
                     }
                 />
             ) : entity === 'execution' ? (
-                <QueryViewNavigator
-                    onQueryExecutionClick={(queryExecution) =>
-                        navigateWithinEnv(
-                            `/query_execution/${queryExecution.id}/`,
-                            {
-                                isModal: true,
-                            }
-                        )
-                    }
-                />
+                <QueryViewNavigator />
             ) : (
                 <div />
             );
@@ -107,20 +114,35 @@ export const EnvironmentAppSidebar: React.FunctionComponent = () => {
             onClick={() => dispatch(setCollapsed(!collapsed))}
             className="collapse-sidebar-button"
         >
-            <Icon name={collapsed ? 'chevron-right' : 'chevron-left'} />
+            <Icon name={collapsed ? 'ChevronRight' : 'ChevronLeft'} />
         </span>
     );
 
     const environmentPickerSection = collapsed ? (
-        <EnvironmentDropdownButton />
+        <div className="collapsed-env flex-center">
+            <EnvironmentDropdownButton
+                customButtonRenderer={() => (
+                    <EnvironmentIcon
+                        disabled={false}
+                        selected={true}
+                        environmentName={currentEnvironment.name}
+                    />
+                )}
+            />
+        </div>
     ) : (
         <EnvironmentTopbar />
     );
 
+    const envPickerClassName = clsx({
+        'sidebar-environment-picker': true,
+        'flex-center': collapsed,
+    });
+
     const contentDOM = (
         <>
             <div className="EnvironmentAppSidebar-content">
-                <div className="sidebar-environment-picker">
+                <div className={envPickerClassName}>
                     {environmentPickerSection}
                 </div>
                 <div className="sidebar-content-main">

@@ -17,8 +17,6 @@ import {
 import { QuerybookSidebarUIGuide } from 'components/UIGuide/QuerybookSidebarUIGuide';
 
 import { Columns, Column } from 'ui/Column/Column';
-import { QuerybookLogo } from 'ui/QuerybookLogo/QuerybookLogo';
-import { Title } from 'ui/Title/Title';
 
 import './Landing.scss';
 
@@ -43,7 +41,6 @@ const DefaultLanding: React.FC = ({ children }) => {
             environment: currentEnvironmentSelector(state),
         };
     });
-    const descriptionDOM = 'Data made simple.';
 
     const dispatch = useDispatch();
     React.useEffect(() => {
@@ -79,15 +76,16 @@ const DefaultLanding: React.FC = ({ children }) => {
     const [hint] = React.useState(sample(querybookHints));
 
     const LandingHeader = (
-        <div className="Landing-top">
-            <div className="Landing-greeting">
-                Hi {titleize(userInfo.fullname || userInfo.username)}, welcome
-                to
+        <div className="Landing-top horizontal-space-between">
+            <div>
+                <div className="Landing-greeting">
+                    Hi {titleize(userInfo.fullname || userInfo.username)},
+                </div>
+                <div className="Landing-subtitle">
+                    Welcome back to Querybook
+                </div>
             </div>
-            <div className="Landing-logo">
-                <QuerybookLogo size={5} />
-            </div>
-            <div className="Landing-desc">{descriptionDOM}</div>
+            <QuerybookSidebarUIGuide />
         </div>
     );
 
@@ -95,28 +93,19 @@ const DefaultLanding: React.FC = ({ children }) => {
         <div className="Landing-bottom">
             <Columns>
                 <Column>
-                    <QuerybookSidebarUIGuide />
-                </Column>
-            </Columns>
-            <Columns>
-                <Column>
-                    <Title size={5} weight={'bold'}>
-                        Did you know?
-                    </Title>
+                    <div className="Landing-section-title">Did you know?</div>
                     <p>{hint}</p>
                 </Column>
             </Columns>
             <Columns>
                 <Column>
-                    <Title weight={'bold'} size={5}>
-                        Recent DataDocs
-                    </Title>
+                    <div className="Landing-section-title">Recent DataDocs</div>
                     <div className="Landing-list">{getRecentDOM()}</div>
                 </Column>
                 <Column>
-                    <Title weight={'bold'} size={5}>
+                    <div className="Landing-section-title">
                         Favorite DataDocs
-                    </Title>
+                    </div>
                     <div className="Landing-list">{getFavoriteDOM()}</div>
                 </Column>
             </Columns>

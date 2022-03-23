@@ -4,8 +4,6 @@ theme:
     options:
         - default
         - dark
-        - night
-        - dawn
         - lush
     helper: Color themes for Querybook.
 

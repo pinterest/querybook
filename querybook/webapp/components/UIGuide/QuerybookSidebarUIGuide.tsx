@@ -21,7 +21,7 @@ function getQuerybookSidebarTourSteps() {
             selector: '.EnvironmentAppSidebar',
             content: ({ goTo }) => (
                 <div>
-                    <Title size={5}>Welcome!</Title>
+                    <Title size="med">Welcome!</Title>
                     <p>Let's go over the sidebar functionalities.</p>
                     <hr />
                     <div>
@@ -30,9 +30,8 @@ function getQuerybookSidebarTourSteps() {
                             onClick={() => goTo(4)}
                             theme="text"
                             size="small"
-                        >
-                            click here
-                        </Button>
+                            title="click here"
+                        />
                     </div>
                 </div>
             ),
@@ -139,7 +138,7 @@ function getQuerybookSidebarTourSteps() {
                     <hr />
                     <p>For quick access, you can use,</p>
                     <div className="flex-row">
-                        <Icon name="command" size={16} />
+                        <Icon name="Command" size={16} />
                         <span> + K</span>
                     </div>
                 </>
@@ -194,9 +193,8 @@ function getQuerybookSidebarTourSteps() {
                             onClick={() => goTo(4)}
                             theme="text"
                             size="small"
-                        >
-                            Click here
-                        </Button>
+                            title="Click here"
+                        />
                         <span> for the DataDoc tour.</span>
                     </div>
                 </>
@@ -232,13 +230,11 @@ export const QuerybookSidebarUIGuide: React.FC = () => {
     return (
         <>
             <Button
-                className="Tour-button"
+                className="QuerybookSidebarUIGuide"
                 onClick={startTour}
-                color="accent"
-                theme="fill"
-            >
-                UI Tutorial
-            </Button>
+                icon="Layout"
+                title="UI Tutorial"
+            />
             <Tour
                 isOpen={showTour}
                 onRequestClose={() => setShowTour(false)}

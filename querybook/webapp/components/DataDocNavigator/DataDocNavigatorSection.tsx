@@ -9,9 +9,11 @@ import { Title } from 'ui/Title/Title';
 import { IconButton } from 'ui/Button/IconButton';
 import { Icon } from 'ui/Icon/Icon';
 import { LoadingIcon } from 'ui/Loading/Loading';
+import type { AllLucideIconNames } from 'ui/Icon/LucideIcons';
+import { OrderByButton } from 'ui/OrderByButton/OrderByButton';
 
 import './DataDocNavigatorSection.scss';
-import { OrderByButton } from 'ui/OrderByButton/OrderByButton';
+import { titleize } from 'lib/utils';
 
 interface INavigatorSectionProps {
     className?: string;
@@ -20,7 +22,7 @@ interface INavigatorSectionProps {
     dataDocs: IDataDoc[];
 
     sectionHeader?: string;
-    sectionHeaderIcon?: string;
+    sectionHeaderIcon?: AllLucideIconNames;
 
     loaded?: boolean;
 
@@ -79,7 +81,14 @@ export const DataDocNavigatorSection: React.FC<INavigatorSectionProps> = ({
 
     const makeDataDocListDOM = () => {
         if (orderedDataDocs.length === 0) {
-            return <div className="ph12">No items in this section.</div>;
+            return (
+                <div className="empty-section-message">
+                    No{' '}
+                    {sectionHeader === 'my docs'
+                        ? 'docs'
+                        : sectionHeader?.toLowerCase()}
+                </div>
+            );
         }
 
         const listDOM = orderedDataDocs.map((dataDoc) => {
@@ -112,7 +121,7 @@ export const DataDocNavigatorSection: React.FC<INavigatorSectionProps> = ({
                 {sectionHeaderIcon && (
                     <Icon size={18} className="mr8" name={sectionHeaderIcon} />
                 )}
-                <Title size={7}>{sectionHeader}</Title>
+                <Title size="small">{titleize(sectionHeader)}</Title>
             </div>
             <div className="flex-row">
                 {allowReorder && (
@@ -138,7 +147,7 @@ export const DataDocNavigatorSection: React.FC<INavigatorSectionProps> = ({
                 )}
                 <IconButton
                     onClick={() => setCollapsed(!collapsed)}
-                    icon={collapsed ? 'chevron-right' : 'chevron-down'}
+                    icon={collapsed ? 'ChevronRight' : 'ChevronDown'}
                     className="ml4"
                 />
             </div>

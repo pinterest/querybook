@@ -2,7 +2,7 @@
 
 exports[`matches enzyme snapshots matches snapshot - height/width 1`] = `
 <div
-  className="Card flex-row clickable"
+  className="Card flex-row clickable "
   onClick={[Function]}
   style={
     Object {
@@ -11,11 +11,13 @@ exports[`matches enzyme snapshots matches snapshot - height/width 1`] = `
     }
   }
 >
-  <div
-    className="Card-title"
+  <AccentText
+    className="mt8 mb16"
+    size="large"
+    weight="bold"
   >
     test
-  </div>
+  </AccentText>
   <div
     className="Card-content"
   >
@@ -26,15 +28,17 @@ exports[`matches enzyme snapshots matches snapshot - height/width 1`] = `
 
 exports[`matches enzyme snapshots matches snapshot 1`] = `
 <div
-  className="Card flex-column clickable"
+  className="Card flex-column clickable "
   onClick={[Function]}
   style={null}
 >
-  <div
-    className="Card-title"
+  <AccentText
+    className="mt8 mb16"
+    size="large"
+    weight="bold"
   >
     test
-  </div>
+  </AccentText>
   <div
     className="Card-content"
   >

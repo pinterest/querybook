@@ -19,8 +19,9 @@ import { TableSamplesResource } from 'resource/table';
 import { AsyncButton } from 'ui/AsyncButton/AsyncButton';
 import { SimpleField } from 'ui/FormikField/SimpleField';
 import { CopyPasteModal } from 'ui/CopyPasteModal/CopyPasteModal';
-import { SoftButton } from 'ui/Button/Button';
+import { Button } from 'ui/Button/Button';
 import { IconButton } from 'ui/Button/IconButton';
+import { useToggleState } from 'hooks/useToggleState';
 
 import { DataTableViewSamplesTable } from './DataTableViewSamplesTable';
 import {
@@ -30,6 +31,7 @@ import {
     tableSamplesFormValuesToParams,
 } from './sampleQueryFormSchema';
 import './DataTableViewSamples.scss';
+import { ToggleButton } from 'ui/ToggleButton/ToggleButton';
 
 export interface IDataTableViewSamplesProps {
     table: IDataTable;
@@ -42,6 +44,11 @@ export const DataTableViewSamples: React.FunctionComponent<IDataTableViewSamples
     tableColumns,
     schema,
 }) => {
+    // Hide options such as where / order by
+    const [showAdvancedOptions, _, toggleShowAdvancedOptions] = useToggleState(
+        false
+    );
+
     // Used to display the raw query that will be used for samples
     // only shown if view query is clicked
     const [rawSamplesQuery, setRawSamplesQuery] = useState<string>(null);
@@ -113,7 +120,10 @@ export const DataTableViewSamples: React.FunctionComponent<IDataTableViewSamples
             <Formik<ITableSamplesFormValues>
                 initialValues={{
                     engineId: queryEngines?.[0]?.id,
-                    partition: null,
+                    partition:
+                        tablePartitions && tablePartitions.length > 0
+                            ? tablePartitions[tablePartitions.length - 1]
+                            : null,
                     where: [['', '=', '']] as [[string, string, string]],
                     order_by: null,
                     order_by_asc: true,
@@ -126,156 +136,187 @@ export const DataTableViewSamples: React.FunctionComponent<IDataTableViewSamples
                     )
                 }
             >
-                {({ submitForm, isSubmitting, values }) => (
-                    <div className="mb12">
-                        <div className="DataTableViewSamples-top flex-row">
-                            <SimpleField
-                                label="Engine"
-                                type="react-select"
-                                name="engineId"
-                                options={queryEngines.map((engine) => ({
-                                    value: engine.id,
-                                    label: engine.name,
-                                }))}
-                            />
-                            <SimpleField
-                                type="react-select"
-                                name="partition"
-                                options={tablePartitions}
-                                withDeselect
-                            />
-                        </div>
-                        <div className="DataTableViewSamples-mid">
-                            <FieldArray
-                                name="where"
-                                render={(arrayHelpers) => {
-                                    const whereDOM = values.where.map(
-                                        (whereClause, idx) => (
-                                            <div className="flex-row" key={idx}>
-                                                <div
-                                                    style={{
-                                                        flex: 3,
-                                                    }}
-                                                >
-                                                    <SimpleField
-                                                        label={'Where'}
-                                                        type="react-select"
-                                                        name={`where[${idx}][0]`}
-                                                        options={tableColumns.map(
-                                                            (col) => col.name
-                                                        )}
-                                                        withDeselect
-                                                    />
-                                                </div>
-                                                <div style={{ flex: 1 }}>
-                                                    <SimpleField
-                                                        label=" "
-                                                        type="select"
-                                                        name={`where[${idx}][1]`}
-                                                        options={COMPARSION_OPS}
-                                                    />
-                                                </div>
-                                                <div style={{ flex: 5 }}>
-                                                    {COMPARSION_OPS_WITH_VALUE.includes(
-                                                        whereClause[1]
-                                                    ) && (
-                                                        <SimpleField
-                                                            label=" "
-                                                            type="input"
-                                                            name={`where[${idx}][2]`}
-                                                        />
-                                                    )}
-                                                </div>
-                                                <div>
-                                                    <IconButton
-                                                        icon="x"
-                                                        onClick={() =>
-                                                            arrayHelpers.remove(
-                                                                idx
-                                                            )
-                                                        }
-                                                    />
-                                                </div>
-                                            </div>
-                                        )
-                                    );
+                {({ submitForm, isSubmitting, values }) => {
+                    const engineField = (
+                        <SimpleField
+                            label="Engine"
+                            type="react-select"
+                            name="engineId"
+                            options={queryEngines.map((engine) => ({
+                                value: engine.id,
+                                label: engine.name,
+                            }))}
+                        />
+                    );
+                    const partitionField = (
+                        <SimpleField
+                            type="react-select"
+                            name="partition"
+                            options={tablePartitions}
+                            withDeselect
+                        />
+                    );
 
-                                    return (
-                                        <>
-                                            {whereDOM}
-                                            <div className="center-align add-where-clause">
-                                                <SoftButton
-                                                    size="small"
-                                                    title="Add Where Clause"
-                                                    icon="plus"
-                                                    onClick={() =>
-                                                        arrayHelpers.push([
-                                                            '',
-                                                            '=',
-                                                            '',
-                                                        ])
-                                                    }
+                    const whereClauseField = (
+                        <FieldArray
+                            name="where"
+                            render={(arrayHelpers) => {
+                                const whereDOM = values.where.map(
+                                    (whereClause, idx) => (
+                                        <div className="flex-row" key={idx}>
+                                            <div
+                                                style={{
+                                                    flex: 3,
+                                                }}
+                                            >
+                                                <SimpleField
+                                                    label={'Where'}
+                                                    type="react-select"
+                                                    name={`where[${idx}][0]`}
+                                                    options={tableColumns.map(
+                                                        (col) => col.name
+                                                    )}
+                                                    withDeselect
                                                 />
                                             </div>
-                                        </>
-                                    );
-                                }}
+                                            <div style={{ flex: 1 }}>
+                                                <SimpleField
+                                                    label=" "
+                                                    type="select"
+                                                    name={`where[${idx}][1]`}
+                                                    options={COMPARSION_OPS}
+                                                />
+                                            </div>
+                                            <div style={{ flex: 5 }}>
+                                                {COMPARSION_OPS_WITH_VALUE.includes(
+                                                    whereClause[1]
+                                                ) && (
+                                                    <SimpleField
+                                                        label=" "
+                                                        type="input"
+                                                        name={`where[${idx}][2]`}
+                                                    />
+                                                )}
+                                            </div>
+                                            <IconButton
+                                                icon="X"
+                                                onClick={() =>
+                                                    arrayHelpers.remove(idx)
+                                                }
+                                                className="mt8"
+                                            />
+                                        </div>
+                                    )
+                                );
+
+                                return (
+                                    <>
+                                        {whereDOM}
+                                        <div className="center-align add-where-clause mt16">
+                                            <Button
+                                                title="New Where Clause"
+                                                icon="Plus"
+                                                onClick={() =>
+                                                    arrayHelpers.push([
+                                                        '',
+                                                        '=',
+                                                        '',
+                                                    ])
+                                                }
+                                            />
+                                        </div>
+                                    </>
+                                );
+                            }}
+                        />
+                    );
+
+                    const orderByField = (
+                        <SimpleField
+                            type="react-select"
+                            name="order_by"
+                            options={tableColumns.map((col) => col.name)}
+                            withDeselect
+                        />
+                    );
+                    const orderByAscOrDescField = values.order_by != null && (
+                        <SimpleField
+                            label="Order"
+                            type="react-select"
+                            name="order_by_asc"
+                            options={[
+                                {
+                                    label: 'Ascending',
+                                    value: true,
+                                },
+                                {
+                                    label: 'Descending',
+                                    value: false,
+                                },
+                            ]}
+                        />
+                    );
+
+                    const controlsField = (
+                        <div className="DataTableViewSamples-button  flex-row">
+                            <ToggleButton
+                                checked={showAdvancedOptions}
+                                onClick={toggleShowAdvancedOptions}
+                                title={
+                                    showAdvancedOptions
+                                        ? 'Hide Advanced Options'
+                                        : 'Show Advanced Options'
+                                }
+                            />
+                            <AsyncButton
+                                icon="Eye"
+                                title="View Sample Query"
+                                onClick={() =>
+                                    getDataTableSamplesQuery(
+                                        table.id,
+                                        tableSamplesFormValuesToParams(values),
+                                        queryEngines.find(
+                                            (engine) =>
+                                                values.engineId === engine.id
+                                        )?.language
+                                    )
+                                }
+                            />
+                            <AsyncButton
+                                icon="Play"
+                                color="accent"
+                                title="Generate Samples"
+                                onClick={submitForm}
+                                disabled={isSubmitting}
                             />
                         </div>
-                        <div className="DataTableViewSamples-bottom">
-                            <div className="flex-row">
-                                <SimpleField
-                                    type="react-select"
-                                    name="order_by"
-                                    options={tableColumns.map(
-                                        (col) => col.name
-                                    )}
-                                    withDeselect
-                                />
-                                {values.order_by != null && (
-                                    <SimpleField
-                                        label="Order"
-                                        type="react-select"
-                                        name="order_by_asc"
-                                        options={[
-                                            {
-                                                label: 'Ascending',
-                                                value: true,
-                                            },
-                                            {
-                                                label: 'Descending',
-                                                value: false,
-                                            },
-                                        ]}
-                                    />
-                                )}
+                    );
+
+                    const formFields = showAdvancedOptions && (
+                        <div className="DataTableViewSamples-form mb12">
+                            <div className="DataTableViewSamples-top flex-row">
+                                {engineField}
+                                {partitionField}
                             </div>
-                            <div className="DataTableViewSamples-button mb8">
-                                <AsyncButton
-                                    title="View Query"
-                                    onClick={() =>
-                                        getDataTableSamplesQuery(
-                                            table.id,
-                                            tableSamplesFormValuesToParams(
-                                                values
-                                            ),
-                                            queryEngines.find(
-                                                (engine) =>
-                                                    values.engineId ===
-                                                    engine.id
-                                            )?.language
-                                        )
-                                    }
-                                />
-                                <AsyncButton
-                                    title="Generate Samples"
-                                    onClick={submitForm}
-                                    disabled={isSubmitting}
-                                />
+                            <div className="DataTableViewSamples-mid">
+                                {whereClauseField}
+                            </div>
+                            <div className="DataTableViewSamples-bottom">
+                                <div className="flex-row">
+                                    {orderByField}
+                                    {orderByAscOrDescField}
+                                </div>
                             </div>
                         </div>
-                    </div>
-                )}
+                    );
+
+                    return (
+                        <div className="mb12">
+                            {formFields}
+                            {controlsField}
+                        </div>
+                    );
+                }}
             </Formik>
         </div>
     );

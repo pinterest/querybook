@@ -12,7 +12,6 @@ import { QueryExecutionButton } from 'components/QueryExecutionButton/QueryExecu
 import { SearchContainer } from 'components/Search/SearchContainer';
 import { UserMenu } from 'components/UserMenu/UserMenu';
 
-import { Divider } from 'ui/Divider/Divider';
 import { IconButton } from 'ui/Button/IconButton';
 import { Link } from 'ui/Link/Link';
 
@@ -36,7 +35,7 @@ export const EntitySidebar: React.FunctionComponent<IEntitySidebarProps> = React
                             <>
                                 <Link to={`/${environment.name}/`}>
                                     <IconButton
-                                        icon="home"
+                                        icon="Home"
                                         tooltip="Home"
                                         tooltipPos="right"
                                         active={
@@ -45,31 +44,38 @@ export const EntitySidebar: React.FunctionComponent<IEntitySidebarProps> = React
                                         }
                                     />
                                 </Link>
-                                <Divider
-                                    marginTop="2px"
-                                    marginBottom="2px"
-                                    height="1px"
-                                    color="transparent"
-                                />
+                                <SearchContainer />
                                 <Link to={`/${environment.name}/adhoc/`}>
-                                    <div>
-                                        <IconButton
-                                            icon="edit"
-                                            tooltip={'Adhoc Query'}
-                                            tooltipPos="right"
-                                            active={location.pathname.startsWith(
-                                                `/${environment.name}/adhoc/`
-                                            )}
-                                            title="Adhoc"
-                                        />
-                                    </div>
+                                    <IconButton
+                                        icon="Edit"
+                                        tooltip={'Adhoc Query'}
+                                        tooltipPos="right"
+                                        active={location.pathname.startsWith(
+                                            `/${environment.name}/adhoc/`
+                                        )}
+                                        title="Adhoc"
+                                    />
+                                </Link>
+                                <Link
+                                    to={`/${environment.name}/doc_schedules/`}
+                                >
+                                    <IconButton
+                                        icon="Clock"
+                                        tooltip="Scheduled Docs"
+                                        tooltipPos="right"
+                                        active={location.pathname.startsWith(
+                                            `/${environment.name}/doc_schedules/`
+                                        )}
+                                        title="Scheds"
+                                    />
                                 </Link>
                             </>
                         )}
                     />
-
+                </div>
+                <div className="apps-list sidebar-list flex-column">
                     <IconButton
-                        icon="file"
+                        icon="File"
                         tooltip="DataDocs"
                         tooltipPos="right"
                         active={selectedEntity === 'datadoc'}
@@ -80,7 +86,7 @@ export const EntitySidebar: React.FunctionComponent<IEntitySidebarProps> = React
                     />
                     {queryMetastores.length ? (
                         <IconButton
-                            icon="book"
+                            icon="Book"
                             tooltip="Tables"
                             tooltipPos="right"
                             active={selectedEntity === 'table'}
@@ -89,36 +95,21 @@ export const EntitySidebar: React.FunctionComponent<IEntitySidebarProps> = React
                         />
                     ) : null}
                     <IconButton
-                        icon="code"
+                        icon="Code"
                         tooltip="Snippets"
                         tooltipPos="right"
                         active={selectedEntity === 'snippet'}
                         onClick={() => onSelectEntity('snippet')}
-                        title="Snippets"
+                        title="Snips"
                     />
                     <QueryExecutionButton
                         onClick={() => onSelectEntity('execution')}
                         active={selectedEntity === 'execution'}
                     />
-                    <Link to={`/${environment.name}/doc_schedules`}>
-                        <IconButton
-                            icon="clock"
-                            tooltip="Scheduled Docs"
-                            tooltipPos="right"
-                            title="Scheduled Docs"
-                        />
-                    </Link>
-                    <Divider
-                        marginTop="8px"
-                        marginBottom="8px"
-                        height="1px"
-                        color="transparent"
-                    />
                 </div>
-                <div className="sidebar-footer flex-column">
-                    <SearchContainer />
-                    <UserMenu />
+                <div className="apps-list flex-column">
                     <QueryEngineStatusButton />
+                    <UserMenu />
                     <InfoMenuButton />
                 </div>
             </div>

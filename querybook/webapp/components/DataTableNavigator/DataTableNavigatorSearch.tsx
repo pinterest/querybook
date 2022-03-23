@@ -113,7 +113,7 @@ export const DataTableNavigatorSearch: React.FC<{
             <SearchBar
                 value={searchString}
                 onSearch={onSearch}
-                placeholder="Search by Table Name..."
+                placeholder="Search by Name"
                 transparent
             />
 
@@ -144,7 +144,7 @@ export const DataTableNavigatorSearch: React.FC<{
                 size={'18px'}
                 noPadding
                 onClick={toggleSearchFilter}
-                icon="sliders"
+                icon="Sliders"
                 active={searchFiltersSize > 0}
                 ping={searchFiltersSize > 0 ? String(searchFiltersSize) : null}
             />
@@ -159,7 +159,7 @@ const SearchFilterRow: React.FC<{ title: string; className?: string }> = ({
     className,
 }) => (
     <div className={`search-filter-row ${className ?? ''}`}>
-        <Title className="mr8" size={7}>
+        <Title className="mr8" size="text">
             {title}
         </Title>
         <div className="search-filter-row-item">{children}</div>

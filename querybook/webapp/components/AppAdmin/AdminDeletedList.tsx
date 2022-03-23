@@ -41,9 +41,10 @@ export function AdminDeletedList<T extends { id: number; name: string }>({
                         {keysToShow.map((key) => getKeyValDOM(key, item[key]))}
                     </div>
                     <div className="AdminDeletedList-button-wrapper">
-                        <Button onClick={() => onRecover(item.id)}>
-                            Recover Item
-                        </Button>
+                        <Button
+                            onClick={() => onRecover(item.id)}
+                            title="Recover Item"
+                        />
                     </div>
                 </Card>
             ))}

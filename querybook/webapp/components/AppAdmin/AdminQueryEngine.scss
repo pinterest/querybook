@@ -2,6 +2,14 @@
     .AdmingQueryEngine-environment-list {
         max-height: 160px;
         overflow-y: auto;
-        background-color: var(--light-bg-color);
+        background-color: var(--bg-light);
+        border-radius: var(--border-radius-sm);
+    }
+    .stacked-fields {
+        .FormField {
+            + .FormField {
+                margin-left: 8px;
+            }
+        }
     }
 }

@@ -7,26 +7,22 @@ const initialState: Readonly<IScheduledDataDocState> = {
     totalPages: 0,
     page: 0,
     pageSize: 10,
-    filtered: '',
+    filters: {
+        scheduled_only: true,
+    },
 };
 
 function scheduledDocsReducer(state = initialState, action) {
     return produce(state, (draft) => {
         switch (action.type) {
-            case '@@dataDoc/RECEIVE_DATA_WITH_SCHEMA': {
-                const {
-                    docs,
-                    total,
-                    pageSize,
-                    page,
-                    filtered,
-                } = action.payload;
+            case '@@scheduledDataDoc/RECEIVE_DOC_WITH_SCHEMA': {
+                const { docs, total, pageSize, page, filters } = action.payload;
 
                 draft.docs = docs;
                 draft.totalPages = Math.ceil(total / pageSize);
                 draft.page = page;
                 draft.pageSize = pageSize;
-                draft.filtered = filtered;
+                draft.filters = filters;
                 return;
             }
         }

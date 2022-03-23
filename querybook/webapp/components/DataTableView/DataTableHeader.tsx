@@ -16,13 +16,12 @@ import {
 import { BoardItemAddButton } from 'components/BoardItemAddButton/BoardItemAddButton';
 import { DataTableTags } from 'components/DataTableTags/DataTableTags';
 import { ImpressionWidget } from 'components/ImpressionWidget/ImpressionWidget';
+import { UserBadge } from 'components/UserBadge/UserBadge';
 
 import { IconButton } from 'ui/Button/IconButton';
-import { Level } from 'ui/Level/Level';
 import { Tag } from 'ui/Tag/Tag';
-import { Title } from 'ui/Title/Title';
 import { ToggleButton } from 'ui/ToggleButton/ToggleButton';
-import { UserBadge } from 'components/UserBadge/UserBadge';
+import { AccentText } from 'ui/StyledText/StyledText';
 
 import './DataTableHeader.scss';
 
@@ -73,71 +72,6 @@ export const DataTableHeader: React.FunctionComponent<IDataTableHeader> = ({
         loadTableOwnerships();
     }, []);
 
-    const titleDOM = (
-        <Level className="mb4">
-            <div>
-                <Title className="pb12">
-                    {shortTableName}
-                    <BoardItemAddButton
-                        size={16}
-                        itemType="table"
-                        itemId={table.id}
-                        className="ml4"
-                    />
-                </Title>
-                <Title subtitle size={5}>
-                    {tableName}
-                </Title>
-            </div>
-        </Level>
-    );
-
-    const ownershipDOM = (tableOwnerships || []).map((ownership) => (
-        <UserBadge key={ownership.uid} uid={ownership.uid} mini />
-    ));
-
-    // Ownership cannot be removed if owner in db
-    const ownerDOM = (
-        <div className="DataTableHeader-owner">
-            <div className="DataTableHeader-owner-list flex-row mb8">
-                {dbTableOwner || tableOwnerships?.length ? (
-                    <>
-                        <span className="mr8">owned by</span>
-                        {dbTableOwner && <UserBadge name={dbTableOwner} mini />}
-                        {ownershipDOM}
-                    </>
-                ) : null}
-                {isDBTableOwner ? null : isTableOwner ? (
-                    <IconButton
-                        tooltip={'Remove my table ownership'}
-                        tooltipPos="right"
-                        icon="user-minus"
-                        size={18}
-                        onClick={deleteTableOwnership}
-                        invertCircle
-                    />
-                ) : (
-                    <IconButton
-                        tooltip={
-                            dbTableOwner || tableOwnerships?.length
-                                ? 'Add myself as an additional owner'
-                                : 'Add myself as an owner'
-                        }
-                        tooltipPos="right"
-                        icon="user-plus"
-                        size={18}
-                        onClick={createTableOwnership}
-                        invertCircle
-                    />
-                )}
-            </div>
-        </div>
-    );
-
-    const viewsBadgeDOM = (
-        <ImpressionWidget itemId={table.id} type={'DATA_TABLE'} />
-    );
-
     let featuredBadge: React.ReactNode;
     if (userInfo.isAdmin) {
         featuredBadge = (
@@ -152,24 +86,102 @@ export const DataTableHeader: React.FunctionComponent<IDataTableHeader> = ({
         featuredBadge = <Tag>Featured</Tag>;
     }
 
+    const iconDOM = (
+        <div className="flex-row">
+            <BoardItemAddButton
+                size={16}
+                itemType="table"
+                itemId={table.id}
+                className="mr16"
+                popoverLayout={['left', 'top']}
+            />
+            <div className="mr24 flex-center">
+                <ImpressionWidget itemId={table.id} type={'DATA_TABLE'} />
+            </div>
+            {featuredBadge}
+        </div>
+    );
+
+    const topDOM = (
+        <div className="DataTableHeader-top horizontal-space-between">
+            <AccentText size="text" weight="bold" color="light">
+                {tableName}
+            </AccentText>
+            {iconDOM}
+        </div>
+    );
+
+    const titleDOM = (
+        <AccentText className="mb4" color="text" size="xlarge" weight="bold">
+            {shortTableName}
+        </AccentText>
+    );
+
+    const ownershipDOM = (tableOwnerships || []).map((ownership) => (
+        <UserBadge key={ownership.uid} uid={ownership.uid} mini cardStyle />
+    ));
+
+    // Ownership cannot be removed if owner in db
+    const ownerDOM = (
+        <div className="DataTableHeader-owner mb8">
+            <div className="DataTableHeader-owner-list flex-row ">
+                <AccentText
+                    className="header-subtitle mr20"
+                    weight="bold"
+                    color="lightest"
+                >
+                    Owners
+                </AccentText>
+                <div className="owner-badges mr8 flex-row">
+                    {dbTableOwner && <UserBadge name={dbTableOwner} mini />}
+                    {ownershipDOM}
+                    {isDBTableOwner ? null : isTableOwner ? (
+                        <IconButton
+                            tooltip={'Remove my table ownership'}
+                            tooltipPos="down"
+                            icon="UserMinus"
+                            size={18}
+                            onClick={deleteTableOwnership}
+                            invertCircle
+                        />
+                    ) : (
+                        <IconButton
+                            tooltip={
+                                dbTableOwner || tableOwnerships?.length
+                                    ? 'Add myself as an additional owner'
+                                    : 'Add myself as an owner'
+                            }
+                            tooltipPos="down"
+                            icon="UserPlus"
+                            size={18}
+                            onClick={createTableOwnership}
+                            invertCircle
+                        />
+                    )}
+                </div>
+            </div>
+        </div>
+    );
+
+    const tagDOM = (
+        <div className="flex-row">
+            <AccentText
+                className="header-subtitle mr20"
+                weight="bold"
+                color="lightest"
+            >
+                Tags
+            </AccentText>
+            <DataTableTags tableId={table.id} />
+        </div>
+    );
+
     return (
-        <div className="DataTableHeader ph24 pt16 pb8">
-            <div className="DataTableHeader-top ">
-                <div className="DataTableHeader-title">{titleDOM}</div>
-                {/* <div className="DataTableHeader-score"></div> */}
-            </div>
-            <div className="DataTableHeader-bottom ">
-                <div className="DataTableHeader-left">
-                    {ownerDOM}
-                    <DataTableTags tableId={table.id} />
-                </div>
-                <div className="DataTableHeader-right">
-                    <div className="DataTableHeader-featured flex-row mb8">
-                        {featuredBadge}
-                    </div>
-                    {viewsBadgeDOM}
-                </div>
-            </div>
+        <div className="DataTableHeader flex-column mb16">
+            {topDOM}
+            {titleDOM}
+            {ownerDOM}
+            {tagDOM}
         </div>
     );
 };

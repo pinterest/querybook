@@ -1,4 +1,5 @@
 import { merge } from 'lodash';
+import { isOSX } from 'lib/utils/os-platform';
 
 const DEFAULT_KEY_MAP = {
     overallUI: {
@@ -92,6 +93,15 @@ const DEFAULT_KEY_MAP = {
             key: 'Cmd-/',
             name: 'Toggle comment',
         },
+        swapLineUp: {
+            key: 'Alt-Up',
+            name: 'Swap current line with the previous line',
+        },
+        swapLineDown: {
+            key: 'Alt-Down',
+            name: 'Swap current line with the next line',
+        },
+
         openTable: {
             key: 'Cmd-P',
             name: 'Open table modal if on a table',
@@ -112,5 +122,25 @@ const DEFAULT_KEY_MAP = {
         },
     },
 };
+
+/**
+ * The default keymap is only MacOSX specific, however CMD auto maps
+ * to CTRL unless it is CodeMirror
+ *
+ * So for Windows (and linux?) we will convert the keymap for queryEditors
+ * to ensure it is compatible for other platforms as well
+ */
+if (!isOSX) {
+    const queryEditorConfig = DEFAULT_KEY_MAP.queryEditor;
+    for (const [_, keyConfig] of Object.entries(queryEditorConfig)) {
+        const keyConfigParts = keyConfig.key.split('-');
+        if (keyConfigParts.includes('Cmd')) {
+            // Swap Cmd with Ctrl
+            keyConfig.key = keyConfigParts
+                .map((part) => (part === 'Cmd' ? 'Ctrl' : part))
+                .join('-');
+        }
+    }
+}
 
 export default merge(DEFAULT_KEY_MAP, window.CUSTOM_KEY_MAP);

@@ -1,15 +1,8 @@
 .DataDocViewersList {
     width: 400px;
 
-    > div:not(:last-child) {
-        padding-left: 8px;
-        padding-right: 8px;
-    }
-
-    .public-row-description {
-        border-top: var(--border);
-        padding-top: 1rem;
-        text-align: center;
+    > div {
+        margin-top: 16px;
     }
 
     .datadoc-add-user-row {
@@ -25,8 +18,7 @@
 
         .user-select-wrapper {
             flex: 1;
-            margin-right: 0.5rem;
-            color: var(--invert-text-color);
+            color: var(--text-invert);
         }
     }
 
@@ -34,18 +26,9 @@
         // Each row is 65px, show at most 5
         max-height: 320px;
         overflow-y: auto;
+        overflow-x: hidden;
         padding-bottom: 0rem;
         padding-top: 0rem;
-        border-top: var(--border);
-
-        > div {
-            padding-left: 8px;
-            padding-right: 8px;
-        }
-
-        > div:not(:last-child) {
-            border-bottom: var(--border);
-        }
     }
 
     .viewers-user-row {

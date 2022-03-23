@@ -8,13 +8,14 @@
             width: 36px;
             height: 36px;
             border-radius: 100px;
+            border: 2px solid var(--bg);
         }
 
         &.extra-user-count {
             z-index: 1;
             .UserAvatarList-user {
-                background: var(--text-color);
-                color: var(--bg-color);
+                background: var(--text);
+                color: var(--bg);
                 font-size: var(--med-text-size);
                 text-align: center;
                 display: flex;

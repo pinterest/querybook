@@ -1,7 +1,7 @@
 .ImpressionWidget {
-    background-color: var(--icon-color);
-    color: var(--invert-text-color);
-    border-radius: var(--border-radius);
+    background-color: var(--icon-light);
+    color: var(--text-invert);
+    border-radius: var(--border-radius-sm);
     display: inline-flex;
     align-items: center;
     padding: 0px 4px;

@@ -2,14 +2,15 @@
     position: relative;
     display: flex;
     align-items: center;
-    margin: 4px;
-    padding: 4px;
+    margin-top: 8px;
+    margin-bottom: 4px;
+    padding: 4px 0px;
 
     &.FormField-stacked {
         flex-wrap: wrap;
 
         .FormFieldLabelSection {
-            margin-bottom: 4px;
+            margin-bottom: 8px;
         }
         .FormFieldInputSectionRow {
             flex: 1;
@@ -21,10 +22,16 @@
         }
     }
 
+    &:not(.FormField-stacked) {
+        .FormFieldLabelSection {
+            align-self: flex-start;
+            margin-top: 6px;
+        }
+    }
+
     .FormFieldLabelSection {
         box-sizing: border-box;
         padding-right: 12px;
-        // min-width: 120px;
         cursor: default;
         white-space: nowrap;
     }
@@ -62,14 +69,12 @@
 .FormSectionHeader {
     cursor: default;
     padding-top: 8px;
+    margin: 16px 0px 8px;
+    font-weight: var(--bold-font);
+    font-family: var(--font-accent);
     span {
-        font-size: var(--text-size);
+        font-size: var(--smedium-text-size);
         white-space: nowrap;
-        margin-right: 12px;
-    }
-    hr {
-        width: 100%;
-        margin: 12px 0px;
     }
 }
 .popover-content {
@@ -78,7 +83,7 @@
             margin-bottom: 8px;
         }
         a {
-            color: var(--color-accent-text);
+            color: var(--color-accent-dark);
             font-weight: var(--bold-font);
         }
     }

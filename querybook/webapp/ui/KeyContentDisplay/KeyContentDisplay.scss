@@ -7,20 +7,16 @@
     .KeyContentDisplay-key {
         width: 180px;
         margin-right: 12px;
+        color: var(--text-light);
+        font-size: var(--text-size);
+        font-weight: var(--light-bold-font);
     }
     .KeyContentDisplay-content {
         width: 100%;
         align-self: center;
-        .EditableTextField {
-            margin-left: -4px;
-            .editor-wrapper {
-                border: var(--border);
-                border-radius: var(--border-radius);
-                background-color: var(--bg-color);
-            }
-        }
+
         &.right-align {
-            max-width: 120px;
+            max-width: 80px;
         }
     }
 }

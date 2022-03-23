@@ -1,22 +1,29 @@
 .DataTableView {
     height: 100%;
 
+    .Container-content {
+        width: 100%;
+    }
+
     .DataTableView-tabs {
         z-index: 10;
         position: sticky;
         top: 0;
-        background-color: var(--bg-color);
-        margin: 0px 16px;
-
-        ul {
-            li {
-                padding: 12px 8px 8px 8px;
-            }
-        }
+        background-color: var(--bg);
     }
 
     .DataTableView-content {
-        padding: 16px 24px;
         flex: 1;
+    }
+
+    .info-text {
+        font-size: var(--text-size);
+        color: var(--text-light);
+    }
+}
+
+.EnvironmentAppRouter-content {
+    .DataTableView {
+        margin: 24px 48px;
     }
 }

@@ -11,7 +11,7 @@ export const DataDocTourSteps: ReactourStep[] = [
     {
         content: (
             <div>
-                <Title size={5}>Welcome to DataDoc!</Title>
+                <Title size="med">Welcome to DataDoc!</Title>
                 <p>Let's go over the DataDoc interface.</p>
             </div>
         ),
@@ -79,7 +79,7 @@ export const DataDocTourSteps: ReactourStep[] = [
     },
     {
         selector:
-            '.DataDoc .DataDocRightSidebar-button-section-bottom [aria-label="Set Templated Variables"]',
+            '.DataDoc .DataDocRightSidebar-button-section-bottom [aria-label="Set Variables"]',
         content: (
             <>
                 <p>
@@ -147,13 +147,9 @@ export const DataDocUIGuide: React.FunctionComponent<{
         <div className="DataDocUIGuide flex-center">
             {hideButton ? null : (
                 <Button
-                    className="Tour-button"
                     onClick={() => setIsOpen(true)}
-                    theme="text"
-                    color="accent"
-                >
-                    Begin DataDoc Tour
-                </Button>
+                    title="Begin DataDoc Tour"
+                />
             )}
             <Tour
                 isOpen={isOpen}

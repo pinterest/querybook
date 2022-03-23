@@ -59,12 +59,6 @@ function applyUserSettings(
                 case 'dark':
                     document.body.className = 'dark-theme';
                     break;
-                case 'night':
-                    document.body.className = 'night-theme';
-                    break;
-                case 'dawn':
-                    document.body.className = 'dawn-theme';
-                    break;
                 case 'lush':
                     document.body.className = 'lush-theme';
                     break;
@@ -159,7 +153,7 @@ export default function userReducer(
             case '@@notificationService/RECEIVE_NOTIFIERS': {
                 if (!('notification_preference' in state.rawSettings)) {
                     draft.rawSettings['notification_preference'] =
-                        action.payload.notificationServices[0].name;
+                        action.payload.notificationServices[0]?.name;
                     draft.computedSettings = computeUserSettings(
                         draft.rawSettings
                     );

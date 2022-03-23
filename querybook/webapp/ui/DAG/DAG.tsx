@@ -60,7 +60,7 @@ export const DAG: React.FunctionComponent<IProps> = ({
             .setDefaultEdgeLabel(() => ({}));
 
         for (const [index, node] of nodes.entries()) {
-            const nodeColor = node.color || 'var(--icon-color)';
+            const nodeColor = node.color || 'var(--icon)';
             g.setNode(String(index), {
                 ...node,
                 ...(customNodeRender

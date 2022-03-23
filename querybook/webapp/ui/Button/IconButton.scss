@@ -1,40 +1,32 @@
 .IconButton {
     cursor: pointer;
     padding: 10px;
-    color: var(--icon-color);
+    color: var(--icon);
     transition: color 0.2s ease-out;
     transition: fill 0.2s ease-out;
     display: inline-flex;
     position: relative;
 
     &.invert-circle {
-        background-color: var(--color-primary-3);
+        background-color: var(--bg-lightest);
         padding: 4px;
         border-radius: 50%;
+
+        &:hover {
+            background-color: var(--bg-hover);
+        }
     }
 
     &.no-padding {
         padding: 0px;
     }
-    &:hover {
-        color: var(--icon-hover-color);
-    }
-    &.active {
-        color: var(--icon-active-color);
-    }
-    &.fill {
-        svg {
-            fill: var(--icon-color);
-        }
+
+    &:not(.disabled) {
         &:hover {
-            svg {
-                fill: var(--icon-hover-color);
-            }
+            color: var(--icon-hover);
         }
         &.active {
-            svg {
-                fill: var(--icon-active-color);
-            }
+            color: var(--color-accent-dark);
         }
     }
 
@@ -43,7 +35,10 @@
     }
 
     &.with-title {
-        padding-bottom: 0px;
+        width: 100%;
+        padding: 10px 4px 8px;
+        display: flex;
+        justify-content: center;
     }
 
     .ping,
@@ -51,7 +46,7 @@
         position: absolute;
         cursor: default;
         border-radius: 100px;
-        background-color: var(--color-accent-bg);
+        background-color: var(--color-accent-dark);
     }
 
     .ping {
@@ -66,13 +61,9 @@
         right: 4px;
         top: 4px;
         padding: 1px 6px 0px 6px;
-
-        color: var(--color-accent-text);
-        font-size: var(--xsmall-text-size);
-        font-weight: var(--bold-font);
     }
 
     .icon-title {
-        font-size: var(--xxxsmall-text-size);
+        padding-top: 2px;
     }
 }

@@ -1,13 +1,16 @@
 import clsx from 'clsx';
+import { useEvent } from 'hooks/useEvent';
 import React from 'react';
 
 import { IconButton } from 'ui/Button/IconButton';
+import type { AllLucideIconNames } from 'ui/Icon/LucideIcons';
 import { Popover } from 'ui/Popover/Popover';
+import { AccentText } from 'ui/StyledText/StyledText';
 
 import './Dropdown.scss';
 
 interface IProps {
-    menuIcon?: string;
+    menuIcon?: AllLucideIconNames;
     className?: string;
     customButtonRenderer?: () => React.ReactNode;
 
@@ -19,7 +22,7 @@ interface IProps {
 }
 
 export const Dropdown: React.FunctionComponent<IProps> = ({
-    menuIcon = 'menu',
+    menuIcon = 'Menu',
     className,
     customButtonRenderer,
 
@@ -68,22 +71,15 @@ export const Dropdown: React.FunctionComponent<IProps> = ({
         },
         [selfRef.current]
     );
-
-    React.useEffect(() => {
-        if (!hoverable && active) {
-            document.addEventListener('mousedown', onDocumentClick);
-        }
-        return () => {
-            if (!hoverable && active) {
-                document.removeEventListener('mousedown', onDocumentClick);
-            }
-        };
-    }, [hoverable, active, onDocumentClick]);
+    useEvent('mousedown', onDocumentClick, {
+        element: document,
+        disabled: hoverable || !active,
+    });
 
     const buttonDOM = customButtonRenderer ? (
         customButtonRenderer()
     ) : (
-        <IconButton icon={menuIcon} />
+        <IconButton icon={menuIcon} noPadding />
     );
 
     const customFormatClass = customButtonRenderer ? ' custom-format ' : '';
@@ -111,6 +107,7 @@ export const Dropdown: React.FunctionComponent<IProps> = ({
                 layout={[isUp ? 'top' : 'bottom', isRight ? 'right' : 'left']}
                 hideArrow
                 skipAnimation
+                noPadding
             >
                 {dropdownContent}
             </Popover>
@@ -125,7 +122,9 @@ export const Dropdown: React.FunctionComponent<IProps> = ({
             onClick={handleClick}
             ref={selfRef}
         >
-            <div className="Dropdown-trigger">{buttonDOM}</div>
+            <AccentText className="Dropdown-trigger" weight="bold">
+                {buttonDOM}
+            </AccentText>
             {dropdownContent}
         </div>
     );

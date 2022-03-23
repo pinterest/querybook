@@ -4,6 +4,8 @@ import { Popover } from 'ui/Popover/Popover';
 import { MenuItem, Menu } from 'ui/Menu/Menu';
 import { IconButton } from 'ui/Button/IconButton';
 import './DataDocAccessRequestPermissionPicker.scss';
+import { Icon } from 'ui/Icon/Icon';
+import { AccentText } from 'ui/StyledText/StyledText';
 
 interface IPermissionPickerProp {
     uid: number;
@@ -29,6 +31,7 @@ export const DataDocAccessRequestPermissionPicker: React.FunctionComponent<IPerm
             anchor={selfRef.current}
             layout={['bottom', 'left']}
             hideArrow
+            noPadding
         >
             <Menu>
                 <MenuItem
@@ -49,23 +52,25 @@ export const DataDocAccessRequestPermissionPicker: React.FunctionComponent<IPerm
             className="permission-text flex-row mr8"
             onClick={() => setShowEditMenu(true)}
         >
-            <i className="fa fa-caret-down caret-icon" />
-            <span> {permission}</span>
+            <AccentText>{permission}</AccentText>
+            <Icon name="ChevronDown" className="ml4" size={16} />
         </div>
     );
     const accessRequestControlButtonsDOM = (
         <div className="access-request-control-buttons flex-row">
             <IconButton
                 className="access-request-control-button"
-                icon="check-circle"
+                icon="CheckCircle"
                 onClick={() => addDataDocEditor(uid, permission)}
                 tooltip={`Allow ${permission} permission`}
                 tooltipPos="left"
             />
             <IconButton
                 className="access-request-control-button"
-                icon="x-circle"
+                icon="XCircle"
                 onClick={() => rejectDataDocAccessRequest(uid)}
+                tooltip="Reject access request"
+                tooltipPos="left"
             />
         </div>
     );

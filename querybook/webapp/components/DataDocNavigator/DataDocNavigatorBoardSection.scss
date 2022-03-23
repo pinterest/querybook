@@ -1,21 +1,23 @@
 .NavigatorBoardView {
+    background-color: var(--bg-light);
+    border-radius: var(--border-radius-sm);
+    overflow: hidden;
+    margin-top: var(--margin-sm);
+
     &.dragged-over {
-        background-color: var(--color-accent-bg-hover);
+        background-color: var(--bg-select);
     }
 
     .board-header-section {
-        &.active {
-            background-color: var(--hover-bg-color);
-        }
         &:hover {
-            background-color: var(--light-bg-color);
+            background-color: var(--bg-hover);
         }
         .board-header-title {
             cursor: pointer;
             overflow: hidden;
 
             .Title {
-                color: var(--light-text-color);
+                color: var(--text-light);
                 text-transform: capitalize;
                 user-select: none;
             }
@@ -36,16 +38,8 @@
             }
         }
     }
-}
 
-.DataDocNavigatorBoardSection {
-    .navigator-board-header {
-        background-color: var(--select-bg-color);
-        user-select: none;
-        cursor: pointer;
-
-        .Title {
-            color: var(--title-color);
-        }
+    .board-item-list {
+        padding-bottom: var(--padding-sm);
     }
 }

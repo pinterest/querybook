@@ -11,7 +11,7 @@ import { getCurrentEnv } from 'lib/utils/query-string';
 import {
     defaultReactSelectStyles,
     makeReactSelectStyle,
-    miniReactSelectStyles,
+    miniAsyncReactSelectStyles,
 } from 'lib/utils/react-select';
 import { titleize } from 'lib/utils';
 import * as searchActions from 'redux/search/action';
@@ -48,8 +48,12 @@ import { PrettyNumber } from 'ui/PrettyNumber/PrettyNumber';
 import { SearchDatePicker } from './SearchDatePicker';
 import { TableSelect } from './TableSelect';
 import './SearchOverview.scss';
+import { EmptyText } from 'ui/StyledText/StyledText';
 
-const userReactSelectStyle = makeReactSelectStyle(true, miniReactSelectStyles);
+const userReactSelectStyle = makeReactSelectStyle(
+    true,
+    miniAsyncReactSelectStyles
+);
 export const SearchOverview: React.FunctionComponent = () => {
     const {
         resultByPage,
@@ -144,41 +148,49 @@ export const SearchOverview: React.FunctionComponent = () => {
 
     const [showAddSearchAuthor, setShowAddSearchAuthor] = React.useState(false);
 
-    const onSearchTabSelect = React.useCallback((newSearchType: string) => {
-        updateSearchType(newSearchType);
-        handleUpdateSearchString('');
-    }, []);
+    const onSearchTabSelect = React.useCallback(
+        (newSearchType: string) => {
+            updateSearchType(newSearchType);
+        },
+        [updateSearchType]
+    );
 
     const toggleShowAddSearchAuthor = React.useCallback(() => {
-        setShowAddSearchAuthor(!showAddSearchAuthor);
-    }, []);
+        setShowAddSearchAuthor((v) => !v);
+    }, [setShowAddSearchAuthor]);
 
     const handleMetastoreChange = React.useCallback(
         (evt: React.ChangeEvent<HTMLSelectElement>) => {
             selectMetastore(Number(evt.target.value));
         },
-        []
+        [selectMetastore]
     );
 
-    const onStartDateChange = React.useCallback((evt) => {
-        const newDate = Number(moment(evt.target.value).format('X'));
-        updateSearchFilter('startDate', isNaN(newDate) ? null : newDate);
-    }, []);
+    const onStartDateChange = React.useCallback(
+        (evt) => {
+            const newDate = Number(moment(evt.target.value).format('X'));
+            updateSearchFilter('startDate', isNaN(newDate) ? null : newDate);
+        },
+        [updateSearchFilter]
+    );
 
-    const onEndDateChange = React.useCallback((evt) => {
-        const newDate = Number(moment(evt.target.value).format('X'));
+    const onEndDateChange = React.useCallback(
+        (evt) => {
+            const newDate = Number(moment(evt.target.value).format('X'));
 
-        updateSearchFilter('endDate', isNaN(newDate) ? null : newDate);
-    }, []);
+            updateSearchFilter('endDate', isNaN(newDate) ? null : newDate);
+        },
+        [updateSearchFilter]
+    );
 
     const setMinDuration = React.useCallback(
         (value: number | null) => updateSearchFilter('minDuration', value),
-        []
+        [updateSearchFilter]
     );
 
     const setMaxDuration = React.useCallback(
         (value: number | null) => updateSearchFilter('maxDuration', value),
-        []
+        [updateSearchFilter]
     );
 
     const getSearchBarDOM = () => {
@@ -198,7 +210,6 @@ export const SearchOverview: React.FunctionComponent = () => {
                     hasIcon={isLoading}
                     hasClearSearch={true}
                     placeholder={placeholder}
-                    transparent
                     autoFocus
                 />
             </div>
@@ -210,7 +221,7 @@ export const SearchOverview: React.FunctionComponent = () => {
     }, []);
 
     const searchTypeDOM = (
-        <div className="search-types">
+        <div className="search-types mv4">
             <Tabs
                 items={SEARCH_TABS}
                 selectedTabKey={searchType}
@@ -274,12 +285,12 @@ export const SearchOverview: React.FunctionComponent = () => {
 
     const orderByButtonFormatter = React.useCallback(
         () => (
-            <span>
+            <div className="flex-row">
                 {searchOrder === SearchOrder.Recency
                     ? 'Most recent'
                     : 'Most relevant'}
-                <i className="fa fa-caret-down caret-icon ml8" />
-            </span>
+                <Icon className="ml8" name="ChevronDown" size={16} />
+            </div>
         ),
         [searchOrder]
     );
@@ -487,7 +498,7 @@ export const SearchOverview: React.FunctionComponent = () => {
         });
 
         const addAuthorDOM = showAddSearchAuthor ? (
-            <div className="add-authors">
+            <div className="add-authors mt4">
                 <UserSelect
                     onSelect={(uid, name) => {
                         addSearchAuthorChoice(uid, name);
@@ -505,7 +516,7 @@ export const SearchOverview: React.FunctionComponent = () => {
             <Button
                 onClick={toggleShowAddSearchAuthor}
                 className="add-authors"
-                icon="plus"
+                icon="Plus"
                 title="more authors"
                 theme="text"
                 color="light"
@@ -525,94 +536,61 @@ export const SearchOverview: React.FunctionComponent = () => {
         searchType === 'Query' ? (
             <>
                 <div className="search-filter">
-                    <span className="filter-title">
-                        Authors
-                        <hr className="dh-hr" />
-                    </span>
+                    <span className="filter-title">Authors</span>
                     {getAuthorFiltersDOM('author_uid')}
                 </div>
                 <div className="search-filter">
-                    <span className="filter-title">
-                        Query Engine
-                        <hr className="dh-hr" />
-                    </span>
+                    <span className="filter-title">Query Engine</span>
                     {queryEngineFilterDOM}
                 </div>
                 {queryMetastores.length && (
                     <div className="search-filter">
-                        <span className="filter-title">
-                            Tables
-                            <hr className="dh-hr" />
-                        </span>
+                        <span className="filter-title">Tables</span>
                         {tableFilterDOM}
                     </div>
                 )}
                 <div className="search-filter">
-                    <span className="filter-title">
-                        Query Type
-                        <hr className="dh-hr" />
-                    </span>
+                    <span className="filter-title">Query Type</span>
                     {queryTypeFilterDOM}
                 </div>
                 <div className="search-filter">
-                    <span className="filter-title">
-                        Statement Type
-                        <hr className="dh-hr" />
-                    </span>
+                    <span className="filter-title">Statement Type</span>
                     <div className="result-item-golden horizontal-space-between">
                         {statementTypeFilterDOM}
                     </div>
                 </div>
                 <div className="search-filter">
-                    <span className="filter-title">
-                        Created At
-                        <hr className="dh-hr" />
-                    </span>
+                    <span className="filter-title">Created At</span>
                     {dateFilterDOM}
                 </div>
                 <div className="search-filter">
-                    <span className="filter-title">
-                        Duration
-                        <hr className="dh-hr" />
-                    </span>
+                    <span className="filter-title">Duration</span>
                     {durationFilterDOM}
                 </div>
             </>
         ) : searchType === 'DataDoc' ? (
             <>
                 <div className="search-filter">
-                    <span className="filter-title">
-                        Authors
-                        <hr className="dh-hr" />
-                    </span>
+                    <span className="filter-title">Authors</span>
                     {getAuthorFiltersDOM('owner_uid')}
                 </div>
                 <div className="search-filter">
-                    <span className="filter-title">
-                        Date
-                        <hr className="dh-hr" />
-                    </span>
+                    <span className="filter-title">Date</span>
                     {dateFilterDOM}
                 </div>
             </>
         ) : (
             <>
                 <div className="search-filter">
-                    <span className="filter-title">
-                        Metastore
-                        <hr className="dh-hr" />
-                    </span>
+                    <span className="filter-title">Metastore</span>
                     {metastoreSelectDOM}
                 </div>
                 <div className="search-filter">
-                    <span className="filter-title">
-                        Featured
-                        <hr className="dh-hr" />
-                    </span>
+                    <span className="filter-title">Featured</span>
                     <div className="result-item-golden horizontal-space-between">
                         <span>
                             <span>featured only</span>
-                            <Icon className="award" name="award" />
+                            <Icon className="award ml4" name="Award" />
                         </span>
                         <Checkbox
                             value={!!searchFilters.golden}
@@ -625,24 +603,15 @@ export const SearchOverview: React.FunctionComponent = () => {
                     </div>
                 </div>
                 <div className="search-filter">
-                    <span className="filter-title">
-                        Date
-                        <hr className="dh-hr" />
-                    </span>
+                    <span className="filter-title">Date</span>
                     {dateFilterDOM}
                 </div>
                 <div className="search-filter">
-                    <span className="filter-title">
-                        Tags
-                        <hr className="dh-hr" />
-                    </span>
+                    <span className="filter-title">Tags</span>
                     {tagDOM}
                 </div>
                 <div className="search-filter">
-                    <span className="filter-title">
-                        Search Settings
-                        <hr className="dh-hr" />
-                    </span>
+                    <span className="filter-title">Search Settings</span>
                     {searchSettingsDOM}
                 </div>
             </>
@@ -671,10 +640,7 @@ export const SearchOverview: React.FunctionComponent = () => {
         !isEmpty(searchFilters) ||
         !!searchString;
     const beginSearchPromptDOM = (
-        <div className="begin-search-prompt">
-            Please enter a search string or apply search filters to begin
-            search.
-        </div>
+        <EmptyText>Enter a search string or apply filters to begin.</EmptyText>
     );
 
     const searchBodyDOM = (
@@ -696,10 +662,7 @@ export const SearchOverview: React.FunctionComponent = () => {
                 {resultsDOM}
                 {paginationDOM}
             </div>
-            <div className="search-filters">
-                <div className="search-filters-by">Filter by</div>
-                {FilterDOM}
-            </div>
+            <div className="search-filters">{FilterDOM}</div>
         </Container>
     );
 

@@ -1,6 +1,6 @@
 .EntitySidebar {
     height: 100%;
-    background-color: var(--bg-color);
+    background-color: var(--bg);
 
     position: relative;
     width: 50px;
@@ -8,4 +8,40 @@
     flex-direction: column;
     justify-content: space-between;
     text-align: center;
+    border-top-right-radius: var(--border-radius);
+
+    .apps-list {
+        margin: 4px 0px;
+        > * {
+            margin-bottom: 2px;
+            display: flex;
+            justify-content: center;
+        }
+        .IconButton,
+        .QueryExecutionButton,
+        .InfoMenuButton,
+        .QueryEngineStatusButton,
+        .UserMenu {
+            width: 100%;
+        }
+        .IconButton {
+            .Icon {
+                margin-bottom: 2px;
+                height: 24px;
+            }
+        }
+    }
+    .sidebar-list {
+        .active {
+            background-color: var(--bg-lightest);
+        }
+    }
+}
+.collapsed .EntitySidebar {
+    .sidebar-list {
+        .active {
+            background-color: transparent;
+            color: var(--icon);
+        }
+    }
 }

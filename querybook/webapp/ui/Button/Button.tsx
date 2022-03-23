@@ -2,6 +2,7 @@ import React from 'react';
 import clsx from 'clsx';
 
 import { Icon, IIconProps } from 'ui/Icon/Icon';
+import type { AllLucideIconNames } from 'ui/Icon/LucideIcons';
 import { StyledButton, ISharedButtonProps } from './StyledButton';
 import { withBoundProps } from 'lib/utils/react-bind';
 import {
@@ -9,10 +10,11 @@ import {
     ButtonThemeType,
     computeStyleButtonProps,
 } from './ButtonTheme';
+import { AccentText } from 'ui/StyledText/StyledText';
 
 export type ButtonProps = React.HTMLAttributes<HTMLSpanElement> &
     ISharedButtonProps & {
-        icon?: string | React.ComponentType<IIconProps>;
+        icon?: AllLucideIconNames | React.ReactElement<IIconProps>;
         title?: string;
         className?: string;
 
@@ -28,7 +30,7 @@ export type ButtonProps = React.HTMLAttributes<HTMLSpanElement> &
 const defaultProps: ButtonProps = {
     className: '',
     color: 'default',
-    theme: 'outline',
+    theme: 'fill',
     size: 'medium',
 };
 
@@ -50,11 +52,11 @@ export const Button = React.forwardRef<HTMLSpanElement, ButtonProps>(
         } = props;
 
         const iconDOM = isLoading ? (
-            <Icon name="loader" />
+            <Icon name="Loading" />
         ) : (
             icon && (typeof icon === 'string' ? <Icon name={icon} /> : icon)
         );
-        const textDOM = title && <span>{title}</span>;
+        const textDOM = title ? <AccentText>{title}</AccentText> : null;
 
         const buttonOnClick = disabled ? null : onClick;
         const themeProps = computeStyleButtonProps(color, theme);
@@ -64,12 +66,14 @@ export const Button = React.forwardRef<HTMLSpanElement, ButtonProps>(
             [className]: !!className,
             active,
             'flex-row': Boolean(iconDOM && textDOM),
-            'icon-only': Boolean(iconDOM && !textDOM),
+            'icon-only': Boolean(iconDOM && !textDOM && !children),
+            [theme]: true,
         });
 
         const pingDOM = !ping ? null : (
             <div className="ping-message">{ping}</div>
         );
+
         return (
             <StyledButton
                 className={buttonClassName}
@@ -82,7 +86,7 @@ export const Button = React.forwardRef<HTMLSpanElement, ButtonProps>(
                 {pingDOM}
                 {iconDOM}
                 {textDOM}
-                {children}
+                <AccentText className="flex-row">{children}</AccentText>
             </StyledButton>
         );
     }
@@ -94,7 +98,6 @@ Button.displayName = 'Button';
 export const TextButton = withBoundProps(Button, {
     theme: 'text',
     fontWeight: '700',
-    uppercase: true,
     pushable: true,
 });
 

@@ -2,13 +2,13 @@ import React from 'react';
 import clsx from 'clsx';
 
 import { InfoButton } from 'ui/Button/InfoButton';
+import { AccentText } from 'ui/StyledText/StyledText';
 
 import './FormField.scss';
 
 export const FormSectionHeader: React.FC = ({ children }) => (
     <div className="FormSectionHeader flex-row">
         <span>{children}</span>
-        <hr />
     </div>
 );
 
@@ -23,6 +23,7 @@ export interface IFormFieldProps {
     className?: string;
 }
 export interface IFormFieldSectionProps {
+    flexed?: boolean;
     className?: string;
 }
 
@@ -57,7 +58,7 @@ export const FormField: React.FunctionComponent<IFormFieldProps> = ({
     ) : null;
 
     const requiredIndicator = required ? (
-        <i className="FormFieldRequired">*Required</i>
+        <span className="FormFieldRequired">*Required</span>
     ) : null;
 
     // If user uses props to supply label, then auto wrap children to be
@@ -91,7 +92,15 @@ export const FormField: React.FunctionComponent<IFormFieldProps> = ({
 const FormFieldLabelSection: React.FunctionComponent<IFormFieldSectionProps> = ({
     children,
     className = '',
-}) => <div className={`FormFieldLabelSection ${className}`}>{children}</div>;
+}) => (
+    <AccentText
+        color="light"
+        weight="bold"
+        className={`FormFieldLabelSection ${className}`}
+    >
+        {children}
+    </AccentText>
+);
 
 export const FormFieldInputSectionRowGroup: React.FunctionComponent<IFormFieldSectionProps> = ({
     children,

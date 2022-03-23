@@ -7,35 +7,41 @@ exports[`matches enzyme snapshots matches snapshot 1`] = `
   <Menu__MenuItem
     key="0"
   >
-    <span
-      className="flex-row flex1"
-    >
+    <AccentText>
       <span
-        className="Menu-text flex1"
+        className="flex-row flex1"
       >
-        test
+        <span
+          className="Menu-text flex1"
+        >
+          test
+        </span>
       </span>
-    </span>
+    </AccentText>
   </Menu__MenuItem>
 </Menu>
 `;
 
 exports[`matches test renderer snapshot serializes the styles 1`] = `
 <div
-  className="Menu-sc-13z76nv-0 dbaXzY Menu"
+  className="Menu-sc-13z76nv-0 jonXBt Menu"
 >
   <span
     className="Menu__MenuItem-sc-13z76nv-1 MenuItem"
   >
-    <span
-      className="flex-row flex1"
+    <div
+      className="StyledText__StyledTextDiv-sc-1ldibmc-0 jYMIFP Text"
     >
       <span
-        className="Menu-text flex1"
+        className="flex-row flex1"
       >
-        test
+        <span
+          className="Menu-text flex1"
+        >
+          test
+        </span>
       </span>
-    </span>
+    </div>
   </span>
 </div>
 `;

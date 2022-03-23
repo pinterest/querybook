@@ -3,6 +3,8 @@ import clsx from 'clsx';
 
 import { Status } from 'const/queryStatus';
 
+import { Icon } from 'ui/Icon/Icon';
+
 import './StatusIcon.scss';
 
 export interface IStatusIconProps {
@@ -16,19 +18,11 @@ export const StatusIcon: React.FunctionComponent<IStatusIconProps> = ({
     tooltip,
     hollow,
 }) => {
-    const iconProps = {
-        status,
-        className: clsx({
-            fas: !hollow,
-            far: hollow,
-            'fa-circle': true,
-        }),
-    };
-
     const spanProps = {
         className: clsx({
             StatusIcon: true,
             [status]: true,
+            'flex-center': true,
         }),
     };
     if (tooltip) {
@@ -38,7 +32,7 @@ export const StatusIcon: React.FunctionComponent<IStatusIconProps> = ({
 
     return (
         <span {...spanProps}>
-            <i {...iconProps} />
+            <Icon className={status} name="Circle" size={16} fill={!hollow} />
         </span>
     );
 };

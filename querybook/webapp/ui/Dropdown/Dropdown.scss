@@ -3,10 +3,12 @@
     display: flex;
     flex-direction: column;
     justify-content: center;
+    align-items: flex-start;
 
     .Dropdown-trigger {
         cursor: pointer;
         display: flex;
+        justify-content: center;
     }
 
     .Dropdown-menu {
@@ -15,10 +17,9 @@
         position: absolute;
         top: 100%;
         z-index: 20;
-        .Menu {
-            border: var(--border);
-            border-radius: var(--border-radius);
-        }
+        box-shadow: var(--box-shadow-md);
+        border-radius: var(--border-radius-sm);
+        font-size: var(--small-text-size);
     }
 
     &.is-right {
@@ -38,14 +39,16 @@
 
     &.Dropdown-nested-menu {
         .Dropdown-menu {
-            top: -1px;
-            // this right now doesn't work
-            margin-left: 100%;
+            top: 0px;
+            left: 0px;
+            margin-left: calc(100% + 8px);
         }
     }
     &.Dropdown-nested-menu.nested-right {
         .Dropdown-menu {
-            margin-right: 100%;
+            left: auto;
+            right: 0px;
+            margin-right: calc(100% + 8px);
         }
     }
 }

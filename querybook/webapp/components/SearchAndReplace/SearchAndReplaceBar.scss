@@ -1,41 +1,55 @@
 .SearchAndReplaceBar {
-    border: var(--border);
-    border-top: none;
     border-bottom-left-radius: var(--border-radius);
     border-bottom-right-radius: var(--border-radius);
 
-    background-color: var(--bg-color);
+    background-color: var(--bg);
     box-shadow: var(--box-shadow);
+
+    .expand-icon {
+        align-self: flex-start;
+    }
 
     .position-info {
         user-select: none;
         font-size: var(--xsmall-text-size);
+        color: var(--text-light);
+        line-height: normal;
+        font-weight: var(--bold-font);
     }
 
     .datadoc-search-input {
-        border: var(--border);
         padding: 4px;
-
-        border-radius: var(--border-radius);
-
+        border-radius: var(--border-radius-sm);
         background-color: transparent;
-        width: 250px;
+        width: 240px;
         display: flex;
         align-items: center;
 
-        &:focus-within {
-            border-color: var(--focus-border-color);
-            background-color: var(--bg-color);
+        &:first-child {
+            .DebouncedInput input {
+                padding-right: 64px;
+            }
         }
 
         .DebouncedInput {
             flex: 1;
             input {
                 border: none;
-                padding: 0;
+                padding: 0px 8px;
                 color: inherit;
                 font-size: var(--text-size);
+                min-height: 24px;
             }
         }
+
+        &:focus-within {
+            input {
+                background-color: var(--bg-select);
+            }
+        }
+    }
+    .data-doc-search-buttons {
+        margin-left: -72px;
+        margin-right: 16px;
     }
 }

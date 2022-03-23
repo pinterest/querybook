@@ -2,20 +2,17 @@
     display: inline-flex;
     color: var(--color-null);
     margin-right: 6px;
-    i {
-        vertical-align: middle;
-    }
 
     &.success {
-        color: var(--color-true);
+        color: var(--color-true-light);
     }
     &.warning {
-        color: var(--color-yellow);
+        color: var(--color-yellow-light);
     }
     &.error {
-        color: var(--color-false);
+        color: var(--color-false-light);
     }
     &.running {
-        color: var(--color-blue);
+        color: var(--color-blue-light);
     }
 }

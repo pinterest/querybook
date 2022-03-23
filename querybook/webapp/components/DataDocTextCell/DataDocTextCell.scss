@@ -5,25 +5,30 @@
     font-size: var(--text-size);
 
     &:focus-within {
-        background-color: var(--light-bg-color);
+        background-color: var(--bg-lightest);
     }
 
     &:hover {
-        background-color: var(--hover-bg-color);
+        background-color: var(--bg-hover);
     }
 
     h1 {
         font-size: var(--xlarge-text-size);
         // So it visually aligns
         margin-left: -3px;
-        font-weight: bold;
     }
 
     h2 {
         font-size: var(--large-text-size);
         // So it visually aligns
         margin-left: -2px;
-        font-weight: bold;
+    }
+
+    h1,
+    h2 {
+        font-weight: var(--bold-font);
+        font-family: var(--font-accent);
+        letter-spacing: var(--letter-spacing-bold);
     }
 
     blockquote {
@@ -57,6 +62,14 @@
     }
 
     a {
-        color: var(--color-accent-text);
+        color: var(--color-accent-dark);
+    }
+}
+.readonly {
+    .DataDocTextCell {
+        &:focus-within,
+        &:hover {
+            background-color: transparent;
+        }
     }
 }

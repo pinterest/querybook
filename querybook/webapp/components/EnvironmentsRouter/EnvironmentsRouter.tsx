@@ -27,6 +27,7 @@ import { FourOhFour } from 'ui/ErrorPage/FourOhFour';
 import { FourOhThree } from 'ui/ErrorPage/FourOhThree';
 
 import { EnvironmentAppRouter } from '../EnvironmentAppRouter/EnvironmentAppRouter';
+import { EmptyText } from 'ui/StyledText/StyledText';
 
 type DispatchProps = ReturnType<typeof mapDispatchToProps>;
 type StateProps = ReturnType<typeof mapStateToProps>;
@@ -41,7 +42,7 @@ const blank: React.FunctionComponent = () => {
     const message =
         window.NO_ENVIRONMENT_MESSAGE ??
         `No Environment Available. Please contact ${getAppName()} Admin for more info.`;
-    return <div className="empty-message">{message}</div>;
+    return <EmptyText>{message}</EmptyText>;
 };
 
 class EnvironmentsRouterComponent extends React.PureComponent<
@@ -104,7 +105,7 @@ class EnvironmentsRouterComponent extends React.PureComponent<
         const { environmentsLoaded } = this.state;
 
         if (!environmentsLoaded) {
-            return <Loading />;
+            return <Loading fullHeight />;
         }
 
         const {

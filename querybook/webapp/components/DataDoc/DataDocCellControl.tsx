@@ -109,7 +109,7 @@ export const DataDocCellControl: React.FunctionComponent<IProps> = ({
                 onClick: handleShare,
                 tooltip: 'Click to copy',
                 tooltipPos: 'right',
-                icon: 'share',
+                icon: 'Share',
             });
         }
 
@@ -120,7 +120,7 @@ export const DataDocCellControl: React.FunctionComponent<IProps> = ({
                 onClick: handleCopyCell,
                 tooltip: 'Copy cell',
                 tooltipPos: 'right',
-                icon: 'copy',
+                icon: 'Copy',
             });
         }
 
@@ -130,7 +130,7 @@ export const DataDocCellControl: React.FunctionComponent<IProps> = ({
                 onClick: handleCutCell,
                 tooltip: 'Cut cell',
                 tooltipPos: 'right',
-                icon: 'cut',
+                icon: 'Scissors',
             });
         }
 
@@ -140,7 +140,7 @@ export const DataDocCellControl: React.FunctionComponent<IProps> = ({
                 onClick: handlePasteCell,
                 tooltip: 'Paste cell to above',
                 tooltipPos: 'right',
-                icon: 'paste',
+                icon: 'Clipboard',
             });
         }
     }
@@ -152,7 +152,7 @@ export const DataDocCellControl: React.FunctionComponent<IProps> = ({
                 <AsyncButton
                     className="block-crud-button"
                     onClick={handleDeleteCell}
-                    icon="x"
+                    icon="X"
                     type="soft"
                     key="delete"
                 />
@@ -167,7 +167,7 @@ export const DataDocCellControl: React.FunctionComponent<IProps> = ({
                     <AsyncButton
                         className="block-crud-button"
                         onClick={handleMoveCellClick}
-                        icon={isHeader ? 'chevrons-up' : 'chevrons-down'}
+                        icon={isHeader ? 'ChevronsUp' : 'ChevronsDown'}
                         type="soft"
                         key="swap"
                     />
@@ -189,7 +189,7 @@ export const DataDocCellControl: React.FunctionComponent<IProps> = ({
                                 ? null
                                 : handleToggleDefaultCollapsed
                         }
-                        icon={animateDefaultChange ? 'lock' : 'unlock'}
+                        icon={animateDefaultChange ? 'Lock' : 'Unlock'}
                         aria-label={
                             showCollapsed
                                 ? 'default to collapsed'
@@ -206,7 +206,7 @@ export const DataDocCellControl: React.FunctionComponent<IProps> = ({
                     ? {
                           onClick: () => setShowCollapsed(!showCollapsed),
                           name: showCollapsed ? 'Uncollapse' : 'Collapse',
-                          icon: showCollapsed ? 'expand' : 'compress',
+                          icon: showCollapsed ? 'Maximize2' : 'Minimize2',
                       }
                     : null
             );
@@ -228,12 +228,12 @@ export const DataDocCellControl: React.FunctionComponent<IProps> = ({
     if (leftMenuItems.length) {
         leftButtons.unshift(
             <Dropdown
-                className={'inline mr4'}
+                className={'inline mr8'}
                 key="dropdown-menu"
                 customButtonRenderer={() => (
                     <SoftButton
                         className="block-crud-button "
-                        icon={'more-vertical'}
+                        icon="MoreVertical"
                     />
                 )}
             >
@@ -256,7 +256,6 @@ export const DataDocCellControl: React.FunctionComponent<IProps> = ({
                 </div>
             ) : null}
             {centerButtons}
-            <span>&nbsp;</span>
             {rightButtons.length ? (
                 <div className="block-right-buttons-wrapper flex-row">
                     {rightButtons}
@@ -280,7 +279,7 @@ const InsertCellButtons: React.FC<{
             className="block-crud-button"
             key={cellKey}
             onClick={() => handleInsertcell(cellKey)}
-            icon="plus"
+            icon="Plus"
             title={cellType.name ?? titleize(cellKey)}
             type="soft"
         />

@@ -1,11 +1,13 @@
 .DataDocNavigatorSection {
+    margin-bottom: var(--margin-sm);
     .navigator-header {
-        background-color: var(--select-bg-color);
+        background-color: var(--bg-light);
+        border-radius: var(--border-radius-sm);
         user-select: none;
         cursor: pointer;
-        .Title {
-            color: var(--title-color);
-            text-transform: capitalize;
+
+        & + div {
+            margin-top: var(--margin-xs);
         }
     }
 }

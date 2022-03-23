@@ -1,10 +1,10 @@
 .TextToggleButton {
     font-size: var(--small-text-size);
-    color: var(--light-text-color);
+    color: var(--text-light);
     font-weight: var(--bold-font);
     user-select: none;
 
     &.active {
-        color: var(--color-accent-text);
+        color: var(--color-accent-dark);
     }
 }

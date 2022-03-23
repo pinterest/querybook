@@ -5,6 +5,7 @@ import { generateFormattedDate } from 'lib/utils/datetime';
 import { Title } from 'ui/Title/Title';
 import { useDataDoc } from 'hooks/redux/useDataDoc';
 import { Loader } from 'ui/Loader/Loader';
+import { UntitledText } from 'ui/StyledText/StyledText';
 
 export const DataDocHoverContent: React.FC<{
     docId: number;
@@ -18,17 +19,21 @@ export const DataDocHoverContent: React.FC<{
         return (
             <>
                 <UserBadge uid={ownerUid} mini />
-                <div className="DataDocHoverContent-date">
-                    Last updated: {updatedAtDate}
+                <div className="DataDocHoverContent-date mt4">
+                    Updated {updatedAtDate}
                 </div>
             </>
         );
     };
 
     return (
-        <div className="p8 DataDocHoverContent">
-            <div className="mb4">
-                <Title size={6}>{title || 'Untitled'}</Title>
+        <div className="DataDocHoverContent">
+            <div className="mb8">
+                {title ? (
+                    <Title size="smedium">{title}</Title>
+                ) : (
+                    <UntitledText size="smedium" />
+                )}
             </div>
             <Loader
                 item={dataDoc}

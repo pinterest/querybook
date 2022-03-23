@@ -6,14 +6,18 @@ import { navigateWithinEnv } from 'lib/utils/query-string';
 import { Modal } from 'ui/Modal/Modal';
 import { useBrowserTitle } from 'hooks/useBrowserTitle';
 import { useModalRoute } from 'hooks/useModalRoute';
+import { Tabs } from 'ui/Tabs/Tabs';
 import { UserSettingsMenu } from 'components/UserSettingsMenu/UserSettingsMenu';
+
+export type UserSettingsTab = 'general' | 'editor';
 
 const UserSettingsMenuRoute: React.FunctionComponent<RouteComponentProps> = ({
     location,
 }) => {
     useBrowserTitle('User Settings');
     const isModalRoute = useModalRoute(location);
-    const contentDOM = <UserSettingsMenu />;
+
+    const [tab, setTab] = React.useState<UserSettingsTab>('general');
 
     return (
         <Modal
@@ -21,9 +25,19 @@ const UserSettingsMenuRoute: React.FunctionComponent<RouteComponentProps> = ({
                 isModalRoute ? history.goBack : () => navigateWithinEnv('/')
             }
             title="User Settings"
-            className="with-padding"
+            topDOM={
+                <Tabs
+                    className="mb8"
+                    items={[
+                        { key: 'general', name: 'General' },
+                        { key: 'editor', name: 'Editor' },
+                    ]}
+                    selectedTabKey={tab}
+                    onSelect={(newTab: UserSettingsTab) => setTab(newTab)}
+                />
+            }
         >
-            {contentDOM}
+            <UserSettingsMenu tab={tab} />
         </Modal>
     );
 };

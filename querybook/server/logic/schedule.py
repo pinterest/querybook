@@ -1,5 +1,6 @@
 from datetime import datetime
 from functools import wraps
+from sqlalchemy.sql.expression import func, and_
 
 from app.flask_app import celery
 from app.db import with_session
@@ -9,7 +10,7 @@ from models.schedule import (
     TaskSchedule,
     TaskRunRecord,
 )
-from sqlalchemy.sql.expression import func, and_
+from models.datadoc import DataDoc
 
 
 @with_session
@@ -150,52 +151,74 @@ def get_data_doc_schedule_name(id: int):
 
 
 @with_session
-def get_task_run_record_run_with_schedule(docs, session):
-    scheduled_doc_names = [get_data_doc_schedule_name(doc.id) for doc in docs]
-    all_schedules = (
-        session.query(TaskSchedule)
-        .filter(TaskSchedule.name.in_(scheduled_doc_names))
-        .all()
+def get_scheduled_data_docs_by_user(
+    uid, environment_id, offset, limit, filters={}, session=None
+):
+    query = (
+        session.query(DataDoc, TaskSchedule)
+        .join(
+            TaskSchedule,
+            TaskSchedule.name == func.concat("run_data_doc_", DataDoc.id),
+            isouter=(not filters.get("scheduled_only", False)),
+        )
+        .filter(DataDoc.owner_uid == uid)
+        .filter(DataDoc.archived == False)  # noqa: E712
+        .filter(DataDoc.environment_id == environment_id)
+        .order_by(DataDoc.id.desc())
     )
+
+    if "name" in filters:
+        query = query.filter(DataDoc.title.contains(filters.get("name")))
+
+    count = query.count()
+    docs_with_schedules = query.offset(offset).limit(limit).all()
+    docs_with_schedules_and_records = get_task_run_record_run_with_schedule(
+        docs_with_schedules, session=session
+    )
+
+    return docs_with_schedules_and_records, count
+
+
+@with_session
+def get_task_run_record_run_with_schedule(docs_with_schedule, session):
+    all_schedules_names = [
+        schedule.name for _, schedule in docs_with_schedule if schedule is not None
+    ]
 
     last_run_record_subquery = (
         session.query(
             TaskRunRecord.name, func.max(TaskRunRecord.created_at).label("max_date")
         )
+        .filter(TaskRunRecord.name.in_(all_schedules_names))
         .group_by(TaskRunRecord.name)
         .subquery()
     )
-    all_task_run_records_subquery = session.query(TaskRunRecord).join(
-        last_run_record_subquery,
-        and_(
-            TaskRunRecord.created_at == last_run_record_subquery.c.max_date,
-            last_run_record_subquery.c.name == TaskRunRecord.name,
-        ),
+    last_task_run_records = (
+        session.query(TaskRunRecord)
+        .join(
+            last_run_record_subquery,
+            and_(
+                TaskRunRecord.created_at == last_run_record_subquery.c.max_date,
+                last_run_record_subquery.c.name == TaskRunRecord.name,
+            ),
+        )
+        .all()
     )
 
-    all_docs = map(
-        lambda doc: dict(
-            {
-                "last_record": next(
-                    filter(
-                        lambda task: task.name == get_data_doc_schedule_name(doc.id),
-                        all_task_run_records_subquery,
-                    ),
-                    None,
+    docs_with_schedule_and_record = []
+    for doc, schedule in docs_with_schedule:
+        last_record = None
+        if schedule:
+            last_record = next(
+                filter(
+                    lambda record: record.name == schedule.name, last_task_run_records
                 ),
-                "schedule": next(
-                    filter(
-                        lambda task: task.name == get_data_doc_schedule_name(doc.id),
-                        all_schedules,
-                    ),
-                    None,
-                ),
-                "doc": doc,
-            }
-        ),
-        docs,
-    )
-    return all_docs
+                None,
+            )
+        docs_with_schedule_and_record.append(
+            {"last_record": last_record, "schedule": schedule, "doc": doc}
+        )
+    return docs_with_schedule_and_record
 
 
 @with_session

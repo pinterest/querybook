@@ -9,13 +9,13 @@ import { navigateWithinEnv } from 'lib/utils/query-string';
 
 import { UserBadge } from 'components/UserBadge/UserBadge';
 import { TokenCreation } from 'components/Token/TokenCreation';
-import { UserAvatar } from 'components/UserBadge/UserAvatar';
 
 import { Link } from 'ui/Link/Link';
 import { MenuInfoItem, Menu, MenuDivider, MenuItem } from 'ui/Menu/Menu';
 import { Modal } from 'ui/Modal/Modal';
 import { Popover, PopoverLayout } from 'ui/Popover/Popover';
 import { ToggleSwitch } from 'ui/ToggleSwitch/ToggleSwitch';
+import { IconButton } from 'ui/Button/IconButton';
 
 import './UserMenu.scss';
 
@@ -66,7 +66,7 @@ export const UserMenu: React.FC<IUserMenuProps> = ({
         const showThemeToggle = theme === 'dark' || theme === 'default';
         const themeToggle = showThemeToggle ? (
             <MenuInfoItem className="horizontal-space-between">
-                <span className="mr8">Dark Theme</span>
+                <span className="mr12">Dark Theme</span>
                 <ToggleSwitch
                     checked={theme === 'dark'}
                     onChange={(val) => setTheme(val ? 'dark' : 'default')}
@@ -76,11 +76,11 @@ export const UserMenu: React.FC<IUserMenuProps> = ({
         return (
             <Menu>
                 <MenuInfoItem>
-                    <UserBadge uid={userInfo.uid} />
+                    <UserBadge uid={userInfo.uid} cardStyle />
                 </MenuInfoItem>
                 <MenuDivider />
-                <MenuItem onClick={goToUserSettingsMenu}>Settings</MenuItem>
                 {themeToggle}
+                <MenuItem onClick={goToUserSettingsMenu}>Settings</MenuItem>
                 <MenuDivider />
                 <MenuItem onClick={toggleShowTokenModal}>
                     API Access Token
@@ -128,9 +128,7 @@ export const UserMenu: React.FC<IUserMenuProps> = ({
                 aria-label={'User Settings'}
                 data-balloon-pos={tooltipPos}
             >
-                <UserAvatar uid={userInfo.uid} />
-
-                <span className="user-menu-title">Settings</span>
+                <IconButton icon="Settings" title="Settings" />
             </span>
             {tokenCreationModalDOM}
             {userSettingsPopover}

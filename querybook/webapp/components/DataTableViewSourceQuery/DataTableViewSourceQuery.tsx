@@ -11,10 +11,10 @@ import { Loading } from 'ui/Loading/Loading';
 import { Table } from 'ui/Table/Table';
 import { ThemedCodeHighlight } from 'ui/CodeHighlight/ThemedCodeHighlight';
 import { Title } from 'ui/Title/Title';
-import { Divider } from 'ui/Divider/Divider';
 import { Button } from 'ui/Button/Button';
 import { Link } from 'ui/Link/Link';
 import './DataTableViewSourceQuery.scss';
+import { EmptyText } from 'ui/StyledText/StyledText';
 
 const dataJobMetadataTableColumns = ['name', 'value'];
 
@@ -81,7 +81,9 @@ export const DataTableViewSourceQuery: React.FunctionComponent<IProps> = ({
 
     const errorDOM =
         jobMetadataIds.length > 0 ? null : (
-            <div>The source query for this table is not available.</div>
+            <EmptyText className="m24">
+                The source query is not available
+            </EmptyText>
         );
 
     const showMoreDOM =
@@ -152,8 +154,9 @@ const DataJobMetadataInfo: React.FC<{
     const tableDOM = (
         <div className="DataTableViewSourceQuery-table">
             <div className="data-job-metadata-top">
-                <Title size={5}>Meta Data Job</Title>
-                <Divider marginTop="4px" marginBottom="12px" />
+                <Title size="med" className="mb12">
+                    Meta Data Job
+                </Title>
             </div>
             <Table
                 className="data-table-details-table"
@@ -173,10 +176,11 @@ const DataJobMetadataInfo: React.FC<{
     }
 
     const queryDOM = (
-        <div className="DataTableViewSourceQuery-source-query">
+        <div className="DataTableViewSourceQuery-source-query mt16">
             <div className="data-job-source-query-top">
-                <Title size={5}>Source Query</Title>
-                <Divider marginTop="4px" marginBottom="12px" />
+                <Title size="med" className="mb12">
+                    Source Query
+                </Title>
             </div>
             <ThemedCodeHighlight value={queryText} />
         </div>

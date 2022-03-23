@@ -8,34 +8,40 @@ import { IDataDoc } from 'const/datadoc';
 import { IStoreState } from '../store/types';
 import { ITaskStatusRecord, ITaskSchedule } from 'const/schedule';
 
-export type IScheduledDoc = {
+export interface IScheduledDocFilters {
+    name?: string;
+    scheduled_only?: boolean;
+}
+export interface IScheduledDoc {
     doc: IDataDoc;
-    lastRecord: ITaskStatusRecord;
+    last_record: ITaskStatusRecord;
     schedule: ITaskSchedule;
-};
+}
 
-export interface IReceiveDataWithSchemaAction extends Action {
-    type: '@@dataDoc/RECEIVE_DATA_WITH_SCHEMA';
+export interface IReceiveDocWithScheduleAction extends Action {
+    type: '@@scheduledDataDoc/RECEIVE_DOC_WITH_SCHEMA';
     payload: {
         docs: IScheduledDoc[];
         total: number;
         page: number;
         pageSize: number;
-        filtered: string;
+        filters: IScheduledDocFilters;
     };
 }
+
+export type ScheduledDataDocAction = IReceiveDocWithScheduleAction;
 
 export type ThunkResult<R> = ThunkAction<
     R,
     IStoreState,
     undefined,
-    IReceiveDataWithSchemaAction
+    IReceiveDocWithScheduleAction
 >;
 
 export type ThunkDispatch = UntypedThunkDispatch<
     IStoreState,
     undefined,
-    IReceiveDataWithSchemaAction
+    IReceiveDocWithScheduleAction
 >;
 
 export interface IScheduledDataDocState {
@@ -43,5 +49,5 @@ export interface IScheduledDataDocState {
     totalPages: number;
     page: number;
     pageSize: number;
-    filtered: string;
+    filters: IScheduledDocFilters;
 }

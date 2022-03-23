@@ -9,6 +9,10 @@ import { useBrowserTitle } from 'hooks/useBrowserTitle';
 import { FAQ } from 'components/Info/FAQ';
 import { Shortcut } from 'components/Info/Shortcut';
 import { Tours } from 'components/Info/Tours';
+import {
+    TemplateGuide,
+    TemplateGuideModal,
+} from 'components/TemplateGuide/TemplateGuide';
 
 import { Modal } from 'ui/Modal/Modal';
 
@@ -27,6 +31,8 @@ const InfoMenuRoute: React.FunctionComponent<RouteComponentProps> = ({
                 return <Tours />;
             case 'faq':
                 return <FAQ />;
+            case 'templating':
+                return <TemplateGuide />;
             default:
                 navigateWithinEnv('/');
         }
@@ -37,12 +43,18 @@ const InfoMenuRoute: React.FunctionComponent<RouteComponentProps> = ({
             ? 'Keyboard Shortcuts'
             : infoType === 'tour'
             ? 'Tutorials'
-            : 'Frequently Asked Questions';
+            : infoType === 'faq'
+            ? 'Frequently Asked Questions'
+            : 'Template Guide';
 
     return isModal ? (
-        <Modal onHide={history.goBack} title={title} className="with-padding">
-            {getContentDOM()}
-        </Modal>
+        infoType === 'templating' ? (
+            <TemplateGuideModal onHide={history.goBack} />
+        ) : (
+            <Modal onHide={history.goBack} title={title}>
+                {getContentDOM()}
+            </Modal>
+        )
     ) : (
         <div className="InfoMenuRoute m24">{getContentDOM()}</div>
     );
