@@ -9,6 +9,7 @@ import { Pagination } from 'ui/Pagination/Pagination';
 import { DebouncedInput } from 'ui/DebouncedInput/DebouncedInput';
 import { Checkbox } from 'ui/Checkbox/Checkbox';
 import { Container } from 'ui/Container/Container';
+import { EmptyText } from 'ui/StyledText/StyledText';
 
 import './DataDocScheduleList.scss';
 
@@ -125,6 +126,13 @@ const DataDocScheduleList: React.FC = () => {
                         key={docWithSchedule.doc.id}
                     />
                 ))}
+                {dataDocsWithSchedule.length === 0 && (
+                    <EmptyText>
+                        {filters.scheduled_only
+                            ? 'No scheduled DataDocs found'
+                            : 'No DataDocs found'}
+                    </EmptyText>
+                )}
                 {totalPages > 1 && (
                     <Pagination
                         currentPage={page}

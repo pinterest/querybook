@@ -208,6 +208,7 @@ export const EmptyText: React.FunctionComponent<IStyledTextProps> = ({
         weight="bold"
         size="large"
         center
+        noUserSelect
         {...elementProps}
     >
         {children}

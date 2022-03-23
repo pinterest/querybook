@@ -77,11 +77,11 @@ export function getKeySymbol(key: string) {
         ? SpecialKeyToSymbol.OSX
         : SpecialKeyToSymbol.Windows;
 
-    return upperKey in specialKeyMap ? specialKeyMap[upperKey] : upperKey;
+    return upperKey in specialKeyMap ? specialKeyMap[upperKey] : key;
 }
 
 export function getShortcutSymbols(keyString: string) {
-    return keyString.split('-').map(getKeySymbol).join('');
+    return keyString.split('-').map(getKeySymbol).join(' ');
 }
 
 export { default as KeyMap } from 'const/keyMap';
