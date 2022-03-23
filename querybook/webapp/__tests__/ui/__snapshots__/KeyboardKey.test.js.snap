@@ -2,7 +2,7 @@
 
 exports[`matches enzyme snapshots matches snapshot 1`] = `
 <KeyboardKey__StyledKeyboardKey>
-  TEST
+  test
 </KeyboardKey__StyledKeyboardKey>
 `;
 
@@ -10,6 +10,6 @@ exports[`matches test renderer snapshot serializes the styles 1`] = `
 <span
   className="KeyboardKey__StyledKeyboardKey-sc-1o6e5rh-0 fqnvqI KeyboardKey mr4"
 >
-  TEST
+  test
 </span>
 `;
