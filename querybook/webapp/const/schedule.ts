@@ -18,7 +18,7 @@ export interface IStatusTypeList {
 export const StatusTypes: IStatusTypeList = {
     [TaskRunStatus.RUNNING]: {
         class: 'status-in-progress',
-        iconName: 'Loader',
+        iconName: 'Loader2',
         text: 'In Progress',
     },
     [TaskRunStatus.SUCCESS]: {

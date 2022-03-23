@@ -51,7 +51,7 @@ export const DataDocHeader = React.forwardRef<HTMLDivElement, IProps>(
         const timeMessage = isSaving ? (
             <div className="flex-row">
                 Saving
-                <Icon name="Loader" className="ml8" />
+                <Icon name="Loader2" className="ml8" />
             </div>
         ) : (
             `Updated ${generateFormattedDate(lastUpdated, 'X')}`
