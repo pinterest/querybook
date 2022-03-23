@@ -264,11 +264,12 @@ export const DataTableViewSamples: React.FunctionComponent<IDataTableViewSamples
                                 onClick={toggleShowAdvancedOptions}
                                 title={
                                     showAdvancedOptions
-                                        ? 'Advanced Options'
+                                        ? 'Hide Advanced Options'
                                         : 'Show Advanced Options'
                                 }
                             />
                             <AsyncButton
+                                icon="Eye"
                                 title="View Sample Query"
                                 onClick={() =>
                                     getDataTableSamplesQuery(
@@ -282,6 +283,8 @@ export const DataTableViewSamples: React.FunctionComponent<IDataTableViewSamples
                                 }
                             />
                             <AsyncButton
+                                icon="Play"
+                                color="accent"
                                 title="Generate Samples"
                                 onClick={submitForm}
                                 disabled={isSubmitting}
