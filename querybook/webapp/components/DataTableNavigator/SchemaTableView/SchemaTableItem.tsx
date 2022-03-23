@@ -75,10 +75,12 @@ export const SchemaTableItem: React.FC<{
         <div className={'DataDocNavigatorSection'}>
             <StyledItem className="horizontal-space-between navigator-header pl8">
                 <div
-                    className="flex1 flex-row"
+                    className="schema-name flex1 flex-row"
                     onClick={() => setIsExpanded(!isExpanded)}
                 >
-                    <Title size="small">{name}</Title>
+                    <Title size="small" className="one-line-ellipsis">
+                        {name}
+                    </Title>
                 </div>
                 <OrderByButton
                     asc={sortOrder.asc}

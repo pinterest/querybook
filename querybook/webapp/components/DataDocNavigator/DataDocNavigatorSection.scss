@@ -9,5 +9,9 @@
         & + div {
             margin-top: var(--margin-xs);
         }
+
+        .schema-name {
+            overflow: hidden;
+        }
     }
 }
