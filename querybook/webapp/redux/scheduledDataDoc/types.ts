@@ -14,8 +14,8 @@ export interface IScheduledDocFilters {
 }
 export interface IScheduledDoc {
     doc: IDataDoc;
-    last_record: ITaskStatusRecord;
-    schedule: ITaskSchedule;
+    last_record?: ITaskStatusRecord;
+    schedule?: ITaskSchedule;
 }
 
 export interface IReceiveDocWithScheduleAction extends Action {

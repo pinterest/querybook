@@ -11,7 +11,7 @@ import { DataTableViewMini } from 'components/DataTableViewMini/DataTableViewMin
 
 import { Level } from 'ui/Level/Level';
 import { IconButton } from 'ui/Button/IconButton';
-
+import { InfoButton } from 'ui/Button/InfoButton';
 import './DataDocLeftSidebar.scss';
 interface IProps {
     docId: number;
@@ -60,7 +60,13 @@ export const DataDocLeftSidebar: React.FunctionComponent<IProps> = ({
                         icon="ArrowLeft"
                         onClick={() => setContentState('default')}
                     />
-                    <div>contents</div>
+                    <div className="flex-row">
+                        <span className="mr4">contents</span>
+                        <InfoButton layout={['right', 'top']}>
+                            Click to jump to the corresponding cell. Drag cells
+                            to reorder them.
+                        </InfoButton>
+                    </div>
                 </Level>
                 <DataDocContents cells={cells} docId={docId} />
             </div>
