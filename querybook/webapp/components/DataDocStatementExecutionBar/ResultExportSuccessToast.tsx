@@ -1,10 +1,10 @@
 import React from 'react';
 
+import { Button } from 'ui/Button/Button';
 import { Modal } from 'ui/Modal/Modal';
-import { Link } from 'ui/Link/Link';
-import { Title } from 'ui/Title/Title';
 import { CopyPasteModal } from 'ui/CopyPasteModal/CopyPasteModal';
 import { IQueryExecutionExportStatusInfo } from 'const/queryExecution';
+import history from 'lib/router-history';
 import toast from 'react-hot-toast';
 
 const UrlModal: React.FunctionComponent<{
@@ -12,12 +12,9 @@ const UrlModal: React.FunctionComponent<{
     title: string;
     onHide: () => any;
 }> = ({ url, title, onHide }) => (
-    <Modal onHide={onHide}>
+    <Modal onHide={onHide} title={title}>
         <div className="flex-center mv24">
-            <Title size="med">{title}</Title>
-            <Link to={url} newTab>
-                View Export
-            </Link>
+            <Button title="View Export" onClick={() => window.open(url)} />
         </div>
     </Modal>
 );

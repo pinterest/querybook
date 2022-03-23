@@ -144,6 +144,7 @@ export const ResultExportDropdown: React.FunctionComponent<IProps> = ({
                         style: {
                             display: 'none',
                         },
+                        duration: Infinity,
                     },
                 }
             );
