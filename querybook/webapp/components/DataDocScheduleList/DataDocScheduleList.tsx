@@ -129,8 +129,8 @@ const DataDocScheduleList: React.FC = () => {
                 {dataDocsWithSchedule.length === 0 && (
                     <EmptyText>
                         {filters.scheduled_only
-                            ? 'No scheduled DataDocs found'
-                            : 'No DataDocs found'}
+                            ? 'No Scheduled DataDocs'
+                            : 'No DataDocs'}
                     </EmptyText>
                 )}
                 {totalPages > 1 && (
