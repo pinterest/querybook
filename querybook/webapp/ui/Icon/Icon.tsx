@@ -1,4 +1,5 @@
 import React from 'react';
+import clsx from 'clsx';
 import type { LucideProps, Icon as LucideIcon } from 'lucide-react';
 import AllLucideIcons, { AllLucideIconNames } from './LucideIcons';
 import './Icon.scss';
@@ -7,7 +8,7 @@ import './Icon.scss';
 export interface IIconProps {
     className?: string;
     size?: string | number;
-    name: AllLucideIconNames;
+    name: AllLucideIconNames | 'Loading';
     options?: LucideProps;
     fill?: boolean;
     color?: TButtonColors;
@@ -24,15 +25,22 @@ export const Icon: React.FunctionComponent<IIconProps> = React.memo(
         fill = false,
         color = '',
     }) => {
-        if (!(name in AllLucideIcons)) {
+        if (!(name in AllLucideIcons) && name !== 'Loading') {
             return null;
         }
-        const LucideIconComponent: LucideIcon = AllLucideIcons[name];
+        const LucideIconComponent: LucideIcon =
+            AllLucideIcons[name === 'Loading' ? 'Circle' : name];
+
+        const iconClassName = clsx({
+            Icon: true,
+            [className]: Boolean(className),
+            fill,
+            [color]: Boolean(color),
+            'loading-icon': name === 'Loading',
+        });
 
         return (
-            <span
-                className={`${className} Icon ${fill ? 'fill' : ''} ${color}`}
-            >
+            <span className={iconClassName}>
                 <LucideIconComponent {...options} size={size} />
             </span>
         );

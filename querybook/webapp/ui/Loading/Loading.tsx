@@ -36,9 +36,11 @@ const StyledLoadingText = styled.div`
     text-align: center;
 `;
 
-export const LoadingIcon: React.FC = () => (
+export const LoadingIcon: React.FC<{ className?: string }> = ({
+    className = '',
+}) => (
     <div className="flex-center">
-        <Icon name="Loader" className="p8" color="light" />
+        <Icon name="Loading" className={'p8' + className} color="light" />
     </div>
 );
 

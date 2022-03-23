@@ -33,7 +33,7 @@ exports[`matches test renderer snapshot serializes the styles 1`] = `
       className="IconButton no-padding"
     >
       <span
-        className=" Icon  "
+        className="Icon"
       >
         <svg
           className="lucide lucide-menu"

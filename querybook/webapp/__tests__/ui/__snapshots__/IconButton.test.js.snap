@@ -112,7 +112,7 @@ exports[`matches test renderer snapshot serializes the styles 1`] = `
   onClick={[Function]}
 >
   <span
-    className=" Icon  "
+    className="Icon"
   >
     <svg
       className="lucide lucide-check"

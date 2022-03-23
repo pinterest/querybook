@@ -60,7 +60,7 @@ export const QueryExecutionNotificationButton: React.FunctionComponent<IProps> =
     }, [notification]);
 
     const iconName = loading
-        ? 'Loader'
+        ? 'Loading'
         : notification
         ? 'CheckCircle'
         : 'Circle';
