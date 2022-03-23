@@ -19,7 +19,7 @@ function useDataDocScheduleFiltersAndPagination() {
         page: initPage,
         filters: initFilters,
         pageSize: initPageSize,
-        numberOfResult,
+        numberOfResults,
     } = useSelector((state: IStoreState) => state.scheduledDocs);
 
     const [docName, setDocName] = useState(initFilters.name ?? '');
@@ -46,7 +46,7 @@ function useDataDocScheduleFiltersAndPagination() {
         setDocName,
         setScheduledOnly,
 
-        numberOfResult,
+        numberOfResults,
         page,
         setPage,
         pageSize,
@@ -81,7 +81,7 @@ const DataDocScheduleList: React.FC = () => {
         page,
         pageSize,
 
-        numberOfResult,
+        numberOfResults,
 
         setPage,
         // Page size is fixed for now, we can
@@ -100,7 +100,7 @@ const DataDocScheduleList: React.FC = () => {
         filters
     );
 
-    const totalPages = Math.ceil(numberOfResult / pageSize);
+    const totalPages = Math.ceil(numberOfResults / pageSize);
 
     return (
         <Container>
@@ -132,7 +132,7 @@ const DataDocScheduleList: React.FC = () => {
                         </EmptyText>
                     ) : (
                         <AccentText color="light" className="ml4 mb8">
-                            <PrettyNumber val={numberOfResult} unit="result" />
+                            <PrettyNumber val={numberOfResults} unit="result" />
                         </AccentText>
                     )}
                     {dataDocsWithSchedule.map((docWithSchedule) => (
