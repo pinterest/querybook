@@ -112,7 +112,7 @@ export const DataTableHeader: React.FunctionComponent<IDataTableHeader> = ({
     );
 
     const titleDOM = (
-        <AccentText className="mb4" color="text" size="xlarge" weight="bold">
+        <AccentText className="mb8" color="text" size="xlarge" weight="bold">
             {shortTableName}
         </AccentText>
     );
@@ -126,14 +126,16 @@ export const DataTableHeader: React.FunctionComponent<IDataTableHeader> = ({
         <div className="DataTableHeader-owner mb8">
             <div className="DataTableHeader-owner-list flex-row ">
                 <AccentText
-                    className="header-subtitle mr20"
+                    className="header-subtitle mr20 mt4"
                     weight="bold"
                     color="lightest"
                 >
                     Owners
                 </AccentText>
                 <div className="owner-badges mr8 flex-row">
-                    {dbTableOwner && <UserBadge name={dbTableOwner} mini />}
+                    {dbTableOwner && (
+                        <UserBadge name={dbTableOwner} mini cardStyle />
+                    )}
                     {ownershipDOM}
                     {isDBTableOwner ? null : isTableOwner ? (
                         <IconButton
@@ -166,7 +168,7 @@ export const DataTableHeader: React.FunctionComponent<IDataTableHeader> = ({
     const tagDOM = (
         <div className="flex-row">
             <AccentText
-                className="header-subtitle mr20"
+                className="header-subtitle mr20 mt6"
                 weight="bold"
                 color="lightest"
             >

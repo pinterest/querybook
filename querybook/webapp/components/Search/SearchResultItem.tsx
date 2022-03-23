@@ -165,7 +165,7 @@ export const QueryItem: React.FunctionComponent<IQueryItemProps> = ({
                 ref={selfRef}
             >
                 <div className="result-items">
-                    <a className="result-items-top horizontal-space-between">
+                    <div className="result-items-top horizontal-space-between">
                         <HighlightTitle
                             title={resultTitle}
                             searchString={searchString}
@@ -174,7 +174,7 @@ export const QueryItem: React.FunctionComponent<IQueryItemProps> = ({
                             <Tag mini>{queryType}</Tag>
                             {queryEngine && <Tag mini>{queryEngine.name}</Tag>}
                         </div>
-                    </a>
+                    </div>
                     <div className="mv8">{queryTextDOM}</div>
                     <Level className="result-items-bottom">
                         <span className="result-item-owner">
@@ -237,12 +237,12 @@ export const DataDocItem: React.FunctionComponent<IDataDocItemProps> = ({
                     <UserAvatar uid={ownerUid} />
                 </div>
                 <div className="result-items">
-                    <a className="result-items-top horizontal-space-between">
+                    <div className="result-items-top horizontal-space-between">
                         <HighlightTitle
                             title={title}
                             searchString={searchString}
                         />
-                    </a>
+                    </div>
                     {descriptionDOM}
                     <Level className="result-items-bottom">
                         <span className="result-item-owner">
@@ -305,7 +305,7 @@ export const DataTableItem: React.FunctionComponent<IDataTableItemProps> = ({
                 ref={selfRef}
             >
                 <div className="result-items">
-                    <a className="result-items-top horizontal-space-between">
+                    <div className="result-items-top horizontal-space-between">
                         <div className="flex-row">
                             <HighlightTitle
                                 title={`${schema}.${name}`}
@@ -316,7 +316,7 @@ export const DataTableItem: React.FunctionComponent<IDataTableItemProps> = ({
                         <StyledText size="small" color="lightest">
                             {generateFormattedDate(createdAt, 'X')}
                         </StyledText>
-                    </a>
+                    </div>
                     <Level className="result-items-bottom">
                         <span className="result-item-description">
                             {descriptionDOM}

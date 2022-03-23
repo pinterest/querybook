@@ -7,7 +7,6 @@ import * as queryExecutionsActions from 'redux/queryExecutions/action';
 import { IStoreState } from 'redux/store/types';
 import { QueryViewEditor } from './QueryViewEditor';
 import { QueryViewExecution } from './QueryViewExecution';
-import { Container } from 'ui/Container/Container';
 import { ErrorPage } from 'ui/ErrorPage/ErrorPage';
 import { AccessRequestButton } from 'components/AccessRequestButton/AccessRequestButton';
 import { Loader } from 'ui/Loader/Loader';
@@ -55,7 +54,7 @@ export const QueryView: React.FunctionComponent<IProps> = ({ queryId }) => {
     };
 
     return (
-        <Container className="QueryView">
+        <div className="QueryView">
             <Loader
                 item={queryExecution}
                 itemKey={queryId}
@@ -65,6 +64,6 @@ export const QueryView: React.FunctionComponent<IProps> = ({ queryId }) => {
                 <QueryViewEditor queryExecution={queryExecution} />
                 <QueryViewExecution queryExecution={queryExecution} />
             </Loader>
-        </Container>
+        </div>
     );
 };

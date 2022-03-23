@@ -7,17 +7,12 @@
         font-family: var(--font-accent);
     }
     .header-subtitle {
-        margin-top: 6px;
         align-self: flex-start;
     }
-    .owner-list {
+    .DataTableHeader-owner-list {
         .owner-badges {
             flex-wrap: wrap;
-            min-height: 36px;
-            .UserBadge {
-                margin-top: 4px;
-                margin-bottom: 4px;
-            }
+            min-height: 30px;
             .UserBadge + .IconButton {
                 margin-left: 12px;
             }

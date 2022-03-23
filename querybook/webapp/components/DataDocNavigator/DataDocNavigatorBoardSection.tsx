@@ -205,7 +205,7 @@ export const DataDocNavigatorBoardSection: React.FC<INavigatorBoardSectionProps>
     );
 
     return (
-        <div className="DataDocNavigatorSection">
+        <div className="DataDocNavigatorSection mb12">
             {sectionHeader}
             {boardsDOM}
             {showCreateModal ? (

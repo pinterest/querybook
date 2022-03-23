@@ -24,6 +24,17 @@
                 .QuerySnippetNavigator {
                     height: 100%;
                 }
+
+                .navigator-header {
+                    background-color: var(--bg-light);
+                    border-radius: var(--border-radius-sm);
+                    user-select: none;
+                    cursor: pointer;
+
+                    & + div {
+                        margin-top: var(--margin-xs);
+                    }
+                }
             }
         }
 

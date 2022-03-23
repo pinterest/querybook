@@ -30,10 +30,10 @@ export const StatementResult: React.FC<IProps> = ({
         actualRowMinusColCount: number,
         fetchedAllRows: boolean
     ) => {
-        const resultPreviewTooltip = `Download full result (${formatNumber(
+        const resultPreviewTooltip = `Click Export to download full result (${formatNumber(
             resultRowMinusColCount,
             'row'
-        )}) through Export.`;
+        )})`;
 
         const fetchRowInfo = fetchedAllRows ? (
             `${formatNumber(actualRowMinusColCount, 'Row')} (Full Result)`
