@@ -1,8 +1,8 @@
 import React from 'react';
+import clsx from 'clsx';
 import type { LucideProps, Icon as LucideIcon } from 'lucide-react';
 import AllLucideIcons, { AllLucideIconNames } from './LucideIcons';
 import './Icon.scss';
-import clsx from 'clsx';
 
 // Wrapper for feather icon
 export interface IIconProps {
