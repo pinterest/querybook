@@ -60,7 +60,7 @@ export const DataDocLeftSidebar: React.FunctionComponent<IProps> = ({
                         icon="ArrowLeft"
                         onClick={() => setContentState('default')}
                     />
-                    <div>
+                    <div className="flex-row">
                         <span className="mr4">contents</span>
                         <InfoButton layout={['right', 'top']}>
                             Click to jump to the corresponding cell. Drag cells
