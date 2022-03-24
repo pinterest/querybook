@@ -9,6 +9,7 @@ import { useSelector, useDispatch } from 'react-redux';
 
 import { useMakeSelector } from 'hooks/redux/useMakeSelector';
 import { getQueryString } from 'lib/utils/query-string';
+import { DataDocContext } from 'context/DataDoc';
 
 import { currentEnvironmentSelector } from 'redux/environment/selector';
 import * as queryExecutionsActions from 'redux/queryExecutions/action';
@@ -16,9 +17,9 @@ import * as queryExecutionsSelectors from 'redux/queryExecutions/selector';
 
 import { QueryExecutionBar } from 'components/QueryExecutionBar/QueryExecutionBar';
 import { QueryExecution } from 'components/QueryExecution/QueryExecution';
-
 import { QueryExecutionPicker } from 'components/ExecutionPicker/QueryExecutionPicker';
-import { DataDocContext } from 'context/DataDoc';
+import { QueryExecutionDuration } from 'components/QueryExecution/QueryExecutionDuration';
+
 import { StyledText } from 'ui/StyledText/StyledText';
 
 interface IProps {
@@ -125,11 +126,18 @@ export const DataDocQueryExecutions: React.FunctionComponent<IProps> = React.mem
 
             return (
                 <div className="execution-selector-section horizontal-space-between">
-                    <QueryExecutionPicker
-                        queryExecutionId={currentExecution?.id}
-                        onSelection={handleQueryExecutionSelected}
-                        queryExecutions={queryExecutions}
-                    />
+                    <div className="flex-row">
+                        <QueryExecutionPicker
+                            queryExecutionId={currentExecution?.id}
+                            onSelection={handleQueryExecutionSelected}
+                            queryExecutions={queryExecutions}
+                        />
+                        <div className="ml8">
+                            <QueryExecutionDuration
+                                queryExecution={currentExecution}
+                            />
+                        </div>
+                    </div>
                     <div className="execution-selector-bottom flex-row">
                         <QueryExecutionBar
                             queryExecution={currentExecution}

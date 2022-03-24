@@ -5,6 +5,7 @@ import { IQueryExecution } from 'const/queryExecution';
 import { currentEnvironmentSelector } from 'redux/environment/selector';
 import { QueryExecutionBar } from 'components/QueryExecutionBar/QueryExecutionBar';
 import { QueryExecution } from 'components/QueryExecution/QueryExecution';
+import { QueryExecutionDuration } from 'components/QueryExecution/QueryExecutionDuration';
 
 export const QueryViewExecution: React.FunctionComponent<{
     queryExecution: IQueryExecution;
@@ -20,7 +21,8 @@ export const QueryViewExecution: React.FunctionComponent<{
 
     const queryExecutionDOM = queryExecution && (
         <div className="query-execution-section-inner">
-            <div className="right-align">
+            <div className="horizontal-space-between">
+                <QueryExecutionDuration queryExecution={queryExecution} />
                 <QueryExecutionBar
                     queryExecution={queryExecution}
                     permalink={generatePermaLink()}

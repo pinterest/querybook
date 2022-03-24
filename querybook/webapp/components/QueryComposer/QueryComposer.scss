@@ -57,6 +57,10 @@
 
             .QueryComposerExecution {
                 padding: 0px 8px 16px 16px;
+                .execution-text {
+                    // need this to line up for some reason
+                    line-height: 1;
+                }
             }
         }
     }
