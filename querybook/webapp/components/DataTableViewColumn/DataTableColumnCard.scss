@@ -21,5 +21,9 @@
             @include one-line-ellipsis();
             width: 95%;
         }
+
+        .EditableTextField .editor-wrapper {
+            background-color: var(--bg-light);
+        }
     }
 }

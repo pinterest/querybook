@@ -6,7 +6,7 @@
     .schema-info-panel {
         min-height: 20%;
         max-height: 80%;
-        margin: 0px -4px;
+        box-shadow: var(--box-shadow-sm);
 
         .DataTableViewMini {
             border-top: var(--border);
