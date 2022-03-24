@@ -220,6 +220,7 @@ export const ResultExportDropdown: React.FunctionComponent<IProps> = ({
                                     e.preventDefault();
                                     onGenericExportClick(exporter, true);
                                 }}
+                                className="ml8"
                             />
                         ) : null}
                     </div>
