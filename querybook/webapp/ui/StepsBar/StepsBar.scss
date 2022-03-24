@@ -9,7 +9,7 @@
             list-style-type: none;
             position: relative;
             text-align: center;
-            font-size: var(--small-text-size);
+            font-size: var(--xsmall-text-size);
             font-weight: bold;
 
             &:before {
@@ -22,7 +22,7 @@
                 text-align: center;
                 margin: 0 auto 5px auto;
                 border-radius: 50%;
-                line-height: 18px;
+                line-height: 16px;
 
                 background-color: var(--color-null);
                 color: var(--bg);
