@@ -5,7 +5,6 @@ import { IQueryExecution, QueryExecutionStatus } from 'const/queryExecution';
 import { formatDuration } from 'lib/utils/datetime';
 
 import { UserName } from 'components/UserBadge/UserName';
-import { useQueryExecutionReduxState } from './QueryExecution';
 import { StyledText } from 'ui/StyledText/StyledText';
 import { TaskStatusIcon } from 'components/Task/TaskStatusIcon';
 import { TaskRunStatus } from 'const/schedule';
@@ -17,24 +16,18 @@ interface IProps {
 export const QueryExecutionDuration: React.FunctionComponent<IProps> = ({
     queryExecution,
 }) => {
-    const { statementExecutions } = useQueryExecutionReduxState(
-        queryExecution.id
-    );
-
     let durationDOM = null;
     if (queryExecution.status < QueryExecutionStatus.DONE) {
         durationDOM = <TaskStatusIcon type={TaskRunStatus.RUNNING} />;
     } else {
-        const lastExecution =
-            statementExecutions[statementExecutions.length - 1];
         let durationText = 'Run ';
 
-        if (lastExecution && lastExecution.completed_at) {
+        if (queryExecution.completed_at) {
             durationText =
                 durationText +
                 `for ${formatDuration(
                     moment.duration(
-                        lastExecution.completed_at - queryExecution.created_at,
+                        queryExecution.completed_at - queryExecution.created_at,
                         'seconds'
                     )
                 )}`;

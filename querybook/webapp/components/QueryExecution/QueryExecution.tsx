@@ -30,7 +30,7 @@ interface IProps {
     changeCellContext?: (context: string) => void;
 }
 
-export function useQueryExecutionReduxState(queryId: number) {
+function useQueryExecutionReduxState(queryId: number) {
     const queryExecution = useSelector((state: IStoreState) =>
         queryExecutionSelector(state, queryId)
     );
