@@ -27,7 +27,7 @@ exports[`matches test renderer snapshot serializes the styles 1`] = `
   onMouseLeave={[Function]}
 >
   <div
-    className="StyledText__StyledTextDiv-sc-1ldibmc-0 dgoMHH Text Dropdown-trigger"
+    className="StyledText__StyledTextDiv-sc-1ldibmc-0 jPRcMt Text Dropdown-trigger"
   >
     <span
       className="IconButton no-padding"

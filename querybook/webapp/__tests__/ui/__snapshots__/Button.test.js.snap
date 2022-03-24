@@ -148,12 +148,12 @@ exports[`matches test renderer snapshot serializes the styles 1`] = `
   size="medium"
 >
   <div
-    className="StyledText__StyledTextDiv-sc-1ldibmc-0 jYMIFP Text"
+    className="StyledText__StyledTextDiv-sc-1ldibmc-0 kaglfx Text"
   >
     test
   </div>
   <div
-    className="StyledText__StyledTextDiv-sc-1ldibmc-0 jYMIFP Text flex-row"
+    className="StyledText__StyledTextDiv-sc-1ldibmc-0 kaglfx Text flex-row"
   />
 </span>
 `;
