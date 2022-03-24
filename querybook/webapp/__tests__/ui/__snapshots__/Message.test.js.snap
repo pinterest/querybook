@@ -58,7 +58,7 @@ exports[`matches test renderer snapshot serializes the styles - error 1`] = `
   className="Message error"
 >
   <div
-    className="StyledText__StyledTextDiv-sc-1ldibmc-0 jPRcMt Text"
+    className="StyledText__StyledTextDiv-sc-1ldibmc-0 lcQBiO Text"
   >
     <div
       className="Message-header"
