@@ -133,7 +133,7 @@ export const DataDocNavigatorSection: React.FC<INavigatorSectionProps> = ({
                         orderByField={
                             dataDocOrderBy === 'alphabetical'
                                 ? 'title'
-                                : 'last edited time'
+                                : 'last updated time'
                         }
                         onOrderByFieldToggle={() =>
                             setOrderBy((v) =>
