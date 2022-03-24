@@ -132,9 +132,11 @@ export const DataDocQueryExecutions: React.FunctionComponent<IProps> = React.mem
                             onSelection={handleQueryExecutionSelected}
                             queryExecutions={queryExecutions}
                         />
-                        <QueryExecutionDuration
-                            queryExecution={currentExecution}
-                        />
+                        <div className="ml8">
+                            <QueryExecutionDuration
+                                queryExecution={currentExecution}
+                            />
+                        </div>
                     </div>
                     <div className="execution-selector-bottom flex-row">
                         <QueryExecutionBar

@@ -13,9 +13,9 @@ const StyledStatusIcon = styled.div`
     }
 
     &.status-in-progress {
-        color: var(--color-warning-dark);
+        color: var(--color-blue-dark);
         * {
-            color: var(--color-warning-dark);
+            color: var(--color-blue-dark);
         }
     }
 

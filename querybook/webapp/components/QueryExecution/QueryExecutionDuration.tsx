@@ -2,11 +2,13 @@ import moment from 'moment';
 import * as React from 'react';
 
 import { IQueryExecution, QueryExecutionStatus } from 'const/queryExecution';
-import { generateFormattedDate, formatDuration } from 'lib/utils/datetime';
+import { formatDuration } from 'lib/utils/datetime';
 
 import { UserName } from 'components/UserBadge/UserName';
 import { useQueryExecutionReduxState } from './QueryExecution';
 import { StyledText } from 'ui/StyledText/StyledText';
+import { TaskStatusIcon } from 'components/Task/TaskStatusIcon';
+import { TaskRunStatus } from 'const/schedule';
 
 interface IProps {
     queryExecution: IQueryExecution;
@@ -19,15 +21,13 @@ export const QueryExecutionDuration: React.FunctionComponent<IProps> = ({
         queryExecution.id
     );
 
-    let durationText = '';
+    let durationDOM = null;
     if (queryExecution.status < QueryExecutionStatus.DONE) {
-        durationText = `running since ${generateFormattedDate(
-            queryExecution.created_at
-        )}`;
+        durationDOM = <TaskStatusIcon type={TaskRunStatus.RUNNING} />;
     } else {
         const lastExecution =
             statementExecutions[statementExecutions.length - 1];
-        durationText = 'run ';
+        let durationText = 'Run ';
 
         if (lastExecution && lastExecution.completed_at) {
             durationText =
@@ -39,11 +39,14 @@ export const QueryExecutionDuration: React.FunctionComponent<IProps> = ({
                     )
                 )}`;
         }
+        durationDOM = durationText;
     }
 
     return (
-        <StyledText className="ml8" color="light">
-            {durationText} by <UserName uid={queryExecution.uid} />
+        <StyledText className="flex-row" color="light">
+            {durationDOM}
+            <span className="mh4">by</span>
+            <UserName uid={queryExecution.uid} />
         </StyledText>
     );
 };

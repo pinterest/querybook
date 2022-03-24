@@ -13,6 +13,7 @@ import { Level } from 'ui/Level/Level';
 import { QueryExecutionBar } from 'components/QueryExecutionBar/QueryExecutionBar';
 import { StatusIcon } from 'ui/StatusIcon/StatusIcon';
 import { AccentText } from 'ui/StyledText/StyledText';
+import { QueryExecutionDuration } from 'components/QueryExecution/QueryExecutionDuration';
 
 interface IProps {
     id: number;
@@ -48,9 +49,15 @@ export const QueryComposerExecution: React.FunctionComponent<IProps> = ({
     return (
         <div className="QueryComposerExecution">
             <Level>
-                <AccentText weight="bold" className="flex-row">
-                    {statusIcon} Execution {execution.id}
-                </AccentText>
+                <div className="flex-row">
+                    <AccentText weight="bold" className="flex-row mr8">
+                        {statusIcon}
+                        <span className="execution-text ml4">
+                            Execution {execution.id}
+                        </span>
+                    </AccentText>
+                    <QueryExecutionDuration queryExecution={execution} />
+                </div>
                 <div className="flex-row">
                     <QueryExecutionBar
                         queryExecution={execution}

@@ -43,7 +43,7 @@ export const StatementResult: React.FC<IProps> = ({
                 <span className="mr4">
                     <PrettyNumber val={actualRowMinusColCount} />
                     <span className="mh4">of</span>
-                    <PrettyNumber val={resultRowMinusColCount} unit="Row" />
+                    <PrettyNumber val={resultRowMinusColCount} unit="row" />
                 </span>
                 <InfoButton>{resultPreviewTooltip}</InfoButton>
             </div>
