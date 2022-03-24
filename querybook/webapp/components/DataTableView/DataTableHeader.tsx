@@ -166,9 +166,9 @@ export const DataTableHeader: React.FunctionComponent<IDataTableHeader> = ({
     );
 
     const tagDOM = (
-        <div className="flex-row">
+        <div className="DataTableHeader-tags flex-row">
             <AccentText
-                className="header-subtitle mr20 mt6"
+                className="header-subtitle mr20"
                 weight="bold"
                 color="lightest"
             >

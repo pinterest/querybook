@@ -20,12 +20,7 @@ export const TokenCreation: React.FunctionComponent<IProps> = () => {
 
     return (
         <div className="TokenCreation flex-column">
-            <AccentText
-                className="mb16"
-                size="small"
-                color="light"
-                noUserSelect
-            >
+            <AccentText className="mb16" size="text" color="light" noUserSelect>
                 {token
                     ? 'This is the only time you will be able to copy this token in plaintext'
                     : 'Creating a new token will invalidate your old tokens'}

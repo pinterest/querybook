@@ -154,6 +154,7 @@ export const DataTableViewSamples: React.FunctionComponent<IDataTableViewSamples
                             name="partition"
                             options={tablePartitions}
                             withDeselect
+                            className="ml16"
                         />
                     );
 

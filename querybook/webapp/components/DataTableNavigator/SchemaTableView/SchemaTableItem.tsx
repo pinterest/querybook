@@ -74,7 +74,7 @@ export const SchemaTableItem: React.FC<{
     ]);
 
     return (
-        <div className="SchemaTableItem">
+        <div className="SchemaTableItem mb12">
             <StyledItem className="horizontal-space-between navigator-header pl8">
                 <div
                     className="schema-name flex1 flex-row"
@@ -110,7 +110,7 @@ export const SchemaTableItem: React.FC<{
                 <div className="board-scroll-wrapper">
                     {total === 0 ? (
                         <div className="empty-section-message">
-                            No {name?.toLowerCase()}
+                            No tables in {name}
                         </div>
                     ) : (
                         <InfinityScroll
