@@ -42,7 +42,7 @@ export const UserAvatarList: React.FC<IUserAvatarListProps> = ({
         <div
             className="UserAvatarList-user-wrapper extra-user-count"
             key={'count'}
-            aria-label={`${extraCount} Others`}
+            aria-label={`${extraCount} others`}
             data-balloon-pos={'down'}
         >
             <div className="UserAvatarList-user">

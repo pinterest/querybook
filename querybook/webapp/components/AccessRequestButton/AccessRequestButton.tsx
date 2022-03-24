@@ -12,7 +12,7 @@ export const AccessRequestButton: React.FunctionComponent<{
     return (
         <div className="AccessRequestButton">
             {accessRequsted ? (
-                <div className="success-message">'Access Request Sent!'</div>
+                <div className="success-message">Access Request Sent!</div>
             ) : (
                 <Button
                     onClick={() => {

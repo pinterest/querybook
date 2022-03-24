@@ -94,12 +94,12 @@ exports[`matches test renderer snapshot serializes the styles 1`] = `
       size="medium"
     >
       <div
-        className="StyledText__StyledTextDiv-sc-1ldibmc-0 jYMIFP Text"
+        className="StyledText__StyledTextDiv-sc-1ldibmc-0 kaglfx Text"
       >
         Previous
       </div>
       <div
-        className="StyledText__StyledTextDiv-sc-1ldibmc-0 jYMIFP Text flex-row"
+        className="StyledText__StyledTextDiv-sc-1ldibmc-0 kaglfx Text flex-row"
       />
     </span>
   </div>
@@ -113,12 +113,12 @@ exports[`matches test renderer snapshot serializes the styles 1`] = `
       size="medium"
     >
       <div
-        className="StyledText__StyledTextDiv-sc-1ldibmc-0 jYMIFP Text"
+        className="StyledText__StyledTextDiv-sc-1ldibmc-0 kaglfx Text"
       >
         Next
       </div>
       <div
-        className="StyledText__StyledTextDiv-sc-1ldibmc-0 jYMIFP Text flex-row"
+        className="StyledText__StyledTextDiv-sc-1ldibmc-0 kaglfx Text flex-row"
       />
     </span>
   </div>
@@ -133,12 +133,12 @@ exports[`matches test renderer snapshot serializes the styles 1`] = `
         size="medium"
       >
         <div
-          className="StyledText__StyledTextDiv-sc-1ldibmc-0 jYMIFP Text"
+          className="StyledText__StyledTextDiv-sc-1ldibmc-0 kaglfx Text"
         >
           1
         </div>
         <div
-          className="StyledText__StyledTextDiv-sc-1ldibmc-0 jYMIFP Text flex-row"
+          className="StyledText__StyledTextDiv-sc-1ldibmc-0 kaglfx Text flex-row"
         />
       </span>
     </li>
@@ -150,12 +150,12 @@ exports[`matches test renderer snapshot serializes the styles 1`] = `
         size="medium"
       >
         <div
-          className="StyledText__StyledTextDiv-sc-1ldibmc-0 jYMIFP Text"
+          className="StyledText__StyledTextDiv-sc-1ldibmc-0 kaglfx Text"
         >
           2
         </div>
         <div
-          className="StyledText__StyledTextDiv-sc-1ldibmc-0 jYMIFP Text flex-row"
+          className="StyledText__StyledTextDiv-sc-1ldibmc-0 kaglfx Text flex-row"
         />
       </span>
     </li>
@@ -167,12 +167,12 @@ exports[`matches test renderer snapshot serializes the styles 1`] = `
         size="medium"
       >
         <div
-          className="StyledText__StyledTextDiv-sc-1ldibmc-0 jYMIFP Text"
+          className="StyledText__StyledTextDiv-sc-1ldibmc-0 kaglfx Text"
         >
           3
         </div>
         <div
-          className="StyledText__StyledTextDiv-sc-1ldibmc-0 jYMIFP Text flex-row"
+          className="StyledText__StyledTextDiv-sc-1ldibmc-0 kaglfx Text flex-row"
         />
       </span>
     </li>
@@ -184,12 +184,12 @@ exports[`matches test renderer snapshot serializes the styles 1`] = `
         size="medium"
       >
         <div
-          className="StyledText__StyledTextDiv-sc-1ldibmc-0 jYMIFP Text"
+          className="StyledText__StyledTextDiv-sc-1ldibmc-0 kaglfx Text"
         >
           4
         </div>
         <div
-          className="StyledText__StyledTextDiv-sc-1ldibmc-0 jYMIFP Text flex-row"
+          className="StyledText__StyledTextDiv-sc-1ldibmc-0 kaglfx Text flex-row"
         />
       </span>
     </li>
@@ -208,12 +208,12 @@ exports[`matches test renderer snapshot serializes the styles 1`] = `
         size="medium"
       >
         <div
-          className="StyledText__StyledTextDiv-sc-1ldibmc-0 jYMIFP Text"
+          className="StyledText__StyledTextDiv-sc-1ldibmc-0 kaglfx Text"
         >
           10
         </div>
         <div
-          className="StyledText__StyledTextDiv-sc-1ldibmc-0 jYMIFP Text flex-row"
+          className="StyledText__StyledTextDiv-sc-1ldibmc-0 kaglfx Text flex-row"
         />
       </span>
     </li>

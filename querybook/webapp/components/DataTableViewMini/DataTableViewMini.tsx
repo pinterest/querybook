@@ -54,7 +54,8 @@ export const DataTableViewMini: React.FunctionComponent<IProps> = ({
 
     return (
         <div className="DataTableViewMini">
-            <Level className="DataTableViewMini-header">
+            <Level className="DataTableViewMini-header pr8">
+                {closeButton || <div />}
                 <TextButton
                     onClick={() =>
                         onViewDetails
@@ -66,7 +67,6 @@ export const DataTableViewMini: React.FunctionComponent<IProps> = ({
                     title="View Table"
                     className="table-details-button mr8"
                 />
-                {closeButton || <div />}
             </Level>
             <div className="DataTableViewMini-content">{infoContentDOM}</div>
         </div>

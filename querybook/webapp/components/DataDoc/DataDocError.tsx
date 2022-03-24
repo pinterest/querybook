@@ -29,7 +29,7 @@ export const DataDocError: React.FunctionComponent<{
         const exceptionMessage = errorObj.response.data.error;
         if (exceptionMessage === 'CANNOT_READ_DATADOC') {
             errorTitle = 'Access Denied';
-            errorMessage = 'You cannot read this DataDoc.';
+            errorMessage = 'You cannot read this DataDoc';
             errorContent = (
                 <AccessRequestButton
                     onAccessRequest={handleDataDocAccessRequest}
@@ -37,7 +37,7 @@ export const DataDocError: React.FunctionComponent<{
             );
         } else if (exceptionMessage === 'DOC_DNE') {
             errorTitle = 'Invalid DataDoc';
-            errorMessage = 'This DataDoc does not exist.';
+            errorMessage = 'This DataDoc does not exist';
         } else {
             errorMessage = exceptionMessage;
         }

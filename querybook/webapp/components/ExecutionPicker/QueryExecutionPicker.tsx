@@ -104,10 +104,9 @@ export const QueryExecutionPicker: React.FunctionComponent<IProps> = React.memo(
                     const createdAt = execution.created_at;
                     const dateString =
                         generateFormattedDate(createdAt, 'X') +
-                        ', ' +
                         (shortVersion
                             ? ''
-                            : moment.utc(createdAt, 'X').fromNow(true));
+                            : ', ' + moment.utc(createdAt, 'X').fromNow(true));
 
                     return (
                         <MenuItem
@@ -116,15 +115,21 @@ export const QueryExecutionPicker: React.FunctionComponent<IProps> = React.memo(
                                 'query-execution-item': true,
                                 'query-execution-selected':
                                     execution.id === queryExecutionId,
+                                'flex-row': true,
                             })}
                             onClick={() => onSelection(execution.id)}
                         >
                             {shortVersion ? '#' : 'Execution '}
-                            {execution.id}: {dateString} ago by
-                            <span className="ml4 mr12">
-                                <UserName uid={execution.uid} />
+                            {execution.id}: {dateString}
+                            {!shortVersion && (
+                                <>
+                                    <span className="mh4">ago by</span>
+                                    <UserName uid={execution.uid} />
+                                </>
+                            )}
+                            <span className="ml8 flex-center">
+                                {statusIcon}
                             </span>
-                            {statusIcon}
                         </MenuItem>
                     );
                 }
