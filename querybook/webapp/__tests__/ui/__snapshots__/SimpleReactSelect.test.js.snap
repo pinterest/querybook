@@ -36,7 +36,7 @@ exports[`matches enzyme snapshots matches snapshot 1`] = `
 
 exports[`matches test renderer snapshot serializes the styles 1`] = `
 <div
-  className="StyledText__StyledTextDiv-sc-1ldibmc-0 kaglfx Text"
+  className="StyledText__StyledTextDiv-sc-1ldibmc-0 bLpBLx Text"
 >
   <div
     className=" css-2b097c-container"
