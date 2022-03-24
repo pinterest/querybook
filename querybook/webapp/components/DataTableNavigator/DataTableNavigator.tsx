@@ -15,7 +15,7 @@ import { currentEnvironmentSelector } from 'redux/environment/selector';
 import { Dispatch, IStoreState } from 'redux/store/types';
 import { UrlContextMenu } from 'ui/ContextMenu/UrlContextMenu';
 import { InfinityScroll } from 'ui/InfinityScroll/InfinityScroll';
-import { ListLink } from 'ui/Link/ListLink';
+import { TableListLink } from 'ui/Link/TableListLink';
 import { Popover } from 'ui/Popover/Popover';
 import { PopoverHoverWrapper } from 'ui/Popover/PopoverHoverWrapper';
 import { makeSelectOptions, Select } from 'ui/Select/Select';
@@ -183,13 +183,13 @@ export const DataTableNavigator: React.FC<IDataTableNavigatorProps> = ({
                 <PopoverHoverWrapper>
                     {(showPopover, anchorElement) => (
                         <>
-                            <ListLink
+                            <TableListLink
                                 className={className}
                                 onClick={(event) =>
                                     handleTableRowClick(table.id, event)
                                 }
-                                isRow
                                 title={table.full_name}
+                                schema={table.schema}
                             />
                             <UrlContextMenu
                                 url={tableUrl}

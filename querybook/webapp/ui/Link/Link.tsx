@@ -5,7 +5,7 @@ import styled from 'styled-components';
 
 import { stopPropagation as stopPropagationFunc } from 'lib/utils/noop';
 
-const StyledLink = styled('a')`
+export const StyledLink = styled('a')`
     ${({ naturalLink }) =>
         naturalLink &&
         `

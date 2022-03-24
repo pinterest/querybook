@@ -637,8 +637,18 @@ export class QueryEditor extends React.PureComponent<
                     onKeyDown={this.onKeyDown}
                     onFocus={this.onFocus}
                     onBlur={this.onBlur}
+                    onDrop={this.onDropHandler}
                 />
             </StyledQueryEditor>
         );
+    }
+
+    private onDropHandler(editor, event) {
+        editor.focus();
+        const { pageX, pageY } = event;
+        editor.setCursor(editor.coordsChar({ left: pageX, top: pageY }));
+
+        const databaseName = event.dataTransfer.getData('fullDBName');
+        editor.replaceRange(` ${databaseName} `, editor.getCursor());
     }
 }
