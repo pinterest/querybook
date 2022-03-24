@@ -27,7 +27,7 @@ export const QueryExecutionBar: React.FunctionComponent<IProps> = ({
     );
 
     const executionDateDOM = (
-        <StyledText className="mr12" color="light">
+        <StyledText className="mr8" color="light">
             {generateFormattedDate(queryExecution.created_at, 'X') +
                 ', ' +
                 moment.utc(queryExecution.created_at, 'X').fromNow()}

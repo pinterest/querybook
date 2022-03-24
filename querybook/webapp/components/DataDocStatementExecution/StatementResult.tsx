@@ -36,7 +36,7 @@ export const StatementResult: React.FC<IProps> = ({
         )})`;
 
         const fetchRowInfo = fetchedAllRows ? (
-            `${formatNumber(actualRowMinusColCount, 'Row')} (Full Result)`
+            `${formatNumber(actualRowMinusColCount, 'row')} (Full Result)`
         ) : (
             <div className="flex-row">
                 <span className="warning-word mr4">Previewing</span>
