@@ -103,7 +103,7 @@ const StyledTextDiv = styled.div`
                 justify-content: center;`
             : ''};
 
-    * {
+    > * {
         ${(props) =>
             props.weight
                 ? ` font-weight: ${
