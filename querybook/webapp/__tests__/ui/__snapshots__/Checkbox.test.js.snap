@@ -13,7 +13,7 @@ exports[`matches enzyme snapshots matches snapshot 1`] = `
       type="checkbox"
     />
     <AccentText
-      size="xsmall"
+      size="small"
     />
   </label>
 </div>
