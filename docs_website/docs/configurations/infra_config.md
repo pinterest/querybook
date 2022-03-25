@@ -101,8 +101,25 @@ the next few configurations are only relevant if you are using OAuth based authe
 
 for LDAP authentication:
 
--   `LDAP_CONN`(**required**)
--   `LDAP_USER_DN` (**required**) DN with {} for username/etc (ex. `uid={},dc=example,dc=com`)
+- `LDAP_CONN`(**required**)
+- `LDAP_USE_TLS` (optional, defaults to `False`)
+- `LDAP_USE_BIND_USER` (optional, defaults to `False`)
+  - If `False`: Direct LDAP login
+    - Additional configuration:
+      - `LDAP_USER_DN` (**required**) DN with {} for username/etc (ex. `uid={},dc=example,dc=com`)
+    - Login flow:
+      - Direct login using formatted `LDAP_USER_DN` + password
+  - If `True`: Advanced LDAP login using _bind user_
+    - Additional configuration:
+      - `LDAP_BIND_USER` (**required**) Name of a _bind user_
+      - `LDAP_BIND_PASSWORD` (**required**) Password of a _bind user_
+      - `LDAP_SEARCH` (**required**) LDAP search base (ex. `ou=people,dc=example,dc=com`)
+      - `LDAP_FILTER` (optional) LDAP filter condition (ex. `(departmentNumber=01000)`)
+    - Login flow:
+      1) Initialized connection for the _bind user_.
+      2) Searching the _login user_ using the _bind user_ in LDAP dictionary based on `LDAP_SEARCH` and `LDAP_FILTER`.
+      3) The _login user_ credentials are tested in direct login.
+      4) If the previous steps were OK, the user is passed on.
 
 If you want to force the user to login again after a certain time, you can the following variable:
 

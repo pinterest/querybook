@@ -73,7 +73,30 @@ class QuerybookSettings(object):
     AZURE_TENANT_ID = get_env_config("AZURE_TENANT_ID")
 
     LDAP_CONN = get_env_config("LDAP_CONN")
+    LDAP_USE_TLS = str(get_env_config("LDAP_USE_TLS")).lower() == "true"
+    LDAP_USE_BIND_USER = str(get_env_config("LDAP_USE_BIND_USER")).lower() == "true"
+    # For direct authentication
     LDAP_USER_DN = get_env_config("LDAP_USER_DN")
+    # For searches using bind user
+    LDAP_BIND_USER = get_env_config("LDAP_BIND_USER")
+    LDAP_BIND_PASSWORD = get_env_config("LDAP_BIND_PASSWORD")
+    LDAP_SEARCH = get_env_config("LDAP_SEARCH")
+    LDAP_FILTER = get_env_config("LDAP_FILTER")
+    # Configuration validation
+    if LDAP_CONN is not None:
+        if LDAP_USE_BIND_USER:
+            if (
+                LDAP_BIND_USER is None
+                or LDAP_BIND_PASSWORD is None
+                or LDAP_SEARCH is None
+            ):
+                raise ValueError(
+                    "LDAP_BIND_USER, LDAP_BIND_PASSWORD and LDAP_SEARCH has to be set when using LDAP bind user connection"
+                )
+        elif LDAP_USER_DN is None:
+            raise ValueError(
+                "LDAP_USER_DN has to be set when using direct LDAP connection"
+            )
 
     # Result Store
     RESULT_STORE_TYPE = get_env_config("RESULT_STORE_TYPE")
