@@ -20,12 +20,11 @@ from lib.query_executor.base_client import ClientBaseClass
 from lib.query_executor.utils import (
     spread_dict,
     merge_str,
-    row_to_csv,
     parse_exception,
     format_if_internal_error_with_stack_trace,
 )
 from lib.result_store import GenericUploader
-
+from lib.utils.csv import row_to_csv
 from logic import query_execution as qe_logic
 
 
