@@ -1,15 +1,7 @@
-import csv
-from io import StringIO
-import sys
-from typing import Generator, List
 from datetime import datetime
-
 
 from app.db import with_session
 from models.result_store import KeyValueStore
-
-# HACK: https://stackoverflow.com/questions/15063936/csv-error-field-larger-than-field-limit-131072
-csv.field_size_limit(sys.maxsize)
 
 
 @with_session
@@ -56,15 +48,3 @@ def delete_key_value_store(key, commit=True, session=None):
         session.delete(item)
         if commit:
             session.commit()
-
-
-def str_to_csv_iter(raw_csv_str: str) -> Generator[List[List[str]], None, None]:
-    # Remove NULL byte to make sure csv conversion works
-    raw_csv_str = raw_csv_str.replace("\x00", "")
-    raw_results = StringIO(raw_csv_str)
-    return csv.reader(raw_results, delimiter=",")
-
-
-def string_to_csv(raw_csv_str: str) -> List[List[str]]:
-    csv_reader = str_to_csv_iter(raw_csv_str)
-    return [row for row in csv_reader]

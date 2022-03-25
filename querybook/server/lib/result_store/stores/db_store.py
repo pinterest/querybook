@@ -1,12 +1,10 @@
+from itertools import islice
 from typing import Generator, List, Optional
 
 from env import QuerybookSettings
 from lib.result_store.stores.base_store import BaseReader, BaseUploader
 from logic import result_store
-from logic.result_store import (
-    create_key_value_store,
-    str_to_csv_iter,
-)
+from lib.utils.csv import str_to_csv_iter, LINE_TERMINATOR
 
 
 class DBReader(BaseReader):
@@ -21,7 +19,7 @@ class DBReader(BaseReader):
 
     def _get_first_n_lines(self, n: Optional[int]) -> List[str]:
         maxsplit = n if n is not None else -1
-        lines = self._text.split("\n", maxsplit)
+        lines = self._text.split(LINE_TERMINATOR, maxsplit)
         if n is not None and len(lines) == n + 1:
             self._text = lines[-1]
             return lines[:-1]
@@ -32,9 +30,10 @@ class DBReader(BaseReader):
     def get_csv_iter(
         self, number_of_lines: Optional[int] = None
     ) -> Generator[List[List[str]], None, None]:
-        curr_lines = self._get_first_n_lines(number_of_lines)
-        raw_csv_str = "\n".join(curr_lines)
-        return str_to_csv_iter(raw_csv_str)
+        csv_iter = str_to_csv_iter(self.read_raw())
+        if number_of_lines is None:
+            return csv_iter
+        return islice(str_to_csv_iter(self.read_raw()), number_of_lines)
 
     def read_lines(self, number_of_lines: int) -> List[str]:
         return self._get_first_n_lines(number_of_lines)
@@ -80,5 +79,5 @@ class DBUploader(BaseUploader):
         return True
 
     def end(self):
-        create_key_value_store(key=self._uri, value="".join(self._chunks))
+        result_store.create_key_value_store(key=self._uri, value="".join(self._chunks))
         self._reset_variables()

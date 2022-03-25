@@ -1,12 +1,11 @@
 from abc import ABCMeta, abstractmethod
 from collections import deque
 from itertools import islice
-from typing import List
+from typing import Generator, List
+
 
 from env import QuerybookSettings
-from logic.result_store import string_to_csv
-
-LINE_TERMINATOR = "\n"
+from lib.utils.csv import string_to_csv, LINE_TERMINATOR, split_csv_to_chunks
 
 
 class FileDoesNotExist(Exception):
@@ -30,10 +29,43 @@ class ChunkReader(metaclass=ABCMeta):
         self._raw_buffer = ""
 
     def get_csv_iter(self, number_of_lines=None):
-        for line in islice(self.read_line(), number_of_lines):
-            csv = string_to_csv(line)
-            if len(csv):
-                yield csv[0]  # yield single row of csv
+        csv_line_count = 0
+        partial_csv_lines = []
+        for csv_chunk in self._read_csv_chunk():
+            valid_csv_chunk, partial_csv_lines = split_csv_to_chunks(
+                partial_csv_lines + csv_chunk
+            )
+            if len(valid_csv_chunk) == 0:
+                continue
+
+            csv_chunk_str = LINE_TERMINATOR.join(valid_csv_chunk)
+            csv = string_to_csv(csv_chunk_str)
+
+            if number_of_lines is None:
+                yield from csv
+            else:
+                rows_to_yield = min(len(csv), number_of_lines - csv_line_count)
+                csv_line_count += rows_to_yield
+                yield from islice(csv, rows_to_yield)
+
+                if csv_line_count >= number_of_lines:
+                    break
+
+    def _read_csv_chunk(self) -> Generator[List[str], None, None]:
+        """
+            Similar to read_line, get the entire chunk of buffer_deque and process
+            them together as CSV
+        """
+        while (not self._eof) or len(self._buffer_deque):
+            if len(self._buffer_deque) > 0:
+                line_chunks = []
+                while len(self._buffer_deque) > 0:
+                    line_chunks.append(self._buffer_deque.popleft())
+                yield line_chunks
+
+            # If not at the end, perform another round of loading
+            if not self._eof:
+                self._fill_buffer()
 
     def read_lines(self, number_of_lines=None) -> List[str]:
         return [line for line in islice(self.read_line(), number_of_lines)]
