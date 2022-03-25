@@ -105,7 +105,9 @@ export function fetchDataDocs(filterMode: string): ThunkResult<Promise<void>> {
         const normalizedData = normalize(rawDataDocs, dataDocListSchema);
 
         const { dataDoc: dataDocById = {} } = normalizedData.entities;
-        dispatch(receiveDataDocs(dataDocById, environmentId, filterMode));
+        dispatch(
+            receiveDataDocs(dataDocById, rawDataDocs, environmentId, filterMode)
+        );
     };
 }
 
@@ -160,7 +162,15 @@ export function receiveDataDoc(
 }
 
 export function receiveDataDocs(
+    /**
+     * Flattened list of dataDocs
+     */
     dataDocById: Record<number, IDataDoc>,
+    /**
+     * Original list of docs from API, could be nested.
+     * This is ONLY used for recent Docs
+     */
+    rawDataDocs: IRawDataDoc[],
     environmentId: number,
     filterMode: string
 ): IReceiveDataDocsAction {
@@ -168,6 +178,7 @@ export function receiveDataDocs(
         type: '@@dataDoc/RECEIVE_DATA_DOCS',
         payload: {
             dataDocById,
+            rawDataDocs,
             environmentId,
             filterMode,
         },

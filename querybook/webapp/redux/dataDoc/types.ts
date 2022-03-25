@@ -10,6 +10,7 @@ import {
     IDataCell,
     IDataDocEditor,
     IDataCellMeta,
+    IRawDataDoc,
 } from 'const/datadoc';
 import { IAccessRequest } from 'const/accessRequest';
 import { IStoreState } from '../store/types';
@@ -25,6 +26,7 @@ export interface IReceiveDataDocsAction extends Action {
     type: '@@dataDoc/RECEIVE_DATA_DOCS';
     payload: {
         dataDocById: Record<number, IDataDoc>;
+        rawDataDocs: IRawDataDoc[];
         environmentId: number;
         filterMode: string;
     };

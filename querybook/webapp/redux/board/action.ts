@@ -44,7 +44,7 @@ function receiveBoardWithItems(dispatch: Dispatch, rawBoard: IBoardRaw) {
         rawBoard
     );
 
-    dispatch(receiveDataDocs(dataDocById, null, null));
+    dispatch(receiveDataDocs(dataDocById, [], null, null));
     dispatch(receiveDataTable({}, dataTableById, {}, {}));
     dispatch({
         type: '@@board/RECEIVE_BOARD_WITH_ITEMS',

@@ -748,10 +748,9 @@ def unfavorite_data_doc(data_doc_id, uid, session=None):
 
 @with_session
 def get_user_recent_data_docs(uid, environment_id, limit=5, session=None):
+    subquery_created_at = func.max(Impression.created_at).label("created_at")
     subquery = (
-        session.query(
-            Impression.item_id, func.max(Impression.created_at).label("created_at")
-        )
+        session.query(Impression.item_id, subquery_created_at)
         .filter(Impression.item_type == ImpressionItemType.DATA_DOC)
         .filter(Impression.uid == uid)
         .group_by(Impression.item_id)
