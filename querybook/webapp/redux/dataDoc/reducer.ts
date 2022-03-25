@@ -236,9 +236,9 @@ function recentDataDocIdsReducer(
 ) {
     switch (action.type) {
         case '@@dataDoc/RECEIVE_DATA_DOCS': {
-            const { filterMode, dataDocById } = action.payload;
+            const { filterMode, rawDataDocs } = action.payload;
             if (filterMode === 'recent') {
-                return Object.keys(dataDocById).map(Number);
+                return rawDataDocs.map((doc) => doc.id);
             }
             return state;
         }
