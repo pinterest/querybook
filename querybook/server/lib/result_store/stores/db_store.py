@@ -30,9 +30,6 @@ class DBReader(BaseReader):
     def get_csv_iter(
         self, number_of_lines: Optional[int] = None
     ) -> Generator[List[List[str]], None, None]:
-        csv_iter = str_to_csv_iter(self.read_raw())
-        if number_of_lines is None:
-            return csv_iter
         return islice(str_to_csv_iter(self.read_raw()), number_of_lines)
 
     def read_lines(self, number_of_lines: int) -> List[str]:

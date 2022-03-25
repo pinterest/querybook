@@ -119,7 +119,7 @@ def csv_sniffer(lines: List[str]) -> int:
 
 
 def split_csv_to_chunks(lines: List[str]) -> Tuple[List[str], List[str]]:
-    """Given a serials of lines, break them into 2 parts
+    """Given a list of lines, break them into 2 parts
        The first part is a valid CSV chunk, the second part
        is partial CSV chunk
 
