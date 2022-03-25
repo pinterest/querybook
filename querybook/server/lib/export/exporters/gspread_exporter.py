@@ -167,7 +167,11 @@ class GoogleSheetsExporter(BaseExporter):
         curr_start_cell = start_cell
         while True:
             csv_chunk = list(islice(csv, MAX_SHEETS_NEW_ROWS))
-            worksheet.update("{}:{}".format(curr_start_cell, end_cell), csv_chunk)
+            worksheet.update(
+                "{}:{}".format(curr_start_cell, end_cell),
+                csv_chunk,
+                value_input_option="USER_ENTERED",
+            )
 
             chunk_len = len(csv_chunk)
             if chunk_len < MAX_SHEETS_NEW_ROWS:
