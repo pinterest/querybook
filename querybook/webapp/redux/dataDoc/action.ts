@@ -167,7 +167,8 @@ export function receiveDataDocs(
      */
     dataDocById: Record<number, IDataDoc>,
     /**
-     * Original list of docs from API, could be nested
+     * Original list of docs from API, could be nested.
+     * This is ONLY used for recent Docs
      */
     rawDataDocs: IRawDataDoc[],
     environmentId: number,
