@@ -229,6 +229,7 @@ export const DataDocStatementExecution: React.FC<IProps> = ({
                     isFullscreen={true}
                     setResultLimit={setResultLimit}
                     resultLimit={resultLimit}
+                    isFetchingStatementResult={isFetchingStatementResult}
                 />
             </Modal>
         ) : null;
