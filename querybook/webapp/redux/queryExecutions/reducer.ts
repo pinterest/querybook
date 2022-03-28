@@ -264,6 +264,7 @@ function statementResultByIdReducer(
                 data,
                 failed = false,
                 error,
+                limit,
             } = action.payload;
 
             if (statementExecutionId in state) {
@@ -281,6 +282,7 @@ function statementResultByIdReducer(
                     data,
                     failed,
                     error,
+                    limit,
                 },
             };
         }

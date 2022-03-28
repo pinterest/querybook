@@ -427,11 +427,7 @@ export function fetchResult(
             const statementResult =
                 state.queryExecutions.statementResultById[statementExecutionId];
 
-            if (
-                statementResult &&
-                statementResult.data?.length != null &&
-                statementResult.data.length - 1 >= numberOfLines // -1 to adjust for columns
-            ) {
+            if (statementResult && statementResult.limit >= numberOfLines) {
                 return statementResult.data;
             }
 
@@ -479,6 +475,7 @@ export function fetchResult(
                     payload: {
                         statementExecutionId,
                         data,
+                        limit: numberOfLines,
                     },
                 });
                 return data;
@@ -489,6 +486,7 @@ export function fetchResult(
                         statementExecutionId,
                         failed: true,
                         error: JSON.stringify(error, null, 2),
+                        limit: numberOfLines,
                     },
                 });
             }

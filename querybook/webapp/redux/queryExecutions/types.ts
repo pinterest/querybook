@@ -60,6 +60,10 @@ export interface IReceiveResultAction extends Action {
         data?: string[][];
         failed?: boolean;
         error?: any;
+        /**
+         * Number of lines tried to fetch
+         */
+        limit: number;
     };
 }
 

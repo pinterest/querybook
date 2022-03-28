@@ -96,9 +96,13 @@ export interface IStatementExecution {
 }
 
 export interface IStatementResult {
-    data: string[][];
+    data?: string[][];
     error?: any;
     failed?: boolean;
+    /**
+     * Number of lines tried to fetch
+     */
+    limit: number;
 }
 
 export interface IStatementResultLoading {

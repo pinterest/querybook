@@ -16,6 +16,7 @@ import { StatementResultTable } from '../StatementResultTable/StatementResultTab
 import { ShowMoreText } from 'ui/ShowMoreText/ShowMoreText';
 import { InfoButton } from 'ui/Button/InfoButton';
 import { IOptions, makeSelectOptions, Select } from 'ui/Select/Select';
+import { Icon } from 'ui/Icon/Icon';
 
 interface IProps {
     statementResult: IStatementResult;
@@ -23,6 +24,7 @@ interface IProps {
     isFullscreen: boolean;
     onFullscreenToggle: () => any;
 
+    isFetchingStatementResult: boolean;
     resultLimit: number;
     setResultLimit: (limit: number) => void;
 }
@@ -33,6 +35,7 @@ export const StatementResult: React.FC<IProps> = ({
     isFullscreen,
     onFullscreenToggle,
 
+    isFetchingStatementResult,
     resultLimit,
     setResultLimit,
 }) => {
@@ -46,7 +49,12 @@ export const StatementResult: React.FC<IProps> = ({
             'row'
         )})`;
 
-        const fetchRowInfo = fetchedAllRows ? (
+        const fetchRowInfo = isFetchingStatementResult ? (
+            <div className="flex-row">
+                Fetching statement results
+                <Icon name="Loading" size={16} className="ml4" />
+            </div>
+        ) : fetchedAllRows ? (
             `${formatNumber(actualRowMinusColCount, 'row')} (Full Result)`
         ) : (
             <div className="flex-row">

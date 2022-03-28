@@ -38,6 +38,15 @@ function useStatementResult(statementExecution: IStatementExecution) {
         (state: IStoreState) =>
             state.queryExecutions.statementResultById[statementExecution.id]
     );
+    const isFetchingStatementResult = Boolean(
+        useSelector(
+            (state: IStoreState) =>
+                state.queryExecutions.statementResultLoadingById[
+                    statementExecution.id
+                ]
+        )
+    );
+
     const [resultLimit, setResultLimit] = useState(
         statementResult?.data?.length
             ? statementResult.data.length - 1 // Subtract 1 to account for 1 row of column names
@@ -52,7 +61,7 @@ function useStatementResult(statementExecution: IStatementExecution) {
     useEffect(() => {
         if (
             statementExecution.result_row_count &&
-            (!statementResult || statementResult.data?.length < resultLimit)
+            (!statementResult || statementResult.limit < resultLimit)
         ) {
             loadStatementResult(statementExecution.id, resultLimit);
         }
@@ -63,6 +72,7 @@ function useStatementResult(statementExecution: IStatementExecution) {
         setResultLimit,
 
         statementResult,
+        isFetchingStatementResult,
     };
 }
 
@@ -107,7 +117,7 @@ export const DataDocStatementExecution: React.FC<IProps> = ({
     const {
         resultLimit,
         setResultLimit,
-
+        isFetchingStatementResult,
         statementResult,
     } = useStatementResult(statementExecution);
 
@@ -181,6 +191,7 @@ export const DataDocStatementExecution: React.FC<IProps> = ({
                         isFullscreen={false}
                         resultLimit={resultLimit}
                         setResultLimit={setResultLimit}
+                        isFetchingStatementResult={isFetchingStatementResult}
                     />
                 </>
             );
