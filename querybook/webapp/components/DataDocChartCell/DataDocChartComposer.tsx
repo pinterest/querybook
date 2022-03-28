@@ -58,6 +58,7 @@ import { DisabledSection } from 'ui/DisabledSection/DisabledSection';
 import { DataDocChart } from './DataDocChart';
 import { DataDocChartCellTable } from './DataDocChartCellTable';
 import './DataDocChartComposer.scss';
+import { StatementExecutionResultSizes } from 'const/queryExecution';
 
 interface IProps {
     meta?: IDataChartCellMeta;
@@ -108,7 +109,8 @@ const DataDocChartComposerComponent: React.FunctionComponent<
         displayStatementId,
         setFieldValue.bind(null, 'cellId'),
         setFieldValue.bind(null, 'executionId'),
-        setDisplayStatementId
+        setDisplayStatementId,
+        values.limit
     );
 
     const chartData = React.useMemo(
@@ -344,6 +346,54 @@ const DataDocChartComposerComponent: React.FunctionComponent<
         />
     );
 
+    const renderPickerDOM = () => {
+        if (values.sourceType === 'custom') {
+            return null; // Custom data is sourced from internal context
+        }
+
+        const showQueryExecution =
+            values.sourceType !== 'execution' && queryExecutions.length;
+        const showStatementExecution =
+            displayExecutionId != null && statementExecutions.length;
+
+        const queryExecutionPicker =
+            showQueryExecution || showStatementExecution ? (
+                <FormField
+                    label={`${
+                        showQueryExecution ? 'Query Execution' : 'Statement'
+                    } (Display Only)`}
+                    stacked
+                    help="Not Saved. Defaults to latest."
+                >
+                    {showQueryExecution && (
+                        <QueryExecutionPicker
+                            queryExecutionId={displayExecutionId}
+                            onSelection={setDisplayExecutionId}
+                            queryExecutions={queryExecutions}
+                            autoSelect
+                            shortVersion
+                        />
+                    )}
+
+                    {showStatementExecution && (
+                        <StatementExecutionPicker
+                            statementExecutionId={displayStatementId}
+                            onSelection={setDisplayStatementId}
+                            statementExecutions={statementExecutions}
+                            total={statementExecutions.length}
+                            autoSelect
+                        />
+                    )}
+                </FormField>
+            ) : null;
+
+        return (
+            <div className="DataDocChartComposer-exec-picker">
+                {queryExecutionPicker}
+            </div>
+        );
+    };
+
     const dataSourceDOM = (
         <>
             <FormSectionHeader>Source</FormSectionHeader>
@@ -385,6 +435,18 @@ const DataDocChartComposerComponent: React.FunctionComponent<
                     label="Execution"
                 />
             ) : null}
+            {renderPickerDOM()}
+            <SimpleField
+                stacked
+                type="react-select"
+                options={StatementExecutionResultSizes.map((size) => ({
+                    value: size,
+                    label: `${size} Rows`,
+                }))}
+                name="limit"
+                label="Row Limit"
+                help="Max number of rows to fetch from the result"
+            />
         </>
     );
 
@@ -466,57 +528,9 @@ const DataDocChartComposerComponent: React.FunctionComponent<
         </>
     );
 
-    const renderPickerDOM = () => {
-        if (values.sourceType === 'custom') {
-            return null; // Custom data is sourced from internal context
-        }
-
-        const queryExecutionPicker =
-            values.sourceType !== 'execution' && queryExecutions.length ? (
-                <FormField
-                    label="Query Execution (Display Only)"
-                    stacked
-                    help="Not Saved. Defaults to latest."
-                >
-                    <QueryExecutionPicker
-                        queryExecutionId={displayExecutionId}
-                        onSelection={setDisplayExecutionId}
-                        queryExecutions={queryExecutions}
-                        autoSelect
-                        shortVersion
-                    />
-                </FormField>
-            ) : null;
-
-        const statementExecutionPicker =
-            displayExecutionId != null && statementExecutions.length ? (
-                <FormField
-                    label="Execution Statement (Display Only)"
-                    stacked
-                    help="Not Saved. Defaults to 1st."
-                >
-                    <StatementExecutionPicker
-                        statementExecutionId={displayStatementId}
-                        onSelection={setDisplayStatementId}
-                        statementExecutions={statementExecutions}
-                        total={statementExecutions.length}
-                        autoSelect
-                    />
-                </FormField>
-            ) : null;
-
-        return (
-            <div className="DataDocChartComposer-exec-picker">
-                {queryExecutionPicker}
-                {statementExecutionPicker}
-            </div>
-        );
-    };
-
     const dataTabDOM = (
         <>
             {dataSourceDOM}
-            {renderPickerDOM()}
             {dataTransformationDOM}
         </>
     );
@@ -1017,6 +1031,10 @@ function formValsToMeta(vals: IChartFormValues, meta: IDataChartCellMeta) {
             draft.data.source_ids = [vals.cellId];
         } else if (vals.sourceType === 'execution') {
             draft.data.source_ids = [vals.executionId];
+        }
+
+        if (vals.limit != null) {
+            draft.data.limit = vals.limit;
         }
 
         // data transformation

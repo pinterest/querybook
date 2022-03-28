@@ -86,4 +86,18 @@
             }
         }
     }
+
+    .StatementResultRowCountPicker {
+        display: inline-flex;
+        margin: 0px 4px;
+        .Select {
+            select {
+                padding: 4px 20px 2px 2px;
+            }
+            &::after {
+                right: 7px;
+                top: 30%;
+            }
+        }
+    }
 }

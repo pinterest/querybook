@@ -13,7 +13,7 @@ import {
     makeStatementExecutionsSelector,
 } from 'redux/queryExecutions/selector';
 
-import { DataDocStatementExecutionBar } from 'components/DataDocStatementExecutionBar/DataDocStatementExecutionBar';
+import { StatementExecutionBar } from 'components/StatementExecutionBar/StatementExecutionBar';
 import { DataDocStatementExecution } from 'components/DataDocStatementExecution/DataDocStatementExecution';
 import { StatementExecutionPicker } from 'components/ExecutionPicker/StatementExecutionPicker';
 import { Loader } from 'ui/Loader/Loader';
@@ -39,14 +39,9 @@ function useQueryExecutionReduxState(queryId: number) {
         queryId
     );
 
-    const statementResultById = useSelector(
-        (state: IStoreState) => state.queryExecutions.statementResultById
-    );
-
     return {
         queryExecution,
         statementExecutions,
-        statementResultById,
     };
 }
 
@@ -69,12 +64,6 @@ function useQueryExecutionDispatch(queryExecutionId: number) {
         [queryExecutionId]
     );
 
-    const loadS3Result = useCallback(
-        (statementExecutionId: number) =>
-            dispatch(queryExecutionsActions.fetchResult(statementExecutionId)),
-        []
-    );
-
     const cancelQueryExecution = useCallback(
         () =>
             QueryExecutionResource.cancel(queryExecutionId).then(() => {
@@ -87,7 +76,6 @@ function useQueryExecutionDispatch(queryExecutionId: number) {
     return {
         loadQueryExecutionIfNeeded,
         pollQueryExecution,
-        loadS3Result,
         cancelQueryExecution,
     };
 }
@@ -106,11 +94,9 @@ export const QueryExecution: React.FC<IProps> = ({
         false
     );
 
-    const {
-        queryExecution,
-        statementExecutions,
-        statementResultById,
-    } = useQueryExecutionReduxState(id);
+    const { queryExecution, statementExecutions } = useQueryExecutionReduxState(
+        id
+    );
 
     const statementExecution = useMemo(
         () => statementExecutions?.[statementIndex],
@@ -120,7 +106,6 @@ export const QueryExecution: React.FC<IProps> = ({
     const {
         loadQueryExecutionIfNeeded,
         pollQueryExecution,
-        loadS3Result,
         cancelQueryExecution,
     } = useQueryExecutionDispatch(id);
 
@@ -158,9 +143,7 @@ export const QueryExecution: React.FC<IProps> = ({
             <DataDocStatementExecution
                 key={statementExecutionId}
                 statementExecution={statementExecution}
-                statementResult={statementResultById[statementExecutionId]}
                 showStatementMeta={showStatementMeta}
-                loadS3Result={loadS3Result}
                 showStatementLogs={showStatementLogs}
                 toggleStatementMeta={toggleShowStatementMeta}
             />
@@ -197,10 +180,10 @@ export const QueryExecution: React.FC<IProps> = ({
     };
 
     const getStatementExecutionHeaderDOM = () => {
-        const { id, status: queryStatus } = queryExecution;
+        const { status: queryStatus } = queryExecution;
 
         const statementExecutionBar = statementExecution ? (
-            <DataDocStatementExecutionBar
+            <StatementExecutionBar
                 queryStatus={queryStatus}
                 statementExecution={statementExecution}
                 showStatementLogs={showStatementLogs}

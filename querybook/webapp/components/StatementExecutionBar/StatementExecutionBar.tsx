@@ -1,6 +1,6 @@
 import React from 'react';
 
-import './DataDocStatementExecutionBar.scss';
+import './StatementExecutionBar.scss';
 import {
     QueryExecutionStatus,
     StatementExecutionStatus,
@@ -23,7 +23,7 @@ interface IProps {
     toggleShowStatementMeta: () => any;
 }
 
-export const DataDocStatementExecutionBar = React.memo<IProps>(
+export const StatementExecutionBar = React.memo<IProps>(
     ({
         statementExecution,
         toggleLogs,
@@ -96,7 +96,7 @@ export const DataDocStatementExecutionBar = React.memo<IProps>(
         );
 
         return (
-            <div className={'DataDocStatementExecutionBar flex-row'}>
+            <div className={'StatementExecutionBar flex-row'}>
                 {showExecutedQueryButton}
                 {getToggleLogsButtonDOM()}
                 {getToggleMetaButtonDOM()}

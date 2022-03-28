@@ -224,7 +224,11 @@ def download_statement_execution_result(statement_execution_id):
     methods=["GET"],
     require_auth=True,
 )
-def get_statement_execution_result(statement_execution_id):
+def get_statement_execution_result(statement_execution_id, limit=None):
+    # TODO: make this customizable
+    limit = 1000 if limit is None else limit
+    api_assert(limit <= 5000, message="Too many rows requested")
+
     with DBSession() as session:
         try:
             statement_execution = logic.get_statement_execution_by_id(
@@ -238,7 +242,7 @@ def get_statement_execution_result(statement_execution_id):
             )
 
             with GenericReader(statement_execution.result_path) as reader:
-                result = reader.read_csv(number_of_lines=2001)
+                result = reader.read_csv(number_of_lines=limit + 1)  # 1 row for column
                 return result
         except FileDoesNotExist as e:
             abort(RESOURCE_NOT_FOUND_STATUS_CODE, str(e))

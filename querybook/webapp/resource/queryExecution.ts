@@ -84,9 +84,9 @@ export const QueryExecutionResource = {
 };
 
 export const StatementResource = {
-    getResult: (id: number) =>
-        ds.fetch<string[][]>({
-            url: `/statement_execution/${id}/result/`,
+    getResult: (id: number, numberOfLines?: number) =>
+        ds.fetch<string[][]>(`/statement_execution/${id}/result/`, {
+            limit: numberOfLines,
         }),
     getLogs: (id: number) =>
         ds.fetch<string[]>(`/statement_execution/${id}/log/`),

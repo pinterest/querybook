@@ -401,39 +401,94 @@ export function fetchExporters(): ThunkResult<Promise<IQueryResultExporter[]>> {
 }
 
 export function fetchResult(
-    statementExecutionId: number
+    statementExecutionId: number,
+    numberOfLines: number
 ): ThunkResult<Promise<string[][]>> {
     return async (dispatch, getState) => {
         const state = getState();
         const statementExecution =
             state.queryExecutions.statementExecutionById[statementExecutionId];
-        if (statementExecution) {
-            const { id, result_row_count: resultRowCount } = statementExecution;
+        if (!statementExecution) {
+            return;
+        }
+        numberOfLines = Math.min(
+            numberOfLines,
+            statementExecution.result_row_count
+        );
+
+        /**
+         * Check to see if there is any data loaded or to be loaded
+         *
+         * Note: Do not make this async, otherwise multiple fetchResults
+         * call may interfere with each other
+         */
+        const getExistingData = () => {
+            // Check loaded result
             const statementResult =
                 state.queryExecutions.statementResultById[statementExecutionId];
-            if (resultRowCount > 0 && !statementResult) {
-                try {
-                    const { data } = await StatementResource.getResult(id);
-                    dispatch({
-                        type: '@@queryExecutions/RECEIVE_RESULT',
-                        payload: {
-                            statementExecutionId,
-                            data,
-                        },
-                    });
-                    return data;
-                } catch (error) {
-                    dispatch({
-                        type: '@@queryExecutions/RECEIVE_RESULT',
-                        payload: {
-                            statementExecutionId,
-                            failed: true,
-                            error: JSON.stringify(error, null, 2),
-                        },
-                    });
-                }
-            } else if (statementResult) {
+
+            if (statementResult && statementResult.limit >= numberOfLines) {
                 return statementResult.data;
+            }
+
+            // Check if there is anything loading
+            const statementResultLoading =
+                state.queryExecutions.statementResultLoadingById[
+                    statementExecutionId
+                ];
+            if (statementResultLoading) {
+                const request = statementResultLoading.request;
+                if (statementResultLoading.numberOfLines >= numberOfLines) {
+                    return new Promise<string[][]>((resolve) =>
+                        request.then((resp) => resolve(resp.data))
+                    );
+                } else {
+                    request.cancel();
+                }
+            }
+            return null;
+        };
+
+        const existingData = getExistingData();
+        if (existingData) {
+            return existingData;
+        }
+
+        if (numberOfLines > 0) {
+            try {
+                const statementResultRequest = StatementResource.getResult(
+                    statementExecutionId,
+                    numberOfLines
+                );
+                dispatch({
+                    type: '@@queryExecutions/START_RESULT',
+                    payload: {
+                        statementExecutionId,
+                        request: statementResultRequest,
+                        numberOfLines,
+                    },
+                });
+
+                const { data } = await statementResultRequest;
+                dispatch({
+                    type: '@@queryExecutions/RECEIVE_RESULT',
+                    payload: {
+                        statementExecutionId,
+                        data,
+                        limit: numberOfLines,
+                    },
+                });
+                return data;
+            } catch (error) {
+                dispatch({
+                    type: '@@queryExecutions/RECEIVE_RESULT',
+                    payload: {
+                        statementExecutionId,
+                        failed: true,
+                        error: JSON.stringify(error, null, 2),
+                        limit: numberOfLines,
+                    },
+                });
             }
         }
     };

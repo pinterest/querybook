@@ -16,6 +16,7 @@ import {
     ChartSize,
 } from 'const/dataDocChart';
 import { fontColor, fillColor, backgroundColor } from 'const/chartColors';
+import { StatementExecutionResultSizes } from 'const/queryExecution';
 import type { DeepPartial } from 'lib/typescript';
 import { formatNumber } from 'lib/utils/number';
 
@@ -113,6 +114,7 @@ export function mapMetaToFormVals(
         sourceType: meta.data.source_type,
         cellId,
         executionId,
+        limit: meta.data.limit ?? StatementExecutionResultSizes[0],
 
         // data transformation
         ...getDataTransformationOptions(meta),

@@ -1,5 +1,5 @@
 import React from 'react';
-import { useSelector, useDispatch } from 'react-redux';
+import { useSelector } from 'react-redux';
 import toast from 'react-hot-toast';
 
 import {
@@ -7,8 +7,7 @@ import {
     IStatementResult,
     IQueryResultExporter,
 } from 'const/queryExecution';
-import * as queryExecutionsActions from 'redux/queryExecutions/action';
-import { IStoreState, Dispatch } from 'redux/store/types';
+import { IStoreState } from 'redux/store/types';
 
 import * as Utils from 'lib/utils';
 import { getStatementExecutionResultDownloadUrl } from 'lib/query-execution';
@@ -85,18 +84,12 @@ export const ResultExportDropdown: React.FunctionComponent<IProps> = ({
         setExporterForForm,
     ] = React.useState<IQueryResultExporter>(null);
 
-    const dispatch: Dispatch = useDispatch();
     const statementExporters = useSelector(
         (state: IStoreState) => state.queryExecutions.statementExporters
     );
     const statementResult = useSelector(
         (state: IStoreState) =>
             state.queryExecutions.statementResultById[statementId]
-    );
-    const loadStatementResult = React.useCallback(
-        (statementExecutionId: number) =>
-            dispatch(queryExecutionsActions.fetchResult(statementExecutionId)),
-        []
     );
 
     const onDownloadClick = React.useCallback(() => {
@@ -109,12 +102,11 @@ export const ResultExportDropdown: React.FunctionComponent<IProps> = ({
     }, [statementId]);
 
     const onExportTSVClick = React.useCallback(async () => {
-        const rawResult =
-            statementResult?.data || (await loadStatementResult(statementId));
+        const rawResult = statementResult?.data || [];
         const parsedResult = tableToTSV(rawResult);
         Utils.copy(parsedResult);
         toast.success('Copied!');
-    }, [statementId, statementResult, loadStatementResult]);
+    }, [statementResult]);
 
     const handleExport = React.useCallback(
         async (
