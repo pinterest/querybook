@@ -12,6 +12,8 @@ const initialState: IQueryExecutionState = {
     dataCellIdQueryExecution: {},
 
     statementResultById: {},
+    statementResultLoadingById: {},
+
     statementLogById: {},
     queryErrorById: {},
     statementExporters: [],
@@ -264,6 +266,14 @@ function statementResultByIdReducer(
                 error,
             } = action.payload;
 
+            if (statementExecutionId in state) {
+                const prevResult = state[statementExecutionId];
+                // Do not overwrite success with failure
+                if (!prevResult.failed && failed) {
+                    return state;
+                }
+            }
+
             return {
                 ...state,
                 [statementExecutionId]: {
@@ -276,6 +286,34 @@ function statementResultByIdReducer(
         }
     }
     return state;
+}
+
+function statementResultLoadingByIdReducer(
+    state = initialState.statementResultLoadingById,
+    action: QueryExecutionAction
+) {
+    return produce(state, (draft) => {
+        switch (action.type) {
+            case '@@queryExecutions/RECEIVE_RESULT': {
+                const { statementExecutionId } = action.payload;
+
+                delete draft[statementExecutionId];
+                return;
+            }
+            case '@@queryExecutions/START_RESULT': {
+                const {
+                    statementExecutionId,
+                    request,
+                    numberOfLines,
+                } = action.payload;
+
+                draft[statementExecutionId] = {
+                    request,
+                    numberOfLines,
+                };
+            }
+        }
+    });
 }
 
 function queryErrorByIdReducer(
@@ -383,6 +421,8 @@ export default combineReducers({
     queryExecutionById: queryExecutionByIdReducer,
 
     statementResultById: statementResultByIdReducer,
+    statementResultLoadingById: statementResultLoadingByIdReducer,
+
     statementLogById: statementLogByIdReducer,
     queryErrorById: queryErrorByIdReducer,
     statementExporters: statementExportersReducer,

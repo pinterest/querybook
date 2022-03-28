@@ -1,7 +1,10 @@
-import React, { useState } from 'react';
+import React, { useMemo, useState } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 
-import { StatementExecutionStatus } from 'const/queryExecution';
+import {
+    StatementExecutionResultSizes,
+    StatementExecutionStatus,
+} from 'const/queryExecution';
 import { useMakeSelector } from 'hooks/redux/useMakeSelector';
 import { IStoreState, Dispatch } from 'redux/store/types';
 import * as queryExecutionsSelector from 'redux/queryExecutions/selector';
@@ -14,7 +17,8 @@ export function useChartSource(
     statementId: number,
     setCellId: (cellId: number) => any,
     setExecutionId: (executionId: number) => any,
-    setStatementId: (statementId: number) => any
+    setStatementId: (statementId: number) => any,
+    limit?: number
 ) {
     const [initializingExecutionId, setInitializingExecutionId] = useState(
         false
@@ -34,6 +38,16 @@ export function useChartSource(
         (state: IStoreState) =>
             state.queryExecutions.statementResultById[statementId]?.data
     );
+    const limitedStatementResultData = useMemo(() => {
+        if (!statementResultData || limit == null) {
+            return statementResultData;
+        }
+        const numRowsWithColumn = statementResultData.length - 1;
+        if (numRowsWithColumn <= limit) {
+            return statementResultData;
+        }
+        return statementResultData.slice(0, limit + 1);
+    }, [statementResultData, limit]);
 
     const dispatch: Dispatch = useDispatch();
     const getCellQueryExecutions = React.useCallback(
@@ -53,9 +67,14 @@ export function useChartSource(
         []
     );
     const loadStatementResult = React.useCallback(
-        (statementExecutionId: number) =>
-            dispatch(queryExecutionsActions.fetchResult(statementExecutionId)),
-        []
+        (statementExecutionId: number, numberOfLines?: number) =>
+            dispatch(
+                queryExecutionsActions.fetchResult(
+                    statementExecutionId,
+                    numberOfLines ?? StatementExecutionResultSizes[0]
+                )
+            ),
+        [dispatch]
     );
 
     const { queryExecutionById, statementExecutionById } = useSelector(
@@ -121,9 +140,9 @@ export function useChartSource(
 
     React.useEffect(() => {
         if (statementId != null) {
-            loadStatementResult(statementId);
+            loadStatementResult(statementId, limit);
         }
-    }, [statementId]);
+    }, [statementId, limit, loadStatementResult]);
 
     const queryExecutions = React.useMemo(
         () =>
@@ -147,7 +166,7 @@ export function useChartSource(
     );
 
     return {
-        statementResultData,
+        statementResultData: limitedStatementResultData,
         queryExecutions,
         statementExecutions,
     };

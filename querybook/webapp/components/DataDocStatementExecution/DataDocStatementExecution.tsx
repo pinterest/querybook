@@ -1,12 +1,14 @@
-import React, { useEffect, useMemo } from 'react';
+import React, { useCallback, useEffect, useMemo, useState } from 'react';
+import { useDispatch, useSelector } from 'react-redux';
 
 import {
     StatementExecutionStatus,
     IStatementExecution,
-    IStatementResult,
+    StatementExecutionResultSizes,
 } from 'const/queryExecution';
 
 import { useToggleState } from 'hooks/useToggleState';
+import { fetchResult } from 'redux/queryExecutions/action';
 
 import { StatementLogWrapper } from './StatementLog';
 import { StatementMeta } from './StatementMeta';
@@ -19,16 +21,49 @@ import './DataDocStatementExecution.scss';
 import { sanitizeAndExtraMarkdown } from 'lib/markdown';
 import { Icon } from 'ui/Icon/Icon';
 import { AccentText } from 'ui/StyledText/StyledText';
+import { IStoreState } from 'redux/store/types';
 
 interface IProps {
     statementExecution: IStatementExecution;
-    statementResult: IStatementResult;
 
     showStatementLogs: boolean;
     showStatementMeta: boolean;
 
     toggleStatementMeta: () => any;
-    loadS3Result: (id: number) => any;
+}
+
+function useStatementResult(statementExecution: IStatementExecution) {
+    const dispatch = useDispatch();
+    const statementResult = useSelector(
+        (state: IStoreState) =>
+            state.queryExecutions.statementResultById[statementExecution.id]
+    );
+    const [resultLimit, setResultLimit] = useState(
+        statementResult?.data?.length
+            ? statementResult.data.length - 1 // Subtract 1 to account for 1 row of column names
+            : StatementExecutionResultSizes[0]
+    );
+
+    const loadStatementResult = useCallback(
+        (id: number, limit: number) => dispatch(fetchResult(id, limit)),
+        [dispatch]
+    );
+
+    useEffect(() => {
+        if (
+            statementExecution.result_row_count &&
+            (!statementResult || statementResult.data?.length < resultLimit)
+        ) {
+            loadStatementResult(statementExecution.id, resultLimit);
+        }
+    }, [resultLimit, statementExecution, statementResult, loadStatementResult]);
+
+    return {
+        resultLimit,
+        setResultLimit,
+
+        statementResult,
+    };
 }
 
 function useStatementMeta(
@@ -57,13 +92,10 @@ function useStatementMeta(
 
 export const DataDocStatementExecution: React.FC<IProps> = ({
     statementExecution,
-    statementResult,
 
     showStatementLogs,
     showStatementMeta,
     toggleStatementMeta,
-
-    loadS3Result,
 }) => {
     const [showInFullScreen, , toggleFullScreen] = useToggleState(false);
     const statementMeta = useStatementMeta(
@@ -72,15 +104,12 @@ export const DataDocStatementExecution: React.FC<IProps> = ({
         toggleStatementMeta
     );
 
-    useEffect(() => {
-        if (statementExecution.result_row_count && !statementResult) {
-            loadS3Result(statementExecution.id);
-        }
-    }, [
-        statementExecution.result_row_count,
-        statementExecution.id,
+    const {
+        resultLimit,
+        setResultLimit,
+
         statementResult,
-    ]);
+    } = useStatementResult(statementExecution);
 
     const getLogDOM = () => (
         <StatementLogWrapper statementId={statementExecution.id} />
@@ -150,6 +179,8 @@ export const DataDocStatementExecution: React.FC<IProps> = ({
                         statementExecution={statementExecution}
                         onFullscreenToggle={toggleFullScreen}
                         isFullscreen={false}
+                        resultLimit={resultLimit}
+                        setResultLimit={setResultLimit}
                     />
                 </>
             );
@@ -185,6 +216,8 @@ export const DataDocStatementExecution: React.FC<IProps> = ({
                     statementExecution={statementExecution}
                     onFullscreenToggle={toggleFullScreen}
                     isFullscreen={true}
+                    setResultLimit={setResultLimit}
+                    resultLimit={resultLimit}
                 />
             </Modal>
         ) : null;

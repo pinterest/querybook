@@ -81,7 +81,8 @@ export const DataDocChartCell = React.memo<IProps>(
             statementExecutionId,
             setCellId,
             setQueryExecutionId,
-            setStatementExecutionId
+            setStatementExecutionId,
+            meta.data.limit
         );
 
         React.useEffect(() => {

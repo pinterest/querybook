@@ -11,6 +11,7 @@ import {
     IStatementExecution,
     IStatementLog,
     IStatementResult,
+    IStatementResultLoading,
 } from 'const/queryExecution';
 import { IAccessRequest } from 'const/accessRequest';
 
@@ -60,6 +61,13 @@ export interface IReceiveResultAction extends Action {
         failed?: boolean;
         error?: any;
     };
+}
+
+export interface IStartResultAction extends Action {
+    type: '@@queryExecutions/START_RESULT';
+    payload: {
+        statementExecutionId: number;
+    } & IStatementResultLoading;
 }
 
 export interface IReceiveLogAction extends Action {
@@ -154,6 +162,7 @@ export type QueryExecutionAction =
     | IReceiveQueryExecutionAction
     | IReceiveQueryErrorAction
     | IReceiveDownloadUrlAction
+    | IStartResultAction
     | IReceiveResultAction
     | IReceiveLogAction
     | IReceiveStatementExecutionAction
@@ -174,6 +183,7 @@ export interface IQueryExecutionState {
 
     queryErrorById: Record<number, IQueryError>;
     statementResultById: Record<number, IStatementResult>;
+    statementResultLoadingById: Record<number, IStatementResultLoading>;
     statementLogById: Record<number, IStatementLog>;
 
     statementExporters: IQueryResultExporter[];

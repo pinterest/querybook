@@ -1,3 +1,5 @@
+import { ICancelablePromise } from 'lib/datasource';
+
 // Keep this the same as the Enum defined in const/query_execution.py
 export enum QueryExecutionStatus {
     INITIALIZED = 0,
@@ -99,6 +101,11 @@ export interface IStatementResult {
     failed?: boolean;
 }
 
+export interface IStatementResultLoading {
+    request: ICancelablePromise<{ data: string[][] }>;
+    numberOfLines: number;
+}
+
 export interface IStatementLog {
     data: string[];
     error?: any;
@@ -124,3 +131,6 @@ export interface IQueryExecutionNotification {
     query_execution_id: number;
     user: number;
 }
+
+// Make sure this is in increasing order
+export const StatementExecutionResultSizes = [1000, 5000, 10000, 50000];

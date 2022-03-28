@@ -37,6 +37,7 @@ cell_types:
                         value_cols: [2]
                     aggregate: false
                     switch: false
+                limit: 1000 # Keep this the same as StatementExecutionResultSizes[0]
             chart:
                 type: ''
                 x_axis:

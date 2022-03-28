@@ -2,7 +2,11 @@ import clsx from 'clsx';
 import React, { useMemo } from 'react';
 
 import { formatNumber } from 'lib/utils/number';
-import { IStatementExecution, IStatementResult } from 'const/queryExecution';
+import {
+    IStatementExecution,
+    IStatementResult,
+    StatementExecutionResultSizes,
+} from 'const/queryExecution';
 
 import { Loading } from 'ui/Loading/Loading';
 import { Message } from 'ui/Message/Message';
@@ -11,12 +15,16 @@ import { PrettyNumber } from 'ui/PrettyNumber/PrettyNumber';
 import { StatementResultTable } from '../StatementResultTable/StatementResultTable';
 import { ShowMoreText } from 'ui/ShowMoreText/ShowMoreText';
 import { InfoButton } from 'ui/Button/InfoButton';
+import { IOptions, makeSelectOptions, Select } from 'ui/Select/Select';
 
 interface IProps {
     statementResult: IStatementResult;
     statementExecution: IStatementExecution;
     isFullscreen: boolean;
     onFullscreenToggle: () => any;
+
+    resultLimit: number;
+    setResultLimit: (limit: number) => void;
 }
 
 export const StatementResult: React.FC<IProps> = ({
@@ -24,16 +32,23 @@ export const StatementResult: React.FC<IProps> = ({
     statementResult,
     isFullscreen,
     onFullscreenToggle,
+
+    resultLimit,
+    setResultLimit,
 }) => {
     const getFetchInfoDOM = (
         resultRowMinusColCount: number,
         actualRowMinusColCount: number,
         fetchedAllRows: boolean
     ) => {
-        const resultPreviewTooltip = `Use Export to download full result (${formatNumber(
-            resultRowMinusColCount,
-            'row'
-        )})`;
+        const resultPreviewTooltip =
+            (actualRowMinusColCount < resultLimit
+                ? 'Unable to load more rows due to large result size. '
+                : '') +
+            `Use Export to download full result (${formatNumber(
+                resultRowMinusColCount,
+                'row'
+            )})`;
 
         const fetchRowInfo = fetchedAllRows ? (
             `${formatNumber(actualRowMinusColCount, 'row')} (Full Result)`
@@ -41,7 +56,12 @@ export const StatementResult: React.FC<IProps> = ({
             <div className="flex-row">
                 <span className="warning-word mr4">Previewing</span>
                 <span className="mr4">
-                    <PrettyNumber val={actualRowMinusColCount} />
+                    <StatementResultRowCountPicker
+                        resultLimit={resultLimit}
+                        setResultLimit={setResultLimit}
+                        maxRowCount={resultRowMinusColCount}
+                        currentRowCount={actualRowMinusColCount}
+                    />
                     <span className="mh4">of</span>
                     <PrettyNumber val={resultRowMinusColCount} unit="row" />
                 </span>
@@ -132,3 +152,64 @@ const StatementResultWithError: React.FC<{ error: any }> = ({ error }) => {
         />
     );
 };
+
+const StatementResultRowCountPicker: React.FC<{
+    resultLimit: number;
+    setResultLimit: (limit: number) => void;
+    currentRowCount: number;
+    maxRowCount: number;
+}> = ({ resultLimit, setResultLimit, currentRowCount, maxRowCount }) => {
+    const resultLimitOptions = useStatementResultLimitOptions(
+        maxRowCount,
+        currentRowCount
+    );
+
+    // Already fetched max possible, or no more limits to increase to
+    if (currentRowCount < resultLimit || resultLimitOptions.length <= 1) {
+        return <PrettyNumber val={currentRowCount} />;
+    }
+
+    return (
+        <span className="StatementResultRowCountPicker">
+            <Select
+                value={resultLimit}
+                onChange={(evt) => setResultLimit(Number(evt.target.value))}
+            >
+                {makeSelectOptions(resultLimitOptions)}
+            </Select>
+        </span>
+    );
+};
+
+function useStatementResultLimitOptions(
+    maxRowCount: number,
+    currentRowCount: number
+) {
+    const resultLimitOptions = useMemo(() => {
+        if (maxRowCount === 0) {
+            return [];
+        }
+        const options: IOptions = [];
+        for (const size of StatementExecutionResultSizes) {
+            if (size < currentRowCount) {
+                continue;
+            }
+
+            if (size <= maxRowCount) {
+                options.push({
+                    key: size,
+                    value: String(size),
+                });
+            } else {
+                options.push({
+                    key: maxRowCount,
+                    value: 'All',
+                });
+                break;
+            }
+        }
+        return options;
+    }, [maxRowCount, currentRowCount]);
+
+    return resultLimitOptions;
+}

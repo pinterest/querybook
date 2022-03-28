@@ -203,6 +203,7 @@ export interface IChartConfig {
             aggregate?: boolean;
             switch?: boolean;
         };
+        limit?: number;
     };
     chart: IChartChartMeta;
     visual?: IChartVisualMeta;
@@ -212,6 +213,7 @@ export interface IChartFormValues {
     sourceType: ChartDataSourceType;
     cellId: number | undefined;
     executionId: number | undefined;
+    limit: number;
 
     formatAggCol: number | undefined;
     formatSeriesCol: number | undefined;

@@ -145,6 +145,11 @@ export const StatementResultTable: React.FunctionComponent<{
         <StyledTableWrapper fontSize={tableFontSize}>
             <Table
                 minRows={0}
+                pageSize={
+                    rows.length <= maxNumberOfRowsToShow
+                        ? rows.length
+                        : undefined
+                }
                 stickyHeader
                 className="-highlight force-scrollbar-x"
                 defaultPageSize={
