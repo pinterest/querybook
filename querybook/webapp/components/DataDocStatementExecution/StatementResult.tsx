@@ -41,14 +41,10 @@ export const StatementResult: React.FC<IProps> = ({
         actualRowMinusColCount: number,
         fetchedAllRows: boolean
     ) => {
-        const resultPreviewTooltip =
-            (actualRowMinusColCount < resultLimit
-                ? 'Unable to load more rows due to large result size. '
-                : '') +
-            `Use Export to download full result (${formatNumber(
-                resultRowMinusColCount,
-                'row'
-            )})`;
+        const resultPreviewTooltip = `Use Export to download full result (${formatNumber(
+            resultRowMinusColCount,
+            'row'
+        )})`;
 
         const fetchRowInfo = fetchedAllRows ? (
             `${formatNumber(actualRowMinusColCount, 'row')} (Full Result)`
@@ -65,6 +61,11 @@ export const StatementResult: React.FC<IProps> = ({
                     <span className="mh4">of</span>
                     <PrettyNumber val={resultRowMinusColCount} unit="row" />
                 </span>
+                {actualRowMinusColCount < resultLimit && (
+                    <span className="warning-word">
+                        (Cannot fetch more rows due to size limit)
+                    </span>
+                )}
                 <InfoButton>{resultPreviewTooltip}</InfoButton>
             </div>
         );
