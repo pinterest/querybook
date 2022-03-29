@@ -48,9 +48,7 @@ function useStatementResult(statementExecution: IStatementExecution) {
     );
 
     const [resultLimit, setResultLimit] = useState(
-        statementResult?.data?.length
-            ? statementResult.data.length - 1 // Subtract 1 to account for 1 row of column names
-            : StatementExecutionResultSizes[0]
+        StatementExecutionResultSizes[0]
     );
 
     const loadStatementResult = useCallback(
