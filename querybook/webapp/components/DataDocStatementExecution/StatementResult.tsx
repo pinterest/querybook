@@ -207,7 +207,7 @@ function useStatementResultLimitOptions(
             if (size <= maxRowCount) {
                 options.push({
                     key: size,
-                    value: String(size),
+                    value: formatNumber(size),
                 });
             } else {
                 options.push({

@@ -32,7 +32,7 @@ export function formatNumber(
 ) {
     const num = Number(rawNum);
     if (!isNumeric(num)) {
-        return rawNum;
+        return rawNum as string;
     } else {
         const numString = num.toLocaleString('en-us', options);
         const unitString = unit ? ` ${unit}${num > 1 ? 's' : ''}` : '';
