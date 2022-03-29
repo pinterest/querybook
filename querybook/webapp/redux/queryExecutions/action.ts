@@ -408,13 +408,14 @@ export function fetchResult(
         const state = getState();
         const statementExecution =
             state.queryExecutions.statementExecutionById[statementExecutionId];
+
         if (!statementExecution) {
             return;
         }
-        numberOfLines = Math.min(
-            numberOfLines,
-            statementExecution.result_row_count
-        );
+
+        if (statementExecution.result_row_count === 0) {
+            return [];
+        }
 
         /**
          * Check to see if there is any data loaded or to be loaded
@@ -454,42 +455,41 @@ export function fetchResult(
             return existingData;
         }
 
-        if (numberOfLines > 0) {
-            try {
-                const statementResultRequest = StatementResource.getResult(
+        try {
+            const statementResultRequest = StatementResource.getResult(
+                statementExecutionId,
+                // Do not let the server read more than necessary
+                Math.min(numberOfLines, statementExecution.result_row_count)
+            );
+            dispatch({
+                type: '@@queryExecutions/START_RESULT',
+                payload: {
                     statementExecutionId,
-                    numberOfLines
-                );
-                dispatch({
-                    type: '@@queryExecutions/START_RESULT',
-                    payload: {
-                        statementExecutionId,
-                        request: statementResultRequest,
-                        numberOfLines,
-                    },
-                });
+                    request: statementResultRequest,
+                    numberOfLines,
+                },
+            });
 
-                const { data } = await statementResultRequest;
-                dispatch({
-                    type: '@@queryExecutions/RECEIVE_RESULT',
-                    payload: {
-                        statementExecutionId,
-                        data,
-                        limit: numberOfLines,
-                    },
-                });
-                return data;
-            } catch (error) {
-                dispatch({
-                    type: '@@queryExecutions/RECEIVE_RESULT',
-                    payload: {
-                        statementExecutionId,
-                        failed: true,
-                        error: JSON.stringify(error, null, 2),
-                        limit: numberOfLines,
-                    },
-                });
-            }
+            const { data } = await statementResultRequest;
+            dispatch({
+                type: '@@queryExecutions/RECEIVE_RESULT',
+                payload: {
+                    statementExecutionId,
+                    data,
+                    limit: numberOfLines,
+                },
+            });
+            return data;
+        } catch (error) {
+            dispatch({
+                type: '@@queryExecutions/RECEIVE_RESULT',
+                payload: {
+                    statementExecutionId,
+                    failed: true,
+                    error: JSON.stringify(error, null, 2),
+                    limit: numberOfLines,
+                },
+            });
         }
     };
 }
