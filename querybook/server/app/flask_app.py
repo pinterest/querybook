@@ -93,7 +93,7 @@ def make_limiter(app):
         key_func=lambda: current_user.id
         if hasattr(current_user, "id")
         else get_remote_address(),
-        default_limits=["1000 per day", "30 per minute"],
+        default_limits=["30 per minute"],
     )
     limiter.enabled = QuerybookSettings.PRODUCTION
     for handler in app.logger.handlers:

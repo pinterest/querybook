@@ -48,9 +48,7 @@ function useStatementResult(statementExecution: IStatementExecution) {
     );
 
     const [resultLimit, setResultLimit] = useState(
-        statementResult?.data?.length
-            ? statementResult.data.length - 1 // Subtract 1 to account for 1 row of column names
-            : StatementExecutionResultSizes[0]
+        StatementExecutionResultSizes[0]
     );
 
     const loadStatementResult = useCallback(
@@ -59,13 +57,15 @@ function useStatementResult(statementExecution: IStatementExecution) {
     );
 
     useEffect(() => {
-        if (
-            statementExecution.result_row_count &&
-            (!statementResult || statementResult.limit < resultLimit)
-        ) {
+        if (statementExecution.result_row_count > 0) {
             loadStatementResult(statementExecution.id, resultLimit);
         }
-    }, [resultLimit, statementExecution, statementResult, loadStatementResult]);
+    }, [
+        statementExecution.id,
+        statementExecution.result_row_count,
+        resultLimit,
+        loadStatementResult,
+    ]);
 
     return {
         resultLimit,
