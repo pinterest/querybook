@@ -3,7 +3,7 @@ from typing import Dict
 from flask import abort, Response, redirect
 from flask_login import current_user
 
-from app.flask_app import socketio
+from app.flask_app import socketio, limiter
 from app.datasource import register, api_assert, RequestException
 from app.db import DBSession
 from app.auth.permission import (
@@ -219,6 +219,7 @@ def download_statement_execution_result(statement_execution_id):
         return response
 
 
+@limiter.exempt
 @register(
     "/statement_execution/<int:statement_execution_id>/result/",
     methods=["GET"],
