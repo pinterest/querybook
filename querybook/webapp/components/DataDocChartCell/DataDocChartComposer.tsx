@@ -28,8 +28,10 @@ import { colorPalette, colorPaletteNames } from 'const/chartColors';
 import { defaultReactSelectStyles } from 'lib/utils/react-select';
 import { mapMetaToFormVals } from 'lib/chart/chart-meta-processing';
 import { transformData } from 'lib/chart/chart-data-transformation';
+import { formatNumber } from 'lib/utils/number';
 import { useChartSource } from 'hooks/chart/useChartSource';
 
+import { StatementExecutionResultSizes } from 'const/queryExecution';
 import { QueryExecutionPicker } from 'components/ExecutionPicker/QueryExecutionPicker';
 import { StatementExecutionPicker } from 'components/ExecutionPicker/StatementExecutionPicker';
 import { StatementResultTable } from 'components/StatementResultTable/StatementResultTable';
@@ -58,7 +60,6 @@ import { DisabledSection } from 'ui/DisabledSection/DisabledSection';
 import { DataDocChart } from './DataDocChart';
 import { DataDocChartCellTable } from './DataDocChartCellTable';
 import './DataDocChartComposer.scss';
-import { StatementExecutionResultSizes } from 'const/queryExecution';
 
 interface IProps {
     meta?: IDataChartCellMeta;
@@ -441,7 +442,7 @@ const DataDocChartComposerComponent: React.FunctionComponent<
                 type="react-select"
                 options={StatementExecutionResultSizes.map((size) => ({
                     value: size,
-                    label: `${size} Rows`,
+                    label: formatNumber(size, 'Row'),
                 }))}
                 name="limit"
                 label="Row Limit"
