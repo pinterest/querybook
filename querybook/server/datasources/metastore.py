@@ -17,6 +17,7 @@ from const.metastore import DataTableWarningSeverity
 from const.time import seconds_in_a_day
 from lib.lineage.utils import lineage
 from lib.metastore.utils import DataTableFinder
+from lib.metastore import get_metastore_loader
 from lib.query_analysis.samples import make_samples_query
 from lib.utils import mysql_cache
 from logic import metastore as logic
@@ -166,6 +167,25 @@ def create_table_ownership(table_id):
         return logic.create_table_ownership(
             table_id=table_id, uid=current_user.id, session=session
         )
+
+
+@register("/table/<int:table_id>/refresh/", methods=["PUT"])
+def refresh_table_from_metastore(table_id):
+    """Refetch table info from metastore"""
+    with DBSession() as session:
+        verify_data_table_permission(table_id, session=session)
+
+        table = logic.get_table_by_id(table_id, session=session)
+        schema = table.data_schema
+
+        metastore_id = schema.metastore_id
+        metastore_loader = get_metastore_loader(metastore_id, session=session)
+        metastore_loader._create_table_table(
+            schema.id, schema.name, table.name, session=session
+        )
+
+        session.refresh(table)
+        return table
 
 
 @register("/table/<int:table_id>/ownership/", methods=["DELETE"])
