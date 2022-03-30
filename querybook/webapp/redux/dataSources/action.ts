@@ -84,25 +84,27 @@ export function fetchQueryMetastore(): ThunkResult<Promise<IQueryMetastore[]>> {
     };
 }
 
+function receiveRawDataTable(rawTable: IDataTable) {
+    const normalizedData = normalize(rawTable, dataTableSchema);
+    const {
+        dataSchema = {},
+        dataTable = {},
+        dataColumn = {},
+        dataTableWarning = {},
+    } = normalizedData.entities;
+
+    return receiveDataTable(
+        dataSchema,
+        dataTable,
+        dataColumn,
+        dataTableWarning
+    );
+}
+
 export function fetchDataTable(tableId: number): ThunkResult<Promise<any>> {
     return async (dispatch) => {
         const { data } = await TableResource.get(tableId);
-        const normalizedData = normalize(data, dataTableSchema);
-        const {
-            dataSchema = {},
-            dataTable = {},
-            dataColumn = {},
-            dataTableWarning = {},
-        } = normalizedData.entities;
-
-        dispatch(
-            receiveDataTable(
-                dataSchema,
-                dataTable,
-                dataColumn,
-                dataTableWarning
-            )
-        );
+        dispatch(receiveRawDataTable(data));
     };
 }
 
@@ -119,6 +121,15 @@ export function fetchDataTableIfNeeded(
                 return Promise.resolve(table);
             }
         }
+    };
+}
+
+export function refreshDataTableInMetastore(
+    tableId: number
+): ThunkResult<Promise<void>> {
+    return async (dispatch) => {
+        const { data } = await TableResource.refresh(tableId);
+        dispatch(receiveRawDataTable(data));
     };
 }
 
