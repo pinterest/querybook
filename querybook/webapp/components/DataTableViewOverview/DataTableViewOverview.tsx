@@ -64,9 +64,9 @@ function useRefreshMetastore(table: IDataTable) {
         refreshRequest.finally(() => setIsRefreshing(false));
 
         toast.promise(refreshRequest, {
-            loading: 'Refreshing table from metastore...',
+            loading: 'Refreshing table from metastore',
             success: 'Successfully updated table!',
-            error: 'Failed to update table from Metastore',
+            error: 'Failed to update table from metastore',
         });
     }, [dispatch, table.id]);
 
