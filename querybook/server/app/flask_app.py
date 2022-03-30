@@ -4,7 +4,6 @@ from datetime import timedelta
 from celery import Celery
 from flask import Flask, Blueprint, json as flask_json, has_request_context
 from flask_socketio import SocketIO
-from flask_login import current_user
 from flask_limiter import Limiter
 from flask_limiter.util import get_remote_address
 from flask_caching import Cache
@@ -88,16 +87,34 @@ def make_celery(app):
 
 
 def make_limiter(app):
+    def limiter_key_func():
+        from flask_login import current_user
+
+        if hasattr(current_user, "id"):
+            return current_user.id
+        return get_remote_address()
+
     limiter = Limiter(
         app,
-        key_func=lambda: current_user.id
-        if hasattr(current_user, "id")
-        else get_remote_address(),
-        default_limits=["30 per minute"],
+        key_func=limiter_key_func,
+        default_limits=["60 per minute"],
+        default_limits_per_method=True,
     )
     limiter.enabled = QuerybookSettings.PRODUCTION
     for handler in app.logger.handlers:
         limiter.logger.addHandler(handler)
+
+    @app.after_request
+    def limiter_add_headers(response):
+        if limiter.enabled and limiter.current_limit and limiter.current_limit.breached:
+            response.headers["flask-limit-amount"] = limiter.current_limit.limit.amount
+            response.headers["flask-limit-key"] = limiter.current_limit.key
+            response.headers["flask-limit-reset-at"] = limiter.current_limit.reset_at
+            response.headers[
+                "flask-limit-window-size"
+            ] = limiter.current_limit.limit.get_expiry()
+        return response
+
     return limiter
 
 

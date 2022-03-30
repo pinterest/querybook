@@ -5,7 +5,7 @@ flask==2.0.1
 Flask-Caching==1.10.1
 Flask-Compress==1.10.1
 Flask-Login==0.4.1
-Flask-Limiter==1.4
+Flask-Limiter==2.2.0
 python-memcached==1.59
 redis==3.5.3
 

@@ -15,6 +15,7 @@ import {
 import { IAccessRequest } from 'const/accessRequest';
 
 import { queryCellExecutionManager } from 'lib/batch/query-execution-manager';
+import { formatError } from 'lib/utils/error';
 import {
     QueryExecutionResource,
     QueryExecutionAccessRequestResource,
@@ -486,7 +487,7 @@ export function fetchResult(
                 payload: {
                     statementExecutionId,
                     failed: true,
-                    error: JSON.stringify(error, null, 2),
+                    error: formatError(error),
                     limit: numberOfLines,
                 },
             });
