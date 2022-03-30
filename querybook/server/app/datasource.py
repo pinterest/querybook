@@ -6,8 +6,6 @@ import socket
 
 import flask
 from flask_login import current_user
-from flask_limiter import RateLimitExceeded
-
 from werkzeug.exceptions import Forbidden, NotFound
 
 from app.flask_app import flask_app, limiter
@@ -71,12 +69,6 @@ def register(url, methods=None, require_auth=True, custom_response=False):
             except RequestException as e:
                 status = e.status_code or 500
                 results = {"host": _host, "error": str(e), "request_exception": True}
-            except RateLimitExceeded as e:
-                status = 429
-                results = {
-                    "host": _host,
-                    "error": f"User {current_user.id} exceeded limit of {e.description}",
-                }
             except Exception as e:
                 LOG.error(e, exc_info=True)
                 status = 500
