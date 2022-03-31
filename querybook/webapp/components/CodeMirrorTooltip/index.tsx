@@ -1,5 +1,5 @@
 import React from 'react';
-import * as ReactDOM from 'react-dom';
+import { createRoot, Root } from 'react-dom/client';
 import { Provider } from 'react-redux';
 
 import { reduxStore } from 'redux/store';
@@ -46,21 +46,21 @@ function mountTooltip(
         },
     };
     // Init the react stuff
-    ReactDOM.render(
+    const tooltipReactRoot = createRoot(tooltipContainer);
+    tooltipReactRoot.render(
         <Provider store={reduxStore}>
             <CodeMirrorTooltip {...mergedProps} />
-        </Provider>,
-        tooltipContainer
+        </Provider>
     );
 
-    return tooltipContainer;
+    return [tooltipContainer, tooltipReactRoot] as const;
 }
 
-function unmountTooltip(tooltipContainer: HTMLDivElement) {
+function unmountTooltip(tooltipContainer: HTMLDivElement, reactRoot: Root) {
     if (!tooltipContainer.parentNode) {
         return;
     }
-    ReactDOM.unmountComponentAtNode(tooltipContainer);
+    reactRoot.unmount();
     tooltipContainer.parentNode.removeChild(tooltipContainer);
 }
 
@@ -85,14 +85,16 @@ export async function showTooltipFor(
         return;
     }
     const hoveredNode = nodes.find((node) => isHovered(node));
-    let tooltip = null;
+    let tooltip: HTMLDivElement = null;
+    let tooltipReactRoot: Root = null;
 
     const hideTooltip = () => {
         if (tooltip) {
             tooltip.removeEventListener('mouseenter', onMouseEnter);
             tooltip.removeEventListener('mouseleave', onMouseOut);
-            unmountTooltip(tooltip);
+            unmountTooltip(tooltip, tooltipReactRoot);
             tooltip = null;
+            tooltipReactRoot = null;
         }
     };
     let hideTooltipTimeout: number;
@@ -123,7 +125,12 @@ export async function showTooltipFor(
         }
     };
 
-    tooltip = mountTooltip(hoveredNode, props, hideTooltipAndNode, direction);
+    [tooltip, tooltipReactRoot] = mountTooltip(
+        hoveredNode,
+        props,
+        hideTooltipAndNode,
+        direction
+    );
 
     tooltip.addEventListener('mouseenter', onMouseEnter);
     tooltip.addEventListener('mouseleave', onMouseOut);
