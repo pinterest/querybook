@@ -12,12 +12,12 @@ interface IProps {
 
 export interface ILineageNodeProps {
     label: string;
-    onSelect: (id) => void;
-    onExpand: (id) => void;
+    onSelect: () => void;
+    onExpand: () => void;
     isSelected: boolean;
 }
 
-export default React.memo<IProps>(({ data }) => {
+export const LineageNode = React.memo<IProps>(({ data }) => {
     const { label, onExpand, onSelect, isSelected } = data;
 
     const LineageNodeClassName = clsx({
@@ -32,7 +32,7 @@ export default React.memo<IProps>(({ data }) => {
                 {label}
             </div>
             <IconButton
-                icon="Eye"
+                icon="Expand"
                 className="ml8"
                 noPadding
                 size={16}

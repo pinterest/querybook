@@ -10,7 +10,7 @@ import {
     FlowGraph,
     initialNodePosition,
 } from 'ui/FlowGraph/FlowGraph';
-import LineageNode from 'ui/FlowGraph/LineageNode';
+import { LineageNode } from 'ui/FlowGraph/LineageNode';
 
 import './DataTableViewLineage.scss';
 
@@ -107,14 +107,14 @@ export const DataTableViewLineage: React.FunctionComponent<IDataTableViewLineage
 }) => {
     const [selectedTableId, setSelectedTableId] = React.useState<number>(null);
 
-    const onNodeClick = React.useCallback((clickedNodeId) => {
+    const onNodeClick = React.useCallback((clickedNodeId: number) => {
         setSelectedTableId((currentSelectedNode) =>
             clickedNodeId !== currentSelectedNode ? clickedNodeId : null
         );
     }, []);
 
     const onNodeExpand = React.useCallback(
-        (clickedNodeId) => {
+        (clickedNodeId: number) => {
             dataLineageLoader(clickedNodeId);
         },
         [dataLineageLoader]
@@ -126,7 +126,7 @@ export const DataTableViewLineage: React.FunctionComponent<IDataTableViewLineage
         const newNodes = [];
         const newEdges = [];
         const seen = new Set<number>();
-        const addedTableIds = new Set<number>([]);
+        const addedTableIds = new Set<number>();
 
         for (const lineages of Object.values(dataLineages)) {
             seen.delete(tableId);
@@ -153,7 +153,7 @@ export const DataTableViewLineage: React.FunctionComponent<IDataTableViewLineage
     React.useEffect(() => {
         dataLineageLoader(table.id);
         setSelectedTableId(table.id);
-    }, [dataLineageLoader, table]);
+    }, [table]);
 
     const miniTableView = selectedTableId != null && (
         <DataTableViewMini

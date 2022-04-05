@@ -8,10 +8,10 @@
         background-color: var(--bg-light);
     }
 
-    .react-flow__handle {
-        border: 3px solid var(--bg-dark);
-    }
     .LineageNode-label {
         cursor: pointer;
+    }
+    .IconButton {
+        color: var(--icon-light);
     }
 }

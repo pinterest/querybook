@@ -1,8 +1,13 @@
 .FlowGraph {
     height: 100%;
     width: 100%;
+
     .react-flow__node {
         width: auto;
+    }
+
+    .react-flow__handle {
+        border: 3px solid var(--bg-dark);
     }
 
     .react-flow__minimap {
