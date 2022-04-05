@@ -43,7 +43,9 @@ class S3Reader(BaseReader):
         if "max_read_size" in self._kwargs:
             reader_kwargs["max_read_size"] = self._kwargs.get("max_read_size")
         self._reader = s3_client.S3FileReader(
-            QuerybookSettings.STORE_BUCKET_NAME, self.uri, **reader_kwargs,
+            QuerybookSettings.STORE_BUCKET_NAME,
+            self.uri,
+            **reader_kwargs,
         )
 
     def get_csv_iter(
@@ -73,7 +75,10 @@ class S3Reader(BaseReader):
             ] = f'attachment; filename="{custom_name}"'
 
         key_signer = S3KeySigner(QuerybookSettings.STORE_BUCKET_NAME)
-        download_url = key_signer.generate_presigned_url(self.uri, params=url_params,)
+        download_url = key_signer.generate_presigned_url(
+            self.uri,
+            params=url_params,
+        )
         return download_url
 
     @property

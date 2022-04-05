@@ -28,7 +28,10 @@ def load_all_change_logs():
             with open(os.path.join(CHANGE_LOG_PATH, "./{}".format(filename))) as f:
                 changelog_date = filename.split(".")[0]
                 __change_logs.append(
-                    {"date": changelog_date, "content": generate_change_log(f.read()),}
+                    {
+                        "date": changelog_date,
+                        "content": generate_change_log(f.read()),
+                    }
                 )
     return __change_logs
 

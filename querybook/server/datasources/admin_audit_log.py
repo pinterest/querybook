@@ -29,7 +29,10 @@ def with_admin_audit_log(item_type: AdminItemType, op: AdminOperation):
                     (
                         result["id"]
                         if isinstance(result, dict)
-                        else getattr(result, "id",)
+                        else getattr(
+                            result,
+                            "id",
+                        )
                     )
                     if op == AdminOperation.CREATE
                     else kwargs["id"]

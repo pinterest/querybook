@@ -48,7 +48,7 @@ class QuerybookLoginManager(LoginManager):
         self.request_callback = load_user_with_api_access_token
         self.user_callback = load_user
         self.needs_refresh_message = (
-            u"To protect your account, please reauthenticate to access this page."
+            "To protect your account, please reauthenticate to access this page."
         )
         self.needs_refresh_message_category = "info"
 

@@ -73,7 +73,9 @@ def assert_is_owner(doc_id, session=None):
         if doc is None:
             raise DocDoesNotExist
         api_assert(
-            doc.owner_uid == current_user.id, "NOT_DATADOC_OWNER", 403,
+            doc.owner_uid == current_user.id,
+            "NOT_DATADOC_OWNER",
+            403,
         )
     except DocDoesNotExist:
         api_assert(False, "DOC_DNE", 404)

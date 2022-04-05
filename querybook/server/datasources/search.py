@@ -86,15 +86,32 @@ def _match_filters(filters):
             filter_terms.append(_make_singular_filter(filter_name, filter_val))
     filters = {"filter": {"bool": {"must": filter_terms}}}
     if created_at_filter:
-        filters["range"] = [{"range": {"created_at": created_at_filter,}}]
+        filters["range"] = [
+            {
+                "range": {
+                    "created_at": created_at_filter,
+                }
+            }
+        ]
     if duration_filter:
         filters.setdefault("range", [])
-        filters["range"].append({"range": {"duration": duration_filter,}})
+        filters["range"].append(
+            {
+                "range": {
+                    "duration": duration_filter,
+                }
+            }
+        )
     return filters
 
 
 def _construct_query_search_query(
-    keywords, filters, limit, offset, sort_key=None, sort_order=None,
+    keywords,
+    filters,
+    limit,
+    offset,
+    sort_key=None,
+    sort_order=None,
 ):
     search_query = {}
     if keywords:
@@ -109,8 +126,21 @@ def _construct_query_search_query(
                     },
                 },
                 "should": [
-                    {"match_phrase": {"query_text": {"query": keywords, "boost": 10,}}},
-                    {"match_phrase": {"title": {"query": keywords,}}},
+                    {
+                        "match_phrase": {
+                            "query_text": {
+                                "query": keywords,
+                                "boost": 10,
+                            }
+                        }
+                    },
+                    {
+                        "match_phrase": {
+                            "title": {
+                                "query": keywords,
+                            }
+                        }
+                    },
                 ],
             }
         }
@@ -147,8 +177,14 @@ def _construct_query_search_query(
     query.update(
         _highlight_fields(
             {
-                "query_text": {"fragment_size": 150, "number_of_fragments": 3,},
-                "title": {"fragment_size": 20, "number_of_fragments": 3,},
+                "query_text": {
+                    "fragment_size": 150,
+                    "number_of_fragments": 3,
+                },
+                "title": {
+                    "fragment_size": 20,
+                    "number_of_fragments": 3,
+                },
             }
         )
     )
@@ -157,11 +193,22 @@ def _construct_query_search_query(
 
 
 def _construct_datadoc_query(
-    keywords, filters, fields, limit, offset, sort_key=None, sort_order=None,
+    keywords,
+    filters,
+    fields,
+    limit,
+    offset,
+    sort_key=None,
+    sort_order=None,
 ):
     # TODO: fields is not used because explicit search for Data Docs is not implemented
     search_query = _match_any_field(
-        keywords, search_fields=["title^5", "cells", "owner",],
+        keywords,
+        search_fields=[
+            "title^5",
+            "cells",
+            "owner",
+        ],
     )
     search_filter = _match_filters(filters)
     if search_filter == {}:
@@ -194,7 +241,14 @@ def _construct_datadoc_query(
 
         query.update({"sort": sort_query})
     query.update(
-        _highlight_fields({"cells": {"fragment_size": 60, "number_of_fragments": 3,}})
+        _highlight_fields(
+            {
+                "cells": {
+                    "fragment_size": 60,
+                    "number_of_fragments": 3,
+                }
+            }
+        )
     )
 
     return json.dumps(query)
@@ -249,7 +303,14 @@ def _match_data_doc_fields(fields):
 
 
 def _construct_tables_query(
-    keywords, filters, fields, limit, offset, concise, sort_key=None, sort_order=None,
+    keywords,
+    filters,
+    fields,
+    limit,
+    offset,
+    concise,
+    sort_key=None,
+    sort_order=None,
 ):
     search_query = {}
     if keywords:
@@ -313,8 +374,14 @@ def _construct_tables_query(
     query.update(
         _highlight_fields(
             {
-                "columns": {"fragment_size": 20, "number_of_fragments": 5,},
-                "description": {"fragment_size": 60, "number_of_fragments": 3,},
+                "columns": {
+                    "fragment_size": 20,
+                    "number_of_fragments": 5,
+                },
+                "description": {
+                    "fragment_size": 60,
+                    "number_of_fragments": 3,
+                },
             }
         )
     )

@@ -246,7 +246,11 @@ def create_data_cell(
     assert isinstance(context, str), "Context must be string"
 
     processed_meta = sanitize_data_cell_meta(cell_type, meta)
-    data_cell = DataCell(cell_type=cell_type, context=context, meta=processed_meta,)
+    data_cell = DataCell(
+        cell_type=cell_type,
+        context=context,
+        meta=processed_meta,
+    )
 
     session.add(data_cell)
 
@@ -263,7 +267,10 @@ def create_data_cell(
 
 @with_session
 def update_data_cell(
-    id, commit=True, session=None, **fields,
+    id,
+    commit=True,
+    session=None,
+    **fields,
 ):
     data_cell = get_data_cell_by_id(id, session=session)
     if not data_cell:
@@ -492,7 +499,11 @@ def move_data_doc_cell_to_doc(cell_id, data_doc_id, index, commit=True, session=
             to_index -= 1
 
         return move_data_doc_cell(
-            data_doc_id, from_index, to_index, commit=commit, session=session,
+            data_doc_id,
+            from_index,
+            to_index,
+            commit=commit,
+            session=session,
         )
 
     # Move every cell in old doc below up 1
@@ -723,7 +734,10 @@ def favorite_data_doc(data_doc_id, uid, session=None):
         .first()
     )
     if not favorite:
-        favorite = FavoriteDataDoc(data_doc_id=data_doc_id, uid=uid,)
+        favorite = FavoriteDataDoc(
+            data_doc_id=data_doc_id,
+            uid=uid,
+        )
     session.add(favorite)
     session.commit()
 
@@ -806,7 +820,12 @@ def create_data_doc_editor(
 
 @with_session
 def update_data_doc_editor(
-    id, read=None, write=None, commit=True, session=None, **fields,
+    id,
+    read=None,
+    write=None,
+    commit=True,
+    session=None,
+    **fields,
 ):
     editor = get_data_doc_editor_by_id(id, session=session)
     if editor:

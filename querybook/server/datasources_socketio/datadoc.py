@@ -258,7 +258,10 @@ def move_data_doc_cursor(data_doc_id, data_cell_id=None):
     update_user_cursor(data_doc_id, data_cell_id)
     socketio.emit(
         "data_doc_cursor_moved",
-        (request.sid, data_cell_id,),
+        (
+            request.sid,
+            data_cell_id,
+        ),
         namespace=DATA_DOC_NAMESPACE,
         room=data_doc_id,
         broadcast=True,

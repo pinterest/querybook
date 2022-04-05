@@ -82,7 +82,10 @@ class QueryExecutorLogger(object):
             ).to_dict()
 
         query_execution = spread_dict(
-            query_execution, {"total": len(self._statement_ranges),},
+            query_execution,
+            {
+                "total": len(self._statement_ranges),
+            },
         )
         socketio.emit(
             "query_start",
@@ -137,7 +140,10 @@ class QueryExecutorLogger(object):
         )
 
     def on_statement_update(
-        self, log: str = "", meta_info: str = None, percent_complete=None,
+        self,
+        log: str = "",
+        meta_info: str = None,
+        percent_complete=None,
     ):
         statement_execution_id = self.statement_execution_ids[-1]
 
@@ -174,7 +180,9 @@ class QueryExecutorLogger(object):
             if percent_complete_change:
                 statement_update_dict["percent_complete"] = percent_complete
                 self._statement_progress = {
-                    statement_execution_id: {"percent_complete": percent_complete,}
+                    statement_execution_id: {
+                        "percent_complete": percent_complete,
+                    }
                 }
 
                 self.update_progress()
@@ -189,7 +197,8 @@ class QueryExecutorLogger(object):
     def on_statement_end(self, cursor):
         statement_execution_id = self.statement_execution_ids[-1]
         qe_logic.update_statement_execution(
-            statement_execution_id, status=StatementExecutionStatus.UPLOADING,
+            statement_execution_id,
+            status=StatementExecutionStatus.UPLOADING,
         )
 
         socketio.emit(
@@ -301,7 +310,10 @@ class QueryExecutorLogger(object):
 
     def update_progress(self):
         progress = spread_dict(
-            self._statement_progress, {"total": len(self._statement_ranges),},
+            self._statement_progress,
+            {
+                "total": len(self._statement_ranges),
+            },
         )
 
         self._celery_task.update_state(state="PROGRESS", meta=progress)
@@ -500,7 +512,10 @@ class QueryExecutorBaseClass(metaclass=ABCMeta):
 
         # Initialize logger
         self._logger = self.LOGGER_CLASS()(
-            query_execution_id, celery_task, self._query, self._statement_ranges,
+            query_execution_id,
+            celery_task,
+            self._query,
+            self._statement_ranges,
         )
 
         # Initialize cursor once poll loop is setup

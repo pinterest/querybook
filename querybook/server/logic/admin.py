@@ -82,7 +82,8 @@ def add_query_engine_to_environment(
 @with_session
 def remove_query_engine_from_environment(environment_id, query_engine_id, session=None):
     session.query(QueryEngineEnvironment).filter_by(
-        query_engine_id=query_engine_id, environment_id=environment_id,
+        query_engine_id=query_engine_id,
+        environment_id=environment_id,
     ).delete()
     session.commit()
 
@@ -197,7 +198,9 @@ def create_query_metastore_update_schedule(
         name=task_schedule_name,
         task="tasks.update_metastore.update_metastore",
         cron=cron,
-        args=[metastore_id,],
+        args=[
+            metastore_id,
+        ],
         commit=commit,
         session=session,
     )
@@ -265,7 +268,7 @@ def delete_query_metastore_by_id(id, commit=True, session=None):
 @with_session
 def get_api_access_token(token_string="", session=None):
     """
-        Returns matching API Access Token
+    Returns matching API Access Token
     """
     token_hash = hashlib.sha512(token_string.encode("utf-8")).hexdigest()
     return (
@@ -279,7 +282,7 @@ def get_api_access_token(token_string="", session=None):
 @with_session
 def get_api_access_token_by_id(api_access_token_id, session=None):
     """
-       Returns matching API Access Token
+    Returns matching API Access Token
     """
     return session.query(APIAccessToken).get(api_access_token_id)
 
@@ -287,7 +290,7 @@ def get_api_access_token_by_id(api_access_token_id, session=None):
 @with_session
 def get_api_access_tokens(owner_uid=None, search_api_access_tokens="", session=None):
     """
-        Returns all or matching API Access Tokens
+    Returns all or matching API Access Tokens
     """
     query = session.query(APIAccessToken)
     query = query.filter(
@@ -316,7 +319,7 @@ def create_api_access_token(uid, description="", session=None):
 @with_session
 def disable_api_access_tokens(uid, creator_uid, commit=True, session=None):
     """
-        Disables all API Access Tokens created by given user
+    Disables all API Access Tokens created by given user
     """
     tokens = (
         session.query(APIAccessToken)
@@ -371,7 +374,9 @@ def sync_metastore_schedule_job(metastore_id, commit=False, session=None):
                 name=task_schedule_name,
                 task="tasks.update_metastore.update_metastore",
                 cron="0 0 * * *",
-                args=[metastore_id,],
+                args=[
+                    metastore_id,
+                ],
                 commit=commit,
                 session=session,
             )

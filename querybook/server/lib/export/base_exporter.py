@@ -71,19 +71,25 @@ class BaseExporter(metaclass=ABCMeta):
 
     @with_session
     def _get_statement_execution_num_rows(
-        self, statement_execution_id: int, session=None,
+        self,
+        statement_execution_id: int,
+        session=None,
     ):
         statement_execution = logic.get_statement_execution_by_id(
-            statement_execution_id, session=session,
+            statement_execution_id,
+            session=session,
         )
         return statement_execution.result_row_count or 0
 
     @with_session
     def _get_statement_execution_num_cols(
-        self, statement_execution_id: int, session=None,
+        self,
+        statement_execution_id: int,
+        session=None,
     ):
         statement_execution = logic.get_statement_execution_by_id(
-            statement_execution_id, session=session,
+            statement_execution_id,
+            session=session,
         )
         if statement_execution.result_path:
             with GenericReader(statement_execution.result_path) as reader:

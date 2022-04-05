@@ -12,12 +12,20 @@ from models.schedule import TaskSchedule
 
 
 @register(
-    "/schedule/", methods=["POST"],
+    "/schedule/",
+    methods=["POST"],
 )
 @admin_only
 @with_admin_audit_log(AdminItemType.Task, AdminOperation.CREATE)
 def create_task_schedule(
-    cron, name, task, task_type, enabled, args=None, kwargs=None, options=None,
+    cron,
+    name,
+    task,
+    task_type,
+    enabled,
+    args=None,
+    kwargs=None,
+    options=None,
 ):
     with DBSession() as session:
         api_assert(validate_cron(cron), "Invalid cron expression")
@@ -36,7 +44,8 @@ def create_task_schedule(
 
 
 @register(
-    "/schedule/name/<name>/", methods=["GET"],
+    "/schedule/name/<name>/",
+    methods=["GET"],
 )
 @admin_only
 def get_schedule_by_name(name):
@@ -44,7 +53,8 @@ def get_schedule_by_name(name):
 
 
 @register(
-    "/schedule/record/name/<name>/", methods=["GET"],
+    "/schedule/record/name/<name>/",
+    methods=["GET"],
 )
 @admin_only
 def get_task_run_record_by_name(name, offset=0, limit=10, hide_successful_jobs=False):
@@ -58,7 +68,8 @@ def get_task_run_record_by_name(name, offset=0, limit=10, hide_successful_jobs=F
 
 
 @register(
-    "/schedule/<int:id>/", methods=["PUT"],
+    "/schedule/<int:id>/",
+    methods=["PUT"],
 )
 @admin_only
 @with_admin_audit_log(AdminItemType.Task, AdminOperation.UPDATE)
@@ -81,12 +92,15 @@ def get_all_tasks():
 @register("/schedule/<int:id>/", methods=["DELETE"])
 @admin_only
 @with_admin_audit_log(AdminItemType.Task, AdminOperation.DELETE)
-def delete_task_schedule(id,):
+def delete_task_schedule(
+    id,
+):
     TaskSchedule.delete(id)
 
 
 @register(
-    "/schedule/<int:id>/run/", methods=["POST"],
+    "/schedule/<int:id>/run/",
+    methods=["POST"],
 )
 @admin_only
 def run_scheduled_task(id):
@@ -94,7 +108,8 @@ def run_scheduled_task(id):
 
 
 @register(
-    "/schedule/record/", methods=["GET"],
+    "/schedule/record/",
+    methods=["GET"],
 )
 @admin_only
 def get_task_run_records(
@@ -122,7 +137,8 @@ def get_task_run_records(
 
 
 @register(
-    "/schedule/<int:id>/record/", methods=["GET"],
+    "/schedule/<int:id>/record/",
+    methods=["GET"],
 )
 @admin_only
 def get_task_run_records_by_name(id, offset=0, limit=10, hide_successful_jobs=False):
@@ -150,7 +166,8 @@ def get_task_run_records_by_name(id, offset=0, limit=10, hide_successful_jobs=Fa
 
 
 @register(
-    "/schedule/tasks_list/", methods=["GET"],
+    "/schedule/tasks_list/",
+    methods=["GET"],
 )
 @admin_only
 def get_registered_tasks_list():
@@ -158,7 +175,8 @@ def get_registered_tasks_list():
 
 
 @register(
-    "/schedule/tasks_list/params/", methods=["GET"],
+    "/schedule/tasks_list/params/",
+    methods=["GET"],
 )
 @admin_only
 def get_all_registered_task_params():

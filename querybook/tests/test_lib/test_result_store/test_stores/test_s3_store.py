@@ -5,7 +5,9 @@ from lib.result_store.stores.s3_store import S3Reader
 
 class S3FileReaderTestCase(TestCase):
     def setUp(self):
-        s3_file_reader_patch = mock.patch("clients.s3_client.S3FileReader",)
+        s3_file_reader_patch = mock.patch(
+            "clients.s3_client.S3FileReader",
+        )
         self.addCleanup(s3_file_reader_patch.stop)
         self.s3_file_reader_mock = s3_file_reader_patch.start()
 

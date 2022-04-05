@@ -70,11 +70,11 @@ def get_all_hive_functions():
         is_function_table = (
             len(table_headers) == 3
             and (
-                table_headers[0] == u"Return Type"
-                or table_headers == u"Row-set columns types"
+                table_headers[0] == "Return Type"
+                or table_headers == "Row-set columns types"
             )
-            and table_headers[1] == u"Name(Signature)"
-            and table_headers[2] == u"Description"
+            and table_headers[1] == "Name(Signature)"
+            and table_headers[2] == "Description"
         )
         if not is_function_table:
             continue

@@ -35,7 +35,10 @@ def create_or_update_tag(tag_name, commit=True, session=None):
         tag = Tag.create({"name": tag_name, "count": 1}, commit=commit, session=session)
     else:
         tag = Tag.update(
-            id=tag.id, fields={"count": tag.count + 1}, commit=commit, session=session,
+            id=tag.id,
+            fields={"count": tag.count + 1},
+            commit=commit,
+            session=session,
         )
 
     return tag

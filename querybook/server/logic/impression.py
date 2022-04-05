@@ -80,7 +80,11 @@ def get_viewers_by_item(item_type, item_id, limit=100, session=None):
 
     latest_viewers_objects = list(
         map(
-            lambda x: {"uid": x[0], "latest_view_at": x[1], "views_count": x[2],},
+            lambda x: {
+                "uid": x[0],
+                "latest_view_at": x[1],
+                "views_count": x[2],
+            },
             latest_viewers,
         )
     )
@@ -129,7 +133,11 @@ def get_viewers_by_item_after_date(
 
     latest_viewers_objects = list(
         map(
-            lambda x: {"uid": x[0], "latest_view_at": x[1], "views_count": x[2],},
+            lambda x: {
+                "uid": x[0],
+                "latest_view_at": x[1],
+                "views_count": x[2],
+            },
             latest_viewers,
         )
     )

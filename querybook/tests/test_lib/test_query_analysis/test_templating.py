@@ -90,7 +90,11 @@ class GetTemplatedVariablesInStringTestCase(TemplatingTestCase):
 
         self.assertEqual(
             get_templated_variables_in_string("{# some comments #}<b>{{name}}</b>"),
-            set(["name",]),
+            set(
+                [
+                    "name",
+                ]
+            ),
         )
 
     def test_nested(self):
@@ -125,7 +129,8 @@ class FlattenRecursiveVariablesTestCase(TemplatingTestCase):
 
         self.assertEqual(
             flatten_recursive_variables(
-                {"foo": "{{ bar }}", "bar": "hello world", "baz": None}, self.jinja_env,
+                {"foo": "{{ bar }}", "bar": "hello world", "baz": None},
+                self.jinja_env,
             ),
             ({"foo": "hello world", "bar": "hello world", "baz": ""}),
         )
@@ -175,9 +180,16 @@ class FlattenRecursiveVariablesTestCase(TemplatingTestCase):
 
         self.assertEqual(
             flatten_recursive_variables(
-                {"foo": "{{ jinja_global_function_mock() }}",}, jinja_env,
+                {
+                    "foo": "{{ jinja_global_function_mock() }}",
+                },
+                jinja_env,
             ),
-            ({"foo": "bar",}),
+            (
+                {
+                    "foo": "bar",
+                }
+            ),
         )
 
     def test_global_function_vars_ignored(self):
@@ -187,7 +199,10 @@ class FlattenRecursiveVariablesTestCase(TemplatingTestCase):
         )
 
         self.assertEqual(
-            flatten_recursive_variables({"foo": "{{ bar }}", "bar": "baz"}, jinja_env,),
+            flatten_recursive_variables(
+                {"foo": "{{ bar }}", "bar": "baz"},
+                jinja_env,
+            ),
             ({"foo": "baz", "bar": "baz"}),
         )
 

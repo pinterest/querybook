@@ -82,7 +82,9 @@ def get_data_docs(
 
 @register("/datadoc/", methods=["POST"])
 def create_data_doc(
-    environment_id, cells=[], title=None,
+    environment_id,
+    cells=[],
+    title=None,
 ):
     with DBSession() as session:
         verify_environment_permission([environment_id])
@@ -102,7 +104,11 @@ def create_data_doc(
 
 @register("/datadoc/from_execution/", methods=["POST"])
 def create_data_doc_from_execution(
-    environment_id, execution_id, engine_id, query_string, title=None,
+    environment_id,
+    execution_id,
+    engine_id,
+    query_string,
+    title=None,
 ):
     with DBSession() as session:
         verify_environment_permission([environment_id])
@@ -227,16 +233,24 @@ def get_function_documentation_by_language(language):
 
 
 @register(
-    "/favorite_data_doc/<int:data_doc_id>/", methods=["POST"], require_auth=True,
+    "/favorite_data_doc/<int:data_doc_id>/",
+    methods=["POST"],
+    require_auth=True,
 )
-def create_favorite_data_doc(data_doc_id,):
+def create_favorite_data_doc(
+    data_doc_id,
+):
     return logic.favorite_data_doc(data_doc_id=data_doc_id, uid=current_user.id)
 
 
 @register(
-    "/favorite_data_doc/<int:data_doc_id>/", methods=["DELETE"], require_auth=True,
+    "/favorite_data_doc/<int:data_doc_id>/",
+    methods=["DELETE"],
+    require_auth=True,
 )
-def delete_favorite_data_doc(data_doc_id,):
+def delete_favorite_data_doc(
+    data_doc_id,
+):
     logic.unfavorite_data_doc(data_doc_id=data_doc_id, uid=current_user.id)
 
 
@@ -262,7 +276,9 @@ def get_datadoc_schedule(id):
 
 @register("/datadoc/<int:id>/schedule/", methods=["POST"])
 def create_datadoc_schedule(
-    id, cron, kwargs,
+    id,
+    cron,
+    kwargs,
 ):
     kwargs_valid, kwargs_valid_reason = validate_datadoc_schedule_config(kwargs)
     api_assert(kwargs_valid, kwargs_valid_reason)
@@ -315,7 +331,9 @@ def update_datadoc_schedule(id, cron=None, enabled=None, kwargs=None):
             }
 
         return schedule_logic.update_task_schedule(
-            schedule.id, session=session, **updated_fields,
+            schedule.id,
+            session=session,
+            **updated_fields,
         )
 
 
@@ -548,7 +566,8 @@ def update_datadoc_editor(
 
 @register("/datadoc_editor/<int:id>/", methods=["DELETE"])
 def delete_datadoc_editor(
-    id, originator=None,  # Used for websocket to identify sender, optional
+    id,
+    originator=None,  # Used for websocket to identify sender, optional
 ):
     with DBSession() as session:
         editor = logic.get_data_doc_editor_by_id(id, session=session)
@@ -617,7 +636,10 @@ def update_datadoc_owner(doc_id, next_owner_id, originator=None):
         )
         socketio.emit(
             "data_doc_updated",
-            (originator, doc_dict,),
+            (
+                originator,
+                doc_dict,
+            ),
             namespace="/datadoc",
             room=next_owner_editor_dict["data_doc_id"],
             broadcast=True,

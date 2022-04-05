@@ -45,7 +45,10 @@ def make_flask_app():
 
 
 def make_cache(app):
-    return Cache(app, config=QuerybookSettings.FLASK_CACHE_CONFIG,)
+    return Cache(
+        app,
+        config=QuerybookSettings.FLASK_CACHE_CONFIG,
+    )
 
 
 def make_celery(app):

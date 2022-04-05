@@ -17,7 +17,7 @@ def monkeysession():
 
 def pytest_configure(config):
     """We can use _called_from_test to disable some checks
-       during the test
+    during the test
     """
     import sys
 

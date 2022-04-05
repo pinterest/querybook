@@ -7,7 +7,9 @@ MOCK_CSV_LINES = ["foo,bar,baz", "hello,world", "a,b,c,d"]
 
 class MockChunkReaderDerivedClass(ChunkReader):
     def __init__(
-        self, read_size=5, max_read_size=20,
+        self,
+        read_size=5,
+        max_read_size=20,
     ):
         self._curr_char = 0
         super(MockChunkReaderDerivedClass, self).__init__(

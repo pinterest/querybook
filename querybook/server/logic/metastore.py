@@ -417,7 +417,10 @@ def create_column(
         comment = comment or old_table_column.comment
 
     new_table_column = DataTableColumn(
-        name=name, type=type, comment=comment, table_id=table_id,
+        name=name,
+        type=type,
+        comment=comment,
+        table_id=table_id,
     )
 
     if not old_table_column:
@@ -438,7 +441,10 @@ def create_column(
 
 @with_session
 def update_column_by_id(
-    id=None, description=None, commit=True, session=None,
+    id=None,
+    description=None,
+    commit=True,
+    session=None,
 ):
 
     table_column = get_column_by_id(id, session=session)

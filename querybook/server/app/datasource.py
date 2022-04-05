@@ -94,7 +94,8 @@ def register(url, methods=None, require_auth=True, custom_response=False):
 
 
 def with_impression(
-    item_id_name, item_type,
+    item_id_name,
+    item_type,
 ):
     def wrapper(fn):
         @functools.wraps(fn)
@@ -138,7 +139,8 @@ def api_assert(value, message="Assertion has failed", status_code=500):
 
 
 def abort_request(
-    status_code=500, message=None,
+    status_code=500,
+    message=None,
 ):
     raise RequestException(message, status_code)
 

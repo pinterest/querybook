@@ -8,7 +8,11 @@ from tasks.delete_mysql_cache import delete_mysql_cache
 
 @with_session
 def set_key(
-    key, value, expires_after=None, serialize=True, session=None,
+    key,
+    value,
+    expires_after=None,
+    serialize=True,
+    session=None,
 ):
     if serialize:
         value = json.dumps(value)
@@ -40,10 +44,15 @@ def get_key(key, expires_after=None, serialize=True, session=None):
 
 
 def cache_first_call_function(
-    cache_key, expires_after, fn, serialize=True, args=[], kwargs={},
+    cache_key,
+    expires_after,
+    fn,
+    serialize=True,
+    args=[],
+    kwargs={},
 ):
     """Check if we can fetch from cache, if not
-       call function and update the cache
+    call function and update the cache
     """
     result_from_cache = True
     try:

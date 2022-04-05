@@ -23,12 +23,19 @@ def update_datadoc(doc_id, fields, sid="", session=None):
     # Check to see if author has permission
     assert_can_write(doc_id, session=session)
     verify_data_doc_permission(doc_id, session=session)
-    doc = logic.update_data_doc(id=doc_id, session=session, **fields,)
+    doc = logic.update_data_doc(
+        id=doc_id,
+        session=session,
+        **fields,
+    )
     doc_dict = doc.to_dict()
 
     socketio.emit(
         "data_doc_updated",
-        (sid, doc_dict,),
+        (
+            sid,
+            doc_dict,
+        ),
         namespace=DATA_DOC_NAMESPACE,
         room=doc_id,
         broadcast=True,
@@ -53,7 +60,11 @@ def insert_data_cell(
     data_cell_dict = data_cell.to_dict()
     socketio.emit(
         "data_cell_inserted",
-        (sid, index, data_cell_dict,),
+        (
+            sid,
+            index,
+            data_cell_dict,
+        ),
         namespace=DATA_DOC_NAMESPACE,
         room=doc_id,
         broadcast=True,
@@ -75,7 +86,11 @@ def move_data_cell(doc_id, from_index, to_index, sid="", session=None):
 
     socketio.emit(
         "data_cell_moved",
-        (sid, from_index, to_index,),
+        (
+            sid,
+            from_index,
+            to_index,
+        ),
         namespace=DATA_DOC_NAMESPACE,
         room=doc_id,
         broadcast=True,
@@ -124,7 +139,11 @@ def paste_data_cell(
             socketio.emit(
                 "data_cell_moved",
                 # sid, from_index, to_index
-                (sid, old_cell_index, index,),
+                (
+                    sid,
+                    old_cell_index,
+                    index,
+                ),
                 namespace=DATA_DOC_NAMESPACE,
                 room=doc_id,
                 broadcast=True,
@@ -132,14 +151,21 @@ def paste_data_cell(
         else:
             socketio.emit(
                 "data_cell_inserted",
-                (sid, index, data_cell.to_dict(),),
+                (
+                    sid,
+                    index,
+                    data_cell.to_dict(),
+                ),
                 namespace=DATA_DOC_NAMESPACE,
                 room=doc_id,
                 broadcast=True,
             )
             socketio.emit(
                 "data_cell_deleted",
-                (sid, cell_id,),
+                (
+                    sid,
+                    cell_id,
+                ),
                 namespace=DATA_DOC_NAMESPACE,
                 room=old_data_doc.id,
                 broadcast=True,
@@ -172,7 +198,11 @@ def update_data_cell(cell_id, fields, sid="", session=None):
     data_doc = logic.get_data_doc_by_data_cell_id(cell_id, session=session)
     assert_can_write(data_doc.id, session=session)
     verify_environment_permission([data_doc.environment_id])
-    data_cell = logic.update_data_cell(id=cell_id, session=session, **fields,)
+    data_cell = logic.update_data_cell(
+        id=cell_id,
+        session=session,
+        **fields,
+    )
     data_cell_dict = data_cell.to_dict()
     socketio.emit(
         "data_cell_updated",
@@ -195,7 +225,10 @@ def delete_data_cell(doc_id, cell_id, sid="", session=None):
 
     socketio.emit(
         "data_cell_deleted",
-        (sid, cell_id,),
+        (
+            sid,
+            cell_id,
+        ),
         namespace=DATA_DOC_NAMESPACE,
         room=doc_id,
         broadcast=True,

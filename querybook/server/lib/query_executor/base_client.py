@@ -7,7 +7,7 @@ class ClientBaseClass(metaclass=ABCMeta):
     @abstractmethod
     def cursor(self):
         """Return Something that
-           inherits CursorBaseClass
+        inherits CursorBaseClass
         """
 
         pass

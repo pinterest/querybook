@@ -66,10 +66,18 @@ def format_if_internal_error_with_stack_trace(
 
 
 def get_parsed_syntax_error(
-    message: str, line_num: int = None, char_num: int = None,
+    message: str,
+    line_num: int = None,
+    char_num: int = None,
 ):
     error_type = QueryExecutionErrorType.SYNTAX.value
-    error_str = json.dumps({"line": line_num, "char": char_num, "message": message,})
+    error_str = json.dumps(
+        {
+            "line": line_num,
+            "char": char_num,
+            "message": message,
+        }
+    )
     return error_type, error_str, None
 
 

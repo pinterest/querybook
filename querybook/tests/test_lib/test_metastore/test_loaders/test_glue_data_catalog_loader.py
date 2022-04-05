@@ -46,7 +46,10 @@ TABLE_INPUT_A_1 = {
         "Location": f"s3://mybucket/{DB_NAME_A}/{TABLE_NAME_A_1}",
     },
     "PartitionKeys": [
-        {"Name": "partition_date", "Type": "string",},
+        {
+            "Name": "partition_date",
+            "Type": "string",
+        },
         {"Name": "partition_hour", "Type": "string"},
     ],
 }
@@ -69,7 +72,10 @@ TABLE_INPUT_B_1 = {
         "Location": f"s3://mybucket/{DB_NAME_B}/{TABLE_NAME_B_1}",
     },
     "PartitionKeys": [
-        {"Name": "partition_date", "Type": "string",},
+        {
+            "Name": "partition_date",
+            "Type": "string",
+        },
         {"Name": "partition_hour", "Type": "string"},
     ],
 }
@@ -85,7 +91,10 @@ TABLE_INPUT_B_2 = {
         "Location": f"s3://mybucket/{DB_NAME_B}/{TABLE_NAME_B_2}",
     },
     "PartitionKeys": [
-        {"Name": "partition_date", "Type": "string",},
+        {
+            "Name": "partition_date",
+            "Type": "string",
+        },
         {"Name": "partition_hour", "Type": "string"},
     ],
 }
@@ -101,7 +110,10 @@ TABLE_INPUT_B_3 = {
         "Location": f"s3://mybucket/{DB_NAME_B}/{TABLE_NAME_B_3}",
     },
     "PartitionKeys": [
-        {"Name": "partition_date", "Type": "string",},
+        {
+            "Name": "partition_date",
+            "Type": "string",
+        },
         {"Name": "partition_hour", "Type": "string"},
     ],
 }

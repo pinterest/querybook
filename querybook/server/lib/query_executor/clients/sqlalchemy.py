@@ -9,7 +9,10 @@ class SqlAlchemyClient(ClientBaseClass):
         self, connection_string=None, connect_args=[], proxy_user=None, *args, **kwargs
     ):
         self._engine = create_sqlalchemy_engine(
-            {"connection_string": connection_string, "connect_args": connect_args,}
+            {
+                "connection_string": connection_string,
+                "connect_args": connect_args,
+            }
         )
         super(SqlAlchemyClient, self).__init__()
 

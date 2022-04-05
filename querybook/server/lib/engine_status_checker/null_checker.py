@@ -10,6 +10,6 @@ class NullChecker(BaseEngineStatusChecker):
     @classmethod
     def check(cls, engine_id: int, uid: int) -> EngineStatus:
         """Perform the check
-           Override if you want custom results
+        Override if you want custom results
         """
         return {"status": QueryEngineStatus.UNAVAILABLE.value, "messages": []}
