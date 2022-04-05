@@ -29,6 +29,7 @@ const nodeHeight = 60;
 const dagreGraph = new dagre.graphlib.Graph();
 dagreGraph.setDefaultEdgeLabel(() => ({}));
 
+// from react-flow docs
 const getLayoutedElements = (nodes, edges) => {
     dagreGraph.setGraph({ rankdir: 'LR' });
 
@@ -78,8 +79,8 @@ const FlowGraphInner: React.FunctionComponent<IProps> = ({
         [initialNodes, initialEdges]
     );
     const store = useStoreApi();
-    const { fitView } = useReactFlow();
     const { nodeInternals } = store.getState();
+    const { fitView } = useReactFlow();
 
     const [nodes, setNodes, onNodesChange] = useNodesState(layoutedNodes);
     const [edges, setEdges, onEdgesChange] = useEdgesState(layoutedEdges);

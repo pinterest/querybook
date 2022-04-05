@@ -10,9 +10,9 @@ import {
     FlowGraph,
     initialNodePosition,
 } from 'ui/FlowGraph/FlowGraph';
+import LineageNode from 'ui/FlowGraph/LineageNode';
 
 import './DataTableViewLineage.scss';
-import LineageNode from 'ui/FlowGraph/LineageNode';
 
 export interface IDataTableViewLineageProps {
     dataLineageLoader: (tableId: number) => any;

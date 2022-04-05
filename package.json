@@ -49,7 +49,6 @@
         "core-decorators": "0.20.0",
         "core-js": "^3.19.1",
         "dagre": "^0.8.5",
-        "dagre-d3": "0.6.1",
         "draft-js": "0.11.7",
         "draft-js-export-html": "^1.4.1",
         "draft-js-import-html": "^1.4.1",
