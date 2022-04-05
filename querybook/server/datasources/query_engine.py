@@ -12,7 +12,8 @@ from logic import admin as admin_logic
 
 
 @register(
-    "/query_engine/", methods=["GET"],
+    "/query_engine/",
+    methods=["GET"],
 )
 def get_query_engines(environment_id):
     verify_environment_permission([environment_id])

@@ -10,7 +10,15 @@ table_keywords = set(["TABLE", "FROM", "JOIN", "INTO"])
 initial_statement_keywords = set(["DESCRIBE", "DESC", "SHOW", "MSCK"])
 
 continue_table_search_key_word = set(
-    ["IF", "NOT", "EXISTS", "FORMATTED", "REPAIR", "PARTITIONS", "EXTENDED",]
+    [
+        "IF",
+        "NOT",
+        "EXISTS",
+        "FORMATTED",
+        "REPAIR",
+        "PARTITIONS",
+        "EXTENDED",
+    ]
 )
 
 LOG = get_logger(__file__)

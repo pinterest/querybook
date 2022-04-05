@@ -60,7 +60,10 @@ def _get_datadoc_notification_params(
 
 @with_session
 def _send_datadoc_notification(
-    user_id: int, notify_with: str, notification_params: Dict, session=None,
+    user_id: int,
+    notify_with: str,
+    notification_params: Dict,
+    session=None,
 ):
     user = User.get(id=user_id, session=session)
     notify_user(

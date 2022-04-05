@@ -42,7 +42,9 @@ def get_google_oauth_config():
 # Reference used: https://dev.to/sethmlarson/python-data-streaming-to-google-cloud-storage-with-resumable-uploads-458h
 class GoogleUploadClient(object):
     def __init__(
-        self, bucket_name: str, blob_name: str,
+        self,
+        bucket_name: str,
+        blob_name: str,
     ):
         from google.cloud import storage
         from google.auth.transport import requests

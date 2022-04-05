@@ -45,7 +45,9 @@ class GetMaxRowsTestCase(TestCase):
         self.mock_create_google_flow = create_google_flow_patch.start()
 
         statement_columns_len_patch = mock.patch.object(
-            GoogleSheetsExporter, "_get_statement_execution_num_cols", return_value=10,
+            GoogleSheetsExporter,
+            "_get_statement_execution_num_cols",
+            return_value=10,
         )
         self.addCleanup(statement_columns_len_patch.stop)
         self.statement_columns_len_mock = statement_columns_len_patch.start()

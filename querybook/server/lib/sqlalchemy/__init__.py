@@ -97,7 +97,10 @@ class CRUDMixin(SerializeMixin):
     @classmethod
     @with_session
     def create(
-        cls, fields={}, commit=True, session=None,
+        cls,
+        fields={},
+        commit=True,
+        session=None,
     ):
         item = cls()
         for key, value in fields.items():

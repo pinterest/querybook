@@ -132,7 +132,11 @@ class ModelEntry(ScheduleEntry):
 
     def __repr__(self):
         return "<ModelEntry: {0} {1}(*{2}, **{3}) {4}>".format(
-            safe_str(self.name), self.task, self.args, self.kwargs, self.schedule,
+            safe_str(self.name),
+            self.task,
+            self.args,
+            self.kwargs,
+            self.schedule,
         )
 
 
@@ -219,7 +223,10 @@ class DatabaseScheduler(Scheduler):
         if self.app.conf.result_expires:
             entries.setdefault(
                 "celery.backend_cleanup",
-                {"task": "celery.backend_cleanup", "schedule": "0 3 * * *",},
+                {
+                    "task": "celery.backend_cleanup",
+                    "schedule": "0 3 * * *",
+                },
             )
         self.update_from_dict(entries)
 

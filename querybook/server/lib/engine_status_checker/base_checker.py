@@ -19,14 +19,13 @@ class EngineStatus(TypedDict):
 class BaseEngineStatusChecker(metaclass=ABCMeta):
     @abstractclassmethod
     def NAME(cls) -> str:
-        """Name of the checker that will be shown on the frontend
-        """
+        """Name of the checker that will be shown on the frontend"""
         raise NotImplementedError()
 
     @classmethod
     def check(cls, engine_id: int, uid: int) -> EngineStatus:
         """Perform the check
-           Override if you want custom results
+        Override if you want custom results
         """
         return cls.get_server_status(engine_id)
 
@@ -41,14 +40,12 @@ class BaseEngineStatusChecker(metaclass=ABCMeta):
 
     @abstractclassmethod
     def _perform_check(cls, engine_id: int) -> EngineStatus:
-        """Perform the check
-        """
+        """Perform the check"""
         raise NotImplementedError()
 
     @classmethod
     def get_server_status_task(cls, engine_id: int) -> None:
-        """This function runs in celery and set the cache
-        """
+        """This function runs in celery and set the cache"""
         result = cls._perform_check(engine_id)
         key = cls.generate_server_check_cache_key(engine_id)
         set_key(key, result)
@@ -86,6 +83,5 @@ class BaseEngineStatusChecker(metaclass=ABCMeta):
 
     @classmethod
     def SERVER_RESULT_EXPIRY(cls) -> int:
-        """Number of seconds before server query result expires
-        """
+        """Number of seconds before server query result expires"""
         return 60

@@ -85,22 +85,24 @@ def logout():
 
 
 @register(
-    "/api_access_token/", methods=["GET"],
+    "/api_access_token/",
+    methods=["GET"],
 )
 def verify_api_access_token():
     """
-        Test route for API Access Token
+    Test route for API Access Token
     """
     return "token is enabled"
 
 
 @register(
-    "/api_access_token/", methods=["POST"],
+    "/api_access_token/",
+    methods=["POST"],
 )
 def handle_create_api_access_tokens():
     """
-        Diables all old tokens and creates a new one
-        Returns new token
+    Diables all old tokens and creates a new one
+    Returns new token
     """
     uid = current_user.id
     admin_logic.disable_api_access_tokens(uid, uid)

@@ -218,8 +218,8 @@ def _flatten_variable(
     flattened_variables: Dict[str, str],
     jinja_env,
 ):
-    """ Helper function for flatten_recursive_variables.
-        Recursively resolve each variable definition
+    """Helper function for flatten_recursive_variables.
+    Recursively resolve each variable definition
     """
     if var_name in flattened_variables:
         return
@@ -295,7 +295,11 @@ def flatten_recursive_variables(
 
 def get_templated_query_variables(variables_provided, jinja_env):
     return flatten_recursive_variables(
-        {**get_default_variables(), **variables_provided,}, jinja_env
+        {
+            **get_default_variables(),
+            **variables_provided,
+        },
+        jinja_env,
     )
 
 

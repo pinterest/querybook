@@ -63,7 +63,11 @@ def get_hosted_es():
         from lib.utils.assume_role_aws4auth import AssumeRoleAWS4Auth
 
         credentials = boto_session.Session().get_credentials()
-        auth = AssumeRoleAWS4Auth(credentials, QuerybookSettings.AWS_REGION, "es",)
+        auth = AssumeRoleAWS4Auth(
+            credentials,
+            QuerybookSettings.AWS_REGION,
+            "es",
+        )
         hosted_es = Elasticsearch(
             hosts=QuerybookSettings.ELASTICSEARCH_HOST,
             http_auth=auth,
@@ -84,7 +88,9 @@ def _get_query_cell_executions_iter(batch_size=1000, session=None):
     offset = 0
     while True:
         query_cells = get_all_query_cells(
-            limit=batch_size, offset=offset, session=session,
+            limit=batch_size,
+            offset=offset,
+            session=session,
         )
         query_executions_count = 0
         for query_cell in query_cells:
@@ -98,7 +104,9 @@ def _get_query_cell_executions_iter(batch_size=1000, session=None):
                 )
                 for query_execution in query_cell_executions:
                     expand_query_execution = query_execution_to_es(
-                        query_execution, data_cell=query_cell, session=session,
+                        query_execution,
+                        data_cell=query_cell,
+                        session=session,
                     )
                     yield expand_query_execution
                 query_executions_count += len(query_cell_executions)
@@ -120,7 +128,9 @@ def _get_adhoc_query_executions_iter(batch_size=1000, session=None):
     offset = 0
     while True:
         query_executions = get_successful_adhoc_query_executions(
-            limit=batch_size, offset=offset, session=session,
+            limit=batch_size,
+            offset=offset,
+            session=session,
         )
         LOG.info(
             "\n--Adhoc query executions count: {}, offset: {}".format(
@@ -235,7 +245,9 @@ def get_query_cells_iter(batch_size=1000, session=None):
 
     while True:
         query_cells = get_all_query_cells(
-            limit=batch_size, offset=offset, session=session,
+            limit=batch_size,
+            offset=offset,
+            session=session,
         )
         LOG.info(
             "\n--Query cells count: {}, offset: {}".format(len(query_cells), offset)
@@ -322,7 +334,11 @@ def get_datadocs_iter(batch_size=5000, session=None):
     offset = 0
 
     while True:
-        data_docs = get_all_data_docs(limit=batch_size, offset=offset, session=session,)
+        data_docs = get_all_data_docs(
+            limit=batch_size,
+            offset=offset,
+            session=session,
+        )
         LOG.info("\n--Datadocs count: {}, offset: {}".format(len(data_docs), offset))
 
         for data_doc in data_docs:
@@ -420,7 +436,11 @@ def get_tables_iter(batch_size=5000, session=None):
     offset = 0
 
     while True:
-        tables = get_all_table(limit=batch_size, offset=offset, session=session,)
+        tables = get_all_table(
+            limit=batch_size,
+            offset=offset,
+            session=session,
+        )
         LOG.info("\n--Table count: {}, offset: {}".format(len(tables), offset))
 
         for table in tables:
@@ -485,9 +505,14 @@ def table_to_es(table, session=None):
         "full_name": full_name,
         "full_name_ngram": full_name,
         "completion_name": {
-            "input": [full_name, table_name,],
+            "input": [
+                full_name,
+                table_name,
+            ],
             "weight": weight,
-            "contexts": {"metastore_id": schema.metastore_id,},
+            "contexts": {
+                "metastore_id": schema.metastore_id,
+            },
         },
         "description": description,
         "created_at": DATETIME_TO_UTC(table.created_at),
@@ -528,7 +553,9 @@ def update_table_by_id(table_id, session=None):
             LOG.error("failed to upsert {}. Will pass.".format(table_id))
 
 
-def delete_es_table_by_id(table_id,):
+def delete_es_table_by_id(
+    table_id,
+):
     index_name = ES_CONFIG["tables"]["index_name"]
     try:
         _delete(index_name, id=table_id)
@@ -566,7 +593,9 @@ def user_to_es(user, session=None):
         "id": user.id,
         "username": username,
         "fullname": fullname,
-        "suggest": {"input": process_names_for_suggestion(username, fullname),},
+        "suggest": {
+            "input": process_names_for_suggestion(username, fullname),
+        },
     }
 
 
@@ -575,7 +604,11 @@ def get_users_iter(batch_size=5000, session=None):
     offset = 0
 
     while True:
-        users = User.get_all(limit=batch_size, offset=offset, session=session,)
+        users = User.get_all(
+            limit=batch_size,
+            offset=offset,
+            session=session,
+        )
         LOG.info("\n--User count: {}, offset: {}".format(len(users), offset))
 
         for user in users:

@@ -9,11 +9,11 @@ from lib.query_analysis.lineage import (
 
 
 class ProcessQueryTestCase(TestCase):
-    """ sample test for setting up scheduled testing """
+    """sample test for setting up scheduled testing"""
 
     def test_create_insert_query(self):
         """testing if process_query returns correct lineage information for multi-line
-           query that has insert and create
+        query that has insert and create
         """
         query = """
             USE analytics;
@@ -84,7 +84,8 @@ FROM
         )
 
         self.assertEqual(
-            processed_query[1], ([[]]),
+            processed_query[1],
+            ([[]]),
         )
 
     def test_empty_statement(self):

@@ -278,7 +278,8 @@ def get_query_execution_notification(query_execution_id, uid, session=None):
 @with_session
 def create_query_execution_notification(query_execution_id, uid, session=None):
     notification = QueryExecutionNotification(
-        query_execution_id=query_execution_id, user=uid,
+        query_execution_id=query_execution_id,
+        user=uid,
     )
     session.add(notification)
     session.commit()

@@ -92,14 +92,19 @@ def run_datadoc_with_config(
     }
 
     chain(*tasks_to_run).apply_async(
-        link=on_datadoc_run_success.s(completion_params=completion_params,),
+        link=on_datadoc_run_success.s(
+            completion_params=completion_params,
+        ),
         link_error=on_datadoc_run_failure.s(completion_params=completion_params),
     )
 
 
 @celery.task(bind=True)
 def _start_query_execution_task(
-    self, previous_query_status, cell_id, query_execution_params,
+    self,
+    previous_query_status,
+    cell_id,
+    query_execution_params,
 ):
     if previous_query_status != QueryExecutionStatus.DONE.value:
         raise Exception(GENERIC_QUERY_FAILURE_MSG)
@@ -116,7 +121,9 @@ def _start_query_execution_task(
 
 @celery.task
 def on_datadoc_run_success(
-    last_query_status, completion_params, **kwargs,
+    last_query_status,
+    completion_params,
+    **kwargs,
 ):
     is_success = last_query_status == QueryExecutionStatus.DONE.value
     error_msg = None if is_success else GENERIC_QUERY_FAILURE_MSG
@@ -128,7 +135,11 @@ def on_datadoc_run_success(
 
 @celery.task
 def on_datadoc_run_failure(
-    request, exc, traceback, completion_params, **kwargs,
+    request,
+    exc,
+    traceback,
+    completion_params,
+    **kwargs,
 ):
     error_msg = "DataDoc failed to run. Task {0!r} raised error: {1!r}".format(
         request.id, exc

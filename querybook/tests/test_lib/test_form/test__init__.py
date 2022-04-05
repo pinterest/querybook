@@ -66,7 +66,8 @@ class ValidateFormTestCase(TestCase):
     def test_array_field(self):
         form = ExpandableFormField(of=FormField(), min=2, max=4)
         self.assertEqual(
-            validate_form(form, "123"), (False, "Field value is not an array"),
+            validate_form(form, "123"),
+            (False, "Field value is not an array"),
         )
         self.assertEqual(
             validate_form(form, ["123"]),
@@ -88,7 +89,8 @@ class ValidateFormTestCase(TestCase):
             phone_numbers=ExpandableFormField(of=FormField(), min=1, max=2),
         )
         self.assertEqual(
-            validate_form(form, "123"), (False, "Field value is not a dictionary"),
+            validate_form(form, "123"),
+            (False, "Field value is not a dictionary"),
         )
         self.assertEqual(
             validate_form(form, {"phone_numbers": [1234], "name": "bob"}),
@@ -99,8 +101,15 @@ class ValidateFormTestCase(TestCase):
             (False, "Field value more than allowed length"),
         )
         self.assertEqual(
-            validate_form(form, {"phone_numbers": ["1234"], "name": "bob"}), (True, ""),
+            validate_form(form, {"phone_numbers": ["1234"], "name": "bob"}),
+            (True, ""),
         )
         self.assertEqual(
-            validate_form(form, {"phone_numbers": ["1234"],}), (True, ""),
+            validate_form(
+                form,
+                {
+                    "phone_numbers": ["1234"],
+                },
+            ),
+            (True, ""),
         )

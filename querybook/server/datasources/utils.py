@@ -19,6 +19,6 @@ def get_change_log_by_date(date):
 @limiter.limit("1 per minute")
 def test_ratelimit():
     """
-        Endpoint to ensure ratelimit works in prod
+    Endpoint to ensure ratelimit works in prod
     """
     return "yes"

@@ -57,14 +57,20 @@ def create_query_execution(query, engine_id, data_cell_id=None, originator=None)
 
         try:
             run_query_task.apply_async(
-                args=[query_execution.id,]
+                args=[
+                    query_execution.id,
+                ]
             )
             query_execution_dict = query_execution.to_dict()
 
             if data_doc:
                 socketio.emit(
                     "data_doc_query_execution",
-                    (originator, query_execution_dict, data_cell_id,),
+                    (
+                        originator,
+                        query_execution_dict,
+                        data_cell_id,
+                    ),
                     namespace="/datadoc",
                     room=data_doc.id,
                     broadcast=True,
@@ -294,7 +300,9 @@ def get_statement_execution_log(statement_execution_id):
 
 
 @register(
-    "/query_execution_notification/<int:query_id>/", methods=["GET"], require_auth=True,
+    "/query_execution_notification/<int:query_id>/",
+    methods=["GET"],
+    require_auth=True,
 )
 def get_query_execution_notification(query_id):
     with DBSession() as session:
@@ -309,7 +317,9 @@ def get_query_execution_notification(query_id):
     methods=["POST"],
     require_auth=True,
 )
-def create_query_execution_notification(query_id,):
+def create_query_execution_notification(
+    query_id,
+):
     with DBSession() as session:
         verify_query_execution_permission(query_id, session=session)
 
@@ -323,7 +333,9 @@ def create_query_execution_notification(query_id,):
     methods=["DELETE"],
     require_auth=True,
 )
-def delete_query_execution_notification(query_id,):
+def delete_query_execution_notification(
+    query_id,
+):
     with DBSession() as session:
         verify_query_execution_permission(query_id, session=session)
         logic.delete_query_execution_notification(
@@ -337,7 +349,8 @@ def get_all_query_result_exporters():
 
 
 @register(
-    "/query_execution_exporter/auth/", methods=["GET"],
+    "/query_execution_exporter/auth/",
+    methods=["GET"],
 )
 def export_statement_execution_acquire_auth(exporter_name):
     exporter = get_exporter(exporter_name)

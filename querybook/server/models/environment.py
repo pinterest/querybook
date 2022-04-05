@@ -41,7 +41,9 @@ class Environment(CRUDMixin, Base):
     deleted_at = sql.Column(sql.DateTime)
 
     users = relationship(
-        "User", secondary="user_environment", backref=backref("environments"),
+        "User",
+        secondary="user_environment",
+        backref=backref("environments"),
     )
 
     @with_session

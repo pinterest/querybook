@@ -13,7 +13,11 @@ class ExecuteQuery(object):
 
     @with_session
     def __call__(
-        self, query: str, engine_id: int, uid: int = None, session=None,
+        self,
+        query: str,
+        engine_id: int,
+        uid: int = None,
+        session=None,
     ):
         """Start the query execution progress. If async then
            it just sets up the necessary variables, if sync

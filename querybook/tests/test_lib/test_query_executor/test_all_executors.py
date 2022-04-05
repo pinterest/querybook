@@ -32,7 +32,8 @@ class GetFlattenedExecutorTestCase(TestCase):
                 return None
 
         self.mock_all_executors = mock.patch(
-            "lib.query_executor.all_executors.ALL_EXECUTORS", [TestEngine, Test2Engine],
+            "lib.query_executor.all_executors.ALL_EXECUTORS",
+            [TestEngine, Test2Engine],
         )
 
     def test_flatten_engines(self):
@@ -77,18 +78,22 @@ class GetExecutorClassTestCase(TestCase):
                 return None
 
         self.mock_all_executors = mock.patch(
-            "lib.query_executor.all_executors.ALL_EXECUTORS", [TestEngine, Test2Engine],
+            "lib.query_executor.all_executors.ALL_EXECUTORS",
+            [TestEngine, Test2Engine],
         )
 
     def test_get_executor_class(self):
         with self.mock_all_executors:
             test_engine, test2_engine = all_executors.ALL_EXECUTORS
             self.assertEqual(
-                all_executors.get_executor_class("English", "Test"), test_engine,
+                all_executors.get_executor_class("English", "Test"),
+                test_engine,
             )
             self.assertEqual(
-                all_executors.get_executor_class("English", "Test2"), test2_engine,
+                all_executors.get_executor_class("English", "Test2"),
+                test2_engine,
             )
             self.assertEqual(
-                all_executors.get_executor_class("French", "Test2"), test2_engine,
+                all_executors.get_executor_class("French", "Test2"),
+                test2_engine,
             )

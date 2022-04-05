@@ -50,7 +50,7 @@ def is_bytes_valid_utf8_char(bs: bytes) -> bool:
 
 
 def split_by_last_invalid_utf8_char(binary_s: bytes) -> Tuple[bytes, bytes]:
-    """ Given a utf8 bytes string, we want to ensure we can take substring of
+    """Given a utf8 bytes string, we want to ensure we can take substring of
         the byte string and get back a valid utf8 string, so given substring a, b
         we want to break a into a + a', and we would get 2 valid utf8 substring
         a and a' + b

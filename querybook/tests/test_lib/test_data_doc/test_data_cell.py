@@ -48,19 +48,22 @@ class GetValidMetaTestCase(TestCase):
         meta = {"title": "Test", "engine": 20, "meta": {"field1": "a", "field2": "b"}}
         meta_type = {"title": "", "engine": 0, "meta": {"field1": "", "field2": ""}}
         self.assertEqual(
-            get_valid_meta(meta, meta_type), meta,
+            get_valid_meta(meta, meta_type),
+            meta,
         )
 
         # Missing
         meta = {"title": "Test2"}
         self.assertEqual(
-            get_valid_meta(meta, meta_type), meta,
+            get_valid_meta(meta, meta_type),
+            meta,
         )
 
         # Extra
         meta = {"title": "Test3", "newProp": 2}
         self.assertEqual(
-            get_valid_meta(meta, meta_type), {"title": "Test3"},
+            get_valid_meta(meta, meta_type),
+            {"title": "Test3"},
         )
 
     def test_nested_array(self):

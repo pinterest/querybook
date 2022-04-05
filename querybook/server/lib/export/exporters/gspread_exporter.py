@@ -112,7 +112,8 @@ class GoogleSheetsExporter(BaseExporter):
         self, statement_execution_id, start_cell: str = "A1", session=None
     ):
         result_columns_len = self._get_statement_execution_num_cols(
-            statement_execution_id, session=session,
+            statement_execution_id,
+            session=session,
         )
         start_cell_coord = worksheet_coord_to_coord(start_cell)
         sheet_start_coord = worksheet_coord_to_coord("A1")
@@ -147,7 +148,11 @@ class GoogleSheetsExporter(BaseExporter):
                 gc, sheet_url, f"Querybook Result {statement_execution_id}"
             ) as sheet:
                 self.write_csv_to_sheet(
-                    gc, sheet, statement_execution_id, worksheet_title, start_cell,
+                    gc,
+                    sheet,
+                    statement_execution_id,
+                    worksheet_title,
+                    start_cell,
                 )
 
             return f"https://docs.google.com/spreadsheets/d/{sheet.id}"
@@ -260,7 +265,7 @@ def worksheet_coord_to_coord(worksheet_coord: str) -> Tuple[int, int]:
 
     num_col = 0
     for i, ch in enumerate(reversed(col)):
-        num_col += (ord(ch) - ordAMinusOne) * (26 ** i)
+        num_col += (ord(ch) - ordAMinusOne) * (26**i)
     return num_col, num_row
 
 

@@ -19,7 +19,8 @@ from models.schedule import TaskSchedule
 
 
 @register(
-    "/announcement/", methods=["GET"],
+    "/announcement/",
+    methods=["GET"],
 )
 def get_announcements():
     return logic.get_admin_announcements()
@@ -27,7 +28,8 @@ def get_announcements():
 
 # ADMIN ONLY APIs
 @register(
-    "/admin/announcement/", methods=["GET"],
+    "/admin/announcement/",
+    methods=["GET"],
 )
 @admin_only
 def get_announcements_admin():
@@ -42,7 +44,11 @@ def get_announcements_admin():
 @admin_only
 @with_admin_audit_log(AdminItemType.Announcement, AdminOperation.CREATE)
 def create_announcement(
-    message, url_regex="", can_dismiss=True, active_from=None, active_till=None,
+    message,
+    url_regex="",
+    can_dismiss=True,
+    active_from=None,
+    active_till=None,
 ):
     with DBSession() as session:
         announcement = Announcement.create(
@@ -68,7 +74,10 @@ def update_announcement(id, **kwargs):
     with DBSession() as session:
         announcement = Announcement.update(
             id=id,
-            fields={**kwargs, "uid": current_user.id,},
+            fields={
+                **kwargs,
+                "uid": current_user.id,
+            },
             field_names=[
                 "uid",
                 "message",
@@ -103,7 +112,8 @@ def get_query_engine_status_checkers():
 
 
 @register(
-    "/admin/query_engine/", methods=["GET"],
+    "/admin/query_engine/",
+    methods=["GET"],
 )
 @admin_only
 def get_all_query_engines_admin():
@@ -114,7 +124,8 @@ def get_all_query_engines_admin():
 
 
 @register(
-    "/admin/query_engine/", methods=["POST"],
+    "/admin/query_engine/",
+    methods=["POST"],
 )
 @admin_only
 @with_admin_audit_log(AdminItemType.QueryEngine, AdminOperation.CREATE)
@@ -146,7 +157,8 @@ def create_query_engine(
 
 
 @register(
-    "/admin/query_engine/<int:id>/", methods=["PUT"],
+    "/admin/query_engine/<int:id>/",
+    methods=["PUT"],
 )
 @admin_only
 @with_admin_audit_log(AdminItemType.QueryEngine, AdminOperation.UPDATE)
@@ -172,25 +184,32 @@ def update_query_engine(id, **fields_to_update):
 
 
 @register(
-    "/admin/query_engine/<int:id>/", methods=["DELETE"],
+    "/admin/query_engine/<int:id>/",
+    methods=["DELETE"],
 )
 @admin_only
 @with_admin_audit_log(AdminItemType.QueryEngine, AdminOperation.DELETE)
-def delete_query_engine(id,):
+def delete_query_engine(
+    id,
+):
     logic.delete_query_engine_by_id(id)
 
 
 @register(
-    "/admin/query_engine/<int:id>/recover/", methods=["POST"],
+    "/admin/query_engine/<int:id>/recover/",
+    methods=["POST"],
 )
 @admin_only
 @with_admin_audit_log(AdminItemType.QueryEngine, AdminOperation.UPDATE)
-def recover_query_engine(id,):
+def recover_query_engine(
+    id,
+):
     logic.recover_query_engine_by_id(id)
 
 
 @register(
-    "/admin/query_metastore_loader/", methods=["GET"],
+    "/admin/query_metastore_loader/",
+    methods=["GET"],
 )
 @admin_only
 def get_all_query_metastore_loaders_admin():
@@ -200,7 +219,8 @@ def get_all_query_metastore_loaders_admin():
 
 
 @register(
-    "/admin/query_metastore/", methods=["GET"],
+    "/admin/query_metastore/",
+    methods=["GET"],
 )
 @admin_only
 def get_all_query_metastores_admin():
@@ -214,12 +234,16 @@ def get_all_query_metastores_admin():
 
 
 @register(
-    "/admin/query_metastore/", methods=["POST"],
+    "/admin/query_metastore/",
+    methods=["POST"],
 )
 @admin_only
 @with_admin_audit_log(AdminItemType.QueryMetastore, AdminOperation.CREATE)
 def create_metastore(
-    name, metastore_params, loader, acl_control=None,
+    name,
+    metastore_params,
+    loader,
+    acl_control=None,
 ):
     with DBSession() as session:
         # TODO: validate executor params
@@ -237,12 +261,14 @@ def create_metastore(
 
 
 @register(
-    "/admin/query_metastore/<int:id>/", methods=["PUT"],
+    "/admin/query_metastore/<int:id>/",
+    methods=["PUT"],
 )
 @admin_only
 @with_admin_audit_log(AdminItemType.QueryMetastore, AdminOperation.UPDATE)
 def update_metastore(
-    id, **fields,
+    id,
+    **fields,
 ):
     with DBSession() as session:
         metastore = QueryMetastore.update(
@@ -259,11 +285,13 @@ def update_metastore(
 
 
 @register(
-    "/admin/query_metastore/<int:id>/schedule/", methods=["POST"],
+    "/admin/query_metastore/<int:id>/schedule/",
+    methods=["POST"],
 )
 @admin_only
 def create_metastore_schedule(
-    id, cron,
+    id,
+    cron,
 ):
     with DBSession() as session:
         return logic.create_query_metastore_update_schedule(
@@ -272,25 +300,32 @@ def create_metastore_schedule(
 
 
 @register(
-    "/admin/query_metastore/<int:id>/recover/", methods=["PUT"],
+    "/admin/query_metastore/<int:id>/recover/",
+    methods=["PUT"],
 )
 @admin_only
 @with_admin_audit_log(AdminItemType.QueryMetastore, AdminOperation.UPDATE)
-def recover_metastore(id,):
+def recover_metastore(
+    id,
+):
     logic.recover_query_metastore_by_id(id)
 
 
 @register(
-    "/admin/query_metastore/<int:id>/", methods=["DELETE"],
+    "/admin/query_metastore/<int:id>/",
+    methods=["DELETE"],
 )
 @admin_only
 @with_admin_audit_log(AdminItemType.QueryMetastore, AdminOperation.DELETE)
-def delete_metastore(id,):
+def delete_metastore(
+    id,
+):
     logic.delete_query_metastore_by_id(id)
 
 
 @register(
-    "/admin/user_role/", methods=["GET"],
+    "/admin/user_role/",
+    methods=["GET"],
 )
 @admin_only
 def get_all_user_role_admin():
@@ -299,7 +334,8 @@ def get_all_user_role_admin():
 
 
 @register(
-    "/admin/user_role/", methods=["POST"],
+    "/admin/user_role/",
+    methods=["POST"],
 )
 @admin_only
 @with_admin_audit_log(AdminItemType.Admin, AdminOperation.CREATE)
@@ -309,11 +345,14 @@ def create_user_role(uid, role):
 
 
 @register(
-    "/admin/user_role/<int:id>/", methods=["DELETE"],
+    "/admin/user_role/<int:id>/",
+    methods=["DELETE"],
 )
 @admin_only
 @with_admin_audit_log(AdminItemType.Admin, AdminOperation.DELETE)
-def delete_user_role(id,):
+def delete_user_role(
+    id,
+):
     user_logic.delete_user_role(id)
 
 
@@ -349,30 +388,41 @@ def create_environment(
 @admin_only
 @with_admin_audit_log(AdminItemType.Environment, AdminOperation.UPDATE)
 def update_environment(id, **fields_to_update):
-    return environment_logic.update_environment(id=id, **fields_to_update,)
+    return environment_logic.update_environment(
+        id=id,
+        **fields_to_update,
+    )
 
 
 @register(
-    "/admin/environment/<int:id>/recover/", methods=["PUT"],
+    "/admin/environment/<int:id>/recover/",
+    methods=["PUT"],
 )
 @admin_only
-def recover_environment(id,):
+def recover_environment(
+    id,
+):
     environment_logic.recover_environment_by_id(id)
 
 
 @register(
-    "/admin/environment/<int:id>/", methods=["DELETE"],
+    "/admin/environment/<int:id>/",
+    methods=["DELETE"],
 )
 @admin_only
 @with_admin_audit_log(AdminItemType.Environment, AdminOperation.DELETE)
-def delete_environment(id,):
+def delete_environment(
+    id,
+):
     environment_logic.delete_environment_by_id(id)
 
 
 @register("/admin/environment/<int:id>/users/", methods=["GET"])
 @admin_only
 def get_users_in_environment(
-    id, limit, offset,
+    id,
+    limit,
+    offset,
 ):
     with DBSession() as session:
         return environment_logic.get_users_in_environment(
@@ -437,7 +487,8 @@ def remove_query_engine_from_environment(id, engine_id):
 
 
 @register(
-    "/admin/api_access_token/<token_id>/", methods=["PUT"],
+    "/admin/api_access_token/<token_id>/",
+    methods=["PUT"],
 )
 @admin_only
 def update_api_access_token_admin(token_id, enabled=False):
@@ -449,7 +500,8 @@ def update_api_access_token_admin(token_id, enabled=False):
 
 
 @register(
-    "/admin/api_access_tokens/", methods=["GET"],
+    "/admin/api_access_tokens/",
+    methods=["GET"],
 )
 @admin_only
 def get_api_access_tokens_admin():
@@ -476,7 +528,9 @@ def exec_demo_set_up():
         metastore_id = QueryMetastore.create(
             {
                 "name": "demo_metastore",
-                "metastore_params": {"connection_string": local_db_conn,},
+                "metastore_params": {
+                    "connection_string": local_db_conn,
+                },
                 "loader": "SqlAlchemyMetastoreLoader",
                 "acl_control": {},
             },
@@ -490,7 +544,9 @@ def exec_demo_set_up():
                 "description": "SQLite Engine",
                 "language": "sqlite",
                 "executor": "sqlalchemy",
-                "executor_params": {"connection_string": local_db_conn,},
+                "executor_params": {
+                    "connection_string": local_db_conn,
+                },
                 "environment_id": environment.id,
                 "metastore_id": metastore_id,
             },
@@ -571,7 +627,10 @@ admin_item_type_values = set(item.value for item in AdminItemType)
 @register("/admin/audit_log/", methods=["GET"])
 @admin_only
 def get_admin_audit_logs(
-    item_type=None, item_id=None, offset=0, limit=10,
+    item_type=None,
+    item_id=None,
+    offset=0,
+    limit=10,
 ):
     api_assert(limit < 200)
     api_assert(item_type is None or item_type in admin_item_type_values)

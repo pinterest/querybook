@@ -205,7 +205,10 @@ class DataTable(CRUDMixin, TruncateString("name", "type", "location"), Base):
     )
 
     def to_dict(
-        self, include_schema=False, include_column=False, include_warnings=False,
+        self,
+        include_schema=False,
+        include_column=False,
+        include_warnings=False,
     ):
         table = {
             "id": self.id,

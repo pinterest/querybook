@@ -7,8 +7,7 @@ class BaseNotifier(metaclass=ABCMeta):
     @property
     @abstractmethod
     def notifier_name(self) -> str:
-        """Name of the notifier that will be shown on the frontend
-        """
+        """Name of the notifier that will be shown on the frontend"""
         raise NotImplementedError()
 
     @property

@@ -21,7 +21,9 @@ class MetastoreTableACLChecker(object):
         return tables_by_schema
 
     def _is_table_in_list(
-        self, schema, table,
+        self,
+        schema,
+        table,
     ):
         if schema in self._tables_by_schema:
             for schema_table in self._tables_by_schema[schema]:
@@ -30,7 +32,9 @@ class MetastoreTableACLChecker(object):
         return False
 
     def is_table_valid(
-        self, schema, table,
+        self,
+        schema,
+        table,
     ):
         if self._type != "allowlist" and self._type != "denylist":
             return True

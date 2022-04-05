@@ -6,7 +6,8 @@ LOG = get_logger(__file__)
 
 
 def import_modules(
-    module_paths: List[Union[str, Tuple[str, str]]], include_none: bool = False,
+    module_paths: List[Union[str, Tuple[str, str]]],
+    include_none: bool = False,
 ) -> List[Any]:
     """Import multiple modules, the invalid paths will be ignored
 

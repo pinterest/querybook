@@ -47,7 +47,9 @@ class GoogleReader(BaseReader):
         if "max_read_size" in self._kwargs:
             reader_kwargs["max_read_size"] = self._kwargs.get("max_read_size")
         self._reader = google_client.GoogleDownloadClient(
-            QuerybookSettings.STORE_BUCKET_NAME, self.uri, **reader_kwargs,
+            QuerybookSettings.STORE_BUCKET_NAME,
+            self.uri,
+            **reader_kwargs,
         )
 
     def get_csv_iter(

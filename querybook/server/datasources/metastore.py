@@ -31,7 +31,9 @@ from tasks.run_sample_query import run_sample_query
 
 
 @register("/query_metastore/", methods=["GET"])
-def get_all_query_metastores(environment_id,):
+def get_all_query_metastores(
+    environment_id,
+):
     verify_environment_permission([environment_id])
     return admin_logic.get_all_query_metastore_by_environment(environment_id)
 
@@ -207,7 +209,12 @@ def get_columns_from_table(table_id):
 
 @register("/table/<int:table_id>/raw_samples_query/", methods=["GET"])
 def get_table_samples_raw_query(
-    table_id, partition=None, where=None, order_by=None, order_by_asc=True, limit=100,
+    table_id,
+    partition=None,
+    where=None,
+    order_by=None,
+    order_by_asc=True,
+    limit=100,
 ):
     with DBSession() as session:
         verify_data_table_permission(table_id, session=session)
@@ -318,12 +325,15 @@ def get_column(column_id, with_table=False):
 
 @register("/column/<int:column_id>/", methods=["PUT"])
 def update_column_by_id(
-    column_id, description=None,
+    column_id,
+    description=None,
 ):
     with DBSession() as session:
         verify_data_column_permission(column_id, session=session)
         return logic.update_column_by_id(
-            column_id, description=description, session=session,
+            column_id,
+            description=description,
+            session=session,
         )
 
 

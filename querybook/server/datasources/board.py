@@ -13,7 +13,8 @@ from models.board import Board
 
 
 @register(
-    "/board/", methods=["GET"],
+    "/board/",
+    methods=["GET"],
 )
 def get_my_boards(environment_id, filter_str=None):
     with DBSession() as session:
@@ -26,7 +27,8 @@ def get_my_boards(environment_id, filter_str=None):
 
 
 @register(
-    "/board/<int:board_id>/", methods=["GET"],
+    "/board/<int:board_id>/",
+    methods=["GET"],
 )
 def get_board_by_id(board_id):
     with DBSession() as session:
@@ -38,10 +40,16 @@ def get_board_by_id(board_id):
 
 
 @register(
-    "/board/", methods=["POST"],
+    "/board/",
+    methods=["POST"],
 )
 def create_board(
-    name, environment_id, owner_uid, description=None, public=None, favorite=False,
+    name,
+    environment_id,
+    owner_uid,
+    description=None,
+    public=None,
+    favorite=False,
 ):
     with DBSession() as session:
         verify_environment_permission([environment_id])
@@ -57,7 +65,8 @@ def create_board(
 
 
 @register(
-    "/board/<int:board_id>/", methods=["PUT"],
+    "/board/<int:board_id>/",
+    methods=["PUT"],
 )
 def update_board(board_id, **fields):
     with DBSession() as session:
@@ -69,7 +78,8 @@ def update_board(board_id, **fields):
 
 
 @register(
-    "/board/<int:board_id>/", methods=["DELETE"],
+    "/board/<int:board_id>/",
+    methods=["DELETE"],
 )
 def delete_board(board_id, **fields):
     with DBSession() as session:
@@ -94,7 +104,8 @@ def get_board_ids_from_board_item(item_type: str, item_id: int, environment_id: 
 
 
 @register(
-    "/board/<int:board_id>/<item_type>/<int:item_id>/", methods=["POST"],
+    "/board/<int:board_id>/<item_type>/<int:item_id>/",
+    methods=["POST"],
 )
 def add_board_item(board_id, item_type, item_id):
     api_assert(item_type == "data_doc" or item_type == "table", "Invalid item type")
@@ -124,7 +135,8 @@ def add_board_item(board_id, item_type, item_id):
 
 
 @register(
-    "/board/<int:board_id>/move/<int:from_index>/<int:to_index>/", methods=["POST"],
+    "/board/<int:board_id>/move/<int:from_index>/<int:to_index>/",
+    methods=["POST"],
 )
 def move_board_item(board_id, from_index, to_index):
     if from_index != to_index:
@@ -134,7 +146,8 @@ def move_board_item(board_id, from_index, to_index):
 
 
 @register(
-    "/board/<int:board_id>/<item_type>/<int:item_id>/", methods=["DELETE"],
+    "/board/<int:board_id>/<item_type>/<int:item_id>/",
+    methods=["DELETE"],
 )
 def delete_board_item(board_id, item_type, item_id):
     api_assert(item_type == "data_doc" or item_type == "table", "Invalid item type")

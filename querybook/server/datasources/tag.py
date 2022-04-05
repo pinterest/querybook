@@ -7,7 +7,8 @@ from logic import tag as logic
 
 
 @register(
-    "/tag/table/<int:table_id>/", methods=["GET"],
+    "/tag/table/<int:table_id>/",
+    methods=["GET"],
 )
 def get_tag_items(table_id):
     with DBSession() as session:
@@ -16,7 +17,8 @@ def get_tag_items(table_id):
 
 
 @register(
-    "/tag/keyword/", methods=["GET"],
+    "/tag/keyword/",
+    methods=["GET"],
 )
 def get_tags_by_keyword(keyword):
     with DBSession() as session:
@@ -25,7 +27,8 @@ def get_tags_by_keyword(keyword):
 
 
 @register(
-    "/tag/table/<int:table_id>/", methods=["POST"],
+    "/tag/table/<int:table_id>/",
+    methods=["POST"],
 )
 def create_tag_item(table_id, tag):
     with DBSession() as session:
@@ -36,7 +39,8 @@ def create_tag_item(table_id, tag):
 
 
 @register(
-    "/tag/table/<int:table_id>/<int:tag_item_id>/", methods=["DELETE"],
+    "/tag/table/<int:table_id>/<int:tag_item_id>/",
+    methods=["DELETE"],
 )
 def delete_tag_item(table_id, tag_item_id):
     with DBSession() as session:

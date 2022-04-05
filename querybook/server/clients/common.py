@@ -53,8 +53,8 @@ class ChunkReader(metaclass=ABCMeta):
 
     def _read_csv_chunk(self) -> Generator[List[str], None, None]:
         """
-            Similar to read_line, get the entire chunk of buffer_deque and process
-            them together as CSV
+        Similar to read_line, get the entire chunk of buffer_deque and process
+        them together as CSV
         """
         while (not self._eof) or len(self._buffer_deque):
             if len(self._buffer_deque) > 0:

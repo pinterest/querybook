@@ -32,7 +32,11 @@ def test_convert_legacy():
 
 def test_convert_semi_legacy():
     assert convert_if_legacy_datadoc_schedule(
-        {**unchanged_fields, "exporter_name": "foobar", "exporter_params": {},}
+        {
+            **unchanged_fields,
+            "exporter_name": "foobar",
+            "exporter_params": {},
+        }
     ) == {**unchanged_fields, "exports": []}
 
 
