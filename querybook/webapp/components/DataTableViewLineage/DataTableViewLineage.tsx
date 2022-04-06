@@ -1,11 +1,18 @@
 import React from 'react';
+import { Edge, Node } from 'react-flow-renderer';
 
 import { ILineageCollection, IDataTable, ILineage } from 'const/metastore';
+import { navigateWithinEnv } from 'lib/utils/query-string';
+
+import { DataTableViewMini } from 'components/DataTableViewMini/DataTableViewMini';
+import {
+    edgeStyle,
+    FlowGraph,
+    initialNodePosition,
+} from 'ui/FlowGraph/FlowGraph';
+import { LineageNode } from 'ui/FlowGraph/LineageNode';
 
 import './DataTableViewLineage.scss';
-import { DAG, IDAGNode, IDAGEdge } from 'ui/DAG/DAG';
-import { DataTableViewMini } from 'components/DataTableViewMini/DataTableViewMini';
-import { navigateWithinEnv } from 'lib/utils/query-string';
 
 export interface IDataTableViewLineageProps {
     dataLineageLoader: (tableId: number) => any;
@@ -18,30 +25,38 @@ function getFullLineage(
     lineages: Record<number, ILineage[]>,
     tableId: number,
     tableName: string,
-    nodes: IDAGNode[],
-    edges: IDAGEdge[],
-    tableIdToNodeIndex: Record<number, number>,
+    nodes: Node[],
+    edges: Edge[],
     seen: Set<number>,
-    level
+    addedTableIds: Set<number>,
+    onSelect: (id: number) => void,
+    onExpand: (id: number) => void,
+    selectedTableId: number
 ) {
     if (seen.has(tableId)) {
         return;
     }
     seen.add(tableId);
 
-    const getNodeIndex = (tid, tName) => {
-        if (!(tid in tableIdToNodeIndex)) {
+    const indexNode = (tid, tName) => {
+        if (!addedTableIds.has(tid)) {
             nodes.push({
-                id: tid,
-                label: tName,
-                rank: level,
+                id: tid.toString(),
+                type: 'lineageNode',
+                data: {
+                    label: tName,
+                    onSelect: () => onSelect(tid),
+                    onExpand: () => onExpand(tid),
+                    isSelected: tid === selectedTableId,
+                },
+                position: initialNodePosition,
             });
-            tableIdToNodeIndex[tid] = nodes.length - 1;
+            addedTableIds.add(tid);
         }
-        return tableIdToNodeIndex[tid];
+        return tid;
     };
 
-    getNodeIndex(tableId, tableName);
+    indexNode(tableId, tableName);
 
     if (tableId in lineages) {
         // Compute Edges
@@ -54,11 +69,15 @@ function getFullLineage(
                 table_name: lineageTableName,
             } = lineage;
 
-            const source = getNodeIndex(sourceId, parentName);
-            const target = getNodeIndex(targetId, lineageTableName);
+            indexNode(sourceId, parentName);
+            indexNode(targetId, lineageTableName);
+
             edges.push({
-                source,
-                target,
+                id: targetId + ',' + sourceId,
+                source: sourceId.toString(),
+                target: targetId.toString(),
+                animated: true,
+                style: edgeStyle,
             });
 
             const nextTableId = sourceId === tableId ? targetId : sourceId;
@@ -71,9 +90,11 @@ function getFullLineage(
                 nextTableName,
                 nodes,
                 edges,
-                tableIdToNodeIndex,
                 seen,
-                level + 1
+                addedTableIds,
+                onSelect,
+                onExpand,
+                selectedTableId
             );
         }
     }
@@ -85,13 +106,27 @@ export const DataTableViewLineage: React.FunctionComponent<IDataTableViewLineage
     table,
 }) => {
     const [selectedTableId, setSelectedTableId] = React.useState<number>(null);
+
+    const onNodeClick = React.useCallback((clickedNodeId: number) => {
+        setSelectedTableId((currentSelectedNode) =>
+            clickedNodeId !== currentSelectedNode ? clickedNodeId : null
+        );
+    }, []);
+
+    const onNodeExpand = React.useCallback(
+        (clickedNodeId: number) => {
+            dataLineageLoader(clickedNodeId);
+        },
+        [dataLineageLoader]
+    );
+
     const { nodes, edges } = React.useMemo(() => {
         const { id: tableId, name: tableName } = table;
 
         const newNodes = [];
-        const tableIdToNodeIndex = {};
         const newEdges = [];
         const seen = new Set<number>();
+        const addedTableIds = new Set<number>();
 
         for (const lineages of Object.values(dataLineages)) {
             seen.delete(tableId);
@@ -101,9 +136,11 @@ export const DataTableViewLineage: React.FunctionComponent<IDataTableViewLineage
                 tableName,
                 newNodes,
                 newEdges,
-                tableIdToNodeIndex,
                 seen,
-                0
+                addedTableIds,
+                onNodeClick,
+                onNodeExpand,
+                selectedTableId
             );
         }
 
@@ -111,14 +148,7 @@ export const DataTableViewLineage: React.FunctionComponent<IDataTableViewLineage
             nodes: newNodes,
             edges: newEdges,
         };
-    }, [dataLineages, table]);
-    const focusNode = React.useMemo(
-        () =>
-            selectedTableId != null
-                ? nodes.find((node) => node.id === selectedTableId)
-                : null,
-        [selectedTableId]
-    );
+    }, [dataLineages, onNodeClick, onNodeExpand, selectedTableId, table]);
 
     React.useEffect(() => {
         dataLineageLoader(table.id);
@@ -140,55 +170,14 @@ export const DataTableViewLineage: React.FunctionComponent<IDataTableViewLineage
             }
         />
     );
-
     return (
-        <div className="DataTableViewLineage">
-            <DAG
+        <div className="DataTableViewLineage flex-row">
+            {miniTableView}
+            <FlowGraph
                 nodes={nodes}
                 edges={edges}
-                focusNode={focusNode}
-                onNodeClicked={(_node, d3) => {
-                    const node = (_node as unknown) as IDAGNode;
-                    const newTableId = Number(node.id);
-                    const prevSelectedNode =
-                        selectedTableId && d3.select(`#node${selectedTableId}`);
-                    const currentSelectedNode = d3.select(`#node${node.id}`);
-                    if (prevSelectedNode) {
-                        // undo focus
-                        prevSelectedNode
-                            .select('rect')
-                            .style('fill', 'var(--bg-light)');
-                    }
-
-                    if (newTableId !== selectedTableId) {
-                        currentSelectedNode
-                            .select('rect')
-                            .style('fill', 'var(--color-accent-lightest)');
-
-                        dataLineageLoader(newTableId);
-                        setSelectedTableId(newTableId);
-                    } else {
-                        setSelectedTableId(null);
-                    }
-                }}
-                customNodeRender={(node) => {
-                    const selected = node.id === selectedTableId;
-                    const nodeColor = selected
-                        ? 'var(--color-accent-lightest)'
-                        : 'var(--bg-lightest)';
-
-                    return {
-                        rx: 5,
-                        ry: 5,
-                        fillColor: nodeColor,
-                        style: `
-                            fill: ${nodeColor};
-                        `,
-                        class: 'generic-node-class',
-                    };
-                }}
+                nodeTypes={{ lineageNode: LineageNode }}
             />
-            {miniTableView}
         </div>
     );
 };

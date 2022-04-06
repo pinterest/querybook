@@ -33,6 +33,11 @@
             overflow-x: hidden;
             overflow-y: auto;
             max-height: 100%;
+            .DataTableViewMini-header {
+                .table-details-button {
+                    margin-right: 8px;
+                }
+            }
         }
     }
 

@@ -8,9 +8,6 @@ const config = {
     moduleDirectories: [
         'node_modules', // This is required
     ],
-    transform: {
-        '^.+\\.(jsx|js|ts|tsx)$': 'babel-jest',
-    },
     setupFiles: ['<rootDir>/__tests__/setup/setup.js'],
     testPathIgnorePatterns: ['<rootDir>/__tests__/setup/'],
     rootDir: './querybook/webapp/',
@@ -19,7 +16,12 @@ const config = {
     globals: {
         __VERSION__: '1.0.0',
         __APPNAME__: 'Querybook',
-        __ENVIRONMENT__: 'production'
+        __ENVIRONMENT__: 'production',
+    },
+    transformIgnorePatterns: [],
+    transform: {
+        '^.+\\.(jsx|js|ts|tsx)$': 'babel-jest',
+        '\\.m?js?$': 'jest-esm-transformer',
     },
 };
 

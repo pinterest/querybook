@@ -22,7 +22,7 @@ const PanelContentWrapper = styled.div`
     `};
 `;
 
-const PanelTitle = styled.p`
+const PanelTitle = styled.span`
     display: flex;
     flex-direction: row;
     justify-content: space-between;

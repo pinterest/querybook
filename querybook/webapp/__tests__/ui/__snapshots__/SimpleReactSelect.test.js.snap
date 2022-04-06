@@ -54,7 +54,7 @@ exports[`matches test renderer snapshot serializes the styles 1`] = `
       onTouchEnd={[Function]}
     >
       <div
-        className=" css-g1d714-ValueContainer"
+        className=" css-l1xr2i-Component"
       >
         <div
           className=" css-phc9i8-placeholder"
@@ -62,7 +62,7 @@ exports[`matches test renderer snapshot serializes the styles 1`] = `
           Select
         </div>
         <div
-          className="css-1d7tz1b-Input"
+          className="css-4glw1s-Component"
         >
           <div
             className=""
@@ -120,7 +120,7 @@ exports[`matches test renderer snapshot serializes the styles 1`] = `
         </div>
       </div>
       <div
-        className=" css-1hb7zxy-IndicatorsContainer"
+        className=" css-ny0e4k-Component"
       >
         <span
           className=" css-shgobz-indicatorSeparator"
