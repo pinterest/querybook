@@ -1,5 +1,5 @@
+import React from 'react';
 import dagre from 'dagre';
-import * as React from 'react';
 import ReactFlow, {
     Edge,
     ReactFlowProvider,
@@ -15,7 +15,6 @@ import ReactFlow, {
 import './FlowGraph.scss';
 
 interface IProps {
-    className?: string;
     nodes: Node[];
     edges: Edge[];
     nodeTypes?: Record<string, any>;
@@ -90,7 +89,6 @@ const FlowGraphInner: React.FunctionComponent<IProps> = ({
         setEdges(layoutedEdges);
         fitView();
     }, [
-        initialEdges,
         setNodes,
         layoutedNodes,
         setEdges,
