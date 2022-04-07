@@ -1,4 +1,4 @@
-FROM node:14
+FROM node:16
 
 WORKDIR /opt/docs_website
 COPY docs_website/package.json docs_website/yarn.lock /opt/docs_website/
