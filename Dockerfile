@@ -13,15 +13,15 @@ RUN rm -rf /var/lib/apt/lists/* \
     python-dev \
     libssl-dev \
     libldap2-dev \
-    && curl -sL https://deb.nodesource.com/setup_14.x |  bash - \
+    && curl -fsSL https://deb.nodesource.com/setup_16.x | bash - \
     && DEBIAN_FRONTEND=noninteractive apt-get install --no-install-recommends -y --allow-downgrades --allow-remove-essential --allow-change-held-packages \
     nodejs \
     && apt-get clean
 
 # Install YARN
-RUN npm i -g npm@6.14.5 \
-    && npm i -g yarn@^1.22 \
-    && npm explore npm --global -- npm install node-gyp@7.0.0 \
+RUN npm i -g npm@8.5.0 \
+    && npm i -g yarn@^1.22.10 \
+    && npm explore npm --global -- npm install node-gyp@9.0.0 \
     && yarn config set cache-folder /mnt/yarn-cache/cache \
     && yarn config set yarn-offline-mirror /mnt/yarn-offline-mirror
 
