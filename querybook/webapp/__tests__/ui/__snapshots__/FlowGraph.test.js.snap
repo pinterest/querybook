@@ -1,0 +1,14 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`matches enzyme snapshots matches snapshot 1`] = `
+<div
+  className="FlowGraph"
+>
+  <ReactFlowProvider>
+    <FlowGraphInner
+      edges={Array []}
+      nodes={Array []}
+    />
+  </ReactFlowProvider>
+</div>
+`;
