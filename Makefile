@@ -50,7 +50,7 @@ install_pip_runtime_dependencies:
 
 install_yarn_packages: node_modules
 node_modules: package.json
-	yarn install --ignore-scripts --frozen-lockfile --pure-lockfile --ignore-engines && npm rebuild node-sass
+	yarn install --ignore-scripts --frozen-lockfile --pure-lockfile --ignore-engines
 	touch node_modules
 
 remove_running_dev_image:
