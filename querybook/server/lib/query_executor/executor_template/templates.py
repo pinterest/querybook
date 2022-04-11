@@ -53,7 +53,7 @@ trino_executor_template = StructFormField(
 <p>See [here](https://trino.io/docs/current/installation/jdbc.html) for more details.</p>""",
     ),
     username=FormField(required=True, regex="\\w+"),
-    impersonate=FormField(field_type=FormFieldType.Boolean),
+    password=FormField(hidden=True),
     proxy_user_id=FormField(
         field_type=FormFieldType.String,
         helper="""
