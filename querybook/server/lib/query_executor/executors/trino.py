@@ -1,4 +1,4 @@
-from pyhive.exc import Error
+from trino.exceptions import Error
 
 from const.query_execution import QueryExecutionErrorType
 from lib.query_executor.base_executor import QueryExecutorBaseClass
