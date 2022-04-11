@@ -1,4 +1,4 @@
-from trino.exceptions import Error
+from trino.exceptions import Error, TrinoQueryError
 
 from const.query_execution import QueryExecutionErrorType
 from lib.query_executor.base_executor import QueryExecutorBaseClass
@@ -36,22 +36,24 @@ class TrinoQueryExecutor(QueryExecutorBaseClass):
         error_type = QueryExecutionErrorType.INTERNAL.value
         error_str = str(e)
         error_extracted = None
-        try:
-            if isinstance(e, Error):
-                error_type = QueryExecutionErrorType.ENGINE.value
+
+        if isinstance(e, TrinoQueryError):
+            try:
+                line_number, column_number = e.error_location
+                return get_parsed_syntax_error(
+                    e.message,
+                    line_number - 1,
+                    column_number - 1,
+                )
+            except Exception:
+                return QueryExecutionErrorType.ENGINE.value, e.message, error_extracted
+
+        if isinstance(e, Error):
+            error_type = QueryExecutionErrorType.ENGINE.value
+            try:
                 error_dict = get_trino_error_dict(e)
                 if error_dict:
                     error_extracted = error_dict.get("message", None)
-                    # In Trino, only context free syntax error are labelled as
-                    # SYNTAX_ERROR, and context sensitive errors are user errors
-                    # However in both cases errorLocation is provided
-                    if "errorLocation" in error_dict:
-                        return get_parsed_syntax_error(
-                            error_extracted,
-                            error_dict["errorLocation"].get("lineNumber", 1) - 1,
-                            error_dict["errorLocation"].get("columnNumber", 1) - 1,
-                        )
-
-        except Exception:
-            pass
+            except Exception:
+                pass
         return error_type, error_str, error_extracted
