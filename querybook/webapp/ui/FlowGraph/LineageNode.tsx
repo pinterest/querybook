@@ -27,7 +27,11 @@ export const LineageNode = React.memo<IProps>(({ data }) => {
     });
     return (
         <div className={LineageNodeClassName}>
-            <Handle type="target" position={Position.Left} />
+            <Handle
+                type="target"
+                position={Position.Left}
+                isConnectable={false}
+            />
             <div className="LineageNode-label" onClick={onSelect}>
                 {label}
             </div>
@@ -38,7 +42,11 @@ export const LineageNode = React.memo<IProps>(({ data }) => {
                 size={16}
                 onClick={onExpand}
             />
-            <Handle type="source" position={Position.Right} />
+            <Handle
+                type="source"
+                position={Position.Right}
+                isConnectable={false}
+            />
         </div>
     );
 });
