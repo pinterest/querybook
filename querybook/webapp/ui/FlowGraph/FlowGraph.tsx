@@ -10,6 +10,9 @@ import ReactFlow, {
     ConnectionLineType,
     Controls,
     MiniMap,
+    Node,
+    addEdge,
+    Background,
 } from 'react-flow-renderer';
 
 import './FlowGraph.scss';
@@ -18,6 +21,7 @@ interface IProps {
     nodes: Node[];
     edges: Edge[];
     nodeTypes?: Record<string, any>;
+    isInteractive?: boolean;
 }
 export const initialNodePosition = { x: 0, y: 0 };
 export const edgeStyle = { stroke: 'var(--bg-dark)' };
@@ -60,15 +64,22 @@ const getLayoutedElements = (nodes, edges) => {
     return { nodes, edges };
 };
 
-export const FlowGraph: React.FunctionComponent<IProps> = (props) => (
+export const FlowGraph: React.FunctionComponent<IProps> = ({
+    isInteractive = false,
+    ...graphProps
+}) => (
     <div className="FlowGraph">
         <ReactFlowProvider>
-            <FlowGraphInner {...props} />
+            {isInteractive ? (
+                <InteractiveFlowGraph {...graphProps} />
+            ) : (
+                <StaticFlowGraph {...graphProps} />
+            )}
         </ReactFlowProvider>
     </div>
 );
 
-const FlowGraphInner: React.FunctionComponent<IProps> = ({
+const StaticFlowGraph: React.FunctionComponent<IProps> = ({
     nodes: initialNodes,
     edges: initialEdges,
     nodeTypes,
@@ -111,6 +122,41 @@ const FlowGraphInner: React.FunctionComponent<IProps> = ({
         >
             <Controls />
             <MiniMap />
+        </ReactFlow>
+    );
+};
+
+const InteractiveFlowGraph: React.FunctionComponent<IProps> = ({
+    nodes: initialNodes,
+    edges: initialEdges,
+    nodeTypes,
+}) => {
+    const [nodes, setNodes, onNodesChange] = useNodesState(initialNodes);
+    const [edges, setEdges, onEdgesChange] = useEdgesState(initialEdges);
+
+    const onConnect = (params) => setEdges((eds) => addEdge(params, eds));
+
+    React.useEffect(() => {
+        setNodes(initialNodes);
+    }, [initialNodes, setNodes]);
+
+    return (
+        <ReactFlow
+            nodes={nodes}
+            edges={edges}
+            onNodesChange={onNodesChange}
+            onEdgesChange={onEdgesChange}
+            nodesConnectable={true}
+            nodesDraggable={true}
+            onConnect={onConnect}
+            snapToGrid={true}
+            connectionLineType={ConnectionLineType.Bezier}
+            nodeTypes={nodeTypes}
+            fitView
+        >
+            <MiniMap />
+            <Controls />
+            <Background />
         </ReactFlow>
     );
 };

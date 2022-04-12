@@ -8,9 +8,10 @@ import { DeleteDataDocButton } from './DeleteDataDocButton';
 import { DataDocTemplateButton } from 'components/DataDocTemplateButton/DataDocTemplateButton';
 import { DataDocScheduleButton } from './DataDocScheduleButton';
 import { getScrollParent, smoothScroll } from 'lib/utils';
+import { useAnnouncements } from 'hooks/redux/useAnnouncements';
 
 import './DataDocRightSidebar.scss';
-import { useAnnouncements } from 'hooks/redux/useAnnouncements';
+import { DataDocDAGExporterButton } from 'components/DataDocDAGExporter/DataDocDAGExporterButton';
 
 interface IProps {
     dataDoc: IDataDoc;
@@ -125,6 +126,10 @@ export const DataDocRightSidebar: React.FunctionComponent<IProps> = ({
                 />
             </div>
             <div className="DataDocRightSidebar-button-section-bottom flex-column mb8">
+                <DataDocDAGExporterButton
+                    isEditable={isEditable}
+                    docId={dataDoc.id}
+                />
                 {templateButtonDOM}
                 {scheduleButtonDOM}
                 <IconButton
