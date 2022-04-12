@@ -22,7 +22,7 @@ interface IProps {
 export const initialNodePosition = { x: 0, y: 0 };
 export const edgeStyle = { stroke: 'var(--bg-dark)' };
 
-const nodeWidth = 172;
+const nodeWidth = 240;
 const nodeHeight = 60;
 
 const dagreGraph = new dagre.graphlib.Graph();
@@ -103,7 +103,9 @@ const FlowGraphInner: React.FunctionComponent<IProps> = ({
             edges={edges}
             onNodesChange={onNodesChange}
             onEdgesChange={onEdgesChange}
-            connectionLineType={ConnectionLineType.SmoothStep}
+            nodesConnectable={false}
+            nodesDraggable={false}
+            connectionLineType={ConnectionLineType.Bezier}
             nodeTypes={nodeTypes}
             fitView
         >
