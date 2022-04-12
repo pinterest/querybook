@@ -6,18 +6,23 @@ interface IProps {
     queryCells: IDataQueryCell[];
 }
 
+const queryCellNode = 'queryCellNode';
+
 export const DataDocDAGExporterGraph: React.FunctionComponent<IProps> = ({
     queryCells,
 }) => {
-    const nodes = queryCells.map((cell) => ({
-        id: cell.id.toString(),
-        type: 'queryCellNode',
-        data: {
-            label: cell.meta.title,
-        },
-        position: initialNodePosition,
-    }));
-    console.log('nodes', nodes);
+    const nodes = React.useMemo(
+        () =>
+            queryCells.map((cell) => ({
+                id: cell.id.toString(),
+                type: queryCellNode,
+                data: {
+                    label: cell.meta.title,
+                },
+                position: initialNodePosition,
+            })),
+        [queryCells]
+    );
 
     return (
         <div className="DataDocDAGExporterGraph">

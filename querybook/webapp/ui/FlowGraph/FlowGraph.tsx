@@ -134,7 +134,10 @@ const InteractiveFlowGraph: React.FunctionComponent<IProps> = ({
     const [nodes, setNodes, onNodesChange] = useNodesState(initialNodes);
     const [edges, setEdges, onEdgesChange] = useEdgesState(initialEdges);
 
-    const onConnect = (params) => setEdges((eds) => addEdge(params, eds));
+    const onConnect = React.useCallback(
+        (params) => setEdges((eds) => addEdge(params, eds)),
+        [setEdges]
+    );
 
     React.useEffect(() => {
         setNodes(initialNodes);

@@ -1,10 +1,9 @@
 import React from 'react';
 import { useDrag } from 'react-dnd';
 
+import NOOP from 'lib/utils/noop';
 import { IDataQueryCell } from 'const/datadoc';
 import { IQueryEngine } from 'const/queryEngine';
-import history from 'lib/router-history';
-import NOOP from 'lib/utils/noop';
 import { getQueryStatements } from 'lib/sql-helper/sql-formatter';
 import { generateFormattedDate } from 'lib/utils/datetime';
 
@@ -24,7 +23,7 @@ export interface IDataDocDAGExporterListItemProps {
     onRemove?: (queryCell: IDataQueryCell) => any;
 }
 
-export const DataDocDAGExporterListItem: React.FunctionComponent<IDataDocDAGExporterListItemProps> = React.memo(
+export const DataDocDAGExporterListItem = React.memo<IDataDocDAGExporterListItemProps>(
     ({ queryCell, queryEngineById, className, url, onRemove }) => {
         const [, drag] = useDrag({
             item: {
@@ -32,21 +31,6 @@ export const DataDocDAGExporterListItem: React.FunctionComponent<IDataDocDAGExpo
                 itemInfo: queryCell,
             },
         });
-
-        const handleClick = React.useCallback(() => {
-            history.push(url);
-        }, [url]);
-
-        const handleRemoveDataDoc = React.useCallback(
-            (event: React.MouseEvent) => {
-                if (onRemove) {
-                    event.stopPropagation();
-                    event.preventDefault();
-                    onRemove(queryCell);
-                }
-            },
-            [onRemove, queryCell]
-        );
 
         const statements = React.useMemo(
             () => getQueryStatements(queryCell.context),
@@ -75,23 +59,13 @@ export const DataDocDAGExporterListItem: React.FunctionComponent<IDataDocDAGExpo
                                 <AccentText>{queryCell.meta.title}</AccentText>
                             </div>
                             <div className="DataDocDagExporterListItem-statements flex-row">
-                                {statements.map((statement: string, idx) => (
-                                    <StyledText
-                                        weight="bold"
-                                        color="light"
-                                        key={statement}
-                                        className={
-                                            idx + 1 === statements.length
-                                                ? ''
-                                                : 'mr4'
-                                        }
-                                    >
-                                        {statement.toLocaleUpperCase()}
-                                        {idx + 1 === statements.length
-                                            ? ''
-                                            : ','}
-                                    </StyledText>
-                                ))}
+                                <StyledText weight="bold" color="light">
+                                    {statements
+                                        .map((statement: string) =>
+                                            statement.toLocaleUpperCase()
+                                        )
+                                        .join(',')}
+                                </StyledText>
                             </div>
                             {showPopover && anchorElement && (
                                 <Popover

@@ -27,18 +27,24 @@ export const DataDocDAGExporter: React.FunctionComponent<IProps> = ({
         dataDocSelectors.dataDocSelector(state, docId)
     );
 
-    const queryCells: IDataQueryCell[] = dataDocCells.filter(
-        (cells) => cells.cell_type === 'query'
-    ) as IDataQueryCell[];
+    const queryCells: IDataQueryCell[] = React.useMemo(
+        () =>
+            dataDocCells.filter(
+                (cells) => cells.cell_type === 'query'
+            ) as IDataQueryCell[],
+        [dataDocCells]
+    );
 
-    const [graphQueryCells, setGraphQueryCells] = React.useState([]);
+    const [graphQueryCells, setGraphQueryCells] = React.useState<
+        IDataQueryCell[]
+    >([]);
 
     const graphQueryCellIds = React.useMemo(
         () => graphQueryCells.map((cell) => cell.id),
         [graphQueryCells]
     );
 
-    const listQueryCells = React.useMemo(
+    const unusedQueryCells = React.useMemo(
         () => queryCells.filter((cell) => !graphQueryCellIds.includes(cell.id)),
         [queryCells, graphQueryCellIds]
     );
@@ -57,12 +63,9 @@ export const DataDocDAGExporter: React.FunctionComponent<IProps> = ({
         }),
     });
 
-    console.log('GRAPH', graphQueryCells);
-    console.log('LIST', listQueryCells);
-
     return (
         <div className="DataDocDAGExporter">
-            <DataDocDagExporterList queryCells={listQueryCells} />
+            <DataDocDagExporterList queryCells={unusedQueryCells} />
             <div className="DataDocDAGExporter-main">
                 <div className="DataDocDAGExporter-graph-wrapper" ref={dropRef}>
                     <DataDocDAGExporterGraph queryCells={graphQueryCells} />

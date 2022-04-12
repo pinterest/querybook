@@ -16,7 +16,7 @@ export const DataDocDAGExporterButton: React.FunctionComponent<IProps> = ({
     const [showModal, setShowModal] = React.useState(false);
 
     return (
-        <div>
+        <>
             <IconButton
                 icon="Network"
                 onClick={() => setShowModal(true)}
@@ -33,6 +33,6 @@ export const DataDocDAGExporterButton: React.FunctionComponent<IProps> = ({
                     <DataDocDAGExporter docId={docId} isEditable={isEditable} />
                 </Modal>
             ) : null}
-        </div>
+        </>
     );
 };
