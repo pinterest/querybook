@@ -41,6 +41,8 @@ export const LineageNode = React.memo<IProps>(({ data }) => {
                 noPadding
                 size={16}
                 onClick={onExpand}
+                tooltip="Fetch lineage if possible"
+                tooltipPos="right"
             />
             <Handle
                 type="source"
