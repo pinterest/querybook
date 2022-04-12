@@ -32,6 +32,7 @@ export const DataDocDAGExporterListItem = React.memo<IDataDocDAGExporterListItem
             },
         });
 
+        // TODO: use parser to get statements
         const statements = React.useMemo(
             () => getQueryStatements(queryCell.context),
             [queryCell]
