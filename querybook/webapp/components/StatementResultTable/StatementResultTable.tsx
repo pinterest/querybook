@@ -1,4 +1,4 @@
-import React, { useMemo, useCallback, useState, useRef } from 'react';
+import React, { useMemo, useCallback, useImperativeHandle } from 'react';
 import { useSelector } from 'react-redux';
 import styled from 'styled-components';
 
@@ -9,13 +9,11 @@ import { findColumnType } from 'lib/query-result/detector';
 
 import { IStoreState } from 'redux/store/types';
 import { Table } from 'ui/Table/Table';
-import { ToggleSwitch } from 'ui/ToggleSwitch/ToggleSwitch';
 
 import { getTransformersForType } from 'lib/query-result/transformer';
 import { StatementResultTableColumn } from './StatementResultTableColumn';
 import { useSortCell } from './useSortCell';
 import { useFilterCell } from './useFilterCell';
-import { BooleanLiteral } from 'typescript';
 
 const StyledTableWrapper = styled.div.attrs({
     className: 'StatementResultTable',
@@ -74,17 +72,11 @@ function useTableFontSize() {
     );
 }
 
-const ShowFullContentCellSwitch = styled.div`
-    display: flex;
-    font-weight: 400;
-    align-items: center;
-`;
+export interface IStatementResultTableHandles {
+    toggleAllExpandedColumns: (expand: boolean) => void;
+}
 
-const FullContentText = styled.div`
-    margin-right: 12px;
-`;
-
-export const StatementResultTable: React.FunctionComponent<{
+interface IStatementResultTableProps {
     // If isPreview, then it is only showing partial results instead of
     // all rows
     isPreview?: boolean;
@@ -92,7 +84,12 @@ export const StatementResultTable: React.FunctionComponent<{
     data: string[][];
     paginate: boolean;
     maxNumberOfRowsToShow?: number;
-}> = ({ data, paginate, maxNumberOfRowsToShow = 20, isPreview = false }) => {
+}
+
+export const StatementResultTable = React.forwardRef<
+    IStatementResultTableHandles,
+    IStatementResultTableProps
+>(({ data, paginate, maxNumberOfRowsToShow = 20, isPreview = false }, ref) => {
     const [
         expandedColumn,
         toggleExpandedColumn,
@@ -124,26 +121,25 @@ export const StatementResultTable: React.FunctionComponent<{
         filterConditionByColumn,
     } = useFilterCell(rows);
 
-    const [isDisplayFull, setIsDisplayFull] = useState(false);
-
-    const visibilityToggle = useCallback(() => {
-        const columnNames = data[0];
-
-        setIsDisplayFull((old) => {
-            const newDisplayFull = !old;
+    const toggleAllExpandedColumns = useCallback(
+        (expand: boolean) => {
+            const columnNames = data[0];
             setExpandedColumn((old) => {
                 columnNames.forEach((columnName) => {
-                    if (newDisplayFull) {
+                    if (expand) {
                         old[columnName] = true;
-                    } else {
+                    } else if (columnName in old) {
                         delete old[columnName];
                     }
                 });
             });
+        },
+        [data, setExpandedColumn]
+    );
 
-            return newDisplayFull;
-        });
-    }, [data, setExpandedColumn]);
+    useImperativeHandle(ref, () => ({
+        toggleAllExpandedColumns,
+    }));
 
     const columns = data[0].map((column, index) => ({
         Header: () => (
@@ -180,15 +176,6 @@ export const StatementResultTable: React.FunctionComponent<{
 
     return (
         <StyledTableWrapper fontSize={tableFontSize}>
-            <ShowFullContentCellSwitch>
-                <FullContentText>
-                    {isDisplayFull ? 'Hide' : 'Show'} full cell content:
-                </FullContentText>
-                <ToggleSwitch
-                    checked={isDisplayFull}
-                    onChange={visibilityToggle}
-                />
-            </ShowFullContentCellSwitch>
             <Table
                 minRows={0}
                 pageSize={
@@ -217,21 +204,24 @@ export const StatementResultTable: React.FunctionComponent<{
             />
         </StyledTableWrapper>
     );
-};
+});
 
 function useExpandedColumn() {
     const [expandedColumn, setExpandedColumn] = useImmer<
         Record<string, boolean>
     >({});
-    const toggleExpandedColumn = useCallback((column: string) => {
-        setExpandedColumn((old) => {
-            if (column in old) {
-                delete old[column];
-            } else {
-                old[column] = true;
-            }
-        });
-    }, []);
+    const toggleExpandedColumn = useCallback(
+        (column: string) => {
+            setExpandedColumn((old) => {
+                if (column in old) {
+                    delete old[column];
+                } else {
+                    old[column] = true;
+                }
+            });
+        },
+        [setExpandedColumn]
+    );
     return [expandedColumn, toggleExpandedColumn, setExpandedColumn] as const;
 }
 

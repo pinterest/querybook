@@ -1,0 +1,64 @@
+@import './../../scss_variables.scss';
+
+.StatementResult {
+    &.fullscreen {
+        display: flex;
+        flex-direction: column;
+        background-color: var(--bg);
+        padding: 8px 16px;
+
+        .StatementResultTable {
+            overflow: hidden;
+            display: flex;
+            .Table {
+                flex: 1;
+                overflow: auto;
+            }
+        }
+    }
+
+    .statement-results-summary {
+        .number-of-rows-message {
+            font-weight: normal;
+            .warning-word {
+                color: var(--color-false);
+            }
+        }
+
+        .view-type-switcher {
+            // Temporal style
+
+            .view-type-button {
+                padding: 0px 4px;
+                margin: 0px 4px;
+                line-height: 1.5;
+                @include query-execution-button();
+
+                cursor: pointer;
+
+                &.selected {
+                    color: var(--text-light);
+                }
+            }
+        }
+    }
+
+    .StatementResultRowCountPicker {
+        display: inline-flex;
+        margin: 0px 4px;
+        .Select {
+            select {
+                padding: 4px 20px 2px 2px;
+            }
+            &::after {
+                right: 7px;
+                top: 30%;
+            }
+        }
+    }
+}
+
+.StatementResult-column-toggle-menu {
+    max-height: 200px;
+    overflow-y: auto;
+}
