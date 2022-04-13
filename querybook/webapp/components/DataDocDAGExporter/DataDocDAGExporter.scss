@@ -1,0 +1,37 @@
+.DataDocDAGExporter {
+    height: 100%;
+    width: 100;
+    overflow: hidden;
+    display: flex;
+    flex-direction: row;
+
+    > div {
+        padding: var(--padding);
+    }
+
+    .DataDocDAGExporterList {
+        width: 320px;
+        height: 100%;
+        overflow-y: auto;
+        .DataDocDAGExporterListItem {
+            background-color: var(--bg-lightest);
+            border-radius: var(--border-radius-sm);
+            cursor: grab;
+
+            &:hover {
+                background-color: var(--bg-hover);
+            }
+        }
+    }
+    .DataDocDAGExporter-main {
+        flex-grow: 1;
+        .DataDocDAGExporter-graph-wrapper {
+            width: 100%;
+            height: calc(100% - 60px);
+            .DataDocDAGExporterGraph {
+                width: 100%;
+                height: 100%;
+            }
+        }
+    }
+}
