@@ -39,16 +39,30 @@
 
     &.Dropdown-nested-menu {
         .Dropdown-menu {
+            display: flex;
             top: 0px;
-            left: 0px;
-            margin-left: calc(100% + 8px);
         }
-    }
-    &.Dropdown-nested-menu.nested-right {
-        .Dropdown-menu {
-            left: auto;
-            right: 0px;
-            margin-right: calc(100% + 8px);
+        &:not(.nested-right) {
+            .Dropdown-menu {
+                left: 100%;
+                margin-left: 8px;
+
+                &::before {
+                    content: ' ';
+                    width: 8px;
+                }
+            }
+        }
+        &.nested-right {
+            .Dropdown-menu {
+                right: 0px;
+                margin-right: 100%;
+
+                &::after {
+                    content: ' ';
+                    width: 8px;
+                }
+            }
         }
     }
 }
