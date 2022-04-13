@@ -37,6 +37,7 @@ export const Dropdown: React.FunctionComponent<IProps> = ({
     const popoverRef = React.useRef<HTMLDivElement>(null);
 
     const [active, setActive] = React.useState(false);
+
     // Hover Based Dropdown control
     const handleMouseEnter = React.useCallback(() => {
         if (hoverable) {
