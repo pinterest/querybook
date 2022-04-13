@@ -170,14 +170,4 @@ function getLanguageForSqlFormatter(language: string): SqlFormatterLanguage {
     return 'sql';
 }
 
-export const getQueryStatements = (query: string) => {
-    const statements = new Set();
-    const formattedQuery = query.toLocaleLowerCase();
-
-    for (const statement of allowedStatement) {
-        if (formattedQuery.includes(statement)) {
-            statements.add(statement);
-        }
-    }
-    return Array.from(statements);
-};
+export const getQueryStatements = (query: string) => ['SELECT', 'UPDATE'];

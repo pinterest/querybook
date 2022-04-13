@@ -49,11 +49,6 @@ export const LineageNode = React.memo<IProps>(({ data }) => {
                 position={Position.Right}
                 isConnectable={false}
             />
-            <Handle
-                type="source"
-                position={Position.Right}
-                isConnectable={false}
-            />
         </div>
     );
 });
