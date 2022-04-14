@@ -84,10 +84,12 @@ export const AsyncButton = React.forwardRef<
 
         const buttonProps: ButtonProps = {
             isLoading: loading,
-            disabled: disableWhileAsync && loading,
             onClick: handleAsyncClick,
-
             ...propsForButton,
+
+            disabled:
+                (disableWhileAsync && loading) ||
+                Boolean(propsForButton.disabled),
             className: clsx(propsForButton.className || ''),
         };
         const Button = getButtonComponentByType(type);

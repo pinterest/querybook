@@ -7,6 +7,14 @@ slug: /changelog
 
 Here are the list of breaking changes that you should be aware of when updating Querybook:
 
+## v3.4.0
+
+There is a new field `feature_params` added to the `query_engine` table to replace `status_checker`.
+Please run [db migrations](../developer_guide/run_db_migration.md) for query engines to continue to work.
+
+`_perform_check` in EngineStatusChecker is now deprecated. Override `perform_check_with_executor` for custom
+health check logic.
+
 ## v3.2.0
 
 Exporters can now export all rows of statement result (limited to the size of the exporter).

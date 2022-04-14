@@ -7,7 +7,11 @@ from datasources.admin_audit_log import with_admin_audit_log
 from env import QuerybookSettings
 from lib.engine_status_checker import ALL_ENGINE_STATUS_CHECKERS
 from lib.metastore.all_loaders import ALL_METASTORE_LOADERS
-from lib.query_executor.all_executors import get_flattened_executor_template
+from lib.query_executor.all_executors import (
+    get_flattened_executor_template,
+    get_executor_class,
+)
+from lib.engine_status_checker import get_engine_checker_class
 from logic import admin as logic
 from logic import user as user_logic
 from logic import environment as environment_logic
@@ -134,8 +138,8 @@ def create_query_engine(
     language,
     executor,
     executor_params,
+    feature_params,
     description=None,
-    status_checker=None,
     metastore_id=None,
 ):
     with DBSession() as session:
@@ -146,14 +150,41 @@ def create_query_engine(
                 "language": language,
                 "executor": executor,
                 "executor_params": executor_params,
+                "feature_params": feature_params,
                 "metastore_id": metastore_id,
-                "status_checker": status_checker,
             },
             session=session,
         )
         query_engine_dict = query_engine.to_dict_admin()
 
     return query_engine_dict
+
+
+@register(
+    "/admin/query_engine/connection/",
+    methods=["GET"],
+)
+@admin_only
+def test_query_engine_connection(
+    name,
+    language,
+    executor,
+    executor_params,
+    feature_params,
+):
+    status_checker = get_engine_checker_class(feature_params["status_checker"])
+    executor_class = get_executor_class(language, executor)
+    pseudo_engine_dict = {
+        "name": name,
+        "language": language,
+        "executor": executor,
+        "executor_params": executor_params,
+        "feature_params": feature_params,
+    }
+
+    return status_checker.perform_check_with_executor(
+        executor_class, executor_params, pseudo_engine_dict
+    )
 
 
 @register(
@@ -173,6 +204,7 @@ def update_query_engine(id, **fields_to_update):
                 "language",
                 "executor",
                 "executor_params",
+                "feature_params",
                 "metastore_id",
                 "deleted_at",
                 "status_checker",

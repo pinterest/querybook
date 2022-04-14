@@ -1,3 +1,4 @@
+from typing import Dict
 from .base_checker import BaseEngineStatusChecker, EngineStatus
 from const.query_execution import QueryEngineStatus
 
@@ -8,8 +9,10 @@ class NullChecker(BaseEngineStatusChecker):
         return "NullChecker"
 
     @classmethod
-    def check(cls, engine_id: int, uid: int) -> EngineStatus:
-        """Perform the check
-        Override if you want custom results
+    def perform_check_with_executor(
+        cls, executor, executor_params: Dict, _engine_dict: Dict
+    ) -> EngineStatus:
+        """
+        This checker performs NOOP check
         """
         return {"status": QueryEngineStatus.UNAVAILABLE.value, "messages": []}
