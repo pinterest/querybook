@@ -131,7 +131,7 @@ def search_user_by_uid(
     apply_filter: bool = False,
 ) -> Optional[Tuple[str, Dict]]:
     search_filter = (
-        f"(&(uid={uid})"
+        f"(&({QuerybookSettings.LDAP_UID_FIELD}={uid})"
         + (_get_ldap_filter() if apply_filter else "(objectClass=*)")
         + ")"
     )
@@ -154,10 +154,11 @@ def search_user_by_dn(
     apply_filter: bool = False,
 ) -> Optional[Tuple[str, Dict]]:
     try:
+        filter_str = _get_ldap_filter() if apply_filter else "(objectClass=*)"
         raw_search_result = ldap_conn.search_s(
             base=user_dn,
             scope=ldap.SCOPE_SUBTREE,
-            filterstr=_get_ldap_filter() if apply_filter else "(objectClass=*)",
+            filterstr=filter_str,
             attrlist=attrs,
         )
     except ldap.NO_SUCH_OBJECT:
@@ -172,11 +173,13 @@ def get_transformed_username(
     if re.match(r"^\w+=.+", username):
         dn = username
         if QuerybookSettings.LDAP_USE_BIND_USER:
-            search_result = search_user_by_dn(ldap_conn, user_dn=dn, attrs=["uid"])
+            search_result = search_user_by_dn(
+                ldap_conn, user_dn=dn, attrs=[QuerybookSettings.LDAP_UID_FIELD]
+            )
             if not search_result:
                 # In case when provided DN wasn't found in LDAP
                 raise AuthenticationError(LDAPAuthErrors.BAD_CREDENTIALS)
-            username = _parse_value(search_result[1]["uid"])
+            username = _parse_value(search_result[1][QuerybookSettings.LDAP_UID_FIELD])
         else:
             match = re.match(
                 QuerybookSettings.LDAP_USER_DN.replace("{}", "(.+?)"), username

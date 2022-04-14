@@ -82,6 +82,7 @@ class QuerybookSettings(object):
     LDAP_BIND_PASSWORD = get_env_config("LDAP_BIND_PASSWORD")
     LDAP_SEARCH = get_env_config("LDAP_SEARCH")
     LDAP_FILTER = get_env_config("LDAP_FILTER")
+    LDAP_UID_FIELD = get_env_config("LDAP_UID_FIELD")
     # Configuration validation
     if LDAP_CONN is not None:
         if LDAP_USE_BIND_USER:

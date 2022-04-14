@@ -115,6 +115,7 @@ for LDAP authentication:
       - `LDAP_BIND_PASSWORD` (**required**) Password of a _bind user_
       - `LDAP_SEARCH` (**required**) LDAP search base (ex. `ou=people,dc=example,dc=com`)
       - `LDAP_FILTER` (optional) LDAP filter condition (ex. `(departmentNumber=01000)`)
+      - `LDAP_UID_FIELD` (optional) Field that matches the username when searching for the account to bind to (defaults to `uid`)
     - Login flow:
       1) Initialized connection for the _bind user_.
       2) Searching the _login user_ using the _bind user_ in LDAP dictionary based on `LDAP_SEARCH` and `LDAP_FILTER`.
