@@ -111,7 +111,7 @@ export function GenericCRUD<T extends Record<any, any>>({
                     const errorSection = !isEmpty(errors) ? (
                         <FormError errors={errors} />
                     ) : null;
-                    console.log({ renderActions });
+
                     return (
                         <div>
                             {renderItem(values, setFieldValue)}
