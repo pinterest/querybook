@@ -1,7 +1,6 @@
 import sqlalchemy as sql
 from sqlalchemy.orm import relationship, backref
 
-
 from app import db
 from const.admin import AdminOperation
 from const.db import (
@@ -87,11 +86,11 @@ class QueryEngine(CRUDMixin, Base):
 
     language = sql.Column(sql.String(length=name_length), nullable=False)
     executor = sql.Column(sql.String(length=name_length), nullable=False)
-    status_checker = sql.Column(sql.String(length=name_length))
 
-    # JSON field
+    # JSON field to store connection details
     executor_params = sql.Column(sql.JSON)
-    control_params = sql.Column(sql.JSON, default={}, nullable=False)
+    # JSON field to store additional features such as Connection checkers
+    feature_params = sql.Column(sql.JSON, default={}, nullable=False)
 
     metastore_id = sql.Column(
         sql.Integer, sql.ForeignKey("query_metastore.id", ondelete="SET NULL")
@@ -114,6 +113,7 @@ class QueryEngine(CRUDMixin, Base):
             "language": self.language,
             "description": self.description,
             "metastore_id": self.metastore_id,
+            "feature_params": self.get_feature_params(),
             "executor": self.executor,
         }
 
@@ -130,13 +130,15 @@ class QueryEngine(CRUDMixin, Base):
             "metastore_id": self.metastore_id,
             "executor": self.executor,
             "executor_params": self.get_engine_params(),
-            "control_params": self.control_params,
-            "status_checker": self.status_checker,
+            "feature_params": self.get_feature_params(),
             "environments": self.environments,
         }
 
     def get_engine_params(self):
         return self.executor_params
+
+    def get_feature_params(self):
+        return self.feature_params or {}
 
 
 class QueryMetastore(CRUDMixin, Base):

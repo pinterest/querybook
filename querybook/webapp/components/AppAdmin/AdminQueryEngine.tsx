@@ -33,6 +33,9 @@ import { Link } from 'ui/Link/Link';
 import { IAdminMetastore, IAdminQueryEngine } from 'const/admin';
 import { AdminQueryEngineResource } from 'resource/admin/queryEngine';
 import './AdminQueryEngine.scss';
+import { AsyncButton } from 'ui/AsyncButton/AsyncButton';
+import toast from 'react-hot-toast';
+import { QueryEngineStatus } from 'const/queryEngine';
 
 interface IProps {
     queryEngines: IAdminQueryEngine[];
@@ -321,7 +324,7 @@ export const AdminQueryEngine: React.FunctionComponent<IProps> = ({
 
                             <SimpleField
                                 stacked
-                                name="status_checker"
+                                name="feature_params.status_checker"
                                 type="select"
                                 options={engineStatusCheckerNames}
                                 withDeselect
@@ -387,6 +390,44 @@ export const AdminQueryEngine: React.FunctionComponent<IProps> = ({
         );
     };
 
+    const renderQueryEngineItemActions = (item: IAdminQueryEngine) => {
+        const hasStatusChecker = Boolean(item.feature_params?.status_checker);
+        const handleTestConnectionClick = () =>
+            toast.promise(
+                AdminQueryEngineResource.testConnection(item).then(
+                    ({ data }) => {
+                        if (data.status === QueryEngineStatus.GOOD) {
+                            return Promise.resolve(data.messages);
+                        } else {
+                            return Promise.reject(data.messages);
+                        }
+                    }
+                ),
+                {
+                    loading: 'Checking status...',
+                    success: (msg) => msg.join('\n'),
+                    error: (msg) => msg.join('\n'),
+                }
+            );
+        return (
+            <>
+                <AsyncButton
+                    icon="PlugZap"
+                    title="Test Connection"
+                    disabled={!hasStatusChecker}
+                    aria-label={
+                        hasStatusChecker
+                            ? null
+                            : `Must specify Status Checker to test connection`
+                    }
+                    data-balloon-pos={'up'}
+                    onClick={handleTestConnectionClick}
+                    disableWhileAsync
+                />
+            </>
+        );
+    };
+
     if (queryEngineId === 'new') {
         if (querybookLanguages && executorByLanguage && executorTemplate) {
             const defaultLanguage = querybookLanguages[0];
@@ -410,7 +451,7 @@ export const AdminQueryEngine: React.FunctionComponent<IProps> = ({
                     string,
                     any
                 >,
-                status_checker: null,
+                feature_params: {},
             };
             return (
                 <div className="AdminQueryEngine">
@@ -419,6 +460,7 @@ export const AdminQueryEngine: React.FunctionComponent<IProps> = ({
                             item={newQueryEngine}
                             createItem={createQueryEngine}
                             renderItem={renderQueryEngineItem}
+                            renderActions={renderQueryEngineItemActions}
                             validate={itemValidator}
                         />
                     </div>
@@ -475,6 +517,7 @@ export const AdminQueryEngine: React.FunctionComponent<IProps> = ({
                             validate={itemValidator}
                             renderItem={renderQueryEngineItem}
                             onItemCUD={loadQueryEngines}
+                            renderActions={renderQueryEngineItemActions}
                             onDelete={() =>
                                 history.push('/admin/query_engine/')
                             }

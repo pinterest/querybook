@@ -1,4 +1,4 @@
-import { escape } from 'lodash';
+import { escape, isEqual } from 'lodash';
 import { PickType } from 'lib/typescript';
 
 // from: https://stackoverflow.com/questions/286141/remove-blank-attributes-from-an-object-in-javascript
@@ -282,7 +282,7 @@ export function getChangedObject(
     const ret = {};
 
     for (const [key, value] of Object.entries(changed)) {
-        if (orig[key] !== value) {
+        if (!isEqual(orig[key], value)) {
             ret[key] = value;
         }
     }

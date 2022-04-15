@@ -1,13 +1,10 @@
 from datetime import datetime
+from typing import Dict
 
-from app.db import DBSession
 from .base_checker import BaseEngineStatusChecker, EngineStatus
 from const.query_execution import QueryEngineStatus
 from lib.query_executor.base_executor import QueryExecutorBaseClass
-from lib.query_executor.all_executors import get_executor_class
-
 from lib.utils.utils import Timeout
-from logic.admin import get_query_engine_by_id
 
 
 class ConnectionChecker(BaseEngineStatusChecker):
@@ -16,18 +13,14 @@ class ConnectionChecker(BaseEngineStatusChecker):
         return "ConnectionChecker"
 
     @classmethod
-    def _perform_check(cls, engine_id: int) -> EngineStatus:
-        with DBSession() as session:
-            engine = get_query_engine_by_id(engine_id, session=session)
-            executor_params = engine.get_engine_params()
-
-            return check_connection(
-                get_executor_class(engine.language, engine.executor), executor_params
-            )
+    def perform_check_with_executor(
+        cls, executor: QueryExecutorBaseClass, executor_params: Dict, _engine_dict: Dict
+    ) -> EngineStatus:
+        return check_connection(executor, executor_params)
 
 
 def check_connection(
-    executor: QueryExecutorBaseClass, client_settings: {}
+    executor: QueryExecutorBaseClass, client_settings: Dict
 ) -> EngineStatus:
     result: EngineStatus = {"status": QueryEngineStatus.GOOD.value, "messages": []}
     try:

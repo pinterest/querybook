@@ -1,4 +1,5 @@
 from lib.utils.import_helper import import_module_with_default
+from .base_checker import BaseEngineStatusChecker
 from .connection_checker import ConnectionChecker
 from .select_one_checker import SelectOneChecker
 from .null_checker import NullChecker
@@ -14,7 +15,7 @@ ALL_ENGINE_STATUS_CHECKERS = [
 ] + ALL_PLUGIN_ENGINE_STATUS_CHECKERS
 
 
-def get_engine_checker_class(name: str):
+def get_engine_checker_class(name: str) -> BaseEngineStatusChecker:
     for checker in ALL_ENGINE_STATUS_CHECKERS:
         if checker.NAME() == name:
             return checker
