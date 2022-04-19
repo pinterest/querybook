@@ -4,7 +4,7 @@ import { useDrag } from 'react-dnd';
 import NOOP from 'lib/utils/noop';
 import { IDataQueryCell } from 'const/datadoc';
 import { IQueryEngine } from 'const/queryEngine';
-import { getQueryStatements } from 'lib/sql-helper/sql-lexer';
+import { getQueryKeywords } from 'lib/sql-helper/sql-lexer';
 import { generateFormattedDate } from 'lib/utils/datetime';
 
 import { queryCellDraggableType } from './DataDocDAGExporter';
@@ -34,7 +34,7 @@ export const DataDocDAGExporterListItem = React.memo<IDataDocDAGExporterListItem
 
         // TODO: use parser to get statements
         const statements = React.useMemo(
-            () => getQueryStatements(queryCell.context),
+            () => getQueryKeywords(queryCell.context),
             [queryCell]
         );
 

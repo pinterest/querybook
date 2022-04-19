@@ -897,7 +897,7 @@ export const getStatementKeyword = (statement: IToken[]) => {
     }
 };
 
-export const getQueryStatements = (query: string) => {
+export const getQueryKeywords = (query: string) => {
     const tokens = tokenize(query);
     const statements = simpleParse(tokens);
 

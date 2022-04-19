@@ -5,7 +5,8 @@ import {
     simpleParse,
     tokenize,
     findWithStatementPlaceholder,
-    getQueryStatements,
+    getQueryKeywords,
+    getStatementKeyword,
 } from 'lib/sql-helper/sql-lexer';
 
 const simpleQuery = `
@@ -283,26 +284,49 @@ FROM
     ).toStrictEqual([0, 9, 14, 27]);
 });
 
-test('getQueryStatements', () => {
-    expect(getQueryStatements(simpleQuery)).toEqual(['select']);
+test('getQueryKeywords', () => {
+    expect(getQueryKeywords(simpleQuery)).toEqual(['select']);
+
+    // multiple statements
+    expect(
+        getQueryKeywords(`INSERT INTO abc SELECT * FROM foobar;
+        WITH foo as (SELECT * FROM hello.world)
+        CREATE TABLE egg.spam AS
+        SELECT a, b FROM foo`)
+    ).toEqual(['insert', 'create']);
+});
+test('getStatementKeyword', () => {
+    expect(getStatementKeyword(simpleParse(tokenize(simpleQuery))[0])).toEqual(
+        'select'
+    );
 
     // insert case
     expect(
-        getQueryStatements(`INSERT INTO abc SELECT * FROM foobar
+        getStatementKeyword(
+            simpleParse(
+                tokenize(`INSERT INTO abc SELECT * FROM foobar
 
         `)
-    ).toEqual(['insert']);
+            )[0]
+        )
+    ).toEqual('insert');
 
     // with case
     expect(
-        getQueryStatements(`WITH foo as (SELECT * FROM hello.world)
+        getStatementKeyword(
+            simpleParse(
+                tokenize(`WITH foo as (SELECT * FROM hello.world)
         CREATE TABLE egg.spam AS
         SELECT a, b FROM foo`)
-    ).toEqual(['create']);
+            )[0]
+        )
+    ).toEqual('create');
 
     // with case with many brackets
     expect(
-        getQueryStatements(`with p as (
+        getStatementKeyword(
+            simpleParse(
+                tokenize(`with p as (
         select *
         from (values
             ('a', 1, 1),
@@ -316,5 +340,7 @@ test('getQueryStatements', () => {
         order by letter
         )
         select * from z`)
-    ).toEqual(['select']);
+            )[0]
+        )
+    ).toEqual('select');
 });
