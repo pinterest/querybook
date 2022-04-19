@@ -5,6 +5,7 @@ import {
     simpleParse,
     tokenize,
     findWithStatementPlaceholder,
+    getQueryStatements,
 } from 'lib/sql-helper/sql-lexer';
 
 const simpleQuery = `
@@ -280,4 +281,40 @@ FROM
     table_a;`
         )
     ).toStrictEqual([0, 9, 14, 27]);
+});
+
+test('getQueryStatements', () => {
+    expect(getQueryStatements(simpleQuery)).toEqual(['select']);
+
+    // insert case
+    expect(
+        getQueryStatements(`INSERT INTO abc SELECT * FROM foobar
+
+        `)
+    ).toEqual(['insert']);
+
+    // with case
+    expect(
+        getQueryStatements(`WITH foo as (SELECT * FROM hello.world)
+        CREATE TABLE egg.spam AS
+        SELECT a, b FROM foo`)
+    ).toEqual(['create']);
+
+    // with case with many brackets
+    expect(
+        getQueryStatements(`with p as (
+        select *
+        from (values
+            ('a', 1, 1),
+            ('b', 2, null),
+            ('c', null, 3),
+            ('d', null, null)
+        ) t1 (letter, val1, val2)
+        ), z as (
+        select *, val1 IS DISTINCT FROM val2
+        from p
+        order by letter
+        )
+        select * from z`)
+    ).toEqual(['select']);
 });

@@ -4,7 +4,7 @@ import { useDrag } from 'react-dnd';
 import NOOP from 'lib/utils/noop';
 import { IDataQueryCell } from 'const/datadoc';
 import { IQueryEngine } from 'const/queryEngine';
-import { getQueryStatements } from 'lib/sql-helper/sql-formatter';
+import { getQueryStatements } from 'lib/sql-helper/sql-lexer';
 import { generateFormattedDate } from 'lib/utils/datetime';
 
 import { queryCellDraggableType } from './DataDocDAGExporter';
@@ -65,14 +65,14 @@ export const DataDocDAGExporterListItem = React.memo<IDataDocDAGExporterListItem
                                         .map((statement: string) =>
                                             statement.toLocaleUpperCase()
                                         )
-                                        .join(',')}
+                                        .join(', ')}
                                 </StyledText>
                             </div>
                             {showPopover && anchorElement && (
                                 <Popover
                                     onHide={NOOP}
                                     anchor={anchorElement}
-                                    layout={['bottom', 'right']}
+                                    layout={['right', 'top']}
                                 >
                                     <pre>{queryCell.context}</pre>
                                 </Popover>
