@@ -6,7 +6,7 @@ import {
     tokenize,
     findWithStatementPlaceholder,
     getQueryKeywords,
-    getStatementKeyword,
+    getStatementType,
 } from 'lib/sql-helper/sql-lexer';
 
 const simpleQuery = `
@@ -295,14 +295,14 @@ test('getQueryKeywords', () => {
         SELECT a, b FROM foo`)
     ).toEqual(['insert', 'create']);
 });
-test('getStatementKeyword', () => {
-    expect(getStatementKeyword(simpleParse(tokenize(simpleQuery))[0])).toEqual(
+test('getStatementType', () => {
+    expect(getStatementType(simpleParse(tokenize(simpleQuery))[0])).toEqual(
         'select'
     );
 
     // insert case
     expect(
-        getStatementKeyword(
+        getStatementType(
             simpleParse(
                 tokenize(`INSERT INTO abc SELECT * FROM foobar
 
@@ -313,7 +313,7 @@ test('getStatementKeyword', () => {
 
     // with case
     expect(
-        getStatementKeyword(
+        getStatementType(
             simpleParse(
                 tokenize(`WITH foo as (SELECT * FROM hello.world)
         CREATE TABLE egg.spam AS
@@ -324,7 +324,7 @@ test('getStatementKeyword', () => {
 
     // with case
     expect(
-        getStatementKeyword(
+        getStatementType(
             simpleParse(
                 tokenize(`WITH
                 x AS (SELECT a FROM t),
@@ -337,7 +337,7 @@ test('getStatementKeyword', () => {
 
     // with case with many brackets
     expect(
-        getStatementKeyword(
+        getStatementType(
             simpleParse(
                 tokenize(`with p as (
         select *

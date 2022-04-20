@@ -861,7 +861,7 @@ export function getEditorLines(statements: IToken[][]) {
     return lines;
 }
 
-export const getStatementKeyword = (statement: IToken[]) => {
+export const getStatementType = (statement: IToken[]) => {
     const firstKeywordIdx = statement.findIndex((token) =>
         isKeywordToken(token)
     );
@@ -871,32 +871,29 @@ export const getStatementKeyword = (statement: IToken[]) => {
         return firstKeyWord;
     }
 
-    let nextKeywordIdx = statement.findIndex(
-        (statement) => statement.text === 'as'
-    );
-    let nextKeyword = statement[nextKeywordIdx].text;
+    let currIdx = firstKeywordIdx + 1;
+    let firstNotAsKeyword = null;
 
-    const findNextKeywordIdx = (startIdx) => {
-        for (let i = startIdx; i < statement.length; i++) {
-            if (isKeywordToken(statement[i])) {
-                return i;
-            }
+    while (currIdx < statement.length) {
+        const token = statement[currIdx];
+        if (isKeywordToken(token) && token.text !== 'as') {
+            firstNotAsKeyword = token.text;
+            break;
         }
-    };
 
-    while (nextKeyword === 'as') {
-        nextKeywordIdx = findNextKeywordIdx(
-            statement[nextKeywordIdx + 1].bracketIndex
-        );
-        nextKeyword = statement[nextKeywordIdx].text;
+        if (token.bracketIndex != null) {
+            currIdx = token.bracketIndex;
+        } else {
+            currIdx += 1;
+        }
     }
 
-    return nextKeyword;
+    return firstNotAsKeyword;
 };
 
 export const getQueryKeywords = (query: string) => {
     const tokens = tokenize(query);
     const statements = simpleParse(tokens);
 
-    return Array.from(new Set(statements.map(getStatementKeyword)));
+    return Array.from(new Set(statements.map(getStatementType)));
 };
