@@ -862,39 +862,36 @@ export function getEditorLines(statements: IToken[][]) {
 }
 
 export const getStatementKeyword = (statement: IToken[]) => {
-    const firstKeywordIndex = statement.findIndex((statement) =>
-        isKeywordToken(statement)
+    const firstKeywordIdx = statement.findIndex((token) =>
+        isKeywordToken(token)
     );
-    const firstKeyWord = statement[firstKeywordIndex].text;
+    const firstKeyWord = statement[firstKeywordIdx].text;
 
-    if (firstKeyWord === 'with') {
-        return getStatementKeyword(statement.slice(firstKeywordIndex + 1));
-    } else if (firstKeyWord === 'as') {
-        let openBracketCount = 0;
-        let closeBracketCount = 0;
-        for (let i = 0; i < statement.length; i++) {
-            // find end of AS statement
-            if (statement[i].type === 'BRACKET') {
-                if (statement[i].text === '(') {
-                    openBracketCount = openBracketCount + 1;
-                } else {
-                    closeBracketCount = closeBracketCount + 1;
-                }
-
-                if (
-                    closeBracketCount !== 0 &&
-                    openBracketCount === closeBracketCount
-                ) {
-                    return getStatementKeyword(statement.slice(i + 1));
-                }
-            }
-        }
-        if (openBracketCount === 0) {
-            return getStatementKeyword(statement.slice(firstKeywordIndex + 1));
-        }
-    } else {
+    if (firstKeyWord !== 'with') {
         return firstKeyWord;
     }
+
+    let nextKeywordIdx = statement.findIndex(
+        (statement) => statement.text === 'as'
+    );
+    let nextKeyword = statement[nextKeywordIdx].text;
+
+    const findNextKeywordIdx = (startIdx) => {
+        for (let i = startIdx; i < statement.length; i++) {
+            if (isKeywordToken(statement[i])) {
+                return i;
+            }
+        }
+    };
+
+    while (nextKeyword === 'as') {
+        nextKeywordIdx = findNextKeywordIdx(
+            statement[nextKeywordIdx + 1].bracketIndex
+        );
+        nextKeyword = statement[nextKeywordIdx].text;
+    }
+
+    return nextKeyword;
 };
 
 export const getQueryKeywords = (query: string) => {

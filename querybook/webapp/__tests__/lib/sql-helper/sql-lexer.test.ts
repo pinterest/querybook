@@ -322,6 +322,19 @@ test('getStatementKeyword', () => {
         )
     ).toEqual('create');
 
+    // with case
+    expect(
+        getStatementKeyword(
+            simpleParse(
+                tokenize(`WITH
+                x AS (SELECT a FROM t),
+                y AS (SELECT a AS b FROM x),
+                z AS (SELECT b AS c FROM y)
+              INSERT c FROM SELECT * FROM z; `)
+            )[0]
+        )
+    ).toEqual('insert');
+
     // with case with many brackets
     expect(
         getStatementKeyword(
@@ -339,8 +352,8 @@ test('getStatementKeyword', () => {
         from p
         order by letter
         )
-        select * from z`)
+        INSERT c FROM SELECT * FROM z;`)
             )[0]
         )
-    ).toEqual('select');
+    ).toEqual('insert');
 });
