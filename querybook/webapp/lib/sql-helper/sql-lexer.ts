@@ -860,3 +860,40 @@ export function getEditorLines(statements: IToken[][]) {
 
     return lines;
 }
+
+export const getStatementType = (statement: IToken[]) => {
+    const firstKeywordIdx = statement.findIndex((token) =>
+        isKeywordToken(token)
+    );
+    const firstKeyWord = statement[firstKeywordIdx].text;
+
+    if (firstKeyWord !== 'with') {
+        return firstKeyWord;
+    }
+
+    let currIdx = firstKeywordIdx + 1;
+    let firstNotAsKeyword = null;
+
+    while (currIdx < statement.length) {
+        const token = statement[currIdx];
+        if (isKeywordToken(token) && token.text !== 'as') {
+            firstNotAsKeyword = token.text;
+            break;
+        }
+
+        if (token.bracketIndex != null) {
+            currIdx = token.bracketIndex;
+        } else {
+            currIdx += 1;
+        }
+    }
+
+    return firstNotAsKeyword;
+};
+
+export const getQueryKeywords = (query: string) => {
+    const tokens = tokenize(query);
+    const statements = simpleParse(tokens);
+
+    return Array.from(new Set(statements.map(getStatementType)));
+};
