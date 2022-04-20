@@ -14,6 +14,7 @@ import ReactFlow, {
     addEdge,
     Background,
 } from 'react-flow-renderer';
+import { Button } from 'ui/Button/Button';
 
 import './FlowGraph.scss';
 
@@ -134,14 +135,29 @@ const InteractiveFlowGraph: React.FunctionComponent<IProps> = ({
     const [nodes, setNodes, onNodesChange] = useNodesState(initialNodes);
     const [edges, setEdges, onEdgesChange] = useEdgesState(initialEdges);
 
+    const { nodes: layoutedNodes, edges: layoutedEdges } = React.useMemo(
+        () => getLayoutedElements(nodes, edges),
+        [nodes, edges]
+    );
+
     const onConnect = React.useCallback(
         (params) => setEdges((eds) => addEdge(params, eds)),
         [setEdges]
     );
 
     React.useEffect(() => {
-        setNodes(initialNodes);
+        setNodes((nodes) => [...initialNodes, ...nodes]);
     }, [initialNodes, setNodes]);
+
+    React.useEffect(() => {
+        setEdges(edges.map((edge) => ({ ...edge, animated: true })));
+    }, [edges.length, setEdges]);
+
+    const onLayout = React.useCallback(() => {
+        setNodes(layoutedNodes);
+        setEdges(layoutedEdges);
+        console.log('????? laying out');
+    }, [layoutedEdges, layoutedNodes, setEdges, setNodes]);
 
     return (
         <ReactFlow
@@ -160,6 +176,11 @@ const InteractiveFlowGraph: React.FunctionComponent<IProps> = ({
             <MiniMap />
             <Controls />
             <Background />
+            <Button
+                className="layout-button"
+                title="layout"
+                onClick={onLayout}
+            />
         </ReactFlow>
     );
 };
