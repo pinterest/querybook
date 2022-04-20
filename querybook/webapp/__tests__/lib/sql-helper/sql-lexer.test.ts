@@ -5,6 +5,8 @@ import {
     simpleParse,
     tokenize,
     findWithStatementPlaceholder,
+    getQueryKeywords,
+    getStatementType,
 } from 'lib/sql-helper/sql-lexer';
 
 const simpleQuery = `
@@ -280,4 +282,78 @@ FROM
     table_a;`
         )
     ).toStrictEqual([0, 9, 14, 27]);
+});
+
+test('getQueryKeywords', () => {
+    expect(getQueryKeywords(simpleQuery)).toEqual(['select']);
+
+    // multiple statements
+    expect(
+        getQueryKeywords(`INSERT INTO abc SELECT * FROM foobar;
+        WITH foo as (SELECT * FROM hello.world)
+        CREATE TABLE egg.spam AS
+        SELECT a, b FROM foo`)
+    ).toEqual(['insert', 'create']);
+});
+test('getStatementType', () => {
+    expect(getStatementType(simpleParse(tokenize(simpleQuery))[0])).toEqual(
+        'select'
+    );
+
+    // insert case
+    expect(
+        getStatementType(
+            simpleParse(
+                tokenize(`INSERT INTO abc SELECT * FROM foobar
+
+        `)
+            )[0]
+        )
+    ).toEqual('insert');
+
+    // with case
+    expect(
+        getStatementType(
+            simpleParse(
+                tokenize(`WITH foo as (SELECT * FROM hello.world)
+        CREATE TABLE egg.spam AS
+        SELECT a, b FROM foo`)
+            )[0]
+        )
+    ).toEqual('create');
+
+    // with case
+    expect(
+        getStatementType(
+            simpleParse(
+                tokenize(`WITH
+                x AS (SELECT a FROM t),
+                y AS (SELECT a AS b FROM x),
+                z AS (SELECT b AS c FROM y)
+              INSERT c FROM SELECT * FROM z; `)
+            )[0]
+        )
+    ).toEqual('insert');
+
+    // with case with many brackets
+    expect(
+        getStatementType(
+            simpleParse(
+                tokenize(`with p as (
+        select *
+        from (values
+            ('a', 1, 1),
+            ('b', 2, null),
+            ('c', null, 3),
+            ('d', null, null)
+        ) t1 (letter, val1, val2)
+        ), z as (
+        select *, val1 IS DISTINCT FROM val2
+        from p
+        order by letter
+        )
+        INSERT c FROM SELECT * FROM z;`)
+            )[0]
+        )
+    ).toEqual('insert');
 });
