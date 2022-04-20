@@ -898,11 +898,5 @@ export const getQueryKeywords = (query: string) => {
     const tokens = tokenize(query);
     const statements = simpleParse(tokens);
 
-    const keywords = new Set();
-
-    for (const statement of statements) {
-        keywords.add(getStatementKeyword(statement));
-    }
-
-    return Array.from(keywords);
+    return Array.from(new Set(statements.map(getStatementKeyword)));
 };
