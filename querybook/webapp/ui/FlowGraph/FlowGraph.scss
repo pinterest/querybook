@@ -32,7 +32,10 @@
         display: none;
     }
 
-    .layout-button {
-        z-index: 100;
+    .layout-buttons {
+        justify-content: flex-end;
+        > * {
+            z-index: 100;
+        }
     }
 }

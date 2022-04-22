@@ -5,12 +5,14 @@ import { QueryCellNode } from 'ui/FlowGraph/QueryCellNode';
 
 interface IProps {
     queryCells: IDataQueryCell[];
+    deleteCell: (id: number) => void;
 }
 
 const queryCellNode = 'queryCellNode';
 
 export const DataDocDAGExporterGraph: React.FunctionComponent<IProps> = ({
     queryCells,
+    deleteCell,
 }) => {
     const nodes = React.useMemo(
         () =>
@@ -19,10 +21,11 @@ export const DataDocDAGExporterGraph: React.FunctionComponent<IProps> = ({
                 type: queryCellNode,
                 data: {
                     label: cell.meta.title,
+                    onDelete: () => deleteCell(cell.id),
                 },
                 position: initialNodePosition,
             })),
-        [queryCells]
+        [deleteCell, queryCells]
     );
 
     return (

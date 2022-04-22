@@ -34,8 +34,9 @@ const dagreGraph = new dagre.graphlib.Graph();
 dagreGraph.setDefaultEdgeLabel(() => ({}));
 
 // from react-flow docs
-const getLayoutedElements = (nodes, edges) => {
-    dagreGraph.setGraph({ rankdir: 'LR' });
+const getLayoutedElements = (nodes, edges, direction = 'LR') => {
+    const isHorizontal = direction === 'LR';
+    dagreGraph.setGraph({ rankdir: direction });
 
     nodes.forEach((node) => {
         dagreGraph.setNode(node.id, { width: nodeWidth, height: nodeHeight });
@@ -49,8 +50,8 @@ const getLayoutedElements = (nodes, edges) => {
 
     nodes.forEach((node) => {
         const nodeWithPosition = dagreGraph.node(node.id);
-        node.targetPosition = 'left';
-        node.sourcePosition = 'right';
+        node.targetPosition = isHorizontal ? 'left' : 'top';
+        node.sourcePosition = isHorizontal ? 'right' : 'bottom';
 
         // We are shifting the dagre node position (anchor=center center) to the top left
         // so it matches the React Flow node anchor point (top left).
@@ -135,29 +136,36 @@ const InteractiveFlowGraph: React.FunctionComponent<IProps> = ({
     const [nodes, setNodes, onNodesChange] = useNodesState(initialNodes);
     const [edges, setEdges, onEdgesChange] = useEdgesState(initialEdges);
 
-    const { nodes: layoutedNodes, edges: layoutedEdges } = React.useMemo(
-        () => getLayoutedElements(nodes, edges),
-        [nodes, edges]
-    );
-
     const onConnect = React.useCallback(
         (params) => setEdges((eds) => addEdge(params, eds)),
         [setEdges]
     );
 
     React.useEffect(() => {
-        setNodes((nodes) => [...initialNodes, ...nodes]);
+        setNodes((nodes) => {
+            const currentNodeIds = nodes.map((node) => node.id);
+            const newNodes = initialNodes.filter(
+                (node) => !currentNodeIds.includes(node.id)
+            );
+
+            const initialNodeIds = initialNodes.map((node) => node.id);
+            // use filtered nodes to preserve position
+            const filteredNodes = nodes.filter((node) =>
+                initialNodeIds.includes(node.id)
+            );
+            return [...filteredNodes, ...newNodes];
+        });
     }, [initialNodes, setNodes]);
 
     React.useEffect(() => {
         setEdges(edges.map((edge) => ({ ...edge, animated: true })));
     }, [edges.length, setEdges]);
 
-    const onLayout = React.useCallback(() => {
-        setNodes(layoutedNodes);
-        setEdges(layoutedEdges);
-        console.log('????? laying out');
-    }, [layoutedEdges, layoutedNodes, setEdges, setNodes]);
+    const onLayout = (direction = 'LR') => {
+        getLayoutedElements(nodes, edges, direction);
+        // force graph to update position
+        onNodesChange([{ id: '0', type: 'select', selected: true }]);
+    };
 
     return (
         <ReactFlow
@@ -176,11 +184,18 @@ const InteractiveFlowGraph: React.FunctionComponent<IProps> = ({
             <MiniMap />
             <Controls />
             <Background />
-            <Button
-                className="layout-button"
-                title="layout"
-                onClick={onLayout}
-            />
+            <div className="flex-row layout-buttons m12">
+                <Button
+                    title="Vertical Layout"
+                    icon="AlignCenterVertical"
+                    onClick={() => onLayout('TB')}
+                />
+                <Button
+                    title="Horizontal Layout"
+                    icon="AlignCenterHorizontal"
+                    onClick={() => onLayout('LR')}
+                />
+            </div>
         </ReactFlow>
     );
 };

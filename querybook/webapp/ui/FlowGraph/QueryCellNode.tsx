@@ -3,6 +3,7 @@ import clsx from 'clsx';
 import { Handle, Position } from 'react-flow-renderer';
 
 import './QueryCellNode.scss';
+import { IconButton } from 'ui/Button/IconButton';
 
 interface IProps {
     data: IQueryCellNodeProps;
@@ -10,13 +11,12 @@ interface IProps {
 
 export interface IQueryCellNodeProps {
     label: string;
-    // onSelect: () => void;
-    // onExpand: () => void;
+    onDelete: () => void;
     isSelected: boolean;
 }
 
 export const QueryCellNode = React.memo<IProps>(({ data }) => {
-    const { label, isSelected } = data;
+    const { label, isSelected, onDelete } = data;
 
     const QueryCellNodeClassName = clsx({
         QueryCellNode: true,
@@ -27,6 +27,13 @@ export const QueryCellNode = React.memo<IProps>(({ data }) => {
         <div className={QueryCellNodeClassName}>
             <Handle type="target" position={Position.Left} />
             <div className="QueryCellNode-label">{label}</div>
+            <IconButton
+                icon="X"
+                noPadding
+                onClick={onDelete}
+                className="ml4"
+                size={16}
+            />
             <Handle type="source" position={Position.Right} />
         </div>
     );
