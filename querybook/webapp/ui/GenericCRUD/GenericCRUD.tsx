@@ -21,6 +21,8 @@ export interface IGenericCRUDProps<T> extends Partial<FormikConfig<T>> {
     onItemCUD?: (item?: T) => any;
 
     validationSchema?: any;
+
+    renderActions?: (item: T) => React.ReactChild;
     renderItem: (
         item: T,
         handleItemChange: (
@@ -39,7 +41,7 @@ export function GenericCRUD<T extends Record<any, any>>({
     onItemCUD,
     onDelete,
     renderItem,
-
+    renderActions,
     ...formikProps
 }: IGenericCRUDProps<T>) {
     const handleDeleteItem = React.useCallback(async () => {
@@ -115,6 +117,7 @@ export function GenericCRUD<T extends Record<any, any>>({
                             {renderItem(values, setFieldValue)}
                             {errorSection}
                             <div className="pv8 right-align mr8">
+                                {renderActions?.(values)}
                                 {deleteButton}
                                 {saveButton}
                             </div>

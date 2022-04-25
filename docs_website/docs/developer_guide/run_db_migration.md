@@ -12,8 +12,4 @@ To make changes to the SQLAlchemy database model definitions, you need to run th
 cd querybook
 PYTHONPATH=server alembic revision --autogenerate -m "<>commit message<>"
 PYTHONPATH=server alembic upgrade head
-
-# OPTIONAL: if you ran the script from remote server
-# and need to sync it back from devapp to local
-./querybook/scripts/sync_alembic_from_remote [Your remote repo location]
 ```

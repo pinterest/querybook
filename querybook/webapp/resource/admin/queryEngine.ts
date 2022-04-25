@@ -1,4 +1,5 @@
 import { IAdminQueryEngine, IQueryEngineTemplate } from 'const/admin';
+import type { IEngineStatusData } from 'const/queryEngine';
 import ds from 'lib/datasource';
 
 export const AdminQueryEngineResource = {
@@ -18,7 +19,7 @@ export const AdminQueryEngineResource = {
             executor: queryEngine.executor,
             executor_params: queryEngine.executor_params,
             metastore_id: queryEngine.metastore_id ?? null,
-            status_checker: queryEngine.status_checker,
+            feature_params: queryEngine.feature_params,
         }),
 
     update: (queryEngineId: number, queryEngine: Partial<IAdminQueryEngine>) =>
@@ -34,4 +35,13 @@ export const AdminQueryEngineResource = {
         ds.save<IAdminQueryEngine>(
             `/admin/query_engine/${queryEngineId}/recover/`
         ),
+
+    testConnection: (queryEngine: IAdminQueryEngine) =>
+        ds.fetch<IEngineStatusData>('/admin/query_engine/connection/', {
+            name: queryEngine.name,
+            language: queryEngine.language,
+            executor: queryEngine.executor,
+            executor_params: queryEngine.executor_params,
+            feature_params: queryEngine.feature_params,
+        }),
 };

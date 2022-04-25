@@ -1,8 +1,27 @@
 version: '2.1'
 
+x-querybook-image: &querybook-image querybook-dev:latest
+x-querybook-depends-on: &querybook-depends-on
+    mysql:
+        condition: service_healthy
+    redis:
+        condition: service_healthy
+    elasticsearch:
+        condition: service_healthy
+x-querybook-volumes: &querybook-volumes
+    # This is to sync in live code change
+    - $PWD:/opt/querybook
+    # See https://stackoverflow.com/questions/29181032/add-a-volume-to-docker-but-exclude-a-sub-folder
+    - /opt/querybook/node_modules/
+    # Make sure the build files don't leak back
+    - /opt/querybook/dist/
+    - $PWD/containers/bundled_querybook_config.yaml:/opt/querybook/querybook/config/querybook_config.yaml
+    # - file:/opt/store/
+
 services:
     web:
-        image: querybook-dev:latest
+        container_name: querybook_web
+        image: *querybook-image
         tty: true
         stdin_open: true
         # network_mode: 'host'
@@ -16,59 +35,26 @@ services:
             APIPORT: '${APIPORT:-3000}'
             HOT_RELOAD: '${HOT_RELOAD:-true}'
         restart: 'always'
-        volumes:
-            # This is for code change via watcher
-            - $PWD:/opt/querybook
-            # See https://stackoverflow.com/questions/29181032/add-a-volume-to-docker-but-exclude-a-sub-folder
-            - /opt/querybook/node_modules/
-            # Make sure the build files don't leak back
-            - /opt/querybook/dist/
-            - $PWD/containers/bundled_querybook_config.yaml:/opt/querybook/querybook/config/querybook_config.yaml
-            # - file:/opt/store/
-        depends_on:
-            mysql:
-                condition: service_healthy
-            redis:
-                condition: service_healthy
-            elasticsearch:
-                condition: service_healthy
+        volumes: *querybook-volumes
+        depends_on: *querybook-depends-on
     worker:
-        image: querybook-dev:latest
+        container_name: querybook_worker
+        image: *querybook-image
         tty: true
         stdin_open: true
         command: './querybook/scripts/runservice worker -c 5'
-        # restart: "always"
-        volumes:
-            # This is for code change via watcher
-            - $PWD:/opt/querybook
-            - $PWD/containers/bundled_querybook_config.yaml:/opt/querybook/querybook/config/querybook_config.yaml
-            # - file:/opt/store/
-        depends_on:
-            mysql:
-                condition: service_healthy
-            redis:
-                condition: service_healthy
-            elasticsearch:
-                condition: service_healthy
+        volumes: *querybook-volumes
+        depends_on: *querybook-depends-on
     scheduler:
-        image: querybook-dev:latest
+        container_name: querybook_scheduler
+        image: *querybook-image
         tty: true
         stdin_open: true
         command: './querybook/scripts/runservice scheduler --pidfile="/opt/celerybeat.pid"'
-        volumes:
-            # This is for code change via watcher
-            - $PWD:/opt/querybook
-            # See https://stackoverflow.com/questions/29181032/add-a-volume-to-docker-but-exclude-a-sub-folder
-            - /opt/querybook/node_modules/
-            # Make sure the build files don't leak back
-            - /opt/querybook/dist/
-            - $PWD/containers/bundled_querybook_config.yaml:/opt/querybook/querybook/config/querybook_config.yaml
-        depends_on:
-            mysql:
-                condition: service_healthy
-            redis:
-                condition: service_healthy
+        volumes: *querybook-volumes
+        depends_on: *querybook-depends-on
     redis:
+        container_name: querybook_redis
         image: redis:5.0.9
         restart: always
         command: ['redis-server', '--appendonly', 'yes']
@@ -81,6 +67,7 @@ services:
             timeout: 10s
             retries: 3
     mysql:
+        container_name: querybook_mysql
         image: mysql:5.7
         restart: always
         ports:
@@ -109,6 +96,7 @@ services:
             timeout: 30s
             retries: 3
     elasticsearch:
+        container_name: querybook_elasticsearch
         image: docker.elastic.co/elasticsearch/elasticsearch:7.16.2
         environment:
             cluster.name: docker-cluster

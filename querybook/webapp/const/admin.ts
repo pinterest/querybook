@@ -44,7 +44,9 @@ export interface IAdminQueryEngine {
     metastore_id: number;
     executor: string;
     executor_params: Record<string, any>;
-    status_checker: string;
+    feature_params: {
+        status_checker?: string;
+    };
 
     environments?: IAdminEnvironment[];
 }
