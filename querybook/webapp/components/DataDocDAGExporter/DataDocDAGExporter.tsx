@@ -1,10 +1,12 @@
 import * as React from 'react';
-import { useSelector } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
 import { useDrop } from 'react-dnd';
+import { Edge, Node } from 'react-flow-renderer';
 
 import * as dataDocSelectors from 'redux/dataDoc/selector';
 import { IStoreState } from 'redux/store/types';
 import { IDataQueryCell } from 'const/datadoc';
+import { fetchDAGExport } from 'redux/dataDoc/action';
 
 import { DataDocDagExporterList } from './DataDocDAGExporterList';
 import { DataDocDAGExporterGraph } from './DataDocDAGExporterGraph';
@@ -23,9 +25,26 @@ export const DataDocDAGExporter: React.FunctionComponent<IProps> = ({
     docId,
     isEditable,
 }) => {
-    const { dataDocCells } = useSelector((state: IStoreState) =>
-        dataDocSelectors.dataDocSelector(state, docId)
+    const dispatch = useDispatch();
+    const { dataDocCells, savedDAGExport } = useSelector(
+        (state: IStoreState) => ({
+            dataDocCells: dataDocSelectors.dataDocSelector(state, docId)
+                .dataDocCells,
+            savedDAGExport: state.dataDoc.dagExportByDocId[docId],
+        })
     );
+    const savedNodes = React.useMemo(
+        () => savedDAGExport.dag?.nodes as Node[],
+        [savedDAGExport]
+    );
+    const savedEdges = React.useMemo(
+        () => savedDAGExport.dag?.edges as Edge[],
+        [savedDAGExport]
+    );
+
+    React.useEffect(() => {
+        dispatch(fetchDAGExport(docId));
+    }, [dispatch, docId]);
 
     const queryCells: IDataQueryCell[] = React.useMemo(
         () =>
@@ -49,6 +68,13 @@ export const DataDocDAGExporter: React.FunctionComponent<IProps> = ({
         [queryCells, graphQueryCellIds]
     );
 
+    React.useEffect(() => {
+        const savedNodeIds = savedDAGExport.dag?.nodes?.map((node) => node.id);
+        setGraphQueryCells(
+            queryCells.filter((cell) => savedNodeIds.includes(cell.id))
+        );
+    }, [savedDAGExport, queryCells]);
+
     const [{ isOver }, dropRef] = useDrop({
         accept: [queryCellDraggableType],
         drop: (item: IDragItem<IDataQueryCell>, monitor) => {
@@ -68,7 +94,11 @@ export const DataDocDAGExporter: React.FunctionComponent<IProps> = ({
             <DataDocDagExporterList queryCells={unusedQueryCells} />
             <div className="DataDocDAGExporter-main">
                 <div className="DataDocDAGExporter-graph-wrapper" ref={dropRef}>
-                    <DataDocDAGExporterGraph queryCells={graphQueryCells} />
+                    <DataDocDAGExporterGraph
+                        queryCells={graphQueryCells}
+                        savedNodes={savedNodes}
+                        savedEdges={savedEdges}
+                    />
                 </div>
             </div>
         </div>

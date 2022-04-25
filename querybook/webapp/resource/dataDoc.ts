@@ -2,6 +2,7 @@ import { IAccessRequest } from 'const/accessRequest';
 import type {
     IDataCell,
     IDataCellMeta,
+    IDataDocDAGExport,
     IDataDocEditor,
     IRawDataDoc,
 } from 'const/datadoc';
@@ -90,6 +91,9 @@ export const DataDocResource = {
             uid: number;
         }>(`/favorite_data_doc/${docId}/`),
     unfavorite: (docId: number) => ds.delete(`/favorite_data_doc/${docId}/`),
+
+    getDAGExport: (docId: number) =>
+        ds.fetch<IDataDocDAGExport>(`/datadoc/${docId}/dag_export/`),
 };
 
 export const DataDocEditorResource = {
