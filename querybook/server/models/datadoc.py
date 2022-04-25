@@ -262,3 +262,21 @@ class DataCellQueryExecution(Base):
             "data_cell_id": self.data_cell_id,
             "latest": self.latest,
         }
+
+
+class DataDocDAGExport(CRUDMixin, Base):
+    __tablename__ = "data_doc_dag_export"
+
+    id = sql.Column(sql.Integer, primary_key=True, autoincrement=True)
+    data_doc_id = sql.Column(
+        sql.Integer,
+        sql.ForeignKey("data_doc.id", ondelete="CASCADE"),
+        nullable=False,
+        unique=True,
+    )
+
+    created_at = sql.Column(sql.DateTime, default=now, nullable=False)
+    updated_at = sql.Column(sql.DateTime, default=now, nullable=False)
+
+    dag = sql.Column(sql.JSON, default={}, nullable=False)
+    meta = sql.Column(sql.JSON, default={}, nullable=False)
