@@ -23,6 +23,7 @@ interface IProps {
     edges: Edge[];
     nodeTypes?: Record<string, any>;
     isInteractive?: boolean;
+    onSaveComponent?: (nodes: Node[], edges: Edge[]) => React.ReactElement;
 }
 export const initialNodePosition = { x: 0, y: 0 };
 export const edgeStyle = { stroke: 'var(--bg-dark)' };
@@ -136,6 +137,7 @@ const InteractiveFlowGraph: React.FunctionComponent<IProps> = ({
     nodes: initialNodes,
     edges: initialEdges,
     nodeTypes,
+    onSaveComponent,
 }) => {
     const [nodes, setNodes, onNodesChange] = useNodesState(initialNodes);
     const [edges, setEdges, onEdgesChange] = useEdgesState(initialEdges);
@@ -148,13 +150,17 @@ const InteractiveFlowGraph: React.FunctionComponent<IProps> = ({
     React.useEffect(() => {
         setNodes((existingNodes) =>
             initialNodes.map(
-                (intiaiNode) =>
+                (initialNode) =>
                     existingNodes.find(
-                        (existingNode) => existingNode.id === intiaiNode.id
-                    ) ?? intiaiNode
+                        (existingNode) => existingNode.id === initialNode.id
+                    ) ?? initialNode
             )
         );
     }, [initialNodes, setNodes]);
+
+    React.useEffect(() => {
+        setEdges(initialEdges);
+    }, [initialEdges, setEdges]);
 
     React.useEffect(() => {
         setEdges(edges.map((edge) => ({ ...edge, animated: true })));
@@ -169,35 +175,40 @@ const InteractiveFlowGraph: React.FunctionComponent<IProps> = ({
         [edges, nodes, onNodesChange]
     );
 
+    console.log('nodes', nodes);
+
     return (
-        <ReactFlow
-            nodes={nodes}
-            edges={edges}
-            onNodesChange={onNodesChange}
-            onEdgesChange={onEdgesChange}
-            nodesConnectable={true}
-            nodesDraggable={true}
-            onConnect={onConnect}
-            snapToGrid={true}
-            connectionLineType={ConnectionLineType.Bezier}
-            nodeTypes={nodeTypes}
-            fitView
-        >
-            <MiniMap />
-            <Controls />
-            <Background />
-            <div className="flex-row layout-buttons m12">
-                <Button
-                    title="Vertical Layout"
-                    icon="AlignCenterVertical"
-                    onClick={() => onLayout('TB')}
-                />
-                <Button
-                    title="Horizontal Layout"
-                    icon="AlignCenterHorizontal"
-                    onClick={() => onLayout('LR')}
-                />
-            </div>
-        </ReactFlow>
+        <>
+            <ReactFlow
+                nodes={nodes}
+                edges={edges}
+                onNodesChange={onNodesChange}
+                onEdgesChange={onEdgesChange}
+                nodesConnectable={true}
+                nodesDraggable={true}
+                onConnect={onConnect}
+                snapToGrid={true}
+                connectionLineType={ConnectionLineType.Bezier}
+                nodeTypes={nodeTypes}
+                fitView
+            >
+                <MiniMap />
+                <Controls />
+                <Background />
+                <div className="flex-row layout-buttons m12">
+                    <Button
+                        title="Vertical Layout"
+                        icon="AlignCenterVertical"
+                        onClick={() => onLayout('TB')}
+                    />
+                    <Button
+                        title="Horizontal Layout"
+                        icon="AlignCenterHorizontal"
+                        onClick={() => onLayout('LR')}
+                    />
+                </div>
+            </ReactFlow>
+            {onSaveComponent(nodes, edges)}
+        </>
     );
 };

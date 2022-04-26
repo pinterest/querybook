@@ -17,10 +17,10 @@ from models.datadoc import (
     FavoriteDataDoc,
     FunctionDocumentation,
     DataDocEditor,
+    DataDocDAGExport,
 )
 from models.access_request import AccessRequest
 from models.impression import Impression
-from querybook.server.models.datadoc import DataDocDAGExport
 from tasks.sync_elasticsearch import sync_elasticsearch
 
 
@@ -989,3 +989,24 @@ def get_dag_export_by_data_doc_id(data_doc_id, session=None):
         .filter(DataDocDAGExport.data_doc_id == data_doc_id)
         .first()
     )
+
+
+@with_session
+def create_or_update_dag_export(data_doc_id, dag, meta, session=None):
+    dag_export = (
+        session.query(DataDocDAGExport)
+        .filter(DataDocDAGExport.data_doc_id == data_doc_id)
+        .first()
+    )
+
+    if dag_export:
+        dag_export.dag = dag
+        dag_export.meta = meta
+        dag_export.updated_at = datetime.datetime.now()
+    else:
+        dag_export = DataDocDAGExport(data_doc_id=data_doc_id, dag=dag, meta=meta)
+        session.add(dag_export)
+
+    session.commit()
+    return dag_export
+

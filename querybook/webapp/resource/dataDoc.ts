@@ -14,6 +14,7 @@ import type {
 
 import dataDocSocket from 'lib/data-doc/datadoc-socketio';
 import ds from 'lib/datasource';
+import { Edge, Node } from 'react-flow-renderer';
 import {
     IScheduledDoc,
     IScheduledDocFilters,
@@ -94,6 +95,16 @@ export const DataDocResource = {
 
     getDAGExport: (docId: number) =>
         ds.fetch<IDataDocDAGExport>(`/datadoc/${docId}/dag_export/`),
+
+    saveDAGExport: (
+        docId: number,
+        dag: Record<string, Node[] | Edge[]>,
+        meta: Record<string, any>
+    ) =>
+        ds.update<IDataDocDAGExport>(`/datadoc/${docId}/dag_export/`, {
+            dag,
+            meta,
+        }),
 };
 
 export const DataDocEditorResource = {

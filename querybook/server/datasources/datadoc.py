@@ -653,3 +653,8 @@ def send_datadoc_transfer_notification(doc_id, next_owner_id, session=None):
 @register("/datadoc/<int:doc_id>/dag_export/", methods=["GET"])
 def get_dag_export(doc_id):
     return logic.get_dag_export_by_data_doc_id(data_doc_id=doc_id)
+
+
+@register("/datadoc/<int:doc_id>/dag_export/", methods=["PUT"])
+def update_dag_export(doc_id, dag, meta):
+    return logic.create_or_update_dag_export(data_doc_id=doc_id, dag=dag, meta=meta)

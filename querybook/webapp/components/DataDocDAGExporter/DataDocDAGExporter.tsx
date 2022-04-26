@@ -6,7 +6,7 @@ import { Edge, Node } from 'react-flow-renderer';
 import * as dataDocSelectors from 'redux/dataDoc/selector';
 import { IStoreState } from 'redux/store/types';
 import { IDataQueryCell } from 'const/datadoc';
-import { fetchDAGExport } from 'redux/dataDoc/action';
+import { fetchDAGExport, saveDAGExport } from 'redux/dataDoc/action';
 
 import { DataDocDagExporterList } from './DataDocDAGExporterList';
 import { DataDocDAGExporterGraph } from './DataDocDAGExporterGraph';
@@ -34,12 +34,21 @@ export const DataDocDAGExporter: React.FunctionComponent<IProps> = ({
             savedDAGExport: state.dataDoc.dagExportByDocId[docId],
         })
     );
+
+    const onSave = React.useCallback(
+        async (nodes, edges) => {
+            console.log('nodeS??????', nodes);
+            dispatch(saveDAGExport(docId, nodes, edges));
+        },
+        [dispatch, docId]
+    );
+
     const savedNodes = React.useMemo(
-        () => savedDAGExport.dag?.nodes as Node[],
+        () => (savedDAGExport?.dag?.nodes as Node[]) || [],
         [savedDAGExport]
     );
     const savedEdges = React.useMemo(
-        () => savedDAGExport.dag?.edges as Edge[],
+        () => (savedDAGExport?.dag?.edges as Edge[]) || [],
         [savedDAGExport]
     );
 
@@ -74,11 +83,11 @@ export const DataDocDAGExporter: React.FunctionComponent<IProps> = ({
     );
 
     React.useEffect(() => {
-        const savedNodeIds = savedDAGExport.dag?.nodes?.map((node) => node.id);
+        const savedNodeIds = savedNodes.map((node) => Number(node.id));
         setGraphQueryCells(
             queryCells.filter((cell) => savedNodeIds.includes(cell.id))
         );
-    }, [savedDAGExport, queryCells]);
+    }, [queryCells, savedNodes]);
 
     const [{ isOver }, dropRef] = useDrop({
         accept: [queryCellDraggableType],
@@ -104,13 +113,23 @@ export const DataDocDAGExporter: React.FunctionComponent<IProps> = ({
                         savedNodes={savedNodes}
                         savedEdges={savedEdges}
                         onDeleteCell={deleteGraphQueryCell}
+                        onSaveComponent={(nodes, edges) => (
+                            <DataDocDAGExporterSave
+                                onSave={() => onSave(nodes, edges)}
+                            />
+                        )}
                     />
-                </div>
-                <div className="DataDocDAGExporter-bottom flex-row mr12">
-                    <Button icon="Save" title="Save Progress" />
-                    <Button icon="FileOutput" title="Export" />
                 </div>
             </div>
         </div>
     );
 };
+
+export const DataDocDAGExporterSave: React.FunctionComponent<{
+    onSave: () => void;
+}> = ({ onSave }) => (
+    <div className="DataDocDAGExporter-bottom flex-row mr12">
+        <Button icon="Save" title="Save Progress" onClick={onSave} />
+        <Button icon="FileOutput" title="Export" />
+    </div>
+);

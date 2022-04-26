@@ -40,6 +40,7 @@ import {
     DataDocEditorResource,
     DataDocResource,
 } from 'resource/dataDoc';
+import { Edge, Node } from 'react-flow-renderer';
 
 export const dataDocCellSchema = new schema.Entity(
     'dataDocCell',
@@ -638,7 +639,24 @@ export function rejectDataDocAccessRequest(
 export function fetchDAGExport(docId: number): ThunkResult<Promise<any>> {
     return async (dispatch) => {
         const { data: DAGExport } = await DataDocResource.getDAGExport(docId);
+        dispatch(receiveDAGExport(docId, DAGExport));
 
+        return DAGExport;
+    };
+}
+
+export function saveDAGExport(
+    docId: number,
+    nodes: Node[],
+    edges: Edge[],
+    meta = {}
+) {
+    return async (dispatch) => {
+        const { data: DAGExport } = await DataDocResource.saveDAGExport(
+            docId,
+            { nodes, edges },
+            meta
+        );
         dispatch(receiveDAGExport(docId, DAGExport));
 
         return DAGExport;
