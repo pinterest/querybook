@@ -9,6 +9,7 @@ import { IDataQueryCell } from 'const/datadoc';
 import { DataDocDagExporterList } from './DataDocDAGExporterList';
 import { DataDocDAGExporterGraph } from './DataDocDAGExporterGraph';
 import { IDragItem } from 'ui/DraggableList/types';
+import { Button } from 'ui/Button/Button';
 
 import './DataDocDAGExporter.scss';
 
@@ -39,6 +40,10 @@ export const DataDocDAGExporter: React.FunctionComponent<IProps> = ({
         IDataQueryCell[]
     >([]);
 
+    const deleteGraphQueryCell = React.useCallback((id: number) => {
+        setGraphQueryCells((cells) => cells.filter((cell) => cell.id !== id));
+    }, []);
+
     const graphQueryCellIds = React.useMemo(
         () => graphQueryCells.map((cell) => cell.id),
         [graphQueryCells]
@@ -68,7 +73,14 @@ export const DataDocDAGExporter: React.FunctionComponent<IProps> = ({
             <DataDocDagExporterList queryCells={unusedQueryCells} />
             <div className="DataDocDAGExporter-main">
                 <div className="DataDocDAGExporter-graph-wrapper" ref={dropRef}>
-                    <DataDocDAGExporterGraph queryCells={graphQueryCells} />
+                    <DataDocDAGExporterGraph
+                        queryCells={graphQueryCells}
+                        onDeleteCell={deleteGraphQueryCell}
+                    />
+                </div>
+                <div className="DataDocDAGExporter-bottom flex-row mr12">
+                    <Button icon="Save" title="Save Progress" />
+                    <Button icon="FileOutput" title="Export" />
                 </div>
             </div>
         </div>

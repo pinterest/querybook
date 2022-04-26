@@ -31,4 +31,11 @@
     .react-flow__attribution {
         display: none;
     }
+
+    .layout-buttons {
+        justify-content: flex-end;
+        > * {
+            z-index: 100;
+        }
+    }
 }
