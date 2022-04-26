@@ -1,8 +1,12 @@
-import { IDataQueryCell } from 'const/datadoc';
 import * as React from 'react';
 import { useSelector } from 'react-redux';
+
+import { IDataQueryCell } from 'const/datadoc';
 import { IStoreState } from 'redux/store/types';
+
 import { DataDocDAGExporterListItem } from './DataDocDAGExporterListItem';
+
+import { EmptyText } from 'ui/StyledText/StyledText';
 
 interface IProps {
     queryCells: IDataQueryCell[];
@@ -23,6 +27,9 @@ export const DataDocDagExporterList: React.FunctionComponent<IProps> = ({
                     queryEngineById={queryEngineById}
                 />
             ))}
+            {queryCells.length === 0 ? (
+                <EmptyText className="mt12">No More Query Cells</EmptyText>
+            ) : null}
         </div>
     );
 };
