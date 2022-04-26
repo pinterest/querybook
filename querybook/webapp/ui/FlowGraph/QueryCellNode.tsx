@@ -18,11 +18,12 @@ export interface IQueryCellNodeProps {
 export const QueryCellNode = React.memo<IProps>(({ data }) => {
     const { label, isSelected, onDelete } = data;
 
-    const QueryCellNodeClassName = clsx({
-        QueryCellNode: true,
-        'flex-row': true,
-        selected: isSelected,
-    });
+    const QueryCellNodeClassName = clsx(
+        'QueryCellNode',
+        'flex-row',
+        isSelected && 'selected'
+    );
+
     return (
         <div className={QueryCellNodeClassName}>
             <Handle type="target" position={Position.Left} />

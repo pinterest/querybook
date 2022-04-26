@@ -33,8 +33,12 @@ const nodeHeight = 60;
 const dagreGraph = new dagre.graphlib.Graph();
 dagreGraph.setDefaultEdgeLabel(() => ({}));
 
-// from react-flow docs
-const getLayoutedElements = (nodes, edges, direction = 'LR') => {
+type LayoutDirection = 'LR' | 'TB';
+const getLayoutedElements = (
+    nodes,
+    edges,
+    direction: LayoutDirection = 'LR'
+) => {
     const isHorizontal = direction === 'LR';
     dagreGraph.setGraph({ rankdir: direction });
 
@@ -142,30 +146,28 @@ const InteractiveFlowGraph: React.FunctionComponent<IProps> = ({
     );
 
     React.useEffect(() => {
-        setNodes((nodes) => {
-            const currentNodeIds = nodes.map((node) => node.id);
-            const newNodes = initialNodes.filter(
-                (node) => !currentNodeIds.includes(node.id)
-            );
-
-            const initialNodeIds = initialNodes.map((node) => node.id);
-            // use filtered nodes to preserve position
-            const filteredNodes = nodes.filter((node) =>
-                initialNodeIds.includes(node.id)
-            );
-            return [...filteredNodes, ...newNodes];
-        });
+        setNodes((existingNodes) =>
+            initialNodes.map(
+                (intiaiNode) =>
+                    existingNodes.find(
+                        (existingNode) => existingNode.id === intiaiNode.id
+                    ) ?? intiaiNode
+            )
+        );
     }, [initialNodes, setNodes]);
 
     React.useEffect(() => {
         setEdges(edges.map((edge) => ({ ...edge, animated: true })));
     }, [edges.length, setEdges]);
 
-    const onLayout = (direction = 'LR') => {
-        getLayoutedElements(nodes, edges, direction);
-        // force graph to update position
-        onNodesChange([{ id: '0', type: 'select', selected: true }]);
-    };
+    const onLayout = React.useCallback(
+        (direction: LayoutDirection = 'LR') => {
+            getLayoutedElements(nodes, edges, direction);
+            // force graph to update position
+            onNodesChange([{ id: '0', type: 'select', selected: true }]);
+        },
+        [edges, nodes, onNodesChange]
+    );
 
     return (
         <ReactFlow

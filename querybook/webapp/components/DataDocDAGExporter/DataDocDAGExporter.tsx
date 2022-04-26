@@ -9,9 +9,9 @@ import { IDataQueryCell } from 'const/datadoc';
 import { DataDocDagExporterList } from './DataDocDAGExporterList';
 import { DataDocDAGExporterGraph } from './DataDocDAGExporterGraph';
 import { IDragItem } from 'ui/DraggableList/types';
+import { Button } from 'ui/Button/Button';
 
 import './DataDocDAGExporter.scss';
-import { Button } from 'ui/Button/Button';
 
 interface IProps {
     docId: number;
@@ -40,15 +40,9 @@ export const DataDocDAGExporter: React.FunctionComponent<IProps> = ({
         IDataQueryCell[]
     >([]);
 
-    const deleteGraphQueryCell = React.useCallback(
-        (id: number) => {
-            setGraphQueryCells((cells) => {
-                const currentCells = [...cells];
-                return currentCells.filter((cell) => cell.id !== id);
-            });
-        },
-        [setGraphQueryCells]
-    );
+    const deleteGraphQueryCell = React.useCallback((id: number) => {
+        setGraphQueryCells((cells) => cells.filter((cell) => cell.id !== id));
+    }, []);
 
     const graphQueryCellIds = React.useMemo(
         () => graphQueryCells.map((cell) => cell.id),
@@ -81,7 +75,7 @@ export const DataDocDAGExporter: React.FunctionComponent<IProps> = ({
                 <div className="DataDocDAGExporter-graph-wrapper" ref={dropRef}>
                     <DataDocDAGExporterGraph
                         queryCells={graphQueryCells}
-                        deleteCell={deleteGraphQueryCell}
+                        onDeleteCell={deleteGraphQueryCell}
                     />
                 </div>
                 <div className="DataDocDAGExporter-bottom flex-row mr12">
