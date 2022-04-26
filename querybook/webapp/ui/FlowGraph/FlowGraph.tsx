@@ -14,6 +14,7 @@ import ReactFlow, {
     addEdge,
     Background,
 } from 'react-flow-renderer';
+import { Button } from 'ui/Button/Button';
 
 import './FlowGraph.scss';
 
@@ -32,9 +33,14 @@ const nodeHeight = 60;
 const dagreGraph = new dagre.graphlib.Graph();
 dagreGraph.setDefaultEdgeLabel(() => ({}));
 
-// from react-flow docs
-const getLayoutedElements = (nodes, edges) => {
-    dagreGraph.setGraph({ rankdir: 'LR' });
+type LayoutDirection = 'LR' | 'TB';
+const getLayoutedElements = (
+    nodes,
+    edges,
+    direction: LayoutDirection = 'LR'
+) => {
+    const isHorizontal = direction === 'LR';
+    dagreGraph.setGraph({ rankdir: direction });
 
     nodes.forEach((node) => {
         dagreGraph.setNode(node.id, { width: nodeWidth, height: nodeHeight });
@@ -48,8 +54,8 @@ const getLayoutedElements = (nodes, edges) => {
 
     nodes.forEach((node) => {
         const nodeWithPosition = dagreGraph.node(node.id);
-        node.targetPosition = 'left';
-        node.sourcePosition = 'right';
+        node.targetPosition = isHorizontal ? 'left' : 'top';
+        node.sourcePosition = isHorizontal ? 'right' : 'bottom';
 
         // We are shifting the dagre node position (anchor=center center) to the top left
         // so it matches the React Flow node anchor point (top left).
@@ -140,8 +146,28 @@ const InteractiveFlowGraph: React.FunctionComponent<IProps> = ({
     );
 
     React.useEffect(() => {
-        setNodes(initialNodes);
+        setNodes((existingNodes) =>
+            initialNodes.map(
+                (intiaiNode) =>
+                    existingNodes.find(
+                        (existingNode) => existingNode.id === intiaiNode.id
+                    ) ?? intiaiNode
+            )
+        );
     }, [initialNodes, setNodes]);
+
+    React.useEffect(() => {
+        setEdges(edges.map((edge) => ({ ...edge, animated: true })));
+    }, [edges.length, setEdges]);
+
+    const onLayout = React.useCallback(
+        (direction: LayoutDirection = 'LR') => {
+            getLayoutedElements(nodes, edges, direction);
+            // force graph to update position
+            onNodesChange([{ id: '0', type: 'select', selected: true }]);
+        },
+        [edges, nodes, onNodesChange]
+    );
 
     return (
         <ReactFlow
@@ -160,6 +186,18 @@ const InteractiveFlowGraph: React.FunctionComponent<IProps> = ({
             <MiniMap />
             <Controls />
             <Background />
+            <div className="flex-row layout-buttons m12">
+                <Button
+                    title="Vertical Layout"
+                    icon="AlignCenterVertical"
+                    onClick={() => onLayout('TB')}
+                />
+                <Button
+                    title="Horizontal Layout"
+                    icon="AlignCenterHorizontal"
+                    onClick={() => onLayout('LR')}
+                />
+            </div>
         </ReactFlow>
     );
 };
