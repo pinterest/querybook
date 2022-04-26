@@ -2,8 +2,9 @@ import * as React from 'react';
 import clsx from 'clsx';
 import { Handle, Position } from 'react-flow-renderer';
 
-import './QueryCellNode.scss';
 import { IconButton } from 'ui/Button/IconButton';
+
+import './QueryCellNode.scss';
 
 interface IProps {
     data: IQueryCellNodeProps;
