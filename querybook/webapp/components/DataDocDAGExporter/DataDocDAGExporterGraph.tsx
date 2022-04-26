@@ -3,36 +3,40 @@ import { IDataQueryCell } from 'const/datadoc';
 import { FlowGraph, initialNodePosition } from 'ui/FlowGraph/FlowGraph';
 import { Edge, Node } from 'react-flow-renderer';
 
+import { QueryCellNode } from 'ui/FlowGraph/QueryCellNode';
 interface IProps {
-    queryCells: IDataQueryCell[];
     savedNodes: Node[];
     savedEdges: Edge[];
+    queryCells: IDataQueryCell[];
+    onDeleteCell: (id: number) => void;
 }
 
 const queryCellNode = 'queryCellNode';
-
-const convertCellToNode = (
-    cell: IDataQueryCell,
-    savedPosition = undefined
-) => ({
-    id: cell.id.toString(),
-    type: queryCellNode,
-    data: {
-        label: cell.meta.title,
-    },
-    position: savedPosition ?? initialNodePosition,
-});
 
 export const DataDocDAGExporterGraph: React.FunctionComponent<IProps> = ({
     queryCells,
     savedNodes,
     savedEdges,
+    onDeleteCell,
 }) => {
     const [nodes, setNodes] = React.useState([]);
 
+    const convertCellToNode = React.useCallback(
+        (cell: IDataQueryCell, savedPosition = undefined) => ({
+            id: cell.id.toString(),
+            type: queryCellNode,
+            data: {
+                label: cell.meta.title,
+                onDelete: () => onDeleteCell(cell.id),
+            },
+            position: savedPosition ?? initialNodePosition,
+        }),
+        [onDeleteCell]
+    );
+
     React.useEffect(() => {
         setNodes(queryCells.map(convertCellToNode));
-    }, [queryCells]);
+    }, [convertCellToNode, queryCells]);
 
     React.useEffect(() => {
         const savedPositionById = {};
@@ -44,11 +48,16 @@ export const DataDocDAGExporterGraph: React.FunctionComponent<IProps> = ({
                 convertCellToNode(cell, savedPositionById[cell.id])
             )
         );
-    }, [savedNodes]);
+    }, [convertCellToNode, savedNodes]);
 
     return (
         <div className="DataDocDAGExporterGraph">
-            <FlowGraph isInteractive={true} nodes={nodes} edges={savedEdges} />
+            <FlowGraph
+                isInteractive={true}
+                nodes={nodes}
+                edges={savedEdges}
+                nodeTypes={{ queryCellNode: QueryCellNode }}
+            />
         </div>
     );
 };
