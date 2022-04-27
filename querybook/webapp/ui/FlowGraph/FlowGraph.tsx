@@ -23,7 +23,7 @@ interface IProps {
     edges: Edge[];
     nodeTypes?: Record<string, any>;
     isInteractive?: boolean;
-    onSaveComponent?: (nodes: Node[], edges: Edge[]) => React.ReactElement;
+    renderSaveComponent?: (nodes: Node[], edges: Edge[]) => React.ReactElement;
 }
 export const initialNodePosition = { x: 0, y: 0 };
 export const edgeStyle = { stroke: 'var(--bg-dark)' };
@@ -137,7 +137,7 @@ const InteractiveFlowGraph: React.FunctionComponent<IProps> = ({
     nodes: initialNodes,
     edges: initialEdges,
     nodeTypes,
-    onSaveComponent,
+    renderSaveComponent,
 }) => {
     const [nodes, setNodes, onNodesChange] = useNodesState(initialNodes);
     const [edges, setEdges, onEdgesChange] = useEdgesState(initialEdges);
@@ -175,8 +175,6 @@ const InteractiveFlowGraph: React.FunctionComponent<IProps> = ({
         [edges, nodes, onNodesChange]
     );
 
-    console.log('nodes', nodes);
-
     return (
         <>
             <ReactFlow
@@ -208,7 +206,7 @@ const InteractiveFlowGraph: React.FunctionComponent<IProps> = ({
                     />
                 </div>
             </ReactFlow>
-            {onSaveComponent(nodes, edges)}
+            {renderSaveComponent(nodes, edges)}
         </>
     );
 };

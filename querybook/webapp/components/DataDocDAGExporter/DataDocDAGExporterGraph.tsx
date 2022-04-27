@@ -1,7 +1,7 @@
 import * as React from 'react';
 import { IDataQueryCell } from 'const/datadoc';
 import { FlowGraph, initialNodePosition } from 'ui/FlowGraph/FlowGraph';
-import { Edge, Node } from 'react-flow-renderer';
+import { Edge, Node, XYPosition } from 'react-flow-renderer';
 
 import { QueryCellNode } from 'ui/FlowGraph/QueryCellNode';
 interface IProps {
@@ -9,7 +9,7 @@ interface IProps {
     savedEdges: Edge[];
     queryCells: IDataQueryCell[];
     onDeleteCell: (id: number) => void;
-    onSaveComponent?: (nodes: Node[], edges: Edge[]) => React.ReactElement;
+    renderSaveComponent?: (nodes: Node[], edges: Edge[]) => React.ReactElement;
 }
 
 const queryCellNode = 'queryCellNode';
@@ -19,7 +19,7 @@ export const DataDocDAGExporterGraph: React.FunctionComponent<IProps> = ({
     savedNodes,
     savedEdges,
     onDeleteCell,
-    onSaveComponent,
+    renderSaveComponent,
 }) => {
     const [nodes, setNodes] = React.useState([]);
 
@@ -37,17 +37,20 @@ export const DataDocDAGExporterGraph: React.FunctionComponent<IProps> = ({
     );
 
     React.useEffect(() => {
-        setNodes(queryCells.map((cell) => convertCellToNode(cell)));
+        setNodes(
+            queryCells.map((cell: IDataQueryCell) => convertCellToNode(cell))
+        );
     }, [convertCellToNode, queryCells]);
 
     React.useEffect(() => {
         if (nodes.length === 0) {
-            const savedPositionsById = {};
+            const savedPositionsById: Record<string, XYPosition> = {};
             savedNodes.forEach((node) => {
                 savedPositionsById[node.id] = node.position;
             });
-            const positionedSavedNodes = queryCells.map((cell) =>
-                convertCellToNode(cell, savedPositionsById[cell.id.toString()])
+            const positionedSavedNodes = queryCells.map(
+                (cell: IDataQueryCell) =>
+                    convertCellToNode(cell, savedPositionsById[cell.id])
             );
             setNodes(positionedSavedNodes);
         }
@@ -60,7 +63,7 @@ export const DataDocDAGExporterGraph: React.FunctionComponent<IProps> = ({
                 nodes={nodes}
                 edges={savedEdges}
                 nodeTypes={{ queryCellNode: QueryCellNode }}
-                onSaveComponent={onSaveComponent}
+                renderSaveComponent={renderSaveComponent}
             />
         </div>
     );

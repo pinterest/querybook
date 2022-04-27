@@ -36,19 +36,18 @@ export const DataDocDAGExporter: React.FunctionComponent<IProps> = ({
     );
 
     const onSave = React.useCallback(
-        async (nodes, edges) => {
-            console.log('nodeS??????', nodes);
+        async (nodes: Node[], edges: Edge[]) => {
             dispatch(saveDAGExport(docId, nodes, edges));
         },
         [dispatch, docId]
     );
 
     const savedNodes = React.useMemo(
-        () => (savedDAGExport?.dag?.nodes as Node[]) || [],
+        () => (savedDAGExport?.dag?.nodes || []) as Node[],
         [savedDAGExport]
     );
     const savedEdges = React.useMemo(
-        () => (savedDAGExport?.dag?.edges as Edge[]) || [],
+        () => (savedDAGExport?.dag?.edges || []) as Edge[],
         [savedDAGExport]
     );
 
@@ -113,7 +112,7 @@ export const DataDocDAGExporter: React.FunctionComponent<IProps> = ({
                         savedNodes={savedNodes}
                         savedEdges={savedEdges}
                         onDeleteCell={deleteGraphQueryCell}
-                        onSaveComponent={(nodes, edges) => (
+                        renderSaveComponent={(nodes, edges) => (
                             <DataDocDAGExporterSave
                                 onSave={() => onSave(nodes, edges)}
                             />

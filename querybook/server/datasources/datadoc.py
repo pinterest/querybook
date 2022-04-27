@@ -667,11 +667,18 @@ def send_datadoc_transfer_notification(doc_id, next_owner_id, session=None):
     )
 
 
-@register("/datadoc/<int:doc_id>/dag_export/", methods=["GET"])
-def get_dag_export(doc_id):
-    return logic.get_dag_export_by_data_doc_id(data_doc_id=doc_id)
+@register("/datadoc/<int:id>/dag_export/", methods=["GET"])
+def get_dag_export(id):
+    with DBSession() as session:
+        assert_can_read(id, session=session)
+        verify_data_doc_permission(id, session=session)
+        return logic.get_dag_export_by_data_doc_id(data_doc_id=id, session=session)
 
 
-@register("/datadoc/<int:doc_id>/dag_export/", methods=["PUT"])
-def update_dag_export(doc_id, dag, meta):
-    return logic.create_or_update_dag_export(data_doc_id=doc_id, dag=dag, meta=meta)
+@register("/datadoc/<int:id>/dag_export/", methods=["POST", "PUT"])
+def update_dag_export(id, dag, meta):
+    with DBSession() as session:
+        assert_can_write(id, session=session)
+        return logic.create_or_update_dag_export(
+            data_doc_id=id, dag=dag, meta=meta, session=session
+        )
