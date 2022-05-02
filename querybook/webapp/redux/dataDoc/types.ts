@@ -11,6 +11,7 @@ import {
     IDataDocEditor,
     IDataCellMeta,
     IRawDataDoc,
+    IDataDocDAGExport,
 } from 'const/datadoc';
 import { IAccessRequest } from 'const/accessRequest';
 import { IStoreState } from '../store/types';
@@ -245,6 +246,14 @@ export interface IMoveDataDocCursor extends Action {
     };
 }
 
+export interface IReceiveDataDocDAGExportAction extends Action {
+    type: '@@dataDoc/RECEIVE_DATA_DOC_DAG_EXPORT';
+    payload: {
+        docId: number;
+        DAGExport: IDataDocDAGExport;
+    };
+}
+
 export type DataDocAction =
     | IReceiveDataDocsAction
     | IReceiveDataDocAction
@@ -272,7 +281,8 @@ export type DataDocAction =
     | IReceiveDataDocAccessRequestsAction
     | IReceiveDataDocAccessRequestAction
     | IRemoveDataDocAccessRequestAction
-    | IMoveDataDocCursor;
+    | IMoveDataDocCursor
+    | IReceiveDataDocDAGExportAction;
 
 export type ThunkResult<R> = ThunkAction<
     R,
@@ -307,4 +317,5 @@ export interface IDataDocState {
     accessRequestsByDocIdUserId: Record<number, Record<number, IAccessRequest>>;
     favoriteDataDocIds: number[];
     recentDataDocIds: number[];
+    dagExportByDocId: Record<number, IDataDocDAGExport>;
 }
