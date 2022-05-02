@@ -1,16 +1,16 @@
-import { queryCellDraggableType } from 'components/DataDocDAGExporter/DataDocDAGExporter';
-import { IDataQueryCell } from 'const/datadoc';
-import { useShallowSelector } from 'hooks/redux/useShallowSelector';
 import React from 'react';
+import { useSelector } from 'react-redux';
 import { useDrop } from 'react-dnd';
 
+import { IDataQueryCell } from 'const/datadoc';
 import { IStoreState } from 'redux/store/types';
 import * as dataDocSelectors from 'redux/dataDoc/selector';
 
+import { queryCellDraggableType } from 'components/DataDocDAGExporter/DataDocDAGExporter';
 import { IDragItem } from 'ui/DraggableList/types';
 
 export function useGraphQueryCells(docId, savedNodes) {
-    const { dataDocCells } = useShallowSelector((state: IStoreState) =>
+    const { dataDocCells } = useSelector((state: IStoreState) =>
         dataDocSelectors.dataDocSelector(state, docId)
     );
 

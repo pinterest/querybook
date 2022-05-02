@@ -1,15 +1,14 @@
 import React from 'react';
 import { Edge, Node } from 'react-flow-renderer';
-import { useDispatch } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
 
 import { fetchDAGExport, saveDAGExport } from 'redux/dataDoc/action';
 import { IStoreState } from 'redux/store/types';
-import { useShallowSelector } from 'hooks/redux/useShallowSelector';
 
 export function useSavedDAG(docId: number) {
     const dispatch = useDispatch();
 
-    const savedDAGExport = useShallowSelector(
+    const savedDAGExport = useSelector(
         (state: IStoreState) => state.dataDoc.dagExportByDocId[docId]
     );
 

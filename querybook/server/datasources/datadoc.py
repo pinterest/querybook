@@ -675,6 +675,6 @@ def get_dag_export(id):
 
 
 @register("/datadoc/<int:id>/dag_export/", methods=["POST", "PUT"])
-def update_dag_export(id, dag, meta):
+def create_or_update_dag_export(id, dag, meta):
     assert_can_write(id)
     return logic.create_or_update_dag_export(data_doc_id=id, dag=dag, meta=meta)
