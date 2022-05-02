@@ -4,6 +4,7 @@ import { FlowGraph, initialNodePosition } from 'ui/FlowGraph/FlowGraph';
 import { Edge, Node, XYPosition } from 'react-flow-renderer';
 
 import { QueryCellNode } from 'ui/FlowGraph/QueryCellNode';
+
 interface IProps {
     savedNodes: Node[];
     savedEdges: Edge[];
@@ -21,40 +22,28 @@ export const DataDocDAGExporterGraph: React.FunctionComponent<IProps> = ({
     onDeleteCell,
     renderSaveComponent,
 }) => {
-    const [nodes, setNodes] = React.useState([]);
-
     const convertCellToNode = React.useCallback(
-        (cell: IDataQueryCell, savedPosition = undefined) => ({
+        (cell: IDataQueryCell, savedPosition?: XYPosition) => ({
             id: cell.id.toString(),
             type: queryCellNode,
             data: {
                 label: cell.meta?.title,
                 onDelete: () => onDeleteCell(cell.id),
             },
-            position: savedPosition || initialNodePosition,
+            position: savedPosition ?? initialNodePosition,
         }),
         [onDeleteCell]
     );
 
-    React.useEffect(() => {
-        setNodes(
-            queryCells.map((cell: IDataQueryCell) => convertCellToNode(cell))
+    const nodes = React.useMemo<Node[]>(() => {
+        const savedPositionsById: Record<string, XYPosition> = {};
+        savedNodes.forEach((node) => {
+            savedPositionsById[node.id] = node.position;
+        });
+        return queryCells.map((cell: IDataQueryCell) =>
+            convertCellToNode(cell, savedPositionsById[cell.id])
         );
-    }, [convertCellToNode, queryCells]);
-
-    React.useEffect(() => {
-        if (nodes.length === 0) {
-            const savedPositionsById: Record<string, XYPosition> = {};
-            savedNodes.forEach((node) => {
-                savedPositionsById[node.id] = node.position;
-            });
-            const positionedSavedNodes = queryCells.map(
-                (cell: IDataQueryCell) =>
-                    convertCellToNode(cell, savedPositionsById[cell.id])
-            );
-            setNodes(positionedSavedNodes);
-        }
-    }, [convertCellToNode, nodes.length, queryCells, savedNodes]);
+    }, [convertCellToNode, queryCells, savedNodes]);
 
     return (
         <div className="DataDocDAGExporterGraph">

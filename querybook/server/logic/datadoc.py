@@ -1012,11 +1012,7 @@ def get_dag_export_by_data_doc_id(data_doc_id, session=None):
 
 @with_session
 def create_or_update_dag_export(data_doc_id, dag, meta, session=None):
-    dag_export = (
-        session.query(DataDocDAGExport)
-        .filter(DataDocDAGExport.data_doc_id == data_doc_id)
-        .first()
-    )
+    dag_export = get_dag_export_by_data_doc_id(data_doc_id, session=session)
 
     if dag_export:
         dag_export.dag = dag
