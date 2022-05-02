@@ -81,11 +81,7 @@ def get_data_docs(
 
 
 @register("/datadoc/", methods=["POST"])
-def create_data_doc(
-    environment_id,
-    cells=[],
-    title=None,
-):
+def create_data_doc(environment_id, cells=[], title=None):
     with DBSession() as session:
         verify_environment_permission([environment_id])
         environment = Environment.get(id=environment_id, session=session)
@@ -669,3 +665,16 @@ def send_datadoc_transfer_notification(doc_id, next_owner_id, session=None):
         ),
         session=session,
     )
+
+
+@register("/datadoc/<int:id>/dag_export/", methods=["GET"])
+def get_dag_export(id):
+    assert_can_read(id)
+    verify_data_doc_permission(id)
+    return logic.get_dag_export_by_data_doc_id(data_doc_id=id)
+
+
+@register("/datadoc/<int:id>/dag_export/", methods=["POST", "PUT"])
+def create_or_update_dag_export(id, dag, meta):
+    assert_can_write(id)
+    return logic.create_or_update_dag_export(data_doc_id=id, dag=dag, meta=meta)

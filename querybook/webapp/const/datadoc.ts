@@ -1,3 +1,4 @@
+import { Edge, Node } from 'react-flow-renderer';
 import { ContentState } from 'draft-js';
 import { IChartConfig } from './dataDocChart';
 
@@ -81,3 +82,14 @@ export interface IDataDocEditor {
 }
 
 export const emptyDataDocTitleMessage = '(Untitled)';
+
+export interface IDataDocDAGExport {
+    id: number;
+    data_doc_id: number;
+
+    created_at: number;
+    updated_at: number;
+
+    dag: Record<string, Node[] | Edge[]>;
+    meta: Record<string, any>;
+}
