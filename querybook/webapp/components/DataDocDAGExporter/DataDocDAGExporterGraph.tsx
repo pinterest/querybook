@@ -11,7 +11,7 @@ interface IProps {
     queryCells: IDataQueryCell[];
     onDeleteCell: (id: number) => void;
     renderSaveComponent?: (nodes: Node[], edges: Edge[]) => React.ReactElement;
-    readonly: boolean;
+    readonly?: boolean;
 }
 
 const queryCellNode = 'queryCellNode';

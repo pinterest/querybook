@@ -58,11 +58,9 @@ export function useGraphQueryCells(
             if (monitor.didDrop()) {
                 return;
             }
-            if (!readonly) {
-                setGraphQueryCells((curr) => [...curr, item.itemInfo]);
-            }
+            setGraphQueryCells((curr) => [...curr, item.itemInfo]);
         },
-
+        canDrop: () => !readonly,
         collect: (monitor) => ({
             isOver: monitor.isOver(),
         }),
