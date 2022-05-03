@@ -11,6 +11,7 @@ interface IProps {
     queryCells: IDataQueryCell[];
     onDeleteCell: (id: number) => void;
     renderSaveComponent?: (nodes: Node[], edges: Edge[]) => React.ReactElement;
+    readonly?: boolean;
 }
 
 const queryCellNode = 'queryCellNode';
@@ -21,6 +22,7 @@ export const DataDocDAGExporterGraph: React.FunctionComponent<IProps> = ({
     savedEdges,
     onDeleteCell,
     renderSaveComponent,
+    readonly,
 }) => {
     const convertCellToNode = React.useCallback(
         (cell: IDataQueryCell, savedPosition?: XYPosition) => ({
@@ -29,10 +31,11 @@ export const DataDocDAGExporterGraph: React.FunctionComponent<IProps> = ({
             data: {
                 label: cell.meta?.title,
                 onDelete: () => onDeleteCell(cell.id),
+                readonly,
             },
             position: savedPosition ?? initialNodePosition,
         }),
-        [onDeleteCell]
+        [onDeleteCell, readonly]
     );
 
     const nodes = React.useMemo<Node[]>(() => {
@@ -48,7 +51,7 @@ export const DataDocDAGExporterGraph: React.FunctionComponent<IProps> = ({
     return (
         <div className="DataDocDAGExporterGraph">
             <FlowGraph
-                isInteractive={true}
+                isInteractive={!readonly}
                 nodes={nodes}
                 edges={savedEdges}
                 nodeTypes={{ queryCellNode: QueryCellNode }}

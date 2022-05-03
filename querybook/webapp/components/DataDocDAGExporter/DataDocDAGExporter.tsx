@@ -12,14 +12,14 @@ import './DataDocDAGExporter.scss';
 
 interface IProps {
     docId: number;
-    isEditable: boolean;
+    readonly: boolean;
 }
 
 export const queryCellDraggableType = 'QueryCell-';
 
 export const DataDocDAGExporter: React.FunctionComponent<IProps> = ({
     docId,
-    isEditable,
+    readonly,
 }) => {
     const { onSave, savedNodes, savedEdges } = useSavedDAG(docId);
 
@@ -28,7 +28,7 @@ export const DataDocDAGExporter: React.FunctionComponent<IProps> = ({
         unusedQueryCells,
         graphQueryCells,
         dropRef,
-    } = useGraphQueryCells(docId, savedNodes);
+    } = useGraphQueryCells(docId, savedNodes, readonly);
 
     return (
         <div className="DataDocDAGExporter">
@@ -40,11 +40,16 @@ export const DataDocDAGExporter: React.FunctionComponent<IProps> = ({
                         savedNodes={savedNodes}
                         savedEdges={savedEdges}
                         onDeleteCell={deleteGraphQueryCell}
-                        renderSaveComponent={(nodes, edges) => (
-                            <DataDocDAGExporterSave
-                                onSave={() => onSave(nodes, edges)}
-                            />
-                        )}
+                        renderSaveComponent={
+                            readonly
+                                ? null
+                                : (nodes, edges) => (
+                                      <DataDocDAGExporterSave
+                                          onSave={() => onSave(nodes, edges)}
+                                      />
+                                  )
+                        }
+                        readonly={readonly}
                     />
                 </div>
             </div>
