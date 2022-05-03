@@ -13,29 +13,27 @@ interface IProps {
 export interface IQueryCellNodeProps {
     label: string;
     onDelete: () => void;
-    isSelected: boolean;
+    readonly: boolean;
 }
 
 export const QueryCellNode = React.memo<IProps>(({ data }) => {
-    const { label, isSelected, onDelete } = data;
+    const { label, readonly, onDelete } = data;
 
-    const QueryCellNodeClassName = clsx(
-        'QueryCellNode',
-        'flex-row',
-        isSelected && 'selected'
-    );
+    const QueryCellNodeClassName = clsx('QueryCellNode', 'flex-row');
 
     return (
         <div className={QueryCellNodeClassName}>
             <Handle type="target" position={Position.Left} />
             <div className="QueryCellNode-label">{label}</div>
-            <IconButton
-                icon="X"
-                noPadding
-                onClick={onDelete}
-                className="ml4"
-                size={16}
-            />
+            {readonly ? null : (
+                <IconButton
+                    icon="X"
+                    noPadding
+                    onClick={onDelete}
+                    className="ml4"
+                    size={16}
+                />
+            )}
             <Handle type="source" position={Position.Right} />
         </div>
     );
