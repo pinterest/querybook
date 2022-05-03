@@ -8,8 +8,13 @@ import * as dataDocSelectors from 'redux/dataDoc/selector';
 
 import { queryCellDraggableType } from 'components/DataDocDAGExporter/DataDocDAGExporter';
 import { IDragItem } from 'ui/DraggableList/types';
+import { Node } from 'react-flow-renderer';
 
-export function useGraphQueryCells(docId, savedNodes) {
+export function useGraphQueryCells(
+    docId: number,
+    savedNodes: Node[],
+    readonly: boolean
+) {
     const { dataDocCells } = useSelector((state: IStoreState) =>
         dataDocSelectors.dataDocSelector(state, docId)
     );
@@ -55,7 +60,7 @@ export function useGraphQueryCells(docId, savedNodes) {
             }
             setGraphQueryCells((curr) => [...curr, item.itemInfo]);
         },
-
+        canDrop: () => !readonly,
         collect: (monitor) => ({
             isOver: monitor.isOver(),
         }),
