@@ -25,7 +25,7 @@ export const QueryCellNode = React.memo<IProps>(({ data }) => {
         <div className={QueryCellNodeClassName}>
             <Handle type="target" position={Position.Left} />
             <div className="QueryCellNode-label">{label}</div>
-            {readonly ? null : (
+            {!readonly && (
                 <IconButton
                     icon="X"
                     noPadding

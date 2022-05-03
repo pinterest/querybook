@@ -35,7 +35,7 @@ export const DataDocDAGExporterGraph: React.FunctionComponent<IProps> = ({
             },
             position: savedPosition ?? initialNodePosition,
         }),
-        [onDeleteCell]
+        [onDeleteCell, readonly]
     );
 
     const nodes = React.useMemo<Node[]>(() => {
