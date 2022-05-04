@@ -23,19 +23,42 @@
             }
         }
     }
+
+    .DataDocDAGExporter-graph-wrapper {
+        width: 100%;
+        height: 100%;
+        .DataDocDAGExporterGraph {
+            width: 100%;
+            height: 100%;
+        }
+    }
+
     .DataDocDAGExporter-main {
         flex-grow: 1;
         .DataDocDAGExporter-graph-wrapper {
-            width: 100%;
             height: calc(100% - 48px);
-            .DataDocDAGExporterGraph {
-                width: 100%;
-                height: 100%;
-            }
         }
         .DataDocDAGExporter-bottom {
             height: 48px;
             justify-content: flex-end;
         }
+
+        .DataDocDAGExporterSettings {
+            width: 100%;
+            height: 100%;
+            .DataDocDAGExporterSettings-form {
+                height: calc(100% - 48px);
+                margin-right: 12px;
+                .FormSectionHeader:first-child {
+                    margin-top: 0px;
+                }
+            }
+        }
+    }
+
+    .DataDocDAGExporter-graph {
+        width: 50%;
+        min-width: 360px;
+        height: 100%;
     }
 }

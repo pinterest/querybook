@@ -60,7 +60,10 @@ def import_module_with_default(module_path: str, module_variable: str = None, **
         if module_variable is not None:
             plugin_value = getattr(plugin_value, module_variable, None)
 
-        if plugin_value is None and has_default:
+        plugin_value_is_empty = plugin_value is None or (
+            isinstance(plugin_value, list) and len(plugin_value) == 0
+        )
+        if plugin_value_is_empty and has_default:
             plugin_value = kwargs["default"]
 
         return plugin_value

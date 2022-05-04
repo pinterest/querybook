@@ -30,6 +30,7 @@ import {
     ISaveDataDocStartAction,
     IReceiveDataDocsAction,
     IReceiveDataDocDAGExportAction,
+    IReceiveDataDocDAGExportersAction,
 } from './types';
 import {
     DataDocPermission,
@@ -673,5 +674,43 @@ export function receiveDAGExport(
             docId,
             DAGExport,
         },
+    };
+}
+
+export function fetchDAGExporters(): ThunkResult<Promise<any>> {
+    return async (dispatch) => {
+        const { data: exporters } = await DataDocResource.getDAGExporters();
+
+        dispatch(receiveDAGExporters(exporters));
+    };
+}
+
+export function receiveDAGExporters(
+    exporters: Array<{ name: string; meta: JSON }>
+): IReceiveDataDocDAGExportersAction {
+    return {
+        type: '@@dataDoc/RECEIVE_DATA_DOC_EXPORTERS',
+        payload: {
+            exporters,
+        },
+    };
+}
+
+export function exportDAG(
+    docId: number,
+    exporterName: string,
+    nodes: Node[],
+    edges: Edge[],
+    meta: any
+) {
+    return async () => {
+        const { data } = await DataDocResource.exportDAG(
+            docId,
+            exporterName,
+            nodes,
+            edges,
+            meta
+        );
+        console.log('dat', data);
     };
 }

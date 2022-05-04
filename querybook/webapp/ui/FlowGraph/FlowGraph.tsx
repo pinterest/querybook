@@ -14,6 +14,7 @@ import ReactFlow, {
     addEdge,
     Background,
 } from 'react-flow-renderer';
+
 import { Button } from 'ui/Button/Button';
 
 import './FlowGraph.scss';
@@ -24,6 +25,7 @@ interface IProps {
     nodeTypes?: Record<string, any>;
     isInteractive?: boolean;
     renderSaveComponent?: (nodes: Node[], edges: Edge[]) => React.ReactElement;
+    preservePosition?: boolean;
 }
 export const initialNodePosition = { x: 0, y: 0 };
 export const edgeStyle = { stroke: 'var(--bg-dark)' };
@@ -73,20 +75,49 @@ const getLayoutedElements = (
 
 export const FlowGraph: React.FunctionComponent<IProps> = ({
     isInteractive = false,
+    preservePosition = false,
     ...graphProps
 }) => (
     <div className="FlowGraph">
         <ReactFlowProvider>
             {isInteractive ? (
                 <InteractiveFlowGraph {...graphProps} />
-            ) : (
+            ) : preservePosition ? (
                 <StaticFlowGraph {...graphProps} />
+            ) : (
+                <StaticLayoutFlowGraph {...graphProps} />
             )}
         </ReactFlowProvider>
     </div>
 );
 
 const StaticFlowGraph: React.FunctionComponent<IProps> = ({
+    nodes,
+    edges,
+    nodeTypes,
+}) => {
+    const { fitView } = useReactFlow();
+
+    React.useEffect(() => {
+        fitView();
+    }, [nodes, edges, fitView]);
+
+    return (
+        <ReactFlow
+            nodes={nodes}
+            edges={edges}
+            nodesConnectable={false}
+            nodesDraggable={false}
+            connectionLineType={ConnectionLineType.Bezier}
+            nodeTypes={nodeTypes}
+            fitView
+        >
+            <Controls />
+        </ReactFlow>
+    );
+};
+
+const StaticLayoutFlowGraph: React.FunctionComponent<IProps> = ({
     nodes: initialNodes,
     edges: initialEdges,
     nodeTypes,

@@ -56,6 +56,7 @@ export const DataDocDAGExporterGraph: React.FunctionComponent<IProps> = ({
                 edges={savedEdges}
                 nodeTypes={{ queryCellNode: QueryCellNode }}
                 renderSaveComponent={renderSaveComponent}
+                preservePosition={readonly}
             />
         </div>
     );

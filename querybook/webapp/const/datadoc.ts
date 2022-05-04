@@ -93,3 +93,13 @@ export interface IDataDocDAGExport {
     dag: Record<string, Node[] | Edge[]>;
     meta: Record<string, any>;
 }
+
+export type IDataDocDAGExporterMeta = Record<
+    string,
+    IDataDocDAGExporterMetaOption
+>;
+
+export interface IDataDocDAGExporterMetaOption {
+    type: 'string' | 'number' | 'select';
+    options: string[];
+}

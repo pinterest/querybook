@@ -11,11 +11,21 @@ class DemoDAGExporter(BaseDAGExporter):
 
     @property
     def dag_exporter_meta(self):
-        return "{}"
+        return """{
+            test: {
+                type: string;
+            },
+            select-test: {
+                type: select;
+                options: ['test1', 'test2']
+            }
+        }
+        """
 
     def export(self, nodes, edges, meta):
         try:
             # exporting
-            print(nodes, edges, meta)
+            print("++++++++++++++++++", nodes, edges, meta)
+            return "meow" + nodes
         except Exception as e:
             LOG.info(e)
