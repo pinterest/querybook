@@ -95,7 +95,6 @@ export const DataDocResource = {
 
     getDAGExport: (docId: number) =>
         ds.fetch<IDataDocDAGExport>(`/datadoc/${docId}/dag_export/`),
-
     saveDAGExport: (
         docId: number,
         dag: Record<string, Node[] | Edge[]>,
@@ -103,6 +102,21 @@ export const DataDocResource = {
     ) =>
         ds.update<IDataDocDAGExport>(`/datadoc/${docId}/dag_export/`, {
             dag,
+            meta,
+        }),
+    getDAGExporters: () =>
+        ds.fetch<Array<{ name: string; meta: JSON }>>(`/datadoc/dag_exporter/`),
+    exportDAG: (
+        docId: number,
+        exporterName: string,
+        nodes: Node[],
+        edges: Edge[],
+        meta: Record<string, any>
+    ) =>
+        ds.save<IDataDocDAGExport>(`/datadoc/${docId}/dag_export/export/`, {
+            exporter_name: exporterName,
+            nodes,
+            edges,
             meta,
         }),
 };

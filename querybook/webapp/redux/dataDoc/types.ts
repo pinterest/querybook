@@ -12,6 +12,7 @@ import {
     IDataCellMeta,
     IRawDataDoc,
     IDataDocDAGExport,
+    IDataDocDAGExporterMeta,
 } from 'const/datadoc';
 import { IAccessRequest } from 'const/accessRequest';
 import { IStoreState } from '../store/types';
@@ -253,6 +254,12 @@ export interface IReceiveDataDocDAGExportAction extends Action {
         DAGExport: IDataDocDAGExport;
     };
 }
+export interface IReceiveDataDocDAGExportersAction extends Action {
+    type: '@@dataDoc/RECEIVE_DATA_DOC_EXPORTERS';
+    payload: {
+        exporters: Array<{ name: string; meta: JSON }>;
+    };
+}
 
 export type DataDocAction =
     | IReceiveDataDocsAction
@@ -282,7 +289,8 @@ export type DataDocAction =
     | IReceiveDataDocAccessRequestAction
     | IRemoveDataDocAccessRequestAction
     | IMoveDataDocCursor
-    | IReceiveDataDocDAGExportAction;
+    | IReceiveDataDocDAGExportAction
+    | IReceiveDataDocDAGExportersAction;
 
 export type ThunkResult<R> = ThunkAction<
     R,
@@ -318,4 +326,5 @@ export interface IDataDocState {
     favoriteDataDocIds: number[];
     recentDataDocIds: number[];
     dagExportByDocId: Record<number, IDataDocDAGExport>;
+    dagExporterMetaByName: Record<string, IDataDocDAGExporterMeta>;
 }

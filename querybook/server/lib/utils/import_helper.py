@@ -6,8 +6,7 @@ LOG = get_logger(__file__)
 
 
 def import_modules(
-    module_paths: List[Union[str, Tuple[str, str]]],
-    include_none: bool = False,
+    module_paths: List[Union[str, Tuple[str, str]]], include_none: bool = False,
 ) -> List[Any]:
     """Import multiple modules, the invalid paths will be ignored
 
@@ -60,7 +59,10 @@ def import_module_with_default(module_path: str, module_variable: str = None, **
         if module_variable is not None:
             plugin_value = getattr(plugin_value, module_variable, None)
 
-        if not plugin_value and has_default:
+        plugin_value_is_empty = plugin_value is None or (
+            isinstance(plugin_value, list) and len(plugin_value) == 0
+        )
+        if plugin_value_is_empty and has_default:
             plugin_value = kwargs["default"]
 
         return plugin_value
