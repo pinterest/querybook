@@ -13,17 +13,30 @@ interface IProps {
 export interface IQueryCellNodeProps {
     label: string;
     onDelete: () => void;
+    updated: boolean;
     readonly: boolean;
 }
 
 // TODO: make edge deletable
 export const QueryCellNode = React.memo<IProps>(({ data }) => {
-    const { label, readonly, onDelete } = data;
+    const { label, readonly, onDelete, updated } = data;
 
-    const QueryCellNodeClassName = clsx('QueryCellNode', 'flex-row');
+    const QueryCellNodeClassName = clsx({
+        QueryCellNode: true,
+        'flex-row': true,
+        updated,
+    });
 
     return (
-        <div className={QueryCellNodeClassName}>
+        <div
+            className={QueryCellNodeClassName}
+            aria-label={
+                updated
+                    ? 'Query updated. Please save progress to keep changes.'
+                    : null
+            }
+            data-balloon-pos={'up'}
+        >
             <Handle type="target" position={Position.Left} />
             <div className="QueryCellNode-label">{label}</div>
             {!readonly && (
