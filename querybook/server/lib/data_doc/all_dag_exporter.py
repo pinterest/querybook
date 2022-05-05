@@ -9,10 +9,6 @@ ALL_PLUGIN_DAG_EXPORTERS = import_module_with_default(
 
 ALL_DAG_EXPORTERS = ALL_PLUGIN_DAG_EXPORTERS
 
-DEFAULT_DAG_EXPORTER = (
-    ALL_DAG_EXPORTERS[0].dag_exporter_name if ALL_DAG_EXPORTERS else None
-)
-
 
 def get_dag_exporter_class(name: str):
     for dag_exporter in ALL_DAG_EXPORTERS:

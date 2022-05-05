@@ -21,7 +21,7 @@ const initialState: Readonly<IDataDocState> = {
     editorsByDocIdUserId: {},
     accessRequestsByDocIdUserId: {},
     dagExportByDocId: {},
-    dagExporterMetaByName: {},
+    dagExporterDataByName: {},
 };
 
 function loadedEnvironmentFilterModeReducer(
@@ -455,7 +455,7 @@ function dagExportByDocIdReducer(
     });
 }
 
-function dagExporterMetaByNameReducer(
+function dagExporterDataByNameReducer(
     state = initialState.dagExportByDocId,
     action: DataDocAction
 ) {
@@ -463,7 +463,10 @@ function dagExporterMetaByNameReducer(
         switch (action.type) {
             case '@@dataDoc/RECEIVE_DATA_DOC_EXPORTERS': {
                 action.payload.exporters.forEach((exporter) => {
-                    draft[exporter.name] = exporter.meta;
+                    draft[exporter.name] = {
+                        meta: exporter.meta,
+                        type: exporter.type,
+                    };
                 });
                 return;
             }
@@ -484,5 +487,5 @@ export default combineReducers({
     editorsByDocIdUserId: editorsByDocIdUserIdReducer,
     accessRequestsByDocIdUserId: accessRequestsByDocIdUserIdReducer,
     dagExportByDocId: dagExportByDocIdReducer,
-    dagExporterMetaByName: dagExporterMetaByNameReducer,
+    dagExporterDataByName: dagExporterDataByNameReducer,
 });
