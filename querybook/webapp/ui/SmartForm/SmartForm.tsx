@@ -14,9 +14,9 @@ import {
 } from 'ui/Form/FormField';
 import { Markdown } from 'ui/Markdown/Markdown';
 import { ToggleSwitch } from 'ui/ToggleSwitch/ToggleSwitch';
+import { SimpleReactSelect } from 'ui/SimpleReactSelect/SimpleReactSelect';
 
 import './SmartForm.scss';
-import { SimpleReactSelect } from 'ui/SimpleReactSelect/SimpleReactSelect';
 
 export {
     updateValue,
