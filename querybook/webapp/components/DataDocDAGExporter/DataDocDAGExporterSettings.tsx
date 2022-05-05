@@ -10,6 +10,7 @@ import { SimpleReactSelect } from 'ui/SimpleReactSelect/SimpleReactSelect';
 import { FormSectionHeader } from 'ui/Form/FormField';
 import { Button } from 'ui/Button/Button';
 import { AsyncButton } from 'ui/AsyncButton/AsyncButton';
+import { CopyPasteModal } from 'ui/CopyPasteModal/CopyPasteModal';
 
 interface IProps {
     onExport: (name: string, settings: any) => Promise<string>;
@@ -22,8 +23,8 @@ export const DataDocDAGExporterSettings: React.FunctionComponent<IProps> = ({
 }) => {
     const dispatch = useDispatch();
 
-    const exporterMetaByName = useSelector(
-        (state: IStoreState) => state.dataDoc.dagExporterMetaByName
+    const exporterDataByName = useSelector(
+        (state: IStoreState) => state.dataDoc.dagExporterDataByName
     );
 
     const [selectedExporter, setSelectedExporter] = React.useState<string>();
@@ -31,16 +32,23 @@ export const DataDocDAGExporterSettings: React.FunctionComponent<IProps> = ({
     const [isWaitingForLink, setIsWaitingForLink] = React.useState<boolean>(
         false
     );
-    const [exportLink, setExportLink] = React.useState<string>();
+    const [exportData, setExportData] = React.useState<string>();
+    const [showExportModal, setShowExportModal] = React.useState<boolean>(
+        false
+    );
 
     const exporterNames = React.useMemo(
-        () => Object.keys(exporterMetaByName || {}),
-        [exporterMetaByName]
+        () => Object.keys(exporterDataByName || {}),
+        [exporterDataByName]
     );
 
     const exporterMeta = React.useMemo(
-        () => exporterMetaByName[selectedExporter],
-        [exporterMetaByName, selectedExporter]
+        () => exporterDataByName[selectedExporter]?.meta,
+        [exporterDataByName, selectedExporter]
+    );
+    const exportType = React.useMemo(
+        () => exporterDataByName[selectedExporter]?.type,
+        [exporterDataByName, selectedExporter]
     );
     const smartFormFields = React.useMemo(() => {
         if (!exporterMeta) {
@@ -86,7 +94,7 @@ export const DataDocDAGExporterSettings: React.FunctionComponent<IProps> = ({
     }, [savedMeta, selectedExporter]);
 
     React.useEffect(() => {
-        setExportLink(undefined);
+        setExportData(undefined);
     }, [selectedExporter]);
 
     React.useEffect(() => {
@@ -105,9 +113,17 @@ export const DataDocDAGExporterSettings: React.FunctionComponent<IProps> = ({
             selectedExporter,
             settingValues
         );
-        setExportLink(exportData);
+        setExportData(exportData);
         setIsWaitingForLink(false);
     }, [onExport, selectedExporter, settingValues]);
+
+    const handleViewExport = React.useCallback(() => {
+        if (exportType === 'url') {
+            window.open(exportData);
+        } else {
+            setShowExportModal(true);
+        }
+    }, [exportData, exportType]);
 
     return (
         <div className="DataDocDAGExporterSettings">
@@ -143,15 +159,22 @@ export const DataDocDAGExporterSettings: React.FunctionComponent<IProps> = ({
                         isLoading={isWaitingForLink}
                     />
                 )}
-                {exportLink && (
+                {exportData && (
                     <Button
                         color="accent"
-                        onClick={() => window.open(exportLink)}
-                        title="Open Export Link"
-                        icon="ExternalLink"
+                        onClick={handleViewExport}
+                        title="View Export"
+                        icon="BookOpen"
                     />
                 )}
             </div>
+            {showExportModal && (
+                <CopyPasteModal
+                    text={exportData}
+                    title={`Export to ${titleize(selectedExporter, '_', ' ')}`}
+                    onHide={() => setShowExportModal(false)}
+                />
+            )}
         </div>
     );
 };

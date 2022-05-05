@@ -4,21 +4,24 @@ from lib.logger import get_logger
 LOG = get_logger(__file__)
 
 
+# TODO: rename
 class DemoDAGExporter(BaseDAGExporter):
     @property
     def dag_exporter_name(self):
         return "demo"
 
     @property
+    def dag_exporter_type(self):
+        return "text"
+
+    @property
     def dag_exporter_meta(self):
-        return {
-            "test": {"type": "string"},
-            "select-test": {"type": "select", "options": ["test1", "test2"]},
-        }
+        # TODO: use FormField
+        return {}
 
     def export(self, nodes, edges, meta):
         try:
-            # exporting
-            return "meow"
+            # TODO: export to file
+            return "url"
         except Exception as e:
             LOG.info(e)

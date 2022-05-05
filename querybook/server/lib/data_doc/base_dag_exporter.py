@@ -10,6 +10,15 @@ class BaseDAGExporter(metaclass=ABCMeta):
 
     @property
     @abstractmethod
+    def dag_exporter_type(self) -> str:
+        # Can be one of 'url' | 'text' | 'none'
+        # Url exports returns a url for user to open
+        # Text exports opens up a copy paste modal for user to copy
+        # None returns nothing since the result is exported without anything to track
+        raise NotImplementedError()
+
+    @property
+    @abstractmethod
     def dag_exporter_meta(self):
         """
         Plug-in specific options for exporting
@@ -31,4 +40,8 @@ class BaseDAGExporter(metaclass=ABCMeta):
         raise NotImplementedError()
 
     def to_dict(self):
-        return {"name": self.dag_exporter_name, "meta": self.dag_exporter_meta}
+        return {
+            "name": self.dag_exporter_name,
+            "meta": self.dag_exporter_meta,
+            "type": self.dag_exporter_type,
+        }

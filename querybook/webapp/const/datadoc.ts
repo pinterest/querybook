@@ -94,6 +94,15 @@ export interface IDataDocDAGExport {
     meta: Record<string, any>;
 }
 
+export interface IDataDocDAGExporterData {
+    type: 'url' | 'text';
+    meta: IDataDocDAGExporterMetaOption;
+}
+
+export interface IDataDocDAGExporter extends IDataDocDAGExporterData {
+    name: string;
+}
+
 export type IDataDocDAGExporterMeta = Record<
     string,
     IDataDocDAGExporterMetaOption
