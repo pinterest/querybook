@@ -12,6 +12,7 @@ import {
     IDataCellMeta,
     IRawDataDoc,
     IDataDocDAGExport,
+    IDataDocDAGExporterMetaOption,
 } from 'const/datadoc';
 import { IAccessRequest } from 'const/accessRequest';
 
@@ -686,7 +687,7 @@ export function fetchDAGExporters(): ThunkResult<Promise<any>> {
 }
 
 export function receiveDAGExporters(
-    exporters: Array<{ name: string; meta: JSON }>
+    exporters: Array<{ name: string; meta: IDataDocDAGExporterMetaOption }>
 ): IReceiveDataDocDAGExportersAction {
     return {
         type: '@@dataDoc/RECEIVE_DATA_DOC_EXPORTERS',

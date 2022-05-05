@@ -16,6 +16,7 @@ import { Markdown } from 'ui/Markdown/Markdown';
 import { ToggleSwitch } from 'ui/ToggleSwitch/ToggleSwitch';
 
 import './SmartForm.scss';
+import { SimpleReactSelect } from 'ui/SimpleReactSelect/SimpleReactSelect';
 
 export {
     updateValue,
@@ -57,6 +58,7 @@ function SimpleFormField<T>({
         required,
         helper,
         field_type: fieldType,
+        options,
     } = formField;
     let controlDOM: React.ReactChild;
     if (fieldType === 'string' || fieldType === 'number') {
@@ -87,6 +89,14 @@ function SimpleFormField<T>({
     } else if (fieldType === 'boolean') {
         controlDOM = (
             <ToggleSwitch checked={!!value} onChange={onFieldChange} />
+        );
+    } else if (fieldType === 'select') {
+        controlDOM = (
+            <SimpleReactSelect
+                value={(value as unknown) as string}
+                options={options}
+                onChange={onFieldChange}
+            />
         );
     }
 

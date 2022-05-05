@@ -13,6 +13,7 @@ import {
     IRawDataDoc,
     IDataDocDAGExport,
     IDataDocDAGExporterMeta,
+    IDataDocDAGExporterMetaOption,
 } from 'const/datadoc';
 import { IAccessRequest } from 'const/accessRequest';
 import { IStoreState } from '../store/types';
@@ -257,7 +258,7 @@ export interface IReceiveDataDocDAGExportAction extends Action {
 export interface IReceiveDataDocDAGExportersAction extends Action {
     type: '@@dataDoc/RECEIVE_DATA_DOC_EXPORTERS';
     payload: {
-        exporters: Array<{ name: string; meta: JSON }>;
+        exporters: Array<{ name: string; meta: IDataDocDAGExporterMetaOption }>;
     };
 }
 
