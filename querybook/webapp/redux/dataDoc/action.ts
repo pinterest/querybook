@@ -695,22 +695,3 @@ export function receiveDAGExporters(
         },
     };
 }
-
-export function exportDAG(
-    docId: number,
-    exporterName: string,
-    nodes: Node[],
-    edges: Edge[],
-    meta: any
-) {
-    return async () => {
-        const { data } = await DataDocResource.exportDAG(
-            docId,
-            exporterName,
-            nodes,
-            edges,
-            meta
-        );
-        console.log('dat', data);
-    };
-}

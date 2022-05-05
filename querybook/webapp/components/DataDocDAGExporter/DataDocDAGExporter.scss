@@ -39,8 +39,9 @@
             height: calc(100% - 48px);
         }
         .DataDocDAGExporter-bottom {
+            width: 100%;
             height: 48px;
-            justify-content: flex-end;
+            padding-right: 12px;
         }
 
         .DataDocDAGExporterSettings {

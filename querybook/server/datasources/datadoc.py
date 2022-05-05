@@ -684,14 +684,12 @@ def create_or_update_dag_export(id, dag, meta):
 
 @register("/datadoc/dag_exporter/", methods=["GET"])
 def get_dag_exporters():
-    print("all", ALL_DAG_EXPORTERS)
     return ALL_DAG_EXPORTERS
 
 
 @register("/datadoc/<int:id>/dag_export/export/", methods=["POST"])
 def save_and_export_dag(id, exporter_name, nodes, edges, meta):
     assert_can_write(id)
-    # logic.create_or_update_dag_export(data_doc_id=id, dag={nodes, edges}, meta=meta)
     return dag_exporter.export_dag(
         nodes=nodes, edges=edges, meta=meta, dag_exporter_name=exporter_name
     )

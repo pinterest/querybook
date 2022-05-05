@@ -25,7 +25,6 @@ class DemoDAGExporter(BaseDAGExporter):
     def export(self, nodes, edges, meta):
         try:
             # exporting
-            print("++++++++++++++++++", nodes, edges, meta)
-            return "meow" + nodes
+            return "meow"
         except Exception as e:
             LOG.info(e)

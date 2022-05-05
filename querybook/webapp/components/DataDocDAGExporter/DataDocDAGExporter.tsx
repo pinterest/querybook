@@ -10,8 +10,7 @@ import { DataDocDAGExporterSettings } from './DataDocDAGExporterSettings';
 import { Button } from 'ui/Button/Button';
 
 import './DataDocDAGExporter.scss';
-import { useDispatch } from 'react-redux';
-import { exportDAG } from 'redux/dataDoc/action';
+import { DataDocResource } from 'resource/dataDoc';
 
 interface IProps {
     docId: number;
@@ -24,12 +23,11 @@ export const DataDocDAGExporter: React.FunctionComponent<IProps> = ({
     docId,
     readonly,
 }) => {
-    const dispatch = useDispatch();
     const [isExporting, setIsExporting] = React.useState(false);
     const [exportNodes, setExportNodes] = React.useState([]);
     const [exportEdges, setExportEdges] = React.useState([]);
 
-    const { onSave, savedNodes, savedEdges } = useSavedDAG(docId);
+    const { onSave, savedNodes, savedEdges, savedMeta } = useSavedDAG(docId);
 
     const {
         deleteGraphQueryCell,
@@ -39,18 +37,20 @@ export const DataDocDAGExporter: React.FunctionComponent<IProps> = ({
     } = useGraphQueryCells(docId, savedNodes, readonly);
 
     const handleExport = React.useCallback(
-        (exporterName, exporterSettings) => {
-            dispatch(
-                exportDAG(
-                    docId,
-                    exporterName,
-                    exportNodes,
-                    exportEdges,
-                    exporterSettings
-                )
+        async (exporterName, exporterSettings) => {
+            const meta = { ...savedMeta, [exporterName]: exporterSettings };
+            onSave(exportNodes, exportEdges, meta);
+
+            const { data: exportData } = await DataDocResource.exportDAG(
+                docId,
+                exporterName,
+                exportNodes,
+                exportEdges,
+                exporterSettings
             );
+            return exportData;
         },
-        [dispatch, docId, exportEdges, exportNodes]
+        [docId, exportEdges, exportNodes, onSave, savedMeta]
     );
 
     const graphDOM = (
@@ -98,6 +98,7 @@ export const DataDocDAGExporter: React.FunctionComponent<IProps> = ({
                     <DataDocDAGExporterSettings
                         onCancel={() => setIsExporting(false)}
                         onExport={handleExport}
+                        savedMeta={savedMeta}
                     />
                 </div>
             )}
@@ -109,7 +110,7 @@ export const DataDocDAGExporterSave: React.FunctionComponent<{
     onSave: () => void;
     onExport: () => void;
 }> = ({ onSave, onExport }) => (
-    <div className="DataDocDAGExporter-bottom flex-row mr12">
+    <div className="DataDocDAGExporter-bottom flex-row right-align">
         <Button icon="Save" title="Save Progress" onClick={onSave} />
         <Button
             icon="FileOutput"
