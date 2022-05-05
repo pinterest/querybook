@@ -12,13 +12,11 @@ import { Button } from 'ui/Button/Button';
 import { AsyncButton } from 'ui/AsyncButton/AsyncButton';
 
 interface IProps {
-    onCancel: () => void;
     onExport: (name: string, settings: any) => Promise<string>;
     savedMeta: Record<string, any>;
 }
 
 export const DataDocDAGExporterSettings: React.FunctionComponent<IProps> = ({
-    onCancel,
     onExport,
     savedMeta,
 }) => {
@@ -27,25 +25,39 @@ export const DataDocDAGExporterSettings: React.FunctionComponent<IProps> = ({
     const exporterMetaByName = useSelector(
         (state: IStoreState) => state.dataDoc.dagExporterMetaByName
     );
+
+    const [selectedExporter, setSelectedExporter] = React.useState<string>();
+    const [settingValues, setSettingValues] = React.useState<any>();
+    const [isWaitingForLink, setIsWaitingForLink] = React.useState<boolean>(
+        false
+    );
+    const [exportLink, setExportLink] = React.useState<string>();
+
     const exporterNames = React.useMemo(
         () => Object.keys(exporterMetaByName || {}),
         [exporterMetaByName]
     );
 
-    const [selectedExporter, setSelectedExporter] = React.useState<string>();
     const exporterMeta = React.useMemo(
         () => exporterMetaByName[selectedExporter],
         [exporterMetaByName, selectedExporter]
     );
-
-    const [settingValues, setSettingValues] = React.useState<any>({
-        test: 'meww',
-    });
-
-    const [isWaitingForLink, setIsWaitingForLink] = React.useState<boolean>(
-        false
-    );
-    const [exportLink, setExportLink] = React.useState<string>();
+    const smartFormFields = React.useMemo(() => {
+        if (!exporterMeta) {
+            return {};
+        }
+        const fields = {};
+        Object.entries(exporterMeta).forEach(([key, value]) => {
+            const field = {
+                field_type: value.type,
+            };
+            if (value.options) {
+                field['options'] = value.options;
+            }
+            fields[key] = field;
+        });
+        return fields;
+    }, [exporterMeta]);
 
     const handleSettingValuesChange = React.useCallback((key, value) => {
         setSettingValues((currVals) => {
@@ -77,6 +89,16 @@ export const DataDocDAGExporterSettings: React.FunctionComponent<IProps> = ({
         setExportLink(undefined);
     }, [selectedExporter]);
 
+    React.useEffect(() => {
+        if (exporterMeta && !settingValues) {
+            const initialValues = {};
+            Object.keys(exporterMeta).map((key) => {
+                initialValues[key] = undefined;
+            });
+            setSettingValues(initialValues);
+        }
+    }, [exporterMeta, settingValues]);
+
     const handleExport = React.useCallback(async () => {
         setIsWaitingForLink(true);
         const exportData: string = await onExport(
@@ -97,46 +119,38 @@ export const DataDocDAGExporterSettings: React.FunctionComponent<IProps> = ({
                     onChange={setSelectedExporter}
                 />
                 <FormSectionHeader>Settings</FormSectionHeader>
-                <SmartForm
-                    formField={{
-                        field_type: 'struct',
-                        fields: {
-                            test: { field_type: 'string' },
-                        },
-                    }}
-                    value={settingValues}
-                    onChange={handleSettingValuesChange}
-                />
+                {settingValues && (
+                    <SmartForm
+                        formField={{
+                            field_type: 'struct',
+                            fields: smartFormFields,
+                        }}
+                        value={settingValues}
+                        onChange={handleSettingValuesChange}
+                    />
+                )}
             </div>
-            <div className="DataDocDAGExporter-bottom horizontal-space-between">
-                <Button
-                    icon="ChevronLeft"
-                    title="Return to Graph"
-                    onClick={onCancel}
-                    className="mr12"
-                />
-                <div>
-                    {selectedExporter && (
-                        <AsyncButton
-                            icon="FileOutput"
-                            title={`Save Settings & Export to ${titleize(
-                                selectedExporter,
-                                '_',
-                                ' '
-                            )}`}
-                            onClick={handleExport}
-                            isLoading={isWaitingForLink}
-                        />
-                    )}
-                    {exportLink && (
-                        <Button
-                            color="accent"
-                            onClick={() => window.open(exportLink)}
-                            title="Open Export Link"
-                            icon="ExternalLink"
-                        />
-                    )}
-                </div>
+            <div className="DataDocDAGExporter-bottom flex-row right-align">
+                {selectedExporter && (
+                    <AsyncButton
+                        icon="FileOutput"
+                        title={`Save Settings & Export to ${titleize(
+                            selectedExporter,
+                            '_',
+                            ' '
+                        )}`}
+                        onClick={handleExport}
+                        isLoading={isWaitingForLink}
+                    />
+                )}
+                {exportLink && (
+                    <Button
+                        color="accent"
+                        onClick={() => window.open(exportLink)}
+                        title="Open Export Link"
+                        icon="ExternalLink"
+                    />
+                )}
             </div>
         </div>
     );

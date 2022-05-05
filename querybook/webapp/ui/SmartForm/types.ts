@@ -1,6 +1,6 @@
 // Keep this in sync with lib/form/__init__.py
 
-type FormFieldType = 'string' | 'boolean' | 'number';
+type FormFieldType = 'string' | 'boolean' | 'number' | 'select';
 type CompositeFieldType = 'list' | 'struct';
 
 interface IBaseFormField {
@@ -13,6 +13,7 @@ interface IFormField extends IBaseFormField {
     regex?: string; // For validation
     hidden?: boolean; // For password
     helper?: string;
+    options?: string[]; // For select
     field_type: FormFieldType; // For type of corresponding value
 }
 

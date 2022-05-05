@@ -11,16 +11,10 @@ class DemoDAGExporter(BaseDAGExporter):
 
     @property
     def dag_exporter_meta(self):
-        return """{
-            test: {
-                type: string;
-            },
-            select-test: {
-                type: select;
-                options: ['test1', 'test2']
-            }
+        return {
+            "test": {"type": "string"},
+            "select-test": {"type": "select", "options": ["test1", "test2"]},
         }
-        """
 
     def export(self, nodes, edges, meta):
         try:

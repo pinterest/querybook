@@ -2,6 +2,7 @@ import * as React from 'react';
 
 import { useSavedDAG } from 'hooks/dag/useSavedDAG';
 import { useGraphQueryCells } from 'hooks/dag/useGraphQueryCells';
+import { DataDocResource } from 'resource/dataDoc';
 
 import { DataDocDagExporterList } from './DataDocDAGExporterList';
 import { DataDocDAGExporterGraph } from './DataDocDAGExporterGraph';
@@ -10,7 +11,6 @@ import { DataDocDAGExporterSettings } from './DataDocDAGExporterSettings';
 import { Button } from 'ui/Button/Button';
 
 import './DataDocDAGExporter.scss';
-import { DataDocResource } from 'resource/dataDoc';
 
 interface IProps {
     docId: number;
@@ -54,36 +54,28 @@ export const DataDocDAGExporter: React.FunctionComponent<IProps> = ({
     );
 
     const graphDOM = (
-        <div
-            className={
-                isExporting
-                    ? 'DataDocDAGExporter-graph'
-                    : 'DataDocDAGExporter-main'
-            }
-        >
-            <div className="DataDocDAGExporter-graph-wrapper" ref={dropRef}>
-                <DataDocDAGExporterGraph
-                    queryCells={graphQueryCells}
-                    savedNodes={savedNodes}
-                    savedEdges={savedEdges}
-                    onDeleteCell={deleteGraphQueryCell}
-                    renderSaveComponent={
-                        readonly || isExporting
-                            ? null
-                            : (nodes, edges) => (
-                                  <DataDocDAGExporterSave
-                                      onSave={() => onSave(nodes, edges)}
-                                      onExport={() => {
-                                          setIsExporting(true);
-                                          setExportNodes(nodes);
-                                          setExportEdges(edges);
-                                      }}
-                                  />
-                              )
-                    }
-                    readonly={isExporting || readonly}
-                />
-            </div>
+        <div className="DataDocDAGExporter-graph-wrapper" ref={dropRef}>
+            <DataDocDAGExporterGraph
+                queryCells={graphQueryCells}
+                savedNodes={savedNodes}
+                savedEdges={savedEdges}
+                onDeleteCell={deleteGraphQueryCell}
+                renderSaveComponent={
+                    readonly || isExporting
+                        ? null
+                        : (nodes, edges) => (
+                              <DataDocDAGExporterSave
+                                  onSave={() => onSave(nodes, edges)}
+                                  onExport={() => {
+                                      setIsExporting(true);
+                                      setExportNodes(nodes);
+                                      setExportEdges(edges);
+                                  }}
+                              />
+                          )
+                }
+                readonly={isExporting || readonly}
+            />
         </div>
     );
 
@@ -92,11 +84,28 @@ export const DataDocDAGExporter: React.FunctionComponent<IProps> = ({
             {!isExporting && (
                 <DataDocDagExporterList queryCells={unusedQueryCells} />
             )}
-            {graphDOM}
+            <div
+                className={
+                    isExporting
+                        ? 'DataDocDAGExporter-graph'
+                        : 'DataDocDAGExporter-main'
+                }
+            >
+                {graphDOM}
+                {isExporting && (
+                    <div className="DataDocDAGExporter-bottom flex-row">
+                        <Button
+                            icon="ChevronLeft"
+                            title="Return to Graph"
+                            onClick={() => setIsExporting(false)}
+                            className="mr12"
+                        />
+                    </div>
+                )}
+            </div>
             {isExporting && (
                 <div className="DataDocDAGExporter-main">
                     <DataDocDAGExporterSettings
-                        onCancel={() => setIsExporting(false)}
                         onExport={handleExport}
                         savedMeta={savedMeta}
                     />

@@ -3,6 +3,7 @@ import type {
     IDataCell,
     IDataCellMeta,
     IDataDocDAGExport,
+    IDataDocDAGExporterMetaOption,
     IDataDocEditor,
     IRawDataDoc,
 } from 'const/datadoc';
@@ -105,7 +106,9 @@ export const DataDocResource = {
             meta,
         }),
     getDAGExporters: () =>
-        ds.fetch<Array<{ name: string; meta: JSON }>>(`/datadoc/dag_exporter/`),
+        ds.fetch<Array<{ name: string; meta: IDataDocDAGExporterMetaOption }>>(
+            `/datadoc/dag_exporter/`
+        ),
     exportDAG: (
         docId: number,
         exporterName: string,
