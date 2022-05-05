@@ -1,23 +1,26 @@
 import * as React from 'react';
-
-import { titleize } from 'lib/utils';
-
-import { Button } from 'ui/Button/Button';
 import { useDispatch, useSelector } from 'react-redux';
+
 import { fetchDAGExporters } from 'redux/dataDoc/action';
 import { IStoreState } from 'redux/store/types';
+import { titleize } from 'lib/utils';
+
 import { SmartForm } from 'ui/SmartForm/SmartForm';
 import { SimpleReactSelect } from 'ui/SimpleReactSelect/SimpleReactSelect';
 import { FormSectionHeader } from 'ui/Form/FormField';
+import { Button } from 'ui/Button/Button';
+import { AsyncButton } from 'ui/AsyncButton/AsyncButton';
 
 interface IProps {
     onCancel: () => void;
-    onExport: (name: string, settings: any) => void;
+    onExport: (name: string, settings: any) => Promise<string>;
+    savedMeta: Record<string, any>;
 }
 
 export const DataDocDAGExporterSettings: React.FunctionComponent<IProps> = ({
     onCancel,
     onExport,
+    savedMeta,
 }) => {
     const dispatch = useDispatch();
 
@@ -30,7 +33,6 @@ export const DataDocDAGExporterSettings: React.FunctionComponent<IProps> = ({
     );
 
     const [selectedExporter, setSelectedExporter] = React.useState<string>();
-
     const exporterMeta = React.useMemo(
         () => exporterMetaByName[selectedExporter],
         [exporterMetaByName, selectedExporter]
@@ -39,6 +41,11 @@ export const DataDocDAGExporterSettings: React.FunctionComponent<IProps> = ({
     const [settingValues, setSettingValues] = React.useState<any>({
         test: 'meww',
     });
+
+    const [isWaitingForLink, setIsWaitingForLink] = React.useState<boolean>(
+        false
+    );
+    const [exportLink, setExportLink] = React.useState<string>();
 
     const handleSettingValuesChange = React.useCallback((key, value) => {
         setSettingValues((currVals) => {
@@ -59,6 +66,26 @@ export const DataDocDAGExporterSettings: React.FunctionComponent<IProps> = ({
             setSelectedExporter(exporterNames[0]);
         }
     }, [exporterNames, selectedExporter]);
+
+    React.useEffect(() => {
+        if (savedMeta[selectedExporter]) {
+            setSettingValues(savedMeta[selectedExporter]);
+        }
+    }, [savedMeta, selectedExporter]);
+
+    React.useEffect(() => {
+        setExportLink(undefined);
+    }, [selectedExporter]);
+
+    const handleExport = React.useCallback(async () => {
+        setIsWaitingForLink(true);
+        const exportData: string = await onExport(
+            selectedExporter,
+            settingValues
+        );
+        setExportLink(exportData);
+        setIsWaitingForLink(false);
+    }, [onExport, selectedExporter, settingValues]);
 
     return (
         <div className="DataDocDAGExporterSettings">
@@ -81,25 +108,35 @@ export const DataDocDAGExporterSettings: React.FunctionComponent<IProps> = ({
                     onChange={handleSettingValuesChange}
                 />
             </div>
-            <div className="DataDocDAGExporter-bottom flex-row mr12">
+            <div className="DataDocDAGExporter-bottom horizontal-space-between">
                 <Button
                     icon="ChevronLeft"
                     title="Return to Graph"
                     onClick={onCancel}
+                    className="mr12"
                 />
-                {selectedExporter && (
-                    <Button
-                        icon="FileOutput"
-                        title={`Export to ${titleize(
-                            selectedExporter,
-                            '_',
-                            ' '
-                        )}`}
-                        onClick={() =>
-                            onExport(selectedExporter, settingValues)
-                        }
-                    />
-                )}
+                <div>
+                    {selectedExporter && (
+                        <AsyncButton
+                            icon="FileOutput"
+                            title={`Save Settings & Export to ${titleize(
+                                selectedExporter,
+                                '_',
+                                ' '
+                            )}`}
+                            onClick={handleExport}
+                            isLoading={isWaitingForLink}
+                        />
+                    )}
+                    {exportLink && (
+                        <Button
+                            color="accent"
+                            onClick={() => window.open(exportLink)}
+                            title="Open Export Link"
+                            icon="ExternalLink"
+                        />
+                    )}
+                </div>
             </div>
         </div>
     );

@@ -16,13 +16,6 @@ export function useSavedDAG(docId: number) {
         dispatch(fetchDAGExport(docId));
     }, [dispatch, docId]);
 
-    const onSave = React.useCallback(
-        async (nodes: Node[], edges: Edge[]) => {
-            dispatch(saveDAGExport(docId, nodes, edges));
-        },
-        [dispatch, docId]
-    );
-
     const savedNodes = React.useMemo(
         () => (savedDAGExport?.dag?.nodes || []) as Node[],
         [savedDAGExport]
@@ -31,6 +24,16 @@ export function useSavedDAG(docId: number) {
         () => (savedDAGExport?.dag?.edges || []) as Edge[],
         [savedDAGExport]
     );
+    const savedMeta = React.useMemo(() => savedDAGExport?.meta || {}, [
+        savedDAGExport,
+    ]);
 
-    return { onSave, savedNodes, savedEdges };
+    const onSave = React.useCallback(
+        async (nodes: Node[], edges: Edge[], meta?: Record<string, any>) => {
+            dispatch(saveDAGExport(docId, nodes, edges, meta));
+        },
+        [dispatch, docId]
+    );
+
+    return { onSave, savedNodes, savedEdges, savedMeta };
 }
