@@ -17,13 +17,14 @@ class BaseDAGExporter(metaclass=ABCMeta):
         # None returns nothing since the result is exported without anything to track
         raise NotImplementedError()
 
+    # TODO: update documentation
     @property
     @abstractmethod
     def dag_exporter_meta(self):
         """
         Plug-in specific options for exporting
 
-        Returns JSON
+        Returns Dict
         """
         raise NotImplementedError()
 
