@@ -70,3 +70,7 @@ GOOGLE_CREDS: ~
 
 # --------------- Logging ---------------
 LOG_LOCATION: ~
+
+# --------------- Table Upload (Experimental) ---------------
+# Used by S3 uploader to upload table to that path, trailing slash optional
+TABLE_UPLOAD_S3_PATH: ~

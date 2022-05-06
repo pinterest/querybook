@@ -73,7 +73,9 @@ class BaseMetastoreLoader(metaclass=ABCMeta):
     @with_session
     def sync_create_or_update_table(self, schema_name, table_name, session=None) -> int:
         """Given a full qualified table name,
-           sync the data in metastore with database
+           sync the data in metastore with database.
+           Note: if table does not exist, this doesn't create a new table. But
+           it does create an empty schema.
 
         Arguments:
             schema_name {str} -- the schema name
@@ -82,18 +84,20 @@ class BaseMetastoreLoader(metaclass=ABCMeta):
         Returns:
             int -- the table id
         """
-        schema = get_schema_by_name(schema_name, self.metastore_id, session=session)
-        if schema is None:  # If no schema, create it
+        schema_in_db = get_schema_by_name(
+            schema_name, self.metastore_id, session=session
+        )
+        if schema_in_db is None:  # If no schema, create it
             # One caveat, What if table actually
             # Does not exist?
-            schema = create_schema(
+            schema_in_db = create_schema(
                 schema_name,
                 table_count=1,
                 metastore_id=self.metastore_id,
                 session=session,
             )
         return self._create_table_table(
-            schema.id, schema_name, table_name, session=session
+            schema_in_db.id, schema_name, table_name, session=session
         )
 
     @with_session

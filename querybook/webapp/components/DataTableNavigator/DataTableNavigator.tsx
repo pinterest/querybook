@@ -281,6 +281,7 @@ export const DataTableNavigator: React.FC<IDataTableNavigatorProps> = ({
             <div className="list-header">
                 {metastorePicker}
                 <DataTableNavigatorSearch
+                    metastoreId={metastoreId}
                     searchFilters={searchFilters}
                     searchString={searchString}
                     onSearch={handleSearch}

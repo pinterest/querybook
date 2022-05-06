@@ -1,10 +1,11 @@
 .DataTableNavigatorSearch {
     border-bottom: var(--border);
+    padding-right: 12px;
+
     > .SearchBar {
         flex-grow: 1;
     }
-    > .IconButton {
-        padding-right: 12px;
+    .table-search-filter-button {
         .ping-message {
             top: -5px;
             right: 6px;

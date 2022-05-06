@@ -7,13 +7,11 @@ import { IUDFRendererValues, UDFEngineConfigsByLanguage } from 'lib/utils/udf';
 
 import { Button, SoftButton } from 'ui/Button/Button';
 import { IconButton } from 'ui/Button/IconButton';
-import { FormField } from 'ui/Form/FormField';
 import { SimpleField } from 'ui/FormikField/SimpleField';
 import { Subtitle, Title } from 'ui/Title/Title';
 import { Link } from 'ui/Link/Link';
 import { Message } from 'ui/Message/Message';
 
-import { UDFTypeSelect } from './UDFTypeSelect';
 import './UDFForm.scss';
 
 interface IUDFFormProps {
@@ -84,14 +82,19 @@ export const UDFForm: React.FC<IUDFFormProps> = ({
                                                 />
                                             </div>
                                             <div className="flex4">
-                                                <FormField label={() => null}>
-                                                    <UDFTypeSelect
-                                                        name={`parameters[${idx}].type`}
-                                                        dataTypes={
-                                                            engineUDFConfig.dataTypes
-                                                        }
-                                                    />
-                                                </FormField>
+                                                <SimpleField
+                                                    type="react-select"
+                                                    label={() => null}
+                                                    name={`parameters[${idx}].type`}
+                                                    options={
+                                                        engineUDFConfig.dataTypes
+                                                    }
+                                                    selectProps={{
+                                                        placeholder:
+                                                            'Select types',
+                                                    }}
+                                                    creatable
+                                                />
                                             </div>
 
                                             <div className="flex1">
@@ -161,7 +164,7 @@ export const UDFForm: React.FC<IUDFFormProps> = ({
                                 required
                             />
                             <div className="flex-row">
-                                <div className="flex1">
+                                <div className="flex1 mr4">
                                     <SimpleField
                                         type="react-select"
                                         name="udfLanguage"
@@ -170,16 +173,19 @@ export const UDFForm: React.FC<IUDFFormProps> = ({
                                         stacked
                                     />
                                 </div>
-                                <div className="flex1">
+                                <div className="flex1 ml4">
                                     {selectedLanguageConfig?.noOutputType ? null : (
-                                        <FormField label="Output Type" stacked>
-                                            <UDFTypeSelect
-                                                name="outputType"
-                                                dataTypes={
-                                                    engineUDFConfig.dataTypes
-                                                }
-                                            />
-                                        </FormField>
+                                        <SimpleField
+                                            label="Output Type"
+                                            stacked
+                                            name="outputType"
+                                            type="react-select"
+                                            creatable
+                                            options={engineUDFConfig.dataTypes}
+                                            selectProps={{
+                                                placeholder: 'Select types',
+                                            }}
+                                        />
                                     )}
                                 </div>
                             </div>
