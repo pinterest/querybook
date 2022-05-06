@@ -10,9 +10,9 @@ import type {
     IRawDataDoc,
 } from 'const/datadoc';
 import type {
-    IDataDocScheduleKwargs,
     IDataDocTaskSchedule,
     ITaskStatusRecord,
+    DataDocType,
 } from 'const/schedule';
 import dataDocSocket from 'lib/data-doc/datadoc-socketio';
 import ds from 'lib/datasource';
@@ -160,19 +160,10 @@ export const DataDocAccessRequestResource = {
 export const DataDocScheduleResource = {
     get: (docId: number) =>
         ds.fetch<IDataDocTaskSchedule>(`/datadoc/${docId}/schedule/`),
-    create: (docId: number, cron: string, kwargs: IDataDocScheduleKwargs) =>
-        ds.save<IDataDocTaskSchedule>(`/datadoc/${docId}/schedule/`, {
-            cron,
-            kwargs,
-        }),
-    update: (
-        docId: number,
-        params: {
-            cron?: string;
-            kwargs?: IDataDocScheduleKwargs;
-            enabled?: boolean;
-        }
-    ) => ds.update<IDataDocTaskSchedule>(`/datadoc/${docId}/schedule/`, params),
+    create: (docId: number, params: DataDocType) =>
+        ds.save<IDataDocTaskSchedule>(`/datadoc/${docId}/schedule/`, params),
+    update: (docId: number, params: DataDocType) =>
+        ds.update<IDataDocTaskSchedule>(`/datadoc/${docId}/schedule/`, params),
     delete: (docId: number) => ds.delete(`/datadoc/${docId}/schedule/`),
 
     run: (docId: number) => ds.save<null>(`/datadoc/${docId}/schedule/run/`),

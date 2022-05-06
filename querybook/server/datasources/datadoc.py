@@ -268,9 +268,7 @@ def get_datadoc_schedule(id):
 
 @register("/datadoc/<int:id>/schedule/", methods=["POST"])
 def create_datadoc_schedule(
-    id,
-    cron,
-    kwargs,
+    id, cron, kwargs, start_time=None, end_time=None, occurrences=None
 ):
     kwargs_valid, kwargs_valid_reason = validate_datadoc_schedule_config(kwargs)
     api_assert(kwargs_valid, kwargs_valid_reason)
@@ -288,12 +286,23 @@ def create_datadoc_schedule(
             cron=cron,
             kwargs={**kwargs, "user_id": current_user.id, "doc_id": id},
             task_type="user",
+            start_time=start_time,
+            end_time=end_time,
+            occurrences=occurrences,
             session=session,
         )
 
 
 @register("/datadoc/<int:id>/schedule/", methods=["PUT"])
-def update_datadoc_schedule(id, cron=None, enabled=None, kwargs=None):
+def update_datadoc_schedule(
+    id,
+    cron=None,
+    enabled=None,
+    kwargs=None,
+    start_time=None,
+    end_time=None,
+    occurrences=None,
+):
     if kwargs is not None:
         kwargs_valid, kwargs_valid_reason = validate_datadoc_schedule_config(kwargs)
         api_assert(kwargs_valid, kwargs_valid_reason)
@@ -310,7 +319,11 @@ def update_datadoc_schedule(id, cron=None, enabled=None, kwargs=None):
         api_assert(schedule, "Schedule does not exist")
         verify_data_doc_permission(id, session=session)
 
-        updated_fields = {}
+        updated_fields = {
+            "end_time": end_time,
+            "occurrences": occurrences,
+            "start_time": start_time,
+        }
         if cron is not None:
             updated_fields["cron"] = cron
         if enabled is not None:
