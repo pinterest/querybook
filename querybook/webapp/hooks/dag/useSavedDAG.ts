@@ -3,10 +3,10 @@ import { Edge, Node } from 'react-flow-renderer';
 import { useDispatch, useSelector } from 'react-redux';
 
 import { fetchDAGExport, saveDAGExport } from 'redux/dataDoc/action';
-import { IStoreState } from 'redux/store/types';
+import { Dispatch, IStoreState } from 'redux/store/types';
 
 export function useSavedDAG(docId: number) {
-    const dispatch = useDispatch();
+    const dispatch: Dispatch = useDispatch();
 
     const savedDAGExport = useSelector(
         (state: IStoreState) => state.dataDoc.dagExportByDocId[docId]
@@ -29,9 +29,8 @@ export function useSavedDAG(docId: number) {
     ]);
 
     const onSave = React.useCallback(
-        async (nodes: Node[], edges: Edge[], meta?: Record<string, any>) => {
-            dispatch(saveDAGExport(docId, nodes, edges, meta));
-        },
+        (nodes: Node[], edges: Edge[], meta?: Record<string, any>) =>
+            dispatch(saveDAGExport(docId, nodes, edges, meta)),
         [dispatch, docId]
     );
 

@@ -1,14 +1,18 @@
 import * as React from 'react';
 
 import { useSavedDAG } from 'hooks/dag/useSavedDAG';
-import { useGraphQueryCells } from 'hooks/dag/useGraphQueryCells';
+import {
+    QueryDAGNodeTypes,
+    useExporterDAG,
+    useQueryCells,
+    useUnusedQueryCells,
+} from 'hooks/dag/useExporterDAG';
 import { DataDocResource } from 'resource/dataDoc';
 
 import { DataDocDagExporterList } from './DataDocDAGExporterList';
-import { DataDocDAGExporterGraph } from './DataDocDAGExporterGraph';
 import { DataDocDAGExporterSettings } from './DataDocDAGExporterSettings';
-
 import { Button } from 'ui/Button/Button';
+import { FlowGraph } from 'ui/FlowGraph/FlowGraph';
 
 import './DataDocDAGExporter.scss';
 
@@ -24,58 +28,55 @@ export const DataDocDAGExporter: React.FunctionComponent<IProps> = ({
     readonly,
 }) => {
     const [isExporting, setIsExporting] = React.useState(false);
-    const [exportNodes, setExportNodes] = React.useState([]);
-    const [exportEdges, setExportEdges] = React.useState([]);
+    const isInteractive = !(readonly || isExporting);
 
     const { onSave, savedNodes, savedEdges, savedMeta } = useSavedDAG(docId);
-
-    const {
-        deleteGraphQueryCell,
-        unusedQueryCells,
-        graphQueryCells,
-        dropRef,
-    } = useGraphQueryCells(docId, savedNodes, readonly);
+    const queryCells = useQueryCells(docId);
+    const [nodes, edges, setNodes, setEdges, dropRef] = useExporterDAG(
+        queryCells,
+        savedNodes,
+        savedEdges,
+        !isInteractive
+    );
+    const unusedQueryCells = useUnusedQueryCells(queryCells, nodes);
 
     const handleExport = React.useCallback(
         async (exporterName, exporterSettings) => {
             const meta = { ...savedMeta, [exporterName]: exporterSettings };
-            onSave(exportNodes, exportEdges, meta);
+            await onSave(nodes, edges, meta);
 
             const { data: exportData } = await DataDocResource.exportDAG(
                 docId,
                 exporterName,
-                exportNodes,
-                exportEdges,
+                nodes,
+                edges,
                 exporterSettings
             );
             return exportData;
         },
-        [docId, exportEdges, exportNodes, onSave, savedMeta]
+        [docId, nodes, edges, onSave, savedMeta]
     );
 
     const graphDOM = (
         <div className="DataDocDAGExporter-graph-wrapper" ref={dropRef}>
-            <DataDocDAGExporterGraph
-                queryCells={graphQueryCells}
-                savedNodes={savedNodes}
-                savedEdges={savedEdges}
-                onDeleteCell={deleteGraphQueryCell}
-                renderSaveComponent={
-                    readonly || isExporting
-                        ? null
-                        : (nodes, edges) => (
-                              <DataDocDAGExporterSave
-                                  onSave={() => onSave(nodes, edges)}
-                                  onExport={() => {
-                                      setIsExporting(true);
-                                      setExportNodes(nodes);
-                                      setExportEdges(edges);
-                                  }}
-                              />
-                          )
-                }
-                readonly={isExporting || readonly}
-            />
+            <div className="DataDocDAGExporterGraph">
+                <FlowGraph
+                    isInteractive={isInteractive}
+                    nodes={nodes}
+                    edges={edges}
+                    setNodes={setNodes}
+                    setEdges={setEdges}
+                    nodeTypes={QueryDAGNodeTypes}
+                />
+            </div>
+            {isInteractive && (
+                <DataDocDAGExporterSave
+                    onSave={() => onSave(nodes, edges)}
+                    onExport={async () => {
+                        setIsExporting(true);
+                    }}
+                />
+            )}
         </div>
     );
 
@@ -116,7 +117,7 @@ export const DataDocDAGExporter: React.FunctionComponent<IProps> = ({
 };
 
 export const DataDocDAGExporterSave: React.FunctionComponent<{
-    onSave: () => void;
+    onSave: () => Promise<any>;
     onExport: () => void;
 }> = ({ onSave, onExport }) => (
     <div className="DataDocDAGExporter-bottom flex-row right-align">
@@ -124,8 +125,8 @@ export const DataDocDAGExporterSave: React.FunctionComponent<{
         <Button
             icon="FileOutput"
             title="Save & Export"
-            onClick={() => {
-                onSave();
+            onClick={async () => {
+                await onSave();
                 onExport();
             }}
         />
