@@ -48,6 +48,7 @@ export function getWithinEnvUrl(subpath: string) {
     return `/${currentEnv.name}/${subpath}`;
 }
 
+// FIXME: check why PR #856 breaks the typecasting
 export function getCurrentEnv() {
     return currentEnvironmentSelector(
         (reduxStore.getState() as unknown) as IStoreState
