@@ -49,5 +49,7 @@ export function getWithinEnvUrl(subpath: string) {
 }
 
 export function getCurrentEnv() {
-    return currentEnvironmentSelector(reduxStore.getState() as IStoreState);
+    return currentEnvironmentSelector(
+        (reduxStore.getState() as unknown) as IStoreState
+    );
 }
