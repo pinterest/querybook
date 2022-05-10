@@ -8,7 +8,6 @@ import { useSelector } from 'react-redux';
 import { queryEngineSelector } from 'redux/queryEngine/selector';
 import { TableUploadResource } from 'resource/tableUpload';
 import { Button } from 'ui/Button/Button';
-import { IconButton } from 'ui/Button/IconButton';
 import { SimpleField } from 'ui/FormikField/SimpleField';
 import { StyledText } from 'ui/StyledText/StyledText';
 import { ITableUploadFormikForm } from './types';
@@ -63,7 +62,7 @@ export const TableUploaderSpecForm: React.FC<{
 
             <FieldArray
                 name="table_config.column_name_types"
-                render={(arrayHelpers) => {
+                render={() => {
                     const columnRowDOMs = values.table_config.column_name_types.map(
                         (_, idx) => (
                             <div key={idx} className="flex-row">
@@ -86,11 +85,6 @@ export const TableUploaderSpecForm: React.FC<{
                                         withDeselect
                                     />
                                 </div>
-
-                                <IconButton
-                                    icon="X"
-                                    onClick={() => arrayHelpers.remove(idx)}
-                                />
                             </div>
                         )
                     );
@@ -126,13 +120,6 @@ export const TableUploaderSpecForm: React.FC<{
                             </div>
 
                             {columnRowDOMs}
-                            <div className="center-align mv4">
-                                <Button
-                                    icon="Plus"
-                                    title="Add New Column"
-                                    onClick={() => arrayHelpers.push(['', ''])}
-                                />
-                            </div>
                         </div>
                     );
                 }}

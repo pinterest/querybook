@@ -73,4 +73,5 @@ LOG_LOCATION: ~
 
 # --------------- Table Upload (Experimental) ---------------
 # Used by S3 uploader to upload table to that path, trailing slash optional
+# For Example: s3://bucket/key_prefix/
 TABLE_UPLOAD_S3_PATH: ~

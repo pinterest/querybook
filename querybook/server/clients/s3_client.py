@@ -132,3 +132,30 @@ class S3FileReader(ChunkReader):
         raw = self._left_over_bytes + self._body.read(self._read_size)
         valid_raw, self._left_over_bytes = split_by_last_invalid_utf8_char(raw)
         return valid_raw.decode("utf-8")
+
+
+class S3FileCopier(object):
+    """Used to copy files managed by Querybook (using QuerybookSettings)
+    to an arbitrary S3 location
+    """
+
+    def __init__(self, resource_path: str):
+        self._source_resource = {
+            "Bucket": QuerybookSettings.STORE_BUCKET_NAME,
+            "Key": resource_path,
+        }
+        self._s3 = boto3.resource("s3")
+
+    @classmethod
+    def s3_path_to_bucket_key(cls, path: str):
+        if path.startswith("s3://"):
+            path = path[5:]
+
+        bucket, key = path.split("/", 1)
+        return bucket, key
+
+    def copy_to(self, target_s3_path: str):
+        target_bucket, target_obj_path = S3FileCopier.s3_path_to_bucket_key(
+            target_s3_path
+        )
+        self._s3.meta.client.copy(self._source_resource, target_bucket, target_obj_path)

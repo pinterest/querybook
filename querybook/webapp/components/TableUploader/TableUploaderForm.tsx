@@ -1,11 +1,13 @@
 import React, { useCallback, useMemo } from 'react';
-import ds from 'lib/datasource';
 import { TableUploaderStepValue, ITableUploadFormikForm } from './types';
 import { Formik } from 'formik';
 import { TableUploaderStep } from './TableUploaderStep';
 import { ITableUploaderSourceForm } from './TableUploaderSourceForm';
 import { TableUploaderSpecForm } from './TableUploaderSpecForm';
 import { TableUploaderConfirmForm } from './TableUploaderConfirmForm';
+import { TableUploadResource } from 'resource/tableUpload';
+import toast from 'react-hot-toast';
+import { navigateWithinEnv } from 'lib/utils/query-string';
 
 interface ITableUploaderFormProps {
     metastoreId: number;
@@ -44,13 +46,23 @@ export const TableUploaderForm: React.FC<ITableUploaderFormProps> = ({
     );
 
     const handleSubmit = useCallback(
-        (tableUploadConfig: ITableUploadFormikForm) => {
+        async (tableUploadConfig: ITableUploadFormikForm) => {
             const {
                 auto_generated_column_types: _,
                 ...uploadForm
             } = tableUploadConfig;
 
-            ds.upload(`/table_upload/preview/`, uploadForm);
+            const createTablePromise = TableUploadResource.createTable(
+                uploadForm
+            ).then(({ data: tableId }) => {
+                navigateWithinEnv(`/table/${tableId}/`);
+            });
+
+            toast.promise(createTablePromise, {
+                loading: 'Creating table...',
+                success: 'Table created!',
+                error: 'Fail to create table',
+            });
         },
         []
     );

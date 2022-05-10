@@ -1,9 +1,11 @@
 import json
+
+from flask_login import current_user
 from app.datasource import register
 from flask import request
 
-from lib.table_upload.exporter.sqlalchemy_exporter import SqlalchemyExporter
 from lib.table_upload.importer.importer_factory import get_importer
+from lib.table_upload.exporter.exporter_factory import get_exporter
 
 
 @register("/table_upload/preview/", methods=["POST"])
@@ -25,5 +27,5 @@ def perform_table_upload():
     engine_id = request.form["engine_id"]
 
     importer = get_importer(import_config, file_uploaded)
-    exporter = SqlalchemyExporter(engine_id, importer, table_config)
+    exporter = get_exporter(engine_id, current_user.id, table_config, importer)
     return exporter.upload()
