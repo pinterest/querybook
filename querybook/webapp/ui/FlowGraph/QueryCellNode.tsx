@@ -16,6 +16,7 @@ export interface IQueryCellNodeProps {
     readonly: boolean;
 }
 
+// TODO: make edge deletable
 export const QueryCellNode = React.memo<IProps>(({ data }) => {
     const { label, readonly, onDelete } = data;
 

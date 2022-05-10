@@ -109,6 +109,7 @@ export const DataDocDAGExporter: React.FunctionComponent<IProps> = ({
                     <DataDocDAGExporterSettings
                         onExport={handleExport}
                         savedMeta={savedMeta}
+                        onSave={(meta) => onSave(nodes, edges, meta)}
                     />
                 </div>
             )}
@@ -123,8 +124,8 @@ export const DataDocDAGExporterSave: React.FunctionComponent<{
     <div className="DataDocDAGExporter-bottom flex-row right-align">
         <Button icon="Save" title="Save Progress" onClick={onSave} />
         <Button
-            icon="FileOutput"
-            title="Save & Export"
+            icon="ChevronRight"
+            title="Configure Exporter"
             onClick={async () => {
                 await onSave();
                 onExport();
