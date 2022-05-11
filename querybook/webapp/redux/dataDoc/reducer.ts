@@ -463,10 +463,7 @@ function dagExporterDataByNameReducer(
         switch (action.type) {
             case '@@dataDoc/RECEIVE_DATA_DOC_EXPORTERS': {
                 action.payload.exporters.forEach((exporter) => {
-                    draft[exporter.name] = {
-                        meta: exporter.meta,
-                        type: exporter.type,
-                    };
+                    draft[exporter.name] = exporter;
                 });
                 return;
             }

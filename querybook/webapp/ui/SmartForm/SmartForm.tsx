@@ -35,10 +35,6 @@ export function prependOnChangePath<T>(
         onChange(subpath ? path + '.' + subpath : path, value);
 }
 
-function isSimpleField(fieldType: FormFieldType | CompositeFieldType) {
-    return ['string', 'boolean', 'number'].includes(fieldType);
-}
-
 function SimpleFormField<T>({
     formField,
     value,

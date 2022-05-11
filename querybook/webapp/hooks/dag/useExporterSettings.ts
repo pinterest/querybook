@@ -4,6 +4,8 @@ import { useDispatch, useSelector } from 'react-redux';
 import { fetchDAGExporters } from 'redux/dataDoc/action';
 import { IStoreState } from 'redux/store/types';
 
+import { updateValue } from 'ui/SmartForm/formFunctions';
+
 interface IProps {
     savedMeta: Record<string, any>;
 }
@@ -16,51 +18,27 @@ export function useExporterSettings({ savedMeta }: IProps) {
     );
 
     const [selectedExporter, setSelectedExporter] = React.useState<string>();
-    const [settingValues, setSettingValues] = React.useState<any>();
+    const [settingValues, setSettingValues] = React.useState<
+        Record<string, any>
+    >({});
 
     const exporterNames = React.useMemo(
         () => Object.keys(exporterDataByName || {}),
         [exporterDataByName]
     );
 
-    const exporterMeta = React.useMemo(
-        () => exporterDataByName[selectedExporter]?.meta,
-        [exporterDataByName, selectedExporter]
-    );
-    const exportType = React.useMemo(
-        () => exporterDataByName[selectedExporter]?.type,
-        [exporterDataByName, selectedExporter]
-    );
-    const smartFormFields = React.useMemo(() => {
-        if (!exporterMeta) {
-            return {};
-        }
-        const fields = {};
-        Object.entries(exporterMeta).forEach(([key, value]) => {
-            const field = {
-                field_type: value.type,
-            };
-            if (value.options) {
-                field['options'] = value.options;
-            }
-            fields[key] = field;
-        });
-        return fields;
-    }, [exporterMeta]);
+    const exporterMeta = exporterDataByName[selectedExporter]?.meta;
+    const exportType = exporterDataByName[selectedExporter]?.type;
 
     const handleSettingValuesChange = React.useCallback((key, value) => {
-        setSettingValues((currVals) => {
-            const vals = { ...currVals };
-            vals[key] = value;
-            return vals;
-        });
+        setSettingValues((currVals) => updateValue(currVals, key, value));
     }, []);
 
     React.useEffect(() => {
         if (exporterNames.length === 0) {
             dispatch(fetchDAGExporters());
         }
-    }, [dispatch, exporterNames]);
+    }, [dispatch]);
 
     React.useEffect(() => {
         if (exporterNames.length && !selectedExporter) {
@@ -72,24 +50,17 @@ export function useExporterSettings({ savedMeta }: IProps) {
         if (savedMeta[selectedExporter]) {
             setSettingValues(savedMeta[selectedExporter]);
         }
-    }, [savedMeta, selectedExporter]);
-
-    React.useEffect(() => {
-        if (exporterMeta && !settingValues) {
-            const initialValues = {};
-            Object.keys(exporterMeta).map((key) => {
-                initialValues[key] = undefined;
-            });
-            setSettingValues(initialValues);
+        if (selectedExporter === undefined && Object.keys(savedMeta).length) {
+            setSelectedExporter(Object.keys(savedMeta)?.[0]);
         }
-    }, [exporterMeta, settingValues]);
+    }, [savedMeta, selectedExporter]);
 
     return {
         exporterNames,
         selectedExporter,
         setSelectedExporter,
         settingValues,
-        smartFormFields,
+        exporterMeta,
         handleSettingValuesChange,
         exportType,
     };

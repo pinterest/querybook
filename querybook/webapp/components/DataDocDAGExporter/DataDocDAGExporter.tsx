@@ -2,19 +2,17 @@ import * as React from 'react';
 
 import { useSavedDAG } from 'hooks/dag/useSavedDAG';
 import {
-    QueryDAGNodeTypes,
     useExporterDAG,
     useQueryCells,
     useUnusedQueryCells,
 } from 'hooks/dag/useExporterDAG';
-import { DataDocResource } from 'resource/dataDoc';
 
-import { DataDocDagExporterList } from './DataDocDAGExporterList';
-import { DataDocDAGExporterSettings } from './DataDocDAGExporterSettings';
+import { DataDocDAGExporterGraph } from './DataDocDAGExporterGraph';
+import { DataDocDAGExporterForm } from './DataDocDAGExporterForm';
 import { Button } from 'ui/Button/Button';
-import { FlowGraph } from 'ui/FlowGraph/FlowGraph';
 
 import './DataDocDAGExporter.scss';
+import { DataDocResource } from 'resource/dataDoc';
 
 interface IProps {
     docId: number;
@@ -28,6 +26,7 @@ export const DataDocDAGExporter: React.FunctionComponent<IProps> = ({
     readonly,
 }) => {
     const [isExporting, setIsExporting] = React.useState(false);
+    const [exportData, setExportData] = React.useState<string>();
     const isInteractive = !(readonly || isExporting);
 
     const { onSave, savedNodes, savedEdges, savedMeta } = useSavedDAG(docId);
@@ -41,7 +40,7 @@ export const DataDocDAGExporter: React.FunctionComponent<IProps> = ({
     const unusedQueryCells = useUnusedQueryCells(queryCells, nodes);
 
     const handleExport = React.useCallback(
-        async (exporterName, exporterSettings) => {
+        async (exporterName: string, exporterSettings: Record<string, any>) => {
             const meta = { ...savedMeta, [exporterName]: exporterSettings };
             await onSave(nodes, edges, meta);
 
@@ -52,66 +51,41 @@ export const DataDocDAGExporter: React.FunctionComponent<IProps> = ({
                 edges,
                 exporterSettings
             );
+            setExportData(exportData);
             return exportData;
         },
         [docId, nodes, edges, onSave, savedMeta]
     );
 
-    const graphDOM = (
-        <div className="DataDocDAGExporter-graph-wrapper" ref={dropRef}>
-            <div className="DataDocDAGExporterGraph">
-                <FlowGraph
-                    isInteractive={isInteractive}
+    return (
+        <div className="DataDocDAGExporter">
+            {isExporting ? (
+                <DataDocDAGExporterForm
+                    handleExport={handleExport}
+                    savedMeta={savedMeta}
+                    dropRef={dropRef}
                     nodes={nodes}
                     edges={edges}
                     setNodes={setNodes}
                     setEdges={setEdges}
-                    nodeTypes={QueryDAGNodeTypes}
+                    onSave={onSave}
+                    onReturn={() => setIsExporting(false)}
+                    clearExportData={() => setExportData(undefined)}
+                    exportData={exportData}
                 />
-            </div>
-            {isInteractive && (
-                <DataDocDAGExporterSave
-                    onSave={() => onSave(nodes, edges)}
+            ) : (
+                <DataDocDAGExporterGraph
+                    unusedQueryCells={unusedQueryCells}
+                    dropRef={dropRef}
+                    nodes={nodes}
+                    edges={edges}
+                    setNodes={setNodes}
+                    setEdges={setEdges}
+                    onSave={onSave}
                     onExport={async () => {
                         setIsExporting(true);
                     }}
                 />
-            )}
-        </div>
-    );
-
-    return (
-        <div className="DataDocDAGExporter">
-            {!isExporting && (
-                <DataDocDagExporterList queryCells={unusedQueryCells} />
-            )}
-            <div
-                className={
-                    isExporting
-                        ? 'DataDocDAGExporter-graph'
-                        : 'DataDocDAGExporter-main'
-                }
-            >
-                {graphDOM}
-                {isExporting && (
-                    <div className="DataDocDAGExporter-bottom flex-row">
-                        <Button
-                            icon="ChevronLeft"
-                            title="Return to Graph"
-                            onClick={() => setIsExporting(false)}
-                            className="mr12"
-                        />
-                    </div>
-                )}
-            </div>
-            {isExporting && (
-                <div className="DataDocDAGExporter-main">
-                    <DataDocDAGExporterSettings
-                        onExport={handleExport}
-                        savedMeta={savedMeta}
-                        onSave={(meta) => onSave(nodes, edges, meta)}
-                    />
-                </div>
             )}
         </div>
     );

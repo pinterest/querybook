@@ -13,7 +13,6 @@ import {
     IRawDataDoc,
     IDataDocDAGExport,
     IDataDocDAGExporter,
-    IDataDocDAGExporterData,
 } from 'const/datadoc';
 import { IAccessRequest } from 'const/accessRequest';
 import { IStoreState } from '../store/types';
@@ -327,5 +326,5 @@ export interface IDataDocState {
     favoriteDataDocIds: number[];
     recentDataDocIds: number[];
     dagExportByDocId: Record<number, IDataDocDAGExport>;
-    dagExporterDataByName: Record<string, IDataDocDAGExporterData>;
+    dagExporterDataByName: Record<string, IDataDocDAGExporter>;
 }

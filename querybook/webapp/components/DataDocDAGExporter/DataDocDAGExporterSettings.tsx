@@ -15,44 +15,38 @@ interface IProps {
     onExport: (name: string, settings: any) => Promise<string>;
     savedMeta: Record<string, any>;
     onSave: (meta: any) => Promise<any>;
+    clearExportData: () => void;
+    exportData?: string;
 }
 
 export const DataDocDAGExporterSettings: React.FunctionComponent<IProps> = ({
     onExport,
     savedMeta,
     onSave,
+    clearExportData,
+    exportData,
 }) => {
-    const [isWaitingForLink, setIsWaitingForLink] = React.useState<boolean>(
-        false
-    );
-    const [exportData, setExportData] = React.useState<string>();
-
     const {
         exporterNames,
         selectedExporter,
         setSelectedExporter,
         settingValues,
-        smartFormFields,
+        exporterMeta,
         handleSettingValuesChange,
         exportType,
     } = useExporterSettings({ savedMeta });
+
     const exportModalTitle = React.useMemo(
         () => `Export to ${titleize(selectedExporter, '_', ' ')}`,
         [selectedExporter]
     );
 
     React.useEffect(() => {
-        setExportData(undefined);
-    }, [selectedExporter]);
+        clearExportData();
+    }, [selectedExporter, settingValues]);
 
     const handleExport = React.useCallback(async () => {
-        setIsWaitingForLink(true);
-        const exportData: string = await onExport(
-            selectedExporter,
-            settingValues
-        );
-        setExportData(exportData);
-        setIsWaitingForLink(false);
+        await onExport(selectedExporter, settingValues);
     }, [onExport, selectedExporter, settingValues]);
 
     return (
@@ -65,12 +59,9 @@ export const DataDocDAGExporterSettings: React.FunctionComponent<IProps> = ({
                     onChange={setSelectedExporter}
                 />
                 <FormSectionHeader>Settings</FormSectionHeader>
-                {settingValues && (
+                {exporterMeta && settingValues && (
                     <SmartForm
-                        formField={{
-                            field_type: 'struct',
-                            fields: smartFormFields,
-                        }}
+                        formField={exporterMeta}
                         value={settingValues}
                         onChange={handleSettingValuesChange}
                     />
@@ -92,17 +83,13 @@ export const DataDocDAGExporterSettings: React.FunctionComponent<IProps> = ({
                                 ' '
                             )}`}
                             onClick={handleExport}
-                            isLoading={isWaitingForLink}
                         />
                     </>
                 )}
             </div>
             {exportData &&
                 (exportType === 'url' ? (
-                    <Modal
-                        onHide={() => setExportData(undefined)}
-                        title={exportModalTitle}
-                    >
+                    <Modal onHide={clearExportData} title={exportModalTitle}>
                         <div className="flex-center mv24">
                             <Button
                                 icon="ChevronRight"
@@ -115,7 +102,7 @@ export const DataDocDAGExporterSettings: React.FunctionComponent<IProps> = ({
                     <CopyPasteModal
                         text={exportData}
                         title={exportModalTitle}
-                        onHide={() => setExportData(undefined)}
+                        onHide={clearExportData}
                     />
                 ))}
         </div>

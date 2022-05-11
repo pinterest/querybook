@@ -678,7 +678,7 @@ export function receiveDAGExport(
     };
 }
 
-export function fetchDAGExporters(): ThunkResult<Promise<any>> {
+export function fetchDAGExporters(): ThunkResult<Promise<void>> {
     return async (dispatch) => {
         const { data: exporters } = await DataDocResource.getDAGExporters();
 

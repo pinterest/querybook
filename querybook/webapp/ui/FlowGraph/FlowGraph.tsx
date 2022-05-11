@@ -7,7 +7,6 @@ import ReactFlow, {
     ConnectionLineType,
     Controls,
     MiniMap,
-    Node,
     addEdge,
     Background,
     Connection,
@@ -15,6 +14,7 @@ import ReactFlow, {
     applyEdgeChanges,
     NodeChange,
     EdgeChange,
+    Node,
 } from 'react-flow-renderer';
 
 import { Button } from 'ui/Button/Button';

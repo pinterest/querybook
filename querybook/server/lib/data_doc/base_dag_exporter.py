@@ -11,10 +11,9 @@ class BaseDAGExporter(metaclass=ABCMeta):
     @property
     @abstractmethod
     def dag_exporter_type(self) -> str:
-        # Can be one of 'url' | 'text' | 'none'
+        # Can be one of 'url' | 'text'
         # Url exports returns a url for user to open
         # Text exports opens up a copy paste modal for user to copy
-        # None returns nothing since the result is exported without anything to track
         raise NotImplementedError()
 
     # TODO: update documentation

@@ -94,21 +94,8 @@ export interface IDataDocDAGExport {
     meta: Record<string, any>;
 }
 
-export interface IDataDocDAGExporterData {
-    type: 'url' | 'text';
-    meta: IDataDocDAGExporterMetaOption;
-}
-
-export interface IDataDocDAGExporter extends IDataDocDAGExporterData {
+export interface IDataDocDAGExporter {
     name: string;
-}
-
-export type IDataDocDAGExporterMeta = Record<
-    string,
-    IDataDocDAGExporterMetaOption
->;
-
-export interface IDataDocDAGExporterMetaOption {
-    type: 'string' | 'number' | 'select';
-    options: string[];
+    type: 'url' | 'text';
+    meta: IFormField | IStructFormField | IExpandableFormField;
 }
