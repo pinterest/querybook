@@ -28,6 +28,8 @@ from logic.query_execution import get_query_execution_by_id
 from logic.schedule import run_and_log_scheduled_task
 from models.environment import Environment
 from lib.notify.utils import notify_user
+from lib.data_doc import utils as dag_exporter
+from lib.data_doc.all_dag_exporter import ALL_DAG_EXPORTERS
 
 LOG = get_logger(__file__)
 
@@ -678,3 +680,16 @@ def get_dag_export(id):
 def create_or_update_dag_export(id, dag, meta):
     assert_can_write(id)
     return logic.create_or_update_dag_export(data_doc_id=id, dag=dag, meta=meta)
+
+
+@register("/datadoc/dag_exporter/", methods=["GET"])
+def get_dag_exporters():
+    return ALL_DAG_EXPORTERS
+
+
+@register("/datadoc/<int:id>/dag_export/export/", methods=["POST"])
+def save_and_export_dag(id, exporter_name, nodes, edges, meta):
+    assert_can_write(id)
+    return dag_exporter.export_dag(
+        nodes=nodes, edges=edges, meta=meta, dag_exporter_name=exporter_name
+    )

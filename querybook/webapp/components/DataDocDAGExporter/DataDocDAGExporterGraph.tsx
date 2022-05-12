@@ -1,62 +1,54 @@
 import * as React from 'react';
-import { IDataQueryCell } from 'const/datadoc';
-import { FlowGraph, initialNodePosition } from 'ui/FlowGraph/FlowGraph';
-import { Edge, Node, XYPosition } from 'react-flow-renderer';
+import { ConnectDropTarget } from 'react-dnd';
+import { Edge, Node } from 'react-flow-renderer';
 
-import { QueryCellNode } from 'ui/FlowGraph/QueryCellNode';
+import { QueryDAGNodeTypes } from 'hooks/dag/useExporterDAG';
+import { IDataDocDAGExport, IDataQueryCell } from 'const/datadoc';
+
+import { DataDocDAGExporterSave } from './DataDocDAGExporter';
+import { DataDocDagExporterList } from './DataDocDAGExporterList';
+import { FlowGraph } from 'ui/FlowGraph/FlowGraph';
 
 interface IProps {
-    savedNodes: Node[];
-    savedEdges: Edge[];
-    queryCells: IDataQueryCell[];
-    onDeleteCell: (id: number) => void;
-    renderSaveComponent?: (nodes: Node[], edges: Edge[]) => React.ReactElement;
-    readonly?: boolean;
+    unusedQueryCells: IDataQueryCell[];
+    dropRef: ConnectDropTarget;
+    nodes: Node[];
+    edges: Edge[];
+    setNodes: (value: React.SetStateAction<Node[]>) => void;
+    setEdges: (value: React.SetStateAction<Edge[]>) => void;
+    onSave: (nodes: Node[], edges: Edge[]) => Promise<IDataDocDAGExport>;
+    onExport: () => void;
 }
 
-const queryCellNode = 'queryCellNode';
-
-export const DataDocDAGExporterGraph: React.FunctionComponent<IProps> = ({
-    queryCells,
-    savedNodes,
-    savedEdges,
-    onDeleteCell,
-    renderSaveComponent,
-    readonly,
-}) => {
-    const convertCellToNode = React.useCallback(
-        (cell: IDataQueryCell, savedPosition?: XYPosition) => ({
-            id: cell.id.toString(),
-            type: queryCellNode,
-            data: {
-                label: cell.meta?.title,
-                onDelete: () => onDeleteCell(cell.id),
-                readonly,
-            },
-            position: savedPosition ?? initialNodePosition,
-        }),
-        [onDeleteCell, readonly]
-    );
-
-    const nodes = React.useMemo<Node[]>(() => {
-        const savedPositionsById: Record<string, XYPosition> = {};
-        savedNodes.forEach((node) => {
-            savedPositionsById[node.id] = node.position;
-        });
-        return queryCells.map((cell: IDataQueryCell) =>
-            convertCellToNode(cell, savedPositionsById[cell.id])
-        );
-    }, [convertCellToNode, queryCells, savedNodes]);
-
-    return (
-        <div className="DataDocDAGExporterGraph">
-            <FlowGraph
-                isInteractive={!readonly}
-                nodes={nodes}
-                edges={savedEdges}
-                nodeTypes={{ queryCellNode: QueryCellNode }}
-                renderSaveComponent={renderSaveComponent}
-            />
+export const DataDocDAGExporterGraph = ({
+    unusedQueryCells,
+    dropRef,
+    nodes,
+    edges,
+    setNodes,
+    setEdges,
+    onSave,
+    onExport,
+}: IProps) => (
+    <>
+        <DataDocDagExporterList queryCells={unusedQueryCells} />
+        <div className="DataDocDAGExporter-main">
+            <div className="DataDocDAGExporter-graph-wrapper" ref={dropRef}>
+                <div className="DataDocDAGExporterGraph">
+                    <FlowGraph
+                        isInteractive={true}
+                        nodes={nodes}
+                        edges={edges}
+                        setNodes={setNodes}
+                        setEdges={setEdges}
+                        nodeTypes={QueryDAGNodeTypes}
+                    />
+                </div>
+                <DataDocDAGExporterSave
+                    onSave={() => onSave(nodes, edges)}
+                    onExport={onExport}
+                />
+            </div>
         </div>
-    );
-};
+    </>
+);
