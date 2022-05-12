@@ -29,8 +29,8 @@ export const DataDocDAGExporterSettings: React.FunctionComponent<IProps> = ({
         handleSettingValuesChange,
     } = useExporterSettings({ savedMeta });
 
-    const handleExport = React.useCallback(() => {
-        onExport(selectedExporter, settingValues);
+    const handleExport = React.useCallback(async () => {
+        await onExport(selectedExporter, settingValues);
     }, [onExport, selectedExporter, settingValues]);
 
     return (
