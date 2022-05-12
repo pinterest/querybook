@@ -14,6 +14,7 @@ import {
 } from 'ui/Form/FormField';
 import { Markdown } from 'ui/Markdown/Markdown';
 import { ToggleSwitch } from 'ui/ToggleSwitch/ToggleSwitch';
+import { SimpleReactSelect } from 'ui/SimpleReactSelect/SimpleReactSelect';
 
 import './SmartForm.scss';
 
@@ -32,10 +33,6 @@ export function prependOnChangePath<T>(
 ) {
     return (subpath: string, value: T) =>
         onChange(subpath ? path + '.' + subpath : path, value);
-}
-
-function isSimpleField(fieldType: FormFieldType | CompositeFieldType) {
-    return ['string', 'boolean', 'number'].includes(fieldType);
 }
 
 function SimpleFormField<T>({
@@ -57,6 +54,7 @@ function SimpleFormField<T>({
         required,
         helper,
         field_type: fieldType,
+        options,
     } = formField;
     let controlDOM: React.ReactChild;
     if (fieldType === 'string' || fieldType === 'number') {
@@ -87,6 +85,14 @@ function SimpleFormField<T>({
     } else if (fieldType === 'boolean') {
         controlDOM = (
             <ToggleSwitch checked={!!value} onChange={onFieldChange} />
+        );
+    } else if (fieldType === 'select') {
+        controlDOM = (
+            <SimpleReactSelect
+                value={(value as unknown) as string}
+                options={options}
+                onChange={onFieldChange}
+            />
         );
     }
 

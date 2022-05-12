@@ -176,8 +176,11 @@ export const DataTableViewLineage: React.FunctionComponent<IDataTableViewLineage
             <FlowGraph
                 nodes={nodes}
                 edges={edges}
-                nodeTypes={{ lineageNode: LineageNode }}
+                nodeTypes={LineageDAGNodeTypes}
+                autoLayout
             />
         </div>
     );
 };
+
+const LineageDAGNodeTypes = { lineageNode: LineageNode };

@@ -1,3 +1,4 @@
+from multiprocessing.dummy import Array
 import re
 from abc import ABCMeta, abstractmethod
 from typing import Dict, Union
@@ -8,6 +9,7 @@ class FormFieldType(Enum):
     String = "string"
     Boolean = "boolean"
     Number = "number"
+    Select = "select"
 
 
 class CompositeFormFieldType(Enum):
@@ -39,6 +41,7 @@ class FormField(AbstractFormField):
         # These two only applies to string field
         regex: str = None,
         hidden: bool = False,
+        options: Array = None,
     ):
         """Initialize the form field
         Keyword Arguments:
@@ -58,6 +61,7 @@ class FormField(AbstractFormField):
         self.helper = helper
         self.hidden = hidden
         self.field_type = field_type
+        self.options = options
 
     def to_dict(self):
         return {
@@ -67,6 +71,7 @@ class FormField(AbstractFormField):
             "helper": self.helper,
             "hidden": self.hidden,
             "field_type": self.field_type.value,
+            "options": self.options,
         }
 
 

@@ -1,12 +1,18 @@
 import * as React from 'react';
 
 import { useSavedDAG } from 'hooks/dag/useSavedDAG';
-import { useGraphQueryCells } from 'hooks/dag/useGraphQueryCells';
+import {
+    useExporterDAG,
+    useQueryCells,
+    useUnusedQueryCells,
+} from 'hooks/dag/useExporterDAG';
+import { DataDocResource } from 'resource/dataDoc';
 
-import { DataDocDagExporterList } from './DataDocDAGExporterList';
 import { DataDocDAGExporterGraph } from './DataDocDAGExporterGraph';
-
+import { DataDocDAGExporterForm } from './DataDocDAGExporterForm';
 import { Button } from 'ui/Button/Button';
+import { CopyPasteModal } from 'ui/CopyPasteModal/CopyPasteModal';
+import { Modal } from 'ui/Modal/Modal';
 
 import './DataDocDAGExporter.scss';
 
@@ -21,47 +27,102 @@ export const DataDocDAGExporter: React.FunctionComponent<IProps> = ({
     docId,
     readonly,
 }) => {
-    const { onSave, savedNodes, savedEdges } = useSavedDAG(docId);
+    const [isExporting, setIsExporting] = React.useState(false);
+    const [exportData, setExportData] = React.useState<string>();
+    const [exportType, setExportType] = React.useState<string>();
+    const isInteractive = !(readonly || isExporting);
 
-    const {
-        deleteGraphQueryCell,
-        unusedQueryCells,
-        graphQueryCells,
-        dropRef,
-    } = useGraphQueryCells(docId, savedNodes, readonly);
+    const { onSave, savedNodes, savedEdges, savedMeta } = useSavedDAG(docId);
+    const queryCells = useQueryCells(docId);
+    const [nodes, edges, setNodes, setEdges, dropRef] = useExporterDAG(
+        queryCells,
+        savedNodes,
+        savedEdges,
+        !isInteractive
+    );
+    const unusedQueryCells = useUnusedQueryCells(queryCells, nodes);
+
+    const handleExport = React.useCallback(
+        async (exporterName: string, exporterSettings: Record<string, any>) => {
+            const meta = { ...savedMeta, [exporterName]: exporterSettings };
+            await onSave(nodes, edges, meta);
+
+            const { data: exportData } = await DataDocResource.exportDAG(
+                docId,
+                exporterName,
+                nodes,
+                edges,
+                exporterSettings
+            );
+            setExportData(exportData?.export);
+            setExportType(exportData?.type);
+        },
+        [docId, nodes, edges, onSave, savedMeta]
+    );
 
     return (
         <div className="DataDocDAGExporter">
-            <DataDocDagExporterList queryCells={unusedQueryCells} />
-            <div className="DataDocDAGExporter-main">
-                <div className="DataDocDAGExporter-graph-wrapper" ref={dropRef}>
-                    <DataDocDAGExporterGraph
-                        queryCells={graphQueryCells}
-                        savedNodes={savedNodes}
-                        savedEdges={savedEdges}
-                        onDeleteCell={deleteGraphQueryCell}
-                        renderSaveComponent={
-                            readonly
-                                ? null
-                                : (nodes, edges) => (
-                                      <DataDocDAGExporterSave
-                                          onSave={() => onSave(nodes, edges)}
-                                      />
-                                  )
-                        }
-                        readonly={readonly}
+            {isExporting ? (
+                <DataDocDAGExporterForm
+                    handleExport={handleExport}
+                    savedMeta={savedMeta}
+                    nodes={nodes}
+                    edges={edges}
+                    onSave={onSave}
+                    onReturn={() => setIsExporting(false)}
+                />
+            ) : (
+                <DataDocDAGExporterGraph
+                    unusedQueryCells={unusedQueryCells}
+                    dropRef={dropRef}
+                    nodes={nodes}
+                    edges={edges}
+                    setNodes={setNodes}
+                    setEdges={setEdges}
+                    onSave={onSave}
+                    onExport={async () => {
+                        setIsExporting(true);
+                    }}
+                />
+            )}
+            {exportData &&
+                (exportType === 'url' ? (
+                    <Modal
+                        onHide={() => setExportData(undefined)}
+                        title="Export Data"
+                    >
+                        <div className="flex-center mv24">
+                            <Button
+                                icon="ChevronRight"
+                                title="Go To Export"
+                                onClick={() => window.open(exportData)}
+                            />
+                        </div>
+                    </Modal>
+                ) : (
+                    <CopyPasteModal
+                        text={exportData}
+                        title="Export Data"
+                        onHide={() => setExportData(undefined)}
                     />
-                </div>
-            </div>
+                ))}
         </div>
     );
 };
 
 export const DataDocDAGExporterSave: React.FunctionComponent<{
-    onSave: () => void;
-}> = ({ onSave }) => (
-    <div className="DataDocDAGExporter-bottom flex-row mr12">
+    onSave: () => Promise<any>;
+    onExport: () => void;
+}> = ({ onSave, onExport }) => (
+    <div className="DataDocDAGExporter-bottom flex-row right-align">
         <Button icon="Save" title="Save Progress" onClick={onSave} />
-        <Button icon="FileOutput" title="Export" />
+        <Button
+            icon="ChevronRight"
+            title="Configure Exporter"
+            onClick={async () => {
+                await onSave();
+                onExport();
+            }}
+        />
     </div>
 );

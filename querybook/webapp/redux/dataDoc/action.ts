@@ -12,6 +12,7 @@ import {
     IDataCellMeta,
     IRawDataDoc,
     IDataDocDAGExport,
+    IDataDocDAGExporter,
 } from 'const/datadoc';
 import { IAccessRequest } from 'const/accessRequest';
 
@@ -30,6 +31,7 @@ import {
     ISaveDataDocStartAction,
     IReceiveDataDocsAction,
     IReceiveDataDocDAGExportAction,
+    IReceiveDataDocDAGExportersAction,
 } from './types';
 import {
     DataDocPermission,
@@ -672,6 +674,25 @@ export function receiveDAGExport(
         payload: {
             docId,
             DAGExport,
+        },
+    };
+}
+
+export function fetchDAGExporters(): ThunkResult<Promise<void>> {
+    return async (dispatch) => {
+        const { data: exporters } = await DataDocResource.getDAGExporters();
+
+        dispatch(receiveDAGExporters(exporters));
+    };
+}
+
+export function receiveDAGExporters(
+    exporters: IDataDocDAGExporter[]
+): IReceiveDataDocDAGExportersAction {
+    return {
+        type: '@@dataDoc/RECEIVE_DATA_DOC_EXPORTERS',
+        payload: {
+            exporters,
         },
     };
 }

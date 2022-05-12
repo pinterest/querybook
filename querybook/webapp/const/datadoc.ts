@@ -93,3 +93,9 @@ export interface IDataDocDAGExport {
     dag: Record<string, Node[] | Edge[]>;
     meta: Record<string, any>;
 }
+
+export interface IDataDocDAGExporter {
+    name: string;
+    type: 'url' | 'text';
+    meta: IFormField | IStructFormField | IExpandableFormField;
+}
