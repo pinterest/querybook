@@ -40,6 +40,7 @@ export const DataDocDAGExporter: React.FunctionComponent<IProps> = ({
         savedEdges,
         !isInteractive
     );
+
     const unusedQueryCells = useUnusedQueryCells(queryCells, nodes);
 
     const handleExport = React.useCallback(

@@ -18,6 +18,8 @@ import ReactFlow, {
 } from 'react-flow-renderer';
 
 import { Button } from 'ui/Button/Button';
+import { KeyboardKey } from 'ui/KeyboardKey/KeyboardKey';
+import { AccentText } from 'ui/StyledText/StyledText';
 
 import './FlowGraph.scss';
 import { getLayoutedElements, LayoutDirection } from './helpers';
@@ -133,6 +135,7 @@ const InteractiveFlowGraph: React.FunctionComponent<IGraphProps> = ({
             setNodes((nds) => applyNodeChanges(changes, nds)),
         [setNodes]
     );
+
     const onEdgesChange = useCallback(
         (changes: EdgeChange[]) =>
             setEdges((eds) => applyEdgeChanges(changes, eds)),
@@ -173,17 +176,29 @@ const InteractiveFlowGraph: React.FunctionComponent<IGraphProps> = ({
                         }
                     }
                 />
-                <div className="flex-row layout-buttons m12">
-                    <Button
-                        title="Vertical Layout"
-                        icon="AlignCenterVertical"
-                        onClick={() => onLayout('TB')}
-                    />
-                    <Button
-                        title="Horizontal Layout"
-                        icon="AlignCenterHorizontal"
-                        onClick={() => onLayout('LR')}
-                    />
+                <div className="flex-column layout-buttons m12">
+                    <div>
+                        <Button
+                            title="Vertical Layout"
+                            icon="AlignCenterVertical"
+                            onClick={() => onLayout('TB')}
+                        />
+                        <Button
+                            title="Horizontal Layout"
+                            icon="AlignCenterHorizontal"
+                            onClick={() => onLayout('LR')}
+                        />
+                    </div>
+                    <div className="FlowGraph-hint flex-row align-right mt12">
+                        <KeyboardKey value="backspace" />
+                        <AccentText
+                            size="xxsmall"
+                            className="ml4 mr8"
+                            color="light"
+                        >
+                            to remove node
+                        </AccentText>
+                    </div>
                 </div>
             </ReactFlow>
         </>

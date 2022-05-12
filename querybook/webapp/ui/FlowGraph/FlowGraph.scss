@@ -33,7 +33,15 @@
     }
 
     .layout-buttons {
-        justify-content: flex-end;
+        align-items: flex-end;
+        .FlowGraph-hint {
+            background-color: var(--bg-lightest);
+            border-radius: var(--border-radius-sm);
+            .KeyboardKey {
+                font-size: var(--xxsmall-text-size);
+                // padding: 4px 8px;
+            }
+        }
         > * {
             z-index: 100;
         }

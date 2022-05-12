@@ -49,20 +49,13 @@ export function useExporterDAG(
     const [nodes, setNodes] = useState<Node[]>([]);
     const [edges, setEdges] = useState<Edge[]>([]);
 
-    const handleDeleteNode = React.useCallback((id: string) => {
-        setNodes((nodes) => nodes.filter((node) => node.id !== id));
-        setEdges((edges) =>
-            edges.filter((edge) => edge.source !== id && edge.target !== id)
-        );
-    }, []);
-
     const createNode = useCallback(
         (cell: IDataQueryCell, savedNode?: Node) => ({
             id: cell.id.toString(),
             type: queryCellNode,
             data: {
                 label: cell.meta?.title,
-                onDelete: () => handleDeleteNode(cell.id.toString()),
+                // onDelete: () => handleDeleteNode(cell.id.toString()),
                 readonly,
                 updated: savedNode?.data?.queryHash
                     ? isQueryUpdated(savedNode?.data?.queryHash, cell.context)
@@ -71,7 +64,7 @@ export function useExporterDAG(
             },
             position: savedNode?.position ?? initialNodePosition,
         }),
-        [handleDeleteNode, readonly]
+        [readonly]
     );
 
     useEffect(() => {
