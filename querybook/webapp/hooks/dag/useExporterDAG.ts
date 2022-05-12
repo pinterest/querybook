@@ -1,16 +1,17 @@
 import React, { useCallback, useEffect, useMemo, useState } from 'react';
+import { Edge, Node } from 'react-flow-renderer';
 import { useSelector } from 'react-redux';
 import { useDrop } from 'react-dnd';
 
 import { IDataQueryCell } from 'const/datadoc';
 import { IStoreState } from 'redux/store/types';
 import * as dataDocSelectors from 'redux/dataDoc/selector';
+import { hashQuery } from 'lib/data-doc/data-doc-utils';
 
 import { queryCellDraggableType } from 'components/DataDocDAGExporter/DataDocDAGExporter';
-import { IDragItem } from 'ui/DraggableList/types';
-import { Edge, Node } from 'react-flow-renderer';
 
 import { QueryCellNode } from 'ui/FlowGraph/QueryCellNode';
+import { IDragItem } from 'ui/DraggableList/types';
 
 export const queryCellNode = 'queryCellNode';
 export const QueryDAGNodeTypes = { queryCellNode: QueryCellNode };
@@ -33,6 +34,11 @@ export function useQueryCells(docId: number) {
 
 export const initialNodePosition = { x: 0, y: 0 };
 export const edgeStyle = { stroke: 'var(--bg-dark)' };
+
+const isQueryUpdated = (savedHash: number, query: string) => {
+    const hash = hashQuery(query);
+    return !(hash === savedHash);
+};
 
 export function useExporterDAG(
     queryCells: IDataQueryCell[],
@@ -58,6 +64,10 @@ export function useExporterDAG(
                 label: cell.meta?.title,
                 onDelete: () => handleDeleteNode(cell.id.toString()),
                 readonly,
+                updated: savedNode?.data?.queryHash
+                    ? isQueryUpdated(savedNode?.data?.queryHash, cell.context)
+                    : false,
+                query: cell.context,
             },
             position: savedNode?.position ?? initialNodePosition,
         }),
