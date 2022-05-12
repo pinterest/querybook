@@ -114,12 +114,15 @@ export const DataDocResource = {
         edges: Edge[],
         meta: Record<string, any>
     ) =>
-        ds.save<string>(`/datadoc/${docId}/dag_export/export/`, {
-            exporter_name: exporterName,
-            nodes,
-            edges,
-            meta,
-        }),
+        ds.save<{ type: string; export: string }>(
+            `/datadoc/${docId}/dag_export/export/`,
+            {
+                exporter_name: exporterName,
+                nodes,
+                edges,
+                meta,
+            }
+        ),
 };
 
 export const DataDocEditorResource = {

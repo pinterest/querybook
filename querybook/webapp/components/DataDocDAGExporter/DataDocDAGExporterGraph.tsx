@@ -16,11 +16,7 @@ interface IProps {
     edges: Edge[];
     setNodes: (value: React.SetStateAction<Node[]>) => void;
     setEdges: (value: React.SetStateAction<Edge[]>) => void;
-    onSave: (
-        nodes: Node[],
-        edges: Edge[],
-        meta?: Record<string, any>
-    ) => Promise<IDataDocDAGExport>;
+    onSave: (nodes: Node[], edges: Edge[]) => Promise<IDataDocDAGExport>;
     onExport: () => void;
 }
 

@@ -31,6 +31,9 @@ class DemoDAGExporter(BaseDAGExporter):
 
     def export(self, nodes, edges, meta):
         try:
-            return "https://www.querybook.org/"
+            return {
+                "type": self.dag_exporter_type,
+                "export": "https://www.querybook.org/",
+            }
         except Exception as e:
             LOG.info(e)

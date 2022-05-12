@@ -8,23 +8,17 @@ import { SimpleReactSelect } from 'ui/SimpleReactSelect/SimpleReactSelect';
 import { FormSectionHeader } from 'ui/Form/FormField';
 import { Button } from 'ui/Button/Button';
 import { AsyncButton } from 'ui/AsyncButton/AsyncButton';
-import { CopyPasteModal } from 'ui/CopyPasteModal/CopyPasteModal';
-import { Modal } from 'ui/Modal/Modal';
 
 interface IProps {
-    onExport: (name: string, settings: any) => Promise<string>;
+    onExport: (name: string, settings: any) => void;
     savedMeta: Record<string, any>;
     onSave: (meta: any) => Promise<any>;
-    clearExportData: () => void;
-    exportData?: string;
 }
 
 export const DataDocDAGExporterSettings: React.FunctionComponent<IProps> = ({
     onExport,
     savedMeta,
     onSave,
-    clearExportData,
-    exportData,
 }) => {
     const {
         exporterNames,
@@ -33,20 +27,10 @@ export const DataDocDAGExporterSettings: React.FunctionComponent<IProps> = ({
         settingValues,
         exporterMeta,
         handleSettingValuesChange,
-        exportType,
     } = useExporterSettings({ savedMeta });
 
-    const exportModalTitle = React.useMemo(
-        () => `Export to ${titleize(selectedExporter, '_', ' ')}`,
-        [selectedExporter]
-    );
-
-    React.useEffect(() => {
-        clearExportData();
-    }, [selectedExporter, settingValues]);
-
-    const handleExport = React.useCallback(async () => {
-        await onExport(selectedExporter, settingValues);
+    const handleExport = React.useCallback(() => {
+        onExport(selectedExporter, settingValues);
     }, [onExport, selectedExporter, settingValues]);
 
     return (
@@ -87,24 +71,6 @@ export const DataDocDAGExporterSettings: React.FunctionComponent<IProps> = ({
                     </>
                 )}
             </div>
-            {exportData &&
-                (exportType === 'url' ? (
-                    <Modal onHide={clearExportData} title={exportModalTitle}>
-                        <div className="flex-center mv24">
-                            <Button
-                                icon="ChevronRight"
-                                title="Go To Export"
-                                onClick={() => window.open(exportData)}
-                            />
-                        </div>
-                    </Modal>
-                ) : (
-                    <CopyPasteModal
-                        text={exportData}
-                        title={exportModalTitle}
-                        onHide={clearExportData}
-                    />
-                ))}
         </div>
     );
 };

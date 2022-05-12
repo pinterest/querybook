@@ -36,6 +36,11 @@ class BaseDAGExporter(metaclass=ABCMeta):
             nodes: dag nodes
             edges: dag edges
             meta: plug-in specific form options and values
+
+        Returns Dict {
+            type: dag_exporter_type
+            export: string
+        }
         """
         raise NotImplementedError()
 

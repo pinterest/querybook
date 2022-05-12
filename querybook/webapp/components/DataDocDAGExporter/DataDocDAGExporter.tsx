@@ -6,13 +6,15 @@ import {
     useQueryCells,
     useUnusedQueryCells,
 } from 'hooks/dag/useExporterDAG';
+import { DataDocResource } from 'resource/dataDoc';
 
 import { DataDocDAGExporterGraph } from './DataDocDAGExporterGraph';
 import { DataDocDAGExporterForm } from './DataDocDAGExporterForm';
 import { Button } from 'ui/Button/Button';
+import { CopyPasteModal } from 'ui/CopyPasteModal/CopyPasteModal';
+import { Modal } from 'ui/Modal/Modal';
 
 import './DataDocDAGExporter.scss';
-import { DataDocResource } from 'resource/dataDoc';
 
 interface IProps {
     docId: number;
@@ -27,6 +29,7 @@ export const DataDocDAGExporter: React.FunctionComponent<IProps> = ({
 }) => {
     const [isExporting, setIsExporting] = React.useState(false);
     const [exportData, setExportData] = React.useState<string>();
+    const [exportType, setExportType] = React.useState<string>();
     const isInteractive = !(readonly || isExporting);
 
     const { onSave, savedNodes, savedEdges, savedMeta } = useSavedDAG(docId);
@@ -51,8 +54,8 @@ export const DataDocDAGExporter: React.FunctionComponent<IProps> = ({
                 edges,
                 exporterSettings
             );
-            setExportData(exportData);
-            return exportData;
+            setExportData(exportData?.export);
+            setExportType(exportData?.type);
         },
         [docId, nodes, edges, onSave, savedMeta]
     );
@@ -63,15 +66,10 @@ export const DataDocDAGExporter: React.FunctionComponent<IProps> = ({
                 <DataDocDAGExporterForm
                     handleExport={handleExport}
                     savedMeta={savedMeta}
-                    dropRef={dropRef}
                     nodes={nodes}
                     edges={edges}
-                    setNodes={setNodes}
-                    setEdges={setEdges}
                     onSave={onSave}
                     onReturn={() => setIsExporting(false)}
-                    clearExportData={() => setExportData(undefined)}
-                    exportData={exportData}
                 />
             ) : (
                 <DataDocDAGExporterGraph
@@ -87,6 +85,27 @@ export const DataDocDAGExporter: React.FunctionComponent<IProps> = ({
                     }}
                 />
             )}
+            {exportData &&
+                (exportType === 'url' ? (
+                    <Modal
+                        onHide={() => setExportData(undefined)}
+                        title="Export Data"
+                    >
+                        <div className="flex-center mv24">
+                            <Button
+                                icon="ChevronRight"
+                                title="Go To Export"
+                                onClick={() => window.open(exportData)}
+                            />
+                        </div>
+                    </Modal>
+                ) : (
+                    <CopyPasteModal
+                        text={exportData}
+                        title="Export Data"
+                        onHide={() => setExportData(undefined)}
+                    />
+                ))}
         </div>
     );
 };

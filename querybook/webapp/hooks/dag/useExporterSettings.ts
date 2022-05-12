@@ -28,7 +28,6 @@ export function useExporterSettings({ savedMeta }: IProps) {
     );
 
     const exporterMeta = exporterDataByName[selectedExporter]?.meta;
-    const exportType = exporterDataByName[selectedExporter]?.type;
 
     const handleSettingValuesChange = React.useCallback((key, value) => {
         setSettingValues((currVals) => updateValue(currVals, key, value));
@@ -41,17 +40,19 @@ export function useExporterSettings({ savedMeta }: IProps) {
     }, [dispatch]);
 
     React.useEffect(() => {
-        if (exporterNames.length && !selectedExporter) {
+        if (selectedExporter) {
+            return;
+        }
+        if (Object.keys(savedMeta).length) {
+            setSelectedExporter(Object.keys(savedMeta)?.[0]);
+        } else if (exporterNames.length) {
             setSelectedExporter(exporterNames[0]);
         }
-    }, [exporterNames, selectedExporter]);
+    }, [exporterNames, selectedExporter, savedMeta]);
 
     React.useEffect(() => {
         if (savedMeta[selectedExporter]) {
             setSettingValues(savedMeta[selectedExporter]);
-        }
-        if (selectedExporter === undefined && Object.keys(savedMeta).length) {
-            setSelectedExporter(Object.keys(savedMeta)?.[0]);
         }
     }, [savedMeta, selectedExporter]);
 
@@ -62,6 +63,5 @@ export function useExporterSettings({ savedMeta }: IProps) {
         settingValues,
         exporterMeta,
         handleSettingValuesChange,
-        exportType,
     };
 }
