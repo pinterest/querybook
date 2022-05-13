@@ -2,6 +2,11 @@
     height: 100%;
     width: 100%;
 
+    .reactflow-wrapper {
+        height: 100%;
+        width: 100%;
+    }
+
     .react-flow__node {
         width: auto;
     }
@@ -39,7 +44,6 @@
             border-radius: var(--border-radius-sm);
             .KeyboardKey {
                 font-size: var(--xxsmall-text-size);
-                // padding: 4px 8px;
             }
         }
         > * {

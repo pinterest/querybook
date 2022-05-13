@@ -15,14 +15,16 @@ import ReactFlow, {
     NodeChange,
     EdgeChange,
     Node,
+    ReactFlowInstance,
 } from 'react-flow-renderer';
+
+import { getLayoutedElements, LayoutDirection } from './helpers';
 
 import { Button } from 'ui/Button/Button';
 import { KeyboardKey } from 'ui/KeyboardKey/KeyboardKey';
 import { AccentText } from 'ui/StyledText/StyledText';
 
 import './FlowGraph.scss';
-import { getLayoutedElements, LayoutDirection } from './helpers';
 
 interface IPluginProps {
     plugins?: {
@@ -42,6 +44,9 @@ interface IGraphProps extends IPluginProps {
 
     onNodesChange?: (nodes: Node[]) => void;
     onEdgesChange?: (edges: Edge[]) => void;
+
+    graphRef?: React.MutableRefObject<HTMLDivElement>;
+    setGraphInstance: (graphIntstance: ReactFlowInstance<any, any>) => void;
 }
 
 interface IFlowGraphProps extends IGraphProps {
@@ -124,6 +129,8 @@ const InteractiveFlowGraph: React.FunctionComponent<IGraphProps> = ({
 
     nodeTypes,
     plugins,
+    graphRef,
+    setGraphInstance,
 }) => {
     const onConnect = useCallback(
         (params: Connection) => setEdges((eds) => addEdge(params, eds)),
@@ -152,7 +159,7 @@ const InteractiveFlowGraph: React.FunctionComponent<IGraphProps> = ({
     );
 
     return (
-        <>
+        <div className="reactflow-wrapper" ref={graphRef}>
             <ReactFlow
                 nodes={nodes}
                 edges={edges}
@@ -165,6 +172,7 @@ const InteractiveFlowGraph: React.FunctionComponent<IGraphProps> = ({
                 connectionLineType={ConnectionLineType.Bezier}
                 defaultEdgeOptions={defaultInteractiveFlowEdgeOptions}
                 nodeTypes={nodeTypes}
+                onInit={setGraphInstance}
                 fitView
             >
                 <ReactFlowPlugins
@@ -201,7 +209,7 @@ const InteractiveFlowGraph: React.FunctionComponent<IGraphProps> = ({
                     </div>
                 </div>
             </ReactFlow>
-        </>
+        </div>
     );
 };
 

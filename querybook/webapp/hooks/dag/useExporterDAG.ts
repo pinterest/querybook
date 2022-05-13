@@ -1,5 +1,5 @@
 import React, { useCallback, useEffect, useMemo, useState } from 'react';
-import { Edge, Node } from 'react-flow-renderer';
+import { Edge, Node, ReactFlowInstance } from 'react-flow-renderer';
 import { useSelector } from 'react-redux';
 import { useDrop } from 'react-dnd';
 
@@ -44,18 +44,22 @@ export function useExporterDAG(
     queryCells: IDataQueryCell[],
     savedNodes: Node[],
     savedEdges: Edge[],
-    readonly: boolean
+    readonly: boolean,
+    graphRef: React.MutableRefObject<HTMLDivElement>
 ) {
     const [nodes, setNodes] = useState<Node[]>([]);
     const [edges, setEdges] = useState<Edge[]>([]);
 
+    const [graphInstance, setGraphInstance] = useState<
+        ReactFlowInstance<any, any>
+    >();
+
     const createNode = useCallback(
-        (cell: IDataQueryCell, savedNode?: Node) => ({
+        (cell: IDataQueryCell, savedNode?: Partial<Node>) => ({
             id: cell.id.toString(),
             type: queryCellNode,
             data: {
                 label: cell.meta?.title,
-                // onDelete: () => handleDeleteNode(cell.id.toString()),
                 readonly,
                 updated: savedNode?.data?.queryHash
                     ? isQueryUpdated(savedNode?.data?.queryHash, cell.context)
@@ -95,7 +99,23 @@ export function useExporterDAG(
             if (monitor.didDrop()) {
                 return;
             }
-            setNodes((nodes) => nodes.concat([createNode(item.itemInfo)]));
+            const reactFlowBounds = graphRef.current.getBoundingClientRect();
+
+            const position =
+                graphInstance &&
+                graphInstance.project({
+                    x: monitor.getClientOffset().x - reactFlowBounds.left,
+                    y: monitor.getClientOffset().y - reactFlowBounds.top,
+                });
+
+            setNodes((nodes) =>
+                nodes.concat([
+                    createNode(
+                        item.itemInfo,
+                        position ? { position } : undefined
+                    ),
+                ])
+            );
         },
         canDrop: () => !readonly,
         collect: (monitor) => ({
@@ -103,7 +123,14 @@ export function useExporterDAG(
         }),
     });
 
-    return [nodes, edges, setNodes, setEdges, dropRef] as const;
+    return [
+        nodes,
+        edges,
+        setNodes,
+        setEdges,
+        dropRef,
+        setGraphInstance,
+    ] as const;
 }
 
 export function useUnusedQueryCells(

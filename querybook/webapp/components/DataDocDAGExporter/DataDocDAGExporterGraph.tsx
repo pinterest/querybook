@@ -1,6 +1,6 @@
 import * as React from 'react';
 import { ConnectDropTarget } from 'react-dnd';
-import { Edge, Node } from 'react-flow-renderer';
+import { Edge, Node, ReactFlowInstance } from 'react-flow-renderer';
 
 import { QueryDAGNodeTypes } from 'hooks/dag/useExporterDAG';
 import { IDataDocDAGExport, IDataQueryCell } from 'const/datadoc';
@@ -12,10 +12,12 @@ import { FlowGraph } from 'ui/FlowGraph/FlowGraph';
 interface IProps {
     unusedQueryCells: IDataQueryCell[];
     dropRef: ConnectDropTarget;
+    graphRef: React.MutableRefObject<HTMLDivElement>;
     nodes: Node[];
     edges: Edge[];
     setNodes: (value: React.SetStateAction<Node[]>) => void;
     setEdges: (value: React.SetStateAction<Edge[]>) => void;
+    setGraphInstance: (graphIntstance: ReactFlowInstance<any, any>) => void;
     onSave: (nodes: Node[], edges: Edge[]) => Promise<IDataDocDAGExport>;
     onExport: () => void;
 }
@@ -23,10 +25,12 @@ interface IProps {
 export const DataDocDAGExporterGraph = ({
     unusedQueryCells,
     dropRef,
+    graphRef,
     nodes,
     edges,
     setNodes,
     setEdges,
+    setGraphInstance,
     onSave,
     onExport,
 }: IProps) => (
@@ -42,6 +46,8 @@ export const DataDocDAGExporterGraph = ({
                         setNodes={setNodes}
                         setEdges={setEdges}
                         nodeTypes={QueryDAGNodeTypes}
+                        graphRef={graphRef}
+                        setGraphInstance={setGraphInstance}
                     />
                 </div>
                 <DataDocDAGExporterSave
