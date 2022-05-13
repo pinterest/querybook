@@ -158,8 +158,6 @@ const InteractiveFlowGraph: React.FunctionComponent<IGraphProps> = ({
         [edges, nodes, setNodes, setEdges]
     );
 
-    console.log('??');
-
     return (
         <div className="reactflow-wrapper" ref={graphRef}>
             <ReactFlow
