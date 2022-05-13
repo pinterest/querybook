@@ -35,6 +35,7 @@ class TrinoCursor(CursorBaseClass):
         self._request = cursor._request
 
     def _init_query_state_vars(self):
+        self.rows = []
         self._tracking_url = None
         self._percent_complete = 0
 
