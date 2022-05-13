@@ -63,6 +63,7 @@ export function useExporterDAG(
                 updated: savedNode?.data?.queryHash
                     ? isQueryUpdated(savedNode?.data?.queryHash, cell.context)
                     : false,
+                query: cell.context,
             },
             position: savedNode?.position ?? initialNodePosition,
             sourcePosition: savedNode.sourcePosition ?? Position.Left,
