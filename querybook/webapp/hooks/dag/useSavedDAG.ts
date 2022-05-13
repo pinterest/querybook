@@ -37,6 +37,8 @@ export function useSavedDAG(docId: number) {
                 data: {
                     queryHash: hashQuery(node.data.query),
                 },
+                sourcePosition: node.sourcePosition,
+                targetPosition: node.targetPosition,
             }));
             return dispatch(saveDAGExport(docId, processedNodes, edges, meta));
         },

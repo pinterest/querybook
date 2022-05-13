@@ -46,7 +46,7 @@ interface IGraphProps extends IPluginProps {
     onEdgesChange?: (edges: Edge[]) => void;
 
     graphRef?: React.MutableRefObject<HTMLDivElement>;
-    setGraphInstance: (graphIntstance: ReactFlowInstance<any, any>) => void;
+    setGraphInstance?: (graphIntstance: ReactFlowInstance<any, any>) => void;
 }
 
 interface IFlowGraphProps extends IGraphProps {
@@ -103,7 +103,7 @@ const StaticFlowGraph: React.FunctionComponent<IGraphProps> = ({
         !autoLayout
     );
 
-    useAutoFitView(nodes, edges);
+    // useAutoFitView(nodes, edges);
     return (
         <ReactFlow
             nodes={nodes}
@@ -157,6 +157,8 @@ const InteractiveFlowGraph: React.FunctionComponent<IGraphProps> = ({
         },
         [edges, nodes, setNodes, setEdges]
     );
+
+    console.log('??');
 
     return (
         <div className="reactflow-wrapper" ref={graphRef}>

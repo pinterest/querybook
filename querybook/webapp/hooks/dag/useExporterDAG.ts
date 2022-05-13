@@ -1,5 +1,5 @@
 import React, { useCallback, useEffect, useMemo, useState } from 'react';
-import { Edge, Node, ReactFlowInstance } from 'react-flow-renderer';
+import { Edge, Node, Position, ReactFlowInstance } from 'react-flow-renderer';
 import { useSelector } from 'react-redux';
 import { useDrop } from 'react-dnd';
 
@@ -60,15 +60,16 @@ export function useExporterDAG(
             type: queryCellNode,
             data: {
                 label: cell.meta?.title,
-                readonly,
                 updated: savedNode?.data?.queryHash
                     ? isQueryUpdated(savedNode?.data?.queryHash, cell.context)
                     : false,
                 query: cell.context,
             },
             position: savedNode?.position ?? initialNodePosition,
+            sourcePosition: savedNode.sourcePosition ?? Position.Left,
+            targetPosition: savedNode.targetPosition ?? Position.Right,
         }),
-        [readonly]
+        []
     );
 
     useEffect(() => {

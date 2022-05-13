@@ -6,22 +6,22 @@ import './QueryCellNode.scss';
 
 interface IProps {
     data: IQueryCellNodeProps;
+    sourcePosition: Position;
+    targetPosition: Position;
 }
 
 export interface IQueryCellNodeProps {
     label: string;
-    // onDelete: () => void;
     updated: boolean;
-    readonly: boolean;
 }
 
 // TODO: make edge deletable
-export const QueryCellNode = React.memo<IProps>(({ data }) => {
-    const { label, readonly, updated } = data;
+export const QueryCellNode = React.memo<IProps>((props) => {
+    const { data, sourcePosition, targetPosition } = props;
+    const { label, updated } = data;
 
     const QueryCellNodeClassName = clsx({
         QueryCellNode: true,
-        'flex-row': true,
         updated,
     });
 
@@ -35,9 +35,9 @@ export const QueryCellNode = React.memo<IProps>(({ data }) => {
             }
             data-balloon-pos={'up'}
         >
-            <Handle type="target" position={Position.Left} />
+            <Handle type="target" position={targetPosition} />
             <div className="QueryCellNode-label">{label}</div>
-            <Handle type="source" position={Position.Right} />
+            <Handle type="source" position={sourcePosition} />
         </div>
     );
 });
