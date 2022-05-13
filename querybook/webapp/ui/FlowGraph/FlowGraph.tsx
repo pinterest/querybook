@@ -16,10 +16,12 @@ import ReactFlow, {
     EdgeChange,
     Node,
     ReactFlowInstance,
+    Position,
 } from 'react-flow-renderer';
 
 import { getLayoutedElements, LayoutDirection } from './helpers';
 
+import { RemovableEdge } from './RemovableEdge';
 import { Button } from 'ui/Button/Button';
 import { KeyboardKey } from 'ui/KeyboardKey/KeyboardKey';
 import { AccentText } from 'ui/StyledText/StyledText';
@@ -55,6 +57,10 @@ interface IFlowGraphProps extends IGraphProps {
 
 export const initialNodePosition = { x: 0, y: 0 };
 export const edgeStyle = { stroke: 'var(--bg-dark)' };
+
+const edgeTypes = {
+    removableEdge: RemovableEdge,
+};
 
 export const FlowGraph: React.FunctionComponent<IFlowGraphProps> = ({
     isInteractive = false,
@@ -103,7 +109,7 @@ const StaticFlowGraph: React.FunctionComponent<IGraphProps> = ({
         !autoLayout
     );
 
-    // useAutoFitView(nodes, edges);
+    useAutoFitView(nodes, edges);
     return (
         <ReactFlow
             nodes={nodes}
@@ -132,15 +138,58 @@ const InteractiveFlowGraph: React.FunctionComponent<IGraphProps> = ({
     graphRef,
     setGraphInstance,
 }) => {
-    const onConnect = useCallback(
-        (params: Connection) => setEdges((eds) => addEdge(params, eds)),
+    const [layoutDirection, setLayoutDirection] = React.useState<'LR' | 'TB'>();
+    const targetPosition = React.useMemo(
+        () => (layoutDirection === 'LR' ? Position.Left : Position.Top),
+        [layoutDirection]
+    );
+    const sourcePosition = React.useMemo(
+        () => (layoutDirection === 'LR' ? Position.Right : Position.Bottom),
+        [layoutDirection]
+    );
+
+    React.useEffect(() => {
+        if (nodes.length && !layoutDirection) {
+            const direction =
+                nodes[0].sourcePosition === Position.Right ? 'LR' : 'TB';
+            setLayoutDirection(direction);
+        }
+    }, [nodes, layoutDirection]);
+
+    const onRemoveEdge = useCallback(
+        (id) => {
+            setEdges((edges) => edges.filter((edge) => !(edge.id === id)));
+        },
         [setEdges]
+    );
+
+    const onConnect = useCallback(
+        (params: Connection) => {
+            setEdges((eds) =>
+                addEdge(
+                    {
+                        ...params,
+                        type: 'removableEdge',
+                        data: { onRemove: onRemoveEdge },
+                    },
+                    eds
+                )
+            );
+        },
+        [onRemoveEdge, setEdges]
     );
 
     const onNodesChange = useCallback(
         (changes: NodeChange[]) =>
-            setNodes((nds) => applyNodeChanges(changes, nds)),
-        [setNodes]
+            setNodes((nds) => {
+                const appliedNodes = applyNodeChanges(changes, nds);
+                return appliedNodes.map((node) => ({
+                    ...node,
+                    targetPosition,
+                    sourcePosition,
+                }));
+            }),
+        [setNodes, sourcePosition, targetPosition]
     );
 
     const onEdgesChange = useCallback(
@@ -151,6 +200,7 @@ const InteractiveFlowGraph: React.FunctionComponent<IGraphProps> = ({
 
     const onLayout = React.useCallback(
         (direction: LayoutDirection = 'LR') => {
+            setLayoutDirection(direction);
             const layoutedDAG = getLayoutedElements(nodes, edges, direction);
             setNodes([...layoutedDAG.nodes]);
             setEdges([...layoutedDAG.edges]);
@@ -172,6 +222,7 @@ const InteractiveFlowGraph: React.FunctionComponent<IGraphProps> = ({
                 connectionLineType={ConnectionLineType.Bezier}
                 defaultEdgeOptions={defaultInteractiveFlowEdgeOptions}
                 nodeTypes={nodeTypes}
+                edgeTypes={edgeTypes}
                 onInit={setGraphInstance}
                 fitView
             >
