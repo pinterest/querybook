@@ -2,7 +2,7 @@ import React from 'react';
 import { getBezierPath, getEdgeCenter } from 'react-flow-renderer';
 import { IconButton } from 'ui/Button/IconButton';
 
-const foreignObjectSize = 32;
+const foreignObjectSize = 24;
 
 export const RemovableEdge = ({
     id,
@@ -46,12 +46,12 @@ export const RemovableEdge = ({
                 height={foreignObjectSize}
                 x={edgeCenterX - foreignObjectSize / 2}
                 y={edgeCenterY - foreignObjectSize / 2}
-                className="flex-center"
             >
                 <IconButton
                     icon="X"
                     invertCircle
                     onClick={() => onRemove(id)}
+                    size={16}
                 />
             </foreignObject>
         </>
