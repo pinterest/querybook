@@ -24,6 +24,7 @@ import { getLayoutedElements, LayoutDirection } from './helpers';
 import { Button } from 'ui/Button/Button';
 import { KeyboardKey } from 'ui/KeyboardKey/KeyboardKey';
 import { AccentText } from 'ui/StyledText/StyledText';
+import { Icon } from 'ui/Icon/Icon';
 
 import './FlowGraph.scss';
 
@@ -47,7 +48,6 @@ interface IGraphProps extends IPluginProps {
     onNodesChange?: (nodes: Node[]) => void;
     onEdgesChange?: (edges: Edge[]) => void;
 
-    graphRef?: React.MutableRefObject<HTMLDivElement>;
     setGraphInstance?: (graphIntstance: ReactFlowInstance<any, any>) => void;
 }
 
@@ -132,7 +132,6 @@ const InteractiveFlowGraph: React.FunctionComponent<IGraphProps> = ({
     nodeTypes,
     edgeTypes,
     plugins,
-    graphRef,
     setGraphInstance,
 }) => {
     const [layoutDirection, setLayoutDirection] = React.useState<'LR' | 'TB'>();
@@ -208,7 +207,7 @@ const InteractiveFlowGraph: React.FunctionComponent<IGraphProps> = ({
     );
 
     return (
-        <div className="reactflow-wrapper" ref={graphRef}>
+        <>
             <ReactFlow
                 nodes={nodes}
                 edges={edges}
@@ -247,19 +246,33 @@ const InteractiveFlowGraph: React.FunctionComponent<IGraphProps> = ({
                             onClick={() => onLayout('LR')}
                         />
                     </div>
-                    <div className="FlowGraph-hint flex-row align-right mt12">
-                        <KeyboardKey value="backspace" />
-                        <AccentText
-                            size="xxsmall"
-                            className="ml4 mr8"
-                            color="light"
-                        >
-                            to remove node
-                        </AccentText>
+                    <div className="FlowGraph-hint flex-row mt12">
+                        <div className="flex-column">
+                            <div>
+                                <KeyboardKey value="backspace" />
+                            </div>
+                            <Icon name="Maximize" size={16} />
+                        </div>
+                        <div className="flex-column">
+                            <AccentText
+                                size="xxsmall"
+                                className="mh8"
+                                color="light"
+                            >
+                                to remove node
+                            </AccentText>
+                            <AccentText
+                                size="xxsmall"
+                                className="mh8"
+                                color="light"
+                            >
+                                to fit all nodes
+                            </AccentText>
+                        </div>
                     </div>
                 </div>
             </ReactFlow>
-        </div>
+        </>
     );
 };
 

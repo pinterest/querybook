@@ -61,6 +61,7 @@ import {
     ListOrdered,
     Lock,
     LogOut,
+    Maximize,
     Maximize2,
     Menu,
     Minimize2,
@@ -160,6 +161,7 @@ const AllLucideIcons = {
     Loading: Circle, // Custom loading icon
     Lock,
     LogOut,
+    Maximize,
     Maximize2,
     Menu,
     Minimize2,

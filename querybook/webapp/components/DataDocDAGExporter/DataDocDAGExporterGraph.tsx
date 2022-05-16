@@ -43,7 +43,7 @@ export const DataDocDAGExporterGraph = ({
         <DataDocDagExporterList queryCells={unusedQueryCells} />
         <div className="DataDocDAGExporter-main">
             <div className="DataDocDAGExporter-graph-wrapper" ref={dropRef}>
-                <div className="DataDocDAGExporterGraph">
+                <div className="DataDocDAGExporterGraph" ref={graphRef}>
                     <FlowGraph
                         isInteractive={true}
                         nodes={nodes}
@@ -52,7 +52,6 @@ export const DataDocDAGExporterGraph = ({
                         setEdges={setEdges}
                         nodeTypes={QueryDAGNodeTypes}
                         edgeTypes={edgeTypes}
-                        graphRef={graphRef}
                         setGraphInstance={setGraphInstance}
                     />
                 </div>

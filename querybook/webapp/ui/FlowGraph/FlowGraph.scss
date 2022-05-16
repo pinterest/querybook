@@ -2,11 +2,6 @@
     height: 100%;
     width: 100%;
 
-    .reactflow-wrapper {
-        height: 100%;
-        width: 100%;
-    }
-
     .react-flow__node {
         width: auto;
     }
@@ -44,6 +39,18 @@
             border-radius: var(--border-radius-sm);
             .KeyboardKey {
                 font-size: var(--xxsmall-text-size);
+            }
+            > .flex-column {
+                > div,
+                > span {
+                    height: 28px;
+                    display: flex;
+                    justify-content: center;
+                    align-items: center;
+                }
+            }
+            > .flex-column:last-child {
+                align-items: flex-start;
             }
         }
         > * {
