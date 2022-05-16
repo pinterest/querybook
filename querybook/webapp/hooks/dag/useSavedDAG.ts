@@ -4,6 +4,7 @@ import { useDispatch, useSelector } from 'react-redux';
 
 import { fetchDAGExport, saveDAGExport } from 'redux/dataDoc/action';
 import { Dispatch, IStoreState } from 'redux/store/types';
+import { hashString } from 'lib/data-doc/data-doc-utils';
 
 export function useSavedDAG(docId: number) {
     const dispatch: Dispatch = useDispatch();
@@ -29,8 +30,18 @@ export function useSavedDAG(docId: number) {
     ]);
 
     const onSave = React.useCallback(
-        (nodes: Node[], edges: Edge[], meta?: Record<string, any>) =>
-            dispatch(saveDAGExport(docId, nodes, edges, meta)),
+        (nodes: Node[], edges: Edge[], meta?: Record<string, any>) => {
+            const processedNodes = nodes.map((node) => ({
+                id: node.id,
+                position: node.position,
+                data: {
+                    queryHash: hashString(node.data.query),
+                },
+                sourcePosition: node.sourcePosition,
+                targetPosition: node.targetPosition,
+            }));
+            return dispatch(saveDAGExport(docId, processedNodes, edges, meta));
+        },
         [dispatch, docId]
     );
 

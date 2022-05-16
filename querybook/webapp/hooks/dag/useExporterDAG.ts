@@ -1,16 +1,17 @@
 import React, { useCallback, useEffect, useMemo, useState } from 'react';
+import { Edge, Node, Position, ReactFlowInstance } from 'react-flow-renderer';
 import { useSelector } from 'react-redux';
 import { useDrop } from 'react-dnd';
 
 import { IDataQueryCell } from 'const/datadoc';
 import { IStoreState } from 'redux/store/types';
 import * as dataDocSelectors from 'redux/dataDoc/selector';
+import { hashString } from 'lib/data-doc/data-doc-utils';
 
 import { queryCellDraggableType } from 'components/DataDocDAGExporter/DataDocDAGExporter';
-import { IDragItem } from 'ui/DraggableList/types';
-import { Edge, Node } from 'react-flow-renderer';
 
 import { QueryCellNode } from 'ui/FlowGraph/QueryCellNode';
+import { IDragItem } from 'ui/DraggableList/types';
 
 export const queryCellNode = 'queryCellNode';
 export const QueryDAGNodeTypes = { queryCellNode: QueryCellNode };
@@ -34,34 +35,41 @@ export function useQueryCells(docId: number) {
 export const initialNodePosition = { x: 0, y: 0 };
 export const edgeStyle = { stroke: 'var(--bg-dark)' };
 
+const isQueryUpdated = (savedHash: number, query: string) => {
+    const hash = hashString(query);
+    return !(hash === savedHash);
+};
+
 export function useExporterDAG(
     queryCells: IDataQueryCell[],
     savedNodes: Node[],
     savedEdges: Edge[],
-    readonly: boolean
+    readonly: boolean,
+    graphRef: React.MutableRefObject<HTMLDivElement>
 ) {
     const [nodes, setNodes] = useState<Node[]>([]);
     const [edges, setEdges] = useState<Edge[]>([]);
 
-    const handleDeleteNode = React.useCallback((id: string) => {
-        setNodes((nodes) => nodes.filter((node) => node.id !== id));
-        setEdges((edges) =>
-            edges.filter((edge) => edge.source !== id && edge.target !== id)
-        );
-    }, []);
+    const [graphInstance, setGraphInstance] = useState<
+        ReactFlowInstance<any, any>
+    >();
 
     const createNode = useCallback(
-        (cell: IDataQueryCell, savedNode?: Node) => ({
+        (cell: IDataQueryCell, savedNode?: Partial<Node>) => ({
             id: cell.id.toString(),
             type: queryCellNode,
             data: {
                 label: cell.meta?.title,
-                onDelete: () => handleDeleteNode(cell.id.toString()),
-                readonly,
+                updated:
+                    savedNode?.data?.queryHash &&
+                    isQueryUpdated(savedNode?.data?.queryHash, cell.context),
+                query: cell.context,
             },
             position: savedNode?.position ?? initialNodePosition,
+            sourcePosition: savedNode.sourcePosition ?? Position.Left,
+            targetPosition: savedNode.targetPosition ?? Position.Right,
         }),
-        [handleDeleteNode, readonly]
+        []
     );
 
     useEffect(() => {
@@ -92,7 +100,23 @@ export function useExporterDAG(
             if (monitor.didDrop()) {
                 return;
             }
-            setNodes((nodes) => nodes.concat([createNode(item.itemInfo)]));
+            const reactFlowBounds = graphRef.current.getBoundingClientRect();
+
+            const position =
+                graphInstance &&
+                graphInstance.project({
+                    x: monitor.getClientOffset().x - reactFlowBounds.left,
+                    y: monitor.getClientOffset().y - reactFlowBounds.top,
+                });
+
+            setNodes((nodes) =>
+                nodes.concat([
+                    createNode(
+                        item.itemInfo,
+                        position ? { position } : undefined
+                    ),
+                ])
+            );
         },
         canDrop: () => !readonly,
         collect: (monitor) => ({
@@ -100,7 +124,14 @@ export function useExporterDAG(
         }),
     });
 
-    return [nodes, edges, setNodes, setEdges, dropRef] as const;
+    return [
+        nodes,
+        edges,
+        setNodes,
+        setEdges,
+        dropRef,
+        setGraphInstance,
+    ] as const;
 }
 
 export function useUnusedQueryCells(

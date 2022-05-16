@@ -27,6 +27,7 @@ export const DataDocDAGExporter: React.FunctionComponent<IProps> = ({
     docId,
     readonly,
 }) => {
+    const graphRef = React.useRef();
     const [isExporting, setIsExporting] = React.useState(false);
     const [exportData, setExportData] = React.useState<string>();
     const [exportType, setExportType] = React.useState<string>();
@@ -34,12 +35,21 @@ export const DataDocDAGExporter: React.FunctionComponent<IProps> = ({
 
     const { onSave, savedNodes, savedEdges, savedMeta } = useSavedDAG(docId);
     const queryCells = useQueryCells(docId);
-    const [nodes, edges, setNodes, setEdges, dropRef] = useExporterDAG(
+    const [
+        nodes,
+        edges,
+        setNodes,
+        setEdges,
+        dropRef,
+        setGraphInstance,
+    ] = useExporterDAG(
         queryCells,
         savedNodes,
         savedEdges,
-        !isInteractive
+        !isInteractive,
+        graphRef
     );
+
     const unusedQueryCells = useUnusedQueryCells(queryCells, nodes);
 
     const handleExport = React.useCallback(
@@ -75,6 +85,7 @@ export const DataDocDAGExporter: React.FunctionComponent<IProps> = ({
                 <DataDocDAGExporterGraph
                     unusedQueryCells={unusedQueryCells}
                     dropRef={dropRef}
+                    graphRef={graphRef}
                     nodes={nodes}
                     edges={edges}
                     setNodes={setNodes}
@@ -83,6 +94,7 @@ export const DataDocDAGExporter: React.FunctionComponent<IProps> = ({
                     onExport={async () => {
                         setIsExporting(true);
                     }}
+                    setGraphInstance={setGraphInstance}
                 />
             )}
             {exportData &&
