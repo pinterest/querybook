@@ -21,7 +21,6 @@ import ReactFlow, {
 
 import { getLayoutedElements, LayoutDirection } from './helpers';
 
-import { RemovableEdge } from './RemovableEdge';
 import { Button } from 'ui/Button/Button';
 import { KeyboardKey } from 'ui/KeyboardKey/KeyboardKey';
 import { AccentText } from 'ui/StyledText/StyledText';
@@ -42,6 +41,7 @@ interface IGraphProps extends IPluginProps {
     setEdges?: React.Dispatch<React.SetStateAction<Edge[]>>;
 
     nodeTypes?: Record<string, any>;
+    edgeTypes?: Record<string, any>;
     autoLayout?: boolean;
 
     onNodesChange?: (nodes: Node[]) => void;
@@ -57,10 +57,6 @@ interface IFlowGraphProps extends IGraphProps {
 
 export const initialNodePosition = { x: 0, y: 0 };
 export const edgeStyle = { stroke: 'var(--bg-dark)' };
-
-const edgeTypes = {
-    removableEdge: RemovableEdge,
-};
 
 export const FlowGraph: React.FunctionComponent<IFlowGraphProps> = ({
     isInteractive = false,
@@ -134,19 +130,16 @@ const InteractiveFlowGraph: React.FunctionComponent<IGraphProps> = ({
     setEdges,
 
     nodeTypes,
+    edgeTypes,
     plugins,
     graphRef,
     setGraphInstance,
 }) => {
     const [layoutDirection, setLayoutDirection] = React.useState<'LR' | 'TB'>();
-    const targetPosition = React.useMemo(
-        () => (layoutDirection === 'LR' ? Position.Left : Position.Top),
-        [layoutDirection]
-    );
-    const sourcePosition = React.useMemo(
-        () => (layoutDirection === 'LR' ? Position.Right : Position.Bottom),
-        [layoutDirection]
-    );
+    const targetPosition =
+        layoutDirection === 'LR' ? Position.Left : Position.Top;
+    const sourcePosition =
+        layoutDirection === 'LR' ? Position.Right : Position.Bottom;
 
     React.useEffect(() => {
         if (nodes.length && !layoutDirection) {

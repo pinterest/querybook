@@ -43,10 +43,10 @@ export function getShareUrl(
 
 // from: https://werxltd.com/wp/2010/05/13/javascript-implementation-of-javas-string-hashcode-method/
 
-export const hashQuery = (query: string) => {
+export const hashString = (str: string) => {
     let hash = 0;
-    for (let i = 0; i < query.length; i++) {
-        const char = query.charCodeAt(i);
+    for (let i = 0; i < str.length; i++) {
+        const char = str.charCodeAt(i);
         // eslint-disable-next-line no-bitwise
         hash = (hash << 5) - hash + char;
         hash = hash && hash; // Convert to 32bit integer

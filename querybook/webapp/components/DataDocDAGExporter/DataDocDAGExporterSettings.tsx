@@ -12,7 +12,7 @@ import { AsyncButton } from 'ui/AsyncButton/AsyncButton';
 interface IProps {
     onExport: (name: string, settings: any) => void;
     savedMeta: Record<string, any>;
-    onSave: (meta: any) => void;
+    onSave: (meta: any) => Promise<any>;
 }
 
 export const DataDocDAGExporterSettings: React.FunctionComponent<IProps> = ({

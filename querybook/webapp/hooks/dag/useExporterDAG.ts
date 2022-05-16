@@ -6,7 +6,7 @@ import { useDrop } from 'react-dnd';
 import { IDataQueryCell } from 'const/datadoc';
 import { IStoreState } from 'redux/store/types';
 import * as dataDocSelectors from 'redux/dataDoc/selector';
-import { hashQuery } from 'lib/data-doc/data-doc-utils';
+import { hashString } from 'lib/data-doc/data-doc-utils';
 
 import { queryCellDraggableType } from 'components/DataDocDAGExporter/DataDocDAGExporter';
 
@@ -36,7 +36,7 @@ export const initialNodePosition = { x: 0, y: 0 };
 export const edgeStyle = { stroke: 'var(--bg-dark)' };
 
 const isQueryUpdated = (savedHash: number, query: string) => {
-    const hash = hashQuery(query);
+    const hash = hashString(query);
     return !(hash === savedHash);
 };
 
@@ -60,9 +60,9 @@ export function useExporterDAG(
             type: queryCellNode,
             data: {
                 label: cell.meta?.title,
-                updated: savedNode?.data?.queryHash
-                    ? isQueryUpdated(savedNode?.data?.queryHash, cell.context)
-                    : false,
+                updated:
+                    savedNode?.data?.queryHash &&
+                    isQueryUpdated(savedNode?.data?.queryHash, cell.context),
                 query: cell.context,
             },
             position: savedNode?.position ?? initialNodePosition,

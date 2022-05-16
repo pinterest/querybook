@@ -1,8 +1,23 @@
 import React from 'react';
-import { getBezierPath, getEdgeCenter } from 'react-flow-renderer';
+import { getBezierPath, getEdgeCenter, Position } from 'react-flow-renderer';
 import { IconButton } from 'ui/Button/IconButton';
 
 const foreignObjectSize = 24;
+
+interface IProps {
+    id: string;
+    data: {
+        onRemove: (id: string) => void;
+    };
+    sourceX: number;
+    sourceY: number;
+    targetX: number;
+    targetY: number;
+    sourcePosition: Position;
+    targetPosition: Position;
+    style: Record<string, any>;
+    markerEnd: string;
+}
 
 export const RemovableEdge = ({
     id,
@@ -15,7 +30,7 @@ export const RemovableEdge = ({
     targetPosition,
     style = {},
     markerEnd,
-}) => {
+}: IProps) => {
     const { onRemove } = data;
     const edgePath = getBezierPath({
         sourceX,

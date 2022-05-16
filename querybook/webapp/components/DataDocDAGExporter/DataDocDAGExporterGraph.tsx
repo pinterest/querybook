@@ -8,6 +8,11 @@ import { IDataDocDAGExport, IDataQueryCell } from 'const/datadoc';
 import { DataDocDAGExporterSave } from './DataDocDAGExporter';
 import { DataDocDagExporterList } from './DataDocDAGExporterList';
 import { FlowGraph } from 'ui/FlowGraph/FlowGraph';
+import { RemovableEdge } from 'ui/FlowGraph/RemovableEdge';
+
+const edgeTypes = {
+    removableEdge: RemovableEdge,
+};
 
 interface IProps {
     unusedQueryCells: IDataQueryCell[];
@@ -46,6 +51,7 @@ export const DataDocDAGExporterGraph = ({
                         setNodes={setNodes}
                         setEdges={setEdges}
                         nodeTypes={QueryDAGNodeTypes}
+                        edgeTypes={edgeTypes}
                         graphRef={graphRef}
                         setGraphInstance={setGraphInstance}
                     />
