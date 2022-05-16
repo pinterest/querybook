@@ -19,7 +19,7 @@ interface IProps {
     markerEnd: string;
 }
 
-export const RemovableEdge = ({
+export const RemovableEdge: React.FC<IProps> = ({
     id,
     data,
     sourceX,

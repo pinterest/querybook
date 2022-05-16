@@ -54,9 +54,6 @@ export function useExporterDAG(
         ReactFlowInstance<any, any>
     >();
 
-    useEffect(() => console.log('savedEdges', savedEdges), [savedEdges]);
-    useEffect(() => console.log('edges', edges), [edges]);
-
     const createNode = useCallback(
         (cell: IDataQueryCell, savedNode?: Partial<Node>) => ({
             id: cell.id.toString(),
