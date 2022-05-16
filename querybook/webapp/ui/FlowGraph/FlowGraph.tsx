@@ -140,6 +140,11 @@ const InteractiveFlowGraph: React.FunctionComponent<IGraphProps> = ({
     const sourcePosition =
         layoutDirection === 'LR' ? Position.Right : Position.Bottom;
 
+    const edgesHaveData = React.useMemo(
+        () => Boolean(edges.length && Object.keys(edges[0]?.data || {}).length),
+        [edges]
+    );
+
     React.useEffect(() => {
         if (nodes.length && !layoutDirection) {
             const direction =
@@ -155,11 +160,20 @@ const InteractiveFlowGraph: React.FunctionComponent<IGraphProps> = ({
         [setEdges]
     );
 
-    React.useEffect(() => {
+    const setRemovableEdges = React.useCallback(() => {
         setEdges((edges) =>
-            edges.map((edge) => ({ ...edge, data: { onRemove: onRemoveEdge } }))
+            edges.map((edge) => ({
+                ...edge,
+                data: { onRemove: onRemoveEdge },
+            }))
         );
-    }, [edges.length, onRemoveEdge, setEdges]);
+    }, [onRemoveEdge, setEdges]);
+
+    React.useEffect(() => {
+        if (edges.length && !edgesHaveData) {
+            setRemovableEdges();
+        }
+    }, [edges.length, edgesHaveData, onRemoveEdge, setRemovableEdges]);
 
     const onConnect = useCallback(
         (params: Connection) => {
