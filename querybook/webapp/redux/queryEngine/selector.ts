@@ -12,6 +12,7 @@ const unknownQueryEngine: IQueryEngine = {
     executor: 'unknown',
     language: 'presto',
     name: 'unknown',
+    feature_params: {},
 };
 
 const queryEngineByIdSelector = (state: IStoreState) =>
