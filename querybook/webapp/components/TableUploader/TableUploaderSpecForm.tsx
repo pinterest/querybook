@@ -3,14 +3,14 @@ import {
     UploadedTableIfExistOptions,
 } from 'const/tableUpload';
 import { FieldArray, useFormikContext } from 'formik';
-import React, { useCallback, useEffect, useMemo } from 'react';
-import { useSelector } from 'react-redux';
-import { queryEngineSelector } from 'redux/queryEngine/selector';
+import React, { useCallback, useEffect } from 'react';
 import { TableUploadResource } from 'resource/tableUpload';
 import { Button } from 'ui/Button/Button';
+import { FormWrapper } from 'ui/Form/FormWrapper';
 import { SimpleField } from 'ui/FormikField/SimpleField';
 import { StyledText } from 'ui/StyledText/StyledText';
 import { ITableUploadFormikForm } from './types';
+import { useQueryEnginesForUpload } from './useQueryEnginesForUpload';
 
 export const TableUploaderSpecForm: React.FC<{
     metastoreId: number;
@@ -19,7 +19,7 @@ export const TableUploaderSpecForm: React.FC<{
         values,
         setFieldValue,
     } = useFormikContext<ITableUploadFormikForm>();
-    const possibleQueryEngines = useQueryEngineInMetastore(metastoreId);
+    const possibleQueryEngines = useQueryEnginesForUpload(metastoreId);
 
     const loadColumnTypes = useCallback(() => {
         TableUploadResource.previewColumns({
@@ -38,27 +38,54 @@ export const TableUploaderSpecForm: React.FC<{
         // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [values.auto_generated_column_types, loadColumnTypes, setFieldValue]);
 
+    // Auto set query engine to be the first one if none is selected
+    useEffect(() => {
+        if (possibleQueryEngines.length === 0) {
+            return;
+        }
+        if (
+            possibleQueryEngines.find(
+                (engine) => engine.id === values.engine_id
+            )
+        ) {
+            return;
+        }
+
+        setFieldValue('engine_id', possibleQueryEngines[0].id);
+    }, [possibleQueryEngines, values.engine_id, setFieldValue]);
+
     return (
         <div>
-            <SimpleField
-                name="engine_id"
-                type="react-select"
-                label="Query Engine to Upload"
-                options={possibleQueryEngines.map((engine) => ({
-                    label: engine.name,
-                    value: engine.id,
-                }))}
-                stacked
-            />
-            <SimpleField name="table_config.schema_name" type="input" stacked />
-            <SimpleField name="table_config.table_name" type="input" stacked />
-            <SimpleField
-                name="table_config.if_exists"
-                type="react-select"
-                options={(UploadedTableIfExistOptions as unknown) as string[]}
-                help="Behavior if the table is already defined. Note: append only works for some databases"
-                stacked
-            />
+            <FormWrapper minLabelWidth="140px">
+                <SimpleField
+                    name="engine_id"
+                    type="react-select"
+                    label="Query Engine"
+                    options={possibleQueryEngines.map((engine) => ({
+                        label: engine.name,
+                        value: engine.id,
+                    }))}
+                    required
+                />
+                <SimpleField
+                    name="table_config.schema_name"
+                    type="input"
+                    required
+                />
+                <SimpleField
+                    name="table_config.table_name"
+                    type="input"
+                    required
+                />
+                <SimpleField
+                    name="table_config.if_exists"
+                    type="react-select"
+                    options={
+                        (UploadedTableIfExistOptions as unknown) as string[]
+                    }
+                    help="Behavior if the table is already defined. Note: append only works for some databases"
+                />
+            </FormWrapper>
 
             <FieldArray
                 name="table_config.column_name_types"
@@ -90,7 +117,7 @@ export const TableUploaderSpecForm: React.FC<{
                     );
 
                     return (
-                        <div className="mt16">
+                        <div className="mt20">
                             <div className="horizontal-space-between">
                                 <StyledText
                                     color="light"
@@ -102,7 +129,7 @@ export const TableUploaderSpecForm: React.FC<{
 
                                 <Button
                                     icon="RefreshCw"
-                                    title="Set columns from upload source"
+                                    title="Reset columns"
                                     onClick={loadColumnTypes}
                                 />
                             </div>
@@ -112,10 +139,10 @@ export const TableUploaderSpecForm: React.FC<{
                                     weight="light"
                                     size="small"
                                 >
-                                    The types provided will be auto-converted to
-                                    the applicable type for the query engine.
-                                    You can also override the default types for
-                                    custom type.
+                                    The types are auto-generated will be
+                                    converted to the applicable type for the
+                                    query engine. You can also provide your own
+                                    typing.
                                 </StyledText>
                             </div>
 
@@ -127,14 +154,3 @@ export const TableUploaderSpecForm: React.FC<{
         </div>
     );
 };
-
-function useQueryEngineInMetastore(metastoreId: number) {
-    const queryEngines = useSelector(queryEngineSelector);
-    return useMemo(
-        () =>
-            queryEngines.filter(
-                (engine) => engine.metastore_id === metastoreId
-            ),
-        [queryEngines, metastoreId]
-    );
-}

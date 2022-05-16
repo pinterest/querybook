@@ -1,3 +1,4 @@
+from typing import Dict, TextIO
 import boto3
 import botocore
 from botocore.client import Config
@@ -139,12 +140,31 @@ class S3FileCopier(object):
     to an arbitrary S3 location
     """
 
-    def __init__(self, resource_path: str):
-        self._source_resource = {
-            "Bucket": QuerybookSettings.STORE_BUCKET_NAME,
-            "Key": resource_path,
-        }
-        self._s3 = boto3.resource("s3")
+    def __init__(self, resource_config: Dict):
+        self._source_config = resource_config
+
+    @classmethod
+    def from_querybook_bucket(cls, key: str):
+        return S3FileCopier(
+            {
+                "type": "s3",
+                "data": {
+                    "Bucket": QuerybookSettings.STORE_BUCKET_NAME,
+                    "Key": key,
+                },
+            }
+        )
+
+    @classmethod
+    def from_local_file(cls, f: TextIO):
+        return S3FileCopier(
+            {
+                "type": "file",
+                "data": {
+                    "file": f,
+                },
+            }
+        )
 
     @classmethod
     def s3_path_to_bucket_key(cls, path: str):
@@ -158,4 +178,11 @@ class S3FileCopier(object):
         target_bucket, target_obj_path = S3FileCopier.s3_path_to_bucket_key(
             target_s3_path
         )
-        self._s3.meta.client.copy(self._source_resource, target_bucket, target_obj_path)
+        source_type = self._source_config["type"]
+        if source_type == "s3":
+            boto3.resource("s3").meta.client.copy(
+                self._source_config["data"], target_bucket, target_obj_path
+            )
+        elif source_type == "file":
+            f: TextIO = self._source_config["data"]["file"]
+            boto3.client("s3").upload_file(f.name, target_bucket, target_obj_path)

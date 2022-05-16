@@ -1,13 +1,16 @@
 import { IQueryExecutionImporterConfig } from 'const/tableUpload';
 import { useFormikContext } from 'formik';
 import React, { useCallback, useMemo, useState } from 'react';
+import { AsyncButton } from 'ui/AsyncButton/AsyncButton';
 import { Button } from 'ui/Button/Button';
 import { StepsBar } from 'ui/StepsBar/StepsBar';
 import { ITableUploadFormikForm, TableUploaderStepValue } from './types';
 
-interface ITableUploaderStepProps {
-    children: (step: number) => React.ReactNode;
-}
+const TableUploaderStepsDOM: React.ReactChild[] = [
+    'Select Source',
+    'Table Spec',
+    'Upload',
+];
 
 function useMaxUploaderStep(config: ITableUploadFormikForm): number {
     return useMemo(() => {
@@ -29,7 +32,11 @@ function useMaxUploaderStep(config: ITableUploadFormikForm): number {
             }
         }
 
-        if (!config.table_config.table_name) {
+        if (
+            !config.table_config.table_name ||
+            !config.table_config.schema_name ||
+            config.engine_id == null
+        ) {
             return TableUploaderStepValue.TableConfig;
         }
 
@@ -37,15 +44,7 @@ function useMaxUploaderStep(config: ITableUploadFormikForm): number {
     }, [config]);
 }
 
-const TableUploaderStepsDOM: React.ReactChild[] = [
-    'Select Source',
-    'Table Spec',
-    'Upload',
-];
-
-export const TableUploaderStep: React.FC<ITableUploaderStepProps> = ({
-    children,
-}) => {
+export function useTableUploaderStep() {
     const {
         values: config,
         setFieldValue,
@@ -66,35 +65,47 @@ export const TableUploaderStep: React.FC<ITableUploaderStepProps> = ({
         [setFieldValue]
     );
 
-    const controlFooter = (
-        <div className="TableUploaderStep-footer horizontal-space-between">
-            <div>
-                {step >= 1 && (
-                    <Button
-                        title="Previous"
-                        onClick={() => handleSetStep(-1)}
-                    />
-                )}
-            </div>
-            <div>
-                {step < TableUploaderStepsDOM.length - 1 && (
-                    <Button
-                        title="Next"
-                        onClick={() => handleSetStep(1)}
-                        disabled={step >= maxStep}
-                    />
-                )}
-            </div>
-        </div>
-    );
+    return [step, maxStep, handleSetStep] as const;
+}
+
+export const TableUploaderStepHeader: React.FC<{
+    step: number;
+}> = ({ step }) => (
+    <div className="TableUploaderStep flex1">
+        <StepsBar steps={TableUploaderStepsDOM} activeStep={step} />
+    </div>
+);
+
+export const TableUploaderStepFooter: React.FC<{
+    step: number;
+    maxStep: number;
+    setStep: (step: number) => void;
+}> = ({ step, maxStep, setStep }) => {
+    const { submitForm } = useFormikContext<ITableUploadFormikForm>();
 
     return (
-        <div className="TableUploaderStep">
-            <div className="TableUploaderStep-header">
-                <StepsBar steps={TableUploaderStepsDOM} activeStep={step} />
+        <div className="TableUploaderStep-footer horizontal-space-between pb12 ph8">
+            <div>
+                {step >= 1 && (
+                    <Button title="Previous" onClick={() => setStep(-1)} />
+                )}
             </div>
-            <div className="TableUploaderStep-content">{children(step)}</div>
-            {controlFooter}
+            <div>
+                {step < TableUploaderStepsDOM.length - 1 ? (
+                    <Button
+                        title="Next"
+                        onClick={() => setStep(1)}
+                        disabled={step >= maxStep}
+                    />
+                ) : (
+                    <AsyncButton
+                        color="confirm"
+                        icon="Upload"
+                        title="Create Table"
+                        onClick={submitForm}
+                    />
+                )}
+            </div>
         </div>
     );
 };

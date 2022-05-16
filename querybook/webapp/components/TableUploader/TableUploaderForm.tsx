@@ -1,20 +1,28 @@
 import React, { useCallback, useMemo } from 'react';
 import { TableUploaderStepValue, ITableUploadFormikForm } from './types';
 import { Formik } from 'formik';
-import { TableUploaderStep } from './TableUploaderStep';
+import {
+    TableUploaderStepFooter,
+    TableUploaderStepHeader,
+    useTableUploaderStep,
+} from './TableUploaderStep';
 import { ITableUploaderSourceForm } from './TableUploaderSourceForm';
 import { TableUploaderSpecForm } from './TableUploaderSpecForm';
 import { TableUploaderConfirmForm } from './TableUploaderConfirmForm';
 import { TableUploadResource } from 'resource/tableUpload';
 import toast from 'react-hot-toast';
-import { navigateWithinEnv } from 'lib/utils/query-string';
+import { Modal } from 'ui/Modal/Modal';
 
 interface ITableUploaderFormProps {
     metastoreId: number;
+    onCompletion: (tableId: number) => void;
+    onHide: () => void;
 }
 
 export const TableUploaderForm: React.FC<ITableUploaderFormProps> = ({
     metastoreId,
+    onCompletion,
+    onHide,
 }) => {
     const initialUploadConfig: ITableUploadFormikForm = useMemo(
         () => ({
@@ -54,42 +62,54 @@ export const TableUploaderForm: React.FC<ITableUploaderFormProps> = ({
 
             const createTablePromise = TableUploadResource.createTable(
                 uploadForm
-            ).then(({ data: tableId }) => {
-                navigateWithinEnv(`/table/${tableId}/`);
-            });
+            );
 
-            toast.promise(createTablePromise, {
+            const { data: tableId } = await toast.promise(createTablePromise, {
                 loading: 'Creating table...',
                 success: 'Table created!',
                 error: 'Fail to create table',
             });
+
+            onCompletion(tableId);
         },
-        []
+        [onCompletion]
     );
 
     return (
-        <div className="TableUploaderForm">
-            <Formik initialValues={initialUploadConfig} onSubmit={handleSubmit}>
-                {() => (
-                    <TableUploaderStep>
-                        {(step) => {
-                            if (step === TableUploaderStepValue.SourceConfig) {
-                                return <ITableUploaderSourceForm />;
-                            } else if (
-                                step === TableUploaderStepValue.TableConfig
-                            ) {
-                                return (
-                                    <TableUploaderSpecForm
-                                        metastoreId={metastoreId}
-                                    />
-                                );
-                            } else {
-                                return <TableUploaderConfirmForm />;
-                            }
-                        }}
-                    </TableUploaderStep>
-                )}
-            </Formik>
-        </div>
+        <Formik initialValues={initialUploadConfig} onSubmit={handleSubmit}>
+            <TableUploaderFormModal onHide={onHide} metastoreId={metastoreId} />
+        </Formik>
+    );
+};
+
+const TableUploaderFormModal: React.FC<{
+    onHide: () => void;
+    metastoreId: number;
+}> = ({ onHide, metastoreId }) => {
+    const [step, maxStep, setStep] = useTableUploaderStep();
+
+    let formDOM: React.ReactNode;
+    if (step === TableUploaderStepValue.SourceConfig) {
+        formDOM = <ITableUploaderSourceForm />;
+    } else if (step === TableUploaderStepValue.TableConfig) {
+        formDOM = <TableUploaderSpecForm metastoreId={metastoreId} />;
+    } else {
+        formDOM = <TableUploaderConfirmForm />;
+    }
+
+    return (
+        <Modal
+            onHide={onHide}
+            topDOM={<TableUploaderStepHeader step={step} />}
+            bottomDOM={
+                <TableUploaderStepFooter
+                    step={step}
+                    maxStep={maxStep}
+                    setStep={setStep}
+                />
+            }
+        >
+            {formDOM}
+        </Modal>
     );
 };

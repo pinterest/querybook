@@ -72,6 +72,8 @@ GOOGLE_CREDS: ~
 LOG_LOCATION: ~
 
 # --------------- Table Upload (Experimental) ---------------
+# Size in bytes
+TABLE_MAX_UPLOAD_SIZE: ~
 # Used by S3 uploader to upload table to that path, trailing slash optional
 # For Example: s3://bucket/key_prefix/
 TABLE_UPLOAD_S3_PATH: ~

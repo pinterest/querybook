@@ -4,14 +4,13 @@ import React, { useMemo } from 'react';
 import { useSelector } from 'react-redux';
 import { queryEngineByIdEnvSelector } from 'redux/queryEngine/selector';
 import { IStoreState } from 'redux/store/types';
-import { AsyncButton } from 'ui/AsyncButton/AsyncButton';
 import { Message } from 'ui/Message/Message';
 import { StyledText } from 'ui/StyledText/StyledText';
 import { Tag, TagGroup } from 'ui/Tag/Tag';
 import { ITableUploadFormikForm } from './types';
 
 export const TableUploaderConfirmForm: React.FC = () => {
-    const { values, submitForm } = useFormikContext<ITableUploadFormikForm>();
+    const { values } = useFormikContext<ITableUploadFormikForm>();
 
     const queryEngine = useSelector(
         (state: IStoreState) =>
@@ -118,14 +117,6 @@ export const TableUploaderConfirmForm: React.FC = () => {
             </div>
             {renderSourceInfoDOM()}
             {renderTableSpecDOM()}
-            <div className="center-align mt12">
-                <AsyncButton
-                    color="confirm"
-                    icon="Upload"
-                    title="Create Table"
-                    onClick={submitForm}
-                />
-            </div>
         </div>
     );
 };

@@ -1,14 +1,21 @@
-import React, { useState } from 'react';
+import { navigateWithinEnv } from 'lib/utils/query-string';
+import React, { useCallback, useState } from 'react';
 import { IconButton, IIconButtonProps } from 'ui/Button/IconButton';
-import { Modal } from 'ui/Modal/Modal';
 import { TableUploaderForm } from './TableUploaderForm';
+import { useQueryEnginesForUpload } from './useQueryEnginesForUpload';
 
 export const TableUploaderButton: React.FC<
     Partial<IIconButtonProps> & { metastoreId: number }
 > = ({ metastoreId, ...iconButtonProps }) => {
     const [showUploader, setShowUploader] = useState(false);
+    const queryEnginesForUpload = useQueryEnginesForUpload(metastoreId);
 
-    return (
+    const handleUploadCompletion = useCallback((tableId: number) => {
+        setShowUploader(false);
+        navigateWithinEnv(`/table/${tableId}`);
+    }, []);
+
+    return queryEnginesForUpload.length > 0 ? (
         <>
             <IconButton
                 icon="Plus"
@@ -17,10 +24,14 @@ export const TableUploaderButton: React.FC<
                 {...iconButtonProps}
             />
             {showUploader && (
-                <Modal onHide={() => setShowUploader(false)}>
-                    <TableUploaderForm metastoreId={metastoreId} />
-                </Modal>
+                <TableUploaderForm
+                    metastoreId={metastoreId}
+                    onCompletion={handleUploadCompletion}
+                    onHide={() => setShowUploader(false)}
+                />
             )}
         </>
+    ) : (
+        <div />
     );
 };

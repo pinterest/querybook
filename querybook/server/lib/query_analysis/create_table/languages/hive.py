@@ -34,11 +34,18 @@ class HiveCreateTable(BaseCreateTable):
         return f"CREATE EXTERNAL TABLE {self._table_name}"
 
     def _get_extra_properties(self) -> str:
-        rows = [
-            "ROW FORMAT SERDE 'org.apache.hadoop.hive.serde2.OpenCSVSerde'",
-            "FIELDS TERMINATED BY ','",
-            f"STORED AS {self._format}",
-            f"LOCATION '{self._file_location}'"
-            'TBLPROPERTIES ("skip.header.line.count"="1")',
-        ]
+        rows = []
+        if self._format == "CSV":
+            rows += [
+                "ROW FORMAT SERDE 'org.apache.hadoop.hive.serde2.OpenCSVSerde'",
+                "FIELDS TERMINATED BY ','",
+                "STORED AS TEXTFILE",
+                f"LOCATION '{self._file_location}'"
+                'TBLPROPERTIES ("skip.header.line.count"="1")',
+            ]
+        elif self._format == "PARQUET":
+            rows += ["STORED AS PARQUET", f"LOCATION '{self._file_location}'"]
+        else:
+            raise ValueError(f"Unsupported Presto file type {self._format}")
+
         return "\n".join(rows)

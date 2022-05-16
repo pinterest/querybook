@@ -8,6 +8,7 @@ from lib.table_upload.importer.query_execution_importer import (
 
 def get_importer(import_config: Dict, file_to_upload: Optional[Any]):
     source_type = import_config["source_type"]
+
     if source_type == "file":
         return CSVFileImporter(file_to_upload, import_config["parse_config"])
     elif source_type == "query_execution":

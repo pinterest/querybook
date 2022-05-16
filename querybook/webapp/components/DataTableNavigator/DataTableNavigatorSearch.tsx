@@ -18,7 +18,6 @@ import { SoftButton } from 'ui/Button/Button';
 import { OrderByButton } from 'ui/OrderByButton/OrderByButton';
 
 import './DataTableNavigatorSearch.scss';
-import { TableUploaderButton } from 'components/TableUploader/TableUploaderButton';
 
 export const DataTableNavigatorSearch: React.FC<{
     metastoreId: number;
@@ -38,7 +37,6 @@ export const DataTableNavigatorSearch: React.FC<{
     searchFilters,
     updateSearchFilter,
     resetSearchFilter,
-    metastoreId,
 
     showTableSearchResult,
 }) => {
@@ -140,14 +138,6 @@ export const DataTableNavigatorSearch: React.FC<{
                     }}
                 />
             )}
-
-            <TableUploaderButton
-                size={'18px'}
-                noPadding
-                tooltipPos="left"
-                className="ml4"
-                metastoreId={metastoreId}
-            />
 
             <IconButton
                 ref={filterButtonRef}

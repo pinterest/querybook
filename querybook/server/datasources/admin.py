@@ -5,13 +5,16 @@ from app.db import DBSession
 from const.admin import AdminOperation, AdminItemType
 from datasources.admin_audit_log import with_admin_audit_log
 from env import QuerybookSettings
-from lib.engine_status_checker import ALL_ENGINE_STATUS_CHECKERS
-from lib.metastore.all_loaders import ALL_METASTORE_LOADERS
 from lib.query_executor.all_executors import (
     get_flattened_executor_template,
     get_executor_class,
 )
-from lib.engine_status_checker import get_engine_checker_class
+from lib.engine_status_checker import (
+    ALL_ENGINE_STATUS_CHECKERS,
+    get_engine_checker_class,
+)
+from lib.metastore.all_loaders import ALL_METASTORE_LOADERS
+from lib.table_upload.exporter.exporter_factory import ALL_TABLE_UPLOAD_EXPORTER_BY_NAME
 from logic import admin as logic
 from logic import user as user_logic
 from logic import environment as environment_logic
@@ -686,3 +689,9 @@ def get_admin_config():
         for key in dir(QuerybookSettings)
         if not key.startswith("__")
     }
+
+
+@register("/admin/table_upload/exporter/", methods=["GET"])
+@admin_only
+def get_admin_table_upload_exporters():
+    return list(ALL_TABLE_UPLOAD_EXPORTER_BY_NAME.keys())

@@ -8,7 +8,8 @@ from .base_exporter import BaseTableUploadExporter
 
 ALL_TABLE_UPLOAD_EXPORTERS: List[BaseTableUploadExporter] = import_modules(
     [
-        ("lib.table_upload.exporter.s3_exporter", "S3Exporter"),
+        ("lib.table_upload.exporter.s3_exporter", "S3CSVExporter"),
+        ("lib.table_upload.exporter.s3_exporter", "S3ParquetExporter"),
         ("lib.table_upload.exporter.sqlalchemy_exporter", "SqlalchemyExporter"),
     ]
 )
@@ -25,7 +26,6 @@ def get_exporter(
     if not query_engine:
         raise Exception(f"Invalid query engine id {engine_id}")
     feature_params = query_engine.feature_params
-    feature_params = {"upload_exporter": "SqlalchemyExporter"}
 
     if "upload_exporter" not in feature_params:
         raise Exception(f"Query engine {query_engine.name} does not have a exporter")

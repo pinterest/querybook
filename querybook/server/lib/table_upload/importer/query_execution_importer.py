@@ -47,7 +47,7 @@ class QueryExecutionImporter(BaseTableUploadImporter):
             self.statement_execution_id, number_of_lines=num_rows, session=session
         )
 
-        # Skip the first row, which is the column header
+        # Skip the first row, which is the colum n header
         sliced_rows = islice(rows, 1, None)
         return columns, sliced_rows
 

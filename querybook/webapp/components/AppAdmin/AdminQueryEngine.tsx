@@ -60,6 +60,10 @@ export const AdminQueryEngine: React.FunctionComponent<IProps> = ({
         AdminQueryEngineResource.getCheckerNames
     );
 
+    const { data: tableUploadExporterNames } = useResource(
+        AdminQueryEngineResource.getTableUploadExporterNames
+    );
+
     const querybookLanguages: string[] = React.useMemo(
         () => [
             ...new Set(
@@ -321,14 +325,6 @@ export const AdminQueryEngine: React.FunctionComponent<IProps> = ({
                                 }}
                                 withDeselect
                             />
-
-                            <SimpleField
-                                stacked
-                                name="feature_params.status_checker"
-                                type="select"
-                                options={engineStatusCheckerNames}
-                                withDeselect
-                            />
                             <SimpleField
                                 stacked
                                 help={() => (
@@ -383,6 +379,33 @@ export const AdminQueryEngine: React.FunctionComponent<IProps> = ({
                                 />
                             </div>
                         </div>
+
+                        <div className="AdminForm-section">
+                            <div className="AdminForm-section-top flex-row">
+                                <div className="AdminForm-section-title">
+                                    Additional Features
+                                </div>
+                            </div>
+                            <div className="AdminForm-section-content">
+                                <SimpleField
+                                    stacked
+                                    name="feature_params.status_checker"
+                                    type="react-select"
+                                    options={engineStatusCheckerNames}
+                                    withDeselect
+                                />
+
+                                <SimpleField
+                                    stacked
+                                    name="feature_params.upload_exporter"
+                                    type="react-select"
+                                    label="(Experimental) Table Upload Exporter"
+                                    options={tableUploadExporterNames}
+                                    withDeselect
+                                />
+                            </div>
+                        </div>
+
                         {environmentDOM}
                     </div>
                 </div>

@@ -55,7 +55,7 @@ class FileUploader(BaseUploader):
 
 class FileReader(BaseReader):
     def __init__(self, uri: str, **kwargs):
-        self.uri = get_file_uri(uri)
+        self._uri = get_file_uri(uri)
 
     def start(self):
         pass
@@ -90,3 +90,7 @@ class FileReader(BaseReader):
 
     def get_download_url(self, custom_name=None):
         return None
+
+    @property
+    def uri(self):
+        return self._uri

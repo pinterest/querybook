@@ -5,6 +5,7 @@ import { FileUploaderArea } from './FileUploaderArea';
 import { IOptions } from 'lib/utils/react-select';
 import { UploadSourceType } from 'const/tableUpload';
 import { ITableUploadFormikForm } from './types';
+import { FormWrapper } from 'ui/Form/FormWrapper';
 
 export const UploadSourceTypeOptions: IOptions<UploadSourceType> = [
     {
@@ -38,17 +39,14 @@ export const ITableUploaderSourceForm: React.FC = ({}) => {
                         <SimpleField
                             type="input"
                             name="import_config.parse_config.delimiter"
-                            stacked
                             help="Are the columns comma separated, tab separated, or other?"
                         />
 
                         <SimpleField
                             type="number"
                             name="import_config.parse_config.skip_rows"
-                            stacked
                         />
                         <SimpleField
-                            stacked
                             type="number"
                             name="import_config.parse_config.max_rows"
                             help="Determine how many rows to upload, put nothing or 0 for unlimited"
@@ -62,7 +60,6 @@ export const ITableUploaderSourceForm: React.FC = ({}) => {
                             <SimpleField
                                 type="input"
                                 name="import_config.parse_config.col_names"
-                                stacked
                                 help="List of column names, comma separated"
                             />
                         )}
@@ -85,10 +82,9 @@ export const ITableUploaderSourceForm: React.FC = ({}) => {
         sourceTypeForm = (
             <>
                 <SimpleField
-                    stacked
                     type="input"
                     name="import_config.query_execution_id"
-                    label="Query Execution Id"
+                    label="Execution Id"
                     help="You can also put the query execution url here (Click on share execution in the query execution view)"
                     onChange={(newInput) => {
                         const inputUrlMatch = newInput.match(
@@ -109,14 +105,13 @@ export const ITableUploaderSourceForm: React.FC = ({}) => {
     }
 
     return (
-        <div>
+        <FormWrapper minLabelWidth="160px">
             <SimpleField
                 type="react-select"
                 options={UploadSourceTypeOptions}
                 name="import_config.source_type"
-                stacked
             />
             {sourceTypeForm}
-        </div>
+        </FormWrapper>
     );
 };
