@@ -156,6 +156,12 @@ const InteractiveFlowGraph: React.FunctionComponent<IGraphProps> = ({
         [setEdges]
     );
 
+    React.useEffect(() => {
+        setEdges((edges) =>
+            edges.map((edge) => ({ ...edge, data: { onRemove: onRemoveEdge } }))
+        );
+    }, [edges.length, onRemoveEdge, setEdges]);
+
     const onConnect = useCallback(
         (params: Connection) => {
             setEdges((eds) =>
