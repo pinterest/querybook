@@ -17,14 +17,10 @@ import { AccentText, StyledText } from 'ui/StyledText/StyledText';
 export interface IDataDocDAGExporterListItemProps {
     queryCell: IDataQueryCell;
     queryEngineById: Record<number, IQueryEngine>;
-    className?: string;
-    pinned?: boolean;
-    url?: string;
-    onRemove?: (queryCell: IDataQueryCell) => any;
 }
 
 export const DataDocDAGExporterListItem = React.memo<IDataDocDAGExporterListItemProps>(
-    ({ queryCell, queryEngineById, className, url, onRemove }) => {
+    ({ queryCell, queryEngineById }) => {
         const [, drag] = useDrag({
             item: {
                 type: queryCellDraggableType,

@@ -1,6 +1,6 @@
 import * as React from 'react';
 import { ConnectDropTarget } from 'react-dnd';
-import { Edge, Node } from 'react-flow-renderer';
+import { Edge, Node, ReactFlowInstance } from 'react-flow-renderer';
 
 import { QueryDAGNodeTypes } from 'hooks/dag/useExporterDAG';
 import { IDataDocDAGExport, IDataQueryCell } from 'const/datadoc';
@@ -8,14 +8,21 @@ import { IDataDocDAGExport, IDataQueryCell } from 'const/datadoc';
 import { DataDocDAGExporterSave } from './DataDocDAGExporter';
 import { DataDocDagExporterList } from './DataDocDAGExporterList';
 import { FlowGraph } from 'ui/FlowGraph/FlowGraph';
+import { RemovableEdge } from 'ui/FlowGraph/RemovableEdge';
+
+const edgeTypes = {
+    removableEdge: RemovableEdge,
+};
 
 interface IProps {
     unusedQueryCells: IDataQueryCell[];
     dropRef: ConnectDropTarget;
+    graphRef: React.MutableRefObject<HTMLDivElement>;
     nodes: Node[];
     edges: Edge[];
     setNodes: (value: React.SetStateAction<Node[]>) => void;
     setEdges: (value: React.SetStateAction<Edge[]>) => void;
+    setGraphInstance: (graphIntstance: ReactFlowInstance<any, any>) => void;
     onSave: (nodes: Node[], edges: Edge[]) => Promise<IDataDocDAGExport>;
     onExport: () => void;
 }
@@ -23,10 +30,12 @@ interface IProps {
 export const DataDocDAGExporterGraph = ({
     unusedQueryCells,
     dropRef,
+    graphRef,
     nodes,
     edges,
     setNodes,
     setEdges,
+    setGraphInstance,
     onSave,
     onExport,
 }: IProps) => (
@@ -34,7 +43,7 @@ export const DataDocDAGExporterGraph = ({
         <DataDocDagExporterList queryCells={unusedQueryCells} />
         <div className="DataDocDAGExporter-main">
             <div className="DataDocDAGExporter-graph-wrapper" ref={dropRef}>
-                <div className="DataDocDAGExporterGraph">
+                <div className="DataDocDAGExporterGraph" ref={graphRef}>
                     <FlowGraph
                         isInteractive={true}
                         nodes={nodes}
@@ -42,6 +51,8 @@ export const DataDocDAGExporterGraph = ({
                         setNodes={setNodes}
                         setEdges={setEdges}
                         nodeTypes={QueryDAGNodeTypes}
+                        edgeTypes={edgeTypes}
+                        setGraphInstance={setGraphInstance}
                     />
                 </div>
                 <DataDocDAGExporterSave

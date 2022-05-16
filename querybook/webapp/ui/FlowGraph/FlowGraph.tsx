@@ -15,12 +15,18 @@ import ReactFlow, {
     NodeChange,
     EdgeChange,
     Node,
+    ReactFlowInstance,
+    Position,
 } from 'react-flow-renderer';
 
+import { getLayoutedElements, LayoutDirection } from './helpers';
+
 import { Button } from 'ui/Button/Button';
+import { KeyboardKey } from 'ui/KeyboardKey/KeyboardKey';
+import { AccentText } from 'ui/StyledText/StyledText';
+import { Icon } from 'ui/Icon/Icon';
 
 import './FlowGraph.scss';
-import { getLayoutedElements, LayoutDirection } from './helpers';
 
 interface IPluginProps {
     plugins?: {
@@ -36,10 +42,13 @@ interface IGraphProps extends IPluginProps {
     setEdges?: React.Dispatch<React.SetStateAction<Edge[]>>;
 
     nodeTypes?: Record<string, any>;
+    edgeTypes?: Record<string, any>;
     autoLayout?: boolean;
 
     onNodesChange?: (nodes: Node[]) => void;
     onEdgesChange?: (edges: Edge[]) => void;
+
+    setGraphInstance?: (graphIntstance: ReactFlowInstance<any, any>) => void;
 }
 
 interface IFlowGraphProps extends IGraphProps {
@@ -121,18 +130,80 @@ const InteractiveFlowGraph: React.FunctionComponent<IGraphProps> = ({
     setEdges,
 
     nodeTypes,
+    edgeTypes,
     plugins,
+    setGraphInstance,
 }) => {
-    const onConnect = useCallback(
-        (params: Connection) => setEdges((eds) => addEdge(params, eds)),
+    const [layoutDirection, setLayoutDirection] = React.useState<'LR' | 'TB'>();
+    const targetPosition =
+        layoutDirection === 'LR' ? Position.Left : Position.Top;
+    const sourcePosition =
+        layoutDirection === 'LR' ? Position.Right : Position.Bottom;
+
+    const edgesHaveData = React.useMemo(
+        () => Boolean(edges.length && Object.keys(edges[0]?.data || {}).length),
+        [edges]
+    );
+
+    React.useEffect(() => {
+        if (nodes.length && !layoutDirection) {
+            const direction =
+                nodes[0].sourcePosition === Position.Right ? 'LR' : 'TB';
+            setLayoutDirection(direction);
+        }
+    }, [nodes, layoutDirection]);
+
+    const onRemoveEdge = useCallback(
+        (id) => {
+            setEdges((edges) => edges.filter((edge) => !(edge.id === id)));
+        },
         [setEdges]
+    );
+
+    const setRemovableEdges = React.useCallback(() => {
+        setEdges((edges) =>
+            edges.map((edge) => ({
+                ...edge,
+                data: { onRemove: onRemoveEdge },
+            }))
+        );
+    }, [onRemoveEdge, setEdges]);
+
+    React.useEffect(() => {
+        if (edges.length && !edgesHaveData) {
+            setRemovableEdges();
+        }
+    }, [edges.length, edgesHaveData, onRemoveEdge, setRemovableEdges]);
+
+    const onConnect = useCallback(
+        (params: Connection) => {
+            setEdges((eds) =>
+                addEdge(
+                    {
+                        ...params,
+                        type: 'removableEdge',
+                        data: { onRemove: onRemoveEdge },
+                    },
+                    eds
+                )
+            );
+        },
+        [onRemoveEdge, setEdges]
     );
 
     const onNodesChange = useCallback(
         (changes: NodeChange[]) =>
-            setNodes((nds) => applyNodeChanges(changes, nds)),
-        [setNodes]
+            setNodes((nds) => {
+                const appliedNodes = applyNodeChanges(changes, nds);
+                return appliedNodes.map((node) => ({
+                    ...node,
+                    targetPosition,
+                    sourcePosition,
+                }));
+            }),
+        [setNodes, sourcePosition, targetPosition]
     );
+
     const onEdgesChange = useCallback(
         (changes: EdgeChange[]) =>
             setEdges((eds) => applyEdgeChanges(changes, eds)),
@@ -141,6 +212,7 @@ const InteractiveFlowGraph: React.FunctionComponent<IGraphProps> = ({
 
     const onLayout = React.useCallback(
         (direction: LayoutDirection = 'LR') => {
+            setLayoutDirection(direction);
             const layoutedDAG = getLayoutedElements(nodes, edges, direction);
             setNodes([...layoutedDAG.nodes]);
             setEdges([...layoutedDAG.edges]);
@@ -162,6 +234,8 @@ const InteractiveFlowGraph: React.FunctionComponent<IGraphProps> = ({
                 connectionLineType={ConnectionLineType.Bezier}
                 defaultEdgeOptions={defaultInteractiveFlowEdgeOptions}
                 nodeTypes={nodeTypes}
+                edgeTypes={edgeTypes}
+                onInit={setGraphInstance}
                 fitView
             >
                 <ReactFlowPlugins
@@ -173,17 +247,43 @@ const InteractiveFlowGraph: React.FunctionComponent<IGraphProps> = ({
                         }
                     }
                 />
-                <div className="flex-row layout-buttons m12">
-                    <Button
-                        title="Vertical Layout"
-                        icon="AlignCenterVertical"
-                        onClick={() => onLayout('TB')}
-                    />
-                    <Button
-                        title="Horizontal Layout"
-                        icon="AlignCenterHorizontal"
-                        onClick={() => onLayout('LR')}
-                    />
+                <div className="flex-column layout-buttons m12">
+                    <div>
+                        <Button
+                            title="Vertical Layout"
+                            icon="AlignCenterVertical"
+                            onClick={() => onLayout('TB')}
+                        />
+                        <Button
+                            title="Horizontal Layout"
+                            icon="AlignCenterHorizontal"
+                            onClick={() => onLayout('LR')}
+                        />
+                    </div>
+                    <div className="FlowGraph-hint flex-row mt12">
+                        <div className="flex-column">
+                            <div>
+                                <KeyboardKey value="backspace" />
+                            </div>
+                            <Icon name="Maximize" size={16} />
+                        </div>
+                        <div className="flex-column">
+                            <AccentText
+                                size="xxsmall"
+                                className="mh8"
+                                color="light"
+                            >
+                                to remove node
+                            </AccentText>
+                            <AccentText
+                                size="xxsmall"
+                                className="mh8"
+                                color="light"
+                            >
+                                to fit all nodes
+                            </AccentText>
+                        </div>
+                    </div>
                 </div>
             </ReactFlow>
         </>
