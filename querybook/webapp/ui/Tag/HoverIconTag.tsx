@@ -21,10 +21,10 @@ export const HoverIconTag: React.FunctionComponent<IHoverIconTagProps> = ({
         </div>
     ) : null;
 
-    tagProps['className'] = clsx(tagProps['className'], 'HoverIconTag');
+    const className = clsx(tagProps['className'], 'HoverIconTag');
 
     return (
-        <Tag {...tagProps}>
+        <Tag {...tagProps} className={className}>
             {children}
             {hoverDOM}
         </Tag>

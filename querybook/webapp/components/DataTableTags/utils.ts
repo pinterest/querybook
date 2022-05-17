@@ -6,7 +6,7 @@ import { useMemo } from 'react';
 const BASELINE_TAG_RANK_SCORE = 2;
 
 export function useRankedTags(tags: ITag[]) {
-    // Note: orderBy is a stable sort, so we do
+    // Note: orderBy is a stable sort, so the API order is kept
     return useMemo(
         () =>
             orderBy(
