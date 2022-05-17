@@ -36,3 +36,6 @@ Before starting, please make sure the following is prepared:
 
 Once Querybook is ready, go to the admin Query Engine page (`/admin/query_engine/`). Go to the `Additional Features` section and choose an appropriate table upload exporter. Once this is saved, users
 who refreshed the page should now see a `+` button on the top of Tables sidebar. Clicking on it would start the table upload flow.
+
+Alternatively, you can view any query execution and hover over the `export` button. If there is any query engine in the environment that supports table upload, there should be an option shown to
+let you upload the query results directly to a table.

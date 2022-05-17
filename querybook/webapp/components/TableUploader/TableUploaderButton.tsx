@@ -1,5 +1,4 @@
-import { navigateWithinEnv } from 'lib/utils/query-string';
-import React, { useCallback, useState } from 'react';
+import React, { useState } from 'react';
 import { IconButton, IIconButtonProps } from 'ui/Button/IconButton';
 import { TableUploaderForm } from './TableUploaderForm';
 import { useQueryEnginesForUpload } from './useQueryEnginesForUpload';
@@ -9,11 +8,6 @@ export const TableUploaderButton: React.FC<
 > = ({ metastoreId, ...iconButtonProps }) => {
     const [showUploader, setShowUploader] = useState(false);
     const queryEnginesForUpload = useQueryEnginesForUpload(metastoreId);
-
-    const handleUploadCompletion = useCallback((tableId: number) => {
-        setShowUploader(false);
-        navigateWithinEnv(`/table/${tableId}`);
-    }, []);
 
     return queryEnginesForUpload.length > 0 ? (
         <>
@@ -26,7 +20,6 @@ export const TableUploaderButton: React.FC<
             {showUploader && (
                 <TableUploaderForm
                     metastoreId={metastoreId}
-                    onCompletion={handleUploadCompletion}
                     onHide={() => setShowUploader(false)}
                 />
             )}

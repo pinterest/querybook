@@ -8,6 +8,7 @@ export enum TableUploaderStepValue {
 
 export type ITableUploadFormikForm = ITableUploadConfigForm & {
     auto_generated_column_types: boolean;
+    metastore_id: number;
 };
 
 export interface IDragObjectFiles {

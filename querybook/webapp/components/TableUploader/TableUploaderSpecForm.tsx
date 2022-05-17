@@ -10,16 +10,19 @@ import { FormWrapper } from 'ui/Form/FormWrapper';
 import { SimpleField } from 'ui/FormikField/SimpleField';
 import { StyledText } from 'ui/StyledText/StyledText';
 import { ITableUploadFormikForm } from './types';
-import { useQueryEnginesForUpload } from './useQueryEnginesForUpload';
+import {
+    useMetastoresForUpload,
+    useQueryEnginesForUpload,
+} from './useQueryEnginesForUpload';
 
-export const TableUploaderSpecForm: React.FC<{
-    metastoreId: number;
-}> = ({ metastoreId }) => {
+export const TableUploaderSpecForm: React.FC = ({}) => {
     const {
         values,
         setFieldValue,
     } = useFormikContext<ITableUploadFormikForm>();
-    const possibleQueryEngines = useQueryEnginesForUpload(metastoreId);
+
+    const possibleMetastores = useMetastoresForUpload();
+    const possibleQueryEngines = useQueryEnginesForUpload(values.metastore_id);
 
     const loadColumnTypes = useCallback(() => {
         TableUploadResource.previewColumns({
@@ -56,27 +59,35 @@ export const TableUploaderSpecForm: React.FC<{
 
     return (
         <div>
+            <div>
+                <StyledText color="light" size="smedium" weight="bold">
+                    Required Fields
+                </StyledText>
+            </div>
             <FormWrapper minLabelWidth="140px">
                 <SimpleField
-                    name="engine_id"
+                    name="metastore_id"
                     type="react-select"
-                    label="Query Engine"
-                    options={possibleQueryEngines.map((engine) => ({
-                        label: engine.name,
-                        value: engine.id,
+                    label="Metastore"
+                    options={possibleMetastores.map((store) => ({
+                        label: store.name,
+                        value: store.id,
                     }))}
-                    required
                 />
-                <SimpleField
-                    name="table_config.schema_name"
-                    type="input"
-                    required
-                />
-                <SimpleField
-                    name="table_config.table_name"
-                    type="input"
-                    required
-                />
+                {values.metastore_id != null && (
+                    <SimpleField
+                        name="engine_id"
+                        type="react-select"
+                        label="Query Engine"
+                        options={possibleQueryEngines.map((engine) => ({
+                            label: engine.name,
+                            value: engine.id,
+                        }))}
+                    />
+                )}
+
+                <SimpleField name="table_config.schema_name" type="input" />
+                <SimpleField name="table_config.table_name" type="input" />
                 <SimpleField
                     name="table_config.if_exists"
                     type="react-select"
