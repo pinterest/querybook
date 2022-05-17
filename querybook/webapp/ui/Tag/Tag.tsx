@@ -3,10 +3,8 @@ import clsx from 'clsx';
 
 import { TooltipDirection } from 'const/tooltip';
 
-import { Icon } from 'ui/Icon/Icon';
-import type { AllLucideIconNames } from 'ui/Icon/LucideIcons';
-
 import './Tag.scss';
+import styled from 'styled-components';
 
 export interface ITagGroupProps {
     className?: string;
@@ -19,6 +17,7 @@ export interface ITagProps {
     highlighted?: boolean;
     mini?: boolean;
     light?: boolean;
+    color?: string;
 
     tooltip?: React.ReactNode;
     tooltipPos?: TooltipDirection;
@@ -27,15 +26,41 @@ export interface ITagProps {
 
     className?: string;
 }
-export interface IHoverIconTagProps extends ITagProps {
-    iconOnHover?: AllLucideIconNames;
-    onIconHoverClick?: () => any;
-}
 
 export const TagGroup: React.FunctionComponent<ITagGroupProps> = ({
     className,
     children,
 }) => <div className={`${className} TagGroup`}>{children}</div>;
+
+const StyledColorTag = styled.span.attrs<{
+    highlighted?: boolean;
+    light?: boolean;
+    color?: string;
+}>({
+    className: 'Tag',
+})`
+    background-color: var(--bg-light);
+    color: var(--text-light);
+
+    ${(props) =>
+        props.highlighted &&
+        `
+    background-color: var(--color-accent-lightest-0);
+    color: var(--color-accent-dark);
+    `}
+
+    ${(props) =>
+        props.light &&
+        `
+    background-color: var(--bg-lightest);
+    `}
+
+    ${(props) =>
+        props.color &&
+        `
+    background-color: ${props.color};
+    `}
+`;
 
 export const Tag: React.FunctionComponent<ITagProps> = ({
     children,
@@ -46,6 +71,7 @@ export const Tag: React.FunctionComponent<ITagProps> = ({
     className,
     mini,
     light,
+    color,
 }) => {
     const tooltipProps = {};
     if (tooltip) {
@@ -56,37 +82,20 @@ export const Tag: React.FunctionComponent<ITagProps> = ({
     const tagClassname = clsx({
         Tag: true,
         'flex-row': true,
-        highlighted,
         mini,
-        light,
         [className]: Boolean(className),
     });
 
     return (
-        <span {...tooltipProps} onClick={onClick} className={tagClassname}>
+        <StyledColorTag
+            {...tooltipProps}
+            onClick={onClick}
+            className={tagClassname}
+            highlighted={highlighted}
+            light={light}
+            color={color}
+        >
             {children}
-        </span>
-    );
-};
-
-export const HoverIconTag: React.FunctionComponent<IHoverIconTagProps> = ({
-    iconOnHover,
-    onIconHoverClick,
-    children,
-    ...tagProps
-}) => {
-    const hoverDOM = iconOnHover ? (
-        <div className="HoverIconTag-hover" onClick={onIconHoverClick}>
-            <Icon name={iconOnHover} />
-        </div>
-    ) : null;
-
-    tagProps['className'] = (tagProps['className'] ?? '') + ' HoverIconTag';
-
-    return (
-        <Tag {...tagProps}>
-            {children}
-            {hoverDOM}
-        </Tag>
+        </StyledColorTag>
     );
 };

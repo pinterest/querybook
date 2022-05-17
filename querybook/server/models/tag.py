@@ -17,6 +17,7 @@ class Tag(CRUDMixin, Base):
     id = sql.Column(sql.Integer, primary_key=True)
     created_at = sql.Column(sql.DateTime, default=now)
     updated_at = sql.Column(sql.DateTime, default=now)
+    meta = sql.Column(sql.JSON, default={}, nullable=False)
 
     name = sql.Column(
         sql.String(length=name_length), unique=True, index=True, nullable=False

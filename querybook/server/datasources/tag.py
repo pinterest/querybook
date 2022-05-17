@@ -7,13 +7,13 @@ from logic import tag as logic
 
 
 @register(
-    "/tag/table/<int:table_id>/",
+    "/table/<int:table_id>/tag/",
     methods=["GET"],
 )
-def get_tag_items(table_id):
+def get_tag_by_table_id(table_id: int):
     with DBSession() as session:
         verify_data_table_permission(table_id, session=session)
-        return logic.get_tag_items_by_table_id(table_id=table_id, session=session)
+        return logic.get_tag_by_table_id(table_id=table_id, session=session)
 
 
 @register(
@@ -27,22 +27,31 @@ def get_tags_by_keyword(keyword):
 
 
 @register(
-    "/tag/table/<int:table_id>/",
+    "/table/<int:table_id>/tag/",
     methods=["POST"],
 )
-def create_tag_item(table_id, tag):
+def add_tag_to_table(table_id, tag):
     with DBSession() as session:
         verify_data_table_permission(table_id, session=session)
-        return logic.create_tag_item(
-            table_id=table_id, tag_name=tag, uid=current_user.id, session=session
+        return logic.add_tag_to_table(
+            table_id=table_id,
+            tag_name=tag,
+            uid=current_user.id,
+            user_is_admin=current_user.is_admin,
+            session=session,
         )
 
 
 @register(
-    "/tag/table/<int:table_id>/<int:tag_item_id>/",
+    "/table/<int:table_id>/tag/",
     methods=["DELETE"],
 )
-def delete_tag_item(table_id, tag_item_id):
+def delete_tag_from_table(table_id: int, tag_name: str):
     with DBSession() as session:
         verify_data_table_permission(table_id, session=session)
-        return logic.delete_tag_item(tag_item_id=tag_item_id, session=session)
+        return logic.delete_tag_from_table(
+            table_id=table_id,
+            tag_name=tag_name,
+            user_is_admin=current_user.is_admin,
+            session=session,
+        )

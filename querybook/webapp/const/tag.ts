@@ -1,7 +1,13 @@
-export interface ITagItem {
+export interface ITag {
     id: number;
+    name: string;
     created_at: number;
-    tag_name: string;
-    table_id: number;
-    uid: number;
+    updated_at: number;
+    meta?: {
+        admin?: boolean;
+        color?: string;
+        icon?: string;
+        tooltip?: string;
+        rank?: number;
+    };
 }

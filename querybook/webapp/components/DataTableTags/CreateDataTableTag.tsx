@@ -1,8 +1,8 @@
 import * as React from 'react';
 import { useDispatch } from 'react-redux';
 
-import { ITagItem } from 'const/tag';
-import { createTableTagItem } from 'redux/tag/action';
+import { ITag } from 'const/tag';
+import { createTableTag } from 'redux/tag/action';
 import { Dispatch } from 'redux/store/types';
 
 import { TableTagSelect } from './TableTagSelect';
@@ -12,7 +12,7 @@ import './CreateDataTableTag.scss';
 
 interface IProps {
     tableId: number;
-    tags: ITagItem[];
+    tags: ITag[];
 }
 
 export const CreateDataTableTag: React.FunctionComponent<IProps> = ({
@@ -23,20 +23,23 @@ export const CreateDataTableTag: React.FunctionComponent<IProps> = ({
     const [showSelect, setShowSelect] = React.useState(false);
 
     const existingTags = React.useMemo(
-        () => (tags || []).map((tag) => tag.tag_name),
+        () => (tags || []).map((tag) => tag.name),
         [tags]
     );
 
     const createTag = React.useCallback(
-        (tag: string) => dispatch(createTableTagItem(tableId, tag)),
-        [tableId]
+        (tag: string) => dispatch(createTableTag(tableId, tag)),
+        [tableId, dispatch]
     );
 
-    const isValidCheck = React.useCallback((val: string) => {
-        const regex = /^[a-z0-9]{1,255}$/i;
-        const match = val.match(regex);
-        return Boolean(match && !existingTags.includes(val));
-    }, []);
+    const isValidCheck = React.useCallback(
+        (val: string) => {
+            const regex = /^[a-z0-9]{1,255}$/i;
+            const match = val.match(regex);
+            return Boolean(match && !existingTags.includes(val));
+        },
+        [existingTags]
+    );
 
     const handleCreateTag = React.useCallback(
         (val: string) => {

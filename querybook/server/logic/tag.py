@@ -5,10 +5,10 @@ from logic.metastore import update_es_tables_by_id
 
 
 @with_session
-def get_tag_items_by_table_id(table_id, session=None):
+def get_tag_by_table_id(table_id, session=None):
     return (
-        session.query(TagItem)
-        .join(Tag)
+        session.query(Tag)
+        .join(TagItem)
         .filter(TagItem.table_id == table_id)
         .order_by(Tag.count.desc())
         .all()
@@ -28,15 +28,20 @@ def get_tags_by_keyword(keyword, limit=10, session=None):
 
 
 @with_session
-def create_or_update_tag(tag_name, commit=True, session=None):
+def create_or_update_tag(tag_name, meta=None, commit=True, session=None):
     tag = Tag.get(name=tag_name, session=session)
 
     if not tag:
-        tag = Tag.create({"name": tag_name, "count": 1}, commit=commit, session=session)
+        tag = Tag.create(
+            {"name": tag_name, "count": 1, "meta": meta or {}},
+            commit=commit,
+            session=session,
+        )
     else:
         tag = Tag.update(
             id=tag.id,
-            fields={"count": tag.count + 1},
+            fields={"count": tag.count + 1, "meta": meta},
+            skip_if_value_none=True,
             commit=commit,
             session=session,
         )
@@ -45,7 +50,7 @@ def create_or_update_tag(tag_name, commit=True, session=None):
 
 
 @with_session
-def create_tag_item(table_id, tag_name, uid, session=None):
+def add_tag_to_table(table_id, tag_name, uid, user_is_admin=False, session=None):
     existing_tag_item = TagItem.get(
         table_id=table_id, tag_name=tag_name, session=session
     )
@@ -54,21 +59,28 @@ def create_tag_item(table_id, tag_name, uid, session=None):
         return
 
     tag = create_or_update_tag(tag_name=tag_name, commit=False, session=session)
+    if (tag.meta or {}).get("admin"):
+        assert user_is_admin, f"Tag {tag_name} can only be modified by admin"
 
-    tag_item = TagItem.create(
+    TagItem.create(
         {"tag_name": tag.name, "table_id": table_id, "uid": uid}, session=session
     )
     update_es_tables_by_id(table_id)
 
-    return tag_item
+    return tag
 
 
 @with_session
-def delete_tag_item(tag_item_id, commit=True, session=None):
-    tag_item = TagItem.get(id=tag_item_id, session=session)
+def delete_tag_from_table(
+    table_id, tag_name, user_is_admin=False, commit=True, session=None
+):
+    tag_item = TagItem.get(table_id=table_id, tag_name=tag_name, session=session)
+    tag = tag_item.tag
 
-    tag_item.tag.count = tag_item.tag.count - 1
-    tag_item.tag.update_at = datetime.datetime.now()
+    tag.count = tag_item.tag.count - 1
+    tag.update_at = datetime.datetime.now()
+    if (tag.meta or {}).get("admin"):
+        assert user_is_admin, f"Tag {tag_name} can only be modified by admin"
 
     session.delete(tag_item)
 
