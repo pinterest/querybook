@@ -156,6 +156,16 @@ def get_query_executions_iter(batch_size=1000, session=None):
 
 
 @with_session
+def _get_datadoc_editors(datadoc, session=None):
+    """Return datadoc editors' uids. If there is no datadoc or datadoc is public, return empty array
+    since there is no need to compute list of editors if everyone is able to access the data"""
+    if datadoc is None or datadoc.public:
+        return []
+    editors = get_data_doc_editors_by_doc_id(data_doc_id=datadoc.id, session=session)
+    return [editor.uid for editor in editors]
+
+
+@with_session
 def query_execution_to_es(query_execution, data_cell=None, session=None):
     """data_cell is added as a parameter so that bulk insert of query executions won't require
     re-retrieval of data_cell"""
@@ -181,6 +191,9 @@ def query_execution_to_es(query_execution, data_cell=None, session=None):
 
     title = data_cell.meta.get("title", "Untitled") if data_cell else None
 
+    datadoc = data_cell.doc if data_cell else None
+    editors = _get_datadoc_editors(datadoc, session=session)
+
     expand_query_execution = {
         "id": query_execution_id,
         "query_type": "query_execution",
@@ -193,6 +206,8 @@ def query_execution_to_es(query_execution, data_cell=None, session=None):
         "duration": duration,
         "full_table_name": table_names,
         "query_text": query_execution.query,
+        "public": datadoc is None or datadoc.public,
+        "readable_user_ids": editors,
     }
     return expand_query_execution
 
@@ -275,6 +290,7 @@ def query_cell_to_es(query_cell, session=None):
     table_names = list(chain.from_iterable(table_names))
 
     datadoc = query_cell.doc
+    editors = _get_datadoc_editors(datadoc, session=session)
 
     expand_query = {
         "id": query_cell_id,
@@ -288,6 +304,8 @@ def query_cell_to_es(query_cell, session=None):
         "created_at": DATETIME_TO_UTC(query_cell.created_at),
         "full_table_name": table_names,
         "query_text": query,
+        "public": datadoc.public,
+        "readable_user_ids": editors,
     }
     return expand_query
 
@@ -369,18 +387,7 @@ def datadocs_to_es(datadoc, session=None):
 
     joined_cells = escape("\n".join(cells_as_text))
 
-    # There is no need to compute the list of editors
-    # for public datadoc since everyone is able to see it
-    editors = (
-        [
-            editor.uid
-            for editor in get_data_doc_editors_by_doc_id(
-                data_doc_id=datadoc.id, session=session
-            )
-        ]
-        if not datadoc.public
-        else []
-    )
+    editors = _get_datadoc_editors(datadoc, session=session)
     expand_datadoc = {
         "id": datadoc.id,
         "environment_id": datadoc.environment_id,

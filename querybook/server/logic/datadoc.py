@@ -5,9 +5,13 @@ from app.db import with_session
 from const.data_doc import DataCellType
 from const.elasticsearch import ElasticsearchItem
 from const.impression import ImpressionItemType
+from const.query_execution import QueryExecutionStatus
 from lib.sqlalchemy import update_model_fields
 from lib.data_doc.data_cell import cell_types, sanitize_data_cell_meta
-from logic.query_execution import get_last_query_execution_from_cell
+from logic.query_execution import (
+    get_last_query_execution_from_cell,
+    update_es_query_execution_by_id,
+)
 from models.datadoc import (
     DataDoc,
     DataDocDataCell,
@@ -20,6 +24,7 @@ from models.datadoc import (
 )
 from models.access_request import AccessRequest
 from models.impression import Impression
+from models.query_execution import QueryExecution
 from tasks.sync_elasticsearch import sync_elasticsearch
 
 
@@ -145,8 +150,12 @@ def update_data_doc(id, commit=True, session=None, **fields):
             session.commit()
             update_es_data_doc_by_id(data_doc.id)
 
-            # ensure es queries are updated if doc is archived
-            if fields.get("archived") is True:
+            # update es queries if doc is switched between public/private
+            if "public" in fields:
+                update_es_query_cells_by_data_doc_id(data_doc.id, session=session)
+                update_es_query_executions_by_data_doc_id(data_doc.id, session=session)
+            # update es query cells if doc is archived
+            elif fields.get("archived") is True:
                 update_es_query_cells_by_data_doc_id(data_doc.id, session=session)
         else:
             session.flush()
@@ -968,6 +977,23 @@ def update_es_query_cells_by_data_doc_id(id, session=None):
     )
     for data_cell in data_cells:
         update_es_query_cell_by_id(data_cell.id)
+
+
+@with_session
+def update_es_query_executions_by_data_doc_id(id, session=None):
+    query_executions = (
+        session.query(QueryExecution)
+        .filter(QueryExecution.status == QueryExecutionStatus.DONE)
+        .join(DataCellQueryExecution)
+        .join(
+            DataDocDataCell,
+            DataCellQueryExecution.data_cell_id == DataDocDataCell.data_cell_id,
+        )
+        .filter(DataDocDataCell.data_doc_id == id)
+        .all()
+    )
+    for execution in query_executions:
+        update_es_query_execution_by_id(execution.id)
 
 
 @with_session

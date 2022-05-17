@@ -7,6 +7,12 @@ slug: /changelog
 
 Here are the list of breaking changes that you should be aware of when updating Querybook:
 
+## v3.5.0
+
+The ElasticSearch index mappings for `query_cells` and `query_executions` were updated to include fields to restrict access to queries based on datadoc access permissions. Query cells and executions on private datadocs will only be shown in query search to users that have access to these datadocs.
+
+Please run `recreate_indices("query_cells", "query_executions")` function in `querybook/server/logic/elasticsearch.py` to recreate the appropriate indices.
+
 ## v3.4.0
 
 There is a new field `feature_params` added to the `query_engine` table to replace `status_checker`.
