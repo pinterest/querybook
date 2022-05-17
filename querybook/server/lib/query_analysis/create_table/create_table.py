@@ -1,9 +1,8 @@
 from typing import Dict, List, Tuple
 
 from .base_create_table import BaseCreateTable
-from .languages.hive import HiveCreateTable
+from .languages.hive import HiveCreateTable, SparkSQLCreateTable
 from .languages.presto import PrestoCreateTable, TrinoCreateTable
-from .languages.sparksql import SparkSQLCreateTable
 
 CREATE_TABLE_CLS_BY_LANGUAGE: Dict[str, BaseCreateTable] = {
     creator.get_language(): creator

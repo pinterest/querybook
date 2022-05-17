@@ -46,6 +46,12 @@ class HiveCreateTable(BaseCreateTable):
         elif self._format == "PARQUET":
             rows += ["STORED AS PARQUET", f"LOCATION '{self._file_location}'"]
         else:
-            raise ValueError(f"Unsupported Presto file type {self._format}")
+            raise ValueError(f"Unsupported file type {self._format}")
 
         return "\n".join(rows)
+
+
+class SparkSQLCreateTable(HiveCreateTable):
+    @classmethod
+    def get_language(cls) -> str:
+        return "sparksql"

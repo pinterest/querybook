@@ -5,5 +5,5 @@ def is_custom_column_type(col_type: str):
     try:
         UploadTableColumnType(col_type)
         return False
-    except TypeError:
+    except ValueError:
         return True

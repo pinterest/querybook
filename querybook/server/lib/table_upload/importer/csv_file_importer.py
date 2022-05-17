@@ -49,6 +49,9 @@ class CSVFileImporter(BaseTableUploadImporter):
         if df is None:
             read_csv_config = self._get_pandas_read_csv_config()
             read_csv_config["nrows"] = 5  # limit the amount of data to read
+
+            # FIXME: If we want to support get_columns then get_pandas_df
+            # We should consider resetting the read, something like self.data.seek(0)
             df = pd.read_csv(self.data, **read_csv_config)
 
         column_names: List[str] = list(df.columns)
