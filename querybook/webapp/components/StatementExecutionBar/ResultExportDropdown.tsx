@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { useSelector } from 'react-redux';
 import toast from 'react-hot-toast';
 
@@ -27,6 +27,8 @@ import {
 } from 'lib/result-export';
 import { StatementResource } from 'resource/queryExecution';
 import { ResultExportSuccessToast } from './ResultExportSuccessToast';
+import { useMetastoresForUpload } from 'components/TableUploader/useQueryEnginesForUpload';
+import { TableUploaderForm } from 'components/TableUploader/TableUploaderForm';
 
 interface IProps {
     statementExecution: IStatementExecution;
@@ -157,6 +159,9 @@ export const ResultExportDropdown: React.FunctionComponent<IProps> = ({
         [handleExport]
     );
 
+    const hasMetastoresForUpload = useMetastoresForUpload().length > 0;
+    const [showTableUploadForm, setShowTableUploadForm] = useState(false);
+
     const formModal = exporterForForm ? (
         <FormModal
             form={exporterForForm.form}
@@ -174,7 +179,7 @@ export const ResultExportDropdown: React.FunctionComponent<IProps> = ({
             {
                 name: 'Download Full Result (as CSV)',
                 onClick: onDownloadClick,
-                icon: 'download',
+                icon: 'Download',
             },
             {
                 name: (
@@ -194,8 +199,17 @@ export const ResultExportDropdown: React.FunctionComponent<IProps> = ({
                     </span>
                 ),
                 onClick: onExportTSVClick,
-                icon: 'copy',
+                icon: 'Copy',
             },
+            ...(hasMetastoresForUpload
+                ? [
+                      {
+                          name: 'Create Table from Result',
+                          onClick: () => setShowTableUploadForm(true),
+                          icon: 'Upload',
+                      },
+                  ]
+                : []),
             ...statementExporters.map((exporter) => ({
                 name: (
                     <div className="horizontal-space-between">
@@ -246,10 +260,19 @@ export const ResultExportDropdown: React.FunctionComponent<IProps> = ({
                 />
             </Dropdown>
         );
+
+    const tableUploadForm = showTableUploadForm && (
+        <TableUploaderForm
+            onHide={() => setShowTableUploadForm(false)}
+            queryExecutionId={statementExecution.query_execution_id}
+        />
+    );
+
     return (
         <>
             {ellipsesDropDownButton}
             {formModal}
+            {tableUploadForm}
         </>
     );
 };

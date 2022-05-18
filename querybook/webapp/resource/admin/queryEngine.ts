@@ -11,6 +11,9 @@ export const AdminQueryEngineResource = {
     getCheckerNames: () =>
         ds.fetch<string[]>('/admin/query_engine_status_checker/'),
 
+    getTableUploadExporterNames: () =>
+        ds.fetch<string[]>('/admin/table_upload/exporter/'),
+
     create: (queryEngine: IAdminQueryEngine) =>
         ds.save<IAdminQueryEngine>(`/admin/query_engine/`, {
             name: queryEngine.name,

@@ -82,7 +82,7 @@ class BaseExporter(metaclass=ABCMeta):
         return statement_execution.result_row_count or 0
 
     @with_session
-    def _get_statement_execution_num_cols(
+    def _get_statement_execution_cols(
         self,
         statement_execution_id: int,
         session=None,
@@ -94,9 +94,20 @@ class BaseExporter(metaclass=ABCMeta):
         if statement_execution.result_path:
             with GenericReader(statement_execution.result_path) as reader:
                 csv = reader.read_csv(number_of_lines=1)
-                if len(csv):
-                    return len(csv[0])
-        return 0
+                if len(csv) > 0:
+                    return csv[0]
+        return None
+
+    @with_session
+    def _get_statement_execution_num_cols(
+        self,
+        statement_execution_id: int,
+        session=None,
+    ):
+        cols = self._get_statement_execution_cols(
+            statement_execution_id, session=session
+        )
+        return len(cols) if cols is not None else 0
 
     def _get_statement_execution_result(
         self,
@@ -121,13 +132,15 @@ class BaseExporter(metaclass=ABCMeta):
                 return result
         return None
 
+    @with_session
     def _get_statement_execution_result_iter(
         self,
         statement_execution_id: int,
         number_of_lines: int = None,  # By default, read all lines
+        session=None,
     ) -> Generator[List[List[str]], None, None]:
         statement_execution = logic.get_statement_execution_by_id(
-            statement_execution_id
+            statement_execution_id, session
         )
         if statement_execution.result_path:
             with GenericReader(

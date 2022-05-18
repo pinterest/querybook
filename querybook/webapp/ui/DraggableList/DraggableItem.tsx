@@ -30,6 +30,7 @@ export function DraggableItem<T extends { id: any }>({
 }: IDraggableItemProps<T> & { children: React.ReactNode }) {
     const ref = useRef<HTMLLIElement>(null);
     const [{ isDragging }, drag] = useDrag({
+        type: draggableItemType,
         item: { type: draggableItemType, index, originalIndex, itemInfo },
         collect: (monitor) => ({
             isDragging: !!monitor.isDragging(),

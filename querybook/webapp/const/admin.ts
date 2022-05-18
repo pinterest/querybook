@@ -46,6 +46,7 @@ export interface IAdminQueryEngine {
     executor_params: Record<string, any>;
     feature_params: {
         status_checker?: string;
+        upload_exporter?: string;
     };
 
     environments?: IAdminEnvironment[];

@@ -87,7 +87,7 @@ export const SimpleField: React.FC<Props> = ({
     type,
     stacked,
     className,
-
+    required,
     ...otherProps
 }) => {
     const title = useMemo(() => {
@@ -164,6 +164,7 @@ export const SimpleField: React.FC<Props> = ({
             label={title}
             help={help}
             stacked={stacked}
+            required={required}
             error={meta.touched ? meta.error : null}
             className={className}
         >

@@ -17,7 +17,7 @@ class EngineStatus(TypedDict):
     status: QueryEngineStatus
 
     # The str here will be parsed as html in the frontend
-    messages: List[str] = []
+    messages: List[str]
 
 
 class BaseEngineStatusChecker(metaclass=ABCMeta):

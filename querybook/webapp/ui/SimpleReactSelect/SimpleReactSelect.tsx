@@ -1,5 +1,6 @@
 import React, { useMemo, useCallback } from 'react';
 import Select, { Props as ReactSelectProps } from 'react-select';
+import Creatable from 'react-select/creatable';
 
 import { makeReactSelectStyle } from 'lib/utils/react-select';
 
@@ -17,6 +18,7 @@ export interface ISimpleReactSelectProps<T> {
     onChange: (o: T) => any;
     withDeselect?: boolean;
     isDisabled?: boolean;
+    creatable?: boolean;
     selectProps?: Partial<ReactSelectProps<T>>;
 
     // Clear selection user picks value
@@ -30,6 +32,7 @@ export function SimpleReactSelect<T>({
     value,
     onChange,
     isDisabled,
+    creatable,
 
     selectProps = {},
     withDeselect = false,
@@ -67,21 +70,27 @@ export function SimpleReactSelect<T>({
         [onChange]
     );
 
+    const componentProps = {
+        styles: reactSelectStyle,
+        menuPortalTarget: overlayRoot,
+        value: selectedOption,
+        onChange: onSelectChange,
+        options: computedOptions,
+        isDisabled,
+        isClearable: withDeselect,
+        menuPlacement: 'auto' as const,
+        placeholder: 'Select',
+        ...selectProps,
+        ...overrideSelectProps,
+    };
+
     return (
         <AccentText>
-            <Select
-                styles={reactSelectStyle}
-                menuPortalTarget={overlayRoot}
-                value={selectedOption}
-                onChange={onSelectChange}
-                options={computedOptions}
-                isDisabled={isDisabled}
-                isClearable={withDeselect}
-                menuPlacement={'auto'}
-                placeholder="Select"
-                {...selectProps}
-                {...overrideSelectProps}
-            />
+            {creatable ? (
+                <Creatable {...componentProps} />
+            ) : (
+                <Select {...componentProps} />
+            )}
         </AccentText>
     );
 }

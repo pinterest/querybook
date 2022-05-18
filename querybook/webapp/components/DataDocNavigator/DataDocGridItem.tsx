@@ -27,6 +27,7 @@ export interface IDataDocGridItemProps {
 export const DataDocGridItem: React.FunctionComponent<IDataDocGridItemProps> = React.memo(
     ({ dataDoc, className, url, onRemove }) => {
         const [, drag] = useDrag({
+            type: DataDocDraggableType,
             item: {
                 type: DataDocDraggableType,
                 itemInfo: dataDoc,

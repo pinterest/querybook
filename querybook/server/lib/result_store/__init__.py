@@ -37,7 +37,10 @@ class GenericUploader(BaseUploader):
 class GenericReader(BaseReader):
     def __init__(self, uri: str, **kwargs):
         store_type, uri_suffix = uri.split("://")
-        self._reader = ALL_RESULT_STORES[store_type].reader(uri_suffix, **kwargs)
+        self.store_type = store_type
+        self._reader: BaseReader = ALL_RESULT_STORES[store_type].reader(
+            uri_suffix, **kwargs
+        )
 
     def start(self):
         self._reader.start()
@@ -57,9 +60,13 @@ class GenericReader(BaseReader):
     def has_download_url(self):
         return self._reader.has_download_url
 
-    def get_download_url(self, custom_name=None):
+    def get_download_url(self, custom_name=None) -> str:
         return self._reader.get_download_url(custom_name=custom_name)
 
     def end(self):
         self._reader.end()
         self._reader = None
+
+    @property
+    def uri(self):
+        return self._reader.uri

@@ -69,6 +69,8 @@ If you install the required packages, these integrations will be automatically s
     -   LDAP (via `-r auth/ldap.txt`)
 -   Exporter:
     -   Google Sheet Exporter (via `-r exporter/gspread.txt`)
+-   (Experimental) Table Upload:
+    -   Parquet (via `-r exporter/parquet.txt`)
 -   Result Store:
     -   AWS S3 (via `-r platform/aws.txt`)
     -   Google GCS (via `-r platform/gcp.txt`)

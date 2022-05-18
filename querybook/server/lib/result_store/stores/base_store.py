@@ -136,3 +136,14 @@ class BaseReader(ABC):
             str: the downloadable url
         """
         pass
+
+    @property
+    def uri(self) -> str:
+        """Some readers can optionally provide this property to represent
+           the true path to get the resource. For example, it could be the
+           key part of a s3 path (s3://bucket/key), and similiarly for gcs
+
+        Returns:
+            str: the path to resource
+        """
+        return None

@@ -20,6 +20,7 @@ import { OrderByButton } from 'ui/OrderByButton/OrderByButton';
 import './DataTableNavigatorSearch.scss';
 
 export const DataTableNavigatorSearch: React.FC<{
+    metastoreId: number;
     searchString: string;
     onSearch: (s: string) => void;
     searchFilters: ITableSearchFilters;
@@ -140,8 +141,8 @@ export const DataTableNavigatorSearch: React.FC<{
 
             <IconButton
                 ref={filterButtonRef}
-                className=""
                 size={'18px'}
+                className="table-search-filter-button"
                 noPadding
                 onClick={toggleSearchFilter}
                 icon="Sliders"

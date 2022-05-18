@@ -1,3 +1,4 @@
+from typing import Dict, TextIO
 import boto3
 import botocore
 from botocore.client import Config
@@ -132,3 +133,56 @@ class S3FileReader(ChunkReader):
         raw = self._left_over_bytes + self._body.read(self._read_size)
         valid_raw, self._left_over_bytes = split_by_last_invalid_utf8_char(raw)
         return valid_raw.decode("utf-8")
+
+
+class S3FileCopier(object):
+    """Used to copy files managed by Querybook (using QuerybookSettings)
+    to an arbitrary S3 location
+    """
+
+    def __init__(self, resource_config: Dict):
+        self._source_config = resource_config
+
+    @classmethod
+    def from_querybook_bucket(cls, key: str):
+        return S3FileCopier(
+            {
+                "type": "s3",
+                "data": {
+                    "Bucket": QuerybookSettings.STORE_BUCKET_NAME,
+                    "Key": key,
+                },
+            }
+        )
+
+    @classmethod
+    def from_local_file(cls, f: TextIO):
+        return S3FileCopier(
+            {
+                "type": "file",
+                "data": {
+                    "file": f,
+                },
+            }
+        )
+
+    @classmethod
+    def s3_path_to_bucket_key(cls, path: str):
+        if path.startswith("s3://"):
+            path = path[5:]
+
+        bucket, key = path.split("/", 1)
+        return bucket, key
+
+    def copy_to(self, target_s3_path: str):
+        target_bucket, target_obj_path = S3FileCopier.s3_path_to_bucket_key(
+            target_s3_path
+        )
+        source_type = self._source_config["type"]
+        if source_type == "s3":
+            boto3.resource("s3").meta.client.copy(
+                self._source_config["data"], target_bucket, target_obj_path
+            )
+        elif source_type == "file":
+            f: TextIO = self._source_config["data"]["file"]
+            boto3.client("s3").upload_file(f.name, target_bucket, target_obj_path)

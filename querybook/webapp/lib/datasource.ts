@@ -98,6 +98,7 @@ function updateDatasource<T>(
 ) {
     return syncDatasource<T>('PUT', urlOrOptions, data, notifyOnError);
 }
+
 function deleteDatasource<T = null>(
     urlOrOptions: UrlOrOptions,
     data?: Record<string, unknown>,
@@ -106,9 +107,40 @@ function deleteDatasource<T = null>(
     return syncDatasource<T>('DELETE', urlOrOptions, data, notifyOnError);
 }
 
+export function uploadDatasource<T = null>(
+    url: string,
+    data: Record<string, any>,
+    notifyOnError = true
+) {
+    const formData = new FormData();
+    for (const [key, value] of Object.entries(data)) {
+        let strOrBlobValue = value;
+        if (
+            !(
+                strOrBlobValue instanceof Blob ||
+                strOrBlobValue instanceof String
+            )
+        ) {
+            strOrBlobValue = JSON.stringify(strOrBlobValue);
+        }
+
+        formData.append(key, strOrBlobValue);
+    }
+
+    const urlOptions: AxiosRequestConfig = {
+        url,
+        headers: {
+            'Content-Type': 'multipart/form-data; charset=utf-8',
+        },
+        data: formData,
+    };
+    return syncDatasource<T>('POST', urlOptions, null, notifyOnError);
+}
+
 export default {
     fetch: fetchDatasource,
     save: saveDatasource,
     update: updateDatasource,
     delete: deleteDatasource,
+    upload: uploadDatasource,
 };

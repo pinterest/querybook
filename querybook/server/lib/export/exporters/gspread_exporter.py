@@ -148,7 +148,6 @@ class GoogleSheetsExporter(BaseExporter):
                 gc, sheet_url, f"Querybook Result {statement_execution_id}"
             ) as sheet:
                 self.write_csv_to_sheet(
-                    gc,
                     sheet,
                     statement_execution_id,
                     worksheet_title,
@@ -187,7 +186,6 @@ class GoogleSheetsExporter(BaseExporter):
 
     def write_csv_to_sheet(
         self,
-        gspread_client,
         sheet,
         statement_execution_id: int,
         worksheet_title: str,
@@ -216,7 +214,7 @@ class GoogleSheetsExporter(BaseExporter):
                 sheet, worksheet_title, end_cell_coord[0], end_cell_coord[1]
             ) as worksheet:
                 csv = self._get_statement_execution_result_iter(
-                    statement_execution_id, number_of_lines=max_rows
+                    statement_execution_id, number_of_lines=max_rows, session=session
                 )
                 self._update_worksheet(worksheet, start_cell, end_cell, csv)
 

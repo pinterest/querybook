@@ -258,6 +258,18 @@ def get_statement_execution_by_id(id, with_query_execution=False, session=None):
     return query.get(id)
 
 
+@with_session
+def get_last_statement_execution_by_query_execution(query_execution_id, session=None):
+    query = (
+        session.query(StatementExecution)
+        .join(QueryExecution)
+        .filter(QueryExecution.id == query_execution_id)
+        .order_by(StatementExecution.id.desc())
+        .limit(1)
+    )
+    return query.first()
+
+
 """
     ----------------------------------------------------------------------------------------------------------
     QUERY EXECUTION NOTIFICATION

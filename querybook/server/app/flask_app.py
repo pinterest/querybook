@@ -41,6 +41,9 @@ def make_flask_app():
             seconds=QuerybookSettings.LOGS_OUT_AFTER
         )
 
+    if QuerybookSettings.TABLE_MAX_UPLOAD_SIZE is not None:
+        app.config["MAX_CONTENT_LENGTH"] = QuerybookSettings.TABLE_MAX_UPLOAD_SIZE
+
     return app
 
 

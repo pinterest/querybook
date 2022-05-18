@@ -7,6 +7,11 @@ export interface IQueryEngine {
 
     metastore_id: number;
     executor: string;
+
+    feature_params: {
+        status_checker?: string;
+        upload_exporter?: string;
+    };
 }
 
 export interface IQueryEngineEnvironment {

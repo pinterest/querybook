@@ -10,6 +10,7 @@ from . import schedule
 from . import user
 from . import board
 from . import utils
+from . import table_upload
 from . import tag
 
 # Flake8 :(
@@ -25,4 +26,5 @@ user
 schedule
 board
 utils
+table_upload
 tag

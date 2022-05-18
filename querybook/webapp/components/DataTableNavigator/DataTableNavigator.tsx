@@ -26,6 +26,7 @@ import { SchemaTableView } from './SchemaTableView/SchemaTableView';
 import './DataTableNavigator.scss';
 import { currentEnvironmentSelector } from 'redux/environment/selector';
 import { UrlContextMenu } from 'ui/ContextMenu/UrlContextMenu';
+import { TableUploaderButton } from 'components/TableUploader/TableUploaderButton';
 
 const PRESELECTED_FILTERS = ['golden'];
 
@@ -226,24 +227,31 @@ export const DataTableNavigator: React.FC<IDataTableNavigatorProps> = ({
         [searchString, searchFilters]
     );
 
-    const metastorePicker =
-        queryMetastores.length > 1 ? (
-            <div className="navigator-metastore-picker">
-                <Select
-                    className="small"
-                    value={metastoreId}
-                    onChange={handleMetastoreChange}
-                    transparent
-                >
-                    {makeSelectOptions(
-                        queryMetastores.map((metastore) => ({
-                            value: metastore.name,
-                            key: metastore.id,
-                        }))
-                    )}
-                </Select>
-            </div>
-        ) : null;
+    const metastorePicker = (
+        <div className="navigator-metastore-picker horizontal-space-between pt12 pr8 pl4">
+            <Select
+                className="small"
+                value={metastoreId}
+                onChange={handleMetastoreChange}
+                transparent
+            >
+                {makeSelectOptions(
+                    queryMetastores.map((metastore) => ({
+                        value: metastore.name,
+                        key: metastore.id,
+                    }))
+                )}
+            </Select>
+
+            <TableUploaderButton
+                size={'18px'}
+                noPadding
+                tooltipPos="left"
+                className="ml4"
+                metastoreId={metastoreId}
+            />
+        </div>
+    );
 
     const dataTablesWithSelection: ITableResultWithSelection[] = dataTables.map(
         (table) => ({
@@ -281,6 +289,7 @@ export const DataTableNavigator: React.FC<IDataTableNavigatorProps> = ({
             <div className="list-header">
                 {metastorePicker}
                 <DataTableNavigatorSearch
+                    metastoreId={metastoreId}
                     searchFilters={searchFilters}
                     searchString={searchString}
                     onSearch={handleSearch}
