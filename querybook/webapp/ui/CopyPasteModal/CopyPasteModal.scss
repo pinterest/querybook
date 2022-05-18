@@ -6,4 +6,9 @@
         max-height: 300px;
         overflow: auto;
     }
+    &.large {
+        .CopyPasteModal-text {
+            max-height: 600px;
+        }
+    }
 }

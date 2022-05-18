@@ -4,17 +4,23 @@ import { ShowMoreText } from 'ui/ShowMoreText/ShowMoreText';
 import { Modal } from 'ui/Modal/Modal';
 
 import './CopyPasteModal.scss';
+import clsx from 'clsx';
 
 interface IProps {
     text: string;
     displayText?: boolean;
     title?: string;
     onHide: () => any;
+    large?: boolean;
 }
 
-export const CopyPasteModal: React.FunctionComponent<IProps> = (props) => {
-    const { text, onHide, displayText = true, title } = props;
-
+export const CopyPasteModal: React.FunctionComponent<IProps> = ({
+    text,
+    onHide,
+    displayText = true,
+    title,
+    large,
+}) => {
     const actionsDOM = [
         <CopyButton key="copy" copyText={text} title="Copy To Clipboard" />,
     ];
@@ -22,17 +28,20 @@ export const CopyPasteModal: React.FunctionComponent<IProps> = (props) => {
     const textDOM = displayText ? (
         <blockquote className="CopyPasteModal-text mb16">
             <pre>
-                <ShowMoreText text={text} length={400} />
+                {large ? text : <ShowMoreText text={text} length={400} />}
             </pre>
         </blockquote>
     ) : null;
 
+    const className = clsx({
+        CopyPasteModal: true,
+        large,
+    });
+
     return (
         <Modal onHide={onHide} title={title ?? 'Copy Paste'}>
-            <div className="CopyPasteModal">
-                <div>
-                    <div>{textDOM}</div>
-                </div>
+            <div className={className}>
+                <div>{textDOM}</div>
                 <div className="right-align mt24">{actionsDOM}</div>
             </div>
         </Modal>

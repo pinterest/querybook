@@ -116,6 +116,7 @@ export const DataDocDAGExporter: React.FunctionComponent<IProps> = ({
                         text={exportData}
                         title="Export Data"
                         onHide={() => setExportData(undefined)}
+                        large
                     />
                 ))}
         </div>
