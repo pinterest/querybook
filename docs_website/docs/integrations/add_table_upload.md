@@ -23,7 +23,7 @@ Currently, there are 2 ways to upload the data:
 
 When ingesting data to SQL DB, 3 different types are supported:
 
--   Generic SQLAlchemy exporter. This uses Pandas' to_sql feature to convert the data to na `insert` statement. This exporter only works with query engines that are based on SQLAlchemy.
+-   Generic SQLAlchemy exporter. This uses Pandas' to_sql feature to convert the data to an `insert` statement. This exporter only works with query engines that are based on SQLAlchemy.
 -   S3 CSV exporter. This would upload the Pandas DataFrame as CSV to S3, and create an external table on top of it. Dependencies such as boto3 must be installed.
 -   S3 Parquet exporter. This would upload a Parquet file instead of a CSV file. In addition to dependencies such as boto3, `pyarrow` must also be installed.
 
