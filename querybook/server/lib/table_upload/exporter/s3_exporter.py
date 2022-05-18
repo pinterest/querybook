@@ -34,7 +34,7 @@ class S3BaseExporter(BaseTableUploadExporter):
         return NotImplementedError()
 
     @abstractmethod
-    def upload_to_s3(self) -> None:
+    def _upload_to_s3(self) -> None:
         """Override this to upload the importer data to s3 location
         specified by destination_s3_path
 
@@ -90,7 +90,7 @@ class S3BaseExporter(BaseTableUploadExporter):
     @with_session
     def _upload(self, session=None) -> Tuple[str, str]:
         self._handle_if_table_exists(session=session)
-        self.upload_to_s3()
+        self._upload_to_s3()
         self._run_query(self._get_table_create_query(session=session), session=session)
 
         return self._fq_table_name
@@ -116,7 +116,7 @@ class S3CSVExporter(S3BaseExporter):
             s3_uploader.write(sub_df.to_csv(index=False, header=(chunk_no == 0)))
         s3_uploader.complete()
 
-    def upload_to_s3(self):
+    def _upload_to_s3(self):
         importer = self._importer
         resource_type, resource_path = importer.get_resource_path()
 
@@ -135,7 +135,7 @@ class S3ParquetExporter(S3BaseExporter):
     def UPLOAD_FILE_TYPE(cls):
         return "PARQUET"
 
-    def upload_to_s3(self) -> None:
+    def _upload_to_s3(self) -> None:
         df = update_pandas_df_column_name_type(
             self._importer.get_pandas_df(), self._table_config["column_name_types"]
         )
