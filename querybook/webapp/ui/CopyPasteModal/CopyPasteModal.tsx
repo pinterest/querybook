@@ -1,10 +1,11 @@
 import React from 'react';
+import clsx from 'clsx';
+
 import { CopyButton } from 'ui/CopyButton/CopyButton';
 import { ShowMoreText } from 'ui/ShowMoreText/ShowMoreText';
 import { Modal } from 'ui/Modal/Modal';
 
 import './CopyPasteModal.scss';
-import clsx from 'clsx';
 
 interface IProps {
     text: string;
