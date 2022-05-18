@@ -17,6 +17,7 @@ from lib.query_analysis.create_table.create_table import (
     get_external_create_table_statement,
 )
 from lib.table_upload.exporter.utils import update_pandas_df_column_name_type
+from querybook.server.env import QuerybookSettings
 from .base_exporter import BaseTableUploadExporter
 
 S3_OBJECT_KEY_NOT_ALLOWED_CHAR = r"[^\w-]+"
@@ -48,10 +49,10 @@ class S3BaseExporter(BaseTableUploadExporter):
         object_key = re.sub(
             S3_OBJECT_KEY_NOT_ALLOWED_CHAR, "", f"{schema_name}/{table_name}"
         )
-        return "s3://pinlogs/cgu/querybook_tables/" + object_key
+        return QuerybookSettings.TABLE_UPLOAD_S3_PATH + object_key
 
     @with_session
-    def _verify_table_exists(self, session=None):
+    def _handle_if_table_exists(self, session=None):
         if_exists = self._table_config["if_exists"]
         schema_name, table_name = self._fq_table_name
         fq_table_name = f"{schema_name}.{table_name}"
@@ -88,7 +89,7 @@ class S3BaseExporter(BaseTableUploadExporter):
 
     @with_session
     def _upload(self, session=None) -> Tuple[str, str]:
-        self._verify_table_exists(session=session)
+        self._handle_if_table_exists(session=session)
         self.upload_to_s3()
         self._run_query(self._get_table_create_query(session=session), session=session)
 

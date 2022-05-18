@@ -204,7 +204,7 @@ export const ResultExportDropdown: React.FunctionComponent<IProps> = ({
             ...(hasMetastoresForUpload
                 ? [
                       {
-                          name: 'Upload Result to Table',
+                          name: 'Create Table from Result',
                           onClick: () => setShowTableUploadForm(true),
                           icon: 'Upload',
                       },

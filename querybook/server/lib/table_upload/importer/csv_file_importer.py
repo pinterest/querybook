@@ -2,7 +2,7 @@ from typing import Dict, List
 
 import pandas as pd
 
-from lib.table_upload.importer.utils import pandas_dtype_upload_type
+from lib.table_upload.importer.utils import get_pandas_upload_type_by_dtype
 from .base_importer import BaseTableUploadImporter
 
 default_csv_parsing_config = {
@@ -55,6 +55,8 @@ class CSVFileImporter(BaseTableUploadImporter):
             df = pd.read_csv(self.data, **read_csv_config)
 
         column_names: List[str] = list(df.columns)
-        column_pd_types = [pandas_dtype_upload_type(dtype) for dtype in df.dtypes]
+        column_pd_types = [
+            get_pandas_upload_type_by_dtype(dtype) for dtype in df.dtypes
+        ]
 
         return list(zip(column_names, column_pd_types))

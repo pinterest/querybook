@@ -71,7 +71,9 @@ class BaseMetastoreLoader(metaclass=ABCMeta):
         self.acl_checker = MetastoreTableACLChecker(metastore_dict["acl_control"])
 
     @with_session
-    def sync_create_or_update_table(self, schema_name, table_name, session=None) -> int:
+    def sync_create_or_update_table(
+        self, schema_name: str, table_name: str, session=None
+    ) -> int:
         """Given a full qualified table name,
            sync the data in metastore with database.
            Note: if table does not exist, this doesn't create a new table. But
@@ -84,21 +86,33 @@ class BaseMetastoreLoader(metaclass=ABCMeta):
         Returns:
             int -- the table id
         """
-        schema_in_db = get_schema_by_name(
+        schema_is_newly_created = False
+        data_schema = get_schema_by_name(
             schema_name, self.metastore_id, session=session
         )
-        if schema_in_db is None:  # If no schema, create it
-            # One caveat, What if table actually
-            # Does not exist?
-            schema_in_db = create_schema(
-                schema_name,
+
+        if data_schema is None:
+            # If no schema, create it
+            # However, if the table turns out to not exist
+            # then we will reset the transaction to remove it
+            schema_is_newly_created = True
+            data_schema = create_schema(
+                name=schema_name,
                 table_count=1,
                 metastore_id=self.metastore_id,
+                commit=False,
                 session=session,
             )
-        return self._create_table_table(
-            schema_in_db.id, schema_name, table_name, session=session
+
+        table_id = self._create_table_table(
+            data_schema.id, schema_name, table_name, session=session
         )
+
+        # Remove creation of new schema since table DNE
+        if table_id is None and schema_is_newly_created:
+            session.expunge(data_schema)
+
+        return table_id
 
     @with_session
     def sync_delete_table(self, schema_name, table_name, session=None):
@@ -187,7 +201,7 @@ class BaseMetastoreLoader(metaclass=ABCMeta):
             LOG.error(traceback.format_exc())
 
         if not table:
-            return
+            return None
 
         try:
             table_id = create_table(

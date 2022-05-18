@@ -90,7 +90,12 @@ def get_schema_by_name(schema_name, metastore_id, session=None):
 
 @with_session
 def create_schema(
-    name=None, table_count=None, description=None, metastore_id=None, session=None
+    name=None,
+    table_count=None,
+    description=None,
+    metastore_id=None,
+    commit=True,
+    session=None,
 ):
     schema = get_schema_by_name(name, metastore_id, session=session)
     new_schema = DataSchema(
@@ -106,7 +111,11 @@ def create_schema(
         new_schema.id = schema.id
         session.merge(new_schema)
 
-    session.commit()
+    if commit:
+        session.commit()
+    else:
+        session.flush()
+
     return new_schema
 
 

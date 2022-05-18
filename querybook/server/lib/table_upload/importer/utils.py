@@ -10,5 +10,5 @@ dtype_to_upload_column_type = {
 }
 
 
-def pandas_dtype_upload_type(dtype) -> UploadTableColumnType:
+def get_pandas_upload_type_by_dtype(dtype) -> UploadTableColumnType:
     return dtype_to_upload_column_type.get(dtype, UploadTableColumnType.STRING)

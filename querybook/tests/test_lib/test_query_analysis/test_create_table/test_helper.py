@@ -5,10 +5,10 @@ from lib.table_upload.common import UploadTableColumnType
 
 class IsCustomColumnTypeTestCase(TestCase):
     def test_included_types(self):
-        self.assertFalse(is_custom_column_type(UploadTableColumnType.INTEGER))
-        self.assertFalse(is_custom_column_type(UploadTableColumnType.STRING))
-        self.assertFalse(is_custom_column_type(UploadTableColumnType.FLOAT))
-        self.assertFalse(is_custom_column_type(UploadTableColumnType.BOOLEAN))
+        self.assertFalse(is_custom_column_type(UploadTableColumnType.INTEGER.value))
+        self.assertFalse(is_custom_column_type(UploadTableColumnType.STRING.value))
+        self.assertFalse(is_custom_column_type(UploadTableColumnType.FLOAT.value))
+        self.assertFalse(is_custom_column_type(UploadTableColumnType.BOOLEAN.value))
 
     def test_custom_types(self):
         self.assertTrue(is_custom_column_type("ARRAY"))

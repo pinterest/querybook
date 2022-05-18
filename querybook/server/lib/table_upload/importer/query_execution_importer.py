@@ -5,7 +5,7 @@ import pandas as pd
 
 from app.db import with_session
 from lib.export.exporters.python_exporter import PythonExporter
-from lib.table_upload.importer.utils import pandas_dtype_upload_type
+from lib.table_upload.importer.utils import get_pandas_upload_type_by_dtype
 from lib.table_upload.common import ImporterResourceType
 from logic.query_execution import (
     get_last_statement_execution_by_query_execution,
@@ -14,6 +14,11 @@ from logic.query_execution import (
 from lib.result_store import GenericReader
 
 from .base_importer import BaseTableUploadImporter
+
+STORE_TYPE_TO_RESOURCE_TYPE = {
+    "s3": ImporterResourceType.S3,
+    "gcs": ImporterResourceType.GCS,
+}
 
 
 class QueryExecutionImporter(BaseTableUploadImporter):
@@ -63,7 +68,9 @@ class QueryExecutionImporter(BaseTableUploadImporter):
             column_names, rows = self._get_statement_results_col_rows(5)
             df = pd.DataFrame(rows, columns=column_names)
 
-        column_pd_types = [pandas_dtype_upload_type(dtype) for dtype in df.dtypes]
+        column_pd_types = [
+            get_pandas_upload_type_by_dtype(dtype) for dtype in df.dtypes
+        ]
         return list(zip(column_names, column_pd_types))
 
     @with_session
@@ -74,10 +81,7 @@ class QueryExecutionImporter(BaseTableUploadImporter):
         with GenericReader(statement_execution.result_path) as reader:
             store_type = reader.store_type
             resource_path = reader.uri
-            resource_type = {
-                "s3": ImporterResourceType.S3,
-                "gcs": ImporterResourceType.GCS,
-            }.get(store_type, None)
+            resource_type = STORE_TYPE_TO_RESOURCE_TYPE.get(store_type, None)
             if resource_type:
                 return [resource_type, resource_path]
 
