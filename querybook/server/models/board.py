@@ -43,6 +43,13 @@ class Board(CRUDMixin, Base):
         backref=backref("boards"),
         order_by="desc(BoardItem.item_order)",
     )
+    # boards = relationship(
+    #     "Board",
+    #     remote_side=[id],
+    #     secondary="board_item",
+    #     backref=backref("boards"),
+    #     order_by="desc(BoardItem.item_order)",
+    # )
 
     @db.with_session
     def get_max_item_order(self, session=None):
@@ -78,6 +85,12 @@ class BoardItem(CRUDMixin, Base):
     table_id = sql.Column(
         sql.Integer, sql.ForeignKey("data_table.id", ondelete="CASCADE"), nullable=True
     )
+    # board_item_id = sql.Column(
+    #     sql.Integer,
+    #     sql.ForeignKey("board.id", ondelete="CASCADE"),
+    #     nullable=True,
+    #     remote_side=[id],
+    # )
     board_id = sql.Column(
         sql.Integer, sql.ForeignKey("board.id", ondelete="CASCADE"), nullable=False
     )
@@ -94,3 +107,36 @@ class BoardItem(CRUDMixin, Base):
     table = relationship("DataTable", uselist=False)
 
     data_doc = relationship("DataDoc", uselist=False)
+
+    board_item = relationship("Board", uselist=False)
+
+
+class BoardEditor(Base):
+    __tablename__ = "board_editor"
+    __table_args__ = (
+        sql.UniqueConstraint("board_id", "uid", name="unique_board_user"),
+    )
+
+    id = sql.Column(sql.Integer, primary_key=True, autoincrement=True)
+    board_id = sql.Column(sql.Integer, sql.ForeignKey("board.id", ondelete="CASCADE"))
+    uid = sql.Column(sql.Integer, sql.ForeignKey("user.id", ondelete="CASCADE"))
+
+    read = sql.Column(sql.Boolean, default=False, nullable=False)
+    write = sql.Column(sql.Boolean, default=False, nullable=False)
+
+    user = relationship("User", uselist=False)
+
+    board = relationship(
+        "Board",
+        uselist=False,
+        backref=backref("editors", cascade="all, delete", passive_deletes=True),
+    )
+
+    def to_dict(self):
+        return {
+            "id": self.id,
+            "board_id": self.board_id,
+            "uid": self.uid,
+            "read": self.read,
+            "write": self.write,
+        }

@@ -57,7 +57,9 @@ export const BoardCreateUpdateForm: React.FunctionComponent<IBoardCreateUpdateFo
                   }
                 : {
                       name: board.name,
-                      description: convertRawToContentState(board.description),
+                      description: convertRawToContentState(
+                          board.description as string
+                      ),
                       public: board.public,
                   },
         [board, isCreateForm]
@@ -81,7 +83,7 @@ export const BoardCreateUpdateForm: React.FunctionComponent<IBoardCreateUpdateFo
                 onComplete(await dispatch(action));
             }}
         >
-            {({ submitForm, isSubmitting, isValid }) => {
+            {({ submitForm, isSubmitting, isValid, setFieldValue, values }) => {
                 const nameField = <SimpleField name="name" type="input" />;
                 // TODO: enable when sharing is possible
                 // const publicField = <SimpleField name="public" type="toggle" />;
