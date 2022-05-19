@@ -3,8 +3,10 @@ import * as React from 'react';
 import { IBoardWithItemIds } from 'const/board';
 import { generateFormattedDate } from 'lib/utils/datetime';
 
-import { AccentText, StyledText } from 'ui/StyledText/StyledText';
+import { AccentText } from 'ui/StyledText/StyledText';
 import { BoardViewersBadge } from 'components/BoardViewersBadge/BoardViewersBadge';
+import { EditableTextField } from 'ui/EditableTextField/EditableTextField';
+import { ContentState } from 'draft-js';
 
 interface IProps {
     board: IBoardWithItemIds;
@@ -43,7 +45,10 @@ export const BoardHeader: React.FunctionComponent<IProps> = ({ board }) => {
             >
                 {board.name}
             </AccentText>
-            <StyledText className="mh8">{board.description}</StyledText>
+            <EditableTextField
+                value={board.description as ContentState}
+                onSave={() => null}
+            />
         </div>
     );
 };

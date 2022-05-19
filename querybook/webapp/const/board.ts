@@ -1,3 +1,4 @@
+import { ContentState } from 'draft-js';
 import { IDataDoc } from './datadoc';
 import { IDataTable } from './metastore';
 
@@ -20,7 +21,7 @@ export interface IBoard {
     deleted_at: number;
 
     name: string;
-    description: string;
+    description: string | ContentState;
     public: boolean;
     board_type: string;
 
