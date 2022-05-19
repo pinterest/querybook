@@ -13,10 +13,10 @@ from textwrap import dedent
 
 from airflow import DAG
 
-from airflow.operators.bash import BashOperator
+from airflow.operators.bash import MySqlOperator
 
 with DAG(
-    "tutorial",
+    "{title}",
     # These args will get passed on to each operator
     # You can override them on a per-task basis during operator initialization
     default_args={
@@ -27,12 +27,12 @@ with DAG(
         "retries": 1,
         "retry_delay": timedelta(minutes=5),
     },
-    description="Demo DAG",
+    description="{description}",
     schedule_interval=timedelta(days=1),
     start_date=datetime(2021, 1, 1),
     catchup=False,
     tags=["example"],
-) as dag:\n
+) as dag:
 """
 
 
@@ -62,33 +62,27 @@ class DemoDAGExporter(BaseDAGExporter):
             export_dag = ""
 
             for node in nodes:
-                node_section = '''
-    query = """{}"""
-    templated_query = dedent(query)
+                node_section = '''\n
+    query_{id} = r"""{query}"""
 
-    node{} = BashOperator(
-        task_id="cell_{}", depends_on_past=False, bash_command=templated_query,
+    task{id} = MySqlOperator(
+        dag=dag, task_id="cell_{id}", sql=query_{id}
     )
                 '''.format(
-                    node["data"]["query"], node["id"], node["id"]
+                    query=node["data"]["query"], id=node["id"]
                 )
                 export_dag = export_dag + node_section
 
             source_to_target = {}
             for edge in edges:
                 source_id = str(edge["source"])
-                if source_id in source_to_target:
-                    source_to_target[source_id] = source_to_target[source_id].append(
-                        edge["target"]
-                    )
-                else:
-                    source_to_target[source_id] = [edge["target"]]
+                source_to_target.setdefault(source_id, []).append(edge["target"])
 
-            for key, values in source_to_target.items():
-                for value in values:
+            for source, targets in source_to_target.items():
+                for target in targets:
                     export_dag = (
                         export_dag
-                        + "\n    node{}.set_downstream(node{})".format(key, value)
+                        + "\n    task_{}.set_downstream(task_{})".format(source, target)
                     )
 
             return {
