@@ -149,7 +149,7 @@ export const TableTag: React.FC<{
                         className="mr4"
                     />
                 )}
-                <span className="tag-name">{tag.name}</span>
+                <span>{tag.name}</span>
             </HoverIconTag>
         </>
     );
