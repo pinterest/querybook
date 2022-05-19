@@ -1,11 +1,11 @@
 import React from 'react';
 import clsx from 'clsx';
+import styled from 'styled-components';
 
 import { TooltipDirection } from 'const/tooltip';
+import { ColorPalette } from 'const/chartColors';
 
 import './Tag.scss';
-import styled from 'styled-components';
-import { ColorPalette } from 'const/chartColors';
 
 export interface ITagGroupProps {
     className?: string;
@@ -18,6 +18,7 @@ export interface ITagProps {
     highlighted?: boolean;
     mini?: boolean;
     light?: boolean;
+    withBorder?: boolean;
     color?: string;
 
     tooltip?: React.ReactNode;
@@ -37,40 +38,35 @@ const StyledColorTag = styled.span.attrs<{
     highlighted?: boolean;
     light?: boolean;
     /**
-     * Must be one of ColorPalette
+     * Must be one of ColorPalette name
      */
     color?: string;
+    withBorder?: boolean;
 }>({
     className: 'Tag',
 })`
-    background-color: var(--bg-light);
-    color: var(--text-light);
-
-    ${(props) =>
-        props.highlighted &&
-        `
-    background-color: var(--color-accent-lightest-0);
-    color: var(--color-accent-dark);
-    `}
-
-    ${(props) =>
-        props.light &&
-        `
-    background-color: var(--bg-lightest);
-    `}
-
     ${(props) => {
-        if (!props.color) {
-            return '';
+        let bgColor = 'var(--bg-light)';
+        let textColor = 'var(--text-light)';
+        if (props.color) {
+            const color = ColorPalette.find((c) => c.name === props.color);
+            if (color) {
+                bgColor = color.fillColor;
+                textColor = color.color;
+            }
+        } else if (props.highlighted) {
+            bgColor = 'var(--color-accent-lightest-0)';
+            textColor = 'var(--color-accent-dark)';
+        } else if (props.light) {
+            bgColor = 'var(--bg-lightest)';
         }
-        const color = ColorPalette.find((c) => c.name === props.color);
-        if (!color) {
-            return '';
-        }
+
+        const borderColor = props.withBorder ? textColor : 'transparent';
 
         return `
-            background-color: ${color.fillColor};
-            color: ${color.color}
+            background-color: ${bgColor};
+            color: ${textColor};
+            border: 1px solid ${borderColor};
         `;
     }}
 `;
@@ -87,6 +83,7 @@ export const Tag = React.forwardRef<HTMLSpanElement, ITagProps>(
             mini,
             light,
             color,
+            withBorder,
         },
         ref
     ) => {
@@ -111,6 +108,7 @@ export const Tag = React.forwardRef<HTMLSpanElement, ITagProps>(
                 highlighted={highlighted}
                 light={light}
                 color={color}
+                withBorder={withBorder}
                 ref={ref}
             >
                 {children}

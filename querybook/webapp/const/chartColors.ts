@@ -37,7 +37,7 @@ export const ColorPalette: IColorPalette[] = [
         fillColor: 'rgba(199, 146, 234, 0.25)',
     },
     {
-        name: 'indian red',
+        name: 'salmon',
         color: '#ec7f77',
         fillColor: 'rgba(236, 127, 119, 0.25)',
     },

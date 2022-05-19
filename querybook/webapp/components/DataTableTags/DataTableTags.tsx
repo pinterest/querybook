@@ -105,11 +105,11 @@ export const TableTag: React.FC<{
     const renderContextMenu = () => (
         <Menu>
             <MenuItem onClick={() => setShowConfigModal(true)}>
-                <Icon name="Settings" className="mr4" />
+                <Icon name="Settings" className="mr8" size={20} />
                 Configure Tag
             </MenuItem>
             <MenuItem onClick={handleDeleteTag}>
-                <Icon name="Trash2" className="mr4" />
+                <Icon name="Trash2" className="mr8" size={20} />
                 Remove Tag
             </MenuItem>
         </Menu>
@@ -140,6 +140,7 @@ export const TableTag: React.FC<{
                 color={tagMeta.color}
                 onClick={handleTagClick}
                 ref={tagRef}
+                withBorder={tagMeta.admin}
             >
                 {tagMeta.icon && (
                     <Icon
@@ -148,7 +149,7 @@ export const TableTag: React.FC<{
                         className="mr4"
                     />
                 )}
-                <span>{tag.name}</span>
+                <span className="tag-name">{tag.name}</span>
             </HoverIconTag>
         </>
     );

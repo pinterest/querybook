@@ -41,7 +41,7 @@ export const TableTagConfigModal: React.FC<{
                         <Icon
                             name={iconName as any}
                             size={16}
-                            className="mr4"
+                            className="mr8"
                         />
                         {iconName}
                     </span>
