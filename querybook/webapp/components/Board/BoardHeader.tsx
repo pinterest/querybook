@@ -4,6 +4,7 @@ import { IBoardWithItemIds } from 'const/board';
 import { generateFormattedDate } from 'lib/utils/datetime';
 
 import { AccentText, StyledText } from 'ui/StyledText/StyledText';
+import { BoardViewersBadge } from 'components/BoardViewersBadge/BoardViewersBadge';
 
 interface IProps {
     board: IBoardWithItemIds;
@@ -28,7 +29,10 @@ export const BoardHeader: React.FunctionComponent<IProps> = ({ board }) => {
                     </AccentText>
                 </div>
                 <div className="BoardHeader-users flex-row">
-                    {/* <DataDocViewersBadge docId={board.id} /> */}
+                    <BoardViewersBadge
+                        boardId={board.id}
+                        isPublic={board.public}
+                    />
                 </div>
             </div>
             <AccentText
