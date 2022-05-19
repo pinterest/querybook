@@ -212,4 +212,8 @@ export const TableTagResource = {
         ds.save<ITag>(`/table/${tableId}/tag/`, { tag }),
     delete: (tableId: number, tagName: string) =>
         ds.delete(`/table/${tableId}/tag/`, { tag_name: tagName }),
+    update: (tag: ITag) =>
+        ds.update<ITag>(`/tag/${tag.id}/`, {
+            meta: tag.meta,
+        }),
 };

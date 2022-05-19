@@ -20,7 +20,7 @@ export function fetchTableTagsFromTableIfNeeded(
 ): ThunkResult<Promise<any>> {
     return (dispatch, getState) => {
         const state = getState();
-        const tags = state.tag.tagByTableId[tableId];
+        const tags = state.tag.tableIdToTagName[tableId];
         if (!tags) {
             return dispatch(fetchTableTagsFromTable(tableId));
         }
@@ -58,5 +58,20 @@ export function deleteTableTag(
         } catch (e) {
             console.error(e);
         }
+    };
+}
+
+export function updateTag(tag: ITag): ThunkResult<Promise<ITag>> {
+    return async (dispatch) => {
+        const { data: newTag } = await TableTagResource.update(tag);
+
+        dispatch({
+            type: '@@tag/RECEIVE_TAG',
+            payload: {
+                tag,
+            },
+        });
+
+        return newTag;
     };
 }

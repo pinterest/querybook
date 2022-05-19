@@ -5,6 +5,7 @@ import { TooltipDirection } from 'const/tooltip';
 
 import './Tag.scss';
 import styled from 'styled-components';
+import { ColorPalette } from 'const/chartColors';
 
 export interface ITagGroupProps {
     className?: string;
@@ -35,6 +36,9 @@ export const TagGroup: React.FunctionComponent<ITagGroupProps> = ({
 const StyledColorTag = styled.span.attrs<{
     highlighted?: boolean;
     light?: boolean;
+    /**
+     * Must be one of ColorPalette
+     */
     color?: string;
 }>({
     className: 'Tag',
@@ -55,47 +59,62 @@ const StyledColorTag = styled.span.attrs<{
     background-color: var(--bg-lightest);
     `}
 
-    ${(props) =>
-        props.color &&
-        `
-    background-color: ${props.color};
-    `}
+    ${(props) => {
+        if (!props.color) {
+            return '';
+        }
+        const color = ColorPalette.find((c) => c.name === props.color);
+        if (!color) {
+            return '';
+        }
+
+        return `
+            background-color: ${color.fillColor};
+            color: ${color.color}
+        `;
+    }}
 `;
 
-export const Tag: React.FunctionComponent<ITagProps> = ({
-    children,
-    highlighted = false,
-    tooltip,
-    tooltipPos = 'top',
-    onClick,
-    className,
-    mini,
-    light,
-    color,
-}) => {
-    const tooltipProps = {};
-    if (tooltip) {
-        tooltipProps['aria-label'] = tooltip;
-        tooltipProps['data-balloon-pos'] = tooltipPos;
+export const Tag = React.forwardRef<HTMLSpanElement, ITagProps>(
+    (
+        {
+            children,
+            highlighted = false,
+            tooltip,
+            tooltipPos = 'top',
+            onClick,
+            className,
+            mini,
+            light,
+            color,
+        },
+        ref
+    ) => {
+        const tooltipProps = {};
+        if (tooltip) {
+            tooltipProps['aria-label'] = tooltip;
+            tooltipProps['data-balloon-pos'] = tooltipPos;
+        }
+
+        const tagClassname = clsx({
+            Tag: true,
+            'flex-row': true,
+            mini,
+            [className]: Boolean(className),
+        });
+
+        return (
+            <StyledColorTag
+                {...tooltipProps}
+                onClick={onClick}
+                className={tagClassname}
+                highlighted={highlighted}
+                light={light}
+                color={color}
+                ref={ref}
+            >
+                {children}
+            </StyledColorTag>
+        );
     }
-
-    const tagClassname = clsx({
-        Tag: true,
-        'flex-row': true,
-        mini,
-        [className]: Boolean(className),
-    });
-
-    return (
-        <StyledColorTag
-            {...tooltipProps}
-            onClick={onClick}
-            className={tagClassname}
-            highlighted={highlighted}
-            light={light}
-            color={color}
-        >
-            {children}
-        </StyledColorTag>
-    );
-};
+);

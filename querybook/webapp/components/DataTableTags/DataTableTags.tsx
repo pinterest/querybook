@@ -13,9 +13,14 @@ import { navigateWithinEnv } from 'lib/utils/query-string';
 import { HoverIconTag } from 'ui/Tag/HoverIconTag';
 import { Icon } from 'ui/Icon/Icon';
 
+import { MenuItem, Menu } from 'ui/Menu/Menu';
+import { ContextMenu } from 'ui/ContextMenu/ContextMenu';
+
 import { CreateDataTableTag } from './CreateDataTableTag';
 import { useRankedTags } from './utils';
 import './DataTableTags.scss';
+import { TableTagConfigModal } from './TableTagConfigModal';
+import { tagsInTableSelector } from 'redux/tag/selector';
 
 interface IProps {
     tableId: number;
@@ -40,7 +45,7 @@ export const DataTableTags: React.FunctionComponent<IProps> = ({
     );
 
     const tags = useRankedTags(
-        useSelector((state: IStoreState) => state.tag.tagByTableId[tableId])
+        useSelector((state: IStoreState) => tagsInTableSelector(state, tableId))
     );
 
     React.useEffect(() => {
@@ -72,10 +77,16 @@ export const TableTag: React.FC<{
 
     isUserAdmin?: boolean;
     readonly?: boolean;
-    navigateOnClick?: boolean;
     deleteTag?: (tagName: string) => void;
-}> = ({ tag, readonly, deleteTag, navigateOnClick, isUserAdmin }) => {
+}> = ({ tag, readonly, deleteTag, isUserAdmin }) => {
     const tagMeta = tag.meta ?? {};
+    const tagRef = React.useRef<HTMLSpanElement>();
+    const [showConfigModal, setShowConfigModal] = React.useState(false);
+
+    const handleDeleteTag = React.useCallback(() => deleteTag(tag.name), [
+        deleteTag,
+        tag.name,
+    ]);
     const handleTagClick = React.useCallback(() => {
         navigateWithinEnv(
             `/search/?${qs.stringify({
@@ -88,23 +99,57 @@ export const TableTag: React.FC<{
         );
     }, [tag.name]);
 
-    const canUserDelete = !readonly && !(tagMeta.admin && !isUserAdmin);
+    const canUserUpdate = !(tagMeta.admin && !isUserAdmin);
+    const canUserDelete = !readonly && canUserUpdate;
+
+    const renderContextMenu = () => (
+        <Menu>
+            <MenuItem onClick={() => setShowConfigModal(true)}>
+                <Icon name="Settings" className="mr4" />
+                Configure Tag
+            </MenuItem>
+            <MenuItem onClick={handleDeleteTag}>
+                <Icon name="Trash2" className="mr4" />
+                Remove Tag
+            </MenuItem>
+        </Menu>
+    );
 
     return (
-        <HoverIconTag
-            key={tag.id}
-            iconOnHover={canUserDelete ? 'X' : null}
-            onIconHoverClick={canUserDelete ? () => deleteTag(tag.name) : null}
-            tooltip={tagMeta.tooltip}
-            tooltipPos={'up'}
-            color={tagMeta.color}
-        >
-            {tagMeta.icon && (
-                <Icon name={tagMeta.icon as any} size={16} className="mr4" />
+        <>
+            {canUserUpdate && (
+                <ContextMenu
+                    anchorRef={tagRef}
+                    renderContextMenu={renderContextMenu}
+                />
             )}
-            <span onClick={navigateOnClick ? handleTagClick : null}>
-                {tag.name}
-            </span>
-        </HoverIconTag>
+
+            {showConfigModal && (
+                <TableTagConfigModal
+                    tag={tag}
+                    onHide={() => setShowConfigModal(false)}
+                />
+            )}
+
+            <HoverIconTag
+                key={tag.id}
+                iconOnHover={canUserDelete ? 'X' : null}
+                onIconHoverClick={canUserDelete ? handleDeleteTag : null}
+                tooltip={tagMeta.tooltip}
+                tooltipPos={'up'}
+                color={tagMeta.color}
+                onClick={handleTagClick}
+                ref={tagRef}
+            >
+                {tagMeta.icon && (
+                    <Icon
+                        name={tagMeta.icon as any}
+                        size={16}
+                        className="mr4"
+                    />
+                )}
+                <span>{tag.name}</span>
+            </HoverIconTag>
+        </>
     );
 };

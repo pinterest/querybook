@@ -7,7 +7,7 @@ import {
 import { IDataChartCellMeta } from 'const/datadoc';
 import { ChartScaleType } from 'const/dataDocChart';
 
-import { colorPalette, colorPaletteFill, fillColor } from 'const/chartColors';
+import { ColorPalette, fillColor } from 'const/chartColors';
 
 function processDataPoint(val: any, scale: ChartScaleType) {
     // val type validation
@@ -110,11 +110,11 @@ export function processChartJSData(
                 // TODO: add custom color support in future?
                 dataset.backgroundColor = dataRows.map(
                     (_, rowColorIdx) =>
-                        colorPalette[rowColorIdx % colorPalette.length]
+                        ColorPalette[rowColorIdx % ColorPalette.length].color
                 );
             } else {
                 dataset.borderColor =
-                    colorPalette[colorIdx % colorPalette.length];
+                    ColorPalette[colorIdx % ColorPalette.length].color;
                 dataset.backgroundColor = [
                     'area',
                     'bar',
@@ -122,7 +122,7 @@ export function processChartJSData(
                     'bubble',
                     'scatter',
                 ].includes(chartMeta.type)
-                    ? colorPaletteFill[colorIdx % colorPaletteFill.length]
+                    ? ColorPalette[colorIdx % ColorPalette.length].fillColor
                     : (dataset.backgroundColor = fillColor[theme]);
                 if (
                     chartMeta.type === 'bubble' ||

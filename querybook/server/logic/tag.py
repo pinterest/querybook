@@ -28,19 +28,19 @@ def get_tags_by_keyword(keyword, limit=10, session=None):
 
 
 @with_session
-def create_or_update_tag(tag_name, meta=None, commit=True, session=None):
+def create_or_update_tag(tag_name, commit=True, session=None):
     tag = Tag.get(name=tag_name, session=session)
 
     if not tag:
         tag = Tag.create(
-            {"name": tag_name, "count": 1, "meta": meta or {}},
+            {"name": tag_name, "count": 1, "meta": {}},
             commit=commit,
             session=session,
         )
     else:
         tag = Tag.update(
             id=tag.id,
-            fields={"count": tag.count + 1, "meta": meta},
+            fields={"count": tag.count + 1},
             skip_if_value_none=True,
             commit=commit,
             session=session,

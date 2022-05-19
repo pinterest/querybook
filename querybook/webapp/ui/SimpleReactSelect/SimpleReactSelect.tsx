@@ -9,7 +9,7 @@ import { AccentText } from 'ui/StyledText/StyledText';
 
 export interface ISelectOption<T> {
     value: T;
-    label: string;
+    label: React.ReactNode;
 }
 
 export interface ISimpleReactSelectProps<T> {

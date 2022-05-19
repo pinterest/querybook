@@ -9,12 +9,10 @@ export interface IHoverIconTagProps extends ITagProps {
     iconOnHover?: AllLucideIconNames;
     onIconHoverClick?: () => any;
 }
-export const HoverIconTag: React.FunctionComponent<IHoverIconTagProps> = ({
-    iconOnHover,
-    onIconHoverClick,
-    children,
-    ...tagProps
-}) => {
+export const HoverIconTag = React.forwardRef<
+    HTMLSpanElement,
+    IHoverIconTagProps
+>(({ iconOnHover, onIconHoverClick, children, ...tagProps }, ref) => {
     const hoverDOM = iconOnHover ? (
         <div className="HoverIconTag-hover" onClick={onIconHoverClick}>
             <Icon name={iconOnHover} />
@@ -24,9 +22,9 @@ export const HoverIconTag: React.FunctionComponent<IHoverIconTagProps> = ({
     const className = clsx(tagProps['className'], 'HoverIconTag');
 
     return (
-        <Tag {...tagProps} className={className}>
+        <Tag {...tagProps} ref={ref} className={className}>
             {children}
             {hoverDOM}
         </Tag>
     );
-};
+});

@@ -18,6 +18,14 @@ export interface IRecieveTagByTable extends Action {
         tag: ITag;
     };
 }
+
+export interface IRecieveTag extends Action {
+    type: '@@tag/RECEIVE_TAG';
+    payload: {
+        tag: ITag;
+    };
+}
+
 export interface IRemoveTagFromTable extends Action {
     type: '@@tag/REMOVE_TAG_FROM_TABLE';
     payload: {
@@ -29,10 +37,12 @@ export interface IRemoveTagFromTable extends Action {
 export type TagAction =
     | IRecieveTagsByTable
     | IRecieveTagByTable
-    | IRemoveTagFromTable;
+    | IRemoveTagFromTable
+    | IRecieveTag;
 
 export type ThunkResult<R> = ThunkAction<R, IStoreState, undefined, TagAction>;
 
 export interface ITagState {
-    tagByTableId: Record<number, ITag[]>;
+    tableIdToTagName: Record<number, string[]>;
+    tagByName: Record<string, ITag>;
 }

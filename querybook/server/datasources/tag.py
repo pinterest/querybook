@@ -1,9 +1,10 @@
 from flask_login import current_user
 
-from app.datasource import register
+from app.datasource import register, api_assert
 from app.db import DBSession
 from app.auth.permission import verify_data_table_permission
 from logic import tag as logic
+from models.tag import Tag
 
 
 @register(
@@ -24,6 +25,15 @@ def get_tags_by_keyword(keyword):
     with DBSession() as session:
         tags = logic.get_tags_by_keyword(keyword=keyword, session=session)
         return [tag.name for tag in tags]
+
+
+@register("/tag/<int:tag_id>/", methods=["PUT"])
+def update_tag(tag_id, meta):
+    tag = Tag.get(id=tag_id)
+    if (tag.meta or {}).get("admin", False):
+        api_assert(current_user.is_admin, "Tag can only be modified by admin")
+
+    return Tag.update(id=tag_id, fields={"meta": meta}, skip_if_value_none=True)
 
 
 @register(
