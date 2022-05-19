@@ -19,7 +19,7 @@ import type {
     ITopQueryUser,
     IUpdateTableParams,
 } from 'const/metastore';
-import type { ITagItem } from 'const/tag';
+import type { ITag } from 'const/tag';
 import ds from 'lib/datasource';
 import JSONBig from 'json-bigint';
 import { convertContentStateToHTML } from 'lib/richtext/serialize';
@@ -205,11 +205,15 @@ export const TableStatsResource = {
 };
 
 export const TableTagResource = {
-    get: (tableId: number) => ds.fetch<ITagItem[]>(`/tag/table/${tableId}/`),
+    get: (tableId: number) => ds.fetch<ITag[]>(`/table/${tableId}/tag/`),
     search: (keyword: string) =>
         ds.fetch<string[]>(`/tag/keyword/`, { keyword }),
     create: (tableId: number, tag: string) =>
-        ds.save<ITagItem>(`/tag/table/${tableId}/`, { tag }),
-    delete: (tableId: number, tagId: number) =>
-        ds.delete(`/tag/table/${tableId}/${tagId}/`),
+        ds.save<ITag>(`/table/${tableId}/tag/`, { tag }),
+    delete: (tableId: number, tagName: string) =>
+        ds.delete(`/table/${tableId}/tag/`, { tag_name: tagName }),
+    update: (tag: ITag) =>
+        ds.update<ITag>(`/tag/${tag.id}/`, {
+            meta: tag.meta,
+        }),
 };

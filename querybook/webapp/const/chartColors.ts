@@ -1,66 +1,49 @@
-export const colorPalette = [
-    '#35B5BB', // blue
-    '#ff3975', // pink
-    '#bfbfbf', // grey
-    '#ffca00', // gold
-
-    '#529dce', // blue
-    '#ff9f42', // orange
-    '#6ba097', // creamy forest green
-    '#aee800', // chartreuse
-
-    '#ff91c8', // bby pink
-    '#85d0ce', // icy blue
-    '#eb37ce', // fuscia
-    '#C792EA', // light purple
-
-    '#ec7f77', // indian red
-    '#989801', // olive
-    '#ecd1af', // beige
-    '#b7652b', // choco
-];
-export const colorPaletteNames = [
-    'blue',
-    'pink',
-    'grey',
-    'gold',
-
-    'blue',
-    'orange',
-    'creamy forest green',
-    'chartreuse',
-
-    'baby pink',
-    'icy blue',
-    'fuscia',
-    'light purple',
-
-    'indian red',
-    'olive',
-    'beige',
-    'choco',
-];
-
-export const colorPaletteFill = [
-    'rgba(53, 181, 187, 0.25)', // dh blue
-    'rgba(255, 57, 117, 0.25)', // pink
-    'rgba(191, 191, 191, 0.25)', // grey
-    'rgba(255, 202, 0, 0.25)', // gold
-
-    'rgba(82, 157, 206, 0.25)', // blue
-    'rgba(255, 159, 66, 0.25)', // orange
-    'rgba(107, 160, 151, 0.25)', // creamy forest green
-    'rgba(174, 232, 0, 0.25)', // chartreuse
-
-    'rgba(255, 145, 200, 0.25)', // bby pink
-    'rgba(133, 208, 206, 0.25)', // icy blue
-    'rgba(235, 55, 206, 0.25)', // fuscia
-    'rgba(199, 146, 234, 0.25)', // light purple
-
-    'rgba(236, 127, 119, 0.25)', // indian red
-    'rgba(152, 152, 1, 0.25)', // olive
-    'rgba(236, 209, 175, 0.25)', // beige
-    'rgba(183, 101, 43, 0.25)', // choco
+interface IColorPalette {
+    name: string;
+    color: string;
+    fillColor: string;
+}
+export const ColorPalette: IColorPalette[] = [
+    { name: 'blue', color: '#35B5BB', fillColor: 'rgba(53, 181, 187, 0.25)' },
+    { name: 'pink', color: '#ff3975', fillColor: 'rgba(255, 57, 117, 0.25)' },
+    { name: 'grey', color: '#bfbfbf', fillColor: 'rgba(191, 191, 191, 0.25)' },
+    { name: 'gold', color: '#ffca00', fillColor: 'rgba(255, 202, 0, 0.25)' },
+    { name: 'blue', color: '#529dce', fillColor: 'rgba(82, 157, 206, 0.25)' },
+    { name: 'orange', color: '#ff9f42', fillColor: 'rgba(255, 159, 66, 0.25)' },
+    {
+        name: 'creamy forest green',
+        color: '#6ba097',
+        fillColor: 'rgba(107, 160, 151, 0.25)',
+    },
+    {
+        name: 'chartreuse',
+        color: '#aee800',
+        fillColor: 'rgba(174, 232, 0, 0.25)',
+    },
+    {
+        name: 'baby pink',
+        color: '#ff91c8',
+        fillColor: 'rgba(255, 145, 200, 0.25)',
+    },
+    {
+        name: 'icy blue',
+        color: '#85d0ce',
+        fillColor: 'rgba(133, 208, 206, 0.25)',
+    },
+    { name: 'fuscia', color: '#eb37ce', fillColor: 'rgba(235, 55, 206, 0.25)' },
+    {
+        name: 'light purple',
+        color: '#C792EA',
+        fillColor: 'rgba(199, 146, 234, 0.25)',
+    },
+    {
+        name: 'salmon',
+        color: '#ec7f77',
+        fillColor: 'rgba(236, 127, 119, 0.25)',
+    },
+    { name: 'olive', color: '#989801', fillColor: 'rgba(152, 152, 1, 0.25)' },
+    { name: 'beige', color: '#ecd1af', fillColor: 'rgba(236, 209, 175, 0.25)' },
+    { name: 'choco', color: '#b7652b', fillColor: 'rgba(183, 101, 43, 0.25)' },
 ];
 
 // rgb for css vars - font

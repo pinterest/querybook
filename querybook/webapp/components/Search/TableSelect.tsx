@@ -11,7 +11,7 @@ import { SearchTableResource } from 'resource/search';
 import { useSelector } from 'react-redux';
 import { queryMetastoresSelector } from 'redux/dataSources/selector';
 import { IStoreState } from 'redux/store/types';
-import { HoverIconTag } from 'ui/Tag/Tag';
+import { HoverIconTag } from 'ui/Tag/HoverIconTag';
 
 import './TableSelect.scss';
 import { AccentText } from 'ui/StyledText/StyledText';
