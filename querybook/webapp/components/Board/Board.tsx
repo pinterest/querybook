@@ -7,10 +7,11 @@ import { Dispatch, IStoreState } from 'redux/store/types';
 import { IBoardWithItemIds, IBoardItem } from 'const/board';
 import { isAxiosError } from 'lib/utils/error';
 
+import { BoardHeader } from './BoardHeader';
 import { BoardDataDocItem } from './BoardDataDocItem';
 import { BoardDataTableItem } from './BoardDataTableItem';
 import { BoardError } from './BoardError';
-import { Title } from 'ui/Title/Title';
+import { Loading } from 'ui/Loading/Loading';
 
 import './Board.scss';
 
@@ -41,12 +42,15 @@ const BoardDOM: React.FunctionComponent<IBoardDOMProps> = ({
         );
 
     return (
-        <div className="Board mv24 mh48">
-            <div className="Board-top ml4">
-                <Title>{board?.name}</Title>
-                <div className="Board-desc">{board?.description}</div>
-            </div>
-            {boardItemDOM}
+        <div className="Board">
+            {board ? (
+                <div className="Board-content">
+                    <BoardHeader board={board} />
+                    {boardItemDOM}
+                </div>
+            ) : (
+                <Loading fullHeight />
+            )}
         </div>
     );
 };

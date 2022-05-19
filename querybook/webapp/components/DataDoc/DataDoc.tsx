@@ -49,6 +49,7 @@ import {
     ISearchAndReplaceHandles,
     SearchAndReplace,
 } from 'components/SearchAndReplace/SearchAndReplace';
+import { DataDocTemplateCell } from 'components/DataDocTemplateButton/DataDocTemplateCell';
 
 import { Message } from 'ui/Message/Message';
 import { Loading } from 'ui/Loading/Loading';
@@ -60,7 +61,6 @@ import { DataDocContentContainer } from './DataDocContentContainer';
 import { DataDocLoading } from './DataDocLoading';
 
 import './DataDoc.scss';
-import { DataDocTemplateCell } from 'components/DataDocTemplateButton/DataDocTemplateCell';
 
 interface IOwnProps {
     docId: number;
@@ -707,7 +707,7 @@ class DataDocComponent extends React.PureComponent<IProps, IState> {
                 className={clsx({
                     DataDoc: true,
                 })}
-                key="data-hub-data-doc"
+                key="querybook-data-doc"
             >
                 <DataDocContext.Provider value={this.getDataDocContextState()}>
                     <SearchAndReplace
