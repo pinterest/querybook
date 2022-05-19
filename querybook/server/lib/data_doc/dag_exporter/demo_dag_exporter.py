@@ -55,8 +55,7 @@ class DemoDAGExporter(BaseDAGExporter):
 
             source_to_target = {}
             for edge in edges:
-                source_id = str(edge["source"])
-                source_to_target.setdefault(source_id, []).append(edge["target"])
+                source_to_target.setdefault(edge["source"], []).append(edge["target"])
 
             for source, targets in source_to_target.items():
                 for target in targets:
