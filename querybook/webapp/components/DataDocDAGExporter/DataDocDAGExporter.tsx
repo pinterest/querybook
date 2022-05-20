@@ -10,12 +10,13 @@ import { DataDocResource } from 'resource/dataDoc';
 
 import { DataDocDAGExporterGraph } from './DataDocDAGExporterGraph';
 import { DataDocDAGExporterForm } from './DataDocDAGExporterForm';
+import { DataDocDagExporterList } from './DataDocDAGExporterList';
+
 import { Button } from 'ui/Button/Button';
 import { CopyPasteModal } from 'ui/CopyPasteModal/CopyPasteModal';
 import { Modal } from 'ui/Modal/Modal';
 
 import './DataDocDAGExporter.scss';
-import { DataDocDagExporterList } from './DataDocDAGExporterList';
 
 interface IProps {
     docId: number;

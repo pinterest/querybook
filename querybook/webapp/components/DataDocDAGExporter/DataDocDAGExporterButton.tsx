@@ -6,12 +6,10 @@ import { DataDocDAGExporter } from './DataDocDAGExporter';
 
 interface IProps {
     docId: number;
-    readonly: boolean;
 }
 
 export const DataDocDAGExporterButton: React.FunctionComponent<IProps> = ({
     docId,
-    readonly,
 }) => {
     const [showModal, setShowModal] = React.useState(false);
 
@@ -30,7 +28,7 @@ export const DataDocDAGExporterButton: React.FunctionComponent<IProps> = ({
                     title="DAG Exporter"
                     type="fullscreen"
                 >
-                    <DataDocDAGExporter docId={docId} readonly={readonly} />
+                    <DataDocDAGExporter docId={docId} />
                 </Modal>
             ) : null}
         </>
