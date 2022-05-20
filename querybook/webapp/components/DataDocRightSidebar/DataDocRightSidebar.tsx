@@ -1,15 +1,19 @@
 import React from 'react';
 import { debounce } from 'lodash';
+import { useDispatch, useSelector } from 'react-redux';
 
 import { IDataDoc } from 'const/datadoc';
-import { IconButton } from 'ui/Button/IconButton';
+import { fetchDAGExporters } from 'redux/dataDoc/action';
+import { IStoreState } from 'redux/store/types';
+import { getScrollParent, smoothScroll } from 'lib/utils';
+import { useAnnouncements } from 'hooks/redux/useAnnouncements';
 
 import { DeleteDataDocButton } from './DeleteDataDocButton';
 import { DataDocTemplateButton } from 'components/DataDocTemplateButton/DataDocTemplateButton';
 import { DataDocScheduleButton } from './DataDocScheduleButton';
-import { getScrollParent, smoothScroll } from 'lib/utils';
-import { useAnnouncements } from 'hooks/redux/useAnnouncements';
 import { DataDocDAGExporterButton } from 'components/DataDocDAGExporter/DataDocDAGExporterButton';
+
+import { IconButton } from 'ui/Button/IconButton';
 
 import './DataDocRightSidebar.scss';
 
@@ -39,7 +43,32 @@ export const DataDocRightSidebar: React.FunctionComponent<IProps> = ({
     onCollapse,
     defaultCollapse,
 }) => {
+    const dispatch = useDispatch();
+
     const numAnnouncements = useAnnouncements().length;
+
+    const exporterDataByName = useSelector(
+        (state: IStoreState) => state.dataDoc.dagExporterDataByName
+    );
+    const exporterNames = React.useMemo(
+        () => Object.keys(exporterDataByName || {}),
+        [exporterDataByName]
+    );
+
+    React.useEffect(() => {
+        if (exporterNames.length === 0) {
+            dispatch(fetchDAGExporters());
+        }
+    }, [dispatch]);
+
+    const exporterExists = React.useMemo(
+        () =>
+            exporterNames.length === 0 ||
+            (exporterNames.length === 1 && exporterNames[0] === 'demo')
+                ? false
+                : true,
+        [exporterNames]
+    );
 
     const [showScrollToTop, setShowScrollToTop] = React.useState(false);
     const selfRef = React.useRef<HTMLDivElement>();
@@ -126,7 +155,7 @@ export const DataDocRightSidebar: React.FunctionComponent<IProps> = ({
                 />
             </div>
             <div className="DataDocRightSidebar-button-section-bottom flex-column mb8">
-                {isEditable && (
+                {isEditable && exporterExists && (
                     <DataDocDAGExporterButton
                         readonly={!isEditable}
                         docId={dataDoc.id}

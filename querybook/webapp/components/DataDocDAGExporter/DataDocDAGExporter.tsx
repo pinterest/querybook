@@ -19,20 +19,17 @@ import { DataDocDagExporterList } from './DataDocDAGExporterList';
 
 interface IProps {
     docId: number;
-    readonly: boolean;
 }
 
 export const queryCellDraggableType = 'QueryCell-';
 
 export const DataDocDAGExporter: React.FunctionComponent<IProps> = ({
     docId,
-    readonly,
 }) => {
     const graphRef = React.useRef();
     const [isExporting, setIsExporting] = React.useState(false);
     const [exportData, setExportData] = React.useState<string>();
     const [exportType, setExportType] = React.useState<string>();
-    const isInteractive = !(readonly || isExporting);
 
     const { onSave, savedNodes, savedEdges, savedMeta } = useSavedDAG(docId);
     const queryCells = useQueryCells(docId);
@@ -47,7 +44,7 @@ export const DataDocDAGExporter: React.FunctionComponent<IProps> = ({
         queryCells,
         savedNodes,
         savedEdges,
-        !isInteractive,
+        !isExporting,
         graphRef
     );
 
