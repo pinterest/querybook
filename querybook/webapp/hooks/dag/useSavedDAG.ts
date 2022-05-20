@@ -40,9 +40,11 @@ export function useSavedDAG(docId: number) {
                 sourcePosition: node.sourcePosition,
                 targetPosition: node.targetPosition,
             }));
-            return dispatch(saveDAGExport(docId, processedNodes, edges, meta));
+            return dispatch(
+                saveDAGExport(docId, processedNodes, edges, meta ?? savedMeta)
+            );
         },
-        [dispatch, docId]
+        [dispatch, docId, savedMeta]
     );
 
     return { onSave, savedNodes, savedEdges, savedMeta };
