@@ -126,10 +126,12 @@ export const DataDocRightSidebar: React.FunctionComponent<IProps> = ({
                 />
             </div>
             <div className="DataDocRightSidebar-button-section-bottom flex-column mb8">
-                <DataDocDAGExporterButton
-                    readonly={!isEditable}
-                    docId={dataDoc.id}
-                />
+                {isEditable && (
+                    <DataDocDAGExporterButton
+                        readonly={!isEditable}
+                        docId={dataDoc.id}
+                    />
+                )}
                 {templateButtonDOM}
                 {scheduleButtonDOM}
                 <IconButton
