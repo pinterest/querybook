@@ -173,7 +173,7 @@ export function arrayGroupByField<
 
 // from https://stackoverflow.com/a/39494245
 export function smoothScroll(
-    scrollContainer: HTMLElement,
+    scrollContainer: HTMLElement | Element,
     finalScrollTop: number,
     duration: number // in ms
 ) {

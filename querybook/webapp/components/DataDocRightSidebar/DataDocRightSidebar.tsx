@@ -1,12 +1,11 @@
 import React from 'react';
-import { debounce } from 'lodash';
 import { useDispatch, useSelector } from 'react-redux';
 
 import { IDataDoc } from 'const/datadoc';
 import { fetchDAGExporters } from 'redux/dataDoc/action';
 import { IStoreState } from 'redux/store/types';
-import { getScrollParent, smoothScroll } from 'lib/utils';
 import { useAnnouncements } from 'hooks/redux/useAnnouncements';
+import { useScrollToTop } from 'hooks/ui/useScrollToTop';
 
 import { DeleteDataDocButton } from './DeleteDataDocButton';
 import { DataDocTemplateButton } from 'components/DataDocTemplateButton/DataDocTemplateButton';
@@ -46,29 +45,10 @@ export const DataDocRightSidebar: React.FunctionComponent<IProps> = ({
     const numAnnouncements = useAnnouncements().length;
     const exporterExists = useExporterExists();
 
-    const [showScrollToTop, setShowScrollToTop] = React.useState(false);
     const selfRef = React.useRef<HTMLDivElement>();
-
-    const checkParentScroll = React.useCallback(
-        debounce((scrollTop: number) => {
-            setShowScrollToTop(scrollTop > 230);
-        }, 500),
-        []
-    );
-
-    React.useEffect(() => {
-        const scrollParent = getScrollParent(selfRef.current);
-        const scrollFunction = (e) => checkParentScroll(e.target.scrollTop);
-        if (scrollParent) {
-            scrollParent.addEventListener('scroll', scrollFunction);
-        }
-
-        return () => {
-            if (scrollParent && scrollFunction) {
-                scrollParent.removeEventListener('scroll', scrollFunction);
-            }
-        };
-    }, []);
+    const { showScrollToTop, onScrollClick } = useScrollToTop({
+        selfRef,
+    });
 
     const deleteButtonDOM = isEditable ? (
         <DeleteDataDocButton docId={dataDoc.id} />
@@ -98,12 +78,7 @@ export const DataDocRightSidebar: React.FunctionComponent<IProps> = ({
                 <IconButton
                     icon="ArrowUp"
                     className={showScrollToTop ? '' : 'hide-button'}
-                    onClick={() => {
-                        const scrollParent = getScrollParent(selfRef.current);
-                        if (scrollParent) {
-                            smoothScroll(scrollParent, 0, 200);
-                        }
-                    }}
+                    onClick={onScrollClick}
                 />
                 <IconButton
                     icon={defaultCollapse ? 'Maximize2' : 'Minimize2'}

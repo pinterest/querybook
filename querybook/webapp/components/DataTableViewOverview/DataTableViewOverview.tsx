@@ -102,6 +102,8 @@ export const DataTableViewOverview: React.FC<IQuerybookTableViewOverviewProps> =
 
     const [handleRefreshTable, isRefreshingTable] = useRefreshMetastore(table);
 
+    console.log('????', table.description);
+
     const description = table.description ? (
         <EditableTextField
             value={table.description as DraftJs.ContentState}

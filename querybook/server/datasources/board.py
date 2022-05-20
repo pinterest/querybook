@@ -6,6 +6,7 @@ from app.auth.permission import (
     verify_environment_permission,
     get_data_table_environment_ids,
     get_data_doc_environment_ids,
+    get_board_environment_ids,
 )
 from logic import board as logic
 from logic.board_permission import assert_can_read, assert_can_edit
@@ -108,7 +109,10 @@ def get_board_ids_from_board_item(item_type: str, item_id: int, environment_id: 
     methods=["POST"],
 )
 def add_board_item(board_id, item_type, item_id):
-    api_assert(item_type == "data_doc" or item_type == "table", "Invalid item type")
+    api_assert(
+        item_type == "data_doc" or item_type == "table" or item_type == "board",
+        "Invalid item type",
+    )
 
     with DBSession() as session:
         assert_can_edit(board_id, session=session)
@@ -118,8 +122,10 @@ def add_board_item(board_id, item_type, item_id):
         item_env_ids = []
         if item_type == "data_doc":
             item_env_ids = get_data_doc_environment_ids(item_id, session=session)
-        else:
+        elif item_type == "table":
             item_env_ids = get_data_table_environment_ids(item_id, session=session)
+        else:
+            item_env_ids = get_board_environment_ids(item_id, session=session)
 
         api_assert(
             board.environment_id in item_env_ids,

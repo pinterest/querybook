@@ -86,7 +86,7 @@ export const BoardList: React.FunctionComponent<IProps> = ({
                 <SearchBar
                     value={filterStr}
                     onSearch={setFilterStr}
-                    placeholder="Filter list"
+                    placeholder="Filter lists"
                     className="mr12"
                 />
                 <IconButton
