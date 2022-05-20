@@ -15,6 +15,7 @@ import { CopyPasteModal } from 'ui/CopyPasteModal/CopyPasteModal';
 import { Modal } from 'ui/Modal/Modal';
 
 import './DataDocDAGExporter.scss';
+import { DataDocDagExporterList } from './DataDocDAGExporterList';
 
 interface IProps {
     docId: number;
@@ -79,20 +80,20 @@ export const DataDocDAGExporter: React.FunctionComponent<IProps> = ({
                     onReturn={() => setIsExporting(false)}
                 />
             ) : (
-                <DataDocDAGExporterGraph
-                    unusedQueryCells={unusedQueryCells}
-                    dropRef={dropRef}
-                    graphRef={graphRef}
-                    nodes={nodes}
-                    edges={edges}
-                    setNodes={setNodes}
-                    setEdges={setEdges}
-                    onSave={onSave}
-                    onExport={async () => {
-                        setIsExporting(true);
-                    }}
-                    setGraphInstance={setGraphInstance}
-                />
+                <>
+                    <DataDocDagExporterList queryCells={unusedQueryCells} />
+                    <DataDocDAGExporterGraph
+                        dropRef={dropRef}
+                        graphRef={graphRef}
+                        setGraphInstance={setGraphInstance}
+                        nodes={nodes}
+                        edges={edges}
+                        setNodes={setNodes}
+                        setEdges={setEdges}
+                        onSave={onSave}
+                        onNext={() => setIsExporting(true)}
+                    />
+                </>
             )}
             {exportData &&
                 (exportType === 'url' ? (
@@ -121,8 +122,8 @@ export const DataDocDAGExporter: React.FunctionComponent<IProps> = ({
 
 export const DataDocDAGExporterSave: React.FunctionComponent<{
     onSave: () => Promise<any>;
-    onExport: () => void;
-}> = ({ onSave, onExport }) => (
+    onNext: () => void;
+}> = ({ onSave, onNext }) => (
     <div className="DataDocDAGExporter-bottom flex-row right-align">
         <Button icon="Save" title="Save Progress" onClick={onSave} />
         <Button
@@ -130,7 +131,7 @@ export const DataDocDAGExporterSave: React.FunctionComponent<{
             title="Configure Exporter"
             onClick={async () => {
                 await onSave();
-                onExport();
+                onNext();
             }}
         />
     </div>

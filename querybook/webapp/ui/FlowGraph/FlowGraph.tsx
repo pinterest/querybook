@@ -16,7 +16,6 @@ import ReactFlow, {
     EdgeChange,
     Node,
     ReactFlowInstance,
-    Position,
 } from 'react-flow-renderer';
 
 import { getLayoutedElements, LayoutDirection } from './helpers';
@@ -134,74 +133,17 @@ const InteractiveFlowGraph: React.FunctionComponent<IGraphProps> = ({
     plugins,
     setGraphInstance,
 }) => {
-    const [layoutDirection, setLayoutDirection] = React.useState<'LR' | 'TB'>();
-    const targetPosition =
-        layoutDirection === 'LR' ? Position.Left : Position.Top;
-    const sourcePosition =
-        layoutDirection === 'LR' ? Position.Right : Position.Bottom;
-
-    const edgesHaveData = React.useMemo(
-        () => Boolean(edges.length && Object.keys(edges[0]?.data || {}).length),
-        [edges]
-    );
-
-    React.useEffect(() => {
-        if (nodes.length && !layoutDirection) {
-            const direction =
-                nodes[0].sourcePosition === Position.Right ? 'LR' : 'TB';
-            setLayoutDirection(direction);
-        }
-    }, [nodes, layoutDirection]);
-
-    const onRemoveEdge = useCallback(
-        (id) => {
-            setEdges((edges) => edges.filter((edge) => !(edge.id === id)));
+    const onConnect = useCallback(
+        (params: Connection) => {
+            setEdges((eds) => addEdge(params, eds));
         },
         [setEdges]
     );
 
-    const setRemovableEdges = React.useCallback(() => {
-        setEdges((edges) =>
-            edges.map((edge) => ({
-                ...edge,
-                data: { onRemove: onRemoveEdge },
-            }))
-        );
-    }, [onRemoveEdge, setEdges]);
-
-    React.useEffect(() => {
-        if (edges.length && !edgesHaveData) {
-            setRemovableEdges();
-        }
-    }, [edges.length, edgesHaveData, onRemoveEdge, setRemovableEdges]);
-
-    const onConnect = useCallback(
-        (params: Connection) => {
-            setEdges((eds) =>
-                addEdge(
-                    {
-                        ...params,
-                        type: 'removableEdge',
-                        data: { onRemove: onRemoveEdge },
-                    },
-                    eds
-                )
-            );
-        },
-        [onRemoveEdge, setEdges]
-    );
-
     const onNodesChange = useCallback(
         (changes: NodeChange[]) =>
-            setNodes((nds) => {
-                const appliedNodes = applyNodeChanges(changes, nds);
-                return appliedNodes.map((node) => ({
-                    ...node,
-                    targetPosition,
-                    sourcePosition,
-                }));
-            }),
-        [setNodes, sourcePosition, targetPosition]
+            setNodes((nds) => applyNodeChanges(changes, nds)),
+        [setNodes]
     );
 
     const onEdgesChange = useCallback(
@@ -212,7 +154,6 @@ const InteractiveFlowGraph: React.FunctionComponent<IGraphProps> = ({
 
     const onLayout = React.useCallback(
         (direction: LayoutDirection = 'LR') => {
-            setLayoutDirection(direction);
             const layoutedDAG = getLayoutedElements(nodes, edges, direction);
             setNodes([...layoutedDAG.nodes]);
             setEdges([...layoutedDAG.edges]);
