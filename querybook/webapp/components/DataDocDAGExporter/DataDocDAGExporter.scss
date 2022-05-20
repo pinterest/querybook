@@ -42,8 +42,12 @@
             .DataDocDAGExporterSettings-form {
                 height: calc(100% - 48px);
                 margin-right: 12px;
-                .FormSectionHeader:first-child {
-                    margin-top: 0px;
+
+                > .FormField:first-child {
+                    width: 100%;
+                    .FormFieldLabelSection {
+                        margin-top: 0px;
+                    }
                 }
             }
         }

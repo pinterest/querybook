@@ -20,7 +20,8 @@ interface IProps {
     onSave: (
         nodes: Node[],
         edges: Edge[],
-        meta?: Record<string, any>
+        exporterMeta?: Record<string, any>,
+        useTemplatedVariables?: boolean
     ) => Promise<IDataDocDAGExport>;
     onReturn: () => void;
 }
@@ -58,7 +59,9 @@ export const DataDocDAGExporterForm = ({
             <DataDocDAGExporterSettings
                 onExport={handleExport}
                 savedMeta={savedMeta}
-                onSave={(meta) => onSave(nodes, edges, meta)}
+                onSave={(exporterMeta, useTemplatedVariables) =>
+                    onSave(nodes, edges, exporterMeta, useTemplatedVariables)
+                }
             />
         </div>
     </>

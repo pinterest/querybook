@@ -5,14 +5,15 @@ import { useExporterSettings } from 'hooks/dag/useExporterSettings';
 
 import { SmartForm } from 'ui/SmartForm/SmartForm';
 import { SimpleReactSelect } from 'ui/SimpleReactSelect/SimpleReactSelect';
-import { FormSectionHeader } from 'ui/Form/FormField';
+import { FormField, FormSectionHeader } from 'ui/Form/FormField';
 import { Button } from 'ui/Button/Button';
 import { AsyncButton } from 'ui/AsyncButton/AsyncButton';
+import { ToggleSwitch } from 'ui/ToggleSwitch/ToggleSwitch';
 
 interface IProps {
     onExport: (name: string, settings: any) => void;
     savedMeta: Record<string, any>;
-    onSave: (meta: any) => Promise<any>;
+    onSave: (meta: any, useTemplatedVariables?: boolean) => Promise<any>;
 }
 
 export const DataDocDAGExporterSettings: React.FunctionComponent<IProps> = ({
@@ -27,6 +28,7 @@ export const DataDocDAGExporterSettings: React.FunctionComponent<IProps> = ({
         settingValues,
         exporterMeta,
         handleSettingValuesChange,
+        useTemplatedVariables,
     } = useExporterSettings({ savedMeta });
 
     const handleExport = React.useCallback(async () => {
@@ -36,6 +38,15 @@ export const DataDocDAGExporterSettings: React.FunctionComponent<IProps> = ({
     return (
         <div className="DataDocDAGExporterSettings">
             <div className="DataDocDAGExporterSettings-form">
+                <FormField
+                    label="Use Templated Variables"
+                    className="horizontal-space-between"
+                >
+                    <ToggleSwitch
+                        checked={useTemplatedVariables}
+                        onChange={() => onSave(null, !useTemplatedVariables)}
+                    />
+                </FormField>
                 <FormSectionHeader>Exporter</FormSectionHeader>
                 <SimpleReactSelect
                     options={exporterNames}
@@ -57,7 +68,15 @@ export const DataDocDAGExporterSettings: React.FunctionComponent<IProps> = ({
                         <Button
                             icon="Save"
                             title="Save Progress"
-                            onClick={() => onSave(settingValues)}
+                            onClick={() =>
+                                onSave(
+                                    {
+                                        ...savedMeta.exporterData,
+                                        [selectedExporter]: settingValues,
+                                    },
+                                    useTemplatedVariables
+                                )
+                            }
                         />
                         <AsyncButton
                             icon="FileOutput"
