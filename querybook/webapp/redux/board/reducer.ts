@@ -1,6 +1,7 @@
 import { IBoardState, BoardAction } from './types';
 import produce from 'immer';
 import { arrayMove } from 'lib/utils';
+import { stateFromHTML } from 'draft-js-import-html';
 
 const initialState: Readonly<IBoardState> = {
     boardById: {},
@@ -16,6 +17,7 @@ export default function (state = initialState, action: BoardAction) {
                     draft.boardById[id] = {
                         ...draft.boardById[id],
                         ...board,
+                        description: stateFromHTML(board.description as string),
                     };
                 }
                 return;
@@ -26,6 +28,7 @@ export default function (state = initialState, action: BoardAction) {
                 draft.boardById[board.id] = {
                     ...draft.boardById[board.id],
                     ...board,
+                    description: stateFromHTML(board.description as string),
                 };
                 draft.boardItemById = {
                     ...draft.boardItemById,

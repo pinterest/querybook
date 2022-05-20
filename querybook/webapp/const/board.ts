@@ -43,7 +43,7 @@ export interface IBoardItem {
     table_id: number | null;
 }
 
-export type BoardItemType = 'table' | 'data_doc';
+export type BoardItemType = 'table' | 'data_doc' | 'board';
 
 export enum BoardOrderBy {
     alphabetical = 0,

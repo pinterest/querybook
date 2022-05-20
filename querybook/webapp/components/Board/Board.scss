@@ -9,18 +9,5 @@
         margin: 0 auto;
         padding: 36px 16px;
         overflow: hidden;
-
-        .BoardItem {
-            cursor: default;
-            margin-right: auto;
-            border-radius: var(--border-radius);
-            background-color: var(--bg-light);
-            .BoardItemIcon {
-                color: var(--icon);
-            }
-            &:hover {
-                background-color: var(--bg-hover);
-            }
-        }
     }
 }

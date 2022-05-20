@@ -6,12 +6,13 @@ import {
     IBoard,
     IBoardRaw,
     BoardItemType,
-    IBoardUpdatableField,
 } from 'const/board';
 import { Dispatch } from 'redux/store/types';
 import { receiveDataDocs } from 'redux/dataDoc/action';
 import { receiveDataTable } from 'redux/dataSources/action';
 import { BoardResource } from 'resource/board';
+import { convertContentStateToHTML } from 'lib/richtext/serialize';
+import { ContentState } from 'draft-js';
 
 export const dataDocSchema = new schema.Entity('dataDoc');
 export const tableSchema = new schema.Entity('dataTable');
@@ -100,8 +101,8 @@ export function fetchBoardIfNeeded(id: number): ThunkResult<Promise<any>> {
 
 export function createBoard(
     name: string,
-    description: string,
-    publicBoard: boolean
+    description: ContentState,
+    isPublic: boolean
 ): ThunkResult<Promise<IBoardRaw>> {
     return async (dispatch, getState) => {
         const state = getState();
@@ -110,8 +111,8 @@ export function createBoard(
                 name,
                 state.environment.currentEnvironmentId,
                 state.user.myUserInfo.uid,
-                description,
-                publicBoard
+                convertContentStateToHTML(description),
+                isPublic
             )
         ).data;
         receiveBoardWithItems(dispatch, board);
@@ -121,10 +122,18 @@ export function createBoard(
 
 export function updateBoard(
     id: number,
-    fields: IBoardUpdatableField
+    name: string,
+    isPublic: boolean,
+    description: ContentState
 ): ThunkResult<Promise<IBoardRaw>> {
     return async (dispatch) => {
-        const board = (await BoardResource.update(id, fields)).data;
+        const board = (
+            await BoardResource.update(id, {
+                name,
+                description: convertContentStateToHTML(description),
+                public: isPublic,
+            })
+        ).data;
         receiveBoardWithItems(dispatch, board);
         return board;
     };

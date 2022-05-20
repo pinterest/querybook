@@ -2,12 +2,10 @@ import React, { useCallback } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 import * as Yup from 'yup';
 import { Formik, Form } from 'formik';
+import { ContentState } from 'draft-js';
 
 import { sendConfirm } from 'lib/querybookUI';
-import {
-    convertContentStateToHTML,
-    convertRawToContentState,
-} from 'lib/richtext/serialize';
+import { convertRawToContentState } from 'lib/richtext/serialize';
 import { createBoard, updateBoard, deleteBoard } from 'redux/board/action';
 import { IStoreState, Dispatch } from 'redux/store/types';
 import { IBoardRaw } from 'const/board';
@@ -57,9 +55,7 @@ export const BoardCreateUpdateForm: React.FunctionComponent<IBoardCreateUpdateFo
                   }
                 : {
                       name: board.name,
-                      description: convertRawToContentState(
-                          board.description as string
-                      ),
+                      description: board.description as ContentState,
                       public: board.public,
                   },
         [board, isCreateForm]
@@ -71,19 +67,22 @@ export const BoardCreateUpdateForm: React.FunctionComponent<IBoardCreateUpdateFo
             validateOnMount={true}
             validationSchema={boardFormSchema}
             onSubmit={async (values) => {
-                const description = convertContentStateToHTML(
-                    values.description
-                );
                 const action = isCreateForm
-                    ? createBoard(values.name, description, values.public)
-                    : updateBoard(boardId, {
-                          ...values,
-                          description,
-                      });
+                    ? createBoard(
+                          values.name,
+                          values.description,
+                          values.public
+                      )
+                    : updateBoard(
+                          boardId,
+                          values.name,
+                          values.public,
+                          values.description
+                      );
                 onComplete(await dispatch(action));
             }}
         >
-            {({ submitForm, isSubmitting, isValid, setFieldValue, values }) => {
+            {({ submitForm, isSubmitting, isValid }) => {
                 const nameField = <SimpleField name="name" type="input" />;
                 // TODO: enable when sharing is possible
                 // const publicField = <SimpleField name="public" type="toggle" />;
