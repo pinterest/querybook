@@ -37,7 +37,7 @@ class DemoDAGExporter(BaseDAGExporter):
             description=FormField(description="dag description"),
         )
 
-    def export(self, nodes, edges, meta):
+    def export(self, nodes, edges, meta, cell_by_node_id):
         try:
             export_dag = aiflow_dag.format(meta["title"], meta["description"])
 
@@ -49,7 +49,7 @@ class DemoDAGExporter(BaseDAGExporter):
         dag=dag, task_id="cell_{id}", sql=query_{id}
     )
                 '''.format(
-                    query=node["data"]["query"], id=node["id"]
+                    query=cell_by_node_id[node["id"]].context, id=node["id"]
                 )
                 export_dag = export_dag + node_section
 

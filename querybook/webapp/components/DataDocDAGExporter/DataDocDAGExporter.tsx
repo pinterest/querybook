@@ -59,10 +59,7 @@ export const DataDocDAGExporter: React.FunctionComponent<IProps> = ({
 
             const { data: exportData } = await DataDocResource.exportDAG(
                 docId,
-                exporterName,
-                nodes,
-                edges,
-                exporterSettings
+                exporterName
             );
             setExportData(exportData?.export);
             setExportType(exportData?.type);

@@ -688,8 +688,6 @@ def get_dag_exporters():
 
 
 @register("/datadoc/<int:id>/dag_export/export/", methods=["POST"])
-def save_and_export_dag(id, exporter_name, nodes, edges, meta):
+def save_and_export_dag(id, exporter_name):
     assert_can_write(id)
-    return dag_exporter.export_dag(
-        nodes=nodes, edges=edges, meta=meta, dag_exporter_name=exporter_name
-    )
+    return dag_exporter.export_dag(data_doc_id=id, dag_exporter_name=exporter_name)
