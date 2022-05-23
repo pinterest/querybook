@@ -30,7 +30,12 @@ export function useSavedDAG(docId: number) {
     ]);
 
     const onSave = React.useCallback(
-        (nodes: Node[], edges: Edge[], meta?: Record<string, any>) => {
+        (
+            nodes: Node[],
+            edges: Edge[],
+            exporterMeta?: Record<string, any>,
+            useTemplatedVariables?: boolean
+        ) => {
             const processedNodes = nodes.map((node) => ({
                 id: node.id,
                 position: node.position,
@@ -40,9 +45,18 @@ export function useSavedDAG(docId: number) {
                 sourcePosition: node.sourcePosition,
                 targetPosition: node.targetPosition,
             }));
+            const meta = {
+                ...savedMeta,
+            };
+            if (exporterMeta) {
+                meta.exporterMeta = exporterMeta;
+            }
+            if (useTemplatedVariables != null) {
+                meta.useTemplatedVariables = useTemplatedVariables;
+            }
             return dispatch(saveDAGExport(docId, processedNodes, edges, meta));
         },
-        [dispatch, docId]
+        [dispatch, docId, savedMeta]
     );
 
     return { onSave, savedNodes, savedEdges, savedMeta };

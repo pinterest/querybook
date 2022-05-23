@@ -29,6 +29,8 @@ export function useExporterSettings({ savedMeta }: IProps) {
 
     const exporterMeta = exporterDataByName[selectedExporter]?.meta;
 
+    const useTemplatedVariables = Boolean(savedMeta.useTemplatedVariables);
+
     const handleSettingValuesChange = React.useCallback((key, value) => {
         setSettingValues((currVals) => updateValue(currVals, key, value));
     }, []);
@@ -43,16 +45,19 @@ export function useExporterSettings({ savedMeta }: IProps) {
         if (selectedExporter) {
             return;
         }
-        if (Object.keys(savedMeta).length) {
-            setSelectedExporter(Object.keys(savedMeta)?.[0]);
+        if (Object.keys(savedMeta).length && savedMeta.exporterMeta) {
+            setSelectedExporter(Object.keys(savedMeta.exporterMeta)?.[0]);
         } else if (exporterNames.length) {
             setSelectedExporter(exporterNames[0]);
         }
     }, [exporterNames, selectedExporter, savedMeta]);
 
     React.useEffect(() => {
-        if (savedMeta[selectedExporter]) {
-            setSettingValues(savedMeta[selectedExporter]);
+        if (
+            savedMeta.exporterMeta &&
+            savedMeta.exporterMeta[selectedExporter]
+        ) {
+            setSettingValues(savedMeta.exporterMeta[selectedExporter]);
         }
     }, [savedMeta, selectedExporter]);
 
@@ -63,5 +68,6 @@ export function useExporterSettings({ savedMeta }: IProps) {
         settingValues,
         exporterMeta,
         handleSettingValuesChange,
+        useTemplatedVariables,
     };
 }

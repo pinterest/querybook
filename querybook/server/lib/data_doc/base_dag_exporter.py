@@ -28,7 +28,7 @@ class BaseDAGExporter(metaclass=ABCMeta):
         raise NotImplementedError()
 
     @abstractmethod
-    def export(self, nodes, edges, meta):
+    def export(self, nodes, edges, meta, cell_by_node_id):
         """
         This function exports the dag graph.
 
@@ -36,6 +36,7 @@ class BaseDAGExporter(metaclass=ABCMeta):
             nodes: dag nodes
             edges: dag edges
             meta: plug-in specific form options and values
+            cell_by_node_id: Dict of query cell data by node id
 
         Returns Dict {
             type: dag_exporter_type
