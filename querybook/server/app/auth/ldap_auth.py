@@ -131,7 +131,7 @@ def search_user_by_uid(
     apply_filter: bool = False,
 ) -> Optional[Tuple[str, Dict]]:
     search_filter = (
-        f"(&({QuerybookSettings.LDAP_UID_FIELD}={uid})"
+        f"(&({QuerybookSettings.LDAP_UID_FIELD}:caseExactMatch:={uid})"
         + (_get_ldap_filter() if apply_filter else "(objectClass=*)")
         + ")"
     )
