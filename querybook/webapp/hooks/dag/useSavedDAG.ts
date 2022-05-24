@@ -49,7 +49,7 @@ export function useSavedDAG(docId: number) {
                 ...savedMeta,
             };
             if (exporterMeta) {
-                meta.exporterMeta = exporterMeta;
+                meta.exporter_meta = exporterMeta;
             }
             if (useTemplatedVariables != null) {
                 meta.useTemplatedVariables = useTemplatedVariables;

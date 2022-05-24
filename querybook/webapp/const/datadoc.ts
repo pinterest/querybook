@@ -83,6 +83,12 @@ export interface IDataDocEditor {
 
 export const emptyDataDocTitleMessage = '(Untitled)';
 
+export interface IDataDocDAGExportMeta {
+    exporter_meta?: {
+        [exporterName: string]: Record<string, any>;
+    };
+    useTemplatedVariables?: boolean;
+}
 export interface IDataDocDAGExport {
     id: number;
     data_doc_id: number;
@@ -91,7 +97,7 @@ export interface IDataDocDAGExport {
     updated_at: number;
 
     dag: Record<string, Node[] | Edge[]>;
-    meta: Record<string, any>;
+    meta: IDataDocDAGExportMeta;
 }
 
 export interface IDataDocDAGExporter {

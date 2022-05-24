@@ -51,7 +51,6 @@ export function useExporterDAG(
     queryCells: IDataQueryCell[],
     savedNodes: Node[],
     savedEdges: Edge[],
-    readonly: boolean,
     graphRef: MutableRefObject<HTMLDivElement>
 ) {
     const [appliedSaved, setAppliedSaved] = useState<boolean>(false);
@@ -200,7 +199,6 @@ export function useExporterDAG(
                 ])
             );
         },
-        canDrop: () => !readonly,
         collect: (monitor) => ({
             isOver: monitor.isOver(),
         }),

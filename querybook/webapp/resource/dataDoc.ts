@@ -105,8 +105,7 @@ export const DataDocResource = {
             dag,
             meta,
         }),
-    getDAGExporters: () =>
-        ds.fetch<IDataDocDAGExporter[]>(`/datadoc/dag_exporter/`),
+    getDAGExporters: () => ds.fetch<IDataDocDAGExporter[]>(`/dag_exporter/`),
     exportDAG: (docId: number, exporterName: string) =>
         ds.save<{ type: string; export: string }>(
             `/datadoc/${docId}/dag_export/export/`,
