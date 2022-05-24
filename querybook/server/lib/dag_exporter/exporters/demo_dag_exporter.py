@@ -5,7 +5,7 @@ from lib.form import StructFormField, FormField
 
 LOG = get_logger(__file__)
 
-aiflow_dag = """
+airflow_dag = """
 from datetime import datetime, timedelta
 
 from airflow import DAG
@@ -38,7 +38,7 @@ class DemoDAGExporter(BaseDAGExporter):
         )
 
     def export(self, nodes, edges, meta, cell_by_id):
-        export_dag = aiflow_dag.format(
+        export_dag = airflow_dag.format(
             meta.get("title", ""), meta.get("description", "")
         )
 

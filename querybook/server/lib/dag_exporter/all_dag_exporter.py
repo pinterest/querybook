@@ -1,5 +1,5 @@
 from lib.utils.import_helper import import_module_with_default
-from .exports.demo_dag_exporter import DemoDAGExporter
+from .exporters.demo_dag_exporter import DemoDAGExporter
 
 ALL_PLUGIN_DAG_EXPORTERS = import_module_with_default(
     "dag_exporter_plugin",
