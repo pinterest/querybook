@@ -41,13 +41,7 @@ export const DataDocDAGExporter: React.FunctionComponent<IProps> = ({
         setEdges,
         dropRef,
         setGraphInstance,
-    ] = useExporterDAG(
-        queryCells,
-        savedNodes,
-        savedEdges,
-        !isExporting,
-        graphRef
-    );
+    ] = useExporterDAG(queryCells, savedNodes, savedEdges, graphRef);
 
     const unusedQueryCells = useUnusedQueryCells(queryCells, nodes);
 

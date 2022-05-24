@@ -5,6 +5,7 @@ from app.db import DBSession
 from const.admin import AdminOperation, AdminItemType
 from datasources.admin_audit_log import with_admin_audit_log
 from env import QuerybookSettings
+
 from lib.engine_status_checker import (
     ALL_ENGINE_STATUS_CHECKERS,
     get_engine_checker_class,
@@ -15,7 +16,6 @@ from lib.query_executor.all_executors import (
     get_flattened_executor_template,
     get_executor_class,
 )
-from lib.engine_status_checker import get_engine_checker_class
 from logic import admin as logic
 from logic import user as user_logic
 from logic import environment as environment_logic

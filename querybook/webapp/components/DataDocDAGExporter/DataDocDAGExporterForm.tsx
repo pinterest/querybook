@@ -13,7 +13,7 @@ interface IProps {
     handleExport: (
         exporterName: string,
         exporterSettings: Record<string, any>
-    ) => void;
+    ) => Promise<any>;
     savedMeta: Record<string, any>;
     nodes: Node[];
     edges: Edge[];

@@ -1,31 +1,40 @@
 import React from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 
+import { IDataDocDAGExportMeta } from 'const/datadoc';
 import { fetchDAGExporters } from 'redux/dataDoc/action';
 import { IStoreState } from 'redux/store/types';
-
 import { updateValue } from 'ui/SmartForm/formFunctions';
 
 interface IProps {
-    savedMeta: Record<string, any>;
+    savedMeta: IDataDocDAGExportMeta;
 }
 
-export function useExporterSettings({ savedMeta }: IProps) {
+function useExporterDataByName() {
     const dispatch = useDispatch();
-
     const exporterDataByName = useSelector(
         (state: IStoreState) => state.dataDoc.dagExporterDataByName
     );
+    const exporterNames = React.useMemo(
+        () => Object.keys(exporterDataByName || {}),
+        [exporterDataByName]
+    );
+    React.useEffect(() => {
+        if (exporterNames.length === 0) {
+            dispatch(fetchDAGExporters());
+        }
+    }, [dispatch]);
+
+    return { exporterDataByName, exporterNames };
+}
+
+export function useExporterSettings({ savedMeta }: IProps) {
+    const { exporterDataByName, exporterNames } = useExporterDataByName();
 
     const [selectedExporter, setSelectedExporter] = React.useState<string>();
     const [settingValues, setSettingValues] = React.useState<
         Record<string, any>
     >({});
-
-    const exporterNames = React.useMemo(
-        () => Object.keys(exporterDataByName || {}),
-        [exporterDataByName]
-    );
 
     const exporterMeta = exporterDataByName[selectedExporter]?.meta;
 
@@ -36,28 +45,19 @@ export function useExporterSettings({ savedMeta }: IProps) {
     }, []);
 
     React.useEffect(() => {
-        if (exporterNames.length === 0) {
-            dispatch(fetchDAGExporters());
-        }
-    }, [dispatch]);
-
-    React.useEffect(() => {
         if (selectedExporter) {
             return;
         }
-        if (Object.keys(savedMeta).length && savedMeta.exporterMeta) {
-            setSelectedExporter(Object.keys(savedMeta.exporterMeta)?.[0]);
+        if (savedMeta.exporter_meta) {
+            setSelectedExporter(Object.keys(savedMeta.exporter_meta)?.[0]);
         } else if (exporterNames.length) {
             setSelectedExporter(exporterNames[0]);
         }
     }, [exporterNames, selectedExporter, savedMeta]);
 
     React.useEffect(() => {
-        if (
-            savedMeta.exporterMeta &&
-            savedMeta.exporterMeta[selectedExporter]
-        ) {
-            setSettingValues(savedMeta.exporterMeta[selectedExporter]);
+        if (savedMeta.exporter_meta?.[selectedExporter]) {
+            setSettingValues(savedMeta.exporter_meta[selectedExporter]);
         }
     }, [savedMeta, selectedExporter]);
 

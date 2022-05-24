@@ -43,32 +43,8 @@ export const DataDocRightSidebar: React.FunctionComponent<IProps> = ({
     onCollapse,
     defaultCollapse,
 }) => {
-    const dispatch = useDispatch();
-
     const numAnnouncements = useAnnouncements().length;
-
-    const exporterDataByName = useSelector(
-        (state: IStoreState) => state.dataDoc.dagExporterDataByName
-    );
-    const exporterNames = React.useMemo(
-        () => Object.keys(exporterDataByName || {}),
-        [exporterDataByName]
-    );
-
-    React.useEffect(() => {
-        if (exporterNames.length === 0) {
-            dispatch(fetchDAGExporters());
-        }
-    }, [dispatch]);
-
-    const exporterExists = React.useMemo(
-        () =>
-            exporterNames.length === 0 ||
-            (exporterNames.length === 1 && exporterNames[0] === 'demo')
-                ? false
-                : true,
-        [exporterNames]
-    );
+    const exporterExists = useExporterExists();
 
     const [showScrollToTop, setShowScrollToTop] = React.useState(false);
     const selfRef = React.useRef<HTMLDivElement>();
@@ -182,3 +158,25 @@ export const DataDocRightSidebar: React.FunctionComponent<IProps> = ({
         </div>
     );
 };
+
+function useExporterExists() {
+    const dispatch = useDispatch();
+    const exporterDataByName = useSelector(
+        (state: IStoreState) => state.dataDoc.dagExporterDataByName
+    );
+    const exporterNames = React.useMemo(
+        () => Object.keys(exporterDataByName || {}),
+        [exporterDataByName]
+    );
+
+    React.useEffect(() => {
+        if (exporterNames.length === 0) {
+            dispatch(fetchDAGExporters());
+        }
+        // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, []);
+
+    const exporterExists = exporterNames.length > 0;
+
+    return exporterExists;
+}

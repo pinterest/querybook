@@ -22,8 +22,8 @@ export interface IDataDocDAGExporterListItemProps {
 export const DataDocDAGExporterListItem = React.memo<IDataDocDAGExporterListItemProps>(
     ({ queryCell, queryEngineById }) => {
         const [, drag] = useDrag({
+            type: queryCellDraggableType,
             item: {
-                type: queryCellDraggableType,
                 itemInfo: queryCell,
             },
         });

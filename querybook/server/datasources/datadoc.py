@@ -28,8 +28,6 @@ from logic.query_execution import get_query_execution_by_id
 from logic.schedule import run_and_log_scheduled_task
 from models.environment import Environment
 from lib.notify.utils import notify_user
-from lib.data_doc import utils as dag_exporter
-from lib.data_doc.all_dag_exporter import ALL_DAG_EXPORTERS
 
 LOG = get_logger(__file__)
 
@@ -667,27 +665,3 @@ def send_datadoc_transfer_notification(doc_id, next_owner_id, session=None):
         ),
         session=session,
     )
-
-
-@register("/datadoc/<int:id>/dag_export/", methods=["GET"])
-def get_dag_export(id):
-    assert_can_read(id)
-    verify_data_doc_permission(id)
-    return logic.get_dag_export_by_data_doc_id(data_doc_id=id)
-
-
-@register("/datadoc/<int:id>/dag_export/", methods=["POST", "PUT"])
-def create_or_update_dag_export(id, dag, meta):
-    assert_can_write(id)
-    return logic.create_or_update_dag_export(data_doc_id=id, dag=dag, meta=meta)
-
-
-@register("/datadoc/dag_exporter/", methods=["GET"])
-def get_dag_exporters():
-    return ALL_DAG_EXPORTERS
-
-
-@register("/datadoc/<int:id>/dag_export/export/", methods=["POST"])
-def save_and_export_dag(id, exporter_name):
-    assert_can_write(id)
-    return dag_exporter.export_dag(data_doc_id=id, dag_exporter_name=exporter_name)

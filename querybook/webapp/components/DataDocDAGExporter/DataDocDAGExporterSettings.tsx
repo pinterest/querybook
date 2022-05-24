@@ -9,10 +9,11 @@ import { FormField, FormSectionHeader } from 'ui/Form/FormField';
 import { Button } from 'ui/Button/Button';
 import { AsyncButton } from 'ui/AsyncButton/AsyncButton';
 import { ToggleSwitch } from 'ui/ToggleSwitch/ToggleSwitch';
+import { IDataDocDAGExportMeta } from 'const/datadoc';
 
 interface IProps {
-    onExport: (name: string, settings: any) => void;
-    savedMeta: Record<string, any>;
+    onExport: (name: string, settings: any) => Promise<any>;
+    savedMeta: IDataDocDAGExportMeta;
     onSave: (meta: any, useTemplatedVariables?: boolean) => Promise<any>;
 }
 
@@ -31,9 +32,10 @@ export const DataDocDAGExporterSettings: React.FunctionComponent<IProps> = ({
         useTemplatedVariables,
     } = useExporterSettings({ savedMeta });
 
-    const handleExport = React.useCallback(async () => {
-        await onExport(selectedExporter, settingValues);
-    }, [onExport, selectedExporter, settingValues]);
+    const handleExport = React.useCallback(
+        () => onExport(selectedExporter, settingValues),
+        [onExport, selectedExporter, settingValues]
+    );
 
     return (
         <div className="DataDocDAGExporterSettings">
@@ -71,7 +73,7 @@ export const DataDocDAGExporterSettings: React.FunctionComponent<IProps> = ({
                             onClick={() =>
                                 onSave(
                                     {
-                                        ...savedMeta.exporterData,
+                                        ...savedMeta.exporter_meta,
                                         [selectedExporter]: settingValues,
                                     },
                                     useTemplatedVariables
