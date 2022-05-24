@@ -116,8 +116,9 @@ class MockLdapUID(MockLdap):
         base: str, scope: int, filterstr: str, attrlist: List[str]
     ) -> List[Tuple]:
         if (
-            (filterstr == "(&(uid=unknown)(objectClass=*))")
-            or (filterstr == "(&(uid=newmaj)(sn=Unknown))")
+            (filterstr == "(&(uid:caseExactMatch:=unknown)(objectClass=*))")
+            or (filterstr == "(&(uid:caseExactMatch:=NEWMAJ)(objectClass=*))")
+            or (filterstr == "(&(uid:caseExactMatch:=newmaj)(sn=Unknown))")
             or (filterstr == "(sn=Unknown)")
             or (base == "uid=unknown,ou=people,dc=querybook,dc=com")
             or (base == "uid=newmaj,ou=people,dc=querybook,dc=unknown")
@@ -127,11 +128,11 @@ class MockLdapUID(MockLdap):
         elif scope == 2 and (
             (
                 base == "ou=people,dc=querybook,dc=com"
-                and filterstr == "(&(uid=newmaj)(objectClass=*))"
+                and filterstr == "(&(uid:caseExactMatch:=newmaj)(objectClass=*))"
             )
             or (
                 base == "ou=people,dc=querybook,dc=com"
-                and filterstr == "(&(uid=newmaj)(sn=Newman))"
+                and filterstr == "(&(uid:caseExactMatch:=newmaj)(sn=Newman))"
             )
             or (
                 base == "uid=newmaj,ou=people,dc=querybook,dc=com"
@@ -171,7 +172,7 @@ class MockLdapCN(MockLdap):
         if scope == 2 and (
             (
                 base == "ou=people,dc=querybook,dc=com"
-                and filterstr == "(&(uid=newmaj)(objectClass=*))"
+                and filterstr == "(&(uid:caseExactMatch:=newmaj)(objectClass=*))"
             )
             or (
                 base == "cn=John Newman,ou=people,dc=querybook,dc=com"
@@ -323,10 +324,10 @@ def test_ldap_get_transformed_username_uid(
 @pytest.mark.parametrize(
     "ldap_filter, use_bind, exp_filter",
     [
-        ("uid=newmaj", True, "(uid=newmaj)"),
-        ("(uid=newmaj)", True, "(uid=newmaj)"),
+        ("uid:caseExactMatch:=newmaj", True, "(uid:caseExactMatch:=newmaj)"),
+        ("(uid:caseExactMatch:=newmaj)", True, "(uid:caseExactMatch:=newmaj)"),
         (None, True, "(objectClass=*)"),
-        ("(uid=newmaj)", False, "(objectClass=*)"),
+        ("(uid:caseExactMatch:=newmaj)", False, "(objectClass=*)"),
     ],
 )
 def test_get_ldap_filter(
