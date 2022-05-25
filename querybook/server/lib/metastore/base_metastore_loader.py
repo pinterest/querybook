@@ -55,6 +55,9 @@ class DataTable(NamedTuple):
     # Json arrays of partitions
     partitions: List = []
 
+    # Metadata
+    description: str = None
+
     # Store the raw info here
     raw_description: str = None
 
@@ -63,6 +66,9 @@ class DataColumn(NamedTuple):
     name: str
     type: str
     comment: str = None
+
+    # Metadata
+    description: str = None
 
 
 class BaseMetastoreLoader(metaclass=ABCMeta):
@@ -155,6 +161,7 @@ class BaseMetastoreLoader(metaclass=ABCMeta):
                 schema_tables += [
                     (schema_id, schema_name, table_name) for table_name in table_names
                 ]
+
         self._create_tables_batched(schema_tables)
 
     def get_latest_partition(
@@ -221,6 +228,7 @@ class BaseMetastoreLoader(metaclass=ABCMeta):
                 data_table_id=table_id,
                 latest_partitions=json.dumps((table.partitions or [])[-10:]),
                 earliest_partitions=json.dumps((table.partitions or [])[:10]),
+                description=table.description,
                 hive_metastore_description=table.raw_description,
                 session=session,
             )
@@ -233,6 +241,7 @@ class BaseMetastoreLoader(metaclass=ABCMeta):
                     name=column.name,
                     type=column.type,
                     comment=column.comment,
+                    description=column.description,
                     table_id=table_id,
                     commit=False,
                     session=session,
