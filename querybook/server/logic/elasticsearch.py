@@ -92,10 +92,13 @@ def _get_dict_by_field(
         Dict[str, Any] - subset of the fields passed or the entire generated dict if fields is None
     """
     fields = fields or field_to_getter.keys()
+
+    def get_field_value(field: str):
+        getter = field_to_getter[field]
+        return getter() if callable(getter) else getter
+
     return {
-        field: getter() if callable(getter) else getter
-        for field, getter in field_to_getter.items()
-        if field in fields
+        field: get_field_value(field) for field in fields if field in field_to_getter
     }
 
 
