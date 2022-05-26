@@ -211,7 +211,7 @@ def query_execution_to_es(query_execution, data_cell=None, fields=None, session=
             else None
         )
 
-    field_to_generator = {
+    field_to_getter = {
         "id": query_execution.id,
         "query_type": "query_execution",
         "title": data_cell.meta.get("title", "Untitled") if data_cell else None,
@@ -229,7 +229,7 @@ def query_execution_to_es(query_execution, data_cell=None, fields=None, session=
         "readable_user_ids": lambda: _get_datadoc_editors(datadoc, session=session),
     }
 
-    return _get_dict_by_field(field_to_generator, fields=fields)
+    return _get_dict_by_field(field_to_getter, fields=fields)
 
 
 @with_exception
@@ -317,7 +317,7 @@ def query_cell_to_es(query_cell, fields=None, session=None):
     engine_id = query_cell_meta.get("engine")
     engine = admin_logic.get_query_engine_by_id(engine_id, session=session)
 
-    field_to_generator = {
+    field_to_getter = {
         "id": query_cell.id,
         "query_type": "query_cell",
         "title": query_cell_meta.get("title", "Untitled"),
@@ -335,7 +335,7 @@ def query_cell_to_es(query_cell, fields=None, session=None):
         "readable_user_ids": lambda: _get_datadoc_editors(datadoc, session=session),
     }
 
-    return _get_dict_by_field(field_to_generator, fields=fields)
+    return _get_dict_by_field(field_to_getter, fields=fields)
 
 
 @with_exception
@@ -426,7 +426,7 @@ def get_joined_cells(datadoc):
 @with_session
 def datadocs_to_es(datadoc, fields=None, session=None):
 
-    field_to_generator = {
+    field_to_getter = {
         "id": datadoc.id,
         "environment_id": datadoc.environment_id,
         "owner_uid": datadoc.owner_uid,
@@ -436,7 +436,7 @@ def datadocs_to_es(datadoc, fields=None, session=None):
         "public": datadoc.public,
         "readable_user_ids": lambda: _get_datadoc_editors(datadoc, session=session),
     }
-    return _get_dict_by_field(field_to_generator, fields=fields)
+    return _get_dict_by_field(field_to_getter, fields=fields)
 
 
 @with_exception
@@ -569,7 +569,7 @@ def table_to_es(table, fields=None, session=None):
             },
         }
 
-    field_to_generator = {
+    field_to_getter = {
         "id": table.id,
         "metastore_id": schema.metastore_id,
         "schema": schema_name,
@@ -584,7 +584,7 @@ def table_to_es(table, fields=None, session=None):
         "importance_score": compute_weight,
         "tags": [tag.tag_name for tag in table.tags],
     }
-    return _get_dict_by_field(field_to_generator, fields=fields)
+    return _get_dict_by_field(field_to_getter, fields=fields)
 
 
 def _bulk_insert_tables():
@@ -665,13 +665,13 @@ def user_to_es(user, fields=None, session=None):
             "input": process_names_for_suggestion(username, fullname),
         }
 
-    field_to_generator = {
+    field_to_getter = {
         "id": user.id,
         "username": username,
         "fullname": fullname,
         "suggest": get_suggestion_field,
     }
-    return _get_dict_by_field(field_to_generator, fields=fields)
+    return _get_dict_by_field(field_to_getter, fields=fields)
 
 
 @with_session
