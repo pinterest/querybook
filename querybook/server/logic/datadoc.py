@@ -821,6 +821,8 @@ def create_data_doc_editor(
     if commit:
         session.commit()
         update_es_data_doc_by_id(editor.data_doc_id)
+        update_es_query_cells_by_data_doc_id(editor.data_doc_id, session=session)
+        update_es_query_executions_by_data_doc_id(editor.data_doc_id, session=session)
     else:
         session.flush()
     session.refresh(editor)
@@ -845,6 +847,12 @@ def update_data_doc_editor(
         if updated:
             if commit:
                 session.commit()
+                update_es_query_cells_by_data_doc_id(
+                    editor.data_doc_id, session=session
+                )
+                update_es_query_executions_by_data_doc_id(
+                    editor.data_doc_id, session=session
+                )
             else:
                 session.flush()
             session.refresh(editor)
@@ -855,8 +863,10 @@ def update_data_doc_editor(
 def delete_data_doc_editor(id, doc_id, session=None, commit=True):
     session.query(DataDocEditor).filter_by(id=id).delete()
     if commit:
-        update_es_data_doc_by_id(doc_id)
         session.commit()
+        update_es_data_doc_by_id(doc_id)
+        update_es_query_cells_by_data_doc_id(doc_id, session=session)
+        update_es_query_executions_by_data_doc_id(doc_id, session=session)
 
 
 """
