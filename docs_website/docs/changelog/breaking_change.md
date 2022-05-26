@@ -11,7 +11,17 @@ Here are the list of breaking changes that you should be aware of when updating 
 
 The ElasticSearch index mappings for `query_cells` and `query_executions` were updated to include fields to restrict access to queries based on datadoc access permissions. Query cells and executions on private datadocs will only be shown in query search to users that have access to these datadocs.
 
-Please run `recreate_indices("query_cells", "query_executions")` function in `querybook/server/logic/elasticsearch.py` to recreate the appropriate indices.
+Follow the instructions at [Re-Initialize ElasticSearch](../developer_guide/reinitialize_es.md) to recreate ElasticSearch indices.
+
+Alternatively, you can run the following python script to update only the added fields in the query indices:
+
+```
+from logic.elasticsearch import bulk_update_index_by_fields, update_indices
+
+update_indices("query_executions", "query_cells")
+bulk_update_index_by_fields("query_executions", {"id", "public", "readable_user_ids"})
+bulk_update_index_by_fields("query_cells", {"id", "public", "readable_user_ids"})
+```
 
 ## v3.4.0
 
