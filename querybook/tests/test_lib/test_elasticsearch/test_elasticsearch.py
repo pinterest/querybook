@@ -18,7 +18,7 @@ COMPLETED_AT_DT = datetime.datetime(
 )  # 15 seconds after created at
 
 
-class BaseQueryTestCase(TestCase):
+class QueryTestCaseMixin(TestCase):
     QUERY_TEXT = "SELECT id, val1 from test_table inner join test_table_2 on test_table_2.val1 = test_table_1.val1 limit 10;"
     ENGINE_ID = 7
     AUTHOR_UID = "bob"
@@ -27,6 +27,16 @@ class BaseQueryTestCase(TestCase):
     QUERY_CELL_ID = 32
     QUERY_CELL_TITLE = "Test Query Cell"
     DATADOC_ID = 198
+
+    BASE_EXPECTED_RESULT = {
+        "title": QUERY_CELL_TITLE,
+        "author_uid": AUTHOR_UID,
+        "engine_id": ENGINE_ID,
+        "statement_type": ["SELECT"],
+        "created_at": CREATED_AT_EPOCH,
+        "full_table_name": ["main.test_table", "main.test_table_2"],
+        "query_text": QUERY_TEXT,
+    }
 
     def _patch_get_query_engine_by_id(self):
         get_query_engine_by_id_patch = patch("logic.admin.get_query_engine_by_id")
@@ -105,25 +115,22 @@ class BaseQueryTestCase(TestCase):
         self._patch_get_datadoc_editors_by_doc_id()
 
 
-class QueryCellTestCase(BaseQueryTestCase):
+class QueryCellTestCase(QueryTestCaseMixin):
     def setUp(self):
         super(QueryCellTestCase, self).setUp()
         self.mock_cell = self._get_mock_query_cell()
+        self.BASE_EXPECTED_RESULT = {
+            **self.BASE_EXPECTED_RESULT,
+            "id": self.QUERY_CELL_ID,
+            "query_type": "query_cell",
+            "data_doc_id": self.DATADOC_ID,
+            "environment_id": self.ENVIRONMENT_ID,
+        }
 
     def test_query_cell_to_es(self):
         result = query_cell_to_es(self.mock_cell, session=MagicMock())
         expected_result = {
-            "id": self.QUERY_CELL_ID,
-            "query_type": "query_cell",
-            "title": self.QUERY_CELL_TITLE,
-            "data_doc_id": self.DATADOC_ID,
-            "environment_id": self.ENVIRONMENT_ID,
-            "author_uid": self.AUTHOR_UID,
-            "engine_id": self.ENGINE_ID,
-            "statement_type": ["SELECT"],
-            "created_at": CREATED_AT_EPOCH,
-            "full_table_name": ["main.test_table", "main.test_table_2"],
-            "query_text": self.QUERY_TEXT,
+            **self.BASE_EXPECTED_RESULT,
             "public": False,
             "readable_user_ids": ["alice", "charlie"],
         }
@@ -132,17 +139,7 @@ class QueryCellTestCase(BaseQueryTestCase):
     def test_private_datadoc(self):
         self.mock_cell.doc = self._create_private_datadoc_mock()
         expected_result = {
-            "id": self.QUERY_CELL_ID,
-            "query_type": "query_cell",
-            "title": self.QUERY_CELL_TITLE,
-            "data_doc_id": self.DATADOC_ID,
-            "environment_id": self.ENVIRONMENT_ID,
-            "author_uid": self.AUTHOR_UID,
-            "engine_id": self.ENGINE_ID,
-            "statement_type": ["SELECT"],
-            "created_at": CREATED_AT_EPOCH,
-            "full_table_name": ["main.test_table", "main.test_table_2"],
-            "query_text": self.QUERY_TEXT,
+            **self.BASE_EXPECTED_RESULT,
             "public": False,
             "readable_user_ids": [],
         }
@@ -152,17 +149,7 @@ class QueryCellTestCase(BaseQueryTestCase):
     def test_public_datadoc(self):
         self.mock_cell.doc = self._create_public_datadoc_mock()
         expected_result = {
-            "id": self.QUERY_CELL_ID,
-            "query_type": "query_cell",
-            "title": self.QUERY_CELL_TITLE,
-            "data_doc_id": self.DATADOC_ID,
-            "environment_id": self.ENVIRONMENT_ID,
-            "author_uid": self.AUTHOR_UID,
-            "engine_id": self.ENGINE_ID,
-            "statement_type": ["SELECT"],
-            "created_at": CREATED_AT_EPOCH,
-            "full_table_name": ["main.test_table", "main.test_table_2"],
-            "query_text": self.QUERY_TEXT,
+            **self.BASE_EXPECTED_RESULT,
             "public": True,
             "readable_user_ids": [],
         }
@@ -177,7 +164,7 @@ class QueryCellTestCase(BaseQueryTestCase):
                 fields=["id", "query_type", "statement_type"],
                 session=MagicMock(),
             )
-            self.assertEquals(
+            self.assertEqual(
                 result,
                 {
                     "id": self.QUERY_CELL_ID,
@@ -185,10 +172,10 @@ class QueryCellTestCase(BaseQueryTestCase):
                     "statement_type": ["SELECT"],
                 },
             )
-            self.assertEquals(mock_process_query.call_count, 0)
+            self.assertEqual(mock_process_query.call_count, 0)
 
 
-class QueryExecutionTestCase(BaseQueryTestCase):
+class QueryExecutionTestCase(QueryTestCaseMixin):
     EXECUTION_ID = 2837
     QUERY_DURATION = 15  # COMPLETED_AT_DT - CREATED_AT_DT seconds
 
@@ -204,21 +191,19 @@ class QueryExecutionTestCase(BaseQueryTestCase):
             created_at=CREATED_AT_DT,
             completed_at=COMPLETED_AT_DT,
         )
+        self.BASE_EXPECTED_RESULT = {
+            **self.BASE_EXPECTED_RESULT,
+            "id": self.EXECUTION_ID,
+            "query_type": "query_execution",
+            "environment_id": [self.ENVIRONMENT_ID],
+            "duration": self.QUERY_DURATION,
+        }
 
     def test_no_data_cell(self):
         result = query_execution_to_es(self.mock_execution, session=MagicMock())
         expected_result = {
-            "id": self.EXECUTION_ID,
-            "query_type": "query_execution",
+            **self.BASE_EXPECTED_RESULT,
             "title": None,
-            "environment_id": [self.ENVIRONMENT_ID],
-            "author_uid": self.AUTHOR_UID,
-            "engine_id": self.ENGINE_ID,
-            "statement_type": ["SELECT"],
-            "created_at": CREATED_AT_EPOCH,
-            "duration": self.QUERY_DURATION,
-            "full_table_name": ["main.test_table", "main.test_table_2"],
-            "query_text": self.QUERY_TEXT,
             "public": True,
             "readable_user_ids": [],
         }
@@ -227,17 +212,7 @@ class QueryExecutionTestCase(BaseQueryTestCase):
     def test_with_data_cell(self):
         mock_cell = self._get_mock_query_cell()
         expected_result = {
-            "id": self.EXECUTION_ID,
-            "query_type": "query_execution",
-            "title": self.QUERY_CELL_TITLE,
-            "environment_id": [self.ENVIRONMENT_ID],
-            "author_uid": self.AUTHOR_UID,
-            "engine_id": self.ENGINE_ID,
-            "statement_type": ["SELECT"],
-            "created_at": CREATED_AT_EPOCH,
-            "duration": self.QUERY_DURATION,
-            "full_table_name": ["main.test_table", "main.test_table_2"],
-            "query_text": self.QUERY_TEXT,
+            **self.BASE_EXPECTED_RESULT,
             "public": False,
             "readable_user_ids": ["alice", "charlie"],
         }
@@ -254,7 +229,7 @@ class QueryExecutionTestCase(BaseQueryTestCase):
                 fields=["id", "query_type", "readable_user_ids"],
                 session=MagicMock(),
             )
-            self.assertEquals(
+            self.assertEqual(
                 result,
                 {
                     "id": self.EXECUTION_ID,
@@ -262,7 +237,7 @@ class QueryExecutionTestCase(BaseQueryTestCase):
                     "readable_user_ids": [],
                 },
             )
-            self.assertEquals(mock_process_query.call_count, 0)
+            self.assertEqual(mock_process_query.call_count, 0)
 
 
 class DataDocTestCase(TestCase):
@@ -330,7 +305,7 @@ class DataDocTestCase(TestCase):
             "public": False,
             "readable_user_ids": ["alice", "charlie"],
         }
-        self.assertEquals(result, expected_result)
+        self.assertEqual(result, expected_result)
 
     def test_partial_dict(self):
         with patch("logic.elasticsearch.get_joined_cells") as mock_get_joined_cells:
@@ -339,8 +314,8 @@ class DataDocTestCase(TestCase):
                 fields=["id", "environment_id", "created_at"],
                 session=MagicMock(),
             )
-            self.assertEquals(mock_get_joined_cells.call_count, 0)
-            self.assertEquals(
+            self.assertEqual(mock_get_joined_cells.call_count, 0)
+            self.assertEqual(
                 result,
                 {
                     "id": self.DATADOC_ID,
@@ -423,16 +398,16 @@ class TableTestCase(TestCase):
             "tags": ["tag_1", "tag_2"],
         }
 
-        self.assertEquals(
+        self.assertEqual(
             table_to_es(self.table_mock, session=MagicMock()),
             expected_result,
         )
-        self.assertEquals(
+        self.assertEqual(
             self.get_table_weight_mock.call_count, 1
         )  # ensure table weight isn't computed twice
 
     def test_partial_dict(self):
-        self.assertEquals(
+        self.assertEqual(
             table_to_es(
                 self.table_mock, fields=["id", "description"], session=MagicMock()
             ),
@@ -441,7 +416,7 @@ class TableTestCase(TestCase):
                 "description": self.TABLE_DESCRIPTION,
             },
         )
-        self.assertEquals(self.get_table_weight_mock.call_count, 0)
+        self.assertEqual(self.get_table_weight_mock.call_count, 0)
 
 
 class UserTestCase(TestCase):
@@ -449,7 +424,7 @@ class UserTestCase(TestCase):
         self.user_mock = MagicMock(username="john", fullname="John Smith 123", id=7)
 
     def test_user_to_es(self):
-        self.assertEquals(
+        self.assertEqual(
             user_to_es(self.user_mock, session=MagicMock()),
             {
                 "id": 7,
@@ -463,7 +438,7 @@ class UserTestCase(TestCase):
         with patch(
             "logic.elasticsearch.process_names_for_suggestion"
         ) as mock_process_names:
-            self.assertEquals(
+            self.assertEqual(
                 user_to_es(
                     self.user_mock,
                     fields=["id", "username", "fullname"],
@@ -475,4 +450,4 @@ class UserTestCase(TestCase):
                     "fullname": "John Smith 123",
                 },
             )
-            self.assertEquals(mock_process_names.call_count, 0)
+            self.assertEqual(mock_process_names.call_count, 0)

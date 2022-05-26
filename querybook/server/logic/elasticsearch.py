@@ -2,7 +2,7 @@ from html import escape
 from itertools import chain
 import math
 import re
-from typing import Set
+from typing import Any, Dict, List, Optional, Set
 
 from const.impression import ImpressionItemType
 from const.query_execution import QueryExecutionStatus
@@ -80,10 +80,37 @@ def get_hosted_es():
     return hosted_es
 
 
-def _get_partial_dict(field_to_generator, fields=None):
-    if fields is None:
-        return {key: func() for key, func in field_to_generator.items()}
-    return {key: func() for key, func in field_to_generator.items() if key in fields}
+def _get_dict_by_field(
+    field_to_getter: Dict[str, Any], fields: Optional[List[str]] = None
+) -> Dict[str, Any]:
+    """Returns a partial dictionary based on the fields provided.
+    Args:
+        field_to_getter: dict of field key to a value or a callable (that must be called to generate a value)
+        fields: list of fields to return in generated dict
+
+    Returns:
+        Dict[str, Any] - subset of the fields passed or the entire generated dict if fields is None
+    """
+    fields = fields or field_to_getter.keys()
+    return {
+        field: getter() if callable(getter) else getter
+        for field, getter in field_to_getter.items()
+        if field in fields
+    }
+
+
+def _get_datadoc_editors(datadoc, session) -> List[str]:
+    if datadoc is None or datadoc.public:
+        return []
+    editors = datadoc_logic.get_data_doc_editors_by_doc_id(
+        data_doc_id=datadoc.id, session=session
+    )
+    return [editor.uid for editor in editors]
+
+
+def _get_table_names_from_query(query, language=None) -> List[str]:
+    table_names, _ = lineage_lib.process_query(query, language=language)
+    return list(chain.from_iterable(table_names))
 
 
 """
@@ -169,18 +196,6 @@ def get_query_executions_iter(batch_size=1000, fields=None, session=None):
 
 
 @with_session
-def _get_datadoc_editors(datadoc, session=None):
-    """Return datadoc editors' uids. If there is no datadoc or datadoc is public, return empty array
-    since there is no need to compute list of editors if everyone is able to access the data"""
-    if datadoc is None or datadoc.public:
-        return []
-    editors = datadoc_logic.get_data_doc_editors_by_doc_id(
-        data_doc_id=datadoc.id, session=session
-    )
-    return [editor.uid for editor in editors]
-
-
-@with_session
 def query_execution_to_es(query_execution, data_cell=None, fields=None, session=None):
     """data_cell is added as a parameter so that bulk insert of query executions won't require
     re-retrieval of data_cell"""
@@ -196,29 +211,25 @@ def query_execution_to_es(query_execution, data_cell=None, fields=None, session=
             else None
         )
 
-    def get_table_names():
-        table_names, _ = lineage_lib.process_query(
-            query_execution.query, language=(engine and engine.language)
-        )
-        return list(chain.from_iterable(table_names))
-
     field_to_generator = {
-        "id": lambda: query_execution.id,
-        "query_type": lambda: "query_execution",
-        "title": lambda: data_cell.meta.get("title", "Untitled") if data_cell else None,
-        "environment_id": lambda: [env.id for env in engine.environments],
-        "author_uid": lambda: query_execution.uid,
-        "engine_id": lambda: engine_id,
+        "id": query_execution.id,
+        "query_type": "query_execution",
+        "title": data_cell.meta.get("title", "Untitled") if data_cell else None,
+        "environment_id": [env.id for env in engine.environments],
+        "author_uid": query_execution.uid,
+        "engine_id": engine_id,
         "statement_type": lambda: get_table_statement_type(query_execution.query),
         "created_at": lambda: DATETIME_TO_UTC(query_execution.created_at),
         "duration": get_duration,
-        "full_table_name": get_table_names,
-        "query_text": lambda: query_execution.query,
-        "public": lambda: datadoc is None or datadoc.public,
+        "full_table_name": lambda: _get_table_names_from_query(
+            query_execution.query, language=(engine and engine.language)
+        ),
+        "query_text": query_execution.query,
+        "public": datadoc is None or datadoc.public,
         "readable_user_ids": lambda: _get_datadoc_editors(datadoc, session=session),
     }
 
-    return _get_partial_dict(field_to_generator, fields=fields)
+    return _get_dict_by_field(field_to_generator, fields=fields)
 
 
 @with_exception
@@ -306,29 +317,25 @@ def query_cell_to_es(query_cell, fields=None, session=None):
     engine_id = query_cell_meta.get("engine")
     engine = admin_logic.get_query_engine_by_id(engine_id, session=session)
 
-    def get_table_names():
-        table_names, _ = lineage_lib.process_query(
-            query, language=(engine and engine.language)
-        )
-        return list(chain.from_iterable(table_names))
-
     field_to_generator = {
-        "id": lambda: query_cell.id,
-        "query_type": lambda: "query_cell",
-        "title": lambda: query_cell_meta.get("title", "Untitled"),
-        "data_doc_id": lambda: datadoc and datadoc.id,
-        "environment_id": lambda: datadoc and datadoc.environment_id,
-        "author_uid": lambda: datadoc and datadoc.owner_uid,
-        "engine_id": lambda: engine_id,
+        "id": query_cell.id,
+        "query_type": "query_cell",
+        "title": query_cell_meta.get("title", "Untitled"),
+        "data_doc_id": datadoc and datadoc.id,
+        "environment_id": datadoc and datadoc.environment_id,
+        "author_uid": datadoc and datadoc.owner_uid,
+        "engine_id": engine_id,
         "statement_type": lambda: get_table_statement_type(query),
         "created_at": lambda: DATETIME_TO_UTC(query_cell.created_at),
-        "full_table_name": get_table_names,
-        "query_text": lambda: query,
-        "public": lambda: datadoc is not None and datadoc.public,
+        "full_table_name": lambda: _get_table_names_from_query(
+            query, language=(engine and engine.language)
+        ),
+        "query_text": query,
+        "public": datadoc is not None and datadoc.public,
         "readable_user_ids": lambda: _get_datadoc_editors(datadoc, session=session),
     }
 
-    return _get_partial_dict(field_to_generator, fields=fields)
+    return _get_dict_by_field(field_to_generator, fields=fields)
 
 
 @with_exception
@@ -420,16 +427,16 @@ def get_joined_cells(datadoc):
 def datadocs_to_es(datadoc, fields=None, session=None):
 
     field_to_generator = {
-        "id": lambda: datadoc.id,
-        "environment_id": lambda: datadoc.environment_id,
-        "owner_uid": lambda: datadoc.owner_uid,
+        "id": datadoc.id,
+        "environment_id": datadoc.environment_id,
+        "owner_uid": datadoc.owner_uid,
         "created_at": lambda: DATETIME_TO_UTC(datadoc.created_at),
         "cells": lambda: get_joined_cells(datadoc),
-        "title": lambda: datadoc.title,
-        "public": lambda: datadoc.public,
+        "title": datadoc.title,
+        "public": datadoc.public,
         "readable_user_ids": lambda: _get_datadoc_editors(datadoc, session=session),
     }
-    return _get_partial_dict(field_to_generator, fields=fields)
+    return _get_dict_by_field(field_to_generator, fields=fields)
 
 
 @with_exception
@@ -563,21 +570,21 @@ def table_to_es(table, fields=None, session=None):
         }
 
     field_to_generator = {
-        "id": lambda: table.id,
-        "metastore_id": lambda: schema.metastore_id,
-        "schema": lambda: schema_name,
-        "name": lambda: table_name,
-        "full_name": lambda: full_name,
-        "full_name_ngram": lambda: full_name,
+        "id": table.id,
+        "metastore_id": schema.metastore_id,
+        "schema": schema_name,
+        "name": table_name,
+        "full_name": full_name,
+        "full_name_ngram": full_name,
         "completion_name": get_completion_name,
         "description": get_table_description,
         "created_at": lambda: DATETIME_TO_UTC(table.created_at),
-        "columns": lambda: [c.name for c in table.columns],
-        "golden": lambda: table.golden,
+        "columns": [c.name for c in table.columns],
+        "golden": table.golden,
         "importance_score": compute_weight,
-        "tags": lambda: [tag.tag_name for tag in table.tags],
+        "tags": [tag.tag_name for tag in table.tags],
     }
-    return _get_partial_dict(field_to_generator, fields=fields)
+    return _get_dict_by_field(field_to_generator, fields=fields)
 
 
 def _bulk_insert_tables():
@@ -653,17 +660,18 @@ def user_to_es(user, fields=None, session=None):
     username = user.username or ""
     fullname = user.fullname or ""
 
+    def get_suggestion_field():
+        return {
+            "input": process_names_for_suggestion(username, fullname),
+        }
+
     field_to_generator = {
-        "id": lambda: user.id,
-        "username": lambda: username,
-        "fullname": lambda: fullname,
-        "suggest": lambda: (
-            {
-                "input": process_names_for_suggestion(username, fullname),
-            }
-        ),
+        "id": user.id,
+        "username": username,
+        "fullname": fullname,
+        "suggest": get_suggestion_field,
     }
-    return _get_partial_dict(field_to_generator, fields=fields)
+    return _get_dict_by_field(field_to_generator, fields=fields)
 
 
 @with_session
@@ -816,18 +824,14 @@ def update_indices(*config_names):
 def bulk_update_index_by_fields(config_name, fields):
     es_config = ES_CONFIG[config_name]
     type_name = es_config["type_name"]
+    LOG.info(f"Updating {type_name}")
     if type_name == "query_executions":
-        LOG.info("Updating query executions")
         _bulk_update_query_executions(fields=fields)
     elif type_name == "query_cells":
-        LOG.info("Updating query cells")
         _bulk_update_query_cells(fields=fields)
     elif type_name == "datadocs":
-        LOG.info("Updating datadocs")
         _bulk_update_datadocs(fields=fields)
     elif type_name == "tables":
-        LOG.info("Updating tables")
         _bulk_update_tables(fields=fields)
     elif type_name == "users":
-        LOG.info("Updating users")
         _bulk_update_users(fields=fields)

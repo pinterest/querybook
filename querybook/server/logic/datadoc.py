@@ -76,7 +76,7 @@ def create_data_doc(
     if commit:
         session.commit()
         update_es_data_doc_by_id(data_doc.id)
-        update_es_query_cells_by_data_doc_id(data_doc.id, session=session)
+        update_es_queries_by_datadoc_id(data_doc.id, session=session)
     else:
         session.flush()
 
@@ -152,8 +152,7 @@ def update_data_doc(id, commit=True, session=None, **fields):
 
             # update es queries if doc is switched between public/private
             if "public" in fields:
-                update_es_query_cells_by_data_doc_id(data_doc.id, session=session)
-                update_es_query_executions_by_data_doc_id(data_doc.id, session=session)
+                update_es_queries_by_datadoc_id(data_doc.id, session=session)
             # update es query cells if doc is archived
             elif fields.get("archived") is True:
                 update_es_query_cells_by_data_doc_id(data_doc.id, session=session)
@@ -233,7 +232,7 @@ def clone_data_doc(id, owner_uid, commit=True, session=None):
     if commit:
         session.commit()
         update_es_data_doc_by_id(new_data_doc.id)
-        update_es_query_cells_by_data_doc_id(new_data_doc.id, session=session)
+        update_es_queries_by_datadoc_id(new_data_doc.id, session=session)
     else:
         session.flush()
     session.refresh(new_data_doc)
@@ -821,8 +820,7 @@ def create_data_doc_editor(
     if commit:
         session.commit()
         update_es_data_doc_by_id(editor.data_doc_id)
-        update_es_query_cells_by_data_doc_id(editor.data_doc_id, session=session)
-        update_es_query_executions_by_data_doc_id(editor.data_doc_id, session=session)
+        update_es_queries_by_datadoc_id(editor.data_doc_id, session=session)
     else:
         session.flush()
     session.refresh(editor)
@@ -847,12 +845,7 @@ def update_data_doc_editor(
         if updated:
             if commit:
                 session.commit()
-                update_es_query_cells_by_data_doc_id(
-                    editor.data_doc_id, session=session
-                )
-                update_es_query_executions_by_data_doc_id(
-                    editor.data_doc_id, session=session
-                )
+                update_es_queries_by_datadoc_id(editor.data_doc_id, session=session)
             else:
                 session.flush()
             session.refresh(editor)
@@ -865,8 +858,7 @@ def delete_data_doc_editor(id, doc_id, session=None, commit=True):
     if commit:
         session.commit()
         update_es_data_doc_by_id(doc_id)
-        update_es_query_cells_by_data_doc_id(doc_id, session=session)
-        update_es_query_executions_by_data_doc_id(doc_id, session=session)
+        update_es_queries_by_datadoc_id(doc_id, session=session)
 
 
 """
@@ -1004,6 +996,12 @@ def update_es_query_executions_by_data_doc_id(id, session=None):
     )
     for execution in query_executions:
         update_es_query_execution_by_id(execution.id)
+
+
+@with_session
+def update_es_queries_by_datadoc_id(id, session=None):
+    update_es_query_cells_by_data_doc_id(id, session=session)
+    update_es_query_executions_by_data_doc_id(id, session=session)
 
 
 @with_session
