@@ -15,7 +15,7 @@ Follow the instructions at [Re-Initialize ElasticSearch](../developer_guide/rein
 
 Alternatively, you can run the following python script to update only the added fields in the query indices:
 
-```
+```py
 from logic.elasticsearch import bulk_update_index_by_fields, update_indices
 
 update_indices("query_executions", "query_cells")
