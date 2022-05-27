@@ -13,15 +13,7 @@ The ElasticSearch index mappings for `query_cells` and `query_executions` were u
 
 Follow the instructions at [Re-Initialize ElasticSearch](../developer_guide/reinitialize_es.md) to recreate ElasticSearch indices.
 
-Alternatively, you can run the following python script to update only the added fields in the query indices:
-
-```py
-from logic.elasticsearch import bulk_update_index_by_fields, update_indices
-
-update_indices("query_executions", "query_cells")
-bulk_update_index_by_fields("query_executions", {"id", "public", "readable_user_ids"})
-bulk_update_index_by_fields("query_cells", {"id", "public", "readable_user_ids"})
-```
+Alternatively, you can run the script `querybook/server/scripts/es_3_5_0_upgrade.py` to update only the added fields in the query indices.
 
 ## v3.4.0
 
