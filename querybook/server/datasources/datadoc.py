@@ -421,6 +421,9 @@ def add_datadoc_editor(
 
         session.commit()
 
+        # Update queries in elasticsearch to reflect new permissions
+        logic.update_es_queries_by_datadoc_id(doc_id, session=session)
+
         if access_request:
             socketio.emit(
                 "data_doc_access_request",
@@ -645,6 +648,9 @@ def update_datadoc_owner(doc_id, next_owner_id, originator=None):
             broadcast=True,
         )
         logic.update_es_data_doc_by_id(doc_id)
+        # Update queries in elasticsearch to reflect new permissions
+        logic.update_es_queries_by_datadoc_id(doc_id, session=session)
+
         send_datadoc_transfer_notification(doc_id, next_owner_uid, session)
         return current_owner_editor_dict
 

@@ -54,6 +54,10 @@ query_executions:
                 query_text:
                     type: text
                     analyzer: query_lowercase
+                public:
+                    type: boolean
+                readable_user_ids:
+                    type: integer
 
 query_cells:
     index_name: search_query_cells_v1
@@ -111,6 +115,11 @@ query_cells:
                 query_text:
                     type: text
                     analyzer: query_lowercase
+                public:
+                    type: boolean
+                readable_user_ids:
+                    type: integer
+
 datadocs:
     index_name: search_datadocs_v1
     type_name: datadocs

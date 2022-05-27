@@ -105,6 +105,14 @@ def _match_filters(filters):
     return filters
 
 
+def _query_access_terms(user_id):
+    return [
+        {"term": {"author_uid": user_id}},
+        {"term": {"readable_user_ids": user_id}},
+        {"term": {"public": True}},
+    ]
+
+
 def _construct_query_search_query(
     keywords,
     filters,
@@ -148,6 +156,11 @@ def _construct_query_search_query(
         search_query = {"match_all": {}}
 
     search_filter = _match_filters(filters)
+    if search_filter == {}:
+        search_filter["filter"] = {"bool": {}}
+    search_filter["filter"]["bool"].setdefault("must", []).append(
+        {"bool": {"should": _query_access_terms(current_user.id)}}
+    )
 
     bool_query = {}
     if search_query != {}:
@@ -213,7 +226,9 @@ def _construct_datadoc_query(
     search_filter = _match_filters(filters)
     if search_filter == {}:
         search_filter["filter"] = {"bool": {}}
-    search_filter["filter"]["bool"]["should"] = _data_doc_access_terms(current_user.id)
+    search_filter["filter"]["bool"].setdefault("must", []).append(
+        {"bool": {"should": _data_doc_access_terms(current_user.id)}}
+    )
 
     bool_query = {}
     if search_query != {}:
