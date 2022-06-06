@@ -11,9 +11,9 @@ import { Tag } from 'ui/Tag/Tag';
 import { Popover } from 'ui/Popover/Popover';
 import { PopoverHoverWrapper } from 'ui/Popover/PopoverHoverWrapper';
 import { AccentText, StyledText } from 'ui/StyledText/StyledText';
+import { ThemedCodeHighlight } from 'ui/CodeHighlight/ThemedCodeHighlight';
 
 import { queryCellDraggableType } from './DataDocDAGExporter';
-import { ThemedCodeHighlight } from 'ui/CodeHighlight/ThemedCodeHighlight';
 
 export interface IDataDocDAGExporterListItemProps {
     queryCell: IDataQueryCell;
