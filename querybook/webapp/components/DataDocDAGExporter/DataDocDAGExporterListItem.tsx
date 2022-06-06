@@ -7,12 +7,13 @@ import { IQueryEngine } from 'const/queryEngine';
 import { getQueryKeywords } from 'lib/sql-helper/sql-lexer';
 import { generateFormattedDate } from 'lib/utils/datetime';
 
-import { queryCellDraggableType } from './DataDocDAGExporter';
-
 import { Tag } from 'ui/Tag/Tag';
 import { Popover } from 'ui/Popover/Popover';
 import { PopoverHoverWrapper } from 'ui/Popover/PopoverHoverWrapper';
 import { AccentText, StyledText } from 'ui/StyledText/StyledText';
+import { ThemedCodeHighlight } from 'ui/CodeHighlight/ThemedCodeHighlight';
+
+import { queryCellDraggableType } from './DataDocDAGExporter';
 
 export interface IDataDocDAGExporterListItemProps {
     queryCell: IDataQueryCell;
@@ -70,7 +71,9 @@ export const DataDocDAGExporterListItem = React.memo<IDataDocDAGExporterListItem
                                     anchor={anchorElement}
                                     layout={['right', 'top']}
                                 >
-                                    <pre>{queryCell.context}</pre>
+                                    <ThemedCodeHighlight
+                                        value={queryCell.context}
+                                    />
                                 </Popover>
                             )}
                         </>
