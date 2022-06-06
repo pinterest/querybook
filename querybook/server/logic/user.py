@@ -1,5 +1,8 @@
+from sqlalchemy import func
+
 from app.db import with_session
 from lib.config import get_config_value
+from lib.logger import get_logger
 from const.user_roles import UserRoleType
 from const.elasticsearch import ElasticsearchItem
 from models.user import (
@@ -10,6 +13,7 @@ from models.user import (
 from tasks.sync_elasticsearch import sync_elasticsearch
 
 
+LOG = get_logger(__file__)
 user_settings_config = get_config_value("user_setting")
 
 """
@@ -30,8 +34,22 @@ def get_users_by_ids(ids, session=None):
 
 
 @with_session
-def get_user_by_name(username, session=None):
-    return User.get(username=username, session=session)
+def get_user_by_name(username, case_sensitive=True, session=None):
+    if case_sensitive:
+        return User.get(username=username, session=session)
+    users = (
+        session.query(User)
+        .filter(func.lower(User.username) == username.lower())
+        .order_by(User.id)
+        .all()
+    )
+    if len(users) > 0:
+        if len(users) > 1:
+            LOG.warning(
+                f"Multiple users were found for username '{username}' in case-insensitive search. Returning user with ID {users[0].id}."
+            )
+        return users[0]
+    return None
 
 
 @with_session
