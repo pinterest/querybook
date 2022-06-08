@@ -37,10 +37,15 @@ def _match_any_field(keywords="", search_fields=[]):
     return query
 
 
+FILTERS_TO_AND = ["full_table_name"]
+
+
 def _make_singular_filter(filter_name: str, filter_val):
     """Create a elasticsearch filter for a single
        filter_name, filter_val pair. Note filter_val can
-       be a list and an OR will be applied
+       be a list and if the filter_name is in FILTERS_TO_AND,
+       and AND will be applied to the list, otherwise an OR
+       will be applied
 
     Args:
         filter_name (str): Name of filter
@@ -51,7 +56,8 @@ def _make_singular_filter(filter_name: str, filter_val):
     """
     if isinstance(filter_val, list):
         filters = [_make_singular_filter(filter_name, val) for val in filter_val]
-        return {"bool": {"should": filters}}
+        query_type = "must" if filter_name in FILTERS_TO_AND else "should"
+        return {"bool": {query_type: filters}}
     return {"match": {filter_name: filter_val}}
 
 
