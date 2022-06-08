@@ -137,4 +137,5 @@ export interface IQueryExecutionNotification {
 }
 
 // Make sure this is in increasing order
-export const StatementExecutionResultSizes = [1000, 5000, 10000, 50000];
+export const StatementExecutionResultSizes: number[] = require('config/query_result_limit.yaml')
+    .query_result_size_options;

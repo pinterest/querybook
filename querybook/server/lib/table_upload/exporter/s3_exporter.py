@@ -17,7 +17,7 @@ from lib.query_analysis.create_table.create_table import (
     get_external_create_table_statement,
 )
 from lib.table_upload.exporter.utils import update_pandas_df_column_name_type
-from querybook.server.env import QuerybookSettings
+from env import QuerybookSettings
 from .base_exporter import BaseTableUploadExporter
 
 S3_OBJECT_KEY_NOT_ALLOWED_CHAR = r"[^\w-]+"

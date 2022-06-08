@@ -27,6 +27,7 @@ from logic.datadoc_permission import user_can_read
 from logic.query_execution_permission import (
     get_default_user_environment_by_execution_id,
 )
+from lib.config import get_config_value
 from tasks.export_query_execution import export_query_execution_task
 from tasks.run_query import run_query_task
 from app.auth.permission import verify_query_execution_owner
@@ -35,6 +36,8 @@ from models.access_request import AccessRequest
 from app.db import with_session
 from env import QuerybookSettings
 from lib.notify.utils import notify_user
+
+QUERY_RESULT_LIMIT_CONFIG = get_config_value("query_result_limit")
 
 
 @register("/query_execution/", methods=["POST"])
@@ -232,8 +235,15 @@ def download_statement_execution_result(statement_execution_id):
 )
 def get_statement_execution_result(statement_execution_id, limit=None):
     # TODO: make this customizable
-    limit = 1000 if limit is None else limit
-    api_assert(limit <= 5000, message="Too many rows requested")
+    limit = (
+        QUERY_RESULT_LIMIT_CONFIG["default_query_result_size"]
+        if limit is None
+        else limit
+    )
+    api_assert(
+        limit <= QUERY_RESULT_LIMIT_CONFIG["query_result_size_options"][-1],
+        message="Too many rows requested",
+    )
 
     with DBSession() as session:
         try:
