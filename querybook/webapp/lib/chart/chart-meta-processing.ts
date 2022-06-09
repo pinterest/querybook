@@ -16,7 +16,7 @@ import {
     ChartSize,
 } from 'const/dataDocChart';
 import { fontColor, fillColor, backgroundColor } from 'const/chartColors';
-import { StatementExecutionResultSizes } from 'const/queryExecution';
+import { StatementExecutionResultSizes } from 'const/queryResultLimit';
 import type { DeepPartial } from 'lib/typescript';
 import { formatNumber } from 'lib/utils/number';
 

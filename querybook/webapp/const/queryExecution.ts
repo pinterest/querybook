@@ -135,7 +135,3 @@ export interface IQueryExecutionNotification {
     query_execution_id: number;
     user: number;
 }
-
-// Make sure this is in increasing order
-export const StatementExecutionResultSizes: number[] = require('config/query_result_limit.yaml')
-    .query_result_size_options;

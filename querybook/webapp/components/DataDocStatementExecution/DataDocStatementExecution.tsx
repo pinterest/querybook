@@ -4,9 +4,8 @@ import { useDispatch, useSelector } from 'react-redux';
 import {
     StatementExecutionStatus,
     IStatementExecution,
-    StatementExecutionResultSizes,
 } from 'const/queryExecution';
-
+import { StatementExecutionResultSizes } from 'const/queryResultLimit';
 import { useToggleState } from 'hooks/useToggleState';
 import { fetchResult } from 'redux/queryExecutions/action';
 
