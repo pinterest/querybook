@@ -5,7 +5,7 @@ import {
     StatementExecutionStatus,
     IStatementExecution,
 } from 'const/queryExecution';
-import { StatementExecutionResultSizes } from 'const/queryResultLimit';
+import { StatementExecutionDefaultResultSize } from 'const/queryResultLimit';
 import { useToggleState } from 'hooks/useToggleState';
 import { fetchResult } from 'redux/queryExecutions/action';
 
@@ -47,7 +47,7 @@ function useStatementResult(statementExecution: IStatementExecution) {
     );
 
     const [resultLimit, setResultLimit] = useState(
-        StatementExecutionResultSizes[0]
+        StatementExecutionDefaultResultSize
     );
 
     const loadStatementResult = useCallback(
