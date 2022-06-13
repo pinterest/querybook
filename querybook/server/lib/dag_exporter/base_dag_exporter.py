@@ -21,7 +21,8 @@ class BaseDAGExporter(metaclass=ABCMeta):
     @abstractmethod
     def dag_exporter_meta(self):
         """
-        Plug-in specific options for exporting
+        Plug-in specific options for exporting.
+        Must use one of AllFormField classes
 
         Returns Dict
         """

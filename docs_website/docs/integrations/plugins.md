@@ -60,6 +60,10 @@ Web page plugin allows you to inject custom js, css to Querybook. Place your cus
 
 Lineage plugin allows you to extend Querybook to fetch lineage information from a custom data lineage backend. Please check [Add Lineage guide](./add_lineage.md) for more details.
 
+### DAG Exporter Plugin
+
+DAG Exporters allow users to create a workflow from Query Cells in DataDocs. Querybook by default provides "demo_dag_exporter" code as an example but it needs to included in the plugin exporter to be used and does not work out of the box. Please Check [Add DAG Exporter guide](./add_dag_exporter.md) to learn how to add a dag exporter.
+
 ## Installing Plugins
 
 1. Ensure you can run the vanilla Querybook
