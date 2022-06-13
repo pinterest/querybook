@@ -60,7 +60,7 @@ export const DataDocDAGExporterListItem = React.memo<IDataDocDAGExporterListItem
                                     </AccentText>
                                 ) : (
                                     <StyledText untitled>
-                                        Untitled Cell #{queryCell.id}
+                                        Untitled Cell {queryCell.id}
                                     </StyledText>
                                 )}
                             </div>

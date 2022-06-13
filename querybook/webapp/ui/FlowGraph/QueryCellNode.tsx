@@ -43,7 +43,7 @@ export const QueryCellNode = React.memo<IProps>(
                     {label ? (
                         <AccentText>{label}</AccentText>
                     ) : (
-                        <StyledText untitled>Untitled Cell #{id}</StyledText>
+                        <StyledText untitled>Untitled Cell {id}</StyledText>
                     )}
                 </div>
                 <Handle type="source" position={sourcePosition} />
