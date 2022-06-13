@@ -24,6 +24,7 @@ import {
     ChartSize,
 } from 'const/dataDocChart';
 import { ColorPalette } from 'const/chartColors';
+import { StatementExecutionResultSizes } from 'const/queryResultLimit';
 
 import { defaultReactSelectStyles } from 'lib/utils/react-select';
 import { mapMetaToFormVals } from 'lib/chart/chart-meta-processing';
@@ -31,7 +32,6 @@ import { transformData } from 'lib/chart/chart-data-transformation';
 import { formatNumber } from 'lib/utils/number';
 import { useChartSource } from 'hooks/chart/useChartSource';
 
-import { StatementExecutionResultSizes } from 'const/queryExecution';
 import { QueryExecutionPicker } from 'components/ExecutionPicker/QueryExecutionPicker';
 import { StatementExecutionPicker } from 'components/ExecutionPicker/StatementExecutionPicker';
 import { StatementResultTable } from 'components/StatementResultTable/StatementResultTable';

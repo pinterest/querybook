@@ -135,6 +135,3 @@ export interface IQueryExecutionNotification {
     query_execution_id: number;
     user: number;
 }
-
-// Make sure this is in increasing order
-export const StatementExecutionResultSizes = [1000, 5000, 10000, 50000];
