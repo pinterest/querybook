@@ -2,7 +2,7 @@ import * as React from 'react';
 import clsx from 'clsx';
 import { Handle, Position } from 'react-flow-renderer';
 
-import { AccentText, StyledText } from '../StylzedText/StyledText';
+import { AccentText, StyledText } from 'ui/StyledText/StyledText';
 
 import './QueryCellNode.scss';
 
