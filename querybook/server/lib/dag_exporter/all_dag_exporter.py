@@ -1,4 +1,5 @@
 from lib.utils.import_helper import import_module_with_default
+from lib.dag_exporter.exporters.demo_dag_exporter import DemoDAGExporter
 
 ALL_PLUGIN_DAG_EXPORTERS = import_module_with_default(
     "dag_exporter_plugin",
@@ -6,7 +7,7 @@ ALL_PLUGIN_DAG_EXPORTERS = import_module_with_default(
     default=[],
 )
 
-ALL_DAG_EXPORTERS = ALL_PLUGIN_DAG_EXPORTERS
+ALL_DAG_EXPORTERS = [DemoDAGExporter()]
 
 
 def get_dag_exporter_class(name: str):
