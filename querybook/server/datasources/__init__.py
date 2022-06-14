@@ -1,4 +1,5 @@
 from . import admin
+from . import dag_exporter
 from . import datadoc
 from . import impression
 from . import metastore
@@ -15,6 +16,7 @@ from . import tag
 
 # Flake8 :(
 admin
+dag_exporter
 datadoc
 impression
 metastore

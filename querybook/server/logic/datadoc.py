@@ -21,6 +21,7 @@ from models.datadoc import (
     FavoriteDataDoc,
     FunctionDocumentation,
     DataDocEditor,
+    DataDocDAGExport,
 )
 from models.access_request import AccessRequest
 from models.impression import Impression
@@ -1025,3 +1026,35 @@ def get_data_cell_by_query_execution_id(query_execution_id, session=None):
         .filter(DataCellQueryExecution.query_execution_id == query_execution_id)
         .first()
     )
+
+
+"""
+    ----------------------------------------------------------------------------------------------------------
+    DAG EXPORT
+    ---------------------------------------------------------------------------------------------------------
+"""
+
+
+@with_session
+def get_dag_export_by_data_doc_id(data_doc_id, session=None):
+    return (
+        session.query(DataDocDAGExport)
+        .filter(DataDocDAGExport.data_doc_id == data_doc_id)
+        .first()
+    )
+
+
+@with_session
+def create_or_update_dag_export(data_doc_id, dag, meta, session=None):
+    dag_export = get_dag_export_by_data_doc_id(data_doc_id, session=session)
+
+    if dag_export:
+        dag_export.dag = dag
+        dag_export.meta = meta
+        dag_export.updated_at = datetime.datetime.now()
+    else:
+        dag_export = DataDocDAGExport(data_doc_id=data_doc_id, dag=dag, meta=meta)
+        session.add(dag_export)
+
+    session.commit()
+    return dag_export

@@ -13,8 +13,8 @@ import { IconButton } from 'ui/Button/IconButton';
 import { Popover } from 'ui/Popover/Popover';
 import { PopoverHoverWrapper } from 'ui/Popover/PopoverHoverWrapper';
 import { DataDocDraggableType } from './navigatorConst';
-import './DataDocGridItem.scss';
 import { UrlContextMenu } from 'ui/ContextMenu/UrlContextMenu';
+import './DataDocGridItem.scss';
 
 export interface IDataDocGridItemProps {
     dataDoc: IDataDoc;

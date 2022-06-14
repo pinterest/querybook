@@ -31,4 +31,30 @@
     .react-flow__attribution {
         display: none;
     }
+
+    .layout-buttons {
+        align-items: flex-end;
+        .FlowGraph-hint {
+            background-color: var(--bg-lightest);
+            border-radius: var(--border-radius-sm);
+            .KeyboardKey {
+                font-size: var(--xxsmall-text-size);
+            }
+            > .flex-column {
+                > div,
+                > span {
+                    height: 28px;
+                    display: flex;
+                    justify-content: center;
+                    align-items: center;
+                }
+            }
+            > .flex-column:last-child {
+                align-items: flex-start;
+            }
+        }
+        > * {
+            z-index: 100;
+        }
+    }
 }

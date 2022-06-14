@@ -5,7 +5,7 @@ exports[`matches enzyme snapshots matches snapshot 1`] = `
   className="FlowGraph"
 >
   <ReactFlowProvider>
-    <FlowGraphInner
+    <StaticFlowGraph
       edges={Array []}
       nodes={Array []}
     />

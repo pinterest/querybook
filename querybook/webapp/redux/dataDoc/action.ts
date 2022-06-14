@@ -11,6 +11,8 @@ import {
     IDataDocEditor,
     IDataCellMeta,
     IRawDataDoc,
+    IDataDocDAGExport,
+    IDataDocDAGExporter,
 } from 'const/datadoc';
 import { IAccessRequest } from 'const/accessRequest';
 
@@ -28,6 +30,8 @@ import {
     ISaveDataDocEndAction,
     ISaveDataDocStartAction,
     IReceiveDataDocsAction,
+    IReceiveDataDocDAGExportAction,
+    IReceiveDataDocDAGExportersAction,
 } from './types';
 import {
     DataDocPermission,
@@ -38,6 +42,7 @@ import {
     DataDocEditorResource,
     DataDocResource,
 } from 'resource/dataDoc';
+import { Edge, Node } from 'react-flow-renderer';
 
 export const dataDocCellSchema = new schema.Entity(
     'dataDocCell',
@@ -630,5 +635,64 @@ export function rejectDataDocAccessRequest(
                 },
             });
         }
+    };
+}
+
+export function fetchDAGExport(docId: number): ThunkResult<Promise<any>> {
+    return async (dispatch) => {
+        const { data: DAGExport } = await DataDocResource.getDAGExport(docId);
+        dispatch(receiveDAGExport(docId, DAGExport));
+
+        return DAGExport;
+    };
+}
+
+export function saveDAGExport(
+    docId: number,
+    nodes: Node[],
+    edges: Edge[],
+    meta = {}
+) {
+    return async (dispatch) => {
+        const { data: DAGExport } = await DataDocResource.saveDAGExport(
+            docId,
+            { nodes, edges },
+            meta
+        );
+        dispatch(receiveDAGExport(docId, DAGExport));
+
+        return DAGExport;
+    };
+}
+
+export function receiveDAGExport(
+    docId: number,
+    DAGExport: IDataDocDAGExport
+): IReceiveDataDocDAGExportAction {
+    return {
+        type: '@@dataDoc/RECEIVE_DATA_DOC_DAG_EXPORT',
+        payload: {
+            docId,
+            DAGExport,
+        },
+    };
+}
+
+export function fetchDAGExporters(): ThunkResult<Promise<void>> {
+    return async (dispatch) => {
+        const { data: exporters } = await DataDocResource.getDAGExporters();
+
+        dispatch(receiveDAGExporters(exporters));
+    };
+}
+
+export function receiveDAGExporters(
+    exporters: IDataDocDAGExporter[]
+): IReceiveDataDocDAGExportersAction {
+    return {
+        type: '@@dataDoc/RECEIVE_DATA_DOC_EXPORTERS',
+        payload: {
+            exporters,
+        },
     };
 }
