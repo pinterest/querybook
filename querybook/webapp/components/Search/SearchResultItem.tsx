@@ -299,7 +299,7 @@ export const DataTableItem: React.FunctionComponent<IDataTableItemProps> = ({
     );
 
     const tagsListDOM = tags?.length ? (
-        <div className="">
+        <div>
             {tags.map((tag) => (
                 <Tag mini key={tag}>
                     {tag}
