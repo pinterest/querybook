@@ -1,7 +1,7 @@
 """add dag exporter
 
 Revision ID: 17f7c039ab6e
-Revises: 8e6d5acc7be1
+Revises: d4ff446a8436
 Create Date: 2022-04-25 21:38:01.176777
 
 """
@@ -11,7 +11,7 @@ import sqlalchemy as sa
 
 # revision identifiers, used by Alembic.
 revision = "17f7c039ab6e"
-down_revision = "8e6d5acc7be1"
+down_revision = "d4ff446a8436"
 branch_labels = None
 depends_on = None
 
