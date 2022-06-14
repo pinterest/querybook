@@ -12,12 +12,12 @@ import { Level } from 'ui/Level/Level';
 import { ThemedCodeHighlight } from 'ui/CodeHighlight/ThemedCodeHighlight';
 import { useSelector } from 'react-redux';
 import { queryEngineByIdEnvSelector } from 'redux/queryEngine/selector';
-import './SearchResultItem.scss';
 import { IconButton } from 'ui/Button/IconButton';
 import { UrlContextMenu } from 'ui/ContextMenu/UrlContextMenu';
 import { stopPropagation } from 'lib/utils/noop';
 import { LoadingRow } from 'ui/Loading/Loading';
 import { AccentText, StyledText, UntitledText } from 'ui/StyledText/StyledText';
+import './SearchResultItem.scss';
 
 const HighlightTitle: React.FunctionComponent<{
     title: string;
@@ -277,6 +277,7 @@ export const DataTableItem: React.FunctionComponent<IDataTableItemProps> = ({
         created_at: createdAt,
         name,
         schema,
+        tags,
     } = preview;
     const handleClick = React.useMemo(() => openClick.bind(null, url), [url]);
 
@@ -296,6 +297,16 @@ export const DataTableItem: React.FunctionComponent<IDataTableItemProps> = ({
     ) : (
         description || 'no description'
     );
+
+    const tagsListDOM = tags?.length ? (
+        <div>
+            {tags.map((tag) => (
+                <Tag mini key={tag}>
+                    {tag}
+                </Tag>
+            ))}
+        </div>
+    ) : null;
 
     return (
         <>
@@ -317,6 +328,7 @@ export const DataTableItem: React.FunctionComponent<IDataTableItemProps> = ({
                             {generateFormattedDate(createdAt, 'X')}
                         </StyledText>
                     </div>
+                    {tagsListDOM}
                     <Level className="result-items-bottom">
                         <span className="result-item-description">
                             {descriptionDOM}

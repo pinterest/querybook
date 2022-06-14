@@ -5,9 +5,9 @@
     > div {
         width: 100%;
     }
+    border: 1px solid transparent;
+    border-radius: var(--border-radius-sm);
     &.invalid-string {
-        div {
-            border-color: var(--color-false);
-        }
+        border-color: var(--color-false);
     }
 }

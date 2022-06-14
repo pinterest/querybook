@@ -7,7 +7,7 @@ import { ITagProps, Tag } from './Tag';
 
 export interface IHoverIconTagProps extends ITagProps {
     iconOnHover?: AllLucideIconNames;
-    onIconHoverClick?: () => any;
+    onIconHoverClick?: (e?: React.MouseEvent) => any;
 }
 export const HoverIconTag = React.forwardRef<
     HTMLSpanElement,
