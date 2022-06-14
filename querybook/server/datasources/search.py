@@ -71,11 +71,7 @@ def _match_filters(filters):
 
     for f in filters:
         filter_name = str(f[0]).lower()
-        filter_val = (
-            str(f[1]).lower()
-            if not isinstance(f[1], list)
-            else [str(v).lower() for v in f[1]]
-        )
+        filter_val = str(f[1]) if not isinstance(f[1], list) else [str(v) for v in f[1]]
 
         if not filter_val or filter_val == "":
             continue
@@ -490,7 +486,6 @@ def search_query(
         sort_key=sort_key,
         sort_order=sort_order,
     )
-
     index_name = "{},{}".format(
         ES_CONFIG["query_cells"]["index_name"],
         ES_CONFIG["query_executions"]["index_name"],

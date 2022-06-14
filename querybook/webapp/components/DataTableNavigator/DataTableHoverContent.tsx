@@ -28,7 +28,7 @@ export const DataTableHoverContent: React.FC<{
     );
 
     const renderTableView = () => {
-        const tagsDOM = <DataTableTags tableId={tableId} readonly />;
+        const tagsDOM = <DataTableTags tableId={tableId} readonly mini />;
         const descriptionDOM = Boolean(tableDescription) && (
             <div className="mb4">
                 <Title size="small">Description</Title>

@@ -4,11 +4,14 @@ import { useDispatch, useSelector } from 'react-redux';
 
 import { ITag } from 'const/tag';
 import { Dispatch, IStoreState } from 'redux/store/types';
+import { tagsInTableSelector } from 'redux/tag/selector';
+
 import {
     fetchTableTagsFromTableIfNeeded,
     deleteTableTag,
 } from 'redux/tag/action';
 import { navigateWithinEnv } from 'lib/utils/query-string';
+import { stopPropagationAndDefault } from 'lib/utils/noop';
 
 import { HoverIconTag } from 'ui/Tag/HoverIconTag';
 import { Icon } from 'ui/Icon/Icon';
@@ -17,19 +20,20 @@ import { MenuItem, Menu } from 'ui/Menu/Menu';
 import { ContextMenu } from 'ui/ContextMenu/ContextMenu';
 
 import { CreateDataTableTag } from './CreateDataTableTag';
+import { TableTagConfigModal } from './TableTagConfigModal';
 import { useRankedTags } from './utils';
 import './DataTableTags.scss';
-import { TableTagConfigModal } from './TableTagConfigModal';
-import { tagsInTableSelector } from 'redux/tag/selector';
 
 interface IProps {
     tableId: number;
     readonly?: boolean;
+    mini?: boolean;
 }
 
 export const DataTableTags: React.FunctionComponent<IProps> = ({
     tableId,
     readonly = false,
+    mini = false,
 }) => {
     const isUserAdmin = useSelector(
         (state: IStoreState) => state.user.myUserInfo.isAdmin
@@ -59,6 +63,7 @@ export const DataTableTags: React.FunctionComponent<IProps> = ({
             deleteTag={deleteTag}
             key={tag.id}
             isUserAdmin={isUserAdmin}
+            mini={mini}
         />
     ));
 
@@ -78,15 +83,19 @@ export const TableTag: React.FC<{
     isUserAdmin?: boolean;
     readonly?: boolean;
     deleteTag?: (tagName: string) => void;
-}> = ({ tag, readonly, deleteTag, isUserAdmin }) => {
+    mini?: boolean;
+}> = ({ tag, readonly, deleteTag, isUserAdmin, mini }) => {
     const tagMeta = tag.meta ?? {};
     const tagRef = React.useRef<HTMLSpanElement>();
     const [showConfigModal, setShowConfigModal] = React.useState(false);
 
-    const handleDeleteTag = React.useCallback(() => deleteTag(tag.name), [
-        deleteTag,
-        tag.name,
-    ]);
+    const handleDeleteTag = React.useCallback(
+        (e: React.MouseEvent<HTMLSpanElement>) => {
+            stopPropagationAndDefault(e);
+            deleteTag(tag.name);
+        },
+        [deleteTag, tag.name]
+    );
     const handleTagClick = React.useCallback(() => {
         navigateWithinEnv(
             `/search/?${qs.stringify({
@@ -99,7 +108,8 @@ export const TableTag: React.FC<{
         );
     }, [tag.name]);
 
-    const canUserUpdate = !(tagMeta.admin && !isUserAdmin);
+    // user can update if it is not readonly and passes the admin check
+    const canUserUpdate = !(readonly || (tagMeta.admin && !isUserAdmin));
     const canUserDelete = !readonly && canUserUpdate;
 
     const renderContextMenu = () => (
@@ -141,6 +151,7 @@ export const TableTag: React.FC<{
                 onClick={handleTagClick}
                 ref={tagRef}
                 withBorder={tagMeta.admin}
+                mini={mini}
             >
                 {tagMeta.icon && (
                     <Icon

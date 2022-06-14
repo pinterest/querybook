@@ -32,15 +32,6 @@ export const CreateDataTableTag: React.FunctionComponent<IProps> = ({
         [tableId, dispatch]
     );
 
-    const isValidCheck = React.useCallback(
-        (val: string) => {
-            const regex = /^[a-z0-9]{1,255}$/i;
-            const match = val.match(regex);
-            return Boolean(match && !existingTags.includes(val));
-        },
-        [existingTags]
-    );
-
     const handleCreateTag = React.useCallback(
         (val: string) => {
             createTag(val).finally(() => setShowSelect(false));
@@ -54,8 +45,8 @@ export const CreateDataTableTag: React.FunctionComponent<IProps> = ({
                 <div className="CreateDataTableTag-input flex-row">
                     <TableTagSelect
                         onSelect={handleCreateTag}
-                        isValidCheck={isValidCheck}
                         existingTags={existingTags}
+                        creatable
                     />
                 </div>
             ) : (

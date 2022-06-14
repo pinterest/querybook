@@ -4,7 +4,6 @@ import {
     makeReactSelectStyle,
     miniReactSelectStyles,
 } from 'lib/utils/react-select';
-import { matchKeyPress } from 'lib/utils/keyboard';
 import { useResource } from 'hooks/useResource';
 import { useDebounce } from 'hooks/useDebounce';
 
@@ -15,16 +14,22 @@ import { TableTagResource } from 'resource/table';
 
 interface IProps {
     onSelect: (val: string) => any;
-    isValidCheck?: (val: string) => boolean;
     existingTags?: string[];
+    creatable?: boolean;
 }
 
 const tagReactSelectStyle = makeReactSelectStyle(true, miniReactSelectStyles);
 
+function isTagValid(val: string, existingTags: string[]) {
+    const regex = /^[a-z0-9]{1,255}$/i;
+    const match = val.match(regex);
+    return Boolean(match && !existingTags.includes(val));
+}
+
 export const TableTagSelect: React.FunctionComponent<IProps> = ({
     onSelect,
-    isValidCheck,
     existingTags = [],
+    creatable = false,
 }) => {
     const [tagString, setTagString] = React.useState('');
     const [isTyping, setIsTyping] = React.useState(false);
@@ -45,19 +50,21 @@ export const TableTagSelect: React.FunctionComponent<IProps> = ({
     );
 
     const isValid = React.useMemo(
-        () => (isTyping && isValidCheck ? isValidCheck(tagString) : true),
-        [isValidCheck, tagString]
+        () =>
+            isTyping ? !tagString || isTagValid(tagString, existingTags) : true,
+        [existingTags, tagString, isTyping]
     );
 
     const handleSelect = React.useCallback(
-        (val?: string) => {
+        (val: string) => {
             const tagVal = val ?? tagString;
-            if (isValid) {
+            const valid = isTagValid(tagVal, existingTags);
+            if (valid) {
                 setTagString('');
                 onSelect(tagVal);
             }
         },
-        [tagString, onSelect]
+        [tagString, onSelect, existingTags]
     );
 
     return (
@@ -67,6 +74,7 @@ export const TableTagSelect: React.FunctionComponent<IProps> = ({
             }
         >
             <SimpleReactSelect
+                creatable={creatable}
                 value={tagString}
                 options={tagSuggestions}
                 onChange={(val) => handleSelect(val)}
@@ -77,15 +85,6 @@ export const TableTagSelect: React.FunctionComponent<IProps> = ({
                     onFocus: () => setIsTyping(true),
                     onBlur: () => setIsTyping(false),
                     noOptionsMessage: () => null,
-                    onKeyDown: (evt) => {
-                        // FIXME: this is due to ReactSelect using React 16.4 typedefs
-                        const keydownEvent = (evt as unknown) as React.KeyboardEvent;
-                        if (matchKeyPress(keydownEvent, 'Enter')) {
-                            handleSelect();
-                        } else if (matchKeyPress(keydownEvent, 'Esc')) {
-                            setTagString('');
-                        }
-                    },
                 }}
                 clearAfterSelect
             />

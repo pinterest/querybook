@@ -30,6 +30,7 @@ export interface ITablePreview {
         columns?: string[];
         description?: string[];
     };
+    tags: string[];
 }
 
 export interface ISearchTableParams {
