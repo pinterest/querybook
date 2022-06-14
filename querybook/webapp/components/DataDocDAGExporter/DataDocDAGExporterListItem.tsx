@@ -54,7 +54,15 @@ export const DataDocDAGExporterListItem = React.memo<IDataDocDAGExporterListItem
                                 </Tag>
                             </div>
                             <div className="DataDocDagExporterListItem-title mb4">
-                                <AccentText>{queryCell.meta.title}</AccentText>
+                                {queryCell.meta.title ? (
+                                    <AccentText>
+                                        {queryCell.meta.title}
+                                    </AccentText>
+                                ) : (
+                                    <StyledText untitled>
+                                        Untitled Cell {queryCell.id}
+                                    </StyledText>
+                                )}
                             </div>
                             <div className="DataDocDagExporterListItem-statements flex-row">
                                 <StyledText weight="bold" color="light">
