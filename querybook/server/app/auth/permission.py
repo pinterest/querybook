@@ -17,6 +17,7 @@ from logic.query_execution_permission import (
     get_user_environments_by_execution_id,
 )
 from logic import query_execution as query_execution_logic
+from models.board import Board
 
 
 def abort_404(message: Optional[str] = None):
@@ -209,3 +210,10 @@ def verify_query_execution_access(execution_id, user_envs, session=None):
         "CANNOT_ACCESS_QUERY_EXECUTION",
         403,
     )
+
+
+@with_session
+def get_board_environment_ids(board_id, session=None):
+    return [
+        eid for eid, in session.query(Board.environment_id).filter(Board.id == board_id)
+    ]

@@ -7,17 +7,17 @@ import { addBoardItem, deleteBoardItem } from 'redux/board/action';
 import { currentEnvironmentSelector } from 'redux/environment/selector';
 import { TooltipDirection } from 'const/tooltip';
 import { useResource } from 'hooks/useResource';
-
-import { IconButton, IIconButtonProps } from 'ui/Button/IconButton';
+import { BoardResource } from 'resource/board';
 import { BoardItemType, IBoardRaw } from 'const/board';
 
-import { Popover, PopoverLayout } from 'ui/Popover/Popover';
 import { BoardCreateUpdateModal } from 'components/BoardCreateUpdateModal/BoardCreateUpdateModal';
 import { BoardList } from 'components/BoardList/BoardList';
 
-import './BoardItemAddButton.scss';
+import { IconButton, IIconButtonProps } from 'ui/Button/IconButton';
+import { Popover, PopoverLayout } from 'ui/Popover/Popover';
 import { Loading } from 'ui/Loading/Loading';
-import { BoardResource } from 'resource/board';
+
+import './BoardItemAddButton.scss';
 
 export interface ICreateDataDocButtonProps extends Partial<IIconButtonProps> {
     // from own Props
