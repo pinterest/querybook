@@ -4,13 +4,17 @@ title: DAG Exporter
 sidebar_label: DAG Exporter
 ---
 
+## Disclaimer
+
+The current version is experimental and there may be breaking changes in the future.
+
 ## What is a dag exporter?
 
 DAG exporter is a way to create a workflow from Query Cells in a Datadoc.
 
 ## Implementation
 
-To keep the process standardized, please create a dag exporter under <project_root>/querybook/server/lib/export/dag_exporters. All dag exporters must inherit from BaseDAGExporter that lives in <project_root>/querybook/server/lib/export/base_dag_exporter.py.
+Due to the many ways a workflow app may be configured, it is unlikely that a dag exporter would be added to the open source repo. Please use the plugin to use this feature. To keep the process standardized, please create a dag exporter under <project_root>/querybook/server/lib/export/dag_exporters. All dag exporters must inherit from BaseDAGExporter that lives in <project_root>/querybook/server/lib/export/base_dag_exporter.py.
 
 Here are some fields of exporter that you must configure in the setup process:
 
