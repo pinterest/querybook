@@ -23,7 +23,8 @@ import {
     chartTypeToAllowedAxisType,
     ChartSize,
 } from 'const/dataDocChart';
-import { colorPalette, colorPaletteNames } from 'const/chartColors';
+import { ColorPalette } from 'const/chartColors';
+import { StatementExecutionResultSizes } from 'const/queryResultLimit';
 
 import { defaultReactSelectStyles } from 'lib/utils/react-select';
 import { mapMetaToFormVals } from 'lib/chart/chart-meta-processing';
@@ -31,7 +32,6 @@ import { transformData } from 'lib/chart/chart-data-transformation';
 import { formatNumber } from 'lib/utils/number';
 import { useChartSource } from 'hooks/chart/useChartSource';
 
-import { StatementExecutionResultSizes } from 'const/queryExecution';
 import { QueryExecutionPicker } from 'components/ExecutionPicker/QueryExecutionPicker';
 import { StatementExecutionPicker } from 'components/ExecutionPicker/StatementExecutionPicker';
 import { StatementResultTable } from 'components/StatementResultTable/StatementResultTable';
@@ -277,9 +277,9 @@ const DataDocChartComposerComponent: React.FunctionComponent<
                 value: i,
                 label: valsArray[i],
                 color:
-                    colorPalette[
-                        values.coloredSeries[i] ?? i % colorPalette.length
-                    ],
+                    ColorPalette[
+                        values.coloredSeries[i] ?? i % ColorPalette.length
+                    ].color,
             }));
             return options;
         },
@@ -300,10 +300,10 @@ const DataDocChartComposerComponent: React.FunctionComponent<
         [chartData]
     );
 
-    const seriesColorOptions = colorPaletteNames.map((color, idx) => ({
+    const seriesColorOptions = ColorPalette.map((color, idx) => ({
         value: idx,
-        label: color,
-        color: colorPalette[idx],
+        label: color.name,
+        color: color.color,
     }));
 
     const seriesAggOptions = Object.entries(aggTypes).map(([val, key]) => ({
@@ -756,7 +756,7 @@ const DataDocChartComposerComponent: React.FunctionComponent<
               const colorIdx =
                   seriesIdx in values.coloredSeries
                       ? values.coloredSeries[seriesIdx]
-                      : seriesIdx % colorPalette.length;
+                      : seriesIdx % ColorPalette.length;
               return (
                   <FormField
                       stacked

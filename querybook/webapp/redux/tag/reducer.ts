@@ -1,40 +1,45 @@
 import { produce } from 'immer';
 
 import { ITagState, TagAction } from './types';
-import { combineReducers } from 'redux';
 
 const initialState: ITagState = {
-    tagItemByTableId: {},
+    tableIdToTagName: {},
+    tagByName: {},
 };
 
-function tagItemByTableId(
-    state = initialState.tagItemByTableId,
-    action: TagAction
-) {
+function tagReducer(state = initialState, action: TagAction) {
     return produce(state, (draft) => {
         switch (action.type) {
-            case '@@tag/RECEIVE_TAG_ITEMS': {
+            case '@@tag/RECEIVE_TAGS_BY_TABLE': {
                 const { tableId, tags } = action.payload;
 
-                draft[tableId] = tags;
+                draft.tableIdToTagName[tableId] = tags.map((t) => t.name);
+                for (const tag of tags) {
+                    draft.tagByName[tag.name] = tag;
+                }
                 return;
             }
-            case '@@tag/RECEIVE_TAG_ITEM': {
+            case '@@tag/RECEIVE_TAG': {
+                const { tag } = action.payload;
+                draft.tagByName[tag.name] = tag;
+                return;
+            }
+            case '@@tag/RECEIVE_TAG_BY_TABLE': {
                 const { tableId, tag } = action.payload;
-                draft[tableId].push(tag);
+                draft.tableIdToTagName[tableId].push(tag.name);
+                draft.tagByName[tag.name] = tag;
                 return;
             }
-            case '@@tag/REMOVE_TAG_ITEM': {
-                const { tableId, tagId } = action.payload;
-                draft[tableId] = draft[tableId].filter(
-                    (tag) => tag.id !== tagId
-                );
+            case '@@tag/REMOVE_TAG_FROM_TABLE': {
+                const { tableId, tagName } = action.payload;
+
+                draft.tableIdToTagName[tableId] = draft.tableIdToTagName[
+                    tableId
+                ].filter((tName) => tName !== tagName);
                 return;
             }
         }
     });
 }
 
-export default combineReducers({
-    tagItemByTableId,
-});
+export default tagReducer;

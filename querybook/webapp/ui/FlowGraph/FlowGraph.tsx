@@ -1,116 +1,247 @@
-import React from 'react';
-import dagre from 'dagre';
+import { debounce } from 'lodash';
+import React, { useCallback, useEffect, useMemo } from 'react';
 import ReactFlow, {
     Edge,
     ReactFlowProvider,
-    useStoreApi,
     useReactFlow,
-    useNodesState,
-    useEdgesState,
     ConnectionLineType,
     Controls,
     MiniMap,
+    addEdge,
+    Background,
+    Connection,
+    applyNodeChanges,
+    applyEdgeChanges,
+    NodeChange,
+    EdgeChange,
+    Node,
+    ReactFlowInstance,
 } from 'react-flow-renderer';
+
+import { getLayoutedElements, LayoutDirection } from './helpers';
+
+import { Button } from 'ui/Button/Button';
+import { KeyboardKey } from 'ui/KeyboardKey/KeyboardKey';
+import { AccentText } from 'ui/StyledText/StyledText';
+import { Icon } from 'ui/Icon/Icon';
 
 import './FlowGraph.scss';
 
-interface IProps {
+interface IPluginProps {
+    plugins?: {
+        background?: boolean;
+        controls?: boolean;
+        miniMap?: boolean;
+    };
+}
+interface IGraphProps extends IPluginProps {
     nodes: Node[];
     edges: Edge[];
+    setNodes?: React.Dispatch<React.SetStateAction<Node[]>>;
+    setEdges?: React.Dispatch<React.SetStateAction<Edge[]>>;
+
     nodeTypes?: Record<string, any>;
+    edgeTypes?: Record<string, any>;
+    autoLayout?: boolean;
+
+    onNodesChange?: (nodes: Node[]) => void;
+    onEdgesChange?: (edges: Edge[]) => void;
+
+    setGraphInstance?: (graphIntstance: ReactFlowInstance<any, any>) => void;
 }
+
+interface IFlowGraphProps extends IGraphProps {
+    isInteractive?: boolean;
+}
+
 export const initialNodePosition = { x: 0, y: 0 };
 export const edgeStyle = { stroke: 'var(--bg-dark)' };
 
-const nodeWidth = 240;
-const nodeHeight = 60;
-
-const dagreGraph = new dagre.graphlib.Graph();
-dagreGraph.setDefaultEdgeLabel(() => ({}));
-
-// from react-flow docs
-const getLayoutedElements = (nodes, edges) => {
-    dagreGraph.setGraph({ rankdir: 'LR' });
-
-    nodes.forEach((node) => {
-        dagreGraph.setNode(node.id, { width: nodeWidth, height: nodeHeight });
-    });
-
-    edges.forEach((edge) => {
-        dagreGraph.setEdge(edge.source, edge.target);
-    });
-
-    dagre.layout(dagreGraph);
-
-    nodes.forEach((node) => {
-        const nodeWithPosition = dagreGraph.node(node.id);
-        node.targetPosition = 'left';
-        node.sourcePosition = 'right';
-
-        // We are shifting the dagre node position (anchor=center center) to the top left
-        // so it matches the React Flow node anchor point (top left).
-        node.position = {
-            x: nodeWithPosition.x - nodeWidth / 2,
-            y: nodeWithPosition.y - nodeHeight / 2,
-        };
-
-        return node;
-    });
-
-    return { nodes, edges };
-};
-
-export const FlowGraph: React.FunctionComponent<IProps> = (props) => (
+export const FlowGraph: React.FunctionComponent<IFlowGraphProps> = ({
+    isInteractive = false,
+    ...graphProps
+}) => (
     <div className="FlowGraph">
         <ReactFlowProvider>
-            <FlowGraphInner {...props} />
+            {isInteractive ? (
+                <InteractiveFlowGraph {...graphProps} />
+            ) : (
+                <StaticFlowGraph {...graphProps} />
+            )}
         </ReactFlowProvider>
     </div>
 );
 
-const FlowGraphInner: React.FunctionComponent<IProps> = ({
+function useLayoutDAG(nodes: Node[], edges: Edge[], disabled: boolean) {
+    return React.useMemo(
+        () => (disabled ? { nodes, edges } : getLayoutedElements(nodes, edges)),
+        [nodes, edges, disabled]
+    );
+}
+
+/**
+ * Automatically call fit view when nodes/edges change
+ */
+function useAutoFitView(...memo: any[]) {
+    const { fitView } = useReactFlow();
+    const debouncedFitView = useMemo(() => debounce(fitView, 100), [fitView]);
+
+    useEffect(() => {
+        debouncedFitView();
+    }, memo);
+}
+
+const StaticFlowGraph: React.FunctionComponent<IGraphProps> = ({
     nodes: initialNodes,
     edges: initialEdges,
     nodeTypes,
+    autoLayout,
+    plugins,
 }) => {
-    const { nodes: layoutedNodes, edges: layoutedEdges } = React.useMemo(
-        () => getLayoutedElements(initialNodes, initialEdges),
-        [initialNodes, initialEdges]
+    const { nodes, edges } = useLayoutDAG(
+        initialNodes,
+        initialEdges,
+        !autoLayout
     );
-    const store = useStoreApi();
-    const { nodeInternals } = store.getState();
-    const { fitView } = useReactFlow();
 
-    const [nodes, setNodes, onNodesChange] = useNodesState(layoutedNodes);
-    const [edges, setEdges, onEdgesChange] = useEdgesState(layoutedEdges);
-
-    React.useEffect(() => {
-        setNodes(layoutedNodes);
-        setEdges(layoutedEdges);
-        fitView();
-    }, [
-        setNodes,
-        layoutedNodes,
-        setEdges,
-        layoutedEdges,
-        fitView,
-        nodeInternals,
-    ]);
-
+    useAutoFitView(nodes, edges);
     return (
         <ReactFlow
             nodes={nodes}
             edges={edges}
-            onNodesChange={onNodesChange}
-            onEdgesChange={onEdgesChange}
             nodesConnectable={false}
             nodesDraggable={false}
             connectionLineType={ConnectionLineType.Bezier}
             nodeTypes={nodeTypes}
             fitView
         >
-            <Controls />
-            <MiniMap />
+            <ReactFlowPlugins plugins={plugins} />
         </ReactFlow>
+    );
+};
+
+const defaultInteractiveFlowEdgeOptions = { animated: true };
+
+const InteractiveFlowGraph: React.FunctionComponent<IGraphProps> = ({
+    nodes,
+    edges,
+    setNodes,
+    setEdges,
+
+    nodeTypes,
+    edgeTypes,
+    plugins,
+    setGraphInstance,
+}) => {
+    const onConnect = useCallback(
+        (params: Connection) => {
+            setEdges((eds) => addEdge(params, eds));
+        },
+        [setEdges]
+    );
+
+    const onNodesChange = useCallback(
+        (changes: NodeChange[]) =>
+            setNodes((nds) => applyNodeChanges(changes, nds)),
+        [setNodes]
+    );
+
+    const onEdgesChange = useCallback(
+        (changes: EdgeChange[]) =>
+            setEdges((eds) => applyEdgeChanges(changes, eds)),
+        [setEdges]
+    );
+
+    const onLayout = React.useCallback(
+        (direction: LayoutDirection = 'LR') => {
+            const layoutedDAG = getLayoutedElements(nodes, edges, direction);
+            setNodes([...layoutedDAG.nodes]);
+            setEdges([...layoutedDAG.edges]);
+        },
+        [edges, nodes, setNodes, setEdges]
+    );
+
+    return (
+        <>
+            <ReactFlow
+                nodes={nodes}
+                edges={edges}
+                onNodesChange={onNodesChange}
+                onEdgesChange={onEdgesChange}
+                nodesConnectable={true}
+                nodesDraggable={true}
+                onConnect={onConnect}
+                snapToGrid={true}
+                connectionLineType={ConnectionLineType.Bezier}
+                defaultEdgeOptions={defaultInteractiveFlowEdgeOptions}
+                nodeTypes={nodeTypes}
+                edgeTypes={edgeTypes}
+                onInit={setGraphInstance}
+                fitView
+            >
+                <ReactFlowPlugins
+                    plugins={
+                        plugins ?? {
+                            background: true,
+                            controls: true,
+                            miniMap: true,
+                        }
+                    }
+                />
+                <div className="flex-column layout-buttons m12">
+                    <div>
+                        <Button
+                            title="Vertical Layout"
+                            icon="AlignCenterVertical"
+                            onClick={() => onLayout('TB')}
+                        />
+                        <Button
+                            title="Horizontal Layout"
+                            icon="AlignCenterHorizontal"
+                            onClick={() => onLayout('LR')}
+                        />
+                    </div>
+                    <div className="FlowGraph-hint flex-row mt12">
+                        <div className="flex-column">
+                            <div>
+                                <KeyboardKey value="backspace" />
+                            </div>
+                            <Icon name="Maximize" size={16} />
+                        </div>
+                        <div className="flex-column">
+                            <AccentText
+                                size="xxsmall"
+                                className="mh8"
+                                color="light"
+                            >
+                                to remove node
+                            </AccentText>
+                            <AccentText
+                                size="xxsmall"
+                                className="mh8"
+                                color="light"
+                            >
+                                to fit all nodes
+                            </AccentText>
+                        </div>
+                    </div>
+                </div>
+            </ReactFlow>
+        </>
+    );
+};
+
+const ReactFlowPlugins: React.FC<IPluginProps> = ({ plugins }) => {
+    plugins = plugins ?? {
+        miniMap: true,
+        controls: true,
+    };
+
+    return (
+        <>
+            {plugins.miniMap && <MiniMap />}
+            {plugins.background && <Background />}
+            {plugins.controls && <Controls />}
+        </>
     );
 };

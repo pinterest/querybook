@@ -1,16 +1,21 @@
 import React from 'react';
 import { debounce } from 'lodash';
+import { useDispatch, useSelector } from 'react-redux';
 
 import { IDataDoc } from 'const/datadoc';
-import { IconButton } from 'ui/Button/IconButton';
+import { fetchDAGExporters } from 'redux/dataDoc/action';
+import { IStoreState } from 'redux/store/types';
+import { getScrollParent, smoothScroll } from 'lib/utils';
+import { useAnnouncements } from 'hooks/redux/useAnnouncements';
 
 import { DeleteDataDocButton } from './DeleteDataDocButton';
 import { DataDocTemplateButton } from 'components/DataDocTemplateButton/DataDocTemplateButton';
 import { DataDocScheduleButton } from './DataDocScheduleButton';
-import { getScrollParent, smoothScroll } from 'lib/utils';
+import { DataDocDAGExporterButton } from 'components/DataDocDAGExporter/DataDocDAGExporterButton';
+
+import { IconButton } from 'ui/Button/IconButton';
 
 import './DataDocRightSidebar.scss';
-import { useAnnouncements } from 'hooks/redux/useAnnouncements';
 
 interface IProps {
     dataDoc: IDataDoc;
@@ -39,6 +44,7 @@ export const DataDocRightSidebar: React.FunctionComponent<IProps> = ({
     defaultCollapse,
 }) => {
     const numAnnouncements = useAnnouncements().length;
+    const exporterExists = useExporterExists();
 
     const [showScrollToTop, setShowScrollToTop] = React.useState(false);
     const selfRef = React.useRef<HTMLDivElement>();
@@ -125,6 +131,9 @@ export const DataDocRightSidebar: React.FunctionComponent<IProps> = ({
                 />
             </div>
             <div className="DataDocRightSidebar-button-section-bottom flex-column mb8">
+                {isEditable && exporterExists && (
+                    <DataDocDAGExporterButton docId={dataDoc.id} />
+                )}
                 {templateButtonDOM}
                 {scheduleButtonDOM}
                 <IconButton
@@ -149,3 +158,25 @@ export const DataDocRightSidebar: React.FunctionComponent<IProps> = ({
         </div>
     );
 };
+
+function useExporterExists() {
+    const dispatch = useDispatch();
+    const exporterDataByName = useSelector(
+        (state: IStoreState) => state.dataDoc.dagExporterDataByName
+    );
+    const exporterNames = React.useMemo(
+        () => Object.keys(exporterDataByName || {}),
+        [exporterDataByName]
+    );
+
+    React.useEffect(() => {
+        if (exporterNames.length === 0) {
+            dispatch(fetchDAGExporters());
+        }
+        // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, []);
+
+    const exporterExists = exporterNames.length > 0;
+
+    return exporterExists;
+}

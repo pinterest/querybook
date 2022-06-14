@@ -2,12 +2,14 @@ from html import escape
 from itertools import chain
 import math
 import re
+from typing import Any, Dict, List, Optional, Set
 
 from const.impression import ImpressionItemType
 from const.query_execution import QueryExecutionStatus
 from env import QuerybookSettings
 from elasticsearch import Elasticsearch, RequestsHttpConnection
-from lib.query_analysis.lineage import get_table_statement_type, process_query
+from lib.query_analysis import lineage as lineage_lib
+from lib.query_analysis.lineage import get_table_statement_type
 
 from lib.utils.utils import (
     DATETIME_TO_UTC,
@@ -18,13 +20,13 @@ from lib.logger import get_logger
 from lib.config import get_config_value
 from lib.richtext import richtext_to_plaintext
 from app.db import with_session
-from logic.admin import get_query_engine_by_id
+from logic import admin as admin_logic
+from logic import datadoc as datadoc_logic
 from logic.datadoc import (
     get_all_data_docs,
     get_all_query_cells,
     get_data_cell_by_query_execution_id,
     get_data_doc_by_id,
-    get_data_doc_editors_by_doc_id,
     get_unarchived_query_cell_by_id,
 )
 from logic.metastore import (
@@ -78,13 +80,49 @@ def get_hosted_es():
     return hosted_es
 
 
+def _get_dict_by_field(
+    field_to_getter: Dict[str, Any], fields: Optional[List[str]] = None
+) -> Dict[str, Any]:
+    """Returns a partial dictionary based on the fields provided.
+    Args:
+        field_to_getter: dict of field key to a value or a callable (that must be called to generate a value)
+        fields: list of fields to return in generated dict
+
+    Returns:
+        Dict[str, Any] - subset of the fields passed or the entire generated dict if fields is None
+    """
+    fields = fields or field_to_getter.keys()
+
+    def get_field_value(field: str):
+        getter = field_to_getter[field]
+        return getter() if callable(getter) else getter
+
+    return {
+        field: get_field_value(field) for field in fields if field in field_to_getter
+    }
+
+
+def _get_datadoc_editors(datadoc, session) -> List[str]:
+    if datadoc is None or datadoc.public:
+        return []
+    editors = datadoc_logic.get_data_doc_editors_by_doc_id(
+        data_doc_id=datadoc.id, session=session
+    )
+    return [editor.uid for editor in editors]
+
+
+def _get_table_names_from_query(query, language=None) -> List[str]:
+    table_names, _ = lineage_lib.process_query(query, language=language)
+    return list(chain.from_iterable(table_names))
+
+
 """
     QUERY EXECUTIONS
 """
 
 
 @with_session
-def _get_query_cell_executions_iter(batch_size=1000, session=None):
+def _get_query_cell_executions_iter(batch_size=1000, fields=None, session=None):
     offset = 0
     while True:
         query_cells = get_all_query_cells(
@@ -106,6 +144,7 @@ def _get_query_cell_executions_iter(batch_size=1000, session=None):
                     expand_query_execution = query_execution_to_es(
                         query_execution,
                         data_cell=query_cell,
+                        fields=fields,
                         session=session,
                     )
                     yield expand_query_execution
@@ -124,7 +163,7 @@ def _get_query_cell_executions_iter(batch_size=1000, session=None):
 
 
 @with_session
-def _get_adhoc_query_executions_iter(batch_size=1000, session=None):
+def _get_adhoc_query_executions_iter(batch_size=1000, fields=None, session=None):
     offset = 0
     while True:
         query_executions = get_successful_adhoc_query_executions(
@@ -140,7 +179,7 @@ def _get_adhoc_query_executions_iter(batch_size=1000, session=None):
 
         for query_execution in query_executions:
             expand_query_execution = query_execution_to_es(
-                query_execution, session=session
+                query_execution, fields=fields, session=session
             )
             yield expand_query_execution
 
@@ -150,51 +189,50 @@ def _get_adhoc_query_executions_iter(batch_size=1000, session=None):
 
 
 @with_session
-def get_query_executions_iter(batch_size=1000, session=None):
-    yield from _get_query_cell_executions_iter(batch_size=batch_size, session=session)
-    yield from _get_adhoc_query_executions_iter(batch_size=batch_size, session=session)
+def get_query_executions_iter(batch_size=1000, fields=None, session=None):
+    yield from _get_query_cell_executions_iter(
+        batch_size=batch_size, fields=fields, session=session
+    )
+    yield from _get_adhoc_query_executions_iter(
+        batch_size=batch_size, fields=fields, session=session
+    )
 
 
 @with_session
-def query_execution_to_es(query_execution, data_cell=None, session=None):
+def query_execution_to_es(query_execution, data_cell=None, fields=None, session=None):
     """data_cell is added as a parameter so that bulk insert of query executions won't require
     re-retrieval of data_cell"""
-    query_execution_id = query_execution.id
-
     engine_id = query_execution.engine_id
-    engine = get_query_engine_by_id(engine_id, session=session)
+    engine = admin_logic.get_query_engine_by_id(engine_id, session=session)
+    datadoc = data_cell.doc if data_cell else None
 
-    table_names, _ = process_query(
-        query_execution.query, language=(engine and engine.language)
-    )
-    table_names = list(chain.from_iterable(table_names))
+    def get_duration():
+        return (
+            DATETIME_TO_UTC(query_execution.completed_at)
+            - DATETIME_TO_UTC(query_execution.created_at)
+            if query_execution.completed_at is not None
+            else None
+        )
 
-    duration = (
-        DATETIME_TO_UTC(query_execution.completed_at)
-        - DATETIME_TO_UTC(query_execution.created_at)
-        if query_execution.completed_at is not None
-        else None
-    )
-
-    environments = engine.environments
-    environment_ids = [env.id for env in environments]
-
-    title = data_cell.meta.get("title", "Untitled") if data_cell else None
-
-    expand_query_execution = {
-        "id": query_execution_id,
+    field_to_getter = {
+        "id": query_execution.id,
         "query_type": "query_execution",
-        "title": title,
-        "environment_id": environment_ids,
+        "title": data_cell.meta.get("title", "Untitled") if data_cell else None,
+        "environment_id": [env.id for env in engine.environments],
         "author_uid": query_execution.uid,
         "engine_id": engine_id,
-        "statement_type": get_table_statement_type(query_execution.query),
-        "created_at": DATETIME_TO_UTC(query_execution.created_at),
-        "duration": duration,
-        "full_table_name": table_names,
+        "statement_type": lambda: get_table_statement_type(query_execution.query),
+        "created_at": lambda: DATETIME_TO_UTC(query_execution.created_at),
+        "duration": get_duration,
+        "full_table_name": lambda: _get_table_names_from_query(
+            query_execution.query, language=(engine and engine.language)
+        ),
         "query_text": query_execution.query,
+        "public": datadoc is None or datadoc.public,
+        "readable_user_ids": lambda: _get_datadoc_editors(datadoc, session=session),
     }
-    return expand_query_execution
+
+    return _get_dict_by_field(field_to_getter, fields=fields)
 
 
 @with_exception
@@ -203,6 +241,15 @@ def _bulk_insert_query_executions():
 
     for query_execution in get_query_executions_iter():
         _insert(index_name, query_execution["id"], query_execution)
+
+
+@with_exception
+def _bulk_update_query_executions(fields: Set[str] = None):
+    index_name = ES_CONFIG["query_executions"]["index_name"]
+
+    for query_execution in get_query_executions_iter(fields=fields):
+        updated_body = {"doc": query_execution, "doc_as_upsert": True}
+        _update(index_name, query_execution["id"], updated_body)
 
 
 @with_exception
@@ -240,7 +287,7 @@ def update_query_execution_by_id(query_execution_id, session=None):
 
 
 @with_session
-def get_query_cells_iter(batch_size=1000, session=None):
+def get_query_cells_iter(batch_size=1000, fields=None, session=None):
     offset = 0
 
     while True:
@@ -254,7 +301,9 @@ def get_query_cells_iter(batch_size=1000, session=None):
         )
 
         for query_cell in query_cells:
-            expand_query_cell = query_cell_to_es(query_cell, session=session)
+            expand_query_cell = query_cell_to_es(
+                query_cell, fields=fields, session=session
+            )
             yield expand_query_cell
 
         if len(query_cells) < batch_size:
@@ -263,33 +312,33 @@ def get_query_cells_iter(batch_size=1000, session=None):
 
 
 @with_session
-def query_cell_to_es(query_cell, session=None):
-    query_cell_id = query_cell.id
+def query_cell_to_es(query_cell, fields=None, session=None):
     query_cell_meta = query_cell.meta
-
-    engine_id = query_cell_meta.get("engine")
-    engine = get_query_engine_by_id(engine_id, session=session)
-
     query = query_cell.context
-    table_names, _ = process_query(query, language=(engine and engine.language))
-    table_names = list(chain.from_iterable(table_names))
-
     datadoc = query_cell.doc
 
-    expand_query = {
-        "id": query_cell_id,
+    engine_id = query_cell_meta.get("engine")
+    engine = admin_logic.get_query_engine_by_id(engine_id, session=session)
+
+    field_to_getter = {
+        "id": query_cell.id,
         "query_type": "query_cell",
         "title": query_cell_meta.get("title", "Untitled"),
         "data_doc_id": datadoc and datadoc.id,
         "environment_id": datadoc and datadoc.environment_id,
         "author_uid": datadoc and datadoc.owner_uid,
         "engine_id": engine_id,
-        "statement_type": get_table_statement_type(query),
-        "created_at": DATETIME_TO_UTC(query_cell.created_at),
-        "full_table_name": table_names,
+        "statement_type": lambda: get_table_statement_type(query),
+        "created_at": lambda: DATETIME_TO_UTC(query_cell.created_at),
+        "full_table_name": lambda: _get_table_names_from_query(
+            query, language=(engine and engine.language)
+        ),
         "query_text": query,
+        "public": datadoc is not None and datadoc.public,
+        "readable_user_ids": lambda: _get_datadoc_editors(datadoc, session=session),
     }
-    return expand_query
+
+    return _get_dict_by_field(field_to_getter, fields=fields)
 
 
 @with_exception
@@ -298,6 +347,15 @@ def _bulk_insert_query_cells():
 
     for query_cell in get_query_cells_iter():
         _insert(index_name, query_cell["id"], query_cell)
+
+
+@with_exception
+def _bulk_update_query_cells(fields: Set[str] = None):
+    index_name = ES_CONFIG["query_cells"]["index_name"]
+
+    for query_cell in get_query_cells_iter(fields=fields):
+        updated_body = {"doc": query_cell, "doc_as_upsert": True}
+        _update(index_name, query_cell["id"], updated_body)
 
 
 @with_exception
@@ -330,7 +388,7 @@ def update_query_cell_by_id(query_cell_id, session=None):
 
 
 @with_session
-def get_datadocs_iter(batch_size=5000, session=None):
+def get_datadocs_iter(batch_size=5000, fields=None, session=None):
     offset = 0
 
     while True:
@@ -342,7 +400,7 @@ def get_datadocs_iter(batch_size=5000, session=None):
         LOG.info("\n--Datadocs count: {}, offset: {}".format(len(data_docs), offset))
 
         for data_doc in data_docs:
-            expand_datadoc = datadocs_to_es(data_doc, session=session)
+            expand_datadoc = datadocs_to_es(data_doc, fields=fields, session=session)
             yield expand_datadoc
 
         if len(data_docs) < batch_size:
@@ -350,10 +408,7 @@ def get_datadocs_iter(batch_size=5000, session=None):
         offset += batch_size
 
 
-@with_session
-def datadocs_to_es(datadoc, session=None):
-    title = datadoc.title
-
+def get_joined_cells(datadoc):
     cells_as_text = []
     for cell in datadoc.cells:
         if cell.cell_type == DataCellType.text:
@@ -368,30 +423,23 @@ def datadocs_to_es(datadoc, session=None):
             cells_as_text.append("[... additional unparsable content ...]")
 
     joined_cells = escape("\n".join(cells_as_text))
+    return joined_cells
 
-    # There is no need to compute the list of editors
-    # for public datadoc since everyone is able to see it
-    editors = (
-        [
-            editor.uid
-            for editor in get_data_doc_editors_by_doc_id(
-                data_doc_id=datadoc.id, session=session
-            )
-        ]
-        if not datadoc.public
-        else []
-    )
-    expand_datadoc = {
+
+@with_session
+def datadocs_to_es(datadoc, fields=None, session=None):
+
+    field_to_getter = {
         "id": datadoc.id,
         "environment_id": datadoc.environment_id,
         "owner_uid": datadoc.owner_uid,
-        "created_at": DATETIME_TO_UTC(datadoc.created_at),
-        "cells": joined_cells,
-        "title": title,
+        "created_at": lambda: DATETIME_TO_UTC(datadoc.created_at),
+        "cells": lambda: get_joined_cells(datadoc),
+        "title": datadoc.title,
         "public": datadoc.public,
-        "readable_user_ids": editors,
+        "readable_user_ids": lambda: _get_datadoc_editors(datadoc, session=session),
     }
-    return expand_datadoc
+    return _get_dict_by_field(field_to_getter, fields=fields)
 
 
 @with_exception
@@ -400,6 +448,15 @@ def _bulk_insert_datadocs():
 
     for datadoc in get_datadocs_iter():
         _insert(index_name, datadoc["id"], datadoc)
+
+
+@with_exception
+def _bulk_update_datadocs(fields: Set[str] = None):
+    index_name = ES_CONFIG["datadocs"]["index_name"]
+
+    for datadoc in get_datadocs_iter(fields=fields):
+        updated_body = {"doc": datadoc, "doc_as_upsert": True}
+        _update(index_name, datadoc["id"], updated_body)
 
 
 @with_exception
@@ -432,7 +489,7 @@ def update_data_doc_by_id(doc_id, session=None):
 
 
 @with_session
-def get_tables_iter(batch_size=5000, session=None):
+def get_tables_iter(batch_size=5000, fields=None, session=None):
     offset = 0
 
     while True:
@@ -444,7 +501,7 @@ def get_tables_iter(batch_size=5000, session=None):
         LOG.info("\n--Table count: {}, offset: {}".format(len(tables), offset))
 
         for table in tables:
-            expand_table = table_to_es(table, session=session)
+            expand_table = table_to_es(table, fields=fields, session=session)
             yield expand_table
 
         if len(tables) < batch_size:
@@ -482,46 +539,55 @@ def get_table_weight(table_id: int, session=None) -> int:
 
 
 @with_session
-def table_to_es(table, session=None):
+def table_to_es(table, fields=None, session=None):
     schema = table.data_schema
-
-    column_names = [c.name for c in table.columns]
     schema_name = schema.name
     table_name = table.name
-    description = (
-        richtext_to_plaintext(table.information.description, escape=True)
-        if table.information
-        else ""
-    )
-
     full_name = "{}.{}".format(schema_name, table_name)
-    weight = get_table_weight(table.id, session=session)
 
-    expand_table = {
+    def get_table_description():
+        return (
+            richtext_to_plaintext(table.information.description, escape=True)
+            if table.information
+            else ""
+        )
+
+    weight = None
+
+    def compute_weight():
+        nonlocal weight
+        if weight is None:
+            weight = get_table_weight(table.id, session=session)
+        return weight
+
+    def get_completion_name():
+        return {
+            "input": [
+                full_name,
+                table_name,
+            ],
+            "weight": compute_weight(),
+            "contexts": {
+                "metastore_id": schema.metastore_id,
+            },
+        }
+
+    field_to_getter = {
         "id": table.id,
         "metastore_id": schema.metastore_id,
         "schema": schema_name,
         "name": table_name,
         "full_name": full_name,
         "full_name_ngram": full_name,
-        "completion_name": {
-            "input": [
-                full_name,
-                table_name,
-            ],
-            "weight": weight,
-            "contexts": {
-                "metastore_id": schema.metastore_id,
-            },
-        },
-        "description": description,
-        "created_at": DATETIME_TO_UTC(table.created_at),
-        "columns": column_names,
+        "completion_name": get_completion_name,
+        "description": get_table_description,
+        "created_at": lambda: DATETIME_TO_UTC(table.created_at),
+        "columns": [c.name for c in table.columns],
         "golden": table.golden,
-        "importance_score": weight,
+        "importance_score": compute_weight,
         "tags": [tag.tag_name for tag in table.tags],
     }
-    return expand_table
+    return _get_dict_by_field(field_to_getter, fields=fields)
 
 
 def _bulk_insert_tables():
@@ -529,6 +595,14 @@ def _bulk_insert_tables():
 
     for table in get_tables_iter():
         _insert(index_name, table["id"], table)
+
+
+def _bulk_update_tables(fields: Set[str] = None):
+    index_name = ES_CONFIG["tables"]["index_name"]
+
+    for table in get_tables_iter(fields=fields):
+        updated_body = {"doc": table, "doc_as_upsert": True}
+        _update(index_name, table["id"], updated_body)
 
 
 @with_exception
@@ -585,22 +659,26 @@ def process_names_for_suggestion(*args):
 
 
 @with_session
-def user_to_es(user, session=None):
+def user_to_es(user, fields=None, session=None):
     username = user.username or ""
     fullname = user.fullname or ""
 
-    return {
+    def get_suggestion_field():
+        return {
+            "input": process_names_for_suggestion(username, fullname),
+        }
+
+    field_to_getter = {
         "id": user.id,
         "username": username,
         "fullname": fullname,
-        "suggest": {
-            "input": process_names_for_suggestion(username, fullname),
-        },
+        "suggest": get_suggestion_field,
     }
+    return _get_dict_by_field(field_to_getter, fields=fields)
 
 
 @with_session
-def get_users_iter(batch_size=5000, session=None):
+def get_users_iter(batch_size=5000, fields=None, session=None):
     offset = 0
 
     while True:
@@ -612,7 +690,7 @@ def get_users_iter(batch_size=5000, session=None):
         LOG.info("\n--User count: {}, offset: {}".format(len(users), offset))
 
         for user in users:
-            expanded_user = user_to_es(user, session=session)
+            expanded_user = user_to_es(user, fields=fields, session=session)
             yield expanded_user
 
         if len(users) < batch_size:
@@ -625,6 +703,14 @@ def _bulk_insert_users():
 
     for user in get_users_iter():
         _insert(index_name, user["id"], user)
+
+
+def _bulk_update_users(fields: Set[str] = None):
+    index_name = ES_CONFIG["users"]["index_name"]
+
+    for user in get_users_iter(fields=fields):
+        updated_body = {"doc": user, "doc_as_upsert": True}
+        _update(index_name, user["id"], updated_body)
 
 
 @with_exception
@@ -728,3 +814,27 @@ def get_es_config_by_name(*config_names):
 def recreate_indices(*config_names):
     delete_indices(*config_names)
     create_indices_if_not_exist(*config_names)
+
+
+def update_indices(*config_names):
+    es_configs = get_es_config_by_name(*config_names)
+    for config in es_configs:
+        index_name = config["index_name"]
+        mapping = config["mappings"]["mappings"]
+        get_hosted_es().indices.put_mapping(mapping, index=index_name)
+
+
+def bulk_update_index_by_fields(config_name, fields):
+    es_config = ES_CONFIG[config_name]
+    type_name = es_config["type_name"]
+    LOG.info(f"Updating {type_name}")
+    if type_name == "query_executions":
+        _bulk_update_query_executions(fields=fields)
+    elif type_name == "query_cells":
+        _bulk_update_query_cells(fields=fields)
+    elif type_name == "datadocs":
+        _bulk_update_datadocs(fields=fields)
+    elif type_name == "tables":
+        _bulk_update_tables(fields=fields)
+    elif type_name == "users":
+        _bulk_update_users(fields=fields)

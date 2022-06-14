@@ -2,6 +2,8 @@ import { IAccessRequest } from 'const/accessRequest';
 import type {
     IDataCell,
     IDataCellMeta,
+    IDataDocDAGExport,
+    IDataDocDAGExporter,
     IDataDocEditor,
     IRawDataDoc,
 } from 'const/datadoc';
@@ -13,6 +15,7 @@ import type {
 
 import dataDocSocket from 'lib/data-doc/datadoc-socketio';
 import ds from 'lib/datasource';
+import { Edge, Node } from 'react-flow-renderer';
 import {
     IScheduledDoc,
     IScheduledDocFilters,
@@ -90,6 +93,26 @@ export const DataDocResource = {
             uid: number;
         }>(`/favorite_data_doc/${docId}/`),
     unfavorite: (docId: number) => ds.delete(`/favorite_data_doc/${docId}/`),
+
+    getDAGExport: (docId: number) =>
+        ds.fetch<IDataDocDAGExport>(`/datadoc/${docId}/dag_export/`),
+    saveDAGExport: (
+        docId: number,
+        dag: Record<string, Node[] | Edge[]>,
+        meta: Record<string, any>
+    ) =>
+        ds.update<IDataDocDAGExport>(`/datadoc/${docId}/dag_export/`, {
+            dag,
+            meta,
+        }),
+    getDAGExporters: () => ds.fetch<IDataDocDAGExporter[]>(`/dag_exporter/`),
+    exportDAG: (docId: number, exporterName: string) =>
+        ds.save<{ type: string; export: string }>(
+            `/datadoc/${docId}/dag_export/export/`,
+            {
+                exporter_name: exporterName,
+            }
+        ),
 };
 
 export const DataDocEditorResource = {

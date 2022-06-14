@@ -4,9 +4,8 @@ import { useDispatch, useSelector } from 'react-redux';
 import {
     StatementExecutionStatus,
     IStatementExecution,
-    StatementExecutionResultSizes,
 } from 'const/queryExecution';
-
+import { StatementExecutionDefaultResultSize } from 'const/queryResultLimit';
 import { useToggleState } from 'hooks/useToggleState';
 import { fetchResult } from 'redux/queryExecutions/action';
 
@@ -48,7 +47,7 @@ function useStatementResult(statementExecution: IStatementExecution) {
     );
 
     const [resultLimit, setResultLimit] = useState(
-        StatementExecutionResultSizes[0]
+        StatementExecutionDefaultResultSize
     );
 
     const loadStatementResult = useCallback(

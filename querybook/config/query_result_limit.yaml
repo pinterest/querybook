@@ -1,0 +1,6 @@
+default_query_result_size: 1000
+query_result_size_options: # Make sure this is in increasing order
+    - 1000
+    - 5000
+    - 10000
+    - 50000

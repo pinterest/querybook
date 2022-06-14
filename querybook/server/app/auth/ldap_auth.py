@@ -116,10 +116,14 @@ def ldap_authenticate(ldap_conn: SimpleLDAPObject, user_dn: str, password: str):
 
 @with_session
 def login_user(username: str, email: str, full_name: str, session=None):
-    user = get_user_by_name(username, session=session)
+    # Case-insensitive search of the user for backward compatibility.
+    # Because it was possible to create e.g. uppercase usernames before.
+    user = get_user_by_name(username, case_sensitive=False, session=session)
     if not user:
+        # Usernames of new LDAP users are lowered in the DB in order to prevent storing
+        # randomly formatted strings from the user input.
         user = create_user(
-            username=username, fullname=full_name, email=email, session=session
+            username=username.lower(), fullname=full_name, email=email, session=session
         )
     return user
 

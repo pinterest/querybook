@@ -28,6 +28,7 @@ const SpecialKeyToSymbol = {
         SHIFT: '⇧',
         UP: '↑',
         DOWN: '↓',
+        BACKSPACE: 'delete',
     },
     Windows: {
         CMD: 'Ctrl',
@@ -35,6 +36,7 @@ const SpecialKeyToSymbol = {
         SHIFT: '⇧',
         UP: '↑',
         DOWN: '↓',
+        BACKSPACE: '←',
     },
 };
 

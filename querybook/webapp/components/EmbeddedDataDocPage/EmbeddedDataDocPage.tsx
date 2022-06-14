@@ -6,14 +6,12 @@ interface IProps {
     id: number;
 }
 
-const EmbeddedDataDocPage: React.FunctionComponent<IProps> = ({ id }) => {
-    return (
-        <FullHeight flex={'column'} className="EmbeddedDataDocPage">
-            <div>
-                <DataDoc docId={id} />
-            </div>
-        </FullHeight>
-    );
-};
+const EmbeddedDataDocPage: React.FunctionComponent<IProps> = ({ id }) => (
+    <FullHeight flex={'column'} className="EmbeddedDataDocPage">
+        <div>
+            <DataDoc docId={id} />
+        </div>
+    </FullHeight>
+);
 
 export default EmbeddedDataDocPage;

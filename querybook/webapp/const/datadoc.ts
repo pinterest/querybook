@@ -1,3 +1,4 @@
+import { Edge, Node } from 'react-flow-renderer';
 import { ContentState } from 'draft-js';
 import { IChartConfig } from './dataDocChart';
 
@@ -81,3 +82,26 @@ export interface IDataDocEditor {
 }
 
 export const emptyDataDocTitleMessage = '(Untitled)';
+
+export interface IDataDocDAGExportMeta {
+    exporter_meta?: {
+        [exporterName: string]: Record<string, any>;
+    };
+    useTemplatedVariables?: boolean;
+}
+export interface IDataDocDAGExport {
+    id: number;
+    data_doc_id: number;
+
+    created_at: number;
+    updated_at: number;
+
+    dag: Record<string, Node[] | Edge[]>;
+    meta: IDataDocDAGExportMeta;
+}
+
+export interface IDataDocDAGExporter {
+    name: string;
+    type: 'url' | 'text';
+    meta: IFormField | IStructFormField | IExpandableFormField;
+}

@@ -21,9 +21,7 @@
 }
 
 .Tag {
-    background-color: var(--bg-light);
     padding: 2px 8px;
-    color: var(--text-light);
     font-weight: var(--bold-font);
     font-size: var(--small-text-size);
     font-family: var(--font-accent);
@@ -33,20 +31,17 @@
         @include one-line-ellipsis();
     }
 
-    &.highlighted {
-        background-color: var(--color-accent-lightest-0);
-        color: var(--color-accent-dark);
-    }
-
     &.mini {
         padding: 2px 4px;
         font-size: var(--xsmall-text-size);
     }
 
-    &.light {
-        background-color: var(--bg-lightest);
+    &.small {
+        @include small-tag();
     }
+}
 
+.HoverIconTag {
     .HoverIconTag-hover {
         display: none;
         .Icon {
@@ -62,10 +57,6 @@
             display: flex;
             cursor: pointer;
         }
-    }
-
-    &.small {
-        @include small-tag();
     }
 }
 

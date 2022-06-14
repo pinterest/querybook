@@ -2,11 +2,9 @@ import clsx from 'clsx';
 import React, { useCallback, useMemo, useRef, useState } from 'react';
 
 import { formatNumber } from 'lib/utils/number';
-import {
-    IStatementExecution,
-    IStatementResult,
-    StatementExecutionResultSizes,
-} from 'const/queryExecution';
+import { IStatementExecution, IStatementResult } from 'const/queryExecution';
+import { StatementExecutionResultSizes } from 'const/queryResultLimit';
+
 import { useImmer } from 'hooks/useImmer';
 import { useToggleState } from 'hooks/useToggleState';
 import { Loading } from 'ui/Loading/Loading';

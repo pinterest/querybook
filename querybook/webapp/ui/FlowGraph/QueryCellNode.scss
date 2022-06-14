@@ -1,0 +1,14 @@
+.QueryCellNode {
+    background-color: var(--bg-lightest);
+    border-radius: var(--border-radius-sm);
+    padding: var(--padding-sm) var(--padding);
+    color: var(--text);
+
+    &.updated {
+        background-color: var(--color-true-light);
+    }
+
+    .QueryCellNode-label {
+        cursor: grab;
+    }
+}

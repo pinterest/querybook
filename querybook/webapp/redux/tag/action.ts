@@ -1,39 +1,41 @@
-import { ITagItem } from 'const/tag';
+import { ITag } from 'const/tag';
 import { TableTagResource } from 'resource/table';
 import { ThunkResult } from './types';
 
-function fetchTableTagItems(tableId: number): ThunkResult<Promise<ITagItem[]>> {
+function fetchTableTagsFromTable(
+    tableId: number
+): ThunkResult<Promise<ITag[]>> {
     return async (dispatch) => {
         const { data } = await TableTagResource.get(tableId);
         dispatch({
-            type: '@@tag/RECEIVE_TAG_ITEMS',
+            type: '@@tag/RECEIVE_TAGS_BY_TABLE',
             payload: { tableId, tags: data },
         });
         return data;
     };
 }
 
-export function fetchTableTagItemsIfNeeded(
+export function fetchTableTagsFromTableIfNeeded(
     tableId: number
 ): ThunkResult<Promise<any>> {
     return (dispatch, getState) => {
         const state = getState();
-        const tags = state.tag.tagItemByTableId[tableId];
+        const tags = state.tag.tableIdToTagName[tableId];
         if (!tags) {
-            return dispatch(fetchTableTagItems(tableId));
+            return dispatch(fetchTableTagsFromTable(tableId));
         }
     };
 }
 
-export function createTableTagItem(
+export function createTableTag(
     tableId: number,
     tag: string
-): ThunkResult<Promise<ITagItem>> {
+): ThunkResult<Promise<ITag>> {
     return async (dispatch) => {
         try {
             const { data } = await TableTagResource.create(tableId, tag);
             dispatch({
-                type: '@@tag/RECEIVE_TAG_ITEM',
+                type: '@@tag/RECEIVE_TAG_BY_TABLE',
                 payload: { tableId, tag: data },
             });
             return data;
@@ -42,19 +44,34 @@ export function createTableTagItem(
         }
     };
 }
-export function deleteTableTagItem(
+export function deleteTableTag(
     tableId: number,
-    tagId: number
+    tagName: string
 ): ThunkResult<Promise<void>> {
     return async (dispatch) => {
         try {
-            await TableTagResource.delete(tableId, tagId);
+            await TableTagResource.delete(tableId, tagName);
             dispatch({
-                type: '@@tag/REMOVE_TAG_ITEM',
-                payload: { tableId, tagId },
+                type: '@@tag/REMOVE_TAG_FROM_TABLE',
+                payload: { tableId, tagName },
             });
         } catch (e) {
             console.error(e);
         }
+    };
+}
+
+export function updateTag(tag: ITag): ThunkResult<Promise<ITag>> {
+    return async (dispatch) => {
+        const { data: newTag } = await TableTagResource.update(tag);
+
+        dispatch({
+            type: '@@tag/RECEIVE_TAG',
+            payload: {
+                tag,
+            },
+        });
+
+        return newTag;
     };
 }

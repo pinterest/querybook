@@ -1,10 +1,9 @@
 import React, { useMemo, useState } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 
-import {
-    StatementExecutionResultSizes,
-    StatementExecutionStatus,
-} from 'const/queryExecution';
+import { StatementExecutionStatus } from 'const/queryExecution';
+import { StatementExecutionResultSizes } from 'const/queryResultLimit';
+
 import { useMakeSelector } from 'hooks/redux/useMakeSelector';
 import { IStoreState, Dispatch } from 'redux/store/types';
 import * as queryExecutionsSelector from 'redux/queryExecutions/selector';

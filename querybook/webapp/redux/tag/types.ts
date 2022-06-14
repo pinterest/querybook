@@ -1,35 +1,48 @@
 import { Action } from 'redux';
-import { ITagItem } from 'const/tag';
+import { ITag } from 'const/tag';
 import { ThunkAction } from 'redux-thunk';
 import { IStoreState } from 'redux/store/types';
 
-export interface IRecieveTagItems extends Action {
-    type: '@@tag/RECEIVE_TAG_ITEMS';
+export interface IRecieveTagsByTable extends Action {
+    type: '@@tag/RECEIVE_TAGS_BY_TABLE';
     payload: {
         tableId: number;
-        tags: ITagItem[];
+        tags: ITag[];
     };
 }
 
-export interface IRecieveTagItem extends Action {
-    type: '@@tag/RECEIVE_TAG_ITEM';
+export interface IRecieveTagByTable extends Action {
+    type: '@@tag/RECEIVE_TAG_BY_TABLE';
     payload: {
         tableId: number;
-        tag: ITagItem;
-    };
-}
-export interface IRemoveTagItem extends Action {
-    type: '@@tag/REMOVE_TAG_ITEM';
-    payload: {
-        tableId: number;
-        tagId: number;
+        tag: ITag;
     };
 }
 
-export type TagAction = IRecieveTagItems | IRecieveTagItem | IRemoveTagItem;
+export interface IRecieveTag extends Action {
+    type: '@@tag/RECEIVE_TAG';
+    payload: {
+        tag: ITag;
+    };
+}
+
+export interface IRemoveTagFromTable extends Action {
+    type: '@@tag/REMOVE_TAG_FROM_TABLE';
+    payload: {
+        tableId: number;
+        tagName: string;
+    };
+}
+
+export type TagAction =
+    | IRecieveTagsByTable
+    | IRecieveTagByTable
+    | IRemoveTagFromTable
+    | IRecieveTag;
 
 export type ThunkResult<R> = ThunkAction<R, IStoreState, undefined, TagAction>;
 
 export interface ITagState {
-    tagItemByTableId: Record<number, ITagItem[]>;
+    tableIdToTagName: Record<number, string[]>;
+    tagByName: Record<string, ITag>;
 }
