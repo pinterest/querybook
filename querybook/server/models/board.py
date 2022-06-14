@@ -31,19 +31,6 @@ class Board(CRUDMixin, Base):
 
     owner = relationship("User", uselist=False)
 
-    docs = relationship(
-        "DataDoc",
-        secondary="board_item",
-        backref=backref("boards"),
-        order_by="desc(BoardItem.item_order)",
-    )
-    tables = relationship(
-        "DataTable",
-        secondary="board_item",
-        backref=backref("boards"),
-        order_by="desc(BoardItem.item_order)",
-    )
-
     @db.with_session
     def get_max_item_order(self, session=None):
         return (
@@ -78,24 +65,29 @@ class BoardItem(CRUDMixin, Base):
     table_id = sql.Column(
         sql.Integer, sql.ForeignKey("data_table.id", ondelete="CASCADE"), nullable=True
     )
+    board_item_id = sql.Column(sql.Integer, sql.ForeignKey("board.id"), nullable=True)
 
     board_id = sql.Column(sql.Integer, sql.ForeignKey("board.id"), nullable=False)
-    
+
     item_order = sql.Column(sql.Integer)
     created_at = sql.Column(sql.DateTime, default=now)
     description = sql.Column(sql.Text(length=mediumtext_length))
-
 
     board = relationship(
         "Board",
         backref=backref("items", order_by="BoardItem.item_order", cascade="all,delete"),
         uselist=False,
+        foreign_keys=board_id,
+    )
+    board_item = relationship(
+        "Board",
+        backref=backref("board_item", cascade="all,delete"),
+        uselist=False,
+        foreign_keys=board_item_id,
     )
 
     table = relationship("DataTable", uselist=False)
     data_doc = relationship("DataDoc", uselist=False)
-    
-
 
 
 class BoardEditor(Base):
