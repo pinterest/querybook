@@ -86,7 +86,12 @@ class BoardItem(CRUDMixin, Base):
     description = sql.Column(sql.Text(length=mediumtext_length))
 
 
-    board = relationship("Board", foreign_keys=[board_id])
+    board = relationship(
+        "Board",
+        backref=backref("items", order_by="BoardItem.item_order", cascade="all,delete"),
+        uselist=False,
+    )
+
     table = relationship("DataTable", uselist=False)
     data_doc = relationship("DataDoc", uselist=False)
     
