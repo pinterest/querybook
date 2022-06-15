@@ -342,9 +342,28 @@ const ColumnToggleMenuButton: React.FC<{
 }> = ({ columnNames, columnVisibility, toggleVisibility }) => {
     const buttonRef = React.useRef<HTMLAnchorElement>();
     const [showPopover, _, toggleShowPopover] = useToggleState(false);
+    const isAllSelected = useMemo(
+        () => columnNames.every((columnName) => columnVisibility[columnName]),
+        [columnNames, columnVisibility]
+    );
 
     const getPopoverContent = () => (
         <div className="StatementResult-column-toggle-menu">
+            <div key="all">
+                <Checkbox
+                    title={isAllSelected ? 'Hide All' : 'Select All'}
+                    value={isAllSelected}
+                    onChange={() => {
+                        if (isAllSelected) {
+                            columnNames.map((col) => toggleVisibility(col));
+                        } else {
+                            columnNames
+                                .filter((col) => !columnVisibility[col])
+                                .map((column) => toggleVisibility(column));
+                        }
+                    }}
+                />
+            </div>
             {columnNames.map((columnName) => (
                 <div key={columnName}>
                     <Checkbox
