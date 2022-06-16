@@ -6,8 +6,15 @@ from lib.query_analysis import get_statements
 
 
 class ExecuteQuery(object):
-    def __init__(self, _async=False):
+    def __init__(self, _async=False, poll_interval=5):
+        """
+        Args:
+            _async (bool, optional): Whether or not to block the thread until completion. Defaults to False.
+            poll_interval (int, optional): If not async, determine how frequent to poll for progress. Defaults to 5 (seconds).
+        """
         self._async = _async
+        self._poll_interval = poll_interval
+
         if _async:
             self._set_async_parameters()
 
@@ -51,9 +58,9 @@ class ExecuteQuery(object):
     def _sync_run(self, cursor, statements):
         for statement in statements[:-1]:
             cursor.run(statement)
-            cursor.poll_until_finish()
+            cursor.poll_until_finish(self._poll_interval)
         cursor.run(statements[-1])
-        cursor.poll_until_finish()
+        cursor.poll_until_finish(self._poll_interval)
         return cursor.get()
 
     def _async_run(self, cursor, statements):

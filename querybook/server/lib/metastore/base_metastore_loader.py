@@ -108,7 +108,7 @@ class BaseMetastoreLoader(metaclass=ABCMeta):
             data_schema.id, schema_name, table_name, session=session
         )
 
-        # Remove creation of new schema since table DNE
+        # Remove creation of new schema if we failed to create table
         if table_id is None and schema_is_newly_created:
             session.expunge(data_schema)
 
@@ -125,15 +125,33 @@ class BaseMetastoreLoader(metaclass=ABCMeta):
 
         """
         # Double check if the table is indeed removed
-        raw_table, _ = self.get_table_and_columns(schema_name, table_name)
+        table_exists = self.check_if_table_exists(schema_name, table_name)
         # If no schema, then table doesn't exist
         schema = get_schema_by_name(schema_name, self.metastore_id, session=session)
-        if not raw_table and schema is not None:
+        if not table_exists and schema is not None:
             table = get_table_by_schema_id_and_name(
                 schema.id, table_name, session=session
             )
             if table:
                 delete_table(table_id=table.id, session=session)
+
+    def check_if_table_exists(self, schema_name: str, table_name: str) -> bool:
+        """Check if schema_name.table_name exists in DB
+
+        Args:
+            schema_name (str): Name of schema
+            table_name (str): Name of table
+
+        Returns:
+            bool: True if exists, False otherwise
+        """
+        try:
+            table_names = self.get_all_table_names_in_schema(schema_name)
+            return table_name in table_names
+        except Exception:
+            # Assume table does not exist if an exception occurred while
+            # trying to fetch all tables under schema
+            return False
 
     def load(self):
         schema_tables = []
