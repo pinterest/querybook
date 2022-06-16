@@ -109,7 +109,6 @@ export function createBoard(
             await BoardResource.create(
                 name,
                 state.environment.currentEnvironmentId,
-                state.user.myUserInfo.uid,
                 description,
                 publicBoard
             )

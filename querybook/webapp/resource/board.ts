@@ -19,14 +19,12 @@ export const BoardResource = {
     create: (
         name: string,
         environmentId: number,
-        ownerId: number,
         description: string,
         _public: boolean
     ) =>
         ds.save<IBoardRaw>('/board/', {
             name,
             environment_id: environmentId,
-            owner_uid: ownerId,
             description,
             public: _public,
         }),

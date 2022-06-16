@@ -257,6 +257,7 @@ def _construct_datadoc_query(
         ]
 
         query.update({"sort": sort_query})
+
     query.update(
         _highlight_fields(
             {
