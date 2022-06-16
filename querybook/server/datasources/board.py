@@ -46,7 +46,6 @@ def get_board_by_id(board_id):
 def create_board(
     name,
     environment_id,
-    owner_uid,
     description=None,
     public=None,
     favorite=False,
@@ -56,7 +55,7 @@ def create_board(
         return logic.create_board(
             name,
             environment_id,
-            owner_uid,
+            current_user.id,
             description,
             public,
             favorite,

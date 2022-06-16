@@ -1,5 +1,5 @@
-import React, { useRef, useState } from 'react';
-import { escapeRegExp } from 'lodash';
+import React, { useMemo, useRef, useState } from 'react';
+import { escape, escapeRegExp } from 'lodash';
 
 import history from 'lib/router-history';
 import { generateFormattedDate } from 'lib/utils/datetime';
@@ -23,12 +23,22 @@ const HighlightTitle: React.FunctionComponent<{
     title: string;
     searchString: string;
 }> = ({ title, searchString }) => {
-    const highlightReplace = (text: string) => `<mark>${text}</mark>`;
-    let highlightedTitle = title;
-    if (searchString && searchString.length) {
-        const searchStringRegex = new RegExp(escapeRegExp(searchString), 'ig');
-        highlightedTitle = title.replace(searchStringRegex, highlightReplace);
-    }
+    const highlightedTitle = useMemo(() => {
+        const highlightReplace = (text: string) => `<mark>${text}</mark>`;
+        let highlightedTitle = escape(title);
+
+        if (searchString && searchString.length) {
+            const searchStringRegex = new RegExp(
+                escapeRegExp(searchString),
+                'ig'
+            );
+            highlightedTitle = highlightedTitle.replace(
+                searchStringRegex,
+                highlightReplace
+            );
+        }
+        return highlightedTitle;
+    }, [title, searchString]);
 
     return highlightedTitle && highlightedTitle !== 'Untitled' ? (
         <AccentText size="smedium" weight="bold" color="text" hover>
