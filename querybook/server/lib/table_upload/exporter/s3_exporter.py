@@ -10,7 +10,7 @@ from app.db import with_session
 from clients.s3_client import S3FileCopier
 from clients.s3_client import MultiPartUploader
 
-from lib.utils.execute_query import execute_query
+from lib.utils.execute_query import ExecuteQuery
 from lib.table_upload.common import ImporterResourceType
 from logic.admin import get_query_engine_by_id
 from lib.query_analysis.create_table.create_table import (
@@ -18,9 +18,11 @@ from lib.query_analysis.create_table.create_table import (
 )
 from lib.table_upload.exporter.utils import update_pandas_df_column_name_type
 from env import QuerybookSettings
+from lib.logger import get_logger
 from .base_exporter import BaseTableUploadExporter
 
 S3_OBJECT_KEY_NOT_ALLOWED_CHAR = r"[^\w-]+"
+LOG = get_logger(__file__)
 
 
 class S3BaseExporter(BaseTableUploadExporter):
@@ -59,11 +61,14 @@ class S3BaseExporter(BaseTableUploadExporter):
 
         if if_exists == "append":
             raise Exception("Cannot use append for S3 table export")
-        elif if_exists == "replace":
-            self._run_query(f"DROP TABLE IF EXISTS {fq_table_name}", session=session)
-        elif if_exists == "fail":
-            table_id = self._sync_table_from_metastore(session=session)
-            if table_id is not None:
+
+        table_exists = self._check_if_table_exists(session=session)
+        if table_exists:
+            if if_exists == "replace":
+                self._run_query(
+                    f"DROP TABLE IF EXISTS {fq_table_name}", session=session
+                )
+            elif if_exists == "fail":
                 raise Exception(f"Table {fq_table_name} already exists.")
 
     @with_session
@@ -81,7 +86,10 @@ class S3BaseExporter(BaseTableUploadExporter):
 
     @with_session
     def _run_query(self, query: str, session=None):
-        execute_query(query, self._engine_id, self._uid, session=session)
+        # Poll frequently since create table should finish quickly
+        ExecuteQuery(False, poll_interval=1)(
+            query, self._engine_id, self._uid, session=session
+        )
 
     @property
     def _fq_table_name(self):
@@ -91,8 +99,9 @@ class S3BaseExporter(BaseTableUploadExporter):
     def _upload(self, session=None) -> Tuple[str, str]:
         self._handle_if_table_exists(session=session)
         self._upload_to_s3()
-        self._run_query(self._get_table_create_query(session=session), session=session)
 
+        create_table_query = self._get_table_create_query(session=session)
+        self._run_query(create_table_query, session=session)
         return self._fq_table_name
 
 

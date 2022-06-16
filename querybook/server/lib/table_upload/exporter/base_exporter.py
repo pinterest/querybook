@@ -53,8 +53,15 @@ class BaseTableUploadExporter(ABC):
             return loader.sync_create_or_update_table(
                 schema_name, table_name, session=session
             )
-
         return None
+
+    @with_session
+    def _check_if_table_exists(self, session=None) -> Optional[bool]:
+        loader = self._get_metastore_loader(session=session)
+        if loader:
+            schema_name, table_name = self._fq_table_name
+            return loader.check_if_table_exists(schema_name, table_name)
+        return False
 
     def upload(self) -> Optional[int]:
         self._upload()

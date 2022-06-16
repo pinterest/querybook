@@ -11,6 +11,9 @@ from app.auth.permission import (
 )
 from lib.table_upload.importer.importer_factory import get_importer
 from lib.table_upload.exporter.exporter_factory import get_exporter
+from lib.logger import get_logger
+
+LOG = get_logger(__file__)
 
 
 @register("/table_upload/preview/", methods=["POST"])
@@ -35,6 +38,7 @@ def perform_table_upload():
 
     importer = get_importer(import_config, file_uploaded)
     exporter = get_exporter(engine_id, current_user.id, table_config, importer)
+
     return exporter.upload()
 
 
