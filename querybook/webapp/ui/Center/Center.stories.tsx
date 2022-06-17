@@ -1,7 +1,6 @@
 import centered from '@storybook/addon-centered/react';
 import React from 'react';
 
-// eslint-disable-next-line import/no-extraneous-dependencies
 import { Center } from './Center';
 
 export default {

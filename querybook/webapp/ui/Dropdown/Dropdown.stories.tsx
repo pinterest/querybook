@@ -4,7 +4,6 @@ import React from 'react';
 import { Button } from 'ui/Button/Button';
 import { ListMenu } from 'ui/Menu/ListMenu';
 
-// eslint-disable-next-line import/no-extraneous-dependencies
 import { Dropdown } from './Dropdown';
 
 export default {

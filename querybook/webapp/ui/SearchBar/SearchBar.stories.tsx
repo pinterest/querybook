@@ -1,7 +1,6 @@
 import centered from '@storybook/addon-centered/react';
 import React from 'react';
 
-// eslint-disable-next-line import/no-extraneous-dependencies
 import { ISearchBarProps, SearchBar } from './SearchBar';
 
 export const _SearchBar = (args: ISearchBarProps) => {

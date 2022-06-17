@@ -1,7 +1,6 @@
 import centered from '@storybook/addon-centered/react';
 import React from 'react';
 
-// eslint-disable-next-line import/no-extraneous-dependencies
 import { Loading, LoadingIcon, LoadingRow } from './Loading';
 
 export const _Loading = () => (

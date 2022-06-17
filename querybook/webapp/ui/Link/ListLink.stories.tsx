@@ -1,7 +1,6 @@
 import centered from '@storybook/addon-centered/react';
 import React from 'react';
 
-// eslint-disable-next-line import/no-extraneous-dependencies
 import { ListLink } from './ListLink';
 
 export const _ListLink = (args) => {

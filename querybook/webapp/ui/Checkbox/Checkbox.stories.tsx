@@ -1,7 +1,6 @@
 import centered from '@storybook/addon-centered/react';
 import React, { useState } from 'react';
 
-// eslint-disable-next-line import/no-extraneous-dependencies
 import { Checkbox } from './Checkbox';
 
 export default {

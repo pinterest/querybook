@@ -5,7 +5,6 @@ import toast from 'react-hot-toast';
 import { sleep } from 'lib/utils';
 import { Button } from 'ui/Button/Button';
 
-// eslint-disable-next-line import/no-extraneous-dependencies
 import { ToastManager } from './ToastManager';
 
 export const _Toast = (args) => (

@@ -3,7 +3,6 @@ import React from 'react';
 
 import { Status } from 'const/queryStatus';
 
-// eslint-disable-next-line import/no-extraneous-dependencies
 import { IStatusIconProps, StatusIcon } from './StatusIcon';
 
 export const _StatusIcon = (args: IStatusIconProps) => (

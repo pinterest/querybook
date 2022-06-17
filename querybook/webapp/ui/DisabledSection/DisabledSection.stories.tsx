@@ -3,7 +3,6 @@ import React from 'react';
 
 import { DebouncedInput } from 'ui/DebouncedInput/DebouncedInput';
 
-// eslint-disable-next-line import/no-extraneous-dependencies
 import { DisabledSection } from './DisabledSection';
 
 export default {
