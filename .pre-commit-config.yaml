@@ -18,7 +18,7 @@ repos:
       rev: 'v2.6.2'
       hooks:
           - id: prettier
-            files: "^querybook/webapp/.*\\.(tsx?)$"
+            files: "querybook/webapp/.*\\.[jt]sx?$"
             additional_dependencies:
                 - prettier@2.2.1
     - repo: https://gitlab.com/pycqa/flake8
@@ -27,8 +27,3 @@ repos:
           - id: flake8
             files: "^querybook/(server|tests)/.*\\.py$"
             exclude: ^querybook/migrations/.*
-    # - repo: https://github.com/pre-commit/mirrors-eslint
-    #   rev: '6.8.0' # Use the sha / tag you want to point at
-    #   files: 'querybook/webapp/.*\\.(tsx?)$'
-    #   hooks:
-    #       - id: eslint

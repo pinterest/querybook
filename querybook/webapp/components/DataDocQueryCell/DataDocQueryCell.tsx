@@ -123,6 +123,52 @@ class DataDocQueryCellComponent extends React.PureComponent<IProps, IState> {
         };
     }
 
+    @bind public get keyMap() {
+        return this._keyMapMemo(this.props.queryEngines);
+    }
+
+    @bind
+    public get engineId() {
+        return this.state.meta.engine;
+    }
+
+    @bind
+    public get queryEngine() {
+        return this.props.queryEngineById[this.engineId];
+    }
+
+    @bind
+    public get queryCollapsed() {
+        const { meta } = this.props;
+        const { queryCollapsedOverride } = this.state;
+
+        const isQueryCollapsedSavedValue = !!meta?.query_collapsed;
+        return queryCollapsedOverride != null
+            ? queryCollapsedOverride
+            : isQueryCollapsedSavedValue;
+    }
+
+    public get hasUDFSupport() {
+        const queryEngine = this.queryEngine;
+        if (!queryEngine) {
+            return false;
+        }
+        return doesLanguageSupportUDF(queryEngine.language);
+    }
+
+    public get defaultCellTitle() {
+        const { queryIndexInDoc } = this.props;
+        return queryIndexInDoc == null
+            ? 'Untitled'
+            : `Query #${queryIndexInDoc + 1}`;
+    }
+
+    public get dataCellTitle() {
+        const { meta } = this.state;
+
+        return meta.title || this.defaultCellTitle;
+    }
+
     @decorate(memoizeOne)
     public _keyMapMemo(engines: IQueryEngine[]) {
         const keyMap = {
@@ -143,28 +189,6 @@ class DataDocQueryCellComponent extends React.PureComponent<IProps, IState> {
         }
 
         return keyMap;
-    }
-
-    @bind public get keyMap() {
-        return this._keyMapMemo(this.props.queryEngines);
-    }
-
-    @bind
-    public get engineId() {
-        return this.state.meta.engine;
-    }
-
-    @bind
-    public get queryEngine() {
-        return this.props.queryEngineById[this.engineId];
-    }
-
-    public get hasUDFSupport() {
-        const queryEngine = this.queryEngine;
-        if (!queryEngine) {
-            return false;
-        }
-        return doesLanguageSupportUDF(queryEngine.language);
     }
 
     @bind
@@ -384,17 +408,6 @@ class DataDocQueryCellComponent extends React.PureComponent<IProps, IState> {
     }
 
     @bind
-    public get queryCollapsed() {
-        const { meta } = this.props;
-        const { queryCollapsedOverride } = this.state;
-
-        const isQueryCollapsedSavedValue = !!meta?.query_collapsed;
-        return queryCollapsedOverride != null
-            ? queryCollapsedOverride
-            : isQueryCollapsedSavedValue;
-    }
-
-    @bind
     public getAdditionalDropDownButtonDOM() {
         const { isEditable } = this.props;
 
@@ -524,18 +537,6 @@ class DataDocQueryCellComponent extends React.PureComponent<IProps, IState> {
                 color="light"
             />
         );
-    }
-
-    public get defaultCellTitle() {
-        const { queryIndexInDoc } = this.props;
-        return queryIndexInDoc == null
-            ? 'Untitled'
-            : `Query #${queryIndexInDoc + 1}`;
-    }
-    public get dataCellTitle() {
-        const { meta } = this.state;
-
-        return meta.title || this.defaultCellTitle;
     }
 
     public renderCellHeaderDOM() {

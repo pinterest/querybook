@@ -69,6 +69,20 @@ export class RichTextEditor extends React.PureComponent<
     private toolBarRef = React.createRef<RichTextEditorToolBar>();
     private selfRef = React.createRef<HTMLDivElement>();
 
+    public get draftJSEditor() {
+        return this.editorRef.current;
+    }
+
+    public get editorState() {
+        return this.state.editorState;
+    }
+
+    public set editorState(editorState: DraftJs.EditorState) {
+        this.setState({
+            editorState,
+        });
+    }
+
     @bind
     public focus() {
         if (this.editorRef) {
@@ -527,20 +541,6 @@ export class RichTextEditor extends React.PureComponent<
         // Suppressing error due to LinkDecorator failing on delete
         // related github issue https://github.com/facebook/draft-js/issues/1320#issuecomment-476509968
         this.forceUpdate();
-    }
-
-    public get editorState() {
-        return this.state.editorState;
-    }
-
-    public set editorState(editorState: DraftJs.EditorState) {
-        this.setState({
-            editorState,
-        });
-    }
-
-    public get draftJSEditor() {
-        return this.editorRef.current;
     }
 
     public getContent() {
