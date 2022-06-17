@@ -53,22 +53,16 @@ const BoardDOM: React.FunctionComponent<IBoardDOMProps> = ({
 
     return (
         <div className="Board">
-            {board ? (
-                <>
-                    <div className="Board-content">
-                        <BoardHeader board={board} />
-                        {boardItemDOM}
-                    </div>
-                    <BoardRightSidebar
-                        onCollapse={() => setDefaulCollapse((c) => !c)}
-                        defaultCollapse={defaultCollapse}
-                        onEditModeToggle={() => setIsEditMode((e) => !e)}
-                        isEditMode={isEditMode}
-                    />
-                </>
-            ) : (
-                <Loading fullHeight />
-            )}
+            <div className="Board-content">
+                <BoardHeader board={board} />
+                {boardItemDOM}
+            </div>
+            <BoardRightSidebar
+                onCollapse={() => setDefaulCollapse((c) => !c)}
+                defaultCollapse={defaultCollapse}
+                onEditModeToggle={() => setIsEditMode((e) => !e)}
+                isEditMode={isEditMode}
+            />
         </div>
     );
 };
@@ -97,7 +91,9 @@ export const Board: React.FunctionComponent<IBoardProps> = ({ boardId }) => {
 
     return error ? (
         <BoardError errorObj={error} boardId={boardId} />
-    ) : (
+    ) : board ? (
         <BoardDOM board={board} boardItemById={boardItemById} />
+    ) : (
+        <Loading fullHeight />
     );
 };

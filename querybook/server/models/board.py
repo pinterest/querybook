@@ -75,6 +75,7 @@ class BoardItem(CRUDMixin, Base):
     created_at = sql.Column(sql.DateTime, default=now)
     description = sql.Column(sql.Text(length=mediumtext_length))
 
+    # the board that board_item belongs to
     parent_board = relationship(
         "Board",
         backref=backref("items", order_by="BoardItem.item_order", cascade="all,delete"),

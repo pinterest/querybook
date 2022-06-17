@@ -1,12 +1,7 @@
 import { normalize, schema } from 'normalizr';
 import { ThunkResult, IReceiveBoardsAction } from './types';
 import { arrayGroupByField } from 'lib/utils';
-import {
-    IBoardWithItemIds,
-    IBoard,
-    IBoardRaw,
-    BoardItemType,
-} from 'const/board';
+import { IBoardWithItemIds, IBoardRaw, BoardItemType } from 'const/board';
 import { Dispatch } from 'redux/store/types';
 import { receiveDataDocs } from 'redux/dataDoc/action';
 import { receiveDataTable } from 'redux/dataSources/action';
@@ -26,8 +21,11 @@ export const boardSchema = new schema.Entity('board', {
 
 function normalizeBoard(rawBoard: IBoardRaw) {
     const normalizedData = normalize(rawBoard, boardSchema);
-    const board: IBoardWithItemIds =
-        normalizedData.entities.board[normalizedData.result];
+    const board: IBoardWithItemIds = {
+        ...normalizedData.entities.board[normalizedData.result],
+        description: normalizedData.entities.board[normalizedData.result]
+            .description as string,
+    };
     const {
         dataTable: dataTableById = {},
         dataDoc: dataDocById = {},
@@ -53,20 +51,20 @@ function receiveBoardWithItems(dispatch: Dispatch, rawBoard: IBoardRaw) {
         payload: {
             board: {
                 ...board,
-                description: stateFromHTML(board.description as string),
             },
             boardItemById,
         },
     });
 }
 
-function receiveBoards(boards: IBoard[]): IReceiveBoardsAction {
-    const boardById = arrayGroupByField(boards);
-    Object.keys(boardById).forEach((boardId) => {
+function receiveBoards(boards: IBoardRaw[]): IReceiveBoardsAction {
+    const boardRawById = arrayGroupByField(boards);
+    const boardById = {};
+    Object.keys(boardRawById).forEach((boardId) => {
         boardById[boardId] = {
-            ...boardById[boardId],
+            ...boardRawById[boardId],
             description: stateFromHTML(
-                boardById[boardId].description as string
+                boardRawById[boardId].description as string
             ),
         };
     });
@@ -80,7 +78,7 @@ function receiveBoards(boards: IBoard[]): IReceiveBoardsAction {
 
 export function fetchBoards(
     filterStr: string = ''
-): ThunkResult<Promise<IBoard[]>> {
+): ThunkResult<Promise<IBoardRaw[]>> {
     return async (dispatch, getState) => {
         const state = getState();
         const rawBoards = (
