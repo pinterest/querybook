@@ -1,11 +1,6 @@
 import * as React from 'react';
 import { RouteComponentProps, useParams } from 'react-router-dom';
 
-import history from 'lib/router-history';
-import { navigateWithinEnv } from 'lib/utils/query-string';
-import { useModalRoute } from 'hooks/useModalRoute';
-import { useBrowserTitle } from 'hooks/useBrowserTitle';
-
 import { FAQ } from 'components/Info/FAQ';
 import { Shortcut } from 'components/Info/Shortcut';
 import { Tours } from 'components/Info/Tours';
@@ -13,7 +8,10 @@ import {
     TemplateGuide,
     TemplateGuideModal,
 } from 'components/TemplateGuide/TemplateGuide';
-
+import { useBrowserTitle } from 'hooks/useBrowserTitle';
+import { useModalRoute } from 'hooks/useModalRoute';
+import history from 'lib/router-history';
+import { navigateWithinEnv } from 'lib/utils/query-string';
 import { Modal } from 'ui/Modal/Modal';
 
 const InfoMenuRoute: React.FunctionComponent<RouteComponentProps> = ({

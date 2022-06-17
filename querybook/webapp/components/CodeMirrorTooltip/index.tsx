@@ -2,10 +2,10 @@ import React from 'react';
 import * as ReactDOM from 'react-dom';
 import { Provider } from 'react-redux';
 
-import { reduxStore } from 'redux/store';
-
 import { sleep } from 'lib/utils';
+import { reduxStore } from 'redux/store';
 import { overlayRoot } from 'ui/Overlay/Overlay';
+
 import {
     CodeMirrorTooltip,
     ICodeMirrorTooltipProps,

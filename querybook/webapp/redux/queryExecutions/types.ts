@@ -1,8 +1,7 @@
 import { Action } from 'redux';
-import { ThunkAction, ThunkDispatch as ReduxThunkDispatch } from 'redux-thunk';
+import { ThunkDispatch as ReduxThunkDispatch, ThunkAction } from 'redux-thunk';
 
-import { DataDocAction } from '../dataDoc/types';
-import { IStoreState } from '../store/types';
+import { IAccessRequest } from 'const/accessRequest';
 import {
     IQueryError,
     IQueryExecution,
@@ -13,7 +12,9 @@ import {
     IStatementResult,
     IStatementResultLoading,
 } from 'const/queryExecution';
-import { IAccessRequest } from 'const/accessRequest';
+
+import { DataDocAction } from '../dataDoc/types';
+import { IStoreState } from '../store/types';
 
 export interface IReceiveQueryExecutionsAction extends Action {
     type: '@@queryExecutions/RECEIVE_QUERY_EXECUTIONS';

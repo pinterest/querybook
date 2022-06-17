@@ -1,15 +1,15 @@
-import React, { useCallback, useMemo } from 'react';
-import { useField } from 'formik';
-import { Controlled as ReactCodeMirror } from 'react-codemirror2';
 import type { Editor, EditorConfiguration } from 'codemirror';
+import { useField } from 'formik';
+import React, { useCallback, useMemo } from 'react';
+import { Controlled as ReactCodeMirror } from 'react-codemirror2';
 import { useSelector } from 'react-redux';
-import { IStoreState } from 'redux/store/types';
+
+import 'codemirror/mode/clike/clike';
+import 'codemirror/mode/javascript/javascript';
+import { StyledQueryEditor } from 'components/QueryEditor/StyledQueryEditor';
 import { getCodeEditorTheme } from 'lib/utils';
 import { KeyMap } from 'lib/utils/keyboard';
-
-import 'codemirror/mode/javascript/javascript';
-import 'codemirror/mode/clike/clike';
-import { StyledQueryEditor } from 'components/QueryEditor/StyledQueryEditor';
+import { IStoreState } from 'redux/store/types';
 
 export interface ICodeEditorFieldProps {
     name: string;

@@ -1,11 +1,12 @@
-import React, { useCallback } from 'react';
 import { useField } from 'formik';
+import React, { useCallback } from 'react';
+
 import { WithOptional } from 'lib/typescript';
 import {
-    Select,
-    makeSelectOptions,
-    ISelectProps,
     IOptions,
+    ISelectProps,
+    makeSelectOptions,
+    Select,
 } from 'ui/Select/Select';
 
 export interface ISelectFieldProps

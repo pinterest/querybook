@@ -1,10 +1,11 @@
 import React, { useState } from 'react';
 import { useDispatch } from 'react-redux';
+
+import { DataDocSchedule } from 'components/DataDocSchedule/DataDocSchedule';
+import { getScheduledDocs } from 'redux/scheduledDataDoc/action';
 import { Dispatch } from 'redux/store/types';
 import { Button } from 'ui/Button/Button';
 import { Modal } from 'ui/Modal/Modal';
-import { getScheduledDocs } from 'redux/scheduledDataDoc/action';
-import { DataDocSchedule } from 'components/DataDocSchedule/DataDocSchedule';
 
 export const DataDocScheduleActionEdit: React.FunctionComponent<{
     docId: number;

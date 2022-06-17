@@ -1,11 +1,13 @@
 import React from 'react';
+
 import { DataDocPermission } from 'lib/data-doc/datadoc-permission';
-import { Popover } from 'ui/Popover/Popover';
-import { MenuItem, Menu } from 'ui/Menu/Menu';
 import { IconButton } from 'ui/Button/IconButton';
-import './DataDocAccessRequestPermissionPicker.scss';
 import { Icon } from 'ui/Icon/Icon';
+import { Menu, MenuItem } from 'ui/Menu/Menu';
+import { Popover } from 'ui/Popover/Popover';
 import { AccentText } from 'ui/StyledText/StyledText';
+
+import './DataDocAccessRequestPermissionPicker.scss';
 
 interface IPermissionPickerProp {
     uid: number;
@@ -15,11 +17,9 @@ interface IPermissionPickerProp {
     rejectQueryExecutionAccessRequest?: (uid: number) => any;
 }
 
-export const DataDocAccessRequestPermissionPicker: React.FunctionComponent<IPermissionPickerProp> = ({
-    uid,
-    addDataDocEditor,
-    rejectDataDocAccessRequest,
-}) => {
+export const DataDocAccessRequestPermissionPicker: React.FunctionComponent<
+    IPermissionPickerProp
+> = ({ uid, addDataDocEditor, rejectDataDocAccessRequest }) => {
     const [showEditMenu, setShowEditMenu] = React.useState(false);
     const selfRef = React.useRef<HTMLDivElement>(null);
     const [permission, setPermission] = React.useState(

@@ -1,5 +1,6 @@
-import React, { useCallback, useImperativeHandle, useState } from 'react';
 import clsx from 'clsx';
+import React, { useCallback, useImperativeHandle, useState } from 'react';
+
 import { useInterval } from 'hooks/useInterval';
 
 export interface ITimerProps {

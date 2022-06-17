@@ -1,13 +1,12 @@
 import React from 'react';
 
 import { navigateWithinEnv } from 'lib/utils/query-string';
-
-import { ColumnPanelView } from './ColumnPanelView';
-import { TablePanelView } from './TablePanelView';
-
 import { TextButton } from 'ui/Button/Button';
 import { IconButton } from 'ui/Button/IconButton';
 import { Level } from 'ui/Level/Level';
+
+import { ColumnPanelView } from './ColumnPanelView';
+import { TablePanelView } from './TablePanelView';
 
 import './DataTableViewMini.scss';
 

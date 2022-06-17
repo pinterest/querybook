@@ -1,11 +1,11 @@
 import React from 'react';
 import { RouteComponentProps } from 'react-router-dom';
-import history from 'lib/router-history';
-import { useModalRoute } from 'hooks/useModalRoute';
 
-import { Modal } from 'ui/Modal/Modal';
 import { QueryView } from 'components/QueryView/QueryView';
 import { useBrowserTitle } from 'hooks/useBrowserTitle';
+import { useModalRoute } from 'hooks/useModalRoute';
+import history from 'lib/router-history';
+import { Modal } from 'ui/Modal/Modal';
 
 const QueryExecutionRoute: React.FunctionComponent<RouteComponentProps> = ({
     location,

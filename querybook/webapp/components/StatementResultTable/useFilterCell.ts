@@ -1,7 +1,8 @@
-import { useMemo, useCallback } from 'react';
 import { isEmpty } from 'lodash';
-import { useImmer } from 'hooks/useImmer';
+import { useCallback, useMemo } from 'react';
+
 import { useDebounce } from 'hooks/useDebounce';
+import { useImmer } from 'hooks/useImmer';
 
 export interface ITableColumnFilter<T = string> {
     name: string;
@@ -10,76 +11,82 @@ export interface ITableColumnFilter<T = string> {
 }
 
 const stringTableColumnFilters = new Map<string, ITableColumnFilter>(
-    ([
-        {
-            name: 'contains',
-            filter: (cell, conditions) => {
-                const containsStr = conditions[0];
-                return cell.includes(containsStr);
+    (
+        [
+            {
+                name: 'contains',
+                filter: (cell, conditions) => {
+                    const containsStr = conditions[0];
+                    return cell.includes(containsStr);
+                },
+                numInputs: 1,
             },
-            numInputs: 1,
-        },
-        {
-            name: 'does not contain',
-            filter: (cell, conditions) => {
-                const containsStr = conditions[0];
-                return !cell.includes(containsStr);
+            {
+                name: 'does not contain',
+                filter: (cell, conditions) => {
+                    const containsStr = conditions[0];
+                    return !cell.includes(containsStr);
+                },
+                numInputs: 1,
             },
-            numInputs: 1,
-        },
-        {
-            name: 'equals',
-            filter: (cell, conditions) => cell === conditions[0],
-            numInputs: 1,
-        },
-        {
-            name: 'not equals',
-            filter: (cell, conditions) => cell !== conditions[0],
-            numInputs: 1,
-        },
-        {
-            name: 'starts with',
-            filter: (cell, conditions) => cell.startsWith(conditions[0]),
-            numInputs: 1,
-        },
-        {
-            name: 'ends with',
-            filter: (cell, conditions) => cell.endsWith(conditions[0]),
-            numInputs: 1,
-        },
-    ] as ITableColumnFilter[]).map((item) => [item.name, item])
+            {
+                name: 'equals',
+                filter: (cell, conditions) => cell === conditions[0],
+                numInputs: 1,
+            },
+            {
+                name: 'not equals',
+                filter: (cell, conditions) => cell !== conditions[0],
+                numInputs: 1,
+            },
+            {
+                name: 'starts with',
+                filter: (cell, conditions) => cell.startsWith(conditions[0]),
+                numInputs: 1,
+            },
+            {
+                name: 'ends with',
+                filter: (cell, conditions) => cell.endsWith(conditions[0]),
+                numInputs: 1,
+            },
+        ] as ITableColumnFilter[]
+    ).map((item) => [item.name, item])
 );
 
 const numberTableColumnFilters = new Map<string, ITableColumnFilter>(
-    ([
-        {
-            name: 'equals',
-            filter: (cell, conditions) => cell === conditions[0],
-            numInputs: 1,
-        },
-        {
-            name: 'not equals',
-            filter: (cell, conditions) => cell !== conditions[0],
-            numInputs: 1,
-        },
-        {
-            name: 'greater than',
-            filter: (cell, conditions) => Number(cell) > Number(conditions[0]),
-            numInputs: 1,
-        },
-        {
-            name: 'less than',
-            filter: (cell, conditions) => Number(cell) < Number(conditions[0]),
-            numInputs: 1,
-        },
-        {
-            name: 'between',
-            filter: (cell, conditions) =>
-                Number(conditions[0]) < Number(cell) &&
-                Number(cell) < Number(conditions[1]),
-            numInputs: 2,
-        },
-    ] as ITableColumnFilter[]).map((item) => [item.name, item])
+    (
+        [
+            {
+                name: 'equals',
+                filter: (cell, conditions) => cell === conditions[0],
+                numInputs: 1,
+            },
+            {
+                name: 'not equals',
+                filter: (cell, conditions) => cell !== conditions[0],
+                numInputs: 1,
+            },
+            {
+                name: 'greater than',
+                filter: (cell, conditions) =>
+                    Number(cell) > Number(conditions[0]),
+                numInputs: 1,
+            },
+            {
+                name: 'less than',
+                filter: (cell, conditions) =>
+                    Number(cell) < Number(conditions[0]),
+                numInputs: 1,
+            },
+            {
+                name: 'between',
+                filter: (cell, conditions) =>
+                    Number(conditions[0]) < Number(cell) &&
+                    Number(cell) < Number(conditions[1]),
+                numInputs: 2,
+            },
+        ] as ITableColumnFilter[]
+    ).map((item) => [item.name, item])
 );
 
 export const tableColumnFiltersByType = {

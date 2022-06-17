@@ -1,14 +1,13 @@
 import { createSelector } from 'reselect';
 
+import { IDataCell, IDataQueryCellMeta } from 'const/datadoc';
 import {
     getViewerInfo,
-    sortViewersInfo,
-    readWriteToPermission,
     permissionToReadWrite,
+    readWriteToPermission,
+    sortViewersInfo,
 } from 'lib/data-doc/datadoc-permission';
 import { IStoreState } from 'redux/store/types';
-import { IDataCell, IDataQueryCellMeta } from 'const/datadoc';
-
 import { myUserInfoSelector } from 'redux/user/selector';
 
 const dataDocByIdSelector = (state: IStoreState) => state.dataDoc.dataDocById;

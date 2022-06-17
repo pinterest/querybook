@@ -1,21 +1,21 @@
-import React, { useCallback, useMemo, useRef } from 'react';
-import moment from 'moment';
 import clsx from 'clsx';
+import moment from 'moment';
+import React, { useCallback, useMemo, useRef } from 'react';
 
-import { queryStatusToStatusIcon } from 'const/queryStatus';
-import { IQueryExecution } from 'const/queryExecution';
 import { IQueryEngine } from 'const/queryEngine';
+import { IQueryExecution } from 'const/queryExecution';
+import { queryStatusToStatusIcon } from 'const/queryStatus';
 import history from 'lib/router-history';
-import { getWithinEnvUrl } from 'lib/utils/query-string';
-import { StatusIcon } from 'ui/StatusIcon/StatusIcon';
-import { Tag } from 'ui/Tag/Tag';
 import {
     formatDuration,
     fromNow,
     generateFormattedDate,
 } from 'lib/utils/datetime';
+import { getWithinEnvUrl } from 'lib/utils/query-string';
 import { UrlContextMenu } from 'ui/ContextMenu/UrlContextMenu';
+import { StatusIcon } from 'ui/StatusIcon/StatusIcon';
 import { AccentText } from 'ui/StyledText/StyledText';
+import { Tag } from 'ui/Tag/Tag';
 
 interface IProps {
     queryExecution: IQueryExecution;
@@ -26,10 +26,8 @@ const ExecutionTime: React.FC<{ queryExecution: IQueryExecution }> = ({
     queryExecution,
 }) => {
     const durationText = useMemo(() => {
-        const {
-            created_at: createdAt,
-            completed_at: completedAt,
-        } = queryExecution;
+        const { created_at: createdAt, completed_at: completedAt } =
+            queryExecution;
 
         if (completedAt == null) {
             // query may still be running, then there is no point to show anything yet

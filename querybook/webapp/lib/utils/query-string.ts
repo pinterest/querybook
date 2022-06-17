@@ -1,8 +1,9 @@
 import qs from 'qs';
+
 import history from 'lib/router-history';
+import { currentEnvironmentSelector } from 'redux/environment/selector';
 import { reduxStore } from 'redux/store';
 import { IStoreState } from 'redux/store/types';
-import { currentEnvironmentSelector } from 'redux/environment/selector';
 
 export function getQueryString(): Record<string, any> {
     return qs.parse(location.search.slice(1));
@@ -51,6 +52,6 @@ export function getWithinEnvUrl(subpath: string) {
 // FIXME: check why PR #856 breaks the typecasting
 export function getCurrentEnv() {
     return currentEnvironmentSelector(
-        (reduxStore.getState() as unknown) as IStoreState
+        reduxStore.getState() as unknown as IStoreState
     );
 }

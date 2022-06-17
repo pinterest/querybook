@@ -1,4 +1,5 @@
 import React, { useCallback, useState } from 'react';
+import { useSelector } from 'react-redux';
 import Select from 'react-select';
 import AsyncSelect, { Props as AsyncProps } from 'react-select/async';
 
@@ -6,15 +7,14 @@ import {
     asyncReactSelectStyles,
     makeReactSelectStyle,
 } from 'lib/utils/react-select';
-import { overlayRoot } from 'ui/Overlay/Overlay';
-import { SearchTableResource } from 'resource/search';
-import { useSelector } from 'react-redux';
 import { queryMetastoresSelector } from 'redux/dataSources/selector';
 import { IStoreState } from 'redux/store/types';
+import { SearchTableResource } from 'resource/search';
+import { overlayRoot } from 'ui/Overlay/Overlay';
+import { AccentText } from 'ui/StyledText/StyledText';
 import { HoverIconTag } from 'ui/Tag/HoverIconTag';
 
 import './TableSelect.scss';
-import { AccentText } from 'ui/StyledText/StyledText';
 
 interface ITableSelectProps {
     tableNames: string[];

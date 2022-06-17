@@ -1,6 +1,6 @@
 // from https://github.com/prismagraphql/chromeless-playground/blob/master/frontend/src/codemirror/codeEditor/addons/textHover.ts
-import { bind } from 'lodash-decorators';
 import * as CodeMirror from 'codemirror';
+import { bind } from 'lodash-decorators';
 
 function isPosInSideToken(pos, token) {
     if (pos.ch === token.start) {

@@ -1,23 +1,21 @@
-import React from 'react';
-import moment from 'moment';
 import clsx from 'clsx';
+import moment from 'moment';
+import React from 'react';
 
+import { UserName } from 'components/UserBadge/UserName';
+import { IQueryExecution, QueryExecutionStatus } from 'const/queryExecution';
 import {
     queryStatusToStatusIcon,
     STATUS_TO_TEXT_MAPPING,
 } from 'const/queryStatus';
-import { QueryExecutionStatus, IQueryExecution } from 'const/queryExecution';
 import { generateFormattedDate } from 'lib/utils/datetime';
-
-import { UserName } from 'components/UserBadge/UserName';
-
 import { Dropdown } from 'ui/Dropdown/Dropdown';
+import { Icon } from 'ui/Icon/Icon';
+import { Menu, MenuItem } from 'ui/Menu/Menu';
 import { StatusIcon } from 'ui/StatusIcon/StatusIcon';
 import { ToggleSwitch } from 'ui/ToggleSwitch/ToggleSwitch';
-import { Menu, MenuItem } from 'ui/Menu/Menu';
 
 import './QueryExecutionPicker.scss';
-import { Icon } from 'ui/Icon/Icon';
 
 interface IProps {
     queryExecutionId: number;

@@ -1,9 +1,9 @@
 import { BatchManager, mergeSetFunction } from 'lib/batch/batch-manager';
-import { Dispatch } from 'redux/store/types';
 import {
-    receiveQueryExecutionsByCell,
     receiveQueryExecution,
+    receiveQueryExecutionsByCell,
 } from 'redux/queryExecutions/action';
+import { Dispatch } from 'redux/store/types';
 import { BatchResource } from 'resource/batch';
 
 class QueryCellExecutionManager {
@@ -11,9 +11,8 @@ class QueryCellExecutionManager {
     private batchLoadUserManager = new BatchManager<number, number[]>({
         batchFrequency: 500,
         processFunction: async (cellIds: number[]) => {
-            const {
-                data: cellExecutions,
-            } = await BatchResource.getExecutionsOfCells(cellIds);
+            const { data: cellExecutions } =
+                await BatchResource.getExecutionsOfCells(cellIds);
 
             for (const [
                 cellId,

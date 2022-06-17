@@ -3,6 +3,7 @@ import React from 'react';
 
 import { Icon } from 'ui/Icon/Icon';
 import type { AllLucideIconNames } from 'ui/Icon/LucideIcons';
+
 import { ITagProps, Tag } from './Tag';
 
 export interface IHoverIconTagProps extends ITagProps {

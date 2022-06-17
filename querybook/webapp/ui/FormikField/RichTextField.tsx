@@ -1,5 +1,5 @@
-import React from 'react';
 import { useField } from 'formik';
+import React from 'react';
 
 import { RichTextEditor } from 'ui/RichTextEditor/RichTextEditor';
 

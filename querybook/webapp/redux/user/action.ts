@@ -1,8 +1,9 @@
+import { UserRoleType } from 'const/user';
+import { userLoadManager } from 'lib/batch/user-load-manager';
 import localStore from 'lib/local-store';
 import { USER_SETTINGS_KEY, UserSettingsValue } from 'lib/local-store/const';
-import { userLoadManager } from 'lib/batch/user-load-manager';
-import { UserRoleType } from 'const/user';
 import { UserResource, UserSettingResource } from 'resource/user';
+
 import { ThunkResult } from './types';
 
 export function loginUser(): ThunkResult<Promise<void>> {
@@ -57,8 +58,8 @@ export function getUserSetting(): ThunkResult<Promise<any>> {
                     type: '@@user/RECEIVE_USER_SETTING',
                     payload: {
                         userSetting,
-                        environmentId: getState().environment
-                            .currentEnvironmentId,
+                        environmentId:
+                            getState().environment.currentEnvironmentId,
                     },
                 });
             }
@@ -79,8 +80,8 @@ export function getUserSettingLocal(): ThunkResult<void> {
                     payload: {
                         userSetting,
                         fromLocal: true,
-                        environmentId: getState().environment
-                            .currentEnvironmentId,
+                        environmentId:
+                            getState().environment.currentEnvironmentId,
                     },
                 });
             });

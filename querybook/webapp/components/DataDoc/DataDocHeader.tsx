@@ -2,18 +2,17 @@ import clsx from 'clsx';
 import React from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 
-import { favoriteDataDoc, unfavoriteDataDoc } from 'redux/dataDoc/action';
-import { IDataDoc, emptyDataDocTitleMessage } from 'const/datadoc';
-import { Dispatch, IStoreState } from 'redux/store/types';
-
-import { generateFormattedDate } from 'lib/utils/datetime';
-import { DataDocViewersBadge } from 'components/DataDocViewersBadge/DataDocViewersBadge';
-import { ResizableTextArea } from 'ui/ResizableTextArea/ResizableTextArea';
-import { IconButton } from 'ui/Button/IconButton';
-import { ImpressionWidget } from 'components/ImpressionWidget/ImpressionWidget';
 import { BoardItemAddButton } from 'components/BoardItemAddButton/BoardItemAddButton';
-import { AccentText } from 'ui/StyledText/StyledText';
+import { DataDocViewersBadge } from 'components/DataDocViewersBadge/DataDocViewersBadge';
+import { ImpressionWidget } from 'components/ImpressionWidget/ImpressionWidget';
+import { emptyDataDocTitleMessage, IDataDoc } from 'const/datadoc';
+import { generateFormattedDate } from 'lib/utils/datetime';
+import { favoriteDataDoc, unfavoriteDataDoc } from 'redux/dataDoc/action';
+import { Dispatch, IStoreState } from 'redux/store/types';
+import { IconButton } from 'ui/Button/IconButton';
 import { Icon } from 'ui/Icon/Icon';
+import { ResizableTextArea } from 'ui/ResizableTextArea/ResizableTextArea';
+import { AccentText } from 'ui/StyledText/StyledText';
 
 interface IProps {
     dataDoc: IDataDoc;

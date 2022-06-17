@@ -1,6 +1,7 @@
-import React from 'react';
 import { useField } from 'formik';
-import { ToggleSwitch, IToggleSwitchProps } from 'ui/ToggleSwitch/ToggleSwitch';
+import React from 'react';
+
+import { IToggleSwitchProps, ToggleSwitch } from 'ui/ToggleSwitch/ToggleSwitch';
 
 export interface IToggleSwitchFieldProps extends Partial<IToggleSwitchProps> {
     name: string;

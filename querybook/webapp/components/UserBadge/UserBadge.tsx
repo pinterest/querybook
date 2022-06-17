@@ -1,14 +1,14 @@
+import clsx from 'clsx';
 import React, { useMemo } from 'react';
 
 import { useUser } from 'hooks/redux/useUser';
-import { ICommonUserLoaderProps } from './types';
+import { AccentText } from 'ui/StyledText/StyledText';
 
-import { UserNameComponent } from './UserName';
+import { ICommonUserLoaderProps } from './types';
 import { UserAvatarComponent } from './UserAvatar';
+import { UserNameComponent } from './UserName';
 
 import './UserBadge.scss';
-import clsx from 'clsx';
-import { AccentText } from 'ui/StyledText/StyledText';
 
 type IProps = {
     isOnline?: boolean;

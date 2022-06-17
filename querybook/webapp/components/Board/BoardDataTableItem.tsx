@@ -1,14 +1,13 @@
+import { ContentState } from 'draft-js';
 import * as React from 'react';
 import { useDispatch } from 'react-redux';
-import { ContentState } from 'draft-js';
 import { Link } from 'react-router-dom';
 
+import { BoardItemAddButton } from 'components/BoardItemAddButton/BoardItemAddButton';
 import { useShallowSelector } from 'hooks/redux/useShallowSelector';
 import { getWithinEnvUrl } from 'lib/utils/query-string';
-
-import { BoardItemAddButton } from 'components/BoardItemAddButton/BoardItemAddButton';
-import { Dispatch, IStoreState } from 'redux/store/types';
 import { fetchDataTableIfNeeded } from 'redux/dataSources/action';
+import { Dispatch, IStoreState } from 'redux/store/types';
 import { Icon } from 'ui/Icon/Icon';
 import { RichTextEditor } from 'ui/RichTextEditor/RichTextEditor';
 import { Title } from 'ui/Title/Title';

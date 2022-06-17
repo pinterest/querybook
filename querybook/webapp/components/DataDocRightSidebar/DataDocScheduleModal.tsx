@@ -1,5 +1,6 @@
-import { DataDocSchedule } from 'components/DataDocSchedule/DataDocSchedule';
 import * as React from 'react';
+
+import { DataDocSchedule } from 'components/DataDocSchedule/DataDocSchedule';
 import { InfoButton } from 'ui/Button/InfoButton';
 import { Modal } from 'ui/Modal/Modal';
 import { Tabs } from 'ui/Tabs/Tabs';
@@ -19,9 +20,8 @@ export const DataDocScheduleModal: React.FunctionComponent<IProps> = ({
     isEditable,
     onHide,
 }) => {
-    const [currentTab, setCurrentTab] = React.useState<IScheduleTabs>(
-        'schedule'
-    );
+    const [currentTab, setCurrentTab] =
+        React.useState<IScheduleTabs>('schedule');
 
     const topDOM = (
         <div className="horizontal-space-between flex1">

@@ -1,22 +1,23 @@
-import React, { useMemo, useRef, useState } from 'react';
 import { escape, escapeRegExp } from 'lodash';
+import React, { useMemo, useRef, useState } from 'react';
+import { useSelector } from 'react-redux';
 
-import history from 'lib/router-history';
-import { generateFormattedDate } from 'lib/utils/datetime';
 import { UserAvatar } from 'components/UserBadge/UserAvatar';
 import { IDataDocPreview, IQueryPreview, ITablePreview } from 'const/search';
-import { Icon } from 'ui/Icon/Icon';
-import { Tag } from 'ui/Tag/Tag';
 import { useUser } from 'hooks/redux/useUser';
-import { Level } from 'ui/Level/Level';
-import { ThemedCodeHighlight } from 'ui/CodeHighlight/ThemedCodeHighlight';
-import { useSelector } from 'react-redux';
+import history from 'lib/router-history';
+import { generateFormattedDate } from 'lib/utils/datetime';
+import { stopPropagation } from 'lib/utils/noop';
 import { queryEngineByIdEnvSelector } from 'redux/queryEngine/selector';
 import { IconButton } from 'ui/Button/IconButton';
+import { ThemedCodeHighlight } from 'ui/CodeHighlight/ThemedCodeHighlight';
 import { UrlContextMenu } from 'ui/ContextMenu/UrlContextMenu';
-import { stopPropagation } from 'lib/utils/noop';
+import { Icon } from 'ui/Icon/Icon';
+import { Level } from 'ui/Level/Level';
 import { LoadingRow } from 'ui/Loading/Loading';
 import { AccentText, StyledText, UntitledText } from 'ui/StyledText/StyledText';
+import { Tag } from 'ui/Tag/Tag';
+
 import './SearchResultItem.scss';
 
 const HighlightTitle: React.FunctionComponent<{

@@ -1,25 +1,22 @@
 import React, {
-    useState,
-    useMemo,
     useCallback,
-    useEffect,
     useContext,
+    useEffect,
+    useMemo,
+    useState,
 } from 'react';
-import { useSelector, useDispatch } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
 
+import { QueryExecutionPicker } from 'components/ExecutionPicker/QueryExecutionPicker';
+import { QueryExecution } from 'components/QueryExecution/QueryExecution';
+import { QueryExecutionDuration } from 'components/QueryExecution/QueryExecutionDuration';
+import { QueryExecutionBar } from 'components/QueryExecutionBar/QueryExecutionBar';
+import { DataDocContext } from 'context/DataDoc';
 import { useMakeSelector } from 'hooks/redux/useMakeSelector';
 import { getQueryString } from 'lib/utils/query-string';
-import { DataDocContext } from 'context/DataDoc';
-
 import { currentEnvironmentSelector } from 'redux/environment/selector';
 import * as queryExecutionsActions from 'redux/queryExecutions/action';
 import * as queryExecutionsSelectors from 'redux/queryExecutions/selector';
-
-import { QueryExecutionBar } from 'components/QueryExecutionBar/QueryExecutionBar';
-import { QueryExecution } from 'components/QueryExecution/QueryExecution';
-import { QueryExecutionPicker } from 'components/ExecutionPicker/QueryExecutionPicker';
-import { QueryExecutionDuration } from 'components/QueryExecution/QueryExecutionDuration';
-
 import { StyledText } from 'ui/StyledText/StyledText';
 
 interface IProps {
@@ -30,11 +27,10 @@ interface IProps {
     changeCellContext?: (context: string) => void;
 }
 
-export const DataDocQueryExecutions: React.FunctionComponent<IProps> = React.memo(
-    ({ cellId, docId, changeCellContext, isQueryCollapsed }) => {
-        const { cellIdToExecutionId, onQueryCellSelectExecution } = useContext(
-            DataDocContext
-        );
+export const DataDocQueryExecutions: React.FunctionComponent<IProps> =
+    React.memo(({ cellId, docId, changeCellContext, isQueryCollapsed }) => {
+        const { cellIdToExecutionId, onQueryCellSelectExecution } =
+            useContext(DataDocContext);
 
         const environment = useSelector(currentEnvironmentSelector);
 
@@ -177,5 +173,4 @@ export const DataDocQueryExecutions: React.FunctionComponent<IProps> = React.mem
                 </StyledText>
             </div>
         );
-    }
-);
+    });

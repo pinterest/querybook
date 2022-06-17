@@ -1,5 +1,5 @@
-import React from 'react';
 import clsx from 'clsx';
+import React from 'react';
 
 import { Icon } from 'ui/Icon/Icon';
 import type { AllLucideIconNames } from 'ui/Icon/LucideIcons';

@@ -1,4 +1,4 @@
-import { CommandActions, Pos, Pass } from 'codemirror';
+import { CommandActions, Pass, Pos } from 'codemirror';
 
 export function attachCustomCommand(commands: CommandActions) {
     // Copied from https://github.com/codemirror/CodeMirror/blob/bd1b7d2976d768ae4e3b8cf209ec59ad73c0305a/keymap/sublime.js#L244

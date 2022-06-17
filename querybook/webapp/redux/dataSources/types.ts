@@ -2,26 +2,27 @@ import { Action } from 'redux';
 import { ThunkAction } from 'redux-thunk';
 
 import {
-    IDataTable,
-    IDataColumn,
-    IDataSchema,
-    ILineage,
-    IDataTableSamples,
-    IFunctionDescription,
-    IQueryMetastore,
     FunctionDocumentationCollection,
-    ILineageCollection,
+    IDataColumn,
     IDataJobMetadata,
-    IPaginatedQuerySamples,
-    IDataTableWarning,
-    IDataTableSamplesPolling,
-    ITopQueryUser,
-    IPaginatedQuerySampleFilters,
+    IDataSchema,
+    IDataTable,
     IDataTableOwnership,
+    IDataTableSamples,
+    IDataTableSamplesPolling,
+    IDataTableWarning,
+    IFunctionDescription,
+    ILineage,
+    ILineageCollection,
+    IPaginatedQuerySampleFilters,
+    IPaginatedQuerySamples,
+    IQueryMetastore,
+    ITableQueryEngine,
     ITableStats,
     ITopQueryConcurrences,
-    ITableQueryEngine,
+    ITopQueryUser,
 } from 'const/metastore';
+
 import { IStoreState } from '../store/types';
 
 export interface IReceiveQueryMetastoresAction extends Action {

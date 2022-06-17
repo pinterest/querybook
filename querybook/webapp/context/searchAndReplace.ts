@@ -1,4 +1,5 @@
 import React from 'react';
+
 import { ISearchAndReplaceState } from 'const/searchAndReplace';
 
 export interface ISearchAndReplaceContextType {
@@ -8,6 +9,5 @@ export interface ISearchAndReplaceContextType {
     hideSearchAndReplace: () => any;
 }
 
-export const SearchAndReplaceContext = React.createContext<ISearchAndReplaceContextType>(
-    null
-);
+export const SearchAndReplaceContext =
+    React.createContext<ISearchAndReplaceContextType>(null);

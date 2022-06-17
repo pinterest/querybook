@@ -1,10 +1,11 @@
 import { normalize } from 'normalizr';
 
-import { getQueryString, replaceQueryString } from 'lib/utils/query-string';
 import * as Utils from 'lib/utils';
-import { ThunkResult, IQueryViewResetAction, IQueryViewState } from './types';
+import { getQueryString, replaceQueryString } from 'lib/utils/query-string';
 import { queryExecutionSchemaList } from 'redux/queryExecutions/action';
 import { IRawQueryExecution, QueryViewResource } from 'resource/queryView';
+
+import { IQueryViewResetAction, IQueryViewState, ThunkResult } from './types';
 
 export const CHUNK_LOAD_SIZE = 50;
 

@@ -1,36 +1,36 @@
 import { normalize, schema } from 'normalizr';
 import type { Socket } from 'socket.io-client';
-import { updateDataDocPolling } from 'redux/dataDoc/action';
-import SocketIOManager from 'lib/socketio-manager';
 
-import { queryEngineSelector } from 'redux/queryEngine/selector';
+import { IAccessRequest } from 'const/accessRequest';
 import {
-    QueryExecutionStatus,
+    IQueryExecution,
     IQueryExecutionViewer,
     IQueryResultExporter,
-    IQueryExecution,
-    IStatementExecution,
     IRawQueryExecution,
+    IStatementExecution,
+    QueryExecutionStatus,
 } from 'const/queryExecution';
-import { IAccessRequest } from 'const/accessRequest';
-
 import { queryCellExecutionManager } from 'lib/batch/query-execution-manager';
+import SocketIOManager from 'lib/socketio-manager';
 import { formatError } from 'lib/utils/error';
+import { updateDataDocPolling } from 'redux/dataDoc/action';
+import { queryEngineSelector } from 'redux/queryEngine/selector';
 import {
-    QueryExecutionResource,
     QueryExecutionAccessRequestResource,
+    QueryExecutionResource,
     QueryExecutionViewerResource,
     StatementResource,
 } from 'resource/queryExecution';
+
 import {
-    IReceiveQueryExecutionsAction,
-    IReceiveQueryExecutionAction,
-    IReceiveStatementExecutionAction,
-    ThunkResult,
-    ThunkDispatch,
-    IReceiveStatementExecutionUpdateAction,
     IReceiveQueryExecutionAccessRequestsAction,
+    IReceiveQueryExecutionAction,
+    IReceiveQueryExecutionsAction,
     IReceiveQueryExecutionViewersAction,
+    IReceiveStatementExecutionAction,
+    IReceiveStatementExecutionUpdateAction,
+    ThunkDispatch,
+    ThunkResult,
 } from './types';
 
 const statementExecutionSchema = new schema.Entity('statementExecution');
@@ -50,8 +50,7 @@ export function addQueryExecutionAccessRequest(
         );
         if (data != null) {
             dispatch({
-                type:
-                    '@@queryExecutions/RECEIVE_QUERY_EXECUTION_ACCESS_REQUEST',
+                type: '@@queryExecutions/RECEIVE_QUERY_EXECUTION_ACCESS_REQUEST',
                 payload: {
                     executionId,
                     request: data,
@@ -296,9 +295,8 @@ export function fetchQueryExecutionAccessRequests(
     queryExecutionId: number
 ): ThunkResult<Promise<void>> {
     return async (dispatch) => {
-        const {
-            data: queryExecutionAccessRequests,
-        } = await QueryExecutionAccessRequestResource.get(queryExecutionId);
+        const { data: queryExecutionAccessRequests } =
+            await QueryExecutionAccessRequestResource.get(queryExecutionId);
         dispatch(
             receiveQueryExecutionAccessRequests(
                 queryExecutionId,
@@ -312,9 +310,8 @@ export function fetchQueryExecutionViewers(
     queryExecutionId: number
 ): ThunkResult<Promise<void>> {
     return async (dispatch) => {
-        const {
-            data: queryExecutionViewers,
-        } = await QueryExecutionViewerResource.get(queryExecutionId);
+        const { data: queryExecutionViewers } =
+            await QueryExecutionViewerResource.get(queryExecutionId);
         dispatch(
             receiveQueryExecutionViewers(
                 queryExecutionId,

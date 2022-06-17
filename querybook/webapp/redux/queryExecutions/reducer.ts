@@ -3,7 +3,8 @@ import moment from 'moment';
 import { combineReducers } from 'redux';
 
 import { StatementExecutionStatus } from 'const/queryExecution';
-import { linkifyLog, arrayGroupByField } from 'lib/utils';
+import { arrayGroupByField, linkifyLog } from 'lib/utils';
+
 import { IQueryExecutionState, QueryExecutionAction } from './types';
 
 const initialState: IQueryExecutionState = {
@@ -155,11 +156,8 @@ function queryExecutionByIdReducer(
                     return;
                 }
 
-                draft[
-                    queryExecutionId
-                ].statement_executions = statementExecutions.concat([
-                    statementExecution.id,
-                ]);
+                draft[queryExecutionId].statement_executions =
+                    statementExecutions.concat([statementExecution.id]);
                 return;
             }
         }
@@ -303,11 +301,8 @@ function statementResultLoadingByIdReducer(
                 return;
             }
             case '@@queryExecutions/START_RESULT': {
-                const {
-                    statementExecutionId,
-                    request,
-                    numberOfLines,
-                } = action.payload;
+                const { statementExecutionId, request, numberOfLines } =
+                    action.payload;
 
                 draft[statementExecutionId] = {
                     request,

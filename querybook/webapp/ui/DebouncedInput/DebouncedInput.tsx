@@ -1,10 +1,10 @@
-import React from 'react';
 import clsx from 'clsx';
+import React from 'react';
 
 import { useDebounceState } from 'hooks/redux/useDebounceState';
+import { AccentText } from 'ui/StyledText/StyledText';
 
 import './DebouncedInput.scss';
-import { AccentText } from 'ui/StyledText/StyledText';
 
 interface IDebouncedInputStylingProps {
     className?: string;

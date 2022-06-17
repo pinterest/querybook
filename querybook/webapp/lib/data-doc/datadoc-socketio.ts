@@ -1,9 +1,9 @@
 import type { Socket } from 'socket.io-client';
 
 import { IAccessRequest } from 'const/accessRequest';
-import { IDataDocEditor, IDataCellMeta } from 'const/datadoc';
-import SocketIOManager from 'lib/socketio-manager';
+import { IDataCellMeta, IDataDocEditor } from 'const/datadoc';
 import { IQueryExecution } from 'const/queryExecution';
+import SocketIOManager from 'lib/socketio-manager';
 import { DataDocResource } from 'resource/dataDoc';
 
 interface IDataDocSocketPromise<T> {

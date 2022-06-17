@@ -1,13 +1,13 @@
 import React from 'react';
 import { RouteComponentProps } from 'react-router-dom';
 
+import { UserSettingsMenu } from 'components/UserSettingsMenu/UserSettingsMenu';
+import { useBrowserTitle } from 'hooks/useBrowserTitle';
+import { useModalRoute } from 'hooks/useModalRoute';
 import history from 'lib/router-history';
 import { navigateWithinEnv } from 'lib/utils/query-string';
 import { Modal } from 'ui/Modal/Modal';
-import { useBrowserTitle } from 'hooks/useBrowserTitle';
-import { useModalRoute } from 'hooks/useModalRoute';
 import { Tabs } from 'ui/Tabs/Tabs';
-import { UserSettingsMenu } from 'components/UserSettingsMenu/UserSettingsMenu';
 
 export type UserSettingsTab = 'general' | 'editor';
 

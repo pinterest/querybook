@@ -1,21 +1,21 @@
-import {
-    ThunkResult,
-    ISetConfirmationAction,
-    IRemoveConfirmationAction,
-    IAnnouncement,
-    ISetSidebarTableId,
-    ISetCollapsedAction,
-} from './types';
-
 import localStore from 'lib/local-store';
 import {
-    DISMISSED_ANNOUNCEMENT_KEY,
-    DismissedAnnouncementValue,
     DATA_DOC_NAV_SECTION_KEY,
     DataDocNavSectionValue,
+    DISMISSED_ANNOUNCEMENT_KEY,
+    DismissedAnnouncementValue,
 } from 'lib/local-store/const';
 import { ISetGlobalStateAction } from 'redux/globalState/types';
 import { AnnouncementResource } from 'resource/announcement';
+
+import {
+    IAnnouncement,
+    IRemoveConfirmationAction,
+    ISetCollapsedAction,
+    ISetConfirmationAction,
+    ISetSidebarTableId,
+    ThunkResult,
+} from './types';
 
 export function setConfirmation(props): ISetConfirmationAction {
     return {

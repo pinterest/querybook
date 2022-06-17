@@ -1,5 +1,6 @@
-import { useContextMenu } from 'hooks/ui/useContextMenu';
 import React, { useImperativeHandle } from 'react';
+
+import { useContextMenu } from 'hooks/ui/useContextMenu';
 import { Overlay } from 'ui/Overlay/Overlay';
 
 interface IContextMenuProps {
@@ -15,9 +16,8 @@ export const ContextMenu = React.forwardRef<
     IContextMenuHandles,
     IContextMenuProps
 >(({ anchorRef, renderContextMenu }, ref) => {
-    const { anchorPoint, show, contextMenuRef, hide } = useContextMenu(
-        anchorRef
-    );
+    const { anchorPoint, show, contextMenuRef, hide } =
+        useContextMenu(anchorRef);
 
     useImperativeHandle(ref, () => ({
         hide,

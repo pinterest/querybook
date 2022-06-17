@@ -1,18 +1,19 @@
 import clsx from 'clsx';
 import React, { useEffect } from 'react';
-import { useSelector, useDispatch } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
 
+import { DataTableViewMini } from 'components/DataTableViewMini/DataTableViewMini';
+import { IDataCell } from 'const/datadoc';
 import { setSidebarTableId } from 'redux/querybookUI/action';
 import { IStoreState } from 'redux/store/types';
-import { IDataCell } from 'const/datadoc';
-
-import { DataDocContents } from './DataDocContents';
-import { DataTableViewMini } from 'components/DataTableViewMini/DataTableViewMini';
-
-import { Level } from 'ui/Level/Level';
 import { IconButton } from 'ui/Button/IconButton';
 import { InfoButton } from 'ui/Button/InfoButton';
+import { Level } from 'ui/Level/Level';
+
+import { DataDocContents } from './DataDocContents';
+
 import './DataDocLeftSidebar.scss';
+
 interface IProps {
     docId: number;
     cells: IDataCell[];
@@ -30,10 +31,8 @@ export const DataDocLeftSidebar: React.FunctionComponent<IProps> = ({
     );
     const clearSidebarTableId = () => dispatch(setSidebarTableId(null));
 
-    const [
-        contentState,
-        setContentState,
-    ] = React.useState<LeftSidebarContentState>('default');
+    const [contentState, setContentState] =
+        React.useState<LeftSidebarContentState>('default');
 
     useEffect(
         () => () => {

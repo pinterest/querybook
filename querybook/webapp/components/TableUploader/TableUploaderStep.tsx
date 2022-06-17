@@ -1,9 +1,11 @@
-import { IQueryExecutionImporterConfig } from 'const/tableUpload';
 import { useFormikContext } from 'formik';
 import React, { useCallback, useMemo, useState } from 'react';
+
+import { IQueryExecutionImporterConfig } from 'const/tableUpload';
 import { AsyncButton } from 'ui/AsyncButton/AsyncButton';
 import { Button } from 'ui/Button/Button';
 import { StepsBar } from 'ui/StepsBar/StepsBar';
+
 import { ITableUploadFormikForm, TableUploaderStepValue } from './types';
 
 const TableUploaderStepsDOM: React.ReactChild[] = [
@@ -45,10 +47,8 @@ function useMaxUploaderStep(config: ITableUploadFormikForm): number {
 }
 
 export function useTableUploaderStep() {
-    const {
-        values: config,
-        setFieldValue,
-    } = useFormikContext<ITableUploadFormikForm>();
+    const { values: config, setFieldValue } =
+        useFormikContext<ITableUploadFormikForm>();
 
     const maxStep = useMaxUploaderStep(config);
     const [step, setStep] = useState(maxStep);

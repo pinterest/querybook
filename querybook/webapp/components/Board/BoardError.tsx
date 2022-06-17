@@ -1,5 +1,5 @@
-import * as React from 'react';
 import type { AxiosError } from 'axios';
+import * as React from 'react';
 
 import { ErrorPage } from 'ui/ErrorPage/ErrorPage';
 

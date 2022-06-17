@@ -1,66 +1,63 @@
-import React from 'react';
-import { connect } from 'react-redux';
+import clsx from 'clsx';
+import { decorate } from 'core-decorators';
 import { ContentState } from 'draft-js';
 import { findIndex } from 'lodash';
 import { bind, debounce } from 'lodash-decorators';
-import { decorate } from 'core-decorators';
 import memoizeOne from 'memoize-one';
-import clsx from 'clsx';
+import React from 'react';
 import toast from 'react-hot-toast';
+import { connect } from 'react-redux';
 
-import {
-    CELL_TYPE,
-    IDataDoc,
-    IDataCell,
-    DataCellUpdateFields,
-    IDataCellMeta,
-} from 'const/datadoc';
-import { ISearchOptions, ISearchResult } from 'const/searchAndReplace';
-import history from 'lib/router-history';
-import { sendConfirm, setBrowserTitle } from 'lib/querybookUI';
-import { scrollToCell, getShareUrl } from 'lib/data-doc/data-doc-utils';
-import { sanitizeUrlTitle, copy } from 'lib/utils';
-import { getQueryString } from 'lib/utils/query-string';
-import { matchKeyMap, KeyMap } from 'lib/utils/keyboard';
-import {
-    deserializeCopyCommand,
-    serializeCopyCommand,
-} from 'lib/data-doc/copy';
-import { formatError, isAxiosError } from 'lib/utils/error';
-import { searchDataDocCells, replaceDataDoc } from 'lib/data-doc/search';
-
-import {
-    closeDataDoc,
-    openDataDoc,
-} from 'redux/dataDocWebsocket/dataDocWebsocket';
-import * as dataDocActions from 'redux/dataDoc/action';
-import { currentEnvironmentSelector } from 'redux/environment/selector';
-import * as dataDocSelectors from 'redux/dataDoc/selector';
-import { myUserInfoSelector } from 'redux/user/selector';
-import { IStoreState, Dispatch } from 'redux/store/types';
-import { IDataDocSavePromise } from 'redux/dataDoc/types';
-
-import { IDataDocContextType, DataDocContext } from 'context/DataDoc';
+import { DataDocCell } from 'components/DataDocCell/DataDocCell';
 import { DataDocLeftSidebar } from 'components/DataDocLeftSidebar/DataDocLeftSidebar';
 import { DataDocRightSidebar } from 'components/DataDocRightSidebar/DataDocRightSidebar';
-import { DataDocUIGuide } from 'components/UIGuide/DataDocUIGuide';
-import { DataDocCell } from 'components/DataDocCell/DataDocCell';
+import { DataDocTemplateCell } from 'components/DataDocTemplateButton/DataDocTemplateCell';
 import {
     ISearchAndReplaceHandles,
     SearchAndReplace,
 } from 'components/SearchAndReplace/SearchAndReplace';
-
-import { Message } from 'ui/Message/Message';
+import { DataDocUIGuide } from 'components/UIGuide/DataDocUIGuide';
+import {
+    CELL_TYPE,
+    DataCellUpdateFields,
+    IDataCell,
+    IDataCellMeta,
+    IDataDoc,
+} from 'const/datadoc';
+import { ISearchOptions, ISearchResult } from 'const/searchAndReplace';
+import { DataDocContext, IDataDocContextType } from 'context/DataDoc';
+import {
+    deserializeCopyCommand,
+    serializeCopyCommand,
+} from 'lib/data-doc/copy';
+import { getShareUrl, scrollToCell } from 'lib/data-doc/data-doc-utils';
+import { replaceDataDoc, searchDataDocCells } from 'lib/data-doc/search';
+import { sendConfirm, setBrowserTitle } from 'lib/querybookUI';
+import history from 'lib/router-history';
+import { copy, sanitizeUrlTitle } from 'lib/utils';
+import { formatError, isAxiosError } from 'lib/utils/error';
+import { KeyMap, matchKeyMap } from 'lib/utils/keyboard';
+import { getQueryString } from 'lib/utils/query-string';
+import * as dataDocActions from 'redux/dataDoc/action';
+import * as dataDocSelectors from 'redux/dataDoc/selector';
+import { IDataDocSavePromise } from 'redux/dataDoc/types';
+import {
+    closeDataDoc,
+    openDataDoc,
+} from 'redux/dataDocWebsocket/dataDocWebsocket';
+import { currentEnvironmentSelector } from 'redux/environment/selector';
+import { Dispatch, IStoreState } from 'redux/store/types';
+import { myUserInfoSelector } from 'redux/user/selector';
 import { Loading } from 'ui/Loading/Loading';
+import { Message } from 'ui/Message/Message';
 
-import { DataDocHeader } from './DataDocHeader';
 import { DataDocCellControl } from './DataDocCellControl';
-import { DataDocError } from './DataDocError';
 import { DataDocContentContainer } from './DataDocContentContainer';
+import { DataDocError } from './DataDocError';
+import { DataDocHeader } from './DataDocHeader';
 import { DataDocLoading } from './DataDocLoading';
 
 import './DataDoc.scss';
-import { DataDocTemplateCell } from 'components/DataDocTemplateButton/DataDocTemplateCell';
 
 interface IOwnProps {
     docId: number;

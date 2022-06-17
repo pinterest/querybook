@@ -1,16 +1,15 @@
 import React from 'react';
-import { RouteComponentProps } from 'react-router-dom';
 import { useDispatch } from 'react-redux';
+import { RouteComponentProps } from 'react-router-dom';
 
+import { EnvironmentModalSwitchRouter } from 'components/EnvironmentAppRouter/EnvironmentModalSwitchRouter';
+import { EnvironmentAppSidebar } from 'components/EnvironmentAppSidebar/EnvironmentAppSidebar';
+import { rehydrateAdhocQueryForEnvironment } from 'redux/adhocQuery/action';
+import { fetchQueryMetastore } from 'redux/dataSources/action';
 import { IEnvironment } from 'redux/environment/types';
 import { loadQueryEngine } from 'redux/queryEngine/action';
-import { fetchQueryMetastore } from 'redux/dataSources/action';
-import { rehydrateAdhocQueryForEnvironment } from 'redux/adhocQuery/action';
-
-import { Loading } from 'ui/Loading/Loading';
-import { EnvironmentAppSidebar } from 'components/EnvironmentAppSidebar/EnvironmentAppSidebar';
-import { EnvironmentModalSwitchRouter } from 'components/EnvironmentAppRouter/EnvironmentModalSwitchRouter';
 import { FullHeight } from 'ui/FullHeight/FullHeight';
+import { Loading } from 'ui/Loading/Loading';
 
 import './EnvironmentAppRouter.scss';
 

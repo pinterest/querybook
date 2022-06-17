@@ -1,9 +1,9 @@
-import React from 'react';
-// eslint-disable-next-line import/no-extraneous-dependencies
 import centered from '@storybook/addon-centered/react';
+import React from 'react';
 
-import { StatusIcon, IStatusIconProps } from './StatusIcon';
 import { Status } from 'const/queryStatus';
+
+import { IStatusIconProps, StatusIcon } from './StatusIcon';
 
 export const _StatusIcon = (args: IStatusIconProps) => (
     <div className="flex-column">

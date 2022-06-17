@@ -1,6 +1,7 @@
 import React from 'react';
-import { findSearchEntities } from 'lib/data-doc/search';
+
 import { ISearchOptions } from 'const/searchAndReplace';
+import { findSearchEntities } from 'lib/data-doc/search';
 
 export function makeSearchHighlightDecorator(
     searchString: string,

@@ -1,29 +1,29 @@
 import { debounce } from 'lodash';
 import React, { useCallback, useEffect, useMemo } from 'react';
 import ReactFlow, {
-    Edge,
-    ReactFlowProvider,
-    useReactFlow,
-    ConnectionLineType,
-    Controls,
-    MiniMap,
     addEdge,
+    applyEdgeChanges,
+    applyNodeChanges,
     Background,
     Connection,
-    applyNodeChanges,
-    applyEdgeChanges,
-    NodeChange,
+    ConnectionLineType,
+    Controls,
+    Edge,
     EdgeChange,
+    MiniMap,
     Node,
+    NodeChange,
     ReactFlowInstance,
+    ReactFlowProvider,
+    useReactFlow,
 } from 'react-flow-renderer';
 
-import { getLayoutedElements, LayoutDirection } from './helpers';
-
 import { Button } from 'ui/Button/Button';
+import { Icon } from 'ui/Icon/Icon';
 import { KeyboardKey } from 'ui/KeyboardKey/KeyboardKey';
 import { AccentText } from 'ui/StyledText/StyledText';
-import { Icon } from 'ui/Icon/Icon';
+
+import { getLayoutedElements, LayoutDirection } from './helpers';
 
 import './FlowGraph.scss';
 

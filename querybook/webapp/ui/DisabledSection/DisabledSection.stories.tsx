@@ -1,9 +1,9 @@
-import React from 'react';
-// eslint-disable-next-line import/no-extraneous-dependencies
 import centered from '@storybook/addon-centered/react';
+import React from 'react';
+
+import { DebouncedInput } from 'ui/DebouncedInput/DebouncedInput';
 
 import { DisabledSection } from './DisabledSection';
-import { DebouncedInput } from 'ui/DebouncedInput/DebouncedInput';
 
 export default {
     title: 'Stateless/DisabledSection',

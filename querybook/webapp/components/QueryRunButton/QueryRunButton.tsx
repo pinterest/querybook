@@ -1,21 +1,20 @@
 import clsx from 'clsx';
 import * as React from 'react';
-
 import { useSelector } from 'react-redux';
-import { queryEngineStatusByIdEnvSelector } from 'redux/queryEngine/selector';
+
 import { IQueryEngine, QueryEngineStatus } from 'const/queryEngine';
 import { queryEngineStatusToIconStatus } from 'const/queryStatusIcon';
 import { TooltipDirection } from 'const/tooltip';
 import { getShortcutSymbols, KeyMap } from 'lib/utils/keyboard';
-
+import { queryEngineStatusByIdEnvSelector } from 'redux/queryEngine/selector';
 import { AsyncButton, IAsyncButtonHandles } from 'ui/AsyncButton/AsyncButton';
 import { Dropdown } from 'ui/Dropdown/Dropdown';
+import { Icon } from 'ui/Icon/Icon';
 import { ListMenu } from 'ui/Menu/ListMenu';
 import { StatusIcon } from 'ui/StatusIcon/StatusIcon';
+import { Tag } from 'ui/Tag/Tag';
 
 import './QueryRunButton.scss';
-import { Icon } from 'ui/Icon/Icon';
-import { Tag } from 'ui/Tag/Tag';
 
 const EXECUTE_QUERY_SHORTCUT = getShortcutSymbols(
     KeyMap.queryEditor.runQuery.key

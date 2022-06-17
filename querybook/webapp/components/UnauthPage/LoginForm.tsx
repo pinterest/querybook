@@ -1,11 +1,11 @@
+import { Form, Formik } from 'formik';
 import React from 'react';
-import { Formik, Form } from 'formik';
 
+import { UserResource } from 'resource/user';
 import { Button } from 'ui/Button/Button';
-import { Message } from 'ui/Message/Message';
 import { FormWrapper } from 'ui/Form/FormWrapper';
 import { SimpleField } from 'ui/FormikField/SimpleField';
-import { UserResource } from 'resource/user';
+import { Message } from 'ui/Message/Message';
 
 export interface ILoginFormProps {
     onSuccessLogin: () => any;

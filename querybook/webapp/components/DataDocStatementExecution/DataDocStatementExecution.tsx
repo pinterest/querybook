@@ -2,25 +2,24 @@ import React, { useCallback, useEffect, useMemo, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 
 import {
-    StatementExecutionStatus,
     IStatementExecution,
+    StatementExecutionStatus,
 } from 'const/queryExecution';
 import { StatementExecutionDefaultResultSize } from 'const/queryResultLimit';
 import { useToggleState } from 'hooks/useToggleState';
+import { sanitizeAndExtraMarkdown } from 'lib/markdown';
 import { fetchResult } from 'redux/queryExecutions/action';
+import { IStoreState } from 'redux/store/types';
+import { Icon } from 'ui/Icon/Icon';
+import { Modal } from 'ui/Modal/Modal';
+import { ProgressBar } from 'ui/ProgressBar/ProgressBar';
+import { AccentText } from 'ui/StyledText/StyledText';
 
 import { StatementLogWrapper } from './StatementLog';
 import { StatementMeta } from './StatementMeta';
 import { StatementResult } from './StatementResult';
 
-import { Modal } from 'ui/Modal/Modal';
-import { ProgressBar } from 'ui/ProgressBar/ProgressBar';
-
 import './DataDocStatementExecution.scss';
-import { sanitizeAndExtraMarkdown } from 'lib/markdown';
-import { Icon } from 'ui/Icon/Icon';
-import { AccentText } from 'ui/StyledText/StyledText';
-import { IStoreState } from 'redux/store/types';
 
 interface IProps {
     statementExecution: IStatementExecution;
@@ -84,9 +83,8 @@ function useStatementMeta(
         if (!metaInfo) {
             return [null, false];
         }
-        const [processedMeta, metaProperties] = sanitizeAndExtraMarkdown(
-            metaInfo
-        );
+        const [processedMeta, metaProperties] =
+            sanitizeAndExtraMarkdown(metaInfo);
         return [processedMeta, Boolean(metaProperties['force_show'])];
     }, [metaInfo]);
 

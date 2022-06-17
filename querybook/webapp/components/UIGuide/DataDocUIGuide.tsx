@@ -1,9 +1,8 @@
 import React from 'react';
-import Tour, { ReactourStep } from 'reactour';
 import { useLocation } from 'react-router-dom';
+import Tour, { ReactourStep } from 'reactour';
 
 import { getQueryString } from 'lib/utils/query-string';
-
 import { Button } from 'ui/Button/Button';
 import { Title } from 'ui/Title/Title';
 

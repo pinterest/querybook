@@ -1,41 +1,39 @@
-import React from 'react';
-import moment from 'moment';
 import { clone } from 'lodash';
+import moment from 'moment';
+import React from 'react';
+import toast from 'react-hot-toast';
 import { useParams } from 'react-router-dom';
 
-import { sendConfirm } from 'lib/querybookUI';
-
-import history from 'lib/router-history';
-import { generateFormattedDate } from 'lib/utils/datetime';
-import { titleize } from 'lib/utils';
-import NOOP from 'lib/utils/noop';
-import { useResource } from 'hooks/useResource';
-
 import { AdminAuditLogButton } from 'components/AdminAuditLog/AdminAuditLogButton';
-
+import { IAdminMetastore, IAdminQueryEngine } from 'const/admin';
+import { QueryEngineStatus } from 'const/queryEngine';
+import { useResource } from 'hooks/useResource';
+import { sendConfirm } from 'lib/querybookUI';
+import history from 'lib/router-history';
+import { titleize } from 'lib/utils';
+import { generateFormattedDate } from 'lib/utils/datetime';
+import NOOP from 'lib/utils/noop';
+import { AdminQueryEngineResource } from 'resource/admin/queryEngine';
+import { AsyncButton } from 'ui/AsyncButton/AsyncButton';
 import { Card } from 'ui/Card/Card';
-import { Loading } from 'ui/Loading/Loading';
+import { Content } from 'ui/Content/Content';
+import { SimpleField } from 'ui/FormikField/SimpleField';
 import { GenericCRUD } from 'ui/GenericCRUD/GenericCRUD';
+import { Level } from 'ui/Level/Level';
+import { Link } from 'ui/Link/Link';
+import { Loader } from 'ui/Loader/Loader';
+import { Loading } from 'ui/Loading/Loading';
 import {
+    getDefaultFormValue,
     SmartForm,
     TemplatedForm,
-    validateForm,
     updateValue,
-    getDefaultFormValue,
+    validateForm,
 } from 'ui/SmartForm/SmartForm';
-import { Loader } from 'ui/Loader/Loader';
-import { SimpleField } from 'ui/FormikField/SimpleField';
-import { Level } from 'ui/Level/Level';
 
 import { AdminDeletedList } from './AdminDeletedList';
-import { Content } from 'ui/Content/Content';
-import { Link } from 'ui/Link/Link';
-import { IAdminMetastore, IAdminQueryEngine } from 'const/admin';
-import { AdminQueryEngineResource } from 'resource/admin/queryEngine';
+
 import './AdminQueryEngine.scss';
-import { AsyncButton } from 'ui/AsyncButton/AsyncButton';
-import toast from 'react-hot-toast';
-import { QueryEngineStatus } from 'const/queryEngine';
 
 interface IProps {
     queryEngines: IAdminQueryEngine[];

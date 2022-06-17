@@ -1,27 +1,24 @@
 import { decorate } from 'core-decorators';
 import { bind } from 'lodash-decorators';
 import memoizeOne from 'memoize-one';
-
 import React from 'react';
 
-import { generateFormattedDate } from 'lib/utils/datetime';
+import { BoundQueryEditor } from 'components/QueryEditor/BoundQueryEditor';
+import { UserName } from 'components/UserBadge/UserName';
+import { IQueryEngine } from 'const/queryEngine';
 import {
     getTemplatedQueryVariables,
     renderTemplatedQuery,
 } from 'lib/templated-query';
-
-import { BoundQueryEditor } from 'components/QueryEditor/BoundQueryEditor';
+import { generateFormattedDate } from 'lib/utils/datetime';
 import { IQuerySnippet } from 'redux/querySnippets/types';
-import { IQueryEngine } from 'const/queryEngine';
-
 import { Button } from 'ui/Button/Button';
+import { Card } from 'ui/Card/Card';
 import { CopyButton } from 'ui/CopyButton/CopyButton';
 import { DebouncedInput } from 'ui/DebouncedInput/DebouncedInput';
 import { FormField, FormFieldInputSectionRowGroup } from 'ui/Form/FormField';
 import { Tag, TagGroup } from 'ui/Tag/Tag';
 import { Title } from 'ui/Title/Title';
-import { UserName } from 'components/UserBadge/UserName';
-import { Card } from 'ui/Card/Card';
 
 import './QuerySnippetView.scss';
 

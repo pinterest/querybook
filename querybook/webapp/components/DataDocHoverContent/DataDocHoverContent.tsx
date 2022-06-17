@@ -1,11 +1,11 @@
 import React from 'react';
 
 import { UserBadge } from 'components/UserBadge/UserBadge';
-import { generateFormattedDate } from 'lib/utils/datetime';
-import { Title } from 'ui/Title/Title';
 import { useDataDoc } from 'hooks/redux/useDataDoc';
+import { generateFormattedDate } from 'lib/utils/datetime';
 import { Loader } from 'ui/Loader/Loader';
 import { UntitledText } from 'ui/StyledText/StyledText';
+import { Title } from 'ui/Title/Title';
 
 export const DataDocHoverContent: React.FC<{
     docId: number;

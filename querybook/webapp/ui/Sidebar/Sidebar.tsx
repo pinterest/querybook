@@ -1,5 +1,5 @@
-import React from 'react';
 import Resizable, { ResizableProps } from 're-resizable';
+import React from 'react';
 import styled from 'styled-components';
 
 import { enableResizable } from 'lib/utils';

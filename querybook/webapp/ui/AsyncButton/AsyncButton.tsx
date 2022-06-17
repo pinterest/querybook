@@ -1,8 +1,4 @@
-import {
-    ButtonProps,
-    ButtonType,
-    getButtonComponentByType,
-} from '../Button/Button';
+import clsx from 'clsx';
 import React, {
     useCallback,
     useEffect,
@@ -10,7 +6,12 @@ import React, {
     useRef,
     useState,
 } from 'react';
-import clsx from 'clsx';
+
+import {
+    ButtonProps,
+    ButtonType,
+    getButtonComponentByType,
+} from '../Button/Button';
 
 export interface IAsyncButtonProps extends ButtonProps {
     onClick?: (...args: any[]) => Promise<unknown>;

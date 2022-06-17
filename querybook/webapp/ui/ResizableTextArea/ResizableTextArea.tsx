@@ -1,7 +1,8 @@
 import clsx from 'clsx';
 import { throttle } from 'lodash';
-import React, { useRef, useEffect, useCallback } from 'react';
+import React, { useCallback, useEffect, useRef } from 'react';
 import styled from 'styled-components';
+
 import { useResizeObserver } from 'hooks/useResizeObserver';
 
 export interface IResizableTextareaProps

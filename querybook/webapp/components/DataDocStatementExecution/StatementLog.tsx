@@ -1,15 +1,15 @@
 import clsx from 'clsx';
 import { debounce } from 'lodash';
 import React from 'react';
-import { useSelector, useDispatch } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
 
-import { matchKeyMap, KeyMap } from 'lib/utils/keyboard';
 import { IStatementLog } from 'const/queryExecution';
+import { KeyMap, matchKeyMap } from 'lib/utils/keyboard';
 import { fetchLog } from 'redux/queryExecutions/action';
-import { IStoreState, Dispatch } from 'redux/store/types';
-import { Message } from 'ui/Message/Message';
-import { Loader } from 'ui/Loader/Loader';
+import { Dispatch, IStoreState } from 'redux/store/types';
 import { SoftButton } from 'ui/Button/Button';
+import { Loader } from 'ui/Loader/Loader';
+import { Message } from 'ui/Message/Message';
 
 import './StatementLog.scss';
 
@@ -30,9 +30,10 @@ export const StatementLog: React.FunctionComponent<IStatementLogProps> = ({
         failed,
         error,
     } = statementLog || ({} as any);
-    const logText: string = React.useMemo(() => (data ?? []).join('\n'), [
-        data,
-    ]);
+    const logText: string = React.useMemo(
+        () => (data ?? []).join('\n'),
+        [data]
+    );
 
     React.useEffect(() => {
         // Auto scroll logs to bottom when getting new logs

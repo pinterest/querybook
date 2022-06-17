@@ -1,15 +1,14 @@
 import React, { useCallback, useEffect, useState } from 'react';
-import { useSelector, useDispatch } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
 
-import { getAppName } from 'lib/utils/global';
-import { IStoreState, Dispatch } from 'redux/store/types';
-import { fetchTopQueryUsersIfNeeded } from 'redux/dataSources/action';
-
-import { Loading } from 'ui/Loading/Loading';
-import { Button } from 'ui/Button/Button';
 import { UserBadge } from 'components/UserBadge/UserBadge';
-import { Tag } from 'ui/Tag/Tag';
+import { getAppName } from 'lib/utils/global';
+import { fetchTopQueryUsersIfNeeded } from 'redux/dataSources/action';
+import { Dispatch, IStoreState } from 'redux/store/types';
+import { Button } from 'ui/Button/Button';
+import { Loading } from 'ui/Loading/Loading';
 import { EmptyText } from 'ui/StyledText/StyledText';
+import { Tag } from 'ui/Tag/Tag';
 
 export function useLoadQueryUsers(tableId: number) {
     const [loading, setLoading] = useState(false);

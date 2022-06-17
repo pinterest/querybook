@@ -1,64 +1,60 @@
-import * as React from 'react';
-import { useSelector } from 'react-redux';
-
-import { Field, withFormik, FormikProps } from 'formik';
+import { Field, FormikProps, withFormik } from 'formik';
 import produce from 'immer';
 import { isEmpty, range } from 'lodash';
+import * as React from 'react';
+import { useSelector } from 'react-redux';
 import Select from 'react-select';
-
-import { IStoreState } from 'redux/store/types';
-import { IDataChartCellMeta } from 'const/datadoc';
-import {
-    IChartFormValues,
-    ChartDataAggType,
-    formTabs,
-    tableTabs,
-    sourceTypes,
-    chartTypes,
-    aggTypes,
-    IChartAxisMeta,
-    ChartScaleType,
-    ChartValueDisplayType,
-    ChartScaleOptions,
-    chartTypeToAllowedAxisType,
-    ChartSize,
-} from 'const/dataDocChart';
-import { ColorPalette } from 'const/chartColors';
-import { StatementExecutionResultSizes } from 'const/queryResultLimit';
-
-import { defaultReactSelectStyles } from 'lib/utils/react-select';
-import { mapMetaToFormVals } from 'lib/chart/chart-meta-processing';
-import { transformData } from 'lib/chart/chart-data-transformation';
-import { formatNumber } from 'lib/utils/number';
-import { useChartSource } from 'hooks/chart/useChartSource';
 
 import { QueryExecutionPicker } from 'components/ExecutionPicker/QueryExecutionPicker';
 import { StatementExecutionPicker } from 'components/ExecutionPicker/StatementExecutionPicker';
 import { StatementResultTable } from 'components/StatementResultTable/StatementResultTable';
-import { queryCellSelector } from 'redux/dataDoc/selector';
-
-import { SoftButton } from 'ui/Button/Button';
-import { IconButton } from 'ui/Button/IconButton';
-import { FormField, FormSectionHeader } from 'ui/Form/FormField';
-import { Tabs } from 'ui/Tabs/Tabs';
-
-import { Level, LevelItem } from 'ui/Level/Level';
+import { ColorPalette } from 'const/chartColors';
+import { IDataChartCellMeta } from 'const/datadoc';
 import {
-    SimpleReactSelect,
-    ISelectOption,
-} from 'ui/SimpleReactSelect/SimpleReactSelect';
+    aggTypes,
+    ChartDataAggType,
+    ChartScaleOptions,
+    ChartScaleType,
+    ChartSize,
+    chartTypes,
+    chartTypeToAllowedAxisType,
+    ChartValueDisplayType,
+    formTabs,
+    IChartAxisMeta,
+    IChartFormValues,
+    sourceTypes,
+    tableTabs,
+} from 'const/dataDocChart';
+import { StatementExecutionResultSizes } from 'const/queryResultLimit';
+import { useChartSource } from 'hooks/chart/useChartSource';
+import { transformData } from 'lib/chart/chart-data-transformation';
+import { mapMetaToFormVals } from 'lib/chart/chart-meta-processing';
 import {
     getAutoDetectedScaleType,
     getDefaultScaleType,
 } from 'lib/chart/chart-utils';
+import { formatNumber } from 'lib/utils/number';
+import { defaultReactSelectStyles } from 'lib/utils/react-select';
+import { queryCellSelector } from 'redux/dataDoc/selector';
+import { IStoreState } from 'redux/store/types';
+import { SoftButton } from 'ui/Button/Button';
+import { IconButton } from 'ui/Button/IconButton';
+import { DisabledSection } from 'ui/DisabledSection/DisabledSection';
+import { FormField, FormSectionHeader } from 'ui/Form/FormField';
+import { FormWrapper } from 'ui/Form/FormWrapper';
 import { NumberField } from 'ui/FormikField/NumberField';
 import { ReactSelectField } from 'ui/FormikField/ReactSelectField';
-import { FormWrapper } from 'ui/Form/FormWrapper';
 import { SimpleField } from 'ui/FormikField/SimpleField';
-import { DisabledSection } from 'ui/DisabledSection/DisabledSection';
+import { Level, LevelItem } from 'ui/Level/Level';
+import {
+    ISelectOption,
+    SimpleReactSelect,
+} from 'ui/SimpleReactSelect/SimpleReactSelect';
+import { Tabs } from 'ui/Tabs/Tabs';
 
 import { DataDocChart } from './DataDocChart';
 import { DataDocChartCellTable } from './DataDocChartCellTable';
+
 import './DataDocChartComposer.scss';
 
 interface IProps {
@@ -96,23 +92,19 @@ const DataDocChartComposerComponent: React.FunctionComponent<
     const [displayExecutionId, setDisplayExecutionId] = React.useState(
         values.executionId
     );
-    const [displayStatementId, setDisplayStatementId] = React.useState(
-        undefined
-    );
+    const [displayStatementId, setDisplayStatementId] =
+        React.useState(undefined);
 
-    const {
-        statementResultData,
-        queryExecutions,
-        statementExecutions,
-    } = useChartSource(
-        values.cellId,
-        displayExecutionId,
-        displayStatementId,
-        setFieldValue.bind(null, 'cellId'),
-        setFieldValue.bind(null, 'executionId'),
-        setDisplayStatementId,
-        values.limit
-    );
+    const { statementResultData, queryExecutions, statementExecutions } =
+        useChartSource(
+            values.cellId,
+            displayExecutionId,
+            displayStatementId,
+            setFieldValue.bind(null, 'cellId'),
+            setFieldValue.bind(null, 'executionId'),
+            setDisplayStatementId,
+            values.limit
+        );
 
     const chartData = React.useMemo(
         () =>
@@ -276,10 +268,9 @@ const DataDocChartComposerComponent: React.FunctionComponent<
             const options = optionIdxs.map((i) => ({
                 value: i,
                 label: valsArray[i],
-                color:
-                    ColorPalette[
-                        values.coloredSeries[i] ?? i % ColorPalette.length
-                    ].color,
+                color: ColorPalette[
+                    values.coloredSeries[i] ?? i % ColorPalette.length
+                ].color,
             }));
             return options;
         },

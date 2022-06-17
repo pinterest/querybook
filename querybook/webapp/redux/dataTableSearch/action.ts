@@ -1,23 +1,22 @@
-import { SearchTableResource, SearchSchemaResource } from 'resource/search';
-import {
-    ThunkResult,
-    IDataTableSearchResultResetAction,
-    IDataTableSearchResultClearAction,
-    ITableSearchResult,
-    IDataTableSearchState,
-    ITableSearchFilters,
-    ISchemaTableSortChangedAction,
-    ISchemasSortChangedAction,
-} from './types';
-
-import { queryMetastoresSelector } from 'redux/dataSources/selector';
-
 import {
     IDataSchema,
     SchemaSortKey,
     SchemaTableSortKey,
 } from 'const/metastore';
+import { queryMetastoresSelector } from 'redux/dataSources/selector';
+import { SearchSchemaResource, SearchTableResource } from 'resource/search';
+
 import { defaultSortSchemaBy, defaultSortSchemaTableBy } from './const';
+import {
+    IDataTableSearchResultClearAction,
+    IDataTableSearchResultResetAction,
+    IDataTableSearchState,
+    ISchemasSortChangedAction,
+    ISchemaTableSortChangedAction,
+    ITableSearchFilters,
+    ITableSearchResult,
+    ThunkResult,
+} from './types';
 
 const BATCH_LOAD_SIZE = 100;
 
@@ -238,9 +237,8 @@ export function getMoreDataTable(): ThunkResult<Promise<ITableSearchResult[]>> {
                 offset: resultsCount,
             };
 
-            const searchRequest = SearchTableResource.searchConcise(
-                searchParams
-            );
+            const searchRequest =
+                SearchTableResource.searchConcise(searchParams);
 
             dispatch({
                 type: '@@dataTableSearch/DATA_TABLE_SEARCH_STARTED',

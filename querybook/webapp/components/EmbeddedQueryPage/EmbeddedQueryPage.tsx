@@ -1,12 +1,13 @@
 import React from 'react';
-import { useSelector, useDispatch } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
 
 import QueryComposer from 'components/QueryComposer/QueryComposer';
 import { IAdhocQuery } from 'const/adhocQuery';
-import { IStoreState, Dispatch } from 'redux/store/types';
 import { receiveAdhocQuery } from 'redux/adhocQuery/action';
-import { FullHeight } from 'ui/FullHeight/FullHeight';
+import { Dispatch, IStoreState } from 'redux/store/types';
 import { Button } from 'ui/Button/Button';
+import { FullHeight } from 'ui/FullHeight/FullHeight';
+
 import './EmbeddedQueryPage.scss';
 
 const EmbeddedQueryPage: React.FunctionComponent = () => {

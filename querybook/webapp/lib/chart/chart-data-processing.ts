@@ -1,13 +1,12 @@
 import {
-    ChartDataset,
     ChartData,
+    ChartDataset,
     FillerControllerDatasetOptions,
 } from 'chart.js';
 
+import { ColorPalette, fillColor } from 'const/chartColors';
 import { IDataChartCellMeta } from 'const/datadoc';
 import { ChartScaleType } from 'const/dataDocChart';
-
-import { ColorPalette, fillColor } from 'const/chartColors';
 
 function processDataPoint(val: any, scale: ChartScaleType) {
     // val type validation

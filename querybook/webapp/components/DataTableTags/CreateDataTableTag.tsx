@@ -2,11 +2,11 @@ import * as React from 'react';
 import { useDispatch } from 'react-redux';
 
 import { ITag } from 'const/tag';
-import { createTableTag } from 'redux/tag/action';
 import { Dispatch } from 'redux/store/types';
+import { createTableTag } from 'redux/tag/action';
+import { IconButton } from 'ui/Button/IconButton';
 
 import { TableTagSelect } from './TableTagSelect';
-import { IconButton } from 'ui/Button/IconButton';
 
 import './CreateDataTableTag.scss';
 

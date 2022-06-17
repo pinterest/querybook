@@ -1,5 +1,6 @@
-import { INotificationState, NotificationServiceAction } from './types';
 import { produce } from 'immer';
+
+import { INotificationState, NotificationServiceAction } from './types';
 
 const initialState: INotificationState = {
     notificationServices: [],

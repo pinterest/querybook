@@ -1,9 +1,10 @@
-import React, { useState } from 'react';
 import clsx from 'clsx';
+import React, { useState } from 'react';
+
+import { useEvent } from 'hooks/useEvent';
 import { Overlay, overlayRoot } from 'ui/Overlay/Overlay';
 
 import './Popover.scss';
-import { useEvent } from 'hooks/useEvent';
 
 export type PopoverDirection = 'left' | 'right' | 'top' | 'bottom';
 export type PopoverLayout =
@@ -112,9 +113,8 @@ export const PopoverContainer = React.forwardRef<
         );
 
         // Popover position calculation code
-        const [wrapperStyle, setWrapperStyle] = React.useState(
-            initialWrapperStyle
-        );
+        const [wrapperStyle, setWrapperStyle] =
+            React.useState(initialWrapperStyle);
         const [arrowStyle, setArrowStyle] = React.useState(initialArrowStyle);
         React.useEffect(() => {
             const newArrowStyle = { ...initialArrowStyle };

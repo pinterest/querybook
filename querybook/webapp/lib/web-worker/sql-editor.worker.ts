@@ -1,11 +1,11 @@
+import { getContextFreeLinterWarnings } from 'lib/sql-helper/sql-context-free-linter';
 import {
-    ICodeAnalysis,
-    tokenize,
-    simpleParse,
     findTableReferenceAndAlias,
     getEditorLines,
+    ICodeAnalysis,
+    simpleParse,
+    tokenize,
 } from 'lib/sql-helper/sql-lexer';
-import { getContextFreeLinterWarnings } from 'lib/sql-helper/sql-context-free-linter';
 
 const context: Worker = self as any;
 context.addEventListener(
@@ -22,11 +22,12 @@ context.addEventListener(
         if (mode === 'autocomplete') {
             codeAnalysis.editorLines = getEditorLines(statements);
         } else if (mode === 'lint') {
-            codeAnalysis.contextFreeLinterWarnings = getContextFreeLinterWarnings(
-                statements,
-                language,
-                codeAnalysis
-            );
+            codeAnalysis.contextFreeLinterWarnings =
+                getContextFreeLinterWarnings(
+                    statements,
+                    language,
+                    codeAnalysis
+                );
         }
 
         context.postMessage(

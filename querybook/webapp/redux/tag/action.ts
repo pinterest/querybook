@@ -1,5 +1,6 @@
 import { ITag } from 'const/tag';
 import { TableTagResource } from 'resource/table';
+
 import { ThunkResult } from './types';
 
 function fetchTableTagsFromTable(

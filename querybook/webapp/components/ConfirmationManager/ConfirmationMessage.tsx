@@ -1,11 +1,12 @@
-import React, { useCallback, useRef, useEffect } from 'react';
+import React, { useCallback, useEffect, useRef } from 'react';
 
 import { useEvent } from 'hooks/useEvent';
-import { matchKeyMap, KeyMap } from 'lib/utils/keyboard';
+import { KeyMap, matchKeyMap } from 'lib/utils/keyboard';
 import { Button } from 'ui/Button/Button';
-import { Modal } from 'ui/Modal/Modal';
 import { ButtonColorType } from 'ui/Button/ButtonTheme';
 import type { AllLucideIconNames } from 'ui/Icon/LucideIcons';
+import { Modal } from 'ui/Modal/Modal';
+
 import './ConfirmationMessage.scss';
 
 export interface IConfirmationMessageProps {
@@ -32,7 +33,9 @@ export interface IConfirmationMessageProps {
     cancelText?: string;
 }
 
-export const ConfirmationMessage: React.FunctionComponent<IConfirmationMessageProps> = ({
+export const ConfirmationMessage: React.FunctionComponent<
+    IConfirmationMessageProps
+> = ({
     header = 'Are you sure?',
     message = '',
     onConfirm,

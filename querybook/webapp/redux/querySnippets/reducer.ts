@@ -1,4 +1,5 @@
 import { produce } from 'immer';
+
 import { IQuerySnippetsState, QuerySnippetsAction } from './types';
 
 const initialState: IQuerySnippetsState = {

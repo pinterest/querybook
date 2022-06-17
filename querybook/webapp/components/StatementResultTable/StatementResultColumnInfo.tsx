@@ -2,15 +2,15 @@ import React, { useCallback, useMemo } from 'react';
 import styled from 'styled-components';
 
 import { columnStatsAnalyzers } from 'lib/query-result/analyzer';
-import { Title } from 'ui/Title/Title';
-import { IColumnTransformer } from 'lib/query-result/types';
 import { getTransformersForType } from 'lib/query-result/transformer';
-import { Checkbox } from 'ui/Checkbox/Checkbox';
-import { Tabs } from 'ui/Tabs/Tabs';
+import { IColumnTransformer } from 'lib/query-result/types';
 import { SoftButton } from 'ui/Button/Button';
+import { Checkbox } from 'ui/Checkbox/Checkbox';
 import { DebouncedInput } from 'ui/DebouncedInput/DebouncedInput';
-import { Select, makeSelectOptions } from 'ui/Select/Select';
 import type { AllLucideIconNames } from 'ui/Icon/LucideIcons';
+import { makeSelectOptions, Select } from 'ui/Select/Select';
+import { Tabs } from 'ui/Tabs/Tabs';
+import { Title } from 'ui/Title/Title';
 
 import { IFilterCondition, tableColumnFiltersByType } from './useFilterCell';
 

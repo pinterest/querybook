@@ -1,15 +1,16 @@
 import React, { useState } from 'react';
 import styled from 'styled-components';
 
+import { Box } from 'ui/Box/Box';
 import { Center } from 'ui/Center/Center';
+import { Link } from 'ui/Link/Link';
+import { Message } from 'ui/Message/Message';
+import { QuerybookLogo } from 'ui/QuerybookLogo/QuerybookLogo';
 import { Tabs } from 'ui/Tabs/Tabs';
 
 import { LoginForm } from './LoginForm';
 import { SignupForm } from './SignupForm';
-import { Box } from 'ui/Box/Box';
-import { Message } from 'ui/Message/Message';
-import { QuerybookLogo } from 'ui/QuerybookLogo/QuerybookLogo';
-import { Link } from 'ui/Link/Link';
+
 import './UnauthPage.scss';
 
 export interface IUnauthPageProps {

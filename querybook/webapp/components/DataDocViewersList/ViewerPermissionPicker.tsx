@@ -4,10 +4,10 @@ import {
     DataDocPermission,
     IViewerInfo,
 } from 'lib/data-doc/datadoc-permission';
-import { Popover } from 'ui/Popover/Popover';
-import { MenuItem, MenuDivider, Menu } from 'ui/Menu/Menu';
 import { sendConfirm } from 'lib/querybookUI';
 import { Icon } from 'ui/Icon/Icon';
+import { Menu, MenuDivider, MenuItem } from 'ui/Menu/Menu';
+import { Popover } from 'ui/Popover/Popover';
 import { AccentText } from 'ui/StyledText/StyledText';
 
 interface IProp {

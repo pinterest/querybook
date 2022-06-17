@@ -1,4 +1,5 @@
 import { isBoolean, isNumber } from 'lodash';
+
 export const SUPPORTED_TYPES = ['boolean', 'number', 'string'] as const;
 export type TSupportedTypes = typeof SUPPORTED_TYPES[number];
 

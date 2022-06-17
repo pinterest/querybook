@@ -1,7 +1,7 @@
 import clsx from 'clsx';
-import { useEvent } from 'hooks/useEvent';
 import React from 'react';
 
+import { useEvent } from 'hooks/useEvent';
 import { IconButton } from 'ui/Button/IconButton';
 import type { AllLucideIconNames } from 'ui/Icon/LucideIcons';
 import { Popover } from 'ui/Popover/Popover';

@@ -1,9 +1,11 @@
-import { copy } from 'lib/utils';
-import { stopPropagationAndDefault } from 'lib/utils/noop';
 import React, { useCallback, useRef } from 'react';
 import toast from 'react-hot-toast';
+
+import { copy } from 'lib/utils';
+import { stopPropagationAndDefault } from 'lib/utils/noop';
 import { Icon } from 'ui/Icon/Icon';
-import { MenuItem, Menu } from 'ui/Menu/Menu';
+import { Menu, MenuItem } from 'ui/Menu/Menu';
+
 import { ContextMenu, IContextMenuHandles } from './ContextMenu';
 
 interface ICopyContextMenuProps {

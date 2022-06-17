@@ -1,5 +1,6 @@
 import React from 'react';
 import styled from 'styled-components';
+
 import { getAppName } from 'lib/utils/global';
 
 const StyledQuerybookLogo = styled.span`

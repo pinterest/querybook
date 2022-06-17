@@ -1,4 +1,5 @@
 import { escape, isEqual } from 'lodash';
+
 import { PickType } from 'lib/typescript';
 
 // from: https://stackoverflow.com/questions/286141/remove-blank-attributes-from-an-object-in-javascript
@@ -163,9 +164,9 @@ export function arrayGroupByField<
         return {};
     }
     return array.reduce((result, item) => {
-        const identifier: string = (item[
+        const identifier: string = item[
             byField || ('id' as any)
-        ] as any) as string;
+        ] as any as string;
         result[identifier] = item;
         return result;
     }, {});
@@ -225,7 +226,8 @@ export function getScrollParent(node: Element): HTMLElement {
 
 export function linkifyLog(log: string) {
     // https://stackoverflow.com/questions/3809401/what-is-a-good-regular-expression-to-match-a-url
-    const urlRegex = /https?:\/\/(www\.)?[-a-zA-Z0-9@:%._\+~#=]{2,256}(\.[a-z]{2,6})?\b([-a-zA-Z0-9@:%_\+.~#?&\/=]*)/;
+    const urlRegex =
+        /https?:\/\/(www\.)?[-a-zA-Z0-9@:%._\+~#=]{2,256}(\.[a-z]{2,6})?\b([-a-zA-Z0-9@:%_\+.~#?&\/=]*)/;
     const processedParts: string[] = [];
 
     while (true) {

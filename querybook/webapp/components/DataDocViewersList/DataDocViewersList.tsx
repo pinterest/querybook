@@ -3,28 +3,26 @@ import React from 'react';
 import toast from 'react-hot-toast';
 import { useDispatch, useSelector } from 'react-redux';
 
-import {
-    IViewerInfo,
-    permissionToReadWrite,
-    DataDocPermission,
-} from 'lib/data-doc/datadoc-permission';
-import { canCurrentUserEditSelector } from 'redux/dataDoc/selector';
-import { addDataDocAccessRequest } from 'redux/dataDoc/action';
-import { Dispatch, IStoreState } from 'redux/store/types';
-
-import { IDataDoc, IDataDocEditor } from 'const/datadoc';
-import { IAccessRequest } from 'const/accessRequest';
-
 import { AccessRequestButton } from 'components/AccessRequestButton/AccessRequestButton';
 import { DataDocAccessRequestPermissionPicker } from 'components/DataDocAccessRequestPermissionPicker.tsx/DataDocAccessRequestPermissionPicker';
-import { ViewerPermissionPicker } from './ViewerPermissionPicker';
 import { UserBadge } from 'components/UserBadge/UserBadge';
 import { UserSelect } from 'components/UserSelect/UserSelect';
-
+import { IAccessRequest } from 'const/accessRequest';
+import { IDataDoc, IDataDocEditor } from 'const/datadoc';
+import {
+    DataDocPermission,
+    IViewerInfo,
+    permissionToReadWrite,
+} from 'lib/data-doc/datadoc-permission';
+import { addDataDocAccessRequest } from 'redux/dataDoc/action';
+import { canCurrentUserEditSelector } from 'redux/dataDoc/selector';
+import { Dispatch, IStoreState } from 'redux/store/types';
+import { StyledText } from 'ui/StyledText/StyledText';
 import { Tabs } from 'ui/Tabs/Tabs';
 
+import { ViewerPermissionPicker } from './ViewerPermissionPicker';
+
 import './DataDocViewersList.scss';
-import { StyledText } from 'ui/StyledText/StyledText';
 
 interface IDataDocViewersListProps {
     className?: string;
@@ -43,7 +41,9 @@ interface IDataDocViewersListProps {
     rejectDataDocAccessRequest: (uid: number) => any;
 }
 
-export const DataDocViewersList: React.FunctionComponent<IDataDocViewersListProps> = ({
+export const DataDocViewersList: React.FunctionComponent<
+    IDataDocViewersListProps
+> = ({
     viewerInfos,
     dataDoc,
     editorsByUid,
@@ -113,9 +113,8 @@ export const DataDocViewersList: React.FunctionComponent<IDataDocViewersListProp
                             if (permission === DataDocPermission.OWNER) {
                                 updateDataDocOwner(info.uid);
                             } else {
-                                const { read, write } = permissionToReadWrite(
-                                    permission
-                                );
+                                const { read, write } =
+                                    permissionToReadWrite(permission);
                                 if (info.uid in editorsByUid) {
                                     updateDataDocEditors(info.uid, read, write);
                                 } else {

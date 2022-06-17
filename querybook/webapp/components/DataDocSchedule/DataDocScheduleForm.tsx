@@ -1,10 +1,12 @@
-import React from 'react';
 import { FieldArray, Form, Formik, useFormikContext } from 'formik';
-import * as Yup from 'yup';
+import React from 'react';
 import { useSelector } from 'react-redux';
+import * as Yup from 'yup';
 
 import type { IQueryResultExporter } from 'const/queryExecution';
 import { IDataDocScheduleKwargs, NotifyOn } from 'const/schedule';
+import { getExporterAuthentication } from 'lib/result-export';
+import { getEnumEntries } from 'lib/typescript';
 import {
     cronToRecurrence,
     IRecurrence,
@@ -12,27 +14,24 @@ import {
     recurrenceToCron,
     recurrenceTypes,
 } from 'lib/utils/cron';
-import { getExporterAuthentication } from 'lib/result-export';
-
-import { IStoreState } from 'redux/store/types';
 import { queryCellSelector } from 'redux/dataDoc/selector';
-
-import { RecurrenceEditor } from 'ui/ReccurenceEditor/RecurrenceEditor';
+import { IStoreState } from 'redux/store/types';
+import { AsyncButton } from 'ui/AsyncButton/AsyncButton';
+import { SoftButton } from 'ui/Button/Button';
+import { IconButton } from 'ui/Button/IconButton';
+import { DisabledSection } from 'ui/DisabledSection/DisabledSection';
 import { FormSectionHeader } from 'ui/Form/FormField';
 import { FormWrapper } from 'ui/Form/FormWrapper';
-import { Level } from 'ui/Level/Level';
 import { SimpleField } from 'ui/FormikField/SimpleField';
-import { DisabledSection } from 'ui/DisabledSection/DisabledSection';
+import { Level } from 'ui/Level/Level';
+import { RecurrenceEditor } from 'ui/ReccurenceEditor/RecurrenceEditor';
 import {
     getDefaultFormValue,
     SmartForm,
     updateValue,
 } from 'ui/SmartForm/SmartForm';
-import { AsyncButton } from 'ui/AsyncButton/AsyncButton';
-import { getEnumEntries } from 'lib/typescript';
+
 import { notificationServiceSelector } from '../../redux/notificationService/selector';
-import { SoftButton } from 'ui/Button/Button';
-import { IconButton } from 'ui/Button/IconButton';
 
 interface IDataDocScheduleFormProps {
     isEditable: boolean;
@@ -85,7 +84,9 @@ interface IScheduleFormValues {
     };
 }
 
-export const DataDocScheduleForm: React.FunctionComponent<IDataDocScheduleFormProps> = ({
+export const DataDocScheduleForm: React.FunctionComponent<
+    IDataDocScheduleFormProps
+> = ({
     isEditable,
 
     docId,

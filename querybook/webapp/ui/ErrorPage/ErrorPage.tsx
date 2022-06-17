@@ -1,10 +1,10 @@
-import React from 'react';
 import clsx from 'clsx';
+import React from 'react';
 
 import history from 'lib/router-history';
 import { Center } from 'ui/Center/Center';
-import { Subtitle, Title } from 'ui/Title/Title';
 import { FullHeight } from 'ui/FullHeight/FullHeight';
+import { Subtitle, Title } from 'ui/Title/Title';
 
 import './ErrorPage.scss';
 

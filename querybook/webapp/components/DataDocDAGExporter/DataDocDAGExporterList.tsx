@@ -3,10 +3,9 @@ import { useSelector } from 'react-redux';
 
 import { IDataQueryCell } from 'const/datadoc';
 import { IStoreState } from 'redux/store/types';
+import { EmptyText } from 'ui/StyledText/StyledText';
 
 import { DataDocDAGExporterListItem } from './DataDocDAGExporterListItem';
-
-import { EmptyText } from 'ui/StyledText/StyledText';
 
 interface IProps {
     queryCells: IDataQueryCell[];

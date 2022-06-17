@@ -1,22 +1,21 @@
+import { Form, Formik } from 'formik';
 import React, { useCallback } from 'react';
-import { useSelector, useDispatch } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
 import * as Yup from 'yup';
-import { Formik, Form } from 'formik';
 
+import { IBoardRaw } from 'const/board';
 import { sendConfirm } from 'lib/querybookUI';
 import {
     convertContentStateToHTML,
     convertRawToContentState,
 } from 'lib/richtext/serialize';
-import { createBoard, updateBoard, deleteBoard } from 'redux/board/action';
-import { IStoreState, Dispatch } from 'redux/store/types';
-import { IBoardRaw } from 'const/board';
-
+import { createBoard, deleteBoard, updateBoard } from 'redux/board/action';
+import { Dispatch, IStoreState } from 'redux/store/types';
 import { Button } from 'ui/Button/Button';
-import { IStandardModalProps } from 'ui/Modal/types';
-import { Modal } from 'ui/Modal/Modal';
 import { FormWrapper } from 'ui/Form/FormWrapper';
 import { SimpleField } from 'ui/FormikField/SimpleField';
+import { Modal } from 'ui/Modal/Modal';
+import { IStandardModalProps } from 'ui/Modal/types';
 
 const boardFormSchema = Yup.object().shape({
     name: Yup.string().max(255).min(1).required(),
@@ -29,10 +28,9 @@ interface IBoardCreateUpdateFormProps {
     onComplete: (board: IBoardRaw) => any;
 }
 
-export const BoardCreateUpdateForm: React.FunctionComponent<IBoardCreateUpdateFormProps> = ({
-    boardId,
-    onComplete,
-}) => {
+export const BoardCreateUpdateForm: React.FunctionComponent<
+    IBoardCreateUpdateFormProps
+> = ({ boardId, onComplete }) => {
     const dispatch: Dispatch = useDispatch();
     const isCreateForm = boardId == null;
     const board = useSelector((state: IStoreState) =>

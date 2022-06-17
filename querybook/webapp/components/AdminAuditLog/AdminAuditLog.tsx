@@ -1,13 +1,14 @@
 import React from 'react';
-import { LogItemType, ActionType } from 'const/adminAuditLog';
-import { usePaginatedResource } from 'hooks/usePaginatedResource';
-import { Table } from 'ui/Table/Table';
-import { generateFormattedDate } from 'lib/utils/datetime';
+
 import { UserBadge } from 'components/UserBadge/UserBadge';
+import { ActionType, LogItemType } from 'const/adminAuditLog';
+import { usePaginatedResource } from 'hooks/usePaginatedResource';
+import { generateFormattedDate } from 'lib/utils/datetime';
+import { AuditLogResource } from 'resource/admin';
 import { AsyncButton } from 'ui/AsyncButton/AsyncButton';
 import { Loading } from 'ui/Loading/Loading';
-import { TagGroup, Tag } from 'ui/Tag/Tag';
-import { AuditLogResource } from 'resource/admin';
+import { Table } from 'ui/Table/Table';
+import { Tag, TagGroup } from 'ui/Tag/Tag';
 
 export interface IAdminAuditLogProps {
     itemType?: LogItemType;
@@ -48,18 +49,14 @@ export const AdminAuditLog: React.FC<IAdminAuditLogProps> = ({
     itemType,
     itemId,
 }) => {
-    const {
-        data,
-        isLoading,
-        fetchMore,
-        hasMore,
-    } = usePaginatedResource<IAdminAuditLog>(
-        React.useMemo(
-            () => AuditLogResource.getPaginatedLogs(itemType, itemId),
-            [itemType, itemId]
-        ),
-        { batchSize: PAGE_SIZE }
-    );
+    const { data, isLoading, fetchMore, hasMore } =
+        usePaginatedResource<IAdminAuditLog>(
+            React.useMemo(
+                () => AuditLogResource.getPaginatedLogs(itemType, itemId),
+                [itemType, itemId]
+            ),
+            { batchSize: PAGE_SIZE }
+        );
 
     const filters = [
         ['Item Type', itemType] as const,

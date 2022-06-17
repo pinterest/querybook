@@ -1,11 +1,12 @@
 import { produce } from 'immer';
+
+import { UserAction } from 'redux/user/types';
+
 import {
     IQueryViewSearchState,
     IQueryViewState,
     QueryViewAction,
 } from './types';
-
-import { UserAction } from 'redux/user/types';
 
 const initialSearchState: IQueryViewSearchState = {
     // pagination

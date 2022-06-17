@@ -1,9 +1,10 @@
 import { QuerySnippetResource } from 'resource/querySnippet';
+
 import {
-    ThunkResult,
     IQueryForm,
     IQuerySnippet,
     IQuerySnippetSearchFilter,
+    ThunkResult,
 } from './types';
 
 export function fetchQuerySnippetIfNeeded(

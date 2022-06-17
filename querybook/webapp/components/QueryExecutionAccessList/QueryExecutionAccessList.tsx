@@ -1,10 +1,10 @@
 import React from 'react';
 import toast from 'react-hot-toast';
 
-import { IQueryExecutionViewer, IQueryExecution } from 'const/queryExecution';
-import { IAccessRequest } from 'const/accessRequest';
-import { UserSelect } from 'components/UserSelect/UserSelect';
 import { UserBadge } from 'components/UserBadge/UserBadge';
+import { UserSelect } from 'components/UserSelect/UserSelect';
+import { IAccessRequest } from 'const/accessRequest';
+import { IQueryExecution, IQueryExecutionViewer } from 'const/queryExecution';
 import { Button } from 'ui/Button/Button';
 import { IconButton } from 'ui/Button/IconButton';
 import { Subtitle } from 'ui/Title/Title';
@@ -21,7 +21,9 @@ interface IQueryExecutionAccessListProps {
     rejectQueryExecutionAccessRequest: (uid: number) => any;
 }
 
-export const QueryExecutionAccessList: React.FunctionComponent<IQueryExecutionAccessListProps> = ({
+export const QueryExecutionAccessList: React.FunctionComponent<
+    IQueryExecutionAccessListProps
+> = ({
     accessRequestsByUid,
     executionViewersByUid,
     queryExecution,

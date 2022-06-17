@@ -1,5 +1,7 @@
 import React, { useMemo } from 'react';
+
 import { HoverIconTag } from 'ui/Tag/HoverIconTag';
+
 import { TableTagSelect } from './TableTagSelect';
 
 export const TableTagGroupSelect: React.FC<{

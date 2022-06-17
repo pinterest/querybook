@@ -1,5 +1,5 @@
-import ds from 'lib/datasource';
 import { ImpressionType } from 'const/impression';
+import ds from 'lib/datasource';
 
 export const ImpressionResource = {
     getUsers: (type: ImpressionType, itemId: number) =>

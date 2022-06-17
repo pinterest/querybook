@@ -1,5 +1,6 @@
 import React, { useRef } from 'react';
-import { useDrag, useDrop, DropTargetMonitor, XYCoord } from 'react-dnd';
+import { DropTargetMonitor, useDrag, useDrop, XYCoord } from 'react-dnd';
+
 import { IDragItem } from './types';
 
 interface IDraggableItemProps<T> {

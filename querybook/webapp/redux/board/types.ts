@@ -5,11 +5,12 @@ import {
 } from 'redux-thunk';
 
 import {
-    IBoard,
-    IBoardWithItemIds,
     BoardItemType,
+    IBoard,
     IBoardItem,
+    IBoardWithItemIds,
 } from 'const/board';
+
 import { IStoreState } from '../store/types';
 
 export interface IReceiveBoardsAction extends Action {

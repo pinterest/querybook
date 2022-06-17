@@ -1,21 +1,20 @@
-import React from 'react';
-import { bind } from 'lodash-decorators';
 import clsx from 'clsx';
+import { VisibilityProperty } from 'csstype';
 import * as DraftJs from 'draft-js';
 import { List } from 'immutable';
-import { VisibilityProperty } from 'csstype';
+import { bind } from 'lodash-decorators';
+import React from 'react';
 
 import {
-    LinkDecorator,
-    isSoftNewLineEvent,
+    isContentStateInUndoStack,
     isListBlock,
+    isSoftNewLineEvent,
+    LinkDecorator,
     RichTextEditorCommand,
     RichTextEditorStyleMap,
-    isContentStateInUndoStack,
 } from 'lib/richtext';
 import * as Utils from 'lib/utils';
-import { matchKeyPress, matchKeyMap, KeyMap } from 'lib/utils/keyboard';
-
+import { KeyMap, matchKeyMap, matchKeyPress } from 'lib/utils/keyboard';
 import { RichTextEditorToolBar } from 'ui/RichTextEditorToolBar/RichTextEditorToolBar';
 
 import './RichTextEditor.scss';
@@ -68,6 +67,20 @@ export class RichTextEditor extends React.PureComponent<
     private editorRef = React.createRef<DraftJs.Editor>();
     private toolBarRef = React.createRef<RichTextEditorToolBar>();
     private selfRef = React.createRef<HTMLDivElement>();
+
+    public get draftJSEditor() {
+        return this.editorRef.current;
+    }
+
+    public get editorState() {
+        return this.state.editorState;
+    }
+
+    public set editorState(editorState: DraftJs.EditorState) {
+        this.setState({
+            editorState,
+        });
+    }
 
     @bind
     public focus() {
@@ -332,9 +345,8 @@ export class RichTextEditor extends React.PureComponent<
             'apply-entity'
         );
 
-        const emptySelectionState = DraftJs.SelectionState.createEmpty(
-            anchorKey
-        );
+        const emptySelectionState =
+            DraftJs.SelectionState.createEmpty(anchorKey);
         const linkSelectionState = emptySelectionState.merge({
             anchorOffset: start,
             focusKey: anchorKey,
@@ -527,20 +539,6 @@ export class RichTextEditor extends React.PureComponent<
         // Suppressing error due to LinkDecorator failing on delete
         // related github issue https://github.com/facebook/draft-js/issues/1320#issuecomment-476509968
         this.forceUpdate();
-    }
-
-    public get editorState() {
-        return this.state.editorState;
-    }
-
-    public set editorState(editorState: DraftJs.EditorState) {
-        this.setState({
-            editorState,
-        });
-    }
-
-    public get draftJSEditor() {
-        return this.editorRef.current;
     }
 
     public getContent() {

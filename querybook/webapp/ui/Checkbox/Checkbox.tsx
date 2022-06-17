@@ -1,7 +1,9 @@
-import React from 'react';
 import clsx from 'clsx';
-import './Checkbox.scss';
+import React from 'react';
+
 import { AccentText } from 'ui/StyledText/StyledText';
+
+import './Checkbox.scss';
 
 export interface ICheckboxProps {
     className?: string;

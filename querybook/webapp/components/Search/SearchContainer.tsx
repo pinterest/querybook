@@ -1,8 +1,9 @@
 import React from 'react';
+
+import { navigateWithinEnv } from 'lib/utils/query-string';
 import { IconButton } from 'ui/Button/IconButton';
 
 import './SearchContainer.scss';
-import { navigateWithinEnv } from 'lib/utils/query-string';
 
 export const SearchContainer: React.FC = () => {
     const navigateToSearch = React.useCallback(() => {

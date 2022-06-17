@@ -1,13 +1,12 @@
 import React from 'react';
-import { RouteComponentProps } from 'react-router-dom';
 import { useDispatch } from 'react-redux';
+import { RouteComponentProps } from 'react-router-dom';
 
-import { mapQueryParamToState as mapQueryParamToStateAction } from 'redux/search/action';
-import history from 'lib/router-history';
-
+import { SearchOverview } from 'components/Search/SearchOverview';
 import { useBrowserTitle } from 'hooks/useBrowserTitle';
 import { useModalRoute } from 'hooks/useModalRoute';
-import { SearchOverview } from 'components/Search/SearchOverview';
+import history from 'lib/router-history';
+import { mapQueryParamToState as mapQueryParamToStateAction } from 'redux/search/action';
 import { Modal } from 'ui/Modal/Modal';
 
 const SearchRoute: React.FunctionComponent<RouteComponentProps> = ({

@@ -1,32 +1,31 @@
-import React from 'react';
-import moment from 'moment';
 import { clone } from 'lodash';
+import moment from 'moment';
+import React from 'react';
 import { useParams } from 'react-router-dom';
 
-import history from 'lib/router-history';
-import { generateFormattedDate } from 'lib/utils/datetime';
-import { useResource } from 'hooks/useResource';
-
-import { AdminDeletedList } from './AdminDeletedList';
 import { AdminAuditLogButton } from 'components/AdminAuditLog/AdminAuditLogButton';
-
 import { TaskEditor } from 'components/Task/TaskEditor';
 import { IAdminACLControl, IAdminMetastore } from 'const/admin';
+import { useResource } from 'hooks/useResource';
+import history from 'lib/router-history';
+import { generateFormattedDate } from 'lib/utils/datetime';
 import { AdminMetastoreResource } from 'resource/admin/metastore';
 import { TextButton } from 'ui/Button/Button';
 import { Card } from 'ui/Card/Card';
+import { SimpleField } from 'ui/FormikField/SimpleField';
+import { GenericCRUD } from 'ui/GenericCRUD/GenericCRUD';
 import { Icon } from 'ui/Icon/Icon';
 import { Level } from 'ui/Level/Level';
 import { Loading } from 'ui/Loading/Loading';
-import { SimpleField } from 'ui/FormikField/SimpleField';
-import { GenericCRUD } from 'ui/GenericCRUD/GenericCRUD';
 import {
     getDefaultFormValue,
     SmartForm,
-    validateForm,
     updateValue,
+    validateForm,
 } from 'ui/SmartForm/SmartForm';
 import { Tabs } from 'ui/Tabs/Tabs';
+
+import { AdminDeletedList } from './AdminDeletedList';
 
 import './AdminMetastore.scss';
 
@@ -330,8 +329,7 @@ export const AdminMetastore: React.FunctionComponent<IProps> = ({
                                                     metastoreUpdateSchedule ?? {
                                                         cron: '0 0 * * *',
                                                         name: `update_metastore_${metastoreId}`,
-                                                        task:
-                                                            'tasks.update_metastore.update_metastore',
+                                                        task: 'tasks.update_metastore.update_metastore',
                                                         task_type: 'prod',
                                                         enabled: true,
                                                         args: [

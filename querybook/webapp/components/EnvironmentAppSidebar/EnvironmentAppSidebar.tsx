@@ -1,25 +1,24 @@
-import React from 'react';
 import clsx from 'clsx';
+import React from 'react';
+import { useDispatch, useSelector } from 'react-redux';
 
-import { navigateWithinEnv } from 'lib/utils/query-string';
-import { useSelector, useDispatch } from 'react-redux';
-import { setCollapsed } from 'redux/querybookUI/action';
-import { useEvent } from 'hooks/useEvent';
-import { matchKeyMap, KeyMap } from 'lib/utils/keyboard';
-import { currentEnvironmentSelector } from 'redux/environment/selector';
-
-import { QuerySnippetNavigator } from 'components/QuerySnippetNavigator/QuerySnippetNavigator';
-import { DataDocSchemaNavigator } from 'components/DataDocSchemaNavigator/DataDocSchemaNavigator';
-import { QueryViewNavigator } from 'components/QueryViewNavigator/QueryViewNavigator';
 import { DataDocNavigator } from 'components/DataDocNavigator/DataDocNavigator';
-import { Sidebar } from 'ui/Sidebar/Sidebar';
-import { Icon } from 'ui/Icon/Icon';
-
+import { DataDocSchemaNavigator } from 'components/DataDocSchemaNavigator/DataDocSchemaNavigator';
+import { QuerySnippetNavigator } from 'components/QuerySnippetNavigator/QuerySnippetNavigator';
+import { QueryViewNavigator } from 'components/QueryViewNavigator/QueryViewNavigator';
+import { useEvent } from 'hooks/useEvent';
+import { KeyMap, matchKeyMap } from 'lib/utils/keyboard';
+import { navigateWithinEnv } from 'lib/utils/query-string';
+import { currentEnvironmentSelector } from 'redux/environment/selector';
+import { setCollapsed } from 'redux/querybookUI/action';
 import { Dispatch, IStoreState } from 'redux/store/types';
-import { EnvironmentTopbar } from './EnvironmentTopbar';
+import { Icon } from 'ui/Icon/Icon';
+import { Sidebar } from 'ui/Sidebar/Sidebar';
+
 import { EntitySidebar } from './EntitySidebar';
 import { EnvironmentDropdownButton } from './EnvironmentDropdownButton';
 import { EnvironmentIcon } from './EnvironmentIcon';
+import { EnvironmentTopbar } from './EnvironmentTopbar';
 import { Entity } from './types';
 
 import './EnvironmentAppSidebar.scss';

@@ -1,6 +1,7 @@
+import React, { useCallback, useRef, useState } from 'react';
+
 import { useEvent } from 'hooks/useEvent';
 import { useMounted } from 'hooks/useMounted';
-import React, { useCallback, useRef, useState } from 'react';
 
 export const useContextMenu = (ref: React.RefObject<HTMLElement>) => {
     const contextMenuRef = useRef<HTMLDivElement>();

@@ -1,4 +1,4 @@
-import React, { useEffect, useRef, useMemo } from 'react';
+import React, { useEffect, useMemo, useRef } from 'react';
 import ReactDOM from 'react-dom';
 
 type OverlayRender = (overlayElm: HTMLDivElement) => any;
@@ -24,9 +24,10 @@ export const Overlay: React.FC<IOverlayProps> = ({
     render,
     customOverlayRoot,
 }) => {
-    const actualOverlayRoot = useMemo(() => customOverlayRoot ?? overlayRoot, [
-        customOverlayRoot,
-    ]);
+    const actualOverlayRoot = useMemo(
+        () => customOverlayRoot ?? overlayRoot,
+        [customOverlayRoot]
+    );
     const overlayRef = useRef(document.createElement('div'));
     useEffect(() => {
         if (className) {

@@ -1,11 +1,11 @@
-import React from 'react';
-// eslint-disable-next-line import/no-extraneous-dependencies
 import centered from '@storybook/addon-centered/react';
+import React from 'react';
 import toast from 'react-hot-toast';
 
-import { ToastManager } from './ToastManager';
-import { Button } from 'ui/Button/Button';
 import { sleep } from 'lib/utils';
+import { Button } from 'ui/Button/Button';
+
+import { ToastManager } from './ToastManager';
 
 export const _Toast = (args) => (
     <div>

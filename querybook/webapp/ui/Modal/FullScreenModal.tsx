@@ -1,10 +1,10 @@
 import clsx from 'clsx';
 import React from 'react';
 
-import { IStandardModalProps } from './types';
-
 import { IconButton } from 'ui/Button/IconButton';
 import { AccentText } from 'ui/StyledText/StyledText';
+
+import { IStandardModalProps } from './types';
 
 export const FullScreenModal: React.FunctionComponent<IStandardModalProps> = ({
     className = '',

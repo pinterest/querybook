@@ -1,14 +1,15 @@
 import { startCase } from 'lodash';
-import React, { useState, useMemo } from 'react';
+import React, { useMemo, useState } from 'react';
 import styled from 'styled-components';
 
 import { SchemaTableSortKey } from 'const/metastore';
-import { Title } from 'ui/Title/Title';
+import type { ITableSearchResult } from 'redux/dataTableSearch/types';
 import { IconButton } from 'ui/Button/IconButton';
 import { InfinityScroll } from 'ui/InfinityScroll/InfinityScroll';
-import type { ITableSearchResult } from 'redux/dataTableSearch/types';
-import type { ITableResultWithSelection } from '../DataTableNavigator';
 import { OrderByButton } from 'ui/OrderByButton/OrderByButton';
+import { Title } from 'ui/Title/Title';
+
+import type { ITableResultWithSelection } from '../DataTableNavigator';
 
 import './SchemaTableItem.scss';
 
@@ -68,10 +69,10 @@ export const SchemaTableItem: React.FC<{
     sortOrder,
 }) => {
     const [isExpanded, setIsExpanded] = useState<boolean>(false);
-    const data = useMemo(() => prepareSchemaNames(tables, selectedTableId), [
-        tables,
-        selectedTableId,
-    ]);
+    const data = useMemo(
+        () => prepareSchemaNames(tables, selectedTableId),
+        [tables, selectedTableId]
+    );
 
     return (
         <div className="SchemaTableItem mb12">

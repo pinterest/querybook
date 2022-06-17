@@ -1,8 +1,10 @@
-import * as React from 'react';
 import { startCase } from 'lodash';
+import * as React from 'react';
+
 import KeyMap from 'const/keyMap';
 import { KeyboardKey } from 'ui/KeyboardKey/KeyboardKey';
 import { Subtitle } from 'ui/Title/Title';
+
 import './Shortcut.scss';
 
 export const Shortcut: React.FunctionComponent = () => (

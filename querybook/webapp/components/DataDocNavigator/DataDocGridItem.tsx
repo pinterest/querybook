@@ -1,19 +1,18 @@
 import React from 'react';
 import { useDrag } from 'react-dnd';
 
-import { IDataDoc } from 'const/datadoc';
 import { DataDocHoverContent } from 'components/DataDocHoverContent/DataDocHoverContent';
-
+import { IDataDoc } from 'const/datadoc';
 import history from 'lib/router-history';
 import NOOP from 'lib/utils/noop';
-
-import { ListLink } from 'ui/Link/ListLink';
 import { IconButton } from 'ui/Button/IconButton';
-
+import { UrlContextMenu } from 'ui/ContextMenu/UrlContextMenu';
+import { ListLink } from 'ui/Link/ListLink';
 import { Popover } from 'ui/Popover/Popover';
 import { PopoverHoverWrapper } from 'ui/Popover/PopoverHoverWrapper';
+
 import { DataDocDraggableType } from './navigatorConst';
-import { UrlContextMenu } from 'ui/ContextMenu/UrlContextMenu';
+
 import './DataDocGridItem.scss';
 
 export interface IDataDocGridItemProps {
@@ -24,8 +23,8 @@ export interface IDataDocGridItemProps {
     onRemove?: (dataDoc: IDataDoc) => any;
 }
 
-export const DataDocGridItem: React.FunctionComponent<IDataDocGridItemProps> = React.memo(
-    ({ dataDoc, className, url, onRemove }) => {
+export const DataDocGridItem: React.FunctionComponent<IDataDocGridItemProps> =
+    React.memo(({ dataDoc, className, url, onRemove }) => {
         const [, drag] = useDrag({
             type: DataDocDraggableType,
             item: {
@@ -96,5 +95,4 @@ export const DataDocGridItem: React.FunctionComponent<IDataDocGridItemProps> = R
                 </PopoverHoverWrapper>
             </div>
         );
-    }
-);
+    });

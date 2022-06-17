@@ -1,7 +1,9 @@
-import { getCodeEditorTheme } from 'lib/utils';
 import React from 'react';
 import { useSelector } from 'react-redux';
+
+import { getCodeEditorTheme } from 'lib/utils';
 import type { IStoreState } from 'redux/store/types';
+
 import { CodeHighlight, ICodeHighlightProps } from './CodeHighlight';
 
 export const ThemedCodeHighlight: React.FC<ICodeHighlightProps> = (props) => {

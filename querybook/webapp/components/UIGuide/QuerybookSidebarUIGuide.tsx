@@ -1,20 +1,18 @@
 import React from 'react';
-import Tour, { ReactourStep } from 'reactour';
 import { useLocation } from 'react-router-dom';
+import Tour, { ReactourStep } from 'reactour';
 
-import { getQueryString } from 'lib/utils/query-string';
 import { getAppName } from 'lib/utils/global';
-
+import { getQueryString } from 'lib/utils/query-string';
 import { Button } from 'ui/Button/Button';
 import { Icon } from 'ui/Icon/Icon';
-import { Title } from 'ui/Title/Title';
 import { Link } from 'ui/Link/Link';
+import { Title } from 'ui/Title/Title';
 
 function getQuerybookSidebarTourSteps() {
     const hasEnvironmentTopbar = !!document.querySelector('.EnvironmentTopbar');
-    const dataDocNavigatorExists = !!document.querySelector(
-        '.DataDocNavigator'
-    );
+    const dataDocNavigatorExists =
+        !!document.querySelector('.DataDocNavigator');
 
     const querybookSidebarTourSteps: ReactourStep[] = [
         {

@@ -1,18 +1,18 @@
 import { Formik } from 'formik';
-import { useDispatch, useSelector } from 'react-redux';
 import React, { useCallback, useMemo } from 'react';
 import toast from 'react-hot-toast';
+import { useDispatch, useSelector } from 'react-redux';
 
+import { ColorPalette } from 'const/chartColors';
 import { ITag, ITagMeta } from 'const/tag';
 import { Dispatch, IStoreState } from 'redux/store/types';
-import { SimpleField } from 'ui/FormikField/SimpleField';
-import { Modal } from 'ui/Modal/Modal';
-import { ColorPalette } from 'const/chartColors';
-import AllLucideIcons from 'ui/Icon/LucideIcons';
-import { Icon } from 'ui/Icon/Icon';
-import { FormWrapper } from 'ui/Form/FormWrapper';
-import { AsyncButton } from 'ui/AsyncButton/AsyncButton';
 import { updateTag } from 'redux/tag/action';
+import { AsyncButton } from 'ui/AsyncButton/AsyncButton';
+import { FormWrapper } from 'ui/Form/FormWrapper';
+import { SimpleField } from 'ui/FormikField/SimpleField';
+import { Icon } from 'ui/Icon/Icon';
+import AllLucideIcons from 'ui/Icon/LucideIcons';
+import { Modal } from 'ui/Modal/Modal';
 
 export const TableTagConfigModal: React.FC<{
     tag: ITag;

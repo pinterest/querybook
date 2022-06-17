@@ -1,20 +1,20 @@
 import React from 'react';
 
 import { titleize } from 'lib/utils';
-import { getDefaultFormValue } from './formFunctions';
-
 import { SoftButton } from 'ui/Button/Button';
 import { IconButton } from 'ui/Button/IconButton';
 import { DebouncedInput } from 'ui/DebouncedInput/DebouncedInput';
 import { DebouncedPasswordInput } from 'ui/DebouncedInput/DebouncedPasswordInput';
 import {
     FormField,
-    FormFieldInputSection,
     FormFieldHelpSection,
+    FormFieldInputSection,
 } from 'ui/Form/FormField';
 import { Markdown } from 'ui/Markdown/Markdown';
-import { ToggleSwitch } from 'ui/ToggleSwitch/ToggleSwitch';
 import { SimpleReactSelect } from 'ui/SimpleReactSelect/SimpleReactSelect';
+import { ToggleSwitch } from 'ui/ToggleSwitch/ToggleSwitch';
+
+import { getDefaultFormValue } from './formFunctions';
 
 import './SmartForm.scss';
 
@@ -75,7 +75,7 @@ function SimpleFormField<T>({
 
         controlDOM = (
             <InputComponent
-                value={(value as unknown) as string}
+                value={value as unknown as string}
                 onChange={onFieldChange}
                 inputProps={inputProps}
                 debounceTime={10}
@@ -89,7 +89,7 @@ function SimpleFormField<T>({
     } else if (fieldType === 'select') {
         controlDOM = (
             <SimpleReactSelect
-                value={(value as unknown) as string}
+                value={value as unknown as string}
                 options={options}
                 onChange={onFieldChange}
             />
@@ -203,8 +203,8 @@ export function SmartForm<T>({
         fieldType === 'list' ? (
             <ExpandableFormField<[]>
                 formField={formField as IExpandableFormField}
-                value={(value as unknown) as []}
-                onChange={(onChange as unknown) as onChangeFunc<[]>}
+                value={value as unknown as []}
+                onChange={onChange as unknown as onChangeFunc<[]>}
             />
         ) : fieldType === 'struct' ? (
             <StructFormField<Record<string, any>>

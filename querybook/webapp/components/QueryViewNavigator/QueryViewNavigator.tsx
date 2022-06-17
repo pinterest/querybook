@@ -1,23 +1,23 @@
-import { debounce, bind } from 'lodash-decorators';
+import { bind, debounce } from 'lodash-decorators';
 import React from 'react';
 import { connect } from 'react-redux';
 
+import { IQueryExecution, QueryExecutionStatus } from 'const/queryExecution';
+import {
+    queryEngineByIdEnvSelector,
+    queryEngineSelector,
+} from 'redux/queryEngine/selector';
+import * as queryExecutionsActions from 'redux/queryExecutions/action';
 import * as queryViewActions from 'redux/queryView/action';
 import { queryExecutionResultSelector } from 'redux/queryView/selector';
-import {
-    queryEngineSelector,
-    queryEngineByIdEnvSelector,
-} from 'redux/queryEngine/selector';
-import { QueryExecutionStatus, IQueryExecution } from 'const/queryExecution';
-import * as queryExecutionsActions from 'redux/queryExecutions/action';
-import { IStoreState, Dispatch } from 'redux/store/types';
-
-import { QueryViewFilter } from './QueryViewFilter';
-import { QueryResult } from './QueryResult';
-
-import './QueryViewNavigator.scss';
+import { Dispatch, IStoreState } from 'redux/store/types';
 import { Icon } from 'ui/Icon/Icon';
 import { AccentText } from 'ui/StyledText/StyledText';
+
+import { QueryResult } from './QueryResult';
+import { QueryViewFilter } from './QueryViewFilter';
+
+import './QueryViewNavigator.scss';
 
 type StateProps = ReturnType<typeof mapStateToProps>;
 type DispatchProps = ReturnType<typeof mapDispatchToProps>;

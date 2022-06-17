@@ -1,11 +1,12 @@
 import { useMemo } from 'react';
-import { IStoreState } from 'redux/store/types';
 
 import { UserSettingsFontSizeToCSSFontSize } from 'const/font';
 import { ISearchAndReplaceContextType } from 'context/searchAndReplace';
 import CodeMirror, { CodeMirrorKeyMap } from 'lib/codemirror';
 import { AutoCompleteType } from 'lib/sql-helper/sql-autocompleter';
 import { getCodeEditorTheme } from 'lib/utils';
+import { IStoreState } from 'redux/store/types';
+
 import { useShallowSelector } from './useShallowSelector';
 
 export function useUserQueryEditorConfig(
@@ -54,8 +55,9 @@ export function useUserQueryEditorConfig(
                     const indentUnit = cm.getOption('indentUnit');
                     let shouldDelChar = false;
                     for (const cursorPos of cursorsPos) {
-                        const indentation = cm.getStateAfter(cursorPos.line)
-                            .indented;
+                        const indentation = cm.getStateAfter(
+                            cursorPos.line
+                        ).indented;
                         if (
                             !(
                                 indentation !== 0 &&

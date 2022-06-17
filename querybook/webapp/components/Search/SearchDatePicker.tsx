@@ -1,6 +1,7 @@
-import React, { useMemo } from 'react';
 import clsx from 'clsx';
 import moment from 'moment';
+import React, { useMemo } from 'react';
+
 import './SearchDatePicker.scss';
 
 const getFormattedDateFromSeconds = (

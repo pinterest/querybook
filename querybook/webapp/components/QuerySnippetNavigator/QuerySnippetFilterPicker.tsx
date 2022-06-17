@@ -1,8 +1,8 @@
 import React from 'react';
 import Select from 'react-select';
 
-import { defaultReactSelectStyles } from 'lib/utils/react-select';
 import { IQueryEngine } from 'const/queryEngine';
+import { defaultReactSelectStyles } from 'lib/utils/react-select';
 import { FormField } from 'ui/Form/FormField';
 
 interface IProps {

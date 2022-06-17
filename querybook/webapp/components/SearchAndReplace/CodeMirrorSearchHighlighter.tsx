@@ -1,4 +1,5 @@
-import React, { useMemo, useEffect } from 'react';
+import React, { useEffect, useMemo } from 'react';
+
 import { ISearchAndReplaceContextType } from 'context/searchAndReplace';
 import { getCodemirrorOverlay } from 'lib/data-doc/search';
 

@@ -1,14 +1,14 @@
-import React from 'react';
 import { shallow } from 'enzyme';
 import toJson from 'enzyme-to-json';
+import React from 'react';
 
 import {
     FormField,
-    FormFieldInputSectionRowGroup,
-    FormFieldInputSectionRow,
-    FormFieldHelpSection,
     FormFieldErrorSection,
+    FormFieldHelpSection,
     FormFieldInputSection,
+    FormFieldInputSectionRow,
+    FormFieldInputSectionRowGroup,
 } from '../../ui/Form/FormField';
 import { FormWrapper } from '../../ui/Form/FormWrapper';
 

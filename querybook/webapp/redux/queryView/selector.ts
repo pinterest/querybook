@@ -1,6 +1,7 @@
 import { createSelector } from 'reselect';
-import { queryExecutionByIdSelector } from 'redux/queryExecutions/selector';
+
 import { queryEngineByIdEnvSelector } from 'redux/queryEngine/selector';
+import { queryExecutionByIdSelector } from 'redux/queryExecutions/selector';
 import { IStoreState } from 'redux/store/types';
 
 const queryExecutionIdsSelector = (state: IStoreState) =>

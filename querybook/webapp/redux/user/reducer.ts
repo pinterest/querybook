@@ -2,9 +2,10 @@ import { produce } from 'immer';
 
 import localStore from 'lib/local-store';
 import { USER_SETTINGS_KEY } from 'lib/local-store/const';
-import { IUserState, UserAction } from './types';
 import { EnvironmentAction } from 'redux/environment/types';
 import { NotificationServiceAction } from 'redux/notificationService/types';
+
+import { IUserState, UserAction } from './types';
 
 const userSettingsConfig: Record<
     string,
@@ -108,11 +109,8 @@ export default function userReducer(
                     return;
                 }
 
-                const {
-                    fromLocal,
-                    userSetting,
-                    environmentId,
-                } = action.payload;
+                const { fromLocal, userSetting, environmentId } =
+                    action.payload;
 
                 draft.fromWeb = !fromLocal;
                 draft.rawSettings = userSetting;

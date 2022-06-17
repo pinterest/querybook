@@ -5,20 +5,18 @@ import {
     useMemo,
     useState,
 } from 'react';
+import { useDrop } from 'react-dnd';
 import { Edge, Node, Position, ReactFlowInstance } from 'react-flow-renderer';
 import { useSelector } from 'react-redux';
-import { useDrop } from 'react-dnd';
-
-import { IDataQueryCell } from 'const/datadoc';
-import { IStoreState } from 'redux/store/types';
-import * as dataDocSelectors from 'redux/dataDoc/selector';
-import { hashString } from 'lib/data-doc/data-doc-utils';
 
 import { queryCellDraggableType } from 'components/DataDocDAGExporter/DataDocDAGExporter';
-
-import { QueryCellNode } from 'ui/FlowGraph/QueryCellNode';
-import { IDragItem } from 'ui/DraggableList/types';
+import { IDataQueryCell } from 'const/datadoc';
 import { usePrevious } from 'hooks/usePrevious';
+import { hashString } from 'lib/data-doc/data-doc-utils';
+import * as dataDocSelectors from 'redux/dataDoc/selector';
+import { IStoreState } from 'redux/store/types';
+import { IDragItem } from 'ui/DraggableList/types';
+import { QueryCellNode } from 'ui/FlowGraph/QueryCellNode';
 
 export const queryCellNode = 'queryCellNode';
 export const QueryDAGNodeTypes = { queryCellNode: QueryCellNode };
@@ -67,9 +65,8 @@ export function useExporterDAG(
     const sourcePosition =
         layoutDirection === 'LR' ? Position.Right : Position.Bottom;
 
-    const [graphInstance, setGraphInstance] = useState<
-        ReactFlowInstance<any, any>
-    >();
+    const [graphInstance, setGraphInstance] =
+        useState<ReactFlowInstance<any, any>>();
 
     const createNode = useCallback(
         (cell: IDataQueryCell, savedNode?: Partial<Node>) => ({

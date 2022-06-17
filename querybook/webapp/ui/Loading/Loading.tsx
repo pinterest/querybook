@@ -1,5 +1,6 @@
 import React from 'react';
 import styled from 'styled-components';
+
 import { Icon } from 'ui/Icon/Icon';
 import { Title } from 'ui/Title/Title';
 

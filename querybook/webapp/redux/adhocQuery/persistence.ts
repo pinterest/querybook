@@ -1,6 +1,6 @@
 import { IAdhocQuery } from 'const/adhocQuery';
 import localStore from 'lib/local-store';
-import { AdhocQueryValue, ADHOC_QUERY_KEY } from 'lib/local-store/const';
+import { ADHOC_QUERY_KEY, AdhocQueryValue } from 'lib/local-store/const';
 
 function getAdhocQueryStorageKey(environmentId: number) {
     return `${ADHOC_QUERY_KEY}_${environmentId}`;

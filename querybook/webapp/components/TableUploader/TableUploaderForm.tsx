@@ -1,18 +1,20 @@
-import React, { useCallback, useMemo } from 'react';
-import { TableUploaderStepValue, ITableUploadFormikForm } from './types';
 import { Formik } from 'formik';
+import React, { useCallback, useMemo } from 'react';
 import toast from 'react-hot-toast';
+
+import { navigateWithinEnv } from 'lib/utils/query-string';
+import { TableUploadResource } from 'resource/tableUpload';
+import { Modal } from 'ui/Modal/Modal';
+
+import { TableUploaderConfirmForm } from './TableUploaderConfirmForm';
+import { ITableUploaderSourceForm } from './TableUploaderSourceForm';
+import { TableUploaderSpecForm } from './TableUploaderSpecForm';
 import {
     TableUploaderStepFooter,
     TableUploaderStepHeader,
     useTableUploaderStep,
 } from './TableUploaderStep';
-import { ITableUploaderSourceForm } from './TableUploaderSourceForm';
-import { TableUploaderSpecForm } from './TableUploaderSpecForm';
-import { TableUploaderConfirmForm } from './TableUploaderConfirmForm';
-import { TableUploadResource } from 'resource/tableUpload';
-import { Modal } from 'ui/Modal/Modal';
-import { navigateWithinEnv } from 'lib/utils/query-string';
+import { ITableUploadFormikForm, TableUploaderStepValue } from './types';
 
 interface ITableUploaderFormProps {
     metastoreId?: number;
@@ -63,14 +65,11 @@ export const TableUploaderForm: React.FC<ITableUploaderFormProps> = ({
 
     const handleSubmit = useCallback(
         async (tableUploadConfig: ITableUploadFormikForm) => {
-            const {
-                auto_generated_column_types: _,
-                ...uploadForm
-            } = tableUploadConfig;
+            const { auto_generated_column_types: _, ...uploadForm } =
+                tableUploadConfig;
 
-            const createTablePromise = TableUploadResource.createTable(
-                uploadForm
-            );
+            const createTablePromise =
+                TableUploadResource.createTable(uploadForm);
 
             const { data: tableId } = await toast.promise(createTablePromise, {
                 loading: 'Creating table...',

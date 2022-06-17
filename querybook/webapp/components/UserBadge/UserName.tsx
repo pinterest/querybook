@@ -1,8 +1,9 @@
 import React from 'react';
 
 import { IUserInfo } from 'const/user';
-import { titleize } from 'lib/utils';
 import { useUser } from 'hooks/redux/useUser';
+import { titleize } from 'lib/utils';
+
 import { ICommonUserLoaderProps } from './types';
 
 export interface IUserNameComponentProps {
@@ -10,10 +11,9 @@ export interface IUserNameComponentProps {
     userInfo: IUserInfo;
 }
 
-export const UserNameComponent: React.FunctionComponent<IUserNameComponentProps> = ({
-    loading,
-    userInfo,
-}) => {
+export const UserNameComponent: React.FunctionComponent<
+    IUserNameComponentProps
+> = ({ loading, userInfo }) => {
     const fullName = loading
         ? 'loading...'
         : userInfo

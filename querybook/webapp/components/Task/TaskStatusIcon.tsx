@@ -1,5 +1,6 @@
 import React from 'react';
 import styled from 'styled-components';
+
 import { StatusTypes, TaskRunStatus } from 'const/schedule';
 import { Icon } from 'ui/Icon/Icon';
 import { AccentText } from 'ui/StyledText/StyledText';

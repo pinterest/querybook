@@ -1,11 +1,11 @@
-import React, { useMemo, useEffect } from 'react';
 import * as DraftJs from 'draft-js';
+import React, { useEffect, useMemo } from 'react';
 import scrollIntoView from 'smooth-scroll-into-view-if-needed';
 
-import { RichTextEditor } from 'ui/RichTextEditor/RichTextEditor';
+import { makeSearchHighlightDecorator } from 'components/SearchAndReplace/SearchHighlightDecorator';
 import { ISearchAndReplaceContextType } from 'context/searchAndReplace';
 import { LinkDecorator } from 'lib/richtext';
-import { makeSearchHighlightDecorator } from 'components/SearchAndReplace/SearchHighlightDecorator';
+import { RichTextEditor } from 'ui/RichTextEditor/RichTextEditor';
 
 export const DraftJsSearchHighlighter: React.FC<{
     editor: RichTextEditor;
@@ -53,16 +53,15 @@ export const DraftJsSearchHighlighter: React.FC<{
     useEffect(() => {
         if (currentSearchItem && editor) {
             // editor.focus();
-            const selectionState: DraftJs.SelectionState = new DraftJs.SelectionState(
-                {
+            const selectionState: DraftJs.SelectionState =
+                new DraftJs.SelectionState({
                     anchorKey: currentSearchItem.blockKey,
                     anchorOffset: currentSearchItem.from,
                     focusKey: currentSearchItem.blockKey,
                     focusOffset: currentSearchItem.to,
                     hasFocus: false,
                     isBackward: false,
-                }
-            );
+                });
             editor.editorState = DraftJs.EditorState.forceSelection(
                 editor.editorState,
                 selectionState

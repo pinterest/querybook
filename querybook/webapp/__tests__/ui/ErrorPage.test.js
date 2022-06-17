@@ -1,6 +1,6 @@
-import React from 'react';
 import { shallow } from 'enzyme';
 import toJson from 'enzyme-to-json';
+import React from 'react';
 
 import { ErrorPage } from '../../ui/ErrorPage/ErrorPage';
 import { FourOhFour } from '../../ui/ErrorPage/FourOhFour';

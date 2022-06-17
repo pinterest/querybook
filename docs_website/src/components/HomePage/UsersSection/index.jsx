@@ -1,7 +1,7 @@
 import React from 'react';
-import Heading from '../../Heading';
-import Grid from '../../Grid';
 
+import Grid from '../../Grid';
+import Heading from '../../Heading';
 import './index.scss';
 
 const userReviews = [

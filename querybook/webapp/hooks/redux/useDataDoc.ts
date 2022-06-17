@@ -1,7 +1,7 @@
 import { useCallback } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
-import { fetchDataDocIfNeeded } from 'redux/dataDoc/action';
 
+import { fetchDataDocIfNeeded } from 'redux/dataDoc/action';
 import { IStoreState } from 'redux/store/types';
 
 /**

@@ -1,7 +1,8 @@
-import React from 'react';
 import MarkdownJSX, { MarkdownToJSX } from 'markdown-to-jsx';
-import { Link } from 'ui/Link/Link';
+import React from 'react';
+
 import { Content } from 'ui/Content/Content';
+import { Link } from 'ui/Link/Link';
 
 const MarkdownLink: React.FC<{ title: string; href: string }> = ({
     title,

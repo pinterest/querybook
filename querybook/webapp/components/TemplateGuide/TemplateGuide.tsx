@@ -1,11 +1,13 @@
 import React, { useState } from 'react';
+
 import { Markdown } from 'ui/Markdown/Markdown';
 import { Modal } from 'ui/Modal/Modal';
 import { Tabs } from 'ui/Tabs/Tabs';
+
 import {
-    TTemplateGuideSection,
-    GUIDE_SECTIONS,
     GUIDE_CONTENT_PER_SECTION,
+    GUIDE_SECTIONS,
+    TTemplateGuideSection,
 } from './GuideContent';
 
 export const TemplateGuideModal: React.FC<{

@@ -1,16 +1,16 @@
-import * as React from 'react';
 import { ContentState } from 'draft-js';
+import * as React from 'react';
 
 import { IDataColumn } from 'const/metastore';
-
-import { DataTableColumnStats } from '../DataTableStats/DataTableColumnStats';
 import { Card } from 'ui/Card/Card';
 import { EditableTextField } from 'ui/EditableTextField/EditableTextField';
 import { Icon } from 'ui/Icon/Icon';
 import { KeyContentDisplay } from 'ui/KeyContentDisplay/KeyContentDisplay';
+import { AccentText, StyledText } from 'ui/StyledText/StyledText';
+
+import { DataTableColumnStats } from '../DataTableStats/DataTableColumnStats';
 
 import './DataTableColumnCard.scss';
-import { AccentText, StyledText } from 'ui/StyledText/StyledText';
 
 interface IProps {
     column: IDataColumn;

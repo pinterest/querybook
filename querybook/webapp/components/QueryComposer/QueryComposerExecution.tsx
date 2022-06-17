@@ -1,19 +1,18 @@
 import React, { useMemo } from 'react';
 import { useSelector } from 'react-redux';
 
+import { QueryExecution } from 'components/QueryExecution/QueryExecution';
+import { QueryExecutionDuration } from 'components/QueryExecution/QueryExecutionDuration';
+import { QueryExecutionBar } from 'components/QueryExecutionBar/QueryExecutionBar';
 import {
     queryStatusToStatusIcon,
     STATUS_TO_TEXT_MAPPING,
 } from 'const/queryStatus';
 import { currentEnvironmentSelector } from 'redux/environment/selector';
 import { IStoreState } from 'redux/store/types';
-
-import { QueryExecution } from 'components/QueryExecution/QueryExecution';
 import { Level } from 'ui/Level/Level';
-import { QueryExecutionBar } from 'components/QueryExecutionBar/QueryExecutionBar';
 import { StatusIcon } from 'ui/StatusIcon/StatusIcon';
 import { AccentText } from 'ui/StyledText/StyledText';
-import { QueryExecutionDuration } from 'components/QueryExecution/QueryExecutionDuration';
 
 interface IProps {
     id: number;

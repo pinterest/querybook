@@ -5,8 +5,9 @@ import {
 } from 'redux-thunk';
 
 import { IDataDoc } from 'const/datadoc';
+import { ITaskSchedule, ITaskStatusRecord } from 'const/schedule';
+
 import { IStoreState } from '../store/types';
-import { ITaskStatusRecord, ITaskSchedule } from 'const/schedule';
 
 export interface IScheduledDocFilters {
     name?: string;

@@ -1,8 +1,9 @@
-import React from 'react';
 import { useField } from 'formik';
+import React from 'react';
+
 import {
-    ResizableTextArea,
     IResizableTextareaProps,
+    ResizableTextArea,
 } from 'ui/ResizableTextArea/ResizableTextArea';
 
 export interface ITextareaFieldProps

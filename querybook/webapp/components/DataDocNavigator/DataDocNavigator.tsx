@@ -1,33 +1,33 @@
-import React, { useState, useCallback, useMemo, useEffect } from 'react';
-
-import { useSelector, useDispatch } from 'react-redux';
+import React, { useCallback, useEffect, useMemo, useState } from 'react';
+import { useDrop } from 'react-dnd';
+import { useDispatch, useSelector } from 'react-redux';
 import { useRouteMatch } from 'react-router-dom';
-import {
-    setDataDocNavSection,
-    getDataDocNavSectionConfigFromStore,
-} from 'redux/querybookUI/action';
-import {
-    recentDataDocsSelector,
-    favoriteDataDocsSelector,
-    dataDocsMineSelector,
-} from 'redux/dataDoc/selector';
-import * as dataDocActions from 'redux/dataDoc/action';
-import { IStoreState, Dispatch } from 'redux/store/types';
 
 import { CreateDataDocButton } from 'components/CreateDataDocButton/CreateDataDocButton';
-
-import { SearchBar } from 'ui/SearchBar/SearchBar';
-import './DataDocNavigator.scss';
-import { DataDocNavigatorSection } from './DataDocNavigatorSection';
 import { IDataDoc } from 'const/datadoc';
-import { DataDocNavigatorBoardSection } from './DataDocNavigatorBoardSection';
-import { useDrop } from 'react-dnd';
+import * as dataDocActions from 'redux/dataDoc/action';
 import {
-    DataDocDraggableType,
+    dataDocsMineSelector,
+    favoriteDataDocsSelector,
+    recentDataDocsSelector,
+} from 'redux/dataDoc/selector';
+import {
+    getDataDocNavSectionConfigFromStore,
+    setDataDocNavSection,
+} from 'redux/querybookUI/action';
+import { Dispatch, IStoreState } from 'redux/store/types';
+import { IDragItem } from 'ui/DraggableList/types';
+import { SearchBar } from 'ui/SearchBar/SearchBar';
+
+import { DataDocNavigatorBoardSection } from './DataDocNavigatorBoardSection';
+import { DataDocNavigatorSection } from './DataDocNavigatorSection';
+import {
     BoardDraggableType,
+    DataDocDraggableType,
     IProcessedBoardItem,
 } from './navigatorConst';
-import { IDragItem } from 'ui/DraggableList/types';
+
+import './DataDocNavigator.scss';
 
 export const DataDocNavigator: React.FC = () => {
     const loadedFilterModes =
@@ -71,10 +71,8 @@ export const DataDocNavigator: React.FC = () => {
         dispatch(getDataDocNavSectionConfigFromStore());
     }, []);
 
-    const {
-        collapsed: boardsCollapsed,
-        setCollapsed: setBoardsCollapsed,
-    } = useBoundSectionState('boards', sectionOpen, setSectionOpen);
+    const { collapsed: boardsCollapsed, setCollapsed: setBoardsCollapsed } =
+        useBoundSectionState('boards', sectionOpen, setSectionOpen);
 
     const commonSectionProps = {
         selectedDocId,
@@ -145,9 +143,10 @@ function useCommonNavigatorState(section: string, props: ICommonSectionProps) {
         props.setSectionOpen
     );
 
-    const load = useCallback(() => props.loadDataDocs(section), [
-        props.loadDataDocs,
-    ]);
+    const load = useCallback(
+        () => props.loadDataDocs(section),
+        [props.loadDataDocs]
+    );
 
     return {
         collapsed,
@@ -215,7 +214,7 @@ const FavoriteDataDocsSection: React.FC<ICommonSectionProps> = (props) => {
             return {
                 isOver:
                     item?.type === BoardDraggableType &&
-                    ((item?.itemInfo as unknown) as IProcessedBoardItem)
+                    (item?.itemInfo as unknown as IProcessedBoardItem)
                         .itemType === 'table'
                         ? false
                         : monitor.isOver(),

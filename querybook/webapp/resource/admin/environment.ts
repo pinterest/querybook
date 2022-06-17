@@ -42,14 +42,13 @@ export const AdminEnvironmentResource = {
             `/admin/environment/${envId}/query_engine/${fromIndex}/${toIndex}/`
         ),
 
-    getPaginatedUsers: (envId: number): IPaginatedResource<IUserInfo> => (
-        limit,
-        offset
-    ) =>
-        ds.fetch(`/admin/environment/${envId}/users/`, {
-            limit,
-            offset,
-        }),
+    getPaginatedUsers:
+        (envId: number): IPaginatedResource<IUserInfo> =>
+        (limit, offset) =>
+            ds.fetch(`/admin/environment/${envId}/users/`, {
+                limit,
+                offset,
+            }),
 
     addUser: (envId: number, uid: number) =>
         ds.save<null>(`/admin/environment/${envId}/user/${uid}/`),

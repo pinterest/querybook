@@ -1,5 +1,6 @@
 import { ITaskSchedule, ITaskStatusRecord, TaskType } from 'const/schedule';
 import ds from 'lib/datasource';
+
 import { IPaginatedResource } from './types';
 
 export const TaskScheduleResource = {
@@ -10,28 +11,32 @@ export const TaskScheduleResource = {
                 [taskParam: string]: string;
             };
         }>('/schedule/tasks_list/params/'),
-    getPaginatedRunRecords: (
-        name: string,
-        hideSuccessfulJobs: boolean,
-        taskType: TaskType
-    ): IPaginatedResource<ITaskStatusRecord> => (limit, offset) =>
-        ds.fetch(`/schedule/record/`, {
-            limit,
-            offset,
-            name,
-            hide_successful_jobs: hideSuccessfulJobs,
-            task_type: taskType,
-        }),
+    getPaginatedRunRecords:
+        (
+            name: string,
+            hideSuccessfulJobs: boolean,
+            taskType: TaskType
+        ): IPaginatedResource<ITaskStatusRecord> =>
+        (limit, offset) =>
+            ds.fetch(`/schedule/record/`, {
+                limit,
+                offset,
+                name,
+                hide_successful_jobs: hideSuccessfulJobs,
+                task_type: taskType,
+            }),
 
-    getPaginatedRunRecordsById: (
-        taskId: number,
-        hideSuccessfulJobs: boolean
-    ): IPaginatedResource<ITaskStatusRecord> => (limit, offset) =>
-        ds.fetch(`/schedule/${taskId}/record/`, {
-            limit,
-            offset,
-            hide_successful_jobs: hideSuccessfulJobs,
-        }),
+    getPaginatedRunRecordsById:
+        (
+            taskId: number,
+            hideSuccessfulJobs: boolean
+        ): IPaginatedResource<ITaskStatusRecord> =>
+        (limit, offset) =>
+            ds.fetch(`/schedule/${taskId}/record/`, {
+                limit,
+                offset,
+                hide_successful_jobs: hideSuccessfulJobs,
+            }),
 
     run: (taskId: number) => ds.save<null>(`/schedule/${taskId}/run/`),
     create: (params: {

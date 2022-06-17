@@ -113,13 +113,8 @@ const bigqueryUDFConfig: IUDFEngineConfig = {
     ],
 
     renderer: (config) => {
-        const {
-            functionName,
-            udfLanguage,
-            outputType,
-            parameters,
-            script,
-        } = config;
+        const { functionName, udfLanguage, outputType, parameters, script } =
+            config;
 
         /*
             There are 3 parts in UDF generation:
@@ -149,8 +144,7 @@ const bigqueryUDFConfig: IUDFEngineConfig = {
     docs: [
         {
             name: 'BigQuery UDF Guide',
-            url:
-                'https://cloud.google.com/bigquery/docs/reference/standard-sql/user-defined-functions#sql-udf-structure',
+            url: 'https://cloud.google.com/bigquery/docs/reference/standard-sql/user-defined-functions#sql-udf-structure',
         },
     ],
 };

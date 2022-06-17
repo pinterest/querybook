@@ -1,46 +1,39 @@
+import { sample } from 'lodash';
 import React from 'react';
 import { useDispatch } from 'react-redux';
-import { sample } from 'lodash';
 
+import { QuerybookSidebarUIGuide } from 'components/UIGuide/QuerybookSidebarUIGuide';
 import { useShallowSelector } from 'hooks/redux/useShallowSelector';
 import { useBrowserTitle } from 'hooks/useBrowserTitle';
 import { titleize } from 'lib/utils';
 import { navigateWithinEnv } from 'lib/utils/query-string';
-import { IStoreState } from 'redux/store/types';
 import { fetchDataDocs } from 'redux/dataDoc/action';
-import { currentEnvironmentSelector } from 'redux/environment/selector';
 import {
-    recentDataDocsSelector,
     favoriteDataDocsSelector,
+    recentDataDocsSelector,
 } from 'redux/dataDoc/selector';
-
-import { QuerybookSidebarUIGuide } from 'components/UIGuide/QuerybookSidebarUIGuide';
-
-import { Columns, Column } from 'ui/Column/Column';
+import { currentEnvironmentSelector } from 'redux/environment/selector';
+import { IStoreState } from 'redux/store/types';
+import { Column, Columns } from 'ui/Column/Column';
 
 import './Landing.scss';
 
 const querybookHints: string[] = require('config/loading_hints.yaml').hints;
 
 const DefaultLanding: React.FC = ({ children }) => {
-    const {
-        userInfo,
-        recentDataDocs,
-        favoriteDataDocs,
-        environment,
-    } = useShallowSelector((state: IStoreState) => {
-        const recentDataDocsFromState = recentDataDocsSelector(state);
-        const favoriteDataDocsFromState = favoriteDataDocsSelector(state).slice(
-            0,
-            5
-        );
-        return {
-            userInfo: state.user.userInfoById[state.user.myUserInfo.uid],
-            recentDataDocs: recentDataDocsFromState,
-            favoriteDataDocs: favoriteDataDocsFromState,
-            environment: currentEnvironmentSelector(state),
-        };
-    });
+    const { userInfo, recentDataDocs, favoriteDataDocs, environment } =
+        useShallowSelector((state: IStoreState) => {
+            const recentDataDocsFromState = recentDataDocsSelector(state);
+            const favoriteDataDocsFromState = favoriteDataDocsSelector(
+                state
+            ).slice(0, 5);
+            return {
+                userInfo: state.user.userInfoById[state.user.myUserInfo.uid],
+                recentDataDocs: recentDataDocsFromState,
+                favoriteDataDocs: favoriteDataDocsFromState,
+                environment: currentEnvironmentSelector(state),
+            };
+        });
 
     const dispatch = useDispatch();
     React.useEffect(() => {

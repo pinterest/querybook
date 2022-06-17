@@ -1,8 +1,10 @@
 import clsx from 'clsx';
-import NOOP from 'lib/utils/noop';
 import { capitalize } from 'lodash';
 import React, { useMemo } from 'react';
+
+import NOOP from 'lib/utils/noop';
 import { TextToggleButton } from 'ui/Button/TextToggleButton';
+
 import './OrderByButton.scss';
 
 export interface ISortButtonProps {

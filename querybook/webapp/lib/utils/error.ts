@@ -1,5 +1,6 @@
 import { AxiosError } from 'axios';
 import moment from 'moment';
+
 import { formatDuration, generateFormattedDate } from './datetime';
 
 export function formatError(error: any): string {

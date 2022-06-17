@@ -1,16 +1,17 @@
-import React from 'react';
 import clsx from 'clsx';
+import React from 'react';
 
+import { withBoundProps } from 'lib/utils/react-bind';
 import { Icon, IIconProps } from 'ui/Icon/Icon';
 import type { AllLucideIconNames } from 'ui/Icon/LucideIcons';
-import { StyledButton, ISharedButtonProps } from './StyledButton';
-import { withBoundProps } from 'lib/utils/react-bind';
+import { AccentText } from 'ui/StyledText/StyledText';
+
 import {
     ButtonColorType,
     ButtonThemeType,
     computeStyleButtonProps,
 } from './ButtonTheme';
-import { AccentText } from 'ui/StyledText/StyledText';
+import { ISharedButtonProps, StyledButton } from './StyledButton';
 
 export type ButtonProps = React.HTMLAttributes<HTMLSpanElement> &
     ISharedButtonProps & {

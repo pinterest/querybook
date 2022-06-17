@@ -2,9 +2,9 @@ import { Action } from 'redux';
 import { ThunkAction } from 'redux-thunk';
 
 import { ICancelablePromise } from 'lib/datasource';
-import { IStoreState } from 'redux/store/types';
-import { QueryExecutionAction } from 'redux/queryExecutions/types';
 import { DataDocAction } from 'redux/dataDoc/types';
+import { QueryExecutionAction } from 'redux/queryExecutions/types';
+import { IStoreState } from 'redux/store/types';
 
 export interface IQueryViewFilter {
     user?: number;

@@ -2,11 +2,12 @@ import React from 'react';
 
 import { ApiTokenResource } from 'resource/apiToken';
 import { Button } from 'ui/Button/Button';
-import { CopyButton } from 'ui/CopyButton/CopyButton';
 import { InfoButton } from 'ui/Button/InfoButton';
+import { CopyButton } from 'ui/CopyButton/CopyButton';
 import { AccentText } from 'ui/StyledText/StyledText';
 
 import './TokenCreation.scss';
+
 interface IProps {
     uid: number;
 }

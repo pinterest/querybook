@@ -1,12 +1,11 @@
 import React from 'react';
 
-import { IDataDoc } from 'const/datadoc';
-
 import { DataDocTemplateVarForm } from 'components/DataDocTemplateButton/DataDocTemplateVarForm';
-import { DataDocTemplateInfoButton } from './DataDocTemplateInfoButton';
-
+import { IDataDoc } from 'const/datadoc';
 import { IconButton } from 'ui/Button/IconButton';
 import { Modal } from 'ui/Modal/Modal';
+
+import { DataDocTemplateInfoButton } from './DataDocTemplateInfoButton';
 
 interface IProps {
     changeDataDocMeta: (docId: number, meta: Record<string, any>) => any;

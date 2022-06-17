@@ -1,17 +1,19 @@
 import { normalize, schema } from 'normalizr';
-import { ThunkResult, IReceiveBoardsAction } from './types';
-import { arrayGroupByField } from 'lib/utils';
+
 import {
-    IBoardWithItemIds,
+    BoardItemType,
     IBoard,
     IBoardRaw,
-    BoardItemType,
     IBoardUpdatableField,
+    IBoardWithItemIds,
 } from 'const/board';
-import { Dispatch } from 'redux/store/types';
+import { arrayGroupByField } from 'lib/utils';
 import { receiveDataDocs } from 'redux/dataDoc/action';
 import { receiveDataTable } from 'redux/dataSources/action';
+import { Dispatch } from 'redux/store/types';
 import { BoardResource } from 'resource/board';
+
+import { IReceiveBoardsAction, ThunkResult } from './types';
 
 export const dataDocSchema = new schema.Entity('dataDoc');
 export const tableSchema = new schema.Entity('dataTable');
@@ -40,9 +42,8 @@ function normalizeBoard(rawBoard: IBoardRaw) {
 }
 
 function receiveBoardWithItems(dispatch: Dispatch, rawBoard: IBoardRaw) {
-    const { board, dataTableById, dataDocById, boardItemById } = normalizeBoard(
-        rawBoard
-    );
+    const { board, dataTableById, dataDocById, boardItemById } =
+        normalizeBoard(rawBoard);
 
     dispatch(receiveDataDocs(dataDocById, [], null, null));
     dispatch(receiveDataTable({}, dataTableById, {}, {}));

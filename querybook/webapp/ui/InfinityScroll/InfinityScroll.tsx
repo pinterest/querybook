@@ -1,6 +1,6 @@
 import React, { CSSProperties, useCallback, useEffect, useRef } from 'react';
+import { AutoSizer, InfiniteLoader, List } from 'react-virtualized';
 
-import { AutoSizer, List, InfiniteLoader } from 'react-virtualized';
 import { LoadingRow } from 'ui/Loading/Loading';
 
 export interface IInfinityScrollProps<T> {

@@ -1,5 +1,6 @@
-import { formatDuration, generateFormattedDate } from 'lib/utils/datetime';
 import moment from 'moment';
+
+import { formatDuration, generateFormattedDate } from 'lib/utils/datetime';
 
 const testTimeStamp1 = 1300000000;
 const testTimeStamp2 = 1300000379;

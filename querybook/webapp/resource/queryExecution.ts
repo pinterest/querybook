@@ -8,8 +8,8 @@ import {
     IQueryResultExporter,
     IRawQueryExecution,
 } from 'const/queryExecution';
-import ds from 'lib/datasource';
 import dataDocSocket from 'lib/data-doc/datadoc-socketio';
+import ds from 'lib/datasource';
 
 export const QueryExecutionAccessRequestResource = {
     get: (executionId: number) =>

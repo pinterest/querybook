@@ -1,14 +1,12 @@
+import 'chartjs-adapter-moment';
 import React, { useState } from 'react';
 import { Line } from 'react-chartjs-2';
-import 'chartjs-adapter-moment';
-
-import { generateFormattedDate } from 'lib/utils/datetime';
-import { ImpressionType } from 'const/impression';
-import { useResource } from 'hooks/useResource';
-import { ImpressionResource } from 'resource/impression';
 
 import { UserName } from 'components/UserBadge/UserName';
-
+import { ImpressionType } from 'const/impression';
+import { useResource } from 'hooks/useResource';
+import { generateFormattedDate } from 'lib/utils/datetime';
+import { ImpressionResource } from 'resource/impression';
 import { Loading } from 'ui/Loading/Loading';
 import { Table } from 'ui/Table/Table';
 import { Tabs } from 'ui/Tabs/Tabs';
@@ -49,10 +47,10 @@ export const ImpressionWidgetMenu: React.FunctionComponent<IProps> = (
 
 const ImpressionWidgetUsers: React.FC<IProps> = ({ type, itemId }) => {
     const { data: users, isLoading } = useResource(
-        React.useCallback(() => ImpressionResource.getUsers(type, itemId), [
-            type,
-            itemId,
-        ])
+        React.useCallback(
+            () => ImpressionResource.getUsers(type, itemId),
+            [type, itemId]
+        )
     );
 
     if (isLoading) {

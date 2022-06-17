@@ -4,7 +4,6 @@ import { useDispatch } from 'react-redux';
 import history from 'lib/router-history';
 import { getAppName } from 'lib/utils/global';
 import * as EnvironmentActions from 'redux/environment/action';
-
 import { DemoResource } from 'resource/admin';
 import { Card } from 'ui/Card/Card';
 import { LoadingIcon } from 'ui/Loading/Loading';

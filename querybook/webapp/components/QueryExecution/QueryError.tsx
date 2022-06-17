@@ -1,33 +1,31 @@
 import React, { useCallback, useMemo } from 'react';
-import { useSelector, useDispatch } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
 
+import { ErrorSuggestion } from 'components/DataDocStatementExecution/ErrorSuggestion';
+import { IQueryEngine } from 'const/queryEngine';
 import {
-    QueryExecutionErrorType,
     IQueryError,
     IQueryExecution,
     IStatementExecution,
+    QueryExecutionErrorType,
 } from 'const/queryExecution';
-
 import {
-    tokenize,
     getQueryLinePosition,
     IToken,
+    tokenize,
 } from 'lib/sql-helper/sql-lexer';
-
-import { IQueryEngine } from 'const/queryEngine';
 import { getAppName } from 'lib/utils/global';
+import { queryEngineByIdEnvSelector } from 'redux/queryEngine/selector';
 import { fetchQueryError } from 'redux/queryExecutions/action';
 import { IStoreState } from 'redux/store/types';
-import { queryEngineByIdEnvSelector } from 'redux/queryEngine/selector';
-
-import { ErrorSuggestion } from 'components/DataDocStatementExecution/ErrorSuggestion';
 import { Icon } from 'ui/Icon/Icon';
+import { Loader } from 'ui/Loader/Loader';
 import { Message } from 'ui/Message/Message';
 import { ShowMoreText } from 'ui/ShowMoreText/ShowMoreText';
 import { Tabs } from 'ui/Tabs/Tabs';
-import { Loader } from 'ui/Loader/Loader';
 
 import { ExecutedQueryCell, IHighlightRange } from './ExecutedQueryCell';
+
 import './QueryError.scss';
 
 interface IProps {

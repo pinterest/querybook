@@ -1,4 +1,5 @@
 import { createSelector } from 'reselect';
+
 import { IStoreState } from 'redux/store/types';
 
 const environmentByIdSelector = (state: IStoreState) =>

@@ -1,11 +1,11 @@
-import React from 'react';
 import { ContentState } from 'draft-js';
+import React from 'react';
 
 import { IDataColumn, IDataTable } from 'const/metastore';
-
-import { DataTableColumnCard } from './DataTableColumnCard';
 import { Loading } from 'ui/Loading/Loading';
 import { SearchBar } from 'ui/SearchBar/SearchBar';
+
+import { DataTableColumnCard } from './DataTableColumnCard';
 
 export interface IDataTableViewColumnProps {
     table: IDataTable;
@@ -17,7 +17,9 @@ export interface IDataTableViewColumnProps {
     ) => any;
 }
 
-export const DataTableViewColumn: React.FunctionComponent<IDataTableViewColumnProps> = ({
+export const DataTableViewColumn: React.FunctionComponent<
+    IDataTableViewColumnProps
+> = ({
     updateDataColumnDescription,
     table = null,
     tableColumns = [],

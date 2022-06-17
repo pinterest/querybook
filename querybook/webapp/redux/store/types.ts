@@ -1,13 +1,21 @@
 import { ThunkDispatch } from 'redux-thunk';
 
-import { IUserState, UserAction } from 'redux/user/types';
-import { IDataDocState, DataDocAction } from 'redux/dataDoc/types';
-import { ISearchState, SearchAction } from 'redux/search/types';
-import { IDataSourcesState, DataSourcesAction } from 'redux/dataSources/types';
+import { AdhocQueryAction, AdhocQueryState } from 'redux/adhocQuery/types';
+import { BoardAction, IBoardState } from 'redux/board/types';
+import { DataDocAction, IDataDocState } from 'redux/dataDoc/types';
+import { DataSourcesAction, IDataSourcesState } from 'redux/dataSources/types';
 import {
-    IDataTableSearchState,
     DataTableSearchAction,
+    IDataTableSearchState,
 } from 'redux/dataTableSearch/types';
+import { EnvironmentAction, IEnvironmentState } from 'redux/environment/types';
+import { GlobalStateAction, IGlobalStateState } from 'redux/globalState/types';
+import {
+    INotificationState,
+    NotificationServiceAction,
+} from 'redux/notificationService/types';
+import { IQuerybookUIState, QuerybookUIAction } from 'redux/querybookUI/types';
+import { IQueryEngineState, QueryEngineAction } from 'redux/queryEngine/types';
 import {
     IQueryExecutionState,
     QueryExecutionAction,
@@ -17,21 +25,13 @@ import {
     QuerySnippetsAction,
 } from 'redux/querySnippets/types';
 import { IQueryViewState, QueryViewAction } from 'redux/queryView/types';
-import { QuerybookUIAction, IQuerybookUIState } from 'redux/querybookUI/types';
-import { IQueryEngineState, QueryEngineAction } from 'redux/queryEngine/types';
-import { IEnvironmentState, EnvironmentAction } from 'redux/environment/types';
-import { AdhocQueryState, AdhocQueryAction } from 'redux/adhocQuery/types';
-import { IBoardState, BoardAction } from 'redux/board/types';
-import { IGlobalStateState, GlobalStateAction } from 'redux/globalState/types';
-import {
-    INotificationState,
-    NotificationServiceAction,
-} from 'redux/notificationService/types';
-import { ITagState, TagAction } from 'redux/tag/types';
 import {
     IScheduledDataDocState,
     ScheduledDataDocAction,
 } from 'redux/scheduledDataDoc/types';
+import { ISearchState, SearchAction } from 'redux/search/types';
+import { ITagState, TagAction } from 'redux/tag/types';
+import { IUserState, UserAction } from 'redux/user/types';
 
 export interface IStoreState {
     readonly user: IUserState;

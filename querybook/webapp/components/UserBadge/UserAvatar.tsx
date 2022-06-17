@@ -1,10 +1,12 @@
 import React, { useEffect } from 'react';
 
-import { useUser } from 'hooks/redux/useUser';
 import { IUserInfo } from 'const/user';
-import { ICommonUserLoaderProps } from './types';
-import './UserAvatar.scss';
+import { useUser } from 'hooks/redux/useUser';
 import { Icon } from 'ui/Icon/Icon';
+
+import { ICommonUserLoaderProps } from './types';
+
+import './UserAvatar.scss';
 
 export type IUserAvatarProps = {
     isOnline?: boolean;
@@ -73,13 +75,9 @@ const DefaultUserIcon: React.FunctionComponent<{
     return <canvas ref={canvasRef} width="100px" height="100px" />;
 };
 
-export const UserAvatarComponent: React.FunctionComponent<IUserAvatarComponentProps> = ({
-    loading,
-    userInfo,
-    isOnline,
-    tiny,
-    onClick = null,
-}) => {
+export const UserAvatarComponent: React.FunctionComponent<
+    IUserAvatarComponentProps
+> = ({ loading, userInfo, isOnline, tiny, onClick = null }) => {
     const profileImage = userInfo ? userInfo.profile_img : null;
     const userName = userInfo ? userInfo.fullname ?? userInfo.username : null;
 

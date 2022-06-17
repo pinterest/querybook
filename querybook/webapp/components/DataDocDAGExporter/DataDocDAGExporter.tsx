@@ -1,20 +1,19 @@
 import * as React from 'react';
 
-import { useSavedDAG } from 'hooks/dag/useSavedDAG';
 import {
     useExporterDAG,
     useQueryCells,
     useUnusedQueryCells,
 } from 'hooks/dag/useExporterDAG';
+import { useSavedDAG } from 'hooks/dag/useSavedDAG';
 import { DataDocResource } from 'resource/dataDoc';
-
-import { DataDocDAGExporterGraph } from './DataDocDAGExporterGraph';
-import { DataDocDAGExporterForm } from './DataDocDAGExporterForm';
-import { DataDocDagExporterList } from './DataDocDAGExporterList';
-
 import { Button } from 'ui/Button/Button';
 import { CopyPasteModal } from 'ui/CopyPasteModal/CopyPasteModal';
 import { Modal } from 'ui/Modal/Modal';
+
+import { DataDocDAGExporterForm } from './DataDocDAGExporterForm';
+import { DataDocDAGExporterGraph } from './DataDocDAGExporterGraph';
+import { DataDocDagExporterList } from './DataDocDAGExporterList';
 
 import './DataDocDAGExporter.scss';
 
@@ -34,14 +33,8 @@ export const DataDocDAGExporter: React.FunctionComponent<IProps> = ({
 
     const { onSave, savedNodes, savedEdges, savedMeta } = useSavedDAG(docId);
     const queryCells = useQueryCells(docId);
-    const [
-        nodes,
-        edges,
-        setNodes,
-        setEdges,
-        dropRef,
-        setGraphInstance,
-    ] = useExporterDAG(queryCells, savedNodes, savedEdges, graphRef);
+    const [nodes, edges, setNodes, setEdges, dropRef, setGraphInstance] =
+        useExporterDAG(queryCells, savedNodes, savedEdges, graphRef);
 
     const unusedQueryCells = useUnusedQueryCells(queryCells, nodes);
 

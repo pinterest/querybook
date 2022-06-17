@@ -1,8 +1,8 @@
 import * as React from 'react';
 
+import { TemplateGuideModal } from 'components/TemplateGuide/TemplateGuide';
 import { useToggleState } from 'hooks/useToggleState';
 import { SoftButton } from 'ui/Button/Button';
-import { TemplateGuideModal } from 'components/TemplateGuide/TemplateGuide';
 import { IconButton } from 'ui/Button/IconButton';
 
 export const DataDocTemplateInfoButton: React.FunctionComponent<{

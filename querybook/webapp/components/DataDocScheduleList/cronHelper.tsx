@@ -1,8 +1,8 @@
 import {
     getRecurrenceLocalTimeString,
-    WEEKDAYS,
-    MONTHS,
     IRecurrence,
+    MONTHS,
+    WEEKDAYS,
 } from 'lib/utils/cron';
 
 /**

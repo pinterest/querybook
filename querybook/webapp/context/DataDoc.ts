@@ -1,5 +1,6 @@
 import React from 'react';
-import { IDataCellMeta, DataCellUpdateFields } from 'const/datadoc';
+
+import { DataCellUpdateFields, IDataCellMeta } from 'const/datadoc';
 
 export interface IDataDocContextType {
     cellIdToExecutionId: Record<number, number>;

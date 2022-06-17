@@ -1,9 +1,10 @@
 import React from 'react';
 import { Route, RouteComponentProps } from 'react-router-dom';
+
 import KeyMap from 'const/keyMap';
-import { navigateWithinEnv } from 'lib/utils/query-string';
-import { matchKeyPress } from 'lib/utils/keyboard';
 import { useEvent } from 'hooks/useEvent';
+import { matchKeyPress } from 'lib/utils/keyboard';
+import { navigateWithinEnv } from 'lib/utils/query-string';
 
 export const CommandKModal: React.FunctionComponent = () => (
     <Route component={CommandKModalInner} />

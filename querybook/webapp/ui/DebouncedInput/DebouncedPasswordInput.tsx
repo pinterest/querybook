@@ -1,9 +1,11 @@
-import React, { useMemo } from 'react';
 import clsx from 'clsx';
+import React, { useMemo } from 'react';
 
 import { useToggleState } from 'hooks/useToggleState';
-import { DebouncedInput, IDebouncedInputProps } from './DebouncedInput';
 import { IconButton } from 'ui/Button/IconButton';
+
+import { DebouncedInput, IDebouncedInputProps } from './DebouncedInput';
+
 import './DebouncedPasswordInput.scss';
 
 export const DebouncedPasswordInput: React.FC<IDebouncedInputProps> = (

@@ -1,11 +1,11 @@
-import { reduxStore } from 'redux/store';
 import type {
-    IColumnStatsAnalyzer,
     IColumnDetector,
+    IColumnStatsAnalyzer,
     IColumnTransformer,
 } from 'lib/query-result/types';
 import type { IUDFEngineConfig } from 'lib/utils/udf';
 import { IDataTableSearchState } from 'redux/dataTableSearch/types';
+import { reduxStore } from 'redux/store';
 
 declare global {
     /* eslint-disable @typescript-eslint/naming-convention */

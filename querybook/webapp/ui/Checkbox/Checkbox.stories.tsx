@@ -1,6 +1,5 @@
-import React, { useState } from 'react';
-// eslint-disable-next-line import/no-extraneous-dependencies
 import centered from '@storybook/addon-centered/react';
+import React, { useState } from 'react';
 
 import { Checkbox } from './Checkbox';
 

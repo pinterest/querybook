@@ -1,10 +1,10 @@
-import React, { useMemo } from 'react';
 import clsx from 'clsx';
+import React, { useMemo } from 'react';
 import ReactTable, { Column, TableProps } from 'react-table';
+import 'react-table/react-table.css';
 
 import { titleize } from 'lib/utils';
 
-import 'react-table/react-table.css';
 import './Table.scss';
 
 export type TableAlign = 'center' | 'left' | 'right';

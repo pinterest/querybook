@@ -1,9 +1,10 @@
 import clsx from 'clsx';
 import React from 'react';
 
-import { IStandardModalProps } from './types';
 import { useAppBlur } from 'hooks/ui/useAppBlur';
 import { AccentText } from 'ui/StyledText/StyledText';
+
+import { IStandardModalProps } from './types';
 
 export const StandardModal: React.FunctionComponent<IStandardModalProps> = ({
     className = '',

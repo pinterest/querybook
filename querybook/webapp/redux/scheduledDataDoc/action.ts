@@ -1,5 +1,6 @@
-import { ThunkResult, IScheduledDoc, IScheduledDocFilters } from './types';
 import { DataDocScheduleResource } from 'resource/dataDoc';
+
+import { IScheduledDoc, IScheduledDocFilters, ThunkResult } from './types';
 
 export function getScheduledDocs({
     paginationPage,

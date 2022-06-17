@@ -3,6 +3,7 @@ import React from 'react';
 import { useSelector } from 'react-redux';
 
 import { IStoreState } from 'redux/store/types';
+
 import { PanelSection, SubPanelSection } from './PanelSection';
 
 const hiveTypeInfo: Record<string, string> = require('config/type_info.yaml');
@@ -11,9 +12,9 @@ interface IColumnPanelViewProps {
     columnId: number;
 }
 
-export const ColumnPanelView: React.FunctionComponent<IColumnPanelViewProps> = ({
-    columnId,
-}) => {
+export const ColumnPanelView: React.FunctionComponent<
+    IColumnPanelViewProps
+> = ({ columnId }) => {
     const column = useSelector(
         (state: IStoreState) => state.dataSources.dataColumnsById[columnId]
     );

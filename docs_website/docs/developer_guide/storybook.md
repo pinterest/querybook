@@ -46,29 +46,23 @@ querybook/webapp/ui/Button/Button.stories.tsx <- storybook for the component
 Here is an minimal example of a story. Please refer to the [storybook documentation](https://storybook.js.org/docs/react/writing-stories/introduction) if you want to add more functionalities.
 
 ```ts
-import React from 'react';
-// eslint-disable-next-line import/no-extraneous-dependencies
 import centered from '@storybook/addon-centered/react';
+import React from 'react';
 
 import { Foo } from './Foo';
-
 export default {
-    // Title should be in the form of [Section]/[Name]
+     Title should be in the form of [Section]/[Name]
     title: 'Stateless/Foo',
-    // Include the centered docorator to center the component
+     Include the centered docorator to center the component
     decorators: [centered],
 };
-
 export const _Foo = (args) => <Foo {...args} />;
-// Provide default prop values for control
-_Foo.args = {
-    prop1: 'foo',
-    prop2: 'bar',
-};
-// Use argTypes to customize the control
-_Foo.argTypes = {
-    children: { control: 'text' },
-};
+ Provide default prop values for control
+_
+_Foo.args = { prop1: 'foo', prop2: 'bar' };
+ Use argTypes to customize the control
+_
+_Foo.argTypes = { children: { control: 'text' } };
 ```
 
 ## Querybook specific integrations

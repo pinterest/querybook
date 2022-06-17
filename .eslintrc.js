@@ -12,7 +12,6 @@ module.exports = {
         'plugin:react/recommended',
         'plugin:react-hooks/recommended',
         'prettier',
-        'prettier/@typescript-eslint',
     ],
     parser: '@typescript-eslint/parser',
     parserOptions: {
@@ -20,7 +19,6 @@ module.exports = {
         sourceType: 'module',
     },
     plugins: [
-        'eslint-plugin-import',
         'eslint-plugin-react',
         'eslint-plugin-prefer-arrow',
         'eslint-plugin-jsdoc',
@@ -98,7 +96,7 @@ module.exports = {
                 leadingUnderscore: 'allow',
             },
             {
-                selector: ['method', 'function'],
+                selector: ['classMethod', 'function'],
                 format: ['camelCase', 'PascalCase'],
                 leadingUnderscore: 'allow',
             },
@@ -156,9 +154,6 @@ module.exports = {
             'undefined',
         ],
         'id-match': 'error',
-        'import/no-extraneous-dependencies': ['error', {}],
-        'import/no-internal-modules': 'off',
-        'import/order': 'off',
         'jsdoc/check-alignment': 'error',
         'jsdoc/check-indentation': 'error',
         'jsdoc/newline-after-description': 'error',

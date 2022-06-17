@@ -1,10 +1,11 @@
 import { createSelector } from 'reselect';
-import { IStoreState } from 'redux/store/types';
-import { currentEnvironmentSelector } from 'redux/environment/selector';
-import { myUserInfoSelector } from 'redux/user/selector';
+
 import { IBoardItem } from 'const/board';
 import { IDataDoc } from 'const/datadoc';
 import { IDataTable } from 'const/metastore';
+import { currentEnvironmentSelector } from 'redux/environment/selector';
+import { IStoreState } from 'redux/store/types';
+import { myUserInfoSelector } from 'redux/user/selector';
 
 const boardByIdSelector = (state: IStoreState) => state.board.boardById;
 const boardItemByIdSelector = (state: IStoreState) => state.board.boardItemById;

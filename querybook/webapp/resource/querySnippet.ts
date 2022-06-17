@@ -18,7 +18,7 @@ export const QuerySnippetResource = {
     create: (params: IQueryForm) =>
         ds.save<IQuerySnippet>(
             '/query_snippet/',
-            (params as unknown) as Record<string, unknown>
+            params as unknown as Record<string, unknown>
         ),
     delete: (id: number) => ds.delete(`/query_snippet/${id}/`),
 };

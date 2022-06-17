@@ -1,7 +1,7 @@
 import moment from 'moment';
 
-import { isNumeric } from 'lib/utils/number';
 import { ChartScaleType } from 'const/dataDocChart';
+import { isNumeric } from 'lib/utils/number';
 
 export type AxesValueType = null | 'date' | 'datetime' | 'number' | 'string';
 export function getValueDataType(value: any): AxesValueType {

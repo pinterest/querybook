@@ -1,16 +1,18 @@
 import React from 'react';
-import { IUserInfo } from 'const/user';
+
 import { UserSelect } from 'components/UserSelect/UserSelect';
+import { IUserInfo } from 'const/user';
 import { usePaginatedResource } from 'hooks/usePaginatedResource';
 import { AdminEnvironmentResource } from 'resource/admin';
 import { AsyncButton } from 'ui/AsyncButton/AsyncButton';
-import { InfinityScroll } from 'ui/InfinityScroll/InfinityScroll';
+import { IconButton } from 'ui/Button/IconButton';
 import {
     FormField,
-    FormFieldInputSectionRow,
     FormFieldInputSection,
+    FormFieldInputSectionRow,
 } from 'ui/Form/FormField';
-import { IconButton } from 'ui/Button/IconButton';
+import { InfinityScroll } from 'ui/InfinityScroll/InfinityScroll';
+
 import './UserEnvironmentEditor.scss';
 
 interface IProps {

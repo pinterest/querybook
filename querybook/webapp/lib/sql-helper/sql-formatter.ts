@@ -1,7 +1,6 @@
-import { find, uniqueId, invert } from 'lodash';
+import { getQueryLinePosition, IToken, tokenize } from './sql-lexer';
+import { find, invert, uniqueId } from 'lodash';
 import sqlFormatter from 'sql-formatter';
-
-import { tokenize, IToken, getQueryLinePosition } from './sql-lexer';
 
 const skipTokenType = new Set(['TEMPLATED_TAG', 'TEMPLATED_BLOCK', 'URL']);
 

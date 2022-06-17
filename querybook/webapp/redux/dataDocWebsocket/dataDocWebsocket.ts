@@ -1,28 +1,25 @@
+import { IAccessRequest } from 'const/accessRequest';
+import { IDataDocEditor } from 'const/datadoc';
 import dataDocSocket, {
     IDataDocSocketEvent,
 } from 'lib/data-doc/datadoc-socketio';
-
-import { IDataDocEditor } from 'const/datadoc';
-import { IAccessRequest } from 'const/accessRequest';
-
-import { ThunkDispatch as QueryExecutionDispatch } from 'redux/queryExecutions/types';
-import { receiveQueryExecution } from 'redux/queryExecutions/action';
-import { ThunkResult } from 'redux/dataDoc/types';
 import {
-    normalizeRawDataDoc,
-    receiveDataDoc,
     deserializeCell,
     fetchDataDoc,
+    normalizeRawDataDoc,
+    receiveDataDoc,
 } from 'redux/dataDoc/action';
+import { ThunkResult } from 'redux/dataDoc/types';
+import { receiveQueryExecution } from 'redux/queryExecutions/action';
+import { ThunkDispatch as QueryExecutionDispatch } from 'redux/queryExecutions/types';
 
 export function openDataDoc(docId: number): ThunkResult<Promise<any>> {
     return async (dispatch) => {
         const dataDocEventMap: IDataDocSocketEvent = {
             receiveDataDoc: {
                 resolve: (rawDataDoc) => {
-                    const { dataDoc, dataDocCellById } = normalizeRawDataDoc(
-                        rawDataDoc
-                    );
+                    const { dataDoc, dataDocCellById } =
+                        normalizeRawDataDoc(rawDataDoc);
                     dispatch(receiveDataDoc(dataDoc, dataDocCellById));
                 },
             },
@@ -171,8 +168,7 @@ export function openDataDoc(docId: number): ThunkResult<Promise<any>> {
                     if (!isSameOrigin) {
                         if (request) {
                             dispatch({
-                                type:
-                                    '@@dataDoc/RECEIVE_DATA_DOC_ACCESS_REQUEST',
+                                type: '@@dataDoc/RECEIVE_DATA_DOC_ACCESS_REQUEST',
                                 payload: {
                                     docId: requestDocId,
                                     request,
@@ -180,8 +176,7 @@ export function openDataDoc(docId: number): ThunkResult<Promise<any>> {
                             });
                         } else {
                             dispatch({
-                                type:
-                                    '@@dataDoc/REMOVE_DATA_DOC_ACCESS_REQUEST',
+                                type: '@@dataDoc/REMOVE_DATA_DOC_ACCESS_REQUEST',
                                 payload: {
                                     docId: requestDocId,
                                     uid,

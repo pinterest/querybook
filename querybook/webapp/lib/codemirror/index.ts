@@ -1,38 +1,31 @@
+// Custom editor command
+import { attachCustomCommand } from './custom-commands';
 import * as CodeMirror from 'codemirror';
-import 'codemirror/lib/codemirror.css';
 
-// From codemirror non-react package:
-import 'codemirror/mode/sql/sql';
-
-// Lint addon
-import 'codemirror/addon/lint/lint';
-import 'codemirror/addon/lint/lint.css';
-
+// Highlight Addon
+import 'codemirror/addon/comment/comment';
+import 'codemirror/addon/edit/closebrackets';
+// Match brakcets addon
+import 'codemirror/addon/edit/matchbrackets';
 // Autocomplete Addon
 import 'codemirror/addon/hint/show-hint';
 import 'codemirror/addon/hint/show-hint.css';
 import 'codemirror/addon/hint/sql-hint';
-
-import 'codemirror/theme/monokai.css';
-import 'codemirror/theme/duotone-light.css';
-import 'codemirror/theme/solarized.css';
-import 'codemirror/theme/material-palenight.css';
-
-// Highlight Addon
-import 'codemirror/addon/comment/comment';
-// Match brakcets addon
-import 'codemirror/addon/edit/matchbrackets';
-import 'codemirror/addon/edit/closebrackets';
-
-// This should apply the hover option to codemirror
-import 'lib/codemirror/codemirror-hover';
+// Lint addon
+import 'codemirror/addon/lint/lint';
+import 'codemirror/addon/lint/lint.css';
 import 'codemirror/addon/runmode/runmode';
-
 // Search highlighting
 import 'codemirror/addon/search/match-highlighter.js';
-
-// Custom editor command
-import { attachCustomCommand } from './custom-commands';
+import 'codemirror/lib/codemirror.css';
+// From codemirror non-react package:
+import 'codemirror/mode/sql/sql';
+import 'codemirror/theme/duotone-light.css';
+import 'codemirror/theme/material-palenight.css';
+import 'codemirror/theme/monokai.css';
+import 'codemirror/theme/solarized.css';
+// This should apply the hover option to codemirror
+import 'lib/codemirror/codemirror-hover';
 
 // Local styling
 import './editor_styles.scss';

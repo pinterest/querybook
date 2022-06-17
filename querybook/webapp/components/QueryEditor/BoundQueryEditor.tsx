@@ -1,19 +1,18 @@
-import React, { useMemo, useEffect, useContext } from 'react';
-
-import { useUserQueryEditorConfig } from 'hooks/redux/useUserQueryEditorConfig';
-import { IQueryEditorProps, QueryEditor } from './QueryEditor';
+import React, { useContext, useEffect, useMemo } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 
-import { SearchAndReplaceContext } from 'context/searchAndReplace';
+import { CodeMirrorSearchHighlighter } from 'components/SearchAndReplace/CodeMirrorSearchHighlighter';
 import { IQueryEngine } from 'const/queryEngine';
+import { SearchAndReplaceContext } from 'context/searchAndReplace';
+import { useUserQueryEditorConfig } from 'hooks/redux/useUserQueryEditorConfig';
+import { useForwardedRef } from 'hooks/useForwardedRef';
 import {
     fetchDataTableByNameIfNeeded,
     fetchFunctionDocumentationIfNeeded,
 } from 'redux/dataSources/action';
-
 import { IStoreState } from 'redux/store/types';
-import { CodeMirrorSearchHighlighter } from 'components/SearchAndReplace/CodeMirrorSearchHighlighter';
-import { useForwardedRef } from 'hooks/useForwardedRef';
+
+import { IQueryEditorProps, QueryEditor } from './QueryEditor';
 
 export const BoundQueryEditor = React.forwardRef<
     QueryEditor,
@@ -46,13 +45,8 @@ export const BoundQueryEditor = React.forwardRef<
         const editorRef = useForwardedRef(ref);
 
         // Code Editor related Props
-        const {
-            codeEditorTheme,
-            keyMap,
-            options,
-            fontSize,
-            autoCompleteType,
-        } = useUserQueryEditorConfig(searchContext);
+        const { codeEditorTheme, keyMap, options, fontSize, autoCompleteType } =
+            useUserQueryEditorConfig(searchContext);
         const combinedOptions = useMemo(
             () => ({
                 ...options,

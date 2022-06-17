@@ -1,7 +1,8 @@
-import React, { useCallback } from 'react';
 import { LocationDescriptor } from 'history';
-import styled from 'styled-components';
+import React, { useCallback } from 'react';
 import { Link as LinkImport, LinkProps } from 'react-router-dom';
+import styled from 'styled-components';
+
 import { stopPropagation as stopPropagationFunc } from 'lib/utils/noop';
 
 const StyledLink = styled('a')`

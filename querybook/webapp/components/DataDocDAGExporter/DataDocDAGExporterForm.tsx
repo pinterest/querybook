@@ -1,13 +1,12 @@
 import * as React from 'react';
 import { Edge, Node } from 'react-flow-renderer';
 
-import { QueryDAGNodeTypes } from 'hooks/dag/useExporterDAG';
 import { IDataDocDAGExport } from 'const/datadoc';
-
-import { DataDocDAGExporterSettings } from './DataDocDAGExporterSettings';
-
+import { QueryDAGNodeTypes } from 'hooks/dag/useExporterDAG';
 import { Button } from 'ui/Button/Button';
 import { FlowGraph } from 'ui/FlowGraph/FlowGraph';
+
+import { DataDocDAGExporterSettings } from './DataDocDAGExporterSettings';
 
 interface IProps {
     handleExport: (

@@ -1,5 +1,5 @@
-import * as Yup from 'yup';
 import moment from 'moment';
+import * as Yup from 'yup';
 
 export interface IRecurrence {
     hour: number;

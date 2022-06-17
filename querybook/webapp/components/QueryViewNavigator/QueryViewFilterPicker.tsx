@@ -1,12 +1,12 @@
 import React from 'react';
-import styled from 'styled-components';
 import Select from 'react-select';
+import styled from 'styled-components';
 
 import {
+    defaultReactSelectStyles,
+    IOption,
     IOptions,
     valueFromId,
-    IOption,
-    defaultReactSelectStyles,
 } from 'lib/utils/react-select';
 import { IQueryViewFilter } from 'redux/queryView/types';
 import { FormField } from 'ui/Form/FormField';
@@ -24,12 +24,9 @@ interface IQueryViewFilterPickerProps {
     statusOptions: IOptions<number>;
 }
 
-export const QueryViewFilterPicker: React.FunctionComponent<IQueryViewFilterPickerProps> = ({
-    filters,
-    updateFilter,
-    engineOptions,
-    statusOptions,
-}) => {
+export const QueryViewFilterPicker: React.FunctionComponent<
+    IQueryViewFilterPickerProps
+> = ({ filters, updateFilter, engineOptions, statusOptions }) => {
     const enginePickerField = (
         <FormField label="Engine" stacked>
             <Select

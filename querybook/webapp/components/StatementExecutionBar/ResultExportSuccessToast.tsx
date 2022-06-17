@@ -1,10 +1,10 @@
 import React from 'react';
-
-import { Button } from 'ui/Button/Button';
-import { Modal } from 'ui/Modal/Modal';
-import { CopyPasteModal } from 'ui/CopyPasteModal/CopyPasteModal';
-import { IQueryExecutionExportStatusInfo } from 'const/queryExecution';
 import toast from 'react-hot-toast';
+
+import { IQueryExecutionExportStatusInfo } from 'const/queryExecution';
+import { Button } from 'ui/Button/Button';
+import { CopyPasteModal } from 'ui/CopyPasteModal/CopyPasteModal';
+import { Modal } from 'ui/Modal/Modal';
 
 const UrlModal: React.FunctionComponent<{
     url: string;

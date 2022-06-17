@@ -1,19 +1,18 @@
 import { TextMarker } from 'codemirror';
 import React from 'react';
-import { useSelector } from 'react-redux';
 import { UnControlled as ReactCodeMirror } from 'react-codemirror2';
+import { useSelector } from 'react-redux';
 import styled from 'styled-components';
 
 import { IQueryExecution } from 'const/queryExecution';
 import { getCodeEditorTheme } from 'lib/utils';
 import { queryEngineByIdEnvSelector } from 'redux/queryEngine/selector';
 import { IStoreState } from 'redux/store/types';
-
-import { Loading } from 'ui/Loading/Loading';
 import { TextButton } from 'ui/Button/Button';
+import { Loading } from 'ui/Loading/Loading';
+import { Tag } from 'ui/Tag/Tag';
 
 import './ExecutedQueryCell.scss';
-import { Tag } from 'ui/Tag/Tag';
 
 const EmbeddedCodeMirrorContainer = styled.div`
     .CodeMirror {

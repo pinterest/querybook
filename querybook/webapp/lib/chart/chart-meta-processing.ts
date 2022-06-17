@@ -1,21 +1,21 @@
 import {
     ChartOptions,
-    LineControllerDatasetOptions,
-    TimeScaleOptions,
-    ScaleOptions,
     LinearScaleOptions,
+    LineControllerDatasetOptions,
+    ScaleOptions,
+    TimeScaleOptions,
 } from 'chart.js';
 
+import { backgroundColor, fillColor, fontColor } from 'const/chartColors';
 import { IDataChartCellMeta } from 'const/datadoc';
 import {
     ChartDataAggType,
+    ChartScaleType,
+    ChartSize,
+    ChartValueDisplayType,
     IChartAxisMeta,
     IChartFormValues,
-    ChartScaleType,
-    ChartValueDisplayType,
-    ChartSize,
 } from 'const/dataDocChart';
-import { fontColor, fillColor, backgroundColor } from 'const/chartColors';
 import { StatementExecutionDefaultResultSize } from 'const/queryResultLimit';
 import type { DeepPartial } from 'lib/typescript';
 import { formatNumber } from 'lib/utils/number';

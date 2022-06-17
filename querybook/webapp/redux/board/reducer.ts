@@ -1,6 +1,8 @@
-import { IBoardState, BoardAction } from './types';
 import produce from 'immer';
+
 import { arrayMove } from 'lib/utils';
+
+import { BoardAction, IBoardState } from './types';
 
 const initialState: Readonly<IBoardState> = {
     boardById: {},

@@ -3,8 +3,10 @@ import {
     ThunkAction,
     ThunkDispatch as UntypedThunkDispatch,
 } from 'redux-thunk';
-import { IStoreState } from '../store/types';
+
 import { IAdhocQuery } from 'const/adhocQuery';
+
+import { IStoreState } from '../store/types';
 
 export interface ISetAdhocQueryAction extends Action {
     type: '@@adhocQuery/SET_ADHOC_QUERY';

@@ -1,22 +1,20 @@
-import React from 'react';
-import { bindActionCreators } from 'redux';
-import { connect } from 'react-redux';
 import { decorate } from 'core-decorators';
-import { bind, debounce } from 'lodash-decorators';
 import { trim } from 'lodash';
+import { bind, debounce } from 'lodash-decorators';
 import memoizeOne from 'memoize-one';
-
-import {
-    IQuerySnippetSearchFilter,
-    IQuerySnippet,
-} from 'redux/querySnippets/types';
-import { queryEngineSelector } from 'redux/queryEngine/selector';
-import * as querySnippetsActions from 'redux/querySnippets/action';
-import { IStoreState, Dispatch } from 'redux/store/types';
+import React from 'react';
+import { connect } from 'react-redux';
+import { bindActionCreators } from 'redux';
 
 import { QuerySnippetComposer } from 'components/QuerySnippetComposer/QuerySnippetComposer';
-import { QuerySnippetFilterPicker } from './QuerySnippetFilterPicker';
-
+import { titleize } from 'lib/utils';
+import { queryEngineSelector } from 'redux/queryEngine/selector';
+import * as querySnippetsActions from 'redux/querySnippets/action';
+import {
+    IQuerySnippet,
+    IQuerySnippetSearchFilter,
+} from 'redux/querySnippets/types';
+import { Dispatch, IStoreState } from 'redux/store/types';
 import { IconButton } from 'ui/Button/IconButton';
 import { InfinityScroll } from 'ui/InfinityScroll/InfinityScroll';
 import { ListLink } from 'ui/Link/ListLink';
@@ -26,8 +24,9 @@ import { Popover } from 'ui/Popover/Popover';
 import { SearchBar } from 'ui/SearchBar/SearchBar';
 import { Tabs } from 'ui/Tabs/Tabs';
 
+import { QuerySnippetFilterPicker } from './QuerySnippetFilterPicker';
+
 import './QuerySnippetNavigator.scss';
-import { titleize } from 'lib/utils';
 
 const NAVIGATOR_TABS = [
     {

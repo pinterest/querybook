@@ -1,7 +1,6 @@
 // Copied from https://dev.to/gabe_ragland/debouncing-with-react-hooks-jci
-
-import { useState, useEffect, useMemo, useRef } from 'react';
 import { debounce, throttle } from 'lodash';
+import { useEffect, useMemo, useRef, useState } from 'react';
 
 interface IUseDebounceStateOptions {
     // defaults to debounce

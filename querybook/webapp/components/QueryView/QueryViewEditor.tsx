@@ -1,23 +1,23 @@
 import React from 'react';
-import { useSelector, useDispatch } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
 
-import { queryStatusToStatusIcon } from 'const/queryStatus';
-import { IQueryExecution } from 'const/queryExecution';
-
-import { navigateWithinEnv } from 'lib/utils/query-string';
-import * as dataSourcesActions from 'redux/dataSources/action';
-import * as adhocQueryActions from 'redux/adhocQuery/action';
-import { queryEngineByIdEnvSelector } from 'redux/queryEngine/selector';
-import { QueryExecutionResource } from 'resource/queryExecution';
-import { Title } from 'ui/Title/Title';
-import { StatusIcon } from 'ui/StatusIcon/StatusIcon';
-import { Button } from 'ui/Button/Button';
-import { useResource } from 'hooks/useResource';
-import { Tag } from 'ui/Tag/Tag';
 import { BoundQueryEditor } from 'components/QueryEditor/BoundQueryEditor';
+import { IQueryExecution } from 'const/queryExecution';
+import { queryStatusToStatusIcon } from 'const/queryStatus';
+import { useResource } from 'hooks/useResource';
+import { navigateWithinEnv } from 'lib/utils/query-string';
+import * as adhocQueryActions from 'redux/adhocQuery/action';
+import * as dataSourcesActions from 'redux/dataSources/action';
+import { currentEnvironmentSelector } from 'redux/environment/selector';
+import { queryEngineByIdEnvSelector } from 'redux/queryEngine/selector';
 import * as queryExecutionActions from 'redux/queryExecutions/action';
 import { myUserInfoSelector } from 'redux/user/selector';
-import { currentEnvironmentSelector } from 'redux/environment/selector';
+import { QueryExecutionResource } from 'resource/queryExecution';
+import { Button } from 'ui/Button/Button';
+import { StatusIcon } from 'ui/StatusIcon/StatusIcon';
+import { Tag } from 'ui/Tag/Tag';
+import { Title } from 'ui/Title/Title';
+
 import { QueryViewEditorShareButton } from './QueryViewEditorShareButton';
 
 export const QueryViewEditor: React.FunctionComponent<{

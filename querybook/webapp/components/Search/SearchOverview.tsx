@@ -1,35 +1,31 @@
-import React from 'react';
+import { isEmpty } from 'lodash';
 import moment from 'moment';
+import React from 'react';
 import { useDispatch } from 'react-redux';
 import CreatableSelect from 'react-select/creatable';
-import { isEmpty } from 'lodash';
 
+import { TableTagGroupSelect } from 'components/DataTableTags/TableTagGroupSelect';
+import { UserAvatar } from 'components/UserBadge/UserAvatar';
+import { UserSelect } from 'components/UserSelect/UserSelect';
 import { IDataDocPreview, IQueryPreview, ITablePreview } from 'const/search';
-
 import { useShallowSelector } from 'hooks/redux/useShallowSelector';
+import { titleize } from 'lib/utils';
 import { getCurrentEnv } from 'lib/utils/query-string';
 import {
     defaultReactSelectStyles,
     makeReactSelectStyle,
     miniAsyncReactSelectStyles,
 } from 'lib/utils/react-select';
-import { titleize } from 'lib/utils';
-import * as searchActions from 'redux/search/action';
-import { IStoreState } from 'redux/store/types';
-import { RESULT_PER_PAGE, SearchOrder, SearchType } from 'redux/search/types';
-import * as dataTableSearchActions from 'redux/dataTableSearch/action';
 import { queryMetastoresSelector } from 'redux/dataSources/selector';
+import * as dataTableSearchActions from 'redux/dataTableSearch/action';
 import { currentEnvironmentSelector } from 'redux/environment/selector';
 import {
     queryEngineByIdEnvSelector,
     queryEngineSelector,
 } from 'redux/queryEngine/selector';
-
-import { UserSelect } from 'components/UserSelect/UserSelect';
-import { UserAvatar } from 'components/UserBadge/UserAvatar';
-import { TableTagGroupSelect } from 'components/DataTableTags/TableTagGroupSelect';
-import { DataDocItem, DataTableItem, QueryItem } from './SearchResultItem';
-
+import * as searchActions from 'redux/search/action';
+import { RESULT_PER_PAGE, SearchOrder, SearchType } from 'redux/search/types';
+import { IStoreState } from 'redux/store/types';
 import { Button } from 'ui/Button/Button';
 import { Checkbox } from 'ui/Checkbox/Checkbox';
 import { Container } from 'ui/Container/Container';
@@ -40,15 +36,18 @@ import { Level } from 'ui/Level/Level';
 import { ListMenu } from 'ui/Menu/ListMenu';
 import NumberInput from 'ui/NumberInput/NumberInput';
 import { Pagination } from 'ui/Pagination/Pagination';
+import { PrettyNumber } from 'ui/PrettyNumber/PrettyNumber';
 import { SearchBar } from 'ui/SearchBar/SearchBar';
 import { Select } from 'ui/Select/Select';
 import { SimpleReactSelect } from 'ui/SimpleReactSelect/SimpleReactSelect';
-import { Tabs } from 'ui/Tabs/Tabs';
-import { PrettyNumber } from 'ui/PrettyNumber/PrettyNumber';
-import { SearchDatePicker } from './SearchDatePicker';
-import { TableSelect } from './TableSelect';
-import './SearchOverview.scss';
 import { EmptyText } from 'ui/StyledText/StyledText';
+import { Tabs } from 'ui/Tabs/Tabs';
+
+import { SearchDatePicker } from './SearchDatePicker';
+import { DataDocItem, DataTableItem, QueryItem } from './SearchResultItem';
+import { TableSelect } from './TableSelect';
+
+import './SearchOverview.scss';
 
 const userReactSelectStyle = makeReactSelectStyle(
     true,

@@ -1,8 +1,9 @@
 import { produce } from 'immer';
 
-import { AdhocQueryState, AdhocQueryAction } from './types';
 import { EnvironmentAction } from 'redux/environment/types';
+
 import { saveAdhocQuery } from './persistence';
+import { AdhocQueryAction, AdhocQueryState } from './types';
 
 const initialState: Readonly<AdhocQueryState> = {};
 

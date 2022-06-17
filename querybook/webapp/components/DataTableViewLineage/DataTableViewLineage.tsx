@@ -1,10 +1,9 @@
 import React from 'react';
 import { Edge, Node } from 'react-flow-renderer';
 
-import { ILineageCollection, IDataTable, ILineage } from 'const/metastore';
-import { navigateWithinEnv } from 'lib/utils/query-string';
-
 import { DataTableViewMini } from 'components/DataTableViewMini/DataTableViewMini';
+import { IDataTable, ILineage, ILineageCollection } from 'const/metastore';
+import { navigateWithinEnv } from 'lib/utils/query-string';
 import {
     edgeStyle,
     FlowGraph,
@@ -100,11 +99,9 @@ function getFullLineage(
     }
 }
 
-export const DataTableViewLineage: React.FunctionComponent<IDataTableViewLineageProps> = ({
-    dataLineageLoader,
-    dataLineages,
-    table,
-}) => {
+export const DataTableViewLineage: React.FunctionComponent<
+    IDataTableViewLineageProps
+> = ({ dataLineageLoader, dataLineages, table }) => {
     const [selectedTableId, setSelectedTableId] = React.useState<number>(null);
 
     const onNodeClick = React.useCallback((clickedNodeId: number) => {

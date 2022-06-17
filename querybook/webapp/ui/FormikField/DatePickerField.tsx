@@ -1,6 +1,6 @@
-import React from 'react';
-import moment from 'moment';
 import { useField } from 'formik';
+import moment from 'moment';
+import React from 'react';
 import styled from 'styled-components';
 
 import { SearchDatePicker } from 'components/Search/SearchDatePicker';

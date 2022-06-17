@@ -1,39 +1,38 @@
 import clsx from 'clsx';
 import { decorate } from 'core-decorators';
 import { find } from 'lodash';
-import { debounce, throttle, bind } from 'lodash-decorators';
+import { bind, debounce, throttle } from 'lodash-decorators';
+import memoizeOne from 'memoize-one';
 import React from 'react';
 import { Controlled as ReactCodeMirror } from 'react-codemirror2';
-import memoizeOne from 'memoize-one';
 
+import { showTooltipFor } from 'components/CodeMirrorTooltip';
+import { ICodeMirrorTooltipProps } from 'components/CodeMirrorTooltip/CodeMirrorTooltip';
 import KeyMap from 'const/keyMap';
+import { FunctionDocumentationCollection } from 'const/metastore';
 import CodeMirror, { CodeMirrorKeyMap } from 'lib/codemirror';
-
 import {
+    AutoCompleteType,
     ExcludedTriggerKeys,
     SqlAutoCompleter,
-    AutoCompleteType,
 } from 'lib/sql-helper/sql-autocompleter';
+import { format } from 'lib/sql-helper/sql-formatter';
 import {
     ICodeAnalysis,
-    TableToken,
     IRange,
     IToken,
+    TableToken,
 } from 'lib/sql-helper/sql-lexer';
-import { format } from 'lib/sql-helper/sql-formatter';
-import { analyzeCode, getSqlLintAnnotations } from 'lib/web-worker';
 import { navigateWithinEnv } from 'lib/utils/query-string';
-
-import { FunctionDocumentationCollection } from 'const/metastore';
-import { ICodeMirrorTooltipProps } from 'components/CodeMirrorTooltip/CodeMirrorTooltip';
-import { showTooltipFor } from 'components/CodeMirrorTooltip';
+import { analyzeCode, getSqlLintAnnotations } from 'lib/web-worker';
+import { Button } from 'ui/Button/Button';
 
 import {
-    StyledQueryEditor,
     IStyledQueryEditorProps,
+    StyledQueryEditor,
 } from './StyledQueryEditor';
+
 import './QueryEditor.scss';
-import { Button } from 'ui/Button/Button';
 
 // Checks if token is in table, returns the table if found, false otherwise
 async function isTokenInTable(

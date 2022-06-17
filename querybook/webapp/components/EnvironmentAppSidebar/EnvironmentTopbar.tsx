@@ -1,20 +1,19 @@
 import React from 'react';
 import { useSelector } from 'react-redux';
 
+import { titleize } from 'lib/utils';
 import {
     currentEnvironmentSelector,
-    userEnvironmentNamesSelector,
     orderedEnvironmentsSelector,
+    userEnvironmentNamesSelector,
 } from 'redux/environment/selector';
-import { titleize } from 'lib/utils';
-
-import { EnvironmentDropdownButton } from './EnvironmentDropdownButton';
-
 import { Level } from 'ui/Level/Level';
 import { Link } from 'ui/Link/Link';
 
-import './EnvironmentTopbar.scss';
+import { EnvironmentDropdownButton } from './EnvironmentDropdownButton';
 import { EnvironmentIcon } from './EnvironmentIcon';
+
+import './EnvironmentTopbar.scss';
 
 const NUMBER_OF_ICONS_TO_SHOW = 6;
 

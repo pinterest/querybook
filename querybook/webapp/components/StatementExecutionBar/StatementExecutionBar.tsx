@@ -1,13 +1,15 @@
 import React from 'react';
 
-import './StatementExecutionBar.scss';
 import {
+    IStatementExecution,
     QueryExecutionStatus,
     StatementExecutionStatus,
-    IStatementExecution,
 } from 'const/queryExecution';
 import { TextButton } from 'ui/Button/Button';
+
 import { ResultExportDropdown } from './ResultExportDropdown';
+
+import './StatementExecutionBar.scss';
 
 interface IProps {
     statementExecution: IStatementExecution;

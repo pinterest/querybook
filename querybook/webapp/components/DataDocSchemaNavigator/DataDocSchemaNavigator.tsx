@@ -1,12 +1,12 @@
-import React from 'react';
 import Resizable from 're-resizable';
-
-import { getCurrentEnv } from 'lib/utils/query-string';
+import React from 'react';
 
 import { DataTableNavigator } from 'components/DataTableNavigator/DataTableNavigator';
-import { FullHeight } from 'ui/FullHeight/FullHeight';
 import { DataTableViewMini } from 'components/DataTableViewMini/DataTableViewMini';
 import { enableResizable } from 'lib/utils';
+import { getCurrentEnv } from 'lib/utils/query-string';
+import { FullHeight } from 'ui/FullHeight/FullHeight';
+
 import './DataDocSchemaNavigator.scss';
 
 export const DataDocSchemaNavigator: React.FunctionComponent = () => {

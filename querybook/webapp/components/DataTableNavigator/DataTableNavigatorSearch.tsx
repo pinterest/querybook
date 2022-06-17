@@ -1,21 +1,19 @@
 import { startCase } from 'lodash';
+import React, { useCallback, useMemo, useRef } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
-import React, { useRef, useMemo, useCallback } from 'react';
-
-import { ITableSearchFilters } from 'redux/dataTableSearch/types';
-
-import { useToggleState } from 'hooks/useToggleState';
 
 import { TableTagGroupSelect } from 'components/DataTableTags/TableTagGroupSelect';
+import { useToggleState } from 'hooks/useToggleState';
 import { changeSchemasSort } from 'redux/dataTableSearch/action';
+import { ITableSearchFilters } from 'redux/dataTableSearch/types';
 import { IStoreState } from 'redux/store/types';
-import { Popover } from 'ui/Popover/Popover';
-import { ToggleSwitch } from 'ui/ToggleSwitch/ToggleSwitch';
-import { Title } from 'ui/Title/Title';
-import { IconButton } from 'ui/Button/IconButton';
-import { SearchBar } from 'ui/SearchBar/SearchBar';
 import { SoftButton } from 'ui/Button/Button';
+import { IconButton } from 'ui/Button/IconButton';
 import { OrderByButton } from 'ui/OrderByButton/OrderByButton';
+import { Popover } from 'ui/Popover/Popover';
+import { SearchBar } from 'ui/SearchBar/SearchBar';
+import { Title } from 'ui/Title/Title';
+import { ToggleSwitch } from 'ui/ToggleSwitch/ToggleSwitch';
 
 import './DataTableNavigatorSearch.scss';
 
@@ -42,9 +40,10 @@ export const DataTableNavigatorSearch: React.FC<{
 }) => {
     const [showSearchFilter, , toggleSearchFilter] = useToggleState(false);
     const filterButtonRef = useRef<HTMLAnchorElement>();
-    const searchFiltersSize = useMemo(() => Object.keys(searchFilters).length, [
-        searchFilters,
-    ]);
+    const searchFiltersSize = useMemo(
+        () => Object.keys(searchFilters).length,
+        [searchFilters]
+    );
     const { key: sortSchemaKey, asc: sortSchemaAsc } = useSelector(
         (state: IStoreState) => state.dataTableSearch.schemas.sortSchemasBy
     );

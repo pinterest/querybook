@@ -1,6 +1,8 @@
-import { IMyUserInfo, IUserInfo } from 'const/user';
 import { Action } from 'redux';
 import { ThunkAction } from 'redux-thunk';
+
+import { IMyUserInfo, IUserInfo } from 'const/user';
+
 import { IStoreState } from '../store/types';
 
 export interface IUserSettingState {

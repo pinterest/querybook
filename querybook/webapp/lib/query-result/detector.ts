@@ -1,6 +1,8 @@
-import { IColumnDetector } from './types';
-import { isNumeric } from 'lib/utils/number';
 import { sampleSize } from 'lodash';
+
+import { isNumeric } from 'lib/utils/number';
+
+import { IColumnDetector } from './types';
 
 const columnDetectors: IColumnDetector[] = [
     {

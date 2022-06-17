@@ -1,19 +1,18 @@
 import React from 'react';
-import { Route } from 'react-router-dom';
 import { useSelector } from 'react-redux';
-
-import { currentEnvironmentSelector } from 'redux/environment/selector';
-import { queryMetastoresSelector } from 'redux/dataSources/selector';
-import { Entity } from './types';
+import { Route } from 'react-router-dom';
 
 import { InfoMenuButton } from 'components/InfoMenuButton/InfoMenuButton';
 import { QueryEngineStatusButton } from 'components/QueryEngineStatusButton/QueryEngineStatusButton';
 import { QueryExecutionButton } from 'components/QueryExecutionButton/QueryExecutionButton';
 import { SearchContainer } from 'components/Search/SearchContainer';
 import { UserMenu } from 'components/UserMenu/UserMenu';
-
+import { queryMetastoresSelector } from 'redux/dataSources/selector';
+import { currentEnvironmentSelector } from 'redux/environment/selector';
 import { IconButton } from 'ui/Button/IconButton';
 import { Link } from 'ui/Link/Link';
+
+import { Entity } from './types';
 
 import './EntitySidebar.scss';
 
@@ -22,8 +21,8 @@ interface IEntitySidebarProps {
     onSelectEntity: (entity: Entity) => any;
 }
 
-export const EntitySidebar: React.FunctionComponent<IEntitySidebarProps> = React.memo(
-    ({ selectedEntity, onSelectEntity }) => {
+export const EntitySidebar: React.FunctionComponent<IEntitySidebarProps> =
+    React.memo(({ selectedEntity, onSelectEntity }) => {
         const environment = useSelector(currentEnvironmentSelector);
         const queryMetastores = useSelector(queryMetastoresSelector);
 
@@ -114,5 +113,4 @@ export const EntitySidebar: React.FunctionComponent<IEntitySidebarProps> = React
                 </div>
             </div>
         );
-    }
-);
+    });

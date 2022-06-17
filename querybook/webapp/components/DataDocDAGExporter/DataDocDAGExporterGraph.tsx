@@ -2,12 +2,12 @@ import * as React from 'react';
 import { ConnectDropTarget } from 'react-dnd';
 import { Edge, Node, ReactFlowInstance } from 'react-flow-renderer';
 
-import { QueryDAGNodeTypes } from 'hooks/dag/useExporterDAG';
 import { IDataDocDAGExport } from 'const/datadoc';
-
-import { DataDocDAGExporterSave } from './DataDocDAGExporter';
+import { QueryDAGNodeTypes } from 'hooks/dag/useExporterDAG';
 import { FlowGraph } from 'ui/FlowGraph/FlowGraph';
 import { RemovableEdge } from 'ui/FlowGraph/RemovableEdge';
+
+import { DataDocDAGExporterSave } from './DataDocDAGExporter';
 
 const edgeTypes = {
     removableEdge: RemovableEdge,

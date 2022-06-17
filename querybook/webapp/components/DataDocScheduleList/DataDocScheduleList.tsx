@@ -1,18 +1,19 @@
 import React, { useEffect, useMemo, useState } from 'react';
-import { useSelector, useDispatch } from 'react-redux';
-import { Dispatch, IStoreState } from 'redux/store/types';
-import { getScheduledDocs } from 'redux/scheduledDataDoc/action';
+import { useDispatch, useSelector } from 'react-redux';
 
+import { getScheduledDocs } from 'redux/scheduledDataDoc/action';
 import { IScheduledDocFilters } from 'redux/scheduledDataDoc/types';
-import { DataDocScheduleItem } from './DataDocScheduleItem';
-import { Pagination } from 'ui/Pagination/Pagination';
-import { DebouncedInput } from 'ui/DebouncedInput/DebouncedInput';
+import { Dispatch, IStoreState } from 'redux/store/types';
 import { Checkbox } from 'ui/Checkbox/Checkbox';
 import { Container } from 'ui/Container/Container';
+import { DebouncedInput } from 'ui/DebouncedInput/DebouncedInput';
+import { Pagination } from 'ui/Pagination/Pagination';
+import { PrettyNumber } from 'ui/PrettyNumber/PrettyNumber';
 import { AccentText, EmptyText } from 'ui/StyledText/StyledText';
 
+import { DataDocScheduleItem } from './DataDocScheduleItem';
+
 import './DataDocScheduleList.scss';
-import { PrettyNumber } from 'ui/PrettyNumber/PrettyNumber';
 
 function useDataDocScheduleFiltersAndPagination() {
     const {

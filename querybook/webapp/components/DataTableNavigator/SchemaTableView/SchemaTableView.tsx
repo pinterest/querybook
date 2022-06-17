@@ -1,18 +1,17 @@
 import React, { useState } from 'react';
-import styled from 'styled-components';
 import { useDispatch, useSelector } from 'react-redux';
+import styled from 'styled-components';
 
 import { SchemaTableSortKey } from 'const/metastore';
-import { Dispatch, IStoreState } from 'redux/store/types';
-import type { ITableSearchResult } from 'redux/dataTableSearch/types';
-import { defaultSortSchemaTableBy } from 'redux/dataTableSearch/const';
 import { useIntersectionObserver } from 'hooks/useIntersectionObserver';
-
 import {
+    changeTableSort,
     searchSchemas,
     searchTableBySchema,
-    changeTableSort,
 } from 'redux/dataTableSearch/action';
+import { defaultSortSchemaTableBy } from 'redux/dataTableSearch/const';
+import type { ITableSearchResult } from 'redux/dataTableSearch/types';
+import { Dispatch, IStoreState } from 'redux/store/types';
 
 import { SchemaTableItem } from './SchemaTableItem';
 
@@ -35,9 +34,8 @@ export const SchemaTableView: React.FunctionComponent<{
     );
 
     const dispatch: Dispatch = useDispatch();
-    const [intersectElement, setIntersectElement] = useState<HTMLDivElement>(
-        null
-    );
+    const [intersectElement, setIntersectElement] =
+        useState<HTMLDivElement>(null);
 
     useIntersectionObserver({
         intersectElement,

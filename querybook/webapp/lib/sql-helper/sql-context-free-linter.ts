@@ -1,4 +1,4 @@
-import { ILinterWarning, IToken, ICodeAnalysis } from './sql-lexer';
+import { ICodeAnalysis, ILinterWarning, IToken } from './sql-lexer';
 
 export function getContextFreeLinterWarnings(
     statements: IToken[][],

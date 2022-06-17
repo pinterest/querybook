@@ -11,20 +11,20 @@ interface IBatchPromise<T> {
 }
 
 export function pickLastMergeFunction<T, M>(changes: Array<IBatchPromise<T>>) {
-    return (changes[changes.length - 1] as unknown) as IBatchPromise<M>;
+    return changes[changes.length - 1] as unknown as IBatchPromise<M>;
 }
 
 export function spreadMergeFunction<
     T = Record<string | number, unknown>,
     M = Record<string | number, unknown>
 >(changes: Array<IBatchPromise<T>>) {
-    const mergedData = (changes.reduce(
+    const mergedData = changes.reduce(
         (hash, change) => ({
             ...hash,
             ...change.data,
         }),
         {}
-    ) as unknown) as M;
+    ) as unknown as M;
     const { onSuccess, onFailure } = changes[changes.length - 1];
     return {
         onSuccess,
@@ -102,9 +102,11 @@ export class BatchManager<T, M> {
         }
 
         // We only notifiy the last one
-        const { onSuccess, onFailure, data: mergedData } = this.mergeFunction(
-            this.batchStack
-        );
+        const {
+            onSuccess,
+            onFailure,
+            data: mergedData,
+        } = this.mergeFunction(this.batchStack);
         // Clear the batch
         this.batchStack = [];
         try {

@@ -1,23 +1,21 @@
-import React from 'react';
 import * as DraftJs from 'draft-js';
+import React from 'react';
 
+import { QueryExecutionPicker } from 'components/ExecutionPicker/QueryExecutionPicker';
+import { StatementExecutionPicker } from 'components/ExecutionPicker/StatementExecutionPicker';
+import { IDataChartCellMeta } from 'const/datadoc';
+import { useChartSource } from 'hooks/chart/useChartSource';
 import { transformData } from 'lib/chart/chart-data-transformation';
 import { getDataTransformationOptions } from 'lib/chart/chart-meta-processing';
-import { useChartSource } from 'hooks/chart/useChartSource';
-
-import { IDataChartCellMeta } from 'const/datadoc';
-
 import { QueryExecutionResource } from 'resource/queryExecution';
-import { StatementExecutionPicker } from 'components/ExecutionPicker/StatementExecutionPicker';
-import { QueryExecutionPicker } from 'components/ExecutionPicker/QueryExecutionPicker';
-
 import { TextButton } from 'ui/Button/Button';
-import { DataDocChart } from './DataDocChart';
-import { DataDocChartCellTable } from './DataDocChartCellTable';
-import { DataDocChartComposer } from './DataDocChartComposer';
 import { InfoButton } from 'ui/Button/InfoButton';
 import { Modal } from 'ui/Modal/Modal';
 import { EmptyText } from 'ui/StyledText/StyledText';
+
+import { DataDocChart } from './DataDocChart';
+import { DataDocChartCellTable } from './DataDocChartCellTable';
+import { DataDocChartComposer } from './DataDocChartComposer';
 
 interface IProps {
     context: string;
@@ -66,24 +64,20 @@ export const DataDocChartCell = React.memo<IProps>(
         const [queryExecutionId, setQueryExecutionId] = React.useState(
             defaultQueryExecutionId
         );
-        const [statementExecutionId, setStatementExecutionId] = React.useState(
-            null
-        );
+        const [statementExecutionId, setStatementExecutionId] =
+            React.useState(null);
         const [showChartComposer, setShowChartComposer] = React.useState(false);
 
-        const {
-            statementResultData,
-            queryExecutions,
-            statementExecutions,
-        } = useChartSource(
-            cellId,
-            queryExecutionId,
-            statementExecutionId,
-            setCellId,
-            setQueryExecutionId,
-            setStatementExecutionId,
-            meta.data.limit
-        );
+        const { statementResultData, queryExecutions, statementExecutions } =
+            useChartSource(
+                cellId,
+                queryExecutionId,
+                statementExecutionId,
+                setCellId,
+                setQueryExecutionId,
+                setStatementExecutionId,
+                meta.data.limit
+            );
 
         React.useEffect(() => {
             const sourceType = meta.data.source_type;

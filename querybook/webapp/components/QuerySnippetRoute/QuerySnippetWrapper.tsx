@@ -1,9 +1,9 @@
 import React from 'react';
-import { useSelector, useDispatch } from 'react-redux';
-import { IStoreState } from 'redux/store/types';
+import { useDispatch, useSelector } from 'react-redux';
 
-import * as querySnippetsActions from 'redux/querySnippets/action';
 import { QuerySnippetComposer } from 'components/QuerySnippetComposer/QuerySnippetComposer';
+import * as querySnippetsActions from 'redux/querySnippets/action';
+import { IStoreState } from 'redux/store/types';
 import { Loader } from 'ui/Loader/Loader';
 
 export const QuerySnippetWrapper: React.FunctionComponent<{ id: number }> = ({

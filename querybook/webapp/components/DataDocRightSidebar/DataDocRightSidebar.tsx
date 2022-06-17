@@ -1,19 +1,18 @@
-import React from 'react';
 import { debounce } from 'lodash';
+import React from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 
+import { DataDocDAGExporterButton } from 'components/DataDocDAGExporter/DataDocDAGExporterButton';
+import { DataDocTemplateButton } from 'components/DataDocTemplateButton/DataDocTemplateButton';
 import { IDataDoc } from 'const/datadoc';
+import { useAnnouncements } from 'hooks/redux/useAnnouncements';
+import { getScrollParent, smoothScroll } from 'lib/utils';
 import { fetchDAGExporters } from 'redux/dataDoc/action';
 import { IStoreState } from 'redux/store/types';
-import { getScrollParent, smoothScroll } from 'lib/utils';
-import { useAnnouncements } from 'hooks/redux/useAnnouncements';
-
-import { DeleteDataDocButton } from './DeleteDataDocButton';
-import { DataDocTemplateButton } from 'components/DataDocTemplateButton/DataDocTemplateButton';
-import { DataDocScheduleButton } from './DataDocScheduleButton';
-import { DataDocDAGExporterButton } from 'components/DataDocDAGExporter/DataDocDAGExporterButton';
-
 import { IconButton } from 'ui/Button/IconButton';
+
+import { DataDocScheduleButton } from './DataDocScheduleButton';
+import { DeleteDataDocButton } from './DeleteDataDocButton';
 
 import './DataDocRightSidebar.scss';
 

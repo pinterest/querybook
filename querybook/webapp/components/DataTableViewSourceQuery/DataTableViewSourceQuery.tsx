@@ -1,20 +1,21 @@
-import React, { useState, useMemo } from 'react';
+import React, { useMemo, useState } from 'react';
 
 import {
-    IDataTable,
     IDataJobMetadata,
+    IDataTable,
     ILineageCollection,
 } from 'const/metastore';
-import { getWithinEnvUrl } from 'lib/utils/query-string';
 import { getAppName } from 'lib/utils/global';
-import { Loading } from 'ui/Loading/Loading';
-import { Table } from 'ui/Table/Table';
-import { ThemedCodeHighlight } from 'ui/CodeHighlight/ThemedCodeHighlight';
-import { Title } from 'ui/Title/Title';
+import { getWithinEnvUrl } from 'lib/utils/query-string';
 import { Button } from 'ui/Button/Button';
+import { ThemedCodeHighlight } from 'ui/CodeHighlight/ThemedCodeHighlight';
 import { Link } from 'ui/Link/Link';
-import './DataTableViewSourceQuery.scss';
+import { Loading } from 'ui/Loading/Loading';
 import { EmptyText } from 'ui/StyledText/StyledText';
+import { Table } from 'ui/Table/Table';
+import { Title } from 'ui/Title/Title';
+
+import './DataTableViewSourceQuery.scss';
 
 const dataJobMetadataTableColumns = ['name', 'value'];
 

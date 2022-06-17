@@ -1,15 +1,13 @@
 import React from 'react';
+import toast from 'react-hot-toast';
 import { useDispatch } from 'react-redux';
 
 import { TooltipDirection } from 'const/tooltip';
-
 import { sendConfirm } from 'lib/querybookUI';
-import { Dispatch } from 'redux/store/types';
-
-import * as dataDocActions from 'redux/dataDoc/action';
-import { IconButton } from 'ui/Button/IconButton';
 import { navigateWithinEnv } from 'lib/utils/query-string';
-import toast from 'react-hot-toast';
+import * as dataDocActions from 'redux/dataDoc/action';
+import { Dispatch } from 'redux/store/types';
+import { IconButton } from 'ui/Button/IconButton';
 
 export interface IDeleteDataDocButtonProps {
     // from own Props
@@ -18,11 +16,9 @@ export interface IDeleteDataDocButtonProps {
     tooltip?: string;
 }
 
-export const DeleteDataDocButton: React.FunctionComponent<IDeleteDataDocButtonProps> = ({
-    docId,
-    tooltip = 'Delete',
-    tooltipPos = 'left',
-}) => {
+export const DeleteDataDocButton: React.FunctionComponent<
+    IDeleteDataDocButtonProps
+> = ({ docId, tooltip = 'Delete', tooltipPos = 'left' }) => {
     const dispatch: Dispatch = useDispatch();
 
     const handleDeleteDataDoc = React.useCallback(

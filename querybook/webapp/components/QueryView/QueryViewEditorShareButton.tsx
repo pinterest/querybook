@@ -1,12 +1,13 @@
-import { QueryExecutionAccessList } from 'components/QueryExecutionAccessList/QueryExecutionAccessList';
 import React, { useRef, useState } from 'react';
-import { Button } from 'ui/Button/Button';
-import { Popover } from 'ui/Popover/Popover';
+import { useDispatch, useSelector } from 'react-redux';
+
+import { QueryExecutionAccessList } from 'components/QueryExecutionAccessList/QueryExecutionAccessList';
 import { IQueryExecution } from 'const/queryExecution';
-import { useSelector, useDispatch } from 'react-redux';
 import * as queryExecutionActions from 'redux/queryExecutions/action';
 import * as queryExecutionSelectors from 'redux/queryExecutions/selector';
 import { IStoreState } from 'redux/store/types';
+import { Button } from 'ui/Button/Button';
+import { Popover } from 'ui/Popover/Popover';
 
 export const QueryViewEditorShareButton: React.FunctionComponent<{
     queryExecution: IQueryExecution;

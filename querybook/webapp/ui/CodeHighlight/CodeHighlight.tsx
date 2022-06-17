@@ -3,8 +3,8 @@ import clsx from 'clsx';
 import React, { useMemo } from 'react';
 import styled from 'styled-components';
 
-import CodeMirror from 'lib/codemirror';
 import 'codemirror/lib/codemirror.css';
+import CodeMirror from 'lib/codemirror';
 
 export interface ICodeHighlightProps extends React.HTMLProps<HTMLDivElement> {
     className?: string;

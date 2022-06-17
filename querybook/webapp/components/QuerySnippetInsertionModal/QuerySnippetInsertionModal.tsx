@@ -2,21 +2,21 @@ import { bind } from 'lodash-decorators';
 import React from 'react';
 import { connect } from 'react-redux';
 
-import * as querySnippetsActions from 'redux/querySnippets/action';
-import { Dispatch, IStoreState } from 'redux/store/types';
-import { IQuerySnippet } from 'redux/querySnippets/types';
-import { queryEngineByIdEnvSelector } from 'redux/queryEngine/selector';
-
-import { Tabs } from 'ui/Tabs/Tabs';
-import { Loading } from 'ui/Loading/Loading';
-import { Sidebar } from 'ui/Sidebar/Sidebar';
+import { QuerySnippetComposer } from 'components/QuerySnippetComposer/QuerySnippetComposer';
 import { QuerySnippetNavigator } from 'components/QuerySnippetNavigator/QuerySnippetNavigator';
+import { queryEngineByIdEnvSelector } from 'redux/queryEngine/selector';
+import * as querySnippetsActions from 'redux/querySnippets/action';
+import { IQuerySnippet } from 'redux/querySnippets/types';
+import { Dispatch, IStoreState } from 'redux/store/types';
+import { Loading } from 'ui/Loading/Loading';
+import { Modal } from 'ui/Modal/Modal';
+import { Sidebar } from 'ui/Sidebar/Sidebar';
+import { EmptyText } from 'ui/StyledText/StyledText';
+import { Tabs } from 'ui/Tabs/Tabs';
 
 import { QuerySnippetView } from './QuerySnippetView';
+
 import './QuerySnippetInsertionModal.scss';
-import { QuerySnippetComposer } from 'components/QuerySnippetComposer/QuerySnippetComposer';
-import { Modal } from 'ui/Modal/Modal';
-import { EmptyText } from 'ui/StyledText/StyledText';
 
 interface IOwnProps {
     onInsert: (query: string) => any;

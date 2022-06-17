@@ -1,10 +1,10 @@
-import React from 'react';
 import { shallow } from 'enzyme';
 import toJson from 'enzyme-to-json';
+import React from 'react';
 import renderer from 'react-test-renderer';
 
-import { Message } from '../../ui/Message/Message';
 import { ErrorMessage } from '../../ui/Message/ErrorMessage';
+import { Message } from '../../ui/Message/Message';
 
 it('renders without crashing', () => {
     shallow(

@@ -1,5 +1,7 @@
+import { useCallback, useMemo } from 'react';
+
 import { isNumeric } from 'lib/utils/number';
-import { useMemo, useCallback } from 'react';
+
 import { isCellNull } from './common';
 
 export type ColumnSortType = 'string' | 'number';

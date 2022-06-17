@@ -1,18 +1,18 @@
 import React, { useCallback, useMemo, useRef } from 'react';
 
+import { UserName } from 'components/UserBadge/UserName';
 import { IQueryEngine } from 'const/queryEngine';
 import { QueryExecutionStatus } from 'const/queryExecution';
-import { IOptions } from 'lib/utils/react-select';
-import { getEnumEntries } from 'lib/typescript';
-import { IQueryViewFilter } from 'redux/queryView/types';
-
-import { UserName } from 'components/UserBadge/UserName';
-import { Popover } from 'ui/Popover/Popover';
-import { IconButton } from 'ui/Button/IconButton';
-import { TagGroup, Tag } from 'ui/Tag/Tag';
 import { useToggleState } from 'hooks/useToggleState';
-import { QueryViewFilterPicker } from './QueryViewFilterPicker';
+import { getEnumEntries } from 'lib/typescript';
 import { navigateWithinEnv } from 'lib/utils/query-string';
+import { IOptions } from 'lib/utils/react-select';
+import { IQueryViewFilter } from 'redux/queryView/types';
+import { IconButton } from 'ui/Button/IconButton';
+import { Popover } from 'ui/Popover/Popover';
+import { Tag, TagGroup } from 'ui/Tag/Tag';
+
+import { QueryViewFilterPicker } from './QueryViewFilterPicker';
 
 interface IQueryViewFilterProps {
     queryEngines: IQueryEngine[];

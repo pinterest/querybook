@@ -1,13 +1,13 @@
 import React from 'react';
-import { Router, Route, Switch } from 'react-router-dom';
+import { Route, Router, Switch } from 'react-router-dom';
 
-import { UserLoader } from 'components/UserLoader/UserLoader';
-import history from 'lib/router-history';
 import { AppLayout } from 'components/AppLayout/AppLayout';
 import { ConfirmationManager } from 'components/ConfirmationManager/ConfirmationManager';
-import { ToastManager } from 'ui/ToastManager/ToastManager';
+import { UserLoader } from 'components/UserLoader/UserLoader';
+import history from 'lib/router-history';
 import { FourOhFour } from 'ui/ErrorPage/FourOhFour';
 import { Loading } from 'ui/Loading/Loading';
+import { ToastManager } from 'ui/ToastManager/ToastManager';
 
 const AppAdmin = React.lazy(() => import('components/AppAdmin/AppAdmin'));
 const EnvironmentsRouter = React.lazy(

@@ -1,4 +1,5 @@
 import { createSelector } from 'reselect';
+
 import { IStoreState } from '../store/types';
 
 const announcementsSelector = (state: IStoreState) =>

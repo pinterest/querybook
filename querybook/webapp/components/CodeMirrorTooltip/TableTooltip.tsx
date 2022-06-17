@@ -1,10 +1,11 @@
-import React from 'react';
 import { ContentState } from 'draft-js';
-import { IDataColumn, IDataTable, IDataSchema } from 'const/metastore';
-import { ShowMoreText } from 'ui/ShowMoreText/ShowMoreText';
-import { IconButton } from 'ui/Button/IconButton';
-import { setSidebarTableId } from 'lib/querybookUI';
+import React from 'react';
+
 import { DataTableTags } from 'components/DataTableTags/DataTableTags';
+import { IDataColumn, IDataSchema, IDataTable } from 'const/metastore';
+import { setSidebarTableId } from 'lib/querybookUI';
+import { IconButton } from 'ui/Button/IconButton';
+import { ShowMoreText } from 'ui/ShowMoreText/ShowMoreText';
 
 interface IProps {
     table: IDataTable;
