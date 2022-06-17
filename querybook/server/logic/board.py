@@ -63,13 +63,16 @@ def add_item_to_board(board_id, item_id, item_type, session=None):  # data_doc o
     # Avoid duplication
     board_item = (
         session.query(BoardItem)
-        .filter_by(**{"board_id": board_id, item_type_to_id_type(item_type): item_id})
+        .filter_by(
+            **{"parent_board_id": board_id, item_type_to_id_type(item_type): item_id}
+        )
         .first()
     )
 
     if not board_item:
         board_item = BoardItem(
-            board_id=board_id, item_order=board.get_max_item_order(session=session) + 1
+            parent_board_id=board_id,
+            item_order=board.get_max_item_order(session=session) + 1,
         )
         setattr(board_item, item_type_to_id_type(item_type), item_id)
         session.add(board_item)
@@ -94,14 +97,14 @@ def move_item_order(board_id, from_index, to_index, commit=True, session=None):
 
     is_move_down = from_item_order < to_item_order
     if is_move_down:
-        session.query(BoardItem).filter(BoardItem.board_id == board_id).filter(
+        session.query(BoardItem).filter(BoardItem.parent_board_id == board_id).filter(
             BoardItem.item_order <= to_item_order
         ).filter(BoardItem.item_order > from_item_order).update(
             {BoardItem.item_order: BoardItem.item_order - 1}
         )
     else:
         # moving up
-        session.query(BoardItem).filter(BoardItem.board_id == board_id).filter(
+        session.query(BoardItem).filter(BoardItem.parent_board_id == board_id).filter(
             BoardItem.item_order >= to_item_order
         ).filter(BoardItem.item_order < from_item_order).update(
             {BoardItem.item_order: BoardItem.item_order + 1}
@@ -141,7 +144,7 @@ def get_board_ids_from_board_item(item_type, item_id, environment_id, session=No
         map(
             lambda id_tuple: id_tuple[0],
             session.query(Board.id)
-            .join(BoardItem, Board.id == BoardItem.board_id)
+            .join(BoardItem, Board.id == BoardItem.parent_board_id)
             .filter(getattr(BoardItem, item_type_to_id_type(item_type)) == item_id)
             .filter(Board.environment_id == environment_id)
             .all(),

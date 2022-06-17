@@ -3,9 +3,9 @@ import { debounce } from 'lodash';
 import { getScrollParent, smoothScroll } from 'lib/utils';
 
 export const useScrollToTop = ({
-    selfRef,
+    containerRef,
 }: {
-    selfRef: React.RefObject<any>;
+    containerRef: React.RefObject<any>;
 }) => {
     const [showScrollToTop, setShowScrollToTop] = useState(false);
 
@@ -17,7 +17,7 @@ export const useScrollToTop = ({
     );
 
     useEffect(() => {
-        const scrollParent = getScrollParent(selfRef?.current);
+        const scrollParent = getScrollParent(containerRef?.current);
         const scrollFunction = (e) => checkParentScroll(e.target.scrollTop);
         if (scrollParent) {
             scrollParent.addEventListener('scroll', scrollFunction);
@@ -30,12 +30,12 @@ export const useScrollToTop = ({
         };
     }, []);
 
-    const onScrollClick = useCallback(() => {
-        const scrollParent = getScrollParent(selfRef?.current);
+    const scrollToTop = useCallback(() => {
+        const scrollParent = getScrollParent(containerRef?.current);
         if (scrollParent) {
             smoothScroll(scrollParent, 0, 200);
         }
-    }, [selfRef]);
+    }, [containerRef]);
 
-    return { showScrollToTop, onScrollClick };
+    return { showScrollToTop, scrollToTop };
 };

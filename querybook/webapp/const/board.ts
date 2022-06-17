@@ -5,12 +5,14 @@ import { IDataTable } from './metastore';
 export interface IBoardRaw extends IBoard {
     docs: IDataDoc[];
     tables: IDataTable[];
+    boards: IBoardItem[];
     items: IBoardItem[];
 }
 
 export interface IBoardWithItemIds extends IBoard {
     docs: number[];
     tables: number[];
+    boards: number[];
     items: number[];
 }
 
@@ -37,10 +39,11 @@ export interface IBoardUpdatableField {
 
 export interface IBoardItem {
     id: number;
-    board_id: number;
+    parent_board_id: number;
     created_at: number;
     data_doc_id: number | null;
     table_id: number | null;
+    board_id: number | null;
 }
 
 export type BoardItemType = 'table' | 'data_doc' | 'board';

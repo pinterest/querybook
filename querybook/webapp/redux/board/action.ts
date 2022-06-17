@@ -13,6 +13,7 @@ import { receiveDataTable } from 'redux/dataSources/action';
 import { BoardResource } from 'resource/board';
 import { convertContentStateToHTML } from 'lib/richtext/serialize';
 import { ContentState } from 'draft-js';
+import { stateFromHTML } from 'draft-js-import-html';
 
 export const dataDocSchema = new schema.Entity('dataDoc');
 export const tableSchema = new schema.Entity('dataTable');
@@ -50,7 +51,10 @@ function receiveBoardWithItems(dispatch: Dispatch, rawBoard: IBoardRaw) {
     dispatch({
         type: '@@board/RECEIVE_BOARD_WITH_ITEMS',
         payload: {
-            board,
+            board: {
+                ...board,
+                description: stateFromHTML(board.description as string),
+            },
             boardItemById,
         },
     });
@@ -58,6 +62,14 @@ function receiveBoardWithItems(dispatch: Dispatch, rawBoard: IBoardRaw) {
 
 function receiveBoards(boards: IBoard[]): IReceiveBoardsAction {
     const boardById = arrayGroupByField(boards);
+    Object.keys(boardById).forEach((boardId) => {
+        boardById[boardId] = {
+            ...boardById[boardId],
+            description: stateFromHTML(
+                boardById[boardId].description as string
+            ),
+        };
+    });
     return {
         type: '@@board/RECEIVE_BOARDS',
         payload: {

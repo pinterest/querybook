@@ -19,8 +19,8 @@ export interface IBoardItemProps {
     itemType: BoardItemType;
     title: string;
     titleUrl: string;
-    notesDOM: React.ReactElement;
-    isCollapsed: boolean;
+    notesDOM: React.ReactNode;
+    defaultCollapsed: boolean;
     isEditMode: boolean;
 }
 
@@ -36,12 +36,12 @@ export const BoardItem: React.FunctionComponent<IBoardItemProps> = ({
     title,
     titleUrl,
     notesDOM,
-    isCollapsed,
+    defaultCollapsed,
     isEditMode,
 }) => {
-    const [collapsed, setCollapsed] = React.useState(isCollapsed);
+    const [collapsed, setCollapsed] = React.useState(defaultCollapsed);
 
-    React.useEffect(() => setCollapsed(isCollapsed), [isCollapsed]);
+    React.useEffect(() => setCollapsed(defaultCollapsed), [defaultCollapsed]);
 
     return (
         <div className="BoardItem mt8 mb16 p12">

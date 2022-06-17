@@ -65,32 +65,34 @@ class BoardItem(CRUDMixin, Base):
     table_id = sql.Column(
         sql.Integer, sql.ForeignKey("data_table.id", ondelete="CASCADE"), nullable=True
     )
-    board_item_id = sql.Column(sql.Integer, sql.ForeignKey("board.id"), nullable=True)
+    board_id = sql.Column(sql.Integer, sql.ForeignKey("board.id"), nullable=True)
 
-    board_id = sql.Column(sql.Integer, sql.ForeignKey("board.id"), nullable=False)
+    parent_board_id = sql.Column(
+        sql.Integer, sql.ForeignKey("board.id"), nullable=False
+    )
 
     item_order = sql.Column(sql.Integer)
     created_at = sql.Column(sql.DateTime, default=now)
     description = sql.Column(sql.Text(length=mediumtext_length))
 
-    board = relationship(
+    parent_board = relationship(
         "Board",
         backref=backref("items", order_by="BoardItem.item_order", cascade="all,delete"),
         uselist=False,
-        foreign_keys=board_id,
+        foreign_keys=parent_board_id,
     )
-    board_item = relationship(
+
+    board = relationship(
         "Board",
         backref=backref("board_item", cascade="all,delete"),
         uselist=False,
-        foreign_keys=board_item_id,
+        foreign_keys=board_id,
     )
-
     table = relationship("DataTable", uselist=False)
     data_doc = relationship("DataDoc", uselist=False)
 
 
-class BoardEditor(Base):
+class BoardEditor(CRUDMixin, Base):
     __tablename__ = "board_editor"
     __table_args__ = (
         sql.UniqueConstraint("board_id", "uid", name="unique_board_user"),
@@ -110,12 +112,3 @@ class BoardEditor(Base):
         uselist=False,
         backref=backref("editors", cascade="all, delete", passive_deletes=True),
     )
-
-    def to_dict(self):
-        return {
-            "id": self.id,
-            "board_id": self.board_id,
-            "uid": self.uid,
-            "read": self.read,
-            "write": self.write,
-        }

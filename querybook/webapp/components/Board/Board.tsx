@@ -22,12 +22,12 @@ interface IBoardDOMProps {
     boardItemById: Record<number, IBoardItem>;
 }
 
-// TODO - meowcodes: implement isEditable
 const BoardDOM: React.FunctionComponent<IBoardDOMProps> = ({
     board,
     boardItemById,
 }) => {
-    const [defaultCollapse, setDefaulCollapse] = React.useState<boolean>(false);
+    const [defaultCollapse, setDefaulCollapse] = React.useState(false);
+    // TODO - meowcodes: implement isEditable
     const [isEditMode, setIsEditMode] = React.useState<boolean>(false);
 
     const boardItemDOM = board?.items

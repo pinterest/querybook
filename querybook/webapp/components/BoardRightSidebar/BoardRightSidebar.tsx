@@ -22,8 +22,8 @@ export const BoardRightSidebar: React.FunctionComponent<IProps> = ({
 }) => {
     const numAnnouncements = useAnnouncements().length;
     const selfRef = React.useRef<HTMLDivElement>();
-    const { showScrollToTop, onScrollClick } = useScrollToTop({
-        selfRef,
+    const { showScrollToTop, scrollToTop } = useScrollToTop({
+        containerRef: selfRef,
     });
 
     const buttonSection = (
@@ -31,7 +31,7 @@ export const BoardRightSidebar: React.FunctionComponent<IProps> = ({
             <IconButton
                 icon="ArrowUp"
                 className={showScrollToTop ? '' : 'hide-button'}
-                onClick={onScrollClick}
+                onClick={scrollToTop}
             />
             <IconButton
                 icon={defaultCollapse ? 'Maximize2' : 'Minimize2'}

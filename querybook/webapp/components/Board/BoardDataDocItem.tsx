@@ -35,7 +35,7 @@ export const BoardDataDocItem: React.FunctionComponent<IProps> = ({
             title={doc.title}
             titleUrl={`/datadoc/${doc.id}/`}
             notesDOM={null}
-            isCollapsed={isCollapsed}
+            defaultCollapsed={isCollapsed}
             isEditMode={isEditMode}
         />
     );

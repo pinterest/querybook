@@ -56,7 +56,7 @@ export const BoardDataTableItem: React.FunctionComponent<IProps> = ({
             title={`${schema?.name}.${table.name}`}
             titleUrl={`/table/${table.id}/`}
             notesDOM={notesDOM}
-            isCollapsed={isCollapsed}
+            defaultCollapsed={isCollapsed}
             isEditMode={isEditMode}
         />
     );

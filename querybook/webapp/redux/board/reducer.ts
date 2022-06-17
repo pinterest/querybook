@@ -1,7 +1,6 @@
 import { IBoardState, BoardAction } from './types';
 import produce from 'immer';
 import { arrayMove } from 'lib/utils';
-import { stateFromHTML } from 'draft-js-import-html';
 
 const initialState: Readonly<IBoardState> = {
     boardById: {},
@@ -17,7 +16,6 @@ export default function (state = initialState, action: BoardAction) {
                     draft.boardById[id] = {
                         ...draft.boardById[id],
                         ...board,
-                        description: stateFromHTML(board.description as string),
                     };
                 }
                 return;
@@ -28,7 +26,6 @@ export default function (state = initialState, action: BoardAction) {
                 draft.boardById[board.id] = {
                     ...draft.boardById[board.id],
                     ...board,
-                    description: stateFromHTML(board.description as string),
                 };
                 draft.boardItemById = {
                     ...draft.boardItemById,
@@ -41,7 +38,7 @@ export default function (state = initialState, action: BoardAction) {
                 delete draft.boardById[id];
                 draft.boardItemById = Object.values(draft.boardItemById).reduce(
                     (hash, boardItem) => {
-                        if (boardItem.board_id !== id) {
+                        if (boardItem.parent_board_id !== id) {
                             hash[boardItem.id] = boardItem;
                         }
                         return hash;
@@ -72,7 +69,7 @@ export default function (state = initialState, action: BoardAction) {
                     (hash, boardItem) => {
                         if (
                             !(
-                                boardItem.board_id === boardId &&
+                                boardItem.parent_board_id === boardId &&
                                 itemField in boardItem &&
                                 boardItem[itemField] === itemId
                             )
