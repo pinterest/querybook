@@ -1,15 +1,15 @@
 import clsx from 'clsx';
 import React, { useCallback } from 'react';
 import toast from 'react-hot-toast';
-import { titleize, sleep, copy } from 'lib/utils';
 
 import { IDataCellMeta } from 'const/datadoc';
 import { useBoundFunc } from 'hooks/useBoundFunction';
+import { copy, sleep, titleize } from 'lib/utils';
+import { getShortcutSymbols, KeyMap } from 'lib/utils/keyboard';
 import { AsyncButton } from 'ui/AsyncButton/AsyncButton';
 import { SoftButton } from 'ui/Button/Button';
 import { Dropdown } from 'ui/Dropdown/Dropdown';
-import { ListMenu, IListMenuItem } from 'ui/Menu/ListMenu';
-import { getShortcutSymbols, KeyMap } from 'lib/utils/keyboard';
+import { IListMenuItem, ListMenu } from 'ui/Menu/ListMenu';
 
 const COPY_CELL_SHORTCUT = getShortcutSymbols(KeyMap.dataDoc.copyCell.key);
 const PASTE_CELL_SHORTCUT = getShortcutSymbols(KeyMap.dataDoc.pasteCell.key);
@@ -72,9 +72,8 @@ export const DataDocCellControl: React.FunctionComponent<IProps> = ({
     toggleDefaultCollapsed,
     shareUrl,
 }) => {
-    const [animateDefaultChange, setAnimateDefaultChange] = React.useState(
-        false
-    );
+    const [animateDefaultChange, setAnimateDefaultChange] =
+        React.useState(false);
 
     const handleToggleDefaultCollapsed = React.useCallback(() => {
         setAnimateDefaultChange(true);

@@ -1,12 +1,13 @@
-import * as React from 'react';
 import clsx from 'clsx';
+import * as React from 'react';
 
 import { Icon } from 'ui/Icon/Icon';
 import type { AllLucideIconNames } from 'ui/Icon/LucideIcons';
-import { Link, ILinkProps } from './Link';
+import { StyledText, UntitledText } from 'ui/StyledText/StyledText';
+
+import { ILinkProps, Link } from './Link';
 
 import './ListLink.scss';
-import { StyledText, UntitledText } from 'ui/StyledText/StyledText';
 
 interface IProps extends ILinkProps {
     className?: string;

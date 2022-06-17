@@ -1,6 +1,7 @@
 import * as DraftJs from 'draft-js';
-import React from 'react';
 import type { Stack } from 'immutable';
+import React from 'react';
+
 import { Link } from 'ui/Link/Link';
 
 interface IUrlLinkProps {

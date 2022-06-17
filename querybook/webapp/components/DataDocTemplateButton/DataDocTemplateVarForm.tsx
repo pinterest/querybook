@@ -1,18 +1,19 @@
+import { FieldArray, Form, Formik } from 'formik';
+import { isEmpty } from 'lodash';
 import React, { useMemo } from 'react';
-import { Formik, Form, FieldArray } from 'formik';
 import * as Yup from 'yup';
 
 import { Button, TextButton } from 'ui/Button/Button';
 import { IconButton } from 'ui/Button/IconButton';
 import { SimpleField } from 'ui/FormikField/SimpleField';
 
-import './DataDocTemplateVarForm.scss';
 import {
     detectVariableType,
     SUPPORTED_TYPES,
     TTemplateVariableDict,
 } from './helpers';
-import { isEmpty } from 'lodash';
+
+import './DataDocTemplateVarForm.scss';
 
 export interface IDataDocTemplateVarFormProps {
     onSave: (vars: TTemplateVariableDict) => any;
@@ -29,7 +30,9 @@ const templatedVarSchema = Yup.object().shape({
 
 const defaultTemplatedVariablesValue = { '': '' };
 
-export const DataDocTemplateVarForm: React.FunctionComponent<IDataDocTemplateVarFormProps> = ({
+export const DataDocTemplateVarForm: React.FunctionComponent<
+    IDataDocTemplateVarFormProps
+> = ({
     onSave,
     templatedVariables,
     defaultTemplatedVariables = defaultTemplatedVariablesValue,
@@ -89,7 +92,7 @@ export const DataDocTemplateVarForm: React.FunctionComponent<IDataDocTemplateVar
                                                       type="react-select"
                                                       name={`variables.${index}[1]`}
                                                       options={
-                                                          (SUPPORTED_TYPES as any) as string[]
+                                                          SUPPORTED_TYPES as any as string[]
                                                       }
                                                       isDisabled={!isEditable}
                                                   />
@@ -104,8 +107,7 @@ export const DataDocTemplateVarForm: React.FunctionComponent<IDataDocTemplateVar
                                                                   value: true,
                                                               },
                                                               {
-                                                                  label:
-                                                                      'False',
+                                                                  label: 'False',
                                                                   value: false,
                                                               },
                                                           ]}

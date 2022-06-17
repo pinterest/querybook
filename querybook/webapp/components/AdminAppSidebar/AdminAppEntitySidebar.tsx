@@ -1,25 +1,22 @@
 import React from 'react';
 
-import history from 'lib/router-history';
-
 import { AdminEntity, adminEntityToTitle } from 'components/AppAdmin/types';
-
+import history from 'lib/router-history';
+import { getAppName } from 'lib/utils/global';
 import { IconButton } from 'ui/Button/IconButton';
+import { AllLucideIconNames } from 'ui/Icon/LucideIcons';
+import { QuerybookLogo } from 'ui/QuerybookLogo/QuerybookLogo';
 
 import './AdminAppEntitySidebar.scss';
-import { QuerybookLogo } from 'ui/QuerybookLogo/QuerybookLogo';
-import { getAppName } from 'lib/utils/global';
-import { AllLucideIconNames } from 'ui/Icon/LucideIcons';
 
 interface IAdminAppEntitySidebarProps {
     selectedEntity: AdminEntity;
     onSelectEntity: (entity: AdminEntity) => any;
 }
 
-export const AdminAppEntitySidebar: React.FunctionComponent<IAdminAppEntitySidebarProps> = ({
-    selectedEntity,
-    onSelectEntity,
-}) => {
+export const AdminAppEntitySidebar: React.FunctionComponent<
+    IAdminAppEntitySidebarProps
+> = ({ selectedEntity, onSelectEntity }) => {
     const makeSidebarItem = (key: AdminEntity, icon: AllLucideIconNames) => (
         <div
             className={`AdminAppEntitySidebar-item flex-row ${

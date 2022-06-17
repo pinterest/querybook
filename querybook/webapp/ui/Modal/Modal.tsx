@@ -1,13 +1,12 @@
 import React from 'react';
 
-import { matchKeyMap, KeyMap } from 'lib/utils/keyboard';
 import { useEvent } from 'hooks/useEvent';
+import { KeyMap, matchKeyMap } from 'lib/utils/keyboard';
+import { Overlay } from 'ui/Overlay/Overlay';
 
-import { IModalProps } from './types';
 import { FullScreenModal } from './FullScreenModal';
 import { StandardModal } from './StandardModal';
-
-import { Overlay } from 'ui/Overlay/Overlay';
+import { IModalProps } from './types';
 
 import './Modal.scss';
 

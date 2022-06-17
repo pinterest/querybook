@@ -1,14 +1,14 @@
 import React from 'react';
-import { useSelector, useDispatch } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
 
 import { UnauthPage } from 'components/UnauthPage/UnauthPage';
 import { formatError } from 'lib/utils/error';
-import * as UserActions from 'redux/user/action';
-import { IStoreState, Dispatch } from 'redux/store/types';
-import { UserResource } from 'resource/user';
-import { Loader } from 'ui/Loader/Loader';
-import { ErrorPage } from 'ui/ErrorPage/ErrorPage';
 import { getEnvironment } from 'lib/utils/global';
+import { Dispatch, IStoreState } from 'redux/store/types';
+import * as UserActions from 'redux/user/action';
+import { UserResource } from 'resource/user';
+import { ErrorPage } from 'ui/ErrorPage/ErrorPage';
+import { Loader } from 'ui/Loader/Loader';
 
 export const UserLoader: React.FunctionComponent = ({ children }) => {
     const [showUnauthPage, setShowUnauth] = React.useState(false);

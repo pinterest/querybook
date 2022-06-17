@@ -1,14 +1,14 @@
-import React from 'react';
 import { shallow } from 'enzyme';
 import toJson from 'enzyme-to-json';
+import React from 'react';
 import renderer from 'react-test-renderer';
 
 import {
     Menu,
-    MenuItem,
-    MenuItemPing,
     MenuDivider,
     MenuInfoItem,
+    MenuItem,
+    MenuItemPing,
 } from '../../ui/Menu/Menu';
 
 it('renders without crashing', () => {

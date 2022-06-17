@@ -1,20 +1,20 @@
 import * as React from 'react';
 
 import localStore from 'lib/local-store';
+import { CHANGE_LOG_KEY, ChangeLogValue } from 'lib/local-store/const';
 import { navigateWithinEnv } from 'lib/utils/query-string';
-import { ChangeLogValue, CHANGE_LOG_KEY } from 'lib/local-store/const';
-
+import { ChangeLogResource } from 'resource/utils/changelog';
 import { IconButton } from 'ui/Button/IconButton';
-import { Popover } from 'ui/Popover/Popover';
 import {
-    MenuDivider,
     Menu,
+    MenuDivider,
+    MenuInfoItem,
     MenuItem,
     MenuItemPing,
-    MenuInfoItem,
 } from 'ui/Menu/Menu';
+import { Popover } from 'ui/Popover/Popover';
+
 import { QuerybookVersion } from './QuerybookVersion';
-import { ChangeLogResource } from 'resource/utils/changelog';
 
 export const InfoMenuButton: React.FunctionComponent = () => {
     const [showPanel, setShowPanel] = React.useState(false);

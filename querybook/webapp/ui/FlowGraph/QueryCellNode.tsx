@@ -1,5 +1,5 @@
-import * as React from 'react';
 import clsx from 'clsx';
+import * as React from 'react';
 import { Handle, Position } from 'react-flow-renderer';
 
 import { AccentText, StyledText } from 'ui/StyledText/StyledText';

@@ -1,16 +1,15 @@
 import * as React from 'react';
 
+import { useDebounce } from 'hooks/useDebounce';
+import { useResource } from 'hooks/useResource';
 import {
     makeReactSelectStyle,
     miniReactSelectStyles,
 } from 'lib/utils/react-select';
-import { useResource } from 'hooks/useResource';
-import { useDebounce } from 'hooks/useDebounce';
-
+import { TableTagResource } from 'resource/table';
 import { SimpleReactSelect } from 'ui/SimpleReactSelect/SimpleReactSelect';
 
 import './TableTagSelect.scss';
-import { TableTagResource } from 'resource/table';
 
 interface IProps {
     onSelect: (val: string) => any;
@@ -36,9 +35,10 @@ export const TableTagSelect: React.FunctionComponent<IProps> = ({
     const debouncedTagString = useDebounce(tagString, 500);
 
     const { data: rawTagSuggestions } = useResource(
-        React.useCallback(() => TableTagResource.search(debouncedTagString), [
-            debouncedTagString,
-        ])
+        React.useCallback(
+            () => TableTagResource.search(debouncedTagString),
+            [debouncedTagString]
+        )
     );
 
     const tagSuggestions = React.useMemo(

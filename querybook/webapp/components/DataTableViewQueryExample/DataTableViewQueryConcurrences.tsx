@@ -1,14 +1,14 @@
 import React, { useCallback, useEffect, useState } from 'react';
-import { useSelector, useDispatch } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
 
-import { IStoreState, Dispatch } from 'redux/store/types';
 import { fetchTopQueryConcurrencesIfNeeded } from 'redux/dataSources/action';
-
-import { Loading } from 'ui/Loading/Loading';
+import { Dispatch, IStoreState } from 'redux/store/types';
 import { Button } from 'ui/Button/Button';
-import { TableName } from './DataTableName';
-import { Tag } from 'ui/Tag/Tag';
+import { Loading } from 'ui/Loading/Loading';
 import { EmptyText } from 'ui/StyledText/StyledText';
+import { Tag } from 'ui/Tag/Tag';
+
+import { TableName } from './DataTableName';
 
 export function useLoadQueryConcurrences(tableId: number) {
     const [loading, setLoading] = useState(false);
@@ -68,10 +68,10 @@ const QueryTableButton: React.FC<{
     queryCount: number;
     active: boolean;
 }> = ({ tableId, onClick, queryCount, active }) => {
-    const handleClick = useCallback(() => onClick?.(tableId), [
-        onClick,
-        tableId,
-    ]);
+    const handleClick = useCallback(
+        () => onClick?.(tableId),
+        [onClick, tableId]
+    );
 
     return (
         <Button onClick={handleClick} active={active}>

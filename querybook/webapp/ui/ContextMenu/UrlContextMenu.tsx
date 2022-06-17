@@ -3,7 +3,8 @@ import toast from 'react-hot-toast';
 
 import { copy } from 'lib/utils';
 import { Icon } from 'ui/Icon/Icon';
-import { MenuItem, Menu } from 'ui/Menu/Menu';
+import { Menu, MenuItem } from 'ui/Menu/Menu';
+
 import { ContextMenu } from './ContextMenu';
 
 interface IUrlContextMenuProps {

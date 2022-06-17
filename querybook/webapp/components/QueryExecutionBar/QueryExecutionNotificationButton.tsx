@@ -1,4 +1,4 @@
-import React, { useCallback, useState, useEffect } from 'react';
+import React, { useCallback, useEffect, useState } from 'react';
 
 import {
     IQueryExecution,
@@ -12,14 +12,11 @@ interface IProps {
     notificationPreference: string;
 }
 
-export const QueryExecutionNotificationButton: React.FunctionComponent<IProps> = ({
-    queryExecution,
-    notificationPreference,
-}) => {
-    const [
-        notification,
-        setNotification,
-    ] = useState<IQueryExecutionNotification>(null);
+export const QueryExecutionNotificationButton: React.FunctionComponent<
+    IProps
+> = ({ queryExecution, notificationPreference }) => {
+    const [notification, setNotification] =
+        useState<IQueryExecutionNotification>(null);
     const [loading, setLoading] = useState(true);
 
     useEffect(() => {

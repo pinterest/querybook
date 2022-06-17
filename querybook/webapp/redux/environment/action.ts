@@ -1,5 +1,6 @@
 import { arrayGroupByField } from 'lib/utils';
 import { UserResource } from 'resource/user';
+
 import { ThunkResult } from './types';
 
 export function fetchEnvironments(): ThunkResult<Promise<void>> {

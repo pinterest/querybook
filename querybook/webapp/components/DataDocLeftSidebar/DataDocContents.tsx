@@ -1,11 +1,11 @@
 import React, { useCallback, useMemo, useRef } from 'react';
 
-import { scrollToCell } from 'lib/data-doc/data-doc-utils';
 import { IDataCell } from 'const/datadoc';
-import { Icon } from 'ui/Icon/Icon';
-import { DraggableList } from 'ui/DraggableList/DraggableList';
-import { moveDataDocCell } from 'redux/dataDoc/action';
+import { scrollToCell } from 'lib/data-doc/data-doc-utils';
 import { getScrollParent } from 'lib/utils';
+import { moveDataDocCell } from 'redux/dataDoc/action';
+import { DraggableList } from 'ui/DraggableList/DraggableList';
+import { Icon } from 'ui/Icon/Icon';
 
 import './DataDocContents.scss';
 

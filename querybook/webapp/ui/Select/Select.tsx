@@ -1,7 +1,9 @@
-import React from 'react';
 import clsx from 'clsx';
-import './Select.scss';
+import React from 'react';
+
 import { AccentText } from 'ui/StyledText/StyledText';
+
+import './Select.scss';
 
 export const DESELECT_VALUE = '';
 export interface ISelectProps {

@@ -1,8 +1,8 @@
 import * as React from 'react';
 
 import { Content } from 'ui/Content/Content';
-import { Subtitle } from 'ui/Title/Title';
 import { Markdown } from 'ui/Markdown/Markdown';
+import { Subtitle } from 'ui/Title/Title';
 
 import './FAQ.scss';
 

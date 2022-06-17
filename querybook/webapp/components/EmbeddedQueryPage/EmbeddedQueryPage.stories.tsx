@@ -1,6 +1,7 @@
 import React, { useCallback } from 'react';
-import { useStateWithRef } from 'hooks/useStateWithRef';
+
 import { useEvent } from 'hooks/useEvent';
+import { useStateWithRef } from 'hooks/useStateWithRef';
 
 export const _EmbeddedQueryPage = (args) => {
     const [queryText, setQueryText, queryTextRef] = useStateWithRef('select 1');

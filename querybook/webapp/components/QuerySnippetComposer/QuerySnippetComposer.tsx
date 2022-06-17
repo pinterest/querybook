@@ -1,34 +1,32 @@
 import { bind, debounce } from 'lodash-decorators';
 import React from 'react';
 import { connect } from 'react-redux';
-import { getTemplatedQueryVariables } from 'lib/templated-query';
-
-import {
-    queryEngineSelector,
-    queryEngineByIdEnvSelector,
-} from 'redux/queryEngine/selector';
-import * as querySnippetsActions from 'redux/querySnippets/action';
-import { IQuerySnippet, IQueryForm } from 'redux/querySnippets/types';
-import { Dispatch, IStoreState } from 'redux/store/types';
-
-import { sendConfirm } from 'lib/querybookUI';
-import { generateFormattedDate } from 'lib/utils/datetime';
 
 import { BoundQueryEditor } from 'components/QueryEditor/BoundQueryEditor';
 import { UserName } from 'components/UserBadge/UserName';
+import { sendConfirm } from 'lib/querybookUI';
+import { getTemplatedQueryVariables } from 'lib/templated-query';
+import { generateFormattedDate } from 'lib/utils/datetime';
+import { navigateWithinEnv } from 'lib/utils/query-string';
+import {
+    queryEngineByIdEnvSelector,
+    queryEngineSelector,
+} from 'redux/queryEngine/selector';
+import * as querySnippetsActions from 'redux/querySnippets/action';
+import { IQueryForm, IQuerySnippet } from 'redux/querySnippets/types';
+import { Dispatch, IStoreState } from 'redux/store/types';
 import { AsyncButton } from 'ui/AsyncButton/AsyncButton';
-import { Message } from 'ui/Message/Message';
-import { FormField } from 'ui/Form/FormField';
+import { Card } from 'ui/Card/Card';
 import { Checkbox } from 'ui/Checkbox/Checkbox';
-import { Tabs } from 'ui/Tabs/Tabs';
+import { FormField } from 'ui/Form/FormField';
+import { FormWrapper } from 'ui/Form/FormWrapper';
+import { Message } from 'ui/Message/Message';
 import { ResizableTextArea } from 'ui/ResizableTextArea/ResizableTextArea';
 import { SimpleReactSelect } from 'ui/SimpleReactSelect/SimpleReactSelect';
-import { FormWrapper } from 'ui/Form/FormWrapper';
-import { Card } from 'ui/Card/Card';
+import { AccentText } from 'ui/StyledText/StyledText';
+import { Tabs } from 'ui/Tabs/Tabs';
 
 import './QuerySnippetComposer.scss';
-import { navigateWithinEnv } from 'lib/utils/query-string';
-import { AccentText } from 'ui/StyledText/StyledText';
 
 function showErrorModal(error) {
     sendConfirm({
@@ -429,11 +427,8 @@ class QuerySnippetComposerComponent extends React.PureComponent<
     }
 
     public handleSave = async () => {
-        const {
-            querySnippet,
-            updateQuerySnippet,
-            saveQuerySnippet,
-        } = this.props;
+        const { querySnippet, updateQuerySnippet, saveQuerySnippet } =
+            this.props;
 
         const { form, isUpdateForm } = this.state;
 

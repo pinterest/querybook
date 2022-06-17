@@ -2,10 +2,10 @@ import React, { useEffect } from 'react';
 import { useDispatch } from 'react-redux';
 
 import { IFunctionDescription } from 'const/metastore';
-import { useEvent } from 'hooks/useEvent';
 import { useShallowSelector } from 'hooks/redux/useShallowSelector';
-import { IStoreState } from 'redux/store/types';
+import { useEvent } from 'hooks/useEvent';
 import * as dataSourcesActions from 'redux/dataSources/action';
+import { IStoreState } from 'redux/store/types';
 
 import { FunctionDocumentationTooltip } from './FunctionDocumentationTooltip';
 import { TableTooltip } from './TableTooltip';
@@ -21,13 +21,9 @@ export interface ICodeMirrorTooltipProps {
     hide: () => any;
 }
 
-export const CodeMirrorTooltip: React.FunctionComponent<ICodeMirrorTooltipProps> = ({
-    tableId,
-    hide,
-    functionDocumentations,
-    error,
-    openTableModal,
-}) => {
+export const CodeMirrorTooltip: React.FunctionComponent<
+    ICodeMirrorTooltipProps
+> = ({ tableId, hide, functionDocumentations, error, openTableModal }) => {
     const { table, schema, columns } = useShallowSelector(
         (state: IStoreState) => {
             const tableFromState = state.dataSources.dataTablesById[tableId];

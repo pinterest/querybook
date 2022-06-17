@@ -1,13 +1,12 @@
 import moment from 'moment';
 import * as React from 'react';
 
-import { IQueryExecution, QueryExecutionStatus } from 'const/queryExecution';
-import { formatDuration } from 'lib/utils/datetime';
-
-import { UserName } from 'components/UserBadge/UserName';
-import { StyledText } from 'ui/StyledText/StyledText';
 import { TaskStatusIcon } from 'components/Task/TaskStatusIcon';
+import { UserName } from 'components/UserBadge/UserName';
+import { IQueryExecution, QueryExecutionStatus } from 'const/queryExecution';
 import { TaskRunStatus } from 'const/schedule';
+import { formatDuration } from 'lib/utils/datetime';
+import { StyledText } from 'ui/StyledText/StyledText';
 
 interface IProps {
     queryExecution: IQueryExecution;

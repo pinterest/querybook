@@ -2,32 +2,30 @@ import { bind } from 'lodash-decorators';
 import React from 'react';
 import { connect } from 'react-redux';
 import {
-    withRouter,
+    Redirect,
+    Route,
     RouteComponentProps,
     Switch,
-    Route,
-    Redirect,
+    withRouter,
 } from 'react-router-dom';
 
+import { SetUp } from 'components/SetUp/SetUp';
+import { getAppName } from 'lib/utils/global';
 import * as EnvironmentActions from 'redux/environment/action';
-import { fetchExporters } from 'redux/queryExecutions/action';
-import { fetchNotifiers } from 'redux/notificationService/action';
-
 import {
     currentEnvironmentSelector,
     environmentsSelector,
     userEnvironmentNamesSelector,
 } from 'redux/environment/selector';
-import { IStoreState, Dispatch } from 'redux/store/types';
-
-import { getAppName } from 'lib/utils/global';
-import { SetUp } from 'components/SetUp/SetUp';
-import { Loading } from 'ui/Loading/Loading';
+import { fetchNotifiers } from 'redux/notificationService/action';
+import { fetchExporters } from 'redux/queryExecutions/action';
+import { Dispatch, IStoreState } from 'redux/store/types';
 import { FourOhFour } from 'ui/ErrorPage/FourOhFour';
 import { FourOhThree } from 'ui/ErrorPage/FourOhThree';
+import { Loading } from 'ui/Loading/Loading';
+import { EmptyText } from 'ui/StyledText/StyledText';
 
 import { EnvironmentAppRouter } from '../EnvironmentAppRouter/EnvironmentAppRouter';
-import { EmptyText } from 'ui/StyledText/StyledText';
 
 type DispatchProps = ReturnType<typeof mapDispatchToProps>;
 type StateProps = ReturnType<typeof mapStateToProps>;
@@ -78,11 +76,8 @@ class EnvironmentsRouterComponent extends React.PureComponent<
 
     @bind
     public selectEnvironment(name: string) {
-        const {
-            environments,
-            userEnvironmentNames,
-            currentEnvironment,
-        } = this.props;
+        const { environments, userEnvironmentNames, currentEnvironment } =
+            this.props;
         if (userEnvironmentNames.has(name)) {
             for (const environment of environments) {
                 if (

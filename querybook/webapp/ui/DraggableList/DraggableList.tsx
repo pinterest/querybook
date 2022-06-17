@@ -1,9 +1,10 @@
 import { uniqueId } from 'lodash';
+import React, { useCallback, useEffect, useMemo, useState } from 'react';
 import { DropTargetMonitor } from 'react-dnd';
-import React, { useState, useEffect, useCallback, useMemo } from 'react';
+
+import { arrayMove } from 'lib/utils';
 
 import { DraggableItem } from './DraggableItem';
-import { arrayMove } from 'lib/utils';
 import { IDragItem } from './types';
 
 interface IDraggableListProps<T> {

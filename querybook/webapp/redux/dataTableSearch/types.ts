@@ -1,12 +1,14 @@
 import { Action } from 'redux';
 import { ThunkAction } from 'redux-thunk';
-import { IStoreState } from '../store/types';
-import { ICancelablePromise } from 'lib/datasource';
+
 import {
     IDataSchema,
     SchemaSortKey,
     SchemaTableSortKey,
 } from 'const/metastore';
+import { ICancelablePromise } from 'lib/datasource';
+
+import { IStoreState } from '../store/types';
 
 export interface ITableSearchResult {
     id: number;

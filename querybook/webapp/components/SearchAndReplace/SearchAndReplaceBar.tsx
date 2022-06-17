@@ -1,21 +1,21 @@
+import { throttle } from 'lodash';
 import React, {
-    useState,
-    useContext,
     useCallback,
-    useRef,
+    useContext,
     useImperativeHandle,
     useMemo,
+    useRef,
+    useState,
 } from 'react';
-import { throttle } from 'lodash';
 
-import { useEvent } from 'hooks/useEvent';
-import { IconButton } from 'ui/Button/IconButton';
-import { DebouncedInput } from 'ui/DebouncedInput/DebouncedInput';
-import { Button, TextButton } from 'ui/Button/Button';
-import { matchKeyPress, matchKeyMap, KeyMap } from 'lib/utils/keyboard';
 import { ISearchOptions } from 'const/searchAndReplace';
 import { SearchAndReplaceContext } from 'context/searchAndReplace';
+import { useEvent } from 'hooks/useEvent';
+import { KeyMap, matchKeyMap, matchKeyPress } from 'lib/utils/keyboard';
+import { Button, TextButton } from 'ui/Button/Button';
+import { IconButton } from 'ui/Button/IconButton';
 import { TextToggleButton } from 'ui/Button/TextToggleButton';
+import { DebouncedInput } from 'ui/DebouncedInput/DebouncedInput';
 
 import './SearchAndReplaceBar.scss';
 

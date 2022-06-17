@@ -1,14 +1,13 @@
 import React from 'react';
 
-import { queryStatusToStatusIcon, Status } from 'const/queryStatus';
 import { IStatementExecution } from 'const/queryExecution';
-
+import { queryStatusToStatusIcon, Status } from 'const/queryStatus';
 import { Dropdown } from 'ui/Dropdown/Dropdown';
-import { StatusIcon } from 'ui/StatusIcon/StatusIcon';
+import { Icon } from 'ui/Icon/Icon';
 import { ListMenu } from 'ui/Menu/ListMenu';
+import { StatusIcon } from 'ui/StatusIcon/StatusIcon';
 
 import './StatementExecutionPicker.scss';
-import { Icon } from 'ui/Icon/Icon';
 
 interface IProps {
     statementExecutionId?: number;

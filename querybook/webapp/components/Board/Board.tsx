@@ -1,16 +1,16 @@
+import { AxiosError } from 'axios';
 import * as React from 'react';
 import { useDispatch, useSelector } from 'react-redux';
-import { AxiosError } from 'axios';
 
+import { IBoardItem, IBoardWithItemIds } from 'const/board';
+import { isAxiosError } from 'lib/utils/error';
 import { fetchBoardIfNeeded } from 'redux/board/action';
 import { Dispatch, IStoreState } from 'redux/store/types';
-import { IBoardWithItemIds, IBoardItem } from 'const/board';
-import { isAxiosError } from 'lib/utils/error';
+import { Title } from 'ui/Title/Title';
 
 import { BoardDataDocItem } from './BoardDataDocItem';
 import { BoardDataTableItem } from './BoardDataTableItem';
 import { BoardError } from './BoardError';
-import { Title } from 'ui/Title/Title';
 
 import './Board.scss';
 

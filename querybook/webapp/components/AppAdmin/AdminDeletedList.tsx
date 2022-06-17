@@ -1,7 +1,8 @@
-import * as React from 'react';
 import moment from 'moment';
-import { Card } from 'ui/Card/Card';
+import * as React from 'react';
+
 import { Button } from 'ui/Button/Button';
+import { Card } from 'ui/Card/Card';
 
 import './AdminDeletedList.scss';
 

@@ -5,8 +5,9 @@ import { useInterval } from 'hooks/useInterval';
 import { IStoreState } from 'redux/store/types';
 import { Loading } from 'ui/Loading/Loading';
 import { ProgressBar } from 'ui/ProgressBar/ProgressBar';
-import { SamplesTableView } from './SamplesTableView';
 import { EmptyText } from 'ui/StyledText/StyledText';
+
+import { SamplesTableView } from './SamplesTableView';
 
 export const DataTableViewSamplesTable: React.FC<{
     tableId: number;

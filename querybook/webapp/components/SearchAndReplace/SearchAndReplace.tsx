@@ -1,24 +1,26 @@
 import React, {
-    useState,
-    useEffect,
     useCallback,
-    useRef,
+    useEffect,
     useImperativeHandle,
+    useRef,
+    useState,
 } from 'react';
+
 import {
+    ISearchAndReplaceBarProps,
+    SearchAndReplaceBar,
+} from 'components/SearchAndReplace/SearchAndReplaceBar';
+import {
+    ISearchAndReplaceState,
     ISearchOptions,
     ISearchResult,
-    ISearchAndReplaceState,
 } from 'const/searchAndReplace';
 import {
     ISearchAndReplaceContextType,
     SearchAndReplaceContext,
 } from 'context/searchAndReplace';
-import {
-    ISearchAndReplaceBarProps,
-    SearchAndReplaceBar,
-} from 'components/SearchAndReplace/SearchAndReplaceBar';
 import { WithOptional } from 'lib/typescript';
+
 import { ISearchAndReplaceBarHandles } from './SearchAndReplaceBar';
 
 const initialSearchState: ISearchAndReplaceState = {

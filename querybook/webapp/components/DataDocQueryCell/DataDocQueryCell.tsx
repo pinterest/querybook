@@ -1,60 +1,58 @@
 import clsx from 'clsx';
-import * as DraftJs from 'draft-js';
-import toast from 'react-hot-toast';
-import { debounce, bind } from 'lodash-decorators';
-import React from 'react';
-import { connect } from 'react-redux';
-import Resizable from 're-resizable';
-import memoizeOne from 'memoize-one';
 import { decorate } from 'core-decorators';
+import * as DraftJs from 'draft-js';
+import { bind, debounce } from 'lodash-decorators';
+import memoizeOne from 'memoize-one';
+import Resizable from 're-resizable';
+import React from 'react';
+import toast from 'react-hot-toast';
+import { connect } from 'react-redux';
 
+import { DataDocQueryExecutions } from 'components/DataDocQueryExecutions/DataDocQueryExecutions';
+import { BoundQueryEditor } from 'components/QueryEditor/BoundQueryEditor';
+import { QueryEditor } from 'components/QueryEditor/QueryEditor';
+import {
+    IQueryRunButtonHandles,
+    QueryEngineSelector,
+    QueryRunButton,
+} from 'components/QueryRunButton/QueryRunButton';
+import { QuerySnippetInsertionModal } from 'components/QuerySnippetInsertionModal/QuerySnippetInsertionModal';
+import { TemplatedQueryView } from 'components/TemplateQueryView/TemplatedQueryView';
+import { UDFForm } from 'components/UDFForm/UDFForm';
+import { IDataQueryCellMeta } from 'const/datadoc';
 import type { IQueryEngine } from 'const/queryEngine';
 import CodeMirror from 'lib/codemirror';
 import {
-    getSelectedQuery,
     getQueryAsExplain,
+    getSelectedQuery,
     IRange,
 } from 'lib/sql-helper/sql-lexer';
 import { renderTemplatedQuery } from 'lib/templated-query';
-import { sleep, enableResizable } from 'lib/utils';
+import { enableResizable, sleep } from 'lib/utils';
 import { formatError } from 'lib/utils/error';
-import { IDataQueryCellMeta } from 'const/datadoc';
-
+import { getShortcutSymbols, KeyMap, matchKeyPress } from 'lib/utils/keyboard';
+import { doesLanguageSupportUDF } from 'lib/utils/udf';
 import * as dataSourcesActions from 'redux/dataSources/action';
-import { createQueryExecution } from 'redux/queryExecutions/action';
 import { setSidebarTableId } from 'redux/querybookUI/action';
 import {
-    queryEngineSelector,
     queryEngineByIdEnvSelector,
+    queryEngineSelector,
 } from 'redux/queryEngine/selector';
-import { IStoreState, Dispatch } from 'redux/store/types';
-import { ISelectedRange } from './common';
-
-import { DataDocQueryExecutions } from 'components/DataDocQueryExecutions/DataDocQueryExecutions';
-import { QueryEditor } from 'components/QueryEditor/QueryEditor';
-import { QuerySnippetInsertionModal } from 'components/QuerySnippetInsertionModal/QuerySnippetInsertionModal';
-import {
-    QueryRunButton,
-    IQueryRunButtonHandles,
-    QueryEngineSelector,
-} from 'components/QueryRunButton/QueryRunButton';
-import { BoundQueryEditor } from 'components/QueryEditor/BoundQueryEditor';
-import { getShortcutSymbols, matchKeyPress, KeyMap } from 'lib/utils/keyboard';
-
+import { createQueryExecution } from 'redux/queryExecutions/action';
+import { Dispatch, IStoreState } from 'redux/store/types';
 import { Button, TextButton } from 'ui/Button/Button';
 import { ThemedCodeHighlight } from 'ui/CodeHighlight/ThemedCodeHighlight';
 import { Dropdown } from 'ui/Dropdown/Dropdown';
 import { Icon } from 'ui/Icon/Icon';
-import { ListMenu, IListMenuItem } from 'ui/Menu/ListMenu';
+import { IListMenuItem, ListMenu } from 'ui/Menu/ListMenu';
 import { Modal } from 'ui/Modal/Modal';
 import { ResizableTextArea } from 'ui/ResizableTextArea/ResizableTextArea';
-
-import { ErrorQueryCell } from './ErrorQueryCell';
-import './DataDocQueryCell.scss';
-import { TemplatedQueryView } from 'components/TemplateQueryView/TemplatedQueryView';
-import { doesLanguageSupportUDF } from 'lib/utils/udf';
-import { UDFForm } from 'components/UDFForm/UDFForm';
 import { AccentText } from 'ui/StyledText/StyledText';
+
+import { ISelectedRange } from './common';
+import { ErrorQueryCell } from './ErrorQueryCell';
+
+import './DataDocQueryCell.scss';
 
 const ON_CHANGE_DEBOUNCE_MS = 500;
 const FORMAT_QUERY_SHORTCUT = getShortcutSymbols(
@@ -183,9 +181,8 @@ class DataDocQueryCellComponent extends React.PureComponent<IProps, IState> {
                 break;
             }
 
-            keyMap[
-                KeyMap.queryEditor.changeEngine.key + '-' + String(key)
-            ] = () => this.handleMetaChange('engine', engine.id);
+            keyMap[KeyMap.queryEditor.changeEngine.key + '-' + String(key)] =
+                () => this.handleMetaChange('engine', engine.id);
         }
 
         return keyMap;
@@ -714,12 +711,8 @@ class DataDocQueryCellComponent extends React.PureComponent<IProps, IState> {
     }
 
     public renderInvalidEngineCell() {
-        const {
-            showCollapsed,
-            isEditable,
-            queryEngineById,
-            queryEngines,
-        } = this.props;
+        const { showCollapsed, isEditable, queryEngineById, queryEngines } =
+            this.props;
         const { query } = this.state;
         const errorMessage = isEditable
             ? 'Please choose another engine for this cell since it uses an invalid engine.'
@@ -747,12 +740,8 @@ class DataDocQueryCellComponent extends React.PureComponent<IProps, IState> {
     }
 
     public render() {
-        const {
-            queryEngines,
-            queryEngineById,
-            showCollapsed,
-            isFullScreen,
-        } = this.props;
+        const { queryEngines, queryEngineById, showCollapsed, isFullScreen } =
+            this.props;
 
         if (!queryEngines.length) {
             return this.renderNoEngineCell();

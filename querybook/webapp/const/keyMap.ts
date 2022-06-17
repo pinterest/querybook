@@ -1,4 +1,5 @@
 import { merge } from 'lodash';
+
 import { isOSX } from 'lib/utils/os-platform';
 
 const DEFAULT_KEY_MAP = {
@@ -117,8 +118,7 @@ const DEFAULT_KEY_MAP = {
         changeEngine: {
             // Note this is combined with -1 -2 ... -9
             key: 'Alt',
-            name:
-                'Alt-1, Alt-2, ..., Alt-9 to change the engine to the nth on the engine list.',
+            name: 'Alt-1, Alt-2, ..., Alt-9 to change the engine to the nth on the engine list.',
         },
     },
 };

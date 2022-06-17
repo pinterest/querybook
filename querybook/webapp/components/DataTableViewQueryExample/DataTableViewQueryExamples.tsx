@@ -1,36 +1,32 @@
+import { isEmpty } from 'lodash';
 import * as React from 'react';
 import { useDispatch, useSelector } from 'react-redux';
-import { isEmpty } from 'lodash';
 
+import { UserName } from 'components/UserBadge/UserName';
 import { IPaginatedQuerySampleFilters } from 'const/metastore';
-
+import { useImmer } from 'hooks/useImmer';
+import { useLoader } from 'hooks/useLoader';
 import { format } from 'lib/sql-helper/sql-formatter';
 import {
     getQueryString,
-    replaceQueryString,
     navigateWithinEnv,
+    replaceQueryString,
 } from 'lib/utils/query-string';
-import { useLoader } from 'hooks/useLoader';
-import { useImmer } from 'hooks/useImmer';
-
-import { IStoreState, Dispatch } from 'redux/store/types';
 import * as dataSourcesActions from 'redux/dataSources/action';
-import * as queryExecutionsActions from 'redux/queryExecutions/action';
 import { queryEngineByIdEnvSelector } from 'redux/queryEngine/selector';
-
-import { DataTableViewQueryUsers } from './DataTableViewQueryUsers';
-import { UserName } from 'components/UserBadge/UserName';
-
+import * as queryExecutionsActions from 'redux/queryExecutions/action';
+import { Dispatch, IStoreState } from 'redux/store/types';
 import { AsyncButton } from 'ui/AsyncButton/AsyncButton';
 import { Button, TextButton } from 'ui/Button/Button';
-import { Loading } from 'ui/Loading/Loading';
 import { ThemedCodeHighlight } from 'ui/CodeHighlight/ThemedCodeHighlight';
+import { Loading } from 'ui/Loading/Loading';
+import { AccentText } from 'ui/StyledText/StyledText';
 
-import { DataTableViewQueryEngines } from './DataTableViewQueryEngines';
 import { DataTableViewQueryConcurrences } from './DataTableViewQueryConcurrences';
+import { DataTableViewQueryEngines } from './DataTableViewQueryEngines';
+import { DataTableViewQueryUsers } from './DataTableViewQueryUsers';
 
 import './DataTableViewQueryExamples.scss';
-import { AccentText } from 'ui/StyledText/StyledText';
 
 interface IProps {
     tableId: number;
@@ -208,9 +204,8 @@ const QueryExamplesList: React.FC<{
     filters: IPaginatedQuerySampleFilters;
 }> = ({ tableId, filters }) => {
     const dispatch: Dispatch = useDispatch();
-    const [loadingQueryExecution, setLoadingQueryExecution] = React.useState(
-        false
-    );
+    const [loadingQueryExecution, setLoadingQueryExecution] =
+        React.useState(false);
 
     const queryEngineById = useSelector(queryEngineByIdEnvSelector);
     const {
@@ -260,9 +255,9 @@ const QueryExamplesList: React.FC<{
 
     React.useEffect(() => {
         setLoadingQueryExecution(true);
-        Promise.all(
-            queryExamplesIdsToLoad.map(loadQueryExecution)
-        ).finally(() => setLoadingQueryExecution(false));
+        Promise.all(queryExamplesIdsToLoad.map(loadQueryExecution)).finally(
+            () => setLoadingQueryExecution(false)
+        );
     }, [queryExampleIds]);
 
     const openDisplayModal = (queryId: number) => {

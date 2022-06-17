@@ -1,57 +1,54 @@
-import toast from 'react-hot-toast';
+import clsx from 'clsx';
+import Resizable from 're-resizable';
 import React, {
-    useRef,
     useCallback,
-    useMemo,
     useEffect,
+    useMemo,
+    useRef,
     useState,
 } from 'react';
-import Resizable from 're-resizable';
-import { useSelector, useDispatch } from 'react-redux';
+import toast from 'react-hot-toast';
+import { useDispatch, useSelector } from 'react-redux';
 
-import KeyMap from 'const/keyMap';
-import { ISearchOptions, ISearchResult } from 'const/searchAndReplace';
-import { useDebounceState } from 'hooks/redux/useDebounceState';
-import { getQueryEngineId, sleep, enableResizable } from 'lib/utils';
-import { getSelectedQuery, IRange } from 'lib/sql-helper/sql-lexer';
-import { navigateWithinEnv } from 'lib/utils/query-string';
-import { searchText, replaceStringIndices } from 'lib/data-doc/search';
-
-import { IStoreState, Dispatch } from 'redux/store/types';
-import {
-    queryEngineSelector,
-    queryEngineByIdEnvSelector,
-} from 'redux/queryEngine/selector';
-import * as queryExecutionsAction from 'redux/queryExecutions/action';
-import * as adhocQueryActions from 'redux/adhocQuery/action';
-import * as dataDocActions from 'redux/dataDoc/action';
-
-import { IQueryEngine } from 'const/queryEngine';
 import { BoundQueryEditor } from 'components/QueryEditor/BoundQueryEditor';
+import { QueryEditor } from 'components/QueryEditor/QueryEditor';
 import {
-    SearchAndReplace,
+    IQueryRunButtonHandles,
+    QueryRunButton,
+} from 'components/QueryRunButton/QueryRunButton';
+import {
     ISearchAndReplaceHandles,
     ISearchAndReplaceProps,
+    SearchAndReplace,
 } from 'components/SearchAndReplace/SearchAndReplace';
-import {
-    QueryRunButton,
-    IQueryRunButtonHandles,
-} from 'components/QueryRunButton/QueryRunButton';
-import { QueryComposerExecution } from './QueryComposerExecution';
-import { QueryEditor } from 'components/QueryEditor/QueryEditor';
 import { UDFForm } from 'components/UDFForm/UDFForm';
-
+import KeyMap from 'const/keyMap';
+import { IQueryEngine } from 'const/queryEngine';
+import { ISearchOptions, ISearchResult } from 'const/searchAndReplace';
+import { useDebounceState } from 'hooks/redux/useDebounceState';
 import { useBrowserTitle } from 'hooks/useBrowserTitle';
-
-import { FullHeight } from 'ui/FullHeight/FullHeight';
-import { IconButton } from 'ui/Button/IconButton';
-import { Level, LevelItem } from 'ui/Level/Level';
+import { replaceStringIndices, searchText } from 'lib/data-doc/search';
+import { getSelectedQuery, IRange } from 'lib/sql-helper/sql-lexer';
+import { enableResizable, getQueryEngineId, sleep } from 'lib/utils';
+import { navigateWithinEnv } from 'lib/utils/query-string';
+import { doesLanguageSupportUDF } from 'lib/utils/udf';
+import * as adhocQueryActions from 'redux/adhocQuery/action';
+import * as dataDocActions from 'redux/dataDoc/action';
+import {
+    queryEngineByIdEnvSelector,
+    queryEngineSelector,
+} from 'redux/queryEngine/selector';
+import * as queryExecutionsAction from 'redux/queryExecutions/action';
+import { Dispatch, IStoreState } from 'redux/store/types';
 import { Button } from 'ui/Button/Button';
+import { IconButton } from 'ui/Button/IconButton';
+import { FullHeight } from 'ui/FullHeight/FullHeight';
+import { Level, LevelItem } from 'ui/Level/Level';
 import { Modal } from 'ui/Modal/Modal';
 
+import { QueryComposerExecution } from './QueryComposerExecution';
+
 import './QueryComposer.scss';
-import { doesLanguageSupportUDF } from 'lib/utils/udf';
-import clsx from 'clsx';
 
 const useExecution = (dispatch: Dispatch, environmentId: number) => {
     const executionId = useSelector(
@@ -211,9 +208,8 @@ function useKeyMap(
                 // We have exhausted all number keys on the keyboard
                 break;
             }
-            keyMap[
-                KeyMap.queryEditor.changeEngine.key + '-' + String(key)
-            ] = () => setEngineId(engine.id);
+            keyMap[KeyMap.queryEditor.changeEngine.key + '-' + String(key)] =
+                () => setEngineId(engine.id);
         }
 
         return keyMap;
@@ -237,10 +233,8 @@ const QueryComposer: React.FC = () => {
         environmentId
     );
 
-    const {
-        searchAndReplaceProps,
-        searchAndReplaceRef,
-    } = useQueryComposerSearchAndReplace(query, setQuery);
+    const { searchAndReplaceProps, searchAndReplaceRef } =
+        useQueryComposerSearchAndReplace(query, setQuery);
 
     const canShowUDFForm = useMemo(
         () => doesLanguageSupportUDF(engine.language),

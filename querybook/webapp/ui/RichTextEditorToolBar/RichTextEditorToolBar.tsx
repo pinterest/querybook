@@ -1,17 +1,18 @@
-import { bind } from 'lodash-decorators';
 import { EditorState, RichUtils } from 'draft-js';
+import { bind } from 'lodash-decorators';
 import React from 'react';
 
-import { ToolBarButton } from './ToolBarButton';
-import {
-    styleButtonsConfig,
-    blockButtonsConfig,
-    entityButtonsConfig,
-} from './ToolBarConfig';
 import { getSelectionRect } from 'lib/utils';
 import { Popover } from 'ui/Popover/Popover';
 
 import { LinkInput } from './LinkInput';
+import { ToolBarButton } from './ToolBarButton';
+import {
+    blockButtonsConfig,
+    entityButtonsConfig,
+    styleButtonsConfig,
+} from './ToolBarConfig';
+
 import './RichTextEditorToolBar.scss';
 
 export interface IRichTextEditorToolBarProps {

@@ -1,24 +1,24 @@
 import React, { useCallback } from 'react';
-import { IDataTableWarning, DataTableWarningSeverity } from 'const/metastore';
 import { useDispatch } from 'react-redux';
 
-import { generateFormattedDate } from 'lib/utils/datetime';
-import { Dispatch } from 'redux/store/types';
-import { getEnumEntries } from 'lib/typescript';
 import { UserName } from 'components/UserBadge/UserName';
-import { SimpleField } from 'ui/FormikField/SimpleField';
-import { Card } from 'ui/Card/Card';
-import { GenericCRUD } from 'ui/GenericCRUD/GenericCRUD';
+import { DataTableWarningSeverity, IDataTableWarning } from 'const/metastore';
+import { getEnumEntries } from 'lib/typescript';
+import { generateFormattedDate } from 'lib/utils/datetime';
 import {
-    deleteTableWarnings,
     createTableWarnings,
+    deleteTableWarnings,
     updateTableWarnings,
 } from 'redux/dataSources/action';
-import { FormWrapper } from 'ui/Form/FormWrapper';
+import { Dispatch } from 'redux/store/types';
 import { TextButton } from 'ui/Button/Button';
+import { Card } from 'ui/Card/Card';
+import { FormWrapper } from 'ui/Form/FormWrapper';
+import { SimpleField } from 'ui/FormikField/SimpleField';
+import { GenericCRUD } from 'ui/GenericCRUD/GenericCRUD';
+import { AccentText } from 'ui/StyledText/StyledText';
 
 import './DataTableViewWarnings.scss';
-import { AccentText } from 'ui/StyledText/StyledText';
 
 interface IProps {
     tableId: number;

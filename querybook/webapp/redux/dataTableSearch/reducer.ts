@@ -1,9 +1,10 @@
 import { produce } from 'immer';
+
 import { defaultSortSchemaBy, defaultSortSchemaTableBy } from './const';
 import {
-    IDataTableSearchState,
-    IDataTableSearchPaginationState,
     DataTableSearchAction,
+    IDataTableSearchPaginationState,
+    IDataTableSearchState,
 } from './types';
 
 const initialResultState: IDataTableSearchPaginationState = {

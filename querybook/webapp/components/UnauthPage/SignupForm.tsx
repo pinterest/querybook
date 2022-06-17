@@ -1,13 +1,13 @@
+import { ErrorMessage, Field, Form, Formik } from 'formik';
 import React from 'react';
-import { Formik, Form, Field, ErrorMessage } from 'formik';
 import * as Yup from 'yup';
 
-import { FormField } from 'ui/Form/FormField';
-import { Message } from 'ui/Message/Message';
+import { UserResource } from 'resource/user';
 import { Button } from 'ui/Button/Button';
+import { FormField } from 'ui/Form/FormField';
 import { FormWrapper } from 'ui/Form/FormWrapper';
 import { SimpleField } from 'ui/FormikField/SimpleField';
-import { UserResource } from 'resource/user';
+import { Message } from 'ui/Message/Message';
 
 export interface ISignupFormProps {
     onSuccessLogin: () => any;
@@ -50,12 +50,9 @@ export const SignupForm: React.FunctionComponent<ISignupFormProps> = ({
                 email: '',
             }}
             onSubmit={({ username, password, email }) =>
-                UserResource.signup(
-                    username,
-                    password,
-                    email
-                ).then(onSuccessLogin, (error) =>
-                    setErrorMessage(String(error))
+                UserResource.signup(username, password, email).then(
+                    onSuccessLogin,
+                    (error) => setErrorMessage(String(error))
                 )
             }
         >

@@ -1,4 +1,5 @@
 import React from 'react';
+
 import { ErrorPage } from 'ui/ErrorPage/ErrorPage';
 
 interface IErrorBoundaryState {

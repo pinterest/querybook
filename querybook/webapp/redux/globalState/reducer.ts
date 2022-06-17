@@ -1,5 +1,6 @@
 import produce from 'immer';
-import { IGlobalStateState, GlobalStateAction } from './types';
+
+import { GlobalStateAction, IGlobalStateState } from './types';
 
 export const defaultGlobalState: IGlobalStateState = {};
 

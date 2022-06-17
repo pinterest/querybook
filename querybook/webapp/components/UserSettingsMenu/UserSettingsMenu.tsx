@@ -1,17 +1,16 @@
 import React, { useMemo } from 'react';
-import { IStoreState } from 'redux/store/types';
-import { useSelector, useDispatch } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
+
+import { UserSettingsTab } from 'components/EnvironmentAppRouter/modalRoute/UserSettingsMenuRoute';
 import { titleize } from 'lib/utils';
-
-import { queryEngineSelector } from 'redux/queryEngine/selector';
-import * as userActions from 'redux/user/action';
-
-import { Select, makeSelectOptions } from 'ui/Select/Select';
 import { availableEnvironmentsSelector } from 'redux/environment/selector';
 import { notificationServiceSelector } from 'redux/notificationService/selector';
+import { queryEngineSelector } from 'redux/queryEngine/selector';
+import { IStoreState } from 'redux/store/types';
+import * as userActions from 'redux/user/action';
+import { makeSelectOptions, Select } from 'ui/Select/Select';
 
 import './UserSettingsMenu.scss';
-import { UserSettingsTab } from 'components/EnvironmentAppRouter/modalRoute/UserSettingsMenuRoute';
 
 const userSettingConfig: Record<
     string,

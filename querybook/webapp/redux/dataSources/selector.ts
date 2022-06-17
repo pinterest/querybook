@@ -1,7 +1,8 @@
 import { createSelector } from 'reselect';
-import { IStoreState } from 'redux/store/types';
-import { queryEngineByIdEnvSelector } from 'redux/queryEngine/selector';
+
 import { IDataColumn } from 'const/metastore';
+import { queryEngineByIdEnvSelector } from 'redux/queryEngine/selector';
+import { IStoreState } from 'redux/store/types';
 
 const queryMetastoreByIdSelector = (state: IStoreState) =>
     state.dataSources.queryMetastoreById;

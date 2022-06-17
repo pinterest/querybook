@@ -1,9 +1,9 @@
 import React from 'react';
-import { formatError } from 'lib/utils/error';
 
+import { useLoader } from 'hooks/useLoader';
+import { formatError } from 'lib/utils/error';
 import { Loading } from 'ui/Loading/Loading';
 import { ErrorMessage } from 'ui/Message/ErrorMessage';
-import { useLoader } from 'hooks/useLoader';
 
 export interface ILoaderProps {
     // We check the value of item to see if it needs to be loaded, must not be null

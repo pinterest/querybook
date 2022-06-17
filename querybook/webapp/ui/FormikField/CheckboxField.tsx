@@ -1,5 +1,6 @@
-import React from 'react';
 import { useField } from 'formik';
+import React from 'react';
+
 import { Checkbox, ICheckboxProps } from 'ui/Checkbox/Checkbox';
 
 export interface ICheckboxFieldProps extends ICheckboxProps {

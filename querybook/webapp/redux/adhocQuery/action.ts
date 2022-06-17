@@ -1,7 +1,8 @@
 import { IAdhocQuery } from 'const/adhocQuery';
 import { fetchQueryExecutionIfNeeded } from 'redux/queryExecutions/action';
-import { ISetAdhocQueryAction, ThunkResult } from './types';
+
 import { loadAdhocQuery } from './persistence';
+import { ISetAdhocQueryAction, ThunkResult } from './types';
 
 export function receiveAdhocQuery(
     adhocQuery: Partial<IAdhocQuery>,

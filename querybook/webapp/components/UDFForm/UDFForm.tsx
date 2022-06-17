@@ -4,13 +4,12 @@ import * as Yup from 'yup';
 
 import { IOptions } from 'lib/utils/react-select';
 import { IUDFRendererValues, UDFEngineConfigsByLanguage } from 'lib/utils/udf';
-
 import { Button, SoftButton } from 'ui/Button/Button';
 import { IconButton } from 'ui/Button/IconButton';
 import { SimpleField } from 'ui/FormikField/SimpleField';
-import { Subtitle, Title } from 'ui/Title/Title';
 import { Link } from 'ui/Link/Link';
 import { Message } from 'ui/Message/Message';
+import { Subtitle, Title } from 'ui/Title/Title';
 
 import './UDFForm.scss';
 
@@ -63,84 +62,89 @@ export const UDFForm: React.FC<IUDFFormProps> = ({
                 validationSchema={UDFFormValuesSchema}
             >
                 {({ values, handleSubmit, isValid }) => {
-                    const selectedLanguageConfig = engineUDFConfig.supportedUDFLanguages.find(
-                        (l) => l.name === values.udfLanguage
-                    );
+                    const selectedLanguageConfig =
+                        engineUDFConfig.supportedUDFLanguages.find(
+                            (l) => l.name === values.udfLanguage
+                        );
 
-                    const parametersDOM = selectedLanguageConfig?.noParameters ? null : (
-                        <FieldArray
-                            name="parameters"
-                            render={(arrayHelper) => {
-                                const parameterRowsDOM = values.parameters.map(
-                                    (_, idx) => (
-                                        <div key={idx} className="flex-row">
-                                            <div className="flex4">
-                                                <SimpleField
-                                                    type="input"
-                                                    name={`parameters[${idx}].name`}
-                                                    label={() => null}
-                                                />
+                    const parametersDOM =
+                        selectedLanguageConfig?.noParameters ? null : (
+                            <FieldArray
+                                name="parameters"
+                                render={(arrayHelper) => {
+                                    const parameterRowsDOM =
+                                        values.parameters.map((_, idx) => (
+                                            <div key={idx} className="flex-row">
+                                                <div className="flex4">
+                                                    <SimpleField
+                                                        type="input"
+                                                        name={`parameters[${idx}].name`}
+                                                        label={() => null}
+                                                    />
+                                                </div>
+                                                <div className="flex4">
+                                                    <SimpleField
+                                                        type="react-select"
+                                                        label={() => null}
+                                                        name={`parameters[${idx}].type`}
+                                                        options={
+                                                            engineUDFConfig.dataTypes
+                                                        }
+                                                        selectProps={{
+                                                            placeholder:
+                                                                'Select types',
+                                                        }}
+                                                        creatable
+                                                    />
+                                                </div>
+
+                                                <div className="flex1">
+                                                    <IconButton
+                                                        icon="X"
+                                                        onClick={() =>
+                                                            arrayHelper.remove(
+                                                                idx
+                                                            )
+                                                        }
+                                                    />
+                                                </div>
                                             </div>
-                                            <div className="flex4">
-                                                <SimpleField
-                                                    type="react-select"
-                                                    label={() => null}
-                                                    name={`parameters[${idx}].type`}
-                                                    options={
-                                                        engineUDFConfig.dataTypes
-                                                    }
-                                                    selectProps={{
-                                                        placeholder:
-                                                            'Select types',
-                                                    }}
-                                                    creatable
-                                                />
+                                        ));
+
+                                    return (
+                                        <div className="UDFForm-parameters">
+                                            <Title size="smedium">
+                                                Parameters
+                                            </Title>
+                                            <div className="flex-row">
+                                                <Subtitle className="flex4 ml16">
+                                                    Name
+                                                </Subtitle>
+                                                <Subtitle className="flex4 ml16">
+                                                    Type
+                                                </Subtitle>
+                                                <div className="flex1" />
                                             </div>
 
-                                            <div className="flex1">
-                                                <IconButton
-                                                    icon="X"
+                                            {parameterRowsDOM}
+                                            <div className="center-align">
+                                                <SoftButton
+                                                    size="small"
+                                                    title="Add New Parameter"
+                                                    icon="Plus"
                                                     onClick={() =>
-                                                        arrayHelper.remove(idx)
+                                                        arrayHelper.push({
+                                                            name: '',
+                                                            type: '',
+                                                        })
                                                     }
                                                 />
                                             </div>
                                         </div>
-                                    )
-                                );
-
-                                return (
-                                    <div className="UDFForm-parameters">
-                                        <Title size="smedium">Parameters</Title>
-                                        <div className="flex-row">
-                                            <Subtitle className="flex4 ml16">
-                                                Name
-                                            </Subtitle>
-                                            <Subtitle className="flex4 ml16">
-                                                Type
-                                            </Subtitle>
-                                            <div className="flex1" />
-                                        </div>
-
-                                        {parameterRowsDOM}
-                                        <div className="center-align">
-                                            <SoftButton
-                                                size="small"
-                                                title="Add New Parameter"
-                                                icon="Plus"
-                                                onClick={() =>
-                                                    arrayHelper.push({
-                                                        name: '',
-                                                        type: '',
-                                                    })
-                                                }
-                                            />
-                                        </div>
-                                    </div>
-                                );
-                            }}
-                        />
-                    );
+                                    );
+                                }}
+                            />
+                        );
 
                     return (
                         <>

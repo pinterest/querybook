@@ -1,13 +1,14 @@
-import React from 'react';
 import JSONBig from 'json-bigint';
+import React from 'react';
 
-import { IColumnTransformer } from './types';
 import {
     formatNumber,
     getHumanReadableNumber,
-    roundNumberToDecimal,
     isNumeric,
+    roundNumberToDecimal,
 } from 'lib/utils/number';
+
+import { IColumnTransformer } from './types';
 
 const queryResultTransformers: IColumnTransformer[] = [
     {

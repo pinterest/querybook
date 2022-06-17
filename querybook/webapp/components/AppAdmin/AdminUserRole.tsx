@@ -1,26 +1,23 @@
 import React from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 
-import { getEnumEntries } from 'lib/typescript';
-import { getQueryString } from 'lib/utils/query-string';
-import { useResource } from 'hooks/useResource';
-import { UserRoleType } from 'const/user';
-
-import { IStoreState } from 'redux/store/types';
-import * as userActions from 'redux/user/action';
-
+import { AdminAuditLogButton } from 'components/AdminAuditLog/AdminAuditLogButton';
 import { UserBadge } from 'components/UserBadge/UserBadge';
 import { UserSelect } from 'components/UserSelect/UserSelect';
-import { AdminAuditLogButton } from 'components/AdminAuditLog/AdminAuditLogButton';
-
+import { UserRoleType } from 'const/user';
+import { useResource } from 'hooks/useResource';
+import { getEnumEntries } from 'lib/typescript';
+import { getQueryString } from 'lib/utils/query-string';
+import { IStoreState } from 'redux/store/types';
+import * as userActions from 'redux/user/action';
+import { UserRoleResource } from 'resource/admin/userRole';
 import { AsyncButton } from 'ui/AsyncButton/AsyncButton';
 import { Button, TextButton } from 'ui/Button/Button';
 import { Card } from 'ui/Card/Card';
 import { FormField } from 'ui/Form/FormField';
 import { Icon } from 'ui/Icon/Icon';
 import { Level } from 'ui/Level/Level';
-import { UserRoleResource } from 'resource/admin/userRole';
-import { Select, makeSelectOptions } from 'ui/Select/Select';
+import { makeSelectOptions, Select } from 'ui/Select/Select';
 
 import './AdminUserRole.scss';
 

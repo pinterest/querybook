@@ -1,9 +1,8 @@
+import { getValueDataType, sortTable } from './chart-utils';
 import { cloneDeep, range } from 'lodash';
 
 import { ChartDataAggType } from 'const/dataDocChart';
 import { isNumeric } from 'lib/utils/number';
-
-import { sortTable, getValueDataType } from './chart-utils';
 
 const emptyCellValue = null;
 const UNDEFINED = 'undefined';

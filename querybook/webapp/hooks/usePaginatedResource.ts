@@ -1,10 +1,10 @@
 import {
-    useState,
+    Reducer,
+    useCallback,
     useEffect,
     useReducer,
-    useCallback,
     useRef,
-    Reducer,
+    useState,
 } from 'react';
 
 import { ICancelablePromise } from 'lib/datasource';

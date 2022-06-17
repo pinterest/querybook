@@ -1,5 +1,6 @@
-import React from 'react';
 import { useField } from 'formik';
+import React from 'react';
+
 import NumberInput from 'ui/NumberInput/NumberInput';
 
 export interface INumberFieldProps

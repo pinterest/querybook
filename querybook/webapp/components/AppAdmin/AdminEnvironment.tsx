@@ -1,25 +1,24 @@
-import React from 'react';
-import * as Yup from 'yup';
 import { clone } from 'lodash';
+import React from 'react';
 import { useParams } from 'react-router-dom';
+import * as Yup from 'yup';
 
-import history from 'lib/router-history';
-
-import { IAdminEnvironment, IAdminQueryEngine } from 'const/admin';
+import { AdminAuditLogButton } from 'components/AdminAuditLog/AdminAuditLogButton';
 import { QueryEngineSelect } from 'components/QueryEngineSelect/QueryEngineSelect';
 import { UserEnvironmentEditor } from 'components/UserEnvironmentEditor/UserEnvironmentEditor';
-import { AdminAuditLogButton } from 'components/AdminAuditLog/AdminAuditLogButton';
+import { IAdminEnvironment, IAdminQueryEngine } from 'const/admin';
+import { useResource } from 'hooks/useResource';
+import history from 'lib/router-history';
 import { AdminEnvironmentResource } from 'resource/admin';
+import { IconButton } from 'ui/Button/IconButton';
 import { Card } from 'ui/Card/Card';
+import { DraggableList } from 'ui/DraggableList/DraggableList';
+import { SimpleField } from 'ui/FormikField/SimpleField';
 import { GenericCRUD } from 'ui/GenericCRUD/GenericCRUD';
 import { Level } from 'ui/Level/Level';
-import { SimpleField } from 'ui/FormikField/SimpleField';
-
-import { IconButton } from 'ui/Button/IconButton';
-import { useResource } from 'hooks/useResource';
-import { DraggableList } from 'ui/DraggableList/DraggableList';
 
 import { AdminDeletedList } from './AdminDeletedList';
+
 import './AdminEnvironment.scss';
 
 const environmentSchema = Yup.object().shape({
@@ -320,15 +319,13 @@ const AdminEnvironmentQueryEngine: React.FC<{
         }
     }, []);
 
-    const {
-        data: environmentEngines,
-        forceFetch: fetchEnvironmentEngines,
-    } = useResource(
-        React.useCallback(
-            () => AdminEnvironmentResource.getQueryEngines(environmentId),
-            [environmentId]
-        )
-    );
+    const { data: environmentEngines, forceFetch: fetchEnvironmentEngines } =
+        useResource(
+            React.useCallback(
+                () => AdminEnvironmentResource.getQueryEngines(environmentId),
+                [environmentId]
+            )
+        );
 
     const handleAddQueryEngine = React.useCallback(
         async (engineId: number) => {

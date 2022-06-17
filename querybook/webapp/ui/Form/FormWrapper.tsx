@@ -1,5 +1,6 @@
 import React from 'react';
 import styled from 'styled-components';
+
 import { NumFontSize, numFontSizeToString } from 'const/font';
 
 interface ISharedProps {

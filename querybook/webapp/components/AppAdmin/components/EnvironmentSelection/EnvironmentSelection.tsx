@@ -1,5 +1,6 @@
-import React, { useMemo } from 'react';
 import { useField, useFormikContext } from 'formik';
+import React, { useMemo } from 'react';
+
 import { SimpleField } from 'ui/FormikField/SimpleField';
 
 interface OptionsType {

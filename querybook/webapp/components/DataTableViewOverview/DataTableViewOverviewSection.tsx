@@ -1,4 +1,5 @@
 import React from 'react';
+
 import { AccentText } from 'ui/StyledText/StyledText';
 
 interface IProps {

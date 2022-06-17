@@ -1,12 +1,14 @@
 import { useFormikContext } from 'formik';
-import { getHumanReadableByteSize } from 'lib/utils/number';
 import React, { useMemo } from 'react';
 import { useSelector } from 'react-redux';
+
+import { getHumanReadableByteSize } from 'lib/utils/number';
 import { queryEngineByIdEnvSelector } from 'redux/queryEngine/selector';
 import { IStoreState } from 'redux/store/types';
 import { Message } from 'ui/Message/Message';
 import { StyledText } from 'ui/StyledText/StyledText';
 import { Tag, TagGroup } from 'ui/Tag/Tag';
+
 import { ITableUploadFormikForm } from './types';
 
 export const TableUploaderConfirmForm: React.FC = () => {

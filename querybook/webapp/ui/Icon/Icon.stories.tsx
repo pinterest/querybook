@@ -1,7 +1,7 @@
-import React from 'react';
-// eslint-disable-next-line import/no-extraneous-dependencies
 import centered from '@storybook/addon-centered/react';
+import React from 'react';
 
+// eslint-disable-next-line import/no-extraneous-dependencies
 import { Icon, IIconProps } from './Icon';
 
 export const _Icon = (args: IIconProps) => <Icon {...args} />;

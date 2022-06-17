@@ -3,17 +3,16 @@ import { useParams } from 'react-router-dom';
 
 import { IChangeLogItem } from 'const/changeLog';
 import localStore from 'lib/local-store';
+import { CHANGE_LOG_KEY, ChangeLogValue } from 'lib/local-store/const';
 import { sanitizeAndExtraMarkdown } from 'lib/markdown';
 import { navigateWithinEnv } from 'lib/utils/query-string';
-import { ChangeLogValue, CHANGE_LOG_KEY } from 'lib/local-store/const';
 import { ChangeLogResource } from 'resource/utils/changelog';
-
-import { Markdown } from 'ui/Markdown/Markdown';
 import { Content } from 'ui/Content/Content';
 import { Icon } from 'ui/Icon/Icon';
+import { Markdown } from 'ui/Markdown/Markdown';
+import { AccentText } from 'ui/StyledText/StyledText';
 
 import './ChangeLog.scss';
-import { AccentText } from 'ui/StyledText/StyledText';
 
 const ChangeLogMarkdown: React.FC<{ markdown: string }> = ({ markdown }) => {
     const processedMarkdown = React.useMemo(() => {

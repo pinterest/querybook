@@ -1,7 +1,9 @@
 import { Action } from 'redux';
 import { ThunkAction } from 'redux-thunk';
+
+import { IEngineStatusData, IQueryEngine } from 'const/queryEngine';
+
 import { IStoreState } from '../store/types';
-import { IQueryEngine, IEngineStatusData } from 'const/queryEngine';
 
 export interface IQueryEngineReceiveAction extends Action {
     type: '@@queryEngine/RECEIVE';

@@ -1,51 +1,49 @@
 import clsx from 'clsx';
-import React, { useEffect, useState, useCallback, useMemo } from 'react';
+import { orderBy } from 'lodash';
+import React, { useCallback, useEffect, useMemo, useState } from 'react';
 import { useDrop } from 'react-dnd';
 import toast from 'react-hot-toast';
-import { useSelector, useDispatch } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
 
-import { IDataDoc, emptyDataDocTitleMessage } from 'const/datadoc';
+import { BoardCreateUpdateModal } from 'components/BoardCreateUpdateModal/BoardCreateUpdateModal';
 import {
     BoardItemType,
     BoardOrderBy,
     BoardOrderToDescription,
     BoardOrderToTitle,
 } from 'const/board';
-
-import { BoardCreateUpdateModal } from 'components/BoardCreateUpdateModal/BoardCreateUpdateModal';
-
-import { myBoardsSelector, makeBoardItemsSelector } from 'redux/board/selector';
+import { emptyDataDocTitleMessage, IDataDoc } from 'const/datadoc';
+import { IDataTable } from 'const/metastore';
+import { getEnumEntries } from 'lib/typescript';
+import { titleize } from 'lib/utils';
 import {
-    fetchBoards,
-    deleteBoardItem,
-    moveBoardItem,
-    fetchBoardIfNeeded,
     addBoardItem,
+    deleteBoardItem,
+    fetchBoardIfNeeded,
+    fetchBoards,
+    moveBoardItem,
 } from 'redux/board/action';
+import { makeBoardItemsSelector, myBoardsSelector } from 'redux/board/selector';
 import { setDataDocNavBoard } from 'redux/querybookUI/action';
 import { dataDocNavBoardOpenSelector } from 'redux/querybookUI/selector';
 import { Dispatch, IStoreState } from 'redux/store/types';
-import { getEnumEntries } from 'lib/typescript';
-
 import { IconButton } from 'ui/Button/IconButton';
-import { LoadingIcon } from 'ui/Loading/Loading';
-import { Level, LevelItem } from 'ui/Level/Level';
 import { DraggableList } from 'ui/DraggableList/DraggableList';
-import { Icon } from 'ui/Icon/Icon';
-import { IDataTable } from 'const/metastore';
-import { Title } from 'ui/Title/Title';
 import { IDragItem } from 'ui/DraggableList/types';
+import { Icon } from 'ui/Icon/Icon';
+import { Level, LevelItem } from 'ui/Level/Level';
+import { LoadingIcon } from 'ui/Loading/Loading';
+import { OrderByButton } from 'ui/OrderByButton/OrderByButton';
+import { Title } from 'ui/Title/Title';
 
+import { BoardListItemRow } from './DataDocNavigatorBoardItem';
 import {
     BoardDraggableType,
     DataDocDraggableType,
     IProcessedBoardItem,
 } from './navigatorConst';
-import { BoardListItemRow } from './DataDocNavigatorBoardItem';
+
 import './DataDocNavigatorBoardSection.scss';
-import { OrderByButton } from 'ui/OrderByButton/OrderByButton';
-import { orderBy } from 'lodash';
-import { titleize } from 'lib/utils';
 
 interface INavigatorBoardSectionProps {
     selectedDocId: number;
@@ -56,16 +54,13 @@ interface INavigatorBoardSectionProps {
 
 const BoardOrderByOptions = getEnumEntries(BoardOrderBy);
 
-export const DataDocNavigatorBoardSection: React.FC<INavigatorBoardSectionProps> = ({
-    selectedDocId,
-    collapsed,
-    setCollapsed,
-    filterString,
-}) => {
-    const toggleCollapsed = useCallback(() => setCollapsed(!collapsed), [
-        setCollapsed,
-        collapsed,
-    ]);
+export const DataDocNavigatorBoardSection: React.FC<
+    INavigatorBoardSectionProps
+> = ({ selectedDocId, collapsed, setCollapsed, filterString }) => {
+    const toggleCollapsed = useCallback(
+        () => setCollapsed(!collapsed),
+        [setCollapsed, collapsed]
+    );
 
     const [showCreateModal, setShowCreateModal] = useState(false);
     const boardItemById = useSelector(

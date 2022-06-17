@@ -1,9 +1,9 @@
-import React from 'react';
 import clsx from 'clsx';
+import React from 'react';
 import styled from 'styled-components';
 
-import { TooltipDirection } from 'const/tooltip';
 import { ColorPalette } from 'const/chartColors';
+import { TooltipDirection } from 'const/tooltip';
 
 import './Tag.scss';
 

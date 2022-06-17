@@ -1,9 +1,8 @@
-import React, { useMemo, useCallback } from 'react';
+import React, { useCallback, useMemo } from 'react';
 import Select, { Props as ReactSelectProps } from 'react-select';
 import Creatable from 'react-select/creatable';
 
 import { makeReactSelectStyle } from 'lib/utils/react-select';
-
 import { overlayRoot } from 'ui/Overlay/Overlay';
 import { AccentText } from 'ui/StyledText/StyledText';
 

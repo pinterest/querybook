@@ -1,6 +1,6 @@
 import {
-    serializeCopyCommand,
     deserializeCopyCommand,
+    serializeCopyCommand,
 } from 'lib/data-doc/copy';
 
 test('Simple serialize case', () => {

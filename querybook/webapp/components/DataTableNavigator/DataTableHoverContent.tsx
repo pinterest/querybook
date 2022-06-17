@@ -1,14 +1,14 @@
-import React, { useMemo } from 'react';
 import { ContentState } from 'draft-js';
+import React, { useMemo } from 'react';
 
-import { Title } from 'ui/Title/Title';
-import { ShowMoreText } from 'ui/ShowMoreText/ShowMoreText';
-
-import './DataTableHoverContent.scss';
+import { DataTableTags } from 'components/DataTableTags/DataTableTags';
 import { useDataTable } from 'hooks/redux/useDataTable';
 import { Loader } from 'ui/Loader/Loader';
-import { DataTableTags } from 'components/DataTableTags/DataTableTags';
+import { ShowMoreText } from 'ui/ShowMoreText/ShowMoreText';
 import { StyledText } from 'ui/StyledText/StyledText';
+import { Title } from 'ui/Title/Title';
+
+import './DataTableHoverContent.scss';
 
 export const DataTableHoverContent: React.FC<{
     tableId: number;

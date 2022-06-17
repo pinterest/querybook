@@ -1,6 +1,7 @@
-import styled from 'styled-components';
-import { getKeySymbol } from 'lib/utils/keyboard';
 import React, { useMemo } from 'react';
+import styled from 'styled-components';
+
+import { getKeySymbol } from 'lib/utils/keyboard';
 
 const StyledKeyboardKey = styled.span.attrs({
     className: 'KeyboardKey mr4',

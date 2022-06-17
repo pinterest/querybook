@@ -1,8 +1,8 @@
-import React from 'react';
-// eslint-disable-next-line import/no-extraneous-dependencies
 import centered from '@storybook/addon-centered/react';
+import React from 'react';
 
-import { SearchBar, ISearchBarProps } from './SearchBar';
+// eslint-disable-next-line import/no-extraneous-dependencies
+import { ISearchBarProps, SearchBar } from './SearchBar';
 
 export const _SearchBar = (args: ISearchBarProps) => {
     const [value, setValue] = React.useState('');

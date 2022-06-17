@@ -1,4 +1,6 @@
 import type { ContentState } from 'draft-js';
+import JSONBig from 'json-bigint';
+
 import type {
     DataTableWarningSeverity,
     IDataColumn,
@@ -12,16 +14,15 @@ import type {
     IPaginatedQuerySampleFilters,
     IQueryMetastore,
     ITableColumnStats,
+    ITableQueryEngine,
     ITableSampleParams,
     ITableStats,
     ITopQueryConcurrences,
-    ITableQueryEngine,
     ITopQueryUser,
     IUpdateTableParams,
 } from 'const/metastore';
 import type { ITag } from 'const/tag';
 import ds from 'lib/datasource';
-import JSONBig from 'json-bigint';
 import { convertContentStateToHTML } from 'lib/richtext/serialize';
 
 export const TableSamplesResource = {

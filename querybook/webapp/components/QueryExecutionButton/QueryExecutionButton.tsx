@@ -1,13 +1,13 @@
 import React, { useEffect, useMemo, useState } from 'react';
 import { useDispatch } from 'react-redux';
 
-import { TooltipDirection } from 'const/tooltip';
-import { fetchActiveQueryExecutionForUser } from 'redux/queryExecutions/action';
-import { IStoreState, Dispatch } from 'redux/store/types';
 import { QueryExecutionStatus } from 'const/queryExecution';
+import { TooltipDirection } from 'const/tooltip';
+import { useShallowSelector } from 'hooks/redux/useShallowSelector';
+import { fetchActiveQueryExecutionForUser } from 'redux/queryExecutions/action';
+import { Dispatch, IStoreState } from 'redux/store/types';
 import { IconButton } from 'ui/Button/IconButton';
 
-import { useShallowSelector } from 'hooks/redux/useShallowSelector';
 import './QueryExecutionButton.scss';
 
 interface IQueryExecutionButtonProps {

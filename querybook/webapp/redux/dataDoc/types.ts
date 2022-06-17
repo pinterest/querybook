@@ -1,20 +1,21 @@
+import { ContentState } from 'draft-js';
 import { Action } from 'redux';
 import {
     ThunkAction,
     ThunkDispatch as UntypedThunkDispatch,
 } from 'redux-thunk';
-import { ContentState } from 'draft-js';
 
+import { IAccessRequest } from 'const/accessRequest';
 import {
-    IDataDoc,
     IDataCell,
-    IDataDocEditor,
     IDataCellMeta,
-    IRawDataDoc,
+    IDataDoc,
     IDataDocDAGExport,
     IDataDocDAGExporter,
+    IDataDocEditor,
+    IRawDataDoc,
 } from 'const/datadoc';
-import { IAccessRequest } from 'const/accessRequest';
+
 import { IStoreState } from '../store/types';
 
 export interface IDataDocSavePromise {

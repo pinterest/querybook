@@ -1,8 +1,8 @@
-import { useState, useEffect, useCallback } from 'react';
-import { useSelector, useDispatch } from 'react-redux';
+import { useCallback, useEffect, useState } from 'react';
+import { useDispatch, useSelector } from 'react-redux';
 
 import { ICancelablePromise } from 'lib/datasource';
-import { IStoreState, Dispatch } from 'redux/store/types';
+import { Dispatch, IStoreState } from 'redux/store/types';
 import * as UserActions from 'redux/user/action';
 
 export function useUser({ uid, name }: { uid?: number; name?: string }) {

@@ -1,8 +1,8 @@
-import { reduxStore } from 'redux/store';
-import { fetchDataTableByNameIfNeeded } from 'redux/dataSources/action';
+import { ILineage, ILinterWarning, TableToken } from './sql-lexer';
 
-import { ILinterWarning, ILineage, TableToken } from './sql-lexer';
 import { DataTableWarningSeverity } from 'const/metastore';
+import { fetchDataTableByNameIfNeeded } from 'redux/dataSources/action';
+import { reduxStore } from 'redux/store';
 
 const tableDoesNotExistCache = new Set();
 
@@ -42,11 +42,8 @@ export async function getContextSensitiveWarnings(
     }
     await Promise.all(tableLoadPromises);
 
-    const {
-        dataTableNameToId,
-        dataTablesById,
-        dataTableWarningById,
-    } = reduxStore.getState().dataSources;
+    const { dataTableNameToId, dataTablesById, dataTableWarningById } =
+        reduxStore.getState().dataSources;
     for (const table of allTables) {
         const implicitSchema = table.end - table.start === table.name.length;
         const fullName = `${table.schema}.${table.name}`;

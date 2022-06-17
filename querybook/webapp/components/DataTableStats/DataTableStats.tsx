@@ -2,8 +2,8 @@ import * as React from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 
 import { isNumeric } from 'lib/utils/number';
-import { IStoreState, Dispatch } from 'redux/store/types';
 import { fetchDataTableStatsIfNeeded } from 'redux/dataSources/action';
+import { Dispatch, IStoreState } from 'redux/store/types';
 import { KeyContentDisplay } from 'ui/KeyContentDisplay/KeyContentDisplay';
 import { LoadingIcon } from 'ui/Loading/Loading';
 

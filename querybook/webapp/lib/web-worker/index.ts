@@ -1,6 +1,7 @@
-import { uniqueId, debounce } from 'lodash';
-import { ICodeAnalysis } from 'lib/sql-helper/sql-lexer';
+import { debounce, uniqueId } from 'lodash';
+
 import { getContextSensitiveWarnings } from 'lib/sql-helper/sql-context-sensitive-linter';
+import { ICodeAnalysis } from 'lib/sql-helper/sql-lexer';
 
 const onCompletePromisesById: Record<number, (value?: any) => void> = {};
 let sqlEditorWorker = null;
@@ -61,10 +62,8 @@ const getSqlLintAnnotationsDebounced = debounce(
                     },
                 } = codeAnalysis;
 
-                const contextSensitiveWarnings = await getContextSensitiveWarnings(
-                    metastoreId,
-                    lineage
-                );
+                const contextSensitiveWarnings =
+                    await getContextSensitiveWarnings(metastoreId, lineage);
                 onComplete(
                     contextFreeLinterWarnings.concat(contextSensitiveWarnings)
                 );
@@ -74,12 +73,11 @@ const getSqlLintAnnotationsDebounced = debounce(
     50
 );
 
-export const getSqlLintAnnotations = (
-    metastoreId: number,
-    language: string
-) => (text: string, onComplete: () => any) => {
-    if ((text || '').length === 0) {
-        return;
-    }
-    getSqlLintAnnotationsDebounced(metastoreId, text, language, onComplete);
-};
+export const getSqlLintAnnotations =
+    (metastoreId: number, language: string) =>
+    (text: string, onComplete: () => any) => {
+        if ((text || '').length === 0) {
+            return;
+        }
+        getSqlLintAnnotationsDebounced(metastoreId, text, language, onComplete);
+    };

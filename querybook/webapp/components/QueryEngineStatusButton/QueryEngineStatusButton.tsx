@@ -1,38 +1,37 @@
+import clsx from 'clsx';
 import React, {
-    useState,
-    useRef,
     useCallback,
     useEffect,
     useMemo,
+    useRef,
+    useState,
 } from 'react';
-import { useSelector, useDispatch } from 'react-redux';
-import clsx from 'clsx';
+import { useDispatch, useSelector } from 'react-redux';
 
-import { TooltipDirection } from 'const/tooltip';
-import { titleize, capitalize } from 'lib/utils';
-import { QueryEngineStatus, IQueryEngine } from 'const/queryEngine';
-import { fetchAllSystemStatus } from 'redux/queryEngine/action';
 import { QueryEngineStatusViewer } from 'components/QueryEngineStatusViewer/QueryEngineStatusViewer';
-import {
-    queryEngineByIdEnvSelector,
-    queryEngineStatusAndEngineIdsSelector,
-} from 'redux/queryEngine/selector';
+import { IQueryEngine, QueryEngineStatus } from 'const/queryEngine';
 import {
     queryEngineStatusToIconStatus,
     queryEngineStatusToMessage,
 } from 'const/queryStatusIcon';
-
-import { Popover, PopoverLayout } from 'ui/Popover/Popover';
-import { Modal } from 'ui/Modal/Modal';
-import { StatusIcon } from 'ui/StatusIcon/StatusIcon';
-import { Timer, ITimerHandles } from 'ui/Timer/Timer';
+import { TooltipDirection } from 'const/tooltip';
+import { capitalize, titleize } from 'lib/utils';
+import { fetchAllSystemStatus } from 'redux/queryEngine/action';
+import {
+    queryEngineByIdEnvSelector,
+    queryEngineStatusAndEngineIdsSelector,
+} from 'redux/queryEngine/selector';
 import { IconButton } from 'ui/Button/IconButton';
 import { Icon } from 'ui/Icon/Icon';
 import { Menu, MenuDivider, MenuInfoItem, MenuItem } from 'ui/Menu/Menu';
+import { Modal } from 'ui/Modal/Modal';
+import { Popover, PopoverLayout } from 'ui/Popover/Popover';
+import { StatusIcon } from 'ui/StatusIcon/StatusIcon';
+import { StyledText } from 'ui/StyledText/StyledText';
+import { Tag } from 'ui/Tag/Tag';
+import { ITimerHandles, Timer } from 'ui/Timer/Timer';
 
 import './QueryEngineStatusButton.scss';
-import { Tag } from 'ui/Tag/Tag';
-import { StyledText } from 'ui/StyledText/StyledText';
 
 const REFRESH_INTERVAL = 60;
 
@@ -46,9 +45,8 @@ export const QueryEngineStatusButton: React.FC<IProps> = ({
     popoverLayout = ['right', 'bottom'] as PopoverLayout,
 }) => {
     const [showPanel, setShowPanel] = useState(false);
-    const [showStatusForEngineId, setShowStatusForEngineId] = useState<string>(
-        null
-    );
+    const [showStatusForEngineId, setShowStatusForEngineId] =
+        useState<string>(null);
     const timerRef = useRef<ITimerHandles>();
     const buttonRef = useRef<HTMLAnchorElement>();
 

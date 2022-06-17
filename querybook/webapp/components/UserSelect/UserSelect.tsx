@@ -1,14 +1,14 @@
+import { debounce } from 'lodash';
 import React from 'react';
 import AsyncSelect, { Props as AsyncProps } from 'react-select/async';
-import { debounce } from 'lodash';
 
+import { UserAvatar } from 'components/UserBadge/UserAvatar';
 import {
     asyncReactSelectStyles,
     makeReactSelectStyle,
 } from 'lib/utils/react-select';
-import { overlayRoot } from 'ui/Overlay/Overlay';
-import { UserAvatar } from 'components/UserBadge/UserAvatar';
 import { SearchUserResource } from 'resource/search';
+import { overlayRoot } from 'ui/Overlay/Overlay';
 import { AccentText } from 'ui/StyledText/StyledText';
 
 interface IUserSearchResultRow {

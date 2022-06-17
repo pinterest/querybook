@@ -1,19 +1,18 @@
-import React, { useMemo, useCallback, useImperativeHandle } from 'react';
+import React, { useCallback, useImperativeHandle, useMemo } from 'react';
 import { useSelector } from 'react-redux';
 import styled from 'styled-components';
 
 import { UserSettingsFontSizeToCSSFontSize } from 'const/font';
 import { useImmer } from 'hooks/useImmer';
-import { IColumnTransformer } from 'lib/query-result/types';
 import { findColumnType } from 'lib/query-result/detector';
-
+import { getTransformersForType } from 'lib/query-result/transformer';
+import { IColumnTransformer } from 'lib/query-result/types';
 import { IStoreState } from 'redux/store/types';
 import { Table } from 'ui/Table/Table';
 
-import { getTransformersForType } from 'lib/query-result/transformer';
 import { StatementResultTableColumn } from './StatementResultTableColumn';
-import { useSortCell } from './useSortCell';
 import { useFilterCell } from './useFilterCell';
+import { useSortCell } from './useSortCell';
 
 const StyledTableWrapper = styled.div.attrs({
     className: 'StatementResultTable',
@@ -90,11 +89,8 @@ export const StatementResultTable = React.forwardRef<
     IStatementResultTableHandles,
     IStatementResultTableProps
 >(({ data, paginate, maxNumberOfRowsToShow = 20, isPreview = false }, ref) => {
-    const [
-        expandedColumn,
-        toggleExpandedColumn,
-        setExpandedColumn,
-    ] = useExpandedColumn();
+    const [expandedColumn, toggleExpandedColumn, setExpandedColumn] =
+        useExpandedColumn();
 
     const tableFontSize = useTableFontSize();
 
@@ -110,16 +106,11 @@ export const StatementResultTable = React.forwardRef<
         [data, rows]
     );
 
-    const {
-        getTransformerForColumn,
-        setTransformerForColumn,
-    } = useColumnTransformer(columnTypes);
+    const { getTransformerForColumn, setTransformerForColumn } =
+        useColumnTransformer(columnTypes);
 
-    const {
-        filteredRows,
-        setFilterCondition,
-        filterConditionByColumn,
-    } = useFilterCell(rows);
+    const { filteredRows, setFilterCondition, filterConditionByColumn } =
+        useFilterCell(rows);
 
     const toggleAllExpandedColumns = useCallback(
         (expand: boolean) => {

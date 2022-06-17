@@ -1,6 +1,7 @@
 import { Action } from 'redux';
-import { ITag } from 'const/tag';
 import { ThunkAction } from 'redux-thunk';
+
+import { ITag } from 'const/tag';
 import { IStoreState } from 'redux/store/types';
 
 export interface IRecieveTagsByTable extends Action {

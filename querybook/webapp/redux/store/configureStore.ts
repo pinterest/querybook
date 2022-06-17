@@ -1,9 +1,9 @@
-import { createStore, applyMiddleware, compose } from 'redux';
+import { applyMiddleware, compose, createStore } from 'redux';
+import ReduxThunk from 'redux-thunk';
+
 // import invariant from 'redux-immutable-state-invariant';
 // import { createLogger } from 'redux-logger';
-
 import rootReducer from './rootReducer';
-import ReduxThunk from 'redux-thunk';
 
 // Re-enable for debugging
 // const loggerMiddleware = createLogger();

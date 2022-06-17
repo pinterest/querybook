@@ -1,4 +1,5 @@
-import { useSelector, shallowEqual } from 'react-redux';
+import { shallowEqual, useSelector } from 'react-redux';
+
 import { IStoreState } from 'redux/store/types';
 
 /**

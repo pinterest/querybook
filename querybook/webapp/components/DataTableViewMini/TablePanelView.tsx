@@ -1,15 +1,14 @@
-import React from 'react';
 import { ContentState } from 'draft-js';
+import React from 'react';
 import styled from 'styled-components';
 
-import { getHumanReadableByteSize } from 'lib/utils/number';
-import { generateFormattedDate } from 'lib/utils/datetime';
-
 import { DataTableTags } from 'components/DataTableTags/DataTableTags';
-import { PanelSection, SubPanelSection } from './PanelSection';
-
-import { Loader } from 'ui/Loader/Loader';
 import { useDataTable } from 'hooks/redux/useDataTable';
+import { generateFormattedDate } from 'lib/utils/datetime';
+import { getHumanReadableByteSize } from 'lib/utils/number';
+import { Loader } from 'ui/Loader/Loader';
+
+import { PanelSection, SubPanelSection } from './PanelSection';
 
 interface ITablePanelViewProps {
     tableId: number;

@@ -8,6 +8,7 @@ import { ThemedCodeHighlight } from 'ui/CodeHighlight/ThemedCodeHighlight';
 import { CopyButton } from 'ui/CopyButton/CopyButton';
 import { Loading } from 'ui/Loading/Loading';
 import { ErrorMessage } from 'ui/Message/ErrorMessage';
+
 import './TemplatedQueryView.scss';
 
 export interface ITemplatedQueryViewProps {
@@ -23,7 +24,11 @@ export const TemplatedQueryView: React.FC<ITemplatedQueryViewProps> = ({
     engineId,
     onRunQueryClick,
 }) => {
-    const { data: renderedQuery, isLoading, error } = useResource(
+    const {
+        data: renderedQuery,
+        isLoading,
+        error,
+    } = useResource(
         React.useCallback(
             () =>
                 TemplatedQueryResource.renderTemplatedQuery(

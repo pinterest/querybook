@@ -1,5 +1,6 @@
 import BigNumber from 'bignumber.js';
 import { sortBy } from 'lodash';
+
 import { IColumnStatsAnalyzer } from './types';
 
 function arrToBigNumber(values: any[]) {

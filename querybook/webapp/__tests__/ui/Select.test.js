@@ -1,8 +1,8 @@
-import React from 'react';
-import { shallow, mount } from 'enzyme';
+import { mount, shallow } from 'enzyme';
 import toJson from 'enzyme-to-json';
+import React from 'react';
 
-import { Select, makeSelectOptions } from '../../ui/Select/Select';
+import { makeSelectOptions, Select } from '../../ui/Select/Select';
 
 it('renders without crashing', () => {
     shallow(<Select value="test" onChange={() => null} />);

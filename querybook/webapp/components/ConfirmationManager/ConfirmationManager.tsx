@@ -1,8 +1,9 @@
 import React from 'react';
-import { useSelector, useDispatch } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
 
 import * as querybookUIActions from 'redux/querybookUI/action';
-import { IStoreState, Dispatch } from 'redux/store/types';
+import { Dispatch, IStoreState } from 'redux/store/types';
+
 import { ConfirmationMessage } from './ConfirmationMessage';
 
 export const ConfirmationManager: React.FunctionComponent = () => {

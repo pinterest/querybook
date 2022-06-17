@@ -1,21 +1,19 @@
-import React, { useState, useRef, useCallback } from 'react';
+import React, { useCallback, useRef, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 
-import { UserResource } from 'resource/user';
-import { TooltipDirection } from 'const/tooltip';
-import { IStoreState, Dispatch } from 'redux/store/types';
-import * as UserActions from 'redux/user/action';
-import { navigateWithinEnv } from 'lib/utils/query-string';
-
-import { UserBadge } from 'components/UserBadge/UserBadge';
 import { TokenCreation } from 'components/Token/TokenCreation';
-
+import { UserBadge } from 'components/UserBadge/UserBadge';
+import { TooltipDirection } from 'const/tooltip';
+import { navigateWithinEnv } from 'lib/utils/query-string';
+import { Dispatch, IStoreState } from 'redux/store/types';
+import * as UserActions from 'redux/user/action';
+import { UserResource } from 'resource/user';
+import { IconButton } from 'ui/Button/IconButton';
 import { Link } from 'ui/Link/Link';
-import { MenuInfoItem, Menu, MenuDivider, MenuItem } from 'ui/Menu/Menu';
+import { Menu, MenuDivider, MenuInfoItem, MenuItem } from 'ui/Menu/Menu';
 import { Modal } from 'ui/Modal/Modal';
 import { Popover, PopoverLayout } from 'ui/Popover/Popover';
 import { ToggleSwitch } from 'ui/ToggleSwitch/ToggleSwitch';
-import { IconButton } from 'ui/Button/IconButton';
 
 import './UserMenu.scss';
 

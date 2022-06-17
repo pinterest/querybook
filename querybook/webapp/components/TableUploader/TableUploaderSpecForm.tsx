@@ -1,14 +1,16 @@
+import { FieldArray, useFormikContext } from 'formik';
+import React, { useCallback, useEffect } from 'react';
+
 import {
     UploadedTableColumnTypes,
     UploadedTableIfExistOptions,
 } from 'const/tableUpload';
-import { FieldArray, useFormikContext } from 'formik';
-import React, { useCallback, useEffect } from 'react';
 import { TableUploadResource } from 'resource/tableUpload';
 import { Button } from 'ui/Button/Button';
 import { FormWrapper } from 'ui/Form/FormWrapper';
 import { SimpleField } from 'ui/FormikField/SimpleField';
 import { StyledText } from 'ui/StyledText/StyledText';
+
 import { ITableUploadFormikForm } from './types';
 import {
     useMetastoresForUpload,
@@ -16,10 +18,8 @@ import {
 } from './useQueryEnginesForUpload';
 
 export const TableUploaderSpecForm: React.FC = ({}) => {
-    const {
-        values,
-        setFieldValue,
-    } = useFormikContext<ITableUploadFormikForm>();
+    const { values, setFieldValue } =
+        useFormikContext<ITableUploadFormikForm>();
 
     const possibleMetastores = useMetastoresForUpload();
     const possibleQueryEngines = useQueryEnginesForUpload(values.metastore_id);
@@ -91,9 +91,7 @@ export const TableUploaderSpecForm: React.FC = ({}) => {
                 <SimpleField
                     name="table_config.if_exists"
                     type="react-select"
-                    options={
-                        (UploadedTableIfExistOptions as unknown) as string[]
-                    }
+                    options={UploadedTableIfExistOptions as unknown as string[]}
                     help="Behavior if the table is already defined. Note: append only works for some databases"
                 />
             </FormWrapper>
@@ -101,8 +99,8 @@ export const TableUploaderSpecForm: React.FC = ({}) => {
             <FieldArray
                 name="table_config.column_name_types"
                 render={() => {
-                    const columnRowDOMs = values.table_config.column_name_types.map(
-                        (_, idx) => (
+                    const columnRowDOMs =
+                        values.table_config.column_name_types.map((_, idx) => (
                             <div key={idx} className="flex-row">
                                 <div className="flex1">
                                     <SimpleField
@@ -117,15 +115,14 @@ export const TableUploaderSpecForm: React.FC = ({}) => {
                                         label={() => null}
                                         type="react-select"
                                         options={
-                                            (UploadedTableColumnTypes as unknown) as string[]
+                                            UploadedTableColumnTypes as unknown as string[]
                                         }
                                         creatable
                                         withDeselect
                                     />
                                 </div>
                             </div>
-                        )
-                    );
+                        ));
 
                     return (
                         <div className="mt20">

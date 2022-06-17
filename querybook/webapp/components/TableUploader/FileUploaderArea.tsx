@@ -2,10 +2,12 @@ import React, { useCallback, useRef } from 'react';
 import { useDrop } from 'react-dnd';
 import { NativeTypes } from 'react-dnd-html5-backend';
 import styled from 'styled-components';
+
 import { Button } from 'ui/Button/Button';
 import { IconButton } from 'ui/Button/IconButton';
 import { Icon } from 'ui/Icon/Icon';
 import { StyledText } from 'ui/StyledText/StyledText';
+
 import { IDragObjectFiles } from './types';
 
 interface IFileUploaderAreaProps {

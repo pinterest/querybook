@@ -1,4 +1,5 @@
 import { useEffect, useRef } from 'react';
+
 import { setBrowserTitle } from 'lib/querybookUI';
 
 export function useBrowserTitle(title = '') {

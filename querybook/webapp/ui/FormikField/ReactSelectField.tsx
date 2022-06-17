@@ -1,9 +1,10 @@
-import React from 'react';
 import { useField } from 'formik';
+import React from 'react';
+
 import { WithOptional } from 'lib/typescript';
 import {
-    SimpleReactSelect,
     ISimpleReactSelectProps,
+    SimpleReactSelect,
 } from 'ui/SimpleReactSelect/SimpleReactSelect';
 
 export interface IReactSelectFieldProps<T = any>

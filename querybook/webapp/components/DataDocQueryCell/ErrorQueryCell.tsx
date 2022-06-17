@@ -1,4 +1,5 @@
 import React from 'react';
+
 import { Message } from 'ui/Message/Message';
 
 interface IErrorQueryCellProps {

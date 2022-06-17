@@ -1,14 +1,13 @@
 import React, { useCallback, useEffect, useState } from 'react';
-import { useSelector, useDispatch } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
 
-import { IStoreState, Dispatch } from 'redux/store/types';
 import { fetchTableQueryEnginesIfNeeded } from 'redux/dataSources/action';
-
-import { Loading } from 'ui/Loading/Loading';
-import { Button } from 'ui/Button/Button';
 import { queryEngineByIdEnvSelector } from 'redux/queryEngine/selector';
-import { Tag } from 'ui/Tag/Tag';
+import { Dispatch, IStoreState } from 'redux/store/types';
+import { Button } from 'ui/Button/Button';
+import { Loading } from 'ui/Loading/Loading';
 import { EmptyText } from 'ui/StyledText/StyledText';
+import { Tag } from 'ui/Tag/Tag';
 
 export function useLoadQueryEngines(tableId: number) {
     const [loading, setLoading] = useState(false);
@@ -68,10 +67,10 @@ const QueryEngineButton: React.FC<{
     queryCount: number;
     active: boolean;
 }> = ({ engineId, onClick, queryCount, active }) => {
-    const handleClick = useCallback(() => onClick?.(engineId), [
-        onClick,
-        engineId,
-    ]);
+    const handleClick = useCallback(
+        () => onClick?.(engineId),
+        [onClick, engineId]
+    );
     const queryEngineById = useSelector(queryEngineByIdEnvSelector);
     const queryEngineName = queryEngineById[engineId].name;
 

@@ -1,26 +1,26 @@
 import clsx from 'clsx';
 import React, { useCallback, useMemo, useRef, useState } from 'react';
 
-import { formatNumber } from 'lib/utils/number';
 import { IStatementExecution, IStatementResult } from 'const/queryExecution';
 import { StatementExecutionResultSizes } from 'const/queryResultLimit';
-
 import { useImmer } from 'hooks/useImmer';
 import { useToggleState } from 'hooks/useToggleState';
+import { formatNumber } from 'lib/utils/number';
+import { TextButton } from 'ui/Button/Button';
+import { InfoButton } from 'ui/Button/InfoButton';
+import { Checkbox } from 'ui/Checkbox/Checkbox';
+import { Icon } from 'ui/Icon/Icon';
 import { Loading } from 'ui/Loading/Loading';
 import { Message } from 'ui/Message/Message';
-import { TextButton } from 'ui/Button/Button';
+import { Popover } from 'ui/Popover/Popover';
 import { PrettyNumber } from 'ui/PrettyNumber/PrettyNumber';
+import { IOptions, makeSelectOptions, Select } from 'ui/Select/Select';
+import { ShowMoreText } from 'ui/ShowMoreText/ShowMoreText';
+
 import {
     IStatementResultTableHandles,
     StatementResultTable,
 } from '../StatementResultTable/StatementResultTable';
-import { ShowMoreText } from 'ui/ShowMoreText/ShowMoreText';
-import { InfoButton } from 'ui/Button/InfoButton';
-import { IOptions, makeSelectOptions, Select } from 'ui/Select/Select';
-import { Icon } from 'ui/Icon/Icon';
-import { Popover } from 'ui/Popover/Popover';
-import { Checkbox } from 'ui/Checkbox/Checkbox';
 
 import './StatementResult.scss';
 

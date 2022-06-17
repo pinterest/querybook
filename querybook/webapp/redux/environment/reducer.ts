@@ -1,7 +1,8 @@
 import { produce } from 'immer';
-import { IEnvironmentState, EnvironmentAction } from './types';
+
 import { DataDocAction } from '../dataDoc/types';
 import { QueryEngineAction } from '../queryEngine/types';
+import { EnvironmentAction, IEnvironmentState } from './types';
 
 const initialState: IEnvironmentState = {
     environmentById: {},

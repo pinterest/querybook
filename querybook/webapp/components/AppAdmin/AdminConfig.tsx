@@ -1,8 +1,9 @@
 import React, { useMemo, useState } from 'react';
+
 import { useResource } from 'hooks/useResource';
-import { Table } from 'ui/Table/Table';
-import { SearchBar } from 'ui/SearchBar/SearchBar';
 import { AdminConfigResource } from 'resource/admin';
+import { SearchBar } from 'ui/SearchBar/SearchBar';
+import { Table } from 'ui/Table/Table';
 
 export const AdminConfig = ({}) => {
     const { data: querybookConfig, isLoading } = useResource(

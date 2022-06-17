@@ -1,43 +1,44 @@
-import React, { useCallback, useState } from 'react';
 import * as DraftJs from 'draft-js';
-
-import {
-    IDataTable,
-    IDataColumn,
-    IDataTableWarning,
-    DataTableWarningSeverity,
-    IPaginatedQuerySampleFilters,
-} from 'const/metastore';
-import { navigateWithinEnv } from 'lib/utils/query-string';
-import { generateFormattedDate } from 'lib/utils/datetime';
-import { getAppName } from 'lib/utils/global';
-import { titleize } from 'lib/utils';
-import { getHumanReadableByteSize } from 'lib/utils/number';
+import React, { useCallback, useState } from 'react';
+import toast from 'react-hot-toast';
 import { useDispatch } from 'react-redux';
 
 import {
     DataTableStats,
     useFetchDataTableStats,
 } from 'components/DataTableStats/DataTableStats';
-import {
-    DataTableViewQueryUsers,
-    useLoadQueryUsers,
-} from 'components/DataTableViewQueryExample/DataTableViewQueryUsers';
-import { SoftButton, TextButton } from 'ui/Button/Button';
-import { EditableTextField } from 'ui/EditableTextField/EditableTextField';
-import { Message } from 'ui/Message/Message';
-import './DataTableViewOverview.scss';
-import { DataTableViewOverviewSection } from './DataTableViewOverviewSection';
-import { LoadingRow } from 'ui/Loading/Loading';
 import { DataTableViewQueryConcurrences } from 'components/DataTableViewQueryExample/DataTableViewQueryConcurrences';
 import {
     DataTableViewQueryEngines,
     useLoadQueryEngines,
 } from 'components/DataTableViewQueryExample/DataTableViewQueryEngines';
-import { ShowMoreText } from 'ui/ShowMoreText/ShowMoreText';
-import { KeyContentDisplay } from 'ui/KeyContentDisplay/KeyContentDisplay';
+import {
+    DataTableViewQueryUsers,
+    useLoadQueryUsers,
+} from 'components/DataTableViewQueryExample/DataTableViewQueryUsers';
+import {
+    DataTableWarningSeverity,
+    IDataColumn,
+    IDataTable,
+    IDataTableWarning,
+    IPaginatedQuerySampleFilters,
+} from 'const/metastore';
+import { titleize } from 'lib/utils';
+import { generateFormattedDate } from 'lib/utils/datetime';
+import { getAppName } from 'lib/utils/global';
+import { getHumanReadableByteSize } from 'lib/utils/number';
+import { navigateWithinEnv } from 'lib/utils/query-string';
 import { refreshDataTableInMetastore } from 'redux/dataSources/action';
-import toast from 'react-hot-toast';
+import { SoftButton, TextButton } from 'ui/Button/Button';
+import { EditableTextField } from 'ui/EditableTextField/EditableTextField';
+import { KeyContentDisplay } from 'ui/KeyContentDisplay/KeyContentDisplay';
+import { LoadingRow } from 'ui/Loading/Loading';
+import { Message } from 'ui/Message/Message';
+import { ShowMoreText } from 'ui/ShowMoreText/ShowMoreText';
+
+import { DataTableViewOverviewSection } from './DataTableViewOverviewSection';
+
+import './DataTableViewOverview.scss';
 
 const dataTableDetailsRows = [
     'type',
@@ -58,9 +59,9 @@ function useRefreshMetastore(table: IDataTable) {
 
     const handleRefreshTable = useCallback(() => {
         setIsRefreshing(true);
-        const refreshRequest = (dispatch(
+        const refreshRequest = dispatch(
             refreshDataTableInMetastore(table.id)
-        ) as unknown) as Promise<void>;
+        ) as unknown as Promise<void>;
         refreshRequest.finally(() => setIsRefreshing(false));
 
         toast.promise(refreshRequest, {
@@ -87,7 +88,9 @@ export interface IQuerybookTableViewOverviewProps {
     onExampleFilter: (params: IPaginatedQuerySampleFilters) => any;
 }
 
-export const DataTableViewOverview: React.FC<IQuerybookTableViewOverviewProps> = ({
+export const DataTableViewOverview: React.FC<
+    IQuerybookTableViewOverviewProps
+> = ({
     table,
     tableName,
     tableWarnings,
@@ -245,9 +248,8 @@ const TableInsightsSection: React.FC<{
     onClick: (params: IPaginatedQuerySampleFilters) => any;
 }> = ({ tableId, onClick }) => {
     const { loading: loadingUsers, topQueryUsers } = useLoadQueryUsers(tableId);
-    const { loading: loadingEngines, queryEngines } = useLoadQueryEngines(
-        tableId
-    );
+    const { loading: loadingEngines, queryEngines } =
+        useLoadQueryEngines(tableId);
     const handleUserClick = useCallback(
         (uid: number) => {
             onClick({ uid });

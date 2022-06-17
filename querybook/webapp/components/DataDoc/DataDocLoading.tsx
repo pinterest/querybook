@@ -1,8 +1,9 @@
-import React from 'react';
 import { sample } from 'lodash';
-import { Subtitle, Title } from 'ui/Title/Title';
+import React from 'react';
+
 import { Icon } from 'ui/Icon/Icon';
 import { LoadingIcon } from 'ui/Loading/Loading';
+import { Subtitle, Title } from 'ui/Title/Title';
 
 const loadingHints: string[] = require('config/loading_hints.yaml').hints;
 

@@ -1,9 +1,8 @@
 import React from 'react';
-import { Switch, Route, useHistory, useLocation } from 'react-router-dom';
+import { Route, Switch, useHistory, useLocation } from 'react-router-dom';
 
-import { usePrevious } from 'hooks/usePrevious';
 import { useModalRoute } from 'hooks/useModalRoute';
-
+import { usePrevious } from 'hooks/usePrevious';
 import { FourOhFour } from 'ui/ErrorPage/FourOhFour';
 import { Loading } from 'ui/Loading/Loading';
 import { Modal } from 'ui/Modal/Modal';
@@ -46,9 +45,8 @@ export const EnvironmentModalSwitchRouter: React.FC = () => {
     const history = useHistory();
 
     const lastLocation = usePrevious(location);
-    const [lastNotModalLocation, setLastNotModalLocation] = React.useState(
-        null
-    );
+    const [lastNotModalLocation, setLastNotModalLocation] =
+        React.useState(null);
 
     React.useEffect(() => {
         if (history.action !== 'POP' && !lastLocation?.state?.isModal) {

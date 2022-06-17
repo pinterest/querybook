@@ -1,27 +1,26 @@
-import React, { useState, useMemo } from 'react';
-import { useDispatch, useSelector } from 'react-redux';
 import { FieldArray, Formik } from 'formik';
+import React, { useMemo, useState } from 'react';
 import toast from 'react-hot-toast';
-
-import * as dataSourcesActions from 'redux/dataSources/action';
-import { IStoreState, Dispatch } from 'redux/store/types';
-import { format } from 'lib/sql-helper/sql-formatter';
-import { isAxiosError } from 'lib/utils/error';
+import { useDispatch, useSelector } from 'react-redux';
 
 import {
-    IDataTable,
-    IDataSchema,
     IDataColumn,
+    IDataSchema,
+    IDataTable,
     ITableSampleParams,
 } from 'const/metastore';
+import { useToggleState } from 'hooks/useToggleState';
+import { format } from 'lib/sql-helper/sql-formatter';
+import { isAxiosError } from 'lib/utils/error';
+import * as dataSourcesActions from 'redux/dataSources/action';
+import { Dispatch, IStoreState } from 'redux/store/types';
 import { TableSamplesResource } from 'resource/table';
-
 import { AsyncButton } from 'ui/AsyncButton/AsyncButton';
-import { SimpleField } from 'ui/FormikField/SimpleField';
-import { CopyPasteModal } from 'ui/CopyPasteModal/CopyPasteModal';
 import { Button } from 'ui/Button/Button';
 import { IconButton } from 'ui/Button/IconButton';
-import { useToggleState } from 'hooks/useToggleState';
+import { CopyPasteModal } from 'ui/CopyPasteModal/CopyPasteModal';
+import { SimpleField } from 'ui/FormikField/SimpleField';
+import { ToggleButton } from 'ui/ToggleButton/ToggleButton';
 
 import { DataTableViewSamplesTable } from './DataTableViewSamplesTable';
 import {
@@ -30,8 +29,8 @@ import {
     ITableSamplesFormValues,
     tableSamplesFormValuesToParams,
 } from './sampleQueryFormSchema';
+
 import './DataTableViewSamples.scss';
-import { ToggleButton } from 'ui/ToggleButton/ToggleButton';
 
 export interface IDataTableViewSamplesProps {
     table: IDataTable;
@@ -39,15 +38,12 @@ export interface IDataTableViewSamplesProps {
     schema: IDataSchema;
 }
 
-export const DataTableViewSamples: React.FunctionComponent<IDataTableViewSamplesProps> = ({
-    table,
-    tableColumns,
-    schema,
-}) => {
+export const DataTableViewSamples: React.FunctionComponent<
+    IDataTableViewSamplesProps
+> = ({ table, tableColumns, schema }) => {
     // Hide options such as where / order by
-    const [showAdvancedOptions, _, toggleShowAdvancedOptions] = useToggleState(
-        false
-    );
+    const [showAdvancedOptions, _, toggleShowAdvancedOptions] =
+        useToggleState(false);
 
     // Used to display the raw query that will be used for samples
     // only shown if view query is clicked

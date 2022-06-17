@@ -1,13 +1,12 @@
+import { isEmpty } from 'lodash';
 import React, { useEffect, useMemo, useState } from 'react';
 
-import { IDataDoc } from 'const/datadoc';
-
 import { DataDocTemplateVarForm } from 'components/DataDocTemplateButton/DataDocTemplateVarForm';
-
-import { isEmpty } from 'lodash';
+import { IDataDoc } from 'const/datadoc';
 import { TextButton } from 'ui/Button/Button';
-import { DataDocTemplateInfoButton } from './DataDocTemplateInfoButton';
 import { AccentText } from 'ui/StyledText/StyledText';
+
+import { DataDocTemplateInfoButton } from './DataDocTemplateInfoButton';
 
 interface IProps {
     changeDataDocMeta: (docId: number, meta: Record<string, any>) => any;
@@ -20,9 +19,10 @@ export const DataDocTemplateCell: React.FunctionComponent<IProps> = ({
     dataDoc,
     isEditable,
 }) => {
-    const hasMeta = useMemo(() => dataDoc.meta && !isEmpty(dataDoc.meta), [
-        dataDoc.meta,
-    ]);
+    const hasMeta = useMemo(
+        () => dataDoc.meta && !isEmpty(dataDoc.meta),
+        [dataDoc.meta]
+    );
     const [showFacade, setShowFacde] = useState(!hasMeta && isEditable);
     useEffect(() => {
         setShowFacde(!hasMeta && isEditable);

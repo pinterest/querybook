@@ -1,6 +1,7 @@
 import React from 'react';
+
+import { IQueryExecution, QueryExecutionStatus } from 'const/queryExecution';
 import { StepsBar } from 'ui/StepsBar/StepsBar';
-import { QueryExecutionStatus, IQueryExecution } from 'const/queryExecution';
 
 export const QuerySteps: React.FunctionComponent<{
     queryExecution: IQueryExecution;

@@ -1,4 +1,5 @@
 import { produce } from 'immer';
+
 import { IQuerybookUIState, QuerybookUIAction } from './types';
 
 const EMBED_PATH_STRING = '/_/embedded';

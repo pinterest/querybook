@@ -1,48 +1,48 @@
+import { ContentState, convertToRaw } from 'draft-js';
+import { mapValues } from 'lodash';
 import moment from 'moment';
 import { normalize, schema } from 'normalizr';
-import { mapValues } from 'lodash';
-import { convertToRaw, ContentState } from 'draft-js';
+import { Edge, Node } from 'react-flow-renderer';
 
+import { IAccessRequest } from 'const/accessRequest';
 import {
-    IDataCell,
-    IDataTextCell,
-    IDataDoc,
     CELL_TYPE,
-    IDataDocEditor,
+    IDataCell,
     IDataCellMeta,
-    IRawDataDoc,
+    IDataDoc,
     IDataDocDAGExport,
     IDataDocDAGExporter,
+    IDataDocEditor,
+    IDataTextCell,
+    IRawDataDoc,
 } from 'const/datadoc';
-import { IAccessRequest } from 'const/accessRequest';
-
 import {
-    DataDocSaveManager,
     DataCellSaveManager,
+    DataDocSaveManager,
 } from 'lib/batch/datadoc-save-manager';
-import { getQueryEngineId } from 'lib/utils';
-import { convertRawToContentState } from 'lib/richtext/serialize';
-import dataDocSocket from 'lib/data-doc/datadoc-socketio';
-import {
-    IUpdateDataDocPollingAction,
-    ThunkResult,
-    IReceiveDataDocAction,
-    ISaveDataDocEndAction,
-    ISaveDataDocStartAction,
-    IReceiveDataDocsAction,
-    IReceiveDataDocDAGExportAction,
-    IReceiveDataDocDAGExportersAction,
-} from './types';
 import {
     DataDocPermission,
     permissionToReadWrite,
 } from 'lib/data-doc/datadoc-permission';
+import dataDocSocket from 'lib/data-doc/datadoc-socketio';
+import { convertRawToContentState } from 'lib/richtext/serialize';
+import { getQueryEngineId } from 'lib/utils';
 import {
     DataDocAccessRequestResource,
     DataDocEditorResource,
     DataDocResource,
 } from 'resource/dataDoc';
-import { Edge, Node } from 'react-flow-renderer';
+
+import {
+    IReceiveDataDocAction,
+    IReceiveDataDocDAGExportAction,
+    IReceiveDataDocDAGExportersAction,
+    IReceiveDataDocsAction,
+    ISaveDataDocEndAction,
+    ISaveDataDocStartAction,
+    IUpdateDataDocPollingAction,
+    ThunkResult,
+} from './types';
 
 export const dataDocCellSchema = new schema.Entity(
     'dataDocCell',
@@ -66,7 +66,7 @@ const dataCellSaveManager = new DataCellSaveManager();
 
 export function deserializeCell(cell: IDataCell) {
     if (cell.cell_type === 'text') {
-        const rawContext = (cell.context as any) as string;
+        const rawContext = cell.context as any as string;
         const context: ContentState = convertRawToContentState(rawContext);
 
         const newCell: IDataTextCell = {

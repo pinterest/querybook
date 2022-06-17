@@ -1,11 +1,11 @@
 import React from 'react';
 import { useSelector } from 'react-redux';
 
-import { IQueryExecution } from 'const/queryExecution';
-import { currentEnvironmentSelector } from 'redux/environment/selector';
-import { QueryExecutionBar } from 'components/QueryExecutionBar/QueryExecutionBar';
 import { QueryExecution } from 'components/QueryExecution/QueryExecution';
 import { QueryExecutionDuration } from 'components/QueryExecution/QueryExecutionDuration';
+import { QueryExecutionBar } from 'components/QueryExecutionBar/QueryExecutionBar';
+import { IQueryExecution } from 'const/queryExecution';
+import { currentEnvironmentSelector } from 'redux/environment/selector';
 
 export const QueryViewExecution: React.FunctionComponent<{
     queryExecution: IQueryExecution;

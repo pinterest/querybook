@@ -1,21 +1,21 @@
 import React from 'react';
 
 import { ITaskStatusRecord } from 'const/schedule';
-import { generateFormattedDate } from 'lib/utils/datetime';
-import { usePaginatedResource } from 'hooks/usePaginatedResource';
-
 import { useInterval } from 'hooks/useInterval';
+import { usePaginatedResource } from 'hooks/usePaginatedResource';
+import { generateFormattedDate } from 'lib/utils/datetime';
+import { TaskScheduleResource } from 'resource/taskSchedule';
 import { AsyncButton } from 'ui/AsyncButton/AsyncButton';
 import { Loading } from 'ui/Loading/Loading';
+import { SearchBar } from 'ui/SearchBar/SearchBar';
+import { ShowMoreText } from 'ui/ShowMoreText/ShowMoreText';
 import { Table, TableAlign } from 'ui/Table/Table';
 import { Tabs } from 'ui/Tabs/Tabs';
-import { SearchBar } from 'ui/SearchBar/SearchBar';
-import { TaskStatusIcon } from './TaskStatusIcon';
 import { ToggleButton } from 'ui/ToggleButton/ToggleButton';
-import { ShowMoreText } from 'ui/ShowMoreText/ShowMoreText';
+
+import { TaskStatusIcon } from './TaskStatusIcon';
 
 import './TaskStatus.scss';
-import { TaskScheduleResource } from 'resource/taskSchedule';
 
 const PAGE_SIZE = 30;
 

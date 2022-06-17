@@ -1,9 +1,8 @@
-import React from 'react';
 import clsx from 'clsx';
+import React from 'react';
 
 import { TooltipDirection } from 'const/tooltip';
-
-import { TButtonColors, Icon } from 'ui/Icon/Icon';
+import { Icon, TButtonColors } from 'ui/Icon/Icon';
 import type { AllLucideIconNames } from 'ui/Icon/LucideIcons';
 import { AccentText, StyledText } from 'ui/StyledText/StyledText';
 

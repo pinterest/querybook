@@ -1,6 +1,7 @@
+import moment from 'moment';
+
 import { IAdminAnnouncement } from 'const/admin';
 import ds from 'lib/datasource';
-import moment from 'moment';
 
 function transformSecondsToString(date?: number): string | undefined {
     return date ? moment(date, 'X').format('YYYY-MM-DD') : undefined;

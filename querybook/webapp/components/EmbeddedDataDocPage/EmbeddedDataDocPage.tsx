@@ -1,6 +1,7 @@
 import React from 'react';
-import { FullHeight } from 'ui/FullHeight/FullHeight';
+
 import { DataDoc } from 'components/DataDoc/DataDoc';
+import { FullHeight } from 'ui/FullHeight/FullHeight';
 
 interface IProps {
     id: number;

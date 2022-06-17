@@ -1,8 +1,8 @@
-import React from 'react';
-// eslint-disable-next-line import/no-extraneous-dependencies
 import centered from '@storybook/addon-centered/react';
+import React from 'react';
 
-import { Select, ISelectProps, makeSelectOptions } from './Select';
+// eslint-disable-next-line import/no-extraneous-dependencies
+import { ISelectProps, makeSelectOptions, Select } from './Select';
 
 export const _Select = (args: ISelectProps) => {
     const [value, setValue] = React.useState('1');

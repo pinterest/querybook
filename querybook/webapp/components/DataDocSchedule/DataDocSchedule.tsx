@@ -1,16 +1,15 @@
 import React from 'react';
 import toast from 'react-hot-toast';
 
+import { IScheduleTabs } from 'components/DataDocRightSidebar/DataDocScheduleModal';
 import { useResource } from 'hooks/useResource';
 import { DataDocScheduleResource } from 'resource/dataDoc';
-
-import { DataDocScheduleForm } from './DataDocScheduleForm';
-import { DataDocScheduleRunLogs } from './DataDocScheduleRunLogs';
-import { IScheduleTabs } from 'components/DataDocRightSidebar/DataDocScheduleModal';
-
 import { Loading } from 'ui/Loading/Loading';
 import { ErrorMessage } from 'ui/Message/ErrorMessage';
 import { EmptyText } from 'ui/StyledText/StyledText';
+
+import { DataDocScheduleForm } from './DataDocScheduleForm';
+import { DataDocScheduleRunLogs } from './DataDocScheduleRunLogs';
 
 interface IDataDocScheduleFormWrapperProps {
     docId: number;
@@ -22,12 +21,9 @@ interface IDataDocScheduleProps extends IDataDocScheduleFormWrapperProps {
     currentTab: IScheduleTabs;
 }
 
-export const DataDocScheduleFormWrapper: React.FunctionComponent<IDataDocScheduleFormWrapperProps> = ({
-    docId,
-    isEditable,
-    onSave,
-    onDelete,
-}) => {
+export const DataDocScheduleFormWrapper: React.FunctionComponent<
+    IDataDocScheduleFormWrapperProps
+> = ({ docId, isEditable, onSave, onDelete }) => {
     const { isLoading, isError, data, forceFetch } = useResource(
         React.useCallback(() => DataDocScheduleResource.get(docId), [docId])
     );
@@ -99,13 +95,9 @@ export const DataDocScheduleFormWrapper: React.FunctionComponent<IDataDocSchedul
     }
 };
 
-export const DataDocSchedule: React.FunctionComponent<IDataDocScheduleProps> = ({
-    docId,
-    isEditable,
-    onSave,
-    onDelete,
-    currentTab,
-}) => {
+export const DataDocSchedule: React.FunctionComponent<
+    IDataDocScheduleProps
+> = ({ docId, isEditable, onSave, onDelete, currentTab }) => {
     const getHistoryDOM = () => (
         <div className="schedule-options">
             <DataDocScheduleRunLogs docId={docId} />

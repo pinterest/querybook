@@ -1,5 +1,5 @@
-import { KeyboardEvent as ReactKeyboardEvent } from 'react';
 import { isOSX } from './os-platform';
+import { KeyboardEvent as ReactKeyboardEvent } from 'react';
 
 type AllKeyboardEvent = KeyboardEvent | ReactKeyboardEvent;
 

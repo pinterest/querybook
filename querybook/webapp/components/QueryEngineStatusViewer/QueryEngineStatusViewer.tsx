@@ -1,19 +1,17 @@
 import React, { useCallback, useEffect } from 'react';
-import { useSelector, useDispatch } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
 
-import { getAppName } from 'lib/utils/global';
-
+import { QueryEngineStatus } from 'const/queryEngine';
 import { generateFormattedDate } from 'lib/utils/datetime';
+import { getAppName } from 'lib/utils/global';
 import { fetchSystemStatus } from 'redux/queryEngine/action';
 import { IStoreState } from 'redux/store/types';
-import { QueryEngineStatus } from 'const/queryEngine';
-
+import { Button } from 'ui/Button/Button';
 import { FormSectionHeader } from 'ui/Form/FormField';
+import { Level } from 'ui/Level/Level';
 import { Loading } from 'ui/Loading/Loading';
 import { Markdown } from 'ui/Markdown/Markdown';
 import { Message, MessageType } from 'ui/Message/Message';
-import { Level } from 'ui/Level/Level';
-import { Button } from 'ui/Button/Button';
 import { AccentText, StyledText } from 'ui/StyledText/StyledText';
 
 import './QueryEngineStatusViewer.scss';

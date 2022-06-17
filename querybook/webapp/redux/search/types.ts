@@ -1,8 +1,10 @@
 import { Action } from 'redux';
 import { ThunkAction } from 'redux-thunk';
-import { IStoreState } from '../store/types';
-import { ICancelablePromise } from 'lib/datasource';
+
 import { ISearchPreview } from 'const/search';
+import { ICancelablePromise } from 'lib/datasource';
+
+import { IStoreState } from '../store/types';
 
 export const RESULT_PER_PAGE = 20;
 export enum SearchOrder {

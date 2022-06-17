@@ -3,25 +3,23 @@ import * as React from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 
 import { ITag } from 'const/tag';
-import { Dispatch, IStoreState } from 'redux/store/types';
-import { tagsInTableSelector } from 'redux/tag/selector';
-
-import {
-    fetchTableTagsFromTableIfNeeded,
-    deleteTableTag,
-} from 'redux/tag/action';
-import { navigateWithinEnv } from 'lib/utils/query-string';
 import { stopPropagationAndDefault } from 'lib/utils/noop';
-
-import { HoverIconTag } from 'ui/Tag/HoverIconTag';
-import { Icon } from 'ui/Icon/Icon';
-
-import { MenuItem, Menu } from 'ui/Menu/Menu';
+import { navigateWithinEnv } from 'lib/utils/query-string';
+import { Dispatch, IStoreState } from 'redux/store/types';
+import {
+    deleteTableTag,
+    fetchTableTagsFromTableIfNeeded,
+} from 'redux/tag/action';
+import { tagsInTableSelector } from 'redux/tag/selector';
 import { ContextMenu } from 'ui/ContextMenu/ContextMenu';
+import { Icon } from 'ui/Icon/Icon';
+import { Menu, MenuItem } from 'ui/Menu/Menu';
+import { HoverIconTag } from 'ui/Tag/HoverIconTag';
 
 import { CreateDataTableTag } from './CreateDataTableTag';
 import { TableTagConfigModal } from './TableTagConfigModal';
 import { useRankedTags } from './utils';
+
 import './DataTableTags.scss';
 
 interface IProps {

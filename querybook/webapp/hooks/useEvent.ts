@@ -19,8 +19,11 @@ export const useEvent = (
         disabled?: boolean;
     }
 ) => {
-    const { useCapture = false, element = window, disabled = false } =
-        options ?? {};
+    const {
+        useCapture = false,
+        element = window,
+        disabled = false,
+    } = options ?? {};
 
     useEffect(() => {
         if (!disabled) {

@@ -1,8 +1,8 @@
-import React from 'react';
 import moment from 'moment';
+import React from 'react';
 
-import { IAdminApiAccessToken } from 'const/admin';
 import { UserName } from 'components/UserBadge/UserName';
+import { IAdminApiAccessToken } from 'const/admin';
 import { generateFormattedDate } from 'lib/utils/datetime';
 import { AdminTokenResource } from 'resource/admin';
 import { Table, TableAlign } from 'ui/Table/Table';

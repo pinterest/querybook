@@ -1,3 +1,7 @@
+import { isEmpty } from 'lodash';
+
+import { ISearchPreview } from 'const/search';
+import { ICancelablePromise } from 'lib/datasource';
 import { getQueryString, replaceQueryString } from 'lib/utils/query-string';
 import { queryMetastoresSelector } from 'redux/dataSources/selector';
 import {
@@ -5,18 +9,16 @@ import {
     SearchQueryResource,
     SearchTableResource,
 } from 'resource/search';
-import { ISearchPreview } from 'const/search';
+
 import {
-    ISearchResultResetAction,
+    IResetSearchAction,
     ISearchAddAuthorAction,
-    ThunkResult,
+    ISearchResultResetAction,
     RESULT_PER_PAGE,
     SearchOrder,
     SearchType,
-    IResetSearchAction,
+    ThunkResult,
 } from './types';
-import { ICancelablePromise } from 'lib/datasource';
-import { isEmpty } from 'lodash';
 
 export function mapQueryParamToState(): ThunkResult<void> {
     return (dispatch) => {

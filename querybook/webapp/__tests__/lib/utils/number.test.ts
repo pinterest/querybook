@@ -1,10 +1,10 @@
 import {
-    getHumanReadableByteSize,
-    formatNumber,
-    getHumanReadableNumber,
     ByteSizes,
-    roundNumberToDecimal,
+    formatNumber,
+    getHumanReadableByteSize,
+    getHumanReadableNumber,
     isNumeric,
+    roundNumberToDecimal,
 } from 'lib/utils/number';
 
 test('getHumanReadableByteSize', () => {

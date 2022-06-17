@@ -1,34 +1,34 @@
 import React, { useState } from 'react';
-import { useSelector } from 'react-redux';
 import toast from 'react-hot-toast';
+import { useSelector } from 'react-redux';
 
+import { TableUploaderForm } from 'components/TableUploader/TableUploaderForm';
+import { useMetastoresForUpload } from 'components/TableUploader/useQueryEnginesForUpload';
 import {
+    IQueryResultExporter,
     IStatementExecution,
     IStatementResult,
-    IQueryResultExporter,
 } from 'const/queryExecution';
-import { IStoreState } from 'redux/store/types';
-
-import * as Utils from 'lib/utils';
 import { getStatementExecutionResultDownloadUrl } from 'lib/query-execution';
-import { tableToTSV } from 'lib/utils/table-export';
-
-import { Dropdown } from 'ui/Dropdown/Dropdown';
-import { Button, TextButton } from 'ui/Button/Button';
-import { Modal } from 'ui/Modal/Modal';
-import { ListMenu } from 'ui/Menu/ListMenu';
-import { validateForm, updateValue } from 'ui/SmartForm/formFunctions';
-import { SmartForm } from 'ui/SmartForm/SmartForm';
-import { IconButton } from 'ui/Button/IconButton';
-import './ResultExportDropdown.scss';
 import {
     getExporterAuthentication,
     pollExporterTaskPromise,
 } from 'lib/result-export';
+import * as Utils from 'lib/utils';
+import { tableToTSV } from 'lib/utils/table-export';
+import { IStoreState } from 'redux/store/types';
 import { StatementResource } from 'resource/queryExecution';
+import { Button, TextButton } from 'ui/Button/Button';
+import { IconButton } from 'ui/Button/IconButton';
+import { Dropdown } from 'ui/Dropdown/Dropdown';
+import { ListMenu } from 'ui/Menu/ListMenu';
+import { Modal } from 'ui/Modal/Modal';
+import { updateValue, validateForm } from 'ui/SmartForm/formFunctions';
+import { SmartForm } from 'ui/SmartForm/SmartForm';
+
 import { ResultExportSuccessToast } from './ResultExportSuccessToast';
-import { useMetastoresForUpload } from 'components/TableUploader/useQueryEnginesForUpload';
-import { TableUploaderForm } from 'components/TableUploader/TableUploaderForm';
+
+import './ResultExportDropdown.scss';
 
 interface IProps {
     statementExecution: IStatementExecution;
@@ -81,10 +81,8 @@ export const ResultExportDropdown: React.FunctionComponent<IProps> = ({
 }) => {
     const statementId = statementExecution.id;
 
-    const [
-        exporterForForm,
-        setExporterForForm,
-    ] = React.useState<IQueryResultExporter>(null);
+    const [exporterForForm, setExporterForForm] =
+        React.useState<IQueryResultExporter>(null);
 
     const statementExporters = useSelector(
         (state: IStoreState) => state.queryExecutions.statementExporters

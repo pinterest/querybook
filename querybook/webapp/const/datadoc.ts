@@ -1,5 +1,6 @@
-import { Edge, Node } from 'react-flow-renderer';
 import { ContentState } from 'draft-js';
+import { Edge, Node } from 'react-flow-renderer';
+
 import { IChartConfig } from './dataDocChart';
 
 export type CELL_TYPE = 'query' | 'text' | 'chart';

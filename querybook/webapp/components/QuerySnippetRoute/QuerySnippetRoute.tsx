@@ -1,9 +1,10 @@
 import React from 'react';
 import { RouteComponentProps } from 'react-router-dom';
-import history from 'lib/router-history';
 
 import { useModalRoute } from 'hooks/useModalRoute';
+import history from 'lib/router-history';
 import { Modal } from 'ui/Modal/Modal';
+
 import { QuerySnippetWrapper } from './QuerySnippetWrapper';
 
 const QuerySnippetRoute: React.FunctionComponent<RouteComponentProps> = ({

@@ -1,5 +1,6 @@
 import { Location } from 'history';
 import { useSelector } from 'react-redux';
+
 import { IStoreState } from 'redux/store/types';
 
 export function useModalRoute(location: Location<{ isModal: boolean }>) {

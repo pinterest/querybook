@@ -1,15 +1,14 @@
-import React from 'react';
 import clsx from 'clsx';
+import React from 'react';
 import { useSelector } from 'react-redux';
 
 import { TooltipDirection } from 'const/tooltip';
 import history from 'lib/router-history';
 import {
-    environmentsSelector,
     currentEnvironmentSelector,
+    environmentsSelector,
     userEnvironmentNamesSelector,
 } from 'redux/environment/selector';
-
 import { Dropdown } from 'ui/Dropdown/Dropdown';
 import { ListMenu } from 'ui/Menu/ListMenu';
 

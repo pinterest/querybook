@@ -1,37 +1,35 @@
-import * as React from 'react';
-import { Formik, Form, Field, FieldArray } from 'formik';
+import { Field, FieldArray, Form, Formik } from 'formik';
 import moment from 'moment';
-import * as Yup from 'yup';
+import * as React from 'react';
 import toast from 'react-hot-toast';
+import * as Yup from 'yup';
 
-import { generateFormattedDate } from 'lib/utils/datetime';
-import {
-    recurrenceToCron,
-    cronToRecurrence,
-    validateCronForRecurrrence,
-    recurrenceTypes,
-    recurrenceOnYup,
-} from 'lib/utils/cron';
-import { sendConfirm } from 'lib/querybookUI';
-import { useResource } from 'hooks/useResource';
-import { ITaskSchedule } from 'const/schedule';
-
-import { TaskStatus } from 'components/Task/TaskStatus';
 import { AdminAuditLogButton } from 'components/AdminAuditLog/AdminAuditLogButton';
-
+import { TaskStatus } from 'components/Task/TaskStatus';
+import { ITaskSchedule } from 'const/schedule';
+import { useResource } from 'hooks/useResource';
+import { sendConfirm } from 'lib/querybookUI';
+import {
+    cronToRecurrence,
+    recurrenceOnYup,
+    recurrenceToCron,
+    recurrenceTypes,
+    validateCronForRecurrrence,
+} from 'lib/utils/cron';
+import { generateFormattedDate } from 'lib/utils/datetime';
+import { TaskScheduleResource } from 'resource/taskSchedule';
 import { AsyncButton } from 'ui/AsyncButton/AsyncButton';
 import { Button, SoftButton } from 'ui/Button/Button';
+import { IconButton } from 'ui/Button/IconButton';
 import { FormField, FormFieldInputSection } from 'ui/Form/FormField';
 import { FormWrapper } from 'ui/Form/FormWrapper';
-import { IconButton } from 'ui/Button/IconButton';
-import { RecurrenceEditor } from 'ui/ReccurenceEditor/RecurrenceEditor';
 import { SimpleField } from 'ui/FormikField/SimpleField';
+import { RecurrenceEditor } from 'ui/ReccurenceEditor/RecurrenceEditor';
 import { Tabs } from 'ui/Tabs/Tabs';
 import { Title } from 'ui/Title/Title';
 import { ToggleButton } from 'ui/ToggleButton/ToggleButton';
 
 import './TaskEditor.scss';
-import { TaskScheduleResource } from 'resource/taskSchedule';
 
 type TaskEditorTabs = 'edit' | 'history';
 
@@ -154,8 +152,7 @@ export const TaskEditor: React.FunctionComponent<IProps> = ({
                     {
                         loading: 'Creating task...',
                         success: 'Task created!',
-                        error:
-                            'Task creation failed - task name must be unique',
+                        error: 'Task creation failed - task name must be unique',
                     }
                 );
             }

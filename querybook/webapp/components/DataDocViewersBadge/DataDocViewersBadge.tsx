@@ -1,17 +1,17 @@
-import { useDispatch } from 'react-redux';
 import React, { useCallback, useRef, useState } from 'react';
-
-import { IStoreState } from 'redux/store/types';
-import * as dataDocActions from 'redux/dataDoc/action';
-import * as dataDocSelectors from 'redux/dataDoc/selector';
+import { useDispatch } from 'react-redux';
 
 import { DataDocViewersList } from 'components/DataDocViewersList/DataDocViewersList';
-import './DataDocViewersBadge.scss';
-import { Popover } from 'ui/Popover/Popover';
-import { Button } from 'ui/Button/Button';
-import { DataDocPermission } from 'lib/data-doc/datadoc-permission';
 import { UserAvatarList } from 'components/UserBadge/UserAvatarList';
 import { useShallowSelector } from 'hooks/redux/useShallowSelector';
+import { DataDocPermission } from 'lib/data-doc/datadoc-permission';
+import * as dataDocActions from 'redux/dataDoc/action';
+import * as dataDocSelectors from 'redux/dataDoc/selector';
+import { IStoreState } from 'redux/store/types';
+import { Button } from 'ui/Button/Button';
+import { Popover } from 'ui/Popover/Popover';
+
+import './DataDocViewersBadge.scss';
 
 interface IDataDocViewersBadgeProps {
     numberBadges?: number;
@@ -96,10 +96,11 @@ export const DataDocViewersBadge = React.memo<IDataDocViewersBadgeProps>(
                     state,
                     docId
                 ),
-                accessRequestsByUid: dataDocSelectors.currentDataDocAccessRequestsByUidSelector(
-                    state,
-                    docId
-                ),
+                accessRequestsByUid:
+                    dataDocSelectors.currentDataDocAccessRequestsByUidSelector(
+                        state,
+                        docId
+                    ),
                 dataDoc: dataDocSelectors.dataDocSelector(state, docId),
                 userInfoById: state.user.userInfoById,
                 readonly: !dataDocSelectors.canCurrentUserEditSelector(
@@ -138,8 +139,8 @@ export const DataDocViewersBadge = React.memo<IDataDocViewersBadgeProps>(
                 />
             );
 
-            const accessRequestsByUidLength = Object.keys(accessRequestsByUid)
-                .length;
+            const accessRequestsByUidLength =
+                Object.keys(accessRequestsByUid).length;
             const shareButtonDOM = (
                 <Button
                     className="viewers-badge-share-button"

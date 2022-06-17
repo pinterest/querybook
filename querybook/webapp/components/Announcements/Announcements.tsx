@@ -1,16 +1,15 @@
 import React from 'react';
 import { useDispatch } from 'react-redux';
+
+import { useAnnouncements } from 'hooks/redux/useAnnouncements';
+import { useInterval } from 'hooks/useInterval';
 import * as querybookUIActions from 'redux/querybookUI/action';
 import { Dispatch } from 'redux/store/types';
-
-import { Level } from 'ui/Level/Level';
 import { IconButton } from 'ui/Button/IconButton';
+import { Level } from 'ui/Level/Level';
 import { Markdown } from 'ui/Markdown/Markdown';
 
 import './Announcements.scss';
-
-import { useInterval } from 'hooks/useInterval';
-import { useAnnouncements } from 'hooks/redux/useAnnouncements';
 
 export const Announcements: React.FunctionComponent = () => {
     const announcements = useAnnouncements();

@@ -2,14 +2,22 @@ import React from 'react';
 import { useSelector } from 'react-redux';
 import { Route, Switch, useParams } from 'react-router-dom';
 
-import history from 'lib/router-history';
-import { getAppName } from 'lib/utils/global';
-import { IStoreState } from 'redux/store/types';
-import { useResource } from 'hooks/useResource';
-
 import { AdminAppEntitySidebar } from 'components/AdminAppSidebar/AdminAppEntitySidebar';
 import { AdminAppNavigator } from 'components/AdminAppSidebar/AdminAppNavigator';
 import { TaskStatus } from 'components/Task/TaskStatus';
+import { useResource } from 'hooks/useResource';
+import history from 'lib/router-history';
+import { getAppName } from 'lib/utils/global';
+import { IStoreState } from 'redux/store/types';
+import {
+    AdminEnvironmentResource,
+    AdminMetastoreResource,
+    AdminQueryEngineResource,
+} from 'resource/admin';
+import { Card } from 'ui/Card/Card';
+import { FourOhThree } from 'ui/ErrorPage/FourOhThree';
+import { Icon } from 'ui/Icon/Icon';
+import { Sidebar } from 'ui/Sidebar/Sidebar';
 
 import { AdminAnnouncement } from './AdminAnnouncement';
 import { AdminApiAccessToken } from './AdminApiAccessToken';
@@ -19,17 +27,8 @@ import { AdminMetastore } from './AdminMetastore';
 import { AdminQueryEngine } from './AdminQueryEngine';
 import { AdminTask } from './AdminTask';
 import { AdminUserRole } from './AdminUserRole';
-import { Card } from 'ui/Card/Card';
-import { FourOhThree } from 'ui/ErrorPage/FourOhThree';
-import { Icon } from 'ui/Icon/Icon';
-import { Sidebar } from 'ui/Sidebar/Sidebar';
-import {
-    AdminEnvironmentResource,
-    AdminMetastoreResource,
-    AdminQueryEngineResource,
-} from 'resource/admin';
-
 import { AdminEntity } from './types';
+
 import './AppAdmin.scss';
 
 const ENTITY_SIDEBAR_WIDTH = 200;

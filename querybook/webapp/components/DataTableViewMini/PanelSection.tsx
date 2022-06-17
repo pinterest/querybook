@@ -1,6 +1,7 @@
-import { titleize } from 'lib/utils';
 import React, { useCallback } from 'react';
 import styled from 'styled-components';
+
+import { titleize } from 'lib/utils';
 import { Icon } from 'ui/Icon/Icon';
 import { AccentText } from 'ui/StyledText/StyledText';
 

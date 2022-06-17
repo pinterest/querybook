@@ -1,6 +1,7 @@
-import { DropFirst } from 'lib/typescript';
 import { useMemo } from 'react';
 import { useSelector } from 'react-redux';
+
+import { DropFirst } from 'lib/typescript';
 import { IStoreState } from 'redux/store/types';
 
 export function useMakeSelector<

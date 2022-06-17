@@ -1,5 +1,6 @@
 import { Action } from 'redux';
 import { ThunkAction } from 'redux-thunk';
+
 import { IStoreState } from '../store/types';
 
 export type NotificationServiceAction = IReceiveNotifiersAction;

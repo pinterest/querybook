@@ -1,24 +1,23 @@
-import * as React from 'react';
 import { Field, FormikErrors } from 'formik';
 import moment from 'moment';
+import * as React from 'react';
 import Select from 'react-select';
 
 import {
+    getMonthdayOptions,
     getRecurrenceLocalTimeString,
     getWeekdayOptions,
-    getMonthdayOptions,
+    getYearlyMonthOptions,
     IRecurrence,
+    IRecurrenceOn,
     RecurrenceType,
     recurrenceTypes,
-    getYearlyMonthOptions,
-    IRecurrenceOn,
 } from 'lib/utils/cron';
 import { makeReactSelectStyle } from 'lib/utils/react-select';
-
 import { FormField } from 'ui/Form/FormField';
+import { overlayRoot } from 'ui/Overlay/Overlay';
 import { Tabs } from 'ui/Tabs/Tabs';
 import { TimePicker } from 'ui/TimePicker/TimePicker';
-import { overlayRoot } from 'ui/Overlay/Overlay';
 
 import './RecurrenceEditor.scss';
 
@@ -167,14 +166,9 @@ interface IDatePickerProps {
     error: FormikErrors<IRecurrenceOn>;
 }
 
-export const RecurrenceEditorDatePicker: React.FunctionComponent<IDatePickerProps> = ({
-    label,
-    onKey,
-    options,
-    error,
-    recurrence,
-    setRecurrence,
-}) => {
+export const RecurrenceEditorDatePicker: React.FunctionComponent<
+    IDatePickerProps
+> = ({ label, onKey, options, error, recurrence, setRecurrence }) => {
     const formattedError = (error?.[onKey] || '').replace(
         `recurrence.on.${onKey}`,
         label

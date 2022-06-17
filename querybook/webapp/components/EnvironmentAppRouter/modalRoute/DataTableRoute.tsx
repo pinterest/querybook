@@ -1,10 +1,10 @@
 import React from 'react';
 import { RouteComponentProps } from 'react-router-dom';
 
-import history from 'lib/router-history';
 import { DataTableView } from 'components/DataTableView/DataTableView';
-import { Modal } from 'ui/Modal/Modal';
 import { useModalRoute } from 'hooks/useModalRoute';
+import history from 'lib/router-history';
+import { Modal } from 'ui/Modal/Modal';
 
 const DataTableRoute: React.FunctionComponent<RouteComponentProps> = ({
     match,

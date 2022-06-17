@@ -1,13 +1,12 @@
 import React, { useMemo, useState } from 'react';
-import { useSelector, useDispatch } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
 
 import { StatementExecutionStatus } from 'const/queryExecution';
 import { StatementExecutionResultSizes } from 'const/queryResultLimit';
-
 import { useMakeSelector } from 'hooks/redux/useMakeSelector';
-import { IStoreState, Dispatch } from 'redux/store/types';
-import * as queryExecutionsSelector from 'redux/queryExecutions/selector';
 import * as queryExecutionsActions from 'redux/queryExecutions/action';
+import * as queryExecutionsSelector from 'redux/queryExecutions/selector';
+import { Dispatch, IStoreState } from 'redux/store/types';
 import { QueryExecutionResource } from 'resource/queryExecution';
 
 export function useChartSource(
@@ -19,9 +18,8 @@ export function useChartSource(
     setStatementId: (statementId: number) => any,
     limit?: number
 ) {
-    const [initializingExecutionId, setInitializingExecutionId] = useState(
-        false
-    );
+    const [initializingExecutionId, setInitializingExecutionId] =
+        useState(false);
     const executionIdList = useSelector((state: IStoreState) =>
         queryExecutionsSelector.dataCellIdQueryExecutionArraySelector(
             state,

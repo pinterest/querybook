@@ -1,5 +1,6 @@
 import { sortBy } from 'lodash';
-import { IDataDocEditor, IDataDoc } from 'const/datadoc';
+
+import { IDataDoc, IDataDocEditor } from 'const/datadoc';
 
 export enum DataDocPermission {
     CAN_READ = 'read only',
@@ -34,9 +35,7 @@ export function readWriteToPermission(
     return DataDocPermission.NULL;
 }
 
-export function permissionToReadWrite(
-    permission: DataDocPermission
-): {
+export function permissionToReadWrite(permission: DataDocPermission): {
     read: boolean;
     write: boolean;
 } {

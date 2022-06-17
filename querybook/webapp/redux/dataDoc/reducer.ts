@@ -3,9 +3,10 @@ import moment from 'moment';
 import { combineReducers } from 'redux';
 
 import { IDataCell } from 'const/datadoc';
-import { arrayMove, arrayGroupByField } from 'lib/utils';
-import { IDataDocState, DataDocAction } from './types';
+import { arrayGroupByField, arrayMove } from 'lib/utils';
 import { EnvironmentAction } from 'redux/environment/types';
+
+import { DataDocAction, IDataDocState } from './types';
 
 const initialState: Readonly<IDataDocState> = {
     dataDocById: {},

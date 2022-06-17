@@ -1,11 +1,10 @@
-import * as React from 'react';
-import { Dispatch } from 'redux/store/types';
-import { useDispatch } from 'react-redux';
 import { AxiosError } from 'axios';
-
-import * as dataDocActions from 'redux/dataDoc/action';
+import * as React from 'react';
+import { useDispatch } from 'react-redux';
 
 import { AccessRequestButton } from 'components/AccessRequestButton/AccessRequestButton';
+import * as dataDocActions from 'redux/dataDoc/action';
+import { Dispatch } from 'redux/store/types';
 import { ErrorPage } from 'ui/ErrorPage/ErrorPage';
 
 export const DataDocError: React.FunctionComponent<{

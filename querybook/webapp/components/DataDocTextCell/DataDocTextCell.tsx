@@ -1,20 +1,21 @@
+import clsx from 'clsx';
 import * as DraftJs from 'draft-js';
 import React, {
-    useState,
-    useRef,
-    useEffect,
     useCallback,
     useContext,
+    useEffect,
+    useRef,
+    useState,
 } from 'react';
-import clsx from 'clsx';
 
-import { SearchAndReplaceContext } from 'context/searchAndReplace';
 import { DraftJsSearchHighlighter } from 'components/SearchAndReplace/DraftJsSearchHighlighter';
 import { IDataCellMetaBase } from 'const/datadoc';
-import { RichTextEditor } from 'ui/RichTextEditor/RichTextEditor';
+import { SearchAndReplaceContext } from 'context/searchAndReplace';
 import { useDebounceState } from 'hooks/redux/useDebounceState';
+import { KeyMap, matchKeyMap } from 'lib/utils/keyboard';
+import { RichTextEditor } from 'ui/RichTextEditor/RichTextEditor';
+
 import './DataDocTextCell.scss';
-import { matchKeyMap, KeyMap } from 'lib/utils/keyboard';
 
 interface IProps {
     cellId: number;

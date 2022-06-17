@@ -1,9 +1,10 @@
 import clsx from 'clsx';
 import React, { useState } from 'react';
 
-import { PopoverLayout, Popover, PopoverDirection } from 'ui/Popover/Popover';
+import { Popover, PopoverDirection, PopoverLayout } from 'ui/Popover/Popover';
 
 import { IconButton } from './IconButton';
+
 import './InfoButton.scss';
 
 interface IInfoButtonProps {

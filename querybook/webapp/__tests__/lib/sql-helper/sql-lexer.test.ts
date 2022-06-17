@@ -1,12 +1,12 @@
 import {
     findTableReferenceAndAlias,
+    findWithStatementPlaceholder,
     getQueryAsExplain,
+    getQueryKeywords,
     getQueryLinePosition,
+    getStatementType,
     simpleParse,
     tokenize,
-    findWithStatementPlaceholder,
-    getQueryKeywords,
-    getStatementType,
 } from 'lib/sql-helper/sql-lexer';
 
 const simpleQuery = `

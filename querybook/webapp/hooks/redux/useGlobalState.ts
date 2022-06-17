@@ -1,5 +1,5 @@
 import { useCallback } from 'react';
-import { useSelector, useDispatch } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
 
 import { setGlobalValue } from 'redux/globalState/action';
 import { IStoreState } from 'redux/store/types';

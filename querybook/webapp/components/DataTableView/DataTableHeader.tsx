@@ -1,27 +1,24 @@
-import React from 'react';
 import { last } from 'lodash';
-import { useSelector, useDispatch } from 'react-redux';
-
-import * as Utils from 'lib/utils';
-
-import { IMyUserInfo } from 'const/user';
-import { IStoreState, Dispatch } from 'redux/store/types';
-import { IDataTable } from 'const/metastore';
-import {
-    fetchDataTableOwnershipIfNeeded,
-    deleteDataTableOwnership,
-    createDataTableOwnership,
-} from 'redux/dataSources/action';
+import React from 'react';
+import { useDispatch, useSelector } from 'react-redux';
 
 import { BoardItemAddButton } from 'components/BoardItemAddButton/BoardItemAddButton';
 import { DataTableTags } from 'components/DataTableTags/DataTableTags';
 import { ImpressionWidget } from 'components/ImpressionWidget/ImpressionWidget';
 import { UserBadge } from 'components/UserBadge/UserBadge';
-
+import { IDataTable } from 'const/metastore';
+import { IMyUserInfo } from 'const/user';
+import * as Utils from 'lib/utils';
+import {
+    createDataTableOwnership,
+    deleteDataTableOwnership,
+    fetchDataTableOwnershipIfNeeded,
+} from 'redux/dataSources/action';
+import { Dispatch, IStoreState } from 'redux/store/types';
 import { IconButton } from 'ui/Button/IconButton';
+import { AccentText } from 'ui/StyledText/StyledText';
 import { Tag } from 'ui/Tag/Tag';
 import { ToggleButton } from 'ui/ToggleButton/ToggleButton';
-import { AccentText } from 'ui/StyledText/StyledText';
 
 import './DataTableHeader.scss';
 

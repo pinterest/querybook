@@ -2,9 +2,9 @@ import React from 'react';
 import { Edge, Node } from 'react-flow-renderer';
 import { useDispatch, useSelector } from 'react-redux';
 
+import { hashString } from 'lib/data-doc/data-doc-utils';
 import { fetchDAGExport, saveDAGExport } from 'redux/dataDoc/action';
 import { Dispatch, IStoreState } from 'redux/store/types';
-import { hashString } from 'lib/data-doc/data-doc-utils';
 
 export function useSavedDAG(docId: number) {
     const dispatch: Dispatch = useDispatch();
@@ -25,9 +25,10 @@ export function useSavedDAG(docId: number) {
         () => (savedDAGExport?.dag?.edges || []) as Edge[],
         [savedDAGExport]
     );
-    const savedMeta = React.useMemo(() => savedDAGExport?.meta || {}, [
-        savedDAGExport,
-    ]);
+    const savedMeta = React.useMemo(
+        () => savedDAGExport?.meta || {},
+        [savedDAGExport]
+    );
 
     const onSave = React.useCallback(
         (

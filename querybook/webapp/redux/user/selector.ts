@@ -1,4 +1,5 @@
 import { createSelector } from 'reselect';
+
 import { IStoreState } from 'redux/store/types';
 
 const userInfoByIdSelector = (state: IStoreState) => state.user.userInfoById;

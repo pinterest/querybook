@@ -1,9 +1,8 @@
 import * as React from 'react';
 
+import { useCreateDataDoc } from 'hooks/dataDoc/useCreateDataDoc';
 import { getAppName } from 'lib/utils/global';
 import { navigateWithinEnv } from 'lib/utils/query-string';
-import { useCreateDataDoc } from 'hooks/dataDoc/useCreateDataDoc';
-
 import { Card } from 'ui/Card/Card';
 
 import './Tours.scss';

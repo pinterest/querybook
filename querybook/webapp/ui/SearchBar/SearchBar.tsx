@@ -2,11 +2,11 @@ import clsx from 'clsx';
 import React from 'react';
 
 import { matchKeyPress } from 'lib/utils/keyboard';
-import { DebouncedInput } from 'ui/DebouncedInput/DebouncedInput';
 import { Button } from 'ui/Button/Button';
+import { DebouncedInput } from 'ui/DebouncedInput/DebouncedInput';
+import { Icon } from 'ui/Icon/Icon';
 
 import './SearchBar.scss';
-import { Icon } from 'ui/Icon/Icon';
 
 export interface ISearchBarProps {
     className?: string;

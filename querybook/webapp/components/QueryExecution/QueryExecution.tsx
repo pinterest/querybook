@@ -1,27 +1,27 @@
-import React, { useState, useCallback, useEffect, useMemo } from 'react';
-import { useSelector, useDispatch } from 'react-redux';
+import React, { useCallback, useEffect, useMemo, useState } from 'react';
 import toast from 'react-hot-toast';
+import { useDispatch, useSelector } from 'react-redux';
 
+import { DataDocStatementExecution } from 'components/DataDocStatementExecution/DataDocStatementExecution';
+import { StatementExecutionPicker } from 'components/ExecutionPicker/StatementExecutionPicker';
+import { StatementExecutionBar } from 'components/StatementExecutionBar/StatementExecutionBar';
 import { QueryExecutionStatus } from 'const/queryExecution';
 import { useMakeSelector } from 'hooks/redux/useMakeSelector';
 import { useToggleState } from 'hooks/useToggleState';
 import * as queryExecutionsActions from 'redux/queryExecutions/action';
-import { QueryExecutionResource } from 'resource/queryExecution';
-import { IStoreState, Dispatch } from 'redux/store/types';
 import {
-    queryExecutionSelector,
     makeStatementExecutionsSelector,
+    queryExecutionSelector,
 } from 'redux/queryExecutions/selector';
-
-import { StatementExecutionBar } from 'components/StatementExecutionBar/StatementExecutionBar';
-import { DataDocStatementExecution } from 'components/DataDocStatementExecution/DataDocStatementExecution';
-import { StatementExecutionPicker } from 'components/ExecutionPicker/StatementExecutionPicker';
+import { Dispatch, IStoreState } from 'redux/store/types';
+import { QueryExecutionResource } from 'resource/queryExecution';
 import { Loader } from 'ui/Loader/Loader';
 import { Loading } from 'ui/Loading/Loading';
 
 import { ExecutedQueryCell } from './ExecutedQueryCell';
 import { QueryErrorWrapper } from './QueryError';
 import { QuerySteps } from './QuerySteps';
+
 import './QueryExecution.scss';
 
 interface IProps {
@@ -86,17 +86,14 @@ export const QueryExecution: React.FC<IProps> = ({
     changeCellContext,
 }) => {
     const [statementIndex, setStatementIndex] = useState(0);
-    const [showExecutedQuery, , toggleShowExecutedQuery] = useToggleState(
-        false
-    );
+    const [showExecutedQuery, , toggleShowExecutedQuery] =
+        useToggleState(false);
     const [showStatementLogs, , toggleLogs] = useToggleState(false);
-    const [showStatementMeta, , toggleShowStatementMeta] = useToggleState(
-        false
-    );
+    const [showStatementMeta, , toggleShowStatementMeta] =
+        useToggleState(false);
 
-    const { queryExecution, statementExecutions } = useQueryExecutionReduxState(
-        id
-    );
+    const { queryExecution, statementExecutions } =
+        useQueryExecutionReduxState(id);
 
     const statementExecution = useMemo(
         () => statementExecutions?.[statementIndex],
@@ -111,9 +108,8 @@ export const QueryExecution: React.FC<IProps> = ({
 
     const selectStatementId = useCallback(
         (statementId: number) => {
-            const {
-                statement_executions: statementExecutionIds,
-            } = queryExecution;
+            const { statement_executions: statementExecutionIds } =
+                queryExecution;
             setStatementIndex(
                 Math.max(statementExecutionIds.indexOf(statementId), 0)
             );

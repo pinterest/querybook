@@ -1,32 +1,30 @@
-import React, { useCallback, useEffect, useMemo } from 'react';
 import clsx from 'clsx';
-import { useSelector, useDispatch } from 'react-redux';
+import React, { useCallback, useEffect, useMemo } from 'react';
+import { useDispatch, useSelector } from 'react-redux';
 import { useHistory } from 'react-router-dom';
 
+import { TableUploaderButton } from 'components/TableUploader/TableUploaderButton';
 import { useShallowSelector } from 'hooks/redux/useShallowSelector';
-import * as dataTableSearchActions from 'redux/dataTableSearch/action';
-import { IStoreState, Dispatch } from 'redux/store/types';
-import {
-    ITableSearchResult,
-    ITableSearchFilters,
-} from 'redux/dataTableSearch/types';
 import { queryMetastoresSelector } from 'redux/dataSources/selector';
-
+import * as dataTableSearchActions from 'redux/dataTableSearch/action';
+import {
+    ITableSearchFilters,
+    ITableSearchResult,
+} from 'redux/dataTableSearch/types';
+import { currentEnvironmentSelector } from 'redux/environment/selector';
+import { Dispatch, IStoreState } from 'redux/store/types';
+import { UrlContextMenu } from 'ui/ContextMenu/UrlContextMenu';
 import { InfinityScroll } from 'ui/InfinityScroll/InfinityScroll';
-import { Select, makeSelectOptions } from 'ui/Select/Select';
 import { ListLink } from 'ui/Link/ListLink';
-import { PopoverHoverWrapper } from 'ui/Popover/PopoverHoverWrapper';
 import { Popover } from 'ui/Popover/Popover';
+import { PopoverHoverWrapper } from 'ui/Popover/PopoverHoverWrapper';
+import { makeSelectOptions, Select } from 'ui/Select/Select';
 
 import { DataTableHoverContent } from './DataTableHoverContent';
 import { DataTableNavigatorSearch } from './DataTableNavigatorSearch';
-
 import { SchemaTableView } from './SchemaTableView/SchemaTableView';
 
 import './DataTableNavigator.scss';
-import { currentEnvironmentSelector } from 'redux/environment/selector';
-import { UrlContextMenu } from 'ui/ContextMenu/UrlContextMenu';
-import { TableUploaderButton } from 'components/TableUploader/TableUploaderButton';
 
 const PRESELECTED_FILTERS = ['golden'];
 

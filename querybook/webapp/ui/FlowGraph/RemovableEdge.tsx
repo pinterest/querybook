@@ -1,5 +1,6 @@
 import React from 'react';
 import { getBezierPath, getEdgeCenter, Position } from 'react-flow-renderer';
+
 import { IconButton } from 'ui/Button/IconButton';
 
 const foreignObjectSize = 24;

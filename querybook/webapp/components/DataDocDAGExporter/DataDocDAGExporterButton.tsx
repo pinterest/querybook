@@ -2,6 +2,7 @@ import React from 'react';
 
 import { IconButton } from 'ui/Button/IconButton';
 import { Modal } from 'ui/Modal/Modal';
+
 import { DataDocDAGExporter } from './DataDocDAGExporter';
 
 interface IProps {

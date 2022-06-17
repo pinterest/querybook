@@ -1,6 +1,7 @@
-import { ITag } from 'const/tag';
 import { isEmpty, orderBy } from 'lodash';
 import { useMemo } from 'react';
+
+import { ITag } from 'const/tag';
 
 // This is the score if tag.meta.rank is defined
 const BASELINE_TAG_RANK_SCORE = 2;

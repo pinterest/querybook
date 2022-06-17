@@ -1,4 +1,5 @@
 import { createSelector } from 'reselect';
+
 import { IQueryExecution } from 'const/queryExecution';
 import { IStoreState } from 'redux/store/types';
 

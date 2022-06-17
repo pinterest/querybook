@@ -1,6 +1,7 @@
 import * as DraftJs from 'draft-js';
-import { IDataDoc, IDataCell } from 'const/datadoc';
-import { ISearchResult, ISearchOptions } from 'const/searchAndReplace';
+
+import { IDataCell, IDataDoc } from 'const/datadoc';
+import { ISearchOptions, ISearchResult } from 'const/searchAndReplace';
 
 export function searchText(
     text: string,

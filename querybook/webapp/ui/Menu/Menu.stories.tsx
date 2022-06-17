@@ -1,13 +1,13 @@
-import React from 'react';
-// eslint-disable-next-line import/no-extraneous-dependencies
 import centered from '@storybook/addon-centered/react';
+import React from 'react';
 
+// eslint-disable-next-line import/no-extraneous-dependencies
 import {
     Menu,
+    MenuDivider,
     MenuInfoItem,
     MenuItem,
     MenuItemPing,
-    MenuDivider,
 } from './Menu';
 
 export const _Menu = () => (

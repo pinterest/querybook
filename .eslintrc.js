@@ -19,7 +19,6 @@ module.exports = {
         sourceType: 'module',
     },
     plugins: [
-        'eslint-plugin-import',
         'eslint-plugin-react',
         'eslint-plugin-prefer-arrow',
         'eslint-plugin-jsdoc',
@@ -155,9 +154,6 @@ module.exports = {
             'undefined',
         ],
         'id-match': 'error',
-        'import/no-extraneous-dependencies': ['error', {}],
-        'import/no-internal-modules': 'off',
-        'import/order': 'error',
         'jsdoc/check-alignment': 'error',
         'jsdoc/check-indentation': 'error',
         'jsdoc/newline-after-description': 'error',

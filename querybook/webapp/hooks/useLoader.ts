@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import { useEffect, useState } from 'react';
 
 export interface ILoaderProps {
     // We check the value of item to see if it needs to be loaded, must not be null

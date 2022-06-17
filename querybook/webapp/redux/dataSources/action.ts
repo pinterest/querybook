@@ -1,25 +1,25 @@
-import { normalize, schema } from 'normalizr';
 import type { ContentState } from 'draft-js';
 import { isEqual } from 'lodash';
+import { normalize, schema } from 'normalizr';
 import toast from 'react-hot-toast';
 
 import {
-    IDataTable,
-    IDataColumn,
-    ILineage,
-    IQueryMetastore,
-    IDataTableSamples,
-    IDataSchema,
-    IDataTableWarning,
     DataTableWarningSeverity,
-    ITopQueryUser,
-    IPaginatedQuerySampleFilters,
-    ITopQueryConcurrences,
-    ITableQueryEngine,
-    IFunctionDescription,
-    IUpdateTableParams,
+    IDataColumn,
+    IDataSchema,
+    IDataTable,
+    IDataTableSamples,
+    IDataTableWarning,
     IDataTableWarningUpdateFields,
+    IFunctionDescription,
+    ILineage,
+    IPaginatedQuerySampleFilters,
+    IQueryMetastore,
+    ITableQueryEngine,
     ITableSampleParams,
+    ITopQueryConcurrences,
+    ITopQueryUser,
+    IUpdateTableParams,
 } from 'const/metastore';
 import { convertRawToContentState } from 'lib/richtext/serialize';
 import {
@@ -34,15 +34,16 @@ import {
     TableWarningResource,
 } from 'resource/table';
 import { FunctionDocumentationResource } from 'resource/utils/functionDocumentation';
+
 import {
+    IReceiveChildDataLineageAction,
+    IReceiveDataJobMetadataAction,
     IReceiveDataTableAction,
-    ThunkResult,
     IReceiveDataTableSamplesAction,
     IReceiveDataTableSamplesPollingAction,
-    IReceiveDataJobMetadataAction,
     IReceiveParentDataLineageAction,
-    IReceiveChildDataLineageAction,
     IReceiveQueryExampleIdsAction,
+    ThunkResult,
 } from './types';
 
 const dataTableColumnSchema = new schema.Entity(
@@ -261,9 +262,8 @@ export function receiveDataTable(
             ),
             dataColumnsById: Object.entries(dataColumn).reduce(
                 (hash, [id, column]) => {
-                    const {
-                        description: rawDescription,
-                    } = column as IDataColumn;
+                    const { description: rawDescription } =
+                        column as IDataColumn;
 
                     const description = convertRawToContentState(
                         rawDescription as string
@@ -287,15 +287,13 @@ export function receiveDataTable(
 export function fetchDataLineage(tableId: number): ThunkResult<Promise<any[]>> {
     return (dispatch, getState) => {
         const promiseArr = [];
-        const cState = getState().dataSources.dataLineages.childLineage[
-            tableId
-        ];
+        const cState =
+            getState().dataSources.dataLineages.childLineage[tableId];
         if (!cState) {
             promiseArr.push(dispatch(fetchChildDataLineage(tableId)));
         }
-        const pState = getState().dataSources.dataLineages.parentLineage[
-            tableId
-        ];
+        const pState =
+            getState().dataSources.dataLineages.parentLineage[tableId];
         if (!pState) {
             promiseArr.push(dispatch(fetchParentDataLineage(tableId)));
         }
@@ -307,9 +305,8 @@ export function fetchParentDataLineage(
     tableId: number
 ): ThunkResult<Promise<void>> {
     return async (dispatch, getState) => {
-        const state = getState().dataSources.dataLineages.parentLineage[
-            tableId
-        ];
+        const state =
+            getState().dataSources.dataLineages.parentLineage[tableId];
         if (!state) {
             const { data } = await TableLineageResource.getParents(tableId);
             dispatch(receiveParentDataLineage(data, tableId));
@@ -444,9 +441,8 @@ export function pollDataTableSample(
 
     return async (dispatch, getState) => {
         try {
-            const poll = getState().dataSources.dataTablesSamplesPollingById[
-                tableId
-            ];
+            const poll =
+                getState().dataSources.dataTablesSamplesPollingById[tableId];
             if (poll) {
                 const { data } = await TableSamplesResource.poll(
                     tableId,
@@ -724,9 +720,8 @@ export function fetchFunctionDocumentationIfNeeded(
             state.dataSources.functionDocumentation.loading[language];
         if (functionDocumentationPromise == null) {
             try {
-                const fetchPromise = FunctionDocumentationResource.getByLanguage(
-                    language
-                );
+                const fetchPromise =
+                    FunctionDocumentationResource.getByLanguage(language);
                 dispatch({
                     type: '@@dataSources/LOADING_FUNCTION_DOCUMENTATION',
                     payload: {

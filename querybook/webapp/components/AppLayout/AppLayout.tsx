@@ -1,11 +1,11 @@
-import React from 'react';
 import clsx from 'clsx';
+import React from 'react';
 
 import { Announcements } from 'components/Announcements/Announcements';
-import { SessionExpirationNotice } from 'components/SessionExpirationNotice/SessionExpirationNotice';
 import { CommandKModal } from 'components/Search/CommandKModal';
-import { FullHeight } from 'ui/FullHeight/FullHeight';
+import { SessionExpirationNotice } from 'components/SessionExpirationNotice/SessionExpirationNotice';
 import { useGlobalState } from 'hooks/redux/useGlobalState';
+import { FullHeight } from 'ui/FullHeight/FullHeight';
 
 import './AppLayout.scss';
 

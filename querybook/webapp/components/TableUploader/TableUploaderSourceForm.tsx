@@ -1,11 +1,13 @@
 import { useFormikContext } from 'formik';
 import React from 'react';
-import { SimpleField } from 'ui/FormikField/SimpleField';
-import { FileUploaderArea } from './FileUploaderArea';
-import { IOptions } from 'lib/utils/react-select';
+
 import { UploadSourceType } from 'const/tableUpload';
-import { ITableUploadFormikForm } from './types';
+import { IOptions } from 'lib/utils/react-select';
 import { FormWrapper } from 'ui/Form/FormWrapper';
+import { SimpleField } from 'ui/FormikField/SimpleField';
+
+import { FileUploaderArea } from './FileUploaderArea';
+import { ITableUploadFormikForm } from './types';
 
 export const UploadSourceTypeOptions: IOptions<UploadSourceType> = [
     {
@@ -18,10 +20,8 @@ export const UploadSourceTypeOptions: IOptions<UploadSourceType> = [
 const queryExecutionUrlRegex = /\/query_execution\/([0-9]+)/;
 
 export const ITableUploaderSourceForm: React.FC = ({}) => {
-    const {
-        values,
-        setFieldValue,
-    } = useFormikContext<ITableUploadFormikForm>();
+    const { values, setFieldValue } =
+        useFormikContext<ITableUploadFormikForm>();
 
     let sourceTypeForm: React.ReactNode;
     if (values.import_config.source_type === 'file') {

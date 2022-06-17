@@ -2,6 +2,7 @@ import { IConfirmationMessageProps } from 'components/ConfirmationManager/Confir
 import * as querybookUIActions from 'redux/querybookUI/action';
 import { reduxStore } from 'redux/store';
 import { Dispatch } from 'redux/store/types';
+
 import { getAppName } from './utils/global';
 
 export function sendConfirm(props: IConfirmationMessageProps) {

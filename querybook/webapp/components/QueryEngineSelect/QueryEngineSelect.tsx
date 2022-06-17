@@ -3,11 +3,11 @@ import * as React from 'react';
 import { IAdminQueryEngine } from 'const/admin';
 import { AsyncButton } from 'ui/AsyncButton/AsyncButton';
 import {
-    FormFieldInputSection,
     FormField,
+    FormFieldInputSection,
     FormFieldInputSectionRow,
 } from 'ui/Form/FormField';
-import { Select, makeSelectOptions } from 'ui/Select/Select';
+import { makeSelectOptions, Select } from 'ui/Select/Select';
 
 interface IProps {
     queryEngines: IAdminQueryEngine[];
@@ -18,10 +18,8 @@ export const QueryEngineSelect: React.FunctionComponent<IProps> = ({
     queryEngines,
     handleAddQueryEngine,
 }) => {
-    const [
-        selectedQueryEngineId,
-        setSelectedQueryEngineId,
-    ] = React.useState<number>(0);
+    const [selectedQueryEngineId, setSelectedQueryEngineId] =
+        React.useState<number>(0);
 
     const selectOptions = React.useMemo(() => {
         const emptyOption: {

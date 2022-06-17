@@ -1,11 +1,9 @@
 import * as React from 'react';
 import { useRouteMatch } from 'react-router-dom';
 
+import { AdminEntity, IAdminEntity } from 'components/AppAdmin/types';
 import history from 'lib/router-history';
 import { titleize } from 'lib/utils';
-
-import { AdminEntity, IAdminEntity } from 'components/AppAdmin/types';
-
 import { IconButton } from 'ui/Button/IconButton';
 import { ListLink } from 'ui/Link/ListLink';
 import { SearchBar } from 'ui/SearchBar/SearchBar';

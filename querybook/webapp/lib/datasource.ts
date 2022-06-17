@@ -1,7 +1,8 @@
 import axios, { AxiosRequestConfig, Canceler, Method } from 'axios';
+import toast from 'react-hot-toast';
+
 import { setSessionExpired } from 'lib/querybookUI';
 import { formatError } from 'lib/utils/error';
-import toast from 'react-hot-toast';
 
 export interface ICancelablePromise<T> extends Promise<T> {
     cancel?: Canceler;

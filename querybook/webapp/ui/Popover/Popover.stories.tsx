@@ -1,7 +1,7 @@
-import React, { useRef, useState } from 'react';
-// eslint-disable-next-line import/no-extraneous-dependencies
 import centered from '@storybook/addon-centered/react';
+import React, { useRef, useState } from 'react';
 
+// eslint-disable-next-line import/no-extraneous-dependencies
 import { Popover } from './Popover';
 
 export const _Popover = (args) => {

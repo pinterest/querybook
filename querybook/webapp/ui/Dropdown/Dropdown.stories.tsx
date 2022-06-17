@@ -1,10 +1,11 @@
-import React from 'react';
-// eslint-disable-next-line import/no-extraneous-dependencies
 import centered from '@storybook/addon-centered/react';
+import React from 'react';
 
-import { Dropdown } from './Dropdown';
-import { ListMenu } from 'ui/Menu/ListMenu';
 import { Button } from 'ui/Button/Button';
+import { ListMenu } from 'ui/Menu/ListMenu';
+
+// eslint-disable-next-line import/no-extraneous-dependencies
+import { Dropdown } from './Dropdown';
 
 export default {
     title: 'Stateful/Dropdown',

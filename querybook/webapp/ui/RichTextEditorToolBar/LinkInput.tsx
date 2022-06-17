@@ -1,5 +1,6 @@
 import React from 'react';
-import { matchKeyMap, KeyMap } from 'lib/utils/keyboard';
+
+import { KeyMap, matchKeyMap } from 'lib/utils/keyboard';
 import { stopPropagationAndDefault } from 'lib/utils/noop';
 
 export const LinkInput: React.FunctionComponent<{

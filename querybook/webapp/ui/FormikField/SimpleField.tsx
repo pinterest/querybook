@@ -1,21 +1,22 @@
-import React, { useMemo } from 'react';
 import { useField } from 'formik';
-import { FormField, IFormFieldProps } from 'ui/Form/FormField';
-import { titleize } from 'lib/utils';
+import React, { useMemo } from 'react';
 
-import { ICheckboxFieldProps, CheckboxField } from './CheckboxField';
+import { titleize } from 'lib/utils';
+import { FormField, IFormFieldProps } from 'ui/Form/FormField';
+
+import { CheckboxField, ICheckboxFieldProps } from './CheckboxField';
+import type { ICodeEditorFieldProps } from './CodeEditorField';
+import { DatePickerField } from './DatePickerField';
 import { IInputFieldProps, InputField } from './InputField';
 import { INumberFieldProps, NumberField } from './NumberField';
 import { IReactSelectFieldProps, ReactSelectField } from './ReactSelectField';
-import { ITextareaFieldProps, TextareaField } from './TextareaField';
+import { IRichTextFieldProps, RichTextField } from './RichTextField';
 import { ISelectFieldProps, SelectField } from './SelectField';
-import { DatePickerField } from './DatePickerField';
+import { ITextareaFieldProps, TextareaField } from './TextareaField';
 import {
     IToggleSwitchFieldProps,
     ToggleSwitchField,
 } from './ToggleSwitchField';
-import { IRichTextFieldProps, RichTextField } from './RichTextField';
-import type { ICodeEditorFieldProps } from './CodeEditorField';
 
 // Since this is rarely used (only UDF) and quite heavy (multiple language defs), it is
 // lazily imported

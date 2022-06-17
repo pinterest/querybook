@@ -1,37 +1,35 @@
-import { bind } from 'lodash-decorators';
-import { snakeCase } from 'lodash';
 import { decorate } from 'core-decorators';
+import { snakeCase } from 'lodash';
+import { bind } from 'lodash-decorators';
 import memoizeOne from 'memoize-one';
 import React from 'react';
 import { connect } from 'react-redux';
-import { withRouter, RouteComponentProps } from 'react-router-dom';
-
-import { IPaginatedQuerySampleFilters } from 'const/metastore';
-import { sanitizeUrlTitle } from 'lib/utils';
-import history from 'lib/router-history';
-import { formatError } from 'lib/utils/error';
-import { getQueryString, replaceQueryString } from 'lib/utils/query-string';
-import { setBrowserTitle } from 'lib/querybookUI';
-import NOOP from 'lib/utils/noop';
-
-import { fullTableSelector } from 'redux/dataSources/selector';
-import { IStoreState, Dispatch } from 'redux/store/types';
-import * as dataSourcesActions from 'redux/dataSources/action';
+import { RouteComponentProps, withRouter } from 'react-router-dom';
 
 import { DataTableViewColumn } from 'components/DataTableViewColumn/DataTableViewColumn';
-import { DataTableViewSamples } from 'components/DataTableViewSamples/DataTableViewSamples';
-import { DataTableViewOverview } from 'components/DataTableViewOverview/DataTableViewOverview';
 import { DataTableViewLineage } from 'components/DataTableViewLineage/DataTableViewLineage';
-import { DataTableViewSourceQuery } from 'components/DataTableViewSourceQuery/DataTableViewSourceQuery';
+import { DataTableViewOverview } from 'components/DataTableViewOverview/DataTableViewOverview';
 import { DataTableViewQueryExamples } from 'components/DataTableViewQueryExample/DataTableViewQueryExamples';
+import { DataTableViewSamples } from 'components/DataTableViewSamples/DataTableViewSamples';
+import { DataTableViewSourceQuery } from 'components/DataTableViewSourceQuery/DataTableViewSourceQuery';
 import { DataTableViewWarnings } from 'components/DataTableViewWarnings/DataTableViewWarnings';
-
-import { DataTableHeader } from './DataTableHeader';
+import { IPaginatedQuerySampleFilters } from 'const/metastore';
+import { setBrowserTitle } from 'lib/querybookUI';
+import history from 'lib/router-history';
+import { sanitizeUrlTitle } from 'lib/utils';
+import { formatError } from 'lib/utils/error';
+import NOOP from 'lib/utils/noop';
+import { getQueryString, replaceQueryString } from 'lib/utils/query-string';
+import * as dataSourcesActions from 'redux/dataSources/action';
+import { fullTableSelector } from 'redux/dataSources/selector';
+import { Dispatch, IStoreState } from 'redux/store/types';
 import { Container } from 'ui/Container/Container';
 import { ErrorPage } from 'ui/ErrorPage/ErrorPage';
 import { FourOhFour } from 'ui/ErrorPage/FourOhFour';
 import { Loader } from 'ui/Loader/Loader';
 import { Tabs } from 'ui/Tabs/Tabs';
+
+import { DataTableHeader } from './DataTableHeader';
 
 import './DataTableView.scss';
 
@@ -341,13 +339,8 @@ function mapStateToProps(state: IStoreState, ownProps) {
 
     const { tableId } = ownProps;
 
-    const {
-        table,
-        schema,
-        tableName,
-        tableColumns,
-        tableWarnings,
-    } = fullTableSelector(state, tableId);
+    const { table, schema, tableName, tableColumns, tableWarnings } =
+        fullTableSelector(state, tableId);
 
     return {
         table,

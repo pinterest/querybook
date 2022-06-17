@@ -1,7 +1,7 @@
-import React from 'react';
-// eslint-disable-next-line import/no-extraneous-dependencies
 import centered from '@storybook/addon-centered/react';
+import React from 'react';
 
+// eslint-disable-next-line import/no-extraneous-dependencies
 import { CopyButton, ICopyButtonProps } from './CopyButton';
 
 export const _CopyButton = (args: ICopyButtonProps) => <CopyButton {...args} />;

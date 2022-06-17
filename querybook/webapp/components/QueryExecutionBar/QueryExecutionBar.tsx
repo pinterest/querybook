@@ -1,16 +1,16 @@
+import moment from 'moment';
 import React from 'react';
 import { useSelector } from 'react-redux';
-import moment from 'moment';
 
-import { IStoreState } from 'redux/store/types';
 import { IQueryExecution, QueryExecutionStatus } from 'const/queryExecution';
 import { generateFormattedDate } from 'lib/utils/datetime';
-
+import { IStoreState } from 'redux/store/types';
 import { CopyButton } from 'ui/CopyButton/CopyButton';
+import { StyledText } from 'ui/StyledText/StyledText';
+
 import { QueryExecutionNotificationButton } from './QueryExecutionNotificationButton';
 
 import './QueryExecutionBar.scss';
-import { StyledText } from 'ui/StyledText/StyledText';
 
 interface IProps {
     queryExecution: IQueryExecution;

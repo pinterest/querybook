@@ -1,17 +1,18 @@
 import clsx from 'clsx';
-import React, { useState, useCallback, useMemo, useRef } from 'react';
+import React, { useCallback, useMemo, useRef, useState } from 'react';
 
 import { IColumnTransformer } from 'lib/query-result/types';
+import { stopPropagationAndDefault } from 'lib/utils/noop';
+import { withBoundProps } from 'lib/utils/react-bind';
 import { IconButton } from 'ui/Button/IconButton';
+import { CopyContextMenuWrapper } from 'ui/ContextMenu/CopyContextMenu';
+import { Popover } from 'ui/Popover/Popover';
+
 import {
     ColumnInfoTabType,
     StatementResultColumnInfo,
 } from './StatementResultColumnInfo';
-import { IFilterCondition, conditionsNotEmpty } from './useFilterCell';
-import { withBoundProps } from 'lib/utils/react-bind';
-import { Popover } from 'ui/Popover/Popover';
-import { stopPropagationAndDefault } from 'lib/utils/noop';
-import { CopyContextMenuWrapper } from 'ui/ContextMenu/CopyContextMenu';
+import { conditionsNotEmpty, IFilterCondition } from './useFilterCell';
 
 interface IStatementResultTableColumnProps
     extends IColumnInfoDropdownButtonProps {
@@ -19,7 +20,9 @@ interface IStatementResultTableColumnProps
     expandedColumn: Record<string, boolean>;
     toggleExpandedColumn: (c: string) => any;
 }
-export const StatementResultTableColumn: React.FC<IStatementResultTableColumnProps> = ({
+export const StatementResultTableColumn: React.FC<
+    IStatementResultTableColumnProps
+> = ({
     column,
     expandedColumn,
     toggleExpandedColumn,
@@ -116,9 +119,8 @@ const ColumnInfoDropdownButton: React.FC<IColumnInfoDropdownButtonProps> = ({
 }) => {
     const [showPopover, setShowPopover] = useState(false);
     const selfRef = useRef<HTMLAnchorElement>(null);
-    const [columnInfoTab, setColumnInfoTab] = useState<ColumnInfoTabType>(
-        'main'
-    );
+    const [columnInfoTab, setColumnInfoTab] =
+        useState<ColumnInfoTabType>('main');
 
     const boundSetTransformerForColumn = useCallback(
         (transformer: IColumnTransformer | null) =>

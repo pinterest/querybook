@@ -1,13 +1,14 @@
 import { produce } from 'immer';
 
+import { UserAction } from 'redux/user/types';
+
 import {
-    SearchAction,
     ISearchPaginationState,
     ISearchState,
+    SearchAction,
     SearchOrder,
     SearchType,
 } from './types';
-import { UserAction } from 'redux/user/types';
 
 const initialPaginationState: ISearchPaginationState = {
     // pagination
