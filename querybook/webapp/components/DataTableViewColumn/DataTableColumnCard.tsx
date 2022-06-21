@@ -1,14 +1,13 @@
 import { ContentState } from 'draft-js';
 import * as React from 'react';
 
+import { DataTableColumnStats } from 'components/DataTableStats/DataTableColumnStats';
 import { IDataColumn } from 'const/metastore';
 import { Card } from 'ui/Card/Card';
 import { EditableTextField } from 'ui/EditableTextField/EditableTextField';
 import { Icon } from 'ui/Icon/Icon';
 import { KeyContentDisplay } from 'ui/KeyContentDisplay/KeyContentDisplay';
 import { AccentText, StyledText } from 'ui/StyledText/StyledText';
-
-import { DataTableColumnStats } from '../DataTableStats/DataTableColumnStats';
 
 import './DataTableColumnCard.scss';
 
