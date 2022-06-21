@@ -1,6 +1,10 @@
 import clsx from 'clsx';
 import React, { useCallback, useMemo, useRef, useState } from 'react';
 
+import {
+    IStatementResultTableHandles,
+    StatementResultTable,
+} from 'components/StatementResultTable/StatementResultTable';
 import { IStatementExecution, IStatementResult } from 'const/queryExecution';
 import { StatementExecutionResultSizes } from 'const/queryResultLimit';
 import { useImmer } from 'hooks/useImmer';
@@ -16,11 +20,6 @@ import { Popover } from 'ui/Popover/Popover';
 import { PrettyNumber } from 'ui/PrettyNumber/PrettyNumber';
 import { IOptions, makeSelectOptions, Select } from 'ui/Select/Select';
 import { ShowMoreText } from 'ui/ShowMoreText/ShowMoreText';
-
-import {
-    IStatementResultTableHandles,
-    StatementResultTable,
-} from '../StatementResultTable/StatementResultTable';
 
 import './StatementResult.scss';
 

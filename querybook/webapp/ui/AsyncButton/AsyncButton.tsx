@@ -11,7 +11,7 @@ import {
     ButtonProps,
     ButtonType,
     getButtonComponentByType,
-} from '../Button/Button';
+} from 'ui/Button/Button';
 
 export interface IAsyncButtonProps extends ButtonProps {
     onClick?: (...args: any[]) => Promise<unknown>;

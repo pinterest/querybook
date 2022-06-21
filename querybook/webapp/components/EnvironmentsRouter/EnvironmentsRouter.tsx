@@ -9,6 +9,7 @@ import {
     withRouter,
 } from 'react-router-dom';
 
+import { EnvironmentAppRouter } from 'components/EnvironmentAppRouter/EnvironmentAppRouter';
 import { SetUp } from 'components/SetUp/SetUp';
 import { getAppName } from 'lib/utils/global';
 import * as EnvironmentActions from 'redux/environment/action';
@@ -24,8 +25,6 @@ import { FourOhFour } from 'ui/ErrorPage/FourOhFour';
 import { FourOhThree } from 'ui/ErrorPage/FourOhThree';
 import { Loading } from 'ui/Loading/Loading';
 import { EmptyText } from 'ui/StyledText/StyledText';
-
-import { EnvironmentAppRouter } from '../EnvironmentAppRouter/EnvironmentAppRouter';
 
 type DispatchProps = ReturnType<typeof mapDispatchToProps>;
 type StateProps = ReturnType<typeof mapStateToProps>;
