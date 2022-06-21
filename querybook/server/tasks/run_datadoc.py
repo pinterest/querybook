@@ -163,23 +163,22 @@ def on_datadoc_completion(
     error_msg=None,
 ):
     try:
+        export_urls = []
+        if is_success:
+            export_urls = export_datadoc(doc_id, user_id, exports)
+
+        notifiy_on_datadoc_complete(
+            doc_id, user_id, is_success, notify_with, notify_on, error_msg, export_urls
+        )
+    except Exception as e:
+        is_success = False
+        error_msg = str(e)
+        LOG.error(e, exc_info=True)
+    finally:
         update_task_run_record(
             id=record_id,
             status=TaskRunStatus.SUCCESS if is_success else TaskRunStatus.FAILURE,
             error_message=error_msg,
         )
-
-        # Export query results
-        export_urls = export_datadoc(doc_id, user_id, exports) if is_success else []
-
-        # Send user Notification
-        notifiy_on_datadoc_complete(
-            doc_id, user_id, is_success, notify_with, notify_on, error_msg, export_urls
-        )
-
-    except Exception as e:
-        is_success = False
-        # error_msg = str(e)
-        LOG.error(e, exc_info=True)
 
     return is_success
