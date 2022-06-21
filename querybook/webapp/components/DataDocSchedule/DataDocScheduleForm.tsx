@@ -15,6 +15,7 @@ import {
     recurrenceTypes,
 } from 'lib/utils/cron';
 import { queryCellSelector } from 'redux/dataDoc/selector';
+import { notificationServiceSelector } from 'redux/notificationService/selector';
 import { IStoreState } from 'redux/store/types';
 import { AsyncButton } from 'ui/AsyncButton/AsyncButton';
 import { SoftButton } from 'ui/Button/Button';
@@ -30,8 +31,6 @@ import {
     SmartForm,
     updateValue,
 } from 'ui/SmartForm/SmartForm';
-
-import { notificationServiceSelector } from '../../redux/notificationService/selector';
 
 interface IDataDocScheduleFormProps {
     isEditable: boolean;
@@ -73,6 +72,21 @@ const scheduleFormSchema = Yup.object().shape({
         ),
     }),
 });
+
+function getDistinctExporters(
+    values: IScheduleFormValues,
+    exporters: IQueryResultExporter[]
+) {
+    return [
+        ...new Set(
+            values.kwargs.exports.map((exportConf) => exportConf.exporter_name)
+        ),
+    ]
+        .map((exporterName) =>
+            exporters.find((exp) => exp.name === exporterName)
+        )
+        .filter((exporter) => exporter);
+}
 
 interface IScheduleFormValues {
     recurrence: IRecurrence;
@@ -132,10 +146,11 @@ export const DataDocScheduleForm: React.FunctionComponent<
             onSubmit={async (values) => {
                 const cronRepr = recurrenceToCron(values.recurrence);
 
-                for (const exportConf of values.kwargs.exports) {
-                    const exporter = exporters.find(
-                        (exp) => exp.name === exportConf.exporter_name
-                    );
+                const exportersInWorkflow = getDistinctExporters(
+                    values,
+                    exporters
+                );
+                for (const exporter of exportersInWorkflow) {
                     await getExporterAuthentication(exporter);
                 }
 
