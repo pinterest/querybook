@@ -157,7 +157,7 @@ class GoogleSheetsExporter(BaseExporter):
             return f"https://docs.google.com/spreadsheets/d/{sheet.id}"
         except RefreshError:
             # Invalidate user access token
-            update_user_properties(current_user.id, gspread_token=None)
+            update_user_properties(uid, gspread_token=None)
             # Continue to raise the error for the frontend client to see
             raise Exception("Invalid Google credentials, please try again.")
 
