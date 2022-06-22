@@ -1,4 +1,3 @@
-import json
 from flask_login import current_user
 
 from app.auth.permission import (
@@ -7,434 +6,18 @@ from app.auth.permission import (
 )
 from app.datasource import register, api_assert
 from lib.logger import get_logger
-from logic.elasticsearch import ES_CONFIG, get_hosted_es
+from lib.elasticsearch.search_datadoc import construct_datadoc_query
+from lib.elasticsearch.search_query import construct_query_search_query
+from lib.elasticsearch.search_table import construct_tables_query
+from lib.elasticsearch.search_utils import (
+    get_matching_objects,
+    get_matching_suggestions,
+)
+from lib.elasticsearch.suggest_table import construct_suggest_table_query
+from lib.elasticsearch.suggest_user import construct_suggest_user_query
+from logic.elasticsearch import ES_CONFIG
 
 LOG = get_logger(__file__)
-
-
-def _highlight_fields(fields_to_highlight):
-    return {
-        "highlight": {
-            "pre_tags": ["<mark>"],
-            "post_tags": ["</mark>"],
-            "type": "plain",
-            "fields": fields_to_highlight,
-        }
-    }
-
-
-def _match_any_field(keywords="", search_fields=[]):
-    if keywords == "":
-        return {}
-    query = {
-        "multi_match": {
-            "query": keywords,
-            "fields": search_fields,
-            "type": "cross_fields",
-            "minimum_should_match": "100%",
-        }
-    }
-    return query
-
-
-FILTERS_TO_AND = ["full_table_name"]
-
-
-def _make_singular_filter(filter_name: str, filter_val):
-    """Create a elasticsearch filter for a single
-       filter_name, filter_val pair. Note filter_val can
-       be a list and if the filter_name is in FILTERS_TO_AND,
-       and AND will be applied to the list, otherwise an OR
-       will be applied
-
-    Args:
-        filter_name (str): Name of filter
-        filter_val (str | str[]): Value of filter
-
-    Returns:
-        Dict: Valid elasticsearch filter params
-    """
-    if isinstance(filter_val, list):
-        filters = [_make_singular_filter(filter_name, val) for val in filter_val]
-        query_type = "must" if filter_name in FILTERS_TO_AND else "should"
-        return {"bool": {query_type: filters}}
-    return {"match": {filter_name: filter_val}}
-
-
-def _match_filters(filters):
-    if not filters:
-        return {}
-
-    filter_terms = []
-    created_at_filter = {}
-    duration_filter = {}
-
-    for f in filters:
-        filter_name = str(f[0]).lower()
-        filter_val = str(f[1]) if not isinstance(f[1], list) else [str(v) for v in f[1]]
-
-        if not filter_val or filter_val == "":
-            continue
-
-        if filter_name == "startdate":
-            created_at_filter["gte"] = filter_val
-        elif filter_name == "enddate":
-            created_at_filter["lte"] = filter_val
-        elif filter_name == "minduration":
-            duration_filter["gte"] = filter_val
-        elif filter_name == "maxduration":
-            duration_filter["lte"] = filter_val
-        else:
-            filter_terms.append(_make_singular_filter(filter_name, filter_val))
-    filters = {"filter": {"bool": {"must": filter_terms}}}
-    if created_at_filter:
-        filters["range"] = [
-            {
-                "range": {
-                    "created_at": created_at_filter,
-                }
-            }
-        ]
-    if duration_filter:
-        filters.setdefault("range", [])
-        filters["range"].append(
-            {
-                "range": {
-                    "duration": duration_filter,
-                }
-            }
-        )
-    return filters
-
-
-def _query_access_terms(user_id):
-    return [
-        {"term": {"author_uid": user_id}},
-        {"term": {"readable_user_ids": user_id}},
-        {"term": {"public": True}},
-    ]
-
-
-def _construct_query_search_query(
-    keywords,
-    filters,
-    limit,
-    offset,
-    sort_key=None,
-    sort_order=None,
-):
-    search_query = {}
-    if keywords:
-        search_query = {
-            "bool": {
-                "must": {
-                    "multi_match": {
-                        "query": keywords,
-                        "fields": ["query_text", "title"],
-                        # All words must appear in a field
-                        "operator": "and",
-                    },
-                },
-                "should": [
-                    {
-                        "match_phrase": {
-                            "query_text": {
-                                "query": keywords,
-                                "boost": 10,
-                            }
-                        }
-                    },
-                    {
-                        "match_phrase": {
-                            "title": {
-                                "query": keywords,
-                            }
-                        }
-                    },
-                ],
-            }
-        }
-    else:
-        search_query = {"match_all": {}}
-
-    search_filter = _match_filters(filters)
-    if search_filter == {}:
-        search_filter["filter"] = {"bool": {}}
-    search_filter["filter"]["bool"].setdefault("must", []).append(
-        {"bool": {"should": _query_access_terms(current_user.id)}}
-    )
-
-    bool_query = {}
-    if search_query != {}:
-        bool_query["must"] = [search_query]
-    if search_filter != {}:
-        bool_query["filter"] = search_filter["filter"]
-        if "range" in search_filter:
-            bool_query.setdefault("must", [])
-            bool_query["must"] += search_filter["range"]
-
-    query = {
-        "query": {"bool": bool_query},
-        "size": limit,
-        "from": offset,
-    }
-
-    if sort_key:
-        if not isinstance(sort_key, list):
-            sort_key = [sort_key]
-            sort_order = [sort_order]
-        sort_query = [
-            {val: {"order": order}} for order, val in zip(sort_order, sort_key)
-        ]
-
-        query.update({"sort": sort_query})
-
-    query.update(
-        _highlight_fields(
-            {
-                "query_text": {
-                    "fragment_size": 150,
-                    "number_of_fragments": 3,
-                },
-                "title": {
-                    "fragment_size": 20,
-                    "number_of_fragments": 3,
-                },
-            }
-        )
-    )
-
-    return json.dumps(query)
-
-
-def _construct_datadoc_query(
-    keywords,
-    filters,
-    fields,
-    limit,
-    offset,
-    sort_key=None,
-    sort_order=None,
-):
-    # TODO: fields is not used because explicit search for Data Docs is not implemented
-    search_query = _match_any_field(
-        keywords,
-        search_fields=[
-            "title^5",
-            "cells",
-            "owner",
-        ],
-    )
-    search_filter = _match_filters(filters)
-    if search_filter == {}:
-        search_filter["filter"] = {"bool": {}}
-    search_filter["filter"]["bool"].setdefault("must", []).append(
-        {"bool": {"should": _data_doc_access_terms(current_user.id)}}
-    )
-
-    bool_query = {}
-    if search_query != {}:
-        bool_query["must"] = [search_query]
-    if search_filter != {}:
-        bool_query["filter"] = search_filter["filter"]
-        if "range" in search_filter:
-            bool_query.setdefault("must", [])
-            bool_query["must"] += search_filter["range"]
-
-    query = {
-        "query": {"bool": bool_query},
-        "_source": ["id", "title", "owner_uid", "created_at"],
-        "size": limit,
-        "from": offset,
-    }
-
-    if sort_key:
-        if not isinstance(sort_key, list):
-            sort_key = [sort_key]
-            sort_order = [sort_order]
-        sort_query = [
-            {val: {"order": order}} for order, val in zip(sort_order, sort_key)
-        ]
-
-        query.update({"sort": sort_query})
-
-    query.update(
-        _highlight_fields(
-            {
-                "cells": {
-                    "fragment_size": 60,
-                    "number_of_fragments": 3,
-                }
-            }
-        )
-    )
-
-    return json.dumps(query)
-
-
-def _data_doc_access_terms(user_id):
-    return [
-        {"term": {"owner_uid": user_id}},
-        {"term": {"readable_user_ids": user_id}},
-        {"term": {"public": True}},
-    ]
-
-
-def _match_table_word_fields(fields):
-    search_fields = []
-    for field in fields:
-        # 'table_name', 'description', and 'column' are fields used by Table search
-        if field == "table_name":
-            search_fields.append("full_name^2")
-            search_fields.append("full_name_ngram")
-        elif field == "description":
-            search_fields.append("description")
-        elif field == "column":
-            search_fields.append("columns")
-    return search_fields
-
-
-def _match_table_phrase_queries(fields, keywords):
-    phrase_queries = []
-    for field in fields:
-        if field == "table_name":
-            phrase_queries.append(
-                {"match_phrase": {"full_name": {"query": keywords, "boost": 10}}}
-            )
-        elif field == "column":
-            phrase_queries.append({"match_phrase": {"columns": {"query": keywords}}})
-    return phrase_queries
-
-
-def _match_data_doc_fields(fields):
-    search_fields = []
-    for field in fields:
-        # 'title', 'cells', and 'owner' are fields used by Data Doc search
-        if field == "title":
-            search_fields.append("title^5")
-        elif field == "cells":
-            search_fields.append("cells")
-        elif field == "owner":
-            search_fields.append("owner")
-
-    return search_fields
-
-
-def _construct_tables_query(
-    keywords,
-    filters,
-    fields,
-    limit,
-    offset,
-    concise,
-    sort_key=None,
-    sort_order=None,
-):
-    search_query = {}
-    if keywords:
-        search_query = {
-            "bool": {
-                "must": {
-                    "multi_match": {
-                        "query": keywords,
-                        "fields": _match_table_word_fields(fields),
-                        # All words must appear in a field
-                        "operator": "and",
-                    },
-                },
-                "should": _match_table_phrase_queries(fields, keywords),
-            }
-        }
-    else:
-        search_query = {"match_all": {}}
-
-    search_query = {
-        "function_score": {
-            "query": search_query,
-            "boost_mode": "multiply",
-            "script_score": {
-                "script": {
-                    "source": "1 + (doc['importance_score'].value + (doc['golden'].value ? 1 : 0))"
-                }
-            },
-        }
-    }
-
-    search_filter = _match_filters(filters)
-
-    bool_query = {}
-    if search_query != {}:
-        bool_query["must"] = [search_query]
-    if search_filter != {}:
-        bool_query["filter"] = search_filter["filter"]
-        if "range" in search_filter:
-            bool_query.setdefault("must", [])
-            bool_query["must"] += search_filter["range"]
-
-    query = {
-        "query": {"bool": bool_query},
-        "size": limit,
-        "from": offset,
-    }
-
-    if concise:
-        query["_source"] = ["id", "schema", "name"]
-
-    if sort_key:
-        if not isinstance(sort_key, list):
-            sort_key = [sort_key]
-            sort_order = [sort_order]
-        sort_query = [
-            {val: {"order": order}} for order, val in zip(sort_order, sort_key)
-        ]
-
-        query.update({"sort": sort_query})
-    query.update(
-        _highlight_fields(
-            {
-                "columns": {
-                    "fragment_size": 20,
-                    "number_of_fragments": 5,
-                },
-                "description": {
-                    "fragment_size": 60,
-                    "number_of_fragments": 3,
-                },
-            }
-        )
-    )
-
-    return json.dumps(query)
-
-
-def _parse_results(results, get_count):
-    hits = results.get("hits", {})
-    ret = []
-    elements = hits.get("hits", [])
-    for element in elements:
-        r = element.get("_source", {})
-        if element.get("highlight"):
-            r.update({"highlight": element.get("highlight")})
-        ret.append(r)
-
-    if get_count:
-        total_found = hits.get("total", {}).get("value", 0)
-        return ret, total_found
-
-    return ret
-
-
-def _get_matching_objects(query, index_name, get_count=False):
-    result = None
-    try:
-        result = get_hosted_es().search(index=index_name, body=query)
-    except Exception as e:
-        LOG.warning("Got ElasticSearch exception: \n " + str(e))
-
-    if result is None:
-        LOG.debug("No Elasticsearch attempt succeeded")
-        result = {}
-    return _parse_results(result, get_count)
 
 
 @register("/search/datadoc/", methods=["GET"])
@@ -451,7 +34,8 @@ def search_datadoc(
     verify_environment_permission([environment_id])
     filters.append(["environment_id", environment_id])
 
-    query = _construct_datadoc_query(
+    query = construct_datadoc_query(
+        uid=current_user.id,
         keywords=keywords,
         filters=filters,
         fields=fields,
@@ -460,7 +44,7 @@ def search_datadoc(
         sort_key=sort_key,
         sort_order=sort_order,
     )
-    results, count = _get_matching_objects(
+    results, count = get_matching_objects(
         query, ES_CONFIG["datadocs"]["index_name"], True
     )
     return {"count": count, "results": results}
@@ -479,7 +63,8 @@ def search_query(
     verify_environment_permission([environment_id])
     filters.append(["environment_id", environment_id])
 
-    query = _construct_query_search_query(
+    query = construct_query_search_query(
+        uid=current_user.id,
         keywords=keywords,
         filters=filters,
         limit=limit,
@@ -492,7 +77,7 @@ def search_query(
         ES_CONFIG["query_executions"]["index_name"],
     )
 
-    results, count = _get_matching_objects(query, index_name, True)
+    results, count = get_matching_objects(query, index_name, True)
     return {"count": count, "results": results}
 
 
@@ -513,7 +98,7 @@ def search_tables(
     verify_metastore_permission(metastore_id)
     filters.append(["metastore_id", metastore_id])
 
-    query = _construct_tables_query(
+    query = construct_tables_query(
         keywords=keywords,
         filters=filters,
         fields=fields,
@@ -523,7 +108,7 @@ def search_tables(
         sort_key=sort_key,
         sort_order=sort_order,
     )
-    results, count = _get_matching_objects(
+    results, count = get_matching_objects(
         query, ES_CONFIG["tables"]["index_name"], True
     )
     return {"count": count, "results": results}
@@ -531,34 +116,11 @@ def search_tables(
 
 @register("/suggest/<int:metastore_id>/tables/", methods=["GET"])
 def suggest_tables(metastore_id, prefix, limit=10):
+    api_assert(limit is None or limit <= 100, "Requesting too many tables")
     verify_metastore_permission(metastore_id)
 
-    query = {
-        "suggest": {
-            "suggest": {
-                "text": prefix,
-                "completion": {
-                    "field": "completion_name",
-                    "size": limit,
-                    "contexts": {"metastore_id": metastore_id},
-                },
-            }
-        },
-    }
-
-    index_name = ES_CONFIG["tables"]["index_name"]
-
-    result = None
-    try:
-        result = get_hosted_es().search(index=index_name, body=query)
-    except Exception as e:
-        LOG.info(e)
-    finally:
-        if result is None:
-            result = {}
-    options = next(iter(result.get("suggest", {}).get("suggest", [])), {}).get(
-        "options", []
-    )
+    query = construct_suggest_table_query(prefix, limit, metastore_id)
+    options = get_matching_suggestions(query, ES_CONFIG["tables"]["index_name"])
     texts = [
         "{}.{}".format(
             option.get("_source", {}).get("schema", ""),
@@ -571,33 +133,12 @@ def suggest_tables(metastore_id, prefix, limit=10):
 
 # /search/ but it is actually suggest
 @register("/search/user/", methods=["GET"])
-def suggest_user(name, limit=10, offset=None):
+def suggest_user(name, limit=10):
     api_assert(limit is None or limit <= 100, "Requesting too many users")
 
-    query = {
-        "suggest": {
-            "suggest": {
-                "text": (name or "").lower(),
-                "completion": {"field": "suggest", "size": limit},
-            }
-        },
-    }
+    query = construct_suggest_user_query(prefix=name, limit=limit)
+    options = get_matching_suggestions(query, ES_CONFIG["users"]["index_name"])
 
-    index_name = ES_CONFIG["users"]["index_name"]
-
-    result = None
-    try:
-        # print '\n--ES latest hosted_index %s\n' % hosted_index
-        result = get_hosted_es().search(index=index_name, body=query)
-    except Exception as e:
-        LOG.info(e)
-    finally:
-        if result is None:
-            result = {}
-
-    options = next(iter(result.get("suggest", {}).get("suggest", [])), {}).get(
-        "options", []
-    )
     users = [
         {
             "id": option.get("_source", {}).get("id"),
