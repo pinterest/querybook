@@ -1,4 +1,4 @@
-from typing import List
+from typing import List, Union
 from lib.logger import get_logger
 
 LOG = get_logger(__file__)
@@ -100,3 +100,16 @@ def match_filters(filters, and_filter_names: List[str] = []):
             }
         )
     return filters
+
+
+def order_by_fields(sort_key: Union[str, List[str]], sort_order: Union[str, List[str]]):
+    if not sort_key:
+        return {}
+
+    if not isinstance(sort_key, list):
+        sort_key = [sort_key]
+        sort_order = [sort_order]
+
+    sort_query = [{val: {"order": order}} for order, val in zip(sort_order, sort_key)]
+
+    return {"sort": sort_query}

@@ -1,6 +1,7 @@
 from lib.elasticsearch.query_utils import (
     match_filters,
     highlight_fields,
+    order_by_fields,
 )
 
 
@@ -90,15 +91,7 @@ def construct_tables_query(
     if concise:
         query["_source"] = ["id", "schema", "name"]
 
-    if sort_key:
-        if not isinstance(sort_key, list):
-            sort_key = [sort_key]
-            sort_order = [sort_order]
-        sort_query = [
-            {val: {"order": order}} for order, val in zip(sort_order, sort_key)
-        ]
-
-        query.update({"sort": sort_query})
+    query.update(order_by_fields(sort_key, sort_order))
     query.update(
         highlight_fields(
             {
