@@ -26,10 +26,9 @@ interface IBoardCreateUpdateFormProps {
     onComplete: (board: IBoardRaw) => any;
 }
 
-export const BoardCreateUpdateForm: React.FunctionComponent<IBoardCreateUpdateFormProps> = ({
-    boardId,
-    onComplete,
-}) => {
+export const BoardCreateUpdateForm: React.FunctionComponent<
+    IBoardCreateUpdateFormProps
+> = ({ boardId, onComplete }) => {
     const dispatch: Dispatch = useDispatch();
     const isCreateForm = boardId == null;
     const board = useSelector((state: IStoreState) =>

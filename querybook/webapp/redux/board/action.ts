@@ -36,9 +36,8 @@ function normalizeBoard(rawBoard: IBoardRaw) {
 }
 
 function receiveBoardWithItems(dispatch: Dispatch, rawBoard: IBoardRaw) {
-    const { board, dataTableById, dataDocById, boardItemById } = normalizeBoard(
-        rawBoard
-    );
+    const { board, dataTableById, dataDocById, boardItemById } =
+        normalizeBoard(rawBoard);
 
     dispatch(receiveDataDocs(dataDocById, [], null, null));
     dispatch(receiveDataTable({}, dataTableById, {}, {}));
