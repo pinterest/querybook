@@ -48,6 +48,7 @@ import {
 import { currentEnvironmentSelector } from 'redux/environment/selector';
 import { Dispatch, IStoreState } from 'redux/store/types';
 import { myUserInfoSelector } from 'redux/user/selector';
+
 import { Loading } from 'ui/Loading/Loading';
 import { Message } from 'ui/Message/Message';
 
@@ -704,7 +705,7 @@ class DataDocComponent extends React.PureComponent<IProps, IState> {
                 className={clsx({
                     DataDoc: true,
                 })}
-                key="data-hub-data-doc"
+                key="querybook-data-doc"
             >
                 <DataDocContext.Provider value={this.getDataDocContextState()}>
                     <SearchAndReplace
