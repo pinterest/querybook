@@ -132,6 +132,10 @@
         overflow: hidden;
         margin-left: var(--margin-sm);
         margin-right: 16px; // match scrollbar width
+
+        &:hover {
+            background-color: var(--bg-hover);
+        }
     }
 
     .list-content {
