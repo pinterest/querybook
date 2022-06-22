@@ -2,6 +2,7 @@ import { ContentState } from 'draft-js';
 import { IDataDoc } from './datadoc';
 import { IDataTable } from './metastore';
 
+// Board returned from API
 export interface IBoardBase {
     id: number;
     created_at: number;
@@ -16,14 +17,6 @@ export interface IBoardBase {
     environment_id: number;
     owner_uid: number;
 }
-export interface IBoardRaw extends IBoardBase {
-    docs: IDataDoc[];
-    tables: IDataTable[];
-    boards: IBoardItem[];
-    items: IBoardItem[];
-
-    description: string;
-}
 
 export interface IBoardWithItemIds extends IBoard {
     docs: number[];
@@ -34,6 +27,15 @@ export interface IBoardWithItemIds extends IBoard {
 
 export interface IBoard extends IBoardBase {
     description: ContentState;
+}
+
+export interface IBoardRaw extends IBoardBase {
+    docs: IDataDoc[];
+    tables: IDataTable[];
+    boards: IBoardItem[];
+    items: IBoardItem[];
+
+    description: string;
 }
 
 export interface IBoardUpdatableField {

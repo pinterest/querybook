@@ -1,5 +1,6 @@
 import type {
     BoardItemType,
+    IBoardBase,
     IBoardItem,
     IBoardRaw,
     IBoardUpdatableField,
@@ -8,7 +9,7 @@ import ds from 'lib/datasource';
 
 export const BoardResource = {
     getAll: (environmentId: number, filterString: string) =>
-        ds.fetch<IBoardRaw[]>('/board/', {
+        ds.fetch<IBoardBase[]>('/board/', {
             environment_id: environmentId,
             filter_str: filterString,
         }),

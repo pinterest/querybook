@@ -1,7 +1,7 @@
 import { normalize, schema } from 'normalizr';
 import { ThunkResult, IReceiveBoardsAction } from './types';
 import { arrayGroupByField } from 'lib/utils';
-import { IBoardWithItemIds, IBoardRaw, BoardItemType } from 'const/board';
+import { IBoardRaw, BoardItemType, IBoardBase, IBoard } from 'const/board';
 import { Dispatch } from 'redux/store/types';
 import { receiveDataDocs } from 'redux/dataDoc/action';
 import { receiveDataTable } from 'redux/dataSources/action';
@@ -21,10 +21,10 @@ export const boardSchema = new schema.Entity('board', {
 
 function normalizeBoard(rawBoard: IBoardRaw) {
     const normalizedData = normalize(rawBoard, boardSchema);
-    const board: IBoardWithItemIds = {
-        ...normalizedData.entities.board[normalizedData.result],
-        description: normalizedData.entities.board[normalizedData.result]
-            .description as string,
+    let board = normalizedData.entities.board[normalizedData.result];
+    board = {
+        ...board,
+        description: board.description as string,
     };
     const {
         dataTable: dataTableById = {},
@@ -49,19 +49,19 @@ function receiveBoardWithItems(dispatch: Dispatch, rawBoard: IBoardRaw) {
     dispatch({
         type: '@@board/RECEIVE_BOARD_WITH_ITEMS',
         payload: {
-            board: {
-                ...board,
-            },
+            board,
             boardItemById,
         },
     });
 }
 
-function receiveBoards(boards: IBoardRaw[]): IReceiveBoardsAction {
-    const boardRawById = arrayGroupByField(boards);
-    const boardById = {};
+function receiveBoards(boards: IBoardBase[]): IReceiveBoardsAction {
+    const boardRawById = arrayGroupByField(boards) as Record<
+        string,
+        IBoardBase
+    >;
     Object.keys(boardRawById).forEach((boardId) => {
-        boardById[boardId] = {
+        boardRawById[boardId] = {
             ...boardRawById[boardId],
             description: stateFromHTML(
                 boardRawById[boardId].description as string
@@ -71,14 +71,14 @@ function receiveBoards(boards: IBoardRaw[]): IReceiveBoardsAction {
     return {
         type: '@@board/RECEIVE_BOARDS',
         payload: {
-            boardById,
+            boardById: boardRawById as Record<string, IBoard>,
         },
     };
 }
 
 export function fetchBoards(
     filterStr: string = ''
-): ThunkResult<Promise<IBoardRaw[]>> {
+): ThunkResult<Promise<IBoardBase[]>> {
     return async (dispatch, getState) => {
         const state = getState();
         const rawBoards = (
