@@ -5,7 +5,7 @@ import { getScrollParent, smoothScroll } from 'lib/utils';
 export const useScrollToTop = ({
     containerRef,
 }: {
-    containerRef: React.RefObject<any>;
+    containerRef: React.RefObject<HTMLElement>;
 }) => {
     const [showScrollToTop, setShowScrollToTop] = useState(false);
 

@@ -10,7 +10,7 @@ export interface IBoardBase {
     deleted_at: number;
 
     name: string;
-    description: string | ContentState;
+    description: string;
     public: boolean;
     board_type: string;
 
@@ -25,7 +25,7 @@ export interface IBoardWithItemIds extends IBoard {
     items: number[];
 }
 
-export interface IBoard extends IBoardBase {
+export interface IBoard extends Omit<IBoardBase, 'description'> {
     description: ContentState;
 }
 
