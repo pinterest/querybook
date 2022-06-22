@@ -1,17 +1,18 @@
 import React from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 
-import { DataDocDAGExporterButton } from 'components/DataDocDAGExporter/DataDocDAGExporterButton';
-import { DataDocTemplateButton } from 'components/DataDocTemplateButton/DataDocTemplateButton';
 import { IDataDoc } from 'const/datadoc';
 import { useAnnouncements } from 'hooks/redux/useAnnouncements';
+import { useScrollToTop } from 'hooks/ui/useScrollToTop';
 import { fetchDAGExporters } from 'redux/dataDoc/action';
 import { IStoreState } from 'redux/store/types';
 
-import { useScrollToTop } from 'hooks/ui/useScrollToTop';
-
+import { DataDocDAGExporterButton } from 'components/DataDocDAGExporter/DataDocDAGExporterButton';
+import { DataDocTemplateButton } from 'components/DataDocTemplateButton/DataDocTemplateButton';
 import { DataDocScheduleButton } from './DataDocScheduleButton';
 import { DeleteDataDocButton } from './DeleteDataDocButton';
+
+import { IconButton } from 'ui/Button/IconButton';
 
 import './DataDocRightSidebar.scss';
 
