@@ -2,7 +2,6 @@ import React, { useCallback } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 import * as Yup from 'yup';
 import { Formik, Form } from 'formik';
-import { ContentState } from 'draft-js';
 
 import { sendConfirm } from 'lib/querybookUI';
 import { convertRawToContentState } from 'lib/richtext/serialize';
@@ -55,7 +54,7 @@ export const BoardCreateUpdateForm: React.FunctionComponent<IBoardCreateUpdateFo
                   }
                 : {
                       name: board.name,
-                      description: board.description as ContentState,
+                      description: board.description,
                       public: board.public,
                   },
         [board, isCreateForm]

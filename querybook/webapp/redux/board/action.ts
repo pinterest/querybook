@@ -21,11 +21,7 @@ export const boardSchema = new schema.Entity('board', {
 
 function normalizeBoard(rawBoard: IBoardRaw) {
     const normalizedData = normalize(rawBoard, boardSchema);
-    let board = normalizedData.entities.board[normalizedData.result];
-    board = {
-        ...board,
-        description: board.description as string,
-    };
+    const board = normalizedData.entities.board[normalizedData.result];
     const {
         dataTable: dataTableById = {},
         dataDoc: dataDocById = {},
@@ -51,7 +47,7 @@ function receiveBoardWithItems(dispatch: Dispatch, rawBoard: IBoardRaw) {
         payload: {
             board: {
                 ...board,
-                description: stateFromHTML(board.description as string),
+                description: stateFromHTML(board.description),
             },
             boardItemById,
         },
@@ -59,22 +55,16 @@ function receiveBoardWithItems(dispatch: Dispatch, rawBoard: IBoardRaw) {
 }
 
 function receiveBoards(boards: IBoardBase[]): IReceiveBoardsAction {
-    const boardRawById = arrayGroupByField(boards) as Record<
-        string,
-        IBoardBase | IBoard
-    >;
-    Object.keys(boardRawById).forEach((boardId) => {
-        boardRawById[boardId] = {
-            ...boardRawById[boardId],
-            description: stateFromHTML(
-                boardRawById[boardId].description as string
-            ),
-        };
-    });
+    const boardById: Record<string, IBoard> = arrayGroupByField(
+        boards.map((board) => ({
+            ...board,
+            description: stateFromHTML(board.description),
+        }))
+    );
     return {
         type: '@@board/RECEIVE_BOARDS',
         payload: {
-            boardById: boardRawById as Record<string, IBoard>,
+            boardById,
         },
     };
 }

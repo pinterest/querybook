@@ -36,8 +36,6 @@ export interface IBoardRaw extends IBoardBase {
     tables: IDataTable[];
     boards: IBoardItem[];
     items: IBoardItem[];
-
-    description: string;
 }
 
 export interface IBoardUpdatableField {
