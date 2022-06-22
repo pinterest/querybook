@@ -408,7 +408,7 @@ const BoardExpandableList: React.FunctionComponent<{
                     itemType,
                     title,
                     selected,
-                    boardId: item.boardItem.board_id,
+                    boardId: item.boardItem.parent_board_id,
                 };
             }),
         [items, selectedDocId]

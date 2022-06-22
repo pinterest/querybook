@@ -1,20 +1,21 @@
 import * as React from 'react';
 import { useDispatch, useSelector } from 'react-redux';
-import { Link } from 'react-router-dom';
 
-import { BoardItemAddButton } from 'components/BoardItemAddButton/BoardItemAddButton';
-import { getWithinEnvUrl } from 'lib/utils/query-string';
-import { fetchDataDocIfNeeded } from 'redux/dataDoc/action';
 import { Dispatch, IStoreState } from 'redux/store/types';
-import { Icon } from 'ui/Icon/Icon';
-import { Title } from 'ui/Title/Title';
+import { fetchDataDocIfNeeded } from 'redux/dataDoc/action';
+
+import { BoardItem } from './BoardItem';
 
 interface IProps {
     docId: number;
+    isCollapsed: boolean;
+    isEditMode: boolean;
 }
 
 export const BoardDataDocItem: React.FunctionComponent<IProps> = ({
     docId,
+    isCollapsed,
+    isEditMode,
 }) => {
     const doc = useSelector(
         (state: IStoreState) => state.dataDoc.dataDocById[docId]
@@ -26,24 +27,16 @@ export const BoardDataDocItem: React.FunctionComponent<IProps> = ({
         dispatch(fetchDataDocIfNeeded(docId));
     }, [docId]);
 
+    // TODO - meowcodes: add notesDOM
     return (
-        <div className="BoardDataDocItem BoardItem mv24 p12">
-            <div className="BoardDataDocItem-top horizontal-space-between">
-                <div className="flex-row">
-                    <Link
-                        to={getWithinEnvUrl(`/datadoc/${doc.id}/`)}
-                        className="BoardItem-title"
-                    >
-                        <Title size="med">{doc.title}</Title>
-                    </Link>
-                    <BoardItemAddButton
-                        size={16}
-                        itemType="data_doc"
-                        itemId={docId}
-                    />
-                </div>
-                <Icon name="File" className="BoardItemIcon mh8" />
-            </div>
-        </div>
+        <BoardItem
+            itemId={docId}
+            itemType="data_doc"
+            title={doc.title}
+            titleUrl={`/datadoc/${doc.id}/`}
+            notesDOM={null}
+            defaultCollapsed={isCollapsed}
+            isEditMode={isEditMode}
+        />
     );
 };

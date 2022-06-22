@@ -5,12 +5,10 @@ import * as Yup from 'yup';
 
 import { IBoardRaw } from 'const/board';
 import { sendConfirm } from 'lib/querybookUI';
-import {
-    convertContentStateToHTML,
-    convertRawToContentState,
-} from 'lib/richtext/serialize';
-import { createBoard, deleteBoard, updateBoard } from 'redux/board/action';
-import { Dispatch, IStoreState } from 'redux/store/types';
+import { convertRawToContentState } from 'lib/richtext/serialize';
+import { createBoard, updateBoard, deleteBoard } from 'redux/board/action';
+import { IStoreState, Dispatch } from 'redux/store/types';
+
 import { Button } from 'ui/Button/Button';
 import { FormWrapper } from 'ui/Form/FormWrapper';
 import { SimpleField } from 'ui/FormikField/SimpleField';
@@ -28,9 +26,10 @@ interface IBoardCreateUpdateFormProps {
     onComplete: (board: IBoardRaw) => any;
 }
 
-export const BoardCreateUpdateForm: React.FunctionComponent<
-    IBoardCreateUpdateFormProps
-> = ({ boardId, onComplete }) => {
+export const BoardCreateUpdateForm: React.FunctionComponent<IBoardCreateUpdateFormProps> = ({
+    boardId,
+    onComplete,
+}) => {
     const dispatch: Dispatch = useDispatch();
     const isCreateForm = boardId == null;
     const board = useSelector((state: IStoreState) =>
@@ -55,7 +54,7 @@ export const BoardCreateUpdateForm: React.FunctionComponent<
                   }
                 : {
                       name: board.name,
-                      description: convertRawToContentState(board.description),
+                      description: board.description,
                       public: board.public,
                   },
         [board, isCreateForm]
@@ -67,15 +66,18 @@ export const BoardCreateUpdateForm: React.FunctionComponent<
             validateOnMount={true}
             validationSchema={boardFormSchema}
             onSubmit={async (values) => {
-                const description = convertContentStateToHTML(
-                    values.description
-                );
                 const action = isCreateForm
-                    ? createBoard(values.name, description, values.public)
-                    : updateBoard(boardId, {
-                          ...values,
-                          description,
-                      });
+                    ? createBoard(
+                          values.name,
+                          values.description,
+                          values.public
+                      )
+                    : updateBoard(
+                          boardId,
+                          values.name,
+                          values.public,
+                          values.description
+                      );
                 onComplete(await dispatch(action));
             }}
         >
