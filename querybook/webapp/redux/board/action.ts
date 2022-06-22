@@ -61,7 +61,7 @@ function receiveBoardWithItems(dispatch: Dispatch, rawBoard: IBoardRaw) {
 function receiveBoards(boards: IBoardBase[]): IReceiveBoardsAction {
     const boardRawById = arrayGroupByField(boards) as Record<
         string,
-        IBoardBase
+        IBoardBase | IBoard
     >;
     Object.keys(boardRawById).forEach((boardId) => {
         boardRawById[boardId] = {
