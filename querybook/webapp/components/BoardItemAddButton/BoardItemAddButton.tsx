@@ -1,15 +1,13 @@
-import React, { useEffect, useRef, useState } from 'react';
+import React, { Dispatch, useEffect, useRef, useState } from 'react';
 import toast from 'react-hot-toast';
 import { useDispatch, useSelector } from 'react-redux';
 
-import { BoardCreateUpdateModal } from 'components/BoardCreateUpdateModal/BoardCreateUpdateModal';
-import { BoardList } from 'components/BoardList/BoardList';
 import { BoardItemType, IBoardRaw } from 'const/board';
 import { TooltipDirection } from 'const/tooltip';
 import { useResource } from 'hooks/useResource';
-
+import { addBoardItem, deleteBoardItem } from 'redux/board/action';
+import { currentEnvironmentSelector } from 'redux/environment/selector';
 import { BoardResource } from 'resource/board';
-import { BoardItemType, IBoardRaw } from 'const/board';
 
 import { BoardCreateUpdateModal } from 'components/BoardCreateUpdateModal/BoardCreateUpdateModal';
 import { BoardList } from 'components/BoardList/BoardList';
@@ -29,7 +27,9 @@ export interface ICreateDataDocButtonProps extends Partial<IIconButtonProps> {
     itemType: BoardItemType;
 }
 
-export const BoardItemAddButton: React.FunctionComponent<ICreateDataDocButtonProps> = ({
+export const BoardItemAddButton: React.FunctionComponent<
+    ICreateDataDocButtonProps
+> = ({
     tooltip = 'Add to list',
     popoverLayout = ['right', 'top'],
     itemId,
