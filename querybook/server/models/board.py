@@ -89,6 +89,8 @@ class BoardItem(CRUDMixin, Base):
     created_at = sql.Column(sql.DateTime, default=now)
     description = sql.Column(sql.Text(length=mediumtext_length))
 
+    meta = sql.Column(sql.JSON, default={}, nullable=False)
+
     # the board that board_item belongs to
     parent_board = relationship(
         "Board",

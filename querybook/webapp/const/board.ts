@@ -16,6 +16,8 @@ export interface IBoardBase {
 
     environment_id: number;
     owner_uid: number;
+
+    meta: Record<string, string>;
 }
 
 export interface IBoardWithItemIds extends IBoard {
