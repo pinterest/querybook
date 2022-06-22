@@ -2,6 +2,7 @@ import { normalize, schema } from 'normalizr';
 
 import { BoardItemType, IBoard, IBoardBase, IBoardRaw } from 'const/board';
 import { arrayGroupByField } from 'lib/utils';
+
 import { receiveDataDocs } from 'redux/dataDoc/action';
 import { receiveDataTable } from 'redux/dataSources/action';
 import { Dispatch } from 'redux/store/types';
@@ -9,8 +10,6 @@ import { BoardResource } from 'resource/board';
 import { convertContentStateToHTML } from 'lib/richtext/serialize';
 import { ContentState } from 'draft-js';
 import { stateFromHTML } from 'draft-js-import-html';
-
-import { IReceiveBoardsAction, ThunkResult } from './types';
 
 export const dataDocSchema = new schema.Entity('dataDoc');
 export const tableSchema = new schema.Entity('dataTable');
@@ -56,7 +55,9 @@ function receiveBoardWithItems(dispatch: Dispatch, rawBoard: IBoardRaw) {
     });
 }
 
-function receiveBoards(boards: IBoardBase[]): IReceiveBoardsAction {
+function receiveBoards(boards: IBoardBase[]): 
+
+{
     const boardById: Record<string, IBoard> = arrayGroupByField(
         boards.map((board) => ({
             ...board,

@@ -7,13 +7,16 @@ import { BoardList } from 'components/BoardList/BoardList';
 import { BoardItemType, IBoardRaw } from 'const/board';
 import { TooltipDirection } from 'const/tooltip';
 import { useResource } from 'hooks/useResource';
-import { addBoardItem, deleteBoardItem } from 'redux/board/action';
-import { currentEnvironmentSelector } from 'redux/environment/selector';
-import { Dispatch } from 'redux/store/types';
+
 import { BoardResource } from 'resource/board';
+import { BoardItemType, IBoardRaw } from 'const/board';
+
+import { BoardCreateUpdateModal } from 'components/BoardCreateUpdateModal/BoardCreateUpdateModal';
+import { BoardList } from 'components/BoardList/BoardList';
+
 import { IconButton, IIconButtonProps } from 'ui/Button/IconButton';
-import { Loading } from 'ui/Loading/Loading';
 import { Popover, PopoverLayout } from 'ui/Popover/Popover';
+import { Loading } from 'ui/Loading/Loading';
 
 import './BoardItemAddButton.scss';
 

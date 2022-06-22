@@ -7,6 +7,7 @@ import { sendConfirm } from 'lib/querybookUI';
 
 import { createBoard, deleteBoard, updateBoard } from 'redux/board/action';
 import { convertRawToContentState } from 'lib/richtext/serialize';
+
 import { IStoreState, Dispatch } from 'redux/store/types';
 import { IBoardRaw } from 'const/board';
 
