@@ -22,7 +22,6 @@ export default function (state = initialState, action: BoardAction) {
             }
             case '@@board/RECEIVE_BOARD_WITH_ITEMS': {
                 const { board, boardItemById } = action.payload;
-
                 draft.boardById[board.id] = {
                     ...draft.boardById[board.id],
                     ...board,

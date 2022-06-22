@@ -49,7 +49,10 @@ function receiveBoardWithItems(dispatch: Dispatch, rawBoard: IBoardRaw) {
     dispatch({
         type: '@@board/RECEIVE_BOARD_WITH_ITEMS',
         payload: {
-            board,
+            board: {
+                ...board,
+                description: stateFromHTML(board.description as string),
+            },
             boardItemById,
         },
     });

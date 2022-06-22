@@ -30,6 +30,20 @@ class Board(CRUDMixin, Base):
     owner_uid = sql.Column(sql.Integer, sql.ForeignKey("user.id", ondelete="CASCADE"))
 
     owner = relationship("User", uselist=False)
+    docs = relationship(
+        "DataDoc",
+        secondary="board_item",
+        primaryjoin="Board.id == BoardItem.parent_board_id",
+        secondaryjoin="DataDoc.id == BoardItem.data_doc_id",
+        viewonly=True,
+    )
+    tables = relationship(
+        "DataTable",
+        secondary="board_item",
+        primaryjoin="Board.id == BoardItem.parent_board_id",
+        secondaryjoin="DataTable.id == BoardItem.table_id",
+        viewonly=True,
+    )
 
     @db.with_session
     def get_max_item_order(self, session=None):
@@ -85,12 +99,14 @@ class BoardItem(CRUDMixin, Base):
 
     board = relationship(
         "Board",
-        backref=backref("board_item", cascade="all,delete"),
+        backref=backref(
+            "boards", order_by="BoardItem.item_order", cascade="all,delete"
+        ),
         uselist=False,
         foreign_keys=board_id,
     )
-    table = relationship("DataTable", uselist=False)
-    data_doc = relationship("DataDoc", uselist=False)
+    # table = relationship("DataTable", uselist=False, foreign_keys=table_id)
+    # data_doc = relationship("DataDoc", uselist=False, foreign_keys=data_doc_id)
 
 
 class BoardEditor(CRUDMixin, Base):

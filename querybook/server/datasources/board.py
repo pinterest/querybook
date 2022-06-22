@@ -37,7 +37,7 @@ def get_board_by_id(board_id):
         board = Board.get(id=board_id, session=session)
         api_assert(board is not None, "Invalid board id", 404)
         verify_environment_permission([board.environment_id])
-        return board.to_dict(extra_fields=["docs", "tables", "items"])
+        return board.to_dict(extra_fields=["docs", "tables", "boards", "items"])
 
 
 @register(
@@ -75,7 +75,7 @@ def update_board(board_id, **fields):
         board = Board.get(id=board_id, session=session)
 
         board = logic.update_board(id=board_id, **fields, session=session)
-        return board.to_dict(extra_fields=["docs", "tables", "items"])
+        return board.to_dict(extra_fields=["docs", "tables", "boards", "items"])
 
 
 @register(
@@ -171,4 +171,4 @@ def get_or_create_favorite_board(environment_id):
         board = logic.get_or_create_user_favorite_board(
             current_user.id, environment_id, session=session
         )
-        return board.to_dict(extra_fields=["docs", "tables"])
+        return board.to_dict(extra_fields=["docs", "tables", "boards", "items"])
