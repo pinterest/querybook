@@ -1,19 +1,9 @@
+import { ContentState } from 'draft-js';
 import { IDataDoc } from './datadoc';
 import { IDataTable } from './metastore';
 
-export interface IBoardRaw extends IBoard {
-    docs: IDataDoc[];
-    tables: IDataTable[];
-    items: IBoardItem[];
-}
-
-export interface IBoardWithItemIds extends IBoard {
-    docs: number[];
-    tables: number[];
-    items: number[];
-}
-
-export interface IBoard {
+// Board returned from API
+export interface IBoardBase {
     id: number;
     created_at: number;
     updated_at: number;
@@ -26,6 +16,26 @@ export interface IBoard {
 
     environment_id: number;
     owner_uid: number;
+
+    meta: Record<string, string>;
+}
+
+export interface IBoardWithItemIds extends IBoard {
+    docs: number[];
+    tables: number[];
+    boards: number[];
+    items: number[];
+}
+
+export interface IBoard extends Omit<IBoardBase, 'description'> {
+    description: ContentState;
+}
+
+export interface IBoardRaw extends IBoardBase {
+    docs: IDataDoc[];
+    tables: IDataTable[];
+    boards: IBoardItem[];
+    items: IBoardItem[];
 }
 
 export interface IBoardUpdatableField {
@@ -36,13 +46,14 @@ export interface IBoardUpdatableField {
 
 export interface IBoardItem {
     id: number;
-    board_id: number;
+    parent_board_id: number;
     created_at: number;
     data_doc_id: number | null;
     table_id: number | null;
+    board_id: number | null;
 }
 
-export type BoardItemType = 'table' | 'data_doc';
+export type BoardItemType = 'table' | 'data_doc' | 'board';
 
 export enum BoardOrderBy {
     alphabetical = 0,

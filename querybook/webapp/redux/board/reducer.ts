@@ -22,7 +22,6 @@ export default function (state = initialState, action: BoardAction) {
             }
             case '@@board/RECEIVE_BOARD_WITH_ITEMS': {
                 const { board, boardItemById } = action.payload;
-
                 draft.boardById[board.id] = {
                     ...draft.boardById[board.id],
                     ...board,
@@ -38,7 +37,7 @@ export default function (state = initialState, action: BoardAction) {
                 delete draft.boardById[id];
                 draft.boardItemById = Object.values(draft.boardItemById).reduce(
                     (hash, boardItem) => {
-                        if (boardItem.board_id !== id) {
+                        if (boardItem.parent_board_id !== id) {
                             hash[boardItem.id] = boardItem;
                         }
                         return hash;
@@ -69,7 +68,7 @@ export default function (state = initialState, action: BoardAction) {
                     (hash, boardItem) => {
                         if (
                             !(
-                                boardItem.board_id === boardId &&
+                                boardItem.parent_board_id === boardId &&
                                 itemField in boardItem &&
                                 boardItem[itemField] === itemId
                             )
