@@ -1,0 +1,12 @@
+.BoardHeader {
+    > div:first-child {
+        align-items: flex-end;
+    }
+    .EditableTextField .editor-wrapper {
+        background-color: var(--bg-lightest);
+        padding: 4px 8px;
+        .RichTextEditor {
+            padding: 2px;
+        }
+    }
+}
