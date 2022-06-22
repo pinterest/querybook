@@ -107,8 +107,6 @@ class BoardItem(CRUDMixin, Base):
         uselist=False,
         foreign_keys=board_id,
     )
-    # table = relationship("DataTable", uselist=False, foreign_keys=table_id)
-    # data_doc = relationship("DataDoc", uselist=False, foreign_keys=data_doc_id)
 
 
 class BoardEditor(CRUDMixin, Base):
