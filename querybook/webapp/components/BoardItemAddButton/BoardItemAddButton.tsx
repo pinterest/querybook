@@ -1,4 +1,4 @@
-import React, { Dispatch, useEffect, useRef, useState } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import toast from 'react-hot-toast';
 import { useDispatch, useSelector } from 'react-redux';
 
@@ -7,6 +7,7 @@ import { TooltipDirection } from 'const/tooltip';
 import { useResource } from 'hooks/useResource';
 import { addBoardItem, deleteBoardItem } from 'redux/board/action';
 import { currentEnvironmentSelector } from 'redux/environment/selector';
+import { Dispatch } from 'redux/store/types';
 import { BoardResource } from 'resource/board';
 
 import { BoardCreateUpdateModal } from 'components/BoardCreateUpdateModal/BoardCreateUpdateModal';
