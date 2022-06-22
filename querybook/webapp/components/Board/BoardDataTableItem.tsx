@@ -1,23 +1,25 @@
-import { ContentState } from 'draft-js';
 import * as React from 'react';
 import { useDispatch } from 'react-redux';
-import { Link } from 'react-router-dom';
+import { ContentState } from 'draft-js';
 
-import { BoardItemAddButton } from 'components/BoardItemAddButton/BoardItemAddButton';
 import { useShallowSelector } from 'hooks/redux/useShallowSelector';
-import { getWithinEnvUrl } from 'lib/utils/query-string';
-import { fetchDataTableIfNeeded } from 'redux/dataSources/action';
 import { Dispatch, IStoreState } from 'redux/store/types';
-import { Icon } from 'ui/Icon/Icon';
+import { fetchDataTableIfNeeded } from 'redux/dataSources/action';
+
+import { BoardItem } from './BoardItem';
+
 import { RichTextEditor } from 'ui/RichTextEditor/RichTextEditor';
-import { Title } from 'ui/Title/Title';
 
 interface IProps {
     tableId: number;
+    isCollapsed: boolean;
+    isEditMode: boolean;
 }
 
 export const BoardDataTableItem: React.FunctionComponent<IProps> = ({
     tableId,
+    isCollapsed,
+    isEditMode,
 }) => {
     const { table, schema } = useShallowSelector((state: IStoreState) => {
         const tableFromState = state.dataSources.dataTablesById[tableId];
@@ -37,40 +39,25 @@ export const BoardDataTableItem: React.FunctionComponent<IProps> = ({
         dispatch(fetchDataTableIfNeeded(tableId));
     }, [tableId]);
 
+    // TODO - meowcodes: make this editable when applicable
+    const notesDOM = (table.description as ContentState).getPlainText()
+        .length ? (
+        <RichTextEditor
+            value={table.description as ContentState}
+            readOnly={true}
+            className="mt8"
+        />
+    ) : null;
+
     return (
-        <div className="BoardDataTableItem BoardItem mv24 p12">
-            <div className="BoardDataTableItem-top horizontal-space-between">
-                <div className="flex-row">
-                    <Link
-                        to={{
-                            pathname: getWithinEnvUrl(`/table/${table.id}/`),
-                            state: {
-                                isModal: true,
-                            },
-                        }}
-                        className="BoardItem-title"
-                    >
-                        <Title size="med">
-                            {schema?.name}.{table.name}
-                        </Title>
-                    </Link>
-                    <BoardItemAddButton
-                        size={16}
-                        itemType="table"
-                        itemId={tableId}
-                    />
-                </div>
-                <Icon name="Database" className="BoardItemIcon mh8" />
-            </div>
-            <div className="BoardDataTableItem-desc">
-                {(table.description as ContentState).getPlainText().length ? (
-                    <RichTextEditor
-                        value={table.description as ContentState}
-                        readOnly={true}
-                        className="mt8"
-                    />
-                ) : null}
-            </div>
-        </div>
+        <BoardItem
+            itemId={table.id}
+            itemType="table"
+            title={`${schema?.name}.${table.name}`}
+            titleUrl={`/table/${table.id}/`}
+            notesDOM={notesDOM}
+            defaultCollapsed={isCollapsed}
+            isEditMode={isEditMode}
+        />
     );
 };

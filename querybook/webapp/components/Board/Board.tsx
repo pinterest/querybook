@@ -6,11 +6,14 @@ import { IBoardItem, IBoardWithItemIds } from 'const/board';
 import { isAxiosError } from 'lib/utils/error';
 import { fetchBoardIfNeeded } from 'redux/board/action';
 import { Dispatch, IStoreState } from 'redux/store/types';
-import { Title } from 'ui/Title/Title';
 
+import { BoardHeader } from './BoardHeader';
 import { BoardDataDocItem } from './BoardDataDocItem';
 import { BoardDataTableItem } from './BoardDataTableItem';
 import { BoardError } from './BoardError';
+import { BoardRightSidebar } from 'components/BoardRightSidebar/BoardRightSidebar';
+
+import { Loading } from 'ui/Loading/Loading';
 
 import './Board.scss';
 
@@ -23,6 +26,10 @@ const BoardDOM: React.FunctionComponent<IBoardDOMProps> = ({
     board,
     boardItemById,
 }) => {
+    const [defaultCollapse, setDefaulCollapse] = React.useState(false);
+    // TODO - meowcodes: implement isEditable
+    const [isEditMode, setIsEditMode] = React.useState<boolean>(false);
+
     const boardItemDOM = board?.items
         ?.map((itemIdx) => boardItemById?.[itemIdx])
         .filter((i) => i)
@@ -31,22 +38,31 @@ const BoardDOM: React.FunctionComponent<IBoardDOMProps> = ({
                 <BoardDataDocItem
                     docId={boardItem.data_doc_id}
                     key={boardItem.id}
+                    isCollapsed={defaultCollapse}
+                    isEditMode={isEditMode}
                 />
             ) : (
                 <BoardDataTableItem
                     tableId={boardItem.table_id}
                     key={boardItem.id}
+                    isCollapsed={defaultCollapse}
+                    isEditMode={isEditMode}
                 />
             )
         );
 
     return (
-        <div className="Board mv24 mh48">
-            <div className="Board-top ml4">
-                <Title>{board?.name}</Title>
-                <div className="Board-desc">{board?.description}</div>
+        <div className="Board">
+            <div className="Board-content">
+                <BoardHeader board={board} />
+                {boardItemDOM}
             </div>
-            {boardItemDOM}
+            <BoardRightSidebar
+                onCollapse={() => setDefaulCollapse((c) => !c)}
+                defaultCollapse={defaultCollapse}
+                onEditModeToggle={() => setIsEditMode((e) => !e)}
+                isEditMode={isEditMode}
+            />
         </div>
     );
 };
@@ -75,7 +91,9 @@ export const Board: React.FunctionComponent<IBoardProps> = ({ boardId }) => {
 
     return error ? (
         <BoardError errorObj={error} boardId={boardId} />
-    ) : (
+    ) : board ? (
         <BoardDOM board={board} boardItemById={boardItemById} />
+    ) : (
+        <Loading fullHeight />
     );
 };

@@ -26,9 +26,7 @@ export interface ICreateDataDocButtonProps extends Partial<IIconButtonProps> {
     itemType: BoardItemType;
 }
 
-export const BoardItemAddButton: React.FunctionComponent<
-    ICreateDataDocButtonProps
-> = ({
+export const BoardItemAddButton: React.FunctionComponent<ICreateDataDocButtonProps> = ({
     tooltip = 'Add to list',
     popoverLayout = ['right', 'top'],
     itemId,

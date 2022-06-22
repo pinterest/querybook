@@ -1,17 +1,14 @@
 import { normalize, schema } from 'normalizr';
 
-import {
-    BoardItemType,
-    IBoard,
-    IBoardRaw,
-    IBoardUpdatableField,
-    IBoardWithItemIds,
-} from 'const/board';
+import { BoardItemType, IBoard, IBoardBase, IBoardRaw } from 'const/board';
 import { arrayGroupByField } from 'lib/utils';
 import { receiveDataDocs } from 'redux/dataDoc/action';
 import { receiveDataTable } from 'redux/dataSources/action';
 import { Dispatch } from 'redux/store/types';
 import { BoardResource } from 'resource/board';
+import { convertContentStateToHTML } from 'lib/richtext/serialize';
+import { ContentState } from 'draft-js';
+import { stateFromHTML } from 'draft-js-import-html';
 
 import { IReceiveBoardsAction, ThunkResult } from './types';
 
@@ -26,8 +23,7 @@ export const boardSchema = new schema.Entity('board', {
 
 function normalizeBoard(rawBoard: IBoardRaw) {
     const normalizedData = normalize(rawBoard, boardSchema);
-    const board: IBoardWithItemIds =
-        normalizedData.entities.board[normalizedData.result];
+    const board = normalizedData.entities.board[normalizedData.result];
     const {
         dataTable: dataTableById = {},
         dataDoc: dataDocById = {},
@@ -42,22 +38,31 @@ function normalizeBoard(rawBoard: IBoardRaw) {
 }
 
 function receiveBoardWithItems(dispatch: Dispatch, rawBoard: IBoardRaw) {
-    const { board, dataTableById, dataDocById, boardItemById } =
-        normalizeBoard(rawBoard);
+    const { board, dataTableById, dataDocById, boardItemById } = normalizeBoard(
+        rawBoard
+    );
 
     dispatch(receiveDataDocs(dataDocById, [], null, null));
     dispatch(receiveDataTable({}, dataTableById, {}, {}));
     dispatch({
         type: '@@board/RECEIVE_BOARD_WITH_ITEMS',
         payload: {
-            board,
+            board: {
+                ...board,
+                description: stateFromHTML(board.description),
+            },
             boardItemById,
         },
     });
 }
 
-function receiveBoards(boards: IBoard[]): IReceiveBoardsAction {
-    const boardById = arrayGroupByField(boards);
+function receiveBoards(boards: IBoardBase[]): IReceiveBoardsAction {
+    const boardById: Record<string, IBoard> = arrayGroupByField(
+        boards.map((board) => ({
+            ...board,
+            description: stateFromHTML(board.description),
+        }))
+    );
     return {
         type: '@@board/RECEIVE_BOARDS',
         payload: {
@@ -68,7 +73,7 @@ function receiveBoards(boards: IBoard[]): IReceiveBoardsAction {
 
 export function fetchBoards(
     filterStr: string = ''
-): ThunkResult<Promise<IBoard[]>> {
+): ThunkResult<Promise<IBoardBase[]>> {
     return async (dispatch, getState) => {
         const state = getState();
         const rawBoards = (
@@ -101,8 +106,8 @@ export function fetchBoardIfNeeded(id: number): ThunkResult<Promise<any>> {
 
 export function createBoard(
     name: string,
-    description: string,
-    publicBoard: boolean
+    description: ContentState,
+    isPublic: boolean
 ): ThunkResult<Promise<IBoardRaw>> {
     return async (dispatch, getState) => {
         const state = getState();
@@ -110,8 +115,8 @@ export function createBoard(
             await BoardResource.create(
                 name,
                 state.environment.currentEnvironmentId,
-                description,
-                publicBoard
+                convertContentStateToHTML(description),
+                isPublic
             )
         ).data;
         receiveBoardWithItems(dispatch, board);
@@ -121,10 +126,18 @@ export function createBoard(
 
 export function updateBoard(
     id: number,
-    fields: IBoardUpdatableField
+    name: string,
+    isPublic: boolean,
+    description: ContentState
 ): ThunkResult<Promise<IBoardRaw>> {
     return async (dispatch) => {
-        const board = (await BoardResource.update(id, fields)).data;
+        const board = (
+            await BoardResource.update(id, {
+                name,
+                description: convertContentStateToHTML(description),
+                public: isPublic,
+            })
+        ).data;
         receiveBoardWithItems(dispatch, board);
         return board;
     };
