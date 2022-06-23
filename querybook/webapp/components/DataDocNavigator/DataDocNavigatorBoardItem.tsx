@@ -44,7 +44,7 @@ export const BoardListItemRow: React.FC<{
                             isRow
                             noPlaceHolder
                         >
-                            <Icon size={16} name={icon} />
+                            <Icon className="mr4" size={16} name={icon} />
                             {title.length ? (
                                 <span className="ListLinkText">{title}</span>
                             ) : (
@@ -63,12 +63,10 @@ export const BoardListItemRow: React.FC<{
                             />
                         </ListLink>
                     </Level>
-
                     <UrlContextMenu
                         url={itemUrlWithinEnv}
                         anchorRef={{ current: anchorElement }}
                     />
-
                     {showPopover && anchorElement && (
                         <Popover
                             onHide={NOOP}
