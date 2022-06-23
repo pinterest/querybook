@@ -1,11 +1,14 @@
 import clsx from 'clsx';
 import React from 'react';
 
+import NOOP from 'lib/utils/noop';
+import { BoardItemType } from 'const/board';
+import { getWithinEnvUrl } from 'lib/utils/query-string';
+import { IProcessedBoardItem } from '../DataDocNavigator/navigatorConst';
+
 import { DataDocHoverContent } from 'components/DataDocHoverContent/DataDocHoverContent';
 import { DataTableHoverContent } from 'components/DataTableNavigator/DataTableHoverContent';
-import { BoardItemType } from 'const/board';
-import NOOP from 'lib/utils/noop';
-import { getWithinEnvUrl } from 'lib/utils/query-string';
+
 import { IconButton } from 'ui/Button/IconButton';
 import { UrlContextMenu } from 'ui/ContextMenu/UrlContextMenu';
 import { Icon } from 'ui/Icon/Icon';
@@ -15,9 +18,7 @@ import { Popover } from 'ui/Popover/Popover';
 import { PopoverHoverWrapper } from 'ui/Popover/PopoverHoverWrapper';
 import { UntitledText } from 'ui/StyledText/StyledText';
 
-import { IProcessedBoardItem } from './navigatorConst';
-
-import './DataDocNavigatorBoardItem.scss';
+import './BoardListItemRow.scss';
 
 export const BoardListItemRow: React.FC<{
     item: IProcessedBoardItem;
