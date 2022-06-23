@@ -21,7 +21,7 @@ import { Dispatch, IStoreState } from 'redux/store/types';
 
 import { BoardCreateUpdateModal } from 'components/BoardCreateUpdateModal/BoardCreateUpdateModal';
 import { BoardExpandableSection } from 'components/BoardExpandableSection/BoardExpandableSection';
-import { PublicBoardList } from 'components/BoardExpandableSection/PublicBoardList';
+import { BoardExpandableHeader } from 'components/BoardExpandableSection/BoardExpandableHeader';
 
 import { IconButton } from 'ui/Button/IconButton';
 import { Icon } from 'ui/Icon/Icon';
@@ -172,10 +172,16 @@ export const DataDocNavigatorBoardSection: React.FC<
 
     const boardsDOM = collapsed ? null : boards.length ? (
         <div className="ml8">
-            <PublicBoardList
-                selectedDocId={selectedDocId}
-                filterString={filterString}
-            />
+            <div className="BoardExpandableSection">
+                <BoardExpandableHeader
+                    boardId={0}
+                    boardName="All Public Lists"
+                    collapsed={false}
+                    toggleCollapsed={() => null}
+                    isEditable={false}
+                    isCollapsable={false}
+                />
+            </div>
             {boards.map((board) => (
                 <BoardExpandableSection
                     key={board.id}

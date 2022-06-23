@@ -15,6 +15,7 @@ import { BoardError } from './BoardError';
 import { BoardHeader } from './BoardHeader';
 
 import { Loading } from 'ui/Loading/Loading';
+import { AccentText } from 'ui/StyledText/StyledText';
 
 import './Board.scss';
 
@@ -31,48 +32,60 @@ const BoardDOM: React.FunctionComponent<IBoardDOMProps> = ({
     // TODO - meowcodes: implement isEditable + board 0
     const [isEditMode, setIsEditMode] = React.useState<boolean>(false);
 
-    const boardItemDOM =
-        board.id === 0
-            ? board.boards?.map((boardId) => (
-                  <BoardBoardItem
-                      boardId={boardId}
-                      key={boardId}
-                      isCollapsed={defaultCollapse}
-                      isEditMode={isEditMode}
-                  />
-              ))
-            : board?.items
-                  ?.map((itemIdx) => boardItemById?.[itemIdx])
-                  .filter((i) => i)
-                  ?.map((boardItem) =>
-                      boardItem.data_doc_id ? (
-                          <BoardDataDocItem
-                              docId={boardItem.data_doc_id}
-                              key={boardItem.id}
-                              isCollapsed={defaultCollapse}
-                              isEditMode={isEditMode}
-                          />
-                      ) : boardItem.table_id ? (
-                          <BoardDataTableItem
-                              tableId={boardItem.table_id}
-                              key={boardItem.id}
-                              isCollapsed={defaultCollapse}
-                              isEditMode={isEditMode}
-                          />
-                      ) : (
-                          <BoardBoardItem
-                              boardId={boardItem.board_id ?? boardItem.id}
-                              key={boardItem.board_id ?? boardItem.id}
-                              isCollapsed={defaultCollapse}
-                              isEditMode={isEditMode}
-                          />
-                      )
-                  );
+    const isPublicList = React.useMemo(() => board.id === 0, [board]);
+
+    const boardItemDOM = isPublicList
+        ? board.boards?.map((boardId) => (
+              <BoardBoardItem
+                  boardId={boardId}
+                  key={boardId}
+                  isCollapsed={defaultCollapse}
+                  isEditMode={isEditMode}
+              />
+          ))
+        : board?.items
+              ?.map((itemIdx) => boardItemById?.[itemIdx])
+              .filter((i) => i)
+              ?.map((boardItem) =>
+                  boardItem.data_doc_id ? (
+                      <BoardDataDocItem
+                          docId={boardItem.data_doc_id}
+                          key={boardItem.id}
+                          isCollapsed={defaultCollapse}
+                          isEditMode={isEditMode}
+                      />
+                  ) : boardItem.table_id ? (
+                      <BoardDataTableItem
+                          tableId={boardItem.table_id}
+                          key={boardItem.id}
+                          isCollapsed={defaultCollapse}
+                          isEditMode={isEditMode}
+                      />
+                  ) : (
+                      <BoardBoardItem
+                          boardId={boardItem.board_id ?? boardItem.id}
+                          key={boardItem.board_id ?? boardItem.id}
+                          isCollapsed={defaultCollapse}
+                          isEditMode={isEditMode}
+                      />
+                  )
+              );
 
     return (
         <div className="Board">
             <div className="Board-content">
-                <BoardHeader board={board} />
+                {isPublicList ? (
+                    <AccentText
+                        className="p8"
+                        color="light"
+                        size="xlarge"
+                        weight="extra"
+                    >
+                        All Public Lists
+                    </AccentText>
+                ) : (
+                    <BoardHeader board={board} />
+                )}
                 {boardItemDOM}
             </div>
             <BoardRightSidebar
