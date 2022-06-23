@@ -21,6 +21,7 @@ interface IProps {
     boardData?: IBoardWithItemIds;
     onEdit?: () => void;
     isEditable?: boolean;
+    isCollapsable?: boolean;
 }
 
 export const BoardExpandableHeader: React.FunctionComponent<IProps> = ({
@@ -30,6 +31,7 @@ export const BoardExpandableHeader: React.FunctionComponent<IProps> = ({
     collapsed,
     onEdit,
     isEditable = true,
+    isCollapsable = true,
     toggleCollapsed,
 }) => {
     const selfRef = React.useRef<HTMLDivElement>();
@@ -89,10 +91,12 @@ export const BoardExpandableHeader: React.FunctionComponent<IProps> = ({
                         />
                     </span>
                 )}
-                <IconButton
-                    icon={collapsed ? 'ChevronRight' : 'ChevronDown'}
-                    onClick={toggleCollapsed}
-                />
+                {isCollapsable && (
+                    <IconButton
+                        icon={collapsed ? 'ChevronRight' : 'ChevronDown'}
+                        onClick={toggleCollapsed}
+                    />
+                )}
             </div>
         </div>
     );
