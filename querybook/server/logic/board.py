@@ -65,7 +65,7 @@ def update_board(id, commit=True, session=None, **fields):
 
 def item_type_to_id_type(item_type):
     assert item_type in ["data_doc", "table", "board"], "Invalid item type"
-    return item_type + "_item_id" if item_type == "board" else item_type + "_id"
+    return item_type + "_id"
 
 
 @with_session
@@ -139,7 +139,9 @@ def move_item_order(board_id, from_index, to_index, commit=True, session=None):
 def get_item_from_board(board_id, item_id, item_type, session=None):
     return (
         session.query(BoardItem)
-        .filter_by(**{"board_id": board_id, item_type_to_id_type(item_type): item_id})
+        .filter_by(
+            **{"parent_board_id": board_id, item_type_to_id_type(item_type): item_id}
+        )
         .first()
     )
 

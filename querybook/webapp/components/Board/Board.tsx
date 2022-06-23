@@ -15,6 +15,7 @@ import { BoardError } from './BoardError';
 import { BoardHeader } from './BoardHeader';
 
 import './Board.scss';
+import { BoardBoardItem } from './BoardBoardItem';
 
 interface IBoardDOMProps {
     board: IBoardWithItemIds;
@@ -40,10 +41,17 @@ const BoardDOM: React.FunctionComponent<IBoardDOMProps> = ({
                     isCollapsed={defaultCollapse}
                     isEditMode={isEditMode}
                 />
-            ) : (
+            ) : boardItem.table_id ? (
                 <BoardDataTableItem
                     tableId={boardItem.table_id}
                     key={boardItem.id}
+                    isCollapsed={defaultCollapse}
+                    isEditMode={isEditMode}
+                />
+            ) : (
+                <BoardBoardItem
+                    boardId={boardItem.board_id}
+                    key={boardItem.board_id}
                     isCollapsed={defaultCollapse}
                     isEditMode={isEditMode}
                 />

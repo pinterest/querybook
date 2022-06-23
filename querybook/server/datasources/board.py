@@ -151,6 +151,10 @@ def add_board_item(board_id, item_type, item_id):
             is None,
             "Item already exists",
         )
+        api_assert(
+            not (item_type == "board" and item_id == board_id),
+            "Board cannot be added to itself",
+        )
 
         return logic.add_item_to_board(board_id, item_id, item_type, session=session)
 
@@ -171,7 +175,10 @@ def move_board_item(board_id, from_index, to_index):
     methods=["DELETE"],
 )
 def delete_board_item(board_id, item_type, item_id):
-    api_assert(item_type == "data_doc" or item_type == "table", "Invalid item type")
+    api_assert(
+        item_type == "data_doc" or item_type == "table" or item_type == "board",
+        "Invalid item type",
+    )
     with DBSession() as session:
         assert_can_edit(board_id, session=session)
 

@@ -1,21 +1,29 @@
 import clsx from 'clsx';
 import { orderBy } from 'lodash';
-import React, { useCallback, useEffect, useMemo, useState } from 'react';
-import { useDrop } from 'react-dnd';
+import React, {
+    useCallback,
+    useEffect,
+    useMemo,
+    useRef,
+    useState,
+} from 'react';
+
+import { useDrag, useDrop } from 'react-dnd';
 import toast from 'react-hot-toast';
 import { useDispatch, useSelector } from 'react-redux';
 
 import { BoardCreateUpdateModal } from 'components/BoardCreateUpdateModal/BoardCreateUpdateModal';
+import history from 'lib/router-history';
 import {
     BoardItemType,
     BoardOrderBy,
     BoardOrderToDescription,
     BoardOrderToTitle,
+    IBoard,
 } from 'const/board';
 import { emptyDataDocTitleMessage, IDataDoc } from 'const/datadoc';
 import { IDataTable } from 'const/metastore';
 import { getEnumEntries } from 'lib/typescript';
-import { titleize } from 'lib/utils';
 import {
     addBoardItem,
     deleteBoardItem,
@@ -44,6 +52,9 @@ import {
 } from './navigatorConst';
 
 import './DataDocNavigatorBoardSection.scss';
+import { UrlContextMenu } from 'ui/ContextMenu/UrlContextMenu';
+import { getWithinEnvUrl } from 'lib/utils/query-string';
+import { ListLink } from 'ui/Link/ListLink';
 
 interface INavigatorBoardSectionProps {
     selectedDocId: number;
@@ -115,7 +126,15 @@ export const DataDocNavigatorBoardSection: React.FC<
             }
 
             if (sourceItemId != null) {
-                if (sourceType === 'board' && sourceBoardId != null) {
+                if (sourceType === 'datadoc') {
+                    await dispatch(
+                        addBoardItem(toBoardId, 'data_doc', sourceItemId)
+                    );
+                } else if (sourceType === 'board' && sourceBoardId == null) {
+                    await dispatch(
+                        addBoardItem(toBoardId, 'board', itemInfo.id)
+                    );
+                } else {
                     const boardItem = boardItemById[sourceItemId];
                     const boardItemType =
                         boardItem['data_doc_id'] != null ? 'data_doc' : 'table';
@@ -132,10 +151,6 @@ export const DataDocNavigatorBoardSection: React.FC<
                             boardItemType,
                             boardItemItemId
                         )
-                    );
-                } else if (sourceType === 'datadoc') {
-                    await dispatch(
-                        addBoardItem(toBoardId, 'data_doc', sourceItemId)
                     );
                 }
             }
@@ -168,7 +183,6 @@ export const DataDocNavigatorBoardSection: React.FC<
                         }
                     />
                 ) : null}
-
                 <IconButton
                     icon="Plus"
                     onClick={() => setShowCreateModal(true)}
@@ -223,6 +237,8 @@ const NavigatorBoardView: React.FunctionComponent<{
         toBoardId: number
     ) => void;
 }> = ({ id, selectedDocId, filterString, onMoveBoardItem }) => {
+    const selfRef = useRef<HTMLDivElement>();
+
     const [showUpdateModal, setShowUpdateModal] = useState(false);
     const dispatch: Dispatch = useDispatch();
 
@@ -282,24 +298,50 @@ const NavigatorBoardView: React.FunctionComponent<{
         },
     });
 
+    const boardUrl = React.useMemo(
+        () => getWithinEnvUrl(`/list/${board.id}/`),
+        [board]
+    );
+    const handleClick = React.useCallback(() => {
+        history.push(boardUrl);
+    }, [boardUrl]);
+
+    const [, drag] = useDrag({
+        type: BoardDraggableType,
+        item: {
+            type: BoardDraggableType,
+            itemInfo: board,
+        },
+    });
+
     const headerSectionDOM = (
         <div
             className={clsx(
                 'horizontal-space-between',
                 'board-header-section',
-                'pl12',
+                'pl8',
                 !collapsed && 'active'
             )}
+            ref={drag}
         >
-            <div
-                onClick={() => setCollapsed(!collapsed)}
-                className="board-header-title flex1"
-            >
-                <Title size="small" color="light" className="one-line-ellipsis">
-                    {titleize(board.name)}
-                </Title>
+            <div className="flex-row" ref={selfRef}>
+                <ListLink
+                    className="board-header-title flex1"
+                    onClick={handleClick}
+                    to={boardUrl}
+                    noPlaceHolder
+                    isRow
+                >
+                    <Title
+                        size="small"
+                        color="light"
+                        className="one-line-ellipsis"
+                    >
+                        {board.name}
+                    </Title>
+                </ListLink>
+                <UrlContextMenu url={boardUrl} anchorRef={selfRef} />
             </div>
-
             <div className="header-control-section">
                 <span className="hover-control-section">
                     <IconButton
@@ -309,7 +351,6 @@ const NavigatorBoardView: React.FunctionComponent<{
                         noPadding
                     />
                 </span>
-
                 <IconButton
                     icon={collapsed ? 'ChevronRight' : 'ChevronDown'}
                     onClick={() => setCollapsed(!collapsed)}
@@ -375,28 +416,38 @@ const BoardExpandableList: React.FunctionComponent<{
             items.map((item) => {
                 const { boardItem, itemData, id } = item;
                 const itemType: BoardItemType =
-                    boardItem['data_doc_id'] != null ? 'data_doc' : 'table';
+                    boardItem['data_doc_id'] != null
+                        ? 'data_doc'
+                        : boardItem['table_id'] != null
+                        ? 'table'
+                        : 'board';
                 let key: string;
                 let icon = null;
                 let itemUrl = '';
                 let title = null;
                 let selected = false;
-                const itemId = itemData.id;
+                const itemId = itemData?.id;
 
                 if (itemType === 'data_doc') {
                     const doc = itemData as IDataDoc;
                     key = `data-doc-${doc.id}`;
-                    icon = 'file';
+                    icon = 'File';
                     title = doc.title ?? emptyDataDocTitleMessage;
                     itemUrl = `/datadoc/${doc.id}/`;
                     selected = selectedDocId === itemData.id;
-                } else {
-                    // table
+                } else if (itemType === 'table') {
                     const table = itemData as IDataTable;
                     key = `table-${table.id}`;
-                    icon = 'database';
+                    icon = 'Database';
                     title = table.name;
                     itemUrl = `/table/${table.id}/`;
+                } else {
+                    // board
+                    const board = itemData as IBoard;
+                    key = `board-${board.id}`;
+                    icon = 'Briefcase';
+                    title = board.name;
+                    itemUrl = `/list/${board.id}/`;
                 }
 
                 return {
