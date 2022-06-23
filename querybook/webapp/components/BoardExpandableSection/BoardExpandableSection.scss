@@ -1,4 +1,4 @@
-.NavigatorBoardView {
+.BoardExpandableSection {
     background-color: var(--bg-light);
     border-radius: var(--border-radius-sm);
     overflow: hidden;
@@ -9,6 +9,10 @@
     }
 
     .board-header-section {
+        > div:first-child,
+        .ListLink {
+            flex-grow: 1;
+        }
         &:hover {
             background-color: var(--bg-hover);
         }

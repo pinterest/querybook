@@ -33,6 +33,15 @@ def get_my_boards(environment_id, filter_str=None):
 )
 def get_board_by_id(board_id):
     with DBSession() as session:
+        if board_id == 0:
+            public_boards = logic.get_all_public_boards(session=session)
+            return {
+                "id": 0,
+                "boards": [
+                    public_board.to_dict()["id"] for public_board in public_boards
+                ],
+            }
+
         assert_can_read(board_id, session=session)
         board = Board.get(id=board_id, session=session)
         api_assert(board is not None, "Invalid board id", 404)
@@ -135,6 +144,10 @@ def add_board_item(board_id, item_type, item_id):
             is None,
             "Item already exists",
         )
+        api_assert(
+            not (item_type == "board" and item_id == board_id),
+            "Board cannot be added to itself",
+        )
 
         return logic.add_item_to_board(board_id, item_id, item_type, session=session)
 
@@ -155,7 +168,10 @@ def move_board_item(board_id, from_index, to_index):
     methods=["DELETE"],
 )
 def delete_board_item(board_id, item_type, item_id):
-    api_assert(item_type == "data_doc" or item_type == "table", "Invalid item type")
+    api_assert(
+        item_type == "data_doc" or item_type == "table" or item_type == "board",
+        "Invalid item type",
+    )
     with DBSession() as session:
         assert_can_edit(board_id, session=session)
 

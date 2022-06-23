@@ -4,14 +4,14 @@ import { ContentState } from 'draft-js';
 import { IBoardWithItemIds } from 'const/board';
 import { generateFormattedDate } from 'lib/utils/datetime';
 
-import { AccentText } from 'ui/StyledText/StyledText';
+import { BoardItemAddButton } from 'components/BoardItemAddButton/BoardItemAddButton';
 import { BoardViewersBadge } from 'components/BoardViewersBadge/BoardViewersBadge';
+
 import { EditableTextField } from 'ui/EditableTextField/EditableTextField';
+import { AccentText } from 'ui/StyledText/StyledText';
+import { TextButton } from 'ui/Button/Button';
 
 import './BoardHeader.scss';
-import { TextButton } from 'ui/Button/Button';
-import { BoardItemAddButton } from 'components/BoardItemAddButton/BoardItemAddButton';
-
 interface IProps {
     board: IBoardWithItemIds;
 }

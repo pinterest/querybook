@@ -1,6 +1,6 @@
 import { createSelector } from 'reselect';
 
-import { IBoardItem } from 'const/board';
+import { IBoard, IBoardItem } from 'const/board';
 import { IDataDoc } from 'const/datadoc';
 import { IDataTable } from 'const/metastore';
 import { currentEnvironmentSelector } from 'redux/environment/selector';
@@ -40,7 +40,8 @@ export const makeBoardItemsSelector = () =>
         rawBoardItemsSelector,
         (state: IStoreState) => state.dataDoc.dataDocById,
         (state: IStoreState) => state.dataSources.dataTablesById,
-        (boardItems, dataDocById, dataTablesById) =>
+        (state: IStoreState) => state.board.boardById,
+        (boardItems, dataDocById, dataTablesById, boardById) =>
             boardItems
                 .map((item) => {
                     if (item['data_doc_id'] != null) {
@@ -48,13 +49,38 @@ export const makeBoardItemsSelector = () =>
                             IBoardItem,
                             IDataDoc
                         ];
-                    } else {
+                    } else if (item['table_id'] != null) {
                         return [item, dataTablesById[item.table_id]] as [
                             IBoardItem,
                             IDataTable
                         ];
+                    } else {
+                        return [item, boardById[item.board_id]] as [
+                            IBoardItem,
+                            IBoard
+                        ];
                     }
                 })
+                .map((item) => ({
+                    boardItem: item[0],
+                    itemData: item[1],
+                    id: item[0].id,
+                }))
+    );
+
+export const publicBoardItemsSelector = () =>
+    createSelector(
+        boardSelector,
+        (state: IStoreState) => state.board.boardById,
+        (board, boardById) =>
+            board?.boards
+                ?.map(
+                    (boardId) =>
+                        [{ id: boardId }, boardById[boardId]] as [
+                            { id: number },
+                            IBoard
+                        ]
+                )
                 .map((item) => ({
                     boardItem: item[0],
                     itemData: item[1],
