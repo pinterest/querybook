@@ -165,6 +165,10 @@ def add_board_item(board_id, item_type, item_id):
             is None,
             "Item already exists",
         )
+        api_assert(
+            not (item_type == "board" and item_id == board_id),
+            "Board cannot be added to itself",
+        )
 
         return logic.add_item_to_board(board_id, item_id, item_type, session=session)
 

@@ -67,3 +67,23 @@ export const makeBoardItemsSelector = () =>
                     id: item[0].id,
                 }))
     );
+
+export const publicBoardItemsSelector = () =>
+    createSelector(
+        boardSelector,
+        (state: IStoreState) => state.board.boardById,
+        (board, boardById) =>
+            board?.boards
+                ?.map(
+                    (boardId) =>
+                        [{ id: boardId }, boardById[boardId]] as [
+                            { id: number },
+                            IBoard
+                        ]
+                )
+                .map((item) => ({
+                    boardItem: item[0],
+                    itemData: item[1],
+                    id: item[0].id,
+                }))
+    );
