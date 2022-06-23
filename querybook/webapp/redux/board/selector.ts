@@ -73,8 +73,8 @@ export const publicBoardItemsSelector = () =>
         boardSelector,
         (state: IStoreState) => state.board.boardById,
         (board, boardById) =>
-            board.boards
-                .map(
+            board?.boards
+                ?.map(
                     (boardId) =>
                         [{ id: boardId }, boardById[boardId]] as [
                             { id: number },

@@ -196,4 +196,4 @@ def update_es_boards_by_id(board_id: int):
 
 @with_session
 def get_all_public_boards(session=None):
-    return session.query(Board).filter(Board.public is True).all()
+    return session.query(Board).filter(Board.public.is_(True)).all()
