@@ -35,7 +35,6 @@ def get_board_by_id(board_id):
     with DBSession() as session:
         if board_id == 0:
             public_boards = logic.get_all_public_boards(session=session)
-            print("pub", public_boards)
             return {
                 "id": 0,
                 "boards": [

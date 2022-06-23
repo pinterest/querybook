@@ -178,4 +178,4 @@ def get_or_create_user_favorite_board(uid, environment_id, session=None):
 
 @with_session
 def get_all_public_boards(session=None):
-    return session.query(Board).filter(Board.public is True).all()
+    return session.query(Board).filter(Board.public.is_(True)).all()
