@@ -2,20 +2,21 @@ import { AxiosError } from 'axios';
 import * as React from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 
-import { BoardRightSidebar } from 'components/BoardRightSidebar/BoardRightSidebar';
 import { IBoardItem, IBoardWithItemIds } from 'const/board';
 import { isAxiosError } from 'lib/utils/error';
 import { fetchBoardIfNeeded } from 'redux/board/action';
 import { Dispatch, IStoreState } from 'redux/store/types';
-import { Loading } from 'ui/Loading/Loading';
 
+import { BoardRightSidebar } from 'components/BoardRightSidebar/BoardRightSidebar';
 import { BoardDataDocItem } from './BoardDataDocItem';
 import { BoardDataTableItem } from './BoardDataTableItem';
+import { BoardBoardItem } from './BoardBoardItem';
 import { BoardError } from './BoardError';
 import { BoardHeader } from './BoardHeader';
 
+import { Loading } from 'ui/Loading/Loading';
+
 import './Board.scss';
-import { BoardBoardItem } from './BoardBoardItem';
 
 interface IBoardDOMProps {
     board: IBoardWithItemIds;
@@ -27,36 +28,46 @@ const BoardDOM: React.FunctionComponent<IBoardDOMProps> = ({
     boardItemById,
 }) => {
     const [defaultCollapse, setDefaulCollapse] = React.useState(false);
-    // TODO - meowcodes: implement isEditable
+    // TODO - meowcodes: implement isEditable + board 0
     const [isEditMode, setIsEditMode] = React.useState<boolean>(false);
 
-    const boardItemDOM = board?.items
-        ?.map((itemIdx) => boardItemById?.[itemIdx])
-        .filter((i) => i)
-        .map((boardItem) =>
-            boardItem.data_doc_id ? (
-                <BoardDataDocItem
-                    docId={boardItem.data_doc_id}
-                    key={boardItem.id}
-                    isCollapsed={defaultCollapse}
-                    isEditMode={isEditMode}
-                />
-            ) : boardItem.table_id ? (
-                <BoardDataTableItem
-                    tableId={boardItem.table_id}
-                    key={boardItem.id}
-                    isCollapsed={defaultCollapse}
-                    isEditMode={isEditMode}
-                />
-            ) : (
-                <BoardBoardItem
-                    boardId={boardItem.board_id}
-                    key={boardItem.board_id}
-                    isCollapsed={defaultCollapse}
-                    isEditMode={isEditMode}
-                />
-            )
-        );
+    const boardItemDOM =
+        board.id === 0
+            ? board.boards?.map((boardId) => (
+                  <BoardBoardItem
+                      boardId={boardId}
+                      key={boardId}
+                      isCollapsed={defaultCollapse}
+                      isEditMode={isEditMode}
+                  />
+              ))
+            : board?.items
+                  ?.map((itemIdx) => boardItemById?.[itemIdx])
+                  .filter((i) => i)
+                  ?.map((boardItem) =>
+                      boardItem.data_doc_id ? (
+                          <BoardDataDocItem
+                              docId={boardItem.data_doc_id}
+                              key={boardItem.id}
+                              isCollapsed={defaultCollapse}
+                              isEditMode={isEditMode}
+                          />
+                      ) : boardItem.table_id ? (
+                          <BoardDataTableItem
+                              tableId={boardItem.table_id}
+                              key={boardItem.id}
+                              isCollapsed={defaultCollapse}
+                              isEditMode={isEditMode}
+                          />
+                      ) : (
+                          <BoardBoardItem
+                              boardId={boardItem.board_id ?? boardItem.id}
+                              key={boardItem.board_id ?? boardItem.id}
+                              isCollapsed={defaultCollapse}
+                              isEditMode={isEditMode}
+                          />
+                      )
+                  );
 
     return (
         <div className="Board">

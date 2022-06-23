@@ -16,8 +16,6 @@ export interface IBoardBase {
 
     environment_id: number;
     owner_uid: number;
-
-    meta: Record<string, string>;
 }
 
 export interface IBoardWithItemIds extends IBoard {
@@ -46,11 +44,16 @@ export interface IBoardUpdatableField {
 
 export interface IBoardItem {
     id: number;
+
     parent_board_id: number;
+
     created_at: number;
+
     data_doc_id: number | null;
     table_id: number | null;
     board_id: number | null;
+
+    meta: Record<string, string>;
 }
 
 export type BoardItemType = 'table' | 'data_doc' | 'board';

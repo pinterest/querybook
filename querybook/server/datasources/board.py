@@ -33,6 +33,16 @@ def get_my_boards(environment_id, filter_str=None):
 )
 def get_board_by_id(board_id):
     with DBSession() as session:
+        if board_id == 0:
+            public_boards = logic.get_all_public_boards(session=session)
+            print("pub", public_boards)
+            return {
+                "id": 0,
+                "boards": [
+                    public_board.to_dict()["id"] for public_board in public_boards
+                ],
+            }
+
         assert_can_read(board_id, session=session)
         board = Board.get(id=board_id, session=session)
         api_assert(board is not None, "Invalid board id", 404)

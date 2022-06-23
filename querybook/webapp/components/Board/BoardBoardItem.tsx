@@ -31,7 +31,7 @@ export const BoardBoardItem: React.FunctionComponent<IProps> = ({
         <BoardItem
             itemId={boardId}
             itemType="board"
-            title={board.name}
+            title={board?.name}
             titleUrl={`/list/${boardId}/`}
             notesDOM={null}
             defaultCollapsed={isCollapsed}
