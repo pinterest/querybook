@@ -79,3 +79,9 @@ export const BoardOrderToTitle = {
     [BoardOrderBy.createdAt]: 'C@',
     [BoardOrderBy.updatedAt]: 'U@',
 };
+
+export const itemTypeToKey = {
+    table: 'tables',
+    data_doc: 'docs',
+    board: 'boards',
+};

@@ -31,8 +31,7 @@ export const BoardDataDocItem: React.FunctionComponent<IProps> = ({
         dispatch(fetchDataDocIfNeeded(docId));
     }, [docId]);
 
-    // TODO - meowcodes: add notesDOM
-    return (
+    return doc ? (
         <BoardItem
             boardId={boardId}
             boardItemId={itemId}
@@ -43,5 +42,5 @@ export const BoardDataDocItem: React.FunctionComponent<IProps> = ({
             defaultCollapsed={isCollapsed}
             isEditMode={isEditMode}
         />
-    );
+    ) : null;
 };

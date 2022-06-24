@@ -164,6 +164,21 @@ export function updateBoard(
     };
 }
 
+export function updateBoardDescription(
+    id: number,
+    description: ContentState
+): ThunkResult<Promise<IBoardRaw>> {
+    return async (dispatch) => {
+        const board = (
+            await BoardResource.update(id, {
+                description: convertContentStateToHTML(description),
+            })
+        ).data;
+        receiveBoardWithItems(dispatch, board);
+        return board;
+    };
+}
+
 export function deleteBoard(id: number): ThunkResult<Promise<void>> {
     return async (dispatch) => {
         await BoardResource.delete(id);
@@ -187,14 +202,17 @@ export function addBoardItem(
             itemType,
             itemId
         );
+
         dispatch({
             type: '@@board/RECEIVE_BOARD_ITEM',
             payload: {
                 boardItem: {
                     ...boardItem,
-                    desciption: stateFromHTML(boardItem.description || ''),
+                    description: stateFromHTML(boardItem.description || ''),
                 } as unknown as IBoardItem,
                 boardId,
+                itemType,
+                itemId,
             },
         });
     };
@@ -255,6 +273,17 @@ export function updateBoardItemDescription(
                     ...boardItem,
                     description: stateFromHTML(boardItem.description || ''),
                 } as unknown as IBoardItem,
+            },
+        });
+    };
+}
+
+export function setCurrentBoardId(boardId: number): ThunkResult<Promise<void>> {
+    return async (dispatch) => {
+        dispatch({
+            type: '@@board/SET_CURRENT_BOARD_ID',
+            payload: {
+                boardId,
             },
         });
     };

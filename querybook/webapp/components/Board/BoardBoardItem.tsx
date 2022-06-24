@@ -31,7 +31,7 @@ export const BoardBoardItem: React.FunctionComponent<IProps> = ({
         dispatch(fetchBoardIfNeeded(boardId));
     }, [boardId]);
 
-    return (
+    return board ? (
         <BoardItem
             boardId={parentBoardId}
             boardItemId={itemId}
@@ -42,5 +42,5 @@ export const BoardBoardItem: React.FunctionComponent<IProps> = ({
             defaultCollapsed={isCollapsed}
             isEditMode={isEditMode}
         />
-    );
+    ) : null;
 };

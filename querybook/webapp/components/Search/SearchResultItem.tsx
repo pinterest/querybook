@@ -2,13 +2,15 @@ import { escape, escapeRegExp } from 'lodash';
 import React, { useMemo, useRef, useState } from 'react';
 import { useSelector } from 'react-redux';
 
-import { UserAvatar } from 'components/UserBadge/UserAvatar';
-import { IDataDocPreview, IQueryPreview, ITablePreview } from 'const/search';
 import { useUser } from 'hooks/redux/useUser';
 import history from 'lib/router-history';
 import { generateFormattedDate } from 'lib/utils/datetime';
 import { stopPropagation } from 'lib/utils/noop';
 import { queryEngineByIdEnvSelector } from 'redux/queryEngine/selector';
+import { IDataDocPreview, IQueryPreview, ITablePreview } from 'const/search';
+
+import { UserAvatar } from 'components/UserBadge/UserAvatar';
+
 import { IconButton } from 'ui/Button/IconButton';
 import { ThemedCodeHighlight } from 'ui/CodeHighlight/ThemedCodeHighlight';
 import { UrlContextMenu } from 'ui/ContextMenu/UrlContextMenu';
@@ -19,6 +21,7 @@ import { AccentText, StyledText, UntitledText } from 'ui/StyledText/StyledText';
 import { Tag } from 'ui/Tag/Tag';
 
 import './SearchResultItem.scss';
+import { SearchResultItemBoardItemAddButton } from './SearchResultItemBoardItemAddButton';
 
 const HighlightTitle: React.FunctionComponent<{
     title: string;
@@ -289,6 +292,7 @@ export const DataTableItem: React.FunctionComponent<IDataTableItemProps> = ({
         name,
         schema,
         tags,
+        id,
     } = preview;
     const handleClick = React.useMemo(() => openClick.bind(null, url), [url]);
 
@@ -320,7 +324,7 @@ export const DataTableItem: React.FunctionComponent<IDataTableItemProps> = ({
     ) : null;
 
     return (
-        <>
+        <div className="SearchResultItemContainer">
             <div
                 className="SearchResultItem flex-row"
                 onClick={handleClick}
@@ -348,6 +352,7 @@ export const DataTableItem: React.FunctionComponent<IDataTableItemProps> = ({
                 </div>
             </div>
             <UrlContextMenu url={url} anchorRef={selfRef} />
-        </>
+            <SearchResultItemBoardItemAddButton itemType="table" itemId={id} />
+        </div>
     );
 };
