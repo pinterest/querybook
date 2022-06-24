@@ -6,8 +6,6 @@ import { addBoardItem, deleteBoardItem } from 'redux/board/action';
 import { Dispatch, IStoreState } from 'redux/store/types';
 import { BoardItemType, itemTypeToKey } from 'const/board';
 
-import { BoardItemAddButton } from 'components/BoardItemAddButton/BoardItemAddButton';
-
 import { IconButton } from 'ui/Button/IconButton';
 import { AccentText } from 'ui/StyledText/StyledText';
 
@@ -48,39 +46,28 @@ export const SearchResultItemBoardItemAddButton: React.FunctionComponent<
     }, [currentBoard, currentBoardId, itemId, itemType, itemInBoard]);
 
     return (
-        <div className="SearchResultItemBoardItemAddButton">
-            {currentBoard ? (
-                <div
-                    className="flex-row"
-                    onClick={handleAddItem}
-                    aria-label={`${itemInBoard ? 'Remove from' : 'Add to'} ${
-                        currentBoard.name
-                    }`}
-                    data-balloon-pos="left"
-                >
-                    <IconButton
-                        icon={itemInBoard ? 'Minus' : 'Plus'}
-                        size={16}
-                        noPadding
-                        className="mr8"
-                    />
-                    <IconButton
-                        fill={true}
-                        color="light"
-                        icon="Briefcase"
-                        size={16}
-                        noPadding
-                    />
-                    <AccentText className="mh8">{currentBoard.name}</AccentText>
-                </div>
-            ) : (
-                <BoardItemAddButton
-                    itemId={itemId}
-                    itemType={itemType}
-                    size={16}
-                    noPadding
-                />
-            )}
+        <div
+            className="flex-row"
+            onClick={handleAddItem}
+            aria-label={`${itemInBoard ? 'Remove from' : 'Add to'} ${
+                currentBoard.name
+            }`}
+            data-balloon-pos="left"
+        >
+            <IconButton
+                icon={itemInBoard ? 'Minus' : 'Plus'}
+                size={16}
+                noPadding
+                className="mr8"
+            />
+            <IconButton
+                fill={true}
+                color="light"
+                icon="Briefcase"
+                size={16}
+                noPadding
+            />
+            <AccentText className="mh8">{currentBoard.name}</AccentText>
         </div>
     );
 };

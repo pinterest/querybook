@@ -86,8 +86,9 @@
         position: absolute;
         bottom: -12px;
         right: 8px;
-        padding: var(--padding-sm);
+        min-width: 32px;
         border-radius: var(--border-radius);
+        padding: var(--padding-sm);
         background-color: var(--bg-light);
         cursor: pointer;
     }

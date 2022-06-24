@@ -22,6 +22,8 @@ import { Tag } from 'ui/Tag/Tag';
 
 import './SearchResultItem.scss';
 import { SearchResultItemBoardItemAddButton } from './SearchResultItemBoardItemAddButton';
+import { IStoreState } from 'redux/store/types';
+import { BoardItemAddButton } from 'components/BoardItemAddButton/BoardItemAddButton';
 
 const HighlightTitle: React.FunctionComponent<{
     title: string;
@@ -295,6 +297,9 @@ export const DataTableItem: React.FunctionComponent<IDataTableItemProps> = ({
         id,
     } = preview;
     const handleClick = React.useMemo(() => openClick.bind(null, url), [url]);
+    const currentBoardId = useSelector(
+        (state: IStoreState) => state.board.currentBoardId
+    );
 
     const goldenIcon = golden ? (
         <div className="result-item-golden ml4">
@@ -352,7 +357,22 @@ export const DataTableItem: React.FunctionComponent<IDataTableItemProps> = ({
                 </div>
             </div>
             <UrlContextMenu url={url} anchorRef={selfRef} />
-            <SearchResultItemBoardItemAddButton itemType="table" itemId={id} />
+            <div className="SearchResultItemBoardItemAddButton flex-center">
+                {currentBoardId ? (
+                    <SearchResultItemBoardItemAddButton
+                        itemType="table"
+                        itemId={id}
+                    />
+                ) : (
+                    <BoardItemAddButton
+                        itemId={id}
+                        itemType="table"
+                        size={16}
+                        noPadding
+                        tooltipPos="left"
+                    />
+                )}
+            </div>
         </div>
     );
 };
