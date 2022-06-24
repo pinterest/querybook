@@ -136,7 +136,7 @@ export const BoardExpandableSection: React.FunctionComponent<{
                 boardData={board}
                 collapsed={collapsed}
                 onEdit={() => setShowUpdateModal(true)}
-                toggleCollapsed={() => setCollapsed((curr) => !curr)}
+                toggleCollapsed={() => setCollapsed(!collapsed)}
             />
             {contentSection}
             {showUpdateModal ? (

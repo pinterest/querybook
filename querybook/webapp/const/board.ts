@@ -42,7 +42,7 @@ export interface IBoardUpdatableField {
     name?: string;
 }
 
-export interface IBoardItem {
+export interface IBoardItemRaw {
     id: number;
 
     parent_board_id: number;
@@ -53,7 +53,13 @@ export interface IBoardItem {
     table_id: number | null;
     board_id: number | null;
 
+    description: string;
+
     meta: Record<string, string>;
+}
+
+export interface IBoardItem extends Omit<IBoardItemRaw, 'description'> {
+    description: ContentState;
 }
 
 export type BoardItemType = 'table' | 'data_doc' | 'board';

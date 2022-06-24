@@ -61,13 +61,21 @@ export interface IMoveBoardItemAction extends Action {
     };
 }
 
+export interface IUpdateBoardItemDescriptionAction extends Action {
+    type: '@@board/UPDATE_BOARD_ITEM_DESCRIPTION';
+    payload: {
+        boardItem: IBoardItem;
+    };
+}
+
 export type BoardAction =
     | IReceiveBoardsAction
     | IReceiveBoardWithItemsAction
     | IRemoveBoardAction
     | IReceiveBoardItemAction
     | IRemoveBoardItemAction
-    | IMoveBoardItemAction;
+    | IMoveBoardItemAction
+    | IUpdateBoardItemDescriptionAction;
 
 export interface IBoardState {
     boardById: Record<number, IBoardWithItemIds>;

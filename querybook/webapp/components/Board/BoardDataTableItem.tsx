@@ -10,12 +10,16 @@ import { RichTextEditor } from 'ui/RichTextEditor/RichTextEditor';
 import { BoardItem } from './BoardItem';
 
 interface IProps {
+    boardId: number;
+    itemId: number;
     tableId: number;
     isCollapsed: boolean;
     isEditMode: boolean;
 }
 
 export const BoardDataTableItem: React.FunctionComponent<IProps> = ({
+    boardId,
+    itemId,
     tableId,
     isCollapsed,
     isEditMode,
@@ -50,11 +54,12 @@ export const BoardDataTableItem: React.FunctionComponent<IProps> = ({
 
     return (
         <BoardItem
+            boardId={boardId}
+            boardItemId={itemId}
             itemId={table.id}
             itemType="table"
             title={`${schema?.name}.${table.name}`}
             titleUrl={`/table/${table.id}/`}
-            notesDOM={notesDOM}
             defaultCollapsed={isCollapsed}
             isEditMode={isEditMode}
         />

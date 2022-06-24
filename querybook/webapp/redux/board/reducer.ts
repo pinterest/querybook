@@ -32,6 +32,7 @@ export default function (state = initialState, action: BoardAction) {
                     ...draft.boardItemById,
                     ...boardItemById,
                 };
+
                 return;
             }
             case '@board/REMOVE_BOARD': {
@@ -95,6 +96,11 @@ export default function (state = initialState, action: BoardAction) {
                 const { boardId, fromIndex, toIndex } = action.payload;
                 const board = draft.boardById[boardId];
                 board.items = arrayMove(board.items, fromIndex, toIndex);
+                return;
+            }
+            case '@@board/UPDATE_BOARD_ITEM_DESCRIPTION': {
+                const { boardItem } = action.payload;
+                draft.boardItemById[boardItem.id] = boardItem;
                 return;
             }
         }

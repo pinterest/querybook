@@ -1,8 +1,13 @@
 import * as React from 'react';
 import { Link } from 'react-router-dom';
+import { useDispatch, useSelector } from 'react-redux';
 
 import { BoardItemType } from 'const/board';
 import { getWithinEnvUrl } from 'lib/utils/query-string';
+import { titleize } from 'lib/utils';
+import { convertRawToContentState } from 'lib/richtext/serialize';
+import { Dispatch, IStoreState } from 'redux/store/types';
+import { updateBoardItemDescription } from 'redux/board/action';
 
 import { BoardItemAddButton } from 'components/BoardItemAddButton/BoardItemAddButton';
 
@@ -10,16 +15,17 @@ import { IconButton } from 'ui/Button/IconButton';
 import { Icon } from 'ui/Icon/Icon';
 import { AllLucideIconNames } from 'ui/Icon/LucideIcons';
 import { Title } from 'ui/Title/Title';
+import { EditableTextField } from 'ui/EditableTextField/EditableTextField';
 
 import './BoardItem.scss';
-import { titleize } from 'lib/utils';
 
 export interface IBoardItemProps {
+    boardId: number;
+    boardItemId: number;
     itemId: number;
     itemType: BoardItemType;
     title: string;
     titleUrl: string;
-    notesDOM: React.ReactNode;
     defaultCollapsed: boolean;
     isEditMode: boolean;
 }
@@ -31,17 +37,35 @@ const boardItemTypeToIcon: Record<BoardItemType, AllLucideIconNames> = {
 };
 
 export const BoardItem: React.FunctionComponent<IBoardItemProps> = ({
+    boardId,
+    boardItemId,
     itemId,
     itemType,
     title,
     titleUrl,
-    notesDOM,
     defaultCollapsed,
     isEditMode,
 }) => {
+    const dispatch: Dispatch = useDispatch();
     const [collapsed, setCollapsed] = React.useState(defaultCollapsed);
 
+    const boardItemData = useSelector(
+        (state: IStoreState) => state.board.boardItemById[boardItemId]
+    );
+
     React.useEffect(() => setCollapsed(defaultCollapsed), [defaultCollapsed]);
+
+    const handleDescriptionSave = React.useCallback(
+        (updatedDescription) =>
+            dispatch(
+                updateBoardItemDescription(
+                    boardId,
+                    boardItemId,
+                    updatedDescription
+                )
+            ),
+        [boardId, boardItemId]
+    );
 
     return (
         <div className="BoardItem mt8 mb16 p12">
@@ -94,7 +118,16 @@ export const BoardItem: React.FunctionComponent<IBoardItemProps> = ({
                     )}
                 </div>
             </div>
-            {collapsed || isEditMode ? null : notesDOM}
+            {collapsed ||
+            isEditMode ||
+            !boardItemData ||
+            boardId === 0 ? null : (
+                <EditableTextField
+                    className="mt8"
+                    value={boardItemData.description}
+                    onSave={handleDescriptionSave}
+                />
+            )}
         </div>
     );
 };

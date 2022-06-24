@@ -179,3 +179,11 @@ def get_or_create_user_favorite_board(uid, environment_id, session=None):
 @with_session
 def get_all_public_boards(session=None):
     return session.query(Board).filter(Board.public.is_(True)).all()
+
+
+@with_session
+def update_board_item_description(board_item, description, session=None):
+    board_item.description = description
+    session.commit()
+
+    return board_item
