@@ -5,7 +5,6 @@ import { useDispatch, useSelector } from 'react-redux';
 import { BoardItemType } from 'const/board';
 import { getWithinEnvUrl } from 'lib/utils/query-string';
 import { titleize } from 'lib/utils';
-import { convertRawToContentState } from 'lib/richtext/serialize';
 import { Dispatch, IStoreState } from 'redux/store/types';
 import { updateBoardItemDescription } from 'redux/board/action';
 
