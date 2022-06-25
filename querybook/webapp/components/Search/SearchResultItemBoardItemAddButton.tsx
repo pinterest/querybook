@@ -46,28 +46,21 @@ export const SearchResultItemBoardItemAddButton: React.FunctionComponent<
     }, [currentBoard, currentBoardId, itemId, itemType, itemInBoard]);
 
     return (
-        <div
-            className="flex-row"
-            onClick={handleAddItem}
-            aria-label={`${itemInBoard ? 'Remove from' : 'Add to'} ${
-                currentBoard.name
-            }`}
-            data-balloon-pos="left"
-        >
+        <div className="flex-row" onClick={handleAddItem}>
             <IconButton
                 icon={itemInBoard ? 'Minus' : 'Plus'}
-                size={16}
+                size={24}
                 noPadding
-                className="mr8"
+                className="mr4"
             />
             <IconButton
                 fill={true}
                 color="light"
                 icon="Briefcase"
-                size={16}
+                size={24}
                 noPadding
             />
-            <AccentText className="mh8">{currentBoard.name}</AccentText>
+            <AccentText className="mh4">{currentBoard.name}</AccentText>
         </div>
     );
 };

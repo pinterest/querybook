@@ -278,6 +278,29 @@ export function updateBoardItemDescription(
     };
 }
 
+export function updateBoardItemMeta(
+    boardId: number,
+    boardItemId: number,
+    updatedMeta: Record<string, any>
+): ThunkResult<Promise<void>> {
+    return async (dispatch) => {
+        const { data: boardItem } = await BoardResource.updateItemMeta(
+            boardId,
+            boardItemId,
+            updatedMeta
+        );
+        dispatch({
+            type: '@@board/UPDATE_BOARD_ITEM_DESCRIPTION',
+            payload: {
+                boardItem: {
+                    ...boardItem,
+                    description: stateFromHTML(boardItem.description || ''),
+                } as unknown as IBoardItem,
+            },
+        });
+    };
+}
+
 export function setCurrentBoardId(boardId: number): ThunkResult<Promise<void>> {
     return async (dispatch) => {
         dispatch({

@@ -7,9 +7,12 @@ import history from 'lib/router-history';
 import { generateFormattedDate } from 'lib/utils/datetime';
 import { stopPropagation } from 'lib/utils/noop';
 import { queryEngineByIdEnvSelector } from 'redux/queryEngine/selector';
+import { IStoreState } from 'redux/store/types';
 import { IDataDocPreview, IQueryPreview, ITablePreview } from 'const/search';
 
+import { SearchResultItemBoardItemAddButton } from './SearchResultItemBoardItemAddButton';
 import { UserAvatar } from 'components/UserBadge/UserAvatar';
+import { BoardItemAddButton } from 'components/BoardItemAddButton/BoardItemAddButton';
 
 import { IconButton } from 'ui/Button/IconButton';
 import { ThemedCodeHighlight } from 'ui/CodeHighlight/ThemedCodeHighlight';
@@ -19,11 +22,9 @@ import { Level } from 'ui/Level/Level';
 import { LoadingRow } from 'ui/Loading/Loading';
 import { AccentText, StyledText, UntitledText } from 'ui/StyledText/StyledText';
 import { Tag } from 'ui/Tag/Tag';
+import { Button } from 'ui/Button/Button';
 
 import './SearchResultItem.scss';
-import { SearchResultItemBoardItemAddButton } from './SearchResultItemBoardItemAddButton';
-import { IStoreState } from 'redux/store/types';
-import { BoardItemAddButton } from 'components/BoardItemAddButton/BoardItemAddButton';
 
 const HighlightTitle: React.FunctionComponent<{
     title: string;
@@ -357,7 +358,7 @@ export const DataTableItem: React.FunctionComponent<IDataTableItemProps> = ({
                 </div>
             </div>
             <UrlContextMenu url={url} anchorRef={selfRef} />
-            <div className="SearchResultItemBoardItemAddButton flex-center">
+            <Button className="SearchResultItemBoardItemAddButton flex-center">
                 {currentBoardId ? (
                     <SearchResultItemBoardItemAddButton
                         itemType="table"
@@ -367,12 +368,12 @@ export const DataTableItem: React.FunctionComponent<IDataTableItemProps> = ({
                     <BoardItemAddButton
                         itemId={id}
                         itemType="table"
-                        size={16}
+                        size={24}
                         noPadding
                         tooltipPos="left"
                     />
                 )}
-            </div>
+            </Button>
         </div>
     );
 };

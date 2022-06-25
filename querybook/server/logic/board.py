@@ -187,3 +187,11 @@ def update_board_item_description(board_item, description, session=None):
     session.commit()
 
     return board_item
+
+
+@with_session
+def update_board_item_meta(board_item, meta, session=None):
+    board_item.meta = meta
+    session.commit()
+
+    return board_item

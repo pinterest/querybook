@@ -1,5 +1,6 @@
 import * as React from 'react';
 import { useDispatch } from 'react-redux';
+import { ContentState } from 'draft-js';
 
 import { useShallowSelector } from 'hooks/redux/useShallowSelector';
 import { fetchDataTableIfNeeded } from 'redux/dataSources/action';
@@ -40,16 +41,6 @@ export const BoardDataTableItem: React.FunctionComponent<IProps> = ({
         dispatch(fetchDataTableIfNeeded(tableId));
     }, [tableId]);
 
-    // TODO - meowcodes: make this editable when applicable
-    // const notesDOM = (table?.description as ContentState).getPlainText()
-    //     .length ? (
-    //     <RichTextEditor
-    //         value={table.description as ContentState}
-    //         readOnly={true}
-    //         className="mt8"
-    //     />
-    // ) : null;
-
     return table ? (
         <BoardItem
             boardId={boardId}
@@ -60,6 +51,7 @@ export const BoardDataTableItem: React.FunctionComponent<IProps> = ({
             titleUrl={`/table/${table.id}/`}
             defaultCollapsed={isCollapsed}
             isEditMode={isEditMode}
+            tableDescription={table.description as ContentState}
         />
     ) : null;
 };

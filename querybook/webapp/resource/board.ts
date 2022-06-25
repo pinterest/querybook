@@ -62,4 +62,15 @@ export const BoardResource = {
                 description: updatedDescription,
             }
         ),
+    updateItemMeta: (
+        boardId: number,
+        boardItemId: number,
+        updatedMeta: Record<string, any>
+    ) =>
+        ds.update<IBoardItemRaw>(
+            `/board/${boardId}/item/${boardItemId}/meta/`,
+            {
+                meta: updatedMeta,
+            }
+        ),
 };

@@ -1,12 +1,17 @@
 import * as React from 'react';
 import { Link } from 'react-router-dom';
 import { useDispatch, useSelector } from 'react-redux';
+import clsx from 'clsx';
+import { ContentState } from 'draft-js';
 
 import { BoardItemType } from 'const/board';
-import { getWithinEnvUrl } from 'lib/utils/query-string';
+import { getWithinEnvUrl, navigateWithinEnv } from 'lib/utils/query-string';
 import { titleize } from 'lib/utils';
 import { Dispatch, IStoreState } from 'redux/store/types';
-import { updateBoardItemDescription } from 'redux/board/action';
+import {
+    updateBoardItemDescription,
+    updateBoardItemMeta,
+} from 'redux/board/action';
 
 import { BoardItemAddButton } from 'components/BoardItemAddButton/BoardItemAddButton';
 
@@ -15,8 +20,11 @@ import { Icon } from 'ui/Icon/Icon';
 import { AllLucideIconNames } from 'ui/Icon/LucideIcons';
 import { Title } from 'ui/Title/Title';
 import { EditableTextField } from 'ui/EditableTextField/EditableTextField';
+import { Button } from 'ui/Button/Button';
 
 import './BoardItem.scss';
+import { RichTextEditor } from 'ui/RichTextEditor/RichTextEditor';
+import { AccentText } from 'ui/StyledText/StyledText';
 
 export interface IBoardItemProps {
     boardId: number;
@@ -27,6 +35,7 @@ export interface IBoardItemProps {
     titleUrl: string;
     defaultCollapsed: boolean;
     isEditMode: boolean;
+    tableDescription?: ContentState;
 }
 
 const boardItemTypeToIcon: Record<BoardItemType, AllLucideIconNames> = {
@@ -44,12 +53,20 @@ export const BoardItem: React.FunctionComponent<IBoardItemProps> = ({
     titleUrl,
     defaultCollapsed,
     isEditMode,
+    tableDescription,
 }) => {
     const dispatch: Dispatch = useDispatch();
     const [collapsed, setCollapsed] = React.useState(defaultCollapsed);
 
-    const boardItemData = useSelector(
-        (state: IStoreState) => state.board.boardItemById[boardItemId]
+    const { boardItemData } = useSelector((state: IStoreState) => ({
+        boardItemData: state.board.boardItemById[boardItemId],
+    }));
+
+    const displayTableDescription = React.useMemo(
+        () =>
+            itemType === 'table' &&
+            boardItemData.meta?.display_table_description,
+        [boardItemData.meta?.display_table_description, itemType]
     );
 
     React.useEffect(() => setCollapsed(defaultCollapsed), [defaultCollapsed]);
@@ -66,8 +83,25 @@ export const BoardItem: React.FunctionComponent<IBoardItemProps> = ({
         [boardId, boardItemId]
     );
 
+    const handleDescriptionSwitch = React.useCallback(() => {
+        dispatch(
+            updateBoardItemMeta(boardId, boardItemId, {
+                ...boardItemData.meta,
+                display_table_description: !displayTableDescription,
+            })
+        );
+    }, [boardId, boardItemData.meta, displayTableDescription]);
+
+    const boardItemClassname = clsx({
+        BoardItem: true,
+        p12: true,
+        mt8: true,
+        mb8: collapsed,
+        mb24: !collapsed,
+    });
+
     return (
-        <div className="BoardItem mt8 mb16 p12">
+        <div className={boardItemClassname}>
             <div className="BoardItem-top horizontal-space-between">
                 <div className="flex-row">
                     <Icon
@@ -121,11 +155,50 @@ export const BoardItem: React.FunctionComponent<IBoardItemProps> = ({
             isEditMode ||
             !boardItemData ||
             boardId === 0 ? null : (
-                <EditableTextField
-                    className="mt8"
-                    value={boardItemData.description}
-                    onSave={handleDescriptionSave}
-                />
+                <>
+                    {displayTableDescription ? (
+                        <RichTextEditor
+                            className="mt8"
+                            value={tableDescription}
+                            readOnly={true}
+                        />
+                    ) : (
+                        <EditableTextField
+                            className="mt8"
+                            value={boardItemData.description}
+                            onSave={handleDescriptionSave}
+                        />
+                    )}
+                    {itemType === 'table' && (
+                        <div className="BoardItem-description-toggle  flex-row">
+                            {displayTableDescription && (
+                                <Button
+                                    onClick={() =>
+                                        navigateWithinEnv(`/table/${itemId}/`, {
+                                            isModal: true,
+                                        })
+                                    }
+                                    className="mr4"
+                                >
+                                    <AccentText size="xsmall">
+                                        Table Details
+                                    </AccentText>
+                                </Button>
+                            )}
+                            <Button
+                                className=" flex-row"
+                                onClick={handleDescriptionSwitch}
+                            >
+                                <Icon name="Repeat" size={16} className="mr8" />
+                                <AccentText size="xsmall">
+                                    {displayTableDescription
+                                        ? 'Switch to Item Notes'
+                                        : 'Switch to Table Description'}
+                                </AccentText>
+                            </Button>
+                        </div>
+                    )}
+                </>
             )}
         </div>
     );

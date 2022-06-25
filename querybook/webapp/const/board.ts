@@ -55,7 +55,7 @@ export interface IBoardItemRaw {
 
     description: string;
 
-    meta: Record<string, string>;
+    meta: Record<string, any>;
 }
 
 export interface IBoardItem extends Omit<IBoardItemRaw, 'description'> {

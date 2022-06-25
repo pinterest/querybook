@@ -189,10 +189,8 @@ def get_or_create_favorite_board(environment_id):
         return board.to_dict(extra_fields=["docs", "tables", "boards", "items"])
 
 
-@register(
-    "/board/<int:board_id>/item/<int:board_item_id>/description/", methods=["PUT"]
-)
-def update_board_item_description(board_id, board_item_id, description):
+@register("/board/<int:board_id>/item/<int:board_item_id>/meta/", methods=["PUT"])
+def update_board_item_meta(board_id, board_item_id, meta):
     with DBSession() as session:
         assert_can_edit(board_id, session=session)
 
@@ -202,6 +200,4 @@ def update_board_item_description(board_id, board_item_id, description):
             "Board item does not exist",
         )
 
-        return logic.update_board_item_description(
-            board_item, description, session=session
-        )
+        return logic.update_board_item_meta(board_item, meta, session=session)
