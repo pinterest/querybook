@@ -1,6 +1,7 @@
 .BoardListItemRow {
     .Icon svg {
         padding: 0;
+        color: var(--icon);
     }
 
     .ListLink {
@@ -9,12 +10,12 @@
     }
 
     .delete-board-item-button {
-        padding: 0;
         display: none;
     }
 
     &:hover {
         .delete-board-item-button {
+            padding: 0px 4px;
             display: flex;
         }
     }
