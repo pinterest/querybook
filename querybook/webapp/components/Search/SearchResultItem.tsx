@@ -220,7 +220,10 @@ export const DataDocItem: React.FunctionComponent<IDataDocItemProps> = ({
     searchString,
 }) => {
     const selfRef = useRef<HTMLDivElement>();
-    const { owner_uid: ownerUid, created_at: createdAt } = preview;
+    const currentBoardId = useSelector(
+        (state: IStoreState) => state.board.currentBoardId
+    );
+    const { owner_uid: ownerUid, created_at: createdAt, id } = preview;
     const { userInfo: ownerInfo, loading } = useUser({ uid: ownerUid });
     const handleClick = React.useMemo(() => openClick.bind(null, url), [url]);
 
@@ -272,6 +275,22 @@ export const DataDocItem: React.FunctionComponent<IDataDocItemProps> = ({
                 </div>
             </div>
             <UrlContextMenu anchorRef={selfRef} url={url} />
+            <Button className="SearchResultItemBoardItemAddButton flex-center">
+                {currentBoardId ? (
+                    <SearchResultItemBoardItemAddButton
+                        itemType="data_doc"
+                        itemId={id}
+                    />
+                ) : (
+                    <BoardItemAddButton
+                        itemId={id}
+                        itemType="data_doc"
+                        size={24}
+                        noPadding
+                        tooltipPos="left"
+                    />
+                )}
+            </Button>
         </div>
     );
 };
