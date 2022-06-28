@@ -164,6 +164,21 @@ export function updateBoard(
     };
 }
 
+export function updateBoardName(
+    id: number,
+    name: string
+): ThunkResult<Promise<IBoardRaw>> {
+    return async (dispatch) => {
+        const board = (
+            await BoardResource.update(id, {
+                name,
+            })
+        ).data;
+        receiveBoardWithItems(dispatch, board);
+        return board;
+    };
+}
+
 export function updateBoardDescription(
     id: number,
     description: ContentState

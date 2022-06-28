@@ -14,6 +14,7 @@ import { DraggableList } from 'ui/DraggableList/DraggableList';
 import { IDragItem } from 'ui/DraggableList/types';
 
 export const BoardExpandableList: React.FunctionComponent<{
+    selectedBoardId: number;
     selectedDocId: number;
     filterString: string;
     boardId: number;
@@ -27,6 +28,7 @@ export const BoardExpandableList: React.FunctionComponent<{
 }> = ({
     filterString,
     selectedDocId,
+    selectedBoardId,
     boardId,
     onDeleteBoardItem,
     onMoveBoardItem,
@@ -57,7 +59,7 @@ export const BoardExpandableList: React.FunctionComponent<{
                         icon = 'File';
                         title = doc.title ?? emptyDataDocTitleMessage;
                         itemUrl = `/datadoc/${doc.id}/`;
-                        selected = selectedDocId === itemData.id;
+                        selected = selectedDocId === doc.id;
                     } else if (itemType === 'table') {
                         const table = itemData as IDataTable;
                         key = `table-${table.id}`;
@@ -71,6 +73,7 @@ export const BoardExpandableList: React.FunctionComponent<{
                         icon = 'Briefcase';
                         title = board.name;
                         itemUrl = `/list/${board.id}/`;
+                        selected = selectedBoardId === board.id;
                     }
 
                     return {

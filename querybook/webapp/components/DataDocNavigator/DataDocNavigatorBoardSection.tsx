@@ -28,6 +28,7 @@ import { Icon } from 'ui/Icon/Icon';
 import { Level, LevelItem } from 'ui/Level/Level';
 import { OrderByButton } from 'ui/OrderByButton/OrderByButton';
 import { Title } from 'ui/Title/Title';
+import { useRouteMatch } from 'react-router-dom';
 
 interface INavigatorBoardSectionProps {
     selectedDocId: number;
@@ -41,6 +42,13 @@ const BoardOrderByOptions = getEnumEntries(BoardOrderBy);
 export const DataDocNavigatorBoardSection: React.FC<
     INavigatorBoardSectionProps
 > = ({ selectedDocId, collapsed, setCollapsed, filterString }) => {
+    const match = useRouteMatch('/:env/:ignore(list)?/:matchBoardId?');
+    const { matchBoardId } = match?.params ?? {};
+    const selectedBoardId = useMemo(
+        () => (matchBoardId ? Number(matchBoardId) : null),
+        [matchBoardId]
+    );
+
     const toggleCollapsed = useCallback(
         () => setCollapsed(!collapsed),
         [setCollapsed, collapsed]
@@ -187,6 +195,7 @@ export const DataDocNavigatorBoardSection: React.FC<
                     key={board.id}
                     id={board.id}
                     selectedDocId={selectedDocId}
+                    selectedBoardId={selectedBoardId}
                     filterString={filterString}
                     onMoveBoardItem={handleMoveBoardItem}
                 />

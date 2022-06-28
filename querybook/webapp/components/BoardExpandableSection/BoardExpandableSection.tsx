@@ -34,12 +34,19 @@ export const BoardExpandableSection: React.FunctionComponent<{
     id: number;
     filterString: string;
     selectedDocId: number;
+    selectedBoardId: number;
     onMoveBoardItem: (
         itemType: string,
         itemInfo: IProcessedBoardItem | IDataDoc,
         toBoardId: number
     ) => void;
-}> = ({ id, selectedDocId, filterString, onMoveBoardItem }) => {
+}> = ({
+    id,
+    selectedDocId,
+    selectedBoardId,
+    filterString,
+    onMoveBoardItem,
+}) => {
     const [showUpdateModal, setShowUpdateModal] = React.useState(false);
     const dispatch: Dispatch = useDispatch();
 
@@ -106,6 +113,7 @@ export const BoardExpandableSection: React.FunctionComponent<{
         <BoardExpandableList
             filterString={filterString}
             selectedDocId={selectedDocId}
+            selectedBoardId={selectedBoardId}
             boardId={id}
             onDeleteBoardItem={handleDeleteBoardItem}
             onMoveBoardItem={handleLocalMoveBoardItem}

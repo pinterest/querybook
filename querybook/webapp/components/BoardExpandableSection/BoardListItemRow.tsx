@@ -26,6 +26,7 @@ export const BoardListItemRow: React.FC<{
 }> = ({ item, onDeleteBoardItem }) => {
     const { key, itemType, icon, title, itemUrl, selected, itemId } = item;
     const itemUrlWithinEnv = getWithinEnvUrl(itemUrl);
+
     return (
         <PopoverHoverWrapper>
             {(showPopover, anchorElement) => (

@@ -1,12 +1,10 @@
 import * as React from 'react';
-import { Link } from 'react-router-dom';
 import { useDispatch, useSelector } from 'react-redux';
 import clsx from 'clsx';
 import { ContentState } from 'draft-js';
 
 import { BoardItemType } from 'const/board';
-import { getWithinEnvUrl, navigateWithinEnv } from 'lib/utils/query-string';
-import { titleize } from 'lib/utils';
+import { navigateWithinEnv } from 'lib/utils/query-string';
 import { Dispatch, IStoreState } from 'redux/store/types';
 import {
     updateBoardItemDescription,
@@ -21,10 +19,11 @@ import { AllLucideIconNames } from 'ui/Icon/LucideIcons';
 import { Title } from 'ui/Title/Title';
 import { EditableTextField } from 'ui/EditableTextField/EditableTextField';
 import { Button } from 'ui/Button/Button';
-
-import './BoardItem.scss';
 import { RichTextEditor } from 'ui/RichTextEditor/RichTextEditor';
 import { AccentText } from 'ui/StyledText/StyledText';
+
+import './BoardItem.scss';
+import { convertContentStateToHTML } from 'lib/richtext/serialize';
 
 export interface IBoardItemProps {
     boardId: number;
@@ -65,8 +64,8 @@ export const BoardItem: React.FunctionComponent<IBoardItemProps> = ({
     const displayTableDescription = React.useMemo(
         () =>
             itemType === 'table' &&
-            boardItemData.meta?.display_table_description,
-        [boardItemData.meta?.display_table_description, itemType]
+            boardItemData?.meta?.display_table_description,
+        [boardItemData?.meta?.display_table_description, itemType]
     );
 
     React.useEffect(() => setCollapsed(defaultCollapsed), [defaultCollapsed]);
@@ -86,11 +85,11 @@ export const BoardItem: React.FunctionComponent<IBoardItemProps> = ({
     const handleDescriptionSwitch = React.useCallback(() => {
         dispatch(
             updateBoardItemMeta(boardId, boardItemId, {
-                ...boardItemData.meta,
+                ...boardItemData?.meta,
                 display_table_description: !displayTableDescription,
             })
         );
-    }, [boardId, boardItemData.meta, displayTableDescription]);
+    }, [boardId, boardItemData?.meta, displayTableDescription]);
 
     const boardItemClassname = clsx({
         BoardItem: true,
@@ -110,15 +109,17 @@ export const BoardItem: React.FunctionComponent<IBoardItemProps> = ({
                         className="mr8"
                         color="light"
                     />
-                    <Link to={getWithinEnvUrl(titleUrl)}>
-                        <Title
-                            size="smedium"
-                            tooltip={`Go to ${titleize(itemType, '_', ' ')}`}
-                            tooltipPos="right"
-                        >
+                    <div
+                        onClick={() =>
+                            navigateWithinEnv(titleUrl, {
+                                isModal: itemType === 'table',
+                            })
+                        }
+                    >
+                        <Title className="BoardItem-title" size="smedium">
                             {title}
                         </Title>
-                    </Link>
+                    </div>
                 </div>
                 <div className="BoardItem-controls flex-center">
                     {isEditMode ? (
@@ -157,34 +158,33 @@ export const BoardItem: React.FunctionComponent<IBoardItemProps> = ({
             boardId === 0 ? null : (
                 <>
                     {displayTableDescription ? (
-                        <RichTextEditor
-                            className="mt8"
-                            value={tableDescription}
-                            readOnly={true}
-                        />
+                        convertContentStateToHTML(tableDescription).length ===
+                            0 ||
+                        convertContentStateToHTML(tableDescription) ===
+                            '<p><br></p>' ? (
+                            <AccentText
+                                className="mt4"
+                                noUserSelect
+                                color="lightest"
+                            >
+                                No table description
+                            </AccentText>
+                        ) : (
+                            <RichTextEditor
+                                className="mt8"
+                                value={tableDescription}
+                                readOnly={true}
+                            />
+                        )
                     ) : (
                         <EditableTextField
                             className="mt8"
-                            value={boardItemData.description}
+                            value={boardItemData?.description}
                             onSave={handleDescriptionSave}
                         />
                     )}
                     {itemType === 'table' && (
-                        <div className="BoardItem-description-toggle  flex-row">
-                            {displayTableDescription && (
-                                <Button
-                                    onClick={() =>
-                                        navigateWithinEnv(`/table/${itemId}/`, {
-                                            isModal: true,
-                                        })
-                                    }
-                                    className="mr4"
-                                >
-                                    <AccentText size="xsmall">
-                                        Table Details
-                                    </AccentText>
-                                </Button>
-                            )}
+                        <div className="BoardItem-description-toggle">
                             <Button
                                 className=" flex-row"
                                 onClick={handleDescriptionSwitch}

@@ -137,7 +137,7 @@ def add_board_item(board_id, item_type, item_id):
 
         api_assert(
             board.environment_id in item_env_ids,
-            "Board item must be in the same environment as the board",
+            "List item must be in the same environment as the list",
         )
         api_assert(
             logic.get_item_from_board(board_id, item_id, item_type, session=session)
@@ -146,7 +146,7 @@ def add_board_item(board_id, item_type, item_id):
         )
         api_assert(
             not (item_type == "board" and item_id == board_id),
-            "Board cannot be added to itself",
+            "List cannot be added to itself",
         )
 
         return logic.add_item_to_board(board_id, item_id, item_type, session=session)

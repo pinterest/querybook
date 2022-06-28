@@ -7,7 +7,11 @@ import { navigateWithinEnv } from 'lib/utils/query-string';
 import { SearchType } from 'redux/search/types';
 import { updateSearchType } from 'redux/search/action';
 import { Dispatch } from 'redux/store/types';
-import { setCurrentBoardId, updateBoardDescription } from 'redux/board/action';
+import {
+    setCurrentBoardId,
+    updateBoardDescription,
+    updateBoardName,
+} from 'redux/board/action';
 
 import { BoardItemAddButton } from 'components/BoardItemAddButton/BoardItemAddButton';
 import { BoardViewersBadge } from 'components/BoardViewersBadge/BoardViewersBadge';
@@ -15,6 +19,7 @@ import { BoardViewersBadge } from 'components/BoardViewersBadge/BoardViewersBadg
 import { EditableTextField } from 'ui/EditableTextField/EditableTextField';
 import { AccentText } from 'ui/StyledText/StyledText';
 import { TextButton } from 'ui/Button/Button';
+import { ResizableTextArea } from 'ui/ResizableTextArea/ResizableTextArea';
 
 import './BoardHeader.scss';
 interface IProps {
@@ -29,7 +34,6 @@ export const BoardHeader: React.FunctionComponent<IProps> = ({ board }) => {
         (searchType: SearchType) => {
             dispatch(updateSearchType(searchType));
             dispatch(setCurrentBoardId(board.id));
-            console.log('ummm hereeee', board.id);
             navigateWithinEnv('/search/', { isModal: true, from: 'board' });
         },
         [board.id]
@@ -38,6 +42,13 @@ export const BoardHeader: React.FunctionComponent<IProps> = ({ board }) => {
     const handleDescriptionUpdate = React.useCallback(
         (description) =>
             dispatch(updateBoardDescription(board.id, description)),
+        [board.id]
+    );
+
+    const handleTitleChange = React.useCallback(
+        (updatedTitle) => {
+            dispatch(updateBoardName(board.id, updatedTitle));
+        },
         [board.id]
     );
 
@@ -78,7 +89,12 @@ export const BoardHeader: React.FunctionComponent<IProps> = ({ board }) => {
                 size="xlarge"
                 weight="extra"
             >
-                {board.name}
+                <ResizableTextArea
+                    value={board.name}
+                    onChange={handleTitleChange}
+                    className="BoardHeader-title"
+                    transparent
+                />
             </AccentText>
             <EditableTextField
                 value={board.description}
