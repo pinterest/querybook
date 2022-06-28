@@ -29,7 +29,7 @@ export const SearchResultItemBoardItemAddButton: React.FunctionComponent<
     );
 
     const itemInBoard = React.useMemo(
-        () => currentBoard[itemTypeToKey[itemType]].includes(itemId),
+        () => currentBoard[itemTypeToKey[itemType]]?.includes(itemId),
         [currentBoard, itemId, itemType]
     );
 

@@ -6,6 +6,7 @@ import { IDataTable } from 'const/metastore';
 import { currentEnvironmentSelector } from 'redux/environment/selector';
 import { IStoreState } from 'redux/store/types';
 import { myUserInfoSelector } from 'redux/user/selector';
+import { IQueryExecution } from 'const/queryExecution';
 
 const boardByIdSelector = (state: IStoreState) => state.board.boardById;
 const boardItemByIdSelector = (state: IStoreState) => state.board.boardItemById;
@@ -41,7 +42,14 @@ export const makeBoardItemsSelector = () =>
         (state: IStoreState) => state.dataDoc.dataDocById,
         (state: IStoreState) => state.dataSources.dataTablesById,
         (state: IStoreState) => state.board.boardById,
-        (boardItems, dataDocById, dataTablesById, boardById) =>
+        (state: IStoreState) => state.queryExecutions.queryExecutionById,
+        (
+            boardItems,
+            dataDocById,
+            dataTablesById,
+            boardById,
+            queryExecutionById
+        ) =>
             boardItems
                 .map((item) => {
                     if (item['data_doc_id'] != null) {
@@ -54,11 +62,16 @@ export const makeBoardItemsSelector = () =>
                             IBoardItem,
                             IDataTable
                         ];
-                    } else {
+                    } else if (item['board_id'] != null) {
                         return [item, boardById[item.board_id]] as [
                             IBoardItem,
                             IBoard
                         ];
+                    } else {
+                        return [
+                            item,
+                            queryExecutionById[item.query_execution_id],
+                        ] as [IBoardItem, IQueryExecution];
                     }
                 })
                 .map((item) => ({

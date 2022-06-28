@@ -17,15 +17,19 @@ import { Dispatch } from 'redux/store/types';
 import { BoardResource } from 'resource/board';
 
 import { IReceiveBoardsAction, ThunkResult } from './types';
+import { receiveQueryExecution } from 'redux/queryExecutions/action';
+import { IQueryExecution } from 'const/queryExecution';
 
 export const dataDocSchema = new schema.Entity('dataDoc');
 export const tableSchema = new schema.Entity('dataTable');
 export const boardSchema = new schema.Entity('board');
+export const querySchema = new schema.Entity('query');
 export const boardItemSchema = new schema.Entity('boardItem');
 export const parentBoardSchema = new schema.Entity('board', {
     docs: [dataDocSchema],
     tables: [tableSchema],
     boards: [boardSchema],
+    qureies: [querySchema],
     items: [boardItemSchema],
 });
 
@@ -36,6 +40,7 @@ function normalizeBoard(rawBoard: IBoardRaw) {
         dataTable: dataTableById = {},
         dataDoc: dataDocById = {},
         board: boardById = {},
+        query: queryById = {},
         boardItem: boardItemById = {},
     } = normalizedData.entities;
 
@@ -44,17 +49,27 @@ function normalizeBoard(rawBoard: IBoardRaw) {
         dataTableById,
         dataDocById,
         boards: Object.values(boardById),
+        queryById,
         boardItemById,
     };
 }
 
 function receiveBoardWithItems(dispatch: Dispatch, rawBoard: IBoardRaw) {
-    const { board, dataTableById, dataDocById, boards, boardItemById } =
-        normalizeBoard(rawBoard);
+    const {
+        board,
+        dataTableById,
+        dataDocById,
+        boards,
+        queryById,
+        boardItemById,
+    } = normalizeBoard(rawBoard);
 
     dispatch(receiveDataDocs(dataDocById, [], null, null));
     dispatch(receiveDataTable({}, dataTableById, {}, {}));
     dispatch(receiveBoards(boards as IBoardBase[]));
+    Object.values(queryById).forEach((query) =>
+        dispatch(receiveQueryExecution(query as IQueryExecution))
+    );
 
     Object.keys(boardItemById).forEach((boardItemId) => {
         boardItemById[boardItemId] = {

@@ -10,6 +10,7 @@ import {
     updateBoardItemDescription,
     updateBoardItemMeta,
 } from 'redux/board/action';
+import { convertContentStateToHTML } from 'lib/richtext/serialize';
 
 import { BoardItemAddButton } from 'components/BoardItemAddButton/BoardItemAddButton';
 
@@ -23,7 +24,6 @@ import { RichTextEditor } from 'ui/RichTextEditor/RichTextEditor';
 import { AccentText } from 'ui/StyledText/StyledText';
 
 import './BoardItem.scss';
-import { convertContentStateToHTML } from 'lib/richtext/serialize';
 
 export interface IBoardItemProps {
     boardId: number;
@@ -41,6 +41,7 @@ const boardItemTypeToIcon: Record<BoardItemType, AllLucideIconNames> = {
     table: 'Book',
     data_doc: 'File',
     board: 'Briefcase',
+    query: 'PlayCircle',
 };
 
 export const BoardItem: React.FunctionComponent<IBoardItemProps> = ({
@@ -112,7 +113,9 @@ export const BoardItem: React.FunctionComponent<IBoardItemProps> = ({
                     <div
                         onClick={() =>
                             navigateWithinEnv(titleUrl, {
-                                isModal: itemType === 'table',
+                                isModal:
+                                    itemType === 'table' ||
+                                    itemType === 'query',
                             })
                         }
                     >

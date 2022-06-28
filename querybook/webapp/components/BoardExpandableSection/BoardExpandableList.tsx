@@ -8,16 +8,18 @@ import {
 import { BoardItemType, IBoard, IBoardItem } from 'const/board';
 import { emptyDataDocTitleMessage, IDataDoc } from 'const/datadoc';
 import { IDataTable } from 'const/metastore';
+import { IQueryExecution } from 'const/queryExecution';
 import { DraggableList } from 'ui/DraggableList/DraggableList';
 import { IDragItem } from 'ui/DraggableList/types';
 
 interface IBoardExpandableListProps {
     selectedDocId: number;
+    selectedBoardId: number;
     filterString: string;
     boardId: number;
     items: Array<{
         boardItem: Partial<IBoardItem>;
-        itemData: IBoard | IDataDoc | IDataTable;
+        itemData: IBoard | IDataDoc | IDataTable | IQueryExecution;
         id: number;
     }>;
     onDeleteBoardItem?: (itemId: number, itemType: BoardItemType) => void;
@@ -46,7 +48,9 @@ export const BoardExpandableList: React.FunctionComponent<
                             ? 'data_doc'
                             : boardItem['table_id'] != null
                             ? 'table'
-                            : 'board';
+                            : boardItem['board_id'] != null
+                            ? 'board'
+                            : 'query';
                     let key: string;
                     let icon = null;
                     let itemUrl = '';
@@ -67,7 +71,7 @@ export const BoardExpandableList: React.FunctionComponent<
                         icon = 'Database';
                         title = table.name;
                         itemUrl = `/table/${table.id}/`;
-                    } else {
+                    } else if (itemType === 'board') {
                         // board
                         const board = itemData as IBoard;
                         key = `board-${board.id}`;
@@ -75,6 +79,13 @@ export const BoardExpandableList: React.FunctionComponent<
                         title = board.name;
                         itemUrl = `/list/${board.id}/`;
                         selected = selectedBoardId === board.id;
+                    } else {
+                        // query execution
+                        const queryExecution = itemData as IQueryExecution;
+                        key = `execution-${queryExecution.id}`;
+                        icon = 'PlayCircle';
+                        title = 'Execution ' + queryExecution.id;
+                        itemUrl = `/query_execution/${queryExecution.id}/`;
                     }
 
                     return {

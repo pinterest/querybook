@@ -47,10 +47,18 @@ export const BoardListItemRow: React.FC<{
                             noPlaceHolder
                         >
                             <Icon className="mr4" size={16} name={icon} />
-                            {title.length ? (
-                                <span className="ListLinkText">{title}</span>
+                            {title ? (
+                                title.length ? (
+                                    <span className="ListLinkText">
+                                        {title}
+                                    </span>
+                                ) : (
+                                    <UntitledText className="ListLinkPlaceholder" />
+                                )
                             ) : (
-                                <UntitledText className="ListLinkPlaceholder" />
+                                <span className="ListLinkText">
+                                    {'Execution ' + itemId}
+                                </span>
                             )}
                             <IconButton
                                 className="delete-board-item-button"

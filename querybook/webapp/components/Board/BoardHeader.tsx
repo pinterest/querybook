@@ -103,6 +103,11 @@ export const BoardHeader: React.FunctionComponent<IProps> = ({ board }) => {
             <div className="flex-row mt8">
                 <TextButton
                     icon="Plus"
+                    title="Query Execution"
+                    onClick={() => openSearchModal(SearchType.Query)}
+                />
+                <TextButton
+                    icon="Plus"
                     title="Data Doc"
                     onClick={() => openSearchModal(SearchType.DataDoc)}
                 />
