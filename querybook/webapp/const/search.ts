@@ -71,6 +71,17 @@ interface IQueryExecutionPreview extends IQueryPreviewBase {
 
 export type IQueryPreview = IQueryCellPreview | IQueryExecutionPreview;
 
+export type ISearchBoardParams = ISearchDataDocParams;
+export interface IBoardPreview {
+    id: number;
+    title: string;
+    owner_uid: number;
+    description: string;
+    highlight?: {
+        description?: string[];
+    };
+}
+
 export interface ISearchQueryParams {
     environment_id: number;
     keywords: string;
@@ -81,7 +92,11 @@ export interface ISearchQueryParams {
     offset?: number;
 }
 
-export type ISearchPreview = IQueryPreview | IDataDocPreview | ITablePreview;
+export type ISearchPreview =
+    | IQueryPreview
+    | IDataDocPreview
+    | ITablePreview
+    | IBoardPreview;
 
 export interface IUserSearchResultRow {
     id: number;
