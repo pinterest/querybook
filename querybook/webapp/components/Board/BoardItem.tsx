@@ -163,9 +163,10 @@ export const BoardItem: React.FunctionComponent<IBoardItemProps> = ({
                         convertContentStateToHTML(tableDescription) ===
                             '<p><br></p>' ? (
                             <AccentText
-                                className="mt4"
+                                className="mt8"
                                 noUserSelect
                                 color="lightest"
+                                size="small"
                             >
                                 No table description
                             </AccentText>

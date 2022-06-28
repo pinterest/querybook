@@ -433,7 +433,7 @@ export const BoardItem: React.FunctionComponent<{
             }}
         />
     ) : (
-        description || 'no description'
+        description || 'No list description'
     );
 
     return (
@@ -453,12 +453,12 @@ export const BoardItem: React.FunctionComponent<{
                             searchString={searchString}
                         />
                     </div>
-                    {descriptionDOM}
                     <Level className="result-items-bottom">
                         <span className="result-item-owner">
                             {ownerInfo.username}
                         </span>
                     </Level>
+                    {descriptionDOM}
                 </div>
             </div>
             <UrlContextMenu anchorRef={selfRef} url={url} />
