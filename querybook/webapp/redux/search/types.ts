@@ -21,6 +21,7 @@ export enum SearchType {
     DataDoc = 'DataDoc',
     Query = 'Query',
     Table = 'Table',
+    Board = 'Board',
 }
 
 export interface ISearchDoneAction extends Action {

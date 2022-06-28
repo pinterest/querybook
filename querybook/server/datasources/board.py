@@ -161,13 +161,3 @@ def delete_board_item(board_id, item_type, item_id):
 
         board = Board.get(id=board_id, session=session)
         logic.remove_item_from_board(board.id, item_id, item_type, session=session)
-
-
-@register("/board/favorite/", methods=["POST"])
-def get_or_create_favorite_board(environment_id):
-    verify_environment_permission([environment_id])
-    with DBSession() as session:
-        board = logic.get_or_create_user_favorite_board(
-            current_user.id, environment_id, session=session
-        )
-        return board.to_dict(extra_fields=["docs", "tables", "boards", "items"])

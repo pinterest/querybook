@@ -5,6 +5,7 @@ import { ICancelablePromise } from 'lib/datasource';
 import { getQueryString, replaceQueryString } from 'lib/utils/query-string';
 import { queryMetastoresSelector } from 'redux/dataSources/selector';
 import {
+    SearchBoardResource,
     SearchDataDocResource,
     SearchQueryResource,
     SearchTableResource,
@@ -144,6 +145,11 @@ export function performSearch(): ThunkResult<Promise<ISearchPreview[]>> {
                         fields: Object.keys(searchState.searchFields),
                     });
                     break;
+                case SearchType.Board:
+                    searchRequest = SearchBoardResource.search({
+                        ...searchParams,
+                        environment_id: state.environment.currentEnvironmentId,
+                    });
             }
 
             dispatch({

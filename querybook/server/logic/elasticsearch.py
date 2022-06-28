@@ -46,6 +46,7 @@ from logic.query_execution import (
 )
 from models.user import User
 from models.datadoc import DataCellType
+from models.board import Board
 
 
 LOG = get_logger(__file__)
@@ -428,7 +429,6 @@ def get_joined_cells(datadoc):
 
 @with_session
 def datadocs_to_es(datadoc, fields=None, session=None):
-
     field_to_getter = {
         "id": datadoc.id,
         "environment_id": datadoc.environment_id,
@@ -738,6 +738,102 @@ def update_user_by_id(uid, session=None):
 
 
 """
+    BOARDS
+"""
+
+
+@with_session
+def get_boards_iter(batch_size=5000, fields=None, session=None):
+    offset = 0
+
+    while True:
+        boards = Board.get_all(
+            limit=batch_size,
+            offset=offset,
+            session=session,
+        )
+        LOG.info("\n--Board count: {}, offset: {}".format(len(boards), offset))
+
+        for board in boards:
+            expanded_board = board_to_es(board, fields=fields, session=session)
+            yield expanded_board
+
+        if len(boards) < batch_size:
+            break
+        offset += batch_size
+
+
+@with_session
+def board_to_es(board, fields=None, session=None):
+    def get_board_doc_titles():
+        return [doc.title for doc in board.docs if doc.title]
+
+    def get_board_table_names():
+        table_names = []
+        for table in board.tables:
+            table_names.append("{}.{}".format(table.data_schema.name, table.name))
+        return table_names
+
+    def get_readable_user_ids():
+        uids = [board.owner_uid]
+        for board_editor in board.editors:
+            uids.append(board_editor.uid)
+        return uids
+
+    field_to_getter = {
+        "id": board.id,
+        "title": board.name,
+        "environment_id": board.environment_id,
+        "description": lambda: richtext_to_plaintext(board.description),
+        "public": board.public,
+        "owner_uid": board.owner_uid,
+        "full_table_name": get_board_table_names,
+        "doc_name": get_board_doc_titles,
+        "readable_user_ids": get_readable_user_ids,
+    }
+    return _get_dict_by_field(field_to_getter, fields=fields)
+
+
+def _bulk_insert_boards():
+    index_name = ES_CONFIG["boards"]["index_name"]
+
+    for board in get_boards_iter():
+        _insert(index_name, board["id"], board)
+
+
+def _bulk_update_boards(fields: Set[str] = None):
+    index_name = ES_CONFIG["boards"]["index_name"]
+
+    for board in get_boards_iter(fields=fields):
+        updated_body = {"doc": board, "doc_as_upsert": True}
+        _update(index_name, board["id"], updated_body)
+
+
+@with_exception
+@with_session
+def update_board_by_id(board_id, session=None):
+    index_name = ES_CONFIG["users"]["index_name"]
+
+    board = Board.get(id=board_id, session=session)
+    if board is None or board.deleted_at is not None:
+        try:
+            _delete(index_name, id=board_id)
+        except Exception:
+            LOG.error("failed to delete board {}. Will pass.".format(board_id))
+    else:
+        formatted_object = board_to_es(board, session=session)
+        try:
+            # Try to update if present
+            updated_body = {
+                "doc": formatted_object,
+                "doc_as_upsert": True,
+            }  # ES requires this format for updates
+            _update(index_name, board, updated_body)
+        except Exception:
+            LOG.error("failed to upsert board {}. Will pass.".format(board))
+
+
+"""
     Elastic Search Utils
 """
 
@@ -754,25 +850,32 @@ def _update(index_name, id, content):
     get_hosted_es().update(index=index_name, id=id, body=content)
 
 
+def _bulk_insert_index(type_name: str):
+    if type_name == "query_executions":
+        LOG.info("Inserting query executions")
+        _bulk_insert_query_executions()
+    elif type_name == "query_cells":
+        LOG.info("Inserting query cells")
+        _bulk_insert_query_cells()
+    elif type_name == "datadocs":
+        LOG.info("Inserting datadocs")
+        _bulk_insert_datadocs()
+    elif type_name == "tables":
+        LOG.info("Inserting tables")
+        _bulk_insert_tables()
+    elif type_name == "users":
+        LOG.info("Inserting users")
+        _bulk_insert_users()
+    elif type_name == "boards":
+        LOG.info("Inserting boards")
+        _bulk_insert_boards()
+
+
 def create_indices(*config_names):
     es_configs = get_es_config_by_name(*config_names)
     for es_config in es_configs:
         get_hosted_es().indices.create(es_config["index_name"], es_config["mappings"])
-
-    LOG.info("Inserting query executions")
-    _bulk_insert_query_executions()
-
-    LOG.info("Inserting query cells")
-    _bulk_insert_query_cells()
-
-    LOG.info("Inserting datadocs")
-    _bulk_insert_datadocs()
-
-    LOG.info("Inserting tables")
-    _bulk_insert_tables()
-
-    LOG.info("Inserting users")
-    _bulk_insert_users()
+        _bulk_insert_index(es_config["type_name"])
 
 
 def create_indices_if_not_exist(*config_names):
@@ -782,21 +885,7 @@ def create_indices_if_not_exist(*config_names):
             get_hosted_es().indices.create(
                 es_config["index_name"], es_config["mappings"]
             )
-            if es_config["type_name"] == "query_executions":
-                LOG.info("Inserting query executions")
-                _bulk_insert_query_executions()
-            elif es_config["type_name"] == "query_cells":
-                LOG.info("Inserting query cells")
-                _bulk_insert_query_cells()
-            elif es_config["type_name"] == "datadocs":
-                LOG.info("Inserting datadocs")
-                _bulk_insert_datadocs()
-            elif es_config["type_name"] == "tables":
-                LOG.info("Inserting tables")
-                _bulk_insert_tables()
-            elif es_config["type_name"] == "users":
-                LOG.info("Inserting users")
-                _bulk_insert_users()
+            _bulk_insert_index(es_config["type_name"])
 
 
 def delete_indices(*config_names):
@@ -838,3 +927,5 @@ def bulk_update_index_by_fields(config_name, fields):
         _bulk_update_tables(fields=fields)
     elif type_name == "users":
         _bulk_update_users(fields=fields)
+    elif type_name == "boards":
+        _bulk_update_boards(fields=fields)
