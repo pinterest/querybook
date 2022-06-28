@@ -148,7 +148,7 @@ export const SearchOverview: React.FunctionComponent = () => {
         }
 
         searchTabs.push({
-            name: 'Board',
+            name: 'List',
             key: SearchType.Board,
         });
 

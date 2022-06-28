@@ -194,5 +194,21 @@ def get_all_public_boards(session=None):
     return session.query(Board).filter(Board.public.is_(True)).all()
 
 
+@with_session
+def update_board_item_description(board_item, description, session=None):
+    board_item.description = description
+    session.commit()
+
+    return board_item
+
+
+@with_session
+def update_board_item_meta(board_item, meta, session=None):
+    board_item.meta = meta
+    session.commit()
+
+    return board_item
+
+
 def update_es_boards_by_id(board_id: int):
     sync_elasticsearch.apply_async(args=[ElasticsearchItem.boards.value, board_id])

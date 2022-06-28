@@ -37,6 +37,7 @@ const BoardDOM: React.FunctionComponent<IBoardDOMProps> = ({
     const boardItemDOM = isPublicList
         ? board.boards?.map((boardId) => (
               <BoardBoardItem
+                  parentBoardId={0}
                   boardId={boardId}
                   key={boardId}
                   isCollapsed={defaultCollapse}
@@ -49,6 +50,8 @@ const BoardDOM: React.FunctionComponent<IBoardDOMProps> = ({
               ?.map((boardItem) =>
                   boardItem.data_doc_id ? (
                       <BoardDataDocItem
+                          boardId={board.id}
+                          itemId={boardItem.id}
                           docId={boardItem.data_doc_id}
                           key={boardItem.id}
                           isCollapsed={defaultCollapse}
@@ -56,6 +59,8 @@ const BoardDOM: React.FunctionComponent<IBoardDOMProps> = ({
                       />
                   ) : boardItem.table_id ? (
                       <BoardDataTableItem
+                          boardId={board.id}
+                          itemId={boardItem.id}
                           tableId={boardItem.table_id}
                           key={boardItem.id}
                           isCollapsed={defaultCollapse}
@@ -63,6 +68,8 @@ const BoardDOM: React.FunctionComponent<IBoardDOMProps> = ({
                       />
                   ) : (
                       <BoardBoardItem
+                          parentBoardId={board.id}
+                          itemId={boardItem.id}
                           boardId={boardItem.board_id ?? boardItem.id}
                           key={boardItem.board_id ?? boardItem.id}
                           isCollapsed={defaultCollapse}
@@ -73,6 +80,7 @@ const BoardDOM: React.FunctionComponent<IBoardDOMProps> = ({
 
     return (
         <div className="Board">
+            <div className="Board-left" />
             <div className="Board-content">
                 {isPublicList ? (
                     <AccentText
