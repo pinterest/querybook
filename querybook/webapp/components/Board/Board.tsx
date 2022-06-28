@@ -80,6 +80,7 @@ const BoardDOM: React.FunctionComponent<IBoardDOMProps> = ({
 
     return (
         <div className="Board">
+            <div className="Board-left" />
             <div className="Board-content">
                 {isPublicList ? (
                     <AccentText
