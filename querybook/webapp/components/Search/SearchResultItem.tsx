@@ -2,7 +2,6 @@ import { escape, escapeRegExp } from 'lodash';
 import React, { useMemo, useRef, useState } from 'react';
 import { useSelector } from 'react-redux';
 
-import { UserAvatar } from 'components/UserBadge/UserAvatar';
 import {
     IBoardPreview,
     IDataDocPreview,
@@ -15,7 +14,6 @@ import { generateFormattedDate } from 'lib/utils/datetime';
 import { stopPropagation } from 'lib/utils/noop';
 import { queryEngineByIdEnvSelector } from 'redux/queryEngine/selector';
 import { IStoreState } from 'redux/store/types';
-import { IDataDocPreview, IQueryPreview, ITablePreview } from 'const/search';
 
 import { SearchResultItemBoardItemAddButton } from './SearchResultItemBoardItemAddButton';
 import { UserAvatar } from 'components/UserBadge/UserAvatar';

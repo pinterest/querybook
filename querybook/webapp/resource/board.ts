@@ -67,6 +67,7 @@ export const BoardResource = {
                 description: updatedDescription,
             }
         ),
+
     updateItemMeta: (
         boardId: number,
         boardItemId: number,
