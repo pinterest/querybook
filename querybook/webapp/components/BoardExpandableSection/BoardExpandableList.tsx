@@ -70,7 +70,6 @@ export const BoardExpandableList: React.FunctionComponent<{
                         title = table.name;
                         itemUrl = `/table/${table.id}/`;
                     } else if (itemType === 'board') {
-                        // board
                         const board = itemData as IBoard;
                         key = `board-${board.id}`;
                         icon = 'Briefcase';
