@@ -9,3 +9,4 @@ class ElasticsearchItem(Enum):
     datadocs = "datadocs"
     tables = "tables"
     users = "users"
+    boards = "boards"
