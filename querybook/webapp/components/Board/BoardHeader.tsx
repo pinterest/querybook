@@ -111,11 +111,11 @@ export const BoardHeader: React.FunctionComponent<IProps> = ({ board }) => {
                     title="Table"
                     onClick={() => openSearchModal(SearchType.Table)}
                 />
-                {/* <TextButton
+                <TextButton
                     icon="Plus"
-                    title="Board"
+                    title="List"
                     onClick={() => openSearchModal(SearchType.Board)}
-                /> */}
+                />
             </div>
         </div>
     );

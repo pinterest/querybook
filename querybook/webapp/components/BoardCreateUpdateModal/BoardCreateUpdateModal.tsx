@@ -81,8 +81,7 @@ export const BoardCreateUpdateForm: React.FunctionComponent<
         >
             {({ submitForm, isSubmitting, isValid }) => {
                 const nameField = <SimpleField name="name" type="input" />;
-                // TODO: enable when sharing is possible
-                // const publicField = <SimpleField name="public" type="toggle" />;
+                const publicField = <SimpleField name="public" type="toggle" />;
 
                 const descriptionField = (
                     <SimpleField name="description" type="rich-text" />
@@ -93,7 +92,7 @@ export const BoardCreateUpdateForm: React.FunctionComponent<
                         <FormWrapper minLabelWidth="150px">
                             <Form>
                                 {nameField}
-                                {/* {publicField} */}
+                                {publicField}
                                 {descriptionField}
                                 <br />
                                 <div className="right-align">

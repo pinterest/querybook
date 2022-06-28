@@ -15,7 +15,7 @@ import {
     IProcessedBoardItem,
 } from './navigatorConst';
 import { getEnumEntries } from 'lib/typescript';
-import { addBoardItem, deleteBoardItem, fetchBoards } from 'redux/board/action';
+import { addBoardItem, fetchBoards } from 'redux/board/action';
 import { myBoardsSelector } from 'redux/board/selector';
 import { Dispatch, IStoreState } from 'redux/store/types';
 
@@ -125,13 +125,6 @@ export const DataDocNavigatorBoardSection: React.FC<
                             : boardItem.table_id;
                     await dispatch(
                         addBoardItem(toBoardId, boardItemType, boardItemItemId)
-                    );
-                    await dispatch(
-                        deleteBoardItem(
-                            sourceBoardId,
-                            boardItemType,
-                            boardItemItemId
-                        )
                     );
                 }
             }

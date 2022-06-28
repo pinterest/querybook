@@ -408,9 +408,12 @@ export const BoardItem: React.FunctionComponent<{
     searchString: string;
 }> = ({ preview, url, searchString }) => {
     const selfRef = useRef<HTMLDivElement>();
-    const { owner_uid: ownerUid, description } = preview;
+    const { owner_uid: ownerUid, description, id } = preview;
     const { userInfo: ownerInfo, loading } = useUser({ uid: ownerUid });
     const handleClick = React.useMemo(() => openClick.bind(null, url), [url]);
+    const currentBoardId = useSelector(
+        (state: IStoreState) => state.board.currentBoardId
+    );
 
     if (loading) {
         return (
@@ -434,7 +437,7 @@ export const BoardItem: React.FunctionComponent<{
     );
 
     return (
-        <>
+        <div className="SearchResultItemContainer">
             <div
                 className="SearchResultItem DataDocItem"
                 onClick={handleClick}
@@ -459,6 +462,24 @@ export const BoardItem: React.FunctionComponent<{
                 </div>
             </div>
             <UrlContextMenu anchorRef={selfRef} url={url} />
-        </>
+            {currentBoardId === id ? null : (
+                <Button className="SearchResultItemBoardItemAddButton flex-center">
+                    {currentBoardId ? (
+                        <SearchResultItemBoardItemAddButton
+                            itemType="board"
+                            itemId={id}
+                        />
+                    ) : (
+                        <BoardItemAddButton
+                            itemId={id}
+                            itemType="board"
+                            size={24}
+                            noPadding
+                            tooltipPos="left"
+                        />
+                    )}
+                </Button>
+            )}
+        </div>
     );
 };
