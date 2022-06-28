@@ -1,16 +1,16 @@
 import { stateFromHTML } from 'draft-js-import-html';
 import React, { useMemo } from 'react';
 
-import { AccentText, StyledText } from 'ui/StyledText/StyledText';
-import { IBoardBase } from 'const/board';
 import { UserAvatar } from 'components/UserBadge/UserAvatar';
+import { IBoardBase } from 'const/board';
 import { useUser } from 'hooks/redux/useUser';
-import { LoadingRow } from 'ui/Loading/Loading';
-import { Level } from 'ui/Level/Level';
 import { generateFormattedDate } from 'lib/utils/datetime';
 import { getWithinEnvUrl } from 'lib/utils/query-string';
+import { Level } from 'ui/Level/Level';
 import { Link } from 'ui/Link/Link';
+import { LoadingRow } from 'ui/Loading/Loading';
 import { RichTextEditor } from 'ui/RichTextEditor/RichTextEditor';
+import { AccentText, StyledText } from 'ui/StyledText/StyledText';
 
 import './BoardDetailedList.scss';
 
@@ -72,12 +72,10 @@ const BoardListItem: React.FunctionComponent<{
 
 export const BoardDetailedList: React.FunctionComponent<
     IBoardDetailedListProps
-> = ({ boards }) => {
-    return (
-        <div className="BoardDetailedList">
-            {boards.map((board) => (
-                <BoardListItem board={board} key={board.id} />
-            ))}
-        </div>
-    );
-};
+> = ({ boards }) => (
+    <div className="BoardDetailedList">
+        {boards.map((board) => (
+            <BoardListItem board={board} key={board.id} />
+        ))}
+    </div>
+);
