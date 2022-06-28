@@ -175,7 +175,7 @@ export const QueryItem: React.FunctionComponent<IQueryItemProps> = ({
     const queryType = isQueryCell ? 'query cell' : 'execution';
 
     return (
-        <>
+        <div className="SearchResultItemContainer">
             <div
                 className="SearchResultItem QueryItem"
                 onClick={handleClick}
@@ -204,7 +204,7 @@ export const QueryItem: React.FunctionComponent<IQueryItemProps> = ({
                 </div>
             </div>
             <UrlContextMenu anchorRef={selfRef} url={url} />
-        </>
+        </div>
     );
 };
 
@@ -244,7 +244,7 @@ export const DataDocItem: React.FunctionComponent<IDataDocItemProps> = ({
     );
 
     return (
-        <>
+        <div className="SearchResultItemContainer">
             <div
                 className="SearchResultItem DataDocItem"
                 onClick={handleClick}
@@ -272,7 +272,7 @@ export const DataDocItem: React.FunctionComponent<IDataDocItemProps> = ({
                 </div>
             </div>
             <UrlContextMenu anchorRef={selfRef} url={url} />
-        </>
+        </div>
     );
 };
 
