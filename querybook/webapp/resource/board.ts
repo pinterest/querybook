@@ -52,7 +52,7 @@ export const BoardResource = {
         }),
 
     getItemBoards: (envId: number, itemType: BoardItemType, itemId: number) =>
-        ds.fetch<number[]>(`/board_item/${itemType}/${itemId}/board/`, {
+        ds.fetch<IBoardBase[]>(`/board_item/${itemType}/${itemId}/board/`, {
             environment_id: envId,
         }),
 };

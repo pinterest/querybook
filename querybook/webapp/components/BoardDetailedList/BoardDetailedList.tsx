@@ -2,7 +2,7 @@ import { stateFromHTML } from 'draft-js-import-html';
 import React from 'react';
 
 import { AccentText, StyledText } from 'ui/StyledText/StyledText';
-import { IBoard } from 'const/board';
+import { IBoardBase } from 'const/board';
 import { UserAvatar } from 'components/UserBadge/UserAvatar';
 import { useUser } from 'hooks/redux/useUser';
 import { LoadingRow } from 'ui/Loading/Loading';
@@ -15,11 +15,11 @@ import { RichTextEditor } from 'ui/RichTextEditor/RichTextEditor';
 import './BoardDetailedList.scss';
 
 export interface IBoardDetailedListProps {
-    boards: IBoard[];
+    boards: IBoardBase[];
 }
 
 const BoardListItem: React.FunctionComponent<{
-    board: IBoard;
+    board: IBoardBase;
 }> = ({ board }) => {
     const {
         created_at: createdAt,
@@ -57,7 +57,7 @@ const BoardListItem: React.FunctionComponent<{
             </div>
             <Level className="Board-bottom">
                 <span className="Board-owner-info">
-                    <UserAvatar className="mr4" uid={ownerUid} tiny />
+                    <UserAvatar uid={ownerUid} tiny />
                     {ownerInfo.username}
                 </span>
                 <StyledText size="small" color="lightest">
