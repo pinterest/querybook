@@ -99,7 +99,7 @@ def delete_board(board_id, **fields):
         Board.delete(board.id, session=session)
 
 
-@register("/board_item/<item_type>/<int:item_id>/board/", methods=["GET"])
+@register("/board_item/<item_type>/<int:item_id>/board_id/", methods=["GET"])
 def get_board_ids_from_board_item(item_type: str, item_id: int, environment_id: int):
     """Given an potential item, find all possible board ids it can
        be related to
@@ -110,6 +110,21 @@ def get_board_ids_from_board_item(item_type: str, item_id: int, environment_id: 
         environment_id {[int]} - [id of board environment]
     """
     return logic.get_board_ids_from_board_item(item_type, item_id, environment_id)
+
+
+@register("/board_item/<item_type>/<int:item_id>/board/", methods=["GET"])
+def get_boards_from_board_item(item_type: str, item_id: int, environment_id: int):
+    """Given an potential item, find all boards containing the list
+       that the current user has access to
+
+    Arguments:
+        item_type {[str]} -- [data_doc or table]
+        item_id {[int]} -- [Doc id or table id]
+        environment_id {[int]} - [id of board environment]
+    """
+    return logic.get_accessible_boards_from_board_item(
+        item_type, item_id, environment_id, current_user.id
+    )
 
 
 @register(
