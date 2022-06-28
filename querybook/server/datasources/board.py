@@ -234,4 +234,3 @@ def update_board_item_meta(board_id, board_item_id, meta):
         )
 
         return logic.update_board_item_meta(board_item, meta, session=session)
-

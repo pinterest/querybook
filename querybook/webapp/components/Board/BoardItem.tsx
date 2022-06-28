@@ -89,7 +89,7 @@ export const BoardItem: React.FunctionComponent<IBoardItemProps> = ({
                 display_table_description: !displayTableDescription,
             })
         );
-    }, [boardId, boardItemData?.meta, displayTableDescription]);
+    }, [boardId, boardItemData, displayTableDescription]);
 
     const boardItemClassname = clsx({
         BoardItem: true,
