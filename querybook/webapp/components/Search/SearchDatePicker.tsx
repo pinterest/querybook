@@ -49,7 +49,14 @@ export const SearchDatePicker: React.FC<ISearchDatePickerProps> = ({
             )}
         >
             <span>{name}</span>
-            <input id={id} type="date" value={dateValue} onChange={onChange} />
+            <div>
+                <input
+                    id={id}
+                    type="date"
+                    value={dateValue}
+                    onChange={onChange}
+                />
+            </div>
         </div>
     );
 };

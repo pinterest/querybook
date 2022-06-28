@@ -8,17 +8,17 @@ export const LinkInput: React.FunctionComponent<{
     onSubmit: (url: string) => any;
 }> = ({ onDismiss, onSubmit }) => {
     const inputRef = React.useRef<HTMLInputElement>();
-    React.useEffect(() => {
-        // This is an hack to get input focus
-        // there are 2 issues:
-        //    1. the autoFocus prop does not work
-        //    2. immediately setting inputRef to focus
-        //       does not work. Possibly because it is in
-        //       a popover
-        setTimeout(() => {
-            inputRef.current.focus();
-        }, 50);
-    }, [inputRef.current]);
+    // React.useEffect(() => {
+    //     // This is an hack to get input focus
+    //     // there are 2 issues:
+    //     //    1. the autoFocus prop does not work
+    //     //    2. immediately setting inputRef to focus
+    //     //       does not work. Possibly because it is in
+    //     //       a popover
+    //     setTimeout(() => {
+    //         inputRef.current.focus();
+    //     }, 50);
+    // }, [inputRef.current]);
 
     return (
         <div className="toolbar-link-input-wrapper">
@@ -39,7 +39,7 @@ export const LinkInput: React.FunctionComponent<{
                         onDismiss();
                     }
                 }}
-                autoFocus
+                autoFocus={false}
             />
         </div>
     );
