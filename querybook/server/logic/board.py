@@ -169,6 +169,7 @@ def get_board_ids_from_board_item(item_type, item_id, environment_id, session=No
         )
     )
 
+
 @with_session
 def get_accessible_boards_from_board_item(
     item_type, item_id, environment_id, current_user_id, session=None
@@ -191,6 +192,7 @@ def get_accessible_boards_from_board_item(
 @with_session
 def get_all_public_boards(session=None):
     return session.query(Board).filter(Board.public.is_(True)).all()
+
 
 def update_es_boards_by_id(board_id: int):
     sync_elasticsearch.apply_async(args=[ElasticsearchItem.boards.value, board_id])
