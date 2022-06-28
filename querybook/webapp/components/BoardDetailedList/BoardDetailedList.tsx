@@ -1,12 +1,11 @@
 import { stateFromHTML } from 'draft-js-import-html';
-import React, { useMemo } from 'react';
+import React from 'react';
 
 import { UserAvatar } from 'components/UserBadge/UserAvatar';
 import { IBoardBase } from 'const/board';
 import { useUser } from 'hooks/redux/useUser';
 import { generateFormattedDate } from 'lib/utils/datetime';
 import { getWithinEnvUrl } from 'lib/utils/query-string';
-import { Level } from 'ui/Level/Level';
 import { Link } from 'ui/Link/Link';
 import { LoadingRow } from 'ui/Loading/Loading';
 import { RichTextEditor } from 'ui/RichTextEditor/RichTextEditor';
@@ -30,42 +29,47 @@ const BoardListItem: React.FunctionComponent<{
     } = board;
     const { userInfo: ownerInfo, loading } = useUser({ uid: ownerUid });
 
-    const richTextDescription = useMemo(
-        () => stateFromHTML(description),
-        [description]
-    );
-
     if (loading) {
         return (
-            <div className="Board flex-center">
+            <div className="BoardListItem flex-center">
                 <LoadingRow />
             </div>
         );
     }
 
     return (
-        <div className="Board">
-            <Link to={getWithinEnvUrl(`/list/${id}`)}>
-                <AccentText size="smedium" weight="bold" color="text" hover>
-                    {name}
-                </AccentText>
-            </Link>
-            <div className="Board-description mv8">
-                {richTextDescription.getPlainText().length ? (
-                    <RichTextEditor value={richTextDescription} readOnly />
-                ) : (
-                    'no description'
-                )}
-            </div>
-            <Level className="Board-bottom">
-                <span className="Board-owner-info">
-                    <UserAvatar uid={ownerUid} tiny />
-                    {ownerInfo.username}
-                </span>
+        <div className="BoardListItem">
+            <div className="BoardListItem-top horizontal-space-between">
+                <Link to={getWithinEnvUrl(`/list/${id}`)}>
+                    <AccentText size="smedium" weight="bold" color="text" hover>
+                        {name}
+                    </AccentText>
+                </Link>
                 <StyledText size="small" color="lightest">
                     {generateFormattedDate(createdAt, 'X')}
                 </StyledText>
-            </Level>
+            </div>
+            <span className="flex-row mt4">
+                <UserAvatar uid={ownerUid} tiny />
+                {ownerInfo.username}
+            </span>
+            <div className="BoardListItem-description mv8">
+                {stateFromHTML(description).getPlainText().length ? (
+                    <RichTextEditor
+                        value={stateFromHTML(description)}
+                        readOnly
+                    />
+                ) : (
+                    <AccentText
+                        className="mt8"
+                        noUserSelect
+                        color="lightest"
+                        size="small"
+                    >
+                        No list description
+                    </AccentText>
+                )}
+            </div>
         </div>
     );
 };

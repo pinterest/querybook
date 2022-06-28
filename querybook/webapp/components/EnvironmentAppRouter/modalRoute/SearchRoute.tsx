@@ -8,6 +8,7 @@ import { useModalRoute } from 'hooks/useModalRoute';
 import history from 'lib/router-history';
 import { mapQueryParamToState as mapQueryParamToStateAction } from 'redux/search/action';
 import { Modal } from 'ui/Modal/Modal';
+import { setCurrentBoardId } from 'redux/board/action';
 
 const SearchRoute: React.FunctionComponent<RouteComponentProps> = ({
     location,
@@ -25,6 +26,13 @@ const SearchRoute: React.FunctionComponent<RouteComponentProps> = ({
             mapQueryParamToState();
         }
     }, []);
+
+    React.useEffect(() => {
+        const isFromBoard = location.state.from === 'board';
+        if (!isFromBoard) {
+            dispatch(setCurrentBoardId(null));
+        }
+    }, [location.state]);
 
     const contentDOM = <SearchOverview />;
 

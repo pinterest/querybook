@@ -1,3 +1,6 @@
 .BoardViewersList {
     width: 400px;
+    > div {
+        margin-top: 16px;
+    }
 }

@@ -1,7 +1,7 @@
 import type {
     BoardItemType,
     IBoardBase,
-    IBoardItem,
+    IBoardItemRaw,
     IBoardRaw,
     IBoardUpdatableField,
 } from 'const/board';
@@ -41,7 +41,7 @@ export const BoardResource = {
     delete: (boardId: number) => ds.delete(`/board/${boardId}/`),
 
     addItem: (boardId: number, itemType: BoardItemType, itemId: number) =>
-        ds.save<IBoardItem>(`/board/${boardId}/${itemType}/${itemId}/`),
+        ds.save<IBoardItemRaw>(`/board/${boardId}/${itemType}/${itemId}/`),
 
     moveItem: (boardId: number, fromIndex: number, toIndex: number) =>
         ds.save<null>(`/board/${boardId}/move/${fromIndex}/${toIndex}/`),
@@ -58,4 +58,28 @@ export const BoardResource = {
         ds.fetch<IBoardBase[]>(`/board_item/${itemType}/${itemId}/board/`, {
             environment_id: envId,
         }),
+
+    updateItemDescription: (
+        boardId: number,
+        boardItemId: number,
+        updatedDescription: string
+    ) =>
+        ds.update<IBoardItemRaw>(
+            `/board/${boardId}/item/${boardItemId}/description/`,
+            {
+                description: updatedDescription,
+            }
+        ),
+
+    updateItemMeta: (
+        boardId: number,
+        boardItemId: number,
+        updatedMeta: Record<string, any>
+    ) =>
+        ds.update<IBoardItemRaw>(
+            `/board/${boardId}/item/${boardItemId}/meta/`,
+            {
+                meta: updatedMeta,
+            }
+        ),
 };

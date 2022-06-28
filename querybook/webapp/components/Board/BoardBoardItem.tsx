@@ -7,12 +7,16 @@ import { Dispatch, IStoreState } from 'redux/store/types';
 import { BoardItem } from './BoardItem';
 
 interface IProps {
+    parentBoardId: number;
+    itemId?: number;
     boardId: number;
     isCollapsed: boolean;
     isEditMode: boolean;
 }
 
 export const BoardBoardItem: React.FunctionComponent<IProps> = ({
+    parentBoardId,
+    itemId,
     boardId,
     isCollapsed,
     isEditMode,
@@ -27,15 +31,16 @@ export const BoardBoardItem: React.FunctionComponent<IProps> = ({
         dispatch(fetchBoardIfNeeded(boardId));
     }, [boardId]);
 
-    return (
+    return board ? (
         <BoardItem
+            boardId={parentBoardId}
+            boardItemId={itemId}
             itemId={boardId}
             itemType="board"
             title={board?.name}
             titleUrl={`/list/${boardId}/`}
-            notesDOM={null}
             defaultCollapsed={isCollapsed}
             isEditMode={isEditMode}
         />
-    );
+    ) : null;
 };

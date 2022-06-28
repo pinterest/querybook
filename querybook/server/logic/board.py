@@ -202,3 +202,19 @@ def get_all_public_boards(environment_id, session=None):
         .filter(Board.environment_id == environment_id)
         .all()
     )
+
+
+@with_session
+def update_board_item_description(board_item, description, session=None):
+    board_item.description = description
+    session.commit()
+
+    return board_item
+
+
+@with_session
+def update_board_item_meta(board_item, meta, session=None):
+    board_item.meta = meta
+    session.commit()
+
+    return board_item

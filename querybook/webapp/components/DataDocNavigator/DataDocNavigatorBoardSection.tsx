@@ -15,7 +15,7 @@ import {
     IProcessedBoardItem,
 } from './navigatorConst';
 import { getEnumEntries } from 'lib/typescript';
-import { addBoardItem, deleteBoardItem, fetchBoards } from 'redux/board/action';
+import { addBoardItem, fetchBoards } from 'redux/board/action';
 import { myBoardsSelector } from 'redux/board/selector';
 import { Dispatch, IStoreState } from 'redux/store/types';
 
@@ -28,6 +28,7 @@ import { Icon } from 'ui/Icon/Icon';
 import { Level, LevelItem } from 'ui/Level/Level';
 import { OrderByButton } from 'ui/OrderByButton/OrderByButton';
 import { Title } from 'ui/Title/Title';
+import { useRouteMatch } from 'react-router-dom';
 
 interface INavigatorBoardSectionProps {
     selectedDocId: number;
@@ -41,6 +42,13 @@ const BoardOrderByOptions = getEnumEntries(BoardOrderBy);
 export const DataDocNavigatorBoardSection: React.FC<
     INavigatorBoardSectionProps
 > = ({ selectedDocId, collapsed, setCollapsed, filterString }) => {
+    const match = useRouteMatch('/:env/:ignore(list)?/:matchBoardId?');
+    const { matchBoardId } = match?.params ?? {};
+    const selectedBoardId = useMemo(
+        () => (matchBoardId ? Number(matchBoardId) : null),
+        [matchBoardId]
+    );
+
     const toggleCollapsed = useCallback(
         () => setCollapsed(!collapsed),
         [setCollapsed, collapsed]
@@ -118,13 +126,6 @@ export const DataDocNavigatorBoardSection: React.FC<
                     await dispatch(
                         addBoardItem(toBoardId, boardItemType, boardItemItemId)
                     );
-                    await dispatch(
-                        deleteBoardItem(
-                            sourceBoardId,
-                            boardItemType,
-                            boardItemItemId
-                        )
-                    );
                 }
             }
         },
@@ -187,6 +188,7 @@ export const DataDocNavigatorBoardSection: React.FC<
                     key={board.id}
                     id={board.id}
                     selectedDocId={selectedDocId}
+                    selectedBoardId={selectedBoardId}
                     filterString={filterString}
                     onMoveBoardItem={handleMoveBoardItem}
                 />

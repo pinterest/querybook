@@ -33,6 +33,8 @@ export interface IReceiveBoardItemAction extends Action {
     payload: {
         boardItem: IBoardItem;
         boardId: number;
+        itemType?: BoardItemType;
+        itemId?: number;
     };
 }
 
@@ -61,17 +63,34 @@ export interface IMoveBoardItemAction extends Action {
     };
 }
 
+export interface IUpdateBoardItemDescriptionAction extends Action {
+    type: '@@board/UPDATE_BOARD_ITEM_DESCRIPTION';
+    payload: {
+        boardItem: IBoardItem;
+    };
+}
+
+export interface ISetCurrentBoardIdAction extends Action {
+    type: '@@board/SET_CURRENT_BOARD_ID';
+    payload: {
+        boardId: number;
+    };
+}
+
 export type BoardAction =
     | IReceiveBoardsAction
     | IReceiveBoardWithItemsAction
     | IRemoveBoardAction
     | IReceiveBoardItemAction
     | IRemoveBoardItemAction
-    | IMoveBoardItemAction;
+    | IMoveBoardItemAction
+    | IUpdateBoardItemDescriptionAction
+    | ISetCurrentBoardIdAction;
 
 export interface IBoardState {
     boardById: Record<number, IBoardWithItemIds>;
     boardItemById: Record<number, IBoardItem>;
+    currentBoardId: number;
 }
 
 export type ThunkResult<R> = ThunkAction<
