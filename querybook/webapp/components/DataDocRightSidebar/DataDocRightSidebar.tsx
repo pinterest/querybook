@@ -14,6 +14,7 @@ import { DataDocScheduleButton } from './DataDocScheduleButton';
 import { DeleteDataDocButton } from './DeleteDataDocButton';
 
 import './DataDocRightSidebar.scss';
+import { DataDocListsButton } from 'components/DataDocListsButton/DataDocListsButton';
 
 interface IProps {
     dataDoc: IDataDoc;
@@ -60,6 +61,9 @@ export const DataDocRightSidebar: React.FunctionComponent<IProps> = ({
             title="Delete"
         />
     );
+
+    const listsButtonDOM = <DataDocListsButton dataDoc={dataDoc} />;
+
     const templateButtonDOM = (
         <DataDocTemplateButton
             dataDoc={dataDoc}
@@ -108,6 +112,7 @@ export const DataDocRightSidebar: React.FunctionComponent<IProps> = ({
                 {isEditable && exporterExists && (
                     <DataDocDAGExporterButton docId={dataDoc.id} />
                 )}
+                {listsButtonDOM}
                 {templateButtonDOM}
                 {scheduleButtonDOM}
                 <IconButton

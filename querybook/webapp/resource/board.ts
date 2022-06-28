@@ -47,6 +47,11 @@ export const BoardResource = {
         ds.delete(`/board/${boardId}/${itemType}/${itemId}/`),
 
     getItemBoardIds: (envId: number, itemType: BoardItemType, itemId: number) =>
+        ds.fetch<number[]>(`/board_item/${itemType}/${itemId}/board_id/`, {
+            environment_id: envId,
+        }),
+
+    getItemBoards: (envId: number, itemType: BoardItemType, itemId: number) =>
         ds.fetch<number[]>(`/board_item/${itemType}/${itemId}/board/`, {
             environment_id: envId,
         }),
