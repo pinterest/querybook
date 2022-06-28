@@ -114,6 +114,10 @@ export const QueryItem: React.FunctionComponent<IQueryItemProps> = ({
     const queryEngineById = useSelector(queryEngineByIdEnvSelector);
     const selfRef = useRef<HTMLDivElement>();
 
+    const currentBoardId = useSelector(
+        (state: IStoreState) => state.board.currentBoardId
+    );
+
     if (loading) {
         return (
             <div className="SearchResultItem QueryItem flex-center">
@@ -209,6 +213,22 @@ export const QueryItem: React.FunctionComponent<IQueryItemProps> = ({
                 </div>
             </div>
             <UrlContextMenu anchorRef={selfRef} url={url} />
+            <Button className="SearchResultItemBoardItemAddButton flex-center">
+                {currentBoardId ? (
+                    <SearchResultItemBoardItemAddButton
+                        itemType="query"
+                        itemId={id}
+                    />
+                ) : (
+                    <BoardItemAddButton
+                        itemId={id}
+                        itemType="query"
+                        size={24}
+                        noPadding
+                        tooltipPos="left"
+                    />
+                )}
+            </Button>
         </div>
     );
 };

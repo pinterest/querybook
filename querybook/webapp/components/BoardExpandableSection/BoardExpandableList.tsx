@@ -3,6 +3,7 @@ import * as React from 'react';
 import { BoardItemType, IBoard, IBoardItem } from 'const/board';
 import { IDataDoc, emptyDataDocTitleMessage } from 'const/datadoc';
 import { IDataTable } from 'const/metastore';
+import { IQueryExecution } from 'const/queryExecution';
 
 import {
     IProcessedBoardItem,
@@ -20,7 +21,7 @@ export const BoardExpandableList: React.FunctionComponent<{
     boardId: number;
     items: Array<{
         boardItem: IBoardItem | { id: number };
-        itemData: IBoard | IDataDoc | IDataTable;
+        itemData: IBoard | IDataDoc | IDataTable | IQueryExecution;
         id: number;
     }>;
     onDeleteBoardItem?: (itemId: number, itemType: BoardItemType) => void;
@@ -45,7 +46,9 @@ export const BoardExpandableList: React.FunctionComponent<{
                             ? 'data_doc'
                             : boardItem['table_id'] != null
                             ? 'table'
-                            : 'board';
+                            : boardItem['board_id'] != null
+                            ? 'board'
+                            : 'query';
                     let key: string;
                     let icon = null;
                     let itemUrl = '';
@@ -66,7 +69,7 @@ export const BoardExpandableList: React.FunctionComponent<{
                         icon = 'Database';
                         title = table.name;
                         itemUrl = `/table/${table.id}/`;
-                    } else {
+                    } else if (itemType === 'board') {
                         // board
                         const board = itemData as IBoard;
                         key = `board-${board.id}`;
@@ -74,6 +77,13 @@ export const BoardExpandableList: React.FunctionComponent<{
                         title = board.name;
                         itemUrl = `/list/${board.id}/`;
                         selected = selectedBoardId === board.id;
+                    } else {
+                        // query execution
+                        const queryExecution = itemData as IQueryExecution;
+                        key = `execution-${queryExecution.id}`;
+                        icon = 'PlayCircle';
+                        title = 'Execution ' + queryExecution.id;
+                        itemUrl = `/query_execution/${queryExecution.id}/`;
                     }
 
                     return {

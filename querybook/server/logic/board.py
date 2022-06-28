@@ -64,8 +64,8 @@ def update_board(id, commit=True, session=None, **fields):
 
 
 def item_type_to_id_type(item_type):
-    assert item_type in ["data_doc", "table", "board"], "Invalid item type"
-    return item_type + "_id"
+    assert item_type in ["data_doc", "table", "board", "query"], "Invalid item type"
+    return item_type + "_execution_id" if item_type == "query" else item_type + "_id"
 
 
 @with_session

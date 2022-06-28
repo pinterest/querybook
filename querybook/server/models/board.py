@@ -44,6 +44,13 @@ class Board(CRUDMixin, Base):
         secondaryjoin="DataTable.id == BoardItem.table_id",
         viewonly=True,
     )
+    queries = relationship(
+        "QueryExecution",
+        secondary="board_item",
+        primaryjoin="Board.id == BoardItem.parent_board_id",
+        secondaryjoin="QueryExecution.id == BoardItem.query_execution_id",
+        viewonly=True,
+    )
 
     @db.with_session
     def get_max_item_order(self, session=None):
@@ -80,6 +87,11 @@ class BoardItem(CRUDMixin, Base):
         sql.Integer, sql.ForeignKey("data_table.id", ondelete="CASCADE"), nullable=True
     )
     board_id = sql.Column(sql.Integer, sql.ForeignKey("board.id"), nullable=True)
+    query_execution_id = sql.Column(
+        sql.Integer,
+        sql.ForeignKey("query_execution.id", ondelete="CASCADE"),
+        nullable=True,
+    )
 
     parent_board_id = sql.Column(
         sql.Integer, sql.ForeignKey("board.id"), nullable=False

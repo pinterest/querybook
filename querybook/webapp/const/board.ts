@@ -1,6 +1,7 @@
 import { ContentState } from 'draft-js';
 import { IDataDoc } from './datadoc';
 import { IDataTable } from './metastore';
+import { IQueryExecution } from './queryExecution';
 
 // Board returned from API
 export interface IBoardBase {
@@ -22,6 +23,7 @@ export interface IBoardWithItemIds extends IBoard {
     docs: number[];
     tables: number[];
     boards: number[];
+    queries: number[];
     items: number[];
 }
 
@@ -33,6 +35,7 @@ export interface IBoardRaw extends IBoardBase {
     docs: IDataDoc[];
     tables: IDataTable[];
     boards: IBoardItem[];
+    queries: IQueryExecution[];
     items: IBoardItem[];
 }
 
@@ -52,6 +55,7 @@ export interface IBoardItemRaw {
     data_doc_id: number | null;
     table_id: number | null;
     board_id: number | null;
+    query_execution_id: number | null;
 
     description: string;
 
@@ -62,7 +66,7 @@ export interface IBoardItem extends Omit<IBoardItemRaw, 'description'> {
     description: ContentState;
 }
 
-export type BoardItemType = 'table' | 'data_doc' | 'board';
+export type BoardItemType = 'table' | 'data_doc' | 'board' | 'query';
 
 export enum BoardOrderBy {
     alphabetical = 0,
@@ -84,4 +88,5 @@ export const itemTypeToKey = {
     table: 'tables',
     data_doc: 'docs',
     board: 'boards',
+    query: 'queries',
 };

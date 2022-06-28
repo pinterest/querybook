@@ -9,10 +9,6 @@
         cursor: pointer;
         margin-bottom: var(--margin);
 
-        &.QueryItem {
-            padding-bottom: 8px;
-        }
-
         mark {
             background-color: var(--color-accent-light);
             color: var(--color-accent-dark);

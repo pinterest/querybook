@@ -7,6 +7,7 @@ from app.auth.permission import (
     get_data_table_environment_ids,
     get_data_doc_environment_ids,
     get_board_environment_ids,
+    get_query_execution_environment_ids,
 )
 from logic import board as logic
 from logic.board_permission import assert_can_read, assert_can_edit
@@ -46,7 +47,9 @@ def get_board_by_id(board_id):
         board = Board.get(id=board_id, session=session)
         api_assert(board is not None, "Invalid board id", 404)
         verify_environment_permission([board.environment_id])
-        return board.to_dict(extra_fields=["docs", "tables", "boards", "items"])
+        return board.to_dict(
+            extra_fields=["docs", "tables", "boards", "queries", "items"]
+        )
 
 
 @register(
@@ -83,7 +86,9 @@ def update_board(board_id, **fields):
         board = Board.get(id=board_id, session=session)
 
         board = logic.update_board(id=board_id, **fields, session=session)
-        return board.to_dict(extra_fields=["docs", "tables", "boards", "items"])
+        return board.to_dict(
+            extra_fields=["docs", "tables", "boards", "queries" "items"]
+        )
 
 
 @register(
@@ -133,7 +138,10 @@ def get_boards_from_board_item(item_type: str, item_id: int, environment_id: int
 )
 def add_board_item(board_id, item_type, item_id):
     api_assert(
-        item_type == "data_doc" or item_type == "table" or item_type == "board",
+        item_type == "data_doc"
+        or item_type == "table"
+        or item_type == "board"
+        or item_type == "query",
         "Invalid item type",
     )
 
@@ -147,8 +155,10 @@ def add_board_item(board_id, item_type, item_id):
             item_env_ids = get_data_doc_environment_ids(item_id, session=session)
         elif item_type == "table":
             item_env_ids = get_data_table_environment_ids(item_id, session=session)
-        else:
+        elif item_type == "board":
             item_env_ids = get_board_environment_ids(item_id, session=session)
+        else:
+            item_env_ids = get_query_execution_environment_ids(item_id, session=session)
 
         api_assert(
             board.environment_id in item_env_ids,
@@ -184,7 +194,10 @@ def move_board_item(board_id, from_index, to_index):
 )
 def delete_board_item(board_id, item_type, item_id):
     api_assert(
-        item_type == "data_doc" or item_type == "table" or item_type == "board",
+        item_type == "data_doc"
+        or item_type == "table"
+        or item_type == "board"
+        or item_type == "query",
         "Invalid item type",
     )
     with DBSession() as session:
@@ -201,7 +214,9 @@ def get_or_create_favorite_board(environment_id):
         board = logic.get_or_create_user_favorite_board(
             current_user.id, environment_id, session=session
         )
-        return board.to_dict(extra_fields=["docs", "tables", "boards", "items"])
+        return board.to_dict(
+            extra_fields=["docs", "tables", "boards", "queries", "items"]
+        )
 
 
 @register(

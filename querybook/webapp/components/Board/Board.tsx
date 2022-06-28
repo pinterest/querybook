@@ -18,6 +18,7 @@ import { Loading } from 'ui/Loading/Loading';
 import { AccentText } from 'ui/StyledText/StyledText';
 
 import './Board.scss';
+import { BoardQueryItem } from './BoardQueryItem';
 
 interface IBoardDOMProps {
     board: IBoardWithItemIds;
@@ -39,7 +40,7 @@ const BoardDOM: React.FunctionComponent<IBoardDOMProps> = ({
               <BoardBoardItem
                   parentBoardId={0}
                   boardId={boardId}
-                  key={boardId}
+                  key={boardId + 'board'}
                   isCollapsed={defaultCollapse}
                   isEditMode={isEditMode}
               />
@@ -53,7 +54,7 @@ const BoardDOM: React.FunctionComponent<IBoardDOMProps> = ({
                           boardId={board.id}
                           itemId={boardItem.id}
                           docId={boardItem.data_doc_id}
-                          key={boardItem.id}
+                          key={boardItem.id + 'doc'}
                           isCollapsed={defaultCollapse}
                           isEditMode={isEditMode}
                       />
@@ -62,16 +63,25 @@ const BoardDOM: React.FunctionComponent<IBoardDOMProps> = ({
                           boardId={board.id}
                           itemId={boardItem.id}
                           tableId={boardItem.table_id}
-                          key={boardItem.id}
+                          key={boardItem.id + 'table'}
                           isCollapsed={defaultCollapse}
                           isEditMode={isEditMode}
                       />
-                  ) : (
+                  ) : boardItem.board_id ? (
                       <BoardBoardItem
                           parentBoardId={board.id}
                           itemId={boardItem.id}
                           boardId={boardItem.board_id ?? boardItem.id}
-                          key={boardItem.board_id ?? boardItem.id}
+                          key={(boardItem.board_id ?? boardItem.id) + 'board'}
+                          isCollapsed={defaultCollapse}
+                          isEditMode={isEditMode}
+                      />
+                  ) : (
+                      <BoardQueryItem
+                          boardId={board.id}
+                          itemId={boardItem.id}
+                          queryExecutionId={boardItem.query_execution_id}
+                          key={boardItem.id + 'query'}
                           isCollapsed={defaultCollapse}
                           isEditMode={isEditMode}
                       />
