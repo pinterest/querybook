@@ -194,7 +194,6 @@ def get_all_public_boards(session=None):
     return session.query(Board).filter(Board.public.is_(True)).all()
 
 
-
 @with_session
 def update_board_item_description(board_item, description, session=None):
     board_item.description = description
