@@ -1,7 +1,9 @@
 import { IDataSchema } from 'const/metastore';
 import type {
+    IBoardPreview,
     IDataDocPreview,
     IQueryPreview,
+    ISearchBoardParams,
     ISearchDataDocParams,
     ISearchQueryParams,
     ISearchTableParams,
@@ -67,4 +69,12 @@ export const SearchUserResource = {
             '/search/user/',
             params as unknown as Record<string, unknown>
         ),
+};
+
+export const SearchBoardResource = {
+    search: (params: ISearchBoardParams) =>
+        ds.fetch<{
+            results: IBoardPreview[];
+            count: number;
+        }>(`/search/board/`, params as unknown as Record<string, unknown>),
 };

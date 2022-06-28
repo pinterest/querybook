@@ -59,11 +59,9 @@ def construct_query_search_query(
         search_query = {"match_all": {}}
 
     search_filter = match_filters(filters, and_filter_names=FILTERS_TO_AND)
-    if search_filter == {}:
-        search_filter["filter"] = {"bool": {}}
-    search_filter["filter"]["bool"].setdefault("must", []).append(
-        {"bool": {"should": _query_access_terms(uid)}}
-    )
+    search_filter.setdefault("filter", {}).setdefault("bool", {}).setdefault(
+        "must", []
+    ).append({"bool": {"should": _query_access_terms(uid)}})
 
     bool_query = {}
     if search_query != {}:

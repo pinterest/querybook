@@ -245,3 +245,44 @@ users:
                     analyzer: whitespace
                 suggest:
                     type: completion
+boards:
+    index_name: search_boards_v1
+    type_name: boards
+    mappings:
+        settings:
+            analysis:
+                analyzer:
+                    user_content_analyzer:
+                        type: custom
+                        tokenizer: standard
+                        char_filter:
+                            - html_strip
+                normalizer:
+                    case_insensitive:
+                        type: custom
+                        filter:
+                            - lowercase
+        mappings:
+            properties:
+                id:
+                    type: long
+                title:
+                    type: text
+                    analyzer: snowball
+                environment_id:
+                    type: long
+                description:
+                    type: text
+                    analyzer: user_content_analyzer
+                full_table_name:
+                    type: keyword
+                    normalizer: case_insensitive
+                doc_name:
+                    type: text
+                    analyzer: snowball
+                public:
+                    type: boolean
+                owner_uid:
+                    type: long
+                readable_user_ids:
+                    type: integer

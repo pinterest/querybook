@@ -1,7 +1,10 @@
 import datetime
+
+from sqlalchemy import or_
 from app.db import with_session
+from const.elasticsearch import ElasticsearchItem
 from models.board import Board, BoardItem
-from models.user import User
+from tasks.sync_elasticsearch import sync_elasticsearch
 
 
 @with_session
@@ -25,7 +28,7 @@ def create_board(
     commit=True,
     session=None,
 ):
-    return Board.create(
+    board = Board.create(
         {
             "name": name,
             "environment_id": environment_id,
@@ -38,16 +41,26 @@ def create_board(
         session=session,
     )
 
+    if commit:
+        update_es_boards_by_id(board.id)
+
+    return board
+
 
 @with_session
 def update_board(id, commit=True, session=None, **fields):
-    return Board.update(
+    board = Board.update(
         id,
         fields=fields,
         field_names=["name", "description", "public"],
         commit=commit,
         session=session,
     )
+
+    if commit:
+        update_es_boards_by_id(board.id)
+
+    return board
 
 
 def item_type_to_id_type(item_type):
@@ -78,6 +91,8 @@ def add_item_to_board(board_id, item_id, item_type, session=None):  # data_doc o
         session.add(board_item)
         session.commit()
         board_item.id
+        update_es_boards_by_id(board_id)
+
     return board_item
 
 
@@ -138,6 +153,7 @@ def remove_item_from_board(board_id, item_id, item_type, commit=True, session=No
         session.delete(item)
         if commit:
             session.commit()
+            update_es_boards_by_id(board_id)
 
 
 @with_session
@@ -155,30 +171,28 @@ def get_board_ids_from_board_item(item_type, item_id, environment_id, session=No
 
 
 @with_session
-def get_or_create_user_favorite_board(uid, environment_id, session=None):
-    user = User.get(id=uid, session=session)
-    favorite_board = (
+def get_accessible_boards_from_board_item(
+    item_type, item_id, environment_id, current_user_id, session=None
+):
+    return (
         session.query(Board)
-        .filter_by(owner_uid=uid, environment_id=environment_id, board_type="favorite")
-        .first()
-    )
-
-    if not favorite_board:
-        favorite_board = create_board(
-            name=f"{user.username}'s favorite",
-            environment_id=environment_id,
-            board_type="favorite",
-            public=False,
-            owner_uid=uid,
-            session=session,
+        .join(BoardItem, Board.id == BoardItem.parent_board_id)
+        .filter(getattr(BoardItem, item_type_to_id_type(item_type)) == item_id)
+        .filter(Board.environment_id == environment_id)
+        .filter(
+            or_(
+                Board.public.is_(True),
+                Board.owner_uid == current_user_id,
+            )
         )
-
-    return favorite_board
+        .all()
+    )
 
 
 @with_session
 def get_all_public_boards(session=None):
     return session.query(Board).filter(Board.public.is_(True)).all()
+
 
 
 @with_session
@@ -195,3 +209,7 @@ def update_board_item_meta(board_item, meta, session=None):
     session.commit()
 
     return board_item
+
+
+def update_es_boards_by_id(board_id: int):
+    sync_elasticsearch.apply_async(args=[ElasticsearchItem.boards.value, board_id])
