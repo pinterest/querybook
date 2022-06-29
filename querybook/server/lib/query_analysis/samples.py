@@ -60,7 +60,7 @@ def make_samples_query(
             order_by, "ASC" if order_by_asc else "DESC"
         )
 
-    full_name = "%s.%s" % (table.data_schema.name, table.name)
+    full_name = "{}.{}".format(table.data_schema.name, table.name)
     query = """
 SELECT
     *

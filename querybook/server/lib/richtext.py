@@ -15,11 +15,12 @@ def richtext_to_plaintext(text, default="", escape=False) -> str:
 
 
 def try_parse_draftjs(text) -> str:
+    """With Richtext serialized as HTML, this will be deprecated in v4"""
     try:
         content_state = json.loads(text)
         return True, draftjs_content_state_to_plaintext(content_state)
     except json.decoder.JSONDecodeError:
-        # For old text cells the value was plain text
+        # For newer version
         return False, text
 
 

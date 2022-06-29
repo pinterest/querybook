@@ -13,6 +13,7 @@ def sync_elasticsearch(self, item_type, item_id, *args, **kwargs):
         update_user_by_id,
         update_query_execution_by_id,
         update_query_cell_by_id,
+        update_board_by_id,
     )
 
     if item_type == ElasticsearchItem.datadocs.value:
@@ -25,3 +26,5 @@ def sync_elasticsearch(self, item_type, item_id, *args, **kwargs):
         update_query_execution_by_id(item_id)
     elif item_type == ElasticsearchItem.query_cells.value:
         update_query_cell_by_id(item_id)
+    elif item_type == ElasticsearchItem.boards.value:
+        update_board_by_id(item_id)

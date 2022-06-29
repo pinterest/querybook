@@ -3,7 +3,12 @@ import React, { useMemo, useRef, useState } from 'react';
 import { useSelector } from 'react-redux';
 
 import { UserAvatar } from 'components/UserBadge/UserAvatar';
-import { IDataDocPreview, IQueryPreview, ITablePreview } from 'const/search';
+import {
+    IBoardPreview,
+    IDataDocPreview,
+    IQueryPreview,
+    ITablePreview,
+} from 'const/search';
 import { useUser } from 'hooks/redux/useUser';
 import history from 'lib/router-history';
 import { generateFormattedDate } from 'lib/utils/datetime';
@@ -348,6 +353,67 @@ export const DataTableItem: React.FunctionComponent<IDataTableItemProps> = ({
                 </div>
             </div>
             <UrlContextMenu url={url} anchorRef={selfRef} />
+        </>
+    );
+};
+
+export const BoardItem: React.FunctionComponent<{
+    preview: IBoardPreview;
+    url: string;
+    searchString: string;
+}> = ({ preview, url, searchString }) => {
+    const selfRef = useRef<HTMLDivElement>();
+    const { owner_uid: ownerUid, description } = preview;
+    const { userInfo: ownerInfo, loading } = useUser({ uid: ownerUid });
+    const handleClick = React.useMemo(() => openClick.bind(null, url), [url]);
+
+    if (loading) {
+        return (
+            <div className="SearchResultItem BoardItem flex-center">
+                <LoadingRow />
+            </div>
+        );
+    }
+
+    const title = preview.title || 'Untitled Board';
+
+    const highlightedDescription = preview.highlight?.description;
+    const descriptionDOM = highlightedDescription ? (
+        <span
+            dangerouslySetInnerHTML={{
+                __html: formatHighlightStrings(highlightedDescription),
+            }}
+        />
+    ) : (
+        description || 'no description'
+    );
+
+    return (
+        <>
+            <div
+                className="SearchResultItem BoardItem"
+                onClick={handleClick}
+                ref={selfRef}
+            >
+                <div className="result-item-icon">
+                    <UserAvatar uid={ownerUid} />
+                </div>
+                <div className="result-items">
+                    <div className="result-items-top horizontal-space-between">
+                        <HighlightTitle
+                            title={title}
+                            searchString={searchString}
+                        />
+                    </div>
+                    {descriptionDOM}
+                    <Level className="result-items-bottom">
+                        <span className="result-item-owner">
+                            {ownerInfo.username}
+                        </span>
+                    </Level>
+                </div>
+            </div>
+            <UrlContextMenu anchorRef={selfRef} url={url} />
         </>
     );
 };
