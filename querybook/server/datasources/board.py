@@ -31,10 +31,13 @@ def get_my_boards(environment_id, filter_str=None):
     "/board/<int:board_id>/",
     methods=["GET"],
 )
-def get_board_by_id(board_id):
+def get_board_by_id(board_id, environment_id):
     with DBSession() as session:
         if board_id == 0:
-            public_boards = logic.get_all_public_boards(session=session)
+            verify_environment_permission([environment_id])
+            public_boards = logic.get_all_public_boards(
+                environment_id=environment_id, session=session
+            )
             return {
                 "id": 0,
                 "boards": [

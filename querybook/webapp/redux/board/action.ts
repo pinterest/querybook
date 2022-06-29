@@ -87,11 +87,16 @@ export function fetchBoards(
 }
 
 export function fetchBoard(id: number): ThunkResult<Promise<IBoardRaw>> {
-    return (dispatch) =>
-        BoardResource.get(id).then(({ data: board }) => {
+    return (dispatch, getState) => {
+        const state = getState();
+        return BoardResource.get(
+            id,
+            state.environment.currentEnvironmentId
+        ).then(({ data: board }) => {
             receiveBoardWithItems(dispatch, board);
             return board;
         });
+    };
 }
 
 export function fetchBoardIfNeeded(id: number): ThunkResult<Promise<any>> {

@@ -14,7 +14,10 @@ export const BoardResource = {
             filter_str: filterString,
         }),
 
-    get: (boardId: number) => ds.fetch<IBoardRaw>(`/board/${boardId}/`),
+    get: (boardId: number, environmentId: number) =>
+        ds.fetch<IBoardRaw>(`/board/${boardId}/`, {
+            environment_id: environmentId,
+        }),
 
     create: (
         name: string,
