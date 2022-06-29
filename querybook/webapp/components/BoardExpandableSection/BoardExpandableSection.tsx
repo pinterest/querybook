@@ -1,32 +1,32 @@
-import * as React from 'react';
 import clsx from 'clsx';
+import * as React from 'react';
 import { useDrop } from 'react-dnd';
 import toast from 'react-hot-toast';
 import { useDispatch, useSelector } from 'react-redux';
 
-import { BoardItemType } from 'const/board';
-import { IDataDoc } from 'const/datadoc';
-import {
-    deleteBoardItem,
-    moveBoardItem,
-    fetchBoardIfNeeded,
-} from 'redux/board/action';
-import { dataDocNavBoardOpenSelector } from 'redux/querybookUI/selector';
-import { Dispatch, IStoreState } from 'redux/store/types';
-import { setDataDocNavBoard } from 'redux/querybookUI/action';
-import { makeBoardItemsSelector } from 'redux/board/selector';
-
 import { BoardCreateUpdateModal } from 'components/BoardCreateUpdateModal/BoardCreateUpdateModal';
 import {
-    IProcessedBoardItem,
     BoardDraggableType,
     DataDocDraggableType,
+    IProcessedBoardItem,
 } from 'components/DataDocNavigator/navigatorConst';
-import { BoardExpandableList } from './BoardExpandableList';
-import { BoardExpandableHeader } from './BoardExpandableHeader';
-
+import { BoardItemType } from 'const/board';
+import { IDataDoc } from 'const/datadoc';
+import { useMakeSelector } from 'hooks/redux/useMakeSelector';
+import {
+    deleteBoardItem,
+    fetchBoardIfNeeded,
+    moveBoardItem,
+} from 'redux/board/action';
+import { makeBoardItemsSelector } from 'redux/board/selector';
+import { setDataDocNavBoard } from 'redux/querybookUI/action';
+import { dataDocNavBoardOpenSelector } from 'redux/querybookUI/selector';
+import { Dispatch, IStoreState } from 'redux/store/types';
 import { IDragItem } from 'ui/DraggableList/types';
 import { LoadingIcon } from 'ui/Loading/Loading';
+
+import { BoardExpandableHeader } from './BoardExpandableHeader';
+import { BoardExpandableList } from './BoardExpandableList';
 
 import './BoardExpandableSection.scss';
 
@@ -51,13 +51,8 @@ export const BoardExpandableSection: React.FunctionComponent<{
         (state: IStoreState) => state.board.boardById[id]
     );
     const boardItemIds = board?.items;
-    const boardItemsSelector = React.useMemo(
-        () => makeBoardItemsSelector(),
-        []
-    );
-    const items = useSelector((state: IStoreState) =>
-        boardItemsSelector(state, board.id)
-    );
+    const items = useMakeSelector(makeBoardItemsSelector, board.id);
+
     const handleDeleteBoardItem = React.useCallback(
         async (itemId: number, itemType: BoardItemType) => {
             await dispatch(deleteBoardItem(board.id, itemType, itemId));

@@ -2,20 +2,19 @@ import { AxiosError } from 'axios';
 import * as React from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 
+import { BoardRightSidebar } from 'components/BoardRightSidebar/BoardRightSidebar';
 import { IBoardItem, IBoardWithItemIds } from 'const/board';
 import { isAxiosError } from 'lib/utils/error';
 import { fetchBoardIfNeeded } from 'redux/board/action';
 import { Dispatch, IStoreState } from 'redux/store/types';
-
-import { BoardRightSidebar } from 'components/BoardRightSidebar/BoardRightSidebar';
-import { BoardDataDocItem } from './BoardDataDocItem';
-import { BoardDataTableItem } from './BoardDataTableItem';
-import { BoardBoardItem } from './BoardBoardItem';
-import { BoardError } from './BoardError';
-import { BoardHeader } from './BoardHeader';
-
 import { Loading } from 'ui/Loading/Loading';
 import { AccentText } from 'ui/StyledText/StyledText';
+
+import { BoardBoardItem } from './BoardBoardItem';
+import { BoardDataDocItem } from './BoardDataDocItem';
+import { BoardDataTableItem } from './BoardDataTableItem';
+import { BoardError } from './BoardError';
+import { BoardHeader } from './BoardHeader';
 
 import './Board.scss';
 
@@ -32,7 +31,7 @@ const BoardDOM: React.FunctionComponent<IBoardDOMProps> = ({
     // TODO - meowcodes: implement isEditable + board 0
     const [isEditMode, setIsEditMode] = React.useState<boolean>(false);
 
-    const isPublicList = React.useMemo(() => board.id === 0, [board]);
+    const isPublicList = board.id === 0;
 
     const boardItemDOM = isPublicList
         ? board.boards?.map((boardId) => (
@@ -44,9 +43,9 @@ const BoardDOM: React.FunctionComponent<IBoardDOMProps> = ({
               />
           ))
         : board?.items
-              ?.map((itemIdx) => boardItemById?.[itemIdx])
+              ?.map((itemIdx) => boardItemById[itemIdx])
               .filter((i) => i)
-              ?.map((boardItem) =>
+              .map((boardItem) =>
                   boardItem.data_doc_id ? (
                       <BoardDataDocItem
                           docId={boardItem.data_doc_id}

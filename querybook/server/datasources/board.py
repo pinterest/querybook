@@ -40,9 +40,7 @@ def get_board_by_id(board_id, environment_id):
             )
             return {
                 "id": 0,
-                "boards": [
-                    public_board.to_dict()["id"] for public_board in public_boards
-                ],
+                "boards": [public_board.id for public_board in public_boards],
             }
 
         assert_can_read(board_id, session=session)

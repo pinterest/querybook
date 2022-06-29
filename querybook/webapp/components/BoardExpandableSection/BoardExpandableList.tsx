@@ -1,30 +1,32 @@
 import * as React from 'react';
 
-import { BoardItemType, IBoard, IBoardItem } from 'const/board';
-import { IDataDoc, emptyDataDocTitleMessage } from 'const/datadoc';
-import { IDataTable } from 'const/metastore';
-
-import {
-    IProcessedBoardItem,
-    BoardDraggableType,
-} from 'components/DataDocNavigator/navigatorConst';
 import { BoardListItemRow } from 'components/BoardExpandableSection/BoardListItemRow';
-
+import {
+    BoardDraggableType,
+    IProcessedBoardItem,
+} from 'components/DataDocNavigator/navigatorConst';
+import { BoardItemType, IBoard, IBoardItem } from 'const/board';
+import { emptyDataDocTitleMessage, IDataDoc } from 'const/datadoc';
+import { IDataTable } from 'const/metastore';
 import { DraggableList } from 'ui/DraggableList/DraggableList';
 import { IDragItem } from 'ui/DraggableList/types';
 
-export const BoardExpandableList: React.FunctionComponent<{
+interface IBoardExpandableListProps {
     selectedDocId: number;
     filterString: string;
     boardId: number;
     items: Array<{
-        boardItem: IBoardItem | { id: number };
+        boardItem: Partial<IBoardItem>;
         itemData: IBoard | IDataDoc | IDataTable;
         id: number;
     }>;
     onDeleteBoardItem?: (itemId: number, itemType: BoardItemType) => void;
     onMoveBoardItem?: (fromIndex: number, toIndex: number) => void;
-}> = ({
+}
+
+export const BoardExpandableList: React.FunctionComponent<
+    IBoardExpandableListProps
+> = ({
     filterString,
     selectedDocId,
     boardId,

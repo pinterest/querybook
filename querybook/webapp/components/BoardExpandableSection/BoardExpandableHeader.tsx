@@ -1,13 +1,11 @@
-import * as React from 'react';
 import clsx from 'clsx';
+import * as React from 'react';
 import { useDrag } from 'react-dnd';
 
+import { BoardDraggableType } from 'components/DataDocNavigator/navigatorConst';
+import { IBoardWithItemIds } from 'const/board';
 import history from 'lib/router-history';
 import { getWithinEnvUrl } from 'lib/utils/query-string';
-import { IBoardWithItemIds } from 'const/board';
-
-import { BoardDraggableType } from 'components/DataDocNavigator/navigatorConst';
-
 import { IconButton } from 'ui/Button/IconButton';
 import { UrlContextMenu } from 'ui/ContextMenu/UrlContextMenu';
 import { ListLink } from 'ui/Link/ListLink';
