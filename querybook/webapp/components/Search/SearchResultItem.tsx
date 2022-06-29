@@ -369,13 +369,13 @@ export const BoardItem: React.FunctionComponent<{
 
     if (loading) {
         return (
-            <div className="SearchResultItem DataDocItem flex-center">
+            <div className="SearchResultItem BoardItem flex-center">
                 <LoadingRow />
             </div>
         );
     }
 
-    const title = preview.title || 'Untitled Doc';
+    const title = preview.title || 'Untitled Board';
 
     const highlightedDescription = preview.highlight?.description;
     const descriptionDOM = highlightedDescription ? (
@@ -391,7 +391,7 @@ export const BoardItem: React.FunctionComponent<{
     return (
         <>
             <div
-                className="SearchResultItem DataDocItem"
+                className="SearchResultItem BoardItem"
                 onClick={handleClick}
                 ref={selfRef}
             >

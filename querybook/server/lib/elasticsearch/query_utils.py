@@ -1,4 +1,4 @@
-from typing import List, Tuple, Union
+from typing import Dict, List, Tuple, Union
 from lib.logger import get_logger
 
 LOG = get_logger(__file__)
@@ -114,3 +114,16 @@ def order_by_fields(sort_key: Union[str, List[str]], sort_order: Union[str, List
     sort_query = [{val: {"order": order}} for order, val in zip(sort_order, sort_key)]
 
     return {"sort": sort_query}
+
+
+def combine_keyword_and_filter_query(keyword_query: Dict, filter_query: Dict):
+    bool_query = {}
+    if keyword_query != {}:
+        bool_query["must"] = [keyword_query]
+    if filter_query != {}:
+        bool_query["filter"] = filter_query["filter"]
+        if "range" in filter_query:
+            bool_query.setdefault("must", [])
+            bool_query["must"] += filter_query["range"]
+
+    return bool_query

@@ -10,7 +10,6 @@ Here are the list of breaking changes that you should be aware of when updating 
 ## v3.6.0
 
 Added a new search index for list search (or boards search internally). Follow the instructions at [Re-Initialize ElasticSearch](../developer_guide/reinitialize_es.md) to recreate ElasticSearch indices.
-Alternatively, you can run the script `querybook/server/scripts/es_3_6_0_upgrade.py` in Docker instance that is connected to prod infra to populate search index information.
 
 ## v3.5.0
 
