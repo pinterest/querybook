@@ -12,6 +12,7 @@ import { DataTableViewOverview } from 'components/DataTableViewOverview/DataTabl
 import { DataTableViewQueryExamples } from 'components/DataTableViewQueryExample/DataTableViewQueryExamples';
 import { DataTableViewSamples } from 'components/DataTableViewSamples/DataTableViewSamples';
 import { DataTableViewSourceQuery } from 'components/DataTableViewSourceQuery/DataTableViewSourceQuery';
+import { DataTableViewBoards } from 'components/DataTableViewBoards/DataTableViewBoards';
 import { DataTableViewWarnings } from 'components/DataTableViewWarnings/DataTableViewWarnings';
 import { IPaginatedQuerySampleFilters } from 'const/metastore';
 import { setBrowserTitle } from 'lib/querybookUI';
@@ -57,6 +58,10 @@ const tabDefinitions = [
     {
         name: 'Query Examples',
         key: 'query_examples',
+    },
+    {
+        name: 'Lists',
+        key: 'lists',
     },
     {
         name: 'Warnings',
@@ -180,6 +185,16 @@ class DataTableViewComponent extends React.PureComponent<
     }
 
     @bind
+    public makeBoardsDOM() {
+        const { table } = this.props;
+        return (
+            <Loader item={table} itemLoader={NOOP}>
+                <DataTableViewBoards table={table} />
+            </Loader>
+        );
+    }
+
+    @bind
     public makeWarningsDOM() {
         const { tableWarnings, table } = this.props;
         return (
@@ -297,6 +312,7 @@ class DataTableViewComponent extends React.PureComponent<
             lineage: this.makeLineageDOM,
             source_query: this.makeQueryDOM,
             query_examples: this.makeQueryExamplesDOM,
+            lists: this.makeBoardsDOM,
             warnings: this.makeWarningsDOM,
         };
 

@@ -1,0 +1,34 @@
+.BoardDetailedList {
+    .Board {
+        display: flex;
+        flex-direction: column;
+        border-radius: var(--border-radius);
+        padding: 8px 16px;
+        background-color: var(--bg-lightest);
+        margin-bottom: var(--margin);
+        min-width: max-content;
+
+        &:hover {
+            background-color: var(--bg-hover);
+        }
+
+        .Board-description {
+            color: var(--text-light);
+        }
+
+        .Board-bottom {
+            align-items: baseline;
+            color: var(--text-light);
+        }
+
+        .Board-owner-info {
+            display: flex;
+            align-items: center;
+            align-self: flex-end;
+        }
+
+        .UserAvatar {
+            margin-right: 4px;
+        }
+    }
+}
