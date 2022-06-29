@@ -15,7 +15,7 @@ interface IProps {
     onHide: () => void;
 }
 
-export const DataDocListsModal: React.FunctionComponent<IProps> = ({
+export const DataDocBoardsModal: React.FunctionComponent<IProps> = ({
     dataDoc,
     onHide,
 }) => {
@@ -33,13 +33,9 @@ export const DataDocListsModal: React.FunctionComponent<IProps> = ({
         )
     );
 
-    if (isLoading) {
-        return <Loading />;
-    }
+    const dataDocName = dataDoc.title ? `"${dataDoc.title}"` : 'the DataDoc';
 
-    const dataDocName = dataDoc.title ? `"${dataDoc.title}"` : 'DataDoc';
-
-    const noListsDOM = (
+    const noBoardsDOM = (
         <EmptyText className="m24">No lists available.</EmptyText>
     );
 
@@ -50,7 +46,7 @@ export const DataDocListsModal: React.FunctionComponent<IProps> = ({
             ) : boards.length ? (
                 <BoardDetailedList boards={boards} />
             ) : (
-                noListsDOM
+                noBoardsDOM
             )}
         </Modal>
     );

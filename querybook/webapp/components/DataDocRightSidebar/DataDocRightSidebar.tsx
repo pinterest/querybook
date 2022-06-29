@@ -1,6 +1,7 @@
 import React from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 
+import { DataDocBoardsButton } from 'components/DataDocBoardsButton/DataDocBoardsButton';
 import { DataDocDAGExporterButton } from 'components/DataDocDAGExporter/DataDocDAGExporterButton';
 import { DataDocTemplateButton } from 'components/DataDocTemplateButton/DataDocTemplateButton';
 import { IDataDoc } from 'const/datadoc';
@@ -14,7 +15,6 @@ import { DataDocScheduleButton } from './DataDocScheduleButton';
 import { DeleteDataDocButton } from './DeleteDataDocButton';
 
 import './DataDocRightSidebar.scss';
-import { DataDocListsButton } from 'components/DataDocListsButton/DataDocListsButton';
 
 interface IProps {
     dataDoc: IDataDoc;
@@ -62,7 +62,7 @@ export const DataDocRightSidebar: React.FunctionComponent<IProps> = ({
         />
     );
 
-    const listsButtonDOM = <DataDocListsButton dataDoc={dataDoc} />;
+    const boardsButtonDOM = <DataDocBoardsButton dataDoc={dataDoc} />;
 
     const templateButtonDOM = (
         <DataDocTemplateButton
@@ -112,7 +112,7 @@ export const DataDocRightSidebar: React.FunctionComponent<IProps> = ({
                 {isEditable && exporterExists && (
                     <DataDocDAGExporterButton docId={dataDoc.id} />
                 )}
-                {listsButtonDOM}
+                {boardsButtonDOM}
                 {templateButtonDOM}
                 {scheduleButtonDOM}
                 <IconButton

@@ -1,5 +1,5 @@
 import { stateFromHTML } from 'draft-js-import-html';
-import React from 'react';
+import React, { useMemo } from 'react';
 
 import { AccentText, StyledText } from 'ui/StyledText/StyledText';
 import { IBoardBase } from 'const/board';
@@ -30,6 +30,11 @@ const BoardListItem: React.FunctionComponent<{
     } = board;
     const { userInfo: ownerInfo, loading } = useUser({ uid: ownerUid });
 
+    const richTextDescription = useMemo(
+        () => stateFromHTML(description),
+        [description]
+    );
+
     if (loading) {
         return (
             <div className="Board flex-center">
@@ -46,11 +51,8 @@ const BoardListItem: React.FunctionComponent<{
                 </AccentText>
             </Link>
             <div className="Board-description mv8">
-                {stateFromHTML(description).getPlainText().length ? (
-                    <RichTextEditor
-                        value={stateFromHTML(description)}
-                        readOnly
-                    />
+                {richTextDescription.getPlainText().length ? (
+                    <RichTextEditor value={richTextDescription} readOnly />
                 ) : (
                     'no description'
                 )}

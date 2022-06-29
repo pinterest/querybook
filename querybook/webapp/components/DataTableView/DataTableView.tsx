@@ -12,7 +12,7 @@ import { DataTableViewOverview } from 'components/DataTableViewOverview/DataTabl
 import { DataTableViewQueryExamples } from 'components/DataTableViewQueryExample/DataTableViewQueryExamples';
 import { DataTableViewSamples } from 'components/DataTableViewSamples/DataTableViewSamples';
 import { DataTableViewSourceQuery } from 'components/DataTableViewSourceQuery/DataTableViewSourceQuery';
-import { DataTableViewLists } from 'components/DataTableViewLists/DataTableViewLists';
+import { DataTableViewBoards } from 'components/DataTableViewBoards/DataTableViewBoards';
 import { DataTableViewWarnings } from 'components/DataTableViewWarnings/DataTableViewWarnings';
 import { IPaginatedQuerySampleFilters } from 'const/metastore';
 import { setBrowserTitle } from 'lib/querybookUI';
@@ -185,11 +185,11 @@ class DataTableViewComponent extends React.PureComponent<
     }
 
     @bind
-    public makeListsDOM() {
+    public makeBoardsDOM() {
         const { table } = this.props;
         return (
             <Loader item={table} itemLoader={NOOP}>
-                <DataTableViewLists table={table} />
+                <DataTableViewBoards table={table} />
             </Loader>
         );
     }
@@ -312,7 +312,7 @@ class DataTableViewComponent extends React.PureComponent<
             lineage: this.makeLineageDOM,
             source_query: this.makeQueryDOM,
             query_examples: this.makeQueryExamplesDOM,
-            lists: this.makeListsDOM,
+            lists: this.makeBoardsDOM,
             warnings: this.makeWarningsDOM,
         };
 

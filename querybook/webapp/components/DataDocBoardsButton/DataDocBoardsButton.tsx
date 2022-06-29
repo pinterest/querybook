@@ -2,30 +2,30 @@ import React from 'react';
 
 import { IDataDoc } from 'const/datadoc';
 import { IconButton } from 'ui/Button/IconButton';
-import { DataDocListsModal } from 'components/DataDocListsModal/DataDocListsModal';
+import { DataDocBoardsModal } from 'components/DataDocBoardsModal/DataDocBoardsModal';
 
 interface IProps {
     dataDoc: IDataDoc;
 }
 
-export const DataDocListsButton: React.FunctionComponent<IProps> = ({
+export const DataDocBoardsButton: React.FunctionComponent<IProps> = ({
     dataDoc,
 }) => {
-    const [showLists, setShowLists] = React.useState(false);
+    const [showBoards, setShowBoards] = React.useState(false);
 
     return (
         <div>
             <IconButton
                 icon="List"
-                onClick={() => setShowLists(true)}
+                onClick={() => setShowBoards(true)}
                 tooltip="View Lists"
                 tooltipPos="left"
                 title="Lists"
             />
-            {showLists ? (
-                <DataDocListsModal
+            {showBoards ? (
+                <DataDocBoardsModal
                     dataDoc={dataDoc}
-                    onHide={() => setShowLists(false)}
+                    onHide={() => setShowBoards(false)}
                 />
             ) : null}
         </div>

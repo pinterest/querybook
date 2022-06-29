@@ -155,7 +155,7 @@ def get_board_ids_from_board_item(item_type, item_id, environment_id, session=No
 
 
 @with_session
-def get_accessible_boards_from_board_item(
+def get_boards_from_board_item(
     item_type, item_id, environment_id, current_user_id, session=None
 ):
     return (
@@ -167,6 +167,7 @@ def get_accessible_boards_from_board_item(
             or_(
                 Board.public.is_(True),
                 Board.owner_uid == current_user_id,
+                # TODO (kgopal492): Account for board sharing
             )
         )
         .all()

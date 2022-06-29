@@ -9,12 +9,12 @@ import { Loading } from 'ui/Loading/Loading';
 import { BoardDetailedList } from 'components/BoardDetailedList/BoardDetailedList';
 import { useResource } from 'hooks/useResource';
 
-export interface IDataTableViewListsProps {
+export interface IDataTableViewBoardsProps {
     table: IDataTable;
 }
 
-export const DataTableViewLists: React.FunctionComponent<
-    IDataTableViewListsProps
+export const DataTableViewBoards: React.FunctionComponent<
+    IDataTableViewBoardsProps
 > = ({ table }) => {
     const environment = useSelector(currentEnvironmentSelector);
 
@@ -26,7 +26,7 @@ export const DataTableViewLists: React.FunctionComponent<
         )
     );
 
-    const noListsDOM = (
+    const noBoardsDOM = (
         <EmptyText className="m24">No lists available.</EmptyText>
     );
 
@@ -35,8 +35,12 @@ export const DataTableViewLists: React.FunctionComponent<
     }
 
     return (
-        <div className="DataTableViewLists">
-            {boards.length ? <BoardDetailedList boards={boards} /> : noListsDOM}
+        <div className="DataTableViewBoards">
+            {boards.length ? (
+                <BoardDetailedList boards={boards} />
+            ) : (
+                noBoardsDOM
+            )}
         </div>
     );
 };
