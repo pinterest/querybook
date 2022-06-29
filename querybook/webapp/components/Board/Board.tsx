@@ -62,8 +62,8 @@ const BoardDOM: React.FunctionComponent<IBoardDOMProps> = ({
                       />
                   ) : (
                       <BoardBoardItem
-                          boardId={boardItem.board_id ?? boardItem.id}
-                          key={boardItem.board_id ?? boardItem.id}
+                          boardId={boardItem.board_id}
+                          key={boardItem.board_id}
                           isCollapsed={defaultCollapse}
                           isEditMode={isEditMode}
                       />
