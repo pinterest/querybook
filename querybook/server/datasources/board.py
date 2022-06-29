@@ -141,6 +141,10 @@ def add_board_item(board_id, item_type, item_id):
 
     with DBSession() as session:
         assert_can_edit(board_id, session=session)
+        api_assert(
+            not (item_type == "board" and item_id == board_id),
+            "Board cannot be added to itself",
+        )
 
         board = Board.get(id=board_id, session=session)
         # You can only add item in the same environment as the board
@@ -160,10 +164,6 @@ def add_board_item(board_id, item_type, item_id):
             logic.get_item_from_board(board_id, item_id, item_type, session=session)
             is None,
             "Item already exists",
-        )
-        api_assert(
-            not (item_type == "board" and item_id == board_id),
-            "Board cannot be added to itself",
         )
 
         return logic.add_item_to_board(board_id, item_id, item_type, session=session)
