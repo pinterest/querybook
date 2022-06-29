@@ -63,7 +63,11 @@ export default function (state = initialState, action: BoardAction) {
             case '@@board/REMOVE_BOARD_ITEM': {
                 const { boardId, itemType, itemId } = action.payload;
                 const itemField =
-                    itemType === 'data_doc' ? 'data_doc_id' : 'table_id';
+                    itemType === 'data_doc'
+                        ? 'data_doc_id'
+                        : itemType === 'table'
+                        ? 'table_id'
+                        : 'board_id';
 
                 const board = draft.boardById[boardId];
                 draft.boardItemById = Object.values(draft.boardItemById).reduce(

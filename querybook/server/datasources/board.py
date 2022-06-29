@@ -31,8 +31,18 @@ def get_my_boards(environment_id, filter_str=None):
     "/board/<int:board_id>/",
     methods=["GET"],
 )
-def get_board_by_id(board_id):
+def get_board_by_id(board_id, environment_id):
     with DBSession() as session:
+        if board_id == 0:
+            verify_environment_permission([environment_id])
+            public_boards = logic.get_all_public_boards(
+                environment_id=environment_id, session=session
+            )
+            return {
+                "id": 0,
+                "boards": [public_board.id for public_board in public_boards],
+            }
+
         assert_can_read(board_id, session=session)
         board = Board.get(id=board_id, session=session)
         api_assert(board is not None, "Invalid board id", 404)
@@ -131,6 +141,10 @@ def add_board_item(board_id, item_type, item_id):
 
     with DBSession() as session:
         assert_can_edit(board_id, session=session)
+        api_assert(
+            not (item_type == "board" and item_id == board_id),
+            "Board cannot be added to itself",
+        )
 
         board = Board.get(id=board_id, session=session)
         # You can only add item in the same environment as the board
@@ -171,7 +185,10 @@ def move_board_item(board_id, from_index, to_index):
     methods=["DELETE"],
 )
 def delete_board_item(board_id, item_type, item_id):
-    api_assert(item_type == "data_doc" or item_type == "table", "Invalid item type")
+    api_assert(
+        item_type == "data_doc" or item_type == "table" or item_type == "board",
+        "Invalid item type",
+    )
     with DBSession() as session:
         assert_can_edit(board_id, session=session)
 
