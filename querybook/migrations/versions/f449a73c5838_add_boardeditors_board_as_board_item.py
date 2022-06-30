@@ -90,7 +90,7 @@ def downgrade():
     op.drop_column("board_item", "meta")
 
     op.drop_constraint("board_item_board_id_fk", "board_item", type_="foreignkey")
-    op.drop_column("board_item", "board_item_id")
+    op.drop_column("board_item", "board_id")
 
     op.alter_column(
         "board_item",
