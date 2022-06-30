@@ -6,13 +6,13 @@ import React from 'react';
 import { connect } from 'react-redux';
 import { RouteComponentProps, withRouter } from 'react-router-dom';
 
+import { DataTableViewBoards } from 'components/DataTableViewBoards/DataTableViewBoards';
 import { DataTableViewColumn } from 'components/DataTableViewColumn/DataTableViewColumn';
 import { DataTableViewLineage } from 'components/DataTableViewLineage/DataTableViewLineage';
 import { DataTableViewOverview } from 'components/DataTableViewOverview/DataTableViewOverview';
 import { DataTableViewQueryExamples } from 'components/DataTableViewQueryExample/DataTableViewQueryExamples';
 import { DataTableViewSamples } from 'components/DataTableViewSamples/DataTableViewSamples';
 import { DataTableViewSourceQuery } from 'components/DataTableViewSourceQuery/DataTableViewSourceQuery';
-import { DataTableViewBoards } from 'components/DataTableViewBoards/DataTableViewBoards';
 import { DataTableViewWarnings } from 'components/DataTableViewWarnings/DataTableViewWarnings';
 import { IPaginatedQuerySampleFilters } from 'const/metastore';
 import { setBrowserTitle } from 'lib/querybookUI';

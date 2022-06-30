@@ -2,11 +2,19 @@ import { ContentState } from 'draft-js';
 import { stateFromHTML } from 'draft-js-import-html';
 import { normalize, schema } from 'normalizr';
 
-import { BoardItemType, IBoard, IBoardBase, IBoardRaw } from 'const/board';
+import {
+    BoardItemType,
+    IBoard,
+    IBoardBase,
+    IBoardItem,
+    IBoardRaw,
+} from 'const/board';
+import { IQueryExecution } from 'const/queryExecution';
 import { convertContentStateToHTML } from 'lib/richtext/serialize';
 import { arrayGroupByField } from 'lib/utils';
 import { receiveDataDocs } from 'redux/dataDoc/action';
 import { receiveDataTable } from 'redux/dataSources/action';
+import { receiveQueryExecution } from 'redux/queryExecutions/action';
 import { Dispatch } from 'redux/store/types';
 import { BoardResource } from 'resource/board';
 
@@ -14,41 +22,70 @@ import { IReceiveBoardsAction, ThunkResult } from './types';
 
 export const dataDocSchema = new schema.Entity('dataDoc');
 export const tableSchema = new schema.Entity('dataTable');
+export const childBoardSchema = new schema.Entity('board');
+export const querySchema = new schema.Entity('query');
 export const boardItemSchema = new schema.Entity('boardItem');
 export const boardSchema = new schema.Entity('board', {
     docs: [dataDocSchema],
     tables: [tableSchema],
+    boards: [childBoardSchema],
+    qureies: [querySchema],
     items: [boardItemSchema],
 });
 
 function normalizeBoard(rawBoard: IBoardRaw) {
     const normalizedData = normalize(rawBoard, boardSchema);
-    const board = normalizedData.entities.board[normalizedData.result];
+    const parentBoard = normalizedData.entities.board[normalizedData.result];
     const {
         dataTable: dataTableById = {},
         dataDoc: dataDocById = {},
+        board: boardById = {},
+        query: queryById = {},
         boardItem: boardItemById = {},
     } = normalizedData.entities;
+
     return {
-        board,
+        board: parentBoard,
         dataTableById,
         dataDocById,
+        boards: Object.values(boardById),
+        queryById,
         boardItemById,
     };
 }
 
 function receiveBoardWithItems(dispatch: Dispatch, rawBoard: IBoardRaw) {
-    const { board, dataTableById, dataDocById, boardItemById } =
-        normalizeBoard(rawBoard);
+    const {
+        board,
+        dataTableById,
+        dataDocById,
+        boards,
+        queryById,
+        boardItemById,
+    } = normalizeBoard(rawBoard);
 
     dispatch(receiveDataDocs(dataDocById, [], null, null));
     dispatch(receiveDataTable({}, dataTableById, {}, {}));
+    dispatch(receiveBoards(boards as IBoardBase[]));
+    Object.values(queryById).forEach((query) =>
+        dispatch(receiveQueryExecution(query as IQueryExecution))
+    );
+
+    Object.keys(boardItemById).forEach((boardItemId) => {
+        boardItemById[boardItemId] = {
+            ...boardItemById[boardItemId],
+            description: stateFromHTML(
+                boardItemById[boardItemId].description || ''
+            ),
+        };
+    });
+
     dispatch({
         type: '@@board/RECEIVE_BOARD_WITH_ITEMS',
         payload: {
             board: {
                 ...board,
-                description: stateFromHTML(board.description),
+                description: stateFromHTML(board.description || ''),
             },
             boardItemById,
         },
@@ -59,7 +96,7 @@ function receiveBoards(boards: IBoardBase[]): IReceiveBoardsAction {
     const boardById: Record<string, IBoard> = arrayGroupByField(
         boards.map((board) => ({
             ...board,
-            description: stateFromHTML(board.description),
+            description: stateFromHTML(board.description || ''),
         }))
     );
     return {
@@ -131,15 +168,31 @@ export function createBoard(
 export function updateBoard(
     id: number,
     name: string,
-    isPublic: boolean,
+    isPublic?: boolean,
+    description?: ContentState
+): ThunkResult<Promise<IBoardRaw>> {
+    return async (dispatch) => {
+        const fields = { name };
+        if (description) {
+            fields['description'] = convertContentStateToHTML(description);
+        }
+        if (isPublic !== null) {
+            fields['public'] = isPublic;
+        }
+        const board = (await BoardResource.update(id, fields)).data;
+        receiveBoardWithItems(dispatch, board);
+        return board;
+    };
+}
+
+export function updateBoardDescription(
+    id: number,
     description: ContentState
 ): ThunkResult<Promise<IBoardRaw>> {
     return async (dispatch) => {
         const board = (
             await BoardResource.update(id, {
-                name,
                 description: convertContentStateToHTML(description),
-                public: isPublic,
             })
         ).data;
         receiveBoardWithItems(dispatch, board);
@@ -170,9 +223,18 @@ export function addBoardItem(
             itemType,
             itemId
         );
+
         dispatch({
             type: '@@board/RECEIVE_BOARD_ITEM',
-            payload: { boardItem, boardId },
+            payload: {
+                boardItem: {
+                    ...boardItem,
+                    description: stateFromHTML(boardItem.description || ''),
+                } as unknown as IBoardItem,
+                boardId,
+                itemType,
+                itemId,
+            },
         });
     };
 }
@@ -209,6 +271,59 @@ export function deleteBoardItem(
                 boardId,
                 itemId,
                 itemType,
+            },
+        });
+    };
+}
+
+export function updateBoardItemDescription(
+    boardItemId: number,
+    updatedDescription: ContentState
+): ThunkResult<Promise<void>> {
+    return async (dispatch) => {
+        const { data: boardItem } = await BoardResource.updateItemFields(
+            boardItemId,
+            { description: convertContentStateToHTML(updatedDescription) }
+        );
+        dispatch({
+            type: '@@board/UPDATE_BOARD_ITEM_DESCRIPTION',
+            payload: {
+                boardItem: {
+                    ...boardItem,
+                    description: stateFromHTML(boardItem.description || ''),
+                } as unknown as IBoardItem,
+            },
+        });
+    };
+}
+
+export function updateBoardItemMeta(
+    boardItemId: number,
+    updatedMeta: Record<string, any>
+): ThunkResult<Promise<void>> {
+    return async (dispatch) => {
+        const { data: boardItem } = await BoardResource.updateItemFields(
+            boardItemId,
+            { meta: updatedMeta }
+        );
+        dispatch({
+            type: '@@board/UPDATE_BOARD_ITEM_DESCRIPTION',
+            payload: {
+                boardItem: {
+                    ...boardItem,
+                    description: stateFromHTML(boardItem.description || ''),
+                } as unknown as IBoardItem,
+            },
+        });
+    };
+}
+
+export function setCurrentBoardId(boardId: number): ThunkResult<Promise<void>> {
+    return async (dispatch) => {
+        dispatch({
+            type: '@@board/SET_CURRENT_BOARD_ID',
+            payload: {
+                boardId,
             },
         });
     };

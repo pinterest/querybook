@@ -64,8 +64,8 @@ def update_board(id, commit=True, session=None, **fields):
 
 
 def item_type_to_id_type(item_type):
-    assert item_type in ["data_doc", "table", "board"], "Invalid item type"
-    return item_type + "_id"
+    assert item_type in ["data_doc", "table", "board", "query"], "Invalid item type"
+    return item_type + "_execution_id" if item_type == "query" else item_type + "_id"
 
 
 @with_session
@@ -202,3 +202,15 @@ def get_all_public_boards(environment_id, session=None):
         .filter(Board.environment_id == environment_id)
         .all()
     )
+
+
+@with_session
+def update_board_item(id, session=None, **fields):
+    board = BoardItem.update(
+        id,
+        fields=fields,
+        field_names=["description", "meta"],
+        session=session,
+    )
+
+    return board

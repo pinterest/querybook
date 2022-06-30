@@ -10,7 +10,8 @@ from app.auth.permission import (
 )
 from logic import board as logic
 from logic.board_permission import assert_can_read, assert_can_edit
-from models.board import Board
+from logic.query_execution import get_environments_by_execution_id
+from models.board import Board, BoardItem
 
 
 @register(
@@ -47,7 +48,9 @@ def get_board_by_id(board_id, environment_id):
         board = Board.get(id=board_id, session=session)
         api_assert(board is not None, "Invalid board id", 404)
         verify_environment_permission([board.environment_id])
-        return board.to_dict(extra_fields=["docs", "tables", "boards", "items"])
+        return board.to_dict(
+            extra_fields=["docs", "tables", "boards", "queries", "items"]
+        )
 
 
 @register(
@@ -84,7 +87,9 @@ def update_board(board_id, **fields):
         board = Board.get(id=board_id, session=session)
 
         board = logic.update_board(id=board_id, **fields, session=session)
-        return board.to_dict(extra_fields=["docs", "tables", "boards", "items"])
+        return board.to_dict(
+            extra_fields=["docs", "tables", "boards", "queries" "items"]
+        )
 
 
 @register(
@@ -135,7 +140,7 @@ def get_boards_from_board_item(item_type: str, item_id: int, environment_id: int
 )
 def add_board_item(board_id, item_type, item_id):
     api_assert(
-        item_type == "data_doc" or item_type == "table" or item_type == "board",
+        item_type in ["data_doc", "table", "board", "query"],
         "Invalid item type",
     )
 
@@ -153,12 +158,17 @@ def add_board_item(board_id, item_type, item_id):
             item_env_ids = get_data_doc_environment_ids(item_id, session=session)
         elif item_type == "table":
             item_env_ids = get_data_table_environment_ids(item_id, session=session)
-        else:
+        elif item_type == "board":
             item_env_ids = get_board_environment_ids(item_id, session=session)
+        else:
+            item_env_ids = [
+                env.id
+                for env in get_environments_by_execution_id(item_id, session=session)
+            ]
 
         api_assert(
             board.environment_id in item_env_ids,
-            "Board item must be in the same environment as the board",
+            "List item must be in the same environment as the list",
         )
         api_assert(
             logic.get_item_from_board(board_id, item_id, item_type, session=session)
@@ -186,7 +196,7 @@ def move_board_item(board_id, from_index, to_index):
 )
 def delete_board_item(board_id, item_type, item_id):
     api_assert(
-        item_type == "data_doc" or item_type == "table" or item_type == "board",
+        item_type in ["data_doc", "table", "board", "query"],
         "Invalid item type",
     )
     with DBSession() as session:
@@ -194,3 +204,16 @@ def delete_board_item(board_id, item_type, item_id):
 
         board = Board.get(id=board_id, session=session)
         logic.remove_item_from_board(board.id, item_id, item_type, session=session)
+
+
+@register("/board/item/<int:board_item_id>/", methods=["PUT"])
+def update_board_item_fields(board_item_id, fields):
+    with DBSession() as session:
+        board_item = BoardItem.get(id=board_item_id, session=session)
+        api_assert(
+            board_item,
+            "List item does not exist",
+        )
+        assert_can_edit(board_item.parent_board_id, session=session)
+
+        return logic.update_board_item(id=board_item_id, fields=fields, session=session)

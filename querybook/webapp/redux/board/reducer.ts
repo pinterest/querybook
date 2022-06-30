@@ -1,5 +1,6 @@
 import produce from 'immer';
 
+import { itemTypeToKey } from 'const/board';
 import { arrayMove } from 'lib/utils';
 
 import { BoardAction, IBoardState } from './types';
@@ -7,6 +8,7 @@ import { BoardAction, IBoardState } from './types';
 const initialState: Readonly<IBoardState> = {
     boardById: {},
     boardItemById: {},
+    currentBoardId: null,
 };
 
 export default function (state = initialState, action: BoardAction) {
@@ -32,6 +34,7 @@ export default function (state = initialState, action: BoardAction) {
                     ...draft.boardItemById,
                     ...boardItemById,
                 };
+
                 return;
             }
             case '@board/REMOVE_BOARD': {
@@ -49,15 +52,17 @@ export default function (state = initialState, action: BoardAction) {
                 return;
             }
             case '@@board/RECEIVE_BOARD_ITEM': {
-                const { boardItem, boardId } = action.payload;
+                const { boardItem, boardId, itemType, itemId } = action.payload;
                 draft.boardItemById[boardItem.id] = boardItem;
                 if (
                     draft.boardById[boardId].items &&
                     !(boardItem.id in draft.boardById[boardId].items)
                 ) {
                     draft.boardById[boardId].items.push(boardItem.id);
+                    draft.boardById[boardId][itemTypeToKey[itemType]].push(
+                        itemId
+                    );
                 }
-
                 return;
             }
             case '@@board/REMOVE_BOARD_ITEM': {
@@ -70,6 +75,7 @@ export default function (state = initialState, action: BoardAction) {
                         : 'board_id';
 
                 const board = draft.boardById[boardId];
+
                 draft.boardItemById = Object.values(draft.boardItemById).reduce(
                     (hash, boardItem) => {
                         if (
@@ -84,6 +90,9 @@ export default function (state = initialState, action: BoardAction) {
                             board.items = board.items.filter(
                                 (id) => id !== boardItem.id
                             );
+                            board[itemTypeToKey[itemType]] = board[
+                                itemTypeToKey[itemType]
+                            ].filter((id) => id !== itemId);
                         }
                         return hash;
                     },
@@ -95,6 +104,16 @@ export default function (state = initialState, action: BoardAction) {
                 const { boardId, fromIndex, toIndex } = action.payload;
                 const board = draft.boardById[boardId];
                 board.items = arrayMove(board.items, fromIndex, toIndex);
+                return;
+            }
+            case '@@board/UPDATE_BOARD_ITEM_DESCRIPTION': {
+                const { boardItem } = action.payload;
+                draft.boardItemById[boardItem.id] = boardItem;
+                return;
+            }
+            case '@@board/SET_CURRENT_BOARD_ID': {
+                const { boardId } = action.payload;
+                draft.currentBoardId = boardId;
                 return;
             }
         }

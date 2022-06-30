@@ -10,4 +10,9 @@
         padding: 36px 16px;
         overflow: hidden;
     }
+    .BoardRightSidebar {
+        position: sticky;
+        top: 0;
+        z-index: 9;
+    }
 }
