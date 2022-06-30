@@ -7,10 +7,10 @@ from app.auth.permission import (
     get_data_table_environment_ids,
     get_data_doc_environment_ids,
     get_board_environment_ids,
-    get_query_execution_environment_ids,
 )
 from logic import board as logic
 from logic.board_permission import assert_can_read, assert_can_edit
+from logic.query_execution import get_environments_by_execution_id
 from models.board import Board, BoardItem
 
 
@@ -161,7 +161,10 @@ def add_board_item(board_id, item_type, item_id):
         elif item_type == "board":
             item_env_ids = get_board_environment_ids(item_id, session=session)
         else:
-            item_env_ids = get_query_execution_environment_ids(item_id, session=session)
+            item_env_ids = [
+                env.id
+                for env in get_environments_by_execution_id(item_id, session=session)
+            ]
 
         api_assert(
             board.environment_id in item_env_ids,
