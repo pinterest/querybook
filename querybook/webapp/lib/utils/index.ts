@@ -48,7 +48,11 @@ export function titleize(
 
 export function getSelectionRect() {
     const windowSelection = window.getSelection();
-    if (windowSelection.rangeCount === 0) {
+
+    if (
+        windowSelection.rangeCount === 0 ||
+        windowSelection.toString().length === 0
+    ) {
         return null;
     }
     return windowSelection.getRangeAt(0).getBoundingClientRect();

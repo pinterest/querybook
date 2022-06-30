@@ -245,7 +245,6 @@ class DataDocComponent extends React.PureComponent<IProps, IState> {
 
     @bind
     public onCellBlur(index: number) {
-        // This is to resolve a race condition
         if (index === this.state.focusedCellIndex) {
             this.focusCellAt(null);
         }
