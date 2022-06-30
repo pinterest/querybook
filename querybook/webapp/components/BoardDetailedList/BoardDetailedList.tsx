@@ -1,5 +1,5 @@
 import { stateFromHTML } from 'draft-js-import-html';
-import React from 'react';
+import React, { useMemo } from 'react';
 
 import { UserAvatar } from 'components/UserBadge/UserAvatar';
 import { IBoardBase } from 'const/board';
@@ -29,6 +29,11 @@ const BoardListItem: React.FunctionComponent<{
     } = board;
     const { userInfo: ownerInfo, loading } = useUser({ uid: ownerUid });
 
+    const richTextDescription = useMemo(
+        () => stateFromHTML(description),
+        [description]
+    );
+
     if (loading) {
         return (
             <div className="BoardListItem flex-center">
@@ -54,11 +59,8 @@ const BoardListItem: React.FunctionComponent<{
                 {ownerInfo.username}
             </span>
             <div className="BoardListItem-description mv8">
-                {stateFromHTML(description).getPlainText().length ? (
-                    <RichTextEditor
-                        value={stateFromHTML(description)}
-                        readOnly
-                    />
+                {richTextDescription.getPlainText().length ? (
+                    <RichTextEditor value={richTextDescription} readOnly />
                 ) : (
                     <AccentText
                         className="mt8"

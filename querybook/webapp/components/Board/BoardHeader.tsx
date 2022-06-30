@@ -1,27 +1,26 @@
 import * as React from 'react';
 import { useDispatch } from 'react-redux';
 
+import { BoardItemAddButton } from 'components/BoardItemAddButton/BoardItemAddButton';
+import { BoardViewersBadge } from 'components/BoardViewersBadge/BoardViewersBadge';
 import { IBoardWithItemIds } from 'const/board';
 import { generateFormattedDate } from 'lib/utils/datetime';
 import { navigateWithinEnv } from 'lib/utils/query-string';
-import { SearchType } from 'redux/search/types';
-import { updateSearchType } from 'redux/search/action';
-import { Dispatch } from 'redux/store/types';
 import {
     setCurrentBoardId,
     updateBoardDescription,
     updateBoardName,
 } from 'redux/board/action';
-
-import { BoardItemAddButton } from 'components/BoardItemAddButton/BoardItemAddButton';
-import { BoardViewersBadge } from 'components/BoardViewersBadge/BoardViewersBadge';
-
-import { EditableTextField } from 'ui/EditableTextField/EditableTextField';
-import { AccentText } from 'ui/StyledText/StyledText';
+import { updateSearchFilter, updateSearchType } from 'redux/search/action';
+import { SearchType } from 'redux/search/types';
+import { Dispatch } from 'redux/store/types';
 import { TextButton } from 'ui/Button/Button';
+import { EditableTextField } from 'ui/EditableTextField/EditableTextField';
 import { ResizableTextArea } from 'ui/ResizableTextArea/ResizableTextArea';
+import { AccentText } from 'ui/StyledText/StyledText';
 
 import './BoardHeader.scss';
+
 interface IProps {
     board: IBoardWithItemIds;
 }
@@ -33,6 +32,9 @@ export const BoardHeader: React.FunctionComponent<IProps> = ({ board }) => {
     const openSearchModal = React.useCallback(
         (searchType: SearchType) => {
             dispatch(updateSearchType(searchType));
+            if (searchType === SearchType.Query) {
+                dispatch(updateSearchFilter('query_type', 'query_execution'));
+            }
             dispatch(setCurrentBoardId(board.id));
             navigateWithinEnv('/search/', { isModal: true, from: 'board' });
         },

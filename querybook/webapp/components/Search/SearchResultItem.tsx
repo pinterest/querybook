@@ -2,6 +2,8 @@ import { escape, escapeRegExp } from 'lodash';
 import React, { useMemo, useRef, useState } from 'react';
 import { useSelector } from 'react-redux';
 
+import { BoardItemAddButton } from 'components/BoardItemAddButton/BoardItemAddButton';
+import { UserAvatar } from 'components/UserBadge/UserAvatar';
 import {
     IBoardPreview,
     IDataDocPreview,
@@ -14,11 +16,7 @@ import { generateFormattedDate } from 'lib/utils/datetime';
 import { stopPropagation } from 'lib/utils/noop';
 import { queryEngineByIdEnvSelector } from 'redux/queryEngine/selector';
 import { IStoreState } from 'redux/store/types';
-
-import { SearchResultItemBoardItemAddButton } from './SearchResultItemBoardItemAddButton';
-import { UserAvatar } from 'components/UserBadge/UserAvatar';
-import { BoardItemAddButton } from 'components/BoardItemAddButton/BoardItemAddButton';
-
+import { Button } from 'ui/Button/Button';
 import { IconButton } from 'ui/Button/IconButton';
 import { ThemedCodeHighlight } from 'ui/CodeHighlight/ThemedCodeHighlight';
 import { UrlContextMenu } from 'ui/ContextMenu/UrlContextMenu';
@@ -27,7 +25,8 @@ import { Level } from 'ui/Level/Level';
 import { LoadingRow } from 'ui/Loading/Loading';
 import { AccentText, StyledText, UntitledText } from 'ui/StyledText/StyledText';
 import { Tag } from 'ui/Tag/Tag';
-import { Button } from 'ui/Button/Button';
+
+import { SearchResultItemBoardItemAddButton } from './SearchResultItemBoardItemAddButton';
 
 import './SearchResultItem.scss';
 
@@ -213,22 +212,24 @@ export const QueryItem: React.FunctionComponent<IQueryItemProps> = ({
                 </div>
             </div>
             <UrlContextMenu anchorRef={selfRef} url={url} />
-            <Button className="SearchResultItemBoardItemAddButton flex-center">
-                {currentBoardId ? (
-                    <SearchResultItemBoardItemAddButton
-                        itemType="query"
-                        itemId={id}
-                    />
-                ) : (
-                    <BoardItemAddButton
-                        itemId={id}
-                        itemType="query"
-                        size={24}
-                        noPadding
-                        tooltipPos="left"
-                    />
-                )}
-            </Button>
+            {queryType === 'execution' && (
+                <Button className="SearchResultItemBoardItemAddButton flex-center">
+                    {currentBoardId ? (
+                        <SearchResultItemBoardItemAddButton
+                            itemType="query"
+                            itemId={id}
+                        />
+                    ) : (
+                        <BoardItemAddButton
+                            itemId={id}
+                            itemType="query"
+                            size={24}
+                            noPadding
+                            tooltipPos="left"
+                        />
+                    )}
+                </Button>
+            )}
         </div>
     );
 };
