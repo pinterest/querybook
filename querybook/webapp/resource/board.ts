@@ -59,27 +59,8 @@ export const BoardResource = {
             environment_id: envId,
         }),
 
-    updateItemDescription: (
-        boardId: number,
-        boardItemId: number,
-        updatedDescription: string
-    ) =>
-        ds.update<IBoardItemRaw>(
-            `/board/${boardId}/item/${boardItemId}/description/`,
-            {
-                description: updatedDescription,
-            }
-        ),
-
-    updateItemMeta: (
-        boardId: number,
-        boardItemId: number,
-        updatedMeta: Record<string, any>
-    ) =>
-        ds.update<IBoardItemRaw>(
-            `/board/${boardId}/item/${boardItemId}/meta/`,
-            {
-                meta: updatedMeta,
-            }
-        ),
+    updateItemFields: (boardItemId: number, fields: Record<string, any>) =>
+        ds.update<IBoardItemRaw>(`/board/item/${boardItemId}/`, {
+            fields,
+        }),
 };

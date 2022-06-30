@@ -9,32 +9,32 @@ import {
     IBoardItem,
     IBoardRaw,
 } from 'const/board';
+import { IQueryExecution } from 'const/queryExecution';
 import { convertContentStateToHTML } from 'lib/richtext/serialize';
 import { arrayGroupByField } from 'lib/utils';
 import { receiveDataDocs } from 'redux/dataDoc/action';
 import { receiveDataTable } from 'redux/dataSources/action';
+import { receiveQueryExecution } from 'redux/queryExecutions/action';
 import { Dispatch } from 'redux/store/types';
 import { BoardResource } from 'resource/board';
 
 import { IReceiveBoardsAction, ThunkResult } from './types';
-import { receiveQueryExecution } from 'redux/queryExecutions/action';
-import { IQueryExecution } from 'const/queryExecution';
 
 export const dataDocSchema = new schema.Entity('dataDoc');
 export const tableSchema = new schema.Entity('dataTable');
-export const boardSchema = new schema.Entity('board');
+export const childBoardSchema = new schema.Entity('board');
 export const querySchema = new schema.Entity('query');
 export const boardItemSchema = new schema.Entity('boardItem');
-export const parentBoardSchema = new schema.Entity('board', {
+export const boardSchema = new schema.Entity('board', {
     docs: [dataDocSchema],
     tables: [tableSchema],
-    boards: [boardSchema],
+    boards: [childBoardSchema],
     qureies: [querySchema],
     items: [boardItemSchema],
 });
 
 function normalizeBoard(rawBoard: IBoardRaw) {
-    const normalizedData = normalize(rawBoard, parentBoardSchema);
+    const normalizedData = normalize(rawBoard, boardSchema);
     const parentBoard = normalizedData.entities.board[normalizedData.result];
     const {
         dataTable: dataTableById = {},
@@ -291,15 +291,13 @@ export function deleteBoardItem(
 }
 
 export function updateBoardItemDescription(
-    boardId: number,
     boardItemId: number,
     updatedDescription: ContentState
 ): ThunkResult<Promise<void>> {
     return async (dispatch) => {
-        const { data: boardItem } = await BoardResource.updateItemDescription(
-            boardId,
+        const { data: boardItem } = await BoardResource.updateItemFields(
             boardItemId,
-            convertContentStateToHTML(updatedDescription)
+            { description: convertContentStateToHTML(updatedDescription) }
         );
         dispatch({
             type: '@@board/UPDATE_BOARD_ITEM_DESCRIPTION',
@@ -314,15 +312,13 @@ export function updateBoardItemDescription(
 }
 
 export function updateBoardItemMeta(
-    boardId: number,
     boardItemId: number,
     updatedMeta: Record<string, any>
 ): ThunkResult<Promise<void>> {
     return async (dispatch) => {
-        const { data: boardItem } = await BoardResource.updateItemMeta(
-            boardId,
+        const { data: boardItem } = await BoardResource.updateItemFields(
             boardItemId,
-            updatedMeta
+            { meta: updatedMeta }
         );
         dispatch({
             type: '@@board/UPDATE_BOARD_ITEM_DESCRIPTION',

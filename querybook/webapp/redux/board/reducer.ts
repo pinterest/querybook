@@ -1,6 +1,6 @@
-import { itemTypeToKey } from 'const/board';
 import produce from 'immer';
 
+import { itemTypeToKey } from 'const/board';
 import { arrayMove } from 'lib/utils';
 
 import { BoardAction, IBoardState } from './types';
@@ -56,16 +56,13 @@ export default function (state = initialState, action: BoardAction) {
                 draft.boardItemById[boardItem.id] = boardItem;
                 if (
                     draft.boardById[boardId].items &&
-                    !(boardItem.id in draft.boardById[boardId].items) &&
-                    itemType &&
-                    itemId
+                    !(boardItem.id in draft.boardById[boardId].items)
                 ) {
                     draft.boardById[boardId].items.push(boardItem.id);
                     draft.boardById[boardId][itemTypeToKey[itemType]].push(
                         itemId
                     );
                 }
-
                 return;
             }
             case '@@board/REMOVE_BOARD_ITEM': {

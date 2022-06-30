@@ -205,16 +205,12 @@ def get_all_public_boards(environment_id, session=None):
 
 
 @with_session
-def update_board_item_description(board_item, description, session=None):
-    board_item.description = description
-    session.commit()
+def update_board_item(id, session=None, **fields):
+    board = BoardItem.update(
+        id,
+        fields=fields,
+        field_names=["description", "meta"],
+        session=session,
+    )
 
-    return board_item
-
-
-@with_session
-def update_board_item_meta(board_item, meta, session=None):
-    board_item.meta = meta
-    session.commit()
-
-    return board_item
+    return board

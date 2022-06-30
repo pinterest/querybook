@@ -39,7 +39,7 @@ const BoardDOM: React.FunctionComponent<IBoardDOMProps> = ({
               <BoardBoardItem
                   parentBoardId={0}
                   boardId={boardId}
-                  key={boardId + 'board'}
+                  key={boardId}
                   isCollapsed={defaultCollapse}
                   isEditMode={isEditMode}
               />
@@ -53,7 +53,7 @@ const BoardDOM: React.FunctionComponent<IBoardDOMProps> = ({
                           boardId={board.id}
                           itemId={boardItem.id}
                           docId={boardItem.data_doc_id}
-                          key={boardItem.id + 'doc'}
+                          key={boardItem.id}
                           isCollapsed={defaultCollapse}
                           isEditMode={isEditMode}
                       />
@@ -62,14 +62,14 @@ const BoardDOM: React.FunctionComponent<IBoardDOMProps> = ({
                           boardId={board.id}
                           itemId={boardItem.id}
                           tableId={boardItem.table_id}
-                          key={boardItem.id + 'table'}
+                          key={boardItem.id}
                           isCollapsed={defaultCollapse}
                           isEditMode={isEditMode}
                       />
                   ) : boardItem.board_id ? (
                       <BoardBoardItem
                           boardId={boardItem.board_id}
-                          key={boardItem.board_id + 'board'}
+                          key={boardItem.board_id}
                           parentBoardId={board.id}
                           itemId={boardItem.id}
                           isCollapsed={defaultCollapse}
@@ -80,7 +80,7 @@ const BoardDOM: React.FunctionComponent<IBoardDOMProps> = ({
                           boardId={board.id}
                           itemId={boardItem.id}
                           queryExecutionId={boardItem.query_execution_id}
-                          key={boardItem.id + 'query'}
+                          key={boardItem.id}
                           isCollapsed={defaultCollapse}
                           isEditMode={isEditMode}
                       />
@@ -89,7 +89,6 @@ const BoardDOM: React.FunctionComponent<IBoardDOMProps> = ({
 
     return (
         <div className="Board">
-            <div className="Board-left" />
             <div className="Board-content">
                 {isPublicList ? (
                     <AccentText

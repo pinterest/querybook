@@ -1,27 +1,24 @@
-import * as React from 'react';
-import { useDispatch, useSelector } from 'react-redux';
 import clsx from 'clsx';
 import { ContentState } from 'draft-js';
+import * as React from 'react';
+import { useDispatch, useSelector } from 'react-redux';
 
+import { BoardItemAddButton } from 'components/BoardItemAddButton/BoardItemAddButton';
 import { BoardItemType } from 'const/board';
 import { navigateWithinEnv } from 'lib/utils/query-string';
-import { Dispatch, IStoreState } from 'redux/store/types';
 import {
     updateBoardItemDescription,
     updateBoardItemMeta,
 } from 'redux/board/action';
-import { convertContentStateToHTML } from 'lib/richtext/serialize';
-
-import { BoardItemAddButton } from 'components/BoardItemAddButton/BoardItemAddButton';
-
+import { Dispatch, IStoreState } from 'redux/store/types';
+import { Button } from 'ui/Button/Button';
 import { IconButton } from 'ui/Button/IconButton';
+import { EditableTextField } from 'ui/EditableTextField/EditableTextField';
 import { Icon } from 'ui/Icon/Icon';
 import { AllLucideIconNames } from 'ui/Icon/LucideIcons';
-import { Title } from 'ui/Title/Title';
-import { EditableTextField } from 'ui/EditableTextField/EditableTextField';
-import { Button } from 'ui/Button/Button';
 import { RichTextEditor } from 'ui/RichTextEditor/RichTextEditor';
 import { AccentText } from 'ui/StyledText/StyledText';
+import { Title } from 'ui/Title/Title';
 
 import './BoardItem.scss';
 
@@ -74,23 +71,21 @@ export const BoardItem: React.FunctionComponent<IBoardItemProps> = ({
     const handleDescriptionSave = React.useCallback(
         (updatedDescription) =>
             dispatch(
-                updateBoardItemDescription(
-                    boardId,
-                    boardItemId,
-                    updatedDescription
-                )
+                updateBoardItemDescription(boardItemId, updatedDescription)
             ),
         [boardId, boardItemId]
     );
 
-    const handleDescriptionSwitch = React.useCallback(() => {
-        dispatch(
-            updateBoardItemMeta(boardId, boardItemId, {
-                ...boardItemData?.meta,
-                display_table_description: !displayTableDescription,
-            })
-        );
-    }, [boardId, boardItemData, displayTableDescription]);
+    const handleDescriptionSwitch = React.useCallback(
+        () =>
+            dispatch(
+                updateBoardItemMeta(boardItemId, {
+                    ...boardItemData?.meta,
+                    display_table_description: !displayTableDescription,
+                })
+            ),
+        [boardId, boardItemData, displayTableDescription]
+    );
 
     const boardItemClassname = clsx({
         BoardItem: true,
@@ -161,10 +156,7 @@ export const BoardItem: React.FunctionComponent<IBoardItemProps> = ({
             boardId === 0 ? null : (
                 <>
                     {displayTableDescription ? (
-                        convertContentStateToHTML(tableDescription).length ===
-                            0 ||
-                        convertContentStateToHTML(tableDescription) ===
-                            '<p><br></p>' ? (
+                        tableDescription.getPlainText().length === 0 ? (
                             <AccentText
                                 className="mt8"
                                 noUserSelect

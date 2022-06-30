@@ -140,10 +140,7 @@ def get_boards_from_board_item(item_type: str, item_id: int, environment_id: int
 )
 def add_board_item(board_id, item_type, item_id):
     api_assert(
-        item_type == "data_doc"
-        or item_type == "table"
-        or item_type == "board"
-        or item_type == "query",
+        item_type in ["data_doc", "table", "board", "query"],
         "Invalid item type",
     )
 
@@ -175,10 +172,6 @@ def add_board_item(board_id, item_type, item_id):
             is None,
             "Item already exists",
         )
-        api_assert(
-            not (item_type == "board" and item_id == board_id),
-            "List cannot be added to itself",
-        )
 
         return logic.add_item_to_board(board_id, item_id, item_type, session=session)
 
@@ -200,10 +193,7 @@ def move_board_item(board_id, from_index, to_index):
 )
 def delete_board_item(board_id, item_type, item_id):
     api_assert(
-        item_type == "data_doc"
-        or item_type == "table"
-        or item_type == "board"
-        or item_type == "query",
+        item_type in ["data_doc", "table", "board", "query"],
         "Invalid item type",
     )
     with DBSession() as session:
@@ -213,45 +203,14 @@ def delete_board_item(board_id, item_type, item_id):
         logic.remove_item_from_board(board.id, item_id, item_type, session=session)
 
 
-@register("/board/favorite/", methods=["POST"])
-def get_or_create_favorite_board(environment_id):
-    verify_environment_permission([environment_id])
+@register("/board/item/<int:board_item_id>/", methods=["PUT"])
+def update_board_item_fields(board_item_id, fields):
     with DBSession() as session:
-        board = logic.get_or_create_user_favorite_board(
-            current_user.id, environment_id, session=session
-        )
-        return board.to_dict(
-            extra_fields=["docs", "tables", "boards", "queries", "items"]
-        )
-
-
-@register(
-    "/board/<int:board_id>/item/<int:board_item_id>/description/", methods=["PUT"]
-)
-def update_board_item_description(board_id, board_item_id, description):
-    with DBSession() as session:
-        assert_can_edit(board_id, session=session)
-
         board_item = BoardItem.get(id=board_item_id, session=session)
+        assert_can_edit(board_item.parent_board_id, session=session)
         api_assert(
             board_item,
             "List item does not exist",
         )
 
-        return logic.update_board_item_description(
-            board_item, description, session=session
-        )
-
-
-@register("/board/<int:board_id>/item/<int:board_item_id>/meta/", methods=["PUT"])
-def update_board_item_meta(board_id, board_item_id, meta):
-    with DBSession() as session:
-        assert_can_edit(board_id, session=session)
-
-        board_item = BoardItem.get(id=board_item_id, session=session)
-        api_assert(
-            board_item,
-            "List item does not exist",
-        )
-
-        return logic.update_board_item_meta(board_item, meta, session=session)
+        return logic.update_board_item(id=board_item_id, fields=fields, session=session)

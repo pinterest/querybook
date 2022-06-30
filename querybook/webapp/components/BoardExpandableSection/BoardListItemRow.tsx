@@ -1,14 +1,11 @@
 import clsx from 'clsx';
 import React from 'react';
 
-import NOOP from 'lib/utils/noop';
-import { BoardItemType } from 'const/board';
-import { getWithinEnvUrl } from 'lib/utils/query-string';
-import { IProcessedBoardItem } from '../DataDocNavigator/navigatorConst';
-
 import { DataDocHoverContent } from 'components/DataDocHoverContent/DataDocHoverContent';
 import { DataTableHoverContent } from 'components/DataTableNavigator/DataTableHoverContent';
-
+import { BoardItemType } from 'const/board';
+import NOOP from 'lib/utils/noop';
+import { getWithinEnvUrl } from 'lib/utils/query-string';
 import { IconButton } from 'ui/Button/IconButton';
 import { UrlContextMenu } from 'ui/ContextMenu/UrlContextMenu';
 import { Icon } from 'ui/Icon/Icon';
@@ -17,6 +14,8 @@ import { ListLink } from 'ui/Link/ListLink';
 import { Popover } from 'ui/Popover/Popover';
 import { PopoverHoverWrapper } from 'ui/Popover/PopoverHoverWrapper';
 import { UntitledText } from 'ui/StyledText/StyledText';
+
+import { IProcessedBoardItem } from '../DataDocNavigator/navigatorConst';
 
 import './BoardListItemRow.scss';
 
@@ -48,17 +47,9 @@ export const BoardListItemRow: React.FC<{
                         >
                             <Icon className="mr4" size={16} name={icon} />
                             {title ? (
-                                title.length ? (
-                                    <span className="ListLinkText">
-                                        {title}
-                                    </span>
-                                ) : (
-                                    <UntitledText className="ListLinkPlaceholder" />
-                                )
+                                <span className="ListLinkText">{title}</span>
                             ) : (
-                                <span className="ListLinkText">
-                                    {'Execution ' + itemId}
-                                </span>
+                                <UntitledText className="ListLinkPlaceholder" />
                             )}
                             <IconButton
                                 className="delete-board-item-button"
