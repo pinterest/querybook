@@ -15,10 +15,11 @@ export const LinkInput: React.FunctionComponent<{
         //    2. immediately setting inputRef to focus
         //       does not work. Possibly because it is in
         //       a popover
+
         setTimeout(() => {
             inputRef.current.focus();
-        }, 50);
-    }, [inputRef.current]);
+        }, 250);
+    }, []);
 
     return (
         <div className="toolbar-link-input-wrapper">
@@ -39,7 +40,7 @@ export const LinkInput: React.FunctionComponent<{
                         onDismiss();
                     }
                 }}
-                autoFocus={false}
+                autoFocus
             />
         </div>
     );
