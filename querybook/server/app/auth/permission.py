@@ -221,10 +221,4 @@ def get_board_environment_ids(board_id, session=None):
 
 @with_session
 def get_query_execution_environment_ids(query_execution_id, session=None):
-    return [
-        eid
-        for eid, in session.query(QueryEngineEnvironment.environment_id)
-        .join(QueryEngine)
-        .join(QueryExecution)
-        .filter(QueryExecution.id == query_execution_id)
-    ]
+    return query_execution_logic.get_environments_by_execution_id(query_execution_id)

@@ -8,8 +8,8 @@ import { generateFormattedDate } from 'lib/utils/datetime';
 import { navigateWithinEnv } from 'lib/utils/query-string';
 import {
     setCurrentBoardId,
+    updateBoard,
     updateBoardDescription,
-    updateBoardName,
 } from 'redux/board/action';
 import { updateSearchFilter, updateSearchType } from 'redux/search/action';
 import { SearchType } from 'redux/search/types';
@@ -49,7 +49,7 @@ export const BoardHeader: React.FunctionComponent<IProps> = ({ board }) => {
 
     const handleTitleChange = React.useCallback(
         (updatedTitle) => {
-            dispatch(updateBoardName(board.id, updatedTitle));
+            dispatch(updateBoard(board.id, updatedTitle));
         },
         [board.id]
     );

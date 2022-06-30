@@ -207,10 +207,10 @@ def delete_board_item(board_id, item_type, item_id):
 def update_board_item_fields(board_item_id, fields):
     with DBSession() as session:
         board_item = BoardItem.get(id=board_item_id, session=session)
-        assert_can_edit(board_item.parent_board_id, session=session)
         api_assert(
             board_item,
             "List item does not exist",
         )
+        assert_can_edit(board_item.parent_board_id, session=session)
 
         return logic.update_board_item(id=board_item_id, fields=fields, session=session)

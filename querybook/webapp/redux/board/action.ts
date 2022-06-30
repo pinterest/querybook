@@ -168,32 +168,18 @@ export function createBoard(
 export function updateBoard(
     id: number,
     name: string,
-    isPublic: boolean,
-    description: ContentState
+    isPublic?: boolean,
+    description?: ContentState
 ): ThunkResult<Promise<IBoardRaw>> {
     return async (dispatch) => {
-        const board = (
-            await BoardResource.update(id, {
-                name,
-                description: convertContentStateToHTML(description),
-                public: isPublic,
-            })
-        ).data;
-        receiveBoardWithItems(dispatch, board);
-        return board;
-    };
-}
-
-export function updateBoardName(
-    id: number,
-    name: string
-): ThunkResult<Promise<IBoardRaw>> {
-    return async (dispatch) => {
-        const board = (
-            await BoardResource.update(id, {
-                name,
-            })
-        ).data;
+        const fields = { name };
+        if (description) {
+            fields['description'] = convertContentStateToHTML(description);
+        }
+        if (isPublic !== null) {
+            fields['public'] = isPublic;
+        }
+        const board = (await BoardResource.update(id, fields)).data;
         receiveBoardWithItems(dispatch, board);
         return board;
     };
