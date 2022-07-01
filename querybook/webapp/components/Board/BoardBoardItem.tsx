@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { useSelector, useDispatch } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
 
 import { fetchBoardIfNeeded } from 'redux/board/action';
 import { Dispatch, IStoreState } from 'redux/store/types';
@@ -7,19 +7,13 @@ import { Dispatch, IStoreState } from 'redux/store/types';
 import { BoardItem } from './BoardItem';
 
 interface IProps {
-    parentBoardId: number;
     itemId?: number;
     boardId: number;
-    isCollapsed: boolean;
-    isEditMode: boolean;
 }
 
 export const BoardBoardItem: React.FunctionComponent<IProps> = ({
-    parentBoardId,
     itemId,
     boardId,
-    isCollapsed,
-    isEditMode,
 }) => {
     const board = useSelector(
         (state: IStoreState) => state.board.boardById[boardId]
@@ -29,18 +23,15 @@ export const BoardBoardItem: React.FunctionComponent<IProps> = ({
 
     React.useEffect(() => {
         dispatch(fetchBoardIfNeeded(boardId));
-    }, [boardId]);
+    }, [dispatch, boardId]);
 
     return board ? (
         <BoardItem
-            boardId={parentBoardId}
             boardItemId={itemId}
             itemId={boardId}
             itemType="board"
             title={board?.name}
             titleUrl={`/list/${boardId}/`}
-            defaultCollapsed={isCollapsed}
-            isEditMode={isEditMode}
         />
     ) : null;
 };

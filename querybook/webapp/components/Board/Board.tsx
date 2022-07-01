@@ -4,11 +4,14 @@ import { useDispatch, useSelector } from 'react-redux';
 
 import { BoardRightSidebar } from 'components/BoardRightSidebar/BoardRightSidebar';
 import { IBoardItem, IBoardWithItemIds } from 'const/board';
+import { BoardPageContext, IBoardPageContextType } from 'context/BoardPage';
+import { useBoardItemActions } from 'hooks/board/useBoardItemActions';
 import { isAxiosError } from 'lib/utils/error';
 import { fetchBoardIfNeeded } from 'redux/board/action';
 import { Dispatch, IStoreState } from 'redux/store/types';
+import { DraggableList } from 'ui/DraggableList/DraggableList';
 import { Loading } from 'ui/Loading/Loading';
-import { AccentText } from 'ui/StyledText/StyledText';
+import { AccentText, EmptyText } from 'ui/StyledText/StyledText';
 
 import { BoardBoardItem } from './BoardBoardItem';
 import { BoardDataDocItem } from './BoardDataDocItem';
@@ -30,87 +33,107 @@ const BoardDOM: React.FunctionComponent<IBoardDOMProps> = ({
 }) => {
     const [defaultCollapse, setDefaulCollapse] = React.useState(false);
     // TODO - meowcodes: implement isEditable + board 0
-    const [isEditMode, setIsEditMode] = React.useState<boolean>(false);
+    const [isEditMode, setIsEditMode] = React.useState(false);
+
+    const { handleDeleteBoardItem, handleMoveBoardItem } =
+        useBoardItemActions(board);
+
+    const boardContextValue: IBoardPageContextType = React.useMemo(
+        () => ({
+            onDeleteBoardItem: handleDeleteBoardItem,
+            isEditMode,
+            isCollapsed: defaultCollapse,
+        }),
+        [handleDeleteBoardItem, isEditMode, defaultCollapse]
+    );
 
     const isPublicList = board.id === 0;
 
-    const boardItemDOM = isPublicList
-        ? board.boards?.map((boardId) => (
-              <BoardBoardItem
-                  parentBoardId={0}
-                  boardId={boardId}
-                  key={boardId}
-                  isCollapsed={defaultCollapse}
-                  isEditMode={isEditMode}
-              />
-          ))
-        : board?.items
-              ?.map((itemIdx) => boardItemById[itemIdx])
-              .filter((i) => i)
-              .map((boardItem) =>
-                  boardItem.data_doc_id ? (
-                      <BoardDataDocItem
-                          boardId={board.id}
-                          itemId={boardItem.id}
-                          docId={boardItem.data_doc_id}
-                          key={boardItem.id}
-                          isCollapsed={defaultCollapse}
-                          isEditMode={isEditMode}
-                      />
-                  ) : boardItem.table_id ? (
-                      <BoardDataTableItem
-                          boardId={board.id}
-                          itemId={boardItem.id}
-                          tableId={boardItem.table_id}
-                          key={boardItem.id}
-                          isCollapsed={defaultCollapse}
-                          isEditMode={isEditMode}
-                      />
-                  ) : boardItem.board_id ? (
-                      <BoardBoardItem
-                          boardId={boardItem.board_id}
-                          key={boardItem.board_id}
-                          parentBoardId={board.id}
-                          itemId={boardItem.id}
-                          isCollapsed={defaultCollapse}
-                          isEditMode={isEditMode}
-                      />
-                  ) : (
-                      <BoardQueryItem
-                          boardId={board.id}
-                          itemId={boardItem.id}
-                          queryExecutionId={boardItem.query_execution_id}
-                          key={boardItem.id}
-                          isCollapsed={defaultCollapse}
-                          isEditMode={isEditMode}
-                      />
-                  )
-              );
+    let boardItemDOM: React.ReactNode;
+    if (isPublicList) {
+        boardItemDOM = board.boards?.map((boardId) => (
+            <BoardBoardItem boardId={boardId} key={boardId} />
+        ));
+    } else {
+        const boardItems =
+            board?.items
+                ?.map((itemIdx) => boardItemById[itemIdx])
+                .filter((i) => i) ?? [];
+
+        if (boardItems.length === 0) {
+            boardItemDOM = (
+                <EmptyText className="mt24">No items in board.</EmptyText>
+            );
+        } else {
+            const boardItemRenderer = (boardItem: IBoardItem) =>
+                boardItem.data_doc_id ? (
+                    <BoardDataDocItem
+                        itemId={boardItem.id}
+                        key={boardItem.id}
+                        docId={boardItem.data_doc_id}
+                    />
+                ) : boardItem.table_id ? (
+                    <BoardDataTableItem
+                        itemId={boardItem.id}
+                        key={boardItem.id}
+                        tableId={boardItem.table_id}
+                    />
+                ) : boardItem.board_id ? (
+                    <BoardBoardItem
+                        itemId={boardItem.id}
+                        key={boardItem.id}
+                        boardId={boardItem.board_id}
+                    />
+                ) : (
+                    <BoardQueryItem
+                        itemId={boardItem.id}
+                        key={boardItem.id}
+                        queryExecutionId={boardItem.query_execution_id}
+                    />
+                );
+
+            if (isEditMode) {
+                boardItemDOM = (
+                    <DraggableList
+                        items={boardItems}
+                        renderItem={(_, boardItem) =>
+                            boardItemRenderer(boardItem)
+                        }
+                        onMove={handleMoveBoardItem}
+                    />
+                );
+            } else {
+                boardItemDOM = boardItems.map(boardItemRenderer);
+            }
+        }
+    }
 
     return (
-        <div className="Board">
-            <div className="Board-content">
-                {isPublicList ? (
-                    <AccentText
-                        className="p8"
-                        color="light"
-                        size="xlarge"
-                        weight="extra"
-                    >
-                        All Public Lists
-                    </AccentText>
-                ) : (
-                    <BoardHeader board={board} />
-                )}
-                {boardItemDOM}
+        <BoardPageContext.Provider value={boardContextValue}>
+            <div className="Board">
+                <div className="Board-content">
+                    {isPublicList ? (
+                        <AccentText
+                            className="p8"
+                            color="light"
+                            size="xlarge"
+                            weight="extra"
+                        >
+                            All Public Lists
+                        </AccentText>
+                    ) : (
+                        <BoardHeader board={board} />
+                    )}
+                    {boardItemDOM}
+                </div>
+                <BoardRightSidebar
+                    onCollapse={() => setDefaulCollapse((c) => !c)}
+                    defaultCollapse={defaultCollapse}
+                    onEditModeToggle={() => setIsEditMode((e) => !e)}
+                    isEditMode={isEditMode}
+                />
             </div>
-            <BoardRightSidebar
-                onCollapse={() => setDefaulCollapse((c) => !c)}
-                defaultCollapse={defaultCollapse}
-                onEditModeToggle={() => setIsEditMode((e) => !e)}
-                isEditMode={isEditMode}
-            />
-        </div>
+        </BoardPageContext.Provider>
     );
 };
 

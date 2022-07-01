@@ -2,7 +2,6 @@ import * as React from 'react';
 
 import { useAnnouncements } from 'hooks/redux/useAnnouncements';
 import { useScrollToTop } from 'hooks/ui/useScrollToTop';
-
 import { IconButton } from 'ui/Button/IconButton';
 
 import './BoardRightSidebar.scss';
@@ -42,6 +41,7 @@ export const BoardRightSidebar: React.FunctionComponent<IProps> = ({
                 }
                 tooltipPos="left"
                 onClick={onCollapse}
+                disabled={isEditMode}
             />
             <IconButton
                 icon={isEditMode ? 'Check' : 'Edit2'}

@@ -1,7 +1,6 @@
 import clsx from 'clsx';
 import * as React from 'react';
 import { useDrop } from 'react-dnd';
-import toast from 'react-hot-toast';
 import { useDispatch, useSelector } from 'react-redux';
 
 import { BoardCreateUpdateModal } from 'components/BoardCreateUpdateModal/BoardCreateUpdateModal';
@@ -10,14 +9,10 @@ import {
     DataDocDraggableType,
     IProcessedBoardItem,
 } from 'components/DataDocNavigator/navigatorConst';
-import { BoardItemType } from 'const/board';
 import { IDataDoc } from 'const/datadoc';
+import { useBoardItemActions } from 'hooks/board/useBoardItemActions';
 import { useMakeSelector } from 'hooks/redux/useMakeSelector';
-import {
-    deleteBoardItem,
-    fetchBoardIfNeeded,
-    moveBoardItem,
-} from 'redux/board/action';
+import { fetchBoardIfNeeded } from 'redux/board/action';
 import { makeBoardItemsSelector } from 'redux/board/selector';
 import { setDataDocNavBoard } from 'redux/querybookUI/action';
 import { dataDocNavBoardOpenSelector } from 'redux/querybookUI/selector';
@@ -54,32 +49,22 @@ export const BoardExpandableSection: React.FunctionComponent<{
         dataDocNavBoardOpenSelector(state, id)
     );
 
+    React.useEffect(() => {
+        if (!collapsed) {
+            dispatch(fetchBoardIfNeeded(id));
+        }
+    }, [id, collapsed]);
+
     const board = useSelector(
         (state: IStoreState) => state.board.boardById[id]
     );
     const boardItemIds = board?.items;
     const items = useMakeSelector(makeBoardItemsSelector, board.id);
 
-    const handleDeleteBoardItem = React.useCallback(
-        async (itemId: number, itemType: BoardItemType) => {
-            await dispatch(deleteBoardItem(board.id, itemType, itemId));
-            // TODO: Consider not duplicating this logic in BoardItemAddButton
-            toast.success(`Item removed from the list "${board.name}"`);
-        },
-        [board]
-    );
-
-    const handleLocalMoveBoardItem = React.useCallback(
-        (fromIndex: number, toIndex: number) =>
-            dispatch(moveBoardItem(board.id, fromIndex, toIndex)),
-        [board]
-    );
-
-    React.useEffect(() => {
-        if (!collapsed) {
-            dispatch(fetchBoardIfNeeded(id));
-        }
-    }, [id, collapsed]);
+    const {
+        handleDeleteBoardItem,
+        handleMoveBoardItem: handleLocalMoveBoardItem,
+    } = useBoardItemActions(board);
 
     const [{ isOver }, dropRef] = useDrop({
         accept: [BoardDraggableType, DataDocDraggableType],
