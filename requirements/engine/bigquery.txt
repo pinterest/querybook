@@ -1,1 +1,5 @@
 google-cloud-bigquery==1.28.0
+
+# Downgrade Protobuf to fix error with bigquery:
+# TypeError: Descriptors cannot not be created directly.
+protobuf==3.20.1
