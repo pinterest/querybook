@@ -7,6 +7,7 @@ import {
     isNumeric,
     roundNumberToDecimal,
 } from 'lib/utils/number';
+import { Link } from 'ui/Link/Link';
 
 import { IColumnTransformer } from './types';
 
@@ -69,6 +70,18 @@ const queryResultTransformers: IColumnTransformer[] = [
                 return v;
             }
         },
+    },
+    {
+        key: 'url',
+        name: 'Url Links',
+        appliesToType: ['url'],
+        priority: 0,
+        auto: true,
+        transform: (v: string): React.ReactNode => (
+            <Link to={v} naturalLink>
+                {v}
+            </Link>
+        ),
     },
 ]
     .concat(window.CUSTOM_COLUMN_TRANSFORMERS ?? [])

@@ -295,3 +295,10 @@ export function getChangedObject(
 
     return ret;
 }
+
+// Source: https://stackoverflow.com/questions/5717093/check-if-a-javascript-string-is-a-url/45567717#45567717
+const urlPattern =
+    /(?:https?):\/\/(\w+:?\w*)?(\S+)(:\d+)?(\/|\/([\w#!:.?+=&%!\-\/]))?/;
+export function isValidUrl(url: string): boolean {
+    return !!urlPattern.test(url);
+}

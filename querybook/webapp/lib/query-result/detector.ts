@@ -1,5 +1,6 @@
 import { sampleSize } from 'lodash';
 
+import { isValidUrl } from 'lib/utils';
 import { isNumeric } from 'lib/utils/number';
 
 import { IColumnDetector } from './types';
@@ -22,6 +23,12 @@ const columnDetectors: IColumnDetector[] = [
                     return false;
                 }
             }),
+    },
+    {
+        type: 'url',
+        priority: 0.2,
+        checker: (colName: string, values: any[]) =>
+            detectTypeForValues(values, isValidUrl),
     },
     {
         type: 'number',
