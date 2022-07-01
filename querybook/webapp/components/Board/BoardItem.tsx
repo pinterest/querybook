@@ -5,6 +5,7 @@ import { useDispatch, useSelector } from 'react-redux';
 
 import { BoardItemAddButton } from 'components/BoardItemAddButton/BoardItemAddButton';
 import { BoardItemType } from 'const/board';
+import { BoardPageContext } from 'context/BoardPage';
 import { navigateWithinEnv } from 'lib/utils/query-string';
 import {
     updateBoardItemDescription,
@@ -23,15 +24,12 @@ import { Title } from 'ui/Title/Title';
 import './BoardItem.scss';
 
 export interface IBoardItemProps {
-    boardId: number;
     boardItemId: number;
     itemId: number;
     itemType: BoardItemType;
     title: string;
     titleUrl: string;
-    defaultCollapsed: boolean;
-    isEditMode: boolean;
-    tableDescription?: ContentState;
+    description?: ContentState;
 }
 
 const boardItemTypeToIcon: Record<BoardItemType, AllLucideIconNames> = {
@@ -42,38 +40,41 @@ const boardItemTypeToIcon: Record<BoardItemType, AllLucideIconNames> = {
 };
 
 export const BoardItem: React.FunctionComponent<IBoardItemProps> = ({
-    boardId,
     boardItemId,
     itemId,
     itemType,
     title,
     titleUrl,
-    defaultCollapsed,
-    isEditMode,
-    tableDescription,
+    description,
 }) => {
+    const {
+        isCollapsed: defaultCollapsed,
+        isEditMode,
+        onDeleteBoardItem,
+    } = React.useContext(BoardPageContext);
+
     const dispatch: Dispatch = useDispatch();
     const [collapsed, setCollapsed] = React.useState(defaultCollapsed);
 
-    const { boardItemData } = useSelector((state: IStoreState) => ({
-        boardItemData: state.board.boardItemById[boardItemId],
-    }));
+    const boardItemData = useSelector(
+        (state: IStoreState) => state.board.boardItemById[boardItemId]
+    );
 
-    const displayTableDescription = React.useMemo(
+    const displayItemDescription = React.useMemo(
         () =>
             itemType === 'table' &&
-            boardItemData?.meta?.display_table_description,
-        [boardItemData?.meta?.display_table_description, itemType]
+            boardItemData?.meta?.display_item_description,
+        [boardItemData?.meta?.display_item_description, itemType]
     );
 
     React.useEffect(() => setCollapsed(defaultCollapsed), [defaultCollapsed]);
 
     const handleDescriptionSave = React.useCallback(
-        (updatedDescription) =>
+        (updatedDescription: ContentState) =>
             dispatch(
                 updateBoardItemDescription(boardItemId, updatedDescription)
             ),
-        [boardId, boardItemId]
+        [dispatch, boardItemId]
     );
 
     const handleDescriptionSwitch = React.useCallback(
@@ -81,10 +82,10 @@ export const BoardItem: React.FunctionComponent<IBoardItemProps> = ({
             dispatch(
                 updateBoardItemMeta(boardItemId, {
                     ...boardItemData?.meta,
-                    display_table_description: !displayTableDescription,
+                    display_item_description: !displayItemDescription,
                 })
             ),
-        [boardId, boardItemData, displayTableDescription]
+        [dispatch, boardItemId, boardItemData, displayItemDescription]
     );
 
     const boardItemClassname = clsx({
@@ -95,107 +96,118 @@ export const BoardItem: React.FunctionComponent<IBoardItemProps> = ({
         mb24: !collapsed,
     });
 
+    const boardItemHeaderDOM = (
+        <div className="flex-row">
+            <Icon
+                name={boardItemTypeToIcon[itemType]}
+                size={20}
+                className="mr8"
+                color="light"
+            />
+            <div
+                onClick={() =>
+                    navigateWithinEnv(titleUrl, {
+                        isModal: itemType === 'table' || itemType === 'query',
+                    })
+                }
+            >
+                <Title className="BoardItem-title" size="smedium">
+                    {title}
+                </Title>
+            </div>
+        </div>
+    );
+
+    const boardItemControlsDOM = isEditMode ? (
+        <>
+            <IconButton
+                size={18}
+                icon="X"
+                noPadding
+                onClick={onDeleteBoardItem.bind(null, itemId, itemType)}
+                tooltip="Remove from board"
+            />
+            <IconButton
+                size={18}
+                icon="MoveVertical"
+                noPadding
+                tooltip="Drag to reorder"
+            />
+        </>
+    ) : (
+        <>
+            <BoardItemAddButton
+                size={18}
+                itemType={itemType}
+                itemId={itemId}
+                noPadding
+                popoverLayout={['left', 'top']}
+                tooltipPos="left"
+                tooltip="Add to another list"
+            />
+            <IconButton
+                size={18}
+                icon={collapsed ? 'Maximize2' : 'Minimize2'}
+                onClick={() => setCollapsed((c) => !c)}
+                noPadding
+            />
+        </>
+    );
+
+    const boardItemDescriptionDOM =
+        collapsed || isEditMode || !boardItemData ? null : (
+            <>
+                {displayItemDescription ? (
+                    description.getPlainText().length === 0 ? (
+                        <AccentText
+                            className="mt8"
+                            noUserSelect
+                            color="lightest"
+                            size="small"
+                        >
+                            No {itemType} description
+                        </AccentText>
+                    ) : (
+                        <RichTextEditor
+                            className="mt8"
+                            value={description}
+                            readOnly={true}
+                        />
+                    )
+                ) : (
+                    <EditableTextField
+                        className="mt8"
+                        value={boardItemData?.description}
+                        onSave={handleDescriptionSave}
+                    />
+                )}
+                {itemType === 'table' && (
+                    <div className="BoardItem-description-toggle">
+                        <Button
+                            className=" flex-row"
+                            onClick={handleDescriptionSwitch}
+                        >
+                            <Icon name="Repeat" size={16} className="mr8" />
+                            <AccentText size="xsmall">
+                                {displayItemDescription
+                                    ? 'Switch to Item Notes'
+                                    : 'Switch to Table Description'}
+                            </AccentText>
+                        </Button>
+                    </div>
+                )}
+            </>
+        );
+
     return (
         <div className={boardItemClassname}>
             <div className="BoardItem-top horizontal-space-between">
-                <div className="flex-row">
-                    <Icon
-                        name={boardItemTypeToIcon[itemType]}
-                        size={20}
-                        className="mr8"
-                        color="light"
-                    />
-                    <div
-                        onClick={() =>
-                            navigateWithinEnv(titleUrl, {
-                                isModal:
-                                    itemType === 'table' ||
-                                    itemType === 'query',
-                            })
-                        }
-                    >
-                        <Title className="BoardItem-title" size="smedium">
-                            {title}
-                        </Title>
-                    </div>
-                </div>
+                {boardItemHeaderDOM}
                 <div className="BoardItem-controls flex-center">
-                    {isEditMode ? (
-                        <>
-                            <IconButton size={18} icon="X" noPadding />
-                            <IconButton
-                                size={18}
-                                icon="MoveVertical"
-                                noPadding
-                            />
-                        </>
-                    ) : (
-                        <>
-                            <BoardItemAddButton
-                                size={18}
-                                itemType={itemType}
-                                itemId={itemId}
-                                noPadding
-                                popoverLayout={['left', 'top']}
-                                tooltipPos="left"
-                                tooltip="Add to another list"
-                            />
-                            <IconButton
-                                size={18}
-                                icon={collapsed ? 'Maximize2' : 'Minimize2'}
-                                onClick={() => setCollapsed((c) => !c)}
-                                noPadding
-                            />
-                        </>
-                    )}
+                    {boardItemControlsDOM}
                 </div>
             </div>
-            {collapsed ||
-            isEditMode ||
-            !boardItemData ||
-            boardId === 0 ? null : (
-                <>
-                    {displayTableDescription ? (
-                        tableDescription.getPlainText().length === 0 ? (
-                            <AccentText
-                                className="mt8"
-                                noUserSelect
-                                color="lightest"
-                                size="small"
-                            >
-                                No table description
-                            </AccentText>
-                        ) : (
-                            <RichTextEditor
-                                className="mt8"
-                                value={tableDescription}
-                                readOnly={true}
-                            />
-                        )
-                    ) : (
-                        <EditableTextField
-                            className="mt8"
-                            value={boardItemData?.description}
-                            onSave={handleDescriptionSave}
-                        />
-                    )}
-                    {itemType === 'table' && (
-                        <div className="BoardItem-description-toggle">
-                            <Button
-                                className=" flex-row"
-                                onClick={handleDescriptionSwitch}
-                            >
-                                <Icon name="Repeat" size={16} className="mr8" />
-                                <AccentText size="xsmall">
-                                    {displayTableDescription
-                                        ? 'Switch to Item Notes'
-                                        : 'Switch to Table Description'}
-                                </AccentText>
-                            </Button>
-                        </div>
-                    )}
-                </>
-            )}
+            {boardItemDescriptionDOM}
         </div>
     );
 };
