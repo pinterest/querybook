@@ -164,7 +164,14 @@ def create_get_latest_partition(engine_id: int) -> Callable[[str, str], str]:
 
 def get_templated_query_env(engine_id: int):
     jinja_env = SandboxedEnvironment()
+
+    # Inject helper functions
     jinja_env.globals.update(latest_partition=create_get_latest_partition(engine_id))
+
+    # Template rendering config
+    jinja_env.trim_blocks = True
+    jinja_env.lstrip_blocks = True
+
     return jinja_env
 
 
