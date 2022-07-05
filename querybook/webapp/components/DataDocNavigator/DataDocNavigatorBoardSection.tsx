@@ -1,34 +1,32 @@
 import { orderBy } from 'lodash';
 import React, { useCallback, useEffect, useMemo, useState } from 'react';
-
 import { useDispatch, useSelector } from 'react-redux';
+import { useRouteMatch } from 'react-router-dom';
 
+import { BoardCreateUpdateModal } from 'components/BoardCreateUpdateModal/BoardCreateUpdateModal';
+import { BoardExpandableHeader } from 'components/BoardExpandableList/BoardExpandableHeader';
+import { BoardExpandableSection } from 'components/BoardExpandableList/BoardExpandableSection';
 import {
     BoardOrderBy,
     BoardOrderToDescription,
     BoardOrderToTitle,
 } from 'const/board';
 import { IDataDoc } from 'const/datadoc';
-import {
-    BoardDraggableType,
-    DataDocDraggableType,
-    IProcessedBoardItem,
-} from './navigatorConst';
 import { getEnumEntries } from 'lib/typescript';
 import { addBoardItem, fetchBoards } from 'redux/board/action';
 import { myBoardsSelector } from 'redux/board/selector';
 import { Dispatch, IStoreState } from 'redux/store/types';
-
-import { BoardCreateUpdateModal } from 'components/BoardCreateUpdateModal/BoardCreateUpdateModal';
-import { BoardExpandableSection } from 'components/BoardExpandableSection/BoardExpandableSection';
-import { BoardExpandableHeader } from 'components/BoardExpandableSection/BoardExpandableHeader';
-
 import { IconButton } from 'ui/Button/IconButton';
 import { Icon } from 'ui/Icon/Icon';
 import { Level, LevelItem } from 'ui/Level/Level';
 import { OrderByButton } from 'ui/OrderByButton/OrderByButton';
 import { Title } from 'ui/Title/Title';
-import { useRouteMatch } from 'react-router-dom';
+
+import {
+    BoardDraggableType,
+    DataDocDraggableType,
+    IProcessedBoardItem,
+} from './navigatorConst';
 
 interface INavigatorBoardSectionProps {
     selectedDocId: number;
@@ -171,7 +169,7 @@ export const DataDocNavigatorBoardSection: React.FC<
         </Level>
     );
 
-    const boardsDOM = collapsed ? null : boards.length ? (
+    const boardsDOM = collapsed ? null : (
         <div className="ml8">
             <div className="BoardExpandableSection">
                 <BoardExpandableHeader
@@ -183,19 +181,19 @@ export const DataDocNavigatorBoardSection: React.FC<
                     isCollapsable={false}
                 />
             </div>
-            {boards.map((board) => (
-                <BoardExpandableSection
-                    key={board.id}
-                    id={board.id}
-                    selectedDocId={selectedDocId}
-                    selectedBoardId={selectedBoardId}
-                    filterString={filterString}
-                    onMoveBoardItem={handleMoveBoardItem}
-                />
-            ))}
+            {boards.length
+                ? boards.map((board) => (
+                      <BoardExpandableSection
+                          key={board.id}
+                          id={board.id}
+                          selectedDocId={selectedDocId}
+                          selectedBoardId={selectedBoardId}
+                          filterString={filterString}
+                          onMoveBoardItem={handleMoveBoardItem}
+                      />
+                  ))
+                : null}
         </div>
-    ) : (
-        <div className="empty-section-message">No lists</div>
     );
 
     return (

@@ -3,7 +3,9 @@ import datetime
 from sqlalchemy import or_
 from app.db import with_session
 from const.elasticsearch import ElasticsearchItem
-from models.board import Board, BoardItem
+from models.board import Board, BoardItem, BoardEditor
+from models.access_request import AccessRequest
+from lib.sqlalchemy import update_model_fields
 from tasks.sync_elasticsearch import sync_elasticsearch
 
 
@@ -214,3 +216,104 @@ def update_board_item(id, session=None, **fields):
     )
 
     return board
+
+
+"""
+    ----------------------------------------------------------------------------------------------------------
+    BOARD EDITOR
+    ---------------------------------------------------------------------------------------------------------
+"""
+
+
+@with_session
+def get_board_editor_by_id(id, session=None):
+    return session.query(BoardEditor).get(id)
+
+
+@with_session
+def get_board_editors_by_board_id(board_id, session=None):
+    return session.query(BoardEditor).filter_by(board_id=board_id).all()
+
+
+@with_session
+def create_board_editor(
+    board_id, uid, read=False, write=False, commit=True, session=None
+):
+    editor = BoardEditor(board_id=board_id, uid=uid, read=read, write=write)
+
+    session.add(editor)
+    if commit:
+        session.commit()
+        update_es_boards_by_id(editor.board_id)
+    else:
+        session.flush()
+    session.refresh(editor)
+    return editor
+
+
+@with_session
+def update_board_editor(
+    id,
+    read=None,
+    write=None,
+    commit=True,
+    session=None,
+    **fields,
+):
+    editor = get_board_editor_by_id(id, session=session)
+    if editor:
+        updated = update_model_fields(
+            editor, skip_if_value_none=True, read=read, write=write
+        )
+
+        if updated:
+            if commit:
+                session.commit()
+            else:
+                session.flush()
+            session.refresh(editor)
+        return editor
+
+
+@with_session
+def delete_board_editor(id, board_id, session=None, commit=True):
+    session.query(BoardEditor).filter_by(id=id).delete()
+    if commit:
+        session.commit()
+        update_es_boards_by_id(board_id)
+
+
+"""
+    ----------------------------------------------------------------------------------------------------------
+    BOARD ACCESS REQUESTS
+    ---------------------------------------------------------------------------------------------------------
+"""
+
+
+@with_session
+def get_board_access_requests_by_board_id(board_id, session=None):
+    return session.query(AccessRequest).filter_by(board_id=board_id).all()
+
+
+@with_session
+def get_board_access_request_by_board_id(board_id, uid, session=None):
+    return session.query(AccessRequest).filter_by(board_id=board_id, uid=uid).first()
+
+
+@with_session
+def create_board_access_request(board_id, uid, commit=True, session=None):
+    request = AccessRequest(uid=uid, board_id=board_id)
+    session.add(request)
+    if commit:
+        session.commit()
+    else:
+        session.flush()
+    session.refresh(request)
+    return request
+
+
+@with_session
+def remove_board_access_request(board_id, uid, session=None, commit=True):
+    session.query(AccessRequest).filter_by(board_id=board_id, uid=uid).delete()
+    if commit:
+        session.commit()

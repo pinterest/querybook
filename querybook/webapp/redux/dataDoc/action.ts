@@ -21,7 +21,7 @@ import {
     DataDocSaveManager,
 } from 'lib/batch/datadoc-save-manager';
 import {
-    DataDocPermission,
+    Permission,
     permissionToReadWrite,
 } from 'lib/data-doc/datadoc-permission';
 import dataDocSocket from 'lib/data-doc/datadoc-socketio';
@@ -515,7 +515,7 @@ export function getDataDocEditors(
 export function addDataDocEditors(
     docId: number,
     uid: number,
-    permission: DataDocPermission
+    permission: Permission
 ): ThunkResult<Promise<IDataDocEditor>> {
     return async (dispatch, getState) => {
         const request = (getState().dataDoc.accessRequestsByDocIdUserId[

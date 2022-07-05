@@ -1,30 +1,29 @@
 import React from 'react';
 
-import { DataDocPermission } from 'lib/data-doc/datadoc-permission';
+import { Permission } from 'lib/data-doc/datadoc-permission';
+
 import { IconButton } from 'ui/Button/IconButton';
 import { Icon } from 'ui/Icon/Icon';
 import { Menu, MenuItem } from 'ui/Menu/Menu';
 import { Popover } from 'ui/Popover/Popover';
 import { AccentText } from 'ui/StyledText/StyledText';
 
-import './DataDocAccessRequestPermissionPicker.scss';
+import './AccessRequestPermissionPicker.scss';
 
 interface IPermissionPickerProp {
     uid: number;
-    addDataDocEditor?: (uid: number, permission: DataDocPermission) => any;
-    rejectDataDocAccessRequest?: (uid: number) => any;
+    addEditor?: (uid: number, permission: Permission) => any;
+    rejectAccessRequest?: (uid: number) => any;
     addQueryExecutionViewer?: (uid: number) => any;
     rejectQueryExecutionAccessRequest?: (uid: number) => any;
 }
 
-export const DataDocAccessRequestPermissionPicker: React.FunctionComponent<
+export const AccessRequestPermissionPicker: React.FunctionComponent<
     IPermissionPickerProp
-> = ({ uid, addDataDocEditor, rejectDataDocAccessRequest }) => {
+> = ({ uid, addEditor, rejectAccessRequest }) => {
     const [showEditMenu, setShowEditMenu] = React.useState(false);
     const selfRef = React.useRef<HTMLDivElement>(null);
-    const [permission, setPermission] = React.useState(
-        DataDocPermission.CAN_READ
-    );
+    const [permission, setPermission] = React.useState(Permission.CAN_READ);
     const editMenuDOM = showEditMenu && (
         <Popover
             onHide={() => setShowEditMenu(false)}
@@ -34,14 +33,10 @@ export const DataDocAccessRequestPermissionPicker: React.FunctionComponent<
             noPadding
         >
             <Menu>
-                <MenuItem
-                    onClick={() => setPermission(DataDocPermission.CAN_READ)}
-                >
+                <MenuItem onClick={() => setPermission(Permission.CAN_READ)}>
                     read only
                 </MenuItem>
-                <MenuItem
-                    onClick={() => setPermission(DataDocPermission.CAN_WRITE)}
-                >
+                <MenuItem onClick={() => setPermission(Permission.CAN_WRITE)}>
                     edit
                 </MenuItem>
             </Menu>
@@ -61,14 +56,14 @@ export const DataDocAccessRequestPermissionPicker: React.FunctionComponent<
             <IconButton
                 className="access-request-control-button"
                 icon="CheckCircle"
-                onClick={() => addDataDocEditor(uid, permission)}
+                onClick={() => addEditor(uid, permission)}
                 tooltip={`Allow ${permission} permission`}
                 tooltipPos="left"
             />
             <IconButton
                 className="access-request-control-button"
                 icon="XCircle"
-                onClick={() => rejectDataDocAccessRequest(uid)}
+                onClick={() => rejectAccessRequest(uid)}
                 tooltip="Reject access request"
                 tooltipPos="left"
             />
@@ -76,10 +71,7 @@ export const DataDocAccessRequestPermissionPicker: React.FunctionComponent<
     );
 
     return (
-        <div
-            className="DataDocAccessRequestPermissionPicker flex-row"
-            ref={selfRef}
-        >
+        <div className="AccessRequestPermissionPicker flex-row" ref={selfRef}>
             {pickerButton}
             {accessRequestControlButtonsDOM}
             {editMenuDOM}

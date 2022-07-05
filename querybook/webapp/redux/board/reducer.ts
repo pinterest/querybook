@@ -1,7 +1,8 @@
 import produce from 'immer';
+import moment from 'moment';
 
 import { itemTypeToKey } from 'const/board';
-import { arrayMove } from 'lib/utils';
+import { arrayGroupByField, arrayMove } from 'lib/utils';
 
 import { BoardAction, IBoardState } from './types';
 
@@ -9,6 +10,8 @@ const initialState: Readonly<IBoardState> = {
     boardById: {},
     boardItemById: {},
     currentBoardId: null,
+    editorsByBoardIdUserId: {},
+    accessRequestsByBoardIdUserId: {},
 };
 
 export default function (state = initialState, action: BoardAction) {
@@ -56,7 +59,9 @@ export default function (state = initialState, action: BoardAction) {
                 draft.boardItemById[boardItem.id] = boardItem;
                 if (
                     draft.boardById[boardId].items &&
-                    !(boardItem.id in draft.boardById[boardId].items)
+                    !(boardItem.id in draft.boardById[boardId].items) &&
+                    itemType &&
+                    itemId
                 ) {
                     draft.boardById[boardId].items.push(boardItem.id);
                     draft.boardById[boardId][itemTypeToKey[itemType]].push(
@@ -114,6 +119,65 @@ export default function (state = initialState, action: BoardAction) {
             case '@@board/SET_CURRENT_BOARD_ID': {
                 const { boardId } = action.payload;
                 draft.currentBoardId = boardId;
+                return;
+            }
+            case '@@board/RECEIVE_BOARD_EDITORS': {
+                const { boardId, editors } = action.payload;
+                draft.editorsByBoardIdUserId[boardId] = arrayGroupByField(
+                    editors,
+                    'uid'
+                );
+                return;
+            }
+            case '@@board/RECEIVE_BOARD_EDITOR': {
+                const { boardId, editor } = action.payload;
+                if (!(boardId in draft.editorsByBoardIdUserId)) {
+                    draft.editorsByBoardIdUserId[boardId] = {};
+                }
+                draft.editorsByBoardIdUserId[boardId][editor.uid] = editor;
+                return;
+            }
+            case '@@board/REMOVE_BOARD_EDITOR': {
+                const { boardId, uid } = action.payload;
+                if (
+                    boardId in draft.editorsByBoardIdUserId &&
+                    uid in draft.editorsByBoardIdUserId[boardId]
+                ) {
+                    delete draft.editorsByBoardIdUserId[boardId][uid];
+                }
+
+                return;
+            }
+            case '@@board/RECEIVE_BOARD_ACCESS_REQUESTS': {
+                const { boardId, requests } = action.payload;
+                draft.accessRequestsByBoardIdUserId[boardId] =
+                    arrayGroupByField(requests, 'uid');
+                return;
+            }
+            case '@@board/RECEIVE_BOARD_ACCESS_REQUEST': {
+                const { boardId, request } = action.payload;
+                if (!(boardId in draft.accessRequestsByBoardIdUserId)) {
+                    draft.accessRequestsByBoardIdUserId[boardId] = {};
+                }
+                draft.accessRequestsByBoardIdUserId[boardId][request.uid] =
+                    request;
+                return;
+            }
+            case '@@board/REMOVE_BOARD_ACCESS_REQUEST': {
+                const { boardId, uid } = action.payload;
+                if (
+                    boardId in draft.accessRequestsByBoardIdUserId &&
+                    uid in draft.accessRequestsByBoardIdUserId[boardId]
+                ) {
+                    delete draft.accessRequestsByBoardIdUserId[boardId][uid];
+                }
+                return;
+            }
+            case '@@board/UPDATE_BOARD_FIELD': {
+                const { boardId, fieldName, fieldVal } = action.payload;
+                const board = draft.boardById[boardId];
+                board[fieldName] = fieldVal;
+                board.updated_at = moment().unix();
                 return;
             }
         }

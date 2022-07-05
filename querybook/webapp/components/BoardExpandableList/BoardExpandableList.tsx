@@ -1,6 +1,5 @@
 import * as React from 'react';
 
-import { BoardListItemRow } from 'components/BoardExpandableSection/BoardListItemRow';
 import {
     BoardDraggableType,
     IProcessedBoardItem,
@@ -11,6 +10,8 @@ import { IDataTable } from 'const/metastore';
 import { IQueryExecution } from 'const/queryExecution';
 import { DraggableList } from 'ui/DraggableList/DraggableList';
 import { IDragItem } from 'ui/DraggableList/types';
+
+import { BoardListItemRow } from './BoardListItemRow';
 
 interface IBoardExpandableListProps {
     selectedDocId: number;

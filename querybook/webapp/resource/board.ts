@@ -1,6 +1,8 @@
+import { IAccessRequest } from 'const/accessRequest';
 import type {
     BoardItemType,
     IBoardBase,
+    IBoardEditor,
     IBoardItemRaw,
     IBoardRaw,
     IBoardUpdatableField,
@@ -40,6 +42,11 @@ export const BoardResource = {
 
     delete: (boardId: number) => ds.delete(`/board/${boardId}/`),
 
+    updateOwner: (boardId: number, newOwnerId: number) =>
+        ds.save<IBoardEditor>(`/board/${boardId}/owner/`, {
+            next_owner_id: newOwnerId,
+        }),
+
     addItem: (boardId: number, itemType: BoardItemType, itemId: number) =>
         ds.save<IBoardItemRaw>(`/board/${boardId}/${itemType}/${itemId}/`),
 
@@ -62,5 +69,34 @@ export const BoardResource = {
     updateItemFields: (boardItemId: number, fields: Record<string, any>) =>
         ds.update<IBoardItemRaw>(`/board/item/${boardItemId}/`, {
             fields,
+        }),
+};
+
+export const BoardEditorResource = {
+    get: (boardId: number) =>
+        ds.fetch<IBoardEditor[]>(`/board/${boardId}/editor/`),
+    create: (boardId: number, uid: number, read: boolean, write: boolean) =>
+        ds.save<IBoardEditor>(`/board/${boardId}/editor/${uid}/`, {
+            read,
+            write,
+        }),
+
+    update: (editorId: number, read: boolean, write: boolean) =>
+        ds.update<IBoardEditor>(`/board_editor/${editorId}/`, {
+            read,
+            write,
+        }),
+
+    delete: (editorId: number) => ds.delete(`/board_editor/${editorId}/`),
+};
+
+export const BoardAccessRequestResource = {
+    get: (boardId: number) =>
+        ds.fetch<IAccessRequest[]>(`/board/${boardId}/access_request/`),
+    create: (boardId: number) =>
+        ds.save<IAccessRequest>(`/board/${boardId}/access_request/`),
+    delete: (boardId: number, uid: number) =>
+        ds.delete(`/board/${boardId}/access_request/`, {
+            uid,
         }),
 };

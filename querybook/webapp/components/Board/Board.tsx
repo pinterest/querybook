@@ -7,7 +7,12 @@ import { IBoardItem, IBoardWithItemIds } from 'const/board';
 import { BoardPageContext, IBoardPageContextType } from 'context/BoardPage';
 import { useBoardItemActions } from 'hooks/board/useBoardItemActions';
 import { isAxiosError } from 'lib/utils/error';
-import { fetchBoardIfNeeded } from 'redux/board/action';
+import {
+    fetchBoardIfNeeded,
+    getBoardEditors,
+    setCurrentBoardId,
+} from 'redux/board/action';
+import * as boardSelectors from 'redux/board/selector';
 import { Dispatch, IStoreState } from 'redux/store/types';
 import { DraggableList } from 'ui/DraggableList/DraggableList';
 import { Loading } from 'ui/Loading/Loading';
@@ -31,6 +36,8 @@ const BoardDOM: React.FunctionComponent<IBoardDOMProps> = ({
     board,
     boardItemById,
 }) => {
+    const isEditable = useSelector(boardSelectors.canCurrentUserEditSelector);
+
     const [defaultCollapse, setDefaulCollapse] = React.useState(false);
     // TODO - meowcodes: implement isEditable + board 0
     const [isEditMode, setIsEditMode] = React.useState(false);
@@ -122,7 +129,7 @@ const BoardDOM: React.FunctionComponent<IBoardDOMProps> = ({
                             All Public Lists
                         </AccentText>
                     ) : (
-                        <BoardHeader board={board} />
+                        <BoardHeader board={board} isEditable={isEditable} />
                     )}
                     {boardItemDOM}
                 </div>
@@ -157,6 +164,8 @@ export const Board: React.FunctionComponent<IBoardProps> = ({ boardId }) => {
                 setError(e);
             }
         });
+        dispatch(setCurrentBoardId(boardId));
+        dispatch(getBoardEditors(boardId));
     }, [boardId]);
 
     return error ? (

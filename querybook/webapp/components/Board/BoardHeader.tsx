@@ -6,27 +6,27 @@ import { BoardViewersBadge } from 'components/BoardViewersBadge/BoardViewersBadg
 import { IBoardWithItemIds } from 'const/board';
 import { generateFormattedDate } from 'lib/utils/datetime';
 import { navigateWithinEnv } from 'lib/utils/query-string';
-import {
-    setCurrentBoardId,
-    updateBoard,
-    updateBoardDescription,
-} from 'redux/board/action';
+import { setCurrentBoardId, updateBoard } from 'redux/board/action';
 import { updateSearchFilter, updateSearchType } from 'redux/search/action';
 import { SearchType } from 'redux/search/types';
 import { Dispatch } from 'redux/store/types';
 import { TextButton } from 'ui/Button/Button';
 import { EditableTextField } from 'ui/EditableTextField/EditableTextField';
 import { ResizableTextArea } from 'ui/ResizableTextArea/ResizableTextArea';
+import { RichTextEditor } from 'ui/RichTextEditor/RichTextEditor';
 import { AccentText } from 'ui/StyledText/StyledText';
 
 import './BoardHeader.scss';
 
 interface IProps {
     board: IBoardWithItemIds;
+    isEditable: boolean;
 }
 
-// TODO - meowcodes: make add item work + add add to list button
-export const BoardHeader: React.FunctionComponent<IProps> = ({ board }) => {
+export const BoardHeader: React.FunctionComponent<IProps> = ({
+    board,
+    isEditable,
+}) => {
     const dispatch: Dispatch = useDispatch();
 
     const openSearchModal = React.useCallback(
@@ -43,7 +43,9 @@ export const BoardHeader: React.FunctionComponent<IProps> = ({ board }) => {
 
     const handleDescriptionUpdate = React.useCallback(
         (description) =>
-            dispatch(updateBoardDescription(board.id, description)),
+            dispatch(
+                updateBoard(board.id, board.name, board.public, description)
+            ),
         [board.id]
     );
 
@@ -82,11 +84,12 @@ export const BoardHeader: React.FunctionComponent<IProps> = ({ board }) => {
                     <BoardViewersBadge
                         boardId={board.id}
                         isPublic={board.public}
+                        isEditable={isEditable}
                     />
                 </div>
             </div>
             <AccentText
-                className="p8"
+                className="pv8"
                 color="light"
                 size="xlarge"
                 weight="extra"
@@ -96,34 +99,41 @@ export const BoardHeader: React.FunctionComponent<IProps> = ({ board }) => {
                     onChange={handleTitleChange}
                     className="BoardHeader-title"
                     transparent
+                    disabled={!isEditable}
                 />
             </AccentText>
-            <EditableTextField
-                value={board.description}
-                onSave={handleDescriptionUpdate}
-            />
-            <div className="flex-row mt8">
-                <TextButton
-                    icon="Plus"
-                    title="Query Execution"
-                    onClick={() => openSearchModal(SearchType.Query)}
+            {isEditable ? (
+                <EditableTextField
+                    value={board.description}
+                    onSave={handleDescriptionUpdate}
                 />
-                <TextButton
-                    icon="Plus"
-                    title="Data Doc"
-                    onClick={() => openSearchModal(SearchType.DataDoc)}
-                />
-                <TextButton
-                    icon="Plus"
-                    title="Table"
-                    onClick={() => openSearchModal(SearchType.Table)}
-                />
-                <TextButton
-                    icon="Plus"
-                    title="List"
-                    onClick={() => openSearchModal(SearchType.Board)}
-                />
-            </div>
+            ) : (
+                <RichTextEditor value={board.description} readOnly={true} />
+            )}
+            {isEditable && (
+                <div className="flex-row mt8">
+                    <TextButton
+                        icon="Plus"
+                        title="Query Execution"
+                        onClick={() => openSearchModal(SearchType.Query)}
+                    />
+                    <TextButton
+                        icon="Plus"
+                        title="Data Doc"
+                        onClick={() => openSearchModal(SearchType.DataDoc)}
+                    />
+                    <TextButton
+                        icon="Plus"
+                        title="Table"
+                        onClick={() => openSearchModal(SearchType.Table)}
+                    />
+                    <TextButton
+                        icon="Plus"
+                        title="List"
+                        onClick={() => openSearchModal(SearchType.Board)}
+                    />
+                </div>
+            )}
         </div>
     );
 };

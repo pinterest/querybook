@@ -4,9 +4,11 @@ import {
     ThunkDispatch as UntypedThunkDispatch,
 } from 'redux-thunk';
 
+import { IAccessRequest } from 'const/accessRequest';
 import {
     BoardItemType,
     IBoard,
+    IBoardEditor,
     IBoardItem,
     IBoardWithItemIds,
 } from 'const/board';
@@ -77,6 +79,63 @@ export interface ISetCurrentBoardIdAction extends Action {
     };
 }
 
+export interface IReceiveBoardEditorsAction extends Action {
+    type: '@@board/RECEIVE_BOARD_EDITORS';
+    payload: {
+        boardId: number;
+        editors: IBoardEditor[];
+    };
+}
+
+export interface IReceiveBoardEditorAction extends Action {
+    type: '@@board/RECEIVE_BOARD_EDITOR';
+    payload: {
+        boardId: number;
+        editor: IBoardEditor;
+    };
+}
+
+export interface IRemoveBoardEditorAction extends Action {
+    type: '@@board/REMOVE_BOARD_EDITOR';
+    payload: {
+        boardId: number;
+        uid: number;
+    };
+}
+
+export interface IReceiveBoardAccessRequestsAction extends Action {
+    type: '@@board/RECEIVE_BOARD_ACCESS_REQUESTS';
+    payload: {
+        boardId: number;
+        requests: IAccessRequest[];
+    };
+}
+
+export interface IReceiveBoardAccessRequestAction extends Action {
+    type: '@@board/RECEIVE_BOARD_ACCESS_REQUEST';
+    payload: {
+        boardId: number;
+        request: IAccessRequest;
+    };
+}
+
+export interface IRemoveBoardAccessRequestAction extends Action {
+    type: '@@board/REMOVE_BOARD_ACCESS_REQUEST';
+    payload: {
+        boardId: number;
+        uid: number;
+    };
+}
+
+export interface IUpdateBoardFieldAction extends Action {
+    type: '@@board/UPDATE_BOARD_FIELD';
+    payload: {
+        boardId: number;
+        fieldName: string;
+        fieldVal: any;
+    };
+}
+
 export type BoardAction =
     | IReceiveBoardsAction
     | IReceiveBoardWithItemsAction
@@ -85,12 +144,24 @@ export type BoardAction =
     | IRemoveBoardItemAction
     | IMoveBoardItemAction
     | IUpdateBoardItemDescriptionAction
-    | ISetCurrentBoardIdAction;
+    | ISetCurrentBoardIdAction
+    | IReceiveBoardEditorsAction
+    | IReceiveBoardEditorAction
+    | IRemoveBoardEditorAction
+    | IReceiveBoardAccessRequestsAction
+    | IReceiveBoardAccessRequestAction
+    | IRemoveBoardAccessRequestAction
+    | IUpdateBoardFieldAction;
 
 export interface IBoardState {
     boardById: Record<number, IBoardWithItemIds>;
     boardItemById: Record<number, IBoardItem>;
     currentBoardId: number;
+    editorsByBoardIdUserId: Record<number, Record<number, IBoardEditor>>;
+    accessRequestsByBoardIdUserId: Record<
+        number,
+        Record<number, IAccessRequest>
+    >;
 }
 
 export type ThunkResult<R> = ThunkAction<
