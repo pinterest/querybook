@@ -14,7 +14,7 @@ import { myUserInfoSelector } from 'redux/user/selector';
 
 const boardByIdSelector = (state: IStoreState) => state.board.boardById;
 const boardItemByIdSelector = (state: IStoreState) => state.board.boardItemById;
-export const boardSelector = (state: IStoreState, boardId: number) =>
+const boardSelector = (state: IStoreState, boardId: number) =>
     state.board.boardById[boardId];
 const editorsByBoardIdUserIdSelector = (state: IStoreState) =>
     state.board.editorsByBoardIdUserId;
