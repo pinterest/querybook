@@ -1,12 +1,12 @@
 import { stateFromHTML } from 'draft-js-import-html';
 import React, { useMemo } from 'react';
+import { Link } from 'react-router-dom';
 
 import { UserAvatar } from 'components/UserBadge/UserAvatar';
 import { IBoardBase } from 'const/board';
 import { useUser } from 'hooks/redux/useUser';
 import { generateFormattedDate } from 'lib/utils/datetime';
 import { getWithinEnvUrl } from 'lib/utils/query-string';
-import { Link } from 'ui/Link/Link';
 import { LoadingRow } from 'ui/Loading/Loading';
 import { RichTextEditor } from 'ui/RichTextEditor/RichTextEditor';
 import { AccentText, StyledText } from 'ui/StyledText/StyledText';

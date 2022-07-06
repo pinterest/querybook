@@ -26,4 +26,9 @@ class AccessRequest(CRUDMixin, Base):
         sql.ForeignKey("query_execution.id", ondelete="CASCADE"),
         nullable=True,
     )
+    board_id = sql.Column(
+        sql.Integer,
+        sql.ForeignKey("board.id", ondelete="CASCADE"),
+        nullable=True,
+    )
     created_at = sql.Column(sql.DateTime, default=now)

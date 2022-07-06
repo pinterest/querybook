@@ -2,10 +2,9 @@ import * as React from 'react';
 import toast from 'react-hot-toast';
 import { useDispatch, useSelector } from 'react-redux';
 
+import { BoardItemType, itemTypeToKey } from 'const/board';
 import { addBoardItem, deleteBoardItem } from 'redux/board/action';
 import { Dispatch, IStoreState } from 'redux/store/types';
-import { BoardItemType, itemTypeToKey } from 'const/board';
-
 import { IconButton } from 'ui/Button/IconButton';
 import { AccentText } from 'ui/StyledText/StyledText';
 

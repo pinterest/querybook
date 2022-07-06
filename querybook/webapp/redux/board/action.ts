@@ -2,23 +2,37 @@ import { ContentState } from 'draft-js';
 import { stateFromHTML } from 'draft-js-import-html';
 import { normalize, schema } from 'normalizr';
 
+import { IAccessRequest } from 'const/accessRequest';
 import {
     BoardItemType,
     IBoard,
     IBoardBase,
+    IBoardEditor,
     IBoardItem,
     IBoardRaw,
 } from 'const/board';
 import { IQueryExecution } from 'const/queryExecution';
+import {
+    Permission,
+    permissionToReadWrite,
+} from 'lib/data-doc/datadoc-permission';
 import { convertContentStateToHTML } from 'lib/richtext/serialize';
 import { arrayGroupByField } from 'lib/utils';
 import { receiveDataDocs } from 'redux/dataDoc/action';
 import { receiveDataTable } from 'redux/dataSources/action';
 import { receiveQueryExecution } from 'redux/queryExecutions/action';
 import { Dispatch } from 'redux/store/types';
-import { BoardResource } from 'resource/board';
+import {
+    BoardAccessRequestResource,
+    BoardEditorResource,
+    BoardResource,
+} from 'resource/board';
 
-import { IReceiveBoardsAction, ThunkResult } from './types';
+import {
+    IReceiveBoardAccessRequestsAction,
+    IReceiveBoardsAction,
+    ThunkResult,
+} from './types';
 
 export const dataDocSchema = new schema.Entity('dataDoc');
 export const tableSchema = new schema.Entity('dataTable');
@@ -185,21 +199,6 @@ export function updateBoard(
     };
 }
 
-export function updateBoardDescription(
-    id: number,
-    description: ContentState
-): ThunkResult<Promise<IBoardRaw>> {
-    return async (dispatch) => {
-        const board = (
-            await BoardResource.update(id, {
-                description: convertContentStateToHTML(description),
-            })
-        ).data;
-        receiveBoardWithItems(dispatch, board);
-        return board;
-    };
-}
-
 export function deleteBoard(id: number): ThunkResult<Promise<void>> {
     return async (dispatch) => {
         await BoardResource.delete(id);
@@ -324,6 +323,210 @@ export function setCurrentBoardId(boardId: number): ThunkResult<Promise<void>> {
             type: '@@board/SET_CURRENT_BOARD_ID',
             payload: {
                 boardId,
+            },
+        });
+    };
+}
+
+export function getBoardEditors(
+    boardId: number
+): ThunkResult<Promise<IBoardEditor[]>> {
+    return async (dispatch) => {
+        const { data } = await BoardEditorResource.get(boardId);
+
+        dispatch({
+            type: '@@board/RECEIVE_BOARD_EDITORS',
+            payload: {
+                boardId,
+                editors: data,
+            },
+        });
+
+        return data;
+    };
+}
+
+export function addBoardEditor(
+    boardId: number,
+    uid: number,
+    permission: Permission
+): ThunkResult<Promise<IBoardEditor>> {
+    return async (dispatch, getState) => {
+        const request = (getState().board.accessRequestsByBoardIdUserId[
+            boardId
+        ] || {})[uid];
+        const { read, write } = permissionToReadWrite(permission);
+        const { data } = await BoardEditorResource.create(
+            boardId,
+            uid,
+            read,
+            write
+        );
+        if (request) {
+            dispatch({
+                type: '@@board/REMOVE_BOARD_ACCESS_REQUEST',
+                payload: {
+                    boardId,
+                    uid,
+                },
+            });
+        }
+        dispatch({
+            type: '@@board/RECEIVE_BOARD_EDITOR',
+            payload: {
+                boardId,
+                editor: data,
+            },
+        });
+
+        return data;
+    };
+}
+
+export function updateBoardEditor(
+    boardId: number,
+    uid: number,
+    read: boolean,
+    write: boolean
+): ThunkResult<Promise<IBoardEditor>> {
+    return async (dispatch, getState) => {
+        const editor = (getState().board.editorsByBoardIdUserId[boardId] || {})[
+            uid
+        ];
+        if (editor) {
+            const { data } = await BoardEditorResource.update(
+                editor.id,
+                read,
+                write
+            );
+
+            dispatch({
+                type: '@@board/RECEIVE_BOARD_EDITOR',
+                payload: {
+                    boardId,
+                    editor: data,
+                },
+            });
+            return data;
+        }
+    };
+}
+
+export function deleteBoardEditor(
+    boardId: number,
+    uid: number
+): ThunkResult<Promise<void>> {
+    return async (dispatch, getState) => {
+        const editor = (getState().board.editorsByBoardIdUserId[boardId] || {})[
+            uid
+        ];
+        if (editor) {
+            await BoardEditorResource.delete(editor.id);
+            dispatch({
+                type: '@@board/REMOVE_BOARD_EDITOR',
+                payload: {
+                    boardId,
+                    uid,
+                },
+            });
+        }
+    };
+}
+
+export function receiveBoardAccessRequests(
+    boardId: number,
+    requests: IAccessRequest[]
+): IReceiveBoardAccessRequestsAction {
+    return {
+        type: '@@board/RECEIVE_BOARD_ACCESS_REQUESTS',
+        payload: {
+            boardId,
+            requests,
+        },
+    };
+}
+
+export function fetchBoardAccessRequests(
+    boardId: number
+): ThunkResult<Promise<void>> {
+    return async (dispatch) => {
+        const { data: boardAccessRequests } =
+            await BoardAccessRequestResource.get(boardId);
+        dispatch(receiveBoardAccessRequests(boardId, boardAccessRequests));
+    };
+}
+
+export function addBoardAccessRequest(
+    boardId: number
+): ThunkResult<Promise<IAccessRequest>> {
+    return async (dispatch) => {
+        const { data } = await BoardAccessRequestResource.create(boardId);
+        if (data != null) {
+            dispatch({
+                type: '@@board/RECEIVE_BOARD_ACCESS_REQUEST',
+                payload: {
+                    boardId,
+                    request: data,
+                },
+            });
+        }
+        return data;
+    };
+}
+
+export function rejectBoardAccessRequest(
+    boardId: number,
+    uid: number
+): ThunkResult<Promise<void>> {
+    return async (dispatch, getState) => {
+        const accessRequest = (getState().board.accessRequestsByBoardIdUserId[
+            boardId
+        ] || {})[uid];
+        if (accessRequest) {
+            await BoardAccessRequestResource.delete(boardId, uid);
+            dispatch({
+                type: '@@board/REMOVE_BOARD_ACCESS_REQUEST',
+                payload: {
+                    boardId,
+                    uid,
+                },
+            });
+        }
+    };
+}
+
+export function updateBoardOwner(
+    boardId: number,
+    nextOwnerId: number
+): ThunkResult<Promise<void>> {
+    return async (dispatch, getState) => {
+        const nextOwnerEditor = (getState().board.editorsByBoardIdUserId[
+            boardId
+        ] || {})[nextOwnerId];
+        const { data } = await BoardResource.updateOwner(
+            boardId,
+            nextOwnerEditor.id
+        );
+        dispatch({
+            type: '@@board/REMOVE_BOARD_EDITOR',
+            payload: {
+                boardId,
+                uid: nextOwnerId,
+            },
+        });
+        dispatch({
+            type: '@@board/UPDATE_BOARD_FIELD',
+            payload: {
+                boardId,
+                fieldName: 'owner_uid',
+                fieldVal: nextOwnerId,
+            },
+        });
+        dispatch({
+            type: '@@board/RECEIVE_BOARD_EDITOR',
+            payload: {
+                boardId: data['board_id'],
+                editor: data,
             },
         });
     };

@@ -1,4 +1,5 @@
 import { ContentState } from 'draft-js';
+
 import { IDataDoc } from './datadoc';
 import { IDataTable } from './metastore';
 import { IQueryExecution } from './queryExecution';
@@ -90,3 +91,12 @@ export const itemTypeToKey = {
     board: 'boards',
     query: 'queries',
 };
+
+export interface IBoardEditor {
+    id: number;
+    board_id: number;
+    uid: number;
+
+    read: boolean;
+    write: boolean;
+}

@@ -1,27 +1,55 @@
 import * as React from 'react';
-import { useDispatch, useSelector } from 'react-redux';
+import toast from 'react-hot-toast';
+import { useDispatch } from 'react-redux';
 
-import { updateBoard } from 'redux/board/action';
+import { useShallowSelector } from 'hooks/redux/useShallowSelector';
+import {
+    Permission,
+    permissionToReadWrite,
+} from 'lib/data-doc/datadoc-permission';
+import {
+    addBoardAccessRequest,
+    addBoardEditor,
+    deleteBoardEditor,
+    rejectBoardAccessRequest,
+    updateBoard,
+    updateBoardEditor,
+    updateBoardOwner,
+} from 'redux/board/action';
+import {
+    boardEditorInfosSelector,
+    currentBoardAccessRequestsByUidSelector,
+} from 'redux/board/selector';
 import { Dispatch, IStoreState } from 'redux/store/types';
-
-import { StyledText } from 'ui/StyledText/StyledText';
-import { Tabs } from 'ui/Tabs/Tabs';
-
-import './BoardViewersList.scss';
+import { ViewersList } from 'ui/ViewersList/ViewersList';
 
 interface IProps {
     boardId: number;
+    isEditable: boolean;
 }
 
-// TODO meowcodes: implement viewer's list ui + editor apis
 export const BoardViewersList: React.FunctionComponent<IProps> = ({
     boardId,
+    isEditable,
 }) => {
     const dispatch: Dispatch = useDispatch();
 
-    const board = useSelector(
-        (state: IStoreState) => state.board.boardById[boardId]
-    );
+    const {
+        board,
+        editorsByUid,
+        editorInfos,
+        currentUserId,
+        accessRequestsByUid,
+    } = useShallowSelector((state: IStoreState) => ({
+        board: state.board.boardById[boardId],
+        editorsByUid: state.board.editorsByBoardIdUserId[boardId],
+        editorInfos: boardEditorInfosSelector(state),
+        currentUserId: state.user.myUserInfo.uid,
+        accessRequestsByUid: currentBoardAccessRequestsByUidSelector(state),
+    }));
+
+    const isOwner = board.owner_uid === currentUserId;
+
     const handlePublicToggle = React.useCallback(
         (selectedTabKey) => {
             dispatch(
@@ -36,34 +64,82 @@ export const BoardViewersList: React.FunctionComponent<IProps> = ({
         [board, dispatch]
     );
 
-    const publicRow = (
-        <>
-            <div className="public-row-switch">
-                <Tabs
-                    selectedTabKey={board.public ? 'Public' : 'Private'}
-                    pills
-                    align="center"
-                    items={['Private', 'Public']}
-                    onSelect={handlePublicToggle}
-                    // disabled={readonly}
-                />
-            </div>
-            <div className="flex-column">
-                <StyledText color="light" noUserSelect>
-                    {board.public
-                        ? 'This list can be viewed by anyone'
-                        : 'Only invited users can view this list'}
-                </StyledText>
-                {/* {isEditor ? null : (
-                    <div className="mt12">
-                        <AccessRequestButton
-                            onAccessRequest={handleDataDocAccessRequest}
-                            isEdit
-                        />
-                    </div>
-                )} */}
-            </div>
-        </>
+    const addBoardEditorAction = React.useCallback(
+        (uid: number, permission: Permission) => {
+            dispatch(addBoardEditor(board.id, uid, permission));
+        },
+        [board.id]
     );
-    return <div className="BoardViewersList">{publicRow}</div>;
+    const rejectAccessRequest = React.useCallback(
+        (uid: number) => {
+            dispatch(rejectBoardAccessRequest(board.id, uid));
+        },
+        [board.id]
+    );
+    const handleBoardAccessRequest = React.useCallback(() => {
+        dispatch(addBoardAccessRequest(board.id));
+    }, [board.id]);
+
+    const handleUserSelect = React.useCallback(
+        (uid: number) => {
+            if (uid in editorsByUid || uid === board.owner_uid) {
+                toast.error('User already added.');
+            } else {
+                const newUserPermission = board.public
+                    ? Permission.CAN_WRITE
+                    : Permission.CAN_READ;
+                dispatch(addBoardEditor(board.id, uid, newUserPermission));
+            }
+        },
+        [board, editorsByUid]
+    );
+
+    const editorInfosToShow = board.public
+        ? editorInfos.filter(
+              (viewer) => viewer.permission !== Permission.CAN_READ
+          )
+        : editorInfos;
+
+    const handleRemoveEditor = React.useCallback(
+        (uid: number) => {
+            if (uid in editorsByUid) {
+                dispatch(deleteBoardEditor(board.id, uid));
+            }
+        },
+        [board.id, editorsByUid]
+    );
+
+    const handlePermissionChange = React.useCallback(
+        (permission: Permission, uid: number) => {
+            if (permission === Permission.OWNER) {
+                dispatch(updateBoardOwner(board.id, uid));
+            } else {
+                const { read, write } = permissionToReadWrite(permission);
+                if (uid in editorsByUid) {
+                    dispatch(updateBoardEditor(board.id, uid, read, write));
+                } else {
+                    dispatch(addBoardEditor(board.id, uid, permission));
+                }
+            }
+        },
+        [board.id, editorsByUid]
+    );
+
+    return (
+        <ViewersList
+            entityName="list"
+            readonly={!isEditable}
+            isPublic={board.public}
+            onPublicToggle={handlePublicToggle}
+            onAccessRequest={handleBoardAccessRequest}
+            onUserSelect={handleUserSelect}
+            infoToShow={editorInfosToShow}
+            onPermissionChange={handlePermissionChange}
+            accessRequestsByUid={accessRequestsByUid}
+            onRemoveEditor={handleRemoveEditor}
+            addEditor={addBoardEditorAction}
+            rejectAccessRequest={rejectAccessRequest}
+            isOwner={isOwner}
+        />
+    );
 };

@@ -52,6 +52,12 @@ class Board(CRUDMixin, Base):
         viewonly=True,
     )
 
+    environment = relationship(
+        "Environment",
+        uselist=False,
+        backref=backref("boards", cascade="all, delete", passive_deletes=True),
+    )
+
     @db.with_session
     def get_max_item_order(self, session=None):
         return (
