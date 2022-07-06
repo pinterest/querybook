@@ -64,7 +64,7 @@ export const BoardViewersList: React.FunctionComponent<IProps> = ({
         [board, dispatch]
     );
 
-    const addBoardEditor = React.useCallback(
+    const addBoardEditorAction = React.useCallback(
         (uid: number, permission: Permission) => {
             dispatch(addBoardEditor(board.id, uid, permission));
         },
@@ -127,7 +127,7 @@ export const BoardViewersList: React.FunctionComponent<IProps> = ({
 
     return (
         <ViewersList
-            entityType={'list'}
+            entityName="list"
             readonly={!isEditable}
             isPublic={board.public}
             onPublicToggle={handlePublicToggle}
@@ -137,7 +137,7 @@ export const BoardViewersList: React.FunctionComponent<IProps> = ({
             onPermissionChange={handlePermissionChange}
             accessRequestsByUid={accessRequestsByUid}
             onRemoveEditor={handleRemoveEditor}
-            addEditor={addBoardEditor}
+            addEditor={addBoardEditorAction}
             rejectAccessRequest={rejectAccessRequest}
             isOwner={isOwner}
         />

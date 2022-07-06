@@ -120,7 +120,7 @@ export const DataDocViewersList: React.FunctionComponent<
 
     return (
         <ViewersList
-            entityType={'document'}
+            entityName="document"
             className={combinedClassname}
             readonly={readonly}
             isPublic={dataDoc.public}
