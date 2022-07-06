@@ -15,7 +15,7 @@ import './ViewersList.scss';
 
 interface IProps {
     className?: string;
-    entityType: string;
+    entityName: string;
 
     readonly: boolean;
 
@@ -37,7 +37,7 @@ interface IProps {
 
 export const ViewersList: React.FunctionComponent<IProps> = ({
     className = '',
-    entityType,
+    entityName,
     readonly,
     isPublic,
     onPublicToggle,
@@ -74,8 +74,8 @@ export const ViewersList: React.FunctionComponent<IProps> = ({
             <div className="flex-column">
                 <StyledText color="light" noUserSelect>
                     {isPublic
-                        ? `This ${entityType} can be viewed by anyone`
-                        : `Only invited users can view this ${entityType}`}
+                        ? `This ${entityName} can be viewed by anyone`
+                        : `Only invited users can view this ${entityName}`}
                 </StyledText>
                 {readonly ? (
                     <div className="mt12">

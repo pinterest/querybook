@@ -1,4 +1,3 @@
-import { sortBy } from 'lodash';
 import { createSelector } from 'reselect';
 
 import { IBoard, IBoardEditor, IBoardItem } from 'const/board';
@@ -7,8 +6,6 @@ import { IDataTable } from 'const/metastore';
 import { IQueryExecution } from 'const/queryExecution';
 import {
     IViewerInfo,
-    Permission,
-    permissionToReadWrite,
     readWriteToPermission,
 } from 'lib/data-doc/datadoc-permission';
 import { currentEnvironmentSelector } from 'redux/environment/selector';
@@ -121,10 +118,7 @@ export const publicBoardItemsSelector = () =>
 export const boardEditorByUidSelector = createSelector(
     currentBoardSelector,
     editorsByBoardIdUserIdSelector,
-    (board, editorsByBoardIdUserId) =>
-        board && board.id in editorsByBoardIdUserId
-            ? editorsByBoardIdUserId[board.id]
-            : {}
+    (board, editorsByBoardIdUserId) => editorsByBoardIdUserId[board?.id] ?? {}
 );
 
 export const canCurrentUserEditSelector = createSelector(
@@ -141,13 +135,7 @@ export const canCurrentUserEditSelector = createSelector(
         }
 
         const editor = uid in editorsByUserId ? editorsByUserId[uid] : null;
-        const permission = readWriteToPermission(
-            editor ? editor.read : false,
-            editor ? editor.write : false,
-            board.owner_uid === uid,
-            board.public
-        );
-        return permissionToReadWrite(permission).write;
+        return editor.write;
     }
 );
 
@@ -162,14 +150,9 @@ export const boardEditorInfosSelector = createSelector(
                 )
             ),
         ];
-        const editorInfo = allUserIds.map((uid) =>
+        return allUserIds.map((uid) =>
             getEditorInfo(uid, editorsByUserId, board)
         );
-        return sortBy(editorInfo, [
-            (info) => (info.permission === Permission.OWNER ? 0 : 1),
-            (info) => -(info.editorId ?? Infinity),
-            'uid',
-        ]);
     }
 );
 
@@ -197,7 +180,5 @@ export const currentBoardAccessRequestsByUidSelector = createSelector(
     currentBoardSelector,
     accessRequestsByBoardIdUserIdSelector,
     (board, accessRequestsByBoardIdUserId) =>
-        board && board.id in accessRequestsByBoardIdUserId
-            ? accessRequestsByBoardIdUserId[board.id]
-            : {}
+        accessRequestsByBoardIdUserId[board?.id] ?? {}
 );

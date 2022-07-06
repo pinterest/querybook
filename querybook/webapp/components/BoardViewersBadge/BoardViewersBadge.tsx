@@ -1,11 +1,10 @@
 import * as React from 'react';
-import { useDispatch } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
 
 import { BoardViewersList } from 'components/BoardViewersList/BoardViewersList';
-import { useShallowSelector } from 'hooks/redux/useShallowSelector';
 import { fetchBoardAccessRequests } from 'redux/board/action';
 import { currentBoardAccessRequestsByUidSelector } from 'redux/board/selector';
-import { Dispatch, IStoreState } from 'redux/store/types';
+import { Dispatch } from 'redux/store/types';
 import { Button } from 'ui/Button/Button';
 import { Popover } from 'ui/Popover/Popover';
 
@@ -26,8 +25,8 @@ export const BoardViewersBadge: React.FunctionComponent<IProps> = ({
     const [showViewsList, setShowViewsList] = React.useState(false);
     const selfRef = React.useRef<HTMLDivElement>();
 
-    const accessRequestsByUid = useShallowSelector((state: IStoreState) =>
-        currentBoardAccessRequestsByUidSelector(state)
+    const accessRequestsByUid = useSelector(
+        currentBoardAccessRequestsByUidSelector
     );
     const accessRequestsByUidLength = Object.keys(accessRequestsByUid).length;
 

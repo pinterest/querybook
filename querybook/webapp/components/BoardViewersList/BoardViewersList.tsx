@@ -1,18 +1,19 @@
 import * as React from 'react';
 import toast from 'react-hot-toast';
-import { useDispatch, useSelector } from 'react-redux';
+import { useDispatch } from 'react-redux';
 
+import { useShallowSelector } from 'hooks/redux/useShallowSelector';
 import {
     Permission,
     permissionToReadWrite,
 } from 'lib/data-doc/datadoc-permission';
 import {
     addBoardAccessRequest,
-    addBoardEditors,
+    addBoardEditor,
     deleteBoardEditor,
     rejectBoardAccessRequest,
     updateBoard,
-    updateBoardEditors,
+    updateBoardEditor,
     updateBoardOwner,
 } from 'redux/board/action';
 import {
@@ -39,7 +40,7 @@ export const BoardViewersList: React.FunctionComponent<IProps> = ({
         editorInfos,
         currentUserId,
         accessRequestsByUid,
-    } = useSelector((state: IStoreState) => ({
+    } = useShallowSelector((state: IStoreState) => ({
         board: state.board.boardById[boardId],
         editorsByUid: state.board.editorsByBoardIdUserId[boardId],
         editorInfos: boardEditorInfosSelector(state),
@@ -47,10 +48,7 @@ export const BoardViewersList: React.FunctionComponent<IProps> = ({
         accessRequestsByUid: currentBoardAccessRequestsByUidSelector(state),
     }));
 
-    const isOwner = React.useMemo(
-        () => board.owner_uid === currentUserId,
-        [board.owner_uid, currentUserId]
-    );
+    const isOwner = board.owner_uid === currentUserId;
 
     const handlePublicToggle = React.useCallback(
         (selectedTabKey) => {
@@ -68,7 +66,7 @@ export const BoardViewersList: React.FunctionComponent<IProps> = ({
 
     const addBoardEditor = React.useCallback(
         (uid: number, permission: Permission) => {
-            dispatch(addBoardEditors(board.id, uid, permission));
+            dispatch(addBoardEditor(board.id, uid, permission));
         },
         [board.id]
     );
@@ -90,7 +88,7 @@ export const BoardViewersList: React.FunctionComponent<IProps> = ({
                 const newUserPermission = board.public
                     ? Permission.CAN_WRITE
                     : Permission.CAN_READ;
-                dispatch(addBoardEditors(board.id, uid, newUserPermission));
+                dispatch(addBoardEditor(board.id, uid, newUserPermission));
             }
         },
         [board, editorsByUid]
@@ -118,9 +116,9 @@ export const BoardViewersList: React.FunctionComponent<IProps> = ({
             } else {
                 const { read, write } = permissionToReadWrite(permission);
                 if (uid in editorsByUid) {
-                    dispatch(updateBoardEditors(board.id, uid, read, write));
+                    dispatch(updateBoardEditor(board.id, uid, read, write));
                 } else {
-                    dispatch(addBoardEditors(board.id, uid, permission));
+                    dispatch(addBoardEditor(board.id, uid, permission));
                 }
             }
         },

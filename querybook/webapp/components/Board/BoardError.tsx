@@ -1,12 +1,10 @@
+import type { AxiosError } from 'axios';
 import * as React from 'react';
 import { useDispatch } from 'react-redux';
-import type { AxiosError } from 'axios';
-
-import { addBoardAccessRequest } from 'redux/board/action';
-import { Dispatch } from 'redux/store/types';
 
 import { AccessRequestButton } from 'components/AccessRequestButton/AccessRequestButton';
-
+import { addBoardAccessRequest } from 'redux/board/action';
+import { Dispatch } from 'redux/store/types';
 import { ErrorPage } from 'ui/ErrorPage/ErrorPage';
 
 export const BoardError: React.FunctionComponent<{
@@ -17,7 +15,7 @@ export const BoardError: React.FunctionComponent<{
 
     let errorTitle: string;
     let errorMessage: string;
-    let errorContent: React.ReactNode;
+    let accessRequestDOM: React.ReactNode;
     // network request fail
     errorTitle = `${errorObj.response.status}: ${errorObj.response.statusText}`;
 
@@ -31,7 +29,7 @@ export const BoardError: React.FunctionComponent<{
         if (exceptionMessage === 'CANNOT_READ_BOARD') {
             errorTitle = 'Access Denied';
             errorMessage = 'You cannot read this Board.';
-            errorContent = (
+            accessRequestDOM = (
                 <AccessRequestButton
                     onAccessRequest={handleBoardAccessRequest}
                 />
@@ -46,7 +44,7 @@ export const BoardError: React.FunctionComponent<{
 
     return (
         <ErrorPage errorTitle={errorTitle} errorMessage={errorMessage}>
-            {errorContent}
+            {accessRequestDOM}
         </ErrorPage>
     );
 });

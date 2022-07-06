@@ -181,18 +181,16 @@ export const DataDocNavigatorBoardSection: React.FC<
                     isCollapsable={false}
                 />
             </div>
-            {boards.length
-                ? boards.map((board) => (
-                      <BoardExpandableSection
-                          key={board.id}
-                          id={board.id}
-                          selectedDocId={selectedDocId}
-                          selectedBoardId={selectedBoardId}
-                          filterString={filterString}
-                          onMoveBoardItem={handleMoveBoardItem}
-                      />
-                  ))
-                : null}
+            {boards.map((board) => (
+                <BoardExpandableSection
+                    key={board.id}
+                    id={board.id}
+                    selectedDocId={selectedDocId}
+                    selectedBoardId={selectedBoardId}
+                    filterString={filterString}
+                    onMoveBoardItem={handleMoveBoardItem}
+                />
+            ))}
         </div>
     );
 

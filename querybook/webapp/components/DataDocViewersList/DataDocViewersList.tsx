@@ -111,7 +111,7 @@ export const DataDocViewersList: React.FunctionComponent<
 
     const onRemoveEditor = React.useCallback(
         (uid: number) => {
-            if (!(uid in editorsByUid)) {
+            if (uid in editorsByUid) {
                 deleteDataDocEditor(uid);
             }
         },

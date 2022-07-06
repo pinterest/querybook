@@ -13,7 +13,6 @@ import { Dispatch } from 'redux/store/types';
 import { TextButton } from 'ui/Button/Button';
 import { EditableTextField } from 'ui/EditableTextField/EditableTextField';
 import { ResizableTextArea } from 'ui/ResizableTextArea/ResizableTextArea';
-import { RichTextEditor } from 'ui/RichTextEditor/RichTextEditor';
 import { AccentText } from 'ui/StyledText/StyledText';
 
 import './BoardHeader.scss';
@@ -102,14 +101,11 @@ export const BoardHeader: React.FunctionComponent<IProps> = ({
                     disabled={!isEditable}
                 />
             </AccentText>
-            {isEditable ? (
-                <EditableTextField
-                    value={board.description}
-                    onSave={handleDescriptionUpdate}
-                />
-            ) : (
-                <RichTextEditor value={board.description} readOnly={true} />
-            )}
+            <EditableTextField
+                value={board.description}
+                onSave={handleDescriptionUpdate}
+                readonly={!isEditable}
+            />
             {isEditable && (
                 <div className="flex-row mt8">
                     <TextButton

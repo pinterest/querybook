@@ -12,12 +12,6 @@ class BoardDoesNotExist(Exception):
 @with_session
 def user_can_edit(board_id, uid, session=None):
     board = session.query(Board).get(board_id)
-    editor = (
-        session.query(BoardEditor)
-        .filter(BoardEditor.board_id == board_id)
-        .filter(BoardEditor.uid == uid)
-        .first()
-    )
 
     if board is None:
         raise BoardDoesNotExist()
@@ -25,18 +19,19 @@ def user_can_edit(board_id, uid, session=None):
     if board.owner_uid == uid:
         return True
 
-    return editor is not None and editor.write
-
-
-@with_session
-def user_can_read(board_id, uid, session=None):
-    board = session.query(Board).get(board_id)
     editor = (
         session.query(BoardEditor)
         .filter(BoardEditor.board_id == board_id)
         .filter(BoardEditor.uid == uid)
         .first()
     )
+
+    return editor is not None and editor.write
+
+
+@with_session
+def user_can_read(board_id, uid, session=None):
+    board = session.query(Board).get(board_id)
 
     if board is None:
         raise BoardDoesNotExist()
@@ -46,6 +41,13 @@ def user_can_read(board_id, uid, session=None):
 
     if board.owner_uid == uid:
         return True
+
+    editor = (
+        session.query(BoardEditor)
+        .filter(BoardEditor.board_id == board_id)
+        .filter(BoardEditor.uid == uid)
+        .first()
+    )
 
     return editor is not None and (editor.read or editor.write)
 

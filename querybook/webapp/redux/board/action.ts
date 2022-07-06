@@ -346,7 +346,7 @@ export function getBoardEditors(
     };
 }
 
-export function addBoardEditors(
+export function addBoardEditor(
     boardId: number,
     uid: number,
     permission: Permission
@@ -383,7 +383,7 @@ export function addBoardEditors(
     };
 }
 
-export function updateBoardEditors(
+export function updateBoardEditor(
     boardId: number,
     uid: number,
     read: boolean,
@@ -394,11 +394,11 @@ export function updateBoardEditors(
             uid
         ];
         if (editor) {
-            const {
-                data,
-            }: {
-                data: IBoardEditor;
-            } = await BoardEditorResource.update(editor.id, read, write);
+            const { data } = await BoardEditorResource.update(
+                editor.id,
+                read,
+                write
+            );
 
             dispatch({
                 type: '@@board/RECEIVE_BOARD_EDITOR',

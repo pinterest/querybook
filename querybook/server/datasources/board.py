@@ -251,7 +251,7 @@ def add_board_editor(
         session.commit()
 
         logic.update_es_boards_by_id(board_id)
-        send_add_board_editor_email(board_id, uid, read, write)
+        send_add_board_editor_notification(board_id, uid, read, write)
         return editor
 
 
@@ -298,15 +298,13 @@ def update_board_owner(board_id, next_owner_id, originator=None):
             commit=False,
             session=session,
         )
-        current_owner_editor_dict = current_owner_editor.to_dict()
 
         # Remove next owner as a board editor
         next_owner_editor = logic.get_board_editor_by_id(next_owner_id, session=session)
-        next_owner_editor_dict = next_owner_editor.to_dict()
         logic.delete_board_editor(
             id=next_owner_id, board_id=board_id, session=session, commit=False
         )
-        next_owner_uid = next_owner_editor_dict["uid"]
+        next_owner_uid = next_owner_editor.uid
         # Update board owner to next owner
         logic.update_board(
             id=board_id, commit=False, session=session, owner_uid=next_owner_uid
@@ -315,7 +313,7 @@ def update_board_owner(board_id, next_owner_id, originator=None):
 
         logic.update_es_boards_by_id(board_id)
         send_board_transfer_notification(board_id, next_owner_uid, session)
-        return current_owner_editor_dict
+        return current_owner_editor
 
 
 def send_board_transfer_notification(board_id, next_owner_id, session=None):
@@ -366,7 +364,7 @@ def send_board_access_request_notification(board_id, uid, session=None):
 
 
 @with_session
-def send_add_board_editor_email(board_id, uid, read, write, session=None):
+def send_add_board_editor_notification(board_id, uid, read, write, session=None):
     inviting_user = user_logic.get_user_by_id(current_user.id, session=session)
     invited_user = user_logic.get_user_by_id(uid, session=session)
     board = Board.get(id=board_id, session=session)
