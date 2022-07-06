@@ -51,14 +51,9 @@ export const BoardViewersList: React.FunctionComponent<IProps> = ({
     const isOwner = board.owner_uid === currentUserId;
 
     const handlePublicToggle = React.useCallback(
-        (selectedTabKey) => {
+        (isPublic) => {
             dispatch(
-                updateBoard(
-                    board.id,
-                    board.name,
-                    selectedTabKey === 'Public',
-                    board.description
-                )
+                updateBoard(board.id, board.name, isPublic, board.description)
             );
         },
         [board, dispatch]

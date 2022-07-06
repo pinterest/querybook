@@ -11,6 +11,7 @@ interface IProps {
     defaultCollapse: boolean;
     onEditModeToggle: () => any;
     isEditMode: boolean;
+    isEditable: boolean;
 }
 
 export const BoardRightSidebar: React.FunctionComponent<IProps> = ({
@@ -18,6 +19,7 @@ export const BoardRightSidebar: React.FunctionComponent<IProps> = ({
     defaultCollapse,
     onEditModeToggle,
     isEditMode,
+    isEditable,
 }) => {
     const numAnnouncements = useAnnouncements().length;
     const selfRef = React.useRef<HTMLDivElement>();
@@ -43,16 +45,18 @@ export const BoardRightSidebar: React.FunctionComponent<IProps> = ({
                 onClick={onCollapse}
                 disabled={isEditMode}
             />
-            <IconButton
-                icon={isEditMode ? 'Check' : 'Edit2'}
-                tooltip={
-                    isEditMode
-                        ? 'Done Editing'
-                        : 'Edit Mode: reorder & delete items'
-                }
-                tooltipPos="left"
-                onClick={onEditModeToggle}
-            />
+            {isEditable && (
+                <IconButton
+                    icon={isEditMode ? 'Check' : 'Edit2'}
+                    tooltip={
+                        isEditMode
+                            ? 'Done Editing'
+                            : 'Edit Mode: reorder & delete items'
+                    }
+                    tooltipPos="left"
+                    onClick={onEditModeToggle}
+                />
+            )}
         </div>
     );
 

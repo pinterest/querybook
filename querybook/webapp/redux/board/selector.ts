@@ -135,7 +135,8 @@ export const canCurrentUserEditSelector = createSelector(
         }
 
         const editor = uid in editorsByUserId ? editorsByUserId[uid] : null;
-        return editor.write;
+
+        return editor ? editor.write : false;
     }
 );
 

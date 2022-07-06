@@ -11,8 +11,8 @@ import { updateSearchFilter, updateSearchType } from 'redux/search/action';
 import { SearchType } from 'redux/search/types';
 import { Dispatch } from 'redux/store/types';
 import { TextButton } from 'ui/Button/Button';
+import { DebouncedInput } from 'ui/DebouncedInput/DebouncedInput';
 import { EditableTextField } from 'ui/EditableTextField/EditableTextField';
-import { ResizableTextArea } from 'ui/ResizableTextArea/ResizableTextArea';
 import { AccentText } from 'ui/StyledText/StyledText';
 
 import './BoardHeader.scss';
@@ -93,13 +93,16 @@ export const BoardHeader: React.FunctionComponent<IProps> = ({
                 size="xlarge"
                 weight="extra"
             >
-                <ResizableTextArea
-                    value={board.name}
-                    onChange={handleTitleChange}
-                    className="BoardHeader-title"
-                    transparent
-                    disabled={!isEditable}
-                />
+                {isEditable ? (
+                    <DebouncedInput
+                        value={board.name}
+                        onChange={handleTitleChange}
+                        className="BoardHeader-title"
+                        transparent
+                    />
+                ) : (
+                    <div className="ml8">{board.name}</div>
+                )}
             </AccentText>
             <EditableTextField
                 value={board.description}
