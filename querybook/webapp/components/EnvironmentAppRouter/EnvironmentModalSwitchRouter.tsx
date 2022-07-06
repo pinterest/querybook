@@ -106,6 +106,7 @@ export const EnvironmentModalSwitchRouter: React.FC = () => {
             <Switch>{modalRoutes}</Switch>
         </React.Suspense>
     );
+
     return (
         <>
             <React.Suspense fallback={<Loading fullHeight />}>
@@ -122,6 +123,7 @@ export const EnvironmentModalSwitchRouter: React.FC = () => {
                 >
                     <Route path="/:env/" exact component={Landing} />
                     <Route path="/:env/datadoc/" component={DataDocRoute} />
+                    <Route path="/:env/list/" component={BoardRoute} />
                     <Route
                         path="/:env/adhoc/"
                         render={() => <QueryComposer />}
@@ -140,7 +142,6 @@ export const EnvironmentModalSwitchRouter: React.FC = () => {
                             <EmbeddedDataDocPage id={match.params['docId']} />
                         )}
                     />
-                    <Route path="/:env/list/:boardId/" component={BoardRoute} />
                     {modalRoutes}
                     <Route component={FourOhFour} />
                 </Switch>

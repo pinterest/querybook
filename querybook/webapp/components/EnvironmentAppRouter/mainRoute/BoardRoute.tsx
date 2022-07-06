@@ -1,13 +1,17 @@
 import React from 'react';
-import { RouteComponentProps } from 'react-router-dom';
+import { Redirect, Route, RouteComponentProps, Switch } from 'react-router-dom';
 
-import { Board } from 'components/Board/Board';
+import { BoardWrapper } from 'components/Board/BoardWrapper';
+import { FourOhFour } from 'ui/ErrorPage/FourOhFour';
 
-const BoardRoute: React.FunctionComponent<RouteComponentProps> = ({
-    match,
-}) => {
-    const boardId = Number(match.params['boardId']);
-    return <Board boardId={boardId} />;
-};
+const BoardRoute: React.FunctionComponent<RouteComponentProps> = () => (
+    <Switch>
+        <Route path="/:env/list/:boardId/" component={BoardWrapper} />
+        <Route path="/:env/list/" exact={true}>
+            <Redirect to="/" />
+        </Route>
+        <Route component={FourOhFour} />
+    </Switch>
+);
 
 export default BoardRoute;
