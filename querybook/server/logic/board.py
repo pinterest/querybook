@@ -207,7 +207,7 @@ def get_all_public_boards(environment_id, session=None):
 
 
 @with_session
-def update_board_item(id, session=None, **fields):
+def update_board_item(id, fields, session=None):
     board = BoardItem.update(
         id,
         fields=fields,
