@@ -212,7 +212,7 @@ def delete_board_item(board_id, item_type, item_id):
 
 
 @register("/board/item/<int:board_item_id>/", methods=["PUT"])
-def update_board_item_fields(board_item_id, fields):
+def update_board_item_fields(board_item_id, **fields):
     with DBSession() as session:
         board_item = BoardItem.get(id=board_item_id, session=session)
         api_assert(
@@ -221,7 +221,7 @@ def update_board_item_fields(board_item_id, fields):
         )
         assert_can_edit(board_item.parent_board_id, session=session)
 
-        return logic.update_board_item(id=board_item_id, fields=fields, session=session)
+        return logic.update_board_item(id=board_item_id, **fields, session=session)
 
 
 @register("/board/<int:board_id>/editor/", methods=["GET"])
