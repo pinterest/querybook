@@ -29,7 +29,7 @@ export const _Message = () => (
         <Message
             title="Success Message"
             message="Success Message with Icon"
-            icon="Award"
+            icon="Check"
             iconSize={16}
             type="success"
         />

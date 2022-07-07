@@ -604,11 +604,11 @@ export const SearchOverview: React.FunctionComponent = () => {
                     {metastoreSelectDOM}
                 </div>
                 <div className="search-filter">
-                    <span className="filter-title">Featured</span>
+                    <span className="filter-title">Top Tier</span>
                     <div className="result-item-golden horizontal-space-between">
                         <span>
-                            <span>featured only</span>
-                            <Icon className="award ml4" name="Award" />
+                            <span>top tier only</span>
+                            <Icon className="crown ml4" name="Crown" />
                         </span>
                         <Checkbox
                             value={!!searchFilters.golden}

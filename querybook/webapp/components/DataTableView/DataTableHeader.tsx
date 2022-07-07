@@ -75,12 +75,12 @@ export const DataTableHeader: React.FunctionComponent<IDataTableHeader> = ({
             <ToggleButton
                 checked={table.golden}
                 onClick={updateDataTableGolden}
-                title={table.golden ? 'Featured' : 'Make Featured'}
+                title={table.golden ? 'Top Tier' : 'Make Top Tier'}
                 size="small"
             />
         );
     } else if (table.golden) {
-        featuredBadge = <Tag>Featured</Tag>;
+        featuredBadge = <Tag>Top Tier</Tag>;
     }
 
     const iconDOM = (

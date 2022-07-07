@@ -72,7 +72,7 @@ export const DataTableNavigatorSearch: React.FC<{
                 />
                 <div>
                     <SearchFilterRow
-                        title="Featured"
+                        title="Top Tier"
                         className="toggle-padding"
                     >
                         <ToggleSwitch
