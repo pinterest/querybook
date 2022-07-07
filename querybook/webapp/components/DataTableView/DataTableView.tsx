@@ -6,6 +6,7 @@ import React from 'react';
 import { connect } from 'react-redux';
 import { RouteComponentProps, withRouter } from 'react-router-dom';
 
+import { DataTableViewBoards } from 'components/DataTableViewBoards/DataTableViewBoards';
 import { DataTableViewColumn } from 'components/DataTableViewColumn/DataTableViewColumn';
 import { DataTableViewLineage } from 'components/DataTableViewLineage/DataTableViewLineage';
 import { DataTableViewOverview } from 'components/DataTableViewOverview/DataTableViewOverview';
@@ -57,6 +58,10 @@ const tabDefinitions = [
     {
         name: 'Query Examples',
         key: 'query_examples',
+    },
+    {
+        name: 'Lists',
+        key: 'lists',
     },
     {
         name: 'Warnings',
@@ -180,6 +185,16 @@ class DataTableViewComponent extends React.PureComponent<
     }
 
     @bind
+    public makeBoardsDOM() {
+        const { table } = this.props;
+        return (
+            <Loader item={table} itemLoader={NOOP}>
+                <DataTableViewBoards table={table} />
+            </Loader>
+        );
+    }
+
+    @bind
     public makeWarningsDOM() {
         const { tableWarnings, table } = this.props;
         return (
@@ -297,6 +312,7 @@ class DataTableViewComponent extends React.PureComponent<
             lineage: this.makeLineageDOM,
             source_query: this.makeQueryDOM,
             query_examples: this.makeQueryExamplesDOM,
+            lists: this.makeBoardsDOM,
             warnings: this.makeWarningsDOM,
         };
 

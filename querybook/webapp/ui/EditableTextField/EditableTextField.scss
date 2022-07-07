@@ -13,7 +13,7 @@
         padding: var(--padding);
         word-break: break-word;
         align-items: flex-start;
-        border-radius: var(--border-radius);
+        border-radius: var(--border-radius-sm);
 
         .RichTextEditor {
             flex: 1;
@@ -36,5 +36,18 @@
         display: flex;
         justify-content: flex-end;
         margin-top: 8px;
+    }
+}
+
+.FormFieldInputSection {
+    .EditableTextField {
+        background-color: var(--bg-light);
+        border-radius: var(--border-radius-sm);
+        .editor-wrapper {
+            padding: 0px;
+        }
+        .edit-mode-button {
+            margin: 4px 8px;
+        }
     }
 }

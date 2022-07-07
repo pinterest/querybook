@@ -1,4 +1,4 @@
-from typing import List, Union
+from typing import Dict, List, Tuple, Union
 from lib.logger import get_logger
 
 LOG = get_logger(__file__)
@@ -54,7 +54,7 @@ def _make_singular_filter(filter_name: str, filter_val, and_filter_names: List[s
     return {"match": {filter_name: filter_val}}
 
 
-def match_filters(filters, and_filter_names: List[str] = []):
+def match_filters(filters: List[Tuple[str, str]], and_filter_names: List[str] = []):
     if not filters:
         return {}
 
@@ -81,9 +81,10 @@ def match_filters(filters, and_filter_names: List[str] = []):
             filter_terms.append(
                 _make_singular_filter(filter_name, filter_val, and_filter_names)
             )
-    filters = {"filter": {"bool": {"must": filter_terms}}}
+
+    filter_query = {"filter": {"bool": {"must": filter_terms}}}
     if created_at_filter:
-        filters["range"] = [
+        filter_query["range"] = [
             {
                 "range": {
                     "created_at": created_at_filter,
@@ -91,15 +92,15 @@ def match_filters(filters, and_filter_names: List[str] = []):
             }
         ]
     if duration_filter:
-        filters.setdefault("range", [])
-        filters["range"].append(
+        filter_query.setdefault("range", [])
+        filter_query["range"].append(
             {
                 "range": {
                     "duration": duration_filter,
                 }
             }
         )
-    return filters
+    return filter_query
 
 
 def order_by_fields(sort_key: Union[str, List[str]], sort_order: Union[str, List[str]]):
@@ -113,3 +114,16 @@ def order_by_fields(sort_key: Union[str, List[str]], sort_order: Union[str, List
     sort_query = [{val: {"order": order}} for order, val in zip(sort_order, sort_key)]
 
     return {"sort": sort_query}
+
+
+def combine_keyword_and_filter_query(keyword_query: Dict, filter_query: Dict):
+    bool_query = {}
+    if keyword_query != {}:
+        bool_query["must"] = [keyword_query]
+    if filter_query != {}:
+        bool_query["filter"] = filter_query["filter"]
+        if "range" in filter_query:
+            bool_query.setdefault("must", [])
+            bool_query["must"] += filter_query["range"]
+
+    return bool_query

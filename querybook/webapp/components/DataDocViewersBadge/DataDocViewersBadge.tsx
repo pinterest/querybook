@@ -4,7 +4,7 @@ import { useDispatch } from 'react-redux';
 import { DataDocViewersList } from 'components/DataDocViewersList/DataDocViewersList';
 import { UserAvatarList } from 'components/UserBadge/UserAvatarList';
 import { useShallowSelector } from 'hooks/redux/useShallowSelector';
-import { DataDocPermission } from 'lib/data-doc/datadoc-permission';
+import { Permission } from 'lib/data-doc/datadoc-permission';
 import * as dataDocActions from 'redux/dataDoc/action';
 import * as dataDocSelectors from 'redux/dataDoc/selector';
 import { IStoreState } from 'redux/store/types';
@@ -21,7 +21,7 @@ interface IDataDocViewersBadgeProps {
 const useDataDocEditorReduxActions = (docId: number) => {
     const dispatch = useDispatch();
     const addDataDocEditor = useCallback(
-        (uid: number, permission: DataDocPermission) =>
+        (uid: number, permission: Permission) =>
             dispatch(dataDocActions.addDataDocEditors(docId, uid, permission)),
         [docId]
     );

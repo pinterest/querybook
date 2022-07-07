@@ -80,8 +80,9 @@ export const StyledButton = styled.span<StyledButtonProps>`
         margin-left: -4px;
     }
 
-    .Icon + span {
+    .Icon + div {
         margin-left: 4px;
+        margin-top: 1.5px;
     }
 
     &.icon-only {

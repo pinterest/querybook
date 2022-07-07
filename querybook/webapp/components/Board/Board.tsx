@@ -2,15 +2,28 @@ import { AxiosError } from 'axios';
 import * as React from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 
+import { BoardRightSidebar } from 'components/BoardRightSidebar/BoardRightSidebar';
 import { IBoardItem, IBoardWithItemIds } from 'const/board';
+import { BoardPageContext, IBoardPageContextType } from 'context/BoardPage';
+import { useBoardItemActions } from 'hooks/board/useBoardItemActions';
 import { isAxiosError } from 'lib/utils/error';
-import { fetchBoardIfNeeded } from 'redux/board/action';
+import {
+    fetchBoardIfNeeded,
+    getBoardEditors,
+    setCurrentBoardId,
+} from 'redux/board/action';
+import * as boardSelectors from 'redux/board/selector';
 import { Dispatch, IStoreState } from 'redux/store/types';
-import { Title } from 'ui/Title/Title';
+import { DraggableList } from 'ui/DraggableList/DraggableList';
+import { Loading } from 'ui/Loading/Loading';
+import { AccentText, EmptyText } from 'ui/StyledText/StyledText';
 
+import { BoardBoardItem } from './BoardBoardItem';
 import { BoardDataDocItem } from './BoardDataDocItem';
 import { BoardDataTableItem } from './BoardDataTableItem';
 import { BoardError } from './BoardError';
+import { BoardHeader } from './BoardHeader';
+import { BoardQueryItem } from './BoardQueryItem';
 
 import './Board.scss';
 
@@ -23,31 +36,112 @@ const BoardDOM: React.FunctionComponent<IBoardDOMProps> = ({
     board,
     boardItemById,
 }) => {
-    const boardItemDOM = board?.items
-        ?.map((itemIdx) => boardItemById?.[itemIdx])
-        .filter((i) => i)
-        .map((boardItem) =>
-            boardItem.data_doc_id ? (
-                <BoardDataDocItem
-                    docId={boardItem.data_doc_id}
-                    key={boardItem.id}
-                />
-            ) : (
-                <BoardDataTableItem
-                    tableId={boardItem.table_id}
-                    key={boardItem.id}
-                />
-            )
-        );
+    const isEditable = useSelector(boardSelectors.canCurrentUserEditSelector);
+
+    const [defaultCollapse, setDefaulCollapse] = React.useState(false);
+    // TODO - meowcodes: implement isEditable + board 0
+    const [isEditMode, setIsEditMode] = React.useState(false);
+
+    const { handleDeleteBoardItem, handleMoveBoardItem } =
+        useBoardItemActions(board);
+
+    const boardContextValue: IBoardPageContextType = React.useMemo(
+        () => ({
+            onDeleteBoardItem: handleDeleteBoardItem,
+            isEditMode,
+            isCollapsed: defaultCollapse,
+        }),
+        [handleDeleteBoardItem, isEditMode, defaultCollapse]
+    );
+
+    const isPublicList = board.id === 0;
+
+    let boardItemDOM: React.ReactNode;
+    if (isPublicList) {
+        boardItemDOM = board.boards?.map((boardId) => (
+            <BoardBoardItem boardId={boardId} key={boardId} />
+        ));
+    } else {
+        const boardItems =
+            board?.items
+                ?.map((itemIdx) => boardItemById[itemIdx])
+                .filter((i) => i) ?? [];
+
+        if (boardItems.length === 0) {
+            boardItemDOM = (
+                <EmptyText className="mt24">No items in board.</EmptyText>
+            );
+        } else {
+            const boardItemRenderer = (boardItem: IBoardItem) =>
+                boardItem.data_doc_id ? (
+                    <BoardDataDocItem
+                        itemId={boardItem.id}
+                        key={boardItem.id}
+                        docId={boardItem.data_doc_id}
+                    />
+                ) : boardItem.table_id ? (
+                    <BoardDataTableItem
+                        itemId={boardItem.id}
+                        key={boardItem.id}
+                        tableId={boardItem.table_id}
+                    />
+                ) : boardItem.board_id ? (
+                    <BoardBoardItem
+                        itemId={boardItem.id}
+                        key={boardItem.id}
+                        boardId={boardItem.board_id}
+                    />
+                ) : (
+                    <BoardQueryItem
+                        itemId={boardItem.id}
+                        key={boardItem.id}
+                        queryExecutionId={boardItem.query_execution_id}
+                    />
+                );
+
+            if (isEditMode) {
+                boardItemDOM = (
+                    <DraggableList
+                        items={boardItems}
+                        renderItem={(_, boardItem) =>
+                            boardItemRenderer(boardItem)
+                        }
+                        onMove={handleMoveBoardItem}
+                    />
+                );
+            } else {
+                boardItemDOM = boardItems.map(boardItemRenderer);
+            }
+        }
+    }
 
     return (
-        <div className="Board mv24 mh48">
-            <div className="Board-top ml4">
-                <Title>{board?.name}</Title>
-                <div className="Board-desc">{board?.description}</div>
+        <BoardPageContext.Provider value={boardContextValue}>
+            <div className="Board">
+                <div className="Board-content">
+                    {isPublicList ? (
+                        <AccentText
+                            className="p8"
+                            color="light"
+                            size="xlarge"
+                            weight="extra"
+                        >
+                            All Public Lists
+                        </AccentText>
+                    ) : (
+                        <BoardHeader board={board} isEditable={isEditable} />
+                    )}
+                    {boardItemDOM}
+                </div>
+                <BoardRightSidebar
+                    onCollapse={() => setDefaulCollapse((c) => !c)}
+                    defaultCollapse={defaultCollapse}
+                    onEditModeToggle={() => setIsEditMode((e) => !e)}
+                    isEditMode={isEditMode}
+                    isEditable={isEditable}
+                />
             </div>
-            {boardItemDOM}
-        </div>
+        </BoardPageContext.Provider>
     );
 };
 
@@ -71,11 +165,15 @@ export const Board: React.FunctionComponent<IBoardProps> = ({ boardId }) => {
                 setError(e);
             }
         });
+        dispatch(setCurrentBoardId(boardId));
+        dispatch(getBoardEditors(boardId));
     }, [boardId]);
 
     return error ? (
         <BoardError errorObj={error} boardId={boardId} />
-    ) : (
+    ) : board ? (
         <BoardDOM board={board} boardItemById={boardItemById} />
+    ) : (
+        <Loading fullHeight />
     );
 };

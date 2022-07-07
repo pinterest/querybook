@@ -703,7 +703,7 @@ class DataDocComponent extends React.PureComponent<IProps, IState> {
                 className={clsx({
                     DataDoc: true,
                 })}
-                key="data-hub-data-doc"
+                key="querybook-data-doc"
             >
                 <DataDocContext.Provider value={this.getDataDocContextState()}>
                     <SearchAndReplace

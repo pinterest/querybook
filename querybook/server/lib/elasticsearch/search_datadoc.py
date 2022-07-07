@@ -3,6 +3,7 @@ from lib.elasticsearch.query_utils import (
     match_filters,
     highlight_fields,
     order_by_fields,
+    combine_keyword_and_filter_query,
 )
 
 
@@ -39,28 +40,19 @@ def construct_datadoc_query(
     sort_order=None,
 ):
     # TODO: fields is not used because explicit search for Data Docs is not implemented
-    search_query = match_any_field(
+    keywords_query = match_any_field(
         keywords,
         search_fields=_match_data_doc_fields(fields),
     )
     search_filter = match_filters(filters)
-    if search_filter == {}:
-        search_filter["filter"] = {"bool": {}}
-    search_filter["filter"]["bool"].setdefault("must", []).append(
-        {"bool": {"should": _data_doc_access_terms(uid)}}
-    )
-
-    bool_query = {}
-    if search_query != {}:
-        bool_query["must"] = [search_query]
-    if search_filter != {}:
-        bool_query["filter"] = search_filter["filter"]
-        if "range" in search_filter:
-            bool_query.setdefault("must", [])
-            bool_query["must"] += search_filter["range"]
+    search_filter.setdefault("filter", {}).setdefault("bool", {}).setdefault(
+        "must", []
+    ).append({"bool": {"should": _data_doc_access_terms(uid)}})
 
     query = {
-        "query": {"bool": bool_query},
+        "query": {
+            "bool": combine_keyword_and_filter_query(keywords_query, search_filter)
+        },
         "_source": ["id", "title", "owner_uid", "created_at"],
         "size": limit,
         "from": offset,

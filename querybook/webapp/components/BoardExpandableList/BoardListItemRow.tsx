@@ -1,9 +1,12 @@
 import clsx from 'clsx';
 import React from 'react';
 
+import { BoardHoverContent } from 'components/BoardHoverContent/BoardHoverContent';
 import { DataDocHoverContent } from 'components/DataDocHoverContent/DataDocHoverContent';
 import { DataTableHoverContent } from 'components/DataTableNavigator/DataTableHoverContent';
+import { QueryExecutionHoverContent } from 'components/QueryExecutionHoverContent/QueryExecutionHoverContent';
 import { BoardItemType } from 'const/board';
+import history from 'lib/router-history';
 import NOOP from 'lib/utils/noop';
 import { getWithinEnvUrl } from 'lib/utils/query-string';
 import { IconButton } from 'ui/Button/IconButton';
@@ -15,9 +18,9 @@ import { Popover } from 'ui/Popover/Popover';
 import { PopoverHoverWrapper } from 'ui/Popover/PopoverHoverWrapper';
 import { UntitledText } from 'ui/StyledText/StyledText';
 
-import { IProcessedBoardItem } from './navigatorConst';
+import { IProcessedBoardItem } from '../DataDocNavigator/navigatorConst';
 
-import './DataDocNavigatorBoardItem.scss';
+import './BoardListItemRow.scss';
 
 export const BoardListItemRow: React.FC<{
     item: IProcessedBoardItem;
@@ -25,6 +28,11 @@ export const BoardListItemRow: React.FC<{
 }> = ({ item, onDeleteBoardItem }) => {
     const { key, itemType, icon, title, itemUrl, selected, itemId } = item;
     const itemUrlWithinEnv = getWithinEnvUrl(itemUrl);
+
+    const handleClick = React.useCallback(() => {
+        history.push(itemUrlWithinEnv);
+    }, [itemUrlWithinEnv]);
+
     return (
         <PopoverHoverWrapper>
             {(showPopover, anchorElement) => (
@@ -35,17 +43,22 @@ export const BoardListItemRow: React.FC<{
                                 'flex1 pr8': true,
                                 selected,
                             })}
-                            to={{
-                                pathname: itemUrlWithinEnv,
-                                state: {
-                                    isModal: itemType !== 'data_doc',
-                                },
-                            }}
+                            onClick={handleClick}
+                            to={
+                                itemType === 'data_doc'
+                                    ? {
+                                          pathname: itemUrlWithinEnv,
+                                          state: {
+                                              isModal: true,
+                                          },
+                                      }
+                                    : itemUrlWithinEnv
+                            }
                             isRow
                             noPlaceHolder
                         >
-                            <Icon size={16} name={icon} />
-                            {title.length ? (
+                            <Icon className="mr4" size={16} name={icon} />
+                            {title ? (
                                 <span className="ListLinkText">{title}</span>
                             ) : (
                                 <UntitledText className="ListLinkPlaceholder" />
@@ -63,12 +76,10 @@ export const BoardListItemRow: React.FC<{
                             />
                         </ListLink>
                     </Level>
-
                     <UrlContextMenu
                         url={itemUrlWithinEnv}
                         anchorRef={{ current: anchorElement }}
                     />
-
                     {showPopover && anchorElement && (
                         <Popover
                             onHide={NOOP}
@@ -80,10 +91,20 @@ export const BoardListItemRow: React.FC<{
                                     docId={itemId}
                                     title={title}
                                 />
-                            ) : (
+                            ) : itemType === 'table' ? (
                                 <DataTableHoverContent
                                     tableId={itemId}
                                     tableName={title}
+                                />
+                            ) : itemType === 'board' ? (
+                                <BoardHoverContent
+                                    boardId={itemId}
+                                    title={title}
+                                />
+                            ) : (
+                                <QueryExecutionHoverContent
+                                    queryExecutionId={itemId}
+                                    title={title}
                                 />
                             )}
                         </Popover>

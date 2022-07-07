@@ -5,10 +5,7 @@ import * as Yup from 'yup';
 
 import { IBoardRaw } from 'const/board';
 import { sendConfirm } from 'lib/querybookUI';
-import {
-    convertContentStateToHTML,
-    convertRawToContentState,
-} from 'lib/richtext/serialize';
+import { convertRawToContentState } from 'lib/richtext/serialize';
 import { createBoard, deleteBoard, updateBoard } from 'redux/board/action';
 import { Dispatch, IStoreState } from 'redux/store/types';
 import { Button } from 'ui/Button/Button';
@@ -55,7 +52,7 @@ export const BoardCreateUpdateForm: React.FunctionComponent<
                   }
                 : {
                       name: board.name,
-                      description: convertRawToContentState(board.description),
+                      description: board.description,
                       public: board.public,
                   },
         [board, isCreateForm]
@@ -67,22 +64,24 @@ export const BoardCreateUpdateForm: React.FunctionComponent<
             validateOnMount={true}
             validationSchema={boardFormSchema}
             onSubmit={async (values) => {
-                const description = convertContentStateToHTML(
-                    values.description
-                );
                 const action = isCreateForm
-                    ? createBoard(values.name, description, values.public)
-                    : updateBoard(boardId, {
-                          ...values,
-                          description,
-                      });
+                    ? createBoard(
+                          values.name,
+                          values.description,
+                          values.public
+                      )
+                    : updateBoard(
+                          boardId,
+                          values.name,
+                          values.public,
+                          values.description
+                      );
                 onComplete(await dispatch(action));
             }}
         >
             {({ submitForm, isSubmitting, isValid }) => {
                 const nameField = <SimpleField name="name" type="input" />;
-                // TODO: enable when sharing is possible
-                // const publicField = <SimpleField name="public" type="toggle" />;
+                const publicField = <SimpleField name="public" type="toggle" />;
 
                 const descriptionField = (
                     <SimpleField name="description" type="rich-text" />
@@ -93,7 +92,7 @@ export const BoardCreateUpdateForm: React.FunctionComponent<
                         <FormWrapper minLabelWidth="150px">
                             <Form>
                                 {nameField}
-                                {/* {publicField} */}
+                                {publicField}
                                 {descriptionField}
                                 <br />
                                 <div className="right-align">

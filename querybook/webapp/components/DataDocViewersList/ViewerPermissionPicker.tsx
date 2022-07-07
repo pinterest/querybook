@@ -1,9 +1,6 @@
 import React from 'react';
 
-import {
-    DataDocPermission,
-    IViewerInfo,
-} from 'lib/data-doc/datadoc-permission';
+import { Permission, IViewerInfo } from 'lib/data-doc/datadoc-permission';
 import { sendConfirm } from 'lib/querybookUI';
 import { Icon } from 'ui/Icon/Icon';
 import { Menu, MenuDivider, MenuItem } from 'ui/Menu/Menu';
@@ -16,7 +13,7 @@ interface IProp {
     publicDataDoc: boolean;
     isOwner: boolean;
 
-    onPermissionChange: (permision: DataDocPermission) => any;
+    onPermissionChange: (permision: Permission) => any;
     onRemoveEditor?: (uid: number) => any;
 }
 
@@ -41,17 +38,13 @@ export const ViewerPermissionPicker: React.FunctionComponent<IProp> = ({
             <Menu>
                 {!publicDataDoc && (
                     <MenuItem
-                        onClick={() =>
-                            onPermissionChange(DataDocPermission.CAN_READ)
-                        }
+                        onClick={() => onPermissionChange(Permission.CAN_READ)}
                     >
                         read only
                     </MenuItem>
                 )}
                 <MenuItem
-                    onClick={() =>
-                        onPermissionChange(DataDocPermission.CAN_WRITE)
-                    }
+                    onClick={() => onPermissionChange(Permission.CAN_WRITE)}
                 >
                     edit
                 </MenuItem>
@@ -63,7 +56,7 @@ export const ViewerPermissionPicker: React.FunctionComponent<IProp> = ({
                                 message:
                                     'Are you sure you want to transfer ownership?',
                                 onConfirm: () =>
-                                    onPermissionChange(DataDocPermission.OWNER),
+                                    onPermissionChange(Permission.OWNER),
                             })
                         }
                     >
@@ -85,8 +78,8 @@ export const ViewerPermissionPicker: React.FunctionComponent<IProp> = ({
     );
 
     const canShowEditMenu =
-        viewerInfo.permission === DataDocPermission.CAN_READ ||
-        viewerInfo.permission === DataDocPermission.CAN_WRITE;
+        viewerInfo.permission === Permission.CAN_READ ||
+        viewerInfo.permission === Permission.CAN_WRITE;
 
     const pickerButton =
         canShowEditMenu && !readonly ? (

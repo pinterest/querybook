@@ -1,7 +1,12 @@
 import datetime
+
+from sqlalchemy import or_
 from app.db import with_session
-from models.board import Board, BoardItem
-from models.user import User
+from const.elasticsearch import ElasticsearchItem
+from models.board import Board, BoardItem, BoardEditor
+from models.access_request import AccessRequest
+from lib.sqlalchemy import update_model_fields
+from tasks.sync_elasticsearch import sync_elasticsearch
 
 
 @with_session
@@ -25,7 +30,7 @@ def create_board(
     commit=True,
     session=None,
 ):
-    return Board.create(
+    board = Board.create(
         {
             "name": name,
             "environment_id": environment_id,
@@ -38,10 +43,15 @@ def create_board(
         session=session,
     )
 
+    if commit:
+        update_es_boards_by_id(board.id)
+
+    return board
+
 
 @with_session
 def update_board(id, commit=True, session=None, **fields):
-    return Board.update(
+    board = Board.update(
         id,
         fields=fields,
         field_names=["name", "description", "public"],
@@ -49,10 +59,15 @@ def update_board(id, commit=True, session=None, **fields):
         session=session,
     )
 
+    if commit:
+        update_es_boards_by_id(board.id)
+
+    return board
+
 
 def item_type_to_id_type(item_type):
-    assert item_type in ["data_doc", "table"], "Invalid item type"
-    return item_type + "_id"
+    assert item_type in ["data_doc", "table", "board", "query"], "Invalid item type"
+    return item_type + "_execution_id" if item_type == "query" else item_type + "_id"
 
 
 @with_session
@@ -63,18 +78,23 @@ def add_item_to_board(board_id, item_id, item_type, session=None):  # data_doc o
     # Avoid duplication
     board_item = (
         session.query(BoardItem)
-        .filter_by(**{"board_id": board_id, item_type_to_id_type(item_type): item_id})
+        .filter_by(
+            **{"parent_board_id": board_id, item_type_to_id_type(item_type): item_id}
+        )
         .first()
     )
 
     if not board_item:
         board_item = BoardItem(
-            board_id=board_id, item_order=board.get_max_item_order(session=session) + 1
+            parent_board_id=board_id,
+            item_order=board.get_max_item_order(session=session) + 1,
         )
         setattr(board_item, item_type_to_id_type(item_type), item_id)
         session.add(board_item)
         session.commit()
         board_item.id
+        update_es_boards_by_id(board_id)
+
     return board_item
 
 
@@ -94,14 +114,14 @@ def move_item_order(board_id, from_index, to_index, commit=True, session=None):
 
     is_move_down = from_item_order < to_item_order
     if is_move_down:
-        session.query(BoardItem).filter(BoardItem.board_id == board_id).filter(
+        session.query(BoardItem).filter(BoardItem.parent_board_id == board_id).filter(
             BoardItem.item_order <= to_item_order
         ).filter(BoardItem.item_order > from_item_order).update(
             {BoardItem.item_order: BoardItem.item_order - 1}
         )
     else:
         # moving up
-        session.query(BoardItem).filter(BoardItem.board_id == board_id).filter(
+        session.query(BoardItem).filter(BoardItem.parent_board_id == board_id).filter(
             BoardItem.item_order >= to_item_order
         ).filter(BoardItem.item_order < from_item_order).update(
             {BoardItem.item_order: BoardItem.item_order + 1}
@@ -121,7 +141,9 @@ def move_item_order(board_id, from_index, to_index, commit=True, session=None):
 def get_item_from_board(board_id, item_id, item_type, session=None):
     return (
         session.query(BoardItem)
-        .filter_by(**{"board_id": board_id, item_type_to_id_type(item_type): item_id})
+        .filter_by(
+            **{"parent_board_id": board_id, item_type_to_id_type(item_type): item_id}
+        )
         .first()
     )
 
@@ -133,6 +155,7 @@ def remove_item_from_board(board_id, item_id, item_type, commit=True, session=No
         session.delete(item)
         if commit:
             session.commit()
+            update_es_boards_by_id(board_id)
 
 
 @with_session
@@ -141,7 +164,7 @@ def get_board_ids_from_board_item(item_type, item_id, environment_id, session=No
         map(
             lambda id_tuple: id_tuple[0],
             session.query(Board.id)
-            .join(BoardItem, Board.id == BoardItem.board_id)
+            .join(BoardItem, Board.id == BoardItem.parent_board_id)
             .filter(getattr(BoardItem, item_type_to_id_type(item_type)) == item_id)
             .filter(Board.environment_id == environment_id)
             .all(),
@@ -150,22 +173,147 @@ def get_board_ids_from_board_item(item_type, item_id, environment_id, session=No
 
 
 @with_session
-def get_or_create_user_favorite_board(uid, environment_id, session=None):
-    user = User.get(id=uid, session=session)
-    favorite_board = (
+def get_boards_from_board_item(
+    item_type, item_id, environment_id, current_user_id, session=None
+):
+    return (
         session.query(Board)
-        .filter_by(owner_uid=uid, environment_id=environment_id, board_type="favorite")
-        .first()
+        .join(BoardItem, Board.id == BoardItem.parent_board_id)
+        .filter(getattr(BoardItem, item_type_to_id_type(item_type)) == item_id)
+        .filter(Board.environment_id == environment_id)
+        .filter(
+            or_(
+                Board.public.is_(True),
+                Board.owner_uid == current_user_id,
+                # TODO (kgopal492): Account for board sharing
+            )
+        )
+        .all()
     )
 
-    if not favorite_board:
-        favorite_board = create_board(
-            name=f"{user.username}'s favorite",
-            environment_id=environment_id,
-            board_type="favorite",
-            public=False,
-            owner_uid=uid,
-            session=session,
+
+def update_es_boards_by_id(board_id: int):
+    sync_elasticsearch.apply_async(args=[ElasticsearchItem.boards.value, board_id])
+
+
+@with_session
+def get_all_public_boards(environment_id, session=None):
+    return (
+        session.query(Board)
+        .filter(Board.public.is_(True))
+        .filter(Board.environment_id == environment_id)
+        .all()
+    )
+
+
+@with_session
+def update_board_item(id, session=None, **fields):
+    board = BoardItem.update(
+        id,
+        fields=fields,
+        field_names=["description", "meta"],
+        session=session,
+    )
+
+    return board
+
+
+"""
+    ----------------------------------------------------------------------------------------------------------
+    BOARD EDITOR
+    ---------------------------------------------------------------------------------------------------------
+"""
+
+
+@with_session
+def get_board_editor_by_id(id, session=None):
+    return session.query(BoardEditor).get(id)
+
+
+@with_session
+def get_board_editors_by_board_id(board_id, session=None):
+    return session.query(BoardEditor).filter_by(board_id=board_id).all()
+
+
+@with_session
+def create_board_editor(
+    board_id, uid, read=False, write=False, commit=True, session=None
+):
+    editor = BoardEditor(board_id=board_id, uid=uid, read=read, write=write)
+
+    session.add(editor)
+    if commit:
+        session.commit()
+        update_es_boards_by_id(editor.board_id)
+    else:
+        session.flush()
+    session.refresh(editor)
+    return editor
+
+
+@with_session
+def update_board_editor(
+    id,
+    read=None,
+    write=None,
+    commit=True,
+    session=None,
+    **fields,
+):
+    editor = get_board_editor_by_id(id, session=session)
+    if editor:
+        updated = update_model_fields(
+            editor, skip_if_value_none=True, read=read, write=write
         )
 
-    return favorite_board
+        if updated:
+            if commit:
+                session.commit()
+            else:
+                session.flush()
+            session.refresh(editor)
+        return editor
+
+
+@with_session
+def delete_board_editor(id, board_id, session=None, commit=True):
+    session.query(BoardEditor).filter_by(id=id).delete()
+    if commit:
+        session.commit()
+        update_es_boards_by_id(board_id)
+
+
+"""
+    ----------------------------------------------------------------------------------------------------------
+    BOARD ACCESS REQUESTS
+    ---------------------------------------------------------------------------------------------------------
+"""
+
+
+@with_session
+def get_board_access_requests_by_board_id(board_id, session=None):
+    return session.query(AccessRequest).filter_by(board_id=board_id).all()
+
+
+@with_session
+def get_board_access_request_by_board_id(board_id, uid, session=None):
+    return session.query(AccessRequest).filter_by(board_id=board_id, uid=uid).first()
+
+
+@with_session
+def create_board_access_request(board_id, uid, commit=True, session=None):
+    request = AccessRequest(uid=uid, board_id=board_id)
+    session.add(request)
+    if commit:
+        session.commit()
+    else:
+        session.flush()
+    session.refresh(request)
+    return request
+
+
+@with_session
+def remove_board_access_request(board_id, uid, session=None, commit=True):
+    session.query(AccessRequest).filter_by(board_id=board_id, uid=uid).delete()
+    if commit:
+        session.commit()

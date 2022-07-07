@@ -2,13 +2,21 @@ import { escape, escapeRegExp } from 'lodash';
 import React, { useMemo, useRef, useState } from 'react';
 import { useSelector } from 'react-redux';
 
+import { BoardItemAddButton } from 'components/BoardItemAddButton/BoardItemAddButton';
 import { UserAvatar } from 'components/UserBadge/UserAvatar';
-import { IDataDocPreview, IQueryPreview, ITablePreview } from 'const/search';
+import {
+    IBoardPreview,
+    IDataDocPreview,
+    IQueryPreview,
+    ITablePreview,
+} from 'const/search';
 import { useUser } from 'hooks/redux/useUser';
 import history from 'lib/router-history';
 import { generateFormattedDate } from 'lib/utils/datetime';
 import { stopPropagation } from 'lib/utils/noop';
 import { queryEngineByIdEnvSelector } from 'redux/queryEngine/selector';
+import { IStoreState } from 'redux/store/types';
+import { Button } from 'ui/Button/Button';
 import { IconButton } from 'ui/Button/IconButton';
 import { ThemedCodeHighlight } from 'ui/CodeHighlight/ThemedCodeHighlight';
 import { UrlContextMenu } from 'ui/ContextMenu/UrlContextMenu';
@@ -17,6 +25,8 @@ import { Level } from 'ui/Level/Level';
 import { LoadingRow } from 'ui/Loading/Loading';
 import { AccentText, StyledText, UntitledText } from 'ui/StyledText/StyledText';
 import { Tag } from 'ui/Tag/Tag';
+
+import { SearchResultItemBoardItemAddButton } from './SearchResultItemBoardItemAddButton';
 
 import './SearchResultItem.scss';
 
@@ -103,6 +113,10 @@ export const QueryItem: React.FunctionComponent<IQueryItemProps> = ({
     const queryEngineById = useSelector(queryEngineByIdEnvSelector);
     const selfRef = useRef<HTMLDivElement>();
 
+    const currentBoardId = useSelector(
+        (state: IStoreState) => state.board.currentBoardId
+    );
+
     if (loading) {
         return (
             <div className="SearchResultItem QueryItem flex-center">
@@ -169,7 +183,7 @@ export const QueryItem: React.FunctionComponent<IQueryItemProps> = ({
     const queryType = isQueryCell ? 'query cell' : 'execution';
 
     return (
-        <>
+        <div className="SearchResultItemContainer">
             <div
                 className="SearchResultItem QueryItem"
                 onClick={handleClick}
@@ -198,7 +212,25 @@ export const QueryItem: React.FunctionComponent<IQueryItemProps> = ({
                 </div>
             </div>
             <UrlContextMenu anchorRef={selfRef} url={url} />
-        </>
+            {queryType === 'execution' && (
+                <Button className="SearchResultItemBoardItemAddButton flex-center">
+                    {currentBoardId ? (
+                        <SearchResultItemBoardItemAddButton
+                            itemType="query"
+                            itemId={id}
+                        />
+                    ) : (
+                        <BoardItemAddButton
+                            itemId={id}
+                            itemType="query"
+                            size={24}
+                            noPadding
+                            tooltipPos="left"
+                        />
+                    )}
+                </Button>
+            )}
+        </div>
     );
 };
 
@@ -214,7 +246,10 @@ export const DataDocItem: React.FunctionComponent<IDataDocItemProps> = ({
     searchString,
 }) => {
     const selfRef = useRef<HTMLDivElement>();
-    const { owner_uid: ownerUid, created_at: createdAt } = preview;
+    const currentBoardId = useSelector(
+        (state: IStoreState) => state.board.currentBoardId
+    );
+    const { owner_uid: ownerUid, created_at: createdAt, id } = preview;
     const { userInfo: ownerInfo, loading } = useUser({ uid: ownerUid });
     const handleClick = React.useMemo(() => openClick.bind(null, url), [url]);
 
@@ -238,7 +273,7 @@ export const DataDocItem: React.FunctionComponent<IDataDocItemProps> = ({
     );
 
     return (
-        <>
+        <div className="SearchResultItemContainer">
             <div
                 className="SearchResultItem DataDocItem"
                 onClick={handleClick}
@@ -266,7 +301,23 @@ export const DataDocItem: React.FunctionComponent<IDataDocItemProps> = ({
                 </div>
             </div>
             <UrlContextMenu anchorRef={selfRef} url={url} />
-        </>
+            <Button className="SearchResultItemBoardItemAddButton flex-center">
+                {currentBoardId ? (
+                    <SearchResultItemBoardItemAddButton
+                        itemType="data_doc"
+                        itemId={id}
+                    />
+                ) : (
+                    <BoardItemAddButton
+                        itemId={id}
+                        itemType="data_doc"
+                        size={24}
+                        noPadding
+                        tooltipPos="left"
+                    />
+                )}
+            </Button>
+        </div>
     );
 };
 
@@ -289,8 +340,12 @@ export const DataTableItem: React.FunctionComponent<IDataTableItemProps> = ({
         name,
         schema,
         tags,
+        id,
     } = preview;
     const handleClick = React.useMemo(() => openClick.bind(null, url), [url]);
+    const currentBoardId = useSelector(
+        (state: IStoreState) => state.board.currentBoardId
+    );
 
     const goldenIcon = golden ? (
         <div className="result-item-golden ml4">
@@ -320,7 +375,7 @@ export const DataTableItem: React.FunctionComponent<IDataTableItemProps> = ({
     ) : null;
 
     return (
-        <>
+        <div className="SearchResultItemContainer">
             <div
                 className="SearchResultItem flex-row"
                 onClick={handleClick}
@@ -348,6 +403,104 @@ export const DataTableItem: React.FunctionComponent<IDataTableItemProps> = ({
                 </div>
             </div>
             <UrlContextMenu url={url} anchorRef={selfRef} />
-        </>
+            <Button className="SearchResultItemBoardItemAddButton flex-center">
+                {currentBoardId ? (
+                    <SearchResultItemBoardItemAddButton
+                        itemType="table"
+                        itemId={id}
+                    />
+                ) : (
+                    <BoardItemAddButton
+                        itemId={id}
+                        itemType="table"
+                        size={24}
+                        noPadding
+                        tooltipPos="left"
+                    />
+                )}
+            </Button>
+        </div>
+    );
+};
+
+export const BoardItem: React.FunctionComponent<{
+    preview: IBoardPreview;
+    url: string;
+    searchString: string;
+}> = ({ preview, url, searchString }) => {
+    const selfRef = useRef<HTMLDivElement>();
+    const { owner_uid: ownerUid, description, id } = preview;
+    const { userInfo: ownerInfo, loading } = useUser({ uid: ownerUid });
+    const handleClick = React.useMemo(() => openClick.bind(null, url), [url]);
+    const currentBoardId = useSelector(
+        (state: IStoreState) => state.board.currentBoardId
+    );
+
+    if (loading) {
+        return (
+            <div className="SearchResultItem BoardItem flex-center">
+                <LoadingRow />
+            </div>
+        );
+    }
+
+    const title = preview.title || 'Untitled Board';
+
+    const highlightedDescription = preview.highlight?.description;
+    const descriptionDOM = highlightedDescription ? (
+        <span
+            dangerouslySetInnerHTML={{
+                __html: formatHighlightStrings(highlightedDescription),
+            }}
+        />
+    ) : (
+        description || 'No list description'
+    );
+
+    return (
+        <div className="SearchResultItemContainer">
+            <div
+                className="SearchResultItem BoardItem"
+                onClick={handleClick}
+                ref={selfRef}
+            >
+                <div className="result-item-icon">
+                    <UserAvatar uid={ownerUid} />
+                </div>
+                <div className="result-items">
+                    <div className="result-items-top horizontal-space-between">
+                        <HighlightTitle
+                            title={title}
+                            searchString={searchString}
+                        />
+                    </div>
+                    <Level className="result-items-bottom">
+                        <span className="result-item-owner">
+                            {ownerInfo.username}
+                        </span>
+                    </Level>
+                    {descriptionDOM}
+                </div>
+            </div>
+            <UrlContextMenu anchorRef={selfRef} url={url} />
+            {currentBoardId === id ? null : (
+                <Button className="SearchResultItemBoardItemAddButton flex-center">
+                    {currentBoardId ? (
+                        <SearchResultItemBoardItemAddButton
+                            itemType="board"
+                            itemId={id}
+                        />
+                    ) : (
+                        <BoardItemAddButton
+                            itemId={id}
+                            itemType="board"
+                            size={24}
+                            noPadding
+                            tooltipPos="left"
+                        />
+                    )}
+                </Button>
+            )}
+        </div>
     );
 };

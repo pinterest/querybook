@@ -2,6 +2,7 @@ from lib.elasticsearch.query_utils import (
     match_filters,
     highlight_fields,
     order_by_fields,
+    combine_keyword_and_filter_query,
 )
 
 FILTERS_TO_AND = ["full_table_name"]
@@ -24,9 +25,9 @@ def construct_query_search_query(
     sort_key=None,
     sort_order=None,
 ):
-    search_query = {}
+    keywords_query = {}
     if keywords:
-        search_query = {
+        keywords_query = {
             "bool": {
                 "must": {
                     "multi_match": {
@@ -56,26 +57,17 @@ def construct_query_search_query(
             }
         }
     else:
-        search_query = {"match_all": {}}
+        keywords_query = {"match_all": {}}
 
     search_filter = match_filters(filters, and_filter_names=FILTERS_TO_AND)
-    if search_filter == {}:
-        search_filter["filter"] = {"bool": {}}
-    search_filter["filter"]["bool"].setdefault("must", []).append(
-        {"bool": {"should": _query_access_terms(uid)}}
-    )
-
-    bool_query = {}
-    if search_query != {}:
-        bool_query["must"] = [search_query]
-    if search_filter != {}:
-        bool_query["filter"] = search_filter["filter"]
-        if "range" in search_filter:
-            bool_query.setdefault("must", [])
-            bool_query["must"] += search_filter["range"]
+    search_filter.setdefault("filter", {}).setdefault("bool", {}).setdefault(
+        "must", []
+    ).append({"bool": {"should": _query_access_terms(uid)}})
 
     query = {
-        "query": {"bool": bool_query},
+        "query": {
+            "bool": combine_keyword_and_filter_query(keywords_query, search_filter)
+        },
         "size": limit,
         "from": offset,
     }

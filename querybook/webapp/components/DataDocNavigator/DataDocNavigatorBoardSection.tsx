@@ -1,49 +1,32 @@
-import clsx from 'clsx';
 import { orderBy } from 'lodash';
 import React, { useCallback, useEffect, useMemo, useState } from 'react';
-import { useDrop } from 'react-dnd';
-import toast from 'react-hot-toast';
 import { useDispatch, useSelector } from 'react-redux';
+import { useRouteMatch } from 'react-router-dom';
 
 import { BoardCreateUpdateModal } from 'components/BoardCreateUpdateModal/BoardCreateUpdateModal';
+import { BoardExpandableHeader } from 'components/BoardExpandableList/BoardExpandableHeader';
+import { BoardExpandableSection } from 'components/BoardExpandableList/BoardExpandableSection';
 import {
-    BoardItemType,
     BoardOrderBy,
     BoardOrderToDescription,
     BoardOrderToTitle,
 } from 'const/board';
-import { emptyDataDocTitleMessage, IDataDoc } from 'const/datadoc';
-import { IDataTable } from 'const/metastore';
+import { IDataDoc } from 'const/datadoc';
 import { getEnumEntries } from 'lib/typescript';
-import { titleize } from 'lib/utils';
-import {
-    addBoardItem,
-    deleteBoardItem,
-    fetchBoardIfNeeded,
-    fetchBoards,
-    moveBoardItem,
-} from 'redux/board/action';
-import { makeBoardItemsSelector, myBoardsSelector } from 'redux/board/selector';
-import { setDataDocNavBoard } from 'redux/querybookUI/action';
-import { dataDocNavBoardOpenSelector } from 'redux/querybookUI/selector';
+import { addBoardItem, fetchBoards } from 'redux/board/action';
+import { myBoardsSelector } from 'redux/board/selector';
 import { Dispatch, IStoreState } from 'redux/store/types';
 import { IconButton } from 'ui/Button/IconButton';
-import { DraggableList } from 'ui/DraggableList/DraggableList';
-import { IDragItem } from 'ui/DraggableList/types';
 import { Icon } from 'ui/Icon/Icon';
 import { Level, LevelItem } from 'ui/Level/Level';
-import { LoadingIcon } from 'ui/Loading/Loading';
 import { OrderByButton } from 'ui/OrderByButton/OrderByButton';
 import { Title } from 'ui/Title/Title';
 
-import { BoardListItemRow } from './DataDocNavigatorBoardItem';
 import {
     BoardDraggableType,
     DataDocDraggableType,
     IProcessedBoardItem,
 } from './navigatorConst';
-
-import './DataDocNavigatorBoardSection.scss';
 
 interface INavigatorBoardSectionProps {
     selectedDocId: number;
@@ -57,6 +40,13 @@ const BoardOrderByOptions = getEnumEntries(BoardOrderBy);
 export const DataDocNavigatorBoardSection: React.FC<
     INavigatorBoardSectionProps
 > = ({ selectedDocId, collapsed, setCollapsed, filterString }) => {
+    const match = useRouteMatch('/:env/:ignore(list)?/:matchBoardId?');
+    const { matchBoardId } = match?.params ?? {};
+    const selectedBoardId = useMemo(
+        () => (matchBoardId ? Number(matchBoardId) : null),
+        [matchBoardId]
+    );
+
     const toggleCollapsed = useCallback(
         () => setCollapsed(!collapsed),
         [setCollapsed, collapsed]
@@ -115,7 +105,15 @@ export const DataDocNavigatorBoardSection: React.FC<
             }
 
             if (sourceItemId != null) {
-                if (sourceType === 'board' && sourceBoardId != null) {
+                if (sourceType === 'datadoc') {
+                    await dispatch(
+                        addBoardItem(toBoardId, 'data_doc', sourceItemId)
+                    );
+                } else if (sourceType === 'board' && sourceBoardId == null) {
+                    await dispatch(
+                        addBoardItem(toBoardId, 'board', itemInfo.id)
+                    );
+                } else {
                     const boardItem = boardItemById[sourceItemId];
                     const boardItemType =
                         boardItem['data_doc_id'] != null ? 'data_doc' : 'table';
@@ -125,17 +123,6 @@ export const DataDocNavigatorBoardSection: React.FC<
                             : boardItem.table_id;
                     await dispatch(
                         addBoardItem(toBoardId, boardItemType, boardItemItemId)
-                    );
-                    await dispatch(
-                        deleteBoardItem(
-                            sourceBoardId,
-                            boardItemType,
-                            boardItemItemId
-                        )
-                    );
-                } else if (sourceType === 'datadoc') {
-                    await dispatch(
-                        addBoardItem(toBoardId, 'data_doc', sourceItemId)
                     );
                 }
             }
@@ -168,7 +155,6 @@ export const DataDocNavigatorBoardSection: React.FC<
                         }
                     />
                 ) : null}
-
                 <IconButton
                     icon="Plus"
                     onClick={() => setShowCreateModal(true)}
@@ -183,20 +169,29 @@ export const DataDocNavigatorBoardSection: React.FC<
         </Level>
     );
 
-    const boardsDOM = collapsed ? null : boards.length ? (
+    const boardsDOM = collapsed ? null : (
         <div className="ml8">
+            <div className="BoardExpandableSection">
+                <BoardExpandableHeader
+                    boardId={0}
+                    boardName="All Public Lists"
+                    collapsed={false}
+                    toggleCollapsed={() => null}
+                    isEditable={false}
+                    isCollapsable={false}
+                />
+            </div>
             {boards.map((board) => (
-                <NavigatorBoardView
+                <BoardExpandableSection
                     key={board.id}
                     id={board.id}
                     selectedDocId={selectedDocId}
+                    selectedBoardId={selectedBoardId}
                     filterString={filterString}
                     onMoveBoardItem={handleMoveBoardItem}
                 />
             ))}
         </div>
-    ) : (
-        <div className="empty-section-message">No lists</div>
     );
 
     return (
@@ -211,264 +206,4 @@ export const DataDocNavigatorBoardSection: React.FC<
             ) : null}
         </div>
     );
-};
-
-const NavigatorBoardView: React.FunctionComponent<{
-    id: number;
-    filterString: string;
-    selectedDocId: number;
-    onMoveBoardItem: (
-        itemType: string,
-        itemInfo: IProcessedBoardItem | IDataDoc,
-        toBoardId: number
-    ) => void;
-}> = ({ id, selectedDocId, filterString, onMoveBoardItem }) => {
-    const [showUpdateModal, setShowUpdateModal] = useState(false);
-    const dispatch: Dispatch = useDispatch();
-
-    const collapsed = !useSelector((state: IStoreState) =>
-        dataDocNavBoardOpenSelector(state, id)
-    );
-    const setCollapsed = useCallback(
-        (newCollapsed) => dispatch(setDataDocNavBoard(id, !newCollapsed)),
-        [id]
-    );
-
-    const board = useSelector(
-        (state: IStoreState) => state.board.boardById[id]
-    );
-    const boardItems = board?.items;
-    const handleDeleteBoardItem = React.useCallback(
-        async (itemId: number, itemType: BoardItemType) => {
-            await dispatch(deleteBoardItem(board.id, itemType, itemId));
-            // TODO: Consider not duplicating this logic in BoardItemAddButton
-            toast.success(`Item removed from the list "${board.name}"`);
-        },
-        [board]
-    );
-
-    const handleLocalMoveBoardItem = React.useCallback(
-        (fromIndex: number, toIndex: number) =>
-            dispatch(moveBoardItem(board.id, fromIndex, toIndex)),
-        [board]
-    );
-
-    useEffect(() => {
-        if (!collapsed) {
-            dispatch(fetchBoardIfNeeded(id));
-        }
-    }, [id, collapsed]);
-
-    const [{ isOver }, dropRef] = useDrop({
-        accept: [BoardDraggableType, DataDocDraggableType],
-        drop: (item: IDragItem<IProcessedBoardItem | IDataDoc>, monitor) => {
-            // You shouldn't be able to drag and drop to your original board
-            if (monitor.didDrop()) {
-                return;
-            }
-            onMoveBoardItem(item.type, item.itemInfo, id);
-        },
-
-        collect: (monitor) => {
-            const item: IDragItem = monitor.getItem();
-
-            return {
-                isOver:
-                    item?.type === BoardDraggableType &&
-                    item.itemInfo['boardId'] === id
-                        ? false
-                        : monitor.isOver(),
-            };
-        },
-    });
-
-    const headerSectionDOM = (
-        <div
-            className={clsx(
-                'horizontal-space-between',
-                'board-header-section',
-                'pl12',
-                !collapsed && 'active'
-            )}
-        >
-            <div
-                onClick={() => setCollapsed(!collapsed)}
-                className="board-header-title flex1"
-            >
-                <Title size="small" color="light" className="one-line-ellipsis">
-                    {titleize(board.name)}
-                </Title>
-            </div>
-
-            <div className="header-control-section">
-                <span className="hover-control-section">
-                    <IconButton
-                        size={18}
-                        icon="Edit3"
-                        onClick={() => setShowUpdateModal(true)}
-                        noPadding
-                    />
-                </span>
-
-                <IconButton
-                    icon={collapsed ? 'ChevronRight' : 'ChevronDown'}
-                    onClick={() => setCollapsed(!collapsed)}
-                />
-            </div>
-        </div>
-    );
-
-    const contentSection = collapsed ? null : boardItems ? (
-        <BoardExpandableList
-            filterString={filterString}
-            selectedDocId={selectedDocId}
-            boardId={id}
-            onDeleteBoardItem={handleDeleteBoardItem}
-            onMoveBoardItem={handleLocalMoveBoardItem}
-        />
-    ) : (
-        <div>
-            <LoadingIcon />
-        </div>
-    );
-
-    return (
-        <div
-            className={clsx({
-                NavigatorBoardView: true,
-                'dragged-over': isOver,
-            })}
-            ref={dropRef}
-        >
-            {headerSectionDOM}
-            {contentSection}
-            {showUpdateModal ? (
-                <BoardCreateUpdateModal
-                    onComplete={() => setShowUpdateModal(false)}
-                    onHide={() => setShowUpdateModal(false)}
-                    boardId={id}
-                />
-            ) : null}
-        </div>
-    );
-};
-
-const BoardExpandableList: React.FunctionComponent<{
-    selectedDocId: number;
-    filterString: string;
-    boardId: number;
-    onDeleteBoardItem: (itemId: number, itemType: BoardItemType) => void;
-    onMoveBoardItem: (fromIndex: number, toIndex: number) => void;
-}> = ({
-    filterString,
-    selectedDocId,
-    boardId,
-    onDeleteBoardItem,
-    onMoveBoardItem,
-}) => {
-    const boardItemsSelector = useMemo(() => makeBoardItemsSelector(), []);
-    const items = useSelector((state: IStoreState) =>
-        boardItemsSelector(state, boardId)
-    );
-    const processedItems: IProcessedBoardItem[] = useMemo(
-        () =>
-            items.map((item) => {
-                const { boardItem, itemData, id } = item;
-                const itemType: BoardItemType =
-                    boardItem['data_doc_id'] != null ? 'data_doc' : 'table';
-                let key: string;
-                let icon = null;
-                let itemUrl = '';
-                let title = null;
-                let selected = false;
-                const itemId = itemData.id;
-
-                if (itemType === 'data_doc') {
-                    const doc = itemData as IDataDoc;
-                    key = `data-doc-${doc.id}`;
-                    icon = 'file';
-                    title = doc.title ?? emptyDataDocTitleMessage;
-                    itemUrl = `/datadoc/${doc.id}/`;
-                    selected = selectedDocId === itemData.id;
-                } else {
-                    // table
-                    const table = itemData as IDataTable;
-                    key = `table-${table.id}`;
-                    icon = 'database';
-                    title = table.name;
-                    itemUrl = `/table/${table.id}/`;
-                }
-
-                return {
-                    id,
-                    key,
-                    icon,
-                    itemUrl,
-                    itemId,
-                    itemType,
-                    title,
-                    selected,
-                    boardId: item.boardItem.board_id,
-                };
-            }),
-        [items, selectedDocId]
-    );
-
-    const itemsToHideSet: Set<number> = useMemo(
-        () =>
-            filterString
-                ? new Set(
-                      processedItems
-                          .filter(
-                              (item) =>
-                                  !item.title
-                                      ?.toLowerCase()
-                                      .includes(filterString)
-                          )
-                          .map((item) => item.id)
-                  )
-                : new Set(),
-        [processedItems, filterString]
-    );
-
-    const canDrop = useCallback(
-        (item: IDragItem<IProcessedBoardItem>) =>
-            item.itemInfo.boardId === boardId,
-        [boardId]
-    );
-
-    const makeItemsDOM = () => (
-        <DraggableList
-            canDrop={canDrop}
-            itemType={BoardDraggableType}
-            items={processedItems}
-            onMove={onMoveBoardItem}
-            renderItem={(idx, item) => {
-                const { id } = item;
-                if (itemsToHideSet.has(id)) {
-                    return null;
-                }
-
-                return (
-                    <BoardListItemRow
-                        item={item}
-                        onDeleteBoardItem={onDeleteBoardItem}
-                    />
-                );
-            }}
-        />
-    );
-
-    const itemsDOM =
-        items.length > 0 ? (
-            items.length > itemsToHideSet.size ? (
-                makeItemsDOM()
-            ) : (
-                <div className="empty-section-message">No items found</div>
-            )
-        ) : (
-            <div className="empty-section-message">No items</div>
-        );
-
-    return <div className="board-item-list">{itemsDOM}</div>;
 };

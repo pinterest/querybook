@@ -12,11 +12,12 @@ export interface IEditableTextFieldProps {
     value: DraftJs.ContentState;
     onSave: (content: DraftJs.ContentState) => Promise<any>;
     className?: string;
+    readonly?: boolean;
 }
 
 export const EditableTextField: React.FunctionComponent<
     IEditableTextFieldProps
-> = ({ value, onSave, className }) => {
+> = ({ value, onSave, className, readonly = false }) => {
     const [editMode, setEditMode] = React.useState(false);
     const editorRef = React.useRef<RichTextEditor>(null);
 
@@ -56,20 +57,21 @@ export const EditableTextField: React.FunctionComponent<
         setEditorContent(value);
     }, [value]);
 
-    const toggleEditModeButton = !editMode ? (
-        <TextButton
-            icon="Edit"
-            title="Edit"
-            onClick={toggleEditMode}
-            className="edit-mode-button"
-        />
-    ) : null;
+    const toggleEditModeButton =
+        !editMode && !readonly ? (
+            <TextButton
+                icon="Edit"
+                title="Edit"
+                onClick={toggleEditMode}
+                className="edit-mode-button"
+            />
+        ) : null;
 
     const editor = (
         <div className="editor-wrapper">
             <RichTextEditor
                 value={value}
-                readOnly={!editMode}
+                readOnly={readonly || !editMode}
                 ref={editorRef}
             />
             {toggleEditModeButton}

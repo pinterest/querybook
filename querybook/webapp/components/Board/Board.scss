@@ -1,15 +1,18 @@
 .Board {
-    .BoardItem {
-        cursor: default;
-        max-width: 960px;
-        margin-right: auto;
-        border-radius: var(--border-radius);
-        background-color: var(--bg-light);
-        .BoardItemIcon {
-            color: var(--icon);
-        }
-        &:hover {
-            background-color: var(--bg-hover);
-        }
+    position: relative;
+    min-height: 100%;
+    width: 100%;
+    display: flex;
+
+    .Board-content {
+        flex: 0 1 var(--max-width);
+        margin: 0 auto;
+        padding: 36px 16px;
+        overflow: hidden;
+    }
+    .BoardRightSidebar {
+        position: sticky;
+        top: 0;
+        z-index: 9;
     }
 }

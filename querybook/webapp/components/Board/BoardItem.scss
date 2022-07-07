@@ -1,0 +1,36 @@
+.BoardItem {
+    cursor: default;
+    position: relative;
+    margin-right: auto;
+    border-radius: var(--border-radius-sm);
+    background-color: var(--bg-lightest);
+    margin-bottom: 24px;
+
+    .BoardItem-controls .Icon {
+        margin-right: 16px;
+    }
+
+    .BoardItem-title {
+        cursor: pointer;
+        &:hover {
+            color: var(--text-hover);
+        }
+    }
+
+    .EditableTextField {
+        .edit-mode-footer {
+            margin-bottom: 8px;
+        }
+        .edit-mode-button {
+            margin-right: -8px;
+        }
+    }
+    .BoardItem-description-toggle {
+        position: absolute;
+        bottom: -12px;
+        right: 8px;
+        .Button {
+            padding: 2px 8px;
+        }
+    }
+}

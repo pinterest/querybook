@@ -1,83 +1,102 @@
 @import './../../scss_variables.scss';
-
-.SearchResultItem {
-    display: flex;
-    border-radius: var(--border-radius);
-    padding: 8px 16px;
-    background-color: var(--bg-lightest);
-    cursor: pointer;
-    margin-bottom: var(--margin);
-
-    mark {
-        background-color: var(--color-accent-light);
-        color: var(--color-accent-dark);
-        padding: 0px 2px;
+.SearchResultItemContainer {
+    position: relative;
+    .SearchResultItem {
+        display: flex;
         border-radius: var(--border-radius);
-    }
+        padding: 8px 16px 20px;
+        background-color: var(--bg-lightest);
+        cursor: pointer;
+        margin-bottom: var(--margin);
 
-    .result-item-icon {
-        width: var(--xxlarge-text-size);
-        height: var(--xxlarge-text-size);
-        margin: 3px 15px 0px 5px;
-        flex-shrink: 0;
-    }
+        mark {
+            background-color: var(--color-accent-lightest-0);
+            color: var(--color-accent-dark);
+            padding: 0px 2px;
+            border-radius: 4px;
+        }
 
-    .result-items {
-        flex-grow: 1;
-        overflow: hidden;
+        .result-item-icon {
+            width: var(--xxlarge-text-size);
+            height: var(--xxlarge-text-size);
+            margin: 3px 15px 0px 5px;
+            flex-shrink: 0;
+        }
 
-        .result-items-top {
-            padding-right: var(--padding-sm);
-            align-items: baseline;
+        .result-items {
+            flex-grow: 1;
+            overflow: hidden;
 
-            .result-item-title {
-                overflow: hidden;
-                white-space: nowrap;
-                text-overflow: ellipsis;
+            .result-items-top {
+                padding-right: var(--padding-sm);
+                align-items: baseline;
+
+                .result-item-title {
+                    overflow: hidden;
+                    white-space: nowrap;
+                    text-overflow: ellipsis;
+                }
+            }
+
+            .result-items-bottom {
+                align-items: baseline;
+                color: var(--text-light);
+            }
+
+            .result-item-description {
+                margin-top: var(--margin-xs);
+                @include ellipsis(3);
+                word-break: break-all;
+            }
+
+            .result-item-query {
+                height: auto;
+                max-height: 240px;
+                overflow-y: auto;
+                border-radius: var(--border-radius);
+            }
+
+            .CodeHighlight,
+            .highlighted-query {
+                cursor: text;
+                background-color: var(--bg-light);
+            }
+
+            .highlighted-query {
+                background: var(--query-editor-default-bg-color);
+                border-radius: var(--border-radius);
+                position: relative;
+
+                .toggle-expand-query-icon {
+                    position: absolute;
+                    right: 8px;
+                }
             }
         }
 
-        .result-items-bottom {
-            align-items: baseline;
-            color: var(--text-light);
-        }
-
-        .result-item-description {
-            margin-top: var(--margin-xs);
-            @include ellipsis(3);
-            word-break: break-all;
-        }
-
-        .result-item-query {
-            height: auto;
-            max-height: 240px;
-            overflow-y: auto;
-            border-radius: var(--border-radius);
-        }
-
-        .CodeHighlight,
-        .highlighted-query {
-            cursor: text;
-            background-color: var(--bg-light);
-        }
-
-        .highlighted-query {
-            background: var(--query-editor-default-bg-color);
-            border-radius: var(--border-radius);
-            position: relative;
-
-            .toggle-expand-query-icon {
-                position: absolute;
-                right: 8px;
+        &:hover {
+            background-color: var(--bg-hover);
+            .CodeHighlight,
+            .highlighted-query {
+                background-color: var(--bg-lightest);
             }
         }
     }
+    .SearchResultItemBoardItemAddButton {
+        position: absolute;
+        bottom: -12px;
+        right: 8px;
+        min-width: 32px;
+        border-radius: var(--border-radius-sm);
+        background-color: var(--bg-light);
+        cursor: pointer;
+        padding: 0;
 
-    &:hover {
-        background-color: var(--bg-hover);
-        .CodeHighlight,
-        .highlighted-query {
-            background-color: var(--bg-lightest);
+        > .flex-row {
+            margin: 2px 6px;
+        }
+        .IconButton .Icon {
+            margin: 0;
         }
     }
 }
