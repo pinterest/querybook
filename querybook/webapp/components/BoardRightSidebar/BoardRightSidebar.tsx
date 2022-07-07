@@ -45,18 +45,19 @@ export const BoardRightSidebar: React.FunctionComponent<IProps> = ({
                 onClick={onCollapse}
                 disabled={isEditMode}
             />
-            {isEditable && (
-                <IconButton
-                    icon={isEditMode ? 'Check' : 'Edit2'}
-                    tooltip={
-                        isEditMode
+            <IconButton
+                icon={isEditMode ? 'Check' : 'Edit2'}
+                tooltip={
+                    isEditable
+                        ? isEditMode
                             ? 'Done Editing'
                             : 'Edit Mode: reorder & delete items'
-                    }
-                    tooltipPos="left"
-                    onClick={onEditModeToggle}
-                />
-            )}
+                        : 'Must be an editor to reoder & delete'
+                }
+                tooltipPos="left"
+                onClick={onEditModeToggle}
+                disabled={!isEditable}
+            />
         </div>
     );
 
