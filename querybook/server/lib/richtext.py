@@ -17,6 +17,9 @@ def richtext_to_plaintext(text, default="", escape=False) -> str:
 def try_parse_draftjs(text) -> str:
     try:
         content_state = json.loads(text)
+        if not isinstance(content_state, dict):
+            return False, text
+
         return True, draftjs_content_state_to_plaintext(content_state)
     except json.decoder.JSONDecodeError:
         # For old text cells the value was plain text
