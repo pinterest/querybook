@@ -18,6 +18,9 @@ def try_parse_draftjs(text) -> str:
     """With Richtext serialized as HTML, this will be deprecated in v4"""
     try:
         content_state = json.loads(text)
+        if not isinstance(content_state, dict):
+            return False, text
+
         return True, draftjs_content_state_to_plaintext(content_state)
     except json.decoder.JSONDecodeError:
         # For newer version
