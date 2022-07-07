@@ -135,23 +135,18 @@ export class RichTextEditor extends React.PureComponent<
 
     @bind
     public onChange(editorState: DraftJs.EditorState) {
-        this.setState((state) => {
-            const previousSelection = state.editorState.getSelection();
+        const previousSelection = this.state.editorState.getSelection();
+        this.setState({ editorState }, () => {
             const currentSelection = editorState.getSelection();
-            const toolBarStyle =
-                previousSelection !== currentSelection
-                    ? this.calculateToolBarStyle(currentSelection)
-                    : state.toolBarStyle;
-
-            return {
-                ...state,
-                editorState,
-                toolBarStyle,
-            };
+            if (previousSelection !== currentSelection) {
+                this.setState({
+                    toolBarStyle: this.calculateToolBarStyle(currentSelection),
+                });
+            }
+            if (this.props.onChange) {
+                this.props.onChange(editorState);
+            }
         });
-        if (this.props.onChange) {
-            this.props.onChange(editorState);
-        }
     }
 
     @bind

@@ -180,8 +180,7 @@ export class RichTextEditorToolBar extends React.PureComponent<
         if (selectionRect != null) {
             if (showLinkInput) {
                 this.lastSelectionRect = selectionRect;
-
-                const linkInput = showLinkInput ? (
+                const linkInput = (
                     <Popover
                         anchorBox={selectionRect}
                         layout={['bottom']}
@@ -192,7 +191,7 @@ export class RichTextEditorToolBar extends React.PureComponent<
                             onSubmit={this.addUrlToEditor}
                         />
                     </Popover>
-                ) : null;
+                );
                 contentDOM = linkInput;
             } else {
                 contentDOM = this.renderButtons();

@@ -68,7 +68,7 @@ services:
             retries: 3
     mysql:
         container_name: querybook_mysql
-        image: mysql:5.7
+        image: mysql:8.0
         restart: always
         ports:
             # <Port exposed> : < MySQL Port running inside container>
