@@ -67,9 +67,7 @@ export const BoardResource = {
         }),
 
     updateItemFields: (boardItemId: number, fields: Record<string, any>) =>
-        ds.update<IBoardItemRaw>(`/board/item/${boardItemId}/`, {
-            fields,
-        }),
+        ds.update<IBoardItemRaw>(`/board/item/${boardItemId}/`, fields),
 };
 
 export const BoardEditorResource = {
