@@ -11,6 +11,7 @@ import {
     updateBoardItemDescription,
     updateBoardItemMeta,
 } from 'redux/board/action';
+import * as boardSelectors from 'redux/board/selector';
 import { Dispatch, IStoreState } from 'redux/store/types';
 import { Button } from 'ui/Button/Button';
 import { IconButton } from 'ui/Button/IconButton';
@@ -52,6 +53,7 @@ export const BoardItem: React.FunctionComponent<IBoardItemProps> = ({
         isEditMode,
         onDeleteBoardItem,
     } = React.useContext(BoardPageContext);
+    const isEditable = useSelector(boardSelectors.canCurrentUserEditSelector);
 
     const dispatch: Dispatch = useDispatch();
     const [collapsed, setCollapsed] = React.useState(defaultCollapsed);
@@ -179,9 +181,10 @@ export const BoardItem: React.FunctionComponent<IBoardItemProps> = ({
                         className="mt8"
                         value={boardItemData?.description}
                         onSave={handleDescriptionSave}
+                        readonly={!isEditable}
                     />
                 )}
-                {itemType === 'table' && (
+                {itemType === 'table' && isEditable && (
                     <div className="BoardItem-description-toggle">
                         <Button
                             className=" flex-row"

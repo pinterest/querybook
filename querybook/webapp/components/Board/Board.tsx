@@ -138,6 +138,7 @@ const BoardDOM: React.FunctionComponent<IBoardDOMProps> = ({
                     defaultCollapse={defaultCollapse}
                     onEditModeToggle={() => setIsEditMode((e) => !e)}
                     isEditMode={isEditMode}
+                    isEditable={isEditable}
                 />
             </div>
         </BoardPageContext.Provider>

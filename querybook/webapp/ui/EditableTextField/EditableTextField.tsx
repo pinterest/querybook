@@ -57,14 +57,15 @@ export const EditableTextField: React.FunctionComponent<
         setEditorContent(value);
     }, [value]);
 
-    const toggleEditModeButton = !editMode ? (
-        <TextButton
-            icon="Edit"
-            title="Edit"
-            onClick={toggleEditMode}
-            className="edit-mode-button"
-        />
-    ) : null;
+    const toggleEditModeButton =
+        !editMode && !readonly ? (
+            <TextButton
+                icon="Edit"
+                title="Edit"
+                onClick={toggleEditMode}
+                className="edit-mode-button"
+            />
+        ) : null;
 
     const editor = (
         <div className="editor-wrapper">

@@ -86,17 +86,19 @@ export const ViewersList: React.FunctionComponent<IProps> = ({
                     </div>
                 ) : null}
             </div>
-            <div className="add-user-row">
-                <div className="user-select-wrapper">
-                    <UserSelect
-                        onSelect={onUserSelect}
-                        selectProps={{
-                            isClearable: true,
-                        }}
-                        clearAfterSelect
-                    />
+            {readonly ? null : (
+                <div className="add-user-row">
+                    <div className="user-select-wrapper">
+                        <UserSelect
+                            onSelect={onUserSelect}
+                            selectProps={{
+                                isClearable: true,
+                            }}
+                            clearAfterSelect
+                        />
+                    </div>
                 </div>
-            </div>
+            )}
             <div className="viewers-list-wrapper">
                 {readonly
                     ? null

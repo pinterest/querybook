@@ -1,6 +1,7 @@
 import * as React from 'react';
 import { useDispatch } from 'react-redux';
 
+import { UserBadge } from 'components/UserBadge/UserBadge';
 import { QueryExecutionStatus } from 'const/queryExecution';
 import { queryStatusToStatusIcon } from 'const/queryStatus';
 import { useShallowSelector } from 'hooks/redux/useShallowSelector';
@@ -42,10 +43,12 @@ export const QueryExecutionHoverContent: React.FunctionComponent<IProps> = ({
             status,
             completed_at: completedAt,
             engine_id: engineId,
+            uid,
         } = queryExecution;
         const completedAtDate = generateFormattedDate(completedAt);
         return (
             <>
+                <UserBadge uid={uid} mini />
                 <div className="flex-row">
                     <StatusIcon
                         status={queryStatusToStatusIcon[queryExecution.status]}

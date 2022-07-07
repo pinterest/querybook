@@ -2,14 +2,14 @@
     > div:first-child {
         align-items: flex-end;
     }
+    .BoardHeader-title input {
+        font-weight: var(--extra-bold-font);
+    }
     .EditableTextField .editor-wrapper {
         background-color: var(--bg-lightest);
         padding: 4px 8px;
         .RichTextEditor {
             padding: 2px;
         }
-    }
-    > .RichTextEditor {
-        padding: 0px 0px 8px 8px;
     }
 }
