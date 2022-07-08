@@ -110,7 +110,7 @@ export const BoardHeader: React.FunctionComponent<IProps> = ({
                 readonly={!isEditable}
             />
             {isEditable && (
-                <div className="flex-row mt8">
+                <div className="BoardHeader-add-buttons flex-row mt8">
                     <TextButton
                         icon="Plus"
                         title="Query Execution"
@@ -122,6 +122,7 @@ export const BoardHeader: React.FunctionComponent<IProps> = ({
                         onClick={() => openSearchModal(SearchType.DataDoc)}
                     />
                     <TextButton
+                        className="BoardHeader-add-table"
                         icon="Plus"
                         title="Table"
                         onClick={() => openSearchModal(SearchType.Table)}

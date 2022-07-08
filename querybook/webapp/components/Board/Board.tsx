@@ -3,6 +3,8 @@ import * as React from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 
 import { BoardRightSidebar } from 'components/BoardRightSidebar/BoardRightSidebar';
+import { BoardItemUIGuide } from 'components/UIGuide/BoardItemUIGuide';
+import { BoardUIGuide } from 'components/UIGuide/BoardUIGuide';
 import { IBoardItem, IBoardWithItemIds } from 'const/board';
 import { BoardPageContext, IBoardPageContextType } from 'context/BoardPage';
 import { useBoardItemActions } from 'hooks/board/useBoardItemActions';
@@ -16,7 +18,7 @@ import * as boardSelectors from 'redux/board/selector';
 import { Dispatch, IStoreState } from 'redux/store/types';
 import { DraggableList } from 'ui/DraggableList/DraggableList';
 import { Loading } from 'ui/Loading/Loading';
-import { AccentText, EmptyText } from 'ui/StyledText/StyledText';
+import { AccentText } from 'ui/StyledText/StyledText';
 
 import { BoardBoardItem } from './BoardBoardItem';
 import { BoardDataDocItem } from './BoardDataDocItem';
@@ -68,9 +70,7 @@ const BoardDOM: React.FunctionComponent<IBoardDOMProps> = ({
                 .filter((i) => i) ?? [];
 
         if (boardItems.length === 0) {
-            boardItemDOM = (
-                <EmptyText className="mt24">No items in board.</EmptyText>
-            );
+            boardItemDOM = <BoardUIGuide />;
         } else {
             const boardItemRenderer = (boardItem: IBoardItem) =>
                 boardItem.data_doc_id ? (
@@ -111,6 +111,15 @@ const BoardDOM: React.FunctionComponent<IBoardDOMProps> = ({
                 );
             } else {
                 boardItemDOM = boardItems.map(boardItemRenderer);
+            }
+
+            if (boardItems.length === 1) {
+                boardItemDOM = (
+                    <>
+                        {boardItemDOM}
+                        <BoardItemUIGuide />
+                    </>
+                );
             }
         }
     }
