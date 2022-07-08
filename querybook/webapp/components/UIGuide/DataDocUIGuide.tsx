@@ -3,7 +3,7 @@ import { useLocation } from 'react-router-dom';
 import Tour, { ReactourStep } from 'reactour';
 
 import { getQueryString } from 'lib/utils/query-string';
-import { Button } from 'ui/Button/Button';
+import { IconButton } from 'ui/Button/IconButton';
 import { Title } from 'ui/Title/Title';
 
 export const DataDocTourSteps: ReactourStep[] = [
@@ -130,9 +130,7 @@ it to run daily, weekly, or monthly.`,
     },
 ];
 
-export const DataDocUIGuide: React.FunctionComponent<{
-    hideButton: boolean;
-}> = ({ hideButton }) => {
+export const DataDocUIGuide: React.FunctionComponent = () => {
     const location = useLocation();
     const { tour } = React.useMemo(() => getQueryString(), [location.search]);
     const [isOpen, setIsOpen] = React.useState(false);
@@ -144,12 +142,12 @@ export const DataDocUIGuide: React.FunctionComponent<{
     }, [tour]);
     return (
         <div className="DataDocUIGuide flex-center">
-            {hideButton ? null : (
-                <Button
-                    onClick={() => setIsOpen(true)}
-                    title="Begin DataDoc Tour"
-                />
-            )}
+            <IconButton
+                onClick={() => setIsOpen(true)}
+                icon="HelpCircle"
+                tooltipPos="left"
+                tooltip="DataDoc UI Guide"
+            />
             <Tour
                 isOpen={isOpen}
                 onRequestClose={() => setIsOpen(false)}

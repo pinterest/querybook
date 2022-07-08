@@ -57,12 +57,13 @@
             .Dropdown-menu {
                 right: 0px;
                 margin-right: 100%;
-
-                &::after {
-                    content: ' ';
-                    width: 8px;
-                }
             }
         }
     }
+}
+
+// only if it's a truly nested menu
+.Menu .Dropdown.Dropdown-nested-menu.nested-right .Dropdown-menu::after {
+    content: ' ';
+    width: 8px;
 }

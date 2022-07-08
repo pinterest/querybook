@@ -17,6 +17,7 @@ interface IProps {
     hoverable?: boolean;
     isRight?: boolean;
     isUp?: boolean;
+    isNestedRight?: boolean;
 
     usePortal?: boolean;
 }
@@ -29,6 +30,7 @@ export const Dropdown: React.FunctionComponent<IProps> = ({
     hoverable = true,
     isRight,
     isUp,
+    isNestedRight,
     usePortal,
 
     children,
@@ -89,8 +91,10 @@ export const Dropdown: React.FunctionComponent<IProps> = ({
         Dropdown: true,
         [className]: className,
         [customFormatClass]: true,
-        'is-right': isRight,
+        'is-right': isRight || isNestedRight,
         'is-up': isUp,
+        'Dropdown-nested-menu': isNestedRight,
+        'nested-right': isNestedRight,
     });
 
     let dropdownContent =

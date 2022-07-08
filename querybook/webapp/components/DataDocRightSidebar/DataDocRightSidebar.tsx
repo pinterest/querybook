@@ -4,6 +4,7 @@ import { useDispatch, useSelector } from 'react-redux';
 import { DataDocBoardsButton } from 'components/DataDocBoardsButton/DataDocBoardsButton';
 import { DataDocDAGExporterButton } from 'components/DataDocDAGExporter/DataDocDAGExporterButton';
 import { DataDocTemplateButton } from 'components/DataDocTemplateButton/DataDocTemplateButton';
+import { DataDocUIGuide } from 'components/UIGuide/DataDocUIGuide';
 import { IDataDoc } from 'const/datadoc';
 import { useAnnouncements } from 'hooks/redux/useAnnouncements';
 import { useScrollToTop } from 'hooks/ui/useScrollToTop';
@@ -107,6 +108,7 @@ export const DataDocRightSidebar: React.FunctionComponent<IProps> = ({
                     }
                     color="accent"
                 />
+                <DataDocUIGuide />
             </div>
             <div className="DataDocRightSidebar-button-section-bottom flex-column mb8">
                 {isEditable && exporterExists && (
