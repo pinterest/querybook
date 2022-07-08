@@ -80,36 +80,6 @@ export const BoardTourSteps: ReactourStep[] = [
         selector: '.Board .BoardHeader-add-table',
         content: `Click on an add button to add a table to the list!`,
     },
-    {
-        selector: '.Board .BoardItem',
-        content: <p>This is a table list item.</p>,
-    },
-    {
-        selector: '.Board .BoardItem .BoardItem-controls',
-        content: (
-            <p>
-                You can add this table to another list or collapse it from here.
-            </p>
-        ),
-    },
-    {
-        selector: '.Board .BoardItem .BoardItem-description',
-        content: (
-            <p>
-                You can add a description of this list item. The description
-                only exists within this list.
-            </p>
-        ),
-    },
-    {
-        selector: '.Board .BoardItem .BoardItem-description-toggle',
-        content: (
-            <p>
-                You can choose to show the table description instead of the list
-                item description by toggling this button.
-            </p>
-        ),
-    },
 ];
 
 export const BoardUIGuide: React.FunctionComponent = () => {
