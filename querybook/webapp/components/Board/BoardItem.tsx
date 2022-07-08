@@ -35,7 +35,7 @@ export interface IBoardItemProps {
 
 const boardItemTypeToIcon: Record<BoardItemType, AllLucideIconNames> = {
     table: 'Book',
-    data_doc: 'File',
+    data_doc: 'Database',
     board: 'Briefcase',
     query: 'PlayCircle',
 };
