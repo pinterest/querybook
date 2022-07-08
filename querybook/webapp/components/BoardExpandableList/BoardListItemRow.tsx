@@ -45,7 +45,7 @@ export const BoardListItemRow: React.FC<{
                             })}
                             onClick={handleClick}
                             to={
-                                itemType === 'data_doc'
+                                itemType === 'table'
                                     ? {
                                           pathname: itemUrlWithinEnv,
                                           state: {
