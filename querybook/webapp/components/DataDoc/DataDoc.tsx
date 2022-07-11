@@ -562,7 +562,6 @@ class DataDocComponent extends React.PureComponent<IProps, IState> {
                             isEditable={isEditable}
                             pasteCellAt={this.pasteCellAt}
                         />
-                        <DataDocUIGuide hideButton={numberOfCells !== 0} />
                     </div>
                 </div>
             );
