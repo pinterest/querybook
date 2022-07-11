@@ -16,7 +16,6 @@ import {
     ISearchAndReplaceHandles,
     SearchAndReplace,
 } from 'components/SearchAndReplace/SearchAndReplace';
-import { DataDocUIGuide } from 'components/UIGuide/DataDocUIGuide';
 import {
     CELL_TYPE,
     DataCellUpdateFields,
