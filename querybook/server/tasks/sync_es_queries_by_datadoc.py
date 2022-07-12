@@ -1,17 +1,13 @@
-from app.db import DBSession
+from app.db import DBSession, with_session
 from app.flask_app import celery
 from lib.celery.task_decorator import debounced_task
-from logic.datadoc import (
-    get_query_cells_by_data_doc_id,
-    get_query_executions_by_data_doc_id,
-)
-from querybook.server.app.db import with_session
 
 
 @with_session
 def _sync_query_cells_by_data_doc_id(doc_id, session=None):
     # Delaying this import to avoid circular dependency
     from logic.elasticsearch import update_query_cell_by_id
+    from logic.datadoc import get_query_cells_by_data_doc_id
 
     query_cells = get_query_cells_by_data_doc_id(doc_id, session=session)
     for cell in query_cells:
@@ -22,6 +18,7 @@ def _sync_query_cells_by_data_doc_id(doc_id, session=None):
 def _sync_query_executions_by_data_doc_id(doc_id, session=None):
     # Delaying this import to avoid circular dependency
     from logic.elasticsearch import update_query_execution_by_id
+    from logic.datadoc import get_query_executions_by_data_doc_id
 
     query_executions = get_query_executions_by_data_doc_id(doc_id, session=session)
     for execution in query_executions:
