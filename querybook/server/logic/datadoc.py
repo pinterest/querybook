@@ -8,10 +8,7 @@ from const.impression import ImpressionItemType
 from const.query_execution import QueryExecutionStatus
 from lib.sqlalchemy import update_model_fields
 from lib.data_doc.data_cell import cell_types, sanitize_data_cell_meta
-from logic.query_execution import (
-    get_last_query_execution_from_cell,
-    update_es_query_execution_by_id,
-)
+from logic.query_execution import get_last_query_execution_from_cell
 from models.datadoc import (
     DataDoc,
     DataDocDataCell,
@@ -27,6 +24,10 @@ from models.access_request import AccessRequest
 from models.impression import Impression
 from models.query_execution import QueryExecution
 from tasks.sync_elasticsearch import sync_elasticsearch
+from tasks.sync_es_queries_by_datadoc import (
+    sync_es_queries_by_datadoc_id,
+    sync_es_query_cells_by_datadoc_id,
+)
 
 
 """
@@ -77,7 +78,7 @@ def create_data_doc(
     if commit:
         session.commit()
         update_es_data_doc_by_id(data_doc.id)
-        update_es_queries_by_datadoc_id(data_doc.id, session=session)
+        update_es_queries_by_datadoc_id(data_doc.id)
     else:
         session.flush()
 
@@ -153,10 +154,10 @@ def update_data_doc(id, commit=True, session=None, **fields):
 
             # update es queries if doc is switched between public/private
             if "public" in fields:
-                update_es_queries_by_datadoc_id(data_doc.id, session=session)
+                update_es_queries_by_datadoc_id(data_doc.id)
             # update es query cells if doc is archived
             elif fields.get("archived") is True:
-                update_es_query_cells_by_data_doc_id(data_doc.id, session=session)
+                update_es_query_cells_by_data_doc_id(data_doc.id)
         else:
             session.flush()
         session.refresh(data_doc)
@@ -233,7 +234,7 @@ def clone_data_doc(id, owner_uid, commit=True, session=None):
     if commit:
         session.commit()
         update_es_data_doc_by_id(new_data_doc.id)
-        update_es_queries_by_datadoc_id(new_data_doc.id, session=session)
+        update_es_queries_by_datadoc_id(new_data_doc.id)
     else:
         session.flush()
     session.refresh(new_data_doc)
@@ -821,7 +822,7 @@ def create_data_doc_editor(
     if commit:
         session.commit()
         update_es_data_doc_by_id(editor.data_doc_id)
-        update_es_queries_by_datadoc_id(editor.data_doc_id, session=session)
+        update_es_queries_by_datadoc_id(editor.data_doc_id)
     else:
         session.flush()
     session.refresh(editor)
@@ -846,7 +847,7 @@ def update_data_doc_editor(
         if updated:
             if commit:
                 session.commit()
-                update_es_queries_by_datadoc_id(editor.data_doc_id, session=session)
+                update_es_queries_by_datadoc_id(editor.data_doc_id)
             else:
                 session.flush()
             session.refresh(editor)
@@ -859,7 +860,7 @@ def delete_data_doc_editor(id, doc_id, session=None, commit=True):
     if commit:
         session.commit()
         update_es_data_doc_by_id(doc_id)
-        update_es_queries_by_datadoc_id(doc_id, session=session)
+        update_es_queries_by_datadoc_id(doc_id)
 
 
 """
@@ -964,12 +965,20 @@ def update_es_data_doc_by_id(id):
     sync_elasticsearch.apply_async(args=[ElasticsearchItem.datadocs.value, id])
 
 
+def update_es_queries_by_datadoc_id(id):
+    sync_es_queries_by_datadoc_id.apply_async(args=[id])
+
+
+def update_es_query_cells_by_data_doc_id(id):
+    sync_es_query_cells_by_datadoc_id.apply_async(args=[id])
+
+
 def update_es_query_cell_by_id(id):
     sync_elasticsearch.apply_async(args=[ElasticsearchItem.query_cells.value, id])
 
 
 @with_session
-def update_es_query_cells_by_data_doc_id(id, session=None):
+def get_query_cells_by_data_doc_id(id, session=None):
     data_cells = (
         session.query(DataCell)
         .filter(DataCell.cell_type == DataCellType.query)
@@ -978,12 +987,11 @@ def update_es_query_cells_by_data_doc_id(id, session=None):
         .filter(DataDoc.id == id)
         .all()
     )
-    for data_cell in data_cells:
-        update_es_query_cell_by_id(data_cell.id)
+    return data_cells
 
 
 @with_session
-def update_es_query_executions_by_data_doc_id(id, session=None):
+def get_query_executions_by_data_doc_id(id, session=None):
     query_executions = (
         session.query(QueryExecution)
         .filter(QueryExecution.status == QueryExecutionStatus.DONE)
@@ -995,14 +1003,7 @@ def update_es_query_executions_by_data_doc_id(id, session=None):
         .filter(DataDocDataCell.data_doc_id == id)
         .all()
     )
-    for execution in query_executions:
-        update_es_query_execution_by_id(execution.id)
-
-
-@with_session
-def update_es_queries_by_datadoc_id(id, session=None):
-    update_es_query_cells_by_data_doc_id(id, session=session)
-    update_es_query_executions_by_data_doc_id(id, session=session)
+    return query_executions
 
 
 @with_session
