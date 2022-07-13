@@ -1,9 +1,6 @@
 import React from 'react';
-import { useLocation } from 'react-router-dom';
-import Tour, { ReactourStep } from 'reactour';
+import { ReactourStep } from 'reactour';
 
-import { getQueryString } from 'lib/utils/query-string';
-import { Button } from 'ui/Button/Button';
 import { Title } from 'ui/Title/Title';
 
 export const BoardTourSteps: ReactourStep[] = [
@@ -81,26 +78,3 @@ export const BoardTourSteps: ReactourStep[] = [
         content: `Click on an add button to add a table to the list!`,
     },
 ];
-
-export const BoardUIGuide: React.FunctionComponent = () => {
-    const location = useLocation();
-    const { tour } = React.useMemo(() => getQueryString(), [location.search]);
-    const [isOpen, setIsOpen] = React.useState(false);
-
-    React.useEffect(() => {
-        if (tour) {
-            setIsOpen(true);
-        }
-    }, [tour]);
-    return (
-        <div className="ListUIGuide flex-center mt16">
-            <Button onClick={() => setIsOpen(true)} title="Begin List Tour" />
-            <Tour
-                isOpen={isOpen}
-                onRequestClose={() => setIsOpen(false)}
-                steps={BoardTourSteps}
-                accentColor={'var(--color-accent)'}
-            />
-        </div>
-    );
-};

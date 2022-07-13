@@ -1,8 +1,13 @@
 import * as React from 'react';
+import Tour from 'reactour';
 
+import { BoardItemTourSteps } from 'components/UIGuide/BoardItemTourSteps';
+import { BoardTourSteps } from 'components/UIGuide/BoardTourSteps';
 import { useAnnouncements } from 'hooks/redux/useAnnouncements';
 import { useScrollToTop } from 'hooks/ui/useScrollToTop';
 import { IconButton } from 'ui/Button/IconButton';
+import { Dropdown } from 'ui/Dropdown/Dropdown';
+import { ListMenu } from 'ui/Menu/ListMenu';
 
 import './BoardRightSidebar.scss';
 
@@ -26,6 +31,9 @@ export const BoardRightSidebar: React.FunctionComponent<IProps> = ({
     const { showScrollToTop, scrollToTop } = useScrollToTop({
         containerRef: selfRef,
     });
+
+    const [isListGuideOpen, setIsListGuideOpen] = React.useState(false);
+    const [isListItemGuideOpen, setIsListItemGuideOpen] = React.useState(false);
 
     const buttonSection = (
         <div className="flex-column">
@@ -58,7 +66,42 @@ export const BoardRightSidebar: React.FunctionComponent<IProps> = ({
                 onClick={onEditModeToggle}
                 disabled={!isEditable}
             />
+            <Dropdown
+                customButtonRenderer={() => <IconButton icon="HelpCircle" />}
+                isNestedRight
+            >
+                <ListMenu
+                    items={[
+                        {
+                            name: 'List UI Guide',
+                            onClick: () => setIsListGuideOpen(true),
+                        },
+                        {
+                            name: 'List Item UI Guide',
+                            onClick: () => setIsListItemGuideOpen(true),
+                        },
+                    ]}
+                    isRight
+                />
+            </Dropdown>
         </div>
+    );
+
+    const tourDOM = (
+        <>
+            <Tour
+                isOpen={isListGuideOpen}
+                onRequestClose={() => setIsListGuideOpen(false)}
+                steps={BoardTourSteps}
+                accentColor={'var(--color-accent)'}
+            />
+            <Tour
+                isOpen={isListItemGuideOpen}
+                onRequestClose={() => setIsListItemGuideOpen(false)}
+                steps={BoardItemTourSteps}
+                accentColor={'var(--color-accent)'}
+            />
+        </>
     );
 
     return (
@@ -68,6 +111,7 @@ export const BoardRightSidebar: React.FunctionComponent<IProps> = ({
             ref={selfRef}
         >
             {buttonSection}
+            {tourDOM}
         </div>
     );
 };
