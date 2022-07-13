@@ -2,7 +2,7 @@ import React from 'react';
 import { Route, RouteComponentProps, Switch } from 'react-router-dom';
 
 import { BoardWrapper } from 'components/Board/BoardWrapper';
-import { PublicBoardPage } from 'components/BoardExpandableList/PublicBoardPage';
+import { PublicBoardPage } from 'components/PublicBoardPage/PublicBoardPage';
 import { FourOhFour } from 'ui/ErrorPage/FourOhFour';
 
 const BoardRoute: React.FunctionComponent<RouteComponentProps> = () => (
