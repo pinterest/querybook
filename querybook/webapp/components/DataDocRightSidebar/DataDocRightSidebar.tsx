@@ -94,6 +94,7 @@ export const DataDocRightSidebar: React.FunctionComponent<IProps> = ({
                     tooltipPos="left"
                     onClick={onCollapse}
                 />
+                <DataDocUIGuide />
                 <IconButton
                     icon="Loading"
                     className={isSaving ? '' : 'hide-button'}
@@ -108,7 +109,6 @@ export const DataDocRightSidebar: React.FunctionComponent<IProps> = ({
                     }
                     color="accent"
                 />
-                <DataDocUIGuide />
             </div>
             <div className="DataDocRightSidebar-button-section-bottom flex-column mb8">
                 {isEditable && exporterExists && (

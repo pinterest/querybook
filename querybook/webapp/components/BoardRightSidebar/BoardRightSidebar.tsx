@@ -68,7 +68,7 @@ export const BoardRightSidebar: React.FunctionComponent<IProps> = ({
             />
             <Dropdown
                 customButtonRenderer={() => <IconButton icon="HelpCircle" />}
-                isNestedRight
+                layout={['left', 'top']}
             >
                 <ListMenu
                     items={[
@@ -81,7 +81,6 @@ export const BoardRightSidebar: React.FunctionComponent<IProps> = ({
                             onClick: () => setIsListItemGuideOpen(true),
                         },
                     ]}
-                    isRight
                 />
             </Dropdown>
         </div>

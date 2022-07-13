@@ -24,7 +24,10 @@ export interface IListMenuItem {
 interface IProps {
     items?: IListMenuItem[];
     type?: 'select'; // Optional, One of none or 'select'
-    isRight?: boolean;
+    /**
+     * Defines the nested menu behavior
+     */
+    isNestedRight?: boolean;
     height?: number;
     soft?: boolean;
     className?: string;
@@ -33,7 +36,7 @@ interface IProps {
 export const ListMenu: React.FunctionComponent<IProps> = ({
     items,
     type,
-    isRight,
+    isNestedRight,
 
     height,
     soft,
@@ -80,7 +83,7 @@ export const ListMenu: React.FunctionComponent<IProps> = ({
                 <Dropdown
                     className={clsx({
                         'Dropdown-nested-menu': true,
-                        'nested-right': isRight,
+                        'nested-right': isNestedRight,
                         MenuItem: true,
                     })}
                     key={index}
@@ -89,6 +92,7 @@ export const ListMenu: React.FunctionComponent<IProps> = ({
                             {buttonContent}
                         </a>
                     )}
+                    layout={[isNestedRight ? 'right' : 'left', 'top']}
                 >
                     <ListMenu items={action.items} />
                 </Dropdown>

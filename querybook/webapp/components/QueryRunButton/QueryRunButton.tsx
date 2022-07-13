@@ -140,10 +140,10 @@ export const QueryEngineSelector: React.FC<IQueryEngineSelectorProps> = ({
     const engineButtonDOM = (
         <Dropdown
             customButtonRenderer={getEngineSelectorButtonDOM}
-            isRight
+            layout={['bottom', 'right']}
             className="engine-selector-dropdown"
         >
-            <ListMenu items={engineItems} type="select" isRight />
+            <ListMenu items={engineItems} type="select" />
         </Dropdown>
     );
 

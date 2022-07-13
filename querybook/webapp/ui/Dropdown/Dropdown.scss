@@ -12,28 +12,69 @@
     }
 
     .Dropdown-menu {
-        left: 0;
         min-width: 80px;
         position: absolute;
-        top: 100%;
         z-index: 20;
         box-shadow: var(--box-shadow-md);
         border-radius: var(--border-radius-sm);
         font-size: var(--small-text-size);
     }
 
-    &.is-right {
-        .Dropdown-menu {
-            left: auto;
-            right: 0;
+    &.opens-bottom {
+        > .Dropdown-menu {
+            top: 100%;
         }
     }
-    &.is-up {
-        .Dropdown-menu {
+
+    &.opens-top {
+        > .Dropdown-menu {
             bottom: 100%;
             padding-bottom: 4px;
             padding-top: initial;
             top: auto;
+        }
+    }
+
+    &.opens-top,
+    &.opens-bottom {
+        &.aligns-right {
+            > .Dropdown-menu {
+                left: auto;
+                right: 0;
+            }
+        }
+
+        &.aligns-left {
+            > .Dropdown-menu {
+                left: 0;
+            }
+        }
+    }
+
+    &.opens-right {
+        > .Dropdown-menu {
+            left: 100%;
+        }
+    }
+
+    &.opens-left {
+        > .Dropdown-menu {
+            right: 100%;
+        }
+    }
+
+    &.opens-right,
+    &.opens-left {
+        &.aligns-top {
+            > .Dropdown-menu {
+                top: 0;
+            }
+        }
+
+        &.aligns-bottom {
+            > .Dropdown-menu {
+                bottom: 0;
+            }
         }
     }
 
@@ -44,26 +85,20 @@
         }
         &:not(.nested-right) {
             .Dropdown-menu {
-                left: 100%;
-                margin-left: 8px;
-
-                &::before {
+                &::after {
                     content: ' ';
-                    width: 8px;
+                    width: 4px;
                 }
             }
         }
-        &.nested-right {
+
+        .nested-right {
             .Dropdown-menu {
-                right: 0px;
-                margin-right: 100%;
+                &::before {
+                    content: ' ';
+                    width: 4px;
+                }
             }
         }
     }
-}
-
-// only if it's a truly nested menu
-.Menu .Dropdown.Dropdown-nested-menu.nested-right .Dropdown-menu::after {
-    content: ' ';
-    width: 8px;
 }

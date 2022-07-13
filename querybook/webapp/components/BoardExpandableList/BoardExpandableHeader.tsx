@@ -35,7 +35,7 @@ export const BoardExpandableHeader: React.FunctionComponent<IProps> = ({
     const selfRef = React.useRef<HTMLDivElement>();
 
     const boardUrl = React.useMemo(
-        () => getWithinEnvUrl(`/list/${boardId}/`),
+        () => getWithinEnvUrl(boardId === 0 ? '/list/' : `/list/${boardId}/`),
         [boardId]
     );
     const handleClick = React.useCallback(() => {

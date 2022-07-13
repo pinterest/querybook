@@ -4,20 +4,22 @@ import React from 'react';
 import { useEvent } from 'hooks/useEvent';
 import { IconButton } from 'ui/Button/IconButton';
 import type { AllLucideIconNames } from 'ui/Icon/LucideIcons';
-import { Popover } from 'ui/Popover/Popover';
+import { Popover, PopoverLayout } from 'ui/Popover/Popover';
 import { AccentText } from 'ui/StyledText/StyledText';
 
 import './Dropdown.scss';
 
+const defaultLayout: PopoverLayout = [
+    'bottom', // main axis, the menu opens from the bottom side
+    'left', // off axis, determines if menu aligns right or left
+];
 interface IProps {
     menuIcon?: AllLucideIconNames;
     className?: string;
     customButtonRenderer?: () => React.ReactNode;
 
     hoverable?: boolean;
-    isRight?: boolean;
-    isUp?: boolean;
-    isNestedRight?: boolean;
+    layout?: PopoverLayout;
 
     usePortal?: boolean;
 }
@@ -28,9 +30,7 @@ export const Dropdown: React.FunctionComponent<IProps> = ({
     customButtonRenderer,
 
     hoverable = true,
-    isRight,
-    isUp,
-    isNestedRight,
+    layout = defaultLayout,
     usePortal,
 
     children,
@@ -87,29 +87,20 @@ export const Dropdown: React.FunctionComponent<IProps> = ({
 
     const customFormatClass = customButtonRenderer ? ' custom-format ' : '';
 
-    const combinedClassName = clsx({
-        Dropdown: true,
-        [className]: className,
-        [customFormatClass]: true,
-        'is-right': isRight || isNestedRight,
-        'is-up': isUp,
-        'Dropdown-nested-menu': isNestedRight,
-        'nested-right': isNestedRight,
-    });
-
     let dropdownContent =
         active && children ? (
             <div className="Dropdown-menu" role="menu">
                 {children}
             </div>
         ) : null;
+
     if (usePortal && dropdownContent) {
         dropdownContent = (
             <Popover
                 ref={popoverRef}
                 onHide={() => setActive(false)}
                 anchor={selfRef.current}
-                layout={[isUp ? 'top' : 'bottom', isRight ? 'right' : 'left']}
+                layout={layout}
                 hideArrow
                 skipAnimation
                 noPadding
@@ -118,6 +109,21 @@ export const Dropdown: React.FunctionComponent<IProps> = ({
             </Popover>
         );
     }
+
+    const mainAxis = layout[0];
+    const offAxis =
+        layout.length > 1
+            ? layout[1]
+            : mainAxis === 'left' || mainAxis === 'right'
+            ? 'top'
+            : 'right';
+    const combinedClassName = clsx({
+        Dropdown: true,
+        [className]: className,
+        [customFormatClass]: true,
+        [`opens-${mainAxis}`]: !usePortal,
+        [`aligns-${offAxis}`]: !usePortal,
+    });
 
     return (
         <div
