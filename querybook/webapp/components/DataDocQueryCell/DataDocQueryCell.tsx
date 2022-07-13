@@ -462,9 +462,9 @@ class DataDocQueryCellComponent extends React.PureComponent<IProps, IState> {
             <Dropdown
                 className="query-cell-additional-dropdown"
                 customButtonRenderer={this.additionalDropDownButtonFormatter}
-                isRight
+                layout={['bottom', 'right']}
             >
-                <ListMenu items={additionalButtons} isRight />
+                <ListMenu items={additionalButtons} />
             </Dropdown>
         ) : null;
     }

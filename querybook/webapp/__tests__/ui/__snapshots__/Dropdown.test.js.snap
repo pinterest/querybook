@@ -2,7 +2,7 @@
 
 exports[`matches enzyme snapshots matches snapshot 1`] = `
 <div
-  className="Dropdown "
+  className="Dropdown  opens-bottom aligns-left"
   onClick={[Function]}
   onMouseEnter={[Function]}
   onMouseLeave={[Function]}
@@ -21,7 +21,7 @@ exports[`matches enzyme snapshots matches snapshot 1`] = `
 
 exports[`matches test renderer snapshot serializes the styles 1`] = `
 <div
-  className="Dropdown "
+  className="Dropdown  opens-bottom aligns-left"
   onClick={[Function]}
   onMouseEnter={[Function]}
   onMouseLeave={[Function]}

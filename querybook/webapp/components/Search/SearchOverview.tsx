@@ -305,7 +305,10 @@ export const SearchOverview: React.FunctionComponent = () => {
     );
 
     const orderByDOM = (
-        <Dropdown customButtonRenderer={orderByButtonFormatter} isRight>
+        <Dropdown
+            customButtonRenderer={orderByButtonFormatter}
+            layout={['bottom', 'right']}
+        >
             <ListMenu
                 items={[SearchOrder.Recency, SearchOrder.Relevance].map(
                     (choice) => ({
@@ -321,7 +324,6 @@ export const SearchOverview: React.FunctionComponent = () => {
                     })
                 )}
                 type="select"
-                isRight
             />
         </Dropdown>
     );

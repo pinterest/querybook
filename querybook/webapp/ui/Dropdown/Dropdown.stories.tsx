@@ -45,6 +45,5 @@ export const _Dropdown = (args) => (
 _Dropdown.args = {
     menuIcon: 'menu',
     hoverable: false,
-    isRight: false,
-    isUp: false,
+    layout: ['bottom', 'right'],
 };

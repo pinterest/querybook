@@ -19,7 +19,7 @@ import { EditableTextField } from 'ui/EditableTextField/EditableTextField';
 import { Icon } from 'ui/Icon/Icon';
 import { AllLucideIconNames } from 'ui/Icon/LucideIcons';
 import { RichTextEditor } from 'ui/RichTextEditor/RichTextEditor';
-import { AccentText } from 'ui/StyledText/StyledText';
+import { AccentText, UntitledText } from 'ui/StyledText/StyledText';
 import { Title } from 'ui/Title/Title';
 
 import './BoardItem.scss';
@@ -34,8 +34,8 @@ export interface IBoardItemProps {
 }
 
 const boardItemTypeToIcon: Record<BoardItemType, AllLucideIconNames> = {
-    table: 'Book',
-    data_doc: 'Database',
+    table: 'Database',
+    data_doc: 'Book',
     board: 'Briefcase',
     query: 'PlayCircle',
 };
@@ -90,13 +90,10 @@ export const BoardItem: React.FunctionComponent<IBoardItemProps> = ({
         [dispatch, boardItemId, boardItemData, displayItemDescription]
     );
 
-    const boardItemClassname = clsx({
-        BoardItem: true,
-        p12: true,
-        mt8: true,
-        mb8: collapsed,
-        mb24: !collapsed,
-    });
+    const boardItemClassname = clsx(
+        'BoardItem p12 mt8',
+        collapsed ? 'mb8' : 'mb24'
+    );
 
     const boardItemHeaderDOM = (
         <div className="flex-row">
@@ -113,9 +110,13 @@ export const BoardItem: React.FunctionComponent<IBoardItemProps> = ({
                     })
                 }
             >
-                <Title className="BoardItem-title" size="smedium">
-                    {title}
-                </Title>
+                {title ? (
+                    <Title className="BoardItem-title" size="smedium">
+                        {title}
+                    </Title>
+                ) : (
+                    <UntitledText className="BoardItem-title" size="smedium" />
+                )}
             </div>
         </div>
     );

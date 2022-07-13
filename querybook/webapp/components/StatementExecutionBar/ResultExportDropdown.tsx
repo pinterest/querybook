@@ -248,13 +248,12 @@ export const ResultExportDropdown: React.FunctionComponent<IProps> = ({
                         title="Export"
                     />
                 )}
-                isRight
+                layout={['bottom', 'right']}
                 usePortal
             >
                 <ListMenu
                     className="ResultExportDropdown-menu"
                     items={additionalButtons}
-                    isRight
                 />
             </Dropdown>
         );

@@ -26,17 +26,13 @@ import { SchemaTableView } from './SchemaTableView/SchemaTableView';
 
 import './DataTableNavigator.scss';
 
-const PRESELECTED_FILTERS = ['golden'];
-
 function isFilteringTables(
     searchString: string,
     searchFilters: ITableSearchFilters
 ): boolean {
     return (
         !!searchString ||
-        Object.keys(searchFilters)
-            .filter((key) => !PRESELECTED_FILTERS.includes(key))
-            .some((key) => searchFilters[key])
+        Object.keys(searchFilters).some((key) => searchFilters[key])
     );
 }
 

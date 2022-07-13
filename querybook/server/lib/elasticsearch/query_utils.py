@@ -64,9 +64,11 @@ def match_filters(filters: List[Tuple[str, str]], and_filter_names: List[str] = 
 
     for f in filters:
         filter_name = str(f[0]).lower()
-        filter_val = str(f[1]) if not isinstance(f[1], list) else [str(v) for v in f[1]]
+        filter_val = f[1]
 
-        if not filter_val or filter_val == "":
+        if filter_val is None or (
+            hasattr(filter_val, "__len__") and len(filter_val) == 0
+        ):
             continue
 
         if filter_name == "startdate":
