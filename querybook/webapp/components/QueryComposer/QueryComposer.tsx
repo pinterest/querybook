@@ -330,39 +330,46 @@ const QueryComposer: React.FC = () => {
         </>
     );
 
-    const executionDOM = executionId != null && (
-        <Resizable
-            defaultSize={{
-                width: '100%',
-                height: `${QUERY_EXECUTION_HEIGHT}px`,
-            }}
-            enable={enableResizable({ top: true, bottom: true })}
-            onResize={scrollToCollapseExecution}
-        >
-            <div className="query-execution-wrapper">
+    const executionDOM = () => {
+        if (!executionId) {
+            return null;
+        } else if (resultsCollapsed) {
+            const collapseButton = (
                 <div
-                    className="hide-execution flex-center pt8 mb4"
-                    onClick={() => setResultsCollapsed(true)}
-                    aria-label="Hide Query Execution"
-                    data-balloon-pos="bottom"
+                    className="flex-center"
+                    onClick={() => setResultsCollapsed(false)}
+                    aria-label="Show Query Execution"
+                    data-balloon-pos="top"
                 >
-                    <IconButton icon="ChevronDown" noPadding />
+                    <IconButton icon="ChevronUp" noPadding />
                 </div>
-                <QueryComposerExecution id={executionId} />
-            </div>
-        </Resizable>
-    );
+            );
+            return collapseButton;
+        }
 
-    const collapseButton = (
-        <div
-            className="flex-center"
-            onClick={() => setResultsCollapsed(false)}
-            aria-label="Show Query Execution"
-            data-balloon-pos="top"
-        >
-            <IconButton icon="ChevronUp" noPadding />
-        </div>
-    );
+        return (
+            <Resizable
+                defaultSize={{
+                    width: '100%',
+                    height: `${QUERY_EXECUTION_HEIGHT}px`,
+                }}
+                enable={enableResizable({ top: true, bottom: true })}
+                onResize={scrollToCollapseExecution}
+            >
+                <div className="query-execution-wrapper">
+                    <div
+                        className="hide-execution flex-center pt8 mb4"
+                        onClick={() => setResultsCollapsed(true)}
+                        aria-label="Collapse Query Execution"
+                        data-balloon-pos="bottom"
+                    >
+                        <IconButton icon="ChevronDown" noPadding />
+                    </div>
+                    <QueryComposerExecution id={executionId} />
+                </div>
+            </Resizable>
+        );
+    };
 
     const udfModalDOM = showUDFForm && (
         <Modal
@@ -395,7 +402,7 @@ const QueryComposer: React.FC = () => {
                     {editorDOM}
                 </SearchAndReplace>
             </div>
-            {resultsCollapsed ? collapseButton : executionDOM}
+            {executionDOM()}
             {udfModalDOM}
         </div>
     );
