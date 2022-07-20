@@ -1,5 +1,4 @@
 import clsx from 'clsx';
-import moment from 'moment';
 import React from 'react';
 
 import { UserName } from 'components/UserBadge/UserName';
@@ -13,6 +12,7 @@ import { Dropdown } from 'ui/Dropdown/Dropdown';
 import { Icon } from 'ui/Icon/Icon';
 import { Menu, MenuItem } from 'ui/Menu/Menu';
 import { StatusIcon } from 'ui/StatusIcon/StatusIcon';
+import { TimeFromNow } from 'ui/Timer/TimeFromNow';
 import { ToggleSwitch } from 'ui/ToggleSwitch/ToggleSwitch';
 
 import './QueryExecutionPicker.scss';
@@ -33,18 +33,19 @@ export const QueryExecutionPicker: React.FunctionComponent<IProps> = React.memo(
         shortVersion,
     }) => {
         const [hideFailed, setHideFailed] = React.useState(false);
-        const filteredQueryExecutions =
-            React.useMemo(() => {
-                if (!hideFailed) {
-                    return queryExecutions;
-                }
+        const filteredQueryExecutions = React.useMemo(() => {
+            if (!hideFailed) {
+                return queryExecutions ?? [];
+            }
 
-                return queryExecutions.filter(
+            return (
+                queryExecutions?.filter(
                     (qe) =>
                         qe.status !== QueryExecutionStatus.ERROR &&
                         qe.status !== QueryExecutionStatus.CANCEL
-                );
-            }, [hideFailed, queryExecutions]) ?? [];
+                ) ?? []
+            );
+        }, [hideFailed, queryExecutions]);
 
         // Create an unique representation of query executions with its ids
         // used for memo in autoSelect
@@ -87,7 +88,7 @@ export const QueryExecutionPicker: React.FunctionComponent<IProps> = React.memo(
             );
         }, [queryExecutionId, queryExecutions]);
 
-        const executionMenuRenderer = React.useCallback(() => {
+        const executionMenuRenderer = () => {
             const executionItemsDOM = filteredQueryExecutions.map(
                 (execution) => {
                     const statusTooltip =
@@ -100,11 +101,16 @@ export const QueryExecutionPicker: React.FunctionComponent<IProps> = React.memo(
                         />
                     );
                     const createdAt = execution.created_at;
-                    const dateString =
-                        generateFormattedDate(createdAt, 'X') +
-                        (shortVersion
-                            ? ''
-                            : ', ' + moment.utc(createdAt, 'X').fromNow(true));
+                    const dateString = (
+                        <>
+                            {generateFormattedDate(createdAt, 'X')}
+                            {shortVersion && (
+                                <>
+                                    , <TimeFromNow timestamp={createdAt} />
+                                </>
+                            )}
+                        </>
+                    );
 
                     return (
                         <MenuItem
@@ -146,7 +152,7 @@ export const QueryExecutionPicker: React.FunctionComponent<IProps> = React.memo(
                     </div>
                 </Menu>
             );
-        }, [filteredQueryExecutions, queryExecutionId, hideFailed]);
+        };
 
         return (
             <Dropdown
