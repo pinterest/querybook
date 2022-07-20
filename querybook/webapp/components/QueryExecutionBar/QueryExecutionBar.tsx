@@ -1,12 +1,11 @@
-import moment from 'moment';
 import React from 'react';
 import { useSelector } from 'react-redux';
 
 import { IQueryExecution, QueryExecutionStatus } from 'const/queryExecution';
-import { generateFormattedDate } from 'lib/utils/datetime';
 import { IStoreState } from 'redux/store/types';
 import { CopyButton } from 'ui/CopyButton/CopyButton';
 import { StyledText } from 'ui/StyledText/StyledText';
+import { TimeFromNow } from 'ui/Timer/TimeFromNow';
 
 import { QueryExecutionNotificationButton } from './QueryExecutionNotificationButton';
 
@@ -28,9 +27,10 @@ export const QueryExecutionBar: React.FunctionComponent<IProps> = ({
 
     const executionDateDOM = (
         <StyledText className="mr8" color="light">
-            {generateFormattedDate(queryExecution.created_at, 'X') +
-                ', ' +
-                moment.utc(queryExecution.created_at, 'X').fromNow()}
+            <TimeFromNow
+                timestamp={queryExecution.created_at}
+                withFormattedDate
+            />
         </StyledText>
     );
 

@@ -1,11 +1,10 @@
-import moment from 'moment';
 import React from 'react';
 
 import { UserName } from 'components/UserBadge/UserName';
 import { IAdminApiAccessToken } from 'const/admin';
-import { generateFormattedDate } from 'lib/utils/datetime';
 import { AdminTokenResource } from 'resource/admin';
 import { Table, TableAlign } from 'ui/Table/Table';
+import { TimeFromNow } from 'ui/Timer/TimeFromNow';
 import { ToggleSwitch } from 'ui/ToggleSwitch/ToggleSwitch';
 
 import './AdminApiAccessToken.scss';
@@ -67,8 +66,7 @@ export const AdminApiAccessToken: React.FunctionComponent = () => {
                 case 'created_at': {
                     dom = (
                         <span>
-                            {generateFormattedDate(value, 'X')},{' '}
-                            {moment.utc(value, 'X').fromNow()}
+                            <TimeFromNow timestamp={value} withFormattedDate />
                         </span>
                     );
                     break;
@@ -76,8 +74,7 @@ export const AdminApiAccessToken: React.FunctionComponent = () => {
                 case 'updated_at': {
                     dom = (
                         <span>
-                            {generateFormattedDate(value, 'X')},{' '}
-                            {moment.utc(value, 'X').fromNow()}
+                            <TimeFromNow timestamp={value} withFormattedDate />
                         </span>
                     );
                     break;

@@ -1,4 +1,3 @@
-import moment from 'moment';
 import * as React from 'react';
 import toast from 'react-hot-toast';
 import { useParams } from 'react-router-dom';
@@ -8,7 +7,6 @@ import { TaskEditor } from 'components/Task/TaskEditor';
 import { ITaskSchedule, TaskType } from 'const/schedule';
 import { useResource } from 'hooks/useResource';
 import history from 'lib/router-history';
-import { generateFormattedDate } from 'lib/utils/datetime';
 import { AdminTaskResource } from 'resource/admin/task';
 import { Button } from 'ui/Button/Button';
 import { Level } from 'ui/Level/Level';
@@ -16,6 +14,7 @@ import { Modal } from 'ui/Modal/Modal';
 import { SearchBar } from 'ui/SearchBar/SearchBar';
 import { Table, TableAlign } from 'ui/Table/Table';
 import { Tabs } from 'ui/Tabs/Tabs';
+import { TimeFromNow } from 'ui/Timer/TimeFromNow';
 import { ToggleSwitch } from 'ui/ToggleSwitch/ToggleSwitch';
 
 import './AdminTask.scss';
@@ -105,8 +104,7 @@ export const AdminTask: React.FC = () => {
                 case 'last_run_at': {
                     dom = (
                         <span>
-                            {generateFormattedDate(value, 'X')},{' '}
-                            {moment.utc(value, 'X').fromNow()}
+                            <TimeFromNow timestamp={value} withFormattedDate />
                         </span>
                     );
                     break;

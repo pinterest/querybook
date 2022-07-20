@@ -6,16 +6,13 @@ import { IQueryEngine } from 'const/queryEngine';
 import { IQueryExecution } from 'const/queryExecution';
 import { queryStatusToStatusIcon } from 'const/queryStatus';
 import history from 'lib/router-history';
-import {
-    formatDuration,
-    fromNow,
-    generateFormattedDate,
-} from 'lib/utils/datetime';
+import { formatDuration, generateFormattedDate } from 'lib/utils/datetime';
 import { getWithinEnvUrl } from 'lib/utils/query-string';
 import { UrlContextMenu } from 'ui/ContextMenu/UrlContextMenu';
 import { StatusIcon } from 'ui/StatusIcon/StatusIcon';
 import { AccentText } from 'ui/StyledText/StyledText';
 import { Tag } from 'ui/Tag/Tag';
+import { TimeFromNow } from 'ui/Timer/TimeFromNow';
 
 interface IProps {
     queryExecution: IQueryExecution;
@@ -31,7 +28,7 @@ const ExecutionTime: React.FC<{ queryExecution: IQueryExecution }> = ({
 
         if (completedAt == null) {
             // query may still be running, then there is no point to show anything yet
-            return null;
+            return <span />;
         } else if (createdAt === completedAt) {
             return 'Less than 1s';
         } else {
@@ -42,7 +39,7 @@ const ExecutionTime: React.FC<{ queryExecution: IQueryExecution }> = ({
     }, [queryExecution]);
 
     if (!durationText) {
-        return null;
+        return <span />;
     }
 
     return <span>{durationText}</span>;
@@ -56,9 +53,9 @@ export const QueryResult: React.FunctionComponent<IProps> = ({
     const queryId = queryExecution.id;
     const queryCode = queryExecution.query;
 
-    const [createdAtFromNow, formattedCreatedAtDate] = useMemo(() => {
+    const formattedCreatedAtDate = useMemo(() => {
         const createdAt = queryExecution.created_at;
-        return [fromNow(createdAt), generateFormattedDate(createdAt)];
+        return generateFormattedDate(createdAt);
     }, [queryExecution.created_at]);
 
     const queryExecutionUrl = useMemo(
@@ -104,7 +101,7 @@ export const QueryResult: React.FunctionComponent<IProps> = ({
                         aria-label={formattedCreatedAtDate}
                         data-balloon-pos="left"
                     >
-                        {createdAtFromNow}
+                        <TimeFromNow timestamp={queryExecution.created_at} />
                     </div>
                 </AccentText>
             </div>

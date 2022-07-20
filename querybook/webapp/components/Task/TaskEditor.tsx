@@ -1,5 +1,4 @@
 import { Field, FieldArray, Form, Formik } from 'formik';
-import moment from 'moment';
 import * as React from 'react';
 import toast from 'react-hot-toast';
 import * as Yup from 'yup';
@@ -16,7 +15,6 @@ import {
     recurrenceTypes,
     validateCronForRecurrrence,
 } from 'lib/utils/cron';
-import { generateFormattedDate } from 'lib/utils/datetime';
 import { TaskScheduleResource } from 'resource/taskSchedule';
 import { AsyncButton } from 'ui/AsyncButton/AsyncButton';
 import { Button, SoftButton } from 'ui/Button/Button';
@@ -26,6 +24,7 @@ import { FormWrapper } from 'ui/Form/FormWrapper';
 import { SimpleField } from 'ui/FormikField/SimpleField';
 import { RecurrenceEditor } from 'ui/ReccurenceEditor/RecurrenceEditor';
 import { Tabs } from 'ui/Tabs/Tabs';
+import { TimeFromNow } from 'ui/Timer/TimeFromNow';
 import { Title } from 'ui/Title/Title';
 import { ToggleButton } from 'ui/ToggleButton/ToggleButton';
 
@@ -462,14 +461,9 @@ export const TaskEditor: React.FunctionComponent<IProps> = ({
                                         </div>
                                         <div>
                                             Last Run:{' '}
-                                            {generateFormattedDate(
-                                                task.last_run_at,
-                                                'X'
-                                            )}
-                                            ,{' '}
-                                            {moment
-                                                .utc(task.last_run_at, 'X')
-                                                .fromNow()}
+                                            <TimeFromNow
+                                                timestamp={task.last_run_at}
+                                            />
                                         </div>
                                         <div>
                                             Total Run Count:{' '}
