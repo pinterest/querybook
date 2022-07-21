@@ -10,6 +10,9 @@ import React, {
 import toast from 'react-hot-toast';
 import { useDispatch, useSelector } from 'react-redux';
 
+import { DataDocTemplateInfoButton } from 'components/DataDocTemplateButton/DataDocTemplateInfoButton';
+import { DataDocTemplateVarForm } from 'components/DataDocTemplateButton/DataDocTemplateVarForm';
+import { TTemplateVariableDict } from 'components/DataDocTemplateButton/helpers';
 import { BoundQueryEditor } from 'components/QueryEditor/BoundQueryEditor';
 import { QueryEditor } from 'components/QueryEditor/QueryEditor';
 import {
@@ -21,6 +24,7 @@ import {
     ISearchAndReplaceProps,
     SearchAndReplace,
 } from 'components/SearchAndReplace/SearchAndReplace';
+import { TemplatedQueryView } from 'components/TemplateQueryView/TemplatedQueryView';
 import { UDFForm } from 'components/UDFForm/UDFForm';
 import KeyMap from 'const/keyMap';
 import { IQueryEngine } from 'const/queryEngine';
@@ -29,7 +33,9 @@ import { useDebounceState } from 'hooks/redux/useDebounceState';
 import { useBrowserTitle } from 'hooks/useBrowserTitle';
 import { replaceStringIndices, searchText } from 'lib/data-doc/search';
 import { getSelectedQuery, IRange } from 'lib/sql-helper/sql-lexer';
+import { renderTemplatedQuery } from 'lib/templated-query';
 import { enableResizable, getQueryEngineId, sleep } from 'lib/utils';
+import { formatError } from 'lib/utils/error';
 import { navigateWithinEnv } from 'lib/utils/query-string';
 import { doesLanguageSupportUDF } from 'lib/utils/udf';
 import * as adhocQueryActions from 'redux/adhocQuery/action';
@@ -42,8 +48,10 @@ import * as queryExecutionsAction from 'redux/queryExecutions/action';
 import { Dispatch, IStoreState } from 'redux/store/types';
 import { Button } from 'ui/Button/Button';
 import { IconButton } from 'ui/Button/IconButton';
+import { Dropdown } from 'ui/Dropdown/Dropdown';
 import { FullHeight } from 'ui/FullHeight/FullHeight';
 import { Level, LevelItem } from 'ui/Level/Level';
+import { IListMenuItem, ListMenu } from 'ui/Menu/ListMenu';
 import { Modal } from 'ui/Modal/Modal';
 
 import { QueryComposerExecution } from './QueryComposerExecution';
@@ -123,6 +131,25 @@ const useQuery = (dispatch: Dispatch, environmentId: number) => {
     );
     const [query, setQuery] = useDebounceState(reduxQuery, setReduxQuery, 500);
     return { query, setQuery };
+};
+
+const useTemplatedVariables = (dispatch: Dispatch, environmentId: number) => {
+    const templatedVariables = useSelector(
+        (state: IStoreState) =>
+            state.adhocQuery[environmentId]?.templatedVariables
+    );
+    const setTemplatedVariables = useCallback(
+        (newVariables: Record<string, any>) =>
+            dispatch(
+                adhocQueryActions.receiveAdhocQuery(
+                    { templatedVariables: newVariables },
+                    environmentId
+                )
+            ),
+        [environmentId]
+    );
+
+    return { templatedVariables, setTemplatedVariables };
 };
 
 const useQueryComposerSearchAndReplace = (
@@ -245,6 +272,13 @@ const QueryComposer: React.FC = () => {
         [engine.language]
     );
     const [showUDFForm, setShowUDFForm] = useState(false);
+    const [showTemplateForm, setShowTemplateForm] = useState(false);
+    const { templatedVariables, setTemplatedVariables } = useTemplatedVariables(
+        dispatch,
+        environmentId
+    );
+    const [showRenderedTemplateModal, setShowRenderedTemplateModal] =
+        useState(false);
 
     const runButtonRef = useRef<IQueryRunButtonHandles>(null);
     const clickOnRunButton = useCallback(() => {
@@ -262,7 +296,8 @@ const QueryComposer: React.FC = () => {
                 dataDocActions.createDataDocFromAdhoc(
                     executionId,
                     engine.id,
-                    query
+                    query,
+                    templatedVariables
                 )
             );
         } else {
@@ -271,26 +306,52 @@ const QueryComposer: React.FC = () => {
                 context: query,
                 meta: { engine: engine.id },
             };
-            dataDoc = await dispatch(dataDocActions.createDataDoc([cell]));
+            dataDoc = await dispatch(
+                dataDocActions.createDataDoc([cell], templatedVariables)
+            );
         }
         navigateWithinEnv(`/datadoc/${dataDoc.id}/`);
-    }, [executionId, query, engine.id]);
+    }, [executionId, query, engine.id, templatedVariables]);
+
+    const getCurrentSelectedQuery = useCallback(async () => {
+        const selectedRange = queryEditorRef.current?.getEditorSelection();
+        try {
+            const rawQuery = getSelectedQuery(query, selectedRange);
+            return await renderTemplatedQuery(
+                rawQuery,
+                templatedVariables,
+                engine?.id
+            );
+        } catch (e) {
+            toast.error(
+                <div>
+                    <p>Failed to templatize query. </p>
+                    <p>{formatError(e)}</p>
+                </div>,
+                {
+                    duration: 5000,
+                }
+            );
+        }
+    }, [query, engine]);
 
     const handleRunQuery = React.useCallback(async () => {
         // Just to throttle to prevent double running
         await sleep(250);
 
-        const selectedRange = queryEditorRef.current?.getEditorSelection();
-        const { id } = await dispatch(
-            queryExecutionsAction.createQueryExecution(
-                getSelectedQuery(query, selectedRange),
-                engine?.id
-            )
-        );
+        const selectedQuery = await getCurrentSelectedQuery();
+        if (selectedQuery) {
+            const { id } = await dispatch(
+                queryExecutionsAction.createQueryExecution(
+                    selectedQuery,
+                    engine?.id
+                )
+            );
 
-        setExecutionId(id);
-        setResultsCollapsed(false);
-    }, [query, engine]);
+            setExecutionId(id);
+            setResultsCollapsed(false);
+        }
+    }, [query, templatedVariables, engine]);
 
     const keyMap = useKeyMap(clickOnRunButton, queryEngines, setEngineId);
 
@@ -422,6 +483,92 @@ const QueryComposer: React.FC = () => {
         </div>
     );
 
+    const templatedModalDOM = showTemplateForm && (
+        <Modal
+            onHide={() => {
+                setShowTemplateForm(false);
+            }}
+            title="Variables"
+            topDOM={<DataDocTemplateInfoButton />}
+        >
+            <DataDocTemplateVarForm
+                isEditable={true}
+                templatedVariables={templatedVariables}
+                onSave={(meta) => {
+                    setTemplatedVariables(meta);
+                    setShowTemplateForm(false);
+                    toast.success('Variables saved!');
+                }}
+            />
+        </Modal>
+    );
+
+    const templatedQueryViewModalDOM = showRenderedTemplateModal && (
+        <Modal
+            onHide={() => setShowRenderedTemplateModal(false)}
+            title="Rendered Templated Query"
+        >
+            <TemplatedQueryView
+                query={query}
+                templatedVariables={templatedVariables}
+                engineId={engine.id}
+                onRunQueryClick={() => {
+                    setShowRenderedTemplateModal(false);
+                    handleRunQuery();
+                }}
+            />
+        </Modal>
+    );
+
+    const getAdditionalDropDownButtonDOM = () => {
+        const additionalButtons: IListMenuItem[] = [
+            {
+                name: 'Template Config',
+                onClick: () => setShowTemplateForm(true),
+                icon: 'Code',
+                tooltip: 'Set Variables',
+                tooltipPos: 'right',
+            },
+            {
+                name: 'Render Template',
+                onClick: () => setShowRenderedTemplateModal(true),
+                icon: 'Eye',
+                tooltip: 'Show the rendered templated query',
+                tooltipPos: 'right',
+            },
+            {
+                name: 'Create DataDoc',
+                onClick: handleCreateDataDoc,
+                icon: 'Plus',
+                tooltip: 'Create datadoc from the adhoc query',
+                tooltipPos: 'right',
+            },
+        ];
+
+        if (canShowUDFForm) {
+            additionalButtons.push({
+                name: 'Add UDF',
+                onClick: () => setShowUDFForm(true),
+                icon: 'Plus',
+                tooltip: 'Add New User Defined Function',
+                tooltipPos: 'right',
+            });
+        }
+
+        return (
+            <>
+                <Dropdown
+                    menuIcon="MoreVertical"
+                    className="query-cell-additional-dropdown"
+                >
+                    <ListMenu items={additionalButtons} />
+                </Dropdown>
+                {templatedModalDOM}
+                {templatedQueryViewModalDOM}
+            </>
+        );
+    };
+
     const headerDOM = (
         <div className="QueryComposer-header">
             <div className="QueryComposer-header-vertical">
@@ -442,26 +589,9 @@ const QueryComposer: React.FC = () => {
                             }}
                             theme="text"
                         />
-                        <Button
-                            icon="Plus"
-                            title="Create DataDoc"
-                            onClick={handleCreateDataDoc}
-                            theme="text"
-                        />
+                        {getAdditionalDropDownButtonDOM()}
                     </LevelItem>
-                    <LevelItem>
-                        {canShowUDFForm && (
-                            <Button
-                                icon="Plus"
-                                title="Add UDF"
-                                aria-label="Add New User Defined Function"
-                                data-balloon-pos="left"
-                                onClick={() => setShowUDFForm(true)}
-                            />
-                        )}
-
-                        {queryRunDOM}
-                    </LevelItem>
+                    <LevelItem>{queryRunDOM}</LevelItem>
                 </Level>
             </div>
         </div>

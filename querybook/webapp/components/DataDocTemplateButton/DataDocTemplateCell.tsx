@@ -1,5 +1,6 @@
 import { isEmpty } from 'lodash';
 import React, { useEffect, useMemo, useState } from 'react';
+import toast from 'react-hot-toast';
 
 import { DataDocTemplateVarForm } from 'components/DataDocTemplateButton/DataDocTemplateVarForm';
 import { IDataDoc } from 'const/datadoc';
@@ -68,6 +69,7 @@ export const DataDocTemplateCell: React.FunctionComponent<IProps> = ({
                         if (isEmpty(meta)) {
                             setShowFacde(true);
                         }
+                        toast.success('Variables saved');
                     }}
                 />
             </>
