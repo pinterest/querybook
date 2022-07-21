@@ -128,14 +128,8 @@ export const BoardItem: React.FunctionComponent<IBoardItemProps> = ({
                 icon="X"
                 noPadding
                 onClick={onDeleteBoardItem.bind(null, itemId, itemType)}
-                tooltip="Remove from board"
             />
-            <IconButton
-                size={18}
-                icon="MoveVertical"
-                noPadding
-                tooltip="Drag to reorder"
-            />
+            <IconButton size={18} icon="MoveVertical" noPadding />
         </>
     ) : (
         <>
