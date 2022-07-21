@@ -221,12 +221,14 @@ export function cloneDataDoc(docId: number): ThunkResult<Promise<IRawDataDoc>> {
 }
 
 export function createDataDoc(
-    cells: Array<Partial<IDataCell>> = []
+    cells: Array<Partial<IDataCell>> = [],
+    meta: Record<string, any> = {}
 ): ThunkResult<Promise<IDataDoc>> {
     return async (dispatch, getState) => {
         const { data: rawDataDoc } = await DataDocResource.create(
             cells,
-            getState().environment.currentEnvironmentId
+            getState().environment.currentEnvironmentId,
+            meta
         );
         const { dataDoc, dataDocCellById } = normalizeRawDataDoc(rawDataDoc);
         dispatch(receiveDataDoc(dataDoc, dataDocCellById));
@@ -238,7 +240,8 @@ export function createDataDoc(
 export function createDataDocFromAdhoc(
     queryExecutionId: number,
     engineId: number,
-    queryString: string = ''
+    queryString: string = '',
+    meta: Record<string, any> = {}
 ): ThunkResult<Promise<IDataDoc>> {
     return async (dispatch, getState) => {
         const state = getState();
@@ -247,7 +250,8 @@ export function createDataDocFromAdhoc(
             state.environment.currentEnvironmentId,
             queryExecutionId,
             engineId,
-            queryString
+            queryString,
+            meta
         );
         const { dataDoc, dataDocCellById } = normalizeRawDataDoc(rawDataDoc);
         dispatch(receiveDataDoc(dataDoc, dataDocCellById));

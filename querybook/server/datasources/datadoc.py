@@ -81,7 +81,7 @@ def get_data_docs(
 
 
 @register("/datadoc/", methods=["POST"])
-def create_data_doc(environment_id, cells=[], title=None):
+def create_data_doc(environment_id, cells=[], title=None, meta={}):
     with DBSession() as session:
         verify_environment_permission([environment_id])
         environment = Environment.get(id=environment_id, session=session)
@@ -93,18 +93,14 @@ def create_data_doc(environment_id, cells=[], title=None):
             public=environment.shareable,
             archived=False,
             title=title,
-            meta={},
+            meta=meta,
             session=session,
         )
 
 
 @register("/datadoc/from_execution/", methods=["POST"])
 def create_data_doc_from_execution(
-    environment_id,
-    execution_id,
-    engine_id,
-    query_string,
-    title=None,
+    environment_id, execution_id, engine_id, query_string, title=None, meta={}
 ):
     with DBSession() as session:
         verify_environment_permission([environment_id])
@@ -124,7 +120,7 @@ def create_data_doc_from_execution(
             public=environment.shareable,
             archived=False,
             title=title,
-            meta={},
+            meta=meta,
             session=session,
         )
 

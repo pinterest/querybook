@@ -1,4 +1,5 @@
 import React from 'react';
+import toast from 'react-hot-toast';
 
 import { DataDocTemplateVarForm } from 'components/DataDocTemplateButton/DataDocTemplateVarForm';
 import { IDataDoc } from 'const/datadoc';
@@ -34,6 +35,7 @@ export const DataDocTemplateButton: React.FunctionComponent<IProps> = ({
                 onSave={(meta) => {
                     changeDataDocMeta(dataDoc.id, meta);
                     setShowTemplateForm(false);
+                    toast.success('Variables saved');
                 }}
             />
         </Modal>

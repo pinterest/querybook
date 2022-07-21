@@ -36,9 +36,14 @@ export const DataDocResource = {
             originator: dataDocSocket.socketId,
         }),
 
-    create: (cells: Array<Partial<IDataCell>>, environmentId: number) =>
+    create: (
+        cells: Array<Partial<IDataCell>>,
+        environmentId: number,
+        meta?: Record<string, any>
+    ) =>
         ds.save<IRawDataDoc>('/datadoc/', {
             title: '',
+            meta,
             environment_id: environmentId,
             cells,
         }),
@@ -47,10 +52,12 @@ export const DataDocResource = {
         environmentId: number,
         queryExecutionId: number,
         engineId: number,
-        queryString: string
+        queryString: string,
+        meta?: Record<string, any>
     ) =>
         ds.save<IRawDataDoc>('/datadoc/from_execution/', {
             title: '',
+            meta: meta,
             environment_id: environmentId,
             execution_id: queryExecutionId,
             engine_id: engineId,
