@@ -64,7 +64,7 @@ class Board(CRUDMixin, Base):
             next(
                 iter(
                     session.query(sql.func.max(BoardItem.item_order))
-                    .filter_by(board_id=self.id)
+                    .filter_by(parent_board_id=self.id)
                     .first()
                 ),
                 None,
