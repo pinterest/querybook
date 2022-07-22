@@ -1,3 +1,4 @@
+import { ContentState } from 'draft-js';
 import * as React from 'react';
 import { useDispatch } from 'react-redux';
 
@@ -6,7 +7,7 @@ import { BoardViewersBadge } from 'components/BoardViewersBadge/BoardViewersBadg
 import { IBoardWithItemIds } from 'const/board';
 import { generateFormattedDate } from 'lib/utils/datetime';
 import { navigateWithinEnv } from 'lib/utils/query-string';
-import { setCurrentBoardId, updateBoard } from 'redux/board/action';
+import { updateBoard } from 'redux/board/action';
 import { updateSearchFilter, updateSearchType } from 'redux/search/action';
 import { SearchType } from 'redux/search/types';
 import { Dispatch } from 'redux/store/types';
@@ -34,25 +35,24 @@ export const BoardHeader: React.FunctionComponent<IProps> = ({
             if (searchType === SearchType.Query) {
                 dispatch(updateSearchFilter('query_type', 'query_execution'));
             }
-            dispatch(setCurrentBoardId(board.id));
-            navigateWithinEnv('/search/', { isModal: true, from: 'board' });
+            navigateWithinEnv('/search/', { isModal: true, boardId: board.id });
         },
-        [board.id]
+        [dispatch, board.id]
     );
 
     const handleDescriptionUpdate = React.useCallback(
-        (description) =>
+        (description: ContentState) =>
             dispatch(
                 updateBoard(board.id, board.name, board.public, description)
             ),
-        [board.id]
+        [dispatch, board.id, board.name, board.public]
     );
 
     const handleTitleChange = React.useCallback(
-        (updatedTitle) => {
+        (updatedTitle: string) => {
             dispatch(updateBoard(board.id, updatedTitle));
         },
-        [board.id]
+        [dispatch, board.id]
     );
 
     return (

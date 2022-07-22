@@ -317,17 +317,6 @@ export function updateBoardItemMeta(
     };
 }
 
-export function setCurrentBoardId(boardId: number): ThunkResult<Promise<void>> {
-    return async (dispatch) => {
-        dispatch({
-            type: '@@board/SET_CURRENT_BOARD_ID',
-            payload: {
-                boardId,
-            },
-        });
-    };
-}
-
 export function getBoardEditors(
     boardId: number
 ): ThunkResult<Promise<IBoardEditor[]>> {

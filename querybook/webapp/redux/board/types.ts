@@ -72,13 +72,6 @@ export interface IUpdateBoardItemDescriptionAction extends Action {
     };
 }
 
-export interface ISetCurrentBoardIdAction extends Action {
-    type: '@@board/SET_CURRENT_BOARD_ID';
-    payload: {
-        boardId: number;
-    };
-}
-
 export interface IReceiveBoardEditorsAction extends Action {
     type: '@@board/RECEIVE_BOARD_EDITORS';
     payload: {
@@ -144,7 +137,6 @@ export type BoardAction =
     | IRemoveBoardItemAction
     | IMoveBoardItemAction
     | IUpdateBoardItemDescriptionAction
-    | ISetCurrentBoardIdAction
     | IReceiveBoardEditorsAction
     | IReceiveBoardEditorAction
     | IRemoveBoardEditorAction
@@ -156,7 +148,6 @@ export type BoardAction =
 export interface IBoardState {
     boardById: Record<number, IBoardWithItemIds>;
     boardItemById: Record<number, IBoardItem>;
-    currentBoardId: number;
     editorsByBoardIdUserId: Record<number, Record<number, IBoardEditor>>;
     accessRequestsByBoardIdUserId: Record<
         number,

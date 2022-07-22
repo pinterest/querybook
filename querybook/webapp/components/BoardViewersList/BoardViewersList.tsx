@@ -43,9 +43,12 @@ export const BoardViewersList: React.FunctionComponent<IProps> = ({
     } = useShallowSelector((state: IStoreState) => ({
         board: state.board.boardById[boardId],
         editorsByUid: state.board.editorsByBoardIdUserId[boardId],
-        editorInfos: boardEditorInfosSelector(state),
+        editorInfos: boardEditorInfosSelector(state, boardId),
         currentUserId: state.user.myUserInfo.uid,
-        accessRequestsByUid: currentBoardAccessRequestsByUidSelector(state),
+        accessRequestsByUid: currentBoardAccessRequestsByUidSelector(
+            state,
+            boardId
+        ),
     }));
 
     const isOwner = board.owner_uid === currentUserId;

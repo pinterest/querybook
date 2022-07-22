@@ -828,7 +828,7 @@ def update_board_by_id(board_id, session=None):
                 "doc": formatted_object,
                 "doc_as_upsert": True,
             }  # ES requires this format for updates
-            _update(index_name, board, updated_body)
+            _update(index_name, board_id, updated_body)
         except Exception:
             LOG.error("failed to upsert board {}. Will pass.".format(board))
 

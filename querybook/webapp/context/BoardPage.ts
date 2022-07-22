@@ -3,6 +3,7 @@ import React from 'react';
 import { BoardItemType } from 'const/board';
 
 export interface IBoardPageContextType {
+    boardId: number;
     isEditMode: boolean;
     isCollapsed: boolean;
 

@@ -25,7 +25,14 @@ import { Title } from 'ui/Title/Title';
 import './BoardItem.scss';
 
 export interface IBoardItemProps {
+    /**
+     * Id of the boardItem in DB
+     */
     boardItemId: number;
+
+    /**
+     * Id of the item, i.e tableId or docId
+     */
     itemId: number;
     itemType: BoardItemType;
     title: string;
@@ -52,8 +59,11 @@ export const BoardItem: React.FunctionComponent<IBoardItemProps> = ({
         isCollapsed: defaultCollapsed,
         isEditMode,
         onDeleteBoardItem,
+        boardId,
     } = React.useContext(BoardPageContext);
-    const isEditable = useSelector(boardSelectors.canCurrentUserEditSelector);
+    const isEditable = useSelector((state: IStoreState) =>
+        boardSelectors.canCurrentUserEditSelector(state, boardId)
+    );
 
     const dispatch: Dispatch = useDispatch();
     const [collapsed, setCollapsed] = React.useState(defaultCollapsed);

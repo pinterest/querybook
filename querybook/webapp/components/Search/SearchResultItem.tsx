@@ -15,7 +15,6 @@ import history from 'lib/router-history';
 import { generateFormattedDate } from 'lib/utils/datetime';
 import { stopPropagation } from 'lib/utils/noop';
 import { queryEngineByIdEnvSelector } from 'redux/queryEngine/selector';
-import { IStoreState } from 'redux/store/types';
 import { Button } from 'ui/Button/Button';
 import { IconButton } from 'ui/Button/IconButton';
 import { ThemedCodeHighlight } from 'ui/CodeHighlight/ThemedCodeHighlight';
@@ -86,12 +85,14 @@ interface IQueryItemProps {
     preview: IQueryPreview;
     searchString: string;
     environmentName: string;
+    fromBoardId: number | undefined;
 }
 
 export const QueryItem: React.FunctionComponent<IQueryItemProps> = ({
     preview,
     environmentName,
     searchString,
+    fromBoardId,
 }) => {
     const {
         author_uid: authorUid,
@@ -112,10 +113,6 @@ export const QueryItem: React.FunctionComponent<IQueryItemProps> = ({
     const handleClick = React.useMemo(() => openClick.bind(null, url), [url]);
     const queryEngineById = useSelector(queryEngineByIdEnvSelector);
     const selfRef = useRef<HTMLDivElement>();
-
-    const currentBoardId = useSelector(
-        (state: IStoreState) => state.board.currentBoardId
-    );
 
     if (loading) {
         return (
@@ -214,10 +211,11 @@ export const QueryItem: React.FunctionComponent<IQueryItemProps> = ({
             <UrlContextMenu anchorRef={selfRef} url={url} />
             {queryType === 'execution' && (
                 <Button className="SearchResultItemBoardItemAddButton flex-center">
-                    {currentBoardId ? (
+                    {fromBoardId ? (
                         <SearchResultItemBoardItemAddButton
                             itemType="query"
                             itemId={id}
+                            fromBoardId={fromBoardId}
                         />
                     ) : (
                         <BoardItemAddButton
@@ -238,17 +236,17 @@ interface IDataDocItemProps {
     preview: IDataDocPreview;
     searchString: string;
     url: string;
+    fromBoardId: number | undefined;
 }
 
 export const DataDocItem: React.FunctionComponent<IDataDocItemProps> = ({
     preview,
     url,
     searchString,
+    fromBoardId,
 }) => {
     const selfRef = useRef<HTMLDivElement>();
-    const currentBoardId = useSelector(
-        (state: IStoreState) => state.board.currentBoardId
-    );
+
     const { owner_uid: ownerUid, created_at: createdAt, id } = preview;
     const { userInfo: ownerInfo, loading } = useUser({ uid: ownerUid });
     const handleClick = React.useMemo(() => openClick.bind(null, url), [url]);
@@ -302,10 +300,11 @@ export const DataDocItem: React.FunctionComponent<IDataDocItemProps> = ({
             </div>
             <UrlContextMenu anchorRef={selfRef} url={url} />
             <Button className="SearchResultItemBoardItemAddButton flex-center">
-                {currentBoardId ? (
+                {fromBoardId ? (
                     <SearchResultItemBoardItemAddButton
                         itemType="data_doc"
                         itemId={id}
+                        fromBoardId={fromBoardId}
                     />
                 ) : (
                     <BoardItemAddButton
@@ -325,12 +324,14 @@ interface IDataTableItemProps {
     preview: ITablePreview;
     searchString: string;
     url: string;
+    fromBoardId: number | undefined;
 }
 
 export const DataTableItem: React.FunctionComponent<IDataTableItemProps> = ({
     preview,
     searchString,
     url,
+    fromBoardId,
 }) => {
     const selfRef = useRef<HTMLDivElement>();
     const {
@@ -343,9 +344,6 @@ export const DataTableItem: React.FunctionComponent<IDataTableItemProps> = ({
         id,
     } = preview;
     const handleClick = React.useMemo(() => openClick.bind(null, url), [url]);
-    const currentBoardId = useSelector(
-        (state: IStoreState) => state.board.currentBoardId
-    );
 
     const goldenIcon = golden ? (
         <div className="result-item-golden ml4">
@@ -404,10 +402,11 @@ export const DataTableItem: React.FunctionComponent<IDataTableItemProps> = ({
             </div>
             <UrlContextMenu url={url} anchorRef={selfRef} />
             <Button className="SearchResultItemBoardItemAddButton flex-center">
-                {currentBoardId ? (
+                {fromBoardId ? (
                     <SearchResultItemBoardItemAddButton
                         itemType="table"
                         itemId={id}
+                        fromBoardId={fromBoardId}
                     />
                 ) : (
                     <BoardItemAddButton
@@ -427,14 +426,12 @@ export const BoardItem: React.FunctionComponent<{
     preview: IBoardPreview;
     url: string;
     searchString: string;
-}> = ({ preview, url, searchString }) => {
+    fromBoardId: number | undefined;
+}> = ({ preview, url, searchString, fromBoardId }) => {
     const selfRef = useRef<HTMLDivElement>();
     const { owner_uid: ownerUid, description, id } = preview;
     const { userInfo: ownerInfo, loading } = useUser({ uid: ownerUid });
     const handleClick = React.useMemo(() => openClick.bind(null, url), [url]);
-    const currentBoardId = useSelector(
-        (state: IStoreState) => state.board.currentBoardId
-    );
 
     if (loading) {
         return (
@@ -483,12 +480,13 @@ export const BoardItem: React.FunctionComponent<{
                 </div>
             </div>
             <UrlContextMenu anchorRef={selfRef} url={url} />
-            {currentBoardId === id ? null : (
+            {fromBoardId === id ? null : (
                 <Button className="SearchResultItemBoardItemAddButton flex-center">
-                    {currentBoardId ? (
+                    {fromBoardId ? (
                         <SearchResultItemBoardItemAddButton
                             itemType="board"
                             itemId={id}
+                            fromBoardId={fromBoardId}
                         />
                     ) : (
                         <BoardItemAddButton

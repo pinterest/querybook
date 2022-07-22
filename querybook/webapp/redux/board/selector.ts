@@ -35,11 +35,8 @@ export const myBoardsSelector = createSelector(
             .sort((a, b) => b.updated_at - a.updated_at)
 );
 
-export const currentBoardSelector = createSelector(
-    (state: IStoreState) => state.board.currentBoardId,
-    boardByIdSelector,
-    (currentBoardId, boardById) => boardById[currentBoardId]
-);
+export const currentBoardSelector = (state: IStoreState, boardId: number) =>
+    state.board.boardById[boardId];
 
 const rawBoardItemsSelector = createSelector(
     boardSelector,

@@ -11,20 +11,20 @@ import { AccentText } from 'ui/StyledText/StyledText';
 interface IProps {
     itemType: BoardItemType;
     itemId: number;
+    fromBoardId: number;
 }
 
 export const SearchResultItemBoardItemAddButton: React.FunctionComponent<
     IProps
-> = ({ itemType, itemId }) => {
+> = ({ itemType, itemId, fromBoardId }) => {
     const dispatch: Dispatch = useDispatch();
-    const { currentBoardId, boardById } = useSelector((state: IStoreState) => ({
-        currentBoardId: state.board.currentBoardId,
-        boardById: state.board.boardById,
-    }));
+    const boardById = useSelector(
+        (state: IStoreState) => state.board.boardById
+    );
 
     const currentBoard = React.useMemo(
-        () => currentBoardId && boardById[currentBoardId],
-        [boardById, currentBoardId]
+        () => fromBoardId && boardById[fromBoardId],
+        [boardById, fromBoardId]
     );
 
     const itemInBoard = React.useMemo(
@@ -35,14 +35,14 @@ export const SearchResultItemBoardItemAddButton: React.FunctionComponent<
     const handleAddItem = React.useCallback(async () => {
         if (!itemInBoard) {
             // Add item
-            await dispatch(addBoardItem(currentBoardId, itemType, itemId));
+            await dispatch(addBoardItem(fromBoardId, itemType, itemId));
             toast.success(`Item added to the list "${currentBoard.name}"!`);
         } else {
             // remove item
-            await dispatch(deleteBoardItem(currentBoardId, itemType, itemId));
+            await dispatch(deleteBoardItem(fromBoardId, itemType, itemId));
             toast.success(`Item removed from the list "${currentBoard.name}"!`);
         }
-    }, [currentBoard, currentBoardId, itemId, itemType, itemInBoard]);
+    }, [dispatch, currentBoard, fromBoardId, itemId, itemType, itemInBoard]);
 
     return (
         <div className="flex-row" onClick={handleAddItem}>

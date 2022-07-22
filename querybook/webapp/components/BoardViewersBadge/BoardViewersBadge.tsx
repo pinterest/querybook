@@ -4,7 +4,7 @@ import { useDispatch, useSelector } from 'react-redux';
 import { BoardViewersList } from 'components/BoardViewersList/BoardViewersList';
 import { fetchBoardAccessRequests } from 'redux/board/action';
 import { currentBoardAccessRequestsByUidSelector } from 'redux/board/selector';
-import { Dispatch } from 'redux/store/types';
+import { Dispatch, IStoreState } from 'redux/store/types';
 import { Button } from 'ui/Button/Button';
 import { Popover } from 'ui/Popover/Popover';
 
@@ -25,14 +25,14 @@ export const BoardViewersBadge: React.FunctionComponent<IProps> = ({
     const [showViewsList, setShowViewsList] = React.useState(false);
     const selfRef = React.useRef<HTMLDivElement>();
 
-    const accessRequestsByUid = useSelector(
-        currentBoardAccessRequestsByUidSelector
+    const accessRequestsByUid = useSelector((state: IStoreState) =>
+        currentBoardAccessRequestsByUidSelector(state, boardId)
     );
     const accessRequestsByUidLength = Object.keys(accessRequestsByUid).length;
 
     React.useEffect(() => {
         dispatch(fetchBoardAccessRequests(boardId));
-    }, [boardId]);
+    }, [dispatch, boardId]);
 
     return (
         <div className="BoardViewersBadge" ref={selfRef}>
