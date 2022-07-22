@@ -1,10 +1,20 @@
 import certifi
 import requests
+import flask_login
 
 from app.auth.oauth_auth import OAuthLoginManager, OAUTH_CALLBACK_PATH
+from app.db import with_session, DBSession
 from env import QuerybookSettings, get_env_config
+from flask import request, session as flask_session, redirect
+from lib.logger import get_logger
 from lib.utils.decorators import in_mem_memoized
-from .utils import AuthenticationError
+from logic.user import (
+    get_user_by_name,
+    create_user,
+)
+from .utils import AuthenticationError, abort_unauthorized, AuthUser
+
+LOG = get_logger(__file__)
 
 
 class NoopAuth(requests.auth.AuthBase):
@@ -39,7 +49,7 @@ class OktaLoginManager(OAuthLoginManager):
             "authorization_url": authorization_url,
             "token_url": token_url,
             "profile_url": profile_url,
-            "scope": ["openid", "email"],
+            "scope": ["openid", "email", "profile"],
         }
 
     def _fetch_access_token(self, code):
@@ -71,10 +81,49 @@ class OktaLoginManager(OAuthLoginManager):
             )
         return self._parse_user_profile(resp)
 
+    def oauth_callback(self):
+        LOG.debug("Handling Oauth callback...")
+
+        if request.args.get("error"):
+            return f"<h1>Error: {request.args.get('error')}</h1>"
+
+        code = request.args.get("code")
+        try:
+            access_token = self._fetch_access_token(code)
+            username, email, fullname = self._get_user_profile(access_token)
+            with DBSession() as session:
+                flask_login.login_user(
+                    AuthUser(
+                        self.login_user(username, email, fullname, session=session)
+                    )
+                )
+        except AuthenticationError as e:
+            LOG.error("Failed authenticate oauth user", e)
+            abort_unauthorized()
+
+        next_url = QuerybookSettings.PUBLIC_URL
+        if "next" in flask_session:
+            next_url = flask_session["next"]
+            del flask_session["next"]
+
+        return redirect(next_url)
+
     def _parse_user_profile(self, resp):
         user = resp.json()
         username = user["email"].split("@")[0]
-        return username, user["email"]
+        return username, user["email"], user["name"]
+
+    @with_session
+    def login_user(self, username, email, fullname, session=None):
+        if not username:
+            raise AuthenticationError("Username must not be empty!")
+
+        user = get_user_by_name(username, session=session)
+        if not user:
+            user = create_user(
+                username=username, fullname=fullname, email=email, session=session
+            )
+        return user
 
 
 login_manager = OktaLoginManager()
