@@ -9,7 +9,6 @@ import { BoardAction, IBoardState } from './types';
 const initialState: Readonly<IBoardState> = {
     boardById: {},
     boardItemById: {},
-    currentBoardId: null,
     editorsByBoardIdUserId: {},
     accessRequestsByBoardIdUserId: {},
 };
@@ -114,11 +113,6 @@ export default function (state = initialState, action: BoardAction) {
             case '@@board/UPDATE_BOARD_ITEM_DESCRIPTION': {
                 const { boardItem } = action.payload;
                 draft.boardItemById[boardItem.id] = boardItem;
-                return;
-            }
-            case '@@board/SET_CURRENT_BOARD_ID': {
-                const { boardId } = action.payload;
-                draft.currentBoardId = boardId;
                 return;
             }
             case '@@board/RECEIVE_BOARD_EDITORS': {

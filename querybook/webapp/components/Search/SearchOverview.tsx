@@ -63,7 +63,14 @@ const userReactSelectStyle = makeReactSelectStyle(
     true,
     miniAsyncReactSelectStyles
 );
-export const SearchOverview: React.FunctionComponent = () => {
+
+interface ISearchOverviewProps {
+    fromBoardId?: number;
+}
+
+export const SearchOverview: React.FC<ISearchOverviewProps> = ({
+    fromBoardId,
+}) => {
     const {
         resultByPage,
         currentPage,
@@ -337,6 +344,7 @@ export const SearchOverview: React.FunctionComponent = () => {
                       key={`${result.query_type}-${result.id}`}
                       preview={result}
                       environmentName={environment.name}
+                      fromBoardId={fromBoardId}
                   />
               ))
             : searchType === SearchType.DataDoc
@@ -346,6 +354,7 @@ export const SearchOverview: React.FunctionComponent = () => {
                       key={result.id}
                       preview={result}
                       url={`/${environment.name}/datadoc/${result.id}/`}
+                      fromBoardId={fromBoardId}
                   />
               ))
             : searchType === SearchType.Table
@@ -355,6 +364,7 @@ export const SearchOverview: React.FunctionComponent = () => {
                       preview={result}
                       url={`/${environment.name}/table/${result.id}/`}
                       searchString={searchString}
+                      fromBoardId={fromBoardId}
                   />
               ))
             : (results as IBoardPreview[]).map((result) => (
@@ -363,6 +373,7 @@ export const SearchOverview: React.FunctionComponent = () => {
                       preview={result}
                       url={`/${environment.name}/list/${result.id}/`}
                       searchString={searchString}
+                      fromBoardId={fromBoardId}
                   />
               ));
 

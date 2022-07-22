@@ -24,6 +24,7 @@ export const PublicBoardPage: React.FunctionComponent = () => {
             onDeleteBoardItem: () => null,
             isEditMode: false,
             isCollapsed: false,
+            boardId: 0,
         }),
         []
     );

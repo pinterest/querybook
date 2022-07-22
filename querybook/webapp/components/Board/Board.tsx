@@ -8,11 +8,7 @@ import { BoardPageContext, IBoardPageContextType } from 'context/BoardPage';
 import { useBoardItemActions } from 'hooks/board/useBoardItemActions';
 import { useBrowserTitle } from 'hooks/useBrowserTitle';
 import { isAxiosError } from 'lib/utils/error';
-import {
-    fetchBoardIfNeeded,
-    getBoardEditors,
-    setCurrentBoardId,
-} from 'redux/board/action';
+import { fetchBoardIfNeeded, getBoardEditors } from 'redux/board/action';
 import * as boardSelectors from 'redux/board/selector';
 import { Dispatch, IStoreState } from 'redux/store/types';
 import { DraggableList } from 'ui/DraggableList/DraggableList';
@@ -38,10 +34,11 @@ const BoardDOM: React.FunctionComponent<IBoardDOMProps> = ({
     boardItemById,
 }) => {
     useBrowserTitle(board.name);
-    const isEditable = useSelector(boardSelectors.canCurrentUserEditSelector);
+    const isEditable = useSelector((state: IStoreState) =>
+        boardSelectors.canCurrentUserEditSelector(state, board.id)
+    );
 
     const [defaultCollapse, setDefaulCollapse] = React.useState(false);
-    // TODO - meowcodes: implement isEditable + board 0
     const [isEditMode, setIsEditMode] = React.useState(false);
 
     const { handleDeleteBoardItem, handleMoveBoardItem } =
@@ -52,8 +49,9 @@ const BoardDOM: React.FunctionComponent<IBoardDOMProps> = ({
             onDeleteBoardItem: handleDeleteBoardItem,
             isEditMode,
             isCollapsed: defaultCollapse,
+            boardId: board.id,
         }),
-        [handleDeleteBoardItem, isEditMode, defaultCollapse]
+        [handleDeleteBoardItem, isEditMode, defaultCollapse, board.id]
     );
 
     let boardItemDOM: React.ReactNode;
@@ -145,7 +143,6 @@ export const Board: React.FunctionComponent<IBoardProps> = ({ boardId }) => {
                 setError(e);
             }
         });
-        dispatch(setCurrentBoardId(boardId));
         dispatch(getBoardEditors(boardId));
     }, [boardId]);
 
