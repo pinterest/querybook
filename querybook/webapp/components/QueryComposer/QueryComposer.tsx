@@ -12,7 +12,6 @@ import { useDispatch, useSelector } from 'react-redux';
 
 import { DataDocTemplateInfoButton } from 'components/DataDocTemplateButton/DataDocTemplateInfoButton';
 import { DataDocTemplateVarForm } from 'components/DataDocTemplateButton/DataDocTemplateVarForm';
-import { TTemplateVariableDict } from 'components/DataDocTemplateButton/helpers';
 import { BoundQueryEditor } from 'components/QueryEditor/BoundQueryEditor';
 import { QueryEditor } from 'components/QueryEditor/QueryEditor';
 import {
@@ -136,7 +135,7 @@ const useQuery = (dispatch: Dispatch, environmentId: number) => {
 const useTemplatedVariables = (dispatch: Dispatch, environmentId: number) => {
     const templatedVariables = useSelector(
         (state: IStoreState) =>
-            state.adhocQuery[environmentId]?.templatedVariables
+            state.adhocQuery[environmentId]?.templatedVariables ?? {}
     );
     const setTemplatedVariables = useCallback(
         (newVariables: Record<string, any>) =>
