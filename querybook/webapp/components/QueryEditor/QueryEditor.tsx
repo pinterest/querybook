@@ -216,6 +216,10 @@ export class QueryEditor extends React.PureComponent<
                 [KeyMap.queryEditor.toggleComment.key]: 'toggleComment',
                 [KeyMap.queryEditor.swapLineUp.key]: 'swapLineUp',
                 [KeyMap.queryEditor.swapLineDown.key]: 'swapLineDown',
+                [KeyMap.queryEditor.addCursorToPrevLine.key]:
+                    'addCursorToPrevLine',
+                [KeyMap.queryEditor.addCursorToNextLine.key]:
+                    'addCursorToNextLine',
 
                 [KeyMap.queryEditor.openTable.key]: this.onOpenTableModal,
                 [KeyMap.queryEditor.formatQuery.key]: this.formatQuery,

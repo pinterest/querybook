@@ -120,6 +120,14 @@ const DEFAULT_KEY_MAP = {
             key: 'Alt',
             name: 'Alt-1, Alt-2, ..., Alt-9 to change the engine to the nth on the engine list.',
         },
+        addCursorToPrevLine: {
+            key: 'Cmd-Alt-Up',
+            name: 'Cmd/Ctrl-Alt-UP to select the same position on the above line and then edit all selected lines together',
+        },
+        addCursorToNextLine: {
+            key: 'Cmd-Alt-Down',
+            name: 'Cmd/Ctrl-Alt-Down to select the same position on the below line and then edit all selected lines together',
+        },
     },
 };
 

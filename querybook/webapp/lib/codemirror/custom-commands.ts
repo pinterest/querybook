@@ -64,6 +64,7 @@ export function attachCustomCommand(commands: CommandActions) {
         const ranges = cm.listSelections();
         const linesToMove = [];
         let at = cm.lastLine() + 1;
+        // eslint-disable-next-line @typescript-eslint/prefer-for-of
         for (let i = ranges.length - 1; i >= 0; i--) {
             const range = ranges[i];
             let from = range.to().line + 1;
@@ -97,5 +98,45 @@ export function attachCustomCommand(commands: CommandActions) {
             }
             cm.scrollIntoView();
         });
+    };
+
+    // https://github.com/codemirror/codemirror5/blob/bd1b7d2976d768ae4e3b8cf209ec59ad73c0305a/keymap/sublime.js#L169
+    const addCursorToSelection = (cm, dir) => {
+        const ranges = cm.listSelections(),
+            newRanges = [];
+        // eslint-disable-next-line @typescript-eslint/prefer-for-of
+        for (let i = 0; i < ranges.length; i++) {
+            const range = ranges[i];
+            const newAnchor = cm.findPosV(
+                range.anchor,
+                dir,
+                'line',
+                range.anchor.goalColumn
+            );
+            const newHead = cm.findPosV(
+                range.head,
+                dir,
+                'line',
+                range.head.goalColumn
+            );
+            newAnchor.goalColumn =
+                range.anchor.goalColumn != null
+                    ? range.anchor.goalColumn
+                    : cm.cursorCoords(range.anchor, 'div').left;
+            newHead.goalColumn =
+                range.head.goalColumn != null
+                    ? range.head.goalColumn
+                    : cm.cursorCoords(range.head, 'div').left;
+            const newRange = { anchor: newAnchor, head: newHead };
+            newRanges.push(range);
+            newRanges.push(newRange);
+        }
+        cm.setSelections(newRanges);
+    };
+    (commands as any).addCursorToPrevLine = (cm) => {
+        addCursorToSelection(cm, -1);
+    };
+    (commands as any).addCursorToNextLine = (cm) => {
+        addCursorToSelection(cm, 1);
     };
 }
