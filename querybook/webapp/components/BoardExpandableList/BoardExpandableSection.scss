@@ -12,6 +12,7 @@
         > div:first-child,
         .ListLink {
             flex-grow: 1;
+            overflow: hidden;
         }
         &:hover {
             background-color: var(--bg-hover);
