@@ -22,6 +22,8 @@ import { UDFForm } from 'components/UDFForm/UDFForm';
 import { IDataQueryCellMeta } from 'const/datadoc';
 import type { IQueryEngine } from 'const/queryEngine';
 import CodeMirror from 'lib/codemirror';
+import { sendConfirm } from 'lib/querybookUI';
+import { getDroppedTables } from 'lib/sql-helper/sql-checker';
 import {
     getQueryAsExplain,
     getSelectedQuery,
@@ -42,6 +44,7 @@ import { createQueryExecution } from 'redux/queryExecutions/action';
 import { Dispatch, IStoreState } from 'redux/store/types';
 import { Button, TextButton } from 'ui/Button/Button';
 import { ThemedCodeHighlight } from 'ui/CodeHighlight/ThemedCodeHighlight';
+import { Content } from 'ui/Content/Content';
 import { Dropdown } from 'ui/Dropdown/Dropdown';
 import { Icon } from 'ui/Icon/Icon';
 import { IListMenuItem, ListMenu } from 'ui/Menu/ListMenu';
@@ -356,13 +359,37 @@ class DataDocQueryCellComponent extends React.PureComponent<IProps, IState> {
     public async onRunButtonClick() {
         await sleep(ON_CHANGE_DEBOUNCE_MS);
         const renderedQuery = await this.getCurrentSelectedQuery();
-
-        if (renderedQuery) {
-            return this.props.createQueryExecution(
+        const runQuery = () =>
+            this.props.createQueryExecution(
                 renderedQuery,
                 this.engineId,
                 this.props.cellId
             );
+
+        if (renderedQuery) {
+            const droppedTables = getDroppedTables(renderedQuery);
+            if (droppedTables.length > 0) {
+                return new Promise((resolve, reject) => {
+                    sendConfirm({
+                        header: 'Dropping Tables?',
+                        message: (
+                            <Content>
+                                <div>Your query is going to drop</div>
+                                <ul>
+                                    {droppedTables.map((t) => (
+                                        <li key={t}>{t}</li>
+                                    ))}
+                                </ul>
+                            </Content>
+                        ),
+                        onConfirm: () => runQuery().then(resolve, reject),
+                        onDismiss: () => resolve(null),
+                        confirmText: 'Continue Execution',
+                    });
+                });
+            } else {
+                return runQuery();
+            }
         }
     }
 

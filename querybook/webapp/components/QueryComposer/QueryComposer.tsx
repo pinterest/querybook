@@ -31,6 +31,8 @@ import { ISearchOptions, ISearchResult } from 'const/searchAndReplace';
 import { useDebounceState } from 'hooks/redux/useDebounceState';
 import { useBrowserTitle } from 'hooks/useBrowserTitle';
 import { replaceStringIndices, searchText } from 'lib/data-doc/search';
+import { sendConfirm } from 'lib/querybookUI';
+import { getDroppedTables } from 'lib/sql-helper/sql-checker';
 import { getSelectedQuery, IRange } from 'lib/sql-helper/sql-lexer';
 import { renderTemplatedQuery } from 'lib/templated-query';
 import { enableResizable, getQueryEngineId, sleep } from 'lib/utils';
@@ -47,6 +49,7 @@ import * as queryExecutionsAction from 'redux/queryExecutions/action';
 import { Dispatch, IStoreState } from 'redux/store/types';
 import { Button } from 'ui/Button/Button';
 import { IconButton } from 'ui/Button/IconButton';
+import { Content } from 'ui/Content/Content';
 import { Dropdown } from 'ui/Dropdown/Dropdown';
 import { FullHeight } from 'ui/FullHeight/FullHeight';
 import { Level, LevelItem } from 'ui/Level/Level';
@@ -339,7 +342,7 @@ const QueryComposer: React.FC = () => {
         await sleep(250);
 
         const selectedQuery = await getCurrentSelectedQuery();
-        if (selectedQuery) {
+        const runQuery = async () => {
             const { id } = await dispatch(
                 queryExecutionsAction.createQueryExecution(
                     selectedQuery,
@@ -349,6 +352,32 @@ const QueryComposer: React.FC = () => {
 
             setExecutionId(id);
             setResultsCollapsed(false);
+        };
+
+        if (selectedQuery) {
+            const droppedTables = getDroppedTables(selectedQuery);
+            if (droppedTables.length > 0) {
+                return new Promise((resolve, reject) => {
+                    sendConfirm({
+                        header: 'Dropping Tables?',
+                        message: (
+                            <Content>
+                                <div>Your query is going to drop</div>
+                                <ul>
+                                    {droppedTables.map((t) => (
+                                        <li key={t}>{t}</li>
+                                    ))}
+                                </ul>
+                            </Content>
+                        ),
+                        onConfirm: () => runQuery().then(resolve, reject),
+                        onDismiss: () => resolve(null),
+                        confirmText: 'Continue Execution',
+                    });
+                });
+            } else {
+                return runQuery();
+            }
         }
     }, [query, templatedVariables, engine]);
 
