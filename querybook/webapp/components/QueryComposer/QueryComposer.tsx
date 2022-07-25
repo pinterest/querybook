@@ -342,44 +342,41 @@ const QueryComposer: React.FC = () => {
         await sleep(250);
 
         const selectedQuery = await getCurrentSelectedQuery();
+        const runQuery = async () => {
+            const { id } = await dispatch(
+                queryExecutionsAction.createQueryExecution(
+                    selectedQuery,
+                    engine?.id
+                )
+            );
+
+            setExecutionId(id);
+            setResultsCollapsed(false);
+        };
+
         if (selectedQuery) {
             const droppedTables = getDroppedTables(selectedQuery);
             if (droppedTables.length > 0) {
-                sendConfirm({
-                    header: 'Dropping Tables?',
-                    message: (
-                        <Content>
-                            <div>Your query is going to drop</div>
-                            <ul>
-                                {droppedTables.map((t) => (
-                                    <li key={t}>{t}</li>
-                                ))}
-                            </ul>
-                        </Content>
-                    ),
-                    onConfirm: async () => {
-                        const { id } = await dispatch(
-                            queryExecutionsAction.createQueryExecution(
-                                selectedQuery,
-                                engine?.id
-                            )
-                        );
-
-                        setExecutionId(id);
-                        setResultsCollapsed(false);
-                    },
-                    confirmText: 'Continue Execution',
+                return new Promise((resolve, reject) => {
+                    sendConfirm({
+                        header: 'Dropping Tables?',
+                        message: (
+                            <Content>
+                                <div>Your query is going to drop</div>
+                                <ul>
+                                    {droppedTables.map((t) => (
+                                        <li key={t}>{t}</li>
+                                    ))}
+                                </ul>
+                            </Content>
+                        ),
+                        onConfirm: () => runQuery().then(resolve, reject),
+                        onDismiss: () => resolve(null),
+                        confirmText: 'Continue Execution',
+                    });
                 });
             } else {
-                const { id } = await dispatch(
-                    queryExecutionsAction.createQueryExecution(
-                        selectedQuery,
-                        engine?.id
-                    )
-                );
-
-                setExecutionId(id);
-                setResultsCollapsed(false);
+                return runQuery();
             }
         }
     }, [query, templatedVariables, engine]);

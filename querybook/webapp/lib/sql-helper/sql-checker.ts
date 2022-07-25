@@ -2,7 +2,6 @@ import {
     findTableReferenceAndAlias,
     getStatementType,
     simpleParse,
-    TableToken,
     tokenize,
 } from './sql-lexer';
 import { isEmpty } from 'lodash';

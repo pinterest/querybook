@@ -359,37 +359,36 @@ class DataDocQueryCellComponent extends React.PureComponent<IProps, IState> {
     public async onRunButtonClick() {
         await sleep(ON_CHANGE_DEBOUNCE_MS);
         const renderedQuery = await this.getCurrentSelectedQuery();
+        const runQuery = () =>
+            this.props.createQueryExecution(
+                renderedQuery,
+                this.engineId,
+                this.props.cellId
+            );
 
         if (renderedQuery) {
             const droppedTables = getDroppedTables(renderedQuery);
             if (droppedTables.length > 0) {
-                sendConfirm({
-                    header: 'Dropping Tables?',
-                    message: (
-                        <Content>
-                            <div>Your query is going to drop</div>
-                            <ul>
-                                {droppedTables.map((t) => (
-                                    <li key={t}>{t}</li>
-                                ))}
-                            </ul>
-                        </Content>
-                    ),
-                    onConfirm: () => {
-                        this.props.createQueryExecution(
-                            renderedQuery,
-                            this.engineId,
-                            this.props.cellId
-                        );
-                    },
-                    confirmText: 'Continue Execution',
+                return new Promise((resolve, reject) => {
+                    sendConfirm({
+                        header: 'Dropping Tables?',
+                        message: (
+                            <Content>
+                                <div>Your query is going to drop</div>
+                                <ul>
+                                    {droppedTables.map((t) => (
+                                        <li key={t}>{t}</li>
+                                    ))}
+                                </ul>
+                            </Content>
+                        ),
+                        onConfirm: () => runQuery().then(resolve, reject),
+                        onDismiss: () => resolve(null),
+                        confirmText: 'Continue Execution',
+                    });
                 });
             } else {
-                return this.props.createQueryExecution(
-                    renderedQuery,
-                    this.engineId,
-                    this.props.cellId
-                );
+                return runQuery();
             }
         }
     }
