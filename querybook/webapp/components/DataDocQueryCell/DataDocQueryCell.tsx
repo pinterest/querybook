@@ -22,6 +22,8 @@ import { UDFForm } from 'components/UDFForm/UDFForm';
 import { IDataQueryCellMeta } from 'const/datadoc';
 import type { IQueryEngine } from 'const/queryEngine';
 import CodeMirror from 'lib/codemirror';
+import { sendConfirm } from 'lib/querybookUI';
+import { getDroppedTables } from 'lib/sql-helper/sql-checker';
 import {
     getQueryAsExplain,
     getSelectedQuery,
@@ -42,6 +44,7 @@ import { createQueryExecution } from 'redux/queryExecutions/action';
 import { Dispatch, IStoreState } from 'redux/store/types';
 import { Button, TextButton } from 'ui/Button/Button';
 import { ThemedCodeHighlight } from 'ui/CodeHighlight/ThemedCodeHighlight';
+import { Content } from 'ui/Content/Content';
 import { Dropdown } from 'ui/Dropdown/Dropdown';
 import { Icon } from 'ui/Icon/Icon';
 import { IListMenuItem, ListMenu } from 'ui/Menu/ListMenu';
@@ -358,11 +361,36 @@ class DataDocQueryCellComponent extends React.PureComponent<IProps, IState> {
         const renderedQuery = await this.getCurrentSelectedQuery();
 
         if (renderedQuery) {
-            return this.props.createQueryExecution(
-                renderedQuery,
-                this.engineId,
-                this.props.cellId
-            );
+            const droppedTables = getDroppedTables(renderedQuery);
+            if (droppedTables.length > 0) {
+                sendConfirm({
+                    header: 'Dropping Tables?',
+                    message: (
+                        <Content>
+                            <div>Your query is going to drop</div>
+                            <ul>
+                                {droppedTables.map((t) => (
+                                    <li key={t}>{t}</li>
+                                ))}
+                            </ul>
+                        </Content>
+                    ),
+                    onConfirm: () => {
+                        this.props.createQueryExecution(
+                            renderedQuery,
+                            this.engineId,
+                            this.props.cellId
+                        );
+                    },
+                    confirmText: 'Continue Execution',
+                });
+            } else {
+                return this.props.createQueryExecution(
+                    renderedQuery,
+                    this.engineId,
+                    this.props.cellId
+                );
+            }
         }
     }
 

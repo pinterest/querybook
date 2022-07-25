@@ -31,6 +31,8 @@ import { ISearchOptions, ISearchResult } from 'const/searchAndReplace';
 import { useDebounceState } from 'hooks/redux/useDebounceState';
 import { useBrowserTitle } from 'hooks/useBrowserTitle';
 import { replaceStringIndices, searchText } from 'lib/data-doc/search';
+import { sendConfirm } from 'lib/querybookUI';
+import { getDroppedTables } from 'lib/sql-helper/sql-checker';
 import { getSelectedQuery, IRange } from 'lib/sql-helper/sql-lexer';
 import { renderTemplatedQuery } from 'lib/templated-query';
 import { enableResizable, getQueryEngineId, sleep } from 'lib/utils';
@@ -47,6 +49,7 @@ import * as queryExecutionsAction from 'redux/queryExecutions/action';
 import { Dispatch, IStoreState } from 'redux/store/types';
 import { Button } from 'ui/Button/Button';
 import { IconButton } from 'ui/Button/IconButton';
+import { Content } from 'ui/Content/Content';
 import { Dropdown } from 'ui/Dropdown/Dropdown';
 import { FullHeight } from 'ui/FullHeight/FullHeight';
 import { Level, LevelItem } from 'ui/Level/Level';
@@ -340,15 +343,44 @@ const QueryComposer: React.FC = () => {
 
         const selectedQuery = await getCurrentSelectedQuery();
         if (selectedQuery) {
-            const { id } = await dispatch(
-                queryExecutionsAction.createQueryExecution(
-                    selectedQuery,
-                    engine?.id
-                )
-            );
+            const droppedTables = getDroppedTables(selectedQuery);
+            if (droppedTables.length > 0) {
+                sendConfirm({
+                    header: 'Dropping Tables?',
+                    message: (
+                        <Content>
+                            <div>Your query is going to drop</div>
+                            <ul>
+                                {droppedTables.map((t) => (
+                                    <li key={t}>{t}</li>
+                                ))}
+                            </ul>
+                        </Content>
+                    ),
+                    onConfirm: async () => {
+                        const { id } = await dispatch(
+                            queryExecutionsAction.createQueryExecution(
+                                selectedQuery,
+                                engine?.id
+                            )
+                        );
 
-            setExecutionId(id);
-            setResultsCollapsed(false);
+                        setExecutionId(id);
+                        setResultsCollapsed(false);
+                    },
+                    confirmText: 'Continue Execution',
+                });
+            } else {
+                const { id } = await dispatch(
+                    queryExecutionsAction.createQueryExecution(
+                        selectedQuery,
+                        engine?.id
+                    )
+                );
+
+                setExecutionId(id);
+                setResultsCollapsed(false);
+            }
         }
     }, [query, templatedVariables, engine]);
 
