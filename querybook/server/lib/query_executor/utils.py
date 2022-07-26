@@ -2,22 +2,6 @@ import json
 from const.query_execution import QueryExecutionErrorType
 
 
-def spread_dict(x, y):
-    """Combines two dictionaries x, y into a new dict z.
-       After we update to python 3.9, we can replace this with x | y
-
-    Args:
-        x (Dict): the first dictionary
-        y (Dict): keys from y will overwrite x
-
-    Returns:
-        Dict: The merged dictionary
-    """
-    z = x.copy()
-    z.update(y)
-    return z
-
-
 def merge_str(str1: str, str2: str, separator: str = "\n") -> str:
     """Join two strings together if by the separator. If either is empty
        then separator will not be used

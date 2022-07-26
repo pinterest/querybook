@@ -24,7 +24,7 @@ jobs:
                   libldap2-dev
             - uses: actions/setup-python@v2
               with:
-                  python-version: 3.7.9
+                  python-version: 3.10
             - uses: actions/cache@v2
               id: pip-cache
               with:

@@ -12,7 +12,7 @@ To enable autocomplete and type checking, it is recommended to install all Query
 
 If you do decide to develop locally, please make sure you have the following python and node versions available locally:
 
--   Python: ~3.7
+-   Python: ~3.10
 -   Node: >=12
 
 If you do not have the compatible version, we recommend the following methods to install the compatible versions required by Querybook.
