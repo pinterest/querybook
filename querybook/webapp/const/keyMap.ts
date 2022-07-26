@@ -122,11 +122,11 @@ const DEFAULT_KEY_MAP = {
         },
         addCursorToPrevLine: {
             key: 'Cmd-Alt-Up',
-            name: 'Cmd/Ctrl-Alt-UP to select the same position on the above line and then edit all selected lines together',
+            name: 'Select the same position on the above line and then edit all selected lines together',
         },
         addCursorToNextLine: {
             key: 'Cmd-Alt-Down',
-            name: 'Cmd/Ctrl-Alt-Down to select the same position on the below line and then edit all selected lines together',
+            name: 'Select the same position on the below line and then edit all selected lines together',
         },
     },
 };
