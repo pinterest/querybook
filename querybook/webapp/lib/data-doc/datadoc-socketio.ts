@@ -133,7 +133,7 @@ export class DataDocSocket {
             this.promiseMap = {};
             if (removeSocket) {
                 // If we are not running any query any more, break off the socketio connection
-                SocketIOManager.removeSocket(this.socket);
+                SocketIOManager.removeSocket(DataDocSocket.NAME_SPACE);
                 this.socket = null;
                 this.socketPromise = null;
             }

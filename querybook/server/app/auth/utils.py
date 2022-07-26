@@ -43,10 +43,8 @@ class QuerybookLoginManager(LoginManager):
     def __init__(self, *args, **kwargs):
         super(QuerybookLoginManager, self).__init__(*args, **kwargs)
 
-        # Note: This code only applies to the current version of Flask-Login(0.4.1)
-        # When upgrade, please use _request_callback and _user_callback
-        self.request_callback = load_user_with_api_access_token
-        self.user_callback = load_user
+        self.request_loader(load_user_with_api_access_token)
+        self.user_loader(load_user)
         self.needs_refresh_message = (
             "To protect your account, please reauthenticate to access this page."
         )
