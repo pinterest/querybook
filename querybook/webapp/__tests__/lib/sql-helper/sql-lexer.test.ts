@@ -295,65 +295,78 @@ test('getQueryKeywords', () => {
         SELECT a, b FROM foo`)
     ).toEqual(['insert', 'create']);
 });
-test('getStatementType', () => {
-    expect(getStatementType(simpleParse(tokenize(simpleQuery))[0])).toEqual(
-        'select'
-    );
+describe('getStatementType', () => {
+    test('Simple example query', () => {
+        expect(getStatementType(simpleParse(tokenize(simpleQuery))[0])).toEqual(
+            'select'
+        );
+    });
 
-    // insert case
-    expect(
-        getStatementType(
-            simpleParse(
-                tokenize(`INSERT INTO abc SELECT * FROM foobar
+    test('Simple insert query', () => {
+        expect(
+            getStatementType(
+                simpleParse(
+                    tokenize(`INSERT INTO abc SELECT * FROM foobar
 
-        `)
-            )[0]
-        )
-    ).toEqual('insert');
+            `)
+                )[0]
+            )
+        ).toEqual('insert');
+    });
 
-    // with case
-    expect(
-        getStatementType(
-            simpleParse(
-                tokenize(`WITH foo as (SELECT * FROM hello.world)
-        CREATE TABLE egg.spam AS
-        SELECT a, b FROM foo`)
-            )[0]
-        )
-    ).toEqual('create');
+    test('Simple create with "with" statement', () => {
+        expect(
+            getStatementType(
+                simpleParse(
+                    tokenize(`WITH foo as (SELECT * FROM hello.world)
+            CREATE TABLE egg.spam AS
+            SELECT a, b FROM foo`)
+                )[0]
+            )
+        ).toEqual('create');
+    });
 
-    // with case
-    expect(
-        getStatementType(
-            simpleParse(
-                tokenize(`WITH
-                x AS (SELECT a FROM t),
-                y AS (SELECT a AS b FROM x),
-                z AS (SELECT b AS c FROM y)
-              INSERT c FROM SELECT * FROM z; `)
-            )[0]
-        )
-    ).toEqual('insert');
+    test('Simple insert with multiple "with" statements', () => {
+        expect(
+            getStatementType(
+                simpleParse(
+                    tokenize(`WITH
+                    x AS (SELECT a FROM t),
+                    y AS (SELECT a AS b FROM x),
+                    z AS (SELECT b AS c FROM y)
+                  INSERT c FROM SELECT * FROM z; `)
+                )[0]
+            )
+        ).toEqual('insert');
+    });
 
     // with case with many brackets
-    expect(
-        getStatementType(
-            simpleParse(
-                tokenize(`with p as (
-        select *
-        from (values
-            ('a', 1, 1),
-            ('b', 2, null),
-            ('c', null, 3),
-            ('d', null, null)
-        ) t1 (letter, val1, val2)
-        ), z as (
-        select *, val1 IS DISTINCT FROM val2
-        from p
-        order by letter
-        )
-        INSERT c FROM SELECT * FROM z;`)
-            )[0]
-        )
-    ).toEqual('insert');
+    test('Complex with statement', () => {
+        expect(
+            getStatementType(
+                simpleParse(
+                    tokenize(`with p as (
+            select *
+            from (values
+                ('a', 1, 1),
+                ('b', 2, null),
+                ('c', null, 3),
+                ('d', null, null)
+            ) t1 (letter, val1, val2)
+            ), z as (
+            select *, val1 IS DISTINCT FROM val2
+            from p
+            order by letter
+            )
+            INSERT c FROM SELECT * FROM z;`)
+                )[0]
+            )
+        ).toEqual('insert');
+    });
+
+    test('Invalid query with no keyword', () => {
+        expect(
+            getStatementType(simpleParse(tokenize('selec 1;'))[0])
+        ).toBeNull();
+    });
 });

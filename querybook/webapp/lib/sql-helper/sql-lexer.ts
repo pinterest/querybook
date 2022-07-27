@@ -865,6 +865,11 @@ export const getStatementType = (statement: IToken[]) => {
     const firstKeywordIdx = statement.findIndex((token) =>
         isKeywordToken(token)
     );
+    if (firstKeywordIdx < 0) {
+        // No keyword in query, it is not valid
+        return null;
+    }
+
     const firstKeyWord = statement[firstKeywordIdx].text;
 
     if (firstKeyWord !== 'with') {
@@ -872,7 +877,7 @@ export const getStatementType = (statement: IToken[]) => {
     }
 
     let currIdx = firstKeywordIdx + 1;
-    let firstNotAsKeyword = null;
+    let firstNotAsKeyword: string | null = null;
 
     while (currIdx < statement.length) {
         const token = statement[currIdx];

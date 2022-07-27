@@ -63,4 +63,9 @@ describe('getDroppedTables', () => {
     `;
         expect(getDroppedTables(query)).toStrictEqual(['db.table2']);
     });
+
+    test('invalid query', () => {
+        const query = `drp tbl;`;
+        expect(getDroppedTables(query)).toStrictEqual([]);
+    });
 });
