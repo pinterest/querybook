@@ -51,4 +51,4 @@ class SqlAlchemyCursor(CursorBaseClass):
         return [list(row) for row in self._cursor.fetchmany(size=n)]
 
     def get_columns(self):
-        return self._cursor.keys()
+        return list(self._cursor.keys())
