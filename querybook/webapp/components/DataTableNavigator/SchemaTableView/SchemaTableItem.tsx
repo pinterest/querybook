@@ -39,7 +39,7 @@ function prepareSchemaNames(
     return tables.map((table) => ({
         ...table,
         selected: table.id === selectedTableId,
-        full_name: table.name,
+        displayName: table.name,
     }));
 }
 

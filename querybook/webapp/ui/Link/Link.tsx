@@ -62,11 +62,6 @@ export const Link: React.FC<ILinkProps> = ({
 }) => {
     const handleClick = useCallback(
         (e: React.MouseEvent<HTMLAnchorElement>) => {
-            if (e.button !== 0) {
-                // If it is not a left click, ignore
-                return;
-            }
-
             e.preventDefault();
             const isCmdDown = e.metaKey;
 
@@ -91,7 +86,7 @@ export const Link: React.FC<ILinkProps> = ({
         <StyledLink
             href={to}
             naturalLink={naturalLink}
-            onMouseDown={handleClick}
+            onClick={handleClick}
             {...elementProps}
             {...(newTab
                 ? {}

@@ -9,7 +9,10 @@ import { Controlled as ReactCodeMirror } from 'react-codemirror2';
 import { showTooltipFor } from 'components/CodeMirrorTooltip';
 import { ICodeMirrorTooltipProps } from 'components/CodeMirrorTooltip/CodeMirrorTooltip';
 import KeyMap from 'const/keyMap';
-import { FunctionDocumentationCollection } from 'const/metastore';
+import {
+    FunctionDocumentationCollection,
+    tableNameDataTransferName,
+} from 'const/metastore';
 import CodeMirror, { CodeMirrorKeyMap } from 'lib/codemirror';
 import {
     AutoCompleteType,
@@ -465,6 +468,20 @@ export class QueryEditor extends React.PureComponent<
     }
 
     @bind
+    public onDrop(editor: CodeMirror.Editor, event: React.DragEvent) {
+        const tableNameData: string = event.dataTransfer.getData(
+            tableNameDataTransferName
+        );
+
+        if (tableNameData) {
+            editor.focus();
+            const { pageX, pageY } = event;
+            editor.setCursor(editor.coordsChar({ left: pageX, top: pageY }));
+            editor.replaceRange(` ${tableNameData} `, editor.getCursor());
+        }
+    }
+
+    @bind
     public onBeforeChange(editor: CodeMirror.Editor, data, value: string) {
         if (this.props.onChange) {
             this.props.onChange(value);
@@ -641,6 +658,7 @@ export class QueryEditor extends React.PureComponent<
                     onKeyDown={this.onKeyDown}
                     onFocus={this.onFocus}
                     onBlur={this.onBlur}
+                    onDrop={this.onDrop}
                 />
             </StyledQueryEditor>
         );

@@ -87,7 +87,6 @@ export const AdminAppNavigator: React.FunctionComponent<IProps> = ({
                                     ? 'AdminAppNavigator-item selected'
                                     : 'AdminAppNavigator-item'
                             }
-                            onClick={() => history.push(url)}
                             key={item.id}
                             to={url}
                             title={item.name}

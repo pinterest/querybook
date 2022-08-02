@@ -3,7 +3,6 @@ import { useDrag } from 'react-dnd';
 
 import { DataDocHoverContent } from 'components/DataDocHoverContent/DataDocHoverContent';
 import { IDataDoc } from 'const/datadoc';
-import history from 'lib/router-history';
 import NOOP from 'lib/utils/noop';
 import { IconButton } from 'ui/Button/IconButton';
 import { UrlContextMenu } from 'ui/ContextMenu/UrlContextMenu';
@@ -33,10 +32,6 @@ export const DataDocGridItem: React.FunctionComponent<IDataDocGridItemProps> =
             },
         });
 
-        const handleClick = React.useCallback(() => {
-            history.push(url);
-        }, [url]);
-
         const handleRemoveDataDoc = React.useCallback(
             (event: React.MouseEvent) => {
                 if (onRemove) {
@@ -58,7 +53,6 @@ export const DataDocGridItem: React.FunctionComponent<IDataDocGridItemProps> =
                         <>
                             <ListLink
                                 className={className}
-                                onClick={handleClick}
                                 to={url}
                                 icon={privateIcon}
                                 title={title}

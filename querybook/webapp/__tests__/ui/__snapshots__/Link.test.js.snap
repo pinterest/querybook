@@ -3,7 +3,7 @@
 exports[`matches enzyme snapshots matches snapshot 1`] = `
 <Link__StyledLink
   href="https://test.com"
-  onMouseDown={[Function]}
+  onClick={[Function]}
   rel="noopener noreferrer"
   target="_blank"
 />
@@ -13,7 +13,7 @@ exports[`matches test renderer snapshot serializes the styles 1`] = `
 <a
   className="Link__StyledLink-sc-1k0sviq-0 gVoECW"
   href="https://test.com"
-  onMouseDown={[Function]}
+  onClick={[Function]}
   rel="noopener noreferrer"
   target="_blank"
 />

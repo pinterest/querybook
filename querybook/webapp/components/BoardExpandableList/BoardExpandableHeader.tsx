@@ -4,7 +4,6 @@ import { useDrag } from 'react-dnd';
 
 import { BoardDraggableType } from 'components/DataDocNavigator/navigatorConst';
 import { IBoardWithItemIds } from 'const/board';
-import history from 'lib/router-history';
 import { getWithinEnvUrl } from 'lib/utils/query-string';
 import { IconButton } from 'ui/Button/IconButton';
 import { UrlContextMenu } from 'ui/ContextMenu/UrlContextMenu';
@@ -38,9 +37,6 @@ export const BoardExpandableHeader: React.FunctionComponent<IProps> = ({
         () => getWithinEnvUrl(boardId === 0 ? '/list/' : `/list/${boardId}/`),
         [boardId]
     );
-    const handleClick = React.useCallback(() => {
-        history.push(boardUrl);
-    }, [boardUrl]);
 
     const [, drag] = useDrag({
         type: BoardDraggableType,
@@ -63,7 +59,6 @@ export const BoardExpandableHeader: React.FunctionComponent<IProps> = ({
             <div className="flex-row" ref={selfRef}>
                 <ListLink
                     className="board-header-title flex1"
-                    onClick={handleClick}
                     to={boardUrl}
                     noPlaceHolder
                     isRow
