@@ -1,5 +1,5 @@
-from flask_socketio import join_room, leave_room, emit
-
+from flask_socketio import join_room, leave_room, emit, rooms
+from flask import request
 
 from app.auth.permission import verify_query_engine_permission
 from app.db import DBSession
@@ -62,3 +62,10 @@ def on_join_room(query_execution_id):
 @register_socket("unsubscribe", namespace=QUERY_EXECUTION_NAMESPACE)
 def on_leave_room(query_execution_id):
     leave_room(query_execution_id)
+
+
+@register_socket("disconnect", namespace=QUERY_EXECUTION_NAMESPACE)
+def disconnect():
+    query_execution_ids = rooms(request.sid, namespace=QUERY_EXECUTION_NAMESPACE)
+    for query_execution_id in query_execution_ids:
+        leave_room(query_execution_id)

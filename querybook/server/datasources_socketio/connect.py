@@ -11,5 +11,5 @@ def connect():
         raise ConnectionRefusedError("User is not logged in, please refresh the page.")
 
 
-socketio.on("connect", namespace=DATA_DOC_NAMESPACE)(connect)
-socketio.on("connect", namespace=QUERY_EXECUTION_NAMESPACE)(connect)
+socketio.on_event("connect", connect, namespace=DATA_DOC_NAMESPACE)
+socketio.on_event("connect", connect, namespace=QUERY_EXECUTION_NAMESPACE)

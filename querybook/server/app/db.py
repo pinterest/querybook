@@ -2,11 +2,17 @@ import os
 from contextlib import contextmanager
 import functools
 
-from flask import has_request_context, g, _app_ctx_stack
+from flask import has_request_context, g
 from sqlalchemy.ext.declarative import declarative_base
 from sqlalchemy.exc import SQLAlchemyError, DisconnectionError
 from sqlalchemy import create_engine, event
 from sqlalchemy.orm import sessionmaker, scoped_session
+
+try:
+    from greenlet import getcurrent as _get_ident
+except ImportError:
+    from threading import get_ident as _get_ident
+
 
 from env import QuerybookSettings
 from lib.logger import get_logger
@@ -87,7 +93,7 @@ def get_session(scopefunc=None):
 
 def get_flask_db_session():
     if "database_session" not in g:
-        g.database_session = get_session(scopefunc=_app_ctx_stack.__ident_func__)()
+        g.database_session = get_session(scopefunc=_get_ident)()
     return g.database_session
 
 
