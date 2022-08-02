@@ -6,7 +6,6 @@ import { DataDocHoverContent } from 'components/DataDocHoverContent/DataDocHover
 import { DataTableHoverContent } from 'components/DataTableNavigator/DataTableHoverContent';
 import { QueryExecutionHoverContent } from 'components/QueryExecutionHoverContent/QueryExecutionHoverContent';
 import { BoardItemType } from 'const/board';
-import history from 'lib/router-history';
 import NOOP from 'lib/utils/noop';
 import { getWithinEnvUrl } from 'lib/utils/query-string';
 import { IconButton } from 'ui/Button/IconButton';
@@ -29,10 +28,6 @@ export const BoardListItemRow: React.FC<{
     const { key, itemType, icon, title, itemUrl, selected, itemId } = item;
     const itemUrlWithinEnv = getWithinEnvUrl(itemUrl);
 
-    const handleClick = React.useCallback(() => {
-        history.push(itemUrlWithinEnv);
-    }, [itemUrlWithinEnv]);
-
     return (
         <PopoverHoverWrapper>
             {(showPopover, anchorElement) => (
@@ -43,7 +38,6 @@ export const BoardListItemRow: React.FC<{
                                 'flex1 pr8': true,
                                 selected,
                             })}
-                            onClick={handleClick}
                             to={
                                 itemType === 'table'
                                     ? {

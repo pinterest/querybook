@@ -1,9 +1,14 @@
 import clsx from 'clsx';
 import React, { useCallback, useEffect, useMemo } from 'react';
+import { useDrag } from 'react-dnd';
 import { useDispatch, useSelector } from 'react-redux';
 import { useHistory } from 'react-router-dom';
 
 import { TableUploaderButton } from 'components/TableUploader/TableUploaderButton';
+import {
+    tableNameDataTransferName,
+    tableNameDraggableType,
+} from 'const/metastore';
 import { useShallowSelector } from 'hooks/redux/useShallowSelector';
 import { queryMetastoresSelector } from 'redux/dataSources/selector';
 import * as dataTableSearchActions from 'redux/dataTableSearch/action';
@@ -37,7 +42,7 @@ function isFilteringTables(
 }
 
 export interface ITableResultWithSelection extends ITableSearchResult {
-    full_name: string;
+    displayName: string;
     selected: boolean;
 }
 
@@ -155,11 +160,18 @@ export const DataTableNavigator: React.FC<IDataTableNavigatorProps> = ({
 
     const handleTableRowClick = useCallback(
         (tableId: number, event: React.MouseEvent) => {
-            if (onTableRowClick) {
+            // Either middle click on cmd/ctrl is pressed
+            const isNewTabClick = event.metaKey || event.button === 1;
+            if (onTableRowClick && !isNewTabClick) {
                 onTableRowClick(tableId, event);
             } else {
-                // default behavior
-                history.push(`/${environmentName}/table/${tableId}/`);
+                console.log(event.button);
+                const url = `/${environmentName}/table/${tableId}/`;
+                if (isNewTabClick) {
+                    window.open(url);
+                } else {
+                    history.push(`/${environmentName}/table/${tableId}/`);
+                }
             }
         },
         [onTableRowClick, history, environmentName]
@@ -173,46 +185,13 @@ export const DataTableNavigator: React.FC<IDataTableNavigatorProps> = ({
     );
 
     const tableRowRenderer = useCallback(
-        (table: ITableResultWithSelection) => {
-            const className = clsx({
-                selected: table.selected,
-            });
-            const tableUrl = `/${environmentName}/table/${table.id}/`;
-
-            return (
-                <PopoverHoverWrapper>
-                    {(showPopover, anchorElement) => (
-                        <>
-                            <ListLink
-                                className={className}
-                                onClick={(event) =>
-                                    handleTableRowClick(table.id, event)
-                                }
-                                isRow
-                                title={table.full_name}
-                            />
-                            <UrlContextMenu
-                                url={tableUrl}
-                                anchorRef={{ current: anchorElement }}
-                            />
-
-                            {showPopover && (
-                                <Popover
-                                    onHide={() => null}
-                                    anchor={anchorElement}
-                                    layout={['right', 'top']}
-                                >
-                                    <DataTableHoverContent
-                                        tableId={table.id}
-                                        tableName={table.full_name}
-                                    />
-                                </Popover>
-                            )}
-                        </>
-                    )}
-                </PopoverHoverWrapper>
-            );
-        },
+        (table: ITableResultWithSelection) => (
+            <TableRow
+                table={table}
+                handleTableRowClick={handleTableRowClick}
+                environmentName={environmentName}
+            />
+        ),
         [handleTableRowClick, environmentName]
     );
 
@@ -250,7 +229,7 @@ export const DataTableNavigator: React.FC<IDataTableNavigatorProps> = ({
     const dataTablesWithSelection: ITableResultWithSelection[] = dataTables.map(
         (table) => ({
             ...table,
-            full_name: `${table.schema}.${table.name}`,
+            displayName: `${table.schema}.${table.name}`,
             selected: selectedTableId === table.id,
         })
     );
@@ -296,3 +275,93 @@ export const DataTableNavigator: React.FC<IDataTableNavigatorProps> = ({
         </div>
     );
 };
+
+const TableRow: React.FC<{
+    table: ITableResultWithSelection;
+    handleTableRowClick: (tableId: number, event: React.MouseEvent) => void;
+    environmentName: string;
+}> = ({ table, handleTableRowClick, environmentName }) => {
+    const className = clsx({
+        selected: table.selected,
+    });
+    const tableUrl = `/${environmentName}/table/${table.id}/`;
+    const handleLinkClick = useCallback(
+        (event: React.MouseEvent) => handleTableRowClick(table.id, event),
+        [handleTableRowClick, table.id]
+    );
+    const tableFullName = useMemo(
+        () => `${table.schema}.${table.name}`,
+        [table]
+    );
+    const { isDragging, dragProps } = useTableNameDrag(tableFullName);
+
+    const linkDOM = (
+        <ListLink
+            className={className}
+            onClick={handleLinkClick}
+            isRow
+            title={table.displayName}
+        />
+    );
+
+    return isDragging ? (
+        linkDOM
+    ) : (
+        <PopoverHoverWrapper>
+            {(showPopover, anchorElement) => (
+                <>
+                    <span {...dragProps}>{linkDOM}</span>
+
+                    <UrlContextMenu
+                        url={tableUrl}
+                        anchorRef={{ current: anchorElement }}
+                    />
+
+                    {showPopover && (
+                        <Popover
+                            onHide={() => null}
+                            anchor={anchorElement}
+                            layout={['right', 'top']}
+                        >
+                            <DataTableHoverContent
+                                tableId={table.id}
+                                tableName={tableFullName}
+                            />
+                        </Popover>
+                    )}
+                </>
+            )}
+        </PopoverHoverWrapper>
+    );
+};
+
+/**
+ *
+ * @param tableName Assumed this is the full name schema.table
+ */
+function useTableNameDrag(tableName: string) {
+    const [{ isDragging }, dragRef] = useDrag({
+        type: tableNameDraggableType,
+        item: {
+            type: tableNameDraggableType,
+        },
+        collect: (monitor) => ({
+            isDragging: !!monitor.isDragging(),
+        }),
+    });
+
+    const handleDragStart = useCallback(
+        (e: React.DragEvent) => {
+            e.dataTransfer.setData(tableNameDataTransferName, tableName);
+        },
+        [tableName]
+    );
+
+    return {
+        isDragging,
+        dragProps: {
+            ref: dragRef,
+            onDragStart: handleDragStart,
+        },
+    };
+}
