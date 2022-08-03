@@ -48,10 +48,11 @@ def register(url, methods=None, require_auth=True, custom_response=False):
             if require_auth and not current_user.is_authenticated:
                 flask.abort(401, description="Login required.")
 
+            params = {}
             if flask.request.method == "GET":
                 params = json.loads(flask.request.args.get("params", "{}"))
-            else:
-                params = flask.request.json or {}
+            elif flask.request.is_json:
+                params = flask.request.json
 
             status = 200
             try:
