@@ -34,6 +34,7 @@ import { replaceStringIndices, searchText } from 'lib/data-doc/search';
 import { sendConfirm } from 'lib/querybookUI';
 import { getDroppedTables } from 'lib/sql-helper/sql-checker';
 import { getSelectedQuery, IRange } from 'lib/sql-helper/sql-lexer';
+import { getLimitedQuery } from 'lib/sql-helper/sql-limiter';
 import { renderTemplatedQuery } from 'lib/templated-query';
 import { enableResizable, getQueryEngineId, sleep } from 'lib/utils';
 import { formatError } from 'lib/utils/error';
@@ -133,6 +134,25 @@ const useQuery = (dispatch: Dispatch, environmentId: number) => {
     );
     const [query, setQuery] = useDebounceState(reduxQuery, setReduxQuery, 500);
     return { query, setQuery };
+};
+
+const useRowLimit = (dispatch: Dispatch, environmentId: number) => {
+    const rowLimit = useSelector(
+        (state: IStoreState) =>
+            state.adhocQuery[environmentId]?.rowLimit ?? true
+    );
+    const setRowLimit = useCallback(
+        (newRowLimit: boolean) =>
+            dispatch(
+                adhocQueryActions.receiveAdhocQuery(
+                    { rowLimit: newRowLimit },
+                    environmentId
+                )
+            ),
+        [dispatch, environmentId]
+    );
+
+    return { rowLimit, setRowLimit };
 };
 
 const useTemplatedVariables = (dispatch: Dispatch, environmentId: number) => {
@@ -263,6 +283,7 @@ const QueryComposer: React.FC = () => {
         dispatch,
         environmentId
     );
+    const { rowLimit, setRowLimit } = useRowLimit(dispatch, environmentId);
 
     const [resultsCollapsed, setResultsCollapsed] = useState(false);
 
@@ -342,10 +363,23 @@ const QueryComposer: React.FC = () => {
         await sleep(250);
 
         const selectedQuery = await getCurrentSelectedQuery();
+        if (!selectedQuery) {
+            return;
+        }
+
+        const limitedQuery =
+            rowLimit && engine?.feature_params.row_limit
+                ? getLimitedQuery(
+                      selectedQuery,
+                      engine.feature_params.row_limit,
+                      engine.language
+                  )
+                : selectedQuery;
+
         const runQuery = async () => {
             const { id } = await dispatch(
                 queryExecutionsAction.createQueryExecution(
-                    selectedQuery,
+                    limitedQuery,
                     engine?.id
                 )
             );
@@ -354,32 +388,30 @@ const QueryComposer: React.FC = () => {
             setResultsCollapsed(false);
         };
 
-        if (selectedQuery) {
-            const droppedTables = getDroppedTables(selectedQuery);
-            if (droppedTables.length > 0) {
-                return new Promise((resolve, reject) => {
-                    sendConfirm({
-                        header: 'Dropping Tables?',
-                        message: (
-                            <Content>
-                                <div>Your query is going to drop</div>
-                                <ul>
-                                    {droppedTables.map((t) => (
-                                        <li key={t}>{t}</li>
-                                    ))}
-                                </ul>
-                            </Content>
-                        ),
-                        onConfirm: () => runQuery().then(resolve, reject),
-                        onDismiss: () => resolve(null),
-                        confirmText: 'Continue Execution',
-                    });
+        const droppedTables = getDroppedTables(limitedQuery);
+        if (droppedTables.length > 0) {
+            return new Promise((resolve, reject) => {
+                sendConfirm({
+                    header: 'Dropping Tables?',
+                    message: (
+                        <Content>
+                            <div>Your query is going to drop</div>
+                            <ul>
+                                {droppedTables.map((t) => (
+                                    <li key={t}>{t}</li>
+                                ))}
+                            </ul>
+                        </Content>
+                    ),
+                    onConfirm: () => runQuery().then(resolve, reject),
+                    onDismiss: () => resolve(null),
+                    confirmText: 'Continue Execution',
                 });
-            } else {
-                return runQuery();
-            }
+            });
+        } else {
+            return runQuery();
         }
-    }, [query, templatedVariables, engine]);
+    }, [query, rowLimit, templatedVariables, engine]);
 
     const keyMap = useKeyMap(clickOnRunButton, queryEngines, setEngineId);
 
@@ -507,6 +539,8 @@ const QueryComposer: React.FC = () => {
                 onRunClick={handleRunQuery}
                 hasSelection={editorHasSelection}
                 runButtonTooltipPos={'down'}
+                rowLimit={rowLimit}
+                onRowLimitChange={setRowLimit}
             />
         </div>
     );

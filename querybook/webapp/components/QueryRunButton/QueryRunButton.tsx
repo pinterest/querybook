@@ -8,6 +8,7 @@ import { TooltipDirection } from 'const/tooltip';
 import { getShortcutSymbols, KeyMap } from 'lib/utils/keyboard';
 import { queryEngineStatusByIdEnvSelector } from 'redux/queryEngine/selector';
 import { AsyncButton, IAsyncButtonHandles } from 'ui/AsyncButton/AsyncButton';
+import { Checkbox } from 'ui/Checkbox/Checkbox';
 import { Dropdown } from 'ui/Dropdown/Dropdown';
 import { Icon } from 'ui/Icon/Icon';
 import { ListMenu } from 'ui/Menu/ListMenu';
@@ -25,6 +26,8 @@ interface IQueryRunButtonProps extends IQueryEngineSelectorProps {
     hasSelection?: boolean;
     runButtonTooltipPos?: TooltipDirection;
     onRunClick: () => any;
+    rowLimit?: boolean;
+    onRowLimitChange?: (rowLimit: boolean) => void;
 }
 
 export interface IQueryRunButtonHandles {
@@ -45,6 +48,8 @@ export const QueryRunButton = React.forwardRef<
             queryEngines,
             engineId,
             onEngineIdSelect,
+            rowLimit,
+            onRowLimitChange,
         },
         ref
     ) => {
@@ -77,8 +82,19 @@ export const QueryRunButton = React.forwardRef<
             />
         );
 
+        const rowLimitDOM =
+            onRowLimitChange &&
+            queryEngineById[engineId]?.feature_params.row_limit ? (
+                <Checkbox
+                    onChange={onRowLimitChange}
+                    value={rowLimit}
+                    title="Limit results automatically"
+                />
+            ) : null;
+
         return (
             <div className="QueryRunButton flex-row ml16">
+                {rowLimitDOM}
                 <QueryEngineSelector
                     disabled={disabled}
                     queryEngineById={queryEngineById}

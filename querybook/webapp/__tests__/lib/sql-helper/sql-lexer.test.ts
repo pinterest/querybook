@@ -1,4 +1,5 @@
 import {
+    containsKeyword,
     findTableReferenceAndAlias,
     findWithStatementPlaceholder,
     getQueryAsExplain,
@@ -368,5 +369,32 @@ describe('getStatementType', () => {
         expect(
             getStatementType(simpleParse(tokenize('selec 1;'))[0])
         ).toBeNull();
+    });
+});
+describe('containsKeyword', () => {
+    test('Simple example query contains limit', () => {
+        expect(
+            containsKeyword(simpleParse(tokenize(simpleQuery))[0], 'limit')
+        ).toBeTruthy();
+    });
+    test('Simple example query does not contain with', () => {
+        expect(
+            containsKeyword(simpleParse(tokenize(simpleQuery))[0], 'with')
+        ).toBeFalsy();
+    });
+    test('Simple insert query contains insert', () => {
+        expect(
+            containsKeyword(
+                simpleParse(
+                    tokenize(`INSERT INTO abc SELECT * FROM foobar`)
+                )[0],
+                'insert'
+            )
+        ).toBeTruthy();
+    });
+    test('Invalid query without keyword', () => {
+        expect(
+            containsKeyword(simpleParse(tokenize('selec 1;'))[0], 'limit')
+        ).toBeFalsy();
     });
 });
