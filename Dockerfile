@@ -1,4 +1,4 @@
-FROM python:3.10
+FROM python:3.9
 
 ARG PRODUCTION=true
 ARG EXTRA_PIP_INSTALLS=""
