@@ -1,5 +1,6 @@
 from html import escape as htmlescape
 import json
+from typing import Tuple
 from bs4 import BeautifulSoup
 
 
@@ -14,7 +15,7 @@ def richtext_to_plaintext(text, default="", escape=False) -> str:
     return text
 
 
-def try_parse_draftjs(text) -> str:
+def try_parse_draftjs(text) -> Tuple[bool, str]:
     """With Richtext serialized as HTML, this will be deprecated in v4"""
     try:
         content_state = json.loads(text)

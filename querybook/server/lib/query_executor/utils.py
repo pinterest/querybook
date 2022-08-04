@@ -1,5 +1,6 @@
 import json
 from const.query_execution import QueryExecutionErrorType
+from lib.query_executor.exc import QueryExecutorException
 
 
 def merge_str(str1: str, str2: str, separator: str = "\n") -> str:
@@ -31,10 +32,15 @@ def parse_exception(e):
 
 
 def format_if_internal_error_with_stack_trace(
-    error_type: QueryExecutionErrorType, error_str: str, stack_trace: str
+    exc: Exception,
+    error_type: QueryExecutionErrorType,
+    error_str: str,
+    stack_trace: str,
 ):
     """If the error is internal (which means its either unknown or caused by Querybook).
-       Then include the stack trace for better debugging
+       Then include the stack trace for better debugging.
+       Note if the error is instance of QueryExecutorException, then we know where
+       and why it is thrown. So it is ignored even tho it is internal.
 
     Args:
         error_type (QueryExecutionErrorType): The type of Querybook runtime error
@@ -44,7 +50,9 @@ def format_if_internal_error_with_stack_trace(
     Returns:
         str: The combined error trace string
     """
-    if error_type == QueryExecutionErrorType.INTERNAL.value:
+    if error_type == QueryExecutionErrorType.INTERNAL.value and not isinstance(
+        exc, QueryExecutorException
+    ):
         return (error_str or "") + "\nStack trace:\n" + stack_trace
     return error_str
 
