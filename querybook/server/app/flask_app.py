@@ -131,8 +131,6 @@ def make_socketio(app):
         message_queue=QuerybookSettings.REDIS_URL,
         json=flask_json,
         cors_allowed_origins="*",
-        logger=True,
-        engineio_logger=True,
     )
     return socketio
 
