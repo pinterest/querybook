@@ -591,7 +591,7 @@ class QueryExecutorBaseClass(metaclass=ABCMeta):
         else:
             self._on_query_completion()
 
-    def _handle_exception(self, e, stack_trace: str):
+    def _handle_exception(self, exc: Exception, stack_trace: str):
         try:
             # Try our best to fetch logs again
             if self._cursor:
@@ -601,11 +601,11 @@ class QueryExecutorBaseClass(metaclass=ABCMeta):
             pass
         finally:
             # Update logger
-            error_type, error_str, error_extracted = self._parse_exception(e)
+            error_type, error_str, error_extracted = self._parse_exception(exc)
             self._logger.on_exception(
                 error_type,
                 format_if_internal_error_with_stack_trace(
-                    error_type, error_str, stack_trace
+                    exc, error_type, error_str, stack_trace
                 ),
                 error_extracted,
             )

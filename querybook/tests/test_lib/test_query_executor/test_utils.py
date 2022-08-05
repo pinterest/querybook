@@ -1,6 +1,7 @@
 from unittest import TestCase
 
 from const.query_execution import QueryExecutionErrorType
+from lib.query_executor.exc import QueryExecutorException
 from lib.query_executor.utils import (
     merge_str,
     format_if_internal_error_with_stack_trace,
@@ -22,14 +23,14 @@ class FormatIfInternalErrorWithStackTraceTestCase(TestCase):
     def test_is_internal_error(self):
         self.assertEqual(
             format_if_internal_error_with_stack_trace(
-                QueryExecutionErrorType.INTERNAL.value, "Hello", "World"
+                Exception(), QueryExecutionErrorType.INTERNAL.value, "Hello", "World"
             ),
             "Hello\nStack trace:\nWorld",
         )
 
         self.assertEqual(
             format_if_internal_error_with_stack_trace(
-                QueryExecutionErrorType.INTERNAL.value, None, "World"
+                Exception(), QueryExecutionErrorType.INTERNAL.value, None, "World"
             ),
             "\nStack trace:\nWorld",
         )
@@ -37,7 +38,18 @@ class FormatIfInternalErrorWithStackTraceTestCase(TestCase):
     def test_is_not_internal_error(self):
         self.assertEqual(
             format_if_internal_error_with_stack_trace(
-                QueryExecutionErrorType.ENGINE.value, "Hello", "World"
+                Exception(), QueryExecutionErrorType.ENGINE.value, "Hello", "World"
+            ),
+            "Hello",
+        )
+
+    def test_is_internal_but_recognizable_error(self):
+        self.assertEqual(
+            format_if_internal_error_with_stack_trace(
+                QueryExecutorException(),
+                QueryExecutionErrorType.INTERNAL.value,
+                "Hello",
+                "World",
             ),
             "Hello",
         )
