@@ -61,13 +61,9 @@ export function getColumnTypesForTable(columns: string[], rows: any[][]) {
         Math.floor(rows.length / 100)
     );
     return columns.map((colName, index) => {
-        const notNullRowValues = rows.reduce((arr, row) => {
-            const value = row[index];
-            if (!isCellValNull(value)) {
-                arr.push(value);
-            }
-            return arr;
-        }, []);
+        const notNullRowValues = rows
+            .map((row) => row[index])
+            .filter((value) => !isCellValNull(value));
 
         const sampledRowValues = sampleSize(notNullRowValues, sizeOfSample);
         return findColumnType(colName, sampledRowValues);

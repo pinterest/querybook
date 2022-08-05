@@ -182,10 +182,12 @@ export const StatementResultTable = React.forwardRef<
                 showPagination={showPagination}
                 formatCell={(index, column, row) => {
                     const value = row[index];
+                    if (isCellValNull(value)) {
+                        return value;
+                    }
+
                     const transformer = getTransformerForColumn(index);
-                    return transformer && !isCellValNull(value)
-                        ? transformer.transform(value)
-                        : value;
+                    return transformer ? transformer.transform(value) : value;
                 }}
                 sortCell={useSortCell(rows)}
             />
