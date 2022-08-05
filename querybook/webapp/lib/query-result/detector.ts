@@ -1,8 +1,9 @@
-import { sampleSize } from 'lodash';
+import { shuffle } from 'lodash';
 
 import { isValidUrl } from 'lib/utils';
 import { isNumeric } from 'lib/utils/number';
 
+import { isCellValNull } from './helper';
 import { IColumnDetector } from './types';
 
 const columnDetectors: IColumnDetector[] = [
@@ -71,10 +72,45 @@ export function detectTypeForValues<T>(
     values: T[],
     detector: (value: T) => boolean
 ): boolean {
+    return (
+        // The strategy is to first pick the first not null value to check
+        // if that passes, then pick some randomly sampled values to confirm
+        detectTypeForFirstNotNullValue(values, detector) &&
+        detectTypeForSampledValuesValue(values, detector)
+    );
+}
+
+function detectTypeForFirstNotNullValue<T>(
+    values: T[],
+    detector: (value: T) => boolean
+): boolean {
+    for (const value of values) {
+        if (!isCellValNull(value)) {
+            return detector(value);
+        }
+    }
+    // No information can be extracted from empty array
+    return false;
+}
+
+function detectTypeForSampledValuesValue<T>(
+    values: T[],
+    detector: (value: T) => boolean
+): boolean {
     const sizeOfSample = Math.max(
         DETECTOR_MIN_SAMPLE_SIZE,
         Math.floor(values.length / 100)
     );
-    const sampleValues = sampleSize(values, sizeOfSample);
+    const shuffledValues = shuffle(values);
+    const sampleValues: T[] = [];
+    for (const value of shuffledValues) {
+        if (sampleValues.length >= sizeOfSample) {
+            break;
+        }
+        if (isCellValNull(value)) {
+            continue;
+        }
+        sampleValues.push(value);
+    }
     return sampleValues.every(detector);
 }

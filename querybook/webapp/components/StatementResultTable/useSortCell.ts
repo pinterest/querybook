@@ -1,8 +1,7 @@
 import { useCallback, useMemo } from 'react';
 
+import { isCellValNull } from 'lib/query-result/helper';
 import { isNumeric } from 'lib/utils/number';
-
-import { isCellNull } from './common';
 
 export type ColumnSortType = 'string' | 'number';
 
@@ -14,9 +13,9 @@ export function useSortCell(rows: string[][]) {
 
     const sortCell = useCallback(
         (colIdx: number, a: any, b: any) => {
-            if (isCellNull(a)) {
+            if (isCellValNull(a)) {
                 return -1;
-            } else if (isCellNull(b)) {
+            } else if (isCellValNull(b)) {
                 return 1;
             }
 
@@ -39,7 +38,7 @@ export function useSortCell(rows: string[][]) {
 function getColumnType(rows: any[][], colIdx: number): ColumnSortType {
     for (const row of rows) {
         const cell = row[colIdx];
-        if (isCellNull(cell)) {
+        if (isCellValNull(cell)) {
             continue;
         } else if (!isNumeric(cell)) {
             return 'string';

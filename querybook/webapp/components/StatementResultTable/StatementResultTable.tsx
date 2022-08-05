@@ -5,6 +5,7 @@ import styled from 'styled-components';
 import { UserSettingsFontSizeToCSSFontSize } from 'const/font';
 import { useImmer } from 'hooks/useImmer';
 import { findColumnType } from 'lib/query-result/detector';
+import { isCellValNull } from 'lib/query-result/helper';
 import { getTransformersForType } from 'lib/query-result/transformer';
 import { IColumnTransformer } from 'lib/query-result/types';
 import { IStoreState } from 'redux/store/types';
@@ -186,10 +187,11 @@ export const StatementResultTable = React.forwardRef<
                 cols={columns}
                 showPagination={showPagination}
                 formatCell={(index, column, row) => {
+                    const value = row[index];
                     const transformer = getTransformerForColumn(index);
-                    return transformer
-                        ? transformer.transform(row[index])
-                        : row[index];
+                    return transformer && !isCellValNull(value)
+                        ? transformer.transform(value)
+                        : value;
                 }}
                 sortCell={useSortCell(rows)}
             />
