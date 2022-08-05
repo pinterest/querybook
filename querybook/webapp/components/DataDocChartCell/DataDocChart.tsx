@@ -14,6 +14,7 @@ import {
     getAutoDetectedScaleType,
     getDefaultScaleType,
 } from 'lib/chart/chart-utils';
+import { isCellValNull } from 'lib/query-result/helper';
 import { IStoreState } from 'redux/store/types';
 
 import { DataDocChartWrapper } from './DataDocChartWrapper';
@@ -26,12 +27,6 @@ interface IDataDocChartProps {
 }
 
 Chart.registry.remove(ChartDataLabels);
-
-function isChartValNull(val: any): boolean {
-    // checks if chart value is null or "null"
-    // only applies to query results in querybook
-    return val === 'null' || val == null;
-}
 
 const useChartScale = (meta: IDataChartCellMeta, data?: any[][]) => {
     const xScale = meta?.chart?.x_axis?.scale;
@@ -52,7 +47,7 @@ const useChartScale = (meta: IDataChartCellMeta, data?: any[][]) => {
         let defaultScale: ChartScaleType = null;
         for (let i = 1; i < data.length; i++) {
             const row = data[i];
-            if (!isChartValNull(row?.[xIndex])) {
+            if (!isCellValNull(row?.[xIndex])) {
                 defaultScale = getDefaultScaleType(row?.[xIndex]);
                 break;
             }
@@ -87,7 +82,7 @@ const useChartScale = (meta: IDataChartCellMeta, data?: any[][]) => {
                 if (
                     !ySeries[j]?.hidden &&
                     j !== xIndex &&
-                    !isChartValNull(val)
+                    !isCellValNull(val)
                 ) {
                     return getAutoDetectedScaleType(
                         allowedYAxisType,

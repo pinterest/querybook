@@ -4,7 +4,8 @@ import styled from 'styled-components';
 
 import { UserSettingsFontSizeToCSSFontSize } from 'const/font';
 import { useImmer } from 'hooks/useImmer';
-import { findColumnType } from 'lib/query-result/detector';
+import { getColumnTypesForTable } from 'lib/query-result/detector';
+import { isCellValNull } from 'lib/query-result/helper';
 import { getTransformersForType } from 'lib/query-result/transformer';
 import { IColumnTransformer } from 'lib/query-result/types';
 import { IStoreState } from 'redux/store/types';
@@ -96,13 +97,7 @@ export const StatementResultTable = React.forwardRef<
 
     const rows = useMemo(() => data.slice(1), [data]);
     const columnTypes = useMemo(
-        () =>
-            data[0].map((col, index) =>
-                findColumnType(
-                    col,
-                    rows.map((row) => row[index])
-                )
-            ),
+        () => getColumnTypesForTable(data[0], rows),
         [data, rows]
     );
 
@@ -186,10 +181,13 @@ export const StatementResultTable = React.forwardRef<
                 cols={columns}
                 showPagination={showPagination}
                 formatCell={(index, column, row) => {
+                    const value = row[index];
+                    if (isCellValNull(value)) {
+                        return value;
+                    }
+
                     const transformer = getTransformerForColumn(index);
-                    return transformer
-                        ? transformer.transform(row[index])
-                        : row[index];
+                    return transformer ? transformer.transform(value) : value;
                 }}
                 sortCell={useSortCell(rows)}
             />

@@ -3,6 +3,7 @@ import { sampleSize } from 'lodash';
 import { isValidUrl } from 'lib/utils';
 import { isNumeric } from 'lib/utils/number';
 
+import { isCellValNull } from './helper';
 import { IColumnDetector } from './types';
 
 const columnDetectors: IColumnDetector[] = [
@@ -54,6 +55,21 @@ const columnDetectors: IColumnDetector[] = [
     .concat(window.CUSTOM_COLUMN_DETECTORS ?? [])
     .sort((a, b) => b.priority - a.priority) as IColumnDetector[];
 
+export function getColumnTypesForTable(columns: string[], rows: any[][]) {
+    const sizeOfSample = Math.max(
+        DETECTOR_MIN_SAMPLE_SIZE,
+        Math.floor(rows.length / 100)
+    );
+    return columns.map((colName, index) => {
+        const notNullRowValues = rows
+            .map((row) => row[index])
+            .filter((value) => !isCellValNull(value));
+
+        const sampledRowValues = sampleSize(notNullRowValues, sizeOfSample);
+        return findColumnType(colName, sampledRowValues);
+    });
+}
+
 export function findColumnType(columnName: string, values: any[]) {
     for (const detector of columnDetectors) {
         if (detector.checker(columnName, values)) {
@@ -71,10 +87,10 @@ export function detectTypeForValues<T>(
     values: T[],
     detector: (value: T) => boolean
 ): boolean {
-    const sizeOfSample = Math.max(
-        DETECTOR_MIN_SAMPLE_SIZE,
-        Math.floor(values.length / 100)
-    );
-    const sampleValues = sampleSize(values, sizeOfSample);
-    return sampleValues.every(detector);
+    // No information can be extracted from empty array
+    if (values.length === 0) {
+        return false;
+    }
+
+    return values.every(detector);
 }
