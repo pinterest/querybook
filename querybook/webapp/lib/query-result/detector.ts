@@ -1,4 +1,4 @@
-import { shuffle } from 'lodash';
+import { sampleSize } from 'lodash';
 
 import { isValidUrl } from 'lib/utils';
 import { isNumeric } from 'lib/utils/number';
@@ -55,6 +55,25 @@ const columnDetectors: IColumnDetector[] = [
     .concat(window.CUSTOM_COLUMN_DETECTORS ?? [])
     .sort((a, b) => b.priority - a.priority) as IColumnDetector[];
 
+export function getColumnTypesForTable(columns: string[], rows: any[][]) {
+    const sizeOfSample = Math.max(
+        DETECTOR_MIN_SAMPLE_SIZE,
+        Math.floor(rows.length / 100)
+    );
+    return columns.map((colName, index) => {
+        const notNullRowValues = rows.reduce((arr, row) => {
+            const value = row[index];
+            if (!isCellValNull(value)) {
+                arr.push(value);
+            }
+            return arr;
+        }, []);
+
+        const sampledRowValues = sampleSize(notNullRowValues, sizeOfSample);
+        return findColumnType(colName, sampledRowValues);
+    });
+}
+
 export function findColumnType(columnName: string, values: any[]) {
     for (const detector of columnDetectors) {
         if (detector.checker(columnName, values)) {
@@ -72,45 +91,10 @@ export function detectTypeForValues<T>(
     values: T[],
     detector: (value: T) => boolean
 ): boolean {
-    return (
-        // The strategy is to first pick the first not null value to check
-        // if that passes, then pick some randomly sampled values to confirm
-        detectTypeForFirstNotNullValue(values, detector) &&
-        detectTypeForSampledValuesValue(values, detector)
-    );
-}
-
-function detectTypeForFirstNotNullValue<T>(
-    values: T[],
-    detector: (value: T) => boolean
-): boolean {
-    for (const value of values) {
-        if (!isCellValNull(value)) {
-            return detector(value);
-        }
-    }
     // No information can be extracted from empty array
-    return false;
-}
-
-function detectTypeForSampledValuesValue<T>(
-    values: T[],
-    detector: (value: T) => boolean
-): boolean {
-    const sizeOfSample = Math.max(
-        DETECTOR_MIN_SAMPLE_SIZE,
-        Math.floor(values.length / 100)
-    );
-    const shuffledValues = shuffle(values);
-    const sampleValues: T[] = [];
-    for (const value of shuffledValues) {
-        if (sampleValues.length >= sizeOfSample) {
-            break;
-        }
-        if (isCellValNull(value)) {
-            continue;
-        }
-        sampleValues.push(value);
+    if (values.length === 0) {
+        return false;
     }
-    return sampleValues.every(detector);
+
+    return values.every(detector);
 }
