@@ -7,7 +7,7 @@ import { FourOhFour } from 'ui/ErrorPage/FourOhFour';
 
 const BoardRoute: React.FunctionComponent<RouteComponentProps> = () => (
     <Switch>
-        <Route path="/:env/list/:boardId/" component={BoardWrapper} />
+        <Route path="/:env/list/:path" component={BoardWrapper} />
         <Route path="/:env/list/" exact={true}>
             <PublicBoardPage />
         </Route>

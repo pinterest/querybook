@@ -1,11 +1,18 @@
 import React from 'react';
-import { RouteComponentProps } from 'react-router-dom';
+
+import { useBoardPath } from 'hooks/ui/useBoardPath';
 
 import { Board } from './Board';
+import { BoardBreadcrumbs } from './BoardBreadcrumbs';
 
-export const BoardWrapper: React.FunctionComponent<RouteComponentProps> = ({
-    match,
-}) => {
-    const boardId = Number(match.params['boardId']);
-    return <Board boardId={boardId} />;
+export const BoardWrapper: React.FunctionComponent = () => {
+    const boardPath = useBoardPath();
+    const boardId = boardPath[boardPath.length - 1];
+
+    return (
+        <>
+            <BoardBreadcrumbs />
+            <Board boardId={boardId} />
+        </>
+    );
 };
