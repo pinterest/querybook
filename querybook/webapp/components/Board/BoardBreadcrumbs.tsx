@@ -30,8 +30,6 @@ export const BoardBreadcrumbs: React.FC = () => {
     const boardById = useBoardById(boardPath);
     const environment = useSelector(currentEnvironmentSelector);
 
-    console.log('boardPath', boardPath, boardPath.length);
-
     const nestedBoardPathAcc = [environment.name, 'list'];
     const nestedBoardPathDOM =
         boardPath.length < 2
