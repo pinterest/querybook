@@ -1,0 +1,13 @@
+.BoardBreadcrumbs {
+    .BoardBreadcrumbs-divder {
+        user-select: none;
+    }
+    .Text {
+        a:hover {
+            color: var(--color-accent-light);
+        }
+    }
+    .Text:last-child a {
+        color: var(--text-lightest);
+    }
+}
