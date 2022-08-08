@@ -11,6 +11,7 @@ from models.schedule import (
     TaskRunRecord,
 )
 from models.datadoc import DataDoc
+from models.board import BoardItem
 
 
 @with_session
@@ -31,6 +32,22 @@ def get_task_schedule_by_id(id, session=None):
 @with_session
 def get_task_schedule_by_name(name, session=None):
     return session.query(TaskSchedule).filter(TaskSchedule.name == name).first()
+
+
+def get_cron_recurrence(recurrences):
+    all_regexs = {
+        "hourly": r"\d+ \* \* \* \*",
+        "daily": r"\d+ \d+ \* \* \*",
+        "weekly": r"\d+ \d+ \* \* \d+(,\d+)*",
+        "monthly": r"\d+ \d+ \d+(,\d+)* \* \*",
+        "yearly": r"\d+ \d+ \d+(,\d+)* \d+(,\d+)* \*",
+    }
+
+    initial_string = [
+        all_regexs[recurrence] for recurrence in recurrences if recurrence in all_regexs
+    ]
+
+    return "|".join(initial_string)
 
 
 @with_session
@@ -169,6 +186,19 @@ def get_scheduled_data_docs_by_user(
 
     if "name" in filters:
         query = query.filter(DataDoc.title.contains(filters.get("name")))
+
+    if "status" in filters:
+        query = query.filter(TaskSchedule.enabled == filters.get("status"))
+
+    if filters.get("recurrence"):
+        query = query.filter(
+            TaskSchedule.cron.regexp(get_cron_recurrence(filters.get("recurrence")))
+        )
+
+    if filters.get("list_ids"):
+        query = query.join(BoardItem, BoardItem.data_doc_id == DataDoc.id).filter(
+            BoardItem.parent_board_id.in_(filters.get("list_ids"))
+        )
 
     count = query.count()
     docs_with_schedules = query.offset(offset).limit(limit).all()

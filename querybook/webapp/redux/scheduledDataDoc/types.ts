@@ -8,11 +8,25 @@ import { IDataDoc } from 'const/datadoc';
 import { ITaskSchedule, ITaskStatusRecord } from 'const/schedule';
 
 import { IStoreState } from '../store/types';
+import { OptionsType } from 'const/options';
 
-export interface IScheduledDocFilters {
+interface IBasicScheduledDocFilters {
     name?: string;
     scheduled_only?: boolean;
+    status?: boolean;
 }
+
+export interface IScheduledDocFilters extends IBasicScheduledDocFilters {
+    recurrence?: OptionsType[];
+    list_ids?: OptionsType[];
+}
+
+export interface ITransformedScheduledDocFilters
+    extends IBasicScheduledDocFilters {
+    recurrence?: string[];
+    list_ids?: string[];
+}
+
 export interface IScheduledDoc {
     doc: IDataDoc;
     last_record?: ITaskStatusRecord;
@@ -26,7 +40,7 @@ export interface IReceiveDocWithScheduleAction extends Action {
         total: number;
         page: number;
         pageSize: number;
-        filters: IScheduledDocFilters;
+        filters: ITransformedScheduledDocFilters;
     };
 }
 
@@ -50,5 +64,5 @@ export interface IScheduledDataDocState {
     numberOfResults: number;
     page: number;
     pageSize: number;
-    filters: IScheduledDocFilters;
+    filters: ITransformedScheduledDocFilters;
 }

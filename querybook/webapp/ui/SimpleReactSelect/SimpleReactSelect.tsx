@@ -19,6 +19,9 @@ export interface ISimpleReactSelectProps<T> {
     isDisabled?: boolean;
     creatable?: boolean;
     selectProps?: Partial<ReactSelectProps<T>>;
+    isMulti?: boolean;
+    closeMenuOnSelect?: boolean;
+    hideSelectedOptions?: boolean;
 
     // Clear selection user picks value
     clearAfterSelect?: boolean;
@@ -59,13 +62,14 @@ export function SimpleReactSelect<T>({
         [options]
     );
 
-    const selectedOption = useMemo(
-        () => computedOptions.find((option) => option.value === value),
-        [computedOptions, value]
-    );
+    const selectedOption = useMemo(() => {
+        return computedOptions.find((option) => option.value === value);
+    }, [computedOptions, value]);
 
     const onSelectChange = useCallback(
-        (val: ISelectOption<T>) => onChange(val?.value),
+        (val: ISelectOption<T>) => {
+            onChange(val?.value);
+        },
         [onChange]
     );
 

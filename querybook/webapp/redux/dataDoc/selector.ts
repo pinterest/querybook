@@ -213,3 +213,12 @@ export const queryCellSelector = createSelector(dataDocCellsSelector, (cells) =>
             };
         })
 );
+
+export const queryDataDocFiltersSelector = createSelector(
+    (state: IStoreState) => state.board.boardById,
+    (boardById) =>
+        Object.values(boardById).map((board) => ({
+            value: board.id,
+            label: board.name,
+        }))
+);

@@ -1,6 +1,6 @@
 import { DataDocScheduleResource } from 'resource/dataDoc';
 
-import { IScheduledDoc, IScheduledDocFilters, ThunkResult } from './types';
+import { IScheduledDoc, ITransformedScheduledDocFilters, ThunkResult } from './types';
 
 export function getScheduledDocs({
     paginationPage,
@@ -9,7 +9,7 @@ export function getScheduledDocs({
 }: {
     paginationPage?: number;
     paginationPageSize?: number;
-    paginationFilter?: IScheduledDocFilters;
+    paginationFilter?: ITransformedScheduledDocFilters;
 }): ThunkResult<Promise<IScheduledDoc[]>> {
     return async (dispatch, getState) => {
         const envId = getState().environment.currentEnvironmentId;
