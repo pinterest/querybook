@@ -6,6 +6,9 @@ import { fetchBoardIfNeeded } from 'redux/board/action';
 import { currentEnvironmentSelector } from 'redux/environment/selector';
 import { Dispatch, IStoreState } from 'redux/store/types';
 import { Link } from 'ui/Link/Link';
+import { AccentText } from 'ui/StyledText/StyledText';
+
+import './BoardBreadcrumbs.scss';
 
 function useBoardById(boardPath: number[]) {
     const boardById = useSelector(
@@ -28,26 +31,36 @@ export const BoardBreadcrumbs: React.FC = () => {
     const environment = useSelector(currentEnvironmentSelector);
 
     const nestedBoardPathAcc = [environment.name, 'list'];
-    const nestedBoardPathDOM = boardPath.map((boardId) => {
-        nestedBoardPathAcc.push(String(boardId));
-        const boardUrl = '/' + nestedBoardPathAcc.join('/') + '/';
-        const board = boardById[boardId];
+    const nestedBoardPathDOM =
+        boardPath.length < 1
+            ? null
+            : boardPath.map((boardId, idx) => {
+                  nestedBoardPathAcc.push(String(boardId));
+                  const boardUrl = '/' + nestedBoardPathAcc.join('/') + '/';
+                  const board = boardById[boardId];
 
-        return (
-            <React.Fragment key={boardId}>
-                <span className="mh4">{'/'}</span>
-                <span className="BoardBreadcrumbs-item">
-                    <Link to={boardUrl}>{board?.name ?? boardId}</Link>
-                </span>
-            </React.Fragment>
-        );
-    });
+                  return (
+                      <React.Fragment key={boardId}>
+                          {idx === 0 ? null : (
+                              <AccentText
+                                  className="mh8"
+                                  weight="bold"
+                                  color="lightest-0"
+                              >
+                                  /
+                              </AccentText>
+                          )}
+                          <AccentText weight="bold" color="lightest-0">
+                              <Link to={boardUrl}>
+                                  {board?.name ?? boardId}
+                              </Link>
+                          </AccentText>
+                      </React.Fragment>
+                  );
+              });
 
     return (
-        <div className="BoardBreadcrumbs">
-            <span className="BoardBreadcrumbs-item">
-                <Link to={`/${environment.name}/list/`}>Lists</Link>
-            </span>
+        <div className="BoardBreadcrumbs flex-row pl8">
             {nestedBoardPathDOM}
         </div>
     );

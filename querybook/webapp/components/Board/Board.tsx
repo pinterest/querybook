@@ -16,6 +16,7 @@ import { Loading } from 'ui/Loading/Loading';
 import { EmptyText } from 'ui/StyledText/StyledText';
 
 import { BoardBoardItem } from './BoardBoardItem';
+import { BoardBreadcrumbs } from './BoardBreadcrumbs';
 import { BoardDataDocItem } from './BoardDataDocItem';
 import { BoardDataTableItem } from './BoardDataTableItem';
 import { BoardError } from './BoardError';
@@ -108,6 +109,7 @@ const BoardDOM: React.FunctionComponent<IBoardDOMProps> = ({
         <BoardPageContext.Provider value={boardContextValue}>
             <div className="Board">
                 <div className="Board-content">
+                    <BoardBreadcrumbs />
                     <BoardHeader board={board} isEditable={isEditable} />
                     {boardItemDOM}
                 </div>

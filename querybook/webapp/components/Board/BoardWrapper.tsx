@@ -3,7 +3,6 @@ import React from 'react';
 import { useBoardPath } from 'hooks/ui/useBoardPath';
 
 import { Board } from './Board';
-import { BoardBreadcrumbs } from './BoardBreadcrumbs';
 
 export const BoardWrapper: React.FunctionComponent = () => {
     const boardPath = useBoardPath();
@@ -11,7 +10,6 @@ export const BoardWrapper: React.FunctionComponent = () => {
 
     return (
         <>
-            <BoardBreadcrumbs />
             <Board boardId={boardId} />
         </>
     );
