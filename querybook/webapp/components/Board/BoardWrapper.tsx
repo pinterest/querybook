@@ -8,9 +8,5 @@ export const BoardWrapper: React.FunctionComponent = () => {
     const boardPath = useBoardPath();
     const boardId = boardPath[boardPath.length - 1];
 
-    return (
-        <>
-            <Board boardId={boardId} />
-        </>
-    );
+    return <Board boardId={boardId} />;
 };

@@ -1,17 +1,16 @@
 import { useMemo } from 'react';
 import { useLocation } from 'react-router-dom';
 
-const duplicateIdx = (array) => {
-    const valueSet = new Set([]);
-    for (let i = 0; i < array.length; ++i) {
-        const value = array[i];
-        if (valueSet.has(value)) {
-            return i;
+function findFirstDuplicatedIdx<T extends string | number>(arr: T[]): number {
+    const valueToIdx = {} as Record<T, number>;
+    for (const [i, value] of arr.entries()) {
+        if (value in valueToIdx) {
+            return valueToIdx[value];
         }
-        valueSet.add(value);
+        valueToIdx[value] = i;
     }
-    return null;
-};
+    return -1;
+}
 
 /**
  * Extract the recursive board ids
@@ -29,9 +28,8 @@ export function useBoardPath() {
             .slice(2)
             .map(Number);
 
-        const dupIdx = duplicateIdx(pathnames);
-
-        return dupIdx === null ? pathnames : pathnames.slice(dupIdx);
+        const firstDupIdx = findFirstDuplicatedIdx(pathnames);
+        return firstDupIdx < 0 ? pathnames : pathnames.slice(firstDupIdx + 1);
     }, [location]);
 
     return path;

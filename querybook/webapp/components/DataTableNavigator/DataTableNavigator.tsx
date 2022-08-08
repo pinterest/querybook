@@ -165,7 +165,6 @@ export const DataTableNavigator: React.FC<IDataTableNavigatorProps> = ({
             if (onTableRowClick && !isNewTabClick) {
                 onTableRowClick(tableId, event);
             } else {
-                console.log(event.button);
                 const url = `/${environmentName}/table/${tableId}/`;
                 if (isNewTabClick) {
                     window.open(url);

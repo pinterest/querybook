@@ -41,9 +41,9 @@ export const BoardBreadcrumbs: React.FC = () => {
 
                   return (
                       <React.Fragment key={boardId}>
-                          {idx === 0 ? null : (
+                          {idx > 0 && (
                               <AccentText
-                                  className="mh8"
+                                  className="BoardBreadcrumbs-divder"
                                   weight="bold"
                                   color="lightest-0"
                               >
