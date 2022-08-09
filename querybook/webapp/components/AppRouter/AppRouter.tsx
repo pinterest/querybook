@@ -1,5 +1,5 @@
 import React from 'react';
-import { Route, Router, Switch } from 'react-router-dom';
+import { Redirect, Route, Router, Switch } from 'react-router-dom';
 
 import { AppLayout } from 'components/AppLayout/AppLayout';
 import { ConfirmationManager } from 'components/ConfirmationManager/ConfirmationManager';
@@ -20,6 +20,21 @@ export const AppRouter: React.FunctionComponent = () => (
             <AppLayout>
                 <React.Suspense fallback={<Loading fullHeight />}>
                     <Switch>
+                        {/* auto append trailing slash */}
+                        <Route
+                            exact
+                            strict
+                            path="/:url*"
+                            render={(props) => (
+                                <Redirect
+                                    to={{
+                                        ...props.location,
+                                        pathname: `${props.location.pathname}/`,
+                                    }}
+                                />
+                            )}
+                        />
+
                         <Route path="/admin/:entity?" component={AppAdmin} />
                         <Route
                             exact

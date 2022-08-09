@@ -1,7 +1,8 @@
-import React from 'react';
+import React, { useMemo } from 'react';
 import { useSelector } from 'react-redux';
 
 import { IQueryExecution, QueryExecutionStatus } from 'const/queryExecution';
+import { getWithinEnvUrl } from 'lib/utils/query-string';
 import { IStoreState } from 'redux/store/types';
 import { CopyButton } from 'ui/CopyButton/CopyButton';
 import { StyledText } from 'ui/StyledText/StyledText';
@@ -13,13 +14,22 @@ import './QueryExecutionBar.scss';
 
 interface IProps {
     queryExecution: IQueryExecution;
-    permalink: string;
+}
+
+function useQueryExecutionUrl(queryExecution: IQueryExecution) {
+    return useMemo(
+        () =>
+            `${location.protocol}//${location.host}${getWithinEnvUrl(
+                `/query_execution/${queryExecution.id}/`
+            )}`,
+        [queryExecution.id]
+    );
 }
 
 export const QueryExecutionBar: React.FunctionComponent<IProps> = ({
     queryExecution,
-    permalink,
 }) => {
+    const permalink = useQueryExecutionUrl(queryExecution);
     const notificationPreference = useSelector(
         (state: IStoreState) =>
             state.user.computedSettings.notification_preference

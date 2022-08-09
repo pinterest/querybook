@@ -5,7 +5,7 @@ import React, {
     useMemo,
     useState,
 } from 'react';
-import { useDispatch, useSelector } from 'react-redux';
+import { useDispatch } from 'react-redux';
 
 import { QueryExecutionPicker } from 'components/ExecutionPicker/QueryExecutionPicker';
 import { QueryExecution } from 'components/QueryExecution/QueryExecution';
@@ -14,7 +14,6 @@ import { QueryExecutionBar } from 'components/QueryExecutionBar/QueryExecutionBa
 import { DataDocContext } from 'context/DataDoc';
 import { useMakeSelector } from 'hooks/redux/useMakeSelector';
 import { getQueryString } from 'lib/utils/query-string';
-import { currentEnvironmentSelector } from 'redux/environment/selector';
 import * as queryExecutionsActions from 'redux/queryExecutions/action';
 import * as queryExecutionsSelectors from 'redux/queryExecutions/selector';
 import { StyledText } from 'ui/StyledText/StyledText';
@@ -31,8 +30,6 @@ export const DataDocQueryExecutions: React.FunctionComponent<IProps> =
     React.memo(({ cellId, docId, changeCellContext, isQueryCollapsed }) => {
         const { cellIdToExecutionId, onQueryCellSelectExecution } =
             useContext(DataDocContext);
-
-        const environment = useSelector(currentEnvironmentSelector);
 
         const queryExecutions =
             useMakeSelector(
@@ -103,17 +100,6 @@ export const DataDocQueryExecutions: React.FunctionComponent<IProps> =
             [queryExecutions]
         );
 
-        const generatePermaLink = useCallback(() => {
-            const queryExecution = (queryExecutions || [])[
-                selectedExecutionIndex
-            ];
-            if (queryExecution) {
-                const shareUrl = `${location.protocol}//${location.host}/${environment.name}/query_execution/${queryExecution.id}/`;
-                return shareUrl;
-            }
-            return '';
-        }, [queryExecutions, selectedExecutionIndex]);
-
         const generateExecutionsPickerDOM = () => {
             const currentExecution = queryExecutions?.[selectedExecutionIndex];
             if (!currentExecution) {
@@ -135,10 +121,7 @@ export const DataDocQueryExecutions: React.FunctionComponent<IProps> =
                         </div>
                     </div>
                     <div className="execution-selector-bottom flex-row">
-                        <QueryExecutionBar
-                            queryExecution={currentExecution}
-                            permalink={generatePermaLink()}
-                        />
+                        <QueryExecutionBar queryExecution={currentExecution} />
                     </div>
                 </div>
             );
