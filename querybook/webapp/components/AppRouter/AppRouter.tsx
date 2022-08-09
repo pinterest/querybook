@@ -26,7 +26,12 @@ export const AppRouter: React.FunctionComponent = () => (
                             strict
                             path="/:url*"
                             render={(props) => (
-                                <Redirect to={`${props.location.pathname}/`} />
+                                <Redirect
+                                    to={{
+                                        ...props.location,
+                                        pathname: `${props.location.pathname}/`,
+                                    }}
+                                />
                             )}
                         />
 
