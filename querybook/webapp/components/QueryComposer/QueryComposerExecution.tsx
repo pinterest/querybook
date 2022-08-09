@@ -1,4 +1,4 @@
-import React, { useMemo } from 'react';
+import React from 'react';
 import { useSelector } from 'react-redux';
 
 import { QueryExecution } from 'components/QueryExecution/QueryExecution';
@@ -8,7 +8,6 @@ import {
     queryStatusToStatusIcon,
     STATUS_TO_TEXT_MAPPING,
 } from 'const/queryStatus';
-import { currentEnvironmentSelector } from 'redux/environment/selector';
 import { IStoreState } from 'redux/store/types';
 import { Level } from 'ui/Level/Level';
 import { StatusIcon } from 'ui/StatusIcon/StatusIcon';
@@ -21,16 +20,9 @@ interface IProps {
 export const QueryComposerExecution: React.FunctionComponent<IProps> = ({
     id,
 }) => {
-    const environment = useSelector(currentEnvironmentSelector);
     const execution = useSelector(
         (state: IStoreState) => state.queryExecutions.queryExecutionById[id]
     );
-    const permalink = useMemo(() => {
-        if (!execution) {
-            return null;
-        }
-        return `${location.protocol}//${location.host}/${environment.name}/query_execution/${execution.id}/`;
-    }, [execution]);
 
     if (!execution) {
         return null;
@@ -58,10 +50,7 @@ export const QueryComposerExecution: React.FunctionComponent<IProps> = ({
                     <QueryExecutionDuration queryExecution={execution} />
                 </div>
                 <div className="flex-row">
-                    <QueryExecutionBar
-                        queryExecution={execution}
-                        permalink={permalink}
-                    />
+                    <QueryExecutionBar queryExecution={execution} />
                 </div>
             </Level>
             <QueryExecution id={id} />
