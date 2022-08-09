@@ -1,0 +1,18 @@
+.UserQueryEngineEditor {
+    .UserQueryEngineEditor-list {
+        height: 160px;
+        background-color: var(--bg-light);
+        border-radius: var(--border-radius-sm);
+        margin-top: 8px;
+        .ReactVirtualized__Grid {
+            padding-bottom: 12px;
+
+            .UserQueryEngineEditor-user {
+                margin-left: 4px;
+                .IconButton {
+                    padding: 8px;
+                }
+            }
+        }
+    }
+}

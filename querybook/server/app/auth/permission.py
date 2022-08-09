@@ -54,6 +54,11 @@ def verify_query_engine_environment_permission(
 
 @with_session
 def verify_query_engine_permission(query_engine_id, session=None):
+    api_assert(
+        query_engine_id in current_user.query_engine_ids,
+        message="Unauthorized Query Engine",
+        status_code=ACCESS_RESTRICTED_STATUS_CODE,
+    )
     environment_ids = [
         eid
         for eid, in session.query(QueryEngineEnvironment.environment_id)

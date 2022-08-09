@@ -9,7 +9,10 @@ from const.user_roles import UserRoleType
 # from lib.utils.decorators import in_mem_memoized
 from models.user import User
 from app.db import DBSession, get_session
-from logic.admin import get_api_access_token
+from logic.admin import (
+    get_all_accessible_query_engine_ids_by_uid,
+    get_api_access_token,
+)
 from logic.environment import get_all_accessible_environment_ids_by_uid
 from logic.user import get_user_by_id
 
@@ -37,6 +40,12 @@ class AuthUser(UserMixin):
     # @in_mem_memoized(300)
     def environment_ids(self):
         return get_all_accessible_environment_ids_by_uid(self.id, session=get_session())
+
+    @property
+    def query_engine_ids(self):
+        return get_all_accessible_query_engine_ids_by_uid(
+            self.id, session=get_session()
+        )
 
 
 class QuerybookLoginManager(LoginManager):

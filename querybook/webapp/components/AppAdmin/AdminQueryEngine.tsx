@@ -5,6 +5,7 @@ import toast from 'react-hot-toast';
 import { useParams } from 'react-router-dom';
 
 import { AdminAuditLogButton } from 'components/AdminAuditLog/AdminAuditLogButton';
+import { UserQueryEngineEditor } from 'components/UserQueryEngineEditor/UserQueryEngineEditor';
 import { IAdminMetastore, IAdminQueryEngine } from 'const/admin';
 import { QueryEngineStatus } from 'const/queryEngine';
 import { useResource } from 'hooks/useResource';
@@ -439,6 +440,23 @@ export const AdminQueryEngine: React.FunctionComponent<IProps> = ({
                                 />
                             </div>
                         </div>
+
+                        {queryEngineId !== 'new' && (
+                            <>
+                                <div className="AdminForm-section">
+                                    <div className="AdminForm-section-top flex-row">
+                                        <div className="AdminForm-section-title">
+                                            Access Control
+                                        </div>
+                                    </div>
+                                    <div className="AdminForm-section-content">
+                                        <UserQueryEngineEditor
+                                            queryEngineId={item.id}
+                                        />
+                                    </div>
+                                </div>
+                            </>
+                        )}
 
                         {environmentDOM}
                     </div>
