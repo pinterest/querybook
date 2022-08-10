@@ -143,6 +143,7 @@ export const BoardItem: React.FunctionComponent<IBoardItemProps> = ({
         <div className={boardItemClassname}>
             <div className="BoardItem-top horizontal-space-between">
                 {boardItemHeaderDOM}
+
                 <div className="BoardItem-controls flex-center">
                     {boardItemControlsDOM}
                 </div>
@@ -266,13 +267,17 @@ const BoardItemFooter: React.FC<{
         return null;
     }
 
-    return (
+    return authorUid === null && updatedAt === null ? null : (
         <div className="horizontal-space-between">
-            <div>{authorUid != null && <UserBadge uid={authorUid} mini />}</div>
-            <div>
+            <div className="flex-row">
+                {authorUid != null && (
+                    <UserBadge uid={authorUid} mini cardStyle />
+                )}
+            </div>
+            <div className="mr4">
                 {updatedAt != null && (
-                    <AccentText color="light">
-                        Last Updated on {generateFormattedDate(updatedAt)}
+                    <AccentText weight="bold" color="lightest">
+                        updated {generateFormattedDate(updatedAt)}
                     </AccentText>
                 )}
             </div>
