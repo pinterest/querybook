@@ -267,7 +267,7 @@ const BoardItemFooter: React.FC<{
         return null;
     }
 
-    return authorUid === null && updatedAt === null ? null : (
+    return (
         <div className="horizontal-space-between">
             <div className="flex-row">
                 {authorUid != null && (
