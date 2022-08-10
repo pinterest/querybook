@@ -39,6 +39,8 @@ export const BoardBoardItem: React.FunctionComponent<IProps> = ({
             itemType="board"
             title={board?.name}
             titleUrl={combinedBoardPath}
+            authorUid={board.owner_uid}
+            updatedAt={board.updated_at}
         />
     ) : null;
 };
