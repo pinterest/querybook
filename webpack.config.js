@@ -68,7 +68,7 @@ function getDevServerSettings(env) {
                     ╚██████╔╝╚██████╔╝███████╗██║  ██║   ██║   ██████╔╝╚██████╔╝╚██████╔╝██║  ██╗
                      ╚══▀▀═╝  ╚═════╝ ╚══════╝╚═╝  ╚═╝   ╚═╝   ╚═════╝  ╚═════╝  ╚═════╝ ╚═╝  ╚═╝
                      - Website is served on http://localhost:${port}
-                     - Run terminal inside container with: \`docker exec -it querybook_web_1 bash\`
+                     - Run terminal inside container with: \`docker exec -it querybook_web bash\`
                      - Stop the containers with \`ctrl+c\` or run \`make bundled_off\`
                                 `);
                 });
