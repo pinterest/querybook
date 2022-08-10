@@ -1,3 +1,4 @@
+import clsx from 'clsx';
 import { ContentState } from 'draft-js';
 import * as React from 'react';
 import { useDispatch } from 'react-redux';
@@ -54,10 +55,14 @@ export const BoardHeader: React.FunctionComponent<IProps> = ({
         },
         [dispatch, board.id]
     );
+    const BoardHeaderClassnames = clsx({
+        BoardHeader,
+        readonly: !isEditable,
+    });
 
     return (
-        <div className="BoardHeader">
-            <div className="horizontal-space-between mb4">
+        <div className={BoardHeaderClassnames}>
+            <div className="horizontal-space-between">
                 <div className="flex-row mr8">
                     <AccentText
                         className="ml8 mr16"
@@ -88,7 +93,7 @@ export const BoardHeader: React.FunctionComponent<IProps> = ({
                 </div>
             </div>
             <AccentText
-                className="pv8"
+                className="mt4 mb8"
                 color="light"
                 size="xlarge"
                 weight="extra"
@@ -101,7 +106,7 @@ export const BoardHeader: React.FunctionComponent<IProps> = ({
                         transparent
                     />
                 ) : (
-                    <div className="ml8">{board.name}</div>
+                    <div className="ml8 mv4">{board.name}</div>
                 )}
             </AccentText>
             <EditableTextField

@@ -1,6 +1,6 @@
 .BoardHeader {
-    > div:first-child {
-        align-items: flex-end;
+    &.readonly {
+        margin-bottom: 16px;
     }
     .BoardHeader-title input {
         font-weight: var(--extra-bold-font);
