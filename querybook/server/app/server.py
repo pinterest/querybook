@@ -15,7 +15,7 @@ datasources
 datasources_socketio
 
 
-@register("/<path:ignore>/")
+@register("/<path:ignore>")
 @limiter.exempt
 def datasource_four_oh_four(*args, **kwargs):
     abort_request(404)
@@ -31,7 +31,7 @@ def get_health_check():
 
 
 @flask_app.route("/")
-@flask_app.route("/<path:ignore>/")
+@flask_app.route("/<path:ignore>")
 @limiter.exempt
 def main(ignore=None):
     return send_file(WEBAPP_INDEX_PATH, mimetype="text/html")
