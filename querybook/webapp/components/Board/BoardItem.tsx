@@ -102,7 +102,7 @@ export const BoardItem: React.FunctionComponent<IBoardItemProps> = ({
 
     const boardItemClassname = clsx(
         'BoardItem p12 mt8',
-        collapsed ? 'mb8' : 'mb24'
+        collapsed ? 'mb8' : isEditable && itemType === 'table' ? 'mb24' : 'mb16'
     );
 
     const boardItemHeaderDOM = (
