@@ -32,6 +32,8 @@ export const BoardQueryItem: React.FunctionComponent<IProps> = ({
             itemType="query"
             title={`Execution ${queryExecution.id}`}
             titleUrl={`/query_execution/${queryExecution.id}/`}
+            authorUid={queryExecution.uid}
+            updatedAt={queryExecution.completed_at}
         />
     ) : null;
 };

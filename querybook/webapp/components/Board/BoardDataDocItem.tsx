@@ -32,6 +32,8 @@ export const BoardDataDocItem: React.FunctionComponent<IProps> = ({
             itemType="data_doc"
             title={doc.title}
             titleUrl={`/datadoc/${doc.id}/`}
+            authorUid={doc.owner_uid}
+            updatedAt={doc.updated_at}
         />
     ) : null;
 };
