@@ -26,6 +26,9 @@ export const DataTableHoverContent: React.FC<{
         () => tableColumns?.map((c) => c.name).join(', '),
         [tableColumns]
     );
+    const wrappedTableName = tableName
+        .replaceAll('_', '\u200B_')
+        .replaceAll('.', '\u200B.');
 
     const renderTableView = () => {
         const tagsDOM = <DataTableTags tableId={tableId} readonly mini />;
@@ -59,7 +62,7 @@ export const DataTableHoverContent: React.FC<{
     return (
         <div className="DataTableHoverContent">
             <Title className="mb4" size="smedium">
-                {tableName}
+                {wrappedTableName}
             </Title>
             <Loader
                 item={table}
