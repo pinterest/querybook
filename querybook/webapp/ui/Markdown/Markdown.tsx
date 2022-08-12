@@ -3,6 +3,7 @@ import React from 'react';
 
 import { Content } from 'ui/Content/Content';
 import { Link } from 'ui/Link/Link';
+import { Message } from 'ui/Message/Message';
 
 const MarkdownLink: React.FC<{ title: string; href: string }> = ({
     title,
@@ -19,6 +20,7 @@ const markdownOptions: MarkdownToJSX.Options = {
         a: {
             component: MarkdownLink,
         },
+        Message: { component: Message },
     },
 };
 
