@@ -20,12 +20,6 @@
         .board-header-title {
             cursor: pointer;
             overflow: hidden;
-
-            .Title {
-                color: var(--text-light);
-                text-transform: capitalize;
-                user-select: none;
-            }
         }
 
         .header-control-section {
