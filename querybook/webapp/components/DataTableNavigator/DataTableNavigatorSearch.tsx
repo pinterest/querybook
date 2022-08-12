@@ -159,7 +159,7 @@ const SearchFilterRow: React.FC<{ title: string; className?: string }> = ({
     className,
 }) => (
     <div className={`search-filter-row ${className ?? ''}`}>
-        <Title className="mr8" size="text">
+        <Title className="mr8 search-filter-title" size="text">
             {title}
         </Title>
         <div className="search-filter-row-item">{children}</div>
