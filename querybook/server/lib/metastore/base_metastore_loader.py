@@ -42,6 +42,9 @@ class DataTable(NamedTuple):
     type: str = None
     owner: str = None
 
+    # Table description
+    description: str = None
+
     # Expected in UTC seconds
     table_created_at: int = None
     table_updated_at: int = None
@@ -237,6 +240,7 @@ class BaseMetastoreLoader(metaclass=ABCMeta):
             ).id
             create_table_information(
                 data_table_id=table_id,
+                description=table.description,
                 latest_partitions=json.dumps((table.partitions or [])[-10:]),
                 earliest_partitions=json.dumps((table.partitions or [])[:10]),
                 hive_metastore_description=table.raw_description,

@@ -253,6 +253,7 @@ def update_table(id, golden=None, score=None, commit=True, session=None):
 @with_session
 def create_table_information(
     data_table_id=None,
+    description=None,
     latest_partitions=None,
     earliest_partitions=None,
     hive_metastore_description=None,
@@ -269,6 +270,13 @@ def create_table_information(
         earliest_partitions=earliest_partitions,
         hive_metastore_description=hive_metastore_description,
     )
+
+    # As parameter descripton is newly added, for backward compatible,
+    # only set the description explicitly when it's not None.
+    # Otherwise, for those existing metastores which dont sync description
+    # to querybook, it will wipe out the existing description.
+    if description is not None:
+        new_table_information.description = description
 
     if not table_information:
         session.add(new_table_information)
