@@ -1,4 +1,6 @@
+import json
 import random
+import socket
 import time
 from typing import List
 from thrift.transport.TTransport import TTransportException
@@ -39,6 +41,13 @@ class HiveMetastoreClient:
         self._write_client = None
         self._num_retries = num_retries
         self._retry_interval_seconds = retry_interval_seconds
+        self._tracing_meta = self._populate_tracing_meta()
+    
+    def _populate_tracing_meta(self):
+        meta = dict()
+        meta['agentName'] = 'querybook' 
+        meta['agentHost'] = socket.gethostname()
+        return meta
 
     def __del__(self):
         self._close_client(self._read_client)
@@ -92,12 +101,20 @@ class HiveMetastoreClient:
             return
         host, port = self._get_host_port_from_addr(self._get_current_rw_hostport())
         self._write_client = self._create_client(host, port)
+        try:
+            self._write_client.setMetaConf('pinterest.thrift.tracing.meta', json.dumps(self._tracing_meta))
+        except Exception as e:
+            _LOG.warning("Failed to send tracing meta to HMS: %s", e)
 
     def _try_to_connect_read(self):
         if self._read_client:
             return
         host, port = self._get_host_port_from_addr(self._get_current_ro_hostport())
         self._read_client = self._create_client(host, port)
+        try:
+            self._read_client.setMetaConf('pinterest.thrift.tracing.meta', json.dumps(self._tracing_meta))
+        except Exception as e:
+            _LOG.warning("Failed to send tracing meta to HMS: %s", e)
 
     def _perform_op(
         self,
