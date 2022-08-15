@@ -63,6 +63,10 @@ describe('getLimitedQuery', () => {
                 'SELECT * FROM table_1 ORDER BY id OFFSET 10 FETCH NEXT 10 ROWS ONLY;';
             expect(getLimitedQuery(query, 100, 'trino')).toBe(query);
         });
+        test('when running a select query with nested query', () => {
+            const query = `select * from (select * from table limit 5) as x limit 10`;
+            expect(getLimitedQuery(query, 100, 'trino')).toBe(query);
+        });
     });
     describe('limited', () => {
         test('when running a select query', () => {
@@ -122,6 +126,30 @@ SELECT field, count(1) FROM table3 GROUP BY field`;
                 .toBe(`SELECT * FROM table_1 limit 10;
 SELECT col1, col2, FROM table2 LIMIT 300;
 SELECT field, count(1) FROM table3 GROUP BY field limit 10;`);
+        });
+        test('when running a select query with nested query', () => {
+            const query = `select * from (select * from table limit 5) as x`;
+            expect(getLimitedQuery(query, 100)).toBe(`${query} limit 100;`);
+        });
+        test('when running a select query with wrapped where', () => {
+            const query = `select * from table where (field = 1 and field2 = 2)`;
+            expect(getLimitedQuery(query, 100)).toBe(`${query} limit 100;`);
+        });
+        test('when running a select query with two nested queries', () => {
+            const query = `select * from (select * from table limit 5) as x outer join (select * from table2 limit 5) as y on x.id = y.id`;
+            expect(getLimitedQuery(query, 100)).toBe(`${query} limit 100;`);
+        });
+        test('when running a select query with two nested queries', () => {
+            const query = `select * from (select * from table limit 5) as x outer join (select * from table2 limit 5) as y on x.id = y.id`;
+            expect(getLimitedQuery(query, 100)).toBe(`${query} limit 100;`);
+        });
+        test('when running a select query with two union queries', () => {
+            const query = `select id, name from table_a union all select id, name from table_b where (deleted = false and active = true)`;
+            expect(getLimitedQuery(query, 100)).toBe(`${query} limit 100;`);
+        });
+        test('when running a select query with two nested union queries', () => {
+            const query = `(select id, name from table_a limit 10) union all (select id, name from table_b where (deleted = false and active = true))`;
+            expect(getLimitedQuery(query, 100)).toBe(`${query} limit 100;`);
         });
     });
 });

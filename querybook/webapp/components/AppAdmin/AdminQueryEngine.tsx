@@ -406,7 +406,7 @@ export const AdminQueryEngine: React.FunctionComponent<IProps> = ({
                                     stacked
                                     name="feature_params.row_limit"
                                     type="number"
-                                    label="Row Limit"
+                                    label="(Experimental) Row Limit"
                                 />
                             </div>
                         </div>

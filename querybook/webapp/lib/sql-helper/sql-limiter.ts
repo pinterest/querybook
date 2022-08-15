@@ -2,6 +2,7 @@ import {
     containsKeyword,
     getStatementRanges,
     getStatementType,
+    IToken,
     simpleParse,
     tokenize,
 } from './sql-lexer';
@@ -32,12 +33,31 @@ export const getLimitedQuery = (
     const updatedQuery = statements
         .map((statement) => {
             const tokens = tokenize(statement, { language });
-            const parsedStatements = simpleParse(tokens)[0];
+            const parsedStatement = simpleParse(tokens)[0];
 
+            // Strip nested statements out of the query
+            const outerStatement: IToken[] = [];
+            let nesting = 0;
+            for (const token of parsedStatement) {
+                if (token.type === 'BRACKET') {
+                    if (token.text === '(' || token.text === '[') {
+                        nesting++;
+                    } else if (token.text === ')' || token.text === ']') {
+                        nesting--;
+                    }
+                } else if (nesting === 0) {
+                    outerStatement.push(token);
+                }
+            }
+
+            // Only check SELECT / UNION statements
+            // Ensure it has either a LIMIT or a FETCH clause
             if (
-                getStatementType(parsedStatements) === 'select' &&
-                !containsKeyword(parsedStatements, 'limit') &&
-                !containsKeyword(parsedStatements, 'fetch')
+                ['select', 'union'].includes(
+                    getStatementType(outerStatement)
+                ) &&
+                !containsKeyword(outerStatement, 'limit') &&
+                !containsKeyword(outerStatement, 'fetch')
             ) {
                 addedLimit = true;
                 return `${statement} limit ${rowLimit};`;
