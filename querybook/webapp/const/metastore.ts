@@ -39,6 +39,7 @@ export interface IDataTable {
     earliest_partitions: string;
     description: string | ContentState;
     hive_metastore_description: string;
+    partition_keys: string;
 
     schema: number;
     schema_id: number;

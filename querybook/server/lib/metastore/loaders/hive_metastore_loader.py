@@ -67,6 +67,9 @@ class HMSMetastoreLoader(BaseMetastoreLoader):
         total_size = parameters.get("totalSize")
         total_size = int(total_size) if total_size is not None else None
 
+        raw_description = ujson.pdumps(description, default=lambda o: o.__dict__)
+        partition_keys = get_partition_keys(raw_description)
+
         table = DataTable(
             name=description.tableName,
             type=description.tableType,
@@ -77,7 +80,8 @@ class HMSMetastoreLoader(BaseMetastoreLoader):
             data_size_bytes=total_size,
             location=sd.location,
             partitions=partitions,
-            raw_description=ujson.pdumps(description, default=lambda o: o.__dict__),
+            raw_description=raw_description,
+            partition_keys=partition_keys,
         )
 
         columns = list(
@@ -109,6 +113,20 @@ def get_hive_metastore_table_description(hmc, db_name, table_name):
         return description
     except NoSuchObjectException:
         return None
+
+
+def get_partition_keys(hive_metastore_description):
+    keys = []
+    try:
+        json_info = ujson.loads(hive_metastore_description)
+        if not json_info["partitionKeys"]:
+            return keys
+        partitionKeys = json_info["partitionKeys"]
+        for partitionKey in partitionKeys:
+            keys.append(partitionKey["name"])
+    except ValueError:
+        return keys
+    return keys
 
 
 def get_partition_filter_from_conditions(conditions: Dict[str, str] = None):

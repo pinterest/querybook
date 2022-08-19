@@ -256,6 +256,7 @@ def create_table_information(
     latest_partitions=None,
     earliest_partitions=None,
     hive_metastore_description=None,
+    partition_keys=[],
     commit=False,
     session=None,
 ):
@@ -263,11 +264,14 @@ def create_table_information(
         data_table_id, session=session
     )
 
+    partition_keys_string = "\n".join(partition_keys)
+
     new_table_information = DataTableInformation(
         data_table_id=data_table_id,
         latest_partitions=latest_partitions,
         earliest_partitions=earliest_partitions,
         hive_metastore_description=hive_metastore_description,
+        partition_keys=partition_keys_string,
     )
 
     if not table_information:
