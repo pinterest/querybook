@@ -140,7 +140,7 @@ export const DataTableViewOverview: React.FC<
         });
 
     const rawMetastoreInfoDOM = table.hive_metastore_description ? (
-        <pre>
+        <pre className="raw-metastore-info">
             <ShowMoreText
                 seeLess
                 length={200}
