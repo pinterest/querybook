@@ -24,6 +24,7 @@ class DataDoc(Base, CRUDMixin):
     public = sql.Column(sql.Boolean, default=True, nullable=False)
     # When archived, data doc will be hidden from everyone
     archived = sql.Column(sql.Boolean, default=False, nullable=False)
+    scheduled = sql.Column(sql.Boolean, default=True, nullable=False)
 
     # AKA creator
     owner_uid = sql.Column(sql.Integer, sql.ForeignKey("user.id", ondelete="CASCADE"))
@@ -54,6 +55,7 @@ class DataDoc(Base, CRUDMixin):
             "environment_id": self.environment_id,
             "public": self.public,
             "archived": self.archived,
+            "scheduled": self.scheduled,
             "owner_uid": self.owner_uid,
             "created_at": self.created_at,
             "updated_at": self.updated_at,

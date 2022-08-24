@@ -69,6 +69,7 @@ export const DataDocResource = {
         fields: Partial<{
             public: boolean;
             archived: boolean;
+            scheduled: boolean;
             owner_uid: number;
             title: string;
             meta: Record<any, any>;

@@ -43,8 +43,18 @@ export const DataDocGridItem: React.FunctionComponent<IDataDocGridItemProps> =
             [onRemove, dataDoc]
         );
 
-        const { title = '', public: publicDataDoc } = dataDoc;
-        const privateIcon = !publicDataDoc ? 'Lock' : null;
+        const {
+            title = '',
+            public: publicDataDoc,
+            scheduled: isshceduled,
+        } = dataDoc;
+        const icons = [];
+        if (!publicDataDoc) {
+            icons.push('Lock');
+        }
+        if (isshceduled) {
+            icons.push('Clock');
+        }
 
         return (
             <div ref={drag} className="DataDocGridItem">
@@ -54,7 +64,7 @@ export const DataDocGridItem: React.FunctionComponent<IDataDocGridItemProps> =
                             <ListLink
                                 className={className}
                                 to={url}
-                                icon={privateIcon}
+                                icons={icons}
                                 title={title}
                                 isRow
                             >

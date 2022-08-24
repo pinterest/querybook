@@ -119,6 +119,7 @@ def create_demo_data_doc(environment_id, engine_id, uid, session=None):
     data_doc_id = data_doc_logic.create_data_doc(
         public=True,
         archived=False,
+        scheduled=False,
         environment_id=environment_id,
         owner_uid=uid,
         title="World Happiness Report (2015-2019)",

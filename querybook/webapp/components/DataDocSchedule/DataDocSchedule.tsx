@@ -7,9 +7,11 @@ import { DataDocScheduleResource } from 'resource/dataDoc';
 import { Loading } from 'ui/Loading/Loading';
 import { ErrorMessage } from 'ui/Message/ErrorMessage';
 import { EmptyText } from 'ui/StyledText/StyledText';
+import { useDispatch } from 'react-redux';
 
 import { DataDocScheduleForm } from './DataDocScheduleForm';
 import { DataDocScheduleRunLogs } from './DataDocScheduleRunLogs';
+import { updateDataDocField } from 'redux/dataDoc/action';
 
 interface IDataDocScheduleFormWrapperProps {
     docId: number;
@@ -27,6 +29,7 @@ export const DataDocScheduleFormWrapper: React.FunctionComponent<
     const { isLoading, isError, data, forceFetch } = useResource(
         React.useCallback(() => DataDocScheduleResource.get(docId), [docId])
     );
+    const dispatch = useDispatch();
 
     if (isLoading) {
         return <Loading />;
@@ -45,15 +48,19 @@ export const DataDocScheduleFormWrapper: React.FunctionComponent<
                 enabled={data?.enabled ?? false}
                 kwargs={data?.kwargs ?? {}}
                 onCreate={(cron, kwargs) =>
-                    DataDocScheduleResource.create(docId, cron, kwargs).then(
-                        () => {
+                    DataDocScheduleResource.create(docId, cron, kwargs)
+                        .then(() => {
                             toast.success('Schedule Created!');
                             forceFetch();
                             if (onSave) {
                                 onSave();
                             }
-                        }
-                    )
+                        })
+                        .then(() => {
+                            dispatch(
+                                updateDataDocField(docId, 'scheduled', true)
+                            );
+                        })
                 }
                 onUpdate={(cron, enabled, kwargs) =>
                     DataDocScheduleResource.update(docId, {
@@ -71,12 +78,22 @@ export const DataDocScheduleFormWrapper: React.FunctionComponent<
                 onDelete={
                     data
                         ? () =>
-                              DataDocScheduleResource.delete(docId).then(() => {
-                                  forceFetch();
-                                  if (onDelete) {
-                                      onDelete();
-                                  }
-                              })
+                              DataDocScheduleResource.delete(docId)
+                                  .then(() => {
+                                      forceFetch();
+                                      if (onDelete) {
+                                          onDelete();
+                                      }
+                                  })
+                                  .then(() => {
+                                      dispatch(
+                                          updateDataDocField(
+                                              docId,
+                                              'scheduled',
+                                              false
+                                          )
+                                      );
+                                  })
                         : null
                 }
                 onRun={

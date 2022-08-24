@@ -91,6 +91,7 @@ def create_data_doc(environment_id, cells=[], title=None, meta={}):
             owner_uid=current_user.id,
             cells=cells,
             public=environment.shareable,
+            scheduled=False,
             archived=False,
             title=title,
             meta=meta,
@@ -119,6 +120,7 @@ def create_data_doc_from_execution(
             execution_id=execution_id,
             public=environment.shareable,
             archived=False,
+            scheduled=False,
             title=title,
             meta=meta,
             session=session,
@@ -281,6 +283,7 @@ def create_datadoc_schedule(
         assert_can_write(id, session=session)
         data_doc = logic.get_data_doc_by_id(id, session=session)
         verify_environment_permission([data_doc.environment_id])
+        logic.update_data_doc(id=id, scheduled=True, session=session)
 
         return schedule_logic.create_task_schedule(
             schedule_name,
@@ -335,6 +338,7 @@ def delete_datadoc_schedule(id):
     with DBSession() as session:
         assert_can_write(id, session=session)
         verify_data_doc_permission(id, session=session)
+        logic.update_data_doc(id=id, scheduled=False, session=session)
 
         schedule = schedule_logic.get_task_schedule_by_name(
             schedule_name, session=session

@@ -44,6 +44,7 @@ def create_data_doc(
     cells=[],
     public=None,
     archived=None,
+    scheduled=None,
     title=None,
     meta=None,
     commit=True,
@@ -52,6 +53,7 @@ def create_data_doc(
     data_doc = DataDoc(
         public=public,
         archived=archived,
+        scheduled=scheduled,
         owner_uid=owner_uid,
         environment_id=environment_id,
         title=title,
@@ -95,6 +97,7 @@ def create_data_doc_from_execution(
     execution_id,
     public=None,
     archived=None,
+    scheduled=None,
     title=None,
     meta=None,
     commit=True,
@@ -109,6 +112,7 @@ def create_data_doc_from_execution(
         public=public,
         archived=archived,
         title=title,
+        scheduled=scheduled,
         meta=meta,
         commit=False,
         session=session,
@@ -141,7 +145,7 @@ def update_data_doc(id, commit=True, session=None, **fields):
     updated = update_model_fields(
         data_doc,
         skip_if_value_none=True,
-        field_names=["public", "archived", "owner_uid", "title", "meta"],
+        field_names=["public", "archived", "owner_uid", "title", "meta", "scheduled"],
         **fields,
     )
 
@@ -209,6 +213,7 @@ def clone_data_doc(id, owner_uid, commit=True, session=None):
         environment_id=data_doc.environment_id,
         public=data_doc.public,
         archived=False,
+        scheduled=data_doc.scheduled,
         owner_uid=owner_uid,
         title=data_doc.title,
         meta=data_doc.meta,
