@@ -10,9 +10,7 @@ from models.schedule import (
     TaskSchedule,
     TaskRunRecord,
 )
-from models.datadoc import DataDoc
-
-DATADOC_SCHEDULE_PREFIX = "run_data_doc_"
+from models.datadoc import DATADOC_SCHEDULE_PREFIX, DataDoc
 
 
 @with_session

@@ -36,7 +36,7 @@ export const _ListLink = (args) => {
 };
 
 _ListLink.args = {
-    icon: 'zap',
+    icons: ['zap'],
     isRow: false,
 };
 

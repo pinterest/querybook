@@ -3,6 +3,7 @@ from datetime import datetime, timedelta
 from enum import Enum
 from typing import Optional
 from app.flask_app import celery
+from models.datadoc import DATADOC_SCHEDULE_PREFIX
 
 from models.schedule import (
     TaskSchedule,
@@ -15,7 +16,6 @@ from const.schedule import TaskRunStatus
 from lib.notify.utils import notify_user
 from lib.scheduled_datadoc.legacy import convert_if_legacy_datadoc_schedule
 from logic.schedule import (
-    DATADOC_SCHEDULE_PREFIX,
     update_task_schedule,
     with_task_logging,
     get_task_run_records,
