@@ -1,10 +1,12 @@
 import { useFormikContext } from 'formik';
-import React, { useMemo } from 'react';
+import React, { useCallback, useMemo } from 'react';
 import { useSelector } from 'react-redux';
 
+import { useResource } from 'hooks/useResource';
 import { getHumanReadableByteSize } from 'lib/utils/number';
 import { queryEngineByIdEnvSelector } from 'redux/queryEngine/selector';
 import { IStoreState } from 'redux/store/types';
+import { TableResource } from 'resource/table';
 import { Message } from 'ui/Message/Message';
 import { StyledText } from 'ui/StyledText/StyledText';
 import { Tag, TagGroup } from 'ui/Tag/Tag';
@@ -117,8 +119,68 @@ export const TableUploaderConfirmForm: React.FC = () => {
                     Confirm Upload Details
                 </StyledText>
             </div>
+            <TableUploaderConfirmWarnings formValues={values} />
             {renderSourceInfoDOM()}
             {renderTableSpecDOM()}
         </div>
     );
+};
+
+const TableUploaderConfirmWarnings: React.FC<{
+    formValues: ITableUploadFormikForm;
+}> = ({ formValues }) => {
+    const {
+        metastore_id: metastoreId,
+        table_config: {
+            schema_name: schemaName,
+            table_name: tableName,
+            if_exists: ifExists,
+        },
+    } = formValues;
+
+    const { data: schemaAndTableExists, isLoading } = useResource(
+        useCallback(
+            () =>
+                TableResource.checkIfExists(metastoreId, schemaName, tableName),
+            [metastoreId, schemaName, tableName]
+        )
+    );
+
+    if (isLoading) {
+        return null;
+    }
+
+    const [schemaExists, tableExists] = schemaAndTableExists;
+    let warningDOM: React.ReactNode = null;
+
+    if (!schemaExists) {
+        warningDOM = (
+            <Message type="error">
+                Failed to find schema {schemaName} in metastore. The create
+                table will fail if the schema does not exist. Please run{' '}
+                <i>create database {schemaName}</i> to create it (or any
+                applicable query for the DB you are using).
+            </Message>
+        );
+    } else if (tableExists) {
+        if (ifExists === 'fail') {
+            warningDOM = (
+                <Message type="error">
+                    The table {schemaName}.{tableName} was detected in
+                    metastore. Since the if exists policy is "fail". The table
+                    upload may not work.
+                </Message>
+            );
+        } else if (ifExists === 'replace') {
+            warningDOM = (
+                <Message type="warning">
+                    The table {schemaName}.{tableName} was detected in
+                    metastore. This table will be replaced by the new table that
+                    is being uploaded.
+                </Message>
+            );
+        }
+    }
+
+    return <div>{warningDOM}</div>;
 };

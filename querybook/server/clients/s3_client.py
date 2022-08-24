@@ -3,6 +3,7 @@ import boto3
 import botocore
 from botocore.client import Config
 
+
 from env import QuerybookSettings
 from lib.utils.utf8 import split_by_last_invalid_utf8_char
 

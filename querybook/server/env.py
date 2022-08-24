@@ -120,6 +120,3 @@ class QuerybookSettings(object):
 
     # Table Upload (Experimental)
     TABLE_MAX_UPLOAD_SIZE = get_env_config("TABLE_MAX_UPLOAD_SIZE")
-    TABLE_UPLOAD_S3_PATH = get_env_config("TABLE_UPLOAD_S3_PATH")
-    if TABLE_UPLOAD_S3_PATH and not TABLE_UPLOAD_S3_PATH.endswith("/"):
-        TABLE_UPLOAD_S3_PATH += "/"

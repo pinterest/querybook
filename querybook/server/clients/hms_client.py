@@ -175,6 +175,18 @@ class HiveMetastoreClient:
         _LOG.info("Get all databases from hive metastore")
         return self._perform_read_op(lambda: self._read_client.get_all_databases())
 
+    def get_database(self, db_name: str):
+        """Get database/schema info
+
+        Args:
+            db_name (str): database name
+
+        Returns:
+            DataBase: Object with the following type: https://github.com/apache/hive/blob/master/standalone-metastore/metastore-common/src/main/thrift/hive_metastore.thrift#L404
+        """
+        _LOG.info("Get db info %s", db_name)
+        return self._perform_read_op(lambda: self._read_client.get_database(db_name))
+
     def get_all_tables(self, db_name):
         """
         Args:

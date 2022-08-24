@@ -131,6 +131,18 @@ export const TableResource = {
             metastore_id: metastoreId,
         }),
 
+    checkIfExists: (
+        metastoreId: number,
+        schemaName: string,
+        tableName: string
+    ) =>
+        ds.fetch<[schemaExists: boolean, tableExists: boolean]>(
+            `/table_name/${schemaName}/${tableName}/exists/`,
+            {
+                metastore_id: metastoreId,
+            }
+        ),
+
     update: (tableId: number, updatedParams: IUpdateTableParams) => {
         const params: Partial<IDataTable> = {};
         if (updatedParams.description != null) {

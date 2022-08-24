@@ -98,6 +98,38 @@ def get_table_by_name(
     return table_dict
 
 
+@register("/table_name/<schema_name>/<table_name>/exists/", methods=["GET"])
+def get_if_schema_or_table_exists(
+    metastore_id, schema_name, table_name
+) -> Tuple[bool, bool]:
+    """
+    Check if the table name / schema name exists in cache, then check the actual metastore
+    if they don't exist
+
+    Returns [schema_exists, table_exists]
+    """
+    verify_metastore_permission(metastore_id)
+    with DataTableFinder(metastore_id) as t_finder:
+        table_exists_in_cache = t_finder.get_table_by_name(schema_name, table_name)
+        if table_exists_in_cache:
+            return [True, True]
+
+        metastore_loader = get_metastore_loader(metastore_id)
+        table_exists = metastore_loader.check_if_table_exists(schema_name, table_name)
+        if table_exists:
+            return [True, True]
+
+        schema_exists_in_cache = t_finder.get_schema_by_name(schema_name)
+        if schema_exists_in_cache:
+            return [True, False]
+
+        schema_exists = metastore_loader.check_if_schema_exists(schema_name)
+        if schema_exists:
+            return [True, False]
+
+    return [False, False]
+
+
 @register("/data_job_metadata/<int:data_job_metadata_id>/", methods=["GET"])
 def get_data_job_metadata(data_job_metadata_id):
     with DBSession() as session:

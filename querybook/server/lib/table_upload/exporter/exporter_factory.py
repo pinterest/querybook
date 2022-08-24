@@ -1,27 +1,28 @@
-from typing import Dict, List
+from typing import Dict
 
 from app.db import with_session
 from logic.admin import get_query_engine_by_id
-from lib.utils.import_helper import import_modules
+from lib.utils.import_helper import import_module_with_default
 
 from .base_exporter import BaseTableUploadExporter
 
-ALL_TABLE_UPLOAD_EXPORTERS: List[BaseTableUploadExporter] = import_modules(
-    [
-        ("lib.table_upload.exporter.s3_exporter", "S3CSVExporter"),
-        ("lib.table_upload.exporter.s3_exporter", "S3ParquetExporter"),
-        ("lib.table_upload.exporter.sqlalchemy_exporter", "SqlalchemyExporter"),
-    ]
+ALL_PLUGIN_EXPORTERS: Dict[str, BaseTableUploadExporter] = import_module_with_default(
+    "table_uploader_plugin", "ALL_PLUGIN_TABLE_UPLOAD_EXPORTERS", default={}
 )
-ALL_TABLE_UPLOAD_EXPORTER_BY_NAME: Dict[str, BaseTableUploadExporter] = {
-    exporter_cls.__name__: exporter_cls for exporter_cls in ALL_TABLE_UPLOAD_EXPORTERS
-}
+
+ALL_TABLE_UPLOAD_EXPORTER_BY_NAME: Dict[str, BaseTableUploadExporter] = {}
+
+SqlalchemyExporter = import_module_with_default(
+    "lib.table_upload.exporter.sqlalchemy_exporter", "SqlalchemyExporter", default=None
+)
+if SqlalchemyExporter:
+    ALL_TABLE_UPLOAD_EXPORTER_BY_NAME["SqlalchemyExporter"] = SqlalchemyExporter()
+
+ALL_TABLE_UPLOAD_EXPORTER_BY_NAME |= ALL_PLUGIN_EXPORTERS
 
 
 @with_session
-def get_exporter(
-    engine_id, uid, table_config, importer, session=None
-) -> BaseTableUploadExporter:
+def get_table_upload_exporter(engine_id, session=None) -> BaseTableUploadExporter:
     query_engine = get_query_engine_by_id(engine_id, session=session)
     if not query_engine:
         raise Exception(f"Invalid query engine id {engine_id}")
@@ -34,8 +35,7 @@ def get_exporter(
     if upload_exporter_name not in ALL_TABLE_UPLOAD_EXPORTER_BY_NAME:
         raise Exception(f"Invalid table exporter configure {upload_exporter_name}")
 
-    exporter_cls: BaseTableUploadExporter = ALL_TABLE_UPLOAD_EXPORTER_BY_NAME[
+    exporter: BaseTableUploadExporter = ALL_TABLE_UPLOAD_EXPORTER_BY_NAME[
         upload_exporter_name
     ]
-    exporter = exporter_cls(uid, engine_id, importer, table_config)
     return exporter

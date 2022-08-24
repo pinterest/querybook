@@ -31,7 +31,9 @@ class HiveCreateTable(BaseCreateTable):
         return ret
 
     def _get_create_prefix(self) -> str:
-        return f"CREATE EXTERNAL TABLE {self._table_name}"
+        if self._file_location is not None:
+            return f"CREATE EXTERNAL TABLE {self._table_name}"
+        return f"CREATE TABLE {self._table_name}"
 
     def _get_extra_properties(self) -> str:
         rows = []
@@ -40,13 +42,15 @@ class HiveCreateTable(BaseCreateTable):
                 "ROW FORMAT SERDE 'org.apache.hadoop.hive.serde2.OpenCSVSerde'",
                 "FIELDS TERMINATED BY ','",
                 "STORED AS TEXTFILE",
-                f"LOCATION '{self._file_location}'"
                 'TBLPROPERTIES ("skip.header.line.count"="1")',
             ]
         elif self._format == "PARQUET":
-            rows += ["STORED AS PARQUET", f"LOCATION '{self._file_location}'"]
+            rows += ["STORED AS PARQUET"]
         else:
             raise ValueError(f"Unsupported file type {self._format}")
+
+        if self._file_location is not None:
+            rows += [f"LOCATION '{self._file_location}'"]
 
         return "\n".join(rows)
 

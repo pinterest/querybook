@@ -65,6 +65,34 @@ format = 'PARQUET'
 )""",
         )
 
+    def test_create_managed_parquet_table(self):
+        create_table = PrestoCreateTable(
+            schema_name="foo",
+            table_name="bar",
+            column_name_types=[
+                ("id", UploadTableColumnType.INTEGER),
+                ("col1", "array"),
+                ("col2", UploadTableColumnType.FLOAT),
+                ("col3", UploadTableColumnType.STRING),
+            ],
+            file_location=None,
+            file_format="PARQUET",
+        )
+
+        self.assertEqual(
+            create_table.get_create_query(),
+            """CREATE TABLE foo.bar
+(
+"id" BIGINT,
+"col1" array,
+"col2" DOUBLE,
+"col3" VARCHAR
+)
+WITH (
+format = 'PARQUET'
+)""",
+        )
+
     def test_create_unknown_format(self):
         create_table = PrestoCreateTable(
             schema_name="foo",
