@@ -253,6 +253,7 @@ def update_table(id, golden=None, score=None, commit=True, session=None):
 @with_session
 def create_table_information(
     data_table_id=None,
+    description=None,
     latest_partitions=None,
     earliest_partitions=None,
     hive_metastore_description=None,
@@ -269,6 +270,13 @@ def create_table_information(
         earliest_partitions=earliest_partitions,
         hive_metastore_description=hive_metastore_description,
     )
+
+    # The reason that we dont add description direclty in
+    # DataTableInformation() above is because it's optional.
+    # Otherwise, for those existing metastores which dont sync description
+    # to querybook, it will wipe out the existing description.
+    if description is not None:
+        new_table_information.description = description
 
     if not table_information:
         session.add(new_table_information)
@@ -419,7 +427,13 @@ def get_all_column_name_by_table_id(table_id, session=None):
 
 @with_session
 def create_column(
-    name=None, type=None, comment=None, table_id=None, commit=True, session=None
+    name=None,
+    type=None,
+    comment=None,
+    description=None,
+    table_id=None,
+    commit=True,
+    session=None,
 ):
     old_table_column = get_column_by_name(name, table_id, session=session)
     if old_table_column:
@@ -431,6 +445,9 @@ def create_column(
         comment=comment,
         table_id=table_id,
     )
+
+    if description is not None:
+        new_table_column.description = description
 
     if not old_table_column:
         session.add(new_table_column)
