@@ -7,13 +7,13 @@ import { AllLucideIconNames } from 'ui/Icon/LucideIcons';
 export interface IColumnIconProps {
     name?: AllLucideIconNames;
     tooltip?: string;
-    hollow?: boolean;
+    fill?: boolean;
 }
 
 export const ColumnIcon: React.FunctionComponent<IColumnIconProps> = ({
     name,
     tooltip,
-    hollow,
+    fill,
 }) => {
     const spanProps = {
         className: clsx({
@@ -27,7 +27,7 @@ export const ColumnIcon: React.FunctionComponent<IColumnIconProps> = ({
 
     return (
         <span {...spanProps}>
-            <Icon name={name} size={16} fill={!hollow} />
+            <Icon name={name} size={16} fill={fill} />
         </span>
     );
 };

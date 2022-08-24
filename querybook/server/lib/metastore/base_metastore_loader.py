@@ -59,7 +59,7 @@ class DataTable(NamedTuple):
     raw_description: str = None
 
     # Arrays of partition keys
-    partition_keys: List = []
+    partition_keys: List[str] = []
 
 
 class DataColumn(NamedTuple):

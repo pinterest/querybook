@@ -10,7 +10,7 @@ import { Loader } from 'ui/Loader/Loader';
 
 import { PanelSection, SubPanelSection } from './PanelSection';
 import { AllLucideIconNames } from 'ui/Icon/LucideIcons';
-import { ColumnIcon } from 'ui/ColumnIcon/ColumnIcon';
+import { ColumnIcon } from './ColumnIcon';
 
 interface ITablePanelViewProps {
     tableId: number;
@@ -30,9 +30,7 @@ export const TablePanelView: React.FunctionComponent<ITablePanelViewProps> = ({
     const { table, schema, tableColumns, getTable } = useDataTable(tableId);
 
     const renderPanelView = () => {
-        const partitionKeyList = table.partition_keys
-            ? table.partition_keys.split('\n')
-            : [];
+        const partitionKeyList = table.column_info?.partition_keys ?? [];
 
         const overviewSection = (
             <PanelSection title="table">
@@ -173,7 +171,7 @@ const ColumnRow: React.FunctionComponent<{
                 <ColumnIcon
                     name={icon}
                     tooltip={'Partitioned Column'}
-                    hollow={true}
+                    fill={false}
                 />
             )}
         </span>
