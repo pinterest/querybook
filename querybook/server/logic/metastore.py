@@ -271,10 +271,6 @@ def create_table_information(
         hive_metastore_description=hive_metastore_description,
     )
 
-    # As parameter descripton is newly added, for backward compatible,
-    # only set the description explicitly when it's not None.
-    # Otherwise, for those existing metastores which dont sync description
-    # to querybook, it will wipe out the existing description.
     if description is not None:
         new_table_information.description = description
 
