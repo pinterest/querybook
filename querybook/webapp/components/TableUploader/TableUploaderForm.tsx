@@ -35,7 +35,7 @@ export const TableUploaderForm: React.FC<ITableUploaderFormProps> = ({
             table_config: {
                 // Table creation configs
                 engine_id: null,
-                if_exists: 'replace',
+                if_exists: 'fail',
                 table_name: '',
                 schema_name: '',
                 column_name_types: [],

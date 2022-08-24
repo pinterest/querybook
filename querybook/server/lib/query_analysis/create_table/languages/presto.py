@@ -36,7 +36,9 @@ class PrestoCreateTable(BaseCreateTable):
         return f"CREATE TABLE {self._table_name}"
 
     def _get_extra_properties(self) -> str:
-        properties = [f"external_location='{self._file_location}'"]
+        properties = list(self._table_properties)
+        if self._file_location is not None:
+            properties += [f"external_location='{self._file_location}'"]
 
         if self._format == "CSV":
             properties += [

@@ -11,15 +11,10 @@ from lib.metastore import get_metastore_loader
 class BaseTableUploadExporter(ABC):
     def __init__(
         self,
-        uid: int,
-        engine_id: int,
-        importer: BaseTableUploadImporter,
-        table_config: Dict,
+        # optional, used for custom upload behavior
+        exporter_config: Dict = {},
     ):
-        self._uid = uid
-        self._engine_id = engine_id
-        self._importer = importer
-        self._table_config = table_config
+        self._exporter_config = exporter_config
 
     @abstractmethod
     def _upload(self):
@@ -63,6 +58,21 @@ class BaseTableUploadExporter(ABC):
             return loader.check_if_table_exists(schema_name, table_name)
         return False
 
-    def upload(self) -> Optional[int]:
+    def upload(
+        self,
+        uid: int,
+        engine_id: int,
+        importer: BaseTableUploadImporter,
+        table_config: Dict,
+    ) -> Optional[int]:
+        # Who is doing the table upload
+        self._uid = uid
+        # The query engine that will be used for upload
+        self._engine_id = engine_id
+        # the importer holds the data being uploaded
+        self._importer = importer
+        # the table config contains informations like name and types
+        self._table_config = table_config
+
         self._upload()
         return self._sync_table_from_metastore()

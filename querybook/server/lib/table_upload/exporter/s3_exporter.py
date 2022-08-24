@@ -13,16 +13,29 @@ from clients.s3_client import MultiPartUploader
 from lib.utils.execute_query import ExecuteQuery
 from lib.table_upload.common import ImporterResourceType
 from logic.admin import get_query_engine_by_id
+from lib.metastore import get_metastore_loader
 from lib.query_analysis.create_table.create_table import (
-    get_external_create_table_statement,
+    get_create_table_statement,
 )
 from lib.table_upload.exporter.utils import update_pandas_df_column_name_type
-from env import QuerybookSettings
 from lib.logger import get_logger
+
 from .base_exporter import BaseTableUploadExporter
 
-S3_OBJECT_KEY_NOT_ALLOWED_CHAR = r"[^\w-]+"
 LOG = get_logger(__file__)
+
+
+"""
+    The S3BaseExporter (and its dervied child classes) support the following options
+    - s3_path (str): if supplied, will use it as the root path for upload. Must be the full s3 path like s3://bucket/...
+    - use_schema_location (bool):
+        if true, the upload root path is inferred by locationUri specified in hms
+        to use this option, the engine must be connected to a metastore that uses
+        HMSMetastoreLoader (or its derived class)
+    - table_properties (List[str]): list of table properties passed, this must be query engine specific.
+        Checkout here for examples in SparkSQL: https://spark.apache.org/docs/latest/sql-ref-syntax-ddl-create-table-hiveformat.html#examples
+        For Trino/Presto, it would be the WITH statement: https://trino.io/docs/current/sql/create-table.html
+"""
 
 
 class S3BaseExporter(BaseTableUploadExporter):
@@ -43,15 +56,46 @@ class S3BaseExporter(BaseTableUploadExporter):
         """
         raise NotImplementedError()
 
-    def destination_s3_path(self) -> str:
-        return self.destination_s3_folder() + "/" + "0000"
+    @with_session
+    def destination_s3_path(self, session=None) -> str:
+        return self.destination_s3_folder(session=session) + "/" + "0000"
 
-    def destination_s3_folder(self) -> str:
-        schema_name, table_name = self._fq_table_name
-        object_key = re.sub(
-            S3_OBJECT_KEY_NOT_ALLOWED_CHAR, "", f"{schema_name}/{table_name}"
-        )
-        return QuerybookSettings.TABLE_UPLOAD_S3_PATH + object_key
+    @with_session
+    def destination_s3_root(self, session=None) -> str:
+        """Generate the bucket name + prefix before
+           the table specific folder
+
+        Returns:
+            str: s3 path consisting bucket + prefix + schema name
+        """
+        if "s3_path" in self._exporter_config:
+            schema_name, _ = self._fq_table_name
+            s3_path: str = self._exporter_config["s3_path"]
+
+            return sanitize_s3_url_with_trailing_slash(s3_path) + schema_name + "/"
+
+        if self._exporter_config.get("use_schema_location", False):
+            # Defer import since this is only needed for this option
+            from lib.metastore.loaders.hive_metastore_loader import HMSMetastoreLoader
+
+            query_engine = get_query_engine_by_id(self._engine_id, session=session)
+            metastore: HMSMetastoreLoader = get_metastore_loader(
+                query_engine.metastore_id, session=session
+            )
+            if metastore is None or not isinstance(metastore, HMSMetastoreLoader):
+                raise Exception("Invalid metastore to use use_schema_location option")
+            schema_location_uri = metastore.hmc.get_database(
+                self._table_config["schema_name"]
+            ).locationUri
+
+            return sanitize_s3_url_with_trailing_slash(schema_location_uri)
+
+        raise Exception("Must specify s3_path or set use_schema_location=True")
+
+    @with_session
+    def destination_s3_folder(self, session=None) -> str:
+        _, table_name = self._fq_table_name
+        return self.destination_s3_root(session=session) + table_name
 
     @with_session
     def _handle_if_table_exists(self, session=None):
@@ -75,13 +119,16 @@ class S3BaseExporter(BaseTableUploadExporter):
     def _get_table_create_query(self, session=None) -> str:
         query_engine = get_query_engine_by_id(self._engine_id, session=session)
         schema_name, table_name = self._fq_table_name
-        return get_external_create_table_statement(
-            query_engine.language,
-            table_name,
-            self._table_config["column_name_types"],
-            self.destination_s3_folder(),
-            schema_name,
-            self.UPLOAD_FILE_TYPE(),
+        is_external = not self._exporter_config.get("use_schema_location", False)
+        return get_create_table_statement(
+            language=query_engine.language,
+            table_name=table_name,
+            schema_name=schema_name,
+            column_name_types=self._table_config["column_name_types"],
+            # if use schema location, then no table location is needed for creation
+            file_location=self.destination_s3_folder() if is_external else None,
+            file_format=self.UPLOAD_FILE_TYPE(),
+            table_properties=self._exporter_config.get("table_properties", []),
         )
 
     @with_session
@@ -98,10 +145,13 @@ class S3BaseExporter(BaseTableUploadExporter):
     @with_session
     def _upload(self, session=None) -> Tuple[str, str]:
         self._handle_if_table_exists(session=session)
-        self._upload_to_s3()
 
         create_table_query = self._get_table_create_query(session=session)
+
+        # Run the create table query first, since table creation
+        # does not require the data being there
         self._run_query(create_table_query, session=session)
+        self._upload_to_s3()
         return self._fq_table_name
 
 
@@ -152,3 +202,15 @@ class S3ParquetExporter(S3BaseExporter):
         with tempfile.NamedTemporaryFile(suffix=".parquet") as f:
             df.to_parquet(f.name, index=False, compression="zstd")
             S3FileCopier.from_local_file(f).copy_to(self.destination_s3_path())
+
+
+def sanitize_s3_url_with_trailing_slash(uri: str) -> str:
+    """
+    This function does two things:
+    1. if the uri is s3a:// or s3n://, change it to s3://
+    2. if there is no trailing slash, add it
+    """
+    uri = re.sub(r"^s3[a-z]:", "s3:", uri)
+    if not uri.endswith("/"):
+        uri += "/"
+    return uri

@@ -153,6 +153,18 @@ class BaseMetastoreLoader(metaclass=ABCMeta):
             # trying to fetch all tables under schema
             return False
 
+    def check_if_schema_exists(self, schema_name: str) -> bool:
+        """Similar to above, but only checks if schema exists in DB
+
+        Args:
+            schema_name (str): Name of schema
+
+        Returns:
+            bool: True if exists
+        """
+        schema_names = self.get_all_schema_names()
+        return schema_name in schema_names
+
     def load(self):
         schema_tables = []
         schema_names = set(self._get_all_filtered_schema_names())
