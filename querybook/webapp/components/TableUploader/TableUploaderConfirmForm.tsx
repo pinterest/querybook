@@ -7,6 +7,7 @@ import { getHumanReadableByteSize } from 'lib/utils/number';
 import { queryEngineByIdEnvSelector } from 'redux/queryEngine/selector';
 import { IStoreState } from 'redux/store/types';
 import { TableResource } from 'resource/table';
+import { Icon } from 'ui/Icon/Icon';
 import { Message } from 'ui/Message/Message';
 import { StyledText } from 'ui/StyledText/StyledText';
 import { Tag, TagGroup } from 'ui/Tag/Tag';
@@ -155,28 +156,59 @@ const TableUploaderConfirmWarnings: React.FC<{
 
     if (!schemaExists) {
         warningDOM = (
-            <Message type="error">
-                Failed to find schema {schemaName} in metastore. The create
-                table will fail if the schema does not exist. Please run{' '}
-                <i>create database {schemaName}</i> to create it (or any
+            <Message
+                type="error"
+                title={
+                    <span className="flex-row">
+                        <Icon name="AlertCircle" size={20} className="mr8" />
+                        Failed to find schema {schemaName} in metastore
+                    </span>
+                }
+            >
+                The create table will fail if the schema does not exist. Please
+                run <i>create database {schemaName}</i> to create it (or any
                 applicable query for the DB you are using).
             </Message>
         );
     } else if (tableExists) {
         if (ifExists === 'fail') {
             warningDOM = (
-                <Message type="error">
-                    The table {schemaName}.{tableName} was detected in
-                    metastore. Since the if exists policy is "fail". The table
-                    upload may not work.
+                <Message
+                    type="error"
+                    title={
+                        <span className="flex-row">
+                            <Icon
+                                name="AlertCircle"
+                                size={20}
+                                className="mr8"
+                            />
+                            The table {schemaName}.{tableName} was detected in
+                            metastore
+                        </span>
+                    }
+                >
+                    Since the if exists policy is "fail". The table upload may
+                    not work.
                 </Message>
             );
         } else if (ifExists === 'replace') {
             warningDOM = (
-                <Message type="warning">
-                    The table {schemaName}.{tableName} was detected in
-                    metastore. This table will be replaced by the new table that
-                    is being uploaded.
+                <Message
+                    type="warning"
+                    title={
+                        <span className="flex-row">
+                            <Icon
+                                name="AlertOctagon"
+                                size={20}
+                                className="mr8"
+                            />
+                            The table {schemaName}.{tableName} was detected in
+                            metastore
+                        </span>
+                    }
+                >
+                    The current table will be dropped and replaced by the new
+                    table that is being uploaded.
                 </Message>
             );
         }
