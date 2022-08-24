@@ -99,7 +99,7 @@ def get_table_by_name(
 
 
 @register("/table_name/<schema_name>/<table_name>/exists/", methods=["GET"])
-def get_if_schema_or_table_exists(
+def get_if_schema_and_table_exists(
     metastore_id, schema_name, table_name
 ) -> Tuple[bool, bool]:
     """

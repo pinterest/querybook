@@ -68,9 +68,8 @@ class S3BaseExporter(BaseTableUploadExporter):
         if "s3_path" in self._exporter_config:
             schema_name, _ = self._fq_table_name
             s3_path: str = self._exporter_config["s3_path"]
-            if not s3_path.endswith("/"):
-                s3_path += "/"
-            return s3_path + schema_name + "/"
+
+            return add_trailing_slash_if_not_exists(s3_path) + schema_name + "/"
 
         if self._exporter_config.get("use_schema_location", False):
             # Defer import since this is only needed for this option
@@ -87,12 +86,9 @@ class S3BaseExporter(BaseTableUploadExporter):
             ).locationUri
 
             # if the url is s3a or s3n, replace with s3
-            sanitized_schema_location_uri = re.sub(
-                r"^s3[a-z]:", "s3:", schema_location_uri
+            sanitized_schema_location_uri = add_trailing_slash_if_not_exists(
+                re.sub(r"^s3[a-z]:", "s3:", schema_location_uri)
             )
-
-            if not sanitized_schema_location_uri.endswith("/"):
-                sanitized_schema_location_uri += "/"
 
             return sanitized_schema_location_uri
 
@@ -101,8 +97,7 @@ class S3BaseExporter(BaseTableUploadExporter):
     @with_session
     def destination_s3_folder(self, session=None) -> str:
         _, table_name = self._fq_table_name
-        object_key = table_name
-        return self.destination_s3_root(session=session) + object_key
+        return self.destination_s3_root(session=session) + table_name
 
     @with_session
     def _handle_if_table_exists(self, session=None):
@@ -208,3 +203,9 @@ class S3ParquetExporter(S3BaseExporter):
         with tempfile.NamedTemporaryFile(suffix=".parquet") as f:
             df.to_parquet(f.name, index=False, compression="zstd")
             S3FileCopier.from_local_file(f).copy_to(self.destination_s3_path())
+
+
+def add_trailing_slash_if_not_exists(uri: str):
+    if not uri.endswith("/"):
+        uri += "/"
+    return uri
