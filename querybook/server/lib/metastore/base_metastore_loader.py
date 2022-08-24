@@ -42,7 +42,7 @@ class DataTable(NamedTuple):
     type: str = None
     owner: str = None
 
-    # description from metastore
+    # description from metastore, expect HTML format
     description: str = None
 
     # Expected in UTC seconds
@@ -65,9 +65,11 @@ class DataTable(NamedTuple):
 class DataColumn(NamedTuple):
     name: str
     type: str
+
+    # column comment from sql query when creating the table
     comment: str = None
 
-    # description from metastore
+    # user edited description from metastore, expect HTML format
     description: str = None
 
 

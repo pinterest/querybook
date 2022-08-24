@@ -271,6 +271,10 @@ def create_table_information(
         hive_metastore_description=hive_metastore_description,
     )
 
+    # The reason that we dont add description direclty in
+    # DataTableInformation() above is because it's optional.
+    # Otherwise, for those existing metastores which dont sync description
+    # to querybook, it will wipe out the existing description.
     if description is not None:
         new_table_information.description = description
 
