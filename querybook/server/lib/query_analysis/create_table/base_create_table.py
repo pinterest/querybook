@@ -8,8 +8,9 @@ class BaseCreateTable(metaclass=ABCMeta):
         schema_name: str,
         table_name: str,
         column_name_types: List[Tuple[str, str]],
-        file_location: str,
         file_format: str,
+        file_location: str = None,
+        table_properties: List[str] = [],
     ):
         self._table_name = (
             table_name if not schema_name else f"{schema_name}.{table_name}"
@@ -17,6 +18,7 @@ class BaseCreateTable(metaclass=ABCMeta):
         self._column_name_types = column_name_types
         self._file_location = file_location
         self._format = file_format
+        self._table_properties = table_properties
 
     @abstractclassmethod
     def get_language(cls) -> str:

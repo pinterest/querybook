@@ -27,11 +27,14 @@ LOG = get_logger(__file__)
 
 """
     The S3BaseExporter (and its dervied child classes) support the following options
-    - s3_path: if supplied, will use it as the root path for upload. Must be the full s3 path like s3://bucket/...
-    - use_schema_location:
+    - s3_path (str): if supplied, will use it as the root path for upload. Must be the full s3 path like s3://bucket/...
+    - use_schema_location (bool):
         if true, the upload root path is inferred by locationUri specified in hms
         to use this option, the engine must be connected to a metastore that uses
         HMSMetastoreLoader (or its derived class)
+    - table_properties (List[str]): list of table properties passed, this must be query engine specific.
+        Checkout here for examples in SparkSQL: https://spark.apache.org/docs/latest/sql-ref-syntax-ddl-create-table-hiveformat.html#examples
+        For Trino/Presto, it would be the WITH statement: https://trino.io/docs/current/sql/create-table.html
 """
 
 
@@ -69,7 +72,7 @@ class S3BaseExporter(BaseTableUploadExporter):
             schema_name, _ = self._fq_table_name
             s3_path: str = self._exporter_config["s3_path"]
 
-            return add_trailing_slash_if_not_exists(s3_path) + schema_name + "/"
+            return sanitize_s3_url_with_trailing_slash(s3_path) + schema_name + "/"
 
         if self._exporter_config.get("use_schema_location", False):
             # Defer import since this is only needed for this option
@@ -85,12 +88,7 @@ class S3BaseExporter(BaseTableUploadExporter):
                 self._table_config["schema_name"]
             ).locationUri
 
-            # if the url is s3a or s3n, replace with s3
-            sanitized_schema_location_uri = add_trailing_slash_if_not_exists(
-                re.sub(r"^s3[a-z]:", "s3:", schema_location_uri)
-            )
-
-            return sanitized_schema_location_uri
+            return sanitize_s3_url_with_trailing_slash(schema_location_uri)
 
         raise Exception("Must specify s3_path or set use_schema_location=True")
 
@@ -123,13 +121,14 @@ class S3BaseExporter(BaseTableUploadExporter):
         schema_name, table_name = self._fq_table_name
         is_external = not self._exporter_config.get("use_schema_location", False)
         return get_create_table_statement(
-            query_engine.language,
-            table_name,
-            self._table_config["column_name_types"],
+            language=query_engine.language,
+            table_name=table_name,
+            schema_name=schema_name,
+            column_name_types=self._table_config["column_name_types"],
             # if use schema location, then no table location is needed for creation
-            self.destination_s3_folder() if is_external else None,
-            schema_name,
-            self.UPLOAD_FILE_TYPE(),
+            file_location=self.destination_s3_folder() if is_external else None,
+            file_format=self.UPLOAD_FILE_TYPE(),
+            table_properties=self._exporter_config.get("table_properties", []),
         )
 
     @with_session
@@ -205,7 +204,13 @@ class S3ParquetExporter(S3BaseExporter):
             S3FileCopier.from_local_file(f).copy_to(self.destination_s3_path())
 
 
-def add_trailing_slash_if_not_exists(uri: str):
+def sanitize_s3_url_with_trailing_slash(uri: str) -> str:
+    """
+    This function does two things:
+    1. if the uri is s3a:// or s3n://, change it to s3://
+    2. if there is no trailing slash, add it
+    """
+    uri = re.sub(r"^s3[a-z]:", "s3:", uri)
     if not uri.endswith("/"):
         uri += "/"
     return uri

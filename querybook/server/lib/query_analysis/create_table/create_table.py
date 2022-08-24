@@ -22,6 +22,7 @@ def get_create_table_statement(
     file_location: str = None,
     schema_name: str = "",
     file_format: str = "TEXTFILE",
+    table_properties: List[str] = [],
 ):
     """Generate a query that can be executed to create
        an external table. It is mostly applicable for Hive tables
@@ -45,8 +46,9 @@ def get_create_table_statement(
         schema_name,
         table_name,
         column_name_types,
-        file_location,
         file_format,
+        file_location,
+        table_properties,
     )
 
     return table_creator.get_create_query()

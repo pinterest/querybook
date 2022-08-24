@@ -37,17 +37,22 @@ class HiveCreateTable(BaseCreateTable):
 
     def _get_extra_properties(self) -> str:
         rows = []
+        table_properties = list(self._table_properties)
         if self._format == "CSV":
             rows += [
                 "ROW FORMAT SERDE 'org.apache.hadoop.hive.serde2.OpenCSVSerde'",
                 "FIELDS TERMINATED BY ','",
                 "STORED AS TEXTFILE",
-                'TBLPROPERTIES ("skip.header.line.count"="1")',
             ]
+            table_properties += ['"skip.header.line.count"="1"']
         elif self._format == "PARQUET":
             rows += ["STORED AS PARQUET"]
         else:
             raise ValueError(f"Unsupported file type {self._format}")
+
+        if len(table_properties):
+            table_properties_str = ", ".join(table_properties)
+            rows += [f"TBLPROPERTIES ({table_properties_str})"]
 
         if self._file_location is not None:
             rows += [f"LOCATION '{self._file_location}'"]
