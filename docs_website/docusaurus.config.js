@@ -55,8 +55,7 @@ module.exports = {
                     label: 'GitHub',
                 },
                 {
-                    to:
-                        'https://join.slack.com/t/querybook/shared_invite/zt-se82lvld-yyzRIqvIASsyYozk7jMCYQ',
+                    to: 'https://join.slack.com/t/querybook/shared_invite/zt-se82lvld-yyzRIqvIASsyYozk7jMCYQ',
                     position: 'left',
                     label: 'Slack',
                 },
@@ -92,8 +91,7 @@ module.exports = {
                         },
                         {
                             label: 'Slack',
-                            href:
-                                'https://join.slack.com/t/querybook/shared_invite/zt-se82lvld-yyzRIqvIASsyYozk7jMCYQ',
+                            href: 'https://join.slack.com/t/querybook/shared_invite/zt-se82lvld-yyzRIqvIASsyYozk7jMCYQ',
                         },
                     ],
                 },
@@ -112,6 +110,7 @@ module.exports = {
         algolia: {
             apiKey: 'fdaa985607f0df46d22edf5e6e01778c',
             indexName: 'querybook',
+            appId: 'BH4D9OD16A',
         },
     },
 };
