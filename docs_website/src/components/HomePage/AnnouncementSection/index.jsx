@@ -1,24 +1,11 @@
-import * as ReactDOM from 'react-dom';
 import React from 'react';
-import Link from '@docusaurus/Link';
+import * as ReactDOM from 'react-dom';
+
 import './index.scss';
 
 const ANNOUNCEMENT_DIV_ID = '__announcement_root';
 
-const AnnouncementBanner = () => (
-    <div className="AnnouncementSection">
-        <p>
-            🚀 March 30 2021 update: We just <b>open sourced Querybook</b> and
-            published our first{' '}
-            <b>
-                <Link to="https://medium.com/@Pinterest_Engineering/open-sourcing-querybook-pinterests-collaborative-big-data-hub-ba2605558883">
-                    blog post
-                </Link>
-            </b>{' '}
-            🚀
-        </p>
-    </div>
-);
+const AnnouncementBanner = () => null;
 
 export default () => {
     const [announcementRoot, setAnnouncementRoot] = React.useState(null);
