@@ -66,9 +66,24 @@ const SettingsByLanguage: Record<string, ILanguageSetting> = {
         operatorChars: /^[*+\-%<>!=&|^~]/,
         punctuationChars: /^[/:.]/,
     },
+    trino: {
+        keywords: new Set(
+            (
+                SQL_KEYWORDS +
+                'alter and as between by case cast constraint create cross cube current_date current_path current_time current_timestamp current_user deallocate delete describe distinct drop else end escape except execute exists extract false fetch first for formatted from full group grouping having if in inner insert intersect into is join left like limit localtime localtimestamp natural next normalize not null offset on only or order outer prepare recursive right rollup row rows select table then ties true uescape union unnest using use values when where with'
+            ).split(' ')
+        ),
+        type: new Set(
+            'boolean tinyint smallint integer bigint real double decimal varchar char varbinary json date time timestamp interval array map row ipaddress'.split(
+                ' '
+            )
+        ),
+        bool: new Set('false true null'.split(' ')),
+        operatorChars: /^[*+\-%<>!=|]/,
+        punctuationChars: /^[/:.]/,
+    },
 };
 SettingsByLanguage['sparksql'] = SettingsByLanguage['hive'];
-SettingsByLanguage['trino'] = SettingsByLanguage['presto'];
 
 export function getLanguageSetting(
     language: string,

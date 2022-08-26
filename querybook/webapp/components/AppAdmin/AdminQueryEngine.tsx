@@ -401,6 +401,13 @@ export const AdminQueryEngine: React.FunctionComponent<IProps> = ({
                                     options={tableUploadExporterNames}
                                     withDeselect
                                 />
+
+                                <SimpleField
+                                    stacked
+                                    name="feature_params.row_limit"
+                                    type="number"
+                                    label="(Experimental) Row Limit"
+                                />
                             </div>
                         </div>
 

@@ -9,6 +9,7 @@ export interface IQueryEngine {
     executor: string;
 
     feature_params: {
+        row_limit?: number;
         status_checker?: string;
         upload_exporter?: string;
     };
