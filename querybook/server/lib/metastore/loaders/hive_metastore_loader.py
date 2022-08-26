@@ -78,6 +78,7 @@ class HMSMetastoreLoader(BaseMetastoreLoader):
             location=sd.location,
             partitions=partitions,
             raw_description=ujson.pdumps(description, default=lambda o: o.__dict__),
+            partition_keys=get_partition_keys(description),
         )
 
         columns = list(
@@ -109,6 +110,18 @@ def get_hive_metastore_table_description(hmc, db_name, table_name):
         return description
     except NoSuchObjectException:
         return None
+
+
+def get_partition_keys(hive_metastore_description):
+    try:
+        if not hive_metastore_description.partitionKeys:
+            return []
+        return [
+            partition_key.name
+            for partition_key in hive_metastore_description.partitionKeys
+        ]
+    except AttributeError:
+        return []
 
 
 def get_partition_filter_from_conditions(conditions: Dict[str, str] = None):

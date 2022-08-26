@@ -259,6 +259,7 @@ class DataTableInformation(
     earliest_partitions = sql.Column(sql.String(description_length))
     description = sql.Column(sql.Text(length=mediumtext_length))
     hive_metastore_description = sql.Column(sql.Text(length=mediumtext_length))
+    column_info = sql.Column(sql.JSON)
 
     def to_dict(self):
         table_information = {
@@ -266,6 +267,7 @@ class DataTableInformation(
             "earliest_partitions": self.earliest_partitions,
             "description": self.description,
             "hive_metastore_description": self.hive_metastore_description,
+            "column_info": self.column_info,
         }
         return table_information
 

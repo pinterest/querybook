@@ -61,6 +61,9 @@ class DataTable(NamedTuple):
     # Store the raw info here
     raw_description: str = None
 
+    # Arrays of partition keys
+    partition_keys: List[str] = []
+
 
 class DataColumn(NamedTuple):
     name: str
@@ -261,6 +264,7 @@ class BaseMetastoreLoader(metaclass=ABCMeta):
                 latest_partitions=json.dumps((table.partitions or [])[-10:]),
                 earliest_partitions=json.dumps((table.partitions or [])[:10]),
                 hive_metastore_description=table.raw_description,
+                partition_keys=table.partition_keys,
                 session=session,
             )
             delete_column_not_in_metastore(
