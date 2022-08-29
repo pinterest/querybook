@@ -668,7 +668,7 @@ def get_schemas(metastore_id, limit=5, offset=0, sort_key="name", sort_order="de
 
 
 @register(
-    "/table/schema_name/table_name/sync/",
+    "/table/<schema_name>/<table_name>/sync/",
     methods=["PUT"],
 )
 def sync_table_from_metastore(
