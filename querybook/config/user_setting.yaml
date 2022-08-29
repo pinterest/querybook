@@ -20,6 +20,15 @@ default_query_engine:
     options: []
     helper: Default query engine when creating a query cell.
 
+use_previous_query_engine:
+    per_env: true
+    tab: general
+    default: disabled
+    options:
+        - enabled
+        - disabled
+    helper: Use the previous cell's selected query engine on a DataDoc when available.
+
 datadoc_arrow_key:
     default: enabled
     tab: general

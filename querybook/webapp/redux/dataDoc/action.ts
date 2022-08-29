@@ -298,12 +298,14 @@ export function insertDataDocCell(
                 state.environment.environmentEngineIds[
                     state.environment.currentEnvironmentId
                 ];
-            const defaultQueryEngine = previousEngine
-                ? previousEngine
-                : getQueryEngineId(
-                    userSetting['default_query_engine'],
-                    queryEngineIds
-                );
+            const defaultQueryEngine =
+                previousEngine &&
+                userSetting['use_previous_query_engine'] === 'enabled'
+                    ? previousEngine
+                    : getQueryEngineId(
+                          userSetting['default_query_engine'],
+                          queryEngineIds
+                      );
             const engine =
                 meta && meta['engine'] != null
                     ? meta['engine']
