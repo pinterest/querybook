@@ -31,6 +31,7 @@
             "integrations/add_engine_status_checker",
             "integrations/add_notifier",
             "integrations/add_query_result_transform",
+            "integrations/add_query_validation",
             "integrations/add_table_upload",
             "integrations/customize_html",
             "integrations/embedded_iframe"

@@ -22,12 +22,15 @@ import {
 import { format } from 'lib/sql-helper/sql-formatter';
 import {
     ICodeAnalysis,
+    ILinterWarning,
     IRange,
     IToken,
     TableToken,
 } from 'lib/sql-helper/sql-lexer';
+import { isQueryUsingTemplating } from 'lib/templated-query';
+import { Nullable } from 'lib/typescript';
 import { navigateWithinEnv } from 'lib/utils/query-string';
-import { analyzeCode, getSqlLintAnnotations } from 'lib/web-worker';
+import { analyzeCode } from 'lib/web-worker';
 import { Button } from 'ui/Button/Button';
 
 import {
@@ -111,12 +114,17 @@ export interface IQueryEditorProps extends IStyledQueryEditorProps {
     onBlur?: (editor: CodeMirror.Editor, event: React.SyntheticEvent) => any;
     onSelection?: (str: string, selection: IRange) => any;
     getTableByName?: (schema: string, name: string) => any;
+
+    getLintErrors?: (
+        query: string,
+        editor: CodeMirror.Editor
+    ) => Promise<ILinterWarning[]>;
+    onLintCompletion?: (hasError?: boolean) => void;
 }
 
 interface IState {
     options: Record<string, unknown>;
     fullScreen: boolean;
-    lintingOn: boolean;
 }
 
 export class QueryEditor extends React.PureComponent<
@@ -147,7 +155,6 @@ export class QueryEditor extends React.PureComponent<
 
         this.state = {
             options: this.createOptions(),
-            lintingOn: false,
             fullScreen: false,
         };
     }
@@ -160,20 +167,18 @@ export class QueryEditor extends React.PureComponent<
             readOnly,
             theme,
             keyMap,
-            language,
-            metastoreId,
+            getLintErrors,
+            onLintCompletion,
         } = this.props;
         // In constructor this.state is not defined
-        const { lintingOn = false } = this.state || {};
         return this._createOptions(
             options,
             lineWrapping,
             readOnly,
             theme,
-            language,
-            metastoreId,
-            keyMap,
-            lintingOn
+            getLintErrors,
+            onLintCompletion,
+            keyMap
         );
     }
 
@@ -183,27 +188,47 @@ export class QueryEditor extends React.PureComponent<
         lineWrapping: boolean,
         readOnly: boolean,
         theme: string,
-        language: string,
-        metastoreId: number,
-        keyMap: CodeMirrorKeyMap,
-        lintingOn: boolean
+        getLintErrors: Nullable<
+            (
+                query: string,
+                editor: CodeMirror.Editor
+            ) => Promise<ILinterWarning[]>
+        >,
+        onLintCompletion: Nullable<(hasError?: boolean) => void>,
+        keyMap: CodeMirrorKeyMap
     ) {
-        const lintingOptions =
-            lintingOn && language != null && metastoreId != null
-                ? {
-                      lint: metastoreId
-                          ? {
-                                // Lint only when you can edit
-                                getAnnotations: getSqlLintAnnotations(
-                                    metastoreId,
-                                    language
-                                ),
-                                async: true,
-                                delay: 1000,
-                            }
-                          : null,
-                  }
-                : {};
+        const lintingOptions = getLintErrors
+            ? {
+                  lint: {
+                      // Lint only when you can edit
+                      getAnnotations: async (
+                          code: string,
+                          onComplete: (warnings: ILinterWarning[]) => void,
+                          _options: any,
+                          editor: CodeMirror.Editor
+                      ) => {
+                          // if query is empty skip check
+                          // if it is using templating, also skip check since
+                          // there is no reliable way to map it back
+                          if (
+                              code.length === 0 ||
+                              isQueryUsingTemplating(code)
+                          ) {
+                              onComplete([]);
+                              return;
+                          }
+
+                          const warnings = await getLintErrors(code, editor);
+                          if (onLintCompletion) {
+                              onLintCompletion(warnings.length > 0);
+                          }
+                          onComplete(warnings);
+                      },
+                      async: true,
+                      lintOnChange: false,
+                  },
+              }
+            : {};
 
         const options = {
             // lineNumbers: true,
@@ -380,6 +405,12 @@ export class QueryEditor extends React.PureComponent<
     }
 
     @bind
+    @debounce(2000)
+    public performLint() {
+        this.editor.performLint();
+    }
+
+    @bind
     @debounce(500)
     public showAutoCompletion(editor: CodeMirror.Editor) {
         (CodeMirror as any).commands.autocomplete(editor, null, {
@@ -446,15 +477,6 @@ export class QueryEditor extends React.PureComponent<
             this.autocomplete.registerHelper();
         }
 
-        const { readOnly } = this.props;
-        const { lintingOn } = this.state;
-
-        if (!readOnly && !lintingOn) {
-            this.setState({
-                lintingOn: true,
-            });
-        }
-
         if (this.props.onFocus) {
             this.props.onFocus(editor, event);
         }
@@ -488,6 +510,7 @@ export class QueryEditor extends React.PureComponent<
         }
 
         this.makeCodeAnalysis(value);
+        this.performLint();
     }
 
     @bind
@@ -604,6 +627,7 @@ export class QueryEditor extends React.PureComponent<
     public componentDidMount() {
         this.makeCodeAnalysis(this.props.value);
         this.makeAutocompleter();
+        this.performLint();
     }
 
     public componentDidUpdate(prevProps, prevState) {

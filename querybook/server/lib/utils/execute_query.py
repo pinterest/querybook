@@ -2,7 +2,7 @@ from app.db import with_session
 from logic.admin import get_query_engine_by_id
 from lib.query_executor.all_executors import get_executor_class
 from lib.query_executor.executor_factory import get_client_setting_from_engine
-from lib.query_analysis import get_statements
+from lib.query_analysis.statements import get_statements
 
 
 class ExecuteQuery(object):

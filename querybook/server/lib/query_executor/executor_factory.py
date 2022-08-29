@@ -3,7 +3,7 @@ from typing import Dict
 from app.db import with_session
 from const.query_execution import QueryExecutionStatus
 from lib.logger import get_logger
-from lib.query_analysis import get_statement_ranges
+from lib.query_analysis.statements import get_statement_ranges
 from lib.query_analysis.lineage import process_query
 from logic import (
     admin as admin_logic,

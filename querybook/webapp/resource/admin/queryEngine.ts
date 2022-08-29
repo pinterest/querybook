@@ -1,5 +1,5 @@
 import { IAdminQueryEngine, IQueryEngineTemplate } from 'const/admin';
-import type { IEngineStatusData } from 'const/queryEngine';
+import type { IEngineStatusData, IQueryValidator } from 'const/queryEngine';
 import ds from 'lib/datasource';
 
 export const AdminQueryEngineResource = {
@@ -13,6 +13,9 @@ export const AdminQueryEngineResource = {
 
     getTableUploadExporterNames: () =>
         ds.fetch<string[]>('/admin/table_upload/exporter/'),
+
+    getQueryValidators: () =>
+        ds.fetch<IQueryValidator[]>('/admin/query_validator/'),
 
     create: (queryEngine: IAdminQueryEngine) =>
         ds.save<IAdminQueryEngine>(`/admin/query_engine/`, {

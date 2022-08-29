@@ -135,3 +135,10 @@ export interface IQueryExecutionNotification {
     query_execution_id: number;
     user: number;
 }
+
+export interface IQueryValidationResult {
+    line: number;
+    ch: number;
+    message: string;
+    severity: string;
+}

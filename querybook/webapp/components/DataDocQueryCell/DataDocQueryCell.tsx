@@ -22,6 +22,7 @@ import { UDFForm } from 'components/UDFForm/UDFForm';
 import { IDataQueryCellMeta } from 'const/datadoc';
 import type { IQueryEngine } from 'const/queryEngine';
 import CodeMirror from 'lib/codemirror';
+import { createSQLLinter } from 'lib/codemirror/codemirror-lint';
 import { sendConfirm } from 'lib/querybookUI';
 import { getDroppedTables } from 'lib/sql-helper/sql-checker';
 import {
@@ -103,6 +104,7 @@ interface IState {
     showQuerySnippetModal: boolean;
     showRenderedTemplateModal: boolean;
     showUDFModal: boolean;
+    hasLintError: boolean;
 }
 
 class DataDocQueryCellComponent extends React.PureComponent<IProps, IState> {
@@ -121,6 +123,7 @@ class DataDocQueryCellComponent extends React.PureComponent<IProps, IState> {
             showQuerySnippetModal: false,
             showRenderedTemplateModal: false,
             showUDFModal: false,
+            hasLintError: false,
         };
     }
 
@@ -136,6 +139,11 @@ class DataDocQueryCellComponent extends React.PureComponent<IProps, IState> {
     @bind
     public get queryEngine() {
         return this.props.queryEngineById[this.engineId];
+    }
+
+    @bind
+    public get hasQueryValidators() {
+        return Boolean(this.queryEngine.feature_params?.validator);
     }
 
     @bind
@@ -233,6 +241,18 @@ class DataDocQueryCellComponent extends React.PureComponent<IProps, IState> {
                 this.props.onFocus();
             }
         }
+    }
+
+    @bind
+    public getLintAnnotations(query: string, cm: CodeMirror.Editor) {
+        return createSQLLinter(this.engineId)(query, cm);
+    }
+
+    @bind
+    public onLint(hasError: boolean) {
+        this.setState({
+            hasLintError: hasError,
+        });
     }
 
     @bind
@@ -570,7 +590,7 @@ class DataDocQueryCellComponent extends React.PureComponent<IProps, IState> {
 
             isEditable,
         } = this.props;
-        const { meta, selectedRange } = this.state;
+        const { meta, selectedRange, hasLintError } = this.state;
 
         const queryTitleDOM = isEditable ? (
             <ResizableTextArea
@@ -602,6 +622,7 @@ class DataDocQueryCellComponent extends React.PureComponent<IProps, IState> {
                             this,
                             'engine'
                         )}
+                        hasLintError={hasLintError}
                     />
                     {this.getAdditionalDropDownButtonDOM()}
                 </div>
@@ -665,6 +686,10 @@ class DataDocQueryCellComponent extends React.PureComponent<IProps, IState> {
                     cellId={cellId}
                     height={isFullScreen ? 'full' : 'auto'}
                     allowFullScreen={false}
+                    onLintCompletion={this.onLint}
+                    getLintErrors={
+                        this.hasQueryValidators ? this.getLintAnnotations : null
+                    }
                 />
                 {openSnippetDOM}
             </div>

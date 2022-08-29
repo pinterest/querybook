@@ -6,6 +6,7 @@ import {
     IQueryExecutionNotification,
     IQueryExecutionViewer,
     IQueryResultExporter,
+    IQueryValidationResult,
     IRawQueryExecution,
 } from 'const/queryExecution';
 import dataDocSocket from 'lib/data-doc/datadoc-socketio';
@@ -159,4 +160,10 @@ export const TemplatedQueryResource = {
             },
             false
         ),
+
+    validateQuery: (query: string, engineId: number) =>
+        ds.save<IQueryValidationResult[]>('/query/validate/', {
+            query,
+            engine_id: engineId,
+        }),
 };

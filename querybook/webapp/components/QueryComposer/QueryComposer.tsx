@@ -30,6 +30,7 @@ import { IQueryEngine } from 'const/queryEngine';
 import { ISearchOptions, ISearchResult } from 'const/searchAndReplace';
 import { useDebounceState } from 'hooks/redux/useDebounceState';
 import { useBrowserTitle } from 'hooks/useBrowserTitle';
+import { createSQLLinter } from 'lib/codemirror/codemirror-lint';
 import { replaceStringIndices, searchText } from 'lib/data-doc/search';
 import { sendConfirm } from 'lib/querybookUI';
 import { getDroppedTables } from 'lib/sql-helper/sql-checker';
@@ -267,6 +268,26 @@ function useKeyMap(
     }, [clickOnRunButton, queryEngines, setEngineId]);
 }
 
+function useQueryLint(queryEngine: IQueryEngine) {
+    const [hasLintErrors, setHasLintErrors] = useState(false);
+    const hasQueryValidators = Boolean(queryEngine?.feature_params?.validator);
+
+    const getLintAnnotations = useMemo(() => {
+        if (!hasQueryValidators) {
+            return null;
+        }
+
+        return (query: string, cm: CodeMirror.Editor) =>
+            createSQLLinter(queryEngine.id)(query, cm);
+    }, [hasQueryValidators, queryEngine?.id]);
+
+    return {
+        getLintAnnotations,
+        setHasLintErrors,
+        hasLintErrors,
+    };
+}
+
 const QueryComposer: React.FC = () => {
     useBrowserTitle('Adhoc Query');
 
@@ -311,6 +332,8 @@ const QueryComposer: React.FC = () => {
     }, []);
 
     const { queryEditorRef, handleFormatQuery } = useQueryEditorHelpers();
+    const { hasLintErrors, setHasLintErrors, getLintAnnotations } =
+        useQueryLint(engine);
 
     const handleCreateDataDoc = useCallback(async () => {
         let dataDoc = null;
@@ -446,6 +469,8 @@ const QueryComposer: React.FC = () => {
                 height="full"
                 engine={engine}
                 onSelection={handleEditorSelection}
+                getLintErrors={getLintAnnotations}
+                onLintCompletion={setHasLintErrors}
                 allowFullScreen
             />
         </>
@@ -541,6 +566,7 @@ const QueryComposer: React.FC = () => {
                 runButtonTooltipPos={'down'}
                 rowLimit={rowLimit}
                 onRowLimitChange={setRowLimit}
+                hasLintError={hasLintErrors}
             />
         </div>
     );

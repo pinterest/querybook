@@ -16,6 +16,7 @@ from lib.query_executor.all_executors import (
     get_flattened_executor_template,
     get_executor_class,
 )
+from lib.query_analysis.validation.all_validators import ALL_QUERY_VALIDATORS_BY_NAME
 from logic import admin as logic
 from logic import user as user_logic
 from logic import environment as environment_logic
@@ -696,3 +697,9 @@ def get_admin_config():
 @admin_only
 def get_admin_table_upload_exporters():
     return list(ALL_TABLE_UPLOAD_EXPORTER_BY_NAME.keys())
+
+
+@register("/admin/query_validator/", methods=["GET"])
+@admin_only
+def get_admin_query_validators():
+    return list(ALL_QUERY_VALIDATORS_BY_NAME.values())
