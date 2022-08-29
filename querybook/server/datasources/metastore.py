@@ -668,11 +668,11 @@ def get_schemas(metastore_id, limit=5, offset=0, sort_key="name", sort_order="de
 
 
 @register(
-    "/metastore/<int:metastore_id>/<str:schema_name>/<str:table_name>/sync/",
+    "/table/schema_name/table_name/sync/",
     methods=["PUT"],
 )
 def sync_table_from_metastore(
-    metastore_id, schema_name, table_name, is_delete: bool = False
+    schema_name, table_name, metastore_id, is_delete: bool = False
 ):
     """Sync table info from metastore. Delete the table if is_delete is True.
 
