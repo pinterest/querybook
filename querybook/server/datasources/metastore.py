@@ -667,7 +667,10 @@ def get_schemas(metastore_id, limit=5, offset=0, sort_key="name", sort_order="de
     return {"results": schemas, "done": len(schemas) < limit}
 
 
-@register("/metastore/<int:metastore_id>/sync/", methods=["PUT"])
+@register(
+    "/metastore/<int:metastore_id>/<str:schema_name>/<str:table_name>/sync/",
+    methods=["PUT"],
+)
 def sync_table_from_metastore(
     metastore_id, schema_name, table_name, is_delete: bool = False
 ):
@@ -682,14 +685,11 @@ def sync_table_from_metastore(
         None if deleting a table
         table id if creating or updating a table
     """
-    with DBSession() as session:
-        metastore_loader = get_metastore_loader(metastore_id, session=session)
+    metastore_loader = get_metastore_loader(metastore_id)
 
-        if is_delete:
-            metastore_loader.sync_delete_table(schema_name, table_name, session=session)
-            return
-        else:
-            table_id = metastore_loader.sync_create_or_update_table(
-                schema_name, table_name, session=session
-            )
-            return table_id
+    if is_delete:
+        metastore_loader.sync_delete_table(schema_name, table_name)
+        return None
+    else:
+        table_id = metastore_loader.sync_create_or_update_table(schema_name, table_name)
+        return table_id
