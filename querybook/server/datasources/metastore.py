@@ -665,3 +665,31 @@ def get_schemas(metastore_id, limit=5, offset=0, sort_key="name", sort_order="de
     schemas = logic.get_all_schemas(metastore_id, offset, limit, sort_key, sort_order)
 
     return {"results": schemas, "done": len(schemas) < limit}
+
+
+@register("/metastore/<int:metastore_id>/sync/", methods=["PUT"])
+def sync_table_from_metastore(
+    metastore_id, schema_name, table_name, is_delete: bool = False
+):
+    """Sync table info from metastore. Delete the table if is_delete is True.
+
+    Args:
+        metastore_id (int): metastore ID
+        schema_name (str): Schema name
+        table_name (str): Table name
+
+    Returns:
+        None if deleting a table
+        table id if creating or updating a table
+    """
+    with DBSession() as session:
+        metastore_loader = get_metastore_loader(metastore_id, session=session)
+
+        if is_delete:
+            metastore_loader.sync_delete_table(schema_name, table_name, session=session)
+            return
+        else:
+            table_id = metastore_loader.sync_create_or_update_table(
+                schema_name, table_name, session=session
+            )
+            return table_id
