@@ -10,7 +10,8 @@ export interface IDataDocContextType {
         index: number,
         cellKey: string,
         context: string,
-        meta: IDataCellMeta
+        meta: IDataCellMeta,
+        previousEngine: number
     ) => Promise<any>;
     updateCell: (cellId: number, fields: DataCellUpdateFields) => Promise<any>;
     copyCellAt: (index: number, cut: boolean) => void;

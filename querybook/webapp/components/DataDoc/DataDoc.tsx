@@ -301,7 +301,8 @@ class DataDocComponent extends React.PureComponent<IProps, IState> {
         index: number,
         cellType: CELL_TYPE,
         context: string,
-        meta: IDataCellMeta
+        meta: IDataCellMeta,
+        previousEngine?: number
     ) {
         try {
             const dataDoc = this.props.dataDoc;
@@ -314,7 +315,8 @@ class DataDocComponent extends React.PureComponent<IProps, IState> {
                     index,
                     cellType,
                     context,
-                    meta
+                    meta,
+                    previousEngine
                 );
             }
         } catch (e) {
@@ -535,7 +537,8 @@ class DataDocComponent extends React.PureComponent<IProps, IState> {
         index: number,
         numberOfCells: number,
         lastQueryCellId: number,
-        queryIndexInDoc: number
+        queryIndexInDoc: number,
+        previousEngine: number
     ) {
         const { dataDoc, isEditable } = this.props;
         const { focusedCellIndex } = this.state;
@@ -556,6 +559,7 @@ class DataDocComponent extends React.PureComponent<IProps, IState> {
                             index={index}
                             numberOfCells={numberOfCells}
                             insertCellAt={insertCellAtBinded}
+                            previousEngine={previousEngine}
                             isHeader={true}
                             active={forceShow}
                             isEditable={isEditable}
@@ -586,25 +590,30 @@ class DataDocComponent extends React.PureComponent<IProps, IState> {
         const cellDOMs = [];
         const { dataDoc } = this.props;
         const dataDocCells = dataDoc.dataDocCells || [];
-        let lastQueryCellId: number = null;
+        let lastQueryCell = null;
         let queryIndexInDoc = 0;
+        let previousEngine: number = null;
 
         for (let i = 0; i < numberOfCells + 1; i++) {
             const cell = dataDocCells[i];
+            if (lastQueryCell) {
+                previousEngine = lastQueryCell.meta.engine;
+            }
             cellDOMs.push(
                 this.renderLazyDataDocCell(
                     cell,
                     i,
                     numberOfCells,
-                    lastQueryCellId,
-                    queryIndexInDoc
+                    cell ? cell.id : null,
+                    queryIndexInDoc,
+                    previousEngine
                 )
             );
 
             const isQueryCell = cell && cell.cell_type === 'query';
             if (isQueryCell) {
                 queryIndexInDoc++;
-                lastQueryCellId = cell.id;
+                lastQueryCell = cell;
             }
         }
 
@@ -856,7 +865,8 @@ function mapDispatchToProps(dispatch: Dispatch) {
             index: number,
             cellType: CELL_TYPE,
             context: string | ContentState,
-            meta: IDataCellMeta
+            meta: IDataCellMeta,
+            previousEngine: number
         ) =>
             dispatch(
                 dataDocActions.insertDataDocCell(
@@ -864,7 +874,8 @@ function mapDispatchToProps(dispatch: Dispatch) {
                     index,
                     cellType,
                     context,
-                    meta
+                    meta,
+                    previousEngine
                 )
             ),
 
