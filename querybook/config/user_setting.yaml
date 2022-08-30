@@ -21,9 +21,8 @@ default_query_engine:
     helper: Default query engine when creating a query cell.
 
 use_previous_query_engine:
-    per_env: true
     tab: general
-    default: disabled
+    default: enabled
     options:
         - enabled
         - disabled
