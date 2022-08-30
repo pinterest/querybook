@@ -22,12 +22,12 @@ export const ColumnIcon: React.FunctionComponent<IColumnIconProps> = ({
     };
     if (tooltip) {
         spanProps['aria-label'] = tooltip;
-        spanProps['data-balloon-pos'] = 'up';
+        spanProps['data-balloon-pos'] = 'right';
     }
 
     return (
         <span {...spanProps}>
-            <Icon name={name} size={16} fill={fill} />
+            <Icon name={name} size={14} fill={fill} />
         </span>
     );
 };
