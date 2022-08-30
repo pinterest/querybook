@@ -867,7 +867,7 @@ function mapDispatchToProps(dispatch: Dispatch) {
             cellType: CELL_TYPE,
             context: string | ContentState,
             meta: IDataCellMeta,
-            previousEngine: number
+            previousEngineId: number
         ) =>
             dispatch(
                 dataDocActions.insertDataDocCell(
@@ -876,7 +876,7 @@ function mapDispatchToProps(dispatch: Dispatch) {
                     cellType,
                     context,
                     meta,
-                    previousEngine
+                    previousEngineId
                 )
             ),
 
