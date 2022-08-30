@@ -62,6 +62,10 @@ export const AdminQueryEngine: React.FunctionComponent<IProps> = ({
         AdminQueryEngineResource.getTableUploadExporterNames
     );
 
+    const { data: queryValidators } = useResource(
+        AdminQueryEngineResource.getQueryValidators
+    );
+
     const querybookLanguages: string[] = React.useMemo(
         () => [
             ...new Set(
@@ -99,6 +103,16 @@ export const AdminQueryEngine: React.FunctionComponent<IProps> = ({
                 return hash;
             }, {}),
         [queryEngineTemplates]
+    );
+
+    const queryValidatorsPerLanguage = React.useMemo(
+        () =>
+            (queryValidators ?? []).reduce((hash, validator) => {
+                hash[validator.language] = hash[validator.language] ?? [];
+                hash[validator.language].push(validator.name);
+                return hash;
+            }, {} as Record<string, string[]>),
+        [queryValidators]
     );
 
     React.useEffect(() => {
@@ -399,6 +413,19 @@ export const AdminQueryEngine: React.FunctionComponent<IProps> = ({
                                     type="react-select"
                                     label="(Experimental) Table Upload Exporter"
                                     options={tableUploadExporterNames}
+                                    withDeselect
+                                />
+
+                                <SimpleField
+                                    stacked
+                                    name="feature_params.validator"
+                                    type="react-select"
+                                    label="(Experimental) Query Validator"
+                                    options={
+                                        queryValidatorsPerLanguage[
+                                            item.language
+                                        ] ?? []
+                                    }
                                     withDeselect
                                 />
 
