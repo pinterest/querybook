@@ -193,6 +193,9 @@ export function mapMetaToChartOptions(
                 titleMarginBottom: 8,
             },
             datalabels: {
+                formatter: (value, context) => {
+                    return context.chart.data.labels[context.dataIndex];
+                },
                 display:
                     meta.visual.values?.display === ChartValueDisplayType.TRUE
                         ? true
