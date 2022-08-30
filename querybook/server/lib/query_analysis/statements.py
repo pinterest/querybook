@@ -9,7 +9,7 @@ skip_token_type = [
 ]
 
 
-def get_statement_ranges(query: str):
+def get_statement_ranges(query: str) -> List[Tuple[int, int]]:
     statements = sqlparse.parse(query)
     statement_ranges = []
     start_index = 0
@@ -61,7 +61,8 @@ def get_query_lines(query: str) -> List[int]:
     line_lens = [len(line) for line in query.split("\n")]
     query_lines = [0]
     for line_len in line_lens:
-        query_lines.append(query_lines[-1] + line_len)
+        # The +1 is the newline character
+        query_lines.append(query_lines[-1] + line_len + 1)
     return query_lines
 
 
@@ -82,7 +83,9 @@ def index_to_line_ch_pos(query_lines: List[int], index: int) -> Tuple[int, int]:
             return line - 1, index - query_lines[line - 1]
 
     # Out of index - return something after the last line
-    return query_lines[-1], index - query_lines[-1]
+    # Note: query_lines is at least length 2, so len(query_lines) - 2 is where
+    # the last line is
+    return len(query_lines) - 2, index - query_lines[-2]
 
 
 def split_query_to_statements_with_start_location(query: str):

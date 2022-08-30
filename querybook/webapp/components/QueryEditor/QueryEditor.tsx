@@ -27,7 +27,7 @@ import {
     IToken,
     TableToken,
 } from 'lib/sql-helper/sql-lexer';
-import { isQueryUsingTemplating } from 'lib/templated-query';
+import { isQueryUsingTemplating } from 'lib/templated-query/validation';
 import { Nullable } from 'lib/typescript';
 import { navigateWithinEnv } from 'lib/utils/query-string';
 import { analyzeCode } from 'lib/web-worker';

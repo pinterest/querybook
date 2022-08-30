@@ -38,7 +38,7 @@ class PrestoExplainValidator(BaseQueryValidator):
                 return error_line, error_ch, error_msg
         return None
 
-    def _map_presto_sync_error_to_query(
+    def _map_statement_error_to_query(
         self,
         statement_idx: int,
         statement_start_locations: List[Tuple[int, int]],
@@ -91,7 +91,7 @@ class PrestoExplainValidator(BaseQueryValidator):
                     if presto_syntax_error:
                         error_line, error_ch, error_msg = presto_syntax_error
                         validation_errors.append(
-                            self._map_presto_sync_error_to_query(
+                            self._map_statement_error_to_query(
                                 statement_idx,
                                 statement_start_locations,
                                 error_line,
