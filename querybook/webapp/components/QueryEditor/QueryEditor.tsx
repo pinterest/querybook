@@ -168,7 +168,6 @@ export class QueryEditor extends React.PureComponent<
             theme,
             keyMap,
             getLintErrors,
-            onLintCompletion,
         } = this.props;
         // In constructor this.state is not defined
         return this._createOptions(
@@ -177,7 +176,6 @@ export class QueryEditor extends React.PureComponent<
             readOnly,
             theme,
             getLintErrors,
-            onLintCompletion,
             keyMap
         );
     }
@@ -194,41 +192,19 @@ export class QueryEditor extends React.PureComponent<
                 editor: CodeMirror.Editor
             ) => Promise<ILinterWarning[]>
         >,
-        onLintCompletion: Nullable<(hasError?: boolean) => void>,
         keyMap: CodeMirrorKeyMap
     ) {
-        const lintingOptions = getLintErrors
-            ? {
-                  lint: {
-                      // Lint only when you can edit
-                      getAnnotations: async (
-                          code: string,
-                          onComplete: (warnings: ILinterWarning[]) => void,
-                          _options: any,
-                          editor: CodeMirror.Editor
-                      ) => {
-                          // if query is empty skip check
-                          // if it is using templating, also skip check since
-                          // there is no reliable way to map it back
-                          if (
-                              code.length === 0 ||
-                              isQueryUsingTemplating(code)
-                          ) {
-                              onComplete([]);
-                              return;
-                          }
-
-                          const warnings = await getLintErrors(code, editor);
-                          if (onLintCompletion) {
-                              onLintCompletion(warnings.length > 0);
-                          }
-                          onComplete(warnings);
+        const lintingOptions =
+            getLintErrors && !readOnly
+                ? {
+                      lint: {
+                          // Lint only when you can edit
+                          getAnnotations: this.getLintAnnotations,
+                          async: true,
+                          lintOnChange: false,
                       },
-                      async: true,
-                      lintOnChange: false,
-                  },
-              }
-            : {};
+                  }
+                : {};
 
         const options = {
             // lineNumbers: true,
@@ -408,6 +384,34 @@ export class QueryEditor extends React.PureComponent<
     @debounce(2000)
     public performLint() {
         this.editor.performLint();
+    }
+
+    @bind
+    public async getLintAnnotations(
+        code: string,
+        onComplete: (warnings: ILinterWarning[]) => void,
+        _options: any,
+        editor: CodeMirror.Editor
+    ) {
+        const { getLintErrors, onLintCompletion } = this.props;
+
+        // if query is empty skip check
+        // if it is using templating, also skip check since
+        // there is no reliable way to map it back
+        if (
+            code.length === 0 ||
+            isQueryUsingTemplating(code) ||
+            !getLintErrors
+        ) {
+            onComplete([]);
+            return;
+        }
+
+        const warnings = await getLintErrors(code, editor);
+        if (onLintCompletion) {
+            onLintCompletion(warnings.length > 0);
+        }
+        onComplete(warnings);
     }
 
     @bind

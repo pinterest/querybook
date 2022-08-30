@@ -80,7 +80,19 @@ def index_to_line_ch_pos(query_lines: List[int], ch_idx: int) -> Tuple[int, int]
     return idx, ch_idx - query_lines[idx]
 
 
-def split_query_to_statements_with_start_location(query: str):
+def split_query_to_statements_with_start_location(
+    query: str,
+) -> Tuple[List[str], List[Tuple[int, int]]]:
+    """This function would split the query into list of statements,
+       and for each statement, return their start location as (line, ch) Tuple
+
+    Args:
+        query (str): the SQL query being passed in
+
+    Returns:
+        Tuple[List[str], List[Tuple[int, int]]]: First value is list of statements,
+            second is list of starting location
+    """
     statement_ranges = get_statement_ranges(query)
     statements = [query[start:end] for start, end in statement_ranges]
 
