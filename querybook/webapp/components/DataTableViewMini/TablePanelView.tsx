@@ -6,11 +6,11 @@ import { DataTableTags } from 'components/DataTableTags/DataTableTags';
 import { useDataTable } from 'hooks/redux/useDataTable';
 import { generateFormattedDate } from 'lib/utils/datetime';
 import { getHumanReadableByteSize } from 'lib/utils/number';
+import { AllLucideIconNames } from 'ui/Icon/LucideIcons';
 import { Loader } from 'ui/Loader/Loader';
 
-import { PanelSection, SubPanelSection } from './PanelSection';
-import { AllLucideIconNames } from 'ui/Icon/LucideIcons';
 import { ColumnIcon } from './ColumnIcon';
+import { PanelSection, SubPanelSection } from './PanelSection';
 
 interface ITablePanelViewProps {
     tableId: number;
@@ -120,6 +120,7 @@ const StyledColumnRow = styled.div<IStyledColumnRowProps>`
     margin-bottom: 4px;
     display: flex;
     flex-direction: row;
+    align-items: center;
 
     .column-row-name {
         user-select: none;
@@ -170,7 +171,7 @@ const ColumnRow: React.FunctionComponent<{
             {icon && (
                 <ColumnIcon
                     name={icon}
-                    tooltip={'Partitioned Column'}
+                    tooltip={'Partition key'}
                     fill={false}
                 />
             )}
