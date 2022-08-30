@@ -48,5 +48,5 @@ class IndexToLineChPosTestCase(TestCase):
 
     def test_out_of_bound(self):
         query_lines = [0, 10, 20, 30]  # "select 1;\nselect 2;\nselect 3;"
-        self.assertTupleEqual(index_to_line_ch_pos(query_lines, 30), (2, 10))
-        self.assertTupleEqual(index_to_line_ch_pos(query_lines, 35), (2, 15))
+        self.assertTupleEqual(index_to_line_ch_pos(query_lines, 30), (3, 0))
+        self.assertTupleEqual(index_to_line_ch_pos(query_lines, 35), (3, 5))

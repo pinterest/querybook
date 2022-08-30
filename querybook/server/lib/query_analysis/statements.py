@@ -66,26 +66,30 @@ def get_query_lines(query: str) -> List[int]:
     return query_lines
 
 
-def index_to_line_ch_pos(query_lines: List[int], index: int) -> Tuple[int, int]:
+def index_to_line_ch_pos(query_lines: List[int], ch_idx: int) -> Tuple[int, int]:
     """convert index to line,ch format
 
     Args:
         query_lines (List[int]): see get_query_lines()
-        index (int): index of char in query
+        ch_idx (int): index of char in query
 
     Returns:
         Tuple[int, int]: line number, and char number. Is none if index out of range
     """
-    for line, start_ch in enumerate(query_lines):
-        # the second check is trivially true,
-        # just in case query_lines is malformed
-        if start_ch > index and line > 0:
-            return line - 1, index - query_lines[line - 1]
+    start_idx = 0
+    end_idx = len(query_lines) - 1
 
-    # Out of index - return something after the last line
-    # Note: query_lines is at least length 2, so len(query_lines) - 2 is where
-    # the last line is
-    return len(query_lines) - 2, index - query_lines[-2]
+    while start_idx <= end_idx:
+        mid = (end_idx - start_idx) // 2 + start_idx
+        if query_lines[mid] == ch_idx:
+            return mid, 0
+        elif query_lines[mid] > ch_idx:
+            end_idx = mid - 1
+        elif query_lines[mid] < ch_idx:
+            start_idx = mid + 1
+
+    lower_idx = end_idx
+    return lower_idx, ch_idx - query_lines[lower_idx]
 
 
 def split_query_to_statements_with_start_location(query: str):
