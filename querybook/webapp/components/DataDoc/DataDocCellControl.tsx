@@ -35,13 +35,11 @@ interface IProps {
     pasteCellAt?: (index: number) => any;
     copyCellAt?: (index: number, cut?: boolean) => any;
 
-    previousEngine?: number;
     insertCellAt: (
         index: number,
         cellKey: string,
         context: string,
-        meta: IDataCellMeta,
-        previousEngine: number
+        meta: IDataCellMeta
     ) => any;
     deleteCellAt?: (index: number) => any;
 
@@ -60,7 +58,6 @@ export const DataDocCellControl: React.FunctionComponent<IProps> = ({
 
     numberOfCells,
     moveCellAt,
-    previousEngine,
     insertCellAt,
     deleteCellAt,
 
@@ -217,7 +214,6 @@ export const DataDocCellControl: React.FunctionComponent<IProps> = ({
         centerButtons.push(
             <InsertCellButtons
                 index={index}
-                previousEngine={previousEngine}
                 key="insert-cell-buttons"
                 insertCellAt={insertCellAt}
             />
@@ -271,11 +267,10 @@ export const DataDocCellControl: React.FunctionComponent<IProps> = ({
 const InsertCellButtons: React.FC<{
     insertCellAt: IProps['insertCellAt'];
     index: number;
-    previousEngine: number;
-}> = React.memo(({ insertCellAt, index, previousEngine }) => {
+}> = React.memo(({ insertCellAt, index }) => {
     const handleInsertcell = useCallback(
-        (cellType: string) => insertCellAt(index, cellType, null, null, previousEngine),
-        [insertCellAt, index, previousEngine]
+        (cellType: string) => insertCellAt(index, cellType, null, null),
+        [insertCellAt, index]
     );
 
     const buttonsDOM = Object.entries(cellTypes).map(([cellKey, cellType]) => (

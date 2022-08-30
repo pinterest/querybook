@@ -278,7 +278,7 @@ export function insertDataDocCell(
     cellType: CELL_TYPE,
     context: string | ContentState,
     meta: IDataCellMeta,
-    previousEngine?: number
+    previousEngineId?: number
 ): ThunkResult<Promise<any>> {
     return (dispatch, getState) => {
         const state = getState();
@@ -299,17 +299,14 @@ export function insertDataDocCell(
                     state.environment.currentEnvironmentId
                 ];
             const defaultQueryEngine =
-                previousEngine &&
+                previousEngineId &&
                 userSetting['use_previous_query_engine'] === 'enabled'
-                    ? previousEngine
+                    ? previousEngineId
                     : getQueryEngineId(
                           userSetting['default_query_engine'],
                           queryEngineIds
                       );
-            const engine =
-                meta && meta['engine'] != null
-                    ? meta['engine']
-                    : defaultQueryEngine;
+            const engine = meta?.['engine'] ?? defaultQueryEngine;
             meta = {
                 ...meta,
                 engine,

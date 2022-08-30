@@ -22,6 +22,7 @@ import {
     IDataCell,
     IDataCellMeta,
     IDataDoc,
+    IDataQueryCell
 } from 'const/datadoc';
 import { ISearchOptions, ISearchResult } from 'const/searchAndReplace';
 import { DataDocContext, IDataDocContextType } from 'context/DataDoc';
@@ -301,8 +302,7 @@ class DataDocComponent extends React.PureComponent<IProps, IState> {
         index: number,
         cellType: CELL_TYPE,
         context: string,
-        meta: IDataCellMeta,
-        previousEngine?: number
+        meta: IDataCellMeta
     ) {
         try {
             const dataDoc = this.props.dataDoc;
@@ -310,13 +310,21 @@ class DataDocComponent extends React.PureComponent<IProps, IState> {
                 // After componentDidUpdate, this will focus the cell
                 this.focusCellIndexAfterInsert = index;
 
+                const previousQueryCell = dataDoc.dataDocCells
+                    .slice(0, index)
+                    .reverse()
+                    .find(
+                        (cell) => cell.cell_type === 'query'
+                    ) as IDataQueryCell;
+                const previousCellEngineId = previousQueryCell?.meta?.engine;
+
                 await this.props.insertDataDocCell(
                     dataDoc.id,
                     index,
                     cellType,
                     context,
                     meta,
-                    previousEngine
+                    previousCellEngineId
                 );
             }
         } catch (e) {
@@ -537,8 +545,7 @@ class DataDocComponent extends React.PureComponent<IProps, IState> {
         index: number,
         numberOfCells: number,
         lastQueryCellId: number,
-        queryIndexInDoc: number,
-        previousEngine: number
+        queryIndexInDoc: number
     ) {
         const { dataDoc, isEditable } = this.props;
         const { focusedCellIndex } = this.state;
@@ -559,7 +566,6 @@ class DataDocComponent extends React.PureComponent<IProps, IState> {
                             index={index}
                             numberOfCells={numberOfCells}
                             insertCellAt={insertCellAtBinded}
-                            previousEngine={previousEngine}
                             isHeader={true}
                             active={forceShow}
                             isEditable={isEditable}
@@ -590,30 +596,25 @@ class DataDocComponent extends React.PureComponent<IProps, IState> {
         const cellDOMs = [];
         const { dataDoc } = this.props;
         const dataDocCells = dataDoc.dataDocCells || [];
-        let lastQueryCell = null;
+        let lastQueryCellId: number = null;
         let queryIndexInDoc = 0;
-        let previousEngine: number = null;
 
         for (let i = 0; i < numberOfCells + 1; i++) {
             const cell = dataDocCells[i];
-            if (lastQueryCell) {
-                previousEngine = lastQueryCell.meta.engine;
-            }
             cellDOMs.push(
                 this.renderLazyDataDocCell(
                     cell,
                     i,
                     numberOfCells,
-                    cell ? cell.id : null,
-                    queryIndexInDoc,
-                    previousEngine
+                    lastQueryCellId,
+                    queryIndexInDoc
                 )
             );
 
             const isQueryCell = cell && cell.cell_type === 'query';
             if (isQueryCell) {
                 queryIndexInDoc++;
-                lastQueryCell = cell;
+                lastQueryCellId = cell.id;
             }
         }
 
