@@ -1,4 +1,6 @@
+from bisect import bisect_right
 from typing import List, Tuple
+
 import sqlparse
 
 skip_token_type = [
@@ -58,11 +60,9 @@ def get_sanitized_statement(statement: str):
 
 
 def get_query_lines(query: str) -> List[int]:
-    line_lens = [len(line) for line in query.split("\n")]
-    query_lines = [0]
-    for line_len in line_lens:
-        # The +1 is the newline character
-        query_lines.append(query_lines[-1] + line_len + 1)
+    query_lines = (
+        [0] + [i + 1 for i, c in enumerate(query) if c == "\n"] + [len(query) + 1]
+    )
     return query_lines
 
 
@@ -76,20 +76,8 @@ def index_to_line_ch_pos(query_lines: List[int], ch_idx: int) -> Tuple[int, int]
     Returns:
         Tuple[int, int]: line number, and char number. Is none if index out of range
     """
-    start_idx = 0
-    end_idx = len(query_lines) - 1
-
-    while start_idx <= end_idx:
-        mid = (end_idx - start_idx) // 2 + start_idx
-        if query_lines[mid] == ch_idx:
-            return mid, 0
-        elif query_lines[mid] > ch_idx:
-            end_idx = mid - 1
-        elif query_lines[mid] < ch_idx:
-            start_idx = mid + 1
-
-    lower_idx = end_idx
-    return lower_idx, ch_idx - query_lines[lower_idx]
+    idx = bisect_right(query_lines, ch_idx) - 1
+    return idx, ch_idx - query_lines[idx]
 
 
 def split_query_to_statements_with_start_location(query: str):
