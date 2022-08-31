@@ -1,7 +1,11 @@
 import { Action } from 'redux';
 import { ThunkAction } from 'redux-thunk';
 
-import { IEngineStatusData, IQueryEngine } from 'const/queryEngine';
+import {
+    IEngineStatusData,
+    IQueryEngine,
+    IQueryTranspiler,
+} from 'const/queryEngine';
 
 import { IStoreState } from '../store/types';
 
@@ -28,10 +32,18 @@ export interface IQueryEngineStatusReceiveAction extends Action {
     };
 }
 
+export interface IQueryTranspilerReceiveAction extends Action {
+    type: '@@queryEngine/TRANSPILER_RECEIVE';
+    payload: {
+        transpilers: IQueryTranspiler[];
+    };
+}
+
 export type QueryEngineAction =
     | IQueryEngineReceiveAction
     | IQueryEngineStatusLoadingAction
-    | IQueryEngineStatusReceiveAction;
+    | IQueryEngineStatusReceiveAction
+    | IQueryTranspilerReceiveAction;
 
 export type ThunkResult<R> = ThunkAction<
     R,
@@ -50,4 +62,5 @@ export interface IQueryEngineStatus {
 export interface IQueryEngineState {
     queryEngineById: Record<number, IQueryEngine>;
     queryEngineStatusById: Record<number, IQueryEngineStatus>;
+    queryTranspilers: IQueryTranspiler[];
 }

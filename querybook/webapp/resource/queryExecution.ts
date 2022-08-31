@@ -1,4 +1,5 @@
 import type { IAccessRequest } from 'const/accessRequest';
+import { IQueryTranspiler } from 'const/queryEngine';
 import {
     IQueryError,
     IQueryExecution,
@@ -165,5 +166,20 @@ export const TemplatedQueryResource = {
         ds.save<IQueryValidationResult[]>('/query/validate/', {
             query,
             engine_id: engineId,
+        }),
+
+    getAllQueryTranspilers: () =>
+        ds.fetch<IQueryTranspiler[]>('/query/transpile/'),
+
+    transpileQuery: (
+        transpiler: string,
+        query: string,
+        fromLanguage: string,
+        toLanguage: string
+    ) =>
+        ds.save<string>(`/query/transpile/${transpiler}/`, {
+            query,
+            from_language: fromLanguage,
+            to_language: toLanguage,
         }),
 };

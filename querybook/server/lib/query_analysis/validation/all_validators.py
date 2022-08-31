@@ -2,12 +2,10 @@ from lib.utils.import_helper import import_module_with_default
 from .base_query_validator import BaseQueryValidator
 from .validators.presto_explain_validator import (
     PrestoExplainValidator,
-    TrinoExplainValidator,
 )
 
 ALL_DEFAULT_QUERY_VALIDATORS = [
     PrestoExplainValidator,
-    TrinoExplainValidator,
 ]
 
 ALL_PLUGIN_QUERY_VALIDATORS_BY_NAME = import_module_with_default(

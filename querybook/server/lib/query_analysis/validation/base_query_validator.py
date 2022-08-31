@@ -36,7 +36,7 @@ class BaseQueryValidator(ABC):
         self._config = config
 
     @abstractmethod
-    def language(self) -> str:
+    def languages(self) -> List[str]:
         raise NotImplementedError()
 
     @abstractmethod
@@ -49,4 +49,4 @@ class BaseQueryValidator(ABC):
         raise NotImplementedError()
 
     def to_dict(self):
-        return {"name": self._name, "language": self.language()}
+        return {"name": self._name, "languages": self.languages()}

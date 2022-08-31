@@ -5,6 +5,7 @@ import { IQueryEngineState, QueryEngineAction } from './types';
 const initialState: IQueryEngineState = {
     queryEngineById: {},
     queryEngineStatusById: {},
+    queryTranspilers: [],
 };
 
 export default function queryEngine(
@@ -30,6 +31,10 @@ export default function queryEngine(
             case '@@queryEngine/STATUS_RECEIVE': {
                 const { id, status } = action.payload;
                 draft.queryEngineStatusById[id] = status;
+                return;
+            }
+            case '@@queryEngine/TRANSPILER_RECEIVE': {
+                draft.queryTranspilers = action.payload.transpilers;
                 return;
             }
         }
