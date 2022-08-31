@@ -22,7 +22,7 @@ import {
     IDataCell,
     IDataCellMeta,
     IDataDoc,
-    IDataQueryCell
+    IDataQueryCell,
 } from 'const/datadoc';
 import { ISearchOptions, ISearchResult } from 'const/searchAndReplace';
 import { DataDocContext, IDataDocContextType } from 'context/DataDoc';
