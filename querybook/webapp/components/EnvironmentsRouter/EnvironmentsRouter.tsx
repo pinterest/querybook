@@ -69,42 +69,42 @@ const EnvironmentsRouter: React.FC = () => {
         [dispatch, environments, currentEnvironment, userEnvironmentNames]
     );
 
-    if (!environmentsLoaded) {
-        return <Loading fullHeight />;
-    }
+    const getRedirectDOM = () => {
+        if (userEnvironmentNames.size > 0) {
+            let defaultEnvironment = null;
+            if (defaultEnvironmentId != null) {
+                defaultEnvironment = environments.find(
+                    (env) =>
+                        env.id === Number(defaultEnvironmentId) &&
+                        userEnvironmentNames.has(env.name)
+                );
+            }
 
-    let redirectDOM = null;
-    if (userEnvironmentNames.size > 0) {
-        let defaultEnvironment = null;
-        if (defaultEnvironmentId != null) {
-            defaultEnvironment = environments.find(
-                (env) =>
-                    env.id === Number(defaultEnvironmentId) &&
+            if (!defaultEnvironment) {
+                defaultEnvironment = environments.find((env) =>
                     userEnvironmentNames.has(env.name)
-            );
+                );
+            }
+            if (defaultEnvironment) {
+                return (
+                    <Route
+                        exact
+                        path="/"
+                        render={() => (
+                            <Redirect to={`/${defaultEnvironment.name}/`} />
+                        )}
+                    />
+                );
+            }
         }
-        if (!defaultEnvironment) {
-            defaultEnvironment = environments.find((env) =>
-                userEnvironmentNames.has(env.name)
-            );
-        }
-        if (defaultEnvironment) {
-            redirectDOM = (
-                <Route
-                    exact
-                    path="/"
-                    render={() => (
-                        <Redirect to={`/${defaultEnvironment.name}/`} />
-                    )}
-                />
-            );
-        }
-    }
 
-    if (redirectDOM == null) {
-        redirectDOM = (
+        return (
             <Route path="/" exact={true} component={isAdmin ? SetUp : blank} />
         );
+    };
+
+    if (!environmentsLoaded) {
+        return <Loading fullHeight />;
     }
 
     return (
@@ -143,7 +143,7 @@ const EnvironmentsRouter: React.FC = () => {
                     );
                 }}
             />
-            {redirectDOM}
+            {getRedirectDOM()}
         </Switch>
     );
 };
