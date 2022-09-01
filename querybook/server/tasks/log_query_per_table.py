@@ -101,7 +101,7 @@ def sync_table_to_metastore(
                     else:
                         # Otherwise for things like insert/select we only update
                         # if it doesn't exist in the metastore
-                        schema_name, table_name = table.split(".")
+                        schema_name, table_name = table.rsplit(".", 1)
                         query_table = m_logic.get_table_by_name(
                             schema_name,
                             table_name,
@@ -112,11 +112,11 @@ def sync_table_to_metastore(
                             tables_to_add.add(table)
 
     for table in tables_to_remove:
-        schema_name, table_name = table.split(".")
+        schema_name, table_name = table.rsplit(".", 1)
         metastore_loader.sync_delete_table(schema_name, table_name, session=session)
 
     for table in tables_to_add:
-        schema_name, table_name = table.split(".")
+        schema_name, table_name = table.rsplit(".", 1)
         metastore_loader.sync_create_or_update_table(
             schema_name, table_name, session=session
         )
@@ -141,7 +141,7 @@ def log_table_per_statement(
             all_tables.update(tables)
 
     for table in all_tables:
-        schema_name, table_name = table.split(".")
+        schema_name, table_name = table.rsplit(".", 1)
         query_table = m_logic.get_table_by_name(
             schema_name, table_name, metastore_id=metastore_id, session=session
         )

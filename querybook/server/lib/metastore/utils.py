@@ -11,7 +11,7 @@ class MetastoreTableACLChecker(object):
     def process_tables(self, tables: List[str]):
         tables_by_schema = {}
         for table in tables:
-            full_name = table.split(".")
+            full_name = table.rsplit(".", 1)
             if len(full_name) == 1:
                 full_name.insert(0, "default")
 
