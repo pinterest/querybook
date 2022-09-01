@@ -76,6 +76,8 @@ If you install the required packages, these integrations will be automatically s
     -   Google GCS (via `-r platform/gcp.txt`)
 -   Elasticsearch:
     -   AWS hosted (via `-r platform/aws.txt`)
+-   Parsing (transpilation):
+    -   SQLGlot (via `-r parser/sqlglot.txt`)
 
 ## How to install packages for integration
 

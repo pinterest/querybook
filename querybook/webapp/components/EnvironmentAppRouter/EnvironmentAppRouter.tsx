@@ -28,6 +28,7 @@ export const EnvironmentAppRouter: React.FunctionComponent<
     );
     const [engineLoaded, setEngineLoaded] = React.useState(false);
     const dispatch = useDispatch();
+
     React.useEffect(() => {
         if (environment?.name) {
             setEngineLoaded(false);

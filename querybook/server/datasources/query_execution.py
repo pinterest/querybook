@@ -34,6 +34,10 @@ from logic.query_execution_permission import (
 )
 from lib.config import get_config_value
 from lib.query_analysis.validation.all_validators import get_validator_by_name
+from lib.query_analysis.transpilation.all_transpilers import (
+    ALL_TRANSPILERS,
+    get_transpiler_by_name,
+)
 from tasks.export_query_execution import export_query_execution_task
 from tasks.run_query import run_query_task
 from app.auth.permission import verify_query_execution_owner
@@ -574,8 +578,21 @@ def perform_query_syntax_check(query: str, engine_id: int):
     validator = get_validator_by_name(validator_name)
 
     api_assert(
-        validator.language() == engine.language,
+        engine.language in validator.languages(),
         "The query engine language does not equal to validator language",
     )
 
     return validator.validate(query, current_user.id, engine_id)
+
+
+@register("/query/transpile/", methods=["GET"])
+def get_all_transpilers():
+    return ALL_TRANSPILERS
+
+
+@register("/query/transpile/<transpiler_name>/", methods=["POST"])
+def transpile_query(
+    transpiler_name: str, query: str, from_language: str, to_language: str
+):
+    transpiler = get_transpiler_by_name(transpiler_name)
+    return transpiler.transpile(query, from_language, to_language)

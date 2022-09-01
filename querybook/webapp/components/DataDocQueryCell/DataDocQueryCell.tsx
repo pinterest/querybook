@@ -20,7 +20,7 @@ import { QuerySnippetInsertionModal } from 'components/QuerySnippetInsertionModa
 import { TemplatedQueryView } from 'components/TemplateQueryView/TemplatedQueryView';
 import { UDFForm } from 'components/UDFForm/UDFForm';
 import { IDataQueryCellMeta } from 'const/datadoc';
-import type { IQueryEngine } from 'const/queryEngine';
+import type { IQueryEngine, IQueryTranspiler } from 'const/queryEngine';
 import CodeMirror from 'lib/codemirror';
 import { createSQLLinter } from 'lib/codemirror/codemirror-lint';
 import { sendConfirm } from 'lib/querybookUI';
@@ -31,6 +31,7 @@ import {
     IRange,
 } from 'lib/sql-helper/sql-lexer';
 import { renderTemplatedQuery } from 'lib/templated-query';
+import { getPossibleTranspilers } from 'lib/templated-query/transpile';
 import { enableResizable, sleep } from 'lib/utils';
 import { formatError } from 'lib/utils/error';
 import { getShortcutSymbols, KeyMap, matchKeyPress } from 'lib/utils/keyboard';
@@ -43,6 +44,7 @@ import {
 } from 'redux/queryEngine/selector';
 import { createQueryExecution } from 'redux/queryExecutions/action';
 import { Dispatch, IStoreState } from 'redux/store/types';
+import { TemplatedQueryResource } from 'resource/queryExecution';
 import { Button, TextButton } from 'ui/Button/Button';
 import { ThemedCodeHighlight } from 'ui/CodeHighlight/ThemedCodeHighlight';
 import { Content } from 'ui/Content/Content';
@@ -197,6 +199,15 @@ class DataDocQueryCellComponent extends React.PureComponent<IProps, IState> {
         }
 
         return keyMap;
+    }
+
+    @decorate(memoizeOne)
+    public getTranspilerOptions(
+        transpilers: IQueryTranspiler[],
+        queryEngine: IQueryEngine,
+        queryEngines: IQueryEngine[]
+    ) {
+        return getPossibleTranspilers(transpilers, queryEngine, queryEngines);
     }
 
     @bind
@@ -421,6 +432,32 @@ class DataDocQueryCellComponent extends React.PureComponent<IProps, IState> {
     }
 
     @bind
+    public async transpileQuery(
+        transpilerName: string,
+        toEngine: IQueryEngine
+    ) {
+        const { data: transpiledQuery } =
+            await TemplatedQueryResource.transpileQuery(
+                transpilerName,
+                this.state.query,
+                this.queryEngine.language,
+                toEngine.language
+            );
+        this.setState(
+            {
+                query: transpiledQuery,
+                meta: {
+                    ...this.state.meta,
+                    engine: toEngine.id,
+                },
+            },
+            () => {
+                toast.success(`Query transpiled to ${toEngine.name}`);
+            }
+        );
+    }
+
+    @bind
     public async explainQuery() {
         const renderedQuery = getQueryAsExplain(
             await this.getCurrentSelectedQuery()
@@ -453,7 +490,8 @@ class DataDocQueryCellComponent extends React.PureComponent<IProps, IState> {
 
     @bind
     public getAdditionalDropDownButtonDOM() {
-        const { isEditable } = this.props;
+        const { isEditable, queryEngines, queryTranspilers } = this.props;
+        const queryEngine = this.queryEngine;
 
         const queryCollapsed = this.queryCollapsed;
 
@@ -496,6 +534,24 @@ class DataDocQueryCellComponent extends React.PureComponent<IProps, IState> {
             onClick: this.toggleQueryCollapsing.bind(this, !queryCollapsed),
             icon: queryCollapsed ? 'Eye' : 'EyeOff',
         });
+
+        const transpilerOptions = this.getTranspilerOptions(
+            queryTranspilers,
+            queryEngine,
+            queryEngines
+        );
+        if (transpilerOptions.length > 0) {
+            additionalButtons.push({
+                name: `Transpile Query`,
+                icon: 'Languages',
+
+                items: transpilerOptions.map((t) => ({
+                    name: `To ${t.toEngine.name} (${t.toEngine.language})`,
+                    onClick: () =>
+                        this.transpileQuery(t.transpilerName, t.toEngine),
+                })),
+            });
+        }
 
         if (this.hasUDFSupport) {
             additionalButtons.push({
@@ -848,6 +904,7 @@ function mapStateToProps(state: IStoreState) {
     const queryEngines = queryEngineSelector(state);
 
     return {
+        queryTranspilers: state.queryEngine.queryTranspilers,
         queryEngines,
         queryEngineById: queryEngineByIdEnvSelector(state),
     };

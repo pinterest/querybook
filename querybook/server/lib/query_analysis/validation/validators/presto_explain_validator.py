@@ -65,8 +65,8 @@ class PrestoExplainValidator(BaseQueryValidator):
     def _run_validation_statement(self, statement: str, engine_id: int, uid: int):
         ExecuteQuery(False, 0.1)(statement, engine_id, uid)
 
-    def language(self):
-        return "presto"
+    def languages(self):
+        return ["presto", "trino"]
 
     def validate(
         self,
@@ -102,8 +102,3 @@ class PrestoExplainValidator(BaseQueryValidator):
 
                 statement_idx += 1
         return validation_errors
-
-
-class TrinoExplainValidator(PrestoExplainValidator):
-    def language(self):
-        return "trino"

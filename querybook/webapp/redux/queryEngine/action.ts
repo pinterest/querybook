@@ -1,5 +1,6 @@
 import { IQueryEngine, QueryEngineStatus } from 'const/queryEngine';
 import { QueryEngineResource } from 'resource/queryEngine';
+import { TemplatedQueryResource } from 'resource/queryExecution';
 
 import { queryEngineByIdEnvSelector } from './selector';
 import { ThunkResult } from './types';
@@ -83,4 +84,15 @@ export function fetchAllSystemStatus(force = false): ThunkResult<Promise<any>> {
                     dispatch(fetchSystemStatus(Number(engineId), force))
             )
         );
+}
+
+export function fetchQueryTranspilers(): ThunkResult<Promise<any>> {
+    return async (dispatch) => {
+        const { data } = await TemplatedQueryResource.getAllQueryTranspilers();
+        dispatch({
+            type: '@@queryEngine/TRANSPILER_RECEIVE',
+            payload: { transpilers: data },
+        });
+        return data;
+    };
 }

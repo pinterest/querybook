@@ -108,8 +108,10 @@ export const AdminQueryEngine: React.FunctionComponent<IProps> = ({
     const queryValidatorsPerLanguage = React.useMemo(
         () =>
             (queryValidators ?? []).reduce((hash, validator) => {
-                hash[validator.language] = hash[validator.language] ?? [];
-                hash[validator.language].push(validator.name);
+                for (const language of validator.languages) {
+                    hash[language] = hash[language] ?? [];
+                    hash[language].push(validator.name);
+                }
                 return hash;
             }, {} as Record<string, string[]>),
         [queryValidators]

@@ -39,5 +39,11 @@ export interface IEngineStatusData {
 
 export interface IQueryValidator {
     name: string;
-    language: string;
+    languages: string[];
+}
+
+export interface IQueryTranspiler {
+    name: string;
+    from_languages: string[];
+    to_languages: string[];
 }
