@@ -1,6 +1,9 @@
 import { ICancelablePromise } from 'lib/datasource';
 
-// Keep this the same as the Enum defined in const/query_execution.py
+/*
+ *  Keep definitions in this file to be same as const/query_execution.py
+ */
+
 export enum QueryExecutionType {
     ADHOC = 'adhoc',
     SCHEDULED = 'scheduled',
