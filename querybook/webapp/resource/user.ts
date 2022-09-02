@@ -34,6 +34,7 @@ export const UserResource = {
         ds.fetch<
             [visibleEnvironments: IEnvironment[], userEnvironmentIds: number[]]
         >('/user/environment/'),
+    getQueryEngines: () => ds.fetch<number[]>('/user/query_engine/'),
     getNotifiers: () => ds.fetch<INotifier[]>('/user/notifiers/'),
 };
 

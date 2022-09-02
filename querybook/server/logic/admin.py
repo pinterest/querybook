@@ -57,34 +57,6 @@ def get_query_engines_by_environment(environment_id, ordered=False, session=None
 
 
 @with_session
-def get_all_accessible_query_engines_by_environment(
-    environment_id, uid, ordered=False, session=None
-):
-    query = (
-        session.query(QueryEngine)
-        .join(QueryEngineEnvironment)
-        .outerjoin(UserQueryEngine)
-        .filter(QueryEngineEnvironment.environment_id == environment_id)
-        .filter(QueryEngine.deleted_at.is_(None))
-        .filter(
-            or_(
-                UserQueryEngine.user_id == uid,
-                # If no user is assigned, then the engine is public
-                UserQueryEngine.user_id.is_(None),
-            )
-        )
-    )
-
-    if ordered:
-        query = query.order_by(QueryEngineEnvironment.engine_order)
-
-    all = query.all()
-
-    print(all)
-    return all
-
-
-@with_session
 def get_all_accessible_query_engine_ids_by_uid(uid, session=None):
     return list(
         map(

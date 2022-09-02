@@ -71,6 +71,12 @@ def get_user_environment_ids():
     return [visible_environments, user_environment_ids]
 
 
+@register("/user/query_engine/", methods=["GET"])
+def get_user_query_engine_ids():
+    # Return all query engine ids that the user has access to
+    return admin_logic.get_all_accessible_query_engine_ids_by_uid(uid=current_user.id)
+
+
 @register("/user/setting/<key>/", methods=["POST"])
 def set_user_setting(key, value=None):
     return logic.create_or_update_user_setting(

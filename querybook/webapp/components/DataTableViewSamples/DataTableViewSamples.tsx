@@ -60,6 +60,9 @@ export const DataTableViewSamples: React.FunctionComponent<
                 state.environment.currentEnvironmentId
             ] ?? [];
         return queryEngineIds
+            .filter((engineId) =>
+                state.queryEngine.userQueryEngineIds.has(engineId)
+            )
             .map((engineId) => state.queryEngine.queryEngineById[engineId])
             .filter((engine) => engine?.metastore_id === schema.metastore_id);
     });

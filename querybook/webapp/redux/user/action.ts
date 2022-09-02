@@ -2,6 +2,7 @@ import { UserRoleType } from 'const/user';
 import { userLoadManager } from 'lib/batch/user-load-manager';
 import localStore from 'lib/local-store';
 import { USER_SETTINGS_KEY, UserSettingsValue } from 'lib/local-store/const';
+import { fetchUserQueryEngines } from 'redux/queryEngine/action';
 import { UserResource, UserSettingResource } from 'resource/user';
 
 import { ThunkResult } from './types';
@@ -27,6 +28,7 @@ export function loginUser(): ThunkResult<Promise<void>> {
                 });
 
                 dispatch(getUserSetting());
+                dispatch(fetchUserQueryEngines());
             }
         });
 }

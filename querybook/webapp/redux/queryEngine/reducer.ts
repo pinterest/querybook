@@ -6,6 +6,7 @@ const initialState: IQueryEngineState = {
     queryEngineById: {},
     queryEngineStatusById: {},
     queryTranspilers: [],
+    userQueryEngineIds: new Set<number>(),
 };
 
 export default function queryEngine(
@@ -35,6 +36,13 @@ export default function queryEngine(
             }
             case '@@queryEngine/TRANSPILER_RECEIVE': {
                 draft.queryTranspilers = action.payload.transpilers;
+                return;
+            }
+            case '@@queryEngine/RECEIVE_USER_QUERY_ENGINE_IDS': {
+                draft.userQueryEngineIds = new Set(
+                    action.payload.userQueryEngineIds
+                );
+
                 return;
             }
         }
