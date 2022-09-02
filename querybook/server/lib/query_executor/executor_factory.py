@@ -17,16 +17,23 @@ LOG = get_logger(__file__)
 
 
 @with_session
-def create_executor_from_execution(query_execution_id, celery_task, session=None):
+def create_executor_from_execution(
+    query_execution_id, celery_task, execution_type, session=None
+):
     executor_params, engine = _get_executor_params_and_engine(
-        query_execution_id, celery_task=celery_task, session=session
+        query_execution_id,
+        celery_task=celery_task,
+        execution_type=execution_type,
+        session=session,
     )
     executor = get_executor_class(engine.language, engine.executor)(**executor_params)
     return executor
 
 
 @with_session
-def _get_executor_params_and_engine(query_execution_id, celery_task, session=None):
+def _get_executor_params_and_engine(
+    query_execution_id, celery_task, execution_type, session=None
+):
     query, statement_ranges, uid, engine_id = _get_query_execution_info(
         query_execution_id, session=session
     )
@@ -44,6 +51,7 @@ def _get_executor_params_and_engine(query_execution_id, celery_task, session=Non
             "query": query,
             "statement_ranges": statement_ranges,
             "client_setting": client_setting,
+            "execution_type": execution_type,
         },
         engine,
     )

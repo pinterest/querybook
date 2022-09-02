@@ -3,6 +3,11 @@ from enum import Enum
 # Keep these the same as const/queryExecution.ts
 
 
+class QueryExecutionType(Enum):
+    ADHOC = "adhoc"
+    SCHEDULED = "scheduled"
+
+
 class QueryExecutionStatus(Enum):
     INITIALIZED = 0
     DELIVERED = 1

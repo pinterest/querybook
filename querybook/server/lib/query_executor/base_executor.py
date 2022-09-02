@@ -493,8 +493,10 @@ class QueryExecutorBaseClass(metaclass=ABCMeta):
         query: str,
         statement_ranges,
         client_setting,
+        execution_type,
     ):
         self._query = query
+        self._execution_type = execution_type
 
         if self.SINGLE_QUERY_QUERY_ENGINE():
             self._statement_ranges = [[0, len(query)]]

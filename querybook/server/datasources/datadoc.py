@@ -286,7 +286,11 @@ def create_datadoc_schedule(
             schedule_name,
             "tasks.run_datadoc.run_datadoc",
             cron=cron,
-            kwargs={**kwargs, "user_id": current_user.id, "doc_id": id},
+            kwargs={
+                **kwargs,
+                "user_id": current_user.id,
+                "doc_id": id,
+            },
             task_type="user",
             session=session,
         )

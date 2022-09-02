@@ -6,7 +6,7 @@ from celery.utils.log import get_task_logger
 
 from app.db import with_session, DBSession
 from app.flask_app import celery
-from const.query_execution import QueryExecutionStatus
+from const.query_execution import QueryExecutionStatus, QueryExecutionType
 from lib.query_executor.notification import notifiy_on_execution_completion
 from lib.query_executor.executor_factory import create_executor_from_execution
 from lib.query_executor.exc import QueryExecutorException
@@ -28,13 +28,17 @@ LOG = get_task_logger(__name__)
     # worth to check later
     acks_late=True,
 )
-def run_query_task(self, query_execution_id):
+def run_query_task(
+    self, query_execution_id, execution_type=QueryExecutionType.ADHOC.value
+):
     executor = None
     error_message = None
     query_execution_status = QueryExecutionStatus.INITIALIZED
 
     try:
-        executor = create_executor_from_execution(query_execution_id, celery_task=self)
+        executor = create_executor_from_execution(
+            query_execution_id, celery_task=self, execution_type=execution_type
+        )
         run_executor_until_finish(self, executor)
     except SoftTimeLimitExceeded:
         # SoftTimeLimitExceeded
