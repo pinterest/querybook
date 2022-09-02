@@ -3,7 +3,7 @@ from celery import chain
 from app.db import DBSession
 from app.flask_app import celery
 
-from const.query_execution import QueryExecutionStatus
+from const.query_execution import QueryExecutionStatus, QueryExecutionType
 from const.schedule import NotifyOn, TaskRunStatus
 
 from lib.logger import get_logger
@@ -37,6 +37,7 @@ def run_datadoc_with_config(
     self,
     doc_id,
     user_id=None,
+    execution_type=QueryExecutionType.SCHEDULED.value,
     # Notification related settings
     notify_with=None,
     notify_on=NotifyOn.ALL.value,
@@ -77,7 +78,7 @@ def run_datadoc_with_config(
                 else _start_query_execution_task.s(**start_query_execution_kwargs)
             )
 
-            tasks_to_run.append(run_query_task.s())
+            tasks_to_run.append(run_query_task.s(execution_type=execution_type))
 
         # Create db entry record
         record_id = create_task_run_record_for_celery_task(self, session=session)
