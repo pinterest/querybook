@@ -26,8 +26,11 @@ def authenticate(username, password, session=None):
     :raise AuthenticationError: if an error occurred
     :return: a PasswordUser
     """
-    if not username or not password:
-        raise AuthenticationError()
+    if not username:
+        raise AuthenticationError("Please provide a username")
+
+    if not password:
+        raise AuthenticationError("Please provide a password")
 
     user = get_user_by_name(username, session=session)
     if not user:
