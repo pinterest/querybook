@@ -1,6 +1,7 @@
-import JSONBig from 'json-bigint';
 import React from 'react';
+import ReactJson, { ThemeObject } from 'react-json-view';
 
+import { isBoolean } from 'lib/utils/boolean';
 import {
     formatNumber,
     getHumanReadableNumber,
@@ -10,6 +11,25 @@ import {
 import { Link } from 'ui/Link/Link';
 
 import { IColumnTransformer } from './types';
+
+const ReactJsonTheme: ThemeObject = {
+    base00: 'transparent', // background
+    base01: 'var(--text)', // not used
+    base02: 'var(--color-accent-dark)', // vertical lines, null value frame
+    base03: 'var(--text)', // not used
+    base04: 'var(--text-light)', // number of items
+    base05: 'var(--text)', // not used
+    base06: 'var(--text)', // not used
+    base07: 'var(--color-accent-dark)', // struct keys, curly brackets, colon
+    base08: 'var(--text)', // not used
+    base09: 'var(--text)', // string value, ellipsis
+    base0A: 'var(--color-accent-lightest)', // null value text
+    base0B: 'var(--text)', // not used
+    base0C: 'var(--color-accent-dark)', // array indices
+    base0D: 'var(--color-accent-dark)', // collapse
+    base0E: 'var(--color-accent-dark)', // expand
+    base0F: 'var(--text)', // int value
+};
 
 const queryResultTransformers: IColumnTransformer[] = [
     {
@@ -58,20 +78,6 @@ const queryResultTransformers: IColumnTransformer[] = [
         transform: (v: string): React.ReactNode => v.toLocaleUpperCase(),
     },
     {
-        key: 'prettify',
-        name: 'Prettify',
-        appliesToType: ['json'],
-        priority: 0,
-        auto: false,
-        transform: (v: string): React.ReactNode => {
-            try {
-                return JSONBig.stringify(JSONBig.parse(v), null, 2);
-            } catch (e) {
-                return v;
-            }
-        },
-    },
-    {
         key: 'url',
         name: 'Url Links',
         appliesToType: ['url'],
@@ -82,6 +88,36 @@ const queryResultTransformers: IColumnTransformer[] = [
                 {v}
             </Link>
         ),
+    },
+    {
+        key: 'parse-json',
+        name: 'Parse JSON',
+        appliesToType: ['json'],
+        priority: 0,
+        auto: true,
+        transform: (v: string): React.ReactNode => {
+            try {
+                const json = JSON.parse(v);
+                // Cannot pass following into <ReactJson />, returning original value in order to protect ReactJson from failing
+                if (!json || isNumeric(json) || isBoolean(json)) {
+                    return v;
+                }
+                return (
+                    <ReactJson
+                        collapsed={1} // keep first level expanded by default
+                        displayDataTypes={false}
+                        enableClipboard={false}
+                        name={false}
+                        quotesOnKeys={false}
+                        src={json}
+                        theme={ReactJsonTheme}
+                    />
+                );
+            } catch (e) {
+                console.error(e);
+                return v;
+            }
+        },
     },
 ]
     .concat(window.CUSTOM_COLUMN_TRANSFORMERS ?? [])
