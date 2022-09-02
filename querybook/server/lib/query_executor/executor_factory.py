@@ -43,7 +43,6 @@ def _get_executor_params_and_engine(
         raise ArchivedQueryEngine("This query engine is disabled.")
 
     client_setting = get_client_setting_from_engine(engine, uid, session=session)
-    client_setting["execution_type"] = execution_type
 
     return (
         {
@@ -52,6 +51,7 @@ def _get_executor_params_and_engine(
             "query": query,
             "statement_ranges": statement_ranges,
             "client_setting": client_setting,
+            "execution_type": execution_type,
         },
         engine,
     )

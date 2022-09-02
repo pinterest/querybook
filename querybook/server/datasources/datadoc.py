@@ -10,7 +10,6 @@ from app.datasource import register, api_assert, with_impression
 from app.flask_app import socketio
 from app.db import DBSession, with_session
 from const.impression import ImpressionItemType
-from const.query_execution import QueryExecutionType
 from env import QuerybookSettings
 
 from lib.celery.cron import validate_cron
@@ -291,8 +290,6 @@ def create_datadoc_schedule(
                 **kwargs,
                 "user_id": current_user.id,
                 "doc_id": id,
-                "scheduled": True,
-                "execution_type": QueryExecutionType.SCHEDULED.value,
             },
             task_type="user",
             session=session,
