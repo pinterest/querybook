@@ -5,7 +5,7 @@ import { UserSettingsTab } from 'components/EnvironmentAppRouter/modalRoute/User
 import { titleize } from 'lib/utils';
 import { availableEnvironmentsSelector } from 'redux/environment/selector';
 import { notificationServiceSelector } from 'redux/notificationService/selector';
-import { queryEngineSelector } from 'redux/queryEngine/selector';
+import { enabledQueryEngineSelector } from 'redux/queryEngine/selector';
 import { IStoreState } from 'redux/store/types';
 import * as userActions from 'redux/user/action';
 import { makeSelectOptions, Select } from 'ui/Select/Select';
@@ -39,7 +39,7 @@ export const UserSettingsMenu: React.FC<{ tab: UserSettingsTab }> = ({
         (state: IStoreState) => state.environment.currentEnvironmentId
     );
     const availableEnvironments = useSelector(availableEnvironmentsSelector);
-    const queryEngines = useSelector(queryEngineSelector);
+    const queryEngines = useSelector(enabledQueryEngineSelector);
     const notifiers = useSelector(notificationServiceSelector);
 
     const dispatch = useDispatch();

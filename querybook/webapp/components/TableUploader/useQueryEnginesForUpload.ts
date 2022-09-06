@@ -1,11 +1,11 @@
 import { useMemo } from 'react';
 import { useSelector } from 'react-redux';
 
-import { queryEngineSelector } from 'redux/queryEngine/selector';
+import { enabledQueryEngineSelector } from 'redux/queryEngine/selector';
 import { IStoreState } from 'redux/store/types';
 
 export function useQueryEnginesForUpload(metastoreId?: number) {
-    const queryEngines = useSelector(queryEngineSelector);
+    const queryEngines = useSelector(enabledQueryEngineSelector);
     return useMemo(
         () =>
             queryEngines.filter(
@@ -18,7 +18,7 @@ export function useQueryEnginesForUpload(metastoreId?: number) {
 }
 
 export function useMetastoresForUpload() {
-    const queryEngines = useSelector(queryEngineSelector);
+    const queryEngines = useSelector(enabledQueryEngineSelector);
     const availableForUploadMetaStoreIds = useMemo(
         () =>
             new Set(

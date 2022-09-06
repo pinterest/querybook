@@ -33,8 +33,25 @@ export const queryEngineSelector = createSelector(
     (queryEngineById, engineIds) => engineIds.map((id) => queryEngineById[id])
 );
 
+export const enabledQueryEngineSelector = createSelector(
+    queryEngineSelector,
+    (queryEngines) =>
+        queryEngines.filter(
+            (engine) => engine.feature_params?.disabled !== true
+        )
+);
+
 export const queryEngineByIdEnvSelector = createSelector(
     queryEngineSelector,
+    (queryEngines) =>
+        new Proxy(arrayGroupByField(queryEngines), {
+            get: (engineById, name: string) =>
+                name in engineById ? engineById[name] : unknownQueryEngine,
+        })
+);
+
+export const enabledQueryEngineByIdEnvSelector = createSelector(
+    enabledQueryEngineSelector,
     (queryEngines) =>
         new Proxy(arrayGroupByField(queryEngines), {
             get: (engineById, name: string) =>
@@ -45,13 +62,20 @@ export const queryEngineByIdEnvSelector = createSelector(
 export const queryEngineStatusAndEngineIdsSelector = createSelector(
     queryEngineStatusByIdSelector,
     engineIdsInEnvironmentSelector,
-    (queryEngineStatusById, engineIds) =>
-        engineIds.reduce((pairs, id) => {
-            if (id in queryEngineStatusById) {
-                pairs.push([id, queryEngineStatusById[id]]);
-            }
-            return pairs;
-        }, []) as Array<[number, IQueryEngineStatus]>
+    enabledQueryEngineSelector,
+    (queryEngineStatusById, engineIds, enabledQueryEngines) =>
+        engineIds
+            .filter(
+                (id) =>
+                    enabledQueryEngines.find((engine) => engine.id === id) !==
+                    undefined
+            )
+            .reduce((pairs, id) => {
+                if (id in queryEngineStatusById) {
+                    pairs.push([id, queryEngineStatusById[id]]);
+                }
+                return pairs;
+            }, []) as Array<[number, IQueryEngineStatus]>
 );
 
 export const queryEngineStatusByIdEnvSelector = createSelector(

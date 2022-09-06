@@ -4,8 +4,8 @@ import { connect } from 'react-redux';
 
 import { IQueryExecution, QueryExecutionStatus } from 'const/queryExecution';
 import {
+    enabledQueryEngineSelector,
     queryEngineByIdEnvSelector,
-    queryEngineSelector,
 } from 'redux/queryEngine/selector';
 import * as queryExecutionsActions from 'redux/queryExecutions/action';
 import * as queryViewActions from 'redux/queryView/action';
@@ -141,7 +141,7 @@ const mapStateToProps = (state: IStoreState) => ({
     queryResults: queryExecutionResultSelector(state),
     isLoadingQueries: state.queryView.isLoading,
     queryViewFilters: state.queryView.filters,
-    queryEngines: queryEngineSelector(state),
+    queryEngines: enabledQueryEngineSelector(state),
     queryEngineById: queryEngineByIdEnvSelector(state),
 });
 

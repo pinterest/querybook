@@ -373,6 +373,14 @@ export const AdminQueryEngine: React.FunctionComponent<IProps> = ({
                                 onChange={updateExecutor}
                             />
                         </div>
+                        <div className="flex-row stacked-fields flex0-children">
+                            <SimpleField
+                                stacked
+                                name="feature_params.disabled"
+                                type="toggle"
+                                label="Disabled"
+                            />
+                        </div>
                         <div className="AdminForm-section">
                             <div className="AdminForm-section-top flex-row">
                                 <div className="AdminForm-section-title">

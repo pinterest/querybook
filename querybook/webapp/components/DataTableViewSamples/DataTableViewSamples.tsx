@@ -61,6 +61,7 @@ export const DataTableViewSamples: React.FunctionComponent<
             ] ?? [];
         return queryEngineIds
             .map((engineId) => state.queryEngine.queryEngineById[engineId])
+            .filter((engine) => engine.feature_params.disabled !== true)
             .filter((engine) => engine?.metastore_id === schema.metastore_id);
     });
 

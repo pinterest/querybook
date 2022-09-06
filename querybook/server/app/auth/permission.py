@@ -7,6 +7,7 @@ from const.datasources import (
     ACCESS_RESTRICTED_STATUS_CODE,
     RESOURCE_NOT_FOUND_STATUS_CODE,
 )
+from logic.admin import get_query_engine_by_id
 
 from models.admin import QueryEngine, QueryMetastore, QueryEngineEnvironment
 from models.query_execution import QueryExecution, StatementExecution
@@ -53,7 +54,19 @@ def verify_query_engine_environment_permission(
 
 
 @with_session
-def verify_query_engine_permission(query_engine_id, session=None):
+def verify_query_engine_permission(query_engine_id, allow_disabled=False, session=None):
+
+    if not allow_disabled:
+        # If the engine is disabled, we should not allow access
+        # This can be bypassed for certain use cases (e.g. viewing snippets)
+        query_engine = get_query_engine_by_id(query_engine_id, session=session)
+
+        api_assert(
+            query_engine.get_feature_params().get("disabled", False) is not True,
+            message="Query Engine disabled",
+            status_code=ACCESS_RESTRICTED_STATUS_CODE,
+        )
+
     environment_ids = [
         eid
         for eid, in session.query(QueryEngineEnvironment.environment_id)

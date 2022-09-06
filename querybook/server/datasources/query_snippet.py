@@ -14,7 +14,11 @@ from logic import admin as admin_logic
 def get_query_snippet_by_id(query_snippet_id):
     with DBSession() as session:
         query_snippet = logic.get_snippet_by_id(query_snippet_id, session=session)
-        verify_query_engine_permission(query_snippet.engine_id, session=session)
+        verify_query_engine_permission(
+            query_snippet.engine_id,
+            allow_disabled=True,  # Allow viewing snippet even if query engine is disabled
+            session=session,
+        )
         return query_snippet
 
 

@@ -45,8 +45,8 @@ import { doesLanguageSupportUDF } from 'lib/utils/udf';
 import * as adhocQueryActions from 'redux/adhocQuery/action';
 import * as dataDocActions from 'redux/dataDoc/action';
 import {
+    enabledQueryEngineSelector,
     queryEngineByIdEnvSelector,
-    queryEngineSelector,
 } from 'redux/queryEngine/selector';
 import * as queryExecutionsAction from 'redux/queryExecutions/action';
 import { Dispatch, IStoreState } from 'redux/store/types';
@@ -89,7 +89,7 @@ const useEngine = (dispatch: Dispatch, environmentId: number) => {
         (state: IStoreState) => state.adhocQuery[environmentId]?.engineId
     );
     const queryEngineById = useSelector(queryEngineByIdEnvSelector);
-    const queryEngines = useSelector(queryEngineSelector);
+    const queryEngines = useSelector(enabledQueryEngineSelector);
     const defaultEngineId = useSelector((state: IStoreState) =>
         getQueryEngineId(
             state.user.computedSettings['default_query_engine'],
