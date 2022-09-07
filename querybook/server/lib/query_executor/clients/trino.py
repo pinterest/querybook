@@ -5,19 +5,28 @@ from lib.query_executor.connection_string.trino import get_trino_connection_conf
 
 class TrinoClient(ClientBaseClass):
     def __init__(
-        self, connection_string, username=None, proxy_user=None, *args, **kwargs
+        self,
+        connection_string,
+        username=None,
+        password=None,
+        proxy_user=None,
+        *args,
+        **kwargs,
     ):
         trino_conf = get_trino_connection_conf(connection_string)
 
         host = trino_conf.host
         port = 8080 if not trino_conf.port else trino_conf.port
 
+        auth = trino.auth.BasicAuthentication(username, password)
+
         connection = trino.dbapi.connect(
             host=host,
             port=port,
             catalog=trino_conf.catalog,
             schema=trino_conf.schema,
-            user=proxy_user or username,
+            auth=auth,
+            user=proxy_user if proxy_user else username,
             http_scheme=trino_conf.protocol,
         )
         self._connection = connection
