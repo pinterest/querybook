@@ -403,6 +403,10 @@ export class QueryEditor extends React.PureComponent<
             isQueryUsingTemplating(code) ||
             !getLintErrors
         ) {
+            // purge previous lint errors
+            if (onLintCompletion) {
+                onLintCompletion(false);
+            }
             onComplete([]);
             return;
         }
