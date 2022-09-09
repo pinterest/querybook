@@ -70,7 +70,11 @@ export const queryEngineStatusAndEngineIdsSelector = createSelector(
                     enabledQueryEngines.some((engine) => engine.id === id) &&
                     id in queryEngineStatusById
             )
-            .map((id) => [id, queryEngineStatusById[id]])
+            .map((id): [number, IQueryEngineStatus] => [
+                id,
+                queryEngineStatusById[id],
+            ])
+    // as Array<>
 );
 
 export const queryEngineStatusByIdEnvSelector = createSelector(
