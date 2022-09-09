@@ -13,6 +13,7 @@ import { useToggleState } from 'hooks/useToggleState';
 import { format } from 'lib/sql-helper/sql-formatter';
 import { isAxiosError } from 'lib/utils/error';
 import * as dataSourcesActions from 'redux/dataSources/action';
+import { enabledQueryEngineSelector } from 'redux/queryEngine/selector';
 import { Dispatch, IStoreState } from 'redux/store/types';
 import { TableSamplesResource } from 'resource/table';
 import { AsyncButton } from 'ui/AsyncButton/AsyncButton';
@@ -55,14 +56,10 @@ export const DataTableViewSamples: React.FunctionComponent<
 
     const dispatch: Dispatch = useDispatch();
     const queryEngines = useSelector((state: IStoreState) => {
-        const queryEngineIds =
-            state.environment.environmentEngineIds[
-                state.environment.currentEnvironmentId
-            ] ?? [];
-        return queryEngineIds
-            .map((engineId) => state.queryEngine.queryEngineById[engineId])
-            .filter((engine) => engine.feature_params.disabled !== true)
-            .filter((engine) => engine?.metastore_id === schema.metastore_id);
+        const queryEngines = enabledQueryEngineSelector(state);
+        return queryEngines.filter(
+            (engine) => engine?.metastore_id === schema.metastore_id
+        );
     });
 
     const loadDataTableSamples = React.useCallback(

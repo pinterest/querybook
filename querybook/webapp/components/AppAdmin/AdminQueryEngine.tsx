@@ -379,6 +379,7 @@ export const AdminQueryEngine: React.FunctionComponent<IProps> = ({
                                 name="feature_params.disabled"
                                 type="toggle"
                                 label="Disabled"
+                                help="If disabled, this query engine cannot run queries, but it remains in environments (if any) and results can still be viewed."
                             />
                         </div>
                         <div className="AdminForm-section">

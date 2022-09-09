@@ -67,15 +67,10 @@ export const queryEngineStatusAndEngineIdsSelector = createSelector(
         engineIds
             .filter(
                 (id) =>
-                    enabledQueryEngines.find((engine) => engine.id === id) !==
-                    undefined
+                    enabledQueryEngines.some((engine) => engine.id === id) &&
+                    id in queryEngineStatusById
             )
-            .reduce((pairs, id) => {
-                if (id in queryEngineStatusById) {
-                    pairs.push([id, queryEngineStatusById[id]]);
-                }
-                return pairs;
-            }, []) as Array<[number, IQueryEngineStatus]>
+            .map((id) => [id, queryEngineStatusById[id]])
 );
 
 export const queryEngineStatusByIdEnvSelector = createSelector(
