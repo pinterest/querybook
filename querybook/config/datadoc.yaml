@@ -16,11 +16,13 @@ cell_types:
             engine: 0 # Engine Id
             collapsed: false
             query_collapsed: false
+            limit: 0
         meta_default:
             title: ''
             engine: null
             collapsed: false
             query_collapsed: false
+            limit: 0
     chart:
         key: 'chart'
         name: 'Chart'

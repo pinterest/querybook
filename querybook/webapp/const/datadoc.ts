@@ -22,6 +22,7 @@ export interface IDataQueryCellMeta extends IDataCellMetaBase {
     title?: string;
     engine?: number;
     query_collapsed?: boolean;
+    limit?: number;
 }
 
 export interface IDataQueryCell extends IDataCellBase {

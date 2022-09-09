@@ -32,14 +32,10 @@ import { useDebounceState } from 'hooks/redux/useDebounceState';
 import { useBrowserTitle } from 'hooks/useBrowserTitle';
 import { createSQLLinter } from 'lib/codemirror/codemirror-lint';
 import { replaceStringIndices, searchText } from 'lib/data-doc/search';
-import { sendConfirm } from 'lib/querybookUI';
-import { getDroppedTables } from 'lib/sql-helper/sql-checker';
 import { getSelectedQuery, IRange } from 'lib/sql-helper/sql-lexer';
-import { getLimitedQuery } from 'lib/sql-helper/sql-limiter';
-import { renderTemplatedQuery } from 'lib/templated-query';
+import { DEFAULT_ROW_LIMIT } from 'lib/sql-helper/sql-limiter';
 import { getPossibleTranspilers } from 'lib/templated-query/transpile';
 import { enableResizable, getQueryEngineId, sleep } from 'lib/utils';
-import { formatError } from 'lib/utils/error';
 import { navigateWithinEnv } from 'lib/utils/query-string';
 import { doesLanguageSupportUDF } from 'lib/utils/udf';
 import * as adhocQueryActions from 'redux/adhocQuery/action';
@@ -53,7 +49,6 @@ import { Dispatch, IStoreState } from 'redux/store/types';
 import { TemplatedQueryResource } from 'resource/queryExecution';
 import { Button } from 'ui/Button/Button';
 import { IconButton } from 'ui/Button/IconButton';
-import { Content } from 'ui/Content/Content';
 import { Dropdown } from 'ui/Dropdown/Dropdown';
 import { FullHeight } from 'ui/FullHeight/FullHeight';
 import { Level, LevelItem } from 'ui/Level/Level';
@@ -61,6 +56,7 @@ import { IListMenuItem, ListMenu } from 'ui/Menu/ListMenu';
 import { Modal } from 'ui/Modal/Modal';
 
 import { QueryComposerExecution } from './QueryComposerExecution';
+import { runQuery, transformQuery } from './RunQuery';
 
 import './QueryComposer.scss';
 
@@ -142,10 +138,10 @@ const useQuery = (dispatch: Dispatch, environmentId: number) => {
 const useRowLimit = (dispatch: Dispatch, environmentId: number) => {
     const rowLimit = useSelector(
         (state: IStoreState) =>
-            state.adhocQuery[environmentId]?.rowLimit ?? true
+            state.adhocQuery[environmentId]?.rowLimit ?? DEFAULT_ROW_LIMIT
     );
     const setRowLimit = useCallback(
-        (newRowLimit: boolean) =>
+        (newRowLimit: number) =>
             dispatch(
                 adhocQueryActions.receiveAdhocQuery(
                     { rowLimit: newRowLimit },
@@ -412,82 +408,43 @@ const QueryComposer: React.FC = () => {
         navigateWithinEnv(`/datadoc/${dataDoc.id}/`);
     }, [executionId, query, engine.id, templatedVariables]);
 
-    const getCurrentSelectedQuery = useCallback(async () => {
+    const getCurrentSelectedQuery = useCallback(() => {
         const selectedRange = queryEditorRef.current?.getEditorSelection();
-        try {
-            const rawQuery = getSelectedQuery(query, selectedRange);
-            return await renderTemplatedQuery(
-                rawQuery,
-                templatedVariables,
-                engine?.id
-            );
-        } catch (e) {
-            toast.error(
-                <div>
-                    <p>Failed to templatize query. </p>
-                    <p>{formatError(e)}</p>
-                </div>,
-                {
-                    duration: 5000,
-                }
-            );
-        }
-    }, [query, engine]);
+        return getSelectedQuery(query, selectedRange);
+    }, [query, queryEditorRef]);
 
     const handleRunQuery = React.useCallback(async () => {
-        // Just to throttle to prevent double running
+        // Throttle to prevent double run
         await sleep(250);
+        const transformedQuery = await transformQuery(
+            getCurrentSelectedQuery(),
+            templatedVariables,
+            engine,
+            rowLimit
+        );
 
-        const selectedQuery = await getCurrentSelectedQuery();
-        if (!selectedQuery) {
-            return;
-        }
-
-        const limitedQuery =
-            rowLimit && engine?.feature_params.row_limit
-                ? getLimitedQuery(
-                      selectedQuery,
-                      engine.feature_params.row_limit,
-                      engine.language
-                  )
-                : selectedQuery;
-
-        const runQuery = async () => {
-            const { id } = await dispatch(
-                queryExecutionsAction.createQueryExecution(
-                    limitedQuery,
-                    engine?.id
-                )
-            );
-
-            setExecutionId(id);
+        const queryId = await runQuery(
+            transformedQuery,
+            engine.id,
+            async (query, engineId) => {
+                const data = await dispatch(
+                    queryExecutionsAction.createQueryExecution(query, engineId)
+                );
+                return data.id;
+            }
+        );
+        if (queryId != null) {
+            setExecutionId(queryId);
             setResultsCollapsed(false);
-        };
-
-        const droppedTables = getDroppedTables(limitedQuery);
-        if (droppedTables.length > 0) {
-            return new Promise((resolve, reject) => {
-                sendConfirm({
-                    header: 'Dropping Tables?',
-                    message: (
-                        <Content>
-                            <div>Your query is going to drop</div>
-                            <ul>
-                                {droppedTables.map((t) => (
-                                    <li key={t}>{t}</li>
-                                ))}
-                            </ul>
-                        </Content>
-                    ),
-                    onConfirm: () => runQuery().then(resolve, reject),
-                    onDismiss: () => resolve(null),
-                    confirmText: 'Continue Execution',
-                });
-            });
-        } else {
-            return runQuery();
         }
-    }, [query, rowLimit, templatedVariables, engine]);
+    }, [
+        rowLimit,
+        engine,
+        templatedVariables,
+        dispatch,
+        getCurrentSelectedQuery,
+        setExecutionId,
+    ]);
 
     const keyMap = useKeyMap(clickOnRunButton, queryEngines, setEngineId);
 

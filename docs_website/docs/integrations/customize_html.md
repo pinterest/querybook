@@ -173,3 +173,19 @@ window.CUSTOM_ENGINE_UDFS = {
     },
 }
 ```
+
+### (Experimental) Row Limit Scale
+
+Querybook provides an experimental query engine feature that auto transforms select
+queries without limit into select queries with limit. By default, users can choose
+limits between 10^1,10^2,...,10^6 and the default limit is 10^3.
+
+However, you can also customize the scale and default value by modifying the following
+window variables:
+
+```js
+// now user can only pick between these values
+window.ROW_LIMIT_SCALE = [8, 64, 512, 4096, 32768];
+// the default limit is now 4096
+window.DEFAULT_ROW_LIMIT = 4096;
+```

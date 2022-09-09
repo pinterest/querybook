@@ -1,5 +1,4 @@
 import {
-    containsKeyword,
     findTableReferenceAndAlias,
     findWithStatementPlaceholder,
     getQueryAsExplain,
@@ -8,6 +7,7 @@ import {
     getStatementType,
     simpleParse,
     tokenize,
+    tokenPatternMatch,
 } from 'lib/sql-helper/sql-lexer';
 
 const simpleQuery = `
@@ -371,30 +371,59 @@ describe('getStatementType', () => {
         ).toBeNull();
     });
 });
-describe('containsKeyword', () => {
+describe('tokenPatternMatch', () => {
     test('Simple example query contains limit', () => {
         expect(
-            containsKeyword(simpleParse(tokenize(simpleQuery))[0], 'limit')
+            tokenPatternMatch(simpleParse(tokenize(simpleQuery))[0], [
+                {
+                    text: 'limit',
+                    type: 'KEYWORD',
+                },
+                {
+                    type: 'NUMBER',
+                },
+            ])
         ).toBeTruthy();
     });
     test('Simple example query does not contain with', () => {
         expect(
-            containsKeyword(simpleParse(tokenize(simpleQuery))[0], 'with')
+            tokenPatternMatch(simpleParse(tokenize(simpleQuery))[0], [
+                {
+                    text: 'with',
+                    type: 'KEYWORD',
+                },
+            ])
         ).toBeFalsy();
     });
     test('Simple insert query contains insert', () => {
         expect(
-            containsKeyword(
+            tokenPatternMatch(
                 simpleParse(
                     tokenize(`INSERT INTO abc SELECT * FROM foobar`)
                 )[0],
-                'insert'
+                [
+                    {
+                        text: 'insert',
+                        type: 'KEYWORD',
+                    },
+                    {
+                        text: 'into',
+                        type: 'KEYWORD',
+                    },
+                    {
+                        type: 'VARIABLE',
+                    },
+                ]
             )
         ).toBeTruthy();
     });
     test('Invalid query without keyword', () => {
         expect(
-            containsKeyword(simpleParse(tokenize('selec 1;'))[0], 'limit')
+            tokenPatternMatch(simpleParse(tokenize('selec 1;'))[0], [
+                {
+                    type: 'KEYWORD',
+                },
+            ])
         ).toBeFalsy();
     });
 });
