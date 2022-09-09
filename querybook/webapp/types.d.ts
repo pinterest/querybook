@@ -39,7 +39,7 @@ declare global {
 
         /**
          * Possible values for automatic query limits.
-         * Defaults from 10^1 to 10^6
+         * Defaults from 10^1 to 10^5
          */
         ROW_LIMIT_SCALE?: number[];
         /**
