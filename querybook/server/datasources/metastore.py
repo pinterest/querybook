@@ -667,9 +667,13 @@ def delete_table_warning(warning_id):
 
 
 @register("/schemas/", methods=["GET"])
-def get_schemas(metastore_id, limit=5, offset=0, sort_key="name", sort_order="desc"):
+def get_schemas(
+    metastore_id, limit=5, offset=0, sort_key="name", sort_order="desc", name=None
+):
     verify_metastore_permission(metastore_id)
-    schemas = logic.get_all_schemas(metastore_id, offset, limit, sort_key, sort_order)
+    schemas = logic.get_all_schemas(
+        metastore_id, offset, limit, sort_key, sort_order, name
+    )
 
     return {"results": schemas, "done": len(schemas) < limit}
 

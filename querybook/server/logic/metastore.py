@@ -23,7 +23,13 @@ from tasks.sync_elasticsearch import sync_elasticsearch
 
 @with_session
 def get_all_schemas(
-    metastore_id, offset=0, limit=5, sort_key="name", sort_order="desc", session=None
+    metastore_id,
+    offset=0,
+    limit=5,
+    sort_key="name",
+    sort_order="desc",
+    name=None,
+    session=None,
 ):
     """Get all the schemas."""
     query = session.query(DataSchema)
@@ -32,6 +38,9 @@ def get_all_schemas(
 
     if sort_order == "desc":
         col = col.desc()
+
+    if name:
+        query = query.filter(DataSchema.name.like("%" + name + "%"))
 
     result = (
         query.order_by(col)

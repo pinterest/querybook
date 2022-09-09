@@ -34,17 +34,24 @@ export const SearchTableResource = {
 };
 
 export const SearchSchemaResource = {
-    getMore: (params: {
+    getMore: ({
+        offset = 0,
+        limit = 30,
+        sort_key = 'name',
+        sort_order = 'asc',
+        ...params
+    }: {
         metastore_id: number;
-        offset: number;
-        limit: number;
-        sort_key: 'name' | 'table_count';
-        sort_order: 'desc' | 'asc';
+        offset?: number;
+        limit?: number;
+        sort_key?: 'name' | 'table_count';
+        sort_order?: 'desc' | 'asc';
+        name?: string;
     }) =>
         ds.fetch<{
             results: IDataSchema[];
             done: boolean;
-        }>('/schemas/', params),
+        }>('/schemas/', { offset, limit, sort_key, sort_order, ...params }),
 };
 
 export const SearchQueryResource = {
