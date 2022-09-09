@@ -909,7 +909,7 @@ export const getQueryKeywords = (query: string) => {
 };
 
 /**
- * This is similar to regex match, but instead of matching strings, we
+ * This is similar to substring match, but instead of matching strings, we
  * are matching tokens.
  * It is implemented using naive double for loop comparison
  *

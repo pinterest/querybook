@@ -26,7 +26,7 @@ export async function transformQuery(
         engine.id
     );
 
-    if (!templatedVariables) {
+    if (!templatizedQuery) {
         return '';
     }
 

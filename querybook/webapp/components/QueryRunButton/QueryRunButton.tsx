@@ -188,25 +188,21 @@ export const QueryEngineSelector: React.FC<IQueryEngineSelectorProps> = ({
     );
 };
 
+const rowLimitOptions = ROW_LIMIT_SCALE.map((value) => ({
+    label: formatNumber(value),
+    value,
+}));
+
 const QueryLimitSelector: React.FC<{
     rowLimit: number;
     setRowLimit: (rowLimit: number) => void;
     tooltipPos: TooltipDirection;
 }> = ({ rowLimit, setRowLimit, tooltipPos }) => {
-    const rowLimitOptions = React.useMemo(
-        () =>
-            ROW_LIMIT_SCALE.map((value) => ({
-                label: formatNumber(value),
-                value,
-            })),
-        []
-    );
-
     React.useEffect(() => {
         if (!rowLimitOptions.some((option) => option.value === rowLimit)) {
             setRowLimit(DEFAULT_ROW_LIMIT);
         }
-    }, [rowLimitOptions, rowLimit, setRowLimit]);
+    }, [rowLimit, setRowLimit]);
 
     const rowLimitMenuItems = rowLimitOptions.map((option) => ({
         name: <span>{option.label}</span>,
@@ -215,24 +211,20 @@ const QueryLimitSelector: React.FC<{
     }));
 
     return (
-        <div>
-            <Dropdown
-                customButtonRenderer={() => (
-                    <div
-                        className="flex-center ph4"
-                        aria-label="Only applies to select statements without limit"
-                        data-balloon-pos={tooltipPos}
-                    >
-                        <span className="mr4">
-                            Limit: {formatNumber(rowLimit)}
-                        </span>
-                        <Icon name="ChevronDown" size={24} color="light" />
-                    </div>
-                )}
-                layout={['bottom', 'right']}
-            >
-                <ListMenu items={rowLimitMenuItems} type="select" />
-            </Dropdown>
-        </div>
+        <Dropdown
+            customButtonRenderer={() => (
+                <div
+                    className="flex-center ph4"
+                    aria-label="Only applies to select statements without limit"
+                    data-balloon-pos={tooltipPos}
+                >
+                    <span className="mr4">Limit: {formatNumber(rowLimit)}</span>
+                    <Icon name="ChevronDown" size={24} color="light" />
+                </div>
+            )}
+            layout={['bottom', 'right']}
+        >
+            <ListMenu items={rowLimitMenuItems} type="select" />
+        </Dropdown>
     );
 };

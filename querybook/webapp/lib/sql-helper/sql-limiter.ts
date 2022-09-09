@@ -6,7 +6,6 @@ import {
     tokenize,
     tokenPatternMatch,
 } from './sql-lexer';
-import { range } from 'lodash';
 
 import { Nullable } from 'lib/typescript';
 
@@ -108,8 +107,12 @@ export function getLimitedQuery(
     return addedLimit ? updatedQuery : query;
 }
 
-// 10^1 to 10^6
+// 10^1 to 10^5
 export const ROW_LIMIT_SCALE =
-    window.ROW_LIMIT_SCALE ?? range(1, 6).map((v) => Math.pow(10, v));
+    window.ROW_LIMIT_SCALE ?? [1, 2, 3, 4, 5].map((v) => Math.pow(10, v));
 // 10^3
 export const DEFAULT_ROW_LIMIT = window.DEFAULT_ROW_LIMIT ?? ROW_LIMIT_SCALE[2];
+
+if (!ROW_LIMIT_SCALE.includes(DEFAULT_ROW_LIMIT)) {
+    throw new Error('DEFAULT_ROW_LIMIT must be in ROW_LIMIT_SCALE');
+}
