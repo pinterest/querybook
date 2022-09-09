@@ -1,7 +1,7 @@
 from flask_socketio import join_room, leave_room, emit, rooms
 from flask import request
 
-from app.auth.permission import verify_query_engine_permission
+from app.auth.permission import verify_query_engine_read_permission
 from app.db import DBSession
 from const.query_execution import QueryExecutionStatus, QUERY_EXECUTION_NAMESPACE
 from lib.logger import get_logger
@@ -19,7 +19,7 @@ def on_join_room(query_execution_id):
             query_execution_id, session=session
         )
         assert execution, "Invalid execution"
-        verify_query_engine_permission(execution.engine_id, session=session)
+        verify_query_engine_read_permission(execution.engine_id, session=session)
 
         execution_dict = execution.to_dict(True) if execution is not None else None
         join_room(query_execution_id)

@@ -54,18 +54,7 @@ def verify_query_engine_environment_permission(
 
 
 @with_session
-def verify_query_engine_permission(query_engine_id, allow_disabled=False, session=None):
-
-    if not allow_disabled:
-        # If the engine is disabled, we should not allow access
-        # This can be bypassed for certain use cases (e.g. viewing snippets)
-        query_engine = get_query_engine_by_id(query_engine_id, session=session)
-
-        api_assert(
-            query_engine.get_feature_params().get("disabled", False) is not True,
-            message="Query Engine disabled",
-            status_code=ACCESS_RESTRICTED_STATUS_CODE,
-        )
+def verify_query_engine_read_permission(query_engine_id, session=None):
 
     environment_ids = [
         eid
@@ -74,6 +63,21 @@ def verify_query_engine_permission(query_engine_id, allow_disabled=False, sessio
         .filter(QueryEngine.id == query_engine_id)
     ]
     verify_environment_permission(environment_ids)
+
+
+@with_session
+def verify_query_engine_run_permission(query_engine_id, session=None):
+
+    # If the engine is disabled, we should not allow run access
+    query_engine = get_query_engine_by_id(query_engine_id, session=session)
+
+    api_assert(
+        query_engine.get_feature_params().get("disabled", False) is not True,
+        message="Query Engine disabled",
+        status_code=ACCESS_RESTRICTED_STATUS_CODE,
+    )
+
+    verify_query_engine_read_permission(query_engine_id, session=session)
 
 
 @with_session

@@ -6,7 +6,7 @@ from flask import request
 
 from app.datasource import register
 from app.auth.permission import (
-    verify_query_engine_permission,
+    verify_query_engine_run_permission,
     verify_query_execution_permission,
 )
 from lib.table_upload.importer.importer_factory import get_table_upload_importer
@@ -34,7 +34,7 @@ def perform_table_upload():
 
     table_config = json.loads(request.form["table_config"])
     engine_id = request.form["engine_id"]
-    verify_query_engine_permission(engine_id)
+    verify_query_engine_run_permission(engine_id)
 
     importer = get_table_upload_importer(import_config, file_uploaded)
     exporter = get_table_upload_exporter(engine_id)

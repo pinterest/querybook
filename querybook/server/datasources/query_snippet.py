@@ -2,7 +2,7 @@ from flask_login import current_user
 
 from app.auth.permission import (
     verify_environment_permission,
-    verify_query_engine_permission,
+    verify_query_engine_read_permission,
 )
 from app.datasource import register, api_assert
 from app.db import DBSession
@@ -14,9 +14,8 @@ from logic import admin as admin_logic
 def get_query_snippet_by_id(query_snippet_id):
     with DBSession() as session:
         query_snippet = logic.get_snippet_by_id(query_snippet_id, session=session)
-        verify_query_engine_permission(
+        verify_query_engine_read_permission(
             query_snippet.engine_id,
-            allow_disabled=True,  # Allow viewing snippet even if query engine is disabled
             session=session,
         )
         return query_snippet
@@ -38,7 +37,7 @@ def update_query_snippet_by_id(
         snippet = logic.get_snippet_by_id(query_snippet_id, session=session)
 
         api_assert(snippet, "Snippet not found")
-        verify_query_engine_permission(snippet.engine_id, session=session)
+        verify_query_engine_read_permission(snippet.engine_id, session=session)
 
         # Pre condition check
         if snippet.golden:  # Editing a golden snippet
@@ -94,7 +93,7 @@ def create_query_snippet(
     )
 
     with DBSession() as session:
-        verify_query_engine_permission(engine_id, session=session)
+        verify_query_engine_read_permission(engine_id, session=session)
 
         return logic.create_snippet(
             created_by,
@@ -120,7 +119,7 @@ def delete_query_snippet_by_id(query_snippet_id):
             snippet.created_by == deleted_by or current_user.is_admin,
             "Only creator or Admin can delete this snippet",
         )
-        verify_query_engine_permission(snippet.engine_id, session=session)
+        verify_query_engine_read_permission(snippet.engine_id, session=session)
 
         logic.delete_snippet(query_snippet_id, deleted_by, session=session)
 

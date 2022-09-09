@@ -9,7 +9,7 @@ from app.db import DBSession
 from app.auth.permission import (
     verify_environment_permission,
     verify_query_execution_permission,
-    verify_query_engine_permission,
+    verify_query_engine_run_permission,
 )
 from clients.common import FileDoesNotExist
 from lib.export.all_exporters import ALL_EXPORTERS, get_exporter
@@ -53,7 +53,7 @@ QUERY_RESULT_LIMIT_CONFIG = get_config_value("query_result_limit")
 @register("/query_execution/", methods=["POST"])
 def create_query_execution(query, engine_id, data_cell_id=None, originator=None):
     with DBSession() as session:
-        verify_query_engine_permission(engine_id, session=session)
+        verify_query_engine_run_permission(engine_id, session=session)
 
         uid = current_user.id
         query_execution = logic.create_query_execution(
@@ -118,7 +118,7 @@ def get_query_execution(query_execution_id):
 def cancel_query_execution(query_execution_id):
     with DBSession() as session:
         execution = logic.get_query_execution_by_id(query_execution_id, session=session)
-        verify_query_engine_permission(execution.engine_id, session=session)
+        verify_query_engine_run_permission(execution.engine_id, session=session)
         execution_dict = execution.to_dict(True) if execution is not None else None
 
         requestor = current_user.id
@@ -569,7 +569,7 @@ def send_query_execution_invitation_notification(execution_id, uid, session=None
 
 @register("/query/validate/", methods=["POST"])
 def perform_query_syntax_check(query: str, engine_id: int):
-    verify_query_engine_permission(engine_id)
+    verify_query_engine_run_permission(engine_id)
 
     engine = admin_logic.get_query_engine_by_id(engine_id)
     validator_name = engine.feature_params.get("validator", None)
