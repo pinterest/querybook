@@ -3,5 +3,5 @@ export interface IAdhocQuery {
     templatedVariables?: Record<string, any>;
     engineId?: number;
     executionId?: number;
-    rowLimit?: boolean;
+    rowLimit?: number;
 }

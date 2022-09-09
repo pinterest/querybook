@@ -5,10 +5,11 @@ import { useSelector } from 'react-redux';
 import { IQueryEngine, QueryEngineStatus } from 'const/queryEngine';
 import { queryEngineStatusToIconStatus } from 'const/queryStatusIcon';
 import { TooltipDirection } from 'const/tooltip';
+import { DEFAULT_ROW_LIMIT, ROW_LIMIT_SCALE } from 'lib/sql-helper/sql-limiter';
 import { getShortcutSymbols, KeyMap } from 'lib/utils/keyboard';
+import { formatNumber } from 'lib/utils/number';
 import { queryEngineStatusByIdEnvSelector } from 'redux/queryEngine/selector';
 import { AsyncButton, IAsyncButtonHandles } from 'ui/AsyncButton/AsyncButton';
-import { Checkbox } from 'ui/Checkbox/Checkbox';
 import { Dropdown } from 'ui/Dropdown/Dropdown';
 import { Icon } from 'ui/Icon/Icon';
 import { ListMenu } from 'ui/Menu/ListMenu';
@@ -25,10 +26,11 @@ interface IQueryRunButtonProps extends IQueryEngineSelectorProps {
     disabled?: boolean;
     hasSelection?: boolean;
     runButtonTooltipPos?: TooltipDirection;
-    onRunClick: () => any;
-    rowLimit?: boolean;
-    onRowLimitChange?: (rowLimit: boolean) => void;
     hasLintError: boolean;
+
+    rowLimit?: number;
+    onRunClick: () => any;
+    onRowLimitChange?: (rowLimit: number) => void;
 }
 
 export interface IQueryRunButtonHandles {
@@ -89,7 +91,7 @@ export const QueryRunButton = React.forwardRef<
                 aria-label={
                     hasLintError
                         ? 'Validation failed, click to run anyway'
-                        : `Execute (${EXECUTE_QUERY_SHORTCUT})`
+                        : `Run (${EXECUTE_QUERY_SHORTCUT})`
                 }
                 data-balloon-length="fit"
                 data-balloon-pos={runButtonTooltipPos}
@@ -97,19 +99,19 @@ export const QueryRunButton = React.forwardRef<
             />
         );
 
+        const isRowLimitEnabled =
+            queryEngineById[engineId]?.feature_params.row_limit;
         const rowLimitDOM =
-            onRowLimitChange &&
-            queryEngineById[engineId]?.feature_params.row_limit ? (
-                <Checkbox
-                    onChange={onRowLimitChange}
-                    value={rowLimit}
-                    title="Limit results automatically"
+            onRowLimitChange && isRowLimitEnabled ? (
+                <QueryLimitSelector
+                    rowLimit={rowLimit}
+                    setRowLimit={onRowLimitChange}
+                    tooltipPos={runButtonTooltipPos}
                 />
             ) : null;
 
         return (
             <div className="QueryRunButton flex-row ml16">
-                {rowLimitDOM}
                 <QueryEngineSelector
                     disabled={disabled}
                     queryEngineById={queryEngineById}
@@ -117,6 +119,7 @@ export const QueryRunButton = React.forwardRef<
                     engineId={engineId}
                     onEngineIdSelect={onEngineIdSelect}
                 />
+                {rowLimitDOM}
                 {runButtonDOM}
             </div>
         );
@@ -182,5 +185,46 @@ export const QueryEngineSelector: React.FC<IQueryEngineSelectorProps> = ({
         <Tag className="mr16">{queryEngineById[engineId].name}</Tag>
     ) : (
         <div className="QueryEngineSelector">{engineButtonDOM}</div>
+    );
+};
+
+const rowLimitOptions = ROW_LIMIT_SCALE.map((value) => ({
+    label: formatNumber(value),
+    value,
+}));
+
+const QueryLimitSelector: React.FC<{
+    rowLimit: number;
+    setRowLimit: (rowLimit: number) => void;
+    tooltipPos: TooltipDirection;
+}> = ({ rowLimit, setRowLimit, tooltipPos }) => {
+    React.useEffect(() => {
+        if (!rowLimitOptions.some((option) => option.value === rowLimit)) {
+            setRowLimit(DEFAULT_ROW_LIMIT);
+        }
+    }, [rowLimit, setRowLimit]);
+
+    const rowLimitMenuItems = rowLimitOptions.map((option) => ({
+        name: <span>{option.label}</span>,
+        onClick: () => setRowLimit(option.value),
+        checked: option.value === rowLimit,
+    }));
+
+    return (
+        <Dropdown
+            customButtonRenderer={() => (
+                <div
+                    className="flex-center ph4"
+                    aria-label="Only applies to select statements without limit"
+                    data-balloon-pos={tooltipPos}
+                >
+                    <span className="mr4">Limit: {formatNumber(rowLimit)}</span>
+                    <Icon name="ChevronDown" size={24} color="light" />
+                </div>
+            )}
+            layout={['bottom', 'right']}
+        >
+            <ListMenu items={rowLimitMenuItems} type="select" />
+        </Dropdown>
     );
 };

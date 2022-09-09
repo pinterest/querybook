@@ -36,6 +36,16 @@ declare global {
             Record<string, { key?: string; name?: string }>
         >;
         CUSTOM_ENGINE_UDFS?: IUDFEngineConfig[];
+
+        /**
+         * Possible values for automatic query limits.
+         * Defaults from 10^1 to 10^5
+         */
+        ROW_LIMIT_SCALE?: number[];
+        /**
+         * Must be a value in ROW_LIMIT_SCALE
+         */
+        DEFAULT_ROW_LIMIT?: number;
     }
 
     // Injected via Webpack

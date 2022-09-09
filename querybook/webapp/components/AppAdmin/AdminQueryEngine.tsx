@@ -434,8 +434,8 @@ export const AdminQueryEngine: React.FunctionComponent<IProps> = ({
                                 <SimpleField
                                     stacked
                                     name="feature_params.row_limit"
-                                    type="number"
-                                    label="(Experimental) Row Limit"
+                                    type="toggle"
+                                    label="(Experimental) Enable Row Limit"
                                 />
                             </div>
                         </div>

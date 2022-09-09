@@ -1,5 +1,6 @@
 import clsx from 'clsx';
 import React, { useCallback, useMemo, useRef, useState } from 'react';
+import { useSelector } from 'react-redux';
 
 import {
     IStatementResultTableHandles,
@@ -9,7 +10,9 @@ import { IStatementExecution, IStatementResult } from 'const/queryExecution';
 import { StatementExecutionResultSizes } from 'const/queryResultLimit';
 import { useImmer } from 'hooks/useImmer';
 import { useToggleState } from 'hooks/useToggleState';
+import { getSelectStatementLimit } from 'lib/sql-helper/sql-limiter';
 import { formatNumber } from 'lib/utils/number';
+import { IStoreState } from 'redux/store/types';
 import { TextButton } from 'ui/Button/Button';
 import { InfoButton } from 'ui/Button/InfoButton';
 import { Checkbox } from 'ui/Checkbox/Checkbox';
@@ -20,6 +23,7 @@ import { Popover } from 'ui/Popover/Popover';
 import { PrettyNumber } from 'ui/PrettyNumber/PrettyNumber';
 import { IOptions, makeSelectOptions, Select } from 'ui/Select/Select';
 import { ShowMoreText } from 'ui/ShowMoreText/ShowMoreText';
+import { AccentText } from 'ui/StyledText/StyledText';
 
 import './StatementResult.scss';
 
@@ -75,6 +79,8 @@ const StatementResultWithResult: React.FC<IProps> = ({
         toggleColumnVisibility,
         processedData: data,
     } = useColumnVisibility(rawData);
+    const statementQueryLimit =
+        useStatementResultQueryLimit(statementExecution);
 
     const [expandAllResultColumns, setExpandAllResultColumns] = useState(false);
     const tableRef = useRef<IStatementResultTableHandles>();
@@ -122,6 +128,7 @@ const StatementResultWithResult: React.FC<IProps> = ({
     ];
     const fetchRowInfoDOM = (
         <FetchInfo
+            statementQueryLimit={statementQueryLimit}
             resultRowMinusColCount={resultRowMinusColCount}
             actualRowMinusColCount={actualRowMinusColCount}
             fetchedAllRows={fetchedAllRows}
@@ -228,6 +235,7 @@ function useStatementResultLimitOptions(
 }
 
 const FetchInfo: React.FC<{
+    statementQueryLimit: number;
     resultRowMinusColCount: number;
     actualRowMinusColCount: number;
     fetchedAllRows: boolean;
@@ -236,6 +244,7 @@ const FetchInfo: React.FC<{
     setResultLimit: (newLimit: number) => void;
     isFetchingStatementResult: boolean;
 }> = ({
+    statementQueryLimit,
     resultRowMinusColCount,
     actualRowMinusColCount,
     fetchedAllRows,
@@ -244,39 +253,67 @@ const FetchInfo: React.FC<{
     setResultLimit,
     isFetchingStatementResult,
 }) => {
-    const resultPreviewTooltip = `Use Export to download full result (${formatNumber(
-        resultRowMinusColCount,
-        'row'
-    )})`;
+    const getFetchInfo = () => {
+        if (isFetchingStatementResult) {
+            return (
+                <div className="flex-row">
+                    Fetching statement results
+                    <Icon name="Loading" size={16} className="ml4" />
+                </div>
+            );
+        }
 
-    const fetchRowInfo = isFetchingStatementResult ? (
-        <div className="flex-row">
-            Fetching statement results
-            <Icon name="Loading" size={16} className="ml4" />
-        </div>
-    ) : fetchedAllRows ? (
-        `${formatNumber(actualRowMinusColCount, 'row')} (Full Result)`
-    ) : (
-        <div className="flex-row">
-            <span className="warning-word mr4">Previewing</span>
-            <span className="mr4">
-                <StatementResultRowCountPicker
-                    resultLimit={resultLimit}
-                    setResultLimit={setResultLimit}
-                    maxRowCount={resultRowMinusColCount}
-                    currentRowCount={actualRowMinusColCount}
-                />
-                <span className="mh4">of</span>
-                <PrettyNumber val={resultRowMinusColCount} unit="row" />
-            </span>
-            {actualRowMinusColCount < resultLimit && (
-                <span className="warning-word">
-                    (Cannot fetch more rows due to size limit)
+        const limitReachedText =
+            statementQueryLimit === resultRowMinusColCount ? (
+                <AccentText
+                    className="flex-row warning-word ml4"
+                    tooltip={
+                        'The number of rows returned matches exactly with the LIMIT in query'
+                    }
+                    data-balloon-length="medium"
+                >
+                    Limited by query
+                </AccentText>
+            ) : null;
+
+        if (fetchedAllRows) {
+            return (
+                <span className="flex-row">
+                    {formatNumber(actualRowMinusColCount, 'row')}
+                    (Full Result)
+                    {limitReachedText}
                 </span>
-            )}
-            <InfoButton>{resultPreviewTooltip}</InfoButton>
-        </div>
-    );
+            );
+        }
+
+        const resultPreviewTooltip = `Use Export to download full result (${formatNumber(
+            resultRowMinusColCount,
+            'row'
+        )})`;
+
+        return (
+            <div className="flex-row">
+                <InfoButton>{resultPreviewTooltip}</InfoButton>
+                <span className="warning-word mr4">Previewing</span>
+                <span className="mr4">
+                    <StatementResultRowCountPicker
+                        resultLimit={resultLimit}
+                        setResultLimit={setResultLimit}
+                        maxRowCount={resultRowMinusColCount}
+                        currentRowCount={actualRowMinusColCount}
+                    />
+                    <span className="mh4">of</span>
+                    <PrettyNumber val={resultRowMinusColCount} unit="row" />
+                </span>
+                {actualRowMinusColCount < resultLimit && (
+                    <span className="warning-word">
+                        (Cannot fetch more rows due to size limit)
+                    </span>
+                )}
+                {limitReachedText && limitReachedText}
+            </div>
+        );
+    };
 
     return (
         <span
@@ -285,7 +322,7 @@ const FetchInfo: React.FC<{
                 'more-rows-than-shown': !fetchedAllRows,
             })}
         >
-            {fetchRowInfo}
+            {getFetchInfo()}
         </span>
     );
 };
@@ -333,6 +370,24 @@ function useColumnVisibility(data: string[][]) {
         toggleColumnVisibility,
         processedData,
     };
+}
+
+function useStatementResultQueryLimit(statementExecution: IStatementExecution) {
+    const queryExecution = useSelector(
+        (state: IStoreState) =>
+            state.queryExecutions.queryExecutionById[
+                statementExecution.query_execution_id
+            ]
+    );
+    const statementStr = useMemo(
+        () =>
+            queryExecution.query.slice(
+                statementExecution.statement_range_start,
+                statementExecution.statement_range_end
+            ),
+        [statementExecution, queryExecution]
+    );
+    return useMemo(() => getSelectStatementLimit(statementStr), [statementStr]);
 }
 
 const ColumnToggleMenuButton: React.FC<{

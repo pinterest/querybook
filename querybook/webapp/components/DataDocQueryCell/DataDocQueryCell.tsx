@@ -9,6 +9,7 @@ import toast from 'react-hot-toast';
 import { connect } from 'react-redux';
 
 import { DataDocQueryExecutions } from 'components/DataDocQueryExecutions/DataDocQueryExecutions';
+import { runQuery, transformQuery } from 'components/QueryComposer/RunQuery';
 import { BoundQueryEditor } from 'components/QueryEditor/BoundQueryEditor';
 import { QueryEditor } from 'components/QueryEditor/QueryEditor';
 import {
@@ -23,17 +24,14 @@ import { IDataQueryCellMeta } from 'const/datadoc';
 import type { IQueryEngine, IQueryTranspiler } from 'const/queryEngine';
 import CodeMirror from 'lib/codemirror';
 import { createSQLLinter } from 'lib/codemirror/codemirror-lint';
-import { sendConfirm } from 'lib/querybookUI';
-import { getDroppedTables } from 'lib/sql-helper/sql-checker';
 import {
     getQueryAsExplain,
     getSelectedQuery,
     IRange,
 } from 'lib/sql-helper/sql-lexer';
-import { renderTemplatedQuery } from 'lib/templated-query';
+import { DEFAULT_ROW_LIMIT } from 'lib/sql-helper/sql-limiter';
 import { getPossibleTranspilers } from 'lib/templated-query/transpile';
-import { enableResizable, sleep } from 'lib/utils';
-import { formatError } from 'lib/utils/error';
+import { enableResizable } from 'lib/utils';
 import { getShortcutSymbols, KeyMap, matchKeyPress } from 'lib/utils/keyboard';
 import { doesLanguageSupportUDF } from 'lib/utils/udf';
 import * as dataSourcesActions from 'redux/dataSources/action';
@@ -47,7 +45,6 @@ import { Dispatch, IStoreState } from 'redux/store/types';
 import { TemplatedQueryResource } from 'resource/queryExecution';
 import { Button, TextButton } from 'ui/Button/Button';
 import { ThemedCodeHighlight } from 'ui/CodeHighlight/ThemedCodeHighlight';
-import { Content } from 'ui/Content/Content';
 import { Dropdown } from 'ui/Dropdown/Dropdown';
 import { Icon } from 'ui/Icon/Icon';
 import { IListMenuItem, ListMenu } from 'ui/Menu/ListMenu';
@@ -178,6 +175,14 @@ class DataDocQueryCellComponent extends React.PureComponent<IProps, IState> {
         const { meta } = this.state;
 
         return meta.title || this.defaultCellTitle;
+    }
+
+    public get hasRowLimit() {
+        return !!this.queryEngine.feature_params.row_limit;
+    }
+
+    public get rowLimit() {
+        return this.state.meta.limit ?? DEFAULT_ROW_LIMIT;
     }
 
     @decorate(memoizeOne)
@@ -359,69 +364,41 @@ class DataDocQueryCellComponent extends React.PureComponent<IProps, IState> {
     }
 
     @bind
-    public async getCurrentSelectedQuery() {
+    public handleMetaRowLimitChange(limit: number) {
+        return this.handleMetaChange('limit', limit);
+    }
+
+    @bind
+    public async getTransformedQuery() {
         const { templatedVariables = {} } = this.props;
         const { query } = this.state;
         const selectedRange =
             this.queryEditorRef.current &&
             this.queryEditorRef.current.getEditorSelection();
+        const rawQuery = getSelectedQuery(query, selectedRange);
 
-        try {
-            const rawQuery = getSelectedQuery(query, selectedRange);
-            return await renderTemplatedQuery(
-                rawQuery,
-                templatedVariables,
-                this.engineId
-            );
-        } catch (e) {
-            toast.error(
-                <div>
-                    <p>Failed to templatize query. </p>
-                    <p>{formatError(e)}</p>
-                </div>,
-                {
-                    duration: 5000,
-                }
-            );
-        }
+        return transformQuery(
+            rawQuery,
+            templatedVariables,
+            this.queryEngine,
+            this.rowLimit
+        );
     }
 
     @bind
     public async onRunButtonClick() {
-        await sleep(ON_CHANGE_DEBOUNCE_MS);
-        const renderedQuery = await this.getCurrentSelectedQuery();
-        const runQuery = () =>
-            this.props.createQueryExecution(
-                renderedQuery,
-                this.engineId,
-                this.props.cellId
-            );
-
-        if (renderedQuery) {
-            const droppedTables = getDroppedTables(renderedQuery);
-            if (droppedTables.length > 0) {
-                return new Promise((resolve, reject) => {
-                    sendConfirm({
-                        header: 'Dropping Tables?',
-                        message: (
-                            <Content>
-                                <div>Your query is going to drop</div>
-                                <ul>
-                                    {droppedTables.map((t) => (
-                                        <li key={t}>{t}</li>
-                                    ))}
-                                </ul>
-                            </Content>
-                        ),
-                        onConfirm: () => runQuery().then(resolve, reject),
-                        onDismiss: () => resolve(null),
-                        confirmText: 'Continue Execution',
-                    });
-                });
-            } else {
-                return runQuery();
-            }
-        }
+        return runQuery(
+            await this.getTransformedQuery(),
+            this.engineId,
+            async (query, engineId) =>
+                (
+                    await this.props.createQueryExecution(
+                        query,
+                        engineId,
+                        this.props.cellId
+                    )
+                ).id
+        );
     }
 
     @bind
@@ -460,7 +437,7 @@ class DataDocQueryCellComponent extends React.PureComponent<IProps, IState> {
     @bind
     public async explainQuery() {
         const renderedQuery = getQueryAsExplain(
-            await this.getCurrentSelectedQuery()
+            await this.getTransformedQuery()
         );
 
         if (renderedQuery) {
@@ -679,6 +656,12 @@ class DataDocQueryCellComponent extends React.PureComponent<IProps, IState> {
                             'engine'
                         )}
                         hasLintError={hasLintError}
+                        rowLimit={this.rowLimit}
+                        onRowLimitChange={
+                            this.hasRowLimit
+                                ? this.handleMetaRowLimitChange
+                                : null
+                        }
                     />
                     {this.getAdditionalDropDownButtonDOM()}
                 </div>

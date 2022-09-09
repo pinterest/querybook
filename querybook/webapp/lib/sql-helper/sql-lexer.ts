@@ -1,4 +1,7 @@
 import { getLanguageSetting } from './sql-setting';
+import { range } from 'lodash';
+
+import { Nullable } from 'lib/typescript';
 
 const keepTokenType = new Set([
     'KEYWORD',
@@ -454,7 +457,7 @@ export function tokenize(
 
 export function simpleParse(tokens: IToken[]) {
     const statements: IToken[][] = [];
-    let bracketStack = [];
+    let bracketStack: IToken[] = [];
 
     let statement: IToken[] = [];
     tokens.forEach((token) => {
@@ -905,5 +908,35 @@ export const getQueryKeywords = (query: string) => {
     return Array.from(new Set(statements.map(getStatementType)));
 };
 
-export const containsKeyword = (statement: IToken[], keyword: string) =>
-    statement.some((token) => isKeywordToken(token) && token.text === keyword);
+/**
+ * This is similar to substring match, but instead of matching strings, we
+ * are matching tokens.
+ * It is implemented using naive double for loop comparison
+ *
+ * @param tokens an array of parsed tokens
+ * @param pattern an array of partial tokens, if any field is present, it must be matched with some token in the tokens array
+ * @returns subarray of tokens that are matched, if no match, then null is returned
+ */
+export const tokenPatternMatch = (
+    tokens: IToken[],
+    pattern: Array<Partial<IToken>>
+): Nullable<IToken[]> => {
+    const tokenMatch = (left: IToken, right: Partial<IToken>) =>
+        Object.entries(right).every(([key, value]) => left[key] === value);
+
+    for (
+        let startIdx = 0;
+        startIdx < tokens.length - pattern.length + 1;
+        startIdx++
+    ) {
+        const match = range(0, pattern.length).every((idx) => {
+            const token = tokens[startIdx + idx];
+            const patternToken = pattern[idx];
+            return tokenMatch(token, patternToken);
+        });
+        if (match) {
+            return tokens.slice(startIdx, startIdx + pattern.length);
+        }
+    }
+    return null;
+};
