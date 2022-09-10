@@ -10,9 +10,11 @@ import { backgroundColor, fillColor, fontColor } from 'const/chartColors';
 import { IDataChartCellMeta } from 'const/datadoc';
 import {
     ChartDataAggType,
+    ChartScaleFormat,
     ChartScaleType,
     ChartSize,
     ChartValueDisplayType,
+    ChartValueSourceType,
     IChartAxisMeta,
     IChartFormValues,
 } from 'const/dataDocChart';
@@ -87,6 +89,7 @@ export function getAxisOptions(axisMeta: IChartAxisMeta) {
         scale: axisMeta.scale,
         min: axisMeta.min,
         max: axisMeta.max,
+        format: axisMeta.format ?? null,
     };
 }
 
@@ -144,8 +147,9 @@ export function mapMetaToFormVals(
 
         valueDisplay:
             meta.visual.values?.display ?? ChartValueDisplayType.FALSE,
-        valuePosition: meta.visual.values?.position,
-        valueAlignment: meta.visual.values?.alignment,
+        valuePosition: meta.visual.values?.position ?? 'center',
+        valueAlignment: meta.visual.values?.alignment ?? 'center',
+        valueSource: meta.visual.values?.source ?? ChartValueSourceType.VALUE,
     };
 }
 
@@ -194,7 +198,14 @@ export function mapMetaToChartOptions(
             },
             datalabels: {
                 formatter: (value, context) => {
-                    return context.chart.data.labels[context.dataIndex];
+                    if (
+                        meta.visual?.values?.source ===
+                        ChartValueSourceType.LABEL
+                    ) {
+                        return context.chart.data.datasets[context.datasetIndex]
+                            .label;
+                    }
+                    return value.y;
                 },
                 display:
                     meta.visual.values?.display === ChartValueDisplayType.TRUE
@@ -357,11 +368,15 @@ function computeScaleOptions(
             (axis as LinearScaleOptions).beginAtZero = true;
         }
 
-        // Prevent ticks from erroring out if there is no data provided
-        // See https://github.com/chartjs/Chart.js/issues/8092
-        axis.ticks = {
-            callback: (val) => val,
-        };
+        if (axisMeta.format === ChartScaleFormat.DOLLAR) {
+            axis.ticks = { format: { style: 'currency', currency: 'USD' } };
+        } else if (axisMeta.format === ChartScaleFormat.PERCENTAGE) {
+            axis.ticks = { format: { style: 'percent' } };
+        } else {
+            // Prevent ticks from erroring out if there is no data provided
+            // See https://github.com/chartjs/Chart.js/issues/8092
+            axis.ticks = { callback: (val) => val };
+        }
     }
 
     return axis;

@@ -13,12 +13,14 @@ import { IDataChartCellMeta } from 'const/datadoc';
 import {
     aggTypes,
     ChartDataAggType,
+    ChartScaleFormat,
     ChartScaleOptions,
     ChartScaleType,
     ChartSize,
     chartTypes,
     chartTypeToAllowedAxisType,
     ChartValueDisplayType,
+    ChartValueSourceType,
     formTabs,
     IChartAxisMeta,
     IChartFormValues,
@@ -597,18 +599,37 @@ const DataDocChartComposerComponent: React.FunctionComponent<
             const assumedScale = axisMeta.scale ?? scaleType;
             if (assumedScale === 'linear' || assumedScale === 'logarithmic') {
                 axisRangeDOM = (
-                    <FormField stacked label="Range">
-                        <Level margin="8px">
-                            <NumberField
-                                name={`${prefix}.min`}
-                                placeholder="Min"
-                            />
-                            <NumberField
-                                name={`${prefix}.max`}
-                                placeholder="Max"
-                            />
-                        </Level>
-                    </FormField>
+                    <>
+                        <FormField stacked label="Range">
+                            <Level margin="8px">
+                                <NumberField
+                                    name={`${prefix}.min`}
+                                    placeholder="Min"
+                                />
+                                <NumberField
+                                    name={`${prefix}.max`}
+                                    placeholder="Max"
+                                />
+                            </Level>
+                        </FormField>
+                        <SimpleField
+                            stacked
+                            label="Format Axis"
+                            type="react-select"
+                            name={`${prefix}.format`}
+                            withDeselect
+                            options={[
+                                {
+                                    label: 'Dollar',
+                                    value: ChartScaleFormat.DOLLAR,
+                                },
+                                {
+                                    label: 'Percentage',
+                                    value: ChartScaleFormat.PERCENTAGE,
+                                },
+                            ]}
+                        />
+                    </>
                 );
             }
 
@@ -855,12 +876,18 @@ const DataDocChartComposerComponent: React.FunctionComponent<
                     ]}
                     onChange={(val) => {
                         setFieldValue('valueDisplay', val);
-                        if (val) {
+                        if (val !== ChartValueDisplayType.FALSE) {
                             if (values.valuePosition == null) {
                                 setFieldValue('valuePosition', 'center');
                             }
                             if (values.valueAlignment == null) {
                                 setFieldValue('valueAlignment', 'center');
+                            }
+                            if (values.valueSource == null) {
+                                setFieldValue(
+                                    'valueSource',
+                                    ChartValueSourceType.VALUE
+                                );
                             }
                         }
                     }}
@@ -887,6 +914,22 @@ const DataDocChartComposerComponent: React.FunctionComponent<
                                 'left',
                                 'top',
                                 'bottom',
+                            ]}
+                        />
+                        <SimpleField
+                            stacked
+                            label="Source"
+                            name="valueSource"
+                            type="react-select"
+                            options={[
+                                {
+                                    value: ChartValueSourceType.VALUE,
+                                    label: 'Chart Value',
+                                },
+                                {
+                                    value: ChartValueSourceType.LABEL,
+                                    label: 'Series Label',
+                                },
                             ]}
                         />
                     </>
@@ -1113,12 +1156,19 @@ function formValsToMeta(vals: IChartFormValues, meta: IDataChartCellMeta) {
         draft.visual.connect_missing = vals.connectMissing;
         draft.visual.size = vals.size;
 
-        draft.visual.values = {
-            display: vals.valueDisplay ?? ChartValueDisplayType.FALSE,
-            position: vals.valuePosition,
-            alignment: vals.valueAlignment,
-        };
+        const displayValue = vals.valueDisplay ?? ChartValueDisplayType.FALSE;
+        if (displayValue !== ChartValueDisplayType.FALSE) {
+            draft.visual.values = {
+                display: displayValue,
+                position: vals.valuePosition,
+                alignment: vals.valueAlignment,
+                source: vals.valueSource,
+            };
+        } else {
+            delete draft.visual.values;
+        }
     });
+
     return updatedMeta;
 }
 

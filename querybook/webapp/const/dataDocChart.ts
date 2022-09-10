@@ -69,6 +69,13 @@ export const ChartScaleOptions: ChartScaleType[] = [
     'linear',
     'logarithmic',
 ];
+
+export enum ChartScaleFormat {
+    NONE = '',
+    DOLLAR = '$',
+    PERCENTAGE = '%',
+}
+
 export const chartTypeToAllowedAxisType: Partial<
     Record<ChartType, { x: ChartScaleType[]; y: ChartScaleType[] }>
 > = {
@@ -115,6 +122,7 @@ export interface IChartAxisMeta {
     scale?: ChartScaleType;
     min?: number;
     max?: number;
+    format?: ChartScaleFormat;
 }
 
 export interface IChartXAxisMeta extends IChartAxisMeta {
@@ -156,6 +164,11 @@ export enum ChartValueDisplayType {
     AUTO,
 }
 
+export enum ChartValueSourceType {
+    VALUE = 0,
+    LABEL = 1,
+}
+
 export enum ChartSize {
     SMALL = 'sm',
     MEDIUM = 'md',
@@ -169,7 +182,8 @@ export interface IChartVisualMeta {
     connect_missing?: boolean;
     size?: ChartSize;
 
-    values: {
+    values?: {
+        source: ChartValueSourceType;
         display: ChartValueDisplayType;
         position: 'center' | 'start' | 'end';
         alignment:
@@ -243,6 +257,7 @@ export interface IChartFormValues {
     connectMissing: boolean;
     size: ChartSize;
 
+    valueSource: ChartValueSourceType;
     valueDisplay: ChartValueDisplayType;
     valuePosition: 'center' | 'start' | 'end';
     valueAlignment:
