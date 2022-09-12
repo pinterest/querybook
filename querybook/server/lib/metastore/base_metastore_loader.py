@@ -1,7 +1,7 @@
 from abc import ABCMeta, abstractmethod, abstractclassmethod
 import gevent
 import math
-from typing import NamedTuple, List, Dict, Tuple
+from typing import NamedTuple, List, Dict, Tuple, Optional
 import traceback
 
 from app.db import DBSession, with_session
@@ -82,13 +82,79 @@ class BaseMetastoreLoader(metaclass=ABCMeta):
         self.acl_checker = MetastoreTableACLChecker(metastore_dict["acl_control"])
 
     @with_session
+    def sync_table(
+        self, schema_name: str, table_name: str, session=None
+    ) -> Optional[int]:
+        """Given a full qualified table name, sync the table with metastore.
+          If table doesn't exsit in neither metastore nor database, do nothing, return None
+          If table exists in metastore, sync the table from metastore to database, return table id
+          If table doesn't exsit in metastore, but exists in database, delete it from database, return -1
+
+        Arguments:
+            schema_name {str} -- the schema name
+            table_name {str} -- the table name
+
+        Returns:
+            Optional[int] -- None | table id | -1
+        """
+        try:
+            # get table from metastore
+            table, columns = self.get_table_and_columns(schema_name, table_name)
+
+            # get schema and table from querybook database
+            db_schema = get_schema_by_name(
+                schema_name, self.metastore_id, session=session
+            )
+            db_table = None
+            if db_schema:
+                db_table = get_table_by_schema_id_and_name(
+                    db_schema.id, table_name, session=session
+                )
+
+            # table doesn't exsit in neither metastore nor database
+            if not table and not db_table:
+                return None
+
+            # table doesn't exist in metastore, delete the table in database
+            if not table:
+                delete_table(table_id=db_table.id, session=session)
+                return -1
+
+            # table exists in metastore, sync it
+            schema_is_newly_created = False
+            if db_schema is None:
+                # Create the schema first if doesn't exist in database
+                schema_is_newly_created = True
+                db_schema = create_schema(
+                    name=schema_name,
+                    table_count=1,
+                    metastore_id=self.metastore_id,
+                    commit=False,
+                    session=session,
+                )
+
+            table_id = self._create_table_table(
+                db_schema.id, schema_name, table_name, table, columns, session=session
+            )
+            # Remove creation of new schema if we failed to create table
+            if table_id is None and schema_is_newly_created:
+                session.expunge(db_schema)
+
+            return table_id
+
+        except Exception:
+            LOG.error(traceback.format_exc())
+            return None
+
+    @with_session
     def sync_create_or_update_table(
         self, schema_name: str, table_name: str, session=None
     ) -> int:
-        """Given a full qualified table name,
-           sync the data in metastore with database.
-           Note: if table does not exist, this doesn't create a new table. But
-           it does create an empty schema.
+        """DEPRECATED!!! PLEASE USE `sync_table` INSTEAD.
+        Given a full qualified table name,
+        sync the data in metastore with database.
+        Note: if table does not exist, this doesn't create a new table. But
+        it does create an empty schema.
 
         Arguments:
             schema_name {str} -- the schema name
@@ -127,8 +193,9 @@ class BaseMetastoreLoader(metaclass=ABCMeta):
 
     @with_session
     def sync_delete_table(self, schema_name, table_name, session=None):
-        """Given a full qualified table name,
-           Remove the table if it exists
+        """DEPRECATED!!! PLEASE USE `sync_table` INSTEAD.
+        Given a full qualified table name,
+        Remove the table if it exists
 
         Arguments:
             schema_name {str} -- the schema name
@@ -232,14 +299,19 @@ class BaseMetastoreLoader(metaclass=ABCMeta):
                 self._create_table_table(schema_id, schema_name, table, session=session)
 
     @with_session
-    def _create_table_table(self, schema_id, schema_name, table_name, session=None):
-        table = None
-        columns = None
-
-        try:
-            table, columns = self.get_table_and_columns(schema_name, table_name)
-        except Exception:
-            LOG.error(traceback.format_exc())
+    def _create_table_table(
+        self, schema_id, schema_name, table_name, table=None, columns=None, session=None
+    ):
+        """Create or update a table.
+        If detailed table info is given (parameter table and columns), it will just use
+        them to create/update the table.  Otherwise, it will try to get the table
+        infofrom the metastore first and then create/update.
+        """
+        if not table:
+            try:
+                table, columns = self.get_table_and_columns(schema_name, table_name)
+            except Exception:
+                LOG.error(traceback.format_exc())
 
         if not table:
             return None

@@ -45,9 +45,7 @@ class BaseTableUploadExporter(ABC):
         loader = self._get_metastore_loader(session=session)
         if loader:
             schema_name, table_name = self._fq_table_name
-            return loader.sync_create_or_update_table(
-                schema_name, table_name, session=session
-            )
+            return loader.sync_table(schema_name, table_name, session=session)
         return None
 
     @with_session

@@ -214,9 +214,7 @@ def refresh_table_from_metastore(table_id):
 
         metastore_id = schema.metastore_id
         metastore_loader = get_metastore_loader(metastore_id, session=session)
-        metastore_loader.sync_create_or_update_table(
-            schema.name, table.name, session=session
-        )
+        metastore_loader.sync_table(schema.name, table.name, session=session)
 
         session.refresh(table)
         return table
@@ -671,25 +669,18 @@ def get_schemas(metastore_id, limit=5, offset=0, sort_key="name", sort_order="de
     "/table/<schema_name>/<table_name>/sync/",
     methods=["PUT"],
 )
-def sync_table_from_metastore(
-    schema_name, table_name, metastore_id, is_delete: bool = False
-):
-    """Sync table info from metastore. Delete the table if is_delete is True.
+def sync_table_from_metastore(schema_name, table_name, metastore_id):
+    """Sync table info with metastore.
 
     Args:
-        metastore_id (int): metastore ID
+        metastore_id (int): Metastore ID
         schema_name (str): Schema name
         table_name (str): Table name
 
     Returns:
-        None if deleting a table
+        None if the table doesn't exist neither metastore nor querybook
+        -1 if table is deleted
         table id if creating or updating a table
     """
     metastore_loader = get_metastore_loader(metastore_id)
-
-    if is_delete:
-        metastore_loader.sync_delete_table(schema_name, table_name)
-        return None
-    else:
-        table_id = metastore_loader.sync_create_or_update_table(schema_name, table_name)
-        return table_id
+    return metastore_loader.sync_table(schema_name, table_name)
