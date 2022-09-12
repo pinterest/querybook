@@ -95,16 +95,19 @@ def sync_table_to_metastore(
             for table in tables:
                 tables_to_sync.add(table)
         elif statement_type is not None:
+            # Otherwise for things like insert/select we only update
+            # if it doesn't exist in the Querybook database
             for table in tables:
-                schema_name, table_name = table.split(".")
-                query_table = m_logic.get_table_by_name(
-                    schema_name,
-                    table_name,
-                    metastore_id=metastore_id,
-                    session=session,
-                )
-                if not query_table:
-                    tables_to_sync.add(table)
+                if table not in tables_to_sync:
+                    schema_name, table_name = table.split(".")
+                    query_table = m_logic.get_table_by_name(
+                        schema_name,
+                        table_name,
+                        metastore_id=metastore_id,
+                        session=session,
+                    )
+                    if not query_table:
+                        tables_to_sync.add(table)
 
     for table in tables_to_sync:
         schema_name, table_name = table.split(".")

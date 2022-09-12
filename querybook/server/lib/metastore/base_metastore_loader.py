@@ -302,6 +302,11 @@ class BaseMetastoreLoader(metaclass=ABCMeta):
     def _create_table_table(
         self, schema_id, schema_name, table_name, table=None, columns=None, session=None
     ):
+        """Create or update a table.
+        If detailed table info is given (parameter table and columns), it will just use
+        them to create/update the table.  Otherwise, it will try to get the table
+        infofrom the metastore first and then create/update.
+        """
         if not table:
             try:
                 table, columns = self.get_table_and_columns(schema_name, table_name)
