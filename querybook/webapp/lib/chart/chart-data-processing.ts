@@ -153,8 +153,6 @@ export function processChartJSData(
         chartData['labels'] = dataRows.map((row) =>
             processDataPoint(row[xAxisIdx], xAxesScaleType)
         );
-    } else {
-        chartData['labels'] = dataRows.map((row) => row[0]);
     }
 
     return chartData;

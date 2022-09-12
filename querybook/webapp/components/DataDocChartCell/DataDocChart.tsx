@@ -29,16 +29,22 @@ interface IDataDocChartProps {
 Chart.registry.remove(ChartDataLabels);
 
 const useChartScale = (meta: IDataChartCellMeta, data?: any[][]) => {
+    const chartType = meta?.chart?.type;
+    const { x: allowedXAxisType, y: allowedYAxisType } = useMemo(
+        () => chartTypeToAllowedAxisType[chartType] ?? { x: [], y: [] },
+        [chartType]
+    );
+
     const xScale = meta?.chart?.x_axis?.scale;
     const xIndex = meta?.chart?.x_axis?.col_idx;
     const xAxesScaleType: ChartScaleType = React.useMemo(() => {
-        if (xScale != null) {
+        if (xScale != null && allowedXAxisType.includes(xScale)) {
             return xScale;
         } else if (data?.length < 2) {
+            // no data
             return null;
         }
 
-        const allowedXAxisType = chartTypeToAllowedAxisType[meta.chart.type].x;
         if (allowedXAxisType.length === 1) {
             // If there is only 1 allowed scale type then return immediately
             return allowedXAxisType[0];
@@ -60,18 +66,17 @@ const useChartScale = (meta: IDataChartCellMeta, data?: any[][]) => {
         // If the configured scale is not allowed, then just pick the first
         // one from the allowed axis type
         return getAutoDetectedScaleType(allowedXAxisType, defaultScale);
-    }, [data, xIndex, xScale]);
+    }, [data, xIndex, xScale, allowedXAxisType]);
 
     const yScale = meta?.chart?.y_axis?.scale;
-    const ySeries = meta?.chart?.y_axis?.series || {};
+    const ySeries = meta?.chart?.y_axis?.series;
     const yAxesScaleType = React.useMemo(() => {
-        if (yScale != null) {
+        if (yScale != null && allowedYAxisType.includes(yScale)) {
             return yScale;
         } else if (data?.length < 2) {
             return null;
         }
 
-        const allowedYAxisType = chartTypeToAllowedAxisType[meta.chart.type].y;
         if (allowedYAxisType.length === 1) {
             // If there is only 1 allowed scale type then return immediately
             return allowedYAxisType[0];
@@ -80,7 +85,7 @@ const useChartScale = (meta: IDataChartCellMeta, data?: any[][]) => {
         for (let i = 1; i < data.length; i++) {
             for (const [j, val] of data[i].entries()) {
                 if (
-                    !ySeries[j]?.hidden &&
+                    !ySeries?.[j]?.hidden &&
                     j !== xIndex &&
                     !isCellValNull(val)
                 ) {
@@ -92,7 +97,7 @@ const useChartScale = (meta: IDataChartCellMeta, data?: any[][]) => {
             }
         }
         return null;
-    }, [data, yScale, ySeries, xIndex]);
+    }, [data, yScale, ySeries, xIndex, allowedYAxisType]);
     return [xAxesScaleType, yAxesScaleType];
 };
 

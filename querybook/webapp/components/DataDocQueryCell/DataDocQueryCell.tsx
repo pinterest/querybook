@@ -420,15 +420,20 @@ class DataDocQueryCellComponent extends React.PureComponent<IProps, IState> {
                 this.queryEngine.language,
                 toEngine.language
             );
+        const updatedMeta = {
+            ...this.state.meta,
+            engine: toEngine.id,
+        };
         this.setState(
             {
                 query: transpiledQuery,
-                meta: {
-                    ...this.state.meta,
-                    engine: toEngine.id,
-                },
+                meta: updatedMeta,
             },
             () => {
+                this.onChangeDebounced({
+                    context: transpiledQuery,
+                    meta: updatedMeta,
+                });
                 toast.success(`Query transpiled to ${toEngine.name}`);
             }
         );
