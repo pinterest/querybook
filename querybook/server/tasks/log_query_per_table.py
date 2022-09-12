@@ -80,46 +80,35 @@ def create_lineage_from_query(
 def sync_table_to_metastore(
     table_per_statement, statement_types, metastore_id, session=None
 ):
+    """Sync tables with metastore. Tables are parsed from executed queries.
+
+    It syncs below two kinds of tables:
+        - tables from CREATE, ALTER, DROP statements.
+        - tables from other statements, but they dont exsit in Querybook database.
+    """
     metastore_loader = get_metastore_loader(metastore_id, session=session)
     assert metastore_loader is not None
 
-    tables_to_add = set()
-    tables_to_remove = set()
+    tables_to_sync = set()
     for tables, statement_type in zip(table_per_statement, statement_types):
-        if statement_type == "DROP":
+        if statement_type in ("CREATE", "ALTER", "DROP"):
             for table in tables:
-                tables_to_add.discard(table)
-                tables_to_remove.add(table)
-        elif statement_type is not None:  # Any other DML/DDL
+                tables_to_sync.add(table)
+        elif statement_type is not None:
             for table in tables:
-                tables_to_remove.discard(table)
+                schema_name, table_name = table.split(".")
+                query_table = m_logic.get_table_by_name(
+                    schema_name,
+                    table_name,
+                    metastore_id=metastore_id,
+                    session=session,
+                )
+                if not query_table:
+                    tables_to_sync.add(table)
 
-                # If table is create or alert, we must update metastore
-                if table not in tables_to_add:  # This is to minimize the checks
-                    if statement_type in ("CREATE", "ALTER"):
-                        tables_to_add.add(table)
-                    else:
-                        # Otherwise for things like insert/select we only update
-                        # if it doesn't exist in the metastore
-                        schema_name, table_name = table.split(".")
-                        query_table = m_logic.get_table_by_name(
-                            schema_name,
-                            table_name,
-                            metastore_id=metastore_id,
-                            session=session,
-                        )
-                        if not query_table:
-                            tables_to_add.add(table)
-
-    for table in tables_to_remove:
+    for table in tables_to_sync:
         schema_name, table_name = table.split(".")
-        metastore_loader.sync_delete_table(schema_name, table_name, session=session)
-
-    for table in tables_to_add:
-        schema_name, table_name = table.split(".")
-        metastore_loader.sync_create_or_update_table(
-            schema_name, table_name, session=session
-        )
+        metastore_loader.sync_table(schema_name, table_name, session=session)
 
 
 @with_session

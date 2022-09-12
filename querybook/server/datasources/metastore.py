@@ -214,9 +214,7 @@ def refresh_table_from_metastore(table_id):
 
         metastore_id = schema.metastore_id
         metastore_loader = get_metastore_loader(metastore_id, session=session)
-        metastore_loader.sync_create_or_update_table(
-            schema.name, table.name, session=session
-        )
+        metastore_loader.sync_table(schema.name, table.name, session=session)
 
         session.refresh(table)
         return table

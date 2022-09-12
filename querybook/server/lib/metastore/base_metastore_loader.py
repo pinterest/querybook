@@ -150,10 +150,11 @@ class BaseMetastoreLoader(metaclass=ABCMeta):
     def sync_create_or_update_table(
         self, schema_name: str, table_name: str, session=None
     ) -> int:
-        """Given a full qualified table name,
-           sync the data in metastore with database.
-           Note: if table does not exist, this doesn't create a new table. But
-           it does create an empty schema.
+        """DEPRECATED!!! PLEASE USE `sync_table` INSTEAD.
+        Given a full qualified table name,
+        sync the data in metastore with database.
+        Note: if table does not exist, this doesn't create a new table. But
+        it does create an empty schema.
 
         Arguments:
             schema_name {str} -- the schema name
@@ -192,8 +193,9 @@ class BaseMetastoreLoader(metaclass=ABCMeta):
 
     @with_session
     def sync_delete_table(self, schema_name, table_name, session=None):
-        """Given a full qualified table name,
-           Remove the table if it exists
+        """DEPRECATED!!! PLEASE USE `sync_table` INSTEAD.
+        Given a full qualified table name,
+        Remove the table if it exists
 
         Arguments:
             schema_name {str} -- the schema name
