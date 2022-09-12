@@ -215,7 +215,7 @@ const QueryLimitSelector: React.FC<{
             customButtonRenderer={() => (
                 <div
                     className="flex-center ph4"
-                    aria-label="Only applies to select statements without limit"
+                    aria-label="Only applies to SELECT query without LIMIT"
                     data-balloon-pos={tooltipPos}
                 >
                     <span className="mr4">Limit: {formatNumber(rowLimit)}</span>
