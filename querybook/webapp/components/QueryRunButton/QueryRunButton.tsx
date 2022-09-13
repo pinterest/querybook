@@ -106,7 +106,7 @@ export const QueryRunButton = React.forwardRef<
         const isRowLimitEnabled =
             queryEngineById[engineId]?.feature_params.row_limit;
         const rowLimitDOM =
-            onRowLimitChange && isRowLimitEnabled ? (
+            !disabled && onRowLimitChange && isRowLimitEnabled ? (
                 <QueryLimitSelector
                     rowLimit={rowLimit}
                     setRowLimit={onRowLimitChange}

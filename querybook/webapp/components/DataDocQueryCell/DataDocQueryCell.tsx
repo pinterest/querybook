@@ -522,7 +522,7 @@ class DataDocQueryCellComponent extends React.PureComponent<IProps, IState> {
             queryEngine,
             queryEngines
         );
-        if (transpilerOptions.length > 0) {
+        if (transpilerOptions.length > 0 && isEditable) {
             additionalButtons.push({
                 name: `Transpile Query`,
                 icon: 'Languages',
