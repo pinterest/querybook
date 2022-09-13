@@ -23,6 +23,7 @@ import {
     IDataTableWarning,
     IPaginatedQuerySampleFilters,
 } from 'const/metastore';
+import { useMounted } from 'hooks/useMounted';
 import { titleize } from 'lib/utils';
 import { generateFormattedDate } from 'lib/utils/datetime';
 import { getAppName } from 'lib/utils/global';
@@ -55,6 +56,7 @@ const dataTableDetailsRows = [
 
 function useRefreshMetastore(table: IDataTable) {
     const dispatch = useDispatch();
+    const isMounted = useMounted();
     const [isRefreshing, setIsRefreshing] = useState(false);
 
     const handleRefreshTable = useCallback(() => {
@@ -62,7 +64,11 @@ function useRefreshMetastore(table: IDataTable) {
         const refreshRequest = dispatch(
             refreshDataTableInMetastore(table.id)
         ) as unknown as Promise<void>;
-        refreshRequest.finally(() => setIsRefreshing(false));
+        refreshRequest.finally(() => {
+            if (isMounted()) {
+                setIsRefreshing(false);
+            }
+        });
 
         toast.promise(refreshRequest, {
             loading: 'Refreshing table from metastore',

@@ -1,12 +1,15 @@
-import { useEffect, useState } from 'react';
+import { useCallback, useEffect, useRef } from 'react';
 
 export function useMounted() {
-    const [mounted, setMounted] = useState(false);
+    const mounted = useRef(false);
+
     useEffect(() => {
-        setMounted(true);
+        mounted.current = true;
+
         return () => {
-            setMounted(false);
+            mounted.current = false;
         };
     }, []);
-    return mounted;
+
+    return useCallback(() => mounted.current, []);
 }

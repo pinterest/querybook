@@ -72,7 +72,11 @@ def get_table(table_id, with_schema=True, with_column=True, with_warnings=True):
     # username = flask_session['uid']
     with DBSession() as session:
         table = logic.get_table_by_id(table_id, session=session)
-        api_assert(table, "Invalid table")
+        api_assert(
+            table,
+            "Table doesn't exist or has been deleted from Metastore",
+            status_code=404,
+        )
         verify_data_schema_permission(table.schema_id, session=session)
         result = table.to_dict(with_schema, with_column, with_warnings)
         return result
@@ -204,8 +208,11 @@ def create_table_ownership(table_id):
 
 
 @register("/table/<int:table_id>/refresh/", methods=["PUT"])
-def refresh_table_from_metastore(table_id):
-    """Refetch table info from metastore"""
+def sync_table_by_table_id(table_id):
+    """Refetch table info from metastore
+    It returns -1 if the table gets deleted.
+    Otherwise, it will return the updated table.
+    """
     with DBSession() as session:
         verify_data_table_permission(table_id, session=session)
 
@@ -214,7 +221,9 @@ def refresh_table_from_metastore(table_id):
 
         metastore_id = schema.metastore_id
         metastore_loader = get_metastore_loader(metastore_id, session=session)
-        metastore_loader.sync_table(schema.name, table.name, session=session)
+        table_id = metastore_loader.sync_table(schema.name, table.name, session=session)
+        if table_id == -1:
+            return -1
 
         session.refresh(table)
         return table
@@ -669,7 +678,7 @@ def get_schemas(metastore_id, limit=5, offset=0, sort_key="name", sort_order="de
     "/table/<schema_name>/<table_name>/sync/",
     methods=["PUT"],
 )
-def sync_table_from_metastore(schema_name, table_name, metastore_id):
+def sync_table_by_table_name(schema_name, table_name, metastore_id):
     """Sync table info with metastore.
 
     Args:

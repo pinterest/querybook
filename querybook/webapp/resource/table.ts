@@ -158,7 +158,7 @@ export const TableResource = {
     },
 
     refresh: (tableId: number) =>
-        ds.update<IDataTable>(`/table/${tableId}/refresh/`),
+        ds.update<IDataTable | -1>(`/table/${tableId}/refresh/`),
 };
 
 export const TableColumnResource = {

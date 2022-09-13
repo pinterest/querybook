@@ -42,6 +42,13 @@ export interface IReceiveDataTableAction extends Action {
     };
 }
 
+export interface IRemoveDataTableAction extends Action {
+    type: '@@dataSources/REMOVE_DATA_TABLE';
+    payload: {
+        dataTableId: number;
+    };
+}
+
 export interface IReceiveParentDataLineageAction extends Action {
     type: '@@dataSources/RECEIVE_PARENT_DATA_LINEAGE';
     payload: {
@@ -183,6 +190,7 @@ export interface IRemoveDataTableOwnership extends Action {
 export type DataSourcesAction =
     | IReceiveQueryMetastoresAction
     | IReceiveDataTableAction
+    | IRemoveDataTableAction
     | IReceiveParentDataLineageAction
     | IReceiveChildDataLineageAction
     | IReceiveDataJobMetadataAction

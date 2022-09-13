@@ -288,8 +288,16 @@ class DataTableViewComponent extends React.PureComponent<
                 item={table}
                 itemKey={tableId}
                 itemLoader={getTable.bind(null, tableId)}
+                emptyRenderer={() => (
+                    <FourOhFour>
+                        Table doesn't exist or has been deleted from Metastore
+                    </FourOhFour>
+                )}
                 errorRenderer={(error) => (
-                    <ErrorPage errorMessage={formatError(error)} />
+                    <ErrorPage
+                        errorCode={error.response?.status}
+                        errorMessage={formatError(error)}
+                    />
                 )}
             >
                 {this.renderTableView()}
