@@ -573,6 +573,24 @@ export function getStatementRanges(
     return statementRanges;
 }
 
+/**
+ * Split a query into multiple statements. Return the non-empty ones
+ *
+ * @param query
+ * @returns array of statements
+ */
+export function getStatementsFromQuery(
+    query: string,
+    language?: string
+): string[] {
+    const statementRanges = getStatementRanges(query, null, language);
+    const statements = statementRanges
+        .map((range) => query.slice(range[0], range[1]))
+        .filter((statement) => statement.length > 0);
+
+    return statements;
+}
+
 export function getSelectedQuery(query: string, selectedRange: IRange = null) {
     const statementRanges = selectedRange
         ? getStatementRanges(query, selectedRange)

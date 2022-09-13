@@ -4,11 +4,15 @@ import toast from 'react-hot-toast';
 import { IQueryEngine } from 'const/queryEngine';
 import { sendConfirm } from 'lib/querybookUI';
 import { getDroppedTables } from 'lib/sql-helper/sql-checker';
-import { getLimitedQuery } from 'lib/sql-helper/sql-limiter';
+import {
+    getLimitedQuery,
+    hasQueryContainUnlimitedSelect,
+} from 'lib/sql-helper/sql-limiter';
 import { renderTemplatedQuery } from 'lib/templated-query';
 import { Nullable } from 'lib/typescript';
 import { formatError } from 'lib/utils/error';
 import { Content } from 'ui/Content/Content';
+import { ShowMoreText } from 'ui/ShowMoreText/ShowMoreText';
 
 export async function transformQuery(
     query: string,
@@ -30,7 +34,7 @@ export async function transformQuery(
         return '';
     }
 
-    const limitedQuery = transformLimitedQuery(
+    const limitedQuery = await transformLimitedQuery(
         templatizedQuery,
         rowLimit,
         engine
@@ -71,14 +75,59 @@ async function transformTemplatedQuery(
     }
 }
 
-function transformLimitedQuery(
+async function transformLimitedQuery(
     query: string,
     rowLimit: Nullable<number>,
     engine: IQueryEngine
 ) {
-    return engine.feature_params?.row_limit && rowLimit != null
-        ? getLimitedQuery(query, rowLimit, engine.language)
-        : query;
+    if (!engine.feature_params?.row_limit) {
+        return query;
+    }
+
+    if (rowLimit != null && rowLimit >= 0) {
+        return getLimitedQuery(query, rowLimit, engine.language);
+    }
+
+    // query is unlimited but engine has row limit feature turned on
+
+    const unlimitedSelectQuery = hasQueryContainUnlimitedSelect(
+        query,
+        engine.language
+    );
+
+    if (!unlimitedSelectQuery) {
+        return query;
+    }
+
+    // Show a warning modal to let user confirm what they are doing
+    return new Promise<string>((resolve, reject) => {
+        sendConfirm({
+            header: 'Your SELECT query is unbounded',
+            message: (
+                <Content>
+                    <div>
+                        The following SELECT statement has no limit. Please make
+                        sure you intend to get all the rows returned.
+                    </div>
+                    <div>
+                        <i>
+                            Tip: to avoid seeing this message, add a LIMIT in
+                            the query or set a limit value on the left of the
+                            run button.
+                        </i>
+                    </div>
+                    <pre>
+                        <code>
+                            <ShowMoreText text={unlimitedSelectQuery} />
+                        </code>
+                    </pre>
+                </Content>
+            ),
+            onConfirm: () => resolve(query),
+            onDismiss: () => reject(),
+            confirmText: 'Run without LIMIT',
+        });
+    });
 }
 
 async function confirmIfDroppingTablesThenRunQuery(
@@ -103,8 +152,8 @@ async function confirmIfDroppingTablesThenRunQuery(
                     </Content>
                 ),
                 onConfirm: () => runQuery().then(resolve, reject),
-                onDismiss: () => resolve(null),
-                confirmText: 'Continue Execution',
+                onDismiss: () => reject(),
+                confirmText: 'DROP the table',
             });
         });
     } else {

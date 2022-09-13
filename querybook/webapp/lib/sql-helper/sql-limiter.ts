@@ -1,5 +1,5 @@
 import {
-    getStatementRanges,
+    getStatementsFromQuery,
     getStatementType,
     IToken,
     simpleParse,
@@ -68,6 +68,24 @@ export function getSelectStatementLimit(
 }
 
 /**
+ * Check if the query has any statements that is SELECT and does not have LIMIT
+ * If so, return the unlimited select statement, else, return null
+ *
+ * @param query
+ * @param language
+ */
+export function hasQueryContainUnlimitedSelect(
+    query: string,
+    language?: string
+): string {
+    const statements = getStatementsFromQuery(query, language);
+
+    return statements.find(
+        (statement) => getSelectStatementLimit(statement, language) === -1
+    );
+}
+
+/**
  * Automatically apply a limit to a query that does not already have a limit.
  *
  * @param {string} query - Query to be executed.
@@ -84,10 +102,7 @@ export function getLimitedQuery(
         return query;
     }
 
-    const statementRanges = getStatementRanges(query, null, language);
-    const statements = statementRanges
-        .map((range) => query.slice(range[0], range[1]))
-        .filter((statement) => statement.length > 0);
+    const statements = getStatementsFromQuery(query, language);
 
     let addedLimit = false;
     const updatedQuery = statements
@@ -112,6 +127,7 @@ export const ROW_LIMIT_SCALE =
     window.ROW_LIMIT_SCALE ?? [1, 2, 3, 4, 5].map((v) => Math.pow(10, v));
 // 10^3
 export const DEFAULT_ROW_LIMIT = window.DEFAULT_ROW_LIMIT ?? ROW_LIMIT_SCALE[2];
+export const ALLOW_UNLIMITED_QUERY = window.ALLOW_UNLIMITED_QUERY ?? true;
 
 if (!ROW_LIMIT_SCALE.includes(DEFAULT_ROW_LIMIT)) {
     throw new Error('DEFAULT_ROW_LIMIT must be in ROW_LIMIT_SCALE');
