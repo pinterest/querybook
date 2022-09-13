@@ -118,6 +118,11 @@ function dataTablesByIdReducer(
                 }
                 return;
             }
+            case '@@dataSources/REMOVE_DATA_TABLE': {
+                const { dataTableId } = action.payload;
+                delete draft[dataTableId];
+                return;
+            }
             case '@@dataSources/RECEIVE_DATA_TABLE_WARNING': {
                 const warning = action.payload;
                 if (!draft[warning.table_id].warnings.includes(warning.id)) {

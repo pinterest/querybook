@@ -305,7 +305,7 @@ class BaseMetastoreLoader(metaclass=ABCMeta):
         """Create or update a table.
         If detailed table info is given (parameter table and columns), it will just use
         them to create/update the table.  Otherwise, it will try to get the table
-        infofrom the metastore first and then create/update.
+        info from the metastore first and then create/update.
         """
         if not table:
             try:

@@ -2,6 +2,7 @@
 
 .ErrorPage {
     position: relative;
+    min-height: 200px;
     .ErrorPage-message {
         @include ellipsis(30);
         white-space: pre-wrap;

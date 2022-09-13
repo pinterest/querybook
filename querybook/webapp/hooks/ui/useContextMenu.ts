@@ -28,7 +28,7 @@ export const useContextMenu = (ref: React.RefObject<HTMLElement>) => {
 
     useEvent('contextmenu', handleContextMenu, {
         element: ref.current,
-        disabled: !(mounted && ref.current != null),
+        disabled: !(mounted() && ref.current != null),
     });
     useEvent('mousedown', handleClickOutside, {
         element: document,

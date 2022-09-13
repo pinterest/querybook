@@ -43,6 +43,7 @@ import {
     IReceiveDataTableSamplesPollingAction,
     IReceiveParentDataLineageAction,
     IReceiveQueryExampleIdsAction,
+    IRemoveDataTableAction,
     ThunkResult,
 } from './types';
 
@@ -130,7 +131,11 @@ export function refreshDataTableInMetastore(
 ): ThunkResult<Promise<void>> {
     return async (dispatch) => {
         const { data } = await TableResource.refresh(tableId);
-        dispatch(receiveRawDataTable(data));
+        if (!data) {
+            dispatch(removeDataTable(tableId));
+        } else {
+            dispatch(receiveRawDataTable(data));
+        }
     };
 }
 
@@ -280,6 +285,15 @@ export function receiveDataTable(
             ),
             dataSchemasById: dataSchema,
             dataTableWarningById: dataTableWarning,
+        },
+    };
+}
+
+export function removeDataTable(tableId: number): IRemoveDataTableAction {
+    return {
+        type: '@@dataSources/REMOVE_DATA_TABLE',
+        payload: {
+            dataTableId: tableId,
         },
     };
 }
