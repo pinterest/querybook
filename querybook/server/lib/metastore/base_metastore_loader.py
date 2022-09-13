@@ -86,9 +86,13 @@ class BaseMetastoreLoader(metaclass=ABCMeta):
         self, schema_name: str, table_name: str, session=None
     ) -> Optional[int]:
         """Given a full qualified table name, sync the table with metastore.
-          If table doesn't exsit in neither metastore nor database, do nothing, return None
-          If table exists in metastore, sync the table from metastore to database, return table id
-          If table doesn't exsit in metastore, but exists in database, delete it from database, return -1
+          - If table is not in the allow list or in the deny list,
+            or it doesn't exsit in neither metastore nor database,
+            do nothing, return None
+          - If table exists in metastore, sync the table from metastore
+            to database, return table id
+          - If table doesn't exsit in metastore, but exists in database,
+            delete it from database, return -1
 
         Arguments:
             schema_name {str} -- the schema name
@@ -98,6 +102,10 @@ class BaseMetastoreLoader(metaclass=ABCMeta):
             Optional[int] -- None | table id | -1
         """
         try:
+            # return None if the table is not in the allow list or in the deny list
+            if self.acl_checker.is_table_valid(schema_name, table_name):
+                return None
+
             # get table from metastore
             table, columns = self.get_table_and_columns(schema_name, table_name)
 
