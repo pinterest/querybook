@@ -131,7 +131,7 @@ export function refreshDataTableInMetastore(
 ): ThunkResult<Promise<void>> {
     return async (dispatch) => {
         const { data } = await TableResource.refresh(tableId);
-        if (data === -1) {
+        if (!data) {
             dispatch(removeDataTable(tableId));
         } else {
             dispatch(receiveRawDataTable(data));

@@ -210,7 +210,7 @@ def create_table_ownership(table_id):
 @register("/table/<int:table_id>/refresh/", methods=["PUT"])
 def sync_table_by_table_id(table_id):
     """Refetch table info from metastore
-    It returns -1 if the table gets deleted.
+    It returns None if the table gets deleted.
     Otherwise, it will return the updated table.
     """
     with DBSession() as session:
@@ -223,7 +223,7 @@ def sync_table_by_table_id(table_id):
         metastore_loader = get_metastore_loader(metastore_id, session=session)
         table_id = metastore_loader.sync_table(schema.name, table.name, session=session)
         if table_id == -1:
-            return -1
+            return None
 
         session.refresh(table)
         return table
