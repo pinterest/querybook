@@ -72,7 +72,7 @@ export const ConfirmationMessage: React.FunctionComponent<
         () => onCloseButtonClick(true),
         [onCloseButtonClick]
     );
-    const handleReject = useMemo(
+    const handleCancel = useMemo(
         () => onCloseButtonClick(false),
         [onCloseButtonClick]
     );
@@ -91,7 +91,7 @@ export const ConfirmationMessage: React.FunctionComponent<
     const actionButtons = [
         <Button
             key="cancel"
-            onClick={handleReject}
+            onClick={handleCancel}
             icon={cancelIcon}
             title={cancelText}
             color={cancelColor}
@@ -110,7 +110,7 @@ export const ConfirmationMessage: React.FunctionComponent<
     }
 
     return (
-        <Modal onHide={handleReject} className="message-size" title={header}>
+        <Modal onHide={handleCancel} className="message-size" title={header}>
             <div className="ConfirmationMessage" ref={selfRef} tabIndex={0}>
                 <div className="confirmation-message">{message}</div>
                 <div className="confirmation-buttons flex-right mt36">

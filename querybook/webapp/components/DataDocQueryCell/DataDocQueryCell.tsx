@@ -517,22 +517,24 @@ class DataDocQueryCellComponent extends React.PureComponent<IProps, IState> {
             icon: queryCollapsed ? 'Eye' : 'EyeOff',
         });
 
-        const transpilerOptions = this.getTranspilerOptions(
-            queryTranspilers,
-            queryEngine,
-            queryEngines
-        );
-        if (transpilerOptions.length > 0) {
-            additionalButtons.push({
-                name: `Transpile Query`,
-                icon: 'Languages',
+        if (isEditable) {
+            const transpilerOptions = this.getTranspilerOptions(
+                queryTranspilers,
+                queryEngine,
+                queryEngines
+            );
+            if (transpilerOptions.length > 0) {
+                additionalButtons.push({
+                    name: `Transpile Query`,
+                    icon: 'Languages',
 
-                items: transpilerOptions.map((t) => ({
-                    name: `To ${t.toEngine.name} (${t.toEngine.language})`,
-                    onClick: () =>
-                        this.transpileQuery(t.transpilerName, t.toEngine),
-                })),
-            });
+                    items: transpilerOptions.map((t) => ({
+                        name: `To ${t.toEngine.name} (${t.toEngine.language})`,
+                        onClick: () =>
+                            this.transpileQuery(t.transpilerName, t.toEngine),
+                    })),
+                });
+            }
         }
 
         if (this.hasUDFSupport) {
