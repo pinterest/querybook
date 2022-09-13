@@ -201,11 +201,15 @@ export const DataDocScheduleForm: React.FunctionComponent<
 
                 const exportField = (
                     <>
-                        <FormSectionHeader>Export</FormSectionHeader>
-                        <ScheduleExportsForm
-                            docId={docId}
-                            exporters={exporters}
-                        />
+                        {exporters && exporters.length > 0 && (
+                            <>
+                                <FormSectionHeader>Export</FormSectionHeader>
+                                <ScheduleExportsForm
+                                    docId={docId}
+                                    exporters={exporters}
+                                />
+                            </>
+                        )}
                     </>
                 );
 
