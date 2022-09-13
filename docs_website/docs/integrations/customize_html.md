@@ -188,4 +188,6 @@ window variables:
 window.ROW_LIMIT_SCALE = [8, 64, 512, 4096, 32768];
 // the default limit is now 4096
 window.DEFAULT_ROW_LIMIT = 4096;
+// this removes the option for user to pick limit: none
+window.ALLOW_UNLIMITED_QUERY = false;
 ```

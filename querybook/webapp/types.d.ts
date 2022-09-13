@@ -46,6 +46,12 @@ declare global {
          * Must be a value in ROW_LIMIT_SCALE
          */
         DEFAULT_ROW_LIMIT?: number;
+        /**
+         * If true, allow user to choose an option for unlimited query
+         * However, users will be shown a warning modal when they run an unlimited
+         * query
+         */
+        ALLOW_UNLIMITED_QUERY?: boolean;
     }
 
     // Injected via Webpack

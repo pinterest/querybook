@@ -1,4 +1,4 @@
-import React, { useCallback, useEffect, useRef } from 'react';
+import React, { useCallback, useEffect, useMemo, useRef } from 'react';
 
 import { useEvent } from 'hooks/useEvent';
 import { KeyMap, matchKeyMap } from 'lib/utils/keyboard';
@@ -68,6 +68,14 @@ export const ConfirmationMessage: React.FunctionComponent<
         },
         [onConfirm, onDismiss, onHide]
     );
+    const handleConfirm = useMemo(
+        () => onCloseButtonClick(true),
+        [onCloseButtonClick]
+    );
+    const handleReject = useMemo(
+        () => onCloseButtonClick(false),
+        [onCloseButtonClick]
+    );
 
     const onEnterPress = useCallback(
         (evt: KeyboardEvent) => {
@@ -83,14 +91,14 @@ export const ConfirmationMessage: React.FunctionComponent<
     const actionButtons = [
         <Button
             key="cancel"
-            onClick={onCloseButtonClick(false)}
+            onClick={handleReject}
             icon={cancelIcon}
             title={cancelText}
             color={cancelColor}
         />,
         <Button
             key="confirm"
-            onClick={onCloseButtonClick(true)}
+            onClick={handleConfirm}
             icon={confirmIcon}
             title={confirmText}
             color={confirmColor}
@@ -102,7 +110,7 @@ export const ConfirmationMessage: React.FunctionComponent<
     }
 
     return (
-        <Modal onHide={onHide} className="message-size" title={header}>
+        <Modal onHide={handleReject} className="message-size" title={header}>
             <div className="ConfirmationMessage" ref={selfRef} tabIndex={0}>
                 <div className="confirmation-message">{message}</div>
                 <div className="confirmation-buttons flex-right mt36">

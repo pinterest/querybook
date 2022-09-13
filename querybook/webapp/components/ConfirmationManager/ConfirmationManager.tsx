@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useCallback } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 
 import * as querybookUIActions from 'redux/querybookUI/action';
@@ -12,12 +12,10 @@ export const ConfirmationManager: React.FunctionComponent = () => {
     );
     const dispatch: Dispatch = useDispatch();
 
-    const wrapOnConfirmationEnd = (callback?: () => any) => () => {
+    const handleHide = useCallback(() => {
         dispatch(querybookUIActions.removeConfirmation());
-        if (callback != null) {
-            callback();
-        }
-    };
+        confirmation?.onHide?.();
+    }, [confirmation, dispatch]);
 
     if (confirmation == null) {
         return null;
@@ -25,9 +23,9 @@ export const ConfirmationManager: React.FunctionComponent = () => {
 
     const mergedProps = {
         ...confirmation,
-        onConfirm: wrapOnConfirmationEnd(confirmation.onConfirm),
-        onDismiss: wrapOnConfirmationEnd(confirmation.onDismiss),
-        onHide: wrapOnConfirmationEnd(confirmation.onHide),
+        onConfirm: confirmation.onConfirm,
+        onDismiss: confirmation.onDismiss,
+        onHide: handleHide,
     };
 
     return <ConfirmationMessage {...mergedProps} />;
