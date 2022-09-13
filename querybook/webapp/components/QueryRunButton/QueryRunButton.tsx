@@ -209,7 +209,7 @@ const QueryLimitSelector: React.FC<{
     }, [rowLimit, setRowLimit]);
 
     const selectedRowLimitText = React.useMemo(() => {
-        if (rowLimit != null && rowLimit >= 0) {
+        if (rowLimit >= 0) {
             return formatNumber(rowLimit);
         }
         return 'none';

@@ -574,7 +574,7 @@ export function getStatementRanges(
 }
 
 /**
- * Split a query into multiple statements. Return the non-emptry ones
+ * Split a query into multiple statements. Return the non-empty ones
  *
  * @param query
  * @returns array of statements

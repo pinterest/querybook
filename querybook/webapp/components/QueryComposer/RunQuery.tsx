@@ -106,13 +106,14 @@ async function transformLimitedQuery(
             message: (
                 <Content>
                     <div>
-                        The following SELECT statement have no limit. Please
-                        make sure you intend to get all the rows returned.
+                        The following SELECT statement has no limit. Please make
+                        sure you intend to get all the rows returned.
                     </div>
                     <div>
                         <i>
                             Tip: to avoid seeing this message, add a LIMIT in
-                            the query or set it on left of the run button.
+                            the query or set a limit value on the left of the
+                            run button.
                         </i>
                     </div>
                     <pre>

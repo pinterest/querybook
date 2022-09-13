@@ -68,8 +68,8 @@ export function getSelectStatementLimit(
 }
 
 /**
- * Check if the query have any statements that is SELECT and does not have LIMT
- * If so, return the statement that is unbounded, else, return null
+ * Check if the query has any statements that is SELECT and does not have LIMIT
+ * If so, return the unlimited select statement, else, return null
  *
  * @param query
  * @param language
@@ -127,7 +127,7 @@ export const ROW_LIMIT_SCALE =
     window.ROW_LIMIT_SCALE ?? [1, 2, 3, 4, 5].map((v) => Math.pow(10, v));
 // 10^3
 export const DEFAULT_ROW_LIMIT = window.DEFAULT_ROW_LIMIT ?? ROW_LIMIT_SCALE[2];
-export const ALLOW_UNLIMITED_QUERY = true;
+export const ALLOW_UNLIMITED_QUERY = window.ALLOW_UNLIMITED_QUERY ?? true;
 
 if (!ROW_LIMIT_SCALE.includes(DEFAULT_ROW_LIMIT)) {
     throw new Error('DEFAULT_ROW_LIMIT must be in ROW_LIMIT_SCALE');
