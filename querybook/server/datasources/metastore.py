@@ -11,7 +11,7 @@ from app.auth.permission import (
 )
 from app.db import DBSession
 from app.datasource import register, api_assert, with_impression, admin_only
-from app.flask_app import cache
+from app.flask_app import cache, limiter
 from const.impression import ImpressionItemType
 from const.metastore import DataTableWarningSeverity
 from const.time import seconds_in_a_day
@@ -678,6 +678,7 @@ def get_schemas(metastore_id, limit=5, offset=0, sort_key="name", sort_order="de
     "/table/<schema_name>/<table_name>/sync/",
     methods=["PUT"],
 )
+@limiter.limit("500 per minute")
 def sync_table_by_table_name(schema_name, table_name, metastore_id):
     """Sync table info with metastore.
 
