@@ -1,7 +1,7 @@
 
 # Server requirements
-Werkzeug==2.2.0
-flask==2.2.0
+Werkzeug==2.2.2
+flask==2.2.2
 Flask-Caching==1.10.1
 Flask-Compress==1.10.1
 Flask-Login==0.6.2
@@ -15,7 +15,7 @@ greenlet==1.1.2
 alembic==1.8.1
 
 gevent-websocket==0.10.1
-flask-socketio==5.2.0
+flask-socketio==5.3.1
 
 # Query templating
 Jinja2==3.1.2  # From Flask
