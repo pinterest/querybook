@@ -3,6 +3,7 @@ import React from 'react';
 import { useSelector } from 'react-redux';
 import * as Yup from 'yup';
 
+import { UserName } from 'components/UserBadge/UserName';
 import type { IQueryResultExporter } from 'const/queryExecution';
 import { IDataDocScheduleKwargs, NotifyOn } from 'const/schedule';
 import { getExporterAuthentication } from 'lib/result-export';
@@ -113,6 +114,9 @@ export const DataDocScheduleForm: React.FunctionComponent<
     onDelete,
     onRun,
 }) => {
+    const dataDoc = useSelector(
+        (state: IStoreState) => state.dataDoc.dataDocById[docId]
+    );
     const exporters = useSelector(
         (state: IStoreState) => state.queryExecutions.statementExporters
     );
@@ -176,6 +180,14 @@ export const DataDocScheduleForm: React.FunctionComponent<
                 const notificationField = (
                     <>
                         <FormSectionHeader>Notification</FormSectionHeader>
+                        <div>
+                            Notification will be sent to the owner of the
+                            datadoc{' '}
+                            <b>
+                                @<UserName uid={dataDoc.owner_uid} />
+                            </b>
+                            , who will be running the scheduled queries.
+                        </div>
                         <SimpleField
                             label="Notify With"
                             name="kwargs.notify_with"

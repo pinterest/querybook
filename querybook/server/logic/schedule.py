@@ -96,7 +96,37 @@ def update_task_schedule(id, commit=True, session=None, no_changes=False, **kwar
 
     if commit:
         session.commit()
-    task_schedule.id
+
+    return task_schedule
+
+
+@with_session
+def update_task_schedule_owner(
+    doc_id,
+    owner_id,
+    commit=True,
+    session=None,
+):
+    """Update the schedule's owner, which is the user_id field in kwargs."""
+    schedule_name = get_data_doc_schedule_name(doc_id)
+    task_schedule = get_task_schedule_by_name(schedule_name, session=session)
+
+    if not task_schedule:
+        raise Exception(
+            "unable to find any schedules for data doc id {}".format(doc_id)
+        )
+
+    update_model_fields(
+        task_schedule,
+        field_names=[
+            "kwargs",
+        ],
+        kwargs={**task_schedule.kwargs, "user_id": owner_id},
+    )
+
+    if commit:
+        session.commit()
+
     return task_schedule
 
 
