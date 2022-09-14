@@ -114,9 +114,6 @@ export const DataDocScheduleForm: React.FunctionComponent<
     onDelete,
     onRun,
 }) => {
-    const dataDoc = useSelector(
-        (state: IStoreState) => state.dataDoc.dataDocById[docId]
-    );
     const exporters = useSelector(
         (state: IStoreState) => state.queryExecutions.statementExporters
     );
@@ -184,7 +181,7 @@ export const DataDocScheduleForm: React.FunctionComponent<
                             Notification will be sent to the owner of the
                             datadoc{' '}
                             <b>
-                                @<UserName uid={dataDoc.owner_uid} />
+                                @<UserName uid={kwargs.user_id} />
                             </b>
                             , who will be running the scheduled queries.
                         </div>
