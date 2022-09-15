@@ -189,8 +189,7 @@ export const DataDocScheduleForm: React.FunctionComponent<
                                     uid={isCreateForm ? userId : kwargs.user_id}
                                 />
                             </b>
-                            , and scheduled queries will also run in the name of
-                            them.
+                            , and scheduled queries will also run by them.
                         </div>
                         <SimpleField
                             label="Notify With"
