@@ -27,7 +27,7 @@ from logic.datadoc_permission import assert_can_read, assert_can_write, assert_i
 from logic.query_execution import get_query_execution_by_id
 from logic.schedule import (
     run_and_log_scheduled_task,
-    update_task_schedule_owner,
+    update_datadoc_schedule_owner,
 )
 from models.environment import Environment
 from lib.notify.utils import notify_user
@@ -615,8 +615,8 @@ def update_datadoc_owner(doc_id, next_owner_id, originator=None):
         doc = logic.update_data_doc(
             id=doc_id, commit=False, session=session, owner_uid=next_owner_uid
         )
-        # Update datadoc schedule's owner to next owner
-        update_task_schedule_owner(
+        # Update datadoc schedule's owner to next owner if there is any
+        update_datadoc_schedule_owner(
             doc_id=doc_id, owner_id=next_owner_uid, commit=False, session=session
         )
 

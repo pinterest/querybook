@@ -114,6 +114,9 @@ export const DataDocScheduleForm: React.FunctionComponent<
     onDelete,
     onRun,
 }) => {
+    const userId = useSelector(
+        (state: IStoreState) => state.user.myUserInfo.uid
+    );
     const exporters = useSelector(
         (state: IStoreState) => state.queryExecutions.statementExporters
     );
@@ -178,12 +181,16 @@ export const DataDocScheduleForm: React.FunctionComponent<
                     <>
                         <FormSectionHeader>Notification</FormSectionHeader>
                         <div>
-                            Notification will be sent to the owner of the
-                            datadoc{' '}
+                            Notifications will be sent to the user who created
+                            or updated the schedule{' '}
                             <b>
-                                @<UserName uid={kwargs.user_id} />
+                                @
+                                <UserName
+                                    uid={isCreateForm ? userId : kwargs.user_id}
+                                />
                             </b>
-                            , who will be running the scheduled queries.
+                            , and scheduled queries will also run in the name of
+                            them.
                         </div>
                         <SimpleField
                             label="Notify With"
