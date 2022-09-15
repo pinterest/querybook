@@ -66,6 +66,8 @@ export enum NotifyOn {
 }
 
 export interface IDataDocScheduleKwargs {
+    doc_id?: number;
+    user_id?: number;
     notify_with?: string;
     notify_on?: NotifyOn;
     exports?: Array<{
