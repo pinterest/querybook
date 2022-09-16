@@ -103,7 +103,7 @@ class BaseMetastoreLoader(metaclass=ABCMeta):
         """
         try:
             # return None if the table is not in the allow list or in the deny list
-            if self.acl_checker.is_table_valid(schema_name, table_name):
+            if not self.acl_checker.is_table_valid(schema_name, table_name):
                 return None
 
             # get table from metastore
