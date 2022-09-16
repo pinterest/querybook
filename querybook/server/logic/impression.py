@@ -106,14 +106,17 @@ def get_viewers_count_by_item_after_date(item_type, item_id, after_date, session
 
 @with_session
 def get_item_timeseries_after_date(item_type, item_id, after_date, session=None):
-    return (
-        session.query(func.count(Impression.uid), func.date(Impression.created_at))
-        .distinct(Impression.uid)
-        .filter_by(item_type=item_type, item_id=item_id)
-        .filter(Impression.created_at >= after_date)
-        .group_by(func.date(Impression.created_at))
-        .all()
-    )
+    return [
+        list(i)
+        for i in (
+            session.query(func.count(Impression.uid), func.date(Impression.created_at))
+            .distinct(Impression.uid)
+            .filter_by(item_type=item_type, item_id=item_id)
+            .filter(Impression.created_at >= after_date)
+            .group_by(func.date(Impression.created_at))
+            .all()
+        )
+    ]
 
 
 @with_session
