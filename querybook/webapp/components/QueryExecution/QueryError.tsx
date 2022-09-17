@@ -18,13 +18,14 @@ import { getAppName } from 'lib/utils/global';
 import { queryEngineByIdEnvSelector } from 'redux/queryEngine/selector';
 import { fetchQueryError } from 'redux/queryExecutions/action';
 import { IStoreState } from 'redux/store/types';
+import { IHighlightRange } from 'ui/CodeHighlight/types';
 import { Icon } from 'ui/Icon/Icon';
 import { Loader } from 'ui/Loader/Loader';
 import { Message } from 'ui/Message/Message';
 import { ShowMoreText } from 'ui/ShowMoreText/ShowMoreText';
 import { Tabs } from 'ui/Tabs/Tabs';
 
-import { ExecutedQueryCell, IHighlightRange } from './ExecutedQueryCell';
+import { ExecutedQueryCell } from './ExecutedQueryCell';
 
 import './QueryError.scss';
 
@@ -112,7 +113,7 @@ export const SyntaxQueryError: React.FunctionComponent<{
                 <ExecutedQueryCell
                     queryExecution={queryExecution}
                     highlightRange={highlightedRange}
-                    editorHeight={'200px'}
+                    maxEditorHeight={'200px'}
                 />
             )}
         </div>
