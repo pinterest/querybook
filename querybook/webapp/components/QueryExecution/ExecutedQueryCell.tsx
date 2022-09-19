@@ -1,102 +1,41 @@
-import { TextMarker } from 'codemirror';
-import React from 'react';
-import { UnControlled as ReactCodeMirror } from 'react-codemirror2';
+import React, { useMemo } from 'react';
 import { useSelector } from 'react-redux';
-import styled from 'styled-components';
 
 import { IQueryExecution } from 'const/queryExecution';
-import { getCodeEditorTheme } from 'lib/utils';
 import { queryEngineByIdEnvSelector } from 'redux/queryEngine/selector';
-import { IStoreState } from 'redux/store/types';
 import { TextButton } from 'ui/Button/Button';
+import { ThemedCodeHighlightWithMark } from 'ui/CodeHighlight/ThemedCodeHighlightWithMark';
+import { IHighlightRange } from 'ui/CodeHighlight/types';
 import { Loading } from 'ui/Loading/Loading';
 import { Tag } from 'ui/Tag/Tag';
 
 import './ExecutedQueryCell.scss';
-
-const EmbeddedCodeMirrorContainer = styled.div`
-    .CodeMirror {
-        &,
-        .CodeMirror-scroll,
-        .CodeMirror-sizer {
-            height: auto;
-            max-height: ${(props) => props.height || '300px'};
-        }
-        font-size: var(--small-text-size);
-        border-radius: var(--border-radius-sm);
-    }
-`;
-
-export interface IHighlightRange {
-    from: number;
-    to: number;
-    className?: string;
-}
 
 interface IProps {
     queryExecution: IQueryExecution;
     highlightRange?: IHighlightRange;
     changeCellContext?: (context: string) => void;
 
-    editorHeight?: string;
-}
-
-function codeMirrorScrollToLine(editor: CodeMirror.Editor, line: number) {
-    const lineTop = editor.charCoords({ line, ch: 0 }, 'local').top;
-    const halfScreen = editor.getScrollerElement().offsetHeight / 2;
-    const halfLineHeight = 5;
-    editor.scrollTo(null, lineTop - halfScreen + halfLineHeight);
+    maxEditorHeight?: string;
 }
 
 export const ExecutedQueryCell: React.FunctionComponent<IProps> = ({
     queryExecution,
     changeCellContext,
     highlightRange,
-    editorHeight,
+    maxEditorHeight: editorHeight,
 }) => {
-    const [editor, setEditor] = React.useState<CodeMirror.Editor>(null);
     const queryEngineById = useSelector(queryEngineByIdEnvSelector);
-    const editorTheme = useSelector((state: IStoreState) =>
-        getCodeEditorTheme(state.user.computedSettings.theme)
+    const highlightRanges = useMemo(
+        () => (highlightRange ? [highlightRange] : []),
+        [highlightRange]
     );
-
-    React.useEffect(() => {
-        let markedText: TextMarker;
-
-        if (editor && highlightRange) {
-            const doc = editor.getDoc();
-            const startPos = doc.posFromIndex(highlightRange.from);
-            const endPos = doc.posFromIndex(highlightRange.to);
-
-            markedText = editor.getDoc().markText(startPos, endPos, {
-                className: highlightRange.className || `code-highlight`,
-            });
-            codeMirrorScrollToLine(editor, startPos.line);
-        }
-        return () => {
-            // clear last marked text
-            if (markedText) {
-                markedText.clear();
-            }
-        };
-    }, [editor, highlightRange?.from, highlightRange?.to]);
 
     if (!queryExecution) {
         return <Loading />;
     }
 
     const { query } = queryExecution;
-
-    const codeMirrorOptions = {
-        mode: 'text/x-hive', // Temporarily hardcoded
-        theme: editorTheme,
-        indentWithTabs: false,
-        readOnly: true,
-        lineNumbers: true,
-        lineWrapping: true,
-        cursorBlinkRate: -1, // nocursor
-    };
-
     const changeCellContextButton = changeCellContext && (
         <TextButton
             onClick={() => {
@@ -120,16 +59,11 @@ export const ExecutedQueryCell: React.FunctionComponent<IProps> = ({
     );
 
     const codeDOM = (
-        <EmbeddedCodeMirrorContainer height={editorHeight}>
-            <ReactCodeMirror
-                options={codeMirrorOptions}
-                value={query}
-                editorDidMount={(newEditor) => {
-                    setEditor(newEditor);
-                    setTimeout(newEditor.refresh, 50);
-                }}
-            />
-        </EmbeddedCodeMirrorContainer>
+        <ThemedCodeHighlightWithMark
+            query={query}
+            highlightRanges={highlightRanges}
+            maxEditorHeight={editorHeight}
+        />
     );
 
     return (

@@ -24,6 +24,7 @@ import {
     SearchAndReplace,
 } from 'components/SearchAndReplace/SearchAndReplace';
 import { TemplatedQueryView } from 'components/TemplateQueryView/TemplatedQueryView';
+import { TranspileQueryModal } from 'components/TranspileQueryModal/TranspileQueryModal';
 import { UDFForm } from 'components/UDFForm/UDFForm';
 import KeyMap from 'const/keyMap';
 import { IQueryEngine } from 'const/queryEngine';
@@ -46,7 +47,6 @@ import {
 } from 'redux/queryEngine/selector';
 import * as queryExecutionsAction from 'redux/queryExecutions/action';
 import { Dispatch, IStoreState } from 'redux/store/types';
-import { TemplatedQueryResource } from 'resource/queryExecution';
 import { Button } from 'ui/Button/Button';
 import { IconButton } from 'ui/Button/IconButton';
 import { Dropdown } from 'ui/Dropdown/Dropdown';
@@ -293,9 +293,15 @@ function useTranspileQuery(
     setEngineId: (engineId: number) => any,
     setQuery: (query: string) => any
 ) {
+    const [transpilerConfig, setTranspilerConfig] = useState<{
+        transpilerName: string;
+        toEngine: IQueryEngine;
+    }>();
+
     const queryTranspilers = useSelector(
         (state: IStoreState) => state.queryEngine.queryTranspilers
     );
+
     const transpilerOptions = useMemo(
         () =>
             getPossibleTranspilers(
@@ -306,26 +312,33 @@ function useTranspileQuery(
         [queryTranspilers, currentQueryEngine, queryEngines]
     );
 
-    const transpileQuery = useCallback(
-        async (transpilerName: string, toEngine: IQueryEngine) => {
-            const { data: transpiledQuery } =
-                await TemplatedQueryResource.transpileQuery(
-                    transpilerName,
-                    query,
-                    currentQueryEngine.language,
-                    toEngine.language
-                );
-
-            setQuery(transpiledQuery);
-            setEngineId(toEngine.id);
-
-            toast.success(`Query transpiled to ${toEngine.name}`);
+    const startQueryTranspile = useCallback(
+        (transpilerName: string, toEngine: IQueryEngine) => {
+            setTranspilerConfig({ transpilerName, toEngine });
         },
-        [setEngineId, setQuery, query, currentQueryEngine]
+        []
+    );
+
+    const clearQueryTranspile = useCallback(
+        () => setTranspilerConfig(null),
+        []
+    );
+    const handleTranspileQuery = useCallback(
+        (query: string, engine: IQueryEngine) => {
+            setQuery(query);
+            setEngineId(engine.id);
+
+            toast.success(`Query transpiled to ${engine.name}`);
+            clearQueryTranspile();
+        },
+        [clearQueryTranspile, setQuery, setEngineId]
     );
 
     return {
-        transpileQuery,
+        transpilerConfig,
+        startQueryTranspile,
+        clearQueryTranspile,
+        handleTranspileQuery,
         transpilerOptions,
     };
 }
@@ -376,13 +389,13 @@ const QueryComposer: React.FC = () => {
     const { queryEditorRef, handleFormatQuery } = useQueryEditorHelpers();
     const { hasLintErrors, setHasLintErrors, getLintAnnotations } =
         useQueryLint(engine);
-    const { transpileQuery, transpilerOptions } = useTranspileQuery(
-        query,
-        engine,
-        queryEngines,
-        setEngineId,
-        setQuery
-    );
+    const {
+        transpilerConfig,
+        startQueryTranspile,
+        clearQueryTranspile,
+        handleTranspileQuery,
+        transpilerOptions,
+    } = useTranspileQuery(query, engine, queryEngines, setEngineId, setQuery);
 
     const handleCreateDataDoc = useCallback(async () => {
         let dataDoc = null;
@@ -650,7 +663,8 @@ const QueryComposer: React.FC = () => {
 
                 items: transpilerOptions.map((t) => ({
                     name: `To ${t.toEngine.name} (${t.toEngine.language})`,
-                    onClick: () => transpileQuery(t.transpilerName, t.toEngine),
+                    onClick: () =>
+                        startQueryTranspile(t.transpilerName, t.toEngine),
                 })),
             });
         }
@@ -707,10 +721,22 @@ const QueryComposer: React.FC = () => {
         </div>
     );
 
+    const transpilerDOM = transpilerConfig ? (
+        <TranspileQueryModal
+            query={query}
+            fromEngine={engine}
+            toEngine={transpilerConfig.toEngine}
+            onHide={clearQueryTranspile}
+            onTranspileConfirm={handleTranspileQuery}
+            transpilerName={transpilerConfig.transpilerName}
+        />
+    ) : null;
+
     return (
         <FullHeight flex={'column'} className="QueryComposer">
             {headerDOM}
             {contentDOM}
+            {transpilerDOM}
         </FullHeight>
     );
 };

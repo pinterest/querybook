@@ -19,6 +19,7 @@ import {
 } from 'components/QueryRunButton/QueryRunButton';
 import { QuerySnippetInsertionModal } from 'components/QuerySnippetInsertionModal/QuerySnippetInsertionModal';
 import { TemplatedQueryView } from 'components/TemplateQueryView/TemplatedQueryView';
+import { TranspileQueryModal } from 'components/TranspileQueryModal/TranspileQueryModal';
 import { UDFForm } from 'components/UDFForm/UDFForm';
 import { IDataQueryCellMeta } from 'const/datadoc';
 import type { IQueryEngine, IQueryTranspiler } from 'const/queryEngine';
@@ -42,7 +43,6 @@ import {
 } from 'redux/queryEngine/selector';
 import { createQueryExecution } from 'redux/queryExecutions/action';
 import { Dispatch, IStoreState } from 'redux/store/types';
-import { TemplatedQueryResource } from 'resource/queryExecution';
 import { Button, TextButton } from 'ui/Button/Button';
 import { ThemedCodeHighlight } from 'ui/CodeHighlight/ThemedCodeHighlight';
 import { Dropdown } from 'ui/Dropdown/Dropdown';
@@ -104,6 +104,11 @@ interface IState {
     showRenderedTemplateModal: boolean;
     showUDFModal: boolean;
     hasLintError: boolean;
+
+    transpilerConfig?: {
+        toEngine: IQueryEngine;
+        transpilerName: string;
+    };
 }
 
 class DataDocQueryCellComponent extends React.PureComponent<IProps, IState> {
@@ -409,32 +414,33 @@ class DataDocQueryCellComponent extends React.PureComponent<IProps, IState> {
     }
 
     @bind
-    public async transpileQuery(
-        transpilerName: string,
-        toEngine: IQueryEngine
-    ) {
-        const { data: transpiledQuery } =
-            await TemplatedQueryResource.transpileQuery(
-                transpilerName,
-                this.state.query,
-                this.queryEngine.language,
-                toEngine.language
-            );
+    public startQueryTranspile(transpilerName: string, toEngine: IQueryEngine) {
+        this.setState({ transpilerConfig: { transpilerName, toEngine } });
+    }
+
+    @bind
+    public clearQueryTranspile() {
+        this.setState({ transpilerConfig: null });
+    }
+
+    @bind
+    public handleTranspileQuery(query: string, engine: IQueryEngine) {
         const updatedMeta = {
             ...this.state.meta,
-            engine: toEngine.id,
+            engine: engine.id,
         };
+        this.clearQueryTranspile();
         this.setState(
             {
-                query: transpiledQuery,
+                query,
                 meta: updatedMeta,
             },
             () => {
                 this.onChangeDebounced({
-                    context: transpiledQuery,
+                    context: query,
                     meta: updatedMeta,
                 });
-                toast.success(`Query transpiled to ${toEngine.name}`);
+                toast.success(`Query transpiled to ${engine.name}`);
             }
         );
     }
@@ -531,7 +537,10 @@ class DataDocQueryCellComponent extends React.PureComponent<IProps, IState> {
                     items: transpilerOptions.map((t) => ({
                         name: `To ${t.toEngine.name} (${t.toEngine.language})`,
                         onClick: () =>
-                            this.transpileQuery(t.transpilerName, t.toEngine),
+                            this.startQueryTranspile(
+                                t.transpilerName,
+                                t.toEngine
+                            ),
                     })),
                 });
             }
@@ -690,6 +699,7 @@ class DataDocQueryCellComponent extends React.PureComponent<IProps, IState> {
             showQuerySnippetModal,
             showRenderedTemplateModal,
             showUDFModal,
+            transpilerConfig,
         } = this.state;
         const queryEngine = queryEngineById[this.engineId];
         const queryCollapsed = this.queryCollapsed;
@@ -778,12 +788,24 @@ class DataDocQueryCellComponent extends React.PureComponent<IProps, IState> {
             </Modal>
         ) : null;
 
+        const transpilerModal = transpilerConfig ? (
+            <TranspileQueryModal
+                query={query}
+                fromEngine={this.queryEngine}
+                toEngine={transpilerConfig.toEngine}
+                onHide={this.clearQueryTranspile}
+                onTranspileConfirm={this.handleTranspileQuery}
+                transpilerName={transpilerConfig.transpilerName}
+            />
+        ) : null;
+
         return (
             <>
                 {editorDOM}
                 {insertQuerySnippetModalDOM}
                 {templatedQueryViewModalDOM}
                 {UDFModal}
+                {transpilerModal}
             </>
         );
     }
