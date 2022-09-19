@@ -1,11 +1,7 @@
 import { TextMarker } from 'codemirror';
 import React, { useMemo } from 'react';
 import { UnControlled as ReactCodeMirror } from 'react-codemirror2';
-import { useSelector } from 'react-redux';
 import styled from 'styled-components';
-
-import { getCodeEditorTheme } from 'lib/utils';
-import { IStoreState } from 'redux/store/types';
 
 import { IHighlightRange } from './types';
 
@@ -40,9 +36,11 @@ function codeMirrorScrollToLine(editor: CodeMirror.Editor, line: number) {
     editor.scrollTo(null, lineTop - halfScreen + halfLineHeight);
 }
 
-interface IProps {
+export interface IProps {
     query: string;
     highlightRanges?: IHighlightRange[];
+    theme: string;
+    language: string;
 
     maxEditorHeight?: string;
     autoHeight?: boolean;
@@ -50,15 +48,14 @@ interface IProps {
 
 export const CodeHighlightWithMark: React.FC<IProps> = ({
     query,
+    theme,
+    language,
+
     highlightRanges = [],
     maxEditorHeight,
     autoHeight = true,
 }) => {
     const [editor, setEditor] = React.useState<CodeMirror.Editor>(null);
-    const editorTheme = useSelector((state: IStoreState) =>
-        getCodeEditorTheme(state.user.computedSettings.theme)
-    );
-
     React.useEffect(() => {
         let markedText: TextMarker;
 
@@ -87,15 +84,15 @@ export const CodeHighlightWithMark: React.FC<IProps> = ({
 
     const codeMirrorOptions = useMemo(
         () => ({
-            mode: 'text/x-hive', // Temporarily hardcoded
-            theme: editorTheme,
+            mode: language,
+            theme,
             indentWithTabs: false,
             readOnly: true,
             lineNumbers: true,
             lineWrapping: true,
             cursorBlinkRate: -1, // nocursor
         }),
-        [editorTheme]
+        [theme, language]
     );
 
     return (

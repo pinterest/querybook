@@ -4,7 +4,7 @@ import { useSelector } from 'react-redux';
 import { IQueryExecution } from 'const/queryExecution';
 import { queryEngineByIdEnvSelector } from 'redux/queryEngine/selector';
 import { TextButton } from 'ui/Button/Button';
-import { CodeHighlightWithMark } from 'ui/CodeHighlight/CodeHighlightWithMark';
+import { ThemedCodeHighlightWithMark } from 'ui/CodeHighlight/ThemedCodeHighlightWithMark';
 import { IHighlightRange } from 'ui/CodeHighlight/types';
 import { Loading } from 'ui/Loading/Loading';
 import { Tag } from 'ui/Tag/Tag';
@@ -59,7 +59,7 @@ export const ExecutedQueryCell: React.FunctionComponent<IProps> = ({
     );
 
     const codeDOM = (
-        <CodeHighlightWithMark
+        <ThemedCodeHighlightWithMark
             query={query}
             highlightRanges={highlightRanges}
             maxEditorHeight={editorHeight}
