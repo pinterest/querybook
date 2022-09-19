@@ -1,6 +1,9 @@
 from datetime import datetime, date
 import json
+
 from flask import json as flask_json
+from sqlalchemy.engine.row import Row
+
 from lib.utils.utils import DATE_TO_UTC, DATETIME_TO_UTC
 
 
@@ -21,6 +24,8 @@ class JSONEncoder(flask_json.JSONEncoder):
             return self.datetime_formatter(obj)
         elif isinstance(obj, date):
             return self.date_formatter(obj)
+        elif isinstance(obj, Row):
+            return list(obj)
 
 
 def dumps(*args, **kwargs):
