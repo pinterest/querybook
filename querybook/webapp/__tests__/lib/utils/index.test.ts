@@ -119,3 +119,20 @@ test('sanitizeUrlTitle', () => {
     expect(utils.sanitizeUrlTitle('another test?!*')).toBe('another-test');
     expect(utils.sanitizeUrlTitle('smiley emoji 😀')).toBe('smiley-emoji-');
 });
+
+test('isValidUrl', () => {
+    expect(utils.isValidUrl('www.google.com')).toBe(true);
+    expect(utils.isValidUrl('https://www.google.com')).toBe(true);
+    expect(utils.isValidUrl('http://google.com')).toBe(true);
+    expect(utils.isValidUrl('Google.com')).toBe(true);
+    expect(utils.isValidUrl('google.com/foo/bar?hello=world#baz')).toBe(true);
+    expect(utils.isValidUrl('www.google.com/a/b/c?test=d')).toBe(true);
+
+    expect(utils.isValidUrl('foobar')).toBe(false);
+    expect(utils.isValidUrl('https://com')).toBe(false);
+    expect(utils.isValidUrl('["https://www.google.com"]')).toBe(false);
+    expect(utils.isValidUrl('{"url": "https://www.google.com"}')).toBe(false);
+
+    // the current regex can't handle localhost
+    // expect(utils.isValidUrl('http://localhost:1234')).toBe(true);
+});

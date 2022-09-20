@@ -296,9 +296,9 @@ export function getChangedObject(
     return ret;
 }
 
-// Source: https://stackoverflow.com/questions/5717093/check-if-a-javascript-string-is-a-url/45567717#45567717
+// Source: https://stackoverflow.com/questions/161738/what-is-the-best-regular-expression-to-check-if-a-string-is-a-valid-url
 const urlPattern =
-    /(?:https?):\/\/(\w+:?\w*)?(\S+)(:\d+)?(\/|\/([\w#!:.?+=&%!\-\/]))?/;
+    /^(https?:\/\/)?[a-z0-9]+([\-\.]{1}[a-z0-9]+)*\.[a-z]{2,5}(:[0-9]{1,5})?(\/.*)?$/i;
 export function isValidUrl(url: string): boolean {
     return !!urlPattern.test(url);
 }

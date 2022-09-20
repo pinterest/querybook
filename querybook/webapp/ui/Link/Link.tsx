@@ -27,6 +27,17 @@ function isInternalUrl(url: LocationDescriptor): boolean {
     return false;
 }
 
+function getExternalUrl(url: LocationDescriptor) {
+    if (url && typeof url === 'string') {
+        if (/^[a-zA-Z]+:\/\//.test(url)) {
+            return url;
+        }
+        return `//${url}`;
+    }
+
+    return url;
+}
+
 // ReactRouter's Link's tying thinks that defaultValue can only be string | string[]
 // This causes a ts error since defaultValue can also be a number
 type AnchorProps = React.AnchorHTMLAttributes<HTMLAnchorElement> & {
@@ -84,7 +95,7 @@ export const Link: React.FC<ILinkProps> = ({
         </LinkImport>
     ) : (
         <StyledLink
-            href={to}
+            href={getExternalUrl(to)}
             naturalLink={naturalLink}
             onClick={handleClick}
             {...elementProps}
