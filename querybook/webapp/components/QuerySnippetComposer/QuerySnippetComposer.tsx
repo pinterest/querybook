@@ -227,7 +227,7 @@ class QuerySnippetComposerComponent extends React.PureComponent<
 
     @bind
     public handleDelete() {
-        return new Promise<void>((resolve) => {
+        return new Promise<void>((resolve, reject) => {
             const { querySnippet } = this.props;
 
             sendConfirm({
@@ -241,6 +241,7 @@ class QuerySnippetComposerComponent extends React.PureComponent<
                     }
                     resolve();
                 },
+                onDismiss: reject,
             });
         });
     }
