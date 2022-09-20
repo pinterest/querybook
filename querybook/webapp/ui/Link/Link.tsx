@@ -32,7 +32,7 @@ function getExternalUrl(url: LocationDescriptor) {
         if (/^[a-zA-Z]+:\/\//.test(url)) {
             return url;
         }
-        return `http://${url}`;
+        return `//${url}`;
     }
 
     return url;
