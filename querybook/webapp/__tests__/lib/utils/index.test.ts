@@ -126,6 +126,7 @@ test('isValidUrl', () => {
     expect(utils.isValidUrl('Google.com')).toBe(true);
     expect(utils.isValidUrl('www.google.com/a/b/c?test=d')).toBe(true);
 
+    expect(utils.isValidUrl('foobar')).toBe(false);
     expect(utils.isValidUrl('https://com')).toBe(false);
     expect(utils.isValidUrl('["https://www.google.com"]')).toBe(false);
     expect(utils.isValidUrl('{"url": "https://www.google.com"}')).toBe(false);
