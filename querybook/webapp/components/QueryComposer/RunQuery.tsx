@@ -152,7 +152,7 @@ async function confirmIfDroppingTablesThenRunQuery(
                     </Content>
                 ),
                 onConfirm: () => runQuery().then(resolve, reject),
-                onDismiss: () => reject(),
+                onDismiss: reject,
                 confirmText: 'DROP the table',
             });
         });
