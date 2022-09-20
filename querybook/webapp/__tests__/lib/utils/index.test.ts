@@ -123,7 +123,9 @@ test('sanitizeUrlTitle', () => {
 test('isValidUrl', () => {
     expect(utils.isValidUrl('www.google.com')).toBe(true);
     expect(utils.isValidUrl('https://www.google.com')).toBe(true);
+    expect(utils.isValidUrl('http://google.com')).toBe(true);
     expect(utils.isValidUrl('Google.com')).toBe(true);
+    expect(utils.isValidUrl('google.com/foo/bar?hello=world#baz')).toBe(true);
     expect(utils.isValidUrl('www.google.com/a/b/c?test=d')).toBe(true);
 
     expect(utils.isValidUrl('foobar')).toBe(false);
