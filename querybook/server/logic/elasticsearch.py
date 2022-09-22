@@ -668,10 +668,13 @@ def user_to_es(user, fields=None, session=None):
             "input": process_names_for_suggestion(username, fullname),
         }
 
+    def get_fullname_field():
+        return (fullname or username) + (" (deactivated)" if user.deleted else "")
+
     field_to_getter = {
         "id": user.id,
         "username": username,
-        "fullname": (fullname or username) + (" (deactivated)" if user.deleted else ""),
+        "fullname": get_fullname_field,
         "suggest": get_suggestion_field,
     }
     return _get_dict_by_field(field_to_getter, fields=fields)

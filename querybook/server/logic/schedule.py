@@ -182,7 +182,7 @@ def get_scheduled_data_docs_by_user(
         session.query(DataDoc, TaskSchedule)
         .join(
             TaskSchedule,
-            TaskSchedule.name == func.concat(DATADOC_SCHEDULE_PREFIX, DataDoc.id),
+            TaskSchedule.name == get_data_doc_schedule_name(DATADOC_SCHEDULE_PREFIX),
             isouter=(not filters.get("scheduled_only", False)),
         )
         .filter(DataDoc.owner_uid == uid)

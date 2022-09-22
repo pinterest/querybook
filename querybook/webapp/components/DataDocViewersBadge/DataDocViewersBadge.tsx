@@ -127,19 +127,24 @@ export const DataDocViewersBadge = React.memo<IDataDocViewersBadgeProps>(
                 <UserAvatarList
                     users={viewerInfos
                         .slice(0, numberBadges)
-                        .map((viewerInfo) => ({
-                            uid: viewerInfo.uid,
-                            tooltip:
-                                viewerInfo.uid in userInfoById
-                                    ? (userInfoById[viewerInfo.uid].fullname ??
-                                          userInfoById[viewerInfo.uid]
-                                              .username) +
-                                      (userInfoById[viewerInfo.uid].deleted
-                                          ? ' (deactivated)'
-                                          : '')
-                                    : null,
-                            isOnline: viewerInfo.online,
-                        }))}
+                        .map((viewerInfo) => {
+                            const userInfo = userInfoById[viewerInfo.uid];
+                            let tooltip: string;
+                            if (userInfo) {
+                                const displayName =
+                                    userInfo.fullname ?? userInfo.username;
+                                const deletedMessage = userInfo.deleted
+                                    ? ' (deactivated)'
+                                    : '';
+                                tooltip = displayName + deletedMessage;
+                            }
+
+                            return {
+                                uid: viewerInfo.uid,
+                                tooltip,
+                                isOnline: viewerInfo.online,
+                            };
+                        })}
                     extraCount={extraViewersCount}
                 />
             );
