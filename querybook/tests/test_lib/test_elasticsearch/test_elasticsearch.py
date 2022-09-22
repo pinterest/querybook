@@ -421,7 +421,9 @@ class TableTestCase(TestCase):
 
 class UserTestCase(TestCase):
     def setUp(self):
-        self.user_mock = MagicMock(username="john", fullname="John Smith 123", id=7)
+        self.user_mock = MagicMock(
+            username="john", fullname="John Smith 123", id=7, deleted=False
+        )
 
     def test_user_to_es(self):
         self.assertEqual(
@@ -432,6 +434,21 @@ class UserTestCase(TestCase):
                 "fullname": "John Smith 123",
                 "suggest": {"input": ["john", "john", "john smith", "john", "smith"]},
             },
+        )
+
+    def test_deleted_user_to_es(self):
+        self.user_mock.deleted = True
+        user_dict = user_to_es(self.user_mock, session=MagicMock())
+
+        self.assertEqual(
+            user_dict["fullname"],
+            "John Smith 123 (deactivated)",
+        )
+
+        # Should not impact search
+        self.assertEqual(
+            user_dict["suggest"],
+            ["john", "john", "john smith", "john", "smith"],
         )
 
     def test_partial_dict(self):
