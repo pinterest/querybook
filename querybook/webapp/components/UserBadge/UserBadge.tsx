@@ -1,6 +1,7 @@
 import clsx from 'clsx';
 import React, { useMemo } from 'react';
 
+import { DELETED_USER_MSG } from 'const/user';
 import { useUser } from 'hooks/redux/useUser';
 import { AccentText } from 'ui/StyledText/StyledText';
 
@@ -43,7 +44,7 @@ export const UserBadge: React.FunctionComponent<IProps> = ({
         [userInfo, name]
     );
 
-    const deletedText = userInfo.deleted ? '(deactivated)' : '';
+    const deletedText = userInfo.deleted ? DELETED_USER_MSG : '';
 
     if (mini) {
         return (

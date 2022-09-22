@@ -18,3 +18,5 @@ export interface IMyUserInfo {
     permission?: number;
     isAdmin: boolean;
 }
+
+export const DELETED_USER_MSG = '(deactivated)';
