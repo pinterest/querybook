@@ -448,7 +448,7 @@ class UserTestCase(TestCase):
         # Should not impact search
         self.assertEqual(
             user_dict["suggest"],
-            ["john", "john", "john smith", "john", "smith"],
+            {"input": ["john", "john", "john smith", "john", "smith"]},
         )
 
     def test_partial_dict(self):
