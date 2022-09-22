@@ -131,7 +131,12 @@ export const DataDocViewersBadge = React.memo<IDataDocViewersBadgeProps>(
                             uid: viewerInfo.uid,
                             tooltip:
                                 viewerInfo.uid in userInfoById
-                                    ? userInfoById[viewerInfo.uid].username
+                                    ? (userInfoById[viewerInfo.uid].fullname ??
+                                          userInfoById[viewerInfo.uid]
+                                              .username) +
+                                      (userInfoById[viewerInfo.uid].deleted
+                                          ? ' (deactivated)'
+                                          : '')
                                     : null,
                             isOnline: viewerInfo.online,
                         }))}

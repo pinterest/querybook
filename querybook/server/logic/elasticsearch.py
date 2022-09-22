@@ -671,7 +671,7 @@ def user_to_es(user, fields=None, session=None):
     field_to_getter = {
         "id": user.id,
         "username": username,
-        "fullname": fullname,
+        "fullname": (fullname or username) + (" (deactivated)" if user.deleted else ""),
         "suggest": get_suggestion_field,
     }
     return _get_dict_by_field(field_to_getter, fields=fields)
@@ -719,7 +719,7 @@ def update_user_by_id(uid, session=None):
     index_name = ES_CONFIG["users"]["index_name"]
 
     user = User.get(id=uid, session=session)
-    if user is None or user.deleted:
+    if user is None:
         try:
             _delete(index_name, id=uid)
         except Exception:

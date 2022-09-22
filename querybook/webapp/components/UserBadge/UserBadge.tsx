@@ -43,6 +43,8 @@ export const UserBadge: React.FunctionComponent<IProps> = ({
         [userInfo, name]
     );
 
+    const deletedText = userInfo.deleted ? '(deactivated)' : '';
+
     if (mini) {
         return (
             <span
@@ -54,7 +56,7 @@ export const UserBadge: React.FunctionComponent<IProps> = ({
             >
                 <figure>{avatarDOM}</figure>
                 <AccentText className="username" weight="bold">
-                    {userInfo?.fullname ?? userName}
+                    {userInfo?.fullname ?? userName} {deletedText}
                 </AccentText>
             </span>
         );
@@ -81,7 +83,7 @@ export const UserBadge: React.FunctionComponent<IProps> = ({
                     <UserNameComponent userInfo={userInfo} loading={loading} />
                 </AccentText>
                 <AccentText className="handle" size="small" color="light">
-                    @{userName}
+                    @{userName} {deletedText}
                 </AccentText>
             </div>
         </div>
