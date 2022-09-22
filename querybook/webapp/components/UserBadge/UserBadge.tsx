@@ -1,6 +1,7 @@
 import clsx from 'clsx';
 import React, { useMemo } from 'react';
 
+import { DELETED_USER_MSG } from 'const/user';
 import { useUser } from 'hooks/redux/useUser';
 import { AccentText } from 'ui/StyledText/StyledText';
 
@@ -43,6 +44,8 @@ export const UserBadge: React.FunctionComponent<IProps> = ({
         [userInfo, name]
     );
 
+    const deletedText = userInfo.deleted ? DELETED_USER_MSG : '';
+
     if (mini) {
         return (
             <span
@@ -54,7 +57,7 @@ export const UserBadge: React.FunctionComponent<IProps> = ({
             >
                 <figure>{avatarDOM}</figure>
                 <AccentText className="username" weight="bold">
-                    {userInfo?.fullname ?? userName}
+                    {userInfo?.fullname ?? userName} {deletedText}
                 </AccentText>
             </span>
         );
@@ -81,7 +84,7 @@ export const UserBadge: React.FunctionComponent<IProps> = ({
                     <UserNameComponent userInfo={userInfo} loading={loading} />
                 </AccentText>
                 <AccentText className="handle" size="small" color="light">
-                    @{userName}
+                    @{userName} {deletedText}
                 </AccentText>
             </div>
         </div>

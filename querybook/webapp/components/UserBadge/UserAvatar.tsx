@@ -1,3 +1,4 @@
+import clsx from 'clsx';
 import React, { useEffect } from 'react';
 
 import { IUserInfo } from 'const/user';
@@ -80,6 +81,7 @@ export const UserAvatarComponent: React.FunctionComponent<
 > = ({ loading, userInfo, isOnline, tiny, onClick = null }) => {
     const profileImage = userInfo ? userInfo.profile_img : null;
     const userName = userInfo ? userInfo.fullname ?? userInfo.username : null;
+    const isDeleted = userInfo?.deleted;
 
     const imageDOM = loading ? (
         <div className="spinner-wrapper">
@@ -91,19 +93,24 @@ export const UserAvatarComponent: React.FunctionComponent<
         <img src={profileImage} />
     );
 
-    const isOnlineClasses = isOnline
-        ? 'is-online-dot online'
-        : 'is-online-dot offline';
-
     const isOnlineDot =
-        isOnline === undefined ? null : <span className={isOnlineClasses} />;
+        isOnline === undefined || tiny || isDeleted ? null : (
+            <span
+                className={clsx(
+                    'is-online-dot',
+                    isOnline ? 'online' : 'offline'
+                )}
+            />
+        );
 
-    return tiny ? (
-        <span className="UserAvatar tiny" onClick={onClick}>
-            {imageDOM}
-        </span>
-    ) : (
-        <span className="UserAvatar" onClick={onClick}>
+    const classNames = clsx(
+        'UserAvatar',
+        tiny && 'tiny',
+        isDeleted && 'deleted'
+    );
+
+    return (
+        <span className={classNames} onClick={onClick}>
             {imageDOM}
             {isOnlineDot}
         </span>

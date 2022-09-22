@@ -3,6 +3,7 @@ import { useDispatch } from 'react-redux';
 
 import { DataDocViewersList } from 'components/DataDocViewersList/DataDocViewersList';
 import { UserAvatarList } from 'components/UserBadge/UserAvatarList';
+import { DELETED_USER_MSG } from 'const/user';
 import { useShallowSelector } from 'hooks/redux/useShallowSelector';
 import { Permission } from 'lib/data-doc/datadoc-permission';
 import * as dataDocActions from 'redux/dataDoc/action';
@@ -127,14 +128,24 @@ export const DataDocViewersBadge = React.memo<IDataDocViewersBadgeProps>(
                 <UserAvatarList
                     users={viewerInfos
                         .slice(0, numberBadges)
-                        .map((viewerInfo) => ({
-                            uid: viewerInfo.uid,
-                            tooltip:
-                                viewerInfo.uid in userInfoById
-                                    ? userInfoById[viewerInfo.uid].username
-                                    : null,
-                            isOnline: viewerInfo.online,
-                        }))}
+                        .map((viewerInfo) => {
+                            const userInfo = userInfoById[viewerInfo.uid];
+                            let tooltip: string;
+                            if (userInfo) {
+                                const displayName =
+                                    userInfo.fullname ?? userInfo.username;
+                                const deletedMessage = userInfo.deleted
+                                    ? ` ${DELETED_USER_MSG}`
+                                    : '';
+                                tooltip = displayName + deletedMessage;
+                            }
+
+                            return {
+                                uid: viewerInfo.uid,
+                                tooltip,
+                                isOnline: viewerInfo.online,
+                            };
+                        })}
                     extraCount={extraViewersCount}
                 />
             );

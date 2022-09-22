@@ -12,6 +12,8 @@ from models.schedule import (
 )
 from models.datadoc import DataDoc
 
+DATADOC_SCHEDULE_PREFIX = "run_data_doc_"
+
 
 @with_session
 def get_all_task_schedules(offset=0, limit=100, session=None):
@@ -169,7 +171,7 @@ def get_task_run_record_run_by_name(
 
 
 def get_data_doc_schedule_name(id: int):
-    return f"run_data_doc_{id}"
+    return f"{DATADOC_SCHEDULE_PREFIX}{id}"
 
 
 @with_session
@@ -180,7 +182,7 @@ def get_scheduled_data_docs_by_user(
         session.query(DataDoc, TaskSchedule)
         .join(
             TaskSchedule,
-            TaskSchedule.name == func.concat("run_data_doc_", DataDoc.id),
+            TaskSchedule.name == func.concat(DATADOC_SCHEDULE_PREFIX, DataDoc.id),
             isouter=(not filters.get("scheduled_only", False)),
         )
         .filter(DataDoc.owner_uid == uid)
