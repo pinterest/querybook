@@ -44,7 +44,7 @@ export const UserBadge: React.FunctionComponent<IProps> = ({
         [userInfo, name]
     );
 
-    const deletedText = userInfo.deleted ? DELETED_USER_MSG : '';
+    const deletedText = userInfo?.deleted ? DELETED_USER_MSG : '';
 
     if (mini) {
         return (
